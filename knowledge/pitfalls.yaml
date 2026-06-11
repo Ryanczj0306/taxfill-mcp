@@ -1,0 +1,47 @@
+# Known-pitfall registry (docs/DEV_PLAN.md, section 10).
+#
+# Every bug found in real use becomes (a) a permanent verifier rule,
+# (b) a regression test, and (c) where applicable, an intake-question fix.
+# Verify reports list each pitfall as PASS/FAIL so agents and users see the
+# self-check happening. Contributors must add an entry here with every bug
+# fix (enforced in the PR template).
+#
+# Schema — each entry:
+#   id:             stable identifier (P-###)
+#   incident:       what actually went wrong
+#   countermeasure: the permanent fix (verifier rule / regression test / intake fix)
+
+pitfalls:
+  - id: P-001
+    incident: >-
+      SSN truncated on 1040-NR: a dashed SSN (e.g. "000-00-0000", 11 chars)
+      written into a 9-cell comb field, last 2 digits clipped — invisible in
+      field dumps, caught only by rendering.
+    countermeasure: >-
+      Clipping scan on every filled field; "format: ssn_digits_only" on comb
+      fields; render+vision pass mandatory before "done".
+
+  - id: P-002
+    incident: >-
+      User supplied historical address; bills would have gone to an old
+      apartment.
+    countermeasure: >-
+      Intake disambiguation (current-mailing vs historical); verifier warns
+      when return address differs from the user-confirmed current address,
+      or matches an address whose date range ended.
+
+  - id: P-003
+    incident: >-
+      Required Yes/No checkboxes silently unanswered (8843 line 12,
+      Sched OI item I).
+    countermeasure: >-
+      Required-checkbox audit: any required group fully "/Off" fails
+      verification.
+
+  - id: P-004
+    incident: >-
+      Treaty benefit nearly mis-scoped on a status-change year (F-1 to H1B
+      still eligible for student-period income).
+    countermeasure: >-
+      Treaty eligibility evaluated per visa period, encoded in
+      knowledge/federal/<year>.yaml treaty rules; covered by eval scenario.

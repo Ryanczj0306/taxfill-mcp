@@ -1,0 +1,20 @@
+# taxfill-mcp — uv workspace root (virtual: the repo root is not a package).
+#
+# The single source of truth for this project is docs/DEV_PLAN.md.
+# Status: v0.1 is IN DEVELOPMENT — nothing is published to PyPI yet.
+#
+# Quickstart for contributors:
+#   uv sync        # creates .venv and installs both workspace packages (editable)
+#   uv run pytest  # runs the test suite
+
+[tool.uv.workspace]
+members = ["packages/core", "packages/mcp-server"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["packages/core/tests"]
+addopts = "-q"

@@ -1,0 +1,89 @@
+# Authoritative source registry (docs/DEV_PLAN.md, section 7).
+#
+# Tax law moves faster than any shipped knowledge pack, so the repo ships
+# "where truth lives" as data and the skill enforces a freshness protocol:
+# for any tax year newer than the newest shipped knowledge pack, or any
+# benefit a pack does not cover, the agent MUST resolve it via these URLs
+# (web search restricted to .gov first), record the citation in
+# RECONCILIATION.md, and refuse to fill any line whose authority it cannot
+# cite. Blogs/Reddit are never authority — at most leads to a .gov citation.
+#
+# Schema — every entry:
+#   url:     official source URL (.gov / .treasury.gov only)
+#   answers: what questions this source resolves
+#   cadence: when/how often it updates
+#
+# Coverage rule: no topic may exist in a knowledge pack or be used by a
+# position decision without an entry here backing it.
+#
+# Status: M0 skeleton — federal topics below are seeds; the full by-topic
+# registry (SALT, medical, energy credits, retirement, AMT, estimated tax,
+# IRB/Rev. Procs, Congress.gov, Federal Register, ...) lands in M3, and
+# state blocks ship with each state knowledge pack in M5. A nightly CI job
+# (planned — DEV_PLAN section 7) will re-fetch these URLs and flag drift
+# (moved pages, new form revisions).
+
+federal:
+  by_topic:
+    filing_basics:
+      - url: https://www.irs.gov/publications/p17
+        answers: >-
+          Pub 17, Your Federal Income Tax: filing requirements, filing
+          status, dependents, income types, standard deduction — the
+          general-individual baseline.
+        cadence: annual (per tax year)
+
+    nonresident_and_treaties:
+      - url: https://www.irs.gov/publications/p519
+        answers: >-
+          Pub 519, U.S. Tax Guide for Aliens: NRA/RA/dual-status rules,
+          Substantial Presence Test, exempt-individual years, which form
+          (1040 vs 1040-NR), treaty benefit claiming mechanics.
+        cadence: annual (per tax year)
+      - url: https://home.treasury.gov/policy-issues/tax-policy/treaties
+        answers: >-
+          Treasury income tax treaty texts and protocols: the authoritative
+          article language (e.g. student articles) behind any treaty
+          position; per-country eligibility details.
+        cadence: as treaties are signed or amended (rare; check per use)
+
+    credits_eitc:
+      - url: https://www.irs.gov/publications/p596
+        answers: >-
+          Pub 596, Earned Income Credit: EITC eligibility, income limits,
+          qualifying-child rules, credit amounts for the year.
+        cadence: annual (per tax year)
+
+    itemized_mortgage_interest:
+      - url: https://www.irs.gov/publications/p936
+        answers: >-
+          Pub 936, Home Mortgage Interest Deduction: acquisition-debt
+          limits, points, grandfathered debt, worksheet rules.
+        cadence: annual (per tax year)
+
+    education:
+      - url: https://www.irs.gov/publications/p970
+        answers: >-
+          Pub 970, Tax Benefits for Education: AOTC/LLC eligibility,
+          1098-T handling, scholarship taxability, student-loan interest.
+        cadence: annual (per tax year)
+
+  change_channels:
+    - url: https://www.irs.gov/newsroom
+      answers: >-
+        IRS Newsroom: new guidance, inflation-adjustment announcements,
+        deadline changes, disaster relief postponements — the first official
+        signal that a shipped knowledge pack may be stale.
+      cadence: multiple updates per week (check for any year newer than the
+        newest shipped pack)
+    - url: https://www.irs.gov/pub/irs-prior/
+      answers: >-
+        IRS prior-year revision archive: the exact blank PDF for any form
+        and year (e.g. f1040nr--2022.pdf) — the canonical source_url base
+        for prior-year form packs and checksum verification.
+      cadence: as form revisions are published
+
+# One block per supported state (DOR/FTB forms pages, residency rules,
+# state credits, treaty-conformity statements, payment portal, where-to-file).
+# Ships together with each state's knowledge pack — first CA in M5.
+states: {}

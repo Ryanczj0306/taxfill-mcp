@@ -1,0 +1,36 @@
+# Test fixture: the EXACT example pack.yaml from docs/DEV_PLAN.md section 5.
+# Synthetic/spec data only — the pdf_sha256 placeholder and truncated
+# verify_url are part of the spec example.
+form: 1040-NR
+jurisdiction: federal            # or: states/ca
+tax_year: 2022
+source_url: https://www.irs.gov/pub/irs-prior/f1040nr--2022.pdf
+pdf_sha256: "..."
+acroform_root: "topmostSubform[0]"      # varies per form (Sched OI: form1040-NR[0])
+fields:
+  - line: "identifying_number"
+    field: "Page1[0].f1_7[0]"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only             # dashes overflow comb cells — learned in production
+  - line: "filing_status.single"
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "1a"
+    field: "Page1[0].f1_28[0]"
+    type: money
+relations:                               # enforced by verifier
+  - "1z == sum(1a..1h)"
+  - "11 == 9 - 10"
+  - "37 == max(0, 24 - 33)"
+cross_form:
+  - "1k == sched_oi.L1e"
+  - "8 == sched_1.10"
+identity_fields: [name, identifying_number, mailing_address]   # must match across the filing
+signature: { page: 2, standalone_only: false }   # f8843: sign only when filed alone
+mailing:
+  no_payment: "Department of the Treasury, IRS, Austin, TX 73301-0215"
+  with_payment: "IRS, P.O. Box 1303, Charlotte, NC 28201-1303"
+  verify_url: "https://www.irs.gov/filing/..."

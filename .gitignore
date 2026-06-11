@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+# NOTE: uv.lock is committed on purpose (reproducible CI) — never ignore it.
+
+# macOS
+.DS_Store
+
+# User tax workspaces hold SSN-bearing documents and drafts (PII).
+# They must NEVER be committable.
+taxfill-workspace/

@@ -1,0 +1,189 @@
+"""Intake profile schema tests (dev plan section 4). All data is synthetic."""
+
+from datetime import date
+
+import pytest
+from pydantic import ValidationError
+
+from taxfill_core.schemas.profile import (
+    Answer,
+    Banking,
+    DateRange,
+    Dependent,
+    Household,
+    Identity,
+    Immigration,
+    IncomeDocument,
+    PriorFilings,
+    Profile,
+    Provenance,
+    ResidencyFacts,
+    ResidencePeriod,
+    StateFootprintYear,
+    VisaPeriod,
+    WorkPeriod,
+)
+
+
+def synthetic_profile() -> Profile:
+    """A profile exercising every section and all three provenance kinds."""
+    return Profile(
+        identity=Identity(
+            name=Answer[str](value="Test Taxpayer", provenance=Provenance.user_stated()),
+            tax_id=Answer[str](value="000000000", provenance=Provenance.user_stated()),
+            dob=Answer[date](value=date(1999, 1, 1), provenance=Provenance.document(file="documents/passport.jpg", page=1)),
+            mailing_address=Answer[str](
+                value="123 Example St Apt 1, Springfield, ZZ 00000",
+                provenance=Provenance.user_stated(),
+            ),
+        ),
+        immigration=Immigration(
+            visa_timeline=[
+                VisaPeriod(
+                    status="F-1",
+                    start=date(2019, 8, 15),
+                    end=date(2023, 6, 30),
+                    provenance=Provenance.document(file="documents/i94_history.pdf", page=1),
+                ),
+                VisaPeriod(
+                    status="H-1B",
+                    start=date(2023, 7, 1),
+                    end=None,  # ongoing
+                    provenance=Provenance.user_stated(),
+                ),
+            ],
+            first_us_entry=Answer[date](
+                value=date(2019, 8, 15),
+                provenance=Provenance.document(file="documents/i94_history.pdf", page=1),
+            ),
+        ),
+        residency_facts=ResidencyFacts(
+            days_in_us={
+                2022: Answer[int](value=365, provenance=Provenance.computed()),
+                2023: Answer[int](value=350, provenance=Provenance.computed()),
+            },
+            home_country_address=Answer[str](
+                value="1 Sample Road, Exampleville, Testland",
+                provenance=Provenance.user_stated(),
+            ),
+        ),
+        household=Household(
+            marital_status=Answer[str](value="single", provenance=Provenance.user_stated()),
+            dependents=[
+                Dependent(name="Test Child", relationship="child", dob=date(2020, 5, 5), provenance=Provenance.user_stated()),
+            ],
+        ),
+        state_footprint={
+            2023: StateFootprintYear(
+                lived=[
+                    ResidencePeriod(state="CA", start=date(2023, 1, 1), end=date(2023, 6, 30), provenance=Provenance.user_stated()),
+                    ResidencePeriod(state="WA", start=date(2023, 7, 1), end=date(2023, 12, 31), provenance=Provenance.user_stated()),
+                ],
+                worked=[
+                    WorkPeriod(state="CA", start=date(2023, 1, 1), end=date(2023, 12, 31), remote=True, provenance=Provenance.user_stated()),
+                ],
+            ),
+        },
+        income_documents=[
+            IncomeDocument(kind="W-2", status="have", file="documents/w2_2023.pdf", provenance=Provenance.document(file="documents/w2_2023.pdf")),
+            IncomeDocument(kind="1099-NEC", status="missing", provenance=Provenance.user_stated()),
+            IncomeDocument(kind="1098-T", status="not_applicable", provenance=Provenance.user_stated()),
+        ],
+        banking=Banking(
+            routing_number=Answer[str](value="123123123", provenance=Provenance.user_stated()),  # synthetic, checksum-valid
+            account_number=Answer[str](value="000123456780", provenance=Provenance.user_stated()),
+            account_type="checking",
+        ),
+        prior_filings=PriorFilings(
+            filed_years=Answer[list[int]](value=[2021, 2022], provenance=Provenance.user_stated()),
+            late_filing_context=Answer[str](value="2020 never filed; back-filing planned", provenance=Provenance.user_stated()),
+        ),
+    )
+
+
+def test_empty_profile_is_valid():
+    # Intake fills the profile incrementally; an empty profile is a legal start state.
+    profile = Profile()
+    assert profile.identity is None
+    assert profile.state_footprint == {}
+    assert profile.income_documents == []
+
+
+def test_profile_json_roundtrip_preserves_everything():
+    original = synthetic_profile()
+    restored = Profile.model_validate_json(original.model_dump_json())
+    assert restored == original
+
+    # Spot-check provenance survived the roundtrip on each kind.
+    assert restored.identity.name.provenance.kind == "user_stated"
+    assert restored.identity.dob.provenance.kind == "document"
+    assert restored.identity.dob.provenance.file == "documents/passport.jpg"
+    assert restored.identity.dob.provenance.page == 1
+    assert restored.residency_facts.days_in_us[2023].provenance.kind == "computed"
+
+    # Int dict keys (years) survive JSON serialization.
+    assert set(restored.residency_facts.days_in_us) == {2022, 2023}
+    assert set(restored.state_footprint) == {2023}
+
+    # Visa timeline stays an ordered list of date-range periods.
+    timeline = restored.immigration.visa_timeline
+    assert [p.status for p in timeline] == ["F-1", "H-1B"]
+    assert timeline[0].end == date(2023, 6, 30)
+    assert timeline[1].end is None  # ongoing period
+
+
+def test_document_provenance_requires_file():
+    with pytest.raises(ValidationError, match="file"):
+        Provenance(kind="document")
+
+
+def test_non_document_provenance_must_not_carry_file_or_page():
+    with pytest.raises(ValidationError, match="document"):
+        Provenance(kind="user_stated", file="documents/w2.pdf")
+    with pytest.raises(ValidationError, match="document"):
+        Provenance(kind="computed", page=2)
+
+
+def test_unknown_provenance_kind_rejected():
+    with pytest.raises(ValidationError):
+        Provenance(kind="guessed")  # never invent a value
+
+
+def test_invalid_document_status_rejected():
+    with pytest.raises(ValidationError):
+        IncomeDocument(kind="W-2", status="lost", provenance=Provenance.user_stated())
+
+
+def test_date_range_end_before_start_rejected():
+    with pytest.raises(ValidationError, match="before start"):
+        DateRange(start=date(2023, 6, 1), end=date(2023, 1, 1))
+
+
+def test_banking_rejects_bad_routing_number():
+    with pytest.raises(ValidationError, match="ABA"):
+        Banking(
+            routing_number=Answer[str](value="123456789", provenance=Provenance.user_stated()),
+            account_number=Answer[str](value="000123456780", provenance=Provenance.user_stated()),
+        )
+
+
+def test_banking_error_message_does_not_echo_the_routing_number():
+    # PII-safe errors: the message we control must not repeat the bad value.
+    # (Pydantic's own diagnostics may show the raw input; redact.py handles
+    # log scrubbing in M1 — here we guarantee our message stays clean.)
+    try:
+        Banking(
+            routing_number=Answer[str](value="999999999", provenance=Provenance.user_stated()),
+            account_number=Answer[str](value="000123456780", provenance=Provenance.user_stated()),
+        )
+    except ValidationError as exc:
+        messages = [err["msg"] for err in exc.errors()]
+        assert messages, "expected at least one validation error"
+        assert all("999999999" not in msg for msg in messages)
+    else:
+        pytest.fail("expected ValidationError for an invalid routing number")
+
+
+def test_unknown_profile_section_rejected():
+    with pytest.raises(ValidationError):
+        Profile.model_validate({"crypto_wallet": {}})
