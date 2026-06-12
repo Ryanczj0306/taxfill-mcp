@@ -135,10 +135,10 @@ taxfill/
 
 ## Roadmap
 
-Milestones from the [dev plan](docs/DEV_PLAN.md) (§15) — all in progress or upcoming:
+Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
 
-- [ ] **M0 — Scaffold:** monorepo, pack & profile schemas, CI, license + disclaimer, CONTRIBUTING
-- [ ] **M1 — Core engine:** formpack loader, filler, verifier, render, calc, residency
+- [x] **M0 — Scaffold:** monorepo, pack & profile schemas, CI, license + disclaimer, CONTRIBUTING
+- [x] **M1 — Core engine:** formpack loader, filler, verifier, render, calc (data-driven 2023 tax tables, source-verified), residency (SPT + exempt years)
 - [ ] **M2 — Federal packs:** f8843 (2019–2024), f1040-NR + schedules (2022–2023), f1040 + schedules (2023–2024)
 - [ ] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge, sources registry, file & pay
 - [ ] **M4 — MCP server:** stdio server, image content for renders, client quickstarts
