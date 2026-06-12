@@ -40,7 +40,7 @@ fields:
   - line: name                              # "Name shown on Form 1040-NR"
     field: "Page1[0].f1_1[0]"
     type: text
-  - line: identifying_number                # "Your identifying number" (plain box in this PDF, NOT a comb; no /MaxLen)
+  - line: identifying_number                # "Your identifying number" (plain box, NOT a comb; PDF /MaxLen 11)
     field: "Page1[0].f1_2[0]"
     type: text
     maxlen: 9
@@ -130,51 +130,67 @@ fields:
   - line: g.visit_1.entered
     field: "Page1[0].LineG_Table1[0].BodyRow1[0].f1_7[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_1.departed
     field: "Page1[0].LineG_Table1[0].BodyRow1[0].f1_8[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_2.entered
     field: "Page1[0].LineG_Table1[0].BodyRow2[0].f1_9[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_2.departed
     field: "Page1[0].LineG_Table1[0].BodyRow2[0].f1_10[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_3.entered
     field: "Page1[0].LineG_Table1[0].BodyRow3[0].f1_11[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_3.departed
     field: "Page1[0].LineG_Table1[0].BodyRow3[0].f1_12[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_4.entered
     field: "Page1[0].LineG_Table1[0].BodyRow4[0].f1_13[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_4.departed
     field: "Page1[0].LineG_Table1[0].BodyRow4[0].f1_14[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_5.entered
     field: "Page1[0].LineG_Table2[0].BodyRow1[0].f1_15[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_5.departed
     field: "Page1[0].LineG_Table2[0].BodyRow1[0].f1_16[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_6.entered
     field: "Page1[0].LineG_Table2[0].BodyRow2[0].f1_17[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_6.departed
     field: "Page1[0].LineG_Table2[0].BodyRow2[0].f1_18[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_7.entered
     field: "Page1[0].LineG_Table2[0].BodyRow3[0].f1_19[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_7.departed
     field: "Page1[0].LineG_Table2[0].BodyRow3[0].f1_20[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_8.entered
     field: "Page1[0].LineG_Table2[0].BodyRow4[0].f1_21[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
   - line: g.visit_8.departed
     field: "Page1[0].LineG_Table2[0].BodyRow4[0].f1_22[0]"
     type: text
+    maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
 
   # --- item H: days present in the United States per year -----------------
   - line: h.2021

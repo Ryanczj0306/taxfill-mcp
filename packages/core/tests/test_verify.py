@@ -704,8 +704,32 @@ def test_cross_form_relation_pass_fail_and_missing_form():
     assert bad.status == "FAIL" and "disagree" in bad.detail
 
     missing = verify_filing([main_ok]).cross_form[0]
-    assert missing.status == "FAIL"
-    assert "no filing item carries that key" in missing.detail
+    assert missing.status == "SKIPPED"
+    assert "not part of this filing" in missing.detail
+
+
+def test_cross_form_skip_when_target_form_absent_is_nonfatal():
+    # A filing that legitimately omits a schedule (no Schedule 2 when there are
+    # no additional taxes) must not FAIL the parent's cross_form rules: the
+    # rule is SKIPPED — visible in the report, never flipping ok — and a
+    # nonzero present-side amount earns an explicit attach-and-reverify caution.
+    pack_main = identity_pack("F-MAIN", cross_form=["1k == sched_oi.L1e"])
+    ident = {"name": "Pat", "identifying_number": "000000000", "mailing_address": "X"}
+
+    blank = filing_item("main", pack_main, dict(ident))
+    report = verify_filing([blank])
+    check = report.cross_form[0]
+    assert check.status == "SKIPPED"
+    assert "not part of this filing" in check.detail
+    assert "caution" not in check.detail  # 1k blank: nothing flows through sched_oi
+    assert report.ok is True
+
+    nonzero = filing_item("main", pack_main, dict(ident), {"1k": 5000})
+    report = verify_filing([nonzero])
+    check = report.cross_form[0]
+    assert check.status == "SKIPPED"
+    assert "caution" in check.detail and "5000" in check.detail and "sched_oi" in check.detail
+    assert report.ok is True  # SKIPPED is non-fatal by design
 
 
 def test_cross_form_blank_lines_count_as_zero_and_are_reported():
