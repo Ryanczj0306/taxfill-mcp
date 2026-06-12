@@ -17,5 +17,5 @@ jobs:
       - name: Sync workspace
         run: uv sync
 
-      - name: Run tests
-        run: uv run pytest
+      - name: Run tests (offline — network golden round-trips run locally / in the planned nightly drift job)
+        run: uv run pytest -m "not network"

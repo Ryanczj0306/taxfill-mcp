@@ -1,0 +1,546 @@
+# Form 1040-NR (2022) — U.S. Nonresident Alien Income Tax Return
+#
+# Authored from the official 2022 revision (irs-prior); every field below was
+# introspected from the blank PDF (pypdf field dump) and position-matched to
+# the printed form by rendering both pages and reading the images.
+# Verified printed title/year on page 1: "1040-NR  U.S. Nonresident Alien
+# Income Tax Return  2022".
+#
+# Excluded fillable widgets (NOT mapped, must stay blank / are not user lines):
+#   Page1[0].f1_36[0]  — line 1i  "Reserved for future use" (shaded)
+#   Page1[0].f1_37[0]  — line 1j  "Reserved for future use" (shaded)
+#   Page1[0].f1_48[0]  — line 6   "Reserved for future use" (shaded)
+#   Page1[0].f1_53[0]  — line 10b "Reserved for future use" (shaded)
+#   Page1[0].f1_54[0]  — line 10c "Reserved for future use" (shaded)
+#   Page2[0].f2_22[0]  — line 27  "Reserved for future use" (shaded)
+#   Page2[0].f2_25[0]  — line 30  "Reserved for future use" (shaded)
+#   Page2[0].f2_44[0]  — Paid Preparer Use Only: preparer's name
+#   Page2[0].f2_45[0]  — Paid Preparer Use Only: PTIN
+#   Page2[0].c2_7[0]   — Paid Preparer Use Only: self-employed checkbox
+#   Page2[0].f2_46[0]  — Paid Preparer Use Only: firm's name
+#   Page2[0].f2_47[0]  — Paid Preparer Use Only: firm's address
+#   Page2[0].f2_48[0]  — Paid Preparer Use Only: phone no.
+#   Page2[0].f2_49[0]  — Paid Preparer Use Only: firm's EIN
+#   (paid-preparer block: this project produces self-prepared returns; the
+#   preparer block is completed and signed only by a paid preparer by hand)
+
+form: 1040-NR
+jurisdiction: federal
+tax_year: 2022
+source_url: https://www.irs.gov/pub/irs-prior/f1040nr--2022.pdf
+pdf_sha256: "ba3d7a205296043544ac90389b93aaccc8aee1227792f2d68f9905f3db01565a"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # --- header: "or other tax year beginning ..., 2022, ending ..., 20.." ---
+  - line: "other_tax_year.beginning"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "other_tax_year.ending"
+    field: "Page1[0].f1_2[0]"
+    type: text
+  - line: "other_tax_year.ending_year"
+    field: "Page1[0].f1_3[0]"
+    type: text
+    maxlen: 2
+
+  # --- filing status (check only one box) ---
+  - line: "filing_status.single"
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: filing_status
+    required: true
+  - line: "filing_status.married_filing_separately"
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: filing_status
+  - line: "filing_status.qualifying_surviving_spouse"
+    field: "Page1[0].c1_1[2]"
+    type: checkbox
+    on_state: "/3"
+    group: filing_status
+  - line: "filing_status.estate"
+    field: "Page1[0].c1_1[3]"
+    type: checkbox
+    on_state: "/4"
+    group: filing_status
+  - line: "filing_status.trust"
+    field: "Page1[0].c1_1[4]"
+    type: checkbox
+    on_state: "/5"
+    group: filing_status
+  # "If you checked the QSS box, enter the child's name if the qualifying
+  # person is a child but not your dependent"
+  - line: "filing_status.qss_child_name"
+    field: "Page1[0].f1_4[0]"
+    type: text
+
+  # --- identity ---
+  - line: "name.first"                  # "Your first name and middle initial"
+    field: "Page1[0].f1_5[0]"
+    type: text
+  - line: "name.last"
+    field: "Page1[0].f1_6[0]"
+    type: text
+  - line: "identifying_number"          # "Your identifying number" (SSN/ITIN)
+    field: "Page1[0].f1_7[0]"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only             # dashes overflow comb cells (P-001)
+  - line: "mailing_address.street"      # "Home address (number and street)"
+    field: "Page1[0].f1_8[0]"
+    type: text
+  - line: "mailing_address.apt"
+    field: "Page1[0].f1_9[0]"
+    type: text
+    maxlen: 12                          # narrow widget (50pt at 8pt font) — clipping guard
+  - line: "mailing_address.city"        # "City, town, or post office"
+    field: "Page1[0].f1_10[0]"
+    type: text
+  - line: "mailing_address.state"
+    field: "Page1[0].f1_11[0]"
+    type: text
+    maxlen: 15                          # narrow widget (63pt at 8pt font) — clipping guard
+  - line: "mailing_address.zip"
+    field: "Page1[0].f1_12[0]"
+    type: text
+    maxlen: 10
+  - line: "mailing_address.foreign_country"
+    field: "Page1[0].f1_13[0]"
+    type: text
+  - line: "mailing_address.foreign_province"
+    field: "Page1[0].f1_14[0]"
+    type: text
+  - line: "mailing_address.foreign_postal_code"
+    field: "Page1[0].f1_15[0]"
+    type: text
+
+  # --- digital assets question (required yes/no, pitfall P-003) ---
+  - line: "digital_assets.yes"
+    field: "Page1[0].c1_3[0]"
+    type: checkbox
+    on_state: "/1"
+    group: digital_assets
+    required: true
+  - line: "digital_assets.no"
+    field: "Page1[0].c1_3[1]"
+    type: checkbox
+    on_state: "/2"
+    group: digital_assets
+
+  # --- dependents ---
+  - line: "dependents.more_than_four"   # "If more than four dependents ... check here"
+    field: "Page1[0].Dependents[0].c1_4[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "dependent_1.name"            # "(1) First name  Last name"
+    field: "Page1[0].Table_Dependents[0].BodyRow1[0].f1_16[0]"
+    type: text
+  - line: "dependent_1.ssn"             # "(2) Dependent's identifying number"
+    field: "Page1[0].Table_Dependents[0].BodyRow1[0].f1_17[0]"
+    type: text
+    maxlen: 11
+  - line: "dependent_1.relationship"    # "(3) Relationship to you"
+    field: "Page1[0].Table_Dependents[0].BodyRow1[0].f1_18[0]"
+    type: text
+  - line: "dependent_1.child_tax_credit"          # "(4) Check the box if qualifies for"
+    field: "Page1[0].Table_Dependents[0].BodyRow1[0].c1_5[0]"
+    type: checkbox
+    on_state: "/1"
+    group: dependent_1_credit
+  - line: "dependent_1.credit_other_dependents"
+    field: "Page1[0].Table_Dependents[0].BodyRow1[0].c1_6[0]"
+    type: checkbox
+    on_state: "/1"
+    group: dependent_1_credit
+  - line: "dependent_2.name"
+    field: "Page1[0].Table_Dependents[0].BodyRow2[0].f1_19[0]"
+    type: text
+  - line: "dependent_2.ssn"
+    field: "Page1[0].Table_Dependents[0].BodyRow2[0].f1_20[0]"
+    type: text
+    maxlen: 11
+  - line: "dependent_2.relationship"
+    field: "Page1[0].Table_Dependents[0].BodyRow2[0].f1_21[0]"
+    type: text
+  - line: "dependent_2.child_tax_credit"
+    field: "Page1[0].Table_Dependents[0].BodyRow2[0].c1_7[0]"
+    type: checkbox
+    on_state: "/1"
+    group: dependent_2_credit
+  - line: "dependent_2.credit_other_dependents"
+    field: "Page1[0].Table_Dependents[0].BodyRow2[0].c1_8[0]"
+    type: checkbox
+    on_state: "/1"
+    group: dependent_2_credit
+  - line: "dependent_3.name"
+    field: "Page1[0].Table_Dependents[0].BodyRow3[0].f1_22[0]"
+    type: text
+  - line: "dependent_3.ssn"
+    field: "Page1[0].Table_Dependents[0].BodyRow3[0].f1_23[0]"
+    type: text
+    maxlen: 11
+  - line: "dependent_3.relationship"
+    field: "Page1[0].Table_Dependents[0].BodyRow3[0].f1_24[0]"
+    type: text
+  - line: "dependent_3.child_tax_credit"
+    field: "Page1[0].Table_Dependents[0].BodyRow3[0].c1_9[0]"
+    type: checkbox
+    on_state: "/1"
+    group: dependent_3_credit
+  - line: "dependent_3.credit_other_dependents"
+    field: "Page1[0].Table_Dependents[0].BodyRow3[0].c1_10[0]"
+    type: checkbox
+    on_state: "/1"
+    group: dependent_3_credit
+  - line: "dependent_4.name"
+    field: "Page1[0].Table_Dependents[0].BodyRow4[0].f1_25[0]"
+    type: text
+  - line: "dependent_4.ssn"
+    field: "Page1[0].Table_Dependents[0].BodyRow4[0].f1_26[0]"
+    type: text
+    maxlen: 11
+  - line: "dependent_4.relationship"
+    field: "Page1[0].Table_Dependents[0].BodyRow4[0].f1_27[0]"
+    type: text
+  - line: "dependent_4.child_tax_credit"
+    field: "Page1[0].Table_Dependents[0].BodyRow4[0].c1_11[0]"
+    type: checkbox
+    on_state: "/1"
+    group: dependent_4_credit
+  - line: "dependent_4.credit_other_dependents"
+    field: "Page1[0].Table_Dependents[0].BodyRow4[0].c1_12[0]"
+    type: checkbox
+    on_state: "/1"
+    group: dependent_4_credit
+
+  # --- income effectively connected with U.S. trade or business ---
+  - line: "1a"                          # Total amount from Form(s) W-2, box 1
+    field: "Page1[0].f1_28[0]"
+    type: money
+  - line: "1b"                          # Household employee wages
+    field: "Page1[0].f1_29[0]"
+    type: money
+  - line: "1c"                          # Tip income
+    field: "Page1[0].f1_30[0]"
+    type: money
+  - line: "1d"                          # Medicaid waiver payments
+    field: "Page1[0].f1_31[0]"
+    type: money
+  - line: "1e"                          # Taxable dependent care benefits (Form 2441, line 26)
+    field: "Page1[0].f1_32[0]"
+    type: money
+  - line: "1f"                          # Employer-provided adoption benefits (Form 8839, line 29)
+    field: "Page1[0].f1_33[0]"
+    type: money
+  - line: "1g"                          # Wages from Form 8919, line 6
+    field: "Page1[0].f1_34[0]"
+    type: money
+  - line: "1h"                          # Other earned income
+    field: "Page1[0].f1_35[0]"
+    type: money
+  - line: "1k"                          # Total income exempt by a treaty (Schedule OI, item L, line 1(e))
+    field: "Page1[0].Line1k_ReadOrder[0].f1_38[0]"
+    type: money
+  - line: "1z"                          # Add lines 1a through 1h
+    field: "Page1[0].f1_39[0]"
+    type: money
+  - line: "2a"                          # Tax-exempt interest
+    field: "Page1[0].f1_40[0]"
+    type: money
+  - line: "2b"                          # Taxable interest
+    field: "Page1[0].f1_41[0]"
+    type: money
+  - line: "3a"                          # Qualified dividends
+    field: "Page1[0].f1_42[0]"
+    type: money
+  - line: "3b"                          # Ordinary dividends
+    field: "Page1[0].f1_43[0]"
+    type: money
+  - line: "4a"                          # IRA distributions
+    field: "Page1[0].f1_44[0]"
+    type: money
+  - line: "4b"                          # Taxable amount
+    field: "Page1[0].f1_45[0]"
+    type: money
+  - line: "5a"                          # Pensions and annuities
+    field: "Page1[0].f1_46[0]"
+    type: money
+  - line: "5b"                          # Taxable amount
+    field: "Page1[0].f1_47[0]"
+    type: money
+  - line: "7.schedule_d_not_required"   # "If not required, check here"
+    field: "Page1[0].c1_13[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "7"                           # Capital gain or (loss)
+    field: "Page1[0].f1_49[0]"
+    type: money
+  - line: "8"                           # Other income from Schedule 1 (Form 1040), line 10
+    field: "Page1[0].f1_50[0]"
+    type: money
+  - line: "9"                           # Total effectively connected income
+    field: "Page1[0].f1_51[0]"
+    type: money
+  - line: "10a"                         # Adjustments: from Schedule 1 (Form 1040), line 26
+    field: "Page1[0].Line10_ReadOrder[0].f1_52[0]"
+    type: money
+  - line: "10d"                         # Enter the amount from line 10a (total adjustments)
+    field: "Page1[0].f1_55[0]"
+    type: money
+  - line: "11"                          # Adjusted gross income
+    field: "Page1[0].f1_56[0]"
+    type: money
+  - line: "12"                          # Itemized deductions (Schedule A (Form 1040-NR)) or India standard deduction
+    field: "Page1[0].f1_57[0]"
+    type: money
+  - line: "13a"                         # Qualified business income deduction
+    field: "Page1[0].f1_58[0]"
+    type: money
+  - line: "13b"                         # Exemptions for estates and trusts only
+    field: "Page1[0].f1_59[0]"
+    type: money
+  - line: "13c"                         # Add lines 13a and 13b
+    field: "Page1[0].f1_60[0]"
+    type: money
+  - line: "14"                          # Add lines 12 and 13c
+    field: "Page1[0].f1_61[0]"
+    type: money
+  - line: "15"                          # Taxable income
+    field: "Page1[0].f1_62[0]"
+    type: money
+
+  # --- page 2: tax and credits ---
+  - line: "16.form_8814"                # Tax ... Check if any from Form(s): 1
+    field: "Page2[0].c2_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "16.form_4972"                # 2
+    field: "Page2[0].c2_2[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "16.form_other"               # 3
+    field: "Page2[0].c2_3[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "16.form_other_number"        # form number blank next to box 3
+    field: "Page2[0].f2_1[0]"
+    type: text
+  - line: "16"                          # Tax
+    field: "Page2[0].f2_2[0]"
+    type: money
+  - line: "17"                          # Amount from Schedule 2 (Form 1040), line 3
+    field: "Page2[0].f2_3[0]"
+    type: money
+  - line: "18"                          # Add lines 16 and 17
+    field: "Page2[0].f2_4[0]"
+    type: money
+  - line: "19"                          # Child tax credit or credit for other dependents (Schedule 8812)
+    field: "Page2[0].f2_5[0]"
+    type: money
+  - line: "20"                          # Amount from Schedule 3 (Form 1040), line 8
+    field: "Page2[0].f2_6[0]"
+    type: money
+  - line: "21"                          # Add lines 19 and 20
+    field: "Page2[0].f2_7[0]"
+    type: money
+  - line: "22"                          # Subtract line 21 from line 18
+    field: "Page2[0].f2_8[0]"
+    type: money
+  - line: "23a"                         # Tax on income not effectively connected (Schedule NEC, line 15)
+    field: "Page2[0].Line23a_ReadOrder[0].f2_9[0]"
+    type: money
+  - line: "23b"                         # Other taxes from Schedule 2 (Form 1040), line 21
+    field: "Page2[0].f2_10[0]"
+    type: money
+  - line: "23c"                         # Transportation tax
+    field: "Page2[0].f2_11[0]"
+    type: money
+  - line: "23d"                         # Add lines 23a through 23c
+    field: "Page2[0].f2_12[0]"
+    type: money
+  - line: "24"                          # Total tax (add lines 22 and 23d)
+    field: "Page2[0].f2_13[0]"
+    type: money
+
+  # --- payments ---
+  - line: "25a"                         # Federal income tax withheld: Form(s) W-2
+    field: "Page2[0].Line25_ReadOrder[0].f2_14[0]"
+    type: money
+  - line: "25b"                         # Form(s) 1099
+    field: "Page2[0].f2_15[0]"
+    type: money
+  - line: "25c"                         # Other forms
+    field: "Page2[0].f2_16[0]"
+    type: money
+  - line: "25d"                         # Add lines 25a through 25c
+    field: "Page2[0].f2_17[0]"
+    type: money
+  - line: "25e"                         # Form(s) 8805
+    field: "Page2[0].f2_18[0]"
+    type: money
+  - line: "25f"                         # Form(s) 8288-A
+    field: "Page2[0].f2_19[0]"
+    type: money
+  - line: "25g"                         # Form(s) 1042-S
+    field: "Page2[0].f2_20[0]"
+    type: money
+  - line: "26"                          # 2022 estimated tax payments and amount applied from 2021 return
+    field: "Page2[0].f2_21[0]"
+    type: money
+  - line: "28"                          # Additional child tax credit (Schedule 8812)
+    field: "Page2[0].f2_23[0]"
+    type: money
+  - line: "29"                          # Credit for amount paid with Form 1040-C
+    field: "Page2[0].f2_24[0]"
+    type: money
+  - line: "31"                          # Amount from Schedule 3 (Form 1040), line 15
+    field: "Page2[0].f2_26[0]"
+    type: money
+  - line: "32"                          # Total other payments and refundable credits
+    field: "Page2[0].f2_27[0]"
+    type: money
+  - line: "33"                          # Total payments
+    field: "Page2[0].f2_28[0]"
+    type: money
+
+  # --- refund ---
+  - line: "34"                          # Amount you overpaid
+    field: "Page2[0].f2_29[0]"
+    type: money
+  - line: "35a.form_8888_attached"      # "If Form 8888 is attached, check here"
+    field: "Page2[0].c2_4[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "35a"                         # Amount of line 34 you want refunded to you
+    field: "Page2[0].f2_30[0]"
+    type: money
+  - line: "35b"                         # Routing number
+    field: "Page2[0].RoutingNo[0].f2_31[0]"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only             # digits only; dashes/spaces overflow comb cells
+  - line: "35c.checking"                # Type: Checking
+    field: "Page2[0].c2_5[0]"
+    type: checkbox
+    on_state: "/1"
+    group: account_type
+  - line: "35c.savings"                 # Type: Savings
+    field: "Page2[0].c2_5[1]"
+    type: checkbox
+    on_state: "/2"
+    group: account_type
+  - line: "35d"                         # Account number
+    field: "Page2[0].AccountNo[0].f2_32[0]"
+    type: text
+    maxlen: 17
+    comb: true
+    format: ssn_digits_only             # digits only; dashes/spaces overflow comb cells
+  - line: "35e"                         # Refund check mailed to an address outside the United States
+    field: "Page2[0].f2_33[0]"
+    type: text
+  - line: "36"                          # Amount of line 34 applied to your 2023 estimated tax
+    field: "Page2[0].f2_34[0]"
+    type: money
+
+  # --- amount you owe ---
+  - line: "37"                          # Amount you owe (subtract line 33 from line 24)
+    field: "Page2[0].f2_35[0]"
+    type: money
+  - line: "38"                          # Estimated tax penalty
+    field: "Page2[0].f2_36[0]"
+    type: money
+
+  # --- third party designee (optional block) ---
+  - line: "third_party_designee.yes"
+    field: "Page2[0].c2_6[0]"
+    type: checkbox
+    on_state: "/1"
+    group: third_party_designee
+  - line: "third_party_designee.no"
+    field: "Page2[0].c2_6[1]"
+    type: checkbox
+    on_state: "/2"
+    group: third_party_designee
+  - line: "third_party_designee.name"
+    field: "Page2[0].f2_37[0]"
+    type: text
+  - line: "third_party_designee.phone"
+    field: "Page2[0].f2_38[0]"
+    type: text
+  - line: "third_party_designee.pin"    # Personal identification number (PIN)
+    field: "Page2[0].f2_39[0]"
+    type: text
+    maxlen: 5
+    comb: true
+    format: ssn_digits_only             # digits only (5-digit PIN comb)
+
+  # --- sign here block (signature and date are handwritten; no PDF fields) ---
+  - line: "occupation"                  # Your occupation
+    field: "Page2[0].f2_40[0]"
+    type: text
+  - line: "identity_protection_pin"     # IRS Identity Protection PIN
+    field: "Page2[0].f2_41[0]"
+    type: text
+    maxlen: 6
+    comb: true
+    format: ssn_digits_only             # digits only (6-digit IP PIN comb)
+  - line: "phone"                       # Phone no.
+    field: "Page2[0].f2_42[0]"
+    type: text
+  - line: "email"                       # Email address
+    field: "Page2[0].f2_43[0]"
+    type: text
+
+relations:
+  # Math printed on the 2022 form face only (worksheets/tax tables live in calc).
+  - "1z == sum(1a..1h)"                 # "Add lines 1a through 1h"
+  - "9 == 1z + 2b + 3b + 4b + 5b + 7 + 8"   # "Add lines 1z, 2b, 3b, 4b, 5b, 7, and 8"
+  - "10d == 10a"                        # "Enter the amount from line 10a" (10b/10c reserved)
+  - "11 == 9 - 10d"                     # "Subtract line 10d from line 9" (adjusted gross income)
+  - "13c == 13a + 13b"                  # "Add lines 13a and 13b"
+  - "14 == 12 + 13c"                    # "Add lines 12 and 13c"
+  - "15 == max(0, 11 - 14)"             # "Subtract line 14 from line 11. If zero or less, enter -0-"
+  - "18 == 16 + 17"                     # "Add lines 16 and 17"
+  - "21 == 19 + 20"                     # "Add lines 19 and 20"
+  - "22 == max(0, 18 - 21)"             # "Subtract line 21 from line 18. If zero or less, enter -0-"
+  - "23d == sum(23a..23c)"              # "Add lines 23a through 23c"
+  - "24 == 22 + 23d"                    # "Add lines 22 and 23d. This is your total tax"
+  - "25d == sum(25a..25c)"              # "Add lines 25a through 25c"
+  - "32 == 28 + 29 + 31"                # "Add lines 28, 29, and 31"
+  - "33 == 25d + 25e + 25f + 25g + 26 + 32"  # "Add lines 25d, 25e, 25f, 25g, 26, and 32"
+  - "34 == max(0, 33 - 24)"             # "If line 33 is more than line 24, subtract line 24 from line 33"
+  - "37 == max(0, 24 - 33)"             # "Subtract line 33 from line 24. This is the amount you owe"
+
+cross_form:
+  - "1k == sched_oi.1e"                 # "Total income exempt by a treaty from Schedule OI ... item L, line 1(e)"
+  - "8 == sched_1.10"                   # "Other income from Schedule 1 (Form 1040), line 10"
+  - "10a == sched_1.26"                 # "From Schedule 1 (Form 1040), line 26"
+  - "17 == sched_2.3"                   # "Amount from Schedule 2 (Form 1040), line 3"
+  - "20 == sched_3.8"                   # "Amount from Schedule 3 (Form 1040), line 8"
+  - "23b == sched_2.21"                 # "Other taxes ... from Schedule 2 (Form 1040), line 21"
+  - "31 == sched_3.15"                  # "Amount from Schedule 3 (Form 1040), line 15"
+
+# The form splits name and address; identity checks compare the split parts.
+# state/zip stay out: they are legitimately blank for foreign-address filers.
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+
+signature:
+  page: 2
+  standalone_only: false
+
+mailing:
+  # Verified 2026-06-11 against the official IRS international where-to-file
+  # page for Form 1040-NR (verify_url below).
+  no_payment: "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215, USA"
+  with_payment: "Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303, USA"
+  verify_url: "https://www.irs.gov/filing/international-where-to-file-forms-1040-nr-1040-pr-and-1040-ss-addresses-for-taxpayers-and-tax-professionals"

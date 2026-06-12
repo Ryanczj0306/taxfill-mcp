@@ -1,0 +1,464 @@
+# Schedule C (Form 1040) 2022 — Profit or Loss From Business (Sole Proprietorship)
+#
+# Revision verified per the freshness protocol (docs/DEV_PLAN.md section 7):
+# page 1 of the downloaded blank was rendered and READ — printed title
+# "Profit or Loss From Business (Sole Proprietorship)", printed year "2022",
+# footer "Schedule C (Form 1040) 2022", OMB 1545-0074, Attachment Seq. 09.
+#
+# Excluded fillable widgets (1 of 105):
+#   - Page1[0].Lines18-27[0].f1_40[0] — printed line 27b is "Reserved for
+#     future use" on the 2022 revision (amount box is greyed out). The widget
+#     exists in the AcroForm but nothing may ever be written there, so it is
+#     deliberately unmapped. (On 2023+ revisions this same widget position is
+#     the line 27b energy efficient commercial buildings deduction.)
+# Schedule C has no paid-preparer or third-party-designee block; every other
+# fillable widget is mapped (104 mapped / 105 fillable).
+#
+# Part V (other expenses) amount lines use UNDOTTED ids
+# (other_expense_1_amount, ...) because the relations evaluator's grammar has
+# no '.' token — dotted ids cannot appear in relation strings, and these nine
+# amounts feed the printed line-48 total. Descriptions follow the same
+# undotted style for symmetry.
+
+form: "Schedule C (Form 1040)"
+jurisdiction: federal
+tax_year: 2022
+source_url: https://www.irs.gov/pub/irs-prior/f1040sc--2022.pdf
+pdf_sha256: "334ef0667595d7c22eac360177f1da0d0a7e6fbe228d0b4df7e0b62e34b4908a"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header: proprietor identity --------------------------------------
+  - line: name                       # "Name of proprietor"
+    field: "Page1[0].Pg1Header[0].f1_1[0]"
+    type: text
+  - line: identifying_number         # "Social security number (SSN)"
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 11                       # PDF MaxLen is 11 (not a comb field)
+    format: ssn_digits_only          # digits only can never overflow (P-001)
+
+  # ---- lettered header block A-J -----------------------------------------
+  - line: principal_business         # A: principal business or profession
+    field: "Page1[0].f1_3[0]"
+    type: text
+  - line: business_code              # B: principal business code (6-digit)
+    field: "Page1[0].BComb[0].f1_4[0]"
+    type: text
+    maxlen: 6
+    comb: true
+  - line: business_name              # C: business name (blank if none)
+    field: "Page1[0].f1_5[0]"
+    type: text
+  - line: ein                        # D: employer ID number (EIN), 9-cell comb
+    field: "Page1[0].DComb[0].f1_6[0]"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only          # EIN digits only — dashes overflow combs
+  # Line E is the BUSINESS address — NOT the filer's mailing address
+  # (pitfall P-002: it comes from the state-footprint/business intake answers
+  # and must never be auto-copied from, or into, the return's mailing
+  # address box on Form 1040/1040-NR).
+  - line: business_address.street    # E: business address (incl. suite/room)
+    field: "Page1[0].f1_7[0]"
+    type: text
+  - line: business_address.city_state_zip   # E: city/town, state, ZIP (one box)
+    field: "Page1[0].f1_8[0]"
+    type: text
+  # F: accounting method — three independent checkboxes, one question.
+  - line: accounting_method.cash
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: accounting_method
+    required: true                   # every Schedule C states a method (P-003)
+  - line: accounting_method.accrual
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: accounting_method
+  - line: accounting_method.other
+    field: "Page1[0].c1_1[2]"
+    type: checkbox
+    on_state: "/3"
+    group: accounting_method
+  - line: accounting_method.other_specify   # F: "Other (specify)" text
+    field: "Page1[0].f1_9[0]"
+    type: text
+  # G: "Did you 'materially participate' in the operation of this business
+  # during 2022?" — required yes/no.
+  - line: material_participation.yes
+    field: "Page1[0].c1_2[0]"
+    type: checkbox
+    on_state: "/Yes"
+    group: material_participation
+    required: true
+  - line: material_participation.no
+    field: "Page1[0].c1_2[1]"
+    type: checkbox
+    on_state: "/No"
+    group: material_participation
+  # H: "If you started or acquired this business during 2022, check here" —
+  # single optional box.
+  - line: started_or_acquired
+    field: "Page1[0].c1_3[0]"
+    type: checkbox
+    on_state: "/1"
+  # I: "Did you make any payments in 2022 that would require you to file
+  # Form(s) 1099?" — required yes/no.
+  - line: payments_1099_required.yes
+    field: "Page1[0].c1_4[0]"
+    type: checkbox
+    on_state: "/Yes"
+    group: payments_1099_required
+    required: true
+  - line: payments_1099_required.no
+    field: "Page1[0].c1_4[1]"
+    type: checkbox
+    on_state: "/No"
+    group: payments_1099_required
+  # J: "If 'Yes', did you or will you file required Form(s) 1099?" —
+  # answered only when line I is yes, so not required.
+  - line: payments_1099_filed.yes
+    field: "Page1[0].c1_5[0]"
+    type: checkbox
+    on_state: "/Yes"
+    group: payments_1099_filed
+  - line: payments_1099_filed.no
+    field: "Page1[0].c1_5[1]"
+    type: checkbox
+    on_state: "/No"
+    group: payments_1099_filed
+
+  # ---- Part I: income -----------------------------------------------------
+  - line: "1"                        # gross receipts or sales
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: 1.statutory_employee       # box on line 1: W-2 statutory employee
+    field: "Page1[0].c1_6[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "2"                        # returns and allowances
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: "3"                        # subtract line 2 from line 1
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "4"                        # cost of goods sold (from line 42)
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "5"                        # gross profit
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "6"                        # other income, incl. fuel tax credit/refund
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "7"                        # gross income
+    field: "Page1[0].f1_16[0]"
+    type: money
+
+  # ---- Part II: expenses, left column (lines 8-17) -------------------------
+  - line: "8"                        # advertising
+    field: "Page1[0].Lines8-17[0].f1_17[0]"
+    type: money
+  - line: "9"                        # car and truck expenses
+    field: "Page1[0].Lines8-17[0].f1_18[0]"
+    type: money
+  - line: "10"                       # commissions and fees
+    field: "Page1[0].Lines8-17[0].f1_19[0]"
+    type: money
+  - line: "11"                       # contract labor
+    field: "Page1[0].Lines8-17[0].f1_20[0]"
+    type: money
+  - line: "12"                       # depletion
+    field: "Page1[0].Lines8-17[0].f1_21[0]"
+    type: money
+  - line: "13"                       # depreciation and section 179
+    field: "Page1[0].Lines8-17[0].f1_22[0]"
+    type: money
+  - line: "14"                       # employee benefit programs
+    field: "Page1[0].Lines8-17[0].f1_23[0]"
+    type: money
+  - line: "15"                       # insurance (other than health)
+    field: "Page1[0].Lines8-17[0].f1_24[0]"
+    type: money
+  - line: 16a                        # interest: mortgage (paid to banks, etc.)
+    field: "Page1[0].Lines8-17[0].f1_25[0]"
+    type: money
+  - line: 16b                        # interest: other
+    field: "Page1[0].Lines8-17[0].f1_26[0]"
+    type: money
+  - line: "17"                       # legal and professional services
+    field: "Page1[0].Lines8-17[0].f1_27[0]"
+    type: money
+
+  # ---- Part II: expenses, right column (lines 18-27a) ----------------------
+  - line: "18"                       # office expense
+    field: "Page1[0].Lines18-27[0].f1_28[0]"
+    type: money
+  - line: "19"                       # pension and profit-sharing plans
+    field: "Page1[0].Lines18-27[0].f1_29[0]"
+    type: money
+  - line: 20a                        # rent/lease: vehicles, machinery, equipment
+    field: "Page1[0].Lines18-27[0].f1_30[0]"
+    type: money
+  - line: 20b                        # rent/lease: other business property
+    field: "Page1[0].Lines18-27[0].f1_31[0]"
+    type: money
+  - line: "21"                       # repairs and maintenance
+    field: "Page1[0].Lines18-27[0].f1_32[0]"
+    type: money
+  - line: "22"                       # supplies (not included in Part III)
+    field: "Page1[0].Lines18-27[0].f1_33[0]"
+    type: money
+  - line: "23"                       # taxes and licenses
+    field: "Page1[0].Lines18-27[0].f1_34[0]"
+    type: money
+  - line: 24a                        # travel
+    field: "Page1[0].Lines18-27[0].f1_35[0]"
+    type: money
+  - line: 24b                        # deductible meals
+    field: "Page1[0].Lines18-27[0].f1_36[0]"
+    type: money
+  - line: "25"                       # utilities
+    field: "Page1[0].Lines18-27[0].f1_37[0]"
+    type: money
+  - line: "26"                       # wages (less employment credits)
+    field: "Page1[0].Lines18-27[0].f1_38[0]"
+    type: money
+  - line: 27a                        # other expenses (from line 48)
+    field: "Page1[0].Lines18-27[0].f1_39[0]"
+    type: money
+  # (line 27b "Reserved for future use" — f1_40 deliberately unmapped, see top)
+
+  # ---- Part II: totals and business use of home -----------------------------
+  - line: "28"                       # total expenses: add lines 8 through 27a
+    field: "Page1[0].f1_41[0]"
+    type: money
+  - line: "29"                       # tentative profit or (loss)
+    field: "Page1[0].f1_42[0]"
+    type: money
+  - line: 30.home_sqft               # simplified method: total sq ft of home
+    field: "Page1[0].f1_43[0]"
+    type: text
+  - line: 30.business_sqft           # simplified method: sq ft used for business
+    field: "Page1[0].f1_44[0]"
+    type: text
+  - line: "30"                       # expenses for business use of home
+    field: "Page1[0].f1_45[0]"
+    type: money
+  - line: "31"                       # net profit or (loss)
+    field: "Page1[0].f1_46[0]"
+    type: money
+  # 32a/32b: answered only when line 31 is a loss — not required.
+  - line: 32a                        # all investment is at risk
+    field: "Page1[0].c1_7[0]"
+    type: checkbox
+    on_state: "/1"
+    group: at_risk
+  - line: 32b                        # some investment is not at risk
+    field: "Page1[0].c1_7[1]"
+    type: checkbox
+    on_state: "/2"
+    group: at_risk
+
+  # ---- Part III: cost of goods sold (page 2) — only filers with inventory ---
+  - line: 33a                        # closing inventory valued at: cost
+    field: "Page2[0].c2_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: inventory_method
+  - line: 33b                        # lower of cost or market
+    field: "Page2[0].c2_2[0]"
+    type: checkbox
+    on_state: "/1"
+    group: inventory_method
+  - line: 33c                        # other (attach explanation)
+    field: "Page2[0].c2_3[0]"
+    type: checkbox
+    on_state: "/1"
+    group: inventory_method
+  - line: 34.yes                     # change in valuing quantities/costs?
+    field: "Page2[0].c2_4[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line34
+  - line: 34.no
+    field: "Page2[0].c2_4[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line34
+  - line: "35"                       # inventory at beginning of year
+    field: "Page2[0].f2_1[0]"
+    type: money
+  - line: "36"                       # purchases less personal-use items
+    field: "Page2[0].f2_2[0]"
+    type: money
+  - line: "37"                       # cost of labor
+    field: "Page2[0].f2_3[0]"
+    type: money
+  - line: "38"                       # materials and supplies
+    field: "Page2[0].f2_4[0]"
+    type: money
+  - line: "39"                       # other costs
+    field: "Page2[0].f2_5[0]"
+    type: money
+  - line: "40"                       # add lines 35 through 39
+    field: "Page2[0].f2_6[0]"
+    type: money
+  - line: "41"                       # inventory at end of year
+    field: "Page2[0].f2_7[0]"
+    type: money
+  - line: "42"                       # cost of goods sold (also on line 4)
+    field: "Page2[0].f2_8[0]"
+    type: money
+
+  # ---- Part IV: vehicle information — only filers claiming line 9 ----------
+  - line: 43.month                   # date vehicle placed in service: month
+    field: "Page2[0].f2_9[0]"
+    type: text
+    maxlen: 2
+  - line: 43.day
+    field: "Page2[0].f2_10[0]"
+    type: text
+    maxlen: 2
+  - line: 43.year
+    field: "Page2[0].f2_11[0]"
+    type: text
+    maxlen: 4
+  - line: 44a                        # miles: business
+    field: "Page2[0].f2_12[0]"
+    type: text
+  - line: 44b                        # miles: commuting
+    field: "Page2[0].f2_13[0]"
+    type: text
+  - line: 44c                        # miles: other
+    field: "Page2[0].f2_14[0]"
+    type: text
+  - line: 45.yes                     # vehicle available for personal use?
+    field: "Page2[0].c2_5[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line45
+  - line: 45.no
+    field: "Page2[0].c2_5[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line45
+  - line: 46.yes                     # another vehicle available for personal use?
+    field: "Page2[0].c2_6[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line46
+  - line: 46.no
+    field: "Page2[0].c2_6[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line46
+  - line: 47a.yes                    # evidence to support your deduction?
+    field: "Page2[0].c2_7[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line47a
+  - line: 47a.no
+    field: "Page2[0].c2_7[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line47a
+  - line: 47b.yes                    # if yes, is the evidence written?
+    field: "Page2[0].c2_8[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line47b
+  - line: 47b.no
+    field: "Page2[0].c2_8[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line47b
+
+  # ---- Part V: other expenses (nine description/amount rows + line 48) ------
+  - line: other_expense_1_description
+    field: "Page2[0].PartVTable[0].Item1[0].f2_15[0]"
+    type: text
+  - line: other_expense_1_amount
+    field: "Page2[0].PartVTable[0].Item1[0].f2_16[0]"
+    type: money
+  - line: other_expense_2_description
+    field: "Page2[0].PartVTable[0].Item2[0].f2_17[0]"
+    type: text
+  - line: other_expense_2_amount
+    field: "Page2[0].PartVTable[0].Item2[0].f2_18[0]"
+    type: money
+  - line: other_expense_3_description
+    field: "Page2[0].PartVTable[0].Item3[0].f2_19[0]"
+    type: text
+  - line: other_expense_3_amount
+    field: "Page2[0].PartVTable[0].Item3[0].f2_20[0]"
+    type: money
+  - line: other_expense_4_description
+    field: "Page2[0].PartVTable[0].Item4[0].f2_21[0]"
+    type: text
+  - line: other_expense_4_amount
+    field: "Page2[0].PartVTable[0].Item4[0].f2_22[0]"
+    type: money
+  - line: other_expense_5_description
+    field: "Page2[0].PartVTable[0].Item5[0].f2_23[0]"
+    type: text
+  - line: other_expense_5_amount
+    field: "Page2[0].PartVTable[0].Item5[0].f2_24[0]"
+    type: money
+  - line: other_expense_6_description
+    field: "Page2[0].PartVTable[0].Item6[0].f2_25[0]"
+    type: text
+  - line: other_expense_6_amount
+    field: "Page2[0].PartVTable[0].Item6[0].f2_26[0]"
+    type: money
+  - line: other_expense_7_description
+    field: "Page2[0].PartVTable[0].Item7[0].f2_27[0]"
+    type: text
+  - line: other_expense_7_amount
+    field: "Page2[0].PartVTable[0].Item7[0].f2_28[0]"
+    type: money
+  - line: other_expense_8_description
+    field: "Page2[0].PartVTable[0].Item8[0].f2_29[0]"
+    type: text
+  - line: other_expense_8_amount
+    field: "Page2[0].PartVTable[0].Item8[0].f2_30[0]"
+    type: money
+  - line: other_expense_9_description
+    field: "Page2[0].PartVTable[0].Item9[0].f2_31[0]"
+    type: text
+  - line: other_expense_9_amount
+    field: "Page2[0].PartVTable[0].Item9[0].f2_32[0]"
+    type: money
+  - line: "48"                       # total other expenses (also on line 27a)
+    field: "Page2[0].f2_33[0]"
+    type: money
+
+# Only arithmetic printed on the form face (formpacks/CONVENTIONS.md).
+# The 2022 line 28 sums through 27a (27b is reserved on this revision).
+relations:
+  - "3 == 1 - 2"                     # "Subtract line 2 from line 1"
+  - "4 == 42"                        # "Cost of goods sold (from line 42)"
+  - "5 == 3 - 4"                     # "Subtract line 4 from line 3"
+  - "7 == 5 + 6"                     # "Add lines 5 and 6"
+  - "27a == 48"                      # "Other expenses (from line 48)" / line 48: "Enter here and on line 27a"
+  - "28 == 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16a + 16b + 17 + 18 + 19 + 20a + 20b + 21 + 22 + 23 + 24a + 24b + 25 + 26 + 27a"
+  - "29 == 7 - 28"                   # "Subtract line 28 from line 7"
+  - "31 == 29 - 30"                  # "Subtract line 30 from line 29"
+  - "40 == 35 + 36 + 37 + 38 + 39"   # "Add lines 35 through 39"
+  - "42 == 40 - 41"                  # "Subtract line 41 from line 40"
+  - "48 == other_expense_1_amount + other_expense_2_amount + other_expense_3_amount + other_expense_4_amount + other_expense_5_amount + other_expense_6_amount + other_expense_7_amount + other_expense_8_amount + other_expense_9_amount"
+
+cross_form:
+  # Line 31: "Net profit or (loss). Enter on both Schedule 1 (Form 1040),
+  # line 3, and on Schedule SE, line 2." (Schedule SE is not a pack form key.)
+  - "31 == sched_1.3"
+
+identity_fields: [name, identifying_number]
+
+# Schedule C is an attachment: no signature block of its own, mailed inside
+# the parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

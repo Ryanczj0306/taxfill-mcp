@@ -2,8 +2,11 @@
 
 :func:`make_acroform_pdf` builds a multi-page fillable PDF with reportlab's
 ``canvas.acroForm`` — text fields (with ``/MaxLen`` and the *comb* field
-flag), and checkboxes with custom export/on state names (real IRS forms use
-states like ``/1``, ``/2`` instead of ``/Yes``).
+flag), checkboxes with custom export/on state names (real IRS forms use
+states like ``/1``, ``/2`` instead of ``/Yes``), and RADIO GROUPS: several
+``kind: "radio"`` specs sharing one ``name`` become ONE ``/Btn`` field whose
+``/T``-less kid widgets each carry a different on-state in their ``/AP /N``
+dict — exactly how real IRS forms implement filing status and yes/no blocks.
 
 Why this exists: real IRS PDFs are never vendored in the repo (dev plan
 section 5), so every test that needs a fillable PDF generates a synthetic
@@ -72,7 +75,12 @@ def make_acroform_pdf(
             - ``name`` (required): the flat AcroForm field name; may contain
               dots/brackets (e.g. ``"topmostSubform[0].Page1[0].f1_7[0]"``) —
               pypdf reports it verbatim as the fully qualified name.
-            - ``kind``: ``"text"`` (default) or ``"checkbox"``.
+            - ``kind``: ``"text"`` (default), ``"checkbox"`` or ``"radio"``.
+              Radio: every spec with the SAME ``name`` adds one option
+              widget (kid) to a single shared /Btn field; each spec needs
+              its own ``on_value`` (e.g. ``"/1"``, ``"/2"``) and may set
+              ``x``/``y``/``size``. The kids carry no ``/T`` of their own —
+              the real IRS radio shape.
             - ``page``: 1-based page number (default 1). Pages are created up
               to the highest page referenced.
             - ``x``, ``y``: position in points from the bottom-left corner;
@@ -111,10 +119,16 @@ def make_acroform_pdf(
             )
         spec.setdefault("kind", "text")
         spec.setdefault("page", 1)
-        if spec["kind"] not in ("text", "checkbox"):
+        if spec["kind"] not in ("text", "checkbox", "radio"):
             raise ValueError(
-                f"field '{spec['name']}': kind must be 'text' or 'checkbox', "
+                f"field '{spec['name']}': kind must be 'text', 'checkbox' or 'radio', "
                 f"got {spec['kind']!r}"
+            )
+        if spec["kind"] == "radio" and not spec.get("on_value"):
+            raise ValueError(
+                f"field '{spec['name']}': radio specs require 'on_value' (the option's "
+                f"export state, e.g. '/1') — every spec sharing this name adds one "
+                f"option widget to the group"
             )
         if spec["kind"] == "text" and spec.get("comb") and not spec.get("maxlen"):
             raise ValueError(
@@ -144,7 +158,10 @@ def make_acroform_pdf(
                 y = next_y
                 next_y -= 30
             # Visible label so rendered pages are non-trivial and debuggable.
-            canv.drawString(72, y + 4, spec["name"].rsplit(".", 1)[-1])
+            label = spec["name"].rsplit(".", 1)[-1]
+            if spec["kind"] == "radio":
+                label = f"{label} {_normalize_state(str(spec['on_value']))}"
+            canv.drawString(72, y + 4, label)
             if spec["kind"] == "text":
                 canv.acroForm.textfield(
                     name=spec["name"],
@@ -155,6 +172,19 @@ def make_acroform_pdf(
                     maxlen=spec.get("maxlen"),
                     fieldFlags=COMB_FLAG if spec.get("comb") else "",
                     value=spec.get("value", ""),
+                )
+            elif spec["kind"] == "radio":
+                # Each call with the same name adds one kid widget to the
+                # shared /Btn field; reportlab uses `value` verbatim as the
+                # kid's /AP /N on-state name.
+                canv.acroForm.radio(
+                    name=spec["name"],
+                    value=_normalize_state(str(spec["on_value"])).lstrip("/"),
+                    selected=False,
+                    x=x,
+                    y=y,
+                    size=spec.get("size", _CHECKBOX_DEFAULTS["size"]),
+                    fieldFlags="noToggleToOff radio",  # drop reportlab's default 'required'
                 )
             else:
                 canv.acroForm.checkbox(
@@ -220,6 +250,11 @@ def _split_into_hierarchy(writer: PdfWriter, names: set[str]) -> None:
     linked by ``/Kids``/``/Parent``; the terminal dict ``C`` carries ``/T``
     plus the field-level keys, and the original widget annotation becomes its
     ``/T``-less kid. The AcroForm ``/Fields`` entry is swapped for the root.
+
+    Radio groups already ARE a parent field with ``/T``-less kid widgets, but
+    reportlab gives that parent a flat dotted ``/T``; for those, the parent
+    keeps its ``/Kids``/``/FT``/``/Ff`` and only the dotted name is split
+    into an ancestor chain (second loop below).
     """
     acroform = writer._root_object["/AcroForm"].get_object()
     fields_arr = acroform["/Fields"]
@@ -251,3 +286,30 @@ def _split_into_hierarchy(writer: PdfWriter, names: set[str]) -> None:
             new_fields.append(node_refs[0])
             acroform[NameObject("/Fields")] = new_fields
             fields_arr = new_fields
+
+    # Radio parents: the flat-named field is NOT a page annotation (only its
+    # /T-less kids are), so it is found via the AcroForm /Fields array. The
+    # field keeps its /Kids widgets; the dotted name is split into ancestors.
+    for field_ref in list(fields_arr):
+        field = field_ref.get_object()
+        flat = field.get("/T")
+        if flat is None or str(flat) not in names or "/Kids" not in field:
+            continue
+        parts = str(flat).split(".")
+        if len(parts) < 2:
+            continue
+        ancestor_refs = []
+        for part in parts[:-1]:
+            node = DictionaryObject()
+            node[NameObject("/T")] = TextStringObject(part)
+            ancestor_refs.append(writer._add_object(node))
+        for parent_ref, child_ref in zip(ancestor_refs, ancestor_refs[1:]):
+            parent_ref.get_object()[NameObject("/Kids")] = ArrayObject([child_ref])
+            child_ref.get_object()[NameObject("/Parent")] = parent_ref
+        field[NameObject("/T")] = TextStringObject(parts[-1])
+        ancestor_refs[-1].get_object()[NameObject("/Kids")] = ArrayObject([field_ref])
+        field[NameObject("/Parent")] = ancestor_refs[-1]
+        new_fields = ArrayObject([f for f in fields_arr if f.get_object() is not field])
+        new_fields.append(ancestor_refs[0])
+        acroform[NameObject("/Fields")] = new_fields
+        fields_arr = new_fields

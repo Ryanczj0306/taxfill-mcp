@@ -1,0 +1,161 @@
+# Schedule A (Form 1040) — Itemized Deductions — tax year 2024 revision.
+# Revision verified by rendering page 1 of the downloaded blank and reading
+# the printed title "SCHEDULE A (Form 1040) Itemized Deductions" and year 2024.
+#
+# Fillable widgets: 37 terminal fields (34 /Tx + 3 /Btn). 36 mapped below.
+# Excluded (1):
+#   - Page1[0].f1_21[0] — line 8d "Reserved for future use": the PDF field is
+#     read-only (/Ff bit 1 set) and the printed line takes no entry.
+# There is no paid-preparer or signature block on Schedule A (attachment-only
+# schedule; signed via the parent Form 1040).
+form: "Schedule A (Form 1040)"
+jurisdiction: federal
+tax_year: 2024
+source_url: https://www.irs.gov/pub/irs-prior/f1040sa--2024.pdf
+pdf_sha256: "4bfff9a524c6db9421527f77dc375978a3204c583e60e60fbd8f9d37bd58492a"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ----- header -----
+  - line: "name"                       # Name(s) shown on Form 1040 or 1040-SR
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "identifying_number"         # Your social security number (free text box, NOT a comb on this form)
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  # ----- Medical and Dental Expenses -----
+  - line: "1"                          # Medical and dental expenses
+    field: "Page1[0].f1_3[0]"
+    type: money
+  - line: "2"                          # Amount from Form 1040 or 1040-SR, line 11 (AGI)
+    field: "Page1[0].f1_4[0]"
+    type: money
+  - line: "3"                          # Multiply line 2 by 7.5% (0.075)
+    field: "Page1[0].f1_5[0]"
+    type: money
+  - line: "4"                          # Subtract line 3 from line 1; if line 3 > line 1, enter -0-
+    field: "Page1[0].f1_6[0]"
+    type: money
+  # ----- Taxes You Paid -----
+  - line: "5a.general_sales_tax"       # "If you elect to include general sales taxes instead of income taxes, check this box" (optional election)
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "5a"                         # State and local income taxes or general sales taxes
+    field: "Page1[0].f1_7[0]"
+    type: money
+  - line: "5b"                         # State and local real estate taxes
+    field: "Page1[0].f1_8[0]"
+    type: money
+  - line: "5c"                         # State and local personal property taxes
+    field: "Page1[0].f1_9[0]"
+    type: money
+  - line: "5d"                         # Add lines 5a through 5c
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "5e"                         # Smaller of line 5d or $10,000 ($5,000 if MFS)
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: "6.type"                     # Other taxes. List type and amount: (first dotted row)
+    field: "Page1[0].f1_12[0]"
+    type: text
+  - line: "6.type_cont"                # Other taxes type/amount continuation (second dotted row)
+    field: "Page1[0].f1_13[0]"
+    type: text
+  - line: "6"                          # Other taxes amount
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "7"                          # Add lines 5e and 6
+    field: "Page1[0].f1_15[0]"
+    type: money
+  # ----- Interest You Paid -----
+  - line: "8.mortgage_not_for_home"    # "If you didn't use all of your home mortgage loan(s) to buy, build, or improve your home ... check this box" (optional disclosure)
+    field: "Page1[0].Line8_ReadOrder[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "8a"                         # Home mortgage interest and points reported on Form 1098
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "8b.payee"                   # Seller-financed mortgage: person's name, identifying no., and address (first dotted row)
+    field: "Page1[0].f1_17[0]"
+    type: text
+  - line: "8b.payee_cont"              # Seller-financed payee continuation (second dotted row)
+    field: "Page1[0].f1_18[0]"
+    type: text
+  - line: "8b"                         # Home mortgage interest NOT reported on Form 1098
+    field: "Page1[0].f1_19[0]"
+    type: money
+  - line: "8c"                         # Points not reported on Form 1098
+    field: "Page1[0].f1_20[0]"
+    type: money
+  # line 8d "Reserved for future use" — Page1[0].f1_21[0] is read-only; excluded (see header comment)
+  - line: "8e"                         # Add lines 8a through 8c
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: "9"                          # Investment interest (Form 4952)
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "10"                         # Add lines 8e and 9
+    field: "Page1[0].f1_24[0]"
+    type: money
+  # ----- Gifts to Charity -----
+  - line: "11"                         # Gifts by cash or check
+    field: "Page1[0].f1_25[0]"
+    type: money
+  - line: "12"                         # Other than by cash or check (Form 8283 if over $500)
+    field: "Page1[0].f1_26[0]"
+    type: money
+  - line: "13"                         # Carryover from prior year
+    field: "Page1[0].f1_27[0]"
+    type: money
+  - line: "14"                         # Add lines 11 through 13
+    field: "Page1[0].f1_28[0]"
+    type: money
+  # ----- Casualty and Theft Losses -----
+  - line: "15"                         # Casualty and theft loss(es) from Form 4684, line 18
+    field: "Page1[0].f1_29[0]"
+    type: money
+  # ----- Other Itemized Deductions -----
+  - line: "16.type"                    # Other—from list in instructions. List type and amount: (first dotted row)
+    field: "Page1[0].f1_30[0]"
+    type: text
+  - line: "16.type_cont"               # continuation (second dotted row)
+    field: "Page1[0].f1_31[0]"
+    type: text
+  - line: "16.type_cont2"              # continuation (third dotted row)
+    field: "Page1[0].f1_32[0]"
+    type: text
+  - line: "16"                         # Other itemized deductions amount
+    field: "Page1[0].f1_33[0]"
+    type: money
+  # ----- Total Itemized Deductions -----
+  - line: "17"                         # Add the far-right-column amounts for lines 4 through 16; also enter on Form 1040/1040-SR line 12
+    field: "Page1[0].f1_34[0]"
+    type: money
+  - line: "18"                         # "If you elect to itemize deductions even though they are less than your standard deduction, check this box" (optional election)
+    field: "Page1[0].Line18_ReadOrder[0].c1_3[0]"
+    type: checkbox
+    on_state: "/1"
+relations:
+  # Form-face arithmetic only. The SALT cap on line 5e IS printed on the form
+  # face ("Enter the smaller of line 5d or $10,000"). CAVEAT: the printed cap
+  # is $5,000 for married filing separately — relations cannot branch on
+  # filing status, so the $10,000 form-face text is encoded; an MFS filing
+  # with 5d > $5,000 will (correctly per the worksheet, falsely per this
+  # relation) report a FAIL the operator must waive. See pack report.
+  - "3 == 2 * 0.075"
+  - "4 == max(0, 1 - 3)"
+  - "5d == sum(5a..5c)"
+  - "5e == min(5d, 10000)"
+  - "7 == 5e + 6"
+  - "8e == sum(8a..8c)"
+  - "10 == 8e + 9"
+  - "14 == 11 + 12 + 13"
+  - "17 == 4 + 7 + 10 + 14 + 15 + 16"
+cross_form:
+  - "2 == f1040.11"                    # "Enter amount from Form 1040 or 1040-SR, line 11"
+  - "17 == f1040.12"                   # "Also, enter this amount on Form 1040 or 1040-SR, line 12"
+identity_fields: [name, identifying_number]
+signature: null                        # attachment-only schedule: no signature block of its own
+mailing: null                          # mailed inside the parent Form 1040 envelope

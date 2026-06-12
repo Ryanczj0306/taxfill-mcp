@@ -1,0 +1,320 @@
+# Form 8843 (2022 revision) -- Statement for Exempt Individuals and Individuals
+# With a Medical Condition. For use by alien individuals only.
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title and revision year "2022"
+# before pinning pdf_sha256 (freshness protocol, dev plan section 7).
+#
+# Field map: introspected from this exact revision (root topmostSubform[0];
+# 65 terminal widgets: 44 text on page 1, 6 checkbox widgets, 15 text on
+# page 2). ALL 65 fillable widgets are mapped below -- no excluded blocks.
+# The taxpayer "Sign here" signature/date rows and the physician's
+# signature/date rows on page 2 are printed rules WITHOUT AcroForm widgets
+# (ink-only), so there is nothing to map there. Form 8843 has no
+# paid-preparer block.
+#
+# relations/cross_form are empty by design: no arithmetic is printed on the
+# form face (every entry is a fact -- dates, day counts, names, yes/no) and
+# no line copies a value from another form in the filing.
+form: "8843"
+jurisdiction: federal
+tax_year: 2022
+source_url: https://www.irs.gov/pub/irs-prior/f8843--2022.pdf
+pdf_sha256: "23e9e02f763c721671cd2e10d6eee5a39bc4f389c3a5105e8dcd4565f2a64175"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- page 1 header ------------------------------------------------------
+  # "For the year January 1--December 31, 2022, or other tax year
+  # beginning ____, 2022, and ending ____, 20__" -- leave all three blank
+  # for a normal calendar-year filing.
+  - line: "tax_period.beginning"
+    field: "Page1[0].Pg1Header[0].f1_1[0]"
+    type: text
+  - line: "tax_period.ending"
+    field: "Page1[0].Pg1Header[0].f1_2[0]"
+    type: text
+  - line: "tax_period.ending_year"    # the two digits printed after "20"
+    field: "Page1[0].Pg1Header[0].f1_3[0]"
+    type: text
+    maxlen: 2
+  - line: "name.first"                # "Your first name and initial"
+    field: "Page1[0].f1_4[0]"
+    type: text
+  - line: "name.last"                 # "Last name"
+    field: "Page1[0].f1_5[0]"
+    type: text
+  # "Your U.S. taxpayer identification number, if any" -- NOT a comb field on
+  # this form; PDF MaxLen 11 fits a dashed SSN/ITIN (000-00-0000).
+  - line: "identifying_number"
+    field: "Page1[0].f1_6[0]"
+    type: text
+    maxlen: 11
+  # Address boxes -- the form prints "Fill in your addresses only if you are
+  # filing this form by itself and not with your tax return".
+  # "Address in the United States" is the filer's CURRENT U.S. mailing
+  # address (where they receive mail TODAY -- pitfall P-002); it carries the
+  # mailing_address identity id so cross-form identity checks line up.
+  - line: "home_country_address"      # "Address in country of residence"
+    field: "Page1[0].f1_7[0]"
+    type: text
+  - line: "mailing_address"           # "Address in the United States"
+    field: "Page1[0].f1_8[0]"
+    type: text
+  # ---- Part I: General Information ----------------------------------------
+  - line: "1a"                        # type of U.S. visa and date you entered the U.S.
+    field: "Page1[0].f1_9[0]"
+    type: text
+  - line: "1b"                        # current nonimmigrant status (+ date of change and previous status, if changed)
+    field: "Page1[0].f1_10[0]"
+    type: text
+  - line: "2"                         # country/countries of citizenship during the tax year
+    field: "Page1[0].f1_11[0]"
+    type: text
+  - line: "3a"                        # country/countries that issued you a passport
+    field: "Page1[0].f1_12[0]"
+    type: text
+  - line: "3b"                        # passport number(s)
+    field: "Page1[0].f1_13[0]"
+    type: text
+  # 4a: actual days present in the United States, one box per printed year.
+  - line: "4a.2022"
+    field: "Page1[0].f1_14[0]"
+    type: text
+  - line: "4a.2021"
+    field: "Page1[0].f1_15[0]"
+    type: text
+  - line: "4a.2020"
+    field: "Page1[0].f1_16[0]"
+    type: text
+  - line: "4b"                        # days in 2022 claimed excludable for the substantial presence test
+    field: "Page1[0].f1_17[0]"
+    type: text
+  # ---- Part II: Teachers and Trainees (complete only if it applies) -------
+  # Line 5: academic institution where you taught in 2022 -- the answer
+  # starts on the question row and continues on the two ruled rows below.
+  - line: "5"
+    field: "Page1[0].f1_18[0]"
+    type: text
+  - line: "5.cont1"
+    field: "Page1[0].f1_19[0]"
+    type: text
+  - line: "5.cont2"
+    field: "Page1[0].f1_20[0]"
+    type: text
+  # Line 6: director of the academic/specialized program you participated in.
+  - line: "6"
+    field: "Page1[0].f1_21[0]"
+    type: text
+  - line: "6.cont1"
+    field: "Page1[0].f1_22[0]"
+    type: text
+  - line: "6.cont2"
+    field: "Page1[0].f1_23[0]"
+    type: text
+  # Line 7: type of U.S. visa (J or Q) held during each of the six prior
+  # years -- one single-character box per printed year (PDF MaxLen 1).
+  - line: "7.2016"
+    field: "Page1[0].f1_24[0]"
+    type: text
+    maxlen: 1
+  - line: "7.2017"
+    field: "Page1[0].f1_25[0]"
+    type: text
+    maxlen: 1
+  - line: "7.2018"
+    field: "Page1[0].f1_26[0]"
+    type: text
+    maxlen: 1
+  - line: "7.2019"
+    field: "Page1[0].f1_27[0]"
+    type: text
+    maxlen: 1
+  - line: "7.2020"
+    field: "Page1[0].f1_28[0]"
+    type: text
+    maxlen: 1
+  - line: "7.2021"
+    field: "Page1[0].f1_29[0]"
+    type: text
+    maxlen: 1
+  # Line 8 yes/no: present in the U.S. as a teacher/trainee/student for any
+  # part of 2 of the 6 prior calendar years (2016 through 2021)? Two checkbox
+  # fields sharing one group. Required whenever Part II applies
+  # (teachers/trainees); NOT marked required because the engine has no
+  # part-conditional requiredness and the primary student flow legitimately
+  # leaves Part II blank -- agents completing Part II must still answer it.
+  - line: "8.yes"
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line8
+  - line: "8.no"
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line8
+  # ---- Part III: Students (complete only if it applies) -------------------
+  # Line 9: academic institution you attended during 2022.
+  - line: "9"
+    field: "Page1[0].f1_30[0]"
+    type: text
+  - line: "9.cont1"
+    field: "Page1[0].f1_31[0]"
+    type: text
+  - line: "9.cont2"
+    field: "Page1[0].f1_32[0]"
+    type: text
+  # Line 10: director of the academic/specialized program you participated in.
+  - line: "10"
+    field: "Page1[0].f1_33[0]"
+    type: text
+  - line: "10.cont1"
+    field: "Page1[0].f1_34[0]"
+    type: text
+  - line: "10.cont2"
+    field: "Page1[0].f1_35[0]"
+    type: text
+  # Line 11: type of U.S. visa (F, J, M, or Q) held during each of the six
+  # prior years -- one single-character box per printed year (PDF MaxLen 1).
+  - line: "11.2016"
+    field: "Page1[0].f1_36[0]"
+    type: text
+    maxlen: 1
+  - line: "11.2017"
+    field: "Page1[0].f1_37[0]"
+    type: text
+    maxlen: 1
+  - line: "11.2018"
+    field: "Page1[0].f1_38[0]"
+    type: text
+    maxlen: 1
+  - line: "11.2019"
+    field: "Page1[0].f1_39[0]"
+    type: text
+    maxlen: 1
+  - line: "11.2020"
+    field: "Page1[0].f1_40[0]"
+    type: text
+    maxlen: 1
+  - line: "11.2021"
+    field: "Page1[0].f1_41[0]"
+    type: text
+    maxlen: 1
+  # Line 12 yes/no: teacher/trainee/student for any part of more than 5
+  # calendar years? THE production P-003 pitfall -- this exact question was
+  # silently left unanswered. required+group makes the checkbox audit fail
+  # any filing that leaves the whole group /Off.
+  - line: "12.yes"
+    field: "Page1[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+    required: true
+    group: line12
+  - line: "12.no"
+    field: "Page1[0].c1_2[1]"
+    type: checkbox
+    on_state: "/2"
+    required: true
+    group: line12
+  # Line 13 yes/no: during 2022, did you apply for (or take steps toward)
+  # lawful permanent resident status, or have such an application pending?
+  - line: "13.yes"
+    field: "Page1[0].c1_3[0]"
+    type: checkbox
+    on_state: "/1"
+    required: true
+    group: line13
+  - line: "13.no"
+    field: "Page1[0].c1_3[1]"
+    type: checkbox
+    on_state: "/2"
+    required: true
+    group: line13
+  # Line 14: if "Yes" on line 13, explain -- answer starts on the question
+  # row and continues on the two ruled rows below.
+  - line: "14"
+    field: "Page1[0].f1_42[0]"
+    type: text
+  - line: "14.cont1"
+    field: "Page1[0].f1_43[0]"
+    type: text
+  - line: "14.cont2"
+    field: "Page1[0].f1_44[0]"
+    type: text
+  # ---- Part IV: Professional Athletes (page 2) -----------------------------
+  # Line 15: charitable sports event(s) competed in during 2022 + dates.
+  - line: "15"
+    field: "Page2[0].f2_1[0]"
+    type: text
+  - line: "15.cont1"
+    field: "Page2[0].f2_2[0]"
+    type: text
+  - line: "15.cont2"
+    field: "Page2[0].f2_3[0]"
+    type: text
+  # Line 16: name(s) and EIN(s) of the benefiting charitable organization(s).
+  - line: "16"
+    field: "Page2[0].f2_4[0]"
+    type: text
+  - line: "16.cont1"
+    field: "Page2[0].f2_5[0]"
+    type: text
+  - line: "16.cont2"
+    field: "Page2[0].f2_6[0]"
+    type: text
+  # ---- Part V: Individuals With a Medical Condition or Medical Problem ----
+  # Line 17a: describe the medical condition/problem that prevented you from
+  # leaving the U.S. -- answer starts on the question row, three ruled rows.
+  - line: "17a"
+    field: "Page2[0].f2_7[0]"
+    type: text
+  - line: "17a.cont1"
+    field: "Page2[0].f2_8[0]"
+    type: text
+  - line: "17a.cont2"
+    field: "Page2[0].f2_9[0]"
+    type: text
+  - line: "17a.cont3"
+    field: "Page2[0].f2_10[0]"
+    type: text
+  - line: "17b"                       # date you intended to leave the U.S.
+    field: "Page2[0].f2_11[0]"
+    type: text
+  - line: "17c"                       # date you actually left the U.S.
+    field: "Page2[0].f2_12[0]"
+    type: text
+  # Line 18, Physician's Statement: "I certify that <name of taxpayer> was
+  # unable to leave the United States on the date shown on line 17b ...".
+  # The physician's signature and date rows are ink-only (no widgets).
+  - line: "18.taxpayer_name"
+    field: "Page2[0].f2_13[0]"
+    type: text
+  - line: "18.physician_name"         # "Name of physician or other medical official"
+    field: "Page2[0].f2_14[0]"
+    type: text
+  - line: "18.physician_address_phone" # "Physician's or other medical official's address and telephone number"
+    field: "Page2[0].f2_15[0]"
+    type: text
+relations: []
+cross_form: []
+identity_fields: [name.first, name.last, identifying_number, mailing_address]
+# Page 2 carries the form's own "Sign here" block; it is signed ONLY when the
+# form is filed by itself ("only if you are filing this form by itself and
+# not with your tax return") -- attached to a 1040-NR it is NOT separately
+# signed.
+signature: { page: 2, standalone_only: true }
+# Standalone where-to-file, verified by READING the "When and Where To File"
+# section inside this exact revision's instructions (pages 3-4 of the
+# source_url PDF): "If you don't have to file a 2022 tax return, mail Form
+# 8843 to the Department of the Treasury, Internal Revenue Service Center,
+# Austin, TX 73301-0215". Form 8843 is an informational statement -- no tax
+# is ever due with it, so the with-payment address is the same Austin
+# address (there is no payment scenario). The official about-form-8843 page
+# (https://www.irs.gov/forms-pubs/about-form-8843) carries no address; the
+# form's own instructions are the authoritative where-to-file source, hence
+# verify_url pins the source PDF. Filed WITH a 1040-NR, the 8843 goes inside
+# the return's envelope to the 1040-NR address instead.
+mailing:
+  no_payment: "Department of the Treasury, Internal Revenue Service Center, Austin, TX 73301-0215"
+  with_payment: "Department of the Treasury, Internal Revenue Service Center, Austin, TX 73301-0215"
+  verify_url: "https://www.irs.gov/pub/irs-prior/f8843--2022.pdf"

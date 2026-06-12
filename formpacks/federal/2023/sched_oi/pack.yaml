@@ -1,0 +1,344 @@
+# Schedule OI (Form 1040-NR) — Other Information, tax year 2023 revision.
+#
+# Blank verified by rendering page 1 and reading the printed title/year:
+# "SCHEDULE OI (Form 1040-NR) ... Other Information ... 2023" (OMB 1545-0074,
+# Attachment Sequence No. 7C). The official prior-year file is f1040nro--2023.pdf
+# (f1040noi / f1040soi do not exist on irs.gov — both 404).
+#
+# Coverage: ALL 65 fillable widgets are mapped (39 text + 26 checkbox kids).
+# Excluded blocks: NONE — Schedule OI has no paid-preparer, signature, or
+# other agent-only block; every widget on the page belongs to items A–M.
+# NOTE: the 2023 revision renumbers text fields vs 2022 (f1_1..f1_39, no
+# zero padding; 2022 used f1_01..f1_40 and skipped f1_07) — introspected
+# from scratch, do not copy field names across years.
+#
+# Items C, D1, D2, F, I (production pitfall P-003), J and K are unconditional
+# Yes/No questions -> required: true on their groups. The follow-up questions
+# (J "If Yes" grantor-trust, K "If Yes" alternative method, L2, L3), the
+# line G Canada/Mexico commuter boxes, and the item M section 871(d)
+# election boxes are conditional -> not required.
+#
+# Relations: the only arithmetic printed on the form face is item L line
+# "(e) Total" = sum of column (d) of treaty rows 1-3. It is NOT encoded
+# because the verify relation grammar cannot reference dotted line ids
+# (tokens are \d+[a-z]? or [A-Za-z_][A-Za-z0-9_]* — no '.'); documented as
+# an engine gap for the integrator. Once the tokenizer supports dotted refs:
+#   "1e == treaty_1.exempt_amount + treaty_2.exempt_amount + treaty_3.exempt_amount"
+#
+# Cross-form: line 1e feeds Form 1040-NR line 1k; per formpacks/CONVENTIONS.md
+# that rule ("1k == sched_oi.1e") lives on the f1040nr pack, not here.
+
+form: "Schedule OI (Form 1040-NR)"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040nro--2023.pdf
+pdf_sha256: "919fe09073832b444dba2f37259a416059d0e702831186e622e6b6a175534cbc"
+acroform_root: "form1040-NR[0]"
+
+fields:
+  # --- header -------------------------------------------------------------
+  - line: name                              # "Name shown on Form 1040-NR"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: identifying_number                # "Your identifying number" (plain box in this PDF, NOT a comb; no /MaxLen)
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only                 # SSN/ITIN digits only — dashes would be flagged by the maxlen scan
+
+  # --- item A: country/countries of citizenship --------------------------
+  - line: a
+    field: "Page1[0].f1_3[0]"
+    type: text
+
+  # --- item B: country of tax residence ----------------------------------
+  - line: b
+    field: "Page1[0].f1_4[0]"
+    type: text
+
+  # --- item C: applied for green card? (required yes/no) ------------------
+  - line: c.yes
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: c
+    required: true
+  - line: c.no
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: c
+
+  # --- item D: were you ever ... -----------------------------------------
+  - line: d1.yes                            # D1: a U.S. citizen?
+    field: "Page1[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+    group: d1
+    required: true
+  - line: d1.no
+    field: "Page1[0].c1_2[1]"
+    type: checkbox
+    on_state: "/2"
+    group: d1
+  - line: d2.yes                            # D2: a green card holder (lawful permanent resident)?
+    field: "Page1[0].c1_3[0]"
+    type: checkbox
+    on_state: "/1"
+    group: d2
+    required: true
+  - line: d2.no
+    field: "Page1[0].c1_3[1]"
+    type: checkbox
+    on_state: "/2"
+    group: d2
+
+  # --- item E: visa type / immigration status on the last day of the year -
+  - line: e
+    field: "Page1[0].f1_5[0]"
+    type: text
+
+  # --- item F: ever changed visa type / immigration status? ---------------
+  - line: f.yes
+    field: "Page1[0].c1_4[0]"
+    type: checkbox
+    on_state: "/1"
+    group: f
+    required: true
+  - line: f.no
+    field: "Page1[0].c1_4[1]"
+    type: checkbox
+    on_state: "/2"
+    group: f
+  - line: f.details                         # "If you answered 'Yes', indicate the date and nature of the change"
+    field: "Page1[0].f1_6[0]"
+    type: text
+
+  # --- item G: dates entered/departed the US during 2023 ------------------
+  # Canada/Mexico frequent-commuter boxes (conditional, then skip to item H)
+  - line: g.canada
+    field: "Page1[0].c1_5[0]"
+    type: checkbox
+    on_state: "/1"
+    group: g
+  - line: g.mexico
+    field: "Page1[0].c1_5[1]"
+    type: checkbox
+    on_state: "/2"
+    group: g
+  # visit rows 1-4 = left column pair (LineG_Table1), 5-8 = right (LineG_Table2)
+  - line: g.visit_1.entered
+    field: "Page1[0].LineG_Table1[0].BodyRow1[0].f1_7[0]"
+    type: text
+  - line: g.visit_1.departed
+    field: "Page1[0].LineG_Table1[0].BodyRow1[0].f1_8[0]"
+    type: text
+  - line: g.visit_2.entered
+    field: "Page1[0].LineG_Table1[0].BodyRow2[0].f1_9[0]"
+    type: text
+  - line: g.visit_2.departed
+    field: "Page1[0].LineG_Table1[0].BodyRow2[0].f1_10[0]"
+    type: text
+  - line: g.visit_3.entered
+    field: "Page1[0].LineG_Table1[0].BodyRow3[0].f1_11[0]"
+    type: text
+  - line: g.visit_3.departed
+    field: "Page1[0].LineG_Table1[0].BodyRow3[0].f1_12[0]"
+    type: text
+  - line: g.visit_4.entered
+    field: "Page1[0].LineG_Table1[0].BodyRow4[0].f1_13[0]"
+    type: text
+  - line: g.visit_4.departed
+    field: "Page1[0].LineG_Table1[0].BodyRow4[0].f1_14[0]"
+    type: text
+  - line: g.visit_5.entered
+    field: "Page1[0].LineG_Table2[0].BodyRow1[0].f1_15[0]"
+    type: text
+  - line: g.visit_5.departed
+    field: "Page1[0].LineG_Table2[0].BodyRow1[0].f1_16[0]"
+    type: text
+  - line: g.visit_6.entered
+    field: "Page1[0].LineG_Table2[0].BodyRow2[0].f1_17[0]"
+    type: text
+  - line: g.visit_6.departed
+    field: "Page1[0].LineG_Table2[0].BodyRow2[0].f1_18[0]"
+    type: text
+  - line: g.visit_7.entered
+    field: "Page1[0].LineG_Table2[0].BodyRow3[0].f1_19[0]"
+    type: text
+  - line: g.visit_7.departed
+    field: "Page1[0].LineG_Table2[0].BodyRow3[0].f1_20[0]"
+    type: text
+  - line: g.visit_8.entered
+    field: "Page1[0].LineG_Table2[0].BodyRow4[0].f1_21[0]"
+    type: text
+  - line: g.visit_8.departed
+    field: "Page1[0].LineG_Table2[0].BodyRow4[0].f1_22[0]"
+    type: text
+
+  # --- item H: days present in the United States per year -----------------
+  - line: h.2021
+    field: "Page1[0].f1_23[0]"
+    type: text
+  - line: h.2022
+    field: "Page1[0].f1_24[0]"
+    type: text
+  - line: h.2023
+    field: "Page1[0].f1_25[0]"
+    type: text
+
+  # --- item I: filed a U.S. income tax return for any prior year? ---------
+  # (production pitfall P-003: this group was once left fully /Off)
+  - line: i.yes
+    field: "Page1[0].c1_6[0]"
+    type: checkbox
+    on_state: "/1"
+    group: i
+    required: true
+  - line: i.no
+    field: "Page1[0].c1_6[1]"
+    type: checkbox
+    on_state: "/2"
+    group: i
+  - line: i.details                         # "If 'Yes', give the latest year and form number you filed"
+    field: "Page1[0].f1_26[0]"
+    type: text
+
+  # --- item J: filing a return for a trust? --------------------------------
+  - line: j.yes
+    field: "Page1[0].c1_7[0]"
+    type: checkbox
+    on_state: "/1"
+    group: j
+    required: true
+  - line: j.no
+    field: "Page1[0].c1_7[1]"
+    type: checkbox
+    on_state: "/2"
+    group: j
+  # "If 'Yes', did the trust have a U.S. or foreign owner under the grantor
+  # trust rules, make a distribution or loan to a U.S. person, or receive a
+  # contribution from a U.S. person?" (conditional)
+  - line: j.grantor.yes
+    field: "Page1[0].c1_8[0]"
+    type: checkbox
+    on_state: "/1"
+    group: j_grantor
+  - line: j.grantor.no
+    field: "Page1[0].c1_8[1]"
+    type: checkbox
+    on_state: "/2"
+    group: j_grantor
+
+  # --- item K: total compensation of $250,000 or more? --------------------
+  - line: k.yes
+    field: "Page1[0].c1_9[0]"
+    type: checkbox
+    on_state: "/1"
+    group: k
+    required: true
+  - line: k.no
+    field: "Page1[0].c1_9[1]"
+    type: checkbox
+    on_state: "/2"
+    group: k
+  # "If 'Yes', did you use an alternative method to determine the source of
+  # this compensation?" (conditional)
+  - line: k.alt_method.yes
+    field: "Page1[0].c1_10[0]"
+    type: checkbox
+    on_state: "/1"
+    group: k_alt_method
+  - line: k.alt_method.no
+    field: "Page1[0].c1_10[1]"
+    type: checkbox
+    on_state: "/2"
+    group: k_alt_method
+
+  # --- item L: income exempt from tax by treaty ----------------------------
+  # L1 table: (a) country, (b) treaty article, (c) months claimed in prior
+  # tax years, (d) amount of exempt income in current tax year
+  - line: treaty_1.country
+    field: "Page1[0].LineL1_Table[0].BodyRow1[0].f1_27[0]"
+    type: text
+  - line: treaty_1.article
+    field: "Page1[0].LineL1_Table[0].BodyRow1[0].f1_28[0]"
+    type: text
+  - line: treaty_1.months_claimed
+    field: "Page1[0].LineL1_Table[0].BodyRow1[0].f1_29[0]"
+    type: text
+  - line: treaty_1.exempt_amount
+    field: "Page1[0].LineL1_Table[0].BodyRow1[0].f1_30[0]"
+    type: money
+  - line: treaty_2.country
+    field: "Page1[0].LineL1_Table[0].BodyRow2[0].f1_31[0]"
+    type: text
+  - line: treaty_2.article
+    field: "Page1[0].LineL1_Table[0].BodyRow2[0].f1_32[0]"
+    type: text
+  - line: treaty_2.months_claimed
+    field: "Page1[0].LineL1_Table[0].BodyRow2[0].f1_33[0]"
+    type: text
+  - line: treaty_2.exempt_amount
+    field: "Page1[0].LineL1_Table[0].BodyRow2[0].f1_34[0]"
+    type: money
+  - line: treaty_3.country
+    field: "Page1[0].LineL1_Table[0].BodyRow3[0].f1_35[0]"
+    type: text
+  - line: treaty_3.article
+    field: "Page1[0].LineL1_Table[0].BodyRow3[0].f1_36[0]"
+    type: text
+  - line: treaty_3.months_claimed
+    field: "Page1[0].LineL1_Table[0].BodyRow3[0].f1_37[0]"
+    type: text
+  - line: treaty_3.exempt_amount
+    field: "Page1[0].LineL1_Table[0].BodyRow3[0].f1_38[0]"
+    type: money
+  # L1(e) Total — "Enter this amount on Form 1040-NR, line 1k" (cross-form
+  # rule lives on the f1040nr pack: "1k == sched_oi.1e")
+  - line: "1e"
+    field: "Page1[0].f1_39[0]"
+    type: money
+  # L2: are you subject to tax in a foreign country on any income in (d)?
+  - line: l2.yes
+    field: "Page1[0].c1_11[0]"
+    type: checkbox
+    on_state: "/1"
+    group: l2
+  - line: l2.no
+    field: "Page1[0].c1_11[1]"
+    type: checkbox
+    on_state: "/2"
+    group: l2
+  # L3: claiming treaty benefits pursuant to a Competent Authority determination?
+  - line: l3.yes
+    field: "Page1[0].c1_12[0]"
+    type: checkbox
+    on_state: "/1"
+    group: l3
+  - line: l3.no
+    field: "Page1[0].c1_12[1]"
+    type: checkbox
+    on_state: "/2"
+    group: l3
+
+  # --- item M: section 871(d) real-property election (conditional) ---------
+  - line: m1                                # first-year election
+    field: "Page1[0].c1_13[0]"
+    type: checkbox
+    on_state: "/1"
+    group: m
+  - line: m2                                # election made in a previous year, not revoked
+    field: "Page1[0].c1_14[0]"
+    type: checkbox
+    on_state: "/1"
+    group: m
+
+relations: []                               # see header comment: the (e)-total sum cannot reference dotted line ids yet
+
+cross_form: []                              # "1k == sched_oi.1e" is carried by the f1040nr pack
+
+identity_fields: [name, identifying_number] # Schedule OI has no address block
+
+signature: null                             # schedules carry no signature block of their own
+mailing: null                               # mailed inside the parent 1040-NR envelope

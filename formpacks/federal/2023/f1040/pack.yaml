@@ -1,0 +1,216 @@
+# Form 1040 (2023) — U.S. Individual Income Tax Return
+#
+# Mapped from the official 2023 revision (printed year and title verified by
+# rendering page 1 of the downloaded blank). 132 of 139 fillable widgets are
+# mapped; the 7 unmapped widgets are the "Paid Preparer Use Only" block,
+# which is preparer-only and never filled by the taxpayer or the agent:
+#   Page2[0].f2_39[0]  preparer's name
+#   Page2[0].f2_40[0]  preparer's PTIN
+#   Page2[0].c2_7[0]   "Check if self-employed" checkbox
+#   Page2[0].f2_41[0]  firm's name
+#   Page2[0].f2_42[0]  firm's phone no.
+#   Page2[0].f2_43[0]  firm's address
+#   Page2[0].f2_44[0]  firm's EIN
+# The taxpayer's signature/date and spouse's signature/date are printed
+# sign-by-hand areas with NO AcroForm widgets (only occupation/IP-PIN boxes
+# are fillable, and those are mapped).
+#
+# Cross-form references NOT encoded (target forms are not pack form keys):
+#   line 19 (child tax credit) and line 28 reference Schedule 8812;
+#   line 29 references Form 8863, line 8.
+# Line 12 prints "Standard deduction or itemized deductions (from Schedule
+# A)" — an either/or, not an unconditional equality, so no sched_a rule.
+# Line 30 is printed "Reserved for future use" but still carries a fillable
+# widget; it is mapped so the agent CAN address it, and should stay blank.
+form: "1040"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040--2023.pdf
+pdf_sha256: "a410ce39e1f9b75ab3ddd8c314b9e7dce022ed6e3aebde5418a58b88f1e0213c"
+acroform_root: "topmostSubform[0]"
+fields:
+  # --- page 1: fiscal-year header (calendar-year filers leave these blank) ---
+  - { line: "fiscal_year.beginning", field: "Page1[0].f1_01[0]", type: text }
+  - { line: "fiscal_year.ending", field: "Page1[0].f1_02[0]", type: text }
+  - { line: "fiscal_year.ending_year", field: "Page1[0].f1_03[0]", type: text, maxlen: 2 }
+  # --- identity ---
+  - { line: "name.first", field: "Page1[0].f1_04[0]", type: text }
+  - { line: "name.last", field: "Page1[0].f1_05[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_06[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "spouse.first_name", field: "Page1[0].f1_07[0]", type: text }
+  - { line: "spouse.last_name", field: "Page1[0].f1_08[0]", type: text }
+  - { line: "spouse.identifying_number", field: "Page1[0].f1_09[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  # CURRENT mailing address — where mail is received TODAY (pitfall P-002).
+  # maxlen on apt/state/zip/foreign-postal protects the 8pt fixed-font boxes
+  # from visual clipping (pitfall P-001); the PDF itself sets no MaxLen.
+  - { line: "mailing_address.street", field: "Page1[0].Address_ReadOrder[0].f1_10[0]", type: text }
+  - { line: "mailing_address.apt", field: "Page1[0].Address_ReadOrder[0].f1_11[0]", type: text, maxlen: 10 }
+  - { line: "mailing_address.city", field: "Page1[0].Address_ReadOrder[0].f1_12[0]", type: text }
+  - { line: "mailing_address.state", field: "Page1[0].Address_ReadOrder[0].f1_13[0]", type: text, maxlen: 14 }
+  - { line: "mailing_address.zip", field: "Page1[0].Address_ReadOrder[0].f1_14[0]", type: text, maxlen: 10 }
+  - { line: "mailing_address.foreign_country", field: "Page1[0].Address_ReadOrder[0].f1_15[0]", type: text }
+  - { line: "mailing_address.foreign_province", field: "Page1[0].Address_ReadOrder[0].f1_16[0]", type: text }
+  - { line: "mailing_address.foreign_postal_code", field: "Page1[0].Address_ReadOrder[0].f1_17[0]", type: text, maxlen: 12 }
+  # Presidential Election Campaign — two independent opt-in boxes
+  - { line: "presidential_campaign.you", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "presidential_campaign.spouse", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1" }
+  # --- filing status: five option boxes, "Check only one box" (required).
+  # Five sibling /Btn fields with distinct on-states (verified by rendering:
+  # /1=Single, /2=HOH, /3=MFJ, /4=MFS, /5=QSS).
+  - { line: "filing_status.single", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1", group: filing_status, required: true }
+  - { line: "filing_status.hoh", field: "Page1[0].c1_3[1]", type: checkbox, on_state: "/2", group: filing_status }
+  - { line: "filing_status.mfj", field: "Page1[0].c1_3[2]", type: checkbox, on_state: "/3", group: filing_status }
+  - { line: "filing_status.mfs", field: "Page1[0].c1_3[3]", type: checkbox, on_state: "/4", group: filing_status }
+  - { line: "filing_status.qss", field: "Page1[0].c1_3[4]", type: checkbox, on_state: "/5", group: filing_status }
+  # MFS: spouse's name / HOH or QSS: qualifying child's name (if not dependent)
+  - { line: "filing_status.spouse_or_qualifying_person_name", field: "Page1[0].f1_18[0]", type: text }
+  # --- digital assets yes/no — the form REQUIRES an answer ---
+  - { line: "digital_assets.yes", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1", group: digital_assets, required: true }
+  - { line: "digital_assets.no", field: "Page1[0].c1_4[1]", type: checkbox, on_state: "/2", group: digital_assets }
+  # --- standard deduction block (independent boxes) ---
+  - { line: "standard_deduction.you_dependent", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "standard_deduction.spouse_dependent", field: "Page1[0].c1_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "standard_deduction.spouse_itemizes_or_dual_status", field: "Page1[0].c1_7[0]", type: checkbox, on_state: "/1" }
+  # --- age/blindness (independent boxes; cutoff printed on the 2023 face) ---
+  - { line: "age_blindness.you_born_before_jan_2_1959", field: "Page1[0].c1_8[0]", type: checkbox, on_state: "/1" }
+  - { line: "age_blindness.you_blind", field: "Page1[0].c1_9[0]", type: checkbox, on_state: "/1" }
+  - { line: "age_blindness.spouse_born_before_jan_2_1959", field: "Page1[0].c1_10[0]", type: checkbox, on_state: "/1" }
+  - { line: "age_blindness.spouse_blind", field: "Page1[0].c1_11[0]", type: checkbox, on_state: "/1" }
+  # --- dependents table (rows 1-4; column (1) holds first AND last name in one box) ---
+  - { line: "dependents.more_than_four", field: "Page1[0].Dependents_ReadOrder[0].c1_12[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_19[0]", type: text }
+  - { line: "dependent_1.ssn", field: "Page1[0].Table_Dependents[0].Row1[0].f1_20[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_1.relationship", field: "Page1[0].Table_Dependents[0].Row1[0].f1_21[0]", type: text, maxlen: 15 }
+  - { line: "dependent_1.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row1[0].c1_13[0]", type: checkbox, on_state: "/1", group: dependent_1_credit }
+  - { line: "dependent_1.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row1[0].c1_14[0]", type: checkbox, on_state: "/1", group: dependent_1_credit }
+  - { line: "dependent_2.name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_22[0]", type: text }
+  - { line: "dependent_2.ssn", field: "Page1[0].Table_Dependents[0].Row2[0].f1_23[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_2.relationship", field: "Page1[0].Table_Dependents[0].Row2[0].f1_24[0]", type: text, maxlen: 15 }
+  - { line: "dependent_2.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row2[0].c1_15[0]", type: checkbox, on_state: "/1", group: dependent_2_credit }
+  - { line: "dependent_2.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row2[0].c1_16[0]", type: checkbox, on_state: "/1", group: dependent_2_credit }
+  - { line: "dependent_3.name", field: "Page1[0].Table_Dependents[0].Row3[0].f1_25[0]", type: text }
+  - { line: "dependent_3.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_26[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_3.relationship", field: "Page1[0].Table_Dependents[0].Row3[0].f1_27[0]", type: text, maxlen: 15 }
+  - { line: "dependent_3.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row3[0].c1_17[0]", type: checkbox, on_state: "/1", group: dependent_3_credit }
+  - { line: "dependent_3.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row3[0].c1_18[0]", type: checkbox, on_state: "/1", group: dependent_3_credit }
+  - { line: "dependent_4.name", field: "Page1[0].Table_Dependents[0].Row4[0].f1_28[0]", type: text }
+  - { line: "dependent_4.ssn", field: "Page1[0].Table_Dependents[0].Row4[0].f1_29[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_4.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_30[0]", type: text, maxlen: 15 }
+  - { line: "dependent_4.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row4[0].c1_19[0]", type: checkbox, on_state: "/1", group: dependent_4_credit }
+  - { line: "dependent_4.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row4[0].c1_20[0]", type: checkbox, on_state: "/1", group: dependent_4_credit }
+  # --- income (page 1) ---
+  - { line: "1a", field: "Page1[0].f1_31[0]", type: money }
+  - { line: "1b", field: "Page1[0].f1_32[0]", type: money }
+  - { line: "1c", field: "Page1[0].f1_33[0]", type: money }
+  - { line: "1d", field: "Page1[0].f1_34[0]", type: money }
+  - { line: "1e", field: "Page1[0].f1_35[0]", type: money }
+  - { line: "1f", field: "Page1[0].f1_36[0]", type: money }
+  - { line: "1g", field: "Page1[0].f1_37[0]", type: money }
+  - { line: "1h", field: "Page1[0].f1_38[0]", type: money }
+  - { line: "1i", field: "Page1[0].f1_39[0]", type: money }
+  - { line: "1z", field: "Page1[0].f1_40[0]", type: money }
+  - { line: "2a", field: "Page1[0].f1_41[0]", type: money }
+  - { line: "2b", field: "Page1[0].f1_42[0]", type: money }
+  - { line: "3a", field: "Page1[0].f1_43[0]", type: money }
+  - { line: "3b", field: "Page1[0].f1_44[0]", type: money }
+  - { line: "4a", field: "Page1[0].Line4a-11_ReadOrder[0].f1_45[0]", type: money }
+  - { line: "4b", field: "Page1[0].Line4a-11_ReadOrder[0].f1_46[0]", type: money }
+  - { line: "5a", field: "Page1[0].Line4a-11_ReadOrder[0].f1_47[0]", type: money }
+  - { line: "5b", field: "Page1[0].Line4a-11_ReadOrder[0].f1_48[0]", type: money }
+  - { line: "6a", field: "Page1[0].Line4a-11_ReadOrder[0].f1_49[0]", type: money }
+  - { line: "6b", field: "Page1[0].Line4a-11_ReadOrder[0].f1_50[0]", type: money }
+  - { line: "6c", field: "Page1[0].Line4a-11_ReadOrder[0].c1_21[0]", type: checkbox, on_state: "/1" }
+  - { line: "7.not_required", field: "Page1[0].Line4a-11_ReadOrder[0].c1_22[0]", type: checkbox, on_state: "/1" }
+  - { line: "7", field: "Page1[0].Line4a-11_ReadOrder[0].f1_51[0]", type: money }
+  - { line: "8", field: "Page1[0].Line4a-11_ReadOrder[0].f1_52[0]", type: money }
+  - { line: "9", field: "Page1[0].Line4a-11_ReadOrder[0].f1_53[0]", type: money }
+  - { line: "10", field: "Page1[0].Line4a-11_ReadOrder[0].f1_54[0]", type: money }
+  - { line: "11", field: "Page1[0].Line4a-11_ReadOrder[0].f1_55[0]", type: money }
+  - { line: "12", field: "Page1[0].f1_56[0]", type: money }
+  - { line: "13", field: "Page1[0].f1_57[0]", type: money }
+  - { line: "14", field: "Page1[0].f1_58[0]", type: money }
+  - { line: "15", field: "Page1[0].f1_59[0]", type: money }
+  # --- tax and credits (page 2) ---
+  # Line 16 "Check if any from Form(s)": three independent boxes + form no.
+  - { line: "16.form_8814", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_4972", field: "Page2[0].c2_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_other", field: "Page2[0].c2_3[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_other_number", field: "Page2[0].f2_01[0]", type: text, maxlen: 8 }
+  - { line: "16", field: "Page2[0].f2_02[0]", type: money }
+  - { line: "17", field: "Page2[0].f2_03[0]", type: money }
+  - { line: "18", field: "Page2[0].f2_04[0]", type: money }
+  - { line: "19", field: "Page2[0].f2_05[0]", type: money }
+  - { line: "20", field: "Page2[0].f2_06[0]", type: money }
+  - { line: "21", field: "Page2[0].f2_07[0]", type: money }
+  - { line: "22", field: "Page2[0].f2_08[0]", type: money }
+  - { line: "23", field: "Page2[0].f2_09[0]", type: money }
+  - { line: "24", field: "Page2[0].f2_10[0]", type: money }
+  # --- payments ---
+  - { line: "25a", field: "Page2[0].f2_11[0]", type: money }
+  - { line: "25b", field: "Page2[0].f2_12[0]", type: money }
+  - { line: "25c", field: "Page2[0].f2_13[0]", type: money }
+  - { line: "25d", field: "Page2[0].f2_14[0]", type: money }
+  - { line: "26", field: "Page2[0].f2_15[0]", type: money }
+  - { line: "27", field: "Page2[0].f2_16[0]", type: money }
+  - { line: "28", field: "Page2[0].f2_17[0]", type: money }
+  - { line: "29", field: "Page2[0].f2_18[0]", type: money }
+  - { line: "30", field: "Page2[0].f2_19[0]", type: money } # printed "Reserved for future use" — leave blank
+  - { line: "31", field: "Page2[0].f2_20[0]", type: money }
+  - { line: "32", field: "Page2[0].f2_21[0]", type: money }
+  - { line: "33", field: "Page2[0].f2_22[0]", type: money }
+  # --- refund / amount you owe ---
+  - { line: "34", field: "Page2[0].f2_23[0]", type: money }
+  - { line: "35a.form_8888", field: "Page2[0].c2_4[0]", type: checkbox, on_state: "/1" }
+  - { line: "35a", field: "Page2[0].f2_24[0]", type: money }
+  - { line: "35b", field: "Page2[0].RoutingNo[0].f2_25[0]", type: text, maxlen: 9, comb: true }
+  - { line: "35c.checking", field: "Page2[0].c2_5[0]", type: checkbox, on_state: "/1", group: "35c" }
+  - { line: "35c.savings", field: "Page2[0].c2_5[1]", type: checkbox, on_state: "/2", group: "35c" }
+  - { line: "35d", field: "Page2[0].AccountNo[0].f2_26[0]", type: text, maxlen: 17, comb: true }
+  - { line: "36", field: "Page2[0].f2_27[0]", type: money }
+  - { line: "37", field: "Page2[0].f2_28[0]", type: money }
+  - { line: "38", field: "Page2[0].f2_29[0]", type: money }
+  # --- third party designee (yes/no pair; commonly left to "No") ---
+  - { line: "third_party_designee.yes", field: "Page2[0].c2_6[0]", type: checkbox, on_state: "/1", group: third_party_designee }
+  - { line: "third_party_designee.no", field: "Page2[0].c2_6[1]", type: checkbox, on_state: "/2", group: third_party_designee }
+  - { line: "third_party_designee.name", field: "Page2[0].f2_30[0]", type: text }
+  - { line: "third_party_designee.phone", field: "Page2[0].f2_31[0]", type: text }
+  - { line: "third_party_designee.pin", field: "Page2[0].f2_32[0]", type: text, maxlen: 5, comb: true }
+  # --- sign here (signature/date are handwritten; only these are fillable) ---
+  - { line: "occupation", field: "Page2[0].f2_33[0]", type: text }
+  - { line: "identity_protection_pin", field: "Page2[0].f2_34[0]", type: text, maxlen: 6, comb: true }
+  - { line: "spouse.occupation", field: "Page2[0].f2_35[0]", type: text }
+  - { line: "spouse.identity_protection_pin", field: "Page2[0].f2_36[0]", type: text, maxlen: 6, comb: true }
+  - { line: "phone", field: "Page2[0].f2_37[0]", type: text }
+  - { line: "email", field: "Page2[0].f2_38[0]", type: text }
+# Only arithmetic printed on the form face (tax-table lookups live in calc/
+# knowledge packs, never here).
+relations:
+  - "1z == sum(1a..1h)"                          # "Add lines 1a through 1h"
+  - "9 == 1z + 2b + 3b + 4b + 5b + 6b + 7 + 8"   # "Add lines 1z, 2b, 3b, 4b, 5b, 6b, 7, and 8"
+  - "11 == 9 - 10"                               # "Subtract line 10 from line 9"
+  - "14 == 12 + 13"                              # "Add lines 12 and 13"
+  - "15 == max(0, 11 - 14)"                      # "Subtract line 14 from line 11. If zero or less, enter -0-"
+  - "18 == 16 + 17"                              # "Add lines 16 and 17"
+  - "21 == 19 + 20"                              # "Add lines 19 and 20"
+  - "22 == max(0, 18 - 21)"                      # "Subtract line 21 from line 18. If zero or less, enter -0-"
+  - "24 == 22 + 23"                              # "Add lines 22 and 23. This is your total tax"
+  - "25d == sum(25a..25c)"                       # "Add lines 25a through 25c"
+  - "32 == 27 + 28 + 29 + 31"                    # "Add lines 27, 28, 29, and 31"
+  - "33 == 25d + 26 + 32"                        # "Add lines 25d, 26, and 32. These are your total payments"
+  - "34 == max(0, 33 - 24)"                      # "If line 33 is more than line 24, subtract line 24 from line 33"
+  - "37 == max(0, 24 - 33)"                      # "Subtract line 33 from line 24. This is the amount you owe"
+cross_form:
+  - "8 == sched_1.10"    # "Additional income from Schedule 1, line 10"
+  - "10 == sched_1.26"   # "Adjustments to income from Schedule 1, line 26"
+  - "17 == sched_2.3"    # "Amount from Schedule 2, line 3"
+  - "20 == sched_3.8"    # "Amount from Schedule 3, line 8"
+  - "23 == sched_2.21"   # "Other taxes ... from Schedule 2, line 21"
+  - "31 == sched_3.15"   # "Amount from Schedule 3, line 15"
+# The 1040 splits name (first/last) and address (street/city/...) into
+# separate boxes, so only the SSN is a single-line identity anchor here;
+# schedules cross-check their "name(s) shown on return" against intake.
+identity_fields: [identifying_number]
+signature: { page: 2 }
+# State-dependent where-to-file — knowledge packs own it in M3 (per
+# formpacks/CONVENTIONS.md the f1040 pack ships mailing: null).
+mailing: null

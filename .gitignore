@@ -10,6 +10,10 @@ build/
 .ruff_cache/
 # NOTE: uv.lock is committed on purpose (reproducible CI) — never ignore it.
 
+# Shared blank-form download cache (fetch_blank). Official IRS/state PDFs
+# are downloaded at runtime and NEVER committed to the repo.
+.cache/
+
 # macOS
 .DS_Store
 

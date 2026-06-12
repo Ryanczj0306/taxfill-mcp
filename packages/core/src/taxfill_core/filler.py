@@ -17,6 +17,12 @@ pypdf specifics encoded here (dev plan section 10):
 - checkboxes need BOTH the field ``/V`` and the widget ``/AS`` set to the
   pack's ``on_state`` (pitfall P-003 territory: a ``/V`` without ``/AS``
   renders unchecked);
+- radio groups (IRS filing status etc.) are ONE ``/Btn`` field whose
+  ``/T``-less kid widgets each carry a different on-state in their
+  ``/AP /N`` dict; the pack maps every option as its own checkbox line on
+  the SAME field with its own ``on_state`` — the chosen state lands as
+  ``/AS`` only on the kid that defines it, sibling kids go ``/Off``, and
+  ``/V`` is set once on the shared field dict;
 - ``update_page_form_field_values(..., auto_regenerate=False)``, then the
   AcroForm ``NeedAppearances`` flag is set so viewers regenerate appearance
   streams;
@@ -196,50 +202,87 @@ def _qualified_name(annot: object) -> str:
     return ".".join(reversed(parts))
 
 
+def _normal_states(annot: object) -> list[str] | None:
+    """The widget's /AP /N appearance-state names, or None when /AP is absent."""
+    ap = annot.get("/AP")  # type: ignore[attr-defined]
+    if ap is None:
+        return None
+    normal = ap.get_object().get("/N")
+    if normal is None:
+        return None
+    return sorted(str(k) for k in normal.get_object().keys())
+
+
 def _set_checkboxes(writer: PdfWriter, updates: dict[str, tuple[str, str]]) -> None:
-    """Set checkbox values: field ``/V`` AND widget ``/AS`` (dev plan section 10).
+    """Set checkbox/radio values: field ``/V`` AND widget ``/AS`` (dev plan section 10).
 
     ``updates`` maps the qualified field name to ``(line, state)``.
+
+    A plain checkbox is one widget. A radio group (real IRS filing status,
+    digital-assets yes/no, ...) is ONE /Btn field whose /T-less kid widgets
+    each carry a DIFFERENT on-state in their /AP /N dict: the chosen state is
+    written as /AS only on the kid that defines it, every sibling kid goes
+    /Off, and /V is set once on the /T-bearing field dictionary.
     """
-    remaining = dict(updates)
+    widgets_by_field: dict[str, list] = {}
     for page in writer.pages:
         for ref in page.get("/Annots", []):
             annot = ref.get_object()
             if annot.get("/Subtype") != "/Widget":
                 continue
             qualified = _qualified_name(annot)
-            if qualified not in remaining:
-                continue
-            line, state = remaining[qualified]
-            if state != _OFF_STATE:
-                # Guard against pack typos: the on_state must be a state the
-                # PDF actually defines, or viewers will render it unchecked.
-                ap = annot.get("/AP")
-                if ap is not None:
-                    normal = ap.get_object().get("/N")
-                    if normal is not None:
-                        states = sorted(str(k) for k in normal.get_object().keys())
-                        if state not in states:
-                            raise ValueError(
-                                f"line '{line}': on_state '{state}' is not a state of "
-                                f"checkbox field '{qualified}' — the PDF offers {states}; "
-                                f"dump the blank PDF's field states and fix the pack's on_state"
-                            )
-            annot[NameObject("/AS")] = NameObject(state)
-            # /V belongs on the *field* dictionary: the widget itself when the
-            # field and widget are merged (it carries /T), else the ancestor
-            # that carries /T.
-            field_obj = annot
-            while "/T" not in field_obj and field_obj.get("/Parent") is not None:
-                field_obj = field_obj["/Parent"].get_object()
-            field_obj[NameObject("/V")] = NameObject(state)
-            del remaining[qualified]
-    if remaining:  # pre-checked against get_fields(), so this is defensive
-        missing = sorted(remaining)
+            if qualified in updates:
+                widgets_by_field.setdefault(qualified, []).append(annot)
+    missing = sorted(q for q in updates if q not in widgets_by_field)
+    if missing:  # pre-checked against get_fields(), so this is defensive
         raise ValueError(
             f"checkbox field(s) {missing} have no widget annotation in the PDF — "
             f"re-introspect the blank PDF and fix the pack's field names"
         )
+    for qualified, (line, state) in updates.items():
+        widgets = widgets_by_field[qualified]
+        carriers = widgets  # state == /Off: every widget (kid) goes /Off
+        if state != _OFF_STATE:
+            # Guard against pack typos: the on_state must be a state the PDF
+            # actually defines, or viewers will render it unchecked. In a
+            # radio group only ONE kid's /AP /N carries the chosen state.
+            carriers = []
+            known: list[str] = []
+            for annot in widgets:
+                states = _normal_states(annot)
+                if states is None:
+                    continue
+                known.extend(states)
+                if state in states:
+                    carriers.append(annot)
+            if not carriers:
+                if known:
+                    raise ValueError(
+                        f"line '{line}': on_state '{state}' is not a state of "
+                        f"checkbox field '{qualified}' — the PDF offers "
+                        f"{sorted(set(known))}; dump the blank PDF's field states "
+                        f"and fix the pack's on_state"
+                    )
+                if len(widgets) > 1:
+                    raise ValueError(
+                        f"line '{line}': none of the {len(widgets)} kid widgets of "
+                        f"field '{qualified}' carries an /AP /N appearance dictionary — "
+                        f"cannot tell which kid shows state '{state}'; re-introspect "
+                        f"the blank PDF (it may be malformed) and fix the pack"
+                    )
+                carriers = widgets  # single widget without /AP: trust the pack
+        carrier_ids = {id(annot) for annot in carriers}
+        for annot in widgets:
+            annot[NameObject("/AS")] = NameObject(
+                state if id(annot) in carrier_ids else _OFF_STATE
+            )
+        # /V belongs on the *field* dictionary: the widget itself when the
+        # field and widget are merged (it carries /T), else the ancestor
+        # that carries /T (the shared radio-group field dict).
+        field_obj = widgets[0]
+        while "/T" not in field_obj and field_obj.get("/Parent") is not None:
+            field_obj = field_obj["/Parent"].get_object()
+        field_obj[NameObject("/V")] = NameObject(state)
 
 
 def fill_form(
@@ -255,7 +298,9 @@ def fill_form(
         values: logical line id -> value. Text lines take strings, money
             lines take int/float/Decimal (IRS whole-dollar rounding is
             applied; rendered as a plain integer string), checkbox lines
-            take yes/no/true/false/bool. **Only lines present here are
+            take yes/no/true/false/bool. Radio-group options (several
+            checkbox lines mapping to ONE field, each with its own
+            on_state) take at most one yes. **Only lines present here are
             touched** — the filler never invents a value.
         blank_pdf: path to the blank official PDF (fetched and
             checksum-verified upstream).
@@ -291,26 +336,29 @@ def fill_form(
     warnings: list[str] = []
     written: dict[str, str] = {}
     text_updates: dict[str, str] = {}
-    checkbox_updates: dict[str, tuple[str, str]] = {}
+    # Checkbox lines are collected per field: a RADIO GROUP maps several
+    # option lines (filing_status.single, .mfj, ...) onto ONE /Btn field,
+    # each with its own on_state — at most one may be answered yes.
+    checkbox_lines: dict[str, list[tuple[str, str]]] = {}
     target_line: dict[str, str] = {}  # qualified field -> first line writing it
 
     for line, value in values.items():
         pf = by_line[line]
         qualified = f"{pack.acroform_root}.{pf.field}"
-        if qualified in target_line:
+        is_checkbox = pf.type == "checkbox"
+        if qualified in target_line and not (is_checkbox and qualified in checkbox_lines):
             # Without this check the later line silently overwrites the
             # earlier one AND `written` only records the survivor, so even
-            # the verifier's assertion diff would miss the loss.
+            # the verifier's assertion diff would miss the loss. (Checkbox
+            # lines sharing one field are a radio group — resolved below.)
             raise ValueError(
                 f"lines '{target_line[qualified]}' and '{line}' both map to AcroForm "
                 f"field '{qualified}' — a field holds one value; submit only one of "
                 f"these lines, or fix the pack so each line maps to its own field"
             )
-        target_line[qualified] = line
-        if pf.type == "checkbox":
-            state = _checkbox_state(pf, value)
-            checkbox_updates[qualified] = (line, state)
-            written[qualified] = state
+        target_line.setdefault(qualified, line)
+        if is_checkbox:
+            checkbox_lines.setdefault(qualified, []).append((line, _checkbox_state(pf, value)))
         else:
             if pf.type == "money":
                 rendered, warning = _render_money(pf, value)
@@ -321,6 +369,25 @@ def fill_form(
             _enforce_length(pf, rendered)
             text_updates[qualified] = rendered
             written[qualified] = rendered
+
+    # Resolve each checkbox field to a single state. Multiple lines on one
+    # field are radio-group options: at most one may be on; "no" answers for
+    # sibling options are redundant but harmless (they confirm /Off).
+    checkbox_updates: dict[str, tuple[str, str]] = {}
+    for qualified, entries in checkbox_lines.items():
+        on_entries = [(line, state) for line, state in entries if state != _OFF_STATE]
+        if len(on_entries) > 1:
+            on_lines = " and ".join(f"'{line}'" for line, _ in on_entries)
+            raise ValueError(
+                f"lines {on_lines} both turn on AcroForm field '{qualified}' — these "
+                f"are options of ONE radio/choice group and the field holds a single "
+                f"selection; answer yes to exactly one of these lines and omit (or "
+                f"answer no to) the others"
+            )
+        # No on-entry means every submitted option answered no: whole group /Off.
+        line, state = on_entries[0] if on_entries else entries[0]
+        checkbox_updates[qualified] = (line, state)
+        written[qualified] = state
 
     try:
         writer = PdfWriter(clone_from=str(blank_pdf))

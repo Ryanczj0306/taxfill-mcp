@@ -19,3 +19,6 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["packages/core/tests"]
 addopts = "-q"
+markers = [
+    "network: needs internet access to download official blank PDFs from .gov URLs (skips gracefully when offline; deselect with -m 'not network')",
+]
