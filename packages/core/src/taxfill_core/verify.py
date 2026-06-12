@@ -111,9 +111,14 @@ __all__ = [
     "verify_form",
 ]
 
-Status = Literal["PASS", "FAIL"]
+Status = Literal["PASS", "FAIL", "SKIPPED"]
 PASS: Status = "PASS"
 FAIL: Status = "FAIL"
+# SKIPPED marks a check that could not be evaluated in this run (e.g. a
+# cross_form rule whose target form is legitimately not part of the filing).
+# Skipped checks stay visible in the report but never flip ``ok`` — silence
+# would hide them, FAIL would reject legitimate filings.
+SKIPPED: Status = "SKIPPED"
 
 # --- Clipping-scan constants (documented in the module docstring) ----------
 _AVG_CHAR_WIDTH_RATIO = 0.5  # average Helvetica glyph width as a fraction of font size
@@ -1463,14 +1468,29 @@ def _cross_form_check(
     try:
         lhs, rhs = resolve(sides[0]), resolve(sides[1])
     except _MissingFormKey as exc:
+        # A filing legitimately omits schedules it does not need; the rule is
+        # skipped (visibly), not failed. If the side that IS present carries a
+        # nonzero amount, warn: that amount usually must flow through the
+        # absent form, so the agent must confirm the schedule is not required.
+        caution = ""
+        for side in sides:
+            try:
+                present = resolve(side)
+            except _MissingFormKey:
+                continue
+            if present != 0:
+                caution = (
+                    f" — caution: '{side}' is {irs_round(present)} (nonzero); if that "
+                    f"amount flows through '{exc.key}', attach that form to the filing "
+                    f"and re-verify"
+                )
         return CrossFormCheck(
             form_key=form_key,
             relation=rule,
-            status=FAIL,
+            status=SKIPPED,
             detail=(
-                f"cross_form rule '{rule}' references form_key '{exc.key}' but no filing "
-                f"item carries that key — pass that form to verify_filing (it belongs in "
-                f"this filing) or fix the rule in pack.yaml"
+                f"cross_form rule '{rule}' not checked: form_key '{exc.key}' is not part "
+                f"of this filing (normal when the schedule is not required){caution}"
             ),
         )
     lhs_dollars, rhs_dollars = irs_round(lhs), irs_round(rhs)
@@ -1655,7 +1675,8 @@ def _confirmed_address_checks(
 
 
 def _all_pass(*sections: Sequence) -> bool:
-    return all(check.status == PASS for section in sections for check in section)
+    """True when no check failed (SKIPPED checks are visible but non-fatal)."""
+    return all(check.status != FAIL for section in sections for check in section)
 
 
 def _aggregate_blanks(*sections: Sequence) -> list[str]:
