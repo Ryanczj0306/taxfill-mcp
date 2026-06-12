@@ -28,7 +28,13 @@ pitfalls:
     countermeasure: >-
       Intake disambiguation (current-mailing vs historical); verifier warns
       when return address differs from the user-confirmed current address,
-      or matches an address whose date range ended.
+      or matches an address whose date range ended. Shipped in M1: the
+      cross-form address consistency check, plus the
+      confirmed_current_address parameter on verify_form/verify_filing that
+      FAILs when the on-disk address differs from the address the user
+      confirmed they receive mail at TODAY. Deferred to M3 intake: flagging
+      an address whose intake date range ended (needs the state-footprint
+      date ranges from the interview).
 
   - id: P-003
     incident: >-
@@ -45,3 +51,9 @@ pitfalls:
     countermeasure: >-
       Treaty eligibility evaluated per visa period, encoded in
       knowledge/federal/<year>.yaml treaty rules; covered by eval scenario.
+      DEFERRED: the treaty rules are M3 knowledge data and the eval scenario
+      is M6 — the deferral is enforced visibly by the pitfall-coverage
+      meta-test allowlist (packages/core/tests/test_pitfall_coverage.py),
+      which fails CI the moment a pitfall lacks both a regression test and
+      a documented deferral. M1 already ships the residency-side groundwork:
+      residency.py flags the F-1 -> H-1B mid-year split with tests.

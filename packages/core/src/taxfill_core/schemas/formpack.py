@@ -60,6 +60,21 @@ class PackField(BaseModel):
         default=None,
         description="Checkbox export value to set, e.g. '/1' (pypdf needs both /V and widget /AS).",
     )
+    required: bool = Field(
+        default=False,
+        description=(
+            "True when the line must be answered on every filing; drives the "
+            "unanswered-required checkbox audit (pitfall P-003)."
+        ),
+    )
+    group: str | None = Field(
+        default=None,
+        description=(
+            "Checkbox group id — the yes/no boxes of one question share a group "
+            "(e.g. 'line12'); a required group must have at least one member "
+            "checked. Valid on checkbox fields only."
+        ),
+    )
 
     @model_validator(mode="after")
     def _check_options_match_type(self) -> "PackField":
@@ -79,6 +94,12 @@ class PackField(BaseModel):
             if self.on_state is not None:
                 raise ValueError(
                     f"field '{self.line}': 'on_state' applies only to checkbox fields — "
+                    f"remove it or change the field type to checkbox"
+                )
+            if self.group is not None:
+                raise ValueError(
+                    f"field '{self.line}': 'group' applies only to checkbox fields "
+                    f"(the yes/no boxes of one question share a group id) — "
                     f"remove it or change the field type to checkbox"
                 )
             if self.comb and self.maxlen is None:

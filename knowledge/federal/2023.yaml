@@ -1,0 +1,161 @@
+# Federal knowledge pack — tax year 2023 (docs/DEV_PLAN.md sections 3, 7, 10).
+#
+# Tax math lives here as DATA with citations, never hardcoded in engine code
+# (the no-LLM-arithmetic rule, dev plan section 10). Every number in this file
+# was transcribed from the official IRS document named in its block's
+# citation. Do NOT edit a number without re-verifying it against that source
+# (irs.gov only; see knowledge/sources.yaml for the source registry).
+#
+# Loaded and validated by packages/core/src/taxfill_core/knowledge.py.
+# Additional top-level blocks (filing thresholds, payment options, mailing
+# addresses, credits, effective_law_changes) land in M3; the loader tolerates
+# extra blocks so this file can grow without engine changes.
+
+jurisdiction: federal
+tax_year: 2023
+
+tax:
+  # Section 1(j)(2) rate schedules for 2023, exactly as published in
+  # Rev. Proc. 2022-38 (Tables 1-4 of Section 3.01):
+  #   Table 1: Married Individuals Filing Joint Returns and Surviving Spouses
+  #   Table 2: Heads of Households
+  #   Table 3: Unmarried Individuals (other than Surviving Spouses and HoH)
+  #   Table 4: Married Individuals Filing Separate Returns
+  # `but_not_over: null` marks the top bracket. For income X inside a
+  # bracket, tax = (sum of rate x span over all lower brackets)
+  #              + rate x (X - over),
+  # which reproduces the published "$B plus R% of the excess over $O" rows
+  # (e.g. single over $44,725 but not over $95,375: $5,147 plus 22%).
+  rate_schedules:
+    citation:
+      source: "Rev. Proc. 2022-38, Section 3.01 (2023 tax rate tables), Tables 1-4"
+      url: "https://www.irs.gov/pub/irs-drop/rp-22-38.pdf"
+    schedules:
+      single:
+        - { over: 0, but_not_over: 11000, rate: 0.10 }
+        - { over: 11000, but_not_over: 44725, rate: 0.12 }
+        - { over: 44725, but_not_over: 95375, rate: 0.22 }
+        - { over: 95375, but_not_over: 182100, rate: 0.24 }
+        - { over: 182100, but_not_over: 231250, rate: 0.32 }
+        - { over: 231250, but_not_over: 578125, rate: 0.35 }
+        - { over: 578125, but_not_over: null, rate: 0.37 }
+      married_filing_jointly:
+        - { over: 0, but_not_over: 22000, rate: 0.10 }
+        - { over: 22000, but_not_over: 89450, rate: 0.12 }
+        - { over: 89450, but_not_over: 190750, rate: 0.22 }
+        - { over: 190750, but_not_over: 364200, rate: 0.24 }
+        - { over: 364200, but_not_over: 462500, rate: 0.32 }
+        - { over: 462500, but_not_over: 693750, rate: 0.35 }
+        - { over: 693750, but_not_over: null, rate: 0.37 }
+      married_filing_separately:
+        - { over: 0, but_not_over: 11000, rate: 0.10 }
+        - { over: 11000, but_not_over: 44725, rate: 0.12 }
+        - { over: 44725, but_not_over: 95375, rate: 0.22 }
+        - { over: 95375, but_not_over: 182100, rate: 0.24 }
+        - { over: 182100, but_not_over: 231250, rate: 0.32 }
+        - { over: 231250, but_not_over: 346875, rate: 0.35 }
+        - { over: 346875, but_not_over: null, rate: 0.37 }
+      head_of_household:
+        - { over: 0, but_not_over: 15700, rate: 0.10 }
+        - { over: 15700, but_not_over: 59850, rate: 0.12 }
+        - { over: 59850, but_not_over: 95350, rate: 0.22 }
+        - { over: 95350, but_not_over: 182100, rate: 0.24 }
+        - { over: 182100, but_not_over: 231250, rate: 0.32 }
+        - { over: 231250, but_not_over: 578100, rate: 0.35 }
+        - { over: 578100, but_not_over: null, rate: 0.37 }
+
+  # The published 2023 Tax Table — mandatory for the ORDINARY line 16
+  # computation when taxable income is below $100,000 (the booklet's last
+  # row is "99,950 / 100,000" followed by "$100,000 or over — use the Tax
+  # Computation Worksheet"). Scope caution, mirroring the booklet's own
+  # line 16 note ("See the instructions for line 16 to see if you must use
+  # the Tax Table below to figure your tax"): returns with qualified
+  # dividends or capital gains (Qualified Dividends and Capital Gain Tax
+  # Worksheet / Schedule D Tax Worksheet), Form 8615, or the Foreign Earned
+  # Income Tax Worksheet compute line 16 from their own worksheet even
+  # below $100,000 — those are OUT OF SCOPE for calc.tax_from_taxable_income;
+  # never apply the table to preferential-rate income.
+  #
+  # Row structure transcribed from the published table (pp. 3-14):
+  #   one row  [0, 5)            -> tax 0 for all statuses
+  #   rows     [5, 15), [15, 25) -> $10-wide bottom rows (tax 1 and 2)
+  #   rows     [25, 3000)        -> $25-wide rows
+  #   rows     [3000, 100000)    -> $50-wide rows
+  # The published tax for a row equals the rate schedule evaluated at the
+  # row MIDPOINT, rounded to the nearest whole dollar with 50 cents rounding
+  # UP ("half_up"). Verified against published rows including the rounding
+  # edges: row 3,000-3,050 = 303 (302.50 rounds up), row 50-75 = 6 (6.25
+  # rounds down to nearest), HoH row 60,000-60,050 = 6,907 (6,906.50 rounds
+  # up), MFJ row 95,000-95,050 = 11,521 (11,520.50 rounds up).
+  # Footnote on the "Married filing jointly" column: "* This column must
+  # also be used by a qualifying surviving spouse."
+  tax_table:
+    citation:
+      source: >-
+        2023 Tax Table, "1040 and 1040-SR TAX AND EARNED INCOME CREDIT
+        TABLES" (Cat. No. 24327A), from the 2023 Instructions for Form 1040,
+        pages 3-14
+      url: "https://www.irs.gov/pub/irs-prior/i1040tt--2023.pdf"
+    applies_below: 100000
+    rounding: half_up
+    row_bands:
+      - { at_least: 0, below: 5, row_width: 5 }
+      - { at_least: 5, below: 25, row_width: 10 }
+      - { at_least: 25, below: 3000, row_width: 25 }
+      - { at_least: 3000, below: 100000, row_width: 50 }
+
+  # At or above $100,000 the Tax Table does not apply; the published
+  # worksheet computes tax as (income x rate) - subtraction_amount, which is
+  # algebraically identical to the rate schedules above (the engine uses the
+  # rate schedules and shows bracket math). Worksheet subtraction amounts
+  # spot-checked: Single 24% row -$6,600.00; MFJ 22% row -$9,385.00;
+  # MFS 37% row -$35,043.00; HoH 35% row -$29,711.50.
+  tax_computation_worksheet:
+    citation:
+      source: >-
+        2023 Tax Computation Worksheet—Line 16 (Section A: Single,
+        B: Married filing jointly / Qualifying surviving spouse,
+        C: Married filing separately, D: Head of household), from the 2023
+        Instructions for Form 1040, page 15 of the Tax Table booklet
+      url: "https://www.irs.gov/pub/irs-prior/i1040tt--2023.pdf"
+    applies_at_or_above: 100000
+
+  # Rev. Proc. 2022-38, Section 3.15:
+  #   (1) base amounts under section 63(c)(2);
+  #   (3) "the additional standard deduction amount under section 63(f) for
+  #       the aged or the blind is $1,500. The additional standard deduction
+  #       amount is increased to $1,850 if the individual is also unmarried
+  #       and not a surviving spouse."
+  # One additional amount applies PER condition PER person (a married couple
+  # both 65+ where one is blind adds 3 x $1,500).
+  standard_deduction:
+    citation:
+      source: "Rev. Proc. 2022-38, Section 3.15 (Standard Deduction)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-22-38.pdf"
+    amounts:
+      single: 13850
+      married_filing_jointly: 27700
+      married_filing_separately: 13850
+      head_of_household: 20800
+    additional_aged_or_blind:
+      married: 1500
+      unmarried: 1850
+
+  # Schedule SE (Form 1040) 2023, Part I:
+  #   line 4a: "multiply line 3 by 92.35% (0.9235)"
+  #   line 4c: "If less than $400, stop; you don't owe self-employment tax."
+  #   line 7:  "Maximum amount of combined wages and self-employment
+  #             earnings subject to social security tax ... for 2023 ...
+  #             160,200"
+  #   line 10: "Multiply the smaller of line 6 or line 9 by 12.4% (0.124)"
+  #   line 11: "Multiply line 6 by 2.9% (0.029)"
+  #   line 13: "Multiply line 12 by 50% (0.50)" (deduction for one-half)
+  se_tax:
+    citation:
+      source: "Schedule SE (Form 1040) 2023, Part I, lines 4a-13"
+      url: "https://www.irs.gov/pub/irs-prior/f1040sse--2023.pdf"
+    net_earnings_factor: 0.9235
+    ss_rate: 0.124
+    medicare_rate: 0.029
+    ss_wage_base: 160200
+    minimum_net_earnings: 400

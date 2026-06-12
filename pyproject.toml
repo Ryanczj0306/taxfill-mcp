@@ -13,6 +13,7 @@ members = ["packages/core", "packages/mcp-server"]
 [dependency-groups]
 dev = [
     "pytest>=8.0",
+    "reportlab>=4.0",  # test-only: generates synthetic AcroForm PDF fixtures (real IRS PDFs are never vendored)
 ]
 
 [tool.pytest.ini_options]
