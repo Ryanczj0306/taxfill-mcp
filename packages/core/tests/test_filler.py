@@ -435,6 +435,147 @@ def test_fill_form_hierarchical_wrong_on_state_still_lists_pdf_states(tmp_path: 
         fill_form(bad_pack, {"box": "yes"}, blank, tmp_path / "out.pdf")
 
 
+# --- radio groups (ONE /Btn field, kid widgets with per-option on-states) -----
+
+
+RADIO_FIELD = "Page1[0].c1_3[0]"
+RADIO_QUALIFIED = f"{ROOT}.{RADIO_FIELD}"
+
+RADIO_PACK = mini_pack(
+    [
+        {"line": "filing_status.single", "field": RADIO_FIELD, "type": "checkbox", "on_state": "/1", "group": "filing_status"},
+        {"line": "filing_status.mfj", "field": RADIO_FIELD, "type": "checkbox", "on_state": "/2", "group": "filing_status"},
+        {"line": "filing_status.hoh", "field": RADIO_FIELD, "type": "checkbox", "on_state": "/3", "group": "filing_status"},
+    ]
+)
+
+
+def radio_blank(tmp_path: Path, *, hierarchical: bool = False) -> Path:
+    """A blank with one 3-option radio group (the real IRS filing-status shape)."""
+    return make_acroform_pdf(
+        tmp_path / f"radio_blank_{hierarchical}.pdf",
+        [
+            {"name": RADIO_QUALIFIED, "kind": "radio", "on_value": state, "hierarchical": hierarchical}
+            for state in ("/1", "/2", "/3")
+        ],
+    )
+
+
+def radio_kid_states(pdf_path: Path) -> dict[str, str]:
+    """Map each kid widget's on-state (from /AP /N) to its current /AS."""
+    states: dict[str, str] = {}
+    for page in PdfReader(pdf_path).pages:
+        for ref in page.get("/Annots", []):
+            annot = ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            normal = annot["/AP"].get_object()["/N"].get_object()
+            on_state = next(str(k) for k in normal.keys() if str(k) != "/Off")
+            states[on_state] = str(annot.get("/AS"))
+    return states
+
+
+@pytest.mark.parametrize("hierarchical", [False, True], ids=["flat-parent", "hierarchical"])
+def test_radio_selection_sets_v_on_field_and_as_on_the_right_kid(tmp_path: Path, hierarchical: bool):
+    blank = radio_blank(tmp_path, hierarchical=hierarchical)
+    out = tmp_path / "filled.pdf"
+    result = fill_form(RADIO_PACK, {"filing_status.mfj": True}, blank, out)
+
+    assert result.written == {RADIO_QUALIFIED: "/2"}
+    reader = PdfReader(out)
+    assert reader.get_fields()[RADIO_QUALIFIED].value == "/2"  # /V on the shared field
+    # /AS lands ONLY on the kid whose /AP /N defines /2; siblings are /Off.
+    assert radio_kid_states(out) == {"/1": "/Off", "/2": "/2", "/3": "/Off"}
+    # /V never lands on a /T-less kid widget.
+    for page in reader.pages:
+        for ref in page.get("/Annots", []):
+            annot = ref.get_object()
+            if annot.get("/Subtype") == "/Widget" and annot.get("/T") is None:
+                assert "/V" not in annot
+
+
+@pytest.mark.parametrize("hierarchical", [False, True], ids=["flat-parent", "hierarchical"])
+def test_radio_switching_turns_the_previous_kid_off(tmp_path: Path, hierarchical: bool):
+    blank = radio_blank(tmp_path, hierarchical=hierarchical)
+    first = tmp_path / "first.pdf"
+    fill_form(RADIO_PACK, {"filing_status.single": "yes"}, blank, first)
+    assert radio_kid_states(first) == {"/1": "/1", "/2": "/Off", "/3": "/Off"}
+
+    # Refill the already-selected PDF with a different option: the old kid
+    # must drop to /Off or the page would show TWO checked filing statuses.
+    second = tmp_path / "second.pdf"
+    fill_form(RADIO_PACK, {"filing_status.hoh": "yes"}, first, second)
+    assert PdfReader(second).get_fields()[RADIO_QUALIFIED].value == "/3"
+    assert radio_kid_states(second) == {"/1": "/Off", "/2": "/Off", "/3": "/3"}
+
+
+def test_radio_one_yes_plus_sibling_nos_is_allowed(tmp_path: Path):
+    # An agent answering the whole question (one yes, the rest no) must not
+    # trip the duplicate-field guard — the no answers just confirm /Off.
+    blank = radio_blank(tmp_path)
+    out = tmp_path / "filled.pdf"
+    result = fill_form(
+        RADIO_PACK,
+        {"filing_status.single": False, "filing_status.mfj": True, "filing_status.hoh": "no"},
+        blank,
+        out,
+    )
+    assert result.written == {RADIO_QUALIFIED: "/2"}
+    assert radio_kid_states(out) == {"/1": "/Off", "/2": "/2", "/3": "/Off"}
+
+
+def test_radio_all_no_turns_the_group_off(tmp_path: Path):
+    blank = radio_blank(tmp_path)
+    selected = tmp_path / "selected.pdf"
+    fill_form(RADIO_PACK, {"filing_status.single": True}, blank, selected)
+    cleared = tmp_path / "cleared.pdf"
+    result = fill_form(RADIO_PACK, {"filing_status.single": False}, selected, cleared)
+    assert result.written == {RADIO_QUALIFIED: "/Off"}
+    assert PdfReader(cleared).get_fields()[RADIO_QUALIFIED].value == "/Off"
+    assert radio_kid_states(cleared) == {"/1": "/Off", "/2": "/Off", "/3": "/Off"}
+
+
+def test_radio_two_yes_answers_are_rejected_prescriptively(tmp_path: Path):
+    blank = radio_blank(tmp_path)
+    with pytest.raises(ValueError) as exc:
+        fill_form(
+            RADIO_PACK,
+            {"filing_status.single": True, "filing_status.mfj": True},
+            blank,
+            tmp_path / "out.pdf",
+        )
+    message = str(exc.value)
+    assert "'filing_status.single'" in message and "'filing_status.mfj'" in message
+    assert "exactly one" in message
+
+
+def test_radio_wrong_on_state_lists_all_kid_states(tmp_path: Path):
+    blank = radio_blank(tmp_path)
+    bad_pack = mini_pack(
+        [{"line": "fs.bogus", "field": RADIO_FIELD, "type": "checkbox", "on_state": "/9"}]
+    )
+    with pytest.raises(ValueError) as exc:
+        fill_form(bad_pack, {"fs.bogus": "yes"}, blank, tmp_path / "out.pdf")
+    message = str(exc.value)
+    assert "'/9'" in message and "on_state" in message
+    for state in ("/1", "/2", "/3", "/Off"):  # the union across all kids
+        assert state in message
+
+
+def test_radio_and_text_line_on_same_field_still_rejected(tmp_path: Path):
+    # The radio relaxation must not weaken the duplicate-target guard for
+    # mixed checkbox/text collisions on one field.
+    blank = radio_blank(tmp_path)
+    pack = mini_pack(
+        [
+            {"line": "fs.single", "field": RADIO_FIELD, "type": "checkbox", "on_state": "/1"},
+            {"line": "oops", "field": RADIO_FIELD, "type": "text"},
+        ]
+    )
+    with pytest.raises(ValueError, match=r"both map to AcroForm field"):
+        fill_form(pack, {"fs.single": True, "oops": "x"}, blank, tmp_path / "out.pdf")
+
+
 # --- misc behavior ------------------------------------------------------------
 
 

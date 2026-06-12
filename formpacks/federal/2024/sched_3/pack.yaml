@@ -1,0 +1,157 @@
+# Schedule 3 (Form 1040) — Additional Credits and Payments — 2024 revision.
+# Single page: the 2024 revision fits Part I (Nonrefundable Credits, lines
+# 1-8) AND Part II (Other Payments and Refundable Credits, lines 9-15) on
+# page 1 (the 2023 revision used two pages). Attached to Form 1040 /
+# 1040-SR / 1040-NR; no signature block, mailed in the parent return's
+# envelope (formpacks/CONVENTIONS.md).
+#
+# Excluded fields (1 of 39 terminal AcroForm fields):
+#   - Page1[0].f1_13[0] — line 6e "Reserved for future use": its amount box
+#     is ReadOnly (/Ff bit 0 set, Ff=8388609) in the official blank, so it is
+#     intentionally unfillable; sum(6a..6z) treats it as blank-as-zero.
+#
+# Field-name quirk (verbatim from the official blank): the 6z write-in
+# continuation is named "f2_23" even though it sits on page 1.
+form: "Schedule 3 (Form 1040)"
+jurisdiction: federal
+tax_year: 2024
+source_url: https://www.irs.gov/pub/irs-prior/f1040s3--2024.pdf
+pdf_sha256: "d9941e4ec1d581ac2e42cabebf8e0416dbc3c703e2142f62de17c838308ddcc8"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- header ----
+  - line: name
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: identifying_number          # "Your social security number" — plain
+    field: "Page1[0].f1_02[0]"        # text box (not a comb field); the widget
+    type: text                        # carries /MaxLen=11, so a dashed SSN
+    maxlen: 11                        # ("000-00-0000") fits exactly
+  # ---- Part I — Nonrefundable Credits ----
+  - line: "1"                         # Foreign tax credit (Form 1116)
+    field: "Page1[0].f1_03[0]"
+    type: money
+  - line: "2"                         # Child and dependent care credit (Form 2441, line 11)
+    field: "Page1[0].f1_04[0]"
+    type: money
+  - line: "3"                         # Education credits (Form 8863, line 19)
+    field: "Page1[0].f1_05[0]"
+    type: money
+  - line: "4"                         # Retirement savings contributions credit (Form 8880)
+    field: "Page1[0].f1_06[0]"
+    type: money
+  - line: 5a                          # Residential clean energy credit (Form 5695, line 15)
+    field: "Page1[0].f1_07[0]"
+    type: money
+  - line: 5b                          # Energy efficient home improvement credit (Form 5695, line 32)
+    field: "Page1[0].f1_08[0]"
+    type: money
+  - line: 6a                          # General business credit (Form 3800)
+    field: "Page1[0].Line6a_ReadOrder[0].f1_09[0]"
+    type: money
+  - line: 6b                          # Credit for prior year minimum tax (Form 8801)
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: 6c                          # Adoption credit (Form 8839)
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: 6d                          # Credit for the elderly or disabled (Schedule R)
+    field: "Page1[0].f1_12[0]"
+    type: money
+  # (6e reserved for future use — excluded, see header comment)
+  - line: 6f                          # Clean vehicle credit (Form 8936)
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: 6g                          # Mortgage interest credit (Form 8396)
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: 6h                          # DC first-time homebuyer credit (Form 8859)
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: 6i                          # Qualified electric vehicle credit (Form 8834)
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: 6j                          # Alternative fuel vehicle refueling property credit (Form 8911)
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: 6k                          # Credit to holders of tax credit bonds (Form 8912)
+    field: "Page1[0].f1_19[0]"
+    type: money
+  - line: 6l                          # Amount on Form 8978, line 14
+    field: "Page1[0].f1_20[0]"
+    type: money
+  - line: 6m                          # Credit for previously owned clean vehicles (Form 8936)
+    field: "Page1[0].f1_21[0]"
+    type: money
+  - line: 6z.type                     # "List type and amount:" — short write-in, row 1
+    field: "Page1[0].Line6z_ReadOrder[0].f1_22[0]"
+    type: text
+  - line: 6z.type_continued           # write-in continuation, full-width row 2
+    field: "Page1[0].Line6z_ReadOrder[0].f2_23[0]"
+    type: text
+  - line: 6z                          # other nonrefundable credits — amount
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: "7"                         # total other nonrefundable credits (6a-6z)
+    field: "Page1[0].f1_25[0]"
+    type: money
+  - line: "8"                         # total -> Form 1040/1040-SR/1040-NR, line 20
+    field: "Page1[0].f1_26[0]"
+    type: money
+  # ---- Part II — Other Payments and Refundable Credits ----
+  - line: "9"                         # Net premium tax credit (Form 8962)
+    field: "Page1[0].f1_27[0]"
+    type: money
+  - line: "10"                        # Amount paid with extension request
+    field: "Page1[0].f1_28[0]"
+    type: money
+  - line: "11"                        # Excess social security and tier 1 RRTA tax withheld
+    field: "Page1[0].f1_29[0]"
+    type: money
+  - line: "12"                        # Credit for federal tax on fuels (Form 4136)
+    field: "Page1[0].f1_30[0]"
+    type: money
+  - line: 13a                         # Form 2439
+    field: "Page1[0].Line13_ReadOrder[0].f1_31[0]"
+    type: money
+  - line: 13b                         # Section 1341 credit for repayment of amounts included in income from earlier years
+    field: "Page1[0].f1_32[0]"
+    type: money
+  - line: 13c                         # Net elective payment election amount (Form 3800, Part III, line 6, column (j))
+    field: "Page1[0].f1_33[0]"
+    type: money
+  - line: 13d                         # Deferred amount of net 965 tax liability
+    field: "Page1[0].f1_34[0]"
+    type: money
+  - line: 13z.type                    # "Other refundable credits (see instructions):" — short write-in, row 1
+    field: "Page1[0].Line13z_ReadOrder[0].f1_35[0]"
+    type: text
+  - line: 13z.type_continued          # write-in continuation, full-width row 2
+    field: "Page1[0].Line13z_ReadOrder[0].f1_36[0]"
+    type: text
+  - line: 13z                         # other refundable credits — amount
+    field: "Page1[0].f1_37[0]"
+    type: money
+  - line: "14"                        # total other payments/refundable credits (13a-13z)
+    field: "Page1[0].f1_38[0]"
+    type: money
+  - line: "15"                        # total -> Form 1040/1040-SR/1040-NR, line 31
+    field: "Page1[0].f1_39[0]"
+    type: money
+relations:
+  # Form-face math only. Unmapped letters inside the printed a..z ranges
+  # (6e reserved + the unprinted 6n-6y / 13e-13y) evaluate blank-as-zero.
+  - "7 == sum(6a..6z)"                          # "Add lines 6a through 6z"
+  - "8 == 1 + 2 + 3 + 4 + 5a + 5b + 7"          # "Add lines 1 through 4, 5a, 5b, and 7"
+  - "14 == sum(13a..13z)"                       # "Add lines 13a through 13z"
+  - "15 == 9 + 10 + 11 + 12 + 14"               # "Add lines 9 through 12 and 14"
+cross_form:
+  # Printed: "Enter here and on Form 1040, 1040-SR, or 1040-NR, line 20/31"
+  # — a filing contains either f1040 or f1040nr; the matching rule applies.
+  - "8 == f1040.20"
+  - "8 == f1040nr.20"
+  - "15 == f1040.31"
+  - "15 == f1040nr.31"
+identity_fields: [name, identifying_number]
+signature: null                       # schedules carry no signature block of their own
+mailing: null                         # mailed inside the parent return's envelope

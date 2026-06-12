@@ -1,0 +1,181 @@
+# Schedule 2 (Form 1040) — Additional Taxes — tax year 2023.
+# Revision verified by rendering page 1: title "Additional Taxes",
+# printed year 2023 ("Schedule 2 (Form 1040) 2023" footer on both pages).
+#
+# Excluded widgets (1 of 44 fillable):
+#   - form1[0].Page2[0].f2_23[0] — printed line 19 "Reserved for future use":
+#     the row is greyed out on the form face and the field carries the
+#     ReadOnly flag (/Ff bit 1) in the blank PDF; never user-filled.
+#
+# Cross-form note: line 3 carries to Form 1040/1040-SR/1040-NR line 17 and
+# line 21 to Form 1040/1040-SR line 23 (Form 1040-NR line 23b). Those rules
+# live in the PARENT packs (f1040 / f1040nr): a Schedule 2 attaches to
+# EITHER parent, and a cross_form ref to a form_key absent from the filing
+# is a verify_filing FAIL — the schedule cannot name one parent for both.
+
+form: "Schedule 2 (Form 1040)"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040s2--2023.pdf
+pdf_sha256: "ccfe610c15371e722c3743943e0f20e278114c3a040e2e00aceb68ea3c6eab33"
+acroform_root: "form1[0]"
+
+fields:
+  # ---- header --------------------------------------------------------------
+  - line: name
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: identifying_number
+    field: "Page1[0].f1_02[0]"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only   # not a comb on this form, but digits-only keeps cross-form identity values consistent
+
+  # ---- Part I — Tax ---------------------------------------------------------
+  - line: "1"            # Alternative minimum tax. Attach Form 6251
+    field: "Page1[0].f1_03[0]"
+    type: money
+  - line: "2"            # Excess advance premium tax credit repayment. Attach Form 8962
+    field: "Page1[0].f1_04[0]"
+    type: money
+  - line: "3"            # Add lines 1 and 2 -> Form 1040/1040-SR/1040-NR line 17
+    field: "Page1[0].f1_05[0]"
+    type: money
+
+  # ---- Part II — Other Taxes (page 1) ---------------------------------------
+  - line: "4"            # Self-employment tax. Attach Schedule SE
+    field: "Page1[0].f1_06[0]"
+    type: money
+  - line: "5"            # Social security/Medicare tax on unreported tips. Form 4137
+    field: "Page1[0].f1_07[0]"
+    type: money
+  - line: "6"            # Uncollected social security/Medicare tax on wages. Form 8919
+    field: "Page1[0].f1_08[0]"
+    type: money
+  - line: "7"            # Total additional social security and Medicare tax. Add lines 5 and 6
+    field: "Page1[0].f1_09[0]"
+    type: money
+  - line: "8.not_required"   # "If not required, check here" (Form 5329 not required)
+    field: "Page1[0].Line8_ReadOrder[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line8_not_required   # optional single checkbox, not a required yes/no question
+  - line: "8"            # Additional tax on IRAs or other tax-favored accounts. Form 5329
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "9"            # Household employment taxes. Attach Schedule H
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: "10"           # Repayment of first-time homebuyer credit. Form 5405
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "11"           # Additional Medicare Tax. Attach Form 8959
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "12"           # Net investment income tax. Attach Form 8960
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "13"           # Uncollected social security/Medicare or RRTA tax from Form W-2 box 12
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "14"           # Interest on tax due on installment income (residential lots/timeshares)
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "15"           # Interest on deferred tax on gain (installment sales > $150,000)
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "16"           # Recapture of low-income housing credit. Attach Form 8611
+    field: "Page1[0].f1_18[0]"
+    type: money
+
+  # ---- Part II — Other Taxes (page 2, line 17 block) -------------------------
+  - line: "17a.type"     # "Recapture of other credits. List type, form number, and amount"
+    field: "Page2[0].Line17a_ReadOrder[0].f2_01[0]"
+    type: text
+  - line: "17a"
+    field: "Page2[0].f2_02[0]"
+    type: money
+  - line: "17b"          # Recapture of federal mortgage subsidy
+    field: "Page2[0].f2_03[0]"
+    type: money
+  - line: "17c"          # Additional tax on HSA distributions. Form 8889
+    field: "Page2[0].f2_04[0]"
+    type: money
+  - line: "17d"          # Additional tax on HSA (not an eligible individual). Form 8889
+    field: "Page2[0].f2_05[0]"
+    type: money
+  - line: "17e"          # Additional tax on Archer MSA distributions. Form 8853
+    field: "Page2[0].f2_06[0]"
+    type: money
+  - line: "17f"          # Additional tax on Medicare Advantage MSA distributions. Form 8853
+    field: "Page2[0].f2_07[0]"
+    type: money
+  - line: "17g"          # Recapture of charitable contribution deduction (fractional interest)
+    field: "Page2[0].f2_08[0]"
+    type: money
+  - line: "17h"          # Income from nonqualified deferred comp plan failing section 409A
+    field: "Page2[0].f2_09[0]"
+    type: money
+  - line: "17i"          # Compensation from nonqualified deferred comp plan (section 457A)
+    field: "Page2[0].f2_10[0]"
+    type: money
+  - line: "17j"          # Section 72(m)(5) excess benefits tax
+    field: "Page2[0].f2_11[0]"
+    type: money
+  - line: "17k"          # Golden parachute payments
+    field: "Page2[0].f2_12[0]"
+    type: money
+  - line: "17l"          # Tax on accumulation distribution of trusts
+    field: "Page2[0].f2_13[0]"
+    type: money
+  - line: "17m"          # Excise tax on insider stock compensation (expatriated corporation)
+    field: "Page2[0].f2_14[0]"
+    type: money
+  - line: "17n"          # Look-back interest, section 167(g)/460(b), Form 8697 or 8866
+    field: "Page2[0].f2_15[0]"
+    type: money
+  - line: "17o"          # Tax on non-effectively connected income (prior-year NRA), Form 1040-NR
+    field: "Page2[0].f2_16[0]"
+    type: money
+  - line: "17p"          # Interest from Form 8621 line 16f (section 1291 fund)
+    field: "Page2[0].f2_17[0]"
+    type: money
+  - line: "17q"          # Interest from Form 8621 line 24
+    field: "Page2[0].f2_18[0]"
+    type: money
+  - line: "17z.type"     # "Any other taxes. List type and amount" (first write-in line)
+    field: "Page2[0].Line17z_ReadOrder[0].f2_19[0]"
+    type: text
+  - line: "17z.type_continued"   # second write-in line of the 17z description
+    field: "Page2[0].Line17z_ReadOrder[0].f2_20[0]"
+    type: text
+  - line: "17z"
+    field: "Page2[0].f2_21[0]"
+    type: money
+  - line: "18"           # Total additional taxes. Add lines 17a through 17z
+    field: "Page2[0].f2_22[0]"
+    type: money
+  # line 19 "Reserved for future use" (f2_23) intentionally unmapped — see header comment
+  - line: "20"           # Section 965 net tax liability installment from Form 965-A
+    field: "Page2[0].f2_24[0]"
+    type: money
+  - line: "21"           # Add lines 4, 7 through 16, and 18 — total other taxes
+    field: "Page2[0].f2_25[0]"
+    type: money
+
+# Form-face math only (printed "Add lines ..." instructions).
+relations:
+  - "3 == 1 + 2"
+  - "7 == 5 + 6"
+  - "18 == sum(17a..17z)"          # letters with no printed line (17r-17y) are blank-as-zero
+  - "21 == 4 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 18"
+
+# Parent packs own the carry-over rules (see header comment).
+cross_form: []
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only schedule: no signature block of its own; mailed inside the
+# parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

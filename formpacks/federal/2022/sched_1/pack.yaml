@@ -1,0 +1,274 @@
+# Schedule 1 (Form 1040) 2022 — Additional Income and Adjustments to Income
+#
+# Attachment to Form 1040 / 1040-SR / 1040-NR (Sequence No. 01). Two parts:
+# Part I Additional Income (page 1, lines 1-10), Part II Adjustments to
+# Income (page 2, lines 11-26). Line 10 feeds 1040/1040-NR line 8 and line 26
+# feeds 1040 line 10 — those cross_form rules live on the PARENT packs; this
+# pack carries only its own form-face sum relations.
+#
+# Verified against the downloaded blank: page 1 prints "2022" and the title
+# "Additional Income and Adjustments to Income" (read from the rendered PNG).
+#
+# Field map notes (introspected from the blank with pypdf):
+# - Every fillable widget is mapped — excluded blocks: NONE (Schedule 1 has
+#   no paid-preparer, signature, or other agent-excluded block).
+# - The form has zero checkbox/radio fields; all 67 widgets are /Tx text.
+# - Lines 8a, 8d, and 8s print parentheses around the entry box: amounts are
+#   entered as losses/exclusions (negative in the line-9 combine math).
+#   The relations below assume values carry their sign.
+# - Line 22 is printed "Reserved for future use" but its widget (f2_14) is
+#   fillable; it is mapped for completeness. Agents should leave it blank —
+#   the printed line-26 instruction ("add lines 11 through 23") still
+#   includes it, blank counting as zero.
+# - 8z / 24z each have TWO description widgets ("List type and amount:"
+#   trailing the label plus a full-width second row) mapped as
+#   <line>.type / <line>.type_2, and one amount widget mapped as <line>.
+#   Their /DA is FIXED 8pt Helvetica-Bold (no auto-size), so overlong text
+#   clips on pixels; maxlen below budgets 5.0 pt/char over the widget's
+#   visible width (rect minus 2pt padding each side), verified by rendering.
+# - Header SSN box (f1_02) is a plain text field with MaxLen 11 (not comb);
+#   format ssn_digits_only still applies so dashed input never overflows.
+#   Line 19b (alimony recipient's SSN) IS a 9-cell comb field.
+
+form: "1040 Schedule 1"
+jurisdiction: federal
+tax_year: 2022
+source_url: https://www.irs.gov/pub/irs-prior/f1040s1--2022.pdf
+pdf_sha256: "82887534af818328b48c10569402ba177b87729edda2cd59151bc854c7e40001"
+acroform_root: "form1[0]"
+
+fields:
+  # ---- header (page 1) ----
+  - line: name
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: identifying_number
+    field: "Page1[0].f1_02[0]"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only
+
+  # ---- Part I — Additional Income (page 1) ----
+  - line: "1"
+    field: "Page1[0].f1_03[0]"
+    type: money
+  - line: "2a"
+    field: "Page1[0].f1_04[0]"
+    type: money
+  - line: "2b" # date of original divorce or separation agreement (MM/DD/YYYY)
+    field: "Page1[0].f1_05[0]"
+    type: text
+  - line: "3"
+    field: "Page1[0].f1_06[0]"
+    type: money
+  - line: "4"
+    field: "Page1[0].f1_07[0]"
+    type: money
+  - line: "5"
+    field: "Page1[0].f1_08[0]"
+    type: money
+  - line: "6"
+    field: "Page1[0].f1_09[0]"
+    type: money
+  - line: "7"
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "8a" # net operating loss — printed in parentheses, enter as negative
+    field: "Page1[0].Line8a_ReadOrder[0].f1_11[0]"
+    type: money
+  - line: "8b"
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "8c"
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "8d" # foreign earned income exclusion (Form 2555) — parenthesized, negative
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "8e"
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "8f"
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "8g"
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "8h"
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: "8i"
+    field: "Page1[0].f1_19[0]"
+    type: money
+  - line: "8j"
+    field: "Page1[0].f1_20[0]"
+    type: money
+  - line: "8k"
+    field: "Page1[0].f1_21[0]"
+    type: money
+  - line: "8l"
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: "8m"
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "8n"
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: "8o"
+    field: "Page1[0].f1_25[0]"
+    type: money
+  - line: "8p"
+    field: "Page1[0].f1_26[0]"
+    type: money
+  - line: "8q"
+    field: "Page1[0].f1_27[0]"
+    type: money
+  - line: "8r"
+    field: "Page1[0].f1_28[0]"
+    type: money
+  - line: "8s" # nontaxable Medicaid waiver payments — parenthesized, negative
+    field: "Page1[0].f1_29[0]"
+    type: money
+  - line: "8t"
+    field: "Page1[0].f1_30[0]"
+    type: money
+  - line: "8u"
+    field: "Page1[0].f1_31[0]"
+    type: money
+  - line: "8z.type" # "Other income. List type and amount:" — first description row
+    field: "Page1[0].Line8z_ReadOrder[0].f1_32[0]"
+    type: text
+    maxlen: 29 # 146.8pt visible at fixed 8pt bold — longer text clips on pixels
+  - line: "8z.type_2" # second (full-width) description row
+    field: "Page1[0].Line8z_ReadOrder[0].f1_33[0]"
+    type: text
+    maxlen: 62 # 312.8pt visible at fixed 8pt bold
+  - line: "8z"
+    field: "Page1[0].f1_34[0]"
+    type: money
+  - line: "9"
+    field: "Page1[0].f1_35[0]"
+    type: money
+  - line: "10"
+    field: "Page1[0].f1_36[0]"
+    type: money
+
+  # ---- Part II — Adjustments to Income (page 2) ----
+  - line: "11"
+    field: "Page2[0].f2_01[0]"
+    type: money
+  - line: "12"
+    field: "Page2[0].f2_02[0]"
+    type: money
+  - line: "13"
+    field: "Page2[0].f2_03[0]"
+    type: money
+  - line: "14"
+    field: "Page2[0].f2_04[0]"
+    type: money
+  - line: "15"
+    field: "Page2[0].f2_05[0]"
+    type: money
+  - line: "16"
+    field: "Page2[0].f2_06[0]"
+    type: money
+  - line: "17"
+    field: "Page2[0].f2_07[0]"
+    type: money
+  - line: "18"
+    field: "Page2[0].f2_08[0]"
+    type: money
+  - line: "19a"
+    field: "Page2[0].f2_09[0]"
+    type: money
+  - line: "19b" # alimony recipient's SSN — 9-cell comb
+    field: "Page2[0].Line19b_CombField[0].f2_10[0]"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: "19c" # date of original divorce or separation agreement (MM/DD/YYYY)
+    field: "Page2[0].f2_11[0]"
+    type: text
+  - line: "20"
+    field: "Page2[0].f2_12[0]"
+    type: money
+  - line: "21"
+    field: "Page2[0].f2_13[0]"
+    type: money
+  - line: "22" # printed "Reserved for future use" — leave blank (see header note)
+    field: "Page2[0].f2_14[0]"
+    type: money
+  - line: "23"
+    field: "Page2[0].f2_15[0]"
+    type: money
+  - line: "24a"
+    field: "Page2[0].Line24a_ReadOrder[0].f2_16[0]"
+    type: money
+  - line: "24b"
+    field: "Page2[0].f2_17[0]"
+    type: money
+  - line: "24c"
+    field: "Page2[0].f2_18[0]"
+    type: money
+  - line: "24d"
+    field: "Page2[0].f2_19[0]"
+    type: money
+  - line: "24e"
+    field: "Page2[0].f2_20[0]"
+    type: money
+  - line: "24f"
+    field: "Page2[0].f2_21[0]"
+    type: money
+  - line: "24g"
+    field: "Page2[0].f2_22[0]"
+    type: money
+  - line: "24h"
+    field: "Page2[0].f2_23[0]"
+    type: money
+  - line: "24i"
+    field: "Page2[0].f2_24[0]"
+    type: money
+  - line: "24j"
+    field: "Page2[0].f2_25[0]"
+    type: money
+  - line: "24k"
+    field: "Page2[0].f2_26[0]"
+    type: money
+  - line: "24z.type" # "Other adjustments. List type and amount:" — first description row
+    field: "Page2[0].Line24z_ReadOrder[0].f2_27[0]"
+    type: text
+    maxlen: 24 # 124.8pt visible at fixed 8pt bold — a 26-char test value visibly clipped
+  - line: "24z.type_2" # second (full-width) description row
+    field: "Page2[0].Line24z_ReadOrder[0].f2_28[0]"
+    type: text
+    maxlen: 62 # 312.8pt visible at fixed 8pt bold
+  - line: "24z"
+    field: "Page2[0].f2_29[0]"
+    type: money
+  - line: "25"
+    field: "Page2[0].f2_30[0]"
+    type: money
+  - line: "26"
+    field: "Page2[0].f2_31[0]"
+    type: money
+
+# Form-face math only (printed combine/add instructions). sum() ranges
+# expand a..z; letters with no mapped line (8v-8y, 24l-24y) count as blank=0.
+relations:
+  - "9 == sum(8a..8z)"                                        # "Add lines 8a through 8z"
+  - "10 == 1 + 2a + 3 + 4 + 5 + 6 + 7 + 9"                    # "Combine lines 1 through 7 and 9"
+  - "25 == sum(24a..24z)"                                     # "Add lines 24a through 24z"
+  - "26 == 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19a + 20 + 21 + 22 + 23 + 25" # "Add lines 11 through 23 and 25"
+
+# Line 10 -> f1040/f1040nr line 8 and line 26 -> f1040 line 10 live on the
+# parent packs per the form notes and CONVENTIONS.md.
+cross_form: []
+
+identity_fields: [name, identifying_number]
+
+# Schedules carry no signature block of their own and are mailed inside the
+# parent return's envelope (CONVENTIONS.md).
+signature: null
+mailing: null
