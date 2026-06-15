@@ -43,6 +43,7 @@ from taxfill_core.calc import (
     tax_from_taxable_income,
 )
 from taxfill_core.filler import FillResult, fill_form
+from taxfill_core.intake import IntakeChecklist, IntakeQuestion, RequiredDocument, intake_checklist
 from taxfill_core.knowledge import Citation, KnowledgePack, load_knowledge
 from taxfill_core.render import RenderedPage, render_pdf
 from taxfill_core.residency import (
@@ -81,11 +82,14 @@ __all__ = [
     "FilingItem",
     "FillResult",
     "FormPack",
+    "IntakeChecklist",
+    "IntakeQuestion",
     "KnowledgePack",
     "PackField",
     "Profile",
     "Provenance",
     "RenderedPage",
+    "RequiredDocument",
     "SPTResult",
     "SeTaxResult",
     "StandardDeductionResult",
@@ -101,6 +105,7 @@ __all__ = [
     "exempt_individual_years",
     "fill_form",
     "independent_recompute",
+    "intake_checklist",
     "irs_round",
     "is_valid_routing_number",
     "load_knowledge",
