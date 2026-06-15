@@ -19,6 +19,7 @@ from taxfill_core.schemas.profile import (
     Provenance,
     ResidencyFacts,
     ResidencePeriod,
+    Spouse,
     StateFootprintYear,
     VisaPeriod,
     WorkPeriod,
@@ -69,6 +70,8 @@ def synthetic_profile() -> Profile:
         ),
         household=Household(
             marital_status=Answer[str](value="single", provenance=Provenance.user_stated()),
+            # Single taxpayer with a dependent child files as head of household.
+            filing_status=Answer[str](value="head_of_household", provenance=Provenance.user_stated()),
             dependents=[
                 Dependent(name="Test Child", relationship="child", dob=date(2020, 5, 5), provenance=Provenance.user_stated()),
             ],
@@ -187,3 +190,58 @@ def test_banking_error_message_does_not_echo_the_routing_number():
 def test_unknown_profile_section_rejected():
     with pytest.raises(ValidationError):
         Profile.model_validate({"crypto_wallet": {}})
+
+
+def test_household_filing_status_roundtrips():
+    restored = Profile.model_validate_json(synthetic_profile().model_dump_json())
+    assert restored.household.filing_status.value == "head_of_household"
+    assert restored.household.filing_status.provenance.kind == "user_stated"
+
+
+def test_invalid_filing_status_rejected():
+    # 'married' is NOT a filing status — the couple elects MFJ or MFS.
+    with pytest.raises(ValidationError):
+        Household(filing_status=Answer[str](value="married", provenance=Provenance.user_stated()))
+
+
+def test_income_document_owner_defaults_to_taxpayer_and_accepts_spouse():
+    doc = IncomeDocument(kind="W-2", status="have", provenance=Provenance.user_stated())
+    assert doc.owner == "taxpayer"  # default: the taxpayer's own income
+    spouse_doc = IncomeDocument(kind="W-2", status="have", owner="spouse", provenance=Provenance.user_stated())
+    assert spouse_doc.owner == "spouse"
+    with pytest.raises(ValidationError):
+        IncomeDocument(kind="W-2", status="have", owner="child", provenance=Provenance.user_stated())
+
+
+def test_joint_return_carries_spouse_as_second_taxpayer():
+    # MFJ: two taxpayers, the spouse with their own identity + NRA visa timeline,
+    # and a spouse-owned income document.
+    profile = Profile(
+        household=Household(
+            marital_status=Answer[str](value="married", provenance=Provenance.user_stated()),
+            filing_status=Answer[str](value="married_filing_jointly", provenance=Provenance.user_stated()),
+            spouse=Spouse(
+                name=Answer[str](value="Spouse Taxpayer", provenance=Provenance.user_stated()),
+                tax_id=Answer[str](value="000000001", provenance=Provenance.user_stated()),
+                immigration=Immigration(
+                    visa_timeline=[
+                        VisaPeriod(status="F-2", start=date(2021, 1, 1), end=None, provenance=Provenance.user_stated()),
+                    ],
+                ),
+            ),
+        ),
+        income_documents=[
+            IncomeDocument(kind="W-2", status="have", owner="taxpayer", provenance=Provenance.user_stated()),
+            IncomeDocument(kind="W-2", status="have", owner="spouse", provenance=Provenance.user_stated()),
+        ],
+    )
+    restored = Profile.model_validate_json(profile.model_dump_json())
+    assert restored.household.filing_status.value == "married_filing_jointly"
+    assert restored.household.spouse.name.value == "Spouse Taxpayer"
+    assert restored.household.spouse.immigration.visa_timeline[0].status == "F-2"
+    assert [d.owner for d in restored.income_documents] == ["taxpayer", "spouse"]
+
+
+def test_spouse_rejects_unknown_field():
+    with pytest.raises(ValidationError):
+        Spouse.model_validate({"middle_name": "x"})
