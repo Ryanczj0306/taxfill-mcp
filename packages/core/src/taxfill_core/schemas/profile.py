@@ -29,12 +29,15 @@ from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from taxfill_core.calc import is_valid_routing_number
+from taxfill_core.calc import FilingStatusInput, is_valid_routing_number
 
 T = TypeVar("T")
 
 ProvenanceKind = Literal["user_stated", "document", "computed"]
 DocumentStatus = Literal["have", "missing", "not_applicable"]
+# Whose income a document reports. On a joint return each W-2/1099 belongs to
+# the taxpayer or the spouse who earned it; the default is the taxpayer.
+DocumentOwner = Literal["taxpayer", "spouse"]
 
 
 class Provenance(BaseModel):
@@ -137,6 +140,15 @@ class Identity(BaseModel):
     name: Answer[str] | None = None
     tax_id: Answer[str] | None = Field(default=None, description="SSN or ITIN.")
     dob: Answer[date] | None = None
+    us_person: Answer[bool] | None = Field(
+        default=None,
+        description=(
+            "True if a U.S. citizen or lawful permanent resident (green-card holder) — always a "
+            "U.S. tax resident, so the immigration/visa timeline and Substantial Presence Test do "
+            "not apply and all filing statuses are available. False routes to the immigration "
+            "section and residency determination. None means not yet asked (intake gates on it)."
+        ),
+    )
     mailing_address: Answer[str] | None = Field(
         default=None,
         description=(
@@ -158,12 +170,51 @@ class Dependent(BaseModel):
     provenance: Provenance
 
 
-class Household(BaseModel):
-    """Filing-status facts and dependents."""
+class Spouse(BaseModel):
+    """The spouse as a full second taxpayer (married-filing-jointly or -separately).
+
+    A joint return is two people on one form: the spouse has their own identity
+    (name, SSN/ITIN, DOB), their own income documents (tagged ``owner='spouse'``
+    in ``income_documents``), and — when an NRA spouse is involved — their own
+    immigration and residency facts. Treating an NRA spouse as a U.S. resident to
+    file jointly is the §6013(g)/(h) election (worldwide income becomes taxable);
+    the election itself is a recorded position, not a profile field.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
-    marital_status: Answer[str] | None = None
+    name: Answer[str] | None = None
+    tax_id: Answer[str] | None = Field(default=None, description="Spouse's SSN or ITIN.")
+    dob: Answer[date] | None = None
+    immigration: Immigration | None = Field(
+        default=None, description="Spouse's visa timeline — drives the NRA-spouse §6013(g)/(h) decision."
+    )
+    residency_facts: ResidencyFacts | None = None
+
+
+class Household(BaseModel):
+    """Filing-status facts, the chosen filing status, the spouse, and dependents."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    marital_status: Answer[str] | None = Field(
+        default=None,
+        description="Whether the taxpayer was married on Dec 31 of the tax year — a FACT, not the filing status.",
+    )
+    filing_status: Answer[FilingStatusInput] | None = Field(
+        default=None,
+        description=(
+            "The CHOSEN federal filing status. 'Married' is not a status: a married couple "
+            "elects married_filing_jointly or married_filing_separately (a position with "
+            "dollar consequences, decided in the positions step). Nonresident-alien (1040-NR) "
+            "filers cannot use married_filing_jointly or head_of_household — the residency "
+            "result gates which statuses are offered."
+        ),
+    )
+    spouse: Spouse | None = Field(
+        default=None,
+        description="The spouse as a second taxpayer; present on a married_filing_jointly or _separately return.",
+    )
     dependents: list[Dependent] = Field(default_factory=list)
 
 
@@ -199,6 +250,10 @@ class IncomeDocument(BaseModel):
     kind: str = Field(description="Document kind, e.g. 'W-2', '1099-NEC', '1099-INT', '1098-T', 'K-1'.")
     status: DocumentStatus
     file: str | None = Field(default=None, description="Workspace-relative path once the document is collected.")
+    owner: DocumentOwner = Field(
+        default="taxpayer",
+        description="Whose income this document reports — on a joint return each document is tagged to the taxpayer or the spouse who earned it.",
+    )
     provenance: Provenance
 
 
