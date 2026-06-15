@@ -262,7 +262,7 @@ def test_pack_radio_options_share_one_group_and_distinct_states(pack_path: Path)
 @pytest.mark.network
 @pytest.mark.parametrize("pack_path", PACK_PATHS, ids=_pack_id)
 def test_pack_golden_roundtrip(pack_path: Path, tmp_path: Path):
-    """fetch -> fill every line -> verify -> render page 1, per pack."""
+    """fetch -> fill every line -> verify -> render EVERY page, per pack."""
     pack = load_pack(pack_path)
     try:
         blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
@@ -279,10 +279,16 @@ def test_pack_golden_roundtrip(pack_path: Path, tmp_path: Path):
     _assert_section_clean(report.clipping, "clipping scan")
     _assert_section_clean(report.checkboxes, "checkbox audit")
 
-    pages = render_pdf(filled, tmp_path / "png", pages=[1])
-    assert pages[0].path.is_file() and pages[0].path.stat().st_size > 1000, (
-        "page 1 rendered to an (almost) empty PNG — the blank may be wrong"
-    )
+    # Render EVERY page (not just page 1): a mis-placed field or clipped value
+    # on a later page (e.g. the f1040 page 2 totals, sched_c page 2 expenses)
+    # only shows up in a full-document render — the vision-review pass the dev
+    # plan (section 10) makes mandatory before "done" needs all pages on disk.
+    pages = render_pdf(filled, tmp_path / "png")
+    assert len(pages) >= 1, "render produced no pages"
+    for page in pages:
+        assert page.path.is_file() and page.path.stat().st_size > 1000, (
+            f"page {page.page} rendered to an (almost) empty PNG — the blank may be wrong"
+        )
 
 
 # ---------------------------------------------------------------------------
