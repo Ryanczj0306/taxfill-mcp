@@ -311,11 +311,140 @@ class TaxKnowledge(BaseModel):
         return self
 
 
+# ── M3 blocks: filing logistics & benefits, each cited (dev plan sections 3, 9) ──
+
+
+class FilingThresholds(BaseModel):
+    """Gross-income filing-requirement amounts by status (Pub 501 Chart A).
+
+    Sub-keys vary by status (``under_65`` / ``age_65_or_older`` for single & HoH;
+    ``both_under_65`` / ``one_spouse_65_or_older`` / ``both_spouses_65_or_older``
+    for MFJ; ``any_age`` for MFS — which is $5 regardless of age), so the inner
+    map is left open rather than forced into one shape.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    # Keyed by status name. The four base FILING_STATUSES are required;
+    # 'qualifying_surviving_spouse' may appear too (it uses the MFJ column, so
+    # it is an alias in the calc data but a real, distinct row on Chart A).
+    amounts: dict[str, dict[str, int]]
+
+    @model_validator(mode="after")
+    def _check_statuses(self) -> "FilingThresholds":
+        missing = [s for s in FILING_STATUSES if s not in self.amounts]
+        if missing:
+            raise ValueError(f"filing_thresholds.amounts must cover all statuses; missing: {', '.join(missing)}")
+        return self
+
+
+class CheckPayment(BaseModel):
+    """How to pay by check/money order (payee + memo line), per the 1040 instructions."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    payee: str = Field(description="Exact payee — the 2023 instructions say 'United States Treasury'.")
+    memo: str = Field(description="What to write on the payment (tax year + form + name/SSN; attach Form 1040-V).")
+
+
+class ElectronicPayment(BaseModel):
+    """One electronic payment channel."""
+
+    model_config = ConfigDict(extra="allow")
+
+    name: str
+    fee: bool = Field(description="Whether the channel charges a processing fee (card processors do; Direct Pay/EFTPS do not).")
+    url: str
+
+
+class PaymentOptions(BaseModel):
+    """Federal payment channels for a balance due (dev plan section 9)."""
+
+    model_config = ConfigDict(extra="allow")
+
+    citation: Citation
+    check: CheckPayment
+    electronic: list[ElectronicPayment]
+
+
+class StateMailingGroup(BaseModel):
+    """One where-to-file row: a set of states and their two addresses."""
+
+    model_config = ConfigDict(extra="allow")
+
+    states: list[str]
+    no_payment: str = Field(description="Address when requesting a refund / not enclosing payment.")
+    with_payment: str = Field(description="Address when enclosing a check or money order.")
+
+
+class MailingAddressPair(BaseModel):
+    """A fixed (non-state-dependent) no-payment / with-payment address pair."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    no_payment: str
+    with_payment: str
+
+
+class MailingAddresses(BaseModel):
+    """Where to file paper returns — 1040 is state-dependent, 1040-NR is fixed."""
+
+    model_config = ConfigDict(extra="allow")
+
+    citation: Citation
+    f1040_groups: list[StateMailingGroup]
+    f1040nr: MailingAddressPair
+
+    def f1040_for_state(self, state: str) -> MailingAddressPair:
+        """Resolve the 1040 address pair for a state name (case-insensitive)."""
+        want = state.strip().casefold()
+        for group in self.f1040_groups:
+            if any(s.casefold() == want for s in group.states):
+                return MailingAddressPair(no_payment=group.no_payment, with_payment=group.with_payment)
+        raise KeyError(
+            f"no where-to-file group lists state {state!r} — check the spelling (full state name, "
+            f"e.g. 'California'), or use the foreign/territory row"
+        )
+
+
+class RefundStatuteOfLimitations(BaseModel):
+    """IRC 6511(a): claim a refund within the later of 3 years of filing / 2 of payment."""
+
+    model_config = ConfigDict(extra="allow")
+
+    years_from_filing: int = Field(gt=0)
+    years_from_payment: int = Field(gt=0)
+    authority: str
+
+
+class Deadlines(BaseModel):
+    """Filing due dates and the refund statute of limitations for the year."""
+
+    model_config = ConfigDict(extra="allow")
+
+    citation: Citation
+    filing_due_date: str = Field(description="ISO date the return is due (e.g. '2024-04-15' for tax year 2023).")
+    refund_statute_of_limitations: RefundStatuteOfLimitations
+
+
+class Credits(BaseModel):
+    """Common credits with their parameters/eligibility (CTC, EITC, ...).
+
+    Inner structures are rich and grow per credit, so they are kept open
+    (``extra='allow'``) — the citation requirement is the firm contract.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    citation: Citation
+
+
 class KnowledgePack(BaseModel):
     """One ``knowledge/<jurisdiction>/<year>.yaml`` file, validated.
 
-    Extra top-level blocks are allowed: M3 adds filing thresholds, payment
-    options, mailing addresses, sources, and effective_law_changes.
+    The ``tax`` block (M1) is required; the M3 filing-logistics blocks are
+    optional so a year can ship calc data before its logistics data.
     """
 
     model_config = ConfigDict(extra="allow")
@@ -323,6 +452,12 @@ class KnowledgePack(BaseModel):
     jurisdiction: str
     tax_year: int = Field(ge=1990, le=2100)
     tax: TaxKnowledge
+    filing_thresholds: FilingThresholds | None = None
+    payment_options: PaymentOptions | None = None
+    mailing_addresses: MailingAddresses | None = None
+    deadlines: Deadlines | None = None
+    credits: Credits | None = None
+    effective_law_changes: list[dict] = Field(default_factory=list)
 
     @field_validator("jurisdiction")
     @classmethod
