@@ -225,8 +225,10 @@ def test_non_gov_citation_url_rejected(raw_2023):
 
 
 def test_extra_top_level_blocks_tolerated(raw_2023):
-    # M3 adds filing thresholds / mailing addresses; older engines must not choke.
+    # KnowledgePack is extra="allow" so a NEW block a future milestone adds (one
+    # this engine version doesn't model yet) must not make an older engine choke.
+    # (filing_thresholds et al. are now typed fields, so use an unmodeled name.)
     raw = copy.deepcopy(raw_2023)
-    raw["filing_thresholds"] = {"single": 13850}
+    raw["some_future_block_v9"] = {"hello": "world"}
     pack = KnowledgePack.model_validate(raw)
     assert pack.tax_year == 2023

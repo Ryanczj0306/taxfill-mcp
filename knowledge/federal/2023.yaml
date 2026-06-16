@@ -159,3 +159,136 @@ tax:
     medicare_rate: 0.029
     ss_wage_base: 160200
     minimum_net_earnings: 400
+
+# ─────────────────────────────────────────────────────────────────────────────
+# M3 filing-logistics & benefits blocks. Every number below was fetched from the
+# cited irs.gov source and adversarially re-verified against that page (no value
+# from memory). Filing thresholds were additionally cross-checked against the
+# standard_deduction block above and reconcile exactly.
+
+# Pub 501 (2023) "Table 1 / Chart A — For Most Taxpayers": the gross-income level
+# at or above which a return is required, by status and age. Non-elderly amounts
+# equal that status's standard deduction; each 65+ person adds the additional
+# standard deduction ($1,850 unmarried / $1,500 married). MFS is the exception:
+# $5 regardless of age.
+filing_thresholds:
+  citation:
+    source: "IRS Publication 501 (2023), Table 1 (Filing Requirements Chart for Most Taxpayers), page 2"
+    url: "https://www.irs.gov/pub/irs-prior/p501--2023.pdf"
+  amounts:
+    single: { under_65: 13850, age_65_or_older: 15700 }
+    married_filing_jointly: { both_under_65: 27700, one_spouse_65_or_older: 29200, both_spouses_65_or_older: 30700 }
+    married_filing_separately: { any_age: 5 }
+    head_of_household: { under_65: 20800, age_65_or_older: 22650 }
+    qualifying_surviving_spouse: { under_65: 27700, age_65_or_older: 29200 }
+
+# 2023 Instructions for Form 1040, "Amount You Owe" / "How To Pay" (p. 61).
+# The 2023 check payee wording is "United States Treasury".
+payment_options:
+  citation:
+    source: '2023 Instructions for Form 1040 (and 1040-SR), Line 37 "Amount You Owe" / "How To Pay", page 61'
+    url: "https://www.irs.gov/pub/irs-prior/i1040gi--2023.pdf"
+  check:
+    payee: "United States Treasury"
+    memo: >-
+      Write "2023 Form 1040" (or "2023 Form 1040-SR") plus your name, address,
+      daytime phone number, and SSN (on a joint return, the SSN shown first) on
+      the payment; enter the amount as $ XXX.XX with no dashes; attach Form
+      1040-V; don't staple the payment to the return and don't send cash.
+  electronic:
+    - { name: "IRS Direct Pay (from a checking/savings account)", fee: false, url: "https://www.irs.gov/payments" }
+    - { name: "EFTPS (Electronic Federal Tax Payment System)", fee: false, enrollment_required: true, url: "https://www.eftps.gov" }
+    - { name: "Debit card, credit card, or digital wallet (via approved processors)", fee: true, url: "https://www.irs.gov/payments" }
+  cash:
+    limit_usd: 1000
+    url: "https://www.irs.gov/paywithcash"
+
+# 2023 Instructions for Form 1040 "Where Do You File?" (p. 113) for the 1040,
+# and the 2023 Instructions for Form 1040-NR "Where To File" (p. 11). The 1040
+# table is state-dependent; the 1040-NR addresses are fixed. Transcribed from
+# the year-specific PDFs (the live where-to-file web page reflects the CURRENT
+# year and differs from 2023). Every state appears exactly once across groups.
+mailing_addresses:
+  citation:
+    source: '2023 Instructions for Forms 1040 and 1040-SR, "Where Do You File?", page 113; 2023 Instructions for Form 1040-NR, "Where To File", page 11'
+    url: "https://www.irs.gov/pub/irs-prior/i1040gi--2023.pdf"
+  f1040nr:
+    no_payment: "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215, U.S.A."
+    with_payment: "Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303, U.S.A."
+  f1040_groups:
+    - states: [Alabama, Georgia, North Carolina, South Carolina, Tennessee]
+      no_payment: "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002"
+      with_payment: "Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214"
+    - states: [Alaska, California, Colorado, Hawaii, Idaho, Kansas, Michigan, Montana, Nebraska, Nevada, North Dakota, Ohio, Oregon, South Dakota, Utah, Washington, Wyoming]
+      no_payment: "Department of the Treasury, Internal Revenue Service, Ogden, UT 84201-0002"
+      with_payment: "Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501"
+    - states: [Arizona, New Mexico]
+      no_payment: "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002"
+      with_payment: "Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501"
+    - states: [Arkansas, Oklahoma]
+      no_payment: "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002"
+      with_payment: "Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000"
+    - states: [Connecticut, Delaware, District of Columbia, Illinois, Indiana, Iowa, Kentucky, Maine, Maryland, Massachusetts, Minnesota, Missouri, New Hampshire, New Jersey, New York, Rhode Island, Vermont, Virginia, West Virginia, Wisconsin]
+      no_payment: "Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002"
+      with_payment: "Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000"
+    - states: [Florida, Louisiana, Mississippi, Texas]
+      no_payment: "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002"
+      with_payment: "Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214"
+    - states: [Pennsylvania]
+      no_payment: "Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002"
+      with_payment: "Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501"
+    - states: ["Foreign country, U.S. territory, APO/FPO, Form 2555/4563, or dual-status alien"]
+      no_payment: "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215"
+      with_payment: "Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303"
+
+# Due dates for tax year 2023 and the refund statute of limitations (IRC 6511).
+deadlines:
+  citation:
+    source: "2023 Instructions for Form 1040-NR (Due Date / Where To File); IRC 6511(a)"
+    url: "https://www.irs.gov/pub/irs-prior/i1040nr--2023.pdf"
+  filing_due_date: "2024-04-15"
+  nonwage_1040nr_due_date: "2024-06-17"   # 1040-NR with no US-withholding wages (15th day, 6th month; Jun 15 2024 = Sat)
+  abroad_automatic_extension_date: "2024-06-15"   # automatic 2-month extension; interest still accrues from Apr 15
+  refund_statute_of_limitations:
+    authority: "IRC 6511(a)"
+    years_from_filing: 3
+    years_from_payment: 2
+    note: "Claim a refund within the later of 3 years from filing or 2 years from payment; a return filed early is treated as filed on the due date."
+
+# Common credits with their 2023 parameters and eligibility predicates.
+credits:
+  citation:
+    source: "2023 Instructions for Schedule 8812 (CTC/ACTC/ODC); Rev. Proc. 2022-38 Section 3.06 (EITC)"
+    url: "https://www.irs.gov/pub/irs-prior/i1040s8--2023.pdf"
+  child_tax_credit:
+    citation:
+      source: "Schedule 8812 (Form 1040) 2023 and its Instructions ('What's New', 'Limits on the CTC and ODC')"
+      url: "https://www.irs.gov/pub/irs-prior/f1040s8--2023.pdf"
+    per_qualifying_child: 2000
+    additional_ctc_refundable_cap_per_child: 1600   # the refundable ACTC cap for 2023
+    credit_for_other_dependents: 500
+    qualifying_child_age_test: "under age 17 at the end of 2023"
+    magi_phaseout_threshold:
+      married_filing_jointly: 400000
+      single: 200000
+      married_filing_separately: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+    phaseout_step: "reduced $50 for each $1,000 (or fraction) of MAGI above the threshold"
+  earned_income_tax_credit:
+    citation:
+      source: "Rev. Proc. 2022-38, Section 3.06 (2023 Earned Income Credit)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-22-38.pdf"
+    investment_income_limit: 11000
+    # keyed by number of qualifying children: 0, 1, 2, 3+ (3+ shares the 2-child earned-income amount)
+    by_qualifying_children:
+      "0": { earned_income_amount: 7840, max_credit: 600, phaseout_begins_other: 9800, phaseout_begins_mfj: 16370, phaseout_complete_other: 17640, phaseout_complete_mfj: 24210 }
+      "1": { earned_income_amount: 11750, max_credit: 3995, phaseout_begins_other: 21560, phaseout_begins_mfj: 28120, phaseout_complete_other: 46560, phaseout_complete_mfj: 53120 }
+      "2": { earned_income_amount: 16510, max_credit: 6604, phaseout_begins_other: 21560, phaseout_begins_mfj: 28120, phaseout_complete_other: 52918, phaseout_complete_mfj: 59478 }
+      "3+": { earned_income_amount: 16510, max_credit: 7430, phaseout_begins_other: 21560, phaseout_begins_mfj: 28120, phaseout_complete_other: 56838, phaseout_complete_mfj: 63398 }
+
+# Enacted-law deltas relevant to TY2023 with final IRS guidance. None require a
+# lookup-path placeholder for 2023 (figures above are final and cited); the
+# block exists so post-2025 years (e.g. OBBBA) can record enacted -> guidance
+# -> final-form status per dev plan section 7.
+effective_law_changes: []
