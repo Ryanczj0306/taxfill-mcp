@@ -56,6 +56,7 @@ from taxfill_core.residency import (
 )
 from taxfill_core.schemas.formpack import FormPack, PackField, load_pack
 from taxfill_core.schemas.profile import Answer, Profile, Provenance
+from taxfill_core.sources import Source, SourcesResult, get_sources
 from taxfill_core.verify import (
     FilingItem,
     TextWidget,
@@ -91,6 +92,8 @@ __all__ = [
     "RenderedPage",
     "RequiredDocument",
     "SPTResult",
+    "Source",
+    "SourcesResult",
     "SeTaxResult",
     "StandardDeductionResult",
     "TaxResult",
@@ -104,6 +107,7 @@ __all__ = [
     "clipping_scan",
     "exempt_individual_years",
     "fill_form",
+    "get_sources",
     "independent_recompute",
     "intake_checklist",
     "irs_round",
