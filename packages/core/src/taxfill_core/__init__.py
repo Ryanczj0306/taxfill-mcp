@@ -42,6 +42,8 @@ from taxfill_core.calc import (
     standard_deduction,
     tax_from_taxable_income,
 )
+from taxfill_core.estimate import CompositionLine, IncomeSnapshot, RefundEstimate, estimate_refund
+from taxfill_core.file_and_pay import FilingInstructions, FilingManifestItem, ReturnInstructions, file_and_pay
 from taxfill_core.filler import FillResult, fill_form
 from taxfill_core.intake import IntakeChecklist, IntakeQuestion, RequiredDocument, intake_checklist
 from taxfill_core.knowledge import Citation, KnowledgePack, load_knowledge
@@ -56,6 +58,7 @@ from taxfill_core.residency import (
 )
 from taxfill_core.schemas.formpack import FormPack, PackField, load_pack
 from taxfill_core.schemas.profile import Answer, Profile, Provenance
+from taxfill_core.sources import Source, SourcesResult, get_sources
 from taxfill_core.verify import (
     FilingItem,
     TextWidget,
@@ -78,19 +81,27 @@ __all__ = [
     "Answer",
     "Citation",
     "ClassificationResult",
+    "CompositionLine",
     "ExemptYearsResult",
+    "FilingInstructions",
     "FilingItem",
+    "FilingManifestItem",
     "FillResult",
     "FormPack",
+    "IncomeSnapshot",
     "IntakeChecklist",
     "IntakeQuestion",
     "KnowledgePack",
     "PackField",
     "Profile",
     "Provenance",
+    "RefundEstimate",
     "RenderedPage",
     "RequiredDocument",
+    "ReturnInstructions",
     "SPTResult",
+    "Source",
+    "SourcesResult",
     "SeTaxResult",
     "StandardDeductionResult",
     "TaxResult",
@@ -102,8 +113,11 @@ __all__ = [
     "checkbox_audit",
     "classify",
     "clipping_scan",
+    "estimate_refund",
     "exempt_individual_years",
+    "file_and_pay",
     "fill_form",
+    "get_sources",
     "independent_recompute",
     "intake_checklist",
     "irs_round",
