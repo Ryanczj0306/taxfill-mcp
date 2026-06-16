@@ -42,6 +42,7 @@ from taxfill_core.calc import (
     standard_deduction,
     tax_from_taxable_income,
 )
+from taxfill_core.estimate import CompositionLine, IncomeSnapshot, RefundEstimate, estimate_refund
 from taxfill_core.filler import FillResult, fill_form
 from taxfill_core.intake import IntakeChecklist, IntakeQuestion, RequiredDocument, intake_checklist
 from taxfill_core.knowledge import Citation, KnowledgePack, load_knowledge
@@ -79,16 +80,19 @@ __all__ = [
     "Answer",
     "Citation",
     "ClassificationResult",
+    "CompositionLine",
     "ExemptYearsResult",
     "FilingItem",
     "FillResult",
     "FormPack",
+    "IncomeSnapshot",
     "IntakeChecklist",
     "IntakeQuestion",
     "KnowledgePack",
     "PackField",
     "Profile",
     "Provenance",
+    "RefundEstimate",
     "RenderedPage",
     "RequiredDocument",
     "SPTResult",
@@ -105,6 +109,7 @@ __all__ = [
     "checkbox_audit",
     "classify",
     "clipping_scan",
+    "estimate_refund",
     "exempt_individual_years",
     "fill_form",
     "get_sources",
