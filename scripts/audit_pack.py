@@ -53,10 +53,15 @@ def main() -> int:
         mapping.append({"line": line, "shows": shown, "field": pf.field, "type": pf.type})
     mapping.sort(key=lambda m: m["line"])
 
-    # Verify report (assertion/clipping/checkbox) for cross-reference.
+    # Verify report (assertion/clipping/checkbox) for cross-reference. Relations
+    # are deliberately excluded: synthetic sentinel fills can never satisfy the
+    # printed sums, so every form would emit a wall of expected relation FAILs
+    # that bury real assertion/clipping/checkbox failures (matches the golden
+    # test's _assert_section_clean usage). cross_form is not populated by
+    # verify_form, so there is nothing to drop there.
     report = verify_form(pack, filled, expected=values)
     fails = []
-    for section in (report.assertions, report.clipping, report.checkboxes, report.relations):
+    for section in (report.assertions, report.clipping, report.checkboxes):
         for chk in section:
             if chk.status == "FAIL":
                 fails.append(chk.detail)
