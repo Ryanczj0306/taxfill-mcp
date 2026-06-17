@@ -48,7 +48,7 @@ from taxfill_core.file_and_pay import FilingInstructions, FilingManifestItem, Re
 from taxfill_core.filing_summary import FilingSummary, FilingSummaryItem, filing_summary
 from taxfill_core.filler import FillResult, fill_form
 from taxfill_core.intake import IntakeChecklist, IntakeQuestion, RequiredDocument, intake_checklist
-from taxfill_core.knowledge import Citation, KnowledgePack, load_knowledge
+from taxfill_core.knowledge import Citation, KnowledgePack, StateKnowledge, load_knowledge, load_state_knowledge
 from taxfill_core.render import RenderedPage, render_pdf
 from taxfill_core.residency import (
     ClassificationResult,
@@ -61,6 +61,7 @@ from taxfill_core.residency import (
 from taxfill_core.schemas.formpack import FormPack, PackField, load_pack
 from taxfill_core.schemas.profile import Answer, Profile, Provenance
 from taxfill_core.sources import Source, SourcesResult, get_sources
+from taxfill_core.statescope import StateFiling, StateScopeResult, state_scope
 from taxfill_core.verify import (
     FilingItem,
     TextWidget,
@@ -111,6 +112,9 @@ __all__ = [
     "SourcesResult",
     "SeTaxResult",
     "StandardDeductionResult",
+    "StateFiling",
+    "StateKnowledge",
+    "StateScopeResult",
     "TaxResult",
     "TextWidget",
     "VerifyReport",
@@ -135,6 +139,7 @@ __all__ = [
     "load_form_pack",
     "load_knowledge",
     "load_pack",
+    "load_state_knowledge",
     "presence_days",
     "presence_days_by_year",
     "read_pdf_fields",
@@ -144,6 +149,7 @@ __all__ = [
     "render_pdf",
     "se_tax",
     "standard_deduction",
+    "state_scope",
     "substantial_presence_test",
     "tax_from_taxable_income",
     "verify_filing",

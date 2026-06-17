@@ -1,0 +1,27 @@
+# States with no broad personal income tax (dev plan section 6 — the
+# "nothing to file" cheap win). A state here means a wage earner who only
+# lived/worked there owes no state income-tax return.
+#
+# Each entry is verifiable at that state's revenue department (no single .gov
+# page lists them all); confirm at the cited DOR before relying on it. Caveats
+# capture the narrow exceptions (a few states tax investment income or capital
+# gains even with no wage tax) so scoping never over-promises "nothing to file".
+
+citation:
+  source: "Each state's Department of Revenue (no broad personal income tax); verify per state at the URL listed."
+  url: "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites"
+
+# Fully no personal income tax (wages, interest, dividends, etc.).
+none:
+  - { state: AK, dor: "https://tax.alaska.gov" }
+  - { state: FL, dor: "https://floridarevenue.com" }
+  - { state: NV, dor: "https://tax.nv.gov" }
+  - { state: SD, dor: "https://dor.sd.gov" }
+  - { state: TX, dor: "https://comptroller.texas.gov" }
+  - { state: WY, dor: "https://revenue.wyo.gov" }
+  - { state: TN, dor: "https://www.tn.gov/revenue", note: "Hall income tax (interest/dividends) fully repealed effective 2021 — no income tax for 2021+." }
+
+# No tax on WAGES, but a narrow tax on some income — scoping must flag, not skip.
+wages_only_exempt:
+  - { state: WA, dor: "https://dor.wa.gov", note: "No personal income tax on wages; a 7% capital-gains excise tax applies to high gains (2022+). Flag if the user had large long-term capital gains." }
+  - { state: NH, dor: "https://www.revenue.nh.gov", note: "No tax on wages; an Interest & Dividends Tax applied through 2024 (repealed for 2025+). Flag if the user had significant interest/dividends in 2023/2024." }

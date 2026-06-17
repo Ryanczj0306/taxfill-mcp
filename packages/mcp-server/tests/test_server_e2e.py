@@ -19,7 +19,7 @@ from taxfill_mcp.server import mcp
 EXPECTED_TOOLS = {
     "intake_checklist", "list_forms", "get_form_map", "fetch_blank", "fill_form",
     "verify_form", "verify_filing", "render_form", "calc", "residency",
-    "estimate_refund", "get_sources", "filing_summary", "file_and_pay",
+    "estimate_refund", "get_sources", "filing_summary", "file_and_pay", "state_scope",
 }
 
 
