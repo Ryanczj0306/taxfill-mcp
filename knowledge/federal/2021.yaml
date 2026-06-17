@@ -212,3 +212,131 @@ effective_law_changes:
       source: "Pub. L. 117-2 (American Rescue Plan Act of 2021), sections 9611 (CTC) and 9621 (EITC)"
       url: "https://www.congress.gov/bill/117th-congress/house-bill/1319/text"
     status: final_form_published
+
+# ─────────────────────────────────────────────────────────────────────────────
+# M3 filing-logistics blocks for 2021, fetched from the cited irs.gov sources and
+# adversarially re-verified. Year-specific (addresses/due dates differ by year).
+payment_options:
+  citation:
+    source: 2021 Instructions for Form 1040 (and 1040-SR), 'Amount You Owe' / 'How To Pay' (Pay Online,
+      Pay by Card, EFTPS, Pay by Cash, Pay by Check or Money Order), page 61
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2021.pdf
+  check:
+    payee: United States Treasury
+    memo: Write "2021 Form 1040" (or "2021 Form 1040-SR") plus your name, address, daytime phone number,
+      and SSN (on a joint return, the SSN shown first) on the payment; enter the amount on the right side
+      of the check as $ XXX.XX with no dashes or lines; attach Form 1040-V; don't attach the payment to
+      the return and don't send cash.
+  electronic:
+  - name: IRS Direct Pay (online transfers directly from a checking/savings account)
+    fee: false
+    url: https://www.irs.gov/payments
+  - name: EFTPS (Electronic Federal Tax Payment System)
+    fee: false
+    url: https://www.eftps.gov
+    enrollment_required: true
+  - name: Pay by debit card, credit card, or digital wallet (via approved service providers ACI Payments
+      / PAY1040 / payUSAtax)
+    fee: true
+    url: https://www.irs.gov/payments
+  cash:
+    limit_usd: 1000
+    url: https://www.irs.gov/payments
+mailing_addresses:
+  citation:
+    source: 2021 Instructions for Forms 1040 and 1040-SR, 'Where Do You File?', page 113; 2021 Instructions
+      for Form 1040-NR, 'Where To File' (Individuals), page 12. Transcribed from the year-specific PDFs
+      (the live where-to-file web page reflects the current year and differs from 2021).
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2021.pdf
+  f1040nr:
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215, U.S.A.
+    with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303, U.S.A.
+  f1040_groups:
+  - states:
+    - Alabama
+    - Georgia
+    - North Carolina
+    - South Carolina
+    - Tennessee
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214
+  - states:
+    - Alaska
+    - California
+    - Colorado
+    - Hawaii
+    - Idaho
+    - Kansas
+    - Michigan
+    - Montana
+    - Nebraska
+    - Nevada
+    - North Dakota
+    - Ohio
+    - Oregon
+    - South Dakota
+    - Utah
+    - Washington
+    - Wyoming
+    no_payment: Department of the Treasury, Internal Revenue Service, Ogden, UT 84201-0002
+    with_payment: Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501
+  - states:
+    - Arizona
+    - New Mexico
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501
+  - states:
+    - Arkansas
+    - Connecticut
+    - Delaware
+    - District of Columbia
+    - Illinois
+    - Indiana
+    - Iowa
+    - Kentucky
+    - Maine
+    - Maryland
+    - Massachusetts
+    - Minnesota
+    - Missouri
+    - New Hampshire
+    - New Jersey
+    - New York
+    - Oklahoma
+    - Rhode Island
+    - Vermont
+    - Virginia
+    - West Virginia
+    - Wisconsin
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000
+  - states:
+    - Florida
+    - Louisiana
+    - Mississippi
+    - Texas
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214
+  - states:
+    - Pennsylvania
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501
+  - states:
+    - A foreign country, U.S. possession or territory, APO/FPO address, Form 2555 or 4563, or dual-status
+      alien
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215
+    with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303
+deadlines:
+  citation:
+    source: 2021 Instructions for Form 1040 (and 1040-SR), 'Amount You Owe' / extension discussion (due
+      date April 18, 2022), pages 60-61; 2021 Instructions for Form 1040-NR, 'Due date of return' (April
+      18, 2022 / June 15, 2022), pages 5 and 11-12; IRC 6511(a)
+    url: https://www.irs.gov/pub/irs-prior/i1040nr--2021.pdf
+  filing_due_date: '2022-04-18'
+  refund_statute_of_limitations:
+    authority: IRC 6511(a)
+    years_from_filing: 3
+    years_from_payment: 2
+    note: Claim a refund within the later of 3 years from the date the return was filed or 2 years from
+      the date the tax was paid; a return filed before the due date is treated as filed on the due date.
+  nonwage_1040nr_due_date: '2022-06-15'

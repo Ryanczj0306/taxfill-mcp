@@ -166,3 +166,147 @@ credits:
       "3+": { earned_income_amount: 14570, max_credit: 6557, phaseout_begins_other: 19030, phaseout_begins_mfj: 24820, phaseout_complete_other: 50162, phaseout_complete_mfj: 55952 }
 
 effective_law_changes: []
+
+# ─────────────────────────────────────────────────────────────────────────────
+# M3 filing-logistics blocks for 2019, fetched from the cited irs.gov sources and
+# adversarially re-verified. Year-specific (addresses/due dates differ by year).
+payment_options:
+  citation:
+    source: 2019 Instructions for Form 1040 (and 1040-SR), "Amount You Owe" / "How To Pay" (Pay Online,
+      Pay by Phone, Pay by Cash, Pay by Check or Money Order), page 58
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2019.pdf
+  check:
+    payee: United States Treasury
+    memo: Write "2019 Form 1040" (or "2019 Form 1040-SR") plus your name, address, daytime phone number,
+      and SSN on the payment; make the check or money order payable to United States Treasury for the
+      full amount due; attach Form 1040-V; don't attach the payment to the return and don't send cash;
+      on a joint return, enter the SSN shown first on the return.
+  electronic:
+  - name: IRS Direct Pay (online transfer directly from your checking or savings account)
+    fee: false
+    url: https://www.irs.gov/payments
+  - name: EFTPS (Electronic Federal Tax Payment System)
+    fee: false
+    url: https://www.eftps.gov
+    enrollment_required: true
+  - name: 'Debit card, credit card, or digital wallet (via approved service providers: PAY1040, payUSAtax,
+      Official Payments)'
+    fee: true
+    url: https://www.irs.gov/payments
+  cash:
+    limit_usd: 1000
+    url: https://www.irs.gov/payments
+mailing_addresses:
+  citation:
+    source: 2019 Instructions for Forms 1040 and 1040-SR, "Where Do You File?", pages 107-108; 2019 Instructions
+      for Form 1040-NR, "Where To File" (Individuals), page 10
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2019.pdf
+  f1040nr:
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215, U.S.A.
+    with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303, U.S.A.
+  f1040_groups:
+  - states:
+    - Alabama
+    - North Carolina
+    - South Carolina
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214
+  - states:
+    - Alaska
+    - California
+    - Hawaii
+    - Washington
+    no_payment: Department of the Treasury, Internal Revenue Service, Fresno, CA 93888-0002
+    with_payment: Internal Revenue Service, P.O. Box 7704, San Francisco, CA 94120-7704
+  - states:
+    - Arizona
+    - Colorado
+    - Idaho
+    - Kansas
+    - Montana
+    - Nebraska
+    - New Mexico
+    - Nevada
+    - North Dakota
+    - Oregon
+    - South Dakota
+    - Utah
+    - Wyoming
+    no_payment: Department of the Treasury, Internal Revenue Service, Ogden, UT 84201-0002
+    with_payment: Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501
+  - states:
+    - Arkansas
+    - Georgia
+    - Indiana
+    - Iowa
+    - Kentucky
+    - Missouri
+    - New Jersey
+    - Oklahoma
+    - Tennessee
+    - Virginia
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000
+  - states:
+    - Connecticut
+    - District of Columbia
+    - Maryland
+    - Rhode Island
+    - West Virginia
+    no_payment: Department of the Treasury, Internal Revenue Service, Ogden, UT 84201-0002
+    with_payment: Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000
+  - states:
+    - Delaware
+    - Maine
+    - Massachusetts
+    - New Hampshire
+    - New York
+    - Vermont
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 37008, Hartford, CT 06176-7008
+  - states:
+    - Florida
+    - Louisiana
+    - Mississippi
+    - Texas
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214
+  - states:
+    - Illinois
+    - Michigan
+    - Minnesota
+    - Ohio
+    - Wisconsin
+    no_payment: Department of the Treasury, Internal Revenue Service, Fresno, CA 93888-0002
+    with_payment: Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501
+  - states:
+    - Pennsylvania
+    no_payment: Department of the Treasury, Internal Revenue Service, Ogden, UT 84201-0002
+    with_payment: Internal Revenue Service, P.O. Box 37008, Hartford, CT 06176-7008
+  - states:
+    - A foreign country, U.S. possession or territory, APO/FPO address, Form 2555 or 4563, or dual-status
+      alien
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215
+    with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303
+deadlines:
+  citation:
+    source: 2019 Instructions for Form 1040 (and 1040-SR), "Amount You Owe" (original due date April 15,
+      2020), page 58; IRS "Tax Day now July 15" (IR-2020-58) and Notice 2020-18 (COVID-19 postponement
+      to July 15, 2020); IRC 6511(a)
+    url: https://www.irs.gov/newsroom/tax-day-now-july-15-treasury-irs-extend-filing-deadline-and-federal-tax-payments-regardless-of-amount-owed
+  filing_due_date: '2020-07-15'
+  refund_statute_of_limitations:
+    authority: IRC 6511(a)
+    years_from_filing: 3
+    years_from_payment: 2
+    note: Claim a refund within the later of 3 years from the date the return was filed or 2 years from
+      the date the tax was paid; a return filed before the due date is treated as filed on the due date.
+      For 2019 (and 2020) returns, because the filing deadline was postponed to July 15, 2020, Notice
+      2023-21 disregards the period from April 15, 2020 through July 15, 2020 in determining the IRC 6511(b)(2)(A)
+      lookback period, so withholding/estimated payments treated as paid on April 15, 2020 remain within
+      the lookback for timely claims filed by the postponed three-year date.
+  postponement_note: The 2019 Form 1040 instructions state the original due date of April 15, 2020. Under
+    Notice 2020-18 (announced via IR-2020-58, March 21, 2020), the Treasury and IRS automatically postponed
+    the federal income tax filing AND payment deadline for 2019 returns from April 15, 2020 to July 15,
+    2020 due to the COVID-19 emergency; no Form 4868/7004 was required and the relief applied to all taxpayers
+    regardless of amount owed.

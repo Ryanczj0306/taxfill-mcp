@@ -155,21 +155,34 @@ def test_degraded_path_when_no_knowledge_pack(tmp_path):
     assert r.mailing_address is None
 
 
-def test_partial_pack_warns_per_missing_block_not_silent_empty():
-    # A loaded-but-PARTIAL pack (2022 ships without the deadlines/mailing/payment
-    # blocks) for a balance-due 1040 must produce explicit warning notes for the
-    # missing mailing address / payment options / deadlines — never a silent
-    # empty deliverable (mailing_address=None, payment=[], deadlines=[], notes=[]).
+def test_partial_pack_warns_per_missing_block_not_silent_empty(tmp_path):
+    # A loaded-but-PARTIAL pack (tax block present, but the payment/mailing/
+    # deadlines logistics blocks absent) for a balance-due 1040 must produce
+    # explicit warning notes for each missing block — never a silent empty
+    # deliverable (mailing_address=None, payment=[], deadlines=[], notes=[]).
+    # Synthesize a partial pack so this stays valid now that every shipped year
+    # is complete: take the real 2023 pack and strip its three logistics blocks.
+    import yaml
+    from pathlib import Path
+
+    real = Path(__file__).resolve().parents[3] / "knowledge" / "federal" / "2023.yaml"
+    raw = yaml.safe_load(real.read_text())
+    for block in ("payment_options", "mailing_addresses", "deadlines"):
+        raw.pop(block, None)
+    fed = tmp_path / "federal"
+    fed.mkdir()
+    (fed / "2023.yaml").write_text(yaml.dump(raw, sort_keys=False))
+
     r = file_and_pay(
-        [FilingManifestItem(form="1040", tax_year=2022, bottom_line=-500, state="California")],
-        knowledge_dir="knowledge",
+        [FilingManifestItem(form="1040", tax_year=2023, bottom_line=-500, state="California")],
+        knowledge_dir=str(tmp_path),
     ).returns[0]
     # Pack loaded -> the FileNotFoundError "no federal knowledge pack" note must NOT fire.
     assert not any("no federal knowledge pack" in n.lower() for n in r.notes)
     # Explicit per-block warnings instead of silent empties.
-    assert any("where-to-file" in n.lower() and "2022" in n and "irs.gov" in n.lower() for n in r.notes)
-    assert any("payment options" in n.lower() and "2022" in n and "irs.gov" in n.lower() for n in r.notes)
-    assert any("statute-of-limitations" in n.lower() and "2022" in n and "irs.gov" in n.lower() for n in r.notes)
+    assert any("where-to-file" in n.lower() and "2023" in n and "irs.gov" in n.lower() for n in r.notes)
+    assert any("payment options" in n.lower() and "2023" in n and "irs.gov" in n.lower() for n in r.notes)
+    assert any("statute-of-limitations" in n.lower() and "2023" in n and "irs.gov" in n.lower() for n in r.notes)
     # No invented data leaked through.
     assert r.mailing_address is None
     assert r.payment == []
