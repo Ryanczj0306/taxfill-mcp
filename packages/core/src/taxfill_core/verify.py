@@ -212,6 +212,24 @@ def _checkbox_is_on(raw: str | None) -> bool:
     return text.lstrip("/").casefold() != "off"
 
 
+def _checkbox_member_selected(pack: FormPack, pack_field: PackField, fields: Mapping[str, str]) -> bool:
+    """True when this group member is the SELECTED option, not just non-/Off.
+
+    Several radio options can share ONE AcroForm field (e.g. filing-status
+    c1_3[0] with states /1../5): every member then reads the SAME on-disk
+    value, so :func:`_checkbox_is_on` is True for all of them even though one
+    option is selected. The selected member is the one whose ``on_state``
+    equals the field's value; members on their OWN field read their own
+    on_state when checked and /Off otherwise — so matching on_state is the
+    one rule that is correct for both shapes.
+    """
+    raw = _lookup_raw(pack, pack_field, fields)
+    if not _checkbox_is_on(raw):
+        return False
+    on_state = pack_field.on_state or "/1"
+    return raw.strip().lstrip("/").casefold() == on_state.strip().lstrip("/").casefold()
+
+
 def _coerce_checkbox_state(value: object, on_state: str) -> bool:
     """Interpret an intended checkbox value as checked/unchecked."""
     if isinstance(value, bool):
@@ -1297,7 +1315,10 @@ def checkbox_audit(pack: FormPack, fields: Mapping[str, str]) -> list[CheckboxCh
     A group is required when ANY member is marked ``required``; it fails when
     every member is /Off (the question was silently left unanswered — the
     8843 line 12 / Sched OI item I incident). Ungrouped required checkboxes
-    fail individually when /Off. Non-required boxes are not audited.
+    fail individually when /Off. Every group (required or not) also fails when
+    MORE than one member is checked: the options of one question are mutually
+    exclusive (the two-filing-status incident). Non-required ungrouped boxes
+    are not audited.
     """
     groups: dict[str, list[PackField]] = {}
     singles: list[PackField] = []
@@ -1311,10 +1332,35 @@ def checkbox_audit(pack: FormPack, fields: Mapping[str, str]) -> list[CheckboxCh
 
     checks: list[CheckboxCheck] = []
     for group_id, members in groups.items():
+        member_lines = [member.line for member in members]
+        # Count SELECTED members, not merely non-/Off ones: radio options
+        # sharing one field all read the same value, so on_state-matching is
+        # the only count that is right for both radio and separate-field groups.
+        on_lines = [
+            member.line
+            for member in members
+            if _checkbox_member_selected(pack, member, fields)
+        ]
+        # At-most-one holds for every group, required or not: the members of
+        # one question are mutually exclusive, so >1 checked is always invalid.
+        if len(on_lines) > 1:
+            checks.append(
+                CheckboxCheck(
+                    group=group_id,
+                    status=FAIL,
+                    members=member_lines,
+                    detail=(
+                        f"checkbox group '{group_id}' has {len(on_lines)} boxes checked "
+                        f"({', '.join(on_lines)}) — exactly one is allowed; the options of one "
+                        f"question are mutually exclusive, so uncheck all but one via fill_form "
+                        f"and re-verify"
+                    ),
+                )
+            )
+            continue
         if not any(member.required for member in members):
             continue
-        member_lines = [member.line for member in members]
-        if any(_checkbox_is_on(_lookup_raw(pack, member, fields)) for member in members):
+        if on_lines:
             checks.append(
                 CheckboxCheck(
                     group=group_id,
@@ -1858,6 +1904,7 @@ def verify_form(
 def verify_filing(
     items: Sequence[FilingItem | Mapping],
     *,
+    independent: Mapping[str, Mapping[str, float | int]] | None = None,
     confirmed_current_address: str | None = None,
 ) -> VerifyReport:
     """Verify a whole filing: identity consistency + cross-form relations.
@@ -1867,11 +1914,15 @@ def verify_filing(
     ``form_key``). Relation and cross-form math run on DISK-derived money
     values; each item's ``values`` are cross-checked against its dump and
     only supplement lines absent from it (divergence is a FAIL in the
-    assertions section). ``confirmed_current_address`` (the address the user
-    receives mail at TODAY, from intake) compares every on-disk address line
-    against it — the P-002 incident shape where ONE wrong historical address
-    lands consistently on every form. ``pitfall_checks`` reports P-001,
-    P-002 (the address used across the filing), and P-003.
+    assertions section). ``independent`` (keyed ``form_key -> {line: expected}``,
+    mirroring :func:`verify_form`) runs the independent recompute against each
+    item's disk-derived values — the verifier's half of the no-LLM-arithmetic
+    rule, guarding the table-lookup lines (1040 line 16/13/19/27, 1040-NR
+    16/23a) that no relation covers. ``confirmed_current_address`` (the address
+    the user receives mail at TODAY, from intake) compares every on-disk
+    address line against it — the P-002 incident shape where ONE wrong
+    historical address lands consistently on every form. ``pitfall_checks``
+    reports P-001, P-002 (the address used across the filing), and P-003.
     """
     filing_items = [item if isinstance(item, FilingItem) else FilingItem.model_validate(item) for item in items]
     if not filing_items:
@@ -1899,7 +1950,16 @@ def verify_filing(
             check.model_copy(update={"line": f"{item.form_key}: {check.line}"}) for check in checks
         )
 
+    if independent is not None:
+        unknown_keys = sorted(set(independent) - set(items_by_key))
+        if unknown_keys:
+            raise ValueError(
+                f"independent recompute references unknown form_key(s) {unknown_keys} — "
+                f"key the recompute set by the filing items' form_key(s) {sorted(items_by_key)}"
+            )
+
     relation_checks: list[RelationCheck] = []
+    recompute_checks: list[RecomputeCheck] = []
     clipping_checks: list[ClippingCheck] = []
     checkbox_checks: list[CheckboxCheck] = []
     cross_form_checks: list[CrossFormCheck] = []
@@ -1909,6 +1969,13 @@ def verify_filing(
             check.model_copy(update={"relation": f"{item.form_key}: {check.relation}"})
             for check in relations(item.pack, values_by_key[item.form_key])
         )
+        if independent is not None and item.form_key in independent:
+            recompute_checks.extend(
+                check.model_copy(update={"line": f"{item.form_key}: {check.line}"})
+                for check in independent_recompute(
+                    values_by_key[item.form_key], independent[item.form_key]
+                )
+            )
         item_widgets = read_text_widgets(item.pdf_path) if item.fields is None and item.pdf_path else []
         clipping_checks.extend(
             check.model_copy(update={"name": f"{item.form_key}: {check.name}"})
@@ -1935,6 +2002,7 @@ def verify_filing(
         ok=_all_pass(
             value_checks,
             relation_checks,
+            recompute_checks,
             clipping_checks,
             checkbox_checks,
             identity_checks,
@@ -1943,6 +2011,7 @@ def verify_filing(
         form_keys=[item.form_key for item in filing_items],
         assertions=value_checks,
         relations=relation_checks,
+        recompute=recompute_checks,
         clipping=clipping_checks,
         checkboxes=checkbox_checks,
         identity=identity_checks,

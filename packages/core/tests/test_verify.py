@@ -504,6 +504,50 @@ def test_non_required_checkboxes_are_not_audited():
     assert checkbox_audit(pack, {}) == []
 
 
+def filing_status_group_pack() -> FormPack:
+    # Five separate single-widget /Btn fields that share only a `group` id —
+    # the real 1040 filing-status shape (c1_3[0]..c1_3[4]).
+    return make_pack(
+        [
+            checkbox_field("filing_status.single", required=True, group="filing_status"),
+            checkbox_field("filing_status.mfj", group="filing_status"),
+            checkbox_field("filing_status.hoh", group="filing_status"),
+        ]
+    )
+
+
+def test_group_with_two_members_on_fails_at_most_one():
+    pack = filing_status_group_pack()
+    fields = disk_fields(pack, {"filing_status.single": "/1", "filing_status.hoh": "/1"})
+    check = checkbox_audit(pack, fields)[0]
+    assert check.status == "FAIL"
+    assert check.group == "filing_status"
+    assert "2 boxes checked" in check.detail
+    assert "exactly one is allowed" in check.detail
+    assert "filing_status.single" in check.detail and "filing_status.hoh" in check.detail
+
+
+def test_non_required_group_with_two_members_on_also_fails():
+    # At-most-one holds for EVERY group, required or not.
+    pack = make_pack(
+        [
+            checkbox_field("optional.yes", group="optional"),
+            checkbox_field("optional.no", group="optional"),
+        ]
+    )
+    fields = disk_fields(pack, {"optional.yes": "/1", "optional.no": "/1"})
+    check = checkbox_audit(pack, fields)[0]
+    assert check.status == "FAIL" and check.group == "optional"
+    assert "exactly one is allowed" in check.detail
+
+
+def test_group_with_exactly_one_member_on_passes():
+    pack = filing_status_group_pack()
+    fields = disk_fields(pack, {"filing_status.single": "/1", "filing_status.hoh": "/Off"})
+    checks = checkbox_audit(pack, fields)
+    assert len(checks) == 1 and checks[0].status == "PASS"
+
+
 # ---------------------------------------------------------------------------
 # Schema additions (required / group on PackField)
 # ---------------------------------------------------------------------------
