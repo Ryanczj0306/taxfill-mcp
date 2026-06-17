@@ -576,6 +576,81 @@ def test_radio_and_text_line_on_same_field_still_rejected(tmp_path: Path):
         fill_form(pack, {"fs.single": True, "oops": "x"}, blank, tmp_path / "out.pdf")
 
 
+# --- grouped checkboxes on SEPARATE fields (the real 1040 shape) --------------
+# The five 1040 filing-status options and every yes/no block are FIVE separate
+# single-widget /Btn fields (c1_3[0]..c1_3[4]) that share only a `group` id —
+# the same-field guard never fires for them, so the group guard must.
+
+
+# Filing status as five separate /Btn fields, distinguished by `group` alone.
+GROUPED_STATUS_PACK = mini_pack(
+    [
+        {"line": "filing_status.single", "field": "Page1[0].c1_3[0]", "type": "checkbox", "on_state": "/1", "group": "filing_status"},
+        {"line": "filing_status.hoh", "field": "Page1[0].c1_3[1]", "type": "checkbox", "on_state": "/1", "group": "filing_status"},
+        {"line": "digital_assets.yes", "field": "Page1[0].c1_8[0]", "type": "checkbox", "on_state": "/1", "group": "digital_assets"},
+        {"line": "digital_assets.no", "field": "Page1[0].c1_9[0]", "type": "checkbox", "on_state": "/1", "group": "digital_assets"},
+    ]
+)
+
+
+def grouped_status_blank(tmp_path: Path) -> Path:
+    return make_acroform_pdf(
+        tmp_path / "grouped_blank.pdf",
+        [
+            {"name": f"{ROOT}.Page1[0].c1_3[0]", "kind": "checkbox", "on_value": "/1"},
+            {"name": f"{ROOT}.Page1[0].c1_3[1]", "kind": "checkbox", "on_value": "/1"},
+            {"name": f"{ROOT}.Page1[0].c1_8[0]", "kind": "checkbox", "on_value": "/1"},
+            {"name": f"{ROOT}.Page1[0].c1_9[0]", "kind": "checkbox", "on_value": "/1"},
+        ],
+    )
+
+
+def test_two_filing_statuses_on_separate_fields_are_rejected(tmp_path: Path):
+    blank = grouped_status_blank(tmp_path)
+    with pytest.raises(ValueError) as exc:
+        fill_form(
+            GROUPED_STATUS_PACK,
+            {"filing_status.single": True, "filing_status.hoh": True},
+            blank,
+            tmp_path / "out.pdf",
+        )
+    message = str(exc.value)
+    assert "filing_status" in message
+    assert "'filing_status.single'" in message and "'filing_status.hoh'" in message
+    assert "exactly one" in message
+
+
+def test_digital_assets_yes_and_no_simultaneously_are_rejected(tmp_path: Path):
+    blank = grouped_status_blank(tmp_path)
+    with pytest.raises(ValueError) as exc:
+        fill_form(
+            GROUPED_STATUS_PACK,
+            {"digital_assets.yes": True, "digital_assets.no": True},
+            blank,
+            tmp_path / "out.pdf",
+        )
+    message = str(exc.value)
+    assert "digital_assets" in message
+    assert "'digital_assets.yes'" in message and "'digital_assets.no'" in message
+    assert "exactly one" in message
+
+
+def test_one_member_per_group_on_separate_fields_is_allowed(tmp_path: Path):
+    # Answering each question once (one status, one digital-assets box) must
+    # pass: the group guard only rejects MORE than one member of one group.
+    blank = grouped_status_blank(tmp_path)
+    out = tmp_path / "out.pdf"
+    result = fill_form(
+        GROUPED_STATUS_PACK,
+        {"filing_status.single": True, "filing_status.hoh": False, "digital_assets.no": True},
+        blank,
+        out,
+    )
+    assert result.written[f"{ROOT}.Page1[0].c1_3[0]"] == "/1"
+    assert result.written[f"{ROOT}.Page1[0].c1_3[1]"] == "/Off"
+    assert result.written[f"{ROOT}.Page1[0].c1_9[0]"] == "/1"
+
+
 # --- misc behavior ------------------------------------------------------------
 
 

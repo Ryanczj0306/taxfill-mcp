@@ -374,6 +374,7 @@ def fill_form(
     # field are radio-group options: at most one may be on; "no" answers for
     # sibling options are redundant but harmless (they confirm /Off).
     checkbox_updates: dict[str, tuple[str, str]] = {}
+    on_lines_by_group: dict[str, list[str]] = {}  # PackField.group -> lines turned on
     for qualified, entries in checkbox_lines.items():
         on_entries = [(line, state) for line, state in entries if state != _OFF_STATE]
         if len(on_entries) > 1:
@@ -388,6 +389,24 @@ def fill_form(
         line, state = on_entries[0] if on_entries else entries[0]
         checkbox_updates[qualified] = (line, state)
         written[qualified] = state
+        for on_line, _ in on_entries:
+            group = by_line[on_line].group
+            if group is not None:
+                on_lines_by_group.setdefault(group, []).append(on_line)
+
+    # Mutual exclusion across a checkbox GROUP. The five 1040 filing-status
+    # options and every yes/no block are separate single-widget /Btn fields
+    # that share only a `group` id — the same-field guard above never fires
+    # for them, so check the group here: at most one member may be on.
+    for group, on_group_lines in on_lines_by_group.items():
+        if len(on_group_lines) > 1:
+            conflicting = " and ".join(f"'{line}'" for line in sorted(on_group_lines))
+            raise ValueError(
+                f"lines {conflicting} all turn on members of checkbox group '{group}' — "
+                f"these are the mutually exclusive options of ONE question and exactly one "
+                f"may be selected; answer yes to a single member and omit (or answer no to) "
+                f"the others"
+            )
 
     try:
         writer = PdfWriter(clone_from=str(blank_pdf))

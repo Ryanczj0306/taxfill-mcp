@@ -248,7 +248,7 @@ deadlines:
     url: "https://www.irs.gov/pub/irs-prior/i1040nr--2023.pdf"
   filing_due_date: "2024-04-15"
   nonwage_1040nr_due_date: "2024-06-17"   # 1040-NR with no US-withholding wages (15th day, 6th month; Jun 15 2024 = Sat)
-  abroad_automatic_extension_date: "2024-06-15"   # automatic 2-month extension; interest still accrues from Apr 15
+  abroad_automatic_extension_date: "2024-06-17"   # automatic 2-month extension; IRC 7503 weekend shift (Jun 15 2024 = Sat); IRS IR-2024-148; interest still accrues from Apr 15
   refund_statute_of_limitations:
     authority: "IRC 6511(a)"
     years_from_filing: 3

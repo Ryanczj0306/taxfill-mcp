@@ -205,9 +205,52 @@ def test_pack_relations_parse_in_verifys_evaluator(pack_path: Path):
     relations(pack, {})
 
 
+# (tax_year, form_key, target_line) triples a cross_form rule may legitimately
+# reference even though no in-scope pack provides them YET — kept explicit and
+# commented so the gap stays visible and a stale entry surfaces when the pack
+# does ship. (The 2022 1040-NR sched_2/sched_3 rules were REMOVED from the pack
+# rather than allowlisted, since sched_2/sched_3 are out of the 2022 scope.)
+CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
+    {
+        # 2024 Schedule 3 can attach to a 1040 OR a 1040-NR, so it carries both
+        # "8 == f1040.20"/"f1040nr.20" and "15 == f1040.31"/"f1040nr.31". The
+        # 2024 scope ships f1040 but no f1040nr pack, so the f1040nr legs cannot
+        # resolve yet (the f1040 legs do). Remove these once a 2024 f1040nr pack
+        # ships.
+        (2024, "f1040nr", "20"),
+        (2024, "f1040nr", "31"),
+        # The 2022 1040-NR keeps its Schedule 2/3 cross_form rules so the verifier
+        # can emit its runtime "attach Schedule 2/3 and re-verify" caution when a
+        # back-filer puts a nonzero amount on lines 17/20/23b/31, but the M2 2022
+        # scope (dev plan section 15) ships no 2022 sched_2/sched_3 pack, so those
+        # targets cannot resolve yet. Remove once 2022 sched_2/sched_3 ship.
+        (2022, "sched_2", "3"),
+        (2022, "sched_2", "21"),
+        (2022, "sched_3", "8"),
+        (2022, "sched_3", "15"),
+    }
+)
+
+
+def _lines_by_year_and_form() -> dict[tuple[int, str], set[str]]:
+    """Map (tax_year, form_key) -> set of line ids, over every discovered pack.
+
+    form_key is the pack DIRECTORY name (what cross_form refs and FilingItem
+    keys use), which the parses-and-matches test already pins to the pack's
+    own form; tax_year comes from the loaded pack.
+    """
+    by_key: dict[tuple[int, str], set[str]] = {}
+    for path in PACK_PATHS:
+        loaded = load_pack(path)
+        form_key = path.parent.name
+        by_key[(loaded.tax_year, form_key)] = {pf.line for pf in loaded.fields}
+    return by_key
+
+
 @pytest.mark.parametrize("pack_path", PACK_PATHS, ids=_pack_id)
-def test_pack_cross_form_targets_use_known_form_keys(pack_path: Path):
+def test_pack_cross_form_targets_resolve_to_an_existing_pack_line(pack_path: Path):
     pack = load_pack(pack_path)
+    lines_by_key = _lines_by_year_and_form()
     local_lines = {pf.line for pf in pack.fields}
     for rule in pack.cross_form:
         sides = [side.strip() for side in rule.split("==")]
@@ -223,6 +266,20 @@ def test_pack_cross_form_targets_use_known_form_keys(pack_path: Path):
                 )
                 assert LINE_ID_RE.fullmatch(target), (
                     f"cross_form rule {rule!r}: target line '{target}' violates the line-id grammar"
+                )
+                if (pack.tax_year, form_key, target) in CROSS_FORM_TARGET_ALLOWLIST:
+                    continue  # out-of-scope-for-now target, explicitly allowed
+                target_lines = lines_by_key.get((pack.tax_year, form_key))
+                assert target_lines is not None, (
+                    f"cross_form rule {rule!r}: no pack '{form_key}' exists for tax_year "
+                    f"{pack.tax_year} — add the target pack, remove the rule, or allowlist "
+                    f"({pack.tax_year}, {form_key!r}, {target!r}) in "
+                    f"CROSS_FORM_TARGET_ALLOWLIST with a reason"
+                )
+                assert target in target_lines, (
+                    f"cross_form rule {rule!r}: line '{target}' is not a line of pack "
+                    f"'{form_key}' ({pack.tax_year}) — fix the target line or add it to that "
+                    f"pack's fields[]"
                 )
             else:
                 assert side in local_lines, (

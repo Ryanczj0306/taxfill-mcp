@@ -8,10 +8,12 @@ cross-form reference chains (e.g. ``f1040.8 == sched_1.10``,
 ``sched_c.31 == sched_1.3``, ``sched_a.2 == f1040.11``) and the cross-form
 identity check (same SSN/name on every form) end to end.
 
-These are WIRING fixtures, not tax computations: the numbers are internally
-consistent so every relation and cross_form ref holds, but line 16 (tax) is a
-plausible placeholder — recomputing tax from the tables is calc's job (M1
-tax-table tests), not this module's.
+These are WIRING fixtures, not full tax computations: the numbers are
+internally consistent so every relation and cross_form ref holds. Scenario A's
+line 16 (tax) is the ONE figure taken from the calc engine's tax-table lookup
+(not a placeholder), and ``verify_filing(independent=...)`` independently
+recomputes it — so the multi-form path exercises the no-LLM-arithmetic
+guardrail end to end (test_e2e.py covers it for a single synthetic form).
 
 Network-marked: needs the official blanks (warm ``.cache/blanks`` or network).
 """
@@ -21,6 +23,7 @@ from pathlib import Path
 
 import pytest
 
+from taxfill_core.calc import tax_from_taxable_income
 from taxfill_core.fetch import OfflineFetchError, fetch_blank
 from taxfill_core.filler import fill_form
 from taxfill_core.schemas.formpack import FormPack, load_pack
@@ -57,12 +60,22 @@ A_FORMS = {
     "sched_b": "formpacks/federal/2023/sched_b/pack.yaml",
     "sched_c": "formpacks/federal/2023/sched_c/pack.yaml",
 }
+# Line 15 (taxable income) drives line 16 (tax). Line 16 is NOT a hand-picked
+# placeholder: it comes from the calc engine's tax-table lookup so the filing
+# exercises the no-LLM-arithmetic guardrail (independent recompute) end to end
+# — the single-form test_e2e.py is the only other place that does. Lines 18/22/
+# 24 follow line 16 (17/21/23 are zero in this stack) and 37 == 24 - 33.
+A_TAXABLE_INCOME = 75800
+A_FILING_STATUS = "single"
+A_TAX = tax_from_taxable_income(A_TAXABLE_INCOME, A_FILING_STATUS, year=2023).tax
+A_TOTAL_PAYMENTS = 4000  # line 33 == 25d + 26 + 32 == 25d == 4000
 A_MONEY = {
     "f1040": {
         "1a": 30000, "1z": 30000, "2b": 500, "3b": 300, "8": 48000,
-        "9": 78800, "11": 78800, "12": 3000, "14": 3000, "15": 75800,
-        "16": 12000, "18": 12000, "22": 12000, "24": 12000,
-        "25a": 4000, "25d": 4000, "33": 4000, "37": 8000,
+        "9": 78800, "11": 78800, "12": 3000, "14": 3000, "15": A_TAXABLE_INCOME,
+        "16": A_TAX, "18": A_TAX, "22": A_TAX, "24": A_TAX,
+        "25a": A_TOTAL_PAYMENTS, "25d": A_TOTAL_PAYMENTS, "33": A_TOTAL_PAYMENTS,
+        "37": max(0, A_TAX - A_TOTAL_PAYMENTS),
     },
     "sched_1": {"3": 48000, "10": 48000},
     "sched_c": {
@@ -105,10 +118,17 @@ B_FORMS = {
     "sched_1": "formpacks/federal/2022/sched_1/pack.yaml",
     "sched_c": "formpacks/federal/2022/sched_c/pack.yaml",
 }
+# Line 16 (tax) is the calc engine's tax-table lookup for taxable income 20,000
+# (single, 2022) — NOT a hand-picked placeholder — so the 1040-NR stack also
+# exercises the no-LLM-arithmetic recompute (B_INDEPENDENT below). Lines 18/22/24
+# follow line 16 (17/21/23 are zero) and 37 == 24 - 33 with payments zero, so the
+# filer owes the full tax.
+B_TAXABLE_INCOME = 20000
+B_TAX = tax_from_taxable_income(B_TAXABLE_INCOME, "single", year=2022).tax
 B_MONEY = {
     "f1040nr": {
-        "8": 20000, "9": 20000, "11": 20000, "15": 20000,
-        "16": 2200, "18": 2200, "22": 2200, "24": 2200, "37": 2200,
+        "8": 20000, "9": 20000, "11": 20000, "15": B_TAXABLE_INCOME,
+        "16": B_TAX, "18": B_TAX, "22": B_TAX, "24": B_TAX, "37": B_TAX,
     },
     "sched_1": {"3": 20000, "10": 20000},
     "sched_c": {"1": 20000, "3": 20000, "5": 20000, "7": 20000, "29": 20000, "31": 20000},
@@ -120,9 +140,17 @@ B_CROSS_FORM_PASS = {
     ("f1040nr", "8 == sched_1.10"),
 }
 
+# Independent-recompute set per scenario, keyed form_key -> {line: expected}.
+# Both scenarios' line 16 is a real tax-table lookup; verify_filing(independent=)
+# re-derives it from the versioned tables and the recompute section must PASS —
+# the multi-form half of the no-LLM-arithmetic guarantee, exercised on BOTH the
+# resident 1040 and the nonresident 1040-NR stack.
+A_INDEPENDENT = {"f1040": {"16": A_TAX}}
+B_INDEPENDENT = {"f1040nr": {"16": B_TAX}}
+
 SCENARIOS = {
-    "A_resident_1040_2023": (A_FORMS, A_MONEY, A_CROSS_FORM_PASS),
-    "B_nra_1040nr_2022": (B_FORMS, B_MONEY, B_CROSS_FORM_PASS),
+    "A_resident_1040_2023": (A_FORMS, A_MONEY, A_CROSS_FORM_PASS, A_INDEPENDENT),
+    "B_nra_1040nr_2022": (B_FORMS, B_MONEY, B_CROSS_FORM_PASS, B_INDEPENDENT),
 }
 
 
@@ -154,7 +182,7 @@ def _build_values(pack: FormPack, money: dict[str, int]) -> dict[str, object]:
 @pytest.mark.network
 @pytest.mark.parametrize("scenario", sorted(SCENARIOS), ids=lambda s: s)
 def test_filing_verifies_clean(scenario: str, tmp_path: Path):
-    forms, money, expected_pass = SCENARIOS[scenario]
+    forms, money, expected_pass, independent = SCENARIOS[scenario]
     items: list[FilingItem] = []
     for key, rel_pack in forms.items():
         pack = load_pack(REPO_ROOT / rel_pack)
@@ -166,14 +194,14 @@ def test_filing_verifies_clean(scenario: str, tmp_path: Path):
         fill_form(pack, _build_values(pack, money.get(key, {})), blank, filled)
         items.append(FilingItem(form_key=key, pack=pack, pdf_path=filled))
 
-    report = verify_filing(items)
+    report = verify_filing(items, independent=independent)
 
     def _fails(section):
         return [c for c in (section or []) if c.status == "FAIL"]
 
     failures = {
         name: [c.detail for c in _fails(getattr(report, name))]
-        for name in ("assertions", "relations", "clipping", "checkboxes", "identity", "cross_form")
+        for name in ("assertions", "relations", "recompute", "clipping", "checkboxes", "identity", "cross_form")
     }
     assert report.ok, "verify_filing reported failures:\n" + "\n".join(
         f"[{name}] {detail}" for name, details in failures.items() for detail in details
@@ -186,3 +214,16 @@ def test_filing_verifies_clean(scenario: str, tmp_path: Path):
         f"these cross_form chains did not evaluate to PASS (skipped or absent): {sorted(missing)}\n"
         f"PASS were: {sorted(passed)}"
     )
+
+    # The no-LLM-arithmetic guardrail: when a recompute set is supplied (scenario
+    # A's f1040 line 16 tax-table lookup), the recompute section must PASS — the
+    # filled tax came from calc over the versioned tables, not from mental math.
+    if independent is not None:
+        expected_lines = {f"{fk}: {line}" for fk, lines in independent.items() for line in lines}
+        recompute_lines = {c.line for c in report.recompute if c.status == "PASS"}
+        assert expected_lines <= recompute_lines, (
+            f"independent recompute did not PASS for {sorted(expected_lines - recompute_lines)} "
+            f"— PASS lines were {sorted(recompute_lines)}"
+        )
+    else:
+        assert not report.recompute, "no recompute set was supplied; the section must be empty"

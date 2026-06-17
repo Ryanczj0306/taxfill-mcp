@@ -23,9 +23,33 @@ import re
 from decimal import Decimal
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlparse
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+
+def validate_gov_url(value: str) -> str:
+    """Validate a citation/source URL: http(s) scheme AND a .gov host.
+
+    Knowledge data and the source registry cite official .gov documents only
+    (irs.gov, congress.gov, federalregister.gov, treasury.gov, eftps.gov, ...).
+    The scheme failure and the host failure raise distinguishable messages so a
+    pack author knows whether to add the scheme or to swap in a .gov source.
+    """
+    if not value.startswith(("https://", "http://")):
+        raise ValueError(
+            "url must be the full official document URL starting with https:// "
+            "(knowledge data is cited to .gov sources only — see knowledge/sources.yaml)"
+        )
+    hostname = (urlparse(value).hostname or "").lower()
+    if not (hostname == "gov" or hostname.endswith(".gov")):
+        raise ValueError(
+            f"url must point to an official .gov host (e.g. irs.gov, congress.gov, "
+            f"treasury.gov), got host {hostname!r} — knowledge data is cited to .gov "
+            f"sources only (see knowledge/sources.yaml)"
+        )
+    return value
 
 # The four federal filing statuses every tax block must cover. (A qualifying
 # surviving spouse uses the married_filing_jointly column — the alias is
@@ -71,13 +95,8 @@ class Citation(BaseModel):
 
     @field_validator("url")
     @classmethod
-    def _url_is_http(cls, value: str) -> str:
-        if not value.startswith(("https://", "http://")):
-            raise ValueError(
-                "citation.url must be the full official document URL starting with https:// "
-                "(knowledge data is cited to .gov sources only — see knowledge/sources.yaml)"
-            )
-        return value
+    def _url_is_gov(cls, value: str) -> str:
+        return validate_gov_url(value)
 
 
 class RateBracket(BaseModel):
@@ -440,6 +459,37 @@ class Credits(BaseModel):
     citation: Citation
 
 
+class EffectiveLawChange(BaseModel):
+    """One enacted-law delta relevant to the filing year (dev plan section 7(2)).
+
+    Each entry MUST carry a citation (to the enacting public law / official
+    guidance) and a status tracking how far the change has matured:
+    ``enacted`` (law passed) -> ``irs_guidance_pending`` (no final IRS numbers
+    yet) -> ``final_form_published`` (figures are final and citeable).
+
+    Numbers without final IRS guidance are NEVER hardcoded; for a not-yet-final
+    figure the entry records ``lookup_path`` (the sources.yaml by_topic key /
+    URL to resolve it from) instead of a value — so the pack stores the lookup
+    path, not an invented number.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    description: str = Field(description="What changed (e.g. 'OBBBA car-loan interest deduction, effective 2025').")
+    citation: Citation
+    status: Literal["enacted", "irs_guidance_pending", "final_form_published"] = Field(
+        description="Maturity of the change: enacted -> irs_guidance_pending -> final_form_published."
+    )
+    lookup_path: str | None = Field(
+        default=None,
+        description="For a figure not yet final: the sources.yaml by_topic key / .gov URL to resolve it from "
+        "(never a hardcoded number). Required while status is not final_form_published if a figure is needed.",
+    )
+    source_topic: str | None = Field(
+        default=None, description="Optional sources.yaml by_topic key this change feeds into."
+    )
+
+
 class KnowledgePack(BaseModel):
     """One ``knowledge/<jurisdiction>/<year>.yaml`` file, validated.
 
@@ -457,7 +507,7 @@ class KnowledgePack(BaseModel):
     mailing_addresses: MailingAddresses | None = None
     deadlines: Deadlines | None = None
     credits: Credits | None = None
-    effective_law_changes: list[dict] = Field(default_factory=list)
+    effective_law_changes: list[EffectiveLawChange] = Field(default_factory=list)
 
     @field_validator("jurisdiction")
     @classmethod

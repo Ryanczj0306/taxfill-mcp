@@ -251,8 +251,8 @@ def test_unknown_filing_status_lists_the_valid_ones():
 
 
 def test_unshipped_year_names_path_and_protocol():
-    with pytest.raises(FileNotFoundError, match=r"2019\.yaml.*freshness protocol"):
-        tax_from_taxable_income(50000, "single", year=2019, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(FileNotFoundError, match=r"2099\.yaml.*freshness protocol"):
+        tax_from_taxable_income(50000, "single", year=2099, knowledge_dir=KNOWLEDGE_DIR)
 
 
 def test_string_and_float_money_inputs_accepted():

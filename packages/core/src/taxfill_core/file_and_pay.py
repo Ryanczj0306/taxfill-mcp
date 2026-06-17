@@ -2,9 +2,11 @@
 
 ``file_and_pay(manifest)`` turns the final set of returns into a personalized,
 human-readable checklist: how to pay, what to sign, how to assemble, where to
-mail, what to keep, and the deadlines (including the 3-year refund statute of
-limitations). Every jurisdiction/payment fact comes from the cited knowledge
-pack (mailing addresses, payment options, deadlines) — never invented.
+mail, what to keep, and the deadlines (due dates incl. the abroad automatic
+2-month extension and Form 4868, plus the refund statute of limitations — the
+later of 3 years from filing or 2 years from payment). Every jurisdiction/
+payment fact comes from the cited knowledge pack (mailing addresses, payment
+options, deadlines) — never invented.
 
 v1 is federal-only (state where-to-file and portals ship with the state packs
 in M5); a non-federal item returns a clear "ships in M5" note rather than a
@@ -127,6 +129,14 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
         payment.append("Verify before sending: the tax year, the amount, and your SSN on the payment.")
     elif refund and item.direct_deposit:
         payment.append("Refund by direct deposit — double-check the routing and account numbers before filing; a wrong digit misroutes the refund.")
+    elif owes and pack is not None and pack.payment_options is None:
+        # Pack loaded but the payment-options block is absent (a partial pack):
+        # don't silently emit empty payment guidance — point to irs.gov.
+        notes.append(
+            f"The federal payment options (check payee wording and online-payment details) for {item.tax_year} are not "
+            f"in the knowledge pack — confirm them on irs.gov (prior-year instructions at "
+            f"https://www.irs.gov/pub/irs-prior/) before paying."
+        )
 
     # Mailing address (resolved from knowledge).
     mailing_address = None
@@ -143,6 +153,13 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
                 notes.append(f"State {item.state!r} not found in the where-to-file table — confirm the address on irs.gov.")
         else:
             notes.append("No state given — the 1040 mailing address depends on your state; provide it to resolve the exact address.")
+    elif pack is not None and pack.mailing_addresses is None:
+        # Pack loaded but the where-to-file block is absent (a partial pack):
+        # don't silently return mailing_address=None with no explanation.
+        notes.append(
+            f"The where-to-file mailing address for {item.tax_year} is not in the knowledge pack — confirm it on "
+            f"irs.gov (prior-year instructions at https://www.irs.gov/pub/irs-prior/) before mailing."
+        )
 
     # Sign.
     sign = ["Print the form pages and sign and date the return in ink."]
@@ -182,18 +199,62 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
         d = pack.deadlines
         citations.append(d.citation)
         deadlines.append(f"Original due date for tax year {item.tax_year}: {d.filing_due_date}.")
+        # A 1040-NR filer with no US-withholding wages is due the 15th day of the
+        # 6th month (data-driven; the manifest may not flag "no US wages", so
+        # frame it conditionally). Guarded by getattr — older packs may omit it.
+        if is_nr:
+            nonwage_due = getattr(d, "nonwage_1040nr_due_date", None)
+            if nonwage_due:
+                deadlines.append(
+                    f"If you are a 1040-NR filer with no US-withholding wages, the return is due the 15th day of the "
+                    f"6th month instead — for {item.tax_year} that is {nonwage_due}."
+                )
+        # Taxpayers abroad on the regular due date get an automatic 2-month
+        # extension to file (interest still accrues from the April due date).
+        abroad_date = getattr(d, "abroad_automatic_extension_date", None)
+        if abroad_date:
+            deadlines.append(
+                f"If you are a taxpayer living/working abroad on the regular due date, you get an automatic 2-month "
+                f"extension to file — to {abroad_date}; interest still accrues from the {d.filing_due_date} due date."
+            )
+        # Form 4868 extends the time to FILE, not the time to PAY.
+        deadlines.append(
+            "Need more time to file? Form 4868 (Application for Automatic Extension of Time To File) extends the time "
+            "to FILE, NOT the time to PAY — pay any estimated balance by the original due date to avoid interest."
+        )
         sol = d.refund_statute_of_limitations
         if refund:
             expiry = _plus_years(d.filing_due_date, sol.years_from_filing)
-            deadlines.append(
-                f"Refund statute of limitations ({sol.authority}): claim within {sol.years_from_filing} years of the "
-                f"due date — for {item.tax_year} that is on/around {expiry}. File before then or the refund is forfeited."
+            years_from_payment = getattr(sol, "years_from_payment", None)
+            later_of = (
+                f"the later of {sol.years_from_filing} years from filing or {years_from_payment} years from payment"
+                if years_from_payment is not None
+                else f"{sol.years_from_filing} years from filing"
             )
-        else:
-            deadlines.append(
-                "Filed late? Late-filing and late-payment penalties plus interest accrue from the due date; "
-                "the IRS will bill these separately — expect that letter, it is not a scam."
+            line = (
+                f"Refund statute of limitations ({sol.authority}): claim within {later_of}. The {expiry} expiry shown "
+                f"assumes on-time filing — a return filed before the due date is treated as filed on the due date. "
+                f"File before then or the refund is forfeited."
             )
+            note = getattr(sol, "note", None)
+            if note:
+                line += f" Note: {note}"
+            deadlines.append(line)
+        elif owes:
+            # Scope the penalty warning to a balance owed (it is over-broad on a
+            # balanced/on-time return). No invented dollar amounts.
+            deadlines.append(
+                "Filed late or paying late? Late-filing and late-payment penalties plus interest accrue from the due "
+                "date; the IRS will bill these separately — expect that letter, it is not a scam."
+            )
+    elif pack is not None and pack.deadlines is None:
+        # Pack loaded but the deadlines block is absent (a partial pack): don't
+        # silently return an empty deadlines list with no due date or SOL window.
+        notes.append(
+            f"The filing due date, abroad extension, and refund statute-of-limitations window for {item.tax_year} are "
+            f"not in the knowledge pack — confirm them on irs.gov (prior-year instructions at "
+            f"https://www.irs.gov/pub/irs-prior/) before filing."
+        )
 
     # De-dup citations.
     seen, uniq = set(), []
