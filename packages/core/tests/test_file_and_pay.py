@@ -87,7 +87,8 @@ def test_empty_manifest_rejected():
 def test_abroad_extension_and_form_4868_surfaced():
     r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-800, state="California")])
     # Abroad automatic 2-month extension date from the pack, with the interest caveat.
-    assert any("abroad" in d.lower() and "2024-06-15" in d for d in r.deadlines)
+    # Jun 15 2024 is a Saturday, so IRC 7503 shifts the deadline to 2024-06-17.
+    assert any("abroad" in d.lower() and "2024-06-17" in d for d in r.deadlines)
     assert any("interest still accrues" in d.lower() for d in r.deadlines)
     # Form 4868 names that it extends time to file, not to pay.
     assert any("4868" in d and "NOT the time to PAY" in d for d in r.deadlines)
@@ -101,7 +102,11 @@ def test_1040nr_nonwage_due_date_framed_conditionally():
 
 def test_1040_does_not_get_nonwage_1040nr_line():
     r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=1000, state="Texas")])
-    assert not any("2024-06-17" in d for d in r.deadlines)
+    # The 1040-NR nonwage line must not appear on a plain 1040. (Key on the
+    # nonwage phrasing, not the bare date: 2024-06-17 is now also the abroad
+    # automatic-extension date after the IRC 7503 weekend shift, and that line
+    # DOES legitimately appear on a 1040.)
+    assert not any("no US-withholding wages" in d for d in r.deadlines)
 
 
 # ── FIX 2: refund statute-of-limitations "later of" rule ──
@@ -148,6 +153,27 @@ def test_degraded_path_when_no_knowledge_pack(tmp_path):
     assert any("BOTH" in s for s in r.sign)
     # No pack -> no resolved mailing address.
     assert r.mailing_address is None
+
+
+def test_partial_pack_warns_per_missing_block_not_silent_empty():
+    # A loaded-but-PARTIAL pack (2022 ships without the deadlines/mailing/payment
+    # blocks) for a balance-due 1040 must produce explicit warning notes for the
+    # missing mailing address / payment options / deadlines — never a silent
+    # empty deliverable (mailing_address=None, payment=[], deadlines=[], notes=[]).
+    r = file_and_pay(
+        [FilingManifestItem(form="1040", tax_year=2022, bottom_line=-500, state="California")],
+        knowledge_dir="knowledge",
+    ).returns[0]
+    # Pack loaded -> the FileNotFoundError "no federal knowledge pack" note must NOT fire.
+    assert not any("no federal knowledge pack" in n.lower() for n in r.notes)
+    # Explicit per-block warnings instead of silent empties.
+    assert any("where-to-file" in n.lower() and "2022" in n and "irs.gov" in n.lower() for n in r.notes)
+    assert any("payment options" in n.lower() and "2022" in n and "irs.gov" in n.lower() for n in r.notes)
+    assert any("statute-of-limitations" in n.lower() and "2022" in n and "irs.gov" in n.lower() for n in r.notes)
+    # No invented data leaked through.
+    assert r.mailing_address is None
+    assert r.payment == []
+    assert r.deadlines == []
 
 
 def test_plus_years_feb_29_boundary():
