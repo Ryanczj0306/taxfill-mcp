@@ -61,9 +61,33 @@ def test_citations_are_gov():
     assert r.citations and all(c.url.startswith("https://") and ".gov" in c.url for c in r.citations)
 
 
-def test_state_item_defers_to_m5():
-    out = file_and_pay([FilingManifestItem(form="540", tax_year=2023, jurisdiction="states/ca", bottom_line=-100)])
-    assert any("M5" in n for n in out.returns[0].notes)
+def test_supported_state_uses_the_pack():
+    r = file_and_pay([FilingManifestItem(
+        form="540", tax_year=2023, jurisdiction="states/ca", bottom_line=-100, state="California")]).returns[0]
+    assert "You owe $100" in r.bottom_line
+    assert any('"Franchise Tax Board"' in p for p in r.payment)
+    assert r.mailing_address and "Franchise Tax Board" in r.mailing_address and "94267" in r.mailing_address  # with-payment
+    assert any("does not conform to federal tax treaties" in n.lower() for n in r.notes)
+    assert any("ftb.ca.gov" in c.url for c in r.citations)
+
+
+def test_unsupported_state_points_to_dor():
+    r = file_and_pay([FilingManifestItem(form="IT-201", tax_year=2023, jurisdiction="states/ny", bottom_line=-100)]).returns[0]
+    assert any("dor" in n.lower() for n in r.notes)
+
+
+def test_supported_state_refund_uses_no_payment_address():
+    r = file_and_pay([FilingManifestItem(
+        form="540", tax_year=2023, jurisdiction="states/ca", bottom_line=500, direct_deposit=True)]).returns[0]
+    assert "94240" in r.mailing_address  # CA refund / no-payment PO box
+    assert not any('"Franchise Tax Board"' in p for p in r.payment)  # no check payee for a refund
+
+
+def test_supported_state_paid_online_does_not_enclose_check():
+    r = file_and_pay([FilingManifestItem(
+        form="540", tax_year=2023, jurisdiction="states/ca", bottom_line=-100, paid_online=True)]).returns[0]
+    assert any("already paid" in p.lower() for p in r.payment)
+    assert "94240" in r.mailing_address  # paid online -> no check enclosed -> no-payment address
 
 
 def test_multiple_returns_get_separate_envelopes_note():

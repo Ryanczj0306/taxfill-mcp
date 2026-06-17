@@ -18,7 +18,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field
 
 from taxfill_core.file_and_pay import FilingManifestItem, _plus_years
-from taxfill_core.knowledge import Citation, load_knowledge
+from taxfill_core.knowledge import Citation, load_knowledge, load_state_knowledge
 
 __all__ = ["FilingSummaryItem", "FilingSummary", "filing_summary"]
 
@@ -152,15 +152,34 @@ def filing_summary(
         if item.jurisdiction == "federal":
             items.append(_federal_item(item, today, knowledge_dir))
         else:
-            refund = item.bottom_line if item.bottom_line > 0 else 0
-            owed = -item.bottom_line if item.bottom_line < 0 else 0
-            head = (f"{item.jurisdiction} {item.tax_year}: refund {_money(refund)}" if refund
-                    else (f"{item.jurisdiction} {item.tax_year}: you owe {_money(owed)}" if owed
-                          else f"{item.jurisdiction} {item.tax_year}: balanced"))
-            items.append(FilingSummaryItem(
-                form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year, headline=head,
-                refund=refund, owed=owed, plain_explanation="State bottom line.",
-                deadline_status="State deadlines ship with the state knowledge pack (M5).",
-                notes=[f"State summary for '{item.jurisdiction}' is preliminary (M5)."],
-            ))
+            items.append(_state_item(item, knowledge_dir))
     return FilingSummary(items=items)
+
+
+def _state_item(item: FilingManifestItem, knowledge_dir) -> FilingSummaryItem:
+    refund = item.bottom_line if item.bottom_line > 0 else 0
+    owed = -item.bottom_line if item.bottom_line < 0 else 0
+    state = item.jurisdiction.split("/", 1)[1].upper() if "/" in item.jurisdiction else item.jurisdiction
+    head = (f"{state} {item.tax_year}: refund {_money(refund)}" if refund
+            else (f"{state} {item.tax_year}: you owe {_money(owed)}" if owed else f"{state} {item.tax_year}: balanced"))
+    code = item.jurisdiction.split("/", 1)[1] if "/" in item.jurisdiction else ""
+    citations, notes, deadline_status = [], [], "Confirm the state deadline at the state DOR."
+    try:
+        sk = load_state_knowledge(code, item.tax_year, knowledge_dir)
+        dl = getattr(sk, "deadlines", None) or {}
+        if dl.get("filing_due_date"):
+            deadline_status = f"Due {dl['filing_due_date']}."
+            if dl.get("verification"):
+                notes.append(f"Deadline: {dl['verification']}")
+            if dl.get("citation"):
+                citations.append(Citation(**dl["citation"]))
+        if not sk.conforms_to_federal_treaties:
+            notes.append(f"If any income was exempt from federal tax under a treaty: {state} does not conform to "
+                         f"federal tax treaties — that income is still taxable to {state}.")
+    except FileNotFoundError:
+        notes.append(f"No '{item.jurisdiction}' knowledge pack for {item.tax_year} yet — confirm the bottom line and deadline at the state DOR.")
+    return FilingSummaryItem(
+        form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year, headline=head,
+        refund=refund, owed=owed, plain_explanation="State bottom line — review against your state return.",
+        deadline_status=deadline_status, citations=citations, notes=notes,
+    )
