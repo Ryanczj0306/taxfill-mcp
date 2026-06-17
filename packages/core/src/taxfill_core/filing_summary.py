@@ -177,7 +177,14 @@ def _state_item(item: FilingManifestItem, knowledge_dir) -> FilingSummaryItem:
             notes.append(f"If any income was exempt from federal tax under a treaty: {state} does not conform to "
                          f"federal tax treaties — that income is still taxable to {state}.")
     except FileNotFoundError:
-        notes.append(f"No '{item.jurisdiction}' knowledge pack for {item.tax_year} yet — confirm the bottom line and deadline at the state DOR.")
+        from taxfill_core.statescope import _load_no_income_tax
+
+        no_tax, _ = _load_no_income_tax(knowledge_dir)
+        if code.upper() in no_tax:
+            deadline_status = f"{state} levies no personal income tax — no state return to file."
+            notes.append(deadline_status)
+        else:
+            notes.append(f"No '{item.jurisdiction}' knowledge pack for {item.tax_year} yet — confirm the bottom line and deadline at the state DOR.")
     return FilingSummaryItem(
         form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year, headline=head,
         refund=refund, owed=owed, plain_explanation="State bottom line — review against your state return.",
