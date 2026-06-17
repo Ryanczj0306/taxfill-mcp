@@ -269,11 +269,34 @@ def test_effective_law_change_missing_citation_rejected(raw_2023):
         KnowledgePack.model_validate(raw)
 
 
-def test_effective_law_change_non_gov_citation_rejected(raw_2023):
+def test_effective_law_change_citation_url_without_scheme_rejected(raw_2023):
+    # A url lacking an http(s) scheme fails on the SCHEME check (message names https://),
+    # distinct from the .gov host check below.
     raw = copy.deepcopy(raw_2023)
     raw["effective_law_changes"] = [_law_change(citation={"source": "a blog", "url": "blog.example/post"})]
     with pytest.raises(ValidationError, match="https://"):
         KnowledgePack.model_validate(raw)
+
+
+def test_effective_law_change_non_gov_https_citation_rejected(raw_2023):
+    # A genuinely non-.gov but well-formed https url must be REJECTED on the HOST
+    # check ('.gov only' promise) — not silently accepted just because it is https.
+    raw = copy.deepcopy(raw_2023)
+    raw["effective_law_changes"] = [
+        _law_change(citation={"source": "a blog", "url": "https://blog.example.com/post"})
+    ]
+    with pytest.raises(ValidationError, match=r"\.gov"):
+        KnowledgePack.model_validate(raw)
+
+
+def test_gov_https_citation_accepted(raw_2023):
+    # A .gov https citation is the happy path and must validate cleanly.
+    raw = copy.deepcopy(raw_2023)
+    raw["effective_law_changes"] = [
+        _law_change(citation={"source": "Pub. L. 119-21", "url": "https://www.congress.gov/bill/119th-congress"})
+    ]
+    pack = KnowledgePack.model_validate(raw)
+    assert pack.effective_law_changes[0].citation.url == "https://www.congress.gov/bill/119th-congress"
 
 
 def test_extra_top_level_blocks_tolerated(raw_2023):

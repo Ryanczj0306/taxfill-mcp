@@ -1,8 +1,26 @@
 """get_sources tests (dev plan section 7 freshness protocol). Reads the real registry."""
 
 import pytest
+from pydantic import ValidationError
 
-from taxfill_core.sources import SourcesResult, get_sources
+from taxfill_core.sources import Source, SourcesResult, get_sources
+
+
+def test_source_accepts_gov_https_url():
+    src = Source(url="https://www.irs.gov/publications/p17", answers="x", cadence="annual")
+    assert src.url == "https://www.irs.gov/publications/p17"
+
+
+def test_source_rejects_non_gov_https_url():
+    # A well-formed https url on a non-.gov host must be rejected on the HOST check.
+    with pytest.raises(ValidationError, match=r"\.gov"):
+        Source(url="https://blog.example.com/post", answers="x", cadence="annual")
+
+
+def test_source_rejects_url_without_scheme():
+    # A url lacking an http(s) scheme fails on the SCHEME check (names https://).
+    with pytest.raises(ValidationError, match="https://"):
+        Source(url="irs.gov/publications/p17", answers="x", cadence="annual")
 
 
 def test_exact_topic_resolves_to_its_source():
