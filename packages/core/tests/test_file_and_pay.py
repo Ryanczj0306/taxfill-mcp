@@ -76,6 +76,12 @@ def test_unsupported_state_points_to_dor():
     assert any("dor" in n.lower() for n in r.notes)
 
 
+def test_no_income_tax_state_in_manifest_says_nothing_to_file():
+    r = file_and_pay([FilingManifestItem(form="N/A", tax_year=2023, jurisdiction="states/tx", bottom_line=0)]).returns[0]
+    assert any("no personal income tax" in n.lower() for n in r.notes)
+    assert not any("knowledge pack" in n.lower() for n in r.notes)
+
+
 def test_supported_state_refund_uses_no_payment_address():
     r = file_and_pay([FilingManifestItem(
         form="540", tax_year=2023, jurisdiction="states/ca", bottom_line=500, direct_deposit=True)]).returns[0]

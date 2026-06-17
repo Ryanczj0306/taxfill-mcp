@@ -286,6 +286,14 @@ def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions
     try:
         sk = load_state_knowledge(state, item.tax_year, knowledge_dir)
     except FileNotFoundError:
+        from taxfill_core.statescope import _load_no_income_tax
+
+        no_tax, _ = _load_no_income_tax(knowledge_dir)
+        if state.upper() in no_tax:
+            return ReturnInstructions(
+                form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year, bottom_line=bottom,
+                notes=[f"{state.upper()} levies no personal income tax — there is no state return to file or mail."],
+            )
         return ReturnInstructions(
             form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year, bottom_line=bottom,
             notes=[f"No '{item.jurisdiction}' knowledge pack for {item.tax_year} yet — confirm where/how to "

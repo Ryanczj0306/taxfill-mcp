@@ -63,6 +63,11 @@ def test_unsupported_state_summary_points_to_dor():
     assert any("dor" in n.lower() for n in it.notes)
 
 
+def test_no_income_tax_state_summary_says_nothing_to_file():
+    it = _one(FilingManifestItem(form="N/A", tax_year=2023, jurisdiction="states/tx", bottom_line=0))
+    assert "no personal income tax" in it.deadline_status.lower() or any("no personal income tax" in n.lower() for n in it.notes)
+
+
 def test_back_filing_multiple_years():
     summary = filing_summary(
         [
