@@ -5,10 +5,12 @@ from datetime import date
 from taxfill_core.schemas.profile import (
     Answer,
     Identity,
+    Immigration,
     Profile,
     Provenance,
     ResidencePeriod,
     StateFootprintYear,
+    VisaPeriod,
     WorkPeriod,
 )
 from taxfill_core.statescope import StateScopeResult, state_scope
@@ -128,3 +130,69 @@ def test_ca_treaty_nonconformity_warns_only_for_treaty_filers():
                   state_footprint={2023: StateFootprintYear(lived=footprint)})
     cit_ca = _by_state(state_scope(cit, 2023))["CA"]
     assert not any("treaties" in w.lower() for w in cit_ca.warnings)
+
+
+def test_ca_treaty_warning_on_nonresident_540nr_path():
+    # The real treaty case: an NRA working in CA but domiciled elsewhere files 540NR.
+    nra = Profile(
+        identity=Identity(us_person=_ans(False)),
+        state_footprint={2023: StateFootprintYear(
+            lived=[_rp("TX", date(2023, 1, 1), date(2023, 12, 31))],
+            worked=[_wp("CA", date(2023, 1, 1), date(2023, 12, 31))],
+        )},
+    )
+    ca = _by_state(state_scope(nra, 2023))["CA"]
+    assert ca.filing_role == "nonresident" and ca.forms[0] == "540NR"
+    assert any("treaties" in w.lower() for w in ca.warnings)
+
+
+def test_treaty_filer_detected_via_visa_timeline_when_us_person_unset():
+    # Common F-1 intake state: us_person not yet answered, but a visa period exists.
+    nra = Profile(
+        identity=Identity(),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2021, 8, 1), provenance=US)]),
+        state_footprint={2023: StateFootprintYear(lived=[_rp("CA", date(2023, 1, 1), date(2023, 12, 31))])},
+    )
+    ca = _by_state(state_scope(nra, 2023))["CA"]
+    assert any("treaties" in w.lower() for w in ca.warnings)
+
+
+def test_ca_credits_caveat_is_surfaced():
+    # The unverified credit-limit caveat must reach the user alongside benefits.
+    ca = _by_state(state_scope(_profile(lived=[_rp("CA", date(2023, 1, 1), date(2023, 12, 31))]), 2023))["CA"]
+    assert ca.benefits_candidates
+    assert any("not independently verified" in w.lower() for w in ca.warnings)
+
+
+def test_overlapping_periods_do_not_inflate_to_resident():
+    # Two overlapping/duplicate part-year periods (corrected move date) must NOT
+    # sum past the full-year threshold (the merge fix). ~Jan-Jul = part_year.
+    r = state_scope(_profile(lived=[
+        _rp("CA", date(2023, 1, 1), date(2023, 7, 15)),
+        _rp("CA", date(2023, 1, 10), date(2023, 7, 20)),  # overlaps the first
+    ]), 2023)
+    assert _by_state(r)["CA"].filing_role == "part_year"
+
+
+def test_same_state_lived_and_worked_yields_single_resident_entry():
+    r = state_scope(_profile(
+        lived=[_rp("CA", date(2023, 1, 1), date(2023, 12, 31))],
+        worked=[_wp("CA", date(2023, 1, 1), date(2023, 12, 31))],
+    ), 2023)
+    ca_entries = [s for s in r.states if s.state == "CA"]
+    assert len(ca_entries) == 1 and ca_entries[0].filing_role == "resident"
+
+
+def test_leap_year_full_year_residence_is_resident():
+    # 2024 is a leap year (366 days) — full-year coverage must still be resident.
+    r = state_scope(_profile(year=2024, lived=[_rp("CA", date(2024, 1, 1), date(2024, 12, 31))]), 2024)
+    assert _by_state(r)["CA"].filing_role == "resident"
+
+
+def test_income_tax_state_without_pack_still_must_file():
+    # New York has no shipped pack: still a resident return, placeholder form, note.
+    r = state_scope(_profile(lived=[_rp("NY", date(2023, 1, 1), date(2023, 12, 31))]), 2023)
+    ny = _by_state(r)["NY"]
+    assert ny.must_file is True and ny.filing_role == "resident" and ny.income_tax is True
+    assert ny.forms == ["(see state DOR — resident vs nonresident form)"]
+    assert any("knowledge pack" in n.lower() for n in r.notes)

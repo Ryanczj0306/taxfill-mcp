@@ -325,8 +325,12 @@ def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions
             citations.append(Citation(**dl["citation"]))
 
     if not sk.conforms_to_federal_treaties:
-        notes.append(f"{state.upper()} does not conform to federal tax treaties — any federally treaty-exempt income "
-                     f"is still taxable here; do not carry the federal exclusion onto the state return.")
+        # Conditional wording (the manifest doesn't carry treaty status, unlike
+        # state_scope which gates this on the profile) — true and useful whether
+        # or not this filer actually has a treaty position.
+        notes.append(f"If any of your income was exempt from federal tax under a treaty: {state.upper()} does not "
+                     f"conform to federal tax treaties, so that income is still taxable to {state.upper()} — do not "
+                     f"carry the federal exclusion onto the state return.")
 
     sign = ["Print the form pages, sign and date the return in ink."]
     if item.filing_jointly:

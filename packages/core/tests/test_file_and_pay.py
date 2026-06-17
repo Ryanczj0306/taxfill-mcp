@@ -76,6 +76,20 @@ def test_unsupported_state_points_to_dor():
     assert any("dor" in n.lower() for n in r.notes)
 
 
+def test_supported_state_refund_uses_no_payment_address():
+    r = file_and_pay([FilingManifestItem(
+        form="540", tax_year=2023, jurisdiction="states/ca", bottom_line=500, direct_deposit=True)]).returns[0]
+    assert "94240" in r.mailing_address  # CA refund / no-payment PO box
+    assert not any('"Franchise Tax Board"' in p for p in r.payment)  # no check payee for a refund
+
+
+def test_supported_state_paid_online_does_not_enclose_check():
+    r = file_and_pay([FilingManifestItem(
+        form="540", tax_year=2023, jurisdiction="states/ca", bottom_line=-100, paid_online=True)]).returns[0]
+    assert any("already paid" in p.lower() for p in r.payment)
+    assert "94240" in r.mailing_address  # paid online -> no check enclosed -> no-payment address
+
+
 def test_multiple_returns_get_separate_envelopes_note():
     out = file_and_pay([
         FilingManifestItem(form="1040", tax_year=2022, bottom_line=-100, state="Texas"),
