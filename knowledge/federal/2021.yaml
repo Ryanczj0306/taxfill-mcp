@@ -1,0 +1,214 @@
+# Federal knowledge pack — tax year 2021 (docs/DEV_PLAN.md sections 3, 7, 10).
+#
+# Tax math lives here as DATA with citations, never hardcoded in engine code
+# (the no-LLM-arithmetic rule, dev plan section 10). Every number in this file
+# was transcribed from the official IRS document named in its block's
+# citation (irs.gov only; see knowledge/sources.yaml). Mirrors the schema of
+# knowledge/federal/2023.yaml exactly. Do NOT edit a number without
+# re-verifying it against that source.
+#
+# IMPORTANT: 2021 was atypical. The American Rescue Plan Act of 2021 (ARPA,
+# Pub. L. 117-2) temporarily expanded BOTH the Child Tax Credit and the
+# childless Earned Income Credit for tax year 2021 only. Those expansions
+# OVERRIDE the inflation figures published in Rev. Proc. 2020-45, and are
+# encoded below from the 2021 Schedule 8812 instructions and Pub 596 (2021).
+# See the effective_law_changes block at the bottom.
+
+jurisdiction: federal
+tax_year: 2021
+
+tax:
+  # Section 1(j)(2) rate schedules for 2021, exactly as published in
+  # Rev. Proc. 2020-45, Section 3.01 (Tables 1-4):
+  #   Table 1: Married Individuals Filing Joint Returns and Surviving Spouses
+  #   Table 2: Heads of Households
+  #   Table 3: Unmarried Individuals (other than Surviving Spouses and HoH)
+  #   Table 4: Married Individuals Filing Separate Returns
+  # (ARPA did NOT change the ordinary rate schedules.)
+  rate_schedules:
+    citation:
+      source: "Rev. Proc. 2020-45, Section 3.01 (2021 tax rate tables), Tables 1-4"
+      url: "https://www.irs.gov/pub/irs-drop/rp-20-45.pdf"
+    schedules:
+      single:
+        - { over: 0, but_not_over: 9950, rate: 0.10 }
+        - { over: 9950, but_not_over: 40525, rate: 0.12 }
+        - { over: 40525, but_not_over: 86375, rate: 0.22 }
+        - { over: 86375, but_not_over: 164925, rate: 0.24 }
+        - { over: 164925, but_not_over: 209425, rate: 0.32 }
+        - { over: 209425, but_not_over: 523600, rate: 0.35 }
+        - { over: 523600, but_not_over: null, rate: 0.37 }
+      married_filing_jointly:
+        - { over: 0, but_not_over: 19900, rate: 0.10 }
+        - { over: 19900, but_not_over: 81050, rate: 0.12 }
+        - { over: 81050, but_not_over: 172750, rate: 0.22 }
+        - { over: 172750, but_not_over: 329850, rate: 0.24 }
+        - { over: 329850, but_not_over: 418850, rate: 0.32 }
+        - { over: 418850, but_not_over: 628300, rate: 0.35 }
+        - { over: 628300, but_not_over: null, rate: 0.37 }
+      married_filing_separately:
+        - { over: 0, but_not_over: 9950, rate: 0.10 }
+        - { over: 9950, but_not_over: 40525, rate: 0.12 }
+        - { over: 40525, but_not_over: 86375, rate: 0.22 }
+        - { over: 86375, but_not_over: 164925, rate: 0.24 }
+        - { over: 164925, but_not_over: 209425, rate: 0.32 }
+        - { over: 209425, but_not_over: 314150, rate: 0.35 }
+        - { over: 314150, but_not_over: null, rate: 0.37 }
+      head_of_household:
+        - { over: 0, but_not_over: 14200, rate: 0.10 }
+        - { over: 14200, but_not_over: 54200, rate: 0.12 }
+        - { over: 54200, but_not_over: 86350, rate: 0.22 }
+        - { over: 86350, but_not_over: 164900, rate: 0.24 }
+        - { over: 164900, but_not_over: 209400, rate: 0.32 }
+        - { over: 209400, but_not_over: 523600, rate: 0.35 }
+        - { over: 523600, but_not_over: null, rate: 0.37 }
+
+  # The published 2021 Tax Table — mandatory for the ORDINARY line 16
+  # computation when taxable income is below $100,000. Scope caution (same as
+  # 2023.yaml): qualified dividends / capital gains (Qualified Dividends and
+  # Capital Gain Tax Worksheet / Schedule D Tax Worksheet), Form 8615, or the
+  # Foreign Earned Income Tax Worksheet compute the tax from their own
+  # worksheet even below $100,000 — those are OUT OF SCOPE for
+  # calc.tax_from_taxable_income; never apply the table to preferential-rate
+  # income. Row structure is stable across years.
+  tax_table:
+    citation:
+      source: >-
+        2021 Tax Table, "1040 and 1040-SR TAX AND EARNED INCOME CREDIT
+        TABLES" (Cat. No. 24327A), from the 2021 Instructions for Form 1040
+      url: "https://www.irs.gov/pub/irs-prior/i1040tt--2021.pdf"
+    applies_below: 100000
+    rounding: half_up
+    row_bands:
+      - { at_least: 0, below: 5, row_width: 5 }
+      - { at_least: 5, below: 25, row_width: 10 }
+      - { at_least: 25, below: 3000, row_width: 25 }
+      - { at_least: 3000, below: 100000, row_width: 50 }
+
+  tax_computation_worksheet:
+    citation:
+      source: >-
+        2021 Tax Computation Worksheet—Line 16 (Single, Married filing jointly
+        / Qualifying widow(er), Married filing separately, Head of household),
+        from the 2021 Instructions for Form 1040
+      url: "https://www.irs.gov/pub/irs-prior/i1040tt--2021.pdf"
+    applies_at_or_above: 100000
+
+  # Rev. Proc. 2020-45, Section 3.16: base amounts under section 63(c)(2);
+  # the additional standard deduction for the aged or the blind is $1,350,
+  # increased to $1,700 if the individual is also unmarried and not a
+  # surviving spouse. One additional amount per condition per person.
+  standard_deduction:
+    citation:
+      source: "Rev. Proc. 2020-45, Section 3.16 (Standard Deduction)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-20-45.pdf"
+    amounts:
+      single: 12550
+      married_filing_jointly: 25100
+      married_filing_separately: 12550
+      head_of_household: 18800
+    additional_aged_or_blind:
+      married: 1350
+      unmarried: 1700
+
+  # Schedule SE (Form 1040) 2021, Part I. Line 7 social security wage base
+  # for 2021 is $142,800.
+  se_tax:
+    citation:
+      source: "Schedule SE (Form 1040) 2021, Part I, lines 4a-13"
+      url: "https://www.irs.gov/pub/irs-prior/f1040sse--2021.pdf"
+    net_earnings_factor: 0.9235
+    ss_rate: 0.124
+    medicare_rate: 0.029
+    ss_wage_base: 142800
+    minimum_net_earnings: 400
+
+# Pub 501 (2021) Table 1 (Filing Requirements Chart for Most Taxpayers): the
+# gross-income level at or above which a return is required, by status and age.
+# Non-elderly amounts equal that status's standard deduction; each 65+ person
+# adds the additional standard deduction ($1,700 unmarried / $1,350 married).
+# MFS is the exception: $5 regardless of age.
+filing_thresholds:
+  citation:
+    source: "IRS Publication 501 (2021), Table 1 (Filing Requirements Chart for Most Taxpayers), page 2"
+    url: "https://www.irs.gov/pub/irs-prior/p501--2021.pdf"
+  amounts:
+    single: { under_65: 12550, age_65_or_older: 14250 }
+    married_filing_jointly: { both_under_65: 25100, one_spouse_65_or_older: 26450, both_spouses_65_or_older: 27800 }
+    married_filing_separately: { any_age: 5 }
+    head_of_household: { under_65: 18800, age_65_or_older: 20500 }
+    qualifying_surviving_spouse: { under_65: 25100, age_65_or_older: 26450 }
+
+# Common credits with their 2021 parameters. BOTH the CTC and the childless
+# EITC were TEMPORARILY EXPANDED by the American Rescue Plan Act of 2021 for
+# tax year 2021 only — see effective_law_changes at the bottom. The numbers
+# below are the ARPA 2021 figures actually used on the 2021 return, NOT the
+# Rev. Proc. 2020-45 inflation baseline.
+credits:
+  citation:
+    source: "2021 Instructions for Schedule 8812 (expanded CTC/ACTC/ODC); Pub 596 (2021) and ARPA (Pub. L. 117-2) for the expanded EITC"
+    url: "https://www.irs.gov/pub/irs-prior/i1040s8--2021.pdf"
+  child_tax_credit:
+    citation:
+      source: "Schedule 8812 (Form 1040) 2021 and its Instructions ('Enhanced child tax credit', Line 5 Worksheet); ARPA section 9611 (IRC 24(i))"
+      url: "https://www.irs.gov/pub/irs-prior/i1040s8--2021.pdf"
+    # ARPA: the credit is $3,600 per qualifying child under age 6 at the end
+    # of 2021, and $3,000 per other qualifying child under age 18 at the end
+    # of 2021. (Pre-ARPA base remained $2,000 per child.)
+    per_qualifying_child: 3000              # qualifying child age 6-17 (under 18, not under 6)
+    per_qualifying_child_under_6: 3600      # qualifying child who has not attained age 6 by end of 2021
+    pre_arpa_base_per_child: 2000           # the non-enhanced base (used in the two-tier phase-out)
+    additional_ctc_refundable_cap_per_child: 3600   # 2021: the CTC was FULLY REFUNDABLE (no separate ACTC $-cap) for taxpayers meeting the residency test
+    fully_refundable: true                  # for taxpayers with a principal place of abode in the US (50 states + DC) for more than half of 2021
+    credit_for_other_dependents: 500        # ODC was NOT enhanced for 2021
+    qualifying_child_age_test: "under age 18 at the end of 2021 (under age 6 for the higher $3,600 amount)"
+    # Two-tier phase-out (2021 Schedule 8812 Line 5 Worksheet + Line 9):
+    #   First phase-out reduces only the ARPA INCREASE above the $2,000 base,
+    #   at $50 per $1,000 (5%) of MAGI over the thresholds below.
+    increased_amount_phaseout_threshold:
+      single: 75000
+      married_filing_separately: 75000
+      head_of_household: 112500
+      married_filing_jointly: 150000
+      qualifying_surviving_spouse: 150000
+    #   Second phase-out reduces the remaining $2,000 base at the regular
+    #   thresholds, at $50 per $1,000 (5%) of MAGI over the threshold.
+    base_credit_phaseout_threshold:
+      married_filing_jointly: 400000
+      single: 200000
+      married_filing_separately: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+    phaseout_step: "each phase-out reduces the affected amount $50 for each $1,000 (or fraction) of MAGI above its threshold (5%)"
+  earned_income_tax_credit:
+    # ARPA (section 9621) raised the childless (0-child) EITC for 2021 only:
+    # bigger credit, wider phase-out, lower minimum age (19, no upper age cap;
+    # special ages for students / former foster / homeless youth), and raised
+    # the investment income limit to $10,000. The 1/2/3+ child amounts are the
+    # Rev. Proc. 2020-45 figures (unchanged by ARPA), confirmed in Pub 596 (2021).
+    citation:
+      source: "Pub 596 (2021) and ARPA section 9621 (childless EITC, $10,000 investment-income limit); Rev. Proc. 2020-45 Section 3.07 (1/2/3+ child amounts, unchanged by ARPA)"
+      url: "https://www.irs.gov/pub/irs-prior/p596--2021.pdf"
+    investment_income_limit: 10000          # ARPA raised this from the Rev. Proc. $3,650 to $10,000 for 2021
+    # keyed by number of qualifying children: 0, 1, 2, 3+ (3+ shares the 2-child earned-income amount)
+    by_qualifying_children:
+      "0": { earned_income_amount: 9820, max_credit: 1502, phaseout_begins_other: 11610, phaseout_begins_mfj: 17550, phaseout_complete_other: 21430, phaseout_complete_mfj: 27380 }
+      "1": { earned_income_amount: 10640, max_credit: 3618, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 42158, phaseout_complete_mfj: 48108 }
+      "2": { earned_income_amount: 14950, max_credit: 5980, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 47915, phaseout_complete_mfj: 53865 }
+      "3+": { earned_income_amount: 14950, max_credit: 6728, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 51464, phaseout_complete_mfj: 57414 }
+
+# ARPA temporarily expanded the 2021 CTC and childless EITC; both expansions
+# are final and citeable for 2021 (figures encoded in credits above), so the
+# status is final_form_published. Recorded here per dev plan section 7(2).
+effective_law_changes:
+  - description: >-
+      American Rescue Plan Act of 2021 (ARPA): for tax year 2021 only, the
+      Child Tax Credit was increased to $3,000/$3,600 per child, made fully
+      refundable for US-resident taxpayers, and given a two-tier phase-out;
+      the childless Earned Income Credit was increased (max ~$1,502, wider
+      phase-out, lower minimum age) and the EITC investment-income limit was
+      raised to $10,000.
+    citation:
+      source: "Pub. L. 117-2 (American Rescue Plan Act of 2021), sections 9611 (CTC) and 9621 (EITC)"
+      url: "https://www.congress.gov/bill/117th-congress/house-bill/1319/text"
+    status: final_form_published
