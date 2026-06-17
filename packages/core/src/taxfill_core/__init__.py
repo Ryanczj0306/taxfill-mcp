@@ -42,7 +42,7 @@ from taxfill_core.calc import (
     standard_deduction,
     tax_from_taxable_income,
 )
-from taxfill_core.discovery import FormMap, FormSummary, LineMap, get_form_map, list_forms
+from taxfill_core.discovery import FormMap, FormSummary, LineMap, get_form_map, list_forms, load_form_pack
 from taxfill_core.estimate import CompositionLine, IncomeSnapshot, RefundEstimate, estimate_refund
 from taxfill_core.file_and_pay import FilingInstructions, FilingManifestItem, ReturnInstructions, file_and_pay
 from taxfill_core.filing_summary import FilingSummary, FilingSummaryItem, filing_summary
@@ -132,6 +132,7 @@ __all__ = [
     "irs_round",
     "is_valid_routing_number",
     "list_forms",
+    "load_form_pack",
     "load_knowledge",
     "load_pack",
     "presence_days",

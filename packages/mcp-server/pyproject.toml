@@ -1,12 +1,16 @@
 [project]
 name = "taxfill-mcp"
 version = "0.1.0.dev0"
-description = "MCP server exposing the TaxFill core engine. Stub package — the server itself is delivered in milestone M4. v0.1 in development — not yet published to PyPI."
+description = "MCP server exposing the TaxFill core engine over stdio (official mcp python-sdk). v0.1 in development — not yet published to PyPI."
 requires-python = ">=3.11"
 license = "MIT"
 dependencies = [
+    "mcp>=1.2",
     "taxfill-core",
 ]
+
+[project.scripts]
+taxfill-mcp = "taxfill_mcp.server:main"
 
 [tool.uv.sources]
 taxfill-core = { workspace = true }
