@@ -32,6 +32,31 @@ def test_change_channels_always_returned():
     assert "newsroom" in urls and "irs-prior" in urls
 
 
+def test_credit_queries_resolve_to_the_right_credit_not_eitc():
+    # Regression: "credit" is a generic family word, so a shared "credit" token
+    # must NOT promote the EITC entry for energy or CTC queries (the old bug).
+    def topics(query, year=2023):
+        return {s.topic for s in get_sources(query, year).sources}
+
+    assert topics("energy credit") == {"credits_energy"}
+    assert topics("child tax credit") == {"credits_ctc"}
+    # EITC phrasing still resolves to its own block, not energy/CTC.
+    for q in ("EITC", "earned income tax credit"):
+        eitc = topics(q)
+        assert "credits_eitc" in eitc, q
+        assert "credits_energy" not in eitc and "credits_ctc" not in eitc, q
+
+
+def test_lone_generic_word_overlap_is_a_clean_miss():
+    # A query that only shares a generic family word with the registry must be a
+    # clean miss (matched=False) so the cite-or-refuse fallback fires — never a
+    # wrong matched=True citation.
+    res = get_sources("deduction", 2023)
+    assert res.matched is False
+    assert res.sources == []
+    assert any("coverage rule" in n for n in res.notes)
+
+
 def test_unknown_topic_is_not_matched_but_guides_the_caller():
     res = get_sources("cryptocurrency_staking", 2023)
     assert res.matched is False

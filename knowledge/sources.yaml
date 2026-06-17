@@ -14,17 +14,25 @@
 #   cadence: when/how often it updates
 #
 # Coverage rule: no topic may exist in a knowledge pack or be used by a
-# position decision without an entry here backing it.
+# position decision without an entry here backing it. The federal by_topic
+# keys below cover every top-level block a federal knowledge pack ships
+# (rate schedules & tax table, standard deduction, SE tax, filing thresholds,
+# payment options, mailing addresses, deadlines, credits) PLUS the broader
+# section-7 areas of individual tax law (charitable, SALT, medical, casualty,
+# dependent care, investment income & basis, retirement, AMT, estimated tax).
+# A topic block named in a pack maps to the by_topic key of the same area;
+# the coverage meta-test (test_knowledge_m3.py) fails if any pack block lacks
+# a backing entry here.
 #
-# Status: M0 skeleton — federal topics below are seeds; the full by-topic
-# registry (SALT, medical, energy credits, retirement, AMT, estimated tax,
-# IRB/Rev. Procs, Congress.gov, Federal Register, ...) lands in M3, and
-# state blocks ship with each state knowledge pack in M5. A nightly CI job
-# (planned — DEV_PLAN section 7) will re-fetch these URLs and flag drift
-# (moved pages, new form revisions).
+# Every URL below was web-verified (WebFetch/WebSearch) to resolve to the
+# stated official IRS/.gov page before being committed. A nightly CI job
+# (planned — DEV_PLAN section 7) re-fetches these URLs and flags drift
+# (moved pages, new form revisions); state blocks ship with each state
+# knowledge pack in M5.
 
 federal:
   by_topic:
+    # ── Filing baseline & logistics (back the pack's filing/payment/where-to-file blocks) ──
     filing_basics:
       - url: https://www.irs.gov/publications/p17
         answers: >-
@@ -33,6 +41,230 @@ federal:
           general-individual baseline.
         cadence: annual (per tax year)
 
+    filing_thresholds:
+      - url: https://www.irs.gov/publications/p501
+        answers: >-
+          Pub 501, Dependents, Standard Deduction, and Filing Information:
+          Table 1 / Chart A gross-income filing-requirement amounts by status
+          and age, the standard deduction amounts, and dependent-return rules.
+        cadence: annual (per tax year)
+
+    standard_deduction:
+      - url: https://www.irs.gov/publications/p501
+        answers: >-
+          Pub 501: base standard deduction per filing status and the
+          additional amounts for being 65-or-older / blind (per condition,
+          per person), with the unmarried vs married amounts.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/irb
+        answers: >-
+          Internal Revenue Bulletin: the annual inflation-adjustment Revenue
+          Procedure (e.g. Rev. Proc. 2022-38 for 2023) — the authoritative
+          source for that year's standard-deduction and bracket figures.
+        cadence: annual (the inflation Rev. Proc. issues each autumn)
+
+    tax_rates_and_tables:
+      - url: https://www.irs.gov/irb
+        answers: >-
+          Internal Revenue Bulletin: the annual section 1(j)(2) rate-schedule
+          Revenue Procedure (e.g. Rev. Proc. 2022-38) — the bracket boundaries
+          and marginal rates for the year.
+        cadence: annual (the inflation Rev. Proc. issues each autumn)
+      - url: https://www.irs.gov/instructions/i1040gi
+        answers: >-
+          Instructions for Forms 1040 and 1040-SR: the published Tax Table
+          (mandatory below $100,000) and the Tax Computation Worksheet
+          (at/above $100,000) for the line 16 tax computation.
+        cadence: annual (per tax year)
+
+    self_employment:
+      - url: https://www.irs.gov/forms-pubs/about-schedule-se-form-1040
+        answers: >-
+          Schedule SE (Form 1040), Self-Employment Tax: net-earnings factor
+          (0.9235), social-security and Medicare rates, the year's SS wage
+          base, and the $400 minimum-net-earnings threshold.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/forms-pubs/about-schedule-c-form-1040
+        answers: >-
+          Schedule C (Form 1040), Profit or Loss From Business: what counts as
+          business income/expense feeding net earnings from self-employment.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/publications/p463
+        answers: >-
+          Pub 463, Travel, Gift, and Car Expenses: standard mileage rate,
+          deductible travel/meals/gift limits, and car-expense methods.
+        cadence: annual (per tax year)
+
+    payment_options:
+      - url: https://www.irs.gov/instructions/i1040gi
+        answers: >-
+          Instructions for Forms 1040 and 1040-SR, "Amount You Owe" / "How To
+          Pay": the year's check payee wording, Form 1040-V memo format, and
+          the electronic-payment channels.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/payments
+        answers: >-
+          IRS Payments: Direct Pay and card/digital-wallet channels (which
+          charge a processing fee, which are free) and current payment URLs.
+        cadence: as channels/processors change (check per use)
+
+    mailing_addresses:
+      - url: https://www.irs.gov/instructions/i1040gi
+        answers: >-
+          Instructions for Forms 1040 and 1040-SR, "Where Do You File?": the
+          state-dependent paper-filing addresses (no-payment vs with-payment).
+        cadence: annual (addresses move between years — use the year-specific PDF)
+      - url: https://www.irs.gov/filing/where-to-file-paper-tax-returns-with-or-without-a-payment
+        answers: >-
+          IRS Where to File: the CURRENT-year service-center addresses;
+          for a prior year use that year's instructions PDF, not this page.
+        cadence: as service centers are reassigned (verify against the year's PDF)
+
+    deadlines:
+      - url: https://www.irs.gov/instructions/i1040gi
+        answers: >-
+          Instructions for Forms 1040 and 1040-SR: the filing due date for the
+          year (and the abroad automatic 2-month extension), plus Form 4868
+          extension mechanics.
+        cadence: annual (per tax year; shifts for weekends/holidays)
+      - url: https://www.irs.gov/instructions/i1040nr
+        answers: >-
+          Instructions for Form 1040-NR, "When To File" / "Where To File": the
+          1040-NR due dates (incl. the no-US-wage-withholding later date).
+        cadence: annual (per tax year)
+
+    # ── Credits ──
+    credits_ctc:
+      - url: https://www.irs.gov/forms-pubs/about-schedule-8812-form-1040
+        answers: >-
+          Schedule 8812 (Form 1040) and its Instructions: the Child Tax Credit
+          (CTC), Credit for Other Dependents (ODC), and Additional Child Tax
+          Credit (ACTC) — per-child amount, refundable cap, qualifying-child
+          age test, and the MAGI phase-out thresholds and step.
+        cadence: annual (per tax year; "What's New" flags law changes)
+
+    credits_eitc:
+      - url: https://www.irs.gov/publications/p596
+        answers: >-
+          Pub 596, Earned Income Credit: EITC eligibility, income limits,
+          qualifying-child rules, credit amounts and phase-outs for the year.
+        cadence: annual (per tax year)
+
+    credits_energy:
+      - url: https://www.irs.gov/forms-pubs/about-form-5695
+        answers: >-
+          Form 5695 and its Instructions, Residential Energy Credits: the
+          Residential Clean Energy Credit and the Energy Efficient Home
+          Improvement Credit — eligible property, percentages, and annual caps.
+        cadence: annual (per tax year; "What's New" flags law changes)
+
+    credits_dependent_care:
+      - url: https://www.irs.gov/publications/p503
+        answers: >-
+          Pub 503, Child and Dependent Care Expenses: qualifying-person and
+          work-related-expense tests, earned-income rule, and the credit
+          percentage/expense limits (Form 2441).
+        cadence: annual (per tax year)
+
+    # ── Itemized deductions (Schedule A) ──
+    itemized_mortgage_interest:
+      - url: https://www.irs.gov/publications/p936
+        answers: >-
+          Pub 936, Home Mortgage Interest Deduction: acquisition-debt
+          limits, points, grandfathered debt, worksheet rules.
+        cadence: annual (per tax year)
+
+    itemized_charitable:
+      - url: https://www.irs.gov/publications/p526
+        answers: >-
+          Pub 526, Charitable Contributions: which organizations qualify, the
+          AGI percentage limits by gift type, and substantiation rules.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/forms-pubs/about-form-8283
+        answers: >-
+          Form 8283, Noncash Charitable Contributions: when it is required
+          (noncash gifts over $500) and the qualified-appraisal rules for
+          larger noncash donations.
+        cadence: annual (per tax year)
+
+    itemized_salt:
+      - url: https://www.irs.gov/instructions/i1040sca
+        answers: >-
+          Instructions for Schedule A (Form 1040): the state-and-local-tax
+          (SALT) deduction and its dollar cap (income/sales taxes plus
+          property taxes), and which taxes are deductible.
+        cadence: annual (per tax year; cap is set by statute — confirm via Congress.gov)
+
+    itemized_medical:
+      - url: https://www.irs.gov/publications/p502
+        answers: >-
+          Pub 502, Medical and Dental Expenses: which expenses are deductible,
+          whose expenses count, and the 7.5%-of-AGI floor on Schedule A.
+        cadence: annual (per tax year)
+
+    casualty_losses:
+      - url: https://www.irs.gov/forms-pubs/about-form-4684
+        answers: >-
+          Form 4684, Casualties and Thefts: deductible casualty/theft losses
+          (federally declared disaster limitation for personal-use property).
+        cadence: annual (per tax year; disaster declarations update mid-year)
+
+    # ── Investment income & basis ──
+    investment_income:
+      - url: https://www.irs.gov/publications/p550
+        answers: >-
+          Pub 550, Investment Income and Expenses: taxation of interest,
+          dividends, capital gains/losses, and related investment expenses.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/publications/p551
+        answers: >-
+          Pub 551, Basis of Assets: cost basis, adjusted basis, and basis of
+          property received by gift, inheritance, or exchange.
+        cadence: as needed (revised periodically)
+      - url: https://www.irs.gov/forms-pubs/about-schedule-b-form-1040
+        answers: >-
+          Schedule B (Form 1040), Interest and Ordinary Dividends: when
+          required (over $1,500) and the foreign-account questions.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/forms-pubs/about-schedule-d-form-1040
+        answers: >-
+          Schedule D (Form 1040), Capital Gains and Losses: short/long-term
+          netting, capital-loss limit, and the worksheet that computes
+          preferential-rate tax.
+        cadence: annual (per tax year)
+
+    # ── Retirement ──
+    retirement:
+      - url: https://www.irs.gov/publications/p590a
+        answers: >-
+          Pub 590-A, Contributions to IRAs: the year's IRA contribution
+          limits, deduction phase-outs, and the saver's credit.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/publications/p590b
+        answers: >-
+          Pub 590-B, Distributions from IRAs: taxation of distributions,
+          required minimum distributions, and early-distribution penalties.
+        cadence: annual (per tax year)
+
+    # ── AMT ──
+    amt:
+      - url: https://www.irs.gov/forms-pubs/about-form-6251
+        answers: >-
+          Form 6251 and its Instructions, Alternative Minimum Tax — Individuals:
+          AMT exemption amounts, phase-out thresholds, and the AMT preference
+          and adjustment items.
+        cadence: annual (per tax year)
+
+    # ── Estimated tax & withholding ──
+    estimated_tax:
+      - url: https://www.irs.gov/publications/p505
+        answers: >-
+          Pub 505, Tax Withholding and Estimated Tax: who must pay estimated
+          tax, the safe-harbor percentages, and Form 2210 underpayment-penalty
+          mechanics.
+        cadence: annual (per tax year)
+
+    # ── Nonresident & treaties ──
     nonresident_and_treaties:
       - url: https://www.irs.gov/publications/p519
         answers: >-
@@ -47,20 +279,7 @@ federal:
           position; per-country eligibility details.
         cadence: as treaties are signed or amended (rare; check per use)
 
-    credits_eitc:
-      - url: https://www.irs.gov/publications/p596
-        answers: >-
-          Pub 596, Earned Income Credit: EITC eligibility, income limits,
-          qualifying-child rules, credit amounts for the year.
-        cadence: annual (per tax year)
-
-    itemized_mortgage_interest:
-      - url: https://www.irs.gov/publications/p936
-        answers: >-
-          Pub 936, Home Mortgage Interest Deduction: acquisition-debt
-          limits, points, grandfathered debt, worksheet rules.
-        cadence: annual (per tax year)
-
+    # ── Education ──
     education:
       - url: https://www.irs.gov/publications/p970
         answers: >-
@@ -82,6 +301,24 @@ federal:
         and year (e.g. f1040nr--2022.pdf) — the canonical source_url base
         for prior-year form packs and checksum verification.
       cadence: as form revisions are published
+    - url: https://www.irs.gov/irb
+      answers: >-
+        Internal Revenue Bulletin: the official home of Revenue Procedures and
+        Revenue Rulings, including the annual inflation-adjustment Rev. Proc.
+        that sets each year's tax tables, brackets, and standard deduction.
+      cadence: weekly (the inflation Rev. Proc. lands each autumn)
+    - url: https://www.congress.gov/public-laws/119th-congress
+      answers: >-
+        Congress.gov public laws: the enacted text of new tax legislation
+        (e.g. the One Big Beautiful Bill Act) — the authority a pack records in
+        effective_law_changes BEFORE final IRS guidance/forms exist.
+      cadence: as bills are enacted (NARA assigns the public-law number)
+    - url: https://www.federalregister.gov/agencies/internal-revenue-service
+      answers: >-
+        Federal Register, IRS agency page: Treasury/IRS proposed and final
+        regulations implementing enacted law — the signal that figures for a
+        new provision are moving from irs_guidance_pending toward final form.
+      cadence: as rules are published (multiple per week during active rulemaking)
 
 # One block per supported state (DOR/FTB forms pages, residency rules,
 # state credits, treaty-conformity statements, payment portal, where-to-file).

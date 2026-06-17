@@ -24,6 +24,18 @@ __all__ = ["Source", "SourcesResult", "get_sources"]
 _JURISDICTION_RE = re.compile(r"^(federal|states/[a-z]{2})$")
 # Words too generic to be useful for keyword matching against topic text.
 _STOPWORDS = frozenset({"the", "and", "for", "a", "an", "of", "to", "tax", "in", "on", "or"})
+# Tokens that name a whole family of topics rather than a specific one, so an
+# incidental overlap on them must NOT promote an unrelated topic to matched
+# (e.g. "credit" appears in EITC, CTC, energy, dependent-care answers alike —
+# without this, get_sources("energy credit") would false-match the EITC entry).
+# They are ignored when scoring answers text; the distinctive token ("energy",
+# "child") is what disambiguates. They still count for topic-KEY matching.
+_GENERIC_TOKENS = frozenset({"credit", "credits", "deduction", "deductions", "income", "form", "forms"})
+# A topic must clear this score to be returned as a match. Exact-key (1000),
+# key-substring (100) and key-token (30/token) matches clear it on their own; a
+# lone incidental answers-token (1) does not — so a single shared word is a
+# clean miss, not a wrong (matched=True) citation that suppresses the fallback.
+_MATCH_THRESHOLD = 2
 
 
 def _repo_knowledge_dir() -> Path:
@@ -84,30 +96,87 @@ def _jurisdiction_block(registry: dict, jurisdiction: str) -> dict:
     return (registry.get("states") or {}).get(state_code) or {}
 
 
-def _tokens(text: str) -> set[str]:
-    return {w for w in re.split(r"[^a-z0-9]+", text.lower()) if w and w not in _STOPWORDS}
+def _tokens(text: str) -> list[str]:
+    """Order-preserving content tokens (stopwords dropped); used for matching."""
+    return [w for w in re.split(r"[^a-z0-9]+", text.lower()) if w and w not in _STOPWORDS]
+
+
+def _longest_contiguous_phrase(query_seq: list[str], answers_seq: list[str]) -> int:
+    """Length of the longest run of >=2 contiguous query tokens that also appears
+    contiguously in the answers token sequence.
+
+    A topic whose answers literally contain a multi-word query phrase is the
+    better fit than one that merely shares the words scattered: "earned income
+    credit" appears contiguously in the EITC answers but not in the dependent-care
+    answers ("earned income rule"), so this breaks ties the per-token count cannot.
+    """
+    best = 0
+    n = len(query_seq)
+    for i in range(n):
+        for j in range(i + 2, n + 1):  # phrases of length >= 2
+            phrase = query_seq[i:j]
+            if len(phrase) <= best:
+                continue
+            if any(answers_seq[k : k + len(phrase)] == phrase for k in range(len(answers_seq) - len(phrase) + 1)):
+                best = len(phrase)
+    return best
+
+
+def _score_topic(key: str, entries: list, query: str, query_tokens: set[str]) -> int:
+    """Relevance of one by_topic key to the query.
+
+    The topic NAME dominates (exact key, substring, then shared key-tokens) so a
+    keyworded phrase resolves to its own block; the ``answers`` text only breaks
+    ties between specific topics via DISTINCTIVE tokens. Generic family words
+    (``credit``, ``deduction``, ...) are ignored in answers scoring so a single
+    shared word can never promote an unrelated topic above the match threshold.
+    """
+    key_norm = key.lower()
+    if key_norm == query:
+        return 1000
+    distinctive = {t for t in query_tokens if t not in _GENERIC_TOKENS}
+    # A purely generic query ("deduction", "credit") carries no specific signal:
+    # it must be a clean miss, never a substring/answers match on a family word.
+    if not distinctive:
+        return 0
+    score = 0
+    if query and (query in key_norm or key_norm in query):
+        score += 100
+    # Key-token matches count only on DISTINCTIVE tokens, so a generic word in a
+    # key name (e.g. the "income" in `investment_income`) cannot incidentally
+    # win an unrelated query ("earned income credit").
+    score += 30 * len(distinctive & set(_tokens(key_norm)))
+    answers_seq = _tokens(" ".join(str(e.get("answers", "")) for e in (entries or [])))
+    answers_tokens = set(answers_seq)
+    # 10 per distinctive token present (the real signal) + 1 per extra
+    # occurrence (a fine tiebreaker: the topic that talks about the distinctive
+    # word most is the better fit, e.g. "child" for CTC vs EITC).
+    hits = distinctive & answers_tokens
+    score += 10 * len(hits)
+    score += sum(answers_seq.count(t) - 1 for t in hits)
+    # Phrase boost: a topic whose answers literally contain a multi-word run of
+    # the query (e.g. "earned income credit") is the better fit than one that
+    # only shares the words scattered ("earned income rule") — this is what
+    # separates the EITC entry from the dependent-care entry for an EITC query.
+    score += 40 * _longest_contiguous_phrase(_tokens(query), answers_seq)
+    return score
 
 
 def _rank_topics(by_topic: dict, topic: str) -> list[str]:
-    """Topic keys whose name or answers match the query, exact-key first."""
+    """Topic keys that match the query, best first — only the best-scoring tier.
+
+    Returns only the topic(s) tied at the top score and clearing the match
+    threshold, so an incidental single-word overlap (which never clears the
+    threshold) is a clean miss rather than a wrong, fallback-suppressing match.
+    """
     query = topic.strip().lower()
-    query_tokens = _tokens(topic)
-    scored: list[tuple[int, str]] = []
-    for key, entries in by_topic.items():
-        key_norm = key.lower()
-        if key_norm == query:
-            scored.append((100, key))
-            continue
-        score = 0
-        if query and (query in key_norm or key_norm in query):
-            score += 50
-        score += 10 * len(query_tokens & _tokens(key_norm))
-        answers_text = " ".join(str(e.get("answers", "")) for e in (entries or []))
-        score += len(query_tokens & _tokens(answers_text))
-        if score:
-            scored.append((score, key))
-    scored.sort(key=lambda s: (-s[0], s[1]))
-    return [key for _, key in scored]
+    query_tokens = set(_tokens(topic))
+    scored = [(_score_topic(key, entries, query, query_tokens), key) for key, entries in by_topic.items()]
+    best = max((s for s, _ in scored), default=0)
+    if best < _MATCH_THRESHOLD:
+        return []
+    winners = sorted(key for score, key in scored if score == best)
+    return winners
 
 
 def get_sources(
