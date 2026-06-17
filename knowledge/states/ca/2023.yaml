@@ -1,0 +1,116 @@
+# California (FTB) state knowledge — tax year 2023 (dev plan section 6).
+#
+# Loaded by taxfill_core.knowledge.load_state_knowledge as a StateKnowledge.
+# No state TAX-computation block (v1 scopes + supplies rules/logistics; it does
+# not compute CA tax). Every figure is cited to ftb.ca.gov.
+#
+# Verification status (honest provenance — this project never ships unverified
+# numbers as authoritative):
+#   - treaty non-conformity + residency rules + forms: CONFIRMED verbatim
+#     against FTB Pub 1031 (2023) by an adversarial re-fetch.
+#   - credits + logistics (mailing addresses, filing thresholds, deadlines):
+#     transcribed from the cited 2023 FTB booklets, but the adversarial
+#     re-fetch was BLOCKED by ftb.ca.gov (HTTP 403), so they carry a
+#     `*_verification` caveat and must be reconfirmed at the cited URL before
+#     a figure is relied on.
+
+jurisdiction: states/ca
+tax_year: 2023
+income_tax: true
+
+# THE critical CA fact (confirmed verbatim, FTB Pub 1031 2023): California does
+# NOT conform to federal tax treaties — income exempt from federal tax under a
+# treaty is STILL taxable by California. Directly hits NRA / F-1 / J-1 filers.
+conforms_to_federal_treaties: false
+treaty_note: >-
+  California does not conform to federal income tax treaties; tax treaties that expressly limit
+  their application to federal income taxes do not apply to California. Income exempt from federal
+  tax under a U.S. treaty is generally still taxable by California unless the treaty specifically
+  excludes it from California tax. FTB Pub. 1031 worked example: a resident of China doing research
+  at a California university received $15,000 in wages excludable for federal purposes under the
+  U.S.-China treaty — those wages are nonetheless taxable by California and must be included on
+  Schedule CA (540NR), Part II, Section A, line 1a, column C. California also disallows the foreign
+  earned income exclusion and the foreign tax credit.
+citation:
+  source: "FTB Publication 1031 (2023), Guidelines for Determining Resident Status — Tax Treaty section (pp. 9-10)"
+  url: "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
+
+residency:
+  resident: "A California resident is taxed on ALL income (worldwide), regardless of source."
+  nonresident: "A nonresident is taxed only on income from California sources."
+  part_year: "A part-year resident is taxed on all income received while a California resident, plus California-source income received while a nonresident."
+  domicile: >-
+    Domicile is the one place you intend as your true, fixed, permanent home and to which you intend
+    to return whenever absent. You have only one domicile at a time. California distinguishes domicile
+    from residence — you can be domiciled in California but not a resident, or domiciled elsewhere but
+    a California resident for income-tax purposes.
+  closest_connection: "Residency follows your closest connections; it is the STRENGTH of your ties (home, family, time, licenses, registrations, bank accounts), not the number, that decides — no single factor is determinative."
+  citation:
+    source: "FTB Publication 1031 (2023), Sections G/I/L (residency, income taxable by California, domicile)"
+    url: "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
+
+# Which California return each role files (confirmed, FTB Pub 1031).
+forms:
+  resident: "540"
+  part_year_or_nonresident: "540NR"
+  schedule: "Schedule CA"
+
+# Common CA credits. Eligibility/structure are stable; the dollar limits are the
+# 2023 booklet figures but could not be independently re-confirmed (see below).
+credits_verification: >-
+  Dollar limits below are transcribed from the cited 2023 FTB booklets; the adversarial re-fetch
+  was blocked by ftb.ca.gov (HTTP 403), so confirm the exact 2023 limit at the cited URL before
+  relying on it. (The live FTB pages now display current-year, inflation-adjusted figures.)
+credits:
+  - name: "Nonrefundable Renter's Credit"
+    type: nonrefundable
+    eligibility: "Full-year California resident who paid rent at least 6 months in 2023 on a non-tax-exempt principal residence; California AGI within the limit; not given a property-tax exemption; not claimable as someone else's dependent."
+    amount: "$60 (single / married-RDP filing separately); $120 (head of household / MFJ / qualifying surviving spouse)"
+    income_limit_2023: "California AGI <= $50,746 (single or MFS); <= $101,492 (MFJ, HoH, or QSS)"
+    claimed_on: "Form 540 line 46 / Form 540 2EZ line 19 / Form 540NR line 61"
+    citation:
+      source: "2023 Form 540 booklet, Nonrefundable Renter's Credit Qualification Record"
+      url: "https://www.ftb.ca.gov/forms/2023/2023-540-booklet.html"
+  - name: "California Earned Income Tax Credit (CalEITC)"
+    type: refundable
+    eligibility: "Requires earned income greater than zero (FTB 3514 line 19). 2023 maximum earned income approximately $30,950, across all qualifying-child counts."
+    claimed_on: "FTB 3514, then Form 540 line 75 / Form 540NR line 85"
+    citation:
+      source: "FTB 2023 Schedule 3514 (CalEITC) booklet / CalEITC eligibility"
+      url: "https://www.ftb.ca.gov/forms/2023/2023-3514-booklet.html"
+
+# Filing logistics — transcribed from FTB but NOT independently re-confirmed
+# (ftb.ca.gov returned HTTP 403 to the verifier). Reconfirm before filing.
+filing_requirement:
+  verification: "From the 2023 Form 540 booklet 'Do I Have to File?' charts; re-fetch blocked (403) — confirm at the cited booklet."
+  note: >-
+    California has its own gross-income and AGI threshold charts that vary by filing status, age
+    (under 65 vs 65+), and number of dependents. Example (single/HoH, under 65, 0 dependents):
+    file if gross income exceeds about $21,561 or AGI exceeds about $17,249. A dependent of another
+    person files if income exceeds their standard deduction. Read the full charts in the booklet.
+  citation:
+    source: "2023 Form 540 booklet, 'Do I Have to File?'"
+    url: "https://www.ftb.ca.gov/forms/2023/2023-540-booklet.html"
+
+mailing_addresses:
+  verification: "Re-fetch returned HTTP 403 from ftb.ca.gov; confirm at the FTB mailing-addresses page before mailing."
+  refund_or_no_payment: "Franchise Tax Board, PO Box 942840, Sacramento CA 94240-0001"
+  with_payment: "Franchise Tax Board, PO Box 942867, Sacramento CA 94267-0001"
+  citation:
+    source: "FTB — Mailing addresses (Personal tax returns)"
+    url: "https://www.ftb.ca.gov/help/contact/mailing-addresses.html"
+
+payment:
+  check_payee: "Franchise Tax Board"
+  web_pay_url: "https://www.ftb.ca.gov/pay"
+  citation:
+    source: "FTB — Pay / Web Pay"
+    url: "https://www.ftb.ca.gov/pay"
+
+deadlines:
+  verification: "Reconfirm at the cited FTB page (re-fetch blocked, 403)."
+  filing_due_date: "2024-04-15"
+  automatic_extension: "California grants an automatic paper-filing extension to October 15 with no form required; tax owed must still be paid by April 15 to avoid penalties/interest."
+  citation:
+    source: "FTB — Extension to file (automatic 6-month extension)"
+    url: "https://www.ftb.ca.gov/file/when-to-file/extension-to-file.html"

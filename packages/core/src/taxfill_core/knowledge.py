@@ -573,3 +573,80 @@ def load_knowledge(
             f"fields or move the file to knowledge/{pack.jurisdiction}/{pack.tax_year}.yaml"
         )
     return pack
+
+
+# ── State knowledge (dev plan section 6) ─────────────────────────────────────
+
+
+class StateKnowledge(BaseModel):
+    """One ``knowledge/states/<st>/<year>.yaml`` — a state's filing knowledge.
+
+    Unlike the federal :class:`KnowledgePack`, a state pack has NO mandatory
+    ``tax`` computation block (state tax math is not computed in v1 — scoping,
+    rules, credits, and logistics are). Extra cited blocks (residency, credits,
+    mailing_addresses, payment, deadlines, filing_requirement, forms) are
+    allowed and grow per state.
+
+    The one firm, typed contract is ``conforms_to_federal_treaties`` — California
+    does NOT, so a treaty-exempt-federally amount is still taxable to CA, which
+    must never be silently assumed.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    jurisdiction: str
+    tax_year: int = Field(ge=1990, le=2100)
+    income_tax: bool = Field(default=True, description="Whether the state levies a broad personal income tax.")
+    conforms_to_federal_treaties: bool = Field(
+        description="False means federal treaty-exempt income is still taxable by this state (e.g. California)."
+    )
+    citation: Citation | None = None
+
+    @field_validator("jurisdiction")
+    @classmethod
+    def _check_state_jurisdiction(cls, value: str) -> str:
+        if not value.startswith("states/") or not _JURISDICTION_RE.fullmatch(value):
+            raise ValueError(
+                f"state knowledge jurisdiction must be 'states/<two-letter lowercase code>' (e.g. 'states/ca'), got {value!r}"
+            )
+        return value
+
+
+def load_state_knowledge(
+    state: str,
+    year: int,
+    base_dir: str | Path | None = None,
+) -> StateKnowledge:
+    """Load ``<base_dir>/states/<state>/<year>.yaml`` as a :class:`StateKnowledge`.
+
+    Args:
+        state: two-letter lowercase code, e.g. ``'ca'``.
+        year: tax year.
+        base_dir: defaults to the repo's ``knowledge/`` directory.
+
+    Raises:
+        ValueError: bad state code or a pack whose declared jurisdiction/year
+            disagrees with its path.
+        FileNotFoundError: no pack for that state/year (lists the freshness path).
+    """
+    state = state.lower()
+    if not re.fullmatch(r"[a-z]{2}", state):
+        raise ValueError(f"state must be a two-letter lowercase code (e.g. 'ca'), got {state!r}")
+    base = Path(base_dir) if base_dir is not None else _repo_knowledge_dir()
+    path = base / "states" / state / f"{year}.yaml"
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"no state knowledge pack for '{state}', tax year {year} — looked for {path}. "
+            f"State packs ship per dev plan section 6 (CA first); resolve any figure from the state DOR "
+            f"(.gov) and cite it — never invent a state rule or amount."
+        )
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        raise ValueError(f"{path}: a state knowledge pack must be a YAML mapping, got {type(raw).__name__}")
+    pack = StateKnowledge.model_validate(raw)
+    if pack.jurisdiction != f"states/{state}" or pack.tax_year != year:
+        raise ValueError(
+            f"{path}: file declares jurisdiction '{pack.jurisdiction}', tax_year {pack.tax_year} but was loaded "
+            f"as state '{state}', year {year} — fix the file or move it to knowledge/states/{state}/{year}.yaml"
+        )
+    return pack

@@ -51,9 +51,16 @@ def test_approval_framing_is_review_draft():
     assert "sign" in summary.approval_prompt.lower() and "approve" in summary.approval_prompt.lower()
 
 
-def test_state_item_is_preliminary_m5():
+def test_supported_state_summary_uses_the_pack():
     it = _one(FilingManifestItem(form="540", tax_year=2023, jurisdiction="states/ca", bottom_line=-100))
-    assert "M5" in " ".join(it.notes) or "M5" in it.deadline_status
+    assert "CA 2023: you owe $100" in it.headline
+    assert "2024-04-15" in it.deadline_status
+    assert any("does not conform to federal tax treaties" in n.lower() for n in it.notes)
+
+
+def test_unsupported_state_summary_points_to_dor():
+    it = _one(FilingManifestItem(form="IT-201", tax_year=2023, jurisdiction="states/ny", bottom_line=-100))
+    assert any("dor" in n.lower() for n in it.notes)
 
 
 def test_back_filing_multiple_years():

@@ -34,8 +34,10 @@ from taxfill_core.schemas.profile import (
     ResidencyFacts,
     StateFootprintYear,
     VisaPeriod,
+    WorkPeriod,
 )
 from taxfill_core.sources import get_sources
+from taxfill_core.statescope import state_scope
 
 US = Provenance.user_stated()
 TODAY = date(2026, 6, 17)
@@ -195,19 +197,50 @@ def test_eval_i_post_2025_refuses_to_invent():
     assert "irs.gov" in src.retrieval_hint and "2026" in src.retrieval_hint
 
 
-# ── (b, c, f) state scenarios — deferred to M5 ─────────────────────────────────
+# ── (b, c, f) state scenarios — M5 ─────────────────────────────────────────────
 
 
-@pytest.mark.skip(reason="M5: needs CA packs + state_scope (b: W-2 federal+CA resident)")
 def test_eval_b_w2_federal_and_ca_resident():
-    ...
+    # (b) Simple W-2, full-year California resident: federal refund estimate +
+    # a CA resident return (Form 540) is required.
+    profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")),
+        state_footprint={2023: StateFootprintYear(
+            lived=[ResidencePeriod(state="CA", start=date(2023, 1, 1), end=date(2023, 12, 31), provenance=US)]
+        )},
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=50000, federal_withholding=6000))
+    assert est.point == _calc_refund(50000, 6000, "single")  # federal bottom line
+    ca = next(s for s in state_scope(profile, 2023).states if s.state == "CA")
+    assert ca.filing_role == "resident" and ca.must_file is True and ca.forms[0] == "540"
 
 
-@pytest.mark.skip(reason="M5: needs CA part-year/nonresident + remote-work sourcing (c)")
 def test_eval_c_part_year_ca_remote():
-    ...
+    # (c) Moved out of CA mid-year, then lived/worked remotely from WA (no income
+    # tax): CA part-year return (540NR); WA nothing to file. Allocation = judgment.
+    profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        state_footprint={2023: StateFootprintYear(
+            lived=[
+                ResidencePeriod(state="CA", start=date(2023, 1, 1), end=date(2023, 5, 31), provenance=US),
+                ResidencePeriod(state="WA", start=date(2023, 6, 1), end=date(2023, 12, 31), provenance=US),
+            ],
+            worked=[WorkPeriod(state="WA", start=date(2023, 6, 1), end=date(2023, 12, 31), remote=True, provenance=US)],
+        )},
+    )
+    scope = state_scope(profile, 2023)
+    by = {s.state: s for s in scope.states}
+    assert by["CA"].filing_role == "part_year" and by["CA"].forms[0] == "540NR"
+    assert by["WA"].must_file is False  # no income tax
+    assert any("allocation" in n.lower() for n in scope.notes)
 
 
-@pytest.mark.skip(reason="M5: needs no-income-tax-state knowledge ('nothing to file') (f)")
 def test_eval_f_no_income_tax_state():
-    ...
+    # (f) Lived in Texas all year -> no state return required ("nothing to file").
+    profile = Profile(state_footprint={2023: StateFootprintYear(
+        lived=[ResidencePeriod(state="TX", start=date(2023, 1, 1), end=date(2023, 12, 31), provenance=US)]
+    )})
+    tx = next(s for s in state_scope(profile, 2023).states if s.state == "TX")
+    assert tx.must_file is False and tx.filing_role == "none"
+    assert "no personal income tax" in tx.reason.lower()
