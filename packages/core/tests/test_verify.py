@@ -1058,6 +1058,45 @@ def test_verify_filing_cross_form_uses_disk_values():
     assert divergence.line.startswith("sched_oi:")
 
 
+def test_verify_filing_independent_unknown_form_key_raises_naming_valid_keys():
+    # The unknown-form-key guard: an `independent` set keyed by a form_key
+    # that is not among the filing items must raise, naming the valid keys.
+    pack_main = identity_pack("F-MAIN")
+    pack_oi = make_pack([money_field("L1e")], form="SCHED-OI")
+    main = filing_item("main", pack_main, {"name": "Pat", "identifying_number": "000000000", "mailing_address": "X", "1k": "5000"})
+    oi = FilingItem(form_key="sched_oi", pack=pack_oi, fields=disk_fields(pack_oi, {"L1e": "5000"}))
+    with pytest.raises(ValueError, match="unknown form_key") as excinfo:
+        verify_filing([main, oi], independent={"nope": {"L1e": 5000}})
+    message = str(excinfo.value)
+    assert "main" in message and "sched_oi" in message  # names the valid form_key(s)
+
+
+def test_verify_filing_independent_recompute_passes_and_prefixes_form_key():
+    # A matching independent recompute against an item's disk value yields a
+    # PASS whose .line is prefixed "<form_key>: <line>"; report.ok stays True.
+    pack_oi = make_pack([money_field("L1e")], form="SCHED-OI")
+    oi = FilingItem(form_key="sched_oi", pack=pack_oi, fields=disk_fields(pack_oi, {"L1e": "5000"}))
+    report = verify_filing([oi], independent={"sched_oi": {"L1e": 5000}})
+    assert report.ok is True
+    recompute = next(check for check in report.recompute if "L1e" in check.line)
+    assert recompute.status == "PASS"
+    assert recompute.line == "sched_oi: L1e"  # prefixed with the item's form_key
+    assert recompute.filled == 5000 and recompute.recomputed == 5000
+
+
+def test_verify_filing_independent_recompute_mismatch_flips_ok_to_false():
+    # An independent expected value that disagrees with the item's disk value
+    # is a recompute FAIL and flips report.ok to False (aggregated via _all_pass).
+    pack_oi = make_pack([money_field("L1e")], form="SCHED-OI")
+    oi = FilingItem(form_key="sched_oi", pack=pack_oi, fields=disk_fields(pack_oi, {"L1e": "5000"}))
+    report = verify_filing([oi], independent={"sched_oi": {"L1e": 4000}})
+    assert report.ok is False
+    recompute = next(check for check in report.recompute if "L1e" in check.line)
+    assert recompute.status == "FAIL"
+    assert recompute.line == "sched_oi: L1e"
+    assert recompute.filled == 5000 and recompute.recomputed == 4000  # disk vs. recompute
+
+
 # ---------------------------------------------------------------------------
 # pypdf layer — offline round-trip over a synthetic AcroForm PDF
 # ---------------------------------------------------------------------------
