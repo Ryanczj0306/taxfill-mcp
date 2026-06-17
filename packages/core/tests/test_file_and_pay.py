@@ -2,7 +2,7 @@
 
 import pytest
 
-from taxfill_core.file_and_pay import FilingManifestItem, file_and_pay
+from taxfill_core.file_and_pay import FilingManifestItem, _plus_years, file_and_pay
 
 
 def _only(manifest):
@@ -79,3 +79,77 @@ def test_multiple_returns_get_separate_envelopes_note():
 def test_empty_manifest_rejected():
     with pytest.raises(ValueError, match="at least one"):
         file_and_pay([])
+
+
+# ── FIX 1: abroad automatic extension, Form 4868, 1040-NR nonwage due date ──
+
+
+def test_abroad_extension_and_form_4868_surfaced():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-800, state="California")])
+    # Abroad automatic 2-month extension date from the pack, with the interest caveat.
+    assert any("abroad" in d.lower() and "2024-06-15" in d for d in r.deadlines)
+    assert any("interest still accrues" in d.lower() for d in r.deadlines)
+    # Form 4868 names that it extends time to file, not to pay.
+    assert any("4868" in d and "NOT the time to PAY" in d for d in r.deadlines)
+
+
+def test_1040nr_nonwage_due_date_framed_conditionally():
+    r = _only([FilingManifestItem(form="1040-NR", tax_year=2023, bottom_line=-200)])
+    # 1040-NR with no US-withholding wages: 15th day of the 6th month, from the pack.
+    assert any("no US-withholding wages" in d and "2024-06-17" in d for d in r.deadlines)
+
+
+def test_1040_does_not_get_nonwage_1040nr_line():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=1000, state="Texas")])
+    assert not any("2024-06-17" in d for d in r.deadlines)
+
+
+# ── FIX 2: refund statute-of-limitations "later of" rule ──
+
+
+def test_refund_sol_states_later_of_rule_and_note():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=1000, state="Texas")])
+    sol_line = next(d for d in r.deadlines if "statute of limitations" in d.lower())
+    # "later of 3 years from filing or 2 years from payment" — both numbers from the pack.
+    assert "later of 3 years from filing or 2 years from payment" in sol_line
+    # On-time-filing caveat is stated.
+    assert "assumes on-time filing" in sol_line
+    assert "treated as filed on the due date" in sol_line
+    # The pack's note is surfaced.
+    assert "Note:" in sol_line
+
+
+def test_balanced_return_does_not_get_penalty_warning():
+    # A balanced, on-time return should NOT trigger the over-broad late-penalty line.
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=0, state="Texas")])
+    assert not any("penalt" in d.lower() for d in r.deadlines)
+
+
+def test_balance_due_still_gets_penalty_warning():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-800, state="California")])
+    assert any("penalt" in d.lower() for d in r.deadlines)
+
+
+# ── FIX 3: degraded no-pack path and _plus_years Feb-29 boundary ──
+
+
+def test_degraded_path_when_no_knowledge_pack(tmp_path):
+    # Point load_knowledge at an empty dir so the pack is guaranteed absent
+    # regardless of which year packs ship — forces the FileNotFoundError path.
+    (tmp_path / "federal").mkdir()
+    out = file_and_pay(
+        [FilingManifestItem(form="1040", tax_year=2023, bottom_line=500, state="Texas", filing_jointly=True)],
+        knowledge_dir=tmp_path,
+    )
+    r = out.returns[0]
+    # Degraded note appears.
+    assert any("no federal knowledge pack" in n.lower() for n in r.notes)
+    # MFJ both-spouses-sign still fires (it's pack-independent).
+    assert any("BOTH" in s for s in r.sign)
+    # No pack -> no resolved mailing address.
+    assert r.mailing_address is None
+
+
+def test_plus_years_feb_29_boundary():
+    # Feb 29 in a leap year + 3 years lands on a non-leap year -> clamps to Feb 28.
+    assert _plus_years("2024-02-29", 3) == "2027-02-28"
