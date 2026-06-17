@@ -2,9 +2,11 @@
 
 ``file_and_pay(manifest)`` turns the final set of returns into a personalized,
 human-readable checklist: how to pay, what to sign, how to assemble, where to
-mail, what to keep, and the deadlines (including the 3-year refund statute of
-limitations). Every jurisdiction/payment fact comes from the cited knowledge
-pack (mailing addresses, payment options, deadlines) — never invented.
+mail, what to keep, and the deadlines (due dates incl. the abroad automatic
+2-month extension and Form 4868, plus the refund statute of limitations — the
+later of 3 years from filing or 2 years from payment). Every jurisdiction/
+payment fact comes from the cited knowledge pack (mailing addresses, payment
+options, deadlines) — never invented.
 
 v1 is federal-only (state where-to-file and portals ship with the state packs
 in M5); a non-federal item returns a clear "ships in M5" note rather than a
@@ -182,17 +184,53 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
         d = pack.deadlines
         citations.append(d.citation)
         deadlines.append(f"Original due date for tax year {item.tax_year}: {d.filing_due_date}.")
+        # A 1040-NR filer with no US-withholding wages is due the 15th day of the
+        # 6th month (data-driven; the manifest may not flag "no US wages", so
+        # frame it conditionally). Guarded by getattr — older packs may omit it.
+        if is_nr:
+            nonwage_due = getattr(d, "nonwage_1040nr_due_date", None)
+            if nonwage_due:
+                deadlines.append(
+                    f"If you are a 1040-NR filer with no US-withholding wages, the return is due the 15th day of the "
+                    f"6th month instead — for {item.tax_year} that is {nonwage_due}."
+                )
+        # Taxpayers abroad on the regular due date get an automatic 2-month
+        # extension to file (interest still accrues from the April due date).
+        abroad_date = getattr(d, "abroad_automatic_extension_date", None)
+        if abroad_date:
+            deadlines.append(
+                f"If you are a taxpayer living/working abroad on the regular due date, you get an automatic 2-month "
+                f"extension to file — to {abroad_date}; interest still accrues from the {d.filing_due_date} due date."
+            )
+        # Form 4868 extends the time to FILE, not the time to PAY.
+        deadlines.append(
+            "Need more time to file? Form 4868 (Application for Automatic Extension of Time To File) extends the time "
+            "to FILE, NOT the time to PAY — pay any estimated balance by the original due date to avoid interest."
+        )
         sol = d.refund_statute_of_limitations
         if refund:
             expiry = _plus_years(d.filing_due_date, sol.years_from_filing)
-            deadlines.append(
-                f"Refund statute of limitations ({sol.authority}): claim within {sol.years_from_filing} years of the "
-                f"due date — for {item.tax_year} that is on/around {expiry}. File before then or the refund is forfeited."
+            years_from_payment = getattr(sol, "years_from_payment", None)
+            later_of = (
+                f"the later of {sol.years_from_filing} years from filing or {years_from_payment} years from payment"
+                if years_from_payment is not None
+                else f"{sol.years_from_filing} years from filing"
             )
-        else:
+            line = (
+                f"Refund statute of limitations ({sol.authority}): claim within {later_of}. The {expiry} expiry shown "
+                f"assumes on-time filing — a return filed before the due date is treated as filed on the due date. "
+                f"File before then or the refund is forfeited."
+            )
+            note = getattr(sol, "note", None)
+            if note:
+                line += f" Note: {note}"
+            deadlines.append(line)
+        elif owes:
+            # Scope the penalty warning to a balance owed (it is over-broad on a
+            # balanced/on-time return). No invented dollar amounts.
             deadlines.append(
-                "Filed late? Late-filing and late-payment penalties plus interest accrue from the due date; "
-                "the IRS will bill these separately — expect that letter, it is not a scam."
+                "Filed late or paying late? Late-filing and late-payment penalties plus interest accrue from the due "
+                "date; the IRS will bill these separately — expect that letter, it is not a scam."
             )
 
     # De-dup citations.
