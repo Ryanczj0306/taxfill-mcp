@@ -129,6 +129,14 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
         payment.append("Verify before sending: the tax year, the amount, and your SSN on the payment.")
     elif refund and item.direct_deposit:
         payment.append("Refund by direct deposit — double-check the routing and account numbers before filing; a wrong digit misroutes the refund.")
+    elif owes and pack is not None and pack.payment_options is None:
+        # Pack loaded but the payment-options block is absent (a partial pack):
+        # don't silently emit empty payment guidance — point to irs.gov.
+        notes.append(
+            f"The federal payment options (check payee wording and online-payment details) for {item.tax_year} are not "
+            f"in the knowledge pack — confirm them on irs.gov (prior-year instructions at "
+            f"https://www.irs.gov/pub/irs-prior/) before paying."
+        )
 
     # Mailing address (resolved from knowledge).
     mailing_address = None
@@ -145,6 +153,13 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
                 notes.append(f"State {item.state!r} not found in the where-to-file table — confirm the address on irs.gov.")
         else:
             notes.append("No state given — the 1040 mailing address depends on your state; provide it to resolve the exact address.")
+    elif pack is not None and pack.mailing_addresses is None:
+        # Pack loaded but the where-to-file block is absent (a partial pack):
+        # don't silently return mailing_address=None with no explanation.
+        notes.append(
+            f"The where-to-file mailing address for {item.tax_year} is not in the knowledge pack — confirm it on "
+            f"irs.gov (prior-year instructions at https://www.irs.gov/pub/irs-prior/) before mailing."
+        )
 
     # Sign.
     sign = ["Print the form pages and sign and date the return in ink."]
@@ -232,6 +247,14 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
                 "Filed late or paying late? Late-filing and late-payment penalties plus interest accrue from the due "
                 "date; the IRS will bill these separately — expect that letter, it is not a scam."
             )
+    elif pack is not None and pack.deadlines is None:
+        # Pack loaded but the deadlines block is absent (a partial pack): don't
+        # silently return an empty deadlines list with no due date or SOL window.
+        notes.append(
+            f"The filing due date, abroad extension, and refund statute-of-limitations window for {item.tax_year} are "
+            f"not in the knowledge pack — confirm them on irs.gov (prior-year instructions at "
+            f"https://www.irs.gov/pub/irs-prior/) before filing."
+        )
 
     # De-dup citations.
     seen, uniq = set(), []
