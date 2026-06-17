@@ -7,7 +7,7 @@
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: nothing is published yet.** The design spec is complete and v0.1 is under active development. Nothing has shipped to PyPI, and the install commands below are **planned, not yet working**. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, and the MCP server all work today and are covered by ~950 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -44,10 +44,10 @@ INTAKE → EXTRACT & CONFIRM → ESTIMATE & ROADMAP ↺ → RESIDENCY & SCOPE �
 ```
 
 1. **Intake** — a guided interview. The server tells the agent exactly what to ask and which documents to collect; you answer in chat and snap photos of your tax docs.
-2. **Extract & confirm** — every document is parsed into structured fields with a record of where each value came from. You confirm the table before anything gets filled. Hard rule: **unknown values stay blank** — nothing is ever invented.
+2. **Extract & confirm** — the agent reads each document (today, with its own vision; an automated `extract_document` parser is on the roadmap) into a table of values, each with a record of where it came from. You confirm the table before anything gets filled. Hard rule: **unknown values stay blank** — nothing is ever invented.
 3. **Estimate & roadmap** — as soon as your first W-2/1099 is confirmed, you get a preliminary refund/owed **range** with its assumptions stated, plus a personalized roadmap (which forms, which documents are still missing). It is refreshed after every later step — with "what changed" — until it converges to the exact summary number. Always labeled ESTIMATE, never fake precision.
 4. **Residency & scope** — computes your federal residency status (resident / nonresident / dual-status) and which states you owe a return to, producing the exact list of forms you need.
-5. **Positions** — you and the agent decide elections, treaty articles, and credits. Every decision and its legal authority is written down in `RECONCILIATION.md`.
+5. **Positions** — you and the agent decide elections, treaty articles, filing status (including married-filing-jointly vs separately), and credits. The agent records every decision and its legal authority in a `RECONCILIATION.md` — your audit trail.
 6. **Fill** — deterministic, field-map-driven PDF filling. No hand-rolled scripts.
 7. **Verify** — a mandatory gate: math checks, cross-form consistency, clipped-text scans, and a visual review of every rendered page. Loops until zero issues.
 8. **Summary** — bottom line first, in plain language: *"Federal 2023: refund $161. Federal 2022: you owe $407, plus a late penalty the IRS will bill separately."* You approve before anything is printed.
@@ -66,21 +66,85 @@ LLMs can already do high-quality tax reasoning. What they lack — and what taxf
 
 ---
 
-## Quickstart (planned — coming with v0.1)
+## Quickstart
 
-> **None of these work yet.** This is the install UX we are building toward; nothing is on PyPI and no bundle has been published.
+### Today — from a source checkout
 
-- **Claude Desktop / Cowork** — one-click MCPB extension bundle (`taxfill.mcpb`): download, double-click, done. The primary path for non-technical users.
+You need [`uv`](https://docs.astral.sh/uv/) (it bootstraps Python for you) and `git`.
+
+```bash
+git clone https://github.com/Ryanczj0306/taxfill-mcp
+cd taxfill-mcp
+uv sync                 # creates the venv, installs both packages
+uv run taxfill-mcp      # starts the stdio MCP server (Ctrl-C to stop)
+```
+
+Then point your agent at it (use the **absolute path** to the checkout):
+
 - **Claude Code:**
 
   ```bash
-  claude mcp add taxfill -- uvx taxfill-mcp
+  claude mcp add taxfill -- uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill-mcp
   ```
 
-  (`uvx` bootstraps Python automatically — you never install Python yourself.)
-- **Copilot / Codex CLI** — equivalent one-liners plus a drop-in skill/instructions file.
+- **Claude Desktop / Cowork** — add to the MCP servers config:
 
-A 60-second demo GIF and an annotated "your first return in 15 minutes" transcript are coming with v0.1.
+  ```json
+  { "mcpServers": { "taxfill": {
+      "command": "uv",
+      "args": ["run", "--project", "/ABSOLUTE/PATH/TO/taxfill-mcp", "taxfill-mcp"] } } }
+  ```
+
+- **Copilot / Codex CLI** — point their MCP config at the same `uv run … taxfill-mcp` command, and paste the matching skill file ([`skills/codex/AGENTS.md`](skills/codex/AGENTS.md) or [`skills/copilot/instructions.md`](skills/copilot/instructions.md)) so the agent knows the workflow. Claude clients pick up [`skills/claude/SKILL.md`](skills/claude/SKILL.md).
+
+### Coming with v0.1 (once published to PyPI)
+
+- **Claude Desktop / Cowork** — one-click MCPB bundle (`taxfill.mcpb`): download, double-click, done. The primary path for non-technical users.
+- **Claude Code:** `claude mcp add taxfill -- uvx taxfill-mcp` (`uvx` bootstraps Python; no checkout needed).
+
+A 60-second demo GIF lands with v0.1.
+
+---
+
+## What to prepare
+
+Snap a clear photo (or PDF) of each document you have — all four corners in frame, no glare. The interview tells you exactly which ones apply to you; a typical set:
+
+- **Identity:** SSN or ITIN; your **current** mailing address (where you get mail *today*).
+- **Income:** every **W-2**, and any **1099** (NEC for self-employment, INT/DIV for bank/brokerage, B for sales), **1098-T** (tuition), **K-1**.
+- **If you're on a visa (F/J/H/L/…):** passport ID page, visa, **I-94** travel history, and **I-20** (F-1) or **DS-2019** (J-1).
+- **For a refund or to pay electronically:** a check or your bank's routing + account numbers.
+- **Back-filing:** which years you've filed before, and anything you already paid.
+
+The agent confirms each extracted value with you before it touches a form, and anything missing is reported as a gap — never guessed.
+
+## Your first return in ~15 minutes
+
+An abbreviated, anonymized walkthrough (simple W-2, single filer, 2023):
+
+> **You:** I need to file my 2023 federal taxes. I have one W-2.
+>
+> **Agent:** *(calls `intake_checklist`)* Let's start. What's your full legal name and SSN? Are you a U.S. citizen or green-card holder? And your **current** mailing address — where you receive mail *today*, not where you lived in 2023?
+>
+> **You:** *(answers; uploads a photo of the W-2)*
+>
+> **Agent:** From your W-2 I read **wages $52,000** and **federal tax withheld $5,400** — can you confirm those two numbers? *(you confirm)* *(calls `estimate_refund`)* Preliminary **ESTIMATE: a refund of about $1,200** — assuming single, standard deduction, no other income or credits. I'll tighten it as we go.
+>
+> **Agent:** *(calls `calc`, `fill_form` for Form 1040, then `verify_form`)* Filled and verified — all math checks pass. *(calls `render_form`)* Here are your pages — please look them over. *(shows images)*
+>
+> **Agent:** *(calls `filing_summary`)* **Bottom line — Federal 2023: refund $1,200**, because your employer withheld more than you owe. The refund-claim deadline is around 2027-04-15. Approve and I'll prepare the mailing checklist?
+>
+> **You:** Approved.
+>
+> **Agent:** *(calls `file_and_pay`)* Print the form pages single-sided, sign and date page 2, attach your W-2, and mail to **Ogden, UT 84201-0002** (California, refund). Photograph the signed pages and keep a copy. Done — you review, sign, and mail it yourself.
+
+## Troubleshooting
+
+- **`uv: command not found`** — install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh` (macOS/Linux) or see the [uv docs](https://docs.astral.sh/uv/). It bootstraps Python; you don't install Python yourself.
+- **Permission prompts on first run** — your OS may ask to allow network access (only for downloading blank forms from irs.gov) and file access (the folder where filled PDFs are written). Both are expected.
+- **The client doesn't see the `taxfill` tools** — make sure the MCP command uses the **absolute** path to the checkout (`uv run --project /ABS/PATH …`), then fully restart the client. `uv run taxfill-mcp` should start without errors in that folder.
+- **Where are my filled PDFs?** — wherever you (or the agent) set `out_path` in `fill_form`. Ask the agent to use a folder you can find, e.g. `~/Documents/taxes-2023/`.
+- **How do I resume later?** — in v0.1 the progress lives in your conversation with the agent, so continue in the same chat. A persistent on-disk workspace (and a `taxfill purge` to wipe it) is on the roadmap.
 
 ---
 
@@ -102,14 +166,16 @@ taxfill/
 
 ---
 
-## MCP tool surface (planned for v0.1)
+## MCP tool surface
+
+Available today (from source); `extract_document` and `state_scope` are the two not-yet-built entries, noted below.
 
 | Tool | Purpose |
 |---|---|
 | `intake_checklist` | Next interview questions + required documents |
-| `extract_document` | Parse W-2/1099/1098/I-94/etc. into fields with provenance; missing = null, never guessed |
+| `extract_document` *(planned)* | Parse W-2/1099/1098/I-94/etc. into fields with provenance; today the agent reads documents with its own vision and you confirm |
 | `residency` | Federal NRA/RA/dual-status via the Substantial Presence Test, work shown |
-| `state_scope` | Which states to file, in what role, with which forms and candidate benefits |
+| `state_scope` *(M5)* | Which states to file, in what role, with which forms and candidate benefits |
 | `list_forms` / `get_form_map` | Discover form packs; line-to-field maps + math relations |
 | `fetch_blank` | Download the official blank PDF, checksum-verify |
 | `fill_form` | Deterministic fill; comb/format handling; rejects unknown lines |
@@ -128,8 +194,8 @@ taxfill/
 - **Everything runs locally.** Your documents and SSN never leave your computer.
 - **The only internet access** is downloading blank tax forms from official .gov URLs (checksum-verified).
 - **No telemetry, no accounts, no uploads.** Logs are PII-redacted (SSNs and account numbers masked).
-- Your workspace holds sensitive documents at rest — keep OS disk encryption on (FileVault / BitLocker).
-- When you're done, `taxfill purge <year>` wipes the workspace.
+- Any documents you save locally hold sensitive data at rest — keep OS disk encryption on (FileVault / BitLocker).
+- A persistent on-disk workspace with a one-command `taxfill purge <year>` wipe is on the roadmap; in v0.1, delete any files you saved yourself when you're done.
 
 ---
 
@@ -138,13 +204,13 @@ taxfill/
 Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
 
 - [x] **M0 — Scaffold:** monorepo, pack & profile schemas, CI, license + disclaimer, CONTRIBUTING
-- [x] **M1 — Core engine:** formpack loader, filler, verifier, render, calc (data-driven 2023 tax tables, source-verified), residency (SPT + exempt years)
-- [ ] **M2 — Federal packs:** f8843 (2019–2024), f1040-NR + schedules (2022–2023), f1040 + schedules (2023–2024)
-- [ ] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge, sources registry, file & pay
-- [ ] **M4 — MCP server:** stdio server, image content for renders, client quickstarts
+- [x] **M1 — Core engine:** formpack loader, filler, verifier, render, calc (data-driven tax tables, source-verified), residency (SPT + exempt years)
+- [x] **M2 — Federal packs:** f8843 (2019–2024), f1040-NR + schedules (2022–2023), f1040 + schedules (2023–2024) — field-map + relation audits clean
+- [x] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge **2019–2024** (irs.gov-cited), sources registry, filing summary, file & pay
+- [x] **M4 — MCP server:** stdio server, 14 tools, image content for renders, client quickstarts
 - [ ] **M5 — State support v1:** California packs + knowledge, no-income-tax states, state scoping
-- [ ] **M6 — Skill + README + launch:** agent skills with cookbook, eval harness, MCPB bundle, ship v0.1
-- [ ] **M7 — Scale-out:** pack-authoring CLI, NY/MA/IL/NJ, more years, amended returns (1040-X), extensions (4868), estimated tax (1040-ES), ITIN (W-7)
+- [~] **M6 — Skill + README + launch:** ✅ agent skills with cookbook, ✅ eval harness, ✅ this README; remaining: `.mcpb` bundle, demo GIF, PyPI publish
+- [ ] **M7 — Scale-out:** pack-authoring CLI, NY/MA/IL/NJ, more years, amended returns (1040-X), extensions (4868), estimated tax (1040-ES), ITIN (W-7), document extraction (`extract_document`), persistent workspace + `taxfill purge`
 
 ---
 
@@ -157,7 +223,7 @@ Yes. You are preparing and filing your own return — the same thing you'd do wi
 v0.1 targets original returns (including late back-filing). Amended returns (Form 1040-X) are on the roadmap (M7).
 
 **What if I get audited?**
-Every position decision and its cited authority is recorded in a generated `RECONCILIATION.md` — a line-by-line audit trail of what was claimed and why, which is exactly what you want to have on hand.
+The agent records every position decision and its cited authority in a `RECONCILIATION.md` — a line-by-line audit trail of what was claimed and why, which is exactly what you want to have on hand. (The skill instructs the agent to maintain it as you go.)
 
 **Does it e-file?**
 No, by design. Output is a paper return: you print it, sign it, and mail it (the file & pay checklist walks you through certified mail). Paper filing keeps a human signature and review in the loop for every return.
