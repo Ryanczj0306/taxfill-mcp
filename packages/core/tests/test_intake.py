@@ -104,6 +104,52 @@ def test_nra_married_surfaces_6013_election_and_status_restriction():
     assert any("if your residency result is nonresident" in n.lower() for n in cl.notes)
 
 
+def test_confirmed_nra_asserts_status_restriction_unconditionally():
+    # M3-RES-2: a visa holder who FAILS the Substantial Presence Test is a confirmed
+    # nonresident alien (classify()=='nonresident'). The highest-stakes branch: the
+    # 1040-NR status restriction is asserted as FACT (unconditionally), not hedged.
+    # F-1 since Aug 2023 with only 120 days present -> the student exemption makes 2023
+    # fully exempt -> 0 countable days -> SPT fails -> nonresident.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(
+            visa_timeline=[VisaPeriod(status="F-1", start=date(2023, 8, 1), provenance=US)]
+        ),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(120)}),
+        household=Household(marital_status=_ans("married")),
+    )
+    cl = intake_checklist(profile, tax_year=2023)
+    # The UNCONDITIONAL restriction note IS present (asserted as fact).
+    assert any(
+        "cannot use married-filing-jointly or head of household" in n for n in cl.notes
+    )
+    # ... and the residency-unknown CONDITIONAL hedge copy is ABSENT (this is the
+    # confirmed-NRA branch, not the conditional one).
+    assert not any("if your residency result is nonresident" in n.lower() for n in cl.notes)
+
+
+def test_contradictory_timeline_falls_back_to_conditional_framing():
+    # M3-RES-3: day counts are present but the visa timeline cannot cover them
+    # (F-1 starts 2025, yet 120 days are reported for 2023) so classify() raises.
+    # intake must NOT crash and must NOT assert the restriction as fact — it falls
+    # back to the CONDITIONAL framing. This exercises the classify()-raising fallback,
+    # distinct from test_nra_married_surfaces_6013 which has NO day counts at all.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(
+            visa_timeline=[VisaPeriod(status="F-1", start=date(2025, 1, 1), provenance=US)]
+        ),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(120)}),
+        household=Household(marital_status=_ans("married")),
+    )
+    cl = intake_checklist(profile, tax_year=2023)
+    # Conditional framing surfaced (the hedge), restriction NOT asserted as fact.
+    assert any("if your residency result is nonresident" in n.lower() for n in cl.notes)
+    assert not any(
+        "cannot use married-filing-jointly or head of household" in n for n in cl.notes
+    )
+
+
 def test_unmarried_with_dependents_asks_head_of_household_determination():
     profile = Profile(
         household=Household(
