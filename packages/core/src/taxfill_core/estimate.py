@@ -162,28 +162,41 @@ def _confirmed_true(answer) -> bool:
     return answer is not None and answer.value is True
 
 
-def _candidate_statuses(profile: Profile) -> tuple[list[str], bool]:
-    """Return (ordered candidate statuses, status_assumed). Primary (headline) is first."""
+def _candidate_statuses(profile: Profile, classification: str | None = None) -> tuple[list[str], bool]:
+    """Return (ordered candidate statuses, status_assumed). Primary (headline) is first.
+
+    ``classification`` is the computed federal residency result ('resident' /
+    'nonresident' / 'dual_status_candidate' / None). A confirmed NONRESIDENT
+    alien files Form 1040-NR, which cannot use married_filing_jointly or
+    head_of_household, so those statuses are dropped from the candidate set.
+    """
     hh = profile.household
     if hh is not None and hh.filing_status is not None and hh.filing_status.value:
         return [str(hh.filing_status.value)], False
+    nonresident = classification == "nonresident"
     if _is_married(profile):
+        # A nonresident-alien (1040-NR) filer cannot use MFJ; the primary becomes MFS.
+        if nonresident:
+            return ["married_filing_separately"], True
         return ["married_filing_jointly", "married_filing_separately"], True
     if _marital(profile) == "widowed":
-        # Recent widow(er) with a dependent child may file as a qualifying surviving
-        # spouse; otherwise single. Keep both so the range brackets the QSS outcome.
-        if hh is not None and (
-            _confirmed_true(hh.maintained_home_for_dependent_child) or hh.dependents
-        ):
+        # Recent widow(er) who maintained a home for a dependent child may file as a
+        # qualifying surviving spouse — confirmed-True makes QSS the PRIMARY (headline),
+        # symmetric to the HOH branch below. When the fact is None but dependents exist,
+        # QSS stays a NON-primary candidate so the range still brackets it; explicitly
+        # False does not offer QSS as primary.
+        if hh is not None and _confirmed_true(hh.maintained_home_for_dependent_child):
             return ["qualifying_surviving_spouse", "single"], True
+        if hh is not None and hh.maintained_home_for_dependent_child is None and hh.dependents:
+            return ["single", "qualifying_surviving_spouse"], True
         return ["single"], True
     # Unmarried. Head of household is offered only as the PRIMARY (headline) when the
     # qualifying-person test is confirmed True; otherwise single is the conservative
     # headline but HoH stays in the candidate list (with a dependent) so the range
-    # still brackets the HoH outcome.
-    if hh is not None and _confirmed_true(hh.hoh_qualifying_person):
+    # still brackets the HoH outcome. A nonresident alien (1040-NR) cannot use HOH at all.
+    if hh is not None and not nonresident and _confirmed_true(hh.hoh_qualifying_person):
         return ["head_of_household", "single"], True
-    if hh is not None and hh.dependents:
+    if hh is not None and not nonresident and hh.dependents:
         return ["single", "head_of_household"], True
     return ["single"], True
 
@@ -195,6 +208,22 @@ _JOINT_LIABILITY_CAVEAT = (
     "Filing jointly (MFJ) makes both spouses jointly and severally liable for the whole tax; "
     "filing separately (MFS) avoids that shared liability but usually costs more in tax. Weigh "
     "the dollar difference against the liability you take on."
+)
+
+# Mirrors intake.py's §6013(g)/(h) wording: a nonresident alien filing 1040-NR cannot
+# use MFJ unless they elect to be treated as a U.S. resident, which taxes worldwide income.
+_SECTION_6013_CAVEAT = (
+    "As a nonresident alien (Form 1040-NR) you cannot file jointly (MFJ); filing jointly "
+    "requires electing under §6013(g)/(h) to treat the nonresident alien as a U.S. resident "
+    "— which makes their worldwide income taxable. Showing married-filing-separately instead."
+)
+
+# When residency is not yet computable for a visa holder, the 1040-NR restriction is conditional.
+_SECTION_6013_CONDITIONAL_CAVEAT = (
+    "If your residency result is nonresident alien, Form 1040-NR cannot use MFJ/HOH; filing "
+    "jointly would then require electing under §6013(g)/(h) to treat the nonresident alien as a "
+    "U.S. resident — which makes their worldwide income taxable. Confirm your residency to "
+    "tighten this."
 )
 
 
@@ -234,10 +263,9 @@ def _classify_residency(profile: Profile, year: int):
         return None
 
 
-def _build_roadmap(profile: Profile, year: int) -> Roadmap:
+def _build_roadmap(profile: Profile, year: int, result=None) -> Roadmap:
     """Returns/forms (from residency when computable, else us_person), missing docs, time."""
     forms: list[str] = []
-    result = _classify_residency(profile, year)
     if result is not None:
         if result.classification == "resident":
             forms = ["Form 1040"]
@@ -337,7 +365,12 @@ def estimate_refund(
         the composition for the primary status, assumptions, what-would-change-it,
         and the calc citations behind the numbers.
     """
-    statuses, status_assumed = _candidate_statuses(profile)
+    # Classify residency once and thread it into both status selection and the roadmap
+    # (H1): a confirmed nonresident alien files 1040-NR, which cannot use MFJ/HOH.
+    residency_result = _classify_residency(profile, year)
+    classification = residency_result.classification if residency_result is not None else None
+
+    statuses, status_assumed = _candidate_statuses(profile, classification)
 
     outcomes = {s: _bottom_line(income, s, year, knowledge_dir) for s in statuses}
     primary = statuses[0]
@@ -346,7 +379,7 @@ def estimate_refund(
     low, high = min(values), max(values)
 
     comparison = _build_comparison(outcomes)
-    roadmap = _build_roadmap(profile, year)
+    roadmap = _build_roadmap(profile, year, residency_result)
 
     # De-duplicate citations by (source, url).
     seen, unique_citations = set(), []
@@ -369,7 +402,24 @@ def estimate_refund(
     assumptions.append("Ordinary tax computation only — qualified dividends / capital gains at preferential rates are not modeled here.")
     assumptions.append("Before unclaimed credits — see what could change it.")
 
+    # §6013(g)/(h) caveat (H1): surfaced in BOTH assumptions and what-would-change-it.
+    ident = profile.identity
+    us_person_false = (
+        ident is not None and ident.us_person is not None and ident.us_person.value is False
+    )
+    residency_caveat: str | None = None
+    if classification == "nonresident" and _is_married(profile):
+        # MFJ was dropped for a confirmed married NRA — explain the §6013 election.
+        residency_caveat = _SECTION_6013_CAVEAT
+    elif classification is None and us_person_false:
+        # Visa holder whose residency is not yet determined — frame it conditionally.
+        residency_caveat = _SECTION_6013_CONDITIONAL_CAVEAT
+    if residency_caveat is not None:
+        assumptions.append(residency_caveat)
+
     changes: list[str] = []
+    if residency_caveat is not None:
+        changes.append(residency_caveat)
     pending = [d for d in profile.income_documents if d.status != "have"]
     if pending:
         kinds = ", ".join(sorted({d.kind for d in pending}))

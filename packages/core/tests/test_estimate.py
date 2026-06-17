@@ -4,6 +4,8 @@ The estimate must only orchestrate calc, so each numeric assertion is checked
 against an independent calc call — never a hand-computed magic number.
 """
 
+from datetime import date
+
 import pytest
 
 from taxfill_core.calc import standard_deduction, tax_from_taxable_income
@@ -12,9 +14,13 @@ from taxfill_core.schemas.profile import (
     Answer,
     Dependent,
     Household,
+    Identity,
+    Immigration,
     IncomeDocument,
     Profile,
     Provenance,
+    ResidencyFacts,
+    VisaPeriod,
 )
 
 US = Provenance.user_stated()
@@ -199,6 +205,122 @@ def test_estimate_raises_for_year_with_no_knowledge_pack():
     # loader's FileNotFoundError rather than inventing numbers.
     with pytest.raises(FileNotFoundError):
         estimate_refund(_single(), 1999, IncomeSnapshot(wages=50000, federal_withholding=6000))
+
+
+# A confirmed-nonresident visa timeline (prototype F-1: years N..N+4 are exempt, so
+# every counted day is excluded and the SPT fails -> nonresident). Mirrors test_residency
+# PROTOTYPE_F1 / test_prototype_exempt_years_classify_nonresident for the 2023 target year.
+def _nra_immigration():
+    return Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2019, 8, 20), end=None, provenance=US)])
+
+
+def _nra_residency():
+    return ResidencyFacts(
+        days_in_us={y: _ans(d) for y, d in {2019: 134, 2020: 330, 2021: 330, 2022: 330, 2023: 330}.items()}
+    )
+
+
+def test_nonresident_married_does_not_recommend_mfj_and_flags_section_6013():
+    # H1: a confirmed nonresident alien files Form 1040-NR, which has no MFJ column.
+    # The primary/recommended status must NOT be MFJ, and the §6013 caveat must appear.
+    profile = Profile(
+        household=Household(marital_status=_ans("married")),
+        identity=Identity(us_person=_ans(False)),
+        immigration=_nra_immigration(),
+        residency_facts=_nra_residency(),
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=90000, federal_withholding=9000))
+    assert est.filing_status_used == "married_filing_separately"
+    # MFJ is dropped entirely — not a candidate, not recommended.
+    if est.comparison is not None:
+        statuses = {c.status for c in est.comparison.candidates}
+        assert "married_filing_jointly" not in statuses
+        assert est.comparison.recommended_status != "married_filing_jointly"
+    # §6013(g)/(h) caveat surfaced in BOTH assumptions and what-would-change-it.
+    assert any("6013" in a for a in est.assumptions)
+    assert any("6013" in c for c in est.what_would_change_it)
+
+
+def test_nonresident_unmarried_with_dependent_does_not_offer_hoh():
+    # H1: an unmarried nonresident alien cannot use head_of_household on Form 1040-NR,
+    # even with a dependent — single is the only candidate.
+    profile = Profile(
+        household=Household(
+            marital_status=_ans("unmarried"),
+            dependents=[Dependent(name="Kid", relationship="child", provenance=US)],
+        ),
+        identity=Identity(us_person=_ans(False)),
+        immigration=_nra_immigration(),
+        residency_facts=_nra_residency(),
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=50000, federal_withholding=6000))
+    assert est.filing_status_used == "single"
+    statuses = {c.status for c in est.comparison.candidates} if est.comparison else {"single"}
+    assert "head_of_household" not in statuses
+
+
+def test_widowed_qss_not_primary_when_maintained_home_explicitly_false():
+    # M1: a widowed filer who answered the QSS gating fact FALSE must not get QSS as
+    # primary even with a dependent — single is the conservative headline.
+    profile = Profile(
+        household=Household(
+            marital_status=_ans("widowed"),
+            maintained_home_for_dependent_child=_ans(False),
+            dependents=[Dependent(name="Kid", relationship="child", provenance=US)],
+        )
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=50000, federal_withholding=6000))
+    assert est.filing_status_used != "qualifying_surviving_spouse"
+    assert est.filing_status_used == "single"
+
+
+def test_widowed_qss_is_primary_when_maintained_home_confirmed_true():
+    # M1: confirmed-True on the QSS gating fact makes qualifying_surviving_spouse the
+    # primary (mirrors the HOH confirmed-for-primary pattern).
+    profile = Profile(
+        household=Household(
+            marital_status=_ans("widowed"),
+            maintained_home_for_dependent_child=_ans(True),
+        )
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=50000, federal_withholding=6000))
+    assert est.filing_status_used == "qualifying_surviving_spouse"
+
+
+def test_roadmap_nonresident_branch_returns_1040nr_and_8843():
+    # Residency-driven roadmap: a computable NONRESIDENT classification yields the
+    # 1040-NR + 8843 forms (closes the residency roadmap branch).
+    profile = Profile(
+        household=Household(marital_status=_ans("unmarried")),
+        immigration=_nra_immigration(),
+        residency_facts=_nra_residency(),
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=50000, federal_withholding=6000))
+    assert est.roadmap.returns_and_forms == ["Form 1040-NR", "Form 8843"]
+
+
+def test_roadmap_dual_status_branch_returns_both_forms():
+    # Residency-driven roadmap: a DUAL-STATUS classification (F-1 transition still inside
+    # the exempt window) yields both 1040 and 1040-NR (closes the dual-status branch).
+    # Mirrors test_residency test_transition_within_exempt_window_flags_dual_status.
+    profile = Profile(
+        household=Household(marital_status=_ans("unmarried")),
+        immigration=Immigration(
+            visa_timeline=[
+                VisaPeriod(status="F-1", start=date(2021, 8, 10), end=date(2024, 6, 30), provenance=US),
+                VisaPeriod(status="H-1B", start=date(2024, 7, 1), end=None, provenance=US),
+            ]
+        ),
+        residency_facts=ResidencyFacts(
+            days_in_us={y: _ans(d) for y, d in {2021: 140, 2022: 340, 2023: 340, 2024: 360}.items()}
+        ),
+    )
+    est = estimate_refund(profile, 2024, IncomeSnapshot(wages=50000, federal_withholding=6000))
+    assert est.roadmap.returns_and_forms == [
+        "Form 1040",
+        "Form 1040-NR (dual-status: both may apply for the split year)",
+        "Form 8843",
+    ]
 
 
 def test_golden_2023_single_published_tax_table_value():
