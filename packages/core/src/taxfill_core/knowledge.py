@@ -440,6 +440,37 @@ class Credits(BaseModel):
     citation: Citation
 
 
+class EffectiveLawChange(BaseModel):
+    """One enacted-law delta relevant to the filing year (dev plan section 7(2)).
+
+    Each entry MUST carry a citation (to the enacting public law / official
+    guidance) and a status tracking how far the change has matured:
+    ``enacted`` (law passed) -> ``irs_guidance_pending`` (no final IRS numbers
+    yet) -> ``final_form_published`` (figures are final and citeable).
+
+    Numbers without final IRS guidance are NEVER hardcoded; for a not-yet-final
+    figure the entry records ``lookup_path`` (the sources.yaml by_topic key /
+    URL to resolve it from) instead of a value — so the pack stores the lookup
+    path, not an invented number.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    description: str = Field(description="What changed (e.g. 'OBBBA car-loan interest deduction, effective 2025').")
+    citation: Citation
+    status: Literal["enacted", "irs_guidance_pending", "final_form_published"] = Field(
+        description="Maturity of the change: enacted -> irs_guidance_pending -> final_form_published."
+    )
+    lookup_path: str | None = Field(
+        default=None,
+        description="For a figure not yet final: the sources.yaml by_topic key / .gov URL to resolve it from "
+        "(never a hardcoded number). Required while status is not final_form_published if a figure is needed.",
+    )
+    source_topic: str | None = Field(
+        default=None, description="Optional sources.yaml by_topic key this change feeds into."
+    )
+
+
 class KnowledgePack(BaseModel):
     """One ``knowledge/<jurisdiction>/<year>.yaml`` file, validated.
 
@@ -457,7 +488,7 @@ class KnowledgePack(BaseModel):
     mailing_addresses: MailingAddresses | None = None
     deadlines: Deadlines | None = None
     credits: Credits | None = None
-    effective_law_changes: list[dict] = Field(default_factory=list)
+    effective_law_changes: list[EffectiveLawChange] = Field(default_factory=list)
 
     @field_validator("jurisdiction")
     @classmethod
