@@ -26,11 +26,19 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from taxfill_core import residency
 from taxfill_core.calc import se_tax, standard_deduction, tax_from_taxable_income
 from taxfill_core.knowledge import Citation
 from taxfill_core.schemas.profile import Profile
 
-__all__ = ["IncomeSnapshot", "CompositionLine", "RefundEstimate", "estimate_refund"]
+__all__ = [
+    "IncomeSnapshot",
+    "CompositionLine",
+    "StatusComparison",
+    "Roadmap",
+    "RefundEstimate",
+    "estimate_refund",
+]
 
 _LABEL = "ESTIMATE"
 
@@ -66,6 +74,53 @@ class CompositionLine(BaseModel):
     amount: int
 
 
+class StatusCandidate(BaseModel):
+    """One filing status that was computed, with its signed bottom line."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: str
+    bottom_line: int = Field(description="Signed bottom line under this status (+ refund, - owed).")
+
+
+class StatusComparison(BaseModel):
+    """MFJ-vs-MFS (and other) side-by-side comparison (eval (l)).
+
+    Shows BOTH amounts, the dollar delta between best and worst, a recommendation
+    (the status with the most refund / least owed), and the joint-liability caveat
+    whenever both MFJ and MFS are on the table.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    candidates: list[StatusCandidate] = Field(description="Every computed status with its signed bottom line.")
+    recommended_status: str = Field(description="The status with the highest signed bottom line (most refund / least owed).")
+    delta: int = Field(description="Absolute dollar difference between the best and worst computed status.")
+    joint_liability_caveat: str | None = Field(
+        default=None,
+        description=(
+            "Set when both MFJ and MFS are candidates: MFJ is jointly-and-severally liable; MFS "
+            "avoids that but usually costs more. None otherwise."
+        ),
+    )
+
+
+class Roadmap(BaseModel):
+    """The personalized roadmap (dev plan section 2 step 3): returns/forms, missing docs, time."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    returns_and_forms: list[str] = Field(
+        default_factory=list,
+        description="Which federal returns/forms this filer needs (best-effort from residency / us_person).",
+    )
+    missing_documents: list[str] = Field(
+        default_factory=list,
+        description="Income documents not yet in hand (status != 'have') — honest gaps, never invented.",
+    )
+    estimated_time: str = Field(default="", description="Coarse honest estimate of time to finish.")
+
+
 class RefundEstimate(BaseModel):
     """A preliminary, honest bottom line. ``label`` is always 'ESTIMATE'."""
 
@@ -80,30 +135,133 @@ class RefundEstimate(BaseModel):
     point: int = Field(description="Bottom line under the primary status (signed: + refund, - owed).")
     headline: str = Field(description="One-line plain-language summary of the range.")
     composition: list[CompositionLine] = Field(default_factory=list)
+    comparison: StatusComparison | None = Field(
+        default=None,
+        description="Side-by-side status comparison (eval (l)); present whenever >=2 candidate statuses were computed.",
+    )
+    roadmap: Roadmap | None = Field(default=None, description="Returns/forms, missing documents, and time-to-finish.")
     assumptions: list[str] = Field(default_factory=list)
     what_would_change_it: list[str] = Field(default_factory=list)
     citations: list[Citation] = Field(default_factory=list)
 
 
-def _is_married(profile: Profile) -> bool:
+def _marital(profile: Profile) -> str | None:
+    """The closed marital-status fact ('married' / 'unmarried' / 'widowed'), or None."""
     hh = profile.household
     if hh is None or hh.marital_status is None or hh.marital_status.value is None:
-        return False
-    return str(hh.marital_status.value).strip().lower() in {
-        "married", "yes", "true", "married_filing_jointly", "married_filing_separately",
-    }
+        return None
+    return str(hh.marital_status.value)
+
+
+def _is_married(profile: Profile) -> bool:
+    return _marital(profile) == "married"
+
+
+def _confirmed_true(answer) -> bool:
+    """True only when an Answer is present with value True (not a gap, not False)."""
+    return answer is not None and answer.value is True
 
 
 def _candidate_statuses(profile: Profile) -> tuple[list[str], bool]:
-    """Return (ordered candidate statuses, status_assumed). Primary is first."""
+    """Return (ordered candidate statuses, status_assumed). Primary (headline) is first."""
     hh = profile.household
     if hh is not None and hh.filing_status is not None and hh.filing_status.value:
         return [str(hh.filing_status.value)], False
     if _is_married(profile):
         return ["married_filing_jointly", "married_filing_separately"], True
+    if _marital(profile) == "widowed":
+        # Recent widow(er) with a dependent child may file as a qualifying surviving
+        # spouse; otherwise single. Keep both so the range brackets the QSS outcome.
+        if hh is not None and (
+            _confirmed_true(hh.maintained_home_for_dependent_child) or hh.dependents
+        ):
+            return ["qualifying_surviving_spouse", "single"], True
+        return ["single"], True
+    # Unmarried. Head of household is offered only as the PRIMARY (headline) when the
+    # qualifying-person test is confirmed True; otherwise single is the conservative
+    # headline but HoH stays in the candidate list (with a dependent) so the range
+    # still brackets the HoH outcome.
+    if hh is not None and _confirmed_true(hh.hoh_qualifying_person):
+        return ["head_of_household", "single"], True
     if hh is not None and hh.dependents:
-        return ["head_of_household", "single"], True  # HoH is the usually-better unmarried-with-dependent path
+        return ["single", "head_of_household"], True
     return ["single"], True
+
+
+_MFJ = "married_filing_jointly"
+_MFS = "married_filing_separately"
+
+_JOINT_LIABILITY_CAVEAT = (
+    "Filing jointly (MFJ) makes both spouses jointly and severally liable for the whole tax; "
+    "filing separately (MFS) avoids that shared liability but usually costs more in tax. Weigh "
+    "the dollar difference against the liability you take on."
+)
+
+
+def _build_comparison(outcomes: dict[str, tuple[int, list, list]]) -> StatusComparison | None:
+    """Build the side-by-side comparison when >=2 statuses were computed (eval (l))."""
+    if len(outcomes) < 2:
+        return None
+    candidates = [StatusCandidate(status=s, bottom_line=v) for s, (v, _c, _cit) in outcomes.items()]
+    values = [c.bottom_line for c in candidates]
+    # Recommended = the most-favorable signed bottom line (most refund / least owed).
+    recommended = max(candidates, key=lambda c: c.bottom_line).status
+    delta = abs(max(values) - min(values))
+    statuses = {c.status for c in candidates}
+    caveat = _JOINT_LIABILITY_CAVEAT if {_MFJ, _MFS} <= statuses else None
+    return StatusComparison(
+        candidates=candidates,
+        recommended_status=recommended,
+        delta=delta,
+        joint_liability_caveat=caveat,
+    )
+
+
+def _classify_residency(profile: Profile, year: int):
+    """Best-effort residency classification from the profile, or None when not computable."""
+    rf = profile.residency_facts
+    imm = profile.immigration
+    if rf is None or not rf.days_in_us or imm is None or not imm.visa_timeline:
+        return None
+    days_by_year = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+    if not days_by_year:
+        return None
+    try:
+        return residency.classify(imm.visa_timeline, days_by_year, year)
+    except (ValueError, AssertionError):
+        # An incomplete/contradictory timeline cannot be classified yet — fall back
+        # to the us_person best-effort rather than guessing.
+        return None
+
+
+def _build_roadmap(profile: Profile, year: int) -> Roadmap:
+    """Returns/forms (from residency when computable, else us_person), missing docs, time."""
+    forms: list[str] = []
+    result = _classify_residency(profile, year)
+    if result is not None:
+        if result.classification == "resident":
+            forms = ["Form 1040"]
+        elif result.classification == "nonresident":
+            forms = ["Form 1040-NR", "Form 8843"]
+        else:  # dual_status_candidate — both may apply for one split year
+            forms = ["Form 1040", "Form 1040-NR (dual-status: both may apply for the split year)", "Form 8843"]
+    else:
+        ident = profile.identity
+        if ident is not None and ident.us_person is not None and ident.us_person.value is True:
+            forms = ["Form 1040"]
+        elif ident is not None and ident.us_person is not None and ident.us_person.value is False:
+            forms = ["Form 1040-NR", "Form 8843"]
+
+    missing = sorted({d.kind for d in profile.income_documents if d.status != "have"})
+
+    if missing:
+        time = "Roughly 1-2 hours once the missing documents are in hand."
+    elif profile.income_documents:
+        time = "Roughly 30-60 minutes — the income documents are in hand."
+    else:
+        time = "Hard to estimate until the income documents are inventoried."
+
+    return Roadmap(returns_and_forms=forms, missing_documents=missing, estimated_time=time)
 
 
 def _bottom_line(income: IncomeSnapshot, status: str, year: int, knowledge_dir):
@@ -187,6 +345,9 @@ def estimate_refund(
     values = [v for (v, _c, _cit) in outcomes.values()]
     low, high = min(values), max(values)
 
+    comparison = _build_comparison(outcomes)
+    roadmap = _build_roadmap(profile, year)
+
     # De-duplicate citations by (source, url).
     seen, unique_citations = set(), []
     for c in citations:
@@ -240,6 +401,8 @@ def estimate_refund(
         point=point,
         headline=headline,
         composition=composition,
+        comparison=comparison,
+        roadmap=roadmap,
         assumptions=assumptions,
         what_would_change_it=changes,
         citations=unique_citations,

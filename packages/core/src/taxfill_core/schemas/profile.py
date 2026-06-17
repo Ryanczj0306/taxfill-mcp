@@ -186,6 +186,15 @@ class Spouse(BaseModel):
     name: Answer[str] | None = None
     tax_id: Answer[str] | None = Field(default=None, description="Spouse's SSN or ITIN.")
     dob: Answer[date] | None = None
+    us_person: Answer[bool] | None = Field(
+        default=None,
+        description=(
+            "True if the spouse is a U.S. citizen or lawful permanent resident — mirrors "
+            "Identity.us_person. Gates whether the spouse needs the Substantial Presence Test / "
+            "visa path at all and whether a §6013(g)/(h) election (treating an NRA spouse as a "
+            "U.S. resident to file jointly) even arises. None means not yet asked."
+        ),
+    )
     immigration: Immigration | None = Field(
         default=None, description="Spouse's visa timeline — drives the NRA-spouse §6013(g)/(h) decision."
     )
@@ -197,9 +206,39 @@ class Household(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    marital_status: Answer[str] | None = Field(
+    marital_status: Answer[Literal["married", "unmarried", "widowed"]] | None = Field(
         default=None,
-        description="Whether the taxpayer was married on Dec 31 of the tax year — a FACT, not the filing status.",
+        description=(
+            "Marital status on Dec 31 of the tax year — a closed, machine-checkable FACT, not "
+            "the filing status. 'married' opens MFJ/MFS; 'unmarried' opens single/HOH; "
+            "'widowed' opens the qualifying-surviving-spouse path (with a dependent child and a "
+            "recent spouse death)."
+        ),
+    )
+    hoh_qualifying_person: Answer[bool] | None = Field(
+        default=None,
+        description=(
+            "Head-of-household FACT: True when the taxpayer paid more than half the cost of "
+            "keeping up a home for a qualifying person (e.g. a child or dependent relative) who "
+            "lived with them more than half the year. Gates the head_of_household status; None "
+            "means not yet asked."
+        ),
+    )
+    spouse_death_year: Answer[int] | None = Field(
+        default=None,
+        description=(
+            "Qualifying-surviving-spouse FACT: the calendar year the spouse died. QSS is "
+            "available for the two tax years AFTER the year of death (the year of death itself "
+            "is normally a joint-return year). None means not asked / not applicable."
+        ),
+    )
+    maintained_home_for_dependent_child: Answer[bool] | None = Field(
+        default=None,
+        description=(
+            "Qualifying-surviving-spouse FACT: True when the taxpayer paid more than half the "
+            "cost of keeping up the main home of a dependent child for the year. Required (with "
+            "spouse_death_year) for the qualifying_surviving_spouse status; None means not asked."
+        ),
     )
     filing_status: Answer[FilingStatusInput] | None = Field(
         default=None,
