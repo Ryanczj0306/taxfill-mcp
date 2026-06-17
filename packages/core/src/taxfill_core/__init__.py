@@ -42,8 +42,10 @@ from taxfill_core.calc import (
     standard_deduction,
     tax_from_taxable_income,
 )
+from taxfill_core.discovery import FormMap, FormSummary, LineMap, get_form_map, list_forms
 from taxfill_core.estimate import CompositionLine, IncomeSnapshot, RefundEstimate, estimate_refund
 from taxfill_core.file_and_pay import FilingInstructions, FilingManifestItem, ReturnInstructions, file_and_pay
+from taxfill_core.filing_summary import FilingSummary, FilingSummaryItem, filing_summary
 from taxfill_core.filler import FillResult, fill_form
 from taxfill_core.intake import IntakeChecklist, IntakeQuestion, RequiredDocument, intake_checklist
 from taxfill_core.knowledge import Citation, KnowledgePack, load_knowledge
@@ -86,12 +88,17 @@ __all__ = [
     "FilingInstructions",
     "FilingItem",
     "FilingManifestItem",
+    "FilingSummary",
+    "FilingSummaryItem",
     "FillResult",
+    "FormMap",
     "FormPack",
+    "FormSummary",
     "IncomeSnapshot",
     "IntakeChecklist",
     "IntakeQuestion",
     "KnowledgePack",
+    "LineMap",
     "PackField",
     "Profile",
     "Provenance",
@@ -116,12 +123,15 @@ __all__ = [
     "estimate_refund",
     "exempt_individual_years",
     "file_and_pay",
+    "filing_summary",
     "fill_form",
+    "get_form_map",
     "get_sources",
     "independent_recompute",
     "intake_checklist",
     "irs_round",
     "is_valid_routing_number",
+    "list_forms",
     "load_knowledge",
     "load_pack",
     "presence_days",
