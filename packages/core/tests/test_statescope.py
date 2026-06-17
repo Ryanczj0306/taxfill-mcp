@@ -3,6 +3,7 @@
 from datetime import date
 
 from taxfill_core.schemas.profile import (
+    Answer,
     Identity,
     Profile,
     Provenance,
@@ -13,6 +14,10 @@ from taxfill_core.schemas.profile import (
 from taxfill_core.statescope import StateScopeResult, state_scope
 
 US = Provenance.user_stated()
+
+
+def _ans(v):
+    return Answer(value=v, provenance=US)
 
 
 def _rp(state, start, end):
@@ -93,3 +98,33 @@ def test_no_footprint_asks_for_it():
 def test_allocation_caveat_always_present_when_states_touched():
     r = state_scope(_profile(lived=[_rp("CA", date(2023, 1, 1), date(2023, 12, 31))]), 2023)
     assert any("allocation" in n.lower() for n in r.notes)
+
+
+# ── CA knowledge pack integration ──────────────────────────────────────────────
+
+
+def test_ca_resident_resolves_540_and_credits_from_pack():
+    ca = _by_state(state_scope(_profile(lived=[_rp("CA", date(2023, 1, 1), date(2023, 12, 31))]), 2023))["CA"]
+    assert ca.forms[0] == "540" and "Schedule CA" in ca.forms
+    assert any("renter" in b.lower() for b in ca.benefits_candidates)
+    assert any("caleitc" in b.lower() or "earned income" in b.lower() for b in ca.benefits_candidates)
+    assert any("ftb.ca.gov" in c.url for c in ca.citations)
+
+
+def test_ca_part_year_resolves_540nr():
+    ca = _by_state(state_scope(_profile(lived=[_rp("CA", date(2023, 1, 1), date(2023, 6, 30))]), 2023))["CA"]
+    assert ca.forms[0] == "540NR"
+
+
+def test_ca_treaty_nonconformity_warns_only_for_treaty_filers():
+    footprint = [_rp("CA", date(2023, 1, 1), date(2023, 12, 31))]
+    # Nonresident-alien filer (us_person False) -> the treaty-non-conformity warning fires.
+    nra = Profile(identity=Identity(us_person=_ans(False)),
+                  state_footprint={2023: StateFootprintYear(lived=footprint)})
+    nra_ca = _by_state(state_scope(nra, 2023))["CA"]
+    assert any("does not conform to federal tax treaties" in w.lower() or "still taxable" in w.lower() for w in nra_ca.warnings)
+    # A U.S. citizen has no treaty position -> no such warning.
+    cit = Profile(identity=Identity(us_person=_ans(True)),
+                  state_footprint={2023: StateFootprintYear(lived=footprint)})
+    cit_ca = _by_state(state_scope(cit, 2023))["CA"]
+    assert not any("treaties" in w.lower() for w in cit_ca.warnings)

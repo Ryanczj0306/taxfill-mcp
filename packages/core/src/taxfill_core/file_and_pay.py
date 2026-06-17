@@ -19,7 +19,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from taxfill_core.knowledge import Citation, load_knowledge
+from taxfill_core.knowledge import Citation, load_knowledge, load_state_knowledge
 
 __all__ = ["FilingManifestItem", "ReturnInstructions", "FilingInstructions", "file_and_pay"]
 
@@ -271,6 +271,77 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
     )
 
 
+def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions:
+    """Last-mile checklist for a state return, from the state knowledge pack.
+
+    Logistics figures carry the pack's verification caveat (some state data could
+    not be independently re-confirmed); they are surfaced with a 'confirm at the
+    DOR' note rather than presented as fully verified.
+    """
+    state = item.jurisdiction.split("/", 1)[1] if "/" in item.jurisdiction else item.jurisdiction
+    refund, owes = item.bottom_line > 0, item.bottom_line < 0
+    bottom = (f"Refund of {_money(item.bottom_line)}" if refund
+              else (f"You owe {_money(item.bottom_line)}." + (" Already paid." if item.paid_online else "")) if owes
+              else "Balanced.")
+    try:
+        sk = load_state_knowledge(state, item.tax_year, knowledge_dir)
+    except FileNotFoundError:
+        return ReturnInstructions(
+            form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year, bottom_line=bottom,
+            notes=[f"No '{item.jurisdiction}' knowledge pack for {item.tax_year} yet — confirm where/how to "
+                   f"file and the deadline at the state DOR (state support grows per dev plan section 6)."],
+        )
+
+    enclosing_check = owes and not item.paid_online
+    citations: list[Citation] = []
+    payment, mailing_address, deadlines, notes = [], None, [], []
+
+    pay = getattr(sk, "payment", None) or {}
+    if owes and item.paid_online:
+        payment.append("Balance already paid — keep the confirmation; do not enclose a check.")
+    elif owes and pay:
+        if pay.get("web_pay_url"):
+            payment.append(f"Pay online via {state.upper()} Web Pay: {pay['web_pay_url']} (no processor fee).")
+        if pay.get("check_payee"):
+            payment.append(f"By check: make it payable to \"{pay['check_payee']}\"; write the tax year, form, and your SSN on it.")
+
+    ma = getattr(sk, "mailing_addresses", None) or {}
+    if ma:
+        mailing_address = ma.get("with_payment") if enclosing_check else ma.get("refund_or_no_payment")
+        if ma.get("verification"):
+            notes.append(f"Mailing address: {ma['verification']}")
+        if ma.get("citation"):
+            citations.append(Citation(**ma["citation"]))
+
+    dl = getattr(sk, "deadlines", None) or {}
+    if dl:
+        if dl.get("filing_due_date"):
+            deadlines.append(f"Due {dl['filing_due_date']}.")
+        if dl.get("automatic_extension"):
+            deadlines.append(dl["automatic_extension"])
+        if dl.get("verification"):
+            notes.append(f"Deadlines: {dl['verification']}")
+        if dl.get("citation"):
+            citations.append(Citation(**dl["citation"]))
+
+    if not sk.conforms_to_federal_treaties:
+        notes.append(f"{state.upper()} does not conform to federal tax treaties — any federally treaty-exempt income "
+                     f"is still taxable here; do not carry the federal exclusion onto the state return.")
+
+    sign = ["Print the form pages, sign and date the return in ink."]
+    if item.filing_jointly:
+        sign.append("Joint return — BOTH spouses must sign.")
+    return ReturnInstructions(
+        form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year, bottom_line=bottom,
+        payment=payment, mailing_address=mailing_address, sign=sign,
+        assemble=["Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099."],
+        mail=["Use a separate envelope from the federal return.",
+              "Certified Mail with Return Receipt gives you proof of timely filing."],
+        records=["Photograph the signed pages; keep a copy and the mailing receipt."],
+        deadlines=deadlines, citations=citations, notes=notes,
+    )
+
+
 def file_and_pay(
     manifest: list[FilingManifestItem],
     *,
@@ -284,8 +355,10 @@ def file_and_pay(
 
     Returns:
         :class:`FilingInstructions` with a :class:`ReturnInstructions` per item.
-        Federal items are fully resolved from the cited knowledge pack; a
-        non-federal item returns a single note that state support ships in M5.
+        Federal and supported-state items are resolved from the cited knowledge
+        pack (state logistics carry a 'confirm at the DOR' caveat where the data
+        could not be independently re-verified); an unsupported state returns a
+        note to confirm at the state DOR.
 
     Raises:
         ValueError: an empty manifest.
@@ -298,14 +371,7 @@ def file_and_pay(
         if item.jurisdiction == "federal":
             returns.append(_federal_return(item, knowledge_dir))
         else:
-            returns.append(
-                ReturnInstructions(
-                    form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year,
-                    bottom_line=("Refund of " + _money(item.bottom_line)) if item.bottom_line > 0
-                    else (("You owe " + _money(item.bottom_line)) if item.bottom_line < 0 else "Balanced."),
-                    notes=[f"State filing instructions for '{item.jurisdiction}' ship with the state knowledge pack (M5)."],
-                )
-            )
+            returns.append(_state_return(item, knowledge_dir))
 
     overall: list[str] = [
         "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
