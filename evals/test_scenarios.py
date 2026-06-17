@@ -36,6 +36,7 @@ from taxfill_core.schemas.profile import (
     VisaPeriod,
 )
 from taxfill_core.sources import get_sources
+from taxfill_core.statescope import state_scope
 
 US = Provenance.user_stated()
 TODAY = date(2026, 6, 17)
@@ -208,6 +209,11 @@ def test_eval_c_part_year_ca_remote():
     ...
 
 
-@pytest.mark.skip(reason="M5: needs no-income-tax-state knowledge ('nothing to file') (f)")
 def test_eval_f_no_income_tax_state():
-    ...
+    # (f) Lived in Texas all year -> no state return required ("nothing to file").
+    profile = Profile(state_footprint={2023: StateFootprintYear(
+        lived=[ResidencePeriod(state="TX", start=date(2023, 1, 1), end=date(2023, 12, 31), provenance=US)]
+    )})
+    tx = next(s for s in state_scope(profile, 2023).states if s.state == "TX")
+    assert tx.must_file is False and tx.filing_role == "none"
+    assert "no personal income tax" in tx.reason.lower()

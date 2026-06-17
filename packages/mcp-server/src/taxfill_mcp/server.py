@@ -29,6 +29,7 @@ from taxfill_core import (
     render_pdf as _render_pdf,
     se_tax as _se_tax,
     standard_deduction as _standard_deduction,
+    state_scope as _state_scope,
     tax_from_taxable_income as _tax,
     verify_filing as _verify_filing,
     verify_form as _verify_form,
@@ -195,6 +196,17 @@ def intake_checklist(profile: dict | None = None, tax_year: int | None = None) -
     """Next interview questions + required documents for a (partial) profile. Empty profile = start."""
     prof = Profile.model_validate(profile) if profile else None
     return _dump(_intake_checklist(prof, tax_year=tax_year))
+
+
+@mcp.tool()
+def state_scope(profile: dict, year: int) -> dict:
+    """Which states require a return for the year, in what role, with forms/benefits/warnings.
+
+    Reads the profile's state_footprint (where the user lived/worked, with dates). No-income-tax
+    states resolve to "nothing to file"; a state that doesn't honor federal treaties (California)
+    warns that treaty-exempt federal income is still taxable there. Allocation stays your judgment.
+    """
+    return _dump(_state_scope(Profile.model_validate(profile), year))
 
 
 @mcp.tool()
