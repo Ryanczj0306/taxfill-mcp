@@ -129,6 +129,21 @@ def test_pack_loads_and_identifies_itself(year):
 
 
 @pytest.mark.parametrize("year", YEARS)
+def test_every_year_ships_filing_logistics_blocks(year):
+    # All shipped years carry the M3 logistics blocks so estimate/file_and_pay
+    # never silently degrade for a supported year.
+    pack = load_knowledge("federal", year, base_dir=KNOWLEDGE_DIR)
+    assert pack.payment_options is not None
+    assert pack.payment_options.check.payee == "United States Treasury"
+    assert pack.mailing_addresses is not None
+    assert pack.mailing_addresses.f1040_for_state("California").no_payment  # resolves
+    assert pack.deadlines is not None
+    assert pack.deadlines.refund_statute_of_limitations.years_from_filing == 3
+    for block in (pack.payment_options, pack.mailing_addresses, pack.deadlines):
+        assert block.citation.url.startswith("https://www.irs.gov/")
+
+
+@pytest.mark.parametrize("year", YEARS)
 def test_rate_schedules_have_seven_brackets_each(year):
     schedules = load_knowledge("federal", year, base_dir=KNOWLEDGE_DIR).tax.rate_schedules.schedules
     assert set(schedules) == {

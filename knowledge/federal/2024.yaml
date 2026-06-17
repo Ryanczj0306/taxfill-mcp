@@ -164,3 +164,134 @@ credits:
       "3+": { earned_income_amount: 17400, max_credit: 7830, phaseout_begins_other: 22720, phaseout_begins_mfj: 29640, phaseout_complete_other: 59899, phaseout_complete_mfj: 66819 }
 
 effective_law_changes: []
+
+# ─────────────────────────────────────────────────────────────────────────────
+# M3 filing-logistics blocks for 2024, fetched from the cited irs.gov sources and
+# adversarially re-verified. Year-specific (addresses/due dates differ by year).
+payment_options:
+  citation:
+    source: 2024 Instructions for Form 1040 (and 1040-SR), Line 37 "Amount You Owe" / "How To Pay", pages
+      59-60
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2024.pdf
+  check:
+    payee: United States Treasury
+    memo: Write "2024 Form 1040" (or "2024 Form 1040-SR") plus your name, address, daytime phone number,
+      and SSN (on a joint return, the SSN shown first) on the payment; enter the amount as $ XXX.XX with
+      no dashes or lines; attach Form 1040-V; don't attach the payment to the return and don't send cash.
+  electronic:
+  - name: IRS Direct Pay (online transfers directly from a checking/savings account)
+    fee: false
+    url: https://www.irs.gov/payments
+  - name: EFTPS (Electronic Federal Tax Payment System)
+    fee: false
+    url: https://www.eftps.gov
+    enrollment_required: true
+  - name: Debit card, credit card, or digital wallet (via approved processors)
+    fee: true
+    url: https://www.irs.gov/payments
+  cash:
+    limit_usd: 1000
+    url: https://www.irs.gov/payments
+mailing_addresses:
+  citation:
+    source: 2024 Instructions for Forms 1040 and 1040-SR, "Where Do You File?", page 112; 2024 Instructions
+      for Form 1040-NR, "Where To File" (Individuals), page 11
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2024.pdf
+  f1040nr:
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215, U.S.A.
+    with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303, U.S.A.
+  f1040_groups:
+  - states:
+    - Alabama
+    - Georgia
+    - North Carolina
+    - South Carolina
+    - Tennessee
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214
+  - states:
+    - Alaska
+    - California
+    - Colorado
+    - Hawaii
+    - Idaho
+    - Kansas
+    - Michigan
+    - Montana
+    - Nebraska
+    - Nevada
+    - North Dakota
+    - Ohio
+    - Oregon
+    - South Dakota
+    - Utah
+    - Washington
+    - Wyoming
+    no_payment: Department of the Treasury, Internal Revenue Service, Ogden, UT 84201-0002
+    with_payment: Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501
+  - states:
+    - Arizona
+    - New Mexico
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501
+  - states:
+    - Arkansas
+    - Oklahoma
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000
+  - states:
+    - Connecticut
+    - Delaware
+    - District of Columbia
+    - Illinois
+    - Indiana
+    - Iowa
+    - Kentucky
+    - Maine
+    - Maryland
+    - Massachusetts
+    - Minnesota
+    - Missouri
+    - New Hampshire
+    - New Jersey
+    - New York
+    - Rhode Island
+    - Vermont
+    - Virginia
+    - West Virginia
+    - Wisconsin
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000
+  - states:
+    - Florida
+    - Louisiana
+    - Mississippi
+    - Texas
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214
+  - states:
+    - Pennsylvania
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 802501, Cincinnati, OH 45280-2501
+  - states:
+    - A foreign country, U.S. territory, APO/FPO address, Form 2555 or 4563 filer, or dual-status alien
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215
+    with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303
+deadlines:
+  citation:
+    source: 2024 Instructions for Form 1040 ("Amount You Owe"/installment text, April 15, 2025); 2024
+      Instructions for Form 1040-NR ("Due date of return"/"When To File"); IRC 6511(a)
+    url: https://www.irs.gov/pub/irs-prior/i1040nr--2024.pdf
+  filing_due_date: '2025-04-15'
+  refund_statute_of_limitations:
+    authority: IRC 6511(a)
+    years_from_filing: 3
+    years_from_payment: 2
+    note: Claim a refund within the later of 3 years from the time the return was filed or 2 years from
+      the time the tax was paid; a return filed before the due date is treated as filed on the due date
+      (IRC 6511(b)(2)/6513(a)).
+  postponement_note: No postponement applies to tax year 2024. April 15, 2025 is a Tuesday and not a weekend
+    or DC/federal holiday, so the statutory due date stands. (The COVID-era postponements affected only
+    TY2019 returns, moved 2020-04-15 -> 2020-07-15, and TY2020 returns, moved 2021-04-15 -> 2021-05-17;
+    neither applies here.)
+  nonwage_1040nr_due_date: '2025-06-16'
