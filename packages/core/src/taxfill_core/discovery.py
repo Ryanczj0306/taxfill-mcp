@@ -11,13 +11,43 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from taxfill_core.schemas.formpack import load_pack
+from taxfill_core.schemas.formpack import FormPack, load_pack
 
-__all__ = ["FormSummary", "LineMap", "FormMap", "list_forms", "get_form_map"]
+__all__ = ["FormSummary", "LineMap", "FormMap", "list_forms", "get_form_map", "load_form_pack"]
 
 
 def _repo_formpacks_dir() -> Path:
     return Path(__file__).resolve().parents[4] / "formpacks"
+
+
+def _pack_path(form: str, year: int, jurisdiction: str, base_dir: str | Path | None) -> Path:
+    base = Path(base_dir) if base_dir is not None else _repo_formpacks_dir()
+    return base / jurisdiction / str(year) / form / "pack.yaml"
+
+
+def load_form_pack(
+    form: str,
+    year: int,
+    jurisdiction: str = "federal",
+    *,
+    base_dir: str | Path | None = None,
+) -> FormPack:
+    """Load the :class:`FormPack` for a (form_key, year, jurisdiction).
+
+    The agent-facing counterpart to :func:`get_form_map`: tools that fetch/fill/
+    verify need the pack object (source_url, sha, fields), not just its map.
+
+    Raises:
+        FileNotFoundError: no pack at the resolved path; lists available keys.
+    """
+    path = _pack_path(form, year, jurisdiction, base_dir)
+    if not path.is_file():
+        available = sorted(s.form_key for s in list_forms(jurisdiction, year, base_dir=base_dir))
+        raise FileNotFoundError(
+            f"no form pack for form '{form}', {jurisdiction} {year} — looked for {path}. "
+            f"Available form keys for {jurisdiction} {year}: {available or 'none'}. Use list_forms()."
+        )
+    return load_pack(path)
 
 
 class FormSummary(BaseModel):
