@@ -69,8 +69,9 @@ def synthetic_profile() -> Profile:
             ),
         ),
         household=Household(
-            marital_status=Answer[str](value="single", provenance=Provenance.user_stated()),
-            # Single taxpayer with a dependent child files as head of household.
+            marital_status=Answer[str](value="unmarried", provenance=Provenance.user_stated()),
+            # Unmarried taxpayer with a qualifying person + dependent child files as head of household.
+            hoh_qualifying_person=Answer[bool](value=True, provenance=Provenance.user_stated()),
             filing_status=Answer[str](value="head_of_household", provenance=Provenance.user_stated()),
             dependents=[
                 Dependent(name="Test Child", relationship="child", dob=date(2020, 5, 5), provenance=Provenance.user_stated()),
@@ -202,6 +203,55 @@ def test_invalid_filing_status_rejected():
     # 'married' is NOT a filing status — the couple elects MFJ or MFS.
     with pytest.raises(ValidationError):
         Household(filing_status=Answer[str](value="married", provenance=Provenance.user_stated()))
+
+
+def test_marital_status_rejects_out_of_domain_string():
+    # marital_status is a closed, machine-checkable fact — 'single' (a filing status)
+    # and other free text are rejected (mirror test_invalid_filing_status_rejected).
+    for bad in ("single", "head_of_household", "yes", ""):
+        with pytest.raises(ValidationError):
+            Household(marital_status=Answer[str](value=bad, provenance=Provenance.user_stated()))
+    # The three legal facts are accepted.
+    for good in ("married", "unmarried", "widowed"):
+        Household(marital_status=Answer[str](value=good, provenance=Provenance.user_stated()))
+
+
+def test_household_filing_status_facts_roundtrip():
+    # The new filing-status FACT fields (hoh_qualifying_person, QSS facts) survive JSON.
+    hh = Household(
+        marital_status=Answer[str](value="widowed", provenance=Provenance.user_stated()),
+        hoh_qualifying_person=Answer[bool](value=True, provenance=Provenance.user_stated()),
+        spouse_death_year=Answer[int](value=2024, provenance=Provenance.user_stated()),
+        maintained_home_for_dependent_child=Answer[bool](value=True, provenance=Provenance.user_stated()),
+    )
+    profile = Profile(household=hh)
+    restored = Profile.model_validate_json(profile.model_dump_json())
+    assert restored.household.hoh_qualifying_person.value is True
+    assert restored.household.spouse_death_year.value == 2024
+    assert restored.household.maintained_home_for_dependent_child.value is True
+    assert restored.household.spouse_death_year.provenance.kind == "user_stated"
+
+
+def test_spouse_us_person_and_residency_facts_roundtrip():
+    # The spouse carries their own us_person flag and residency facts (an NRA spouse
+    # needs the SPT/visa path; both must survive a JSON roundtrip).
+    profile = Profile(
+        household=Household(
+            marital_status=Answer[str](value="married", provenance=Provenance.user_stated()),
+            filing_status=Answer[str](value="married_filing_jointly", provenance=Provenance.user_stated()),
+            spouse=Spouse(
+                name=Answer[str](value="Spouse Taxpayer", provenance=Provenance.user_stated()),
+                us_person=Answer[bool](value=False, provenance=Provenance.user_stated()),
+                residency_facts=ResidencyFacts(
+                    days_in_us={2023: Answer[int](value=120, provenance=Provenance.computed())},
+                ),
+            ),
+        ),
+    )
+    restored = Profile.model_validate_json(profile.model_dump_json())
+    assert restored.household.spouse.us_person.value is False
+    assert restored.household.spouse.residency_facts.days_in_us[2023].value == 120
+    assert restored.household.spouse.residency_facts.days_in_us[2023].provenance.kind == "computed"
 
 
 def test_income_document_owner_defaults_to_taxpayer_and_accepts_spouse():

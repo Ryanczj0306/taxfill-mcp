@@ -504,6 +504,50 @@ def test_non_required_checkboxes_are_not_audited():
     assert checkbox_audit(pack, {}) == []
 
 
+def filing_status_group_pack() -> FormPack:
+    # Five separate single-widget /Btn fields that share only a `group` id —
+    # the real 1040 filing-status shape (c1_3[0]..c1_3[4]).
+    return make_pack(
+        [
+            checkbox_field("filing_status.single", required=True, group="filing_status"),
+            checkbox_field("filing_status.mfj", group="filing_status"),
+            checkbox_field("filing_status.hoh", group="filing_status"),
+        ]
+    )
+
+
+def test_group_with_two_members_on_fails_at_most_one():
+    pack = filing_status_group_pack()
+    fields = disk_fields(pack, {"filing_status.single": "/1", "filing_status.hoh": "/1"})
+    check = checkbox_audit(pack, fields)[0]
+    assert check.status == "FAIL"
+    assert check.group == "filing_status"
+    assert "2 boxes checked" in check.detail
+    assert "exactly one is allowed" in check.detail
+    assert "filing_status.single" in check.detail and "filing_status.hoh" in check.detail
+
+
+def test_non_required_group_with_two_members_on_also_fails():
+    # At-most-one holds for EVERY group, required or not.
+    pack = make_pack(
+        [
+            checkbox_field("optional.yes", group="optional"),
+            checkbox_field("optional.no", group="optional"),
+        ]
+    )
+    fields = disk_fields(pack, {"optional.yes": "/1", "optional.no": "/1"})
+    check = checkbox_audit(pack, fields)[0]
+    assert check.status == "FAIL" and check.group == "optional"
+    assert "exactly one is allowed" in check.detail
+
+
+def test_group_with_exactly_one_member_on_passes():
+    pack = filing_status_group_pack()
+    fields = disk_fields(pack, {"filing_status.single": "/1", "filing_status.hoh": "/Off"})
+    checks = checkbox_audit(pack, fields)
+    assert len(checks) == 1 and checks[0].status == "PASS"
+
+
 # ---------------------------------------------------------------------------
 # Schema additions (required / group on PackField)
 # ---------------------------------------------------------------------------
@@ -1012,6 +1056,45 @@ def test_verify_filing_cross_form_uses_disk_values():
     divergence = next(check for check in report.assertions if "L1e" in check.line)
     assert divergence.status == "FAIL"
     assert divergence.line.startswith("sched_oi:")
+
+
+def test_verify_filing_independent_unknown_form_key_raises_naming_valid_keys():
+    # The unknown-form-key guard: an `independent` set keyed by a form_key
+    # that is not among the filing items must raise, naming the valid keys.
+    pack_main = identity_pack("F-MAIN")
+    pack_oi = make_pack([money_field("L1e")], form="SCHED-OI")
+    main = filing_item("main", pack_main, {"name": "Pat", "identifying_number": "000000000", "mailing_address": "X", "1k": "5000"})
+    oi = FilingItem(form_key="sched_oi", pack=pack_oi, fields=disk_fields(pack_oi, {"L1e": "5000"}))
+    with pytest.raises(ValueError, match="unknown form_key") as excinfo:
+        verify_filing([main, oi], independent={"nope": {"L1e": 5000}})
+    message = str(excinfo.value)
+    assert "main" in message and "sched_oi" in message  # names the valid form_key(s)
+
+
+def test_verify_filing_independent_recompute_passes_and_prefixes_form_key():
+    # A matching independent recompute against an item's disk value yields a
+    # PASS whose .line is prefixed "<form_key>: <line>"; report.ok stays True.
+    pack_oi = make_pack([money_field("L1e")], form="SCHED-OI")
+    oi = FilingItem(form_key="sched_oi", pack=pack_oi, fields=disk_fields(pack_oi, {"L1e": "5000"}))
+    report = verify_filing([oi], independent={"sched_oi": {"L1e": 5000}})
+    assert report.ok is True
+    recompute = next(check for check in report.recompute if "L1e" in check.line)
+    assert recompute.status == "PASS"
+    assert recompute.line == "sched_oi: L1e"  # prefixed with the item's form_key
+    assert recompute.filled == 5000 and recompute.recomputed == 5000
+
+
+def test_verify_filing_independent_recompute_mismatch_flips_ok_to_false():
+    # An independent expected value that disagrees with the item's disk value
+    # is a recompute FAIL and flips report.ok to False (aggregated via _all_pass).
+    pack_oi = make_pack([money_field("L1e")], form="SCHED-OI")
+    oi = FilingItem(form_key="sched_oi", pack=pack_oi, fields=disk_fields(pack_oi, {"L1e": "5000"}))
+    report = verify_filing([oi], independent={"sched_oi": {"L1e": 4000}})
+    assert report.ok is False
+    recompute = next(check for check in report.recompute if "L1e" in check.line)
+    assert recompute.status == "FAIL"
+    assert recompute.line == "sched_oi: L1e"
+    assert recompute.filled == 5000 and recompute.recomputed == 4000  # disk vs. recompute
 
 
 # ---------------------------------------------------------------------------

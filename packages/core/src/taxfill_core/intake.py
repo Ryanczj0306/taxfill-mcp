@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from taxfill_core import residency
 from taxfill_core.schemas.profile import Answer, Profile
 
 __all__ = ["IntakeQuestion", "RequiredDocument", "IntakeChecklist", "intake_checklist"]
@@ -97,6 +98,45 @@ def _q(qid, section, prompt, why, answers_into, disambiguation=None) -> IntakeQu
     )
 
 
+def _marital(profile: Profile) -> str | None:
+    """The closed marital-status fact ('married' / 'unmarried' / 'widowed'), or None."""
+    hh = profile.household
+    if hh is None or not _has(hh.marital_status):
+        return None
+    return str(hh.marital_status.value)
+
+
+def _residency_classification(profile: Profile, tax_year: int | None) -> str | None:
+    """Best-effort federal residency classification, or None when not yet computable.
+
+    Returns one of 'nonresident' / 'resident' / 'dual_status_candidate' only when the
+    profile has both a visa timeline and per-year day counts (and a target year);
+    otherwise None so callers gate conditionally rather than asserting a result.
+    """
+    if tax_year is None:
+        return None
+    imm = profile.immigration
+    rf = profile.residency_facts
+    if imm is None or not imm.visa_timeline or rf is None or not rf.days_in_us:
+        return None
+    days_by_year = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+    if not days_by_year:
+        return None
+    try:
+        return residency.classify(imm.visa_timeline, days_by_year, tax_year).classification
+    except (ValueError, AssertionError):
+        # Incomplete or contradictory inputs — cannot classify yet; gate conditionally.
+        return None
+
+
+def _has_f1_period(profile: Profile) -> bool:
+    """True when the visa timeline declares an F-1 (student) period."""
+    imm = profile.immigration
+    if imm is None:
+        return False
+    return any(p.status.strip().upper().replace("-", "").startswith("F1") for p in imm.visa_timeline)
+
+
 # ── section handlers: each appends the questions still needed ─────────────────
 
 
@@ -166,24 +206,41 @@ def _residency_questions(profile: Profile, out: list[IntakeQuestion], tax_year: 
                       "Nonresident returns and some treaty claims require it.", "residency_facts.home_country_address"))
 
 
-def _household_questions(profile: Profile, out: list[IntakeQuestion], notes: list[str]) -> None:
+def _household_questions(
+    profile: Profile, out: list[IntakeQuestion], notes: list[str], tax_year: int | None
+) -> None:
     hh = profile.household
     ident = profile.identity
-    nonresident_path = ident is not None and _has(ident.us_person) and ident.us_person.value is False
+    visa_holder = ident is not None and _has(ident.us_person) and ident.us_person.value is False
+    # Gate the 1040-NR status restriction on the COMPUTED residency result (a true
+    # NRA), not on us_person — a visa holder who passes the Substantial Presence Test
+    # is a RESIDENT ALIEN who CAN use MFJ/HOH and needs no §6013 election. When residency
+    # cannot be computed yet, frame the restriction conditionally.
+    classification = _residency_classification(profile, tax_year)
+    is_nonresident = classification == "nonresident"
+    is_resident = classification == "resident"
+    # The nonresident path applies if confirmed NRA, or if a visa holder whose residency
+    # is not yet computable (conditional framing) — but never for a confirmed resident.
+    nonresident_path = is_nonresident or (visa_holder and classification is None)
+    residency_unknown = visa_holder and classification is None
 
     if hh is None or not _has(hh.marital_status):
         out.append(_q("household.marital_status", "household",
-                      "Were you married on December 31 of the tax year?",
+                      "Were you married, unmarried, or widowed on December 31 of the tax year?",
                       "Marital status on the last day of the year sets which filing statuses you may use.",
                       "household.marital_status",
-                      disambiguation="This is a fact about Dec 31 — being married is NOT itself a filing status; "
-                                     "married couples still choose between filing jointly or separately."))
+                      disambiguation="Answer 'married', 'unmarried', or 'widowed'. This is a fact about Dec 31 — being "
+                                     "married is NOT itself a filing status; married couples still choose between "
+                                     "filing jointly or separately. Answer 'widowed' only if your spouse died in a "
+                                     "recent year (it can open the qualifying-surviving-spouse status)."))
         return  # filing-status question depends on the answer; ask it next round.
 
-    married = str(hh.marital_status.value).strip().lower() in {"married", "yes", "true", "married_filing_jointly", "married_filing_separately"}
+    marital = _marital(profile)
+    married = marital == "married"
+    widowed = marital == "widowed"
 
-    if not _has(hh.filing_status):
-        if married:
+    if married:
+        if not _has(hh.filing_status):
             note = ("Married couples choose married-filing-jointly (one combined return, usually lower tax, but both "
                     "spouses are jointly liable) or married-filing-separately. We can compute it both ways and show "
                     "the dollar difference.")
@@ -194,23 +251,7 @@ def _household_questions(profile: Profile, out: list[IntakeQuestion], notes: lis
                           "Do you want to file jointly with your spouse or separately?",
                           "It changes your brackets, standard deduction, and credit eligibility.",
                           "household.filing_status", disambiguation=note))
-        else:
-            has_dependents = bool(hh.dependents)
-            prompt = ("Did you pay more than half the cost of keeping up a home for a qualifying person (e.g. your "
-                      "child)?" if has_dependents else
-                      "Do you support a qualifying person (e.g. a child or relative) who lived with you?")
-            out.append(_q("household.filing_status", "household", prompt,
-                          "An unmarried taxpayer with a qualifying person may file head of household (lower tax than single).",
-                          "household.filing_status",
-                          disambiguation="If yes, you likely file head of household; if no, single. A recent widow(er) "
-                                         "with a dependent child may qualify as a surviving spouse."))
-        if nonresident_path:
-            notes.append("Nonresident-alien filers (Form 1040-NR) cannot use married-filing-jointly or head of "
-                         "household; the available statuses are single, married-filing-separately, or qualifying "
-                         "surviving spouse — confirm residency to finalize.")
-
-    # Spouse as a second taxpayer, once a married/joint path is chosen.
-    if married:
+        # Spouse as a second taxpayer on a married path.
         sp = hh.spouse
         if sp is None or not _has(sp.name):
             out.append(_q("household.spouse.name", "household", "What is your spouse's full legal name?",
@@ -218,6 +259,71 @@ def _household_questions(profile: Profile, out: list[IntakeQuestion], notes: lis
         if sp is None or not _has(sp.tax_id):
             out.append(_q("household.spouse.tax_id", "household", "What is your spouse's SSN or ITIN?",
                           "Both taxpayers are identified on the return.", "household.spouse.tax_id"))
+    elif widowed:
+        # Qualifying-surviving-spouse routing: a recent widow(er) with a dependent child
+        # may file as a qualifying surviving spouse — symmetric to the HOH routed question.
+        if not _has(hh.spouse_death_year):
+            out.append(_q("household.spouse_death_year", "household",
+                          "In what year did your spouse die?",
+                          "Qualifying surviving spouse is available for the two tax years AFTER the year of death.",
+                          "household.spouse_death_year",
+                          disambiguation="The year of death itself is normally a joint-return year; the surviving-"
+                                         "spouse status applies to the next two tax years."))
+        if not _has(hh.maintained_home_for_dependent_child):
+            out.append(_q("household.maintained_home_for_dependent_child", "household",
+                          "Did you pay more than half the cost of keeping up a home that was the main home of your "
+                          "dependent child all year?",
+                          "It is the key test for the qualifying-surviving-spouse status.",
+                          "household.maintained_home_for_dependent_child",
+                          disambiguation="If yes (and your spouse died within the prior two tax years), you may file "
+                                         "as a qualifying surviving spouse (the lower married-filing-jointly tax). "
+                                         "If no, you file as single."))
+        if nonresident_path:
+            notes.append("If your residency result is nonresident alien, Form 1040-NR has a qualifying-surviving-"
+                         "spouse box but no head-of-household box.")
+    else:
+        # Unmarried. Branch the HOH-vs-single advice on the nonresident condition so it
+        # agrees with the gating note: Form 1040-NR has no head-of-household box, so do
+        # NOT recommend head of household on the nonresident path.
+        if not _has(hh.hoh_qualifying_person):
+            if nonresident_path:
+                prompt = ("Did you support a qualifying person (e.g. a child or relative) who lived with you, and "
+                          "pay more than half the cost of keeping up their home?")
+                disamb = ("This records the head-of-household fact. Note: if your residency result is nonresident "
+                          "alien, Form 1040-NR has no head-of-household box, so your options are single, married-"
+                          "filing-separately, or qualifying surviving spouse — not head of household."
+                          if residency_unknown else
+                          "Form 1040-NR has no head-of-household box, so even if you support a qualifying person "
+                          "your options as a nonresident alien are single, married-filing-separately, or "
+                          "qualifying surviving spouse.")
+            else:
+                has_dependents = bool(hh.dependents)
+                prompt = ("Did you pay more than half the cost of keeping up a home for a qualifying person (e.g. "
+                          "your child)?" if has_dependents else
+                          "Do you support a qualifying person (e.g. a child or relative) who lived with you?")
+                disamb = ("If yes, you likely file head of household (lower tax than single); if no, single. A "
+                          "recent widow(er) with a dependent child may instead qualify as a surviving spouse.")
+            out.append(_q("household.hoh_qualifying_person", "household", prompt,
+                          ("An unmarried taxpayer with a qualifying person may file head of household (lower tax "
+                           "than single)." if not nonresident_path else
+                           "It records the qualifying-person fact, though a nonresident alien cannot use head of "
+                           "household."),
+                          "household.hoh_qualifying_person", disambiguation=disamb))
+
+    # Residency-gated status restriction note (conditional when not yet computable).
+    if not _has(hh.filing_status):
+        if is_nonresident:
+            notes.append("Nonresident-alien filers (Form 1040-NR) cannot use married-filing-jointly or head of "
+                         "household; the available statuses are single, married-filing-separately, or qualifying "
+                         "surviving spouse.")
+        elif is_resident:
+            notes.append("Your residency result is resident alien, so all filing statuses are available — "
+                         "married-filing-jointly and head of household included.")
+        elif residency_unknown:
+            notes.append("If your residency result is nonresident alien, Form 1040-NR has no married-filing-jointly "
+                         "or head-of-household box — the available statuses would be single, married-filing-"
+                         "separately, or qualifying surviving spouse. If you are a resident alien, all statuses are "
+                         "available. Confirm residency to finalize.")
 
     if hh is None or not hh.dependents:
         out.append(_q("household.dependents", "household", "Do you have any dependents to claim? If so, list them.",
@@ -283,6 +389,14 @@ def _required_documents(profile: Profile) -> list[RequiredDocument]:
         if "J-1" in statuses or "J1" in statuses:
             docs.append(RequiredDocument(kind="DS-2019", why="J-1 exchange-visitor status document."))
 
+    # M3-DOC-4: an NRA student (non-US-person with an F-1 period) who has not yet
+    # declared any income documents gets the two income docs the spec's NRA-student
+    # example names seeded as honest gaps (status='missing' is a gap marker, NOT
+    # invented data — it says "we still need this", never asserts a value).
+    if nonresident and _has_f1_period(profile) and not profile.income_documents:
+        docs.append(RequiredDocument(kind="W-2", why="Reports wages from on-campus / OPT work that must appear on the return.", status="missing"))
+        docs.append(RequiredDocument(kind="1098-T", why="Tuition statement; supports education-related entries for a student.", status="missing"))
+
     # Reflect the user's declared income-document inventory and its status.
     for d in profile.income_documents:
         docs.append(RequiredDocument(kind=d.kind, why="Reports income that must appear on the return.", status=d.status))
@@ -323,7 +437,7 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     _identity_questions(profile, out)
     _immigration_questions(profile, out, notes)
     _residency_questions(profile, out, tax_year)
-    _household_questions(profile, out, notes)
+    _household_questions(profile, out, notes, tax_year)
     _state_footprint_questions(profile, out, tax_year)
     _income_document_questions(profile, out)
     _banking_questions(profile, out)

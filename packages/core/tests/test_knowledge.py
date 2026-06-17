@@ -14,7 +14,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from taxfill_core.knowledge import KnowledgePack, load_knowledge
+from taxfill_core.knowledge import EffectiveLawChange, KnowledgePack, load_knowledge
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 KNOWLEDGE_DIR = REPO_ROOT / "knowledge"
@@ -135,9 +135,9 @@ def test_every_block_carries_an_official_citation(pack_2023):
 
 def test_missing_year_names_exact_path_and_freshness_protocol():
     with pytest.raises(FileNotFoundError) as excinfo:
-        load_knowledge("federal", 2019, base_dir=KNOWLEDGE_DIR)
+        load_knowledge("federal", 2099, base_dir=KNOWLEDGE_DIR)
     message = str(excinfo.value)
-    assert str(KNOWLEDGE_DIR / "federal" / "2019.yaml") in message
+    assert str(KNOWLEDGE_DIR / "federal" / "2099.yaml") in message
     assert "freshness protocol" in message
     assert "sources.yaml" in message
 
@@ -222,6 +222,81 @@ def test_non_gov_citation_url_rejected(raw_2023):
     raw["tax"]["se_tax"]["citation"]["url"] = "somewhere/on/disk.pdf"
     with pytest.raises(ValidationError, match="https://"):
         KnowledgePack.model_validate(raw)
+
+
+# ---------------------------------------------------------------------------
+# effective_law_changes — typed, cited, status-enforced (dev plan section 7(2))
+# ---------------------------------------------------------------------------
+
+
+def _law_change(**overrides) -> dict:
+    base = {
+        "description": "OBBBA car-loan interest deduction, effective 2025",
+        "citation": {"source": "Pub. L. 119-21, sec. 70203", "url": "https://www.congress.gov/bill/119th-congress"},
+        "status": "irs_guidance_pending",
+        "lookup_path": "credits_energy",
+    }
+    base.update(overrides)
+    return base
+
+
+def test_effective_law_changes_empty_list_is_valid(raw_2023):
+    # The shipped 2023 pack ships `effective_law_changes: []` — must stay valid.
+    assert raw_2023["effective_law_changes"] == []
+    pack = KnowledgePack.model_validate(raw_2023)
+    assert pack.effective_law_changes == []
+
+
+def test_effective_law_change_well_formed_validates():
+    change = EffectiveLawChange.model_validate(_law_change())
+    assert change.status == "irs_guidance_pending"
+    assert change.citation.url.startswith("https://")
+
+
+def test_effective_law_change_bogus_status_rejected(raw_2023):
+    raw = copy.deepcopy(raw_2023)
+    raw["effective_law_changes"] = [_law_change(status="rumored")]
+    with pytest.raises(ValidationError):
+        KnowledgePack.model_validate(raw)
+
+
+def test_effective_law_change_missing_citation_rejected(raw_2023):
+    raw = copy.deepcopy(raw_2023)
+    bad = _law_change()
+    del bad["citation"]
+    raw["effective_law_changes"] = [bad]
+    with pytest.raises(ValidationError):
+        KnowledgePack.model_validate(raw)
+
+
+def test_effective_law_change_citation_url_without_scheme_rejected(raw_2023):
+    # A url lacking an http(s) scheme fails on the SCHEME check (message names https://),
+    # distinct from the .gov host check below.
+    raw = copy.deepcopy(raw_2023)
+    raw["effective_law_changes"] = [_law_change(citation={"source": "a blog", "url": "blog.example/post"})]
+    with pytest.raises(ValidationError, match="https://"):
+        KnowledgePack.model_validate(raw)
+
+
+def test_effective_law_change_non_gov_https_citation_rejected(raw_2023):
+    # A genuinely non-.gov but well-formed https url must be REJECTED on the HOST
+    # check ('.gov only' promise) — not silently accepted just because it is https.
+    raw = copy.deepcopy(raw_2023)
+    raw["effective_law_changes"] = [
+        _law_change(citation={"source": "a blog", "url": "https://blog.example.com/post"})
+    ]
+    with pytest.raises(ValidationError, match=r"\.gov"):
+        KnowledgePack.model_validate(raw)
+
+
+def test_gov_https_citation_accepted(raw_2023):
+    # A .gov https citation is the happy path and must validate cleanly.
+    raw = copy.deepcopy(raw_2023)
+    raw["effective_law_changes"] = [
+        _law_change(citation={"source": "Pub. L. 119-21", "url": "https://www.congress.gov/bill/119th-congress"})
+    ]
+    pack = KnowledgePack.model_validate(raw)
+    assert pack.effective_law_changes[0].citation.url == "https://www.congress.gov/bill/119th-congress"
 
 
 def test_extra_top_level_blocks_tolerated(raw_2023):

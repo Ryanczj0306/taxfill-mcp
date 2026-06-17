@@ -8,14 +8,36 @@ reconcile exactly with the independently-sourced standard_deduction block.
 from pathlib import Path
 
 import pytest
+import yaml
 from pydantic import ValidationError
 
 from taxfill_core.knowledge import FilingThresholds, KnowledgePack, load_knowledge
+from taxfill_core.sources import get_sources
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 KNOWLEDGE_DIR = REPO_ROOT / "knowledge"
 
 US_STATES_PLUS_DC = 51  # 50 states + District of Columbia
+
+# Top-level pack keys that are metadata (not topic blocks needing a source) and
+# the freshness ledger itself (backed by sources.yaml change_channels, not by a
+# by_topic entry).
+NON_TOPIC_BLOCKS = frozenset({"jurisdiction", "tax_year", "effective_law_changes"})
+
+# Coverage rule (dev plan section 7, line 154): every top-level TOPIC BLOCK a
+# federal pack ships must be backed by sources.yaml by_topic entries. Block
+# names are identical across years, so new year packs that mirror 2023.yaml's
+# block names pass automatically. The `tax` block bundles several areas (rate
+# schedules, tax table, standard deduction, SE tax) and the `credits` block
+# bundles CTC + EITC, so those map to several required by_topic keys.
+BLOCK_TO_REQUIRED_TOPICS = {
+    "tax": ("tax_rates_and_tables", "standard_deduction", "self_employment"),
+    "filing_thresholds": ("filing_thresholds",),
+    "payment_options": ("payment_options",),
+    "mailing_addresses": ("mailing_addresses",),
+    "deadlines": ("deadlines",),
+    "credits": ("credits_ctc", "credits_eitc"),
+}
 
 
 @pytest.fixture(scope="module")
@@ -108,3 +130,53 @@ def test_credits_key_parameters(pack: KnowledgePack):
     assert eitc["investment_income_limit"] == 11000
     assert eitc["by_qualifying_children"]["3+"]["max_credit"] == 7430
     assert eitc["by_qualifying_children"]["0"]["max_credit"] == 600
+
+
+# ---------------------------------------------------------------------------
+# Coverage meta-test (dev plan section 7, line 154): every top-level TOPIC
+# BLOCK shipped by a federal pack must be backed by a sources.yaml by_topic
+# entry. Driven by block NAMES (identical across years), so each new year pack
+# that mirrors 2023.yaml's block names is covered automatically.
+# ---------------------------------------------------------------------------
+
+FEDERAL_PACK_FILES = sorted((KNOWLEDGE_DIR / "federal").glob("[0-9][0-9][0-9][0-9].yaml"))
+
+
+def _backing_topics(topic_key: str, year: int) -> set[str]:
+    """The by_topic keys get_sources resolves a topic key to (empty if a miss)."""
+    res = get_sources(topic_key, year, base_dir=KNOWLEDGE_DIR)
+    return {s.topic for s in res.sources if s.topic} if res.matched else set()
+
+
+def test_every_federal_pack_block_has_a_backing_source():
+    assert FEDERAL_PACK_FILES, "no federal knowledge packs found to check"
+    available = set(get_sources("filing_basics", 2023, base_dir=KNOWLEDGE_DIR).available_topics)
+    for pack_path in FEDERAL_PACK_FILES:
+        year = int(pack_path.stem)
+        raw = yaml.safe_load(pack_path.read_text(encoding="utf-8"))
+        blocks = [k for k in raw if k not in NON_TOPIC_BLOCKS]
+        for block in blocks:
+            assert block in BLOCK_TO_REQUIRED_TOPICS, (
+                f"{pack_path.name}: top-level block '{block}' has no entry in BLOCK_TO_REQUIRED_TOPICS — "
+                f"add a sources.yaml by_topic entry for it and map it here (coverage rule, dev plan section 7)"
+            )
+            for topic_key in BLOCK_TO_REQUIRED_TOPICS[block]:
+                assert topic_key in available, (
+                    f"{pack_path.name}: block '{block}' needs sources.yaml by_topic '{topic_key}', "
+                    f"which is missing from the federal registry (coverage rule, dev plan section 7)"
+                )
+                # The registry entry must actually resolve via get_sources to a .gov URL.
+                assert topic_key in _backing_topics(topic_key, year), (
+                    f"sources.yaml by_topic '{topic_key}' does not resolve via get_sources"
+                )
+
+
+def test_change_channels_cover_section7_freshness_signals():
+    # Section 7 enumerates the change channels a pack relies on for figures that
+    # post-date it: newsroom, prior-year archive, the IRB/Rev. Procs, Congress.gov
+    # (enacted law), and the Federal Register (Treasury/IRS rulemaking).
+    res = get_sources("filing_basics", 2024, base_dir=KNOWLEDGE_DIR)
+    urls = " ".join(c.url for c in res.change_channels)
+    for needle in ("newsroom", "irs-prior", "/irb", "congress.gov", "federalregister.gov"):
+        assert needle in urls, f"change_channels missing the section-7 source '{needle}'"
+    assert all(c.url.startswith("https://") and ".gov" in c.url for c in res.change_channels)
