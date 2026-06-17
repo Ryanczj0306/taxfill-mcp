@@ -17,7 +17,9 @@ import re
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from taxfill_core.knowledge import validate_gov_url
 
 __all__ = ["Source", "SourcesResult", "get_sources"]
 
@@ -52,6 +54,11 @@ class Source(BaseModel):
     answers: str = Field(description="What questions this source resolves.")
     cadence: str = Field(description="When/how often it updates.")
     topic: str | None = Field(default=None, description="The by_topic key this came from (None for change_channels).")
+
+    @field_validator("url")
+    @classmethod
+    def _url_is_gov(cls, value: str) -> str:
+        return validate_gov_url(value)
 
 
 class SourcesResult(BaseModel):

@@ -23,9 +23,33 @@ import re
 from decimal import Decimal
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlparse
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+
+def validate_gov_url(value: str) -> str:
+    """Validate a citation/source URL: http(s) scheme AND a .gov host.
+
+    Knowledge data and the source registry cite official .gov documents only
+    (irs.gov, congress.gov, federalregister.gov, treasury.gov, eftps.gov, ...).
+    The scheme failure and the host failure raise distinguishable messages so a
+    pack author knows whether to add the scheme or to swap in a .gov source.
+    """
+    if not value.startswith(("https://", "http://")):
+        raise ValueError(
+            "url must be the full official document URL starting with https:// "
+            "(knowledge data is cited to .gov sources only — see knowledge/sources.yaml)"
+        )
+    hostname = (urlparse(value).hostname or "").lower()
+    if not (hostname == "gov" or hostname.endswith(".gov")):
+        raise ValueError(
+            f"url must point to an official .gov host (e.g. irs.gov, congress.gov, "
+            f"treasury.gov), got host {hostname!r} — knowledge data is cited to .gov "
+            f"sources only (see knowledge/sources.yaml)"
+        )
+    return value
 
 # The four federal filing statuses every tax block must cover. (A qualifying
 # surviving spouse uses the married_filing_jointly column — the alias is
@@ -71,13 +95,8 @@ class Citation(BaseModel):
 
     @field_validator("url")
     @classmethod
-    def _url_is_http(cls, value: str) -> str:
-        if not value.startswith(("https://", "http://")):
-            raise ValueError(
-                "citation.url must be the full official document URL starting with https:// "
-                "(knowledge data is cited to .gov sources only — see knowledge/sources.yaml)"
-            )
-        return value
+    def _url_is_gov(cls, value: str) -> str:
+        return validate_gov_url(value)
 
 
 class RateBracket(BaseModel):
