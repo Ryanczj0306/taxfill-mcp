@@ -1,0 +1,166 @@
+# Federal knowledge pack — tax year 2024 (docs/DEV_PLAN.md sections 3, 7, 10).
+#
+# Tax math lives here as DATA with citations, never hardcoded in engine code
+# (the no-LLM-arithmetic rule, dev plan section 10). Every number in this file
+# was transcribed from the official IRS document named in its block's
+# citation (irs.gov only; see knowledge/sources.yaml). Mirrors the schema of
+# knowledge/federal/2023.yaml exactly. Do NOT edit a number without
+# re-verifying it against that source.
+
+jurisdiction: federal
+tax_year: 2024
+
+tax:
+  # Section 1(j)(2) rate schedules for 2024, exactly as published in
+  # Rev. Proc. 2023-34, Section 3.01 (Tables 1-4):
+  #   Table 1: Married Individuals Filing Joint Returns and Surviving Spouses
+  #   Table 2: Heads of Households
+  #   Table 3: Unmarried Individuals (other than Surviving Spouses and HoH)
+  #   Table 4: Married Individuals Filing Separate Returns
+  rate_schedules:
+    citation:
+      source: "Rev. Proc. 2023-34, Section 3.01 (2024 tax rate tables), Tables 1-4"
+      url: "https://www.irs.gov/pub/irs-drop/rp-23-34.pdf"
+    schedules:
+      single:
+        - { over: 0, but_not_over: 11600, rate: 0.10 }
+        - { over: 11600, but_not_over: 47150, rate: 0.12 }
+        - { over: 47150, but_not_over: 100525, rate: 0.22 }
+        - { over: 100525, but_not_over: 191950, rate: 0.24 }
+        - { over: 191950, but_not_over: 243725, rate: 0.32 }
+        - { over: 243725, but_not_over: 609350, rate: 0.35 }
+        - { over: 609350, but_not_over: null, rate: 0.37 }
+      married_filing_jointly:
+        - { over: 0, but_not_over: 23200, rate: 0.10 }
+        - { over: 23200, but_not_over: 94300, rate: 0.12 }
+        - { over: 94300, but_not_over: 201050, rate: 0.22 }
+        - { over: 201050, but_not_over: 383900, rate: 0.24 }
+        - { over: 383900, but_not_over: 487450, rate: 0.32 }
+        - { over: 487450, but_not_over: 731200, rate: 0.35 }
+        - { over: 731200, but_not_over: null, rate: 0.37 }
+      married_filing_separately:
+        - { over: 0, but_not_over: 11600, rate: 0.10 }
+        - { over: 11600, but_not_over: 47150, rate: 0.12 }
+        - { over: 47150, but_not_over: 100525, rate: 0.22 }
+        - { over: 100525, but_not_over: 191950, rate: 0.24 }
+        - { over: 191950, but_not_over: 243725, rate: 0.32 }
+        - { over: 243725, but_not_over: 365600, rate: 0.35 }
+        - { over: 365600, but_not_over: null, rate: 0.37 }
+      head_of_household:
+        - { over: 0, but_not_over: 16550, rate: 0.10 }
+        - { over: 16550, but_not_over: 63100, rate: 0.12 }
+        - { over: 63100, but_not_over: 100500, rate: 0.22 }
+        - { over: 100500, but_not_over: 191950, rate: 0.24 }
+        - { over: 191950, but_not_over: 243700, rate: 0.32 }
+        - { over: 243700, but_not_over: 609350, rate: 0.35 }
+        - { over: 609350, but_not_over: null, rate: 0.37 }
+
+  # The published 2024 Tax Table — mandatory for the ORDINARY line 16
+  # computation when taxable income is below $100,000. Scope caution (same as
+  # 2023.yaml): qualified dividends / capital gains (Qualified Dividends and
+  # Capital Gain Tax Worksheet / Schedule D Tax Worksheet), Form 8615, or the
+  # Foreign Earned Income Tax Worksheet compute the tax from their own
+  # worksheet even below $100,000 — those are OUT OF SCOPE for
+  # calc.tax_from_taxable_income; never apply the table to preferential-rate
+  # income. Row structure is stable across years.
+  tax_table:
+    citation:
+      source: >-
+        2024 Tax Table, "1040 and 1040-SR TAX AND EARNED INCOME CREDIT
+        TABLES" (Cat. No. 24327A), from the 2024 Instructions for Form 1040
+      url: "https://www.irs.gov/pub/irs-prior/i1040tt--2024.pdf"
+    applies_below: 100000
+    rounding: half_up
+    row_bands:
+      - { at_least: 0, below: 5, row_width: 5 }
+      - { at_least: 5, below: 25, row_width: 10 }
+      - { at_least: 25, below: 3000, row_width: 25 }
+      - { at_least: 3000, below: 100000, row_width: 50 }
+
+  tax_computation_worksheet:
+    citation:
+      source: >-
+        2024 Tax Computation Worksheet—Line 16 (Single, Married filing jointly
+        / Qualifying surviving spouse, Married filing separately, Head of
+        household), from the 2024 Instructions for Form 1040
+      url: "https://www.irs.gov/pub/irs-prior/i1040tt--2024.pdf"
+    applies_at_or_above: 100000
+
+  # Rev. Proc. 2023-34, Section 3.15: base amounts under section 63(c)(2);
+  # the additional standard deduction for the aged or the blind is $1,550,
+  # increased to $1,950 if the individual is also unmarried and not a
+  # surviving spouse. One additional amount per condition per person.
+  standard_deduction:
+    citation:
+      source: "Rev. Proc. 2023-34, Section 3.15 (Standard Deduction)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-23-34.pdf"
+    amounts:
+      single: 14600
+      married_filing_jointly: 29200
+      married_filing_separately: 14600
+      head_of_household: 21900
+    additional_aged_or_blind:
+      married: 1550
+      unmarried: 1950
+
+  # Schedule SE (Form 1040) 2024, Part I. Line 7 social security wage base
+  # for 2024 is $168,600.
+  se_tax:
+    citation:
+      source: "Schedule SE (Form 1040) 2024, Part I, lines 4a-13"
+      url: "https://www.irs.gov/pub/irs-prior/f1040sse--2024.pdf"
+    net_earnings_factor: 0.9235
+    ss_rate: 0.124
+    medicare_rate: 0.029
+    ss_wage_base: 168600
+    minimum_net_earnings: 400
+
+# Pub 501 (2024) Table 1 (Filing Requirements Chart for Most Taxpayers): the
+# gross-income level at or above which a return is required, by status and age.
+# Non-elderly amounts equal that status's standard deduction; each 65+ person
+# adds the additional standard deduction ($1,950 unmarried / $1,550 married).
+# MFS is the exception: $5 regardless of age.
+filing_thresholds:
+  citation:
+    source: "IRS Publication 501 (2024), Table 1 (Filing Requirements Chart for Most Taxpayers), page 2"
+    url: "https://www.irs.gov/pub/irs-prior/p501--2024.pdf"
+  amounts:
+    single: { under_65: 14600, age_65_or_older: 16550 }
+    married_filing_jointly: { both_under_65: 29200, one_spouse_65_or_older: 30750, both_spouses_65_or_older: 32300 }
+    married_filing_separately: { any_age: 5 }
+    head_of_household: { under_65: 21900, age_65_or_older: 23850 }
+    qualifying_surviving_spouse: { under_65: 29200, age_65_or_older: 30750 }
+
+# Common credits with their 2024 parameters and eligibility predicates.
+credits:
+  citation:
+    source: "2024 Instructions for Schedule 8812 (CTC/ACTC/ODC); Rev. Proc. 2023-34 Section 3.06 (EITC)"
+    url: "https://www.irs.gov/pub/irs-prior/i1040s8--2024.pdf"
+  child_tax_credit:
+    citation:
+      source: "Schedule 8812 (Form 1040) 2024 and its Instructions ('What's New', maximum ACTC $1,700); Rev. Proc. 2023-34 Section 3.05"
+      url: "https://www.irs.gov/pub/irs-prior/f1040s8--2024.pdf"
+    per_qualifying_child: 2000
+    additional_ctc_refundable_cap_per_child: 1700   # ACTC cap per child for 2024 (Schedule 8812 line 18b; Rev. Proc. 2023-34 Section 3.05)
+    credit_for_other_dependents: 500
+    qualifying_child_age_test: "under age 17 at the end of 2024"
+    magi_phaseout_threshold:
+      married_filing_jointly: 400000
+      single: 200000
+      married_filing_separately: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+    phaseout_step: "reduced $50 for each $1,000 (or fraction) of MAGI above the threshold"
+  earned_income_tax_credit:
+    citation:
+      source: "Rev. Proc. 2023-34, Section 3.06 (2024 Earned Income Credit)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-23-34.pdf"
+    investment_income_limit: 11600
+    # keyed by number of qualifying children: 0, 1, 2, 3+ (3+ shares the 2-child earned-income amount)
+    by_qualifying_children:
+      "0": { earned_income_amount: 8260, max_credit: 632, phaseout_begins_other: 10330, phaseout_begins_mfj: 17250, phaseout_complete_other: 18591, phaseout_complete_mfj: 25511 }
+      "1": { earned_income_amount: 12390, max_credit: 4213, phaseout_begins_other: 22720, phaseout_begins_mfj: 29640, phaseout_complete_other: 49084, phaseout_complete_mfj: 56004 }
+      "2": { earned_income_amount: 17400, max_credit: 6960, phaseout_begins_other: 22720, phaseout_begins_mfj: 29640, phaseout_complete_other: 55768, phaseout_complete_mfj: 62688 }
+      "3+": { earned_income_amount: 17400, max_credit: 7830, phaseout_begins_other: 22720, phaseout_begins_mfj: 29640, phaseout_complete_other: 59899, phaseout_complete_mfj: 66819 }
+
+effective_law_changes: []
