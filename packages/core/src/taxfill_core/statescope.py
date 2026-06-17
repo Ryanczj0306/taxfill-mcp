@@ -14,7 +14,7 @@ treaty-exempt income is still taxable there.
 from __future__ import annotations
 
 import calendar
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Literal
 
@@ -72,14 +72,32 @@ def _load_no_income_tax(base_dir):
 
 
 def _days_lived_in_year(periods, year: int) -> int:
-    """Total days a set of residence periods overlap the calendar year."""
+    """Days a set of residence periods cover within the calendar year.
+
+    Periods are clamped to the year, then MERGED into disjoint intervals before
+    counting — so overlapping or duplicated intake periods (two interviews, a
+    corrected move date) don't inflate the count and mislabel a part-year
+    resident as a full-year resident. Adjacent days (one period ends, the next
+    starts the next day) count as continuous coverage.
+    """
     jan1, dec31 = date(year, 1, 1), date(year, 12, 31)
-    days = 0
+    clamped = []
     for p in periods:
         start = max(p.start, jan1)
         end = min(p.end or dec31, dec31)  # ongoing period -> through year end
         if end >= start:
-            days += (end - start).days + 1
+            clamped.append((start, end))
+    clamped.sort()
+    days, cur_start, cur_end = 0, None, None
+    for s, e in clamped:
+        if cur_end is None or s > cur_end + timedelta(days=1):  # gap -> new interval
+            if cur_end is not None:
+                days += (cur_end - cur_start).days + 1
+            cur_start, cur_end = s, e
+        else:  # overlapping or adjacent -> extend
+            cur_end = max(cur_end, e)
+    if cur_end is not None:
+        days += (cur_end - cur_start).days + 1
     return days
 
 
@@ -129,7 +147,8 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
     out: list[StateFiling] = []
     for st in sorted(touched):
         lived_days = _days_lived_in_year(lived_by_state.get(st, []), year)
-        if lived_days >= year_len - 3:  # whole year (a few days' slack for date edges)
+        full_year = lived_days >= year_len  # covered every day (vs reached via the edge slack)
+        if lived_days >= year_len - 3:  # whole year (a few days' slack for date-edge rounding)
             role: FilingRole = "resident"
         elif lived_days > 0:
             role = "part_year"
@@ -173,6 +192,11 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
             for c in getattr(sk, "credits", None) or []:
                 if isinstance(c, dict) and c.get("name"):
                     benefits.append(c["name"] + (f" — {c['eligibility']}" if c.get("eligibility") else ""))
+            # Surface the credits caveat alongside the benefits (some CA credit
+            # dollar limits could not be independently re-verified — see the pack).
+            cv = getattr(sk, "credits_verification", None)
+            if benefits and cv:
+                warnings.append(f"Credit amounts/limits are not independently verified: {cv}")
             if not sk.conforms_to_federal_treaties and treaty_filer:
                 warnings.append(
                     f"{st} does NOT conform to federal tax treaties: income exempt from federal tax under a "
@@ -185,8 +209,14 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
                          f"credits at the state DOR before filing.")
 
         must_file = role in ("resident", "part_year", "nonresident")
+        resident_reason = (
+            f"Lived in {st} all of {year} — file a resident return on income from all sources."
+            if full_year else
+            f"Lived in {st} essentially all of {year} (a few days short — confirm it was not a part-year "
+            f"move) — likely a resident return on income from all sources."
+        )
         reason = {
-            "resident": f"Lived in {st} all of {year} — file a resident return on income from all sources.",
+            "resident": resident_reason,
             "part_year": f"Lived in {st} part of {year} — file a part-year return on income while a resident (plus {st}-source income while not).",
             "nonresident": f"Worked in {st} in {year} without living there — file a nonresident return on {st}-source income.",
             "none": f"{st} appears in the footprint but with no residence or work days in {year}.",

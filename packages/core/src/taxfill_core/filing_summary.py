@@ -174,7 +174,8 @@ def _state_item(item: FilingManifestItem, knowledge_dir) -> FilingSummaryItem:
             if dl.get("citation"):
                 citations.append(Citation(**dl["citation"]))
         if not sk.conforms_to_federal_treaties:
-            notes.append(f"{state} does not conform to federal tax treaties — federally treaty-exempt income is still taxable here.")
+            notes.append(f"If any income was exempt from federal tax under a treaty: {state} does not conform to "
+                         f"federal tax treaties — that income is still taxable to {state}.")
     except FileNotFoundError:
         notes.append(f"No '{item.jurisdiction}' knowledge pack for {item.tax_year} yet — confirm the bottom line and deadline at the state DOR.")
     return FilingSummaryItem(
