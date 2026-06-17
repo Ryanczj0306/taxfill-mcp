@@ -118,10 +118,17 @@ B_FORMS = {
     "sched_1": "formpacks/federal/2022/sched_1/pack.yaml",
     "sched_c": "formpacks/federal/2022/sched_c/pack.yaml",
 }
+# Line 16 (tax) is the calc engine's tax-table lookup for taxable income 20,000
+# (single, 2022) — NOT a hand-picked placeholder — so the 1040-NR stack also
+# exercises the no-LLM-arithmetic recompute (B_INDEPENDENT below). Lines 18/22/24
+# follow line 16 (17/21/23 are zero) and 37 == 24 - 33 with payments zero, so the
+# filer owes the full tax.
+B_TAXABLE_INCOME = 20000
+B_TAX = tax_from_taxable_income(B_TAXABLE_INCOME, "single", year=2022).tax
 B_MONEY = {
     "f1040nr": {
-        "8": 20000, "9": 20000, "11": 20000, "15": 20000,
-        "16": 2200, "18": 2200, "22": 2200, "24": 2200, "37": 2200,
+        "8": 20000, "9": 20000, "11": 20000, "15": B_TAXABLE_INCOME,
+        "16": B_TAX, "18": B_TAX, "22": B_TAX, "24": B_TAX, "37": B_TAX,
     },
     "sched_1": {"3": 20000, "10": 20000},
     "sched_c": {"1": 20000, "3": 20000, "5": 20000, "7": 20000, "29": 20000, "31": 20000},
@@ -133,15 +140,17 @@ B_CROSS_FORM_PASS = {
     ("f1040nr", "8 == sched_1.10"),
 }
 
-# Optional independent-recompute set per scenario, keyed form_key -> {line:
-# expected}. Only scenario A's f1040 line 16 is a true table-lookup line we can
-# recompute here; verify_filing(independent=...) re-derives it and the recompute
-# section must PASS — the multi-form half of the no-LLM-arithmetic guarantee.
+# Independent-recompute set per scenario, keyed form_key -> {line: expected}.
+# Both scenarios' line 16 is a real tax-table lookup; verify_filing(independent=)
+# re-derives it from the versioned tables and the recompute section must PASS —
+# the multi-form half of the no-LLM-arithmetic guarantee, exercised on BOTH the
+# resident 1040 and the nonresident 1040-NR stack.
 A_INDEPENDENT = {"f1040": {"16": A_TAX}}
+B_INDEPENDENT = {"f1040nr": {"16": B_TAX}}
 
 SCENARIOS = {
     "A_resident_1040_2023": (A_FORMS, A_MONEY, A_CROSS_FORM_PASS, A_INDEPENDENT),
-    "B_nra_1040nr_2022": (B_FORMS, B_MONEY, B_CROSS_FORM_PASS, None),
+    "B_nra_1040nr_2022": (B_FORMS, B_MONEY, B_CROSS_FORM_PASS, B_INDEPENDENT),
 }
 
 

@@ -219,6 +219,15 @@ CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
         # ships.
         (2024, "f1040nr", "20"),
         (2024, "f1040nr", "31"),
+        # The 2022 1040-NR keeps its Schedule 2/3 cross_form rules so the verifier
+        # can emit its runtime "attach Schedule 2/3 and re-verify" caution when a
+        # back-filer puts a nonzero amount on lines 17/20/23b/31, but the M2 2022
+        # scope (dev plan section 15) ships no 2022 sched_2/sched_3 pack, so those
+        # targets cannot resolve yet. Remove once 2022 sched_2/sched_3 ship.
+        (2022, "sched_2", "3"),
+        (2022, "sched_2", "21"),
+        (2022, "sched_3", "8"),
+        (2022, "sched_3", "15"),
     }
 )
 
