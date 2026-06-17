@@ -517,15 +517,20 @@ relations:
   - "37 == max(0, 24 - 33)"             # "Subtract line 33 from line 24. This is the amount you owe"
 
 cross_form:
-  # Only rules whose target pack exists in the 2022 scope are kept: the M2
-  # 1040-NR(2022) scope is f1040nr + sched_1/sched_c/sched_oi only (dev plan
-  # section 15). Lines 17/20/23b/31 would reference Schedule 2/Schedule 3,
-  # which are NOT in scope for 2022, so their cross_form rules are omitted
-  # (re-add "17 == sched_2.3", "20 == sched_3.8", "23b == sched_2.21",
-  # "31 == sched_3.15" once 2022 sched_2/sched_3 packs ship).
+  # The Schedule 2/Schedule 3 packs are NOT in the M2 2022 1040-NR scope (dev
+  # plan section 15 = f1040nr + sched_1/sched_c/sched_oi). These four rules are
+  # kept anyway so the verifier emits its runtime SKIPPED-with-caution ("attach
+  # Schedule 2/3 and re-verify") when a back-filer puts a nonzero amount on these
+  # lines; the CI cross-form-target check allowlists the four out-of-scope
+  # targets ((2022, sched_2/sched_3, ...) in CROSS_FORM_TARGET_ALLOWLIST). Drop
+  # the allowlist entries once 2022 sched_2/sched_3 packs ship.
   - "1k == sched_oi.1e"                 # "Total income exempt by a treaty from Schedule OI ... item L, line 1(e)"
   - "8 == sched_1.10"                   # "Other income from Schedule 1 (Form 1040), line 10"
   - "10a == sched_1.26"                 # "From Schedule 1 (Form 1040), line 26"
+  - "17 == sched_2.3"                   # "Amount from Schedule 2, line 3" (Schedule 2 out of 2022 scope -> SKIPPED w/ caution)
+  - "20 == sched_3.8"                   # "Amount from Schedule 3, line 8" (Schedule 3 out of 2022 scope -> SKIPPED w/ caution)
+  - "23b == sched_2.21"                 # "Other taxes ... from Schedule 2, line 21" (out of 2022 scope -> SKIPPED w/ caution)
+  - "31 == sched_3.15"                  # "Amount from Schedule 3, line 15" (out of 2022 scope -> SKIPPED w/ caution)
 
 # The form splits name and address; identity checks compare the split parts.
 # state/zip stay out: they are legitimately blank for foreign-address filers.
