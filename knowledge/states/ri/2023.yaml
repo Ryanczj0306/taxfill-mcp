@@ -43,6 +43,84 @@ forms:
   resident: Form RI-1040 (Rhode Island Resident Individual Income Tax Return)
   part_year_or_nonresident: Form RI-1040NR (Rhode Island Nonresident Individual Income Tax Return) — nonresidents
     complete RI Schedule II; part-year residents complete RI Schedule III
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Rhode Island Earned Income Credit (RI EITC)
+  type: refundable
+  eligibility: Resident (and part-year/eligible nonresident) taxpayers who qualify for and claim the FEDERAL Earned
+    Income Tax Credit. RI does not impose its own separate eligibility test - if you receive the federal EITC, you
+    receive the RI EITC. You must claim the federal EITC (federal Form 1040/1040-SR, line 27) to claim the RI credit.
+  amount: '15% of the federal earned income credit. Computed on RI Schedule EIC: Line 38 = federal EITC; Line 39
+    = 15% (Rhode Island percentage, preprinted on the form); Line 40 = Line 38 x Line 39.'
+  income_limit_2023: No separate Rhode Island income limit; eligibility and income limits track the federal EITC
+    (the federal EITC AGI/investment-income limits for the 2023 tax year apply).
+  claimed_on: RI Schedule EIC, line 40; carried to Form RI-1040, line 14d (within the Total Payments and Credits
+    section, line 14g).
+  citation:
+    source: '2023 Instructions for Filing RI-1040 (RI Division of Taxation) - RI Schedule EIC instructions: ''Line
+      39 - The Rhode Island percentage is 15%.'' and ''Line 40 - Rhode Island Earned Income Credit: Multiply line
+      38 by line 39. Enter here and on page 1, line 14d.'''
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf
+- name: Property Tax Relief Credit (Form RI-1040H, the RI property-tax "circuit breaker")
+  type: refundable
+  eligibility: 'Must answer YES to ALL eligibility questions on Form RI-1040H Part 1: (A) domiciled in Rhode Island
+    for all of 2023; (B) lived in a household or rented a dwelling that was subject to property tax in 2023; (C)
+    current on property taxes or rent due on the homestead for 2023 and all prior years; (D) you OR your spouse
+    were 65 years of age or older AND/OR disabled as of December 31, 2023; and (E) 2023 total household income was
+    $37,870 or less. Both homeowners (Part 3, attach 2023 property tax bill) and renters (Part 4, attach 2023 lease
+    or 3 rent receipts; rent paid is multiplied by 20% as deemed property tax) may claim it.'
+  amount: 'Maximum credit is $650.00. Homeowners: tentative credit = property taxes paid for 2023 minus (household
+    income x table percentage), then the lesser of that amount or $650 (Form RI-1040H lines 2-6). Renters: 20% of
+    rent paid is treated as property tax, minus (household income x table percentage), then the lesser of that amount
+    or $650 (lines 7-12). The income-based percentage from the page-3 computation table ranges from 3% up to 6%
+    (e.g., 6% for the $16,231-$37,870 income band).'
+  income_limit_2023: Total household income of $37,870 or less for 2023 (Form RI-1040H, Part 1, question E).
+  claimed_on: Form RI-1040H, line 13 (Property Tax Relief); carried to Form RI-1040, line 14c. RI-1040H must be
+    filed by April 15, 2024; an extension to file RI-1040 does NOT extend the time to file RI-1040H.
+  citation:
+    source: 2023 Form RI-1040 (Rhode Island Property Tax Relief Claim), RI Division of Taxation - Part 1 eligibility
+      (income '$37,870 or less', age/disabled 'as of December 31, 2023'), line 6/line 12 ('Line 5/Line 11 or $650.00,
+      whichever is LESS'), line 13 ('Enter here and on Form RI-1040, line 14c'); income computation table on page
+      3.
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040H_w.pdf
+- name: Credit for Child and Dependent Care Expenses (Rhode Island portion of the allowable federal credit)
+  type: nonrefundable
+  eligibility: Taxpayers who claimed the federal Credit for Child and Dependent Care Expenses (federal Form 1040/1040-SR,
+    Schedule 3, line 2). Rhode Island allows a credit equal to a percentage of that federal care credit, limited
+    to the amount of Rhode Island income tax (so any excess is not refunded - it is nonrefundable).
+  amount: '25% of the federal Credit for Child and Dependent Care Expenses, capped at the Rhode Island income tax.
+    Computed on RI Schedule I: Line 20 = federal care credit (federal Schedule 3, line 2); Line 21 = Line 20 x 25%;
+    Line 22 (Maximum Credit) = lesser of RI income tax (line 19) or Line 21.'
+  income_limit_2023: No separate Rhode Island income limit stated; the federal child and dependent care credit rules
+    (federal AGI-based percentage and expense caps) govern the base amount.
+  claimed_on: RI Schedule I, line 22; carried to Form RI-1040, line 9a (Rhode Island Percentage of Allowable Federal
+    Credit), in the credits-against-tax section (lines 9a-9d, subtracted from tax at line 10a; if zero or less,
+    enter zero - confirming it is nonrefundable).
+  citation:
+    source: '2023 Instructions for Filing RI-1040 (RI Division of Taxation), RI Schedule I - Allowable Federal Credit:
+      ''Line 20 - Credit for Child and Dependent Care Expenses: Enter the amount from Federal Form 1040 or Federal
+      Form 1040-SR, Schedule 3, line 2.''; ''Line 21 - Multiply the amount on line 20 by 25%''; ''Line 22 - Maximum
+      Credit: Enter the amount from line 19 or 21, whichever is less. Enter here and on form RI-1040, page 1, line
+      9a.'''
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf
+- name: Credit for Income Taxes Paid to Another State
+  type: nonrefundable
+  eligibility: Rhode Island residents who also paid income tax to another state on income that is also taxed by
+    Rhode Island. Authorized under R.I. Gen. Laws section 44-30-18. If income tax was paid to more than one other
+    state, Form RI-1040MU must be used.
+  amount: 'The smallest of: (line 23) the Rhode Island income tax less allowable federal credit, (line 27) the tentative
+    credit (RI tax x the proportion of income from the other state), or (line 28) the income tax actually due and
+    paid to the other state. Computed on RI Schedule II, line 29.'
+  income_limit_2023: None.
+  claimed_on: RI Schedule II, line 29; carried to Form RI-1040, line 9b (credits-against-tax section, lines 9a-9d,
+    subtracted from tax at line 10a - nonrefundable).
+  citation:
+    source: '2023 Instructions for Filing RI-1040 (RI Division of Taxation), RI Schedule II - Credit for Income
+      Taxes Paid to Another State (R.I. Gen. Laws section 44-30-18): ''Line 29 - Maximum Credit for Tax Paid to
+      Another State: Enter the amount from line 23, line 27 or line 28, whichever is the smallest. Enter here and
+      on page 1, line 9b.'''
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf
 filing_requirement:
   note: 'Every resident individual of Rhode Island who is required to file a federal income tax return must file
     a RI individual income tax return (RI-1040). A resident not required to file a federal return may still need

@@ -41,6 +41,84 @@ forms:
     of Income); nonresidents and part-year residents use PIT-B to allocate/apportion NM-source income. Mark residency
     status R (resident), N (non-resident), or P/F (part-year/first-year) on PIT-1; PIT-B is required when there
     is income from sources both inside and outside New Mexico.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Low-Income Comprehensive Tax Rebate (LICTR); New Mexico Child Day Care Credit; Property Tax Rebate for
+  Persons 65 or Older.'
+credits:
+- name: Working Families Tax Credit (New Mexico's state EITC)
+  type: refundable
+  eligibility: New Mexico residents who file an individual NM income tax return and qualify for the federal Earned
+    Income Tax Credit (or would qualify but for an SSN/ITIN identification-number requirement, or but for the federal
+    age limit if at least 18 but under 25). Low-to-moderate-income working individuals and families.
+  amount: 25% of the federal Earned Income Tax Credit the taxpayer is (or would be) eligible for, for tax year 2023.
+  income_limit_2023: No separate state income cap; bounded by federal EITC eligibility (federal EITC phases out
+    by income and number of qualifying children).
+  claimed_on: Form PIT-1, New Mexico Personal Income Tax Return (Working Families Tax Credit line)
+  citation:
+    source: Enacted HB 291 (2021 Regular Session, final version) amending Section 7-2-18.15 NMSA 1978
+    url: https://www.nmlegis.gov/Sessions/21%20Regular/final/HB0291.pdf
+- name: New Mexico Child Income Tax Credit
+  type: refundable
+  eligibility: A taxpayer who is a New Mexico resident and is not a dependent of another individual, for each qualifying
+    child (as defined under the federal Internal Revenue Code). Available for taxable years beginning January 1,
+    2023.
+  amount: 'Per qualifying child, by adjusted gross income: $0-$25,000 = $600; over $25,000 to $50,000 = $400; over
+    $50,000 to $75,000 = $200; over $75,000 to $100,000 = $100; over $100,000 to $200,000 = $75; over $200,000 to
+    $350,000 = $50; over $350,000 = $25.'
+  income_limit_2023: No hard cutoff; the per-child amount declines with AGI to $25 per child for AGI over $350,000.
+  claimed_on: Form PIT-1, New Mexico Personal Income Tax Return (Child Income Tax Credit line)
+  citation:
+    source: Enacted HB 144 (2023 Regular Session) amending Section 7-2-18.34 NMSA 1978; corroborated by NM Taxation
+      & Revenue 2023 filing-season news release (Jan 29, 2024)
+    url: https://www.nmlegis.gov/Sessions/23%20Regular/bills/house/HB0144.html
+- name: Low-Income Comprehensive Tax Rebate (LICTR)
+  type: refundable
+  eligibility: Any New Mexico resident who files an individual NM income tax return, is not a dependent of another
+    individual, was not an inmate of a public institution for more than six months, and was physically present in
+    NM for at least six months during the tax year. May be claimed even with no taxable income.
+  amount: A small fixed rebate from a statutory table based on modified gross income and number of household exemptions;
+    for tax year 2022 the table maxed at roughly $730 for the largest households. Beginning with tax year 2022 the
+    rebate AMOUNTS are adjusted annually for inflation (CPI), so the exact 2023 dollar amounts differ from 2022
+    and I could not retrieve the 2023 table from an official source.
+  income_limit_2023: Modified gross income of $36,000 or less (statutory ceiling; not inflation-indexed).
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section II (filed with PIT-1)
+  citation:
+    source: Enacted HB 291 (2021 Regular Session, final) amending Section 7-2-14 NMSA 1978 ($36,000 ceiling; rebate
+      amounts inflation-indexed from TY2022); 2022 PIT-RC instructions
+    url: https://www.nmlegis.gov/Sessions/21%20Regular/final/HB0291.pdf
+  unverified: true
+- name: New Mexico Child Day Care Credit
+  type: refundable
+  eligibility: A New Mexico resident who (a) provided over half the cost of maintaining a household for one or more
+    qualifying dependents, (b) was gainfully employed during the period claimed, (c) was not receiving TANF/New
+    Mexico Works or similar public assistance during that period, and (d) paid unreimbursed, uncompensated child
+    day care expenses. Use the PIT-Childcare worksheet and Form PIT-CG (caregiver statement).
+  amount: 40% of qualifying day-care expenses, where the expense counted is capped at $8 per child per day; the
+    credit cannot exceed $480 per child and cannot exceed $1,200 total ($600 for a married taxpayer filing separately).
+  income_limit_2023: Modified gross income of $30,160 or less (this is the figure stated in the 2022 PIT-RC instructions;
+    the limit is inflation-indexed, so the exact 2023 ceiling may differ slightly).
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section V (with PIT-Childcare worksheet and
+    PIT-CG, filed with PIT-1)
+  citation:
+    source: NM Taxation & Revenue Department PIT-Childcare Child Day Care Credit Worksheet; 2022 PIT-RC instructions
+    url: https://realfile.tax.newmexico.gov/pit-childcare.pdf
+  unverified: true
+- name: Property Tax Rebate for Persons 65 or Older
+  type: refundable
+  eligibility: New Mexico residents who were age 65 or older on the last day of the tax year, were physically present
+    in NM at least six months, are not eligible to be claimed as a dependent, and were not a public-institution
+    inmate more than six months. Both homeowners (property tax billed) and renters (rent paid on principal residence)
+    may qualify.
+  amount: A percentage of property tax liability (or rent-equivalent) on the principal residence, from a statutory
+    sliding scale by modified gross income; the rebate cannot exceed $250 ($125 for a married taxpayer filing separately).
+  income_limit_2023: Modified gross income of $16,000 or less.
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section III (filed with PIT-1)
+  citation:
+    source: NM Taxation & Revenue 2022 PIT-RC instructions (Property Tax Rebate for Persons 65 or Older; Section
+      7-2-14.2/14.3 NMSA 1978)
+    url: https://realfile.tax.newmexico.gov/2022pit-rc-ins.pdf
+  unverified: true
 filing_requirement:
   note: 'Per the 2023 PIT-1 instructions ("Who Must File"): New Mexico law requires every person who meets BOTH
     of the following to file a PIT-1: (1) is a New Mexico resident OR has income from New Mexico sources, AND (2)

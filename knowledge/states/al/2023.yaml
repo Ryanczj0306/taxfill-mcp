@@ -45,6 +45,60 @@ forms:
   part_year_or_nonresident: Form 40NR — Alabama Individual Income Tax Return (Nonresidents Only). Part-year residents
     file the resident Form 40 (reporting only the resident-period income); a person who is part-year resident AND
     has nonresident-period Alabama-source income files BOTH Form 40 and Form 40NR.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Credit for Taxes Paid to Another State
+  type: nonrefundable
+  eligibility: Legal residents of Alabama filing Form 40 who have income from sources outside Alabama that is taxed
+    by BOTH Alabama and another U.S. state or territory in the same tax year. (Part-year residents only if the AL
+    and other-state returns cover the same period. No credit for income from a state with no income tax, or where
+    the out-of-state income is fully offset by a corresponding deduction. A separate procedure/Schedule OC Section
+    B applies to foreign-country tax.)
+  amount: Credit equals the tax paid to the other state, but limited to the LESSER of (a) the tax actually due to
+    the other state/territory, or (b) the Alabama tax that would be due on that same income computed at Alabama
+    rates. (In the booklet's worked example the credit came to $2,463.)
+  income_limit_2023: None (no income cap; the credit is capped by the amount of out-of-state income double-taxed
+    and the AL tax rate on it).
+  claimed_on: Form 40, page 1, line 17 / line 18 (net tax), computed on Schedule CR and reported through Schedule
+    OC, Part A. Must attach a copy of the other state's return.
+  citation:
+    source: Alabama Department of Revenue, 2023 Form 40 Booklet (instructions), 'Credit for Taxes Paid to Another
+      State' and 'Credit for Taxes Paid To Other States' / Schedule CR sections.
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23f40bk.pdf
+- name: Alabama Adoption Tax Credit
+  type: refundable
+  eligibility: 'Taxpayers who reside in Alabama and complete an adoption. Two cases: (1) a private adoption in which
+    the adopted child is a resident of Alabama, or a qualified foster child in the permanent legal custody of the
+    Alabama Department of Human Resources; (2) an out-of-state adoption or where the adopted child is not otherwise
+    an Alabama resident. Schedule AAC must be completed.'
+  amount: $2,000 per child for a private adoption where the adopted child is an Alabama resident or a qualified
+    foster child in DHR custody; $1,000 per child for an out-of-state adoption / when the adopted child is not an
+    Alabama resident. (Act 2022-299, effective Jan 1, 2023, raised the resident amount to $2,000.)
+  income_limit_2023: None stated.
+  claimed_on: Computed on Schedule AAC, carried to Schedule OC, Part M; the refundable amount flows from Schedule
+    OC, Section F, line F2/F4 to Form 40 (or 40NR), page 1, line 25 (Refundable Credit).
+  citation:
+    source: Alabama Department of Revenue, 2023 Schedule OC Instructions, Part M - Alabama Adoption Tax Credit and
+      Section F; corroborated by 2023 Form 40 Booklet 'What's New' (Act 2022-299).
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf
+- name: Rural Physician Credit
+  type: nonrefundable
+  eligibility: Licensed physicians who practice and reside in a small or rural Alabama community of fewer than 25,000
+    residents, with admission privileges to a 'small or rural hospital' that has an emergency room (acute care hospital
+    with fewer than 105 beds, located more than 20 miles from another acute care facility, or receiving Medicare
+    rural reimbursement). Does not apply to physicians who met the requirements on/before May 5, 1993, nor to a
+    physician who previously practiced in such a community unless they return after practicing in a large/urban
+    community for at least three years.
+  amount: $5,000 per year for a qualifying physician ($10,000 if married filing jointly and both spouses qualify).
+    May be claimed for no more than five consecutive tax years.
+  income_limit_2023: None.
+  claimed_on: Schedule OC, Part D (lines D1-D3), carried to Schedule OC Section C; reduces net tax on Form 40, page
+    1, line 18 (via Schedule OC, line E5).
+  citation:
+    source: Alabama Department of Revenue, 2023 Schedule OC Instructions, Part D - Rural Physician Credit; figures
+      corroborated on the 2023 Schedule OC form, Part D, line D2.
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf
 filing_requirement:
   note: 'Domicile-based. Full-year residents (2023) must file if gross income is at least: Single $4,500; Head of
     Family $8,200; Married Filing Joint $11,500; Married Filing Separate $5,750. Part-year residents use the same

@@ -40,6 +40,86 @@ forms:
   part_year_or_nonresident: Form 1040ME with Schedule NR (Form 1040ME), "Schedule for Calculating the Nonresident
     Credit"; married taxpayers electing to file as single may use Schedule NRH (Form 1040ME) instead. Used by nonresidents,
     part-year residents, and safe harbor residents. (Full-year residents may not file Schedule NR.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Maine Earned Income Credit (EIC)
+  type: refundable
+  eligibility: Maine residents and part-year residents who properly claim the federal earned income tax credit on
+    federal Form 1040/1040-SR (including filers using an ITIN, and filers age 18+ with no qualifying children).
+    For nonresidents the credit is nonrefundable and may not reduce Maine tax below zero.
+  amount: 25% of the federal EIC (50% of the federal EIC for taxpayers with no qualifying children), for tax years
+    beginning on or after January 1, 2022 (which includes 2023).
+  income_limit_2023: No separate Maine income limit; eligibility tracks the federal EIC income limits (taxpayer
+    must qualify for the federal earned income tax credit).
+  claimed_on: Form 1040ME, Schedule A, line 3 (residents/part-year residents); line 11 for nonresidents. Computed
+    on the Earned Income Tax Credit Worksheet.
+  citation:
+    source: Maine Revenue Services - Maine Earned Income Credit (EIC) page; and 2023 Form 1040ME Schedule A
+    url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/earned-income-credit
+- name: Property Tax Fairness Credit (PTFC)
+  type: refundable
+  eligibility: Maine residents and part-year residents who owned or rented a home in Maine during any part of 2023
+    and lived in it as their principal residence, and who paid property tax greater than 4% of total income OR rent
+    greater than 26.67% of total income. Cannot be claimed if filing status is married filing separately.
+  amount: Refundable credit up to $1,000 ($1,500 if you or your spouse were at least 65 during the tax year). Up
+    to $2,000 ($3,000 if 65+) if you or your spouse is a U.S. Armed Forces veteran rated 100% permanently and totally
+    disabled by the VA. Credit = (benefit base capped by maximum benefit base of $2,300-$3,700 by filing status/dependents)
+    minus 4% of total income, capped at the applicable maximum.
+  income_limit_2023: '2023 total income must be less than: Single $57,500; Head of Household $75,000 (0 or 1 dependent)
+    / $92,500 (more than 1 dependent); Married Filing Jointly or Qualifying Surviving Spouse $75,000 (0 dependents)
+    / $92,500 (1 or more dependents).'
+  claimed_on: Form 1040ME, line 25d; computed on Schedule PTFC/STFC, line 15.
+  citation:
+    source: 2023 Form 1040ME, Schedule PTFC/STFC (Property Tax Fairness Credit / Sales Tax Fairness Credit) and
+      instructions; Maine Revenue Services Property Tax Fairness Credit page
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_sched_pstfc_ff.pdf
+- name: Sales Tax Fairness Credit (STFC)
+  type: refundable
+  eligibility: Individuals who were Maine residents during any part of the 2023 tax year, are not married filing
+    separately, and cannot be claimed as a dependent on another person's return. Credit amount depends on the number
+    of qualifying children and dependents claimed on Form 1040ME, line 13a.
+  amount: Refundable credit up to $255 for 2023, depending on number of qualifying children and dependents (the
+    exact amount is taken from the line 16 table on page 18 of the Schedule PTFC/STFC instructions based on filing
+    status, total income, and dependents).
+  income_limit_2023: '2023 total income not more than: $29,800 if single; $46,950 if head of household; $58,600
+    if married filing jointly or qualifying surviving spouse.'
+  claimed_on: Form 1040ME, line 25e; computed on Schedule PTFC/STFC, line 16 (or line 16a if filing Schedule NR/NRH).
+  citation:
+    source: 2023 Form 1040ME, Schedule PTFC/STFC and instructions; Maine Revenue Services Sales Tax Fairness Credit
+      page
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_sched_pstfc_ff.pdf
+- name: Child Care Credit
+  type: refundable
+  eligibility: Maine residents and part-year residents (a nonrefundable portion is also available to nonresidents)
+    who claimed the federal credit for child and dependent care expenses on federal Form 2441 / Schedule 3, line
+    2. An enhanced rate applies if expenses were paid to a Step 4 / Star 5 quality-certified Maine child care provider.
+  amount: 25% of the federal child and dependent care credit (50% for expenses paid to a Step 4 / Star 5 quality
+    child care provider). The credit is refundable up to $500 (Schedule A, line 1); any amount above $500 is claimed
+    as a nonrefundable credit (Schedule A, line 9).
+  income_limit_2023: No stated Maine income limit; the credit is a percentage of the federal child and dependent
+    care credit.
+  claimed_on: Form 1040ME, Schedule A, line 1 (refundable, up to $500) and line 9 (nonrefundable remainder); computed
+    on the Worksheet for Child Care Credit - Schedule A, Lines 1 and 9.
+  citation:
+    source: 2023 Form 1040ME, Schedule A and Worksheet for Child Care Credit; Maine Revenue Services Child Care
+      Credit page
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_sched_a_ff.pdf
+- name: Dependent Exemption Tax Credit
+  type: nonrefundable
+  eligibility: Taxpayers with qualifying children and dependents (the number reported on Form 1040ME, line 13a)
+    for whom the federal child tax credit under IRC Section 24 was claimed for the same taxable year. Nonrefundable
+    for tax years beginning before 2024 (which includes 2023).
+  amount: '$300 per qualifying child and dependent. Phases out for higher incomes: subtract $7.50 for every $1,000
+    (rounded up) by which 2023 Maine adjusted gross income (Form 1040ME, line 16) exceeds the threshold.'
+  income_limit_2023: Phaseout begins when Maine adjusted gross income exceeds $200,000 ($400,000 if married filing
+    jointly); reduced by $7.50 per $1,000 over the threshold.
+  claimed_on: Form 1040ME, Schedule A, line 8 (number of dependents x $300, less phaseout); computed on the Worksheet
+    for Dependent Exemption Tax Credit - Schedule A, Line 8.
+  citation:
+    source: 2023 Form 1040ME, Schedule A and Worksheet for Dependent Exemption Tax Credit; Maine Revenue Services
+      Dependent Exemption Tax Credit page
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_sched_a_ff.pdf
 filing_requirement:
   note: 'Per the 2023 Form 1040ME instructions ("Who must file?"): A Maine income tax return must be filed if you
     are a Maine resident who is required to file a federal income tax return, OR if you are not required to file

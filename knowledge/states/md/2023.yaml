@@ -37,6 +37,95 @@ forms:
     Form 505NR (Nonresident Income Tax Calculation) attached; Form 515 is used by nonresidents who must file in
     a Maryland local jurisdiction. Part-year residents do NOT use 505 — they file the resident Form 502 with part-year
     adjustments (Instruction 26).'
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Maryland Earned Income Credit (state EITC) - nonrefundable portion
+  type: nonrefundable
+  eligibility: Maryland residents who qualify for the federal Earned Income Credit. Maryland also allows the state
+    credit even if you do not qualify for the federal EIC in limited cases (a check box on Form 502 line 22 area).
+    Dependent taxpayers (filing status 6) are excluded from related poverty credit but may claim the EIC per the
+    worksheet.
+  amount: 'Equal to 50% of your federal earned income credit (Worksheet 18A line 2: federal EIC x .50), entered
+    on Form 502 line 22, limited to your Maryland tax (the nonrefundable portion cannot exceed Maryland tax on Worksheet
+    18A line 1).'
+  income_limit_2023: No separate Maryland income cap; eligibility tracks the federal EITC income limits for tax
+    year 2023.
+  claimed_on: Form 502, line 22 (computed on State Earned Income Credit Worksheet 18A / 18A.1 in Resident Booklet
+    Instruction 18).
+  citation:
+    source: Comptroller of Maryland - 2023 Resident Tax Forms and Instructions (Resident Booklet), Instruction 18,
+      and 2023 Form 502
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2023/Resident-Booklet.pdf
+- name: Maryland Refundable Earned Income Credit (refundable portion of state EITC)
+  type: refundable
+  eligibility: Residents whose Maryland earned income credit exceeds their Maryland tax. Available to a married
+    couple filing jointly or separately (with or without a qualifying child), or any taxpayer with at least one
+    qualifying child; individuals without a qualifying child use Worksheet 18A.1 to check eligibility. Must have
+    an entry on Form 502 line 22 and line 29 and zero on line 3 of Worksheet 18A.
+  amount: The amount by which 45% of your federal earned income credit exceeds your Maryland tax liability (Worksheet
+    21A). Expanded to 45% by the 2023 Family Prosperity Act.
+  income_limit_2023: No separate Maryland income cap; tracks federal EITC income limits for tax year 2023.
+  claimed_on: Form 502, line 42 (Refundable Earned Income Credit Worksheet 21A in Resident Booklet Instruction 21).
+  citation:
+    source: Comptroller of Maryland - 2023 Resident Booklet, Instruction 21 (Line 42), and 2023 Form 502
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2023/Resident-Booklet.pdf
+- name: Maryland State Poverty Level Credit
+  type: nonrefundable
+  eligibility: Residents whose earned income and federal adjusted gross income (plus additions) are below the poverty
+    income guidelines for the number of persons in the family/household claimed on the federal return, and generally
+    whose Maryland tax exceeds 50% of their federal earned income credit. NOT available if you checked filing status
+    6 (dependent taxpayer).
+  amount: '5% of your earned income (Worksheet 18B line 5: earned income x .05). This is not a refundable credit.'
+  income_limit_2023: Must be below the 2023 poverty income guidelines listed in the booklet, e.g. $14,580 (1 person),
+    $19,720 (2), $24,860 (3), $30,000 (4), $35,140 (5), $40,280 (6), $45,420 (7), $50,560 (8); add $5,140 per additional
+    person.
+  claimed_on: Form 502, line 23 (State Poverty Level Credit Worksheet 18B in Resident Booklet Instruction 18).
+  citation:
+    source: Comptroller of Maryland - 2023 Resident Booklet, Instruction 18 (Line 23) and Poverty Income Guidelines
+      chart
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2023/Resident-Booklet.pdf
+- name: Maryland Credit for Child and Dependent Care Expenses
+  type: nonrefundable
+  eligibility: Maryland residents only who were eligible for the federal Child and Dependent Care Credit (federal
+    Form 2441) for tax year 2023. (A separate refundable version exists for lower-income filers - see note - claimed
+    on Form 502CR Part CC line 7.)
+  amount: A percentage of the federal credit, starting at 32% (decimal 0.3200) and phasing down as FAGI rises (per
+    the Credit for Child and Dependent Care Expenses Chart); the credit equals federal Form 2441 credit x the chart
+    decimal (Form 502CR Part B line 2 x line 3).
+  income_limit_2023: Phased out for FAGI above $161,100 (married filing jointly) and $103,650 (all other filing
+    statuses) - reaches 0.0000 at/above those amounts for tax year 2023.
+  claimed_on: Form 502CR, Part B (line 4), carried to Part AA line 2; total credits flow to Form 502 line 24.
+  citation:
+    source: Comptroller of Maryland - 2023 Form 502CR (Part B, Credit for Child and Dependent Care Expenses Chart,
+      and instructions)
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2023/502CR.pdf
+- name: Maryland Senior Tax Credit
+  type: nonrefundable
+  eligibility: Resident individuals who are at least age 65 (created by SB405, Acts of 2022). Subject to federal
+    AGI limits below.
+  amount: $1,000 if FAGI does not exceed $100,000. For married filing jointly, qualifying surviving spouse, and
+    head of household whose FAGI does not exceed $150,000, the credit is $1,750 (reduced to $1,000 if only one spouse
+    on a joint return is at least age 65). Nonrefundable - excess is not refunded.
+  income_limit_2023: FAGI must not exceed $100,000 (single/other) or $150,000 (married filing jointly, qualifying
+    surviving spouse, head of household).
+  claimed_on: Form 502CR, Part M (line 1), carried to Part AA line 13; total flows to Form 502 line 24.
+  citation:
+    source: Comptroller of Maryland - 2023 Form 502CR (Part M instructions) and 2023 Resident Booklet Instruction
+      24(m)
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2023/502CR.pdf
+- name: Refundable Maryland Child Tax Credit
+  type: refundable
+  eligibility: Residents with a federal AGI of $15,000 or less AND a qualified dependent who is either (1) a child
+    under age 6 on the last day of the tax year, or (2) a child over age 5 and under age 17 who has a disability.
+  amount: '$500 multiplied by the number of qualified children (Worksheet 21C: number of qualified children x $500).'
+  income_limit_2023: 'Federal adjusted gross income must be $15,000 or less (Worksheet 21C: if FAGI greater than
+    $15,000, not eligible).'
+  claimed_on: Form 502CR, Part CC, line 8 (Refundable Maryland Child Tax Credit, Worksheet 21C).
+  citation:
+    source: Comptroller of Maryland - 2023 Form 502CR (Part CC line 8 and Refundable Child Tax Credit Worksheet
+      21C)
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2023/502CR.pdf
 filing_requirement:
   note: 'You generally must file a Maryland return if you are/were a Maryland resident and are required to file
     a federal return, or if your Maryland gross income (total federal income plus Maryland additions, minus Maryland

@@ -42,6 +42,78 @@ forms:
     and complete Form 500 Schedule 3 to calculate Georgia taxable income). There is no separate nonresident return
     number; the residency status box on Form 500 Line 4 (1=full-year resident, 2=part-year resident, 3=nonresident)
     designates status.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Low Income Tax Credit (Credit Code 211)
+  type: nonrefundable
+  eligibility: Georgia residents whose Federal adjusted gross income (FAGI) is less than $20,000 and who are not
+    claimed (or eligible to be claimed) as a dependent on another taxpayer's federal or Georgia return. Cannot be
+    claimed by an inmate in a correctional facility. Part-year residents qualify only if they were Georgia residents
+    at the end of the tax year. Credit is computed per exemption (self, spouse, and natural/legally adopted children;
+    for this credit dependents do NOT include unborn dependents).
+  amount: 'Per-exemption credit based on FAGI bracket, multiplied by number of exemptions (Form 500 Line 17c = Line
+    17a exemptions x Line 17b table credit): FAGI under $6,000 = $26 per exemption; $6,000 but not more than $7,999
+    = $20; $8,000 but not more than $9,999 = $14; $10,000 but not more than $14,999 = $8; $15,000 but not more than
+    $19,999 = $5. Credit cannot exceed the taxpayer''s income tax liability.'
+  income_limit_2023: Federal AGI must be less than $20,000
+  claimed_on: Form 500, Line 17 (17a = number of exemptions, 17b = per-exemption credit from table, 17c = total)
+    using the Low Income Credit Worksheet on page 25 of the 2023 IT-511 booklet; or Form 500EZ, Line 5 (5a/5b/5c)
+  citation:
+    source: Georgia DOR 2023 IT-511 Individual Income Tax Instruction Booklet, Low Income Credit Worksheet (p.25)
+      and Line 17 instructions
+    url: https://dor.georgia.gov/document/document/2023-it-511-individual-income-tax-booklet/download
+- name: Child and Dependent Care Expense Credit (Credit Code 202)
+  type: nonrefundable
+  eligibility: Georgia taxpayers who claimed and were allowed the federal child & dependent care expense credit
+    under Internal Revenue Code Section 21 on their federal Form 1040. The Georgia credit is a flat percentage of
+    that allowed federal credit; the booklet does not impose a separate Georgia income limit (federal Section 21
+    eligibility rules govern).
+  amount: '30% of the federal IRC Section 21 child & dependent care credit claimed and allowed on the federal Form
+    1040 (IND-CR 202: Line 3 = federal credit x .30). Cannot be carried forward or back; cannot exceed the taxpayer''s
+    income tax liability.'
+  income_limit_2023: No separate Georgia income limit stated (governed by federal Section 21 rules)
+  claimed_on: Form IND-CR Schedule 202 (included with Form 500/500X); result carried to IND-CR Summary Worksheet
+    Line 2, whose total flows to Form 500/500X Page 3, Line 19
+  citation:
+    source: Georgia DOR 2023 IT-511 booklet, IND-CR 202 Child and Dependent Care Expense Credit (Tax Credit 202),
+      O.C.G.A. Section 48-7-29.10
+    url: https://dor.georgia.gov/document/document/2023-it-511-individual-income-tax-booklet/download
+- name: Qualified Caregiving Expense Credit (Credit Code 204)
+  type: nonrefundable
+  eligibility: Taxpayers who pay qualified caregiving expenses for a qualifying family member who is at least age
+    62 OR has been determined disabled by the Social Security Administration. A qualifying family member includes
+    the taxpayer or someone related to the taxpayer by blood, marriage, or adoption. Qualified services (home health
+    agency, personal care, homemaker, adult day care, respite care, medically necessary equipment) must be obtained
+    from an organization or individual NOT related to the taxpayer or family member. Expenses already subtracted/excluded
+    from Georgia net taxable income do not qualify.
+  amount: '10% of the cost of qualified caregiving expenses, but the credit cannot exceed $150 (IND-CR 204: Line
+    5 = lesser of (expenses x 10%) or $150 maximum). No carryover or carryback; cannot exceed the taxpayer''s income
+    tax liability.'
+  income_limit_2023: None stated
+  claimed_on: Form IND-CR Schedule 204 (included with Form 500/500X); result carried to IND-CR Summary Worksheet
+    Line 4, whose total flows to Form 500/500X Page 3, Line 19
+  citation:
+    source: Georgia DOR 2023 IT-511 booklet, IND-CR 204 Qualified Caregiving Expense Credit (Tax Credit 204), O.C.G.A.
+      Section 48-7-29.2
+    url: https://dor.georgia.gov/document/document/2023-it-511-individual-income-tax-booklet/download
+- name: Disabled Person Home Purchase or Retrofit Credit (Credit Code 201)
+  type: nonrefundable
+  eligibility: A permanently disabled person (the taxpayer or the taxpayer's spouse on a joint return) who has been
+    issued a permanent parking permit (or special permanent parking permit) by the Department of Revenue, and who
+    purchases a new single-family home containing all four required accessibility features, or retrofits an existing
+    single-family home with one or more of those features (no-step entrance; 32-inch interior passage doorways;
+    bathroom-wall reinforcements for grab bars; accessible light switches/outlets).
+  amount: 'For a qualifying new-home purchase: the lesser of $500 per residence or the taxpayer''s income tax liability.
+    For retrofitting an existing home: the lesser of cost or $125 per feature, not to exceed $500 per residence.
+    Unused credit may be carried forward 3 years.'
+  income_limit_2023: None
+  claimed_on: Form IND-CR Schedule 201 (included with Form 500/500X); result carried to IND-CR Summary Worksheet
+    Line 1, whose total flows to Form 500/500X Page 3, Line 19
+  citation:
+    source: Georgia DOR 2023 IT-511 booklet, IND-CR 201 Disabled Person Home Purchase or Retrofit Credit (Tax Credit
+      201), O.C.G.A. Section 48-7-29.1
+    url: https://dor.georgia.gov/document/document/2023-it-511-individual-income-tax-booklet/download
 filing_requirement:
   note: 'A full-year resident must file a Georgia return if required to file a federal return, if they have income
     subject to Georgia tax but not federal tax, or if income exceeds the sum of the standard deduction and personal

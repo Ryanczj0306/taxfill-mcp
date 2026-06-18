@@ -44,6 +44,82 @@ forms:
   part_year_or_nonresident: Part-year residents file Form D-40 (prorating deductions/credits). DC has no general
     nonresident income tax return; a nonresident with DC tax erroneously withheld files Form D-40B, Nonresident
     Request for Refund.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: DC Earned Income Tax Credit (DC EITC) — filers WITH a qualifying child
+  type: refundable
+  eligibility: DC residents who qualify for the federal Earned Income Credit and have a qualifying child. For TY2023
+    the credit was also expanded to certain ITIN filers (no SSN required). The DC EITC mirrors federal EIC eligibility.
+  amount: '70% of your federal Earned Income Credit (federal EIC amount x .70). Note: for TY2023, if the DC EITC
+    is $1,200 or more it is paid in 12 equal monthly installments rather than a lump sum.'
+  income_limit_2023: Same earned-income / AGI phase-out limits as the federal EIC (tied to number of qualifying
+    children and filing status; DC does not impose a separate cap).
+  claimed_on: Form D-40, Line 27 (Line 27c x .70 = Line 27d) for filers with a qualifying child
+  citation:
+    source: 'DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax booklet (D-40 form, Page 2, Line 27)
+      and OTR DC EITC FAQs (percent-of-federal table: 2022-2024 = 70%)'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_012324.pdf
+- name: DC Earned Income Tax Credit (DC EITC) — filers WITHOUT a qualifying child
+  type: refundable
+  eligibility: DC residents (age 25-64 if not otherwise qualifying federally; certain ITIN filers also eligible
+    for TY2023) who do not have a qualifying child. Uses the DC EITC Worksheet for Filers Without a Qualifying Child
+    in the D-40 instructions. Investment income must be $11,000 or less.
+  amount: Computed from the DC 'EITC Worksheet For Filers Without A Qualifying Child' in the D-40 instructions;
+    the maximum DC EITC for filers without a qualifying child increased to $600 for TY2023 (up from $560).
+  income_limit_2023: Earned income / federal AGI must be at or below the federal childless-EIC threshold ($28,xxx
+    range cited in the worksheet); investment income $11,000 or less.
+  claimed_on: Form D-40, Line 27e (amount from the DC EITC childless worksheet)
+  citation:
+    source: 'DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax booklet: ''New for 2023'' (childless
+      EITC max increased from $560 to $600; investment-income limit $11,000) and the DC EITC Worksheet For Filers
+      Without A Qualifying Child'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_012324.pdf
+- name: Schedule H — Homeowner and Renter Property Tax Credit ('circuit-breaker')
+  type: refundable
+  eligibility: DC residents who owned or rented their DC home for all of 2023 and were not claimed as a dependent
+    (with an age-70 exception path). Renters use Section A (property tax deemed = 20% of rent paid); homeowners
+    use Section B (actual DC real property tax). One claim per 'tax filing unit'; cannot claim for an exempt property
+    owned by a government, house of worship, or nonprofit.
+  amount: Maximum credit $1,325 for TY2023 (increased from $1,250). Computed via the 'Computing Your Property Tax
+    Credit' worksheet; for renters, rent paid x .20 is treated as property tax.
+  income_limit_2023: Federal AGI of the tax filing unit must not exceed $61,300 (under age 70) or $83,700 (age 70
+    or older) for TY2023.
+  claimed_on: Schedule H, carried to Form D-40, Line 28 (or filed standalone)
+  citation:
+    source: DC Office of Tax and Revenue — 2023 D-40 booklet 'New for 2023' and 'Instructions for Schedule H' (max
+      credit $1,325; AGI limits $61,300 / $83,700; renter factor .20); 2023 Schedule H form
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_012324.pdf
+- name: Keep Child Care Affordable Tax Credit (Schedule ELC; formerly Early Learning Tax Credit)
+  type: refundable
+  eligibility: DC taxpayer who paid eligible child-care expenses to a licensed/subsidized 'qualified child development
+    facility' for an eligible child — a dependent under age 4 as of 9/30/2023 — and whose DC taxable income does
+    not exceed the limit. Child must not be a recipient of the District's subsidized child-care program.
+  amount: Maximum credit $1,115 per eligible child for TY2023 (increased from prior year); equals the eligible child-care
+    expenses paid up to the $1,115 per-child cap.
+  income_limit_2023: 'DC taxable income must not exceed (TY2023): $167,400 for Single, Head of Household, Married/Registered
+    Domestic Partners filing jointly, and Married/RDP filing separately on the same return; $83,700 for Married/RDP
+    filing separately.'
+  claimed_on: Schedule ELC, totaled to Schedule U Part 1B Line 2, then Form D-40, Line 29
+  citation:
+    source: DC Office of Tax and Revenue — 2023 Schedule ELC form and instructions (eligible child under age 4 as
+      of 9/30/2023; income limits $167,400 / $83,700; max $1,115 per child on Line 11; refundable); 2023 Schedule
+      U
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_SCH_ELC_Final_011924.pdf
+- name: Credit for Child and Dependent Care Expenses
+  type: nonrefundable
+  eligibility: DC residents (or part-year residents, who use DC Form 2441) who claimed the federal child and dependent
+    care credit on federal Form 2441 for the care of a qualifying dependent so the taxpayer could work or look for
+    work.
+  amount: 32% of the federal child and dependent care credit from federal Form 2441 (federal Form 2441 credit x
+    .32). Part-year DC residents compute on DC Form 2441, Line 5.
+  income_limit_2023: No separate DC income limit; the underlying federal Form 2441 credit limits apply (expenses
+    capped at $3,000 for one dependent / $6,000 for two or more).
+  claimed_on: Form D-40, Line 21
+  citation:
+    source: DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax booklet, D-40 form Page 2, Line 21 ('Credit
+      for child and dependent care expenses ... from federal Form 2441 ... x .32')
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_012324.pdf
 filing_requirement:
   note: 'Per the 2023 D-40 booklet ''Who must file a DC income tax return?'': you must file Form D-40 if (a) you
     were a DC resident in 2023 and were required to file a federal income tax return (a DC resident is an individual

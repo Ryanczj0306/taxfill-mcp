@@ -38,6 +38,60 @@ forms:
   resident: MI-1040 (Michigan Individual Income Tax Return)
   part_year_or_nonresident: Schedule NR (Nonresident and Part-Year Resident Schedule), filed together with Form
     MI-1040
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Home Heating Credit (low-income heating-cost credit).'
+credits:
+- name: Michigan Earned Income Tax Credit for Working Families (EITC)
+  type: refundable
+  eligibility: You must qualify for and claim the federal EITC. If you do not qualify for the federal EITC, you
+    do not qualify for the Michigan EITC. Aimed at low-to-moderate-income working individuals and families; eligible
+    amount depends on income, filing status, number of qualifying children, and/or disability. Beginning with tax
+    year 2023 the rate is 30% of the federal credit (the Lowering MI Costs plan / Public Act 4 of 2023 raised it
+    from 6% to 30%).
+  amount: 30% of the taxpayer's federal EITC (Michigan amount = federal EITC on MI-1040 line 27a multiplied by 0.30,
+    entered on line 27b)
+  income_limit_2023: No separate Michigan income cap; the limit is whatever the federal EITC allows for the year
+    (based on federal AGI/earned income, filing status, and number of qualifying children).
+  claimed_on: MI-1040, line 27 (line 27a = federal EITC amount; line 27b = line 27a x 30%)
+  citation:
+    source: 2023 MICHIGAN MI-1040 Individual Income Tax Forms and Instructions (BOOK_MI-1040), Line 27 instructions
+      and refundable-credits schedule
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/BOOK_MI-1040.pdf
+- name: Homestead Property Tax Credit (general claimants)
+  type: refundable
+  eligibility: 'Available to Michigan resident homeowners and renters whose homestead is in Michigan and who were
+    a Michigan resident for at least 6 months of the year. You must own and occupy the homestead, or rent/lease
+    it under a contract. Cannot claim if total household resources exceed $67,300, or if the homestead''s taxable
+    value exceeds $154,000 (excluding vacant farmland classified as agricultural). Renters: in most cases 23% of
+    rent paid is treated as property tax eligible for the credit. Separate, more generous computations apply to
+    seniors (age 65+), the blind/disabled, paraplegic/hemiplegic/quadriplegic/deaf claimants, and veterans/surviving
+    spouses.'
+  amount: Credit = property taxes (or 23% of rent for renters) that exceed 3.2% of total household resources for
+    general claimants, then multiplied by the applicable percentage (60% for most general claimants per MI-1040CR
+    computation). Maximum credit is $1,700. The computed credit is reduced 10% for every $1,000 (or part of $1,000)
+    that total household resources exceed $58,300 (full phase-out above $67,300 per MI-1040CR Table B).
+  income_limit_2023: Total household resources of $67,300 or less; credit phases out for total household resources
+    above $58,300 and reaches $0 above $67,300. Homestead taxable value must not exceed $154,000.
+  claimed_on: MI-1040, line 25, by attaching Form MI-1040CR (or MI-1040CR-2 for certain veterans/blind claimants)
+  citation:
+    source: 2023 MI-1040CR Homestead Property Tax Credit Claim Instructions (Who May Claim; Line 34; Tables 2, A
+      and B; maximum credit limit)
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/MI-1040CR-Instructions.pdf?rev=e7eefec8ce2b40bda05c01a336a1aa63&hash=4CABE8587D55A1E2BD7F0433BFE0AF09
+- name: Home Heating Credit (low-income heating-cost credit)
+  type: refundable
+  eligibility: 'Helps qualified low-income Michigan homeowners and renters pay part of their home heating costs.
+    Eligibility and credit are determined by the number of exemptions and a corresponding income ceiling using a
+    standard-allowance method (MI-1040CR-7 Table A) or an alternate computation (Table B). Claimed on a separate
+    form, not on the MI-1040 itself. NOTE: the specific 2023 standard-allowance dollar amounts and income ceilings
+    could not be independently confirmed from a tax-year-2023 official source in this research, so the dollar figures
+    are left blank and flagged unverified.'
+  claimed_on: Form MI-1040CR-7 (Home Heating Credit Claim), filed separately (not attached to the MI-1040)
+  citation:
+    source: 2023 MICHIGAN MI-1040 Individual Income Tax Forms and Instructions (BOOK_MI-1040), references to MI-1040CR-7
+      Home Heating Credit
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/BOOK_MI-1040.pdf
+  unverified: true
 filing_requirement:
   note: File a 2023 MI-1040 if you owe tax, are due a refund, or your AGI exceeds your exemption allowance (the
     personal/stillbirth exemption allowance for 2023 is $5,400 per exemption; the 2023 income tax rate is 4.05%).

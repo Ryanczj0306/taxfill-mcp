@@ -38,6 +38,80 @@ forms:
   resident: Form IL-1040, Illinois Individual Income Tax Return
   part_year_or_nonresident: Form IL-1040 with Schedule NR (Nonresident and Part-Year Resident Computation of Illinois
     Tax)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Illinois Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: 'In general, anyone who qualified for the federal EITC also qualifies for the Illinois EITC. New
+    for tax year 2023, eligibility was expanded (Public Act 102-0700): taxpayers who meet all federal EITC qualifications
+    EXCEPT that they file with an IRS-issued ITIN (no valid SSN required for taxpayer, spouse, or qualifying children),
+    and/or are age 18-24 or 65+ with no qualifying child, may now also claim it. Must have earned income under the
+    federal limits in Table 1, investment income below $11,000, not have filed federal Form 2555, and have been
+    a US resident for at least half of 2023.'
+  amount: '20% of the federal Earned Income Tax Credit. Schedule IL-E/EIC Line 7: ''Multiply the amount on Line
+    6 [federal EITC] by 20% (0.2).'' Nonresidents/part-year residents prorate by the Illinois income percentage
+    from Schedule NR Line 48.'
+  income_limit_2023: 'Federal EITC earned-income limits apply (2023, Table 1): no qualifying children $17,640 ($24,210
+    MFJ); one child $46,560 ($53,120 MFJ); two children $52,918 ($59,478 MFJ); three children $56,838 ($63,398 MFJ).
+    Investment income must be below $11,000.'
+  claimed_on: Schedule IL-E/EIC, Step 4, Line 9; carried to Form IL-1040, Line 29 (Step 8 Payments and Refundable
+    Credit). The form notes the total Illinois EITC may exceed the amount of tax (i.e., refundable).
+  citation:
+    source: Illinois Department of Revenue — 2023 Schedule IL-E/EIC (form) and 2023 Schedule IL-E/EIC Instructions
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-schedule-il-e-eic-instr.pdf
+- name: Illinois Property Tax Credit
+  type: nonrefundable
+  eligibility: Illinois residents who, during 2022, owned and lived at a principal residence located in Illinois
+    and paid the Illinois property tax on it during the 2023 tax year. Not available for a vacation home, rental
+    property, vacant lot, farmland, mobile home privilege tax, penalties/fees, or property outside Illinois. Nonresidents
+    may not take this credit. The portion of property tax deductible as a business expense is excluded.
+  amount: '5% of qualifying Illinois property tax paid on the principal residence. Schedule ICR Section A, Line
+    4g: ''Multiply Line 4f by 5% (.05).'' The combined Property Tax + K-12 Education Expense + Volunteer Emergency
+    Worker credits cannot exceed tax due (nonrefundable).'
+  income_limit_2023: Not allowed if the taxpayer's adjusted gross income for the taxable year exceeds $500,000 for
+    returns with a federal filing status of married filing jointly, or $250,000 for all other returns.
+  claimed_on: Schedule ICR, Section A (Lines 4-5); total nonrefundable credit on Schedule ICR Line 13 carried to
+    Form IL-1040, Line 16.
+  citation:
+    source: Illinois Department of Revenue — 2023 Schedule ICR (form) and 2023 Schedule ICR Instructions
+    url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-icr-instr.pdf
+- name: K-12 Education Expense Credit
+  type: nonrefundable
+  eligibility: Parent or legal guardian of a full-time student who was under age 21 at the close of the school year,
+    where the taxpayer and student were Illinois residents when the expenses were paid, and the student attended
+    kindergarten through 12th grade at a public or nonpublic school in Illinois during 2023. Must complete Section
+    B of Schedule ICR including the K-12 Education Expense Credit Worksheet and attach school receipts.
+  amount: '25% of qualified K-12 education expenses paid in excess of the first $250, up to a maximum credit of
+    $750 regardless of the number of qualifying students. Schedule ICR Section B: Line 7b excludes the first $250;
+    Line 7d ''Multiply Line 7c by 25% (.25). Compare the result and $750, and enter the lesser amount.'' For separately-filing
+    parents/guardians, combined credit may not exceed $750.'
+  income_limit_2023: Not allowed if the taxpayer's adjusted gross income for the taxable year exceeds $500,000 for
+    returns with a federal filing status of married filing jointly, or $250,000 for all other returns.
+  claimed_on: Schedule ICR, Section B (Lines 7-8) plus K-12 Education Expense Credit Worksheet; total nonrefundable
+    credit on Schedule ICR Line 13 carried to Form IL-1040, Line 16.
+  citation:
+    source: Illinois Department of Revenue — 2023 Schedule ICR (form) and 2023 Schedule ICR Instructions
+    url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-icr-instr.pdf
+- name: Volunteer Emergency Worker Credit
+  type: nonrefundable
+  eligibility: 'Created by Public Act 103-0009 for 2023. Available only to a person who received a 2023 Volunteer
+    Emergency Worker Credit Certificate from IDOR. A volunteer emergency worker is a non-full-time member of a fire
+    department, fire protection district, or fire protection association with a Fire Department Identification Number
+    from the Office of the State Fire Marshal. Must have served as a volunteer emergency worker at least 9 months
+    during the taxable year, not receive more than $5,000 in compensation for those services, submit a complete
+    application with IDOR, and be one of the first 10,000 qualified applicants. Note: the income limit that applies
+    to the property tax / K-12 credits does NOT apply to this credit.'
+  amount: $500 per awarded individual; $1,000 if married filing jointly and both spouses were awarded the credit.
+    Schedule ICR Line 10c. Statewide aggregate of all such credits awarded by the Department in a calendar year
+    may not exceed $5,000,000, awarded first-come first-served.
+  income_limit_2023: No adjusted-gross-income limit applies to this credit (the $500,000 MFJ / $250,000 other limit
+    applies only to the property tax and K-12 credits).
+  claimed_on: Schedule ICR, Section C (Lines 10-11); total nonrefundable credit on Schedule ICR Line 13 carried
+    to Form IL-1040, Line 16.
+  citation:
+    source: Illinois Department of Revenue — 2023 Schedule ICR (form) and 2023 Schedule ICR Instructions
+    url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-icr-instr.pdf
 filing_requirement:
   note: An Illinois resident must file Form IL-1040 if (a) you were required to file a federal income tax return,
     OR (b) you were not required to file federally but your Illinois base income from Line 9 is greater than your

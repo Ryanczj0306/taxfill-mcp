@@ -29,6 +29,67 @@ forms:
   resident: Form 760 (Resident Individual Income Tax Return)
   part_year_or_nonresident: 'Nonresident: Form 763 (Nonresident Individual Income Tax Return). Part-year resident:
     Form 760PY (Part-Year Resident Individual Income Tax Return).'
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Credit for Tax Paid to Another State.'
+credits:
+- name: Credit for Low-Income Individuals (CLI)
+  type: nonrefundable
+  eligibility: Virginia residents whose family Virginia Adjusted Gross Income (family VAGI) is at or below the federal
+    poverty guideline for their family size, and who do not claim the age deduction, the 65+/blind exemption, the
+    Virginia National Guard subtraction (Code 28), basic military pay subtraction (Code 38), or federal/state employee
+    subtraction (Code 39), and who are not claimed as a dependent on another return. Cannot be combined with either
+    Virginia EITC option.
+  amount: $300 per personal and dependent exemption reported on Form 760 (excluding the age 65+ and blind exemptions);
+    credit is limited to Virginia income tax liability (Schedule ADJ Line 13)
+  income_limit_2023: 'Family VAGI must be at or below the 2023 federal poverty guideline: 1 exemption $14,580; 2
+    $19,720; 3 $24,860; 4 $30,000; 5 $35,140; 6 $40,280; 7 $45,420; 8 $50,560; add $5,140 for each additional person'
+  claimed_on: Schedule ADJ (Form 760-ADJ) Lines 10-13, carried to Line 17, then Form 760 Line 23
+  citation:
+    source: 2023 Form 760 Resident Individual Income Tax Instructions, p.26 ('Tax Credit for Low-Income Individuals'
+      and Poverty Guideline Table), Virginia Department of Taxation
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+- name: Virginia Earned Income Credit (nonrefundable, 20% option)
+  type: nonrefundable
+  eligibility: Virginia residents who claimed the federal Earned Income Tax Credit on their 2023 federal return.
+    Mutually exclusive with the Credit for Low-Income Individuals and with the 15% refundable EITC option — taxpayer
+    claims only the one option that benefits them most.
+  amount: 20% (.20) of the federal Earned Income Tax Credit claimed on the federal return; nonrefundable, limited
+    to Virginia income tax liability (Schedule ADJ Line 15 / Line 16a)
+  income_limit_2023: No separate Virginia income cap; eligibility tracks the federal EITC income limits since it
+    requires a federal EITC claim
+  claimed_on: Schedule ADJ (Form 760-ADJ) Lines 14-15 and 16a, carried to Line 17, then Form 760 Line 23
+  citation:
+    source: 2023 Form 760 Resident Individual Income Tax Instructions, p.26 (Schedule ADJ Lines 14-17 instructions);
+      2023 Virginia Schedule ADJ Line 15
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+- name: Refundable Virginia Earned Income Tax Credit (15% option)
+  type: refundable
+  eligibility: Virginia residents who claimed the federal Earned Income Tax Credit on their 2023 federal return;
+    available for taxable years beginning 1/1/2022 but before 1/1/2026. Mutually exclusive with the Credit for Low-Income
+    Individuals and the 20% nonrefundable EITC — taxpayer claims only one of the three.
+  amount: 15% (.15) of the federal Earned Income Tax Credit claimed on the federal return; refundable, so it may
+    exceed the taxpayer's Virginia tax liability (Schedule ADJ Line 16b)
+  income_limit_2023: No separate Virginia income cap; eligibility tracks the federal EITC income limits since it
+    requires a federal EITC claim
+  claimed_on: Schedule ADJ (Form 760-ADJ) Line 16b, carried to Line 17, then Form 760 Line 23
+  citation:
+    source: 2023 Form 760 Resident Individual Income Tax Instructions, p.26 ('Refundable Virginia Earned Income
+      Tax Credit (EITC), equal to 15 percent of the federal EITC'); 2023 Virginia Schedule ADJ Line 16b
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+- name: Credit for Tax Paid to Another State
+  type: nonrefundable
+  eligibility: Virginia residents (and certain part-year residents) who paid income tax to another state on income
+    that is also taxed by Virginia, to avoid double taxation. Does not apply to tax paid to a foreign country, and
+    special rules apply for the District of Columbia, Kentucky, and other border states.
+  income_limit_2023: None stated; the credit equals the qualifying tax paid to the other state subject to a limitation
+    based on the proportion of Virginia tax attributable to the out-of-state income (computed on Schedule OSC)
+  claimed_on: Schedule OSC, Line 21; entered on Form 760 Line 24
+  citation:
+    source: 2023 Form 760 Resident Individual Income Tax Instructions, p.32-33 ('Credit for Taxes Paid to Another
+      State' / Schedule OSC) and Line 24 instructions, Virginia Department of Taxation
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+  unverified: true
 filing_requirement:
   note: 'Every Virginia resident whose Virginia Adjusted Gross Income (VAGI) is at or above the minimum threshold
     must file Form 760. For tax year 2023 the thresholds are: Single or Married filing separately - VAGI $11,950

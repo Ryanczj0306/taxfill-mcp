@@ -37,6 +37,53 @@ forms:
   part_year_or_nonresident: Form 43 (Part-year Resident and Nonresident Income Tax Return); part-year/nonresident
     filers claiming additions, subtractions, or certain credits also file Form 39NR (Part-year Resident and Nonresident
     Supplemental Schedule)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Idaho Grocery Credit (Food Tax Credit)
+  type: refundable
+  eligibility: Idaho residents only. Claimed for yourself, spouse, and each qualifying Idaho-resident dependent.
+    If someone else can claim you as a dependent, you cannot claim it. Does NOT qualify for any month a person received
+    federal food stamp (SNAP) assistance, was incarcerated, or lived illegally in the US. Refundable even if you
+    are not required to file an income tax return (file Form 40, or Form 24 if you/spouse are 65+).
+  amount: $120 each for taxpayer, spouse, and each qualifying dependent for the full year (prorated at $10/qualified
+    month). Additional $20 each for taxpayer and/or spouse who is age 65 or older on Dec 31, 2023 (i.e., $140 for
+    a full-year resident 65+; for 65+ partial year, $11.67 per qualified month).
+  income_limit_2023: None
+  claimed_on: Form 40, line 43 (Grocery Credit Worksheet, instructions page 11). Nonfilers/65+ may use Form 24.
+  citation:
+    source: Idaho State Tax Commission, Form 40 Individual Income Tax Return and Instructions 2023 (EIN00046, 11-06-2023),
+      Line 43 Grocery Credit and Grocery Credit Worksheet, pages 11-12
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_11-06-2023.pdf
+- name: Idaho Child Tax Credit
+  type: nonrefundable
+  eligibility: You must have a qualifying child who is age 16 or under as of December 31, 2023 (per federal qualifying-child
+    definition, federal Form 1040 instructions). For divorced/separated parents, the custodial parent claims the
+    child unless a court order or signed written declaration (federal Form 8332) awards the claim to the noncustodial
+    parent (must be attached). No qualifying child means no credit.
+  amount: '$205 per qualifying child. Per the worksheet: multiply number of qualifying children by $205, then limit
+    to the lesser of that amount or the remaining tax liability after the credit for tax paid to other states and
+    credits from Forms 39R and 44.'
+  income_limit_2023: None stated; the credit is limited to your remaining Idaho tax liability after certain other
+    credits (nonrefundable).
+  claimed_on: Form 40, line 25 (Idaho Child Tax Credit Worksheet, instructions page 10).
+  citation:
+    source: Idaho State Tax Commission, Form 40 Instructions 2023 (EIN00046, 11-06-2023), Line 25 Idaho Child Tax
+      Credit Worksheet, page 10
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_11-06-2023.pdf
+- name: Credit for Maintaining a Home for a Family Member Age 65 or Older or with a Developmental Disability
+  type: refundable
+  eligibility: You maintained a household during 2023 for an immediate family member who is (a) age 65 or older
+    (not counting yourself or your spouse), or (b) has a developmental disability (may include yourself or your
+    spouse) AND you did NOT also claim the $1,000-per-person deduction for that family member on Form 39R, Part
+    B, line 15. You can claim this credit even if your gross income is below the filing requirement (hence treated
+    as a refundable payment/credit on the return).
+  amount: $100 per qualifying person, up to a maximum of $300.
+  income_limit_2023: None (claimable even if gross income is below the filing threshold).
+  claimed_on: Form 40, line 44 (requires Form 39R).
+  citation:
+    source: Idaho State Tax Commission, Form 40 Instructions 2023 (EIN00046, 11-06-2023), Line 44, page 12
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_11-06-2023.pdf
 filing_requirement:
   note: '2023 thresholds (Idaho Individual Income Tax General Information, ''Who Must File''): every Idaho resident
     who must file a federal return must file; every part-year resident with more than $2,500 total gross income
