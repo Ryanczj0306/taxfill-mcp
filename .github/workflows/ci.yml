@@ -3,19 +3,77 @@ name: CI
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "17 8 * * *"   # nightly freshness/drift check (dev plan §7)
+  workflow_dispatch:
 
 jobs:
   test:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.11"
-
       - name: Sync workspace
         run: uv sync
-
-      - name: Run tests (offline — network golden round-trips run locally / in the planned nightly drift job)
+      - name: Run tests (offline — network golden round-trips run in the drift job)
         run: uv run pytest -m "not network"
+
+  packaging:
+    # Guards the v0.1 ship invariant: the published wheel must be self-contained —
+    # knowledge/ + formpacks/ data resolves from inside the installed package, with
+    # no repo checkout on the path. Build, install into a clean venv OUTSIDE the
+    # repo, and exercise the loaders.
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Stage data + build both distributions
+        run: |
+          python scripts/stage_data.py
+          uv build --package taxfill-core
+          uv build --package taxfill-mcp
+      - name: twine check (PyPI metadata)
+        run: uvx twine check dist/*
+      - name: Install into a clean venv outside the repo and smoke-test
+        run: |
+          set -e
+          TMP="$(mktemp -d)"
+          uv venv "$TMP/venv" --python 3.11
+          uv pip install --python "$TMP/venv/bin/python" --find-links dist/ "$(ls dist/taxfill_mcp-*.whl)"
+          cd "$TMP"   # leave the repo so the resolver cannot fall back to repo-root data
+          env -u TAXFILL_DATA_DIR "$TMP/venv/bin/python" - <<'PY'
+          import asyncio
+          from taxfill_core.datadir import data_root
+          from taxfill_core import load_knowledge, load_state_knowledge
+          from taxfill_core.discovery import list_forms, load_form_pack
+          import taxfill_mcp.server as s
+          assert "site-packages" in str(data_root()), f"data not packaged: {data_root()}"
+          assert load_knowledge("federal", 2023).tax_year == 2023
+          assert load_state_knowledge("ca", 2023).jurisdiction == "states/ca"
+          assert load_form_pack("f1040", 2023, "federal").fields, "f1040 field map missing"
+          assert len(list_forms("federal", 2023)) >= 8
+          tools = asyncio.run(s.mcp.list_tools())
+          assert len(tools) == 15, f"expected 15 tools, got {len(tools)}"
+          print(f"OK — installed wheel is self-contained; {len(tools)} tools register")
+          PY
+
+  drift:
+    # Nightly (and manual) freshness check: re-fetch every official source URL and
+    # form blank, fail loudly on a moved page or a revised form (dev plan §7).
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Sync workspace
+        run: uv sync
+      - name: Check source/form drift
+        run: uv run python scripts/check_drift.py
