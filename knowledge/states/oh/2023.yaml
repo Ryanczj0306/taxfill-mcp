@@ -40,6 +40,87 @@ forms:
     the same Ohio IT 1040 and check the part-year resident or nonresident box. They compute the Nonresident Credit
     on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. (Optional residency
     status election: form IT NRS, Ohio Nonresident Statement.)'
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Ohio Earned Income Credit (EIC)
+  type: nonrefundable
+  eligibility: Resident/part-year/nonresident taxpayers who qualified for and claimed the federal Earned Income
+    Tax Credit for tax year 2023 (federal Form 1040/1040-SR, line 27). Eligibility tracks the federal EIC.
+  amount: 30% of your federal EIC (federal 1040/1040-SR, line 27). No state-level dollar cap for 2023.
+  income_limit_2023: No separate Ohio income limit; bounded by the federal EIC income/investment-income thresholds
+    since the credit is a percentage of the federal credit.
+  claimed_on: Ohio Schedule of Credits, line 13 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2023 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 13 Earned Income Credit (R.C. 5747.71)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+- name: Retirement Income Credit
+  type: nonrefundable
+  eligibility: Taxpayer (and spouse, if filing jointly) who (a) has modified adjusted gross income less exemptions
+    under $100,000; (b) received income from a pension, profit-sharing, or retirement plan (e.g., traditional IRA
+    or 401(k)) on account of retirement; (c) the income is included in Ohio adjusted gross income; and (d) has not
+    previously taken the Ohio lump sum retirement credit. Amounts deducted on the Ohio Schedule of Adjustments (e.g.,
+    Social Security, uniformed-services retirement) do not qualify.
+  amount: 'Table-based on total eligible retirement income included in Ohio AGI: $501-$1,500 = $25; $1,501-$3,000
+    = $50; $3,001-$5,000 = $80; $5,001-$8,000 = $130; $8,001 or more = $200. Maximum credit per return is $200.'
+  income_limit_2023: Modified adjusted gross income less exemptions must be less than $100,000.
+  claimed_on: Ohio Schedule of Credits, line 2 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2023 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 2 Retirement Income Credit and Table 2 (R.C. 5747.055(B))
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+- name: Senior Citizen Credit
+  type: nonrefundable
+  eligibility: Taxpayer who (a) has modified adjusted gross income less exemptions under $100,000; (b) was 65 or
+    older at the end of the tax year; and (c) has not previously taken the Ohio lump sum distribution credit.
+  amount: $50 per return.
+  income_limit_2023: Modified adjusted gross income less exemptions must be less than $100,000.
+  claimed_on: Ohio Schedule of Credits, line 4 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2023 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 4 Senior Citizen Credit (R.C. 5747.055(F))
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+- name: Child and Dependent Care Credit
+  type: nonrefundable
+  eligibility: Taxpayer whose modified adjusted gross income is less than $40,000 AND who claimed the federal 'credit
+    for child and dependent care expenses' on federal Form 2441.
+  amount: 'If Ohio MAGI is less than $20,000: the full amount from federal Form 2441, line 9c. If MAGI is $20,000
+    or more but less than $40,000: 25% of the amount on federal Form 2441, line 11.'
+  income_limit_2023: Modified adjusted gross income must be less than $40,000 (no credit at $40,000 or more).
+  claimed_on: Ohio Schedule of Credits, line 6 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2023 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 6 Child Care and Dependent Care Credit and worksheet (R.C. 5747.054)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+- name: Joint Filing Credit
+  type: nonrefundable
+  eligibility: Married taxpayers filing a joint Ohio return where EACH spouse has at least $500 of 'qualifying income'
+    (income included in Ohio AGI other than interest, dividends/distributions, capital gains, and rents/royalties;
+    amounts deducted on the Ohio Schedule of Adjustments such as business income, Social Security, and certain military
+    pay do not count).
+  amount: 'A percentage of tax liability before this credit (Schedule of Credits line 11), based on MAGI less exemptions:
+    0-$25,000 = 20%; $25,001-$50,000 = 15%; $50,001-$75,000 = 10%; $75,001 or more = 5%. Maximum credit per return
+    is $650.'
+  income_limit_2023: No income ceiling to qualify; the credit percentage decreases as MAGI less exemptions rises
+    (5% above $75,000), and the credit is capped at $650.
+  claimed_on: Ohio Schedule of Credits, line 12 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2023 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 12 Joint Filing Credit and percentage table (R.C. 5747.05(E))
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+- name: Exemption Credit
+  type: nonrefundable
+  eligibility: Taxpayer whose modified adjusted gross income less exemptions is less than $30,000; a credit is allowed
+    for each personal/dependent exemption claimed on the return. This functions as Ohio's low-income credit tied
+    to the number of exemptions.
+  amount: $20 for each exemption claimed on the return.
+  income_limit_2023: Modified adjusted gross income less exemptions must be less than $30,000.
+  claimed_on: Ohio Schedule of Credits, line 9 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2023 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 9 Exemption Credit (R.C. 5747.022)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
 filing_requirement:
   note: 'Per the 2023 IT 1040 instruction booklet: "Every Ohio resident and every part-year resident is subject
     to the Ohio income tax. Every nonresident having Ohio-sourced income must also file." Exception: a full-year

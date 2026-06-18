@@ -38,6 +38,79 @@ residency:
 forms:
   resident: AR1000F - Full Year Resident Individual Income Tax Return
   part_year_or_nonresident: AR1000NR - Part Year or Non-Resident Individual Income Tax Return
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Personal Tax Credit (personal exemption credit)
+  type: nonrefundable
+  eligibility: 'Every Arkansas individual filer. One credit each for: yourself, spouse, and each dependent; plus
+    extra credit boxes for age 65 or over, ''65 Special'' (low-income elderly), blind, deaf, and head of household/surviving
+    spouse. Listed in the Personal Tax Credits section of the return.'
+  amount: $29 per box checked and $29 per dependent (Line 7A boxes x $29, Line 7B dependents x $29, totaled on Line
+    7C)
+  income_limit_2023: None
+  claimed_on: Form AR1000F lines 7A/7B/7C, carried to AR1000F line 34
+  citation:
+    source: Arkansas DFA - 2023 AR1000F Full Year Resident Individual Income Tax Return (form, P1) and 2023 AR1000F/AR1000NR
+      Instructions (Line 34, p.15)
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf
+- name: Child and Dependent Care Credit
+  type: nonrefundable
+  eligibility: Resident taxpayers who paid for the care of a qualifying person (a dependent under age 13, or a spouse/dependent
+    incapable of self-care) so the taxpayer (and spouse, if married) could work or look for work. Mirrors the federal
+    child and dependent care credit (federal Form 2441). Filing status 5 (married filing separately on different
+    returns) generally cannot claim it unless special conditions are met.
+  amount: 20% of the federal child and dependent care credit. The federal credit equals an applicable percentage
+    (0.20 to 0.35, based on federal AGI per the AR2441 line 8 table) of qualified expenses up to $3,000 for one
+    qualifying person or $6,000 for two or more. The Arkansas credit is then that federal credit multiplied by .20
+    (AR2441 line 9 x .20 = line 10).
+  income_limit_2023: No hard income cap; the federal percentage applied to expenses declines with higher federal
+    AGI (35% at AGI of $15,000 or less, down to 20% for AGI over $43,000).
+  claimed_on: Form AR2441, result entered on AR1000F/AR1000NR line 35 (and/or line 43)
+  citation:
+    source: Arkansas DFA - 2023 AR2441 Child and Dependent Care Expenses (form, lines 8-10) and 2023 AR1000F/AR1000NR
+      Instructions (Line 35, p.15)
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR2441_Child_andDependentCareExpenses.pdf
+- name: Additional Tax Credit for Qualified Individuals (low-income credit)
+  type: nonrefundable
+  eligibility: An individual taxpayer with net taxable income up to the 2023 threshold who timely files an Arkansas
+    income tax return. Phases out across the income table; allowed per individual (doubled for joint Filing Status
+    2, and computed separately per spouse for Filing Status 4).
+  amount: 'Up to $60 per individual. Per the 2023 table: $60 for net taxable income $0-$25,000, then declining by
+    $5 per $100 bracket ($55, $50, ... $5) up to $26,100, and $0 once net taxable income is $26,101 or more.'
+  income_limit_2023: Net taxable income (AR1000F line 28) of $26,100 or less for tax year 2023
+  claimed_on: Additional Tax Credit for Qualified Individuals Worksheet, then Form AR1000TC line 6, carried to AR1000F
+    line 36
+  citation:
+    source: Arkansas DFA - 2023 Individual Income Tax Forms and Instructions booklet, 'Additional Tax Credit For
+      Qualified Individuals Worksheet' table (p.22)
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf
+- name: Inflationary Relief Income Tax Credit (2023 one-time credit)
+  type: nonrefundable
+  eligibility: Arkansas full-year residents only, filing a full-year resident return for tax year beginning January
+    1, 2023. One-time credit for the 2023 tax year only. Not available to nonresidents/part-year residents.
+  amount: 'Up to $150 for filing status 1, 3, 4, 5, 6 (single etc.) and up to $300 for filing status 2 (married
+    filing joint). Phases down with income: e.g. status 1/3/5/6 gets $150 for net income $1-$89,600, declining in
+    $10 steps to $0 at $103,601+; status 2 gets $300 for $1-$179,200, declining to $0 at $207,201+.'
+  income_limit_2023: Net income (AR1000F line 28) up to $103,600 (single/status 1,3,4,5,6) or up to $207,200 (joint,
+    status 2)
+  claimed_on: Inflationary Relief Income Tax Credit Worksheet, then Form AR1000TC line 7, carried to AR1000F line
+    36
+  citation:
+    source: Arkansas DFA - 2023 Individual Income Tax Forms and Instructions booklet, 'Inflationary Relief Income
+      Tax Credit Worksheet' and tables (p.21)
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf
+- name: Credit for Individuals with Developmental Disabilities
+  type: nonrefundable
+  eligibility: Taxpayers who have a dependent (or self) who qualifies with a developmental disability, as certified
+    on Form AR1000-DD (formerly AR1000RC5). Certifications valid on/after January 1, 2022 have no expiration date.
+  amount: $500 per qualifying individual with a developmental disability (multiply number of qualifying dependents
+    by $500)
+  income_limit_2023: None
+  claimed_on: Form AR1000TC line 8 (attach Form AR1000-DD the first year), carried to AR1000F line 36
+  citation:
+    source: Arkansas DFA - Instructions for AR1000TC (2023), Line 8
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000TC_Schedule_of_TaxCredits_andBusiness_IncentiveCredits_Instructions.pdf
 filing_requirement:
   note: '2023 minimum gross-income filing thresholds (full-year residents, AR1000F): Single $13,850; Head of Household
     with 1 or no dependents $19,692; Head of Household with 2+ dependents $23,473; Married Filing Joint with 1 or

@@ -38,6 +38,92 @@ forms:
   part_year_or_nonresident: Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02).
     Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident
     treatment), whichever is more advantageous.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Earned Income Tax Credit (Delaware EITC)
+  type: refundable
+  eligibility: 'Resident individuals who claimed (and qualified for) the federal Earned Income Credit. The taxpayer
+    ELECTS one of two options: a REFUNDABLE credit equal to 4.5% of the federal EITC, OR a NONREFUNDABLE credit
+    equal to 20% of the federal EITC (the return software/worksheet picks whichever yields the larger benefit: if
+    4.5% of federal EITC is greater than or equal to the Delaware tax on Line 32, take the refundable 4.5%; otherwise
+    take the lesser of the Delaware tax or 20% of federal EITC as nonrefundable). Computed on DE Schedule II (Form
+    PIT-RSS). Must attach DE Schedule II, Federal Form 1040 pages 1-2, and Federal Schedule EIC.'
+  amount: 'Refundable: 4.5% of federal earned income credit (federal EITC x 0.045). Nonrefundable alternative: 20%
+    of federal earned income credit (federal EITC x 0.20).'
+  income_limit_2023: No separate Delaware income limit; eligibility and amount are tied to the federal EITC (which
+    has its own income limits based on filing status and number of qualifying children).
+  claimed_on: Form PIT-RES, Line 33 (refundable/non-refundable box checked); computed on DE Schedule II of Form
+    PIT-RSS (Lines 13-17)
+  citation:
+    source: Delaware Division of Revenue, 2023 Delaware Individual Resident Income Tax Return Instructions (Form
+      PIT-RES), Line 33 Earned Income Tax Credit and DE Schedule II
+    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+- name: Child Care Credit (Child and Dependent Care Credit)
+  type: nonrefundable
+  eligibility: Resident individuals who claimed the federal child and dependent care credit. Must attach a copy
+    of Federal Form 2441. For spouses who file a joint federal return but file separate/combined-separate Delaware
+    returns, the credit may only be applied against the tax of the spouse with the lower taxable income (Line 22).
+    This is the child/dependent CARE credit, not the Child Tax Credit (the Child Tax Credit is not allowed on the
+    Delaware return).
+  amount: 50% of the federal child and dependent care credit (amount from Line 11 of Federal Form 2441 x 0.50).
+    Credit may not exceed $3,000.
+  income_limit_2023: No stated Delaware income limit; amount derives from the federal Form 2441 credit.
+  claimed_on: Form PIT-RES, Line 30 (Line 30 Worksheet - Child Care Credit)
+  citation:
+    source: Delaware Division of Revenue, 2023 Form PIT-RES Instructions, Line 30 Child Care Credit and Line 30
+      Worksheet
+    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+- name: Personal Credits (exemption credit)
+  type: nonrefundable
+  eligibility: Resident individuals are allowed a credit for each personal exemption. You receive the credit even
+    if you do not recognize personal exemptions on your federal return. NOT available if you are claimed as a dependent
+    on another person's federal return (enter 0).
+  amount: $110 per personal exemption (number of exemptions x $110).
+  income_limit_2023: No income limit.
+  claimed_on: Form PIT-RES, Line 26a
+  citation:
+    source: Delaware Division of Revenue, 2023 Form PIT-RES Instructions, Line 26a Personal Credits
+    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+- name: Additional Personal Credit (age 60 or over)
+  type: nonrefundable
+  eligibility: Resident taxpayer and/or spouse who were 60 years of age or older on December 31, 2023. Check the
+    appropriate box(es) for self/spouse. This is Delaware's main senior-relief credit on the income-tax return (separate
+    senior relief is also provided via the pension exclusion and the Line 11 persons-60-or-over exclusion, which
+    are income exclusions rather than credits).
+  amount: $110 per qualifying person age 60+ (number of boxes checked x $110).
+  income_limit_2023: No income limit.
+  claimed_on: Form PIT-RES, Line 26b
+  citation:
+    source: Delaware Division of Revenue, 2023 Form PIT-RES Instructions, Line 26b Additional Personal Credits
+    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+- name: Credit for Income Taxes Paid to Another State
+  type: nonrefundable
+  eligibility: Delaware residents (or those electing to be taxed as residents) who paid income tax to another state
+    on income earned in that state that is also included in Delaware taxable income. Must attach a signed copy of
+    the other state's return. Does not include city wage taxes or county taxes; District of Columbia counts as a
+    'state' for this credit. Use Form PIT-RSS Schedule I if claiming credit for more than one state.
+  amount: 'Formula (Line 27 Worksheet): the credit is the SMALLEST of (a) the Delaware tax liability, (b) the tax
+    due and paid to the other state after all credits, or (c) Delaware tax multiplied by the ratio of other-state
+    AGI to Delaware AGI. No fixed dollar amount.'
+  income_limit_2023: No income limit.
+  claimed_on: Form PIT-RES, Line 27 (Line 27 Worksheet; DE Schedule I / Form PIT-RSS if multiple states)
+  citation:
+    source: Delaware Division of Revenue, 2023 Form PIT-RES Instructions, Line 27 Other State Tax Credit and Line
+      27 Worksheet
+    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+- name: Volunteer Firefighter Credit
+  type: nonrefundable
+  eligibility: Delaware residents who are active volunteer firefighters on call to fight fires on a regular basis,
+    members of a fire company auxiliary, or active members of an organized rescue squad in a Delaware volunteer
+    company. Active status is verified annually with the volunteer fire companies; the Fire Company number must
+    be entered on Line 28. Only one $1,000 credit may be claimed per spouse.
+  amount: $1,000 per qualifying volunteer (max one $1,000 per spouse).
+  income_limit_2023: No income limit.
+  claimed_on: Form PIT-RES, Line 28
+  citation:
+    source: Delaware Division of Revenue, 2023 Form PIT-RES Instructions, Line 28 Volunteer Firefighter Credit
+    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
 filing_requirement:
   note: 'Full-year residents must file a 2023 return if their individual Delaware adjusted gross income exceeds
     the age/status threshold: Under 60 - $9,400 (Filing Status 1, 4, & 5 single/separate) or $15,450 (Status 2 married

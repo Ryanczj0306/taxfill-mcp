@@ -40,6 +40,87 @@ forms:
   resident: Form IT-40, Indiana Full-Year Resident Individual Income Tax Return (2023)
   part_year_or_nonresident: Form IT-40PNR, Indiana Part-Year and Full-Year Nonresident Individual Income Tax Return
     (2023). (Reciprocal-state full-year nonresidents with only IN wage income file Form IT-40RNR instead.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Indiana Earned Income Credit (EIC)
+  type: refundable
+  eligibility: You must be eligible for and have actually claimed the federal Earned Income Credit on your federal
+    return; if you did not claim the federal EIC you cannot claim the Indiana EIC. For 2023 and later Indiana follows
+    all federal EIC requirements and allowances (the prior Indiana-specific modifications no longer apply). Schedule
+    IN-EIC (including dependent information) must be completed and enclosed by all filers claiming the credit. Part-year
+    residents get an apportioned credit.
+  amount: Indiana EIC = 10% of your federal EIC.
+  income_limit_2023: Income on Form IT-40, line 1 (or Indiana Schedule A, line 36A) must be less than $63,398; at
+    $63,398 or more you are not eligible.
+  claimed_on: 'Form IT-40, Schedule 5: Credits, line 6, with Schedule IN-EIC enclosed.'
+  citation:
+    source: 'Indiana DOR Income Tax Information Bulletin #92, ''Individual Earned Income Tax Credit (EITC) Procedures''
+      (March 2024), corroborated by 2023 IT-40 Booklet (Schedule 5, line 6)'
+    url: https://www.in.gov/dor/files/ib92.pdf
+- name: Unified Tax Credit for the Elderly
+  type: refundable
+  eligibility: You and/or your spouse must have been age 65 or older by Dec. 31, 2023; if married and living together
+    at any time during the year you must file a joint return; you must have been an Indiana resident for at least
+    six months during 2023; and you must not have been in prison for 180 days or more in 2023. Disabled persons
+    under age 65 do not qualify. The credit must be claimed within three years of the return's filing due date.
+    Low-income filers not otherwise required to file may claim it on the simplified Form SC-40; others claim it
+    on Form IT-40 line 5. File either SC-40 or IT-40, not both.
+  amount: 'Refund/credit ranges from $40 to $140 based on filing status, age, and income. Joint filers both age
+    65+ (IT-40 Table A): under $1,000 = $140; $1,000-$2,999 = $90; $3,000-$9,999 = $80. Only one person age 65+
+    / single or widowed (IT-40 Table B): under $1,000 = $100; $1,000-$2,999 = $50; $3,000-$9,999 = $40.'
+  income_limit_2023: Income on Form IT-40, line 1 must be less than $10,000. (On Form SC-40 the simplified-filing
+    income thresholds on Line E are under $2,500 if single/widowed, under $3,500 if married with one spouse 65+,
+    and under $5,000 if married with both 65+.)
+  claimed_on: 'Form IT-40, Schedule 5: Credits, line 5 (Table A or Table B), OR Form SC-40, line F.'
+  citation:
+    source: 2023 IT-40 Full-Year Resident Individual Income Tax Booklet (Schedule 5, line 5, Tables A and B); Form
+      SC-40 'Unified Tax Credit for the Elderly' (2023), State Form 44404
+    url: https://forms.in.gov/Download.aspx?id=15792
+- name: Lake County (Indiana) Residential Income Tax Credit
+  type: nonrefundable
+  eligibility: Available only to residents who paid property tax to Lake County, Indiana on their principal residence
+    (owned or being bought under contract); whose Modified Indiana Adjusted Gross Income is less than $18,600; and
+    who are NOT claiming the Homeowner's Residential Property Tax Deduction on Indiana Schedule 2, line 2. This
+    is the closest Indiana equivalent to a property-tax credit but is limited to Lake County residents (not statewide).
+  amount: Credit equals the lesser of the Lake County property tax you paid or $300 (maximum). For married filing
+    separately the maximum is $150. An income-based phaseout applies for Modified Indiana AGI between $18,000 and
+    $18,600 (the maximum credit is reduced by 50% of the amount over $18,000).
+  income_limit_2023: Modified Indiana Adjusted Gross Income must be less than $18,600 (phaseout begins at $18,000).
+  claimed_on: 'Form IT-40, Schedule 5: Credits, line 7 (computed via Worksheets A-D in the IT-40 instructions).'
+  citation:
+    source: 2023 IT-40 Full-Year Resident Individual Income Tax Booklet (Schedule 5, line 7, Worksheets A-D)
+    url: https://forms.in.gov/Download.aspx?id=15792
+- name: Indiana529 / CollegeChoice 529 Education Savings Plan Credit
+  type: nonrefundable
+  eligibility: Any Indiana taxpayer (single, married filing jointly, or married filing separately) who makes a contribution
+    to an Indiana529 (formerly CollegeChoice 529) Savings Plan account during the tax year; the taxpayer need not
+    be the account owner. Credit offsets only state adjusted gross income tax liability and cannot be used against
+    county tax. Claimed on Schedule IN-529.
+  amount: '20% of total contributions made during the tax year (including contributions designated for K-12 tuition),
+    capped at a maximum credit of $1,500 for single individuals and married couples filing jointly, and $750 for
+    a married individual filing separately. Also limited to the taxpayer''s state AGI tax liability. (Example: a
+    $4,000 contribution yields an $800 credit.)'
+  income_limit_2023: No income limit.
+  claimed_on: 'Schedule IN-529, with the resulting credit reported on Form IT-40, Schedule 6: Offset Credits.'
+  citation:
+    source: 'Indiana DOR Income Tax Information Bulletin #98, ''Indiana 529 Savings Plan Credit'' (2023-tax-year
+      amount section)'
+    url: https://www.in.gov/dor/files/ib98.pdf
+- name: Adoption Credit
+  type: nonrefundable
+  eligibility: You are eligible to claim the Indiana adoption credit if you claimed an adoption credit on your federal
+    return (federal Form 8839). A credit may also be allowed based on a federal adoption credit carryforward from
+    the preceding five tax years (2018-2022).
+  amount: The lesser of 20% of the federal adoption credit allowed per child, or $2,500 per child. A credit claimed
+    from a federal carryforward is likewise limited to $2,500 per child.
+  income_limit_2023: No separate Indiana income limit stated (federal Form 8839 phaseouts apply at the federal level).
+  claimed_on: 'Form IT-40, Schedule 5: Credits, line 11 (computed via the Adoption Credit Worksheet in the IT-40
+    instructions).'
+  citation:
+    source: '2023 IT-40 Full-Year Resident Individual Income Tax Booklet (Schedule 5, line 11, Adoption Credit;
+      references Income Tax Information Bulletin #111)'
+    url: https://forms.in.gov/Download.aspx?id=15792
 filing_requirement:
   note: 'A full-year Indiana resident must file Form IT-40 if gross income (total income before deductions) exceeds
     total allowable exemptions. For filing-requirement purposes Indiana allows a $1,000 exemption for the taxpayer,

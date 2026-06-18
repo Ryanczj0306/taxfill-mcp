@@ -36,6 +36,74 @@ residency:
 forms:
   resident: IT-540 (2023 Louisiana Resident Income Tax Return)
   part_year_or_nonresident: IT-540B (2023 Louisiana Nonresident and Part-Year Resident Income Tax Return)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Louisiana Earned Income Credit (LA EIC)
+  type: refundable
+  eligibility: 'Resident individuals who claimed and received a Federal Earned Income Credit (EIC) for 2023. Per
+    the form: the Federal EIC is available for certain individuals who work, have a valid Social Security Number,
+    and have a qualifying child, or are between ages 25 and 64; these individuals cannot be a qualifying child or
+    dependent of another person. Authorized by R.S. 47:297.8.'
+  amount: '5% of the Federal Earned Income Credit (Federal Form 1040/1040-SR, Line 27). LA EIC Worksheet: Line 1
+    (Federal EIC) multiplied by .05 (5 percent), rounded to the nearest dollar.'
+  income_limit_2023: No separate Louisiana income cap stated; eligibility tracks the federal EIC income limits (you
+    must have qualified for and received the Federal EIC).
+  claimed_on: Form IT-540, Line 15 (from the 2023 Louisiana Earned Income Credit Worksheet, Line 3)
+  citation:
+    source: Louisiana Department of Revenue – 2023 Form IT-540 Resident Income Tax Return (Louisiana Earned Income
+      Credit Worksheet)
+    url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
+- name: Louisiana Refundable Child Care Credit (federal AGI $25,000 or less)
+  type: refundable
+  eligibility: Louisiana residents with federal adjusted gross income of $25,000 or less who incurred child and
+    dependent care expenses in Louisiana (under IRC Section 21) for a qualifying child under age 13 (or a disabled
+    dependent/spouse) to allow the taxpayer, and spouse if married filing jointly, to work or look for work. Refundable
+    whether or not a federal child care credit was claimed. Authorized by R.S. 47:297.4.
+  amount: 'Qualified expenses capped at $3,000 for one qualifying person / $6,000 for two or more (Worksheet Line
+    3), limited to earned income, multiplied by a federal-AGI-based decimal that scales from .35 (AGI $0–$15,000)
+    down to .30 (AGI $23,000–$25,000), then multiplied by 50% (Worksheet Line 10 x .50). Decimal table verbatim:
+    $0–$15,000 = .35; $15,000–$17,000 = .34; $17,000–$19,000 = .33; $19,000–$21,000 = .32; $21,000–$23,000 = .31;
+    $23,000–$25,000 = .30.'
+  income_limit_2023: Federal adjusted gross income must be $25,000 or less to claim the refundable version.
+  claimed_on: Form IT-540, Line 13 (with expense/limit amounts on Lines 13A and 13B; from the 2023 Louisiana Refundable
+    Child Care Credit Worksheet)
+  citation:
+    source: Louisiana Department of Revenue – 2023 Form IT-540 (Louisiana Refundable Child Care Credit Worksheet)
+      and 2023 Louisiana Child Care Credit Instructions
+    url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
+- name: Louisiana Nonrefundable Child Care Credit (federal AGI greater than $25,000)
+  type: nonrefundable
+  eligibility: Louisiana residents with federal adjusted gross income greater than $25,000 who incurred qualifying
+    child and dependent care expenses (IRC Section 21) in Louisiana and claimed a federal child care credit. Unused
+    credit may be carried forward up to five years. Authorized by R.S. 47:297.4.
+  amount: 'Federal Child Care Credit (Federal Form 1040/1040-SR, Schedule 3, Line 2) multiplied by an AGI-based
+    percentage: $25,001–$35,000 = 30% (.30); $35,001–$60,000 = 10% (.10); over $60,000 = 10% (.10). If federal AGI
+    is greater than $60,000, the credit is limited to the LESSER of $25.00 or 10 percent of the federal credit.'
+  income_limit_2023: Federal adjusted gross income must be greater than $25,000 to claim on this line; for AGI over
+    $60,000 the credit is capped at $25 (or 10% of the federal credit, whichever is less).
+  claimed_on: Form IT-540, Schedule J – Nonrefundable Priority 3 Credits, Line 2 (carryforward on Line 3); from
+    the 2023 Louisiana Nonrefundable Child Care Credit Worksheet
+  citation:
+    source: Louisiana Department of Revenue – 2023 Form IT-540 (Schedule J and Nonrefundable Child Care Credit Worksheet)
+    url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
+- name: Louisiana School Readiness Child Care Expense Credit (refundable, federal AGI $25,000 or less)
+  type: refundable
+  eligibility: Taxpayers who qualify for the Louisiana Child Care Credit and who had a qualified dependent under
+    age six that attended a child care facility participating in the Quality Start Rating program (administered
+    by the Louisiana Dept. of Education) rated at two stars or higher. Facility must provide Form R-10614. Refundable
+    version requires federal AGI of $25,000 or less. Authorized by R.S. 47:6104.
+  amount: 'A percentage of the Louisiana child care credit based on the facility''s Quality Star Rating: Five Star
+    = 200% (2.0); Four Star = 150% (1.5); Three Star = 100% (1.0); Two Star = 50% (.50); One Star (or not participating)
+    = 0% (.00).'
+  income_limit_2023: Federal adjusted gross income of $25,000 or less for the refundable version (above $25,000
+    the credit is nonrefundable and claimed on Schedule J, with up to five-year carryforward).
+  claimed_on: Form IT-540, Line 14 (refundable; from the 2023 Louisiana Refundable School Readiness Credit Worksheet).
+    Nonrefundable version (AGI > $25,000) is on Form IT-540, Schedule J, Line 4 (carryforward Line 5).
+  citation:
+    source: Louisiana Department of Revenue – School Readiness Credit page and 2023 Form IT-540 (Refundable School
+      Readiness Credit Worksheet)
+    url: https://revenue.louisiana.gov/individuals/general-resources/school-readiness-credit/
 filing_requirement:
   note: 'Per the 2023 IT-540 instructions ("WHO MUST FILE A RETURN"): (1) A Louisiana resident who is required to
     file a federal individual income tax return must file a Louisiana return reporting all income earned in 2023.

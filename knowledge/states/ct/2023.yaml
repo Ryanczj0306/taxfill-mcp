@@ -36,6 +36,74 @@ forms:
   resident: Form CT-1040, Connecticut Resident Income Tax Return
   part_year_or_nonresident: Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return
     (use Schedule CT-SI to report Connecticut-source income)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Connecticut Earned Income Tax Credit (CT EITC)
+  type: refundable
+  eligibility: Connecticut full-year residents who claimed and were allowed the 2023 federal Earned Income Credit.
+    Taxpayer (and spouse/qualifying children, if applicable) must have valid Social Security Numbers by the return
+    due date, must have earned income from employment or self-employment, and must meet all federal EITC rules.
+    Either qualify with a qualifying child, or as a worker without a qualifying child aged 25-64.
+  amount: 40% (.40) of the federal earned income credit allowed on the 2023 federal return. Schedule CT-EITC Line
+    10 = federal EIC (Form 1040 Line 27) x 0.40.
+  income_limit_2023: Mirrors federal EITC income limits; additionally, investment income must be $11,950 or less
+    for 2023.
+  claimed_on: Schedule CT-EITC (Line 16), carried to Form CT-1040, Line 20a (or Form CT-1040X, Line 22a)
+  citation:
+    source: CT DRS - 2023 Form CT-1040 Instructions (Line 20a) and 2023 Schedule CT-EITC
+    url: https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf
+- name: Property Tax Credit (Schedule 3)
+  type: nonrefundable
+  eligibility: Connecticut residents who paid qualifying property tax during 2023 to a Connecticut political subdivision
+    on their primary residence and/or a privately owned or leased motor vehicle. Single/MFS/HOH limited to one motor
+    vehicle; MFJ/qualifying surviving spouse limited to two. (For 2023 there is no longer an age-65-or-dependent
+    eligibility restriction; the credit is available to any resident who paid qualifying property tax.) Cannot be
+    claimed if Form CT-1040 Line 10 is zero.
+  amount: Maximum credit is $300 per return regardless of filing status; limited to the lesser of qualifying property
+    tax paid or $300, then phased down by Connecticut AGI per the Property Tax Credit Table. Full $300 (no reduction)
+    allowed if Connecticut AGI is at or below the filing-status threshold below; above it, the credit is multiplied
+    by a decimal that decreases as AGI rises.
+  income_limit_2023: 'Full credit allowed at Connecticut AGI of: Single $49,500 or less; MFJ/qualifying surviving
+    spouse $70,500 or less; Married filing separately $35,250 or less; Head of household $54,500 or less. Above
+    these the credit phases out per the Property Tax Credit Table.'
+  claimed_on: Form CT-1040, Schedule 3 (Lines 60-68), carried to Form CT-1040, Line 11
+  citation:
+    source: CT DRS - 2023 Form CT-1040 Instructions (Line 11 / Schedule 3 - Property Tax Credit, pages 13-14)
+    url: https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf
+- name: Personal Tax Credit (low-income credit, Table E)
+  type: nonrefundable
+  eligibility: Connecticut resident individuals whose Connecticut AGI falls within the Table E phase-out ranges
+    for their filing status. Taxpayers below the no-tax threshold owe no income tax and need no credit; the personal
+    credit reduces the income tax for low-to-moderate income filers just above that threshold.
+  amount: 'A decimal percentage reduction of the calculated Connecticut income tax, up to .75 (75%), declining in
+    steps to .00 as Connecticut AGI rises. Example (Single): .75 for AGI over $15,000 up to $18,800; stepping down
+    to .00 once AGI exceeds $64,500.'
+  income_limit_2023: 'Credit fully phases out (decimal = .00) above: Single $64,500; MFJ/qualifying surviving spouse
+    $100,500; Married filing separately $52,500; Head of household $78,500. Filers at or below the no-tax floor
+    (MFS $12,000 / Single $15,000 / HOH $19,000 / MFJ $24,000) owe no tax.'
+  claimed_on: Tax Calculation Schedule, Line 8 (decimal from Table E), reducing the income tax reported on Form
+    CT-1040, Line 6
+  citation:
+    source: CT DRS - 2023 Form CT-1040 Instructions (Table E - Personal Tax Credits; Tax Calculation Schedule Line
+      8)
+    url: https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf
+- name: Credit for Income Taxes Paid to Qualifying Jurisdictions (Schedule 2)
+  type: nonrefundable
+  eligibility: Connecticut residents (and part-year residents) whose income reported on the CT return is also subject
+    to income tax in another qualifying jurisdiction (another U.S. state, a local jurisdiction within another state,
+    or the District of Columbia) where the taxpayer filed a return and paid income tax. Prevents double taxation
+    of the same income. A copy of the other jurisdiction's return must be attached.
+  amount: Limited to the lesser of (a) the income tax actually paid to the qualifying jurisdiction on income also
+    taxed by Connecticut, or (b) the proportion of Connecticut income tax attributable to that income (Connecticut
+    income tax multiplied by the ratio of income taxed in the other jurisdiction to Connecticut AGI). Computed on
+    Schedule 2.
+  income_limit_2023: No specific income limit; the credit amount is capped by the formula above.
+  claimed_on: Form CT-1040, Schedule 2 (Line 59), carried to Form CT-1040, Line 7
+  citation:
+    source: CT DRS - 2023 Form CT-1040 Instructions (Line 7 / Schedule 2 - Credit for Income Taxes Paid to Qualifying
+      Jurisdictions)
+    url: https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf
 filing_requirement:
   note: 'Connecticut uses a "Gross Income Test." A resident generally must file Form CT-1040 if Connecticut gross
     income exceeds the threshold for their filing status: $12,000 (married filing separately), $15,000 (single),

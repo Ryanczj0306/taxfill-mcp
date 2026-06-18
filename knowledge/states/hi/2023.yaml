@@ -39,6 +39,80 @@ residency:
 forms:
   resident: Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)
   part_year_or_nonresident: Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2023)
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Credit for Low-Income Household Renters; Credit for Child and Dependent Care Expenses.'
+credits:
+- name: Refundable Food/Excise Tax Credit
+  type: refundable
+  eligibility: Each individual income tax filer (including those with no taxable income) who is a Hawaii resident
+    physically present in Hawaii more than nine months during 2023, who is not (and is not eligible to be) claimed
+    as a dependent by another taxpayer for federal or Hawaii purposes, and who is not incarcerated for the entire
+    year. Credit is computed per qualified exemption (taxpayer, spouse, dependents, plus certain minor children
+    receiving public support).
+  amount: 'Per qualified exemption, based on federal AGI (line 6): Under $15,000 = $220; $15,000 to under $20,000
+    = $200; $20,000 to under $25,000 = $170; $25,000 to under $30,000 = $140; $30,000 to under $40,000 = $110. For
+    Married Filing Jointly/Separately, Head of Household, or Qualifying Surviving Spouse only: $40,000 to under
+    $50,000 = $90; $50,000 to under $60,000 = $70. Multiply the per-exemption amount by the number of qualified
+    exemptions.'
+  income_limit_2023: Federal AGI must be less than $60,000 (less than $40,000 if filing status is Single). Married
+    filing separately must combine both spouses' federal AGI; if $60,000 or more, no credit.
+  claimed_on: Form N-311; result entered on Form N-11, line 28 (or Form N-15, line 45)
+  citation:
+    source: Hawaii Department of Taxation, Form N-311 (Rev. 2023), Refundable Food/Excise Tax Credit
+    url: https://files.hawaii.gov/tax/forms/2023/n311_i.pdf
+- name: Refundable Earned Income Tax Credit (Hawaii EITC)
+  type: refundable
+  eligibility: A qualifying individual taxpayer who (a) files a federal return and claims the federal earned income
+    credit under IRC section 32 for the tax year, (b) uses the same filing status on the Hawaii return as on the
+    federal return, and (c) claims the same dependents on the Hawaii return as on the federal return. Part-year
+    residents and nonresidents prorate by the ratio of Hawaii AGI to federal AGI.
+  amount: Equal to 40% of the federal earned income tax credit allowed and properly claimed on the federal return
+    (increased from 20% to 40% by Act 163, SLH 2023, effective for taxable years beginning after Dec 31, 2022).
+    Part-year/nonresidents multiply by the Hawaii-to-federal AGI ratio.
+  income_limit_2023: No separate Hawaii income limit; eligibility follows the federal EITC income/eligibility limits
+    under IRC section 32.
+  claimed_on: Form N-356; new credit amount carried to Schedule CR (refundable credits section)
+  citation:
+    source: Hawaii Department of Taxation, Form N-356 (Rev. 2023), Earned Income Tax Credit
+    url: https://files.hawaii.gov/tax/forms/2023/n356_i.pdf
+- name: Credit for Low-Income Household Renters
+  type: refundable
+  eligibility: Hawaii resident present in Hawaii more than nine months during 2023 who occupies and pays rent for
+    real property in Hawaii used as a residence, whose rental unit was fully subject to real property tax (units
+    wholly or partially exempt do not qualify), and who is not (and is not eligible to be) claimed as a dependent
+    by another taxpayer. Net rent paid (after exclusions such as utilities, parking, ground rent, and rental subsidies/public
+    assistance) must exceed $1,000.
+  amount: $50 multiplied by the number of qualified exemptions (taxpayer, spouse, and qualifying dependents present
+    in Hawaii more than nine months). Add 1 additional exemption if the taxpayer is a qualified exemption age 65
+    or over, and 1 more for a qualifying spouse age 65 or over (Schedule X lines 9-10), so each senior adds another
+    $50.
+  income_limit_2023: Adjusted gross income (Form N-11, line 20 / N-15, line 35 Column A) must be less than $30,000.
+  claimed_on: Schedule X (Form N-11/N-15), Part I; result entered on Form N-11, line 29 (or Form N-15, line 46)
+  citation:
+    source: Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2023), Part I; and 2023 Form N-11 Instructions,
+      Line 29
+    url: https://files.hawaii.gov/tax/forms/2023/schx_i.pdf
+  unverified: true
+- name: Credit for Child and Dependent Care Expenses
+  type: nonrefundable
+  eligibility: Taxpayers who paid qualified expenses for the care of a qualifying person (e.g., dependent child
+    or disabled dependent/spouse) to enable them (and a spouse, if married) to work or look for work, including
+    payments to the State of Hawaii A+ Program. Generally married persons must file jointly; married-filing-separately
+    taxpayers may claim only if they meet the separate-filer requirements in the instructions. Provider information
+    must be reported on Schedule X, Part II.
+  amount: 'Applicable percentage (decimal) multiplied by qualified care expenses (capped at $10,000 for one qualifying
+    person or $20,000 for two or more). Decimal by AGI: under $25,001 = .25; $25,001-30,000 = .24; $30,001-35,000
+    = .23; $35,001-40,000 = .22; $40,001-45,000 = .21; $45,001-50,000 = .20; $50,001 and over = .15. Maximum credit
+    therefore $2,500 for one qualifying person and $5,000 for two or more (25% of the expense caps).'
+  income_limit_2023: No eligibility cutoff, but the credit percentage decreases with AGI (from 25% down to a floor
+    of 15% once AGI exceeds $50,000); credit is limited to the lesser of qualified expenses or earned income.
+  claimed_on: Schedule X (Form N-11/N-15), Part II; result entered on Form N-11, line 30 (or Form N-15, line 47)
+  citation:
+    source: Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2023), Part II; and 2023 Form N-11
+      Instructions, Line 30
+    url: https://files.hawaii.gov/tax/forms/2023/schx_i.pdf
+  unverified: true
 filing_requirement:
   note: 'A full-year resident must file Form N-11 if gross income subject to Hawaii income tax exceeds the filing
     threshold. Per the 2023 N-11 instructions, for individuals UNDER age 65 the gross-income thresholds are: Single

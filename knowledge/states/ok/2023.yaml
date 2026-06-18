@@ -39,6 +39,70 @@ residency:
 forms:
   resident: Form 511 - Oklahoma Resident Individual Income Tax Return (2023)
   part_year_or_nonresident: Form 511-NR - Oklahoma Nonresident/Part-Year Resident Income Tax Return (2023)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Oklahoma Earned Income Credit (EIC)
+  type: refundable
+  eligibility: Resident and part-year resident filers who qualify for the federal Earned Income Credit. Nonresidents
+    do not qualify. The federal EIC is recalculated using the federal EITC eligibility/computation rules in effect
+    for the 2020 tax year. A copy of the federal return and OTC Form 511-EIC must be provided.
+  amount: 5% of the federal earned income credit (computed under 2020 federal rules), then prorated by the ratio
+    of Oklahoma AGI to Federal AGI (Form 511 line 7 / line 1, capped at 100%). Computed on Schedule 511-G.
+  income_limit_2023: No separate Oklahoma income limit; eligibility follows the federal EITC income limits/phase-outs
+    as in effect for tax year 2020.
+  claimed_on: Form 511, line 28 (computed on Schedule 511-G; included in 'Payments and credits' total on line 30
+    and refundable). For 2023 the Oklahoma EIC is refundable.
+  citation:
+    source: Oklahoma Tax Commission, 2023 Oklahoma Resident Individual Income Tax Forms and Instructions (Form 511
+      packet) - Line 28 instructions and Schedule 511-G
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-Pkt.pdf
+- name: Child Care / Child Tax Credit
+  type: nonrefundable
+  eligibility: Resident, part-year resident, or nonresident military filers whose Federal AGI is $100,000 or less
+    and who are allowed either the federal credit for child care expenses or the federal child tax credit. Must
+    provide a copy of the federal return and, if applicable, the federal child care credit schedule.
+  amount: 'The greater of: (a) 20% of the federal credit for child care expenses, OR (b) 5% of the federal child
+    tax credit (including both the nonrefundable child tax credit and the refundable additional child tax credit).
+    The result is prorated by the ratio of Oklahoma AGI to Federal AGI (Form 511 line 7 / line 1). Computed on Schedule
+    511-F.'
+  income_limit_2023: Federal AGI of $100,000 or less. If Federal AGI is greater than $100,000, no credit is allowed.
+  claimed_on: Form 511, line 15 (computed on Schedule 511-F when Oklahoma AGI is less than Federal AGI). It is subtracted
+    from tax on Form 511 line 18 ('do not enter less than zero'), making it nonrefundable.
+  citation:
+    source: Oklahoma Tax Commission, 2023 Form 511 packet - Line 15 instructions and Schedule 511-F
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-Pkt.pdf
+- name: Sales Tax Relief Credit (Sales Tax Refund)
+  type: refundable
+  eligibility: 'Must be an Oklahoma resident for the entire year. General income limit is $20,000 of total gross
+    household income, raised to $50,000 if any one of the following applies: you can claim an exemption for a dependent;
+    you and/or your spouse are 65 or older by 12/31/2023; or you have a physical disability constituting a substantial
+    handicap to employment (proof required). Excluded: anyone who received TANF in any month of 2023; felons who
+    were DOC inmates for any part of the year; and individuals living in Oklahoma under a visa. Claimed on Form
+    538-S.'
+  amount: $40 per qualified exemption (total qualified exemptions in Box D x $40), per Form 538-S Part 4, line 15.
+  income_limit_2023: $20,000 total gross household income (general), or $50,000 if you have a dependent, are 65+,
+    or are disabled.
+  claimed_on: Form 538-S, line 15; carried to Form 511, line 25 (refundable; included in 'Payments and credits'
+    on Form 511 line 30).
+  citation:
+    source: Oklahoma Tax Commission, 2023 Form 538-S 'Claim for Credit/Refund of Sales Tax' (form + instructions),
+      and 2023 Form 511 packet Line 25 instructions
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/538-S.pdf
+- name: Credit for Property Tax Relief (Low Income Property Tax Credit)
+  type: refundable
+  eligibility: Any person 65 years of age or older, or any totally disabled person, who is head of a household and
+    was a resident of and domiciled in Oklahoma during the entire preceding calendar year, and whose gross household
+    income for that year does not exceed $12,000. The claim is for property taxes paid on the household occupied
+    during the preceding calendar year. Claim must be made on Form 538-H.
+  amount: Based on property taxes paid on the occupied household during the preceding year; the credit may not exceed
+    $200.
+  income_limit_2023: Gross household income must not exceed $12,000.
+  claimed_on: Form 538-H; carried to Form 511, line 24 ('Low Income Property Tax Credit'; refundable, included in
+    'Payments and credits' on Form 511 line 30).
+  citation:
+    source: Oklahoma Tax Commission, 2023 Form 511 packet - Line 24 instructions ('Credit for Property Tax Relief')
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-Pkt.pdf
 filing_requirement:
   note: 'Resident: every resident individual whose gross income from both within and outside Oklahoma exceeds the
     standard deduction plus personal exemption must file (Form 511); see charts on page 5 of the 2023 511 packet.

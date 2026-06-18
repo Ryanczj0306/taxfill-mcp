@@ -48,6 +48,67 @@ forms:
     part-year residents also file Montana Form 2, and additionally complete the Nonresident/Part-Year Resident Ratio
     Schedule (Form 2, page 8) to apportion the tax. (The DER-1 referenced in the instructions is for single-member
     LLCs owned by nonresidents, not the individual return.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Montana Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Full-year Montana residents who claimed the federal Earned Income Tax Credit on their federal return.
+    Nonresidents and taxpayers Married Filing Separately on separate forms do NOT qualify (enter 0). Enrolled tribal
+    members living on their reservation, members of section 501(d) agricultural organizations, part-year residents,
+    and servicemembers use the Montana EITC Reduction Worksheet to determine the Montana-earned-income portion.
+  amount: '3% of the federal EITC for tax year 2023 (line 23b = line 23a federal EITC x 0.03). Example from instructions:
+    $2,000 federal EITC yields a $60 Montana EITC. NOTE: rate rises to 10% beginning TY2024, not 2023.'
+  income_limit_2023: No separate Montana income limit; governed by federal EITC eligibility (the federal AGI/earned-income
+    limits that determine federal EITC qualification).
+  claimed_on: Form 2, page 1, line 23a (federal EITC amount) and line 23b (Montana EITC)
+  citation:
+    source: 2023 Montana Form 2 Individual Income Tax Return Instructions, page 11, 'Line 23 - Earned Income Tax
+      Credit'
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- name: Elderly Homeowner/Renter Credit
+  type: refundable
+  eligibility: Montana residents age 62 or older as of December 31, 2023, who lived in Montana at least 9 months
+    during the tax year, occupied a Montana residence as a renter, owner, or lessee for at least 6 months during
+    the year, and whose total gross household income (all household members) is under the limit. Available even
+    to those with no other filing requirement. Only one claim per household. For married claimants, only one spouse
+    must meet the age-62 test.
+  amount: Refundable credit of up to $1,150. The exact amount is determined by a formula based on gross/net household
+    income, rent, and property tax (Elderly Homeowner/Renter Credit Schedule, Form 2 page 10).
+  income_limit_2023: Gross household income of all household members must be less than $45,000 for the tax year
+    (if $45,000 or more, no credit).
+  claimed_on: Elderly Homeowner/Renter Credit Schedule (Form 2, page 10), with the credit carried to the Other Payments
+    and Refundable Credits Schedule, line 7
+  citation:
+    source: 2023 Montana Form 2 Instructions, pages 43-46 (Elderly Homeowner/Renter Credit Schedule) and page 45
+      line 7; also DOR Elderly Homeowner/Renter Credit web page
+    url: https://revenue.mt.gov/property/property-tax-help/montana-elderly-homeowner-renter-credit
+- name: Resident Capital Gains Credit
+  type: nonrefundable
+  eligibility: Full-year Montana residents with net capital gains. Net capital gains must first be reduced by any
+    Montana capital-loss carryover reported on the Montana Subtractions Schedule (lines 19 or 27). Nonresidents
+    and part-year residents instead use line 2 (Nonresident/Part-Year Resident Capital Gains Credit), 2% of Montana-source
+    net capital gains.
+  amount: '2% of net capital gains reported on Form 2, line 7. NOTE: this credit is repealed beginning TY2024 (replaced
+    by a reduced long-term capital gains tax rate), but is valid for 2023.'
+  income_limit_2023: No income limit; credit is a flat percentage of net capital gains.
+  claimed_on: Nonrefundable Credits Schedule, line 1 (Form 2, page 9)
+  citation:
+    source: 2023 Montana Form 2 Instructions, page 39, 'Line 1 - Resident Capital Gains Credit'
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- name: Credit for Income Tax Paid to Another State or Country
+  type: nonrefundable
+  eligibility: Full-year or part-year Montana residents who paid income tax to another state or country on an item
+    of income that is also included in their Montana Adjusted Gross Income while a Montana resident. Penalties and
+    interest paid to the other state/country are excluded; a separate schedule must be completed for each state/country.
+  income_limit_2023: No income limit; the credit is generally limited to the lesser of the tax paid to the other
+    state/country or the Montana tax attributable to that income (computed on the page 9 schedule).
+  claimed_on: Nonrefundable Credits Schedule, line 3 (Form 2, page 9), using the Credit for Income Tax Paid to Another
+    State or Country Schedule on page 9
+  citation:
+    source: 2023 Montana Form 2 Instructions, page 39, 'Line 3 - Credit for Income Tax Paid to Another State or
+      Country'
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
 filing_requirement:
   note: 'Per the 2023 Form 2 instructions ("Filing Requirements"): you must file a Montana return if, during the
     year, you were a resident or part-year resident of Montana, OR a nonresident who received Montana source income;

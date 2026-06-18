@@ -35,6 +35,79 @@ residency:
 forms:
   resident: Form IT-201, Resident Income Tax Return
   part_year_or_nonresident: Form IT-203, Nonresident and Part-Year Resident Income Tax Return
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Child and Dependent Care Credit (New York State).'
+credits:
+- name: New York State Earned Income Credit (EITC)
+  type: refundable
+  eligibility: You must have qualified for and claimed the federal earned income credit, and not have claimed the
+    Noncustodial parent earned income credit. Valid SSNs required for you and each qualifying child by the return
+    due date. Full-year residents get a fully refundable credit; nonresidents nonrefundable; part-year residents
+    partially refundable.
+  amount: 30% of the allowable federal earned income credit, reduced by the amount of any household credit claimed
+  income_limit_2023: Same income/earnings eligibility as the federal EIC; phases out by family size and earnings
+    (specific 2023 dollar thresholds not listed on the cited state page)
+  claimed_on: Form IT-215 (Claim for Earned Income Credit); amount carried to Form IT-201, line 65
+  citation:
+    source: NY Dept. of Taxation and Finance - Earned income credit (New York State)
+    url: https://www.tax.ny.gov/pit/credits/earned_income_credit.htm
+- name: Empire State Child Credit
+  type: refundable
+  eligibility: Full-year New York State resident (or married to a full-year resident filing jointly) with at least
+    one qualifying child under age 17 on December 31, 2023, who lived with you more than half the year, is claimed
+    as a dependent on your federal return, and is a U.S. citizen/national/resident. Valid SSN or ITIN required for
+    you and each child.
+  amount: The greater of (a) 33% of the portion of the federal child tax credit and additional child tax credit
+    attributable to qualifying children, or (b) $100 times the number of qualifying children. (If a child's SSN/ITIN
+    was issued after the return due date, only the $100-per-child amount is allowed.)
+  income_limit_2023: 'Federal AGI must be at or below: $110,000 (married filing jointly); $75,000 (single, head
+    of household, or qualifying surviving spouse); $55,000 (married filing separately)'
+  claimed_on: Form IT-213 (Claim for Empire State Child Credit), filed with Form IT-201
+  citation:
+    source: NY Dept. of Taxation and Finance - 2023 Instructions for Form IT-213
+    url: https://www.tax.ny.gov/forms/html-instructions/2023/it/it213i-2023.htm
+- name: Real Property Tax Credit (circuit-breaker, homeowners and renters)
+  type: refundable
+  eligibility: 'New York State resident for all of 2023 who occupied the same NY residence for at least six months,
+    was not claimed as a dependent on another taxpayer''s federal return, and whose residence was not fully exempt
+    from real property taxes. Homeowners: owned property with current market value of $85,000 or less and paid real
+    property taxes. Renters: average monthly rent of $450 or less (excluding charges for heat, gas, electricity,
+    furnishings, or board).'
+  amount: Maximum credit is $75 if all household members are under age 65; maximum is $375 if you, your spouse,
+    or a dependent is age 65 or older
+  income_limit_2023: Household gross income of $18,000 or less for 2023
+  claimed_on: Form IT-214 (Claim for Real Property Tax Credit); amount carried to Form IT-201, line 67 (or Form
+    IT-214 filed by itself for a refund if not required to file)
+  citation:
+    source: NY Dept. of Taxation and Finance - Real property tax credit (and 2023 Form IT-214)
+    url: https://www.tax.ny.gov/pit/credits/real_property_tax_credit.htm
+- name: Child and Dependent Care Credit (New York State)
+  type: refundable
+  eligibility: You are entitled to this credit if you qualified to claim the federal child and dependent care credit
+    (whether or not you actually claimed the federal credit). Full-year residents get a fully refundable credit;
+    nonresidents nonrefundable; part-year residents partially refundable.
+  income_limit_2023: No flat income cap; the credit is a percentage of the federal credit determined by a table
+    based on New York adjusted gross income (exact 2023 percentages not shown on the cited state landing page —
+    confirm against Form IT-216 instructions)
+  claimed_on: Form IT-216 (Claim for Child and Dependent Care Credit), filed with Form IT-201
+  citation:
+    source: NY Dept. of Taxation and Finance - Child and dependent care credit
+    url: https://www.tax.ny.gov/pit/credits/child_and_dependent_care_credit.htm
+  unverified: true
+- name: New York State Household Credit
+  type: nonrefundable
+  eligibility: New York State resident (full-year or part-year) who cannot be claimed as a dependent on another
+    individual's federal income tax return. Amount depends on filing status and number of exemptions claimed on
+    the federal return, looked up in the household credit tables in the Form IT-201 instructions.
+  amount: Determined from household credit tables; for a single filer with no dependents the maximum is $75 (federal
+    AGI up to $5,000), phasing down ($60, $50, $45, $40, $20) to $0 once federal AGI exceeds the income limit
+  income_limit_2023: Federal AGI of $28,000 or less (single); $32,000 or less (married filing jointly, qualifying
+    surviving spouse, or head of household); $32,000 or less (married filing separately)
+  claimed_on: Claimed directly on Form IT-201, line 40 (or Form IT-203 for nonresidents/part-year residents)
+  citation:
+    source: NY Dept. of Taxation and Finance - New York State household credit (and 2023 Instructions for Form IT-201)
+    url: https://www.tax.ny.gov/pit/credits/household_credit.htm
 filing_requirement:
   note: Full-year residents file IT-201 if they must file a federal return, or if federal AGI plus NY additions
     exceeds the NY filing threshold (per the 2023 IT-201 instructions, you must file even if not required to file

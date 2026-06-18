@@ -34,6 +34,88 @@ forms:
   part_year_or_nonresident: Form IN-111 (same return) plus Schedule IN-113, Vermont Income Adjustment Calculations
     (nonresidents and part-year residents complete IN-113 to apportion/allocate Vermont income; nonresidents complete
     Parts I and II)
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Renter Credit (renter rebate / circuit-breaker).'
+credits:
+- name: Vermont Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Full-year and part-year Vermont residents who qualify for and receive the federal Earned Income Tax
+    Credit. As of 2023 it is available to all qualifying VT residents regardless of whether they, their spouse,
+    or qualifying dependents have an SSN or ITIN (such returns must be paper-filed).
+  amount: 38% of the federal Earned Income Tax Credit (multiply federal EITC by 0.38). Part-year residents prorate
+    by Vermont portion of income.
+  income_limit_2023: No separate Vermont income limit; eligibility tracks the federal EITC income limits (federal
+    EITC must be claimed on federal Form 1040).
+  claimed_on: 'Schedule IN-112, Part II, Line 7 (federal EITC entered on Line 6); total refundable credits carried
+    to Form IN-111, Line 25c (Part-year residents: Line 12).'
+  citation:
+    source: Vermont Department of Taxes - 2023 Schedule IN-112 (form) and 2023 Schedule IN-112 Instructions
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-2023.pdf
+- name: Vermont Child Tax Credit
+  type: refundable
+  eligibility: Full-year and part-year Vermont resident families with a qualifying child age six or younger at the
+    close of the tax year (children born 2018 through 2023 for tax year 2023). Available to all qualifying VT residents
+    regardless of SSN/ITIN status of taxpayer, spouse, or dependents.
+  amount: $1,000 per qualifying child. Full credit if AGI (Form IN-111, Line 1) is $125,000 or less. Credit is reduced
+    by $20 for each additional $1,000 (or fraction) of AGI above $125,000, and phases out completely at $175,000
+    of AGI (per the official Child Tax Credit Table; e.g. $720 per child at $138,001-$141,000 AGI, $0 at $174,001+).
+  income_limit_2023: Full credit at AGI up to $125,000; partial credit for AGI between $125,000 and $175,000; no
+    credit at AGI of $175,000 or more.
+  claimed_on: 'Schedule IN-112, Part II, Line 4 (number of qualifying children on Line 3); total refundable credits
+    carried to Form IN-111, Line 25c (Part-year residents: Line 12).'
+  citation:
+    source: Vermont Department of Taxes - 2023 Schedule IN-112 Instructions (Child Tax Credit Table and phase-out
+      rule) and Tax Credits and Adjustments for Individuals page
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2023.pdf
+- name: Vermont Child and Dependent Care Credit
+  type: refundable
+  eligibility: Full-year and part-year Vermont residents who earn income, pay dependent care expenses, and are eligible
+    for the federal Child and Dependent Care Credit (federal Form 2441).
+  amount: 72% of the federal Child and Dependent Care Credit (multiply federal Form 2441, Line 11 by 0.72). Part-year
+    residents prorate by Vermont portion of income.
+  income_limit_2023: No separate Vermont income limit stated; eligibility tracks the federal Child and Dependent
+    Care Credit.
+  claimed_on: 'Schedule IN-112, Part II, Line 2 (federal amount on Line 1); total refundable credits carried to
+    Form IN-111, Line 25c (Part-year residents: Line 12).'
+  citation:
+    source: Vermont Department of Taxes - 2023 Schedule IN-112 Instructions and Tax Credits and Adjustments for
+      Individuals page
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2023.pdf
+- name: Renter Credit (renter rebate / circuit-breaker)
+  type: refundable
+  eligibility: 'Vermont renters who, for 2023: (1) were domiciled in Vermont as their main home for the entire calendar
+    year, (2) paid rent for at least six months in Vermont (need not be consecutive), (3) are not claimed as a dependent
+    on another taxpayer''s return, and (4) have income at or below the Renter Credit income limits, which vary by
+    county of residence and number of household members.'
+  amount: Income-based; the credit is computed from the renter's income and 10% of the U.S. HUD fair market rent
+    for an apartment of the household's size in the renter's county. Specific dollar amounts and the per-county/per-household
+    income eligibility limits vary and are determined via the official Renter Credit Calculator and tables (not
+    a single fixed figure).
+  income_limit_2023: County- and household-size-specific income limits apply (set per the Renter Credit limits);
+    a single statewide dollar limit was not confirmed from the cited source.
+  claimed_on: Form RCC-146, Renter Credit Claim (filed separately from / alongside the income tax return). Due April
+    15, 2024; may be late-filed through Oct. 15, 2024.
+  citation:
+    source: Vermont Department of Taxes - Renter Credit page and 2023 Form IN-111 Instructions (Renter Credit Claim
+      section)
+    url: https://tax.vermont.gov/individuals/renter-credit
+  unverified: true
+- name: Elderly or Permanently Disabled Tax Credit
+  type: nonrefundable
+  eligibility: 'Taxpayers who qualify for and receive the federal Credit for the Elderly or the Disabled: you are
+    age 65 or older, OR you retired on permanent and total disability and have taxable disability income, and your
+    income is within the federal limits. Intended for seniors and disabled persons with little tax-exempt retirement
+    or disability income.'
+  amount: 24% of the federal Credit for the Elderly or the Disabled.
+  income_limit_2023: Tracks the federal Credit for the Elderly or the Disabled income/AGI and nontaxable-benefit
+    limits; no separate Vermont dollar limit confirmed from the cited source.
+  claimed_on: Schedule IN-119, Vermont Tax Adjustments and Nonrefundable Credits, Part I (subtraction from Vermont
+    income tax); flows to Form IN-111, Line 9.
+  citation:
+    source: Vermont Department of Taxes - Tax Credits and Adjustments for Individuals page (credit amount/refundability)
+      and 2023 Form IN-111 Instructions, Line 9 (Schedule IN-119, Part I)
+    url: https://tax.vermont.gov/individuals/personal-income-tax/tax-credits
 filing_requirement:
   note: 'A 2023 Vermont income tax return must be filed by full-year residents, part-year residents, and nonresidents
     who are required to file a 2023 federal income tax return AND earned or received more than $100 in Vermont income,

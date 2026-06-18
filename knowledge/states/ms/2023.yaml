@@ -42,6 +42,70 @@ forms:
   resident: Form 80-105, Mississippi Resident Individual Income Tax Return (2023; Form 80-105-23-8-1-000, Rev. 11/23)
   part_year_or_nonresident: Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return
     (2023; Form 80-205-23-8-1-000, Rev. 11/23)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Dependent Care Credit (credit code 37)
+  type: nonrefundable
+  eligibility: Mississippi individuals who claim the federal Child and Dependent Care Credit on their federal return
+    for certain dependent care expenses. The taxpayer must actually claim the federal credit and must have federal
+    adjusted gross income (AGI) of not more than $50,000. New for tax year 2023.
+  amount: 25% of the amount of the federal Child and Dependent Care Credit claimed on the taxpayer's federal income
+    tax return; the credit is limited to the taxpayer's total Mississippi income tax liability.
+  income_limit_2023: Federal AGI must be not more than $50,000.
+  claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 37; total carried to Form 80-105 line 19 (resident)
+    or Form 80-205 line 21 (non-resident/part-year).
+  citation:
+    source: Mississippi Department of Revenue, 2023 Individual Income Tax Instructions (Form 80-100-23), 'Dependent
+      Care Credit' section
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf
+- name: Child Adoption Credit (credit code 25)
+  type: nonrefundable
+  eligibility: A Mississippi taxpayer who legally adopts a dependent child under the laws of Mississippi, for qualified
+    adoption expenses paid or incurred during the tax year for each child. The credit is claimed for the tax year
+    in which the adoption becomes final.
+  amount: Up to $10,000 per child for a dependent child residing in Mississippi before adoption (increased from
+    $5,000 effective for calendar year 2023 and after); up to $5,000 per child for a dependent child residing outside
+    Mississippi but legally adopted under Mississippi law (effective 2023 and after).
+  income_limit_2023: None stated.
+  claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 25; total carried to Form 80-105 line 19 (resident)
+    or Form 80-205 line 21 (non-resident/part-year). Any unused credit may be carried forward 5 years.
+  citation:
+    source: Mississippi Department of Revenue, 2023 Individual Income Tax Instructions (Form 80-100-23), 'Child
+      Adoption Credit' section and 2023 legislative summary (Senate Bill 2696)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf
+- name: Long Term Care Credit (credit code 17)
+  type: nonrefundable
+  eligibility: Mississippi individual taxpayers who pay premiums during the taxable year for certain qualified long-term
+    care insurance policies as defined in IRC Section 7702B. If more than one person is carried on the same policy,
+    the credit is available only for that one policy.
+  amount: 25% of premiums paid during the taxable year, not to exceed $500.00, or the taxpayer's income tax liability,
+    whichever is less, for each individual qualified long-term care insurance policy. No carryforward is allowed
+    for any unused portion.
+  income_limit_2023: None stated.
+  claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 17; total carried to Form 80-105 line 19 (resident)
+    or Form 80-205 line 21 (non-resident/part-year).
+  citation:
+    source: Mississippi Department of Revenue, 2023 Individual Income Tax Instructions (Form 80-100-23), 'Long Term
+      Care Credit' section
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf
+- name: Credit for Income Tax Paid to Another State
+  type: nonrefundable
+  eligibility: A legal resident of Mississippi who earns income in another state and is required to pay income tax
+    to that other state, on income also taxed by Mississippi. The taxpayer MUST file a return with the other state
+    and attach a copy (plus Form 80-160); W-2 withholding amounts alone are not sufficient. Not applicable on the
+    Non-Resident return.
+  amount: 'Credit for the total income tax due to the other state, subject to three statutory limitations under
+    Miss. Code Ann. Sec. 27-7-77: (1) cannot exceed the Mississippi income tax due on line 17; (2) cannot exceed
+    income tax actually paid to the other state; (3) cannot exceed an amount computed by applying the highest applicable
+    Mississippi rates to the net taxable income reported to the other state.'
+  income_limit_2023: None (limited instead by the formula above).
+  claimed_on: Form 80-105 line 18 (resident return); supported by Form 80-160 with a copy of the other state's return
+    attached.
+  citation:
+    source: 'Mississippi Department of Revenue, 2023 Individual Income Tax Instructions (Form 80-100-23), ''Line
+      18: Credit for Income Tax Paid to Another State'' section'
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf
 filing_requirement:
   note: 'Per 2023 instructions (Form 80-100), file a Mississippi return if any apply: you had Mississippi income
     tax withheld (other than gambling); you are a non-resident or part-year resident with income taxed by Mississippi

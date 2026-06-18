@@ -38,6 +38,92 @@ residency:
 forms:
   resident: Form M1, Individual Income Tax
   part_year_or_nonresident: Schedule M1NR, Nonresidents/Part-Year Residents (filed together with Form M1)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Minnesota Working Family Credit (state Earned Income Tax Credit)
+  type: refundable
+  eligibility: Full-year or part-year MN residents who earned income from a job or self-employment (mirrors federal
+    EIC). Must not be claimed as a dependent; investment income must be under $11,000; if no qualifying children,
+    you (or spouse) must be age 19-64 and have a U.S. main home for more than half of 2023. Not available to full-year
+    nonresidents, those with a 2- or 10-year federal EIC ban, or (generally) Married Filing Separately. Combined
+    with the Child Tax Credit and the Credit for Qualifying Older Children on Schedule M1CWFC.
+  amount: '4% of the first $8,750 of earned income (max $350 base), plus a Credit for Qualifying Older Children
+    of $925 (one older child), $2,100 (two), or $2,500 (three or more). 2023 maximum total Working Family Credit:
+    $350 with zero qualifying older children, $1,275 with one, $2,450 with two, $2,850 with three or more.'
+  income_limit_2023: Credit is reduced when adjusted gross income exceeds $29,500 ($35,000 if Married Filing Jointly).
+    Reduction is 12% of AGI above the limit (9% if you have a qualifying older child but no qualifying child for
+    the Child Tax Credit).
+  claimed_on: Schedule M1CWFC, line 15 (flows to Schedule M1REF line 2, then Form M1 line 22)
+  citation:
+    source: 2023 Schedule M1CWFC, Minnesota Child and Working Family Credits (form + instructions), MN Department
+      of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-23.pdf
+- name: Minnesota Child Tax Credit
+  type: refundable
+  eligibility: Full-year or part-year MN residents with one or more qualifying children under age 18 at the end
+    of 2023 (qualifying child determined on Schedule M1DQC). Same base eligibility as the Working Family Credit
+    (not a dependent of another, investment income under $11,000, not a full-year nonresident, generally not Married
+    Filing Separately). ITIN may be used if no SSN.
+  amount: $1,750 for each qualifying child under age 18, with no cap on the number of qualifying children.
+  income_limit_2023: Credit is reduced when adjusted gross income exceeds $29,500 ($35,000 if Married Filing Jointly);
+    the reduction is 12% of AGI above the limit.
+  claimed_on: Schedule M1CWFC, line 8 (combined credit on line 15 flows to Schedule M1REF line 2; number of qualifying
+    children entered on M1REF line 2a, then Form M1 line 22)
+  citation:
+    source: 2023 Schedule M1CWFC, Minnesota Child and Working Family Credits (instructions, 'What's new?'), MN Department
+      of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-23.pdf
+- name: Minnesota Child and Dependent Care Credit
+  type: refundable
+  eligibility: MN taxpayers (Single, Head of Household, Qualifying Surviving Spouse, or Married Filing Jointly)
+    who had earned income and paid someone (not a spouse, the qualifying child's parent, or a dependent) to care
+    for a qualifying person (e.g., a child under 13 or a disabled dependent/spouse) so they could work or look for
+    work. Also available to certain licensed family daycare operators caring for their own young child, and for
+    a child born in 2023 even without actual expenses. Unlike the federal credit, the MN credit is refundable.
+  amount: A percentage of qualifying care expenses, capped at $3,000 (one qualifying person) or $6,000 (two or more).
+    The percentage ranges from 35% (AGI $15,000 or less) down to 20% (AGI over $43,000) per Table 3; thus the pre-phaseout
+    maximum is about $2,100 for two or more qualifying persons. Above AGI of $59,210 the credit is further reduced
+    by a worksheet phase-out.
+  income_limit_2023: Federal adjusted gross income must be less than $71,210 (one qualifying person) or less than
+    $83,210 (two or more qualifying persons).
+  claimed_on: Schedule M1CD, line 9 (flows to Schedule M1REF line 1, then Form M1 line 22)
+  citation:
+    source: 2023 Schedule M1CD, Child and Dependent Care Credit (form + instructions), MN Department of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2023-12/m1cd-23.pdf
+- name: Renter's Property Tax Refund (renter's credit / 'circuit-breaker')
+  type: refundable
+  eligibility: MN renters who in 2023 lived in a building where property taxes were payable (or payments in lieu
+    of property taxes were payable) and received a CRP (Certificate of Rent Paid) from their landlord. Not available
+    to anyone who can be claimed as a dependent on someone else's 2023 federal return. For tax year 2023 this was
+    claimed on a separate return (Form M1PR), not the M1 income tax return (it moved onto the income tax return
+    starting in 2024).
+  amount: Refund is based on household income and rent constituting property taxes, looked up in the Renters Refund
+    Table in the M1PR instructions. Maximum renter refund for 2023 is $2,570.
+  income_limit_2023: Total household income must be less than $73,270 to qualify for the renter's refund.
+  claimed_on: Form M1PR, Homestead Credit Refund (for Homeowners) and Renter's Property Tax Refund — renter's refund
+    amount on line 18
+  citation:
+    source: 2023 Form M1PR instructions (Homestead Credit Refund and Renter's Property Tax Refund), MN Department
+      of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1pr-inst-23.pdf
+- name: K-12 Education Credit
+  type: refundable
+  eligibility: MN parents/guardians who paid education-related expenses in 2023 for a qualifying child in grades
+    K-12 (a qualifying child is the same as for the federal Earned Income Credit). Qualifying expenses include things
+    like tutoring by a qualified instructor, instructional materials, and certain educational services (private/parochial
+    school tuition does NOT qualify for the credit). Refundable, so it can produce a refund even with no tax liability.
+  amount: 75% of qualifying K-12 education expenses, up to a maximum of $1,500 per qualifying child (form multiplies
+    the number of K-12 qualifying children by $1,500 when AGI is $70,000 or less; the smaller of 75% of expenses
+    or that cap is the credit).
+  income_limit_2023: 'AGI limit varies by number of K-12 qualifying children: $76,000 (1 or 2 children), $79,000
+    (3), $82,000 (4), $85,000 (5), $88,000 plus $3,000 for each additional child (6 or more). Above the limit you
+    do not qualify (but may use the K-12 Education Subtraction instead).'
+  claimed_on: Schedule M1ED, line 13 (flows to Schedule M1REF line 3, then Form M1 line 22)
+  citation:
+    source: 2023 Schedule M1ED, K-12 Education Credit (form + instructions) and 2023 Form M1 instructions, MN Department
+      of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-02/m1ed-23.pdf
 filing_requirement:
   note: 'Full-year residents must file a 2023 Form M1 if required to file a federal return, or if income exceeds
     the filing-requirement chart amount for their filing status/age (e.g., Single born on/after Jan 2, 1959: $13,825;

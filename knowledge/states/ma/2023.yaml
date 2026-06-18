@@ -51,6 +51,72 @@ forms:
   part_year_or_nonresident: Form 1-NR/PY — Massachusetts Nonresident or Part-Year Resident Income Tax Return (2023).
     Taxpayers who are both nonresident and part-year resident also complete Schedule R/NR (Resident/Nonresident
     Worksheet).
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Limited Income Credit (with No Tax Status).'
+credits:
+- name: Massachusetts Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Massachusetts residents (full- or part-year) who qualify for and claim the federal Earned Income
+    Credit. The MA credit piggybacks on federal EITC eligibility (earned income, investment-income limits, qualifying-child
+    rules). Part-year residents prorate the credit by days resided in MA.
+  amount: '40% of the federal earned income credit claimed on the taxpayer''s federal return (effective for tax
+    years beginning on or after Jan 1, 2023). Part-year residents: 40% of federal credit x (MA-resident days / total
+    days in year).'
+  income_limit_2023: No separate MA income limit; tied to the federal EITC income/AGI limits for 2023 (federal maximum
+    earned income referenced as $63,398 for 2023).
+  claimed_on: 2023 Form 1 (Resident), line 43 (refundable credits section, totaled on line 48); Form 1-NR/PY for
+    nonresidents/part-year.
+  citation:
+    source: MA DOR Earned Income Tax Credit (EITC) page; Governor's Budget Tax Expenditure Budget item 1.605 (Earned
+      Income Credit); 2023 Massachusetts Tax Cuts Legislation
+    url: https://www.mass.gov/info-details/massachusetts-earned-income-tax-credit-eitc
+- name: Senior Circuit Breaker Tax Credit (Real Estate Tax Credit for persons age 65+)
+  type: refundable
+  eligibility: Taxpayer must be age 65 or older by Dec 31, 2023, own or rent and occupy a principal residence in
+    Massachusetts, and meet income/valuation limits. Married taxpayers must file jointly to claim. (Married filing
+    separately and dependents claimed on another return generally do not qualify.)
+  amount: 'For homeowners: the amount by which 2023 property tax payments (including water/sewer use charges and
+    stormwater fees, excluding abatements/exemptions) exceed 10% of total income, capped at the 2023 maximum credit
+    of $2,590. For renters: the amount by which 25% of rent paid for the principal residence exceeds 10% of total
+    income, also capped at $2,590.'
+  income_limit_2023: '2023 total income may not exceed $69,000 (single, not head of household), $86,000 (head of
+    household), or $103,000 (married filing jointly). Homeowners: assessed valuation of the principal residence
+    (before residential exemptions, after abatements) may not exceed $1,025,000.'
+  claimed_on: 2023 Form 1, line 44 (enclose Schedule CB, Circuit Breaker Credit); Form 1-NR/PY for part-year residents.
+  citation:
+    source: 'MA DOR TIR 23-11: Annual Update of Real Estate Tax Credit for Certain Persons Age 65 and Older; MA
+      DOR Senior Circuit Breaker Tax Credit page; 2023 Schedule CB'
+    url: https://www.mass.gov/technical-information-release/tir-23-11-annual-update-of-real-estate-tax-credit-for-certain-persons-age-65-and-older
+- name: Child and Family Tax Credit
+  type: refundable
+  eligibility: 'Resident (or part-year resident for the period of residency) maintaining a household that includes
+    a qualifying individual: (1) a dependent under age 13 who qualifies as a federal dependent; (2) a dependent
+    or spouse who is physically or mentally incapable of self-care and principally lives with the taxpayer; or (3)
+    a dependent who is age 65 or older or disabled. Cannot be claimed by a full-year nonresident or by married taxpayers
+    filing separate MA returns. Created by the 2023 Tax Relief legislation, replacing the prior Household Dependent
+    Care Credit / Dependent Member of Household credit and removing the former two-dependent cap.'
+  amount: $310 for each qualifying individual for tax years beginning on or after Jan 1, 2023, with no cap on the
+    number of qualifying individuals. (Increases to $440 each for tax years beginning on or after Jan 1, 2024.)
+  income_limit_2023: No income limit specified.
+  claimed_on: 2023 Form 1, line 46 (refundable credits section, totaled on line 48); Form 1-NR/PY for nonresidents/part-year
+    residents. Schedule DI used to report dependent information.
+  citation:
+    source: MA DOR Child and Family Tax Credit page; Governor's Budget Tax Expenditure Budget item 1.628 (Child
+      and Family Tax Credit); 2023 Massachusetts Tax Cuts Legislation
+    url: https://www.mass.gov/info-details/massachusetts-child-and-family-tax-credit
+- name: Limited Income Credit (with No Tax Status)
+  type: nonrefundable
+  eligibility: Low-income MA filers whose Massachusetts AGI exceeds the No Tax Status threshold but falls within
+    the Limited Income Credit range (thresholds vary by filing status and number of dependents). It reduces tax
+    for filers just above the No Tax Status cutoff. Computed via the Massachusetts AGI Worksheet / Limited Income
+    Credit Worksheet in the Form 1 instructions (Schedule NTS-L-NR/PY for part-year residents and nonresidents).
+  claimed_on: 2023 Form 1 (No Tax Status / Limited Income Credit lines, via the Form 1 instructions worksheets);
+    Schedule NTS-L-NR/PY for nonresidents and part-year residents.
+  citation:
+    source: MA DOR No Tax Status and Limited Income Credit page; 2023 Schedule NTS-L-NR/PY
+    url: https://www.mass.gov/info-details/massachusetts-no-tax-status-and-limited-income-credit
+  unverified: true
 filing_requirement:
   note: 'RESIDENT: Must file Form 1 if a MA resident and gross income (from all sources, inside or outside MA) was
     more than $8,000; if $8,000 or less, no return required. NONRESIDENT: Must file Form 1-NR/PY if Massachusetts-source
