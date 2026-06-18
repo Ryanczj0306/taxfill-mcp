@@ -45,7 +45,7 @@ jobs:
           set -e
           TMP="$(mktemp -d)"
           uv venv "$TMP/venv" --python 3.11
-          uv pip install --python "$TMP/venv/bin/python" --find-links dist/ "$(ls dist/taxfill_mcp-*.whl)"
+          uv pip install --python "$TMP/venv/bin/python" --no-cache --find-links dist/ "$(ls dist/taxfill_mcp-*.whl)"
           cd "$TMP"   # leave the repo so the resolver cannot fall back to repo-root data
           env -u TAXFILL_DATA_DIR "$TMP/venv/bin/python" - <<'PY'
           import asyncio

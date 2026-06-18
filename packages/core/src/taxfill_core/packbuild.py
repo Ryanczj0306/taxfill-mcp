@@ -29,6 +29,41 @@ class FieldInfo(dict):
     """A single widget: name, type, page, rect, maxlen, on_states (a plain dict)."""
 
 
+def _qualified_name(annot) -> str:
+    """Fully qualified field name: /T parts joined by '.' up the /Parent chain.
+
+    Mirrors taxfill_core.filler._qualified_name so a skeleton's `field` matches the
+    name the filler/verifier address on real hierarchical (XFA) IRS AcroForms — not
+    just the leaf /T (which only coincides on flat state forms).
+    """
+    parts: list[str] = []
+    node = annot
+    seen: set[int] = set()
+    while node is not None:
+        if id(node) in seen:
+            break
+        seen.add(id(node))
+        title = node.get("/T")
+        if title:
+            parts.append(str(title))
+        parent = node.get("/Parent")
+        node = parent.get_object() if parent is not None else None
+    return ".".join(reversed(parts))
+
+
+def _inherited(annot, key: str):
+    """Walk the /Parent chain for an inheritable attribute (/FT, /MaxLen)."""
+    node = annot
+    seen: set[int] = set()
+    while node is not None and id(node) not in seen:
+        seen.add(id(node))
+        if node.get(key) is not None:
+            return node.get(key)
+        parent = node.get("/Parent")
+        node = parent.get_object() if parent is not None else None
+    return None
+
+
 def extract_fields(pdf_path: str | Path) -> list[FieldInfo]:
     """Every AcroForm widget in document order (name, type, page, rect, maxlen, on_states)."""
     reader = PdfReader(str(pdf_path))
@@ -38,24 +73,22 @@ def extract_fields(pdf_path: str | Path) -> list[FieldInfo]:
             obj = annot.get_object()
             if obj.get("/Subtype") != "/Widget":
                 continue
-            node = obj
-            name, ft = obj.get("/T"), obj.get("/FT")
-            if name is None and obj.get("/Parent") is not None:
-                node = obj.get("/Parent").get_object()
-                name, ft = node.get("/T"), node.get("/FT")
-            if name is None:
+            name = _qualified_name(obj)
+            if not name:
                 continue
+            ft = _inherited(obj, "/FT")
+            maxlen = _inherited(obj, "/MaxLen")
             on_states: list[str] = []
             if ft == "/Btn":
                 ap = obj.get("/AP")
                 if ap and ap.get_object().get("/N"):
                     on_states = [str(k) for k in ap.get_object()["/N"].get_object().keys() if k != "/Off"]
             out.append(FieldInfo(
-                name=str(name),
+                name=name,
                 type="checkbox" if ft == "/Btn" else "text",
                 page=page_index,
                 rect=[round(float(x)) for x in (obj.get("/Rect") or [])],
-                maxlen=int(node.get("/MaxLen")) if node.get("/MaxLen") is not None else None,
+                maxlen=int(maxlen) if maxlen is not None else None,
                 on_states=on_states,
             ))
     return out
