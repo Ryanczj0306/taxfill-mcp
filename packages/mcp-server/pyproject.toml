@@ -12,6 +12,7 @@ dependencies = [
 
 [project.scripts]
 taxfill-mcp = "taxfill_mcp.server:main"
+taxfill = "taxfill_mcp.cli:main"
 
 [tool.uv.sources]
 taxfill-core = { workspace = true }

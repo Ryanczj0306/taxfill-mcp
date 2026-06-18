@@ -62,7 +62,7 @@ from taxfill_core.datadir import data_root
 from taxfill_core import load_state_knowledge
 assert 'site-packages' in str(data_root())
 assert load_state_knowledge('ca', 2023).jurisdiction == 'states/ca'
-assert len(asyncio.run(s.mcp.list_tools())) == 17
+assert len(asyncio.run(s.mcp.list_tools())) == 21
 print('self-contained OK')
 " )
 ```
