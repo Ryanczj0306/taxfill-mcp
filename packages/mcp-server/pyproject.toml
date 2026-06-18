@@ -4,6 +4,7 @@ version = "0.1.0.dev0"
 description = "MCP server exposing the TaxFill core engine over stdio (official mcp python-sdk). v0.1 in development — not yet published to PyPI."
 requires-python = ">=3.11"
 license = "MIT"
+readme = "README.md"
 dependencies = [
     "mcp>=1.2",
     "taxfill-core",

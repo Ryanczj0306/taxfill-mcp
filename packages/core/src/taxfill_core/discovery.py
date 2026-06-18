@@ -11,13 +11,14 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from taxfill_core.datadir import formpacks_dir
 from taxfill_core.schemas.formpack import FormPack, load_pack
 
 __all__ = ["FormSummary", "LineMap", "FormMap", "list_forms", "get_form_map", "load_form_pack"]
 
 
 def _repo_formpacks_dir() -> Path:
-    return Path(__file__).resolve().parents[4] / "formpacks"
+    return formpacks_dir()
 
 
 def _pack_path(form: str, year: int, jurisdiction: str, base_dir: str | Path | None) -> Path:
