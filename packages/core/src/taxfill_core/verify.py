@@ -297,8 +297,12 @@ def normalize_on_disk(pack_field: PackField, raw: str) -> str:
 
 
 def qualified_field_name(pack: FormPack, pack_field: PackField) -> str:
-    """Fully qualified AcroForm name: ``<acroform_root>.<field path>``."""
-    return f"{pack.acroform_root}.{pack_field.field}"
+    """Fully qualified AcroForm name: ``<acroform_root>.<field path>``.
+
+    Flat AcroForms (e.g. CA FTB) have top-level field names and an empty
+    ``acroform_root``, so the name is the field itself with no leading dot.
+    """
+    return f"{pack.acroform_root}.{pack_field.field}" if pack.acroform_root else pack_field.field
 
 
 def _lookup_raw(pack: FormPack, pack_field: PackField, fields: Mapping[str, str]) -> str | None:

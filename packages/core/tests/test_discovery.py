@@ -7,9 +7,11 @@ from taxfill_core.discovery import FormMap, FormSummary, get_form_map, list_form
 
 def test_list_all_packs():
     allf = list_forms()
-    assert len(allf) == 26  # the M2 federal pack set
     assert all(isinstance(s, FormSummary) for s in allf)
     assert all(s.source_url.startswith("https://") for s in allf)
+    # 26 federal (the M2 set) plus the growing state packs.
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 26
+    assert any(s.jurisdiction.startswith("states/") for s in allf)
 
 
 def test_list_filters_by_jurisdiction_and_year():

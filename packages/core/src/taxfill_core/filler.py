@@ -344,7 +344,9 @@ def fill_form(
 
     for line, value in values.items():
         pf = by_line[line]
-        qualified = f"{pack.acroform_root}.{pf.field}"
+        # Flat AcroForms (e.g. CA FTB) have top-level field names and an empty
+        # acroform_root; XFA-derived forms (federal) prepend the subform root.
+        qualified = f"{pack.acroform_root}.{pf.field}" if pack.acroform_root else pf.field
         is_checkbox = pf.type == "checkbox"
         if qualified in target_line and not (is_checkbox and qualified in checkbox_lines):
             # Without this check the later line silently overwrites the
