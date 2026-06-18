@@ -21,6 +21,7 @@ EXPECTED_TOOLS = {
     "verify_form", "verify_filing", "render_form", "calc", "residency",
     "estimate_refund", "get_sources", "filing_summary", "file_and_pay", "state_scope",
     "list_document_kinds", "extract_document",
+    "workspace_save", "workspace_load", "workspace_record_position", "workspace_reconcile",
 }
 
 
@@ -82,6 +83,19 @@ def test_list_document_kinds_and_extract():
     by = {f["key"]: f for f in out["fields"]}
     assert by["1"]["value"] == "50000" and by["1"]["provenance"]["file"] == "documents/w2.png"
     assert out["gaps"] == [] and out["citation"]["url"].startswith("https://www.irs.gov/")
+
+
+def test_workspace_persist_resume_reconcile(tmp_path):
+    root = str(tmp_path / "ws")
+    _run(_call("workspace_save", {"year": 2023, "profile": {"identity": {}}, "root": root}))
+    loaded = _data(_run(_call("workspace_load", {"year": 2023, "root": root})))
+    assert loaded["profile"] == {"identity": {}}
+    _run(_call("workspace_record_position", {"year": 2023, "root": root, "position": {
+        "topic": "std deduction", "value": "13850",
+        "citation": {"source": "IRS Pub 17", "url": "https://www.irs.gov/publications/p17"},
+    }}))
+    rec = _data(_run(_call("workspace_reconcile", {"year": 2023, "root": root})))
+    assert "p17" in rec["reconciliation_md"] and rec["status"]["positions"]["decided"] == 1
 
 
 def test_intake_checklist_start():
