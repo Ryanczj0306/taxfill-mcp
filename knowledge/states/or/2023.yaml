@@ -39,6 +39,84 @@ forms:
   resident: Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040)
   part_year_or_nonresident: 'Nonresident: Form OR-40-N (150-101-048). Part-year resident: Form OR-40-P (150-101-055).
     Both share the same instruction booklet (150-101-048-1).'
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Oregon Earned Income Credit (EIC)
+  type: refundable
+  eligibility: You must qualify for the federal Earned Income Tax Credit (EITC). Low- to moderate-income working
+    individuals and families. ITIN filers who cannot claim the federal EITC because the taxpayer, spouse, or child
+    has an ITIN rather than a work-eligible SSN may still qualify (see Schedule OR-EIC-ITIN). RDPs may claim it
+    using their 'as if' federal return.
+  amount: 9% (0.09) of your federal EITC if your youngest dependent is at least 3 years old at the end of the tax
+    year, or you have no dependents; 12% (0.12) of your federal EITC if your youngest dependent is younger than
+    3 at the end of the tax year (2023 Form OR-40 instructions, Table 6, line 36).
+  income_limit_2023: Same income limits as the federal EITC (Oregon does not set a separate income cap; eligibility
+    follows federal EITC qualification).
+  claimed_on: Form OR-40, line 36 (Refundable credits section). Computed via the Earned Income Credit Worksheet
+    in the OR-40 instructions.
+  citation:
+    source: Oregon DOR 2023 Form OR-40 Instructions (Full-year Resident), publication 150-101-040-1, Rev. 12-06-23,
+      page 18 (line 36, Table 6).
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf
+- name: Working Family Household and Dependent Care Credit (WFHDC)
+  type: refundable
+  eligibility: Low- and middle-income working families who paid qualified expenses for household services or dependent
+    care for one or more qualifying individuals (generally a dependent under age 13, or a disabled dependent or
+    disabled spouse) so the taxpayer (and spouse, if filing jointly) could work, look for work, or attend school.
+    Filing status must be single, head of household, qualifying surviving spouse, or married filing jointly (married
+    filing separately only in limited circumstances). The care provider cannot be your spouse, the parent of the
+    qualifying individual, or a person you can claim as a dependent. Tied to IRC Section 21; federal Form 2441 must
+    be completed.
+  amount: A refundable credit equal to a percentage of qualified care expenses. Qualified expenses are capped at
+    $12,000 for one qualifying individual or $24,000 for two or more (and cannot exceed your earned income, or the
+    lesser of each spouse's earned income if filing jointly). The applicable credit percentage is based on household
+    size, AGI, and the age of the youngest qualifying individual, determined using the DOR WFHDC online calculator
+    or Publication WFHDC-TB (the percentage table is not printed in the Schedule OR-WFHDC instructions).
+  income_limit_2023: 'Adjusted gross income (Form OR-40 line 7 for full-year residents) must be less than the limit
+    for your household size: household size 2 = $59,160; 3 = $74,580; 4 = $90,000; 5 = $105,420; 6 = $120,840; 7
+    = $136,260; 8 or more = $151,680. (Higher-education/student-status qualification uses a lower AGI table by household
+    size: 2 = $21,692; 3 = $27,346; 4 = $33,000; 5 = $38,654; 6 = $44,308; 7 = $49,962; 8 or more = $55,616.)'
+  claimed_on: Schedule OR-WFHDC (must be included with the return). For Form OR-40 filers, the credit amount (Schedule
+    OR-WFHDC line 29) is reported on Schedule OR-ASC, Section F, using code 895, which flows to Form OR-40 refundable
+    credits (line 39, Total refundable credits from Schedule OR-ASC).
+  citation:
+    source: Oregon DOR 2023 Schedule OR-WFHDC Instructions, publication 150-101-195-1, Rev. 10-12-23, pages 1 (refundable
+      status, $12,000/$24,000 caps, AGI-limit table by household size), 4 (student AGI-limit table), and 7 (line
+      29 reporting via Schedule OR-ASC Section F, code 895).
+    url: https://www.oregon.gov/dor/forms/FormsPubs/schedule-or-wfhdc-inst_101-195-1_2023.pdf
+- name: Oregon Kids Credit
+  type: refundable
+  eligibility: Low-income taxpayers with one or more dependents age 5 or younger at the end of 2023 listed on the
+    Oregon return. Filing status must be single, married filing jointly, head of household, or qualifying surviving
+    spouse (married filing separately does not qualify). New for tax year 2023.
+  amount: 'Up to $1,000 per qualifying dependent age 5 or younger, for up to five dependents (maximum 5 children).
+    Full $1,000-per-child credit when qualifying income is $25,000 or less; the credit phases out for qualifying
+    income between $25,000 and $30,000 and is unavailable at $30,000 or more (Oregon Kids Credit Worksheet: line
+    4 phaseout amount $25,000; STOP if qualifying income is $30,000 or more).'
+  income_limit_2023: Qualifying income (Oregon income after subtractions, adjusted per the worksheet) must be under
+    $30,000. Full credit at $25,000 or less; partial credit between $25,000 and $30,000.
+  claimed_on: Form OR-40, line 37 (Refundable credits section). Computed via the Oregon Kids Credit Worksheet in
+    the OR-40 instructions.
+  citation:
+    source: Oregon DOR 2023 Form OR-40 Instructions (Full-year Resident), publication 150-101-040-1, Rev. 12-06-23,
+      pages 18-19 (line 37, credit amount up to $1,000 per dependent, age 5 or younger, qualifying income under
+      $30,000, $25,000 phaseout amount, max 5 children).
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf
+- name: Exemption credit
+  type: nonrefundable
+  eligibility: Available to the taxpayer, spouse (if filing jointly), and qualifying dependents (a personal exemption
+    credit per allowed exemption). Phased out for higher-income filers.
+  amount: '$236 for each qualifying personal exemption (2023 Exemption Credit Worksheet: line 4 times $236). Reduced/eliminated
+    when federal AGI exceeds the threshold below.'
+  income_limit_2023: Credit is $0 if federal AGI is more than $200,000 (or more than $100,000 if filing status is
+    single or married filing separately).
+  claimed_on: Form OR-40, line 25 (Credits-Nonrefundable section). Computed via the Exemption credit worksheet in
+    the OR-40 instructions.
+  citation:
+    source: Oregon DOR 2023 Form OR-40 Instructions (Full-year Resident), publication 150-101-040-1, Rev. 12-06-23,
+      page 17 (line 25, $236 per exemption, $200,000/$100,000 federal AGI phaseout).
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf
 filing_requirement:
   note: '2023 OR-40 instructions: "You need to file if your gross income is more than the amount shown below for
     your filing status" (Table 1 full-year resident thresholds, e.g. Single with 0 box checked $7,305; MFJ 0 boxes

@@ -42,6 +42,67 @@ forms:
   part_year_or_nonresident: PA-40 (same form) - "Nonresidents and part-year residents use the same PA-40 form as
     PA residents"; fill in residency oval (N) Nonresident or (P) Part-Year Resident. Use PA Schedule NRH/PA Schedule
     SP as applicable; nonresident/part-year apportionment per PA-40 page 43 instructions.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Tax Forgiveness Credit (Special Tax Forgiveness).'
+credits:
+- name: Tax Forgiveness Credit (Special Tax Forgiveness)
+  type: nonrefundable
+  eligibility: PA residents (and part-year/nonresidents with PA-taxable income) who meet the eligibility-income
+    limits and are not claimed as a dependent on another person's federal return (a dependent child can still qualify
+    if the claiming taxpayer also qualifies). Determined by filing status, number of dependent children, and total
+    eligibility income (which includes some nontaxable income such as interest, dividends, and gifts).
+  amount: 'A percentage (100% down to 10%, in 10-point steps) of PA tax liability, set by the Eligibility Income
+    Tables (PA-40 booklet p.39) based on eligibility income and number of dependents. Formula: Schedule SP Line
+    16 = PA tax liability (Line 14) x forgiveness decimal (Line 15). Base eligibility income is $6,500 (single)
+    / $13,000 (married), increased by ~$9,500 per dependent child. Example from DOR: a single parent with two children
+    with income up to $27,750, and a married couple with two children with income up to $34,250, can qualify for
+    100% forgiveness.'
+  income_limit_2023: Varies by filing status and dependents; e.g., single with no dependents qualifies for some
+    forgiveness up to about $8,750 of eligibility income; married with no dependents up to about $15,250; thresholds
+    rise ~$9,500 per dependent child.
+  claimed_on: PA-40 Schedule SP, Section IV Line 16, carried to PA-40 Line 21
+  citation:
+    source: PA Dept of Revenue – Tax Forgiveness page and 2023 PA-40 Schedule SP
+    url: https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax/tax-forgiveness
+  unverified: true
+- name: Child and Dependent Care Enhancement Tax Credit
+  type: refundable
+  eligibility: PA residents who qualified for and claimed the federal Child and Dependent Care Credit under IRC
+    Section 21 on their federal Form 1040 (Form 2441). Must have paid care expenses for a qualifying child under
+    13 or a spouse/dependent incapable of self-care, and must attach federal Form 2441 and 1040 Schedule 3 to the
+    PA-40.
+  amount: 'For tax year 2023 the PA credit equals 100% of the federal Child and Dependent Care Credit (federal Form
+    2441, Line 9a). Federal qualifying expenses are capped at $3,000 (one qualifying person) / $6,000 (two or more),
+    with the federal credit rate running from 35% down to 20% by income. Resulting maximum PA credit: $1,050 (one
+    dependent) / $2,100 (two or more); minimum $600 (one) / $1,200 (two or more) when expenses are at least $3,000
+    per dependent.'
+  income_limit_2023: No hard income cutoff to claim; the federal credit percentage (and thus the PA credit) phases
+    down from 35% to 20% as income rises (the higher 35% rate applies at lower incomes, e.g. roughly household income
+    of $43,000 and under for the maximum).
+  claimed_on: PA-40 Schedule DC, Section III Line 2 (amount from federal Form 2441 Line 9a), carried to PA-40 Line
+    23 (Total Other Credits)
+  citation:
+    source: PA Dept of Revenue – Child and Dependent Care Credit page and 2023 PA-40 Schedule DC (PA-40 DC) form/instructions
+    url: https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax/child-and-dependent-care-credit
+- name: Property Tax/Rent Rebate Program (PTRR)
+  type: refundable
+  eligibility: 'Pennsylvania residents who are age 65 or older; widows/widowers age 50 or older; or people with
+    disabilities age 18 or older, who owned and occupied a home (and paid property tax) or rented during the claim
+    year. NOTE: This is a standalone rebate filed on Form PA-1000, not a credit on the PA-40 income tax return.
+    For claim year 2023 (rebates paid in 2024) it was expanded by Act 7 of 2023.'
+  amount: 'Flat standard rebate by household income for claim year 2023: $1,000 for income $0-$8,000; $770 for $8,001-$15,000;
+    $460 for $15,001-$18,000; $380 for $18,001-$45,000. Maximum base rebate $1,000 (up from $650). Rebate may not
+    exceed actual property taxes or rent paid. Supplemental rebates of up to 50% of the base are available to certain
+    homeowners with income of $30,000 or less (Philadelphia/Pittsburgh/Scranton residents, or those paying more
+    than 15% of income in property tax).'
+  income_limit_2023: $45,000 household income for both homeowners and renters (only half of Social Security income
+    is counted toward eligibility income).
+  claimed_on: Form PA-1000, Property Tax or Rent Rebate Claim (standalone application, not the PA-40)
+  citation:
+    source: PA Dept of Revenue – 2023 Property Tax/Rent Rebate Program Statistical Report (rebate parameter table,
+      claim year 2023)
+    url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/news-and-statistics/reportsstats/ptrr/stats/documents/2023_ptrr_stats.pdf
 filing_requirement:
   note: Per the 2023 PA-40 instructions, a PA resident, nonresident or part-year resident must file a 2023 PA-40
     if they received total PA gross taxable income in excess of $33 during 2023 (even if no tax is due) and/or incurred

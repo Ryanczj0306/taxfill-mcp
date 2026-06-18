@@ -40,6 +40,61 @@ forms:
   part_year_or_nonresident: Form IT-140 (check "Filing as Nonresident" or "Filing as Part-Year Resident"), completed
     together with Schedule A (Form IT-140), "Nonresidents/Part-Year Residents Schedule of Income." (Nonresident
     composite filers use Form IT-140NRC.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Family Tax Credit (FTC)
+  type: nonrefundable
+  eligibility: Low-income WV resident individuals/families who file with at least one exemption. Filers with zero
+    exemptions cannot claim it, and persons who pay the federal Alternative Minimum Tax are ineligible. Eligibility
+    and credit percentage depend on family size (number of exemptions, boxes a+b+c) and Modified Federal AGI. Computed
+    on Schedule FTC-1 and attached to the return; if filing married-filing-separately use Table 2.
+  amount: 'A percentage of WV income tax due (line 8 of IT-140), from 100% down to a phase-out, based on family
+    size and Modified Federal AGI. For a 1-person household the credit is 100% of tax when Modified Federal AGI
+    is $14,580 or less, then 90% from $14,580 to $14,880, 80% to $15,180, 70% to $15,480, 60% to $15,780, 50% to
+    $16,080, 40% to $16,380, etc. (100% thresholds rise with family size: e.g. $19,720 for family size 2, $24,860
+    for size 3, $30,000 for size 4).'
+  income_limit_2023: No fixed cutoff; the credit percentage phases from 100% to 0% as Modified Federal AGI rises
+    within each family-size bracket (e.g., 1-person household 100% at <=$14,580, phasing out above ~$16,680; 4-person
+    household 100% at <=$30,000).
+  claimed_on: Schedule FTC-1, then carried to line 2 of the IT-140 RECAP (Tax Credit Recap) schedule
+  citation:
+    source: WV Tax Division - 2023 Personal Income Tax Forms & Instructions (IT-140 booklet), Schedule FTC-1 and
+      2023 Family Tax Credit Tables (pages 11-12)
+    url: https://tax.wv.gov/Documents/PIT/2023/it140.PersonalIncomeTaxFormsAndInstructions.2023.pdf
+- name: Homestead Excess Property Tax Credit (HEPTC)
+  type: refundable
+  eligibility: Low-income owners of an owner-occupied WV residence whose WV real property tax paid (less any Senior
+    Citizen Tax Credit) exceeds 4% of gross household income. Low-income means federal AGI of 300% or less of the
+    federal poverty guideline for the household size. Homestead Exemption program participation is NOT required.
+    No credit if any owner of the homestead is not a low-income person. Filers who pay federal AMT are flagged/excluded.
+    Schedule HEPTC-1 and the Class 2 property tax receipt must be filed.
+  amount: 'Refundable credit equal to the amount by which property tax paid (less SCTC) exceeds 4% of gross household
+    income, capped at a maximum of $1,000. Formula on Schedule HEPTC-1: line 3 (WV property tax paid less SCTC)
+    minus line 7 (4% x total gross income); enter that result or $1,000, whichever is lower.'
+  income_limit_2023: 'Federal AGI (or income less Social Security if not required to file federal) must be: $43,740
+    or less (1 person), $59,160 (2), $74,580 (3), $90,000 (4); add $15,420 for each additional person in the home.'
+  claimed_on: Schedule HEPTC-1, line 9, carried to Form IT-140 line 18
+  citation:
+    source: WV Tax Division - 2023 Schedule HEPTC-1 (Homestead Excess Property Tax Credit), Form IT-140
+    url: https://tax.wv.gov/Documents/PIT/2023/it140.schedule-HEPTC1.2023.pdf
+- name: Senior Citizen Tax Credit (SCTC)
+  type: refundable
+  eligibility: Restricted to homeowners who participate in the county Homestead Exemption program (generally age
+    65+ or permanently/totally disabled), who owe and pay a Class II property tax liability on a homestead-exemption-eligible
+    home (assessed value greater than $20,000 before the $20,000 homestead exemption), and whose federal AGI is
+    less than 150% of the federal poverty guidelines. The WV Tax Division mails Form WV SCTC-A to program participants;
+    the original SCTC-A must be filed (preparer-created substitutes are denied).
+  amount: Refundable credit based on the ad valorem (Class II) property taxes paid on the first $20,000 (or portion
+    thereof) of taxable assessed value above the $20,000 Homestead Exemption. The dollar amount is taxpayer-specific
+    (varies with property tax paid); it is computed on Form SCTC-A and is not a single fixed figure.
+  income_limit_2023: 'Federal AGI must be less than 150% of federal poverty guidelines: maximum is $21,870 for a
+    1-person household, $29,580 (2), $37,290 (3), $45,000 (4); add $7,710 for each additional person.'
+  claimed_on: Schedule/Form SCTC-A (line 2, Part III), carried to Form IT-140 line 17
+  citation:
+    source: WV Tax Division - 2023 Personal Income Tax Forms & Instructions (IT-140 booklet), Senior Citizens Tax
+      Credit Information (page 34) and Form IT-140 line 17 instructions
+    url: https://tax.wv.gov/Documents/PIT/2023/it140.PersonalIncomeTaxFormsAndInstructions.2023.pdf
 filing_requirement:
   note: 'Must file a WV return if: you were a WV resident for the entire year; a part-year resident; or a nonresident
     whose FAGI includes WV-source income. You must file even if not required to file federally if your WV adjusted

@@ -35,6 +35,71 @@ forms:
     Form 140EZ are also available for eligible residents)
   part_year_or_nonresident: 'Nonresident: Arizona Form 140NR - Nonresident Personal Income Tax Return. Part-year
     resident: Arizona Form 140PY - Part-Year Resident Personal Income Tax Return.'
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Dependent Tax Credit
+  type: nonrefundable
+  eligibility: Available to taxpayers who claim qualifying dependents (a dependent for federal income tax purposes)
+    on the Arizona return. Credit amount is higher for dependents under age 17. Cannot also claim the same individual
+    as a qualifying parent/grandparent exemption (line 41) or Other Exemption (line 40).
+  amount: $100 for each qualifying dependent under age 17 at year-end; $25 for each qualifying dependent age 17
+    or older at year-end. Reduced (phased out) for AGI above the limits.
+  income_limit_2023: Begins to phase out when federal AGI (Form 140, line 12) exceeds $200,000 (single, head of
+    household, or married filing separate) or $400,000 (married filing joint).
+  claimed_on: Arizona Form 140, page 2, line 49 (also Form 140A). Worksheet/Tables in the Form 140 instructions.
+  citation:
+    source: Arizona Department of Revenue, 2023 Form 140 Resident Personal Income Tax Return Instructions (Line
+      49 - Dependent Tax Credit)
+    url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140i.pdf
+- name: Family Income Tax Credit
+  type: nonrefundable
+  eligibility: Arizona residents whose total income does not exceed the maximum allowed for their filing status
+    and number of dependents. The credit only reduces tax and cannot be refunded.
+  amount: $40 for each person (taxpayer, spouse, and qualifying dependents), capped at a maximum of $240 for married-filing-joint
+    or head-of-household returns (filing status 4 or 5) and $120 for single or married-filing-separate returns (filing
+    status 6 or 7). Computed on Worksheet II in the Form 140 instructions.
+  income_limit_2023: 'Maximum income depends on filing status and number of dependents. Married filing joint (Table
+    I): $20,000 for 0-1 dependents, $23,600 for 2, $27,300 for 3, $31,000 for 4 or more. Head of household (Table
+    II): $20,000 (0-1), $20,135 (2), $23,800 (3), $25,200 (4), $26,575 (5+). Single or married filing separate (Table
+    III): $10,000 for 0 or more dependents.'
+  claimed_on: Arizona Form 140, page 2, line 50 (also Form 140A). Worksheets I and II in the Form 140 instructions.
+  citation:
+    source: Arizona Department of Revenue, 2023 Form 140 Instructions (Line 50 - Family Income Tax Credit, Tables
+      I-III, Worksheets I-II)
+    url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140i.pdf
+- name: Credit for Increased Excise Taxes
+  type: refundable
+  eligibility: Taxpayer must have an SSN valid for employment, meet the income threshold for their filing status,
+    not be claimed as a dependent by another taxpayer, and not have been sentenced to at least 60 days in a county/state/federal
+    prison during 2023. Married joint filers may claim for a spouse with a valid SSN or ITIN.
+  amount: '$25 for each person (taxpayer, spouse, and qualifying dependents who are Arizona residents), up to a
+    maximum credit of $100 per household. (Worksheet: number of dependents plus 2 if MFJ or plus 1 otherwise, times
+    $25, not to exceed $100.)'
+  income_limit_2023: Federal AGI (Form 140, line 12) of $25,000 or less for married filing joint or head of household;
+    $12,500 or less for single or married filing separate.
+  claimed_on: Arizona Form 140, page 2, line 56 (also Form 140A). If also claiming the property tax credit, computed
+    on Form 140PTC (line 17) and carried to Form 140 line 56.
+  citation:
+    source: Arizona Department of Revenue, 2023 Form 140 Instructions (Line 56 - Increased Excise Tax Credit; Credit
+      for Increased Excise Taxes Worksheet)
+    url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140i.pdf
+- name: Property Tax Credit (Form 140PTC)
+  type: refundable
+  eligibility: Must be an Arizona resident for the entire year and have paid Arizona property tax or rent on a main
+    home during 2023. Must be either (a) age 65 or older by Dec 31, 2023, or (b) under 65 but receiving Title 16
+    Supplemental Security Income (SSI) payments. Total household income must be under the limits below.
+  amount: A set credit amount based on total household income, per the Schedule 1 (live alone) and Schedule 2 (live
+    with others) tables on Form 140PTC. Maximum credit is $502 (for the lowest income brackets), decreasing as household
+    income rises.
+  income_limit_2023: Total household income less than $3,751 if you lived alone, or less than $5,501 if others lived
+    with you.
+  claimed_on: Arizona Form 140PTC, line 15 (claimed as a refund itself, or carried to Form 140 page 2 line 57 /
+    Form 140A line 27 when filing a return). Cannot be claimed on Form 140EZ.
+  citation:
+    source: Arizona Department of Revenue, 2023 Form 140PTC Property Tax Refund (Credit) Claim and Instructions
+      (eligibility tests; Schedules 1 & 2 credit tables)
+    url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140PTCi.pdf
 filing_requirement:
   note: 'Per the AZ DOR Form 140 instructions, an Arizona return is required for 2023 when gross income exceeds
     the federal standard-deduction-based thresholds: more than $13,850 (single or married filing separately), more

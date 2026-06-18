@@ -38,6 +38,83 @@ forms:
   part_year_or_nonresident: Form 1040N with Nebraska Schedule III (Computation of Nebraska Tax for Nonresidents
     and Partial-Year Residents); there is no separate nonresident form number — nonresidents and partial-year residents
     file the same Form 1040N and must attach Schedule III.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Nebraska Earned Income Credit (state EITC)
+  type: refundable
+  eligibility: Full-year and partial-year Nebraska residents who qualify for and claim the federal Earned Income
+    Credit. Nonresidents may not claim it. If filing Nebraska married-filing-separately, eligibility depends on
+    whether the federal EIC is allowed on a federal MFS return.
+  amount: 10% of the federal earned income credit (federal credit x .10). Partial-year residents multiply by the
+    line-4 Schedule III apportionment ratio.
+  income_limit_2023: 'Same income limits as the federal EITC. For 2023 the federal earned-income thresholds cited
+    in the booklet worksheet are: $17,640 ($24,210 MFJ) for no qualifying children; $46,560 ($53,120 MFJ) for one
+    child; $52,918 ($59,478 MFJ) for two children; $56,838 ($63,398 MFJ) for three or more children.'
+  claimed_on: Form 1040N, line 35 (residents); Nebraska Schedule III, lines 11-12 (partial-year residents)
+  citation:
+    source: 2023 Nebraska Individual Income Tax Booklet (Form 1040N booklet), line 35 instructions and Nebraska
+      Earned Income Worksheet
+    url: https://revenue.nebraska.gov/sites/revenue.nebraska.gov/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf
+- name: Nebraska Child/Dependent Care Credit (refundable, AGI $29,000 or less)
+  type: refundable
+  eligibility: Full-year and partial-year residents whose federal AGI (Form 1040N, line 5) is $29,000 or less and
+    who have qualifying federal child & dependent care expenses. Must complete and attach Nebraska Form 2441N (the
+    federal Form 2441 alone is not accepted). Taxpayers who file federal MFJ but Nebraska MFS cannot claim it; nonresidents
+    cannot claim it.
+  amount: 'Refundable amount = (smallest of qualifying expenses/earned income, capped at $8,000 for one qualifying
+    person or $16,000 for two or more) x federal decimal (ranges from .35 at AGI of $15,000 or less down to .28
+    for AGI over $27,000 up to $29,000) x Nebraska state decimal (1.00 for AGI of $22,000 or less, stepping down:
+    .90, .80, .70, .60, .50, .40, and .30 for AGI over $28,000 up to $29,000).'
+  income_limit_2023: Federal AGI of $29,000 or less (Form 1040N line 5). Above $29,000 the credit is instead the
+    nonrefundable version on line 23 (25% of the federal credit).
+  claimed_on: Form 2441N, line 11, carried to Form 1040N, line 33 (residents); partial-year residents use Form 2441N
+    line 12 / Schedule III line 6c
+  citation:
+    source: 2023 Nebraska Form 2441N (Nebraska Child and Dependent Care Expenses) and 2023 Form 1040N booklet line
+      33 instructions
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_2441N_2023_Final.pdf
+- name: Nebraska Child/Dependent Care Nonrefundable Credit (AGI over $29,000)
+  type: nonrefundable
+  eligibility: Resident taxpayers with federal AGI greater than $29,000 who claim the federal child & dependent
+    care credit. Must include a copy of federal Form 2441 (credit disallowed if not received). Taxpayers who file
+    federal MFJ but Nebraska MFS cannot claim it; nonresidents cannot claim it (partial-year residents use Schedule
+    III line 6c).
+  amount: 25% (.25) of the amount on line 2 of Schedule 3, Federal Form 1040 (i.e., 25% of the federal child & dependent
+    care credit).
+  income_limit_2023: Federal AGI greater than $29,000 (taxpayers at or below $29,000 use the refundable version
+    on line 33 instead).
+  claimed_on: Form 1040N, line 23 (residents); Nebraska Schedule III, line 6c (partial-year residents)
+  citation:
+    source: 2023 Nebraska Individual Income Tax Booklet (Form 1040N booklet), line 23 instructions
+    url: https://revenue.nebraska.gov/sites/revenue.nebraska.gov/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf
+- name: Credit for School District & Community College Property Taxes (Form PTC)
+  type: refundable
+  eligibility: Any individual (and other entities) who paid qualified Nebraska school district and/or community
+    college property taxes during the 2023 calendar year, directly or through a mortgage escrow. Qualified taxes
+    exclude amounts for bonded indebtedness, voter-approved levy overrides, and certain delinquent taxes. Must file
+    Form PTC with the return; the DOR Property Tax Look-up Tool computes qualified amounts.
+  amount: School district property tax credit = 30% (.30) of total Nebraska school district property taxes paid
+    in 2023. Community college property tax credit = 55% (.55) of total Nebraska community college property taxes
+    paid in 2023.
+  income_limit_2023: None (not income-limited).
+  claimed_on: Form PTC, line 1 carried to Form 1040N line 36 (school district); Form PTC line 2 carried to Form
+    1040N line 37 (community college)
+  citation:
+    source: 2023 Nebraska Property Tax Credit, Form PTC (8-822-2023), included in the 2023 Form 1040N booklet, Part
+      A computation
+    url: https://revenue.nebraska.gov/sites/revenue.nebraska.gov/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf
+- name: Nebraska Personal Exemption Credit (residents only)
+  type: nonrefundable
+  eligibility: Nebraska residents may claim a credit for each Nebraska personal exemption reported on line 4, Form
+    1040N (taxpayer, spouse, and dependents). Nonresidents and partial-year residents claim a prorated version on
+    Schedule III line 7.
+  amount: $157 per Nebraska personal exemption (multiply $157 by the number of exemptions on line 4, Form 1040N).
+  income_limit_2023: None (not income-limited).
+  claimed_on: Form 1040N, line 18 (residents); Nebraska Schedule III, line 7 (nonresidents/partial-year residents)
+  citation:
+    source: 2023 Nebraska Individual Income Tax Booklet (Form 1040N booklet), line 18 instructions
+    url: https://revenue.nebraska.gov/sites/revenue.nebraska.gov/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf
 filing_requirement:
   note: 'Per the 2023 Form 1040N booklet ("Who Must File?"): A Nebraska RESIDENT must file if they (a) are required
     to file a federal individual income tax return reporting a federal tax liability before credits, OR (b) have
