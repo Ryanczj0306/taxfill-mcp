@@ -18,7 +18,7 @@ formpacks/federal/<tax_year>/<form_key>/pack.yaml
 - `<form_key>` MUST be one of:
 
   `f8843`, `f1040nr`, `f1040`, `sched_1`, `sched_2`, `sched_3`,
-  `sched_a`, `sched_b`, `sched_c`, `sched_oi`
+  `sched_a`, `sched_b`, `sched_c`, `sched_oi`, `sched_se`
 
   These keys are also the only valid cross-form reference targets (below).
 
