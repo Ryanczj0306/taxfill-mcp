@@ -19,6 +19,7 @@ from pathlib import Path
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from taxfill_core.datadir import knowledge_dir
 from taxfill_core.knowledge import validate_gov_url
 
 __all__ = ["Source", "SourcesResult", "get_sources"]
@@ -41,8 +42,7 @@ _MATCH_THRESHOLD = 2
 
 
 def _repo_knowledge_dir() -> Path:
-    # packages/core/src/taxfill_core/sources.py -> repo root is parents[4].
-    return Path(__file__).resolve().parents[4] / "knowledge"
+    return knowledge_dir()
 
 
 class Source(BaseModel):

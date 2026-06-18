@@ -28,6 +28,8 @@ from urllib.parse import urlparse
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from taxfill_core.datadir import knowledge_dir
+
 
 def validate_gov_url(value: str) -> str:
     """Validate a citation/source URL: http(s) scheme AND an official US gov host.
@@ -74,8 +76,9 @@ _JURISDICTION_RE = re.compile(r"^(federal|states/[a-z]{2})$")
 
 
 def _repo_knowledge_dir() -> Path:
-    """Default pack location: ``<repo root>/knowledge`` in a source checkout."""
-    return Path(__file__).resolve().parents[4] / "knowledge"
+    """Default pack location: the repo ``knowledge/`` (checkout) or the
+    wheel-packaged ``_data/knowledge`` — see :mod:`taxfill_core.datadir`."""
+    return knowledge_dir()
 
 
 def _as_exact_decimal(value: object) -> object:

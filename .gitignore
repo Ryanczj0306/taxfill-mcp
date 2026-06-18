@@ -20,3 +20,6 @@ build/
 # User tax workspaces hold SSN-bearing documents and drafts (PII).
 # They must NEVER be committable.
 taxfill-workspace/
+
+# staged data copy for packaging (source of truth is repo-root knowledge/ + formpacks/)
+packages/core/src/taxfill_core/_data/

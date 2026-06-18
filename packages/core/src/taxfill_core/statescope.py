@@ -21,6 +21,7 @@ from typing import Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
+from taxfill_core.datadir import knowledge_dir
 from taxfill_core.knowledge import Citation, StateKnowledge, load_state_knowledge
 from taxfill_core.schemas.profile import Profile
 
@@ -56,7 +57,7 @@ class StateScopeResult(BaseModel):
 
 
 def _repo_knowledge_dir() -> Path:
-    return Path(__file__).resolve().parents[4] / "knowledge"
+    return knowledge_dir()
 
 
 def _load_no_income_tax(base_dir):
