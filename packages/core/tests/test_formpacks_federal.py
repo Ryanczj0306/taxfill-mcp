@@ -53,6 +53,7 @@ KNOWN_FORM_KEYS = frozenset(
         "sched_b",
         "sched_c",
         "sched_oi",
+        "sched_se",
     }
 )
 
