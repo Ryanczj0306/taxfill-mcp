@@ -40,6 +40,57 @@ forms:
     full-year resident returns.
   part_year_or_nonresident: Form 740-NP (Kentucky Individual Income Tax Return — Nonresident or Part-Year Resident).
     Reciprocal-state residents with only KY wages use Form 740-NP-R.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Family Size Tax Credit
+  type: nonrefundable
+  eligibility: Resident individuals/families with modified gross income (MGI) at or below 133% of the federal poverty
+    threshold for their family size. Family size is capped at 4 (yourself, spouse if living in same household, and
+    qualifying children). Available even to someone claimed as a dependent on a parent's return (family size 1).
+    To get ANY credit, 2023 MGI must be at or below $19,391 (family of 1), $26,228 (family of 2), $33,064 (family
+    of 3), or $39,900 (family of 4+).
+  amount: Calculated tax (Form 740 line 19) multiplied by a credit percentage from the Family Size Tax Credit Table.
+    Percentage is 100% at/below the threshold ($14,580 fam.1 / $19,720 fam.2 / $24,860 fam.3 / $30,000 fam.4+) and
+    steps down 90/80/70/60/50/40/30/20/10/0% as MGI rises through the table bands, reaching 0% above $19,391 (fam.1),
+    $26,228 (fam.2), $33,064 (fam.3), $39,900 (fam.4+).
+  income_limit_2023: '2023 threshold (100% credit ceiling): $14,580 (family of 1), $19,720 (family of 2), $24,860
+    (family of 3), $30,000 (family of 4 or more). Phases to 0% credit above MGI of $19,391 / $26,228 / $33,064 /
+    $39,900 respectively. If total MGI is $39,900 or less you may qualify.'
+  claimed_on: Form 740, lines 20 (family size box) and 21 (line 19 tax x decimal percentage); percentage determined
+    from Schedule ITER Family Size Tax Credit Table (Section C)
+  citation:
+    source: Kentucky Department of Revenue — 2023 Form 740 instruction packet (42A740) and 2023 Schedule ITC (42A740-ITC),
+      Section C Family Size Tax Credit Table
+    url: https://revenue.ky.gov/Forms/Schedule%20ITC%202023.pdf
+- name: Child and Dependent Care Credit
+  type: nonrefundable
+  eligibility: Residents who qualified for and claimed the federal child and dependent care credit on federal Form
+    2441 (care expenses for a qualifying child/dependent so the taxpayer can work). If you did not meet federal
+    filing requirements but would have been entitled to the federal credit, you may still claim the Kentucky credit
+    by completing federal Form 2441 and noting 'did not meet federal filing requirements.' Kentucky has no separate
+    income limit; eligibility tracks the federal credit.
+  amount: 20% (.20) of the federal child and dependent care credit from federal Form 2441, line 11.
+  income_limit_2023: None specified by Kentucky; follows federal Form 2441 rules.
+  claimed_on: Form 740, line 24 (federal Form 2441 line 11 x 20%)
+  citation:
+    source: Kentucky Department of Revenue — 2023 Form 740 (42A740) line 24 and 2023 Form 740 instruction packet,
+      instructions for line 24
+    url: https://revenue.ky.gov/Forms/Form%20740%202023.pdf
+- name: Personal Tax Credits (age 65+, blind, or Kentucky National Guard)
+  type: nonrefundable
+  eligibility: Taxpayer (and spouse, if filing jointly or married filing separately on a combined return) who, as
+    of 12/31/2023, was age 65 or older, was legally blind, and/or was a member of the Kentucky National Guard. A
+    taxpayer can claim more than one (e.g., 65+ AND blind). No income limit.
+  amount: $40 if 65 or older; $40 if legally blind; $20 if a member of the Kentucky National Guard. Credits are
+    additive per person (e.g., a 65+ AND blind taxpayer = $80). These are flat dollar credits that directly reduce
+    the calculated tax.
+  income_limit_2023: None.
+  claimed_on: Schedule ITC, Section B (lines 1-3 taxpayer, lines 5-7 spouse; totals assigned on lines 9-12), carried
+    to Form 740, line 17
+  citation:
+    source: Kentucky Department of Revenue — 2023 Schedule ITC (42A740-ITC), Section B Personal Tax Credits
+    url: https://revenue.ky.gov/Forms/Schedule%20ITC%202023.pdf
 filing_requirement:
   note: 'A Kentucky individual income tax return must be filed if BOTH (1) modified gross income exceeds the threshold
     for your family size in Chart A — 2023 thresholds: family size 1 = $15,650; 2 = $21,150; 3 = $26,650; 4+ = $32,150

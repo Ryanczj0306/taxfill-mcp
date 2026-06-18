@@ -48,6 +48,57 @@ forms:
   part_year_or_nonresident: Form MO-NRI (Missouri Income Percentage), filed with Form MO-1040, for nonresidents
     and part-year residents. Part-year residents may alternatively use Form MO-CR (resident credit) with MO-1040,
     whichever is more beneficial.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Property Tax Credit Claim (Circuit Breaker)
+  type: refundable
+  eligibility: 'Missouri residents who fall into one of four qualification categories: (A) age 65 or older and a
+    full-year MO resident; (B) 100% disabled veteran as a result of military service; (C) 100% disabled (per SSA
+    or SSA-1099); or (D) age 60 or older and receiving surviving spouse Social Security benefits. Available to both
+    renters/part-year owners and full-year homeowners. Renters who rent from a facility that does not pay property
+    tax are not eligible.'
+  amount: Credit based on real estate tax or rent paid and net household income, per the official Property Tax Credit
+    Chart. Maximum credit is $750 for renters (rent from MO-CRP Line 9 or $750, whichever is less) and $1,100 for
+    owners (property tax paid or $1,100, whichever is less); combined cap of $1,100 (MO-PTC Lines 9-11).
+  income_limit_2023: 'Net household income limits (after the $2,000/$4,000 deduction on Line 7): renters/part-year
+    owners - single $27,200 or less, married filing combined $29,200 or less; owners who occupied home entire year
+    - single $30,000 or less, married filing combined $34,000 or less.'
+  claimed_on: Form MO-PTS attached to Form MO-1040, Line 43 (if also filing an income tax return); or standalone
+    Form MO-PTC if not required to file an income tax return.
+  citation:
+    source: Missouri Department of Revenue - 2023 Form MO-PTC Property Tax Credit Claim Instructions (eligibility
+      'Am I Eligible?' diagram and Form MO-PTC Lines 7-12)
+    url: https://dor.mo.gov/forms/MO-PTC%20Instructions_2023.pdf
+- name: Missouri Working Family Tax Credit (state EITC)
+  type: nonrefundable
+  eligibility: Resident individual who is allowed a Federal Earned Income Credit (EIC) on the federal return for
+    the same tax year; filing status must be single, head of household, qualifying widow(er), or married filing
+    combined (married filing separately does not qualify); investment income must be under $4,050 for 2023. Must
+    have remaining tax liability after Property Tax Credit and Miscellaneous Tax Credits. Federal return and Federal
+    Schedule EIC must be attached.
+  amount: 10% of the taxpayer's Federal Earned Income Credit (Federal Form 1040/1040-SR, Line 27) for tax year 2023.
+    Limited to remaining MO tax liability; cannot be refunded and cannot be carried forward.
+  income_limit_2023: No separate state income limit beyond federal EIC eligibility; investment income must be less
+    than $4,050 for 2023.
+  claimed_on: Form MO-WFTC, carried to Form MO-1040, Line 44.
+  citation:
+    source: Missouri Department of Revenue - 2023 Form MO-WFTC and Missouri Working Family Tax Credit FAQs
+    url: https://dor.mo.gov/forms/MO-WFTC_2023.pdf
+- name: Food Pantry / Homeless Shelter / Soup Kitchen Tax Credit
+  type: nonrefundable
+  eligibility: Any Missouri taxpayer who donates cash or food to a local food pantry, homeless shelter, or soup
+    kitchen located in Missouri. Each spouse on a married filing combined return may claim separately. Credit cannot
+    be sold, transferred, or assigned.
+  amount: 50% of donations, up to $2,500 per taxpayer per year. Limited to the taxpayer's tax liability; excess
+    may be carried forward up to three subsequent years. Subject to a cumulative statewide cap of $1,750,000 per
+    fiscal year (credits apportioned equally if claims exceed the cap).
+  income_limit_2023: No income limit.
+  claimed_on: Form MO-FPT, claimed through Form MO-TC (Miscellaneous Income Tax Credits), carried to Form MO-1040,
+    Line 42.
+  citation:
+    source: Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page
+    url: https://dor.mo.gov/tax-credits/fpt.html
 filing_requirement:
   note: 'Per the 2023 MO-1040 instructions: you do not have to file a Missouri return if you are not required to
     file a federal return. If required to file a federal return, you may still not have to file a Missouri return

@@ -40,6 +40,75 @@ forms:
     NJ residency period.
   part_year_or_nonresident: NJ-1040NR (New Jersey Nonresident Income Tax Return). Used by nonresidents with NJ-source
     income and by part-year nonresidents (indicate residency period). There is no separate part-year resident return.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: New Jersey Earned Income Tax Credit (NJEITC)
+  type: refundable
+  eligibility: New Jersey residents who work and have earned income and who claimed and were allowed the federal
+    Earned Income Credit (EIC). Residents at least 18 years old (with or without a qualifying child) may apply even
+    if they did not meet the federal age requirement; must meet federal EIC income limits and have a valid SSN.
+    Claimed by filing Form NJ-1040.
+  amount: '40% of the taxpayer''s federal Earned Income Credit (EIC). 2023 instructions: ''The NJEITC is 40% of
+    the federal EIC. If you claimed and were allowed a federal earned income credit (EIC), enter 40% of your federal
+    EIC amount.'''
+  income_limit_2023: Tied to the federal EIC income limits for tax year 2023 (varies by filing status and number
+    of qualifying children). The state does not set a separate dollar income limit; eligibility follows federal
+    EIC qualification.
+  claimed_on: Form NJ-1040, Line 58
+  citation:
+    source: 2023 NJ-1040 Resident Income Tax Return Instructions, Line 58 (New Jersey Division of Taxation)
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
+- name: Property Tax Deduction/Credit (homeowners and renters)
+  type: refundable
+  eligibility: Residents who were domiciled in NJ and maintained a primary residence as a homeowner or tenant during
+    2023 that was subject to property taxes (paid directly as a homeowner, or through rent for tenants). Taxpayer
+    chooses EITHER the deduction OR the credit (whichever is more beneficial). For tenants, the residence must have
+    a separate kitchen and bath. The credit (vs. deduction) is generally taken by those age 65+, blind/disabled,
+    or whose income is below the filing threshold. 18% of rent paid during the year is treated as property taxes
+    paid.
+  amount: 'Property Tax Credit: $50 ($25 if married/CU partner filing separately and maintaining the same home)
+    — refundable, taken on Line 56. Alternatively, Property Tax Deduction: actual property taxes paid (or 18% of
+    rent) up to a maximum of $15,000 ($7,500 if filing separately and sharing the same home) — taken on Line 41.
+    Only one benefit may be claimed.'
+  income_limit_2023: No upper income limit to claim the deduction/credit. Those not otherwise required to file (e.g.,
+    gross income at or below the filing threshold of $10,000 single / $20,000 other statuses) can still claim the
+    Property Tax Credit if age 65+, blind, or disabled, using Form NJ-1040-HW.
+  claimed_on: Form NJ-1040, Line 41 (Property Tax Deduction) or Line 56 (Property Tax Credit); or Form NJ-1040-HW
+    for those not required to file NJ-1040
+  citation:
+    source: 2023 NJ-1040 Resident Income Tax Return Instructions, Property Tax Deduction/Credit (Lines 41 and 56),
+      and NJ Division of Taxation 'Property Tax Deduction/Credit for Homeowners and Renters' page
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
+- name: Child and Dependent Care Credit
+  type: refundable
+  eligibility: Resident taxpayers who have earned income, paid someone to care for one or more qualifying persons
+    (a child under 13 or a dependent/spouse incapable of self-care) so they could work or look for work, and who
+    were allowed the federal child and dependent care credit. Married filing separately generally not eligible unless
+    federal exceptions are met. Civil union and non-joint-federal filers follow special worksheet rules.
+  amount: 'A percentage of the taxpayer''s federal child and dependent care credit, tiered by NJ taxable income
+    (Worksheet J): 50% if NJ taxable income is $30,000 or less; 40% if over $30,000 to $60,000; 30% if over $60,000
+    to $90,000; 20% if over $90,000 to $120,000; 10% if over $120,000 to $150,000; not eligible if over $150,000.'
+  income_limit_2023: New Jersey taxable income of $150,000 or less (over $150,000 = not eligible).
+  claimed_on: Form NJ-1040, Line 64 (computed on Worksheet J; enclose federal Form 2441)
+  citation:
+    source: 2023 NJ-1040 Resident Income Tax Return Instructions, Line 64 / Worksheet J (New Jersey Division of
+      Taxation)
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
+- name: New Jersey Child Tax Credit
+  type: refundable
+  eligibility: Resident taxpayers with NJ taxable income of $80,000 or less, claiming a credit for each dependent
+    who is age 5 or younger (born 2018 or later) on the last day of the tax year. The dependent must be claimed
+    on Lines 10/11 of the NJ-1040. Married filing separately is not eligible. The per-child credit was increased
+    for Tax Year 2023.
+  amount: 'Per qualifying child (age 5 or younger), by NJ taxable income: $1,000 if $30,000 or less; $800 if over
+    $30,000 to $40,000; $600 if over $40,000 to $50,000; $400 if over $50,000 to $60,000; $200 if over $60,000 to
+    $80,000. Multiply the per-child amount by the number of qualifying dependents.'
+  income_limit_2023: New Jersey taxable income of $80,000 or less.
+  claimed_on: Form NJ-1040, Line 65
+  citation:
+    source: 2023 NJ-1040 Resident Income Tax Return Instructions, Line 65 (New Jersey Division of Taxation)
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
 filing_requirement:
   note: 'For 2023, you must file an NJ return if your gross income (from everywhere/in-State and out-of-State) for
     the entire year exceeded the filing threshold: $10,000 for Single or Married/CU partner filing separate; $20,000

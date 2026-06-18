@@ -56,6 +56,23 @@ def test_treaty_conformity_drives_the_nra_warning(code: str):
     )
 
 
+@pytest.mark.parametrize("code", STATE_CODES, ids=lambda c: c)
+def test_state_pack_has_cited_credits(code: str):
+    # Every income-tax pack now ships a credits block; each credit cites a gov host
+    # and the pack carries the verification caveat.
+    from urllib.parse import urlparse
+
+    pack = load_state_knowledge(code, 2023, base_dir=REPO_ROOT / "knowledge")
+    credits = getattr(pack, "credits", None) or []
+    assert credits, f"{code}: no credits block"
+    assert getattr(pack, "credits_verification", None), f"{code}: missing credits_verification caveat"
+    for c in credits:
+        url = c["citation"]["url"]
+        host = (urlparse(url).hostname or "").lower()
+        assert any(host == t or host.endswith("." + t) for t in ("gov", "mil", "us")), f"{code}: {c['name']} cites non-gov {url}"
+        assert c.get("type") in ("refundable", "nonrefundable"), f"{code}: {c['name']} bad type"
+
+
 def test_known_nonconforming_states_are_flagged():
     flagged = {c for c in STATE_CODES if not load_state_knowledge(c, 2023, base_dir=REPO_ROOT / "knowledge").conforms_to_federal_treaties}
     # Every confirmed add-back state present in the repo must be flagged non-conforming.

@@ -37,6 +37,87 @@ residency:
 forms:
   resident: Form 1 (Wisconsin Income Tax) - full-year residents
   part_year_or_nonresident: Form 1NPR (Nonresident and Part-Year Resident Wisconsin Income Tax Return)
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Married Couple Credit.'
+credits:
+- name: Wisconsin Earned Income Credit (EITC)
+  type: refundable
+  eligibility: Full-year Wisconsin resident who qualifies for the federal earned income credit AND has at least
+    one qualifying child (federal definition of qualifying child applies). Married filers generally must file jointly;
+    a married-filing-separate filer is ineligible unless they meet sec. 7703(b) IRC (then files as head of household,
+    married). Wisconsin adopted the federal EITC changes in Public Law 117-2, but a qualifying child is still required
+    for the Wisconsin credit (no childless-worker credit).
+  amount: 'A percentage of the federal earned income credit (from federal Form 1040/1040-SR line 27), based on qualifying
+    children: 1 child = 4%; 2 children = 11%; 3 or more children = 34%.'
+  income_limit_2023: No separate Wisconsin income limit stated; eligibility follows the federal EITC income/eligibility
+    limits (after Schedule I adjustments).
+  claimed_on: Form 1, line 29 (Form 1NPR for part-year/nonresidents, as applicable)
+  citation:
+    source: 2023 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 29 Earned Income Credit
+    url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+- name: Wisconsin Homestead Credit (property-tax / rent circuit-breaker)
+  type: refundable
+  eligibility: 'Legal resident of Wisconsin for all of 2023; age 18 or older as of Dec 31, 2023 (claimant); owner
+    or renter of the Wisconsin homestead lived in during 2023; AND must meet one of: age 62+ (claimant), disabled,
+    or have earned income during 2023. Disqualified if: claimed as a dependent on another''s 2023 federal return
+    (unless age 62+), living in a tax-exempt nursing home receiving Title XIX medical assistance, received W2/county
+    relief payments for every month of the year, lived all year in property-tax-exempt housing, or another household
+    member filed a Schedule H/H-EZ. Claimed on Schedule H (or simpler Schedule H-EZ).'
+  amount: Credit is computed from a table based on household income and the lesser of property taxes (and/or 25%
+    of rent if heat not included, 20% if heat included) up to the allowable amounts. Maximum credit is $1,460 (per
+    the 2023 credit table; reached at the lowest income levels).
+  income_limit_2023: Household income must be less than $24,680 for 2023; at $24,680 or more, no credit is allowed.
+  claimed_on: Schedule H or Schedule H-EZ; carried to Form 1, line 32 (Schedule H may also be filed with Form 1NPR;
+    Schedule H-EZ cannot)
+  citation:
+    source: 2023 H & H-EZ Wisconsin Homestead Credit Instructions (Wisconsin Department of Revenue), Section A 'Do
+      You Qualify?' and the homestead credit table
+    url: https://www.revenue.wi.gov/TaxForms2023/2023-ScheduleH-Inst.pdf
+- name: Renter's and Homeowner's School Property Tax Credit
+  type: nonrefundable
+  eligibility: Wisconsin filers who paid rent during 2023 for living quarters used as their primary residence, OR
+    who paid property taxes during 2023 on their home. Available whether or not the homestead credit is claimed.
+    Cannot be claimed if you or your spouse claim the veterans and surviving spouses property tax credit. Rent for
+    property-tax-exempt housing (e.g., university dorms, nonprofit senior housing, certain public housing) does
+    not qualify.
+  amount: 'Credit figured from the Renter''s School Property Tax Credit Table (renter''s portion of rent: amounts
+    differ depending on whether heat was included) and the Homeowner''s credit (12% of property taxes paid). Total
+    combined credit on lines 15a and 15b may not exceed $300 ($150 if married filing separately or married filing
+    as head of household).'
+  income_limit_2023: No income limit.
+  claimed_on: Form 1, line 15 (15a renter's portion, 15b homeowner's portion)
+  citation:
+    source: 2023 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 15 Renter's and Homeowner's School
+      Property Tax Credit
+    url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+- name: Additional Child and Dependent Care Tax Credit
+  type: nonrefundable
+  eligibility: You must have claimed the federal child and dependent care tax credit on your federal return, and
+    you must have been a legal resident of Wisconsin for the entire year (on a joint return, qualifies if at least
+    one spouse is a full-year Wisconsin resident).
+  amount: 50% of your federal child and dependent care tax credit (the amount from line 9c of federal Form 2441).
+  income_limit_2023: No separate Wisconsin income limit stated; follows the federal Form 2441 credit, which phases
+    with income at the federal level.
+  claimed_on: Form 1, line 14 (a copy of completed federal Form 2441 must be included)
+  citation:
+    source: 2023 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 14 Additional Child and Dependent
+      Care Tax Credit
+    url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+- name: Married Couple Credit
+  type: nonrefundable
+  eligibility: Married filing a joint return where both spouses have qualified earned income (taxable wages, salaries,
+    tips, certain scholarships/fellowships reported on W-2, other employee compensation, disability income treated
+    as wages, and net self-employment earnings). Not available if Form 2555/2555-EZ (foreign earned income exclusion)
+    or Form 4563 is filed. Computed on Schedule 2 of Form 1.
+  income_limit_2023: No income limit; the credit is a percentage of the lower-earning spouse's qualified earned
+    income, computed via the Schedule 2 worksheet, subject to a statutory maximum. (Exact rate and maximum dollar
+    cap could not be independently confirmed from the instruction text read.)
+  claimed_on: Form 1, line 17 (computed on Schedule 2, page 4 of Form 1)
+  citation:
+    source: 2023 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 17 Married Couple Credit
+    url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+  unverified: true
 filing_requirement:
   note: 'A full-year resident must file Form 1 for 2023 if gross income (or combined gross income of a married couple)
     met the threshold for the filing status/age: Single $13,460 (under 65) / $13,710 (65+); Married filing joint

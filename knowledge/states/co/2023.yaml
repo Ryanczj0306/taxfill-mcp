@@ -37,6 +37,84 @@ forms:
     DR 0104EZ also exists for qualifying simple full-year-resident returns.
   part_year_or_nonresident: DR 0104 with the DR 0104PN (Part-Year Resident/Nonresident Tax Calculation Schedule)
     attached — mark the "Part-Year or Nonresident" box on the DR 0104.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Property Tax/Rent/Heat Rebate (PTC Rebate) - low-income seniors and disabled.'
+credits:
+- name: Colorado Earned Income Tax Credit (COEITC) - SSN filers
+  type: refundable
+  eligibility: Full-year or part-year Colorado residents who claim the federal Earned Income Tax Credit (EITC) and
+    have an SSN valid for employment. Part-year residents apportion by the DR 0104PN line 34 percentage. (ITIN filers
+    and certain filers under 25 use a separate form, DR 0104TN.)
+  amount: '50% of the federal EITC you claimed for tax year 2023 (DR 0104CR line 5 = line 4 federal EITC x 0.50).
+    Note: 50% is a one-year-only rate for 2023; the standard statutory rate is lower in other years.'
+  income_limit_2023: No separate Colorado income limit; eligibility tracks the federal EITC income limits for 2023.
+  claimed_on: DR 0104CR (Individual Credit Schedule), Part I, line 5 (refundable); total carried to DR 0104 line
+    28
+  citation:
+    source: Colorado DOR, 2023 Form DR 0104CR Individual Credit Schedule (PDF)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104CR_2023.pdf
+- name: Colorado Child Tax Credit
+  type: refundable
+  eligibility: Qualifying resident individuals with an eligible child who was UNDER AGE 6 at the end of 2023 (born
+    2018 or later) and who qualified (or would qualify) for the federal child tax credit / additional child tax
+    credit. Full-year residents enter the result directly; part-year residents apportion via DR 0104PN line 34.
+    Children age 6 or older are not eligible.
+  amount: 'A percentage of the total federal child tax credit allowed for the eligible under-6 children. Applicable
+    percentage depends on filing status and federal AGI: SINGLE - 60% if AGI <= $25,000, 30% if $25,001-$50,000,
+    10% if $50,001-$75,000. JOINT - 60% if AGI <= $35,000, 30% if $35,001-$60,000, 10% if $60,001-$85,000.'
+  income_limit_2023: Federal AGI must be $75,000 or less (single) / $85,000 or less (joint filers); above that you
+    are not eligible.
+  claimed_on: Computed on DR 0104CN (2023 Colorado Child Tax Credit), line 22 (or line 24 for part-year residents);
+    entered on DR 0104CR Part I, line 1 (refundable)
+  citation:
+    source: Colorado DOR, 2023 Form DR 0104CN Colorado Child Tax Credit (PDF)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104CN_2023.pdf
+- name: Child Care Expenses Credit (Colorado child & dependent care credit)
+  type: refundable
+  eligibility: Full-year or part-year Colorado residents (nonresidents and Married-Filing-Separate filers cannot
+    claim) who paid someone to care for a dependent qualifying person under age 13 so the taxpayer (and spouse,
+    if filing jointly) could work or look for work, AND who claimed the federal Child and Dependent Care Expenses
+    Credit (federal Form 2441). Care must meet IRC Section 21 / IRS Pub 503 tests.
+  amount: 50% of the federal child and dependent care credit (DR 0347 line 9 = federal Form 2441 line 11 x 0.50).
+  income_limit_2023: Federal adjusted gross income (Form 2441 / 1040) of $60,000 or less; if AGI is greater than
+    $60,000 you do not qualify for this version of the credit.
+  claimed_on: Computed on DR 0347 (2023 Child Care Expenses Tax Credit), Part III; entered on DR 0104CR Part I,
+    line 2 (refundable)
+  citation:
+    source: Colorado DOR, 2023 Form DR 0347 Child Care Expenses Tax Credit (PDF)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0347_2023.pdf
+- name: Low-Income Child Care Expenses Credit
+  type: refundable
+  eligibility: Part- or full-year Colorado residents who were NOT required to file a federal return or were unable
+    to claim the federal Child and Dependent Care Expenses Credit, paid care expenses for a qualifying person under
+    age 13 so they could work/look for work, and had adjusted gross income of $25,000 or less. (Married-Filing-Separate
+    cannot claim.)
+  amount: 25% of qualifying child care expenses (DR 0347 line 11 = line 3 x 0.25), capped at $500 for one qualifying
+    child or $1,000 for two or more qualifying children (Table A).
+  income_limit_2023: Adjusted gross income of $25,000 or less.
+  claimed_on: Computed on DR 0347 (2023 Child Care Expenses Tax Credit), Part IV; entered on DR 0104CR Part I, line
+    2 (refundable)
+  citation:
+    source: Colorado DOR, 2023 Form DR 0347 Child Care Expenses Tax Credit (PDF)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0347_2023.pdf
+- name: Property Tax/Rent/Heat Rebate (PTC Rebate) - low-income seniors and disabled
+  type: refundable
+  eligibility: 'Full-year Colorado residents (lived in CO all of 2023) who paid property tax, rent, or heating bills
+    in 2023, were not claimed as a dependent on another return, and met an age/disability test: age 65 or older
+    on 12/31/2023; OR a surviving spouse (widow/widower) at least 58 years old on 12/31/2023; OR totally disabled
+    for all of 2023 receiving full disability benefits. This is a standalone rebate application (not part of the
+    income-tax return); 2023 applications were due by 12/31/2025.'
+  income_limit_2023: Total income from all sources less than $18,026 (single) or less than $24,345 combined (married).
+    Qualifying applicants also receive a TABOR State Sales Tax Refund add-on of $800 (single) / $1,600 (joint),
+    per DR 0104PTC line 13.
+  claimed_on: DR 0104PTC, Colorado Property Tax/Rent/Heat Rebate Application (filed separately from the DR 0104
+    income-tax return)
+  citation:
+    source: Colorado DOR, 2023 104PTC Book / DR 0104PTC Property Tax/Rent/Heat Rebate Instructions and Application
+      (PDF)
+    url: https://tax.colorado.gov/sites/tax/files/documents/Book0104PTC_2023.pdf
+  unverified: true
 filing_requirement:
   note: 'You must file a 2023 DR 0104 if you are required to file a federal income tax return with the IRS (or will
     have a Colorado income tax liability) AND you are: (a) a full-year Colorado resident, (b) a part-year Colorado

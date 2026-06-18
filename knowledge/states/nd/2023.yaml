@@ -45,6 +45,79 @@ forms:
     nonresident/part-year status, no other-state credit).
   part_year_or_nonresident: Schedule ND-1NR (Tax Calculation for Nonresidents and Part-Year Residents), filed with
     Form ND-1. (Nonresidents and part-year residents file Form ND-1 plus Schedule ND-1NR; they cannot use Form ND-EZ.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Marriage Penalty Credit
+  type: nonrefundable
+  eligibility: Married couples filing a JOINT North Dakota return where both spouses have qualified income (wages,
+    self-employment, taxable retirement/Social Security). Qualifies only if joint ND taxable income (Form ND-1 line
+    18) exceeds $74,862 AND the lower-earning spouse's qualified income exceeds $43,980. Designed to offset the
+    higher tax that two-earner couples pay versus filing as singles.
+  amount: Calculated via the Marriage Penalty Credit Worksheet; equals the smaller of the computed marriage penalty
+    (joint tax minus the sum of each spouse's tax computed separately at single rates) or the maximum credit of
+    $287.
+  income_limit_2023: Joint ND taxable income must be more than $74,862 and the lower-earning spouse's qualified
+    income must be more than $43,980 to qualify (these are thresholds to be eligible, not upper income caps).
+  claimed_on: Form ND-1, line 22 (Marriage Penalty Credit Worksheet in the 2023 ND-1 booklet, p.14-15)
+  citation:
+    source: ND Office of State Tax Commissioner — 2023 Individual Income Tax Booklet (Marriage Penalty Credit Worksheet)
+      and Marriage Penalty Tax Credit web page
+    url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/2023-individual-income-tax-booklet.pdf
+- name: Family Member Care Tax Credit
+  type: nonrefundable
+  eligibility: A taxpayer who paid qualified care expenses for a qualifying family member who is (a) related to
+    the taxpayer by blood or marriage, (b) at least 65 years old OR disabled per the Social Security Administration,
+    and (c) has federal taxable income of $20,000 or less if unmarried, or combined federal taxable income of $35,000
+    or less if married. Care must be provided by an unrelated person/organization and not reimbursed by insurance
+    or a government assistance program. (This is ND's analogue to a dependent-care credit, but it covers elderly/disabled
+    family members, not children.)
+  amount: Credit = eligible qualified care expenses multiplied by a decimal (0.20 to 0.30, decreasing as the caregiver's
+    federal taxable income rises), capped at $2,000 per qualifying family member ($1,000 if Married Filing Separately),
+    and limited to $4,000 total across all family members ($2,000 if MFS). The credit phases out using a federal-taxable-income
+    limit subtraction (see line 9-11).
+  income_limit_2023: Caregiver federal taxable income phaseout begins at $50,000 (Single/HoH/QW), $70,000 (Married
+    Filing Jointly), or $35,000 (Married Filing Separately); credit reduced dollar-for-dollar by income above these
+    limits. Separately, the cared-for family member's federal taxable income must be <= $20,000 (unmarried) or <=
+    $35,000 (married couple).
+  claimed_on: Schedule ND-1FC, line 11, carried to Schedule ND-1TC, line 1 (then to Form ND-1, line 23)
+  citation:
+    source: ND Office of State Tax Commissioner — 2023 Schedule ND-1FC (Family Member Care Tax Credit) and 2023
+      Schedule ND-1TC
+    url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/schedule-nd-1fc-2023.pdf
+- name: Renter's Refund (Renter's Property Tax Refund / circuit-breaker)
+  type: refundable
+  eligibility: A North Dakota renter who is age 65 or older OR has a permanent and total disability, whose income
+    (including spouse and dependents) does not exceed $70,000. Rent must be for the renter's place of residence
+    or a mobile home lot (heat, water, lights, telephone, and furniture costs do not count as rent). For a married
+    couple living together, only one spouse may apply. There is no asset limitation for renters.
+  amount: 'Refund equals (20% of annual rent) minus (4% of annual income), up to a maximum refund of $600. (Official
+    example: $9,600 annual rent and $35,000 income gives $1,920 - $1,400 = $520 refund.)'
+  income_limit_2023: $70,000 (total income including spouse and dependents)
+  claimed_on: Application for Property Tax Credit / Renter's Refund filed directly with the ND Office of State Tax
+    Commissioner (not on Form ND-1); applications accepted from the Tuesday after MLK Jr. Day through May 31, postmarked
+    by May 31.
+  citation:
+    source: ND Office of State Tax Commissioner — Renter's Refund web page and Homestead Property Tax Credit and
+      Renter's Refund web page
+    url: https://www.tax.nd.gov/property-tax-credits/renters-refund
+- name: Homestead Property Tax Credit
+  type: nonrefundable
+  eligibility: A North Dakota homeowner who is age 65 or older OR has a permanent and total disability (no age requirement
+    for disability), who lives in and owns the property, and whose income (including spouse and dependents) does
+    not exceed $70,000. For a married couple living together, only one spouse may apply. There is no asset limitation
+    for homeowners. Disability applicants must include a physician's certificate.
+  amount: 'Reduction in the property''s taxable value based on income: income $0-$40,000 = 100% reduction up to
+    a maximum $9,000 of taxable value (max true & full value $200,000); income $40,001-$70,000 = 50% reduction up
+    to a maximum $4,500 of taxable value (max true & full value $100,000). The dollar property-tax savings depends
+    on the local mill rate.'
+  income_limit_2023: $70,000 (total income including spouse and dependents)
+  claimed_on: Application filed with the local county assessor or county director of tax equalization before March
+    31 (a property-tax program, not claimed on Form ND-1).
+  citation:
+    source: ND Office of State Tax Commissioner — Homestead Property Tax Credit web page and Homestead Property
+      Tax Credit and Renter's Refund web page
+    url: https://www.tax.nd.gov/homestead-property-tax-credit
 filing_requirement:
   note: 'You must file a 2023 ND individual income tax return if you are required to file a 2023 federal return
     AND you are: (a) a full-year ND resident (taxed on all income, even if earned outside ND or overseas); (b) a

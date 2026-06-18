@@ -37,6 +37,93 @@ residency:
 forms:
   resident: TC-40 (Utah Individual Income Tax Return) — full-year residents file TC-40
   part_year_or_nonresident: TC-40 with Schedule TC-40B (Non or Part-year Resident Schedule)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Taxpayer Tax Credit
+  type: nonrefundable
+  eligibility: Available to essentially all Utah resident filers (and apportioned for part-year/nonresidents). It
+    is the broad general credit that offsets Utah's flat 4.65% income tax. The credit is reduced (phased out) as
+    income rises above a base amount tied to filing status, and is reduced to zero for higher earners. Filers whose
+    federal AGI is at or below their federal standard deduction are instead 'Qualified Exempt Taxpayers' and owe
+    no Utah tax (TC-40 line 21).
+  amount: Initial credit = 6% (.06) of the sum of Utah personal exemptions ($1,941 per dependent) plus federal standard/itemized
+    deductions (TC-40 line 16). Phase-out = 1.3% (.013) of Utah taxable income above the filing-status base amount
+    (TC-40 line 19). Final credit = initial credit minus phase-out, not less than 0 (TC-40 line 20).
+  income_limit_2023: 'Phase-out base amounts (income above which the credit begins to shrink): Single $16,742; Married
+    filing separately $16,742; Head of household $25,114; Married filing jointly $33,484; Qualifying surviving spouse
+    $33,484. Credit fully phases out above these amounts as income rises.'
+  claimed_on: Utah TC-40, line 20 (computed via lines 16-20). Personal exemption on line 11; deductions on lines
+    12-15.
+  citation:
+    source: 2023 Utah TC-40 Individual Income Tax Instructions (Utah State Tax Commission), Line 16-20 Taxpayer
+      Tax Credit, p.8-9
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+- name: Utah Earned Income Tax Credit (EITC)
+  type: nonrefundable
+  eligibility: 'You must (1) qualify for and claim the federal earned income tax credit in the same tax year, and
+    (2) earn Utah income reported on a federal W-2. For 2023 the legislature (HB 54) limited the Utah credit to
+    the amount of Utah income earned (Utah W-2 wages). Nonrefundable: it can reduce Utah income tax to zero but
+    any excess is not refunded and cannot be carried forward or back.'
+  amount: 20 percent (0.20) of your federal earned income tax credit (federal Form 1040/1040-SR, line 27), but limited
+    to the lesser of that 20% amount or your total Utah wages shown on W-2 box 16.
+  income_limit_2023: No separate Utah income limit; eligibility tracks the federal EITC income limits (you must
+    qualify for and claim the federal EITC).
+  claimed_on: Utah TC-40A, Part 3 (apportionable nonrefundable credits), using code AM; total carried to TC-40,
+    line 24.
+  citation:
+    source: 2023 Utah TC-40 Individual Income Tax Instructions, (AM) Earned Income Tax Credit (UC 59-10-1044), p.21;
+      corroborated by incometax.utah.gov EITC page
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+- name: Retirement Credit
+  type: nonrefundable
+  eligibility: 'You (and/or your spouse, if filing jointly) must have been born on or before Dec. 31, 1952. You
+    may NOT claim it if you (or your spouse) claim the Social Security Benefits Credit (code AH) or the Military
+    Retirement Credit (code AJ). Nonrefundable: reduces tax to zero but no refund of excess; no carryforward/back.'
+  amount: Up to $450 per qualifying individual ($900 if both spouses qualify on a joint return). The credit is reduced
+    by 2.5% (0.025) of modified adjusted gross income (MAGI) above the filing-status threshold below (Retirement
+    Credit Worksheet, line 9 = MAGI over threshold x .025; credit = $450/$900 minus that amount, not below 0).
+  income_limit_2023: 'MAGI thresholds above which the $450/$900 credit begins to phase out (worksheet line 7): Married
+    filing separately $16,000; Married filing federal 1040NR $16,000; Married filing joint $32,000; Single $25,000;
+    Qualifying surviving spouse or head of household $32,000.'
+  claimed_on: Utah TC-40A, Part 3, using code 18 (also enter birthdate(s)); total carried to TC-40, line 24.
+  citation:
+    source: 2023 Utah TC-40 Individual Income Tax Instructions, (18) Retirement Credit (UC 59-10-1019) and Retirement
+      Credit Worksheet, p.19; corroborated by incometax.utah.gov retirement-credit page
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+- name: Social Security Benefits Credit
+  type: nonrefundable
+  eligibility: 'Available to filers who included taxable Social Security benefits in income. This is Utah''s senior/retirement-income
+    relief credit (an alternative to, and larger than, the Retirement Credit for many). You may NOT also claim the
+    Retirement Credit (code 18) for the same person. Amounts not in federal taxable income, and amounts used for
+    a federal credit, cannot be used. Nonrefundable: reduces tax to zero, no refund of excess, no carryforward/back.'
+  amount: Credit = 4.65% (0.0465) of the Social Security benefits included in your adjusted gross income (worksheet
+    line 7), reduced by 2.5% (0.025) of modified adjusted gross income above the filing-status threshold (worksheet
+    line 10); result not less than 0.
+  income_limit_2023: 'MAGI thresholds above which the credit phases out (worksheet line 8): Married filing separately
+    $37,500; Married filing federal 1040NR $37,500; Married filing joint $75,000; Single $45,000; Qualifying surviving
+    spouse or head of household $75,000.'
+  claimed_on: Utah TC-40A, Part 3, using code AH; total carried to TC-40, line 24.
+  citation:
+    source: 2023 Utah TC-40 Individual Income Tax Instructions, (AH) Social Security Benefits Credit (UC 59-10-1042)
+      and Social Security Credit Worksheet, p.20-21
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+- name: At-Home Parent Credit
+  type: nonrefundable
+  eligibility: An at-home parent (biological/step/adoptive/foster parent, legal guardian, or person housing a child
+    placed for legal adoption) who provides full-time care in their residence for a child 12 months old or younger
+    on the last day of 2023, with the child claimed as a dependent on the at-home parent's return. The at-home parent's
+    combined W-2 wages/tips/compensation plus federal Schedule C gross income (line 7) must be $3,000 or less, and
+    federal adjusted gross income (TC-40 line 4) must be $50,000 or less. This is Utah's closest analog to a child/dependent-care
+    credit. Nonrefundable; no carryforward/back.
+  amount: $100 for each child 12 months old or younger on the last day of 2023.
+  income_limit_2023: At-home parent's wages/tips/compensation + Schedule C gross income must be <= $3,000; and household
+    federal adjusted gross income (TC-40 line 4) must be <= $50,000.
+  claimed_on: Utah TC-40A, Part 4 (nonapportionable nonrefundable credits), using code 01 (no separate form; keep
+    records); total carried to TC-40, line 26.
+  citation:
+    source: 2023 Utah TC-40 Individual Income Tax Instructions, (01) At-Home Parent Credit (UC 59-10-1005), p.22-23
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
 filing_requirement:
   note: 'Per the 2023 TC-40 instructions ("Who Must File"), you must file a Utah TC-40 return if you: (1) are a
     Utah resident or part-year resident who must file a federal return; (2) are a nonresident or part-year resident

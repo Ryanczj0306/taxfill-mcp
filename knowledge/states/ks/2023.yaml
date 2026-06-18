@@ -39,6 +39,87 @@ forms:
   part_year_or_nonresident: Same Form K-40, with Schedule S (Supplemental Schedule) Part B "Income Allocation for
     Nonresidents and Part-Year Residents" required to compute the nonresident percentage (K-40 line 9 / Schedule
     S line B23). Kansas does not have a separate standalone nonresident form.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Kansas Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Kansas residents only (not part-year residents or nonresidents) who qualify for and claim the federal
+    Earned Income Tax Credit. A valid SSN is required for the full year for the taxpayer, spouse (if MFJ), and each
+    dependent claimed.
+  amount: 'Equal to 17% of the taxpayer''s federal EITC. Computed on the EITC Worksheet (page 8 of K-40 instructions):
+    Kansas EITC = federal EITC x 17%. The portion that offsets Kansas tax liability goes on line 17 (nonrefundable
+    use), and the remainder (worksheet line 4) is refundable and entered on line 23.'
+  income_limit_2023: No separate Kansas income limit; eligibility and income phase-out follow the federal EITC rules
+    (you must qualify for the federal EITC).
+  claimed_on: Form K-40, line 17 (credit against tax) and line 23 (refundable portion); computed on the Earned Income
+    Tax Credit (EITC) Worksheet on page 8 of the K-40 instructions.
+  citation:
+    source: Kansas Department of Revenue, 2023 Individual Income Tax Booklet (Form K-40 instructions, ip23.pdf),
+      Line 17 / Line 23 instructions and EITC Worksheet
+    url: https://www.ksrevenue.gov/pdf/ip23.pdf
+- name: Food Sales Tax Credit
+  type: nonrefundable
+  eligibility: 'Must be a Kansas resident for ALL of 2023, AND meet at least one taxpayer-status condition: (1)
+    age 55 or older for all of 2023; or (2) permanently blind or disabled regardless of age; or (3) have a dependent
+    child under age 18 who lived with you all year and whom you claim as a personal exemption. Booklet states it
+    is nonrefundable: ''If you do not have a Kansas tax liability, this credit is not available to you.'''
+  amount: $125 for each qualified exemption. Dependents age 18 or older (born before Jan 1, 2006) do not qualify
+    as exemptions for this credit, and no additional exemption is allowed for head-of-household status. Credit =
+    (number of qualified exemptions) x $125.
+  income_limit_2023: Federal adjusted gross income of $30,615 or less.
+  claimed_on: Form K-40, line 18; computed on lines A through H on the front of Form K-40 (line H = qualified exemptions
+    x $125).
+  citation:
+    source: Kansas Department of Revenue, 2023 Individual Income Tax Booklet (Form K-40 instructions, ip23.pdf),
+      'Food Sales Tax Credit' overview and Food Sales Tax Credit / Line 18 instructions
+    url: https://www.ksrevenue.gov/pdf/ip23.pdf
+- name: Credit for Child and Dependent Care Expenses
+  type: nonrefundable
+  eligibility: Kansas residents only - nonresidents and part-year residents are NOT eligible. Available to taxpayers
+    who claimed the federal child and dependent care credit on federal Form 2441.
+  amount: 25% of the amount of the federal credit allowed on federal Form 2441. Kansas credit = federal Form 2441
+    credit x 25%.
+  income_limit_2023: No separate Kansas income limit stated; tied to the federal Form 2441 credit (which has its
+    own federal limits).
+  claimed_on: Form K-40, line 14.
+  citation:
+    source: Kansas Department of Revenue, 2023 Individual Income Tax Booklet (Form K-40 instructions, ip23.pdf),
+      Line 14 (Credit for child and dependent care expenses)
+    url: https://www.ksrevenue.gov/pdf/ip23.pdf
+- name: Homestead Refund (property tax / circuit-breaker relief)
+  type: refundable
+  eligibility: 'Kansas resident the entire year of 2023 who OWNED and occupied a Kansas home (homeowners only -
+    the booklet states the program is ''not available to renters''), AND meets one of: (1) born before January 1,
+    1968 (i.e., 55 or older); or (2) blind or totally and permanently disabled all of 2023; or (3) had a dependent
+    child who lived with you the entire year, born before January 1, 2023 and under age 18 all of 2023.'
+  amount: Refund is a percentage of general property tax paid, with a maximum refund of $700. The refund percentage
+    decreases as household income rises (e.g., the $26,001-$40,500 income bracket yields a 5% refund percentage
+    per the booklet's refund table); refund is the lesser of the property tax paid (line 12) or $700, multiplied
+    by the income-based percentage.
+  income_limit_2023: Total household income of $40,500 or less for 2023.
+  claimed_on: Form K-40H (Kansas Homestead Claim) - a separate form, not the K-40.
+  citation:
+    source: Kansas Department of Revenue, 2023 Homestead or Property Tax Refund for Homeowners booklet (k-40hbook23.pdf),
+      Homestead refund overview, eligibility, and refund percentage table
+    url: https://www.ksrevenue.gov/pdf/k-40hbook23.pdf
+- name: Credit for Taxes Paid to Other States
+  type: nonrefundable
+  eligibility: Kansas residents whose Kansas adjusted gross income (KAGI, line 3 of K-40) includes income earned
+    in another state and who were required to pay income tax to that other state on that income. (Part-year residents
+    filing as nonresidents may claim a version via a separate worksheet.) No credit for income from a state with
+    no income tax. A copy of the other state's tax return must be enclosed.
+  amount: 'Determined by the ''Worksheet for Residents'': the credit equals the lesser of (a) the 2023 income tax
+    actually paid to the other state (including local political subdivisions), or (b) the maximum credit allowable
+    = total Kansas income tax (line 12) x (other-state income included in KAGI / KAGI). The credit cannot exceed
+    the tax liability shown on the other state''s return.'
+  income_limit_2023: No income limit; the credit is limited by the formula above rather than by an income ceiling.
+  claimed_on: Form K-40, line 13; computed on the Worksheet for Residents (or Worksheet for Part-Year Residents
+    filing as Nonresidents) in the K-40 instructions.
+  citation:
+    source: Kansas Department of Revenue, 2023 Individual Income Tax Booklet (Form K-40 instructions, ip23.pdf),
+      Line 13 (Credit for taxes paid to other states) and Worksheet for Residents
+    url: https://www.ksrevenue.gov/pdf/ip23.pdf
 filing_requirement:
   note: 'A full-year Kansas resident must file a 2023 K-40 if (1) they are required to file a federal return, OR
     (2) their Kansas adjusted gross income exceeds the total of their Kansas standard deduction and exemption allowance.

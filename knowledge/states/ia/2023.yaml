@@ -43,6 +43,85 @@ forms:
   part_year_or_nonresident: IA 126 (Iowa Nonresident and Part-Year Resident Credit Schedule), form number 41-126,
     filed together with the IA 1040. (Iowa does not use a separate nonresident return; nonresidents/part-year residents
     file the IA 1040 and attach the IA 126.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Iowa Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Available only to taxpayers who qualify for the federal Earned Income Tax Credit (EITC). Iowa simply
+    piggybacks on federal EITC eligibility (earned income, AGI, investment-income, and qualifying-child rules are
+    determined at the federal level). A taxpayer who qualifies for the Iowa low-income exemption may file an Iowa
+    return solely to claim a refund of this credit.
+  amount: 15% (.15) of the taxpayer's federal EITC
+  income_limit_2023: No separate Iowa income limit; bounded by the federal EITC income limits for 2023
+  claimed_on: IA 1040, line 25
+  citation:
+    source: Iowa Department of Revenue — 2023 IA 1040 Expanded Instructions (PDF), 'Iowa Earned Income Tax Credit',
+      Line 25
+    url: https://revenue.iowa.gov/media/2811/download?inline
+- name: Child and Dependent Care Credit
+  type: refundable
+  eligibility: Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying child/dependent
+    care expenses and qualify for the federal child and dependent care credit (must attach completed federal Form
+    2441). For married filing jointly, both spouses' Iowa taxable income is combined to test the $90,000 limit.
+    Only one of the Child & Dependent Care Credit OR the Early Childhood Development Credit may be claimed per year.
+    Generally cannot be claimed if filing status is married filing separately.
+  amount: 'A percentage of the federal Form 2441 line 9c amount, set by Iowa taxable income (IA 1040 line 4): less
+    than $10,000 = 75%; $10,000-$19,999 = 65%; $20,000-$24,999 = 55%; $25,000-$34,999 = 50%; $35,000-$39,999 = 40%;
+    $40,000-$89,999 = 30%; $90,000 and over = not eligible'
+  income_limit_2023: Iowa taxable income must be less than $90,000 (combined for married filing jointly)
+  claimed_on: IA 1040, line 24 (check the 'Child and Dependent Care Credit' box)
+  citation:
+    source: Iowa Department of Revenue — 2023 IA 1040 Expanded Instructions (PDF), 'Child and Dependent Care Credit
+      or Early Childhood Development Credit', Line 24
+    url: https://revenue.iowa.gov/media/2811/download?inline
+- name: Early Childhood Development Credit
+  type: refundable
+  eligibility: Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying early
+    childhood development expenses (e.g., preschool, child-development books/materials, lesson plans, educational
+    activities) for a dependent aged three through five. Claimed in lieu of (not in addition to) the Child and Dependent
+    Care Credit — only one of the two may be taken per year. For married separate filers the $90,000 limit applies
+    only to the income of the spouse claiming the dependent.
+  amount: 25% of the first $1,000 of qualifying expenses paid in 2023 for each dependent ages three through five
+    (maximum $250 per qualifying dependent)
+  income_limit_2023: Iowa taxable income must be less than $90,000 (combined for married filing jointly; for married
+    separate filers, only the claiming spouse's income counts)
+  claimed_on: IA 1040, line 24 (check the 'Early Childhood Development Credit' box)
+  citation:
+    source: Iowa Department of Revenue — 2023 IA 1040 Expanded Instructions (PDF), 'Early Childhood Development
+      Credit', Line 24
+    url: https://revenue.iowa.gov/media/2811/download?inline
+- name: Tuition and Textbook Credit (K-12)
+  type: nonrefundable
+  eligibility: A parent/taxpayer who claims a dependent attending grades K-12 at an accredited Iowa elementary or
+    secondary school (or receiving qualifying private instruction) and who paid tuition and textbook expenses for
+    that dependent. Only the spouse/parent claiming a given dependent may claim that dependent's expenses; expenses
+    paid with 529-account distributions may qualify.
+  amount: 25% of the first $2,000 of qualifying tuition and textbook expenses paid for each dependent (maximum $500
+    credit per dependent)
+  income_limit_2023: No income limit
+  claimed_on: IA 1040, line 9
+  citation:
+    source: Iowa Department of Revenue — 2023 IA 1040 Expanded Instructions (PDF), 'Tuition and Textbook Credit
+      (K-12 Only)', Line 9
+    url: https://revenue.iowa.gov/media/2811/download?inline
+- name: Low-Income Exemption (with elevated threshold for filers age 65+)
+  type: nonrefundable
+  eligibility: This is an exemption from Iowa income tax (not a dollar-amount credit) functioning as Iowa's primary
+    low-income and senior relief on the IA 1040 — Iowa has no separate 'elderly credit' line. A taxpayer is exempt
+    from Iowa income tax if Iowa taxable income (IA 1040 line 4, with required add-backs) is at or below the threshold
+    for their filing status. Senior filers (taxpayer or spouse age 65 or older on 12/31/23) qualify under a substantially
+    higher threshold.
+  amount: Not a dollar credit — it eliminates Iowa income-tax liability when income is at or below the threshold
+    (income above the threshold is fully taxed).
+  income_limit_2023: 'Single: Iowa taxable income $9,000 or less ($24,000 or less if age 65+ on 12/31/23); or under
+    $5,000 if claimed as a dependent. Married filing jointly / head of household / qualifying surviving spouse:
+    $13,500 or less ($32,000 or less if taxpayer or spouse is 65+ on 12/31/23). Married filing separately: each
+    spouse $9,000 or less AND combined $13,500 or less.'
+  claimed_on: IA 1040 — check the low-income exemption box between Steps 4 and 5 (Step 5 area)
+  citation:
+    source: Iowa Department of Revenue — 2023 IA 1040 Expanded Instructions (PDF), low-income exemption instructions
+    url: https://revenue.iowa.gov/media/2811/download?inline
 filing_requirement:
   note: A resident or part-year resident must file if Iowa taxable income (IA 1040 line 4, with specified add-backs
     incl. standard/itemized deduction, QBI deduction, personal exemption, lump-sum distribution, and Iowa NOL carryforward)

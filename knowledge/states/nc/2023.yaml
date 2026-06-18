@@ -40,6 +40,47 @@ forms:
   part_year_or_nonresident: Form D-400 with Form D-400 Schedule PN (2023 Part-Year Resident and Nonresident Schedule)
     to compute the NC taxable percentage; if needed, Form D-400 Schedule PN-1 (Other Additions and Other Deductions).
     All filers, including part-year residents and nonresidents, file the same Form D-400.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L).'
+credits:
+- name: Credit for Income Tax Paid to Another State or Country
+  type: nonrefundable
+  eligibility: N.C. residents (and part-year residents for the resident period) only. Available when income earned
+    while a legal resident of North Carolina is taxed by both North Carolina and another U.S. state or a foreign
+    country because it was earned in or derived from sources in that other state/country. No credit for tax paid
+    to a city/county/other political subdivision or to the federal government. Nonresidents are NOT entitled to
+    this credit. A copy of the return filed with the other state/country and proof of payment must be attached.
+  amount: Credit = the LESSER of (a) Line 5 [N.C. income tax x (income taxed by other state / total N.C.-source-adjusted
+    income), i.e. D-400 Line 15 x decimal from dividing Line 2 by Line 1] or (b) Line 6 [net income tax actually
+    paid to the other state/country on that income]. No fixed dollar amount; it is capped at the proportion of N.C.
+    tax attributable to the double-taxed income. For multiple states/countries, a separate Out-of-State Tax Credit
+    Worksheet is used per jurisdiction.
+  income_limit_2023: 'No income limit. The credit is limited mechanically: total credits taken (D-400TC Line 20)
+    cannot exceed the N.C. income tax on D-400 Line 15.'
+  claimed_on: Form D-400TC, Part 1, Lines 1-7a (result flows through Part 3 Line 16/18/20); then reported on Form
+    D-400, Line 16 ("Tax Credits (From Form D-400TC, Part 3, Line 20)").
+  citation:
+    source: NCDOR 2023 D-401 Individual Income Tax Instructions (Instructions for Form D-400TC, Part 1) and 2023
+      Form D-400TC
+    url: https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open
+- name: Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L)
+  type: nonrefundable
+  eligibility: Narrow / not broadly applicable to ordinary residents. Available to taxpayers who incur qualified
+    rehabilitation expenditures/expenses on a certified historic structure or historic mill facility placed in service
+    under the requirements of Article 3D (expired for expenditures incurred by Jan 1, 2023; property must have been
+    placed in service by Jan 1, 2023), Article 3H (historic mill facility; requires eligibility certification from
+    the State Historic Preservation Officer), or Article 3L (current Historic Rehabilitation Tax Credits Investment
+    Program; requires Form NC-Rehab). Distinguishes income-producing vs. non-income-producing structures.
+  income_limit_2023: No income limit, but total credits on D-400TC Line 20 cannot exceed the N.C. income tax on
+    D-400 Line 15. Specific credit percentages/caps vary by Article (3D/3H/3L) and are set in the respective General
+    Statutes / Form NC-Rehab, which were not extracted as exact figures here.
+  claimed_on: Form D-400TC, Part 2, Lines 8-13 (Article 3L requires Form NC-Rehab attached to front of D-400); flows
+    to D-400 Line 16.
+  citation:
+    source: NCDOR 2023 Form D-400TC and 2023 D-401 Instructions (Part 2, Credits for Rehabilitating Historic Structures)
+    url: https://www.ncdor.gov/2023-d-400tc-individual-income-tax-credits
+  unverified: true
 filing_requirement:
   note: 'A 2023 NC return is required if federal gross income for 2023 exceeds the filing threshold for your status
     (2023 Filing Requirements Chart): Single $12,750; Married Filing Jointly $25,500; Married Filing Separately

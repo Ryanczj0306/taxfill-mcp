@@ -37,6 +37,77 @@ forms:
   part_year_or_nonresident: Schedule NR (Nonresident Schedule), attached to a completed SC1040. Nonresidents and
     part-year residents electing to file as a nonresident complete Schedule NR; Column A = income from the federal
     return, Column B = income earned while an SC resident or from SC sources.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: South Carolina Earned Income Tax Credit (EITC)
+  type: nonrefundable
+  eligibility: Full-year South Carolina residents who were eligible for and claimed the federal Earned Income Tax
+    Credit on their federal return for the same tax year. The TC-60 instructs the taxpayer to STOP (no credit) if
+    they were not a full-year SC resident or were not eligible for the federal EITC.
+  amount: '125% of the federal Earned Income Tax Credit allowed on the taxpayer''s federal return for 2023. (Form''s
+    own example: federal EITC of $1,190 x 125% = $1,488 SC EITC.) The credit was phased in over five years and is
+    fully phased in beginning tax year 2023.'
+  income_limit_2023: No separate SC income limit stated; eligibility tracks the federal EITC, so the federal EITC
+    income limits effectively apply (taxpayer must qualify for the federal EITC).
+  claimed_on: Computed on SC Schedule TC-60; the result is entered on the SC1040TC (nonrefundable credit schedule),
+    which flows to SC1040 line 13 (Other nonrefundable credits).
+  citation:
+    source: SC DOR Form TC-60, South Carolina Earned Income Tax Credit (Rev. 5/8/23)
+    url: https://dor.sc.gov/forms-site/Forms/TC60_2023.pdf
+- name: Two Wage Earner Credit
+  type: nonrefundable
+  eligibility: Married couples filing jointly where both spouses have earned income taxed to South Carolina. Not
+    allowed for filing statuses Single, Married Filing Separately, or Head of Household. If either spouse's qualified
+    earned income is zero or less, the credit cannot be taken.
+  amount: 'For 2023 (fully phased in): 0.007 (0.7%) multiplied by the lesser of $50,000 or the SC qualified earned
+    income of the spouse with the LOWER SC qualified earned income. Maximum credit cannot exceed $350. (Form''s
+    own example: $16,000 x .007 = $112.) SC qualified earned income = SC earned income minus certain federal adjustments
+    (deductible part of self-employment tax, self-employment SEP/SIMPLE/qualified plans, self-employment health
+    insurance deduction, IRA deduction, repayment of sub-pay).'
+  income_limit_2023: The credit base is capped at $50,000 of the lower-earning spouse's SC qualified earned income;
+    there is no upper income cutoff that disqualifies the taxpayer, but the cap limits the maximum credit to $350.
+  claimed_on: SC1040 line 12 (computed via the Worksheet for Two Wage Earner Credit in the SC1040 instructions).
+  citation:
+    source: 'SC DOR 2023 SC1040 Individual Income Tax Instructions (December 2023), Line 12: Two Wage Earner Credit'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf
+- name: Child and Dependent Care Credit
+  type: nonrefundable
+  eligibility: Full-year SC residents who incurred federal child and dependent care expenses (reported on federal
+    Form 2441). Part-year residents/nonresidents qualify only if they are residents of a state that offers a comparable
+    credit to nonresidents, and then only on a prorated basis. Cannot be claimed if filing status is Married Filing
+    Separately.
+  amount: '7% of the federal child and dependent care expense (from federal Form 2441). Maximum credit is $210 for
+    one child/dependent or $420 for two or more children/dependents. (Form''s own example: $2,000 federal expense
+    x .07 = $140.) Part-year/nonresidents prorate the federal expense by the Schedule NR proration percentage before
+    applying 7%.'
+  income_limit_2023: No SC income limit stated; the credit is a flat 7% of the qualifying federal expense, subject
+    to the $210 / $420 caps.
+  claimed_on: SC1040 line 11.
+  citation:
+    source: 'SC DOR 2023 SC1040 Individual Income Tax Instructions (December 2023), Line 11: Child and Dependent
+      Care Credit'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf
+- name: Tuition Tax Credit
+  type: refundable
+  eligibility: A SC resident student (or a parent/legal guardian/other person who can claim the student as a dependent
+    and who paid the tuition) attending a qualifying SC 2-year or 4-year college/university. Student must have received
+    an SC high school diploma (or qualifying homeschool/out-of-state prep diploma) during or after May 2018, enrolled
+    within 12 months of graduating high school, qualify for in-state tuition, be a degree-seeking undergraduate
+    (or in a qualifying 1-year certificate/diploma program), and complete at least 30 credit hours for the year
+    (15 if attending only one semester; 12 at Converse/Wofford). Disqualifiers include being in student-loan default,
+    receiving a LIFE or Palmetto Fellows Scholarship for both Spring and Fall, certain felony/alcohol/drug convictions,
+    and claiming for more than four consecutive years after enrollment.
+  amount: 50% of qualified tuition paid (after subtracting scholarships/grants used for tuition), not to exceed
+    $1,500 per tax year. For 4-year independent (private) institutions, qualifying tuition is limited to $12,268
+    for 2023 (prorated if not a full year).
+  income_limit_2023: No income limit stated; the credit is limited by the 50%-of-tuition calculation and the $1,500
+    annual cap.
+  claimed_on: Computed on Form I-319 (one per student); the total is entered on SC1040 line 21 (Tuition tax credit),
+    which is in the SC1040 "Tax Payments and Refundable Credits" section.
+  citation:
+    source: SC DOR Form I-319, 2023 Tuition Tax Credit (Rev. 4/11/23)
+    url: https://dor.sc.gov/forms-site/Forms/I319_2023.pdf
 filing_requirement:
   note: 'You must file an SC Individual Income Tax return if you answer YES to any: Resident under 65 - you were
     required to file a federal return that included income taxable by SC (SC residents are taxed on their entire
