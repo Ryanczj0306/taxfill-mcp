@@ -1,0 +1,105 @@
+# ND state knowledge — tax year 2023. Fetched + cited from the ND DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/nd
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'ND does NOT conform — it re-taxes federally treaty-exempt income. Although the ND-1 resident return
+  starts from federal taxable income (Form 1040/1040-SR line 15, ND-1 line 1b), the 2023 ND-1 Individual Income
+  Tax Booklet (p.5) states: "Except where an income tax treaty between the United States and a foreign country specifically
+  exempts income from taxation by a U.S. state, income tax treaties between the U.S. and foreign countries do not
+  apply for North Dakota income tax purposes. Therefore, you may have to pay North Dakota income tax on gross income
+  from North Dakota sources even though the income is exempt from U.S. income tax because of a treaty." The mechanism
+  is in the Guideline: Income Taxation of Nonresident Aliens — the taxpayer must complete a Pro Forma U.S. Form
+  1040NR but "you must disregard any instruction to the U.S. income tax return that refers to the treaty," then
+  carry that pro-forma 1040NR line 15 (with treaty income NOT excluded) to ND-1 line 1b. So treaty-exempt income
+  that drops out of the actual federal return is effectively added back (rebuilt) before flowing into ND income.
+  This is the same non-conforming posture as CA/CT/MD/MS. The treaty pass-through applies ONLY where a treaty article
+  specifically extends the exemption to the 50 U.S. states.'
+citation:
+  source: ND 2023 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions) — Who must file (pp.4-5), Statutory
+    7-month rule, treaty statement (p.5), When and where to file / mailing PO Box 5621 (p.7), assembly & check payee
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/2023-individual-income-tax-booklet.pdf
+starts_from: federal taxable income (Form 1040/1040-SR line 15 -> ND-1 line 1b; line 1a also captures federal AGI
+  from line 11). Per the Nonresident Aliens guideline, a nonresident alien builds a Pro Forma 1040NR disregarding
+  treaty provisions and enters its line 15 on ND-1 line 1b.
+residency:
+  summary: 'Full-year resident: a legal resident of ND (domicile = permanent home you always intend to return to)
+    for the entire tax year, OR someone meeting the statutory 7-month rule. Statutory 7-month rule: even if not
+    a ND resident, you must file as a full-year resident if you maintain a permanent place of abode in ND (a dwelling
+    with cooking and bathroom facilities suitable for year-round living, maintained on a permanent/indefinite basis)
+    and spend in the aggregate more than 210 days of the tax year in ND; the rule does not apply to part-year residents,
+    full-year nonresidents serving in the U.S. armed forces, or full-year Montana/Minnesota residents covered by
+    reciprocity. Part-year resident: a ND resident for only part of 2023 — files if required to file federally and
+    derived gross income from any source while a ND resident or from a ND source while a nonresident. Full-year
+    nonresident: not a ND resident for any part of the year and does not meet the 7-month rule — files if required
+    to file federally and derived gross income from ND sources. Resident is taxed on all income; nonresidents/part-year
+    residents apportion via Schedule ND-1NR. Reciprocity exempts MN and MT full-year residents from ND filing on
+    certain ND wage/personal-service income. A resident may claim a credit for tax paid to another state.'
+forms:
+  resident: Form ND-1 (Individual Income Tax Return). A simplified Form ND-EZ is available for qualifying full-year
+    residents who answer "No" to all the "Which form to use" questions (e.g., no additions/most subtractions, no
+    nonresident/part-year status, no other-state credit).
+  part_year_or_nonresident: Schedule ND-1NR (Tax Calculation for Nonresidents and Part-Year Residents), filed with
+    Form ND-1. (Nonresidents and part-year residents file Form ND-1 plus Schedule ND-1NR; they cannot use Form ND-EZ.)
+filing_requirement:
+  note: 'You must file a 2023 ND individual income tax return if you are required to file a 2023 federal return
+    AND you are: (a) a full-year ND resident (taxed on all income, even if earned outside ND or overseas); (b) a
+    part-year resident with ND-source income or income earned while a resident; or (c) a full-year nonresident (including
+    a nonresident alien) with gross income from ND sources. MN/MT full-year residents are exempt under reciprocity
+    for certain ND wage/personal-service income. (2023 ND-1 Booklet, "Who must file a return," pp. 4-5.)'
+mailing_addresses:
+  refund_or_no_payment: Office of State Tax Commissioner, PO Box 5621, Bismarck, ND 58506-5621
+  with_payment: Office of State Tax Commissioner, PO Box 5621, Bismarck, ND 58506-5621 (enclose check/money order
+    payable to "North Dakota Office of State Tax Commissioner" with Form ND-1PRV payment voucher; do not staple)
+  citation:
+    source: ND 2023 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions) — Who must file (pp.4-5), Statutory
+      7-month rule, treaty statement (p.5), When and where to file / mailing PO Box 5621 (p.7), assembly & check
+      payee
+    url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/2023-individual-income-tax-booklet.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: North Dakota Office of State Tax Commissioner (Form ND-1 line 36 references paying "ND State Tax
+    Commissioner"; enclose Form ND-1PRV voucher with a paper check/money order)
+  web_pay_url: https://tap.tax.nd.gov/
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: ND 2023 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions) — Who must file (pp.4-5), Statutory
+      7-month rule, treaty statement (p.5), When and where to file / mailing PO Box 5621 (p.7), assembly & check
+      payee
+    url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/2023-individual-income-tax-booklet.pdf
+all_citations:
+- source: ND 2023 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions) — Who must file (pp.4-5), Statutory
+    7-month rule, treaty statement (p.5), When and where to file / mailing PO Box 5621 (p.7), assembly & check payee
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/2023-individual-income-tax-booklet.pdf
+- source: Form ND-1 (2023) — line 1a federal AGI (1040 line 11), line 1b federal taxable income (1040 line 15),
+    additions lines 2-4, mailing to Office of State Tax Commissioner PO Box 5621 Bismarck ND 58506-5621, pay to
+    ND State Tax Commissioner
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/form-nd-1-2023.pdf
+- source: Schedule ND-1NR (2023) — Tax Calculation for Nonresidents and Part-Year Residents
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/schedule-nd-1nr-2023.pdf
+- source: 'Guideline: Income Taxation of Nonresident Aliens — ND does not recognize treaties unless they specifically
+    exempt income from state tax; Pro Forma 1040NR disregarding treaty provisions; enter 1040NR line 15 on ND-1
+    line 1b'
+  url: https://www.tax.nd.gov/sites/www/files/documents/guidelines/individual/income-taxation-of-nonresident-aliens-guideline.pdf
+- source: ND Office of State Tax Commissioner — Individual Income Tax overview page (due date on/before April 15;
+    ND TAP payment portal)
+  url: https://www.tax.nd.gov/individual-income-tax
+- source: ND Office of State Tax Commissioner — Resident residency definition (full-time + 7-month/210-day rule)
+  url: https://www.tax.nd.gov/news/resources/residency/resident
+- source: ND Office of State Tax Commissioner — Non-Resident residency definition and ND-source income
+  url: https://www.tax.nd.gov/news/resources/residency/non-resident
+unverified:
+- The mailing address is the same PO Box (5621) for both refund/no-payment and with-payment returns per the 2023
+  booklet's single 'Mail your return to' / assembly instructions; ND does not appear to publish separate refund
+  vs payment PO boxes. Confirm at tax.nd.gov before relying on a split address.
+- Online payment portal canonical URL given as https://tap.tax.nd.gov/ (ND TAP). The booklet/individual-income-tax
+  page also direct users to tax.nd.gov 'Make A Payment'; the booklet cited a non-logged-in pay link http://tap.tax.nd.gov/?link=NonLogPay.
+  Confirm the current ND TAP payment URL at the DOR.
+- Exact ND-EZ vs ND-1 eligibility questions were summarized, not fully enumerated; confirm the 'Which form to use'
+  checklist (2023 booklet p.6) for a specific taxpayer.

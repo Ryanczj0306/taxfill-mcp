@@ -1,0 +1,94 @@
+# SC state knowledge — tax year 2023. Fetched + cited from the SC DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/sc
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: SC1040 line 1 starts from FEDERAL TAXABLE INCOME ("Enter your taxable income from your federal form"
+  - 2023 SC1040 Instructions, p.2). Federally treaty-exempt income is already excluded from federal taxable income
+  before the SC return begins. SC's additions to income (SC1040 lines a-e) do NOT include any add-back of tax-treaty-exempt
+  income. The only foreign-related add-back is on line e ("Add back foreign area allowances, cost of living allowances,
+  and income from US possessions"), which is distinct from income exempt under a federal income tax treaty and does
+  not re-capture treaty income. Because treaty-exempt income is neither in the federal taxable-income starting point
+  nor added back, it is NOT re-taxed by SC -> conforms. (SC also confirms conformity to the IRC as amended through
+  12/31/2022 except as otherwise provided.)
+citation:
+  source: 2023 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) - Line 1 'Enter your taxable income
+    from your federal form'; Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back;
+    IRC conformity through 12/31/2022; due date April 15, 2024
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf
+starts_from: federal taxable income
+residency:
+  summary: 'Resident: domiciled in / maintains SC as permanent home - SC return treats you as a resident even if
+    living outside SC if all are true: (1) intention to maintain SC as your permanent home, (2) SC is the center
+    of your financial, social, and family life, (3) when away you intend to return to SC. Nonresident: permanent
+    home is outside SC for the entire year and none of the resident tests apply. Part-year resident (moved into
+    or out of SC during the year): may elect to file either as a full-year resident (SC1040, report all income,
+    claim credit for taxes paid to another state via SC1040TC) OR as a nonresident (SC1040 with Schedule NR, taxed
+    only on income earned while an SC resident plus SC-source income, prorate deductions); may choose whichever
+    method is more beneficial. Residency is domicile-based (true, fixed, permanent home with intent to return);
+    see SCDOR "Determining a Taxpayer''s Domicile for Income Tax Purposes" at dor.sc.gov/policy. Special military
+    rules apply.'
+forms:
+  resident: SC1040 (South Carolina Individual Income Tax Return)
+  part_year_or_nonresident: Schedule NR (Nonresident Schedule), attached to a completed SC1040. Nonresidents and
+    part-year residents electing to file as a nonresident complete Schedule NR; Column A = income from the federal
+    return, Column B = income earned while an SC resident or from SC sources.
+filing_requirement:
+  note: 'You must file an SC Individual Income Tax return if you answer YES to any: Resident under 65 - you were
+    required to file a federal return that included income taxable by SC (SC residents are taxed on their entire
+    income regardless of where earned, unless specifically exempted), or you had SC Income Tax withheld. Resident
+    65+ - MFJ (both 65+): gross income greater than the federal gross-income filing requirement amount plus $30,000;
+    any other status: greater than the federal amount plus $15,000; or SC tax was withheld. Nonresidents - you had
+    SC Income Tax withheld, or you had SC gross income (e.g., rental property, businesses, or other SC investments).
+    Find the federal gross-income filing requirement in the federal 1040 instructions at irs.gov. (Source: 2023
+    SC Individual Income Tax General Information and FAQs.)'
+mailing_addresses:
+  refund_or_no_payment: SC1040 Processing Center, PO Box 101100, Columbia, SC 29211-0100
+  with_payment: Taxable Processing Center, PO Box 101105, Columbia, SC 29211-0105
+  citation:
+    source: 2023 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) - Line 1 'Enter your taxable income
+      from your federal form'; Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back;
+      IRC conformity through 12/31/2022; due date April 15, 2024
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: SCDOR (South Carolina Department of Revenue)
+  web_pay_url: https://mydorway.dor.sc.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) - Line 1 'Enter your taxable income
+      from your federal form'; Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back;
+      IRC conformity through 12/31/2022; due date April 15, 2024
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf
+all_citations:
+- source: 2023 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) - Line 1 'Enter your taxable income
+    from your federal form'; Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back;
+    IRC conformity through 12/31/2022; due date April 15, 2024
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf
+- source: '2023 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - MAIL TO addresses: Refunds/Zero
+    Tax PO Box 101100; Balance Due PO Box 101105'
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2023.pdf
+- source: '2023 SC Individual Income Tax: General Information and FAQs (SC Dept. of Revenue) - who must file, resident/nonresident/part-year
+    definitions, domicile, due date April 15, 2024, check payable to SCDOR'
+  url: https://www.dor.sc.gov/sites/dor/files/forms/Geninfo_2023.pdf
+- source: 2023 Schedule NR (Nonresident Schedule) form (SC Dept. of Revenue) - nonresident/part-year, attach to
+    completed SC1040, Column A federal / Column B SC
+  url: https://dor.sc.gov/forms-site/Forms/SchNRinst_2023.pdf
+- source: SCDOR Individual Income Tax FAQs / MyDORWAY payment portal (check payable to SCDOR; portal URL)
+  url: https://dor.sc.gov/iit/prepare-you-file/iit-faqs
+unverified:
+- Exact verbatim definitions of 'resident,' 'part-year resident,' and 'nonresident' as separately labeled terms
+  come from the SCDOR General Information and FAQs (functional tests quoted) rather than a single statutory glossary
+  in the SC1040 form; the detailed domicile standard is in SCDOR's separate policy document 'Determining a Taxpayer's
+  Domicile for Income Tax Purposes' (dor.sc.gov/policy), which was not separately fetched - confirm at the DOR if
+  a precise statutory citation is needed.
+- Check payee is given as 'SCDOR' in the SCDOR FAQs and in the SC1040 instructions for UT-3 and SC1040ES payments;
+  the SC1040 form's printed payment line did not show a literal payee string in the extracted text, so the exact
+  wording for a mailed SC1040 balance-due check (SCDOR vs. South Carolina Department of Revenue) should be confirmed
+  at the DOR.
