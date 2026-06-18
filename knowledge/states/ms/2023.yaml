@@ -1,0 +1,92 @@
+# MS state knowledge — tax year 2023. Fetched + cited from the MS DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ms
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'Mississippi does NOT conform to federal tax treaties and re-taxes treaty-exempt income. Two .gov findings
+  establish this. (1) The MS DOR Individual Income Tax FAQ states verbatim: "Does Mississippi honor federal income
+  tax exemption treaties between the United States and other foreign counties? No, as a general rule, Mississippi
+  does not follow federal income tax exemption treaties. Any income earned on a 1042S should be reported on the
+  Mississippi return as taxable income." (2) Unlike most states, MS does NOT start from federal AGI — the 2023 Form
+  80-105 builds Mississippi income from scratch line-by-line (wages, business income, capital gain, interest, dividends,
+  pensions, etc. on lines 38-48; "Total income" line 49) and then applies MS-specific adjustments (lines 50-65)
+  to reach "Mississippi adjusted gross income" (line 66). Because the return is built from gross income items rather
+  than inheriting the federal AGI exclusion, treaty-exempt wages/income (e.g., reported on a 1042-S) are pulled
+  into Mississippi taxable income directly; no special add-back schedule is needed. Net effect: treaty-exempt income
+  IS taxed by Mississippi, so conforms_to_federal_treaties = false.'
+citation:
+  source: MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; due date; resident/nonresident/part-year
+    forms; filing requirement; 1042-S taxable)
+  url: https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions
+starts_from: Mississippi gross income computed from scratch on the return (NOT federal AGI). The 2023 resident Form
+  80-105 starts from individual income line items (wages line 38 through other income line 48), totals them at line
+  49 "Total income," then subtracts MS adjustments (lines 50-65) to reach line 66 "Mississippi adjusted gross income."
+  There is no "federal adjusted gross income" starting line on the resident return.
+residency:
+  summary: 'Per the 2023 instructions (Form 80-100, "Am I a Resident or a Non-Resident?"): a legal resident is an
+    individual who maintains a home, apartment, or other place of abode in Mississippi, OR who exercises the rights
+    of citizenship in Mississippi by meeting the requirements as a voter, OR who enjoys the benefits of homestead
+    exemption. Residency is based on domicile/legal residence: an individual remains a legal resident of Mississippi
+    (even if temporarily absent for varying intervals) until citizenship rights are relinquished and a new legal
+    residence is established (changes in driver''s license, vehicle tags, voter registration, and property taxes
+    evidence intent to change legal residence). A part-year resident is someone who moved into or out of Mississippi
+    during the year; part-year residents file Form 80-205 and are taxed only on income earned while a Mississippi
+    resident, prorating deductions and exemptions. Nonresidents file Form 80-205 and are taxed only on Mississippi-source
+    income (e.g., wages for services performed in Mississippi), reporting total income from all sources solely to
+    prorate deductions and exemptions.'
+forms:
+  resident: Form 80-105, Mississippi Resident Individual Income Tax Return (2023; Form 80-105-23-8-1-000, Rev. 11/23)
+  part_year_or_nonresident: Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return
+    (2023; Form 80-205-23-8-1-000, Rev. 11/23)
+filing_requirement:
+  note: 'Per 2023 instructions (Form 80-100), file a Mississippi return if any apply: you had Mississippi income
+    tax withheld (other than gambling); you are a non-resident or part-year resident with income taxed by Mississippi
+    (other than gambling); single resident with gross income over $8,300 plus $1,500 per dependent; married resident
+    (combined) with gross income over $16,600 plus $1,500 per dependent; a minor resident with gross income over
+    the personal exemption plus standard deduction for the filing status; residents working outside Mississippi/abroad
+    must report total gross income regardless of source. If not required to file but Mississippi tax was withheld,
+    file to obtain a refund.'
+mailing_addresses:
+  refund_or_no_payment: 'Returns requesting a REFUND: Mississippi Department of Revenue, P.O. Box 23058, Jackson,
+    MS 39225-3058. (Per Form 80-105/80-205 footer and 2023 instructions Form 80-100.)'
+  with_payment: 'All other returns (with payment or no tax due): Mississippi Department of Revenue, P.O. Box 23050,
+    Jackson, MS 39225-3050. (Per Form 80-105/80-205 footer and 2023 instructions.) When mailing the Form 80-106
+    payment voucher WITHOUT the return, send to: Department of Revenue, P.O. Box 23192, Jackson, MS 39225-3192;
+    WITH the return: P.O. Box 23050, Jackson, MS 39225-3050.'
+  citation:
+    source: MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; due date; resident/nonresident/part-year
+      forms; filing requirement; 1042-S taxable)
+    url: https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions
+payment:
+  check_payee: Department of Revenue (make check or money order payable to "Department of Revenue"; write the identification
+    number on the check/money order). Per 2023 Form 80-106 payment voucher instructions.
+  web_pay_url: https://tap.dor.ms.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; due date; resident/nonresident/part-year
+      forms; filing requirement; 1042-S taxable)
+    url: https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions
+all_citations:
+- source: MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; due date; resident/nonresident/part-year
+    forms; filing requirement; 1042-S taxable)
+  url: https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions
+- source: MS DOR — 2023 Form 80-105 Resident Individual Income Tax Return (income built from line items, not federal
+    AGI; line 66 Mississippi adjusted gross income; mailing addresses)
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105238.pdf
+- source: MS DOR — 2023 Form 80-205 Non-Resident / Part-Year Resident Individual Income Tax Return
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80205238.pdf
+- source: MS DOR — 2023 Form 80-100 Resident, Non-Resident and Part-Year Resident Instructions (residency/domicile
+    rules; filing thresholds; April 15 due date; mailing addresses)
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf
+- source: MS DOR — 2023 Form 80-106 Individual/Fiduciary Income Tax Payment Voucher (check payee 'Department of
+    Revenue'; with/without-return mailing; TAP payment)
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80106238.pdf
+- source: MS DOR — Make Online Tax Payments / Taxpayer Access Point (TAP)
+  url: https://www.dor.ms.gov/forms-resources/make-online-tax-payments
+- source: MS DOR — Taxpayer Access Point (TAP) login system
+  url: https://tap.dor.ms.gov/_/

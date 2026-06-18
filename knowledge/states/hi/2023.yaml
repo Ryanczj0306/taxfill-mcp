@@ -1,0 +1,90 @@
+# HI state knowledge — tax year 2023. Fetched + cited from the HI DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/hi
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Hawaii''s resident return (Form N-11) line 7 starts from "Federal adjusted gross income (AGI)" reported
+  from federal Form 1040/1040-SR. Treaty-exempt income excluded at the federal level is therefore already excluded
+  from the Hawaii starting amount. Hawaii''s additions to federal AGI are an explicit, enumerated list on Form N-11
+  line 10 ("Other Hawaii Additions to Federal AGI"): differences in the taxable portion of the Hawaii tax refund,
+  Individual Housing Account distributions, Peace Corps compensation, depreciation/gain differences, compensation
+  from temporary employment outside the United States, student-loan-interest differences, employer-provided adoption-benefit
+  differences, qualified tuition program distributions for K-12, distributions from certain foreign corporations,
+  and "other adjustments." None of these is an add-back of federal tax-treaty-exempt income (unlike California''s
+  Schedule CA). The N-11 instructions'' "Special Instructions for Nonresident Aliens" further state that a person
+  who is a nonresident alien for federal purposes but a Hawaii resident applies the federal nonresident-alien rules
+  when filing the Hawaii resident return and still begins from federal AGI, with no instruction to add back treaty
+  income. Conclusion: treaty-exempt income is NOT re-taxed -> conforms = true.'
+citation:
+  source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
+    income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
+  url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+starts_from: 'federal AGI (Form N-11, line 7: "Federal adjusted gross income (AGI)")'
+residency:
+  summary: 'Per Hawaii''s N-11 instructions: a RESIDENT is (1) every individual domiciled in Hawaii, and (2) every
+    other individual (whether or not domiciled in Hawaii) who resides in Hawaii for other than a temporary or transitory
+    purpose; a resident is taxed on income from all sources. An individual domiciled outside Hawaii is PRESUMED
+    to be a resident if present in Hawaii more than 200 days during the taxable year, a presumption rebuttable by
+    evidence of a permanent abode outside Hawaii and presence for a temporary/transitory purpose. "Domicile" is
+    the place of an individual''s true, fixed, permanent home to which they intend to return; changing domicile
+    requires abandoning the old domicile, intent to establish a new one, and actual physical presence in the new
+    domicile. A NONRESIDENT is an individual in Hawaii for a temporary or transient purpose whose permanent domicile
+    is not Hawaii (taxed only on Hawaii-source income). A PART-YEAR RESIDENT was a Hawaii resident for part of the
+    year and a nonresident for the other part (e.g., moved into or out of Hawaii during the year); taxed on all
+    income during the residency period and on Hawaii-source income only during the nonresidency period.'
+forms:
+  resident: Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)
+  part_year_or_nonresident: Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2023)
+filing_requirement:
+  note: 'A full-year resident must file Form N-11 if gross income subject to Hawaii income tax exceeds the filing
+    threshold. Per the 2023 N-11 instructions, for individuals UNDER age 65 the gross-income thresholds are: Single
+    and Married filing separately $3,344; Head of household $4,356; Qualifying surviving spouse $5,544; Married
+    filing jointly $6,688. Higher thresholds apply for individuals age 65 or older (e.g., Single/MFS $4,488; Head
+    of household $5,500; Qualifying surviving spouse $6,688; MFJ one spouse 65+ $7,832; MFJ both 65+ $8,976) and
+    for persons certified as blind, deaf, or totally disabled (Form N-172). A return must also be filed regardless
+    of income level if certain recapture or special forms (e.g., N-2, N-103, N-152, N-312, N-814) apply.'
+mailing_addresses:
+  refund_or_no_payment: Hawaii Department of Taxation, P.O. Box 3559, Honolulu, Hawaii 96811-3559 (use when NOT
+    enclosing a check or money order)
+  with_payment: 'Hawaii Department of Taxation, Attn: Payment Section, P.O. Box 1530, Honolulu, Hawaii 96806-1530
+    (use when enclosing a check or money order)'
+  citation:
+    source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
+      income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
+    url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Hawaii State Tax Collector
+  web_pay_url: https://hitax.hawaii.gov
+deadlines:
+  filing_due_date: '2024-04-22'
+  citation:
+    source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
+      income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
+    url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+all_citations:
+- source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
+    income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
+  url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+- source: Hawaii 2023 N-11 Resident Income Tax Instructions — residency/domicile definitions, 200-day presumption,
+    which form to file, due date April 22 2024, mailing addresses, check payee 'Hawaii State Tax Collector', hitax.hawaii.gov
+    portal, Line 10 additions list, filing thresholds
+  url: https://files.hawaii.gov/tax/forms/2023/n11ins.pdf
+- source: Hawaii Form N-15 (Rev. 2023) Individual Income Tax Return — Nonresident and Part-Year Resident
+  url: https://files.hawaii.gov/tax/forms/2023/n15_f.pdf
+- source: Hawaii 2023 N-15 Nonresident/Part-Year Resident Instructions
+  url: https://files.hawaii.gov/tax/forms/2023/n15ins.pdf
+- source: Hawaii Department of Taxation — Individual Income Tax (Resident and Nonresident) forms page
+  url: https://tax.hawaii.gov/forms/a1_b1_1income/
+unverified:
+- Whether hitax.hawaii.gov is the precise canonical payment URL versus tax.hawaii.gov/eservices/ — the N-11 instructions
+  cite the State Internet portal as 'hitax.hawaii.gov' for Form N-200V electronic payment and 'tax.hawaii.gov/eservices/'
+  for general e-services; the exact deep-link payment page was not separately confirmed.
+- The N-15 nonresident/part-year due date and mailing addresses were not independently re-extracted from the N-15
+  instructions PDF in this session; they are presumed identical to the N-11 (April 22, 2024; same Box 1530 / Box
+  3559 addresses) but should be confirmed against n15ins.pdf at the DOR.

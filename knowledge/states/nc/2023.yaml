@@ -1,0 +1,95 @@
+# NC state knowledge — tax year 2023. Fetched + cited from the NC DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/nc
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'NC conforms. The 2023 D-401 instructions state on Line 6: "The starting point for determining North
+  Carolina taxable income is federal adjusted gross income." Because federally treaty-exempt income is already excluded
+  from federal AGI, it flows through to NC untaxed UNLESS NC adds it back. The complete list of Form D-400 Schedule
+  S, Part A "Additions to Federal Adjusted Gross Income" (Lines 1-16, D-401 pp. 17-18) contains NO add-back of treaty-exempt
+  income (additions are limited to items like non-NC state/local bond interest, bonus depreciation, IRC 179 expense,
+  Opportunity Fund deferred gains, S-corp built-in gains, federal NOL, 529 withdrawals, employer education-loan
+  payments, expenses allocable to exempt income, etc.). Since treaty-exempt income is not re-taxed, conforms_to_federal_treaties
+  = true. Note one nuance to flag for filers: Schedule S Part A Line 12 requires adding back EXPENSES allocable
+  to income exempt from NC tax, but it does not add back the exempt income itself.'
+citation:
+  source: 2023 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must
+    File, residency, p.5-6), When Must I File (due date, p.7), Where Do I File / How Can I Pay (mailing addresses,
+    payee, p.8), Line 6 federal AGI starting point (p.13), Line 7 Additions / Schedule S Part A list (p.13, 17-18),
+    Filing Requirements Chart (p.6)
+  url: https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open
+starts_from: federal adjusted gross income (Form D-400, Line 6 — "The starting point for determining North Carolina
+  taxable income is federal adjusted gross income"); the NC starting basis is the Internal Revenue Code as of January
+  1, 2023
+residency:
+  summary: Residency is based on domicile. A North Carolina RESIDENT is an individual domiciled in NC at any time
+    during 2023, or who resided in NC during 2023 for other than a temporary or transitory purpose; an individual
+    present in NC for more than 183 days during the taxable year is presumed (rebuttably) to be a resident, though
+    absence for more than 183 days raises no presumption of non-residence. A PART-YEAR RESIDENT is one who moved
+    into and became a resident of NC during 2023, or who moved out of NC and became a resident of another state
+    during 2023 (a resident who moves away remains an NC resident until a definite new domicile is established elsewhere
+    and the NC domicile is abandoned). A NONRESIDENT is one who was not a resident at any time during 2023 but received
+    income from NC sources (e.g., NC real/tangible property, an NC business/trade/profession/occupation, or NC gambling).
+    A nonresident alien may be treated as resident, part-year, or nonresident for NC purposes.
+forms:
+  resident: Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents
+  part_year_or_nonresident: Form D-400 with Form D-400 Schedule PN (2023 Part-Year Resident and Nonresident Schedule)
+    to compute the NC taxable percentage; if needed, Form D-400 Schedule PN-1 (Other Additions and Other Deductions).
+    All filers, including part-year residents and nonresidents, file the same Form D-400.
+filing_requirement:
+  note: 'A 2023 NC return is required if federal gross income for 2023 exceeds the filing threshold for your status
+    (2023 Filing Requirements Chart): Single $12,750; Married Filing Jointly $25,500; Married Filing Separately
+    $12,750 (if spouse does not claim itemized deductions) or $0 (if spouse claims itemized deductions); Head of
+    Household $19,125; Qualifying Widow(er)/Surviving Spouse $25,500; Nonresident Alien $0 (regardless of filing
+    status). NC minimum gross income filing requirements differ from the IRC because NC''s standard deduction differs
+    from the federal. A part-year resident or nonresident with NC-source income must file if total gross income
+    from all sources exceeds the threshold for the filing status.'
+mailing_addresses:
+  refund_or_no_payment: N.C. Department of Revenue, P.O. Box R, Raleigh, NC 27634-0001 (if due a refund or no payment
+    due and filing on paper)
+  with_payment: N.C. Department of Revenue, P.O. Box 25000, Raleigh, NC 27640-0640 (with payment due plus Form D-400V
+    payment voucher)
+  citation:
+    source: 2023 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who
+      Must File, residency, p.5-6), When Must I File (due date, p.7), Where Do I File / How Can I Pay (mailing addresses,
+      payee, p.8), Line 6 federal AGI starting point (p.13), Line 7 Additions / Schedule S Part A list (p.13, 17-18),
+      Filing Requirements Chart (p.6)
+    url: https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: N.C. Department of Revenue (write "2023 D-400", your name, address, and last 4 digits of your SSN
+    on the payment; check/money order must be drawn on a U.S. bank in U.S. dollars; do not send cash)
+  web_pay_url: https://www.ncdor.gov/file-pay/file-pay-individuals
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who
+      Must File, residency, p.5-6), When Must I File (due date, p.7), Where Do I File / How Can I Pay (mailing addresses,
+      payee, p.8), Line 6 federal AGI starting point (p.13), Line 7 Additions / Schedule S Part A list (p.13, 17-18),
+      Filing Requirements Chart (p.6)
+    url: https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open
+all_citations:
+- source: 2023 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must
+    File, residency, p.5-6), When Must I File (due date, p.7), Where Do I File / How Can I Pay (mailing addresses,
+    payee, p.8), Line 6 federal AGI starting point (p.13), Line 7 Additions / Schedule S Part A list (p.13, 17-18),
+    Filing Requirements Chart (p.6)
+  url: https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open
+- source: NCDOR — 2023 D-400 Individual Income Tax Return page
+  url: https://www.ncdor.gov/2023-d-400-individual-income-tax-return
+- source: NCDOR — File & Pay for Individuals (online payment by bank draft no fee; Visa/MasterCard $2 per $100)
+  url: https://www.ncdor.gov/file-pay/file-pay-individuals
+- source: NCDOR — eServices (online payment options, availability)
+  url: https://www.ncdor.gov/file-pay/eservices
+unverified:
+- 'The exact online portal landing URL for paying 2023 individual income tax: I cited https://www.ncdor.gov/file-pay/file-pay-individuals
+  (current NCDOR ''File & Pay for Individuals'' page) from a .gov search result, but the 2023 D-401 booklet itself
+  only says ''visit the Department''s website (www.ncdor.gov)'' and does not print a specific deep-link URL — confirm
+  the live payment link at ncdor.gov.'
+- 'Whether the standalone NCDOR ''When, Where, and How to File'' web page reflects 2023 specifically: that page
+  currently displays tax year 2025 content, so all 2023-specific figures above were taken from the dated 2023 D-401
+  PDF booklet rather than that living web page.'

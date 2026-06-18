@@ -1,0 +1,99 @@
+# KY state knowledge — tax year 2023. Fetched + cited from the KY DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ky
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Kentucky''s resident return (Form 740) starts from federal adjusted gross income — Form 740 line 5
+  is "Federal Adjusted Gross Income," and the 2023 740 instruction packet states: "Kentucky law requires that the
+  individual income tax return begin with federal adjusted gross income and be adjusted for any differences to arrive
+  at Kentucky adjusted gross income." Modifications are made on Schedule M. The Schedule M "Additions to Federal
+  Adjusted Gross Income" (lines 1-5) are: (1) interest on other states'' obligations / mutual-fund dividends, (2)
+  resident adjustment from KY Schedule K-1, (3) special depreciation/Section 179, (4) federal NOL, and (5) "other
+  additions" (reservist/National Guard expenses, lump-sum distribution 20% capital-gains portion, passive activity
+  loss adjustment, pension/IRA basis differences, intangible-asset gain differences). NONE of these add back federally
+  tax-treaty-exempt income. Because treaty-exempt income is already excluded from federal AGI and KY has no add-back
+  for it, it is not re-taxed by Kentucky — therefore KY conforms.'
+citation:
+  source: '2023 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT) (10-23)): starting
+    point (''the individual income tax return begin with federal adjusted gross income''), Form 740 line 5 Federal
+    AGI, Schedule M additions list, Federal/Kentucky differences, due date April 15 2024, mailing addresses (Refund
+    40618-0006 / Pay 40619-0008), check payable to Kentucky State Treasurer / Form 740-V'
+  url: https://revenue.ky.gov/Forms/740%20Packet%20Instructions%202023.pdf
+starts_from: 'federal AGI (Form 740, line 5 "Federal Adjusted Gross Income"; packet: "the individual income tax
+  return begin with federal adjusted gross income")'
+residency:
+  summary: 'Per the 2023 Form 740-NP instructions: individuals who maintain a permanent residence in Kentucky (i.e.,
+    are domiciled in Kentucky) for the entire tax year are full-year RESIDENTS and file Form 740. Persons not domiciled
+    in Kentucky but who live in Kentucky for more than 183 days during the tax year are ALSO considered residents
+    (a statutory-resident rule) but, since they are not full-year residents, file Form 740-NP. Individuals who established
+    or abandoned Kentucky residency during the year are PART-YEAR residents (file Form 740-NP), reporting income
+    from all sources while a resident plus Kentucky-source income while a nonresident. Full-year NONRESIDENTS report
+    only income from Kentucky sources (activities carried on in KY, services performed in KY, and KY-located property)
+    on Form 740-NP. Full-year residents of reciprocal states (IL, IN, MI, OH, VA, WV, WI) with only KY wage income
+    use Form 740-NP-R.'
+forms:
+  resident: Form 740 (Kentucky Individual Income Tax Return — Full-Year Resident). Form 740-EZ also exists for simple
+    full-year resident returns.
+  part_year_or_nonresident: Form 740-NP (Kentucky Individual Income Tax Return — Nonresident or Part-Year Resident).
+    Reciprocal-state residents with only KY wages use Form 740-NP-R.
+filing_requirement:
+  note: 'A Kentucky individual income tax return must be filed if BOTH (1) modified gross income exceeds the threshold
+    for your family size in Chart A — 2023 thresholds: family size 1 = $15,650; 2 = $21,150; 3 = $26,650; 4+ = $32,150
+    — AND (2) Kentucky adjusted gross income exceeds the Chart B threshold for your filing status/age (e.g., $3,270
+    single/married under 65; $4,270 if one is 65+; $5,270 if both 65+/blind). Self-employment exception: must file
+    regardless of Chart B if Kentucky self-employment gross receipts exceed the Chart A modified-gross-income amount
+    for the family size. Nonresidents/part-year residents apply the same modified-gross-income (Chart A) tests and
+    file Form 740-NP if they had KY-source income.'
+mailing_addresses:
+  refund_or_no_payment: Kentucky Department of Revenue, Frankfort, KY 40618-0006 (Refund/Other Returns)
+  with_payment: Kentucky Department of Revenue, Frankfort, KY 40619-0008 (Pay Returns)
+  citation:
+    source: '2023 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT) (10-23)): starting
+      point (''the individual income tax return begin with federal adjusted gross income''), Form 740 line 5 Federal
+      AGI, Schedule M additions list, Federal/Kentucky differences, due date April 15 2024, mailing addresses (Refund
+      40618-0006 / Pay 40619-0008), check payable to Kentucky State Treasurer / Form 740-V'
+    url: https://revenue.ky.gov/Forms/740%20Packet%20Instructions%202023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Kentucky State Treasurer (write "KY Income Tax-2023" and your Social Security number on the face
+    of the check; use Form 740-V payment voucher)
+  web_pay_url: https://epayment.ky.gov/EPAY
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: '2023 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT) (10-23)): starting
+      point (''the individual income tax return begin with federal adjusted gross income''), Form 740 line 5 Federal
+      AGI, Schedule M additions list, Federal/Kentucky differences, due date April 15 2024, mailing addresses (Refund
+      40618-0006 / Pay 40619-0008), check payable to Kentucky State Treasurer / Form 740-V'
+    url: https://revenue.ky.gov/Forms/740%20Packet%20Instructions%202023.pdf
+all_citations:
+- source: '2023 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT) (10-23)): starting
+    point (''the individual income tax return begin with federal adjusted gross income''), Form 740 line 5 Federal
+    AGI, Schedule M additions list, Federal/Kentucky differences, due date April 15 2024, mailing addresses (Refund
+    40618-0006 / Pay 40619-0008), check payable to Kentucky State Treasurer / Form 740-V'
+  url: https://revenue.ky.gov/Forms/740%20Packet%20Instructions%202023.pdf
+- source: '2023 Form 740-NP Nonresident or Part-Year Resident Instruction Packet (42A740-NP(P)): residency definitions
+    — domicile, 183-day statutory resident rule, part-year/nonresident filing, who must file Form 740-NP'
+  url: https://revenue.ky.gov/Forms/740-NP%20Packet%20Instructions%205-9-23.pdf
+- source: 'KY DOR — Do I Need to File a Return: Chart A modified gross income thresholds, Chart B KY AGI thresholds,
+    self-employment exception, Form 740 vs 740-NP'
+  url: https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/Do-I-Need-to-File-a-Return.aspx
+- source: 'KY DOR — E-file and Payment Options: online electronic payment via epayment.ky.gov, mailing addresses
+    (40619-0008 with payment / 40618-0006 refund), checks payable to KY State Treasurer'
+  url: https://revenue.ky.gov/Collections/Pages/E-file-Payment-Options.aspx
+- source: Kentucky Department of Revenue Electronic Payment portal (EPAY)
+  url: https://epayment.ky.gov/EPAY
+- source: KY DOR — Form 740 (2023) return
+  url: https://revenue.ky.gov/Forms/Form%20740%202023.pdf
+unverified:
+- No KY .gov page explicitly addresses tax-TREATY-exempt income by name; the conformity conclusion is inferred from
+  KY beginning at federal AGI plus the absence of any treaty add-back in the Schedule M additions list. This is
+  the standard federal-AGI-conformity case but the specific treaty-income treatment is not stated verbatim on a
+  KY .gov page.
+- The exact 2023 Form 740-V payment-voucher mailing address was not separately pulled; payment-with-return mailing
+  is confirmed as Frankfort, KY 40619-0008 from both the packet and the DOR E-file/Payment Options page.

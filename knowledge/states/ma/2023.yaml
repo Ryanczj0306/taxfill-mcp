@@ -1,0 +1,106 @@
+# MA state knowledge — tax year 2023. Fetched + cited from the MA DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ma
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Net result: treaty-exempt income is NOT re-taxed by MA, so conforms = true — but the mechanism is
+  an EXPLICIT DEDUCTION, not passive federal-AGI conformity. Important nuance: MA''s Form 1 does NOT start from
+  federal AGI. It builds Massachusetts gross income from its own categories. Line 3 (Wages) is taken from W-2 state
+  wages (Box 16), and the instructions state ''Massachusetts gross income also includes the following, which are
+  not subject to U.S. income tax'' (i.e., MA can pull in items federal excludes). So treaty-exempt income that an
+  employer reports in state wages would otherwise land in MA income. MA neutralizes this with a dedicated Schedule
+  Y, Line 4 deduction: ''Amounts Excludible Under MGL Ch 41, § 111F or U.S. Tax Treaty Included in Form 1, Line
+  3'' — ''If you were a qualifying student or a taxpayer with income exempt under a United States tax treaty, enter
+  any excludible amount of income received that was exempt under such tax treaty in line 4 of Schedule Y that was
+  included in Form 1, line 3, and fill in the appropriate oval.'' Because Schedule Y reduces income, the treaty-exempt
+  amount is deducted back out and is not taxed. (Form 1-NR/PY has the identical Schedule Y, Line 4 deduction referencing
+  Form 1-NR/PY, line 5.) PRACTICAL NOTE: unlike a pure federal-AGI conformity state where treaty income flows out
+  automatically, in MA the taxpayer must affirmatively claim the Schedule Y, Line 4 deduction (and fill the treaty
+  oval) — if treaty wages appear in W-2 Box 16/Form 1 line 3 and the deduction is not claimed, the income would
+  be taxed. Source: 2023 Form 1 Instructions, ''Line 4. Amounts Excludible Under MGL Ch 41, § 111F or U.S. Tax Treaty
+  Included in Form 1, Line 3'' (p.21) and ''Line 3. Wages, Salaries, Tips'' (p.7); 2023 Form 1-NR/PY Instructions
+  Schedule Y Line 4 (p.27).'
+citation:
+  source: 2023 Form 1 Instructions (MA DOR) — residency definitions, $8,000 threshold, MA gross income definition
+    incl. items not federally taxed, Line 3 wages from W-2 state wages with sec.911 add-back, Schedule Y Line 4
+    U.S. tax treaty deduction, IRC conformity (general non-conformity to post-1/1/2022 IRC), Filing Due Dates (April
+    17, 2024), mailing PO Box 7000 / 7003, payee 'Commonwealth of Massachusetts', mass.gov/masstaxconnect
+  url: https://www.mass.gov/doc/2023-form-1-instructions/download
+starts_from: 'federal wages (W-2 state wages, Box 16) — NOT federal AGI. MA Form 1 builds Massachusetts gross income
+  from its own income categories (5.0% income incl. wages from W-2; interest/dividends on Schedule B; capital gains
+  on Schedule D); it does not begin from a single federal AGI line. The Form 1 instructions: ''Report in line 3
+  total state wages and allocated tips from Form(s) W-2. Generally, your total wages and allocated tips will be
+  the same amount reported on your U.S. Form 1040, line 1z,'' with explicit add-back adjustments (e.g., IRC sec.911
+  foreign earned income exclusion must be added back; MA state/local pension contributions excluded for federal
+  are included).'
+residency:
+  summary: 'MA recognizes four statuses (MGL ch 62). FULL-YEAR RESIDENT: your residence (domicile) is in Massachusetts
+    for the entire year, OR you maintain a permanent place of abode in MA and spend more than 183 days in the aggregate
+    in the state during the year (the statutory-resident test) — file Form 1. ''Residence'' and ''domicile'' denote
+    the place where you have your permanent home and to which, whenever absent, you intend to return. NONRESIDENT:
+    not a MA resident but received Massachusetts-source income (e.g., from a MA job) — file Form 1-NR/PY. PART-YEAR
+    RESIDENT: you moved into or out of MA during the year; income/deductions/exemptions are apportioned based on
+    days resident or MA-source income — file Form 1-NR/PY. NONRESIDENT AND PART-YEAR RESIDENT: meet both criteria;
+    file Form 1-NR/PY and complete Schedule R/NR (Resident/Nonresident Worksheet).'
+forms:
+  resident: Form 1 — Massachusetts Resident Income Tax Return (2023)
+  part_year_or_nonresident: Form 1-NR/PY — Massachusetts Nonresident or Part-Year Resident Income Tax Return (2023).
+    Taxpayers who are both nonresident and part-year resident also complete Schedule R/NR (Resident/Nonresident
+    Worksheet).
+filing_requirement:
+  note: 'RESIDENT: Must file Form 1 if a MA resident and gross income (from all sources, inside or outside MA) was
+    more than $8,000; if $8,000 or less, no return required. NONRESIDENT: Must file Form 1-NR/PY if Massachusetts-source
+    income exceeded the lesser of (a) $8,000, OR (b) the prorated personal exemption (personal exemption amount
+    multiplied by the ratio of MA income to total income). PART-YEAR RESIDENT: Must file Form 1-NR/PY if gross income
+    during the year was more than $8,000 (from sources inside or outside MA). Source: 2023 Form 1 Instructions (''Filing
+    Your Massachusetts Return'') and 2023 Form 1-NR/PY Instructions (who must file).'
+mailing_addresses:
+  refund_or_no_payment: Massachusetts Department of Revenue, PO Box 7000, Boston, MA 02204-7000 (Form 1; use the
+    white mailing label if expecting a refund or no tax due)
+  with_payment: Massachusetts Department of Revenue, PO Box 7003, Boston, MA 02204-7003 (Form 1; use the light blue
+    mailing label when mailing with a payment)
+  citation:
+    source: 2023 Form 1 Instructions (MA DOR) — residency definitions, $8,000 threshold, MA gross income definition
+      incl. items not federally taxed, Line 3 wages from W-2 state wages with sec.911 add-back, Schedule Y Line
+      4 U.S. tax treaty deduction, IRC conformity (general non-conformity to post-1/1/2022 IRC), Filing Due Dates
+      (April 17, 2024), mailing PO Box 7000 / 7003, payee 'Commonwealth of Massachusetts', mass.gov/masstaxconnect
+    url: https://www.mass.gov/doc/2023-form-1-instructions/download
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Commonwealth of Massachusetts (make check or money order payable to 'Commonwealth of Massachusetts';
+    sign it and write your Social Security number on the front, lower left corner)
+  web_pay_url: https://mass.gov/masstaxconnect
+deadlines:
+  filing_due_date: '2024-04-17'
+  citation:
+    source: 2023 Form 1 Instructions (MA DOR) — residency definitions, $8,000 threshold, MA gross income definition
+      incl. items not federally taxed, Line 3 wages from W-2 state wages with sec.911 add-back, Schedule Y Line
+      4 U.S. tax treaty deduction, IRC conformity (general non-conformity to post-1/1/2022 IRC), Filing Due Dates
+      (April 17, 2024), mailing PO Box 7000 / 7003, payee 'Commonwealth of Massachusetts', mass.gov/masstaxconnect
+    url: https://www.mass.gov/doc/2023-form-1-instructions/download
+all_citations:
+- source: 2023 Form 1 Instructions (MA DOR) — residency definitions, $8,000 threshold, MA gross income definition
+    incl. items not federally taxed, Line 3 wages from W-2 state wages with sec.911 add-back, Schedule Y Line 4
+    U.S. tax treaty deduction, IRC conformity (general non-conformity to post-1/1/2022 IRC), Filing Due Dates (April
+    17, 2024), mailing PO Box 7000 / 7003, payee 'Commonwealth of Massachusetts', mass.gov/masstaxconnect
+  url: https://www.mass.gov/doc/2023-form-1-instructions/download
+- source: 2023 Form 1-NR/PY Instructions (MA DOR) — Form 1-NR/PY title (Massachusetts Nonresident or Part-Year Resident
+    Income Tax Return), four residency categories, nonresident $8,000 / prorated personal exemption threshold, part-year
+    $8,000 threshold, Schedule R/NR requirement, due date April 17, 2024, Schedule Y Line 4 U.S. tax treaty deduction
+  url: https://www.mass.gov/doc/2023-form-1-nrpy-instructions/download
+- source: 2023 Form 1 Massachusetts Resident Income Tax Return (MA DOR) — confirms official form title 'Form 1 Massachusetts
+    Resident Income Tax Return' for tax year 2023
+  url: https://www.mass.gov/doc/2023-form-1-massachusetts-resident-income-tax-return/download
+- source: 2023 Massachusetts Personal Income Tax Forms and Instructions (MA DOR list page)
+  url: https://www.mass.gov/lists/2023-massachusetts-personal-income-tax-forms-and-instructions
+unverified:
+- The HTML guide pages on mass.gov (e.g. 'Personal Income Tax for Nonresidents', 'Who Must File') returned HTTP
+  403 to automated fetch; residency/threshold facts were instead confirmed from the official 2023 Form 1 and Form
+  1-NR/PY instruction PDFs, which are authoritative. No fact in this record relies on a non-.gov source.
+- Whether MA DOR maintains a separate dedicated 'with-payment' courier/overnight street address beyond the PO Box
+  was not checked; the two PO Box addresses above are the standard mailing addresses stated in the 2023 Form 1 instructions.

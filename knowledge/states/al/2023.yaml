@@ -1,0 +1,116 @@
+# AL state knowledge — tax year 2023. Fetched + cited from the AL DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/al
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'Alabama does NOT start the return from federal adjusted gross income. Both the resident Form 40 and
+  the nonresident Form 40NR build Alabama income from their own line items computed under Alabama law (Form 40NR
+  Line 5 ''Wages, Salaries, Tips, Etc.'' from Schedule W-2; Line 6/8 ''Other Income''; separate interest/dividend
+  lines), not by importing a federal AGI figure. Because the federal-AGI-conformity flow-through does not exist
+  here, a treaty exclusion that is already netted out of federal AGI does NOT automatically carry to the Alabama
+  return. The 23f40nrbk.pdf booklet (page 12, Line 8) is explicit on the only foreign-income mechanism it recognizes:
+  ''All foreign income must be reported on your return, in order to receive any foreign income exclusion,'' and
+  that exclusion is the IRC sec. 911 foreign EARNED income exclusion, claimed as a separate negative-line credit
+  with federal Form 2555 attached. There is NO Alabama line, schedule, or instruction that recognizes or excludes
+  income exempt under a U.S. income-TAX TREATY. Given (a) the separate Alabama income build-up rather than a federal-AGI
+  start, and (b) the affirmative ''report all foreign income'' rule with only a sec. 911-style exclusion path, conformity
+  to federal treaty exemptions is NOT established on any .gov page. Per conservative handling this is set false
+  and flagged. See unverified/notes.'
+citation:
+  source: 2023 Form 40NR Booklet (Nonresidents) — domicile/residency definitions, Section 1; filing thresholds (p.4);
+    When To File / automatic extension (p.5); Income & line-by-line incl. Line 8 Foreign Income Exclusion / 'all
+    foreign income must be reported' (pp.7-12); Where To File and check payee (pp.10-11)
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf
+starts_from: 'Alabama gross income computed under Alabama law (separate line items: Form 40NR Line 5 wages/salaries/tips
+  from Schedule W-2, Line 6/8 other income, separate interest/dividend lines) — it does NOT start from federal adjusted
+  gross income or federal taxable income.'
+residency:
+  summary: Residency is domicile-based. A resident is anyone domiciled in (a resident of) Alabama — domicile being
+    where one lives, has a permanent home, and intends to return when absent — and residents are taxed on their
+    entire income whether earned within or without Alabama. A part-year resident establishes or abandons Alabama
+    domicile during the year and reports income earned (with prorated deductions) only during the period of Alabama
+    residency. A nonresident has no Alabama domicile/permanent home but is taxed on income from Alabama sources
+    or services performed in Alabama; a foreign citizen who comes to Alabama to work, buys a home, and intends to
+    return to the country of origin is treated as having established Alabama domicile and is taxed on income from
+    all sources. Once established, domicile continues until a new one is established coupled with abandonment of
+    the old.
+forms:
+  resident: Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional
+    short form for full-year residents who do not itemize and have only wage/salary plus interest/dividend income;
+    part-year residents use Form 40.)
+  part_year_or_nonresident: Form 40NR — Alabama Individual Income Tax Return (Nonresidents Only). Part-year residents
+    file the resident Form 40 (reporting only the resident-period income); a person who is part-year resident AND
+    has nonresident-period Alabama-source income files BOTH Form 40 and Form 40NR.
+filing_requirement:
+  note: 'Domicile-based. Full-year residents (2023) must file if gross income is at least: Single $4,500; Head of
+    Family $8,200; Married Filing Joint $11,500; Married Filing Separate $5,750. Part-year residents use the same
+    thresholds measured against gross income earned while an Alabama resident. Nonresidents must file Form 40NR
+    if Alabama-source income exceeds the allowable prorated personal exemption. Even if below the threshold, file
+    to claim a refund of any Alabama tax withheld. (Thresholds from the 2023 Form 40NR booklet, page 4 ''You Must
+    File A Return If'' chart, which states the same amounts for full-year and part-year residents.)'
+mailing_addresses:
+  refund_or_no_payment: Alabama Department of Revenue, P.O. Box 154, Montgomery, AL 36135-0001
+  with_payment: Alabama Department of Revenue, P.O. Box 2401, Montgomery, AL 36140-0001 (include Form 40V payment
+    voucher)
+  citation:
+    source: 2023 Form 40NR Booklet (Nonresidents) — domicile/residency definitions, Section 1; filing thresholds
+      (p.4); When To File / automatic extension (p.5); Income & line-by-line incl. Line 8 Foreign Income Exclusion
+      / 'all foreign income must be reported' (pp.7-12); Where To File and check payee (pp.10-11)
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Alabama Department of Revenue
+  web_pay_url: https://myalabamataxes.alabama.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Form 40NR Booklet (Nonresidents) — domicile/residency definitions, Section 1; filing thresholds
+      (p.4); When To File / automatic extension (p.5); Income & line-by-line incl. Line 8 Foreign Income Exclusion
+      / 'all foreign income must be reported' (pp.7-12); Where To File and check payee (pp.10-11)
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf
+all_citations:
+- source: 2023 Form 40NR Booklet (Nonresidents) — domicile/residency definitions, Section 1; filing thresholds (p.4);
+    When To File / automatic extension (p.5); Income & line-by-line incl. Line 8 Foreign Income Exclusion / 'all
+    foreign income must be reported' (pp.7-12); Where To File and check payee (pp.10-11)
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf
+- source: 2023 Alabama Individual Income Tax Return – Residents & Part-Year Residents (Form 40 landing page + 23f40.pdf)
+  url: https://www.revenue.alabama.gov/forms/2023-alabama-individual-income-tax-return-residents-part-year-residents/
+- source: 2023 Alabama Individual Income Tax Return – Nonresidents Only (Form 40NR landing page)
+  url: https://www.revenue.alabama.gov/forms/2023-alabama-individual-income-tax-return-nonresidents-only/
+- source: Forms Mailing Addresses — Form 40 / Form 40NR with-payment (Box 2401, 36140-0001) and refund/no-payment
+    (Box 154, 36135-0001)
+  url: https://www.revenue.alabama.gov/individual-corporate/forms-mailing-addresses/
+- source: Due Dates — individual income tax return 'due the same date as the corresponding federal income tax return'
+  url: https://www.revenue.alabama.gov/individual-corporate/due-dates/
+- source: 'FAQ: When should I file my Alabama Individual Income Tax Return — ''due on April 15th, unless the 15th
+    is a weekend or holiday'''
+  url: https://www.revenue.alabama.gov/faqs/when-should-i-file-my-alabama-individual-income-tax-return/
+- source: 'Individual Income Tax: General Information for Individuals (filing requirement, domicile-based residency)'
+  url: https://www.revenue.alabama.gov/individual-corporate/individual-income-tax-filing-information/
+- source: Form 40V 2023 (payment voucher; check payable to Alabama Department of Revenue; MyAlabamaTaxes)
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/f40vblk.pdf
+unverified:
+- 'TREATY CONFORMITY: No .gov page confirms whether income exempt under a U.S. income-tax TREATY is excluded for
+  Alabama purposes. Alabama does not start from federal AGI, and the only foreign-income mechanism the Form 40NR
+  booklet describes is the IRC sec. 911 foreign EARNED income exclusion (claimed via a negative-line credit with
+  federal Form 2555), with an explicit instruction that ''all foreign income must be reported.'' Whether treaty-exempt
+  wages must be included in Alabama wages, or whether a treaty exclusion is honored, COULD NOT be confirmed and
+  should be confirmed with the Alabama DOR before relying on conformity. conforms_to_federal_treaties was set false
+  on the conservative basis that no pass-through/exclusion for treaty income is established.'
+- The April 15, 2024 due date for the 2023 return is inferred from the .gov rule 'due the same date as the federal
+  return / April 15th unless a weekend or holiday' (April 15, 2024 was a Monday and the federal deadline). No .gov
+  page was found stating the literal string '2024-04-15' for the 2023 tax year.
+- The Form 40NR booklet text could only be read reliably for pp.1-12; the page-4 filing-threshold chart shows the
+  listed dollar amounts for full-year and part-year residents, but the standalone resident Form 40 instruction booklet's
+  identical thresholds were not separately fetched (same amounts are standard and reflected on the 40NR chart).
+- 'The 23f40nrbk.pdf booklet (Where To File, p.11) lists a third address for ''not receiving a refund or making
+  a payment'': P.O. Box 327469, Montgomery, AL 36132-7469. The official Forms Mailing Addresses page consolidates
+  refund/no-payment to P.O. Box 154 (36135-0001); the no-payment-no-refund Box 327469 variant from the booklet was
+  not reconciled with the mailing-addresses page and should be confirmed.'
+- Form 40A short-form eligibility details summarized from the 40NR booklet's 'Which Form To File' cross-reference,
+  not from a separately fetched 2023 Form 40A booklet.

@@ -1,0 +1,95 @@
+# AR state knowledge — tax year 2023. Fetched + cited from the AR DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ar
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'Arkansas does NOT conform to federal tax treaty exemptions. Two independent .gov-sourced facts establish
+  this: (1) The AR1000F return does NOT start from federal adjusted gross income. It builds Arkansas income line-by-line
+  from source documents — Line 8 ''Add the wages, salaries, tips, etc. reported on your W-2(s)'', Line 10 interest,
+  Line 11 dividends, etc., summed to Line 23 ''Total Income'' and then to Arkansas AGI on Line 25. Because income
+  is captured from the W-2/source level, a federal treaty exclusion taken on the federal return does NOT carry through.
+  (2) The 2023 instructions state explicitly (p.~12): ''Foreign students who are exempt from federal taxes because
+  of a tax treaty must file and pay tax on all income including non-qualified scholarship or fellowship income.''
+  That is an affirmative requirement to tax treaty-exempt income, equivalent to a treaty add-back. Therefore treaty-exempt
+  income IS re-taxed by Arkansas -> conforms_to_federal_treaties = false.'
+citation:
+  source: 'Arkansas 2023 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions booklet)
+    - Arkansas Dept. of Finance and Administration. Contains: residency/domicile definitions (p.9), who-must-file
+    thresholds and ''When to File'' April 15, 2024 due date (p.10), tax-treaty foreign-student taxation language,
+    line-by-line income section (Lines 8-25), mailing addresses, and check-payable instructions.'
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf
+starts_from: Arkansas does NOT start from federal AGI. The AR1000F/AR1000NR income section is built line-by-line
+  from source documents (Line 8 W-2 wages, Line 10 interest, Line 11 dividends, ... Line 23 Total Income), then
+  computes Arkansas Adjusted Gross Income on Line 25. Effectively the starting point is federal wages / individual
+  income items, not federal AGI or federal taxable income.
+residency:
+  summary: 'Residency is based on domicile (the place you intend as your permanent home and to return to whenever
+    away; you can have only one, and it does not change until you move somewhere you intend to make your permanent
+    home). FULL YEAR RESIDENT: you lived in Arkansas all of calendar year 2023, or maintained a domicile or Home
+    of Record in Arkansas during the tax year (file AR1000F). NONRESIDENT: you did not make your domicile in Arkansas
+    (file AR1000NR). PART YEAR RESIDENT: you established a domicile in Arkansas, or moved out of the state, during
+    calendar year 2023 (file AR1000NR). The instructions do not state a bright-line day-count statutory-resident
+    test (no 183-day rule); residency turns on domicile. (Military: Home of Record in Arkansas keeps you an Arkansas
+    resident, though active-duty military compensation is exempt.)'
+forms:
+  resident: AR1000F - Full Year Resident Individual Income Tax Return
+  part_year_or_nonresident: AR1000NR - Part Year or Non-Resident Individual Income Tax Return
+filing_requirement:
+  note: '2023 minimum gross-income filing thresholds (full-year residents, AR1000F): Single $13,850; Head of Household
+    with 1 or no dependents $19,692; Head of Household with 2+ dependents $23,473; Married Filing Joint with 1 or
+    no dependents $23,357; Married Filing Joint with 2+ dependents $28,111; Married Filing Separately $9,140; Surviving
+    Spouse with 1 or no dependents $19,692; Surviving Spouse with 2+ dependents $23,473. ''Gross income'' is all
+    income before deductions other than income specifically exempt, but it DOES include the $6,000 retirement-income
+    exemption and U.S. active-duty/military-retirement amounts. If gross income is below your threshold you are
+    not required to file, but must file to claim any refund. NONRESIDENTS (AR1000NR): must file if they received
+    any gross income from Arkansas sources, regardless of marital/filing status or amount. PART YEAR RESIDENTS (AR1000NR):
+    must file if they received any gross income while an Arkansas resident, regardless of amount.'
+mailing_addresses:
+  refund_or_no_payment: 'Refund return: Arkansas State Income Tax, P.O. Box 1000, Little Rock, AR 72203-1000. No
+    Tax Due / Refund return: Arkansas State Income Tax, P.O. Box 2144, Little Rock, AR 72203-2144.'
+  with_payment: 'Tax Due return: Arkansas State Income Tax, P.O. Box 2144, Little Rock, AR 72203-2144. (Attach Form
+    AR1000V payment voucher with check or money order.)'
+  citation:
+    source: 'Arkansas 2023 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions booklet)
+      - Arkansas Dept. of Finance and Administration. Contains: residency/domicile definitions (p.9), who-must-file
+      thresholds and ''When to File'' April 15, 2024 due date (p.10), tax-treaty foreign-student taxation language,
+      line-by-line income section (Lines 8-25), mailing addresses, and check-payable instructions.'
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Department of Finance and Administration (make check or money order payable in U.S. Dollars; write
+    the tax year and your SSN/account number on it; attach Form AR1000V)
+  web_pay_url: https://www.atap.arkansas.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 'Arkansas 2023 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions booklet)
+      - Arkansas Dept. of Finance and Administration. Contains: residency/domicile definitions (p.9), who-must-file
+      thresholds and ''When to File'' April 15, 2024 due date (p.10), tax-treaty foreign-student taxation language,
+      line-by-line income section (Lines 8-25), mailing addresses, and check-payable instructions.'
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf
+all_citations:
+- source: 'Arkansas 2023 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions booklet)
+    - Arkansas Dept. of Finance and Administration. Contains: residency/domicile definitions (p.9), who-must-file
+    thresholds and ''When to File'' April 15, 2024 due date (p.10), tax-treaty foreign-student taxation language,
+    line-by-line income section (Lines 8-25), mailing addresses, and check-payable instructions.'
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf
+- source: '2023 Tax Forms - Arkansas Department of Finance and Administration (confirms official 2023 form titles:
+    AR1000F ''Full Year Resident Individual Income Tax Return'' and AR1000NR ''Part Year or Non-Resident Individual
+    Income Tax Return''; posted 01/04/2024).'
+  url: https://www.dfa.arkansas.gov/office/taxes/income-tax-administration/individual-income-tax/forms/2023-tax-forms/
+- source: Arkansas Taxpayer Access Point (ATAP) - official DFA online payment/account portal (referenced in the
+    2023 instructions booklet for making payments).
+  url: https://www.atap.arkansas.gov
+unverified:
+- Exact street/physical (non-PO-box) address for private-courier (non-USPS) delivery of returns — the 2023 booklet
+  says to use a physical address but the precise street address was not captured from the extracted text.
+- Whether Form AR1000V is required vs. optional when paying by mail (booklet says 'Complete Form AR1000V ... and
+  attach a check or money order'); treated as the standard payment-voucher process but exact mandatory-vs-optional
+  wording not separately confirmed.
+- ATAP processing/convenience fees (if any) for online card payments — not stated in the reviewed instructions.

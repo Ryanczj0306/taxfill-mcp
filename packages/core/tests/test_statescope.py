@@ -189,9 +189,11 @@ def test_leap_year_full_year_residence_is_resident():
     assert _by_state(r)["CA"].filing_role == "resident"
 
 
-def test_income_tax_state_without_pack_still_must_file():
-    # New York has no shipped pack: still a resident return, placeholder form, note.
-    r = state_scope(_profile(lived=[_rp("NY", date(2023, 1, 1), date(2023, 12, 31))]), 2023)
+def test_income_tax_state_without_pack_still_must_file(tmp_path):
+    # An income-tax state with no shipped pack: still a resident return, placeholder
+    # form, and a note. Use an empty knowledge dir so this stays valid as more state
+    # packs ship (NY itself is now packed).
+    r = state_scope(_profile(lived=[_rp("NY", date(2023, 1, 1), date(2023, 12, 31))]), 2023, base_dir=tmp_path)
     ny = _by_state(r)["NY"]
     assert ny.must_file is True and ny.filing_role == "resident" and ny.income_tax is True
     assert ny.forms == ["(see state DOR — resident vs nonresident form)"]

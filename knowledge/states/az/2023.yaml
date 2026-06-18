@@ -1,0 +1,98 @@
+# AZ state knowledge — tax year 2023. Fetched + cited from the AZ DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/az
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Arizona''s resident return (Form 140) starts from federal adjusted gross income: line 12 of the 2023
+  Form 140 is "Federal adjusted gross income," and the AZ DOR instructions state "Arizona gross income is your federal
+  adjusted gross income." Because federally treaty-exempt income is already excluded from federal AGI, it flows
+  through to the AZ return excluded. AZ then applies only specific statutory additions (Form 140 lines 14-18, including
+  the "Other Additions to Arizona Gross Income" schedule on page 5, which lists items such as the ordinary-income
+  portion of lump-sum distributions excluded federally, items previously deducted for Arizona purposes, and claim-of-right
+  adjustments). No line on Form 140 or its additions schedule adds back federal tax-treaty-exempt income (unlike
+  California''s Schedule CA). Therefore treaty-exempt income is NOT re-taxed by Arizona -> conforms. (Caveat: the
+  full page-5 additions schedule was read via .gov search snippets, not the full PDF page, because the form PDFs
+  returned HTTP 403 — see unverified.)'
+citation:
+  source: AZ DOR - 2023 Form 140 Resident Personal Income Tax Return (line 12 = Federal adjusted gross income; additions
+    lines 14-18; mailing addresses; make check payable to Arizona Department of Revenue; AZTaxes.gov)
+  url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf
+starts_from: federal AGI (Form 140 line 12 = "Federal adjusted gross income")
+residency:
+  summary: An individual is an Arizona resident if their domicile is in Arizona; domicile is the place of one's
+    permanent home, where one intends to return when temporarily living or working elsewhere — leaving Arizona for
+    a temporary period does not end Arizona residency (AZ DOR Form 140 instructions). Full-year residents file Form
+    140 (or 140A/140EZ if eligible). A part-year resident (Arizona resident for only part of the year) files Form
+    140PY. A nonresident with Arizona-source income files Form 140NR. (Arizona also has a statutory presence/9-month-presumption
+    concept under A.R.S. 43-104, but the domicile rule is the core test cited in the DOR instructions; the 9-month
+    statutory presumption was not separately confirmed on a .gov page in this session — see unverified.)
+forms:
+  resident: Arizona Form 140 - Resident Personal Income Tax Return (full-year residents; short forms Form 140A and
+    Form 140EZ are also available for eligible residents)
+  part_year_or_nonresident: 'Nonresident: Arizona Form 140NR - Nonresident Personal Income Tax Return. Part-year
+    resident: Arizona Form 140PY - Part-Year Resident Personal Income Tax Return.'
+filing_requirement:
+  note: 'Per the AZ DOR Form 140 instructions, an Arizona return is required for 2023 when gross income exceeds
+    the federal standard-deduction-based thresholds: more than $13,850 (single or married filing separately), more
+    than $20,800 (head of household), and more than $27,700 (married filing jointly). You may file Form 140 only
+    if you (and spouse, if MFJ) are full-year Arizona residents; you must use Form 140 (rather than 140A/140EZ)
+    if Arizona taxable income is $50,000 or more, if you itemize, or if you make adjustments to income or claim
+    certain credits.'
+mailing_addresses:
+  refund_or_no_payment: Arizona Department of Revenue, PO Box 52138, Phoenix, AZ 85072-2138 (if expecting a refund,
+    owe no tax, or owe tax but are not sending a payment)
+  with_payment: Arizona Department of Revenue, PO Box 52016, Phoenix, AZ 85072-2016 (if sending a payment with Form
+    140)
+  citation:
+    source: AZ DOR - 2023 Form 140 Resident Personal Income Tax Return (line 12 = Federal adjusted gross income;
+      additions lines 14-18; mailing addresses; make check payable to Arizona Department of Revenue; AZTaxes.gov)
+    url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Arizona Department of Revenue (write your SSN on the payment and include it with your return)
+  web_pay_url: https://www.AZTaxes.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: AZ DOR - 2023 Form 140 Resident Personal Income Tax Return (line 12 = Federal adjusted gross income;
+      additions lines 14-18; mailing addresses; make check payable to Arizona Department of Revenue; AZTaxes.gov)
+    url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf
+all_citations:
+- source: AZ DOR - 2023 Form 140 Resident Personal Income Tax Return (line 12 = Federal adjusted gross income; additions
+    lines 14-18; mailing addresses; make check payable to Arizona Department of Revenue; AZTaxes.gov)
+  url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf
+- source: AZ DOR - Form 140 Arizona Resident Personal Income Tax Booklet (residency/domicile definition; who must
+    file; filing thresholds; Other Additions to Arizona Gross Income schedule, page 5)
+  url: https://azdor.gov/forms/individual/form-140-arizona-resident-personal-income-tax-booklet
+- source: AZ DOR - 2023 Form 140 Booklet PDF
+  url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140Booklet.pdf
+- source: AZ DOR - 2023 Form 140NR Nonresident Personal Income Tax Return booklet
+  url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140NRBooklet.pdf
+- source: AZ DOR - Part-Year Resident Personal Income Tax Form (Form 140PY) page
+  url: https://azdor.gov/forms/individual/part-year-resident-personal-income-tax-form-non-fillable-form
+- source: AZ DOR - Mailing Addresses
+  url: https://azdor.gov/contact-us/mailing-addresses
+- source: AZ DOR News Center - 2023 Income Tax Deadline (April 15, 2024 due date; Oct 15, 2024 extension)
+  url: https://azdor.gov/news-center/2023-income-tax-deadline-one-month-away
+- source: AZ DOR News Center - Only One Week Away from the Deadline for Arizona Individual Income Tax Returns
+  url: https://azdor.gov/news-center/only-one-week-away-deadline-arizona-individual-income-tax-returns
+- source: AZ DOR - Individual Income Tax Forms index
+  url: https://azdor.gov/forms/individual
+unverified:
+- Full text of the page-5 'Other Additions to Arizona Gross Income' schedule on the 2023 Form 140 was read via azdor.gov
+  search snippets, not the full PDF page (the form/booklet PDFs returned HTTP 403 to the fetcher). The conclusion
+  that there is NO treaty-exempt-income add-back line is based on those snippets plus the federal-AGI starting point;
+  recommend confirming the complete additions schedule directly at the DOR.
+- Mailing addresses (PO Box 52016 with payment; PO Box 52138 refund/no-payment) and the 'make check payable to Arizona
+  Department of Revenue' instruction came from azdor.gov search snippets of the Form 140 instructions and the Mailing
+  Addresses page; the Mailing Addresses page itself returned HTTP 403 to the fetcher, so the exact ZIP+4 suffixes
+  were not visually confirmed on the rendered page.
+- The Arizona statutory-resident / 9-month-presence presumption (A.R.S. 43-104) was not separately confirmed on
+  a .gov page in this session; only the domicile-based resident definition from the Form 140 instructions was confirmed.
+- Filing thresholds ($13,850 / $20,800 / $27,700) came from azdor.gov search snippets of the Form 140 booklet, not
+  a directly rendered .gov page.
