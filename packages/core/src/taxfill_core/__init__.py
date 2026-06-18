@@ -44,6 +44,7 @@ from taxfill_core.calc import (
 )
 from taxfill_core.discovery import FormMap, FormSummary, LineMap, get_form_map, list_forms, load_form_pack
 from taxfill_core.estimate import CompositionLine, IncomeSnapshot, RefundEstimate, estimate_refund
+from taxfill_core.extract import ExtractedDocument, extract_document, list_document_kinds
 from taxfill_core.file_and_pay import FilingInstructions, FilingManifestItem, ReturnInstructions, file_and_pay
 from taxfill_core.filing_summary import FilingSummary, FilingSummaryItem, filing_summary
 from taxfill_core.filler import FillResult, fill_form
@@ -132,6 +133,9 @@ __all__ = [
     "get_form_map",
     "get_sources",
     "independent_recompute",
+    "extract_document",
+    "list_document_kinds",
+    "ExtractedDocument",
     "intake_checklist",
     "irs_round",
     "is_valid_routing_number",

@@ -35,6 +35,7 @@ from taxfill_core import (
     verify_form as _verify_form,
 )
 from taxfill_core.discovery import get_form_map as _get_form_map, list_forms as _list_forms, load_form_pack
+from taxfill_core.extract import extract_document as _extract_document, list_document_kinds as _list_document_kinds
 from taxfill_core.fetch import fetch_blank as _fetch_blank
 from taxfill_core.estimate import IncomeSnapshot
 from taxfill_core.file_and_pay import FilingManifestItem
@@ -196,6 +197,29 @@ def intake_checklist(profile: dict | None = None, tax_year: int | None = None) -
     """Next interview questions + required documents for a (partial) profile. Empty profile = start."""
     prof = Profile.model_validate(profile) if profile else None
     return _dump(_intake_checklist(prof, tax_year=tax_year))
+
+
+@mcp.tool()
+def list_document_kinds() -> list[dict]:
+    """Supported tax-document types and their official box layouts (W-2, 1099-*, 1098-*, 1042-S).
+
+    Read this first, then read the actual document with your own vision and pass the boxes you
+    see to extract_document. Each kind cites the form's irs.gov layout page.
+    """
+    return _list_document_kinds()
+
+
+@mcp.tool()
+def extract_document(path: str, kind: str, fields: dict[str, Any], page: int | None = None) -> dict:
+    """Structure + validate YOUR reading of one tax document into provenance-tagged fields.
+
+    This does NOT do OCR — you read the document (image/PDF) with your own vision and pass the
+    box->value map in `fields` (keys from list_document_kinds). The tool type-checks each value,
+    tags it with document provenance (file + page), flags required boxes you didn't read as `gaps`,
+    surfaces unreadable values as `invalid`, and returns a confirm-table. Never invent a box: any
+    box you omit stays null. `kind` is e.g. "W-2", "1099-INT", "1042-S".
+    """
+    return _dump(_extract_document(path, kind, fields, page=page))
 
 
 @mcp.tool()
