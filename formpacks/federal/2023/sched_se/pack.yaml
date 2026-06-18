@@ -1,0 +1,113 @@
+# Schedule SE (Form 1040), 2023 — Self-Employment Tax.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) →
+# vision-map workflow → adversarial verify (two independent verifiers; one real
+# correction applied: header f1_1[0] is the NAME field, not the SSN) → this map.
+#
+# 25 fillable widgets are mapped. Two skeleton widgets are PRE-PRINTED CONSTANTS,
+# never taxpayer-entered, and are intentionally NOT mapped:
+#   - line 7  ($160,200 — 2023 Social Security wage base), widget f1_13[0]
+#   - line 14 ($6,560 — max income for optional methods),  widget f2_1[0]
+# Relations that reference those constants (line 9, line 16) are therefore omitted
+# (the recompute engine + human review cover them); only unconditional equalities
+# whose operands are all mapped lines are declared.
+form: "Schedule SE (Form 1040)"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040sse--2023.pdf
+pdf_sha256: ae11beaaedd525f47155e1692c7f7e5386c912c334912978f5f87507dcdc0b30
+acroform_root: topmostSubform[0]
+fields:
+  - line: name
+    field: Page1[0].f1_1[0]
+    type: text
+  - line: identifying_number
+    field: Page1[0].f1_2[0]
+    type: text
+    maxlen: 11
+  - line: minister_exempt          # Part I line A — minister/religious-order Form 4361 exemption checkbox
+    field: Page1[0].c1_1[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 1a                        # Net farm profit/(loss) — Sch F line 34, Sch K-1 (1065) box 14 code A
+    field: Page1[0].f1_3[0]
+    type: money
+  - line: 1b                        # Conservation Reserve Program payments (SS retirement/disability)
+    field: Page1[0].f1_4[0]
+    type: money
+  - line: "2"                       # Net profit/(loss) — Sch C line 31; Sch K-1 (1065) box 14 code A (non-farm)
+    field: Page1[0].f1_5[0]
+    type: money
+  - line: "3"                       # Combine 1a, 1b, and 2
+    field: Page1[0].f1_6[0]
+    type: money
+  - line: 4a                        # If line 3 > 0, line 3 × 92.35%; else line 3
+    field: Page1[0].f1_7[0]
+    type: money
+  - line: 4b                        # Optional methods: total of lines 15 and 17
+    field: Page1[0].f1_8[0]
+    type: money
+  - line: 4c                        # Combine 4a and 4b
+    field: Page1[0].f1_9[0]
+    type: money
+  - line: 5a                        # Church employee income from Form W-2
+    field: Page1[0].Line5a_ReadOrder[0].f1_10[0]
+    type: money
+  - line: 5b                        # line 5a × 92.35% (if < $100, enter 0)
+    field: Page1[0].f1_11[0]
+    type: money
+  - line: "6"                       # Add 4c and 5b
+    field: Page1[0].f1_12[0]
+    type: money
+  - line: 8a                        # SS wages + tips (W-2 boxes 3 and 7) + RRTA tier-1
+    field: Page1[0].Line8a_ReadOrder[0].f1_14[0]
+    type: money
+  - line: 8b                        # Unreported tips (Form 4137 line 10)
+    field: Page1[0].f1_15[0]
+    type: money
+  - line: 8c                        # Wages subject to SS tax (Form 8919 line 10)
+    field: Page1[0].f1_16[0]
+    type: money
+  - line: 8d                        # Add 8a, 8b, 8c
+    field: Page1[0].f1_17[0]
+    type: money
+  - line: "9"                       # line 7 ($160,200) − 8d (if ≤ 0, enter 0)
+    field: Page1[0].f1_18[0]
+    type: money
+  - line: "10"                      # smaller of line 6 or line 9 × 12.4%
+    field: Page1[0].f1_19[0]
+    type: money
+  - line: "11"                      # line 6 × 2.9%
+    field: Page1[0].f1_20[0]
+    type: money
+  - line: "12"                      # Self-employment tax: add 10 and 11 → Schedule 2 line 4
+    field: Page1[0].f1_21[0]
+    type: money
+  - line: "13"                      # One-half SE-tax deduction: line 12 × 50% → Schedule 1 line 15
+    field: Page1[0].f1_22[0]
+    type: money
+  - line: "15"                      # Farm optional method
+    field: Page2[0].f2_2[0]
+    type: money
+  - line: "16"                      # Subtract line 15 from line 14
+    field: Page2[0].f2_3[0]
+    type: money
+  - line: "17"                      # Nonfarm optional method
+    field: Page2[0].f2_4[0]
+    type: money
+relations:
+  - "3 == 1a + 1b + 2"              # "Combine lines 1a, 1b, and 2"
+  - "4c == 4a + 4b"                 # "Combine lines 4a and 4b"
+  - "6 == 4c + 5b"                  # "Add lines 4c and 5b"
+  - "8d == 8a + 8b + 8c"            # "Add lines 8a, 8b, and 8c"
+  - "10 == min(6, 9) * 0.124"       # "Multiply the smaller of line 6 or line 9 by 12.4%"
+  - "11 == 6 * 0.029"               # "Multiply line 6 by 2.9%"
+  - "12 == 10 + 11"                 # "Self-employment tax. Add lines 10 and 11"
+  - "13 == 12 * 0.5"                # "Multiply line 12 by 50%"
+  - "4b == 15 + 17"                 # "Enter the total of lines 15 and 17 here"
+cross_form:
+  - "12 == sched_2.4"               # SE tax → Schedule 2 (Form 1040), line 4
+  - "13 == sched_1.15"              # one-half SE-tax deduction → Schedule 1 (Form 1040), line 15
+identity_fields:
+  - name
+  - identifying_number
