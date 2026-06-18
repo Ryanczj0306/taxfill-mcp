@@ -1,0 +1,102 @@
+# IA state knowledge — tax year 2023. Fetched + cited from the IA DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ia
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: Iowa conforms. Beginning with tax year 2023 the IA 1040 was substantially revised so that "The starting
+  point for taxation on the IA 1040 is now federal taxable income" (2023 IA 1040 Expanded Instructions). The form's
+  Step 4 computes Iowa taxable income as federal taxable income (IA 1040 line 2, from federal 1040 line 15) plus
+  net Iowa modifications from IA 1040 Schedule 1. Iowa applies rolling IRC conformity ("The calculation of Iowa
+  taxable income is the same as the calculation for federal taxable income"). Federally treaty-exempt income is
+  excluded from federal AGI/federal taxable income before it ever reaches the Iowa return, and there is NO treaty/foreign-income
+  re-inclusion among the Schedule 1 additions (Column A additions are limited to items such as interest from state/municipal
+  securities, certain dividends, depreciation/Section 179 nonconformity, and pre-2023 federal NOL carryforward).
+  This is reinforced by Iowa Admin. Code rule 701—300.17, which states a resident is taxed on all income "except
+  when an item of income is specifically exempted from taxation by a provision of federal or Iowa law." Therefore
+  treaty-exempt income is not re-taxed.
+citation:
+  source: '2023 IA 1040 Iowa Individual Income Tax Return (form 41-001) - starting lines (Step 4: line 1 Federal
+    total income, line 2 Federal taxable income, line 3 Net Iowa modifications, line 4 Iowa taxable income) and
+    mailing address / check payee'
+  url: https://revenue.iowa.gov/media/2746/download?inline=
+starts_from: 'federal taxable income (federal Form 1040, line 15; IA 1040 line 2). Note: IA 1040 line 1 separately
+  reports "federal total income" from federal 1040 line 9, but Iowa taxable income (line 4) is built from federal
+  taxable income (line 2) plus Schedule 1 modifications. This is a 2023 restructure away from the pre-2023 net-income
+  starting point.'
+residency:
+  summary: Per Iowa Admin. Code 701—300.17(422), an individual is a "resident" if they either (1) maintain a permanent
+    place of abode in Iowa, or (2) are domiciled in Iowa, and a resident is taxed on all income regardless of source
+    (except income specifically exempted by federal or Iowa law). "Domicile" is where one intends to permanently
+    or indefinitely reside and to return when absent; every person has exactly one domicile, and an established
+    Iowa domicile is retained until the person abandons it, removes to another state, and forms a bona fide intent
+    to remain there (Julson v. Julson). There is a rebuttable presumption of a "permanent place of abode" if the
+    person maintains an abode in Iowa and spends more than 183 days of the tax year in Iowa, though 183 days alone
+    neither establishes nor abandons domicile. A part-year resident is an Iowa resident for only part of the year;
+    a nonresident is domiciled outside Iowa with Iowa-source income. Nonresidents and part-year residents use the
+    IA 126 to compute the credit limiting Iowa tax to the Iowa-source portion of income.
+forms:
+  resident: IA 1040 (Iowa Individual Income Tax Return), form number 41-001
+  part_year_or_nonresident: IA 126 (Iowa Nonresident and Part-Year Resident Credit Schedule), form number 41-126,
+    filed together with the IA 1040. (Iowa does not use a separate nonresident return; nonresidents/part-year residents
+    file the IA 1040 and attach the IA 126.)
+filing_requirement:
+  note: A resident or part-year resident must file if Iowa taxable income (IA 1040 line 4, with specified add-backs
+    incl. standard/itemized deduction, QBI deduction, personal exemption, lump-sum distribution, and Iowa NOL carryforward)
+    is more than $9,000 for single/married-filing-separately ($24,000 if 65 or older on 12/31/23), or more than
+    $13,500 for all other filing statuses ($32,000 if you or spouse is 65 or older). A dependent must file if Iowa
+    taxable income is $5,000 or more. A nonresident or part-year resident must file if Iowa-source net income (IA
+    126) was $1,000 or more, unless below the thresholds above. Anyone with Iowa tax withheld who wants a refund
+    must also file. (2023 IA 1040 Expanded Instructions, "Who Must File?")
+mailing_addresses:
+  refund_or_no_payment: Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187
+  with_payment: Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187
+  citation:
+    source: '2023 IA 1040 Iowa Individual Income Tax Return (form 41-001) - starting lines (Step 4: line 1 Federal
+      total income, line 2 Federal taxable income, line 3 Net Iowa modifications, line 4 Iowa taxable income) and
+      mailing address / check payee'
+    url: https://revenue.iowa.gov/media/2746/download?inline=
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Iowa Department of Revenue
+  web_pay_url: https://govconnect.iowa.gov/
+deadlines:
+  filing_due_date: '2024-04-30'
+  citation:
+    source: '2023 IA 1040 Iowa Individual Income Tax Return (form 41-001) - starting lines (Step 4: line 1 Federal
+      total income, line 2 Federal taxable income, line 3 Net Iowa modifications, line 4 Iowa taxable income) and
+      mailing address / check payee'
+    url: https://revenue.iowa.gov/media/2746/download?inline=
+all_citations:
+- source: '2023 IA 1040 Iowa Individual Income Tax Return (form 41-001) - starting lines (Step 4: line 1 Federal
+    total income, line 2 Federal taxable income, line 3 Net Iowa modifications, line 4 Iowa taxable income) and
+    mailing address / check payee'
+  url: https://revenue.iowa.gov/media/2746/download?inline=
+- source: 2023 IA 1040 Expanded Instructions (archived) - 'starting point ... is now federal taxable income', rolling
+    IRC conformity, Federal Total Income (fed 1040 line 9) and Federal Taxable Income (fed 1040 line 15), Schedule
+    1 additions, Who Must File thresholds
+  url: https://revenue.iowa.gov/media/2811/download?inline=
+- source: Iowa Administrative Code 701—300.17(422) Resident determination (eff. 02-22-2023) - resident/permanent
+    place of abode/domicile definitions; resident taxed on all income except items exempted by federal or Iowa law
+  url: https://www.legis.iowa.gov/docs/iac/rule/02-22-2023.701.300.17.pdf
+- source: 2023 IA 126 Nonresident and Part-Year Resident Credit Schedule (form 41-126)
+  url: https://revenue.iowa.gov/media/2440/download?inline=
+- source: Iowa Department of Revenue - Individual Taxes (filing due date April 30)
+  url: https://revenue.iowa.gov/taxes/file-my-taxes/individual-taxes
+- source: Iowa Department of Revenue - Make a Payment (GovConnectIowa online payment portal)
+  url: https://revenue.iowa.gov/taxes/make-payment
+- source: GovConnectIowa payment portal
+  url: https://govconnect.iowa.gov/tap/?Link=MakePayment
+unverified:
+- Exact filing due date confirmed as April 30 from the Iowa DOR 'Individual Taxes' page rather than directly inside
+  the 2023 IA 1040 instructions; confirm the precise 2023 statutory due date (and any weekend/holiday shift) at
+  the DOR. Iowa's individual return due date is April 30, NOT the federal April 15.
+- 'Whether Iowa publishes a separate mailing address for returns WITH payment vs refund/no-payment: the 2023 IA
+  1040 form prints a single processing address (PO BOX 9187, Des Moines IA 50306-9187); a different lockbox for
+  payment-enclosed returns was not located on a .gov page. Confirm at the DOR.'
+- The general GovConnectIowa base URL (govconnect.iowa.gov) is given; the deep 'Make a Payment' link returned by
+  the DOR page (govconnect.iowa.gov/tap/?Link=MakePayment) should be re-verified as current.

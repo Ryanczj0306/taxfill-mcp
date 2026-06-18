@@ -1,0 +1,91 @@
+# CO state knowledge — tax year 2023. Fetched + cited from the CO DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/co
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Colorado''s DR 0104 begins at "Federal Taxable Income" (line 1, taken directly from federal Form 1040/1040-SR/1040-SP).
+  Federally treaty-exempt income is already excluded from federal taxable income, so it flows through to Colorado
+  untaxed UNLESS Colorado has an explicit addback. The DR 0104''s complete Additions to Federal Taxable Income (lines
+  2-7) are: state/local income or sales taxes from Schedule A, Qualified Business Income Deduction addback, Federal
+  Deduction addback, nonqualified CollegeInvest distributions, nonqualified Colorado ABLE distributions, and Line
+  7 "Other Additions" (whose enumerated items in the 2023 booklet are: non-Colorado state/local bond interest, charitable
+  conservation easement amounts also claimed for a CO credit, unauthorized alien labor expenses, partnership/fiduciary
+  adjustments increasing federal taxable income, and restricted-membership club expenses). NONE of these is an addback
+  of federally treaty-exempt or foreign-source income. Therefore treaty-exempt income is not re-taxed and Colorado
+  conforms. (Confirmed against the official 2023 DR 0104 form and DR 0104 Booklet PDFs on tax.colorado.gov.)'
+citation:
+  source: Colorado DOR — DR 0104, 2023 Colorado Individual Income Tax Return (form PDF; line 1 'Federal Taxable
+    Income', Additions lines 2-7)
+  url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf
+starts_from: federal taxable income
+residency:
+  summary: An individual is a Colorado full-year resident if domiciled in Colorado (domicile being the permanent
+    home to which one intends to return when away), OR if they maintain a permanent place of abode in Colorado and
+    spend, in aggregate, more than six months of the tax year in Colorado (the statutory "six-month rule"). A part-year
+    resident is domiciled in Colorado for only part of the year (e.g., moved into or out of Colorado during 2023)
+    and is taxed on income received while a resident plus Colorado-source income; a nonresident did not reside in
+    Colorado during the year and is taxed only on Colorado-source income. Part-year residents and nonresidents prorate
+    their tax using the DR 0104PN. (The domicile + six-month definitions come from the CO DOR Residency Status /
+    Individual Income Tax Guide pages; the booklet states CO tax is based on federal taxable income and prorates
+    for part-year/nonresident filers via DR 0104PN.)
+forms:
+  resident: DR 0104 (Colorado Individual Income Tax Return) — full-year residents mark the "Full-Year" box. A simplified
+    DR 0104EZ also exists for qualifying simple full-year-resident returns.
+  part_year_or_nonresident: DR 0104 with the DR 0104PN (Part-Year Resident/Nonresident Tax Calculation Schedule)
+    attached — mark the "Part-Year or Nonresident" box on the DR 0104.
+filing_requirement:
+  note: 'You must file a 2023 DR 0104 if you are required to file a federal income tax return with the IRS (or will
+    have a Colorado income tax liability) AND you are: (a) a full-year Colorado resident, (b) a part-year Colorado
+    resident who received taxable income while residing in Colorado (file DR 0104 + DR 0104PN), or (c) a nonresident
+    who received income from Colorado sources (file DR 0104 + DR 0104PN). Colorado residents must file even if they
+    have no Colorado tax liability when a federal return is required; filing is also the only way to claim a refund.
+    (Source: 2023 DR 0104 Booklet, "Who Must File This Tax Return.")'
+mailing_addresses:
+  refund_or_no_payment: Colorado Department of Revenue, Denver, CO 80261-0005 (no street address required)
+  with_payment: Colorado Department of Revenue, Denver, CO 80261-0006 (no street address required)
+  citation:
+    source: Colorado DOR — DR 0104, 2023 Colorado Individual Income Tax Return (form PDF; line 1 'Federal Taxable
+      Income', Additions lines 2-7)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Colorado Department of Revenue (write SSN and "2023 DR 0104" on the memo line; include the DR 0900
+    Individual Income Tax Payment voucher when paying by mail)
+  web_pay_url: https://www.colorado.gov/revenueonline
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: Colorado DOR — DR 0104, 2023 Colorado Individual Income Tax Return (form PDF; line 1 'Federal Taxable
+      Income', Additions lines 2-7)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf
+all_citations:
+- source: Colorado DOR — DR 0104, 2023 Colorado Individual Income Tax Return (form PDF; line 1 'Federal Taxable
+    Income', Additions lines 2-7)
+  url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf
+- source: Colorado DOR — Full-Year, Part-Year and Nonresident DR 0104 Booklet 2023 (Who Must File, Due Date, Mailing
+    addresses, Line 7 Other Additions, Pay by Mail / DR 0900 / Revenue Online)
+  url: https://tax.colorado.gov/sites/tax/files/documents/Book0104_2023.pdf
+- source: Colorado DOR — DR 0104 Booklet landing page
+  url: https://tax.colorado.gov/DR0104Booklet
+- source: Colorado DOR — DR 0104PN Part-Year Resident/Nonresident Calculation Schedule
+  url: https://tax.colorado.gov/DR0104PN
+- source: Colorado DOR — Residency Status page (domicile + six-month rule)
+  url: https://tax.colorado.gov/residency-status
+- source: Colorado DOR — Individual Income Tax Guide (federal taxable income starting point; residency)
+  url: https://tax.colorado.gov/individual-income-tax-guide
+- source: Colorado DOR — Individual Income Tax Filing Requirements
+  url: https://tax.colorado.gov/individual-income-tax-filing-requirements
+unverified:
+- Exact statutory residency wording (domicile definition and the >6-month 'six-month rule') was sourced from CO
+  DOR Residency Status / Individual Income Tax Guide HTML pages, which returned HTTP 403 to direct fetch; the wording
+  was corroborated via CO DOR search snippets but not confirmed verbatim against the rendered .gov page — confirm
+  at the DOR.
+- 'Online payment portal URL: the booklet references ''Colorado.gov/RevenueOnline'' (a redirect alias) rather than
+  printing a full canonical https URL; the exact current canonical URL should be confirmed at the DOR.'
+- DR 0104EZ availability/eligibility as a full-year simplified return was seen in DOR search listings (DR0104EZ_2023.pdf)
+  but the eligibility criteria were not fully fetched — confirm at the DOR.

@@ -1,0 +1,103 @@
+# LA state knowledge — tax year 2023. Fetched + cited from the LA DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/la
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'LA''s resident return (IT-540) starts from Federal Adjusted Gross Income: Line 7 is "FEDERAL ADJUSTED
+  GROSS INCOME" and the instructions say "Line 7 - Enter the amount of your Federal Adjusted Gross Income (Federal
+  AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11." Federally treaty-exempt income is already
+  excluded from federal AGI (Form 1040 Line 11) and therefore flows through. The only "additions" to federal AGI
+  are on Schedule E, Lines 2A-2D: (2A) interest and dividend income from other states and their political subdivisions,
+  (2B) recapture of START contributions, (2C) recapture of START K12 contributions, and (2D) add-back of pass-through
+  entity loss. There is NO add-back of tax-treaty-exempt income anywhere on the IT-540 form, Schedule E, or in the
+  instructions (the word "treaty" appears zero times in both the 2023 IT-540 form PDF and the 2023 IT-540 instructions
+  PDF). Because LA starts from federal AGI and has no treaty addback, treaty-exempt income is not re-taxed -> conforms.'
+citation:
+  source: 'Louisiana DOR - 2023 IT-540 Resident Income Tax Return (form PDF): Line 7 = Federal Adjusted Gross Income;
+    Schedule E additions Lines 2A-2D; mailing Address 1 P.O. Box 3550 (with payment) and Address 2 P.O. Box 3440
+    (all other); ''Calendar year return due 5/15/2024'''
+  url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
+starts_from: federal AGI (IT-540 Line 7 = Federal Adjusted Gross Income from Federal Form 1040/1040-SR, Line 11)
+residency:
+  summary: 'Louisiana residency is domicile-based. A Louisiana resident is a person domiciled in Louisiana (or who
+    maintains a Louisiana residence while working in another state); per the IT-540 instructions, "A temporary absence
+    from Louisiana does not automatically change your domicile for income tax purposes" and you must affirmatively
+    establish a new domicile elsewhere (e.g., registering to vote, titling vehicles, obtaining a driver''s license,
+    homestead exemption) and abandon the Louisiana domicile to change it. Residents file IT-540 and report all income
+    from all sources. Nonresidents and part-year residents file IT-540B and are taxed only on Louisiana-source income
+    (the IT-540B computes a ratio of Louisiana AGI to Federal AGI and applies it; all income from all sources is
+    reported to determine the ratio). Part-year residents may elect to file either a resident (IT-540) or nonresident
+    (IT-540B) return, whichever is more beneficial (see LDR Revenue Ruling 05-008). Note: unlike some states (e.g.,
+    NY), Louisiana does not use a statutory-resident day-count test; residency turns on domicile.'
+forms:
+  resident: IT-540 (2023 Louisiana Resident Income Tax Return)
+  part_year_or_nonresident: IT-540B (2023 Louisiana Nonresident and Part-Year Resident Income Tax Return)
+filing_requirement:
+  note: 'Per the 2023 IT-540 instructions ("WHO MUST FILE A RETURN"): (1) A Louisiana resident who is required to
+    file a federal individual income tax return must file a Louisiana return reporting all income earned in 2023.
+    (2) You must file to obtain a refund or credit if you overpaid through withholding, estimated tax, a credit
+    carried forward, or are due the Louisiana earned income credit. (3) If you are not required to file a federal
+    return but had Louisiana income tax withheld in 2023, you must file to claim a refund. Nonresidents/part-year
+    residents with Louisiana-source income who must file a federal return must file IT-540B. The filing trigger
+    keys off the federal filing requirement rather than a fixed standalone dollar threshold; the IRS federal filing
+    thresholds therefore govern.'
+mailing_addresses:
+  refund_or_no_payment: 'Louisiana Department of Revenue, P.O. Box 3440, Baton Rouge, LA 70821-3440 (Address 2:
+    all other individual income tax returns / refund / no-payment)'
+  with_payment: 'Louisiana Department of Revenue, P.O. Box 3550, Baton Rouge, LA 70821-3550 (Address 1: balance-due
+    return with payment). Print the last four digits of your SSN on the check/money order. Do not send cash. All
+    four pages of the return must be mailed together with W-2s and completed schedules.'
+  citation:
+    source: 'Louisiana DOR - 2023 IT-540 Resident Income Tax Return (form PDF): Line 7 = Federal Adjusted Gross
+      Income; Schedule E additions Lines 2A-2D; mailing Address 1 P.O. Box 3550 (with payment) and Address 2 P.O.
+      Box 3440 (all other); ''Calendar year return due 5/15/2024'''
+    url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: 'Louisiana Department of Revenue (per IT-540 instructions: "Make your check or money order payable
+    to the Louisiana Department of Revenue." Print the last four digits of your SSN on the check or money order;
+    do not send cash.)'
+  web_pay_url: https://www.revenue.louisiana.gov/latap
+deadlines:
+  filing_due_date: '2024-05-15'
+  citation:
+    source: 'Louisiana DOR - 2023 IT-540 Resident Income Tax Return (form PDF): Line 7 = Federal Adjusted Gross
+      Income; Schedule E additions Lines 2A-2D; mailing Address 1 P.O. Box 3550 (with payment) and Address 2 P.O.
+      Box 3440 (all other); ''Calendar year return due 5/15/2024'''
+    url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
+all_citations:
+- source: 'Louisiana DOR - 2023 IT-540 Resident Income Tax Return (form PDF): Line 7 = Federal Adjusted Gross Income;
+    Schedule E additions Lines 2A-2D; mailing Address 1 P.O. Box 3550 (with payment) and Address 2 P.O. Box 3440
+    (all other); ''Calendar year return due 5/15/2024'''
+  url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
+- source: 'Louisiana DOR - 2023 IT-540 Resident Income Tax Return Instructions: ''Line 7 - Enter the amount of your
+    Federal Adjusted Gross Income ... from Federal Form 1040 or 1040-SR, Line 11''; WHO MUST FILE A RETURN; WHEN
+    TO FILE (''A 2023 calendar year return is due on or before May 15, 2024''); WHERE TO FILE AND PAY (P.O. Box
+    3550 with payment, P.O. Box 3440 all other); ''Make your check or money order payable to the Louisiana Department
+    of Revenue''; LaTAP electronic payment'
+  url: https://dam.ldr.la.gov/taxforms/IT540i%20WEB(2023)%20INSTRUCTIONS.pdf
+- source: 'Louisiana DOR - Individual Income Tax (general resources): residency/domicile, IT-540 vs IT-540B, returns
+    and payments due May 15th of the following year, filing requirement tied to federal filing obligation'
+  url: https://revenue.louisiana.gov/individuals/general-resources/individual-income-tax/
+- source: Louisiana DOR - Tax Forms for Individuals (2023 IT-540 and IT-540B form/instruction listing and titles)
+  url: https://revenue.louisiana.gov/tax-forms/individuals/
+- source: Louisiana DOR - 2023 IT-540B Nonresident and Part-Year Resident Income Tax Return (form PDF)
+  url: https://dam.ldr.la.gov/taxforms/IT540B(2023)WEB%20F.pdf
+- source: Louisiana DOR - 2023 IT-540B Nonresident/Part-Year Resident Instructions
+  url: https://dam.ldr.la.gov/taxforms/IT540Bi(2023).pdf
+unverified:
+- The 'refund/no-payment' address is the same P.O. Box 3440 used for 'all other individual income tax returns' (the
+  form/instructions label it Address 2 for all non-payment returns rather than a dedicated 'refund' box); confirm
+  at the DOR if a return is specifically a refund return.
+- The exact official title/designation of IT-540B as 'Nonresident and Part-Year Resident' was taken from the DOR
+  forms-listing page and general-resources page; the IT-540B form/instruction PDF text itself was not parsed line-by-line
+  in this session, so the precise part-year residency mechanics on IT-540B (vs the resident-election option) should
+  be confirmed against the IT-540B instructions PDF.
+- Specific standalone dollar filing thresholds were not located on a .gov page; LA ties the filing requirement to
+  the federal filing obligation rather than a fixed LA-only gross-income threshold, so confirm any specific threshold
+  at the DOR.

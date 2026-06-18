@@ -1,0 +1,103 @@
+# ME state knowledge — tax year 2023. Fetched + cited from the ME DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/me
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Maine''s resident return (Form 1040ME) starts from federal adjusted gross income: Line 14 instructs
+  "Enter the federal adjusted gross income shown on your federal Form 1040, line 11 or Form 1040-SR, line 11." Maine''s
+  only income additions are on Schedule 1A (per 36 M.R.S. § 5122(1)), and the full Schedule 1A list contains NO
+  add-back of federally treaty-exempt income — the additions are limited to specific items (non-Maine municipal/state
+  bond interest, NOL recovery adjustment, MainePERS contributions, bonus depreciation add-back, fiduciary adjustments,
+  nonresident installment-sale gain election, and pass-through financial-institution adjustments). Because treaty-exempt
+  income is already excluded from federal AGI and there is no Maine add-back, it flows through and is not re-taxed.
+  Maine therefore conforms to federal treaty exclusions (unlike California, which adds treaty income back on Schedule
+  CA). Basis: 2023 Form 1040ME instructions, Line 14 and Schedule 1A (23_1040me_book_gen_instr.pdf).'
+citation:
+  source: 2023 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — Line 14 federal AGI starting
+    point, Schedule 1A income additions (no treaty add-back), Who-must-file, due date Apr 17 2024, payee 'Treasurer,
+    State of Maine', Maine Tax Portal revenue.maine.gov, nonresident $3,000/12-day threshold
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_book_gen_instr.pdf
+starts_from: federal AGI (Form 1040ME Line 14 = federal adjusted gross income from federal Form 1040 line 11 / 1040-SR
+  line 11)
+residency:
+  summary: Maine taxes individuals based on domicile and a statutory-resident test. A full-year resident is domiciled
+    in Maine for the entire year (or is a statutory resident); a statutory/"183-day" resident is an individual who
+    maintains a permanent place of abode in Maine and spends 183 or more days of the tax year in Maine, regardless
+    of domicile. Domicile is "the place where a person has his true, fixed, and permanent home and principal establishment,
+    and to which he has, whenever absent, the intention of returning." A part-year resident establishes or abandons
+    Maine domicile during the year and is taxed on all income while a Maine resident plus Maine-source income while
+    a nonresident/safe harbor resident. A nonresident is domiciled outside Maine (and is not a statutory resident)
+    and is taxed only on Maine-source income. A "safe harbor resident" is a person who, although domiciled in Maine,
+    is treated as a nonresident for the year because they meet Maine's safe-harbor day-count/abode conditions (e.g.,
+    the general or foreign safe harbor). Nonresidents/part-year/safe-harbor residents claim a nonresident credit
+    using Schedule NR (or NRH).
+forms:
+  resident: Form 1040ME (Maine Individual Income Tax Return) — resident return
+  part_year_or_nonresident: Form 1040ME with Schedule NR (Form 1040ME), "Schedule for Calculating the Nonresident
+    Credit"; married taxpayers electing to file as single may use Schedule NRH (Form 1040ME) instead. Used by nonresidents,
+    part-year residents, and safe harbor residents. (Full-year residents may not file Schedule NR.)
+filing_requirement:
+  note: 'Per the 2023 Form 1040ME instructions ("Who must file?"): A Maine income tax return must be filed if you
+    are a Maine resident who is required to file a federal income tax return, OR if you are not required to file
+    a federal return but have income subject to Maine income tax resulting in a Maine income tax liability. Even
+    if required to file federally, a resident does not have to file a Maine return if they have no income addition
+    modifications (Schedule 1A, line 12) AND their income subject to Maine tax is less than the sum of their Maine
+    standard deduction plus personal exemption. A return must still be filed to claim a refund. Generally, nonresidents/safe
+    harbor residents with Maine-source income resulting in a Maine tax liability must file (see Schedule NR instructions
+    for minimum taxability thresholds; 36 M.R.S. § 5142(8-B) and Rule 806). Nonresident employee de minimis: a nonresident
+    working in Maine as an employee is not required to pay Maine tax or file on personal-services income unless
+    they work in Maine more than 12 days AND derive more than $3,000 of income from all Maine sources.'
+mailing_addresses:
+  refund_or_no_payment: Maine Revenue Services, P.O. Box 1066, Augusta, ME 04332-1066 (Form 1040ME without a payment
+    / refund or no balance due)
+  with_payment: Maine Revenue Services, P.O. Box 1067, Augusta, ME 04332-1067 (Form 1040ME with a payment / check
+    or money order enclosed)
+  citation:
+    source: 2023 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — Line 14 federal AGI starting
+      point, Schedule 1A income additions (no treaty add-back), Who-must-file, due date Apr 17 2024, payee 'Treasurer,
+      State of Maine', Maine Tax Portal revenue.maine.gov, nonresident $3,000/12-day threshold
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_book_gen_instr.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Treasurer, State of Maine (enclose a check or money order; include your complete name, address, and
+    telephone number on the check/money order)
+  web_pay_url: https://revenue.maine.gov
+deadlines:
+  filing_due_date: '2024-04-17'
+  citation:
+    source: 2023 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — Line 14 federal AGI starting
+      point, Schedule 1A income additions (no treaty add-back), Who-must-file, due date Apr 17 2024, payee 'Treasurer,
+      State of Maine', Maine Tax Portal revenue.maine.gov, nonresident $3,000/12-day threshold
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_book_gen_instr.pdf
+all_citations:
+- source: 2023 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — Line 14 federal AGI starting
+    point, Schedule 1A income additions (no treaty add-back), Who-must-file, due date Apr 17 2024, payee 'Treasurer,
+    State of Maine', Maine Tax Portal revenue.maine.gov, nonresident $3,000/12-day threshold
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_book_gen_instr.pdf
+- source: Maine Revenue Services — Mailing Addresses for Forms and Applications (1040ME with payment = PO Box 1067;
+    without payment/refund = PO Box 1066)
+  url: https://www.maine.gov/revenue/about/contact/mailing-addresses
+- source: 'INDIVIDUAL INCOME TAX — Determining Residency Status, Guidance Document (2023): domicile definition,
+    statutory/183-day resident, part-year, nonresident, safe harbor'
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/residency_guidance_2023.pdf
+- source: 2023 Schedule NR (Form 1040ME) — nonresident credit schedule for nonresidents/part-year/safe harbor residents
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/2023_sch_nr_ff.pdf
+- source: 2023 Schedule NRH (Form 1040ME) — schedule for married individuals electing to file single
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/2023_sch_nrh_ff.pdf
+- source: Maine Revenue Services — Individual Income Tax (1040ME) program page
+  url: https://www.maine.gov/revenue/taxes/income-estate-tax/individual-income-tax-1040me
+- source: Maine Revenue Services — Individual Income Tax FAQ
+  url: https://www.maine.gov/revenue/faq/individual-income-tax
+unverified:
+- Whether 'Treasurer, State of Maine' is also the exact wording for estimated-tax/voucher payments (confirmed only
+  for the 1040ME balance-due check payee in the booklet) — confirm at the DOR.
+- The precise day-count and abode conditions of Maine's 'safe harbor resident' categories (general vs. foreign safe
+  harbor) were summarized from the residency guidance but the full numeric thresholds were not transcribed verbatim
+  here — confirm exact thresholds in the residency_guidance_2023.pdf / Rule 806.
+- Resident minimum-filing dollar thresholds are stated as a formula (standard deduction + personal exemption) rather
+  than a fixed dollar chart; specific 2023 dollar amounts were not extracted from a .gov chart in this pass.

@@ -1,0 +1,93 @@
+# ID state knowledge — tax year 2023. Fetched + cited from the ID DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/id
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Idaho''s resident return (Form 40) starts on line 7 from federal adjusted gross income (federal Form
+  1040/1040-SR, line 11), and the only statutory additions are on Form 39R, Part A: (1) federal NOL deduction, (2)
+  capital loss carryover incurred outside the state before becoming an Idaho resident, (3) non-Idaho state/local
+  bond interest and dividends, (4) Idaho college savings account withdrawal, (5) bonus depreciation, (6) other additions.
+  There is NO add-back of federally treaty-exempt income (unlike CA''s Schedule CA). Because treaty-exempt income
+  is already excluded from federal AGI and is not added back, it flows through untaxed. Idaho also affirmatively
+  confirms this in its Noncitizens guidance: ''Idaho honors all tax treaties recognized by the United States'' and
+  ''Gross income amounts exempt by treaty are not included in the gross income filing requirement for Idaho.'' Therefore
+  Idaho conforms to federal treaty exemptions.'
+citation:
+  source: Idaho Form 40, Individual Income Tax Return and Instructions 2023 (EFO00089 / instructions EIN00046) —
+    line 7 starts from federal AGI (federal 1040/1040-SR line 11); additions from Form 39R Part A; mailing addresses
+    on form face; check payable to Idaho State Tax Commission; E-Pay at tax.idaho.gov/epay
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_08-23-2023.pdf
+starts_from: federal AGI (Form 40, line 7 = federal Form 1040/1040-SR, line 11)
+residency:
+  summary: Idaho residency is domicile-based with a statutory-resident overlay. You are a RESIDENT if Idaho is your
+    permanent home / the center of your financial, social and family life and the place you intend to return to;
+    you are ALSO a (statutory) resident if you maintain a home in Idaho the entire year AND spend more than 270
+    days in Idaho during the tax year. You are a PART-YEAR resident if you moved into or out of Idaho during the
+    year. You are a NONRESIDENT if your permanent home is outside Idaho all year (a detailed safe-harbor also treats
+    certain people as nonresidents if they lived outside Idaho at least 445 days in a 15-month period and spent
+    fewer than 60 days in Idaho, with other conditions). Military and Military Spouses Residency Relief Act rules
+    can override these.
+forms:
+  resident: Form 40 (Individual Income Tax Return); residents claiming additions, subtractions, or certain credits
+    also file Form 39R (Resident Supplemental Schedule)
+  part_year_or_nonresident: Form 43 (Part-year Resident and Nonresident Income Tax Return); part-year/nonresident
+    filers claiming additions, subtractions, or certain credits also file Form 39NR (Part-year Resident and Nonresident
+    Supplemental Schedule)
+filing_requirement:
+  note: '2023 thresholds (Idaho Individual Income Tax General Information, ''Who Must File''): every Idaho resident
+    who must file a federal return must file; every part-year resident with more than $2,500 total gross income
+    (all sources while resident + Idaho sources while nonresident) must file; every nonresident with more than $2,500
+    gross income from Idaho sources must file. Resident gross-income thresholds for 2023 include: Single under 65
+    = $13,850 (65+ = $15,700); Head of household under 65 = $20,800 (65+ = $22,650); MFJ under 65 (both) = $27,700;
+    Qualifying surviving spouse under 65 = $27,700; Married filing separately (any age) = $5. Treaty-exempt amounts
+    are excluded from the gross-income filing test.'
+mailing_addresses:
+  refund_or_no_payment: 'Return only / no payment: Idaho State Tax Commission, PO Box 56, Boise ID 83756-0056. (Delivery
+    service requiring a physical address: Idaho State Tax Commission, 11321 W Chinden Blvd, Bldg 2, Boise ID 83714.)'
+  with_payment: 'Return and payment: Idaho State Tax Commission, PO Box 83784, Boise ID 83707-3784. (Payment without
+    a return: send with Form ID-VP to Idaho State Tax Commission, PO Box 83784, Boise ID 83707-3784.)'
+  citation:
+    source: Idaho Form 40, Individual Income Tax Return and Instructions 2023 (EFO00089 / instructions EIN00046)
+      — line 7 starts from federal AGI (federal 1040/1040-SR line 11); additions from Form 39R Part A; mailing addresses
+      on form face; check payable to Idaho State Tax Commission; E-Pay at tax.idaho.gov/epay
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_08-23-2023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Idaho State Tax Commission (write your Social Security number on the check or money order; don't
+    send cash)
+  web_pay_url: https://tax.idaho.gov/epay
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: Idaho Form 40, Individual Income Tax Return and Instructions 2023 (EFO00089 / instructions EIN00046)
+      — line 7 starts from federal AGI (federal 1040/1040-SR line 11); additions from Form 39R Part A; mailing addresses
+      on form face; check payable to Idaho State Tax Commission; E-Pay at tax.idaho.gov/epay
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_08-23-2023.pdf
+all_citations:
+- source: Idaho Form 40, Individual Income Tax Return and Instructions 2023 (EFO00089 / instructions EIN00046) —
+    line 7 starts from federal AGI (federal 1040/1040-SR line 11); additions from Form 39R Part A; mailing addresses
+    on form face; check payable to Idaho State Tax Commission; E-Pay at tax.idaho.gov/epay
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_08-23-2023.pdf
+- source: Idaho Form 39R, Resident Supplemental Schedule 2023 (EFO00088) — Part A Additions list (lines 1-6); confirms
+    NO federal treaty-exempt income add-back
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00088/EFO00088_09-07-2023.pdf
+- source: Idaho Individual Income Tax General Information 2023 (EIN00046) — Who Must File / filing thresholds, When
+    to File and Pay (April 15, 2024), Which Form to Use (Form 40 / Form 43 / 39R / 39NR), Where to File mailing
+    addresses, Residency definitions (domicile + 270-day statutory resident)
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_11-06-2023.pdf
+- source: 'Idaho State Tax Commission — Noncitizens guidance: ''Idaho honors all tax treaties recognized by the
+    United States''; ''Gross income amounts exempt by treaty are not included in the gross income filing requirement
+    for Idaho'''
+  url: https://tax.idaho.gov/taxes/income-tax/individual-income/specific-guidance-for-individual-income-tax/specific-guidance-for-individuals-noncitizens/
+unverified:
+- Exact dollar figure of the $2,500 part-year/nonresident filing threshold is stated in narrative form in General
+  Information but was not independently cross-checked against the Form 43 instructions; cross-confirm at the DOR
+  if a precise statutory cite is needed.
+- Check-payee wording ('Idaho State Tax Commission', write SSN on check) is taken from the Form 40 instructions
+  Line 54 narrative; the General Information document directs payment via Form ID-VP / E-Pay but does not restate
+  the payee text verbatim.

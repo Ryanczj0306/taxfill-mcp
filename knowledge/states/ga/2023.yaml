@@ -1,0 +1,106 @@
+# GA state knowledge — tax year 2023. Fetched + cited from the GA DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ga
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Georgia conforms. The resident return (Form 500) starts from federal adjusted gross income (Form 500,
+  Line 8: "Federal adjusted gross income (From Federal Form 1040)"), and the GA DOR confirms "Georgia Individual
+  Income tax is based on the taxpayer''s federal adjusted gross income, adjustments that are required by Georgia
+  law." Adjustments are made only on Form 500 Schedule 1. Schedule 1 ADDITIONS (lines 1-5) are limited to: (1) Interest
+  on Non-Georgia Municipal and State Bonds, (2) Lump Sum Distributions, (3) Depreciation, (4) Net operating loss
+  carryover deducted on the Federal return, and (5) Other (Specify) -- there is NO add-back of federally treaty-exempt
+  income (unlike California''s Schedule CA add-back). To the contrary, the IT-511 booklet expressly lists as a SUBTRACTION
+  item 10: "Income from any fund, program or system which is specifically exempted by Federal law or treaty." Because
+  treaty-exempt income is already excluded from federal AGI and GA neither adds it back nor otherwise re-taxes it
+  (and explicitly recognizes the treaty exemption), it flows through untaxed.'
+citation:
+  source: GA Form 500 (Rev. 08/30/23) 2023 blank return - Line 8 'Federal adjusted gross income (From Federal Form
+    1040)', Line 9 Schedule 1 adjustments, Line 4 residency status (1 full-year/2 part-year/3 nonresident), 'use
+    Form 500 Schedule 3 if you are a part-year or nonresident filer'
+  url: https://dor.georgia.gov/document/document/2023-500-individual-income-tax-return-blank-form-printing/download
+starts_from: federal adjusted gross income (Form 500, Line 8, "Federal adjusted gross income (From Federal Form
+  1040)"; then Line 9 = adjustments from Form 500 Schedule 1; Line 10 = Georgia adjusted gross income)
+residency:
+  summary: Residency is determined by legal residence (domicile). A full-year resident is one whose legal residence
+    is Georgia, and full-year residents are taxed on all income (except tax-exempt income) regardless of source;
+    the requirement applies even while temporarily absent from or living outside the state. A part-year resident
+    is a legal resident of Georgia for only a portion of the tax year and, if required to file federally, must file
+    a Georgia return. A nonresident is someone who works in Georgia or receives income from Georgia sources; nonresidents
+    (and individuals required to file federal Form 1040NR) file Georgia Form 500 and complete Schedule 3 to compute
+    Georgia-source taxable income. (Legal residents of other states need not file if their only Georgia activity
+    is services as an employee whose wages do not exceed the lesser of 5% of total wages or $5,000.) The IT-511
+    booklet and the DOR Residency Filing Requirements page state the rule in domicile terms; no fixed 183-day statutory-resident
+    day-count test was found on a .gov page.
+forms:
+  resident: Form 500 (Georgia Individual Income Tax Return), Rev. 08/30/23 for tax year 2023; short-form Form 500-EZ
+    also available for eligible full-year residents.
+  part_year_or_nonresident: Form 500 with Schedule 3 (part-year residents and nonresidents file the same Form 500
+    and complete Form 500 Schedule 3 to calculate Georgia taxable income). There is no separate nonresident return
+    number; the residency status box on Form 500 Line 4 (1=full-year resident, 2=part-year resident, 3=nonresident)
+    designates status.
+filing_requirement:
+  note: 'A full-year resident must file a Georgia return if required to file a federal return, if they have income
+    subject to Georgia tax but not federal tax, or if income exceeds the sum of the standard deduction and personal
+    exemptions per the IT-511 chart (e.g., Single/HoH/Qualifying Surviving Spouse under 65 not blind: $8,100; Married
+    Filing Joint both under 65 not blind: $14,500; Married Filing Separate under 65 not blind: $7,250 -- thresholds
+    increase for age 65+/blind). Part-year residents and nonresidents who work in Georgia or have Georgia-source
+    income and are required to file a federal return must file Form 500 with Schedule 3. Individuals required to
+    file federal Form 1040NR must file Form 500.'
+mailing_addresses:
+  refund_or_no_payment: Georgia Dept. of Revenue, PO Box 740392, Atlanta, GA 30374-0392 (for Form 500 and 500 EZ
+    returns expecting a refund or with no balance due)
+  with_payment: Georgia Dept. of Revenue, PO Box 740399, Atlanta, GA 30374-0399 (for Form 500 and 500 EZ returns
+    filed with payment / balance due). A standalone payment with Form 525-TV voucher (no return enclosed) goes to
+    Georgia Dept. of Revenue, PO Box 740323, Atlanta, GA 30374-0323.
+  citation:
+    source: GA Form 500 (Rev. 08/30/23) 2023 blank return - Line 8 'Federal adjusted gross income (From Federal
+      Form 1040)', Line 9 Schedule 1 adjustments, Line 4 residency status (1 full-year/2 part-year/3 nonresident),
+      'use Form 500 Schedule 3 if you are a part-year or nonresident filer'
+    url: https://dor.georgia.gov/document/document/2023-500-individual-income-tax-return-blank-form-printing/download
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: 'Georgia Department of Revenue (per IT-511: "make your check or money order payable to the Georgia
+    Department of Revenue")'
+  web_pay_url: https://gtc.dor.ga.gov/ (Georgia Tax Center, GTC)
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: GA Form 500 (Rev. 08/30/23) 2023 blank return - Line 8 'Federal adjusted gross income (From Federal
+      Form 1040)', Line 9 Schedule 1 adjustments, Line 4 residency status (1 full-year/2 part-year/3 nonresident),
+      'use Form 500 Schedule 3 if you are a part-year or nonresident filer'
+    url: https://dor.georgia.gov/document/document/2023-500-individual-income-tax-return-blank-form-printing/download
+all_citations:
+- source: GA Form 500 (Rev. 08/30/23) 2023 blank return - Line 8 'Federal adjusted gross income (From Federal Form
+    1040)', Line 9 Schedule 1 adjustments, Line 4 residency status (1 full-year/2 part-year/3 nonresident), 'use
+    Form 500 Schedule 3 if you are a part-year or nonresident filer'
+  url: https://dor.georgia.gov/document/document/2023-500-individual-income-tax-return-blank-form-printing/download
+- source: GA 2023 IT-511 Individual Income Tax Instruction Booklet - Schedule 1 ADDITIONS lines 1-5 (no treaty add-back);
+    Subtractions item 10 'Income from any fund, program or system which is specifically exempted by Federal law
+    or treaty'; Filing Requirements / residency (full-year, part-year, nonresident, 1040NR); 'Tax returns due April
+    15, 2024' and 'Calendar year taxpayers are required to file on or before April 15, 2024'; 'make your check or
+    money order payable to the Georgia Department of Revenue'
+  url: https://dor.georgia.gov/document/document/2023-it-511-individual-income-tax-booklet/download
+- source: GA DOR - Filing Georgia State Individual Income Tax Return - 'Georgia Individual Income tax is based on
+    the taxpayer's federal adjusted gross income, adjustments that are required by Georgia law'
+  url: https://dor.georgia.gov/taxes/filing-georgia-state-individual-income-tax-return
+- source: GA DOR - Residency Filing Requirements (full-year/part-year/nonresident definitions; Form 500 + Schedule
+    3)
+  url: https://dor.georgia.gov/residency-filing-requirements
+- source: GA DOR - Mailing Address - Individual/Fiduciary Income Tax (Form 500 refund/no balance PO Box 740392-0392;
+    payment PO Box 740399-0399; 525-TV PO Box 740323-0323)
+  url: https://dor.georgia.gov/mailing-address-individualfiduciary-income-tax
+- source: GA DOR - How Do I Make a Tax Payment? (Georgia Tax Center / GTC online portal; Form 525-TV)
+  url: https://dor.georgia.gov/taxes/how-do-i-make-tax-payment
+unverified:
+- Exact gross-income filing thresholds for nonresidents/part-year residents as a standalone dollar figure (the IT-511
+  chart thresholds shown are framed for full-year residents; nonresidents/part-year file Form 500+Schedule 3 if
+  required to file federally and they have GA-source income) - confirm at DOR if a precise nonresident threshold
+  is needed.
+- The exact GTC URL scheme (gtc.dor.ga.gov) was read from a DOR page via the WebFetch summarizer rather than viewing
+  the rendered link directly; the canonical landing is https://dor.georgia.gov/taxes/how-do-i-make-tax-payment which
+  routes to the Georgia Tax Center - confirm the live GTC URL at the DOR site.

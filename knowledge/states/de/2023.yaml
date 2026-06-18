@@ -1,0 +1,91 @@
+# DE state knowledge — tax year 2023. Fetched + cited from the DE DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/de
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Delaware''s resident return (PIT-RES) starts at Line 1 = "Federal Adjusted Gross Income from Federal
+  Form 1040, Line 11." Section A - Additions contains ONLY Line 2 (interest on non-Delaware state/local obligations)
+  and Line 3 (fiduciary adjustments / oil percentage depletion). There is no add-back of federally treaty-exempt
+  income anywhere in the additions schedule. The non-resident PIT-NON requires Column A Lines 1-17 to "match each
+  line of Federal Form 1040," with the same two additions (out-of-state muni interest, fiduciary/oil depletion).
+  Because income excluded by treaty is already excluded from federal AGI and Delaware has no treaty add-back, that
+  income flows through untaxed -> conforms. (Source: 2023 PIT-RES instructions, Section A - Additions, p.5; 2023
+  PIT-NON instructions, Column A.) Note: the resident form''s Line 14 "Foreign Taxes Paid" addition is an itemized-deduction
+  adjustment for those who took the federal Foreign Tax Credit, NOT a treaty-exempt-income add-back.'
+citation:
+  source: 'DE Division of Revenue - 2023 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who
+    Must File, residency definition, When to File (due 4/30/2024), Section A Additions (Line 1 federal AGI from
+    1040 Line 11; Lines 2-3 only), mailing addresses, check payee ''DE Division of Revenue'', portal tax.delaware.gov'
+  url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+starts_from: federal AGI (Federal Form 1040, Line 11), entered on PIT-RES Line 1
+residency:
+  summary: 'A resident is an individual who EITHER (a) is domiciled in Delaware for any part of the taxable year,
+    OR (b) maintains a place of abode in Delaware and spends more than 183 days of the taxable year in Delaware
+    (statutory resident). Domicile is the place an individual intends as a permanent home; once established it continues
+    until the individual moves to a new location with a bona fide intention to make it the permanent home. A part-year
+    resident is one who changes legal residence during the year (and is a part-year resident of both states); part-year
+    residents may elect to file either as a full-year resident (PIT-RES) or as a non-resident (PIT-NON), whichever
+    is more advantageous. A non-resident is someone who is neither domiciled nor a statutory resident but has gross
+    income from Delaware sources; non-residents must file if they had any gross income from Delaware sources during
+    the year. (Foreign-traveler exception: out of the U.S. at least 495 days in 18 consecutive months without maintaining
+    a DE abode = not a resident; does not apply to Armed Forces / U.S. government employees.)'
+forms:
+  resident: Form PIT-RES (Delaware Individual Income Tax Return - Resident; formerly Form 200-01)
+  part_year_or_nonresident: Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02).
+    Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident
+    treatment), whichever is more advantageous.
+filing_requirement:
+  note: 'Full-year residents must file a 2023 return if their individual Delaware adjusted gross income exceeds
+    the age/status threshold: Under 60 - $9,400 (Filing Status 1, 4, & 5 single/separate) or $15,450 (Status 2 married
+    filing joint); 60-64 - $12,200 / $17,950; 65+ or blind - $14,700 / $20,450; 65+ AND blind - $17,200 / $22,950;
+    claimed as a dependent on another''s return - $5,250 (or $7,750 / $10,250 for 65+ and/or blind). Part-year residents
+    must file if they had income from any source while a DE resident, or DE-source income while a non-resident.
+    Non-residents must file if they had any gross income from Delaware sources during 2023. (Source: 2023 PIT-RES
+    instructions, "Who Must File," p.2.)'
+mailing_addresses:
+  refund_or_no_payment: 'Refund due (PIT-RES Line 46 / PIT-NON Line 60): State of Delaware, Division of Revenue,
+    P.O. Box 8710, Wilmington, DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division
+    of Revenue, P.O. Box 8711, Wilmington, DE 19899-8711.'
+  with_payment: 'Enclosing payment / balance due (PIT-RES Line 45 / PIT-NON Line 59): State of Delaware, Division
+    of Revenue, P.O. Box 508, Wilmington, DE 19899-508.'
+  citation:
+    source: 'DE Division of Revenue - 2023 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who
+      Must File, residency definition, When to File (due 4/30/2024), Section A Additions (Line 1 federal AGI from
+      1040 Line 11; Lines 2-3 only), mailing addresses, check payee ''DE Division of Revenue'', portal tax.delaware.gov'
+    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: DE Division of Revenue
+  web_pay_url: https://tax.delaware.gov
+deadlines:
+  filing_due_date: '2024-04-30'
+  citation:
+    source: 'DE Division of Revenue - 2023 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who
+      Must File, residency definition, When to File (due 4/30/2024), Section A Additions (Line 1 federal AGI from
+      1040 Line 11; Lines 2-3 only), mailing addresses, check payee ''DE Division of Revenue'', portal tax.delaware.gov'
+    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+all_citations:
+- source: 'DE Division of Revenue - 2023 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who
+    Must File, residency definition, When to File (due 4/30/2024), Section A Additions (Line 1 federal AGI from
+    1040 Line 11; Lines 2-3 only), mailing addresses, check payee ''DE Division of Revenue'', portal tax.delaware.gov'
+  url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+- source: 'DE Division of Revenue - 2023 Individual Income Tax Return NON-Resident (Form PIT-NON) Instructions:
+    part-year/non-resident filing, Column A must match Federal Form 1040 line-by-line, additions (out-of-state muni
+    interest, fiduciary/oil depletion), mailing addresses, due 4/30/2024'
+  url: https://revenuefiles.delaware.gov/2023/PIT-NON_TY23_2023-01_Instructions.pdf
+- source: DE Division of Revenue - Personal Income Tax Forms and Instructions (forms index)
+  url: https://revenue.delaware.gov/personal-income-tax-forms/personal-income-tax-forms-instructions/
+- source: DE Division of Revenue - Personal Income Tax FAQs
+  url: https://revenue.delaware.gov/frequently-asked-questions/personal-income-tax-faqs/
+unverified:
+- 'Canonical online payment portal URL: the instructions repeatedly cite ''tax.delaware.gov'' as the portal for
+  payments/extensions and refund status; structured as https://tax.delaware.gov. The Division also references a
+  Payment page at revenue.delaware.gov/payment/. Exact landing URL for a balance-due payment was not independently
+  re-confirmed on a live page beyond the instruction-booklet references - confirm at the DOR.'
+- 'Check payee exact wording: the 2023 PIT-RES instructions state ''Make check payable to: DE Division of Revenue'';
+  this was confirmed in the resident booklet but not separately on the FAQ/payment web page.'

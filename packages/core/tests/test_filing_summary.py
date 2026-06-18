@@ -58,8 +58,13 @@ def test_supported_state_summary_uses_the_pack():
     assert any("does not conform to federal tax treaties" in n.lower() for n in it.notes)
 
 
-def test_unsupported_state_summary_points_to_dor():
-    it = _one(FilingManifestItem(form="IT-201", tax_year=2023, jurisdiction="states/ny", bottom_line=-100))
+def test_unsupported_state_summary_points_to_dor(tmp_path):
+    # An income-tax state with no shipped pack points to the DOR. Empty knowledge
+    # dir keeps this valid as more state packs ship.
+    it = filing_summary(
+        [FilingManifestItem(form="IT-201", tax_year=2023, jurisdiction="states/ny", bottom_line=-100)],
+        today=TODAY, knowledge_dir=str(tmp_path),
+    ).items[0]
     assert any("dor" in n.lower() for n in it.notes)
 
 

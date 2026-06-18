@@ -1,0 +1,114 @@
+# MO state knowledge — tax year 2023. Fetched + cited from the MO DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/mo
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Missouri''s resident return starts from federal adjusted gross income and has no treaty-exempt income
+  add-back, so federally treaty-exempt income (already excluded from federal AGI) flows through untaxed -> conforms.
+  Form MO-1040 Line 1 is captioned "FEDERAL ADJUSTED GROSS INCOME," and the 2023 MO-1040 instructions state "You
+  must begin your Missouri return with your total federal adjusted gross income." The only additions to federal
+  AGI are on Form MO-A, Part 1, Lines 1-6 (interest on non-Missouri state/local obligations; partnership/fiduciary/S-corp
+  adjustments and NOL carryback/carryforward; out-of-state/nonresident property-tax modification; nonqualified ABLE-program
+  distributions) — none of which add back federally treaty-exempt income or foreign-earned income. Corroborating:
+  the "Nonresident Alien Special Filing Instructions" direct the filer to "Enter your federal adjusted gross income
+  from U.S. Nonresident Alien Income Tax Return (Federal Form 1040NR), Line 11, on Form MO-1040, Line 1," meaning
+  treaty-exempt income already excluded from 1040NR AGI carries to MO Line 1 unchanged with no reattachment. Unlike
+  California (which adds treaty income back on Schedule CA), Missouri has no analogous addback. Cite: 2023 MO-1040
+  Instructions, Line 1 and Form MO-A Part 1.'
+citation:
+  source: 2023 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; 'begin your Missouri
+    return with your total federal adjusted gross income'; Form MO-A Part 1 additions; residency/domicile definitions;
+    nonresident & part-year rules; April 15, 2024 due date; filing requirement thresholds; mailing addresses incl.
+    2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; check payable to Missouri Department
+    of Revenue)
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf
+starts_from: federal AGI (Form MO-1040, Line 1 = "FEDERAL ADJUSTED GROSS INCOME"; for Form 1040NR filers, federal
+  1040NR Line 11)
+residency:
+  summary: 'A Missouri resident is an individual who either (1) maintained a domicile in Missouri, or (2) did not
+    maintain a Missouri domicile but had permanent living quarters in Missouri and spent more than 183 days of the
+    taxable year in Missouri (statutory-resident rule). Exception: an individual domiciled in Missouri who did not
+    maintain permanent living quarters in Missouri, did maintain permanent living quarters elsewhere, and spent
+    30 days or fewer of the taxable year in Missouri is NOT a resident. "Domicile" is the place an individual intends
+    as their permanent home and to which they intend to return when absent; once established it continues until
+    the individual moves elsewhere with the true intention of making a new permanent home, and an individual can
+    have only one domicile at a time. A nonresident is an individual who does not meet the definition of resident;
+    if required to file, nonresidents with income from another state use Form MO-NRI to determine the Missouri income
+    percentage. A part-year resident (one who establishes or changes Missouri domicile during the year) is taxed
+    on all income earned while living in Missouri and may either elect to be taxed as a full-year resident using
+    Form MO-CR (credit for taxes paid to other states) or use Form MO-NRI (Missouri income percentage), whichever
+    is more beneficial.'
+forms:
+  resident: Form MO-1040 (Individual Income Tax Long Form). The same MO-1040 is used by all filers; residents claiming
+    credit for taxes paid to another state attach Form MO-CR.
+  part_year_or_nonresident: Form MO-NRI (Missouri Income Percentage), filed with Form MO-1040, for nonresidents
+    and part-year residents. Part-year residents may alternatively use Form MO-CR (resident credit) with MO-1040,
+    whichever is more beneficial.
+filing_requirement:
+  note: 'Per the 2023 MO-1040 instructions: you do not have to file a Missouri return if you are not required to
+    file a federal return. If required to file a federal return, you may still not have to file a Missouri return
+    if you (a) are a resident with less than $1,200 of Missouri adjusted gross income; (b) are a nonresident with
+    less than $600 of Missouri income; or (c) have Missouri adjusted gross income less than the amount of your standard
+    deduction for your filing status. (If not required to file but Missouri tax was withheld, file to claim a refund.)'
+mailing_addresses:
+  refund_or_no_payment: 'Missouri Department of Revenue, P.O. Box 500, Jefferson City, MO 65105-0500 (for a refund
+    or no amount due). Note: returns printed from the Department''s fill-in/auto-calculating forms carry a 2-D barcode
+    and use a different address: refund returns to P.O. Box 3222, Jefferson City, MO 65105-3222 (refund returns
+    claiming a property tax credit: P.O. Box 3385, Jefferson City, MO 65105-3385).'
+  with_payment: 'Missouri Department of Revenue, P.O. Box 329, Jefferson City, MO 65105-0329 (balance due, with
+    payment and all required attachments). Note: 2-D barcode (fill-in/auto-calculating) returns use P.O. Box 3370,
+    Jefferson City, MO 65105-3370 (balance due returns claiming a property tax credit: P.O. Box 3395, Jefferson
+    City, MO 65105-3395).'
+  citation:
+    source: 2023 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; 'begin your
+      Missouri return with your total federal adjusted gross income'; Form MO-A Part 1 additions; residency/domicile
+      definitions; nonresident & part-year rules; April 15, 2024 due date; filing requirement thresholds; mailing
+      addresses incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; check payable to
+      Missouri Department of Revenue)
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Missouri Department of Revenue (check or money order, U.S. funds only; by submitting payment by check
+    you authorize the Department to process it electronically; if mailed after the return is filed, attach Form
+    MO-1040V)
+  web_pay_url: https://magic.collectorsolutions.com/magic-ui/Login/MODOR
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; 'begin your
+      Missouri return with your total federal adjusted gross income'; Form MO-A Part 1 additions; residency/domicile
+      definitions; nonresident & part-year rules; April 15, 2024 due date; filing requirement thresholds; mailing
+      addresses incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; check payable to
+      Missouri Department of Revenue)
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf
+all_citations:
+- source: 2023 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; 'begin your Missouri
+    return with your total federal adjusted gross income'; Form MO-A Part 1 additions; residency/domicile definitions;
+    nonresident & part-year rules; April 15, 2024 due date; filing requirement thresholds; mailing addresses incl.
+    2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; check payable to Missouri Department
+    of Revenue)
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf
+- source: Missouri DOR - Nonresidents and Residents with Other State Income (resident/nonresident/part-year definitions;
+    MO-NRI / MO-CR usage with MO-1040)
+  url: https://dor.mo.gov/taxation/individual/additional-resources/non-residents.html
+- source: Missouri DOR - Form MO-NRI, 2023 Missouri Income Percentage
+  url: https://dor.mo.gov/forms/MO-NRI_2023.pdf
+- source: Missouri DOR - Pay Individual Income Taxes Online (online payment portal URL; eCheck and credit/debit
+    card methods)
+  url: https://dor.mo.gov/taxation/individual/pay-online.html
+unverified:
+- The online payment landing page (dor.mo.gov/taxation/individual/pay-online.html) routes 'Pay Taxes Online' to
+  a third-party processor URL (https://magic.collectorsolutions.com/magic-ui/Login/MODOR, NCR Payments / formerly
+  JetPay). Whether Missouri also accepts individual income tax payments through its mytax.mo.gov portal was not
+  separately confirmed on a .gov page in this session; confirm the current portal at the DOR.
+- Exact dollar amounts of the Missouri standard deduction by filing status (referenced in filing-requirement option
+  (c)) were not transcribed here; the threshold mirrors the federal standard deduction per the instructions — confirm
+  the specific figure at the DOR if a precise number is needed.
+- MO-NRI form was identified by title/URL but its line-level mechanics were not fully read; the residency/usage
+  description is drawn from the MO-1040 instructions and the DOR non-residents page rather than a line-by-line read
+  of MO-NRI.
