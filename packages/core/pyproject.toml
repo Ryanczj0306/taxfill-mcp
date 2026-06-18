@@ -4,6 +4,7 @@ version = "0.1.0.dev0"
 description = "Pure-Python core for TaxFill: form-pack and intake-profile schemas plus calculation primitives. No MCP dependency. v0.1 in development — not yet published to PyPI."
 requires-python = ">=3.11"
 license = "MIT"
+readme = "README.md"
 dependencies = [
     "pydantic>=2",
     "pyyaml>=6",
@@ -17,3 +18,12 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/taxfill_core"]
+
+# The knowledge/ and formpacks/ data trees live at the repo root. Before building
+# a distribution, `python scripts/stage_data.py` copies them (YAML/md only) into
+# src/taxfill_core/_data/ so a published `uvx taxfill-mcp` is self-contained. That
+# copy is git-ignored, so it is force-included here via `artifacts` (which
+# overrides VCS exclusion) for both the sdist and the wheel. The datadir resolver
+# prefers the repo root in a checkout and this _data/ copy when installed.
+[tool.hatch.build]
+artifacts = ["src/taxfill_core/_data/**"]
