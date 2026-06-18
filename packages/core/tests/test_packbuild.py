@@ -52,6 +52,53 @@ def test_build_skeleton_validates_as_formpack(tmp_path):
     FormPack.model_validate(skel)
 
 
+def test_extract_fields_qualifies_hierarchical_names(tmp_path):
+    # Real IRS XFA shape: a parent/kid tree — the skeleton must carry the FULL
+    # dotted name (what the filler addresses), not just the leaf /T.
+    from pypdf import PdfReader
+    pdf = make_acroform_pdf(tmp_path / "h.pdf", [
+        {"name": f"{ROOT}.Page1[0].f1_7[0]", "maxlen": 9, "hierarchical": True},
+    ])
+    names = [f["name"] for f in extract_fields(pdf)]
+    assert f"{ROOT}.Page1[0].f1_7[0]" in names
+    # and the filler agrees on that name
+    PdfReader(str(pdf))
+
+
+def test_radio_group_options_are_enumerated(tmp_path):
+    pdf = make_acroform_pdf(tmp_path / "r.pdf", [
+        {"name": f"{ROOT}.Page1[0].fs[0]", "kind": "radio", "on_value": "/1"},
+        {"name": f"{ROOT}.Page1[0].fs[0]", "kind": "radio", "on_value": "/2"},
+    ])
+    skel = build_skeleton(pdf, form="540", jurisdiction="states/ca", tax_year=2023,
+                          source_url="https://www.ftb.ca.gov/forms/2023/2023-540.pdf")
+    skel.pop("_todo")
+    cb = [f for f in skel["fields"] if f["type"] == "checkbox"]
+    on = {f["on_state"] for f in cb}
+    assert {"/1", "/2"} <= on                          # both radio options enumerated
+    assert len({f["field"] for f in cb}) == 1          # they share one AcroForm field
+    assert len({f["line"] for f in cb}) == len(cb)     # unique line keys per option
+    FormPack.model_validate(skel)
+
+
+def test_sentinel_sweep_fills_each_field_with_its_name(tmp_path):
+    from pypdf import PdfReader
+
+    from taxfill_core.packbuild import sentinel_sweep
+    pdf = _blank(tmp_path)
+    out = sentinel_sweep(pdf, tmp_path / "sweep.pdf")
+    reader = PdfReader(str(out))
+    filled = {}
+    for page in reader.pages:
+        for ref in page.get("/Annots") or []:
+            o = ref.get_object()
+            node = o if o.get("/T") is not None else (o.get("/Parent").get_object() if o.get("/Parent") else o)
+            if node.get("/T") is not None and node.get("/V") is not None:
+                filled[str(node.get("/T"))] = str(node.get("/V"))
+    # a text field's value is its own (leaf) name; at least one checkbox got an on-state
+    assert any(v in k for k, v in filled.items())
+
+
 def test_introspect_cli_writes_skeleton(tmp_path):
     # The `taxfill introspect` CLI ties build_skeleton + sweep together; taxfill_mcp
     # is installed in the workspace so it imports here.

@@ -7,7 +7,10 @@ license = "MIT"
 readme = "README.md"
 dependencies = [
     "mcp>=1.2",
-    "taxfill-core",
+    # Pin to the matching core release so `uvx taxfill-mcp` never resolves a
+    # mismatched taxfill-core from PyPI. Keep in sync with the version bump
+    # (see docs/PUBLISHING.md).
+    "taxfill-core==0.1.0.dev0",
 ]
 
 [project.scripts]

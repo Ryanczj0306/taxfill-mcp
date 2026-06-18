@@ -47,7 +47,10 @@ def data_root() -> Path:
     packaged = here.parent / "_data"
     if _has_data(packaged):
         return packaged
-    return here.parents[4]
+    # Neither a checkout ancestor nor the wheel-packaged copy has the data. Return
+    # the packaged location so the loaders' not-found error names a real candidate
+    # path (rather than a meaningless venv-root guess); set $TAXFILL_DATA_DIR to fix.
+    return packaged
 
 
 def knowledge_dir() -> Path:
