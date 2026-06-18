@@ -1,0 +1,76 @@
+"""Resumable workspace tests (dev plan section 2).
+
+Round-trips a filing across "sessions" (re-open), enforces the on-disk ethos (no
+position without authority => unverified), generates RECONCILIATION.md /
+CHECKLIST.md from recorded positions, and proves `purge` wipes everything.
+"""
+from __future__ import annotations
+
+from taxfill_core.knowledge import Citation
+from taxfill_core.workspace import Position, Workspace
+
+CITE = Citation(source="IRS Pub 17 (2023)", url="https://www.irs.gov/publications/p17")
+
+
+def test_open_creates_layout_and_is_resumable(tmp_path):
+    ws = Workspace.open(tmp_path, 2023, now="2026-06-18 10:00")
+    assert ws.exists() and ws.documents_dir.is_dir() and ws.drafts_dir.is_dir()
+    ws.save_profile({"identity": {}}, now="2026-06-18 10:01")
+    # Re-open (a new "session") sees the saved state.
+    again = Workspace.open(tmp_path, 2023)
+    assert again.load_profile() == {"identity": {}}
+
+
+def test_position_without_citation_is_unverified():
+    p = Position(topic="1040 line 12 — standard deduction", value="13850")
+    assert p.status == "unverified"  # decided was downgraded: no authority
+    cited = Position(topic="x", value="1", citation=CITE)
+    assert cited.status == "decided"
+
+
+def test_record_position_replaces_by_topic(tmp_path):
+    ws = Workspace.open(tmp_path, 2023)
+    ws.record_position(Position(topic="line 1 — wages", value="50000", citation=CITE))
+    ws.record_position(Position(topic="line 1 — wages", value="52000", citation=CITE))  # correction
+    positions = ws.positions()
+    assert len(positions) == 1 and positions[0].value == "52000"
+
+
+def test_reconciliation_md_lists_authority_and_flags_unverified(tmp_path):
+    ws = Workspace.open(tmp_path, 2023)
+    ws.record_position(Position(topic="Std deduction", value="13850", citation=CITE, references=["f1040.12"]))
+    ws.record_position(Position(topic="Mystery credit", value="500"))  # no citation -> unverified
+    ws.record_position(Position(topic="Allocate state wages", value="?", status="open"))
+    path = ws.write_reconciliation(now="2026-06-18 10:05")
+    md = path.read_text()
+    assert "p17" in md and "f1040.12" in md           # the cited authority is rendered
+    assert "Unverified" in md and "Mystery credit" in md
+    assert "Open questions" in md and "Allocate state wages" in md
+    assert "**1**" in md  # one decided
+
+
+def test_checklist_md_surfaces_open_and_gaps(tmp_path):
+    ws = Workspace.open(tmp_path, 2023)
+    ws.record_position(Position(topic="Foreign income", value="", status="open"))
+    path = ws.write_checklist(gaps=["W-2 box 1 not yet confirmed"], now="2026-06-18 10:06")
+    md = path.read_text()
+    assert "Foreign income" in md and "W-2 box 1 not yet confirmed" in md
+
+
+def test_purge_scrubs_and_removes_then_is_idempotent(tmp_path):
+    ws = Workspace.open(tmp_path, 2023)
+    ws.save_profile({"ssn": "123-45-6789"})
+    (ws.documents_dir / "w2.txt").write_text("sensitive wages 50000")
+    assert ws.root.exists()
+    n = ws.purge()
+    assert n >= 2 and not ws.root.exists()
+    assert ws.purge() == 0  # nothing left to scrub
+
+
+def test_status_reports_position_breakdown(tmp_path):
+    ws = Workspace.open(tmp_path, 2023)
+    ws.record_position(Position(topic="a", value="1", citation=CITE))
+    ws.record_position(Position(topic="b", value="2"))  # unverified
+    st = ws.status()
+    assert st["positions"] == {"total": 2, "decided": 1, "unverified": 1, "open": 0}
+    assert st["has_profile"] is False
