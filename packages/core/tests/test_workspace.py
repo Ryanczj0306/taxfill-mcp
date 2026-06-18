@@ -67,6 +67,43 @@ def test_purge_scrubs_and_removes_then_is_idempotent(tmp_path):
     assert ws.purge() == 0  # nothing left to scrub
 
 
+def test_purge_actually_overwrites_bytes_before_unlink(tmp_path, monkeypatch):
+    # The privacy guarantee: prove the scrub path runs (os.urandom called with the
+    # file's byte length) before the file is unlinked, not silently skipped.
+    import taxfill_core.workspace as wsmod
+    ws = Workspace.open(tmp_path, 2023)
+    ws.save_profile({"ssn": "123-45-6789"})
+    secret = ws.documents_dir / "w2.txt"
+    secret.write_text("wages 50000 ssn 123-45-6789")
+    overwrites: list[int] = []
+    real_urandom = wsmod.os.urandom
+    monkeypatch.setattr(wsmod.os, "urandom", lambda n: overwrites.append(n) or real_urandom(n))
+    n = ws.purge()
+    assert n >= 2 and not ws.root.exists()
+    assert len(secret.read_text()) if secret.exists() else True  # file gone
+    assert any(sz == len("wages 50000 ssn 123-45-6789") for sz in overwrites), "secret file was not byte-scrubbed"
+
+
+def test_bad_year_is_rejected(tmp_path):
+    import pytest
+    for bad in ("../etc", "2023/x", "abc"):
+        with pytest.raises(ValueError):
+            Workspace.open(tmp_path, bad)
+
+
+def test_bad_position_status_rejected():
+    import pytest
+    with pytest.raises(ValueError, match="decided|open|unverified"):
+        Position(topic="x", value="1", citation=CITE, status="bogus")
+
+
+def test_reconciliation_escapes_pipes(tmp_path):
+    ws = Workspace.open(tmp_path, 2023)
+    ws.record_position(Position(topic="a|b", value="1", citation=CITE, rationale="x | y"))
+    md = ws.write_reconciliation().read_text()
+    assert "x \\| y" in md  # pipe escaped so the markdown table is not broken
+
+
 def test_status_reports_position_breakdown(tmp_path):
     ws = Workspace.open(tmp_path, 2023)
     ws.record_position(Position(topic="a", value="1", citation=CITE))

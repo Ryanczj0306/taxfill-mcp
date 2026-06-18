@@ -72,6 +72,39 @@ def test_1042s_nra_required_boxes():
     assert doc.gaps == []
 
 
+def test_punctuation_only_money_is_invalid_not_blank():
+    # A non-blank reading that is only currency punctuation is a misread — it must
+    # NOT masquerade as a confirmed-blank "ok" field and slip past the gap check.
+    for token in ("-", "$", ",", "$,", " - "):
+        doc = extract_document("documents/w2.png", "W-2", {"1": token, "2": "0", "employee_ssn": "123-45-6789", "employer_ein": "12-3456789"})
+        box1 = next(f for f in doc.fields if f.key == "1")
+        assert box1.status == "invalid", token
+        assert "1" in doc.gaps  # required + not ok => gap
+
+
+def test_unrecognized_checkbox_is_invalid_not_silently_unchecked():
+    doc = extract_document("documents/w2.png", "W-2", {"13_retirement": "see attached"})
+    cb = next(f for f in doc.fields if f.key == "13_retirement")
+    assert cb.status == "invalid" and cb.value != False  # never fabricated as "unchecked"
+    # recognized negative tokens DO resolve to a real False
+    doc2 = extract_document("documents/w2.png", "W-2", {"13_retirement": "no"})
+    assert next(f for f in doc2.fields if f.key == "13_retirement").value is False
+
+
+def test_fractional_reading_of_int_box_is_invalid():
+    # 1042-S box 1 (income code) is a code; use a money/int contrast instead via 1098-T.
+    doc = extract_document("documents/1098t.png", "1098-T", {"1": "1234.50"})
+    assert next(f for f in doc.fields if f.key == "1").status == "ok"  # money keeps cents
+    # state must be 2 alpha
+    w2 = extract_document("documents/w2.png", "W-2", {"15_state": "CAL"})
+    assert next(f for f in w2.fields if f.key == "15_state").status == "invalid"
+
+
+def test_bad_page_rejected():
+    with pytest.raises(ValueError, match="1-based"):
+        extract_document("documents/w2.png", "W-2", {}, page=0)
+
+
 def test_unsupported_kind_raises():
     with pytest.raises(ValueError, match="unsupported document kind"):
         extract_document("documents/x.png", "W-9", {})

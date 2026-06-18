@@ -17,8 +17,10 @@ Two invariants carry the project ethos onto disk:
 * **No position without authority.** :class:`Position` requires a citation; one
   recorded without a confirmed source is forced to ``status="unverified"`` and
   called out in both generated files — never silently treated as settled.
-* **Purge means gone.** :meth:`Workspace.purge` overwrites every file's bytes
-  before unlinking, so a user can wipe a return's PII on demand.
+* **Purge on demand.** :meth:`Workspace.purge` overwrites every file's bytes
+  before unlinking so a user can wipe a return's PII. This is best-effort: on
+  copy-on-write filesystems (APFS/Btrfs/ZFS) and wear-leveled SSDs the original
+  blocks may survive — see :meth:`Workspace.purge` for the honest guarantee.
 
 Timestamps are caller-supplied (``now`` strings) so the module stays pure and the
 MCP layer / CLI can pass the wall clock.
@@ -75,6 +77,14 @@ class Workspace:
     """A filing workspace for one tax year. Create/open, then save/record/generate/purge."""
 
     def __init__(self, base: Path, year: int):
+        # Bound the year to an integer so str(year) can never carry a path separator
+        # or '..' — the workspace dir name is then always a safe, local component.
+        try:
+            year = int(year)
+        except (TypeError, ValueError):
+            raise ValueError(f"year must be an integer, got {year!r}")
+        if not 1900 <= year <= 2100:
+            raise ValueError(f"year out of range (1900–2100): {year}")
         self.year = year
         self.root = Path(base) / str(year)
 
@@ -164,11 +174,13 @@ class Workspace:
             lines.append("")
             lines.append("| Topic | Value | Authority | Rationale | Refs |")
             lines.append("|---|---|---|---|---|")
+            def _cell(s: str) -> str:
+                return str(s).replace("|", "\\|").replace("\n", " ")
+
             for p in rows:
-                auth = f"[{p.citation.source}]({p.citation.url})" if p.citation else "**— none —**"
-                refs = ", ".join(p.references) if p.references else ""
-                rationale = p.rationale.replace("|", "\\|").replace("\n", " ")
-                lines.append(f"| {p.topic} | {p.value} | {auth} | {rationale} | {refs} |")
+                auth = f"[{_cell(p.citation.source)}]({p.citation.url})" if p.citation else "**— none —**"
+                refs = _cell(", ".join(p.references)) if p.references else ""
+                lines.append(f"| {_cell(p.topic)} | {_cell(p.value)} | {auth} | {_cell(p.rationale)} | {refs} |")
             lines.append("")
 
         _table("Decided positions", decided)
@@ -209,9 +221,16 @@ class Workspace:
 
     # ── purge (privacy) ────────────────────────────────────────────────────
     def purge(self) -> int:
-        """Securely wipe the workspace: overwrite every file's bytes, then remove it.
+        """Best-effort secure wipe: overwrite every file's bytes, then remove the tree.
 
         Returns the number of files scrubbed. After this the year's directory is gone.
+
+        Honest threat model: the in-place overwrite reliably removes the data on a
+        traditional overwrite-in-place filesystem, but does NOT guarantee the
+        original blocks are destroyed on copy-on-write filesystems (APFS, Btrfs,
+        ZFS), SSDs with wear-leveling, or where snapshots / journaling / Time
+        Machine retain prior versions. For a hard guarantee use full-disk
+        encryption (so deletion is effectively crypto-erase) or vendor secure-erase.
         """
         if not self.root.exists():
             return 0
