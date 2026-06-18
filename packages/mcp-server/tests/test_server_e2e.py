@@ -20,6 +20,7 @@ EXPECTED_TOOLS = {
     "intake_checklist", "list_forms", "get_form_map", "fetch_blank", "fill_form",
     "verify_form", "verify_filing", "render_form", "calc", "residency",
     "estimate_refund", "get_sources", "filing_summary", "file_and_pay", "state_scope",
+    "list_document_kinds", "extract_document",
 }
 
 
@@ -68,6 +69,19 @@ def test_list_forms_and_get_form_map():
     fm = _data(_run(_call("get_form_map", {"form": "f1040", "year": 2023})))
     assert fm["form"] == "1040"
     assert "8 == sched_1.10" in fm["cross_form"]
+
+
+def test_list_document_kinds_and_extract():
+    kinds = _data(_run(_call("list_document_kinds", {})))
+    assert any(k["kind"] == "W-2" for k in kinds)
+    out = _data(_run(_call("extract_document", {
+        "path": "documents/w2.png", "kind": "W-2",
+        "fields": {"employee_ssn": "123-45-6789", "employer_ein": "12-3456789", "1": "$50,000", "2": "5000"},
+        "page": 1,
+    })))
+    by = {f["key"]: f for f in out["fields"]}
+    assert by["1"]["value"] == "50000" and by["1"]["provenance"]["file"] == "documents/w2.png"
+    assert out["gaps"] == [] and out["citation"]["url"].startswith("https://www.irs.gov/")
 
 
 def test_intake_checklist_start():
