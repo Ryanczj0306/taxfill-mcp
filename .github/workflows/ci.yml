@@ -59,7 +59,7 @@ jobs:
           assert load_form_pack("f1040", 2023, "federal").fields, "f1040 field map missing"
           assert len(list_forms("federal", 2023)) >= 8
           tools = asyncio.run(s.mcp.list_tools())
-          assert len(tools) == 17, f"expected 17 tools, got {len(tools)}"
+          assert len(tools) == 21, f"expected 21 tools, got {len(tools)}"
           print(f"OK — installed wheel is self-contained; {len(tools)} tools register")
           PY
 

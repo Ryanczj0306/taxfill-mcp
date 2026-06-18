@@ -14,6 +14,7 @@ the calling agent can vision-review every page (the mandatory verify gate).
 from __future__ import annotations
 
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -42,6 +43,13 @@ from taxfill_core.file_and_pay import FilingManifestItem
 from taxfill_core.residency import classify as _classify
 from taxfill_core.schemas.profile import Profile
 from taxfill_core.verify import FilingItem, VerifyReport
+from taxfill_core.workspace import Position, Workspace
+
+WORKSPACE_ROOT = "taxfill-workspace"
+
+
+def _now() -> str:
+    return datetime.now().strftime("%Y-%m-%d %H:%M")
 
 mcp = FastMCP(
     "taxfill",
@@ -220,6 +228,42 @@ def extract_document(path: str, kind: str, fields: dict[str, Any], page: int | N
     box you omit stays null. `kind` is e.g. "W-2", "1099-INT", "1042-S".
     """
     return _dump(_extract_document(path, kind, fields, page=page))
+
+
+@mcp.tool()
+def workspace_save(year: int, profile: dict, root: str = WORKSPACE_ROOT) -> dict:
+    """Persist the intake profile to the local resumable workspace (taxfill-workspace/<year>/)."""
+    ws = Workspace.open(root, year, now=_now())
+    ws.save_profile(profile, now=_now())
+    return ws.status()
+
+
+@mcp.tool()
+def workspace_load(year: int, root: str = WORKSPACE_ROOT) -> dict:
+    """Resume: load the saved profile + status from the local workspace (None profile if new)."""
+    ws = Workspace(root, year)
+    return {"status": ws.status(), "profile": ws.load_profile()}
+
+
+@mcp.tool()
+def workspace_record_position(year: int, position: dict, root: str = WORKSPACE_ROOT) -> dict:
+    """Record one decided position with its authority into the audit trail.
+
+    A position with no `citation` is stored as `unverified` (never `decided`) — the return
+    is not ready while any remain. Recording the same `topic` again replaces it (corrections).
+    """
+    ws = Workspace.open(root, year, now=_now())
+    saved = ws.record_position(Position.model_validate(position), now=_now())
+    return {"recorded": _dump(saved), "status": ws.status()}
+
+
+@mcp.tool()
+def workspace_reconcile(year: int, gaps: list[str] | None = None, root: str = WORKSPACE_ROOT) -> dict:
+    """Generate RECONCILIATION.md (positions + authority) and CHECKLIST.md from recorded state."""
+    ws = Workspace.open(root, year, now=_now())
+    r = ws.write_reconciliation(now=_now())
+    c = ws.write_checklist(gaps=gaps, now=_now())
+    return {"reconciliation_path": str(r), "checklist_path": str(c), "reconciliation_md": r.read_text(), "status": ws.status()}
 
 
 @mcp.tool()
