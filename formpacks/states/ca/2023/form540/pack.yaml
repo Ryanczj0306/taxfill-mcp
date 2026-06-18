@@ -1,0 +1,607 @@
+# California Form 540 (2023) — Resident Income Tax Return.
+#
+# Authored via scripts/introspect_pdf.py (sentinel sweep of the FTB AcroForm,
+# whose field names are opaque sequential ids like "1045"/"1035 CB") + a
+# page-by-page vision mapping to printed line ids + scripts/assemble_ca540.py,
+# then ADVERSARIALLY VISION-AUDITED (all 6 pages clean: every filled value lands
+# at its correct printed line). Relations are transcribed verbatim from the
+# printed line labels (e.g. line 11 = "Add line 7 through line 10"); cross_form
+# line 13 = federal AGI (Form 1040 line 11). Flat AcroForm: acroform_root is
+# empty and field names are top-level. Blank PDF is fetched from the official
+# FTB URL at runtime and checksum-verified.
+form: '540'
+jurisdiction: states/ca
+tax_year: 2023
+source_url: https://www.ftb.ca.gov/forms/2023/2023-540.pdf
+pdf_sha256: 58b5a25d40476a3d0c3f5b51556cec906dd8aea2f448f0ce3e3d9f4e92170e33
+acroform_root: ''
+fields:
+- line: fiscal_year.month_end
+  field: '1002'
+  type: text
+  maxlen: 2
+- line: amended_return
+  field: 1001 CB
+  type: checkbox
+  on_state: /Yes
+- line: name.first
+  field: '1003'
+  type: text
+- line: name.middle_initial
+  field: '1004'
+  type: text
+  maxlen: 1
+- line: name.last
+  field: '1005'
+  type: text
+- line: name.suffix
+  field: '1006'
+  type: text
+  maxlen: 4
+- line: identifying_number
+  field: '1007'
+  type: text
+- line: name.spouse_first
+  field: '1008'
+  type: text
+- line: name.spouse_middle_initial
+  field: '1009'
+  type: text
+  maxlen: 1
+- line: name.spouse_last
+  field: '1010'
+  type: text
+- line: name.spouse_suffix
+  field: '1011'
+  type: text
+  maxlen: 4
+- line: spouse_identifying_number
+  field: '1012'
+  type: text
+- line: mailing_address.additional_info
+  field: '1013'
+  type: text
+- line: pba_code
+  field: '1014'
+  type: text
+  maxlen: 6
+- line: mailing_address.street
+  field: '1015'
+  type: text
+- line: mailing_address.apt_no
+  field: '1016'
+  type: text
+  maxlen: 5
+- line: mailing_address.pmb
+  field: '1017'
+  type: text
+  maxlen: 6
+- line: mailing_address.city
+  field: '1018'
+  type: text
+- line: mailing_address.state
+  field: '1019'
+  type: text
+  maxlen: 2
+- line: mailing_address.zip
+  field: '1020'
+  type: text
+  maxlen: 10
+- line: mailing_address.foreign_country
+  field: '1021'
+  type: text
+- line: mailing_address.foreign_province
+  field: '1022'
+  type: text
+- line: mailing_address.foreign_postal
+  field: '1023'
+  type: text
+- line: date_of_birth
+  field: '1024'
+  type: text
+  maxlen: 10
+- line: spouse_date_of_birth
+  field: '1025'
+  type: text
+  maxlen: 10
+- line: prior_name
+  field: '1026'
+  type: text
+- line: spouse_prior_name
+  field: '1027'
+  type: text
+- line: county
+  field: '1028'
+  type: text
+- line: principal_residence.same_as_mailing
+  field: 1029 CB
+  type: checkbox
+  on_state: /Yes
+- line: principal_residence.street
+  field: '1030'
+  type: text
+- line: principal_residence.apt_no
+  field: '1031'
+  type: text
+  maxlen: 5
+- line: principal_residence.city
+  field: '1032'
+  type: text
+- line: principal_residence.state
+  field: '1033'
+  type: text
+  maxlen: 2
+- line: principal_residence.zip
+  field: '1034'
+  type: text
+  maxlen: 10
+- line: filing_status.ca_different_from_federal
+  field: 1035 CB
+  type: checkbox
+  on_state: /Yes
+- line: filing_status.single
+  field: 1036 CB
+  type: checkbox
+  on_state: /Yes
+  group: filing_status
+  required: true
+- line: filing_status.hoh
+  field: 1040 CB
+  type: checkbox
+  on_state: /Yes
+  group: filing_status
+- line: filing_status.mfj
+  field: 1037 CB
+  type: checkbox
+  on_state: /Yes
+  group: filing_status
+- line: filing_status.qss
+  field: 1041 CB
+  type: checkbox
+  on_state: /Yes
+  group: filing_status
+- line: filing_status.qss_year_died
+  field: '1042'
+  type: text
+  maxlen: 4
+- line: filing_status.qss_extra
+  field: '1043'
+  type: text
+- line: filing_status.mfs
+  field: 1038 CB
+  type: checkbox
+  on_state: /Yes
+  group: filing_status
+- line: filing_status.mfs_spouse_name
+  field: '1039'
+  type: text
+- line: '6'
+  field: 1044 CB
+  type: checkbox
+  on_state: /Yes
+- line: 7.count
+  field: '1045'
+  type: text
+  maxlen: 1
+- line: '7'
+  field: '1046'
+  type: money
+- line: 8.count
+  field: '1047'
+  type: text
+  maxlen: 1
+- line: '8'
+  field: '1048'
+  type: money
+- line: 9.count
+  field: '1049'
+  type: text
+  maxlen: 1
+- line: '9'
+  field: '1050'
+  type: money
+- line: dependent_3.first_name
+  field: '2011'
+  type: text
+- line: dependent_1.first_name
+  field: '2003'
+  type: text
+- line: dependent_2.first_name
+  field: '2007'
+  type: text
+- line: dependent_2.last_name
+  field: '2008'
+  type: text
+- line: dependent_3.last_name
+  field: '2012'
+  type: text
+- line: dependent_1.last_name
+  field: '2004'
+  type: text
+- line: dependent_1.ssn
+  field: '2005'
+  type: text
+  maxlen: 10
+- line: dependent_2.ssn
+  field: '2009'
+  type: text
+  maxlen: 10
+- line: dependent_3.ssn
+  field: '2013'
+  type: text
+  maxlen: 10
+- line: dependent_1.relationship
+  field: '2006'
+  type: text
+- line: dependent_2.relationship
+  field: '2010'
+  type: text
+- line: dependent_3.relationship
+  field: '2014'
+  type: text
+- line: 10.count
+  field: '2015'
+  type: text
+  maxlen: 2
+- line: '10'
+  field: '2016'
+  type: money
+- line: '11'
+  field: '2017'
+  type: money
+- line: '12'
+  field: '2018'
+  type: money
+- line: '13'
+  field: '2019'
+  type: money
+- line: '14'
+  field: '2020'
+  type: money
+- line: '15'
+  field: '2021'
+  type: money
+- line: '16'
+  field: '2022'
+  type: money
+- line: '17'
+  field: '2023'
+  type: money
+- line: '18'
+  field: '2024'
+  type: money
+- line: '19'
+  field: '2025'
+  type: money
+- line: 31.tax_table
+  field: 2026 CB
+  type: checkbox
+  on_state: /Yes
+- line: 31.tax_rate_schedule
+  field: 2027 CB
+  type: checkbox
+  on_state: /Yes
+- line: 31.ftb_3800
+  field: 2028 CB
+  type: checkbox
+  on_state: /Yes
+- line: 31.ftb_3803
+  field: 2029 CB
+  type: checkbox
+  on_state: /Yes
+- line: '31'
+  field: '2030'
+  type: money
+- line: '32'
+  field: '2031'
+  type: money
+- line: '33'
+  field: '2032'
+  type: money
+- line: 34.schedule_g1
+  field: 2033 CB
+  type: checkbox
+  on_state: /Yes
+- line: 34.ftb_5870a
+  field: 2034 CB
+  type: checkbox
+  on_state: /Yes
+- line: '34'
+  field: '2035'
+  type: money
+- line: '35'
+  field: '2036'
+  type: money
+- line: '40'
+  field: '2037'
+  type: money
+- line: 43.credit_name
+  field: '2038'
+  type: text
+- line: 43.code
+  field: '2039'
+  type: text
+  maxlen: 3
+- line: '43'
+  field: '2040'
+  type: money
+- line: '44'
+  field: '2043'
+  type: money
+- line: 44.credit_name
+  field: '2041'
+  type: text
+- line: 44.code
+  field: '2042'
+  type: text
+  maxlen: 3
+- line: '45'
+  field: '3003'
+  type: money
+- line: '46'
+  field: '3004'
+  type: money
+- line: '47'
+  field: '3005'
+  type: money
+- line: '48'
+  field: '3006'
+  type: money
+- line: '61'
+  field: '3007'
+  type: money
+- line: '62'
+  field: '3008'
+  type: money
+- line: '63'
+  field: '3009'
+  type: money
+- line: '64'
+  field: '3010'
+  type: money
+- line: '71'
+  field: '3011'
+  type: money
+- line: '72'
+  field: '3012'
+  type: money
+- line: '73'
+  field: '3013'
+  type: money
+- line: '74'
+  field: '3014'
+  type: money
+- line: '75'
+  field: '3015'
+  type: money
+- line: '76'
+  field: '3016'
+  type: money
+- line: '77'
+  field: '3017'
+  type: money
+- line: '78'
+  field: '3018'
+  type: money
+- line: '91'
+  field: '3019'
+  type: money
+- line: 91.paid_directly_cdtfa
+  field: 3020 RB
+  type: checkbox
+  on_state: /1
+- line: 92.full_year_health_coverage
+  field: 3021 CB
+  type: checkbox
+  on_state: /Yes
+- line: '92'
+  field: '3022'
+  type: money
+- line: '93'
+  field: '3023'
+  type: money
+- line: '94'
+  field: '3024'
+  type: money
+- line: '95'
+  field: '3025'
+  type: money
+- line: '96'
+  field: '3026'
+  type: money
+- line: '97'
+  field: '3027'
+  type: money
+- line: '98'
+  field: '4003'
+  type: money
+- line: '99'
+  field: '4004'
+  type: money
+- line: '100'
+  field: '4005'
+  type: money
+- line: '400'
+  field: '4006'
+  type: money
+- line: '401'
+  field: '4007'
+  type: money
+- line: '403'
+  field: '4008'
+  type: money
+- line: '405'
+  field: '4009'
+  type: money
+- line: '406'
+  field: '4010'
+  type: money
+- line: '407'
+  field: '4011'
+  type: money
+- line: '408'
+  field: 4012a
+  type: money
+- line: '410'
+  field: '4013'
+  type: money
+- line: '413'
+  field: '4014'
+  type: money
+- line: '422'
+  field: '4015'
+  type: money
+- line: '423'
+  field: '4016'
+  type: money
+- line: '424'
+  field: '4017'
+  type: money
+- line: '425'
+  field: '4018'
+  type: money
+- line: '438'
+  field: '4020'
+  type: money
+- line: '439'
+  field: '4021'
+  type: money
+- line: '440'
+  field: '4022'
+  type: money
+- line: '444'
+  field: '4023'
+  type: money
+- line: '445'
+  field: '4024'
+  type: money
+- line: '110'
+  field: '4026'
+  type: money
+- line: '111'
+  field: '4027'
+  type: money
+- line: '112'
+  field: '5003'
+  type: money
+- line: 113.ftb_5805
+  field: 5004 CB
+  type: checkbox
+  on_state: /Yes
+- line: 113.ftb_5805f
+  field: 5005 CB
+  type: checkbox
+  on_state: /Yes
+- line: '113'
+  field: '5006'
+  type: money
+- line: '114'
+  field: '5007'
+  type: money
+- line: '115'
+  field: '5008'
+  type: money
+- line: 116.routing_number
+  field: '5009'
+  type: text
+  maxlen: 9
+- line: 116.account_number
+  field: '5011'
+  type: text
+  maxlen: 17
+- line: '116'
+  field: '5012'
+  type: money
+- line: 116.account_type
+  field: 5010 RB
+  type: checkbox
+  on_state: /1
+- line: 117.routing_number
+  field: '5013'
+  type: text
+  maxlen: 9
+- line: 117.account_number
+  field: '5015'
+  type: text
+  maxlen: 17
+- line: '117'
+  field: '5016'
+  type: money
+- line: 117.account_type
+  field: 5014 RB
+  type: checkbox
+  on_state: /1
+- line: voter_info.register
+  field: 5017 CB
+  type: checkbox
+  on_state: /Yes
+- line: health_care_coverage.no
+  field: 5018 RB
+  type: checkbox
+  on_state: /1
+- line: identifying_number.page6
+  field: '2002'
+  type: text
+- line: name.full
+  field: '2001'
+  type: text
+- line: signature.date
+  field: '6001'
+  type: text
+  maxlen: 10
+- line: signature.email
+  field: '6002'
+  type: text
+- line: signature.preferred_phone
+  field: '6003'
+  type: text
+  maxlen: 10
+- line: paid_preparer.ptin
+  field: '6005'
+  type: text
+  maxlen: 9
+- line: paid_preparer.firm_name
+  field: '6004'
+  type: text
+- line: paid_preparer.firm_fein
+  field: '6007'
+  type: text
+  maxlen: 9
+- line: paid_preparer.firm_address
+  field: '6006'
+  type: text
+- line: third_party_designee.allow_no
+  field: 6008 RB
+  type: checkbox
+  on_state: /1
+- line: third_party_designee.name
+  field: '6009'
+  type: text
+- line: third_party_designee.phone
+  field: '6010'
+  type: text
+  maxlen: 10
+relations:
+- 11 == 7 + 8 + 9 + 10
+- 15 == 13 - 14
+- 17 == 15 + 16
+- 19 == max(0, 17 - 18)
+- 33 == max(0, 31 - 32)
+- 35 == 33 + 34
+- 48 == max(0, 35 - 47)
+- 64 == 48 + 61 + 62 + 63
+- 78 == 71 + 72 + 73 + 74 + 75 + 76 + 77
+- 93 == max(0, 78 - 91)
+- 94 == max(0, 91 - 78)
+- 99 == 97 - 98
+- 100 == max(0, 64 - 95)
+- 110 == 400 + 401 + 403 + 405 + 406 + 407 + 408 + 410 + 413 + 422 + 423 + 424 + 425 + 438 + 439 + 440 + 444 + 445
+cross_form:
+- 13 == f1040.11
+identity_fields:
+- name.first
+- name.last
+- identifying_number
+signature:
+  page: 6
+mailing: null
