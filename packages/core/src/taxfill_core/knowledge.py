@@ -30,24 +30,26 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 
 def validate_gov_url(value: str) -> str:
-    """Validate a citation/source URL: http(s) scheme AND a .gov host.
+    """Validate a citation/source URL: http(s) scheme AND an official US gov host.
 
-    Knowledge data and the source registry cite official .gov documents only
-    (irs.gov, congress.gov, federalregister.gov, treasury.gov, eftps.gov, ...).
-    The scheme failure and the host failure raise distinguishable messages so a
-    pack author knows whether to add the scheme or to swap in a .gov source.
+    Knowledge data and the source registry cite official government documents
+    only: federal ``.gov`` (irs.gov, congress.gov, treasury.gov, ...), ``.mil``,
+    and state/local ``.us`` (e.g. revenue.state.mn.us) — many state Departments
+    of Revenue publish on a ``.us`` host rather than ``.gov``. Blogs/commercial
+    sites are never authority. Scheme and host failures raise distinct messages.
     """
     if not value.startswith(("https://", "http://")):
         raise ValueError(
             "url must be the full official document URL starting with https:// "
-            "(knowledge data is cited to .gov sources only — see knowledge/sources.yaml)"
+            "(knowledge data is cited to official government sources only)"
         )
     hostname = (urlparse(value).hostname or "").lower()
-    if not (hostname == "gov" or hostname.endswith(".gov")):
+    if not any(hostname == tld or hostname.endswith("." + tld) for tld in ("gov", "mil", "us")):
         raise ValueError(
-            f"url must point to an official .gov host (e.g. irs.gov, congress.gov, "
-            f"treasury.gov), got host {hostname!r} — knowledge data is cited to .gov "
-            f"sources only (see knowledge/sources.yaml)"
+            f"url must point to an official US government host — a federal/.gov site "
+            f"(irs.gov, treasury.gov), a .mil site, or a state/local .us site "
+            f"(e.g. revenue.state.mn.us), got host {hostname!r}. Blogs/commercial "
+            f"sites are never authority for tax data."
         )
     return value
 

@@ -1,0 +1,98 @@
+# MT state knowledge — tax year 2023. Fetched + cited from the MT DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/mt
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'MT conforms. For tax year 2023, the Montana Form 2 instructions state plainly: "Your income on your
+  Montana tax return begins with your Federal Adjusted Gross Income" (2023 Form 2 Instructions, "Federal Adjusted
+  Gross Income" section, p.9). Federally treaty-exempt income (excluded from federal AGI under an applicable U.S.
+  tax treaty) is therefore already absent from the MT starting figure. The Montana Additions Schedule defines additions
+  as "all items of income that are not included in Federal Adjusted Gross Income and that must be added" (p.10/p.17),
+  and its enumerated lines are: Line 1 Recovery of Federal Income Tax Deducted; Line 2 Other Recoveries; Line 5
+  Smaller Federal Estate/Trust Distributions; Line 6 Medical Savings Account nonqualified withdrawals; Line 7 First-Time
+  Home-Buyer Account nonqualified withdrawals; Line 9 Federal Net Operating Loss Deduction; Line 10 Expenses used
+  to claim a MT credit; Line 11 Farm/Ranch Risk Management distributions; Line 12 pass-through entity (K-1) additions;
+  Line 13 Title Plant Depreciation/Amortization; Line 14 State Income Tax Deduction; Line 15 Other Additions. NONE
+  is an add-back of treaty-exempt income. Line 15 ("Other Additions") examples are limited to passive/rental and
+  capital loss carryover differences and uncredited S-corp federal income tax — not treaty income. Unlike California
+  (Schedule CA), Montana has no treaty-income addback for 2023, so treaty-exempt income is not re-taxed.'
+citation:
+  source: 2023 Montana Form 2 Individual Income Tax Instructions (MT DOR) — starting point ("begins with your Federal
+    Adjusted Gross Income"), Montana Additions Schedule line-by-line, residency definitions, filing thresholds chart,
+    due date (April 15, 2024), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check
+    payable to Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+starts_from: 'federal AGI (Form 2, line 11 = Federal Adjusted Gross Income from federal Form 1040). NOTE: this is
+  the rule for tax year 2023 and earlier; beginning tax year 2024 Montana switched its starting point to federal
+  TAXABLE income.'
+residency:
+  summary: 'Montana recognizes three statuses. RESIDENT: "You are a Montana resident if you are domiciled or maintain
+    a permanent place of abode in Montana," and Montana taxes all of a resident''s income even if earned out-of-state.
+    Domicile/permanent-abode is determined by factors such as voting/registering to vote in MT, holding a MT driver''s
+    license or ID, MT resident hunting/fishing license, claiming MT residency for college admission/financial aid
+    or for prior-year tax purposes, concealed-weapon permit, and where a motor vehicle is registered. PART-YEAR
+    RESIDENT: someone who was a MT resident at the start of the year and established residency in another state
+    during the year, OR a nonresident at the start of the year who established MT residency during the year; MT
+    taxes income received while living in MT plus MT-source income earned while not living in MT. NONRESIDENT: neither
+    a resident nor a part-year resident; MT taxes only income from Montana sources. (Snowbirds who remain MT-domiciled,
+    seasonal workers who do not establish MT residency, and MT residents at out-of-state college are not part-year
+    residents.) MT also has a North Dakota wage-withholding reciprocity agreement and Servicemembers Civil Relief
+    Act / Military Spouse Residency Relief Act provisions.'
+forms:
+  resident: Montana Form 2 — Individual Income Tax Return (full-year residents file Form 2).
+  part_year_or_nonresident: There is no separate nonresident/part-year individual form for 2023. Nonresidents and
+    part-year residents also file Montana Form 2, and additionally complete the Nonresident/Part-Year Resident Ratio
+    Schedule (Form 2, page 8) to apportion the tax. (The DER-1 referenced in the instructions is for single-member
+    LLCs owned by nonresidents, not the individual return.)
+filing_requirement:
+  note: 'Per the 2023 Form 2 instructions ("Filing Requirements"): you must file a Montana return if, during the
+    year, you were a resident or part-year resident of Montana, OR a nonresident who received Montana source income;
+    AND your federal gross income (excluding unemployment compensation) is at least the threshold for your filing
+    status. 2023 thresholds (under 65 / 65 or older): Single or Married Filing Separately = $5,540 / $8,500; Head
+    of Household = $11,080 / $14,040; Married Filing Jointly = $11,080 (both under 65), $14,040 (one spouse 65+),
+    $17,000 (both 65+). Add $2,960 to the applicable minimum if you (or spouse) are blind. You must also file if
+    you had MT additions/subtractions, incurred/reported losses (to track sourcing), or to claim a refund of withholding
+    or refundable credits (e.g., Earned Income Tax Credit, Elderly Homeowner/Renter Credit).'
+mailing_addresses:
+  refund_or_no_payment: Montana Department of Revenue, PO Box 6577, Helena, MT 59604-6577
+  with_payment: Montana Department of Revenue, PO Box 6308, Helena, MT 59604-6308
+  citation:
+    source: 2023 Montana Form 2 Individual Income Tax Instructions (MT DOR) — starting point ("begins with your
+      Federal Adjusted Gross Income"), Montana Additions Schedule line-by-line, residency definitions, filing thresholds
+      chart, due date (April 15, 2024), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment
+      (check payable to Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Montana Department of Revenue (sign the check and write your Social Security Number and "Tax Year
+    2023" on the memo line; include the payment voucher available at MTRevenue.gov)
+  web_pay_url: https://tap.dor.mt.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Montana Form 2 Individual Income Tax Instructions (MT DOR) — starting point ("begins with your
+      Federal Adjusted Gross Income"), Montana Additions Schedule line-by-line, residency definitions, filing thresholds
+      chart, due date (April 15, 2024), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment
+      (check payable to Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+all_citations:
+- source: 2023 Montana Form 2 Individual Income Tax Instructions (MT DOR) — starting point ("begins with your Federal
+    Adjusted Gross Income"), Montana Additions Schedule line-by-line, residency definitions, filing thresholds chart,
+    due date (April 15, 2024), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check
+    payable to Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- source: 'Montana DOR — Individual Filing Requirements (who must file: resident/part-year/nonresident with MT source
+    income who had a federal filing requirement; prior years use Form 2 booklet thresholds)'
+  url: https://revenue.mt.gov/taxes/individual-income-tax/filing-requirements
+- source: Montana DOR — Montana Individual Income Tax Return (Form 2) publication page
+  url: https://revenue.mt.gov/publications/montana-individual-income-tax-return-form-2
+unverified:
+- No explicit statement found in the 2023 Form 2 instructions that uses the word 'treaty' or directly addresses
+  U.S. tax-treaty-exempt income; conformity is inferred (high confidence) from the federal-AGI starting point plus
+  the absence of any treaty add-back among the enumerated Montana Additions Schedule lines (1-15). Recommend confirming
+  treaty treatment with the MT DOR for any case with treaty-specific facts.

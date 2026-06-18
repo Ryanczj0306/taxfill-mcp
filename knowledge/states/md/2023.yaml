@@ -1,0 +1,99 @@
+# MD state knowledge — tax year 2023. Fetched + cited from the MD DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/md
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'Maryland Form 502 starts from federal adjusted gross income (line 1 = "Adjusted gross income from
+  your federal return"), so treaty-exempt income is initially excluded — BUT Maryland then adds it back. Instruction
+  12 (Additions to Income), Line 5 "Other Additions to Income," code letter g reads verbatim: "Income exempt from
+  federal tax by federal law or treaty that is not exempt from Maryland tax." This is an explicit add-back of federally
+  treaty-exempt income (analogous to California''s Schedule CA addback), entered on Form 502 line 5 with code letter
+  g. Therefore treaty-exempt income IS re-taxed by Maryland and the state does NOT conform. Source: 2023 Resident
+  Booklet, Instruction 12, code letter g (marylandcomptroller.gov / marylandtaxes.gov).'
+citation:
+  source: 2023 Maryland Form 502 Resident Income Tax Return (COM/RAD-009) — line 1 'Adjusted gross income from your
+    federal return'; Additions lines 2-5 incl. line 5 'Other additions (Enter code letter(s) from Instruction 12.)'
+  url: https://www.marylandtaxes.gov/forms/23_forms/502.pdf
+starts_from: 'federal AGI (Form 502 line 1: "Adjusted gross income from your federal return"; line 1 of federal
+  Form 1040/1040SR line 11 is copied per Instruction 11)'
+residency:
+  summary: 'You are a resident of Maryland if (a) your permanent home is or was in Maryland (domicile), OR (b) your
+    permanent home is outside Maryland but you maintained a place of abode (a place to live) in Maryland for more
+    than six months of the tax year AND you were physically present in the state for 183 days or more (statutory
+    resident) — in which case you must file a full-year resident return. Part-year residents (those who began or
+    ended legal residence in Maryland during 2023) file the resident Form 502 with adjustments per Instruction 26.
+    Nonresidents who had Maryland-source income (and were not Maryland residents) file the nonresident return (Form
+    505, or Form 515 for nonresidents subject to the special nonresident/local-jurisdiction rules). Military personnel
+    domiciled in Maryland but stationed elsewhere generally retain Maryland residency (see Administrative Release
+    37 / Instruction 29). Source: 2023 Resident Booklet, "Who Is a Resident?" and Instructions 9 and 26.'
+forms:
+  resident: Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502
+    (per Instruction 26).
+  part_year_or_nonresident: 'Nonresidents: Form 505 — Maryland Nonresident Income Tax Return (COM/RAD-022), with
+    Form 505NR (Nonresident Income Tax Calculation) attached; Form 515 is used by nonresidents who must file in
+    a Maryland local jurisdiction. Part-year residents do NOT use 505 — they file the resident Form 502 with part-year
+    adjustments (Instruction 26).'
+filing_requirement:
+  note: 'You generally must file a Maryland return if you are/were a Maryland resident and are required to file
+    a federal return, or if your Maryland gross income (total federal income plus Maryland additions, minus Maryland
+    subtractions for dependents) equals or exceeds the minimum filing level for your status. 2023 minimum filing
+    levels for taxpayers under 65 (Table 1): Single (incl. dependent taxpayers) $13,850; Joint $27,700; Married
+    filing separately $13,850; Head of household $20,800; Qualifying surviving spouse $27,700. Higher thresholds
+    apply if 65 or over (Table 2: e.g., Single 65+ $15,700; Joint both 65+ $30,700). You should also file to claim
+    a refund if Maryland tax was withheld. Source: 2023 Resident Booklet, Instruction 1 "Who Must File?" and Minimum
+    Filing Levels Tables 1 and 2.'
+mailing_addresses:
+  refund_or_no_payment: Comptroller of Maryland, Revenue Administration Division, 110 Carroll Street, Annapolis,
+    MD 21411-0001
+  with_payment: Comptroller of Maryland, Payment Processing, PO Box 8888, Annapolis, MD 21401-8888 (attach check/money
+    order to Form PV; place on top of Form 502)
+  citation:
+    source: 2023 Maryland Form 502 Resident Income Tax Return (COM/RAD-009) — line 1 'Adjusted gross income from
+      your federal return'; Additions lines 2-5 incl. line 5 'Other additions (Enter code letter(s) from Instruction
+      12.)'
+    url: https://www.marylandtaxes.gov/forms/23_forms/502.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Comptroller of Maryland
+  web_pay_url: https://interactive.marylandtaxes.gov/Individuals/Payment/
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Maryland Form 502 Resident Income Tax Return (COM/RAD-009) — line 1 'Adjusted gross income from
+      your federal return'; Additions lines 2-5 incl. line 5 'Other additions (Enter code letter(s) from Instruction
+      12.)'
+    url: https://www.marylandtaxes.gov/forms/23_forms/502.pdf
+all_citations:
+- source: 2023 Maryland Form 502 Resident Income Tax Return (COM/RAD-009) — line 1 'Adjusted gross income from your
+    federal return'; Additions lines 2-5 incl. line 5 'Other additions (Enter code letter(s) from Instruction 12.)'
+  url: https://www.marylandtaxes.gov/forms/23_forms/502.pdf
+- source: 2023 Maryland Resident Booklet (Form 502 Instructions) — Due Date (Apr 15, 2024); Instruction 1 Who Must
+    File + Minimum Filing Levels Tables; Who Is a Resident (domicile / abode + 183-day statutory resident); Instruction
+    11 Income (copy federal AGI); Instruction 12 Additions to Income, code letter g 'Income exempt from federal
+    tax by federal law or treaty that is not exempt from Maryland tax'; Instruction 24 Mailing/Payment; Instruction
+    26 Part-Year Residents file Form 502
+  url: https://www.marylandtaxes.gov/forms/23_forms/Resident-Booklet.pdf
+- source: 2023 Maryland Resident Booklet (canonical redirect host marylandcomptroller.gov) — same Instruction 12
+    code-g treaty addback and Instruction 24 mailing addresses (Payment Processing PO Box 8888; Revenue Administration
+    Division 110 Carroll Street)
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2023/Resident-Booklet.pdf
+- source: 2023 Maryland Form 505 Nonresident Income Tax Return (COM/RAD-022)
+  url: https://www.marylandtaxes.gov/forms/23_forms/505.pdf
+- source: 2023 Maryland Form 505NR Nonresident Income Tax Calculation
+  url: https://www.marylandtaxes.gov/forms/23_forms/505NR.pdf
+- source: Maryland Comptroller Individual Bill Pay (online payment portal)
+  url: https://interactive.marylandtaxes.gov/Individuals/Payment/
+unverified:
+- Exact official title string of Form 515 was not opened on a .gov page in this session (referenced only via Form
+  502 instructions as the alternate nonresident form); confirm at the Comptroller if precise Form 515 wording is
+  needed.
+- The online payment portal URL (interactive.marylandtaxes.gov/Individuals/Payment/) is cited from the instruction
+  text directing taxpayers to 'marylandtaxes.gov ... Bill Pay' and from a prior .gov instruction reference; the
+  exact deep-link path was not independently re-fetched as a live page this session.
+- Private delivery service (FedEx/UPS) address Comptroller of Maryland, Revenue Administration Division, 110 Carroll
+  Street, Annapolis, MD 21411-0001 is the same as the no-payment address per Instruction 24 (confirmed on .gov).

@@ -1,0 +1,99 @@
+# KS state knowledge — tax year 2023. Fetched + cited from the KS DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ks
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Kansas Form K-40 starts from federal adjusted gross income (K-40 Line 1: "Federal adjusted gross income
+  (as reported on your federal income tax return)"), and Kansas modifications are made only on Schedule S Part A.
+  The Schedule S Part A "Additions to Federal Adjusted Gross Income" are an enumerated, closed list (lines A1-A7):
+  A1 state/municipal bond interest, A2 KPERS contributions, A3 Kansas expensing recapture, A4 low-income student
+  scholarship contributions, A5 IRC 163(j) business interest expense carryforward, A6 unqualified First-Time Home
+  Buyer savings account withdrawals, and A7 "other additions" (whose instructions list only federal income tax refunds
+  and partnership/S-corp/fiduciary adjustments). There is NO add-back for federally tax-treaty-exempt income anywhere
+  in Part A. Because income exempt under a U.S. tax treaty is already excluded from federal AGI and Kansas has no
+  add-back, it flows through and is not re-taxed by Kansas -> conforms. (Source: 2023 Individual Income Tax Booklet,
+  ip23.pdf, K-40 Line 1 and Schedule S Part A / line-by-line instructions.)'
+citation:
+  source: 'Kansas DOR — 2023 Individual Income Tax Booklet (ip23.pdf): K-40 Line 1 federal AGI starting point; Schedule
+    S Part A additions list and line-by-line instructions (no treaty add-back); residency definitions (Who Must
+    File); filing thresholds; Where to File mailing address; When to File due date April 15, 2024; payment options/payee'
+  url: https://www.ksrevenue.gov/pdf/ip23.pdf
+starts_from: federal AGI (K-40 Line 1 = "Federal adjusted gross income (as reported on your federal income tax return)")
+residency:
+  summary: Kansas taxes by domicile/residence. Per the 2023 booklet, "A Kansas resident for income tax purposes
+    is anyone who lives in Kansas, regardless of where they are employed. An individual who is away from Kansas
+    for a period of time and has intentions of returning to Kansas is a resident" — a domicile/intent-to-return
+    concept; a full-year resident is taxed on all income. A PART-YEAR RESIDENT is "a Kansas resident for less than
+    12 months during the tax year," must enter the Kansas residency dates on the K-40, and completes Schedule S
+    Part B to allocate income. A NONRESIDENT is someone not a resident of Kansas who received income from Kansas
+    sources; they must file regardless of the amount of Kansas-source income and complete Schedule S Part B. Military
+    pay is taxable only to the service member's state of legal residency; nonresident service members stationed
+    in Kansas are taxed only on Kansas-source income.
+forms:
+  resident: Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents
+    complete K-40 (with Schedule S Part A only if they have modifications)
+  part_year_or_nonresident: Same Form K-40, with Schedule S (Supplemental Schedule) Part B "Income Allocation for
+    Nonresidents and Part-Year Residents" required to compute the nonresident percentage (K-40 line 9 / Schedule
+    S line B23). Kansas does not have a separate standalone nonresident form.
+filing_requirement:
+  note: 'A full-year Kansas resident must file a 2023 K-40 if (1) they are required to file a federal return, OR
+    (2) their Kansas adjusted gross income exceeds the total of their Kansas standard deduction and exemption allowance.
+    Minimum gross-income filing thresholds (2023): Single under 65 = $5,750 (65+/blind = $6,600); Married Filing
+    Joint both under 65 = $12,500; Head of Household under 65 = $10,500; Married Filing Separate under 65 = $6,250.
+    Nonresidents must file if they received ANY income from Kansas sources, regardless of amount. (Source: ip23.pdf,
+    "Who Must File a Return.")'
+mailing_addresses:
+  refund_or_no_payment: INDIVIDUAL INCOME TAX, KANSAS DEPARTMENT OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260
+  with_payment: INDIVIDUAL INCOME TAX, KANSAS DEPARTMENT OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260 (Kansas
+    uses the same PO Box for both refund/no-balance returns and returns with payment; if paying by check/money order,
+    enclose Form K-40V payment voucher and mail to KANSAS INCOME TAX, KANSAS DEPARTMENT OF REVENUE, PO BOX 750260,
+    TOPEKA KS 66699-0260)
+  citation:
+    source: 'Kansas DOR — 2023 Individual Income Tax Booklet (ip23.pdf): K-40 Line 1 federal AGI starting point;
+      Schedule S Part A additions list and line-by-line instructions (no treaty add-back); residency definitions
+      (Who Must File); filing thresholds; Where to File mailing address; When to File due date April 15, 2024; payment
+      options/payee'
+    url: https://www.ksrevenue.gov/pdf/ip23.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Kansas Income Tax
+  web_pay_url: https://www.ksrevenue.gov/taxpayment.html
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 'Kansas DOR — 2023 Individual Income Tax Booklet (ip23.pdf): K-40 Line 1 federal AGI starting point;
+      Schedule S Part A additions list and line-by-line instructions (no treaty add-back); residency definitions
+      (Who Must File); filing thresholds; Where to File mailing address; When to File due date April 15, 2024; payment
+      options/payee'
+    url: https://www.ksrevenue.gov/pdf/ip23.pdf
+all_citations:
+- source: 'Kansas DOR — 2023 Individual Income Tax Booklet (ip23.pdf): K-40 Line 1 federal AGI starting point; Schedule
+    S Part A additions list and line-by-line instructions (no treaty add-back); residency definitions (Who Must
+    File); filing thresholds; Where to File mailing address; When to File due date April 15, 2024; payment options/payee'
+  url: https://www.ksrevenue.gov/pdf/ip23.pdf
+- source: Kansas DOR — 2023 Income Tax Booklet landing page
+  url: https://www.ksrevenue.gov/incomebook23.html
+- source: 'Kansas DOR — 2023 Schedule S (Supplemental Schedule, schs23.pdf): Part A modifications to federal AGI
+    and Part B income allocation for nonresidents/part-year residents'
+  url: https://www.ksrevenue.gov/pdf/schs23.pdf
+- source: Kansas DOR — 2023 Form K-40 (k-4023.pdf)
+  url: https://www.ksrevenue.gov/pdf/k-4023.pdf
+- source: 'Kansas DOR — 2023 K-40V Individual Income Tax Payment Voucher (k-40v23.pdf): check payable to ''Kansas
+    Income Tax'', mailing address PO BOX 750260 TOPEKA KS 66699-0260, due April 15, 2024'
+  url: https://www.ksrevenue.gov/pdf/k-40v23.pdf
+- source: Kansas DOR — Individual Income Tax Forms index
+  url: https://www.ksrevenue.gov/forms-ii.html
+- source: Kansas DOR — Electronic Services / Tax Payment vendor list (online payment portal)
+  url: https://www.ksrevenue.gov/taxpayment.html
+unverified:
+- No explicit Kansas statutory '183-day' statutory-resident bright-line was found in the booklet; Kansas residency
+  is stated in domicile/intent-to-return terms only (the precise day-count statutory test, if any, was not confirmed
+  on a .gov page).
+- Kansas publishes a single PO Box (PO BOX 750260, TOPEKA KS 66699-0260) for both refund and with-payment returns;
+  a separate distinct ZIP/box for balance-due returns was not found, so the with-payment vs refund mailing distinction
+  could not be confirmed as different addresses — confirm at the DOR if a distinct balance-due box is expected.

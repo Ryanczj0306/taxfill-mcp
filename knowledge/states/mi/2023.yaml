@@ -1,0 +1,93 @@
+# MI state knowledge — tax year 2023. Fetched + cited from the MI DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/mi
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'MI starts from federal AGI and has no treaty add-back, so federally treaty-exempt income (already
+  excluded from federal AGI) flows through untaxed -> conforms. Confirmed two ways from michigan.gov sources: (1)
+  The 2023 MI-1040 begins at line 10 "Adjusted Gross Income from your U.S. Form 1040," and Michigan modifications
+  are only the enumerated additions on Schedule 1 (line 11) and subtractions (line 13). (2) The 2023 Schedule 1
+  "Additions to Income" lines 1-8 contain NO addition for income exempt under a federal tax treaty (the additions
+  are: non-Michigan municipal interest/dividends, self-employment/income taxes deducted federally, MI-1040D/4797
+  capital gain adjustments, out-of-state business/property losses, oil/gas extraction expenses, federal NOL deduction,
+  and MESP/MET nonqualified withdrawals). The words "treaty"/"treaties" appear zero times in the entire 2023 MI-1040
+  instruction booklet, so there is no Michigan add-back analogous to California''s Schedule CA treaty addback.'
+citation:
+  source: 2023 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 'Adjusted Gross Income from your
+    U.S. Form 1040', line 11 'Additions from Schedule 1', and the printed mailing addresses (Lansing, MI 48956 refund;
+    Lansing, MI 48929 with payment)
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/MI-1040.pdf
+starts_from: 'federal AGI (MI-1040 line 10: "Adjusted Gross Income from your U.S. Form 1040")'
+residency:
+  summary: 'Michigan uses a domicile-based residency definition. Resident: Michigan is your permanent home (the
+    place you intend to return to whenever you go away); a temporary absence (e.g., wintering in a southern state)
+    does not change residency. Part-year resident: you move your permanent home into or out of Michigan during the
+    year, and you pay Michigan tax on income earned, received, or accrued while living in Michigan (use Schedule
+    NR to allocate). Nonresident: you pay Michigan tax only on Michigan-source income (Michigan wages/compensation
+    unless from a reciprocal state, Michigan rents/royalties, gains on Michigan real/tangible property, income from
+    a Michigan business/partnership/S corp, Michigan lottery/casino winnings) and file Schedule NR with an MI-1040.
+    Out-of-state students living in Michigan only to attend school are nonresidents. Reciprocal states (IL, IN,
+    KY, MN, OH, WI): wages are taxed only by the state of residence. Note: the 2023 instruction booklet states the
+    domicile-based rules above but does not state a numeric statutory-resident day-count test, so any day-count
+    "statutory resident" concept is not asserted here.'
+forms:
+  resident: MI-1040 (Michigan Individual Income Tax Return)
+  part_year_or_nonresident: Schedule NR (Nonresident and Part-Year Resident Schedule), filed together with Form
+    MI-1040
+filing_requirement:
+  note: File a 2023 MI-1040 if you owe tax, are due a refund, or your AGI exceeds your exemption allowance (the
+    personal/stillbirth exemption allowance for 2023 is $5,400 per exemption; the 2023 income tax rate is 4.05%).
+    Treasury also advises filing a Michigan return if you file a federal return, even if no Michigan tax is owed.
+    If your income subject to tax (line 14) is less than your personal exemption allowance (line 15) but Michigan
+    tax was withheld, you must file to claim a refund. Dependents claimed on another's return need not file if AGI
+    is $1,500 or less (single/MFS) or $3,000 or less (joint), unless claiming a refund of withholding.
+mailing_addresses:
+  refund_or_no_payment: 'Refund, credit, or zero returns: Michigan Department of Treasury, Lansing, MI 48956'
+  with_payment: 'Returns with payment (pay amount on MI-1040 line 34): Michigan Department of Treasury, Lansing,
+    MI 48929 (mail check and return together)'
+  citation:
+    source: 2023 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 'Adjusted Gross Income from
+      your U.S. Form 1040', line 11 'Additions from Schedule 1', and the printed mailing addresses (Lansing, MI
+      48956 refund; Lansing, MI 48929 with payment)
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/MI-1040.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: State of Michigan (write the last four digits of your Social Security number(s) and "2023 income
+    tax" on the front of the check)
+  web_pay_url: https://www.michigan.gov/taxes/iit/iitpayments
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 'Adjusted Gross Income from
+      your U.S. Form 1040', line 11 'Additions from Schedule 1', and the printed mailing addresses (Lansing, MI
+      48956 refund; Lansing, MI 48929 with payment)
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/MI-1040.pdf
+all_citations:
+- source: 2023 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 'Adjusted Gross Income from your
+    U.S. Form 1040', line 11 'Additions from Schedule 1', and the printed mailing addresses (Lansing, MI 48956 refund;
+    Lansing, MI 48929 with payment)
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/MI-1040.pdf
+- source: MICHIGAN 2023 MI-1040 Individual Income Tax Forms and Instructions booklet (BOOK_MI-1040.pdf) - residency
+    definitions, who-must-file, April 15 2024 due date, check payable to 'State of Michigan', $5,400 exemption,
+    4.05% rate, Schedule 1 additions line-by-line (no treaty addback)
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/BOOK_MI-1040.pdf
+- source: 2023 Individual Income Tax Forms and Instructions (forms index, lists MI-1040 and Schedule NR)
+  url: https://www.michigan.gov/taxes/iit-forms/2023-individual-income-tax-forms-and-instructions
+- source: Make a Payment - Michigan Individual Income Tax e-Payments (online payment portal)
+  url: https://www.michigan.gov/taxes/iit/iitpayments
+unverified:
+- The Schedule NR PDF itself returned HTTP 403 and could not be opened directly; the form name 'Nonresident and
+  Part-Year Resident Schedule (Schedule NR)' is confirmed only from the MI-1040 instruction booklet text and the
+  forms-index search result, not from the standalone Schedule NR PDF.
+- The 2023 Schedule 1 standalone PDF returned HTTP 403; the 'no treaty add-back' finding is based on the Schedule
+  1 line-by-line instructions within the 2023 instruction booklet (additions lines 1-8) plus a full-text search
+  of the booklet (zero occurrences of 'treaty'/'treaties'), rather than the standalone Schedule 1 form image.
+- Michigan's residency definition is domicile-based per the 2023 booklet; the booklet does not state a numeric day-count
+  'statutory resident' test, so no specific day threshold was confirmed.
+- Exact online-payment processing fees / accepted methods (eCheck vs card) were not individually verified beyond
+  the official 'Make a Payment' page existence.

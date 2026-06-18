@@ -1,0 +1,98 @@
+# NY state knowledge — tax year 2023. Fetched + cited from the NY DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ny
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'NY Form IT-201 begins from the federal return''s income items (line 1 = "wages, salaries, tips, etc."
+  from federal Form 1040 line 1z) and arrives at federal adjusted gross income on line 19. Because the return starts
+  from federal AGI, income that is exempt from federal tax under a U.S. income tax treaty is already excluded from
+  federal AGI and flows through to NY. NY''s additions to federal AGI (IT-201 lines 20-23, with "other additions"
+  detailed on Form IT-225) do not include any modification that adds back treaty-exempt income. The 2023 IT-201
+  instructions reference treaties only in an unrelated context (Item G code M4, military servicemember residency
+  election), and the IT-225 addition-modification chart (codes A-101 through ~A-222) contains no code referencing
+  a federal tax treaty, treaty-exempt wages/income, or nonresident-alien treaty exclusions. Net effect: starts from
+  federal AGI and has no treaty addback, so treaty-exempt income is NOT re-taxed -> conforms = true. (Unlike CA,
+  which adds treaty-exempt income back on Schedule CA, NY has no analogous addback.)'
+citation:
+  source: Instructions for Form IT-201, Full-Year Resident Income Tax Return (2023) - starting point (line 1 = federal
+    1040 line 1z; line 19 federal AGI), additions lines 20-23, due date April 15 2024, filing threshold
+  url: https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm
+starts_from: federal AGI (Form IT-201 builds federal income items on lines 1-16/17/18 and computes federal adjusted
+  gross income on line 19, which is the starting point for NY modifications)
+residency:
+  summary: 'You are a NY State resident if (a) your domicile is New York State, OR (b) you are a "statutory resident"
+    - you maintain a permanent place of abode in NY for substantially all of the taxable year (a period exceeding
+    11 months) AND spend 184 days or more in NY during the year (any part of a day counts as a day). Domicile is
+    your permanent home that you intend to return to; you can have only one domicile, while you may have multiple
+    residences. A nonresident is someone who was not a NY resident for any part of the year. A part-year resident
+    meets the resident definition for only part of the year and the nonresident definition for the rest; they pay
+    NY tax on all income received while a resident plus NY-source income received while a nonresident. (Note: the
+    NY .gov definitions page states the statutory-resident day threshold as 184 days, not 183.)'
+forms:
+  resident: Form IT-201, Resident Income Tax Return
+  part_year_or_nonresident: Form IT-203, Nonresident and Part-Year Resident Income Tax Return
+filing_requirement:
+  note: Full-year residents file IT-201 if they must file a federal return, or if federal AGI plus NY additions
+    exceeds the NY filing threshold (per the 2023 IT-201 instructions, you must file even if not required to file
+    federally when federal AGI plus NY additions was more than $4,000, or $3,100 if single and claimable as a dependent),
+    or to claim a refund of NY/NYC/Yonkers withholding or refundable credits. Nonresidents/part-year residents file
+    IT-203 if they have NY-source income and their NY adjusted gross income (Federal amount column) exceeds the
+    NY standard deduction, or to claim a refund/credits. Thresholds vary by filing status; confirm the specific
+    dollar amounts at the DOR.
+mailing_addresses:
+  refund_or_no_payment: STATE PROCESSING CENTER, PO BOX 61000, ALBANY NY 12261-0001 (paper return with no payment
+    / refund return)
+  with_payment: STATE PROCESSING CENTER, PO BOX 15555, ALBANY NY 12212-5555 (paper return enclosing a payment, with
+    Form IT-201-V payment voucher)
+  citation:
+    source: Instructions for Form IT-201, Full-Year Resident Income Tax Return (2023) - starting point (line 1 =
+      federal 1040 line 1z; line 19 federal AGI), additions lines 20-23, due date April 15 2024, filing threshold
+    url: https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: New York State Income Tax (make check or money order payable in U.S. funds to "New York State Income
+    Tax"; write the last four digits of your SSN, the tax year, and "Income Tax" on it)
+  web_pay_url: https://www.tax.ny.gov/pay/ind/pay-income-tax-online.htm
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: Instructions for Form IT-201, Full-Year Resident Income Tax Return (2023) - starting point (line 1 =
+      federal 1040 line 1z; line 19 federal AGI), additions lines 20-23, due date April 15 2024, filing threshold
+    url: https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm
+all_citations:
+- source: Instructions for Form IT-201, Full-Year Resident Income Tax Return (2023) - starting point (line 1 = federal
+    1040 line 1z; line 19 federal AGI), additions lines 20-23, due date April 15 2024, filing threshold
+  url: https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm
+- source: Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return (2023) - filing requirement,
+    Federal amount column starting from federal income/AGI
+  url: https://www.tax.ny.gov/forms/html-instructions/2023/it/it203i-2023.htm
+- source: Income tax definitions (resident, nonresident, part-year resident, domicile, statutory resident 184-day
+    rule, permanent place of abode, substantially all of the taxable year)
+  url: https://www.tax.ny.gov/pit/file/pit_definitions.htm
+- source: Instructions for Form IT-225, New York State Modifications (2023) - addition modifications chart, no treaty-exempt-income
+    addback
+  url: https://www.tax.ny.gov/forms/html-instructions/2023/it/it225i-2023.htm
+- source: Mailing addresses (personal income tax returns) - refund/no-payment vs with-payment PO Box addresses
+  url: https://www.tax.ny.gov/pit/file/return-assembly-mail.htm
+- source: Make a personal income tax return payment online (Individual Online Services / Quick Pay)
+  url: https://www.tax.ny.gov/pay/ind/pay-income-tax-online.htm
+- source: Form IT-201-V Payment Voucher for Income Tax Returns - check payee 'New York State Income Tax'
+  url: https://www.tax.ny.gov/pdf/current_forms/it/it201v_fill_in.pdf
+unverified:
+- The check-payee name 'New York State Income Tax' on Form IT-201-V was sourced from tax.ny.gov search-result text;
+  the IT-201-V PDF itself returned unparseable binary on direct fetch, so confirm the exact payee wording on the
+  live voucher PDF.
+- The treaty-conformity conclusion relies on the parsed contents of the IT-201-I additions section and the IT-225
+  addition-modification chart (codes A-101 through ~A-222); no NY .gov page affirmatively states 'treaty income
+  is not added back.' The conclusion is inferred from the absence of any treaty addback modification, not from an
+  explicit statement. Confirm at the DOR for cases involving treaty-exempt income.
+- The IT-203 instructions page did not surface the explicit filing deadline or its own mailing addresses in the
+  fetched excerpt; due date (April 15, 2024) and mailing addresses were confirmed from the IT-201 instructions and
+  the central mailing-address page, which apply to both forms.
+- Exact dollar filing thresholds by filing status (beyond the $4,000 / $3,100 dependent figures quoted for residents)
+  were not enumerated; confirm full charts at the DOR.
