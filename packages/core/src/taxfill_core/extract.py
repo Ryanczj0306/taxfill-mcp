@@ -260,11 +260,20 @@ def _coerce(value: Any, type_: FieldType) -> tuple[Any, bool]:
     try:
         if type_ == "money":
             cleaned = _MONEY_RE.sub("", str(value))
-            if cleaned in ("", "-"):
-                return None, True
+            if cleaned in ("", "-", "+"):
+                # A non-blank reading that is only currency punctuation ("-", "$", ",")
+                # is a misread, not an empty box — flag invalid so it can't masquerade
+                # as a confirmed blank and slip past the required-gap check.
+                return value, False
             return str(Decimal(cleaned)), True
         if type_ == "int":
-            return int(Decimal(_MONEY_RE.sub("", str(value)))), True
+            cleaned = _MONEY_RE.sub("", str(value))
+            if cleaned in ("", "-", "+"):
+                return value, False
+            dec = Decimal(cleaned)
+            if dec != dec.to_integral_value():
+                return value, False  # a fractional reading of an int box is a misread, not a truncation
+            return int(dec), True
         if type_ in ("ein", "ssn", "tin"):
             digits = _DIGITS_RE.sub("", str(value))
             if type_ == "ssn" and len(digits) != 9:
@@ -280,7 +289,14 @@ def _coerce(value: Any, type_: FieldType) -> tuple[Any, bool]:
             s = str(value).strip().upper()
             return s, len(s) == 2 and s.isalpha()
         if type_ == "checkbox":
-            return str(value).strip().lower() in ("x", "true", "yes", "1", "checked"), True
+            token = str(value).strip().lower()
+            if token in ("x", "true", "yes", "y", "1", "checked", "on"):
+                return True, True
+            if token in ("false", "no", "n", "0", "off", "unchecked", "blank"):
+                return False, True
+            # An unrecognized reading is NOT silently treated as unchecked — that
+            # would assert a value the agent never read. Surface it as invalid.
+            return value, False
         return str(value), True
     except (InvalidOperation, ValueError):
         return value, False
@@ -327,6 +343,8 @@ def extract_document(
             f"unsupported document kind {kind!r}; supported: {sorted(DOC_SPECS)}. "
             "Use list_document_kinds() for each form's box layout."
         )
+    if page is not None and page < 1:
+        raise ValueError("page must be a 1-based page number (>= 1), or None when unknown")
     fields = fields or {}
     prov = Provenance.document(file=path, page=page)
     out_fields: list[ExtractedField] = []

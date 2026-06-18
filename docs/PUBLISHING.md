@@ -24,6 +24,8 @@ Set the same version in both packages (they release together):
 
 - `packages/core/pyproject.toml` → `version`
 - `packages/mcp-server/pyproject.toml` → `version`
+- `packages/mcp-server/pyproject.toml` → `dependencies` pin `taxfill-core==<version>`
+  (keep it in lock-step so `uvx taxfill-mcp` resolves the matching core)
 
 For the first real release, drop the `.dev0` suffix → `0.1.0`. Also flip the
 "not yet published to PyPI" notes in both package `README.md`s and
@@ -55,7 +57,7 @@ runs — do it locally too before uploading):
 ```bash
 TMP="$(mktemp -d)"
 uv venv "$TMP/venv" --python 3.11
-uv pip install --python "$TMP/venv/bin/python" --find-links dist/ "$(ls dist/taxfill_mcp-*.whl)"
+uv pip install --python "$TMP/venv/bin/python" --no-cache --find-links dist/ "$(ls dist/taxfill_mcp-*.whl)"
 ( cd "$TMP" && env -u TAXFILL_DATA_DIR "$TMP/venv/bin/python" -c "
 import asyncio, taxfill_mcp.server as s
 from taxfill_core.datadir import data_root

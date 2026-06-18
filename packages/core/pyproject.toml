@@ -27,3 +27,8 @@ packages = ["src/taxfill_core"]
 # prefers the repo root in a checkout and this _data/ copy when installed.
 [tool.hatch.build]
 artifacts = ["src/taxfill_core/_data/**"]
+
+# Auto-stage the data into _data/ on every build (and fail loudly if it's absent),
+# so a build is self-contained even without running scripts/stage_data.py first.
+[tool.hatch.build.hooks.custom]
+path = "hatch_build.py"
