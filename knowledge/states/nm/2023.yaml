@@ -1,0 +1,92 @@
+# NM state knowledge — tax year 2023. Fetched + cited from the NM DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/nm
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'NM''s resident return (PIT-1) starts from federal adjusted gross income: "LINE 9. Federal Adjusted
+  Gross Income — Enter the federal adjusted gross income as reported on your federal Form 1040 or 1040SR, line 11"
+  (2023 PIT-1 instructions, p. PIT-1-23). Income exempt from federal tax under a US tax treaty is already excluded
+  from federal AGI and therefore flows through to NM. NM''s additions to federal AGI are enumerated exclusively
+  on Schedule PIT-ADJ lines 1-5: (1) interest/dividends from federal tax-exempt bonds, (2) federal net operating
+  loss carryover, (3) refunded NM Section 529 contributions, (4) charitable land-donation deduction tied to the
+  NM land conservation credit, and (5) tax paid by a pass-through entity. None of these is an add-back of federally
+  tax-treaty-exempt income, foreign treaty income, or any income exempt under a US tax treaty (the word "treaty"
+  does not appear in the PIT-1, PIT-B, or PIT-ADJ instructions). Because there is no treaty add-back, federally
+  treaty-exempt income is NOT re-taxed by New Mexico -> conforms.'
+citation:
+  source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
+  url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
+starts_from: federal AGI (PIT-1 line 9 = federal Form 1040/1040SR line 11)
+residency:
+  summary: 'Residency for income tax turns on (1) where you were domiciled during the tax year and (2) whether you
+    were physically present in NM for 185 days or more. RESIDENT: domiciled in NM for the entire year, OR physically
+    present in NM for a total of 185 days or more during the tax year regardless of domicile (a day counts only
+    if present for 24 hours; the 185 days need not be consecutive; includes students/temporary workers who plan
+    to return out of state). DOMICILE: the place you intend as your permanent home; you can have only one domicile;
+    a NM domicile is not changed until you show you abandoned it and established a new one elsewhere; change of
+    domicile must be clear and convincing. FIRST-YEAR RESIDENT: moved to NM during 2023 intending to make it your
+    permanent residence AND still in NM on Dec 31, 2023 (need not meet 185 days); a former NM resident who was a
+    nonresident for at least one full tax year may also file as first-year resident. PART-YEAR RESIDENT: was a NM
+    resident for part of the year, was NOT present 185+ days, and on Dec 31 was no longer domiciled in NM (moved
+    to and intends to maintain domicile in another state). NON-RESIDENT: not domiciled in NM for any part of the
+    year and not physically present at least 185 days. Special rules apply to military servicemembers and qualifying
+    spouses, and to enrolled members of NM federally recognized Indian nations/tribes/pueblos.'
+forms:
+  resident: Form PIT-1 (New Mexico Personal Income Tax Return)
+  part_year_or_nonresident: Form PIT-1 filed with Schedule PIT-B (Schedule of New Mexico Allocation and Apportionment
+    of Income); nonresidents and part-year residents use PIT-B to allocate/apportion NM-source income. Mark residency
+    status R (resident), N (non-resident), or P/F (part-year/first-year) on PIT-1; PIT-B is required when there
+    is income from sources both inside and outside New Mexico.
+filing_requirement:
+  note: 'Per the 2023 PIT-1 instructions ("Who Must File"): New Mexico law requires every person who meets BOTH
+    of the following to file a PIT-1: (1) is a New Mexico resident OR has income from New Mexico sources, AND (2)
+    is required to file a federal income tax return. A taxpayer who did not need to file a federal return may still
+    need to file a NM return in certain situations (e.g., to claim a refund or rebate).'
+mailing_addresses:
+  refund_or_no_payment: NM Taxation and Revenue Dept., P.O. Box 25122, Santa Fe, NM 87504-5122 (mail refund returns
+    and returns without a payment attached here)
+  with_payment: NM Taxation and Revenue Dept., P.O. Box 8390, Santa Fe, NM 87504-8390 (mail returns with a payment
+    and voucher attached, or payments/vouchers without a return, here)
+  citation:
+    source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
+    url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: New Mexico Taxation and Revenue Department
+  web_pay_url: https://tap.state.nm.us
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
+    url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
+all_citations:
+- source: 2023 PIT-1 New Mexico Personal Income Tax Return Instructions (official, NM Taxation & Revenue Dept. public
+    files) — Line 9 Federal AGI, Who Must File, residency definitions, filing due date (April 15, 2024 paper / April
+    30, 2024 e-file+e-pay), mailing addresses (PO Box 25122 refund/no-payment; PO Box 8390 with payment), check
+    payee, TAP portal
+  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/f1146c5b-ac60-4015-bea4-11b1ea86449d/2023pit-1-ins.pdf
+- source: 2023 PIT-B Instructions — Schedule of New Mexico Allocation and Apportionment of Income (nonresident/part-year
+    allocation form); points to PIT-1 'Who Must File' for resident/part-year/non-resident definitions
+  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/5e4ea6f1-93e0-48b5-ab42-2a51c82452d1/2023pit-b-ins.pdf
+- source: 2023 PIT-ADJ Instructions — Schedule of Additions, Deductions, and Exemptions; complete list of additions
+    to federal AGI (lines 1-5), with no treaty-exempt income add-back
+  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/cb0dc85c-5c28-45b1-a3f5-1e00fffaaf6b/2023pit-adj-ins.pdf
+- source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
+  url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
+- source: New Mexico Taxpayer Access Point (TAP) — official online filing/payment portal
+  url: https://tap.state.nm.us
+unverified:
+- The 2023 PIT-1/PIT-B/PIT-ADJ instructions were retrieved from the NM Taxation & Revenue Department's public-files
+  host (klvg4oyd4j.execute-api.us-west-2.amazonaws.com), which is the AWS-backed document store linked from tax.newmexico.gov
+  rather than a tax.newmexico.gov URL itself; content matches the Department's official 2023 PIT booklet but the
+  host domain is an AWS execute-api endpoint. Confirm at tax.newmexico.gov Forms & Publications if a tax.newmexico.gov-hosted
+  copy is required.
+- Exact dollar filing-requirement thresholds (income amounts below which a return need not be filed) were not extracted
+  line-by-line from the federal-filing-requirement charts; the requirement is stated as keyed to the federal filing
+  requirement plus NM residency/NM-source income. Confirm specific dollar thresholds against the federal Form 1040
+  instructions / NM PIT-1 booklet at the DOR.

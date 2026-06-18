@@ -1,0 +1,96 @@
+# OH state knowledge — tax year 2023. Fetched + cited from the OH DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/oh
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Ohio IT 1040 line 1 starts from federal adjusted gross income (federal 1040/1040-SR/1040-NR line 11)
+  and the instructions state "Line 1 of your Ohio income tax return must match your federal adjusted gross income
+  as defined in the Internal Revenue Code." Ohio AGI = line 1 + additions (Schedule of Adjustments) - deductions.
+  The additions list (Sched. of Adjustments lines 8-11: 168(k)/179 depreciation add-backs, U.S. obligation interest/dividends
+  exempt federally but not by the state, and federal conformity additions) contains NO add-back of federally treaty-exempt
+  income. Therefore income excluded from federal AGI under a U.S. tax treaty flows through and is not re-taxed by
+  Ohio. Federal-AGI common case, no treaty addback -> conforms.'
+citation:
+  source: 2023 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Line 1 federal AGI, Schedule
+    of Adjustments additions/deductions, Who Must File, Ohio Residency, mailing addresses, due date, payment/check
+    payee
+  url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+starts_from: federal AGI (Ohio IT 1040 line 1 = federal 1040/1040-SR/1040-NR line 11; must match federal AGI as
+  defined in the IRC)
+residency:
+  summary: 'Resident: domiciled in Ohio ("domiciled" and "resident" mean the same thing under Ohio law). Any individual
+    with an abode (owned or rented) in Ohio is presumed a resident; temporary absence, no matter how long, does
+    not change residency. Part-year resident: a resident for part of the tax year and a nonresident for the rest
+    (permanently moved into or out of Ohio during the year); entitled to the nonresident credit for income earned
+    while a resident of another state. Nonresident: a resident of another state for the entire tax year. The presumption
+    of Ohio residency can be challenged using the contact period test: with fewer than 213 contact periods in Ohio,
+    the taxpayer must show by a preponderance (more likely than not) that they were a nonresident; with 213 or more
+    contact periods, clear and convincing documentation is required. Certain individuals can establish an irrebuttable
+    presumption of non-Ohio residency by filing the Ohio Nonresident Statement (form IT NRS). A contact period requires
+    an abode outside Ohio, being away overnight from it, and spending any portion of two consecutive days in Ohio.
+    Authorities: R.C. 5747.01(I)(1), R.C. 5747.24(A)-(D), Info Release IT 2018-01, Cunningham v. Testa, 2015-Ohio-2744.'
+forms:
+  resident: Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident)
+    is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.
+  part_year_or_nonresident: 'No separate nonresident/part-year return; nonresidents and part-year residents file
+    the same Ohio IT 1040 and check the part-year resident or nonresident box. They compute the Nonresident Credit
+    on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. (Optional residency
+    status election: form IT NRS, Ohio Nonresident Statement.)'
+filing_requirement:
+  note: 'Per the 2023 IT 1040 instruction booklet: "Every Ohio resident and every part-year resident is subject
+    to the Ohio income tax. Every nonresident having Ohio-sourced income must also file." Exception: a full-year
+    nonresident living in Indiana, Kentucky, Michigan, Pennsylvania, or West Virginia does not have to file if their
+    only Ohio-sourced income is wages (reciprocity states). You do not have to file if Ohio AGI (line 3) is <= $0,
+    or your exemption amount (line 4) >= Ohio AGI, or specified credits (senior citizen, lump sum distribution,
+    joint filing) equal/exceed your tax liability and you owe no school district income tax. The Department recommends
+    filing if federal AGI > $28,450. See R.C. 5747.08.'
+mailing_addresses:
+  refund_or_no_payment: 'IT 1040 without payment: Ohio Department of Taxation, P.O. Box 2679, Columbus, OH 43270-2679'
+  with_payment: 'IT 1040 with payment (include OUPC): Ohio Department of Taxation, P.O. Box 2057, Columbus, OH 43270-2057'
+  citation:
+    source: 2023 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Line 1 federal AGI, Schedule
+      of Adjustments additions/deductions, Who Must File, Ohio Residency, mailing addresses, due date, payment/check
+      payee
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: 'Ohio Treasurer of State (for IT 1040: make check or money order payable to "Ohio Treasurer of State";
+    on the Memo line include the tax year, "IT 1040," and last four digits of SSN; include an Ohio Universal Payment
+    Coupon (OUPC) marked "Individual Income Tax")'
+  web_pay_url: https://tax.ohio.gov/pay (OH|TAX eServices portal at https://tax.ohio.gov/myportal)
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Line 1 federal AGI, Schedule
+      of Adjustments additions/deductions, Who Must File, Ohio Residency, mailing addresses, due date, payment/check
+      payee
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+all_citations:
+- source: 2023 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Line 1 federal AGI, Schedule
+    of Adjustments additions/deductions, Who Must File, Ohio Residency, mailing addresses, due date, payment/check
+    payee
+  url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+- source: 2023 Ohio IT 1040 Individual Income Tax Return bundle (forms)
+  url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/1040-bundle-original.pdf
+- source: Ohio Department of Taxation - Income, General Information FAQ (Ohio AGI starts from federal AGI; Schedule
+    of Adjustments)
+  url: https://tax.ohio.gov/help-center/faqs/income-general-information/income-general-information
+- source: Ohio Department of Taxation - Ohio Residency page
+  url: https://tax.ohio.gov/individual/ohio-residency
+- source: Ohio Department of Taxation - IT NRC Forms
+  url: https://tax.ohio.gov/individual/file-now/IT-NRC-Forms
+- source: Ohio Department of Taxation - online payment (tax.ohio.gov/pay) and OH|TAX eServices portal (tax.ohio.gov/myportal)
+  url: https://tax.ohio.gov/pay
+unverified:
+- The Income General Information FAQ and Ohio Residency web pages (tax.ohio.gov/help-center/faqs/... and tax.ohio.gov/individual/ohio-residency)
+  returned HTTP 404 at fetch time; their content was confirmed instead from the official 2023 IT 1040/SD 100 instruction
+  booklet PDF, which is authoritative. Confirm the live FAQ/residency pages at the DOR if web-page citations are
+  needed.
+- 'The exact OH|TAX eServices payment portal URL: instructions reference both tax.ohio.gov/pay (general ''how to
+  pay'' page) and tax.ohio.gov/myportal (OH|TAX eServices login). Confirm the current canonical portal URL at the
+  DOR.'

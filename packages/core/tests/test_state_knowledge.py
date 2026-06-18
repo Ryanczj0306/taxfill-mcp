@@ -21,13 +21,14 @@ STATE_KB = sorted((REPO_ROOT / "knowledge" / "states").glob("*/2023.yaml"))
 STATE_CODES = [p.parent.name for p in STATE_KB]
 US = Provenance.user_stated()
 
-# Confirmed (cited, verbatim) treaty NON-conformity — these add back federally
-# treaty-exempt income, so a treaty filer must be warned.
-KNOWN_NONCONFORMING = {"ca", "al", "ar", "ct", "md", "ms"}
+# Treaty NON-conformity — these add back / do not pass through federally
+# treaty-exempt income, so a treaty filer must be warned (cited per pack).
+KNOWN_NONCONFORMING = {"ca", "al", "ar", "ct", "md", "ms", "nd", "nj", "pa"}
 
 
 def test_state_knowledge_packs_exist():
-    assert len(STATE_CODES) >= 27  # CA + the 26 fetched in the first wave
+    # All income-tax jurisdictions: 41 states + DC (the 9 no-tax states need no pack).
+    assert len(STATE_CODES) >= 42
 
 
 @pytest.mark.parametrize("code", STATE_CODES, ids=lambda c: c)

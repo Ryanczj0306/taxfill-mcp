@@ -1,0 +1,92 @@
+# VT state knowledge — tax year 2023. Fetched + cited from the VT DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/vt
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Vermont''s resident return starts from federal adjusted gross income and does NOT add back federally
+  treaty-exempt income; it explicitly SUBTRACTS it. Form IN-111 Line 1 is "Federal Adjusted Gross Income — Enter
+  the amount from your federal Form 1040." The DOR "Resident" page states: "If you are a Vermont resident, your
+  income starts with federal adjusted gross income minus the following: Income exempted from state taxation by the
+  laws of the United States..." Line 2 (Net Modifications to Federal AGI, via Schedule IN-112) contains the standard
+  state additions/subtractions with no treaty-income add-back. Because treaty-exempt income is already excluded
+  from federal AGI and is additionally listed as a Vermont subtraction (not an addition), it is not re-taxed ->
+  conforms = true.'
+citation:
+  source: 'VT Dept of Taxes — 2023 Form IN-111 Instructions (PDF): Line 1 = Federal Adjusted Gross Income; due date
+    April 15, 2024; mailing addresses (PO Box 1881 refund/no tax due, PO Box 1779 balance due); check payable to
+    Vermont Department of Taxes with Form IN-116; myVTax'
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf
+starts_from: federal AGI (Form IN-111 Line 1 = Federal Adjusted Gross Income from federal Form 1040; net modifications
+  applied on Line 2 via Schedule IN-112)
+residency:
+  summary: 'Resident: you qualify as a Vermont resident for that part of the taxable year during which you are domiciled
+    in Vermont, OR you maintain a permanent home in Vermont and are present in Vermont for more than 183 days of
+    the taxable year (statutory residency). Part-year resident: a Vermont resident for only part of the tax year
+    (typically moved into or out of Vermont) — combine income while a resident with Vermont-source income while
+    a nonresident. Nonresident: does not qualify as a resident during any part of the year; taxed only on Vermont-source
+    income.'
+forms:
+  resident: Form IN-111, Vermont Income Tax Return
+  part_year_or_nonresident: Form IN-111 (same return) plus Schedule IN-113, Vermont Income Adjustment Calculations
+    (nonresidents and part-year residents complete IN-113 to apportion/allocate Vermont income; nonresidents complete
+    Parts I and II)
+filing_requirement:
+  note: 'A 2023 Vermont income tax return must be filed by full-year residents, part-year residents, and nonresidents
+    who are required to file a 2023 federal income tax return AND earned or received more than $100 in Vermont income,
+    OR earned/received gross income of more than $1,000 as a nonresident. Residents: file if federal AGI (less Vermont
+    exclusions, including U.S.-law-exempt income) exceeds $100. Nonresidents: file if Vermont net income is more
+    than $100 or Vermont gross income (before losses) is more than $1,000.'
+mailing_addresses:
+  refund_or_no_payment: Vermont Department of Taxes, PO Box 1881, Montpelier, VT 05601-1881
+  with_payment: Vermont Department of Taxes, PO Box 1779, Montpelier, VT 05601-1779 (attach check to the lower left
+    side of the return)
+  citation:
+    source: 'VT Dept of Taxes — 2023 Form IN-111 Instructions (PDF): Line 1 = Federal Adjusted Gross Income; due
+      date April 15, 2024; mailing addresses (PO Box 1881 refund/no tax due, PO Box 1779 balance due); check payable
+      to Vermont Department of Taxes with Form IN-116; myVTax'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Vermont Department of Taxes (pay by check or money order; include 2023 Form IN-116, Vermont Income
+    Tax Payment Voucher)
+  web_pay_url: https://myvtax.vermont.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 'VT Dept of Taxes — 2023 Form IN-111 Instructions (PDF): Line 1 = Federal Adjusted Gross Income; due
+      date April 15, 2024; mailing addresses (PO Box 1881 refund/no tax due, PO Box 1779 balance due); check payable
+      to Vermont Department of Taxes with Form IN-116; myVTax'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf
+all_citations:
+- source: 'VT Dept of Taxes — 2023 Form IN-111 Instructions (PDF): Line 1 = Federal Adjusted Gross Income; due date
+    April 15, 2024; mailing addresses (PO Box 1881 refund/no tax due, PO Box 1779 balance due); check payable to
+    Vermont Department of Taxes with Form IN-116; myVTax'
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf
+- source: 'VT Dept of Taxes — Resident (Who Should File): residency definition (domicile or permanent home + 183
+    days); income starts with federal AGI minus income exempted from state taxation by the laws of the United States;
+    $100 filing threshold'
+  url: https://tax.vermont.gov/individuals/who-should-file/resident
+- source: 'VT Dept of Taxes — Part-Year Resident (Who Should File): part-year definition and combined-income $100
+    threshold'
+  url: https://tax.vermont.gov/individuals/who-should-file/part-year-resident
+- source: 'VT Dept of Taxes — Nonresident with Earned Vermont Income (Who Should File): nonresident filing threshold
+    (net income > $100 or gross income > $1,000); Vermont-source income rules'
+  url: https://tax.vermont.gov/individuals/who-should-file/nonresident
+- source: 'VT Dept of Taxes — 2023 Schedule IN-113 Instructions (PDF): nonresident/part-year income adjustment calculations'
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2023.pdf
+- source: VT Dept of Taxes — 2023 Form IN-111 (document landing page)
+  url: https://tax.vermont.gov/document/2023-form-111
+unverified:
+- Exact ZIP+4 routing nuances were taken from the 2023 IN-111 Instructions; confirm current-year addresses at the
+  DOR before mailing as PO Box assignments can change between filing years.
+- myVTax portal base URL (myvtax.vermont.gov) is cited from the IN-111 instructions ('myVTax.vermont.gov'); the
+  exact deep-link for an individual income tax payment was not separately captured — confirm the payment path at
+  the DOR.
+- Whether a specific tax treaty article is recognized for a given taxpayer should be confirmed at the DOR; the general
+  conformity conclusion is based on the federal-AGI starting point plus the explicit U.S.-law-exempt-income subtraction,
+  with no observed treaty add-back.

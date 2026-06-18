@@ -1,0 +1,103 @@
+# RI state knowledge — tax year 2023. Fetched + cited from the RI DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ri
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'The RI-1040 resident return starts from federal adjusted gross income (RI-1040 Line 1: "Enter your
+  federal adjusted gross income from Federal Form 1040 or Federal Form 1040-SR, line 11"), and the General Instructions
+  state "the Rhode Island income tax is based on your federal adjusted gross income." RI taxable income is built
+  only via the RI Schedule M modifications. I reviewed every "Modification Increasing Federal Adjusted Gross Income"
+  on Schedule M (Lines 2a-2k, instructions pages I-8 to I-10): the add-backs are out-of-state municipal bond interest
+  (2a), RI fiduciary adjustment (2b), recapture of Family Education Account modifications (2c), bonus depreciation
+  (2d), recapture of Section 529 modifications (2e), recapture of previously-claimed tax-credit income (2f), pass-through
+  entity tax (2h), unemployment compensation not in federal AGI (2i), taxable PPP loan amount (2j), and a reserved
+  line (2k). NONE of these add back income that is exempt from federal tax under a U.S. income tax treaty. Because
+  treaty-exempt income is already excluded from federal AGI and RI has no add-back of it, it flows through and is
+  not re-taxed by Rhode Island. Therefore RI conforms (treaty-exempt income is not re-taxed).'
+citation:
+  source: '2023 Instructions for Filing RI-1040 (Resident) — RI Division of Taxation: starting point (Line 1 = federal
+    AGI), Who Must File / Resident & domicile definitions (p. I-1), Where and When to File / due date 4/15/2024
+    + mailing addresses 5806 refund and 5807 with-payment (p. I-2), RI Schedule M modifications increasing/decreasing
+    federal AGI with no treaty add-back (pp. I-8 to I-10), RI Tax Computation Worksheet (p. I-11)'
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf
+starts_from: federal AGI (Federal Form 1040/1040-SR, line 11) — RI-1040 Line 1; RI taxable income then computed
+  via RI Schedule M modifications, RI standard deduction, and RI exemptions
+residency:
+  summary: 'Resident = an individual domiciled in Rhode Island, OR an individual who maintains a permanent place
+    of abode in Rhode Island and spends more than 183 days of the year in Rhode Island (statutory resident). Domicile
+    is "the place an individual regards as his or her permanent home - the place to which he or she intends to return
+    after a period of absence"; a domicile once established continues until a new fixed and permanent home is acquired
+    (changing domicile requires intent to abandon the old, intent to acquire a new one, and actual physical presence
+    in the new domicile). Nonresident = any person not within the definition of a resident, who must file if they
+    have income derived from or connected with Rhode Island sources and are required to file a federal return. Part-year
+    resident = an individual who was a RI resident for a period of less than 12 months; files if required to file
+    a federal return. Nonresidents and part-year residents both use Form RI-1040NR (nonresidents complete Schedule
+    II; part-year residents complete Schedule III). Note: military pay of armed-forces members is taxed only by
+    their state of legal residence (Soldiers and Sailors Civil Relief Act); certain servicemember-spouse income
+    may be exempt under the Military Spouses Residency Relief Act.'
+forms:
+  resident: Form RI-1040 (Rhode Island Resident Individual Income Tax Return)
+  part_year_or_nonresident: Form RI-1040NR (Rhode Island Nonresident Individual Income Tax Return) — nonresidents
+    complete RI Schedule II; part-year residents complete RI Schedule III
+filing_requirement:
+  note: 'Every resident individual of Rhode Island who is required to file a federal income tax return must file
+    a RI individual income tax return (RI-1040). A resident not required to file a federal return may still need
+    to file a RI return if their RI income for the year exceeds the sum of their RI personal exemptions and applicable
+    standard deduction. Every nonresident individual required to file a federal return who has income derived from
+    or connected with Rhode Island sources must file (RI-1040NR). A part-year resident (RI resident for less than
+    12 months) must file if they are required to file a federal return. (Source: RI Division of Taxation, Individual
+    Tax Filing Requirements; 2023 RI-1040 instructions, "Who Must File a Return," p. I-1.)'
+mailing_addresses:
+  refund_or_no_payment: Rhode Island Division of Taxation, One Capitol Hill, Providence, RI 02908-5806
+  with_payment: Rhode Island Division of Taxation, One Capitol Hill, Providence, RI 02908-5807 (mail return, payment,
+    and Form RI-1040V together)
+  citation:
+    source: '2023 Instructions for Filing RI-1040 (Resident) — RI Division of Taxation: starting point (Line 1 =
+      federal AGI), Who Must File / Resident & domicile definitions (p. I-1), Where and When to File / due date
+      4/15/2024 + mailing addresses 5806 refund and 5807 with-payment (p. I-2), RI Schedule M modifications increasing/decreasing
+      federal AGI with no treaty add-back (pp. I-8 to I-10), RI Tax Computation Worksheet (p. I-11)'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: 'R.I. Division of Taxation (per 2023 Form RI-1040V: "Make your check or money order payable to the
+    ''R.I. Division of Taxation.'' Do not send cash." Write "Form RI-1040V," daytime phone number, and SSN on the
+    check)'
+  web_pay_url: https://taxportal.ri.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: '2023 Instructions for Filing RI-1040 (Resident) — RI Division of Taxation: starting point (Line 1 =
+      federal AGI), Who Must File / Resident & domicile definitions (p. I-1), Where and When to File / due date
+      4/15/2024 + mailing addresses 5806 refund and 5807 with-payment (p. I-2), RI Schedule M modifications increasing/decreasing
+      federal AGI with no treaty add-back (pp. I-8 to I-10), RI Tax Computation Worksheet (p. I-11)'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf
+all_citations:
+- source: '2023 Instructions for Filing RI-1040 (Resident) — RI Division of Taxation: starting point (Line 1 = federal
+    AGI), Who Must File / Resident & domicile definitions (p. I-1), Where and When to File / due date 4/15/2024
+    + mailing addresses 5806 refund and 5807 with-payment (p. I-2), RI Schedule M modifications increasing/decreasing
+    federal AGI with no treaty add-back (pp. I-8 to I-10), RI Tax Computation Worksheet (p. I-11)'
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf
+- source: Individual Tax Filing Requirements — RI Division of Taxation (resident/nonresident/part-year definitions,
+    domicile, 183-day statutory resident, RI-1040 vs RI-1040NR Schedule II/III)
+  url: https://tax.ri.gov/tax-sections/personal-income-tax/individual-tax-filing-requirements
+- source: 2023 Form RI-1040V (Rhode Island Return Payment Voucher) — check payable to 'R.I. Division of Taxation,'
+    mailing address One Capitol Hill, Providence, RI 02908-5807, and portal taxportal.ri.gov
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-01/2023%20RI-1040V_w.pdf
+- source: Make a Payment Online — RI Division of Taxation (official Tax Portal URL taxportal.ri.gov; check payments
+    per form instructions; credit card option)
+  url: https://tax.ri.gov/online-services/make-payment-online
+- source: 2023 Instructions for Filing RI-1040NR (Nonresident/Part-Year) booklet — RI Division of Taxation
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%20NR%20Instructions.pdf
+unverified:
+- The nonresident/part-year due date and mailing addresses were not separately read from the 2023 RI-1040NR instruction
+  booklet; they are assumed identical to the resident return (4/15/2024; refund to 02908-5806, with-payment to 02908-5807).
+  Confirm at the DOR via the RI-1040NR booklet.
+- Treaty conformity is inferred from the absence of any treaty add-back on RI Schedule M (which I reviewed line-by-line)
+  rather than from an explicit RI statement that treaty-exempt income is excluded. RI has no Schedule-CA-style treaty
+  add-back, so treaty-exempt income flows through federal AGI untaxed; if a specific treaty article is at issue,
+  confirm at the DOR.

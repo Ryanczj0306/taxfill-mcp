@@ -1,0 +1,98 @@
+# OK state knowledge — tax year 2023. Fetched + cited from the OK DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ok
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Oklahoma''s resident return (Form 511) starts at line 1 from "Federal adjusted gross income (from
+  Federal 1040 or 1040-SR)" and then applies Schedule 511-A (Oklahoma subtractions) and Schedule 511-B (Oklahoma
+  additions) to arrive at Oklahoma AGI. The complete Schedule 511-B additions list for 2023 is closed and enumerated:
+  (1) state and municipal bond interest, (2) out-of-state losses, (3) lump-sum distributions not in federal AGI,
+  (4) federal net operating loss, (5) recapture of depletion / excess federal depletion, (6) recapture of 529 contributions,
+  (7) Oklahoma loss distributed by an electing PTE, (8) miscellaneous other additions. There is NO add-back of federally
+  treaty-exempt income anywhere in the resident or nonresident packets (a full-text search of both 2023 packets
+  for "treaty"/"treaties" returns zero hits). Because OK begins from federal AGI and does not add treaty income
+  back (unlike CA Schedule CA), federally treaty-exempt income already excluded from federal AGI flows through and
+  is NOT re-taxed by Oklahoma. The 511-NR likewise begins from the federal amounts: "The Federal Adjusted Gross
+  Income (AGI) will be adjusted using the Oklahoma additions and subtractions." Therefore conforms = true.'
+citation:
+  source: '2023 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions (Oklahoma Tax Commission).
+    Source for: Form 511 line 1 = Federal AGI starting point; Schedule 511-B additions list (no treaty add-back);
+    resident/part-year/nonresident domicile definitions; due date April 15 (April 20 e-file/e-pay); WHO MUST FILE
+    thresholds; ''When You Are Finished'' mailing to PO Box 26800, OKC 73126-0800; check payable to Oklahoma Tax
+    Commission; OkTAP at tax.ok.gov.'
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-Pkt-2023.pdf
+starts_from: 'federal AGI (Form 511 line 1: "Federal adjusted gross income (from Federal 1040 or 1040-SR)")'
+residency:
+  summary: Domicile-based. Resident = a person domiciled in Oklahoma for the entire tax year ("Domicile" is the
+    true, fixed, and permanent home you intend to return to; once established it remains until a new one is adopted).
+    Part-year resident = an individual whose domicile was in Oklahoma for less than 12 months during the tax year.
+    Nonresident = an individual whose domicile was not in Oklahoma for any portion of the tax year. Military residency
+    follows the SCRA (as amended by the Veterans Auto and Education Improvement Act of 2022); an Oklahoma resident
+    who enters military service remains an Oklahoma resident until establishing permanent residence in another state
+    and changing military records (DD2058). Resident income = all income reported on the federal return except income
+    from real/tangible personal property located in another state, business activity in another state, or gains/losses
+    on sale of real property in another state.
+forms:
+  resident: Form 511 - Oklahoma Resident Individual Income Tax Return (2023)
+  part_year_or_nonresident: Form 511-NR - Oklahoma Nonresident/Part-Year Resident Income Tax Return (2023)
+filing_requirement:
+  note: 'Resident: every resident individual whose gross income from both within and outside Oklahoma exceeds the
+    standard deduction plus personal exemption must file (Form 511); see charts on page 5 of the 2023 511 packet.
+    Part-year resident: same filing requirements as a resident during the period of residency; during the period
+    of nonresidency a return is also required if Oklahoma-source gross income is $1,000 or more (Form 511-NR). Nonresident:
+    every nonresident with gross income from Oklahoma sources of $1,000 or more must file (Form 511-NR), except
+    as otherwise provided under the Pass-Through Entity Tax Equity Act of 2019.'
+mailing_addresses:
+  refund_or_no_payment: Oklahoma Tax Commission, PO Box 26800, Oklahoma City, OK 73126-0800 (this is the single
+    mailing address for the 2023 Form 511 / 511-NR return itself, whether refund, no-payment, or with payment enclosed)
+  with_payment: 'Return with payment enclosed: Oklahoma Tax Commission, PO Box 26800, Oklahoma City, OK 73126-0800
+    (''Mail your return, along with any payment due, to'' this address). NOTE: a separate payment made AFTER the
+    return is already filed, using Form 511-V payment voucher, goes to Oklahoma Tax Commission, PO Box 26890, Oklahoma
+    City, OK 73126-0890.'
+  citation:
+    source: '2023 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions (Oklahoma Tax Commission).
+      Source for: Form 511 line 1 = Federal AGI starting point; Schedule 511-B additions list (no treaty add-back);
+      resident/part-year/nonresident domicile definitions; due date April 15 (April 20 e-file/e-pay); WHO MUST FILE
+      thresholds; ''When You Are Finished'' mailing to PO Box 26800, OKC 73126-0800; check payable to Oklahoma Tax
+      Commission; OkTAP at tax.ok.gov.'
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-Pkt-2023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Oklahoma Tax Commission (check or money order payable to 'Oklahoma Tax Commission'; do not send cash)
+  web_pay_url: https://oktap.tax.ok.gov (OkTAP, accessed via tax.ok.gov - 'Make a Payment' link)
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: '2023 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions (Oklahoma Tax Commission).
+      Source for: Form 511 line 1 = Federal AGI starting point; Schedule 511-B additions list (no treaty add-back);
+      resident/part-year/nonresident domicile definitions; due date April 15 (April 20 e-file/e-pay); WHO MUST FILE
+      thresholds; ''When You Are Finished'' mailing to PO Box 26800, OKC 73126-0800; check payable to Oklahoma Tax
+      Commission; OkTAP at tax.ok.gov.'
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-Pkt-2023.pdf
+all_citations:
+- source: '2023 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions (Oklahoma Tax Commission).
+    Source for: Form 511 line 1 = Federal AGI starting point; Schedule 511-B additions list (no treaty add-back);
+    resident/part-year/nonresident domicile definitions; due date April 15 (April 20 e-file/e-pay); WHO MUST FILE
+    thresholds; ''When You Are Finished'' mailing to PO Box 26800, OKC 73126-0800; check payable to Oklahoma Tax
+    Commission; OkTAP at tax.ok.gov.'
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-Pkt-2023.pdf
+- source: '2023 Form 511-NR - Oklahoma Nonresident/Part-Year Resident Income Tax Forms and Instructions (Oklahoma
+    Tax Commission). Source for: 511-NR starts from Federal AGI (''The Federal Adjusted Gross Income (AGI) will
+    be adjusted using the Oklahoma additions and subtractions''); Federal Amount / Oklahoma Amount column method;
+    residency definitions; $1,000 Oklahoma-source filing threshold; ''When You Are Finished'' mailing to PO Box
+    26800, OKC 73126-0800.'
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-NR-Pkt.pdf
+- source: '2023 Form 511-V - State of Oklahoma Individual Income Tax Payment Voucher Instructions (Oklahoma Tax
+    Commission). Source for: check/money order payable to Oklahoma Tax Commission (no cash); separate-payment mailing
+    to PO Box 26890, OKC 73126-0890; due date 04-15-2024 on voucher; online payment via OkTAP at tax.ok.gov ''Make
+    a Payment''.'
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-V.pdf
+unverified:
+- 'Exact OkTAP payment portal URL: the 2023 packets and 511-V instruct taxpayers to visit ''tax.ok.gov'' and click
+  the OkTAP / ''Make a Payment'' link rather than printing a literal payment URL. The OkTAP login domain is https://oktap.tax.ok.gov
+  but the precise current payment landing URL should be confirmed at the DOR (tax.ok.gov).'
