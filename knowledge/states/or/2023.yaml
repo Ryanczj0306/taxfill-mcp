@@ -1,0 +1,105 @@
+# OR state knowledge — tax year 2023. Fetched + cited from the OR DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/or
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Oregon''s resident return (Form OR-40) starts from federal adjusted gross income: Line 7 instruction
+  reads "Federal adjusted gross income (AGI). Enter your federal AGI from Form 1040, 1040-SR or 1040-NR, line 11;
+  or Form 1040-X, line 1C." Oregon taxable income is then built by applying additions (Schedule OR-ASC) and subtractions
+  to that federal AGI. The 2023 OR-40 instruction booklet contains no general addition/add-back of federally treaty-exempt
+  income (unlike California''s Schedule CA, or CT/MD/MS). Because federally treaty-exempt income is already excluded
+  from federal AGI on the 1040 and there is no Oregon add-back code restoring it, the treaty exclusion flows through
+  and is NOT re-taxed by Oregon. Therefore Oregon conforms to federal treaty treatment for the common case (conforms_to_federal_treaties
+  = true). Caveat: confirm against the full Schedule OR-ASC / OR-ASC-NP addition code list and Publication OR-17
+  for any niche addition that could touch a specific treaty article.'
+citation:
+  source: 2023 Form OR-40 Instructions, Full-year Resident (150-101-040-1, Rev. 12-06-23) - line 7 federal AGI starting
+    point, residency definitions, 200-day rule, April 15 2024 due date, filing thresholds (Table 1), mailing addresses
+    (PO Box 14700 / PO Box 14555), check payee and Revenue Online payment
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf
+starts_from: federal AGI (Form OR-40 line 7 = federal adjusted gross income from federal Form 1040/1040-SR/1040-NR
+  line 11)
+residency:
+  summary: 'Full-year resident: Oregon is your permanent home and the center of your financial, social, and family
+    life (the place you intend to return); you remain a full-year resident through temporary absences. You may ALSO
+    be treated as a full-year resident if you maintained an Oregon residence and spent more than 200 days in Oregon
+    during the tax year (statutory 200-day rule), or are a non-U.S. citizen without permanent resident status. Nonresident:
+    your permanent home was outside Oregon all year (Oregon taxes only Oregon-source income). Part-year resident:
+    you moved into or out of Oregon during the year (but not merely a temporary absence); taxed on all income while
+    an Oregon resident plus Oregon-source income while a nonresident. Special cases: "Special-case Oregon residents"
+    who maintained a permanent home outside Oregon for the entire year, kept no Oregon home, and did not spend more
+    than 200 days in Oregon are treated as nonresidents (file OR-40-N); "Oregon residents living abroad" who are
+    qualified individuals for the federal foreign earned income / housing exclusion are also treated as nonresidents
+    (ORS 316.027 referenced for military). An RV does not count as a permanent home outside Oregon.'
+forms:
+  resident: Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040)
+  part_year_or_nonresident: 'Nonresident: Form OR-40-N (150-101-048). Part-year resident: Form OR-40-P (150-101-055).
+    Both share the same instruction booklet (150-101-048-1).'
+filing_requirement:
+  note: '2023 OR-40 instructions: "You need to file if your gross income is more than the amount shown below for
+    your filing status" (Table 1 full-year resident thresholds, e.g. Single with 0 box checked $7,305; MFJ 0 boxes
+    $14,605; a dependent $1,250 or earned income plus $400 up to the standard deduction). You must also file if
+    you are required to file a federal return, if you had $1 or more of Oregon income tax withheld and want a refund,
+    or if you qualify for a refundable credit. Part-year residents and nonresidents must file if gross income from
+    Oregon taxable sources (while a nonresident) plus all-source income while a resident exceeds the threshold for
+    their filing status. Full threshold charts are in the OR-40 / OR-40-N/P instructions and Publication OR-17.'
+mailing_addresses:
+  refund_or_no_payment: Oregon Department of Revenue, PO Box 14700, Salem OR 97309-0930 (refund returns or no-tax-due
+    returns)
+  with_payment: 'Oregon Department of Revenue, PO Box 14555, Salem OR 97309-0940 (tax-to-pay returns), per the 2023
+    Form OR-40 instruction booklet. NOTE: the face of the 2023 Form OR-40 itself lists tax-due returns going to
+    PO Box 14720, Salem OR 97309-0463 - a discrepancy between the form and the booklet; confirm the current address
+    with the DOR before relying on it.'
+  citation:
+    source: 2023 Form OR-40 Instructions, Full-year Resident (150-101-040-1, Rev. 12-06-23) - line 7 federal AGI
+      starting point, residency definitions, 200-day rule, April 15 2024 due date, filing thresholds (Table 1),
+      mailing addresses (PO Box 14700 / PO Box 14555), check payee and Revenue Online payment
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Oregon Department of Revenue (make check, cashier's check, or money order payable to "Oregon Department
+    of Revenue"; write tax year 2023, "Oregon Form OR-40," and last four digits of SSN/ITIN on the payment; use
+    Form OR-40-V voucher only for a separate payment, not when payment is included with the return)
+  web_pay_url: https://www.oregon.gov/dor (click the link for Revenue Online; pay free by direct debit from checking/savings,
+    or by Discover/MasterCard/Visa credit card with a convenience fee)
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Form OR-40 Instructions, Full-year Resident (150-101-040-1, Rev. 12-06-23) - line 7 federal AGI
+      starting point, residency definitions, 200-day rule, April 15 2024 due date, filing thresholds (Table 1),
+      mailing addresses (PO Box 14700 / PO Box 14555), check payee and Revenue Online payment
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf
+all_citations:
+- source: 2023 Form OR-40 Instructions, Full-year Resident (150-101-040-1, Rev. 12-06-23) - line 7 federal AGI starting
+    point, residency definitions, 200-day rule, April 15 2024 due date, filing thresholds (Table 1), mailing addresses
+    (PO Box 14700 / PO Box 14555), check payee and Revenue Online payment
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf
+- source: 2023 Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040)
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40_101-040_2023.pdf
+- source: 2023 Form OR-40-N, Oregon Individual Income Tax Return for Nonresidents (150-101-048)
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_101-048_2023.pdf
+- source: 2023 Form OR-40-P, Oregon Individual Income Tax Return for Part-year Residents (150-101-055)
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-p_101-055_2023.pdf
+- source: 2023 Form OR-40-N and OR-40-P Instructions (150-101-048-1)
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2023.pdf
+- source: Oregon DOR - Do I need to file? (Individuals) - filing requirement / residency status
+  url: https://www.oregon.gov/dor/programs/individuals/pages/file-requirements.aspx
+- source: Oregon DOR - What form do I use? (Individuals) - residency definitions and form selection
+  url: https://www.oregon.gov/dor/programs/individuals/pages/what-form.aspx
+unverified:
+- Treaty conformity confirmed structurally (federal AGI start + no visible treaty add-back in the OR-40 booklet)
+  but the complete Schedule OR-ASC / OR-ASC-NP addition code list and Publication OR-17 were not exhaustively reviewed
+  for any niche addition code that could restore a specific treaty-exempt item; confirm at the Oregon DOR if a particular
+  treaty article is at issue.
+- 'Mailing address for tax-to-pay returns shows a discrepancy: the 2023 OR-40 instruction booklet says PO Box 14555
+  (Salem OR 97309-0940) while a search summary of the OR-40 form face referenced PO Box 14720 (Salem OR 97309-0463).
+  The refund/no-tax-due address (PO Box 14700, 97309-0930) is consistent. Confirm the correct with-payment address
+  with the DOR before mailing.'
+- Nonresident/part-year (OR-40-N / OR-40-P) line-by-line starting point and any treaty-related apportionment were
+  not individually verified from the OR-40-N/P booklet text (only the resident OR-40 booklet was parsed in full);
+  the OR-40-N/P booklet was identified but its internal figures should be confirmed at the DOR.
