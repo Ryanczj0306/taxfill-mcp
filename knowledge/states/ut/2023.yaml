@@ -1,0 +1,77 @@
+# UT state knowledge — tax year 2023. Fetched + cited from the UT DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ut
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Utah''s resident return (TC-40) starts from federal adjusted gross income (FAGI). TC-40 Line 4 instructs:
+  "Enter your federal adjusted gross income (FAGI) from line 11 ... of your federal return." Federally treaty-exempt
+  income is already excluded from FAGI and flows through. The full list of TC-40A Part 1 "Additions to Income (added
+  to federal income)" — codes 51 (lump sum distribution), 53 (MSA addback), 54 (my529 addback), 56 (child''s income
+  excluded from parent''s return), 57 (municipal bond interest), 60 (untaxed income of a resident trust), 61 (untaxed
+  income of a nonresident trust), 67 (tax paid on behalf of a pass-through entity), 68 (PPP grant/loan addback),
+  69 (equitable adjustments) — contains NO add-back of income exempt under a federal tax treaty. The instructions''
+  "Income from Other Countries" section reinforces this: Utah residents pay Utah tax on foreign-earned income only
+  "if the income is included in federal adjusted gross income on the federal return." Therefore treaty-exempt income
+  is NOT re-taxed by Utah -> conforms = true.'
+citation:
+  source: 2023 Utah TC-40 Individual Income Tax Instructions (official PDF) — covers Who Must File, Utah Domicile
+    / Resident / Nonresident / Part-Year Resident definitions, Line 4 Federal Adjusted Gross Income starting point,
+    TC-40A Part 1 Additions to Income (codes 51-69), Income from Other Countries, due date April 15 2024, paper-return
+    mailing addresses (84134-0260 / 84134-0266), check payee, and tap.utah.gov
+  url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+starts_from: federal AGI (TC-40 Line 4 = federal adjusted gross income / FAGI from federal 1040 line 11)
+residency:
+  summary: 'Resident: a person domiciled in Utah for any period during the taxable year, but only for the duration
+    of that period (income worldwide is taxable during the resident period). Nonresident: a person who is not a
+    resident (taxed only on Utah-source income). Part-year resident: a person who is a resident for part of the
+    year and a nonresident for the rest; all income received during the residency period is taxable in Utah regardless
+    of source, plus Utah-source income during the nonresidency period. Utah uses a domicile-based test with several
+    rebuttable presumptions of Utah domicile (e.g., claiming a residential exemption on a primary residence, a spouse/child
+    enrolled as a resident student at a Utah higher-ed institution, or filing a Utah resident/part-year return).
+    Special domicile rules apply to military members and spouses (see Pub 57). Note: 2022 SB 39 exempts certain
+    nonresidents working in Utah 20 days or fewer.'
+forms:
+  resident: TC-40 (Utah Individual Income Tax Return) — full-year residents file TC-40
+  part_year_or_nonresident: TC-40 with Schedule TC-40B (Non or Part-year Resident Schedule)
+filing_requirement:
+  note: 'Per the 2023 TC-40 instructions ("Who Must File"), you must file a Utah TC-40 return if you: (1) are a
+    Utah resident or part-year resident who must file a federal return; (2) are a nonresident or part-year resident
+    with income from Utah sources who must file a federal return; or (3) want a refund of any income tax overpaid.
+    Complete your federal return first (even if not required to file with the IRS) because the Utah return is built
+    from federal figures. A taxpayer whose federal adjusted gross income is less than the federal standard deduction
+    may be a "qualified exempt taxpayer" (see line 21 instructions).'
+mailing_addresses:
+  refund_or_no_payment: Utah State Tax Commission, 210 N 1950 W, Salt Lake City, UT 84134-0260 (Refund Return)
+  with_payment: Utah State Tax Commission, 210 N 1950 W, Salt Lake City, UT 84134-0266 (Tax-due Return; include
+    TC-547 payment coupon)
+  citation:
+    source: 2023 Utah TC-40 Individual Income Tax Instructions (official PDF) — covers Who Must File, Utah Domicile
+      / Resident / Nonresident / Part-Year Resident definitions, Line 4 Federal Adjusted Gross Income starting point,
+      TC-40A Part 1 Additions to Income (codes 51-69), Income from Other Countries, due date April 15 2024, paper-return
+      mailing addresses (84134-0260 / 84134-0266), check payee, and tap.utah.gov
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+payment:
+  check_payee: Utah State Tax Commission (write daytime phone number and "2023 TC-40" on the check)
+  web_pay_url: https://tap.utah.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Utah TC-40 Individual Income Tax Instructions (official PDF) — covers Who Must File, Utah Domicile
+      / Resident / Nonresident / Part-Year Resident definitions, Line 4 Federal Adjusted Gross Income starting point,
+      TC-40A Part 1 Additions to Income (codes 51-69), Income from Other Countries, due date April 15 2024, paper-return
+      mailing addresses (84134-0260 / 84134-0266), check payee, and tap.utah.gov
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+all_citations:
+- source: 2023 Utah TC-40 Individual Income Tax Instructions (official PDF) — covers Who Must File, Utah Domicile
+    / Resident / Nonresident / Part-Year Resident definitions, Line 4 Federal Adjusted Gross Income starting point,
+    TC-40A Part 1 Additions to Income (codes 51-69), Income from Other Countries, due date April 15 2024, paper-return
+    mailing addresses (84134-0260 / 84134-0266), check payee, and tap.utah.gov
+  url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+- source: 2023 Utah TC-40 form (official PDF)
+  url: https://tax.utah.gov/forms/2023/tc-40.pdf
+- source: Utah State Tax Commission — Income Tax line-by-line instructions portal
+  url: https://incometax.utah.gov/instructions

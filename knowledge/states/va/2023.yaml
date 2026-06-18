@@ -1,0 +1,84 @@
+# VA state knowledge — tax year 2023. Fetched + cited from the VA DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/va
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Virginia''s individual income tax computation starts from federal adjusted gross income (Form 760,
+  Line 1: "Enter the federal adjusted gross income from your federal return... use the federal adjusted gross income
+  amount, NOT federal taxable income"). Virginia''s official Additions list and Schedule ADJ contain NO addback
+  for income exempt from federal tax under a U.S. tax treaty or for treaty-excluded foreign income (additions are
+  limited to items like interest on other states'' obligations, bonus depreciation, federally-exempt U.S. obligations
+  interest, etc.). Because treaty-exempt income is already excluded from federal AGI and Virginia does not add it
+  back, it flows through and is NOT re-taxed -> conforms.'
+citation:
+  source: 2023 Form 760 Resident Individual Income Tax Instructions (Virginia Tax) - Line 1 Federal Adjusted Gross
+    Income; due date May 1, 2024; filing thresholds; payment options / check payee; mailing addresses
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+starts_from: federal AGI (federal adjusted gross income; Form 760 Line 1)
+residency:
+  summary: 'Resident: a person who is a legal (domiciliary) resident of Virginia, OR an "actual" resident who is
+    physically present in / maintains a place of abode in Virginia for more than 183 days during the taxable year.
+    Part-year resident: a person who moves into Virginia during the year intending to become a resident, or who
+    moves out of Virginia during the year to become a resident of another state. Nonresident: a person who is not
+    a resident or part-year resident but who receives taxable income from Virginia sources.'
+forms:
+  resident: Form 760 (Resident Individual Income Tax Return)
+  part_year_or_nonresident: 'Nonresident: Form 763 (Nonresident Individual Income Tax Return). Part-year resident:
+    Form 760PY (Part-Year Resident Individual Income Tax Return).'
+filing_requirement:
+  note: 'Every Virginia resident whose Virginia Adjusted Gross Income (VAGI) is at or above the minimum threshold
+    must file Form 760. For tax year 2023 the thresholds are: Single or Married filing separately - VAGI $11,950
+    or more; Married filing jointly - combined VAGI $23,900 or more. (Per 2023 Form 760 instructions, "Do You Need
+    to File a Virginia Income Tax Return?")'
+mailing_addresses:
+  refund_or_no_payment: Virginia Department of Taxation, P.O. Box 1498, Richmond, VA 23218-1498 (refund / no-payment
+    returns). Alternatively, returns may be filed with the locality (Commissioner of the Revenue / Director of Finance)
+    where the taxpayer resided on January 1.
+  with_payment: Virginia Department of Taxation, P.O. Box 760, Richmond, VA 23218-0760 (returns with a tax payment
+    due). Alternatively, may be filed/paid with the locality where the taxpayer resided on January 1.
+  citation:
+    source: 2023 Form 760 Resident Individual Income Tax Instructions (Virginia Tax) - Line 1 Federal Adjusted Gross
+      Income; due date May 1, 2024; filing thresholds; payment options / check payee; mailing addresses
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: 'Department of Taxation (make check or money order payable to the Department of Taxation; write Social
+    Security Number and "2023 Virginia income tax payment" on the check). NOTE: If filing the return locally rather
+    than with the state, make the check payable to the Treasurer or Director of Finance of the city/county of residence.'
+  web_pay_url: https://www.tax.virginia.gov/payments
+deadlines:
+  filing_due_date: '2024-05-01'
+  citation:
+    source: 2023 Form 760 Resident Individual Income Tax Instructions (Virginia Tax) - Line 1 Federal Adjusted Gross
+      Income; due date May 1, 2024; filing thresholds; payment options / check payee; mailing addresses
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+all_citations:
+- source: 2023 Form 760 Resident Individual Income Tax Instructions (Virginia Tax) - Line 1 Federal Adjusted Gross
+    Income; due date May 1, 2024; filing thresholds; payment options / check payee; mailing addresses
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+- source: Residency Status (Virginia Tax) - resident / part-year / nonresident definitions, 183-day and domicile
+    rules
+  url: https://www.tax.virginia.gov/residency-status
+- source: Additions (Virginia Tax) - 'starting point ... is federal adjusted gross income'; full list of additions
+    contains no treaty-exempt income addback
+  url: https://www.tax.virginia.gov/additions
+- source: Where to File (Virginia Tax) - refund P.O. Box 1498 vs tax-due P.O. Box 760, Richmond, VA
+  url: https://www.tax.virginia.gov/where-to-file
+- source: What Form Should I File | 760PY and 763 (Virginia Tax) - nonresident Form 763, part-year Form 760PY
+  url: https://www.tax.virginia.gov/node/144
+- source: 2023 Virginia Resident Form 760 (Virginia Tax)
+  url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2023/760-2023.pdf
+unverified:
+- The 760 instructions provide an additional filing extension to July 1, 2024 for taxpayers overseas (Puerto Rico
+  mention) on the May 1 due date; the general calendar-year 2023 due date is confirmed as May 1, 2024. No April
+  15 due date applies to Virginia (Virginia uniquely uses May 1) - confirm at the DOR if a federal-aligned date
+  is assumed elsewhere.
+- Treaty pass-through is inferred from (a) federal-AGI starting point and (b) absence of any treaty addback in the
+  official Additions list / Schedule ADJ. Virginia provides no explicit statement that treaty-exempt income is excluded;
+  it simply flows through federal AGI. Confirm at the Virginia Department of Taxation for any specific treaty-income
+  situation.

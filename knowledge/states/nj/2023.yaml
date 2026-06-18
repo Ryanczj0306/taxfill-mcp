@@ -1,0 +1,100 @@
+# NJ state knowledge — tax year 2023. Fetched + cited from the NJ DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/nj
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'New Jersey does NOT start from federal AGI. The NJ Gross Income Tax is a self-contained system that
+  builds gross income from its own statutory categories. The 2023 NJ-1040 instructions explicitly direct: "Use ''State
+  Wages'' from box 16 of your W-2, not federal wages (box 1)" and warn that "State wages (box 16) [can be] higher
+  than your federal wages (box 1)," and that if income taxable for NJ is not in box 16 you "must add that amount
+  back into your State wages." Because NJ never imports federal AGI, a federal tax-treaty exemption (which reduces
+  federal box 1 / federal AGI) does NOT automatically pass through. NJ''s Gross Income Tax Act contains no provision
+  recognizing federal income tax treaties, so federally treaty-exempt wages are generally still taxable for NJ purposes.
+  This puts NJ in the "builds income from scratch, no treaty pass-through" category -> conforms_to_federal_treaties
+  = false. (Conservative reading; the precise NJ treatment of a specific treaty article should be confirmed at the
+  DOR.)'
+citation:
+  source: 2023 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) - Do You Have to File p.3,
+    Which Form to File / Domicile p.4-5, Line 15 Wages (State wages box 16, not federal box 1) p.9, How to Pay /
+    check payable to 'State of New Jersey - TGI' p.47, Where to Mail Your Return (PO Box 555 refunds; PO Box 111
+    payments) p.47-48, When to File / April 15, 2024 p.4
+  url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
+starts_from: state-computed (NJ gross income built from its own income categories; wages taken from W-2 box 16 "State
+  wages," NOT federal AGI or federal box 1 wages)
+residency:
+  summary: 'Residency is determined by domicile and a statutory-resident test. Domicile is "the place you consider
+    your permanent home — the place where you intend to return after a period of absence"; you have only one domicile
+    and it continues until you establish a new permanent home elsewhere. (1) If NJ is your domicile, you are a RESIDENT
+    unless you (a) did not maintain a permanent home in NJ, (b) maintained a permanent home outside NJ, AND (c)
+    did not spend more than 30 days in NJ. (2) If NJ is NOT your domicile, you are a resident only if you maintain
+    a permanent home in NJ and spend more than 183 days here (statutory resident). A NONRESIDENT has no NJ domicile
+    and does not meet the 183-day statutory test. PART-YEAR: there is no part-year resident return — if you change
+    domicile mid-year you file NJ-1040 (as a part-year resident) reporting income received during the resident period,
+    and if you also had NJ-source income while a nonresident you must also file NJ-1040NR.'
+forms:
+  resident: NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their
+    NJ residency period.
+  part_year_or_nonresident: NJ-1040NR (New Jersey Nonresident Income Tax Return). Used by nonresidents with NJ-source
+    income and by part-year nonresidents (indicate residency period). There is no separate part-year resident return.
+filing_requirement:
+  note: 'For 2023, you must file an NJ return if your gross income (from everywhere/in-State and out-of-State) for
+    the entire year exceeded the filing threshold: $10,000 for Single or Married/CU partner filing separate; $20,000
+    for Married/CU couple filing joint, Head of household, or Qualifying widow(er)/surviving CU partner. Also file
+    if NJ tax was withheld and you are due a refund, if you paid NJ estimated tax and are due a refund, or if you
+    are eligible for the NJ EITC or another refundable credit. (2023 NJ-1040 instructions, p.3; GIT-6.)'
+mailing_addresses:
+  refund_or_no_payment: State of New Jersey, Division of Taxation, Revenue Processing Center - Refunds, PO Box 555,
+    Trenton NJ 08647-0555
+  with_payment: State of New Jersey, Division of Taxation, Revenue Processing Center - Payments, PO Box 111, Trenton
+    NJ 08645-0111
+  citation:
+    source: 2023 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) - Do You Have to File
+      p.3, Which Form to File / Domicile p.4-5, Line 15 Wages (State wages box 16, not federal box 1) p.9, How to
+      Pay / check payable to 'State of New Jersey - TGI' p.47, Where to Mail Your Return (PO Box 555 refunds; PO
+      Box 111 payments) p.47-48, When to File / April 15, 2024 p.4
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: State of New Jersey - TGI (write the taxpayer's Social Security number on the check or money order;
+    enclose Form NJ-1040-V payment voucher)
+  web_pay_url: https://www.nj.gov/treasury/taxation/
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) - Do You Have to File
+      p.3, Which Form to File / Domicile p.4-5, Line 15 Wages (State wages box 16, not federal box 1) p.9, How to
+      Pay / check payable to 'State of New Jersey - TGI' p.47, Where to Mail Your Return (PO Box 555 refunds; PO
+      Box 111 payments) p.47-48, When to File / April 15, 2024 p.4
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
+all_citations:
+- source: 2023 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) - Do You Have to File p.3,
+    Which Form to File / Domicile p.4-5, Line 15 Wages (State wages box 16, not federal box 1) p.9, How to Pay /
+    check payable to 'State of New Jersey - TGI' p.47, Where to Mail Your Return (PO Box 555 refunds; PO Box 111
+    payments) p.47-48, When to File / April 15, 2024 p.4
+  url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
+- source: NJ Division of Taxation Publication GIT-6, Part-Year Residents and Nonresidents - Domicile, Resident (30-day
+    / 183-day statutory) definitions, Income Filing Thresholds, NJ-1040 vs NJ-1040NR
+  url: https://www.nj.gov/treasury/taxation/pdf/pubs/tgi-ee/git6.pdf
+- source: NJ Division of Taxation - 2023 NJ-1040NR Nonresident Income Tax Return
+  url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040nr.pdf
+- source: NJ Division of Taxation - Income Tax (Nonresidents) overview page
+  url: https://www.nj.gov/treasury/taxation/njit24.shtml
+- source: NJ Division of Taxation - Income Tax Forms (Form NJ-1040-V payment voucher / blank vouchers)
+  url: https://www.nj.gov/treasury/taxation/prntgit.shtml
+unverified:
+- 'Exact NJ treatment of a SPECIFIC federal tax-treaty article (e.g., student/researcher/teacher exemptions): the
+  conforms_to_federal_treaties=false conclusion is inferred from NJ''s wholly independent Gross Income Tax base
+  (box-16 state wages, no federal-AGI starting point, no statutory treaty recognition) rather than from explicit
+  treaty language in the NJ-1040 instructions, which do not mention tax treaties. Confirm the specific treaty scenario
+  directly with the NJ Division of Taxation.'
+- The general online tax/payment portal URL (nj.gov/treasury/taxation -> nj.gov/taxation) was cited from the instructions
+  text; the exact direct e-check / 'Make a Payment' deep link (e.g., the NJ Online Filing / individual tax portal
+  at www1.state.nj.us) was not separately verified for the 2023 cycle. Confirm the current direct payment URL at
+  the DOR.
+- Whether any NJ-source treaty-exempt income on the NJ-1040NR is treated differently from resident wages was not
+  separately confirmed.

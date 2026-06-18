@@ -1,0 +1,101 @@
+# PA state knowledge — tax year 2023. Fetched + cited from the PA DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/pa
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'PA does NOT start from federal adjusted gross income. Per the official Department of Revenue Personal
+  Income Tax page and the 2023 PA-40 instructions, PA imposes a flat 3.07% tax on eight SEPARATELY-computed classes
+  of income ("Pennsylvania taxes eight classes of income: (1) compensation; (2) interest; (3) dividends; (4) net
+  profits...; (5) net gains...dispositions of property; (6) net gains...rents, royalties, patents and copyrights;
+  (7) income...through estates or trusts; and (8) gambling and lottery winnings"). PA provides no standard deduction
+  or personal exemption and the 2023 PA-40 instructions state filing requirements "are different than federal requirements."
+  Because PA computes taxable compensation from gross PA-source wages rather than inheriting federal AGI, there
+  is NO automatic federal-AGI pass-through that would carry a federal tax-treaty exclusion into the state return,
+  and neither the PA-40 instructions nor the PA Personal Income Tax Guide (Brief Overview/Filing Requirements) contain
+  any treaty pass-through mechanism. Under the task rubric this is the "state builds income from scratch (not federal
+  AGI) with no treaty pass-through" case -> conforms_to_federal_treaties = false. CAVEAT: In administrative practice
+  PA generally does not tax compensation a federal treaty exempts (such wages typically are excluded from PA-taxable
+  Box 16 compensation), so the precise treatment of treaty-exempt income should be confirmed with the PA DOR; flagged
+  in unverified.'
+citation:
+  source: 2023 PA-40 Personal Income Tax Return Instructions (PA-40IN) - due date, who must file ($33 threshold),
+    residency status (R/N/P), 'Nonresidents and part-year residents use the same PA-40 form', PA-40 V reference
+  url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40in.pdf
+starts_from: state-computed (flat 3.07% on eight separately-computed classes of income; not federal AGI, not federal
+  taxable income)
+residency:
+  summary: PA defines a RESIDENT as an individual domiciled in Pennsylvania OR a statutory resident. Domicile is
+    "the place where an individual, by present and voluntary intention, establishes his true, fixed and permanent
+    home." A STATUTORY RESIDENT is a person domiciled outside PA who maintains a permanent place of abode in PA
+    AND spends more than 183 days (midnight to midnight) of the taxable year in PA. A NONRESIDENT is domiciled elsewhere
+    and does not meet statutory-resident tests; PA taxes nonresidents only on income earned, received or realized
+    from Pennsylvania sources. A PART-YEAR RESIDENT is a resident for part of the year and a nonresident for the
+    other part (moved into or out of PA during 2023); taxed on all income while a PA resident plus PA-source income
+    while a nonresident. Residents report all income regardless of source. (2023 PA-40 instructions, Residency Status;
+    PIT Guide - Brief Overview and Filing Requirements.)
+forms:
+  resident: PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident
+  part_year_or_nonresident: PA-40 (same form) - "Nonresidents and part-year residents use the same PA-40 form as
+    PA residents"; fill in residency oval (N) Nonresident or (P) Part-Year Resident. Use PA Schedule NRH/PA Schedule
+    SP as applicable; nonresident/part-year apportionment per PA-40 page 43 instructions.
+filing_requirement:
+  note: Per the 2023 PA-40 instructions, a PA resident, nonresident or part-year resident must file a 2023 PA-40
+    if they received total PA gross taxable income in excess of $33 during 2023 (even if no tax is due) and/or incurred
+    a loss from any transaction as an individual, sole proprietor, partner, or PA S corporation shareholder. The
+    PIT Guide phrases it as filing "when he or she realizes income generating $1 or more in tax, even if no tax
+    is due." PA filing requirements differ from federal; a person not required to file federally may still have
+    to file in PA.
+mailing_addresses:
+  refund_or_no_payment: 'Refund/credit requested: PA DEPT OF REVENUE, REFUND/CREDIT REQUESTED, 3 REVENUE PLACE,
+    HARRISBURG PA 17129-0003. No payment/no refund: PA DEPT OF REVENUE, NO PAYMENT/NO REFUND, 2 REVENUE PLACE, HARRISBURG
+    PA 17129-0002.'
+  with_payment: PA DEPT OF REVENUE, PAYMENT ENCLOSED, 1 REVENUE PLACE, HARRISBURG PA 17129-0001 (enclose Form PA-40
+    V payment voucher)
+  citation:
+    source: 2023 PA-40 Personal Income Tax Return Instructions (PA-40IN) - due date, who must file ($33 threshold),
+      residency status (R/N/P), 'Nonresidents and part-year residents use the same PA-40 form', PA-40 V reference
+    url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40in.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: 'PA Department of Revenue (per 2023 PA-40 V: "Make the check or money order payable to the PA DEPARTMENT
+    OF REVENUE"; write the last four digits of the primary taxpayer''s SSN on the check)'
+  web_pay_url: https://mypath.pa.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 PA-40 Personal Income Tax Return Instructions (PA-40IN) - due date, who must file ($33 threshold),
+      residency status (R/N/P), 'Nonresidents and part-year residents use the same PA-40 form', PA-40 V reference
+    url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40in.pdf
+all_citations:
+- source: 2023 PA-40 Personal Income Tax Return Instructions (PA-40IN) - due date, who must file ($33 threshold),
+    residency status (R/N/P), 'Nonresidents and part-year residents use the same PA-40 form', PA-40 V reference
+  url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40in.pdf
+- source: PA DOR - Personal Income Tax (tax-types-and-information) - 3.07% flat rate, eight classes of income, no
+    standard deduction/personal exemption
+  url: https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax
+- source: PA DOR PIT Guide - Brief Overview and Filing Requirements - filing requirement ('$1 or more in tax'),
+    April 15 due date, residency/domicile/statutory resident (183 days, permanent place of abode), eight classes
+    taxed separately
+  url: https://www.pa.gov/agencies/revenue/forms-and-publications/pa-personal-income-tax-guide/brief-overview-and-filing-requirements
+- source: PA DOR Mailing Addresses directory - PA-40 payment (1 Revenue Place 17129-0001), no payment/no refund
+    (2 Revenue Place 17129-0002), refund/credit (3 Revenue Place 17129-0003)
+  url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/contactus/documents/address_directory.pdf
+- source: 2023 PA-40 V Payment Voucher - check payee 'PA DEPARTMENT OF REVENUE', payment-enclosed address 1 Revenue
+    Place Harrisburg PA 17129-0001
+  url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40v.pdf
+- source: PA DOR - Make a Personal Income Tax Payment (myPATH online portal)
+  url: https://www.pa.gov/services/revenue/make-a-personal-income-tax-payment
+unverified:
+- 'Exact treatment of FEDERAL TAX TREATY-EXEMPT income: PA does not start from federal AGI and has no documented
+  treaty add-back or pass-through, so conforms_to_federal_treaties is set to false per the rubric''s ''builds income
+  from scratch'' rule. However, PA generally does not tax compensation that a federal treaty exempts (such wages
+  are typically excluded from PA-taxable compensation/Box 16), so the precise treatment differs from a clean add-back
+  state. CONFIRM treaty-exempt-income treatment directly with the PA Department of Revenue.'
+- The online payment portal canonical URL displayed by the payment page is https://www.mypath.pa.gov/_/; the human-facing
+  entry point mypath.pa.gov is cited in the 2023 PA-40 instructions. Confirm the current myPATH login URL at the
+  DOR.

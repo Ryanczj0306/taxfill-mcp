@@ -1,0 +1,97 @@
+# WV state knowledge — tax year 2023. Fetched + cited from the WV DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/wv
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'WV''s resident return (Form IT-140) starts from federal adjusted gross income (line 1). The 2023 instructions
+  state plainly: "The starting point for the West Virginia income tax return is your federal adjusted gross income."
+  Federally treaty-exempt income is already excluded from FAGI and flows through. WV''s Schedule M "Modifications
+  Increasing Federal Adjusted Gross Income" (lines 51-58) lists ONLY: interest/dividends on federal obligations
+  exempt from federal but not state tax; interest/dividends on non-WV state/local bonds; interest on money borrowed
+  to buy WV-exempt bonds; 402(e) lump-sum distributions; "other income deducted from FAGI but subject to state tax"
+  (example given is IRC Section 199 income); and savings-plan/ABLE/Jumpstart withdrawals. There is NO add-back for
+  tax-treaty income, foreign/nonresident-alien treaty income, or income excluded under a US tax treaty. Therefore
+  treaty-exempt income is NOT re-taxed by WV -> conforms = true.'
+citation:
+  source: 'WV Tax Division - 2023 Personal Income Tax Forms & Instructions (IT-140 booklet): starting point = FAGI
+    (p.23), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status
+    (pp.16-17), due date April 15 2024 (pp.1, 23), mailing addresses & payment options (Form IT-140 p.2), Special
+    Nonresident / 183-day PA-VA rule (Schedule A Part II, p.27)'
+  url: https://tax.wv.gov/Documents/PIT/2023/it140.PersonalIncomeTaxFormsAndInstructions.2023.pdf
+starts_from: federal AGI (Form IT-140 line 1 = Federal Adjusted Gross Income)
+residency:
+  summary: 'RESIDENT: an individual who (a) spends more than 30 days in WV with the intent of WV becoming his/her
+    permanent residence, OR (b) maintains a physical presence in WV for more than 183 days of the taxable year,
+    even if also considered a resident of another state (statutory/183-day resident). PART-YEAR RESIDENT: an individual
+    who changes residence either from WV to another state, or from another state to WV, during the taxable year.
+    FULL-YEAR NONRESIDENT: a WV resident who spends fewer than 30 days of the year in WV and maintains a permanent
+    place of residence outside WV; OR a resident of another state who does not maintain a physical presence in WV
+    and does not spend more than 183 days in WV. SPECIAL NONRESIDENT (reciprocity): a full-year resident of KY,
+    MD, OH, PA, or VA whose only WV-source income was wages/salaries (mark "Nonresident Special" box, complete Part
+    II of Schedule A). NOTE: a non-military domiciliary resident of PA or VA who spends more than 183 days in WV
+    is treated as a WV resident and must file as a resident. Nonresidents with no WV-source income or withholding
+    are not required to file.'
+forms:
+  resident: Form IT-140 (West Virginia Personal Income Tax Return) - check "Resident" status
+  part_year_or_nonresident: Form IT-140 (check "Filing as Nonresident" or "Filing as Part-Year Resident"), completed
+    together with Schedule A (Form IT-140), "Nonresidents/Part-Year Residents Schedule of Income." (Nonresident
+    composite filers use Form IT-140NRC.)
+filing_requirement:
+  note: 'Must file a WV return if: you were a WV resident for the entire year; a part-year resident; or a nonresident
+    whose FAGI includes WV-source income. You must file even if not required to file federally if your WV adjusted
+    gross income exceeds your allowable personal-exemption deduction ($2,000 per exemption, or $500 if claiming
+    zero exemptions), or if claiming the SCTC/HEPTC credit, or if due a refund. Taxpayers 65+ are not required to
+    file if total income is less than the exemption allowance plus the senior-citizen modification ($2,000 per exemption
+    plus up to $8,000 of income per taxpayer 65+), but must file to claim a refund. (Source: 2023 IT-140 instructions,
+    "Who Must File," p.16.)'
+mailing_addresses:
+  refund_or_no_payment: WV Tax Division, P.O. Box 1071, Charleston, WV 25324-1071
+  with_payment: WV Tax Division, P.O. Box 3694, Charleston, WV 25336-3694
+  citation:
+    source: 'WV Tax Division - 2023 Personal Income Tax Forms & Instructions (IT-140 booklet): starting point =
+      FAGI (p.23), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency
+      Status (pp.16-17), due date April 15 2024 (pp.1, 23), mailing addresses & payment options (Form IT-140 p.2),
+      Special Nonresident / 183-day PA-VA rule (Schedule A Part II, p.27)'
+    url: https://tax.wv.gov/Documents/PIT/2023/it140.PersonalIncomeTaxFormsAndInstructions.2023.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: WV Tax Division (check or money order payable to the WV Tax Division; enclose with return)
+  web_pay_url: https://mytaxes.wvtax.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 'WV Tax Division - 2023 Personal Income Tax Forms & Instructions (IT-140 booklet): starting point =
+      FAGI (p.23), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency
+      Status (pp.16-17), due date April 15 2024 (pp.1, 23), mailing addresses & payment options (Form IT-140 p.2),
+      Special Nonresident / 183-day PA-VA rule (Schedule A Part II, p.27)'
+    url: https://tax.wv.gov/Documents/PIT/2023/it140.PersonalIncomeTaxFormsAndInstructions.2023.pdf
+all_citations:
+- source: 'WV Tax Division - 2023 Personal Income Tax Forms & Instructions (IT-140 booklet): starting point = FAGI
+    (p.23), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status
+    (pp.16-17), due date April 15 2024 (pp.1, 23), mailing addresses & payment options (Form IT-140 p.2), Special
+    Nonresident / 183-day PA-VA rule (Schedule A Part II, p.27)'
+  url: https://tax.wv.gov/Documents/PIT/2023/it140.PersonalIncomeTaxFormsAndInstructions.2023.pdf
+- source: 'WV Tax Division - 2023 Form IT-140 (Personal Income Tax Return): line 1 Federal Adjusted Gross Income;
+    refund mail to P.O. Box 1071 Charleston WV 25324-1071; balance due mail to P.O. Box 3694 Charleston WV 25336-3694;
+    check/money order payable to WV Tax Division; electronic payment at mytaxes.wvtax.gov'
+  url: https://tax.wv.gov/Documents/PIT/2023/it140.2023.pdf
+- source: WV Tax Division - 2023 Schedule M (Form IT-140), Modifications to Adjusted Gross Income (increasing modifications,
+    lines 51-58)
+  url: https://tax.wv.gov/Documents/PIT/2023/it140.schedule-M.2023.pdf
+- source: WV Tax Division - 2023 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income
+  url: https://tax.wv.gov/Documents/PIT/2023/it140.schedule-A.2023.pdf
+- source: WV Tax Division - Individuals page (forms portal)
+  url: https://tax.wv.gov/Individuals
+unverified:
+- Exact mytaxes.wvtax.gov URL path/label for paying personal income tax may change; instructions say visit mytaxes.wvtax.gov
+  and click 'Pay Personal Income Tax.' Confirm current portal at the DOR.
+- Whether a credit/debit-card payment option (and any third-party processor or convenience fee) exists in addition
+  to ACH debit via MyTaxes was not separately confirmed for 2023; confirm at the DOR.
+- Treaty conformity is inferred from the absence of any treaty add-back in the 2023 Schedule M increasing-modifications
+  list plus the FAGI starting point; WV statute/regs were not independently reviewed for a treaty-specific add-back.
+  Confirm at the DOR if a taxpayer relies on a US tax-treaty exclusion.

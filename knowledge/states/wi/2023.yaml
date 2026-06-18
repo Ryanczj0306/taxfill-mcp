@@ -1,0 +1,94 @@
+# WI state knowledge — tax year 2023. Fetched + cited from the WI DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/wi
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Wisconsin Form 1 starts from federal adjusted gross income (Form 1, Line 1 instructions: "Fill in
+  your federal adjusted gross income from line 11 of your federal Form 1040 or 1040-SR"). Federally treaty-exempt
+  income is already excluded from federal AGI and is never added back on the Wisconsin return. The Schedule AD (Additions
+  to Income) instructions list all addition modifications (lines 1-31: state/municipal interest, capital gain/loss,
+  college savings & ABLE distributions, federal NOL deduction, lump-sum distributions, PFIC excess distributions,
+  related-entity expenses, moving expenses outside WI/US, basis differences, marital property differences, farmland
+  preservation credit, various computed credits, and tax-option (S) corporation adjustments) and NONE adds back
+  income exempt under a U.S. tax treaty. Form 1 Line 2 (adjustments via Schedule I) only converts for federal law
+  provisions Wisconsin has not adopted (e.g., bonus depreciation, business interest limitation), not treaties. Therefore
+  treaty-exempt income flows through and is NOT re-taxed -> conforms = true. (Verified at WI DOR; no explicit treaty
+  provision text found, so flagged in unverified.)'
+citation:
+  source: 2023 Form 1 Instructions (I-111) - Line 1 Federal Adjusted Gross Income; Which Form to File / domicile;
+    Who Must File thresholds; Where to File mailing addresses; due date April 15, 2024
+  url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+starts_from: federal AGI (federal adjusted gross income from line 11 of federal Form 1040/1040-SR)
+residency:
+  summary: 'Full-year residents file Form 1; nonresidents and part-year residents file Form 1NPR. You must file
+    Form 1NPR if you were domiciled in another state or country at any time during the year, or are filing a joint
+    return and your spouse was domiciled elsewhere at any time during the year. Domicile is defined as "your true,
+    fixed, and permanent home to which, whenever absent, you intend to return"; you can be physically present/residing
+    in one locality but maintain domicile in another. An established domicile does not change unless all three occur:
+    (1) you intend to abandon your old domicile and act consistently, (2) you intend to acquire a new domicile and
+    act consistently, and (3) you are physically present in the new domicile. Tax treatment: full-year residents
+    are taxed on income from all sources; nonresidents are taxed only on income from Wisconsin sources; part-year
+    residents are taxed on all income while a Wisconsin resident and only on Wisconsin-source income while a nonresident.
+    Service members may elect Wisconsin residence under 50 U.S.C. 4001 (see Publication 128).'
+forms:
+  resident: Form 1 (Wisconsin Income Tax) - full-year residents
+  part_year_or_nonresident: Form 1NPR (Nonresident and Part-Year Resident Wisconsin Income Tax Return)
+filing_requirement:
+  note: 'A full-year resident must file Form 1 for 2023 if gross income (or combined gross income of a married couple)
+    met the threshold for the filing status/age: Single $13,460 (under 65) / $13,710 (65+); Married filing joint
+    $25,020 (both under 65) / $25,270 (one 65+) / $25,520 (both 65+); Married filing separate $11,920 (under 65)
+    / $12,170 (65+) per spouse; Head of household $17,180 (under 65) / $17,430 (65+). Gross income means all income
+    (before deducting expenses) reportable to Wisconsin and does not include items exempt from Wisconsin tax (e.g.,
+    Social Security benefits or U.S. government interest). Nonresidents/part-year residents must file Form 1NPR
+    if Wisconsin gross income (or combined with spouse) was $2,000 or more. Dependents and certain other situations
+    have separate lower thresholds.'
+mailing_addresses:
+  refund_or_no_payment: 'Wisconsin Department of Revenue, PO Box 59, Madison WI 53785-0001 (if refund or no tax
+    due). Note: if claiming homestead credit, mail to PO Box 34, Madison WI 53786-0001.'
+  with_payment: Wisconsin Department of Revenue, PO Box 268, Madison WI 53790-0001 (if tax is due). For an e-filed
+    return paid by check with Form PV, the WI DOR payment FAQ directs the check to PO Box 3028, Milwaukee WI 53201-3028.
+  citation:
+    source: 2023 Form 1 Instructions (I-111) - Line 1 Federal Adjusted Gross Income; Which Form to File / domicile;
+      Who Must File thresholds; Where to File mailing addresses; due date April 15, 2024
+    url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Wisconsin Department of Revenue
+  web_pay_url: https://tap.revenue.wi.gov/pay
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Form 1 Instructions (I-111) - Line 1 Federal Adjusted Gross Income; Which Form to File / domicile;
+      Who Must File thresholds; Where to File mailing addresses; due date April 15, 2024
+    url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+all_citations:
+- source: 2023 Form 1 Instructions (I-111) - Line 1 Federal Adjusted Gross Income; Which Form to File / domicile;
+    Who Must File thresholds; Where to File mailing addresses; due date April 15, 2024
+  url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+- source: 2023 Schedule AD Instructions (I-0102) - Additions to Income, full list of addition modifications (no
+    treaty-exempt income add-back)
+  url: https://www.revenue.wi.gov/TaxForms2023/2023-ScheduleAD-Inst.pdf
+- source: 2023 Form 1NPR Instructions (I-152) - Nonresident & Part-Year Resident return; $2,000 gross income filing
+    threshold; residency tax treatment
+  url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1NPR-Inst.pdf
+- source: 2023 Form 1-ES Instructions (D-101A) - 'Make your remittance payable to the Wisconsin Department of Revenue';
+    online payment at https://tap.revenue.wi.gov/pay (free service)
+  url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-ES-Inst.pdf
+- source: WI DOR Make a Payment (Online Services) - QuickPay/My Tax Account online payment portal
+  url: https://www.revenue.wi.gov/Pages/OnlineServices/Pay.aspx
+- source: WI DOR Individual Income Tax - Part-Year and Nonresidents FAQ
+  url: https://www.revenue.wi.gov/Pages/FAQS/pcs-npr.aspx
+unverified:
+- No WI DOR page was found that explicitly mentions U.S. tax-treaty-exempt income or whether such income is added
+  back. Conformity (true) is inferred from the federal-AGI starting point (Form 1 Line 1) plus the absence of any
+  treaty add-back across the Schedule AD additions list. Confirm at the DOR (e.g., Publication 122 for nonresidents,
+  or contact DORIncome@wisconsin.gov / (608) 266-2486) for treaty-specific situations, particularly for nonresident
+  aliens filing Form 1NPR.
+- 'The with-payment check mailing address differs by filing method: paper Form 1 with payment goes to PO Box 268
+  Madison WI 53790-0001 (per Form 1 instructions), while an e-filed return paid by check + Form PV goes to PO Box
+  3028 Milwaukee WI 53201-3028 (per WI DOR payment FAQ). Confirm the correct box for the taxpayer''s filing method.'

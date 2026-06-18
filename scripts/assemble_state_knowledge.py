@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -24,9 +25,20 @@ from taxfill_core.knowledge import StateKnowledge  # noqa: E402
 KB = json.load(open("/tmp/states_kb.json"))
 
 
+def _is_gov_host(url: str) -> bool:
+    host = (urlparse(url).hostname or "").lower()
+    return any(host == t or host.endswith("." + t) for t in ("gov", "mil", "us"))
+
+
 def build(st: str, d: dict) -> dict:
     cites = d.get("citations") or []
-    primary = cites[0] if cites else {"source": f"{st} Department of Revenue", "url": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites"}
+    # The typed Citation fields require a government host; some DORs serve form
+    # PDFs from a CDN (e.g. NM on amazonaws.com) but also cite a .gov page — pick
+    # the first government-host citation as primary.
+    gov_cites = [c for c in cites if _is_gov_host(c.get("url", ""))]
+    primary = (gov_cites or cites or [None])[0] or {"source": f"{st} Department of Revenue", "url": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites"}
+    if not _is_gov_host(primary.get("url", "")):
+        primary = {"source": f"{st} Department of Revenue", "url": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites"}
     pack = {
         "jurisdiction": f"states/{st.lower()}",
         "tax_year": 2023,
