@@ -1,0 +1,108 @@
+# DC state knowledge — tax year 2023. Fetched + cited from the DC DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/dc
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'DC''s Form D-40 begins from federal adjusted gross income (the D-40 income computation line and Schedule
+  I Calculation A are both titled around ''Federal Adjusted Gross Income''), and DC''s only mechanism for adding
+  income back is Schedule I, Calculation A ''Additions to federal adjusted gross income.'' The verified addition
+  categories on the 2023 Schedule I (Cal. A) are: (1) part-year resident adjustment, (2) income eligible for federal
+  income averaging (Form 4972), (3) 100% federal bonus depreciation / extra IRC sec.179, (4) discrimination award
+  subject to income averaging, (5) S-corp deductions from Sch K-1 (1120-S), (6) pass-through losses from DC unincorporated
+  businesses exceeding the $12,000 threshold, (7) ''Other ... items not subject to federal tax but subject to DC
+  tax,'' and (8) capital gains deferred for Qualified Opportunity Funds. There is NO line that adds back income
+  that is exempt from federal tax under a U.S. income tax treaty (contrast California''s explicit Schedule CA treaty
+  addback). Because treaty-exempt income is already excluded from federal AGI and DC has no treaty addback, it flows
+  through and is NOT re-taxed by DC. Therefore DC conforms (treaty-exempt income remains exempt). Source: 2023 D-40
+  Instruction Booklet, Schedule I Calculation A and line-by-line instructions.'
+citation:
+  source: 'DC OTR — 2023 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Who must file, When are
+    your taxes due (April 15, 2024), How to file / By mail addresses (PO Box 96145 refund/no-money-due; PO Box 96169
+    with payment), check payable to DC Treasurer, Schedule I Calculation A additions (no treaty addback) and Calculation
+    B subtractions, D-40 starts from federal adjusted gross income'
+  url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_041124.pdf
+starts_from: federal AGI (Form D-40 income computation starts from 'Federal adjusted gross income'; Schedule I then
+  applies Calculation A additions and Calculation B subtractions to arrive at DC adjusted gross income)
+residency:
+  summary: 'Per the 2023 D-40 booklet ''Who must file'' section: you must file a DC Individual Income Tax Return
+    (Form D-40) if you were a DC resident in 2023 and were required to file a federal return — and ''a DC resident
+    is an individual domiciled in DC at any time during the taxable year'' (domicile = you lived in or moved to
+    DC with intent to remain indefinitely). You are also a (statutory) resident, and must file, if you maintained
+    a place of abode in DC for a total of 183 days or more during 2023, even if your permanent home was outside
+    DC. Part-year residents (DC resident for only part of the year) file Form D-40 and must prorate the standard
+    deduction and applicable credits. True nonresidents (permanent home outside DC for all of 2023 and not in DC
+    183+ days) are not subject to DC income tax on a regular return; DC has no reciprocal-style general nonresident
+    income tax return — a nonresident whose employer erroneously withheld DC tax files Form D-40B (Nonresident Request
+    for Refund). Note per D-40B: if you moved into DC intending to become a domiciliary you are treated as a DC
+    resident and the 183-day test does not apply.'
+forms:
+  resident: Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)
+  part_year_or_nonresident: Part-year residents file Form D-40 (prorating deductions/credits). DC has no general
+    nonresident income tax return; a nonresident with DC tax erroneously withheld files Form D-40B, Nonresident
+    Request for Refund.
+filing_requirement:
+  note: 'Per the 2023 D-40 booklet ''Who must file a DC income tax return?'': you must file Form D-40 if (a) you
+    were a DC resident in 2023 and were required to file a federal income tax return (a DC resident is an individual
+    domiciled in DC at any time during the year); or (b) you maintained a place of abode in DC for 183 days or more
+    during 2023 even if your permanent home was outside DC; or (c) you were a part-year DC resident in 2023; or
+    (d) you were a member of the U.S. armed forces and DC was your legal residence for tax purposes for all or part
+    of 2023. The DC filing requirement for residents is keyed to the federal filing requirement rather than a separate
+    DC dollar threshold. You do NOT need to file if you were not required to file a 2023 federal return and were
+    not a DC resident during 2023 (certain elected members of Congress / their staff with bona fide residence in
+    another state are also exempt).'
+mailing_addresses:
+  refund_or_no_payment: 'Office of Tax and Revenue, PO Box 96145, Washington, DC 20090-6145 (use for a no-money-due
+    return or a refund-request return). Nonresident refund Form D-40B is mailed separately to: Office of Tax and
+    Revenue, PO Box 96147, Washington, DC 20090-6147.'
+  with_payment: Office of Tax and Revenue, PO Box 96169, Washington, DC 20090-6169 (D-40 return with payment / D-40P
+    payment voucher with check or money order).
+  citation:
+    source: 'DC OTR — 2023 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Who must file, When
+      are your taxes due (April 15, 2024), How to file / By mail addresses (PO Box 96145 refund/no-money-due; PO
+      Box 96169 with payment), check payable to DC Treasurer, Schedule I Calculation A additions (no treaty addback)
+      and Calculation B subtractions, D-40 starts from federal adjusted gross income'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_041124.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: DC Treasurer (make check or money order, in U.S. dollars, payable to the 'DC Treasurer'; write your
+    TIN, daytime phone, tax year '2023' and 'D-40' on the payment)
+  web_pay_url: https://mytax.dc.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 'DC OTR — 2023 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Who must file, When
+      are your taxes due (April 15, 2024), How to file / By mail addresses (PO Box 96145 refund/no-money-due; PO
+      Box 96169 with payment), check payable to DC Treasurer, Schedule I Calculation A additions (no treaty addback)
+      and Calculation B subtractions, D-40 starts from federal adjusted gross income'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_041124.pdf
+all_citations:
+- source: 'DC OTR — 2023 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Who must file, When are
+    your taxes due (April 15, 2024), How to file / By mail addresses (PO Box 96145 refund/no-money-due; PO Box 96169
+    with payment), check payable to DC Treasurer, Schedule I Calculation A additions (no treaty addback) and Calculation
+    B subtractions, D-40 starts from federal adjusted gross income'
+  url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_041124.pdf
+- source: DC OTR — 2023 D-40 Booklet publication landing page
+  url: https://otr.cfo.dc.gov/publication/2023-d-40-booklet
+- source: DC OTR — 2023 Form D-40B Nonresident Request for Refund (form + 'Who must file a Form D-40B', mailing
+    to PO Box 96147, domicile/183-day note)
+  url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40B_0002_012324.pdf
+- source: DC OTR — Individual Income Tax Filing FAQ (residency / 183-day rule, who must file, file by April 15,
+    payable to DC Treasurer, MyTax.DC.gov, D-40B for nonresident refund)
+  url: https://otr.cfo.dc.gov/book/individual-income-tax-faqs/individual-income-tax-filing
+- source: DC OTR — MyTax.DC.gov online tax portal (electronic filing and payment)
+  url: https://mytax.dc.gov
+unverified:
+- Whether DC's 'Other' addition (Schedule I, Calculation A, Line 7 — 'items not subject to federal tax but subject
+  to DC tax') could in some interpretation capture a specific federal treaty exclusion. The booklet does NOT list
+  treaty income as an example and DC Code sec.47-1803.02 is referenced only for subtractions; no treaty addback
+  is enumerated, so conformity is assessed as true, but the open-ended 'Other' line was not exhaustively cross-checked
+  against DC Code sec.47-1803.02(a) additions — confirm at DOR for an unusual treaty position.
+- Exact ZIP+4 / current-year validity of the PO Box 96145 (refund/no-payment) and PO Box 96169 (with payment) addresses
+  for a return filed late in 2026 — addresses are from the 2023 booklet; confirm at OTR before mailing.
+- Whether DC accepted any extended/non-April-15 due date for TY2023 (e.g., disaster relief). Booklet states April
+  15, 2024; no special extension was found, but confirm at DOR.

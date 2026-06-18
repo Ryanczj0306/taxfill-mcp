@@ -1,0 +1,89 @@
+# NE state knowledge — tax year 2023. Fetched + cited from the NE DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ne
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Nebraska''s resident return (Form 1040N) starts from federal adjusted gross income: line 5 instructs
+  "Enter the amount from Federal Form 1040 or 1040-SR, page 1, line 11." Federally treaty-exempt income is already
+  excluded from federal AGI and therefore flows through. The only additions to federal AGI are on Nebraska Schedule
+  I, Part A ("Adjustments Increasing Federal AGI"), whose nine line items are: (1) interest income from state/local
+  obligations exempt from federal tax, (2) exempt interest from Nebraska obligations, (3) total taxable interest
+  (line 1 minus line 2), (4) Financial Institution Tax Credit claimed, (5) Nebraska College Savings Program recapture,
+  (6) Nebraska Enable plan recapture, (7) federal net operating loss deduction, (8) S corporation or LLC Non-Nebraska
+  loss, and (9) Nebraska PTET deducted under IRC sec. 164. NONE of these requires adding back income exempt under
+  a U.S. income tax treaty. With no treaty add-back and a federal-AGI starting point, treaty-exempt income is not
+  re-taxed -> Nebraska conforms.'
+citation:
+  source: 2023 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2023) — federal AGI starting
+    point (Line 5), residency definitions, Who Must File, due date, check payee
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf
+starts_from: federal AGI (Form 1040N line 5 = federal AGI from Federal Form 1040/1040-SR page 1, line 11)
+residency:
+  summary: 'Nebraska bases residency on domicile plus a statutory-resident (183-day) rule. RESIDENT: an individual
+    whose domicile is in Nebraska, OR an individual who is physically present in Nebraska and maintains a permanent
+    place of abode in the state for an aggregate of more than six months; specifically, if an individual maintains
+    a permanent place of abode in Nebraska and is present in Nebraska for at least 183 days during the tax year,
+    that individual is a Nebraska resident even if domiciled in another state (any part of a day in Nebraska counts
+    as a day in the state). DOMICILE is the place of one''s permanent home, where the individual intends to return;
+    once established it remains until abandoned (by leaving the state, abandoning Nebraska domicile, and establishing
+    domicile elsewhere). PARTIAL-YEAR RESIDENT: an individual who is a resident for part, but less than all, of
+    the year, having changed domicile during the year by moving into or out of Nebraska. NONRESIDENT: a non-domiciliary
+    not meeting the statutory-resident test, taxed only on income derived from or connected with Nebraska sources.'
+forms:
+  resident: Form 1040N — Nebraska Individual Income Tax Return
+  part_year_or_nonresident: Form 1040N with Nebraska Schedule III (Computation of Nebraska Tax for Nonresidents
+    and Partial-Year Residents); there is no separate nonresident form number — nonresidents and partial-year residents
+    file the same Form 1040N and must attach Schedule III.
+filing_requirement:
+  note: 'Per the 2023 Form 1040N booklet ("Who Must File?"): A Nebraska RESIDENT must file if they (a) are required
+    to file a federal individual income tax return reporting a federal tax liability before credits, OR (b) have
+    $5,000 or more of net Nebraska adjustments to federal AGI (including non-Nebraska state and local bond interest
+    exempt from federal tax). A PARTIAL-YEAR RESIDENT or NONRESIDENT must file if they have income derived from
+    or connected with Nebraska sources.'
+mailing_addresses:
+  refund_or_no_payment: 'Refund returns: Nebraska Department of Revenue, PO Box 98912, Lincoln, NE 68509-8912. (Note:
+    Nebraska splits addresses by refund vs. no-refund, not refund vs. payment. Returns NOT requesting a refund —
+    including balance-due/with-payment returns — go to PO Box 98934 below.)'
+  with_payment: 'Returns not requesting a refund (includes balance due / with payment): Nebraska Department of Revenue,
+    PO Box 98934, Lincoln, NE 68509-8934.'
+  citation:
+    source: 2023 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2023) — federal AGI starting
+      point (Line 5), residency definitions, Who Must File, due date, check payee
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Nebraska Department of Revenue (make check or money order payable to the "Nebraska Department of
+    Revenue")
+  web_pay_url: https://revenue.nebraska.gov/individuals/electronic-payment-options-individual-income-tax
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2023) — federal AGI starting
+      point (Line 5), residency definitions, Who Must File, due date, check payee
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf
+all_citations:
+- source: 2023 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2023) — federal AGI starting
+    point (Line 5), residency definitions, Who Must File, due date, check payee
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf
+- source: 2023 Nebraska Schedule I, II, III (Form 1040N) — Part A Adjustments Increasing Federal AGI line items
+    (no treaty add-back)
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040N_Schedules_2023_Final.pdf
+- source: 2023 Nebraska Form 1040N (Individual Income Tax Return) — form title, mailing addresses (PO Box 98912
+    refund / PO Box 98934 not requesting refund)
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040N_2023_Final.pdf
+- source: Nebraska DOR — Electronic Payment Options for Individual Income Tax (e-pay portal / online payment)
+  url: https://revenue.nebraska.gov/individuals/electronic-payment-options-individual-income-tax
+- source: Nebraska DOR — 2023 Income Tax Forms index
+  url: https://revenue.nebraska.gov/about/2023-income-tax-forms
+unverified:
+- Exact direct deep-link URL of the Nebraska e-pay web application itself (the .gov electronic-payment-options page
+  links to it, but the standalone e-pay app URL was not quoted verbatim on a .gov page during this research). Confirm
+  the precise login URL at the DOR e-pay page.
+- Whether PO Box 98934 ('returns not requesting a refund') is the literal address Nebraska intends for paper returns
+  mailed WITH a check (Nebraska frames the split as refund vs. no-refund rather than refund vs. with-payment); confirm
+  at the DOR before relying on it for a with-payment paper return.

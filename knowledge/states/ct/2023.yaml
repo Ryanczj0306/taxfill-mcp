@@ -1,0 +1,95 @@
+# CT state knowledge — tax year 2023. Fetched + cited from the CT DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/ct
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'CT''s resident return (Form CT-1040) starts from federal AGI (Line 1 = "Federal adjusted gross income
+  from federal Form 1040, Line 11"), so treaty-exempt income is initially excluded. HOWEVER, CT has an EXPLICIT
+  ADD-BACK: the 2023 CT-1040 instructions (Schedule 1 additions, Line 37 "Other") and the 2023 CT-1040NR/PY instructions
+  (Schedule 1 additions, Line 39 "Other") both direct: "1. Add back any treaty income reported on federal Form 1040NR
+  if a nonresident alien. Enter the words ''treaty income'' in the space provided." Because CT requires nonresident
+  aliens to add federally treaty-exempt income back into Connecticut adjusted gross income, CT does NOT conform
+  to federal treaty exemptions for affected filers (analogous to California''s Schedule CA add-back). Note: this
+  add-back is scoped to nonresident aliens filing federal Form 1040NR; a filer with no treaty income / not a nonresident
+  alien is unaffected, but the statutory rule re-taxes treaty income, so conforms_to_federal_treaties = false.'
+citation:
+  source: '2023 Form CT-1040 Connecticut Resident Income Tax Return (Line 1 = federal AGI; Schedule 1 Line 31-38
+    additions; ''Due date: April 15, 2024''; mailing addresses PO Box 2976/2977; check payable to Commissioner of
+    Revenue Services)'
+  url: https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf
+starts_from: federal AGI (Form CT-1040, Line 1 = "Federal adjusted gross income from federal Form 1040, Line 11,
+  or federal Form 1040-SR, Line 11"); then Line 2 additions from Schedule 1, Line 38 and Line 4 subtractions from
+  Schedule 1, Line 50 produce Connecticut adjusted gross income on Line 5.
+residency:
+  summary: Connecticut taxes by domicile and statutory residence. You are a RESIDENT if Connecticut was your domicile
+    (permanent home you intend to return to) for the entire taxable year, OR (statutory resident) if you maintained
+    a permanent place of abode in Connecticut during the entire taxable year AND spent more than 183 days of the
+    taxable year in Connecticut. A PART-YEAR RESIDENT changed legal residence by moving into or out of Connecticut
+    during the year. A NONRESIDENT is neither a resident nor a part-year resident; a nonresident is taxed only on
+    Connecticut-source income and prorates the tax. (The DRS Tax-Information page now displays 2025-year wording,
+    but the statutory domicile/permanent-place-of-abode + 183-day framework is unchanged from 2023.)
+forms:
+  resident: Form CT-1040, Connecticut Resident Income Tax Return
+  part_year_or_nonresident: Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return
+    (use Schedule CT-SI to report Connecticut-source income)
+filing_requirement:
+  note: 'Connecticut uses a "Gross Income Test." A resident generally must file Form CT-1040 if Connecticut gross
+    income exceeds the threshold for their filing status: $12,000 (married filing separately), $15,000 (single),
+    $19,000 (head of household), or $24,000 (married filing jointly or qualifying surviving spouse). You must also
+    file if you had Connecticut income tax withheld, made estimated payments, meet the Gross Income Test, had a
+    federal alternative minimum tax liability, or are claiming a Connecticut refund. Nonresidents/part-year residents
+    file CT-1040NR/PY if they meet the Gross Income Test or had federal AMT liability (and, for nonresidents, had
+    Connecticut-source income).'
+mailing_addresses:
+  refund_or_no_payment: Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976 (for refunds and all
+    other tax forms without payment)
+  with_payment: Department of Revenue Services, PO Box 2977, Hartford CT 06104-2977 (for all tax forms with payment)
+  citation:
+    source: '2023 Form CT-1040 Connecticut Resident Income Tax Return (Line 1 = federal AGI; Schedule 1 Line 31-38
+      additions; ''Due date: April 15, 2024''; mailing addresses PO Box 2976/2977; check payable to Commissioner
+      of Revenue Services)'
+    url: https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Commissioner of Revenue Services (write SSN(s) and "2023 Form CT-1040" on the check)
+  web_pay_url: https://portal.ct.gov/DRS-myconneCT
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: '2023 Form CT-1040 Connecticut Resident Income Tax Return (Line 1 = federal AGI; Schedule 1 Line 31-38
+      additions; ''Due date: April 15, 2024''; mailing addresses PO Box 2976/2977; check payable to Commissioner
+      of Revenue Services)'
+    url: https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf
+all_citations:
+- source: '2023 Form CT-1040 Connecticut Resident Income Tax Return (Line 1 = federal AGI; Schedule 1 Line 31-38
+    additions; ''Due date: April 15, 2024''; mailing addresses PO Box 2976/2977; check payable to Commissioner of
+    Revenue Services)'
+  url: https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf
+- source: '2023 Form CT-1040 Instructions (Rev. 12/23) - Schedule 1 Line 37 ''Other'' additions: ''1. Add back any
+    treaty income reported on federal Form 1040NR if a nonresident alien''; gross income thresholds; April 15, 2024
+    references; myconneCT'
+  url: https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf
+- source: 2023 Form CT-1040NR/PY Nonresident and Part-Year Resident Income Tax Return
+  url: https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040nrpy_1223.pdf
+- source: '2023 Form CT-1040NR/PY Instructions (Rev. 12/23) - Schedule 1 Line 39 ''Other'' additions: ''1. Add back
+    any treaty income reported on federal Form 1040NR if a nonresident alien''; gross income thresholds; nonresident/part-year
+    filing rules'
+  url: https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040nrpy-instructions_1223.pdf
+- source: 'CT DRS Resident Income Tax - Tax Information (residency definitions: domicile, statutory resident permanent
+    place of abode + 183 days; Gross Income Test thresholds)'
+  url: https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information
+- source: CT DRS Schedule CT-SI Nonresident or Part-Year Resident Schedule of Income 2023
+  url: https://portal.ct.gov/-/media/drs/forms/2023/income/schedule-ct-si_1223.pdf
+unverified:
+- 'Exact verbatim residency-definition wording specifically dated to tax year 2023 on a .gov page: confirmed conceptually
+  from the CT-1040NR/PY instructions and the DRS Tax-Information page, but the live DRS Tax-Information web page
+  now renders 2025-tax-year wording (domicile + permanent place of abode + more-than-183-days framework is unchanged).
+  Confirm 2023-specific phrasing in the 2023 CT-1040NR/PY instructions front matter if exact citation is required.'
+- 'Whether DRS observed any non-April-15 due date adjustment for 2023 (e.g., weekend/holiday or emergency extension):
+  the 2023 CT-1040 form prints ''Due date: April 15, 2024'' (April 15, 2024 was a Monday), so no adjustment applies,
+  but confirm at DOR if relying on a different date.'

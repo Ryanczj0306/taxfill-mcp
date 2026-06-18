@@ -1,0 +1,102 @@
+# MN state knowledge — tax year 2023. Fetched + cited from the MN DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/mn
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Minnesota''s resident return (Form M1) starts from federal adjusted gross income: the 2023 M1 instructions
+  for Line 1 state "Line 1—Federal Adjusted Gross Income. Enter your 2023 federal adjusted gross income from: Line
+  11 of Form 1040 or 1040-SR, or 1040-NR." Federally treaty-exempt income is already excluded from federal AGI and
+  therefore flows through. The Minnesota additions schedules (Schedule M1M lines 1-9, and Schedule M1MB) contain
+  NO line that adds back income exempt under a U.S. income tax treaty. The complete 2023 M1M additions list is:
+  out-of-state municipal bond interest (line 1), out-of-state mutual fund tax-exempt dividends (line 2), expenses
+  attributable to income not taxed by MN (line 3), capital gain portion of a lump-sum distribution (line 4), M1HOME
+  first-time homebuyer addition (line 5), and 529 distributions used for K-12 tuition (line 6) — lines 7-9 are intentionally
+  blank. The only treaty references in the MN M1 instructions are FAVORABLE to the taxpayer (a nonresident alien
+  may claim the standard deduction if allowed by a U.S. income tax treaty). Because there is no treaty addback,
+  treaty-exempt income is not re-taxed -> conforms.'
+citation:
+  source: 2023 Minnesota Individual Income Tax Forms and Instructions (Form M1) — Line 1 = Federal Adjusted Gross
+    Income; Line 2 additions from Schedule M1M; residency rules (domicile + 183-day); due date April 15, 2024; Schedule
+    M1NR; treaty references favor taxpayer only
+  url: https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf
+starts_from: federal AGI (Form M1 Line 1 = federal adjusted gross income, from Line 11 of federal Form 1040/1040-SR/1040-NR)
+residency:
+  summary: 'Minnesota taxes by residency. You are a full-year resident if Minnesota was your permanent home in 2023,
+    OR Minnesota was your home for an indefinite period and you maintained a year-round abode (house, condo, apartment,
+    mobile home, or cabin with cooking and bathing facilities) in Minnesota (the domicile test). A statutory-resident
+    rule also applies: if you were a resident of another state but were physically present in Minnesota for 183
+    days or more during the tax year AND you (or your spouse) owned, rented, lived in, or leased a year-round abode
+    in Minnesota, you are treated as a Minnesota resident for the length of time you maintained that abode. Part-year
+    residents are those who moved into or out of Minnesota during 2023; nonresidents have Minnesota-source income
+    but are domiciled elsewhere and do not meet the 183-day/abode test. Part-year residents and nonresidents compute
+    Minnesota tax on the share of income assignable to Minnesota using Schedule M1NR. (See Income Tax Fact Sheets
+    1 Residency, 2 Part-Year Residents, 3 Nonresidents.)'
+forms:
+  resident: Form M1, Individual Income Tax
+  part_year_or_nonresident: Schedule M1NR, Nonresidents/Part-Year Residents (filed together with Form M1)
+filing_requirement:
+  note: 'Full-year residents must file a 2023 Form M1 if required to file a federal return, or if income exceeds
+    the filing-requirement chart amount for their filing status/age (e.g., Single born on/after Jan 2, 1959: $13,825;
+    born before: $15,675; Married Filing Jointly both born on/after Jan 2, 1959: $27,650; Married Filing Separately
+    any age: $5). Part-year residents must file if 2023 Minnesota-source income is $13,825 or more (file Schedule
+    M1NR). Nonresidents/part-year residents add (1) all income while a MN resident plus (2) MN-source income while
+    a nonresident; if the total is $13,825 or more they must file Form M1 with Schedule M1NR. A nonresident alien
+    who is a part-year resident or nonresident under the 183-day rule must file if MN-source gross income is at
+    least $5. Source: 2023 Form M1 instructions, Filing Requirements (page 5-7).'
+mailing_addresses:
+  refund_or_no_payment: Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010
+  with_payment: 'There is NO separate payment-only mailing address. The Form M1 return is mailed to Minnesota Department
+    of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010. Payment by check/money order is made
+    separately using a voucher created with the department''s Payment Voucher System; per the M1 instructions and
+    the Filing a Paper Income Tax Return page, mail the voucher and check to the address printed on the voucher,
+    sent separately from the return. (Special case: if electing advance payments of the 2025 child tax credit on
+    Schedule M1CWFC, the paper return goes to Mail Station 0015, 55146-0015.)'
+  citation:
+    source: 2023 Minnesota Individual Income Tax Forms and Instructions (Form M1) — Line 1 = Federal Adjusted Gross
+      Income; Line 2 additions from Schedule M1M; residency rules (domicile + 183-day); due date April 15, 2024;
+      Schedule M1NR; treaty references favor taxpayer only
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Minnesota Department of Revenue (make check/money order payable to Minnesota Department of Revenue;
+    the MN DOR Payment Voucher System voucher must be created and enclosed/mailed with the check) -- exact payee/memo
+    wording not confirmed verbatim on a .gov page in this pass; see unverified
+  web_pay_url: https://www.revenue.state.mn.us/make-payment
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Minnesota Individual Income Tax Forms and Instructions (Form M1) — Line 1 = Federal Adjusted Gross
+      Income; Line 2 additions from Schedule M1M; residency rules (domicile + 183-day); due date April 15, 2024;
+      Schedule M1NR; treaty references favor taxpayer only
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf
+all_citations:
+- source: 2023 Minnesota Individual Income Tax Forms and Instructions (Form M1) — Line 1 = Federal Adjusted Gross
+    Income; Line 2 additions from Schedule M1M; residency rules (domicile + 183-day); due date April 15, 2024; Schedule
+    M1NR; treaty references favor taxpayer only
+  url: https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf
+- source: 2023 Schedule M1M, Income Additions and Subtractions — complete additions list (lines 1-9); no treaty
+    add-back line
+  url: https://www.revenue.state.mn.us/sites/default/files/2024-04/m1m-23_0.pdf
+- source: 2023 Schedule M1NR, Nonresidents/Part-Year Residents
+  url: https://www.revenue.state.mn.us/sites/default/files/2025-07/m1nr-23.pdf
+- source: Filing a Paper Income Tax Return — mailing address Mail Station 0010, St. Paul, MN 55146-0010
+  url: https://www.revenue.state.mn.us/filing-paper-income-tax-return
+- source: Paying Your Individual Income Tax / Make a Payment — online payment options and Payment Voucher System
+  url: https://www.revenue.state.mn.us/make-payment
+- source: 2023 Form M1 (the form itself)
+  url: https://www.revenue.state.mn.us/sites/default/files/2024-12/m1-23.pdf
+unverified:
+- Exact check PAYEE wording ('Minnesota Department of Revenue') and the MEMO-line instruction (last four digits
+  of SSN) — appeared only in a search-result snippet, not confirmed verbatim on a directly-fetched .gov page in
+  this pass; confirm via the MN DOR Payment Voucher System / Make a Payment page.
+- Whether the with-payment voucher resolves to a different physical mailing address than Mail Station 0010 — MN
+  uses a voucher with the address printed on it ('mail to the address on the voucher'), so the destination is voucher-specific
+  and was not captured verbatim.
+- Online portal exact product name (referred to as the department's 'online services'/'e-Services' and 'Make a Payment
+  under Individuals') — URL https://www.revenue.state.mn.us/make-payment confirmed; specific e-Services payment
+  URL not separately captured.

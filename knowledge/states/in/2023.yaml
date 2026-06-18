@@ -1,0 +1,83 @@
+# IN state knowledge — tax year 2023. Fetched + cited from the IN DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/in
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Indiana''s resident return (Form IT-40) starts from federal adjusted gross income: Line 1 instructs
+  "Enter the adjusted gross income from your federal Form 1040/1040-SR, line 11." Income exempt from federal tax
+  under a U.S. tax treaty is already excluded from federal AGI, so it flows through to Indiana untaxed. The only
+  Indiana additions are Schedule 1: Add-Backs, which are all IRC-conformity / decoupling items (bonus depreciation,
+  NOL deduction, out-of-state municipal obligation interest, Section 179, excess business losses (461(l)), excess
+  federal interest (163(j)), federal repatriated dividends (965), employer student loan payments, conformity codes
+  120/147, etc.). The full Schedule 1 add-back list contains NO line for treaty-exempt or U.S.-tax-treaty income,
+  and a full-text search of both the IT-40 and IT-40PNR 2023 booklets returns zero references to "treaty." Because
+  IN starts from federal AGI and has no treaty add-back, federally treaty-exempt income is NOT re-taxed -> conforms.
+  (Contrast with CA, which adds treaty income back on Schedule CA.)'
+citation:
+  source: Indiana DOR - 2023 IT-40 Full-Year Resident Individual Income Tax Booklet (Line 1 federal AGI start; Schedule
+    1 Add-Backs list - no treaty add-back; residency definitions; due date April 15, 2024; mailing addresses; check
+    payee DOR; INTIME; filing requirement/exemption thresholds)
+  url: https://forms.in.gov/Download.aspx?id=15792
+starts_from: 'federal AGI (Form IT-40, Line 1: federal adjusted gross income from federal Form 1040/1040-SR, line
+  11)'
+residency:
+  summary: 'Indiana residency is based on legal residence (domicile). Full-year resident: you maintain your legal
+    residence in Indiana from Jan. 1 - Dec. 31 of the tax year; you need not be physically present the entire year
+    (e.g., a temporary stay outside Indiana, including military personnel, does not break residency; retirees who
+    keep their Indiana home, driver''s license, voting rights, and homestead deduction remain full-year residents).
+    Full-year residents file Form IT-40. Part-year resident: an Indiana resident for less than the full year (e.g.,
+    moved in/out during 2023); taxed on income earned while an Indiana resident plus income from Indiana sources,
+    filed on Form IT-40PNR. Nonresident: a legal resident of another state with Indiana-source income files Form
+    IT-40PNR (Part-Year and Full-Year Nonresident). Special case: full-year residents of the reciprocal states (Kentucky,
+    Michigan, Ohio, Pennsylvania, Wisconsin) whose only Indiana income is wages/salaries/tips/commissions file the
+    reciprocal Form IT-40RNR instead. Indiana does not publish a day-count statutory-resident test like some states;
+    residency turns on legal residence/domicile.'
+forms:
+  resident: Form IT-40, Indiana Full-Year Resident Individual Income Tax Return (2023)
+  part_year_or_nonresident: Form IT-40PNR, Indiana Part-Year and Full-Year Nonresident Individual Income Tax Return
+    (2023). (Reciprocal-state full-year nonresidents with only IN wage income file Form IT-40RNR instead.)
+filing_requirement:
+  note: 'A full-year Indiana resident must file Form IT-40 if gross income (total income before deductions) exceeds
+    total allowable exemptions. For filing-requirement purposes Indiana allows a $1,000 exemption for the taxpayer,
+    $1,000 for a spouse (if MFJ), and $1,000 per dependent; if gross income is less than total exemptions, no return
+    is required (though one may be filed to claim refunds/credits). Deceased-taxpayer thresholds: file if the deceased
+    was under 65 with gross income over $1,000, age 65+ with gross income over $2,000, or a nonresident with Indiana
+    gross income. Part-year residents and nonresidents with Indiana-source income file IT-40PNR.'
+mailing_addresses:
+  refund_or_no_payment: Indiana Department of Revenue, P.O. Box 40, Indianapolis, IN 46206-0040 (for all filings
+    NOT enclosing a payment)
+  with_payment: Indiana Department of Revenue, P.O. Box 7224, Indianapolis, IN 46207-7224 (if enclosing a payment)
+  citation:
+    source: Indiana DOR - 2023 IT-40 Full-Year Resident Individual Income Tax Booklet (Line 1 federal AGI start;
+      Schedule 1 Add-Backs list - no treaty add-back; residency definitions; due date April 15, 2024; mailing addresses;
+      check payee DOR; INTIME; filing requirement/exemption thresholds)
+    url: https://forms.in.gov/Download.aspx?id=15792
+payment:
+  check_payee: DOR (money order, cashier's check or personal check made payable to DOR; payments must be in U.S.
+    funds)
+  web_pay_url: https://intime.dor.in.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: Indiana DOR - 2023 IT-40 Full-Year Resident Individual Income Tax Booklet (Line 1 federal AGI start;
+      Schedule 1 Add-Backs list - no treaty add-back; residency definitions; due date April 15, 2024; mailing addresses;
+      check payee DOR; INTIME; filing requirement/exemption thresholds)
+    url: https://forms.in.gov/Download.aspx?id=15792
+all_citations:
+- source: Indiana DOR - 2023 IT-40 Full-Year Resident Individual Income Tax Booklet (Line 1 federal AGI start; Schedule
+    1 Add-Backs list - no treaty add-back; residency definitions; due date April 15, 2024; mailing addresses; check
+    payee DOR; INTIME; filing requirement/exemption thresholds)
+  url: https://forms.in.gov/Download.aspx?id=15792
+- source: Indiana DOR - 2023 Form IT-40 (Full-Year Resident Individual Income Tax Return)
+  url: https://forms.in.gov/Download.aspx?id=15790
+- source: Indiana DOR - 2023 IT-40PNR Part-Year and Full-Year Nonresident Individual Income Tax Booklet (form name;
+    federal AGI / Schedule A structure; no treaty add-back)
+  url: https://forms.in.gov/Download.aspx?id=15796
+- source: Indiana DOR - Individual Income Tax Overview
+  url: https://www.in.gov/dor/i-am-a/individual/individual-income-tax-overview/
+- source: Indiana DOR - INTIME e-services payment portal
+  url: https://intime.dor.in.gov

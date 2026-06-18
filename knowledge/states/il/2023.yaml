@@ -1,0 +1,99 @@
+# IL state knowledge — tax year 2023. Fetched + cited from the IL DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/il
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'IL-1040 starts from federal adjusted gross income: 2023 IL-1040 Step 2, Line 1 "Adjusted gross income
+  — Enter the adjusted gross income from your federal return." The instructions ("What is Illinois income?") confirm
+  "Your Illinois income includes the adjusted gross income (AGI) amount figured on your federal return, plus any
+  additional income that must be added to your AGI." Income exempt from federal tax under a U.S. income tax treaty
+  is already excluded from federal AGI, so it flows through and is not re-taxed. Illinois additions are limited:
+  Line 2 "Federally tax-exempt income" applies ONLY to federally tax-exempt interest and dividend income reported
+  on federal Form 1040 Line 2a (municipal bond interest), not to foreign treaty income; Line 3/Schedule M "Other
+  additions" enumerates specific items (child''s 8814 interest/dividends, pass-through additions, Section 529/ABLE
+  earnings, IL-4562 special depreciation, business expense recapture, etc.) and contains no add-back of federal
+  income-tax-treaty-exempt income. There is NO California-style Schedule CA treaty addback. Therefore treaty-exempt
+  income is not re-taxed and IL conforms.'
+citation:
+  source: 2023 Form IL-1040 Instructions (IL-1040 Instructions R-12/23) — cover/mailing addresses, due date, income
+    tax rate, exemption allowance
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf
+starts_from: 'federal AGI (2023 IL-1040 Step 2, Line 1: "Adjusted gross income — Enter the adjusted gross income
+  from your federal return")'
+residency:
+  summary: You are an Illinois resident if you were domiciled in Illinois for the entire tax year; your domicile
+    is the place where you reside and intend to return after temporary absences (e.g., U.S. Armed Forces duty, residence
+    in a foreign country, out-of-state student or seasonal residence). A part-year resident is someone who was an
+    Illinois resident for only part of the year (e.g., moved into or out of Illinois) and files IL-1040 plus Schedule
+    NR. A nonresident is a person not domiciled in Illinois who has Illinois-source income; nonresidents and part-year
+    residents compute Illinois-taxable income on Schedule NR. Illinois does not publish a numeric day-count statutory-resident
+    test in the IL-1040 general information; residency turns on domicile. If a joint federal return is filed and
+    one spouse is an Illinois resident while the other is a nonresident or part-year resident, separate Illinois
+    returns may be filed; a joint Illinois return causes both to be taxed as residents.
+forms:
+  resident: Form IL-1040, Illinois Individual Income Tax Return
+  part_year_or_nonresident: Form IL-1040 with Schedule NR (Nonresident and Part-Year Resident Computation of Illinois
+    Tax)
+filing_requirement:
+  note: An Illinois resident must file Form IL-1040 if (a) you were required to file a federal income tax return,
+    OR (b) you were not required to file federally but your Illinois base income from Line 9 is greater than your
+    Illinois exemption allowance. The personal exemption amount for tax year 2023 is $2,425 (Public Act 103-0009).
+    An Illinois resident claimed as a dependent on another person's return must file if Illinois base income from
+    Line 9 is greater than $2,425 (or to get a refund of Illinois tax withheld). A nonresident must file IL-1040
+    and Schedule NR if Illinois base income from Schedule NR Step 5, Line 46 exceeds the Schedule NR exemption allowance
+    (Step 5, Line 50), or to claim a refund of Illinois tax withheld in error. Even if not otherwise required, file
+    to obtain a refund of Illinois tax withheld, estimated payments, or pass-through withholding.
+mailing_addresses:
+  refund_or_no_payment: ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19041, SPRINGFIELD IL 62794-9041 (if no payment is
+    enclosed)
+  with_payment: ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19027, SPRINGFIELD IL 62794-9027 (if a payment is enclosed)
+  citation:
+    source: 2023 Form IL-1040 Instructions (IL-1040 Instructions R-12/23) — cover/mailing addresses, due date, income
+      tax rate, exemption allowance
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Illinois Department of Revenue (make check or money order payable to "Illinois Department of Revenue"
+    (not IRS); write the taxpayer's SSN, spouse's SSN if joint, and the tax year in the lower left corner; attach
+    Form IL-1040-V payment voucher to a paper return)
+  web_pay_url: https://mytax.illinois.gov
+deadlines:
+  filing_due_date: '2024-04-15'
+  citation:
+    source: 2023 Form IL-1040 Instructions (IL-1040 Instructions R-12/23) — cover/mailing addresses, due date, income
+      tax rate, exemption allowance
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf
+all_citations:
+- source: 2023 Form IL-1040 Instructions (IL-1040 Instructions R-12/23) — cover/mailing addresses, due date, income
+    tax rate, exemption allowance
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf
+- source: 2023 IL-1040 Instructions, General Information pp.3-5 — Who must file, Who is an Illinois resident (domicile),
+    part-year/nonresident filing, due date April 15 2024
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf
+- source: 2023 IL-1040 Instructions, Step-by-Step pp.6-7 — Line D resident status/Schedule NR, Line 1 'Adjusted
+    gross income — Enter the adjusted gross income from your federal return', Line 2 federally tax-exempt income,
+    Line 3 other additions / Schedule M
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf
+- source: 2023 IL-1040 Instructions, Line 40 Payment options p.15 — check payable to 'Illinois Department of Revenue'
+    (not IRS), electronic payment via mytax.illinois.gov
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf
+- source: IL DOR General Information (IL-1040 instructions, HTML) — residency, due date, what is Illinois income
+    (federal AGI)
+  url: https://tax.illinois.gov/forms/incometax/currentyear/individual/il-1040-instr/general-information.html
+- source: IL DOR Pub-119, Illinois Schedule NR for Individuals — part-year/nonresident computation
+  url: https://tax.illinois.gov/research/publications/pubs/illinois-schedule-nr-for-individuals.html
+- source: 2023 Schedule NR IL-1040 Instructions (PDF)
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-schedule-nr-instr.pdf
+unverified:
+- MyTax Illinois online payment portal URL (mytax.illinois.gov) is referenced by name throughout the .gov instructions
+  but the literal full URL string was not displayed as a clickable link in the fetched pages; confirm exact portal
+  address at tax.illinois.gov.
+- Schedule M was not opened line-by-line; the conclusion that Schedule M contains no foreign income-tax-treaty add-back
+  is based on the Line 2 and Line 3 'Other additions' enumerations in the IL-1040 instructions (pp.7), which list
+  no treaty add-back. Confirm against the full 2023 Schedule M / Schedule M Instructions if a treaty-income edge
+  case is in play.
