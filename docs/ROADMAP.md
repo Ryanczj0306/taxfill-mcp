@@ -18,8 +18,9 @@ purge`) · introspect pack-authoring CLI · Phase A launch packaging + drift CI.
 **Form packs that can be FILLED today (all introspect→vision-map→adversarial-
 audit→golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE,
 **Schedule D, Schedule E, Form 8863, Form 2555** (#6 priority set complete);
-state — CA Form 540 + 540NR + **Schedule CA 540 + 540NR**, **NY IT-201 + IT-203**
-(NY is the first non-CA state that can be filled). 37 form packs total.
+state — CA Form 540 + 540NR + **Schedule CA 540 + 540NR**, **NY IT-201 + IT-203**,
+**IL IL-1040**, **PA PA-40**, **OH IT 1040 (13-page bundle)** — 6 states fillable.
+40 form packs total.
 
 **Quality bar (non-negotiable, applies to every item below):** no invented
 numbers — every figure cited to a .gov/.us source or shipped with an explicit
@@ -32,12 +33,13 @@ The eight remaining workstreams, with the phase that schedules each:
 
 ## 1. State form packs — the biggest gap (Phase C)
 
-**STATUS (2026-06-19):** CA complete (540, 540NR, **Schedule CA 540 + 540NR**)
-and **NY shipped (IT-201 resident + IT-203 nonresident/part-year)** — NY is the
-first non-CA state that can be filled. Rolling out the rest by population next
-(IL → PA → OH → …).
+**STATUS (2026-06-19):** **6 states now fillable** — CA (540, 540NR, Schedule CA
+540 + 540NR), NY (IT-201 + IT-203), **IL (IL-1040)**, **PA (PA-40)**, **OH (IT
+1040 full 13-page bundle)**. Rolling out by population; next tranche: GA → NC →
+MI → NJ → MA → …, then each state's nonresident/part-year form where it is a
+separate form (IL Schedule NR, OH IT NRC, etc.).
 
-**Why:** ~48 jurisdictions can still only be *scoped*, not filled.
+**Why:** ~45 jurisdictions can still only be *scoped*, not filled.
 
 **Scope:** 36 states + DC have fillable AcroForms (resident + nonresident/part-
 year forms) + their adjustment schedules (Schedule-CA equivalents); plus 5 hard
