@@ -1,0 +1,354 @@
+# Form IT-40, 2023 — Indiana Full-Year Resident Individual Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) -> vision-map workflow (both
+# pages + zoomed crops read to place each field on its printed line / column;
+# checkbox widgets, which render only an "X" in the sweep, were positioned by
+# their AcroForm /Rect coordinates) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw,
+# human-readable sentinel ids the form ships with, e.g. "Federal AGI"-line is
+# named "1", the SSN comb boxes "Your Social Security Number1..3", the deposit
+# checkboxes "Check Box4..7"). IT-40 is a single-column resident return: each
+# numbered income/tax line is one widget, so the line key is the printed step
+# number ("1".."26"). Header, county-code, refund/deposit, and signature widgets
+# carry descriptive keys; the four header/MFS/amend yes-no boxes keep their
+# sentinel ids ("Check Box Amend", "Check Box1".."Check Box3").
+#
+# Coverage. The blank PDF has 72 distinct AcroForm field objects (pypdf
+# get_fields); ALL 72 fillable widgets are mapped here. None are omitted — every
+# widget is a /Tx text/comb box or a /Btn checkbox that accepts taxpayer data.
+# There are NO JS push-buttons (no Ff bit-17 Pushbutton) and NO read-only
+# tooltips (no Ff bit-1 ReadOnly) on this form, so nothing is intentionally
+# unmapped.
+#
+# Checkboxes. Eight single yes/no /Btn boxes, each one field with the lone
+# appearance state "/Yes" (copied verbatim from the widget AP /N dicts):
+#   * Check Box Amend — "Place X in box if amending" (top right, page 1).
+#   * Check Box1 — your-SSN "Place X in box if applying for ITIN".
+#   * Check Box2 — spouse-SSN "Place X in box if applying for ITIN".
+#   * Check Box3 — "Place X in box if you are married filing separately".
+#   * Check Box4 / Check Box5 / Check Box6 — line 22c Direct Deposit "Type:"
+#     Checking / Savings / Hoosier Works MC (left-to-right by widget /Rect x).
+#   * Check Box7 — line 22d "Place an X in the box if refund will go to an
+#     account outside the United States".
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix on the
+# form, so lines 1-18, 19a/19b/19c, 19d, 20, 21, and 23-26 are `money`. Genuine
+# text widgets stay text: the comb fiscal-year MM/DD/YYYY boxes (Fiscal1..6),
+# the 3-2-4 SSN comb boxes (no single 11-char SSN widget exists on this form —
+# each part is its own comb cell), names/initials/suffix, address/city/state,
+# the 10-char ZIP comb, the 2-char foreign-country and county-code boxes, line
+# 19a/19b "Your/Spouse county code" 2-char boxes, the line-20a "Enter Code A/F"
+# box, bank routing (9) / account (17) comb boxes, and the two signature-date
+# boxes (Date1 = taxpayer, Date2 = spouse).
+#
+# Relations. Only unconditional equalities with every operand mapped are
+# declared (3=1+2, 5=3-4, 7=5-6, 11=8+9+10, 14=12+13, 15=11, 26=23+24+25).
+# Lines whose printed instruction is conditional/floored/capped are OMITTED per
+# the conservative house style: line 8 (rate multiply, "if less than zero leave
+# blank"), line 16 ("if line 14 >= line 15 … if smaller skip to line 23"), line
+# 17 ("cannot be greater than line 16"), line 18 (depends on the conditional
+# line 16), line 19d ("cannot be more than line 18"), line 21 ("if less than
+# zero, see line 23 instructions"), and line 23 (greater-than test).
+#
+# Cross_form. Line 1's printed label is "your federal adjusted gross income from
+# your federal income tax return, Form 1040 or Form 1040-SR, line 11", so the
+# single cross_form equality 1 == f1040.11 (Form 1040, 2023, line 11 = AGI) is
+# declared.
+form: Form IT-40
+jurisdiction: states/in
+tax_year: 2023
+source_url: https://forms.in.gov/Download.aspx?id=15790
+pdf_sha256: 2e584913e7edfbfe3e390d1bc8f2517d0a74a865e0bc01068831d2c6973c67b9
+acroform_root: ''
+fields:
+  # ===================================================== header (page 1)
+  # ---- Fiscal year: from MM/DD/YYYY (Fiscal1/2/3) to MM/DD/YYYY (Fiscal4/5/6)
+  - line: fiscal_year_from_month
+    field: Fiscal1
+    type: text
+    maxlen: 2
+  - line: fiscal_year_from_day
+    field: Fiscal 2
+    type: text
+    maxlen: 2
+  - line: fiscal_year_from_year
+    field: Fiscal3
+    type: text
+    maxlen: 4
+  - line: fiscal_year_to_month
+    field: Fiscal4
+    type: text
+    maxlen: 2
+  - line: fiscal_year_to_day
+    field: Fiscal5
+    type: text
+    maxlen: 2
+  - line: fiscal_year_to_year
+    field: Fiscal6
+    type: text
+    maxlen: 4
+  - line: amending::yes          # "Place X in box if amending"
+    field: Check Box Amend
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Your / spouse SSN (3-2-4 comb boxes)
+  - line: tp_ssn_area
+    field: Your Social Security Number1
+    type: text
+    maxlen: 3
+  - line: tp_ssn_group
+    field: Your Social Security Number2
+    type: text
+    maxlen: 2
+  - line: tp_ssn_serial
+    field: Your Social Security Number3
+    type: text
+    maxlen: 4
+  - line: spouse_ssn_area
+    field: Spouse Social Security Number1
+    type: text
+    maxlen: 3
+  - line: spouse_ssn_group
+    field: Spouse Social Security Number2
+    type: text
+    maxlen: 2
+  - line: spouse_ssn_serial
+    field: Spouse Social Security Number3
+    type: text
+    maxlen: 4
+  - line: tp_itin_applying::yes      # your-SSN "Place X in box if applying for ITIN"
+    field: Check Box1
+    type: checkbox
+    on_state: /Yes
+  - line: spouse_itin_applying::yes  # spouse-SSN "Place X in box if applying for ITIN"
+    field: Check Box2
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Name
+  - line: tp_first_name
+    field: Your First Name
+    type: text
+  - line: tp_first_initial
+    field: Your First Initial
+    type: text
+    maxlen: 1
+  - line: tp_last_name
+    field: Your Last Name
+    type: text
+  - line: tp_suffix
+    field: Your Suffix
+    type: text
+  - line: spouse_first_name
+    field: Spouse First Name
+    type: text
+  - line: spouse_first_initial
+    field: Spouse First Initial
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: Spouse Last Name
+    type: text
+  - line: spouse_suffix
+    field: Spouse Suffix
+    type: text
+
+  # ---- Address
+  - line: present_address
+    field: Address
+    type: text
+  - line: married_filing_separately::yes  # "Place X in box if you are married filing separately"
+    field: Check Box3
+    type: checkbox
+    on_state: /Yes
+  - line: city
+    field: City
+    type: text
+  - line: state
+    field: State
+    type: text
+    maxlen: 2
+  - line: zip_or_postal_code
+    field: Zip Code
+    type: text
+    maxlen: 10
+  - line: foreign_country_code
+    field: Foreign Country
+    type: text
+    maxlen: 2
+
+  # ---- 2-digit county codes (where lived/worked Jan. 1, 2023)
+  - line: county_where_you_lived
+    field: County Where You Lived
+    type: text
+    maxlen: 2
+  - line: county_where_you_worked
+    field: County Where You Worked
+    type: text
+    maxlen: 2
+  - line: county_where_spouse_lived
+    field: County Where Spouse Lived
+    type: text
+    maxlen: 2
+  - line: county_where_spouse_worked
+    field: County Where Spouse Worked
+    type: text
+    maxlen: 2
+
+  # ===================================================== income / tax (page 1)
+  - line: "1"        # Federal AGI — federal Form 1040 or 1040-SR, line 11
+    field: "1"
+    type: money
+  - line: "2"        # Indiana Add-Backs — Schedule 1, line 7
+    field: "2"
+    type: money
+  - line: "3"        # Add line 1 and 2
+    field: "3"
+    type: money
+  - line: "4"        # Indiana Deductions — Schedule 2, line 12
+    field: "4"
+    type: money
+  - line: "5"        # Subtract line 4 from line 3
+    field: "5"
+    type: money
+  - line: "6"        # Indiana Exemptions — Schedule 3, line 7
+    field: "6"
+    type: money
+  - line: "7"        # Indiana Adjusted Gross Income — subtract line 6 from line 5
+    field: "7"
+    type: money
+  - line: "8"        # State adjusted gross income tax — line 7 x 3.15% (.0315)
+    field: "8"
+    type: money
+  - line: "9"        # County tax — Schedule CT-40
+    field: "9"
+    type: money
+  - line: "10"       # Other taxes — Schedule 4, line 4
+    field: "10"
+    type: money
+  - line: "11"       # Indiana Taxes — add lines 8, 9 and 10
+    field: "11"
+    type: money
+
+  # ===================================================== credits / tax (page 2)
+  - line: "12"       # Credits — Schedule 5, line 13
+    field: "12"
+    type: money
+  - line: "13"       # Offset credits — Schedule 6, line 8
+    field: "13"
+    type: money
+  - line: "14"       # Indiana Credits — add lines 12 and 13
+    field: "14"
+    type: money
+  - line: "15"       # Indiana Taxes — amount from line 11
+    field: "15"
+    type: money
+  - line: "16"       # If line 14 >= line 15, subtract line 15 from line 14 (else skip to 23)
+    field: "16"
+    type: money
+  - line: "17"       # Donations — Schedule IN-DONATE; cannot be greater than line 16
+    field: "17"
+    type: money
+  - line: "18"       # Overpayment — subtract line 17 from line 16
+    field: "18"
+    type: money
+
+  # ---- line 19 — amount from line 18 applied to 2024 estimated tax account
+  - line: 19a_your_county_code
+    field: Your County Code
+    type: text
+    maxlen: 2
+  - line: 19a        # your county tax to be applied
+    field: 19a
+    type: money
+  - line: 19b_spouse_county_code
+    field: Spouse County Code
+    type: text
+    maxlen: 2
+  - line: 19b        # spouse county tax to be applied
+    field: 19b
+    type: money
+  - line: 19c        # Indiana adjusted gross income tax to be applied
+    field: 19c
+    type: money
+  - line: 19d        # Total to be applied (a + b + c; cannot be more than line 18)
+    field: 19d
+    type: money
+
+  # ---- line 20 — penalty for underpayment of estimated tax (IT-2210 / IT-2210A)
+  - line: "20"
+    field: "20"
+    type: money
+  - line: 20a        # Enter Code A if annualizing; Code F if Farmer or Fisherman
+    field: 20a
+    type: text
+    maxlen: 1
+
+  - line: "21"       # Refund — line 18 minus lines 19d and 20
+    field: "21"
+    type: money
+
+  # ---- line 22 — Direct Deposit
+  - line: 22a_routing_number
+    field: Routing Number
+    type: text
+    maxlen: 9
+  - line: 22b_account_number
+    field: Account Number
+    type: text
+    maxlen: 17
+  - line: 22c_account_type::checking
+    field: Check Box4
+    type: checkbox
+    on_state: /Yes
+  - line: 22c_account_type::savings
+    field: Check Box5
+    type: checkbox
+    on_state: /Yes
+  - line: 22c_account_type::hoosier_works_mc
+    field: Check Box6
+    type: checkbox
+    on_state: /Yes
+  - line: 22d_account_outside_us::yes  # refund will go to an account outside the United States
+    field: Check Box7
+    type: checkbox
+    on_state: /Yes
+
+  # ---- amount due (page 2)
+  - line: "23"       # If line 15 > line 14, subtract line 14 from line 15; add any amount on line 20
+    field: "23"
+    type: money
+  - line: "24"       # Penalty if filed after due date
+    field: "24"
+    type: money
+  - line: "25"       # Interest if filed after due date
+    field: "25"
+    type: money
+  - line: "26"       # Amount You Owe — add lines 23, 24 and 25
+    field: "26"
+    type: money
+
+  # ---- Sign and date
+  - line: your_signature_date
+    field: Date1
+    type: text
+  - line: spouse_signature_date
+    field: Date2
+    type: text
+relations:
+  - "3 == 1 + 2"            # Line 3 "Add line 1 and 2."
+  - "5 == 3 - 4"            # Line 5 "Subtract line 4 from line 3."
+  - "7 == 5 - 6"            # Line 7 "Subtract line 6 from line 5. … Indiana Adjusted Gross Income."
+  - "11 == 8 + 9 + 10"     # Line 11 "Add lines 8, 9 and 10. … Indiana Taxes."
+  - "14 == 12 + 13"        # Line 14 "Add lines 12 and 13. … Indiana Credits."
+  - "15 == 11"             # Line 15 "Enter amount from line 11."
+  - "26 == 23 + 24 + 25"   # Line 26 "Amount Due: Add lines 23, 24 and 25."
+cross_form:
+  - "1 == f1040.11"        # Line 1 "your federal adjusted gross income … Form 1040 or Form 1040-SR, line 11"
+identity_fields:
+  - tp_ssn_area
+  - tp_first_name
+  - tp_last_name
