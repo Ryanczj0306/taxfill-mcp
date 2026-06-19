@@ -1,0 +1,465 @@
+# Form IL-1040, 2023 — Illinois Individual Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) -> vision-map workflow (both
+# pages + zoomed crops read to place each field on its printed line / column)
+# -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw,
+# human-readable sentinel ids the form ships with, e.g. "Federally adjusted
+# income", "Filing status", "YourSignatureDate"). IL-1040 is a single-column
+# resident return, so each numbered income/tax line is one widget and the line
+# key is the printed step line number ("Federally adjusted income" widget ->
+# line "1", etc.). Header, exemption sub-boxes, refund/account, signature and
+# preparer widgets carry descriptive keys.
+#
+# Coverage. The blank PDF has 99 distinct AcroForm field objects (pypdf
+# get_fields). 95 fillable widgets are mapped here. Three widgets are
+# intentionally OMITTED — none accept taxpayer data:
+#   * "Help"  — a read-only (/Tx, Ff bit 1 ReadOnly) tooltip banner at the top
+#     of page 1; it cannot be filled.
+#   * "Reset" and "Print" — push-buttons (/Btn, Ff bit 17 Pushbutton) at the
+#     bottom of page 2; their "_States_" (/BBox, /Filter, /FormType, …) are the
+#     button's appearance-stream dict keys, not selectable values. Form actions,
+#     not data fields.
+#   * The bare "/Btn FT=None" parent "Check if someone can claim you as a
+#     dependent" is a container with no fillable AP of its own; its two real
+#     widgets ("… - You" /You and "… - Spouse" /Spouse) are mapped below. It is
+#     not a separate mappable field and is not counted.
+# Radio / checkbox questions that are ONE /Btn field with several mutually
+# exclusive options (Filing status; Resident; Refund Method; Checking/Savings
+# Account) are each mapped as one checkbox line per option on the shared field,
+# carrying the exact on_state read from the widget AP /N dictionaries
+# (verified against the blank: e.g. "/Married filing jointly", and the long
+# "/direct deposit - Complete the information below if you check this box.").
+# Single yes/no checkboxes (dependent You/Spouse, 65-or-older You/Spouse,
+# legally-blind You/Spouse, Farming/Nursing home/Annualized/Not-required-to-
+# file, IDOR share, self-employed, Department-may-discuss) are one /Btn each.
+#
+# Money vs text. The dollar boxes the skeleton tagged `text maxlen:10` (and the
+# Step-4 exemption sub-amounts the skeleton tagged maxlen 4/5) are mapped as
+# `money` — every one prints a ".00" cents suffix on the form. Genuine text
+# widgets stay text: names, address, city/state/ZIP, county, email, the
+# 2-digit comb fiscal-year month/year boxes, SSN boxes (maxlen 11), the 4-digit
+# birth-year boxes, the dependent-count box, bank routing (9) / account (17)
+# comb boxes, signature dates, phone area-code (3) / number boxes, PTIN (12),
+# firm FEIN (10), and the preparer / third-party name fields.
+#
+# Relations. Only unconditional equalities with every operand mapped are
+# declared (4=1+2+3, 8=5+6+7, 9=4-8, 19=14-18, 23=19+20+21+22, 24=23,
+# 30=25..29, 35=33+34). Lines whose printed instruction is conditional or
+# floored/capped — 11 (resident vs Schedule NR source), 14 ("cannot be less
+# than zero"), 18 ("cannot exceed … Line 14"), 31/32 (greater-than tests),
+# 36/37/39/40 (refund/owe branches) — are OMITTED per the conservative house
+# style.
+#
+# Cross_form. Line 1's printed label is "Federal adjusted gross income from
+# your federal Form 1040 or 1040-SR, Line 11", so the single cross_form
+# equality 1 == f1040.11 (Form 1040, 2023, line 11 = AGI) is declared.
+form: Form IL-1040
+jurisdiction: states/il
+tax_year: 2023
+source_url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040.pdf
+pdf_sha256: 2a679ac2be080745a445d79d0073fed924d893ea1ea1cd62be2faa0f7c397cd6
+acroform_root: ''
+fields:
+  # ===================================================== header (page 1, Step 1)
+  # OMITTED: "Help" (read-only tooltip banner — not fillable).
+  - line: fiscal_year_ending_month
+    field: Fiscal year ending month
+    type: text
+    maxlen: 2
+  - line: fiscal_year_ending_year
+    field: Fiscal year ending year
+    type: text
+    maxlen: 2
+  - line: tp_first_name_and_initial
+    field: Your first name and initial
+    type: text
+  - line: tp_last_name
+    field: Your last name
+    type: text
+  - line: tp_year_of_birth
+    field: Year of birth
+    type: text
+    maxlen: 4
+  - line: tp_ssn
+    field: Your social security number
+    type: text
+    maxlen: 11
+  - line: spouse_first_name_and_initial
+    field: Your spouse's first name and initial
+    type: text
+  - line: spouse_last_name
+    field: Your spouse's last name
+    type: text
+  - line: spouse_year_of_birth
+    field: Spouse year of birth
+    type: text
+    maxlen: 4
+  - line: spouse_ssn
+    field: Your spouse's social security number
+    type: text
+    maxlen: 11
+  - line: mailing_address
+    field: Mailing address (See instructions if foreign address)
+    type: text
+  - line: apartment_number
+    field: Apartment number
+    type: text
+  - line: city
+    field: City
+    type: text
+  - line: state
+    field: State
+    type: text
+  - line: zip_or_postal_code
+    field: ZIP or Postal Code
+    type: text
+    maxlen: 10
+  - line: foreign_nation
+    field: Foreign Nation, if not the United States
+    type: text
+  - line: county_illinois_only
+    field: County, (Illinois only)
+    type: text
+  - line: email_address
+    field: Email Address
+    type: text
+
+  # ---- A — Filing status (ONE /Btn field; mutually exclusive options)
+  - line: A_filing_status::single
+    field: Filing status
+    type: checkbox
+    on_state: /Single
+  - line: A_filing_status::mfj
+    field: Filing status
+    type: checkbox
+    on_state: /Married filing jointly
+  - line: A_filing_status::mfs
+    field: Filing status
+    type: checkbox
+    on_state: /Married filing separately
+  - line: A_filing_status::widowed
+    field: Filing status
+    type: checkbox
+    on_state: /Widowed
+  - line: A_filing_status::hoh
+    field: Filing status
+    type: checkbox
+    on_state: /Head of Household
+
+  # ---- C — Check if someone can claim you as a dependent (You / Spouse boxes)
+  - line: C_claimed_as_dependent::you
+    field: Check if someone can claim you as a dependent. See instructions - You
+    type: checkbox
+    on_state: /You
+  - line: C_claimed_as_dependent::spouse
+    field: Check if someone can claim you as a dependent. See instructions - Spouse
+    type: checkbox
+    on_state: /Spouse
+
+  # ---- D — Nonresident / part-year resident (ONE /Btn field)
+  - line: D_residency::nonresident
+    field: Resident
+    type: checkbox
+    on_state: /Nonresident
+  - line: D_residency::part_year
+    field: Resident
+    type: checkbox
+    on_state: /Part-year resident
+
+  # ===================================================== Step 2 — Income (1-4)
+  - line: "1"        # Federal adjusted gross income (federal 1040/1040-SR Line 11)
+    field: Federally adjusted income
+    type: money
+  - line: "2"        # Federally tax-exempt interest and dividend income (1040 Line 2a)
+    field: Federally tax-exempt interest
+    type: money
+  - line: "3"        # Other additions (Schedule M)
+    field: Other additions
+    type: money
+  - line: "4"        # Total income — add Lines 1 through 3
+    field: Total income
+    type: money
+
+  # ===================================================== Step 3 — Base income (5-9)
+  - line: "5"        # Social security benefits / certain retirement plan income
+    field: Social security benefits
+    type: money
+  - line: "6"        # Illinois income tax overpayment included in federal Form 1040
+    field: Illinois income tax overpayment
+    type: money
+  - line: "7"        # Other subtractions (Schedule M)
+    field: Other subtractions
+    type: money
+  - line: "8"        # Total of your subtractions — add Lines 5, 6, and 7
+    field: Total of your subtractions
+    type: money
+  - line: "9"        # Illinois base income — subtract Line 8 from Line 4
+    field: Illinois base income
+    type: money
+
+  # ===================================================== Step 4 — Exemptions (line 10 a-d)
+  - line: 10a        # Exemption amount (basic allowance)
+    field: Exemption amount
+    type: money
+  - line: 10b_65_or_older::you
+    field: 65 or older - you
+    type: checkbox
+    on_state: /You
+  - line: 10b_65_or_older::spouse
+    field: 65 or older - spouse
+    type: checkbox
+    on_state: /Spouse
+  - line: 10b        # 65 or older — exemption amount (# of checkboxes x $1,000)
+    field: 65 or older exemption amount
+    type: money
+  - line: 10c_legally_blind::you
+    field: Legally blind - you
+    type: checkbox
+    on_state: /You
+  - line: 10c_legally_blind::spouse
+    field: Legally blind - spouse
+    type: checkbox
+    on_state: /Spouse
+  - line: 10c        # Legally blind — exemption amount (# of checkboxes x $1,000)
+    field: Legally blind exemption amount
+    type: money
+  - line: 10d        # If claiming dependents — amount from Schedule IL-E/EIC, Step 2, Line 1
+    field: Claiming dependents
+    type: money
+  - line: "10"       # Exemption allowance — add Lines 10a through 10d
+    field: Exemption allowance
+    type: money
+
+  # ===================================================== Step 5 — Net income and tax (11-14)
+  - line: "11"       # Residents: net income (Line 9 - Line 10); nonres/part-year: from Schedule NR
+    field: Illinois net income from Schedule NR
+    type: money
+  - line: "12"       # Residents: multiply Line 11 by 4.95% (.0495)
+    field: Multiply residency rate
+    type: money
+  - line: "13"       # Recapture of investment tax credits (Schedule 4255)
+    field: Recapture of investment tax credits
+    type: money
+  - line: "14"       # Income tax — add Lines 12 and 13
+    field: Income tax
+    type: money
+
+  # ============================================= Step 6 — Tax after nonrefundable credits (15-19)
+  - line: "15"       # Income tax paid to another state while an Illinois resident (Schedule CR)
+    field: Income tax paid to another state
+    type: money
+  - line: "16"       # Property tax / K-12 education / volunteer emergency worker credit (Schedule ICR)
+    field: Schedule ICR
+    type: money
+  - line: "17"       # Credit amount from Schedule 1299-C
+    field: Credit amount from Schedule 1299-C
+    type: money
+  - line: "18"       # Total of your credits — add Lines 15, 16, and 17
+    field: Total of your credits
+    type: money
+  - line: "19"       # Tax after nonrefundable credits — subtract Line 18 from Line 14
+    field: Tax after nonrefundable credits
+    type: money
+
+  # ===================================================== Step 7 — Other taxes (20-23)
+  - line: "20"       # Household employment tax
+    field: Household employment tax
+    type: money
+  - line: "21"       # Use tax on internet, mail order, or other out-of-state purchases
+    field: Use tax
+    type: money
+  - line: "22"       # Compassionate Use of Medical Cannabis Program Act / gaming-license surcharges
+    field: Compassionate Use of Medical Cannabis Program Act
+    type: money
+  - line: "23"       # Total Tax — add Lines 19, 20, 21, and 22
+    field: Total Tax
+    type: money
+
+  # ===================================================== Page 2
+  - line: "24"       # Total tax from Page 1, Line 23
+    field: Total tax from Page 1
+    type: money
+
+  # ---- Step 8 — Payments and refundable credit (25-30)
+  - line: "25"       # Illinois Income Tax withheld (Schedule IL-WIT)
+    field: Illinois Income Tax withheld
+    type: money
+  - line: "26"       # Estimated payments (Forms IL-1040-ES and IL-505-I)
+    field: Estimated payments
+    type: money
+  - line: "27"       # Pass-through withholding (Schedule K-1-P or K-1-T)
+    field: Pass-through withholding
+    type: money
+  - line: "28"       # Pass-through entity tax credit (Schedule K-1-P or K-1-T)
+    field: Pass-through entity tax credit
+    type: money
+  - line: "29"       # Earned Income Credit from Schedule IL-E/EIC, Step 4, Line 9
+    field: Earned Income Credit from Schedule IL-E/EIC
+    type: money
+  - line: "30"       # Total payments and refundable credit — add Lines 25 through 29
+    field: Total payments and refundable credit
+    type: money
+
+  # ---- Step 9 — Total (31-32)
+  - line: "31"       # If Line 30 is greater than Line 24, subtract Line 24 from Line 30 (overpayment)
+    field: If Line 30 is greater
+    type: money
+  - line: "32"       # If Line 24 is greater than Line 30, subtract Line 30 from Line 24 (tax due)
+    field: If Line 24 is greater
+    type: money
+
+  # ---- Step 10 — Underpayment of estimated tax penalty and donations (33-35)
+  - line: "33"       # Late-payment penalty for underpayment of estimated tax
+    field: Late-payment penalty for underpayment
+    type: money
+  - line: 33a_farming
+    field: Farming
+    type: checkbox
+    on_state: /Farming
+  - line: 33b_nursing_home   # you or spouse 65+ or permanently living in a nursing home
+    field: Nursing home
+    type: checkbox
+    on_state: /65
+  - line: 33c_annualized     # income not received evenly — annualized on Form IL-2210
+    field: Annualized
+    type: checkbox
+    on_state: /Annualized
+  - line: 33d_not_required_to_file   # not required to file an IL return in the previous tax year
+    field: Not required to file last year
+    type: checkbox
+    on_state: /Not requred to file last year
+  - line: "34"       # Voluntary charitable donations (Schedule G)
+    field: Voluntary charitable donations
+    type: money
+  - line: "35"       # Total penalty and donations — add Lines 33 and 34
+    field: Total penalty and donations
+    type: money
+
+  # ---- Step 11 — Refund or amount you owe (36-40)
+  - line: "36"       # Overpayment — if Line 31 > Line 35, subtract Line 35 from Line 31
+    field: Overpayment amount
+    type: money
+  - line: "37"       # Amount from Line 36 you want refunded to you
+    field: Refunded to you
+    type: money
+  # ---- line 38 — refund method + direct-deposit account information
+  - line: 38a_refund_method::direct_deposit
+    field: Refund Method
+    type: checkbox
+    on_state: /direct deposit - Complete the information below if you check this box.
+  - line: 38b_refund_method::paper_check
+    field: Refund Method
+    type: checkbox
+    on_state: /Paper Check
+  - line: 38_routing_number
+    field: Bank routing number
+    type: text
+    maxlen: 9
+  - line: 38_account_type::checking
+    field: Checking/Savings Account
+    type: checkbox
+    on_state: /Checking
+  - line: 38_account_type::savings
+    field: Checking/Savings Account
+    type: checkbox
+    on_state: /Savings
+  - line: 38_account_number
+    field: Bank account number
+    type: text
+    maxlen: 17
+  - line: "39"       # Amount to be credited forward — subtract Line 37 from Line 36
+    field: Amount to be credited forwarded
+    type: money
+  - line: "40"       # Amount you owe
+    field: Amount you owe
+    type: money
+
+  # ---- Step 12 — Health insurance checkbox and signature
+  - line: 41_idor_share_income   # IDOR may share income info with IL state agencies (health-insurance eligibility)
+    field: IDORshareincome information
+    type: checkbox
+    on_state: /IDOR may share your income information
+
+  # ---- Sign here
+  - line: your_signature_date
+    field: YourSignatureDate
+    type: text
+  - line: spouse_signature_date
+    field: SpouseSignatureDate
+    type: text
+  - line: daytime_phone_area_code
+    field: DaytimeAreaCode
+    type: text
+    maxlen: 3
+  - line: daytime_phone_number
+    field: DaytimePhoneNumber
+    type: text
+
+  # ---- Paid preparer use only
+  - line: preparer_name
+    field: PreparerName
+    type: text
+  - line: preparer_signature_date
+    field: PreparerSignatureDate
+    type: text
+  - line: preparer_self_employed
+    field: CheckBoxSelfEmployed
+    type: checkbox
+    on_state: /Yes
+  - line: preparer_ptin
+    field: PreparerPTIN
+    type: text
+    maxlen: 12
+  - line: preparer_firm_name
+    field: PreparerFirmName
+    type: text
+  - line: preparer_firm_fein
+    field: PreparerFirmFEIN
+    type: text
+    maxlen: 10
+  - line: preparer_firm_address
+    field: PreparerFirmAddress
+    type: text
+  - line: preparer_firm_phone_area_code
+    field: PreparerFirmAreaCode
+    type: text
+    maxlen: 3
+  - line: preparer_firm_phone_number
+    field: PreparerFirmPhoneNumber
+    type: text
+
+  # ---- Third party designee
+  - line: third_party_designee_name
+    field: ThirdPartyName
+    type: text
+  - line: third_party_designee_phone_area_code
+    field: ThirdPartyAreaCode
+    type: text
+    maxlen: 3
+  - line: third_party_designee_phone_number
+    field: ThirdPartyPhoneNumber
+    type: text
+  - line: third_party_designee_authorize   # Department may discuss this return with the designee
+    field: Department may discuss
+    type: checkbox
+    on_state: /Yes
+
+  # OMITTED push-buttons (form actions, not data fields): "Reset", "Print".
+relations:
+  - "4 == 1 + 2 + 3"              # Line 4 "Total income. Add Lines 1 through 3."
+  - "8 == 5 + 6 + 7"              # Line 8 "Add Lines 5, 6, and 7. … total of your subtractions."
+  - "9 == 4 - 8"                  # Line 9 "Illinois base income. Subtract Line 8 from Line 4."
+  - "19 == 14 - 18"               # Line 19 "Tax after nonrefundable credits. Subtract Line 18 from Line 14."
+  - "23 == 19 + 20 + 21 + 22"     # Line 23 "Total Tax. Add Lines 19, 20, 21, and 22."
+  - "24 == 23"                    # Line 24 "Total tax from Page 1, Line 23."
+  - "30 == 25 + 26 + 27 + 28 + 29"  # Line 30 "Total payments and refundable credit. Add Lines 25 through 29."
+  - "35 == 33 + 34"               # Line 35 "Total penalty and donations. Add Lines 33 and 34."
+cross_form:
+  - "1 == f1040.11"               # Line 1 "Federal adjusted gross income … federal Form 1040 or 1040-SR, Line 11"
+identity_fields:
+  - tp_ssn
+  - tp_first_name_and_initial
+  - tp_last_name
