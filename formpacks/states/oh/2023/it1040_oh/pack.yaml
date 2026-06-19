@@ -1,0 +1,1699 @@
+# Form IT 1040, 2023 — Ohio Individual Income Tax Return (the full 1040 bundle:
+# IT 1040 + Schedule of Adjustments + Schedule IT BUS + Schedule of Credits +
+# Schedule of Dependents + Schedule of Withholding + the Ohio Universal Payment
+# Coupon (OUPC)).
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep — every
+# widget rendered with its own field name) -> vision-map of all 13 sweep PNGs
+# (each schedule page read, zoomed where dense) -> AcroForm field-flag audit
+# (pypdf get_fields()) to separate genuinely fillable widgets from read-only /
+# pushbutton ones -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw opaque
+# sentinel ids the form ships with, e.g. "TP_FN", "L1", "SchedA_L11",
+# "SchedW_B_L1_WAGE"). Ohio's IT 1040 is a single-column return, so income/credit
+# lines carry no _A/_B/_C column suffix. Because the SAME line number repeats
+# across the bundled schedules (IT 1040 line 1, Schedule of Adjustments line 1,
+# Schedule of Credits line 1, IT BUS line 1, ...), main-form line keys are bare
+# numbers ("1".."27") while each schedule's lines are prefixed (schedA_, schedITbus_,
+# schedC_, schedJ_, schedW_) to keep every key unique.
+#
+# Coverage. The skeleton lists 536 widget entries (519 distinct field names). Of
+# those, the genuinely TAXPAYER-FILLABLE widgets are mapped here. The following
+# are intentionally NOT mapped, each a non-data or auto-computed widget confirmed
+# read-only / pushbutton via the AcroForm field flags (/Ff):
+#   * Form-action PUSHBUTTONS (/Ff pushbutton bit): "Print Form", "Reset Form",
+#     "Print Blank Form", "RESET" — JavaScript buttons, not data.
+#   * The e-file "include schedule / include a copy" UPLOAD pushbuttons
+#     UF_L1A..UF_L4A, ..B, ..C, ..D, ..E, ..H (and the F/G variants the skeleton
+#     omits): read-only pushbuttons (/Ff = 65537), no on/off appearance states.
+#   * TP_SSN1 (and its page-repeat copies TP_SSN1#2..#11): a READ-ONLY mirror of
+#     the primary SSN auto-propagated to the "Primary taxpayer's SSN" header on
+#     schedule pages 3-12. The user enters the SSN once in TP_SSN (page 1, mapped
+#     as tp_ssn); this mirror is computed, not entered.
+#   * IT 1040 lines 17 and 19 widgets (L17, L19): the AcroForm marks BOTH
+#     read-only (/Ff bit 1). They are the "Amended return only" lines whose values
+#     the form locks/derives; not free-entry on this PDF, so omitted.
+#   * The ENTIRE Ohio Universal Payment Coupon (page 13) EXCEPT upc_payment: every
+#     other coupon widget — UPC_FName/LName/address1/CityStateZip/1st3LName/
+#     Identifier/SDN/SDHide/TaxYear/IDType/TaxType/Reason/Payable/MailTo1/MailTo2/
+#     ScanDate, 40P_MI, the *Display fields, VendorID, today, and the scan-line /
+#     check-digit cells (checkdigit1/2, checkdigitSD, Scan4, ScanSSN1..9,
+#     sdnum1..3, Scan_Reason1/2, sd1..4, fc1..3, ScanDate1..4, ScanPH1..5,
+#     ScanID1..3) — is a READ-ONLY mirror auto-populated by the coupon's JavaScript
+#     from the return above it. Only UPC_Payment (the amount-of-payment box) is a
+#     free-entry field and is mapped (upc_payment).
+# There are NO pre-printed statutory dollar constants in the fillable set (IT BUS
+# line 12's $250,000/$125,000 prompt is a free-entry box the filer types, mapped
+# as schedITbus_12).
+#
+# Money vs text. Dollar boxes are typed `money`; the narrow "-" sign boxes that
+# precede some negative-capable lines (L1_NEG, L3_NEG, L20_NEG and the IT BUS
+# _NEG boxes) stay `text maxlen:1`. Genuine text widgets — names, addresses,
+# SSN/EIN/TIN boxes, dates, school-district / county codes, two-character state
+# codes, ownership-percentage boxes, distribution codes, the P/S source flag,
+# count boxes (number of exemptions), and the joint-filing-credit percentage box
+# — stay `text` with the skeleton's maxlen.
+#   NOTE (audit correction): the 7 statutory-cap credit/educator boxes typed as
+#   small `text` (schedC_2/4/8/9/12/14, schedA_36; PDF /MaxLen 2-3) are the
+#   TINIEST-cap lines (e.g. $50 senior-citizen credit, $200 retirement credit).
+#   They are NOT, however, the ONLY narrow boxes: several `money` lines also carry
+#   a small PDF /MaxLen (L4=5; donations L26A-F=4; schedC_3=6, schedC_5/6/7=4,
+#   schedC_13/15/16=4; schedA_4/12/34/35=6, schedA_37=5, schedA_38=4, schedA_43=5;
+#   schedITbus_12/13=6). Those stay `money` (they are whole-dollar amount lines
+#   that need IRS rounding and feed the sum relations); their realistic statutory
+#   values fit the cap, and any overlong value is caught post-fill by verify's
+#   P-001 clipping_scan (it reads the PDF /MaxLen directly). The split is therefore
+#   semantic (tiny fixed-credit boxes vs amount boxes), NOT a single "/MaxLen < N"
+#   threshold. Audited 2026-06-19: every taxpayer-fillable widget on all 13 pages
+#   is mapped to the correct line/column/type; 0 fillable widgets left unmapped.
+#
+# Relations / cross_form. IT 1040 line 1 is explicitly "Federal adjusted gross
+# income (federal 1040 or 1040-SR, line 11)", so cross_form 1 == f1040.11 is
+# declared. Only unconditional sums whose operands are ALL mapped money lines and
+# carry no sign-box ambiguity are declared (line 13 total tax liability; the
+# Schedule of Adjustments total-additions/total-deductions; the Schedule of
+# Credits subtotals). Sign-boxed lines (1, 3, 20, IT BUS 10) and "if negative,
+# enter zero" / "if line X is more than..." conditional lines are OMITTED per the
+# conservative house style.
+form: Form IT 1040
+jurisdiction: states/oh
+tax_year: 2023
+source_url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/1040-bundle-original-fi.pdf
+pdf_sha256: c8d35ebb84d5bf48c897dc64a39a741343fca2160ccf3eb2085de15ed442b8b5
+acroform_root: ''
+fields:
+  # =========================================================== IT 1040 page 1
+  # ---- Top checkboxes
+  - line: amended_return            # "AMENDED RETURN - Check here and include Ohio IT RE."
+    field: CHK_AMD
+    type: checkbox
+    on_state: /Yes
+  - line: nol_carryback             # "NOL CARRYBACK - Check here and include Schedule IT NOL."
+    field: CHK_NOL
+    type: checkbox
+    on_state: /1
+  # ---- Taxpayer / spouse identity
+  - line: tp_ssn                    # Primary taxpayer's SSN (required)
+    field: TP_SSN
+    type: text
+    maxlen: 9
+  - line: tp_deceased               # primary taxpayer "If deceased"
+    field: CHK_PRIM_DEC
+    type: checkbox
+    on_state: /Yes
+  - line: spouse_ssn                # Spouse's SSN (if filing jointly)
+    field: SP_SSN
+    type: text
+    maxlen: 9
+  - line: spouse_deceased           # spouse "If deceased"
+    field: CHK_SP_DEC
+    type: checkbox
+    on_state: /Yes
+  - line: school_district_number    # School district #
+    field: SD_NUM
+    type: text
+    maxlen: 4
+  - line: tp_first_name
+    field: TP_FN
+    type: text
+    maxlen: 15
+  - line: tp_mi
+    field: TP_MI
+    type: text
+    maxlen: 1
+  - line: tp_last_name
+    field: TP_LN
+    type: text
+    maxlen: 22
+  - line: spouse_first_name
+    field: SP_FN
+    type: text
+    maxlen: 15
+  - line: spouse_mi
+    field: SP_MI
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: SP_LN
+    type: text
+    maxlen: 22
+  - line: address_line_1            # Address line 1 (number and street) or P.O. Box
+    field: ADDRESS1
+    type: text
+    maxlen: 35
+  - line: address_line_2            # Address line 2 (apartment number, suite number, etc.)
+    field: ADDRESS2
+    type: text
+    maxlen: 35
+  - line: city
+    field: CITY
+    type: text
+    maxlen: 20
+  - line: state
+    field: STATE
+    type: text
+    maxlen: 2
+  - line: zip_code
+    field: ZIP
+    type: text
+    maxlen: 5
+  - line: ohio_county              # Ohio county (first four letters)
+    field: COUNTY
+    type: text
+    maxlen: 4
+  - line: foreign_country          # Foreign country (if the mailing address is outside the U.S.)
+    field: FRGN_COUNTRY
+    type: text
+    maxlen: 20
+  - line: foreign_postal_code
+    field: FRGN_ZIP
+    type: text
+    maxlen: 7
+  # ---- Residency Status — primary (check one) + indicate state
+  - line: residency_primary::resident
+    field: CHK_PRIM_RES
+    type: checkbox
+    on_state: /1
+  - line: residency_primary::part_year
+    field: CHK_PRIM_RES
+    type: checkbox
+    on_state: /2
+  - line: residency_primary::nonresident
+    field: CHK_PRIM_RES
+    type: checkbox
+    on_state: /3
+  - line: residency_primary_indicate_state   # *Indicate state (primary nonresident/part-year)
+    field: PRIM_NON_RES_STATE
+    type: text
+    maxlen: 2
+  # ---- Residency Status — spouse (check one if filing jointly) + indicate state
+  - line: residency_spouse::resident
+    field: CHK_SP_RES
+    type: checkbox
+    on_state: /1
+  - line: residency_spouse::part_year
+    field: CHK_SP_RES
+    type: checkbox
+    on_state: /2
+  - line: residency_spouse::nonresident
+    field: CHK_SP_RES
+    type: checkbox
+    on_state: /3
+  - line: residency_spouse_indicate_state    # *Indicate state (spouse)
+    field: SP_NON_RES_STATE
+    type: text
+    maxlen: 2
+  # ---- Filing Status (check one, as reported on federal return)
+  - line: filing_status::single_hoh_qss   # Single, head of household or qualifying surviving spouse
+    field: CHK_FILING_STATUS
+    type: checkbox
+    on_state: /1
+  - line: filing_status::mfj              # Married filing jointly
+    field: CHK_FILING_STATUS
+    type: checkbox
+    on_state: /2
+  - line: filing_status::mfs              # Married filing separately
+    field: CHK_FILING_STATUS
+    type: checkbox
+    on_state: /3
+  - line: filing_status_mfs_spouse_ssn    # Spouse's SSN (married filing separately)
+    field: SP_SSN_SEP
+    type: text
+    maxlen: 9
+  # ---- Ohio Nonresident Statement (irrebuttable-presumption criteria)
+  - line: nonresident_statement_primary   # Primary meets the five criteria for irrebuttable presumption as nonresident
+    field: CHK_PRIM_NON_RES_STMT
+    type: checkbox
+    on_state: /1
+  - line: nonresident_statement_spouse    # Spouse meets the five criteria for irrebuttable presumption as nonresident
+    field: CHK_SP_NON_RES_STMT
+    type: checkbox
+    on_state: /1
+  # ---- Federal extension / dependent-of-another
+  - line: federal_extension_filer         # Federal extension filers - check here
+    field: CHK_FED_EXT_FILTER
+    type: checkbox
+    on_state: /1
+  - line: can_be_claimed_dependent        # "If someone can claim you (or your spouse if filing jointly) as a dependent, check here."
+    field: CHK_CLAIM_DEP
+    type: checkbox
+    on_state: /1
+
+  # ---- Lines 1-7
+  - line: 1_neg                  # line 1 "-" sign box (place a "-" if negative)
+    field: L1_NEG
+    type: text
+    maxlen: 1
+  - line: "1"                    # Federal adjusted gross income (federal 1040 or 1040-SR, line 11)
+    field: L1
+    type: money
+  - line: 2a                     # Additions — Ohio Schedule of Adjustments, line 11
+    field: L2A
+    type: money
+  - line: 2b                     # Deductions — Ohio Schedule of Adjustments, line 44
+    field: L2B
+    type: money
+  - line: 3_neg                  # line 3 "-" sign box
+    field: L3_NEG
+    type: text
+    maxlen: 1
+  - line: "3"                    # Ohio adjusted gross income (line 1 plus line 2a minus line 2b)
+    field: L3
+    type: money
+  - line: 4_number_of_exemptions # "Number of exemptions including you and your spouse/dependents, if applicable"
+    field: L4_EXEMPT
+    type: text
+    maxlen: 2
+  - line: "4"                    # Exemption amount (include Schedule of Dependents if applicable)
+    field: L4
+    type: money
+  - line: "5"                    # Ohio income tax base (line 3 minus line 4; if negative, enter zero)
+    field: L5
+    type: money
+  - line: "6"                    # Taxable business income — Ohio Schedule of Business Income, line 15
+    field: L6
+    type: money
+  - line: "7"                    # Taxable nonbusiness income (line 5 minus line 6; if negative, enter zero)
+    field: L7
+    type: money
+
+  # =========================================================== IT 1040 page 2
+  # (TP_SSN1 top-of-page header SSN widget is a read-only mirror — see header note.)
+  - line: 7a                     # Amount from line 7 on page 1
+    field: L7a
+    type: money
+  - line: 8a                     # Nonbusiness income tax liability on line 7a
+    field: L8A
+    type: money
+  - line: 8b                     # Business income tax liability — Ohio Schedule of Business Income, line 16
+    field: L8B
+    type: money
+  - line: 8c                     # Income tax liability before credits (line 8a plus line 8b)
+    field: L8C
+    type: money
+  - line: "9"                    # Ohio nonrefundable credits — Ohio Schedule of Credits, line 38
+    field: L9
+    type: money
+  - line: "10"                   # Tax liability after nonrefundable credits (line 8c minus line 9; if negative, enter zero)
+    field: L10
+    type: money
+  - line: "11"                   # Interest penalty on underpayment of estimated tax (include Ohio IT/SD 2210)
+    field: L11
+    type: money
+  - line: "12"                   # Unpaid use tax
+    field: L12
+    type: money
+  - line: "13"                   # Total Ohio tax liability before withholding or estimated payments (add lines 10, 11 and 12)
+    field: L13
+    type: money
+  - line: "14"                   # Ohio income tax withheld — Schedule of Ohio Withholding, Part A, line 1
+    field: L14
+    type: money
+  - line: "15"                   # Estimated and extension payments, and credit carryforward from last year's return
+    field: L15
+    type: money
+  - line: "16"                   # Refundable credits — Ohio Schedule of Credits, line 44
+    field: L16
+    type: money
+  # lines 17 & 19 widgets (L17/L19, "Amended return only") are read-only on this
+  # PDF — see header note; omitted from the fillable map.
+  - line: "18"                   # Total Ohio tax payments (add lines 14, 15, 16 and 17)
+    field: L18
+    type: money
+  - line: 20_neg                 # line 20 "-" sign box (place a "-" if negative)
+    field: L20_NEG
+    type: text
+    maxlen: 1
+  - line: "20"                   # Line 18 minus line 19
+    field: L20
+    type: money
+  - line: "21"                   # Tax due (line 13 minus line 20)
+    field: L21
+    type: money
+  - line: "22"                   # Interest due on late payment of tax
+    field: L22
+    type: money
+  - line: "23"                   # TOTAL AMOUNT DUE (line 21 plus line 22) — Ohio Universal Payment Coupon (OUPC)
+    field: L23
+    type: money
+  - line: "24"                   # Overpayment (line 20 minus line 13)
+    field: L24
+    type: money
+  - line: "25"                   # Original return only — portion of line 24 carried forward to next year's tax liability
+    field: L25
+    type: money
+  # ---- line 26 — Original return only — donations (a-f) and total (g)
+  - line: 26a                    # a. Wishes for Sick Children
+    field: L26A
+    type: money
+  - line: 26b                    # b. Wildlife Species
+    field: L26B
+    type: money
+  - line: 26c                    # c. Military Injury Relief
+    field: L26C
+    type: money
+  - line: 26d                    # d. Ohio History Fund
+    field: L26D
+    type: money
+  - line: 26e                    # e. Nature Preserves/Scenic Rivers
+    field: L26E
+    type: money
+  - line: 26f                    # f. Breast/Cervical Cancer
+    field: L26F
+    type: money
+  - line: 26g                    # Total (26a through 26f)
+    field: L26G
+    type: money
+  - line: "27"                   # REFUND (line 24 minus lines 25 and 26g)
+    field: L27
+    type: money
+  # ---- Sign Here / preparer block (page 2)
+  - line: primary_signature_phone   # Primary signature — Phone number
+    field: PHONE_NUM
+    type: text
+    maxlen: 10
+  - line: signature_date            # Date (spouse signature line)
+    field: SIGN_DATE
+    type: text
+    maxlen: 8
+  - line: preparer_printed_name     # Preparer's printed name
+    field: PREPARER_PRINTED_NAME
+    type: text
+    maxlen: 25
+  - line: preparer_phone            # Preparer — Phone number
+    field: PREPARER_PHONE_NUM
+    type: text
+    maxlen: 10
+  - line: preparer_ptin             # Preparer PTIN
+    field: PREPARER_TIN
+    type: text
+    maxlen: 8
+  - line: authorize_preparer_discuss   # "Authorize your preparer to discuss this return"
+    field: SpeakPrep
+    type: checkbox
+    on_state: /1
+  - line: non_paid_preparer            # "Non-paid preparer"
+    field: NonPaidPrep
+    type: checkbox
+    on_state: /1
+
+  # =============================== Ohio Schedule of Adjustments (pages 3-4)
+  # Additions (lines 1-11) — add only if not already included on IT 1040 line 1.
+  - line: schedA_1               # Non-Ohio state or local government interest and dividends
+    field: SchedA_L1
+    type: money
+  - line: schedA_2               # Ohio pass-through entity taxes excluded from federal adjusted gross income
+    field: SchedA_L2
+    type: money
+  - line: schedA_3               # Taxes paid to another state or District of Columbia related to IRS notice 2020-75
+    field: SchedA_L3
+    type: money
+  - line: schedA_4               # 529 plan funds used for non-qualified expenses
+    field: SchedA_L4
+    type: money
+  - line: schedA_5               # Losses from sale or disposition of Ohio public obligations
+    field: SchedA_L5
+    type: money
+  - line: schedA_6               # Nonmedical withdrawals from a medical savings account
+    field: SchedA_L6
+    type: money
+  - line: schedA_7               # Reimbursement of expenses previously deducted on an Ohio income tax return
+    field: SchedA_L7
+    type: money
+  - line: schedA_8               # Internal Revenue Code 168(k) and 179 depreciation expense add-back
+    field: SchedA_L8
+    type: money
+  - line: schedA_9               # Exempt federal interest and dividends subject to state taxation
+    field: SchedA_L9
+    type: money
+  - line: schedA_10              # Federal conformity additions
+    field: SchedA_L10
+    type: money
+  - line: schedA_11             # Total additions (add lines 1 through 10 ONLY) — Ohio IT 1040, line 2a
+    field: SchedA_L11
+    type: money
+  # Deductions (lines 12-44) — deduct only if included on IT 1040 line 1.
+  - line: schedA_12             # Business income deduction — Ohio Schedule of Business Income, line 13
+    field: SchedA_L12
+    type: money
+  - line: schedA_13             # Employee compensation earned in Ohio by residents of neighboring states
+    field: SchedA_L13
+    type: money
+  - line: schedA_14             # Taxable refunds, credits, or offsets of state and local income taxes (federal 1040, Schedule 1, line 1)
+    field: SchedA_L14
+    type: money
+  - line: schedA_15             # Taxable Social Security benefits (federal 1040 and 1040-SR, line 6b)
+    field: SchedA_L15
+    type: money
+  - line: schedA_16             # Certain railroad benefits
+    field: SchedA_L16
+    type: money
+  - line: schedA_17             # Interest income from Ohio public obligations and purchase obligations; gains from disposition of Ohio public obligations; or income from a transfer agreement
+    field: SchedA_L17
+    type: money
+  - line: schedA_18             # Amounts contributed to an Ohio county's individual development account program
+    field: SchedA_L18
+    type: money
+  - line: schedA_19             # Amounts contributed to a STABLE account; Ohio's ABLE plan
+    field: SchedA_L19
+    type: money
+  - line: schedA_20             # Income from a transfer agreement or enterprise zone... (federal income excess of business deduction)
+    field: SchedA_L20
+    type: money
+  - line: schedA_21             # Certain payments related to the East Palestine train derailment
+    field: SchedA_L21
+    type: money
+  - line: schedA_22             # Ohio adoption grant program payments received from the Ohio Department of Job and Family Services
+    field: SchedA_L22
+    type: money
+  - line: schedA_23             # Federal interest and dividends exempt from state taxation
+    field: SchedA_L23
+    type: money
+  - line: schedA_24             # Deduction of prior year 168(k) and 179 depreciation add-backs
+    field: SchedA_L24
+    type: money
+  - line: schedA_25             # Refund or reimbursements from the federal 1040, Schedule 1, line 8z for federal itemized deductions claimed on a prior year return
+    field: SchedA_L25
+    type: money
+  - line: schedA_26             # Repayment of income reported in a prior year
+    field: SchedA_L26
+    type: money
+  - line: schedA_27             # Wage expense not deducted based on the federal work opportunity tax credit
+    field: SchedA_L27
+    type: money
+  - line: schedA_28             # Federal conformity deductions
+    field: SchedA_L28
+    type: money
+  - line: schedA_29             # Military pay received by Ohio residents while stationed outside Ohio
+    field: SchedA_L29
+    type: money
+  - line: schedA_30             # Compensation earned by nonresident military servicemembers and their civilian spouses
+    field: SchedA_L30
+    type: money
+  - line: schedA_31             # Uniformed services retirement income
+    field: SchedA_L31
+    type: money
+  - line: schedA_32             # Military injury relief fund grants and veteran's disability severance payments
+    field: SchedA_L32
+    type: money
+  - line: schedA_33             # Certain Ohio National Guard reimbursements and benefits
+    field: SchedA_L33
+    type: money
+  - line: schedA_34             # Amounts contributed to a 529 Plan
+    field: SchedA_L34
+    type: money
+  - line: schedA_35             # Pell/Ohio College Opportunity taxable grant amounts used to pay room and board
+    field: SchedA_L35
+    type: money
+  - line: schedA_36             # Ohio educator expenses in excess of federal deduction (capped narrow box, /MaxLen 3)
+    field: SchedA_L36
+    type: text
+    maxlen: 3
+  - line: schedA_37             # Income attributable to loan repayments by the Ohio Department of Higher Education under the rural practice incentive program
+    field: SchedA_L37
+    type: money
+  - line: schedA_38             # Grant program payments made by the Ohio Department of Higher Education on behalf of adopted students
+    field: SchedA_L38
+    type: money
+  - line: schedA_39             # Disability benefits
+    field: SchedA_L39
+    type: money
+  - line: schedA_40             # Survivor benefits
+    field: SchedA_L40
+    type: money
+  - line: schedA_41             # Unreimbursed medical and health care expenses
+    field: SchedA_L41
+    type: money
+  - line: schedA_42             # Medical savings account contributions/earnings
+    field: SchedA_L42
+    type: money
+  - line: schedA_43             # Qualified organ donor expenses
+    field: SchedA_L43
+    type: money
+  - line: schedA_44            # Total deductions (add lines 12 through 43 ONLY) — Ohio IT 1040, line 2b
+    field: SchedA_L44
+    type: money
+
+  # =============================== Ohio Schedule IT BUS (pages 5-6)
+  # Part 1 — Business Income (lines 1-10); the "-" sign boxes mark negative lines.
+  - line: schedITbus_1          # Schedule B — Interest and Ordinary Dividends
+    field: SchedITBUS_L1
+    type: money
+  - line: schedITbus_2_neg      # line 2 "-" sign box
+    field: SchedITBUS_L2_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_2          # Schedule C — Net Profit or Loss From Business (Sole Proprietorship)
+    field: SchedITBUS_L2
+    type: money
+  - line: schedITbus_3_neg      # line 3 "-" sign box
+    field: SchedITBUS_L3_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_3          # Schedule D — Capital Gains and Losses
+    field: SchedITBUS_L3
+    type: money
+  - line: schedITbus_4_neg      # line 4 "-" sign box
+    field: SchedITBUS_L4_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_4          # Schedule E — Supplemental Income and Loss
+    field: SchedITBUS_L4
+    type: money
+  - line: schedITbus_5          # Guaranteed payments or compensation from a pass-through entity to a 20% or greater direct or indirect owner
+    field: SchedITBUS_L5
+    type: money
+  - line: schedITbus_6_neg      # line 6 "-" sign box
+    field: SchedITBUS_L6_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_6          # Schedule F — Net Profit or Loss From Farming
+    field: SchedITBUS_L6
+    type: money
+  - line: schedITbus_7          # Add-back of electing pass-through entity taxes paid on the Ohio form IT 4738 that qualify as business income
+    field: SchedITBUS_L7
+    type: money
+  - line: schedITbus_8          # Add-back of taxes paid to another state or the District of Columbia related to IRS notice 2020-75 that qualify as business income
+    field: SchedITBUS_L8
+    type: money
+  - line: schedITbus_9_neg      # line 9 "-" sign box
+    field: SchedITBUS_L9_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_9          # Other business income or loss not reported above (e.g. form 4797 amounts)
+    field: SchedITBUS_L9
+    type: money
+  - line: schedITbus_10_neg     # line 10 "-" sign box
+    field: SchedITBUS_L10_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_10         # Total business income (add lines 1 through 9)
+    field: SchedITBUS_L10
+    type: money
+  # Part 2 — Business Income Deduction (lines 11-13)
+  - line: schedITbus_11         # Enter the lesser of line 10 above or Ohio IT 1040, line 1 (if negative, enter zero)
+    field: SchedITBUS_L11
+    type: money
+  - line: schedITbus_12         # Enter $250,000 (single/MFJ) OR $125,000 (MFS)
+    field: SchedITBUS_L12
+    type: money
+  - line: schedITbus_13         # Enter the lesser of line 11 or line 12 — Ohio Schedule of Adjustments, line 12
+    field: SchedITBUS_L13
+    type: money
+  # Part 3 — Taxable Business Income (lines 14-16)
+  - line: schedITbus_14         # Line 11 minus line 13
+    field: SchedITBUS_L14
+    type: money
+  - line: schedITbus_15         # Taxable business income (lesser of line 14 or Ohio IT 1040, line 5) — Ohio IT 1040, line 6
+    field: SchedITBUS_L15
+    type: money
+  - line: schedITbus_16         # Business income tax liability — multiply line 15 by 3% (.03) — Ohio IT 1040, line 8b
+    field: SchedITBUS_L16
+    type: money
+  # Part 4 — Business Sources (8 rows: FEIN/SSN, primary ownership %, spouse ownership %, business name)
+  - line: schedITbus_src1_fein_ssn
+    field: SchedITBUS_L1_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src1_primary_pct
+    field: SchedITBUS_L1_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src1_spouse_pct
+    field: SchedITBUS_L1_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src1_name
+    field: SchedITBUS_L1_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src2_fein_ssn
+    field: SchedITBUS_L2_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src2_primary_pct
+    field: SchedITBUS_L2_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src2_spouse_pct
+    field: SchedITBUS_L2_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src2_name
+    field: SchedITBUS_L2_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src3_fein_ssn
+    field: SchedITBUS_L3_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src3_primary_pct
+    field: SchedITBUS_L3_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src3_spouse_pct
+    field: SchedITBUS_L3_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src3_name
+    field: SchedITBUS_L3_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src4_fein_ssn
+    field: SchedITBUS_L4_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src4_primary_pct
+    field: SchedITBUS_L4_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src4_spouse_pct
+    field: SchedITBUS_L4_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src4_name
+    field: SchedITBUS_L4_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src5_fein_ssn
+    field: SchedITBUS_L5_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src5_primary_pct
+    field: SchedITBUS_L5_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src5_spouse_pct
+    field: SchedITBUS_L5_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src5_name
+    field: SchedITBUS_L5_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src6_fein_ssn
+    field: SchedITBUS_L6_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src6_primary_pct
+    field: SchedITBUS_L6_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src6_spouse_pct
+    field: SchedITBUS_L6_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src6_name
+    field: SchedITBUS_L6_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src7_fein_ssn
+    field: SchedITBUS_L7_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src7_primary_pct
+    field: SchedITBUS_L7_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src7_spouse_pct
+    field: SchedITBUS_L7_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src7_name
+    field: SchedITBUS_L7_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src8_fein_ssn
+    field: SchedITBUS_L8_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src8_primary_pct
+    field: SchedITBUS_L8_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src8_spouse_pct
+    field: SchedITBUS_L8_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src8_name
+    field: SchedITBUS_L8_NAME
+    type: text
+    maxlen: 40
+
+  # =============================== Ohio Schedule of Credits (pages 7-8)
+  # Nonrefundable Credits (lines 1-35)
+  - line: schedC_1              # Tax liability before credits (from Ohio IT 1040, line 8c)
+    field: SchedC_L1
+    type: money
+  - line: schedC_2              # Retirement income credit (statutory-capped narrow box, /MaxLen 3)
+    field: SchedC_L2
+    type: text
+    maxlen: 3
+  - line: schedC_3              # Lump sum retirement credit
+    field: SchedC_L3
+    type: money
+  - line: schedC_4              # Senior citizen credit (fixed $50; statutory-capped narrow box, /MaxLen 2)
+    field: SchedC_L4
+    type: text
+    maxlen: 2
+  - line: schedC_5              # Lump sum distribution credit
+    field: SchedC_L5
+    type: money
+  - line: schedC_6              # Child care & dependent care credit
+    field: SchedC_L6
+    type: money
+  - line: schedC_7              # Displaced worker training credit
+    field: SchedC_L7
+    type: money
+  - line: schedC_8              # Campaign contribution credit for Ohio statewide office or General Assembly (statutory-capped narrow box, /MaxLen 3)
+    field: SchedC_L8
+    type: text
+    maxlen: 3
+  - line: schedC_9              # Exemption credit (statutory-capped narrow box, /MaxLen 3)
+    field: SchedC_L9
+    type: text
+    maxlen: 3
+  - line: schedC_10             # Total (add lines 2 through 9)
+    field: SchedC_L10
+    type: money
+  - line: schedC_11             # Tax less credits (line 1 minus line 10; if negative, enter zero)
+    field: SchedC_L11
+    type: money
+  - line: schedC_12_jfc         # Joint filing credit percentage box (% times line 11, up to $650)
+    field: SchedC_L12_JFC
+    type: text
+    maxlen: 2
+  - line: schedC_12             # Joint filing credit — amount (capped $650; statutory-capped narrow box, /MaxLen 3)
+    field: SchedC_L12
+    type: text
+    maxlen: 3
+  - line: schedC_13             # Earned income credit
+    field: SchedC_L13
+    type: money
+  - line: schedC_14             # Home school expenses credit (statutory-capped narrow box, /MaxLen 3)
+    field: SchedC_L14
+    type: text
+    maxlen: 3
+  - line: schedC_15             # Scholarship donation credit
+    field: SchedC_L15
+    type: money
+  - line: schedC_16             # Nonchartered, nonpublic school tuition credit
+    field: SchedC_L16
+    type: money
+  - line: schedC_17             # Credit for work-based learning experiences
+    field: SchedC_L17
+    type: money
+  - line: schedC_18             # Ohio adoption credit carryforward
+    field: SchedC_L18
+    type: money
+  - line: schedC_19             # Nonrefundable job retention credit
+    field: SchedC_L19
+    type: money
+  - line: schedC_20             # Credit for eligible new employees in an enterprise zone
+    field: SchedC_L20
+    type: money
+  - line: schedC_21             # Credit for the beginning farmers financial management program
+    field: SchedC_L21
+    type: money
+  - line: schedC_22             # Welcome Home Ohio credit
+    field: SchedC_L22
+    type: money
+  - line: schedC_23             # Credit for sale/rental of agricultural assets to beginning farmers
+    field: SchedC_L23
+    type: money
+  - line: schedC_24             # Grape production credit
+    field: SchedC_L24
+    type: money
+  - line: schedC_25             # InvestOhio credit
+    field: SchedC_L25
+    type: money
+  - line: schedC_26             # Lead abatement credit
+    field: SchedC_L26
+    type: money
+  - line: schedC_27             # Opportunity zone investment credit
+    field: SchedC_L27
+    type: money
+  - line: schedC_28             # Technology investment credit carryforward
+    field: SchedC_L28
+    type: money
+  - line: schedC_29             # Enterprise zone day care & training credits
+    field: SchedC_L29
+    type: money
+  - line: schedC_30             # Research & development credit
+    field: SchedC_L30
+    type: money
+  - line: schedC_31             # Nonrefundable Ohio historic preservation credit
+    field: SchedC_L31
+    type: money
+  - line: schedC_32             # Ohio low-income housing credit
+    field: SchedC_L32
+    type: money
+  - line: schedC_33             # Affordable single-family housing credit
+    field: SchedC_L33
+    type: money
+  - line: schedC_34             # Total (add lines 12 through 33)
+    field: SchedC_L34
+    type: money
+  - line: schedC_35             # Tax less additional credits (line 11 minus line 34; if negative, enter zero)
+    field: SchedC_L35
+    type: money
+  # Residency Credits (lines 36-37) and nonrefundable total (line 38)
+  - line: schedC_36             # Nonresident credit — Ohio IT NRC, line 20
+    field: SchedC_L36
+    type: money
+  - line: schedC_37             # Resident credit — Ohio IT RC, line 7
+    field: SchedC_L37
+    type: money
+  - line: schedC_38             # Total nonrefundable credits (add lines 10, 34, 36 and 37) — Ohio IT 1040, line 9
+    field: SchedC_L38
+    type: money
+  # Refundable Credits (lines 39-44)
+  - line: schedC_39             # Refundable Ohio historic preservation credit
+    field: SchedC_L39
+    type: money
+  - line: schedC_40             # Refundable job creation credit & job retention credit
+    field: SchedC_L40
+    type: money
+  - line: schedC_41             # Pass-through entity credit
+    field: SchedC_L41
+    type: money
+  - line: schedC_42             # Motion picture & Broadway theatrical production credit
+    field: SchedC_L42
+    type: money
+  - line: schedC_43             # Venture capital credit
+    field: SchedC_L43
+    type: money
+  - line: schedC_44             # Total refundable credits (add lines 39 through 43) — Ohio IT 1040, line 16
+    field: SchedC_L44
+    type: money
+
+  # =============================== Ohio Schedule of Dependents (pages 9-10)
+  # 15 dependent rows: SSN, date of birth (MM-DD-YYYY), relationship to you, first name, M.I., last name.
+  - line: schedJ_dep1_ssn
+    field: SchedJ_L1_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep1_dob
+    field: SchedJ_L1_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep1_relationship
+    field: SchedJ_L1_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep1_first
+    field: SchedJ_L1_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep1_mi
+    field: SchedJ_L1_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep1_last
+    field: SchedJ_L1_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep2_ssn
+    field: SchedJ_L2_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep2_dob
+    field: SchedJ_L2_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep2_relationship
+    field: SchedJ_L2_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep2_first
+    field: SchedJ_L2_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep2_mi
+    field: SchedJ_L2_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep2_last
+    field: SchedJ_L2_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep3_ssn
+    field: SchedJ_L3_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep3_dob
+    field: SchedJ_L3_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep3_relationship
+    field: SchedJ_L3_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep3_first
+    field: SchedJ_L3_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep3_mi
+    field: SchedJ_L3_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep3_last
+    field: SchedJ_L3_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep4_ssn
+    field: SchedJ_L4_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep4_dob
+    field: SchedJ_L4_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep4_relationship
+    field: SchedJ_L4_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep4_first
+    field: SchedJ_L4_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep4_mi
+    field: SchedJ_L4_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep4_last
+    field: SchedJ_L4_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep5_ssn
+    field: SchedJ_L5_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep5_dob
+    field: SchedJ_L5_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep5_relationship
+    field: SchedJ_L5_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep5_first
+    field: SchedJ_L5_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep5_mi
+    field: SchedJ_L5_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep5_last
+    field: SchedJ_L5_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep6_ssn
+    field: SchedJ_L6_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep6_dob
+    field: SchedJ_L6_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep6_relationship
+    field: SchedJ_L6_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep6_first
+    field: SchedJ_L6_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep6_mi
+    field: SchedJ_L6_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep6_last
+    field: SchedJ_L6_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep7_ssn
+    field: SchedJ_L7_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep7_dob
+    field: SchedJ_L7_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep7_relationship
+    field: SchedJ_L7_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep7_first
+    field: SchedJ_L7_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep7_mi
+    field: SchedJ_L7_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep7_last
+    field: SchedJ_L7_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep8_ssn
+    field: SchedJ_L8_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep8_dob
+    field: SchedJ_L8_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep8_relationship
+    field: SchedJ_L8_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep8_first
+    field: SchedJ_L8_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep8_mi
+    field: SchedJ_L8_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep8_last
+    field: SchedJ_L8_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep9_ssn
+    field: SchedJ_L9_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep9_dob
+    field: SchedJ_L9_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep9_relationship
+    field: SchedJ_L9_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep9_first
+    field: SchedJ_L9_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep9_mi
+    field: SchedJ_L9_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep9_last
+    field: SchedJ_L9_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep10_ssn
+    field: SchedJ_L10_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep10_dob
+    field: SchedJ_L10_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep10_relationship
+    field: SchedJ_L10_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep10_first
+    field: SchedJ_L10_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep10_mi
+    field: SchedJ_L10_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep10_last
+    field: SchedJ_L10_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep11_ssn
+    field: SchedJ_L11_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep11_dob
+    field: SchedJ_L11_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep11_relationship
+    field: SchedJ_L11_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep11_first
+    field: SchedJ_L11_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep11_mi
+    field: SchedJ_L11_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep11_last
+    field: SchedJ_L11_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep12_ssn
+    field: SchedJ_L12_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep12_dob
+    field: SchedJ_L12_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep12_relationship
+    field: SchedJ_L12_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep12_first
+    field: SchedJ_L12_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep12_mi
+    field: SchedJ_L12_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep12_last
+    field: SchedJ_L12_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep13_ssn
+    field: SchedJ_L13_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep13_dob
+    field: SchedJ_L13_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep13_relationship
+    field: SchedJ_L13_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep13_first
+    field: SchedJ_L13_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep13_mi
+    field: SchedJ_L13_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep13_last
+    field: SchedJ_L13_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep14_ssn
+    field: SchedJ_L14_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep14_dob
+    field: SchedJ_L14_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep14_relationship
+    field: SchedJ_L14_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep14_first
+    field: SchedJ_L14_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep14_mi
+    field: SchedJ_L14_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep14_last
+    field: SchedJ_L14_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep15_ssn
+    field: SchedJ_L15_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep15_dob
+    field: SchedJ_L15_DEP_DOB
+    type: text
+    maxlen: 15
+  - line: schedJ_dep15_relationship
+    field: SchedJ_L15_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep15_first
+    field: SchedJ_L15_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep15_mi
+    field: SchedJ_L15_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep15_last
+    field: SchedJ_L15_DEP_LN
+    type: text
+    maxlen: 20
+
+  # =============================== Ohio Schedule of Withholding (pages 11-12)
+  # Part A — Total Withholding
+  - line: schedW_a              # Total of all Ohio state tax withheld on pages 1 and 2 — Ohio IT 1040, line 14
+    field: SchedW_A
+    type: money
+  # Part B — W-2s (7 rows): P/S flag, Box b EIN, Box 1 wages, Box 2 federal income
+  # tax withheld, Box 15 employer's Ohio ID number, Box 16 Ohio wages, Box 17 Ohio income tax.
+  - line: schedW_b_w2_1_ps
+    field: SchedW_B_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_1_ein
+    field: SchedW_B_L1_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_1_box1_wages
+    field: SchedW_B_L1_WAGE
+    type: money
+  - line: schedW_b_w2_1_box2_fed_withheld
+    field: SchedW_B_L1_FITW
+    type: money
+  - line: schedW_b_w2_1_box15_oh_id
+    field: SchedW_B_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_1_box16_oh_wages
+    field: SchedW_B_L1_OHWAGE
+    type: money
+  - line: schedW_b_w2_1_box17_oh_tax
+    field: SchedW_B_L1_OHIT
+    type: money
+  - line: schedW_b_w2_2_ps
+    field: SchedW_B_L2_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_2_ein
+    field: SchedW_B_L2_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_2_box1_wages
+    field: SchedW_B_L2_WAGE
+    type: money
+  - line: schedW_b_w2_2_box2_fed_withheld
+    field: SchedW_B_L2_FITW
+    type: money
+  - line: schedW_b_w2_2_box15_oh_id
+    field: SchedW_B_L2_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_2_box16_oh_wages
+    field: SchedW_B_L2_OHWAGE
+    type: money
+  - line: schedW_b_w2_2_box17_oh_tax
+    field: SchedW_B_L2_OHIT
+    type: money
+  - line: schedW_b_w2_3_ps
+    field: SchedW_B_L3_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_3_ein
+    field: SchedW_B_L3_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_3_box1_wages
+    field: SchedW_B_L3_WAGE
+    type: money
+  - line: schedW_b_w2_3_box2_fed_withheld
+    field: SchedW_B_L3_FITW
+    type: money
+  - line: schedW_b_w2_3_box15_oh_id
+    field: SchedW_B_L3_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_3_box16_oh_wages
+    field: SchedW_B_L3_OHWAGE
+    type: money
+  - line: schedW_b_w2_3_box17_oh_tax
+    field: SchedW_B_L3_OHIT
+    type: money
+  - line: schedW_b_w2_4_ps
+    field: SchedW_B_L4_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_4_ein
+    field: SchedW_B_L4_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_4_box1_wages
+    field: SchedW_B_L4_WAGE
+    type: money
+  - line: schedW_b_w2_4_box2_fed_withheld
+    field: SchedW_B_L4_FITW
+    type: money
+  - line: schedW_b_w2_4_box15_oh_id
+    field: SchedW_B_L4_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_4_box16_oh_wages
+    field: SchedW_B_L4_OHWAGE
+    type: money
+  - line: schedW_b_w2_4_box17_oh_tax
+    field: SchedW_B_L4_OHIT
+    type: money
+  - line: schedW_b_w2_5_ps
+    field: SchedW_B_L5_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_5_ein
+    field: SchedW_B_L5_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_5_box1_wages
+    field: SchedW_B_L5_WAGE
+    type: money
+  - line: schedW_b_w2_5_box2_fed_withheld
+    field: SchedW_B_L5_FITW
+    type: money
+  - line: schedW_b_w2_5_box15_oh_id
+    field: SchedW_B_L5_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_5_box16_oh_wages
+    field: SchedW_B_L5_OHWAGE
+    type: money
+  - line: schedW_b_w2_5_box17_oh_tax
+    field: SchedW_B_L5_OHIT
+    type: money
+  - line: schedW_b_w2_6_ps
+    field: SchedW_B_L6_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_6_ein
+    field: SchedW_B_L6_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_6_box1_wages
+    field: SchedW_B_L6_WAGE
+    type: money
+  - line: schedW_b_w2_6_box2_fed_withheld
+    field: SchedW_B_L6_FITW
+    type: money
+  - line: schedW_b_w2_6_box15_oh_id
+    field: SchedW_B_L6_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_6_box16_oh_wages
+    field: SchedW_B_L6_OHWAGE
+    type: money
+  - line: schedW_b_w2_6_box17_oh_tax
+    field: SchedW_B_L6_OHIT
+    type: money
+  - line: schedW_b_w2_7_ps
+    field: SchedW_B_L7_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_7_ein
+    field: SchedW_B_L7_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_7_box1_wages
+    field: SchedW_B_L7_WAGE
+    type: money
+  - line: schedW_b_w2_7_box2_fed_withheld
+    field: SchedW_B_L7_FITW
+    type: money
+  - line: schedW_b_w2_7_box15_oh_id
+    field: SchedW_B_L7_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_7_box16_oh_wages
+    field: SchedW_B_L7_OHWAGE
+    type: money
+  - line: schedW_b_w2_7_box17_oh_tax
+    field: SchedW_B_L7_OHIT
+    type: money
+  # Part C — 1099-Rs (4 rows): P/S flag, Payer's TIN, Box 1 gross distribution,
+  # "Total distribution" checkbox, Box 7 distribution code, Box 15 payer's Ohio
+  # number, Box 4 federal income tax withheld, Box 14 Ohio tax withheld.
+  - line: schedW_c_1099r_1_ps
+    field: SchedW_C_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_c_1099r_1_tin
+    field: SchedW_C_L1_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_c_1099r_1_box1_gross
+    field: SchedW_C_L1_GROSS
+    type: money
+  - line: schedW_c_1099r_1_total_distribution
+    field: SchedW_C_L1_CHK
+    type: checkbox
+    on_state: /Yes
+  - line: schedW_c_1099r_1_box7_dist_code
+    field: SchedW_C_L1_DIST
+    type: text
+    maxlen: 2
+  - line: schedW_c_1099r_1_box15_oh_id
+    field: SchedW_C_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_c_1099r_1_box4_fed_withheld
+    field: SchedW_C_L1_FITW
+    type: money
+  - line: schedW_c_1099r_1_box14_oh_withheld
+    field: SchedW_C_L1_OHTW
+    type: money
+  - line: schedW_c_1099r_2_ps
+    field: SchedW_C_L2_PS
+    type: text
+    maxlen: 1
+  - line: schedW_c_1099r_2_tin
+    field: SchedW_C_L2_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_c_1099r_2_box1_gross
+    field: SchedW_C_L2_GROSS
+    type: money
+  - line: schedW_c_1099r_2_total_distribution
+    field: SchedW_C_L2_CHK
+    type: checkbox
+    on_state: /Yes
+  - line: schedW_c_1099r_2_box7_dist_code
+    field: SchedW_C_L2_DIST
+    type: text
+    maxlen: 2
+  - line: schedW_c_1099r_2_box15_oh_id
+    field: SchedW_C_L2_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_c_1099r_2_box4_fed_withheld
+    field: SchedW_C_L2_FITW
+    type: money
+  - line: schedW_c_1099r_2_box14_oh_withheld
+    field: SchedW_C_L2_OHTW
+    type: money
+  - line: schedW_c_1099r_3_ps
+    field: SchedW_C_L3_PS
+    type: text
+    maxlen: 1
+  - line: schedW_c_1099r_3_tin
+    field: SchedW_C_L3_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_c_1099r_3_box1_gross
+    field: SchedW_C_L3_GROSS
+    type: money
+  - line: schedW_c_1099r_3_total_distribution
+    field: SchedW_C_L3_CHK
+    type: checkbox
+    on_state: /Yes
+  - line: schedW_c_1099r_3_box7_dist_code
+    field: SchedW_C_L3_DIST
+    type: text
+    maxlen: 2
+  - line: schedW_c_1099r_3_box15_oh_id
+    field: SchedW_C_L3_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_c_1099r_3_box4_fed_withheld
+    field: SchedW_C_L3_FITW
+    type: money
+  - line: schedW_c_1099r_3_box14_oh_withheld
+    field: SchedW_C_L3_OHTW
+    type: money
+  - line: schedW_c_1099r_4_ps
+    field: SchedW_C_L4_PS
+    type: text
+    maxlen: 1
+  - line: schedW_c_1099r_4_tin
+    field: SchedW_C_L4_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_c_1099r_4_box1_gross
+    field: SchedW_C_L4_GROSS
+    type: money
+  - line: schedW_c_1099r_4_total_distribution
+    field: SchedW_C_L4_CHK
+    type: checkbox
+    on_state: /Yes
+  - line: schedW_c_1099r_4_box7_dist_code
+    field: SchedW_C_L4_DIST
+    type: text
+    maxlen: 2
+  - line: schedW_c_1099r_4_box15_oh_id
+    field: SchedW_C_L4_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_c_1099r_4_box4_fed_withheld
+    field: SchedW_C_L4_FITW
+    type: money
+  - line: schedW_c_1099r_4_box14_oh_withheld
+    field: SchedW_C_L4_OHTW
+    type: money
+  # Part D — W-2Gs (3 rows): P/S flag, Payer's federal ID number, Box 1 reportable
+  # winnings, Box 4 federal income tax withheld, Box 13 Ohio state ID number,
+  # Box 14 Ohio state winnings, Box 15 Ohio income tax withheld.
+  - line: schedW_d_w2g_1_ps
+    field: SchedW_D_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_d_w2g_1_fed_id
+    field: SchedW_D_L1_FEDID
+    type: text
+    maxlen: 9
+  - line: schedW_d_w2g_1_box1_winnings
+    field: SchedW_D_L1_WIN
+    type: money
+  - line: schedW_d_w2g_1_box4_fed_withheld
+    field: SchedW_D_L1_FITW
+    type: money
+  - line: schedW_d_w2g_1_box13_oh_id
+    field: SchedW_D_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_d_w2g_1_box14_oh_winnings
+    field: SchedW_D_L1_OHWIN
+    type: money
+  - line: schedW_d_w2g_1_box15_oh_withheld
+    field: SchedW_D_L1_OHTW
+    type: money
+  - line: schedW_d_w2g_2_ps
+    field: SchedW_D_L2_PS
+    type: text
+    maxlen: 1
+  - line: schedW_d_w2g_2_fed_id
+    field: SchedW_D_L2_FEDID
+    type: text
+    maxlen: 9
+  - line: schedW_d_w2g_2_box1_winnings
+    field: SchedW_D_L2_WIN
+    type: money
+  - line: schedW_d_w2g_2_box4_fed_withheld
+    field: SchedW_D_L2_FITW
+    type: money
+  - line: schedW_d_w2g_2_box13_oh_id
+    field: SchedW_D_L2_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_d_w2g_2_box14_oh_winnings
+    field: SchedW_D_L2_OHWIN
+    type: money
+  - line: schedW_d_w2g_2_box15_oh_withheld
+    field: SchedW_D_L2_OHTW
+    type: money
+  - line: schedW_d_w2g_3_ps
+    field: SchedW_D_L3_PS
+    type: text
+    maxlen: 1
+  - line: schedW_d_w2g_3_fed_id
+    field: SchedW_D_L3_FEDID
+    type: text
+    maxlen: 9
+  - line: schedW_d_w2g_3_box1_winnings
+    field: SchedW_D_L3_WIN
+    type: money
+  - line: schedW_d_w2g_3_box4_fed_withheld
+    field: SchedW_D_L3_FITW
+    type: money
+  - line: schedW_d_w2g_3_box13_oh_id
+    field: SchedW_D_L3_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_d_w2g_3_box14_oh_winnings
+    field: SchedW_D_L3_OHWIN
+    type: money
+  - line: schedW_d_w2g_3_box15_oh_withheld
+    field: SchedW_D_L3_OHTW
+    type: money
+  # Part E — 1099-NECs (2 rows): P/S flag, Payer's TIN, Box 1 nonemployee
+  # compensation, Box 4 federal income tax withheld, Box 6 payer's Ohio number,
+  # Box 7 state income, Box 5 Ohio tax withheld.
+  - line: schedW_e_1099nec_1_ps
+    field: SchedW_E_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_e_1099nec_1_tin
+    field: SchedW_E_L1_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_e_1099nec_1_box1_comp
+    field: SchedW_E_L1_COMP
+    type: money
+  - line: schedW_e_1099nec_1_box4_fed_withheld
+    field: SchedW_E_L1_FITW
+    type: money
+  - line: schedW_e_1099nec_1_box6_oh_id
+    field: SchedW_E_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_e_1099nec_1_box7_state_income
+    field: SchedW_E_L1_OHINC
+    type: money
+  - line: schedW_e_1099nec_1_box5_oh_withheld
+    field: SchedW_E_L1_OHTW
+    type: money
+  - line: schedW_e_1099nec_2_ps
+    field: SchedW_E_L2_PS
+    type: text
+    maxlen: 1
+  - line: schedW_e_1099nec_2_tin
+    field: SchedW_E_L2_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_e_1099nec_2_box1_comp
+    field: SchedW_E_L2_COMP
+    type: money
+  - line: schedW_e_1099nec_2_box4_fed_withheld
+    field: SchedW_E_L2_FITW
+    type: money
+  - line: schedW_e_1099nec_2_box6_oh_id
+    field: SchedW_E_L2_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_e_1099nec_2_box7_state_income
+    field: SchedW_E_L2_OHINC
+    type: money
+  - line: schedW_e_1099nec_2_box5_oh_withheld
+    field: SchedW_E_L2_OHTW
+    type: money
+
+  # =============================== Ohio Universal Payment Coupon (page 13)
+  # Only the amount-of-payment box is free-entry; all other coupon widgets are
+  # read-only auto-populated mirrors and are omitted (see header note).
+  - line: upc_payment           # Amount of Payment
+    field: UPC_Payment
+    type: text
+    maxlen: 9
+relations:
+  # Only sums whose operands are ALL `money` lines are declared. The Schedule of
+  # Adjustments total-additions (line 11) and the Schedule of Credits nonrefundable /
+  # refundable totals (lines 38, 44) qualify. The "add lines 2 through 9" (schedC_10)
+  # and "add lines 12 through 43" (schedA_44) sums are OMITTED because some operands
+  # (statutory-capped credit/educator boxes schedC_2/4/8/9, schedA_36) are typed
+  # `text` (their PDF /MaxLen is too small to hold a money amount), so they are not
+  # money operands.
+  - "13 == 10 + 11 + 12"                                                               # IT 1040: "Total Ohio tax liability ... (add lines 10, 11 and 12)"
+  - "schedA_11 == schedA_1 + schedA_2 + schedA_3 + schedA_4 + schedA_5 + schedA_6 + schedA_7 + schedA_8 + schedA_9 + schedA_10"  # "Total additions (add lines 1 through 10 ONLY)"
+  - "schedC_38 == schedC_10 + schedC_34 + schedC_36 + schedC_37"                        # "Total nonrefundable credits (add lines 10, 34, 36 and 37)"
+  - "schedC_44 == schedC_39 + schedC_40 + schedC_41 + schedC_42 + schedC_43"            # "Total refundable credits (add lines 39 through 43)"
+cross_form:
+  - "1 == f1040.11"            # IT 1040 line 1 "Federal adjusted gross income (federal 1040 or 1040-SR, line 11)" = Form 1040 (2023) line 11 (AGI)
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name
