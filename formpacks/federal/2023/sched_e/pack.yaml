@@ -1,0 +1,668 @@
+# Schedule E (Form 1040), 2023 — Supplemental Income and Loss.
+# (Rental real estate, royalties, partnerships, S corporations, estates, trusts, REMICs.)
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) →
+# vision-map workflow (every fillable widget located by reading its own field
+# name printed at its position on the rendered form) → this map.
+#
+# Line-id convention (formpacks/CONVENTIONS.md): dot-separated, lowercase. The
+# 3 repeated rental columns are suffixed .a/.b/.c; Part II/III row+column grids
+# use <line>.<row>.<col> (e.g. 28.a.name, 28.a.g, 33.a.d).
+#
+# Structure:
+#   Part I  (page 1) — Rental real estate & royalties. Header questions A & B
+#                      (Yes/No), 3 repeated property columns a/b/c for lines
+#                      1a/1b/2 and the income/expense grid (lines 3–22), then
+#                      whole-form summary totals 23a–26.
+#   Part II (page 2) — Partnerships & S corporations. Line 28 has two sub-tables:
+#                      cols (a)–(f) [name/type/foreign/EIN/basis/at-risk] over
+#                      rows a–d, and cols (g)–(k) [passive/nonpassive income &
+#                      loss] over rows a–d, then totals 29a/29b and 30/31/32.
+#   Part III(page 2) — Estates & trusts. Line 33 cols (a)/(b) name+EIN rows a/b,
+#                      cols (c)–(f) rows a/b, totals 34a/34b, lines 35/36/37.
+#   Part IV (page 2) — REMICs. Line 38 cols (a)–(e) single row, line 39.
+#   Part V  (page 2) — Summary lines 40–43.
+#
+# ALL 185 fillable widgets in the skeleton are mapped. There are NO pre-printed
+# constants on this form, so nothing is intentionally left unmapped.
+#
+# Line-2 / line-28 / line-29 "shaded" cells: the printed form greys out a few
+# total/column cells that taxpayers normally leave blank (e.g. 29a cols g/i/j,
+# 29b cols h/k), but the AcroForm still defines a fillable widget for each, so
+# every one is mapped by its grid position (line + row + column suffix).
+#
+# Relations: the verify-module relation evaluator only tokenizes plain digit
+# line ids (e.g. 30, 31), not dotted column ids, so only the two whole-line
+# combine equalities whose operands are all plain mapped lines are declared
+# (32 = 30+31; 37 = 35+36). The many per-column totals (line 20, 29a/29b, 34a/34b)
+# and conditional passive-activity limitation lines are left to the recompute
+# engine + human review.
+form: Schedule E (Form 1040)
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040se--2023.pdf
+pdf_sha256: 5252b9584187a583827bc42fd7b6d51b9c071ef7d09687fd8b97b6bcc141543e
+acroform_root: topmostSubform[0]
+fields:
+  # ---- Page 1 header ----
+  - line: name
+    field: Page1[0].f1_1[0]
+    type: text
+  - line: identifying_number
+    field: Page1[0].f1_2[0]
+    type: text
+    maxlen: 11
+  # ---- Part I header questions A & B (Yes/No pairs) ----
+  - line: a.yes                      # Line A "Did you make any payments...1099?" — Yes
+    field: Page1[0].c1_1[0]
+    type: checkbox
+    on_state: /1
+  - line: a.no                       # Line A — No
+    field: Page1[0].c1_1[1]
+    type: checkbox
+    on_state: /2
+  - line: b.yes                      # Line B "If Yes, did you/will you file required 1099?" — Yes
+    field: Page1[0].c1_2[0]
+    type: checkbox
+    on_state: /1
+  - line: b.no                       # Line B — No
+    field: Page1[0].c1_2[1]
+    type: checkbox
+    on_state: /2
+  # ---- Line 1a: physical address of each property (cols a/b/c) ----
+  - line: 1a.a
+    field: Page1[0].Table_Line1a[0].RowA[0].f1_3[0]
+    type: text
+  - line: 1a.b
+    field: Page1[0].Table_Line1a[0].RowB[0].f1_4[0]
+    type: text
+  - line: 1a.c
+    field: Page1[0].Table_Line1a[0].RowC[0].f1_5[0]
+    type: text
+  # ---- Line 1b: type of property code (1-8), cols a/b/c ----
+  - line: 1b.a
+    field: Page1[0].Table_Line1b[0].RowA[0].f1_6[0]
+    type: text
+    maxlen: 1
+  - line: 1b.b
+    field: Page1[0].Table_Line1b[0].RowB[0].f1_7[0]
+    type: text
+    maxlen: 1
+  - line: 1b.c
+    field: Page1[0].Table_Line1b[0].RowC[0].f1_8[0]
+    type: text
+    maxlen: 1
+  # ---- Line 2: fair rental days / personal use days / QJV checkbox, rows a/b/c ----
+  - line: 2.a.fair_rental_days
+    field: Page1[0].Table_Line2[0].RowA[0].f1_9[0]
+    type: text
+  - line: 2.a.personal_use_days
+    field: Page1[0].Table_Line2[0].RowA[0].f1_10[0]
+    type: text
+  - line: 2.a.qjv
+    field: Page1[0].Table_Line2[0].RowA[0].c1_3[0]
+    type: checkbox
+    on_state: /1
+  - line: 2.b.fair_rental_days
+    field: Page1[0].Table_Line2[0].RowB[0].f1_11[0]
+    type: text
+  - line: 2.b.personal_use_days
+    field: Page1[0].Table_Line2[0].RowB[0].f1_12[0]
+    type: text
+  - line: 2.b.qjv
+    field: Page1[0].Table_Line2[0].RowB[0].c1_4[0]
+    type: checkbox
+    on_state: /1
+  - line: 2.c.fair_rental_days
+    field: Page1[0].Table_Line2[0].RowC[0].f1_13[0]
+    type: text
+  - line: 2.c.personal_use_days
+    field: Page1[0].Table_Line2[0].RowC[0].f1_14[0]
+    type: text
+  - line: 2.c.qjv
+    field: Page1[0].Table_Line2[0].RowC[0].c1_5[0]
+    type: checkbox
+    on_state: /1
+  # ---- Type of Property list, "8 Other (describe)" free-text ----
+  - line: type_other_describe
+    field: Page1[0].f1_15[0]
+    type: text
+  # ---- Income lines 3 (rents) & 4 (royalties), cols a/b/c ----
+  - line: 3.a                        # Rents received
+    field: Page1[0].Table_Income[0].Line3[0].f1_16[0]
+    type: money
+  - line: 3.b
+    field: Page1[0].Table_Income[0].Line3[0].f1_17[0]
+    type: money
+  - line: 3.c
+    field: Page1[0].Table_Income[0].Line3[0].f1_18[0]
+    type: money
+  - line: 4.a                        # Royalties received
+    field: Page1[0].Table_Income[0].Line4[0].f1_19[0]
+    type: money
+  - line: 4.b
+    field: Page1[0].Table_Income[0].Line4[0].f1_20[0]
+    type: money
+  - line: 4.c
+    field: Page1[0].Table_Income[0].Line4[0].f1_21[0]
+    type: money
+  # ---- Expenses lines 5–19, cols a/b/c ----
+  - line: 5.a                        # Advertising
+    field: Page1[0].Table_Expenses[0].Line5[0].f1_22[0]
+    type: money
+  - line: 5.b
+    field: Page1[0].Table_Expenses[0].Line5[0].f1_23[0]
+    type: money
+  - line: 5.c
+    field: Page1[0].Table_Expenses[0].Line5[0].f1_24[0]
+    type: money
+  - line: 6.a                        # Auto and travel
+    field: Page1[0].Table_Expenses[0].Line6[0].f1_25[0]
+    type: money
+  - line: 6.b
+    field: Page1[0].Table_Expenses[0].Line6[0].f1_26[0]
+    type: money
+  - line: 6.c
+    field: Page1[0].Table_Expenses[0].Line6[0].f1_27[0]
+    type: money
+  - line: 7.a                        # Cleaning and maintenance
+    field: Page1[0].Table_Expenses[0].Line7[0].f1_28[0]
+    type: money
+  - line: 7.b
+    field: Page1[0].Table_Expenses[0].Line7[0].f1_29[0]
+    type: money
+  - line: 7.c
+    field: Page1[0].Table_Expenses[0].Line7[0].f1_30[0]
+    type: money
+  - line: 8.a                        # Commissions
+    field: Page1[0].Table_Expenses[0].Line8[0].f1_31[0]
+    type: money
+  - line: 8.b
+    field: Page1[0].Table_Expenses[0].Line8[0].f1_32[0]
+    type: money
+  - line: 8.c
+    field: Page1[0].Table_Expenses[0].Line8[0].f1_33[0]
+    type: money
+  - line: 9.a                        # Insurance
+    field: Page1[0].Table_Expenses[0].Line9[0].f1_34[0]
+    type: money
+  - line: 9.b
+    field: Page1[0].Table_Expenses[0].Line9[0].f1_35[0]
+    type: money
+  - line: 9.c
+    field: Page1[0].Table_Expenses[0].Line9[0].f1_36[0]
+    type: money
+  - line: 10.a                       # Legal and other professional fees
+    field: Page1[0].Table_Expenses[0].Line10[0].f1_37[0]
+    type: money
+  - line: 10.b
+    field: Page1[0].Table_Expenses[0].Line10[0].f1_38[0]
+    type: money
+  - line: 10.c
+    field: Page1[0].Table_Expenses[0].Line10[0].f1_39[0]
+    type: money
+  - line: 11.a                       # Management fees
+    field: Page1[0].Table_Expenses[0].Line11[0].f1_40[0]
+    type: money
+  - line: 11.b
+    field: Page1[0].Table_Expenses[0].Line11[0].f1_41[0]
+    type: money
+  - line: 11.c
+    field: Page1[0].Table_Expenses[0].Line11[0].f1_42[0]
+    type: money
+  - line: 12.a                       # Mortgage interest paid to banks, etc.
+    field: Page1[0].Table_Expenses[0].Line12[0].f1_43[0]
+    type: money
+  - line: 12.b
+    field: Page1[0].Table_Expenses[0].Line12[0].f1_44[0]
+    type: money
+  - line: 12.c
+    field: Page1[0].Table_Expenses[0].Line12[0].f1_45[0]
+    type: money
+  - line: 13.a                       # Other interest
+    field: Page1[0].Table_Expenses[0].Line13[0].f1_46[0]
+    type: money
+  - line: 13.b
+    field: Page1[0].Table_Expenses[0].Line13[0].f1_47[0]
+    type: money
+  - line: 13.c
+    field: Page1[0].Table_Expenses[0].Line13[0].f1_48[0]
+    type: money
+  - line: 14.a                       # Repairs
+    field: Page1[0].Table_Expenses[0].Line14[0].f1_49[0]
+    type: money
+  - line: 14.b
+    field: Page1[0].Table_Expenses[0].Line14[0].f1_50[0]
+    type: money
+  - line: 14.c
+    field: Page1[0].Table_Expenses[0].Line14[0].f1_51[0]
+    type: money
+  - line: 15.a                       # Supplies
+    field: Page1[0].Table_Expenses[0].Line15[0].f1_52[0]
+    type: money
+  - line: 15.b
+    field: Page1[0].Table_Expenses[0].Line15[0].f1_53[0]
+    type: money
+  - line: 15.c
+    field: Page1[0].Table_Expenses[0].Line15[0].f1_54[0]
+    type: money
+  - line: 16.a                       # Taxes
+    field: Page1[0].Table_Expenses[0].Line16[0].f1_55[0]
+    type: money
+  - line: 16.b
+    field: Page1[0].Table_Expenses[0].Line16[0].f1_56[0]
+    type: money
+  - line: 16.c
+    field: Page1[0].Table_Expenses[0].Line16[0].f1_57[0]
+    type: money
+  - line: 17.a                       # Utilities
+    field: Page1[0].Table_Expenses[0].Line17[0].f1_58[0]
+    type: money
+  - line: 17.b
+    field: Page1[0].Table_Expenses[0].Line17[0].f1_59[0]
+    type: money
+  - line: 17.c
+    field: Page1[0].Table_Expenses[0].Line17[0].f1_60[0]
+    type: money
+  - line: 18.a                       # Depreciation expense or depletion
+    field: Page1[0].Table_Expenses[0].Line18[0].f1_61[0]
+    type: money
+  - line: 18.b
+    field: Page1[0].Table_Expenses[0].Line18[0].f1_62[0]
+    type: money
+  - line: 18.c
+    field: Page1[0].Table_Expenses[0].Line18[0].f1_63[0]
+    type: money
+  - line: 19.label                   # "Other (list)" free-text description (col header)
+    field: Page1[0].Table_Expenses[0].Line19[0].f1_64[0]
+    type: text
+  - line: 19.a                       # Other (list) amount
+    field: Page1[0].Table_Expenses[0].Line19[0].f1_65[0]
+    type: money
+  - line: 19.b
+    field: Page1[0].Table_Expenses[0].Line19[0].f1_66[0]
+    type: money
+  - line: 19.c
+    field: Page1[0].Table_Expenses[0].Line19[0].f1_67[0]
+    type: money
+  - line: 20.a                       # Total expenses. Add lines 5 through 19
+    field: Page1[0].Table_Expenses[0].Line20[0].f1_68[0]
+    type: money
+  - line: 20.b
+    field: Page1[0].Table_Expenses[0].Line20[0].f1_69[0]
+    type: money
+  - line: 20.c
+    field: Page1[0].Table_Expenses[0].Line20[0].f1_70[0]
+    type: money
+  - line: 21.a                       # Subtract line 20 from line 3 (rents)/4 (royalties)
+    field: Page1[0].Table_Expenses[0].Line21[0].f1_71[0]
+    type: money
+  - line: 21.b
+    field: Page1[0].Table_Expenses[0].Line21[0].f1_72[0]
+    type: money
+  - line: 21.c
+    field: Page1[0].Table_Expenses[0].Line21[0].f1_73[0]
+    type: money
+  - line: 22.a                       # Deductible rental real estate loss after limitation (Form 8582)
+    field: Page1[0].Table_Expenses[0].Line22[0].f1_74[0]
+    type: money
+  - line: 22.b
+    field: Page1[0].Table_Expenses[0].Line22[0].f1_75[0]
+    type: money
+  - line: 22.c
+    field: Page1[0].Table_Expenses[0].Line22[0].f1_76[0]
+    type: money
+  # ---- Whole-form summary lines 23a–26 (single boxes) ----
+  - line: 23a                        # Total of all amounts reported on line 3 for all rental properties
+    field: Page1[0].f1_77[0]
+    type: money
+  - line: 23b                        # Total of all amounts reported on line 4 for all royalty properties
+    field: Page1[0].f1_78[0]
+    type: money
+  - line: 23c                        # Total of all amounts reported on line 12 for all properties
+    field: Page1[0].f1_79[0]
+    type: money
+  - line: 23d                        # Total of all amounts reported on line 18 for all properties
+    field: Page1[0].f1_80[0]
+    type: money
+  - line: 23e                        # Total of all amounts reported on line 20 for all properties
+    field: Page1[0].f1_81[0]
+    type: money
+  - line: "24"                       # Income. Add positive amounts shown on line 21
+    field: Page1[0].f1_82[0]
+    type: money
+  - line: "25"                       # Losses. Royalty losses (line 21) + rental real estate losses (line 22)
+    field: Page1[0].f1_83[0]
+    type: money
+  - line: "26"                       # Total rental real estate and royalty income or (loss). Combine 24 and 25
+    field: Page1[0].f1_84[0]
+    type: money
+  # ================= PAGE 2 =================
+  # ---- Page 2 header ----
+  - line: name_page2
+    field: Page2[0].f2_1[0]
+    type: text
+  - line: identifying_number_page2
+    field: Page2[0].f2_2[0]
+    type: text
+    maxlen: 11
+  # ---- Part II line 27 (at-risk / prior-year loss question) Yes/No ----
+  - line: 27.yes
+    field: Page2[0].c2_1[0]
+    type: checkbox
+    on_state: /1
+  - line: 27.no
+    field: Page2[0].c2_1[1]
+    type: checkbox
+    on_state: /2
+  # ---- Line 28 cols (a) name / (b) P-or-S / (c) foreign / (d) EIN / (e) basis / (f) at-risk, rows a–d ----
+  - line: 28.a.name
+    field: Page2[0].Table_Line28a-f[0].RowA[0].f2_3[0]
+    type: text
+  - line: 28.a.type                  # (b) P=partnership / S=S corporation
+    field: Page2[0].Table_Line28a-f[0].RowA[0].f2_4[0]
+    type: text
+    maxlen: 1
+  - line: 28.a.foreign               # (c) foreign partnership
+    field: Page2[0].Table_Line28a-f[0].RowA[0].c2_2[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.a.ein                   # (d) employer identification number
+    field: Page2[0].Table_Line28a-f[0].RowA[0].f2_5[0]
+    type: text
+    maxlen: 10
+  - line: 28.a.basis_required        # (e) basis computation is required
+    field: Page2[0].Table_Line28a-f[0].RowA[0].c2_3[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.a.not_at_risk           # (f) any amount is not at risk
+    field: Page2[0].Table_Line28a-f[0].RowA[0].c2_4[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.b.name
+    field: Page2[0].Table_Line28a-f[0].RowB[0].f2_6[0]
+    type: text
+  - line: 28.b.type
+    field: Page2[0].Table_Line28a-f[0].RowB[0].f2_7[0]
+    type: text
+    maxlen: 1
+  - line: 28.b.foreign
+    field: Page2[0].Table_Line28a-f[0].RowB[0].c2_5[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.b.ein
+    field: Page2[0].Table_Line28a-f[0].RowB[0].f2_8[0]
+    type: text
+    maxlen: 10
+  - line: 28.b.basis_required
+    field: Page2[0].Table_Line28a-f[0].RowB[0].c2_6[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.b.not_at_risk
+    field: Page2[0].Table_Line28a-f[0].RowB[0].c2_7[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.c.name
+    field: Page2[0].Table_Line28a-f[0].RowC[0].f2_9[0]
+    type: text
+  - line: 28.c.type
+    field: Page2[0].Table_Line28a-f[0].RowC[0].f2_10[0]
+    type: text
+    maxlen: 1
+  - line: 28.c.foreign
+    field: Page2[0].Table_Line28a-f[0].RowC[0].c2_8[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.c.ein
+    field: Page2[0].Table_Line28a-f[0].RowC[0].f2_11[0]
+    type: text
+    maxlen: 10
+  - line: 28.c.basis_required
+    field: Page2[0].Table_Line28a-f[0].RowC[0].c2_9[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.c.not_at_risk
+    field: Page2[0].Table_Line28a-f[0].RowC[0].c2_10[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.d.name
+    field: Page2[0].Table_Line28a-f[0].RowD[0].f2_12[0]
+    type: text
+  - line: 28.d.type
+    field: Page2[0].Table_Line28a-f[0].RowD[0].f2_13[0]
+    type: text
+    maxlen: 1
+  - line: 28.d.foreign
+    field: Page2[0].Table_Line28a-f[0].RowD[0].c2_11[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.d.ein
+    field: Page2[0].Table_Line28a-f[0].RowD[0].f2_14[0]
+    type: text
+    maxlen: 10
+  - line: 28.d.basis_required
+    field: Page2[0].Table_Line28a-f[0].RowD[0].c2_12[0]
+    type: checkbox
+    on_state: /1
+  - line: 28.d.not_at_risk
+    field: Page2[0].Table_Line28a-f[0].RowD[0].c2_13[0]
+    type: checkbox
+    on_state: /1
+  # ---- Line 28 cols (g) passive loss / (h) passive income / (i) nonpassive loss / (j) sec.179 / (k) nonpassive income, rows a–d ----
+  - line: 28.a.g                     # (g) Passive loss allowed (attach Form 8582)
+    field: Page2[0].Table_Line28g-k[0].RowA[0].f2_15[0]
+    type: money
+  - line: 28.a.h                     # (h) Passive income from Schedule K-1
+    field: Page2[0].Table_Line28g-k[0].RowA[0].f2_16[0]
+    type: money
+  - line: 28.a.i                     # (i) Nonpassive loss allowed
+    field: Page2[0].Table_Line28g-k[0].RowA[0].f2_17[0]
+    type: money
+  - line: 28.a.j                     # (j) Section 179 expense deduction from Form 4562
+    field: Page2[0].Table_Line28g-k[0].RowA[0].f2_18[0]
+    type: money
+  - line: 28.a.k                     # (k) Nonpassive income from Schedule K-1
+    field: Page2[0].Table_Line28g-k[0].RowA[0].f2_19[0]
+    type: money
+  - line: 28.b.g
+    field: Page2[0].Table_Line28g-k[0].RowB[0].f2_20[0]
+    type: money
+  - line: 28.b.h
+    field: Page2[0].Table_Line28g-k[0].RowB[0].f2_21[0]
+    type: money
+  - line: 28.b.i
+    field: Page2[0].Table_Line28g-k[0].RowB[0].f2_22[0]
+    type: money
+  - line: 28.b.j
+    field: Page2[0].Table_Line28g-k[0].RowB[0].f2_23[0]
+    type: money
+  - line: 28.b.k
+    field: Page2[0].Table_Line28g-k[0].RowB[0].f2_24[0]
+    type: money
+  - line: 28.c.g
+    field: Page2[0].Table_Line28g-k[0].RowC[0].f2_25[0]
+    type: money
+  - line: 28.c.h
+    field: Page2[0].Table_Line28g-k[0].RowC[0].f2_26[0]
+    type: money
+  - line: 28.c.i
+    field: Page2[0].Table_Line28g-k[0].RowC[0].f2_27[0]
+    type: money
+  - line: 28.c.j
+    field: Page2[0].Table_Line28g-k[0].RowC[0].f2_28[0]
+    type: money
+  - line: 28.c.k
+    field: Page2[0].Table_Line28g-k[0].RowC[0].f2_29[0]
+    type: money
+  - line: 28.d.g
+    field: Page2[0].Table_Line28g-k[0].RowD[0].f2_30[0]
+    type: money
+  - line: 28.d.h
+    field: Page2[0].Table_Line28g-k[0].RowD[0].f2_31[0]
+    type: money
+  - line: 28.d.i
+    field: Page2[0].Table_Line28g-k[0].RowD[0].f2_32[0]
+    type: money
+  - line: 28.d.j
+    field: Page2[0].Table_Line28g-k[0].RowD[0].f2_33[0]
+    type: money
+  - line: 28.d.k
+    field: Page2[0].Table_Line28g-k[0].RowD[0].f2_34[0]
+    type: money
+  # ---- Line 29a Totals (cols g–k) ----
+  - line: 29a.g
+    field: Page2[0].f2_35[0]
+    type: money
+  - line: 29a.h
+    field: Page2[0].f2_36[0]
+    type: money
+  - line: 29a.i
+    field: Page2[0].f2_37[0]
+    type: money
+  - line: 29a.j
+    field: Page2[0].f2_38[0]
+    type: money
+  - line: 29a.k
+    field: Page2[0].f2_39[0]
+    type: money
+  # ---- Line 29b Totals (cols g–k) ----
+  - line: 29b.g
+    field: Page2[0].f2_40[0]
+    type: money
+  - line: 29b.h
+    field: Page2[0].f2_41[0]
+    type: money
+  - line: 29b.i
+    field: Page2[0].f2_42[0]
+    type: money
+  - line: 29b.j
+    field: Page2[0].f2_43[0]
+    type: money
+  - line: 29b.k
+    field: Page2[0].f2_44[0]
+    type: money
+  - line: "30"                       # Add columns (h) and (k) of line 29a
+    field: Page2[0].f2_45[0]
+    type: money
+  - line: "31"                       # Add columns (g), (i), and (j) of line 29b
+    field: Page2[0].f2_46[0]
+    type: money
+  - line: "32"                       # Total partnership and S corp income or (loss). Combine 30 and 31
+    field: Page2[0].f2_47[0]
+    type: money
+  # ---- Part III line 33: (a) name / (b) EIN, rows a/b ----
+  - line: 33.a.name
+    field: Page2[0].Table_Line33a-b[0].RowA[0].f2_48[0]
+    type: text
+  - line: 33.a.ein
+    field: Page2[0].Table_Line33a-b[0].RowA[0].f2_49[0]
+    type: text
+    maxlen: 10
+  - line: 33.b.name
+    field: Page2[0].Table_Line33a-b[0].RowB[0].f2_50[0]
+    type: text
+  - line: 33.b.ein
+    field: Page2[0].Table_Line33a-b[0].RowB[0].f2_51[0]
+    type: text
+    maxlen: 10
+  # ---- Part III line 33 cols (c)–(f), rows a/b ----
+  - line: 33.a.c                     # (c) Passive deduction or loss allowed (Form 8582)
+    field: Page2[0].Table_Line33c-f[0].RowA[0].f2_52[0]
+    type: money
+  - line: 33.a.d                     # (d) Passive income from Schedule K-1
+    field: Page2[0].Table_Line33c-f[0].RowA[0].f2_53[0]
+    type: money
+  - line: 33.a.e                     # (e) Deduction or loss from Schedule K-1
+    field: Page2[0].Table_Line33c-f[0].RowA[0].f2_54[0]
+    type: money
+  - line: 33.a.f                     # (f) Other income from Schedule K-1
+    field: Page2[0].Table_Line33c-f[0].RowA[0].f2_55[0]
+    type: money
+  - line: 33.b.c
+    field: Page2[0].Table_Line33c-f[0].RowB[0].f2_56[0]
+    type: money
+  - line: 33.b.d
+    field: Page2[0].Table_Line33c-f[0].RowB[0].f2_57[0]
+    type: money
+  - line: 33.b.e
+    field: Page2[0].Table_Line33c-f[0].RowB[0].f2_58[0]
+    type: money
+  - line: 33.b.f
+    field: Page2[0].Table_Line33c-f[0].RowB[0].f2_59[0]
+    type: money
+  # ---- Line 34a Totals (cols c–f) ----
+  - line: 34a.c
+    field: Page2[0].f2_60[0]
+    type: money
+  - line: 34a.d
+    field: Page2[0].f2_61[0]
+    type: money
+  - line: 34a.e
+    field: Page2[0].f2_62[0]
+    type: money
+  - line: 34a.f
+    field: Page2[0].f2_63[0]
+    type: money
+  # ---- Line 34b Totals (cols c–f) ----
+  - line: 34b.c
+    field: Page2[0].f2_64[0]
+    type: money
+  - line: 34b.d
+    field: Page2[0].f2_65[0]
+    type: money
+  - line: 34b.e
+    field: Page2[0].f2_66[0]
+    type: money
+  - line: 34b.f
+    field: Page2[0].f2_67[0]
+    type: money
+  - line: "35"                       # Add columns (d) and (f) of line 34a
+    field: Page2[0].f2_68[0]
+    type: money
+  - line: "36"                       # Add columns (c) and (e) of line 34b
+    field: Page2[0].f2_69[0]
+    type: money
+  - line: "37"                       # Total estate and trust income or (loss). Combine 35 and 36
+    field: Page2[0].f2_70[0]
+    type: money
+  # ---- Part IV line 38 REMICs: (a) name / (b) EIN / (c) excess inclusion / (d) taxable income / (e) income ----
+  - line: 38.name
+    field: Page2[0].Table_Line38[0].Row1[0].f2_71[0]
+    type: text
+  - line: 38.ein
+    field: Page2[0].Table_Line38[0].Row1[0].f2_72[0]
+    type: text
+    maxlen: 10
+  - line: 38.c                       # (c) Excess inclusion from Schedules Q, line 2c
+    field: Page2[0].Table_Line38[0].Row1[0].f2_73[0]
+    type: money
+  - line: 38.d                       # (d) Taxable income (net loss) from Schedules Q, line 1b
+    field: Page2[0].Table_Line38[0].Row1[0].f2_74[0]
+    type: money
+  - line: 38.e                       # (e) Income from Schedules Q, line 3b
+    field: Page2[0].Table_Line38[0].Row1[0].f2_75[0]
+    type: money
+  - line: "39"                       # Combine columns (d) and (e) only
+    field: Page2[0].f2_76[0]
+    type: money
+  # ---- Part V Summary ----
+  - line: "40"                       # Net farm rental income or (loss) from Form 4835
+    field: Page2[0].f2_77[0]
+    type: money
+  - line: "41"                       # Total income or (loss). Combine lines 26, 32, 37, 39, 40 → Schedule 1 line 5
+    field: Page2[0].f2_78[0]
+    type: money
+  - line: "42"                       # Reconciliation of farming and fishing income
+    field: Page2[0].Line42_ReadOrder[0].f2_79[0]
+    type: money
+  - line: "43"                       # Reconciliation for real estate professionals
+    field: Page2[0].f2_80[0]
+    type: money
+relations:
+  - "32 == 30 + 31"                  # "Total partnership and S corp income or (loss). Combine lines 30 and 31"
+  - "37 == 35 + 36"                  # "Total estate and trust income or (loss). Combine lines 35 and 36"
+cross_form:
+  - "41 == sched_1.5"                # Total supplemental income/(loss) → Schedule 1 (Form 1040), line 5
+identity_fields:
+  - name
+  - identifying_number

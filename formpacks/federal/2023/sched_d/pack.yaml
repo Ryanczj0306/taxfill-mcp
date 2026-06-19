@@ -1,0 +1,219 @@
+# Schedule D (Form 1040), 2023 — Capital Gains and Losses.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) →
+# vision-map workflow (every fillable widget filled with its own field name and
+# read against the printed line label/column on the real form) → this map.
+#
+# Part I (Short-Term) and Part II (Long-Term) are each a 4-column table:
+#   (d) Proceeds (sales price)  | (e) Cost (or other basis)
+#   (g) Adjustments (from Form 8949 Part I/II, line 2, column (g))
+#   (h) Gain or (loss) = (d) − (e) + (g)
+# Column keys use the dotted convention (e.g. "1a.d","1a.e","1a.g","1a.h") on the
+# multi-box lines (1a,1b,2,3 and 8a,8b,9,10). Single-box money lines (4–7,11–16,
+# 18,19,21) use the bare line number. Yes/No checkbox pairs use ".yes"/".no".
+#
+# ALL 55 fillable widgets are mapped — Schedule D has NO pre-printed statutory
+# constants, so nothing is intentionally left unmapped.
+#
+# Relations: only line 16 ("Combine lines 7 and 15") is declared — it is an
+# unconditional equality whose operands (7, 15, 16) are all mapped. The per-row
+# column equality (h) = (d) − (e) + (g) is NOT declared: the verify relation
+# grammar resolves a line id as a single token and cannot reference dotted
+# column keys, so those checks are left to the recompute engine + human review.
+# The conditional/worksheet-driven subtotals (lines 7, 15, 18–21) are likewise
+# left to recompute + review.
+form: "Schedule D (Form 1040)"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040sd--2023.pdf
+pdf_sha256: 3421941cbc675e004d38ff3045e865f82bb97a5db080c9630a34057f4165ec07
+acroform_root: topmostSubform[0]
+fields:
+  # --- Header ---
+  - line: name                       # Name(s) shown on return
+    field: Page1[0].f1_01[0]
+    type: text
+  - line: identifying_number         # Your social security number
+    field: Page1[0].f1_02[0]
+    type: text
+    maxlen: 11
+  - line: qof.yes                    # "Did you dispose of any investment(s) in a QOF...?" — Yes
+    field: Page1[0].c1_1[0]
+    type: checkbox
+    on_state: "/1"
+  - line: qof.no                     # ...QOF question — No
+    field: Page1[0].c1_1[1]
+    type: checkbox
+    on_state: "/2"
+
+  # --- Part I: Short-Term Capital Gains and Losses (assets held 1 year or less) ---
+  - line: 1a.d                       # Line 1a — 1099-B basis reported to IRS, no adjustments; (d) Proceeds
+    field: Page1[0].Table_PartI[0].Row1a[0].f1_03[0]
+    type: money
+  - line: 1a.e                       # 1a (e) Cost or other basis
+    field: Page1[0].Table_PartI[0].Row1a[0].f1_04[0]
+    type: money
+  - line: 1a.g                       # 1a (g) Adjustments
+    field: Page1[0].Table_PartI[0].Row1a[0].f1_05_RO[0]
+    type: money
+  - line: 1a.h                       # 1a (h) Gain or (loss)
+    field: Page1[0].Table_PartI[0].Row1a[0].f1_06[0]
+    type: money
+  - line: 1b.d                       # Line 1b — totals for Form 8949 Box A checked; (d) Proceeds
+    field: Page1[0].Table_PartI[0].Row1b[0].f1_07[0]
+    type: money
+  - line: 1b.e                       # 1b (e) Cost or other basis
+    field: Page1[0].Table_PartI[0].Row1b[0].f1_08[0]
+    type: money
+  - line: 1b.g                       # 1b (g) Adjustments
+    field: Page1[0].Table_PartI[0].Row1b[0].f1_09[0]
+    type: money
+  - line: 1b.h                       # 1b (h) Gain or (loss)
+    field: Page1[0].Table_PartI[0].Row1b[0].f1_10[0]
+    type: money
+  - line: 2.d                        # Line 2 — totals for Form 8949 Box B checked; (d) Proceeds
+    field: Page1[0].Table_PartI[0].Row2[0].f1_11[0]
+    type: money
+  - line: 2.e                        # 2 (e) Cost or other basis
+    field: Page1[0].Table_PartI[0].Row2[0].f1_12[0]
+    type: money
+  - line: 2.g                        # 2 (g) Adjustments
+    field: Page1[0].Table_PartI[0].Row2[0].f1_13[0]
+    type: money
+  - line: 2.h                        # 2 (h) Gain or (loss)
+    field: Page1[0].Table_PartI[0].Row2[0].f1_14[0]
+    type: money
+  - line: 3.d                        # Line 3 — totals for Form 8949 Box C checked; (d) Proceeds
+    field: Page1[0].Table_PartI[0].Row3[0].f1_15[0]
+    type: money
+  - line: 3.e                        # 3 (e) Cost or other basis
+    field: Page1[0].Table_PartI[0].Row3[0].f1_16[0]
+    type: money
+  - line: 3.g                        # 3 (g) Adjustments
+    field: Page1[0].Table_PartI[0].Row3[0].f1_17[0]
+    type: money
+  - line: 3.h                        # 3 (h) Gain or (loss)
+    field: Page1[0].Table_PartI[0].Row3[0].f1_18[0]
+    type: money
+  - line: "4"                        # Short-term gain from Form 6252; ST gain/(loss) from Forms 4684, 6781, 8824
+    field: Page1[0].f1_19[0]
+    type: money
+  - line: "5"                        # Net ST gain/(loss) from partnerships, S corps, estates, trusts (Sch K-1)
+    field: Page1[0].f1_20[0]
+    type: money
+  - line: "6"                        # Short-term capital loss carryover (Capital Loss Carryover Worksheet, line 8)
+    field: Page1[0].f1_21[0]
+    type: money
+  - line: "7"                        # Net short-term capital gain or (loss). Combine lines 1a–6 in column (h)
+    field: Page1[0].f1_22[0]
+    type: money
+
+  # --- Part II: Long-Term Capital Gains and Losses (assets held more than 1 year) ---
+  - line: 8a.d                       # Line 8a — 1099-B basis reported to IRS, no adjustments; (d) Proceeds
+    field: Page1[0].Table_PartII[0].Row8a[0].f1_23[0]
+    type: money
+  - line: 8a.e                       # 8a (e) Cost or other basis
+    field: Page1[0].Table_PartII[0].Row8a[0].f1_24[0]
+    type: money
+  - line: 8a.g                       # 8a (g) Adjustments
+    field: Page1[0].Table_PartII[0].Row8a[0].f1_25_RO[0]
+    type: money
+  - line: 8a.h                       # 8a (h) Gain or (loss)
+    field: Page1[0].Table_PartII[0].Row8a[0].f1_26[0]
+    type: money
+  - line: 8b.d                       # Line 8b — totals for Form 8949 Box D checked; (d) Proceeds
+    field: Page1[0].Table_PartII[0].Row8b[0].f1_27[0]
+    type: money
+  - line: 8b.e                       # 8b (e) Cost or other basis
+    field: Page1[0].Table_PartII[0].Row8b[0].f1_28[0]
+    type: money
+  - line: 8b.g                       # 8b (g) Adjustments
+    field: Page1[0].Table_PartII[0].Row8b[0].f1_29[0]
+    type: money
+  - line: 8b.h                       # 8b (h) Gain or (loss)
+    field: Page1[0].Table_PartII[0].Row8b[0].f1_30[0]
+    type: money
+  - line: 9.d                        # Line 9 — totals for Form 8949 Box E checked; (d) Proceeds
+    field: Page1[0].Table_PartII[0].Row9[0].f1_31[0]
+    type: money
+  - line: 9.e                        # 9 (e) Cost or other basis
+    field: Page1[0].Table_PartII[0].Row9[0].f1_32[0]
+    type: money
+  - line: 9.g                        # 9 (g) Adjustments
+    field: Page1[0].Table_PartII[0].Row9[0].f1_33[0]
+    type: money
+  - line: 9.h                        # 9 (h) Gain or (loss)
+    field: Page1[0].Table_PartII[0].Row9[0].f1_34[0]
+    type: money
+  - line: 10.d                       # Line 10 — totals for Form 8949 Box F checked; (d) Proceeds
+    field: Page1[0].Table_PartII[0].Row10[0].f1_35[0]
+    type: money
+  - line: 10.e                       # 10 (e) Cost or other basis
+    field: Page1[0].Table_PartII[0].Row10[0].f1_36[0]
+    type: money
+  - line: 10.g                       # 10 (g) Adjustments
+    field: Page1[0].Table_PartII[0].Row10[0].f1_37[0]
+    type: money
+  - line: 10.h                       # 10 (h) Gain or (loss)
+    field: Page1[0].Table_PartII[0].Row10[0].f1_38[0]
+    type: money
+  - line: "11"                       # Gain from Form 4797 Part I; LT gain from Forms 2439, 6252; Forms 4684, 6781, 8824
+    field: Page1[0].f1_39[0]
+    type: money
+  - line: "12"                       # Net LT gain/(loss) from partnerships, S corps, estates, trusts (Sch K-1)
+    field: Page1[0].f1_40[0]
+    type: money
+  - line: "13"                       # Capital gain distributions
+    field: Page1[0].f1_41[0]
+    type: money
+  - line: "14"                       # Long-term capital loss carryover (Capital Loss Carryover Worksheet, line 13)
+    field: Page1[0].f1_42[0]
+    type: money
+  - line: "15"                       # Net long-term capital gain or (loss). Combine lines 8a–14 in column (h)
+    field: Page1[0].f1_43[0]
+    type: money
+
+  # --- Part III: Summary (page 2) ---
+  - line: "16"                       # Combine lines 7 and 15 and enter the result → Form 1040, line 7
+    field: Page2[0].f2_01[0]
+    type: money
+  - line: 17.yes                     # Line 17 "Are lines 15 and 16 both gains?" — Yes
+    field: Page2[0].c2_1[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 17.no                      # Line 17 — No
+    field: Page2[0].c2_1[1]
+    type: checkbox
+    on_state: "/2"
+  - line: "18"                       # 28% Rate Gain Worksheet amount
+    field: Page2[0].f2_02[0]
+    type: money
+  - line: "19"                       # Unrecaptured Section 1250 Gain Worksheet amount
+    field: Page2[0].f2_03[0]
+    type: money
+  - line: 20.yes                     # Line 20 "Are lines 18 and 19 both zero or blank...?" — Yes
+    field: Page2[0].c2_2[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 20.no                      # Line 20 — No
+    field: Page2[0].c2_2[1]
+    type: checkbox
+    on_state: "/2"
+  - line: "21"                       # If line 16 is a loss, smaller of loss on 16 or ($3,000)/($1,500) → Form 1040 line 7
+    field: Page2[0].TagCorrectingSubform[0].f2_04[0]
+    type: money
+  - line: 22.yes                     # Line 22 "Do you have qualified dividends on Form 1040 line 3a?" — Yes
+    field: Page2[0].c2_3[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 22.no                      # Line 22 — No
+    field: Page2[0].c2_3[1]
+    type: checkbox
+    on_state: "/2"
+relations:
+  - "16 == 7 + 15"                   # "Combine lines 7 and 15 and enter the result"
+cross_form:
+  - "16 == f1040.7"                  # Net capital gain/(loss) → Form 1040, line 7
+identity_fields:
+  - name
+  - identifying_number
