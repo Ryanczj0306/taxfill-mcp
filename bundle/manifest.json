@@ -1,0 +1,146 @@
+{
+  "$schema_note": "DRAFT pre-filled at version-bump time. Run `mcpb validate` against the installed @anthropic-ai/mcpb CLI before `mcpb pack` \u2014 adjust field names to the CLI's current schema if it has drifted.",
+  "manifest_version": "0.2",
+  "name": "taxfill",
+  "display_name": "TaxFill",
+  "version": "0.1.0",
+  "description": "Draft-prepare a U.S. tax return from your documents \u2014 fills official IRS/state PDFs from cited, source-verified knowledge. Not tax advice; review-only, paper filing (no e-file).",
+  "long_description": "TaxFill is a local MCP server that helps a person prepare a paper U.S. federal (and California) income-tax return for review. It downloads the official blank PDF, fills it from your confirmed inputs, computes lines from source-verified tax tables, and shows every figure's authority. It never invents numbers, never e-files, and is not a substitute for a professional.",
+  "author": {
+    "name": "TaxFill maintainers",
+    "url": "https://github.com/Ryanczj0306/taxfill-mcp"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/Ryanczj0306/taxfill-mcp",
+  "documentation": "https://github.com/Ryanczj0306/taxfill-mcp#readme",
+  "keywords": [
+    "tax",
+    "irs",
+    "1040",
+    "mcp",
+    "pdf",
+    "f1040-nr",
+    "nonresident"
+  ],
+  "server": {
+    "type": "binary",
+    "mcp_config": {
+      "command": "uvx",
+      "args": [
+        "taxfill-mcp"
+      ]
+    }
+  },
+  "tools": [
+    {
+      "name": "list_forms",
+      "description": "List available form packs (optionally filtered by jurisdiction/year)."
+    },
+    {
+      "name": "get_form_map",
+      "description": "Return one pack's line->field map, relations, and cross-form refs."
+    },
+    {
+      "name": "fetch_blank",
+      "description": "Download the official blank PDF (checksum-verified) and return its local path."
+    },
+    {
+      "name": "fill_form",
+      "description": "Deterministically fill a form. `values` maps line ids (per get_form_map) to values."
+    },
+    {
+      "name": "verify_form",
+      "description": "Verify a filled form against its pack: assertions, relation math + independent recompute,"
+    },
+    {
+      "name": "verify_filing",
+      "description": "Verify a whole filing across forms: cross-form identity + inter-form relations."
+    },
+    {
+      "name": "render_form",
+      "description": "Render PDF pages to PNG images (returned as MCP image content) for vision review."
+    },
+    {
+      "name": "calc",
+      "description": "Deterministic tax math. op in {tax, standard_deduction, se_tax}; every result shows its"
+    },
+    {
+      "name": "residency",
+      "description": "Federal residency (NRA/RA/dual-status) via the Substantial Presence Test + exempt years."
+    },
+    {
+      "name": "intake_checklist",
+      "description": "Next interview questions + required documents for a (partial) profile. Empty profile = start."
+    },
+    {
+      "name": "list_document_kinds",
+      "description": "Supported tax-document types and their official box layouts (W-2, 1099-*, 1098-*, 1042-S)."
+    },
+    {
+      "name": "extract_document",
+      "description": "Structure + validate YOUR reading of one tax document into provenance-tagged fields."
+    },
+    {
+      "name": "workspace_save",
+      "description": "Persist the intake profile to the local resumable workspace (taxfill-workspace/<year>/)."
+    },
+    {
+      "name": "workspace_load",
+      "description": "Resume: load the saved profile + status from the local workspace (None profile if new)."
+    },
+    {
+      "name": "workspace_record_position",
+      "description": "Record one decided position with its authority into the audit trail."
+    },
+    {
+      "name": "workspace_reconcile",
+      "description": "Generate RECONCILIATION.md (positions + authority) and CHECKLIST.md from recorded state."
+    },
+    {
+      "name": "state_scope",
+      "description": "Which states require a return for the year, in what role, with forms/benefits/warnings."
+    },
+    {
+      "name": "estimate_refund",
+      "description": "Early bottom-line ESTIMATE (a range) from a partial profile + confirmed income amounts."
+    },
+    {
+      "name": "get_sources",
+      "description": "Ranked official .gov sources for a topic + the freshness change-channels (freshness protocol)."
+    },
+    {
+      "name": "filing_summary",
+      "description": "Plain-language bottom line per return (refund/owed + deadline & refund-SOL status) for approval."
+    },
+    {
+      "name": "file_and_pay",
+      "description": "Last-mile checklist per return: pay, sign, assemble, mail, records, deadlines. Same manifest as filing_summary."
+    }
+  ],
+  "tools_generated": false,
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "python": ">=3.11"
+    }
+  },
+  "permissions": {
+    "network": {
+      "outbound": [
+        "*.gov",
+        "*.us"
+      ],
+      "reason": "download official blank tax forms from government sites"
+    },
+    "filesystem": {
+      "read_write": [
+        "user-selected working directory"
+      ],
+      "reason": "write filled PDFs and the resumable taxfill-workspace"
+    }
+  }
+}

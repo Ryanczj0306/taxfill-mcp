@@ -26,6 +26,8 @@ Set the same version in both packages (they release together):
 - `packages/mcp-server/pyproject.toml` → `version`
 - `packages/mcp-server/pyproject.toml` → `dependencies` pin `taxfill-core==<version>`
   (keep it in lock-step so `uvx taxfill-mcp` resolves the matching core)
+- `packages/core/src/taxfill_core/__init__.py` → `__version__`
+- `packages/mcp-server/src/taxfill_mcp/__init__.py` → `__version__`
 
 For the first real release, drop the `.dev0` suffix → `0.1.0`. Also flip the
 "not yet published to PyPI" notes in both package `README.md`s and
