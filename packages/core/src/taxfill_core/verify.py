@@ -574,6 +574,15 @@ def read_text_widgets(pdf_path: str | Path) -> list[TextWidget]:
                 continue
             if _inherited(annot, "/FT") != "/Tx":
                 continue
+            # Skip read-only text widgets (Ff bit 1, ReadOnly). They cannot
+            # receive taxpayer input, so the filler never writes them; any
+            # value present is a decorative/banner default baked into the blank
+            # (e.g. NC D-400's fixed-18pt "PRINT" banner, IL-1040's "Help"
+            # tooltip). Scanning them for clipping yields false positives on a
+            # value the user can neither change nor see clipped.
+            flags = _inherited(annot, "/Ff")
+            if flags is not None and int(flags) & 1:
+                continue
             rect = annot.get("/Rect")
             rect_width = abs(float(rect[2]) - float(rect[0])) if rect else 0.0
             value = _inherited(annot, "/V")
