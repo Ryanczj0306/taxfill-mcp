@@ -19,7 +19,7 @@ purge`) · introspect pack-authoring CLI · Phase A launch packaging + drift CI.
 audit→golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE,
 **Schedule D, Schedule E, Form 8863, Form 2555** (#6 priority set complete);
 state — CA Form 540 + 540NR + **Schedule CA 540 + 540NR**, **NY IT-201 + IT-203**,
-**IL IL-1040**, **PA PA-40**, **OH IT 1040 (13-page bundle)** — 6 states fillable.
+**IL IL-1040**, **PA PA-40**, **OH IT 1040 (13-page bundle)** — 5 states fillable.
 40 form packs total.
 
 **Quality bar (non-negotiable, applies to every item below):** no invented
@@ -33,7 +33,7 @@ The eight remaining workstreams, with the phase that schedules each:
 
 ## 1. State form packs — the biggest gap (Phase C)
 
-**STATUS (2026-06-19):** **6 states now fillable** — CA (540, 540NR, Schedule CA
+**STATUS (2026-06-19):** **5 states now fillable** — CA (540, 540NR, Schedule CA
 540 + 540NR), NY (IT-201 + IT-203), **IL (IL-1040)**, **PA (PA-40)**, **OH (IT
 1040 full 13-page bundle)**. Rolling out by population; next tranche: GA → NC →
 MI → NJ → MA → …, then each state's nonresident/part-year form where it is a
