@@ -1,0 +1,477 @@
+# Form D-400, 2023 — North Carolina Individual Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) -> vision-map workflow (the
+# instruction page plus both form pages, with zoomed crops, read to place each
+# field on its printed line / column) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty). The field names are the raw
+# Web-Fill sentinel ids the NCDOR PDF ships with: header/demographic widgets
+# carry "y_d400wf_<thing>" descriptive names (y_d400wf_fname1, y_d400wf_add,
+# y_d400wf_ssn1, …) and every numbered dollar line is a "y_d400wf_li<NN>…_good"
+# box, so the line key is the printed step/line number ("y_d400wf_li6_good" ->
+# line "6", etc.). The PDF the sentinel sweep renders is 3 images: image 1 is
+# the NCDOR "Instructions for Web Fill-In Forms" cover (DO NOT MAIL THIS PAGE)
+# which carries no taxpayer data, image 2 is form Page 1 (header through line
+# 15), image 3 is form Page 2 (lines 16-34 + signatures).
+#
+# Coverage. The blank PDF has 95 distinct AcroForm field objects (pypdf
+# get_fields dedupes the two repeated widgets — the SSN box and the "PRINT"
+# banner each appear on both form pages under one shared field name). 92
+# fillable widgets are mapped here. Three widgets are intentionally OMITTED —
+# none accept taxpayer data:
+#   * "PRINT"  — a read-only (/Tx, Ff bit 1 ReadOnly) banner/tooltip widget
+#     ("DO NOT MAIL THIS PAGE" / page header echo); it cannot be filled.
+#   * "z_d400wf_print" and "z_d400wf_clear" — push-buttons (/Btn, Ff bit 17
+#     Pushbutton; their AP sentinel state is the appearance-stream dict key
+#     "/BBox", not a selectable value) — the PRINT and CLEAR buttons at the top
+#     of Page 1. Form actions, not data fields.
+#
+# Money vs text. Every "y_d400wf_li<NN>…_good" dollar box (and the N.C.
+# Education Endowment Fund "$" box, y_d400wf_NCEDU_good) is mapped `money`:
+# each prints a ".00" cents suffix and the filler renders whole dollars.
+# Exceptions kept as `text`: y_d400wf_li10a_good (line 10a is a COUNT of
+# qualifying children, not dollars) and y_d400wf_li13_page1_good (line 13 is a
+# taxable PERCENTAGE "entered as a decimal", which whole-dollar money rounding
+# would corrupt). Genuine text widgets stay text: names, middle initials,
+# address/apt/city/ZIP/country/county, the fiscal-year begin/end date boxes,
+# SSN boxes (maxlen 11), spouse name/SSN, the date-of-death boxes, signature
+# and preparer dates, contact phone, preparer FEIN/SSN/PTIN and phone, the
+# page-2 last-name echo, and the three /Ch dropdown widgets (State, Year-
+# spouse-died, and the line-26e underpayment-Exception letter box) which are
+# free-form choice fields written as text.
+#
+# Checkboxes / fill-in circles. NC uses single-widget /Btn yes/no circles
+# rather than shared radio fields, so each circle is its own field mapped one
+# line per option with on_state copied verbatim from the skeleton (/Yes for the
+# yes/no and fill-in circles). The Residency-Status, Veteran-Information and
+# Federal-Extension blocks each pair a "yes" field and a "no" field
+# (rs1/rs2 taxpayer/spouse residency, v1/sv1 taxpayer/spouse veteran,
+# fedex1 federal extension). The Filing-Status block is five separate
+# single-circle fields (fstat1..fstat5). Amended Return, Out of Country,
+# Deceased-Taxpayer signed-by-representative, the line-18 "no Consumer Use Tax
+# is due" certification circle, line 11 NC Standard vs NC Itemized deduction,
+# and the preparer-discussion authorization are single /Btn /Yes circles.
+#
+# Relations. Only unconditional add/subtract equalities with every operand
+# mapped are declared (8=6+7; 12a=9+10b+11; 12b=8-12a; 17=15-16; 19=17+18;
+# 23=20a+20b+21a+21b+21c+21d+22; 26d=26b+26c; 33=29+30+31+32). Lines whose
+# printed instruction is conditional, floored, rate-scaled or a refund/owe
+# branch — 14 (full-year vs part-year), 15 (× 4.75%), 25 ("if less than zero,
+# see instructions"), 26a/26e (tax-due branch + exception), 27 (amount due),
+# 28 (overpayment branch), 34 ("Amount To Be Refunded") — are OMITTED per the
+# conservative house style.
+#
+# Cross_form. Line 6's printed label is "Federal Adjusted Gross Income", the
+# federal AGI, so the single cross_form equality 6 == f1040.11 (Form 1040, 2023,
+# line 11 = AGI) is declared.
+form: Form D-400
+jurisdiction: states/nc
+tax_year: 2023
+source_url: https://www.ncdor.gov/2023-d-400-web-fill-version/open
+pdf_sha256: 7272993303b268f3aec38b716a987efee2253890621026fd18eeb00f2a10b3c7
+acroform_root: ''
+fields:
+  # ============================================ Page 1 — header (calendar/fiscal year)
+  # OMITTED: "PRINT" (read-only banner widget — not fillable);
+  #          "z_d400wf_print", "z_d400wf_clear" (Page 1 PRINT/CLEAR push-buttons).
+  - line: amended_return
+    field: y_d400wf_amendedreturn
+    type: checkbox
+    on_state: /Yes
+  - line: fiscal_year_beginning
+    field: y_d400wf_datebeg
+    type: text
+  - line: fiscal_year_ending
+    field: y_d400wf_dateend
+    type: text
+
+  # ---- names & SSNs
+  - line: tp_ssn
+    field: y_d400wf_ssn1
+    type: text
+    maxlen: 11
+  - line: spouse_ssn
+    field: y_d400wf_ssn2
+    type: text
+    maxlen: 11
+  - line: tp_first_name
+    field: y_d400wf_fname1
+    type: text
+    maxlen: 25
+  - line: tp_middle_initial
+    field: y_d400wf_mi1
+    type: text
+    maxlen: 1
+  - line: tp_last_name
+    field: y_d400wf_lname1
+    type: text
+    maxlen: 25
+  - line: spouse_first_name
+    field: y_d400wf_fname2
+    type: text
+    maxlen: 25
+  - line: spouse_middle_initial
+    field: y_d400wf_mi2
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: y_d400wf_lname2
+    type: text
+    maxlen: 25
+
+  # ---- mailing address
+  - line: mailing_address
+    field: y_d400wf_add
+    type: text
+    maxlen: 50
+  - line: apartment_number
+    field: y_d400wf_apartment number
+    type: text
+    maxlen: 5
+  - line: city
+    field: y_d400wf_city
+    type: text
+    maxlen: 27
+  - line: state
+    field: y_d400wf_state
+    type: text
+  - line: zip_code
+    field: y_d400wf_zip
+    type: text
+    maxlen: 10
+  - line: country_if_not_us
+    field: y_d400wf_country
+    type: text
+    maxlen: 9
+  - line: county_first_five_letters
+    field: y_d400wf_county
+    type: text
+    maxlen: 5
+
+  # ---- N.C. Education Endowment Fund contribution amount ($ box)
+  - line: nc_education_endowment_fund_contribution
+    field: y_d400wf_NCEDU_good
+    type: money
+    maxlen: 9
+
+  # ---- Out of Country (fill in circle if you/spouse out of country on filing date)
+  - line: out_of_country
+    field: y_d400wf_Out of Country
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Deceased Taxpayer Information
+  - line: deceased_signed_by_representative
+    field: y_d400wf_Signed by Executor or Administrator
+    type: checkbox
+    on_state: /Yes
+  - line: deceased_date_of_death_taxpayer
+    field: y_d400wf_dead1
+    type: text
+  - line: deceased_date_of_death_spouse
+    field: y_d400wf_dead2
+    type: text
+
+  # ---- Residency Status (were YOU / your SPOUSE a resident the entire year?)
+  - line: residency_taxpayer::yes
+    field: y_d400wf_rs1yes
+    type: checkbox
+    on_state: /Yes
+  - line: residency_taxpayer::no
+    field: y_d400wf_rs1no
+    type: checkbox
+    on_state: /Yes
+  - line: residency_spouse::yes
+    field: y_d400wf_rs2yes
+    type: checkbox
+    on_state: /Yes
+  - line: residency_spouse::no
+    field: y_d400wf_rs2no
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Veteran Information (are YOU / is your SPOUSE a veteran?)
+  - line: veteran_taxpayer::yes
+    field: y_d400wf_v1yes
+    type: checkbox
+    on_state: /Yes
+  - line: veteran_taxpayer::no
+    field: y_d400wf_v2no
+    type: checkbox
+    on_state: /Yes
+  - line: veteran_spouse::yes
+    field: y_d400wf_sv1yes
+    type: checkbox
+    on_state: /Yes
+  - line: veteran_spouse::no
+    field: y_d400wf_sv1no
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Federal Extension (granted an automatic extension for 2023 federal return?)
+  - line: federal_extension::yes
+    field: y_d400wf_fedex1yes
+    type: checkbox
+    on_state: /Yes
+  - line: federal_extension::no
+    field: y_d400wf_fedex1no
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Filing Status (fill in one circle only)
+  - line: filing_status::single
+    field: y_d400wf_fstat1
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status::mfj
+    field: y_d400wf_fstat2
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status::mfs
+    field: y_d400wf_fstat3
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status::hoh
+    field: y_d400wf_fstat4
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status::qualifying_widow
+    field: y_d400wf_fstat5
+    type: checkbox
+    on_state: /Yes
+  # MFS / Qualifying-widow auxiliary inputs
+  - line: spouse_full_name
+    field: y_d400wf_sname2
+    type: text
+    maxlen: 36
+  - line: spouse_ssn_filing_status
+    field: y_d400wf_sssn2
+    type: text
+  - line: qualifying_widow_year_spouse_died
+    field: y_d400wf_dead3
+    type: text
+
+  # ============================================ Page 1 — income & deductions (lines 6-15)
+  - line: "6"        # Federal Adjusted Gross Income (federal 1040/1040-SR Line 11)
+    field: y_d400wf_li6_good
+    type: money
+    maxlen: 9
+  - line: "7"        # Additions to Federal Adjusted Gross Income (D-400 Schedule S, Part A, Line 16)
+    field: y_d400wf_li7_good
+    type: money
+    maxlen: 8
+  - line: "8"        # Add Lines 6 and 7
+    field: y_d400wf_li8_good
+    type: money
+    maxlen: 9
+  - line: "9"        # Deductions From Federal Adjusted Gross Income (D-400 Schedule S, Part B, Line 41)
+    field: y_d400wf_li9_good
+    type: money
+    maxlen: 8
+  - line: 10a        # Child Deduction — number of qualifying children (a COUNT, not dollars)
+    field: y_d400wf_li10a_good
+    type: text
+    maxlen: 2
+  - line: 10b        # Child Deduction — amount of the child deduction
+    field: y_d400wf_li10b_good
+    type: money
+    maxlen: 5
+  - line: 11_nc_standard_deduction
+    field: y_d400wf_ncstandarddeduction
+    type: checkbox
+    on_state: /Yes
+  - line: 11_nc_itemized_deductions
+    field: y_d400wf_ncitemizeddeduction
+    type: checkbox
+    on_state: /Yes
+  - line: "11"       # N.C. Standard Deduction OR N.C. Itemized Deductions amount
+    field: y_d400wf_li11_page1_good
+    type: money
+    maxlen: 8
+  - line: 12a        # Add Lines 9, 10b, and 11
+    field: y_d400wf_li12a_pg1_good
+    type: money
+    maxlen: 9
+  - line: 12b        # Subtract Line 12a from Line 8
+    field: y_d400wf_li12b_pg1_good
+    type: money
+    maxlen: 9
+  - line: "13"       # Part-year Residents / Nonresidents Taxable Percentage (decimal — text, not money)
+    field: y_d400wf_li13_page1_good
+    type: text
+    maxlen: 6
+  - line: "14"       # North Carolina Taxable Income
+    field: y_d400wf_li14_pg1_good
+    type: money
+    maxlen: 9
+  - line: "15"       # North Carolina Income Tax (multiply Line 14 by 4.75%)
+    field: y_d400wf_li15_pg1_good
+    type: money
+    maxlen: 8
+
+  # ============================================ Page 2 — header echo
+  - line: tp_last_name_page2
+    field: y_d400wf_lname2_PG2
+    type: text
+    maxlen: 10
+  # NOTE: the Page-2 "Your Social Security Number" box is the SAME AcroForm
+  # field as the Page-1 SSN (y_d400wf_ssn1, mapped above as tp_ssn); it is not
+  # remapped here (one field, one value).
+
+  # ============================================ Page 2 — tax & payments (lines 16-34)
+  - line: "16"       # Tax Credits (Form D-400TC, Part 3, Line 20)
+    field: y_d400wf_li16_pg2_good
+    type: money
+    maxlen: 8
+  - line: "17"       # Subtract Line 16 from Line 15
+    field: y_d400wf_li17_pg2_good
+    type: money
+    maxlen: 8
+  - line: 18_no_consumer_use_tax_due   # certify no Consumer Use Tax is due — fill in circle
+    field: y_d400wf_Consumer Use Tax
+    type: checkbox
+    on_state: /Yes
+  - line: "18"       # Consumer Use Tax
+    field: y_d400wf_li18_pg2_good
+    type: money
+    maxlen: 8
+  - line: "19"       # Add Lines 17 and 18
+    field: y_d400wf_li19_pg2_good
+    type: money
+    maxlen: 8
+  - line: 20a        # North Carolina Income Tax Withheld — Your tax withheld
+    field: y_d400wf_li20a_pg2_good
+    type: money
+    maxlen: 8
+  - line: 20b        # North Carolina Income Tax Withheld — Spouse's tax withheld
+    field: y_d400wf_li20b_pg2_good
+    type: money
+    maxlen: 8
+  - line: 21a        # Other Tax Payments — 2023 estimated tax
+    field: y_d400wf_li21a_pg2_good
+    type: money
+    maxlen: 8
+  - line: 21b        # Other Tax Payments — Paid with extension
+    field: y_d400wf_li21b_pg2_good
+    type: money
+    maxlen: 8
+  - line: 21c        # Other Tax Payments — Partnership
+    field: y_d400wf_li21c_pg2_good
+    type: money
+    maxlen: 8
+  - line: 21d        # Other Tax Payments — S Corporation
+    field: y_d400wf_li21d_pg2_good
+    type: money
+    maxlen: 8
+  - line: "22"       # Additional Payments (Amended Returns Only)
+    field: y_d400wf_li22_pg2_good
+    type: money
+    maxlen: 8
+  - line: "23"       # Add Lines 20a through 22
+    field: y_d400wf_li23_pg2_good
+    type: money
+    maxlen: 8
+  - line: "24"       # Previous Refunds (Amended Returns Only)
+    field: y_d400wf_li24_pg2_good
+    type: money
+    maxlen: 8
+  - line: "25"       # Subtract Line 24 from Line 23
+    field: y_d400wf_li25_pg2_good
+    type: money
+    maxlen: 9
+  - line: 26a        # Tax Due — if Line 25 < Line 19, subtract Line 25 from Line 19
+    field: y_d400wf_li26a_pg2_good
+    type: money
+    maxlen: 8
+  - line: 26b        # Penalties
+    field: y_d400wf_li26b_pg2_good
+    type: money
+    maxlen: 6
+  - line: 26c        # Interest
+    field: y_d400wf_li26c_pg2_good
+    type: money
+    maxlen: 6
+  - line: 26d        # Add Lines 26b and 26c
+    field: y_d400wf_li26d_pg2_good
+    type: money
+    maxlen: 8
+  - line: 26e_exception   # Exception to Underpayment of Estimated Tax — letter box (/Ch dropdown)
+    field: y_d400wf_Ex_good
+    type: text
+  - line: 26e        # Interest on the Underpayment of Estimated Income Tax
+    field: y_d400wf_li26e_pg2_good
+    type: money
+    maxlen: 8
+  - line: "27"       # Amount Due — Add Lines 26a, 26d, and 26e
+    field: y_d400wf_li27_pg2_good
+    type: money
+    maxlen: 8
+  - line: "28"       # Overpayment — if Line 25 > Line 19, subtract Line 19 from Line 25
+    field: y_d400wf_li28_pg2_good
+    type: money
+    maxlen: 8
+  - line: "29"       # Amount of Line 28 to be applied to 2024 Estimated Income Tax
+    field: y_d400wf_li29_pg2_good
+    type: money
+    maxlen: 8
+  - line: "30"       # Contribution to the N.C. Nongame and Endangered Wildlife Fund
+    field: y_d400wf_li30_pg2_good
+    type: money
+    maxlen: 8
+  - line: "31"       # Contribution to the N.C. Education Endowment Fund
+    field: y_d400wf_li31_pg2_good
+    type: money
+    maxlen: 8
+  - line: "32"       # Contribution to the N.C. Breast and Cervical Cancer Control Program
+    field: y_d400wf_li32_pg2_good
+    type: money
+    maxlen: 8
+  - line: "33"       # Add Lines 29 through 32
+    field: y_d400wf_li33_pg2_good
+    type: money
+    maxlen: 8
+  - line: "34"       # Subtract Line 33 from Line 28 — Amount To Be Refunded
+    field: y_d400wf_li34_pg2_good
+    type: money
+    maxlen: 8
+
+  # ============================================ Page 2 — signatures & preparer
+  - line: your_signature_date
+    field: y_d400wf_sigdate
+    type: text
+  - line: spouse_signature_date
+    field: y_d400wf_sigdate2
+    type: text
+  - line: contact_phone_number
+    field: y_d400wf_dayphone
+    type: text
+  - line: authorize_preparer_discussion
+    field: y_d400wf_check
+    type: checkbox
+    on_state: /Yes
+  - line: preparer_signature_date
+    field: y_d400wf_ppsigdate
+    type: text
+  - line: preparer_fein_ssn_ptin
+    field: y_d400wf_ppssn
+    type: text
+    maxlen: 9
+  - line: preparer_contact_phone_number
+    field: y_d400wf_ppphoneno
+    type: text
+relations:
+  - "8 == 6 + 7"                                   # Line 8 "Add Lines 6 and 7."
+  - "12a == 9 + 10b + 11"                          # Line 12a "Add Lines 9, 10b, and 11."
+  - "12b == 8 - 12a"                               # Line 12b "Subtract Line 12a from Line 8."
+  - "17 == 15 - 16"                                # Line 17 "Subtract Line 16 from Line 15."
+  - "19 == 17 + 18"                                # Line 19 "Add Lines 17 and 18."
+  - "23 == 20a + 20b + 21a + 21b + 21c + 21d + 22" # Line 23 "Add Lines 20a through 22."
+  - "26d == 26b + 26c"                             # Line 26d "Add Lines 26b and 26c."
+  - "33 == 29 + 30 + 31 + 32"                      # Line 33 "Add Lines 29 through 32."
+cross_form:
+  - "6 == f1040.11"                                # Line 6 "Federal Adjusted Gross Income"
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name
