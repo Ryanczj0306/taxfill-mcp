@@ -1,0 +1,447 @@
+# Form PA-40, 2023 — Pennsylvania Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) -> vision-map workflow (both
+# pages + zoomed crops read to place each field on its printed line / column,
+# plus a pypdf widget-type dump to separate genuine data widgets from the
+# form's JavaScript control buttons) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty). Field names are the raw opaque
+# leaf ids the form ships with — many carry a printed-line prefix
+# ("1a. Gross Compensation", "4. Loss", "32. Refund donation line") and some
+# carry leading whitespace baked into the AcroForm; kept verbatim. PA-40 is a
+# single-column return, so income/payment lines carry no A/B/C suffix — the
+# line key is just the printed line number.
+#
+# Coverage. The blank PDF has 119 fillable widgets across 2 pages. 100 are
+# genuine data widgets; after collapsing the shared SSN field that repeats on
+# page 2 to ONE line and expanding the three radio groups, 80 data fields are
+# mapped (81 distinct AcroForm field names map all 100 data widgets):
+#   * "Enter SSN shown first without dashes or spaces" is ONE /Tx field with a
+#     widget at the top of BOTH pages; pypdf propagates a single value to every
+#     widget copy, so it is mapped ONCE (line "your_ssn"). Mapping it twice as
+#     text would trip the filler's one-field-one-value guard.
+#   * Radio / mutually-exclusive ovals (Residency Status /1 /2 /3,
+#     Filing Status /1 /2 /3 /4, Tax Forgiveness /1 /2 /3) are each ONE /Btn
+#     field; every option is mapped as its own checkbox line on that shared
+#     field with its own on_state, and the filler enforces single-selection.
+#   * Standalone yes/no ovals (Extension /1, Amended Return /2, Farmers /0,
+#     Deceased /5, Taxpayer /1, Spouse /1, the three "Loss" ovals /none on
+#     lines 4/5/6, Form REV-459B /1, line-27 REV-1630/REV-1630A /3,
+#     E-File Opt Out /1) are each their own one-state /Btn field.
+#
+# Intentionally NOT mapped — 19 widgets, all JavaScript PUSHBUTTONS (field flag
+# bit 17 set: Ff 65536/65537), i.e. UI controls with no fillable data state
+# (their only "on_state" is the appearance-stream dictionary key "/BBox"):
+#   page 1: "Official Use Only", "start box", "arrow", "Print Form",
+#           "GO TO NEXT PAGE", "TOP OF PAGE", "RESET FORM", "Disclaimer Notice"
+#   page 2: "Official Use Only", "start box", "arrow" (x2), "Signature",
+#           "Example Date", "Spouse's Signature", "Do Not Call", "Print Form",
+#           "RETURN TO PAGE 1", "RESET FORM"
+# (Signature / Example Date / Spouse's Signature print "Please sign after
+# printing." — they are not data entry boxes.) No statutory pre-printed
+# constants exist on this form.
+#
+# Money vs text. Dollar boxes (lines 1a..31 and the line 32-36 donation
+# amounts) are mapped `money`. Genuine text widgets stay text: name/address/
+# occupation lines, SSN boxes (PA strips dashes; /MaxLen 9), dates, two-char
+# state/country codes, school code/name, the single-char deduction "Code"
+# (line 10) / line-27 "Code" / line 32-36 organization "R" code boxes, the
+# Dependents count (19b), Final Return reason, Part-Year-Resident from/to
+# month boxes, and the preparer block.
+#
+# Relations. Only unconditional equalities whose operands are all mapped money
+# lines are declared (1c, 11, 12, 18, 24). Line 9 ("add only the POSITIVE
+# amounts ... do not add losses") is conditional and OMITTED per house style.
+# No cross_form: PA-40 begins from PA-taxable compensation, not federal AGI, so
+# no printed label states a federal-source line.
+form: Form PA-40
+jurisdiction: states/pa
+tax_year: 2023
+source_url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40.pdf
+pdf_sha256: 181ac70fa32cbe78742befae04f31b33ba450b83c8f083c1049cce6df3d8163d
+acroform_root: ''
+fields:
+  # ================================================= header / personal (page 1)
+  - line: your_ssn                       # "Your Social Security Number" (ONE field; repeats top of page 2)
+    field: Enter SSN shown first without dashes or spaces
+    type: text
+    maxlen: 9
+  - line: spouse_ssn                     # "Spouse's Social Security Number (even if filing separately)"
+    field: Enter SSN of spouse without dashes or spaces
+    type: text
+    maxlen: 9
+  - line: tp_last_name
+    field: Use all caps to enter taxpayer's last name
+    type: text
+  - line: tp_suffix
+    field: Use all caps to enter suffixes such as JR, SR, III
+    type: text
+    maxlen: 3
+  - line: tp_first_name
+    field: Use all caps to enter taxpayer's first name
+    type: text
+  - line: tp_mi
+    field: Use Cap For Your Middle Initial
+    type: text
+    maxlen: 1
+  - line: spouse_first_name
+    field: Use all caps to enter spouse's first name
+    type: text
+  - line: spouse_mi
+    field: Use Cap For Your Spouse's Middle Initial
+    type: text
+    maxlen: 1
+  - line: spouse_last_name               # "Spouse's Last Name - Only if different from Last Name above"
+    field: Use all caps to enter spouse's last name if different from above
+    type: text
+  - line: spouse_suffix
+    field: Use all caps to enter spouse's suffixes such as JR, SR, III
+    type: text
+    maxlen: 3
+  - line: address_line1                  # "First Line of Address"
+    field: Use all caps to enter First Line of Address
+    type: text
+  - line: address_line2                  # "Second Line of Address"
+    field: Use all caps to enter Second Line of Address
+    type: text
+  - line: city                           # "City or Post Office"
+    field: Use all caps to enter City or Post Office
+    type: text
+  - line: state
+    field: Use all caps to enter two character State abbreviation
+    type: text
+    maxlen: 2
+  - line: zip
+    field: Enter five digit Zip Code
+    type: text
+    maxlen: 5
+  - line: country_code
+    field: Use all caps to enter two character Country Code
+    type: text
+    maxlen: 2
+  - line: daytime_phone
+    field: Enter Daytime Telephone Number without parenthesis, dashes or spaces
+    type: text
+    maxlen: 10
+  - line: school_code                    # "School Code" (list on pages 42 & 43)
+    field: Enter five digit School Code from list on pags 42 & 43
+    type: text
+    maxlen: 5
+
+  # ---- Extension / Amended (ovals, top-right)
+  - line: extension                      # "Extension. See the instructions."
+    field: Extension
+    type: checkbox
+    on_state: /1
+  - line: amended_return                 # "Amended Return. See the instructions."
+    field: Amended Return
+    type: checkbox
+    on_state: /2
+
+  # ---- Residency Status (one /Btn, fill only one oval): R / N / P
+  - line: residency_status::resident     # R — Pennsylvania Resident
+    field: Residency Status
+    type: checkbox
+    on_state: /1
+  - line: residency_status::nonresident  # N — Nonresident
+    field: Residency Status
+    type: checkbox
+    on_state: /2
+  - line: residency_status::part_year    # P — Part-Year Resident
+    field: Residency Status
+    type: checkbox
+    on_state: /3
+  - line: part_year_resident_from        # "Part-Year Resident from __/2023" (month box)
+    field: Part Year Resident from
+    type: text
+    maxlen: 5
+  - line: part_year_resident_to          # "...to __/2023" (month box)
+    field: Part year resident to
+    type: text
+    maxlen: 5
+
+  # ---- Filing Status (one /Btn): S / J / M / F
+  - line: filing_status::single          # S — Single
+    field: Filing Status
+    type: checkbox
+    on_state: /1
+  - line: filing_status::mfj             # J — Married, Filing Jointly
+    field: Filing Status
+    type: checkbox
+    on_state: /2
+  - line: filing_status::mfs             # M — Married, Filing Separately
+    field: Filing Status
+    type: checkbox
+    on_state: /3
+  - line: filing_status::final_return    # F — Final Return
+    field: Filing Status
+    type: checkbox
+    on_state: /4
+  - line: final_return_reason            # "F Final Return. Indicate reason:" (text)
+    field: Final Return
+    type: text
+    maxlen: 15
+
+  # ---- Deceased block: D oval, then Taxpayer / Spouse deceased ovals + DODs
+  - line: deceased                       # D — Deceased
+    field: Deceased
+    type: checkbox
+    on_state: /5
+  - line: deceased_taxpayer              # Taxpayer (deceased oval)
+    field: Taxpayer
+    type: checkbox
+    on_state: /1
+  - line: taxpayer_date_of_death         # "Date of death __/2023"
+    field: Taxpayer Date of Death
+    type: text
+    maxlen: 5
+  - line: deceased_spouse                # Spouse (deceased oval)
+    field: Spouse
+    type: checkbox
+    on_state: /1
+  - line: spouse_date_of_death           # "Date of death __/2023"
+    field: Spouse Date of Death
+    type: text
+    maxlen: 5
+
+  - line: farmers                        # "Farmers. Fill in this oval if at least two-thirds of gross income is from farming."
+    field: Farmers
+    type: checkbox
+    on_state: /0
+  - line: school_district_name           # "Name of school district where you lived on 12/31/2023"
+    field: Name of School District
+    type: text
+    maxlen: 15
+  - line: tp_occupation                  # "Your Occupation"
+    field: Your Occupation
+    type: text
+  - line: spouse_occupation              # "Spouse's occupation"
+    field: Spouse's occupation
+    type: text
+
+  # ================================================= income / deductions (page 1)
+  - line: 1a                             # Gross Compensation
+    field: 1a. Gross Compensation
+    type: money
+  - line: 1b                             # Unreimbursed Employee Business Expenses
+    field: 1b. Unreimbursed Employee Business Expenses
+    type: money
+  - line: 1c                             # Net Compensation (subtract 1b from 1a)
+    field: 1c. Net Compensation
+    type: money
+  - line: "2"                            # Interest Income
+    field: 2. Interest Income
+    type: money
+  - line: "3"                            # Dividend and Capital Gains Distributions Income
+    field: 3. Dividend  and Capital Gains Distributions Income
+    type: money
+  - line: 4_loss                         # line 4 LOSS oval
+    field: 4. Loss
+    type: checkbox
+    on_state: /none
+  - line: "4"                            # Net Income or Loss from the Operation of a Business, Profession or Farm
+    field: 4. Net Income or Loss from the Operation of a Business, etc
+    type: money
+  - line: 5_loss                         # line 5 LOSS oval
+    field: 5. Loss
+    type: checkbox
+    on_state: /none
+  - line: "5"                            # Net Gain or Loss from the Sale, Exchange or Disposition of Property
+    field: 5. Net Gain or Loss from Sale, etc. of Property
+    type: money
+  - line: 6_loss                         # line 6 LOSS oval
+    field: 6. Loss
+    type: checkbox
+    on_state: /none
+  - line: "6"                            # Net Income or Loss from Rents, Royalties, Patents or Copyrights
+    field: 6. Net Income or Loss from Rents, etc
+    type: money
+  - line: "7"                            # Estate or Trust Income
+    field: 7. Estate or Trust income
+    type: money
+  - line: "8"                            # Gambling and Lottery Winnings
+    field: 8. Gambling and Lottery Winnings
+    type: money
+  - line: "9"                            # Total PA Taxable Income
+    field: 9. Total PA Taxable Income
+    type: money
+  - line: 10_code                        # line 10 deduction code box
+    field: Code
+    type: text
+    maxlen: 1
+  - line: "10"                           # Other Deductions
+    field: 10.  Other Deductions
+    type: money
+  - line: "11"                           # Adjusted PA Taxable Income (subtract 10 from 9)
+    field: 11. Adjusted PA Taxable Income
+    type: money
+
+  # ================================================= page 2 header
+  # ("Enter SSN shown first" top-of-page widget is the same field mapped as 'your_ssn'.)
+  - line: name_on_page2                  # "Name(s)" header on page 2
+    field: Name(s)
+    type: text
+
+  # ---- tax, withholding, payments
+  - line: "12"                           # PA Tax Liability. Multiply Line 11 by 3.07 percent (0.0307)
+    field: 12. PA Tax Liability. Multiply Line 11 by 3.07%
+    type: money
+  - line: "13"                           # Total PA Tax Withheld
+    field: 13. Total PA Tax Withheld
+    type: money
+  - line: "14"                           # Credit from your 2022 PA Income Tax return
+    field: 14. Credit from your PA Income Tax Return
+    type: money
+  - line: 15_rev459b                     # line 15 "Fill in oval if including Form REV-459B"
+    field: Form REV-459B
+    type: checkbox
+    on_state: /1
+  - line: "15"                           # 2023 Estimated Installment Payments
+    field: 15. Estimated Installment Payments
+    type: money
+  - line: "16"                           # 2023 Extension Payment
+    field: 16. Extension Payment
+    type: money
+  - line: "17"                           # Nonresident Tax Withheld from your PA Schedule(s) NRK-1
+    field: 17. Nonredsident Tax Withheld
+    type: money
+  - line: "18"                           # Total Estimated Payments and Credits. Add Lines 14, 15, 16 and 17
+    field: 18.Total Estimated Payments and Credits
+    type: money
+
+  # ---- Tax Forgiveness Credit (line 19a, one /Btn): Unmarried-or-Separated / Married / Deceased
+  - line: tax_forgiveness::unmarried     # 19a — Unmarried or Separated
+    field: Tax Forgiveness
+    type: checkbox
+    on_state: /1
+  - line: tax_forgiveness::married       # 19a — Married
+    field: Tax Forgiveness
+    type: checkbox
+    on_state: /2
+  - line: tax_forgiveness::deceased      # 19a — Deceased
+    field: Tax Forgiveness
+    type: checkbox
+    on_state: /3
+  - line: 19b_dependents                 # 19b — Dependents, Section II Line 2, PA Schedule SP (count)
+    field: Dependents
+    type: text
+    maxlen: 2
+  - line: "20"                           # Total Eligibility Income from Section III, Line 11, PA Schedule SP
+    field: 20. Total Eligibility Income
+    type: money
+  - line: "21"                           # Tax Forgiveness Credit from Section IV, Line 16, PA Schedule SP
+    field: 21. Tax Forgiveness Credit
+    type: money
+  - line: "22"                           # Resident Credit. Submit PA Schedule(s) G-L and/or RK-1
+    field: 22. Resident Credit
+    type: money
+  - line: "23"                           # Total Other Credits. Submit PA Schedule OC and/or PA Schedule DC
+    field: 23.Total Other Credits
+    type: money
+  - line: "24"                           # TOTAL PAYMENTS and CREDITS. Add Lines 13, 18, 21, 22 and 23
+    field: 24. Total Payments and Credits
+    type: money
+  - line: "25"                           # USE TAX
+    field: 25. USE TAX
+    type: money
+  - line: "26"                           # TAX DUE
+    field: 26. TAX DUE
+    type: money
+  - line: 27_code                        # line 27 code box
+    field: 27. Code
+    type: text
+    maxlen: 1
+  - line: 27_rev1630                     # line 27 "Fill in oval if including Form REV-1630/REV-1630A"
+    field: 27. REV-1630
+    type: checkbox
+    on_state: /3
+  - line: "27"                           # Penalties and Interest
+    field: 27.Penalties and Interest
+    type: money
+  - line: "28"                           # TOTAL PAYMENT DUE
+    field: 28. TOTAL PAYMENT
+    type: money
+  - line: "29"                           # OVERPAYMENT
+    field: 29. OVERPAYMENT
+    type: money
+  - line: "30"                           # Refund — amount of Line 29 you want as a check / direct deposit
+    field: 30. Refund
+    type: money
+  - line: "31"                           # Credit — amount of Line 29 applied to 2024 estimated account
+    field: 31. Credit
+    type: money
+
+  # ---- Donation lines 32-36: each has an organization "R" code box + a donation amount
+  - line: 32_code                        # line 32 organization code box
+    field: 32. Refund
+    type: text
+    maxlen: 1
+  - line: "32"                           # line 32 donation amount
+    field: 32. Refund donation line
+    type: money
+  - line: 33_code
+    field: 33. Refund
+    type: text
+    maxlen: 1
+  - line: "33"
+    field: 33. Refund donation line
+    type: money
+  - line: 34_code
+    field: 34. Refund
+    type: text
+    maxlen: 1
+  - line: "34"
+    field: 34. Refund donation line
+    type: money
+  - line: 35_code
+    field: 35. Refund
+    type: text
+    maxlen: 1
+  - line: "35"
+    field: 35. Refund donation line
+    type: money
+  - line: 36_code
+    field: 36. Refund
+    type: text
+    maxlen: 1
+  - line: "36"
+    field: 36. Refund donation line
+    type: money
+
+  # ---- signature / preparer block
+  - line: signed_date                    # "Date" (MM/DD/YY)
+    field: Date
+    type: text
+    maxlen: 8
+  - line: efile_opt_out                  # "E-File Opt Out. See the instructions."
+    field: E-File Opt Out
+    type: checkbox
+    on_state: /1
+  - line: preparer_ptin                  # "Preparer's PTIN" (printed label) / SSN box
+    field: Preparerês SSN / PTIN
+    type: text
+    maxlen: 9
+  - line: preparer_name                  # "Preparer's Name and Telephone Number" — name
+    field: Preparer's Name
+    type: text
+    maxlen: 30
+  - line: preparer_phone                 # "...and Telephone Number" — phone
+    field: Preparer's Telephone Number
+    type: text
+    maxlen: 30
+  - line: firm_fein                      # "Firm FEIN"
+    field: Firm FEIN
+    type: text
+    maxlen: 10
+relations:
+  - "1c == 1a - 1b"                      # "Net Compensation. Subtract Line 1b from Line 1a."
+  - "11 == 9 - 10"                       # "Adjusted PA Taxable Income. Subtract Line 10 from Line 9."
+  - "12 == 11 * 0.0307"                  # "PA Tax Liability. Multiply Line 11 by 3.07 percent (0.0307)."
+  - "18 == 14 + 15 + 16 + 17"            # "Total Estimated Payments and Credits. Add Lines 14, 15, 16 and 17."
+  - "24 == 13 + 18 + 21 + 22 + 23"       # "TOTAL PAYMENTS and CREDITS. Add Lines 13, 18, 21, 22 and 23."
+cross_form: []
+identity_fields:
+  - your_ssn
+  - tp_first_name
+  - tp_last_name
