@@ -1,0 +1,412 @@
+# Form MI-1040, 2023 — Michigan Individual Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) -> vision-map workflow (all
+# three pages + zoomed crops read to place each field on its printed line /
+# column) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty). Field names are the raw sentinel
+# ids the form ships with; many are human-readable ("F First Name", "Home
+# address", "line 10"), a few are generic ("Check Box6", "Text1", "*"). The
+# numbered income/tax lines use widgets literally named "line 10" .. "line 37"
+# (note the inconsistent casing the form ships: "Line 19b", "Line 37", and the
+# spaced "line 32 c"); these are kept EXACTLY as the skeleton lists them. The
+# SSN comb (FSSN1/FSSN2/FSSN3, three cells of 3/2/4 digits) prints atop all
+# three pages but is ONE AcroForm field with several widget annotations (pypdf
+# exposes it once), so it is mapped a single time in the page-1 header.
+#
+# Coverage. The blank PDF's distinct fillable AcroForm fields are all mapped
+# here. The skeleton lists FSSN1/FSSN2/FSSN3 three times (the same comb repeated
+# atop each page) — those duplicate widget references are mapped only once. One
+# widget is intentionally OMITTED — it accepts no taxpayer data:
+#   * "Reset" — the red "Reset Form" push-button (top of page 1). Its skeleton
+#     on_state "/BBox" is an appearance-stream dict key, not a selectable value;
+#     it is a form action (Ff bit 17 Pushbutton), not a data field.
+# All other skeleton entries are mapped.
+#
+# Radio / checkbox questions. Single yes/no boxes are one /Btn each, carrying
+# the exact on_state read from the widget AP /N dictionaries (preserved verbatim,
+# including the misspelled "/State campaing fund spouse"). The Filing-status
+# question is ONE /Btn field ("Filing status") with three mutually exclusive
+# options, mapped as one checkbox line per option on the shared field. Residency
+# status is split across three separate /Btn fields the form ships ("Residency
+# status" Resident, "Check Box11" Nonresident, "Check Box12" Part year
+# resident). The Type-of-Account question is ONE /Btn ("type checking") with
+# /Yes = Checking and /No = Savings.
+#
+# Money vs text. Every numbered dollar box prints a ".00" cents suffix on the
+# form and is mapped `money` (lines 9a-9f amounts, 10-37, line 18a/18b, 19a/19b,
+# 27a/27b, 32c, and the Interest/Penalty boxes on line 34). Genuine text widgets
+# stay text: names, address/city/state/ZIP, school-district code, the spouse
+# full-name box ("*"), SSN comb cells (3/2/4), the small 2-digit exemption COUNT
+# boxes (9a-9d — counts, not dollars), bank routing/account numbers, the
+# deceased date-of-death MM-DD-YYYY comb cells (Text1..Text6, 2/2/4), and the
+# preparer name / firm / address fields.
+#
+# Relations. Only unconditional equalities with every operand mapped are
+# declared (12=10+11, 24=20+21+22+23). Lines whose printed instruction is
+# conditional or floored ("enter 0" tests on 14/16/20, the greater-than tests on
+# 34/35, the credit-forward/refund branches 36/37, the EITC multiply 27b, the
+# 9f exemption rollup with per-row multipliers, line 33 refundable-credit sum
+# that includes off-form schedules) are OMITTED per the conservative house style.
+#
+# Cross_form. Line 10's printed label is "Adjusted Gross Income from your U.S.
+# Form 1040", so the single cross_form equality 10 == f1040.11 (Form 1040, 2023,
+# line 11 = AGI) is declared.
+form: Form MI-1040
+jurisdiction: states/mi
+tax_year: 2023
+source_url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/MI-1040.pdf?rev=21fba619760e4f4f97a4fdd934ad9e8d&hash=A7515D544EB571CB3EC166E40166153F
+pdf_sha256: f297806b71c56081bd2acc059fa3df820884fa86c9d97c7668636233811b6e22
+acroform_root: ''
+fields:
+  # ===================================================== header (page 1)
+  # OMITTED: "Reset" (red "Reset Form" push-button — form action, not fillable).
+  - line: amended_return     # "Amended Return (Include Schedule AMD)" top-right
+    field: Amended return box
+    type: checkbox
+    on_state: /Yes
+
+  # ---- 1 — Filer name and SSN
+  - line: filer_first_name
+    field: F First Name
+    type: text
+  - line: filer_middle_initial   # "M.I." — single-character initial box
+    field: F initial
+    type: text
+    maxlen: 1
+  - line: filer_last_name
+    field: F Last Name
+    type: text
+  - line: filer_ssn_1
+    field: FSSN1
+    type: text
+    maxlen: 3
+  - line: filer_ssn_2
+    field: FSSN2
+    type: text
+    maxlen: 2
+  - line: filer_ssn_3
+    field: FSSN3
+    type: text
+    maxlen: 4
+
+  # ---- spouse name and SSN
+  - line: spouse_first_name
+    field: Sp First Name
+    type: text
+  - line: spouse_middle_initial  # "M.I." — single-character initial box
+    field: Sp initial
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: Sp Last Name
+    type: text
+  - line: spouse_ssn_1
+    field: SpSSN1
+    type: text
+    maxlen: 3
+  - line: spouse_ssn_2
+    field: SpSSN2
+    type: text
+    maxlen: 2
+  - line: spouse_ssn_3
+    field: SpSSN3
+    type: text
+    maxlen: 4
+
+  # ---- address
+  - line: home_address
+    field: Home address
+    type: text
+  - line: city_or_town
+    field: City or town
+    type: text
+  - line: state
+    field: State
+    type: text
+    maxlen: 2
+  - line: zip_code
+    field: Zip Code
+    type: text
+  - line: school_district_code     # box 4 — School District Code (5 digits)
+    field: School District Code
+    type: text
+    maxlen: 5
+
+  # ---- box 5 — STATE CAMPAIGN FUND (a. Filer / b. Spouse)
+  - line: 5a_campaign_fund_filer
+    field: Check Box4
+    type: checkbox
+    on_state: /State campaign fund filer
+  - line: 5b_campaign_fund_spouse
+    field: Check Box5
+    type: checkbox
+    on_state: /State campaing fund spouse
+
+  # ---- box 6 — FARMERS, FISHERMEN, OR SEAFARERS (2/3 of income from farming)
+  - line: 6_farmers_fishermen
+    field: Check Box6
+    type: checkbox
+    on_state: /Yes
+
+  # ---- box 7 — 2023 FILING STATUS (ONE /Btn field; mutually exclusive)
+  - line: 7_filing_status::single
+    field: Filing status
+    type: checkbox
+    on_state: /single
+  - line: 7_filing_status::mfj
+    field: Filing status
+    type: checkbox
+    on_state: /married filing jointly
+  - line: 7_filing_status::mfs
+    field: Filing status
+    type: checkbox
+    on_state: /married filing separately
+  - line: 7c_spouse_full_name     # "* If you check box c, ... enter spouse's full name below:"
+    field: '*'
+    type: text
+
+  # ---- box 8 — 2023 RESIDENCY STATUS (three separate /Btn fields)
+  - line: 8a_residency::resident
+    field: Residency status
+    type: checkbox
+    on_state: /Resident
+  - line: 8b_residency::nonresident
+    field: Check Box11
+    type: checkbox
+    on_state: /Nonresident
+  - line: 8c_residency::part_year
+    field: Check Box12
+    type: checkbox
+    on_state: /Part year resident
+
+  # ===================================================== line 9 — EXEMPTIONS
+  - line: 9a_count          # Number of exemptions (count box, x $5,400)
+    field: 9a
+    type: text
+    maxlen: 2
+  - line: 9a_amount
+    field: line 9a
+    type: money
+  - line: 9b_count          # Number of special exemptions (count box, x $3,100)
+    field: 9b
+    type: text
+    maxlen: 2
+  - line: 9b_amount
+    field: line 9b
+    type: money
+  - line: 9c_count          # Number of qualified disabled veterans (count box, x $400)
+    field: 9c
+    type: text
+    maxlen: 2
+  - line: 9c_amount
+    field: line 9c
+    type: money
+  - line: 9d_count          # Number of Certificates of Stillbirth from MDHHS (count box, x $5,400)
+    field: 9d
+    type: text
+    maxlen: 2
+  - line: 9d_amount
+    field: line 9d
+    type: money
+  - line: 9e_claimed_as_dependent     # "Claimed as dependent, see line 9 NOTE above"
+    field: Check Box13
+    type: checkbox
+    on_state: /Yes
+  - line: 9e_amount
+    field: line 9e
+    type: money
+  - line: 9f_amount         # "Add lines 9a, 9b, 9c, 9d and 9e. Enter here and on line 15."
+    field: line 9f
+    type: money
+
+  # ===================================================== income / tax (10-17)
+  - line: "10"        # Adjusted Gross Income from your U.S. Form 1040
+    field: line 10
+    type: money
+  - line: "11"        # Additions from Schedule 1, line 9. Include Schedule 1
+    field: line 11
+    type: money
+  - line: "12"        # Total. Add lines 10 and 11
+    field: line 12
+    type: money
+  - line: "13"        # Subtractions from Schedule 1, line 31. Include Schedule 1
+    field: line 13
+    type: money
+  - line: "14"        # Income subject to tax. Subtract line 13 from line 12
+    field: line 14
+    type: money
+  - line: "15"        # Exemption allowance. Enter amount from line 9f or Schedule NR
+    field: line 15
+    type: money
+  - line: "16"        # Taxable income. Subtract line 15 from line 14
+    field: line 16
+    type: money
+  - line: "17"        # Tax. Multiply line 16 by 4.05% (.0405)
+    field: line 17
+    type: money
+
+  # ---- NON-REFUNDABLE CREDITS (18-24)
+  # NOTE: "Filer's Full Social Security Number" atop pages 2 and 3 is the SAME
+  # AcroForm field (FSSN1/FSSN2/FSSN3) as the page-1 header comb — pypdf exposes
+  # it as one field with several widget annotations, so it is mapped once above
+  # and its page-2/page-3 occurrences are NOT remapped (one field = one value).
+  - line: 18a        # Income Tax Imposed by government units outside Michigan — AMOUNT
+    field: line 18a
+    type: money
+  - line: 18b        # ... — CREDIT
+    field: line 18b
+    type: money
+  - line: 19a        # Michigan Historic Preservation Tax Credit — AMOUNT
+    field: line 19a
+    type: money
+  - line: 19b        # ... — CREDIT
+    field: Line 19b
+    type: money
+  - line: "20"       # Income Tax. Subtract sum of lines 18b and 19b from line 17
+    field: line 20
+    type: money
+  - line: "21"       # Voluntary Contributions from Form 4642, line 6. Include Form 4642
+    field: line 21
+    type: money
+  - line: "22"       # Penalty for nonqualified withdrawal from Form 5792 (MI First-Time Home Buyer Savings)
+    field: line 22
+    type: money
+  - line: "23"       # USE TAX due on Internet, mail order or other out-of-state purchases
+    field: line 23
+    type: money
+  - line: "24"       # Total Tax Liability. Add lines 20 through 23
+    field: line 24
+    type: money
+
+  # ---- REFUNDABLE CREDITS AND PAYMENTS (25-33)
+  - line: "25"       # Property Tax Credit. Include MI-1040CR or MI-1040CR-2
+    field: line 25
+    type: money
+  - line: "26"       # Farmland Preservation Tax Credit. Include MI-1040CR-5
+    field: line 26
+    type: money
+  - line: 27a        # Earned Income Tax Credit — FEDERAL (federal credit)
+    field: line 27a
+    type: money
+  - line: 27b        # ... — MICHIGAN (multiply 27a by 30%)
+    field: line 27b
+    type: money
+  - line: "28"       # Michigan Historic Preservation Tax Credit (refundable). Include Form 3581
+    field: line 28
+    type: money
+  - line: "29"       # Credit for allocated share of tax paid by an electing flow-through entity
+    field: line 29
+    type: money
+  - line: "30"       # Michigan tax withheld from Schedule W, line 6. Include Schedule W
+    field: line 30
+    type: money
+  - line: "31"       # Estimated tax, extension payments and 2022 credit forward
+    field: line 31
+    type: money
+
+  # ---- line 32 — 2023 AMENDED RETURNS ONLY
+  - line: 32a_amended_refund     # "check box 32a and enter this amount as a negative number on line 32c"
+    field: 31a
+    type: checkbox
+    on_state: /Yes
+  - line: 32b_amended_tax        # "check box 32b ... as a positive number on line 32c"
+    field: Line 31b
+    type: checkbox
+    on_state: /No
+  - line: 32c        # amended adjustment amount
+    field: line 32 c
+    type: money
+  - line: "33"       # Total refundable credits and payments. Add lines 25, 26, 27b, 28, 29, 30, 31 and 32c
+    field: line 33
+    type: money
+
+  # ---- REFUND OR TAX DUE (34-37)
+  # (Filer SSN comb atop page 3 is the same field mapped once in the header.)
+  - line: 34_interest        # "Include interest [____]" on line 34 YOU OWE
+    field: Line 34 Interest
+    type: money
+  - line: 34_penalty         # "... and penalty [____]"
+    field: Line 34 Penalty
+    type: money
+  - line: "34"       # YOU OWE. If line 33 is less than line 24, subtract line 33 from line 24
+    field: line 34
+    type: money
+  - line: "35"       # Overpayment. If line 33 is greater than line 24, subtract line 24 from line 33
+    field: line 35
+    type: money
+  - line: "36"       # Credit Forward. Amount of line 35 to be credited to your 2024 estimated tax
+    field: line 36
+    type: money
+  - line: "37"       # REFUND. Subtract line 36 from line 35
+    field: Line 37
+    type: money
+
+  # ---- DIRECT DEPOSIT
+  - line: routing_transit_number     # a. Routing Transit Number
+    field: routing
+    type: text
+  - line: account_number             # b. Account Number
+    field: account number
+    type: text
+  - line: account_type::checking     # c. Type of Account — 1. Checking
+    field: type checking
+    type: checkbox
+    on_state: /Yes
+  - line: account_type::savings      # c. Type of Account — 2. Savings
+    field: type checking
+    type: checkbox
+    on_state: /No
+
+  # ---- Deceased Taxpayer — ENTER DATE OF DEATH ONLY (MM-DD-YYYY)
+  - line: filer_dod_month            # Filer date of death — MM
+    field: Text1
+    type: text
+    maxlen: 2
+  - line: filer_dod_day              # Filer date of death — DD
+    field: Text2
+    type: text
+    maxlen: 2
+  - line: filer_dod_year             # Filer date of death — YYYY
+    field: Text3
+    type: text
+    maxlen: 4
+  - line: spouse_dod_month           # Spouse date of death — MM
+    field: Text4
+    type: text
+    maxlen: 2
+  - line: spouse_dod_day             # Spouse date of death — DD
+    field: Text5
+    type: text
+    maxlen: 2
+  - line: spouse_dod_year            # Spouse date of death — YYYY
+    field: Text6
+    type: text
+    maxlen: 4
+
+  # ---- Preparer Certification
+  - line: preparer_ptin              # Preparer's PTIN, FEIN or SSN
+    field: preparer's PTIN
+    type: text
+  - line: preparer_name             # Preparer's Name (print or type)
+    field: preparer's business
+    type: text
+  - line: preparer_business_address  # Preparer's Business Name, Address and Telephone Number
+    field: preparer's business address
+    type: text
+
+  # ---- Authorize Treasury to discuss return with preparer
+  - line: authorize_discuss
+    field: authorize box
+    type: checkbox
+    on_state: /Yes
+relations:
+  - "12 == 10 + 11"               # Line 12 "Total. Add lines 10 and 11."
+  - "24 == 20 + 21 + 22 + 23"     # Line 24 "Total Tax Liability. Add lines 20 through 23."
+cross_form:
+  - "10 == f1040.11"              # Line 10 "Adjusted Gross Income from your U.S. Form 1040" (2023 AGI = line 11)
+identity_fields:
+  - filer_ssn_1
+  - filer_first_name
+  - filer_last_name

@@ -1,0 +1,3416 @@
+# Form NJ-1040, 2023 - New Jersey Resident Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep -
+# every widget rendered with its own field name) -> vision-map workflow (all
+# four pages rendered from the official blank, with per-widget rect overlays
+# read against the printed line labels to place every cell) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty). The shipped field names are the
+# raw, often-scrambled sentinel ids the form ships with (e.g. "undefined_42",
+# "Text146", "Group168", "x  1000") - they do NOT track the printed line
+# numbers, so every line key below was assigned from the widget's PAGE +
+# POSITION, not from its field name. The blank's get_fields order is identical
+# to the page/widget order, which is how each raw field path was tied to its
+# spot on the form.
+#
+# NJ-1040 prints nearly every dollar amount as a row of single-character COMB
+# cells (one digit per box, with pre-printed comma/decimal separators that are
+# NOT widgets). Each money line is therefore a run of one-character `text`
+# widgets (maxlen 1), keyed "<line>_dNN" left-to-right (d01 = leftmost /
+# highest-order digit). They are kept as `text` (matching the skeleton) rather
+# than `money` because no single widget holds a whole dollar value - the engine
+# fills each cell with one character. SSNs, the county/municipality code,
+# part-year-resident dates, birth years, the driver's-license number, and the
+# preparer / firm federal-id numbers are comb runs too and use the same
+# "<name>_dNN" scheme. Genuine single-value text widgets (name, address,
+# city, state, ZIP, firm name) keep descriptive keys.
+#
+# Sections. Page 1: header (taxpayer/spouse SSN, name, address, county code,
+# the three header checkboxes), part-year-resident & fiscal-year date combs,
+# Filing Status (Group1, one radio /Choice1..5), the MFS spouse-SSN comb, the
+# qualifying-widow year-of-death radio, Exemptions 6-13 (each: self/spouse
+# oval(s) + a count box + the "x $N,NNN =" result amount), and the four
+# Dependent rows (name + SSN comb + birth-year comb + "no health insurance"
+# box). Pages 2-4: the numbered income / tax / credit / payment / contribution
+# lines, each a comb amount, plus line-level checkboxes (NJ-2210 enclosed,
+# health-coverage 53a/53b, the REQUIRED NJ-HCC box, the EIC and Child-and-
+# Dependent-Care CU-couple boxes, line-79 e-check), the line-40b residency
+# radio (Homeowner/Tenant/Both), the line-70..77 designated-contribution
+# radios ($10 / $20 / Other), the Gubernatorial Elections Fund Yes/No radios,
+# the signature dates, and the paid-preparer block.
+#
+# Checkboxes / radios. on_state strings are copied verbatim from the skeleton
+# (the widget AP /N keys), preserving the odd values the form uses: filing
+# status & several contributions use "/Choice1".."/Choice5"; the contribution
+# radios on lines 70/71 and 75-77 use "/0" "/1" "/2"; single yes/no boxes use
+# "/Yes"; the line-79 e-check box uses "/On". Radio questions that are ONE
+# AcroForm field with several mutually exclusive options share that field and
+# carry one line per option (e.g. "filing_status::single", "::mfj", ...).
+#
+# Relations / cross_form. OMITTED. Every NJ-1040 total (e.g. 27, 38, 54, 66) is
+# split across many single-character comb cells; no line key holds a whole
+# numeric value, so no intra-form equality can be expressed over mapped money
+# fields, and the conservative house style declares none. No printed label
+# names a federal source line directly (NJ gross income is built on Schedule
+# NJ-BUS / NJ-COJ etc., not a federal 1040 line), so cross_form is empty too.
+#
+# Coverage. The blank has 840 AcroForm widgets; 838 lines are mapped here. The
+# two widgets NOT given their own line are mirror twins: the NJ-1040 reuses the
+# AcroForm field name "undefined_118" for two adjacent line-41 comb cells, and
+# "undefined_114" for one line-42 cell AND one line-55 cell. Widgets that share
+# a field name always display the same value, and the engine writes a field
+# once, so each duplicated name is mapped a single time (the twin still renders
+# the value) - flagged inline at the kept line. There are no JS pushbuttons or
+# readonly tooltips to omit. The pre-printed comma/period separators, the greyed
+# ".00" cents, and the "Division use" boxes are static artwork, not widgets.
+
+form: "Form NJ-1040"
+jurisdiction: "states/nj"
+tax_year: 2023
+source_url: "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040.pdf"
+pdf_sha256: 77ec771e83a38be1d6f33851791498a7d4b75b2db57d51d69f54d2ccf84da1f0
+acroform_root: ''
+fields:
+  # ===================================================== PAGE 1 - header, filing status, exemptions, dependents
+  - line: "tp_ssn_d01"
+    field: "undefined"
+    type: text
+    maxlen: 1
+  - line: "tp_ssn_d02"
+    field: "undefined_2"
+    type: text
+    maxlen: 1
+  - line: "tp_ssn_d03"
+    field: "Your Social Security Number required"
+    type: text
+    maxlen: 1
+  - line: "tp_ssn_d04"
+    field: "Text3"
+    type: text
+    maxlen: 1
+  - line: "tp_ssn_d05"
+    field: "Text4"
+    type: text
+    maxlen: 1
+  - line: "tp_ssn_d06"
+    field: "Text5"
+    type: text
+    maxlen: 1
+  - line: "tp_ssn_d07"
+    field: "Text6"
+    type: text
+    maxlen: 1
+  - line: "tp_ssn_d08"
+    field: "Text7"
+    type: text
+    maxlen: 1
+  - line: "tp_ssn_d09"
+    field: "Text8"
+    type: text
+    maxlen: 1
+  - line: "tp_name_last_first_initial"
+    field: "Last Name First Name Initial Joint Filers enter first name and middle initial of each Enter spousesCU partners last name ONLY if different"
+    type: text
+  - line: "spouse_ssn_d01"
+    field: "undefined_3"
+    type: text
+    maxlen: 1
+  - line: "spouse_ssn_d02"
+    field: "undefined_4"
+    type: text
+    maxlen: 1
+  - line: "spouse_ssn_d03"
+    field: "undefined_5"
+    type: text
+    maxlen: 1
+  - line: "spouse_ssn_d04"
+    field: "Text9"
+    type: text
+    maxlen: 1
+  - line: "spouse_ssn_d05"
+    field: "Text10"
+    type: text
+    maxlen: 1
+  - line: "spouse_ssn_d06"
+    field: "Text11"
+    type: text
+    maxlen: 1
+  - line: "spouse_ssn_d07"
+    field: "Text12"
+    type: text
+    maxlen: 1
+  - line: "spouse_ssn_d08"
+    field: "Text13"
+    type: text
+    maxlen: 1
+  - line: "spouse_ssn_d09"
+    field: "Text14"
+    type: text
+    maxlen: 1
+  - line: "home_address"
+    field: "SpousesCU Partners SSN if filing jointly"
+    type: text
+  - line: "city_town_post_office"
+    field: "CountyMunicipality Code See Table page 50"
+    type: text
+  - line: "state"
+    field: "State"
+    type: text
+    maxlen: 2
+  - line: "zip_code"
+    field: "ZIP Code"
+    type: text
+  - line: "county_municipality_code_d1"
+    field: "CM4"
+    type: text
+    maxlen: 1
+  - line: "county_municipality_code_d2"
+    field: "CM3"
+    type: text
+    maxlen: 1
+  - line: "county_municipality_code_d3"
+    field: "CM2"
+    type: text
+    maxlen: 1
+  - line: "county_municipality_code_d4"
+    field: "CM1"
+    type: text
+    maxlen: 1
+  - line: "header_federal_extension_filed"
+    field: "Check Box18"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "header_foreign_address"
+    field: "Check Box19"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "header_address_changed"
+    field: "Check Box20"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "partyear_from_month_d1"
+    field: "Text21"
+    type: text
+    maxlen: 1
+  - line: "partyear_from_month_d2"
+    field: "Text22"
+    type: text
+    maxlen: 1
+  - line: "partyear_from_day_d1"
+    field: "Text23"
+    type: text
+    maxlen: 1
+  - line: "partyear_from_day_d2"
+    field: "Text24"
+    type: text
+    maxlen: 1
+  - line: "partyear_to_month_d1"
+    field: "Text25"
+    type: text
+    maxlen: 1
+  - line: "partyear_to_month_d2"
+    field: "Text26"
+    type: text
+    maxlen: 1
+  - line: "partyear_to_day_d1"
+    field: "Text27"
+    type: text
+    maxlen: 1
+  - line: "partyear_to_day_d2"
+    field: "Text28"
+    type: text
+    maxlen: 1
+  - line: "fiscal_year_end_month_d1"
+    field: "2020"
+    type: text
+    maxlen: 1
+  - line: "fiscal_year_end_month_d2"
+    field: "Text29"
+    type: text
+    maxlen: 1
+  - line: "filing_status::single"
+    field: "Group1"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "filing_status::mfj"
+    field: "Group1"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "filing_status::mfs"
+    field: "Group1"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "mfs_spouse_ssn_d01"
+    field: "undefined_7"
+    type: text
+    maxlen: 1
+  - line: "mfs_spouse_ssn_d02"
+    field: "undefined_8"
+    type: text
+    maxlen: 1
+  - line: "mfs_spouse_ssn_d03"
+    field: "Enter spousesCU partners SSN"
+    type: text
+    maxlen: 1
+  - line: "mfs_spouse_ssn_d04"
+    field: "Text31"
+    type: text
+    maxlen: 1
+  - line: "mfs_spouse_ssn_d05"
+    field: "Text32"
+    type: text
+    maxlen: 1
+  - line: "mfs_spouse_ssn_d06"
+    field: "Text33"
+    type: text
+    maxlen: 1
+  - line: "mfs_spouse_ssn_d07"
+    field: "Text34"
+    type: text
+    maxlen: 1
+  - line: "mfs_spouse_ssn_d08"
+    field: "Text35"
+    type: text
+    maxlen: 1
+  - line: "mfs_spouse_ssn_d09"
+    field: "Text36"
+    type: text
+    maxlen: 1
+  - line: "filing_status::hoh"
+    field: "Group1"
+    type: checkbox
+    on_state: "/Choice4"
+  - line: "filing_status::qualifying_widow"
+    field: "Group1"
+    type: checkbox
+    on_state: "/Choice5"
+  - line: "filing_status_qw_year_of_death::2021"
+    field: "Group1qualwi5ab"
+    type: checkbox
+    on_state: "/0"
+  - line: "filing_status_qw_year_of_death::2022"
+    field: "Group1qualwi5ab"
+    type: checkbox
+    on_state: "/1"
+  - line: "exemption_6_regular_self"
+    field: "Check Box39"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "exemption_6_regular_spouse_cu"
+    field: "Check Box40"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "exemption_6_regular_count"
+    field: "Domestic"
+    type: text
+    maxlen: 1
+  - line: "exemption_6_regular_amount"
+    field: "x  1000"
+    type: text
+  - line: "exemption_7_senior_65plus_amount"
+    field: "x  1000_2"
+    type: text
+  - line: "exemption_7_senior_65plus_self"
+    field: "Check Box41"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "exemption_7_senior_65plus_spouse_cu"
+    field: "Check Box42"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "exemption_7_senior_65plus_count"
+    field: "undefined_9"
+    type: text
+    maxlen: 1
+  - line: "exemption_8_blind_disabled_amount"
+    field: "x  1000_3"
+    type: text
+  - line: "exemption_8_blind_disabled_self"
+    field: "Check Box43"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "exemption_8_blind_disabled_spouse_cu"
+    field: "Check Box44"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "exemption_8_blind_disabled_count"
+    field: "undefined_10"
+    type: text
+    maxlen: 1
+  - line: "exemption_9_veteran_self"
+    field: "Check Box45"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "exemption_9_veteran_spouse_cu"
+    field: "Check Box46"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "exemption_9_veteran_count"
+    field: "undefined_11"
+    type: text
+    maxlen: 1
+  - line: "exemption_9_veteran_amount"
+    field: "x  6000"
+    type: text
+  - line: "exemption_10_qualified_children_count_d1"
+    field: "Text47"
+    type: text
+    maxlen: 1
+  - line: "exemption_10_qualified_children_count_d2"
+    field: "undefined_12"
+    type: text
+    maxlen: 1
+  - line: "exemption_10_qualified_children_amount"
+    field: "x  1500"
+    type: text
+  - line: "exemption_11_other_dependents_count_d1"
+    field: "Text48"
+    type: text
+    maxlen: 1
+  - line: "exemption_11_other_dependents_count_d2"
+    field: "undefined_13"
+    type: text
+    maxlen: 1
+  - line: "exemption_11_other_dependents_amount"
+    field: "x  1500_2"
+    type: text
+  - line: "exemption_12_dependents_college_count_d1"
+    field: "Text49"
+    type: text
+    maxlen: 1
+  - line: "exemption_12_dependents_college_count_d2"
+    field: "undefined_14"
+    type: text
+    maxlen: 1
+  - line: "exemption_12_dependents_college_amount"
+    field: "x  1000_4"
+    type: text
+  - line: "13_total_exemption_amount_d01"
+    field: "undefined_15"
+    type: text
+    maxlen: 1
+  - line: "13_total_exemption_amount_d02"
+    field: "undefined_16"
+    type: text
+    maxlen: 1
+  - line: "13_total_exemption_amount_d03"
+    field: "undefined_17"
+    type: text
+    maxlen: 1
+  - line: "13_total_exemption_amount_d04"
+    field: "Text50"
+    type: text
+    maxlen: 1
+  - line: "13_total_exemption_amount_d05"
+    field: "Text51"
+    type: text
+    maxlen: 1
+  - line: "13_total_exemption_amount_d06"
+    field: "Text52"
+    type: text
+    maxlen: 1
+  - line: "13_total_exemption_amount_d07"
+    field: "Text53"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_name"
+    field: "Last Name First Name Middle Initial 1"
+    type: text
+  - line: "dependent_1_ssn_d01"
+    field: "undefined_18"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_ssn_d02"
+    field: "undefined_19"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_ssn_d03"
+    field: "undefined_20"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_ssn_d04"
+    field: "Text54"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_ssn_d05"
+    field: "Text55"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_ssn_d06"
+    field: "Text56"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_ssn_d07"
+    field: "Text57"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_ssn_d08"
+    field: "Text58"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_ssn_d09"
+    field: "Text59"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_birth_year_d01"
+    field: "Birth Year"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_birth_year_d02"
+    field: "Text60"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_birth_year_d03"
+    field: "Text61"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_birth_year_d04"
+    field: "Text62"
+    type: text
+    maxlen: 1
+  - line: "dependent_1_no_health_insurance"
+    field: "Check Box63"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "dependent_2_name"
+    field: "Last Name First Name Middle Initial 2"
+    type: text
+  - line: "dependent_2_ssn_d01"
+    field: "undefined_21"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_ssn_d02"
+    field: "undefined_22"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_ssn_d03"
+    field: "undefined_23"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_ssn_d04"
+    field: "undefined_24"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_ssn_d05"
+    field: "Text65"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_ssn_d06"
+    field: "Text66"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_ssn_d07"
+    field: "Text67"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_ssn_d08"
+    field: "Text68"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_ssn_d09"
+    field: "Text69"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_birth_year_d01"
+    field: "Text70"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_birth_year_d02"
+    field: "Text71"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_birth_year_d03"
+    field: "Text72"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_birth_year_d04"
+    field: "Text73"
+    type: text
+    maxlen: 1
+  - line: "dependent_2_no_health_insurance"
+    field: "Check Box74"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "dependent_3_name"
+    field: "Last Name First Name Middle Initial 3"
+    type: text
+  - line: "dependent_3_ssn_d01"
+    field: "undefined_25"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_ssn_d02"
+    field: "undefined_26"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_ssn_d03"
+    field: "undefined_27"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_ssn_d04"
+    field: "undefined_28"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_ssn_d05"
+    field: "Text75"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_ssn_d06"
+    field: "Text76"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_ssn_d07"
+    field: "Text77"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_ssn_d08"
+    field: "Text78"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_ssn_d09"
+    field: "Text79"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_birth_year_d01"
+    field: "Text80"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_birth_year_d02"
+    field: "Text81"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_birth_year_d03"
+    field: "Text82"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_birth_year_d04"
+    field: "Text83"
+    type: text
+    maxlen: 1
+  - line: "dependent_3_no_health_insurance"
+    field: "Check Box84"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "dependent_4_name"
+    field: "Last Name First Name Middle Initial 4"
+    type: text
+  - line: "dependent_4_ssn_d01"
+    field: "undefined_29"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_ssn_d02"
+    field: "undefined_30"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_ssn_d03"
+    field: "undefined_31"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_ssn_d04"
+    field: "undefined_32"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_ssn_d05"
+    field: "Text85"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_ssn_d06"
+    field: "Text86"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_ssn_d07"
+    field: "Text87"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_ssn_d08"
+    field: "Text88"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_ssn_d09"
+    field: "Text89"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_birth_year_d01"
+    field: "Text90"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_birth_year_d02"
+    field: "Text91"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_birth_year_d03"
+    field: "Text92"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_birth_year_d04"
+    field: "Text93"
+    type: text
+    maxlen: 1
+  - line: "dependent_4_no_health_insurance"
+    field: "Check Box94"
+    type: checkbox
+    on_state: "/Yes"
+  # ===================================================== PAGE 2 - lines 15-41 (income, deductions, property tax)
+  - line: "page2_ssn"
+    field: "Your Social Security Number"
+    type: text
+  - line: "page2_names"
+    field: "Names as shown on Form NJ1040"
+    type: text
+  - line: "line15_d01"
+    field: "15"
+    type: text
+    maxlen: 1
+  - line: "line15_d02"
+    field: "undefined_36"
+    type: text
+    maxlen: 1
+  - line: "line15_d03"
+    field: "undefined_37"
+    type: text
+    maxlen: 1
+  - line: "line15_d04"
+    field: "undefined_38"
+    type: text
+    maxlen: 1
+  - line: "line15_d05"
+    field: "Text100"
+    type: text
+    maxlen: 1
+  - line: "line15_d06"
+    field: "Text101"
+    type: text
+    maxlen: 1
+  - line: "line15_d07"
+    field: "Text103"
+    type: text
+    maxlen: 1
+  - line: "line15_d08"
+    field: "Text104"
+    type: text
+    maxlen: 1
+  - line: "line15_d09"
+    field: "Text105"
+    type: text
+    maxlen: 1
+  - line: "line15_d10"
+    field: "Text106"
+    type: text
+    maxlen: 1
+  - line: "line16a_d01"
+    field: "undefined_43"
+    type: text
+    maxlen: 1
+  - line: "line16a_d02"
+    field: "undefined_39"
+    type: text
+    maxlen: 1
+  - line: "line16a_d03"
+    field: "undefined_40"
+    type: text
+    maxlen: 1
+  - line: "line16a_d04"
+    field: "undefined_41"
+    type: text
+    maxlen: 1
+  - line: "line16a_d05"
+    field: "Text107"
+    type: text
+    maxlen: 1
+  - line: "line16a_d06"
+    field: "108"
+    type: text
+    maxlen: 1
+  - line: "line16a_d07"
+    field: "109"
+    type: text
+    maxlen: 1
+  - line: "line16a_d08"
+    field: "110"
+    type: text
+    maxlen: 1
+  - line: "line16a_d09"
+    field: "111"
+    type: text
+    maxlen: 1
+  - line: "line16a_d10"
+    field: "112"
+    type: text
+    maxlen: 1
+  - line: "line16b_d01"
+    field: "16b"
+    type: text
+    maxlen: 1
+  - line: "line16b_d02"
+    field: "undefined_42"
+    type: text
+    maxlen: 1
+  - line: "line16b_d03"
+    field: "16a"
+    type: text
+    maxlen: 1
+  - line: "line16b_d04"
+    field: "undefined_44"
+    type: text
+    maxlen: 1
+  - line: "line16b_d05"
+    field: "113"
+    type: text
+    maxlen: 1
+  - line: "line16b_d06"
+    field: "114"
+    type: text
+    maxlen: 1
+  - line: "line16b_d07"
+    field: "115"
+    type: text
+    maxlen: 1
+  - line: "line16b_d08"
+    field: "116"
+    type: text
+    maxlen: 1
+  - line: "line16b_d09"
+    field: "117"
+    type: text
+    maxlen: 1
+  - line: "line17_d01"
+    field: "17"
+    type: text
+    maxlen: 1
+  - line: "line17_d02"
+    field: "undefined_45"
+    type: text
+    maxlen: 1
+  - line: "line17_d03"
+    field: "undefined_46"
+    type: text
+    maxlen: 1
+  - line: "line17_d04"
+    field: "undefined_47"
+    type: text
+    maxlen: 1
+  - line: "line17_d05"
+    field: "118"
+    type: text
+    maxlen: 1
+  - line: "line17_d06"
+    field: "119"
+    type: text
+    maxlen: 1
+  - line: "line17_d07"
+    field: "120"
+    type: text
+    maxlen: 1
+  - line: "line17_d08"
+    field: "121"
+    type: text
+    maxlen: 1
+  - line: "line17_d09"
+    field: "122"
+    type: text
+    maxlen: 1
+  - line: "line17_d10"
+    field: "123"
+    type: text
+    maxlen: 1
+  - line: "line18_d01"
+    field: "18"
+    type: text
+    maxlen: 1
+  - line: "line18_d02"
+    field: "undefined_48"
+    type: text
+    maxlen: 1
+  - line: "line18_d03"
+    field: "undefined_49"
+    type: text
+    maxlen: 1
+  - line: "line18_d04"
+    field: "undefined_50"
+    type: text
+    maxlen: 1
+  - line: "line18_d05"
+    field: "124"
+    type: text
+    maxlen: 1
+  - line: "line18_d06"
+    field: "125"
+    type: text
+    maxlen: 1
+  - line: "line18_d07"
+    field: "126"
+    type: text
+    maxlen: 1
+  - line: "line18_d08"
+    field: "127"
+    type: text
+    maxlen: 1
+  - line: "line18_d09"
+    field: "128"
+    type: text
+    maxlen: 1
+  - line: "line18_d10"
+    field: "129"
+    type: text
+    maxlen: 1
+  - line: "line19_d01"
+    field: "19"
+    type: text
+    maxlen: 1
+  - line: "line19_d02"
+    field: "undefined_51"
+    type: text
+    maxlen: 1
+  - line: "line19_d03"
+    field: "undefined_52"
+    type: text
+    maxlen: 1
+  - line: "line19_d04"
+    field: "undefined_53"
+    type: text
+    maxlen: 1
+  - line: "line19_d05"
+    field: "130"
+    type: text
+    maxlen: 1
+  - line: "line19_d06"
+    field: "131"
+    type: text
+    maxlen: 1
+  - line: "line19_d07"
+    field: "132"
+    type: text
+    maxlen: 1
+  - line: "line19_d08"
+    field: "133"
+    type: text
+    maxlen: 1
+  - line: "line19_d09"
+    field: "134"
+    type: text
+    maxlen: 1
+  - line: "line19_d10"
+    field: "135"
+    type: text
+    maxlen: 1
+  - line: "line20a_d01"
+    field: "20a"
+    type: text
+    maxlen: 1
+  - line: "line20a_d02"
+    field: "undefined_54"
+    type: text
+    maxlen: 1
+  - line: "line20a_d03"
+    field: "undefined_55"
+    type: text
+    maxlen: 1
+  - line: "line20a_d04"
+    field: "undefined_56"
+    type: text
+    maxlen: 1
+  - line: "line20a_d05"
+    field: "136"
+    type: text
+    maxlen: 1
+  - line: "line20a_d06"
+    field: "137"
+    type: text
+    maxlen: 1
+  - line: "line20a_d07"
+    field: "138"
+    type: text
+    maxlen: 1
+  - line: "line20a_d08"
+    field: "139"
+    type: text
+    maxlen: 1
+  - line: "line20a_d09"
+    field: "140"
+    type: text
+    maxlen: 1
+  - line: "line20a_d10"
+    field: "141"
+    type: text
+    maxlen: 1
+  - line: "line20b_d01"
+    field: "20b"
+    type: text
+    maxlen: 1
+  - line: "line20b_d02"
+    field: "undefined_57"
+    type: text
+    maxlen: 1
+  - line: "line20b_d03"
+    field: "142"
+    type: text
+    maxlen: 1
+  - line: "line20b_d04"
+    field: "143"
+    type: text
+    maxlen: 1
+  - line: "line20b_d05"
+    field: "undefined_58"
+    type: text
+    maxlen: 1
+  - line: "line20b_d06"
+    field: "144"
+    type: text
+    maxlen: 1
+  - line: "line20b_d07"
+    field: "145"
+    type: text
+    maxlen: 1
+  - line: "line20b_d08"
+    field: "undefined_59"
+    type: text
+    maxlen: 1
+  - line: "line20b_d09"
+    field: "146"
+    type: text
+    maxlen: 1
+  - line: "line21_d01"
+    field: "21"
+    type: text
+    maxlen: 1
+  - line: "line21_d02"
+    field: "147"
+    type: text
+    maxlen: 1
+  - line: "line21_d03"
+    field: "undefined_60"
+    type: text
+    maxlen: 1
+  - line: "line21_d04"
+    field: "148"
+    type: text
+    maxlen: 1
+  - line: "line21_d05"
+    field: "149"
+    type: text
+    maxlen: 1
+  - line: "line21_d06"
+    field: "undefined_61"
+    type: text
+    maxlen: 1
+  - line: "line21_d07"
+    field: "150"
+    type: text
+    maxlen: 1
+  - line: "line21_d08"
+    field: "151"
+    type: text
+    maxlen: 1
+  - line: "line21_d09"
+    field: "undefined_62"
+    type: text
+    maxlen: 1
+  - line: "line21_d10"
+    field: "152"
+    type: text
+    maxlen: 1
+  - line: "line22_d01"
+    field: "22"
+    type: text
+    maxlen: 1
+  - line: "line22_d02"
+    field: "153"
+    type: text
+    maxlen: 1
+  - line: "line22_d03"
+    field: "undefined_63"
+    type: text
+    maxlen: 1
+  - line: "line22_d04"
+    field: "154"
+    type: text
+    maxlen: 1
+  - line: "line22_d05"
+    field: "155"
+    type: text
+    maxlen: 1
+  - line: "line22_d06"
+    field: "undefined_64"
+    type: text
+    maxlen: 1
+  - line: "line22_d07"
+    field: "156"
+    type: text
+    maxlen: 1
+  - line: "line22_d08"
+    field: "157"
+    type: text
+    maxlen: 1
+  - line: "line22_d09"
+    field: "undefined_65"
+    type: text
+    maxlen: 1
+  - line: "line22_d10"
+    field: "158"
+    type: text
+    maxlen: 1
+  - line: "line23_d01"
+    field: "23"
+    type: text
+    maxlen: 1
+  - line: "line23_d02"
+    field: "159"
+    type: text
+    maxlen: 1
+  - line: "line23_d03"
+    field: "undefined_66"
+    type: text
+    maxlen: 1
+  - line: "line23_d04"
+    field: "160"
+    type: text
+    maxlen: 1
+  - line: "line23_d05"
+    field: "161"
+    type: text
+    maxlen: 1
+  - line: "line23_d06"
+    field: "undefined_67"
+    type: text
+    maxlen: 1
+  - line: "line23_d07"
+    field: "162"
+    type: text
+    maxlen: 1
+  - line: "line23_d08"
+    field: "163"
+    type: text
+    maxlen: 1
+  - line: "line23_d09"
+    field: "undefined_68"
+    type: text
+    maxlen: 1
+  - line: "line23_d10"
+    field: "164"
+    type: text
+    maxlen: 1
+  - line: "line24_d01"
+    field: "24"
+    type: text
+    maxlen: 1
+  - line: "line24_d02"
+    field: "165"
+    type: text
+    maxlen: 1
+  - line: "line24_d03"
+    field: "undefined_69"
+    type: text
+    maxlen: 1
+  - line: "line24_d04"
+    field: "166"
+    type: text
+    maxlen: 1
+  - line: "line24_d05"
+    field: "167"
+    type: text
+    maxlen: 1
+  - line: "line24_d06"
+    field: "undefined_70"
+    type: text
+    maxlen: 1
+  - line: "line24_d07"
+    field: "168"
+    type: text
+    maxlen: 1
+  - line: "line24_d08"
+    field: "169"
+    type: text
+    maxlen: 1
+  - line: "line24_d09"
+    field: "undefined_71"
+    type: text
+    maxlen: 1
+  - line: "line24_d10"
+    field: "170"
+    type: text
+    maxlen: 1
+  - line: "line25_d01"
+    field: "25"
+    type: text
+    maxlen: 1
+  - line: "line25_d02"
+    field: "171"
+    type: text
+    maxlen: 1
+  - line: "line25_d03"
+    field: "undefined_72"
+    type: text
+    maxlen: 1
+  - line: "line25_d04"
+    field: "172"
+    type: text
+    maxlen: 1
+  - line: "line25_d05"
+    field: "173"
+    type: text
+    maxlen: 1
+  - line: "line25_d06"
+    field: "undefined_73"
+    type: text
+    maxlen: 1
+  - line: "line25_d07"
+    field: "174"
+    type: text
+    maxlen: 1
+  - line: "line25_d08"
+    field: "175"
+    type: text
+    maxlen: 1
+  - line: "line25_d09"
+    field: "undefined_74"
+    type: text
+    maxlen: 1
+  - line: "line25_d10"
+    field: "176"
+    type: text
+    maxlen: 1
+  - line: "line26_d01"
+    field: "26"
+    type: text
+    maxlen: 1
+  - line: "line26_d02"
+    field: "177"
+    type: text
+    maxlen: 1
+  - line: "line26_d03"
+    field: "undefined_75"
+    type: text
+    maxlen: 1
+  - line: "line26_d04"
+    field: "178"
+    type: text
+    maxlen: 1
+  - line: "line26_d05"
+    field: "179"
+    type: text
+    maxlen: 1
+  - line: "line26_d06"
+    field: "undefined_76"
+    type: text
+    maxlen: 1
+  - line: "line26_d07"
+    field: "180"
+    type: text
+    maxlen: 1
+  - line: "line26_d08"
+    field: "181"
+    type: text
+    maxlen: 1
+  - line: "line26_d09"
+    field: "undefined_77"
+    type: text
+    maxlen: 1
+  - line: "line26_d10"
+    field: "182"
+    type: text
+    maxlen: 1
+  - line: "line27_d01"
+    field: "263"
+    type: text
+    maxlen: 1
+  - line: "line27_d02"
+    field: "27"
+    type: text
+    maxlen: 1
+  - line: "line27_d03"
+    field: "183"
+    type: text
+    maxlen: 1
+  - line: "line27_d04"
+    field: "undefined_78"
+    type: text
+    maxlen: 1
+  - line: "line27_d05"
+    field: "184"
+    type: text
+    maxlen: 1
+  - line: "line27_d06"
+    field: "185"
+    type: text
+    maxlen: 1
+  - line: "line27_d07"
+    field: "undefined_79"
+    type: text
+    maxlen: 1
+  - line: "line27_d08"
+    field: "186"
+    type: text
+    maxlen: 1
+  - line: "line27_d09"
+    field: "187"
+    type: text
+    maxlen: 1
+  - line: "line27_d10"
+    field: "undefined_80"
+    type: text
+    maxlen: 1
+  - line: "line27_d11"
+    field: "188"
+    type: text
+    maxlen: 1
+  - line: "line28a_d01"
+    field: "28a"
+    type: text
+    maxlen: 1
+  - line: "line28a_d02"
+    field: "189"
+    type: text
+    maxlen: 1
+  - line: "line28a_d03"
+    field: "190"
+    type: text
+    maxlen: 1
+  - line: "line28a_d04"
+    field: "undefined_81"
+    type: text
+    maxlen: 1
+  - line: "line28a_d05"
+    field: "191"
+    type: text
+    maxlen: 1
+  - line: "line28a_d06"
+    field: "192"
+    type: text
+    maxlen: 1
+  - line: "line28a_d07"
+    field: "undefined_82"
+    type: text
+    maxlen: 1
+  - line: "line28a_d08"
+    field: "193"
+    type: text
+    maxlen: 1
+  - line: "line28b_d01"
+    field: "28b"
+    type: text
+    maxlen: 1
+  - line: "line28b_d02"
+    field: "194"
+    type: text
+    maxlen: 1
+  - line: "line28b_d03"
+    field: "195"
+    type: text
+    maxlen: 1
+  - line: "line28b_d04"
+    field: "undefined_83"
+    type: text
+    maxlen: 1
+  - line: "line28b_d05"
+    field: "196"
+    type: text
+    maxlen: 1
+  - line: "line28b_d06"
+    field: "197"
+    type: text
+    maxlen: 1
+  - line: "line28b_d07"
+    field: "undefined_84"
+    type: text
+    maxlen: 1
+  - line: "line28b_d08"
+    field: "198"
+    type: text
+    maxlen: 1
+  - line: "line28c_d01"
+    field: "28c"
+    type: text
+    maxlen: 1
+  - line: "line28c_d02"
+    field: "199"
+    type: text
+    maxlen: 1
+  - line: "line28c_d03"
+    field: "200"
+    type: text
+    maxlen: 1
+  - line: "line28c_d04"
+    field: "undefined_85"
+    type: text
+    maxlen: 1
+  - line: "line28c_d05"
+    field: "201"
+    type: text
+    maxlen: 1
+  - line: "line28c_d06"
+    field: "202"
+    type: text
+    maxlen: 1
+  - line: "line28c_d07"
+    field: "undefined_86"
+    type: text
+    maxlen: 1
+  - line: "line28c_d08"
+    field: "203"
+    type: text
+    maxlen: 1
+  - line: "line29_d01"
+    field: "270"
+    type: text
+    maxlen: 1
+  - line: "line29_d02"
+    field: "29"
+    type: text
+    maxlen: 1
+  - line: "line29_d03"
+    field: "204"
+    type: text
+    maxlen: 1
+  - line: "line29_d04"
+    field: "undefined_87"
+    type: text
+    maxlen: 1
+  - line: "line29_d05"
+    field: "205"
+    type: text
+    maxlen: 1
+  - line: "line29_d06"
+    field: "206"
+    type: text
+    maxlen: 1
+  - line: "line29_d07"
+    field: "undefined_88"
+    type: text
+    maxlen: 1
+  - line: "line29_d08"
+    field: "207"
+    type: text
+    maxlen: 1
+  - line: "line29_d09"
+    field: "208"
+    type: text
+    maxlen: 1
+  - line: "line29_d10"
+    field: "undefined_89"
+    type: text
+    maxlen: 1
+  - line: "line29_d11"
+    field: "209"
+    type: text
+    maxlen: 1
+  - line: "line30_d01"
+    field: "30"
+    type: text
+    maxlen: 1
+  - line: "line30_d02"
+    field: "210"
+    type: text
+    maxlen: 1
+  - line: "line30_d03"
+    field: "211"
+    type: text
+    maxlen: 1
+  - line: "line30_d04"
+    field: "undefined_90"
+    type: text
+    maxlen: 1
+  - line: "line30_d05"
+    field: "212"
+    type: text
+    maxlen: 1
+  - line: "line30_d06"
+    field: "213"
+    type: text
+    maxlen: 1
+  - line: "line30_d07"
+    field: "undefined_91"
+    type: text
+    maxlen: 1
+  - line: "line30_d08"
+    field: "214"
+    type: text
+    maxlen: 1
+  - line: "line31_d01"
+    field: "31"
+    type: text
+    maxlen: 1
+  - line: "line31_d02"
+    field: "215"
+    type: text
+    maxlen: 1
+  - line: "line31_d03"
+    field: "216"
+    type: text
+    maxlen: 1
+  - line: "line31_d04"
+    field: "undefined_92"
+    type: text
+    maxlen: 1
+  - line: "line31_d05"
+    field: "217"
+    type: text
+    maxlen: 1
+  - line: "line31_d06"
+    field: "218"
+    type: text
+    maxlen: 1
+  - line: "line31_d07"
+    field: "undefined_93"
+    type: text
+    maxlen: 1
+  - line: "line31_d08"
+    field: "219"
+    type: text
+    maxlen: 1
+  - line: "line32_d01"
+    field: "32"
+    type: text
+    maxlen: 1
+  - line: "line32_d02"
+    field: "220"
+    type: text
+    maxlen: 1
+  - line: "line32_d03"
+    field: "221"
+    type: text
+    maxlen: 1
+  - line: "line32_d04"
+    field: "undefined_94"
+    type: text
+    maxlen: 1
+  - line: "line32_d05"
+    field: "222"
+    type: text
+    maxlen: 1
+  - line: "line32_d06"
+    field: "223"
+    type: text
+    maxlen: 1
+  - line: "line32_d07"
+    field: "undefined_95"
+    type: text
+    maxlen: 1
+  - line: "line32_d08"
+    field: "224"
+    type: text
+    maxlen: 1
+  - line: "line33_d01"
+    field: "33"
+    type: text
+    maxlen: 1
+  - line: "line33_d02"
+    field: "225"
+    type: text
+    maxlen: 1
+  - line: "line33_d03"
+    field: "226"
+    type: text
+    maxlen: 1
+  - line: "line33_d04"
+    field: "undefined_96"
+    type: text
+    maxlen: 1
+  - line: "line33_d05"
+    field: "227"
+    type: text
+    maxlen: 1
+  - line: "line33_d06"
+    field: "228"
+    type: text
+    maxlen: 1
+  - line: "line33_d07"
+    field: "undefined_97"
+    type: text
+    maxlen: 1
+  - line: "line33_d08"
+    field: "229"
+    type: text
+    maxlen: 1
+  - line: "line34_d01"
+    field: "34"
+    type: text
+    maxlen: 1
+  - line: "line34_d02"
+    field: "230"
+    type: text
+    maxlen: 1
+  - line: "line34_d03"
+    field: "231"
+    type: text
+    maxlen: 1
+  - line: "line34_d04"
+    field: "undefined_98"
+    type: text
+    maxlen: 1
+  - line: "line34_d05"
+    field: "232"
+    type: text
+    maxlen: 1
+  - line: "line34_d06"
+    field: "233"
+    type: text
+    maxlen: 1
+  - line: "line34_d07"
+    field: "undefined_99"
+    type: text
+    maxlen: 1
+  - line: "line34_d08"
+    field: "234"
+    type: text
+    maxlen: 1
+  - line: "line35_d01"
+    field: "35"
+    type: text
+    maxlen: 1
+  - line: "line35_d02"
+    field: "235"
+    type: text
+    maxlen: 1
+  - line: "line35_d03"
+    field: "236"
+    type: text
+    maxlen: 1
+  - line: "line35_d04"
+    field: "undefined_100"
+    type: text
+    maxlen: 1
+  - line: "line35_d05"
+    field: "237"
+    type: text
+    maxlen: 1
+  - line: "line35_d06"
+    field: "238"
+    type: text
+    maxlen: 1
+  - line: "line35_d07"
+    field: "undefined_101"
+    type: text
+    maxlen: 1
+  - line: "line35_d08"
+    field: "239"
+    type: text
+    maxlen: 1
+  - line: "line36_d01"
+    field: "36"
+    type: text
+    maxlen: 1
+  - line: "line36_d02"
+    field: "240"
+    type: text
+    maxlen: 1
+  - line: "line36_d03"
+    field: "241"
+    type: text
+    maxlen: 1
+  - line: "line36_d04"
+    field: "undefined_102"
+    type: text
+    maxlen: 1
+  - line: "line36_d05"
+    field: "242"
+    type: text
+    maxlen: 1
+  - line: "line36_d06"
+    field: "243"
+    type: text
+    maxlen: 1
+  - line: "line36_d07"
+    field: "undefined_103"
+    type: text
+    maxlen: 1
+  - line: "line36_d08"
+    field: "244"
+    type: text
+    maxlen: 1
+  - line: "line37a_njbest_deduction_d01"
+    field: "38b Block"
+    type: text
+    maxlen: 1
+  - line: "line37a_njbest_deduction_d02"
+    field: "257"
+    type: text
+    maxlen: 1
+  - line: "line37a_njbest_deduction_d03"
+    field: "258"
+    type: text
+    maxlen: 1
+  - line: "line37a_njbest_deduction_d04"
+    field: "259"
+    type: text
+    maxlen: 1
+  - line: "line37a_njbest_deduction_d05"
+    field: "260"
+    type: text
+    maxlen: 1
+  - line: "line37a_njbest_deduction_d06"
+    field: "undefined_110"
+    type: text
+    maxlen: 1
+  - line: "line37a_njbest_deduction_d07"
+    field: "261"
+    type: text
+    maxlen: 1
+  - line: "line37b_njclass_deduction_d01"
+    field: "264"
+    type: text
+    maxlen: 1
+  - line: "line37b_njclass_deduction_d02"
+    field: "265"
+    type: text
+    maxlen: 1
+  - line: "line37b_njclass_deduction_d03"
+    field: "266"
+    type: text
+    maxlen: 1
+  - line: "line37b_njclass_deduction_d04"
+    field: "267"
+    type: text
+    maxlen: 1
+  - line: "line37b_njclass_deduction_d05"
+    field: "268"
+    type: text
+    maxlen: 1
+  - line: "line37b_njclass_deduction_d06"
+    field: "269"
+    type: text
+    maxlen: 1
+  - line: "line37c_nj_higher_ed_tuition_deduction_d01"
+    field: "271"
+    type: text
+    maxlen: 1
+  - line: "line37c_nj_higher_ed_tuition_deduction_d02"
+    field: "272"
+    type: text
+    maxlen: 1
+  - line: "line37c_nj_higher_ed_tuition_deduction_d03"
+    field: "Qualifier"
+    type: text
+    maxlen: 1
+  - line: "line37c_nj_higher_ed_tuition_deduction_d04"
+    field: "273"
+    type: text
+    maxlen: 1
+  - line: "line37c_nj_higher_ed_tuition_deduction_d05"
+    field: "274"
+    type: text
+    maxlen: 1
+  - line: "line37c_nj_higher_ed_tuition_deduction_d06"
+    field: "275"
+    type: text
+    maxlen: 1
+  - line: "line37c_nj_higher_ed_tuition_deduction_d07"
+    field: "276"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d01"
+    field: "278"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d02"
+    field: "undefined_104"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d03"
+    field: "246"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d04"
+    field: "247"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d05"
+    field: "undefined_105"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d06"
+    field: "248"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d07"
+    field: "249"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d08"
+    field: "undefined_106"
+    type: text
+    maxlen: 1
+  - line: "line38_total_exemptions_deductions_d09"
+    field: "250"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d01"
+    field: "279"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d02"
+    field: "38a Total Property Taxes 18 of Rent Paid See instructions page 23 38a"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d03"
+    field: "251"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d04"
+    field: "undefined_107"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d05"
+    field: "252"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d06"
+    field: "253"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d07"
+    field: "undefined_108"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d08"
+    field: "254"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d09"
+    field: "255"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d10"
+    field: "undefined_109"
+    type: text
+    maxlen: 1
+  - line: "line39_taxable_income_d11"
+    field: "256"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d01"
+    field: "39"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d02"
+    field: "280"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d03"
+    field: "undefined_112"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d04"
+    field: "281"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d05"
+    field: "282"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d06"
+    field: "undefined_113"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d07"
+    field: "283"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d08"
+    field: "37"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d09"
+    field: "245"
+    type: text
+    maxlen: 1
+  - line: "line40a_total_property_taxes_d10"
+    field: "24539a#2"
+    type: text
+    maxlen: 1
+  - line: "line40b_residency_status::homeowner"
+    field: "Group182"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "line40b_residency_status::tenant"
+    field: "Group182"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "line40b_residency_status::both"
+    field: "Group182"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "line41_property_tax_deduction_d01"
+    field: "undefined_116"
+    type: text
+    maxlen: 1
+  - line: "line41_property_tax_deduction_d02"
+    field: "41"
+    type: text
+    maxlen: 1
+  - line: "line41_property_tax_deduction_d03"
+    field: "undefined_117"
+    type: text
+    maxlen: 1
+  - line: "line41_property_tax_deduction_d04"
+    field: "undefined_118"
+    type: text
+    maxlen: 1
+    # NOTE: a second widget also named 'undefined_118' sits in the next cell of
+    #   this line and mirrors this value (one field name, two boxes); not re-mapped.
+  - line: "line41_property_tax_deduction_d06"
+    field: "Text1"
+    type: text
+    maxlen: 1
+  - line: "line41_property_tax_deduction_d07"
+    field: "Text2"
+    type: text
+    maxlen: 1
+  - line: "line41_property_tax_deduction_d08"
+    field: "Text18"
+    type: text
+    maxlen: 1
+  # ===================================================== PAGE 3 - lines 42-67 (tax, credits, withholdings)
+  - line: "page3_ssn"
+    field: "Your Social Security Number_2"
+    type: text
+  - line: "page3_names"
+    field: "Names as shown on Form NJ1040_2"
+    type: text
+  - line: "line42_nj_taxable_income_d01"
+    field: "Enter Code4332"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d02"
+    field: "40"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d03"
+    field: "undefined_114"
+    type: text
+    maxlen: 1
+    # NOTE: a second widget also named 'undefined_114' appears on line 55 and would
+    #   mirror this cell's value; the form reuses the name, so line 55 cannot carry an
+    #   independent digit there and that twin widget is intentionally not re-mapped.
+  - line: "line42_nj_taxable_income_d04"
+    field: "Text19"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d05"
+    field: "Text20"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d06"
+    field: "Text30"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d07"
+    field: "Text37"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d08"
+    field: "Text38"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d09"
+    field: "Text39"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d10"
+    field: "Text40"
+    type: text
+    maxlen: 1
+  - line: "line42_nj_taxable_income_d11"
+    field: "Text41"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d01"
+    field: "Enter Code4332243ew"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d02"
+    field: "4036y54ethdf"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d03"
+    field: "42"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d04"
+    field: "undefined_119"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d05"
+    field: "undefined_120"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d06"
+    field: "Text43"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d07"
+    field: "Text44"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d08"
+    field: "Text45"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d09"
+    field: "Text46"
+    type: text
+    maxlen: 1
+  - line: "line43_tax_on_line42_d10"
+    field: "Text63"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_code_d1"
+    field: "Enter Code"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_code_d2"
+    field: "Text42"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d01"
+    field: "Enter Code4332243ew56u6yt"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d02"
+    field: "4036y54ethdf56tykhj6z3"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d03"
+    field: "43"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d04"
+    field: "undefined_121"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d05"
+    field: "undefined_122"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d06"
+    field: "Text64"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d07"
+    field: "Text74"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d08"
+    field: "Text84"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d09"
+    field: "Text94"
+    type: text
+    maxlen: 1
+  - line: "line44_credit_other_jurisdictions_d10"
+    field: "Text95"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d01"
+    field: "Enter Code4332243ewR@434"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d02"
+    field: "4036y54ethdf!!!##$$"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d03"
+    field: "45"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d04"
+    field: "undefined_125"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d05"
+    field: "undefined_126"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d06"
+    field: "Text99"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d07"
+    field: "Text102"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d08"
+    field: "Text108"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d09"
+    field: "Text109"
+    type: text
+    maxlen: 1
+  - line: "line45_balance_of_tax_d10"
+    field: "Text110"
+    type: text
+    maxlen: 1
+  - line: "line46_sheltered_workshop_credit_d01"
+    field: "444rthgf"
+    type: text
+    maxlen: 1
+  - line: "line46_sheltered_workshop_credit_d02"
+    field: "undefined_1235ehvbncvw"
+    type: text
+    maxlen: 1
+  - line: "line46_sheltered_workshop_credit_d03"
+    field: "44"
+    type: text
+    maxlen: 1
+  - line: "line46_sheltered_workshop_credit_d04"
+    field: "undefined_123"
+    type: text
+    maxlen: 1
+  - line: "line46_sheltered_workshop_credit_d05"
+    field: "undefined_124"
+    type: text
+    maxlen: 1
+  - line: "line46_sheltered_workshop_credit_d06"
+    field: "Text96"
+    type: text
+    maxlen: 1
+  - line: "line46_sheltered_workshop_credit_d07"
+    field: "Text97"
+    type: text
+    maxlen: 1
+  - line: "line46_sheltered_workshop_credit_d08"
+    field: "Text98"
+    type: text
+    maxlen: 1
+  - line: "line47_gold_star_family_counseling_credit_d01"
+    field: "46"
+    type: text
+    maxlen: 1
+  - line: "line47_gold_star_family_counseling_credit_d02"
+    field: "undefined_127"
+    type: text
+    maxlen: 1
+  - line: "line47_gold_star_family_counseling_credit_d03"
+    field: "undefined_128"
+    type: text
+    maxlen: 1
+  - line: "line47_gold_star_family_counseling_credit_d04"
+    field: "Text111"
+    type: text
+    maxlen: 1
+  - line: "line47_gold_star_family_counseling_credit_d05"
+    field: "Text112"
+    type: text
+    maxlen: 1
+  - line: "line47_gold_star_family_counseling_credit_d06"
+    field: "Text113"
+    type: text
+    maxlen: 1
+  - line: "line47_gold_star_family_counseling_credit_d07"
+    field: "Text114"
+    type: text
+    maxlen: 1
+  - line: "line47_gold_star_family_counseling_credit_d08"
+    field: "Text115"
+    type: text
+    maxlen: 1
+  - line: "line48_credit_employer_organ_donor_d01"
+    field: "47"
+    type: text
+    maxlen: 1
+  - line: "line48_credit_employer_organ_donor_d02"
+    field: "undefined_129"
+    type: text
+    maxlen: 1
+  - line: "line48_credit_employer_organ_donor_d03"
+    field: "undefined_130"
+    type: text
+    maxlen: 1
+  - line: "line48_credit_employer_organ_donor_d04"
+    field: "Text116"
+    type: text
+    maxlen: 1
+  - line: "line48_credit_employer_organ_donor_d05"
+    field: "Text117"
+    type: text
+    maxlen: 1
+  - line: "line48_credit_employer_organ_donor_d06"
+    field: "Text118"
+    type: text
+    maxlen: 1
+  - line: "line48_credit_employer_organ_donor_d07"
+    field: "Text119"
+    type: text
+    maxlen: 1
+  - line: "line48_credit_employer_organ_donor_d08"
+    field: "Text120"
+    type: text
+    maxlen: 1
+  - line: "line49_total_credits_d01"
+    field: "48"
+    type: text
+    maxlen: 1
+  - line: "line49_total_credits_d02"
+    field: "undefined_131"
+    type: text
+    maxlen: 1
+  - line: "line49_total_credits_d03"
+    field: "undefined_132"
+    type: text
+    maxlen: 1
+  - line: "line49_total_credits_d04"
+    field: "Text121"
+    type: text
+    maxlen: 1
+  - line: "line49_total_credits_d05"
+    field: "Text122"
+    type: text
+    maxlen: 1
+  - line: "line49_total_credits_d06"
+    field: "Text123"
+    type: text
+    maxlen: 1
+  - line: "line49_total_credits_d07"
+    field: "Text124"
+    type: text
+    maxlen: 1
+  - line: "line49_total_credits_d08"
+    field: "Text125"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d01"
+    field: "Enter Code4332243ew6576z66z##"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d02"
+    field: "4036y54ethdf(*H"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d03"
+    field: "49"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d04"
+    field: "undefined_133"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d05"
+    field: "undefined_134"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d06"
+    field: "Text126"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d07"
+    field: "Text127"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d08"
+    field: "Text128"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d09"
+    field: "Text129"
+    type: text
+    maxlen: 1
+  - line: "line50_balance_of_tax_after_credits_d10"
+    field: "Text130"
+    type: text
+    maxlen: 1
+  - line: "line51_use_tax_due_d01"
+    field: "50"
+    type: text
+    maxlen: 1
+  - line: "line51_use_tax_due_d02"
+    field: "50_2"
+    type: text
+    maxlen: 1
+  - line: "line51_use_tax_due_d03"
+    field: "50_3"
+    type: text
+    maxlen: 1
+  - line: "line51_use_tax_due_d04"
+    field: "Text131"
+    type: text
+    maxlen: 1
+  - line: "line51_use_tax_due_d05"
+    field: "Text132"
+    type: text
+    maxlen: 1
+  - line: "line51_use_tax_due_d06"
+    field: "Text133"
+    type: text
+    maxlen: 1
+  - line: "line51_use_tax_due_d07"
+    field: "Text134"
+    type: text
+    maxlen: 1
+  - line: "line51_use_tax_due_d08"
+    field: "50_7"
+    type: text
+    maxlen: 1
+  - line: "line52_interest_underpayment_estimated_tax_d01"
+    field: "51"
+    type: text
+    maxlen: 1
+  - line: "line52_interest_underpayment_estimated_tax_d02"
+    field: "undefined_137"
+    type: text
+    maxlen: 1
+  - line: "line52_interest_underpayment_estimated_tax_d03"
+    field: "undefined_138"
+    type: text
+    maxlen: 1
+  - line: "line52_interest_underpayment_estimated_tax_d04"
+    field: "Text136"
+    type: text
+    maxlen: 1
+  - line: "line52_interest_underpayment_estimated_tax_d05"
+    field: "Text137"
+    type: text
+    maxlen: 1
+  - line: "line52_interest_underpayment_estimated_tax_d06"
+    field: "Text138"
+    type: text
+    maxlen: 1
+  - line: "line52_interest_underpayment_estimated_tax_d07"
+    field: "Text139"
+    type: text
+    maxlen: 1
+  - line: "line52_interest_underpayment_estimated_tax_d08"
+    field: "Text140"
+    type: text
+    maxlen: 1
+  - line: "line52_nj2210_enclosed"
+    field: "Check Box146"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "line53a_no_health_insurance"
+    field: "Check Box146aabb"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "line53b_get_covered_nj"
+    field: "Check Box146aabbffdd"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "line53c_shared_responsibility_payment_d01"
+    field: "52"
+    type: text
+    maxlen: 1
+  - line: "line53c_shared_responsibility_payment_d02"
+    field: "undefined_139"
+    type: text
+    maxlen: 1
+  - line: "line53c_shared_responsibility_payment_d03"
+    field: "undefined_140"
+    type: text
+    maxlen: 1
+  - line: "line53c_shared_responsibility_payment_d04"
+    field: "Text141"
+    type: text
+    maxlen: 1
+  - line: "line53c_shared_responsibility_payment_d05"
+    field: "Text142"
+    type: text
+    maxlen: 1
+  - line: "line53c_shared_responsibility_payment_d06"
+    field: "Text143"
+    type: text
+    maxlen: 1
+  - line: "line53c_shared_responsibility_payment_d07"
+    field: "Text144"
+    type: text
+    maxlen: 1
+  - line: "line53c_shared_responsibility_payment_d08"
+    field: "Text145"
+    type: text
+    maxlen: 1
+  - line: "line53c_nj_hcc_enclosed"
+    field: "Check Box147"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "line54_total_tax_due_d01"
+    field: "Enter Code4332243ew^^%$#"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d02"
+    field: "4036y54ethdf%%^87"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d03"
+    field: "53"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d04"
+    field: "undefined_141"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d05"
+    field: "undefined_142"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d06"
+    field: "Text148"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d07"
+    field: "Text149"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d08"
+    field: "Text150"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d09"
+    field: "Text151"
+    type: text
+    maxlen: 1
+  - line: "line54_total_tax_due_d10"
+    field: "Text152"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d01"
+    field: "undefined_1471qerw"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d03"
+    field: "undefined_143"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d04"
+    field: "undefined_144"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d05"
+    field: "undefined_145"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d06"
+    field: "Text153"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d07"
+    field: "Text154"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d08"
+    field: "Text155"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d09"
+    field: "Text156"
+    type: text
+    maxlen: 1
+  - line: "line55_total_nj_income_tax_withheld_d10"
+    field: "Text157"
+    type: text
+    maxlen: 1
+  - line: "line56_property_tax_credit_d01"
+    field: "Text161"
+    type: text
+    maxlen: 1
+  - line: "line56_property_tax_credit_d02"
+    field: "Text162"
+    type: text
+    maxlen: 1
+  - line: "line56_property_tax_credit_d03"
+    field: "Text163"
+    type: text
+    maxlen: 1
+  - line: "line56_property_tax_credit_d04"
+    field: "Text164"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d01"
+    field: "56!#$$"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d02"
+    field: "56"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d03"
+    field: "undefined_147"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d04"
+    field: "undefined_148"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d05"
+    field: "undefined_149"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d06"
+    field: "Text160"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d07"
+    field: "55"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d08"
+    field: "undefined_146"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d09"
+    field: "Text158"
+    type: text
+    maxlen: 1
+  - line: "line57_estimated_tax_payments_d10"
+    field: "Text159"
+    type: text
+    maxlen: 1
+  - line: "line58_nj_earned_income_tax_credit_d01"
+    field: "58"
+    type: text
+    maxlen: 1
+  - line: "line58_nj_earned_income_tax_credit_d02"
+    field: "undefined_152"
+    type: text
+    maxlen: 1
+  - line: "line58_nj_earned_income_tax_credit_d03"
+    field: "undefined_153"
+    type: text
+    maxlen: 1
+  - line: "line58_nj_earned_income_tax_credit_d04"
+    field: "Text170"
+    type: text
+    maxlen: 1
+  - line: "line58_nj_earned_income_tax_credit_d05"
+    field: "Text171"
+    type: text
+    maxlen: 1
+  - line: "line58_nj_earned_income_tax_credit_d06"
+    field: "Text172"
+    type: text
+    maxlen: 1
+  - line: "line58_irs_calculated_federal_eic"
+    field: "Check Box168"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "line58_cu_couple_claiming_eic"
+    field: "Check Box169"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "line59_excess_ui_wf_swf_withheld_d01"
+    field: "59"
+    type: text
+    maxlen: 1
+  - line: "line59_excess_ui_wf_swf_withheld_d02"
+    field: "undefined_154"
+    type: text
+    maxlen: 1
+  - line: "line59_excess_ui_wf_swf_withheld_d03"
+    field: "undefined_155"
+    type: text
+    maxlen: 1
+  - line: "line59_excess_ui_wf_swf_withheld_d04"
+    field: "Text173"
+    type: text
+    maxlen: 1
+  - line: "line59_excess_ui_wf_swf_withheld_d05"
+    field: "Text174"
+    type: text
+    maxlen: 1
+  - line: "line59_excess_ui_wf_swf_withheld_d06"
+    field: "Text175"
+    type: text
+    maxlen: 1
+  - line: "line60_excess_disability_insurance_withheld_d01"
+    field: "Text165"
+    type: text
+    maxlen: 1
+  - line: "line60_excess_disability_insurance_withheld_d02"
+    field: "Text166"
+    type: text
+    maxlen: 1
+  - line: "line60_excess_disability_insurance_withheld_d03"
+    field: "Text167"
+    type: text
+    maxlen: 1
+  - line: "line61_excess_family_leave_insurance_withheld_d01"
+    field: "60"
+    type: text
+    maxlen: 1
+  - line: "line61_excess_family_leave_insurance_withheld_d02"
+    field: "undefined_156"
+    type: text
+    maxlen: 1
+  - line: "line61_excess_family_leave_insurance_withheld_d03"
+    field: "undefined_157"
+    type: text
+    maxlen: 1
+  - line: "line61_excess_family_leave_insurance_withheld_d04"
+    field: "Text176"
+    type: text
+    maxlen: 1
+  - line: "line61_excess_family_leave_insurance_withheld_d05"
+    field: "Text177"
+    type: text
+    maxlen: 1
+  - line: "line61_excess_family_leave_insurance_withheld_d06"
+    field: "Text178"
+    type: text
+    maxlen: 1
+  - line: "line62_wounded_warrior_caregivers_credit_d01"
+    field: "61"
+    type: text
+    maxlen: 1
+  - line: "line62_wounded_warrior_caregivers_credit_d02"
+    field: "undefined_158"
+    type: text
+    maxlen: 1
+  - line: "line62_wounded_warrior_caregivers_credit_d03"
+    field: "undefined_159"
+    type: text
+    maxlen: 1
+  - line: "line62_wounded_warrior_caregivers_credit_d04"
+    field: "Text179"
+    type: text
+    maxlen: 1
+  - line: "line62_wounded_warrior_caregivers_credit_d05"
+    field: "Text180"
+    type: text
+    maxlen: 1
+  - line: "line62_wounded_warrior_caregivers_credit_d06"
+    field: "Text181"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d01"
+    field: "63#4ytg"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d02"
+    field: "63"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d03"
+    field: "undefined_163"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d04"
+    field: "undefined_164"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d05"
+    field: "undefined_165"
+    type: text
+    maxlen: 2
+  - line: "line63_pass_through_business_alt_income_tax_credit_d06"
+    field: "Text187"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d07"
+    field: "Text188"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d08"
+    field: "Text189"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d09"
+    field: "Text190"
+    type: text
+    maxlen: 1
+  - line: "line63_pass_through_business_alt_income_tax_credit_d10"
+    field: "Text191"
+    type: text
+    maxlen: 1
+  - line: "line64_child_dependent_care_credit_d01"
+    field: "undefined_168"
+    type: text
+    maxlen: 2
+  - line: "line64_child_dependent_care_credit_d02"
+    field: "Text192"
+    type: text
+    maxlen: 1
+  - line: "line64_child_dependent_care_credit_d03"
+    field: "Text193"
+    type: text
+    maxlen: 1
+  - line: "line64_child_dependent_care_credit_d04"
+    field: "Text194"
+    type: text
+    maxlen: 1
+  - line: "line64_child_dependent_care_credit_d05"
+    field: "Text195"
+    type: text
+    maxlen: 1
+  - line: "line64_child_dependent_care_credit_d06"
+    field: "Text196"
+    type: text
+    maxlen: 1
+  - line: "line64_cu_couple_claiming_child_dependent_care"
+    field: "Check Box169123"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "line65_dependents_age5_or_younger_count"
+    field: "64"
+    type: text
+    maxlen: 1
+  - line: "line65_nj_child_tax_credit_d01"
+    field: "undefined_162"
+    type: text
+    maxlen: 2
+  - line: "line65_nj_child_tax_credit_d02"
+    field: "Text182"
+    type: text
+    maxlen: 1
+  - line: "line65_nj_child_tax_credit_d03"
+    field: "Text183"
+    type: text
+    maxlen: 1
+  - line: "line65_nj_child_tax_credit_d04"
+    field: "Text184"
+    type: text
+    maxlen: 1
+  - line: "line65_nj_child_tax_credit_d05"
+    field: "Text185"
+    type: text
+    maxlen: 1
+  - line: "line65_nj_child_tax_credit_d06"
+    field: "Text186"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d01"
+    field: "undefined_167"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d02"
+    field: "66page2!!"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d03"
+    field: "62"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d04"
+    field: "undefined_160"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d05"
+    field: "undefined_161"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d06"
+    field: "66"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d07"
+    field: "undefined_172"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d08"
+    field: "Text202"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d09"
+    field: "Text203"
+    type: text
+    maxlen: 1
+  - line: "line66_total_withholdings_credits_payments_d10"
+    field: "Text204"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d01"
+    field: "67AA12vvff434tei7yt#"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d02"
+    field: "67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d03"
+    field: "67AA12133vvve367AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d04"
+    field: "67AA127434ERDFvfr67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d05"
+    field: "67AA12697TDFGCXDqaffw67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d06"
+    field: "672wqreafd67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d07"
+    field: "undefined_173t24wsd67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d08"
+    field: "Text20523rwefa67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d09"
+    field: "Text2061ddwQz1267AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line67_tax_due_d10"
+    field: "Text20711231167AA12vvff434te"
+    type: text
+    maxlen: 1
+  # ===================================================== PAGE 4 - lines 68-80, gubernatorial, signature, preparer
+  - line: "page4_ssn"
+    field: "Your Social Security Number_3"
+    type: text
+  - line: "page4_names"
+    field: "Names as shown on Form NJ1040_3"
+    type: text
+  - line: "line68_overpayment_d01"
+    field: "74112###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d02"
+    field: "7412###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d03"
+    field: "undefined_18112###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d04"
+    field: "undefined_18212###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d05"
+    field: "undefined_18312###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d06"
+    field: "Text22912###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d07"
+    field: "Text23012###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d08"
+    field: "Text23112###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d09"
+    field: "Text23212###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line68_overpayment_d10"
+    field: "Text23312###5z564312###5z5643"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d01"
+    field: "74112###5z564396669"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d02"
+    field: "7412###5z564312###5z56434396669"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d03"
+    field: "undefined_18112###5z564312###5z56434396669"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d04"
+    field: "undefined_18212###5z564312###5z56434396669"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d05"
+    field: "undefined_18312###5z564312###5z56443966693"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d06"
+    field: "68"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d07"
+    field: "undefined_17268"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d08"
+    field: "Text20268"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d09"
+    field: "Text20368"
+    type: text
+    maxlen: 1
+  - line: "line69_credit_to_2024_tax_d10"
+    field: "Text20468"
+    type: text
+    maxlen: 1
+  - line: "line70_contribution_endangered_wildlife::amount_10"
+    field: "Group168"
+    type: checkbox
+    on_state: "/0"
+  - line: "line70_contribution_endangered_wildlife::amount_20"
+    field: "Group168"
+    type: checkbox
+    on_state: "/1"
+  - line: "line70_contribution_endangered_wildlife::amount_other"
+    field: "Group168"
+    type: checkbox
+    on_state: "/2"
+  - line: "line70_contribution_endangered_wildlife_d01"
+    field: "68abb"
+    type: text
+    maxlen: 1
+  - line: "line70_contribution_endangered_wildlife_d02"
+    field: "undefined_1726868abb"
+    type: text
+    maxlen: 1
+  - line: "line70_contribution_endangered_wildlife_d03"
+    field: "Text2026868abb"
+    type: text
+    maxlen: 1
+  - line: "line70_contribution_endangered_wildlife_d04"
+    field: "Text2036868abb"
+    type: text
+    maxlen: 1
+  - line: "line70_contribution_endangered_wildlife_d05"
+    field: "Text2046868abb"
+    type: text
+    maxlen: 1
+  - line: "line71_contribution_childrens_trust::amount_10"
+    field: "Group1681"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "line71_contribution_childrens_trust::amount_20"
+    field: "Group1681"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "line71_contribution_childrens_trust::amount_other"
+    field: "Group1681"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "line71_contribution_childrens_trust_d01"
+    field: "6767AA12vvff434te67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line71_contribution_childrens_trust_d02"
+    field: "undefined_173$%$R67AA12vvff434te67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line71_contribution_childrens_trust_d03"
+    field: "Text205%$Rw67AA12vvff434te67AA12vvff434te"
+    type: text
+    maxlen: 1
+  - line: "line71_contribution_childrens_trust_d04"
+    field: "Text206$$@#67AA12vvff434te67AA12vvff434terf"
+    type: text
+    maxlen: 1
+  - line: "line71_contribution_childrens_trust_d05"
+    field: "Text207$#@#wr67AA12vvff434te67AA12vvff434te67AA12vvff434tedq"
+    type: text
+    maxlen: 1
+  - line: "line72_contribution_vietnam_veterans_memorial::amount_10"
+    field: "Group168170"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "line72_contribution_vietnam_veterans_memorial::amount_20"
+    field: "Group168170"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "line72_contribution_vietnam_veterans_memorial::amount_other"
+    field: "Group168170"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "line72_contribution_vietnam_veterans_memorial_d01"
+    field: "6871a"
+    type: text
+    maxlen: 1
+  - line: "line72_contribution_vietnam_veterans_memorial_d02"
+    field: "undefined_17471a"
+    type: text
+    maxlen: 1
+  - line: "line72_contribution_vietnam_veterans_memorial_d03"
+    field: "Text20871a"
+    type: text
+    maxlen: 1
+  - line: "line72_contribution_vietnam_veterans_memorial_d04"
+    field: "Text20971a"
+    type: text
+    maxlen: 1
+  - line: "line72_contribution_vietnam_veterans_memorial_d05"
+    field: "Text21071a"
+    type: text
+    maxlen: 1
+  - line: "line73_contribution_breast_cancer_research::amount_10"
+    field: "Group1681701"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "line73_contribution_breast_cancer_research::amount_20"
+    field: "Group1681701"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "line73_contribution_breast_cancer_research::amount_other"
+    field: "Group1681701"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "line73_contribution_breast_cancer_research_d01"
+    field: "697172aaa"
+    type: text
+    maxlen: 1
+  - line: "line73_contribution_breast_cancer_research_d02"
+    field: "undefined_1757172aaa"
+    type: text
+    maxlen: 1
+  - line: "line73_contribution_breast_cancer_research_d03"
+    field: "Text2117172aaa"
+    type: text
+    maxlen: 1
+  - line: "line73_contribution_breast_cancer_research_d04"
+    field: "Text2127172aaa"
+    type: text
+    maxlen: 1
+  - line: "line73_contribution_breast_cancer_research_d05"
+    field: "Text2137172aaa12~"
+    type: text
+    maxlen: 1
+  - line: "line74_contribution_uss_nj_educational_museum::amount_10"
+    field: "Group16817012"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "line74_contribution_uss_nj_educational_museum::amount_20"
+    field: "Group16817012"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "line74_contribution_uss_nj_educational_museum::amount_other"
+    field: "Group16817012"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "line74_contribution_uss_nj_educational_museum_d01"
+    field: "70aaa744372aaa"
+    type: text
+    maxlen: 1
+  - line: "line74_contribution_uss_nj_educational_museum_d02"
+    field: "undefined_176aaa744372aaa"
+    type: text
+    maxlen: 1
+  - line: "line74_contribution_uss_nj_educational_museum_d03"
+    field: "Text214aaa744372aaa"
+    type: text
+    maxlen: 1
+  - line: "line74_contribution_uss_nj_educational_museum_d04"
+    field: "Text215aaa744372aaa"
+    type: text
+    maxlen: 1
+  - line: "line74_contribution_uss_nj_educational_museum_d05"
+    field: "Text216aaa744372aaa"
+    type: text
+    maxlen: 1
+  - line: "line75_other_designated_contribution::amount_10"
+    field: "Group168170129"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "line75_other_designated_contribution::amount_20"
+    field: "Group168170129"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "line75_other_designated_contribution::amount_other"
+    field: "Group168170129"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "line75_other_designated_contribution_code_d1"
+    field: "Enter Code_2"
+    type: text
+    maxlen: 1
+  - line: "line75_other_designated_contribution_code_d2"
+    field: "Text217"
+    type: text
+    maxlen: 1
+  - line: "line75_other_designated_contribution_d01"
+    field: "71"
+    type: text
+    maxlen: 1
+  - line: "line75_other_designated_contribution_d02"
+    field: "undefined_177"
+    type: text
+    maxlen: 1
+  - line: "line75_other_designated_contribution_d03"
+    field: "Text218"
+    type: text
+    maxlen: 1
+  - line: "line75_other_designated_contribution_d04"
+    field: "Text219"
+    type: text
+    maxlen: 1
+  - line: "line75_other_designated_contribution_d05"
+    field: "Text220"
+    type: text
+    maxlen: 1
+  - line: "line76_other_designated_contribution::amount_10"
+    field: "Group611"
+    type: checkbox
+    on_state: "/0"
+  - line: "line76_other_designated_contribution::amount_20"
+    field: "Group611"
+    type: checkbox
+    on_state: "/1"
+  - line: "line76_other_designated_contribution::amount_other"
+    field: "Group611"
+    type: checkbox
+    on_state: "/2"
+  - line: "line76_other_designated_contribution_code_d1"
+    field: "Enter Code_3"
+    type: text
+    maxlen: 1
+  - line: "line76_other_designated_contribution_code_d2"
+    field: "Text221"
+    type: text
+    maxlen: 1
+  - line: "line76_other_designated_contribution_d01"
+    field: "72"
+    type: text
+    maxlen: 1
+  - line: "line76_other_designated_contribution_d02"
+    field: "undefined_178"
+    type: text
+    maxlen: 1
+  - line: "line76_other_designated_contribution_d03"
+    field: "Text222"
+    type: text
+    maxlen: 1
+  - line: "line76_other_designated_contribution_d04"
+    field: "Text223"
+    type: text
+    maxlen: 1
+  - line: "line76_other_designated_contribution_d05"
+    field: "Text224"
+    type: text
+    maxlen: 1
+  - line: "line77_other_designated_contribution::amount_10"
+    field: "Group6112"
+    type: checkbox
+    on_state: "/0"
+  - line: "line77_other_designated_contribution::amount_20"
+    field: "Group6112"
+    type: checkbox
+    on_state: "/1"
+  - line: "line77_other_designated_contribution::amount_other"
+    field: "Group6112"
+    type: checkbox
+    on_state: "/2"
+  - line: "line77_other_designated_contribution_code_d1"
+    field: "undefined_179"
+    type: text
+    maxlen: 1
+  - line: "line77_other_designated_contribution_code_d2"
+    field: "Text225"
+    type: text
+    maxlen: 1
+  - line: "line77_other_designated_contribution_d01"
+    field: "73"
+    type: text
+    maxlen: 1
+  - line: "line77_other_designated_contribution_d02"
+    field: "Text280"
+    type: text
+    maxlen: 1
+  - line: "line77_other_designated_contribution_d03"
+    field: "Text226"
+    type: text
+    maxlen: 1
+  - line: "line77_other_designated_contribution_d04"
+    field: "Text227"
+    type: text
+    maxlen: 1
+  - line: "line77_other_designated_contribution_d05"
+    field: "Text228"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d01"
+    field: "74112###"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d02"
+    field: "74"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d03"
+    field: "undefined_181"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d04"
+    field: "undefined_182"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d05"
+    field: "undefined_183"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d06"
+    field: "Text229"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d07"
+    field: "Text230"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d08"
+    field: "Text231"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d09"
+    field: "Text232"
+    type: text
+    maxlen: 1
+  - line: "line78_total_adjustments_d10"
+    field: "Text233"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d01"
+    field: "754112###"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d02"
+    field: "75"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d03"
+    field: "undefined_184"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d04"
+    field: "undefined_185"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d05"
+    field: "undefined_186"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d06"
+    field: "Text234"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d07"
+    field: "Text235"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d08"
+    field: "Text236"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d09"
+    field: "Text237"
+    type: text
+    maxlen: 1
+  - line: "line79_balance_due_d10"
+    field: "Text238"
+    type: text
+    maxlen: 1
+  - line: "line79_paying_by_echeck_or_credit_card"
+    field: "Line77bdue"
+    type: checkbox
+    on_state: "/On"
+  - line: "line80_refund_amount_d01"
+    field: "764112###"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d02"
+    field: "76"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d03"
+    field: "undefined_187"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d04"
+    field: "undefined_188"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d05"
+    field: "undefined_189"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d06"
+    field: "Text240"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d07"
+    field: "Text241"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d08"
+    field: "Text242"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d09"
+    field: "Text243"
+    type: text
+    maxlen: 1
+  - line: "line80_refund_amount_d10"
+    field: "Text244"
+    type: text
+    maxlen: 1
+  - line: "gubernatorial_elections_fund_you::yes"
+    field: "Group245"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "gubernatorial_elections_fund_you::no"
+    field: "Group245"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "gubernatorial_elections_fund_spouse_cu::yes"
+    field: "Group246"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "gubernatorial_elections_fund_spouse_cu::no"
+    field: "Group246"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "your_signature_date"
+    field: "Date1_es_:signer:date"
+    type: text
+  - line: "spouse_signature_date"
+    field: "Date2_es_:signer:date"
+    type: text
+  - line: "drivers_license_number_d01"
+    field: "Drivers License Number Voluntary Instructions page 44"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d02"
+    field: "Text246"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d03"
+    field: "Text247"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d04"
+    field: "Text248"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d05"
+    field: "Text249"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d06"
+    field: "Text250"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d07"
+    field: "Text251"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d08"
+    field: "Text252"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d09"
+    field: "Text253"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d10"
+    field: "Text254"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d11"
+    field: "Text255"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d12"
+    field: "Text256"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d13"
+    field: "Text257"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d14"
+    field: "Text258"
+    type: text
+    maxlen: 1
+  - line: "drivers_license_number_d15"
+    field: "Text259"
+    type: text
+    maxlen: 1
+  - line: "death_certificate_enclosed"
+    field: "Check Box260"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "do_not_want_paper_form_next_year"
+    field: "Check Box261"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "authorize_division_to_discuss_with_preparer"
+    field: "Check Box262"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "preparer_nj1040o_enclosed"
+    field: "Check Box263"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "preparer_federal_id_number_d01"
+    field: "Federal Identification Number"
+    type: text
+    maxlen: 1
+  - line: "preparer_federal_id_number_d02"
+    field: "Text264"
+    type: text
+    maxlen: 1
+  - line: "preparer_federal_id_number_d03"
+    field: "Text265"
+    type: text
+    maxlen: 1
+  - line: "preparer_federal_id_number_d04"
+    field: "Text266"
+    type: text
+    maxlen: 1
+  - line: "preparer_federal_id_number_d05"
+    field: "Text267"
+    type: text
+    maxlen: 1
+  - line: "preparer_federal_id_number_d06"
+    field: "Text268"
+    type: text
+    maxlen: 1
+  - line: "preparer_federal_id_number_d07"
+    field: "Text269"
+    type: text
+    maxlen: 1
+  - line: "preparer_federal_id_number_d08"
+    field: "Text270"
+    type: text
+    maxlen: 1
+  - line: "preparer_federal_id_number_d09"
+    field: "Text271"
+    type: text
+    maxlen: 1
+  - line: "firm_name"
+    field: "Firms Name"
+    type: text
+  - line: "firm_federal_employer_id_number_d01"
+    field: "Federal Employer Identification Number"
+    type: text
+    maxlen: 1
+  - line: "firm_federal_employer_id_number_d02"
+    field: "Text272"
+    type: text
+    maxlen: 1
+  - line: "firm_federal_employer_id_number_d03"
+    field: "Text273"
+    type: text
+    maxlen: 1
+  - line: "firm_federal_employer_id_number_d04"
+    field: "Text274"
+    type: text
+    maxlen: 1
+  - line: "firm_federal_employer_id_number_d05"
+    field: "Text275"
+    type: text
+    maxlen: 1
+  - line: "firm_federal_employer_id_number_d06"
+    field: "Text276"
+    type: text
+    maxlen: 1
+  - line: "firm_federal_employer_id_number_d07"
+    field: "Text277"
+    type: text
+    maxlen: 1
+  - line: "firm_federal_employer_id_number_d08"
+    field: "Text278"
+    type: text
+    maxlen: 1
+  - line: "firm_federal_employer_id_number_d09"
+    field: "Text279"
+    type: text
+    maxlen: 1
+relations: []
+cross_form: []
+identity_fields:
+  - tp_ssn_d01
+  - tp_name_last_first_initial
+  - home_address
