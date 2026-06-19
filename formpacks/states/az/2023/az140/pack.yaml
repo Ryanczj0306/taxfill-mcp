@@ -1,0 +1,1650 @@
+# Arizona Form 140, 2023 — Resident Personal Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every one of the 430 AcroForm widgets rendered with its own field name) ->
+# vision-map workflow (all six pages plus zoomed crops read to place each
+# field on its printed line / column) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw sentinel
+# ids the form ships with, e.g. "1a", "Filing Status", "10c First", "5Fa").
+# Form 140 is six pages: pages 1-2 the return itself, page 3 the Standard
+# Deduction Increase for Charitable Contributions worksheet (lines 1C-7C),
+# page 4 Dependent and Other Exemption Information (Part 1 dependents 10f-10p,
+# Part 2 qualifying parents 11d-11i, Part 3 Other Exemptions rows 1-10),
+# page 5 Other Additions to Arizona Gross Income (rows A-T, feeds line 18),
+# page 6 Other Subtractions from Arizona Gross Income (rows A-W, feeds line 36).
+# Numbered return lines use the printed line number as the key ("12", "29a",
+# "34c", "54a", "78"); the page-1 exemption COUNT boxes ("Enter the number
+# claimed. Do not put a check mark.") keep their printed numbers "8", "9",
+# "10a", "10b", "11a". Header, dependent/parent detail rows, worksheet rows,
+# refund/account, signature and preparer widgets carry descriptive keys.
+#
+# Coverage. The blank PDF has 430 AcroForm widgets (406 distinct field names —
+# 24 widgets are duplicate-named: the "Your Name"/"SSN" header pair "1b"/"1c"
+# is repeated atop pages 2-6, and four detail cells ("10o First/Last/SSN/
+# Relationship", "3_10 First/Last/SSN") appear twice on page 4). A text or
+# money AcroForm field holds ONE value, so each duplicate-named text field is
+# mapped exactly once (the filler writes that value to every widget sharing the
+# name); the radio /Btn fields below are the only fields legitimately mapped to
+# several lines. 429 widgets are covered. One widget is intentionally OMITTED:
+#   * "cmdPrintForm" — a push-button (/Btn, Ff bit 17 Pushbutton; the "Print
+#     Form" button at the bottom of page 2); its "/BBox" appearance-state is the
+#     button's appearance-stream dict key, not a selectable value. A form
+#     action, not a data field.
+#
+# Radio / mutually-exclusive questions that are ONE /Btn field with several
+# options are each mapped as one checkbox line per option on the shared field,
+# carrying the exact on_state read from the widget AP dictionaries:
+#   * "Filing Status" — /Choice1..4 read top-to-bottom = line 4 Married filing
+#     joint / line 5 Head of household / line 6 Married filing separate / line 7
+#     Single (verified against the blank's widget rects, y 621>609>585>573).
+#   * "Itemized/Standard" (line 43) — /Choice1 = ITEMIZED (left), /Choice2 =
+#     STANDARD (right).
+#   * "Political Party" (line 75) — /Choice1 Democratic, /Choice2 Libertarian,
+#     /Choice3 Republican (verified by widget x: 284 < 353 < 421).
+#   * "Refund" (line 79 direct-deposit) — /Checking Acct, /Savings Acct.
+# Single yes/no checkboxes (82F extension, 4a injured spouse, 13S Form 140-SBI,
+# 44C charitable, the 58 refundable-credit boxes 581/582/583, the 77 penalty-
+# method boxes 771/772/773, 79A foreign account, the per-dependent age/educ
+# boxes, per-parent age65/died boxes, the page-4 Other-Exemption age65/stillborn
+# boxes, and the "more space, complete page 4" boxes) are one /Btn each.
+#
+# Money vs text. Every dollar box on the form prints a ".00" cents suffix, so
+# all numbered amount lines (12-89, 29a/29b, 34a-c, 54a-c) and every lettered
+# worksheet amount (page 3 1C-7C, page 5 A-T incl. F/G/H sub-rows, page 6 A-W)
+# are typed `money`. The page-1 exemption tallies (8, 9, 10a, 10b, 11a) and the
+# page-2 Other-Exemptions count box "40E" are integer counts, but the pack
+# schema has no integer type, so they stay `text`. SSN/ITIN boxes (1c, 1f, every
+# "* SSN") are text maxlen 11; bank routing (9) / account (17) carry their comb
+# lengths. Every text field carries a `maxlen` equal to the widget's cell
+# capacity (derived from its /Rect width at the form's fixed /Helv 10 Tf font),
+# so values cannot visually clip (pitfall P-001). All other names, address,
+# city/state/ZIP, fiscal-year, relationship, months-in-home, occupation and
+# preparer fields stay text.
+#
+# Relations. Only unconditional equalities with every operand mapped as money
+# are declared (14 = 12 - 13; 19 = 14..18; 34c = 34a + 34b; 48 = 46 + 47;
+# 54c = 54a + 54b; 63 = 61 - 62; 78 = 64..74 + 76). Lines whose printed
+# instruction is a rate multiplication (24 = .25 x line 23; 46 tax tables; 45 =
+# .025 x line 44), a floored/capped subtraction or a refund/owe branch
+# (35, 42, 52, 59, 60, 61, 79, 80) are OMITTED per the conservative house style.
+#
+# Cross_form. Line 12's printed label is "Federal adjusted gross income (from
+# your federal return)", so the single cross_form equality 12 == f1040.11
+# (Form 1040, 2023, line 11 = AGI) is declared.
+form: Form 140
+jurisdiction: states/az
+tax_year: 2023
+source_url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf
+pdf_sha256: 6ac62b1984154d2a87393a4a1154b9525e403df56a1717d2a1e39d679e2d81ad
+acroform_root: ''
+fields:
+  # ===================================================== header (page 1)
+  - line: "82F_extension"
+    field: "Check Box82F"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "fiscal_year_beginning"
+    field: "FY_Beg"
+    type: text
+    maxlen: 4
+  - line: "fiscal_year_ending"
+    field: "FY_End"
+    type: text
+    maxlen: 4
+  - line: "fiscal_year_ending_year"
+    field: "FY_End Year"
+    type: text
+    maxlen: 2
+  - line: "tp_first_name_and_initial"
+    field: "1a"
+    type: text
+    maxlen: 39
+  - line: "tp_last_name"
+    field: "1b"
+    type: text
+    maxlen: 28
+  - line: "tp_ssn"
+    field: "1c"
+    type: text
+    maxlen: 11
+  - line: "spouse_first_name_and_initial"
+    field: "1d"
+    type: text
+    maxlen: 39
+  - line: "spouse_last_name"
+    field: "1e"
+    type: text
+    maxlen: 28
+  - line: "spouse_ssn"
+    field: "1f"
+    type: text
+    maxlen: 11
+  - line: "home_address"
+    field: "2a"
+    type: text
+    maxlen: 52
+  - line: "apartment_number"
+    field: "2b"
+    type: text
+    maxlen: 16
+  - line: "daytime_phone"
+    field: "2c"
+    type: text
+    maxlen: 22
+  - line: "city"
+    field: "City, Town, Post Office"
+    type: text
+    maxlen: 30
+  - line: "state"
+    field: "State"
+    type: text
+    maxlen: 5
+  - line: "zip_code"
+    field: "ZIP Code"
+    type: text
+    maxlen: 9
+  - line: "last_names_prior_years"
+    field: "Last Names 4 years"
+    type: text
+    maxlen: 28
+  # ---- Filing status (lines 4-7; ONE /Btn 'Filing Status', Choice1..4 top->bottom)
+  - line: "4_filing_status::mfj"
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Choice1"
+  # ---- 4a Injured Spouse Protection of Joint Overpayment
+  - line: "4a_injured_spouse"
+    field: "4a"
+    type: checkbox
+    on_state: "/Yes"
+  # ---- 5 Head of household qualifying child/dependent name
+  - line: "5_hoh_qualifying_name"
+    field: "Head of Household"
+    type: text
+    maxlen: 50
+  # ---- Exemptions: count boxes (lines 8-11a; 'Enter the number claimed')
+  - line: "8"
+    field: "8"
+    type: text
+    maxlen: 3
+  - line: "9"
+    field: "9"
+    type: text
+    maxlen: 3
+  - line: "10a"
+    field: "10a"
+    type: text
+    maxlen: 3
+  - line: "10b"
+    field: "10b"
+    type: text
+    maxlen: 3
+  - line: "11a"
+    field: "11a"
+    type: text
+    maxlen: 3
+  # ---- 'For more space, check the box and complete page 4' flags
+  - line: "10ab_more_space"
+    field: "10a_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "5_filing_status::hoh"
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "6_filing_status::mfs"
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "7_filing_status::single"
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Choice4"
+  # ===================================================== Dependents detail (Box 10a/10b)
+    # cols: (a) name (b) SSN (c) relationship (d) months in home
+    #       (e) Dependent Age included in Box 10a / Box 10b  (f) educational-credit
+  - line: "10c_first_name"
+    field: "10c First"
+    type: text
+    maxlen: 17
+  - line: "10c_last_name"
+    field: "10c Last"
+    type: text
+    maxlen: 21
+  - line: "10c_ssn"
+    field: "10c SSN"
+    type: text
+    maxlen: 11
+  - line: "10c_relationship"
+    field: "10c Relationship"
+    type: text
+    maxlen: 11
+  - line: "10c_months_in_home"
+    field: "10c Mo in Home"
+    type: text
+    maxlen: 6
+  - line: "10c_dep_age_box10a"
+    field: "10c_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10c_dep_age_box10b"
+    field: "10c_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10c_educ_credit"
+    field: "10c educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10d_first_name"
+    field: "10d First"
+    type: text
+    maxlen: 17
+  - line: "10d_last_name"
+    field: "10d Last"
+    type: text
+    maxlen: 21
+  - line: "10d_ssn"
+    field: "10d SSN"
+    type: text
+    maxlen: 11
+  - line: "10d_relationship"
+    field: "10d Relationship"
+    type: text
+    maxlen: 11
+  - line: "10d_months_in_home"
+    field: "10d Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "10d_dep_age_box10a"
+    field: "10d_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10d_dep_age_box10b"
+    field: "10d_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10d_educ_credit"
+    field: "10d educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10e_first_name"
+    field: "10e First"
+    type: text
+    maxlen: 17
+  - line: "10e_last_name"
+    field: "10e Last"
+    type: text
+    maxlen: 21
+  - line: "10e_ssn"
+    field: "10e SSN"
+    type: text
+    maxlen: 11
+  - line: "10e_relationship"
+    field: "10e Relationship"
+    type: text
+    maxlen: 11
+  - line: "10e_months_in_home"
+    field: "10e Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "10e_dep_age_box10a"
+    field: "10e_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10e_dep_age_box10b"
+    field: "10e_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10e_educ_credit"
+    field: "10e educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11a_more_space"
+    field: "11a check box"
+    type: checkbox
+    on_state: "/Yes"
+  # ===================================================== Qualifying parents/grandparents (Box 11a)
+    # cols: (a) name (b) SSN (c) relationship (d) months in home (e) AGE 65 OR OVER (f) IF DIED IN 2023
+  - line: "11b_first_name"
+    field: "11b First"
+    type: text
+    maxlen: 17
+  - line: "11b_last_name"
+    field: "11b Last"
+    type: text
+    maxlen: 21
+  - line: "11b_ssn"
+    field: "11b SSN"
+    type: text
+    maxlen: 11
+  - line: "11b_relationship"
+    field: "11b Relationship"
+    type: text
+    maxlen: 11
+  - line: "11b_months_in_home"
+    field: "11b Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "11b_age65_over"
+    field: "11b over 65"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11b_died"
+    field: "11b died"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11c_first_name"
+    field: "11c First"
+    type: text
+    maxlen: 17
+  - line: "11c_last_name"
+    field: "11c Last"
+    type: text
+    maxlen: 21
+  - line: "11c_ssn"
+    field: "11c SSN"
+    type: text
+    maxlen: 11
+  - line: "11c_relationship"
+    field: "11c Relationship"
+    type: text
+    maxlen: 11
+  - line: "11c_months_in_home"
+    field: "11c Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "11c_age65_over"
+    field: "11c over 65"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11c_died"
+    field: "11c died"
+    type: checkbox
+    on_state: "/Yes"
+  # ===================================================== Additions (page 1, lines 12-19)
+  - line: "12"
+    field: "12"
+    type: money
+  - line: "13S_filing_140sbi"
+    field: "13S"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "13"
+    field: "13"
+    type: money
+  - line: "14"
+    field: "14"
+    type: money
+  - line: "15"
+    field: "15"
+    type: money
+  - line: "16"
+    field: "16"
+    type: money
+  - line: "17"
+    field: "17"
+    type: money
+  - line: "18"
+    field: "18"
+    type: money
+  - line: "19"
+    field: "19"
+    type: money
+  # ===================================================== Subtractions (page 1, lines 20-35)
+  - line: "20"
+    field: "20"
+    type: money
+  - line: "21"
+    field: "21"
+    type: money
+  - line: "22"
+    field: "22"
+    type: money
+  - line: "23"
+    field: "23"
+    type: money
+  - line: "24"
+    field: "24"
+    type: money
+  - line: "25"
+    field: "25"
+    type: money
+  - line: "26"
+    field: "26"
+    type: money
+  - line: "27"
+    field: "27"
+    type: money
+  - line: "28"
+    field: "28"
+    type: money
+  - line: "29a"
+    field: "29a"
+    type: money
+  - line: "29b"
+    field: "29b"
+    type: money
+  - line: "30"
+    field: "30"
+    type: money
+  - line: "31"
+    field: "31"
+    type: money
+  - line: "32"
+    field: "32"
+    type: money
+  - line: "33"
+    field: "33"
+    type: money
+  - line: "34a"
+    field: "34a"
+    type: money
+  - line: "34b"
+    field: "34b"
+    type: money
+  - line: "34c"
+    field: "34c"
+    type: money
+  - line: "35"
+    field: "35"
+    type: money
+  # ===================================================== page 2 — subtractions cont. & exemptions (36-42)
+  - line: "36"
+    field: "36"
+    type: money
+  - line: "37"
+    field: "37"
+    type: money
+  - line: "38"
+    field: "38"
+    type: money
+  - line: "39"
+    field: "39"
+    type: money
+  - line: "40E"
+    field: "40E"
+    type: text
+    maxlen: 4
+  - line: "40"
+    field: "40"
+    type: money
+  - line: "41"
+    field: "41"
+    type: money
+  - line: "42"
+    field: "42"
+    type: money
+  # ---- 43 Deductions (ONE /Btn 'Itemized/Standard'; Choice1 ITEMIZED, Choice2 STANDARD)
+  - line: "43_deductions::itemized"
+    field: "Itemized/Standard"
+    type: checkbox
+    on_state: "/Choice1"
+  - line: "43"
+    field: "43"
+    type: money
+  # ---- 44 Charitable contributions while taking the standard deduction (check box 44C)
+  - line: "44C_charitable_with_standard"
+    field: "44C"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "44"
+    field: "44"
+    type: money
+  # ===================================================== Balance of tax (lines 45-52)
+  - line: "45"
+    field: "45"
+    type: money
+  - line: "46"
+    field: "46"
+    type: money
+  - line: "47"
+    field: "47"
+    type: money
+  - line: "48"
+    field: "48"
+    type: money
+  - line: "49"
+    field: "49"
+    type: money
+  - line: "50"
+    field: "50"
+    type: money
+  - line: "51"
+    field: "51"
+    type: money
+  - line: "52"
+    field: "52"
+    type: money
+  # ===================================================== Total payments & refundable credits (53-59)
+  - line: "53"
+    field: "53"
+    type: money
+  - line: "54a"
+    field: "54a"
+    type: money
+  - line: "54b"
+    field: "54b"
+    type: money
+  - line: "54c"
+    field: "54c"
+    type: money
+  - line: "55"
+    field: "55"
+    type: money
+  - line: "56"
+    field: "56"
+    type: money
+  - line: "57"
+    field: "57"
+    type: money
+  # ---- 58 refundable-credit boxes (581 Form 308-I, 582 Form 334, 583 Form 349)
+  - line: "58_credit_308i"
+    field: "58_1"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "58_credit_334"
+    field: "58_2"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "58_credit_349"
+    field: "58_3"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "58"
+    field: "58"
+    type: money
+  - line: "59"
+    field: "59"
+    type: money
+  # ===================================================== Tax due / overpayment (60-63)
+  - line: "60"
+    field: "60"
+    type: money
+  - line: "61"
+    field: "61"
+    type: money
+  - line: "62"
+    field: "62"
+    type: money
+  - line: "63"
+    field: "63"
+    type: money
+  # ===================================================== Voluntary gifts (lines 64-74)
+  - line: "64"
+    field: "64"
+    type: money
+  - line: "65"
+    field: "65"
+    type: money
+  - line: "66"
+    field: "66"
+    type: money
+  - line: "67"
+    field: "67"
+    type: money
+  - line: "68"
+    field: "68"
+    type: money
+  - line: "69"
+    field: "69"
+    type: money
+  - line: "70"
+    field: "70"
+    type: money
+  - line: "71"
+    field: "71"
+    type: money
+  - line: "72"
+    field: "72"
+    type: money
+  - line: "73"
+    field: "73"
+    type: money
+  - line: "74"
+    field: "74"
+    type: money
+  # ---- 75 Political Party (ONE /Btn; Choice1 Democratic, Choice2 Libertarian, Choice3 Republican)
+  - line: "75_political_party::democratic"
+    field: "Political Party"
+    type: checkbox
+    on_state: "/Choice1"
+  # ===================================================== Penalty / refund / amount owed (76-80)
+  - line: "76"
+    field: "76"
+    type: money
+  # ---- 77 penalty-computation method (771 Annualized/Other, 772 Farmer/Fisherman, 773 Form 221 included)
+  - line: "77_annualized_other"
+    field: "77_1"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "77_farmer_or_fisherman"
+    field: "77_2"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "77_form221_included"
+    field: "77_3"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "78"
+    field: "78"
+    type: money
+  - line: "79"
+    field: "79"
+    type: money
+  - line: "79A_foreign_account"
+    field: "79A"
+    type: checkbox
+    on_state: "/Yes"
+  # ---- 79 direct-deposit (ONE /Btn 'Refund' Checking/Savings; routing/account comb boxes; 79A foreign account)
+  - line: "79_account_type::checking"
+    field: "Refund"
+    type: checkbox
+    on_state: "/Checking Acct"
+  - line: "79_account_type::savings"
+    field: "Refund"
+    type: checkbox
+    on_state: "/Savings Acct"
+  - line: "79_routing_number"
+    field: "Routing Number"
+    type: text
+    maxlen: 9
+  - line: "79_account_number"
+    field: "Account Number"
+    type: text
+    maxlen: 17
+  - line: "80"
+    field: "80"
+    type: money
+  - line: "75_political_party::libertarian"
+    field: "Political Party"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "75_political_party::republican"
+    field: "Political Party"
+    type: checkbox
+    on_state: "/Choice3"
+  - line: "43_deductions::standard"
+    field: "Itemized/Standard"
+    type: checkbox
+    on_state: "/Choice2"
+  - line: "81"
+    field: "81"
+    type: text
+    maxlen: 32
+  - line: "82"
+    field: "82"
+    type: text
+    maxlen: 32
+  - line: "83"
+    field: "83"
+    type: text
+    maxlen: 46
+  - line: "84"
+    field: "84"
+    type: text
+    maxlen: 56
+  - line: "85"
+    field: "85"
+    type: text
+    maxlen: 25
+  - line: "86"
+    field: "86"
+    type: text
+    maxlen: 36
+  - line: "87"
+    field: "87"
+    type: text
+    maxlen: 8
+  - line: "88"
+    field: "88"
+    type: text
+    maxlen: 11
+  - line: "89"
+    field: "89"
+    type: text
+    maxlen: 23
+  # ===================================================== page 3 — Standard Deduction Increase worksheet (1C-7C)
+  - line: "ws3_1c_gifts_cash_or_check"
+    field: "3_1c"
+    type: money
+  - line: "ws3_2c_other"
+    field: "3_2c"
+    type: money
+  - line: "ws3_3c_carryover"
+    field: "3_3c"
+    type: money
+  - line: "ws3_4c_add_1c_3c"
+    field: "3_4c"
+    type: money
+  - line: "ws3_5c_credit_contributions"
+    field: "3_5c"
+    type: money
+  - line: "ws3_6c_subtract_5c_from_4c"
+    field: "3_6c"
+    type: money
+  - line: "ws3_7c_multiply_by_31pct"
+    field: "3_7c"
+    type: money
+  # ===================================================== page 4 Part 1 — additional dependents (10f-10p)
+  - line: "10f_first_name"
+    field: "10f First"
+    type: text
+    maxlen: 13
+  - line: "10f_last_name"
+    field: "10f Last"
+    type: text
+    maxlen: 15
+  - line: "10f_ssn"
+    field: "10f SSN"
+    type: text
+    maxlen: 11
+  - line: "10f_relationship"
+    field: "10f Relationship"
+    type: text
+    maxlen: 12
+  - line: "10f_months_in_home"
+    field: "10f Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "10f_dep_age_box10a"
+    field: "10f_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10f_dep_age_box10b"
+    field: "10f_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10f_educ_credit"
+    field: "10f educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10g_first_name"
+    field: "10g First"
+    type: text
+    maxlen: 13
+  - line: "10g_last_name"
+    field: "10g Last"
+    type: text
+    maxlen: 15
+  - line: "10g_ssn"
+    field: "10g SSN"
+    type: text
+    maxlen: 11
+  - line: "10g_relationship"
+    field: "10g Relationship"
+    type: text
+    maxlen: 12
+  - line: "10g_months_in_home"
+    field: "10g Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "10g_dep_age_box10a"
+    field: "10g_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10g_dep_age_box10b"
+    field: "10g_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10g_educ_credit"
+    field: "10g educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10h_first_name"
+    field: "10h First"
+    type: text
+    maxlen: 13
+  - line: "10h_last_name"
+    field: "10h Last"
+    type: text
+    maxlen: 15
+  - line: "10h_ssn"
+    field: "10h SSN"
+    type: text
+    maxlen: 11
+  - line: "10h_relationship"
+    field: "10h Relationship"
+    type: text
+    maxlen: 12
+  - line: "10h_months_in_home"
+    field: "10h Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "10h_dep_age_box10a"
+    field: "10h_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10h_dep_age_box10b"
+    field: "10h_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10h_educ_credit"
+    field: "10h educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10i_first_name"
+    field: "10i First"
+    type: text
+    maxlen: 13
+  - line: "10i_last_name"
+    field: "10i Last"
+    type: text
+    maxlen: 15
+  - line: "10i_ssn"
+    field: "10i SSN"
+    type: text
+    maxlen: 11
+  - line: "10i_relationship"
+    field: "10i Relationship"
+    type: text
+    maxlen: 12
+  - line: "10i_months_in_home"
+    field: "10i Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "10i_dep_age_box10a"
+    field: "10i_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10i_dep_age_box10b"
+    field: "10i_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10i_educ_credit"
+    field: "10i educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10j_first_name"
+    field: "10j First"
+    type: text
+    maxlen: 13
+  - line: "10j_last_name"
+    field: "10j Last"
+    type: text
+    maxlen: 15
+  - line: "10j_ssn"
+    field: "10j SSN"
+    type: text
+    maxlen: 11
+  - line: "10j_relationship"
+    field: "10j Relationship"
+    type: text
+    maxlen: 12
+  - line: "10j_months_in_home"
+    field: "10j Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "10j_dep_age_box10a"
+    field: "10j_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10j_dep_age_box10b"
+    field: "10j_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10j_educ_credit"
+    field: "10j educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10k_first_name"
+    field: "10k First"
+    type: text
+    maxlen: 13
+  - line: "10k_last_name"
+    field: "10k Last"
+    type: text
+    maxlen: 15
+  - line: "10k_ssn"
+    field: "10k SSN"
+    type: text
+    maxlen: 11
+  - line: "10k_relationship"
+    field: "10k Relationship"
+    type: text
+    maxlen: 12
+  - line: "10k_months_in_home"
+    field: "10k Mo in Home"
+    type: text
+    maxlen: 6
+  - line: "10k_dep_age_box10a"
+    field: "10k_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10k_dep_age_box10b"
+    field: "10k_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10k_educ_credit"
+    field: "10k educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10l_first_name"
+    field: "10l First"
+    type: text
+    maxlen: 13
+  - line: "10l_last_name"
+    field: "10l Last"
+    type: text
+    maxlen: 15
+  - line: "10l_ssn"
+    field: "10l SSN"
+    type: text
+    maxlen: 11
+  - line: "10l_relationship"
+    field: "10l Relationship"
+    type: text
+    maxlen: 12
+  - line: "10l_months_in_home"
+    field: "10l Mo in Home"
+    type: text
+    maxlen: 6
+  - line: "10l_dep_age_box10a"
+    field: "10l_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10l_dep_age_box10b"
+    field: "10l_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10l_educ_credit"
+    field: "10l educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10m_first_name"
+    field: "10m First"
+    type: text
+    maxlen: 13
+  - line: "10m_last_name"
+    field: "10m Last"
+    type: text
+    maxlen: 15
+  - line: "10m_ssn"
+    field: "10m SSN"
+    type: text
+    maxlen: 11
+  - line: "10m_relationship"
+    field: "10m Relationship"
+    type: text
+    maxlen: 12
+  - line: "10m_months_in_home"
+    field: "10m Mo in Home"
+    type: text
+    maxlen: 6
+  - line: "10m_dep_age_box10a"
+    field: "10m_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10m_dep_age_box10b"
+    field: "10m_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10m_educ_credit"
+    field: "10m educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10n_first_name"
+    field: "10n First"
+    type: text
+    maxlen: 13
+  - line: "10n_last_name"
+    field: "10n Last"
+    type: text
+    maxlen: 15
+  - line: "10n_ssn"
+    field: "10n SSN"
+    type: text
+    maxlen: 11
+  - line: "10n_relationship"
+    field: "10n Relationship"
+    type: text
+    maxlen: 12
+  - line: "10n_months_in_home"
+    field: "10n Mo in Home"
+    type: text
+    maxlen: 6
+  - line: "10n_dep_age_box10a"
+    field: "10n_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10n_dep_age_box10b"
+    field: "10n_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10n_educ_credit"
+    field: "10n educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10o_first_name"
+    field: "10o First"
+    type: text
+    maxlen: 13
+  - line: "10o_last_name"
+    field: "10o Last"
+    type: text
+    maxlen: 15
+  - line: "10o_ssn"
+    field: "10o SSN"
+    type: text
+    maxlen: 11
+  - line: "10o_relationship"
+    field: "10o Relationship"
+    type: text
+    maxlen: 12
+  - line: "10o_months_in_home"
+    field: "10o Mo in Home"
+    type: text
+    maxlen: 6
+  - line: "10o_dep_age_box10a"
+    field: "10o_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10o_dep_age_box10b"
+    field: "10o_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10o_educ_credit"
+    field: "10o educ"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10p_first_name"
+    field: "10p First"
+    type: text
+    maxlen: 13
+  - line: "10p_last_name"
+    field: "10p Last"
+    type: text
+    maxlen: 15
+  - line: "10p_ssn"
+    field: "10p SSN"
+    type: text
+    maxlen: 11
+  - line: "10p_relationship"
+    field: "10p Relationship"
+    type: text
+    maxlen: 12
+  - line: "10p_months_in_home"
+    field: "10p Mo in Home"
+    type: text
+    maxlen: 6
+  - line: "10p_dep_age_box10a"
+    field: "10p_10a check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10p_dep_age_box10b"
+    field: "10p_10b check box"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "10p_educ_credit"
+    field: "10p educ"
+    type: checkbox
+    on_state: "/Yes"
+  # ===================================================== page 4 Part 2 — additional qualifying parents (11d-11i)
+  - line: "11d_first_name"
+    field: "11d First"
+    type: text
+    maxlen: 13
+  - line: "11d_last_name"
+    field: "11d Last"
+    type: text
+    maxlen: 15
+  - line: "11d_ssn"
+    field: "11d SSN"
+    type: text
+    maxlen: 11
+  - line: "11d_relationship"
+    field: "11d Relationship"
+    type: text
+    maxlen: 13
+  - line: "11d_months_in_home"
+    field: "11d Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "11d_age65_over"
+    field: "11d over 65"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11d_died"
+    field: "11d died"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11e_first_name"
+    field: "11e First"
+    type: text
+    maxlen: 13
+  - line: "11e_last_name"
+    field: "11e Last"
+    type: text
+    maxlen: 15
+  - line: "11e_ssn"
+    field: "11e SSN"
+    type: text
+    maxlen: 11
+  - line: "11e_relationship"
+    field: "11e Relationship"
+    type: text
+    maxlen: 13
+  - line: "11e_months_in_home"
+    field: "11e Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "11e_age65_over"
+    field: "11e over 65"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11e_died"
+    field: "11e died"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11f_first_name"
+    field: "11f First"
+    type: text
+    maxlen: 13
+  - line: "11f_last_name"
+    field: "11f Last"
+    type: text
+    maxlen: 15
+  - line: "11f_ssn"
+    field: "11f SSN"
+    type: text
+    maxlen: 11
+  - line: "11f_relationship"
+    field: "11f Relationship"
+    type: text
+    maxlen: 13
+  - line: "11f_months_in_home"
+    field: "11f Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "11f_age65_over"
+    field: "11f over 65"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11f_died"
+    field: "11f died"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11g_first_name"
+    field: "11g First"
+    type: text
+    maxlen: 13
+  - line: "11g_last_name"
+    field: "11g Last"
+    type: text
+    maxlen: 15
+  - line: "11g_ssn"
+    field: "11g SSN"
+    type: text
+    maxlen: 11
+  - line: "11g_relationship"
+    field: "11g Relationship"
+    type: text
+    maxlen: 13
+  - line: "11g_months_in_home"
+    field: "11g Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "11g_age65_over"
+    field: "11g over 65"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11g_died"
+    field: "11g died"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11h_first_name"
+    field: "11h First"
+    type: text
+    maxlen: 13
+  - line: "11h_last_name"
+    field: "11h Last"
+    type: text
+    maxlen: 15
+  - line: "11h_ssn"
+    field: "11h SSN"
+    type: text
+    maxlen: 11
+  - line: "11h_relationship"
+    field: "11h Relationship"
+    type: text
+    maxlen: 13
+  - line: "11h_months_in_home"
+    field: "11h Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "11h_age65_over"
+    field: "11h over 65"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11h_died"
+    field: "11h died"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11i_first_name"
+    field: "11i First"
+    type: text
+    maxlen: 13
+  - line: "11i_last_name"
+    field: "11i Last"
+    type: text
+    maxlen: 15
+  - line: "11i_ssn"
+    field: "11i SSN"
+    type: text
+    maxlen: 11
+  - line: "11i_relationship"
+    field: "11i Relationship"
+    type: text
+    maxlen: 13
+  - line: "11i_months_in_home"
+    field: "11i Mo in Home"
+    type: text
+    maxlen: 5
+  - line: "11i_age65_over"
+    field: "11i over 65"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "11i_died"
+    field: "11i died"
+    type: checkbox
+    on_state: "/Yes"
+  # ===================================================== page 4 Part 3 — Other Exemptions (rows 1-10)
+    # cols: (a) name (b) SSN (c) AGE 65 OR OVER C1/C2 (d) STILLBORN CHILD IN 2023
+  - line: "oe_1_first_name"
+    field: "3_1 First"
+    type: text
+    maxlen: 13
+  - line: "oe_1_last_name"
+    field: "3_1 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_1_ssn"
+    field: "3_1 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_1_age65_c1"
+    field: "c1_1"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_1_age65_c2"
+    field: "c2_1"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_1_stillborn_child"
+    field: "1 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_2_first_name"
+    field: "3_2 First"
+    type: text
+    maxlen: 13
+  - line: "oe_2_last_name"
+    field: "3_2 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_2_ssn"
+    field: "3_2 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_2_age65_c1"
+    field: "c1_2"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_2_age65_c2"
+    field: "c2_2"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_2_stillborn_child"
+    field: "2 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_3_first_name"
+    field: "3_3 First"
+    type: text
+    maxlen: 13
+  - line: "oe_3_last_name"
+    field: "3_3 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_3_ssn"
+    field: "3_3 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_3_age65_c1"
+    field: "c1_3"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_3_age65_c2"
+    field: "c2_3"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_3_stillborn_child"
+    field: "3 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_4_first_name"
+    field: "3_4 First"
+    type: text
+    maxlen: 13
+  - line: "oe_4_last_name"
+    field: "3_4 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_4_ssn"
+    field: "3_4 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_4_age65_c1"
+    field: "c1_4"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_4_age65_c2"
+    field: "c2_4"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_4_stillborn_child"
+    field: "4 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_5_first_name"
+    field: "3_5 First"
+    type: text
+    maxlen: 13
+  - line: "oe_5_last_name"
+    field: "3_5 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_5_ssn"
+    field: "3_5 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_5_age65_c1"
+    field: "c1_5"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_5_age65_c2"
+    field: "c2_5"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_5_stillborn_child"
+    field: "5 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_6_first_name"
+    field: "3_6 First"
+    type: text
+    maxlen: 13
+  - line: "oe_6_last_name"
+    field: "3_6 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_6_ssn"
+    field: "3_6 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_6_age65_c1"
+    field: "c1_6"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_6_age65_c2"
+    field: "c2_6"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_6_stillborn_child"
+    field: "6 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_7_first_name"
+    field: "3_7 First"
+    type: text
+    maxlen: 13
+  - line: "oe_7_last_name"
+    field: "3_7 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_7_ssn"
+    field: "3_7 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_7_age65_c1"
+    field: "c1_7"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_7_age65_c2"
+    field: "c2_7"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_7_stillborn_child"
+    field: "7 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_8_first_name"
+    field: "3_8 First"
+    type: text
+    maxlen: 13
+  - line: "oe_8_last_name"
+    field: "3_8 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_8_ssn"
+    field: "3_8 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_8_age65_c1"
+    field: "c1_8"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_8_age65_c2"
+    field: "c2_8"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_8_stillborn_child"
+    field: "8 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_9_first_name"
+    field: "3_9 First"
+    type: text
+    maxlen: 13
+  - line: "oe_9_last_name"
+    field: "3_9 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_9_ssn"
+    field: "3_9 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_9_age65_c1"
+    field: "c1_9"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_9_age65_c2"
+    field: "c2_9"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_9_stillborn_child"
+    field: "9 child"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_10_first_name"
+    field: "3_10 First"
+    type: text
+    maxlen: 13
+  - line: "oe_10_last_name"
+    field: "3_10 Last"
+    type: text
+    maxlen: 15
+  - line: "oe_10_ssn"
+    field: "3_10 SSN"
+    type: text
+    maxlen: 11
+  - line: "oe_10_age65_c1"
+    field: "c1_10"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_10_age65_c2"
+    field: "c2_10"
+    type: checkbox
+    on_state: "/Yes"
+  - line: "oe_10_stillborn_child"
+    field: "10 child"
+    type: checkbox
+    on_state: "/Yes"
+  # ===================================================== page 5 — Other Additions to AZ Gross Income (A-T, -> line 18)
+  - line: "oa_A_married_separate"
+    field: "5A"
+    type: money
+  - line: "oa_B_141az_k1"
+    field: "5B"
+    type: money
+  - line: "oa_C_lump_sum"
+    field: "5C"
+    type: money
+  - line: "oa_D_items_previously_deducted"
+    field: "5D"
+    type: money
+  - line: "oa_E_claim_of_right"
+    field: "5E"
+    type: money
+  - line: "oa_Fa_agri_water_conservation"
+    field: "5Fa"
+    type: money
+  - line: "oa_Fb_net_operating_loss"
+    field: "5Fb"
+    type: money
+  - line: "oa_Ga_agri_water_conservation_credit"
+    field: "5Ga"
+    type: money
+  - line: "oa_Gb_s_corp_agri_water"
+    field: "5Gb"
+    type: money
+  - line: "oa_Ha_adjusted_basis_credit_property"
+    field: "5Ha"
+    type: money
+  - line: "oa_Hb_pollution_control_credit"
+    field: "Hb"
+    type: money
+  - line: "oa_Hc_pollution_control_equipment"
+    field: "Hc"
+    type: money
+  - line: "oa_I_nonqualified_withdrawals_529"
+    field: "I"
+    type: money
+  - line: "oa_J_sole_prop_loss_marijuana"
+    field: "J"
+    type: money
+  - line: "oa_K_federal_nol_carryforward_nonresident"
+    field: "5K"
+    type: money
+  - line: "oa_L_federal_capital_loss_carryforward"
+    field: "5L"
+    type: money
+  - line: "oa_M_disabilities_access"
+    field: "5M"
+    type: money
+  - line: "oa_N_amortization_pollution_facility_1990"
+    field: "5N"
+    type: money
+  - line: "oa_O_net_capital_loss_exchange"
+    field: "5O"
+    type: money
+  - line: "oa_P_entity_level_income_tax"
+    field: "5P"
+    type: money
+  - line: "oa_Q_entity_level_pte_credit"
+    field: "5Q"
+    type: money
+  - line: "oa_R_adjustments_tax_credits"
+    field: "5R"
+    type: money
+  - line: "oa_S_other_additions"
+    field: "5S"
+    type: money
+  - line: "oa_T_total_other_additions"
+    field: "5T"
+    type: money
+  # ===================================================== page 6 — Other Subtractions from AZ Gross Income (A-W, -> line 36)
+  - line: "os_A_married_separate"
+    field: "6A"
+    type: money
+  - line: "os_B_141az_k1"
+    field: "6B"
+    type: money
+  - line: "os_C_federally_taxable_municipal"
+    field: "6C"
+    type: money
+  - line: "os_D_adoption_expense"
+    field: "6D"
+    type: money
+  - line: "os_E_qualified_wood_stove"
+    field: "6E"
+    type: money
+  - line: "os_F_claim_of_right"
+    field: "6F"
+    type: money
+  - line: "os_G_certain_expenses_federal_credits"
+    field: "6G"
+    type: money
+  - line: "os_H_agricultural_crops_donation"
+    field: "6H"
+    type: money
+  - line: "os_I_installment_sale_taxed_other_state"
+    field: "6I"
+    type: money
+  - line: "os_J_agri_water_conservation"
+    field: "6J"
+    type: money
+  - line: "os_K_basis_adjustment_property"
+    field: "6K"
+    type: money
+  - line: "os_L_sole_prop_income_marijuana"
+    field: "6L"
+    type: money
+  - line: "os_M_long_term_care_savings"
+    field: "6M"
+    type: money
+  - line: "os_N_americans_disabilities_access"
+    field: "6N"
+    type: money
+  - line: "os_O_exploration_expenses_pre1990"
+    field: "6O"
+    type: money
+  - line: "os_P_sole_prop_marijuana_establishment"
+    field: "6P"
+    type: money
+  - line: "os_Q_s_corp_shareholders_marijuana"
+    field: "6Q"
+    type: money
+  - line: "os_R_net_capital_gain_exchange"
+    field: "6R"
+    type: money
+  - line: "os_S_virtual_currency_token"
+    field: "6S"
+    type: money
+  - line: "os_T_gas_fees_virtual_currency"
+    field: "6T"
+    type: money
+  - line: "os_U_arizona_families_tax_rebate"
+    field: "6U"
+    type: money
+  - line: "os_V_other_subtractions"
+    field: "6V"
+    type: money
+  - line: "os_W_total_other_subtractions"
+    field: "6W"
+    type: money
+  # OMITTED push-button (form action, not a data field): "cmdPrintForm".
+relations:
+  - "14 == 12 - 13"  # Line 14 'Modified federal adjusted gross income. Subtract line 13 from line 12.'
+  - "19 == 14 + 15 + 16 + 17 + 18"  # Line 19 'Subtotal: Add lines 14 through 18.'
+  - "34c == 34a + 34b"  # Line 34c 'add 34a and 34b'
+  - "48 == 46 + 47"  # Line 48 'Subtotal of tax: Add lines 46 and 47.'
+  - "54c == 54a + 54b"  # Line 54c 'Add 54a and 54b.'
+  - "63 == 61 - 62"  # Line 63 'Balance of overpayment: Subtract line 62 from line 61.'
+  - "78 == 64 + 65 + 66 + 67 + 68 + 69 + 70 + 71 + 72 + 73 + 74 + 76"  # Line 78 'Add lines 64 through 74 and 76; enter the total.'
+cross_form:
+  - "12 == f1040.11"  # Line 12 'Federal adjusted gross income (from your federal return)' = AGI
+identity_fields:
+  - tp_ssn
+  - tp_first_name_and_initial
+  - tp_last_name
