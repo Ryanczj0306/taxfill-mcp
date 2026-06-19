@@ -1159,6 +1159,44 @@ def test_read_text_widgets_geometry_round_trip(filled_pdf):
     assert name.da  # reportlab writes a /DA; the heuristic has a font size
 
 
+def test_read_text_widgets_skips_read_only_fields(tmp_path):
+    # Regression: read-only text widgets (/Ff bit 1, ReadOnly) carry baked-in
+    # banner/tooltip defaults the filler never writes (NC D-400's fixed "PRINT"
+    # banner, IL-1040's "Help" tooltip). The clipping scan must skip them or it
+    # false-positives on a value the user can neither change nor see clipped.
+    from pdf_fixtures import make_acroform_pdf
+    from pypdf import PdfWriter
+    from pypdf.generic import NameObject, NumberObject
+
+    editable = f"{ROOT}.Page1[0].f_editable[0]"
+    banner = f"{ROOT}.Page1[0].f_banner[0]"
+    blank = make_acroform_pdf(
+        tmp_path / "ro.pdf",
+        [
+            {"name": editable, "kind": "text", "width": 200},
+            {"name": banner, "kind": "text", "width": 200},
+        ],
+    )
+    # Flip the ReadOnly flag on the banner field's widget (the fixture has no
+    # input key for /Ff on a flat text field, so set it directly via pypdf).
+    writer = PdfWriter(clone_from=str(blank))
+    flipped = False
+    for page in writer.pages:
+        for ref in page.get("/Annots", []):
+            annot = ref.get_object()
+            if annot.get("/T") == banner:
+                annot[NameObject("/Ff")] = NumberObject(1)  # bit 1 = ReadOnly
+                flipped = True
+    assert flipped, "fixture did not expose the banner widget to flag"
+    out = tmp_path / "ro_flagged.pdf"
+    with out.open("wb") as fh:
+        writer.write(fh)
+
+    names = {w.name for w in read_text_widgets(out)}
+    assert editable in names  # an editable text widget is still scanned
+    assert banner not in names  # the read-only banner is skipped
+
+
 def test_read_layer_reconstructs_hierarchical_qualified_names(tmp_path):
     # Regression (coverage gap): real IRS forms are TRUE parent/kid AcroForm
     # trees (topmostSubform[0] -> Page1[0] -> f1_7[0]); the fixtures used to
