@@ -9,8 +9,9 @@ def test_list_all_packs():
     allf = list_forms()
     assert all(isinstance(s, FormSummary) for s in allf)
     assert all(s.source_url.startswith("https://") for s in allf)
-    # 26 federal (the M2 set) + Schedule SE (2023) = 27, plus the growing state packs.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 27
+    # 26 federal (the M2 set) + Schedule SE + Schedule D/E + Form 8863/2555 (2023)
+    # = 31, plus the growing state packs.
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 31
     assert any(s.jurisdiction.startswith("states/") for s in allf)
 
 

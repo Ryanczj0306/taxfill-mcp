@@ -1,0 +1,603 @@
+# Form 2555, 2023 — Foreign Earned Income.
+#
+# Computes the foreign earned income exclusion and/or housing exclusion/deduction.
+# The foreign earned income exclusion (Part VII, line 42) and the housing
+# exclusion (Part VIII, line 45) flow to Schedule 1 (Form 1040) line 8d as a
+# NEGATIVE (a subtraction from income); the housing DEDUCTION (Part IX, line 50)
+# flows to Schedule 1 line 24j.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) →
+# vision-map workflow (every fillable widget was filled with its own field name
+# and read off the real form at its printed line position) → this map.
+#
+# All 160 fillable AcroForm widgets in the skeleton are mapped. No widget is left
+# unmapped: line 37 ("Maximum foreign earned income exclusion. Enter $120,000")
+# IS a fillable answer box (f3_13) on this form — not a pre-printed constant — so
+# it is mapped as money (the taxpayer enters the statutory amount into the widget).
+#
+# Multi-box lines:
+#   * Lines 35 and 39 each split a decimal ratio across two boxes: the integer
+#     part (maxlen 1) and the fractional digits (maxlen 3) — ids 35.whole/35.dec.
+#   * Lines 15a, 15e, 20b, 21d, 22f, and 23 each have a free-text "list type and
+#     amount"/description that wraps across two text boxes (a label line + a
+#     continuation line) plus, where applicable, a separate money box — ids
+#     <line>.desc / <line>.desc2 (and the bare <line> for the money box).
+#   * Line 14 (Part II) is a travel grid, 8 rows × 4 columns (a)(b)(c)(d), laid
+#     out as two side-by-side half-tables (rows 1-4, then rows 5-8). Ids 14.rN.x.
+#   * Line 18 (Part III) is a travel grid, 4 rows × 6 columns (a)-(f). Ids 18.rN.x.
+#
+# Relations: only unconditional, all-operands-mapped equalities printed on the
+# form face are declared (line 22g = 22a..22f; line 43 = 36 + 42). Conditional /
+# "smaller of" / decimal-driven / worksheet lines (line 24 net, 26, 30, 32-42,
+# 45-50) are left to the recompute engine + human review, matching the
+# conservative style of the shipped sched_se pack.
+#
+# cross_form is intentionally OMITTED: the only inter-form links (line 45 -> Sch 1
+# line 8d, line 50 -> Sch 1 line 24j) are NOT plain equalities — line 45 is
+# carried to Schedule 1 line 8d as a NEGATIVE (sign-inverted), so `45 == sched_1.8d`
+# would be false. A wrong relation is worse than a missing one, so neither is
+# declared; the recompute engine + human review own the sign-aware carry.
+form: Form 2555
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f2555--2023.pdf
+pdf_sha256: 73c8d54fafacd85b9cfec0a0c50852cc76172b13f9219bf38d32191239607e10
+acroform_root: topmostSubform[0]
+fields:
+  # ---- Header ----
+  - line: name                       # Name shown on Form 1040 or 1040-SR
+    field: Page1[0].f1_1[0]
+    type: text
+  - line: identifying_number         # Your social security number
+    field: Page1[0].f1_2[0]
+    type: text
+    maxlen: 11
+  # ---- Part I  General Information ----
+  - line: "1"                        # Your foreign address (including country)
+    field: Page1[0].f1_3[0]
+    type: text
+  - line: "2"                        # Your occupation
+    field: Page1[0].f1_4[0]
+    type: text
+  - line: "3"                        # Employer's name
+    field: Page1[0].f1_5[0]
+    type: text
+  - line: 4a                         # Employer's U.S. address
+    field: Page1[0].f1_6[0]
+    type: text
+  - line: 4b                         # Employer's foreign address
+    field: Page1[0].f1_7[0]
+    type: text
+  - line: 5a                         # Employer is: a foreign entity
+    field: Page1[0].c1_1[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 5b                         # Employer is: a U.S. company
+    field: Page1[0].c1_2[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 5c                         # Employer is: self
+    field: Page1[0].c1_3[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 5d                         # Employer is: a foreign affiliate of a U.S. company
+    field: Page1[0].c1_4[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 5e                         # Employer is: other
+    field: Page1[0].c1_5[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 5e.specify                 # Other (specify) — free text
+    field: Page1[0].f1_8[0]
+    type: text
+  - line: 6a                         # If previously filed Form 2555/2555-EZ, last year filed
+    field: Page1[0].f1_9[0]
+    type: text
+    maxlen: 4
+  - line: 6b                         # Didn't previously file 2555/2555-EZ to claim exclusions
+    field: Page1[0].c1_6[0]
+    type: checkbox
+    on_state: "/1"
+  - line: 6c.yes                     # Have you ever revoked either of the exclusions? — Yes
+    field: Page1[0].c1_7[0]
+    type: checkbox
+    on_state: "/1"
+    group: line6c
+  - line: 6c.no                      # ... — No
+    field: Page1[0].c1_7[1]
+    type: checkbox
+    on_state: "/2"
+    group: line6c
+  - line: 6d                         # If "Yes", type of exclusion and tax year revocation effective
+    field: Page1[0].f1_10[0]
+    type: text
+  - line: "7"                        # Of what country are you a citizen/national?
+    field: Page1[0].f1_11[0]
+    type: text
+  - line: 8a.yes                     # Maintain a separate foreign residence (second household)? — Yes
+    field: Page1[0].c1_9[0]
+    type: checkbox
+    on_state: "/1"
+    group: line8a
+  - line: 8a.no                      # ... — No
+    field: Page1[0].c1_9[1]
+    type: checkbox
+    on_state: "/2"
+    group: line8a
+  - line: 8b                         # If "Yes", city/country of separate residence + number of days
+    field: Page1[0].f1_12[0]
+    type: text
+  - line: 9.taxhome                  # List your tax home(s) during your tax year
+    field: Page1[0].f1_13[0]
+    type: text
+  - line: 9.dates                    # ... and date(s) established
+    field: Page1[0].f1_14[0]
+    type: text
+  # ---- Part II  Bona Fide Residence Test ----
+  - line: 10.began                   # Date bona fide residence began
+    field: Page1[0].f1_15[0]
+    type: text
+  - line: 10.ended                   # ... and ended
+    field: Page1[0].f1_16[0]
+    type: text
+  - line: 11a                        # Kind of living quarters: purchased house
+    field: Page1[0].c1_11[0]
+    type: checkbox
+    on_state: "/1"
+    group: line11
+  - line: 11b                        # Kind of living quarters: rented house or apartment
+    field: Page1[0].c1_11[1]
+    type: checkbox
+    on_state: "/2"
+    group: line11
+  - line: 11c                        # Kind of living quarters: rented room
+    field: Page1[0].c1_11[2]
+    type: checkbox
+    on_state: "/3"
+    group: line11
+  - line: 11d                        # Kind of living quarters: quarters furnished by employer
+    field: Page1[0].c1_11[3]
+    type: checkbox
+    on_state: "/4"
+    group: line11
+  - line: 12a.yes                    # Did family live abroad during any part of tax year? — Yes
+    field: Page1[0].c1_15[0]
+    type: checkbox
+    on_state: "/1"
+    group: line12a
+  - line: 12a.no                     # ... — No
+    field: Page1[0].c1_15[1]
+    type: checkbox
+    on_state: "/2"
+    group: line12a
+  - line: 12b                        # If "Yes", for what period?
+    field: Page1[0].f1_17[0]
+    type: text
+  - line: 13a.yes                    # Submitted statement to foreign authorities you aren't a resident? — Yes
+    field: Page1[0].c1_17[0]
+    type: checkbox
+    on_state: "/1"
+    group: line13a
+  - line: 13a.no                     # ... — No
+    field: Page1[0].c1_17[1]
+    type: checkbox
+    on_state: "/2"
+    group: line13a
+  - line: 13b.yes                    # Required to pay income tax to country of bona fide residence? — Yes
+    field: Page1[0].c1_19[0]
+    type: checkbox
+    on_state: "/1"
+    group: line13b
+  - line: 13b.no                     # ... — No
+    field: Page1[0].c1_19[1]
+    type: checkbox
+    on_state: "/2"
+    group: line13b
+  # ---- Line 14 travel grid: 8 rows × cols (a)date arrived US, (b)date left US,
+  #      (c)number of days on business, (d)income earned in US on business ----
+  - line: 14.r1.a
+    field: Page1[0].Table1_Line14[0].BodyRow1[0].f1_18[0]
+    type: text
+  - line: 14.r1.b
+    field: Page1[0].Table1_Line14[0].BodyRow1[0].f1_19[0]
+    type: text
+  - line: 14.r1.c
+    field: Page1[0].Table1_Line14[0].BodyRow1[0].f1_20[0]
+    type: text
+  - line: 14.r1.d
+    field: Page1[0].Table1_Line14[0].BodyRow1[0].f1_21[0]
+    type: money
+  - line: 14.r2.a
+    field: Page1[0].Table1_Line14[0].BodyRow2[0].f1_22[0]
+    type: text
+  - line: 14.r2.b
+    field: Page1[0].Table1_Line14[0].BodyRow2[0].f1_23[0]
+    type: text
+  - line: 14.r2.c
+    field: Page1[0].Table1_Line14[0].BodyRow2[0].f1_24[0]
+    type: text
+  - line: 14.r2.d
+    field: Page1[0].Table1_Line14[0].BodyRow2[0].f1_25[0]
+    type: money
+  - line: 14.r3.a
+    field: Page1[0].Table1_Line14[0].BodyRow3[0].f1_26[0]
+    type: text
+  - line: 14.r3.b
+    field: Page1[0].Table1_Line14[0].BodyRow3[0].f1_27[0]
+    type: text
+  - line: 14.r3.c
+    field: Page1[0].Table1_Line14[0].BodyRow3[0].f1_28[0]
+    type: text
+  - line: 14.r3.d
+    field: Page1[0].Table1_Line14[0].BodyRow3[0].f1_29[0]
+    type: money
+  - line: 14.r4.a
+    field: Page1[0].Table1_Line14[0].BodyRow4[0].f1_30[0]
+    type: text
+  - line: 14.r4.b
+    field: Page1[0].Table1_Line14[0].BodyRow4[0].f1_31[0]
+    type: text
+  - line: 14.r4.c
+    field: Page1[0].Table1_Line14[0].BodyRow4[0].f1_32[0]
+    type: text
+  - line: 14.r4.d
+    field: Page1[0].Table1_Line14[0].BodyRow4[0].f1_33[0]
+    type: money
+  - line: 14.r5.a
+    field: Page1[0].Table2_Line14[0].BodyRow5[0].f1_34[0]
+    type: text
+  - line: 14.r5.b
+    field: Page1[0].Table2_Line14[0].BodyRow5[0].f1_35[0]
+    type: text
+  - line: 14.r5.c
+    field: Page1[0].Table2_Line14[0].BodyRow5[0].f1_36[0]
+    type: text
+  - line: 14.r5.d
+    field: Page1[0].Table2_Line14[0].BodyRow5[0].f1_37[0]
+    type: money
+  - line: 14.r6.a
+    field: Page1[0].Table2_Line14[0].BodyRow6[0].f1_38[0]
+    type: text
+  - line: 14.r6.b
+    field: Page1[0].Table2_Line14[0].BodyRow6[0].f1_39[0]
+    type: text
+  - line: 14.r6.c
+    field: Page1[0].Table2_Line14[0].BodyRow6[0].f1_40[0]
+    type: text
+  - line: 14.r6.d
+    field: Page1[0].Table2_Line14[0].BodyRow6[0].f1_41[0]
+    type: money
+  - line: 14.r7.a
+    field: Page1[0].Table2_Line14[0].BodyRow7[0].f1_42[0]
+    type: text
+  - line: 14.r7.b
+    field: Page1[0].Table2_Line14[0].BodyRow7[0].f1_43[0]
+    type: text
+  - line: 14.r7.c
+    field: Page1[0].Table2_Line14[0].BodyRow7[0].f1_44[0]
+    type: text
+  - line: 14.r7.d
+    field: Page1[0].Table2_Line14[0].BodyRow7[0].f1_45[0]
+    type: money
+  - line: 14.r8.a
+    field: Page1[0].Table2_Line14[0].BodyRow8[0].f1_46[0]
+    type: text
+  - line: 14.r8.b
+    field: Page1[0].Table2_Line14[0].BodyRow8[0].f1_47[0]
+    type: text
+  - line: 14.r8.c
+    field: Page1[0].Table2_Line14[0].BodyRow8[0].f1_48[0]
+    type: text
+  - line: 14.r8.d
+    field: Page1[0].Table2_Line14[0].BodyRow8[0].f1_49[0]
+    type: money
+  # ---- Line 15 ----
+  - line: 15a.desc                   # List contractual terms/conditions re: length of employment abroad
+    field: Page1[0].f1_50[0]
+    type: text
+  - line: 15a.desc2                  # ... continuation line
+    field: Page1[0].f1_51[0]
+    type: text
+  - line: 15b                        # Type of visa under which you entered the foreign country
+    field: Page1[0].f1_52[0]
+    type: text
+  - line: 15c.yes                    # Did visa limit length of stay/employment? — Yes
+    field: Page1[0].c1_21[0]
+    type: checkbox
+    on_state: "/1"
+    group: line15c
+  - line: 15c.no                     # ... — No
+    field: Page1[0].c1_21[1]
+    type: checkbox
+    on_state: "/2"
+    group: line15c
+  - line: 15d.yes                    # Did you maintain a home in the US while living abroad? — Yes
+    field: Page1[0].c1_23[0]
+    type: checkbox
+    on_state: "/1"
+    group: line15d
+  - line: 15d.no                     # ... — No
+    field: Page1[0].c1_23[1]
+    type: checkbox
+    on_state: "/2"
+    group: line15d
+  - line: 15e.desc                   # If "Yes", address of home, whether rented, occupants & relationship
+    field: Page1[0].f1_53[0]
+    type: text
+  - line: 15e.desc2                  # ... continuation line ("to you.")
+    field: Page1[0].f1_54[0]
+    type: text
+  # ---- Part III  Physical Presence Test ----
+  - line: 16.from                    # Physical presence test 12-month period: from
+    field: Page2[0].f2_1[0]
+    type: text
+  - line: 16.through                 # ... through
+    field: Page2[0].f2_2[0]
+    type: text
+  - line: "17"                       # Principal country of employment during tax year
+    field: Page2[0].f2_3[0]
+    type: text
+  # ---- Line 18 travel grid: 4 rows × cols (a)name of country, (b)date arrived,
+  #      (c)date left, (d)full days present in country, (e)number of days on
+  #      business, (f)income earned in US on business ----
+  - line: 18.r1.a
+    field: Page2[0].Table_Line18[0].BodyRow1[0].f2_4[0]
+    type: text
+  - line: 18.r1.b
+    field: Page2[0].Table_Line18[0].BodyRow1[0].f2_5[0]
+    type: text
+  - line: 18.r1.c
+    field: Page2[0].Table_Line18[0].BodyRow1[0].f2_6[0]
+    type: text
+  - line: 18.r1.d
+    field: Page2[0].Table_Line18[0].BodyRow1[0].f2_7[0]
+    type: text
+  - line: 18.r1.e
+    field: Page2[0].Table_Line18[0].BodyRow1[0].f2_8[0]
+    type: text
+  - line: 18.r1.f
+    field: Page2[0].Table_Line18[0].BodyRow1[0].f2_9[0]
+    type: money
+  - line: 18.r2.a
+    field: Page2[0].Table_Line18[0].BodyRow2[0].f2_10[0]
+    type: text
+  - line: 18.r2.b
+    field: Page2[0].Table_Line18[0].BodyRow2[0].f2_11[0]
+    type: text
+  - line: 18.r2.c
+    field: Page2[0].Table_Line18[0].BodyRow2[0].f2_12[0]
+    type: text
+  - line: 18.r2.d
+    field: Page2[0].Table_Line18[0].BodyRow2[0].f2_13[0]
+    type: text
+  - line: 18.r2.e
+    field: Page2[0].Table_Line18[0].BodyRow2[0].f2_14[0]
+    type: text
+  - line: 18.r2.f
+    field: Page2[0].Table_Line18[0].BodyRow2[0].f2_15[0]
+    type: money
+  - line: 18.r3.a
+    field: Page2[0].Table_Line18[0].BodyRow3[0].f2_16[0]
+    type: text
+  - line: 18.r3.b
+    field: Page2[0].Table_Line18[0].BodyRow3[0].f2_17[0]
+    type: text
+  - line: 18.r3.c
+    field: Page2[0].Table_Line18[0].BodyRow3[0].f2_18[0]
+    type: text
+  - line: 18.r3.d
+    field: Page2[0].Table_Line18[0].BodyRow3[0].f2_19[0]
+    type: text
+  - line: 18.r3.e
+    field: Page2[0].Table_Line18[0].BodyRow3[0].f2_20[0]
+    type: text
+  - line: 18.r3.f
+    field: Page2[0].Table_Line18[0].BodyRow3[0].f2_21[0]
+    type: money
+  - line: 18.r4.a
+    field: Page2[0].Table_Line18[0].BodyRow4[0].f2_22[0]
+    type: text
+  - line: 18.r4.b
+    field: Page2[0].Table_Line18[0].BodyRow4[0].f2_23[0]
+    type: text
+  - line: 18.r4.c
+    field: Page2[0].Table_Line18[0].BodyRow4[0].f2_24[0]
+    type: text
+  - line: 18.r4.d
+    field: Page2[0].Table_Line18[0].BodyRow4[0].f2_25[0]
+    type: text
+  - line: 18.r4.e
+    field: Page2[0].Table_Line18[0].BodyRow4[0].f2_26[0]
+    type: text
+  - line: 18.r4.f
+    field: Page2[0].Table_Line18[0].BodyRow4[0].f2_27[0]
+    type: money
+  # ---- Part IV  All Taxpayers (2023 Foreign Earned Income) ----
+  - line: "19"                       # Total wages, salaries, bonuses, commissions, etc.
+    field: Page2[0].f2_28[0]
+    type: money
+  - line: 20a                        # Allowable share of income — in a business (incl. farming)/profession
+    field: Page2[0].f2_29[0]
+    type: money
+  - line: 20b.desc                   # In a partnership — name, address, type of income
+    field: Page2[0].f2_30[0]
+    type: text
+  - line: 20b.desc2                  # ... continuation line
+    field: Page2[0].f2_31[0]
+    type: text
+  - line: 20b                        # In a partnership — amount
+    field: Page2[0].f2_32[0]
+    type: money
+  - line: 21a                        # Noncash income — home (lodging)
+    field: Page2[0].f2_33[0]
+    type: money
+  - line: 21b                        # Noncash income — meals
+    field: Page2[0].f2_34[0]
+    type: money
+  - line: 21c                        # Noncash income — car
+    field: Page2[0].f2_35[0]
+    type: money
+  - line: 21d.desc                   # Noncash income — other property/facilities, type & amount
+    field: Page2[0].f2_36[0]
+    type: text
+  - line: 21d.desc2                  # ... continuation line
+    field: Page2[0].f2_37[0]
+    type: text
+  - line: 21d                        # Noncash income — other property/facilities, amount
+    field: Page2[0].f2_38[0]
+    type: money
+  - line: 22a                        # Allowances/reimbursements — cost of living & overseas differential
+    field: Page2[0].f2_39[0]
+    type: money
+  - line: 22b                        # Allowances — family
+    field: Page2[0].f2_40[0]
+    type: money
+  - line: 22c                        # Allowances — education
+    field: Page2[0].f2_41[0]
+    type: money
+  - line: 22d                        # Allowances — home leave
+    field: Page2[0].f2_42[0]
+    type: money
+  - line: 22e                        # Allowances — quarters
+    field: Page2[0].f2_43[0]
+    type: money
+  - line: 22f.desc                   # Allowances — for any other purpose, type & amount
+    field: Page2[0].f2_44[0]
+    type: text
+  - line: 22f.desc2                  # ... continuation line
+    field: Page2[0].f2_45[0]
+    type: text
+  - line: 22f                        # Allowances — for any other purpose, amount
+    field: Page2[0].f2_46[0]
+    type: money
+  - line: 22g                        # Add lines 22a through 22f
+    field: Page2[0].f2_47[0]
+    type: money
+  - line: 23.desc                    # Other foreign earned income — type & amount (description)
+    field: Page2[0].f2_48[0]
+    type: text
+  - line: 23.desc2                   # ... continuation line
+    field: Page2[0].f2_49[0]
+    type: text
+  - line: "23"                       # Other foreign earned income — amount
+    field: Page2[0].f2_50[0]
+    type: money
+  - line: "24"                       # Add lines 19 through 21d, line 22g, and line 23
+    field: Page2[0].f2_51[0]
+    type: money
+  - line: "25"                       # Total meals/lodging included on line 24 that is excludable
+    field: Page2[0].f2_52[0]
+    type: money
+  - line: "26"                       # Subtract line 25 from line 24 = 2023 foreign earned income
+    field: Page2[0].f2_53[0]
+    type: money
+  # ---- Part V  All Taxpayers ----
+  - line: "27"                       # Enter the amount from line 26
+    field: Page3[0].Line27TagCorrectingSubform[0].f3_1[0]
+    type: money
+  - line: 27.yes                     # Claiming housing exclusion or deduction? — Yes (complete Part VI)
+    field: Page3[0].c3_1[0]
+    type: checkbox
+    on_state: "/1"
+    group: line27
+  - line: 27.no                      # ... — No (go to Part VII)
+    field: Page3[0].c3_1[1]
+    type: checkbox
+    on_state: "/2"
+    group: line27
+  # ---- Part VI  Housing Exclusion and/or Deduction ----
+  - line: "28"                       # Qualified housing expenses for the tax year
+    field: Page3[0].Line28TagCorrectingSubform[0].f3_2[0]
+    type: money
+  - line: 29a                        # Enter location where housing expenses incurred
+    field: Page3[0].f3_3[0]
+    type: text
+  - line: 29b                        # Enter limit on housing expenses
+    field: Page3[0].f3_4[0]
+    type: money
+  - line: "30"                       # Enter the smaller of line 28 or line 29b
+    field: Page3[0].f3_5[0]
+    type: money
+  - line: "31"                       # Number of days in qualifying period that fall within 2023 tax year
+    field: Page3[0].f3_6[0]
+    type: text
+    maxlen: 3
+  - line: "32"                       # Multiply $52.60 by number of days on line 31
+    field: Page3[0].f3_7[0]
+    type: money
+  - line: "33"                       # Subtract line 32 from line 30
+    field: Page3[0].f3_8[0]
+    type: money
+  - line: "34"                       # Enter employer-provided amounts
+    field: Page3[0].f3_9[0]
+    type: money
+  - line: 35.whole                   # Divide line 34 by line 27 (decimal) — integer part
+    field: Page3[0].f3_10[0]
+    type: text
+    maxlen: 1
+  - line: 35.dec                     # ... fractional digits
+    field: Page3[0].f3_11[0]
+    type: text
+    maxlen: 3
+  - line: "36"                       # Housing exclusion — multiply line 33 by line 35
+    field: Page3[0].f3_12[0]
+    type: money
+  # ---- Part VII  Foreign Earned Income Exclusion ----
+  - line: "37"                       # Maximum foreign earned income exclusion (enter $120,000)
+    field: Page3[0].f3_13[0]
+    type: money
+  - line: "38"                       # Number of days in qualifying period that fall within 2023 tax year
+    field: Page3[0].f3_14[0]
+    type: text
+    maxlen: 3
+  - line: 39.whole                   # Divide line 38 by days in tax year (decimal) — integer part
+    field: Page3[0].f3_15[0]
+    type: text
+    maxlen: 1
+  - line: 39.dec                     # ... fractional digits
+    field: Page3[0].f3_16[0]
+    type: text
+    maxlen: 3
+  - line: "40"                       # Multiply line 37 by line 39
+    field: Page3[0].f3_17[0]
+    type: money
+  - line: "41"                       # Subtract line 36 from line 40
+    field: Page3[0].f3_18[0]
+    type: money
+  - line: "42"                       # Foreign earned income exclusion — smaller of line 40 or line 41
+    field: Page3[0].f3_19[0]
+    type: money
+  # ---- Part VIII  Housing Exclusion, Foreign Earned Income Exclusion, or Both ----
+  - line: "43"                       # Add lines 36 and 42
+    field: Page3[0].f3_20[0]
+    type: money
+  - line: "44"                       # Deductions allowed in figuring AGI allocable to excluded income
+    field: Page3[0].f3_21[0]
+    type: money
+  - line: "45"                       # Subtract line 44 from line 43 (to Schedule 1 line 8d as a negative)
+    field: Page3[0].f3_22[0]
+    type: money
+  # ---- Part IX  Housing Deduction ----
+  - line: "46"                       # Subtract line 36 from line 33
+    field: Page3[0].f3_23[0]
+    type: money
+  - line: "47"                       # Subtract line 43 from line 27
+    field: Page3[0].f3_24[0]
+    type: money
+  - line: "48"                       # Enter the smaller of line 46 or line 47
+    field: Page3[0].f3_25[0]
+    type: money
+  - line: "49"                       # Housing deduction carryover from 2022
+    field: Page3[0].f3_26[0]
+    type: money
+  - line: "50"                       # Housing deduction — add lines 48 and 49 (to Schedule 1 line 24j)
+    field: Page3[0].f3_27[0]
+    type: money
+relations:
+  - "22g == 22a + 22b + 22c + 22d + 22e + 22f"   # "Add lines 22a through 22f"
+  - "43 == 36 + 42"                              # "Add lines 36 and 42"
+cross_form: []
+identity_fields:
+  - name
+  - identifying_number
