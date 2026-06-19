@@ -1,0 +1,3018 @@
+# Form MO-1040, 2023 - Missouri Individual Income Tax Return (Long Form),
+# together with every schedule and worksheet bundled in the official
+# "MO-1040 Fillable Calculating" PDF: the 5-page MO-1040 return; the Tax
+# Chart / Tax Calculation Worksheet; Form MO-A (Individual Income Tax
+# Adjustments, Parts 1-5 + the Itemized-Deductions, Long-Term-Care and
+# Qualified-Health-Insurance worksheets); Form MO-CR (resident credit for
+# tax paid to other states - two copies + MO-CR Schedule 1); Form MO-NRI
+# (Missouri Income Percentage); Form MO-TC (Miscellaneous Income Tax
+# Credits); Form MO-PTS (Property Tax Credit Schedule); Form MO-CRP
+# (Certification of Rent Paid - five copies); Form 5632 (529 Direct
+# Deposit); and Form 5766 (First-Time Home Buyers Bank Worksheet).
+#
+# Authored via the taxfill pipeline: `taxfill introspect` produced the
+# sentinel sweep (every AcroForm widget rendered with its own field name at
+# its position, 32 pages) and the skeleton pack; each printed line label was
+# then read off the sweep PNGs (zoomed per section) to type and key every
+# widget.
+#
+# Layout. Hierarchical AcroForm (acroform_root empty; field paths are the
+# fully-qualified names the PDF ships with - e.g. flat ids like "line1-Y",
+# dotted parent/child ids like "c.single" or "nri_3Ya", and the column-split
+# "<line>-Y" / "<line>-S" pairs that the form uses wherever a married couple
+# files a combined return with a Yourself and a Spouse column). field: paths
+# are copied verbatim from the skeleton.
+#
+# Coverage. The blank PDF has 878 distinct fillable AcroForm field objects
+# (1,017 terminal /Tx and /Btn fields; 1,172 sentinel widgets counting every
+# repeated occurrence). 879 pack lines map every fillable widget - all 878
+# distinct fields, plus the single shared CalcOption radio mapped once per
+# option (/X "DO Automatic Calculations" and /N "DON'T DO Automatic
+# Calculations"). A field that prints on several pages (e.g. SSN-1, firstname-1,
+# address, nri_city, mocr_name-1, printlid.12) is ONE AcroForm object and is
+# mapped on ONE line - the duplicate sentinel occurrences (SSN-1#2, #3, ...)
+# are the same field and are not re-mapped (a field holds one value).
+#
+# Intentionally OMITTED - 140 distinct widgets, none accept taxpayer data,
+# every one a JavaScript pushbutton (/Btn with Ff bit-17 Pushbutton set;
+# their sole appearance state is the stream-dict key /BBox, not a selectable
+# value):
+#   * Per-line "calculate" buttons the calculating PDF places beside computed
+#     cells: "Line 1".."Line 56", "MO-A Line 1".."MO-A Part 5 Line 5",
+#     "MO-CR Line 1".."MO-CR Line 11", "MO-NRI Line 1".."Line 3",
+#     "MO-PTS Line 2".."Line 14", "MO-CRP Lines 1-5"/"Line 6".."Line 9",
+#     "CRP2023", and "UF_L1".."UF_L10".
+#   * Navigation / action buttons: every "btnGoto*" (Back to 1040, go to a
+#     schedule), btnP1, btnCalculate, btnPrint, btnreset, btnRstWSNRI,
+#     RstWorksheetMOA, finish, and the image buttons "Instructions_af_image",
+#     "do calculations_af_image", "don't do calculations_af_image".
+#   * "Privacy Notice" (the "CLICK HERE" link button repeated on every page).
+# Each was confirmed a pushbutton by reading the blank PDF's field flags
+# (Ff & 0x10000) - none are data inputs, exactly like IL-1040's "Reset"/"Print".
+#
+# Money vs text. Dollar boxes (every numbered income/tax/credit line and
+# computed total, the MO-A/MO-CR/MO-PTS/MO-CRP/MO-TC amount columns, the
+# 529/FTHB amounts, and the percentage cells the form computes) are `money`.
+# Genuine text widgets stay text: names / initials / suffixes, SSN boxes
+# (maxlen carried from the skeleton: 11 for the comb SSN_1/SSN_2, 9 for the
+# schedule SSN-1/SSN-2), addresses / city / state / ZIP / county, the 2- and
+# 4-digit fiscal-year and birth-date comb cells, bank routing (9) / account
+# (17), preparer ids, the "Other (description)" and explanation text boxes,
+# the 2-digit trust-fund codes (line51m_tfcd / line51n_tfcd), and the
+# auto-populated helper / label strings (Texto7-9, Text1, txt01/02,
+# 1040_30Text, 1040_32Text2/3, lblNRI, MOAText, amendedTXT, vendorid,
+# printlid.*, fdata, ProtectBarcode).
+#
+# Checkboxes. Every real checkbox is its own /Btn with export state /X
+# (verified against the blank). The one multi-option /Btn is CalcOption (a
+# radio with /X and /N appearance states), mapped as two lines on the shared
+# field carrying each on_state. on_state values are copied verbatim from the
+# skeleton.
+#
+# Relations / cross_form. OMITTED. MO-1040 splits nearly every income/tax
+# line into Yourself ("<n>-Y") and Spouse ("<n>-S") columns whose keys carry
+# a hyphen; the verifier's relation grammar tokenizes operands as digits +
+# optional single letter or [A-Za-z_][A-Za-z0-9_]* names only (no hyphen, dot
+# or space), so these column lines cannot be referenced as relation operands.
+# Per the conservative house style every relation/cross_form rule is omitted
+# rather than risk an unparseable or partial equality.
+form: Form MO-1040
+jurisdiction: states/mo
+tax_year: 2023
+source_url: https://dor.mo.gov/forms/MO-1040%20Fillable%20Calculating_2023.pdf
+pdf_sha256: 589940ef12527b44d8a8b262b0c49958c62a1e6a632603390de64b938930428f
+acroform_root: ''
+fields:
+  - line: "printlid.1"
+    field: "printlid.1"
+    type: text
+  - line: "fdata"
+    field: "fdata"
+    type: text
+  - line: "CalcOption-X"
+    field: "CalcOption"
+    type: checkbox
+    on_state: "/X"
+  - line: "ProtectBarcode"
+    field: "ProtectBarcode"
+    type: text
+  - line: "amended"
+    field: "amended"
+    type: checkbox
+    on_state: "/X"
+  - line: "composite"
+    field: "composite"
+    type: checkbox
+    on_state: "/X"
+  - line: "fedextension"
+    field: "fedextension"
+    type: checkbox
+    on_state: "/X"
+  - line: "socialservices"
+    field: "socialservices"
+    type: checkbox
+    on_state: "/X"
+  - line: "federalreturn"
+    field: "federalreturn"
+    type: checkbox
+    on_state: "/X"
+  - line: "FYBegDateMM"
+    field: "FYBegDateMM"
+    type: text
+    maxlen: 2
+  - line: "FYBegDateDD"
+    field: "FYBegDateDD"
+    type: text
+    maxlen: 2
+  - line: "FYBegDateYY"
+    field: "FYBegDateYY"
+    type: text
+    maxlen: 2
+  - line: "FYEndDateMM"
+    field: "FYEndDateMM"
+    type: text
+    maxlen: 2
+  - line: "FYEndDateDD"
+    field: "FYEndDateDD"
+    type: text
+    maxlen: 2
+  - line: "FYEndDateYY"
+    field: "FYEndDateYY"
+    type: text
+    maxlen: 2
+  - line: "vendorid"
+    field: "vendorid"
+    type: text
+  - line: "c.single"
+    field: "c.single"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.dependent"
+    field: "c.dependent"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.married"
+    field: "c.married"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.marrfilingsep"
+    field: "c.marrfilingsep"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.headofhousehold"
+    field: "c.headofhousehold"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.widower"
+    field: "c.widower"
+    type: checkbox
+    on_state: "/X"
+  - line: "62-Y"
+    field: "62-Y"
+    type: checkbox
+    on_state: "/X"
+  - line: "62-S"
+    field: "62-S"
+    type: checkbox
+    on_state: "/X"
+  - line: "65-Y"
+    field: "65-Y"
+    type: checkbox
+    on_state: "/X"
+  - line: "65-S"
+    field: "65-S"
+    type: checkbox
+    on_state: "/X"
+  - line: "blind-Y"
+    field: "blind-Y"
+    type: checkbox
+    on_state: "/X"
+  - line: "blind-S"
+    field: "blind-S"
+    type: checkbox
+    on_state: "/X"
+  - line: "disabled-Y"
+    field: "disabled-Y"
+    type: checkbox
+    on_state: "/X"
+  - line: "disabled-S"
+    field: "disabled-S"
+    type: checkbox
+    on_state: "/X"
+  - line: "nonobl-Y"
+    field: "nonobl-Y"
+    type: checkbox
+    on_state: "/X"
+  - line: "nonoblig-S"
+    field: "nonoblig-S"
+    type: checkbox
+    on_state: "/X"
+  - line: "SSN_1"
+    field: "SSN_1"
+    type: text
+    maxlen: 11
+  - line: "decease-1"
+    field: "decease-1"
+    type: checkbox
+    on_state: "/X"
+  - line: "SSN_2"
+    field: "SSN_2"
+    type: text
+    maxlen: 11
+  - line: "decease2"
+    field: "decease2"
+    type: checkbox
+    on_state: "/X"
+  - line: "firstname-1"
+    field: "firstname-1"
+    type: text
+  - line: "min-1"
+    field: "min-1"
+    type: text
+    maxlen: 1
+  - line: "lastname-1"
+    field: "lastname-1"
+    type: text
+  - line: "title-1"
+    field: "title-1"
+    type: text
+    maxlen: 3
+  - line: "firstname-2"
+    field: "firstname-2"
+    type: text
+  - line: "min-2"
+    field: "min-2"
+    type: text
+    maxlen: 1
+  - line: "lastname-2"
+    field: "lastname-2"
+    type: text
+  - line: "title-2"
+    field: "title-2"
+    type: text
+    maxlen: 3
+  - line: "incareof"
+    field: "incareof"
+    type: text
+  - line: "address"
+    field: "address"
+    type: text
+  - line: "city"
+    field: "city"
+    type: text
+  - line: "state"
+    field: "state"
+    type: text
+    maxlen: 2
+  - line: "d.zipcode"
+    field: "d.zipcode"
+    type: text
+    maxlen: 5
+  - line: "d.zipext"
+    field: "d.zipext"
+    type: text
+    maxlen: 4
+  - line: "COUNTY CODE"
+    field: "COUNTY CODE"
+    type: text
+  - line: "CalcOption-N"
+    field: "CalcOption"
+    type: checkbox
+    on_state: "/N"
+  - line: "printlid.2"
+    field: "printlid.2"
+    type: text
+  - line: "line1-Y"
+    field: "line1-Y"
+    type: money
+  - line: "line1-S"
+    field: "line1-S"
+    type: money
+  - line: "line2-Y"
+    field: "line2-Y"
+    type: money
+  - line: "line2-S"
+    field: "line2-S"
+    type: money
+  - line: "line3-Y"
+    field: "line3-Y"
+    type: money
+  - line: "line3-S"
+    field: "line3-S"
+    type: money
+  - line: "line4-Y"
+    field: "line4-Y"
+    type: money
+  - line: "line4-S"
+    field: "line4-S"
+    type: money
+  - line: "line5-Y"
+    field: "line5-Y"
+    type: money
+  - line: "line5-S"
+    field: "line5-S"
+    type: money
+  - line: "line6"
+    field: "line6"
+    type: money
+  - line: "line7-Y"
+    field: "line7-Y"
+    type: text
+  - line: "line7-S"
+    field: "line7-S"
+    type: text
+  - line: "line8"
+    field: "line8"
+    type: money
+  - line: "line9"
+    field: "line9"
+    type: money
+  - line: "line10"
+    field: "line10"
+    type: money
+  - line: "line11"
+    field: "line11"
+    type: money
+  - line: "line12"
+    field: "line12"
+    type: text
+  - line: "line13"
+    field: "line13"
+    type: money
+  - line: "adjLine14"
+    field: "adjLine14"
+    type: money
+  - line: "line14"
+    field: "line14"
+    type: money
+  - line: "line15"
+    field: "line15"
+    type: money
+  - line: "line16"
+    field: "line16"
+    type: money
+  - line: "line17"
+    field: "line17"
+    type: money
+  - line: "line18"
+    field: "line18"
+    type: money
+  - line: "line19"
+    field: "line19"
+    type: money
+  - line: "line20"
+    field: "line20"
+    type: money
+  - line: "line21"
+    field: "line21"
+    type: money
+  - line: "line21a"
+    field: "line21a"
+    type: money
+  - line: "line21b"
+    field: "line21b"
+    type: money
+  - line: "line21c"
+    field: "line21c"
+    type: money
+  - line: "printlid.3"
+    field: "printlid.3"
+    type: text
+  - line: "line22a"
+    field: "line22a"
+    type: money
+  - line: "line22b"
+    field: "line22b"
+    type: money
+  - line: "line22"
+    field: "line22"
+    type: money
+  - line: "line23"
+    field: "line23"
+    type: money
+  - line: "line24"
+    field: "line24"
+    type: money
+  - line: "line25"
+    field: "line25"
+    type: money
+  - line: "line26"
+    field: "line26"
+    type: money
+  - line: "line27Y"
+    field: "line27Y"
+    type: money
+  - line: "line27S"
+    field: "line27S"
+    type: money
+  - line: "line28Y"
+    field: "line28Y"
+    type: money
+  - line: "line28S"
+    field: "line28S"
+    type: money
+  - line: "line29Y"
+    field: "line29Y"
+    type: money
+  - line: "line29S"
+    field: "line29S"
+    type: money
+  - line: "line30Y"
+    field: "line30Y"
+    type: money
+  - line: "line30S"
+    field: "line30S"
+    type: money
+  - line: "line31Y"
+    field: "line31Y"
+    type: money
+  - line: "line31S"
+    field: "line31S"
+    type: money
+  - line: "line32Y"
+    field: "line32Y"
+    type: text
+  - line: "line32S"
+    field: "line32S"
+    type: text
+  - line: "txt01"
+    field: "txt01"
+    type: text
+  - line: "txt02"
+    field: "txt02"
+    type: text
+  - line: "33_YS"
+    field: "33_YS"
+    type: checkbox
+    on_state: "/X"
+  - line: "33_SP"
+    field: "33_SP"
+    type: checkbox
+    on_state: "/X"
+  - line: "line33Y"
+    field: "line33Y"
+    type: money
+  - line: "line33S"
+    field: "line33S"
+    type: money
+  - line: "34_lump"
+    field: "34_lump"
+    type: checkbox
+    on_state: "/X"
+  - line: "34_recapture"
+    field: "34_recapture"
+    type: checkbox
+    on_state: "/X"
+  - line: "line34Y"
+    field: "line34Y"
+    type: money
+  - line: "line34S"
+    field: "line34S"
+    type: money
+  - line: "line35Y"
+    field: "line35Y"
+    type: money
+  - line: "line35S"
+    field: "line35S"
+    type: money
+  - line: "line36"
+    field: "line36"
+    type: money
+  - line: "line37"
+    field: "line37"
+    type: money
+  - line: "line38"
+    field: "line38"
+    type: money
+  - line: "line39"
+    field: "line39"
+    type: money
+  - line: "line40"
+    field: "line40"
+    type: money
+  - line: "line41"
+    field: "line41"
+    type: money
+  - line: "line42"
+    field: "line42"
+    type: money
+  - line: "line43"
+    field: "line43"
+    type: money
+  - line: "line44"
+    field: "line44"
+    type: money
+  - line: "line45"
+    field: "line45"
+    type: money
+  - line: "printlid.4"
+    field: "printlid.4"
+    type: text
+  - line: "line46"
+    field: "line46"
+    type: money
+  - line: "line47"
+    field: "line47"
+    type: money
+  - line: "line47a"
+    field: "line47a"
+    type: checkbox
+    on_state: "/X"
+  - line: "47mm"
+    field: "47mm"
+    type: text
+    maxlen: 2
+  - line: "47dd"
+    field: "47dd"
+    type: text
+    maxlen: 2
+  - line: "47yy"
+    field: "47yy"
+    type: text
+    maxlen: 2
+  - line: "line47b"
+    field: "line47b"
+    type: checkbox
+    on_state: "/X"
+  - line: "47byy"
+    field: "47byy"
+    type: text
+    maxlen: 2
+  - line: "line47c"
+    field: "line47c"
+    type: checkbox
+    on_state: "/X"
+  - line: "47cyy"
+    field: "47cyy"
+    type: text
+    maxlen: 2
+  - line: "line47d"
+    field: "line47d"
+    type: checkbox
+    on_state: "/X"
+  - line: "47dmm"
+    field: "47dmm"
+    type: text
+    maxlen: 2
+  - line: "47ddd"
+    field: "47ddd"
+    type: text
+    maxlen: 2
+  - line: "47dyy"
+    field: "47dyy"
+    type: text
+    maxlen: 2
+  - line: "amendedTXT"
+    field: "amendedTXT"
+    type: text
+  - line: "line48"
+    field: "line48"
+    type: money
+  - line: "line49"
+    field: "line49"
+    type: money
+  - line: "line50"
+    field: "line50"
+    type: money
+  - line: "line51a"
+    field: "line51a"
+    type: money
+  - line: "line51b"
+    field: "line51b"
+    type: money
+  - line: "line51c"
+    field: "line51c"
+    type: money
+  - line: "line51d"
+    field: "line51d"
+    type: money
+  - line: "line51e"
+    field: "line51e"
+    type: money
+  - line: "line51f"
+    field: "line51f"
+    type: money
+  - line: "line51g"
+    field: "line51g"
+    type: money
+  - line: "line51h"
+    field: "line51h"
+    type: money
+  - line: "line51i"
+    field: "line51i"
+    type: money
+  - line: "line51j"
+    field: "line51j"
+    type: money
+  - line: "line51k"
+    field: "line51k"
+    type: money
+  - line: "line51l"
+    field: "line51l"
+    type: money
+  - line: "line51m_tfcd"
+    field: "line51m_tfcd"
+    type: text
+    maxlen: 2
+  - line: "line51m"
+    field: "line51m"
+    type: money
+  - line: "line51n_tfcd"
+    field: "line51n_tfcd"
+    type: text
+    maxlen: 2
+  - line: "line51n"
+    field: "line51n"
+    type: money
+  - line: "line51txt"
+    field: "line51txt"
+    type: text
+  - line: "line51"
+    field: "line51"
+    type: money
+  - line: "line52"
+    field: "line52"
+    type: money
+  - line: "line53"
+    field: "line53"
+    type: money
+  - line: "bankaccttype"
+    field: "bankaccttype"
+    type: text
+  - line: "dd_routingno"
+    field: "dd_routingno"
+    type: text
+    maxlen: 9
+  - line: "dd_acctno"
+    field: "dd_acctno"
+    type: text
+    maxlen: 17
+  - line: "dd_checking"
+    field: "dd_checking"
+    type: checkbox
+    on_state: "/X"
+  - line: "dd_savings"
+    field: "dd_savings"
+    type: checkbox
+    on_state: "/X"
+  - line: "printlid.5"
+    field: "printlid.5"
+    type: text
+  - line: "line54"
+    field: "line54"
+    type: money
+  - line: "line55"
+    field: "line55"
+    type: money
+  - line: "c.55"
+    field: "c.55"
+    type: checkbox
+    on_state: "/X"
+  - line: "line56"
+    field: "line56"
+    type: money
+  - line: "t.signature"
+    field: "t.signature"
+    type: text
+  - line: "date1mm"
+    field: "date1mm"
+    type: text
+    maxlen: 2
+  - line: "date1dd"
+    field: "date1dd"
+    type: text
+    maxlen: 2
+  - line: "date1yy"
+    field: "date1yy"
+    type: text
+    maxlen: 2
+  - line: "t.spousesignature"
+    field: "t.spousesignature"
+    type: text
+  - line: "date2mm"
+    field: "date2mm"
+    type: text
+    maxlen: 2
+  - line: "date2dd"
+    field: "date2dd"
+    type: text
+    maxlen: 2
+  - line: "date2yy"
+    field: "date2yy"
+    type: text
+    maxlen: 2
+  - line: "Emailaddress"
+    field: "Emailaddress"
+    type: text
+  - line: "dayphone"
+    field: "dayphone"
+    type: text
+  - line: "prepdatemm"
+    field: "prepdatemm"
+    type: text
+    maxlen: 2
+  - line: "prepdatedd"
+    field: "prepdatedd"
+    type: text
+    maxlen: 2
+  - line: "prepdateyy"
+    field: "prepdateyy"
+    type: text
+    maxlen: 2
+  - line: "FEIN"
+    field: "FEIN"
+    type: text
+    maxlen: 9
+  - line: "prepphone"
+    field: "prepphone"
+    type: text
+  - line: "prepaddress"
+    field: "prepaddress"
+    type: text
+  - line: "prepstate"
+    field: "prepstate"
+    type: text
+    maxlen: 2
+  - line: "prepzipcode"
+    field: "prepzipcode"
+    type: text
+    maxlen: 5
+  - line: "YES"
+    field: "YES"
+    type: checkbox
+    on_state: "/X"
+  - line: "NO"
+    field: "NO"
+    type: checkbox
+    on_state: "/X"
+  - line: "failtosignYES"
+    field: "failtosignYES"
+    type: checkbox
+    on_state: "/X"
+  - line: "failtosignNO"
+    field: "failtosignNO"
+    type: checkbox
+    on_state: "/X"
+  - line: "E10"
+    field: "E10"
+    type: checkbox
+    on_state: "/X"
+  - line: "printlid.6"
+    field: "printlid.6"
+    type: text
+  - line: "moa_y1"
+    field: "moa_y1"
+    type: money
+  - line: "moa_s1"
+    field: "moa_s1"
+    type: money
+  - line: "moa_y2"
+    field: "moa_y2"
+    type: money
+  - line: "moa_s2"
+    field: "moa_s2"
+    type: money
+  - line: "moa_y3"
+    field: "moa_y3"
+    type: money
+  - line: "moa_s3"
+    field: "moa_s3"
+    type: money
+  - line: "moa_y4"
+    field: "moa_y4"
+    type: text
+  - line: "moa_s4"
+    field: "moa_s4"
+    type: text
+  - line: "moa_y5"
+    field: "moa_y5"
+    type: money
+  - line: "moa_s5"
+    field: "moa_s5"
+    type: money
+  - line: "moa_y6"
+    field: "moa_y6"
+    type: money
+  - line: "moa_s6"
+    field: "moa_s6"
+    type: money
+  - line: "moa_y7"
+    field: "moa_y7"
+    type: money
+  - line: "moa_s7"
+    field: "moa_s7"
+    type: money
+  - line: "printlid.7"
+    field: "printlid.7"
+    type: text
+  - line: "SSN-1"
+    field: "SSN-1"
+    type: text
+    maxlen: 9
+  - line: "SSN-2"
+    field: "SSN-2"
+    type: text
+    maxlen: 9
+  - line: "moa_1y"
+    field: "moa_1y"
+    type: money
+  - line: "moa_1s"
+    field: "moa_1s"
+    type: money
+  - line: "moa_2p"
+    field: "moa_2p"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2f"
+    field: "moa_2f"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2scorp"
+    field: "moa_2scorp"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2busint"
+    field: "moa_2busint"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2n"
+    field: "moa_2n"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2o"
+    field: "moa_2o"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2other"
+    field: "moa_2other"
+    type: text
+  - line: "moa_2y"
+    field: "moa_2y"
+    type: money
+  - line: "moa_2s"
+    field: "moa_2s"
+    type: money
+  - line: "moa_3y"
+    field: "moa_3y"
+    type: money
+  - line: "moa_3s"
+    field: "moa_3s"
+    type: money
+  - line: "moa_4y"
+    field: "moa_4y"
+    type: money
+  - line: "moa_4s"
+    field: "moa_4s"
+    type: money
+  - line: "moa_5y"
+    field: "moa_5y"
+    type: money
+  - line: "moa_5s"
+    field: "moa_5s"
+    type: money
+  - line: "moa_6y"
+    field: "moa_6y"
+    type: money
+  - line: "moa_6s"
+    field: "moa_6s"
+    type: money
+  - line: "moa_7y"
+    field: "moa_7y"
+    type: money
+  - line: "moa_7s"
+    field: "moa_7s"
+    type: money
+  - line: "moa_8y"
+    field: "moa_8y"
+    type: money
+  - line: "moa_8s"
+    field: "moa_8s"
+    type: money
+  - line: "moa_9y"
+    field: "moa_9y"
+    type: money
+  - line: "moa_9s"
+    field: "moa_9s"
+    type: money
+  - line: "moa_10y"
+    field: "moa_10y"
+    type: money
+  - line: "moa_10s"
+    field: "moa_10s"
+    type: money
+  - line: "moa_11p"
+    field: "moa_11p"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11f"
+    field: "moa_11f"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11scorp"
+    field: "moa_11scorp"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11r"
+    field: "moa_11r"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11mil"
+    field: "moa_11mil"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11com"
+    field: "moa_11com"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11ba"
+    field: "moa_11ba"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11moPPTA"
+    field: "moa_11moPPTA"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11netop"
+    field: "moa_11netop"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11busint"
+    field: "moa_11busint"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11o"
+    field: "moa_11o"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11other"
+    field: "moa_11other"
+    type: text
+  - line: "moa_11y"
+    field: "moa_11y"
+    type: money
+  - line: "moa_11s"
+    field: "moa_11s"
+    type: money
+  - line: "moa_12y"
+    field: "moa_12y"
+    type: money
+  - line: "moa_12s"
+    field: "moa_12s"
+    type: money
+  - line: "moa_13y"
+    field: "moa_13y"
+    type: money
+  - line: "moa_13s"
+    field: "moa_13s"
+    type: money
+  - line: "printlid.8"
+    field: "printlid.8"
+    type: text
+  - line: "moa_13sold"
+    field: "moa_13sold"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_14y"
+    field: "moa_14y"
+    type: money
+  - line: "moa_14s"
+    field: "moa_14s"
+    type: money
+  - line: "moa_15y"
+    field: "moa_15y"
+    type: money
+  - line: "moa_15s"
+    field: "moa_15s"
+    type: money
+  - line: "moa_16y"
+    field: "moa_16y"
+    type: money
+  - line: "moa_16s"
+    field: "moa_16s"
+    type: money
+  - line: "moa_17y"
+    field: "moa_17y"
+    type: money
+  - line: "moa_17s"
+    field: "moa_17s"
+    type: money
+  - line: "moa_18y"
+    field: "moa_18y"
+    type: money
+  - line: "moa_18s"
+    field: "moa_18s"
+    type: money
+  - line: "txtItemError"
+    field: "txtItemError"
+    type: text
+  - line: "moa_pt2_1"
+    field: "moa_pt2_1"
+    type: money
+  - line: "moa_pt2_2"
+    field: "moa_pt2_2"
+    type: money
+  - line: "moa_pt2_3"
+    field: "moa_pt2_3"
+    type: money
+  - line: "moa_pt2_4"
+    field: "moa_pt2_4"
+    type: money
+  - line: "moa_pt2_5"
+    field: "moa_pt2_5"
+    type: money
+  - line: "moa_pt2_6"
+    field: "moa_pt2_6"
+    type: money
+  - line: "moa_pt2_7"
+    field: "moa_pt2_7"
+    type: money
+  - line: "moa_pt2_8"
+    field: "moa_pt2_8"
+    type: money
+  - line: "moa_pt2_9"
+    field: "moa_pt2_9"
+    type: money
+  - line: "moa_pt2_10"
+    field: "moa_pt2_10"
+    type: money
+  - line: "moa_pt2_11"
+    field: "moa_pt2_11"
+    type: money
+  - line: "moa_pt2_12"
+    field: "moa_pt2_12"
+    type: money
+  - line: "P1040_L14"
+    field: "P1040_L14"
+    type: checkbox
+    on_state: "/X"
+  - line: "Texto7"
+    field: "Texto7"
+    type: text
+  - line: "moa_wks1"
+    field: "moa_wks1"
+    type: money
+  - line: "moa_wks2"
+    field: "moa_wks2"
+    type: money
+  - line: "moa_wks3"
+    field: "moa_wks3"
+    type: money
+  - line: "moa_wks4"
+    field: "moa_wks4"
+    type: money
+  - line: "moa_wks5"
+    field: "moa_wks5"
+    type: text
+  - line: "moa_wks6"
+    field: "moa_wks6"
+    type: money
+  - line: "moa_wks7"
+    field: "moa_wks7"
+    type: money
+  - line: "MOAText"
+    field: "MOAText"
+    type: text
+  - line: "UseWS3"
+    field: "UseWS3"
+    type: checkbox
+    on_state: "/X"
+  - line: "printlid.9"
+    field: "printlid.9"
+    type: text
+  - line: "moa_pt3_1"
+    field: "moa_pt3_1"
+    type: money
+  - line: "moa_pt3_2"
+    field: "moa_pt3_2"
+    type: money
+  - line: "moa_pt3_3"
+    field: "moa_pt3_3"
+    type: money
+  - line: "moa_pt3_4"
+    field: "moa_pt3_4"
+    type: money
+  - line: "moa_pt3_5"
+    field: "moa_pt3_5"
+    type: money
+  - line: "moa_pt3_6y"
+    field: "moa_pt3_6y"
+    type: money
+  - line: "moa_pt3_6s"
+    field: "moa_pt3_6s"
+    type: money
+  - line: "moa_pt3_7y"
+    field: "moa_pt3_7y"
+    type: money
+  - line: "moa_pt3_7s"
+    field: "moa_pt3_7s"
+    type: money
+  - line: "moa_pt3_8y"
+    field: "moa_pt3_8y"
+    type: money
+  - line: "moa_pt3_8s"
+    field: "moa_pt3_8s"
+    type: money
+  - line: "moa_pt3_9y"
+    field: "moa_pt3_9y"
+    type: money
+  - line: "moa_pt3_9s"
+    field: "moa_pt3_9s"
+    type: money
+  - line: "moa_pt3_10"
+    field: "moa_pt3_10"
+    type: money
+  - line: "moa_pt3_11"
+    field: "moa_pt3_11"
+    type: money
+  - line: "moa_pt4_1"
+    field: "moa_pt4_1"
+    type: money
+  - line: "moa_pt4_2"
+    field: "moa_pt4_2"
+    type: money
+  - line: "moa_pt4_3"
+    field: "moa_pt4_3"
+    type: money
+  - line: "moa_pt4_4"
+    field: "moa_pt4_4"
+    type: money
+  - line: "moa_pt4_5"
+    field: "moa_pt4_5"
+    type: money
+  - line: "moa_pt4_6y"
+    field: "moa_pt4_6y"
+    type: money
+  - line: "moa_pt4_6s"
+    field: "moa_pt4_6s"
+    type: money
+  - line: "moa_pt4_7y"
+    field: "moa_pt4_7y"
+    type: money
+  - line: "moa_pt4_7s"
+    field: "moa_pt4_7s"
+    type: money
+  - line: "moa_pt4_8"
+    field: "moa_pt4_8"
+    type: money
+  - line: "moa_pt4_9"
+    field: "moa_pt4_9"
+    type: money
+  - line: "printlid.10"
+    field: "printlid.10"
+    type: text
+  - line: "moa_pt5_1"
+    field: "moa_pt5_1"
+    type: money
+  - line: "moa_pt5_2"
+    field: "moa_pt5_2"
+    type: money
+  - line: "moa_pt5_3"
+    field: "moa_pt5_3"
+    type: money
+  - line: "moa_pt5_4y"
+    field: "moa_pt5_4y"
+    type: money
+  - line: "moa_pt5_4s"
+    field: "moa_pt5_4s"
+    type: money
+  - line: "moa_pt5_5y"
+    field: "moa_pt5_5y"
+    type: money
+  - line: "moa_pt5_5s"
+    field: "moa_pt5_5s"
+    type: money
+  - line: "moa_pt5_6y"
+    field: "moa_pt5_6y"
+    type: money
+  - line: "moa_pt5_6s"
+    field: "moa_pt5_6s"
+    type: money
+  - line: "moa_pt5_7"
+    field: "moa_pt5_7"
+    type: money
+  - line: "moa_pt5_8"
+    field: "moa_pt5_8"
+    type: money
+  - line: "moa_pt5_TE"
+    field: "moa_pt5_TE"
+    type: money
+  - line: "printlid.11"
+    field: "printlid.11"
+    type: text
+  - line: "mocr_name-1"
+    field: "mocr_name-1"
+    type: text
+  - line: "mocr_name-2"
+    field: "mocr_name-2"
+    type: text
+  - line: "mocr_1y"
+    field: "mocr_1y"
+    type: money
+  - line: "mocr_1s"
+    field: "mocr_1s"
+    type: money
+  - line: "mocr_2y"
+    field: "mocr_2y"
+    type: money
+  - line: "mocr_2s"
+    field: "mocr_2s"
+    type: money
+  - line: "mocr_st-1"
+    field: "mocr_st-1"
+    type: text
+    maxlen: 2
+  - line: "mocr_st-2"
+    field: "mocr_st-2"
+    type: text
+    maxlen: 2
+  - line: "mocr_3y"
+    field: "mocr_3y"
+    type: money
+  - line: "mocr_3s"
+    field: "mocr_3s"
+    type: money
+  - line: "mocr_other1"
+    field: "mocr_other1"
+    type: text
+  - line: "mocr_4y"
+    field: "mocr_4y"
+    type: money
+  - line: "mocr_4s"
+    field: "mocr_4s"
+    type: money
+  - line: "mocr_5y"
+    field: "mocr_5y"
+    type: money
+  - line: "mocr_5s"
+    field: "mocr_5s"
+    type: money
+  - line: "mocr_6y"
+    field: "mocr_6y"
+    type: money
+  - line: "mocr_6s"
+    field: "mocr_6s"
+    type: money
+  - line: "mocr_7y"
+    field: "mocr_7y"
+    type: money
+  - line: "mocr_7s"
+    field: "mocr_7s"
+    type: money
+  - line: "mocr_8y"
+    field: "mocr_8y"
+    type: text
+  - line: "mocr_8s"
+    field: "mocr_8s"
+    type: text
+  - line: "mocr_9y"
+    field: "mocr_9y"
+    type: money
+  - line: "mocr_9s"
+    field: "mocr_9s"
+    type: money
+  - line: "mocr_10y"
+    field: "mocr_10y"
+    type: money
+  - line: "mocr_10s"
+    field: "mocr_10s"
+    type: money
+  - line: "mocr_11y"
+    field: "mocr_11y"
+    type: money
+  - line: "mocr_11s"
+    field: "mocr_11s"
+    type: money
+  - line: "printlid.12"
+    field: "printlid.12"
+    type: text
+  - line: "mocr_1yb"
+    field: "mocr_1yb"
+    type: money
+  - line: "mocr_1sb"
+    field: "mocr_1sb"
+    type: money
+  - line: "mocr_2yb"
+    field: "mocr_2yb"
+    type: money
+  - line: "mocr_2sb"
+    field: "mocr_2sb"
+    type: money
+  - line: "mocr_st-1b"
+    field: "mocr_st-1b"
+    type: text
+    maxlen: 2
+  - line: "mocr_st-2b"
+    field: "mocr_st-2b"
+    type: text
+    maxlen: 2
+  - line: "mocr_3yb"
+    field: "mocr_3yb"
+    type: money
+  - line: "mocr_3sb"
+    field: "mocr_3sb"
+    type: money
+  - line: "mocr_other1b"
+    field: "mocr_other1b"
+    type: text
+  - line: "mocr_4yb"
+    field: "mocr_4yb"
+    type: money
+  - line: "mocr_4sb"
+    field: "mocr_4sb"
+    type: money
+  - line: "mocr_5yb"
+    field: "mocr_5yb"
+    type: money
+  - line: "mocr_5sb"
+    field: "mocr_5sb"
+    type: money
+  - line: "mocr_6yb"
+    field: "mocr_6yb"
+    type: money
+  - line: "mocr_6sb"
+    field: "mocr_6sb"
+    type: money
+  - line: "mocr_7yb"
+    field: "mocr_7yb"
+    type: money
+  - line: "mocr_7sb"
+    field: "mocr_7sb"
+    type: money
+  - line: "mocr_8yb"
+    field: "mocr_8yb"
+    type: text
+  - line: "mocr_8sb"
+    field: "mocr_8sb"
+    type: text
+  - line: "mocr_9yb"
+    field: "mocr_9yb"
+    type: money
+  - line: "mocr_9sb"
+    field: "mocr_9sb"
+    type: money
+  - line: "mocr_10yb"
+    field: "mocr_10yb"
+    type: money
+  - line: "mocr_10sb"
+    field: "mocr_10sb"
+    type: money
+  - line: "mocr_11yb"
+    field: "mocr_11yb"
+    type: money
+  - line: "mocr_11sb"
+    field: "mocr_11sb"
+    type: money
+  - line: "stateabbreviations"
+    field: "stateabbreviations"
+    type: text
+  - line: "mocrsch1_1y"
+    field: "mocrsch1_1y"
+    type: money
+  - line: "mocrsch1_1s"
+    field: "mocrsch1_1s"
+    type: money
+  - line: "mocrsch1_2y"
+    field: "mocrsch1_2y"
+    type: money
+  - line: "mocrsch1_2s"
+    field: "mocrsch1_2s"
+    type: money
+  - line: "mocrsch1_3y"
+    field: "mocrsch1_3y"
+    type: text
+  - line: "mocrsch1_3s"
+    field: "mocrsch1_3s"
+    type: text
+  - line: "mocrsch1_4y"
+    field: "mocrsch1_4y"
+    type: money
+  - line: "mocrsch1_4s"
+    field: "mocrsch1_4s"
+    type: money
+  - line: "mocrsch1_5y"
+    field: "mocrsch1_5y"
+    type: money
+  - line: "mocrsch1_5s"
+    field: "mocrsch1_5s"
+    type: money
+  - line: "printlid.14"
+    field: "printlid.14"
+    type: text
+  - line: "nri_city"
+    field: "nri_city"
+    type: text
+  - line: "nri_line1_Ybx"
+    field: "nri_line1_Ybx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_resid_Y"
+    field: "nri_resid_Y"
+    type: text
+    maxlen: 2
+  - line: "nri_line1_Sbx"
+    field: "nri_line1_Sbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_resid_S"
+    field: "nri_resid_S"
+    type: text
+    maxlen: 2
+  - line: "nri_line1_Yrwbx"
+    field: "nri_line1_Yrwbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line1_Srwbx"
+    field: "nri_line1_Srwbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line2_Ybx"
+    field: "nri_line2_Ybx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line2_Sbx"
+    field: "nri_line2_Sbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line2_Yrwbx"
+    field: "nri_line2_Yrwbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line2_Srwbx"
+    field: "nri_line2_Srwbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line2a1"
+    field: "nri_line2a1"
+    type: text
+  - line: "nri_line2a2"
+    field: "nri_line2a2"
+    type: text
+  - line: "nri_line2Sa1"
+    field: "nri_line2Sa1"
+    type: text
+  - line: "nri_line2Sa2"
+    field: "nri_line2Sa2"
+    type: text
+  - line: "nri_line2bstate"
+    field: "nri_line2bstate"
+    type: text
+    maxlen: 2
+  - line: "nri_line2Sbstate"
+    field: "nri_line2Sbstate"
+    type: text
+    maxlen: 2
+  - line: "nri_line2b1"
+    field: "nri_line2b1"
+    type: text
+  - line: "nri_line2b2"
+    field: "nri_line2b2"
+    type: text
+  - line: "nri_line2Sb1"
+    field: "nri_line2Sb1"
+    type: text
+  - line: "nri_line2Sb2"
+    field: "nri_line2Sb2"
+    type: text
+  - line: "nri_line3_Ybx"
+    field: "nri_line3_Ybx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line3_Sbx"
+    field: "nri_line3_Sbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line3Ya"
+    field: "nri_line3Ya"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_3aYstate2"
+    field: "nri_3aYstate2"
+    type: text
+    maxlen: 2
+  - line: "nri_line3aS"
+    field: "nri_line3aS"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line3aSstate2"
+    field: "nri_line3aSstate2"
+    type: text
+  - line: "nri_3Ya"
+    field: "nri_3Ya"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_3Ystate2"
+    field: "nri_3Ystate2"
+    type: text
+  - line: "nri_line3bS"
+    field: "nri_line3bS"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line3bSstate2"
+    field: "nri_line3bSstate2"
+    type: text
+  - line: "nri_3bYstate3"
+    field: "nri_3bYstate3"
+    type: text
+    maxlen: 2
+  - line: "nri_line3bSstate3"
+    field: "nri_line3bSstate3"
+    type: text
+    maxlen: 2
+  - line: "printlid.15"
+    field: "printlid.15"
+    type: text
+  - line: "A-Y"
+    field: "A-Y"
+    type: money
+  - line: "A-S"
+    field: "A-S"
+    type: money
+  - line: "B-Y"
+    field: "B-Y"
+    type: money
+  - line: "B-S"
+    field: "B-S"
+    type: money
+  - line: "C-Y"
+    field: "C-Y"
+    type: money
+  - line: "C-S"
+    field: "C-S"
+    type: money
+  - line: "D-Y"
+    field: "D-Y"
+    type: money
+  - line: "D-S"
+    field: "D-S"
+    type: money
+  - line: "E-Y"
+    field: "E-Y"
+    type: money
+  - line: "E-S"
+    field: "E-S"
+    type: money
+  - line: "F-Y"
+    field: "F-Y"
+    type: money
+  - line: "F-S"
+    field: "F-S"
+    type: money
+  - line: "G-Y"
+    field: "G-Y"
+    type: money
+  - line: "G-S"
+    field: "G-S"
+    type: money
+  - line: "H-Y"
+    field: "H-Y"
+    type: money
+  - line: "H-S"
+    field: "H-S"
+    type: money
+  - line: "I-Y"
+    field: "I-Y"
+    type: money
+  - line: "I-S"
+    field: "I-S"
+    type: money
+  - line: "J-Y"
+    field: "J-Y"
+    type: money
+  - line: "J-S"
+    field: "J-S"
+    type: money
+  - line: "K-Y"
+    field: "K-Y"
+    type: money
+  - line: "K-S"
+    field: "K-S"
+    type: money
+  - line: "L-Y"
+    field: "L-Y"
+    type: money
+  - line: "L-S"
+    field: "L-S"
+    type: money
+  - line: "M-Y"
+    field: "M-Y"
+    type: money
+  - line: "M-S"
+    field: "M-S"
+    type: money
+  - line: "N-Y"
+    field: "N-Y"
+    type: money
+  - line: "N-S"
+    field: "N-S"
+    type: money
+  - line: "O-Y"
+    field: "O-Y"
+    type: money
+  - line: "O-S"
+    field: "O-S"
+    type: money
+  - line: "P-Y"
+    field: "P-Y"
+    type: money
+  - line: "P-S"
+    field: "P-S"
+    type: money
+  - line: "Q-Y"
+    field: "Q-Y"
+    type: money
+  - line: "Q-S"
+    field: "Q-S"
+    type: money
+  - line: "R-Y"
+    field: "R-Y"
+    type: money
+  - line: "R-S"
+    field: "R-S"
+    type: money
+  - line: "S-Y"
+    field: "S-Y"
+    type: money
+  - line: "S-S"
+    field: "S-S"
+    type: money
+  - line: "T-Y"
+    field: "T-Y"
+    type: money
+  - line: "T-S"
+    field: "T-S"
+    type: money
+  - line: "U-Y"
+    field: "U-Y"
+    type: money
+  - line: "U-S"
+    field: "U-S"
+    type: money
+  - line: "lblNRI"
+    field: "lblNRI"
+    type: text
+  - line: "UseWS1"
+    field: "UseWS1"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line1Y"
+    field: "nri_line1Y"
+    type: money
+  - line: "nri_line1S"
+    field: "nri_line1S"
+    type: money
+  - line: "nri_line2Y"
+    field: "nri_line2Y"
+    type: money
+  - line: "nri_line2S"
+    field: "nri_line2S"
+    type: money
+  - line: "1040_30Text"
+    field: "1040_30Text"
+    type: text
+  - line: "UseNRI01"
+    field: "UseNRI01"
+    type: checkbox
+    on_state: "/X"
+  - line: "1040_32Text2"
+    field: "1040_32Text2"
+    type: text
+  - line: "UseNRI02"
+    field: "UseNRI02"
+    type: checkbox
+    on_state: "/X"
+  - line: "1040_32Text3"
+    field: "1040_32Text3"
+    type: text
+  - line: "nri_line3Y"
+    field: "nri_line3Y"
+    type: text
+  - line: "nri_line3S"
+    field: "nri_line3S"
+    type: text
+  - line: "printlid.16"
+    field: "printlid.16"
+    type: text
+  - line: "printlid.18"
+    field: "printlid.18"
+    type: text
+  - line: "t.tc_name-1"
+    field: "t.tc_name-1"
+    type: text
+  - line: "t.tc_name-2"
+    field: "t.tc_name-2"
+    type: text
+  - line: "t.tc_corpname"
+    field: "t.tc_corpname"
+    type: text
+  - line: "d.tc_charterno"
+    field: "d.tc_charterno"
+    type: text
+    maxlen: 11
+  - line: "d.tc_mitsno"
+    field: "d.tc_mitsno"
+    type: text
+    maxlen: 8
+  - line: "t.tc_bn1"
+    field: "t.tc_bn1"
+    type: text
+    maxlen: 6
+  - line: "t.tc.ac1"
+    field: "t.tc.ac1"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn1"
+    field: "t.tc_cn1"
+    type: text
+  - line: "n.tc_c1_1"
+    field: "n.tc_c1_1"
+    type: money
+  - line: "n.tc_c2_1"
+    field: "n.tc_c2_1"
+    type: money
+  - line: "t.tc_bn2"
+    field: "t.tc_bn2"
+    type: text
+  - line: "t.tc.ac2"
+    field: "t.tc.ac2"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn2"
+    field: "t.tc_cn2"
+    type: text
+  - line: "n.tc_c1_2"
+    field: "n.tc_c1_2"
+    type: money
+  - line: "n.tc_c2_2"
+    field: "n.tc_c2_2"
+    type: money
+  - line: "t.tc_bn3"
+    field: "t.tc_bn3"
+    type: text
+  - line: "t.tc.ac3"
+    field: "t.tc.ac3"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn3"
+    field: "t.tc_cn3"
+    type: text
+  - line: "n.tc_c1_3"
+    field: "n.tc_c1_3"
+    type: money
+  - line: "n.tc_c2_3"
+    field: "n.tc_c2_3"
+    type: money
+  - line: "t.tc_bn4"
+    field: "t.tc_bn4"
+    type: text
+  - line: "t.tc.ac4"
+    field: "t.tc.ac4"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn4"
+    field: "t.tc_cn4"
+    type: text
+  - line: "n.tc_c1_4"
+    field: "n.tc_c1_4"
+    type: money
+  - line: "n.tc_c2_4"
+    field: "n.tc_c2_4"
+    type: money
+  - line: "t.tc_bn5"
+    field: "t.tc_bn5"
+    type: text
+  - line: "t.tc.ac5"
+    field: "t.tc.ac5"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn5"
+    field: "t.tc_cn5"
+    type: text
+  - line: "n.tc_c1_5"
+    field: "n.tc_c1_5"
+    type: money
+  - line: "n.tc_c2_5"
+    field: "n.tc_c2_5"
+    type: money
+  - line: "t.tc_bn6"
+    field: "t.tc_bn6"
+    type: text
+  - line: "t.tc.ac6"
+    field: "t.tc.ac6"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn6"
+    field: "t.tc_cn6"
+    type: text
+  - line: "n.tc_c1_6"
+    field: "n.tc_c1_6"
+    type: money
+  - line: "n.tc_c2_6"
+    field: "n.tc_c2_6"
+    type: money
+  - line: "t.tc_bn7"
+    field: "t.tc_bn7"
+    type: text
+  - line: "t.tc.ac7"
+    field: "t.tc.ac7"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn7"
+    field: "t.tc_cn7"
+    type: text
+  - line: "n.tc_c1_7"
+    field: "n.tc_c1_7"
+    type: money
+  - line: "n.tc_c2_7"
+    field: "n.tc_c2_7"
+    type: money
+  - line: "t.tc_bn8"
+    field: "t.tc_bn8"
+    type: text
+  - line: "t.tc.ac8"
+    field: "t.tc.ac8"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn8"
+    field: "t.tc_cn8"
+    type: text
+  - line: "n.tc_c1_8"
+    field: "n.tc_c1_8"
+    type: money
+  - line: "n.tc_c2_8"
+    field: "n.tc_c2_8"
+    type: money
+  - line: "t.tc_bn9"
+    field: "t.tc_bn9"
+    type: text
+  - line: "t.tc.ac9"
+    field: "t.tc.ac9"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn9"
+    field: "t.tc_cn9"
+    type: text
+  - line: "n.tc_c1_9"
+    field: "n.tc_c1_9"
+    type: money
+  - line: "n.tc_c2_9"
+    field: "n.tc_c2_9"
+    type: money
+  - line: "t.tc_bn10"
+    field: "t.tc_bn10"
+    type: text
+  - line: "t.tc.ac10"
+    field: "t.tc.ac10"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn10"
+    field: "t.tc_cn10"
+    type: text
+  - line: "n.tc_c1_10"
+    field: "n.tc_c1_10"
+    type: money
+  - line: "n.tc_c2_10"
+    field: "n.tc_c2_10"
+    type: money
+  - line: "n.tc_c1_11"
+    field: "n.tc_c1_11"
+    type: money
+  - line: "n.tc_c2_11"
+    field: "n.tc_c2_11"
+    type: money
+  - line: "n.tc_c1_12"
+    field: "n.tc_c1_12"
+    type: money
+  - line: "n.tc_c2_12"
+    field: "n.tc_c2_12"
+    type: money
+  - line: "n.tc_c1_13"
+    field: "n.tc_c1_13"
+    type: money
+  - line: "printlid.20"
+    field: "printlid.20"
+    type: text
+  - line: "printlid.21"
+    field: "printlid.21"
+    type: text
+  - line: "1-Y"
+    field: "1-Y"
+    type: money
+  - line: "1-S"
+    field: "1-S"
+    type: money
+  - line: "2-Y"
+    field: "2-Y"
+    type: money
+  - line: "2-S"
+    field: "2-S"
+    type: money
+  - line: "3-Y"
+    field: "3-Y"
+    type: money
+  - line: "3-S"
+    field: "3-S"
+    type: money
+  - line: "4-Y"
+    field: "4-Y"
+    type: money
+  - line: "4-S"
+    field: "4-S"
+    type: money
+  - line: "5-Y"
+    field: "5-Y"
+    type: money
+  - line: "5-S"
+    field: "5-S"
+    type: money
+  - line: "6-Y"
+    field: "6-Y"
+    type: money
+  - line: "6-S"
+    field: "6-S"
+    type: money
+  - line: "7-Y"
+    field: "7-Y"
+    type: money
+  - line: "7-S"
+    field: "7-S"
+    type: money
+  - line: "8-Y"
+    field: "8-Y"
+    type: money
+  - line: "8-S"
+    field: "8-S"
+    type: money
+  - line: "9-Y"
+    field: "9-Y"
+    type: money
+  - line: "9-S"
+    field: "9-S"
+    type: money
+  - line: "10-Y"
+    field: "10-Y"
+    type: money
+  - line: "10-S"
+    field: "10-S"
+    type: money
+  - line: "11-Y"
+    field: "11-Y"
+    type: money
+  - line: "11-S"
+    field: "11-S"
+    type: money
+  - line: "12-Y"
+    field: "12-Y"
+    type: money
+  - line: "12-S"
+    field: "12-S"
+    type: money
+  - line: "13-Y"
+    field: "13-Y"
+    type: money
+  - line: "13-S"
+    field: "13-S"
+    type: money
+  - line: "14-Y"
+    field: "14-Y"
+    type: money
+  - line: "14-S"
+    field: "14-S"
+    type: money
+  - line: "15-Y"
+    field: "15-Y"
+    type: money
+  - line: "15-S"
+    field: "15-S"
+    type: money
+  - line: "16-Y"
+    field: "16-Y"
+    type: money
+  - line: "16-S"
+    field: "16-S"
+    type: money
+  - line: "17-Y"
+    field: "17-Y"
+    type: money
+  - line: "17-S"
+    field: "17-S"
+    type: money
+  - line: "18-Y"
+    field: "18-Y"
+    type: money
+  - line: "18-S"
+    field: "18-S"
+    type: money
+  - line: "Texto8"
+    field: "Texto8"
+    type: text
+  - line: "UseWS2"
+    field: "UseWS2"
+    type: checkbox
+    on_state: "/X"
+  - line: "printlid.22"
+    field: "printlid.22"
+    type: text
+  - line: "d.pts_bd_mm-1"
+    field: "d.pts_bd_mm-1"
+    type: text
+    maxlen: 2
+  - line: "d.pts_bd_dd-1"
+    field: "d.pts_bd_dd-1"
+    type: text
+    maxlen: 2
+  - line: "d.pts_bd_yy-1"
+    field: "d.pts_bd_yy-1"
+    type: text
+    maxlen: 4
+  - line: "d.pts_bd_mm-2"
+    field: "d.pts_bd_mm-2"
+    type: text
+    maxlen: 2
+  - line: "d.pts_bd_dd-2"
+    field: "d.pts_bd_dd-2"
+    type: text
+    maxlen: 2
+  - line: "d.pts_bd_yy-2"
+    field: "d.pts_bd_yy-2"
+    type: text
+    maxlen: 4
+  - line: "c.pts_65"
+    field: "c.pts_65"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.pts_100disvet"
+    field: "c.pts_100disvet"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.pts_100disabled"
+    field: "c.pts_100disabled"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.pts_60orolder"
+    field: "c.pts_60orolder"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.pts_single"
+    field: "c.pts_single"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.pts_married"
+    field: "c.pts_married"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.pts_marrlivsep"
+    field: "c.pts_marrlivsep"
+    type: checkbox
+    on_state: "/X"
+  - line: "n.pts_1"
+    field: "n.pts_1"
+    type: money
+  - line: "n.pts_2"
+    field: "n.pts_2"
+    type: money
+  - line: "n.pts_3"
+    field: "n.pts_3"
+    type: money
+  - line: "n.pts_4"
+    field: "n.pts_4"
+    type: money
+  - line: "n.pts_5"
+    field: "n.pts_5"
+    type: money
+  - line: "printlid.23"
+    field: "printlid.23"
+    type: text
+  - line: "n.pts_6"
+    field: "n.pts_6"
+    type: money
+  - line: "n.pts_7"
+    field: "n.pts_7"
+    type: money
+  - line: "n.pts_8"
+    field: "n.pts_8"
+    type: money
+  - line: "n.pts_9"
+    field: "n.pts_9"
+    type: money
+  - line: "Text1"
+    field: "Text1"
+    type: text
+  - line: "c.ownfullyear"
+    field: "c.ownfullyear"
+    type: checkbox
+    on_state: "/X"
+  - line: "Texto9"
+    field: "Texto9"
+    type: text
+  - line: "n.pts_10"
+    field: "n.pts_10"
+    type: money
+  - line: "n.pts_11"
+    field: "n.pts_11"
+    type: money
+  - line: "n.pts_12"
+    field: "n.pts_12"
+    type: money
+  - line: "n.pts_13"
+    field: "n.pts_13"
+    type: money
+  - line: "n.pts_14"
+    field: "n.pts_14"
+    type: money
+  - line: "printlid.24"
+    field: "printlid.24"
+    type: text
+  - line: "c.crp_relatedYa"
+    field: "c.crp_relatedYa"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explain"
+    field: "t.crp_explain"
+    type: text
+  - line: "t.crp_address1"
+    field: "t.crp_address1"
+    type: text
+  - line: "t.crp_apt1"
+    field: "t.crp_apt1"
+    type: text
+    maxlen: 4
+  - line: "t.crp_city1"
+    field: "t.crp_city1"
+    type: text
+  - line: "t.crp_state1"
+    field: "t.crp_state1"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1"
+    field: "t.crp_zip1"
+    type: text
+    maxlen: 5
+  - line: "t.crp_llname1"
+    field: "t.crp_llname1"
+    type: text
+  - line: "t.crp_lladdress1"
+    field: "t.crp_lladdress1"
+    type: text
+  - line: "t.crp_llapt1"
+    field: "t.crp_llapt1"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1"
+    field: "t.crp_llcity1"
+    type: text
+  - line: "t.crp_llstate1"
+    field: "t.crp_llstate1"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1"
+    field: "t.crp_llzip1"
+    type: text
+    maxlen: 5
+  - line: "d.crp_llphone1"
+    field: "d.crp_llphone1"
+    type: text
+  - line: "d.crp_5fr_mm-1"
+    field: "d.crp_5fr_mm-1"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5fr_dd-1"
+    field: "d.crp_5fr_dd-1"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_mm-1"
+    field: "d.crp_5to_mm-1"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_dd-1"
+    field: "d.crp_5to_dd-1"
+    type: text
+    maxlen: 2
+  - line: "n.crp_6a"
+    field: "n.crp_6a"
+    type: money
+  - line: "n.crp_7a"
+    field: "n.crp_7a"
+    type: text
+  - line: "c.crp_7aa"
+    field: "c.crp_7aa"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ba"
+    field: "c.crp_7ba"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ca"
+    field: "c.crp_7ca"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7da"
+    field: "c.crp_7da"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ea"
+    field: "c.crp_7ea"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ha"
+    field: "c.crp_7ha"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fa"
+    field: "c.crp_7fa"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ga"
+    field: "c.crp_7ga"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ia"
+    field: "c.crp_7ia"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ja"
+    field: "c.crp_7ja"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ka"
+    field: "c.crp_7ka"
+    type: checkbox
+    on_state: "/X"
+  - line: "n.crp_8a"
+    field: "n.crp_8a"
+    type: money
+  - line: "n.crp_9a"
+    field: "n.crp_9a"
+    type: money
+  - line: "printlid.25"
+    field: "printlid.25"
+    type: text
+  - line: "c.crp_relatedYb"
+    field: "c.crp_relatedYb"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explainb"
+    field: "t.crp_explainb"
+    type: text
+  - line: "t.crp_address1b"
+    field: "t.crp_address1b"
+    type: text
+  - line: "t.crp_apt1b"
+    field: "t.crp_apt1b"
+    type: text
+    maxlen: 4
+  - line: "t.crp_citystate1b"
+    field: "t.crp_citystate1b"
+    type: text
+  - line: "t.crp_state1b"
+    field: "t.crp_state1b"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1b"
+    field: "t.crp_zip1b"
+    type: text
+    maxlen: 5
+  - line: "t.crp_llname1b"
+    field: "t.crp_llname1b"
+    type: text
+  - line: "t.crp_lladdress1b"
+    field: "t.crp_lladdress1b"
+    type: text
+  - line: "t.crp_llapt1b"
+    field: "t.crp_llapt1b"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1b"
+    field: "t.crp_llcity1b"
+    type: text
+  - line: "t.crp_llstate1b"
+    field: "t.crp_llstate1b"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1b"
+    field: "t.crp_llzip1b"
+    type: text
+    maxlen: 5
+  - line: "d.crp_llphone1b"
+    field: "d.crp_llphone1b"
+    type: text
+  - line: "d.crp_5fr_mm-2"
+    field: "d.crp_5fr_mm-2"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5fr_dd-2"
+    field: "d.crp_5fr_dd-2"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_mm-2"
+    field: "d.crp_5to_mm-2"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_dd-2"
+    field: "d.crp_5to_dd-2"
+    type: text
+    maxlen: 2
+  - line: "n.crp_6b"
+    field: "n.crp_6b"
+    type: money
+  - line: "n.crp_7b"
+    field: "n.crp_7b"
+    type: text
+  - line: "c.crp_7ab"
+    field: "c.crp_7ab"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7bb"
+    field: "c.crp_7bb"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7cb"
+    field: "c.crp_7cb"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7db"
+    field: "c.crp_7db"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7eb"
+    field: "c.crp_7eb"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7hb"
+    field: "c.crp_7hb"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fb"
+    field: "c.crp_7fb"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7gb"
+    field: "c.crp_7gb"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ib"
+    field: "c.crp_7ib"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7jb"
+    field: "c.crp_7jb"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7kb"
+    field: "c.crp_7kb"
+    type: checkbox
+    on_state: "/X"
+  - line: "n.crp_8b"
+    field: "n.crp_8b"
+    type: money
+  - line: "n.crp_9b"
+    field: "n.crp_9b"
+    type: money
+  - line: "printlid.26"
+    field: "printlid.26"
+    type: text
+  - line: "c.crp_relatedYc"
+    field: "c.crp_relatedYc"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explainc"
+    field: "t.crp_explainc"
+    type: text
+  - line: "t.crp_address1c"
+    field: "t.crp_address1c"
+    type: text
+  - line: "t.crp_apt1c"
+    field: "t.crp_apt1c"
+    type: text
+    maxlen: 4
+  - line: "t.crp_citystate1c"
+    field: "t.crp_citystate1c"
+    type: text
+  - line: "t.crp_state1c"
+    field: "t.crp_state1c"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1c"
+    field: "t.crp_zip1c"
+    type: text
+    maxlen: 5
+  - line: "t.crp_llname1c"
+    field: "t.crp_llname1c"
+    type: text
+  - line: "t.crp_lladdress1c"
+    field: "t.crp_lladdress1c"
+    type: text
+  - line: "t.crp_llapt1c"
+    field: "t.crp_llapt1c"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1c"
+    field: "t.crp_llcity1c"
+    type: text
+  - line: "t.crp_llstate1c"
+    field: "t.crp_llstate1c"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1c"
+    field: "t.crp_llzip1c"
+    type: text
+    maxlen: 5
+  - line: "d.crp_llphone1c"
+    field: "d.crp_llphone1c"
+    type: text
+  - line: "d.crp_5fr_mm-3"
+    field: "d.crp_5fr_mm-3"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5fr_dd-3"
+    field: "d.crp_5fr_dd-3"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_mm-3"
+    field: "d.crp_5to_mm-3"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_dd-3"
+    field: "d.crp_5to_dd-3"
+    type: text
+    maxlen: 2
+  - line: "n.crp_6c"
+    field: "n.crp_6c"
+    type: money
+  - line: "n.crp_7c"
+    field: "n.crp_7c"
+    type: text
+  - line: "c.crp_7ac"
+    field: "c.crp_7ac"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7bc"
+    field: "c.crp_7bc"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7cc"
+    field: "c.crp_7cc"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7dc"
+    field: "c.crp_7dc"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ec"
+    field: "c.crp_7ec"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7hc"
+    field: "c.crp_7hc"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fc"
+    field: "c.crp_7fc"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7gc"
+    field: "c.crp_7gc"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ic"
+    field: "c.crp_7ic"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7jc"
+    field: "c.crp_7jc"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7kc"
+    field: "c.crp_7kc"
+    type: checkbox
+    on_state: "/X"
+  - line: "n.crp_8c"
+    field: "n.crp_8c"
+    type: money
+  - line: "n.crp_9c"
+    field: "n.crp_9c"
+    type: money
+  - line: "printlid.27"
+    field: "printlid.27"
+    type: text
+  - line: "c.crp_relatedYd"
+    field: "c.crp_relatedYd"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explaind"
+    field: "t.crp_explaind"
+    type: text
+  - line: "t.crp_address1d"
+    field: "t.crp_address1d"
+    type: text
+  - line: "t.crp_apt1d"
+    field: "t.crp_apt1d"
+    type: text
+    maxlen: 4
+  - line: "t.crp_citystate1d"
+    field: "t.crp_citystate1d"
+    type: text
+  - line: "t.crp_state1d"
+    field: "t.crp_state1d"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1d"
+    field: "t.crp_zip1d"
+    type: text
+    maxlen: 5
+  - line: "t.crp_llname1d"
+    field: "t.crp_llname1d"
+    type: text
+  - line: "t.crp_lladdress1d"
+    field: "t.crp_lladdress1d"
+    type: text
+  - line: "t.crp_llapt1d"
+    field: "t.crp_llapt1d"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1d"
+    field: "t.crp_llcity1d"
+    type: text
+  - line: "t.crp_llstate1d"
+    field: "t.crp_llstate1d"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1d"
+    field: "t.crp_llzip1d"
+    type: text
+    maxlen: 5
+  - line: "d.crp_llphone1d"
+    field: "d.crp_llphone1d"
+    type: text
+  - line: "d.crp_5fr_mm-4"
+    field: "d.crp_5fr_mm-4"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5fr_dd-4"
+    field: "d.crp_5fr_dd-4"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_mm-4"
+    field: "d.crp_5to_mm-4"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_dd-4"
+    field: "d.crp_5to_dd-4"
+    type: text
+    maxlen: 2
+  - line: "n.crp_6d"
+    field: "n.crp_6d"
+    type: money
+  - line: "n.crp_7d"
+    field: "n.crp_7d"
+    type: text
+  - line: "c.crp_7ad"
+    field: "c.crp_7ad"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7bd"
+    field: "c.crp_7bd"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7cd"
+    field: "c.crp_7cd"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7dd"
+    field: "c.crp_7dd"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ed"
+    field: "c.crp_7ed"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7hd"
+    field: "c.crp_7hd"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fd"
+    field: "c.crp_7fd"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7gd"
+    field: "c.crp_7gd"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7id"
+    field: "c.crp_7id"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7jd"
+    field: "c.crp_7jd"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7kd"
+    field: "c.crp_7kd"
+    type: checkbox
+    on_state: "/X"
+  - line: "n.crp_8d"
+    field: "n.crp_8d"
+    type: money
+  - line: "n.crp_9d"
+    field: "n.crp_9d"
+    type: money
+  - line: "printlid.28"
+    field: "printlid.28"
+    type: text
+  - line: "c.crp_relatedYe"
+    field: "c.crp_relatedYe"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explaine"
+    field: "t.crp_explaine"
+    type: text
+  - line: "t.crp_address1e"
+    field: "t.crp_address1e"
+    type: text
+  - line: "t.crp_address1c_apt"
+    field: "t.crp_address1c_apt"
+    type: text
+    maxlen: 4
+  - line: "t.crp_citystate1e"
+    field: "t.crp_citystate1e"
+    type: text
+  - line: "t.crp_state1e"
+    field: "t.crp_state1e"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1e"
+    field: "t.crp_zip1e"
+    type: text
+    maxlen: 5
+  - line: "t.crp_llname1e"
+    field: "t.crp_llname1e"
+    type: text
+  - line: "t.crp_lladdress1e"
+    field: "t.crp_lladdress1e"
+    type: text
+  - line: "t.crp_llapt1e"
+    field: "t.crp_llapt1e"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1e"
+    field: "t.crp_llcity1e"
+    type: text
+  - line: "t.crp_llstate1e"
+    field: "t.crp_llstate1e"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1e"
+    field: "t.crp_llzip1e"
+    type: text
+    maxlen: 5
+  - line: "d.crp_llphone1e"
+    field: "d.crp_llphone1e"
+    type: text
+  - line: "d.crp_5fr_mm-5"
+    field: "d.crp_5fr_mm-5"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5fr_dd-5"
+    field: "d.crp_5fr_dd-5"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_mm-5"
+    field: "d.crp_5to_mm-5"
+    type: text
+    maxlen: 2
+  - line: "d.crp_5to_dd-5"
+    field: "d.crp_5to_dd-5"
+    type: text
+    maxlen: 2
+  - line: "n.crp_6e"
+    field: "n.crp_6e"
+    type: money
+  - line: "n.crp_7e"
+    field: "n.crp_7e"
+    type: text
+  - line: "c.crp_7ae"
+    field: "c.crp_7ae"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7be"
+    field: "c.crp_7be"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ce"
+    field: "c.crp_7ce"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7de"
+    field: "c.crp_7de"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ee"
+    field: "c.crp_7ee"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7he"
+    field: "c.crp_7he"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fe"
+    field: "c.crp_7fe"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ge"
+    field: "c.crp_7ge"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ie"
+    field: "c.crp_7ie"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7je"
+    field: "c.crp_7je"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7ke"
+    field: "c.crp_7ke"
+    type: checkbox
+    on_state: "/X"
+  - line: "n.crp_8e"
+    field: "n.crp_8e"
+    type: money
+  - line: "n.crp_9e"
+    field: "n.crp_9e"
+    type: money
+  - line: "printlid.29"
+    field: "printlid.29"
+    type: text
+  - line: "n.pg4ltc_a"
+    field: "n.pg4ltc_a"
+    type: money
+  - line: "n.pg4ltc_b"
+    field: "n.pg4ltc_b"
+    type: money
+  - line: "n.pg4ltc_c"
+    field: "n.pg4ltc_c"
+    type: money
+  - line: "n.pg4ltc_d"
+    field: "n.pg4ltc_d"
+    type: money
+  - line: "n.pg4ltc_e"
+    field: "n.pg4ltc_e"
+    type: money
+  - line: "n.pg4ltc_f"
+    field: "n.pg4ltc_f"
+    type: money
+  - line: "n.pg4ltc_g"
+    field: "n.pg4ltc_g"
+    type: money
+  - line: "printlid.30"
+    field: "printlid.30"
+    type: text
+  - line: "qh1"
+    field: "qh1"
+    type: money
+  - line: "qh2"
+    field: "qh2"
+    type: money
+  - line: "qh3"
+    field: "qh3"
+    type: text
+  - line: "qh4y"
+    field: "qh4y"
+    type: money
+  - line: "qh4s"
+    field: "qh4s"
+    type: money
+  - line: "qh5y"
+    field: "qh5y"
+    type: money
+  - line: "qh5s"
+    field: "qh5s"
+    type: money
+  - line: "qh6y"
+    field: "qh6y"
+    type: money
+  - line: "qh6s"
+    field: "qh6s"
+    type: money
+  - line: "qh7y"
+    field: "qh7y"
+    type: money
+  - line: "qh7s"
+    field: "qh7s"
+    type: money
+  - line: "qh8"
+    field: "qh8"
+    type: money
+  - line: "qh9y"
+    field: "qh9y"
+    type: text
+  - line: "qh9s"
+    field: "qh9s"
+    type: text
+  - line: "qh10"
+    field: "qh10"
+    type: money
+  - line: "qh11"
+    field: "qh11"
+    type: money
+  - line: "qh12"
+    field: "qh12"
+    type: text
+  - line: "qh13"
+    field: "qh13"
+    type: money
+  - line: "qh14"
+    field: "qh14"
+    type: money
+  - line: "qh15"
+    field: "qh15"
+    type: money
+  - line: "qh16"
+    field: "qh16"
+    type: money
+  - line: "qh17y"
+    field: "qh17y"
+    type: money
+  - line: "qh17s"
+    field: "qh17s"
+    type: money
+  - line: "printlid.31"
+    field: "printlid.31"
+    type: text
+  - line: "accountnumber-1"
+    field: "accountnumber-1"
+    type: text
+    maxlen: 11
+  - line: "amount-1"
+    field: "amount-1"
+    type: money
+  - line: "accountnumber-2"
+    field: "accountnumber-2"
+    type: text
+    maxlen: 11
+  - line: "amount-2"
+    field: "amount-2"
+    type: money
+  - line: "accountnumber-3"
+    field: "accountnumber-3"
+    type: text
+    maxlen: 11
+  - line: "amount-3"
+    field: "amount-3"
+    type: money
+  - line: "accountnumber-4"
+    field: "accountnumber-4"
+    type: text
+    maxlen: 11
+  - line: "amount-4"
+    field: "amount-4"
+    type: money
+  - line: "totaldeposit"
+    field: "totaldeposit"
+    type: money
+  - line: "fthb_name-1"
+    field: "fthb_name-1"
+    type: text
+  - line: "fthb_name-2"
+    field: "fthb_name-2"
+    type: text
+  - line: "ahaddress"
+    field: "ahaddress"
+    type: text
+  - line: "ahcity"
+    field: "ahcity"
+    type: text
+  - line: "ahstate"
+    field: "ahstate"
+    type: text
+    maxlen: 2
+  - line: "ahzipcode"
+    field: "ahzipcode"
+    type: text
+    maxlen: 5
+  - line: "resaddress"
+    field: "resaddress"
+    type: text
+  - line: "rescity"
+    field: "rescity"
+    type: text
+  - line: "resstate"
+    field: "resstate"
+    type: text
+    maxlen: 2
+  - line: "reszipcode"
+    field: "reszipcode"
+    type: text
+    maxlen: 5
+  - line: "beneficiaryname"
+    field: "beneficiaryname"
+    type: text
+  - line: "beneficiaryssn"
+    field: "beneficiaryssn"
+    type: text
+    maxlen: 9
+  - line: "benaddress"
+    field: "benaddress"
+    type: text
+  - line: "bencity"
+    field: "bencity"
+    type: text
+  - line: "benstate"
+    field: "benstate"
+    type: text
+    maxlen: 2
+  - line: "benzipcode"
+    field: "benzipcode"
+    type: text
+    maxlen: 5
+  - line: "finstname"
+    field: "finstname"
+    type: text
+  - line: "finstaccountnumber"
+    field: "finstaccountnumber"
+    type: text
+    maxlen: 11
+  - line: "totaccdep"
+    field: "totaccdep"
+    type: money
+  - line: "totaccwith"
+    field: "totaccwith"
+    type: money
+  - line: "intearned"
+    field: "intearned"
+    type: money
+  - line: "accbaljan1"
+    field: "accbaljan1"
+    type: money
+  - line: "accbaldec31"
+    field: "accbaldec31"
+    type: money
+  - line: "milservmember"
+    field: "milservmember"
+    type: checkbox
+    on_state: "/X"
+  - line: "expdate1mm"
+    field: "expdate1mm"
+    type: text
+    maxlen: 2
+  - line: "expdate1dd"
+    field: "expdate1dd"
+    type: text
+    maxlen: 2
+  - line: "expdate1yy"
+    field: "expdate1yy"
+    type: text
+    maxlen: 4
+  - line: "expdesc1"
+    field: "expdesc1"
+    type: text
+  - line: "expamount1"
+    field: "expamount1"
+    type: money
+  - line: "expdate2mm"
+    field: "expdate2mm"
+    type: text
+    maxlen: 2
+  - line: "expdate2dd"
+    field: "expdate2dd"
+    type: text
+    maxlen: 2
+  - line: "expdate2yy"
+    field: "expdate2yy"
+    type: text
+    maxlen: 4
+  - line: "expdesc2"
+    field: "expdesc2"
+    type: text
+  - line: "expamount2"
+    field: "expamount2"
+    type: money
+  - line: "expdate3mm"
+    field: "expdate3mm"
+    type: text
+    maxlen: 2
+  - line: "expdate3dd"
+    field: "expdate3dd"
+    type: text
+    maxlen: 2
+  - line: "expdate3yy"
+    field: "expdate3yy"
+    type: text
+    maxlen: 4
+  - line: "expdesc3"
+    field: "expdesc3"
+    type: text
+  - line: "expamount3"
+    field: "expamount3"
+    type: money
+  - line: "contributionded"
+    field: "contributionded"
+    type: money
+  - line: "accruedint"
+    field: "accruedint"
+    type: money
+relations: []
+cross_form: []
+identity_fields:
+  - SSN_1
+  - firstname-1
+  - lastname-1

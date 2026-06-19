@@ -1,0 +1,519 @@
+# Form 760, 2023 — Virginia Resident Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every AcroForm widget rendered with its own field name) -> vision-map
+# workflow (both pages + zoomed crops read to place each field on its printed
+# line / column) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty; the field names are the raw,
+# human-readable sentinel ids the form ships with, e.g. "Your Name",
+# "1. Federal Adjusted Gross Income", "Check Box2"). VA 760 is a two-page
+# resident return: page 1 carries the header / filing status / exemptions and
+# income lines 1-15; page 2 carries tax/credits/payments lines 16-36, the
+# direct-deposit block, and the signature / preparer block. Each numbered
+# income/tax line is one money widget keyed by its printed step number ("1",
+# "2", ... "36"); the two withholding sub-lines are keyed "19a"/"19b". Header,
+# exemption, refund/account, signature and preparer widgets carry descriptive
+# keys.
+#
+# Coverage. The blank PDF has 115 fillable AcroForm widget entries (the
+# introspect skeleton). ALL 115 are mapped here — nothing is intentionally
+# omitted. Note "Account Type" is ONE /Btn field with two mutually exclusive
+# appearance states (/checking, /savings); it is mapped as two checkbox lines
+# on the shared field, each carrying the exact on_state read from the blank.
+# Pre-printed cells that are NOT AcroForm widgets and therefore never appeared
+# in the sweep are not fields and are not counted: the Section-A "You" count
+# box (always preprinted "1"), the bottom-of-page-1 office-use ovals
+# (LAR / DLAR / DTD / LTD) and the adjacent "$ ____" / 6-cell office box.
+#
+# Checkboxes / ovals. Every yes/no oval is one /Btn field. Its on_state is the
+# exact export value dumped from the blank — VA reuses a small set of odd
+# appearance-state strings across unrelated ovals (/Yes, /spouse, /savings,
+# /checking); these are copied verbatim, NOT normalized. The six income-line
+# "LOSS" ovals (one to the left of lines 1, 3, 9, 13, 14, 15 on page 1) are
+# the fields "Check Box2".."Check Box7" (on_state /Yes); the line-17 "LOSS"
+# oval on page 2 is "Check Box8" (on_state /Yes).
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix and is
+# mapped `money` (the skeleton tagged them `text maxlen:9`). The Section-A/B
+# exemption DOLLAR boxes (count x $930 / x $800) and the age-deduction
+# you/spouse/total boxes and the "Earned Income Credit Amount" claimed and the
+# line-17 STA dollar box are likewise `money`. Genuine text widgets stay text:
+# names, address, city/state/ZIP, birth dates (mm-dd-yyyy), locality / reason
+# / filing-status / filing-election codes, the SSN comb boxes (9 cells), the
+# exemption COUNT boxes (You-65/Spouse-65/blind/dependents/section subtotals),
+# the VA driver's-license number / issue-date boxes, bank routing (9) /
+# account (17) comb boxes, signature dates, phone (10) boxes, the ID-theft PIN
+# (7), and the preparer name / firm / phone / PTIN fields.
+#
+# Relations. Only unconditional equalities with every operand mapped to a
+# single numbered money line are declared (3=1+2, 8=4+5+6+7, 9=3-8,
+# 14=10+11+12+13, 15=9-14, 26=19a+19b+20..25, 34=29+30+31+32+33). Lines whose
+# printed instruction is conditional / branchy — 4 (age-deduction sum over
+# you/spouse sub-boxes, not numbered lines), 18 ("Subtract Line 17 from Line
+# 16" where "Line 17" is split across the spouse-VAGI box and the "17a" STA
+# box — operand is ambiguous), 27/28 ("If Line 26 is less/greater than …"),
+# 35/36 (owe/refund branches) — are OMITTED per the conservative house style.
+#
+# Cross_form. Line 1's printed label is "Adjusted Gross Income from federal
+# return" (federal AGI), so the single cross_form equality 1 == f1040.11
+# (Form 1040, 2023, line 11 = AGI) is declared.
+form: Form 760
+jurisdiction: states/va
+tax_year: 2023
+source_url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2023/760-2023.pdf
+pdf_sha256: 03663fad03779eeda77f497160e8cc03eda843c531cb8abbfb7d107979c82452
+acroform_root: ''
+fields:
+  # ============================================ page 1 — header (name / SSN)
+  - line: your_first_name
+    field: Your Name
+    type: text
+    maxlen: 20
+  - line: your_middle_initial
+    field: Middle initial
+    type: text
+    maxlen: 1
+  - line: your_last_name
+    field: Last name including suffix
+    type: text
+    maxlen: 20
+  - line: your_ssn
+    field: Your SSN
+    type: text
+    maxlen: 9
+  - line: your_first_four_letters_last_name
+    field: First four letters of last name
+    type: text
+    maxlen: 4
+  - line: spouse_first_name
+    field: Spouse Name
+    type: text
+    maxlen: 20
+  - line: spouse_middle_initial
+    field: Middle initial_2
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: Spouse Last Name
+    type: text
+    maxlen: 20
+  - line: spouse_ssn
+    field: Spouse SSN
+    type: text
+    maxlen: 9
+  - line: spouse_first_four_letters_last_name
+    field: First four letters of last name_2
+    type: text
+    maxlen: 4
+  # ---- address (oval = "Number and Street - if this is a change, fill in oval")
+  - line: address_change::yes
+    field: Address change
+    type: checkbox
+    on_state: /Yes
+  - line: address
+    field: Address
+    type: text
+    maxlen: 60
+  - line: city_town_or_post_office
+    field: City, Town OR Post Office
+    type: text
+    maxlen: 40
+  - line: state
+    field: State
+    type: text
+  - line: zip_code
+    field: Zip Code
+    type: text
+    maxlen: 10
+  - line: your_birthdate
+    field: Your Birthdate
+    type: text
+    maxlen: 8
+  - line: you_deceased::yes
+    field: You Deceased
+    type: checkbox
+    on_state: /Yes
+  - line: spouse_birthdate
+    field: Spouse Birthdate
+    type: text
+    maxlen: 8
+  - line: spouse_deceased::yes
+    field: Spouse Deceased
+    type: checkbox
+    on_state: /Yes
+  - line: locality_code
+    field: Locality Code
+    type: text
+    maxlen: 3
+
+  # ---- DMAS information-sharing authorization oval
+  - line: authorize_share_info_to_dmas::on
+    field: Autrhorize shared Info to DMAS
+    type: checkbox
+    on_state: /spouse
+
+  # ---- "Fill in all ovals that apply" (left + center columns)
+  - line: name_or_filing_status_changed::on
+    field: Name or Fliling Status Changed
+    type: checkbox
+    on_state: /spouse
+  - line: return_not_filed_last_year::on
+    field: Return Not Filed Last Year
+    type: checkbox
+    on_state: /spouse
+  - line: dependent_on_anothers_return::on
+    field: Dependent on Another's Return
+    type: checkbox
+    on_state: /spouse
+  - line: qualifying_farmer_fisherman_or_merchant_seaman::on
+    field: Farmer, Fisherman or Merchant Seaman
+    type: checkbox
+    on_state: /savings
+  - line: amended_return::on
+    field: Amended Return
+    type: checkbox
+    on_state: /spouse
+  - line: amended_return_reason_code
+    field: Reason Code
+    type: text
+    maxlen: 2
+  - line: overseas_on_due_date::on
+    field: Overseas on due date
+    type: checkbox
+    on_state: /savings
+  - line: federal_schedule_c_filed::on
+    field: Schedule C filed with Federal
+    type: checkbox
+    on_state: /savings
+  - line: earned_income_credit_on_federal_return::on
+    field: Earned Income Credit
+    type: checkbox
+    on_state: /savings
+  - line: earned_income_credit_amount_claimed
+    field: Earned Income Credit Amount
+    type: money
+
+  # ---- VA driver's license information (Customer ID + Issue Date, you/spouse)
+  - line: your_va_drivers_license_number
+    field: You Virginia Driver's License Number
+    type: text
+    maxlen: 9
+  - line: your_va_drivers_license_issue_date
+    field: You Issue Date
+    type: text
+    maxlen: 8
+  - line: spouse_va_drivers_license_number
+    field: Spouse Virginia Driver's License Number
+    type: text
+    maxlen: 9
+  - line: spouse_va_drivers_license_issue_date
+    field: Spouse Issue Date
+    type: text
+    maxlen: 8
+
+  # ---- Filing Status (code box) + Federal HOH oval + Filing-Status-3 spouse name
+  - line: filing_status_code
+    field: Filing Status
+    type: text
+    maxlen: 1
+  - line: federal_head_of_household::yes
+    field: Federal Head of household
+    type: checkbox
+    on_state: /spouse
+  - line: spouse_name_filing_status_3
+    field: Spouse Name_2
+    type: text
+
+  # ---- Exemptions Section A (You count = preprinted "1", not a widget)
+  - line: exemptions_section_a_spouse_if_filing_status_2
+    field: Spouse if Filing Status 2
+    type: text
+    maxlen: 1
+  - line: exemptions_section_a_dependents
+    field: Dependents
+    type: text
+    maxlen: 2
+  - line: exemptions_section_a_total_count
+    field: Total Exemptions Section A
+    type: text
+    maxlen: 2
+  - line: exemptions_section_a_dollar_amount
+    field: Total Exemptions Dollar Amount Section A
+    type: money
+
+  # ---- Exemptions Section B (you/spouse 65-or-over, you/spouse blind)
+  - line: exemptions_section_b_you_over_65
+    field: You over 65
+    type: text
+    maxlen: 1
+  - line: exemptions_section_b_spouse_over_65
+    field: Spouse over 65
+    type: text
+    maxlen: 1
+  - line: exemptions_section_b_you_blind
+    field: You Blind
+    type: text
+    maxlen: 1
+  - line: exemptions_section_b_spouse_blind
+    field: Spouse Blind
+    type: text
+    maxlen: 1
+  - line: exemptions_section_b_total_count
+    field: Total Exemptions Section B
+    type: text
+    maxlen: 2
+  - line: exemptions_section_b_dollar_amount
+    field: Total Exemption Dollar Amount Section B
+    type: money
+
+  # ============================================ page 1 — income lines 1-15
+  - line: line1_loss::yes              # "LOSS" oval to the left of Line 1
+    field: Check Box2
+    type: checkbox
+    on_state: /Yes
+  - line: "1"                          # Adjusted Gross Income from federal return
+    field: 1. Federal Adjusted Gross Income
+    type: money
+  - line: "2"                          # Additions from enclosed Schedule ADJ, Line 3
+    field: 2. Additions
+    type: money
+  - line: line3_loss::yes             # "LOSS" oval to the left of Line 3
+    field: Check Box3
+    type: checkbox
+    on_state: /Yes
+  - line: "3"                          # Add Lines 1 and 2
+    field: 3. Add Lines 1 and 2
+    type: money
+  - line: line4_you_age_deduction     # Age Deduction — You
+    field: You Age Deduction
+    type: money
+  - line: line4_spouse_age_deduction  # Age Deduction — Spouse
+    field: Spouse Age Deduction
+    type: money
+  - line: "4"                          # Total Age Deduction (You + Spouse)
+    field: 4. Total Age Deduction
+    type: money
+  - line: "5"                          # Social Security and equivalent Tier 1 Railroad Retirement benefits
+    field: 5. Soc Sec and Rail benefits
+    type: money
+  - line: "6"                          # State Income Tax refund or overpayment credit
+    field: 6. State Income tax refund or overpayment
+    type: money
+  - line: "7"                          # Subtractions from enclosed Schedule ADJ, Line 7
+    field: 7. Subtractions
+    type: money
+  - line: "8"                          # Add Lines 4, 5, 6 and 7
+    field: 8. Add lines 4,5,6 and 7
+    type: money
+  - line: line9_loss::yes             # "LOSS" oval to the left of Line 9
+    field: Check Box4
+    type: checkbox
+    on_state: /Yes
+  - line: "9"                          # Virginia Adjusted Gross Income (VAGI) — subtract Line 8 from Line 3
+    field: 9. Virginia Adjusted Gross Income
+    type: money
+  - line: "10"                         # Itemized Deductions from Virginia Schedule A
+    field: 10. Itemized Deductions
+    type: money
+  - line: "11"                         # Standard Deduction (if not itemizing)
+    field: 11. Standard Deduction
+    type: money
+  - line: "12"                         # Exemptions — sum of Section A plus Section B
+    field: 12. Total Exemptions Section A plus Section B above
+    type: money
+  - line: line13_loss::yes            # "LOSS" oval to the left of Line 13
+    field: Check Box5
+    type: checkbox
+    on_state: /Yes
+  - line: "13"                         # Deductions from Schedule ADJ, Line 9
+    field: 13 Total Deductions
+    type: money
+  - line: line14_loss::yes            # "LOSS" oval to the left of Line 14
+    field: Check Box6
+    type: checkbox
+    on_state: /Yes
+  - line: "14"                         # Add Lines 10, 11, 12 and 13
+    field: 14. Add Lines 10,11, 12 and 13
+    type: money
+  - line: line15_loss::yes            # "LOSS" oval to the left of Line 15
+    field: Check Box7
+    type: checkbox
+    on_state: /Yes
+  - line: "15"                         # Virginia Taxable Income — subtract Line 14 from Line 9
+    field: 15. Virginia Taxable income
+    type: money
+
+  # ============================================ page 2 — header SSN repeat
+  - line: page2_your_ssn
+    field: SSN 1
+    type: text
+    maxlen: 9
+
+  # ============================================ page 2 — tax lines 16-36
+  - line: "16"                         # Amount of Tax from Tax Table or Tax Rate Schedule
+    field: 16. Amount of tax
+    type: money
+  - line: line17_loss::yes            # "LOSS" oval to the left of Line 17
+    field: Check Box8
+    type: checkbox
+    on_state: /Yes
+  - line: "17"                         # Spouse Tax Adjustment — enter Spouse's VAGI in this box
+    field: 17. Spouse Tax Adjustment
+    type: money
+  - line: 17a                          # Spouse Tax Adjustment (STA) dollar amount
+    field: 17a Spouse Tax Adjustment Dollar Amount
+    type: money
+  - line: "18"                         # Net Amount of Tax — subtract Line 17 from Line 16
+    field: 18. Net Amount of Tax
+    type: money
+  - line: 19a                          # Your Virginia income tax withheld for 2023
+    field: 19a Your Virginia Witholding
+    type: money
+  - line: 19b                          # Spouse's Virginia withholding (Filing Status 2 only)
+    field: 19b Spouse's Virginia Witholding
+    type: money
+  - line: "20"                         # Estimated tax payments for taxable year 2023 (Form 760ES)
+    field: 20. Estimated Payments Made
+    type: money
+  - line: "21"                         # Amount of 2022 overpayment applied toward 2023 estimated tax
+    field: 21. 2022 Overpayment applied to 2023
+    type: money
+  - line: "22"                         # Extension Payments (Form 760IP)
+    field: 22. Extension Payments
+    type: money
+  - line: "23"                         # Tax Credit for Low-Income Individuals or EIC (Sch. ADJ, Line 17)
+    field: 23. Tax Credit for Low Income or Earned Income
+    type: money
+  - line: "24"                         # Credit for Tax Paid to Another State (Schedule OSC, Line 21)
+    field: 24. Credit for Taxes paid to another State
+    type: money
+  - line: "25"                         # Credits from enclosed Schedule CR, Section 5, Part 1, Line 1A
+    field: 25. Credits from SCH CR
+    type: money
+  - line: "26"                         # Add Lines 19a through 25
+    field: 26. Add Lines 19a Through 25
+    type: money
+  - line: "27"                         # Tax You Owe — if Line 26 < Line 18, subtract Line 26 from Line 18
+    field: 27. Tax you owe
+    type: money
+  - line: "28"                         # Tax Overpayment — if Line 18 < Line 26, subtract Line 18 from Line 26
+    field: 28. Overpayment
+    type: money
+  - line: "29"                         # Amount of overpayment credited to next year's estimated tax
+    field: 29. Overpayment credited to next year
+    type: money
+  - line: "30"                         # Virginia529 and ABLE Contributions (Schedule VAC, Section I, Line 6)
+    field: 30. Virginia529 and ABLE Contributions
+    type: money
+  - line: "31"                         # Other Voluntary Contributions (Schedule VAC, Section II, Line 14)
+    field: 31.  Other Contributions from SCH VAC
+    type: money
+  - line: line32_760c_760f_enclosed::on   # oval: "Enter 760C or 760F in box and fill in oval"
+    field: Fill in oval if 760C or 760F is enclosed
+    type: checkbox
+    on_state: /spouse
+  - line: "32"                         # Addition to Tax, Penalty, and Interest (Schedule ADJ, Line 21)
+    field: 32. Addition to Tax , Penalty and Interest
+    type: money
+  - line: line33_no_sales_use_tax_due::on   # oval: "FILL IN OVAL IF NO SALES AND USE TAX IS DUE"
+    field: Fill in oval if no sales tax is due
+    type: checkbox
+    on_state: /spouse
+  - line: "33"                         # Sales and Use Tax (Consumer's Use Tax)
+    field: 33. Consumer's Use Tax
+    type: money
+  - line: "34"                         # Add Lines 29 through 33
+    field: 34. Add lines 29 Through 33
+    type: money
+  - line: line35_paying_by_credit_or_debit::on   # oval: "FILL IN OVAL IF PAYING BY CREDIT OR DEBIT CARD"
+    field: Paying by Debit or Credit
+    type: checkbox
+    on_state: /spouse
+  - line: "35"                         # Amount You Owe
+    field: 35. Amount You Owe
+    type: money
+  - line: "36"                         # Your Refund
+    field: 36. Your Refund
+    type: money
+
+  # ============================================ page 2 — direct bank deposit
+  - line: account_type::checking
+    field: Account Type
+    type: checkbox
+    on_state: /checking
+  - line: account_type::savings
+    field: Account Type
+    type: checkbox
+    on_state: /savings
+  - line: bank_routing_transit_number
+    field: Bank Routing Transit Number
+    type: text
+    maxlen: 9
+  - line: bank_account_number
+    field: Bank Account Number
+    type: text
+    maxlen: 17
+
+  # ============================================ page 2 — authorizations + signature
+  - line: option_for_electronic_1099g::on   # oval: "I agree to obtain my Form 1099-G at www.tax.virginia.gov"
+    field: Option for electronic 1099G
+    type: checkbox
+    on_state: /savings
+  - line: your_signature_date
+    field: Date
+    type: text
+    maxlen: 8
+  - line: spouse_signature_date
+    field: Date_2
+    type: text
+    maxlen: 8
+  - line: your_phone_number
+    field: Your Phone Number
+    type: text
+    maxlen: 10
+  - line: spouse_phone_number
+    field: Spouse's Phone Number
+    type: text
+    maxlen: 10
+  - line: id_theft_pin
+    field: ID Theft PIN
+    type: text
+    maxlen: 7
+
+  # ============================================ page 2 — paid preparer
+  - line: preparer_name
+    field: Preparer's Name
+    type: text
+  - line: preparer_firm_name
+    field: Preparer Firm Name
+    type: text
+  - line: preparer_phone_number
+    field: Preparer Phone Number
+    type: text
+  - line: preparer_filing_election
+    field: Filing Election
+    type: text
+    maxlen: 2
+  - line: preparer_ptin
+    field: Prepares PTIN
+    type: text
+    maxlen: 9
+  - line: permission_to_discuss_with_preparer::on   # oval: "I (We) authorize the Dept. of Taxation to discuss this return with my (our) preparer"
+    field: Permission to Discuss with Preparer
+    type: checkbox
+    on_state: /spouse
+relations:
+  - "3 == 1 + 2"                       # Line 3 "Add Lines 1 and 2."
+  - "8 == 4 + 5 + 6 + 7"               # Line 8 "Add Lines 4, 5, 6 and 7."
+  - "9 == 3 - 8"                       # Line 9 "VAGI — Subtract Line 8 from Line 3."
+  - "14 == 10 + 11 + 12 + 13"          # Line 14 "Add Lines 10, 11, 12 and 13."
+  - "15 == 9 - 14"                     # Line 15 "Virginia Taxable Income — Subtract Line 14 from Line 9."
+  - "26 == 19a + 19b + 20 + 21 + 22 + 23 + 24 + 25"  # Line 26 "Add Lines 19a through 25."
+  - "34 == 29 + 30 + 31 + 32 + 33"     # Line 34 "Add Lines 29 through 33."
+cross_form:
+  - "1 == f1040.11"                    # Line 1 "Adjusted Gross Income from federal return" (federal AGI = Form 1040 Line 11)
+identity_fields:
+  - your_ssn
+  - your_first_name
+  - your_last_name
