@@ -20,4 +20,4 @@ Design commitments (unchanged from the dev plan):
 Status: v0.1 IN DEVELOPMENT — not yet published to PyPI.
 """
 
-__version__ = "0.1.0.dev0"
+__version__ = "0.1.0"

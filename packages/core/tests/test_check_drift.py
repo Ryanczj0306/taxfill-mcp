@@ -6,6 +6,7 @@ import urllib.error
 from pathlib import Path
 
 import pytest
+import yaml
 
 REPO = Path(__file__).resolve().parents[3]
 
@@ -69,3 +70,44 @@ def test_unreachable_blank_is_drift(monkeypatch):
     monkeypatch.setattr(cd, "_download", boom)
     drift = cd.check_form_blanks()
     assert drift and all("unreachable" in d.lower() for d in drift)
+
+
+def test_collect_mailing_urls_scopes_to_mailing_block():
+    # Only URLs nested under a mailing_addresses key are collected; other cited
+    # facts (deadlines, etc.) carry their own citation.url and are out of scope.
+    node = {
+        "mailing_addresses": {"citation": {"url": "M1"}, "verify": {"url": "M2"}},
+        "deadlines": {"citation": {"url": "D1"}},
+        "nested": [{"mailing_addresses": {"citation": {"url": "M3"}}}],
+    }
+    out: list[str] = []
+    cd._collect_mailing_urls(node, out)
+    assert set(out) == {"M1", "M2", "M3"}  # D1 excluded
+
+
+def test_probe_urls_404_is_drift_but_403_is_only_a_warning(monkeypatch):
+    url = "https://example.gov/where-to-file"
+    monkeypatch.setattr(cd.urllib.request, "urlopen", lambda *a, **k: _Resp(200))
+    assert cd._probe_urls([url], "x") == []
+
+    def raise_404(*a, **k):
+        raise urllib.error.HTTPError(url, 404, "gone", {}, None)
+    monkeypatch.setattr(cd.urllib.request, "urlopen", raise_404)
+    assert cd._probe_urls([url], "x")  # non-empty: drifted
+
+    def raise_403(*a, **k):
+        raise urllib.error.HTTPError(url, 403, "blocked", {}, None)
+    monkeypatch.setattr(cd.urllib.request, "urlopen", raise_403)
+    assert cd._probe_urls([url], "x") == []  # 403 = blocked bot, not drift
+
+
+def test_mailing_addresses_checked_and_reachable_is_no_drift(monkeypatch):
+    # The real federal + per-state knowledge packs DO carry where-to-file URLs,
+    # and when they all resolve there is no drift.
+    federal = yaml.safe_load((REPO / "knowledge" / "federal" / "2023.yaml").read_text())
+    found: list[str] = []
+    cd._collect_mailing_urls(federal, found)
+    assert any("irs.gov" in u for u in found)  # wiring: real where-to-file URL collected
+
+    monkeypatch.setattr(cd.urllib.request, "urlopen", lambda *a, **k: _Resp(200))
+    assert cd.check_mailing_addresses() == []

@@ -1,0 +1,1051 @@
+# Form IT-203 (2023) — New York State Nonresident and Part-Year Resident
+# Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) → vision-map workflow (all
+# four pages + zoomed crops read to place each field on its printed line/
+# column) → this map.
+#
+# Layout. Flat AcroForm (acroform_root empty); field names are the raw opaque
+# sentinel ids/labels from the PDF (e.g. "federal 1 dollars", "Filing Status",
+# "1030"-style names do NOT appear here — NY used descriptive widget names).
+# The income/adjustment block (page 2 lines 1-31) is a TWO-column grid:
+#   _fed = Federal amount (whole dollars)
+#   _ny  = New York State amount (whole dollars)
+# Each such line therefore has up to two money boxes carrying a _fed / _ny
+# suffix. Lines that print only one column (line 12 federal-only; line 32
+# "Enter the amount from line 31, Federal amount column") have no suffix or a
+# single explicit column key. The page 1 header, dependent grid, and pages 3-4
+# (single-column NY computation) carry no fed/ny split.
+#
+# "Your SSN" appears as ONE physical AcroForm widget that the PDF repeats on
+# every page (pages 1-4). The skeleton lists it four times (Your SSN, Your
+# SSN#2/#3/#4) all bound to the SAME field "Your SSN"; we keep the single
+# canonical mapping `your_ssn` and drop the duplicates (they would collide on
+# an identical field path and add nothing). See the omissions list below.
+#
+# All fillable widgets are mapped EXCEPT the duplicate "Your SSN" repeats
+# (#2/#3/#4 — same widget, mapped once as your_ssn) — there are NO greyed/
+# reserved cells on this form's fillable set and no pre-printed constants.
+#
+# cross_form. Printed line 19 is "Federal adjusted gross income"; its Federal-
+# amount column is the federal Form 1040 AGI. Per the prompt's instruction to
+# cross_form where the printed label says "federal amount", line19_fed ties to
+# form_1040 AGI. No on-form unconditional relations whose operands are ALL
+# mapped exist in a clean two-column form-1040-sourced layout, so relations is
+# empty per conservative house style (the per-column federal/NY arithmetic is
+# conditional and pulls from many off-form federal lines).
+form: Form IT-203
+jurisdiction: states/ny
+tax_year: 2023
+source_url: https://www.tax.ny.gov/pdf/2023/inc/it203_2023_fill_in.pdf
+pdf_sha256: 923aaeb0881da8e8138f7a07203cedced36bd545399445503ba939d021526b07
+acroform_root: ''
+fields:
+  # ============================================================ page 1 header
+  - line: fiscal_year_begin            # "for fiscal year beginning ... 23"
+    field: beginning date
+    type: text
+    maxlen: 6
+  - line: fiscal_year_end              # "and ending ..."
+    field: ending date
+    type: text
+    maxlen: 10
+  - line: your_first_name
+    field: Your first name
+    type: text
+    maxlen: 23
+  - line: your_last_name
+    field: Your last name
+    type: text
+    maxlen: 45
+  - line: your_dob                      # Your date of birth (mmddyyyy)
+    field: Your DOB
+    type: text
+    maxlen: 8
+  - line: your_ssn                      # Your Social Security number
+    field: Your SSN
+    type: text
+    maxlen: 9
+  - line: spouse_first_name
+    field: Spouse's first name
+    type: text
+    maxlen: 23
+  - line: spouse_last_name
+    field: Spouse's last name
+    type: text
+    maxlen: 45
+  - line: spouse_dob                    # Spouse's date of birth (mmddyyyy)
+    field: Spouse DOB
+    type: text
+    maxlen: 8
+  - line: spouse_ssn                    # Spouse's Social Security number
+    field: Spouse's SSN
+    type: text
+    maxlen: 9
+  - line: mailing_address              # Mailing address (number and street or PO box)
+    field: Mailing address
+    type: text
+    maxlen: 60
+  - line: mailing_apartment_number
+    field: Apartment number 1
+    type: text
+    maxlen: 10
+  - line: nys_county_of_residence       # NY State county of residence
+    field: NY State county of residence
+    type: text
+    maxlen: 25
+  - line: mailing_city
+    field: City, village or post office 1
+    type: text
+    maxlen: 26
+  - line: mailing_state
+    field: State 1
+    type: text
+    maxlen: 2
+  - line: mailing_zip
+    field: ZIP code 1
+    type: text
+    maxlen: 10
+  - line: mailing_country
+    field: Country
+    type: text
+    maxlen: 23
+  - line: nys_school_district_name
+    field: nys school district name
+    type: text
+    maxlen: 25
+  - line: permanent_home_address        # Taxpayer's permanent home address (if different)
+    field: permanent home address
+    type: text
+    maxlen: 50
+  - line: permanent_apartment_number
+    field: apartment number 2
+    type: text
+    maxlen: 10
+  - line: permanent_city
+    field: city, village or post office 2
+    type: text
+    maxlen: 20
+  - line: nys_school_district_code      # School district code number
+    field: school district code number
+    type: text
+    maxlen: 3
+  - line: permanent_state
+    field: State 2
+    type: text
+    maxlen: 2
+  - line: permanent_zip
+    field: zip code 2
+    type: text
+    maxlen: 10
+  - line: permanent_country
+    field: Country 2
+    type: text
+    maxlen: 23
+  - line: taxpayer_date_of_death        # Decedent information — Taxpayer's date of death
+    field: if taxpayer is deceased
+    type: text
+    maxlen: 8
+  - line: spouse_date_of_death          # Decedent information — Spouse's date of death
+    field: date of death
+    type: text
+    maxlen: 8
+
+  # ------------------------------------------------ A. Filing status (one box)
+  - line: A_filing_status_single
+    field: Filing Status
+    type: checkbox
+    on_state: /1 Single
+  - line: A_filing_status_mfj
+    field: Filing Status
+    type: checkbox
+    on_state: "/2 Married Filing Joint Return (enter spouse恠 social security number above)"
+  - line: A_filing_status_mfs
+    field: Filing Status
+    type: checkbox
+    on_state: "/3 Married Filing Seperate Return (enter spouse恠 social security number above)"
+  - line: A_filing_status_hoh
+    field: Filing Status
+    type: checkbox
+    on_state: /Head of Household (with qualifying person)
+  - line: A_filing_status_qss
+    field: Filing Status
+    type: checkbox
+    on_state: /Qualifying widow(er) with dependent child
+
+  # ------- B. Did you itemize deductions on your 2023 federal return? (yes/no)
+  - line: B_itemized_federal_yes
+    field: BoxB
+    type: checkbox
+    on_state: /yes
+  - line: B_itemized_federal_no
+    field: BoxB
+    type: checkbox
+    on_state: /no
+  # ------- C. Can you be claimed as a dependent on another return? (yes/no)
+  - line: C_claimed_dependent_yes
+    field: BoxC
+    type: checkbox
+    on_state: /yes
+  - line: C_claimed_dependent_no
+    field: BoxC
+    type: checkbox
+    on_state: /no
+  # ------- D1. Did you have a financial account located in a foreign country?
+  - line: D1_foreign_account_yes
+    field: BoxD1
+    type: checkbox
+    on_state: /yes
+  - line: D1_foreign_account_no
+    field: BoxD1
+    type: checkbox
+    on_state: /no
+  # ------- D2(1). Did you/spouse maintain living quarters in Yonkers? (yes/no)
+  - line: D2_yonkers_quarters_yes
+    field: BoxD2
+    type: checkbox
+    on_state: /yes
+  - line: D2_yonkers_quarters_no
+    field: BoxD2
+    type: checkbox
+    on_state: /no
+  - line: D2_months_you_yonkers       # (2) Number of months YOU lived in Yonkers in 2023
+    field: D2_amount
+    type: text
+    maxlen: 2
+  - line: D2_months_spouse_yonkers    # (3) Number of months YOUR SPOUSE lived in Yonkers in 2023
+    field: D2_amount_spouse
+    type: text
+    maxlen: 2
+  # ------- D2(4). Did you/spouse work in Yonkers while not living there? (y/n)
+  - line: D2_work_yonkers_yes
+    field: BoxD4
+    type: checkbox
+    on_state: /yes
+  - line: D2_work_yonkers_no
+    field: BoxD4
+    type: checkbox
+    on_state: /no
+  # ------- E. New York City part-year residents only
+  - line: E_months_you_nyc           # (1) Number of months YOU lived in NY City in 2023
+    field: E2.0
+    type: text
+    maxlen: 2
+  - line: E_months_spouse_nyc        # (2) Number of months YOUR SPOUSE lived in NY City in 2023
+    field: E2.1
+    type: text
+    maxlen: 2
+  # ------- F. Enter your 2-character special condition code(s)
+  - line: F_special_condition_1
+    field: F1
+    type: text
+    maxlen: 2
+  - line: F_special_condition_2
+    field: F2
+    type: text
+    maxlen: 2
+  # ------- G. New York State part-year residents — date moved in/out of NYS
+  - line: G_date_moved
+    field: G date
+    type: text
+    maxlen: 10
+  # ------- G. On the last day of the tax year (mark X in one box)
+  - line: G_lastday_lived_in_nys      # 1) Lived in NYS
+    field: lived in
+    type: checkbox
+    on_state: "/1"
+  - line: G_lastday_outside_with_income   # 2) Lived outside NYS; received income from NYS sources during nonresident period
+    field: lived in
+    type: checkbox
+    on_state: "/2"
+  - line: G_lastday_outside_no_income     # 3) Lived outside NYS; received no income from NYS sources during nonresident period
+    field: lived in
+    type: checkbox
+    on_state: "/3"
+  # ------- H. Did you/spouse maintain living quarters in NYS in 2023? (yes/no)
+  - line: H_nys_quarters_yes
+    field: In NYC
+    type: checkbox
+    on_state: /yes
+  - line: H_nys_quarters_no
+    field: In NYC
+    type: checkbox
+    on_state: /no
+
+  # -------------------------------------- I. Dependent information (6 rows 0-5)
+  - line: dep0_first_mi
+    field: first and middle I.0
+    type: text
+    maxlen: 25
+  - line: dep0_last_name
+    field: last name chart.0
+    type: text
+    maxlen: 25
+  - line: dep0_relationship
+    field: relationship.0
+    type: text
+    maxlen: 20
+  - line: dep0_ssn
+    field: dependent ssn.0
+    type: text
+    maxlen: 9
+  - line: dep0_dob
+    field: dependent dob.0
+    type: text
+    maxlen: 8
+  - line: dep1_first_mi
+    field: first and middle I.1
+    type: text
+    maxlen: 25
+  - line: dep1_last_name
+    field: last name chart.1
+    type: text
+    maxlen: 25
+  - line: dep1_relationship
+    field: relationship.1
+    type: text
+    maxlen: 20
+  - line: dep1_ssn
+    field: dependent ssn.1
+    type: text
+    maxlen: 9
+  - line: dep1_dob
+    field: dependent dob.1
+    type: text
+    maxlen: 8
+  - line: dep2_first_mi
+    field: first and middle I.2
+    type: text
+    maxlen: 25
+  - line: dep2_last_name
+    field: last name chart.2
+    type: text
+    maxlen: 25
+  - line: dep2_relationship
+    field: relationship.2
+    type: text
+    maxlen: 20
+  - line: dep2_ssn
+    field: dependent ssn.2
+    type: text
+    maxlen: 9
+  - line: dep2_dob
+    field: dependent dob.2
+    type: text
+    maxlen: 8
+  - line: dep3_first_mi
+    field: first and middle I.3
+    type: text
+    maxlen: 25
+  - line: dep3_last_name
+    field: last name chart.3
+    type: text
+    maxlen: 25
+  - line: dep3_relationship
+    field: relationship.3
+    type: text
+    maxlen: 20
+  - line: dep3_ssn
+    field: dependent ssn.3
+    type: text
+    maxlen: 9
+  - line: dep3_dob
+    field: dependent dob.3
+    type: text
+    maxlen: 8
+  - line: dep4_first_mi
+    field: first and middle I.4
+    type: text
+    maxlen: 25
+  - line: dep4_last_name
+    field: last name chart.4
+    type: text
+    maxlen: 25
+  - line: dep4_relationship
+    field: relationship.4
+    type: text
+    maxlen: 20
+  - line: dep4_ssn
+    field: dependent ssn.4
+    type: text
+    maxlen: 9
+  - line: dep4_dob
+    field: dependent dob.4
+    type: text
+    maxlen: 8
+  - line: dep5_first_mi
+    field: first and middle I.5
+    type: text
+    maxlen: 25
+  - line: dep5_last_name
+    field: last name chart.5
+    type: text
+    maxlen: 25
+  - line: dep5_relationship
+    field: relationship.5
+    type: text
+    maxlen: 20
+  - line: dep5_ssn
+    field: dependent ssn.5
+    type: text
+    maxlen: 9
+  - line: dep5_dob
+    field: dependent dob.5
+    type: text
+    maxlen: 8
+  - line: dep_more_than_9             # "If more than 6 dependents, mark an X in the box"
+    field: more than 9
+    type: checkbox
+    on_state: /yes
+
+  # =================================== page 2 — Federal income and adjustments
+  # two columns: _fed = Federal amount, _ny = New York State amount
+  - line: 1_wages_fed                 # Wages, salaries, tips, etc.
+    field: federal 1 dollars
+    type: money
+    maxlen: 10
+  - line: 1_wages_ny
+    field: nys 1 dollars
+    type: money
+    maxlen: 10
+  - line: 2_taxable_interest_fed
+    field: federal 2 dollars
+    type: money
+    maxlen: 10
+  - line: 2_taxable_interest_ny
+    field: nys 2 dollars
+    type: money
+    maxlen: 10
+  - line: 3_ordinary_dividends_fed
+    field: federal 3 dollars
+    type: money
+    maxlen: 10
+  - line: 3_ordinary_dividends_ny
+    field: nys 3 dollars
+    type: money
+    maxlen: 10
+  - line: 4_taxable_refunds_fed       # Taxable refunds, credits, or offsets of state/local income taxes
+    field: federal 4 dollars
+    type: money
+    maxlen: 10
+  - line: 4_taxable_refunds_ny
+    field: nys 4 dollars
+    type: money
+    maxlen: 10
+  - line: 5_alimony_received_fed
+    field: federal 5 dollars
+    type: money
+    maxlen: 10
+  - line: 5_alimony_received_ny
+    field: nys 5 dollars
+    type: money
+    maxlen: 10
+  - line: 6_business_income_fed       # Business income or loss (Sch C)
+    field: federal 6 dollars
+    type: money
+    maxlen: 10
+  - line: 6_business_income_ny
+    field: nys 6 dollars
+    type: money
+    maxlen: 10
+  - line: 7_capital_gain_fed          # Capital gain or loss (Sch D)
+    field: federal 7 dollars
+    type: money
+    maxlen: 10
+  - line: 7_capital_gain_ny
+    field: nys 7 dollars
+    type: money
+    maxlen: 10
+  - line: 8_taxable_ira_fed           # Taxable amount of IRA distributions
+    field: federal 8 dollars
+    type: money
+    maxlen: 10
+  - line: 8_taxable_ira_ny
+    field: nys 8 dollars
+    type: money
+    maxlen: 10
+  - line: 9_lump_sum_box              # line 9 — "mark X in box" if you used the federal lump-sum (Form 4972) method
+    field: line 9 box
+    type: checkbox
+    on_state: /Yes
+  - line: 9_taxable_pensions_fed      # Taxable amount of pensions/annuities
+    field: federal 9 dollars
+    type: money
+    maxlen: 10
+  - line: 9_taxable_pensions_ny
+    field: nys 9 dollars
+    type: money
+    maxlen: 10
+  - line: 10_rental_partnership_box   # line 10 — "mark X in box"
+    field: line 10 box
+    type: checkbox
+    on_state: /Yes
+  - line: 10_rental_partnership_fed   # Rental real estate, royalties, partnerships, S corps, trusts, etc.
+    field: federal 10 dollars
+    type: money
+    maxlen: 10
+  - line: 10_rental_partnership_ny
+    field: nys 10 dollars
+    type: money
+    maxlen: 10
+  - line: 11_rental_real_estate_fed   # Rental real estate included in line 10
+    field: federal 11 dollars
+    type: money
+    maxlen: 10
+  - line: 11_rental_real_estate_ny
+    field: nys 11 dollars
+    type: money
+    maxlen: 10
+  - line: 12_farm_income_fed          # line 12 — federal amount only (NY column greyed/absent)
+    field: federal 12 dollars
+    type: money
+    maxlen: 10
+  - line: 13_farm_income_fed          # Farm income or loss (Sch F)
+    field: federal 13 dollars
+    type: money
+    maxlen: 10
+  - line: 13_farm_income_ny
+    field: nys 13 dollars
+    type: money
+    maxlen: 10
+  - line: 14_unemployment_fed         # Unemployment compensation
+    field: federal 14 dollars
+    type: money
+    maxlen: 10
+  - line: 14_unemployment_ny
+    field: nys 14 dollars
+    type: money
+    maxlen: 10
+  - line: 15_taxable_ss_fed           # Taxable amount of Social Security benefits
+    field: federal 15 dollars
+    type: money
+    maxlen: 10
+  - line: 15_taxable_ss_ny
+    field: nys 15 dollars
+    type: money
+    maxlen: 10
+  - line: 16_other_income_identify    # line 16 — "identify" description
+    field: 16 identify
+    type: text
+    maxlen: 20
+  - line: 16_other_income_fed         # Other income
+    field: federal 16 dollars
+    type: money
+    maxlen: 10
+  - line: 16_other_income_ny
+    field: nys 16 dollars
+    type: money
+    maxlen: 10
+  - line: 17_total_income_fed         # Add lines 1 through 11 and 13 through 16
+    field: federal 17 dollars
+    type: money
+    maxlen: 10
+  - line: 17_total_income_ny
+    field: nys 17 dollars
+    type: money
+    maxlen: 10
+  - line: 18_federal_adjustments_identify   # line 18 — "identify" description
+    field: 18 identify
+    type: text
+    maxlen: 34
+  - line: 18_federal_adjustments_fed  # Total federal adjustments to income
+    field: federal 18 dollars
+    type: money
+    maxlen: 10
+  - line: 18_federal_adjustments_ny
+    field: nys 18 dollars
+    type: money
+    maxlen: 10
+  - line: 19_federal_agi_fed          # Federal adjusted gross income (subtract line 18 from line 17)
+    field: federal 19 dollars
+    type: money
+    maxlen: 10
+  - line: 19_federal_agi_ny
+    field: nys 19 dollars
+    type: money
+    maxlen: 10
+
+  # ------------------------------------------------- New York additions (20-23)
+  - line: 20_interest_state_local_bonds_fed   # Interest income on state and local bonds/obligations
+    field: federal 20 dollars
+    type: money
+    maxlen: 10
+  - line: 20_interest_state_local_bonds_ny
+    field: nys 20 dollars
+    type: money
+    maxlen: 10
+  - line: 21_public_employee_414h_fed        # Public employee 414(h) retirement contributions
+    field: federal 21 dollars
+    type: money
+    maxlen: 10
+  - line: 21_public_employee_414h_ny
+    field: nys 21 dollars
+    type: money
+    maxlen: 10
+  - line: 22_other_additions_fed             # Other (Form IT-225, line 9)
+    field: federal 22 dollars
+    type: money
+    maxlen: 10
+  - line: 22_other_additions_ny
+    field: nys 22 dollars
+    type: money
+    maxlen: 10
+  - line: 23_add_lines_19_to_22_fed          # Add lines 19 through 22
+    field: federal 23 dollars
+    type: money
+    maxlen: 10
+  - line: 23_add_lines_19_to_22_ny
+    field: nys 23 dollars
+    type: money
+    maxlen: 10
+
+  # ---------------------------------------------- New York subtractions (24-31)
+  - line: 24_taxable_refunds_subtraction_fed  # Taxable refunds, credits, or offsets of state/local income taxes
+    field: federal 24 dollars
+    type: money
+    maxlen: 10
+  - line: 24_taxable_refunds_subtraction_ny
+    field: nys 24 dollars
+    type: money
+    maxlen: 10
+  - line: 25_pensions_nys_local_govt_fed      # Pensions of NYS and local governments and the federal government
+    field: federal 25 dollars
+    type: money
+    maxlen: 10
+  - line: 25_pensions_nys_local_govt_ny
+    field: nys 25 dollars
+    type: money
+    maxlen: 10
+  - line: 26_us_govt_bond_interest_fed        # Interest income on U.S. government bonds
+    field: federal 26 dollars
+    type: money
+    maxlen: 10
+  - line: 26_us_govt_bond_interest_ny
+    field: nys 26 dollars
+    type: money
+    maxlen: 10
+  - line: 27_pension_annuity_exclusion_fed    # Pension and annuity income exclusion
+    field: federal 27 dollars
+    type: money
+    maxlen: 10
+  - line: 27_pension_annuity_exclusion_ny
+    field: nys 27 dollars
+    type: money
+    maxlen: 10
+  - line: 28_other_subtractions_fed           # Other (Form IT-225, line 18)
+    field: federal 28 dollars
+    type: money
+    maxlen: 10
+  - line: 28_other_subtractions_ny
+    field: nys 28 dollars
+    type: money
+    maxlen: 10
+  - line: 29_add_lines_25_to_28_fed           # Add lines 25 through 28
+    field: federal 29 dollars
+    type: money
+    maxlen: 10
+  - line: 29_add_lines_25_to_28_ny
+    field: nys 29 dollars
+    type: money
+    maxlen: 10
+  - line: 30_add_lines_24_and_29_fed          # Add lines 24 and 29
+    field: federal 30 dollars
+    type: money
+    maxlen: 10
+  - line: 30_add_lines_24_and_29_ny
+    field: nys 30 dollars
+    type: money
+    maxlen: 10
+  - line: 31_nys_adjusted_gross_income_fed    # New York adjusted gross income (subtract line 30 from line 23)
+    field: federal 31 dollars
+    type: money
+    maxlen: 10
+  - line: 31_nys_adjusted_gross_income_ny
+    field: nys 31 dollars
+    type: money
+    maxlen: 10
+  - line: 32_amount_from_line_31_federal      # line 32 — "Enter the amount from line 31, Federal amount column"
+    field: 32 dollars
+    type: money
+    maxlen: 10
+
+  # ============================== page 3 — Standard/Itemized deduction & tax
+  - line: name_as_shown_page1                 # "Name(s) as shown on page 1"
+    field: Name as shown on page 1
+    type: text
+    maxlen: 45
+  - line: deduction_standard                  # line 33 — Mark X: Standard
+    field: deduction
+    type: checkbox
+    on_state: /Standard
+  - line: deduction_itemized                  # line 33 — Mark X: Itemized
+    field: deduction
+    type: checkbox
+    on_state: /Itemized
+  - line: 33_deduction_amount                 # line 33 — standard or itemized deduction amount
+    field: 33 dollars
+    type: money
+    maxlen: 10
+  - line: 34_subtract_33_from_32              # line 34 — Subtract line 33 from line 32
+    field: 34 dollars
+    type: money
+    maxlen: 10
+  - line: 35_dependent_exemptions             # line 35 — Dependent exemptions (enter NUMBER of dependents from item I)
+    field: 35 dollars
+    type: text
+    maxlen: 2
+  - line: 36_nys_taxable_income               # line 36 — New York taxable income (subtract line 35 from line 34)
+    field: 36 dollars
+    type: money
+    maxlen: 10
+  - line: 37_nyt_taxable_income               # line 37 — NY taxable income (from line 36)
+    field: 37 dollars
+    type: money
+    maxlen: 10
+  - line: 38_nys_tax_on_line37                # line 38 — New York State tax on line 37 amount
+    field: 38 dollars
+    type: money
+    maxlen: 10
+  - line: 39_nys_household_credit             # line 39 — New York State household credit
+    field: 39 dollars
+    type: money
+    maxlen: 10
+  - line: 40_subtract_39_from_38              # line 40 — Subtract line 39 from line 38
+    field: 40 dollars
+    type: money
+    maxlen: 10
+  - line: 41_nys_child_dependent_care_credit  # line 41 — NY State child and dependent care credit
+    field: 41 dollars
+    type: money
+    maxlen: 10
+  - line: 42_subtract_41_from_40              # line 42 — Subtract line 41 from line 40
+    field: 42 dollars
+    type: money
+    maxlen: 10
+  - line: 43_eic_amount                       # line 43 — New York State earned income credit — "EIC" small box
+    field: EIC
+    type: text
+    maxlen: 3
+  - line: 43_nys_eic                          # line 43 — New York State earned income credit amount
+    field: 43 dollars
+    type: money
+    maxlen: 10
+  - line: 44_base_tax                         # line 44 — Base tax (subtract line 43 from line 42)
+    field: 44 dollars
+    type: money
+    maxlen: 10
+  - line: 45_income_percentage                # line 45 — Income percentage entry box "percent"
+    field: percent
+    type: text
+    maxlen: 5
+  - line: 45_ny_amount_from_line31            # line 45 — New York State amount from line 31 (numerator)
+    field: 45nys dollars
+    type: money
+    maxlen: 10
+  - line: 45_federal_amount_from_line31       # line 45 — Federal amount from line 31 (denominator)
+    field: 45 federal dollars
+    type: money
+    maxlen: 10
+  - line: 45_income_percentage_result         # line 45 — result rounded to 4 decimal places
+    field: 45 dollars
+    type: text
+    maxlen: 8
+  - line: 46_allocated_nys_tax                # line 46 — Allocated New York State tax (multiply line 44 by line 45)
+    field: 46 dollars
+    type: money
+    maxlen: 10
+  - line: 47_nys_nonrefundable_credits        # line 47 — NY State nonrefundable credits (Form IT-203-ATT, line 8)
+    field: 47 dollars
+    type: money
+    maxlen: 10
+  - line: 48_subtract_47_from_46              # line 48 — Subtract line 47 from line 46
+    field: 48 dollars
+    type: money
+    maxlen: 10
+  - line: 49_net_other_nys_taxes              # line 49 — Net other New York State taxes (Form IT-203-ATT, line 33)
+    field: 49 dollars
+    type: money
+    maxlen: 10
+  - line: 50_total_nys_taxes                  # line 50 — Total New York State taxes (add lines 48 and 49)
+    field: 50 dollars
+    type: money
+    maxlen: 10
+
+  # --- page 3 — NYC and Yonkers taxes, credits, surcharges, and MCTMT (51-58)
+  - line: 51_nyc_resident_tax                 # line 51 — Part-year New York City resident tax (Form IT-360.1)
+    field: 51 dollars
+    type: money
+    maxlen: 10
+  - line: 52_pyr_nonrefundable_nyc_child_care # line 52 — Part-year resident nonrefundable NYC child and dependent care credit
+    field: 52 dollars
+    type: money
+    maxlen: 10
+  - line: 52a_subtract_52_from_51             # line 52a — Subtract line 52 from line 51
+    field: 52a dollars
+    type: money
+    maxlen: 10
+  - line: 52b_mctmt_net_earnings_zone1        # line 52b — MCTMT net earnings base for Zone 1
+    field: 52b dollars
+    type: money
+    maxlen: 10
+  - line: 52c_mctmt_net_earnings_zone2        # line 52c — MCTMT net earnings base for Zone 2
+    field: 52c dollars
+    type: money
+    maxlen: 10
+  - line: 52d_mctmt_zone1                     # line 52d — MCTMT for Zone 1
+    field: 53d dollars
+    type: money
+    maxlen: 10
+  - line: 52e_mctmt_zone2                     # line 52e — MCTMT for Zone 2
+    field: 53e dollars
+    type: money
+    maxlen: 10
+  - line: 52f_total_mctmt                     # line 52f — Total MCTMT (add lines 52d and 52e)
+    field: 53f dollars
+    type: money
+    maxlen: 10
+  - line: 53_yonkers_nonresident_earnings_tax # line 53 — Yonkers nonresident earnings tax (Form Y-203)
+    field: 53 dollars
+    type: money
+    maxlen: 10
+  - line: 54_pyr_yonkers_income_tax_surcharge # line 54 — Part-year Yonkers resident income tax surcharge (Form IT-360.1)
+    field: 54 dollars
+    type: money
+    maxlen: 10
+  - line: 55_total_nyc_yonkers_mctmt          # line 55 — Total NYC and Yonkers taxes / surcharges and MCTMT (add 52a, 52f, 53, 54)
+    field: 55 dollars
+    type: money
+    maxlen: 10
+  - line: 56_sales_or_use_tax                 # line 56 — Sales or use tax (do not leave blank)
+    field: 56 dollars
+    type: money
+    maxlen: 10
+  - line: 57_voluntary_contributions          # line 57 — Voluntary contributions (Form IT-227, Part 2, line 1)
+    field: 57 dollars
+    type: money
+    maxlen: 5
+  - line: 58_total_taxes_and_contributions    # line 58 — Total NYS, NYC, Yonkers, sales/use taxes, MCTMT, and voluntary contributions
+    field: 58 dollars
+    type: money
+    maxlen: 10
+
+  # ============================ page 4 — payments, refundable credits, refund
+  - line: 59_amount_from_line58               # line 59 — Enter amount from line 58
+    field: 59 dollars
+    type: money
+    maxlen: 10
+  - line: 60_part_year_nyc_school_tax_credit_fixed   # line 60 — Part-year NYC school tax credit (fixed amount)
+    field: 60 dollars
+    type: money
+    maxlen: 10
+  - line: 60a_nyc_school_tax_credit_rate_reduction   # line 60a — NYC school tax credit (rate reduction amount)
+    field: 60a dollars
+    type: money
+    maxlen: 10
+  - line: 61_other_refundable_credits         # line 61 — Other refundable credits (Form IT-203-ATT, line 17)
+    field: 61 dollars
+    type: money
+    maxlen: 10
+  - line: 62_total_nys_tax_withheld           # line 62 — Total New York State tax withheld
+    field: 62 dollars
+    type: money
+    maxlen: 10
+  - line: 63_total_nyc_tax_withheld           # line 63 — Total New York City tax withheld
+    field: 63 dollars
+    type: money
+    maxlen: 10
+  - line: 64_total_yonkers_tax_withheld       # line 64 — Total Yonkers tax withheld
+    field: 64 dollars
+    type: money
+    maxlen: 10
+  - line: 65_total_estimated_tax_paid         # line 65 — Total estimated tax payments/amount paid with Form IT-370
+    field: 65 dollars
+    type: money
+    maxlen: 10
+  - line: 66_total_payments_refundable_credits # line 66 — Total payments and refundable credits (add lines 60 through 65)
+    field: 66 dollars
+    type: money
+    maxlen: 10
+  - line: 67_amount_overpaid                   # line 67 — Amount overpaid (if line 66 is more than line 59, subtract line 59 from line 66)
+    field: 67 dollars
+    type: money
+    maxlen: 10
+  - line: 68_amount_available_for_refund       # line 68 — Amount of line 67 available for refund (subtract line 69 from line 67)
+    field: 68 dollars
+    type: money
+    maxlen: 10
+  - line: 68a_amount_refund_direct_deposit     # line 68a — Amount of line 68 you want to deposit into a NYS 529 account
+    field: 68a dollars
+    type: money
+    maxlen: 10
+  - line: 68b_total_refund_after_529           # line 68b — Total refund after NYS 529 account deposit (subtract line 68a from line 68)
+    field: 68b dollars
+    type: money
+    maxlen: 10
+  - line: 68_refund_choice_direct_deposit      # line 68 — Mark one refund choice: direct deposit to checking/savings
+    field: line 68
+    type: checkbox
+    on_state: /direct deposit
+  - line: 68_refund_choice_paper_check         # line 68 — Mark one refund choice: paper check (raw on_state "/debit card")
+    field: line 68
+    type: checkbox
+    on_state: /debit card
+  - line: 69_amount_applied_to_2024_estimate   # line 69 — Amount of line 67 you want applied to your 2024 estimated tax
+    field: 69 dollars
+    type: money
+    maxlen: 10
+  - line: 70_electronic_funds_withdrawal_box   # line 70 — To pay by electronic funds withdrawal, mark X in this box
+    field: line 70
+    type: checkbox
+    on_state: /elec funds withdrawal
+  - line: 70_amount_you_owe                    # line 70 — Amount you owe (if line 66 is less than line 59, subtract line 66 from line 59)
+    field: 70 dollars
+    type: money
+    maxlen: 10
+  - line: 71_estimated_tax_penalty             # line 71 — Estimated tax penalty (include this amount on line 70)
+    field: 71 dollars
+    type: money
+    maxlen: 10
+  - line: 72_other_penalties_and_interest      # line 72 — Other penalties and interest
+    field: 72 dollars
+    type: money
+    maxlen: 10
+  - line: 73_foreign_account_box               # line 73 — If refund/payment goes to an account outside the U.S., mark X in this box
+    field: Foreign accounts
+    type: checkbox
+    on_state: /Yes
+  - line: 73a_account_type_personal_checking   # line 73a — Account type: Personal checking
+    field: line 73a
+    type: checkbox
+    on_state: /Personal checking
+  - line: 73a_account_type_personal_savings    # line 73a — Account type: Personal savings
+    field: line 73a
+    type: checkbox
+    on_state: /Personal savings
+  - line: 73a_account_type_business_checking   # line 73a — Account type: Business checking
+    field: line 73a
+    type: checkbox
+    on_state: /Business checking
+  - line: 73a_account_type_business_savings    # line 73a — Account type: Business savings
+    field: line 73a
+    type: checkbox
+    on_state: /Business savings
+  - line: 73b_routing_number                   # line 73b — Routing number
+    field: routing number
+    type: text
+    maxlen: 9
+  - line: 73c_account_number                   # line 73c — Account number
+    field: account number
+    type: text
+    maxlen: 17
+  - line: 73_electronic_funds_withdrawal_date  # line 73 — Electronic funds withdrawal: Date
+    field: electronic funds withdrawal
+    type: text
+    maxlen: 10
+  - line: 74_electronic_funds_withdrawal_amount # line 74 — Electronic funds withdrawal: Amount
+    field: line 74
+    type: money
+    maxlen: 10
+
+  # --------------------------------- page 4 — third-party designee & signature
+  - line: third_party_designee_yes
+    field: 3rd Party Discuss
+    type: checkbox
+    on_state: /yes
+  - line: third_party_designee_no
+    field: 3rd Party Discuss
+    type: checkbox
+    on_state: /no
+  - line: designee_name                        # Print designee's name
+    field: designee name
+    type: text
+    maxlen: 40
+  - line: designee_phone_area_code             # Designee's phone number (area code)
+    field: designee phone number
+    type: text
+    maxlen: 3
+  - line: designee_phone_number                # Designee's phone number
+    field: designees phone number
+    type: text
+    maxlen: 20
+  - line: designee_email                        # Designee email
+    field: email1
+    type: text
+    maxlen: 60
+  - line: designee_pin                          # Personal identification number (PIN)
+    field: designee pin
+    type: text
+    maxlen: 5
+  - line: preparer_nytprin                       # Preparer's NYTPRIN
+    field: NYTPRIN
+    type: text
+    maxlen: 9
+  - line: preparer_nytprin_excl_code            # NYTPRIN exclusion code
+    field: NYTPRIN excl code
+    type: text
+    maxlen: 2
+  - line: preparer_printed_name
+    field: preparer's printed name
+    type: text
+    maxlen: 30
+  - line: preparer_ptin_or_ssn                   # Preparer's PTIN or SSN
+    field: preparersssno
+    type: text
+    maxlen: 9
+  - line: preparer_firm_name                     # Firm's name (or yours, if self-employed)
+    field: firmsname
+    type: text
+    maxlen: 40
+  - line: preparer_address
+    field: address
+    type: text
+    maxlen: 40
+  - line: preparer_city
+    field: City
+    type: text
+    maxlen: 45
+  - line: preparer_email
+    field: email2
+    type: text
+    maxlen: 50
+  - line: preparer_employer_id_number            # Employer identification number
+    field: employidnumber
+    type: text
+    maxlen: 9
+  - line: preparer_date
+    field: date
+    type: text
+    maxlen: 10
+  - line: taxpayer_occupation                    # Your occupation
+    field: Occupation
+    type: text
+    maxlen: 40
+  - line: spouse_occupation                       # Spouse's occupation
+    field: Occupation - Spouse
+    type: text
+    maxlen: 20
+  - line: taxpayer_signature_date
+    field: date2
+    type: text
+    maxlen: 10
+  - line: taxpayer_daytime_phone_area_code        # Daytime phone number (area code)
+    field: day phone area code
+    type: text
+    maxlen: 3
+  - line: taxpayer_daytime_phone_number
+    field: daytimephoneno
+    type: text
+    maxlen: 20
+  - line: taxpayer_email
+    field: email3
+    type: text
+    maxlen: 30
+relations: []
+# cross_form: line 19 Federal amount column is the federal Form 1040 adjusted
+# gross income (printed label: "Federal adjusted gross income"). Per the
+# prompt, cross_form to federal where the printed label says "federal amount".
+cross_form:
+  - "19_federal_agi_fed == f1040.11"   # Federal AGI → Form 1040, line 11
+identity_fields:
+  - your_ssn

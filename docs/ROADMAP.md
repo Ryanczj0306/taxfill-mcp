@@ -5,14 +5,21 @@ plan for what is **not yet done**, as of the current state.
 
 ## Where we are
 
-Done and on `main` (~1076 tests): M0 scaffold · M1 engine · M2 federal packs
+Done and on `main` (1222 tests): M0 scaffold · M1 engine · M2 federal packs
 (f1040, f1040-NR, f8843, sched 1/2/3/A/B/C/OI — audited) · M3 intake + knowledge
 (intake_checklist, estimate_refund, get_sources, file_and_pay, filing_summary;
-federal knowledge 2019–2024 fully cited) · M4 MCP server (15 tools, stdio, image
+federal knowledge 2019–2024 fully cited) · M4 MCP server (21 tools, stdio, image
 content, in-memory e2e tests) · M5 state support (state_scope, no-income-tax
-states, **knowledge packs for all 41 income-tax states + DC**, CA 540 + 540NR
-form packs — vision-mapped + adversarially audited) · M6 code (SKILL.md cookbook,
-§14 eval harness, §13 README, MCPB build recipe).
+states, **knowledge packs for all 41 income-tax states + DC**, cited credits for
+all of them) · M6 code (SKILL.md cookbook, §14 eval harness, §13 README, MCPB
+build recipe) · Phase B (`extract_document`, resumable workspace + `taxfill
+purge`) · introspect pack-authoring CLI · Phase A launch packaging + drift CI.
+
+**Form packs that can be FILLED today (all introspect→vision-map→adversarial-
+audit→golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE,
+**Schedule D, Schedule E, Form 8863, Form 2555** (#6 priority set complete);
+state — CA Form 540 + 540NR + **Schedule CA 540 + 540NR**, **NY IT-201 + IT-203**
+(NY is the first non-CA state that can be filled). 37 form packs total.
 
 **Quality bar (non-negotiable, applies to every item below):** no invented
 numbers — every figure cited to a .gov/.us source or shipped with an explicit
@@ -25,8 +32,12 @@ The eight remaining workstreams, with the phase that schedules each:
 
 ## 1. State form packs — the biggest gap (Phase C)
 
-**Why:** today only CA can be *filled* (540/540NR); the other 49 jurisdictions
-can be *scoped* but not filled.
+**STATUS (2026-06-19):** CA complete (540, 540NR, **Schedule CA 540 + 540NR**)
+and **NY shipped (IT-201 resident + IT-203 nonresident/part-year)** — NY is the
+first non-CA state that can be filled. Rolling out the rest by population next
+(IL → PA → OH → …).
+
+**Why:** ~48 jurisdictions can still only be *scoped*, not filled.
 
 **Scope:** 36 states + DC have fillable AcroForms (resident + nonresident/part-
 year forms) + their adjustment schedules (Schedule-CA equivalents); plus 5 hard
@@ -110,12 +121,17 @@ PyPI access.
 
 ## 6. More federal forms beyond the M2 set (Phase C, as scenarios need)
 
+**STATUS (2026-06-19): COMPLETE for the listed priority set.** Schedule SE,
+Schedule D, Schedule E, Form 8863, Form 2555 are all shipped (2023), audited, and
+golden round-trip green. Further forms can be added on the same pipeline as
+scenarios demand.
+
 **Why:** common situations need forms M2 didn't include.
 
-**Scope (priority order):** Schedule SE (calc already computes SE tax — add the
-fill pack), Schedule D (cap gains) + Schedule E (rental/K-1), Form 8863
-(education credits), Form 2555 (foreign earned income exclusion). Each via the
-M2 pipeline (introspect → map → audit) + its `calc`/relations as needed.
+**Scope (priority order, all DONE):** Schedule SE, Schedule D (cap gains),
+Schedule E (rental/K-1), Form 8863 (education credits), Form 2555 (foreign earned
+income exclusion). Each via the M2 pipeline (introspect → map → audit) + its
+`calc`/relations as needed.
 
 **Acceptance:** per form: pack audited + golden round-trip; any new computed line
 backed by cited `calc` data. **Effort: M–L.** **Deps:** none.

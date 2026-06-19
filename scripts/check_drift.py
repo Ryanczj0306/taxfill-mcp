@@ -13,10 +13,19 @@ caught by CI rather than by a user mid-filing:
   * **Source registry** — for every URL in ``knowledge/sources.yaml`` (the
     section-7 "where truth lives" registry), confirm it still resolves. Pages
     legitimately change content, so we check reachability, not a checksum.
+  * **Mailing addresses / where-to-file** — for every ``mailing_addresses``
+    citation URL in the federal and per-state knowledge packs (the "where do you
+    file?" pages the shipped paper-filing addresses are transcribed from),
+    confirm it still resolves. These verify-URLs live inside the knowledge YAMLs
+    and are *not* in ``sources.yaml``, so without this check a relocated
+    where-to-file page — and the silently-stale address it leaves behind — would
+    go unnoticed until a user mailed a return to the wrong PO box. Reachability
+    only (page content moves legitimately); a dead URL is drift.
 
-Exit code is nonzero if anything DRIFTED (revised blank, or a dead source URL),
-zero otherwise. Network access required — this is a scheduled job, not part of
-the offline unit suite. Run: ``python scripts/check_drift.py``.
+Exit code is nonzero if anything DRIFTED (revised blank, a dead source URL, or a
+dead where-to-file page), zero otherwise. Network access required — this is a
+scheduled job, not part of the offline unit suite. Run:
+``python scripts/check_drift.py``.
 """
 from __future__ import annotations
 
@@ -48,6 +57,47 @@ def _collect_source_urls(node, out: list[str]) -> None:
     elif isinstance(node, list):
         for item in node:
             _collect_source_urls(item, out)
+
+
+def _collect_mailing_urls(node, out: list[str]) -> None:
+    """Recursively gather every ``url:`` nested under a ``mailing_addresses`` key.
+
+    Scoped deliberately to mailing-address blocks so this checks the where-to-file
+    pages specifically — not every cited fact in the knowledge pack (those carry
+    their own ``citation.url`` and are out of scope for the address-drift check).
+    """
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == "mailing_addresses":
+                _collect_source_urls(value, out)
+            else:
+                _collect_mailing_urls(value, out)
+    elif isinstance(node, list):
+        for item in node:
+            _collect_mailing_urls(item, out)
+
+
+def _probe_urls(urls: list[str], label: str) -> list[str]:
+    """Confirm each URL still resolves. 403/429 are warn-only (blocked bot, not a
+    move); any other failure is drift. Returns the list of drift descriptions."""
+    drift: list[str] = []
+    print(f"\n=== {label} ({len(urls)} URLs) ===")
+    for url in urls:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+                code = resp.getcode()
+            print(f"  ok     {code} {url}")
+        except urllib.error.HTTPError as exc:
+            if exc.code in (403, 429):  # blocked/throttled bot, not a move — warn only
+                print(f"  warn   {exc.code} (blocked, not drift) {url}")
+            else:
+                drift.append(f"{label}: {url} -> HTTP {exc.code}")
+                print(f"  DRIFT  {exc.code} {url}")
+        except Exception as exc:
+            drift.append(f"{label}: {url} unreachable — {exc}")
+            print(f"  DRIFT  unreachable {url}")
+    return drift
 
 
 def check_form_blanks() -> list[str]:
@@ -86,29 +136,27 @@ def check_source_urls() -> list[str]:
     raw = yaml.safe_load((REPO / "knowledge" / "sources.yaml").read_text())
     urls: list[str] = []
     _collect_source_urls(raw, urls)
-    urls = sorted(set(urls))
-    drift: list[str] = []
-    print(f"\n=== Source registry ({len(urls)} URLs) ===")
-    for url in urls:
+    return _probe_urls(sorted(set(urls)), "Source registry")
+
+
+def check_mailing_addresses() -> list[str]:
+    """Re-fetch every where-to-file / mailing-address citation URL in the federal
+    and per-state knowledge packs and flag any that no longer resolve."""
+    urls: list[str] = []
+    knowledge = REPO / "knowledge"
+    packs = sorted(knowledge.glob("federal/*.yaml")) + sorted(knowledge.glob("states/**/*.yaml"))
+    for path in packs:
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
-            with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
-                code = resp.getcode()
-            print(f"  ok     {code} {url}")
-        except urllib.error.HTTPError as exc:
-            if exc.code in (403, 429):  # blocked/throttled bot, not a move — warn only
-                print(f"  warn   {exc.code} (blocked, not drift) {url}")
-            else:
-                drift.append(f"source URL {url} -> HTTP {exc.code}")
-                print(f"  DRIFT  {exc.code} {url}")
-        except Exception as exc:
-            drift.append(f"source URL {url} unreachable — {exc}")
-            print(f"  DRIFT  unreachable {url}")
-    return drift
+            raw = yaml.safe_load(path.read_text())
+        except Exception as exc:  # pragma: no cover - defensive
+            print(f"  skip   {path.relative_to(REPO)}: parse error — {exc}")
+            continue
+        _collect_mailing_urls(raw, urls)
+    return _probe_urls(sorted(set(urls)), "Mailing addresses / where-to-file")
 
 
 def main() -> int:
-    drift = check_form_blanks() + check_source_urls()
+    drift = check_form_blanks() + check_source_urls() + check_mailing_addresses()
     print("\n" + "=" * 60)
     if drift:
         print(f"DRIFT DETECTED — {len(drift)} item(s) need attention:")

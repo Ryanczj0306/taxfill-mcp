@@ -1,0 +1,811 @@
+# Schedule CA (540), 2023 — California Adjustments — Residents.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) → vision-map workflow (every
+# page + zoomed crops read to place each field on its printed line/column) →
+# this map.
+#
+# Layout. The form is a flat AcroForm (acroform_root empty; field names are the
+# raw top-level sentinel ids 1000..6036). Part I (Sections A/B income, Section C
+# adjustments) is a three-column grid:
+#   A = Federal Amounts (taxable amounts from your federal return)
+#   B = Subtractions (See instructions)
+#   C = Additions (See instructions)
+# Each income/adjustment line therefore has up to three money boxes; many lines
+# grey out one or two columns (no widget exists for a greyed cell — those line
+# keys are simply absent). Column-bearing keys carry an _A / _B / _C suffix.
+# Single-column computation lines (Part I "primary amount" boxes like 2a/3a and
+# the entire Part II lower block lines 18-30) have no suffix.
+#
+# All 247 fillable widgets are mapped. There are NO pre-printed statutory
+# constants on this form (every box is taxpayer-entered), so none are omitted.
+# The 237 dollar boxes the skeleton tagged `text maxlen:12` are mapped as
+# `money`; the 9 non-maxlen text widgets are genuine text (name, two SSN/ITIN
+# boxes, last name, and five "list type and amount / specify" description
+# lines); 1 checkbox (Part II "did NOT itemize for federal but will for CA").
+#
+# Relations: Schedule CA's column math is conditional/cross-column (e.g. col A
+# less col B plus col C, with multiple greyed operands) and several addends are
+# unmapped greyed cells, so per the conservative house style NO relations are
+# declared. cross_form is likewise omitted: the printed totals feed Form 540
+# lines 14/16/18 but those are Form 540's input lines, not equalities asserted
+# on this schedule.
+form: "Schedule CA (540)"
+jurisdiction: states/ca
+tax_year: 2023
+source_url: https://www.ftb.ca.gov/forms/2023/2023-540-ca.pdf
+pdf_sha256: e831c9801446fcf12e80c5fc5201995305bf30c6a651ca3fbd0503b918a7be57
+acroform_root: ''
+fields:
+  # ---------------------------------------------------------------- header
+  - line: name
+    field: '1000'
+    type: text
+  - line: identifying_number
+    field: '1001'
+    type: text
+    maxlen: 11
+
+  # ===================== Part I, Section A — Income (from federal 1040/1040-SR)
+  - line: 1a_A          # Total amount from federal Form(s) W-2, box 1
+    field: '1002'
+    type: money
+  - line: 1a_B
+    field: '1003'
+    type: money
+  - line: 1a_C
+    field: '1004'
+    type: money
+  - line: 1b_A          # Household employee wages not reported on federal Form(s) W-2
+    field: '1005'
+    type: money
+  - line: 1b_B
+    field: '1006'
+    type: money
+  - line: 1b_C
+    field: '1007'
+    type: money
+  - line: 1c_A          # Tip income not reported on line 1a
+    field: '1008'
+    type: money
+  - line: 1c_B
+    field: '1009'
+    type: money
+  - line: 1c_C
+    field: '1010'
+    type: money
+  - line: 1d_A          # Medicaid waiver payments not reported on federal Form(s) W-2
+    field: '1011'
+    type: money
+  - line: 1d_B
+    field: '1012'
+    type: money
+  - line: 1d_C
+    field: '1013'
+    type: money
+  - line: 1e_A          # Taxable dependent care benefits (federal Form 2441, line 26)
+    field: '1014'
+    type: money
+  - line: 1e_B
+    field: '1015'
+    type: money
+  - line: 1e_C
+    field: '1016'
+    type: money
+  - line: 1f_A          # Employer-provided adoption benefits (federal Form 8839, line 29)
+    field: '1017'
+    type: money
+  - line: 1f_B
+    field: '1018'
+    type: money
+  - line: 1f_C
+    field: '1019'
+    type: money
+  - line: 1g_A          # Wages from federal Form 8919, line 6
+    field: '1020'
+    type: money
+  - line: 1g_B
+    field: '1021'
+    type: money
+  - line: 1g_C
+    field: '1022'
+    type: money
+  - line: 1h_A          # Other earned income
+    field: '1023'
+    type: money
+  - line: 1h_B
+    field: '1024'
+    type: money
+  - line: 1h_C
+    field: '1025'
+    type: money
+  - line: 1i_C          # Nontaxable combat pay election (only col C box exists; A/B greyed)
+    field: '1026'
+    type: money
+  - line: 1z_A          # Add line 1a through line 1i
+    field: '1027'
+    type: money
+  - line: 1z_B
+    field: '1028'
+    type: money
+  - line: 1z_C
+    field: '1029'
+    type: money
+  - line: 2a            # Taxable interest — federal amount (primary box, left of grid)
+    field: '1030'
+    type: money
+  - line: 2b_A
+    field: '1031'
+    type: money
+  - line: 2b_B
+    field: '1032'
+    type: money
+  - line: 2b_C
+    field: '1033'
+    type: money
+  - line: 3a            # Ordinary dividends — federal amount (primary box)
+    field: '1034'
+    type: money
+  - line: 3b_A
+    field: '1035'
+    type: money
+  - line: 3b_B
+    field: '1036'
+    type: money
+  - line: 3b_C
+    field: '1037'
+    type: money
+  - line: 4a            # IRA distributions — federal amount (primary box)
+    field: '1038'
+    type: money
+  - line: 4b_A
+    field: '1039'
+    type: money
+  - line: 4b_B
+    field: '1040'
+    type: money
+  - line: 4b_C
+    field: '1041'
+    type: money
+  - line: 5a            # Pensions and annuities — federal amount (primary box)
+    field: '1042'
+    type: money
+  - line: 5b_A
+    field: '1043'
+    type: money
+  - line: 5b_B
+    field: '1044'
+    type: money
+  - line: 5b_C
+    field: '1045'
+    type: money
+  - line: 6a            # Social security benefits — federal amount (primary box)
+    field: '1046'
+    type: money
+  - line: 6b_A
+    field: '1047'
+    type: money
+  - line: 6b_B          # col C greyed for SS benefits
+    field: '1048'
+    type: money
+  - line: 7_A           # Capital gain or (loss)
+    field: '1049'
+    type: money
+  - line: 7_B
+    field: '1050'
+    type: money
+  - line: 7_C
+    field: '1051'
+    type: money
+
+  # ============== Part I, Section B — Additional Income (from federal Sch 1)
+  - line: B1_A          # Taxable refunds, credits, or offsets of state and local income taxes
+    field: '1052'
+    type: money
+  - line: B1_B          # col C greyed
+    field: '1053'
+    type: money
+  - line: B2a_A         # Alimony received (col B greyed)
+    field: '1054'
+    type: money
+  - line: B2a_C
+    field: '1055'
+    type: money
+  - line: B3_A          # Business income or (loss)
+    field: '1056'
+    type: money
+  - line: B3_B
+    field: '1057'
+    type: money
+  - line: B3_C
+    field: '1058'
+    type: money
+  - line: B4_A          # Other gains or (losses)
+    field: '1059'
+    type: money
+  - line: B4_B
+    field: '1060'
+    type: money
+  - line: B4_C
+    field: '1061'
+    type: money
+  - line: B5_A          # Rental real estate, royalties, partnerships, S corps, trusts, etc.
+    field: '1062'
+    type: money
+  - line: B5_B
+    field: '1063'
+    type: money
+  - line: B5_C
+    field: '1064'
+    type: money
+  - line: B6_A          # Farm income or (loss)
+    field: '1065'
+    type: money
+  - line: B6_B
+    field: '1066'
+    type: money
+  - line: B6_C
+    field: '1067'
+    type: money
+  - line: B7_A          # Unemployment compensation (col C greyed)
+    field: '1068'
+    type: money
+  - line: B7_B
+    field: '1069'
+    type: money
+
+  # ---- Section B line 8 (Other income), sub-lines a-z — continued on Side 2
+  - line: B8a_A         # Federal net operating loss (col B greyed)
+    field: '2001'
+    type: money
+  - line: B8a_C
+    field: '2002'
+    type: money
+  - line: B8b_A         # Gambling (col C greyed)
+    field: '2003'
+    type: money
+  - line: B8b_B
+    field: '2004'
+    type: money
+  - line: B8c_A         # Cancellation of debt
+    field: '2005'
+    type: money
+  - line: B8c_B
+    field: '2006'
+    type: money
+  - line: B8c_C
+    field: '2007'
+    type: money
+  - line: B8d_A         # Foreign earned income exclusion from federal Form 2555 (col B greyed)
+    field: '2008'
+    type: money
+  - line: B8d_C
+    field: '2009'
+    type: money
+  - line: B8e_A         # Income from federal Form 8853 (col B greyed)
+    field: '2010'
+    type: money
+  - line: B8e_C
+    field: '2011'
+    type: money
+  - line: B8f_A         # Income from federal Form 8889 (col C greyed)
+    field: '2012'
+    type: money
+  - line: B8f_B
+    field: '2013'
+    type: money
+  - line: B8g_A         # Alaska Permanent Fund dividends (cols B/C greyed)
+    field: '2014'
+    type: money
+  - line: B8h_A         # Jury duty pay (cols B/C greyed)
+    field: '2015'
+    type: money
+  - line: B8i_A         # Prizes and awards (cols B/C greyed)
+    field: '2016'
+    type: money
+  - line: B8j_A         # Activity not engaged in for profit income (cols B/C greyed)
+    field: '2017'
+    type: money
+  - line: B8k_A         # Stock options (col B greyed)
+    field: '2018'
+    type: money
+  - line: B8k_C
+    field: '2019'
+    type: money
+  - line: B8l_A         # Income from rental of personal property (not a business) (cols B/C greyed)
+    field: '2020'
+    type: money
+  - line: B8m_A         # Olympic and Paralympic medals and USOC prize money (cols B/C greyed)
+    field: '2021'
+    type: money
+  - line: B8n_A         # IRC Section 951(a) inclusion (col C greyed)
+    field: '2022'
+    type: money
+  - line: B8n_B
+    field: '2023'
+    type: money
+  - line: B8o_A         # IRC Section 951A(a) inclusion (col C greyed)
+    field: '2024'
+    type: money
+  - line: B8o_B
+    field: '2025'
+    type: money
+  - line: B8p_A         # IRC Section 461(l) excess business loss adjustment
+    field: '2026'
+    type: money
+  - line: B8p_B
+    field: '2027'
+    type: money
+  - line: B8p_C
+    field: '2028'
+    type: money
+  - line: B8q_A         # Taxable distributions from an ABLE account (cols B/C greyed)
+    field: '2029'
+    type: money
+  - line: B8r_A         # Scholarship and fellowship grants not reported on W-2 (cols B/C greyed)
+    field: '2030'
+    type: money
+  - line: B8s_A         # Nontaxable amount of Medicaid waiver payments on 1040 line 1a/1d (cols B/C greyed)
+    field: '2031'
+    type: money
+  - line: B8t_A         # Pension/annuity from nonqualified deferred comp / IRC 457 plan (cols B/C greyed)
+    field: '2032'
+    type: money
+  - line: B8u_A         # Wages earned while incarcerated (cols B/C greyed)
+    field: '2033'
+    type: money
+  - line: B8z_desc      # line 8z — "Other income. List type and amount" description
+    field: '2034'
+    type: text
+  - line: B8z_A         # Other income — amount
+    field: '2035'
+    type: money
+  - line: B8z_B
+    field: '2036'
+    type: money
+  - line: B8z_C
+    field: '2037'
+    type: money
+
+  # ---- Section B totals — continued on Side 3
+  - line: B9a_A         # Total other income. Add lines 8a through 8z
+    field: '3001'
+    type: money
+  - line: B9a_B
+    field: '3002'
+    type: money
+  - line: B9a_C
+    field: '3003'
+    type: money
+  - line: B9b1_B        # Disaster loss deduction from form FTB 3805V (only col B)
+    field: '3004'
+    type: money
+  - line: B9b2_B        # NOL deduction from form FTB 3805V (only col B)
+    field: '3005'
+    type: money
+  - line: B9b3_B        # NOL deduction from form FTB 3805Z, 3807, or 3809 (only col B)
+    field: '3006'
+    type: money
+  - line: B10_A         # Total. Combine Section A line 1z..7 and Section B line 1..7, 9a
+    field: '3007'
+    type: money
+  - line: B10_B
+    field: '3008'
+    type: money
+  - line: B10_C
+    field: '3009'
+    type: money
+
+  # ============== Part I, Section C — Adjustments to Income (from federal Sch 1)
+  - line: C11_A         # Educator expenses (col C greyed)
+    field: '3010'
+    type: money
+  - line: C11_B
+    field: '3011'
+    type: money
+  - line: C12_A         # Certain business expenses of reservists, performing artists, fee-basis gov't officials
+    field: '3012'
+    type: money
+  - line: C12_B
+    field: '3013'
+    type: money
+  - line: C12_C
+    field: '3014'
+    type: money
+  - line: C13_A         # Health savings account deduction (col C greyed)
+    field: '3015'
+    type: money
+  - line: C13_B
+    field: '3016'
+    type: money
+  - line: C14_A         # Moving expenses. Attach form FTB 3913 (col B greyed)
+    field: '3017'
+    type: money
+  - line: C14_C
+    field: '3018'
+    type: money
+  - line: C15_A         # Deductible part of self-employment tax (col C greyed)
+    field: '3019'
+    type: money
+  - line: C15_B
+    field: '3020'
+    type: money
+  - line: C16_A         # Self-employed SEP, SIMPLE, and qualified plans (cols B/C greyed)
+    field: '3021'
+    type: money
+  - line: C17_A         # Self-employed health insurance deduction (col C greyed)
+    field: '3022'
+    type: money
+  - line: C17_B
+    field: '3023'
+    type: money
+  - line: C18_A         # Penalty on early withdrawal of savings (cols B/C greyed)
+    field: '3024'
+    type: money
+  - line: C19a_A        # Alimony paid (col B greyed)
+    field: '3025'
+    type: money
+  - line: C19a_C
+    field: '3026'
+    type: money
+  - line: C19b_ssn      # line 19b — Recipient's SSN
+    field: '3027'
+    type: text
+    maxlen: 11
+  - line: C19b_lastname # line 19b — Recipient's Last Name
+    field: '3028'
+    type: text
+  - line: C20_A         # IRA deduction
+    field: '3029'
+    type: money
+  - line: C20_B
+    field: '3030'
+    type: money
+  - line: C20_C
+    field: '3031'
+    type: money
+  - line: C21_A         # Student loan interest deduction (col B greyed)
+    field: '3032'
+    type: money
+  - line: C21_C
+    field: '3033'
+    type: money
+  - line: C23_A         # Archer MSA deduction (cols B/C greyed); line 22 reserved (no widgets)
+    field: '3034'
+    type: money
+
+  # ---- Section C line 24 (Other adjustments), sub-lines a-z — continued on Side 4
+  - line: C24a_A        # Jury duty pay (cols B/C greyed)
+    field: '4001'
+    type: money
+  - line: C24b_A        # Deductible expenses related to income reported on line 8l
+    field: '4002'
+    type: money
+  - line: C24b_B
+    field: '4003'
+    type: money
+  - line: C24b_C
+    field: '4004'
+    type: money
+  - line: C24c_A        # Nontaxable Olympic/Paralympic medals & USOC prize money reported on line 8m (col C greyed)
+    field: '4005'
+    type: money
+  - line: C24c_B
+    field: '4006'
+    type: money
+  - line: C24d_A        # Reforestation amortization and expenses (col C greyed)
+    field: '4007'
+    type: money
+  - line: C24d_B
+    field: '4008'
+    type: money
+  - line: C24e_A        # Repayment of supplemental unemployment benefits under federal Trade Act of 1974 (cols B/C greyed)
+    field: '4009'
+    type: money
+  - line: C24f_A        # Contributions to IRC Section 501(c)(18)(D) pension plans
+    field: '4010'
+    type: money
+  - line: C24f_B
+    field: '4011'
+    type: money
+  - line: C24f_C
+    field: '4012'
+    type: money
+  - line: C24g_A        # Contributions by certain chaplains to IRC Section 403(b) plans
+    field: '4013'
+    type: money
+  - line: C24g_B
+    field: '4014'
+    type: money
+  - line: C24g_C
+    field: '4015'
+    type: money
+  - line: C24h_A        # Attorney fees and court costs for unlawful discrimination claims (cols B/C greyed)
+    field: '4016'
+    type: money
+  - line: C24i_A        # Attorney fees/court costs paid re IRS whistleblower award (col C greyed)
+    field: '4017'
+    type: money
+  - line: C24i_B
+    field: '4018'
+    type: money
+  - line: C24j_A        # Housing deduction from federal Form 2555 (col C greyed)
+    field: '4019'
+    type: money
+  - line: C24j_B
+    field: '4020'
+    type: money
+  - line: C24k_A        # Excess deductions of IRC Section 67(e) expenses from federal Sch K-1 (1041) (cols B/C greyed)
+    field: '4021'
+    type: money
+  - line: C24z_desc     # line 24z — "Other adjustments. List type and amount" description
+    field: '4022'
+    type: text
+  - line: C24z_A        # Other adjustments — amount
+    field: '4023'
+    type: money
+  - line: C24z_B
+    field: '4024'
+    type: money
+  - line: C24z_C
+    field: '4025'
+    type: money
+  - line: C25_A         # Total other adjustments. Add line 24a through line 24z
+    field: '4026'
+    type: money
+  - line: C25_B
+    field: '4027'
+    type: money
+  - line: C25_C
+    field: '4028'
+    type: money
+  - line: C26_A         # Add line 11 through line 23 and line 25 in columns A, B, and C
+    field: '4029'
+    type: money
+  - line: C26_B
+    field: '4030'
+    type: money
+  - line: C26_C
+    field: '4031'
+    type: money
+  - line: C27_A         # Total. Subtract line 26 from line 10 in columns A, B, and C
+    field: '4032'
+    type: money
+  - line: C27_B
+    field: '4033'
+    type: money
+  - line: C27_C
+    field: '4034'
+    type: money
+
+  # ===================== Part II — Adjustments to Federal Itemized Deductions
+  - line: II_not_itemize_federal_cb   # Check box if you did NOT itemize for federal but will itemize for California
+    field: 5000 CB
+    type: checkbox
+    on_state: /Yes
+  # ---- Medical and Dental Expenses (lines 1-3 are single computation boxes)
+  - line: II1            # Medical and dental expenses
+    field: '5001'
+    type: money
+  - line: II2            # Enter amount from federal Form 1040 or 1040-SR, line 11
+    field: '5002'
+    type: money
+  - line: II3            # Multiply line 2 by 7.5% (0.075)
+    field: '5003'
+    type: money
+  - line: II4_A          # Subtract line 3 from line 1 (col B greyed)
+    field: '5004'
+    type: money
+  - line: II4_C
+    field: '5005'
+    type: money
+  # ---- Taxes You Paid
+  - line: II5a_A         # State and local income tax or general sales taxes (col C greyed)
+    field: '5006'
+    type: money
+  - line: II5a_B
+    field: '5007'
+    type: money
+  - line: II5b_A         # State and local real estate taxes (single col-A box)
+    field: '5008'
+    type: money
+  - line: II5c_A         # State and local personal property taxes (single col-A box)
+    field: '5009'
+    type: money
+  - line: II5d_A         # Add line 5a through line 5c (single col-A box)
+    field: '5010'
+    type: money
+  - line: II5e_A         # Enter the smaller of line 5d or $10,000 ($5,000 MFS)
+    field: '5011'
+    type: money
+  - line: II5e_B
+    field: '5012'
+    type: money
+  - line: II5e_C
+    field: '5013'
+    type: money
+  - line: II6_desc       # line 6 — "Other taxes. List type" description
+    field: '5014'
+    type: text
+  - line: II6_A          # Other taxes — amount
+    field: '5015'
+    type: money
+  - line: II6_B
+    field: '5016'
+    type: money
+  - line: II6_C
+    field: '5017'
+    type: money
+  - line: II7_A          # Add line 5e and line 6
+    field: '5018'
+    type: money
+  - line: II7_B
+    field: '5019'
+    type: money
+  - line: II7_C
+    field: '5020'
+    type: money
+  # ---- Interest You Paid
+  - line: II8a_A         # Home mortgage interest and points reported on federal Form 1098 (col B greyed)
+    field: '5021'
+    type: money
+  - line: II8a_C
+    field: '5022'
+    type: money
+  - line: II8b_A         # Home mortgage interest not reported on federal Form 1098 (col B greyed)
+    field: '5023'
+    type: money
+  - line: II8b_C
+    field: '5024'
+    type: money
+  - line: II8c_A         # Points not reported on federal Form 1098 (col B greyed)
+    field: '5025'
+    type: money
+  - line: II8c_C
+    field: '5026'
+    type: money
+  - line: II8e_A         # Add line 8a through line 8c (line 8d reserved, no widgets)
+    field: '5027'
+    type: money
+  - line: II8e_B
+    field: '5028'
+    type: money
+  - line: II8e_C
+    field: '5029'
+    type: money
+  - line: II9_A          # Investment interest
+    field: '5030'
+    type: money
+  - line: II9_B
+    field: '5031'
+    type: money
+  - line: II9_C
+    field: '5032'
+    type: money
+  - line: II10_A         # Add line 8e and line 9
+    field: '5033'
+    type: money
+  - line: II10_B
+    field: '5034'
+    type: money
+  - line: II10_C
+    field: '5035'
+    type: money
+
+  # ---- Gifts to Charity — continued on Side 6
+  - line: II11_A         # Gifts by cash or check
+    field: '6001'
+    type: money
+  - line: II11_B
+    field: '6002'
+    type: money
+  - line: II11_C
+    field: '6003'
+    type: money
+  - line: II12_A         # Other than by cash or check
+    field: '6004'
+    type: money
+  - line: II12_B
+    field: '6005'
+    type: money
+  - line: II12_C
+    field: '6006'
+    type: money
+  - line: II13_A         # Carryover from prior year
+    field: '6007'
+    type: money
+  - line: II13_B
+    field: '6008'
+    type: money
+  - line: II13_C
+    field: '6009'
+    type: money
+  - line: II14_A         # Add line 11 through line 13
+    field: '6010'
+    type: money
+  - line: II14_B
+    field: '6011'
+    type: money
+  - line: II14_C
+    field: '6012'
+    type: money
+  # ---- Casualty and Theft Losses
+  - line: II15_A         # Casualty or theft loss(es). Attach federal Form 4684
+    field: '6013'
+    type: money
+  - line: II15_B
+    field: '6014'
+    type: money
+  - line: II15_C
+    field: '6015'
+    type: money
+  # ---- Other Itemized Deductions
+  - line: II16_A         # Other — from list in federal instructions
+    field: '6016'
+    type: money
+  - line: II16_B
+    field: '6017'
+    type: money
+  - line: II16_C
+    field: '6018'
+    type: money
+  - line: II17_A         # Add lines 4, 7, 10, 14, 15, and 16 in columns A, B, and C
+    field: '6019'
+    type: money
+  - line: II17_B
+    field: '6020'
+    type: money
+  - line: II17_C
+    field: '6021'
+    type: money
+  - line: II18           # Total. Combine line 17 column A less column B plus column C (single box)
+    field: '6022'
+    type: money
+  # ---- Job Expenses and Certain Miscellaneous Deductions (single-box block)
+  - line: II19           # Unreimbursed employee expenses. Attach federal Form 2106 if required
+    field: '6023'
+    type: money
+  - line: II20           # Tax preparation fees
+    field: '6024'
+    type: money
+  - line: II21_desc      # line 21 — "Other expenses: investment, safe deposit box, etc. List type" description
+    field: '6025'
+    type: text
+  - line: II21           # Other expenses — amount
+    field: '6026'
+    type: money
+  - line: II22           # Add line 19 through line 21
+    field: '6027'
+    type: money
+  - line: II23           # Enter amount from federal Form 1040 or 1040-SR, line 11
+    field: '6028'
+    type: money
+  - line: II24           # Multiply line 23 by 2% (0.02). If less than zero, enter 0
+    field: '6029'
+    type: money
+  - line: II25           # Subtract line 24 from line 22. If line 24 is more than line 22, enter 0
+    field: '6030'
+    type: money
+  - line: II26           # Total Itemized Deductions. Add line 18 and line 25
+    field: '6031'
+    type: money
+  - line: II27_desc      # line 27 — "Other adjustments. See instructions. Specify" description
+    field: '6032'
+    type: text
+  - line: II27           # Other adjustments — amount
+    field: '6033'
+    type: money
+  - line: II28           # Combine line 26 and line 27
+    field: '6034'
+    type: money
+  - line: II29           # Itemized Deductions Worksheet result (federal AGI > threshold)
+    field: '6035'
+    type: money
+  - line: II30           # Larger of line 29 or standard deduction → transfer to Form 540, line 18
+    field: '6036'
+    type: money
+relations: []
+cross_form: []
+identity_fields:
+  - name
+  - identifying_number
