@@ -44,6 +44,8 @@ PACK_PATHS = sorted((REPO_ROOT / "formpacks" / "federal").glob("*/*/pack.yaml"))
 KNOWN_FORM_KEYS = frozenset(
     {
         "f8843",
+        "f8863",
+        "f2555",
         "f1040nr",
         "f1040",
         "sched_1",
@@ -52,6 +54,8 @@ KNOWN_FORM_KEYS = frozenset(
         "sched_a",
         "sched_b",
         "sched_c",
+        "sched_d",
+        "sched_e",
         "sched_oi",
         "sched_se",
     }

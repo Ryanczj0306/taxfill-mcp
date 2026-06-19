@@ -207,10 +207,10 @@ Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
 - [x] **M1 — Core engine:** formpack loader, filler, verifier, render, calc (data-driven tax tables, source-verified), residency (SPT + exempt years)
 - [x] **M2 — Federal packs:** f8843 (2019–2024), f1040-NR + schedules (2022–2023), f1040 + schedules (2023–2024) — field-map + relation audits clean
 - [x] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge **2019–2024** (irs.gov-cited), sources registry, filing summary, file & pay
-- [x] **M4 — MCP server:** stdio server, 14 tools, image content for renders, client quickstarts
-- [ ] **M5 — State support v1:** California packs + knowledge, no-income-tax states, state scoping
-- [~] **M6 — Skill + README + launch:** ✅ agent skills with cookbook, ✅ eval harness, ✅ this README; remaining: `.mcpb` bundle, demo GIF, PyPI publish
-- [ ] **M7 — Scale-out:** pack-authoring CLI, NY/MA/IL/NJ, more years, amended returns (1040-X), extensions (4868), estimated tax (1040-ES), ITIN (W-7), document extraction (`extract_document`), persistent workspace + `taxfill purge`
+- [x] **M4 — MCP server:** stdio server, 21 tools, image content for renders, client quickstarts
+- [x] **M5 — State support v1:** California packs (540 + 540NR) + knowledge, all-50-state + DC knowledge packs with cited credits, no-income-tax states, state scoping
+- [~] **M6 — Skill + README + launch:** ✅ agent skills with cookbook, ✅ eval harness, ✅ this README, ✅ self-contained packaging + drift CI; remaining: `.mcpb` bundle, demo GIF, PyPI publish
+- [~] **M7 — Scale-out:** ✅ pack-authoring CLI (`taxfill introspect`), ✅ document extraction (`extract_document`), ✅ persistent workspace + `taxfill purge`, ✅ Schedule SE via the introspect pipeline; remaining: more state form packs (NY/MA/IL/NJ…), more federal forms (Schedule D/E, 8863, 2555), more years, amended returns (1040-X), extensions (4868), estimated tax (1040-ES), ITIN (W-7)
 
 ---
 

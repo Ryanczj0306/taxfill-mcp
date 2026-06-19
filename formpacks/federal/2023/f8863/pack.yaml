@@ -1,0 +1,358 @@
+# Form 8863, 2023 — Education Credits (American Opportunity and Lifetime Learning Credits).
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) →
+# vision-map workflow (each fillable widget filled with its own field name, then
+# the printed line label nearest each name was read off the rendered PDF) → this map.
+#
+# Flow: Part I line 8 (refundable American opportunity credit) → Form 1040/1040-SR
+# line 29; Part II line 19 (nonrefundable education credits) → Schedule 3 line 3.
+#
+# Page layout notes:
+#   - Line 6 and line 17 are decimal RATIOS entered across two boxes: an
+#     integer/units box and a fractional box ("1 . 000"). Mapped as two text
+#     fields each (6_units/6_decimal, 17_units/17_decimal); typed text because the
+#     value is a rounded decimal (e.g. "1.000" or "0.652"), not a money amount.
+#   - Line 7 has a printed "check this box" widget (under-24 / can't-take-refundable
+#     -credit indicator), mapped as checkbox 7_box.
+#   - Part III (page 2) is a per-student worksheet. Lines 22a / 22b capture the
+#     first / second educational institution; each has a name box, an address box,
+#     two Yes/No 1098-T questions, and a 9-digit EIN entered one character per box
+#     (22a_ein_1..22a_ein_9 / 22b_ein_1..22b_ein_9).
+#   - Lines 23–26 are Yes/No eligibility questions (c2_5..c2_8).
+#
+# ALL 77 fillable widgets in the skeleton are mapped. No widgets are intentionally
+# unmapped — Form 8863 contains no pre-printed statutory-constant boxes (unlike
+# Schedule SE's $160,200 / $6,560 boxes). The statutory thresholds on lines 2, 5,
+# 13, 16 are taxpayer-entered (the filer picks the MFJ vs other amount), so they
+# are real fillable fields, not constants.
+form: Form 8863
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f8863--2023.pdf
+pdf_sha256: dae8814d278f144bc71c2e05a72a7bcac4004b817547ef48fa774575e7fdc77e
+acroform_root: topmostSubform[0]
+fields:
+  # ---- Page 1 header ----
+  - line: name
+    field: Page1[0].f1_1[0]
+    type: text
+  - line: ssn_area
+    field: Page1[0].SocialSecurity[0].f1_2[0]
+    type: text
+    maxlen: 3
+  - line: ssn_group
+    field: Page1[0].SocialSecurity[0].f1_3[0]
+    type: text
+    maxlen: 2
+  - line: ssn_serial
+    field: Page1[0].SocialSecurity[0].f1_4[0]
+    type: text
+    maxlen: 4
+
+  # ---- Part I: Refundable American Opportunity Credit ----
+  - line: "1"                         # Total of all amounts from all Parts III, line 30
+    field: Page1[0].f1_5[0]
+    type: money
+  - line: "2"                         # $180,000 MFJ / $90,000 single, HOH, QSS
+    field: Page1[0].f1_6[0]
+    type: money
+  - line: "3"                         # Amount from Form 1040/1040-SR, line 11 (MAGI)
+    field: Page1[0].f1_7[0]
+    type: money
+  - line: "4"                         # Subtract line 3 from line 2
+    field: Page1[0].f1_8[0]
+    type: money
+  - line: "5"                         # $20,000 MFJ / $10,000 single, HOH, QSS
+    field: Page1[0].f1_9[0]
+    type: money
+  - line: 6.units                     # Line 6 ratio — integer/units part ("1" or "0")
+    field: Page1[0].f1_10[0]
+    type: text
+  - line: 6.decimal                   # Line 6 ratio — decimal places ("000".."999")
+    field: Page1[0].f1_11[0]
+    type: text
+  - line: 7.box                       # Under-24 box: can't take refundable AOTC, check here
+    field: Page1[0].c1_1[0]
+    type: checkbox
+    on_state: "/1"
+  - line: "7"                         # Multiply line 1 by line 6
+    field: Page1[0].f1_12[0]
+    type: money
+  - line: "8"                         # Refundable AOTC: line 7 × 40% → Form 1040 line 29
+    field: Page1[0].f1_13[0]
+    type: money
+
+  # ---- Part II: Nonrefundable Education Credits ----
+  - line: "9"                         # Subtract line 8 from line 7
+    field: Page1[0].f1_14[0]
+    type: money
+  - line: "10"                        # Total of all amounts from all Parts III, line 31
+    field: Page1[0].f1_15[0]
+    type: money
+  - line: "11"                        # Smaller of line 10 or $10,000
+    field: Page1[0].f1_16[0]
+    type: money
+  - line: "12"                        # Multiply line 11 by 20%
+    field: Page1[0].f1_17[0]
+    type: money
+  - line: "13"                        # $180,000 MFJ / $90,000 single, HOH, QSS
+    field: Page1[0].f1_18[0]
+    type: money
+  - line: "14"                        # Amount from Form 1040/1040-SR, line 11 (MAGI)
+    field: Page1[0].f1_19[0]
+    type: money
+  - line: "15"                        # Subtract line 14 from line 13
+    field: Page1[0].f1_20[0]
+    type: money
+  - line: "16"                        # $20,000 MFJ / $10,000 single, HOH, QSS
+    field: Page1[0].f1_21[0]
+    type: money
+  - line: 17.units                    # Line 17 ratio — integer/units part
+    field: Page1[0].f1_22[0]
+    type: text
+  - line: 17.decimal                  # Line 17 ratio — decimal places
+    field: Page1[0].f1_23[0]
+    type: text
+  - line: "18"                        # Multiply line 12 by line 17
+    field: Page1[0].f1_24[0]
+    type: money
+  - line: "19"                        # Nonrefundable education credits → Schedule 3 line 3
+    field: Page1[0].f1_25[0]
+    type: money
+
+  # ---- Page 2 header (Part III per-student) ----
+  - line: name_p2
+    field: Page2[0].NameShown[0]
+    type: text
+  - line: ssn_p2_area
+    field: Page2[0].SSN[0].f2_1[0]
+    type: text
+    maxlen: 3
+  - line: ssn_p2_group
+    field: Page2[0].SSN[0].f2_2[0]
+    type: text
+    maxlen: 2
+  - line: ssn_p2_serial
+    field: Page2[0].SSN[0].f2_3[0]
+    type: text
+    maxlen: 4
+
+  # ---- Part III: Student and Educational Institution Information ----
+  - line: "20"                        # Student name (as shown on page 1 of return)
+    field: Page2[0].StudentName[0]
+    type: text
+  - line: 21.ssn_area                 # Student SSN
+    field: Page2[0].StudentSSN[0].f2_4[0]
+    type: text
+    maxlen: 3
+  - line: 21.ssn_group
+    field: Page2[0].StudentSSN[0].f2_5[0]
+    type: text
+    maxlen: 2
+  - line: 21.ssn_serial
+    field: Page2[0].StudentSSN[0].f2_6[0]
+    type: text
+    maxlen: 4
+
+  # Line 22a — first educational institution
+  - line: 22a.name                    # a. Name of first educational institution
+    field: Page2[0].Line22a[0].f2_7[0]
+    type: text
+  - line: 22a.address                 # 22a(1) Address
+    field: Page2[0].Line22a[0].f2_8[0]
+    type: text
+    maxlen: 255
+  - line: 22a.q2.yes                  # 22a(2) Received 1098-T from this institution for 2023? Yes
+    field: Page2[0].Line22a[0].c2_1[0]
+    type: checkbox
+    on_state: "/Yes"
+    group: 22a.q2
+  - line: 22a.q2.no                   # 22a(2) No
+    field: Page2[0].Line22a[0].c2_1[1]
+    type: checkbox
+    on_state: "/No"
+    group: 22a.q2
+  - line: 22a.q3.yes                  # 22a(3) Received 1098-T for 2022 with box 7 checked? Yes
+    field: Page2[0].Line22a[0].c2_2[0]
+    type: checkbox
+    on_state: "/Yes"
+    group: 22a.q3
+  - line: 22a.q3.no                   # 22a(3) No
+    field: Page2[0].Line22a[0].c2_2[1]
+    type: checkbox
+    on_state: "/No"
+    group: 22a.q3
+  - line: 22a.ein.1                   # 22a(4) Institution EIN — one char per box
+    field: Page2[0].Line22a[0].f2_9[0]
+    type: text
+    maxlen: 1
+  - line: 22a.ein.2
+    field: Page2[0].Line22a[0].f2_10[0]
+    type: text
+    maxlen: 1
+  - line: 22a.ein.3
+    field: Page2[0].Line22a[0].f2_11[0]
+    type: text
+    maxlen: 1
+  - line: 22a.ein.4
+    field: Page2[0].Line22a[0].f2_12[0]
+    type: text
+    maxlen: 1
+  - line: 22a.ein.5
+    field: Page2[0].Line22a[0].f2_13[0]
+    type: text
+    maxlen: 1
+  - line: 22a.ein.6
+    field: Page2[0].Line22a[0].f2_14[0]
+    type: text
+    maxlen: 1
+  - line: 22a.ein.7
+    field: Page2[0].Line22a[0].f2_15[0]
+    type: text
+    maxlen: 1
+  - line: 22a.ein.8
+    field: Page2[0].Line22a[0].f2_16[0]
+    type: text
+    maxlen: 1
+  - line: 22a.ein.9
+    field: Page2[0].Line22a[0].f2_17[0]
+    type: text
+    maxlen: 1
+
+  # Line 22b — second educational institution (if any)
+  - line: 22b.name                    # b. Name of second educational institution
+    field: Page2[0].Line22b[0].f2_18[0]
+    type: text
+  - line: 22b.address                 # 22b(1) Address
+    field: Page2[0].Line22b[0].f2_19[0]
+    type: text
+    maxlen: 257
+  - line: 22b.q2.yes                  # 22b(2) Received 1098-T from this institution for 2023? Yes
+    field: Page2[0].Line22b[0].c2_3[0]
+    type: checkbox
+    on_state: "/Yes"
+    group: 22b.q2
+  - line: 22b.q2.no                   # 22b(2) No
+    field: Page2[0].Line22b[0].c2_3[1]
+    type: checkbox
+    on_state: "/No"
+    group: 22b.q2
+  - line: 22b.q3.yes                  # 22b(3) Received 1098-T for 2022 with box 7 checked? Yes
+    field: Page2[0].Line22b[0].c2_4[0]
+    type: checkbox
+    on_state: "/Yes"
+    group: 22b.q3
+  - line: 22b.q3.no                   # 22b(3) No
+    field: Page2[0].Line22b[0].c2_4[1]
+    type: checkbox
+    on_state: "/No"
+    group: 22b.q3
+  - line: 22b.ein.1                   # 22b(4) Institution EIN — one char per box
+    field: Page2[0].Line22b[0].f2_20[0]
+    type: text
+    maxlen: 1
+  - line: 22b.ein.2
+    field: Page2[0].Line22b[0].f2_21[0]
+    type: text
+    maxlen: 1
+  - line: 22b.ein.3
+    field: Page2[0].Line22b[0].f2_22[0]
+    type: text
+    maxlen: 1
+  - line: 22b.ein.4
+    field: Page2[0].Line22b[0].f2_23[0]
+    type: text
+    maxlen: 1
+  - line: 22b.ein.5
+    field: Page2[0].Line22b[0].f2_24[0]
+    type: text
+    maxlen: 1
+  - line: 22b.ein.6
+    field: Page2[0].Line22b[0].f2_25[0]
+    type: text
+    maxlen: 1
+  - line: 22b.ein.7
+    field: Page2[0].Line22b[0].f2_26[0]
+    type: text
+    maxlen: 1
+  - line: 22b.ein.8
+    field: Page2[0].Line22b[0].f2_27[0]
+    type: text
+    maxlen: 1
+  - line: 22b.ein.9
+    field: Page2[0].Line22b[0].f2_28[0]
+    type: text
+    maxlen: 1
+
+  # Lines 23–26 — eligibility Yes/No questions
+  - line: 23.yes                      # Line 23 AOTC claimed for any 4 prior years? Yes — Stop
+    field: Page2[0].c2_5[0]
+    type: checkbox
+    on_state: "/Yes"
+    group: "23"
+  - line: 23.no                       # Line 23 No — go to line 24
+    field: Page2[0].c2_5[1]
+    type: checkbox
+    on_state: "/No"
+    group: "23"
+  - line: 24.yes                      # Line 24 Enrolled at least half-time? Yes — go to line 25
+    field: Page2[0].c2_6[0]
+    type: checkbox
+    on_state: "/Yes"
+    group: "24"
+  - line: 24.no                       # Line 24 No — Stop
+    field: Page2[0].c2_6[1]
+    type: checkbox
+    on_state: "/No"
+    group: "24"
+  - line: 25.yes                      # Line 25 Completed first 4 years before 2023? Yes — Stop
+    field: Page2[0].c2_7[0]
+    type: checkbox
+    on_state: "/Yes"
+    group: "25"
+  - line: 25.no                       # Line 25 No — go to line 26
+    field: Page2[0].c2_7[1]
+    type: checkbox
+    on_state: "/No"
+    group: "25"
+  - line: 26.yes                      # Line 26 Convicted of felony drug offense? Yes — Stop
+    field: Page2[0].c2_8[0]
+    type: checkbox
+    on_state: "/Yes"
+    group: "26"
+  - line: 26.no                       # Line 26 No — complete lines 27–30
+    field: Page2[0].c2_8[1]
+    type: checkbox
+    on_state: "/No"
+    group: "26"
+
+  # American Opportunity Credit (lines 27–30)
+  - line: "27"                        # Adjusted qualified education expenses (max $4,000)
+    field: Page2[0].f2_29[0]
+    type: money
+  - line: "28"                        # Subtract $2,000 from line 27
+    field: Page2[0].f2_30[0]
+    type: money
+  - line: "29"                        # Multiply line 28 by 25%
+    field: Page2[0].f2_31[0]
+    type: money
+  - line: "30"                        # AOTC for this student → Part I, line 1
+    field: Page2[0].f2_32[0]
+    type: money
+
+  # Lifetime Learning Credit (line 31)
+  - line: "31"                        # Adjusted qualified education expenses → Part II, line 10
+    field: Page2[0].f2_33[0]
+    type: money
+
+relations:
+  - "4 == 2 - 3"                      # "Subtract line 3 from line 2"
+  - "15 == 13 - 14"                   # "Subtract line 14 from line 13"
+cross_form:
+  - "8 == f1040.29"                   # Refundable AOTC → Form 1040/1040-SR, line 29
+  - "19 == sched_3.3"                 # Nonrefundable education credits → Schedule 3, line 3
+identity_fields:
+  - name
+  - ssn_area
+  - ssn_group
+  - ssn_serial

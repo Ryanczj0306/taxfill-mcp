@@ -1,6 +1,6 @@
 [project]
 name = "taxfill-mcp"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "MCP server exposing the TaxFill core engine over stdio (official mcp python-sdk). v0.1 in development — not yet published to PyPI."
 requires-python = ">=3.11"
 license = "MIT"
@@ -10,7 +10,7 @@ dependencies = [
     # Pin to the matching core release so `uvx taxfill-mcp` never resolves a
     # mismatched taxfill-core from PyPI. Keep in sync with the version bump
     # (see docs/PUBLISHING.md).
-    "taxfill-core==0.1.0.dev0",
+    "taxfill-core==0.1.0",
 ]
 
 [project.scripts]
