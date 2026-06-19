@@ -20,7 +20,8 @@ audit→golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/S
 **Schedule D, Schedule E, Form 8863, Form 2555** (#6 priority set complete);
 state — CA (540 + 540NR + Schedule CA 540 + 540NR), NY (IT-201 + IT-203),
 IL (IL-1040), PA (PA-40), OH (IT 1040 13-page bundle), GA (Form 500), NC (D-400),
-MI (MI-1040), NJ (NJ-1040) — **9 states fillable**. 44 form packs total.
+MI (MI-1040), NJ (NJ-1040), VA (Form 760), AZ (Form 140), IN (IT-40), MO (MO-1040
+32-page bundle), MD (Form 502) — **14 states fillable**. 49 form packs total.
 
 **Quality bar (non-negotiable, applies to every item below):** no invented
 numbers — every figure cited to a .gov/.us source or shipped with an explicit
@@ -33,14 +34,14 @@ The eight remaining workstreams, with the phase that schedules each:
 
 ## 1. State form packs — the biggest gap (Phase C)
 
-**STATUS (2026-06-19):** **9 states now fillable** — CA (540, 540NR, Schedule CA
-540 + 540NR), NY (IT-201 + IT-203), IL (IL-1040), PA (PA-40), OH (IT 1040 13-page
-bundle), GA (Form 500), NC (D-400), MI (MI-1040), NJ (NJ-1040). **MA Form 1** was
-located but is a confirmed fetch-blocked hard state (official mass.gov PDF is a
-fillable AcroForm but the repo downloader can't retrieve it — needs a downloader
-fix). Next tranche by population: VA → AZ → IN → MO → MD → …, plus retry MA via a
-downloader enhancement and add each state's nonresident/part-year form where
-separate (IL Schedule NR, OH IT NRC, etc.).
+**STATUS (2026-06-19):** **14 states now fillable** — CA, NY, IL, PA, OH, GA, NC,
+MI, NJ, VA, AZ, IN, MO, MD (resident main returns; CA also has 540NR + Schedule
+CA 540/540NR; NY also IT-203). **MA Form 1** was located but is a confirmed
+fetch-blocked hard state (official mass.gov PDF is a fillable AcroForm but the
+repo downloader can't retrieve it — needs a downloader fix). Next tranche by
+population: WI → CO → MN → SC → AL → …, plus retry MA via a downloader
+enhancement and add each state's nonresident/part-year form where separate
+(IL Schedule NR, OH IT NRC, etc.).
 
 **Why:** ~41 jurisdictions can still only be *scoped*, not filled.
 
