@@ -101,6 +101,26 @@ def test_probe_urls_404_is_drift_but_403_is_only_a_warning(monkeypatch):
     assert cd._probe_urls([url], "x") == []  # 403 = blocked bot, not drift
 
 
+def test_probe_urls_ssl_cert_error_is_a_warning_not_drift(monkeypatch):
+    # State .gov sites (e.g. dor.ms.gov) often serve an incomplete cert chain;
+    # urllib (stricter than browsers) raises SSLCertVerificationError. The page
+    # is up — the cert just won't verify — so this is a warn, not a moved page.
+    import ssl
+
+    url = "https://dor.example.gov/individual-income-tax-faqs"
+
+    def raise_ssl(*a, **k):
+        raise urllib.error.URLError(ssl.SSLCertVerificationError("CERTIFICATE_VERIFY_FAILED"))
+    monkeypatch.setattr(cd.urllib.request, "urlopen", raise_ssl)
+    assert cd._probe_urls([url], "x") == []  # SSL cert chain quirk = warn, not drift
+
+    # A genuine connection failure (no SSL reason) is still drift.
+    def raise_refused(*a, **k):
+        raise urllib.error.URLError(ConnectionRefusedError("refused"))
+    monkeypatch.setattr(cd.urllib.request, "urlopen", raise_refused)
+    assert cd._probe_urls([url], "x")  # non-empty: genuine unreachable = drift
+
+
 def test_mailing_addresses_checked_and_reachable_is_no_drift(monkeypatch):
     # The real federal + per-state knowledge packs DO carry where-to-file URLs,
     # and when they all resolve there is no drift.
