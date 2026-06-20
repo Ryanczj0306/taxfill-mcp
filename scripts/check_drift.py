@@ -29,6 +29,7 @@ scheduled job, not part of the offline unit suite. Run:
 """
 from __future__ import annotations
 
+import ssl
 import sys
 import urllib.error
 import urllib.request
@@ -94,6 +95,18 @@ def _probe_urls(urls: list[str], label: str) -> list[str]:
             else:
                 drift.append(f"{label}: {url} -> HTTP {exc.code}")
                 print(f"  DRIFT  {exc.code} {url}")
+        except urllib.error.URLError as exc:
+            # TLS-chain quirks (incomplete intermediate certs served by some state
+            # .gov sites — urllib is stricter than browsers, which fetch missing
+            # intermediates via AIA) raise SSLCertVerificationError. The page is
+            # up, the cert just won't verify against a strict CA bundle, so — like
+            # a 403 — this is not a moved page. Warn, don't fail. A genuine
+            # connection failure (DNS, refused, timeout) is still drift.
+            if isinstance(getattr(exc, "reason", None), ssl.SSLError):
+                print(f"  warn   SSL cert (not drift) {url}")
+            else:
+                drift.append(f"{label}: {url} unreachable — {exc}")
+                print(f"  DRIFT  unreachable {url}")
         except Exception as exc:
             drift.append(f"{label}: {url} unreachable — {exc}")
             print(f"  DRIFT  unreachable {url}")
