@@ -105,11 +105,14 @@ Now that `uvx taxfill-mcp` works, follow [`bundle/README.md`](../bundle/README.m
 
 ```bash
 cd bundle
-mcpb init && mcpb validate && mcpb pack   # produces taxfill.mcpb
+mcpb validate && mcpb pack   # manifest.json already finalized — just validate + pack -> taxfill.mcpb
 ```
 
-Use the manifest values listed in that file (launch via `uvx taxfill-mcp`; the 15
-tools; outbound-network-to-.gov + local-file permissions; the README disclaimer).
+`bundle/manifest.json` is already finalized and **passes `mcpb validate`** against
+the current CLI schema (v0.2): the `$schema_note` draft marker was dropped,
+`server.entry_point` added, and the `permissions` block removed (the v0.2/v0.3
+schema has no permissions field — Claude Desktop prompts for file/network consent
+at install time). It declares the **21 tools**; the README disclaimer applies.
 
 ## 7. Demo GIF
 
