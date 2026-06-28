@@ -80,14 +80,19 @@ one verified test count, CI green.
 > credentials**. Runbooks already written: [`docs/PUBLISHING.md`](PUBLISHING.md),
 > [`docs/ACCEPTANCE.md`](ACCEPTANCE.md), [`docs/DEMO.md`](DEMO.md).
 
-- [ ] **A1 — Publish `taxfill-mcp` (+ `taxfill-core`) to PyPI.** Wheels are already
-      built in `dist/` (2026-06-19). `twine upload dist/*`. Enables
-      `uvx taxfill-mcp`. **Dep: PyPI token.**
+- [ ] **A1 — Publish `taxfill-mcp` (+ `taxfill-core`) to PyPI.** **Verified
+      PyPI-ready (2026-06-28):** data re-staged, both packages rebuilt (now include
+      the AL/CO/MN/WI packs), `uvx twine check dist/*` PASSED, and the self-contained
+      smoke test passed in a clean off-repo venv (21 tools + data bundled). Only the
+      irreversible `uvx twine upload dist/*` remains. Enables `uvx taxfill-mcp`.
+      **Manual/blocked: needs maintainer PyPI token.**
 - [ ] **A2 — Tag the release.** `git tag v0.1.0` + GitHub release notes.
-- [ ] **A3 — Build the `.mcpb` one-click bundle.** Un-DRAFT `bundle/manifest.json`,
-      then `mcpb validate` + `mcpb pack` → `taxfill.mcpb` (no `.mcpb` artifact
-      exists yet). This is the primary path for non-technical Claude Desktop users.
-      **Dep: `mcpb` CLI installed.**
+- [~] **A3 — Build the `.mcpb` one-click bundle.** **Manifest finalized (2026-06-28):**
+      dropped the `$schema_note` draft marker, added `server.entry_point`, removed the
+      now-unschema'd `permissions` block — `mcpb validate` **PASSES**. Only `mcpb pack`
+      → `taxfill.mcpb` remains, and it is **publish-gated** (the bundle launches
+      `uvx taxfill-mcp`, which only resolves after A1). Primary path for non-technical
+      Claude Desktop users.
 - [ ] **A4 — Record the 60-second demo GIF** per `docs/DEMO.md` (storyboard +
       6 beats already written) → `docs/media/demo.gif`; embed in README.
 - [ ] **A5 — Run the 20-minute non-developer acceptance test** (`docs/ACCEPTANCE.md`)

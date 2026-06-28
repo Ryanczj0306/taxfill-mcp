@@ -22,14 +22,18 @@ remain at release:
 
 ```bash
 cd bundle
-# (manifest.json already present — review it; drop the "$schema_note" field)
-mcpb validate        # check the manifest against the installed CLI's schema
+mcpb validate        # manifest.json already finalized — confirms it passes
 mcpb pack            # produces taxfill.mcpb
 ```
 
-If `mcpb validate` flags field-name drift (the schema evolves), adjust
-`manifest.json` to match the CLI's current schema and re-run. Re-generate the
-tool list after any server tool change with the snippet in `docs/PUBLISHING.md`.
+`manifest.json` is already finalized and **passes `mcpb validate`** against the
+current CLI schema (v0.2, as of 2026-06-28): the `$schema_note` draft marker was
+dropped, `server.entry_point` (`"taxfill-mcp"`) was added, and the old
+`permissions` block was removed — the v0.2/v0.3 schema has no `permissions` field,
+so Claude Desktop prompts for the outbound-.gov-network + local-file consent at
+install time instead. If a future `mcpb validate` flags field-name drift (the
+schema evolves), adjust `manifest.json` to match and re-run. Re-generate the tool
+list after any server tool change with the snippet in `docs/PUBLISHING.md`.
 
 ## Manifest values to use
 

@@ -1,5 +1,4 @@
 {
-  "$schema_note": "DRAFT pre-filled at version-bump time. Run `mcpb validate` against the installed @anthropic-ai/mcpb CLI before `mcpb pack` \u2014 adjust field names to the CLI's current schema if it has drifted.",
   "manifest_version": "0.2",
   "name": "taxfill",
   "display_name": "TaxFill",
@@ -24,6 +23,7 @@
   ],
   "server": {
     "type": "binary",
+    "entry_point": "taxfill-mcp",
     "mcp_config": {
       "command": "uvx",
       "args": [
@@ -126,21 +126,6 @@
     ],
     "runtimes": {
       "python": ">=3.11"
-    }
-  },
-  "permissions": {
-    "network": {
-      "outbound": [
-        "*.gov",
-        "*.us"
-      ],
-      "reason": "download official blank tax forms from government sites"
-    },
-    "filesystem": {
-      "read_write": [
-        "user-selected working directory"
-      ],
-      "reason": "write filled PDFs and the resumable taxfill-workspace"
     }
   }
 }
