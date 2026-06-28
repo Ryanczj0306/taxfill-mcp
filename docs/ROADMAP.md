@@ -1,184 +1,197 @@
 # TaxFill — Completion Roadmap (remaining work)
 
 The design spec is [`docs/DEV_PLAN.md`](DEV_PLAN.md). This is the forward-looking
-plan for what is **not yet done**, as of the current state.
+plan for what is **not yet done**, as of **2026-06-28**.
 
-## Where we are
+> **Status note (2026-06-28 rewrite).** A full claimed-vs-actual audit of the repo
+> found the previous (2026-06-19) version of this file materially **understated
+> completion**. Corrected below. In short: the project is **~85% done and v0.1 is
+> functionally code-complete** — every engine/data workstream is finished and
+> merged; what genuinely remains is (1) **launch execution** to ship v0.1 and
+> (2) the **open-ended coverage breadth** (more state form packs + four new federal
+> form types). There are **no remaining code blockers** for v0.1.
 
-Done and on `main` (1222 tests): M0 scaffold · M1 engine · M2 federal packs
-(f1040, f1040-NR, f8843, sched 1/2/3/A/B/C/OI — audited) · M3 intake + knowledge
-(intake_checklist, estimate_refund, get_sources, file_and_pay, filing_summary;
-federal knowledge 2019–2024 fully cited) · M4 MCP server (21 tools, stdio, image
-content, in-memory e2e tests) · M5 state support (state_scope, no-income-tax
-states, **knowledge packs for all 41 income-tax states + DC**, cited credits for
-all of them) · M6 code (SKILL.md cookbook, §14 eval harness, §13 README, MCPB
-build recipe) · Phase B (`extract_document`, resumable workspace + `taxfill
-purge`) · introspect pack-authoring CLI · Phase A launch packaging + drift CI.
+## Where we are (verified)
 
-**Form packs that can be FILLED today (all introspect→vision-map→adversarial-
-audit→golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE,
-**Schedule D, Schedule E, Form 8863, Form 2555** (#6 priority set complete);
-state — CA (540 + 540NR + Schedule CA 540 + 540NR), NY (IT-201 + IT-203),
-IL (IL-1040), PA (PA-40), OH (IT 1040 13-page bundle), GA (Form 500), NC (D-400),
-MI (MI-1040), NJ (NJ-1040), VA (Form 760), AZ (Form 140), IN (IT-40), MO (MO-1040
-32-page bundle), MD (Form 502) — **14 states fillable**. 49 form packs total.
+Done and on `main` (**1,288 tests, all green** — verified `pytest` run, exit 0):
+
+- **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
+  server (21 tools, stdio, image content) · M5 state support · M6 code/docs.**
+- **MCP server — 21 tools, CI-gated** (`.github/workflows/ci.yml` asserts exactly
+  21): list_forms, get_form_map, fetch_blank, fill_form, verify_form,
+  verify_filing, render_form (vision Image), calc, residency, intake_checklist,
+  list_document_kinds, extract_document, workspace_save, workspace_load,
+  workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
+  get_sources, filing_summary, file_and_pay. Core = 19 modules (~9.2k LOC).
+- **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
+  1099-NEC/INT/DIV/B, 1098-T, 1042-S, with per-field provenance) and the resumable
+  workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
+  / CHECKLIST.md) are implemented, merged, and tested.
+- **Federal form packs — priority set DONE.** 31 packs across 2019–2024. M2 base
+  set + Schedule SE/D/E + Form 8863 + Form 2555 all ship (2023), audited, golden.
+- **State credits — DONE for all 42 jurisdictions** (41 income-tax states + DC):
+  every `knowledge/states/<st>/2023.yaml` carries a cited `credits` block (~174
+  entries total); `state_scope` surfaces them as `benefits_candidates`.
+- **Drift CI — DONE.** Scheduled cron job runs `scripts/check_drift.py` (form-blank
+  SHA256 + source URLs + mailing addresses), 9 tests, SSL-tolerance fix merged.
+- **Pack-authoring CLI — DONE.** `taxfill introspect <blank.pdf>` emits a pack
+  skeleton (`packbuild.py` + `cli.py`), tested.
+
+**Form packs that can be FILLED today (introspect→vision-map→adversarial-audit→
+golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E,
+Form 8863, Form 2555. state — **18 states** (22 packs): CA (540 + 540NR +
+Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
+IN, MO, MD, **AL, CO, MN, WI**. **53 form packs total** (31 federal + 22 state).
+
+> ⚠️ Four finished state packs (**AL, CO, MN, WI**) are currently **untracked in
+> the working tree** — see Phase 0 below; commit them first.
 
 **Quality bar (non-negotiable, applies to every item below):** no invented
 numbers — every figure cited to a .gov/.us source or shipped with an explicit
 `unverified` caveat; every form-pack field map adversarially **vision-audited**
 before it ships; tests green; feature-branch → `--no-ff` merge.
 
-The eight remaining workstreams, with the phase that schedules each:
+---
+
+## Phase 0 — Hygiene & truth-up (Effort: S — do first, hours)
+
+Cheap, high-credibility cleanup that the audit surfaced. No new features.
+
+- [ ] **Commit the 4 untracked state packs** (`formpacks/states/{al,co,mn,wi}/`)
+      after a green `test_formpacks_states.py` round-trip. They are finished work
+      sitting outside git — invisible to CI and at risk of loss.
+- [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
+      and a full run (**exit 0, no collection errors**): the suite is **1,288 tests,
+      all green**. The earlier figures were stale/under-counted (old ROADMAP *1222*,
+      README *~1076*, audit-sandbox *~903* — the sandbox couldn't run collection).
+      README + this file now quote **1,288**.
+- [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
+      done, 18 states (not 14), 53 packs (not 49), Phase B done, drift CI done.
+
+**Acceptance:** working tree clean (no untracked packs), README + this file quote
+one verified test count, CI green.
 
 ---
 
-## 1. State form packs — the biggest gap (Phase C)
+## Phase A — Ship v0.1 (Effort: S–M, ~1–2 weeks; the real gate)
 
-**STATUS (2026-06-19):** **14 states now fillable** — CA, NY, IL, PA, OH, GA, NC,
-MI, NJ, VA, AZ, IN, MO, MD (resident main returns; CA also has 540NR + Schedule
-CA 540/540NR; NY also IT-203). **MA Form 1** was located but is a confirmed
-fetch-blocked hard state (official mass.gov PDF is a fillable AcroForm but the
-repo downloader can't retrieve it — needs a downloader fix). Next tranche by
-population: WI → CO → MN → SC → AL → …, plus retry MA via a downloader
-enhancement and add each state's nonresident/part-year form where separate
-(IL Schedule NR, OH IT NRC, etc.).
+> Nothing is installable by a normal user until this lands. **No code blockers** —
+> this is pure launch execution. The one external dependency is **maintainer PyPI
+> credentials**. Runbooks already written: [`docs/PUBLISHING.md`](PUBLISHING.md),
+> [`docs/ACCEPTANCE.md`](ACCEPTANCE.md), [`docs/DEMO.md`](DEMO.md).
 
-**Why:** ~41 jurisdictions can still only be *scoped*, not filled.
-
-**Scope:** 36 states + DC have fillable AcroForms (resident + nonresident/part-
-year forms) + their adjustment schedules (Schedule-CA equivalents); plus 5 hard
-states (IA/NM flat-or-XFA, CT/SC print-only, MA fetch-recheck).
-
-**Method:** the proven CA pipeline — `scripts/introspect_pdf.py` (sentinel
-sweep) → per-page vision-mapping workflow → `assemble_*` → adversarial vision
-audit → `test_formpacks_states.py` golden round-trip. Roll out by population:
-NY → IL → PA → OH → GA → NC → MI → NJ → MA → … (~top 10 ≈ most of the US).
-
-**Steps:** per state: (a) introspect the resident form; (b) vision-map (6 agents);
-(c) assemble pack.yaml (relations from printed labels; cross_form line = federal
-AGI; flat AcroForm); (d) audit every page, fix, re-audit; (e) repeat for the
-nonresident/part-year form + adjustment schedule. Then the hard states: XFA
-handling (federal already does XFA), an OCR-positioned overlay filler for
-print-only forms, or a documented "print + hand-fill from computed values"
-fallback.
-
-**Acceptance:** each pack loads, golden round-trip clean (fill→verify→render all
-pages), field map audited clean. **Effort: XL.** **Deps:** none (pipeline ready);
-hard states depend on the new overlay-filler engine work.
-
-## 2. State credits data — 41 states (Phase C, parallel with #1)
-
-**Why:** only CA's knowledge pack has a `credits` block; the other 41 show no
-`benefits_candidates` in state_scope.
-
-**Method:** one fetch-and-verify workflow wave (like the all-states knowledge
-fetch) gathering each state's common credits (state EITC, renter's/property
-credits, child-care) with eligibility predicates + cited amounts; assemble into
-the existing `credits` block of each `knowledge/states/<st>/<year>.yaml`.
-
-**Acceptance:** each state pack gains a cited `credits` block (or an explicit
-"no notable credits" note); state_scope surfaces them with the unverified-caveat
-plumbing already in place. **Effort: M.** **Deps:** state knowledge packs (done).
-
-## 3. `extract_document` tool (Phase B)
-
-**Why:** the §2 "extract & confirm" step is the one §8 tool not built; the agent
-currently reads documents with its own vision and the user confirms.
-
-**Method:** a `taxfill_core.extract` module + MCP tool that parses common docs
-(W-2, 1099-NEC/INT/DIV/B, 1098-T, I-94, I-20) into structured fields **with
-per-field provenance** (file, page). Hard rule preserved: missing = null, never
-guessed. v1 can wrap the agent's vision output into the confirm-table contract
-(server validates + structures) rather than bundling OCR; a later pass adds
-on-device OCR.
-
-**Acceptance:** `extract_document(path, kind_hint?)` returns typed fields +
-provenance + a gap list; round-trips into `estimate_refund`/`fill_form`; tests
-with synthetic documents. **Effort: L.** **Deps:** none.
-
-## 4. Resumable workspace + `taxfill purge` + RECONCILIATION.md (Phase B)
-
-**Why:** §2 promises a resumable on-disk workspace; today state lives only in the
-conversation, and RECONCILIATION.md is agent-maintained (not generated).
-
-**Method:** `taxfill_core.workspace` — `taxfill-workspace/<year>/` holding
-`profile.json`, `documents/`, `drafts/`, a generated `RECONCILIATION.md` (the
-position/authority audit trail) and `CHECKLIST.md`; load/save/resume; a
-`taxfill purge <year>` CLI that securely wipes it. Wire the MCP server to
-read/write the workspace so any client resumes from state.
-
-**Acceptance:** a filing can stop and resume across sessions; RECONCILIATION.md
-is generated from recorded positions; `purge` removes all PII-bearing files;
-tests. **Effort: L.** **Deps:** none (but improves #3's confirm flow).
-
-## 5. Launch ops — ship v0.1 (Phase A)
-
-**Why:** nothing is installable by a normal user until this lands.
-
-**Steps:** (a) publish `taxfill-mcp` to PyPI (enables `uvx taxfill-mcp`);
-(b) build + sign the `.mcpb` bundle per [`bundle/README.md`](../bundle/README.md);
-(c) record the 60-second demo GIF; (d) run the §13 non-developer 20-minute
-acceptance test and fix what blocks a non-technical user.
+- [ ] **A1 — Publish `taxfill-mcp` (+ `taxfill-core`) to PyPI.** Wheels are already
+      built in `dist/` (2026-06-19). `twine upload dist/*`. Enables
+      `uvx taxfill-mcp`. **Dep: PyPI token.**
+- [ ] **A2 — Tag the release.** `git tag v0.1.0` + GitHub release notes.
+- [ ] **A3 — Build the `.mcpb` one-click bundle.** Un-DRAFT `bundle/manifest.json`,
+      then `mcpb validate` + `mcpb pack` → `taxfill.mcpb` (no `.mcpb` artifact
+      exists yet). This is the primary path for non-technical Claude Desktop users.
+      **Dep: `mcpb` CLI installed.**
+- [ ] **A4 — Record the 60-second demo GIF** per `docs/DEMO.md` (storyboard +
+      6 beats already written) → `docs/media/demo.gif`; embed in README.
+- [ ] **A5 — Run the 20-minute non-developer acceptance test** (`docs/ACCEPTANCE.md`)
+      on a clean machine; fix whatever blocks a non-technical user.
+- [ ] **A6 — Flip README** "not yet on PyPI / bundle coming" language to shipped.
 
 **Acceptance:** `uvx taxfill-mcp` and the one-click `.mcpb` both work; a
 non-developer reaches a filled sample form in <20 min following only the README.
-**Effort: S–M (mostly ops + needs publish credentials).** **Deps:** maintainer
-PyPI access.
-
-## 6. More federal forms beyond the M2 set (Phase C, as scenarios need)
-
-**STATUS (2026-06-19): COMPLETE for the listed priority set.** Schedule SE,
-Schedule D, Schedule E, Form 8863, Form 2555 are all shipped (2023), audited, and
-golden round-trip green. Further forms can be added on the same pipeline as
-scenarios demand.
-
-**Why:** common situations need forms M2 didn't include.
-
-**Scope (priority order, all DONE):** Schedule SE, Schedule D (cap gains),
-Schedule E (rental/K-1), Form 8863 (education credits), Form 2555 (foreign earned
-income exclusion). Each via the M2 pipeline (introspect → map → audit) + its
-`calc`/relations as needed.
-
-**Acceptance:** per form: pack audited + golden round-trip; any new computed line
-backed by cited `calc` data. **Effort: M–L.** **Deps:** none.
-
-## 7. M7 scale-out — tooling + new form types (Phase D)
-
-**Scope:** a pack-authoring CLI (`taxfill introspect blank.pdf` → pack skeleton;
-`scripts/introspect_pdf.py` is the seed) to mechanize #1/#6; amended returns
-(1040-X), extensions (4868), estimated-tax vouchers (1040-ES), ITIN (W-7); more
-tax years; a community pack-contribution pipeline.
-
-**Acceptance:** the CLI emits a skeleton pack from any fillable PDF; each new form
-type is audited + tested. **Effort: L–XL.** **Deps:** #1 (validates the CLI on
-real state packs).
-
-## 8. Nightly drift CI (Phase A)
-
-**Why:** §7 freshness protocol promises a job that catches moved pages / new form
-revisions / changed addresses.
-
-**Method:** confirm/extend the scheduled job in `.github/workflows/ci.yml` to
-re-fetch `sources.yaml` URLs + form `source_url`s + mailing addresses and fail
-loudly on PDF-checksum or address drift (it already runs the network goldens on a
-schedule — extend it to the drift checks).
-
-**Acceptance:** a scheduled CI run flags any drifted source/address/checksum.
-**Effort: S.** **Deps:** none.
 
 ---
 
-## Phased sequencing
+## Phase C — Coverage breadth (Effort: XL — the long pole, parallelizable)
 
-- **Phase A — Ship v0.1 (small, high-leverage):** #5 launch ops + #8 drift CI →
-  the project becomes installable and self-maintaining.
-- **Phase B — Single-user completeness:** #3 extract_document + #4 workspace →
-  the federal flow is truly self-serve and resumable across days.
-- **Phase C — Coverage breadth (the big rollout, parallelizable):** #1 state form
-  packs (by population) ‖ #2 state credits ‖ #6 more federal forms.
-- **Phase D — Scale-out:** #7 pack-authoring CLI + new form types (1040-X, 4868,
-  1040-ES, W-7), which in turn accelerates the tail of Phase C.
+The dominant remaining body of work. Use the proven pipeline:
+`scripts/introspect_pdf.py` (now the `taxfill introspect` CLI) → per-page
+vision-mapping → `assemble_*` → adversarial vision audit → `test_formpacks_states.py`
+golden round-trip.
 
-Phases A and B are mostly independent and can run before/alongside C. Within C,
-state form packs are the long pole; the pack-authoring CLI (#7) is the force
-multiplier — pulling a slice of #7 forward (the CLI only) would speed #1/#6.
+### C1 — Remaining resident state form packs (24 jurisdictions)
+
+18 of 42 income-tax jurisdictions are fillable. **24 remain** (23 states + DC),
+all have knowledge packs but no fillable form pack yet:
+
+`AR · CT · DC · DE · HI · IA · ID · KS · KY · LA · MA · ME · MS · MT · ND · NE ·
+NM · OK · OR · RI · SC · UT · VT · WV`
+
+- [ ] Roll out the **easy AcroForm states by population first**: KY → OR → LA →
+      UT → KS → AR → OK → ID → NE → ME → MS → HI → NM-flat? → RI → MT → ND → DE →
+      VT → DC. (~one feature branch per 3–5 states, `--no-ff` merge per tranche.)
+- [ ] Per state: introspect → vision-map (≈6 agents) → assemble `pack.yaml`
+      (relations from printed labels; `cross_form` line = federal AGI) → audit
+      every page → re-audit → golden round-trip.
+
+### C2 — Nonresident / part-year forms
+
+Only **CA** (540NR + Schedule CA 540NR) and **NY** (IT-203) have them today.
+
+- [ ] Add the separate nonresident/part-year return for each state that has one
+      (IL Schedule NR, OH IT NRC, PA part-year, etc.) + the adjustment schedule.
+
+### C3 — Hard states (need engine work, not just packs)
+
+- [ ] **MA Form 1** — fetch-blocked AcroForm; needs a **downloader fix** (mass.gov
+      fillable PDF the repo downloader can't retrieve).
+- [ ] **IA / NM** — flat-or-XFA forms; reuse the federal XFA handling.
+- [ ] **CT / SC** — print-only; need an **OCR-positioned overlay filler** engine
+      (or a documented "print + hand-fill from computed values" fallback).
+
+**Acceptance (each pack):** loads; golden round-trip clean (fill→verify→render all
+pages); field map audited clean. **Effort: XL. Deps:** C1/C2 pipeline ready;
+C3 hard states depend on new downloader + overlay-filler engine work.
+
+---
+
+## Phase D — Scale-out: new form types & tooling (Effort: L–XL)
+
+### D1 — New federal form TYPES (currently 0%)
+
+None of these exist in `formpacks/` yet; each needs PDF → schema → vision-map →
+adversarial audit → tests, on the existing pipeline.
+
+- [ ] **1040-X** (amended return) — high demand, moderate field count.
+- [ ] **4868** (automatic extension) — low field count, high demand. *(quickest)*
+- [ ] **1040-ES** (estimated-tax vouchers) — low field count.
+- [ ] **W-7** (ITIN application) — hardest; likely needs new field types
+      (photo/signature) in the filler.
+
+### D2 — Breadth follow-ons
+
+- [ ] More tax years for the state packs (federal already spans 2019–2024).
+- [ ] Community pack-contribution pipeline (the `taxfill introspect` CLI is the
+      seed; document the author→audit→PR flow).
+
+**Acceptance:** each new form type audited + golden-tested; any computed line
+backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
+
+---
+
+## Phase E — Test & eval hardening (Effort: S–M)
+
+- [ ] **Finish the §14 eval suite.** `evals/test_scenarios.py` implements scenarios
+      **a–j (10 of 13)**. The three hardest — and most likely to expose tax-logic
+      bugs — are missing: **(k)** MFJ with two W-2s, **(l)** MFJ-vs-MFS optimizer,
+      **(m)** NRA-spouse §6013(g) election. Implement and green them.
+- [ ] Wire the true test count (Phase 0) into a CI badge / README line.
+
+**Acceptance:** all 13 eval scenarios run green; one authoritative test count.
+
+---
+
+## Phased sequencing (recommended order)
+
+1. **Phase 0** (hours) — commit untracked packs, fix test-count truth. Do today.
+2. **Phase A** (1–2 wks) — ship v0.1. Highest leverage: flips the product from
+   "from-source only" to installable. Only external dep is a PyPI token.
+3. **Phase E** (parallel, low cost) — close the 3 eval scenarios; hardens tax logic
+   before broad rollout.
+4. **Phase C** (months, parallelizable) — the long pole. Roll out resident state
+   packs by population using the `introspect` CLI; defer hard states (C3) until the
+   downloader fix + overlay filler are built.
+5. **Phase D** — new federal form types (4868 first — cheapest/high-demand → 1040-ES
+   → 1040-X → W-7), then breadth follow-ons.
+
+Phases A, E, and the start of C are largely independent and can run in parallel.
+Within C, resident packs (C1) are the long pole; the now-working `introspect` CLI
+is the force multiplier. C3 hard states and D1's W-7 are the only items needing
+**new engine code** (downloader fix, overlay filler, new field types).
