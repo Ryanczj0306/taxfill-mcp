@@ -1,0 +1,349 @@
+# Form M1, 2023 — Minnesota Individual Income Tax return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every AcroForm widget rendered with its own field name) -> vision-map
+# workflow (both pages + zoomed crops read to place each field on its printed
+# line / column, cross-checked against the widget /Rect dump) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw,
+# human-readable sentinel ids the form ships with, e.g. "yourfirstnameandinitial",
+# "m1line1", "checkifsingle"). M1 is a two-page resident return: page 1 carries
+# the header (name / SSN / DOB / address), filing status, the State Elections
+# Campaign Fund codes, the "From Your Federal Return" summary boxes, and income
+# lines 1-13 (with sub-lines 13a/13b); page 2 carries the M1HOME/M1529/M1LS
+# checkboxes on line 14, tax/credit/payment lines 14-24, the direct-deposit
+# block (line 25), amount-you-owe / penalty / estimated-tax lines 26-30, and the
+# signature / preparer block. Each numbered dollar line is one money widget keyed
+# by its printed step number ("1".."30"); line 13 sub-amounts are keyed "13a"/"13b".
+#
+# Coverage. The blank PDF has 74 fillable AcroForm widget entries (the introspect
+# skeleton). ALL 74 are mapped here — nothing is intentionally omitted. There are
+# no JS pushbuttons, no readonly tooltips, and no greyed/reserved widgets. The
+# "From Your Federal Return" worksheet boxes (A wages / B IRA-pensions /
+# C unemployment / D federal taxable income) ARE fillable widgets and are mapped.
+# Pre-printed cells that are NOT AcroForm widgets never appeared in the sweep and
+# are not fields: the printed party-code legend, the office-use barcode, etc.
+#
+# Checkboxes. Every X-box is one /Btn field with a single appearance state /Yes
+# (dumped from the blank and copied verbatim). The five filing-status boxes
+# (single / MFJ / MFS / HOH / qualifying surviving spouse) are five independent
+# /Btn fields, not a radio group. The two account-type boxes (checking / savings)
+# are likewise two independent /Btn fields. Line 14's three boxes (Schedule
+# M1HOME / M1529 / M1LS) are three independent /Btn fields.
+#
+# Money vs text. Every numbered dollar line and the four "From Your Federal
+# Return" worksheet dollar boxes are mapped `money` (the skeleton tagged them
+# `text maxlen:8/10`; money rounds to whole dollars, which is correct for these
+# whole-dollar boxes). Genuine text widgets stay text: names, address,
+# city/state/ZIP, SSNs (maxlen 11), birth dates (mm/dd/yyyy, maxlen 12), the
+# 2-digit State Elections Campaign party codes (Yourcode/Spousecode), the MFS
+# spouse name / SSN, bank routing / account comb boxes, the signature / preparer
+# dates, the daytime-phone and e-mail boxes, and the PTIN/VITA-TCE box.
+#
+# Field-name caveat (signature block). The two signature-date widgets are named
+# misleadingly in the source PDF: `preparersignaturedate` is actually the
+# TAXPAYER/SPOUSE signature date (top-right "Date (MM/DD/YYYY)" column on the
+# "Your Signature / Spouse's Signature" row), and `signaturedate` is the PAID
+# PREPARER's signature date (center "Date (MM/DD/YYYY)" on the preparer row).
+# They are keyed here by their printed position, not by the raw field name.
+#
+# Relations. Only unconditional equalities with every operand mapped to a single
+# numbered money line are declared (3=1+2, 8=4+5+6+7, 12=10+11, 15=13+14,
+# 19=17+18, 23=20+21+22). Lines whose printed instruction is conditional /
+# branchy — 9 ("Subtract line 8 from line 3. If zero or less, leave blank"),
+# 17 ("Subtract line 16 from line 15, if result is zero or less leave blank"),
+# 24 (refund branch), 26 (amount-you-owe branch), 27 (penalty from Sch M15),
+# 28 (penalty and interest), 29 (line 24 you want sent to you), 30 (line 24
+# applied to 2024 estimated tax) — are OMITTED per the conservative house style.
+#
+# Cross_form. Line 1's printed label is "Federal adjusted gross income (from
+# line 11 of federal Form 1040 and 1040-SR)", so the single cross_form equality
+# 1 == f1040.11 (Form 1040, 2023, line 11 = AGI) is declared.
+form: Form M1
+jurisdiction: states/mn
+tax_year: 2023
+source_url: https://www.revenue.state.mn.us/sites/default/files/2024-12/m1-23.pdf
+pdf_sha256: e60be7a20781253be192f1b8cf56d41b09febe06cad2d804ad1d97fc7d0d5cea
+acroform_root: ''
+fields:
+  # ============================================ page 1 — header (name / SSN / DOB)
+  - line: your_first_name_and_initial
+    field: yourfirstnameandinitial
+    type: text
+  - line: your_last_name
+    field: LastName
+    type: text
+  - line: your_ssn
+    field: YourSocialSecurityNumber
+    type: text
+    maxlen: 11
+  - line: your_date_of_birth
+    field: YourDateofBirth
+    type: text
+    maxlen: 12
+  - line: spouse_first_name_and_initial
+    field: SpousesFirstNameandInitial
+    type: text
+  - line: spouse_last_name
+    field: Spouseslastname
+    type: text
+  - line: spouse_ssn
+    field: SpousesSocialSecurityNumber
+    type: text
+    maxlen: 11
+  - line: spouse_date_of_birth
+    field: spousesdateofbirth
+    type: text
+    maxlen: 12
+  - line: current_home_address
+    field: CurrentHomeAddress
+    type: text
+  - line: check_here_if_a_new_address::yes
+    field: checkhereifanewaddress
+    type: checkbox
+    on_state: /Yes
+  - line: check_here_if_a_foreign_address::yes
+    field: checkhereifaforeignaddress
+    type: checkbox
+    on_state: /Yes
+  - line: city
+    field: city
+    type: text
+  - line: state
+    field: state
+    type: text
+    maxlen: 2
+  - line: zip_code
+    field: zipcode
+    type: text
+
+  # ============================================ page 1 — federal filing status
+  - line: filing_status_single::yes
+    field: checkifsingle
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status_married_filing_jointly::yes
+    field: checkifmarriedfilingjoint
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status_married_filing_separately::yes
+    field: checkifmarriedfilingseparately
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status_head_of_household::yes
+    field: checkifheadofhousehold
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status_qualifying_surviving_spouse::yes
+    field: checkifqualifyingwidower
+    type: checkbox
+    on_state: /Yes
+  # MFS-only: spouse name + SSN entered next to the MFS box
+  - line: mfs_spouse_name
+    field: Enterspousename
+    type: text
+  - line: mfs_spouse_ssn
+    field: EnterspouseSocialSecuritynumber
+    type: text
+
+  # ============================================ page 1 — State Elections Campaign Fund
+  - line: state_elections_campaign_your_code
+    field: Yourcode
+    type: text
+    maxlen: 2
+  - line: state_elections_campaign_spouse_code
+    field: Spousecode
+    type: text
+    maxlen: 2
+
+  # ============================================ page 1 — "From Your Federal Return" worksheet boxes
+  - line: federal_return_a_wages_salaries_tips
+    field: wages, salaries, tips
+    type: money
+  - line: federal_return_b_ira_pensions_annuities
+    field: irapensionsannuities
+    type: money
+  - line: federal_return_c_unemployment
+    field: unemployment
+    type: money
+  - line: federal_return_d_federal_taxable_income
+    field: FAGI
+    type: money
+
+  # ============================================ page 1 — income lines 1-13
+  - line: "1"                              # Federal adjusted gross income (from line 11 of federal Form 1040 / 1040-SR)
+    field: m1line1
+    type: money
+  - line: "2"                              # Additions to income (Schedule M1M line 10 + M1MB line 9)
+    field: m1line2
+    type: money
+  - line: "3"                              # Add lines 1 and 2
+    field: m1line3
+    type: money
+  - line: "4"                              # Itemized deductions (Schedule M1SA) or standard deduction
+    field: m1line4
+    type: money
+  - line: "5"                              # Exemptions (Schedule M1DQC)
+    field: m1line5
+    type: money
+  - line: "6"                              # State income tax refund (from line 1 of federal Schedule 1)
+    field: m1line6
+    type: money
+  - line: "7"                              # Subtractions (Schedule M1M line 35 + M1MB line 21)
+    field: m1line7
+    type: money
+  - line: "8"                              # Total subtractions. Add lines 4 through 7
+    field: m1line8
+    type: money
+  - line: "9"                              # Minnesota taxable income. Subtract line 8 from line 3 (if <=0, blank)
+    field: m1line9
+    type: money
+  - line: "10"                             # Tax from the table or schedules in the M1 instructions
+    field: m1line10
+    type: money
+  - line: "11"                             # Alternative minimum tax (enclose Schedule M1MT)
+    field: m1line11
+    type: money
+  - line: "12"                             # Add lines 10 and 11
+    field: m1line12
+    type: money
+  - line: "13"                             # Full-year residents: line 12 on line 13. Part-year/nonresidents: M1NR line 32
+    field: m1line13
+    type: money
+  - line: 13a                              # Part-year/nonresidents: from M1NR line 28
+    field: m1line13a
+    type: money
+  - line: 13b                              # Part-year/nonresidents: from M1NR line 29
+    field: m1line13b
+    type: money
+
+  # ============================================ page 2 — line 14 schedule checkboxes
+  - line: line14_schedule_m1home::yes      # (a) Schedule M1HOME
+    field: checkforschedulem1home
+    type: checkbox
+    on_state: /Yes
+  - line: line14_schedule_m1529::yes       # (b) Schedule M1529
+    field: checkforschedulem1529
+    type: checkbox
+    on_state: /Yes
+  - line: line14_schedule_m1ls::yes        # (c) Schedule M1LS
+    field: checkforschedulels
+    type: checkbox
+    on_state: /Yes
+
+  # ============================================ page 2 — tax / credit / payment lines 14-24
+  - line: "14"                             # Other taxes (recapture, lump-sum distributions)
+    field: m1line14
+    type: money
+  - line: "15"                             # Tax before credits. Add lines 13 and 14
+    field: m1line15
+    type: money
+  - line: "16"                             # Amount from line 21 of Schedule M1C, Nonrefundable Credits
+    field: m1line16
+    type: money
+  - line: "17"                             # Subtract line 16 from line 15 (if <=0, blank)
+    field: m1line17
+    type: money
+  - line: "18"                             # Nongame Wildlife Fund contribution
+    field: m1line18
+    type: money
+  - line: "19"                             # Add lines 17 and 18
+    field: m1line19
+    type: money
+  - line: "20"                             # Minnesota income tax withheld (Schedule M1W)
+    field: m1line20
+    type: money
+  - line: "21"                             # Minnesota estimated tax and extension payments made for 2023
+    field: m1line21
+    type: money
+  - line: "22"                             # Amount from line 11 of Schedule M1REF, Refundable Credits
+    field: m1line22
+    type: money
+  - line: "23"                             # Total payments. Add lines 20 through 22
+    field: m1line23
+    type: money
+  - line: "24"                             # REFUND. If line 23 > line 19, subtract line 19 from line 23
+    field: m1line24
+    type: money
+
+  # ============================================ page 2 — line 25 direct deposit
+  - line: account_type_checking::yes
+    field: checkifchecking
+    type: checkbox
+    on_state: /Yes
+  - line: account_type_savings::yes
+    field: checkifsavings
+    type: checkbox
+    on_state: /Yes
+  - line: routing_number
+    field: Routingnumber
+    type: text
+  - line: account_number
+    field: AccountNumber
+    type: text
+    maxlen: 17
+
+  # ============================================ page 2 — amount-you-owe / penalty / estimated tax 26-30
+  - line: "26"                             # AMOUNT YOU OWE. If line 19 > line 23, subtract line 23 from line 19
+    field: m1line26
+    type: money
+  - line: "27"                             # Penalty amount from Schedule M15 (also subtract from line 24 or add to line 26; enclose Schedule M15)
+    field: m1line27
+    type: money
+  - line: "28"                             # Penalty and interest
+    field: m1line28
+    type: money
+  - line: "29"                             # Amount from line 24 you want sent to you
+    field: m1line29
+    type: money
+  - line: "30"                             # Amount from line 24 you want applied to your 2024 estimated tax
+    field: m1line30
+    type: money
+
+  # ============================================ page 2 — signature block
+  # NB: field name `preparersignaturedate` is the TAXPAYER/SPOUSE signature date
+  # (top-right "Date (MM/DD/YYYY)" column), per its printed position.
+  - line: taxpayer_signature_date
+    field: preparersignaturedate
+    type: text
+  - line: taxpayer_daytime_phone
+    field: Taxpayersdaytimephone
+    type: text
+  - line: your_email_address
+    field: Youremailaddress
+    type: text
+  # NB: field name `signaturedate` is the PAID PREPARER signature date
+  # (center "Date (MM/DD/YYYY)" on the preparer row), per its printed position.
+  - line: preparer_signature_date
+    field: signaturedate
+    type: text
+  - line: preparer_ptin_or_vita_tce
+    field: PTINorVITATCErequired
+    type: text
+  - line: preparer_daytime_phone
+    field: Preparersdaytimephone
+    type: text
+  - line: preparer_email_address
+    field: Preparersemailaddress
+    type: text
+  - line: do_not_want_preparer_to_file_electronically::yes
+    field: checkifyoudontwantyourpreparertofileelectronically
+    type: checkbox
+    on_state: /Yes
+  - line: authorize_paid_preparer_to_discuss::yes
+    field: checktoauthorizeyourpaidpreparer
+    type: checkbox
+    on_state: /Yes
+relations:
+  - "3 == 1 + 2"                           # Line 3 "Add lines 1 and 2."
+  - "8 == 4 + 5 + 6 + 7"                   # Line 8 "Total subtractions. Add lines 4 through 7."
+  - "12 == 10 + 11"                        # Line 12 "Add lines 10 and 11."
+  - "15 == 13 + 14"                        # Line 15 "Tax before credits. Add lines 13 and 14."
+  - "19 == 17 + 18"                        # Line 19 "Add lines 17 and 18."
+  - "23 == 20 + 21 + 22"                   # Line 23 "Total payments. Add lines 20 through 22."
+cross_form:
+  - "1 == f1040.11"                        # Line 1 "Federal adjusted gross income (from line 11 of federal Form 1040 / 1040-SR)"
+identity_fields:
+  - your_ssn
+  - your_first_name_and_initial
+  - your_last_name
