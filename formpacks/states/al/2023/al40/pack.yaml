@@ -1,0 +1,8731 @@
+# Form 40, 2023 - Alabama Individual Income Tax Return (full booklet).
+#
+# Authored via the taxfill pipeline: `taxfill introspect` produced the sentinel
+# sweep (every AcroForm widget rendered with its own field name) and the
+# skeleton field list; this map was built by reading the sweep pages, dumping
+# every widget's /FT, /Ff and /AP /N appearance states from the official blank,
+# and placing each fillable widget on its printed line.
+#
+# Layout. Alabama's Form 40 is a dynamic-XFA PDF whose static AcroForm carries
+# the whole booklet: the two-page Form 40 return plus every supporting schedule
+# (A/B/DC itemized + interest/dividends + donation check-offs, DS & HOF
+# dependents / head-of-family, ATP additional taxes & penalties, HBC first/second
+# chance home-buyer savings, CR credit-for-taxes-paid worksheet, OC other
+# available credits incl. Sections A-F and the AATC/AAC/KRCCI sub-schedules,
+# NOL-85 / NOL-85A net-operating-loss application x4 copies, Schedule W-2,
+# Schedule RS retirement, Schedule CP composite payments, Schedule D & E, Form
+# 4952A investment-interest, and the Federal Income Tax Deduction worksheet).
+# Flat AcroForm: acroform_root is empty and the field names are the raw,
+# human-readable ids the form ships with (e.g. "WAGESINC", "SCHOCPG5SECC3C1").
+#
+# Coverage. The blank PDF has 2453 distinct fillable AcroForm fields. 179 of
+# them are JavaScript PUSHBUTTONS (Ff bit-17 set: every "GoTo*"/"Reset*"/
+# "btn*"/"BTN BC*"/"printlid.*"/"UF_*"/"VERCTRL" navigation, reset, print and
+# units-of-five UI control) - those carry no taxpayer data and are intentionally
+# OMITTED (each such name appears only as an appearance-stream /BBox, never a
+# real /AP /N on-state). The remaining 2274 data widgets (2084 text, 190
+# checkboxes) are ALL mapped. No readonly/computed text widget is omitted: AL
+# marks many running totals ReadOnly, but they remain mapped so a filer can
+# carry the computed value.
+#
+# Checkboxes. Every real checkbox/radio in this form uses exactly one of two
+# export values, read verbatim from the blank's /AP /N dictionary: /X (184 of
+# them) or /Yes (6, on the NOL-85A part-II / part-I-A "checkbox" cells). The
+# skeleton's defaulted "/1" and "/BBox" on-states belonged only to the omitted
+# pushbuttons and the UF_* helper toggles; no data checkbox uses them.
+#
+# Money vs text. The skeleton tagged every dollar box `text maxlen:9`. The 35
+# numbered dollar lines of the Form 40 return body (page 1 income/tax lines 5-35
+# and the two party-fund $ boxes) are re-typed `money` so the verifier can
+# enforce the page-1 arithmetic. All schedule/worksheet amount boxes are left
+# `text` exactly as introspected: many of them are percentage / ratio / "divide
+# ... not over 100%" cells (e.g. NOL-85A Part III line 19) or comb cells whose
+# value must never be whole-dollar rounded, so the conservative choice is to
+# keep them text rather than risk corrupting a fraction.
+#
+# Relations. Only unconditional page-1 equalities whose every operand is a
+# mapped money line are declared: line 8 = 5+6+7 (total income), line 15 =
+# 11+12+13+14 (total deductions). Branchy / table-driven lines (16 taxable
+# income, 17 tax-from-table, 18 net tax, 22 total liability with its $1 voluntary
+# party-fund add-ons, the owe/refund split) are OMITTED per the conservative
+# house style. cross_form is empty: Alabama computes its own state AGI and the
+# federal figures on page 2 are reconciliation boxes, not unconditional copies of
+# a single federal line.
+form: Form 40
+jurisdiction: states/al
+tax_year: 2023
+source_url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23f40.pdf
+pdf_sha256: 023470e8b831a77a04773aba4b5165f0c72188f70ea7b12206269f549707b27f
+acroform_root: ''
+fields:
+  - line: Instructions
+    field: Instructions
+    type: text
+  - line: UF_InfoA
+    field: UF_InfoA
+    type: text
+  - line: BegDate
+    field: BegDate
+    type: text
+    maxlen: 10
+  - line: EndDate
+    field: EndDate
+    type: text
+    maxlen: 10
+  - line: SSSN
+    field: SSSN
+    type: text
+    maxlen: 9
+  - line: SPSSN
+    field: SPSSN
+    type: text
+    maxlen: 9
+  - line: CHKDECEASED
+    field: CHKDECEASED
+    type: checkbox
+    on_state: /X
+  - line: CHKDECEASEDSP
+    field: CHKDECEASEDSP
+    type: checkbox
+    on_state: /X
+  - line: DDate
+    field: DDate
+    type: text
+    maxlen: 10
+  - line: DDateSP
+    field: DDateSP
+    type: text
+    maxlen: 10
+  - line: FIRSTNAME
+    field: FIRSTNAME
+    type: text
+    maxlen: 20
+  - line: MIDDLEINITIAL
+    field: MIDDLEINITIAL
+    type: text
+    maxlen: 1
+  - line: LASTNAME
+    field: LASTNAME
+    type: text
+    maxlen: 20
+  - line: SPOUSEFIRSTNAME
+    field: SPOUSEFIRSTNAME
+    type: text
+    maxlen: 20
+  - line: SPMIDDLEINITIAL
+    field: SPMIDDLEINITIAL
+    type: text
+    maxlen: 1
+  - line: SPOUSELASTNAME
+    field: SPOUSELASTNAME
+    type: text
+    maxlen: 20
+  - line: CHKAMENDED
+    field: CHKAMENDED
+    type: checkbox
+    on_state: /X
+  - line: ADDRESS
+    field: ADDRESS
+    type: text
+    maxlen: 35
+  - line: CITY
+    field: CITY
+    type: text
+    maxlen: 15
+  - line: STATE
+    field: STATE
+    type: text
+    maxlen: 2
+  - line: ZIP
+    field: ZIP
+    type: text
+    maxlen: 9
+  - line: CHKOUTSIDEUSA
+    field: CHKOUTSIDEUSA
+    type: checkbox
+    on_state: /X
+  - line: COUNTRY
+    field: COUNTRY
+    type: text
+  - line: S
+    field: S
+    type: checkbox
+    on_state: /X
+  - line: MFS
+    field: MFS
+    type: checkbox
+    on_state: /X
+  - line: SPQUSSN
+    field: SPQUSSN
+    type: text
+    maxlen: 9
+  - line: CHKNRA
+    field: CHKNRA
+    type: checkbox
+    on_state: /X
+  - line: MFJ
+    field: MFJ
+    type: checkbox
+    on_state: /X
+  - line: HOF
+    field: HOF
+    type: checkbox
+    on_state: /X
+  - line: "5_al_tax_withheld"
+    field: ALTXWH
+    type: money
+  - line: "5"
+    field: WAGESINC
+    type: money
+  - line: "6"
+    field: INTDIVINC
+    type: money
+  - line: "7"
+    field: TOTOTHERINC
+    type: money
+  - line: "8"
+    field: TOTALINC
+    type: money
+  - line: "9"
+    field: TOTADJINC
+    type: money
+  - line: "10"
+    field: ADJGRSINC
+    type: money
+  - line: CHKITMDED
+    field: CHKITMDED
+    type: checkbox
+    on_state: /X
+  - line: CHKSTDDED
+    field: CHKSTDDED
+    type: checkbox
+    on_state: /X
+  - line: "11"
+    field: ITMSTDDED
+    type: money
+  - line: "12"
+    field: FEDTXLIABDED
+    type: money
+  - line: "13"
+    field: PERSEXEMP
+    type: money
+  - line: "14"
+    field: DEPEXMPTION
+    type: money
+  - line: "15"
+    field: TOTDED
+    type: money
+  - line: "16"
+    field: TAXINC
+    type: money
+  - line: CHKNOL85A
+    field: CHKNOL85A
+    type: checkbox
+    on_state: /X
+  - line: "17"
+    field: TAXDUE
+    type: money
+  - line: CHKOC
+    field: CHKOC
+    type: checkbox
+    on_state: /X
+  - line: "18"
+    field: NETTAXDUE
+    type: money
+  - line: "19"
+    field: ADDTAX
+    type: money
+  - line: ALDEM1
+    field: ALDEM1
+    type: checkbox
+    on_state: /X
+  - line: ALDEMPTY2
+    field: ALDEMPTY2
+    type: checkbox
+    on_state: /X
+  - line: ALDEMPTY0
+    field: ALDEMPTY0
+    type: checkbox
+    on_state: /X
+  - line: "20_amount"
+    field: CONTALDEMPTY
+    type: money
+  - line: ALREPPTY1
+    field: ALREPPTY1
+    type: checkbox
+    on_state: /X
+  - line: ALREPPTY2
+    field: ALREPPTY2
+    type: checkbox
+    on_state: /X
+  - line: ALREPPTY0
+    field: ALREPPTY0
+    type: checkbox
+    on_state: /X
+  - line: "21_amount"
+    field: TOTALREPPTY
+    type: money
+  - line: "22"
+    field: TOTTAXLIB
+    type: money
+  - line: "23"
+    field: TOTALWH
+    type: money
+  - line: "24"
+    field: ESTMEXTSIONPMT
+    type: money
+  - line: "25"
+    field: AMENDEDPAYMENTS
+    type: money
+  - line: "26"
+    field: REFUNDABLERC
+    type: money
+  - line: "27"
+    field: SCHCPPAYMENT
+    type: money
+  - line: "28"
+    field: TOTPMT
+    type: money
+  - line: "29"
+    field: AMENDEDRETURNONLY
+    type: money
+  - line: "30"
+    field: ADJUSTEDTOTALPAYMENTS
+    type: money
+  - line: "31"
+    field: AMTOWE
+    type: money
+  - line: "32"
+    field: ESTPEN
+    type: money
+  - line: "33"
+    field: OVERPAID
+    type: money
+  - line: "34_total_donations"
+    field: PG1LINE33
+    type: money
+  - line: "34_first_checkoff"
+    field: CHECKOFF1
+    type: money
+  - line: "35"
+    field: REFTOYOU
+    type: money
+  - line: CHKDIRECTDEPOSIT
+    field: CHKDIRECTDEPOSIT
+    type: checkbox
+    on_state: /X
+  - line: ALIMONYREC
+    field: ALIMONYREC
+    type: text
+    maxlen: 9
+  - line: BUSINC
+    field: BUSINC
+    type: text
+    maxlen: 9
+  - line: SCHEDULEDTOT
+    field: SCHEDULEDTOT
+    type: text
+    maxlen: 9
+  - line: TAXIRADIST
+    field: TAXIRADIST
+    type: text
+    maxlen: 9
+  - line: TOTSCHE
+    field: TOTSCHE
+    type: text
+    maxlen: 9
+  - line: FARMINC
+    field: FARMINC
+    type: text
+    maxlen: 9
+  - line: "OTHERINCEXP#1"
+    field: "OTHERINCEXP#1"
+    type: text
+  - line: OTHERINCOME
+    field: OTHERINCOME
+    type: text
+    maxlen: 9
+  - line: TOTOTHERINCPG2
+    field: TOTOTHERINCPG2
+    type: text
+    maxlen: 9
+  - line: IRADED
+    field: IRADED
+    type: text
+    maxlen: 9
+  - line: SPIRADED
+    field: SPIRADED
+    type: text
+    maxlen: 9
+  - line: KEOUGHPMTS
+    field: KEOUGHPMTS
+    type: text
+    maxlen: 9
+  - line: PENEARLYWITHD
+    field: PENEARLYWITHD
+    type: text
+    maxlen: 9
+  - line: ALMRECNAME
+    field: ALMRECNAME
+    type: text
+  - line: ALIMSSN
+    field: ALIMSSN
+    type: text
+    maxlen: 9
+  - line: ALIMPD
+    field: ALIMPD
+    type: text
+    maxlen: 9
+  - line: ADOPTEXP
+    field: ADOPTEXP
+    type: text
+    maxlen: 9
+  - line: MOVEXPCITY
+    field: MOVEXPCITY
+    type: text
+  - line: MOVEXPST
+    field: MOVEXPST
+    type: text
+    maxlen: 2
+  - line: MOVEXPZIP
+    field: MOVEXPZIP
+    type: text
+  - line: MOVEXP
+    field: MOVEXP
+    type: text
+    maxlen: 9
+  - line: SELFEMPHLTDED
+    field: SELFEMPHLTDED
+    type: text
+    maxlen: 9
+  - line: PACTPROGRAM
+    field: PACTPROGRAM
+    type: text
+    maxlen: 9
+  - line: HEALTHINSURANCE
+    field: HEALTHINSURANCE
+    type: text
+    maxlen: 9
+  - line: HOMEUPGRADECOST
+    field: HOMEUPGRADECOST
+    type: text
+    maxlen: 9
+  - line: CATASTROPHESAVING
+    field: CATASTROPHESAVING
+    type: text
+    maxlen: 9
+  - line: CONHEALTHACCT
+    field: CONHEALTHACCT
+    type: text
+    maxlen: 9
+  - line: HOMEBUYERSAVING
+    field: HOMEBUYERSAVING
+    type: text
+    maxlen: 9
+  - line: FIREFIGHTERINS
+    field: FIREFIGHTERINS
+    type: text
+    maxlen: 9
+  - line: ABLESAVING
+    field: ABLESAVING
+    type: text
+    maxlen: 9
+  - line: TOTADJINCPG2
+    field: TOTADJINCPG2
+    type: text
+    maxlen: 9
+  - line: TOTALDS
+    field: TOTALDS
+    type: text
+    maxlen: 9
+  - line: TOTDEPAMT
+    field: TOTDEPAMT
+    type: text
+    maxlen: 9
+  - line: CHKFULLYRRES
+    field: CHKFULLYRRES
+    type: checkbox
+    on_state: /X
+  - line: CHKPRTYRRES
+    field: CHKPRTYRRES
+    type: checkbox
+    on_state: /X
+  - line: PRTYRBEGDATE
+    field: PRTYRBEGDATE
+    type: text
+  - line: PRTYRENDDTE
+    field: PRTYRENDDTE
+    type: text
+  - line: CHKFILERTNYES
+    field: CHKFILERTNYES
+    type: checkbox
+    on_state: /X
+  - line: CHKFILERTNNO
+    field: CHKFILERTNNO
+    type: checkbox
+    on_state: /X
+  - line: NOTFILEREASON
+    field: NOTFILEREASON
+    type: text
+  - line: PRESEMPNAMEADR1
+    field: PRESEMPNAMEADR1
+    type: text
+  - line: PRESEMPNAMEADR2
+    field: PRESEMPNAMEADR2
+    type: text
+    maxlen: 12
+  - line: SPEMPNAMEADDR
+    field: SPEMPNAMEADDR
+    type: text
+  - line: FEDAGI
+    field: FEDAGI
+    type: text
+    maxlen: 9
+  - line: FEDTXINC
+    field: FEDTXINC
+    type: text
+    maxlen: 9
+  - line: CHKYESFEDINCNOAL
+    field: CHKYESFEDINCNOAL
+    type: checkbox
+    on_state: /X
+  - line: CHKFEDNOALNO
+    field: CHKFEDNOALNO
+    type: checkbox
+    on_state: /X
+  - line: "NONTAXINC#1"
+    field: "NONTAXINC#1"
+    type: text
+    maxlen: 30
+  - line: AMTNONTXINC1
+    field: AMTNONTXINC1
+    type: text
+    maxlen: 9
+  - line: "NONTAXINC#2"
+    field: "NONTAXINC#2"
+    type: text
+    maxlen: 30
+  - line: AMTNONTAXINC2
+    field: AMTNONTAXINC2
+    type: text
+    maxlen: 9
+  - line: RouteNumber
+    field: RouteNumber
+    type: text
+  - line: DIRECTDEPCHECK
+    field: DIRECTDEPCHECK
+    type: checkbox
+    on_state: /X
+  - line: DIRECTDEPSAVINGS
+    field: DIRECTDEPSAVINGS
+    type: checkbox
+    on_state: /X
+  - line: AccNumber
+    field: AccNumber
+    type: text
+    maxlen: 17
+  - line: CHKYESOUTSIDE
+    field: CHKYESOUTSIDE
+    type: checkbox
+    on_state: /X
+  - line: CHKNOOUTSIDE
+    field: CHKNOOUTSIDE
+    type: checkbox
+    on_state: /X
+  - line: DOB
+    field: DOB
+    type: text
+    maxlen: 10
+  - line: DLState
+    field: DLState
+    type: text
+    maxlen: 2
+  - line: DLNumber
+    field: DLNumber
+    type: text
+    maxlen: 11
+  - line: IssDate
+    field: IssDate
+    type: text
+    maxlen: 10
+  - line: ExpDate
+    field: ExpDate
+    type: text
+    maxlen: 10
+  - line: DOBSp
+    field: DOBSp
+    type: text
+    maxlen: 10
+  - line: DLStateSp
+    field: DLStateSp
+    type: text
+    maxlen: 2
+  - line: DLNumberSp
+    field: DLNumberSp
+    type: text
+    maxlen: 11
+  - line: IssDateSp
+    field: IssDateSp
+    type: text
+    maxlen: 10
+  - line: ExpDateSp
+    field: ExpDateSp
+    type: text
+    maxlen: 10
+  - line: CHKAUTH
+    field: CHKAUTH
+    type: checkbox
+    on_state: /X
+  - line: NonDriver
+    field: NonDriver
+    type: text
+  - line: NDL
+    field: NDL
+    type: checkbox
+    on_state: /X
+  - line: SPNDL
+    field: SPNDL
+    type: checkbox
+    on_state: /X
+  - line: PRIMARYSIGNDTE
+    field: PRIMARYSIGNDTE
+    type: text
+  - line: PHONENUMBER
+    field: PHONENUMBER
+    type: text
+    maxlen: 3
+  - line: PHONENUMBERb
+    field: PHONENUMBERb
+    type: text
+    maxlen: 7
+  - line: OCCUPATION
+    field: OCCUPATION
+    type: text
+  - line: SPOUSESIGNDTE
+    field: SPOUSESIGNDTE
+    type: text
+  - line: SPPHONENUMBER
+    field: SPPHONENUMBER
+    type: text
+    maxlen: 3
+  - line: SPHONENUMBERb
+    field: SPHONENUMBERb
+    type: text
+    maxlen: 7
+  - line: SPOUSEOCCUP
+    field: SPOUSEOCCUP
+    type: text
+  - line: PREPSIGNDATE
+    field: PREPSIGNDATE
+    type: text
+  - line: CHKPREPSELFEMP
+    field: CHKPREPSELFEMP
+    type: checkbox
+    on_state: /X
+  - line: PREPSSN
+    field: PREPSSN
+    type: text
+    maxlen: 9
+  - line: PREPEIN
+    field: PREPEIN
+    type: text
+    maxlen: 9
+  - line: PREPFIRMNAME
+    field: PREPFIRMNAME
+    type: text
+  - line: PREPDAYPHONE
+    field: PREPDAYPHONE
+    type: text
+    maxlen: 3
+  - line: PREPDAYPHONEb
+    field: PREPDAYPHONEb
+    type: text
+    maxlen: 7
+  - line: PREPFIRMZIP
+    field: PREPFIRMZIP
+    type: text
+  - line: PREPADDRESS
+    field: PREPADDRESS
+    type: text
+  - line: SCHANAME
+    field: SCHANAME
+    type: text
+  - line: SCHASSN
+    field: SCHASSN
+    type: text
+    maxlen: 9
+  - line: TOTMEDEXP
+    field: TOTMEDEXP
+    type: text
+    maxlen: 9
+  - line: MEDEXPLIMIT
+    field: MEDEXPLIMIT
+    type: text
+    maxlen: 9
+  - line: ALLMEDEXP
+    field: ALLMEDEXP
+    type: text
+    maxlen: 9
+  - line: REALESTATETAXES
+    field: REALESTATETAXES
+    type: text
+    maxlen: 9
+  - line: FICA
+    field: FICA
+    type: text
+    maxlen: 9
+  - line: RRRETIREMENT
+    field: RRRETIREMENT
+    type: text
+    maxlen: 9
+  - line: OTHTAXDESC1
+    field: OTHTAXDESC1
+    type: text
+  - line: OTHTAXDESC2
+    field: OTHTAXDESC2
+    type: text
+  - line: OTHERTAXES
+    field: OTHERTAXES
+    type: text
+    maxlen: 9
+  - line: TOTALTAXES
+    field: TOTALTAXES
+    type: text
+    maxlen: 9
+  - line: "1098MTGINT"
+    field: "1098MTGINT"
+    type: text
+    maxlen: 9
+  - line: MTGINTPDDESCR1
+    field: MTGINTPDDESCR1
+    type: text
+  - line: MTGINTPDDESCR2
+    field: MTGINTPDDESCR2
+    type: text
+  - line: MTGINTPDDESCR3
+    field: MTGINTPDDESCR3
+    type: text
+  - line: NON1098MTGINT
+    field: NON1098MTGINT
+    type: text
+    maxlen: 9
+  - line: QUALIFIEDMORTGAGEINS
+    field: QUALIFIEDMORTGAGEINS
+    type: text
+    maxlen: 9
+  - line: NON1098POINTS
+    field: NON1098POINTS
+    type: text
+    maxlen: 9
+  - line: INVESTMENTINTEREST
+    field: INVESTMENTINTEREST
+    type: text
+    maxlen: 9
+  - line: TOTALINTEREST
+    field: TOTALINTEREST
+    type: text
+    maxlen: 9
+  - line: CASHCONTRIBUTIONS
+    field: CASHCONTRIBUTIONS
+    type: text
+    maxlen: 9
+  - line: OTHERCONTRIBUTIONS
+    field: OTHERCONTRIBUTIONS
+    type: text
+    maxlen: 9
+  - line: CONTRIBUCARRYOVER
+    field: CONTRIBUCARRYOVER
+    type: text
+    maxlen: 9
+  - line: TOTALCONTRIBUTIONS
+    field: TOTALCONTRIBUTIONS
+    type: text
+    maxlen: 9
+  - line: SCHACK19A
+    field: SCHACK19A
+    type: checkbox
+    on_state: /X
+  - line: SCHACK19B
+    field: SCHACK19B
+    type: checkbox
+    on_state: /X
+  - line: CASUALTYTHEFTLOSS
+    field: CASUALTYTHEFTLOSS
+    type: text
+    maxlen: 9
+  - line: CASTHFTLOSSLIM
+    field: CASTHFTLOSSLIM
+    type: text
+    maxlen: 9
+  - line: ALLCASTHEFTLOSS
+    field: ALLCASTHEFTLOSS
+    type: text
+    maxlen: 9
+  - line: UNREIMBEXPEXPL1
+    field: UNREIMBEXPEXPL1
+    type: text
+  - line: UNREIMBEXPEXPL2
+    field: UNREIMBEXPEXPL2
+    type: text
+  - line: UNREIMBEXPEXPL3
+    field: UNREIMBEXPEXPL3
+    type: text
+  - line: UNREIMBURSEDEMPEXP
+    field: UNREIMBURSEDEMPEXP
+    type: text
+    maxlen: 9
+  - line: OTHEXPDESC1
+    field: OTHEXPDESC1
+    type: text
+  - line: OTHEXPDESC2
+    field: OTHEXPDESC2
+    type: text
+  - line: OTHERJOBEXP
+    field: OTHERJOBEXP
+    type: text
+    maxlen: 9
+  - line: TOTALJOBEXP
+    field: TOTALJOBEXP
+    type: text
+    maxlen: 9
+  - line: JOBEXPLIMITATION
+    field: JOBEXPLIMITATION
+    type: text
+    maxlen: 9
+  - line: ALLJOBEXP
+    field: ALLJOBEXP
+    type: text
+    maxlen: 9
+  - line: OTHMISCDEDEXP1
+    field: OTHMISCDEDEXP1
+    type: text
+  - line: OTHMISCDEDEXP2
+    field: OTHMISCDEDEXP2
+    type: text
+  - line: OTHMISCDEDEXP3
+    field: OTHMISCDEDEXP3
+    type: text
+  - line: OTHMISCDEDEXP4
+    field: OTHMISCDEDEXP4
+    type: text
+  - line: OTHERMISCDEDUCTIONS
+    field: OTHERMISCDEDUCTIONS
+    type: text
+    maxlen: 9
+  - line: QUALIFLONGTERM
+    field: QUALIFLONGTERM
+    type: text
+    maxlen: 9
+  - line: TOTALITZDED
+    field: TOTALITZDED
+    type: text
+    maxlen: 9
+  - line: NAME2A
+    field: NAME2A
+    type: text
+  - line: SSSNB2A
+    field: SSSNB2A
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#1"
+    field: "INTPAYER#1"
+    type: text
+  - line: "EXMPINT#1"
+    field: "EXMPINT#1"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#1"
+    field: "TAXINT#1"
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#2"
+    field: "INTPAYER#2"
+    type: text
+  - line: "EXMPINT#2"
+    field: "EXMPINT#2"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#2"
+    field: "TAXINT#2"
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#3"
+    field: "INTPAYER#3"
+    type: text
+  - line: "EXMPINT#3"
+    field: "EXMPINT#3"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#3"
+    field: "TAXINT#3"
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#4"
+    field: "INTPAYER#4"
+    type: text
+  - line: "EXMPINT#4"
+    field: "EXMPINT#4"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#4"
+    field: "TAXINT#4"
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#5"
+    field: "INTPAYER#5"
+    type: text
+  - line: "EXMPINT#5"
+    field: "EXMPINT#5"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#5"
+    field: "TAXINT#5"
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#6"
+    field: "INTPAYER#6"
+    type: text
+  - line: "EXMPINT#6"
+    field: "EXMPINT#6"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#6"
+    field: "TAXINT#6"
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#7"
+    field: "INTPAYER#7"
+    type: text
+  - line: "EXMPINT#7"
+    field: "EXMPINT#7"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#7"
+    field: "TAXINT#7"
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#8"
+    field: "INTPAYER#8"
+    type: text
+  - line: "EXMPINT#8"
+    field: "EXMPINT#8"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#8"
+    field: "TAXINT#8"
+    type: text
+    maxlen: 9
+  - line: "INTPAYER#9"
+    field: "INTPAYER#9"
+    type: text
+  - line: "EXMPINT#9"
+    field: "EXMPINT#9"
+    type: text
+    maxlen: 9
+  - line: "TAXINT#9"
+    field: "TAXINT#9"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#1"
+    field: "DIVPAYER#1"
+    type: text
+  - line: "TAXDIV#1"
+    field: "TAXDIV#1"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#2"
+    field: "DIVPAYER#2"
+    type: text
+  - line: "TAXDIV#2"
+    field: "TAXDIV#2"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#3"
+    field: "DIVPAYER#3"
+    type: text
+  - line: "TAXDIV#3"
+    field: "TAXDIV#3"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#4"
+    field: "DIVPAYER#4"
+    type: text
+  - line: "TAXDIV#4"
+    field: "TAXDIV#4"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#5"
+    field: "DIVPAYER#5"
+    type: text
+  - line: "TAXDIV#5"
+    field: "TAXDIV#5"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#6"
+    field: "DIVPAYER#6"
+    type: text
+  - line: "TAXDIV#6"
+    field: "TAXDIV#6"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#7"
+    field: "DIVPAYER#7"
+    type: text
+  - line: "TAXDIV#7"
+    field: "TAXDIV#7"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#8"
+    field: "DIVPAYER#8"
+    type: text
+  - line: "TAXDIV#8"
+    field: "TAXDIV#8"
+    type: text
+    maxlen: 9
+  - line: "DIVPAYER#9"
+    field: "DIVPAYER#9"
+    type: text
+  - line: "TAXDIV#9"
+    field: "TAXDIV#9"
+    type: text
+    maxlen: 9
+  - line: TOTALINTDIV
+    field: TOTALINTDIV
+    type: text
+    maxlen: 9
+  - line: CHECKOFF2
+    field: CHECKOFF2
+    type: text
+    maxlen: 9
+  - line: CHECKOFF3
+    field: CHECKOFF3
+    type: text
+    maxlen: 9
+  - line: CHECKOFF4
+    field: CHECKOFF4
+    type: text
+    maxlen: 9
+  - line: CHECKOFF5
+    field: CHECKOFF5
+    type: text
+    maxlen: 9
+  - line: CHECKOFF6
+    field: CHECKOFF6
+    type: text
+    maxlen: 9
+  - line: CHECKOFF7
+    field: CHECKOFF7
+    type: text
+    maxlen: 9
+  - line: CHECKOFF8
+    field: CHECKOFF8
+    type: text
+    maxlen: 9
+  - line: CHECKOFF9
+    field: CHECKOFF9
+    type: text
+    maxlen: 9
+  - line: CHECKOFF10
+    field: CHECKOFF10
+    type: text
+    maxlen: 9
+  - line: CHECKOFF11
+    field: CHECKOFF11
+    type: text
+    maxlen: 9
+  - line: CHECKOFF12
+    field: CHECKOFF12
+    type: text
+    maxlen: 9
+  - line: CHECKOFF13
+    field: CHECKOFF13
+    type: text
+    maxlen: 9
+  - line: CHECKOFF14
+    field: CHECKOFF14
+    type: text
+    maxlen: 9
+  - line: CHECKOFF15
+    field: CHECKOFF15
+    type: text
+    maxlen: 9
+  - line: CHECKOFF16
+    field: CHECKOFF16
+    type: text
+    maxlen: 9
+  - line: CHECKOFF17
+    field: CHECKOFF17
+    type: text
+    maxlen: 9
+  - line: CHECKOFF18
+    field: CHECKOFF18
+    type: text
+    maxlen: 9
+  - line: CHECKOFF19
+    field: CHECKOFF19
+    type: text
+    maxlen: 9
+  - line: TOTCHECKOFFS
+    field: TOTCHECKOFFS
+    type: text
+    maxlen: 9
+  - line: SCHDSNAME
+    field: SCHDSNAME
+    type: text
+  - line: SCHDSSSN
+    field: SCHDSSSN
+    type: text
+  - line: SCHDSSPSSN
+    field: SCHDSSPSSN
+    type: text
+  - line: DEP1FIRST NAME
+    field: DEP1FIRST NAME
+    type: text
+  - line: DEP1LAST NAME
+    field: DEP1LAST NAME
+    type: text
+  - line: DEP1SSN
+    field: DEP1SSN
+    type: text
+    maxlen: 9
+  - line: DEP1REL
+    field: DEP1REL
+    type: text
+  - line: DEP1SUPPORT
+    field: DEP1SUPPORT
+    type: text
+  - line: DEP2FIRSTNAME
+    field: DEP2FIRSTNAME
+    type: text
+  - line: DEP2LASTNAME
+    field: DEP2LASTNAME
+    type: text
+  - line: DEP2SSN
+    field: DEP2SSN
+    type: text
+    maxlen: 9
+  - line: DEP2REL
+    field: DEP2REL
+    type: text
+  - line: DEP2SUPPORT
+    field: DEP2SUPPORT
+    type: text
+  - line: DEP3FIRST NAME
+    field: DEP3FIRST NAME
+    type: text
+  - line: DEP3LASTNAME
+    field: DEP3LASTNAME
+    type: text
+  - line: DEP3SSN
+    field: DEP3SSN
+    type: text
+    maxlen: 9
+  - line: DEP3REL
+    field: DEP3REL
+    type: text
+  - line: DEP3SUPPORT
+    field: DEP3SUPPORT
+    type: text
+  - line: DEP4FIRSTNAME
+    field: DEP4FIRSTNAME
+    type: text
+  - line: DEP4LASTNAME
+    field: DEP4LASTNAME
+    type: text
+  - line: DEP4SSN
+    field: DEP4SSN
+    type: text
+    maxlen: 9
+  - line: DEP4REL
+    field: DEP4REL
+    type: text
+  - line: DEP4SUPPORT
+    field: DEP4SUPPORT
+    type: text
+  - line: DEP5FIRST NAME
+    field: DEP5FIRST NAME
+    type: text
+  - line: DEP5LAST NAME
+    field: DEP5LAST NAME
+    type: text
+  - line: DEP5SSN
+    field: DEP5SSN
+    type: text
+    maxlen: 9
+  - line: DEP5REL
+    field: DEP5REL
+    type: text
+  - line: DEP5SUPPORT
+    field: DEP5SUPPORT
+    type: text
+  - line: DEP6FIRSTNAME
+    field: DEP6FIRSTNAME
+    type: text
+  - line: DEP6LASTNAME
+    field: DEP6LASTNAME
+    type: text
+  - line: DEP6SSN
+    field: DEP6SSN
+    type: text
+    maxlen: 9
+  - line: DEP6REL
+    field: DEP6REL
+    type: text
+  - line: DEP6SUPPORT
+    field: DEP6SUPPORT
+    type: text
+  - line: DEP7FIRST NAME
+    field: DEP7FIRST NAME
+    type: text
+  - line: DEP7LASTNAME
+    field: DEP7LASTNAME
+    type: text
+  - line: DEP7SSN
+    field: DEP7SSN
+    type: text
+    maxlen: 9
+  - line: DEP7REL
+    field: DEP7REL
+    type: text
+  - line: DEP7SUPPORT
+    field: DEP7SUPPORT
+    type: text
+  - line: DEP8FIRSTNAME
+    field: DEP8FIRSTNAME
+    type: text
+  - line: DEP8LASTNAME
+    field: DEP8LASTNAME
+    type: text
+  - line: DEP8SSN
+    field: DEP8SSN
+    type: text
+    maxlen: 9
+  - line: DEP8REL
+    field: DEP8REL
+    type: text
+  - line: DEP8SUPPORT
+    field: DEP8SUPPORT
+    type: text
+  - line: DEP9FIRST NAME
+    field: DEP9FIRST NAME
+    type: text
+  - line: DEP9LAST NAME
+    field: DEP9LAST NAME
+    type: text
+  - line: DEP9SSN
+    field: DEP9SSN
+    type: text
+    maxlen: 9
+  - line: DEP9REL
+    field: DEP9REL
+    type: text
+  - line: DEP9SUPPORT
+    field: DEP9SUPPORT
+    type: text
+  - line: DEP10FIRSTNAME
+    field: DEP10FIRSTNAME
+    type: text
+  - line: DEP10LASTNAME
+    field: DEP10LASTNAME
+    type: text
+  - line: DEP10SSN
+    field: DEP10SSN
+    type: text
+    maxlen: 9
+  - line: DEP10REL
+    field: DEP10REL
+    type: text
+  - line: DEP10SUPPORT
+    field: DEP10SUPPORT
+    type: text
+  - line: DEP11FIRST NAME
+    field: DEP11FIRST NAME
+    type: text
+  - line: DEP11LASTNAME
+    field: DEP11LASTNAME
+    type: text
+  - line: DEP11SSN
+    field: DEP11SSN
+    type: text
+    maxlen: 9
+  - line: DEP11REL
+    field: DEP11REL
+    type: text
+  - line: DEP11SUPPORT
+    field: DEP11SUPPORT
+    type: text
+  - line: DEP12FIRSTNAME
+    field: DEP12FIRSTNAME
+    type: text
+  - line: DEP12LASTNAME
+    field: DEP12LASTNAME
+    type: text
+  - line: DEP12SSN
+    field: DEP12SSN
+    type: text
+    maxlen: 9
+  - line: DEP12REL
+    field: DEP12REL
+    type: text
+  - line: DEP12SUPPORT
+    field: DEP12SUPPORT
+    type: text
+  - line: NOOFDEP
+    field: NOOFDEP
+    type: text
+    maxlen: 2
+  - line: SCHHOFNAME
+    field: SCHHOFNAME
+    type: text
+  - line: SCHHOFSSN
+    field: SCHHOFSSN
+    type: text
+  - line: SCHHOFSPSSN
+    field: SCHHOFSPSSN
+    type: text
+  - line: SCHJHOFDEPNAME
+    field: SCHJHOFDEPNAME
+    type: text
+  - line: SCHHOFDEPSSN
+    field: SCHHOFDEPSSN
+    type: text
+  - line: SCHHOFDEPRE
+    field: SCHHOFDEPRE
+    type: text
+  - line: CHKHOFO
+    field: CHKHOFO
+    type: checkbox
+    on_state: /X
+  - line: CHKHOFR
+    field: CHKHOFR
+    type: checkbox
+    on_state: /X
+  - line: CHKHOFY1
+    field: CHKHOFY1
+    type: checkbox
+    on_state: /X
+  - line: CHKHOFN1
+    field: CHKHOFN1
+    type: checkbox
+    on_state: /X
+  - line: SCHHOFDATEM
+    field: SCHHOFDATEM
+    type: text
+  - line: SCHHOFDATED
+    field: SCHHOFDATED
+    type: text
+  - line: SCHHOFDATES
+    field: SCHHOFDATES
+    type: text
+  - line: CHKHOFY2
+    field: CHKHOFY2
+    type: checkbox
+    on_state: /X
+  - line: CHKHOFN2
+    field: CHKHOFN2
+    type: checkbox
+    on_state: /X
+  - line: CHKHOFY3
+    field: CHKHOFY3
+    type: checkbox
+    on_state: /X
+  - line: CHKHOFN3
+    field: CHKHOFN3
+    type: checkbox
+    on_state: /X
+  - line: SCHATPPTILINE1
+    field: SCHATPPTILINE1
+    type: text
+    maxlen: 9
+  - line: SCHATPPTILINE2
+    field: SCHATPPTILINE2
+    type: text
+    maxlen: 9
+  - line: SCHATPPTILINE3
+    field: SCHATPPTILINE3
+    type: text
+    maxlen: 9
+  - line: SCHATPPTIILINE1
+    field: SCHATPPTIILINE1
+    type: text
+    maxlen: 9
+  - line: SCHATPPTIILINE2
+    field: SCHATPPTIILINE2
+    type: text
+    maxlen: 9
+  - line: SCHATPPTIILINE3
+    field: SCHATPPTIILINE3
+    type: text
+    maxlen: 9
+  - line: SCHATPNAME
+    field: SCHATPNAME
+    type: text
+  - line: SCHATPSSN
+    field: SCHATPSSN
+    type: text
+    maxlen: 9
+  - line: CHKUSETAX
+    field: CHKUSETAX
+    type: checkbox
+    on_state: /X
+  - line: CHKATPPTII
+    field: CHKATPPTII
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCNAME
+    field: SCHHBCNAME
+    type: text
+  - line: SCHHBCSSN
+    field: SCHHBCSSN
+    type: text
+    maxlen: 9
+  - line: SCHHBCSPSSN
+    field: SCHHBCSPSSN
+    type: text
+    maxlen: 9
+  - line: SCHHBCPTIII2ANO
+    field: SCHHBCPTIII2ANO
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIII2AYES
+    field: SCHHBCPTIII2AYES
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIII3NO
+    field: SCHHBCPTIII3NO
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIII3YES
+    field: SCHHBCPTIII3YES
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIV1NO
+    field: SCHHBCPTIV1NO
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIV1YES
+    field: SCHHBCPTIV1YES
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIV2NO
+    field: SCHHBCPTIV2NO
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIV2YES
+    field: SCHHBCPTIV2YES
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIV3NO
+    field: SCHHBCPTIV3NO
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIV3YES
+    field: SCHHBCPTIV3YES
+    type: checkbox
+    on_state: /X
+  - line: SCHHBCPTIILINE1
+    field: SCHHBCPTIILINE1
+    type: text
+    maxlen: 9
+  - line: SCHHBCPTIILINE2
+    field: SCHHBCPTIILINE2
+    type: text
+    maxlen: 9
+  - line: SCHHBCPTIILINE3
+    field: SCHHBCPTIILINE3
+    type: text
+    maxlen: 9
+  - line: SCHHBCPTIILINE4
+    field: SCHHBCPTIILINE4
+    type: text
+    maxlen: 9
+  - line: SCHHBCPTIIILINE4
+    field: SCHHBCPTIIILINE4
+    type: text
+    maxlen: 9
+  - line: SCHHBCPTIIILINE1
+    field: SCHHBCPTIIILINE1
+    type: text
+    maxlen: 9
+  - line: SCHHBCPTIVLINE4
+    field: SCHHBCPTIVLINE4
+    type: text
+    maxlen: 9
+  - line: SCHHBCPTILINE1
+    field: SCHHBCPTILINE1
+    type: text
+    maxlen: 30
+  - line: SCHHBCPTILINE4A
+    field: SCHHBCPTILINE4A
+    type: text
+    maxlen: 30
+  - line: SCHHBCPTILINE4B
+    field: SCHHBCPTILINE4B
+    type: text
+    maxlen: 30
+  - line: SCHHBCPTILINE2
+    field: SCHHBCPTILINE2
+    type: text
+    maxlen: 30
+  - line: SCHHBCACCTNUMBER
+    field: SCHHBCACCTNUMBER
+    type: text
+    maxlen: 35
+  - line: SCHHBCYEAR
+    field: SCHHBCYEAR
+    type: text
+  - line: SCHHBCPTILINE8A
+    field: SCHHBCPTILINE8A
+    type: text
+    maxlen: 30
+  - line: SCHHBCPTILINE8B
+    field: SCHHBCPTILINE8B
+    type: text
+    maxlen: 30
+  - line: SCHHBCPTILINE6
+    field: SCHHBCPTILINE6
+    type: text
+    maxlen: 30
+  - line: SCHHBCACCTNUMBER7
+    field: SCHHBCACCTNUMBER7
+    type: text
+    maxlen: 35
+  - line: CITYSCHHBC
+    field: CITYSCHHBC
+    type: text
+    maxlen: 15
+  - line: STATESCHHBC
+    field: STATESCHHBC
+    type: text
+    maxlen: 2
+  - line: ZIPSCHHBC
+    field: ZIPSCHHBC
+    type: text
+    maxlen: 9
+  - line: ADDRESSSCHHBC
+    field: ADDRESSSCHHBC
+    type: text
+    maxlen: 32
+  - line: SCHHBCPTILINE5
+    field: SCHHBCPTILINE5
+    type: text
+    maxlen: 30
+  - line: CITYSCHHBC2
+    field: CITYSCHHBC2
+    type: text
+    maxlen: 15
+  - line: STATESCHHBC2
+    field: STATESCHHBC2
+    type: text
+    maxlen: 2
+  - line: ZIPSCHHBC2
+    field: ZIPSCHHBC2
+    type: text
+    maxlen: 9
+  - line: ADDRESSSCHHBC2
+    field: ADDRESSSCHHBC2
+    type: text
+    maxlen: 32
+  - line: CITYSCHHBC3
+    field: CITYSCHHBC3
+    type: text
+    maxlen: 15
+  - line: STATESCHHBC3
+    field: STATESCHHBC3
+    type: text
+    maxlen: 2
+  - line: ZIPSCHHBC3
+    field: ZIPSCHHBC3
+    type: text
+    maxlen: 9
+  - line: ADDRESSSCHHBC3
+    field: ADDRESSSCHHBC3
+    type: text
+    maxlen: 32
+  - line: SCHHBCPTIIILINE5
+    field: SCHHBCPTIIILINE5
+    type: text
+    maxlen: 9
+  - line: SCHCRNAME
+    field: SCHCRNAME
+    type: text
+  - line: SCHCRSSN
+    field: SCHCRSSN
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN1
+    field: SCHCRWKSHTPTLN1
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN2
+    field: SCHCRWKSHTPTLN2
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN3
+    field: SCHCRWKSHTPTLN3
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN4
+    field: SCHCRWKSHTPTLN4
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN5
+    field: SCHCRWKSHTPTLN5
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN6
+    field: SCHCRWKSHTPTLN6
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN7
+    field: SCHCRWKSHTPTLN7
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN8
+    field: SCHCRWKSHTPTLN8
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN9
+    field: SCHCRWKSHTPTLN9
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN10
+    field: SCHCRWKSHTPTLN10
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN11
+    field: SCHCRWKSHTPTLN11
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN12
+    field: SCHCRWKSHTPTLN12
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN13
+    field: SCHCRWKSHTPTLN13
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN14
+    field: SCHCRWKSHTPTLN14
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN15
+    field: SCHCRWKSHTPTLN15
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN16
+    field: SCHCRWKSHTPTLN16
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN17
+    field: SCHCRWKSHTPTLN17
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN18
+    field: SCHCRWKSHTPTLN18
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN19
+    field: SCHCRWKSHTPTLN19
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN20
+    field: SCHCRWKSHTPTLN20
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN21
+    field: SCHCRWKSHTPTLN21
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN22
+    field: SCHCRWKSHTPTLN22
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN23
+    field: SCHCRWKSHTPTLN23
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN24
+    field: SCHCRWKSHTPTLN24
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN25
+    field: SCHCRWKSHTPTLN25
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN26
+    field: SCHCRWKSHTPTLN26
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN27
+    field: SCHCRWKSHTPTLN27
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN1B
+    field: SCHCRWKSHTPTLN1B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN1C
+    field: SCHCRWKSHTPTLN1C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN1D
+    field: SCHCRWKSHTPTLN1D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN1E
+    field: SCHCRWKSHTPTLN1E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN1A
+    field: SCHCRWKSHTPTLN1A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN2B
+    field: SCHCRWKSHTPTLN2B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN2C
+    field: SCHCRWKSHTPTLN2C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN2D
+    field: SCHCRWKSHTPTLN2D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN2E
+    field: SCHCRWKSHTPTLN2E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN2A
+    field: SCHCRWKSHTPTLN2A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN3B
+    field: SCHCRWKSHTPTLN3B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN3C
+    field: SCHCRWKSHTPTLN3C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN3D
+    field: SCHCRWKSHTPTLN3D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN3E
+    field: SCHCRWKSHTPTLN3E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN3A
+    field: SCHCRWKSHTPTLN3A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN4B
+    field: SCHCRWKSHTPTLN4B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN4C
+    field: SCHCRWKSHTPTLN4C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN4D
+    field: SCHCRWKSHTPTLN4D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN4E
+    field: SCHCRWKSHTPTLN4E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN4A
+    field: SCHCRWKSHTPTLN4A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN5B
+    field: SCHCRWKSHTPTLN5B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN5C
+    field: SCHCRWKSHTPTLN5C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN5D
+    field: SCHCRWKSHTPTLN5D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN5E
+    field: SCHCRWKSHTPTLN5E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN5A
+    field: SCHCRWKSHTPTLN5A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN6B
+    field: SCHCRWKSHTPTLN6B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN6C
+    field: SCHCRWKSHTPTLN6C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN6D
+    field: SCHCRWKSHTPTLN6D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN6E
+    field: SCHCRWKSHTPTLN6E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN6A
+    field: SCHCRWKSHTPTLN6A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN7B
+    field: SCHCRWKSHTPTLN7B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN7C
+    field: SCHCRWKSHTPTLN7C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN7D
+    field: SCHCRWKSHTPTLN7D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN7E
+    field: SCHCRWKSHTPTLN7E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN7A
+    field: SCHCRWKSHTPTLN7A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN8B
+    field: SCHCRWKSHTPTLN8B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN8C
+    field: SCHCRWKSHTPTLN8C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN8D
+    field: SCHCRWKSHTPTLN8D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN8E
+    field: SCHCRWKSHTPTLN8E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN8A
+    field: SCHCRWKSHTPTLN8A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN9B
+    field: SCHCRWKSHTPTLN9B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN9C
+    field: SCHCRWKSHTPTLN9C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN9D
+    field: SCHCRWKSHTPTLN9D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN9E
+    field: SCHCRWKSHTPTLN9E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN9A
+    field: SCHCRWKSHTPTLN9A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN10B
+    field: SCHCRWKSHTPTLN10B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN10C
+    field: SCHCRWKSHTPTLN10C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN10D
+    field: SCHCRWKSHTPTLN10D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN10E
+    field: SCHCRWKSHTPTLN10E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN10A
+    field: SCHCRWKSHTPTLN10A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN11B
+    field: SCHCRWKSHTPTLN11B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN11C
+    field: SCHCRWKSHTPTLN11C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN11D
+    field: SCHCRWKSHTPTLN11D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN11E
+    field: SCHCRWKSHTPTLN11E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN11A
+    field: SCHCRWKSHTPTLN11A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN12B
+    field: SCHCRWKSHTPTLN12B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN12C
+    field: SCHCRWKSHTPTLN12C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN12D
+    field: SCHCRWKSHTPTLN12D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN12E
+    field: SCHCRWKSHTPTLN12E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN12A
+    field: SCHCRWKSHTPTLN12A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN13B
+    field: SCHCRWKSHTPTLN13B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN13C
+    field: SCHCRWKSHTPTLN13C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN13D
+    field: SCHCRWKSHTPTLN13D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN13E
+    field: SCHCRWKSHTPTLN13E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN13A
+    field: SCHCRWKSHTPTLN13A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN14B
+    field: SCHCRWKSHTPTLN14B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN14C
+    field: SCHCRWKSHTPTLN14C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN14D
+    field: SCHCRWKSHTPTLN14D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN14E
+    field: SCHCRWKSHTPTLN14E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN14A
+    field: SCHCRWKSHTPTLN14A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN15B
+    field: SCHCRWKSHTPTLN15B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN15C
+    field: SCHCRWKSHTPTLN15C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN15D
+    field: SCHCRWKSHTPTLN15D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN15E
+    field: SCHCRWKSHTPTLN15E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN15A
+    field: SCHCRWKSHTPTLN15A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN16B
+    field: SCHCRWKSHTPTLN16B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN16C
+    field: SCHCRWKSHTPTLN16C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN16D
+    field: SCHCRWKSHTPTLN16D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN16E
+    field: SCHCRWKSHTPTLN16E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN16A
+    field: SCHCRWKSHTPTLN16A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN17B
+    field: SCHCRWKSHTPTLN17B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN17C
+    field: SCHCRWKSHTPTLN17C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN17D
+    field: SCHCRWKSHTPTLN17D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN17E
+    field: SCHCRWKSHTPTLN17E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN17A
+    field: SCHCRWKSHTPTLN17A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN18B
+    field: SCHCRWKSHTPTLN18B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN18C
+    field: SCHCRWKSHTPTLN18C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN18D
+    field: SCHCRWKSHTPTLN18D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN18E
+    field: SCHCRWKSHTPTLN18E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN18A
+    field: SCHCRWKSHTPTLN18A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN19B
+    field: SCHCRWKSHTPTLN19B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN19C
+    field: SCHCRWKSHTPTLN19C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN19D
+    field: SCHCRWKSHTPTLN19D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN19E
+    field: SCHCRWKSHTPTLN19E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN19A
+    field: SCHCRWKSHTPTLN19A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN20B
+    field: SCHCRWKSHTPTLN20B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN20C
+    field: SCHCRWKSHTPTLN20C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN20D
+    field: SCHCRWKSHTPTLN20D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN20E
+    field: SCHCRWKSHTPTLN20E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN20A
+    field: SCHCRWKSHTPTLN20A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN21B
+    field: SCHCRWKSHTPTLN21B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN21C
+    field: SCHCRWKSHTPTLN21C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN21D
+    field: SCHCRWKSHTPTLN21D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN21E
+    field: SCHCRWKSHTPTLN21E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN21A
+    field: SCHCRWKSHTPTLN21A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN22B
+    field: SCHCRWKSHTPTLN22B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN22C
+    field: SCHCRWKSHTPTLN22C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN22D
+    field: SCHCRWKSHTPTLN22D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN22E
+    field: SCHCRWKSHTPTLN22E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN22A
+    field: SCHCRWKSHTPTLN22A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN23B
+    field: SCHCRWKSHTPTLN23B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN23C
+    field: SCHCRWKSHTPTLN23C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN23D
+    field: SCHCRWKSHTPTLN23D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN23E
+    field: SCHCRWKSHTPTLN23E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN23A
+    field: SCHCRWKSHTPTLN23A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN24B
+    field: SCHCRWKSHTPTLN24B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN24C
+    field: SCHCRWKSHTPTLN24C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN24D
+    field: SCHCRWKSHTPTLN24D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN24E
+    field: SCHCRWKSHTPTLN24E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN24A
+    field: SCHCRWKSHTPTLN24A
+    type: text
+    maxlen: 2
+  - line: SCHCRWKSHTPTLN25B
+    field: SCHCRWKSHTPTLN25B
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN25C
+    field: SCHCRWKSHTPTLN25C
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN25D
+    field: SCHCRWKSHTPTLN25D
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN25E
+    field: SCHCRWKSHTPTLN25E
+    type: text
+    maxlen: 9
+  - line: SCHCRWKSHTPTLN25A
+    field: SCHCRWKSHTPTLN25A
+    type: text
+    maxlen: 2
+  - line: Instructions10
+    field: Instructions10
+    type: text
+  - line: UF_InfoJ
+    field: UF_InfoJ
+    type: text
+  - line: SCHOCNAME
+    field: SCHOCNAME
+    type: text
+  - line: SCHOCSSN
+    field: SCHOCSSN
+    type: text
+    maxlen: 9
+  - line: SCHOCSECA
+    field: SCHOCSECA
+    type: text
+    maxlen: 9
+  - line: SCHOCLINEA1PA
+    field: SCHOCLINEA1PA
+    type: text
+    maxlen: 9
+  - line: SCHOCLINEA2PA
+    field: SCHOCLINEA2PA
+    type: text
+    maxlen: 9
+  - line: SCHOCLINEA3PA
+    field: SCHOCLINEA3PA
+    type: text
+    maxlen: 6
+  - line: SCHOCLINEA4PA
+    field: SCHOCLINEA4PA
+    type: text
+    maxlen: 9
+  - line: SCHOCLINEA5PA
+    field: SCHOCLINEA5PA
+    type: text
+    maxlen: 9
+  - line: SCHOCLINEA6PA
+    field: SCHOCLINEA6PA
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE1PB
+    field: SCHOCLINE1PB
+    type: text
+  - line: SCHOCLINE1PC
+    field: SCHOCLINE1PC
+    type: text
+    maxlen: 20
+  - line: SCHOCLINE2PC
+    field: SCHOCLINE2PC
+    type: text
+  - line: "SCHOCLINE3#1PC"
+    field: "SCHOCLINE3#1PC"
+    type: text
+  - line: "SCHOCLINE3#2PC"
+    field: "SCHOCLINE3#2PC"
+    type: text
+  - line: "SCHOCLINE4#1PC"
+    field: "SCHOCLINE4#1PC"
+    type: checkbox
+    on_state: /X
+  - line: "SCHOCLINE4#2PC"
+    field: "SCHOCLINE4#2PC"
+    type: checkbox
+    on_state: /X
+  - line: "SCHOCLINE5#1PC"
+    field: "SCHOCLINE5#1PC"
+    type: checkbox
+    on_state: /X
+  - line: "SCHOCLINE5#2PC"
+    field: "SCHOCLINE5#2PC"
+    type: checkbox
+    on_state: /X
+  - line: SCHOCLINE6PC
+    field: SCHOCLINE6PC
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE7PC
+    field: SCHOCLINE7PC
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE1PD
+    field: SCHOCLINE1PD
+    type: text
+  - line: SCHOCLINE1APD
+    field: SCHOCLINE1APD
+    type: text
+  - line: SCHOCLINE2PD
+    field: SCHOCLINE2PD
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE3PD
+    field: SCHOCLINE3PD
+    type: text
+    maxlen: 9
+  - line: COALCREDIT
+    field: COALCREDIT
+    type: text
+    maxlen: 9
+  - line: SCHOCPTFYES
+    field: SCHOCPTFYES
+    type: checkbox
+    on_state: /X
+  - line: SCHOCPTFNO
+    field: SCHOCPTFNO
+    type: checkbox
+    on_state: /X
+  - line: SCHOCLINE1PF
+    field: SCHOCLINE1PF
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE2PF
+    field: SCHOCLINE2PF
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE3PF
+    field: SCHOCLINE3PF
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE4PF
+    field: SCHOCLINE4PF
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE5PF
+    field: SCHOCLINE5PF
+    type: text
+    maxlen: 9
+  - line: SCHOCPTFFEIN
+    field: SCHOCPTFFEIN
+    type: text
+  - line: SCHOCLINE6PF
+    field: SCHOCLINE6PF
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE7PF
+    field: SCHOCLINE7PF
+    type: text
+    maxlen: 9
+  - line: UF_InfoB
+    field: UF_InfoB
+    type: text
+  - line: Instructions1
+    field: Instructions1
+    type: text
+  - line: SCHOCLINE1PE
+    field: SCHOCLINE1PE
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE2PE
+    field: SCHOCLINE2PE
+    type: text
+    maxlen: 9
+  - line: SCHOCPTEFEIN
+    field: SCHOCPTEFEIN
+    type: text
+  - line: SCHOCPTHNO
+    field: SCHOCPTHNO
+    type: checkbox
+    on_state: /X
+  - line: SCHOCPTHYES
+    field: SCHOCPTHYES
+    type: checkbox
+    on_state: /X
+  - line: SCHOCLINE1PH
+    field: SCHOCLINE1PH
+    type: text
+  - line: SCHOCLINE2PH
+    field: SCHOCLINE2PH
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE4PH
+    field: SCHOCLINE4PH
+    type: text
+    maxlen: 9
+  - line: SCHOCPTHFEIN
+    field: SCHOCPTHFEIN
+    type: text
+  - line: SCHOCLINE5PH
+    field: SCHOCLINE5PH
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE6PH
+    field: SCHOCLINE6PH
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE1PI
+    field: SCHOCLINE1PI
+    type: text
+    maxlen: 50
+  - line: SCHOCPTIFEIN
+    field: SCHOCPTIFEIN
+    type: text
+  - line: SCHOCLINE3PI
+    field: SCHOCLINE3PI
+    type: text
+    maxlen: 30
+  - line: SCHOCLINE4PI
+    field: SCHOCLINE4PI
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE5PI
+    field: SCHOCLINE5PI
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE6PI
+    field: SCHOCLINE6PI
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE7PI
+    field: SCHOCLINE7PI
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE8PI
+    field: SCHOCLINE8PI
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE9PI
+    field: SCHOCLINE9PI
+    type: text
+    maxlen: 9
+  - line: CHKSCHOCPPJ
+    field: CHKSCHOCPPJ
+    type: checkbox
+    on_state: /X
+  - line: CHKSCHOCCPJ
+    field: CHKSCHOCCPJ
+    type: checkbox
+    on_state: /X
+  - line: CHKSCHOCRPJ
+    field: CHKSCHOCRPJ
+    type: checkbox
+    on_state: /X
+  - line: SCHOCLINE1PJ
+    field: SCHOCLINE1PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE2PJ
+    field: SCHOCLINE2PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE3PJ
+    field: SCHOCLINE3PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE4PJ
+    field: SCHOCLINE4PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE5PJ
+    field: SCHOCLINE5PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE6PJ
+    field: SCHOCLINE6PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE7PJ
+    field: SCHOCLINE7PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE9PJ
+    field: SCHOCLINE9PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE10PJ
+    field: SCHOCLINE10PJ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE11PJ
+    field: SCHOCLINE11PJ
+    type: text
+    maxlen: 11
+  - line: SCHOC10FEINPJ
+    field: SCHOC10FEINPJ
+    type: text
+    maxlen: 12
+  - line: SCHOCPTKLINE1
+    field: SCHOCPTKLINE1
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE1PG
+    field: SCHOCLINE1PG
+    type: text
+  - line: SCHOCLINE2PG
+    field: SCHOCLINE2PG
+    type: text
+    maxlen: 9
+  - line: SCHOCPTGFEIN
+    field: SCHOCPTGFEIN
+    type: text
+  - line: SCHOCLINE3PG
+    field: SCHOCLINE3PG
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE4PG
+    field: SCHOCLINE4PG
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE1PL
+    field: SCHOCLINE1PL
+    type: text
+    maxlen: 30
+  - line: SCHOCLINE2APL
+    field: SCHOCLINE2APL
+    type: text
+    maxlen: 30
+  - line: SCHOCLINE2BPL
+    field: SCHOCLINE2BPL
+    type: text
+    maxlen: 15
+  - line: SCHOCLINE2CPL
+    field: SCHOCLINE2CPL
+    type: text
+    maxlen: 15
+  - line: SCHOCLINE2DPL
+    field: SCHOCLINE2DPL
+    type: text
+    maxlen: 15
+  - line: SCHOCLINE3PL
+    field: SCHOCLINE3PL
+    type: text
+    maxlen: 9
+  - line: SCHOCFEINPL
+    field: SCHOCFEINPL
+    type: text
+    maxlen: 12
+  - line: SCHOCLINE4PL
+    field: SCHOCLINE4PL
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE5PL
+    field: SCHOCLINE5PL
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE7PL
+    field: SCHOCLINE7PL
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE1PO
+    field: SCHOCLINE1PO
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE2PO
+    field: SCHOCLINE2PO
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE3PO
+    field: SCHOCLINE3PO
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE4PO
+    field: SCHOCLINE4PO
+    type: text
+    maxlen: 11
+  - line: SCHOCFEINPO
+    field: SCHOCFEINPO
+    type: text
+  - line: SCHOCLINE5PO
+    field: SCHOCLINE5PO
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE7PO
+    field: SCHOCLINE7PO
+    type: text
+    maxlen: 11
+  - line: SCHOCPNumber1PN
+    field: SCHOCPNumber1PN
+    type: text
+  - line: SCHOCDate1PN
+    field: SCHOCDate1PN
+    type: text
+    maxlen: 10
+  - line: SCHOCAmount1PN
+    field: SCHOCAmount1PN
+    type: text
+    maxlen: 11
+  - line: SCHOCPNumber2PN
+    field: SCHOCPNumber2PN
+    type: text
+  - line: SCHOCDate2PN
+    field: SCHOCDate2PN
+    type: text
+    maxlen: 10
+  - line: SCHOCAmount2PN
+    field: SCHOCAmount2PN
+    type: text
+    maxlen: 11
+  - line: SCHOCPNumber3PN
+    field: SCHOCPNumber3PN
+    type: text
+  - line: SCHOCDate3PN
+    field: SCHOCDate3PN
+    type: text
+    maxlen: 10
+  - line: SCHOCAmount3PN
+    field: SCHOCAmount3PN
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE2PN
+    field: SCHOCLINE2PN
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE3PN
+    field: SCHOCLINE3PN
+    type: text
+    maxlen: 11
+  - line: SCHOCFEINPN
+    field: SCHOCFEINPN
+    type: text
+  - line: SCHOCLINE4PN
+    field: SCHOCLINE4PN
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE1PM
+    field: SCHOCLINE1PM
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE8PO
+    field: SCHOCLINE8PO
+    type: text
+    maxlen: 11
+  - line: SCHOCYEARPO1
+    field: SCHOCYEARPO1
+    type: text
+  - line: SCHOCYEARPO2
+    field: SCHOCYEARPO2
+    type: text
+  - line: SCHOCYEARPO3
+    field: SCHOCYEARPO3
+    type: text
+  - line: SCHOCCARRYFORWARD1PO
+    field: SCHOCCARRYFORWARD1PO
+    type: text
+  - line: SCHOCCARRYFORWARD2PO
+    field: SCHOCCARRYFORWARD2PO
+    type: text
+  - line: SCHOCCARRYFORWARD3PO
+    field: SCHOCCARRYFORWARD3PO
+    type: text
+  - line: SCHOCLIMITATION1PO
+    field: SCHOCLIMITATION1PO
+    type: text
+  - line: SCHOCLIMITATION2PO
+    field: SCHOCLIMITATION2PO
+    type: text
+  - line: SCHOCLIMITATION3PO
+    field: SCHOCLIMITATION3PO
+    type: text
+  - line: SCHOCPOMAXIMUM1
+    field: SCHOCPOMAXIMUM1
+    type: text
+  - line: SCHOCPOMAXIMUM2
+    field: SCHOCPOMAXIMUM2
+    type: text
+  - line: SCHOCPOMAXIMUM3
+    field: SCHOCPOMAXIMUM3
+    type: text
+  - line: SCHOCUNUSED1PO
+    field: SCHOCUNUSED1PO
+    type: text
+  - line: SCHOCUNUSED2PO
+    field: SCHOCUNUSED2PO
+    type: text
+  - line: SCHOCUNUSED3PO
+    field: SCHOCUNUSED3PO
+    type: text
+  - line: SCHOCLINE9PO
+    field: SCHOCLINE9PO
+    type: text
+  - line: SCHOCPNUMBERPP
+    field: SCHOCPNUMBERPP
+    type: text
+  - line: SCHOCLINE1PP
+    field: SCHOCLINE1PP
+    type: text
+    maxlen: 11
+  - line: SCHOCFEINPP
+    field: SCHOCFEINPP
+    type: text
+  - line: SCHOCLINE2PP
+    field: SCHOCLINE2PP
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE3PP
+    field: SCHOCLINE3PP
+    type: text
+    maxlen: 11
+  - line: SCHOCCNAMEPS
+    field: SCHOCCNAMEPS
+    type: text
+  - line: SCHOCFEINPS
+    field: SCHOCFEINPS
+    type: text
+  - line: SCHOCLINE1PS
+    field: SCHOCLINE1PS
+    type: text
+    maxlen: 9
+  - line: SCHOCFEINPS2
+    field: SCHOCFEINPS2
+    type: text
+  - line: SCHOCLINE2PS
+    field: SCHOCLINE2PS
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE3PS
+    field: SCHOCLINE3PS
+    type: text
+    maxlen: 9
+  - line: SCHOCCNAMEPQ
+    field: SCHOCCNAMEPQ
+    type: text
+  - line: SCHOCPFEINPQ
+    field: SCHOCPFEINPQ
+    type: text
+  - line: SCHOCLINE1PQ
+    field: SCHOCLINE1PQ
+    type: text
+    maxlen: 11
+  - line: SCHOCFEINPQ
+    field: SCHOCFEINPQ
+    type: text
+  - line: SCHOCLINE2PQ
+    field: SCHOCLINE2PQ
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE3PQ
+    field: SCHOCLINE3PQ
+    type: text
+    maxlen: 11
+  - line: SCHOCNAMEPR
+    field: SCHOCNAMEPR
+    type: text
+    maxlen: 35
+  - line: SCHOCLINE1PR
+    field: SCHOCLINE1PR
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE2PR
+    field: SCHOCLINE2PR
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE3PR
+    field: SCHOCLINE3PR
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE6PR
+    field: SCHOCLINE6PR
+    type: text
+    maxlen: 11
+  - line: SCHOCYEARPR1
+    field: SCHOCYEARPR1
+    type: text
+  - line: SCHOCYEARPR2
+    field: SCHOCYEARPR2
+    type: text
+  - line: SCHOCYEARPR3
+    field: SCHOCYEARPR3
+    type: text
+  - line: SCHOCCARRYFORWARD1PR
+    field: SCHOCCARRYFORWARD1PR
+    type: text
+  - line: SCHOCCARRYFORWARD2PR
+    field: SCHOCCARRYFORWARD2PR
+    type: text
+  - line: SCHOCCARRYFORWARD3PR
+    field: SCHOCCARRYFORWARD3PR
+    type: text
+  - line: SCHOCLIMITATION1PR
+    field: SCHOCLIMITATION1PR
+    type: text
+  - line: SCHOCLIMITATION2PR
+    field: SCHOCLIMITATION2PR
+    type: text
+  - line: SCHOCLIMITATION3PR
+    field: SCHOCLIMITATION3PR
+    type: text
+  - line: SCHOCPRMAXIMUM1
+    field: SCHOCPRMAXIMUM1
+    type: text
+  - line: SCHOCPRMAXIMUM2
+    field: SCHOCPRMAXIMUM2
+    type: text
+  - line: SCHOCPRMAXIMUM3
+    field: SCHOCPRMAXIMUM3
+    type: text
+  - line: SCHOCUNUSED1PR
+    field: SCHOCUNUSED1PR
+    type: text
+  - line: SCHOCUNUSED2PR
+    field: SCHOCUNUSED2PR
+    type: text
+  - line: SCHOCUNUSED3PR
+    field: SCHOCUNUSED3PR
+    type: text
+  - line: SCHOCYEARPR4
+    field: SCHOCYEARPR4
+    type: text
+  - line: SCHOCCARRYFORWARD4PR
+    field: SCHOCCARRYFORWARD4PR
+    type: text
+  - line: SCHOCLIMITATION4PR
+    field: SCHOCLIMITATION4PR
+    type: text
+  - line: SCHOCPRMAXIMUM4
+    field: SCHOCPRMAXIMUM4
+    type: text
+  - line: SCHOCUNUSED4PR
+    field: SCHOCUNUSED4PR
+    type: text
+  - line: SCHOCLINE9PR
+    field: SCHOCLINE9PR
+    type: text
+  - line: SCHOCFEINPR
+    field: SCHOCFEINPR
+    type: text
+  - line: SCHOCLINE4PR
+    field: SCHOCLINE4PR
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE5PR
+    field: SCHOCLINE5PR
+    type: text
+    maxlen: 11
+  - line: Instructions2
+    field: Instructions2
+    type: text
+  - line: UF_InfoC
+    field: UF_InfoC
+    type: text
+  - line: SCHOCPNumber1PT
+    field: SCHOCPNumber1PT
+    type: text
+  - line: SCHOCPDate1PT
+    field: SCHOCPDate1PT
+    type: text
+    maxlen: 10
+  - line: SCHOCAmount1PT
+    field: SCHOCAmount1PT
+    type: text
+    maxlen: 11
+  - line: SCHOCPNumber2PT
+    field: SCHOCPNumber2PT
+    type: text
+  - line: SCHOCPDate2PT
+    field: SCHOCPDate2PT
+    type: text
+    maxlen: 10
+  - line: SCHOCAmount2PT
+    field: SCHOCAmount2PT
+    type: text
+    maxlen: 11
+  - line: SCHOCPNumber3PT
+    field: SCHOCPNumber3PT
+    type: text
+  - line: SCHOCPDate3PT
+    field: SCHOCPDate3PT
+    type: text
+    maxlen: 10
+  - line: SCHOCAmount3PT
+    field: SCHOCAmount3PT
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE3PT
+    field: SCHOCLINE3PT
+    type: text
+    maxlen: 11
+  - line: SCHOCPRTULINE1
+    field: SCHOCPRTULINE1
+    type: text
+    maxlen: 11
+  - line: SCHOCPRTWLINE1
+    field: SCHOCPRTWLINE1
+    type: text
+    maxlen: 11
+  - line: SCHOCPRTVLINE1
+    field: SCHOCPRTVLINE1
+    type: text
+    maxlen: 11
+  - line: SCHOCPRTYLINE1
+    field: SCHOCPRTYLINE1
+    type: text
+    maxlen: 11
+  - line: SCHOCLINE3PX
+    field: SCHOCLINE3PX
+    type: text
+    maxlen: 9
+  - line: SCHOCFEINPX
+    field: SCHOCFEINPX
+    type: text
+    maxlen: 12
+  - line: SCHOCLINE4PX
+    field: SCHOCLINE4PX
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE5PX
+    field: SCHOCLINE5PX
+    type: text
+    maxlen: 9
+  - line: SCHOCCNAMEPX
+    field: SCHOCCNAMEPX
+    type: text
+  - line: SCHOCLINE1PX
+    field: SCHOCLINE1PX
+    type: text
+    maxlen: 9
+  - line: SCHOCLINE2PX
+    field: SCHOCLINE2PX
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC3C1
+    field: SCHOCPG5SECC3C1
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C1
+    field: SCHOCPG5SECC4C1
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C1
+    field: SCHOCPG5SECC5C1
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C1
+    field: SCHOCPG5SECC6C1
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C2
+    field: SCHOCPG5SECC3C2
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C2
+    field: SCHOCPG5SECC4C2
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C2
+    field: SCHOCPG5SECC5C2
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C2
+    field: SCHOCPG5SECC6C2
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C3
+    field: SCHOCPG5SECC3C3
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C3
+    field: SCHOCPG5SECC4C3
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C3
+    field: SCHOCPG5SECC5C3
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C3
+    field: SCHOCPG5SECC6C3
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C4
+    field: SCHOCPG5SECC3C4
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C4
+    field: SCHOCPG5SECC4C4
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C4
+    field: SCHOCPG5SECC5C4
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C4
+    field: SCHOCPG5SECC6C4
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C5
+    field: SCHOCPG5SECC3C5
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C5
+    field: SCHOCPG5SECC4C5
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C5
+    field: SCHOCPG5SECC5C5
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C5
+    field: SCHOCPG5SECC6C5
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C6
+    field: SCHOCPG5SECC3C6
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C6
+    field: SCHOCPG5SECC4C6
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C6
+    field: SCHOCPG5SECC5C6
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C6
+    field: SCHOCPG5SECC6C6
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C7
+    field: SCHOCPG5SECC3C7
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C7
+    field: SCHOCPG5SECC4C7
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C7
+    field: SCHOCPG5SECC5C7
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C7
+    field: SCHOCPG5SECC6C7
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C8
+    field: SCHOCPG5SECC3C8
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C8
+    field: SCHOCPG5SECC4C8
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C8
+    field: SCHOCPG5SECC5C8
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C8
+    field: SCHOCPG5SECC6C8
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C9
+    field: SCHOCPG5SECC3C9
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C9
+    field: SCHOCPG5SECC4C9
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C9
+    field: SCHOCPG5SECC5C9
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C9
+    field: SCHOCPG5SECC6C9
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C10
+    field: SCHOCPG5SECC3C10
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C10
+    field: SCHOCPG5SECC4C10
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C10
+    field: SCHOCPG5SECC5C10
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C10
+    field: SCHOCPG5SECC6C10
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C10
+    field: SCHOCPG5SECC7C10
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C11
+    field: SCHOCPG5SECC3C11
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C11
+    field: SCHOCPG5SECC4C11
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C11
+    field: SCHOCPG5SECC5C11
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C11
+    field: SCHOCPG5SECC6C11
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C12
+    field: SCHOCPG5SECC3C12
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C12
+    field: SCHOCPG5SECC4C12
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C12
+    field: SCHOCPG5SECC5C12
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C12
+    field: SCHOCPG5SECC6C12
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C12
+    field: SCHOCPG5SECC7C12
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C13
+    field: SCHOCPG5SECC3C13
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C13
+    field: SCHOCPG5SECC4C13
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C13
+    field: SCHOCPG5SECC5C13
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C13
+    field: SCHOCPG5SECC6C13
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C14
+    field: SCHOCPG5SECC3C14
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C14
+    field: SCHOCPG5SECC4C14
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C14
+    field: SCHOCPG5SECC5C14
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C14
+    field: SCHOCPG5SECC6C14
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C14
+    field: SCHOCPG5SECC7C14
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC2C15
+    field: SCHOCPG5SECC2C15
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C15
+    field: SCHOCPG5SECC3C15
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C15
+    field: SCHOCPG5SECC4C15
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C15
+    field: SCHOCPG5SECC5C15
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C15
+    field: SCHOCPG5SECC6C15
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C15
+    field: SCHOCPG5SECC7C15
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C16
+    field: SCHOCPG5SECC3C16
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C16
+    field: SCHOCPG5SECC4C16
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C16
+    field: SCHOCPG5SECC5C16
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C16
+    field: SCHOCPG5SECC6C16
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C16
+    field: SCHOCPG5SECC7C16
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C17
+    field: SCHOCPG5SECC3C17
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C17
+    field: SCHOCPG5SECC4C17
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C17
+    field: SCHOCPG5SECC5C17
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C17
+    field: SCHOCPG5SECC6C17
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C17
+    field: SCHOCPG5SECC7C17
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC2C18
+    field: SCHOCPG5SECC2C18
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C18
+    field: SCHOCPG5SECC3C18
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C18
+    field: SCHOCPG5SECC4C18
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C18
+    field: SCHOCPG5SECC5C18
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C18
+    field: SCHOCPG5SECC6C18
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C18
+    field: SCHOCPG5SECC7C18
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C19
+    field: SCHOCPG5SECC3C19
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C19
+    field: SCHOCPG5SECC4C19
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C19
+    field: SCHOCPG5SECC5C19
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C19
+    field: SCHOCPG5SECC6C19
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C20
+    field: SCHOCPG5SECC3C20
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C20
+    field: SCHOCPG5SECC4C20
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C20
+    field: SCHOCPG5SECC5C20
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C20
+    field: SCHOCPG5SECC6C20
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C21
+    field: SCHOCPG5SECC3C21
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C21
+    field: SCHOCPG5SECC4C21
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C21
+    field: SCHOCPG5SECC5C21
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C21
+    field: SCHOCPG5SECC6C21
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C22
+    field: SCHOCPG5SECC3C22
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C22
+    field: SCHOCPG5SECC4C22
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C22
+    field: SCHOCPG5SECC5C22
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C22
+    field: SCHOCPG5SECC6C22
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5TOT
+    field: SCHOCPG5SECC5TOT
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C25
+    field: SCHOCPG5SECC3C25
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C25
+    field: SCHOCPG5SECC4C25
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C25
+    field: SCHOCPG5SECC5C25
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C25
+    field: SCHOCPG5SECC6C25
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C23
+    field: SCHOCPG5SECC3C23
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C23
+    field: SCHOCPG5SECC4C23
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C23
+    field: SCHOCPG5SECC5C23
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C23
+    field: SCHOCPG5SECC6C23
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC2C24
+    field: SCHOCPG5SECC2C24
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC3C24
+    field: SCHOCPG5SECC3C24
+    type: text
+    maxlen: 9
+  - line: SCHOCPG5SECC4C24
+    field: SCHOCPG5SECC4C24
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC5C24
+    field: SCHOCPG5SECC5C24
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC6C24
+    field: SCHOCPG5SECC6C24
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C24
+    field: SCHOCPG5SECC7C24
+    type: text
+    maxlen: 11
+  - line: SCHOCPG5SECC7C5
+    field: SCHOCPG5SECC7C5
+    type: text
+    maxlen: 11
+  - line: SCHOCPG6SECDCA1
+    field: SCHOCPG6SECDCA1
+    type: text
+  - line: SECTIONDDATE1
+    field: SECTIONDDATE1
+    type: text
+  - line: SCHOCPG6SECDCC1
+    field: SCHOCPG6SECDCC1
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD1
+    field: SCHOCPG6SECDCD1
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE1
+    field: SCHOCPG6SECDCE1
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF1
+    field: SCHOCPG6SECDCF1
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG1
+    field: SCHOCPG6SECDCG1
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA2
+    field: SCHOCPG6SECDCA2
+    type: text
+  - line: SECTIONDDATE2
+    field: SECTIONDDATE2
+    type: text
+  - line: SCHOCPG6SECDCC2
+    field: SCHOCPG6SECDCC2
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD2
+    field: SCHOCPG6SECDCD2
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE2
+    field: SCHOCPG6SECDCE2
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF2
+    field: SCHOCPG6SECDCF2
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG2
+    field: SCHOCPG6SECDCG2
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA3
+    field: SCHOCPG6SECDCA3
+    type: text
+  - line: SECTIONDDATE3
+    field: SECTIONDDATE3
+    type: text
+  - line: SCHOCPG6SECDCC3
+    field: SCHOCPG6SECDCC3
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD3
+    field: SCHOCPG6SECDCD3
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE3
+    field: SCHOCPG6SECDCE3
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF3
+    field: SCHOCPG6SECDCF3
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG3
+    field: SCHOCPG6SECDCG3
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA4
+    field: SCHOCPG6SECDCA4
+    type: text
+  - line: SECTIONDDATE4
+    field: SECTIONDDATE4
+    type: text
+  - line: SCHOCPG6SECDCC4
+    field: SCHOCPG6SECDCC4
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD4
+    field: SCHOCPG6SECDCD4
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE4
+    field: SCHOCPG6SECDCE4
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF4
+    field: SCHOCPG6SECDCF4
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG4
+    field: SCHOCPG6SECDCG4
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA5
+    field: SCHOCPG6SECDCA5
+    type: text
+  - line: SECTIONDDATE5
+    field: SECTIONDDATE5
+    type: text
+  - line: SCHOCPG6SECDCC5
+    field: SCHOCPG6SECDCC5
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD5
+    field: SCHOCPG6SECDCD5
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE5
+    field: SCHOCPG6SECDCE5
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF5
+    field: SCHOCPG6SECDCF5
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG5
+    field: SCHOCPG6SECDCG5
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA6
+    field: SCHOCPG6SECDCA6
+    type: text
+  - line: SECTIONDDATE6
+    field: SECTIONDDATE6
+    type: text
+  - line: SCHOCPG6SECDCC6
+    field: SCHOCPG6SECDCC6
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD6
+    field: SCHOCPG6SECDCD6
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE6
+    field: SCHOCPG6SECDCE6
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF6
+    field: SCHOCPG6SECDCF6
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG6
+    field: SCHOCPG6SECDCG6
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA7
+    field: SCHOCPG6SECDCA7
+    type: text
+  - line: SECTIONDDATE7
+    field: SECTIONDDATE7
+    type: text
+  - line: SCHOCPG6SECDCC7
+    field: SCHOCPG6SECDCC7
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD7
+    field: SCHOCPG6SECDCD7
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE7
+    field: SCHOCPG6SECDCE7
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF7
+    field: SCHOCPG6SECDCF7
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG7
+    field: SCHOCPG6SECDCG7
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA8
+    field: SCHOCPG6SECDCA8
+    type: text
+  - line: SECTIONDDATE8
+    field: SECTIONDDATE8
+    type: text
+  - line: SCHOCPG6SECDCC8
+    field: SCHOCPG6SECDCC8
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD8
+    field: SCHOCPG6SECDCD8
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE8
+    field: SCHOCPG6SECDCE8
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF8
+    field: SCHOCPG6SECDCF8
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG8
+    field: SCHOCPG6SECDCG8
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA9
+    field: SCHOCPG6SECDCA9
+    type: text
+  - line: SECTIONDDATE9
+    field: SECTIONDDATE9
+    type: text
+  - line: SCHOCPG6SECDCC9
+    field: SCHOCPG6SECDCC9
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD9
+    field: SCHOCPG6SECDCD9
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE9
+    field: SCHOCPG6SECDCE9
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF9
+    field: SCHOCPG6SECDCF9
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG9
+    field: SCHOCPG6SECDCG9
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA10
+    field: SCHOCPG6SECDCA10
+    type: text
+  - line: SECTIONDDATE10
+    field: SECTIONDDATE10
+    type: text
+  - line: SCHOCPG6SECDCC10
+    field: SCHOCPG6SECDCC10
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD10
+    field: SCHOCPG6SECDCD10
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE10
+    field: SCHOCPG6SECDCE10
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF10
+    field: SCHOCPG6SECDCF10
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG10
+    field: SCHOCPG6SECDCG10
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCC11
+    field: SCHOCPG6SECDCC11
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA11
+    field: SCHOCPG6SECDCA11
+    type: text
+  - line: SECTIONDDATE11
+    field: SECTIONDDATE11
+    type: text
+  - line: SCHOCPG6SECDCD11
+    field: SCHOCPG6SECDCD11
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE11
+    field: SCHOCPG6SECDCE11
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF11
+    field: SCHOCPG6SECDCF11
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG11
+    field: SCHOCPG6SECDCG11
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA12
+    field: SCHOCPG6SECDCA12
+    type: text
+  - line: SECTIONDDATE12
+    field: SECTIONDDATE12
+    type: text
+  - line: SCHOCPG6SECDCC12
+    field: SCHOCPG6SECDCC12
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD12
+    field: SCHOCPG6SECDCD12
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE12
+    field: SCHOCPG6SECDCE12
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF12
+    field: SCHOCPG6SECDCF12
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG12
+    field: SCHOCPG6SECDCG12
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA13
+    field: SCHOCPG6SECDCA13
+    type: text
+  - line: SECTIONDDATE13
+    field: SECTIONDDATE13
+    type: text
+  - line: SCHOCPG6SECDCC13
+    field: SCHOCPG6SECDCC13
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD13
+    field: SCHOCPG6SECDCD13
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE13
+    field: SCHOCPG6SECDCE13
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF13
+    field: SCHOCPG6SECDCF13
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG13
+    field: SCHOCPG6SECDCG13
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA14
+    field: SCHOCPG6SECDCA14
+    type: text
+  - line: SECTIONDDATE14
+    field: SECTIONDDATE14
+    type: text
+  - line: SCHOCPG6SECDCC14
+    field: SCHOCPG6SECDCC14
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD14
+    field: SCHOCPG6SECDCD14
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE14
+    field: SCHOCPG6SECDCE14
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF14
+    field: SCHOCPG6SECDCF14
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG14
+    field: SCHOCPG6SECDCG14
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA15
+    field: SCHOCPG6SECDCA15
+    type: text
+  - line: SECTIONDDATE15
+    field: SECTIONDDATE15
+    type: text
+  - line: SCHOCPG6SECDCC15
+    field: SCHOCPG6SECDCC15
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD15
+    field: SCHOCPG6SECDCD15
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE15
+    field: SCHOCPG6SECDCE15
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF15
+    field: SCHOCPG6SECDCF15
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG15
+    field: SCHOCPG6SECDCG15
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA16
+    field: SCHOCPG6SECDCA16
+    type: text
+  - line: SECTIONDDATE16
+    field: SECTIONDDATE16
+    type: text
+  - line: SCHOCPG6SECDCC16
+    field: SCHOCPG6SECDCC16
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD16
+    field: SCHOCPG6SECDCD16
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE16
+    field: SCHOCPG6SECDCE16
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF16
+    field: SCHOCPG6SECDCF16
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG16
+    field: SCHOCPG6SECDCG16
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA17
+    field: SCHOCPG6SECDCA17
+    type: text
+  - line: SECTIONDDATE17
+    field: SECTIONDDATE17
+    type: text
+  - line: SCHOCPG6SECDCC17
+    field: SCHOCPG6SECDCC17
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD17
+    field: SCHOCPG6SECDCD17
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE17
+    field: SCHOCPG6SECDCE17
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF17
+    field: SCHOCPG6SECDCF17
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG17
+    field: SCHOCPG6SECDCG17
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA18
+    field: SCHOCPG6SECDCA18
+    type: text
+  - line: SECTIONDDATE18
+    field: SECTIONDDATE18
+    type: text
+  - line: SCHOCPG6SECDCC18
+    field: SCHOCPG6SECDCC18
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD18
+    field: SCHOCPG6SECDCD18
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE18
+    field: SCHOCPG6SECDCE18
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF18
+    field: SCHOCPG6SECDCF18
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG18
+    field: SCHOCPG6SECDCG18
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA19
+    field: SCHOCPG6SECDCA19
+    type: text
+  - line: SECTIONDDATE19
+    field: SECTIONDDATE19
+    type: text
+  - line: SCHOCPG6SECDCC19
+    field: SCHOCPG6SECDCC19
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD19
+    field: SCHOCPG6SECDCD19
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE19
+    field: SCHOCPG6SECDCE19
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF19
+    field: SCHOCPG6SECDCF19
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG19
+    field: SCHOCPG6SECDCG19
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCA20
+    field: SCHOCPG6SECDCA20
+    type: text
+  - line: SECTIONDDATE20
+    field: SECTIONDDATE20
+    type: text
+  - line: SCHOCPG6SECDCC20
+    field: SCHOCPG6SECDCC20
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCD20
+    field: SCHOCPG6SECDCD20
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE20
+    field: SCHOCPG6SECDCE20
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCF20
+    field: SCHOCPG6SECDCF20
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCG20
+    field: SCHOCPG6SECDCG20
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECDCE21
+    field: SCHOCPG6SECDCE21
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECEE2
+    field: SCHOCPG6SECEE2
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECEE3
+    field: SCHOCPG6SECEE3
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECEE4
+    field: SCHOCPG6SECEE4
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECEE5
+    field: SCHOCPG6SECEE5
+    type: text
+    maxlen: 9
+  - line: SCHOCPG6SECFF1
+    field: SCHOCPG6SECFF1
+    type: text
+    maxlen: 11
+  - line: SCHOCPG6SECFF2
+    field: SCHOCPG6SECFF2
+    type: text
+    maxlen: 11
+  - line: SCHOCPG6SECFF3
+    field: SCHOCPG6SECFF3
+    type: text
+    maxlen: 11
+  - line: SCHOCPG6SECFF4
+    field: SCHOCPG6SECFF4
+    type: text
+    maxlen: 11
+  - line: UF_InfoD
+    field: UF_InfoD
+    type: text
+  - line: SCHAATCNAME
+    field: SCHAATCNAME
+    type: text
+  - line: SCHAATCSSN
+    field: SCHAATCSSN
+    type: text
+    maxlen: 9
+  - line: SCHAATCSPSSN
+    field: SCHAATCSPSSN
+    type: text
+    maxlen: 9
+  - line: Instructions4
+    field: Instructions4
+    type: text
+  - line: SCHAATCLN1
+    field: SCHAATCLN1
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN2
+    field: SCHAATCLN2
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN3
+    field: SCHAATCLN3
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN4
+    field: SCHAATCLN4
+    type: text
+  - line: SCHAATCLN5
+    field: SCHAATCLN5
+    type: text
+  - line: SCHAATCLN6
+    field: SCHAATCLN6
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN8
+    field: SCHAATCLN8
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN9
+    field: SCHAATCLN9
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN10
+    field: SCHAATCLN10
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN11
+    field: SCHAATCLN11
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN12
+    field: SCHAATCLN12
+    type: text
+  - line: SCHAATCLN13
+    field: SCHAATCLN13
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN14
+    field: SCHAATCLN14
+    type: text
+  - line: SCHAATCLN15
+    field: SCHAATCLN15
+    type: text
+  - line: SCHAATCLN17
+    field: SCHAATCLN17
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN18
+    field: SCHAATCLN18
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN19
+    field: SCHAATCLN19
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN20
+    field: SCHAATCLN20
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN21
+    field: SCHAATCLN21
+    type: text
+  - line: SCHAATCLN22
+    field: SCHAATCLN22
+    type: text
+  - line: SCHAATCLN23
+    field: SCHAATCLN23
+    type: text
+  - line: SCHAATCLN24
+    field: SCHAATCLN24
+    type: text
+  - line: SCHAATCLN26
+    field: SCHAATCLN26
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN27
+    field: SCHAATCLN27
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN28
+    field: SCHAATCLN28
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN29
+    field: SCHAATCLN29
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN30
+    field: SCHAATCLN30
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN31
+    field: SCHAATCLN31
+    type: text
+    maxlen: 30
+  - line: SCHAATCLN32
+    field: SCHAATCLN32
+    type: text
+  - line: SCHAATCLN33
+    field: SCHAATCLN33
+    type: text
+  - line: SCHAATCLN35
+    field: SCHAATCLN35
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN36
+    field: SCHAATCLN36
+    type: text
+    maxlen: 9
+  - line: SCHAATCLN37
+    field: SCHAATCLN37
+    type: text
+    maxlen: 9
+  - line: UF_InfoE
+    field: UF_InfoE
+    type: text
+  - line: SCHAACNAME
+    field: SCHAACNAME
+    type: text
+  - line: SCHAACSSN
+    field: SCHAACSSN
+    type: text
+    maxlen: 9
+  - line: SCHAACSPSSN
+    field: SCHAACSPSSN
+    type: text
+    maxlen: 9
+  - line: Instructions3
+    field: Instructions3
+    type: text
+  - line: SCHAACPRTILN1
+    field: SCHAACPRTILN1
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN2
+    field: SCHAACPRTILN2
+    type: text
+  - line: SCHAACPRTILN3
+    field: SCHAACPRTILN3
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN4
+    field: SCHAACPRTILN4
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN5
+    field: SCHAACPRTILN5
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN6
+    field: SCHAACPRTILN6
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTILN7
+    field: SCHAACPRTILN7
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN8
+    field: SCHAACPRTILN8
+    type: text
+  - line: SCHAACPRTILN9
+    field: SCHAACPRTILN9
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN10
+    field: SCHAACPRTILN10
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN11
+    field: SCHAACPRTILN11
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN12
+    field: SCHAACPRTILN12
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTILN13
+    field: SCHAACPRTILN13
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN14
+    field: SCHAACPRTILN14
+    type: text
+  - line: SCHAACPRTILN15
+    field: SCHAACPRTILN15
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTILN16
+    field: SCHAACPRTILN16
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN17
+    field: SCHAACPRTILN17
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN18
+    field: SCHAACPRTILN18
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTILN19
+    field: SCHAACPRTILN19
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN21
+    field: SCHAACPRTILN21
+    type: text
+    maxlen: 9
+  - line: SCHAACPRTILN22
+    field: SCHAACPRTILN22
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN23
+    field: SCHAACPRTILN23
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN24
+    field: SCHAACPRTILN24
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTILN25
+    field: SCHAACPRTILN25
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN26
+    field: SCHAACPRTILN26
+    type: text
+  - line: SCHAACPRTILN27
+    field: SCHAACPRTILN27
+    type: text
+    maxlen: 9
+  - line: SCHAACPRTILN28
+    field: SCHAACPRTILN28
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN29
+    field: SCHAACPRTILN29
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTILN20
+    field: SCHAACPRTILN20
+    type: text
+  - line: SCHAACPRTILN30
+    field: SCHAACPRTILN30
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTIILN1
+    field: SCHAACPRTIILN1
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN2
+    field: SCHAACPRTIILN2
+    type: text
+  - line: SCHAACPRTIILN3
+    field: SCHAACPRTIILN3
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN4
+    field: SCHAACPRTIILN4
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN5
+    field: SCHAACPRTIILN5
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN6
+    field: SCHAACPRTIILN6
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTIILN7
+    field: SCHAACPRTIILN7
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN8
+    field: SCHAACPRTIILN8
+    type: text
+  - line: SCHAACPRTIILN9
+    field: SCHAACPRTIILN9
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN10
+    field: SCHAACPRTIILN10
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN11
+    field: SCHAACPRTIILN11
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN12
+    field: SCHAACPRTIILN12
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTIILN13
+    field: SCHAACPRTIILN13
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN14
+    field: SCHAACPRTIILN14
+    type: text
+  - line: SCHAACPRTIILN15
+    field: SCHAACPRTIILN15
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTIILN16
+    field: SCHAACPRTIILN16
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN17
+    field: SCHAACPRTIILN17
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN18
+    field: SCHAACPRTIILN18
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTIILN19
+    field: SCHAACPRTIILN19
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN21
+    field: SCHAACPRTIILN21
+    type: text
+    maxlen: 9
+  - line: SCHAACPRTIILN22
+    field: SCHAACPRTIILN22
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN23
+    field: SCHAACPRTIILN23
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN24
+    field: SCHAACPRTIILN24
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTIILN25
+    field: SCHAACPRTIILN25
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN26
+    field: SCHAACPRTIILN26
+    type: text
+  - line: SCHAACPRTIILN27
+    field: SCHAACPRTIILN27
+    type: text
+    maxlen: 9
+  - line: SCHAACPRTIILN28
+    field: SCHAACPRTIILN28
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN29
+    field: SCHAACPRTIILN29
+    type: text
+    maxlen: 30
+  - line: SCHAACPRTIILN20
+    field: SCHAACPRTIILN20
+    type: text
+  - line: SCHAACPRTIILN30
+    field: SCHAACPRTIILN30
+    type: text
+    maxlen: 60
+  - line: SCHAACPRTIIILN1
+    field: SCHAACPRTIIILN1
+    type: text
+    maxlen: 9
+  - line: SCHAACPRTIIILN2
+    field: SCHAACPRTIIILN2
+    type: text
+    maxlen: 9
+  - line: SCHAACPRTIIILN3
+    field: SCHAACPRTIIILN3
+    type: text
+    maxlen: 9
+  - line: SCHKRCCIBDATE
+    field: SCHKRCCIBDATE
+    type: text
+  - line: BEGYEAR
+    field: BEGYEAR
+    type: text
+    maxlen: 2
+  - line: SCHKRCCIEDATE
+    field: SCHKRCCIEDATE
+    type: text
+  - line: SCHKRCCIEYEAR
+    field: SCHKRCCIEYEAR
+    type: text
+    maxlen: 2
+  - line: SCHKRCCIPNumber1
+    field: SCHKRCCIPNumber1
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPNumber2
+    field: SCHKRCCIPNumber2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPNumber3
+    field: SCHKRCCIPNumber3
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIDate1
+    field: SCHKRCCIDate1
+    type: text
+  - line: SCHKRCCIDate2
+    field: SCHKRCCIDate2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIDate3
+    field: SCHKRCCIDate3
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPENAME1
+    field: SCHKRCCIPENAME1
+    type: text
+  - line: SCHKRCCIDEFEIN1
+    field: SCHKRCCIDEFEIN1
+    type: text
+    maxlen: 9
+  - line: SCHKRCCIPENAME2
+    field: SCHKRCCIPENAME2
+    type: text
+  - line: SCHKRCCIPENAME3
+    field: SCHKRCCIPENAME3
+    type: text
+  - line: SCHKRCCIDENAME1
+    field: SCHKRCCIDENAME1
+    type: text
+  - line: SCHKRCCIDENAME2
+    field: SCHKRCCIDENAME2
+    type: text
+  - line: SCHKRCCIDENAME3
+    field: SCHKRCCIDENAME3
+    type: text
+  - line: SCHKRCCIPTIIILINE1a
+    field: SCHKRCCIPTIIILINE1a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE1b
+    field: SCHKRCCIPTIIILINE1b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE1c
+    field: SCHKRCCIPTIIILINE1c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE2a
+    field: SCHKRCCIPTIIILINE2a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE2b
+    field: SCHKRCCIPTIIILINE2b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE2c
+    field: SCHKRCCIPTIIILINE2c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE3a
+    field: SCHKRCCIPTIIILINE3a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE3b
+    field: SCHKRCCIPTIIILINE3b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE3c
+    field: SCHKRCCIPTIIILINE3c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE4a
+    field: SCHKRCCIPTIIILINE4a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE4b
+    field: SCHKRCCIPTIIILINE4b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE4c
+    field: SCHKRCCIPTIIILINE4c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE1a
+    field: SCHKRCCIPTIVLINE1a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE1b
+    field: SCHKRCCIPTIVLINE1b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE1c
+    field: SCHKRCCIPTIVLINE1c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE2a
+    field: SCHKRCCIPTIVLINE2a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE2b
+    field: SCHKRCCIPTIVLINE2b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE2c
+    field: SCHKRCCIPTIVLINE2c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE3a
+    field: SCHKRCCIPTIVLINE3a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE3b
+    field: SCHKRCCIPTIVLINE3b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE3c
+    field: SCHKRCCIPTIVLINE3c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE4a
+    field: SCHKRCCIPTIVLINE4a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE4b
+    field: SCHKRCCIPTIVLINE4b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE4c
+    field: SCHKRCCIPTIVLINE4c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE5a
+    field: SCHKRCCIPTIVLINE5a
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE5b
+    field: SCHKRCCIPTIVLINE5b
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE5c
+    field: SCHKRCCIPTIVLINE5c
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE5
+    field: SCHKRCCIPTIIILINE5
+    type: text
+    maxlen: 10
+  - line: SCHKRCCINAME
+    field: SCHKRCCINAME
+    type: text
+  - line: SCHKRCCISSN
+    field: SCHKRCCISSN
+    type: text
+    maxlen: 9
+  - line: SCHKRCCIDEFEIN2
+    field: SCHKRCCIDEFEIN2
+    type: text
+    maxlen: 9
+  - line: SCHKRCCIDEFEIN3
+    field: SCHKRCCIDEFEIN3
+    type: text
+    maxlen: 9
+  - line: UF_InfoG
+    field: UF_InfoG
+    type: text
+  - line: Instructions5
+    field: Instructions5
+    type: text
+  - line: SCHKRCCIBDATE-2
+    field: SCHKRCCIBDATE-2
+    type: text
+  - line: BEGYEAR-2
+    field: BEGYEAR-2
+    type: text
+    maxlen: 2
+  - line: SCHKRCCIEDATE-2
+    field: SCHKRCCIEDATE-2
+    type: text
+  - line: SCHKRCCIEYEAR-2
+    field: SCHKRCCIEYEAR-2
+    type: text
+    maxlen: 2
+  - line: SCHKRCCIPNumber1-2
+    field: SCHKRCCIPNumber1-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPNumber2-2
+    field: SCHKRCCIPNumber2-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPNumber3-2
+    field: SCHKRCCIPNumber3-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIDate1-2
+    field: SCHKRCCIDate1-2
+    type: text
+  - line: SCHKRCCIDate2-2
+    field: SCHKRCCIDate2-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIDate3-2
+    field: SCHKRCCIDate3-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPENAME1-2
+    field: SCHKRCCIPENAME1-2
+    type: text
+  - line: SCHKRCCIDEFEIN1-2
+    field: SCHKRCCIDEFEIN1-2
+    type: text
+    maxlen: 9
+  - line: SCHKRCCIPENAME2-2
+    field: SCHKRCCIPENAME2-2
+    type: text
+  - line: SCHKRCCIPENAME3-2
+    field: SCHKRCCIPENAME3-2
+    type: text
+  - line: SCHKRCCIDENAME1-2
+    field: SCHKRCCIDENAME1-2
+    type: text
+  - line: SCHKRCCIDENAME2-2
+    field: SCHKRCCIDENAME2-2
+    type: text
+  - line: SCHKRCCIDENAME3-2
+    field: SCHKRCCIDENAME3-2
+    type: text
+  - line: SCHKRCCIPTIIILINE1a-2
+    field: SCHKRCCIPTIIILINE1a-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE1b-2
+    field: SCHKRCCIPTIIILINE1b-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE1c-2
+    field: SCHKRCCIPTIIILINE1c-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE2a-2
+    field: SCHKRCCIPTIIILINE2a-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE2b-2
+    field: SCHKRCCIPTIIILINE2b-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE2c-2
+    field: SCHKRCCIPTIIILINE2c-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE3a-2
+    field: SCHKRCCIPTIIILINE3a-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE3b-2
+    field: SCHKRCCIPTIIILINE3b-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE3c-2
+    field: SCHKRCCIPTIIILINE3c-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE4a-2
+    field: SCHKRCCIPTIIILINE4a-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE4b-2
+    field: SCHKRCCIPTIIILINE4b-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE4c-2
+    field: SCHKRCCIPTIIILINE4c-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE1a-2
+    field: SCHKRCCIPTIVLINE1a-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE1b-2
+    field: SCHKRCCIPTIVLINE1b-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE1c-2
+    field: SCHKRCCIPTIVLINE1c-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE2a-2
+    field: SCHKRCCIPTIVLINE2a-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE2b-2
+    field: SCHKRCCIPTIVLINE2b-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE2c-2
+    field: SCHKRCCIPTIVLINE2c-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE4a-2
+    field: SCHKRCCIPTIVLINE4a-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE4b-2
+    field: SCHKRCCIPTIVLINE4b-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE4c-2
+    field: SCHKRCCIPTIVLINE4c-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE5a-2
+    field: SCHKRCCIPTIVLINE5a-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE5b-2
+    field: SCHKRCCIPTIVLINE5b-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIVLINE5c-2
+    field: SCHKRCCIPTIVLINE5c-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCIPTIIILINE5-2
+    field: SCHKRCCIPTIIILINE5-2
+    type: text
+    maxlen: 10
+  - line: SCHKRCCINAME-2
+    field: SCHKRCCINAME-2
+    type: text
+  - line: SCHKRCCISSN-2
+    field: SCHKRCCISSN-2
+    type: text
+    maxlen: 9
+  - line: SCHKRCCIDEFEIN2-2
+    field: SCHKRCCIDEFEIN2-2
+    type: text
+    maxlen: 9
+  - line: SCHKRCCIDEFEIN3-2
+    field: SCHKRCCIDEFEIN3-2
+    type: text
+    maxlen: 9
+  - line: SCHKRCCIPTIVLINE3a-2
+    field: SCHKRCCIPTIVLINE3a-2
+    type: text
+  - line: SCHKRCCIPTIVLINE3b-2
+    field: SCHKRCCIPTIVLINE3b-2
+    type: text
+  - line: SCHKRCCIPTIVLINE3c-2
+    field: SCHKRCCIPTIVLINE3c-2
+    type: text
+  - line: SchNOL85Date
+    field: SchNOL85Date
+    type: text
+    maxlen: 5
+  - line: SchNOL85Year
+    field: SchNOL85Year
+    type: text
+    maxlen: 4
+  - line: SchNOL85NAME
+    field: SchNOL85NAME
+    type: text
+  - line: SchNOL85SSN
+    field: SchNOL85SSN
+    type: text
+  - line: SchNOL85LN1a
+    field: SchNOL85LN1a
+    type: text
+  - line: SchNOL85LN1b
+    field: SchNOL85LN1b
+    type: text
+  - line: SchNOL85LN1c
+    field: SchNOL85LN1c
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN1d
+    field: SchNOL85LN1d
+    type: text
+    maxlen: 9
+  - line: SchNOL85LN1e
+    field: SchNOL85LN1e
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN1f
+    field: SchNOL85LN1f
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN1g
+    field: SchNOL85LN1g
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN2hOther
+    field: SchNOL85LN2hOther
+    type: text
+  - line: SchNOL85LN1h
+    field: SchNOL85LN1h
+    type: text
+    maxlen: 9
+  - line: SchNOL85LN2a
+    field: SchNOL85LN2a
+    type: text
+    maxlen: 9
+  - line: SchNOL85LN2b
+    field: SchNOL85LN2b
+    type: text
+    maxlen: 9
+  - line: SchNOL85LN3a
+    field: SchNOL85LN3a
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN3b
+    field: SchNOL85LN3b
+    type: text
+    maxlen: 9
+  - line: SchNOL85LN4
+    field: SchNOL85LN4
+    type: text
+    maxlen: 9
+  - line: SchNOL85LN5
+    field: SchNOL85LN5
+    type: text
+    maxlen: 11
+  - line: SchNOL85LN6
+    field: SchNOL85LN6
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN7a
+    field: SchNOL85LN7a
+    type: text
+    maxlen: 9
+  - line: SchNOL85LN7b
+    field: SchNOL85LN7b
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN7c
+    field: SchNOL85LN7c
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN7d
+    field: SchNOL85LN7d
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN7e
+    field: SchNOL85LN7e
+    type: text
+    maxlen: 9
+  - line: SchNOL85LN7f
+    field: SchNOL85LN7f
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN17gOther
+    field: SchNOL85LN17gOther
+    type: text
+    maxlen: 11
+  - line: SchNOL85LN7g
+    field: SchNOL85LN7g
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN8
+    field: SchNOL85LN8
+    type: text
+    maxlen: 10
+  - line: SchNOL85LN9
+    field: SchNOL85LN9
+    type: text
+    maxlen: 10
+  - line: UF_InfoH
+    field: UF_InfoH
+    type: text
+  - line: Instructions7
+    field: Instructions7
+    type: text
+  - line: SchNOL85PTIILN1
+    field: SchNOL85PTIILN1
+    type: text
+    maxlen: 10
+  - line: SchNOL85PTIILN2
+    field: SchNOL85PTIILN2
+    type: text
+    maxlen: 10
+  - line: SchNOL85PTIILN3
+    field: SchNOL85PTIILN3
+    type: text
+    maxlen: 10
+  - line: SchNOL85PTIILN4
+    field: SchNOL85PTIILN4
+    type: text
+    maxlen: 10
+  - line: SchNOL85PTIILN5
+    field: SchNOL85PTIILN5
+    type: text
+    maxlen: 10
+  - line: SchNOL85PTIILN6
+    field: SchNOL85PTIILN6
+    type: text
+    maxlen: 10
+  - line: SchNOL85PTIILN7
+    field: SchNOL85PTIILN7
+    type: text
+    maxlen: 10
+  - line: SchNOL85PTIICKBox
+    field: SchNOL85PTIICKBox
+    type: checkbox
+    on_state: /Yes
+  - line: SchNOL85ADate
+    field: SchNOL85ADate
+    type: text
+    maxlen: 5
+  - line: SchNOL85AYear
+    field: SchNOL85AYear
+    type: text
+    maxlen: 4
+  - line: SchNOL85ANAME
+    field: SchNOL85ANAME
+    type: text
+  - line: SchNOL85ASSN
+    field: SchNOL85ASSN
+    type: text
+  - line: SchNOL85A1aBDate
+    field: SchNOL85A1aBDate
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aBYear
+    field: SchNOL85A1aBYear
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1aEDate
+    field: SchNOL85A1aEDate
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aEYear
+    field: SchNOL85A1aEYear
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1bY
+    field: SchNOL85A1bY
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1bN
+    field: SchNOL85A1bN
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cY
+    field: SchNOL85A1cY
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cN
+    field: SchNOL85A1cN
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85ALN2
+    field: SchNOL85ALN2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN3
+    field: SchNOL85ALN3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4a
+    field: SchNOL85ALN4a
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4b
+    field: SchNOL85ALN4b
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN5
+    field: SchNOL85ALN5
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN6
+    field: SchNOL85ALN6
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN7
+    field: SchNOL85ALN7
+    type: text
+    maxlen: 9
+  - line: SchNOL85APICKbox
+    field: SchNOL85APICKbox
+    type: checkbox
+    on_state: /Yes
+  - line: UF_InfoI
+    field: UF_InfoI
+    type: text
+  - line: Instructions8
+    field: Instructions8
+    type: text
+  - line: SchNOL85ALN8
+    field: SchNOL85ALN8
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN9
+    field: SchNOL85ALN9
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN10
+    field: SchNOL85ALN10
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11a
+    field: SchNOL85ALN11a
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11b
+    field: SchNOL85ALN11b
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11c
+    field: SchNOL85ALN11c
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11d
+    field: SchNOL85ALN11d
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11e
+    field: SchNOL85ALN11e
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN12
+    field: SchNOL85ALN12
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN13
+    field: SchNOL85ALN13
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN14
+    field: SchNOL85ALN14
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN15
+    field: SchNOL85ALN15
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN16
+    field: SchNOL85ALN16
+    type: text
+    maxlen: 10
+  - line: SchNOL85ALN17
+    field: SchNOL85ALN17
+    type: text
+    maxlen: 10
+  - line: SchNOL85ALN18
+    field: SchNOL85ALN18
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN19
+    field: SchNOL85ALN19
+    type: text
+    maxlen: 8
+  - line: SchNOL85ADate-1
+    field: SchNOL85ADate-1
+    type: text
+    maxlen: 5
+  - line: SchNOL85AYear-1
+    field: SchNOL85AYear-1
+    type: text
+    maxlen: 4
+  - line: SchNOL85ANAME-1
+    field: SchNOL85ANAME-1
+    type: text
+  - line: SchNOL85ASSN-1
+    field: SchNOL85ASSN-1
+    type: text
+  - line: SchNOL85A1aBDate-1
+    field: SchNOL85A1aBDate-1
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aBYear-1
+    field: SchNOL85A1aBYear-1
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1aEDate-1
+    field: SchNOL85A1aEDate-1
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aEYear-1
+    field: SchNOL85A1aEYear-1
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1bY-1
+    field: SchNOL85A1bY-1
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1bN-1
+    field: SchNOL85A1bN-1
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cY-1
+    field: SchNOL85A1cY-1
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cN-1
+    field: SchNOL85A1cN-1
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85ALN2-1
+    field: SchNOL85ALN2-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN3-1
+    field: SchNOL85ALN3-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4a-1
+    field: SchNOL85ALN4a-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4b-1
+    field: SchNOL85ALN4b-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN5-1
+    field: SchNOL85ALN5-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN6-1
+    field: SchNOL85ALN6-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN7-1
+    field: SchNOL85ALN7-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85APICKbox-1
+    field: SchNOL85APICKbox-1
+    type: checkbox
+    on_state: /Yes
+  - line: SchNOL85ALN8-1
+    field: SchNOL85ALN8-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN9-1
+    field: SchNOL85ALN9-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN10-1
+    field: SchNOL85ALN10-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11a-1
+    field: SchNOL85ALN11a-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11b-1
+    field: SchNOL85ALN11b-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11c-1
+    field: SchNOL85ALN11c-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11d-1
+    field: SchNOL85ALN11d-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11e-1
+    field: SchNOL85ALN11e-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN12-1
+    field: SchNOL85ALN12-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN13-1
+    field: SchNOL85ALN13-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN14-1
+    field: SchNOL85ALN14-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN15-1
+    field: SchNOL85ALN15-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN16-1
+    field: SchNOL85ALN16-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN17-1
+    field: SchNOL85ALN17-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN18-1
+    field: SchNOL85ALN18-1
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN19-1
+    field: SchNOL85ALN19-1
+    type: text
+    maxlen: 8
+  - line: SchNOL85ADate-2
+    field: SchNOL85ADate-2
+    type: text
+    maxlen: 5
+  - line: SchNOL85AYear-2
+    field: SchNOL85AYear-2
+    type: text
+    maxlen: 4
+  - line: SchNOL85ANAME-2
+    field: SchNOL85ANAME-2
+    type: text
+  - line: SchNOL85ASSN-2
+    field: SchNOL85ASSN-2
+    type: text
+  - line: SchNOL85A1aBDate-2
+    field: SchNOL85A1aBDate-2
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aBYear-2
+    field: SchNOL85A1aBYear-2
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1aEDate-2
+    field: SchNOL85A1aEDate-2
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aEYear-2
+    field: SchNOL85A1aEYear-2
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1bY-2
+    field: SchNOL85A1bY-2
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1bN-2
+    field: SchNOL85A1bN-2
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cY-2
+    field: SchNOL85A1cY-2
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cN-2
+    field: SchNOL85A1cN-2
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85ALN2-2
+    field: SchNOL85ALN2-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN3-2
+    field: SchNOL85ALN3-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4a-2
+    field: SchNOL85ALN4a-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4b-2
+    field: SchNOL85ALN4b-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN5-2
+    field: SchNOL85ALN5-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN6-2
+    field: SchNOL85ALN6-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN7-2
+    field: SchNOL85ALN7-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85APICKbox-2
+    field: SchNOL85APICKbox-2
+    type: checkbox
+    on_state: /Yes
+  - line: SchNOL85ALN8-2
+    field: SchNOL85ALN8-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN9-2
+    field: SchNOL85ALN9-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN10-2
+    field: SchNOL85ALN10-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11a-2
+    field: SchNOL85ALN11a-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11b-2
+    field: SchNOL85ALN11b-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11c-2
+    field: SchNOL85ALN11c-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11d-2
+    field: SchNOL85ALN11d-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11e-2
+    field: SchNOL85ALN11e-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN12-2
+    field: SchNOL85ALN12-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN13-2
+    field: SchNOL85ALN13-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN14-2
+    field: SchNOL85ALN14-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN15-2
+    field: SchNOL85ALN15-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN16-2
+    field: SchNOL85ALN16-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN17-2
+    field: SchNOL85ALN17-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN18-2
+    field: SchNOL85ALN18-2
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN19-2
+    field: SchNOL85ALN19-2
+    type: text
+    maxlen: 8
+  - line: SchNOL85ADate-3
+    field: SchNOL85ADate-3
+    type: text
+    maxlen: 5
+  - line: SchNOL85AYear-3
+    field: SchNOL85AYear-3
+    type: text
+    maxlen: 4
+  - line: SchNOL85ANAME-3
+    field: SchNOL85ANAME-3
+    type: text
+  - line: SchNOL85ASSN-3
+    field: SchNOL85ASSN-3
+    type: text
+  - line: SchNOL85A1aBDate-3
+    field: SchNOL85A1aBDate-3
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aBYear-3
+    field: SchNOL85A1aBYear-3
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1aEDate-3
+    field: SchNOL85A1aEDate-3
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aEYear-3
+    field: SchNOL85A1aEYear-3
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1bY-3
+    field: SchNOL85A1bY-3
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1bN-3
+    field: SchNOL85A1bN-3
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cY-3
+    field: SchNOL85A1cY-3
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cN-3
+    field: SchNOL85A1cN-3
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85ALN2-3
+    field: SchNOL85ALN2-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN3-3
+    field: SchNOL85ALN3-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4a-3
+    field: SchNOL85ALN4a-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4b-3
+    field: SchNOL85ALN4b-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN5-3
+    field: SchNOL85ALN5-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN6-3
+    field: SchNOL85ALN6-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN7-3
+    field: SchNOL85ALN7-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85APICKbox-3
+    field: SchNOL85APICKbox-3
+    type: checkbox
+    on_state: /Yes
+  - line: SchNOL85ALN8-3
+    field: SchNOL85ALN8-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN9-3
+    field: SchNOL85ALN9-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN10-3
+    field: SchNOL85ALN10-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11a-3
+    field: SchNOL85ALN11a-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11b-3
+    field: SchNOL85ALN11b-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11c-3
+    field: SchNOL85ALN11c-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11d-3
+    field: SchNOL85ALN11d-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11e-3
+    field: SchNOL85ALN11e-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN12-3
+    field: SchNOL85ALN12-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN13-3
+    field: SchNOL85ALN13-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN14-3
+    field: SchNOL85ALN14-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN15-3
+    field: SchNOL85ALN15-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN16-3
+    field: SchNOL85ALN16-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN17-3
+    field: SchNOL85ALN17-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN18-3
+    field: SchNOL85ALN18-3
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN19-3
+    field: SchNOL85ALN19-3
+    type: text
+    maxlen: 8
+  - line: SchNOL85ADate-4
+    field: SchNOL85ADate-4
+    type: text
+    maxlen: 5
+  - line: SchNOL85AYear-4
+    field: SchNOL85AYear-4
+    type: text
+    maxlen: 4
+  - line: SchNOL85ANAME-4
+    field: SchNOL85ANAME-4
+    type: text
+  - line: SchNOL85ASSN-4
+    field: SchNOL85ASSN-4
+    type: text
+  - line: SchNOL85A1aBDate-4
+    field: SchNOL85A1aBDate-4
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aBYear-4
+    field: SchNOL85A1aBYear-4
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1aEDate-4
+    field: SchNOL85A1aEDate-4
+    type: text
+    maxlen: 5
+  - line: SchNOL85A1aEYear-4
+    field: SchNOL85A1aEYear-4
+    type: text
+    maxlen: 4
+  - line: SchNOL85A1bY-4
+    field: SchNOL85A1bY-4
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1bN-4
+    field: SchNOL85A1bN-4
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cY-4
+    field: SchNOL85A1cY-4
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85A1cN-4
+    field: SchNOL85A1cN-4
+    type: checkbox
+    on_state: /X
+  - line: SchNOL85ALN2-4
+    field: SchNOL85ALN2-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN3-4
+    field: SchNOL85ALN3-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4a-4
+    field: SchNOL85ALN4a-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN4b-4
+    field: SchNOL85ALN4b-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN5-4
+    field: SchNOL85ALN5-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN6-4
+    field: SchNOL85ALN6-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN7-4
+    field: SchNOL85ALN7-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85APICKbox-4
+    field: SchNOL85APICKbox-4
+    type: checkbox
+    on_state: /Yes
+  - line: SchNOL85ALN8-4
+    field: SchNOL85ALN8-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN9-4
+    field: SchNOL85ALN9-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN10-4
+    field: SchNOL85ALN10-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11a-4
+    field: SchNOL85ALN11a-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11b-4
+    field: SchNOL85ALN11b-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11c-4
+    field: SchNOL85ALN11c-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11d-4
+    field: SchNOL85ALN11d-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN11e-4
+    field: SchNOL85ALN11e-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN12-4
+    field: SchNOL85ALN12-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN13-4
+    field: SchNOL85ALN13-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN14-4
+    field: SchNOL85ALN14-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN15-4
+    field: SchNOL85ALN15-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN16-4
+    field: SchNOL85ALN16-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN17-4
+    field: SchNOL85ALN17-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN18-4
+    field: SchNOL85ALN18-4
+    type: text
+    maxlen: 9
+  - line: SchNOL85ALN19-4
+    field: SchNOL85ALN19-4
+    type: text
+    maxlen: 8
+  - line: Instructions9
+    field: Instructions9
+    type: text
+  - line: UF_InfoF
+    field: UF_InfoF
+    type: text
+  - line: SCHW2NAME
+    field: SCHW2NAME
+    type: text
+  - line: SCHW2SSN
+    field: SCHW2SSN
+    type: text
+  - line: SCHW2SPSSN
+    field: SCHW2SPSSN
+    type: text
+  - line: SCHW2ALN1
+    field: SCHW2ALN1
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN1
+    field: SCHW2BLN1
+    type: text
+    maxlen: 9
+  - line: SCHW2C1
+    field: SCHW2C1
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D1
+    field: SCHW2D1
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E1
+    field: SCHW2E1
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN1
+    field: SCHW2FLN1
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN1
+    field: SCHW2GLN1
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN1
+    field: SCHW2HLN1
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN1
+    field: SCHW2ILN1
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN1
+    field: SCHW2JLN1
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN2
+    field: SCHW2ALN2
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN2
+    field: SCHW2BLN2
+    type: text
+    maxlen: 9
+  - line: SCHW2C2
+    field: SCHW2C2
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D2
+    field: SCHW2D2
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E2
+    field: SCHW2E2
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN2
+    field: SCHW2FLN2
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN2
+    field: SCHW2GLN2
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN2
+    field: SCHW2HLN2
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN2
+    field: SCHW2ILN2
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN2
+    field: SCHW2JLN2
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN3
+    field: SCHW2ALN3
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN3
+    field: SCHW2BLN3
+    type: text
+    maxlen: 9
+  - line: SCHW2C3
+    field: SCHW2C3
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D3
+    field: SCHW2D3
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E3
+    field: SCHW2E3
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN3
+    field: SCHW2FLN3
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN3
+    field: SCHW2GLN3
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN3
+    field: SCHW2HLN3
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN3
+    field: SCHW2ILN3
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN3
+    field: SCHW2JLN3
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN4
+    field: SCHW2ALN4
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN4
+    field: SCHW2BLN4
+    type: text
+    maxlen: 9
+  - line: SCHW2C4
+    field: SCHW2C4
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D4
+    field: SCHW2D4
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E4
+    field: SCHW2E4
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN4
+    field: SCHW2FLN4
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN4
+    field: SCHW2GLN4
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN4
+    field: SCHW2HLN4
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN4
+    field: SCHW2ILN4
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN4
+    field: SCHW2JLN4
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN5
+    field: SCHW2ALN5
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN5
+    field: SCHW2BLN5
+    type: text
+    maxlen: 9
+  - line: SCHW2C5
+    field: SCHW2C5
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D5
+    field: SCHW2D5
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E5
+    field: SCHW2E5
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN5
+    field: SCHW2FLN5
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN5
+    field: SCHW2GLN5
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN5
+    field: SCHW2HLN5
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN5
+    field: SCHW2ILN5
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN5
+    field: SCHW2JLN5
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN6
+    field: SCHW2ALN6
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN6
+    field: SCHW2BLN6
+    type: text
+    maxlen: 9
+  - line: SCHW2C6
+    field: SCHW2C6
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D6
+    field: SCHW2D6
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E6
+    field: SCHW2E6
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN6
+    field: SCHW2FLN6
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN6
+    field: SCHW2GLN6
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN6
+    field: SCHW2HLN6
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN6
+    field: SCHW2ILN6
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN6
+    field: SCHW2JLN6
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN7
+    field: SCHW2ALN7
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN7
+    field: SCHW2BLN7
+    type: text
+    maxlen: 9
+  - line: SCHW2C7
+    field: SCHW2C7
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D7
+    field: SCHW2D7
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E7
+    field: SCHW2E7
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN7
+    field: SCHW2FLN7
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN7
+    field: SCHW2GLN7
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN7
+    field: SCHW2HLN7
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN7
+    field: SCHW2ILN7
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN7
+    field: SCHW2JLN7
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN8
+    field: SCHW2ALN8
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN8
+    field: SCHW2BLN8
+    type: text
+    maxlen: 9
+  - line: SCHW2C8
+    field: SCHW2C8
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D8
+    field: SCHW2D8
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E8
+    field: SCHW2E8
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN8
+    field: SCHW2FLN8
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN8
+    field: SCHW2GLN8
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN8
+    field: SCHW2HLN8
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN8
+    field: SCHW2ILN8
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN8
+    field: SCHW2JLN8
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN9
+    field: SCHW2ALN9
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN9
+    field: SCHW2BLN9
+    type: text
+    maxlen: 9
+  - line: SCHW2C9
+    field: SCHW2C9
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D9
+    field: SCHW2D9
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E9
+    field: SCHW2E9
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN9
+    field: SCHW2FLN9
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN9
+    field: SCHW2GLN9
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN9
+    field: SCHW2HLN9
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN9
+    field: SCHW2ILN9
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN9
+    field: SCHW2JLN9
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN10
+    field: SCHW2ALN10
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN10
+    field: SCHW2BLN10
+    type: text
+    maxlen: 9
+  - line: SCHW2C10
+    field: SCHW2C10
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D10
+    field: SCHW2D10
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E10
+    field: SCHW2E10
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN10
+    field: SCHW2FLN10
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN10
+    field: SCHW2GLN10
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN10
+    field: SCHW2HLN10
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN10
+    field: SCHW2ILN10
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN10
+    field: SCHW2JLN10
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN11
+    field: SCHW2ALN11
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN11
+    field: SCHW2BLN11
+    type: text
+    maxlen: 9
+  - line: SCHW2C11
+    field: SCHW2C11
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D11
+    field: SCHW2D11
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E11
+    field: SCHW2E11
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN11
+    field: SCHW2FLN11
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN11
+    field: SCHW2GLN11
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN11
+    field: SCHW2HLN11
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN11
+    field: SCHW2ILN11
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN11
+    field: SCHW2JLN11
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN12
+    field: SCHW2ALN12
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN12
+    field: SCHW2BLN12
+    type: text
+    maxlen: 9
+  - line: SCHW2C12
+    field: SCHW2C12
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D12
+    field: SCHW2D12
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E12
+    field: SCHW2E12
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN12
+    field: SCHW2FLN12
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN12
+    field: SCHW2GLN12
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN12
+    field: SCHW2HLN12
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN12
+    field: SCHW2ILN12
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN12
+    field: SCHW2JLN12
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN13
+    field: SCHW2ALN13
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN13
+    field: SCHW2BLN13
+    type: text
+    maxlen: 9
+  - line: SCHW2C13
+    field: SCHW2C13
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D13
+    field: SCHW2D13
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E13
+    field: SCHW2E13
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN13
+    field: SCHW2FLN13
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN13
+    field: SCHW2GLN13
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN13
+    field: SCHW2HLN13
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN13
+    field: SCHW2ILN13
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN13
+    field: SCHW2JLN13
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN14
+    field: SCHW2ALN14
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN14
+    field: SCHW2BLN14
+    type: text
+    maxlen: 9
+  - line: SCHW2C14
+    field: SCHW2C14
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D14
+    field: SCHW2D14
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E14
+    field: SCHW2E14
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN14
+    field: SCHW2FLN14
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN14
+    field: SCHW2GLN14
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN14
+    field: SCHW2HLN14
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN14
+    field: SCHW2ILN14
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN14
+    field: SCHW2JLN14
+    type: text
+    maxlen: 9
+  - line: SCHW2ALN15
+    field: SCHW2ALN15
+    type: text
+    maxlen: 9
+  - line: SCHW2BLN15
+    field: SCHW2BLN15
+    type: text
+    maxlen: 9
+  - line: SCHW2C15
+    field: SCHW2C15
+    type: checkbox
+    on_state: /X
+  - line: SCHW2D15
+    field: SCHW2D15
+    type: checkbox
+    on_state: /X
+  - line: SCHW2E15
+    field: SCHW2E15
+    type: text
+    maxlen: 2
+  - line: SCHW2FLN15
+    field: SCHW2FLN15
+    type: text
+    maxlen: 10
+  - line: SCHW2GLN15
+    field: SCHW2GLN15
+    type: text
+    maxlen: 9
+  - line: SCHW2HLN15
+    field: SCHW2HLN15
+    type: text
+    maxlen: 9
+  - line: SCHW2ILN15
+    field: SCHW2ILN15
+    type: text
+    maxlen: 9
+  - line: SCHW2JLN15
+    field: SCHW2JLN15
+    type: text
+    maxlen: 9
+  - line: SCHW2LN16
+    field: SCHW2LN16
+    type: text
+    maxlen: 9
+  - line: SCHW2LN17
+    field: SCHW2LN17
+    type: text
+    maxlen: 9
+  - line: SCHW2TOTALG
+    field: SCHW2TOTALG
+    type: text
+    maxlen: 9
+  - line: SCHW2TOTALH
+    field: SCHW2TOTALH
+    type: text
+    maxlen: 9
+  - line: SCHW2TOTALI
+    field: SCHW2TOTALI
+    type: text
+    maxlen: 9
+  - line: SCHW2TOTALJ
+    field: SCHW2TOTALJ
+    type: text
+    maxlen: 9
+  - line: SCHRSNAME
+    field: SCHRSNAME
+    type: text
+  - line: SCHRSSSN
+    field: SCHRSSSN
+    type: text
+  - line: SCHRSSPSSN
+    field: SCHRSSPSSN
+    type: text
+  - line: SCHRSALN1
+    field: SCHRSALN1
+    type: text
+    maxlen: 9
+  - line: SCHRSB1
+    field: SCHRSB1
+    type: checkbox
+    on_state: /X
+  - line: SCHRSC1
+    field: SCHRSC1
+    type: text
+    maxlen: 2
+  - line: SCHRSDLN1
+    field: SCHRSDLN1
+    type: text
+    maxlen: 20
+  - line: SCHRSELN1
+    field: SCHRSELN1
+    type: text
+    maxlen: 9
+  - line: SCHRSF1
+    field: SCHRSF1
+    type: text
+    maxlen: 2
+  - line: SCHRSGLN1
+    field: SCHRSGLN1
+    type: text
+    maxlen: 10
+  - line: SCHRSHLN1
+    field: SCHRSHLN1
+    type: text
+    maxlen: 9
+  - line: SCHRSILN1
+    field: SCHRSILN1
+    type: text
+    maxlen: 30
+  - line: SCHRSALN2
+    field: SCHRSALN2
+    type: text
+    maxlen: 9
+  - line: SCHRSB2
+    field: SCHRSB2
+    type: checkbox
+    on_state: /X
+  - line: SCHRSC2
+    field: SCHRSC2
+    type: text
+    maxlen: 2
+  - line: SCHRSDLN2
+    field: SCHRSDLN2
+    type: text
+    maxlen: 20
+  - line: SCHRSELN2
+    field: SCHRSELN2
+    type: text
+    maxlen: 9
+  - line: SCHRSF2
+    field: SCHRSF2
+    type: text
+    maxlen: 2
+  - line: SCHRSGLN2
+    field: SCHRSGLN2
+    type: text
+    maxlen: 10
+  - line: SCHRSHLN2
+    field: SCHRSHLN2
+    type: text
+    maxlen: 9
+  - line: SCHRSILN2
+    field: SCHRSILN2
+    type: text
+    maxlen: 30
+  - line: SCHRSALN3
+    field: SCHRSALN3
+    type: text
+    maxlen: 9
+  - line: SCHRSB3
+    field: SCHRSB3
+    type: checkbox
+    on_state: /X
+  - line: SCHRSC3
+    field: SCHRSC3
+    type: text
+    maxlen: 2
+  - line: SCHRSDLN3
+    field: SCHRSDLN3
+    type: text
+    maxlen: 20
+  - line: SCHRSELN3
+    field: SCHRSELN3
+    type: text
+    maxlen: 9
+  - line: SCHRSF3
+    field: SCHRSF3
+    type: text
+    maxlen: 2
+  - line: SCHRSGLN3
+    field: SCHRSGLN3
+    type: text
+    maxlen: 10
+  - line: SCHRSHLN3
+    field: SCHRSHLN3
+    type: text
+    maxlen: 9
+  - line: SCHRSILN3
+    field: SCHRSILN3
+    type: text
+    maxlen: 30
+  - line: SCHRSALN4
+    field: SCHRSALN4
+    type: text
+    maxlen: 9
+  - line: SCHRSB4
+    field: SCHRSB4
+    type: checkbox
+    on_state: /X
+  - line: SCHRSC4
+    field: SCHRSC4
+    type: text
+    maxlen: 2
+  - line: SCHRSDLN4
+    field: SCHRSDLN4
+    type: text
+    maxlen: 20
+  - line: SCHRSELN4
+    field: SCHRSELN4
+    type: text
+    maxlen: 9
+  - line: SCHRSF4
+    field: SCHRSF4
+    type: text
+    maxlen: 2
+  - line: SCHRSGLN4
+    field: SCHRSGLN4
+    type: text
+    maxlen: 10
+  - line: SCHRSHLN4
+    field: SCHRSHLN4
+    type: text
+    maxlen: 9
+  - line: SCHRSILN4
+    field: SCHRSILN4
+    type: text
+    maxlen: 30
+  - line: SCHRSALN5
+    field: SCHRSALN5
+    type: text
+    maxlen: 9
+  - line: SCHRSB5
+    field: SCHRSB5
+    type: checkbox
+    on_state: /X
+  - line: SCHRSC5
+    field: SCHRSC5
+    type: text
+    maxlen: 2
+  - line: SCHRSDLN5
+    field: SCHRSDLN5
+    type: text
+    maxlen: 20
+  - line: SCHRSELN5
+    field: SCHRSELN5
+    type: text
+    maxlen: 9
+  - line: SCHRSF5
+    field: SCHRSF5
+    type: text
+    maxlen: 2
+  - line: SCHRSGLN5
+    field: SCHRSGLN5
+    type: text
+    maxlen: 10
+  - line: SCHRSHLN5
+    field: SCHRSHLN5
+    type: text
+    maxlen: 9
+  - line: SCHRSILN5
+    field: SCHRSILN5
+    type: text
+    maxlen: 30
+  - line: SCHRSALN6
+    field: SCHRSALN6
+    type: text
+    maxlen: 9
+  - line: SCHRSB6
+    field: SCHRSB6
+    type: checkbox
+    on_state: /X
+  - line: SCHRSC6
+    field: SCHRSC6
+    type: text
+    maxlen: 2
+  - line: SCHRSDLN6
+    field: SCHRSDLN6
+    type: text
+    maxlen: 20
+  - line: SCHRSELN6
+    field: SCHRSELN6
+    type: text
+    maxlen: 9
+  - line: SCHRSF6
+    field: SCHRSF6
+    type: text
+    maxlen: 2
+  - line: SCHRSGLN6
+    field: SCHRSGLN6
+    type: text
+    maxlen: 10
+  - line: SCHRSHLN6
+    field: SCHRSHLN6
+    type: text
+    maxlen: 9
+  - line: SCHRSILN6
+    field: SCHRSILN6
+    type: text
+    maxlen: 30
+  - line: SCHRSALN7
+    field: SCHRSALN7
+    type: text
+    maxlen: 9
+  - line: SCHRSB7
+    field: SCHRSB7
+    type: checkbox
+    on_state: /X
+  - line: SCHRSC7
+    field: SCHRSC7
+    type: text
+    maxlen: 2
+  - line: SCHRSDLN7
+    field: SCHRSDLN7
+    type: text
+    maxlen: 20
+  - line: SCHRSELN7
+    field: SCHRSELN7
+    type: text
+    maxlen: 9
+  - line: SCHRSF7
+    field: SCHRSF7
+    type: text
+    maxlen: 2
+  - line: SCHRSGLN7
+    field: SCHRSGLN7
+    type: text
+    maxlen: 10
+  - line: SCHRSHLN7
+    field: SCHRSHLN7
+    type: text
+    maxlen: 9
+  - line: SCHRSILN7
+    field: SCHRSILN7
+    type: text
+    maxlen: 30
+  - line: SCHRSLN8
+    field: SCHRSLN8
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIALN1
+    field: SCHRSPTIIALN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIB1
+    field: SCHRSPTIIB1
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIC1
+    field: SCHRSPTIIC1
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIDLN1
+    field: SCHRSPTIIDLN1
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIELN1
+    field: SCHRSPTIIELN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIF1
+    field: SCHRSPTIIF1
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIGLN1
+    field: SCHRSPTIIGLN1
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIHLN1
+    field: SCHRSPTIIHLN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN1
+    field: SCHRSPTIIILN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIALN2
+    field: SCHRSPTIIALN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIB2
+    field: SCHRSPTIIB2
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIC2
+    field: SCHRSPTIIC2
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIDLN2
+    field: SCHRSPTIIDLN2
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIELN2
+    field: SCHRSPTIIELN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIF2
+    field: SCHRSPTIIF2
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIGLN2
+    field: SCHRSPTIIGLN2
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIHLN2
+    field: SCHRSPTIIHLN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN2
+    field: SCHRSPTIIILN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIALN3
+    field: SCHRSPTIIALN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIB3
+    field: SCHRSPTIIB3
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIC3
+    field: SCHRSPTIIC3
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIDLN3
+    field: SCHRSPTIIDLN3
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIELN3
+    field: SCHRSPTIIELN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIF3
+    field: SCHRSPTIIF3
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIGLN3
+    field: SCHRSPTIIGLN3
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIHLN3
+    field: SCHRSPTIIHLN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN3
+    field: SCHRSPTIIILN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIALN4
+    field: SCHRSPTIIALN4
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIB4
+    field: SCHRSPTIIB4
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIC4
+    field: SCHRSPTIIC4
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIDLN4
+    field: SCHRSPTIIDLN4
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIELN4
+    field: SCHRSPTIIELN4
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIF4
+    field: SCHRSPTIIF4
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIGLN4
+    field: SCHRSPTIIGLN4
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIHLN4
+    field: SCHRSPTIIHLN4
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN4
+    field: SCHRSPTIIILN4
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIALN5
+    field: SCHRSPTIIALN5
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIB5
+    field: SCHRSPTIIB5
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIC5
+    field: SCHRSPTIIC5
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIDLN5
+    field: SCHRSPTIIDLN5
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIELN5
+    field: SCHRSPTIIELN5
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIF5
+    field: SCHRSPTIIF5
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIGLN5
+    field: SCHRSPTIIGLN5
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIHLN5
+    field: SCHRSPTIIHLN5
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN5
+    field: SCHRSPTIIILN5
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIALN6
+    field: SCHRSPTIIALN6
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIB6
+    field: SCHRSPTIIB6
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIC6
+    field: SCHRSPTIIC6
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIDLN6
+    field: SCHRSPTIIDLN6
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIELN6
+    field: SCHRSPTIIELN6
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIF6
+    field: SCHRSPTIIF6
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIGLN6
+    field: SCHRSPTIIGLN6
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIHLN6
+    field: SCHRSPTIIHLN6
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN6
+    field: SCHRSPTIIILN6
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIALN7
+    field: SCHRSPTIIALN7
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIB7
+    field: SCHRSPTIIB7
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIC7
+    field: SCHRSPTIIC7
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIDLN7
+    field: SCHRSPTIIDLN7
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIELN7
+    field: SCHRSPTIIELN7
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIF7
+    field: SCHRSPTIIF7
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIGLN7
+    field: SCHRSPTIIGLN7
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIHLN7
+    field: SCHRSPTIIHLN7
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN7
+    field: SCHRSPTIIILN7
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIILN8
+    field: SCHRSPTIILN8
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIILN9
+    field: SCHRSPTIILN9
+    type: text
+    maxlen: 9
+  - line: SCHRSYES
+    field: SCHRSYES
+    type: checkbox
+    on_state: /X
+  - line: SCHRSNO
+    field: SCHRSNO
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIILN10
+    field: SCHRSPTIILN10
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIILN11
+    field: SCHRSPTIILN11
+    type: text
+    maxlen: 9
+  - line: Instructions11
+    field: Instructions11
+    type: text
+  - line: UF_InfoK
+    field: UF_InfoK
+    type: text
+  - line: SCHRSPTIIIALN1
+    field: SCHRSPTIIIALN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIB1
+    field: SCHRSPTIIIB1
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIIC1
+    field: SCHRSPTIIIC1
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIDLN1
+    field: SCHRSPTIIIDLN1
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIIELN1
+    field: SCHRSPTIIIELN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIF1
+    field: SCHRSPTIIIF1
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIGLN1
+    field: SCHRSPTIIIGLN1
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIIHLN1
+    field: SCHRSPTIIIHLN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIILN1
+    field: SCHRSPTIIIILN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIALN2
+    field: SCHRSPTIIIALN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIB2
+    field: SCHRSPTIIIB2
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIIC2
+    field: SCHRSPTIIIC2
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIDLN2
+    field: SCHRSPTIIIDLN2
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIIELN2
+    field: SCHRSPTIIIELN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIF2
+    field: SCHRSPTIIIF2
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIGLN2
+    field: SCHRSPTIIIGLN2
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIIHLN2
+    field: SCHRSPTIIIHLN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIILN2
+    field: SCHRSPTIIIILN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIALN3
+    field: SCHRSPTIIIALN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIB3
+    field: SCHRSPTIIIB3
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIIC3
+    field: SCHRSPTIIIC3
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIDLN3
+    field: SCHRSPTIIIDLN3
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIIELN3
+    field: SCHRSPTIIIELN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIF3
+    field: SCHRSPTIIIF3
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIGLN3
+    field: SCHRSPTIIIGLN3
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIIHLN3
+    field: SCHRSPTIIIHLN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIILN3
+    field: SCHRSPTIIIILN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIALN4
+    field: SCHRSPTIIIALN4
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIB4
+    field: SCHRSPTIIIB4
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIIC4
+    field: SCHRSPTIIIC4
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIDLN4
+    field: SCHRSPTIIIDLN4
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIIELN4
+    field: SCHRSPTIIIELN4
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIF4
+    field: SCHRSPTIIIF4
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIGLN4
+    field: SCHRSPTIIIGLN4
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIIHLN4
+    field: SCHRSPTIIIHLN4
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIILN4
+    field: SCHRSPTIIIILN4
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIALN5
+    field: SCHRSPTIIIALN5
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIB5
+    field: SCHRSPTIIIB5
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIIC5
+    field: SCHRSPTIIIC5
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIDLN5
+    field: SCHRSPTIIIDLN5
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIIELN5
+    field: SCHRSPTIIIELN5
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIF5
+    field: SCHRSPTIIIF5
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIGLN5
+    field: SCHRSPTIIIGLN5
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIIHLN5
+    field: SCHRSPTIIIHLN5
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIILN5
+    field: SCHRSPTIIIILN5
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIALN6
+    field: SCHRSPTIIIALN6
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIB6
+    field: SCHRSPTIIIB6
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIIC6
+    field: SCHRSPTIIIC6
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIDLN6
+    field: SCHRSPTIIIDLN6
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIIELN6
+    field: SCHRSPTIIIELN6
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIF6
+    field: SCHRSPTIIIF6
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIGLN6
+    field: SCHRSPTIIIGLN6
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIIHLN6
+    field: SCHRSPTIIIHLN6
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIILN6
+    field: SCHRSPTIIIILN6
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIALN7
+    field: SCHRSPTIIIALN7
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIB7
+    field: SCHRSPTIIIB7
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIIC7
+    field: SCHRSPTIIIC7
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIDLN7
+    field: SCHRSPTIIIDLN7
+    type: text
+    maxlen: 20
+  - line: SCHRSPTIIIELN7
+    field: SCHRSPTIIIELN7
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIF7
+    field: SCHRSPTIIIF7
+    type: text
+    maxlen: 2
+  - line: SCHRSPTIIIGLN7
+    field: SCHRSPTIIIGLN7
+    type: text
+    maxlen: 10
+  - line: SCHRSPTIIIHLN7
+    field: SCHRSPTIIIHLN7
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIIILN7
+    field: SCHRSPTIIIILN7
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN8
+    field: SCHRSPTIIILN8
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN9
+    field: SCHRSPTIIILN9
+    type: text
+    maxlen: 9
+  - line: SCHRSYES2
+    field: SCHRSYES2
+    type: checkbox
+    on_state: /X
+  - line: SCHRSNO2
+    field: SCHRSNO2
+    type: checkbox
+    on_state: /X
+  - line: SCHRSPTIIILN10
+    field: SCHRSPTIIILN10
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIIILN11
+    field: SCHRSPTIIILN11
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIVLN1
+    field: SCHRSPTIVLN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIVLN2
+    field: SCHRSPTIVLN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTIVLN3
+    field: SCHRSPTIVLN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTVLN1
+    field: SCHRSPTVLN1
+    type: text
+    maxlen: 9
+  - line: SCHRSPTVLN2
+    field: SCHRSPTVLN2
+    type: text
+    maxlen: 9
+  - line: SCHRSPTVLN3
+    field: SCHRSPTVLN3
+    type: text
+    maxlen: 9
+  - line: SCHRSPTVLN4
+    field: SCHRSPTVLN4
+    type: text
+    maxlen: 9
+  - line: SCHCPALN1
+    field: SCHCPALN1
+    type: text
+    maxlen: 9
+  - line: SCHCPALN2
+    field: SCHCPALN2
+    type: text
+    maxlen: 9
+  - line: SCHCPALN3
+    field: SCHCPALN3
+    type: text
+    maxlen: 9
+  - line: SCHCPALN4
+    field: SCHCPALN4
+    type: text
+    maxlen: 9
+  - line: SCHCPALN5
+    field: SCHCPALN5
+    type: text
+    maxlen: 9
+  - line: SCHCPALN6
+    field: SCHCPALN6
+    type: text
+    maxlen: 9
+  - line: SCHCPALN7
+    field: SCHCPALN7
+    type: text
+    maxlen: 9
+  - line: SCHCPALN8
+    field: SCHCPALN8
+    type: text
+    maxlen: 9
+  - line: SCHCPALN9
+    field: SCHCPALN9
+    type: text
+    maxlen: 9
+  - line: SCHCPALN10
+    field: SCHCPALN10
+    type: text
+    maxlen: 9
+  - line: SCHCPALN11
+    field: SCHCPALN11
+    type: text
+    maxlen: 9
+  - line: SCHCPALN12
+    field: SCHCPALN12
+    type: text
+    maxlen: 9
+  - line: SCHCPALN13
+    field: SCHCPALN13
+    type: text
+    maxlen: 9
+  - line: SCHCPALN14
+    field: SCHCPALN14
+    type: text
+    maxlen: 9
+  - line: SCHCPALN15
+    field: SCHCPALN15
+    type: text
+    maxlen: 9
+  - line: SCHCPALN16
+    field: SCHCPALN16
+    type: text
+    maxlen: 9
+  - line: SCHCPALN17
+    field: SCHCPALN17
+    type: text
+    maxlen: 9
+  - line: SCHCPALN18
+    field: SCHCPALN18
+    type: text
+    maxlen: 9
+  - line: SCHCPALN19
+    field: SCHCPALN19
+    type: text
+    maxlen: 9
+  - line: SCHCPB1
+    field: SCHCPB1
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB2
+    field: SCHCPB2
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB3
+    field: SCHCPB3
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB4
+    field: SCHCPB4
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB5
+    field: SCHCPB5
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB6
+    field: SCHCPB6
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB7
+    field: SCHCPB7
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB8
+    field: SCHCPB8
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB9
+    field: SCHCPB9
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB10
+    field: SCHCPB10
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB11
+    field: SCHCPB11
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB12
+    field: SCHCPB12
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB13
+    field: SCHCPB13
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB14
+    field: SCHCPB14
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB15
+    field: SCHCPB15
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB16
+    field: SCHCPB16
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB17
+    field: SCHCPB17
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB18
+    field: SCHCPB18
+    type: checkbox
+    on_state: /X
+  - line: SCHCPB19
+    field: SCHCPB19
+    type: checkbox
+    on_state: /X
+  - line: SCHCPCLN1
+    field: SCHCPCLN1
+    type: text
+  - line: SCHCPCLN2
+    field: SCHCPCLN2
+    type: text
+  - line: SCHCPCLN3
+    field: SCHCPCLN3
+    type: text
+  - line: SCHCPCLN4
+    field: SCHCPCLN4
+    type: text
+  - line: SCHCPCLN5
+    field: SCHCPCLN5
+    type: text
+  - line: SCHCPCLN6
+    field: SCHCPCLN6
+    type: text
+  - line: SCHCPCLN7
+    field: SCHCPCLN7
+    type: text
+  - line: SCHCPCLN8
+    field: SCHCPCLN8
+    type: text
+  - line: SCHCPCLN9
+    field: SCHCPCLN9
+    type: text
+  - line: SCHCPCLN10
+    field: SCHCPCLN10
+    type: text
+  - line: SCHCPCLN11
+    field: SCHCPCLN11
+    type: text
+  - line: SCHCPCLM12
+    field: SCHCPCLM12
+    type: text
+  - line: SCHCPCLN13
+    field: SCHCPCLN13
+    type: text
+  - line: SCHCPCLN14
+    field: SCHCPCLN14
+    type: text
+  - line: SCHCPCLN15
+    field: SCHCPCLN15
+    type: text
+  - line: SCHCPCLN16
+    field: SCHCPCLN16
+    type: text
+  - line: SCHCPCLN17
+    field: SCHCPCLN17
+    type: text
+  - line: SCHCPCLN18
+    field: SCHCPCLN18
+    type: text
+  - line: SCHCPCLN19
+    field: SCHCPCLN19
+    type: text
+  - line: SCHCPDLN1
+    field: SCHCPDLN1
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN2
+    field: SCHCPDLN2
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN3
+    field: SCHCPDLN3
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN4
+    field: SCHCPDLN4
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN5
+    field: SCHCPDLN5
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN6
+    field: SCHCPDLN6
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN7
+    field: SCHCPDLN7
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN8
+    field: SCHCPDLN8
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN9
+    field: SCHCPDLN9
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN10
+    field: SCHCPDLN10
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN11
+    field: SCHCPDLN11
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN12
+    field: SCHCPDLN12
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN13
+    field: SCHCPDLN13
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN14
+    field: SCHCPDLN14
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN15
+    field: SCHCPDLN15
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN16
+    field: SCHCPDLN16
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN17
+    field: SCHCPDLN17
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN18
+    field: SCHCPDLN18
+    type: text
+    maxlen: 9
+  - line: SCHCPDLN19
+    field: SCHCPDLN19
+    type: text
+    maxlen: 9
+  - line: SCHCPELN1
+    field: SCHCPELN1
+    type: text
+  - line: SCHCPELN2
+    field: SCHCPELN2
+    type: text
+  - line: SCHCPELN3
+    field: SCHCPELN3
+    type: text
+  - line: SCHCPELN4
+    field: SCHCPELN4
+    type: text
+  - line: SCHCPELN5
+    field: SCHCPELN5
+    type: text
+  - line: SCHCPELN6
+    field: SCHCPELN6
+    type: text
+  - line: SCHCPELN7
+    field: SCHCPELN7
+    type: text
+  - line: SCHCPELN8
+    field: SCHCPELN8
+    type: text
+  - line: SCHCPELN9
+    field: SCHCPELN9
+    type: text
+  - line: SCHCPELN10
+    field: SCHCPELN10
+    type: text
+  - line: SCHCPELN11
+    field: SCHCPELN11
+    type: text
+  - line: SCHCPELM12
+    field: SCHCPELM12
+    type: text
+  - line: SCHCPELN13
+    field: SCHCPELN13
+    type: text
+  - line: SCHCPELN14
+    field: SCHCPELN14
+    type: text
+  - line: SCHCPELN15
+    field: SCHCPELN15
+    type: text
+  - line: SCHCPELN16
+    field: SCHCPELN16
+    type: text
+  - line: SCHCPELN17
+    field: SCHCPELN17
+    type: text
+  - line: SCHCPELN18
+    field: SCHCPELN18
+    type: text
+  - line: SCHCPELN19
+    field: SCHCPELN19
+    type: text
+  - line: SCHCPFLN1
+    field: SCHCPFLN1
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN2
+    field: SCHCPFLN2
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN3
+    field: SCHCPFLN3
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN4
+    field: SCHCPFLN4
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN5
+    field: SCHCPFLN5
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN6
+    field: SCHCPFLN6
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN7
+    field: SCHCPFLN7
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN8
+    field: SCHCPFLN8
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN9
+    field: SCHCPFLN9
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN10
+    field: SCHCPFLN10
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN11
+    field: SCHCPFLN11
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN12
+    field: SCHCPFLN12
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN13
+    field: SCHCPFLN13
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN14
+    field: SCHCPFLN14
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN15
+    field: SCHCPFLN15
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN16
+    field: SCHCPFLN16
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN17
+    field: SCHCPFLN17
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN18
+    field: SCHCPFLN18
+    type: text
+    maxlen: 9
+  - line: SCHCPFLN19
+    field: SCHCPFLN19
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN1
+    field: SCHCPGLN1
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN2
+    field: SCHCPGLN2
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN3
+    field: SCHCPGLN3
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN4
+    field: SCHCPGLN4
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN5
+    field: SCHCPGLN5
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN6
+    field: SCHCPGLN6
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN7
+    field: SCHCPGLN7
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN8
+    field: SCHCPGLN8
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN9
+    field: SCHCPGLN9
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN10
+    field: SCHCPGLN10
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN11
+    field: SCHCPGLN11
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN12
+    field: SCHCPGLN12
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN13
+    field: SCHCPGLN13
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN14
+    field: SCHCPGLN14
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN15
+    field: SCHCPGLN15
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN16
+    field: SCHCPGLN16
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN17
+    field: SCHCPGLN17
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN18
+    field: SCHCPGLN18
+    type: text
+    maxlen: 9
+  - line: SCHCPGLN19
+    field: SCHCPGLN19
+    type: text
+    maxlen: 9
+  - line: SCHCPNAME
+    field: SCHCPNAME
+    type: text
+  - line: SCHCPSSN
+    field: SCHCPSSN
+    type: text
+  - line: SCHCPGTOTAL
+    field: SCHCPGTOTAL
+    type: text
+    maxlen: 9
+  - line: SCHDNAME
+    field: SCHDNAME
+    type: text
+  - line: SCHDSSN
+    field: SCHDSSN
+    type: text
+    maxlen: 9
+  - line: "PROP#1"
+    field: "PROP#1"
+    type: text
+  - line: "DATEACQ#1"
+    field: "DATEACQ#1"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#1"
+    field: "DATESOLD#1"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#1"
+    field: "AMTREC#1"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#1"
+    field: "DEPREC#1"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#1"
+    field: "COSTORBASIS#1"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#1"
+    field: "SUBIMPROVEMENTS#1"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#1"
+    field: "NETPROFITORLOSS#1"
+    type: text
+    maxlen: 9
+  - line: "PROP#2"
+    field: "PROP#2"
+    type: text
+  - line: "DATEACQ#2"
+    field: "DATEACQ#2"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#2"
+    field: "DATESOLD#2"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#2"
+    field: "AMTREC#2"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#2"
+    field: "DEPREC#2"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#2"
+    field: "COSTORBASIS#2"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#2"
+    field: "SUBIMPROVEMENTS#2"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#2"
+    field: "NETPROFITORLOSS#2"
+    type: text
+    maxlen: 9
+  - line: "PROP#3"
+    field: "PROP#3"
+    type: text
+  - line: "DATEACQ#3"
+    field: "DATEACQ#3"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#3"
+    field: "DATESOLD#3"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#3"
+    field: "AMTREC#3"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#3"
+    field: "DEPREC#3"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#3"
+    field: "COSTORBASIS#3"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#3"
+    field: "SUBIMPROVEMENTS#3"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#3"
+    field: "NETPROFITORLOSS#3"
+    type: text
+    maxlen: 9
+  - line: "PROP#4"
+    field: "PROP#4"
+    type: text
+  - line: "DATEACQ#4"
+    field: "DATEACQ#4"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#4"
+    field: "DATESOLD#4"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#4"
+    field: "AMTREC#4"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#4"
+    field: "DEPREC#4"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#4"
+    field: "COSTORBASIS#4"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#4"
+    field: "SUBIMPROVEMENTS#4"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#4"
+    field: "NETPROFITORLOSS#4"
+    type: text
+    maxlen: 9
+  - line: "PROP#5"
+    field: "PROP#5"
+    type: text
+  - line: "DATEACQ#5"
+    field: "DATEACQ#5"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#5"
+    field: "DATESOLD#5"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#5"
+    field: "AMTREC#5"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#5"
+    field: "DEPREC#5"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#5"
+    field: "COSTORBASIS#5"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#5"
+    field: "SUBIMPROVEMENTS#5"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#5"
+    field: "NETPROFITORLOSS#5"
+    type: text
+    maxlen: 9
+  - line: "PROP#6"
+    field: "PROP#6"
+    type: text
+  - line: "DATEACQ#6"
+    field: "DATEACQ#6"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#6"
+    field: "DATESOLD#6"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#6"
+    field: "AMTREC#6"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#6"
+    field: "DEPREC#6"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#6"
+    field: "COSTORBASIS#6"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#6"
+    field: "SUBIMPROVEMENTS#6"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#6"
+    field: "NETPROFITORLOSS#6"
+    type: text
+    maxlen: 9
+  - line: "PROP#7"
+    field: "PROP#7"
+    type: text
+  - line: "DATEACQ#7"
+    field: "DATEACQ#7"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#7"
+    field: "DATESOLD#7"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#7"
+    field: "AMTREC#7"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#7"
+    field: "DEPREC#7"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#7"
+    field: "COSTORBASIS#7"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#7"
+    field: "SUBIMPROVEMENTS#7"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#7"
+    field: "NETPROFITORLOSS#7"
+    type: text
+    maxlen: 9
+  - line: "PROP#8"
+    field: "PROP#8"
+    type: text
+  - line: "DATEACQ#8"
+    field: "DATEACQ#8"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#8"
+    field: "DATESOLD#8"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#8"
+    field: "AMTREC#8"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#8"
+    field: "DEPREC#8"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#8"
+    field: "COSTORBASIS#8"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#8"
+    field: "SUBIMPROVEMENTS#8"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#8"
+    field: "NETPROFITORLOSS#8"
+    type: text
+    maxlen: 9
+  - line: "PROP#9"
+    field: "PROP#9"
+    type: text
+  - line: "DATEACQ#9"
+    field: "DATEACQ#9"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#9"
+    field: "DATESOLD#9"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#9"
+    field: "AMTREC#9"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#9"
+    field: "DEPREC#9"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#9"
+    field: "COSTORBASIS#9"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#9"
+    field: "SUBIMPROVEMENTS#9"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#9"
+    field: "NETPROFITORLOSS#9"
+    type: text
+    maxlen: 9
+  - line: "PROP#10"
+    field: "PROP#10"
+    type: text
+  - line: "DATEACQ#10"
+    field: "DATEACQ#10"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#10"
+    field: "DATESOLD#10"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#10"
+    field: "AMTREC#10"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#10"
+    field: "DEPREC#10"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#10"
+    field: "COSTORBASIS#10"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#10"
+    field: "SUBIMPROVEMENTS#10"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#10"
+    field: "NETPROFITORLOSS#10"
+    type: text
+    maxlen: 9
+  - line: "PROP#11"
+    field: "PROP#11"
+    type: text
+  - line: "DATEACQ#11"
+    field: "DATEACQ#11"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#11"
+    field: "DATESOLD#11"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#11"
+    field: "AMTREC#11"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#11"
+    field: "DEPREC#11"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#11"
+    field: "COSTORBASIS#11"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#11"
+    field: "SUBIMPROVEMENTS#11"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#11"
+    field: "NETPROFITORLOSS#11"
+    type: text
+    maxlen: 9
+  - line: "PROP#12"
+    field: "PROP#12"
+    type: text
+  - line: "DATEACQ#12"
+    field: "DATEACQ#12"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#12"
+    field: "DATESOLD#12"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#12"
+    field: "AMTREC#12"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#12"
+    field: "DEPREC#12"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#12"
+    field: "COSTORBASIS#12"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#12"
+    field: "SUBIMPROVEMENTS#12"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#12"
+    field: "NETPROFITORLOSS#12"
+    type: text
+    maxlen: 9
+  - line: "PROP#13"
+    field: "PROP#13"
+    type: text
+  - line: "DATEACQ#13"
+    field: "DATEACQ#13"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#13"
+    field: "DATESOLD#13"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#13"
+    field: "AMTREC#13"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#13"
+    field: "DEPREC#13"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#13"
+    field: "COSTORBASIS#13"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#13"
+    field: "SUBIMPROVEMENTS#13"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#13"
+    field: "NETPROFITORLOSS#13"
+    type: text
+    maxlen: 9
+  - line: "PROP#14"
+    field: "PROP#14"
+    type: text
+  - line: "DATEACQ#14"
+    field: "DATEACQ#14"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#14"
+    field: "DATESOLD#14"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#14"
+    field: "AMTREC#14"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#14"
+    field: "DEPREC#14"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#14"
+    field: "COSTORBASIS#14"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#14"
+    field: "SUBIMPROVEMENTS#14"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#14"
+    field: "NETPROFITORLOSS#14"
+    type: text
+    maxlen: 9
+  - line: "PROP#15"
+    field: "PROP#15"
+    type: text
+  - line: "DATEACQ#15"
+    field: "DATEACQ#15"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#15"
+    field: "DATESOLD#15"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#15"
+    field: "AMTREC#15"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#15"
+    field: "DEPREC#15"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#15"
+    field: "COSTORBASIS#15"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#15"
+    field: "SUBIMPROVEMENTS#15"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#15"
+    field: "NETPROFITORLOSS#15"
+    type: text
+    maxlen: 9
+  - line: "PROP#16"
+    field: "PROP#16"
+    type: text
+  - line: "DATEACQ#16"
+    field: "DATEACQ#16"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#16"
+    field: "DATESOLD#16"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#16"
+    field: "AMTREC#16"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#16"
+    field: "DEPREC#16"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#16"
+    field: "COSTORBASIS#16"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#16"
+    field: "SUBIMPROVEMENTS#16"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#16"
+    field: "NETPROFITORLOSS#16"
+    type: text
+    maxlen: 9
+  - line: "PROP#17"
+    field: "PROP#17"
+    type: text
+  - line: "DATEACQ#17"
+    field: "DATEACQ#17"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#17"
+    field: "DATESOLD#17"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#17"
+    field: "AMTREC#17"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#17"
+    field: "DEPREC#17"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#17"
+    field: "COSTORBASIS#17"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#17"
+    field: "SUBIMPROVEMENTS#17"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#17"
+    field: "NETPROFITORLOSS#17"
+    type: text
+    maxlen: 9
+  - line: "PROP#18"
+    field: "PROP#18"
+    type: text
+  - line: "DATEACQ#18"
+    field: "DATEACQ#18"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#18"
+    field: "DATESOLD#18"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#18"
+    field: "AMTREC#18"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#18"
+    field: "DEPREC#18"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#18"
+    field: "COSTORBASIS#18"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#18"
+    field: "SUBIMPROVEMENTS#18"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#18"
+    field: "NETPROFITORLOSS#18"
+    type: text
+    maxlen: 9
+  - line: "PROP#19"
+    field: "PROP#19"
+    type: text
+  - line: "DATEACQ#19"
+    field: "DATEACQ#19"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#19"
+    field: "DATESOLD#19"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#19"
+    field: "AMTREC#19"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#19"
+    field: "DEPREC#19"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#19"
+    field: "COSTORBASIS#19"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#19"
+    field: "SUBIMPROVEMENTS#19"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#19"
+    field: "NETPROFITORLOSS#19"
+    type: text
+    maxlen: 9
+  - line: "PROP#20"
+    field: "PROP#20"
+    type: text
+  - line: "DATEACQ#20"
+    field: "DATEACQ#20"
+    type: text
+    maxlen: 10
+  - line: "DATESOLD#20"
+    field: "DATESOLD#20"
+    type: text
+    maxlen: 10
+  - line: "AMTREC#20"
+    field: "AMTREC#20"
+    type: text
+    maxlen: 9
+  - line: "DEPREC#20"
+    field: "DEPREC#20"
+    type: text
+    maxlen: 9
+  - line: "COSTORBASIS#20"
+    field: "COSTORBASIS#20"
+    type: text
+    maxlen: 9
+  - line: "SUBIMPROVEMENTS#20"
+    field: "SUBIMPROVEMENTS#20"
+    type: text
+    maxlen: 9
+  - line: "NETPROFITORLOSS#20"
+    field: "NETPROFITORLOSS#20"
+    type: text
+    maxlen: 9
+  - line: txtMultiScheduleD
+    field: txtMultiScheduleD
+    type: text
+  - line: CHKMULTISCHD
+    field: CHKMULTISCHD
+    type: checkbox
+    on_state: /X
+  - line: TOTNETPROFITORLOSS
+    field: TOTNETPROFITORLOSS
+    type: text
+    maxlen: 9
+  - line: SCHENAME
+    field: SCHENAME
+    type: text
+  - line: SCHESSN
+    field: SCHESSN
+    type: text
+    maxlen: 9
+  - line: "DESCRIPTIONPROPERTY#1"
+    field: "DESCRIPTIONPROPERTY#1"
+    type: text
+  - line: "LOCATIONPROPERTY#1"
+    field: "LOCATIONPROPERTY#1"
+    type: text
+  - line: YESA
+    field: YESA
+    type: checkbox
+    on_state: /X
+  - line: NOA
+    field: NOA
+    type: checkbox
+    on_state: /X
+  - line: "DESCRIPTIONPROPERTY#2"
+    field: "DESCRIPTIONPROPERTY#2"
+    type: text
+  - line: "LOCATIONPROPERTY#2"
+    field: "LOCATIONPROPERTY#2"
+    type: text
+  - line: YESB
+    field: YESB
+    type: checkbox
+    on_state: /X
+  - line: NOB
+    field: NOB
+    type: checkbox
+    on_state: /X
+  - line: "DESCRIPTIONPROPERTY#3"
+    field: "DESCRIPTIONPROPERTY#3"
+    type: text
+  - line: YESC
+    field: YESC
+    type: checkbox
+    on_state: /X
+  - line: NOC
+    field: NOC
+    type: checkbox
+    on_state: /X
+  - line: "LOCATIONPROPERTY#3"
+    field: "LOCATIONPROPERTY#3"
+    type: text
+  - line: "RENTSRECEIVED#1"
+    field: "RENTSRECEIVED#1"
+    type: text
+    maxlen: 9
+  - line: "RENTSRECEIVED#2"
+    field: "RENTSRECEIVED#2"
+    type: text
+    maxlen: 9
+  - line: "RENTSRECEIVED#3"
+    field: "RENTSRECEIVED#3"
+    type: text
+    maxlen: 9
+  - line: TOTRENTSRECEIVED
+    field: TOTRENTSRECEIVED
+    type: text
+    maxlen: 9
+  - line: "ROYALTIESRECEIVED#1"
+    field: "ROYALTIESRECEIVED#1"
+    type: text
+    maxlen: 9
+  - line: "ROYALTIESRECEIVED#2"
+    field: "ROYALTIESRECEIVED#2"
+    type: text
+    maxlen: 9
+  - line: "ROYALTIESRECEIVED#3"
+    field: "ROYALTIESRECEIVED#3"
+    type: text
+    maxlen: 9
+  - line: TOTROYALTIESRECEIVED
+    field: TOTROYALTIESRECEIVED
+    type: text
+    maxlen: 9
+  - line: "ADVERTISINGEXPENSE#1"
+    field: "ADVERTISINGEXPENSE#1"
+    type: text
+    maxlen: 9
+  - line: "ADVERTISINGEXPENSE#2"
+    field: "ADVERTISINGEXPENSE#2"
+    type: text
+    maxlen: 9
+  - line: "ADVERTISINGEXPENSE#3"
+    field: "ADVERTISINGEXPENSE#3"
+    type: text
+    maxlen: 9
+  - line: "AUTOTRAVELEXP#1"
+    field: "AUTOTRAVELEXP#1"
+    type: text
+    maxlen: 9
+  - line: "AUTOTRAVELEXP#2"
+    field: "AUTOTRAVELEXP#2"
+    type: text
+    maxlen: 9
+  - line: "AUTOTRAVELEXP#3"
+    field: "AUTOTRAVELEXP#3"
+    type: text
+    maxlen: 9
+  - line: "CLEANINGMAINTEXP#1"
+    field: "CLEANINGMAINTEXP#1"
+    type: text
+    maxlen: 9
+  - line: "CLEANINGMAINTEXP#2"
+    field: "CLEANINGMAINTEXP#2"
+    type: text
+    maxlen: 9
+  - line: "CLEANINGMAINTEXP#3"
+    field: "CLEANINGMAINTEXP#3"
+    type: text
+    maxlen: 9
+  - line: "COMMISSIONSEXP#1"
+    field: "COMMISSIONSEXP#1"
+    type: text
+    maxlen: 9
+  - line: "COMMISSIONSEXP#2"
+    field: "COMMISSIONSEXP#2"
+    type: text
+    maxlen: 9
+  - line: "COMMISSIONSEXP#3"
+    field: "COMMISSIONSEXP#3"
+    type: text
+    maxlen: 9
+  - line: "INSURANCEEXP#1"
+    field: "INSURANCEEXP#1"
+    type: text
+    maxlen: 9
+  - line: "INSURANCEEXP#2"
+    field: "INSURANCEEXP#2"
+    type: text
+    maxlen: 9
+  - line: "INSURANCEEXP#3"
+    field: "INSURANCEEXP#3"
+    type: text
+    maxlen: 9
+  - line: "LEGALEXP#1"
+    field: "LEGALEXP#1"
+    type: text
+    maxlen: 9
+  - line: "LEGALEXP#2"
+    field: "LEGALEXP#2"
+    type: text
+    maxlen: 9
+  - line: "LEGALEXP#3"
+    field: "LEGALEXP#3"
+    type: text
+    maxlen: 9
+  - line: "MGMTFEESEXP#1"
+    field: "MGMTFEESEXP#1"
+    type: text
+    maxlen: 9
+  - line: "MGMTFEESEXP#2"
+    field: "MGMTFEESEXP#2"
+    type: text
+    maxlen: 9
+  - line: "MGMTFEESEXP#3"
+    field: "MGMTFEESEXP#3"
+    type: text
+    maxlen: 9
+  - line: "MTGINTEXP#1"
+    field: "MTGINTEXP#1"
+    type: text
+    maxlen: 9
+  - line: "MTGINTEXP#2"
+    field: "MTGINTEXP#2"
+    type: text
+    maxlen: 9
+  - line: "MTGINTEXP#3"
+    field: "MTGINTEXP#3"
+    type: text
+    maxlen: 9
+  - line: TOTMTG
+    field: TOTMTG
+    type: text
+    maxlen: 9
+  - line: "OTHERINTEXP#1"
+    field: "OTHERINTEXP#1"
+    type: text
+    maxlen: 9
+  - line: "OTHERINTEXP#2"
+    field: "OTHERINTEXP#2"
+    type: text
+    maxlen: 9
+  - line: "OTHERINTEXP#3"
+    field: "OTHERINTEXP#3"
+    type: text
+    maxlen: 9
+  - line: "REPAIRSEXP#1"
+    field: "REPAIRSEXP#1"
+    type: text
+    maxlen: 9
+  - line: "REPAIRSEXP#2"
+    field: "REPAIRSEXP#2"
+    type: text
+    maxlen: 9
+  - line: "REPAIRSEXP#3"
+    field: "REPAIRSEXP#3"
+    type: text
+    maxlen: 9
+  - line: "SUPPLIESEXP#1"
+    field: "SUPPLIESEXP#1"
+    type: text
+    maxlen: 9
+  - line: "SUPPLIESEXP#2"
+    field: "SUPPLIESEXP#2"
+    type: text
+    maxlen: 9
+  - line: "SUPPLIESEXP#3"
+    field: "SUPPLIESEXP#3"
+    type: text
+    maxlen: 9
+  - line: "TAXES#1"
+    field: "TAXES#1"
+    type: text
+    maxlen: 9
+  - line: "TAXES#2"
+    field: "TAXES#2"
+    type: text
+    maxlen: 9
+  - line: "TAXES#3"
+    field: "TAXES#3"
+    type: text
+    maxlen: 9
+  - line: "UTILITIES#1"
+    field: "UTILITIES#1"
+    type: text
+    maxlen: 9
+  - line: "UTILITIES#2"
+    field: "UTILITIES#2"
+    type: text
+    maxlen: 9
+  - line: "UTILITIES#3"
+    field: "UTILITIES#3"
+    type: text
+    maxlen: 9
+  - line: OTHEXP1DESCRIPTION
+    field: OTHEXP1DESCRIPTION
+    type: text
+  - line: "OTHEXP1#1"
+    field: "OTHEXP1#1"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP1#2"
+    field: "OTHEXP1#2"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP1#3"
+    field: "OTHEXP1#3"
+    type: text
+    maxlen: 9
+  - line: OTHEXP2DESCRIPTION
+    field: OTHEXP2DESCRIPTION
+    type: text
+  - line: "OTHEXP2#1"
+    field: "OTHEXP2#1"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP2#2"
+    field: "OTHEXP2#2"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP2#3"
+    field: "OTHEXP2#3"
+    type: text
+    maxlen: 9
+  - line: OTHEXP3DESCRIPTION
+    field: OTHEXP3DESCRIPTION
+    type: text
+  - line: "OTHEXP3#1"
+    field: "OTHEXP3#1"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP3#2"
+    field: "OTHEXP3#2"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP3#3"
+    field: "OTHEXP3#3"
+    type: text
+    maxlen: 9
+  - line: OTHEXP4DESCRIPTION
+    field: OTHEXP4DESCRIPTION
+    type: text
+  - line: "OTHEXP4#1"
+    field: "OTHEXP4#1"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP4#2"
+    field: "OTHEXP4#2"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP4#3"
+    field: "OTHEXP4#3"
+    type: text
+    maxlen: 9
+  - line: OTHEXP5DESCRIPTION
+    field: OTHEXP5DESCRIPTION
+    type: text
+  - line: "OTHEXP5#1"
+    field: "OTHEXP5#1"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP5#2"
+    field: "OTHEXP5#2"
+    type: text
+    maxlen: 9
+  - line: "OTHEXP5#3"
+    field: "OTHEXP5#3"
+    type: text
+    maxlen: 9
+  - line: "SUBTOTALEXP#1"
+    field: "SUBTOTALEXP#1"
+    type: text
+    maxlen: 9
+  - line: "SUBTOTALEXP#2"
+    field: "SUBTOTALEXP#2"
+    type: text
+    maxlen: 9
+  - line: "SUBTOTALEXP#3"
+    field: "SUBTOTALEXP#3"
+    type: text
+    maxlen: 9
+  - line: TOTALSUBTOTALEXPENSE
+    field: TOTALSUBTOTALEXPENSE
+    type: text
+    maxlen: 9
+  - line: "DEPRECIATION#1"
+    field: "DEPRECIATION#1"
+    type: text
+    maxlen: 9
+  - line: "DEPRECIATION#2"
+    field: "DEPRECIATION#2"
+    type: text
+    maxlen: 9
+  - line: "DEPRECIATION#3"
+    field: "DEPRECIATION#3"
+    type: text
+    maxlen: 9
+  - line: TOTALDEPRECIATION
+    field: TOTALDEPRECIATION
+    type: text
+    maxlen: 9
+  - line: "TOTALEXPENSES#1"
+    field: "TOTALEXPENSES#1"
+    type: text
+    maxlen: 9
+  - line: "TOTALEXPENSES#2"
+    field: "TOTALEXPENSES#2"
+    type: text
+    maxlen: 9
+  - line: "TOTALEXPENSES#3"
+    field: "TOTALEXPENSES#3"
+    type: text
+    maxlen: 9
+  - line: "SCHEDULEEINCLOSS#1"
+    field: "SCHEDULEEINCLOSS#1"
+    type: text
+    maxlen: 9
+  - line: "SCHEDULEEINCLOSS#2"
+    field: "SCHEDULEEINCLOSS#2"
+    type: text
+    maxlen: 9
+  - line: "SCHEDULEEINCLOSS#3"
+    field: "SCHEDULEEINCLOSS#3"
+    type: text
+    maxlen: 9
+  - line: TOTALREALESTATEROYALTIEINCLOSS
+    field: TOTALREALESTATEROYALTIEINCLOSS
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTNAME#1"
+    field: "PSHIPSCORPESTATETRUSTNAME#1"
+    type: text
+  - line: "PSHIPSCORPESTATETRUSTADDRESS#1"
+    field: "PSHIPSCORPESTATETRUSTADDRESS#1"
+    type: text
+  - line: CHKPSHIP1
+    field: CHKPSHIP1
+    type: checkbox
+    on_state: /X
+  - line: CHKESTTRST1
+    field: CHKESTTRST1
+    type: checkbox
+    on_state: /X
+  - line: CHKSCORP1
+    field: CHKSCORP1
+    type: checkbox
+    on_state: /X
+  - line: PSHIPSCORPESTATETRUSTEIN
+    field: PSHIPSCORPESTATETRUSTEIN
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTINCLOSS#1"
+    field: "PSHIPSCORPESTATETRUSTINCLOSS#1"
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTNAME#2"
+    field: "PSHIPSCORPESTATETRUSTNAME#2"
+    type: text
+  - line: "PSHIPSCORPESTATETRUSTADDRESS#2"
+    field: "PSHIPSCORPESTATETRUSTADDRESS#2"
+    type: text
+  - line: CHKPSHIP2
+    field: CHKPSHIP2
+    type: checkbox
+    on_state: /X
+  - line: CHKESTTRST2
+    field: CHKESTTRST2
+    type: checkbox
+    on_state: /X
+  - line: CHKSCORP2
+    field: CHKSCORP2
+    type: checkbox
+    on_state: /X
+  - line: "PSHIPSCORPESTATETRUSTEIN#2"
+    field: "PSHIPSCORPESTATETRUSTEIN#2"
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTINCLOSS#2"
+    field: "PSHIPSCORPESTATETRUSTINCLOSS#2"
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTNAME#3"
+    field: "PSHIPSCORPESTATETRUSTNAME#3"
+    type: text
+  - line: "PSHIPSCORPESTATETRUSTADDRESS#3"
+    field: "PSHIPSCORPESTATETRUSTADDRESS#3"
+    type: text
+  - line: CHKPSHIP3
+    field: CHKPSHIP3
+    type: checkbox
+    on_state: /X
+  - line: CHKESTTRST3
+    field: CHKESTTRST3
+    type: checkbox
+    on_state: /X
+  - line: CHKSCORP3
+    field: CHKSCORP3
+    type: checkbox
+    on_state: /X
+  - line: "PSHIPSCORPESTATETRUSTEIN#3"
+    field: "PSHIPSCORPESTATETRUSTEIN#3"
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTINCLOSS#3"
+    field: "PSHIPSCORPESTATETRUSTINCLOSS#3"
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTNAME#4"
+    field: "PSHIPSCORPESTATETRUSTNAME#4"
+    type: text
+  - line: "PSHIPSCORPESTATETRUSTEIN#4"
+    field: "PSHIPSCORPESTATETRUSTEIN#4"
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTINCLOSS#4"
+    field: "PSHIPSCORPESTATETRUSTINCLOSS#4"
+    type: text
+    maxlen: 9
+  - line: "PSHIPSCORPESTATETRUSTADDRESS#4"
+    field: "PSHIPSCORPESTATETRUSTADDRESS#4"
+    type: text
+  - line: CHKPSHIP4
+    field: CHKPSHIP4
+    type: checkbox
+    on_state: /X
+  - line: CHKESTTRST4
+    field: CHKESTTRST4
+    type: checkbox
+    on_state: /X
+  - line: CHKSCORP4
+    field: CHKSCORP4
+    type: checkbox
+    on_state: /X
+  - line: TOTALPSHIPSCORPESTATETRUSTINCLOSS
+    field: TOTALPSHIPSCORPESTATETRUSTINCLOSS
+    type: text
+    maxlen: 9
+  - line: txtMultiScheduleE
+    field: txtMultiScheduleE
+    type: text
+  - line: CHKMULTISCHE
+    field: CHKMULTISCHE
+    type: checkbox
+    on_state: /X
+  - line: TOTALSCHEDULEEINCOMELOSS
+    field: TOTALSCHEDULEEINCOMELOSS
+    type: text
+    maxlen: 9
+  - line: "4952ANAME"
+    field: "4952ANAME"
+    type: text
+  - line: "4952ASSN"
+    field: "4952ASSN"
+    type: text
+    maxlen: 9
+  - line: CHK4952AIND
+    field: CHK4952AIND
+    type: checkbox
+    on_state: /X
+  - line: CHK4952AEST
+    field: CHK4952AEST
+    type: checkbox
+    on_state: /X
+  - line: CHK4952ATRST
+    field: CHK4952ATRST
+    type: checkbox
+    on_state: /X
+  - line: PG7LINE1
+    field: PG7LINE1
+    type: text
+    maxlen: 9
+  - line: PG7LINE2
+    field: PG7LINE2
+    type: text
+    maxlen: 9
+  - line: PG7LINE3
+    field: PG7LINE3
+    type: text
+    maxlen: 9
+  - line: PG7LINE4
+    field: PG7LINE4
+    type: text
+    maxlen: 9
+  - line: PG7LINE5
+    field: PG7LINE5
+    type: text
+    maxlen: 9
+  - line: FITDW1
+    field: FITDW1
+    type: text
+    maxlen: 9
+  - line: FITDW2
+    field: FITDW2
+    type: text
+    maxlen: 9
+  - line: FITDW3
+    field: FITDW3
+    type: text
+    maxlen: 9
+  - line: FITDW4a
+    field: FITDW4a
+    type: text
+    maxlen: 9
+  - line: FITDW4b
+    field: FITDW4b
+    type: text
+    maxlen: 9
+  - line: FITDW4c
+    field: FITDW4c
+    type: text
+    maxlen: 9
+  - line: FITDW4d
+    field: FITDW4d
+    type: text
+    maxlen: 9
+  - line: FITDW5
+    field: FITDW5
+    type: text
+    maxlen: 9
+  - line: FITDW6
+    field: FITDW6
+    type: text
+    maxlen: 9
+relations:
+  - "8 == 5 + 6 + 7"
+  - "15 == 11 + 12 + 13 + 14"
+cross_form: []
+identity_fields:
+  - SSSN
+  - FIRSTNAME
+  - LASTNAME

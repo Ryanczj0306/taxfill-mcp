@@ -1,0 +1,740 @@
+# Form 1, 2023 — Wisconsin Income Tax (resident return).
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every AcroForm widget rendered with its own field name) -> vision-map
+# workflow (all four pages, zoomed crops read to place each field on its
+# printed line / column) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw sentinel
+# ids the form ships with, e.g. "lname", "1" .. "45", "sch1-5", "ss3"). The
+# multi-option button fields (status, district, allow) are single /Btn fields
+# whose kid widgets each carry one appearance state; they are mapped as one
+# checkbox line per state on the SHARED field, each carrying the exact on_state
+# read from the blank. WI Form 1 is a four-page return:
+#   page 1 — header (name/SSN, address, filing status, tax district, special
+#            conditions), income lines 1-10c;
+#   page 2 — header SSN repeat, lines 11-31 (tax, credits, donations, EIC,
+#            farmland);
+#   page 3 — header SSN repeat, lines 32-45 (homestead, refundable credits,
+#            refund/owe), Third Party Designee block, Sign Here block;
+#   page 4 — Schedule 1 (Itemized Deduction Credit) and Schedule 2 (Married
+#            Couple Credit When Both Spouses Are Employed).
+#
+# Coverage. The blank PDF has 181 fillable AcroForm widget entries (the
+# introspect skeleton). 177 are mapped here. FOUR are intentionally omitted:
+#   - SaveAs, Print, Clear — JS PUSHBUTTONS (/Btn, Ff bit-17 = 65536, no real
+#     export value; the skeleton's "/BBox" on_state is an appearance-dict key,
+#     not a fillable state). The grey Save / Print / Clear buttons at the top
+#     of the form; not data fields.
+#   - Purpose — READONLY tooltip text field (/Tx, Ff = 4097, bit-1 readonly
+#     set); the yellow "Purpose" banner, not a data field.
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix and is
+# mapped `money`. Genuine text widgets stay text: names, address,
+# city/state/ZIP, the SSN comb cells (ss3/ss2/ss4 = 3/2/4 digits, repeated per
+# page), tax-district / county / school-district / special-condition / reason
+# strings, signature dates, phone area+number cells, the PIN comb cells, and
+# the line-19 state abbreviation. Boxes that hold a COUNT (not dollars) are
+# also `text` (the schema has no int type): line 10a exemptions allowed, line
+# 10b 65-or-older count, line 29 number of qualifying children. CRITICAL: line
+# 29's "%" box (29percent) holds a PERCENTAGE and is `text`, never money (money
+# would round the fraction).
+# The two preprinted constant multipliers ".33" (line 24), ".05" (Schedule 1
+# line 8), ".03" (Schedule 2 line 7) are NOT widgets and never appeared in the
+# sweep — they are not fields.
+#
+# Worksheet sub-boxes. Several lines carry a worksheet input plus a looked-up
+# result, each a distinct widget:
+#   line 15a/b school property tax credit: 15a = rent (heat included), 15aa =
+#     rent (heat NOT included), Line15aaa = the line-15a credit (table p.19);
+#     15b = property taxes paid, 15bb = the line-15b credit (table p.20).
+#   line 10: 10a = exemptions count, line10a = 10a x $700 result; 10b = 65+
+#     count, line10b = 10b x $250 result; 10c = add 10a + 10b.
+#   line 24: 24penalties = penalty base, 24 = base x .33 result.
+#   line 29: 29a = federal EIC, 29percent = % , line29 = result.
+#   line 43: 43code = underpayment-interest exception code, 43 = the interest.
+#
+# Relations. Only unconditional equalities with every operand mapped to a
+# single line are declared. Lines whose printed instruction floors at zero
+# ("If line X is larger than line Y, fill in 0": lines 9, 21, Sch1 line 7,
+# Sch2 line 5) or branches on a comparison (lines 39, 42, 36's "Add lines 27
+# through 35" where 27-35 span ambiguous sub-lines, 20's "Add lines 13 through
+# 19" likewise) or apply a constant multiplier (14a = 14 x 50%, 24 = base x
+# .33, Sch1 line 9, Sch2 line 8) are OMITTED per the conservative house style.
+#
+# Cross_form. Line 1's printed label is "Federal adjusted gross income from
+# Form 1040, line 11", so the single cross_form equality 1 == f1040.11 (Form
+# 1040, 2023, line 11 = AGI) is declared.
+form: Form 1
+jurisdiction: states/wi
+tax_year: 2023
+source_url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1f.pdf
+pdf_sha256: 61851bb8671db185c561df63bcffd9d8e05549f5a1470dea3912239783dd5e5e
+acroform_root: ''
+fields:
+  # ============================================ page 1 — header / amended
+  # SaveAs / Print / Clear pushbuttons (Ff bit-17) and Purpose readonly banner
+  # (Ff bit-1) intentionally omitted — see header comment.
+  - line: amended_return::yes          # "Check here if an amended return"
+    field: amended
+    type: checkbox
+    on_state: /Yes
+  - line: tax_year_begin_date          # "For the year ... beginning [date]"
+    field: date
+    type: text
+  - line: tax_year_end_date            # "... ending [date2]"
+    field: date2
+    type: text
+  - line: tax_year_end_day             # "... [date3] , 20 da" (2-digit day/year)
+    field: date3
+    type: text
+    maxlen: 2
+
+  # ---- your name / SSN
+  - line: your_last_name
+    field: lname
+    type: text
+  - line: your_first_name
+    field: fname
+    type: text
+  - line: your_middle_initial
+    field: mi
+    type: text
+    maxlen: 1
+  - line: your_ssn_first3
+    field: ss3
+    type: text
+    maxlen: 3
+  - line: your_ssn_mid2
+    field: ss2
+    type: text
+    maxlen: 2
+  - line: your_ssn_last4
+    field: ss4
+    type: text
+    maxlen: 4
+  # ---- spouse name / SSN (joint return)
+  - line: spouse_last_name
+    field: splname
+    type: text
+  - line: spouse_first_name
+    field: sfname
+    type: text
+  - line: spouse_middle_initial
+    field: smi
+    type: text
+    maxlen: 1
+  - line: spouse_ssn_first3
+    field: sss3
+    type: text
+    maxlen: 3
+  - line: spouse_ssn_mid2
+    field: sss2
+    type: text
+    maxlen: 2
+  - line: spouse_ssn_last4
+    field: sss4
+    type: text
+    maxlen: 4
+  # ---- address
+  - line: home_address
+    field: address
+    type: text
+  - line: apartment_number
+    field: apt
+    type: text
+  - line: city_or_post_office
+    field: city
+    type: text
+  - line: state
+    field: state
+    type: text
+    maxlen: 2
+  - line: zip_code
+    field: zip
+    type: text
+    maxlen: 10
+
+  # ---- filing status (one /Btn, five mutually exclusive states)
+  - line: filing_status::single
+    field: status
+    type: checkbox
+    on_state: /Single
+  - line: filing_status::married_filing_joint
+    field: status
+    type: checkbox
+    on_state: /Joint
+  - line: filing_status::married_filing_separate
+    field: status
+    type: checkbox
+    on_state: /Married Separate
+  # spouse name for married-filing-separate
+  - line: married_separate_spouse_last_name
+    field: lastname
+    type: text
+  - line: married_separate_spouse_first_name
+    field: firstname
+    type: text
+  - line: married_separate_spouse_middle_initial
+    field: mi2
+    type: text
+    maxlen: 1
+  - line: filing_status::head_of_household_not_married
+    field: status
+    type: checkbox
+    on_state: /Head Household NOT Married
+  - line: filing_status::head_of_household_married
+    field: status
+    type: checkbox
+    on_state: /Head Household Married
+
+  # ---- tax district (one /Btn, three mutually exclusive states)
+  - line: tax_district::city
+    field: district
+    type: checkbox
+    on_state: /city
+  - line: tax_district::village
+    field: district
+    type: checkbox
+    on_state: /village
+  - line: tax_district::town
+    field: district
+    type: checkbox
+    on_state: /town
+  - line: tax_district_name           # "City, village, or town" name
+    field: reside99
+    type: text
+  - line: county_name
+    field: county
+    type: text
+  - line: school_district_number
+    field: schdist
+    type: text
+    maxlen: 4
+  - line: special_conditions_code
+    field: sccode
+    type: text
+    maxlen: 2
+  - line: special_conditions_text
+    field: speccond
+    type: text
+  - line: form_804_filed_with_return::city   # "Form 804 filed with return"
+    field: form804
+    type: checkbox
+    on_state: /city
+
+  # ============================================ page 1 — income lines 1-10c
+  - line: "1"                          # Federal adjusted gross income from Form 1040, line 11
+    field: line1
+    type: money
+  - line: "2"                          # Adjustments to federal AGI from Schedule I, line 3
+    field: "2"
+    type: money
+  - line: "3"                          # Add lines 1 and 2 (federal AGI for Wisconsin)
+    field: "3"
+    type: money
+  - line: line3_w2_wages_included     # "Form W-2 wages included in line 3"
+    field: 3wages
+    type: money
+  - line: "4"                          # Total additions to income from Schedule AD, line 33
+    field: "4"
+    type: money
+  - line: "5"                          # Add lines 3 and 4
+    field: "5"
+    type: money
+  - line: "6"                          # Total subtractions from income from Schedule SB, line 50
+    field: "6"
+    type: money
+  - line: "7"                          # Subtract line 6 from line 5 (Wisconsin income)
+    field: "7"
+    type: money
+  - line: "8"                          # Standard deduction (table on page 35)
+    field: "8"
+    type: money
+  - line: line8_dependent_check::yes  # "If someone else can claim you ... check here"
+    field: 8a
+    type: checkbox
+    on_state: /Yes
+  - line: "9"                          # Subtract line 8 from line 7
+    field: "9"
+    type: money
+  - line: line10a_exemptions_count    # 10a "Fill in exemptions allowed" (count, not dollars)
+    field: 10a
+    type: text
+    maxlen: 2
+  - line: 10a                          # 10a count x $700 (dollar result)
+    field: line10a
+    type: money
+  - line: line10b_you_65::yes         # 10b "Check if 65 or older — You"
+    field: you
+    type: checkbox
+    on_state: /Yes
+  - line: line10b_spouse_65::yes      # 10b "Check if 65 or older — Spouse"
+    field: spouse
+    type: checkbox
+    on_state: /Yes
+  - line: line10b_count               # 10b 65-or-older count (not dollars)
+    field: 10b
+    type: text
+    maxlen: 1
+  - line: 10b                          # 10b count x $250 (dollar result)
+    field: line10b
+    type: money
+  - line: 10c                          # Add lines 10a and 10b
+    field: 10c
+    type: money
+
+  # ============================================ page 2 — header SSN repeat
+  - line: page2_your_last_name
+    field: lnamepg2
+    type: text
+  - line: page2_your_first_name
+    field: fnamepg2
+    type: text
+  - line: page2_your_ssn_first3
+    field: ss3pg2
+    type: text
+    maxlen: 3
+  - line: page2_your_ssn_mid2
+    field: ss2pg2
+    type: text
+    maxlen: 2
+  - line: page2_your_ssn_last4
+    field: ss4pg2
+    type: text
+    maxlen: 4
+
+  # ============================================ page 2 — lines 11-31
+  - line: "11"                         # Subtract line 10c from line 9 (taxable income)
+    field: "11"
+    type: money
+  - line: "12"                         # Tax (table on page 38)
+    field: "12"
+    type: money
+  - line: "13"                         # Itemized deduction credit (Schedule 1, page 4)
+    field: "13"
+    type: money
+  - line: "14"                         # Federal child and dependent care credit (Form 2441)
+    field: "14"
+    type: money
+  - line: 14a                          # line 14 x 50%
+    field: 14a
+    type: money
+  - line: line15a_rent_heat_included      # 15a worksheet: rent paid 2023 — heat included
+    field: 15a
+    type: money
+  - line: line15a_rent_heat_not_included  # 15a worksheet: rent paid 2023 — heat NOT included
+    field: 15aa
+    type: money
+  - line: 15a                          # School property tax credit on rent (table page 19)
+    field: Line15aaa
+    type: money
+  - line: line15b_property_taxes_paid     # 15b worksheet: property taxes paid on home 2023
+    field: 15b
+    type: money
+  - line: 15b                          # School property tax credit on property taxes (table page 20)
+    field: 15bb
+    type: money
+  - line: "16"                         # Working families tax credit (see page 20)
+    field: "16"
+    type: money
+  - line: "17"                         # Married couple credit (Schedule 2, page 4)
+    field: "17"
+    type: money
+  - line: "18"                         # Nonrefundable credits from line 34 of Schedule CR
+    field: "18"
+    type: money
+  - line: line19_other_state_abbreviation  # state abbreviation for line 19
+    field: 19-StateAbb
+    type: text
+    maxlen: 2
+  - line: "19"                         # Net income tax paid to another state (Schedule OS)
+    field: "19"
+    type: money
+  - line: "20"                         # Add lines 13 through 19
+    field: "20"
+    type: money
+  - line: "21"                         # Subtract line 20 from line 12 (net tax)
+    field: "21"
+    type: money
+  - line: "22"                         # Sales and use tax due on out-of-state purchases
+    field: "22"
+    type: money
+  - line: line22_no_tax_due::yes      # "If you certify that no sales or use tax is due, check here"
+    field: 22-checkbox
+    type: checkbox
+    on_state: /Yes
+  # ---- line 23 donations (decreases refund / increases amount owed)
+  - line: 23a                          # Endangered resources
+    field: 23a
+    type: money
+  - line: 23b                          # Cancer research
+    field: 23b
+    type: money
+  - line: 23c                          # Veterans trust fund
+    field: 23c
+    type: money
+  - line: 23d                          # Multiple sclerosis
+    field: 23d
+    type: money
+  - line: 23e                          # Military family relief
+    field: 23e
+    type: money
+  - line: 23f                          # Second Harvest/Feeding America
+    field: 23f
+    type: money
+  - line: 23g                          # Red Cross WI Disaster Relief
+    field: 23g
+    type: money
+  - line: 23h                          # Special Olympics Wisconsin
+    field: 23h
+    type: money
+  - line: 23i                          # Total (add lines 23a through 23h)
+    field: line23i
+    type: money
+  - line: line24_penalty_base         # Penalties on IRAs, retirement plans, MSAs, etc. (base)
+    field: 24penalties
+    type: money
+  - line: "24"                         # line 24 base x .33
+    field: "24"
+    type: money
+  - line: "25"                         # Other penalties (see page 25)
+    field: "25"
+    type: money
+  - line: "26"                         # Add lines 21, 22, 23i, 24, and 25
+    field: "26"
+    type: money
+  - line: "27"                         # Wisconsin tax withheld (include withholding statements)
+    field: line27
+    type: money
+  - line: "28"                         # 2023 estimated tax payments and amount applied from 2022 return
+    field: line28
+    type: money
+  - line: line29_qualifying_children  # Earned income credit — number of qualifying children (count, not dollars)
+    field: "29"
+    type: text
+    maxlen: 1
+  - line: line29_federal_credit       # Federal credit base
+    field: 29a
+    type: money
+  - line: line29_percent              # percentage (NOT money — preserves the fraction)
+    field: 29percent
+    type: text
+    maxlen: 2
+  - line: "29"                         # Earned income credit result
+    field: line29
+    type: money
+  - line: 30a                          # Farmland preservation credit — Schedule FC, line 17
+    field: line30a
+    type: money
+  - line: 30b                          # Farmland preservation credit — Schedule FC-A, line 13
+    field: line30b
+    type: money
+  - line: "31"                         # Repayment credit (see page 27)
+    field: line31
+    type: money
+
+  # ============================================ page 3 — header SSN repeat
+  - line: page3_your_last_name
+    field: lnamepg3
+    type: text
+  - line: page3_your_first_name
+    field: fnamepg3
+    type: text
+  - line: page3_your_ssn_first3
+    field: ss3pg3
+    type: text
+    maxlen: 3
+  - line: page3_your_ssn_mid2
+    field: ss2pg3
+    type: text
+    maxlen: 2
+  - line: page3_your_ssn_last4
+    field: ss4pg3
+    type: text
+    maxlen: 4
+
+  # ============================================ page 3 — lines 32-45
+  - line: "32"                         # Homestead credit (Schedule H or H-EZ)
+    field: "32"
+    type: money
+  - line: "33"                         # Eligible veterans and surviving spouses property tax credit
+    field: "33"
+    type: money
+  - line: "34"                         # Refundable credits from Schedule CR, line 40
+    field: "34"
+    type: money
+  - line: "35"                         # AMENDED RETURN ONLY — amounts previously paid
+    field: "35"
+    type: money
+  - line: "36"                         # Add lines 27 through 35
+    field: "36"
+    type: money
+  - line: "37"                         # AMENDED RETURN ONLY — amounts previously refunded
+    field: "37"
+    type: money
+  - line: "38"                         # Subtract line 37 from line 36
+    field: "38"
+    type: money
+  - line: "39"                         # Amount you overpaid (line 38 larger than line 26)
+    field: "39"
+    type: money
+  - line: "40"                         # Amount of line 39 you want REFUNDED TO YOU
+    field: "40"
+    type: money
+  - line: "41"                         # Amount of line 39 applied to 2024 estimated tax
+    field: "41"
+    type: money
+  - line: "42"                         # Amount you underpaid (line 38 smaller than line 26)
+    field: "42"
+    type: money
+  - line: line43_exception_code       # Underpayment interest exception code
+    field: 43code
+    type: text
+    maxlen: 2
+  - line: "43"                         # Underpayment interest
+    field: "43"
+    type: money
+  - line: "44"                         # Add lines 42 and 43 (AMOUNT YOU OWE)
+    field: "44"
+    type: money
+  - line: "45"                         # Interest (see page 34)
+    field: "45"
+    type: money
+
+  # ============================================ page 3 — Third Party Designee
+  - line: third_party_designee::yes   # "Do you want to allow another person to discuss this return"
+    field: allow
+    type: checkbox
+    on_state: /Yes
+  - line: third_party_designee::no
+    field: allow
+    type: checkbox
+    on_state: /no
+  - line: designee_name
+    field: designeename
+    type: text
+    maxlen: 20
+  - line: designee_phone_area_code
+    field: area1
+    type: text
+    maxlen: 3
+  - line: designee_phone_number
+    field: phone1
+    type: text
+    maxlen: 8
+  - line: designee_pin_1
+    field: pin1
+    type: text
+    maxlen: 1
+  - line: designee_pin_2
+    field: pin2
+    type: text
+    maxlen: 1
+  - line: designee_pin_3
+    field: pin3
+    type: text
+    maxlen: 1
+  - line: designee_pin_4
+    field: pin4
+    type: text
+    maxlen: 1
+  - line: designee_pin_5
+    field: pin5
+    type: text
+    maxlen: 1
+
+  # ============================================ page 3 — Sign Here (you)
+  - line: your_signature_date
+    field: todaysdate
+    type: text
+  - line: your_daytime_phone_area_code
+    field: area2
+    type: text
+    maxlen: 3
+  - line: your_daytime_phone_number
+    field: phone2
+    type: text
+    maxlen: 8
+  - line: your_wi_identity_protection_pin_1
+    field: wipp1
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_2
+    field: wipp2
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_3
+    field: wipp3
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_4
+    field: wipp4
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_5
+    field: wipp5
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_6
+    field: wipp6
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_7
+    field: wipp7
+    type: text
+    maxlen: 1
+  # ---- Sign Here (spouse)
+  - line: spouse_signature_date
+    field: todaysdate2
+    type: text
+  - line: spouse_daytime_phone_area_code
+    field: area3
+    type: text
+    maxlen: 3
+  - line: spouse_daytime_phone_number
+    field: phone3
+    type: text
+    maxlen: 8
+  - line: spouse_wi_identity_protection_pin_1
+    field: wipp1a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_2
+    field: wipp2a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_3
+    field: wipp3a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_4
+    field: wipp4a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_5
+    field: wipp5a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_6
+    field: wipp6a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_7
+    field: wipp7a
+    type: text
+    maxlen: 1
+
+  # ============================================ page 4 — header SSN repeat
+  - line: page4_your_last_name
+    field: lnamepg4
+    type: text
+  - line: page4_your_first_name
+    field: fnamepg4
+    type: text
+  - line: page4_your_ssn_first3
+    field: ss3pg4
+    type: text
+    maxlen: 3
+  - line: page4_your_ssn_mid2
+    field: ss2pg4
+    type: text
+    maxlen: 2
+  - line: page4_your_ssn_last4
+    field: ss4pg4
+    type: text
+    maxlen: 4
+
+  # ---- Schedule 1 — Itemized Deduction Credit
+  - line: sch1_1                       # Medical and dental expenses (federal Schedule A)
+    field: sch1-1
+    type: money
+  - line: sch1_2                       # Interest paid (federal Schedule A)
+    field: sch1-2
+    type: money
+  - line: sch1_3                       # Gifts to charity (federal Schedule A)
+    field: sch1-3
+    type: money
+  - line: sch1_4                       # Casualty losses (federal Schedule A)
+    field: sch1-4
+    type: money
+  - line: sch1_5                       # Add lines 1 through 4
+    field: sch1-5
+    type: money
+  - line: sch1_6                       # Standard deduction from line 8 on page 1 of Form 1
+    field: sch1-6
+    type: money
+  - line: sch1_7                       # Subtract line 6 from line 5
+    field: sch1-7
+    type: money
+  # Schedule 1 line 8 ("Rate of credit is .05 (5%)") is a preprinted constant,
+  # not a widget — no field.
+  - line: sch1_9                       # Multiply line 7 by line 8 (enter on line 13)
+    field: sch1-9
+    type: money
+
+  # ---- Schedule 2 — Married Couple Credit (A = Yourself, B = Spouse)
+  - line: sch2_1_yourself             # Taxable wages, salaries, tips, etc. — column A
+    field: sch2a-1
+    type: money
+  - line: sch2_1_spouse              # column B
+    field: sch2b-1
+    type: money
+  - line: sch2_2_yourself            # Net profit/loss from self-employment — column A
+    field: sch2a-2
+    type: money
+  - line: sch2_2_spouse             # column B
+    field: sch2b-2
+    type: money
+  - line: sch2_3_yourself            # Combine lines 1 and 2 (earned income) — column A
+    field: sch2a-3
+    type: money
+  - line: sch2_3_spouse             # column B
+    field: sch2b-3
+    type: money
+  - line: sch2_4_yourself            # Add adjustments from federal Schedule 1 — column A
+    field: sch2a-4
+    type: money
+  - line: sch2_4_spouse             # column B
+    field: sch2b-4
+    type: money
+  - line: sch2_5_yourself            # Subtract line 4 from line 3 (qualified earned income) — column A
+    field: sch2a-5
+    type: money
+  - line: sch2_5_spouse             # column B
+    field: sch2b-5
+    type: money
+  - line: sch2_6                       # Smaller of columns A and B of line 5 (max $16,000)
+    field: sch2-6
+    type: money
+  # Schedule 2 line 7 ("Rate of credit is .03 (3%)") is a preprinted constant,
+  # not a widget — no field.
+  # Schedule 2 line 8 is a dollar box, but its widget hard-caps at MaxLen 3
+  # (the form's "Do not fill in more than $480" => at most 3 digits, no cents:
+  # the ".00" suffix is preprinted). It is mapped `text` with maxlen 3 so the
+  # clipping scan honors that 3-character cap; mapping it `money` cannot satisfy
+  # the cap (whole-dollar money values up to $480 are <= 3 chars in practice,
+  # but the type carries no width ceiling the verifier can enforce against the
+  # 3-cell widget).
+  - line: sch2_8                       # Multiply line 6 by line 7 (enter on line 17), max $480
+    field: sch2-8
+    type: text
+    maxlen: 3
+relations:
+  - "3 == 1 + 2"                       # Line 3 "Add lines 1 and 2."
+  - "5 == 3 + 4"                       # Line 5 "Add lines 3 and 4."
+  - "7 == 5 - 6"                       # Line 7 "Subtract line 6 from line 5."
+  - "10c == 10a + 10b"                 # Line 10c "Add lines 10a and 10b."
+  - "23i == 23a + 23b + 23c + 23d + 23e + 23f + 23g + 23h"  # Line 23i "Total (add lines a through h)."
+  - "26 == 21 + 22 + 23i + 24 + 25"    # Line 26 "Add lines 21, 22, 23i, 24, and 25."
+  - "38 == 36 - 37"                    # Line 38 "Subtract line 37 from line 36."
+  - "44 == 42 + 43"                    # Line 44 "Add lines 42 and 43."
+  - "sch1_5 == sch1_1 + sch1_2 + sch1_3 + sch1_4"   # Schedule 1 line 5 "Add lines 1 through 4."
+  - "sch2_3_yourself == sch2_1_yourself + sch2_2_yourself"  # Schedule 2 line 3 (col A) "Combine lines 1 and 2."
+  - "sch2_3_spouse == sch2_1_spouse + sch2_2_spouse"        # Schedule 2 line 3 (col B) "Combine lines 1 and 2."
+cross_form:
+  - "1 == f1040.11"                    # Line 1 "Federal adjusted gross income from Form 1040, line 11."
+identity_fields:
+  - ss3
+  - fname
+  - lname

@@ -1,0 +1,411 @@
+# Form DR 0104, 2023 — Colorado Individual Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every AcroForm widget rendered with its own raw field name) -> vision-map
+# workflow (all four sentinel-sweep pages, read at 2x zoom to place each field
+# on its printed line / column) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty). DR 0104 ships its widgets with
+# opaque "TextNN" sentinel ids rather than human-readable names, so the `field`
+# value is the raw introspect path verbatim and the `line` key is the printed
+# label / step number read off the sweep. The form is four pages: page 1 is the
+# header (taxpayer + spouse name/SSN/DOB/ID-card block, address, the
+# reduced-cost-health-coverage box) plus income lines 1-3; page 2 carries lines
+# 4-24; page 3 carries lines 25-38 and the direct-deposit block; page 4 carries
+# lines 39-43, the Third Party Designee block, the signature dates, and the paid
+# preparer block. The Name header (field "Text31") repeats at the top of pages
+# 2/3/4 and the SSN-or-ITIN header (field "Text5") repeats at the top of pages
+# 1/2/3/4; in this flat AcroForm each is ONE field (one value, painted into
+# every per-page header slot), so each is mapped exactly once — "Text5" on line
+# `ssn_or_itin` and "Text31" on line `header_name`. (The filler rejects two text
+# lines sharing a field, confirming the single-field interpretation.)
+#
+# Coverage. The introspect skeleton enumerates 98 fillable AcroForm widget
+# entries, but field "Text5" appears 4x and field "Text31" appears 3x (the same
+# value shown in each page's header slot), so there are 93 DISTINCT fillable
+# fields and ALL 93 are mapped here — nothing is intentionally omitted. Three
+# /Btn fields hold mutually exclusive appearance states and are each mapped as
+# multiple checkbox lines on the shared field, carrying the exact on_state read
+# from the blank: "Direct Deposit" (/Checking, /Savings, /CollegeInvest) and
+# "Third Party Designee" (/No, /Yes). The remaining checkboxes ("Full-Year",
+# "Part-Year", "Mark if Abroad…", "Deceased", "Deceased_1", "Checkbox for
+# reduced cost health coverage", and the three line-25 prepayment-document
+# boxes) are single-state /Btn fields.
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix in the
+# box and is mapped `money` (the skeleton had tagged them `text`); this also
+# lets the conservative subtotal relations below evaluate. Genuine text widgets
+# stay text: taxpayer / spouse names, middle initials (maxlen 1), dates of
+# birth, SSN-or-ITIN boxes, driver/ID-card State-of-Issue / last-4 / issue-date
+# boxes, mailing address / city / state (maxlen 2) / ZIP / foreign-country,
+# phone, the "Other Additions explain" box, bank routing (9) / account (17),
+# the Name and SSN-or-ITIN header fields, the designee name/phone, the two
+# signature dates, and the preparer name / phone / address / city / state
+# (maxlen 2) / ZIP. DR 0104 carries no percentage / proration boxes (proration
+# lives on the DR 0104PN), so no text-typed ratio fields are needed.
+#
+# Relations. Only unconditional equalities with every operand mapped to a
+# numbered money line are declared: line 8 (sum of 1-7), line 10 (8-9), line 14
+# (sum of 11-13), line 18 (14 minus 15+16+17), line 20 (18+19), line 29 (sum of
+# 21-28), line 33 (sum of 30-32), line 35 (29+34), line 38 (36-37), line 39
+# (20-35), line 43 (sum of 39-42). Branchy / conditional lines are OMITTED per
+# house style: line 36 ("Overpayment, IF line 35 is greater than line 20 …").
+#
+# Cross_form. No DR 0104 box prints a federal source line as a bare equality —
+# line 1 is "Federal Taxable Income" (not federal AGI / a single 1040 line) and
+# line 30 is "Federal Adjusted Gross Income" used only for the TABOR Modified
+# AGI worksheet, not a return total — so no cross_form equality is declared.
+form: Form DR 0104
+jurisdiction: states/co
+tax_year: 2023
+source_url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf
+pdf_sha256: fd5a4613b10e129609eecefe57b9fae80b121f388a60577d2fa70228e7c7ea3e
+acroform_root: ''
+fields:
+  # ============================================ page 1 — filing-period boxes
+  - line: full_year::yes               # "Full-Year"
+    field: Full-Year
+    type: checkbox
+    on_state: /Yes
+  - line: part_year_or_nonresident::yes # "Part-Year or Nonresident … *Must include DR 0104PN"
+    field: Part-Year
+    type: checkbox
+    on_state: /Yes
+  - line: mark_if_abroad_on_due_date::yes # "Mark if Abroad on due date – see instructions"
+    field: Mark if Abroad on due date–see instructions
+    type: checkbox
+    on_state: /Yes
+
+  # ============================================ page 1 — taxpayer header
+  - line: your_last_name               # "Your Last Name"
+    field: Text1
+    type: text
+  - line: your_first_name              # "Your First Name"
+    field: Text2
+    type: text
+  - line: your_middle_initial          # "Middle Initial"
+    field: Text3
+    type: text
+    maxlen: 1
+  - line: your_date_of_birth           # "Date of Birth (MM/DD/YYYY)"
+    field: Text4
+    type: text
+  - line: ssn_or_itin                  # "SSN or ITIN" (taxpayer)
+    field: Text5
+    type: text
+  - line: you_deceased::yes            # "Deceased" (taxpayer)
+    field: Deceased
+    type: checkbox
+    on_state: /Yes
+  - line: your_id_card_state_of_issue  # ID card: "State of Issue"
+    field: Text6
+    type: text
+  - line: your_id_card_last_4          # ID card: "Last 4 characters of ID number"
+    field: Text7
+    type: text
+  - line: your_id_card_date_of_issuance # ID card: "Date of Issuance"
+    field: Text8
+    type: text
+
+  # ============================================ page 1 — spouse header
+  - line: spouse_last_name             # "If Joint, Spouse's Last Name"
+    field: Text9
+    type: text
+  - line: spouse_first_name            # "Spouse's First Name"
+    field: Text10
+    type: text
+  - line: spouse_middle_initial        # "Middle Initial"
+    field: Text11
+    type: text
+    maxlen: 1
+  - line: spouse_date_of_birth         # "Spouse's Date of Birth (MM/DD/YYYY)"
+    field: Text12
+    type: text
+  - line: spouse_ssn_or_itin           # "Spouse's SSN or ITIN"
+    field: Text13
+    type: text
+  - line: spouse_deceased::yes         # "Deceased" (spouse)
+    field: Deceased_1
+    type: checkbox
+    on_state: /Yes
+  - line: spouse_id_card_state_of_issue # spouse ID card: "State of Issue"
+    field: Text14
+    type: text
+  - line: spouse_id_card_last_4        # spouse ID card: "Last 4 characters of ID number"
+    field: Text15
+    type: text
+  - line: spouse_id_card_date_of_issuance # spouse ID card: "Date of Issuance"
+    field: Text16
+    type: text
+
+  # ============================================ page 1 — address / contact
+  - line: mailing_address              # "Mailing Address"
+    field: Text17
+    type: text
+  - line: phone_number                 # "Phone Number"
+    field: Text19
+    type: text
+  - line: city                         # "City"
+    field: Text20
+    type: text
+  - line: state                        # "State"
+    field: Text21
+    type: text
+    maxlen: 2
+  - line: zip_code                     # "ZIP Code"
+    field: Text22
+    type: text
+  - line: foreign_country              # "Foreign Country (if applicable)"
+    field: Text23
+    type: text
+  - line: reduced_cost_health_coverage::yes # "…check this box if: … reduced-cost health coverage"
+    field: Checkbox for reduced cost health coverage
+    type: checkbox
+    on_state: /Yes
+
+  # ---- "Name" header field (single field; painted into the pages 2/3/4 header
+  #      slots). Page 1 instead carries the discrete Text1/Text2 name boxes.
+  - line: header_name
+    field: Text31
+    type: text
+
+  # ============================================ page 1 — income lines 1-3
+  - line: "1"                          # Enter Federal Taxable Income from your federal income tax form
+    field: Text24
+    type: money
+  - line: "2"                          # State and Local Income taxes or general sales taxes (Sch. A)
+    field: Text25
+    type: money
+  - line: "3"                          # Qualified Business Income Deduction Addback
+    field: Text26
+    type: money
+
+  # ============================================ page 2 — additions lines 4-8
+  - line: "4"                          # Federal Deduction addback (see instructions)
+    field: Text33.0
+    type: money
+  - line: "5"                          # Nonqualified CollegeInvest Tuition Savings Account distributions
+    field: Text33.1
+    type: money
+  - line: "6"                          # Nonqualified Colorado ABLE Account distributions
+    field: Text33.2.0
+    type: money
+  - line: "7"                          # Other Additions, explain (see instructions)
+    field: Text33.2.1
+    type: money
+  - line: line7_explain                # "Explain" box adjacent to line 7
+    field: Explain - page 2
+    type: text
+  - line: "8"                          # Subtotal, sum of lines 1 through 7
+    field: Subtractions fromt he DR 0104AD
+    type: money
+
+  # ============================================ page 2 — subtractions / tax lines 9-24
+  - line: "9"                          # Subtractions from the DR 0104AD Schedule, line 23
+    field: Text34
+    type: money
+  - line: "10"                         # Colorado Taxable Income, subtract line 9 from line 8
+    field: Text35
+    type: money
+  - line: "11"                         # Colorado Tax from tax table or the DR 0104PN line 36
+    field: Text36
+    type: money
+  - line: "12"                         # Alternative Minimum Tax from the DR 0104AMT line 8
+    field: Text37
+    type: money
+  - line: "13"                         # Recapture of prior year credits
+    field: Text38
+    type: money
+  - line: "14"                         # Subtotal, sum of lines 11 through 13
+    field: Text39
+    type: money
+  - line: "15"                         # Nonrefundable Credits from the DR 0104CR line 54
+    field: Text40
+    type: money
+  - line: "16"                         # Total Nonrefundable Enterprise Zone credits used (DR 1366 line 85)
+    field: Text41
+    type: money
+  - line: "17"                         # Strategic Capital Tax Credit from DR 1330
+    field: Text42
+    type: money
+  - line: "18"                         # Net Income Tax, sum of lines 15,16,17 subtracted from line 14
+    field: Text43
+    type: money
+  - line: "19"                         # Use Tax reported on the DR 0104US schedule line 7
+    field: Text44
+    type: money
+  - line: "20"                         # Net Colorado Tax, sum of lines 18 and 19
+    field: Text45
+    type: money
+  - line: "21"                         # CO Income Tax Withheld from W-2s and 1099s
+    field: Text46
+    type: money
+  - line: "22"                         # Prior-year Estimated Tax Carryforward
+    field: Text47
+    type: money
+  - line: "23"                         # Estimated Tax Payments
+    field: Text48
+    type: money
+  - line: "24"                         # Extension Payment remitted with the DR 0158-I
+    field: Text49
+    type: money
+
+  # ============================================ page 3 — line 25 prepayment-doc boxes + value
+  - line: line25_dr0104bep::yes        # line 25 Other Prepayments: "DR 0104BEP"
+    field: 104-line 20-104BEP
+    type: checkbox
+    on_state: /Yes
+  - line: line25_dr0108::yes           # line 25 Other Prepayments: "DR 0108"
+    field: 104-line 20-DR 0108
+    type: checkbox
+    on_state: /Yes
+  - line: line25_dr1079::yes           # line 25 Other Prepayments: "DR 1079"
+    field: 104-line 20-DR 1079
+    type: checkbox
+    on_state: /Yes
+  - line: "25"                         # Other Prepayments (value)
+    field: Text50
+    type: money
+
+  # ============================================ page 3 — credits / TABOR lines 26-38
+  - line: "26"                         # Gross Conservation Easement Credit from the DR 1305G line 33
+    field: Text51
+    type: money
+  - line: "27"                         # Innovative Motor Vehicle and Innovative Truck Credit from DR 0617
+    field: Text52
+    type: money
+  - line: "28"                         # Refundable Credits from the DR 0104CR line 16
+    field: Text28
+    type: money
+  - line: "29"                         # Subtotal, sum of lines 21 through 28
+    field: Text56
+    type: money
+  - line: "30"                         # Federal Adjusted Gross Income from your federal income tax form
+    field: Text55
+    type: money
+  - line: "31"                         # Nontaxable Social Security Income
+    field: Text32
+    type: money
+  - line: "32"                         # Nontaxable interest income from state and local bonds
+    field: Text18
+    type: money
+  - line: "33"                         # Sum of lines 30 through 32: Modified AGI for TABOR
+    field: Text30
+    type: money
+  - line: "34"                         # State Sales Tax Refund (TABOR)
+    field: Text76
+    type: money
+  - line: "35"                         # Sum of lines 29 and 34
+    field: Text27
+    type: money
+  - line: "36"                         # Overpayment, if line 35 is greater than line 20, subtract line 20 from 35
+    field: Text29
+    type: money
+  - line: "37"                         # Estimated Tax Credit Carryforward to 2024 first quarter
+    field: Text53
+    type: money
+  - line: "38"                         # Refund, subtract line 37 from line 36
+    field: Text54
+    type: money
+
+  # ============================================ page 3 — direct deposit block
+  - line: direct_deposit_routing_number # "Routing Number"
+    field: Routing Number
+    type: text
+    maxlen: 9
+  - line: direct_deposit_type::checking # "Type: Checking"
+    field: Direct Deposit
+    type: checkbox
+    on_state: /Checking
+  - line: direct_deposit_type::savings  # "Type: Savings"
+    field: Direct Deposit
+    type: checkbox
+    on_state: /Savings
+  - line: direct_deposit_type::collegeinvest # "Type: CollegeInvest 529"
+    field: Direct Deposit
+    type: checkbox
+    on_state: /CollegeInvest
+  - line: direct_deposit_account_number # "Account Number"
+    field: Account Number
+    type: text
+    maxlen: 17
+
+  # ============================================ page 4 — amount-owed lines 39-43
+  - line: "39"                         # Net Tax Due, subtract line 35 from line 20
+    field: Text59
+    type: money
+  - line: "40"                         # Delinquent Payment Penalty
+    field: Text60
+    type: money
+  - line: "41"                         # Delinquent Payment Interest
+    field: Text61
+    type: money
+  - line: "42"                         # Estimated Tax Penalty, submit the DR 0204
+    field: Text62
+    type: money
+  - line: "43"                         # Amount You Owe, sum of lines 39 through 42
+    field: Text63
+    type: money
+
+  # ============================================ page 4 — Third Party Designee
+  - line: third_party_designee::no     # "Do you want to allow another person…? No"
+    field: Third Party Designee
+    type: checkbox
+    on_state: /No
+  - line: third_party_designee::yes    # "… Yes. Complete the following:"
+    field: Third Party Designee
+    type: checkbox
+    on_state: /Yes
+  - line: designee_name                # "Designee's Name"
+    field: Text64
+    type: text
+  - line: designee_phone_number        # designee "Phone Number"
+    field: Text65
+    type: text
+
+  # ============================================ page 4 — signature dates
+  - line: your_signature_date          # "Your Signature … Date (MM/DD/YY)"
+    field: Text66
+    type: text
+  - line: spouse_signature_date        # "Spouse's Signature … Date (MM/DD/YY)"
+    field: Text68
+    type: text
+
+  # ============================================ page 4 — paid preparer
+  - line: preparer_name                # "Paid Preparer's Name"
+    field: Text69
+    type: text
+  - line: preparer_phone               # "Paid Preparer's Phone"
+    field: Text71
+    type: text
+  - line: preparer_address             # "Paid Preparer's Address"
+    field: Text72
+    type: text
+  - line: preparer_city                # preparer "City"
+    field: Text73
+    type: text
+  - line: preparer_state               # preparer "State"
+    field: Text74
+    type: text
+    maxlen: 2
+  - line: preparer_zip_code            # preparer "ZIP Code"
+    field: Text75
+    type: text
+
+relations:
+  - "8 == 1 + 2 + 3 + 4 + 5 + 6 + 7"   # line 8 "Subtotal, sum of lines 1 through 7"
+  - "10 == 8 - 9"                       # line 10 "Colorado Taxable Income, subtract line 9 from line 8"
+  - "14 == 11 + 12 + 13"               # line 14 "Subtotal, sum of lines 11 through 13"
+  - "18 == 14 - 15 - 16 - 17"          # line 18 "Net Income Tax, sum of 15,16,17 subtracted from line 14"
+  - "20 == 18 + 19"                    # line 20 "Net Colorado Tax, sum of lines 18 and 19"
+  - "29 == 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28"  # line 29 "Subtotal, sum of lines 21 through 28"
+  - "33 == 30 + 31 + 32"               # line 33 "Sum of lines 30 through 32: Modified AGI for TABOR"
+  - "35 == 29 + 34"                    # line 35 "Sum of lines 29 and 34"
+  - "38 == 36 - 37"                    # line 38 "Refund, subtract line 37 from line 36"
+  - "39 == 20 - 35"                    # line 39 "Net Tax Due, subtract line 35 from line 20"
+  - "43 == 39 + 40 + 41 + 42"          # line 43 "Amount You Owe, sum of lines 39 through 42"
+cross_form: []
+identity_fields:
+  - ssn_or_itin
+  - your_first_name
+  - your_last_name
