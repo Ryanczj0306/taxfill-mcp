@@ -13,7 +13,7 @@ plan for what is **not yet done**, as of **2026-06-28**.
 
 ## Where we are (verified)
 
-Done and on `main` (**1,288 tests, all green** — verified `pytest` run, exit 0):
+Done and on `main` (**1,291 tests, all green** — verified `pytest` run, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (21 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -61,10 +61,10 @@ Cheap, high-credibility cleanup that the audit surfaced. No new features.
       after a green `test_formpacks_states.py` round-trip. They are finished work
       sitting outside git — invisible to CI and at risk of loss.
 - [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
-      and a full run (**exit 0, no collection errors**): the suite is **1,288 tests,
-      all green**. The earlier figures were stale/under-counted (old ROADMAP *1222*,
-      README *~1076*, audit-sandbox *~903* — the sandbox couldn't run collection).
-      README + this file now quote **1,288**.
+      and a full run (**exit 0, no collection errors**): the suite is **1,291 tests,
+      all green** (1,288 at audit + 3 new eval scenarios k/l/m). The earlier figures
+      were stale/under-counted (old ROADMAP *1222*, README *~1076*, audit-sandbox
+      *~903* — the sandbox couldn't run collection). README + this file now quote **1,291**.
 - [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
       done, 18 states (not 14), 53 packs (not 49), Phase B done, drift CI done.
 
@@ -173,13 +173,16 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
 
 ## Phase E — Test & eval hardening (Effort: S–M)
 
-- [ ] **Finish the §14 eval suite.** `evals/test_scenarios.py` implements scenarios
-      **a–j (10 of 13)**. The three hardest — and most likely to expose tax-logic
-      bugs — are missing: **(k)** MFJ with two W-2s, **(l)** MFJ-vs-MFS optimizer,
-      **(m)** NRA-spouse §6013(g) election. Implement and green them.
-- [ ] Wire the true test count (Phase 0) into a CI badge / README line.
+- [x] **Finish the §14 eval suite — DONE (2026-06-28).** `evals/test_scenarios.py`
+      now implements all **13 scenarios (a–m)**, green: **(k)** MFJ two W-2s (joint
+      standard deduction/brackets + both-signature checklist), **(l)** MFJ-vs-MFS
+      comparison (engine computes both ways → `RefundEstimate.comparison` carries the
+      recommendation, dollar delta, and joint-liability caveat), **(m)** NRA-spouse
+      §6013(g) election (MFJ dropped → MFS, election + worldwide-income trade-off
+      surfaced in both estimate and intake, authority via `get_sources`).
+- [ ] Wire the true test count (1,291) into a CI badge / README line.
 
-**Acceptance:** all 13 eval scenarios run green; one authoritative test count.
+**Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
 
 ---
 
