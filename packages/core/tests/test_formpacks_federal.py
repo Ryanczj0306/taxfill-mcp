@@ -46,6 +46,7 @@ KNOWN_FORM_KEYS = frozenset(
         "f8843",
         "f8863",
         "f2555",
+        "f4868",
         "f1040nr",
         "f1040",
         "sched_1",
