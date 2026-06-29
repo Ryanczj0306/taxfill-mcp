@@ -5,10 +5,12 @@ behaviours the dev plan calls out per scenario letter. These are integration
 EVALS, not unit tests: they prove the M1-M4 stack does the right thing on
 realistic cases, including the honest-estimate and no-invented-numbers rules.
 
-Federal scenarios (a, d, e, g, h, i, j) run now. State scenarios (b, c, f) need
-M5 (CA packs + state_scope) and are explicit xfail/skip markers so the gap is
-visible, never silently missing. Multi-form fill+verify on real PDFs is covered
-by packages/core/tests/test_filing_integration.py (the 1040 and 1040-NR stacks).
+All thirteen scenarios (a–m) run now: the federal cases (a, d, e, g, h, i, j) on
+the M1-M4 stack; the joint / separate / NRA-spouse cases (k, l, m) on the
+filing-status-aware engine (MFJ math, the both-ways comparison, and the §6013(g)/(h)
+election surface); and the state cases (b, c, f) on M5 (CA packs + state_scope).
+Multi-form fill+verify on real PDFs is covered by
+packages/core/tests/test_filing_integration.py (the 1040 and 1040-NR stacks).
 """
 from __future__ import annotations
 
@@ -32,6 +34,7 @@ from taxfill_core.schemas.profile import (
     Provenance,
     ResidencePeriod,
     ResidencyFacts,
+    Spouse,
     StateFootprintYear,
     VisaPeriod,
     WorkPeriod,
@@ -244,3 +247,103 @@ def test_eval_f_no_income_tax_state():
     tx = next(s for s in state_scope(profile, 2023).states if s.state == "TX")
     assert tx.must_file is False and tx.filing_role == "none"
     assert "no personal income tax" in tx.reason.lower()
+
+
+# ── (k) married filing jointly: two W-2s on one return ─────────────────────────
+
+
+def test_eval_k_mfj_two_w2s():
+    # A married couple, each with a W-2, files ONE joint return. The engine must use
+    # the MFJ standard deduction + brackets (not the single column), carry the spouse
+    # as a second taxpayer, and the checklist must require BOTH signatures.
+    taxpayer_wages, spouse_wages, withholding = 62000, 48000, 12000
+    profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(
+            marital_status=_ans("married"),
+            filing_status=_ans("married_filing_jointly"),
+            spouse=Spouse(name=_ans("Jordan Q. Spouse"), tax_id=_ans("123-45-6789")),
+        ),
+    )
+    # The crux of MFJ math: the joint standard deduction (2023: $27,700 = 2x the
+    # single $13,850), not the single amount.
+    assert standard_deduction("married_filing_jointly", 2023).amount == 27700
+    assert standard_deduction("married_filing_jointly", 2023).amount == 2 * standard_deduction("single", 2023).amount
+
+    combined = taxpayer_wages + spouse_wages
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=combined, federal_withholding=withholding))
+    # Confirmed MFJ -> one number (no range), computed on the MFJ column.
+    assert est.filing_status_used == "married_filing_jointly" and est.status_assumed is False
+    assert est.point == _calc_refund(combined, withholding, "married_filing_jointly")
+    assert any("married_filing_jointly" in a for a in est.assumptions)
+    # Spouse identity is carried -> intake does NOT re-ask the spouse name/SSN.
+    asked = {q.id for q in intake_checklist(profile, tax_year=2023).next_questions}
+    assert "household.spouse.name" not in asked and "household.spouse.tax_id" not in asked
+    # Both-signature checklist (MFJ): a missing signature voids the filing.
+    item = FilingManifestItem(form="1040", tax_year=2023, bottom_line=est.point, filing_jointly=True)
+    sign = file_and_pay([item]).returns[0].sign
+    assert any("both spouses must sign" in s.lower() for s in sign)
+
+
+# ── (l) MFJ vs MFS: compute both ways, recommend the lower-tax option ───────────
+
+
+def test_eval_l_mfj_vs_mfs_comparison():
+    # Married, filing status NOT yet chosen. The engine computes the return BOTH ways
+    # and returns a side-by-side comparison: a recommendation, the dollar delta, and
+    # the joint-liability caveat. Recommending without showing both, or dropping the
+    # liability caveat, fails the eval.
+    wages, withholding = 90000, 11000  # single-earner couple -> MFJ clearly better
+    profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(marital_status=_ans("married")),  # MFJ vs MFS still open
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=wages, federal_withholding=withholding))
+    comp = est.comparison
+    assert comp is not None, "a married, status-unconfirmed estimate must compute both ways"
+    assert {c.status for c in comp.candidates} == {"married_filing_jointly", "married_filing_separately"}
+    # Both candidates match an independent calc both ways.
+    by_status = {c.status: c.bottom_line for c in comp.candidates}
+    assert by_status["married_filing_jointly"] == _calc_refund(wages, withholding, "married_filing_jointly")
+    assert by_status["married_filing_separately"] == _calc_refund(wages, withholding, "married_filing_separately")
+    # Recommendation is the lower-tax (more favorable bottom-line) option, with the delta shown.
+    assert comp.recommended_status == "married_filing_jointly"
+    assert comp.delta == abs(by_status["married_filing_jointly"] - by_status["married_filing_separately"])
+    assert comp.delta > 0
+    # The joint-liability caveat is present (ignoring it fails the eval).
+    assert comp.joint_liability_caveat and "jointly" in comp.joint_liability_caveat.lower()
+    assert "liab" in comp.joint_liability_caveat.lower()
+
+
+# ── (m) NRA-spouse §6013(g) election: surfaced + cited, never silent ───────────
+
+
+def test_eval_m_nra_spouse_6013_election():
+    # An F-1 (nonresident-alien) taxpayer who is married. Form 1040-NR cannot use MFJ;
+    # to file jointly the couple must ELECT under §6013(g)/(h) to treat the NRA spouse
+    # as a U.S. resident — which makes their worldwide income taxable. The engine must
+    # surface that election + trade-off (never silently file MFJ), and the authority
+    # must be citable.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2021, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2021: _ans(150), 2022: _ans(300), 2023: _ans(300)}),
+        household=Household(marital_status=_ans("married")),
+    )
+    # Precondition: this taxpayer classifies as a nonresident alien (F-1 exempt).
+    assert classify([{"status": "F-1", "start": "2021-08-01", "end": None}],
+                    {2021: 150, 2022: 300, 2023: 300}, 2023).classification == "nonresident"
+
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40000, federal_withholding=3000))
+    # MFJ is DROPPED for a confirmed married NRA -> primary becomes MFS, not a silent MFJ.
+    assert est.filing_status_used == "married_filing_separately"
+    surfaced = " ".join(est.assumptions + est.what_would_change_it)
+    assert "§6013" in surfaced  # the election is named, not silent
+    assert "worldwide income" in surfaced.lower()  # the trade-off is surfaced
+    # Intake surfaces the same election on the filing-status question.
+    fs_q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions
+                if q.id == "household.filing_status")
+    assert "§6013" in fs_q.disambiguation and "worldwide income" in fs_q.disambiguation.lower()
+    # Cited: the authority is resolvable via get_sources (IRS .gov + freshness channels), like (i).
+    src = get_sources("nonresident alien spouse 6013 election", 2023)
+    assert "irs.gov" in src.retrieval_hint and src.change_channels
