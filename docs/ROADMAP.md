@@ -13,7 +13,7 @@ plan for what is **not yet done**, as of **2026-06-28**.
 
 ## Where we are (verified)
 
-Done and on `main` (**1,315 tests, all green** — verified `pytest` run, exit 0):
+Done and on `main` (**1,323 tests, all green** — verified `pytest` run, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (21 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -27,10 +27,11 @@ Done and on `main` (**1,315 tests, all green** — verified `pytest` run, exit 0
   1099-NEC/INT/DIV/B, 1098-T, 1042-S, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
-- **Federal form packs — priority set DONE.** 34 packs across 2019–2024. M2 base
+- **Federal form packs — priority set DONE.** 35 packs across 2019–2024. M2 base
   set + Schedule SE/D/E + Form 8863 + Form 2555 all ship (2023), audited, golden;
-  + Phase-D new form types **Form 4868** (extension), **Form 1040-ES** (estimated-tax
-  vouchers), and **Form 1040-X** (amended return, Rev. 2-2024), all audited.
+  + **all four Phase-D new form types** — **Form 4868** (extension), **Form 1040-ES**
+  (estimated-tax vouchers), **Form 1040-X** (amended return, Rev. 2-2024), and
+  **Form W-7** (ITIN application, Rev. 12-2024) — all audited.
 - **State credits — DONE for all 42 jurisdictions** (41 income-tax states + DC):
   every `knowledge/states/<st>/2023.yaml` carries a cited `credits` block (~174
   entries total); `state_scope` surfaces them as `benefits_candidates`.
@@ -43,7 +44,7 @@ Done and on `main` (**1,315 tests, all green** — verified `pytest` run, exit 0
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E,
 Form 8863, Form 2555. state — **18 states** (22 packs): CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
-IN, MO, MD, **AL, CO, MN, WI**. **56 form packs total** (34 federal + 22 state).
+IN, MO, MD, **AL, CO, MN, WI**. **57 form packs total** (35 federal + 22 state).
 
 > ⚠️ Four finished state packs (**AL, CO, MN, WI**) are currently **untracked in
 > the working tree** — see Phase 0 below; commit them first.
@@ -63,9 +64,9 @@ Cheap, high-credibility cleanup that the audit surfaced. No new features.
       after a green `test_formpacks_states.py` round-trip. They are finished work
       sitting outside git — invisible to CI and at risk of loss.
 - [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
-      and a full run (**exit 0, no collection errors**): the suite is **1,315 tests,
+      and a full run (**exit 0, no collection errors**): the suite is **1,323 tests,
       all green** (1,288 at audit + 3 eval scenarios k/l/m + 8 each for Forms 4868,
-      1040-ES, and 1040-X). The earlier figures
+      1040-ES, 1040-X, and W-7). The earlier figures
       were stale/under-counted (old ROADMAP *1222*, README *~1076*, audit-sandbox
       *~903* — the sandbox couldn't run collection). README + this file now quote **1,291**.
 - [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
@@ -152,7 +153,7 @@ C3 hard states depend on new downloader + overlay-filler engine work.
 
 ## Phase D — Scale-out: new form types & tooling (Effort: L–XL)
 
-### D1 — New federal form TYPES (3 of 4 done)
+### D1 — New federal form TYPES (4 of 4 — DONE)
 
 Each needs PDF → schema → vision-map → adversarial audit → tests, on the existing
 pipeline (the `taxfill introspect` CLI seeds the field map).
@@ -178,8 +179,15 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       explanation, signature/preparer. On-face column-C math encoded as relations
       (`3 == 1 - 2`, `11 == 8 + 10`, `20 == max(0, 11 - 19)`, …). Golden round-trip
       green + adversarial vision audit clean. `formpacks/federal/2023/f1040x/`.
-- [ ] **W-7** (ITIN application) — hardest; likely needs new field types
-      (photo/signature) in the filler.
+- [x] **W-7** (ITIN application) — **DONE (2026-06-29)**, tax year 2023 via the
+      Rev. December 2024 revision. The "needs new field types (photo/signature)"
+      worry did **not** materialize: W-7 is a plain single-page AcroForm (the ID
+      documents are attached separately, not PDF fields). 65 widgets mapped:
+      application-type / gender / ID-document / prior-ITIN / delegate radios,
+      reasons a–h, name(s), mailing + foreign address, comb date-of-birth /
+      exp-date / entry-date, citizenship/visa, 6f ITIN/IRSN comb segments,
+      acceptance-agent block. Golden round-trip green + adversarial vision audit
+      clean. `formpacks/federal/2023/fw7/`.
 
 ### D2 — Breadth follow-ons
 
@@ -201,7 +209,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       recommendation, dollar delta, and joint-liability caveat), **(m)** NRA-spouse
       §6013(g) election (MFJ dropped → MFS, election + worldwide-income trade-off
       surfaced in both estimate and intake, authority via `get_sources`).
-- [ ] Wire the true test count (1,315) into a CI badge / README line.
+- [ ] Wire the true test count (1,323) into a CI badge / README line.
 
 **Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
 
@@ -217,10 +225,13 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
 4. **Phase C** (months, parallelizable) — the long pole. Roll out resident state
    packs by population using the `introspect` CLI; defer hard states (C3) until the
    downloader fix + overlay filler are built.
-5. **Phase D** — new federal form types (✅ 4868 + ✅ 1040-ES + ✅ 1040-X done;
-   remaining W-7), then breadth follow-ons.
+5. **Phase D** — new federal form types **DONE** (✅ 4868 + ✅ 1040-ES + ✅ 1040-X
+   + ✅ W-7); what remains in Phase D is breadth follow-ons (more tax years for
+   state packs, community pack-contribution pipeline).
 
 Phases A, E, and the start of C are largely independent and can run in parallel.
 Within C, resident packs (C1) are the long pole; the now-working `introspect` CLI
-is the force multiplier. C3 hard states and D1's W-7 are the only items needing
-**new engine code** (downloader fix, overlay filler, new field types).
+is the force multiplier. **C3 hard states are now the only items needing new engine
+code** (a downloader fix for fetch-blocked AcroForms + an OCR-positioned overlay
+filler for print-only forms) — every other remaining item runs on the existing
+pipeline (W-7, once feared to need new field types, turned out to be a plain AcroForm).

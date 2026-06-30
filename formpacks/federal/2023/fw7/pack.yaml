@@ -1,0 +1,119 @@
+# Form W-7 (Rev. December 2024) -- Application for IRS Individual Taxpayer
+# Identification Number (ITIN). For individuals who are not U.S. citizens or
+# permanent residents and are not eligible for an SSN.
+#
+# REVISION: W-7 is not issued per tax year (one stable revision serves several);
+# this pins the archived Rev. December 2024 (irs-prior/fw7--2024.pdf), the one in
+# use for 2023/2024 filings. The form carries NO tax-year-specific lines.
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the title and "Rev. December 2024" before pinning
+# pdf_sha256 (freshness protocol, dev plan section 7). Field map introspected from
+# this exact revision (root topmostSubform[0]); single page, all 65 mapped widgets
+# below (48 text + 17 of the 21 checkbox widgets that carry real options).
+#
+# NOTE on supporting documents: W-7 requires original identity/foreign-status
+# documents (passport, etc.) to be ATTACHED -- they are not PDF fields, so there
+# is no photo/signature field to fill (the M7 "needs new field types" worry does
+# not apply; W-7 is a plain AcroForm). The applicant has no SSN/ITIN yet, so there
+# is no identifying-number line.
+form: "W-7"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/fw7--2024.pdf
+pdf_sha256: "0917902b7fd3caaf63a4562fea3d23765fdfd4715f3b2470adb56a930556a943"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ===== Application type (check one) =======================================
+  - { line: "application_type.new", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/2", group: application_type, required: true }
+  - { line: "application_type.renew", field: "Page1[0].c1_1[1]", type: checkbox, on_state: "/1", group: application_type }
+  # ===== Reason you're submitting Form W-7 (boxes a-h) ======================
+  # Independent checkboxes: usually one is checked, but combinations occur
+  # (a requires also h; d or e may pair), so they are not a single radio group.
+  - { line: "reason.a", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1" }   # NRA claiming treaty benefit
+  - { line: "reason.b", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1" }   # NRA filing a U.S. return
+  - { line: "reason.c", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1" }   # U.S. resident alien filing
+  - { line: "reason.d", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1" }   # Dependent of U.S. citizen/resident
+  - { line: "reason.e", field: "Page1[0].c1_6[0]", type: checkbox, on_state: "/1" }   # Spouse of U.S. citizen/resident
+  - { line: "reason.f", field: "Page1[0].c1_7[0]", type: checkbox, on_state: "/1" }   # NRA student/professor/researcher
+  - { line: "reason.g", field: "Page1[0].c1_8[0]", type: checkbox, on_state: "/1" }   # Dependent/spouse of NRA visa holder
+  - { line: "reason.h", field: "Page1[0].c1_9[0]", type: checkbox, on_state: "/1" }   # Other
+  - { line: "reason_d.relationship", field: "Page1[0].f1_01[0]", type: text }                 # "If d, relationship to U.S. citizen/resident"
+  - { line: "reason_de.us_person_name", field: "Page1[0].f1_02[0]", type: text }              # "If d or e, name of U.S. citizen/resident"
+  - { line: "reason_de.us_person_ssn", field: "Page1[0].f1_03[0]", type: text }               # "...and SSN/ITIN"
+  - { line: "reason.h_other", field: "Page1[0].f1_04[0]", type: text }                        # "h Other (see instructions)" specify
+  - { line: "treaty.country", field: "Page1[0].f1_05[0]", type: text }                        # "Additional info for a and f: treaty country"
+  - { line: "treaty.article", field: "Page1[0].f1_06[0]", type: text }                        # treaty article number
+  # ===== 1a Name / 1b Name at birth =========================================
+  - { line: "name.first", field: "Page1[0].f1_07[0]", type: text }
+  - { line: "name.middle", field: "Page1[0].f1_08[0]", type: text }
+  - { line: "name.last", field: "Page1[0].f1_09[0]", type: text }
+  - { line: "name_at_birth.first", field: "Page1[0].f1_10[0]", type: text }
+  - { line: "name_at_birth.middle", field: "Page1[0].f1_11[0]", type: text }
+  - { line: "name_at_birth.last", field: "Page1[0].f1_12[0]", type: text }
+  # ===== 2 Mailing address / 3 Foreign (non-U.S.) address ===================
+  - { line: "mailing_address.street", field: "Page1[0].f1_13[0]", type: text }
+  - { line: "mailing_address.city_state_country", field: "Page1[0].f1_14[0]", type: text }
+  - { line: "foreign_address.street", field: "Page1[0].f1_15[0]", type: text }
+  - { line: "foreign_address.city_state_country", field: "Page1[0].f1_16[0]", type: text }
+  # ===== 4 Birth information / 5 Gender =====================================
+  - { line: "birth.date", field: "Page1[0].Line4_ReadOrder[0].f1_17[0]", type: text, maxlen: 8, comb: true }   # MM/DD/YYYY
+  - { line: "birth.country", field: "Page1[0].f1_18[0]", type: text }
+  - { line: "birth.city_state", field: "Page1[0].f1_19[0]", type: text }
+  - { line: "gender.male", field: "Page1[0].c1_10[0]", type: checkbox, on_state: "/1", group: gender }
+  - { line: "gender.female", field: "Page1[0].c1_10[1]", type: checkbox, on_state: "/2", group: gender }
+  # ===== 6 Other information =================================================
+  - { line: "citizenship", field: "Page1[0].f1_20[0]", type: text }                  # 6a country(ies) of citizenship
+  - { line: "foreign_tax_id", field: "Page1[0].f1_21[0]", type: text }               # 6b foreign tax I.D. number
+  - { line: "visa_info", field: "Page1[0].f1_22[0]", type: text }                    # 6c type of U.S. visa, number, expiration
+  # 6d Identification document(s) submitted (check one for the first document).
+  - { line: "id_document.passport", field: "Page1[0].c1_11[0]", type: checkbox, on_state: "/1", group: id_document }
+  - { line: "id_document.drivers_license", field: "Page1[0].c1_11[1]", type: checkbox, on_state: "/2", group: id_document }
+  - { line: "id_document.uscis", field: "Page1[0].c1_11[2]", type: checkbox, on_state: "/3", group: id_document }
+  - { line: "id_document.other", field: "Page1[0].c1_11[3]", type: checkbox, on_state: "/4", group: id_document }
+  - { line: "id_document.other_specify", field: "Page1[0].f1_23[0]", type: text }
+  - { line: "id_document.issued_by", field: "Page1[0].Issued_ReadOrder[0].f1_24[0]", type: text }
+  - { line: "id_document.number", field: "Page1[0].Issued_ReadOrder[0].f1_25[0]", type: text }
+  - { line: "id_document.exp_date", field: "Page1[0].Issued_ReadOrder[0].f1_26[0]", type: text, maxlen: 8, comb: true }
+  - { line: "id_document.date_of_entry", field: "Page1[0].f1_27[0]", type: text, maxlen: 8, comb: true }   # date of entry into the U.S.
+  # 6e Previously received an ITIN/IRSN?  No/Don't know vs Yes.
+  - { line: "prior_itin.no", field: "Page1[0].c1_12[0]", type: checkbox, on_state: "/1", group: prior_itin_received }
+  - { line: "prior_itin.yes", field: "Page1[0].c1_12[1]", type: checkbox, on_state: "/2", group: prior_itin_received }
+  # 6f ITIN and/or IRSN (segmented comb fields) + name under which issued.
+  - { line: "prior_itin.itin_area", field: "Page1[0].ITIN[0].f1_28[0]", type: text, maxlen: 3, comb: true }
+  - { line: "prior_itin.itin_group", field: "Page1[0].ITIN[0].f1_29[0]", type: text, maxlen: 2, comb: true }
+  - { line: "prior_itin.itin_serial", field: "Page1[0].ITIN[0].f1_30[0]", type: text, maxlen: 4, comb: true }
+  - { line: "prior_itin.irsn_area", field: "Page1[0].IRSN[0].f1_31[0]", type: text, maxlen: 3, comb: true }
+  - { line: "prior_itin.irsn_group", field: "Page1[0].IRSN[0].f1_32[0]", type: text, maxlen: 2, comb: true }
+  - { line: "prior_itin.irsn_serial", field: "Page1[0].IRSN[0].f1_33[0]", type: text, maxlen: 4, comb: true }
+  - { line: "prior_itin.issued_name_first", field: "Page1[0].f1_34[0]", type: text }
+  - { line: "prior_itin.issued_name_middle", field: "Page1[0].f1_35[0]", type: text }
+  - { line: "prior_itin.issued_name_last", field: "Page1[0].f1_36[0]", type: text }
+  # 6g College/university or company (for students/professors).
+  - { line: "school.name", field: "Page1[0].f1_37[0]", type: text }
+  - { line: "school.city_state", field: "Page1[0].f1_38[0]", type: text }
+  - { line: "school.length_of_stay", field: "Page1[0].f1_39[0]", type: text }
+  # ===== Sign Here (signature/date are ink-only) ============================
+  - { line: "phone", field: "Page1[0].f1_40[0]", type: text }
+  - { line: "delegate.name", field: "Page1[0].f1_41[0]", type: text }
+  - { line: "delegate.parent", field: "Page1[0].c1_13[0]", type: checkbox, on_state: "/1", group: delegate_relationship }
+  - { line: "delegate.power_of_attorney", field: "Page1[0].c1_13[1]", type: checkbox, on_state: "/2", group: delegate_relationship }
+  - { line: "delegate.court_guardian", field: "Page1[0].c1_13[2]", type: checkbox, on_state: "/3", group: delegate_relationship }
+  # ===== Acceptance Agent's Use ONLY ========================================
+  - { line: "acceptance_agent.phone", field: "Page1[0].f1_42[0]", type: text }
+  - { line: "acceptance_agent.fax", field: "Page1[0].f1_43[0]", type: text }
+  - { line: "acceptance_agent.name_title", field: "Page1[0].f1_44[0]", type: text }
+  - { line: "acceptance_agent.company", field: "Page1[0].f1_45[0]", type: text }
+  - { line: "acceptance_agent.ein", field: "Page1[0].f1_46[0]", type: text, maxlen: 10 }
+  - { line: "acceptance_agent.ptin", field: "Page1[0].f1_47[0]", type: text, maxlen: 11 }
+  - { line: "acceptance_agent.office_code", field: "Page1[0].f1_48[0]", type: text }
+# W-7 has no arithmetic and copies no value from another in-filing form.
+relations: []
+cross_form: []
+identity_fields: [name.first, name.last]
+# Signed in the "Sign Here" block (ink signature, no widget).
+signature: { page: 1 }
+# W-7 has a single fixed filing address (IRS ITIN Operation, Austin TX) -- not a
+# state table -- but the exact PO box/ZIP is pinned from the W-7 *instructions*,
+# so it is sourced into the knowledge layer rather than guessed here.
+mailing: null
