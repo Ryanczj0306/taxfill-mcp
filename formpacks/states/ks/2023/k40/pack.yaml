@@ -1,0 +1,569 @@
+# Form K-40, 2023 -- Kansas Individual Income Tax Return.
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title ("2023 KANSAS INDIVIDUAL
+# INCOME TAX"), the form number "K-40", and the revision stamp "(Rev. 7-23)"
+# before pinning pdf_sha256 (freshness protocol). Page 2 prints "K-40 Page 2".
+#
+# Layout. FLAT AcroForm: acroform_root is empty -- every widget's field name is
+# the raw flat id the form ships with (a descriptive English phrase, e.g.
+# "your first name", "1 federal adjusted gross income...", "Signature of
+# taxpayer"). No /Parent name chain (verified: all 134 top-level fields have
+# /T and no /Parent).
+#
+# This is a single 2-page PDF and BOTH PAGES ARE THE FILED RETURN. Residents
+# and nonresidents share this form; every line is mapped.
+#   page 1 -- header (names, two SSNs, mailing address, school district, county,
+#             last-name-letters, daytime phone), name/address-changed and
+#             deceased flags, Amended Return (3 boxes), Filing Status (4 boxes),
+#             Residency Status (3 boxes + part-year date range), Exemptions and
+#             Dependents (federal-exemptions count, head-of-household add,
+#             disabled-veteran allowance, total Kansas exemptions, and a
+#             7-row dependents table: name/DOB/relationship/SSN), and the Food
+#             Sales Tax Credit worksheet (questions A-C yes/no, lines D-H).
+#   page 2 -- numbered lines 1-44 (Income 1-3, Deductions 4-7, Tax Computation
+#             8-12, Credits 13-19, Withholding/Payments 20-28, Balance Due
+#             29-33, Overpayment / Contributions 34-44) plus the Signature(s)
+#             block (authorize-discussion checkbox, taxpayer + spouse signature
+#             & date, preparer signature/phone/PTIN).
+#
+# Coverage. The blank PDF exposes 134 fillable AcroForm widget entries; ALL 134
+# are mapped here (109 text + 25 checkbox). Nothing is intentionally omitted.
+#
+# Money vs text. Every numbered dollar line on page 2 prints a ".00" whole-
+# dollar cents suffix and is mapped `money`. Line 9 (Nonresident percentage,
+# field name "0000", prints "100.0000"-style 4-decimal fraction) stays `text`
+# so the fraction is not rounded away. The header text strings (names, address,
+# SSNs, district/county codes, phone) and signature strings stay `text`. The
+# Food Sales Tax Credit worksheet entries (D federal AGI, E/F/G counts, H
+# credit amount) and the small count boxes in the Exemptions block stay `text`
+# because they are entered as transcribed figures on this worksheet section.
+#
+# Checkboxes / radio groups. Each printed question that offers mutually
+# exclusive options is implemented on this form as several SEPARATE single-state
+# /Btn widgets (each on_state "/Yes"), not one shared /Btn field. Per
+# CONVENTIONS the harness only REQUIRES a shared group when widgets share one
+# `field`; here no two options share a field. The yes/no pairs of the Food Sales
+# Tax Credit questions A/B/C still carry a shared `group` (they are the two
+# options of one question). Filing status, residency status, and amended-return
+# boxes are each independent flags the filer marks ONE of, mapped as individual
+# checkboxes (no shared field to force a group). The three "if a negative check
+# this field" boxes (lines 1, 2, 3), the line-28 negative box, the line-32
+# commercial-farming/fishing box, the name/address-changed flag, the deceased
+# flag, and the authorize-discussion box are all standalone /Yes flags.
+#
+# Relations. Only unconditional single-box on-face equalities are declared
+# (every operand mapped to one line). Lines whose printed instruction floors at
+# zero ("if less than zero enter 0": 7, 19; "cannot be less than zero": 16) or
+# branch on a comparison (29 underpayment, 33 amount-you-owe, 34 overpayment,
+# 44 refund) are OMITTED per the conservative house style. Line 6 ("add lines 4
+# and 5") and line 12 ("residents: add lines 8 & 11") are declared.
+#
+# Cross_form. Line 1's printed label is "Federal adjusted gross income (as
+# reported on your federal income tax return)" -- federal AGI = f1040.11.
+form: "K-40"
+jurisdiction: states/ks
+tax_year: 2023
+source_url: https://www.ksrevenue.gov/pdf/k-4023.pdf
+pdf_sha256: "a7f14133e87dc0b865a29f030acbbcd575911ac98e6d7a3d71affaf5ec57c1a4"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header (name / address)
+  - line: name.first                     # "Your First Name"
+    field: your first name
+    type: text
+  - line: name.middle_initial            # "Initial"
+    field: your middle initial
+    type: text
+    maxlen: 3
+  - line: name.last                      # "Last Name"
+    field: your last name
+    type: text
+  - line: spouse.name.first              # "Spouse's First Name"
+    field: spouses first name
+    type: text
+  - line: spouse.name.middle_initial     # "Initial"
+    field: spouses middle initial
+    type: text
+    maxlen: 3
+  - line: spouse.name.last               # "Last Name"
+    field: spouses last name
+    type: text
+  - line: mailing_address.street         # "Mailing Address (Number and Street, including Rural Route)"
+    field: mailing address
+    type: text
+  - line: school_district_number         # "School District No."
+    field: school district number
+    type: text
+    maxlen: 11
+  - line: mailing_address.city           # "City, Town, or Post Office"
+    field: city town or post office
+    type: text
+  - line: mailing_address.state          # "State"
+    field: state - abbreviation
+    type: text
+    maxlen: 3
+  - line: mailing_address.zip            # "Zip Code"
+    field: zip code - 5 digit
+    type: text
+    maxlen: 6
+  - line: county_abbreviation            # "County Abbreviation"
+    field: county - abbreviation
+    type: text
+    maxlen: 11
+  - line: name.last_four_letters         # "Enter the first four letters of your last name. Use ALL CAPITAL letters."
+    field: enter the first four letters of your last name - all CAPS
+    type: text
+    maxlen: 11
+  - line: identifying_number             # "Your Social Security Number"
+    field: your social security number
+    type: text
+  - line: spouse.name.last_four_letters  # "Enter the first four letters of your spouse's last name."
+    field: enter the first four letters of your spouses last name - all CAPS
+    type: text
+    maxlen: 11
+  - line: spouse.identifying_number      # "Spouse's Social Security Number"
+    field: your spouses social security number
+    type: text
+  - line: daytime_telephone_number       # "Daytime Telephone Number"
+    field: daytime telephone number
+    type: text
+
+  # ---- name/address-changed and deceased flags
+  - line: name_or_address_changed.yes    # "If your name or address has changed since last year, mark an X"
+    field: check if your name or address has changed since last year
+    type: checkbox
+    on_state: /Yes
+  - line: deceased.yes                   # "If taxpayer (or spouse if filing joint) died during this tax year, mark an X"
+    field: check if taxpayer or spouse if filing joint died during this tax year
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Amended Return (Mark ONE)
+  - line: amended_return.kansas_only     # "Amended affects Kansas only"
+    field: amended return - amended affects kansas only
+    type: checkbox
+    on_state: /Yes
+  - line: amended_return.federal         # "Amended Federal tax return"
+    field: amended return - amended federal tax return
+    type: checkbox
+    on_state: /Yes
+  - line: amended_return.irs_adjustment  # "Adjustment by the IRS"
+    field: amended return - adjustment by the irs
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Filing Status (Mark ONE)
+  - line: filing_status.single           # "Single"
+    field: filing status - single
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status.married_filing_joint  # "Married filing joint (Even if only one had income)"
+    field: filing status - married filing joint
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status.married_filing_separate  # "Married filing separate"
+    field: filing status - married filing separate
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status.head_of_household  # "Head of household (Do not mark if filing a joint return)"
+    field: filing status - head of household
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Residency Status (Mark ONE)
+  - line: residency_status.resident      # "Resident"
+    field: residency status - resident
+    type: checkbox
+    on_state: /Yes
+  - line: residency_status.part_year     # "Part-year resident (Complete Sch. S, Part B)"
+    field: residency status - part-year resident
+    type: checkbox
+    on_state: /Yes
+  - line: residency_status.part_year_from  # "Part-year resident from"
+    field: part-year resident from
+    type: text
+    maxlen: 9
+  - line: residency_status.part_year_to    # "... to"
+    field: part-year resident to
+    type: text
+    maxlen: 9
+  - line: residency_status.nonresident   # "Nonresident (Complete Sch. S, Part B)"
+    field: residency status - nonresident
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Exemptions and Dependents
+  - line: exemptions.federal_total       # "Enter the total exemptions for you, your spouse, and each dependent."
+    field: enter the number of exemptions you claimed on your federal return
+    type: text
+    maxlen: 5
+  - line: exemptions.head_of_household_add  # "If filing status above is Head of household, add one exemption."
+    field: if filing status above is head of household, enter 1
+    type: text
+    maxlen: 2
+  - line: exemptions.disabled_veteran    # "If claiming the Disabled Veteran Personal Exemption allowance, enter the total here."
+    field: If claiming the Disabled Veteran Personal Exemption Allowance, enter the total here
+    type: text
+    maxlen: 2
+  - line: exemptions.total_kansas        # "Total Kansas exemptions."
+    field: total kansas exemptions
+    type: text
+    maxlen: 5
+  # ---- dependents table (7 rows: name / DOB / relationship / SSN)
+  - line: dependent_1.name
+    field: enter requested information for all persons claimed as a dependent - name
+    type: text
+  - line: dependent_1.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth
+    type: text
+  - line: dependent_1.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship
+    type: text
+  - line: dependent_1.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number
+    type: text
+  - line: dependent_2.name
+    field: enter requested information for all persons claimed as a dependent - name 2
+    type: text
+  - line: dependent_2.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth 2
+    type: text
+  - line: dependent_2.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship 2
+    type: text
+  - line: dependent_2.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number 2
+    type: text
+  - line: dependent_3.name
+    field: enter requested information for all persons claimed as a dependent - name 3
+    type: text
+  - line: dependent_3.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth 3
+    type: text
+  - line: dependent_3.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship 3
+    type: text
+  - line: dependent_3.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number 3
+    type: text
+  - line: dependent_4.name
+    field: enter requested information for all persons claimed as a dependent - name 4
+    type: text
+  - line: dependent_4.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth 4
+    type: text
+  - line: dependent_4.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship 4
+    type: text
+  - line: dependent_4.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number 4
+    type: text
+  - line: dependent_5.name
+    field: enter requested information for all persons claimed as a dependent - name 5
+    type: text
+  - line: dependent_5.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth 5
+    type: text
+  - line: dependent_5.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship 5
+    type: text
+  - line: dependent_5.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number 5
+    type: text
+  - line: dependent_6.name
+    field: enter requested information for all persons claimed as a dependent - name 6
+    type: text
+  - line: dependent_6.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth 6
+    type: text
+  - line: dependent_6.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship 6
+    type: text
+  - line: dependent_6.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number 6
+    type: text
+  - line: dependent_7.name
+    field: enter requested information for all persons claimed as a dependent - name 7
+    type: text
+  - line: dependent_7.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth 7
+    type: text
+  - line: dependent_7.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship 7
+    type: text
+  - line: dependent_7.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number 7
+    type: text
+
+  # ---- Food Sales Tax Credit worksheet (questions A-C yes/no, lines D-H)
+  - line: food_sales_tax_credit.a.yes    # "A. Had a dependent child who lived with you all year and was under 18 all of 2023? YES"
+    field: a had a child who lived with you all year and was under the age of 18 all of 2014 - yes
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.a
+  - line: food_sales_tax_credit.a.no     # "A. ... NO"
+    field: a had a child who lived with you all year and was under the age of 18 all of 2014 - no
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.a
+  - line: food_sales_tax_credit.b.yes    # "B. Were you (or spouse) 55 or older all of 2023 (born before Jan 1, 1968)? YES"
+    field: b were you or spouse 55 years of age or older al of 2014 born before january 1, 1959 - yes
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.b
+  - line: food_sales_tax_credit.b.no     # "B. ... NO"
+    field: b were you or spouse 55 years of age or older al of 2014 born before january 1, 1959 - no
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.b
+  - line: food_sales_tax_credit.c.yes    # "C. Were you (or spouse) totally and permanently disabled or blind all of 2023? YES"
+    field: c were you or spouse totally or permanently disabled or blind all of 2014 regardless of age - yes
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.c
+  - line: food_sales_tax_credit.c.no     # "C. ... NO"
+    field: c were you or spouse totally or permanently disabled or blind all of 2014 regardless of age - no
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.c
+  - line: food_sales_tax_credit.d.negative  # "D." shade-box-for-negative marker preceding the federal AGI entry
+    field: d if a negative click here is not skip
+    type: checkbox
+    on_state: /Yes
+  - line: food_sales_tax_credit.d        # "D. If you answered Yes to A/B/C, enter your federal AGI from line 1 of this return."
+    field: "d if you answered yes to a, b, or c enter your federal adjusted gross income line 1 of this return. if it is more than $30,615 stop here, you do not qualify for this credit"
+    type: text
+  - line: food_sales_tax_credit.e        # "E. Number of exemptions claimed."
+    field: e number of exemptions claimed on your federal income tax reutrn
+    type: text
+    maxlen: 5
+  - line: food_sales_tax_credit.f        # "F. Number of dependents that are 18 or older (born before Jan 1, 2006)"
+    field: f number of dependents that are 18 years of age or older, born before january 1, 1997
+    type: text
+    maxlen: 5
+  - line: food_sales_tax_credit.g        # "G. Total qualifying exemptions (subtract line F from line E)"
+    field: g total qualifying exemptions - subtract line f from line e
+    type: text
+    maxlen: 5
+  - line: food_sales_tax_credit.h        # "H. Food Sales Tax Credit (multiply line G by $125). Enter here and on line 18."
+    field: "h food sales tax credit, multiply line g by $125. enter the result here and on line 17 of this form"
+    type: text
+
+  # ============================================ page 2 -- Income (lines 1-3)
+  - line: 1.negative                     # line 1 shade-box-for-negative marker
+    field: 1 if a negative check this field
+    type: checkbox
+    on_state: /Yes
+  - line: "1"                            # 1 Federal adjusted gross income (as reported on your federal income tax return)
+    field: 1 federal adjusted gross income, as reported on your federal income tax return
+    type: money
+  - line: 2.negative                     # line 2 shade-box-for-negative marker
+    field: 2 if a negative check this field
+    type: checkbox
+    on_state: /Yes
+  - line: "2"                            # 2 Modifications (from Schedule S, line A25; enclose Schedule S)
+    field: 2 modifications, frmo sch s line a28, enclose sch s
+    type: money
+  - line: 3.negative                     # line 3 shade-box-for-negative marker
+    field: 3 if a negative check this field
+    type: checkbox
+    on_state: /Yes
+  - line: "3"                            # 3 Kansas adjusted gross income (line 2 added to or subtracted from line 1)
+    field: 3 kansas adjusted gross income, line 2 added or subtracted from line 1
+    type: money
+
+  # ---- Deductions (lines 4-7)
+  - line: "4"                            # 4 Standard deduction OR itemized deductions
+    field: 4 standard deduction or itemized deductions
+    type: money
+  - line: "5"                            # 5 Exemption allowance ($2,250 x number of exemptions claimed)
+    field: 5 exemption allowance, $2,250 x number of exemptions claimed
+    type: money
+  - line: "6"                            # 6 Total deductions (add lines 4 and 5)
+    field: 6 total dudecutions, add lines 4 and 5
+    type: money
+  - line: "7"                            # 7 Taxable income (subtract line 6 from line 3; if less than zero, enter 0)
+    field: 7 taxable income, subtract line6 from line 3; if less than zero enter 0
+    type: money
+
+  # ---- Tax Computation (lines 8-12)
+  - line: "8"                            # 8 Tax (from Tax Tables or Tax Computation Schedule)
+    field: 8 tax, use tax tables ot tax computation schedule
+    type: money
+  - line: "9"                            # 9 Nonresident percentage (from Schedule S, line B23; or if 100%, enter 100.0000)
+    field: "9 nonresident percentage, from sch s line b23 or if 100% enter 100.0000"
+    type: text
+  - line: "10"                           # 10 Nonresident tax (multiply line 8 by line 9)
+    field: 10 nonresident tax, multiply line 8 by line 9
+    type: money
+  - line: "11"                           # 11 Kansas tax on lump sum distributions (residents only)
+    field: 11 kansas tax on lump sum distributions, residents only
+    type: money
+  - line: "12"                           # 12 TOTAL INCOME TAX (residents: add lines 8 & 11; nonresidents: amount from line 10)
+    field: 12 total income tax, residnets add lines 8 and 11; nonresidents enter amount form line 10
+    type: money
+
+  # ---- Credits (lines 13-19)
+  - line: "13"                           # 13 Credit for taxes paid to other states
+    field: 13 credit for taxes paid to other states - enclose return(s) from other states
+    type: money
+  - line: "14"                           # 14 Credit for child and dependent care expenses (residents only)
+    field: 14 credit for child and dependent care expenses
+    type: money
+  - line: "15"                           # 15 Other credits (enclose all appropriate credit schedules)
+    field: 15 other credits
+    type: money
+  - line: "16"                           # 16 Subtotal (subtract lines 13, 14 and 15 from line 12)
+    field: 16 subtotal, subtract lines 13, 14 and 15 from line 12
+    type: money
+  - line: "17"                           # 17 Earned income tax credit (from worksheet on page 8 of instructions)
+    field: 17 earned income tax credit
+    type: money
+  - line: "18"                           # 18 Food sales tax credit (from line H, front of this form)
+    field: 18 food sales tax credit, from line h
+    type: money
+  - line: "19"                           # 19 Total tax balance (subtract lines 17 and 18 from line 16; cannot be less than zero)
+    field: 19 total tax balance, subtract lines 20-26, then subtract line 27
+    type: money
+
+  # ---- Withholding and Payments (lines 20-28)
+  - line: "20"                           # 20 Kansas income tax withheld from W-2s and/or 1099s
+    field: 20 kansas income tax withheld from w2, 1099 or k19
+    type: money
+  - line: "21"                           # 21 Estimated tax paid
+    field: 21 estimated tax paid
+    type: money
+  - line: "22"                           # 22 Amount paid with Kansas extension
+    field: 22 amount paid with kansas extension
+    type: money
+  - line: "23"                           # 23 Refundable portion of earned income credit
+    field: 23 refundable portion of earned income tax credit
+    type: money
+  - line: "24"                           # 24 Refundable portion of tax credits
+    field: 24 refundable portion of tax credits
+    type: money
+  - line: "25"                           # 25 Payments remitted with original return
+    field: 25 payments remitted with original return
+    type: money
+  - line: "26"                           # 26 Credit for tax paid on the K-120S (enclose K-9)
+    field: 26 credit for tax paid on the K-120S, enlcose K-9
+    type: money
+  - line: "27"                           # 27 Overpayment from original return (this figure is a subtraction)
+    field: 27 overpayment from original return - this figure is a subtraction
+    type: money
+  - line: 28.negative                    # line 28 shade-box-for-negative marker
+    field: 28 if a negative check this field
+    type: checkbox
+    on_state: /Yes
+  - line: "28"                           # 28 Total refundable credits (add lines 20 through 26; then subtract line 27)
+    field: 28 total refundable credits, add lines 20 - 26 and subtract line 27
+    type: money
+
+  # ---- Balance Due (lines 29-33)
+  - line: "29"                           # 29 Underpayment (if line 19 is greater than line 28, enter the difference)
+    field: 29 underpayment, if line 19 is greater than line 28 enter the difference here
+    type: money
+  - line: "30"                           # 30 Interest
+    field: 30 interest
+    type: money
+  - line: "31"                           # 31 Penalty
+    field: 31 penalty
+    type: money
+  - line: "32"                           # 32 Estimated Tax Penalty
+    field: 32 estimated tax penalty
+    type: money
+  - line: 32.commercial_farming_fishing  # 32 "Mark box if engaged in commercial farming or fishing in 2023"
+    field: 32 mark box if engaged in commercial farming or fishing in 2022
+    type: checkbox
+    on_state: /Yes
+  - line: "33"                           # 33 AMOUNT YOU OWE (add lines 29 through 32 and any entries on lines 36 through 43)
+    field: 33 amount you owe, add lines 29 - 32 and any entries on lines 36 - 43
+    type: money
+
+  # ---- Overpayment / Contributions (lines 34-44)
+  - line: "34"                           # 34 Overpayment (if line 19 is less than line 28, enter the difference)
+    field: 34 overpayment, if line 19 is less than 28 enter differnce here
+    type: money
+  - line: "35"                           # 35 CREDIT FORWARD (amount applied to 2024 estimated tax)
+    field: 35 credit forward, enter amount you wish to be applied to your 2023 estimated tax
+    type: money
+  - line: "36"                           # 36 CHICKADEE CHECKOFF (Kansas Nongame Wildlife Improvement Program)
+    field: 36 chickadee checkoff
+    type: money
+  - line: "37"                           # 37 SENIOR CITIZENS MEALS ON WHEELS CONTRIBUTION PROGRAM
+    field: 37 senior citizens meals on wheels contribution program
+    type: money
+  - line: "38"                           # 38 BREAST CANCER RESEARCH FUND
+    field: 38 breast cancer research fund
+    type: money
+  - line: "39"                           # 39 MILITARY EMERGENCY RELIEF FUND
+    field: 39 military emergency relief fund
+    type: money
+  - line: "40"                           # 40 KANSAS HOMETOWN HEROES FUND
+    field: 40 kansas hometown heros fund
+    type: money
+  - line: "41"                           # 41 KANSAS CREATIVE ARTS INDUSTRY FUND
+    field: 41 kansas creative arts industry fund
+    type: money
+  - line: "42"                           # 42 LOCAL SCHOOL DISTRICT CONTRIBUTION FUND
+    field: 42 local school district contribution fund
+    type: money
+  - line: 42.school_district_number      # 42 "School District Number"
+    field: 42 school district number
+    type: text
+    maxlen: 6
+  - line: "43"                           # 43 KANSAS HISTORIC SITE CONTRIBUTION FUND
+    field: 43 Kansas Histric Site Contribution Fund
+    type: money
+  - line: 43.historic_site_number        # 43 "Historic Site Number"
+    field: 43 Historic Site number
+    type: text
+    maxlen: 6
+  - line: "44"                           # 44 REFUND (subtract lines 35 through 43 from line 34)
+    field: 44 refund, subtract lines 35 - 43 from line 34
+    type: money
+
+  # ---- Signature(s)
+  - line: signature.authorize_discussion  # "I authorize the Director of Taxation ... to discuss my return ... with my preparer."
+    field: i authorize the director of taxation or the directors designee to discuss my return and enclosures with my preparer
+    type: checkbox
+    on_state: /Yes
+  - line: signature.taxpayer             # "Signature of taxpayer"
+    field: Signature of taxpayer
+    type: text
+  - line: signature.taxpayer_date        # "DATE"
+    field: date signed
+    type: text
+  - line: signature.spouse               # "Signature of spouse (If married filing joint)"
+    field: Signature of spouse
+    type: text
+  - line: signature.spouse_date          # "DATE"
+    field: date signed 2
+    type: text
+  - line: preparer.signature             # "Signature of preparer other than taxpayer"
+    field: Signature of preparer
+    type: text
+  - line: preparer.phone                 # "Phone number of preparer"
+    field: preparers phone number
+    type: text
+  - line: preparer.id_number             # "Tax Preparer's PTIN, EIN or SSN"
+    field: preparers PTIN, ein or ssn
+    type: text
+relations:
+  - "6 == 4 + 5"                         # 6 "Total deductions (add lines 4 and 5)"
+  - "12 == 8 + 11"                       # 12 residents: "add lines 8 & 11"
+cross_form:
+  # Line 1 "Federal adjusted gross income (as reported on your federal income
+  # tax return)" -- federal AGI from Form 1040 line 11.
+  - "1 == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null
