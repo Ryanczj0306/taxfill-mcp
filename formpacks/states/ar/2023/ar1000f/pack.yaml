@@ -1,0 +1,917 @@
+# Form AR1000F, 2023 -- Arkansas Individual Income Tax Return, FULL YEAR RESIDENT.
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title ("2023 AR1000F / ARKANSAS
+# INDIVIDUAL INCOME TAX RETURN / Full Year Resident"), the page footers
+# "AR1000F, Page 1 (R 7/3/2023)", "AR1000F Page 2 (R 6/13/2023)" and
+# "AR1000F Page 3 (R 7/5/2023)", and the barcodes ITAR231/ITAR232/ITAR233
+# before pinning pdf_sha256 (freshness protocol).
+#
+# Layout. FLAT AcroForm: acroform_root is empty. The blank ships GENERIC widget
+# names ("F_NR-1-4", "F_NR0-2-1", "F_NR-3-1", "Signature1" ...) that carry no
+# semantic line label, so every line below was placed by READING the
+# sentinel-sweep render of its page (each widget shows its own field name), not
+# inferred from the name. No /Parent name chain.
+# AR1000F is a 3-page return and ALL THREE PAGES ARE THE FILED RETURN (no
+# instructions / tax tables / worksheets interleaved):
+#   page 1 -- header (fiscal-year dates, amended flag, primary/spouse name+MI+
+#             SSN+deceased flags, mailing address, foreign-address flag, emails,
+#             1099-G/booklet/extension request boxes, DL#/state-ID rows),
+#             FILING STATUS 1-6 (one /Btn, states /1../6), line 7A personal-
+#             credit checkboxes + count + amount, dependents table, 7B/7C;
+#   page 2 -- Primary-SSN repeat, INCOME lines 8-25 and TAX COMPUTATION lines
+#             26-38, in TWO COLUMNS: (A) Primary/Joint Income, (B) Spouse's
+#             Income (Status 4 Only);
+#   page 3 -- Primary-SSN repeat, PAYMENTS 39-46, REFUND/TAX-DUE 47-52C, DIRECT
+#             DEPOSIT (two routing/account comb rows + checking/savings + amts),
+#             Sign Here block (primary/spouse), preparer "may discuss" Yes/No,
+#             Paid Preparer block.
+#
+# Columns (status-based income split). On page 2, column (A) is "Primary/Joint
+# Income" and column (B) is "Spouse's Income -- Status 4 Only" (filing status 4
+# = married filing separately on the same return). Paired widgets are mapped as
+# <line>.a (column A primary/joint) and <line>.b (column B spouse). Lines that
+# the form prints with ONLY a column-A or a single right-hand box (29 col A/B
+# both present; 30-33, 37, 38 single right box; 34-36 single col-A box) are
+# mapped accordingly -- bare <line> where the form has one box, .a/.b where it
+# prints both. Lines 9 (military pay), 17 (military retirement) and 18A/18B
+# (gross/taxable entry boxes) have inline Primary/Spouse entry boxes mapped as
+# .primary / .spouse sub-lines, plus the resulting column figure on .a/.b.
+#
+# Coverage. The blank exposes 228 fillable AcroForm widget ENTRIES (introspect
+# skeleton); the filing-status /Btn (F_NR-1-33) contributes 6 entries on one
+# field, the two checking/savings /Btn (F_NR-3-19, F_NR-3-47) 2 each, and the
+# may-discuss /Btn (F_NR-3-80) 2, while F_NR-1-8 repeats as the SSN header on
+# all 3 pages (one field, 3 widget entries). Mapped here: 211 lines.
+# Intentionally OMITTED (2 distinct fields): "Print Button" and "Clear Button"
+# -- JS PUSHBUTTONS at the top of page 1 (their on_states are appearance-dict
+# keys /BBox /Filter /Type ..., not fillable export values), not data fields.
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix and is
+# mapped `money`. Identity / name / address / email / date / signature /
+# preparer strings stay `text`. The line-7A and 7B "X $29 =" count boxes
+# (F_NR-1-48 maxlen 2, F_NR-1-65 maxlen 2) hold a COUNT (no schema int type) ->
+# `text`. The DL "Your state"/"Spouse state" 2-char boxes, the ",20__" 2-digit
+# fiscal-year box, the early-childhood certification number, and the 52A UEP
+# exception-code box are `text`. Routing/account direct-deposit cells are
+# one-char-per-cell text widgets (maxlen 1).
+#
+# SSN. The SSN boxes (F_NR-1-8 primary, F_NR-1-13 spouse) are plain /Tx text
+# widgets (NOT comb -- no Ff comb bit, no MaxLen in the skeleton), so they are
+# mapped `text` with format:ssn_digits_only and no comb flag. F_NR-1-8 is the
+# primary filer's number -> identity id `identifying_number`.
+#
+# Checkboxes / radio groups. The single /Btn fields with multiple kid states are
+# mapped one line per state on the SHARED field with the exact on_state read
+# from the blank: F_NR-1-33 filing status (/1../6), F_NR-3-19 / F_NR-3-47
+# checking-or-savings (/Checking /Savings), F_NR-3-80 may-discuss (/YES /No).
+# All other checkboxes are independent single-state /Yes flags (amended,
+# deceased x2, foreign-address, 1099-G/booklet/extension requests, the 7A
+# personal-credit boxes, the line-27 tax-table selectors, the foreign-account
+# direct-deposit flag).
+#
+# Relations. Only unconditional on-face additions whose every operand is mapped
+# to a single (undotted) line are declared. Per-column arithmetic on the .a/.b
+# income/tax lines cannot be expressed (the relations grammar tokenizes only
+# digit+letter line ids, not dotted column lines) and is omitted, as are lines
+# whose printed instruction floors at zero or branches on a comparison (38, 47,
+# 50, 51).
+#
+# Cross_form. Line 25 is "ADJUSTED GROSS INCOME"; AR1000F builds AGI from its
+# OWN line-by-line income (lines 8-24), it does NOT start from federal 1040
+# line 11, so there is no unconditional single-line == f1040.11 link. cross_form
+# is therefore [].
+form: "AR1000F"
+jurisdiction: states/ar
+tax_year: 2023
+source_url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf
+pdf_sha256: "5d592aac8695131a77ef36512de63a66bfe723b6612e07ac110bf3999c94633a"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header
+  - line: tax_year_end_date              # "Jan. 1 - Dec. 31, 2023 or fiscal year ending ____"
+    field: F_NR-1-1
+    type: text
+  - line: tax_year_end_year              # ", 20 __" (2-digit year)
+    field: F_NR-1-2
+    type: text
+    maxlen: 2
+  - line: amended_return.yes             # "CHECK BOX IF AMENDED RETURN"
+    field: F_NR-1-3
+    type: checkbox
+    on_state: /Yes
+  # ---- primary name + deceased + SSN
+  - line: name                           # "Primary's legal first name" + last name (identity name)
+    field: F_NR-1-4
+    type: text
+  - line: name.primary_mi                # Primary MI
+    field: F_NR-1-5
+    type: text
+    maxlen: 1
+  - line: name.primary_last              # Primary Last name
+    field: F_NR-1-6
+    type: text
+  - line: deceased.primary               # "Check if Deceased" (primary)
+    field: F_NR-1-7
+    type: checkbox
+    on_state: /Yes
+  - line: identifying_number             # "Primary's social security number"
+    field: F_NR-1-8
+    type: text
+    format: ssn_digits_only
+  # ---- spouse name + deceased + SSN
+  - line: spouse.name                    # "Spouse's legal first name"
+    field: F_NR-1-9
+    type: text
+  - line: spouse.name_mi                 # Spouse MI
+    field: F_NR-1-10
+    type: text
+    maxlen: 1
+  - line: spouse.name_last               # Spouse Last name
+    field: F_NR-1-11
+    type: text
+  - line: deceased.spouse                # "Check if Deceased" (spouse)
+    field: F_NR-1-12
+    type: checkbox
+    on_state: /Yes
+  - line: spouse.identifying_number      # "Spouse's social security number"
+    field: F_NR-1-13
+    type: text
+    format: ssn_digits_only
+  # ---- address
+  - line: mailing_address.street         # "Mailing address (number and street, P.O. box or rural route)"
+    field: F_NR-1-14
+    type: text
+  - line: mailing_address.city           # City
+    field: F_NR-1-15
+    type: text
+  - line: mailing_address.state          # State or province
+    field: F_NR-1-16
+    type: text
+  - line: mailing_address.zip            # ZIP
+    field: F_NR-1-17
+    type: text
+  - line: mailing_address.outside_us     # "Check if address is outside U.S."
+    field: F_NR-1-18
+    type: checkbox
+    on_state: /Yes
+  - line: mailing_address.foreign_country  # "Foreign country name"
+    field: F_NR-1-19
+    type: text
+  - line: primary_email                  # "Primary email"
+    field: F_NR-1-20
+    type: text
+  - line: secondary_email                # "Secondary email"
+    field: F_NR-1-21
+    type: text
+  # ---- request checkboxes
+  - line: request_1099g.yes              # "Check the box if you still want us to mail you a paper Form 1099-G"
+    field: F_NR-1-22
+    type: checkbox
+    on_state: /Yes
+  - line: request_tax_booklet.yes        # "Check here if you want a tax booklet mailed to you next year."
+    field: F_NR-1-23
+    type: checkbox
+    on_state: /Yes
+  - line: filed_extension.yes            # "Check this box if you have filed a state extension or an automatic federal extension"
+    field: F_NR-1-24
+    type: checkbox
+    on_state: /Yes
+  # ---- driver license / state ID rows (primary then spouse)
+  - line: drivers_license.primary_number   # "DL# / State ID" (primary)
+    field: F_NR-1-25
+    type: text
+  - line: drivers_license.primary_state    # "Your state"
+    field: F_NR-1-26
+    type: text
+    maxlen: 2
+  - line: drivers_license.primary_issue_date     # "Issue date (mm/dd/yyyy)"
+    field: F_NR-1-27
+    type: text
+  - line: drivers_license.primary_expiration_date  # "Expiration date (mm/dd/yyyy)"
+    field: F_NR-1-28
+    type: text
+  - line: drivers_license.spouse_number    # "DL# / State ID" (spouse)
+    field: F_NR-1-29
+    type: text
+  - line: drivers_license.spouse_state     # "Spouse state"
+    field: F_NR-1-30
+    type: text
+    maxlen: 2
+  - line: drivers_license.spouse_issue_date
+    field: F_NR-1-31
+    type: text
+  - line: drivers_license.spouse_expiration_date
+    field: F_NR-1-32
+    type: text
+
+  # ---- FILING STATUS (one /Btn, six mutually exclusive states /1../6)
+  - line: filing_status.single           # 1 Single (or widowed before 2023 or divorced at end of 2023)
+    field: F_NR-1-33
+    type: checkbox
+    on_state: /1
+    group: filing_status
+  - line: filing_status.married_filing_joint   # 2 Married filing joint
+    field: F_NR-1-33
+    type: checkbox
+    on_state: /2
+    group: filing_status
+  - line: filing_status.head_of_household      # 3 Head of household
+    field: F_NR-1-33
+    type: checkbox
+    on_state: /3
+    group: filing_status
+  - line: filing_status.married_filing_separately_same_return  # 4 Married filing separately on the same return
+    field: F_NR-1-33
+    type: checkbox
+    on_state: /4
+    group: filing_status
+  - line: filing_status.married_filing_separately_different_returns  # 5 Married filing separately on different returns
+    field: F_NR-1-33
+    type: checkbox
+    on_state: /5
+    group: filing_status
+  - line: filing_status.surviving_spouse       # 6 Surviving spouse with dependent child
+    field: F_NR-1-33
+    type: checkbox
+    on_state: /6
+    group: filing_status
+  - line: filing_status.head_of_household_child_name  # status 3: enter child's name here
+    field: F_NR-1-34
+    type: text
+  - line: filing_status.separate_spouse_name   # status 5: enter spouse's name here (SSN above); narrow right-margin box
+    field: F_NR-1-35
+    type: text
+    maxlen: 13
+  - line: filing_status.surviving_spouse_year_died  # status 6: "Year spouse died"
+    field: F_NR-1-36
+    type: text
+    maxlen: 4
+
+  # ---- line 7A personal-tax-credit checkboxes (top row = Yourself; bottom = Spouse)
+  - line: 7a.yourself                    # 7A Yourself
+    field: F_NR-1-37
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.yourself_65_or_over         # Yourself 65 or over
+    field: F_NR-1-38
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.yourself_65_special         # Yourself 65 Special
+    field: F_NR-1-39
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.yourself_blind              # Yourself Blind
+    field: F_NR-1-40
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.yourself_deaf               # Yourself Deaf
+    field: F_NR-1-41
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.head_of_household_surviving_spouse  # Head of household/surviving spouse (status 3 or 6 only)
+    field: F_NR-1-42
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.spouse                      # 7A Spouse
+    field: F_NR-1-43
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.spouse_65_or_over           # Spouse 65 or over
+    field: F_NR-1-44
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.spouse_65_special           # Spouse 65 Special
+    field: F_NR-1-45
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.spouse_blind                # Spouse Blind
+    field: F_NR-1-46
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.spouse_deaf                 # Spouse Deaf
+    field: F_NR-1-47
+    type: checkbox
+    on_state: /Yes
+  - line: 7a.count                       # 7A "Multiply number of boxes checked" count
+    field: F_NR-1-48
+    type: text
+    maxlen: 2
+  - line: 7a                             # 7A amount (count X $29)
+    field: F_NR-1-49
+    type: money
+
+  # ---- Dependents table (5 rows: first name / last name / SSN / relationship)
+  - line: dependent_1.first_name
+    field: F_NR-1-50
+    type: text
+  - line: dependent_1.ssn
+    field: F_NR-1-51
+    type: text
+    format: ssn_digits_only
+  - line: dependent_1.relationship
+    field: F_NR-1-52
+    type: text
+  - line: dependent_2.first_name
+    field: F_NR-1-53
+    type: text
+  - line: dependent_2.ssn
+    field: F_NR-1-54
+    type: text
+    format: ssn_digits_only
+  - line: dependent_2.relationship
+    field: F_NR-1-55
+    type: text
+  - line: dependent_3.first_name
+    field: F_NR-1-56
+    type: text
+  - line: dependent_3.ssn
+    field: F_NR-1-57
+    type: text
+    format: ssn_digits_only
+  - line: dependent_3.relationship
+    field: F_NR-1-58
+    type: text
+  - line: dependent_4.first_name
+    field: F_NR-1-59
+    type: text
+  - line: dependent_4.ssn
+    field: F_NR-1-60
+    type: text
+    format: ssn_digits_only
+  - line: dependent_4.relationship
+    field: F_NR-1-61
+    type: text
+  - line: dependent_5.first_name
+    field: F_NR-1-62
+    type: text
+  - line: dependent_5.ssn
+    field: F_NR-1-63
+    type: text
+    format: ssn_digits_only
+  - line: dependent_5.relationship
+    field: F_NR-1-64
+    type: text
+  - line: 7b.count                       # 7B "Multiply number of DEPENDENTS from above" count
+    field: F_NR-1-65
+    type: text
+    maxlen: 2
+  - line: 7b                             # 7B amount (dependents X $29)
+    field: F_NR-1-66
+    type: money
+  - line: 7c                             # 7C TOTAL PERSONAL TAX CREDITS (add 7A and 7B)
+    field: F_NR-1-68
+    type: money
+
+  # ============================================ page 2 -- income / tax computation
+  # column (A) = Primary/Joint Income (.a); column (B) = Spouse's Income, Status 4 Only (.b)
+  - line: 8.a                            # 8 Wages, salaries, tips -- col A
+    field: F_NR0-2-1
+    type: money
+  - line: 8.b                            # 8 -- col B
+    field: F_NR0-2-2
+    type: money
+  - line: 9.primary                      # 9 Military pay: Primary (inline entry box)
+    field: F_NR0-2-4
+    type: money
+  - line: 9.spouse                       # 9 Military pay: Spouse (inline entry box)
+    field: F_NR0-2-5
+    type: money
+  - line: 10.a                           # 10 Interest income -- col A
+    field: F_NR0-2-6
+    type: money
+  - line: 10.b
+    field: F_NR0-2-7
+    type: money
+  - line: 11.a                           # 11 Dividend income -- col A
+    field: F_NR0-2-9
+    type: money
+  - line: 11.b
+    field: F_NR0-2-10
+    type: money
+  - line: 12.a                           # 12 Alimony and separate maintenance received -- col A
+    field: F_NR0-2-12
+    type: money
+  - line: 12.b
+    field: F_NR0-2-13
+    type: money
+  - line: 13.a                           # 13 Business or professional income (Sch C) -- col A
+    field: F_NR0-2-15
+    type: money
+  - line: 13.b
+    field: F_NR0-2-16
+    type: money
+  - line: 14.a                           # 14 Capital gains/(losses) (Sch D) -- col A
+    field: F_NR0-2-18
+    type: money
+  - line: 14.b
+    field: F_NR0-2-19
+    type: money
+  - line: 15.a                           # 15 Other gains or (losses) -- col A
+    field: F_NR0-2-21
+    type: money
+  - line: 15.b
+    field: F_NR0-2-22
+    type: money
+  - line: 16.a                           # 16 Non-qualified IRA distributions and taxable annuities -- col A
+    field: F_NR0-2-24
+    type: money
+  - line: 16.b
+    field: F_NR0-2-25
+    type: money
+  - line: 17.primary                     # 17 Military retirement: Primary (inline entry box)
+    field: F_NR0-2-27
+    type: money
+  - line: 17.spouse                      # 17 Military retirement: Spouse (inline entry box)
+    field: F_NR0-2-28
+    type: money
+  - line: 18a.gross                      # 18A Primary employer pension/qualified IRA(s): Gross
+    field: F_NR0-2-29
+    type: money
+  - line: 18a.taxable                    # 18A Taxable (Less $6,000)
+    field: F_NR0-2-30
+    type: money
+  - line: 18a                            # 18A resulting taxable -- col A
+    field: F_NR0-2-31
+    type: money
+  - line: 18b.gross                      # 18B Spouse employer pension/qualified IRA(s): Gross
+    field: F_NR0-2-33
+    type: money
+  - line: 18b.taxable                    # 18B Taxable (Less $6,000)
+    field: F_NR0-2-34
+    type: money
+  - line: 18b.a                          # 18B resulting taxable -- col A (Primary/Joint)
+    field: F_NR0-2-35
+    type: money
+  - line: 18b.b                          # 18B resulting taxable -- col B (Spouse, Status 4)
+    field: F_NR0-2-36
+    type: money
+  - line: 19.a                           # 19 Rents, royalties, partnerships, estates, trusts (Sch E) -- col A
+    field: F_NR0-2-38
+    type: money
+  - line: 19.b
+    field: F_NR0-2-39
+    type: money
+  - line: 20.a                           # 20 Farm income (Sch F) -- col A
+    field: F_NR0-2-41
+    type: money
+  - line: 20.b
+    field: F_NR0-2-42
+    type: money
+  - line: 21.a                           # 21 Unemployment -- col A
+    field: F_NR0-2-44
+    type: money
+  - line: 21.b
+    field: F_NR0-2-45
+    type: money
+  - line: 22.a                           # 22 Other income/depreciation differences (Form AR-OI) -- col A
+    field: F_NR0-2-47
+    type: money
+  - line: 22.b
+    field: F_NR0-2-48
+    type: money
+  - line: 23.a                           # 23 TOTAL INCOME (add lines 8 through 22) -- col A
+    field: F_NR0-2-50
+    type: money
+  - line: 23.b
+    field: F_NR0-2-51
+    type: money
+  - line: 24.a                           # 24 TOTAL ADJUSTMENTS (Form AR1000ADJ) -- col A
+    field: F_NR0-2-53
+    type: money
+  - line: 24.b
+    field: F_NR0-2-54
+    type: money
+  - line: 25.a                           # 25 ADJUSTED GROSS INCOME (subtract 24 from 23) -- col A
+    field: F_NR0-2-56
+    type: money
+  - line: 25.b
+    field: F_NR0-2-57
+    type: money
+  # ---- line 26/27 tax-table selector checkboxes (one independent /Choice each)
+  - line: 27.low_income_table            # 27 Low income table ($0)
+    field: F_NR0-2-59
+    type: checkbox
+    on_state: /Choice1
+    group: tax_table
+  - line: 27.standard_deduction          # 27 Standard deduction
+    field: F_NR0-2-59
+    type: checkbox
+    on_state: /Choice2
+    group: tax_table
+  - line: 27.itemized_deductions         # 27 Itemized deductions (Attach AR3)
+    field: F_NR0-2-59
+    type: checkbox
+    on_state: /Choice3
+    group: tax_table
+  - line: 27.a                           # 27 deduction amount -- col A
+    field: F_NR0-2-60
+    type: money
+  - line: 27.b
+    field: F_NR0-2-61
+    type: money
+  - line: 28.a                           # 28 NET TAXABLE INCOME (subtract 27 from 25) -- col A
+    field: F_NR0-2-62
+    type: money
+  - line: 28.b
+    field: F_NR0-2-63
+    type: money
+  - line: 29.a                           # 29 TAX (from tax table) -- col A
+    field: F_NR0-2-64
+    type: money
+  - line: 29.b
+    field: F_NR0-2-65
+    type: money
+  - line: "30"                           # 30 Combined tax (add line 29, columns A and B) -- single right box
+    field: F_NR0-2-66
+    type: money
+  - line: "31"                           # 31 Tax from Lump Sum Distribution Averaging Schedule (AR1000TD)
+    field: F_NR0-2-67
+    type: money
+  - line: "32"                           # 32 Additional tax on IRA and qualified plan withdrawal and overpayment
+    field: F_NR0-2-68
+    type: money
+  - line: "33"                           # 33 TOTAL TAX (add lines 30 through 32)
+    field: F_NR0-2-69
+    type: money
+  - line: "34"                           # 34 Personal tax credit(s) (from line 7C)
+    field: F_NR0-2-70
+    type: money
+  - line: "35"                           # 35 Child care credit (AR2441)
+    field: F_NR0-2-71
+    type: money
+  - line: "36"                           # 36 Other credits (AR1000TC)
+    field: F_NR0-2-72
+    type: money
+  - line: "37"                           # 37 TOTAL CREDITS (add lines 34 through 36)
+    field: F_NR0-2-73
+    type: money
+  - line: "38"                           # 38 NET TAX (subtract line 37 from line 33; if 37 > 33 enter 0)
+    field: F_NR0-2-74
+    type: money
+
+  # ============================================ page 3 -- payments / refund / direct deposit / signatures
+  - line: "39"                           # 39 Arkansas income tax withheld
+    field: F_NR-3-1
+    type: money
+  - line: "40"                           # 40 Estimated tax paid or credit brought forward from 2022
+    field: F_NR-3-2
+    type: money
+  - line: "41"                           # 41 Payment made with extension
+    field: F_NR-3-3
+    type: money
+  - line: "42"                           # 42 AMENDED RETURNS ONLY - previous payments
+    field: F_NR-3-4
+    type: money
+  - line: 43.certification_number        # 43 Early childhood program: Certification number
+    field: F_NR-3-5
+    type: text
+  - line: "43"                           # 43 Early childhood program amount (AR1000EC and AR2441)
+    field: F_NR-3-6
+    type: money
+  - line: "44"                           # 44 TOTAL PAYMENTS (add lines 39 through 43)
+    field: F_NR-3-7
+    type: money
+  - line: "45"                           # 45 AMENDED RETURNS ONLY - previous refund
+    field: F_NR-3-8
+    type: money
+  - line: "46"                           # 46 Adjusted total payments (subtract line 45 from line 44)
+    field: F_NR-3-9
+    type: money
+  - line: "47"                           # 47 AMOUNT OF OVERPAYMENT/REFUND (if line 46 > line 38)
+    field: F_NR-3-10
+    type: money
+  - line: "48"                           # 48 Amount to be applied to 2024 estimated tax
+    field: F_NR-3-11
+    type: money
+  - line: "49"                           # 49 Amount of Check-Off contributions (AR1000CO)
+    field: F_NR-3-12
+    type: money
+  - line: "50"                           # 50 AMOUNT TO BE REFUNDED TO YOU (subtract lines 48 and 49 from 47)
+    field: F_NR-3-13
+    type: money
+  - line: "51"                           # 51 AMOUNT DUE (if line 46 < line 38)
+    field: F_NR-3-14
+    type: money
+  - line: 52a.exception_code             # 52A UEP exception code box
+    field: F_NR-3-15
+    type: text
+    maxlen: 3
+  - line: 52b                            # 52B Penalty
+    field: F_NR-3-16
+    type: money
+  - line: 52c                            # 52C Add lines 51 and 52B (TOTAL DUE)
+    field: F_NR-3-17
+    type: money
+  # ---- direct deposit
+  - line: direct_deposit.foreign_account # "Check if either deposit(s) will ultimately be placed in a foreign account."
+    field: F_NR-3-18
+    type: checkbox
+    on_state: /Yes
+  - line: direct_deposit_1.account_type.checking   # Account 1 Checking
+    field: F_NR-3-19
+    type: checkbox
+    on_state: /Checking
+    group: direct_deposit_1_account_type
+  - line: direct_deposit_1.account_type.savings    # Account 1 Savings
+    field: F_NR-3-19
+    type: checkbox
+    on_state: /Savings
+    group: direct_deposit_1_account_type
+  - line: direct_deposit_1.routing.1
+    field: F_NR-3-20
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.routing.2
+    field: F_NR-3-21
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.routing.3
+    field: F_NR-3-22
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.routing.4
+    field: F_NR-3-23
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.routing.5
+    field: F_NR-3-24
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.routing.6
+    field: F_NR-3-25
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.routing.7
+    field: F_NR-3-26
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.routing.8
+    field: F_NR-3-27
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.routing.9
+    field: F_NR-3-28
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.1
+    field: F_NR-3-29
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.2
+    field: F_NR-3-30
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.3
+    field: F_NR-3-31
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.4
+    field: F_NR-3-32
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.5
+    field: F_NR-3-33
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.6
+    field: F_NR-3-34
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.7
+    field: F_NR-3-35
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.8
+    field: F_NR-3-36
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.9
+    field: F_NR-3-37
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.10
+    field: F_NR-3-38
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.11
+    field: F_NR-3-39
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.12
+    field: F_NR-3-40
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.13
+    field: F_NR-3-41
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.14
+    field: F_NR-3-42
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.15
+    field: F_NR-3-43
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.16
+    field: F_NR-3-44
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.account.17
+    field: F_NR-3-45
+    type: text
+    maxlen: 1
+  - line: direct_deposit_1.amount        # "Direct deposit 1 amt."
+    field: F_NR-3-46
+    type: money
+  - line: direct_deposit_2.account_type.checking   # Account 2 Checking
+    field: F_NR-3-47
+    type: checkbox
+    on_state: /Checking
+    group: direct_deposit_2_account_type
+  - line: direct_deposit_2.account_type.savings    # Account 2 Savings
+    field: F_NR-3-47
+    type: checkbox
+    on_state: /Savings
+    group: direct_deposit_2_account_type
+  - line: direct_deposit_2.routing.1
+    field: F_NR-3-48
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.routing.2
+    field: F_NR-3-49
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.routing.3
+    field: F_NR-3-50
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.routing.4
+    field: F_NR-3-51
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.routing.5
+    field: F_NR-3-52
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.routing.6
+    field: F_NR-3-53
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.routing.7
+    field: F_NR-3-54
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.routing.8
+    field: F_NR-3-55
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.routing.9
+    field: F_NR-3-56
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.1
+    field: F_NR-3-57
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.2
+    field: F_NR-3-58
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.3
+    field: F_NR-3-59
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.4
+    field: F_NR-3-60
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.5
+    field: F_NR-3-61
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.6
+    field: F_NR-3-62
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.7
+    field: F_NR-3-63
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.8
+    field: F_NR-3-64
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.9
+    field: F_NR-3-65
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.10
+    field: F_NR-3-66
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.11
+    field: F_NR-3-67
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.12
+    field: F_NR-3-68
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.13
+    field: F_NR-3-69
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.14
+    field: F_NR-3-70
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.15
+    field: F_NR-3-71
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.16
+    field: F_NR-3-72
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.account.17
+    field: F_NR-3-73
+    type: text
+    maxlen: 1
+  - line: direct_deposit_2.amount        # "Direct deposit 2 amt."
+    field: F_NR-3-74
+    type: money
+
+  # ---- Sign Here / Paid Preparer
+  - line: signature.primary              # Primary's signature
+    field: Signature1
+    type: text
+  - line: signature.primary_date         # Date
+    field: F_NR-3-75
+    type: text
+  - line: signature.primary_phone        # Telephone
+    field: F_NR-3-76
+    type: text
+  - line: signature.spouse               # Spouse's signature
+    field: Signature2
+    type: text
+  - line: signature.spouse_date          # Date
+    field: F_NR-3-77
+    type: text
+  - line: signature.spouse_phone         # Telephone
+    field: F_NR-3-78
+    type: text
+  - line: preparer.signature             # Paid preparer's signature
+    field: Signature3
+    type: text
+  - line: preparer.ptin                  # PTIN/ID number
+    field: F_NR-3-79
+    type: text
+  - line: preparer.may_discuss.yes       # "May the Arkansas Revenue Division discuss this return with the preparer?" Yes
+    field: F_NR-3-80
+    type: checkbox
+    on_state: /YES
+    group: preparer_may_discuss
+  - line: preparer.may_discuss.no        # No
+    field: F_NR-3-80
+    type: checkbox
+    on_state: /No
+    group: preparer_may_discuss
+  - line: preparer.name                  # Preparer's name
+    field: F_NR-3-81
+    type: text
+  - line: preparer.phone                 # Telephone
+    field: F_NR-3-82
+    type: text
+  - line: preparer.address               # Address
+    field: F_NR-3-83
+    type: text
+  - line: preparer.city                  # City
+    field: F_NR-3-84
+    type: text
+  - line: preparer.state                 # State
+    field: F_NR-3-85
+    type: text
+  - line: preparer.zip                   # ZIP
+    field: F_NR-3-86
+    type: text
+  - line: preparer.email                 # E-mail
+    field: F_NR-3-87
+    type: text
+relations:
+  # Only single-box on-face additions whose operands are all undotted lines.
+  - "33 == 30 + 31 + 32"                 # 33 "TOTAL TAX (Add lines 30 through 32)"
+  - "44 == 39 + 40 + 41 + 42 + 43"       # 44 "TOTAL PAYMENTS (Add lines 39 through 43)"
+  - "46 == 44 - 45"                      # 46 "Adjusted total payments (Subtract line 45 from line 44)"
+  - "52c == 51 + 52b"                    # 52C "Add lines 51 and 52B"
+cross_form: []
+identity_fields:
+  - name
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 3}
+mailing: null
