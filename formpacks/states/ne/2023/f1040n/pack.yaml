@@ -1,0 +1,651 @@
+# Form 1040N, 2023 -- Nebraska Individual Income Tax Return (resident).
+#
+# Provenance: blank downloaded from the official source_url below; the MAIN
+# (page 1) sentinel sweep was rendered and READ to confirm the printed tax
+# year "2023" (header reads "Nebraska Individual Income Tax Return ... for the
+# taxable year January 1, 2023 through December 31, 2023", form number
+# "FORM 1040N", big "2023" upper-right, footer stamp "8-417-2023") BEFORE
+# pinning pdf_sha256 (freshness protocol; Utah wrong-year trap avoided).
+#
+# Layout. FLAT AcroForm: acroform_root is empty -- every widget's field name is
+# the raw flat id the form ships with (descriptive English / "Line N" labels).
+# Verified via pypdf: all top-level /Btn and /Tx fields carry /T and no
+# /Parent chain. 145 top-level fields; 146 widgets (the digital-asset Yes/No
+# question is ONE /Btn field "virtual_currrency_Yes_No" with two kid widgets).
+#
+# This is a single 2-page PDF and BOTH PAGES ARE THE FILED RETURN (page 1
+# footer "Complete Reverse Side"; page 2 continues the numbered lines and holds
+# the signature block + where-to-file). Every fillable widget on both pages is
+# mapped except the two non-data pushbuttons.
+#   page 1 -- header (names, two combed SSNs, mailing address, combed High
+#             School District Code), digital-asset Yes/No, Farmer/Rancher +
+#             Active Military + Deceased flags and deceased names/dates,
+#             line 1 Federal Filing Status (5 options + separate SSN/Name),
+#             line 2a age/blind boxes, line 2b can-be-claimed boxes, line 3
+#             Type of Return (resident / part-year + dates / nonresident),
+#             line 4 personal exemptions (4a, 4b, dependents table, 4c, total),
+#             lines 5-17 (AGI, deductions, Nebraska taxable income, tax).
+#   page 2 -- lines 18-49 (nonrefundable credits 18-28, tax after credits 29
+#             + "entering federal tax" box 29a, withholding/payments 30-39 with
+#             30a-30d withholding splits and line 35 EIC children/federal-credit
+#             entries, refundable total 40, penalty 41 + box 96, total tax 42,
+#             use-tax worksheet 43 with 91-95 entries, amount due 44 + e-pay box,
+#             overpayment 45, applied/donation 46-47, refund 48, direct deposit
+#             49a-49d) plus the signature block (taxpayer date/phone/email,
+#             preparer date/PTIN/EIN/firm/phone).
+#
+# Coverage. The blank exposes 146 fillable AcroForm widgets across 145 fields.
+# 143 fields are mapped. EXCLUDED (2): the "print" and "reset" pushbuttons --
+# JavaScript action /Btn widgets with no value/appearance states (not return
+# data). Mapped breakdown: 120 text + 23 checkbox/radio.
+#
+# Money vs text. Every numbered dollar line prints a ".00" whole-dollar cents
+# suffix and is mapped `money`. Combed SSN boxes (3 segments each for taxpayer
+# and spouse) are `text` comb format ssn_digits_only. The High School District
+# Code (7 single-char comb boxes) and the personal-exemption count boxes
+# (4a/4b/4c/4total), the EIC qualifying-children count (line 35 "97"), the
+# routing/account numbers (49a/49c), and all name/date/phone/email/firm strings
+# stay `text`. Lines 16a/16b/16c and the use-tax sub-entries 91-94 print a "$"
+# dollar entry and are mapped `money`; 49b (account type 1/2) and 95 (local
+# code) stay `text`.
+#
+# Checkboxes / radio groups. The digital-asset question is ONE /Btn field with
+# two kids (on_states "/0" Yes and "/1" No) -- mapped as two lines that SHARE
+# the field "virtual_currrency_Yes_No" and SHARE group digital_assets, each with
+# its own on_state (harness requires a shared group when widgets share a field).
+# EVERY OTHER checkbox is its own independent single-state /Btn (page 1 on_state
+# "/On"; page 2 on_state "/Yes") -- filing status, age/blind, can-be-claimed,
+# type-of-return, and the page-2 flags (29a entering-federal-tax, 96 Form 2210N,
+# 44a electronic/credit-card payment, 49d foreign-account) are each a flag the
+# filer marks individually; none share a /Btn field, so per CONVENTIONS no
+# shared group is forced.
+#
+# Relations. Only single-box on-face equalities with every operand mapped to a
+# line are declared: line 11 ("line 5 minus line 10"), line 28 ("add lines 18
+# through 27"), line 42 ("Add lines 29 and 41"). Lines that floor at zero
+# ("if line 28 is more than line 17, enter -0-": 29) or branch on a comparison
+# (14 less-than-0, 44/45/48 due-vs-overpayment) are OMITTED per house style.
+# Line 17 ("add lines 15 and 16") is declared. Line 40 ("add lines 30 through
+# 39") and line 10 (multi-line/larger-of) and line 4 total span sub-entries with
+# their own widgets so they are declared where unambiguous: 17, 28, 42, 11.
+#
+# Cross_form. Line 5 prints "Federal adjusted gross income (AGI) (line 11,
+# Federal Form 1040 or 1040-SR)" -- federal AGI = f1040.11.
+form: "1040N"
+jurisdiction: states/ne
+tax_year: 2023
+source_url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040N_2023_Final.pdf
+pdf_sha256: "b5b0608856e897f1ce7a594aa2586d5c6aa69c920b7e662039d08a9d4a312005"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header (name / address)
+  - line: name.first                     # "Your First Name and Initial"
+    field: Primary First1
+    type: text
+  - line: name.last                      # "Last Name"
+    field: Primary Last1
+    type: text
+  - line: spouse.name.first              # "If a Joint Return, Spouse's First Name and Initial"
+    field: Spouse First1
+    type: text
+  - line: spouse.name.last               # "Last Name"
+    field: Spouse Last1
+    type: text
+  - line: mailing_address.street         # "Current Mailing Address (Number and Street or PO Box)"
+    field: Address1
+    type: text
+  - line: mailing_address.city           # "City"
+    field: City
+    type: text
+  - line: mailing_address.state          # "State"
+    field: State
+    type: text
+    maxlen: 3
+  - line: mailing_address.zip            # "ZIP Code"
+    field: Zip Code
+    type: text
+    maxlen: 11
+
+  # ---- Your Social Security Number (3-segment comb)
+  - line: identifying_number.a           # "Your Social Security Number" (area, 3 digits)
+    field: Your Social Security Number
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 3
+  - line: identifying_number.b           # "Your Social Security Number" (group, 2 digits)
+    field: Your Social Security Number1
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 2
+  - line: identifying_number.c           # "Your Social Security Number" (serial, 4 digits)
+    field: Your Social Security Number2
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 4
+  # ---- Spouse's Social Security Number (3-segment comb)
+  - line: spouse.identifying_number.a    # "Spouse's Social Security Number" (area, 3 digits)
+    field: Spouse's Social Security Number
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 3
+  - line: spouse.identifying_number.b    # "Spouse's Social Security Number" (group, 2 digits)
+    field: Spouse's Social Security Number1
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 2
+  - line: spouse.identifying_number.c    # "Spouse's Social Security Number" (serial, 4 digits)
+    field: Spouse's Social Security Number2
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 4
+
+  # ---- High School District Code (7 single-char comb boxes)
+  - line: high_school_district_code.1
+    field: High School District Code1
+    type: text
+    maxlen: 1
+  - line: high_school_district_code.2
+    field: High School District Code2
+    type: text
+    maxlen: 1
+  - line: high_school_district_code.3
+    field: High School District Code3
+    type: text
+    maxlen: 1
+  - line: high_school_district_code.4
+    field: High School District Code4
+    type: text
+    maxlen: 1
+  - line: high_school_district_code.5
+    field: High School District Code5
+    type: text
+    maxlen: 1
+  - line: high_school_district_code.6
+    field: High School District Code6
+    type: text
+    maxlen: 1
+  - line: high_school_district_code.7
+    field: High School District Code7
+    type: text
+    maxlen: 1
+
+  # ---- Digital asset question (ONE /Btn field, two kids: /0 Yes, /1 No)
+  - line: digital_assets.yes             # "During 2023, did you ... dispose of a digital asset ...? Yes"
+    field: virtual_currrency_Yes_No
+    type: checkbox
+    on_state: /0
+    group: digital_assets
+  - line: digital_assets.no              # "... No"
+    field: virtual_currrency_Yes_No
+    type: checkbox
+    on_state: /1
+    group: digital_assets
+
+  # ---- Farmer/Rancher, Active Military, Deceased flags + deceased names/dates
+  - line: farmer_rancher.yes             # "(1) Farmer/Rancher"
+    field: Farmer/Rancher
+    type: checkbox
+    on_state: /On
+  - line: active_military.yes            # "(2) Active Military"
+    field: Active Military
+    type: checkbox
+    on_state: /On
+  - line: deceased_taxpayer.yes          # "(1) Deceased Taxpayer(s) (first name & date of death)"
+    field: Deceased Taxpayer
+    type: checkbox
+    on_state: /On
+  - line: deceased_1.name                # deceased 1 first name
+    field: Deceased Box
+    type: text
+  - line: deceased_1.date.month          # deceased 1 date of death (month)
+    field: Deceased 1 Date1a
+    type: text
+    maxlen: 2
+  - line: deceased_1.date.day            # deceased 1 date of death (day)
+    field: Deceased 1 Date1b
+    type: text
+    maxlen: 2
+  - line: deceased_1.date.year           # deceased 1 date of death (year)
+    field: Deceased 1 Date1c
+    type: text
+    maxlen: 4
+  - line: deceased_2.name                # deceased 2 name
+    field: Deceased 2 Name
+    type: text
+  - line: deceased_2.date.month          # deceased 2 date of death (month)
+    field: Deceased 2 Date2a
+    type: text
+    maxlen: 2
+  - line: deceased_2.date.day            # deceased 2 date of death (day)
+    field: Deceased 2 Date2b
+    type: text
+    maxlen: 2
+  - line: deceased_2.date.year           # deceased 2 date of death (year)
+    field: Deceased 2 Date2c
+    type: text
+    maxlen: 4
+
+  # ---- Line 1: Federal Filing Status (5 options) + MFS spouse SSN/Name
+  - line: filing_status.single           # "(1) Single"
+    field: Single
+    type: checkbox
+    on_state: /On
+  - line: filing_status.married_filing_jointly  # "(2) Married, filing jointly"
+    field: Married, filing jointly
+    type: checkbox
+    on_state: /On
+  - line: filing_status.married_filing_separately  # "(3) Married, filing separately"
+    field: Married, filing separately
+    type: checkbox
+    on_state: /On
+  - line: filing_status.head_of_household  # "(4) Head of Household"
+    field: Head of Household
+    type: checkbox
+    on_state: /On
+  - line: filing_status.qualifying_surviving_spouse  # "(5) Qualifying surviving spouse (QSS)"
+    field: Surviving Spouse
+    type: checkbox
+    on_state: /On
+  - line: filing_status.separate_ssn     # MFS "Spouse's SSN"
+    field: Separate SSN
+    type: text
+  - line: filing_status.separate_name    # MFS "and Full Name"
+    field: Separate Name
+    type: text
+
+  # ---- Line 2a: age/blind checks
+  - line: 2a.you_65_or_older             # "Check if YOU were: (1) 65 or older"
+    field: You 65 or older
+    type: checkbox
+    on_state: /On
+  - line: 2a.you_blind                   # "(2) Blind"
+    field: you blind
+    type: checkbox
+    on_state: /On
+  - line: 2a.spouse_65_or_older          # "SPOUSE was: (3) 65 or older"
+    field: spouse 65 or older
+    type: checkbox
+    on_state: /On
+  - line: 2a.spouse_blind                # "(4) Blind"
+    field: spouse blind
+    type: checkbox
+    on_state: /On
+  # ---- Line 2b: someone can claim you/spouse as dependent
+  - line: 2b.you                         # "(1) You"
+    field: dependent
+    type: checkbox
+    on_state: /On
+  - line: 2b.spouse                       # "(2) Spouse"
+    field: spouse
+    type: checkbox
+    on_state: /On
+
+  # ---- Line 3: Type of Return
+  - line: 3.resident                     # "(1) Resident"
+    field: resident
+    type: checkbox
+    on_state: /On
+  - line: 3.part_year_resident           # "(2) Partial-year resident"
+    field: part year
+    type: checkbox
+    on_state: /On
+  - line: 3.part_year_from.month         # "from ___ , 2023" (month)
+    field: year from1
+    type: text
+    maxlen: 2
+  - line: 3.part_year_from.day           # "from ___ , 2023" (day)
+    field: year from2
+    type: text
+    maxlen: 2
+  - line: 3.part_year_to.month           # "to ___ , 2023" (month)
+    field: year to1
+    type: text
+    maxlen: 2
+  - line: 3.part_year_to.day             # "to ___ , 2023" (day)
+    field: year to2
+    type: text
+    maxlen: 2
+  - line: 3.nonresident                  # "(3) Nonresident (attach Schedule III)"
+    field: nonresident
+    type: checkbox
+    on_state: /On
+
+  # ---- Line 4: Nebraska personal exemptions
+  - line: 4a                             # "a Yourself"
+    field: 4a
+    type: text
+    maxlen: 2
+  - line: 4b                             # "b Spouse"
+    field: 4b
+    type: text
+    maxlen: 2
+  # dependents table (3 rows: first name / last name / SSN)
+  - line: dependent_1.name.first
+    field: First Name 1
+    type: text
+  - line: dependent_1.name.last
+    field: Last Name 1
+    type: text
+  - line: dependent_1.ssn
+    field: SSN 1
+    type: text
+  - line: dependent_2.name.first
+    field: First Name 2
+    type: text
+  - line: dependent_2.name.last
+    field: Last Name 2
+    type: text
+  - line: dependent_2.ssn
+    field: SSN 2
+    type: text
+  - line: dependent_3.name.first
+    field: First Name 3
+    type: text
+  - line: dependent_3.name.last
+    field: Last Name 3
+    type: text
+  - line: dependent_3.ssn
+    field: SSN 3
+    type: text
+  - line: 4c                             # "Total number of dependents listed .... 4c"
+    field: 4c
+    type: text
+    maxlen: 2
+  - line: "4"                            # "Total Nebraska personal exemptions -- add lines 4a, 4b, and 4c"
+    field: 4total
+    type: text
+    maxlen: 3
+
+  # ---- Lines 5-17 (page 1)
+  - line: "5"                            # 5 Federal adjusted gross income (AGI) (line 11, Federal Form 1040 or 1040-SR)
+    field: Line 5
+    type: money
+  - line: "6"                            # 6 Nebraska standard deduction
+    field: Line 6
+    type: money
+  - line: "7"                            # 7 Total itemized deductions (line 17, Federal Schedule A)
+    field: Line 7
+    type: money
+  - line: "8"                            # 8 State and local income taxes (line 5a, Schedule A)
+    field: Line 8
+    type: money
+  - line: "9"                            # 9 Nebraska itemized deductions (line 7 minus line 8)
+    field: Line 9
+    type: money
+  - line: "10"                           # 10 Nebraska standard deduction or itemized (larger of line 6 or line 9)
+    field: "10"
+    type: money
+  - line: "11"                           # 11 Nebraska income before adjustments (line 5 minus line 10)
+    field: "11"
+    type: money
+  - line: "12"                           # 12 Adjustments increasing federal AGI (Nebraska Schedule I line 10)
+    field: "12"
+    type: money
+  - line: "13"                           # 13 Adjustments decreasing federal AGI (Nebraska Schedule I line 36)
+    field: "13"
+    type: money
+  - line: "14"                           # 14 Nebraska Taxable Income (line 11 plus line 12 minus line 13)
+    field: "14"
+    type: money
+  - line: "15"                           # 15 Nebraska income tax
+    field: "15"
+    type: money
+  - line: 16a                            # 16a Federal Tax on Lump-Sum Distributions (Federal Form 4972)
+    field: 16a
+    type: money
+  - line: 16b                            # 16b Federal tax on early distributions
+    field: 16b
+    type: money
+  - line: 16c                            # 16c Total (add lines 16a and 16b)
+    field: 16c
+    type: money
+  - line: "16"                           # 16 Nebraska other tax calculation (result)
+    field: "16"
+    type: money
+  - line: "17"                           # 17 Total Nebraska tax before personal exemption credit (add lines 15 and 16)
+    field: "17"
+    type: money
+
+  # ============================================ page 2 -- lines 18-28 (nonrefundable credits)
+  - line: "18"                           # 18 Nebr. personal exemption credit for residents ($157 times line 4)
+    field: Line 18
+    type: money
+  - line: "19"                           # 19 Credit for tax paid to another state (Nebraska Schedule II line 6)
+    field: Line 19
+    type: money
+  - line: "20"                           # 20 Credit for the elderly or disabled (Federal Schedule R)
+    field: Line 20
+    type: money
+  - line: "21"                           # 21 Community Development Assistance Act credit (Form CDN)
+    field: Line 21
+    type: money
+  - line: "22"                           # 22 Form 3800N nonrefundable credit
+    field: Line 22
+    type: money
+  - line: "23"                           # 23 Nebraska child/dependent care nonrefundable credit
+    field: Line 23
+    type: money
+  - line: "24"                           # 24 Credit for financial institution tax (Form NFC)
+    field: Line 24
+    type: money
+  - line: "25"                           # 25 Employer's credit for expenses incurred for TANF (ADC) recipients
+    field: Line 25
+    type: money
+  - line: "26"                           # 26 Designated extremely blighted area tax credit (Form 1040N-EB)
+    field: Line 26
+    type: money
+  - line: 27.certificate_number          # 27 "Enter certificate number from Form ETC-A"
+    field: Line 27a
+    type: text
+  - line: "27"                           # 27 NE employer tax credit for employing convicted felons
+    field: Line 27
+    type: money
+  - line: "28"                           # 28 Total nonrefundable credits (add lines 18 through 27)
+    field: Line 28
+    type: money
+
+  # ---- Line 29: tax after nonrefundable credits + entering-federal-tax box
+  - line: 29.entering_federal_tax        # 29 "If entering federal tax, check box"
+    field: 29a
+    type: checkbox
+    on_state: /Yes
+  - line: "29"                           # 29 Nebraska tax after nonrefundable credits (line 17 minus line 28)
+    field: Line 29
+    type: money
+
+  # ---- Line 30: total Nebraska income tax withheld + 30a-30d splits
+  - line: 30.a                           # 30a W-2
+    field: 30a
+    type: money
+  - line: 30.b                           # 30b K-1N
+    field: 30b
+    type: money
+  - line: 30.c                           # 30c W-2G, 1099-R, 1099-MISC, 1099-NEC, etc.
+    field: 30c
+    type: money
+  - line: 30.d                           # 30d PTET credit from K-1N
+    field: 30d
+    type: money
+  - line: "30"                           # 30 Total Nebraska income tax withheld
+    field: Line 30
+    type: money
+  - line: "31"                           # 31 2023 estimated income tax payments
+    field: Line 31
+    type: money
+  - line: "32"                           # 32 Form 3800N refundable credit
+    field: Line 32
+    type: money
+  - line: "33"                           # 33 Nebraska child/dependent care refundable credit
+    field: Line 33
+    type: money
+  - line: "34"                           # 34 Beginning Farmer credit from Form 1099 BFC
+    field: Line 34
+    type: money
+  # ---- Line 35: Nebraska earned income credit (children count + federal credit)
+  - line: 35.qualifying_children         # 35 "Enter number of qualifying children"
+    field: "97"
+    type: text
+    maxlen: 2
+  - line: 35.federal_credit              # 35 "Federal credit $___"
+    field: "98"
+    type: money
+  - line: "35"                           # 35 Nebraska earned income credit (federal credit x .10)
+    field: Line 35
+    type: money
+  - line: "36"                           # 36 Credit for school district property taxes (Form PTC)
+    field: Line 36
+    type: money
+  - line: "37"                           # 37 Credit for community college property taxes (Form PTC)
+    field: Line 37
+    type: money
+  - line: "38"                           # 38 Credit for qualified Volunteer Emergency Responders
+    field: Line 38
+    type: money
+  - line: "39"                           # 39 Stillborn child tax credit
+    field: Line 39
+    type: money
+  - line: "40"                           # 40 Total refundable credits (add lines 30 through 39)
+    field: Line 40
+    type: money
+
+  # ---- Line 41: underpayment penalty + Form 2210N box
+  - line: 41.form_2210n                  # 41 "attach Form 2210N, and check this box 96"
+    field: "96"
+    type: checkbox
+    on_state: /Yes
+  - line: "41"                           # 41 Penalty for underpayment of estimated tax
+    field: Line 41
+    type: money
+  - line: "42"                           # 42 Total tax and penalty. Add lines 29 and 41
+    field: Line 42
+    type: money
+
+  # ---- Line 43: use tax worksheet (91-95 entries)
+  - line: 43.state_purchases             # 91 "Enter purchases subject to state tax"
+    field: "91"
+    type: money
+  - line: 43.state_tax                   # 92 "State tax (purchases x 5.5%)"
+    field: "92"
+    type: money
+  - line: 43.local_purchases             # 93 "Enter purchases subject to local tax"
+    field: "93"
+    type: money
+  - line: 43.local_tax                   # 94 "Local tax (purchases x local rate)"
+    field: "94"
+    type: money
+  # NOTE: the two AcroForm widgets are misleadingly named — the /T 'total tax' is
+  # physically the "95 Local code" box, and the /T 'local code' is physically the
+  # "x local rate of ___%" box. Mapped by PHYSICAL position (verified by render),
+  # not by the internal field name.
+  - line: 43.local_code                  # 95 "Local code"
+    field: total tax
+    type: text
+    maxlen: 3
+  - line: 43.local_rate                  # "purchases x local rate of ___%"
+    field: local code
+    type: text
+    maxlen: 4
+  - line: "43"                           # 43 Use tax due on taxable purchases
+    field: Line 43
+    type: money
+
+  # ---- Line 44: amount due + electronic/credit-card payment box
+  - line: 44.electronic_payment          # 44 "For electronic or credit card payment check box here"
+    field: 44a
+    type: checkbox
+    on_state: /Yes
+  - line: "44"                           # 44 Total amount due
+    field: Line 44
+    type: money
+  - line: "45"                           # 45 Overpayment
+    field: Line 45
+    type: money
+  - line: "46"                           # 46 Amount of line 45 applied to 2024 estimated tax
+    field: Line 46
+    type: money
+  - line: "47"                           # 47 Wildlife Conservation Fund donation of $1 or more
+    field: Line 47
+    type: money
+  - line: "48"                           # 48 Amount of line 45 you want refunded
+    field: Line 48
+    type: money
+
+  # ---- Line 49: direct deposit
+  - line: 49a                            # 49a Routing Number
+    field: 49a
+    type: text
+    maxlen: 9
+  - line: 49b                            # 49b Type of Account (1 = Checking, 2 = Savings)
+    field: 49b
+    type: text
+    maxlen: 1
+  - line: 49c                            # 49c Account Number
+    field: 49c
+    type: text
+    maxlen: 17
+  - line: 49d                            # 49d "Check this box if this refund will go to a bank account outside the United States"
+    field: 49d
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Signature block
+  - line: signature.taxpayer_date        # "Date" (taxpayer)
+    field: Date_sig
+    type: text
+  - line: signature.email                # "email address"
+    field: email address
+    type: text
+  - line: signature.daytime_phone.area   # "Daytime Phone" (area)
+    field: Phone_siga
+    type: text
+    maxlen: 3
+  - line: signature.daytime_phone.number # "Daytime Phone" (number)
+    field: Phone_sigb
+    type: text
+  - line: preparer.date                  # "Date" (preparer)
+    field: Date_preparer
+    type: text
+  - line: preparer.ptin                  # "Preparers PTIN"
+    field: Preparers PTIN
+    type: text
+  - line: preparer.ein                   # "EIN"
+    field: EIN
+    type: text
+  - line: preparer.firm_name             # "Print Firm's Name"
+    field: Firms name
+    type: text
+  - line: preparer.phone.area            # "Daytime Phone" (preparer area)
+    field: Phone_preparera
+    type: text
+    maxlen: 3
+  - line: preparer.phone.number          # "Daytime Phone" (preparer number)
+    field: Phone_preparerb
+    type: text
+
+relations:
+  - "11 == 5 - 10"                       # 11 "Nebraska income before adjustments (line 5 minus line 10)"
+  - "17 == 15 + 16"                      # 17 "Total Nebraska tax ... (add lines 15 and 16)"
+  - "28 == 18 + 19 + 20 + 21 + 22 + 23 + 24 + 25 + 26 + 27"  # 28 "Total nonrefundable credits (add lines 18 through 27)"
+  - "42 == 29 + 41"                      # 42 "Total tax and penalty. Add lines 29 and 41"
+cross_form:
+  # Line 5 "Federal adjusted gross income (AGI) (line 11, Federal Form 1040 or
+  # 1040-SR)" -- federal AGI from Form 1040 line 11.
+  - "5 == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number.a
+  - identifying_number.b
+  - identifying_number.c
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null
