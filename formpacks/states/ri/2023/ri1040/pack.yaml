@@ -1,0 +1,997 @@
+# Form RI-1040, 2023 -- Rhode Island Resident Individual Income Tax Return.
+#
+# Provenance: blank downloaded from the official source_url below
+# (tax.ri.gov 2023_1040WE_w.pdf). The MAIN (page 1) sentinel sweep was rendered
+# and READ to confirm the printed tax year: header reads "State of Rhode Island
+# Division of Taxation / 2023 Form RI-1040 / Resident Individual Income Tax
+# Return", footer "Revised 11/2023". printed_year_verified = 2023 BEFORE pinning
+# pdf_sha256 (freshness protocol; Utah wrong-year trap avoided).
+#
+# Layout. XFA-style nested AcroForm: acroform_root is "topmostSubform[0]" and
+# every field's fully-qualified name is "topmostSubform[0].PageN[0].<leafname>"
+# (verified via pypdf get_fields() -- 327 named fields; all carry a /Parent chain
+# under the PageN[0] subform of the page they sit on). The introspect sweep PNGs
+# show only the LEAF /T (e.g. "TotalRITax[0]"); the page-subform prefix is the
+# real disambiguator. Three leaf names recur on two pages each and are GENUINELY
+# DISTINCT fields thanks to the page prefix: TotalRITax (Page1 line 13a vs Page2
+# line 13b), RIIncomeTax (Page1 line 8 vs Page3 line 19), ModifiedFedAGI (Page1
+# line 3 vs Page3 line 25) -- each mapped twice with its correct PageN[0]. prefix.
+# The header name/SSN widgets (PrimFirstName, PrimLastName, PrimTaxpayerSSN, etc.)
+# are REPEATED on pages 2-5 as the "Name(s) shown" carry-over banner; each repeat
+# is a DISTINCT field under its own PageN[0], so they are mapped once on page 1 as
+# the identity fields and the page 2-5 banner repeats are EXCLUDED (carry-over
+# duplicates, not return data).
+#
+# This 5-page PDF is the FILED RETURN plus its directly-attached schedules:
+#   page 1 -- RI-1040 front: header (names, two SSNs, address, city of legal
+#             residence), flags (primary/spouse deceased, new address, amended),
+#             electoral contribution Yes, specific-party checkbox + party name,
+#             filing status (5 boxes), lines 1-13a (AGI, modifications, RI std
+#             deduction, exemptions, taxable income, RI tax, credits 9a-9d, tax
+#             after credits 10a-10b, checkoff contributions 11, use/sales tax 12a
+#             + use-tax-accurate certify box, individual mandate penalty 12b +
+#             full-year-coverage certify box, total RI tax 13a).
+#   page 2 -- RI-1040 back: 13b carry, payments 14a-14f, total payments 14g,
+#             previously issued overpayments 14h, net payments 14i, amount due
+#             15a-15c, overpaid 16, refund 17, applied-to-2024 18, signature
+#             block (driver license numbers/states/dates/phones, paid preparer
+#             block, contact-preparer YES box).
+#   page 3 -- attached schedules: RI Schedule I (allowable federal credit, lines
+#             19-22), RI Schedule II (credit for tax paid to another state, lines
+#             23-29), RI Checkoff Contributions Schedule (lines 30-37), RI
+#             Schedule EIC (lines 38-40).
+#   page 4 -- RI Schedule W (withholding): 15 rows of Col A spouse flag / Col B
+#             letter code / Col C payer name / Col D fed ID / Col E RI withheld,
+#             line 16 total, line 17 count of W-2s/1099s.
+#   page 5 -- RI Schedule E (exemption schedule): 1a/1b yourself/spouse boxes,
+#             13 dependent rows (name/SSN/DOB/relationship), summary lines 3-5.
+#
+# Money vs text. Each numbered dollar line on pages 1-3 ships as a PAIR of
+# widgets: the dollars field (rect x 454-533, maxlen 10) and a separate 2-digit
+# cents box (the "-00" / "-00[0]" suffixed widget, rect x 533-554, maxlen 2). The
+# dollars field is mapped `money`; the cents companion widgets are EXCLUDED (they
+# are the printed ".00" cents portion, not an independent data line -- mapping
+# both would double-fill one printed amount). The same pattern holds for the
+# 9a/9b/9c sub-credit fields (dollars at x 331-410, cents "-00" at x 410-432).
+# Schedule W Col E withholding rows are likewise dollars + 2-digit cents pairs.
+# SSN fields are mapped `text` comb format ssn_digits_only (single 9-digit comb
+# box, maxlen 9). State codes / letter codes / counts stay `text`.
+#
+# Checkboxes. Filing status (5 separate single-state /Btn, on_state "/X"),
+# deceased/new-address/amended flags, electoral Yes, specific-party, use-tax
+# certify, individual-mandate full-coverage certify, contact-preparer YES are
+# each their OWN independent single-state /Btn ("/X" on pg 1-2). Schedule E
+# yourself/spouse boxes are single-state /Btn on_state "/1". No /Btn field is
+# shared across two printed controls, so no shared groups are forced; filing
+# status options nonetheless share group filing_status per house style (distinct
+# fields, distinct on_state, one group) -- harness only FORCES a shared group when
+# widgets share a /T, which these do not, so they are mapped as independent
+# checkboxes each carrying group filing_status.
+#
+# Relations. Only single-box on-face arithmetic with every operand mapped:
+#   3  == 1 + 2     ("Combine lines 1 and 2")
+#   9d == 9a+9b+9c  ("Add lines 9a, 9b and 9c")
+#   14g == 14a+14b+14c+14d+14e+14f ("Add lines 14a, 14b, 14c, 14d, 14e and 14f")
+#   14i == 14g - 14h ("Subtract line 14h from line 14g")
+#   13a == 10a+10b+11+12a+12b ("Add lines 10a, 10b, 11, 12a and 12b")
+#   22 == min(19, 21) ("Line 19 or 21, whichever is SMALLER")
+#   37 == 30+31+32+33+34+35+36 ("Add lines 30 through 36")
+#   40 == 38 * 39 -- OMITTED (39 is a printed constant 15%, not a mapped line).
+# Lines that floor at zero ("if zero or less, enter 0": 5, 7, 10a) or branch on a
+# larger-than comparison (15a, 16) are OMITTED per house style.
+#
+# Cross_form. Page 1 line 1 prints "Federal AGI from Federal Form 1040 or
+# 1040-SR, line 11" -- federal AGI = f1040.11.
+form: "RI-1040"
+jurisdiction: states/ri
+tax_year: 2023
+source_url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023_1040WE_w.pdf
+pdf_sha256: "db8606dabba92f1576f9fdc3a98198533ac1f94d59f18936461eab6c760701a2"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ============================================ page 1 -- header (name / address)
+  - line: name.first                     # "Your first name"
+    field: Page1[0].PrimFirstName[0]
+    type: text
+  - line: name.middle_initial            # "MI"
+    field: Page1[0].PrimMidInitial[0]
+    type: text
+    maxlen: 1
+  - line: name.last                      # "Last name"
+    field: Page1[0].PrimLastName[0]
+    type: text
+  - line: name.suffix                    # "Suffix"
+    field: Page1[0].Suffix[0]
+    type: text
+    maxlen: 3
+  - line: spouse.name.first              # "Spouse's name"
+    field: Page1[0].SecFirstName[0]
+    type: text
+  - line: spouse.name.middle_initial     # "MI"
+    field: Page1[0].SecMidInitial[0]
+    type: text
+    maxlen: 1
+  - line: spouse.name.last               # "Last name"
+    field: Page1[0].SecLastName[0]
+    type: text
+  - line: spouse.name.suffix             # "Suffix"
+    field: Page1[0].Suffix[1]
+    type: text
+    maxlen: 3
+  - line: identifying_number             # "Your social security number" (9-digit comb)
+    field: Page1[0].PrimTaxpayerSSN[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: spouse.identifying_number      # "Spouse's social security number" (9-digit comb)
+    field: Page1[0].SecTaxpayerSSN[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: mailing_address.street         # "Address"
+    field: Page1[0].AddressLine1[0]
+    type: text
+  - line: mailing_address.city           # "City, town or post office"
+    field: Page1[0].City[0]
+    type: text
+  - line: mailing_address.state          # "State"
+    field: Page1[0].State[0]
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip            # "ZIP code"
+    field: Page1[0].ZipCode[0]
+    type: text
+    maxlen: 5
+  - line: city_town_legal_residence      # "City or town of legal residence"
+    field: Page1[0].CityTownLegalResidence[0]
+    type: text
+
+  # ---- header flags
+  - line: primary_deceased.yes           # "Primary deceased?"
+    field: Page1[0].PrimaryDeceased[0]
+    type: checkbox
+    on_state: /X
+  - line: spouse_deceased.yes            # "Spouse deceased?"
+    field: Page1[0].SpouseDeceased[0]
+    type: checkbox
+    on_state: /X
+  - line: new_address.yes                # "New address?"
+    field: Page1[0].NewAddress[0]
+    type: checkbox
+    on_state: /X
+  - line: amended_return.yes             # "Amended Return?"
+    field: Page1[0].AmendedReturn[0]
+    type: checkbox
+    on_state: /X
+  - line: electoral_contribution.yes     # "ELECTORAL CONTRIBUTION ... check here ... Yes"
+    field: Page1[0].ElectoralContribution[0]
+    type: checkbox
+    on_state: /X
+  - line: specific_party.yes             # "...be paid to a specific party, check the box"
+    field: Page1[0].SpecificPartyChkBx[0]
+    type: checkbox
+    on_state: /X
+  - line: specific_party.name            # "...fill in the name of the political party"
+    field: Page1[0].SpecificParty[0]
+    type: text
+    maxlen: 12
+
+  # ---- filing status (5 separate single-state /Btn, each its own option)
+  - line: filing_status.single          # "Single"
+    field: Page1[0].StateFilingStatus_S[0]
+    type: checkbox
+    on_state: /X
+    group: filing_status
+  - line: filing_status.married_filing_jointly   # "Married filing jointly"
+    field: Page1[0].StateFilingStatus_J[0]
+    type: checkbox
+    on_state: /X
+    group: filing_status
+  - line: filing_status.married_filing_separately # "Married filing separately"
+    field: Page1[0].StateFilingStatus_M[0]
+    type: checkbox
+    on_state: /X
+    group: filing_status
+  - line: filing_status.head_of_household        # "Head of household"
+    field: Page1[0].StateFilingStatus_H[0]
+    type: checkbox
+    on_state: /X
+    group: filing_status
+  - line: filing_status.qualifying_widow         # "Qualifying widow(er)"
+    field: Page1[0].StateFilingStatus_W[0]
+    type: checkbox
+    on_state: /X
+    group: filing_status
+
+  # ---- page 1 income/tax/credit lines (dollars field mapped; "-00" cents box excluded)
+  - line: "1"                            # "Federal AGI from Federal Form 1040 or 1040-SR, line 11"
+    field: Page1[0].AGI[0]
+    type: money
+  - line: "2"                            # "Net modifications to Federal AGI from RI Sch M, line 3"
+    field: Page1[0].NetMods[0]
+    type: money
+  - line: "3"                            # "Modified Federal AGI. Combine lines 1 and 2"
+    field: Page1[0].ModifiedFedAGI[0]
+    type: money
+  - line: "4"                            # "RI Standard Deduction"
+    field: Page1[0].RIStandardDeduction[0]
+    type: money
+  - line: "5"                            # "Subtract line 4 from line 3. If zero or less, enter 0"
+    field: Page1[0].FedAGIAfterDed[0]
+    type: money
+  - line: "6.count"                      # "# of exemptions from RI Sch E, line 5"
+    field: Page1[0].NumFedExemptions[0]
+    type: text
+    maxlen: 2
+  - line: "6"                            # "... multiply by $4,700 and enter result on line 6"
+    field: Page1[0].RIExemptionAmount[0]
+    type: money
+  - line: "7"                            # "RI TAXABLE INCOME. Subtract line 6 from line 5"
+    field: Page1[0].RITaxableIncome[0]
+    type: money
+  - line: "8"                            # "RI income tax from Rhode Island Tax Table or Tax Computation Worksheet"
+    field: Page1[0].RIIncomeTax[0]
+    type: money
+  - line: 9a                             # "RI percentage of allowable Federal credit from page 3, RI Sch I, line 22"
+    field: Page1[0].RIFederalCredit[0]
+    type: money
+  - line: 9b                             # "RI Credit for income taxes paid to other states from page 3, RI Sch II, line 29"
+    field: Page1[0].RICreditPaidToOtherStates[0]
+    type: money
+  - line: 9c                             # "Other Rhode Island Credits from RI Schedule CR, line 9"
+    field: Page1[0].OtherRICredits[0]
+    type: money
+  - line: 9d                             # "Total RI credits. Add lines 9a, 9b and 9c"
+    field: Page1[0].TotalRICredits[0]
+    type: money
+  - line: 10a                            # "Rhode Island income tax after credits. Subtract line 9d from line 8"
+    field: Page1[0].RIIncomeTaxAfterCredit[0]
+    type: money
+  - line: 10b                            # "Recapture of Prior Year Other Rhode Island Credits from RI Schedule CR, line 12"
+    field: Page1[0].RecaptureofPriorYear[0]
+    type: money
+  - line: "11"                           # "RI checkoff contributions from page 3, RI Checkoff Schedule, line 37"
+    field: Page1[0].RIContributions[0]
+    type: money
+  - line: 12a                            # "USE/SALES tax due from RI Schedule U, line 4 or line 8"
+    field: Page1[0].UseSalesTaxDue[0]
+    type: money
+  - line: 12a.certify                    # "Check to certify use tax amount on line 12a is accurate"
+    field: Page1[0].UseTax[0]
+    type: checkbox
+    on_state: /X
+  - line: 12b                            # "Individual Mandate Penalty"
+    field: Page1[0].MandatePenalty[0]
+    type: money
+  - line: 12b.certify                    # "Check to certify full year coverage"
+    field: Page1[0].IndMandate[0]
+    type: checkbox
+    on_state: /X
+  - line: 13a                            # "TOTAL RI TAX AND CHECKOFF CONTRIBUTIONS. Add lines 10a, 10b, 11, 12a and 12b"
+    field: Page1[0].TotalRITax[0]
+    type: money
+
+  # ============================================ page 2 -- payments / refund / due
+  - line: 13b                            # "TOTAL RI TAX AND CHECKOFF CONTRIBUTIONS from line 13a"
+    field: Page2[0].TotalRITax[0]
+    type: money
+  - line: 14a                            # "RI 2023 income tax withheld from RI Schedule W, line 16"
+    field: Page2[0].RIWithholding[0]
+    type: money
+  - line: 14b                            # "2023 estimated tax payments and amount applied from 2022 return"
+    field: Page2[0].EstimatedTaxPayments[0]
+    type: money
+  - line: 14c                            # "Property tax relief credit from RI-1040H, line 13"
+    field: Page2[0].PropertyTaxReliefCredit[0]
+    type: money
+  - line: 14d                            # "RI earned income credit from page 3, RI Schedule EIC, line 40"
+    field: Page2[0].RIEarnedIncomeCredit[0]
+    type: money
+  - line: 14e                            # "RI Residential Lead Paint Credit from RI-6238, line 7"
+    field: Page2[0].RIResidentialLeadPaintCredit[0]
+    type: money
+  - line: 14f                            # "Other payments"
+    field: Page2[0].OtherPayments[0]
+    type: money
+  - line: 14g                            # "TOTAL PAYMENTS AND CREDITS. Add lines 14a, 14b, 14c, 14d, 14e and 14f"
+    field: Page2[0].TotalPaymentsAndCredits[0]
+    type: money
+  - line: 14h                            # "Previously issued overpayments (if filing an amended return)"
+    field: Page2[0].PreviouslyIssuedRefunds[0]
+    type: money
+  - line: 14i                            # "NET PAYMENTS. Subtract line 14h from line 14g"
+    field: Page2[0].NetPayments[0]
+    type: money
+  - line: 15a                            # "AMOUNT DUE. If line 13b is LARGER than line 14i, subtract line 14i from line 13b"
+    field: Page2[0].AmountDue[0]
+    type: money
+  - line: 15b                            # "Enter the amount of underestimating interest due from Form RI-2210 or RI-2210A"
+    field: Page2[0].UnderestimatingInterestDue[0]
+    type: money
+  - line: 15c                            # "TOTAL AMOUNT DUE. Add lines 15a and 15b"
+    field: Page2[0].TotalAmountDue[0]
+    type: money
+  - line: "16"                           # "AMOUNT OVERPAID. If line 14i is LARGER than line 13b ..."
+    field: Page2[0].AmountOverpaid[0]
+    type: money
+  - line: "17"                           # "Amount of overpayment to be refunded"
+    field: Page2[0].AmountToBeRefunded[0]
+    type: money
+  - line: "18"                           # "Amount of overpayment to be applied to 2024 estimated tax"
+    field: Page2[0].AmountToBeApplied[0]
+    type: money
+
+  # ---- page 2 signature block
+  - line: signature.taxpayer.license_number   # "Your driver's license number"
+    field: Page2[0].PrimTaxpayerLicenseNumber[0]
+    type: text
+    maxlen: 9
+  - line: signature.taxpayer.license_state    # "and state"
+    field: Page2[0].StateP[0]
+    type: text
+    maxlen: 2
+  - line: signature.taxpayer.date             # taxpayer "Date"
+    field: Page2[0].DateP[0]
+    type: text
+  - line: signature.taxpayer.phone            # taxpayer "Telephone number"
+    field: Page2[0].PhoneNumberP[0]
+    type: text
+    maxlen: 10
+  - line: signature.spouse.license_number      # "Spouse's driver's license number"
+    field: Page2[0].SecTaxpayeLicenseNumber[0]
+    type: text
+    maxlen: 9
+  - line: signature.spouse.license_state        # "and state"
+    field: Page2[0].StateS[0]
+    type: text
+    maxlen: 2
+  - line: signature.spouse.date                 # spouse "Date"
+    field: Page2[0].DateS[0]
+    type: text
+  - line: signature.spouse.phone                # spouse "Telephone number"
+    field: Page2[0].PhoneNumberS[0]
+    type: text
+    maxlen: 10
+  - line: preparer.name                         # paid preparer "Print name"
+    field: Page2[0].PreparerName[0]
+    type: text
+  - line: preparer.date                         # paid preparer "Date"
+    field: Page2[0].Date[0]
+    type: text
+  - line: preparer.phone                        # paid preparer "Telephone number"
+    field: Page2[0].PreparerPhoneNumber[0]
+    type: text
+    maxlen: 10
+  - line: preparer.address                      # "Paid preparer address"
+    field: Page2[0].PreparerAddress[0]
+    type: text
+  - line: preparer.city                         # "City, town or post office"
+    field: Page2[0].PreparerCity[0]
+    type: text
+  - line: preparer.state                        # "State"
+    field: Page2[0].PreparerState[0]
+    type: text
+    maxlen: 2
+  - line: preparer.zip                          # "ZIP code"
+    field: Page2[0].PreparerZipCode[0]
+    type: text
+    maxlen: 5
+  - line: preparer.ptin                         # "PTIN"
+    field: Page2[0].PTIN[0]
+    type: text
+    maxlen: 9
+  - line: preparer.contact.yes                  # "May the Division of Taxation contact your preparer? YES"
+    field: Page2[0].ContactPreparer[0]
+    type: checkbox
+    on_state: /X
+
+  # ============================================ page 3 -- RI Schedule I (lines 19-22)
+  - line: "19"                           # "RI income tax from page 1, line 8"
+    field: Page3[0].RIIncomeTax[0]
+    type: money
+  - line: "20"                           # "Credit for child and dependent care expenses from Federal Form 1040 or 1040-SR, Sch 3, line 2"
+    field: Page3[0].CreditChildDep[0]
+    type: money
+  - line: "21"                           # "Tentative allowable federal credit. Multiply line 20 by 25%"
+    field: Page3[0].TentativeAllowFedCredits[0]
+    type: money
+  - line: "22"                           # "MAXIMUM CREDIT. Line 19 or 21, whichever is SMALLER. Enter here and on page 1, line 9a"
+    field: Page3[0].MaxCredit[0]
+    type: money
+
+  # ---- RI Schedule II (lines 23-29)
+  - line: "23"                           # "RI income tax from RI-1040, page 1, line 8 less allowable federal credit ... line 22"
+    field: Page3[0].RIIncomeTaxLessFCR[0]
+    type: money
+  - line: "24"                           # "Income derived from other state"
+    field: Page3[0].IncOtherState[0]
+    type: money
+  - line: "25"                           # "Modified federal AGI from page 1, line 3"
+    field: Page3[0].ModifiedFedAGI[0]
+    type: money
+  - line: "26"                           # "Divide line 24 by line 25"
+    field: Page3[0].OtherStatePctg[0]
+    type: text
+    maxlen: 6
+  - line: "27"                           # "Tentative credit. Multiply line 23 by line 26"
+    field: Page3[0].TentativeCredit[0]
+    type: money
+  - line: 28.state                       # "...Insert abbreviation for state paid"
+    field: Page3[0].OtherStateAbbrev[0]
+    type: text
+    maxlen: 2
+  - line: "28"                           # "Tax due and paid to other state"
+    field: Page3[0].TxPdOtherState[0]
+    type: money
+  - line: "29"                           # "MAXIMUM TAX CREDIT. Line 23, 27 or 28, whichever is the SMALLEST. ... page 1, line 9b"
+    field: Page3[0].MaxCreditSchII[0]
+    type: money
+
+  # ---- RI Checkoff Contributions Schedule (lines 30-37)
+  - line: "30"                           # "Drug program account RIGL 44-30-2.4"
+    field: Page3[0].DrugPrgCont[0]
+    type: money
+  - line: "31"                           # "Olympic Contribution RIGL 44-30-2.1"
+    field: Page3[0].OlympicCont[0]
+    type: money
+  - line: "32"                           # "RI Organ Transplant Fund RIGL 44-30-2.5"
+    field: Page3[0].OrganTranCont[0]
+    type: money
+  - line: "33"                           # "RI Council on the Arts RIGL 42-75.1-1"
+    field: Page3[0].CouncilArtCont[0]
+    type: money
+  - line: "34"                           # "Nongame Wildlife Fund RIGL 44-30-2.2"
+    field: Page3[0].RIWildlifeCont[0]
+    type: money
+  - line: "35"                           # "Childhood Disease Victim's Fund RIGL 44-30-2.3 ..."
+    field: Page3[0].DiseaseVictimsCont[0]
+    type: money
+  - line: "36"                           # "RI Military Family Relief Fund RIGL 44-30-2.9"
+    field: Page3[0].RIMilFamCont[0]
+    type: money
+  - line: "37"                           # "TOTAL CONTRIBUTIONS. Add lines 30 through 36. ... page 1, line 11"
+    field: Page3[0].RICheckoffAmt[0]
+    type: money
+
+  # ---- RI Schedule EIC (lines 38-40)
+  - line: "38"                           # "Federal earned income credit from Federal Form 1040 or 1040-SR, line 27"
+    field: Page3[0].FedEarnedIncCrdts[0]
+    type: money
+  - line: "40"                           # "RI EARNED INCOME CREDIT. Multiply line 38 by line 39. ... page 2, line 14d"
+    field: Page3[0].RIEIC[0]
+    type: money
+
+  # ============================================ page 4 -- RI Schedule W (withholding)
+  - line: schedule_w.1.spouse_flag       # row 1 Col A "S if Spouse's W-2"
+    field: Page4[0].Spouse1[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.1.code              # row 1 Col B "letter code"
+    field: Page4[0].Code1[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.1.payer_name        # row 1 Col C "Employer's Name"
+    field: Page4[0].EmpPayerName-1[0]
+    type: text
+  - line: schedule_w.1.fed_id            # row 1 Col D "Employer's state ID / Federal ID #"
+    field: Page4[0].EmpFedID-1[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.1.ri_withheld       # row 1 Col E "Rhode Island Income Tax Withheld"
+    field: Page4[0].RIIncWthld-1[0]
+    type: money
+  - line: schedule_w.2.spouse_flag
+    field: Page4[0].Spouse2[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.2.code
+    field: Page4[0].Code2[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.2.payer_name
+    field: Page4[0].EmpPayerName-2[0]
+    type: text
+  - line: schedule_w.2.fed_id
+    field: Page4[0].EmpFedID-2[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.2.ri_withheld
+    field: Page4[0].RIIncWthld-2[0]
+    type: money
+  - line: schedule_w.3.spouse_flag
+    field: Page4[0].Spouse3[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.3.code
+    field: Page4[0].Code3[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.3.payer_name
+    field: Page4[0].EmpPayerName-3[0]
+    type: text
+  - line: schedule_w.3.fed_id
+    field: Page4[0].EmpFedID-3[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.3.ri_withheld
+    field: Page4[0].RIIncWthld-3[0]
+    type: money
+  - line: schedule_w.4.spouse_flag
+    field: Page4[0].Spouse4[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.4.code
+    field: Page4[0].Code4[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.4.payer_name
+    field: Page4[0].EmpPayerName-4[0]
+    type: text
+  - line: schedule_w.4.fed_id
+    field: Page4[0].EmpFedID-4[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.4.ri_withheld
+    field: Page4[0].RIIncWthld-4[0]
+    type: money
+  - line: schedule_w.5.spouse_flag
+    field: Page4[0].Spouse5[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.5.code
+    field: Page4[0].Code5[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.5.payer_name
+    field: Page4[0].EmpPayerName-5[0]
+    type: text
+  - line: schedule_w.5.fed_id
+    field: Page4[0].EmpFedID-5[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.5.ri_withheld
+    field: Page4[0].RIIncWthld-5[0]
+    type: money
+  - line: schedule_w.6.spouse_flag
+    field: Page4[0].Spouse6[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.6.code
+    field: Page4[0].Code6[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.6.payer_name
+    field: Page4[0].EmpPayerName-6[0]
+    type: text
+  - line: schedule_w.6.fed_id
+    field: Page4[0].EmpFedID-6[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.6.ri_withheld
+    field: Page4[0].RIIncWthld-6[0]
+    type: money
+  - line: schedule_w.7.spouse_flag
+    field: Page4[0].Spouse7[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.7.code
+    field: Page4[0].Code7[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.7.payer_name
+    field: Page4[0].EmpPayerName-7[0]
+    type: text
+  - line: schedule_w.7.fed_id
+    field: Page4[0].EmpFedID-7[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.7.ri_withheld
+    field: Page4[0].RIIncWthld-7[0]
+    type: money
+  - line: schedule_w.8.spouse_flag
+    field: Page4[0].Spouse8[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.8.code
+    field: Page4[0].Code8[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.8.payer_name
+    field: Page4[0].EmpPayerName-8[0]
+    type: text
+  - line: schedule_w.8.fed_id
+    field: Page4[0].EmpFedID-8[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.8.ri_withheld
+    field: Page4[0].RIIncWthld-8[0]
+    type: money
+  - line: schedule_w.9.spouse_flag
+    field: Page4[0].Spouse9[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.9.code
+    field: Page4[0].Code9[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.9.payer_name
+    field: Page4[0].EmpPayerName-9[0]
+    type: text
+  - line: schedule_w.9.fed_id
+    field: Page4[0].EmpFedID-9[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.9.ri_withheld
+    field: Page4[0].RIIncWthld-9[0]
+    type: money
+  - line: schedule_w.10.spouse_flag
+    field: Page4[0].Spouse10[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.10.code
+    field: Page4[0].Code10[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.10.payer_name
+    field: Page4[0].EmpPayerName-10[0]
+    type: text
+  - line: schedule_w.10.fed_id
+    field: Page4[0].EmpFedID-10[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.10.ri_withheld
+    field: Page4[0].RIIncWthld-10[0]
+    type: money
+  - line: schedule_w.11.spouse_flag
+    field: Page4[0].Spouse11[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.11.code
+    field: Page4[0].Code11[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.11.payer_name
+    field: Page4[0].EmpPayerName-11[0]
+    type: text
+  - line: schedule_w.11.fed_id
+    field: Page4[0].EmpFedID-11[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.11.ri_withheld
+    field: Page4[0].RIIncWthld-11[0]
+    type: money
+  - line: schedule_w.12.spouse_flag
+    field: Page4[0].Spouse12[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.12.code
+    field: Page4[0].Code12[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.12.payer_name
+    field: Page4[0].EmpPayerName-12[0]
+    type: text
+  - line: schedule_w.12.fed_id
+    field: Page4[0].EmpFedID-12[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.12.ri_withheld
+    field: Page4[0].RIIncWthld-12[0]
+    type: money
+  - line: schedule_w.13.spouse_flag
+    field: Page4[0].Spouse13[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.13.code
+    field: Page4[0].Code13[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.13.payer_name
+    field: Page4[0].EmpPayerName-13[0]
+    type: text
+  - line: schedule_w.13.fed_id
+    field: Page4[0].EmpFedID-13[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.13.ri_withheld
+    field: Page4[0].RIIncWthld-13[0]
+    type: money
+  - line: schedule_w.14.spouse_flag
+    field: Page4[0].Spouse14[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.14.code
+    field: Page4[0].Code14[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.14.payer_name
+    field: Page4[0].EmpPayerName-14[0]
+    type: text
+  - line: schedule_w.14.fed_id
+    field: Page4[0].EmpFedID-14[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.14.ri_withheld
+    field: Page4[0].RIIncWthld-14[0]
+    type: money
+  - line: schedule_w.15.spouse_flag
+    field: Page4[0].Spouse15[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.15.code
+    field: Page4[0].Code15[0]
+    type: text
+    maxlen: 1
+  - line: schedule_w.15.payer_name
+    field: Page4[0].EmpPayerName-15[0]
+    type: text
+  - line: schedule_w.15.fed_id
+    field: Page4[0].EmpFedID-15[0]
+    type: text
+    maxlen: 9
+  - line: schedule_w.15.ri_withheld
+    field: Page4[0].RIIncWthld-15[0]
+    type: money
+  - line: schedule_w.16                  # "Total RI Income Tax Withheld. Add lines 1 through 15, Col. E. ... line 14a"
+    field: Page4[0].TotalRIIncWthld-1[0]
+    type: money
+  - line: schedule_w.17                  # "Total number of W-2s and 1099s showing Rhode Island Income Tax Withheld"
+    field: Page4[0].NumW21099[0]
+    type: text
+
+  # ============================================ page 5 -- RI Schedule E (exemptions)
+  - line: schedule_e.1a.yourself         # "1a Yourself"
+    field: Page5[0].CheckBox_Yourself[0]
+    type: checkbox
+    on_state: /1
+  - line: schedule_e.1b.spouse           # "1b Spouse"
+    field: Page5[0].CheckBox_Spouse[0]
+    type: checkbox
+    on_state: /1
+  - line: schedule_e.dependent_1.name    # 2a (A) Name of Dependent
+    field: Page5[0].Name-1[0]
+    type: text
+  - line: schedule_e.dependent_1.ssn     # 2a (B) Social Security Number
+    field: Page5[0].SSN-1[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_1.dob     # 2a (C) Date of Birth
+    field: Page5[0].DOB-1[0]
+    type: text
+  - line: schedule_e.dependent_1.relationship  # 2a (D) Relationship
+    field: Page5[0].Relationship-1[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_2.name
+    field: Page5[0].Name-2[0]
+    type: text
+  - line: schedule_e.dependent_2.ssn
+    field: Page5[0].SSN-2[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_2.dob
+    field: Page5[0].DOB-2[0]
+    type: text
+  - line: schedule_e.dependent_2.relationship
+    field: Page5[0].Relationship-2[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_3.name
+    field: Page5[0].Name-3[0]
+    type: text
+  - line: schedule_e.dependent_3.ssn
+    field: Page5[0].SSN-3[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_3.dob
+    field: Page5[0].DOB-3[0]
+    type: text
+  - line: schedule_e.dependent_3.relationship
+    field: Page5[0].Relationship-3[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_4.name
+    field: Page5[0].Name-4[0]
+    type: text
+  - line: schedule_e.dependent_4.ssn
+    field: Page5[0].SSN-4[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_4.dob
+    field: Page5[0].DOB-4[0]
+    type: text
+  - line: schedule_e.dependent_4.relationship
+    field: Page5[0].Relationship-4[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_5.name
+    field: Page5[0].Name-5[0]
+    type: text
+  - line: schedule_e.dependent_5.ssn
+    field: Page5[0].SSN-5[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_5.dob
+    field: Page5[0].DOB-5[0]
+    type: text
+  - line: schedule_e.dependent_5.relationship
+    field: Page5[0].Relationship-5[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_6.name
+    field: Page5[0].Name-6[0]
+    type: text
+  - line: schedule_e.dependent_6.ssn
+    field: Page5[0].SSN-6[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_6.dob
+    field: Page5[0].DOB-6[0]
+    type: text
+  - line: schedule_e.dependent_6.relationship
+    field: Page5[0].Relationship-6[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_7.name
+    field: Page5[0].Name-7[0]
+    type: text
+  - line: schedule_e.dependent_7.ssn
+    field: Page5[0].SSN-7[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_7.dob
+    field: Page5[0].DOB-7[0]
+    type: text
+  - line: schedule_e.dependent_7.relationship
+    field: Page5[0].Relationship-7[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_8.name
+    field: Page5[0].Name-8[0]
+    type: text
+  - line: schedule_e.dependent_8.ssn
+    field: Page5[0].SSN-8[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_8.dob
+    field: Page5[0].DOB-8[0]
+    type: text
+  - line: schedule_e.dependent_8.relationship
+    field: Page5[0].Relationship-8[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_9.name
+    field: Page5[0].Name-9[0]
+    type: text
+  - line: schedule_e.dependent_9.ssn
+    field: Page5[0].SSN-9[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_9.dob
+    field: Page5[0].DOB-9[0]
+    type: text
+  - line: schedule_e.dependent_9.relationship
+    field: Page5[0].Relationship-9[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_10.name
+    field: Page5[0].Name-10[0]
+    type: text
+  - line: schedule_e.dependent_10.ssn
+    field: Page5[0].SSN-10[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_10.dob
+    field: Page5[0].DOB-10[0]
+    type: text
+  - line: schedule_e.dependent_10.relationship
+    field: Page5[0].Relationship-10[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_11.name
+    field: Page5[0].Name-11[0]
+    type: text
+  - line: schedule_e.dependent_11.ssn
+    field: Page5[0].SSN-11[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_11.dob
+    field: Page5[0].DOB-11[0]
+    type: text
+  - line: schedule_e.dependent_11.relationship
+    field: Page5[0].Relationship-11[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_12.name
+    field: Page5[0].Name-12[0]
+    type: text
+  - line: schedule_e.dependent_12.ssn
+    field: Page5[0].SSN-12[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_12.dob
+    field: Page5[0].DOB-12[0]
+    type: text
+  - line: schedule_e.dependent_12.relationship
+    field: Page5[0].Relationship-12[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.dependent_13.name
+    field: Page5[0].Name-13[0]
+    type: text
+  - line: schedule_e.dependent_13.ssn
+    field: Page5[0].SSN-13[0]
+    type: text
+    comb: true
+    format: ssn_digits_only
+    maxlen: 9
+  - line: schedule_e.dependent_13.dob
+    field: Page5[0].DOB-13[0]
+    type: text
+  - line: schedule_e.dependent_13.relationship
+    field: Page5[0].Relationship-13[0]
+    type: text
+    maxlen: 9
+  - line: schedule_e.3                   # "Enter the number of boxes checked on lines 1a and 1b"
+    field: Page5[0].SummaryLine3[0]
+    type: text
+  - line: schedule_e.4a                  # "Enter the number of children from lines 2a through 2m who lived with you"
+    field: Page5[0].SummaryLine4a[0]
+    type: text
+  - line: schedule_e.4b                  # "...who did not live with you due to divorce or separation"
+    field: Page5[0].SummaryLine4b[0]
+    type: text
+  - line: schedule_e.4c                  # "...other dependents from lines 2a through 2m not included on lines 4a or 4b"
+    field: Page5[0].SummaryLine4c[0]
+    type: text
+  - line: schedule_e.5                   # "Add the numbers from lines 3 through 4c. ... RI-1040/NR, pg 1, line 6"
+    field: Page5[0].SummaryLine5[0]
+    type: text
+relations:
+  - "3 == 1 + 2"                         # "Modified Federal AGI. Combine lines 1 and 2"
+  - "9d == 9a + 9b + 9c"                 # "Total RI credits. Add lines 9a, 9b and 9c"
+  - "13a == 10a + 10b + 11 + 12a + 12b"  # "TOTAL RI TAX ... Add lines 10a, 10b, 11, 12a and 12b"
+  - "14g == 14a + 14b + 14c + 14d + 14e + 14f"  # "TOTAL PAYMENTS AND CREDITS. Add ..."
+  - "14i == 14g - 14h"                   # "NET PAYMENTS. Subtract line 14h from line 14g"
+  - "15c == 15a + 15b"                   # "TOTAL AMOUNT DUE. Add lines 15a and 15b"
+  - "22 == min(19, 21)"                  # "MAXIMUM CREDIT. Line 19 or 21, whichever is SMALLER"
+  - "37 == 30 + 31 + 32 + 33 + 34 + 35 + 36"  # "TOTAL CONTRIBUTIONS. Add lines 30 through 36"
+cross_form:
+  # Page 1 line 1 "Federal AGI from Federal Form 1040 or 1040-SR, line 11".
+  - "1 == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null

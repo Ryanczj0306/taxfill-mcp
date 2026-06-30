@@ -13,7 +13,7 @@ plan for what is **not yet done**, as of **2026-06-28**.
 
 ## Where we are (verified)
 
-Done and on `main` (**1,355 tests, all green** — verified `pytest` run, exit 0):
+Done and on `main` (**1,367 tests, all green** — verified `pytest` run, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (21 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -42,11 +42,11 @@ Done and on `main` (**1,355 tests, all green** — verified `pytest` run, exit 0
 
 **Form packs that can be FILLED today (introspect→vision-map→adversarial-audit→
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E,
-Form 8863, Form 2555. state — **26 states** (30 packs): CA (540 + 540NR +
+Form 8863, Form 2555. state — **29 states** (33 packs): CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
-AR (AR1000F), **ID (40), NE (1040N), OK (511)**. **65 form packs total**
-(35 federal + 30 state).
+AR (AR1000F), ID (40), NE (1040N), OK (511), **ME (1040ME), MS (80-105),
+RI (RI-1040)**. **68 form packs total** (35 federal + 33 state).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
 > (Phase 0, 2026-06-28) and counted above.
@@ -66,13 +66,13 @@ Cheap, high-credibility cleanup that the audit surfaced. No new features.
       — DONE (2026-06-28) after a green `test_formpacks_states.py` round-trip; merged
       via `feat/state-rollout-al-co-mn-wi`. Working tree is now clean.
 - [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
-      and a full run (**exit 0, no collection errors**): the suite is **1,355 tests,
+      and a full run (**exit 0, no collection errors**): the suite is **1,367 tests,
       all green** (1,288 at audit + 3 eval scenarios k/l/m + 8 each for Forms 4868,
       1040-ES, 1040-X, and W-7). The earlier figures
       were stale/under-counted (old ROADMAP *1222*, README *~1076*, audit-sandbox
-      *~903* — the sandbox couldn't run collection). README + this file now quote **1,355**.
+      *~903* — the sandbox couldn't run collection). README + this file now quote **1,367**.
 - [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
-      done, 26 states (not 14), 65 packs (not 49), Phase B done, drift CI done.
+      done, 29 states (not 14), 68 packs (not 49), Phase B done, drift CI done.
 
 **Acceptance:** working tree clean (no untracked packs), README + this file quote
 one verified test count, CI green.
@@ -120,23 +120,22 @@ The dominant remaining body of work. Use the proven pipeline:
 vision-mapping → `assemble_*` → adversarial vision audit → `test_formpacks_states.py`
 golden round-trip.
 
-### C1 — Remaining resident state form packs (16 jurisdictions)
+### C1 — Remaining resident state form packs (13 jurisdictions)
 
-**26 of 42** income-tax jurisdictions are now fillable (three C1 tranches shipped via the
-introspect→vision-map→adversarial-audit→golden pipeline). **16 remain** (15 states + DC),
-all have knowledge packs but no fillable form pack yet:
+**29 of 42** income-tax jurisdictions are now fillable (four C1 tranches shipped via the
+introspect→vision-map→adversarial-audit→golden pipeline). **13 remain** (12 states + DC):
 
-`CT · DC · DE · HI · IA · MA · ME · MS · MT · ND ·
-NM · RI · SC · UT · VT · WV`
+`CT · DC · DE · HI · IA · MA · MT · ND · NM · SC · UT · VT · WV`
 
 - [x] Tranche 1 (2026-06-30) — **KY (740), OR (OR-40), LA (IT-540)**.
 - [x] Tranche 2 (2026-06-30) — **KS (K-40), AR (AR1000F)**.
 - [x] Tranche 3 (2026-06-30) — **ID (40), NE (1040N), OK (511)**. (NE line-43 use-tax
       sub-fields and an OK 511/538-S shared-control collision were caught by the
       adversarial audit and fixed before merge.)
-- [ ] Roll out the remaining **easy AcroForm states by population**: ME → MS → HI →
-      RI → MT → ND → DE → VT → DC (+ the hard-state set CT/IA/NM/SC/MA, and UT once
-      a 2023 artifact is locatable). (~one feature branch per 3–5 states.)
+- [x] Tranche 4 (2026-06-30) — **ME (1040ME), MS (80-105), RI (RI-1040)**.
+- [ ] Roll out the remaining **easy AcroForm states by population**: MT → ND → DE →
+      VT → DC. (~one feature branch per 3–5 states.) Then only the hard-state set
+      (C3) is left: CT, IA, NM, SC, MA, **HI**, plus **UT** (2023-artifact sourcing).
 - [ ] **UT (TC-40) — deferred / sourcing blocker:** Utah serves a year-agnostic
       `tc-40.pdf`; the `…/forms/2023/tc-40.pdf` path actually returns the **2025**
       revision (confirmed by rendering — line 17 shows the 2025 phase-out thresholds,
@@ -159,8 +158,9 @@ Only **CA** (540NR + Schedule CA 540NR) and **NY** (IT-203) have them today.
 - [ ] **MA Form 1** — fetch-blocked AcroForm; needs a **downloader fix** (mass.gov
       fillable PDF the repo downloader can't retrieve).
 - [ ] **IA / NM** — flat-or-XFA forms; reuse the federal XFA handling.
-- [ ] **CT / SC** — print-only; need an **OCR-positioned overlay filler** engine
-      (or a documented "print + hand-fill from computed values" fallback).
+- [ ] **CT / SC / HI** — print-only (no AcroForm and no XFA — HI N-11 2023 was
+      confirmed flat: 0 fillable widgets); need an **OCR-positioned overlay filler**
+      engine (or a documented "print + hand-fill from computed values" fallback).
 
 **Acceptance (each pack):** loads; golden round-trip clean (fill→verify→render all
 pages); field map audited clean. **Effort: XL. Deps:** C1/C2 pipeline ready;
@@ -226,7 +226,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       recommendation, dollar delta, and joint-liability caveat), **(m)** NRA-spouse
       §6013(g) election (MFJ dropped → MFS, election + worldwide-income trade-off
       surfaced in both estimate and intake, authority via `get_sources`).
-- [ ] Wire the true test count (1,355) into a CI badge / README line.
+- [ ] Wire the true test count (1,367) into a CI badge / README line.
 
 **Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
 
