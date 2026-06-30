@@ -66,7 +66,7 @@ def test_all_expected_tools_are_listed_with_schemas():
 
 def test_list_forms_and_get_form_map():
     data = _data(_run(_call("list_forms", {"jurisdiction": "federal", "year": 2023})))
-    assert len(data) == 17  # M2 set (10) + Schedule SE + Schedule D/E + Form 8863/2555 + Form 4868 + Form 1040-ES
+    assert len(data) == 18  # M2 set (10) + Schedule SE + Schedule D/E + Form 8863/2555 + Form 4868 + Form 1040-ES + Form 1040-X
     fm = _data(_run(_call("get_form_map", {"form": "f1040", "year": 2023})))
     assert fm["form"] == "1040"
     assert "8 == sched_1.10" in fm["cross_form"]
