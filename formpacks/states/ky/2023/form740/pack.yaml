@@ -1,0 +1,503 @@
+# Form 740, 2023 -- Kentucky Individual Income Tax Return (full-year RESIDENTS ONLY).
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title ("KENTUCKY INDIVIDUAL INCOME
+# TAX RETURN -- Residents Only"), the form number "FORM 740", the tax year
+# "2023", and the revision stamp "42A740 (10-23)" before pinning pdf_sha256
+# (freshness protocol). Pages 2 and 3 print "FORM 740 (2023) ... Page 2/3 of 3"
+# and carry the same revision stamp.
+#
+# Layout. FLAT AcroForm: acroform_root is empty -- every widget's field name is
+# the raw flat id the form ships with (e.g. "740Name", "740Line5A",
+# "740FilingStatus", "Signature of Taxpayer"). No /Parent name chain.
+# KY 740 is a 3-page return and ALL THREE PAGES ARE THE FILED RETURN
+# (no instructions / tax tables / worksheets are interleaved in this PDF):
+#   page 1 -- header (deceased flags, tax-year dates, two SSNs, name, address),
+#             filing status (1-4), Amended flag, Political Party Fund
+#             designations, and income/tax lines 5-19 in two columns
+#             (A = Spouse when filing status 2; B = Yourself or Joint);
+#   page 2 -- family-size box (line 20), Family Size Tax Credit (line 21
+#             decimal + percentage + amount), lines 22-30, withholding/payments
+#             31a-31h, lines 32-37 (additional tax due / overpaid);
+#   page 3 -- Fund Contributions 38a-38k, lines 39-41 (credit-forward /
+#             refund), Sign Here block (taxpayer + spouse), Paid Preparer Use
+#             block, and the Enclose federal-1040 checkbox.
+#
+# Coverage. The blank PDF exposes 118 fillable AcroForm widget entries
+# (introspect skeleton). ALL 118 are mapped here (93 text + 25 checkbox).
+# Nothing is intentionally omitted -- this PDF contains no JS pushbuttons,
+# readonly banners, or instructions-only fields.
+#
+# Columns. Lines 5-18 are paired A/B widgets: column A ("...A" field) is the
+# spouse column used only when filing status 2 (married filing separately on a
+# combined return) is checked; column B ("...B" field) is "Yourself (or Joint)".
+# They are mapped as distinct lines suffixed `.a` / `.b`. Line 19 has only a
+# single (column-B) box on the form, mapped as bare "19".
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix and is
+# mapped `money`. The two non-dollar boxes on line 21 stay `text`: the Family
+# Size Tax Credit DECIMAL amount (740Line21FSTCdecimal, MaxLen 4) and its
+# PERCENTAGE (740Line21FSTCPercentage, MaxLen 3) -- mapping them money would
+# round away the fraction. Line 24's federal-amount entry box
+# ("740Line24 from federal form 2441-K, line 11") is the federal Form 2441
+# line-11 figure the filer transcribes before the x20% result on line 24; it is
+# a dollar figure and mapped `money`. Identity / signature / preparer strings
+# stay `text`.
+#
+# SSN combs. 740SpouseSSN (column A) and 740PrimarySSN (column B) are /Btn-comb
+# text widgets (Ff comb bit set, MaxLen 9) -- one digit per cell, no dashes --
+# so they carry comb:true and format:ssn_digits_only. 740PrimarySSN is the
+# primary filer's number -> identity id `identifying_number`.
+#
+# Checkboxes / radio groups. The single /Btn fields with multiple kid states are
+# mapped one line per state on the SHARED field with the exact on_state read
+# from the blank: 740FilingStatus (/Single /Combined /Joint /Separate),
+# 740FSCheckbox (family size 1-4, on_states /1../4), 740PolPartySpouse and
+# 740PolPartyTP (/Demo /Republican "/No Desig"), DiscussDor (/Yes /No). The
+# remaining checkboxes are independent single-state /Yes flags (deceased,
+# Amended, Schedule J, Form 4972-K, Schedule RC-R, Schedule DS-R, Angel
+# Investor, Enclose-1040).
+#
+# Relations. Only unconditional on-face equalities with every operand mapped to
+# a single line are declared. Lines whose printed instruction floors at zero
+# ("If line X is larger than line Y, enter zero": 16, 18, 26) or branch on a
+# comparison (33, 36, 37) are OMITTED per the conservative house style.
+#
+# Cross_form. Line 5's printed label is "Enter amount from federal Form 1040 or
+# 1040-SR, line 11" (federal AGI). On a combined return that AGI is split
+# across columns A and B, so no single column equals f1040.11 unconditionally;
+# the federal-AGI link is therefore declared on the Yourself/Joint column
+# (5.b == f1040.11), which holds for filing statuses 1/3/4.
+form: "740"
+jurisdiction: states/ky
+tax_year: 2023
+source_url: https://revenue.ky.gov/Forms/Form%20740%202023.pdf
+pdf_sha256: "50341c1bc47312333df034ccca736453bd0866df3755ef5227e728a3d09f36e4"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header
+  - line: deceased.spouse                # "Check if deceased: Spouse"
+    field: 740DeceasedIndSpouse
+    type: checkbox
+    on_state: /Yes
+  - line: deceased.taxpayer              # "Check if deceased: Taxpayer"
+    field: 740DeceasedIndTaxpayer
+    type: checkbox
+    on_state: /Yes
+  - line: tax_year_begin_date            # "For calendar year or other taxable year beginning"
+    field: 740BeginningDate
+    type: text
+  - line: tax_year_end_date              # "... and ending"
+    field: 740EndingDate
+    type: text
+  # ---- SSNs (comb, digits only). A = Spouse, B = Yourself (primary filer).
+  - line: spouse.identifying_number      # "A. Spouse's Social Security Number"
+    field: 740SpouseSSN
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: identifying_number             # "B. Your Social Security Number"
+    field: 740PrimarySSN
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: name                           # "Name -- Last, First, Middle Initial (both names if joint/combined)"
+    field: 740Name
+    type: text
+  - line: mailing_address.street         # "Mailing Address (Number and Street incl. Apt or P.O. Box)"
+    field: 740StreetAddress2
+    type: text
+  - line: mailing_address.city_state_zip # "City, Town or Post Office / State / ZIP Code" (single box)
+    field: 740CityStateZip
+    type: text
+
+  # ---- filing status (one /Btn, four mutually exclusive states)
+  - line: filing_status.single           # 1 Single
+    field: 740FilingStatus
+    type: checkbox
+    on_state: /Single
+  - line: filing_status.married_filing_separately_combined  # 2 Married filing separately on this combined return
+    field: 740FilingStatus
+    type: checkbox
+    on_state: /Combined
+  - line: filing_status.married_filing_joint                # 3 Married, filing joint return
+    field: 740FilingStatus
+    type: checkbox
+    on_state: /Joint
+  - line: filing_status.married_filing_separate_returns     # 4 Married, filing separate returns
+    field: 740FilingStatus
+    type: checkbox
+    on_state: /Separate
+  - line: filing_status.separate_spouse_name                # status 4: enter spouse's full name
+    field: 740SFS4SpouseName
+    type: text
+
+  - line: amended_return.yes             # "Amended (Enclose copy of 1040X, if applicable)"
+    field: AmendedCheckbox
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Political Party Fund (A = Spouse, B = Yourself); two /Btn fields
+  - line: political_party_fund.spouse.democratic
+    field: 740PolPartySpouse
+    type: checkbox
+    on_state: /Demo
+  - line: political_party_fund.spouse.republican
+    field: 740PolPartySpouse
+    type: checkbox
+    on_state: /Republican
+  - line: political_party_fund.spouse.no_designation
+    field: 740PolPartySpouse
+    type: checkbox
+    on_state: /No Desig
+  - line: political_party_fund.yourself.democratic
+    field: 740PolPartyTP
+    type: checkbox
+    on_state: /Demo
+  - line: political_party_fund.yourself.republican
+    field: 740PolPartyTP
+    type: checkbox
+    on_state: /Republican
+  - line: political_party_fund.yourself.no_designation
+    field: 740PolPartyTP
+    type: checkbox
+    on_state: /No Desig
+
+  # ============================================ page 1 -- income/tax lines 5-19
+  # column A = Spouse (filing status 2), column B = Yourself (or Joint)
+  - line: 5.a                            # 5 federal Form 1040/1040-SR line 11 (federal AGI) -- col A
+    field: 740Line5A
+    type: money
+  - line: 5.b                            # 5 -- col B
+    field: 740Line5B
+    type: money
+  - line: 6.a                            # 6 Additions from Schedule M, line 6 -- col A
+    field: 740Line6A
+    type: money
+  - line: 6.b
+    field: 740Line6B
+    type: money
+  - line: 7.a                            # 7 Add lines 5 and 6 -- col A
+    field: 740Line7A
+    type: money
+  - line: 7.b
+    field: 740Line7B
+    type: money
+  - line: 8.a                            # 8 Subtractions from Schedule M, line 17 -- col A
+    field: 740Line8A
+    type: money
+  - line: 8.b
+    field: 740Line8B
+    type: money
+  - line: 9.a                            # 9 Subtract line 8 from line 7 (Kentucky AGI) -- col A
+    field: 740Line9A
+    type: money
+  - line: 9.b
+    field: 740Line9B
+    type: money
+  - line: 10.a                           # 10 Itemized / $2,980 nonitemizer deduction -- col A
+    field: 740Line10A
+    type: money
+  - line: 10.b
+    field: 740Line10B
+    type: money
+  - line: 11.a                           # 11 Subtract line 10 from line 9 (Taxable Income) -- col A
+    field: 740Line11A
+    type: money
+  - line: 11.b
+    field: 740Line11B
+    type: money
+  - line: 12.schedule_j                  # 12 Tax Computation: amount from Schedule J checkbox
+    field: 740SchJCheckbox
+    type: checkbox
+    on_state: /Yes
+  - line: 12.a                           # 12 Tax (line 11 x 4.5% or Schedule J) -- col A
+    field: 740Line12A
+    type: money
+  - line: 12.b
+    field: 740Line12B
+    type: money
+  - line: 13.form_4972k                  # 13 Enter tax from Form 4972-K checkbox
+    field: 740Form4972KCheckbox
+    type: checkbox
+    on_state: /Yes
+  - line: 13.schedule_rcr                # 13 Schedule RC-R checkbox
+    field: 740SchRCRCheckbox
+    type: checkbox
+    on_state: /Yes
+  - line: 13.schedule_dsr                # 13 Schedule DS-R checkbox
+    field: 740DSRCheckbox
+    type: checkbox
+    on_state: /Yes
+  - line: 13.angel_investor_recapture    # 13 Angel Investor Recapture checkbox
+    field: 740AngelCheckbox
+    type: checkbox
+    on_state: /Yes
+  - line: 13.a                           # 13 tax amount -- col A
+    field: 740Line13A
+    type: money
+  - line: 13.b
+    field: 740Line13B
+    type: money
+  - line: 14.a                           # 14 Add lines 12 and 13 -- col A
+    field: 740Line14A
+    type: money
+  - line: 14.b
+    field: 740Line14B
+    type: money
+  - line: 15.a                           # 15 Schedule ITC, Section A, lines 25E and 25F -- col A
+    field: 740Line15A
+    type: money
+  - line: 15.b
+    field: 740Line15B
+    type: money
+  - line: 16.a                           # 16 Subtract line 15 from line 14 (>=0) -- col A
+    field: 740Line16A
+    type: money
+  - line: 16.b
+    field: 740Line16B
+    type: money
+  - line: 17.a                           # 17 Personal tax credit from Schedule ITC, Section B -- col A
+    field: 740Line17A
+    type: money
+  - line: 17.b
+    field: 740Line17B
+    type: money
+  - line: 18.a                           # 18 Subtract line 17 from line 16 (>=0) -- col A
+    field: 740Line18A
+    type: money
+  - line: 18.b
+    field: 740Line18B
+    type: money
+  - line: "19"                           # 19 Add tax amounts in Columns A and B, line 18 (single box)
+    field: 740Line19
+    type: money
+
+  # ============================================ page 2 -- lines 20-37
+  - line: 20.family_size_1               # 20 family size box -- 1
+    field: 740FSCheckbox
+    type: checkbox
+    on_state: /1
+  - line: 20.family_size_2               # 20 -- 2
+    field: 740FSCheckbox
+    type: checkbox
+    on_state: /2
+  - line: 20.family_size_3               # 20 -- 3
+    field: 740FSCheckbox
+    type: checkbox
+    on_state: /3
+  - line: 20.family_size_4               # 20 -- 4 (or more)
+    field: 740FSCheckbox
+    type: checkbox
+    on_state: /4
+  - line: 21.decimal                     # 21 Family Size Tax Credit decimal amount (preserve fraction)
+    field: 740Line21FSTCdecimal
+    type: text
+    maxlen: 4
+  - line: 21.percentage                  # 21 (___%) percentage (preserve fraction)
+    field: 740Line21FSTCPercentage
+    type: text
+    maxlen: 3
+  - line: "21"                           # 21 Multiply line 19 by Family Size Tax Credit (amount)
+    field: 740Line21
+    type: money
+  - line: "22"                           # 22 Subtract line 21 from line 19
+    field: 740Line22
+    type: money
+  - line: "23"                           # 23 Education Tuition Tax Credit (Form 8863-K, line 17)
+    field: 740Line23
+    type: money
+  - line: 24.federal_2441                # 24 federal Form 2441 line 11 amount (before x20%)
+    field: "740Line24 from federal form 2441-K, line 11"
+    type: money
+  - line: "24"                           # 24 Child and Dependent Care Credit (federal 2441 line 11 x 20%)
+    field: 740Line24
+    type: money
+  - line: "26"                           # 26 Income Tax Liability. Subtract lines 23-25 from line 22 (>=0)
+    field: 740Line26
+    type: money
+  - line: "27"                           # 27 Kentucky Use Tax due on out-of-state purchases
+    field: 740Line27
+    type: money
+  - line: "28"                           # 28 Add lines 26 and 27 (Total Tax Liability)
+    field: 740Line28
+    type: money
+  - line: "29"                           # 29 For amended return: overpayment shown on original return
+    field: 740Line29
+    type: money
+  - line: "30"                           # 30 Add lines 28 and 29
+    field: 740Line30
+    type: money
+  - line: 31a                            # 31a Kentucky income tax withheld (Schedule KW-2)
+    field: 740Line31a
+    type: money
+  - line: 31b                            # 31b 2023 Kentucky estimated tax/extension payments
+    field: 740Line31b
+    type: money
+  - line: 31c                            # 31c 2023 refundable certified rehabilitation credit
+    field: 740Line31c
+    type: money
+  - line: 31d                            # 31d 2023 refundable entertainment incentive tax credit
+    field: 740Line31d
+    type: money
+  - line: 31e                            # 31e 2023 refundable development area tax credit
+    field: 740Line31e
+    type: money
+  - line: 31f                            # 31f 2023 refundable decontamination tax credit
+    field: 740Line31f
+    type: money
+  - line: 31g                            # 31g 2023 refundable pass-through entity tax credit (Form PTET-CR, line 9)
+    field: 740Line31g
+    type: money
+  - line: 31h                            # 31h For amended return: amount paid with original + later payments
+    field: 740Line31h
+    type: money
+  - line: "32"                           # 32 Add lines 31(a) through 31(h)
+    field: 740Line32
+    type: money
+  - line: "33"                           # 33 Additional Tax Due (line 30 - line 32)
+    field: 740Line33
+    type: money
+  - line: 34a                            # 34a Estimated tax penalty
+    field: 740Line34a
+    type: money
+  - line: 34b                            # 34b Interest
+    field: 740Line34b
+    type: money
+  - line: 34c                            # 34c Late payment penalty
+    field: 740Line34c
+    type: money
+  - line: 34d                            # 34d Late filing penalty
+    field: 740Line34d
+    type: money
+  - line: "35"                           # 35 Add lines 34(a) through 34(d)
+    field: 740Line35
+    type: money
+  - line: "36"                           # 36 AMOUNT YOU OWE (total of 30 and 35 minus 32)
+    field: 740Line36
+    type: money
+  - line: "37"                           # 37 AMOUNT YOU OVERPAID (line 32 minus lines 30 and 35)
+    field: 740Line37
+    type: money
+
+  # ============================================ page 3 -- Fund Contributions 38, lines 39-41
+  - line: 38a                            # 38a Nature and Wildlife Fund
+    field: 740Line38a
+    type: money
+  - line: 38b                            # 38b Child Victims' Trust Fund
+    field: 740Line38b
+    type: money
+  - line: 38c                            # 38c Veterans' Program Trust Fund
+    field: 740Line38c
+    type: money
+  - line: 38d                            # 38d Breast Cancer Research/Education Trust Fund
+    field: 740Line38d
+    type: money
+  - line: 38e                            # 38e Farms to Food Banks Trust Fund
+    field: 740Line38e
+    type: money
+  - line: 38f                            # 38f Local History Trust Fund
+    field: 740Line38f
+    type: money
+  - line: 38g                            # 38g Special Olympics Kentucky
+    field: 740Line38g
+    type: money
+  - line: 38h                            # 38h Pediatric Cancer Research Trust Fund
+    field: 740Line38h
+    type: money
+  - line: 38i                            # 38i Rape Crisis Center Trust Fund
+    field: 740Line38i
+    type: money
+  - line: 38j                            # 38j Court Appointed Special Advocate Trust Fund
+    field: 740Line38j
+    type: money
+  - line: 38k                            # 38k YMCA Youth Association Fund
+    field: 740Line38k
+    type: money
+  - line: "39"                           # 39 Add lines 38(a) through 38(k)
+    field: 740Line39
+    type: money
+  - line: "40"                           # 40 Amount of line 37 credited to 2024 estimated tax
+    field: 740Line40
+    type: money
+  - line: "41"                           # 41 REFUNDED TO YOU (line 37 minus lines 39 and 40)
+    field: 740Line41
+    type: money
+
+  # ============================================ page 3 -- Sign Here / Paid Preparer
+  - line: signature.taxpayer            # Signature of Taxpayer
+    field: Signature of Taxpayer
+    type: text
+  - line: signature.taxpayer_drivers_license
+    field: 740DriversLic-TP
+    type: text
+  - line: signature.taxpayer_date
+    field: 740TP1SigDate
+    type: text
+  - line: signature.daytime_phone
+    field: 740DaytimePhoneNum
+    type: text
+  - line: signature.spouse             # Signature of Spouse
+    field: Signature of Spouse
+    type: text
+  - line: signature.spouse_drivers_license
+    field: 740DriversLic-SP
+    type: text
+  - line: signature.spouse_date
+    field: 740TP2SigDate
+    type: text
+  - line: preparer.signature           # Signature of Preparer
+    field: Signature of Preparer
+    type: text
+  - line: preparer.date
+    field: 740PreparerSigDate
+    type: text
+  - line: preparer.firm_name           # Name of Preparer or Firm
+    field: 740FirmName
+    type: text
+  - line: preparer.id_number           # ID Number (PTIN)
+    field: 740PreparerID
+    type: text
+    maxlen: 11
+  - line: preparer.email
+    field: 740PrepEmail
+    type: text
+  - line: preparer.phone
+    field: 740PreparerPhoneNum
+    type: text
+  - line: preparer.may_discuss.yes     # "May the DOR discuss this return with this preparer?" Yes
+    field: DiscussDor
+    type: checkbox
+    on_state: /Yes
+  - line: preparer.may_discuss.no      # No
+    field: DiscussDor
+    type: checkbox
+    on_state: /No
+  - line: enclose_federal_1040.not_required  # "Include copy of federal Form 1040 ... If not required, check here"
+    field: 740Enclose1040Checkbox
+    type: checkbox
+    on_state: /Yes
+relations:
+  # NOTE: the relations grammar tokenizes only digit+letter line ids
+  # (e.g. "31a", "38b") -- it cannot reference the dotted column lines
+  # ("5.a", "7.b"), so the per-column face arithmetic on lines 5-18 (add
+  # 5+6, subtract 8 from 7, etc.) cannot be expressed here and is omitted.
+  # Only single-box face equalities are declared.
+  - "28 == 26 + 27"                      # 28 "Add lines 26 and 27"
+  - "30 == 28 + 29"                      # 30 "Add lines 28 and 29"
+  - "32 == 31a + 31b + 31c + 31d + 31e + 31f + 31g + 31h"  # 32 "Add lines 31(a) through 31(h)"
+  - "35 == 34a + 34b + 34c + 34d"        # 35 "Add lines 34(a) through 34(d)"
+  - "39 == 38a + 38b + 38c + 38d + 38e + 38f + 38g + 38h + 38i + 38j + 38k"  # 39 "Add lines 38(a) through 38(k)"
+cross_form:
+  # Line 5 "Enter amount from federal Form 1040 or 1040-SR, line 11" (federal
+  # AGI). Declared on the Yourself/Joint column (holds for filing status 1/3/4).
+  - "5.b == f1040.11"
+identity_fields:
+  - name
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city_state_zip
+signature: {page: 3}
+mailing: null
