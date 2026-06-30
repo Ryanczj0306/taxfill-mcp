@@ -1,0 +1,212 @@
+# Form 1040-X (Rev. February 2024) -- Amended U.S. Individual Income Tax Return.
+#
+# REVISION CHOICE: Form 1040-X is NOT issued per tax year -- one revision serves
+# several years, and the filer enters the year being amended in the header. The
+# **Rev. February 2024** revision (Form 1040-X (Rev. 2-2024)) is the one used to
+# amend tax years 2021-2023: its line 4a is "Reserved", line 4b is the QBI
+# deduction, and line 5 = line 3 - line 4b. (The current irs-pdf/f1040x.pdf is the
+# Rev. December 2025 revision, which repurposes line 4b for the 2025 OBBBA
+# tips/overtime/car-loan deductions -- WRONG for a 2023 amendment.) So this 2023
+# pack pins the archived Feb-2024 revision via its irs-prior URL.
+#
+# Provenance: blank downloaded from the official source_url below; pages 1 and 2
+# were rendered and READ to confirm the printed title, "Rev. February 2024", and
+# the line structure before pinning pdf_sha256 (freshness protocol, dev plan
+# section 7). Field map introspected from this exact revision (root
+# topmostSubform[0]).
+#
+# COLUMN MODEL (the defining feature of 1040-X): lines 1-15 and 24-29 have three
+# columns -- A (original/as-previously-adjusted), B (net change), C (correct
+# amount). The CORRECT amount (column C) is the operative value that flows to the
+# IRS, so it carries the bare printed line id ("1", "4b", "11"); column A is
+# "<line>.original" and column B is "<line>.net_change". The on-face math that the
+# verifier checks runs on column C (e.g. "11 == 8 + 10"); the C = A + B per-line
+# identity is the user's own reconciliation and is not re-derived here.
+#
+# Lines 16-23 are single-column (correct amount only). Lines 9, 24, 26, 28, 29 are
+# "Reserved for future use" -- their (greyed) widgets are intentionally not mapped.
+# Signature/date rows are ink-only (no widgets); the form IS signed on page 2.
+form: "1040-X"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040x--2024.pdf
+pdf_sha256: "a4bed38aa74f7f0f84b6541287d273fcfa6612a81f5134fc5bf411c0b4daa819"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ===== Header ============================================================
+  - { line: "amended_year", field: "Page1[0].f1_01[0]", type: text, maxlen: 4 }   # "This return is for calendar year (enter year)"
+  - { line: "fiscal_year_ended", field: "Page1[0].f1_02[0]", type: text }
+  - { line: "name.first", field: "Page1[0].f1_03[0]", type: text }
+  - { line: "name.last", field: "Page1[0].f1_04[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_05[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "spouse.first_name", field: "Page1[0].f1_06[0]", type: text }
+  - { line: "spouse.last_name", field: "Page1[0].f1_07[0]", type: text }
+  - { line: "spouse.identifying_number", field: "Page1[0].f1_08[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "mailing_address.street", field: "Page1[0].Address_ReadOrder[0].f1_09[0]", type: text }
+  - { line: "mailing_address.apt", field: "Page1[0].Address_ReadOrder[0].f1_10[0]", type: text, maxlen: 10 }   # narrow box -- cap to protect against clipping (P-001)
+  - { line: "mailing_address.city", field: "Page1[0].Address_ReadOrder[0].f1_11[0]", type: text }
+  - { line: "mailing_address.state", field: "Page1[0].Address_ReadOrder[0].f1_12[0]", type: text }
+  - { line: "mailing_address.zip", field: "Page1[0].Address_ReadOrder[0].f1_13[0]", type: text }
+  - { line: "mailing_address.foreign_country", field: "Page1[0].Address_ReadOrder[0].f1_14[0]", type: text }
+  - { line: "mailing_address.foreign_province", field: "Page1[0].Address_ReadOrder[0].f1_15[0]", type: text }
+  - { line: "mailing_address.foreign_postal_code", field: "Page1[0].Address_ReadOrder[0].f1_16[0]", type: text }
+  - { line: "presidential_campaign.you", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "presidential_campaign.spouse", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/2" }
+  # Amended-return filing status -- exactly one box (printed order Single, MFJ, MFS, HOH, QSS).
+  - { line: "filing_status.single", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1", group: filing_status, required: true }
+  - { line: "filing_status.mfj", field: "Page1[0].c1_3[1]", type: checkbox, on_state: "/2", group: filing_status }
+  - { line: "filing_status.mfs", field: "Page1[0].c1_3[2]", type: checkbox, on_state: "/3", group: filing_status }
+  - { line: "filing_status.hoh", field: "Page1[0].c1_3[3]", type: checkbox, on_state: "/4", group: filing_status }
+  - { line: "filing_status.qss", field: "Page1[0].c1_3[4]", type: checkbox, on_state: "/5", group: filing_status }
+  - { line: "filing_status.spouse_or_qualifying_person_name", field: "Page1[0].f1_17[0]", type: text }
+  # ===== Lines 1-15: columns A (original) / B (net change) / C (correct) =====
+  # Line 1 -- Adjusted gross income (+ NOL-carryback checkbox).
+  - { line: "1.nol_carryback", field: "Page1[0].Table_IncomeDeductions[0].Line1[0].Adjusted[0].c1_4[0]", type: checkbox, on_state: "/1" }
+  - { line: "1.original", field: "Page1[0].Table_IncomeDeductions[0].Line1[0].f1_18[0]", type: money }
+  - { line: "1.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line1[0].f1_19[0]", type: money }
+  - { line: "1", field: "Page1[0].Table_IncomeDeductions[0].Line1[0].f1_20[0]", type: money }
+  # Line 2 -- Itemized deductions or standard deduction.
+  - { line: "2.original", field: "Page1[0].Table_IncomeDeductions[0].Line2[0].f1_21[0]", type: money }
+  - { line: "2.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line2[0].f1_22[0]", type: money }
+  - { line: "2", field: "Page1[0].Table_IncomeDeductions[0].Line2[0].f1_23[0]", type: money }
+  # Line 3 -- Subtract line 2 from line 1.
+  - { line: "3.original", field: "Page1[0].Table_IncomeDeductions[0].Line3[0].f1_24[0]", type: money }
+  - { line: "3.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line3[0].f1_25[0]", type: money }
+  - { line: "3", field: "Page1[0].Table_IncomeDeductions[0].Line3[0].f1_26[0]", type: money }
+  # Line 4a -- Reserved for future use.
+  - { line: "4a.original", field: "Page1[0].Table_IncomeDeductions[0].Line4a[0].f1_27[0]", type: money }
+  - { line: "4a.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line4a[0].f1_28[0]", type: money }
+  - { line: "4a", field: "Page1[0].Table_IncomeDeductions[0].Line4a[0].f1_29[0]", type: money }
+  # Line 4b -- Qualified business income deduction.
+  - { line: "4b.original", field: "Page1[0].Table_IncomeDeductions[0].Line4b[0].f1_30[0]", type: money }
+  - { line: "4b.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line4b[0].f1_31[0]", type: money }
+  - { line: "4b", field: "Page1[0].Table_IncomeDeductions[0].Line4b[0].f1_32[0]", type: money }
+  # Line 5 -- Taxable income. Subtract line 4b from line 3 (column C floored at 0).
+  - { line: "5.original", field: "Page1[0].Table_IncomeDeductions[0].Line5[0].f1_33[0]", type: money }
+  - { line: "5.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line5[0].f1_34[0]", type: money }
+  - { line: "5", field: "Page1[0].Table_IncomeDeductions[0].Line5[0].f1_35[0]", type: money }
+  # Line 6 -- Tax (+ "method(s) used to figure tax" text).
+  - { line: "6.method", field: "Page1[0].Table_TaxLiability[0].Line6[0].Tax[0].f1_36[0]", type: text }
+  - { line: "6.original", field: "Page1[0].Table_TaxLiability[0].Line6[0].f1_37[0]", type: money }
+  - { line: "6.net_change", field: "Page1[0].Table_TaxLiability[0].Line6[0].f1_38[0]", type: money }
+  - { line: "6", field: "Page1[0].Table_TaxLiability[0].Line6[0].f1_39[0]", type: money }
+  # Line 7 -- Nonrefundable credits (+ general-business-credit-carryback checkbox).
+  - { line: "7.gbc_carryback", field: "Page1[0].Table_TaxLiability[0].Line7[0].Credits[0].c1_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "7.original", field: "Page1[0].Table_TaxLiability[0].Line7[0].f1_40[0]", type: money }
+  - { line: "7.net_change", field: "Page1[0].Table_TaxLiability[0].Line7[0].f1_41[0]", type: money }
+  - { line: "7", field: "Page1[0].Table_TaxLiability[0].Line7[0].f1_42[0]", type: money }
+  # Line 8 -- Subtract line 7 from line 6 (floored at 0).
+  - { line: "8.original", field: "Page1[0].Table_TaxLiability[0].Line8[0].f1_43[0]", type: money }
+  - { line: "8.net_change", field: "Page1[0].Table_TaxLiability[0].Line8[0].f1_44[0]", type: money }
+  - { line: "8", field: "Page1[0].Table_TaxLiability[0].Line8[0].f1_45[0]", type: money }
+  # Line 9 -- Reserved for future use (greyed, not mapped: f1_46/47/48).
+  # Line 10 -- Other taxes.
+  - { line: "10.original", field: "Page1[0].Table_TaxLiability[0].Line10[0].f1_49[0]", type: money }
+  - { line: "10.net_change", field: "Page1[0].Table_TaxLiability[0].Line10[0].f1_50[0]", type: money }
+  - { line: "10", field: "Page1[0].Table_TaxLiability[0].Line10[0].f1_51[0]", type: money }
+  # Line 11 -- Total tax. Add lines 8 and 10.
+  - { line: "11.original", field: "Page1[0].Table_TaxLiability[0].Line11[0].f1_52[0]", type: money }
+  - { line: "11.net_change", field: "Page1[0].Table_TaxLiability[0].Line11[0].f1_53[0]", type: money }
+  - { line: "11", field: "Page1[0].Table_TaxLiability[0].Line11[0].f1_54[0]", type: money }
+  # Line 12 -- Federal income tax withheld.
+  - { line: "12.original", field: "Page1[0].Table_Payments[0].Line12[0].f1_55[0]", type: money }
+  - { line: "12.net_change", field: "Page1[0].Table_Payments[0].Line12[0].f1_56[0]", type: money }
+  - { line: "12", field: "Page1[0].Table_Payments[0].Line12[0].f1_57[0]", type: money }
+  # Line 13 -- Estimated tax payments.
+  - { line: "13.original", field: "Page1[0].Table_Payments[0].Line13[0].f1_58[0]", type: money }
+  - { line: "13.net_change", field: "Page1[0].Table_Payments[0].Line13[0].f1_59[0]", type: money }
+  - { line: "13", field: "Page1[0].Table_Payments[0].Line13[0].f1_60[0]", type: money }
+  # Line 14 -- Earned income credit (EIC).
+  - { line: "14.original", field: "Page1[0].Table_Payments[0].Line14[0].f1_61[0]", type: money }
+  - { line: "14.net_change", field: "Page1[0].Table_Payments[0].Line14[0].f1_62[0]", type: money }
+  - { line: "14", field: "Page1[0].Table_Payments[0].Line14[0].f1_63[0]", type: money }
+  # Line 15 -- Refundable credits (+ source checkboxes + "other" specify text).
+  - { line: "15.schedule_8812", field: "Page1[0].Table_Payments[0].Line15[0].Refundable[0].c1_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_2439", field: "Page1[0].Table_Payments[0].Line15[0].Refundable[0].c1_7[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_4136", field: "Page1[0].Table_Payments[0].Line15[0].Refundable[0].c1_8[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_8863", field: "Page1[0].Table_Payments[0].Line15[0].Refundable[0].c1_9[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_8885", field: "Page1[0].Table_Payments[0].Line15[0].Refundable[0].c1_10[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_8962", field: "Page1[0].Table_Payments[0].Line15[0].Refundable[0].c1_11[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.other", field: "Page1[0].Table_Payments[0].Line15[0].Refundable[0].c1_12[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.other_specify", field: "Page1[0].Table_Payments[0].Line15[0].Refundable[0].f1_64[0]", type: text }
+  - { line: "15.original", field: "Page1[0].Table_Payments[0].Line15[0].f1_65[0]", type: money }
+  - { line: "15.net_change", field: "Page1[0].Table_Payments[0].Line15[0].f1_66[0]", type: money }
+  - { line: "15", field: "Page1[0].Table_Payments[0].Line15[0].f1_67[0]", type: money }
+  # ===== Lines 16-23: correct amount only (single column) ===================
+  - { line: "16", field: "Page1[0].f1_68[0]", type: money }   # Amount paid with extension + after filing
+  - { line: "17", field: "Page1[0].f1_69[0]", type: money }   # Total payments. Add lines 12-15 (col C) and 16
+  - { line: "18", field: "Page1[0].f1_70[0]", type: money }   # Overpayment on original return
+  - { line: "19", field: "Page1[0].f1_71[0]", type: money }   # Subtract line 18 from line 17
+  - { line: "20", field: "Page1[0].f1_72[0]", type: money }   # Amount you owe
+  - { line: "21", field: "Page1[0].f1_73[0]", type: money }   # Overpaid on this return
+  - { line: "22", field: "Page1[0].f1_74[0]", type: money }   # Amount of line 21 refunded to you
+  - { line: "23.estimated_tax_year", field: "Page1[0].f1_75[0]", type: text, maxlen: 4 }  # "applied to your (enter year)"
+  - { line: "23", field: "Page1[0].f1_76[0]", type: money }   # Amount of line 21 applied to estimated tax
+  # ===== Page 2, Part I: Dependents (lines 24-29 = number of dependents) =====
+  # Line 25 -- Your dependent children who lived with you.
+  - { line: "25.original", field: "Page2[0].Table_Lines24-29[0].Line25[0].f2_04[0]", type: money }
+  - { line: "25.net_change", field: "Page2[0].Table_Lines24-29[0].Line25[0].f2_05[0]", type: money }
+  - { line: "25", field: "Page2[0].Table_Lines24-29[0].Line25[0].f2_06[0]", type: money }
+  # Line 27 -- Other dependents.
+  - { line: "27.original", field: "Page2[0].Table_Lines24-29[0].Line27[0].f2_10[0]", type: money }
+  - { line: "27.net_change", field: "Page2[0].Table_Lines24-29[0].Line27[0].f2_11[0]", type: money }
+  - { line: "27", field: "Page2[0].Table_Lines24-29[0].Line27[0].f2_12[0]", type: money }
+  # Lines 24, 26, 28, 29 -- Reserved for future use (greyed, not mapped).
+  # Line 30 -- List ALL dependents.
+  - { line: "dependents.more_than_four", field: "Page2[0].Dependents_ReadOrder[0].c2_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_19[0]", type: text }
+  - { line: "dependent_1.identifying_number", field: "Page2[0].Table_Dependents[0].Row1[0].f2_20[0]", type: text, maxlen: 11 }
+  - { line: "dependent_1.relationship", field: "Page2[0].Table_Dependents[0].Row1[0].f2_21[0]", type: text }
+  - { line: "dependent_1.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row1[0].c2_2[0]", type: checkbox, on_state: "/1", group: dependent_1_credit }
+  - { line: "dependent_1.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row1[0].c2_2[1]", type: checkbox, on_state: "/2", group: dependent_1_credit }
+  - { line: "dependent_2.name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_22[0]", type: text }
+  - { line: "dependent_2.identifying_number", field: "Page2[0].Table_Dependents[0].Row2[0].f2_23[0]", type: text, maxlen: 11 }
+  - { line: "dependent_2.relationship", field: "Page2[0].Table_Dependents[0].Row2[0].f2_24[0]", type: text }
+  - { line: "dependent_2.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row2[0].c2_3[0]", type: checkbox, on_state: "/1", group: dependent_2_credit }
+  - { line: "dependent_2.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row2[0].c2_3[1]", type: checkbox, on_state: "/2", group: dependent_2_credit }
+  - { line: "dependent_3.name", field: "Page2[0].Table_Dependents[0].Row3[0].f2_25[0]", type: text }
+  - { line: "dependent_3.identifying_number", field: "Page2[0].Table_Dependents[0].Row3[0].f2_26[0]", type: text, maxlen: 11 }
+  - { line: "dependent_3.relationship", field: "Page2[0].Table_Dependents[0].Row3[0].f2_27[0]", type: text }
+  - { line: "dependent_3.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row3[0].c2_4[0]", type: checkbox, on_state: "/1", group: dependent_3_credit }
+  - { line: "dependent_3.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row3[0].c2_4[1]", type: checkbox, on_state: "/2", group: dependent_3_credit }
+  - { line: "dependent_4.name", field: "Page2[0].Table_Dependents[0].Row4[0].f2_28[0]", type: text }
+  - { line: "dependent_4.identifying_number", field: "Page2[0].Table_Dependents[0].Row4[0].f2_29[0]", type: text, maxlen: 11 }
+  - { line: "dependent_4.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_30[0]", type: text }
+  - { line: "dependent_4.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row4[0].c2_5[0]", type: checkbox, on_state: "/1", group: dependent_4_credit }
+  - { line: "dependent_4.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row4[0].c2_5[1]", type: checkbox, on_state: "/2", group: dependent_4_credit }
+  # ===== Page 2, Part II: Explanation of changes ============================
+  - { line: "explanation", field: "Page2[0].f2_31[0]", type: text }
+  # ===== Sign Here (signature/date are ink-only; these are the typed fields) =
+  - { line: "occupation", field: "Page2[0].f2_32[0]", type: text }
+  - { line: "identity_protection_pin", field: "Page2[0].f2_33[0]", type: text, maxlen: 6, comb: true }
+  - { line: "spouse_occupation", field: "Page2[0].f2_34[0]", type: text }
+  - { line: "spouse_identity_protection_pin", field: "Page2[0].f2_35[0]", type: text, maxlen: 6, comb: true }
+  - { line: "phone", field: "Page2[0].f2_36[0]", type: text }
+  - { line: "email", field: "Page2[0].f2_37[0]", type: text }
+  # ===== Paid Preparer Use Only =============================================
+  - { line: "preparer.name", field: "Page2[0].f2_38[0]", type: text }
+  - { line: "preparer.ptin", field: "Page2[0].f2_39[0]", type: text, maxlen: 11 }
+  - { line: "preparer.self_employed", field: "Page2[0].c2_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "preparer.firm_name", field: "Page2[0].f2_40[0]", type: text }
+  - { line: "preparer.firm_phone", field: "Page2[0].f2_41[0]", type: text }
+  - { line: "preparer.firm_address", field: "Page2[0].f2_42[0]", type: text }
+  - { line: "preparer.firm_ein", field: "Page2[0].f2_43[0]", type: text }
+relations:
+  # On-face arithmetic for the CORRECT (column C) amounts -- exactly as printed.
+  - "3 == 1 - 2"                       # "Subtract line 2 from line 1"
+  - "5 == max(0, 3 - 4b)"              # "Taxable income. Subtract line 4b from line 3" (>=0)
+  - "8 == max(0, 6 - 7)"               # "Subtract line 7 from line 6" (>=0)
+  - "11 == 8 + 10"                     # "Total tax. Add lines 8 and 10"
+  - "17 == 12 + 13 + 14 + 15 + 16"     # "Total payments. Add lines 12 through 15, column C, and line 16"
+  - "19 == 17 - 18"                    # "Subtract line 18 from line 17"
+  - "20 == max(0, 11 - 19)"            # "Amount you owe" (line 11 col C > line 19)
+  - "21 == max(0, 19 - 11)"            # "overpaid on this return" (line 11 col C < line 19)
+# The corrected amounts come from the amended Form 1040/1040-SR/1040-NR the filer
+# attaches; that attachment is a separate document, not an in-filing cross_form copy.
+cross_form: []
+identity_fields: [name.first, name.last, identifying_number]
+# Form 1040-X is signed on page 2 (the "Sign Here" block; ink signature, no widget).
+signature: { page: 2 }
+# "Where To File" is a state-by-state table (and varies with payment); like the
+# f1040 pack, the knowledge layer owns address resolution.
+mailing: null
