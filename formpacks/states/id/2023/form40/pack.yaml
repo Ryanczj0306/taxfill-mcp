@@ -1,0 +1,527 @@
+# Form 40, 2023 -- Idaho Individual Income Tax Return (residents).
+#
+# Provenance. Blank downloaded from the official source_url below (EFO00089,
+# revision stamp "08-23-2023"). PRINTED YEAR CONFIRMED: the page-1 sweep PNG
+# prints "Form 40 / Individual Income Tax Return" with a large "2023" in the
+# masthead and "EFO00089  08-23-2023" in the footer; page 2 prints
+# "Form 40  2023  (continued)". pdf_sha256 pinned only after reading the
+# rendered pages (freshness protocol).
+#
+# Layout / what is mapped. The downloaded PDF is a 10-page bundle.
+#   pages 1-2  -- Form 40 itself, the FILED RETURN. The page-1 footer reads
+#                 "Page 1 of 2" and page 2 "Page 2 of 2". MAPPED in full here.
+#   page 3     -- (no fillable widgets).
+#   pages 4-8  -- "Form 40 -- Instructions 2023" (booklet pages 8-12 of 52):
+#                 the Standard Deduction Worksheet, the Line 20 Tax Worksheet,
+#                 the Idaho Child Tax Credit Worksheet (line 25), and the
+#                 Grocery Credit Worksheet (line 43). These are INSTRUCTION-PAGE
+#                 worksheets with their OWN local line numbers (their widget
+#                 names are "Frm40Sheet...", "...sheetL1", "L5R1c2", etc.), NOT
+#                 part of the filed return. EXCLUDED -- they are scratch math
+#                 the filer transcribes onto Form 40 lines 16/20/25/43, and
+#                 nothing on the filed return reads them. Pages 9-10 carry no
+#                 fillable widgets.
+#
+# Layout (AcroForm). FLAT AcroForm: acroform_root is empty -- every widget's
+# field name is the raw flat id the form ships with (e.g. "IncomeL7",
+# "FilingStatusSingle", "DirectDepositL57Route"). Verified: none of the 159
+# top-level widgets has a dotted /Parent name chain.
+#
+# Coverage. Pages 1-2 expose 126 fillable widgets (60 on p1 + 66 on p2); ALL
+# 126 are mapped here. The 33 widgets on instruction pages 4-8 are excluded as
+# described above.
+#
+# Money vs text. Every numbered dollar line (7-61) prints a preprinted ".00"
+# whole-dollar cents box and is mapped `money`. Header strings (names, two SSNs,
+# mailing address, country, year-begin/end, dependents table), the line-45/48/49
+# descriptive sub-entries (Special Fuels / Gasoline labels, Paid/Withheld/ABE,
+# Incentive/Claim), the preparer block, and the signature date stay `text`. The
+# two SSN header boxes and dependent SSN boxes are single free-text widgets on
+# this form (no comb cell structure) -- kept `text`, no comb/format. The Direct
+# Deposit routing (maxlen 9) and account (maxlen 17) boxes carry their AcroForm
+# maxlen.
+#
+# Checkboxes. Every checkbox widget on this form is an independent single-state
+# /Btn with on_state "/Yes" (verified from the field dump). The Filing Status
+# row (lines 1-5) is five SEPARATE /Yes widgets -- the filer marks ONE, but no
+# two share a /Btn field, so per CONVENTIONS no shared `group` is required (same
+# pattern as the shipped KS/KY packs). Line 12a/12b each offer a Yourself + a
+# Spouse box (independent flags) and 12c a single box; all standalone. Note the
+# raw widget names are positional, not semantic: "SpouseDeceased" (rect x=430,
+# filing-status row) is Filing Status option 5 (Qualifying surviving spouse),
+# while "SpouseDeceased 2" (rect x=521, spouse-SSN row) is the spouse "Deceased
+# in 2023" flag, and "Deceased" is the taxpayer "Deceased in 2023" flag. Mapped
+# by printed position, not by raw name.
+#
+# Relations. Only unconditional on-face additions/subtractions whose every
+# operand is itself a mapped single box are declared. Line 9 ("Total. Add lines
+# 7 and 8"), line 26 ("Total Credits. Add lines 22 through 25"), and line 42
+# ("Total Tax Plus Donations. Add lines 33 through 41") are declared. Lines that
+# print "if less than zero, enter zero" / "if line X is more than line Y" branch
+# conditions (11, 15, 17, 19, 27, 51, 54, 55) are OMITTED per the conservative
+# house style. Line 33 ("Add lines 27 through 32") and line 50 ("Add lines 43
+# through 49") mix a mapped checkbox/preprinted-$10 (line 32) and descriptive
+# sub-fields, so they are omitted to avoid asserting against non-money operands.
+#
+# Cross_form. Line 7's printed label is "Enter your federal adjusted gross
+# income from federal Form 1040 or 1040-SR, line 11" -- federal AGI = f1040.11.
+form: "40"
+jurisdiction: states/id
+tax_year: 2023
+source_url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_08-23-2023.pdf
+pdf_sha256: "61bd7574a6e959ad233a2c01b9712c24220c7ee6a0304a9a880a0a91c62d942f"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- amended / period
+  - line: amended_return.yes              # "Amended Return? Check the box."
+    field: AmendedRtn
+    type: checkbox
+    on_state: /Yes
+  - line: amended_return.reason           # "...enter the number that applies."
+    field: AmendReason
+    type: text
+    maxlen: 2
+  - line: fiscal_year_beginning          # "fiscal year beginning"
+    field: YearBeginning
+    type: text
+  - line: fiscal_year_ending             # "ending"
+    field: YearEnding
+    type: text
+
+  # ---- header (name / SSN / address)
+  - line: name.first                      # "Your first name and initial"
+    field: FirstNameInitial
+    type: text
+  - line: name.last                       # "Your last name"
+    field: LastName
+    type: text
+  - line: identifying_number              # "Your Social Security number (SSN)"
+    field: SSN
+    type: text
+  - line: deceased.yes                    # taxpayer "Deceased in 2023"
+    field: Deceased
+    type: checkbox
+    on_state: /Yes
+  - line: spouse.name.first               # "Spouse's first name and initial"
+    field: SpouseFirstNameInitial
+    type: text
+  - line: spouse.name.last                # "Spouse's last name"
+    field: SpouseLastName
+    type: text
+  - line: spouse.identifying_number       # "Spouse's Social Security number (SSN)"
+    field: SpouseSSN
+    type: text
+  - line: spouse.deceased.yes             # spouse "Deceased in 2023" (rect x=521)
+    field: SpouseDeceased 2
+    type: checkbox
+    on_state: /Yes
+  - line: mailing_address.street          # "Current mailing address"
+    field: CurrentMailing
+    type: text
+  - line: mailing_address.city            # "City"
+    field: City
+    type: text
+  - line: mailing_address.state           # "State"
+    field: StateAbbrv
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip             # "ZIP Code"
+    field: ZIPcode
+    type: text
+    maxlen: 10
+  - line: foreign_country                 # "Foreign country (if not U.S.)"
+    field: Country
+    type: text
+
+  # ---- Filing Status (check only one)
+  - line: filing_status.single            # "1. Single"
+    field: FilingStatusSingle
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status.married_filing_jointly   # "2. Married filing jointly"
+    field: FilingStatusMarriedJoint
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status.married_filing_separately  # "3. Married filing separately"
+    field: FilingStatusMarriedSeparate
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status.head_of_household # "4. Head of household"
+    field: FilingStatusHead
+    type: checkbox
+    on_state: /Yes
+  - line: filing_status.qualifying_surviving_spouse  # "5. Qualifying surviving spouse" (rect x=430)
+    field: SpouseDeceased
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Household (lines 6a-6d) and dependents table
+  - line: 6a                              # "6a. Yourself"
+    field: 6aYourself
+    type: text
+    maxlen: 2
+  - line: 6b                              # "6b. Spouse"
+    field: 6bSpouse
+    type: text
+    maxlen: 2
+  - line: 6c                              # "6c. Dependents"
+    field: 6cDependents
+    type: text
+    maxlen: 2
+  - line: 6d                              # "6d. Total household"
+    field: 6dTotalHousehold
+    type: text
+    maxlen: 2
+  - line: dependent_1.name.first
+    field: 6cDependent1First
+    type: text
+  - line: dependent_1.name.last
+    field: 6cDependent1Last
+    type: text
+  - line: dependent_1.ssn
+    field: 6cDependent1SSN
+    type: text
+  - line: dependent_1.birthdate
+    field: 6cDependent1Birthdate
+    type: text
+  - line: dependent_2.name.first
+    field: 6cDependent2First
+    type: text
+  - line: dependent_2.name.last
+    field: 6cDependent2Last
+    type: text
+  - line: dependent_2.ssn
+    field: 6cDependent2SSN
+    type: text
+  - line: dependent_2.birthdate
+    field: 6cDependent2Birthdate
+    type: text
+  - line: dependent_3.name.first
+    field: 6cDependent3First
+    type: text
+  - line: dependent_3.name.last
+    field: 6cDependent3Last
+    type: text
+  - line: dependent_3.ssn
+    field: 6cDependent3SSN
+    type: text
+  - line: dependent_3.birthdate
+    field: 6cDependent3Birthdate
+    type: text
+  - line: dependent_4.name.first
+    field: 6cDependent4First
+    type: text
+  - line: dependent_4.name.last
+    field: 6cDependent4Last
+    type: text
+  - line: dependent_4.ssn
+    field: 6cDependent4SSN
+    type: text
+  - line: dependent_4.birthdate
+    field: 6cDependent4Birthdate
+    type: text
+
+  # ---- Income (lines 7-11)
+  - line: "7"                             # "7. Enter your federal adjusted gross income from federal Form 1040 or 1040-SR, line 11."
+    field: IncomeL7
+    type: money
+  - line: "8"                             # "8. Additions from Form 39R, Part A, line 7."
+    field: IncomeL8
+    type: money
+  - line: "9"                             # "9. Total. Add lines 7 and 8"
+    field: IncomeL9
+    type: money
+  - line: "10"                            # "10. Subtractions from Form 39R, Part B, line 24."
+    field: IncomeL10
+    type: money
+  - line: "11"                            # "11. Total Adjusted Income. Subtract line 10 from line 9"
+    field: IncomeL11
+    type: money
+
+  # ---- Tax Computation (lines 12-20)
+  - line: 12a.yourself                    # "12a. If age 65 or older ... Yourself"
+    field: "L12aYourself "
+    type: checkbox
+    on_state: /Yes
+  - line: 12a.spouse                      # "12a. ... Spouse"
+    field: L12aSpouse
+    type: checkbox
+    on_state: /Yes
+  - line: 12b.yourself                    # "12b. If blind ... Yourself"
+    field: L12bYourself
+    type: checkbox
+    on_state: /Yes
+  - line: 12b.spouse                      # "12b. ... Spouse"
+    field: L12bSpouse
+    type: checkbox
+    on_state: /Yes
+  - line: 12c                             # "12c. If your parent or someone else can claim you as a dependent..."
+    field: L12cDependent
+    type: checkbox
+    on_state: /Yes
+  - line: "13"                            # "13. Itemized deductions. Include federal Schedule A."
+    field: TxCompL13
+    type: money
+  - line: "14"                            # "14. State and local income or general sales taxes included on federal Schedule A"
+    field: TxCompL14
+    type: money
+  - line: "15"                            # "15. Subtract line 14 from line 13. If you don't use federal Schedule A, enter zero"
+    field: TxCompL15
+    type: money
+  - line: "16"                            # "16. Standard deduction."
+    field: TxCompL16
+    type: money
+  - line: "17"                            # "17. Subtract the larger of line 15 or 16 from line 11. If less than zero, enter zero"
+    field: TxCompL17
+    type: money
+  - line: "18"                            # "18. Qualified business income deduction. If less than zero, enter zero"
+    field: IncomeL18
+    type: money
+  - line: "19"                            # "19. Idaho taxable income. Subtract line 18 from line 17"
+    field: TxCompL19
+    type: money
+  - line: "20"                            # "20. Tax from worksheet."
+    field: TxCompL20
+    type: money
+
+  # ============================================ page 2 -- Credits (lines 21-27)
+  - line: "21"                            # "21. Tax amount from line 20"
+    field: L21
+    type: money
+  - line: "22"                            # "22. Income tax paid to other states."
+    field: CreditsL22
+    type: money
+  - line: "23"                            # "23. Total credits from Form 39R, Part D, line 4."
+    field: CreditsL23
+    type: money
+  - line: "24"                            # "24. Total business income tax credits from Form 44, Part I, line 10."
+    field: CreditsL24
+    type: money
+  - line: "25"                            # "25. Idaho Child Tax Credit."
+    field: CreditsL25
+    type: money
+  - line: "26"                            # "26. Total Credits. Add lines 22 through 25"
+    field: CreditsL26
+    type: money
+  - line: "27"                            # "27. Subtract line 26 from line 21. If line 26 is more than line 21, enter zero"
+    field: CreditsL27
+    type: money
+
+  # ---- Other Taxes (lines 28-33)
+  - line: "28"                            # "28. Fuels use tax due. Include Form 75"
+    field: OtherTaxesL28
+    type: money
+  - line: "29"                            # "29. Sales/use tax due on untaxed purchases"
+    field: OtherTaxesL29
+    type: money
+  - line: "30"                            # "30. Total tax from recapture of income tax credits from Form 44, Part II, line 6."
+    field: OtherTaxesL30
+    type: money
+  - line: "31"                            # "31. Tax from recapture of qualified investment exemption (QIE). Include Form 49ER"
+    field: OtherTaxesL31
+    type: money
+  - line: 32.public_assistance           # "32. ... Check the box if you received Idaho public assistance payments for 2023"
+    field: OtherTaxesL32Check
+    type: checkbox
+    on_state: /Yes
+  - line: "33"                            # "33. Total Tax. Add lines 27 through 32"
+    field: OtherTaxesL33
+    type: money
+
+  # ---- Donations (lines 34-42)
+  - line: "34"                            # "34. Idaho Nongame Wildlife Fund"
+    field: DonationsL34
+    type: money
+  - line: "35"                            # "35. Idaho Children's Trust Fund"
+    field: DonationsL35
+    type: money
+  - line: "36"                            # "36. Special Olympics Idaho"
+    field: DonationsL36
+    type: money
+  - line: "37"                            # "37. Idaho Guard & Reserve Family"
+    field: DonationsL37
+    type: money
+  - line: "38"                            # "38. American Red Cross of Idaho Fund"
+    field: DonationsL38
+    type: money
+  - line: "39"                            # "39. Veterans Support Fund"
+    field: DonationsL39
+    type: money
+  - line: "40"                            # "40. Idaho Food Bank Fund"
+    field: DonationsL40
+    type: money
+  - line: "41"                            # "41. Opportunity Scholarship Program"
+    field: DonationsL41
+    type: money
+  - line: "42"                            # "42. Total Tax Plus Donations. Add lines 33 through 41"
+    field: DonationsL42
+    type: money
+
+  # ---- Payments and Other Credits (lines 43-50)
+  - line: 43.computed                     # "43. Grocery Credit. Computed amount from worksheet on page 11"
+    field: PymntOtherCreditsL43
+    type: money
+  - line: "43"                            # "43. ...enter the computed amount on line 43" (the line-43 column entry)
+    field: PymntOtherCreditL43Amount
+    type: money
+  - line: 43.donate                       # "43. To donate your grocery credit to the Cooperative Welfare Fund, check the box and enter zero"
+    field: PymntsOtherCreditsCheck
+    type: checkbox
+    on_state: /Yes
+  - line: "44"                            # "44. Maintaining a home for family member age 65 or older or developmentally disabled."
+    field: PymntOtherCreditL44
+    type: money
+  - line: 45.special_fuels                # "45. Special fuels tax refund" (label sub-entry)
+    field: PymntOtherCreditL45SpecialFuels
+    type: text
+  - line: 45.gasoline                     # "45. Gasoline tax refund" (label sub-entry)
+    field: PymntOtherCreditL45Gasoline
+    type: text
+  - line: "45"                            # "45. ...Include Form 75" (the line-45 column entry)
+    field: PymntOtherCreditL45Amount
+    type: money
+  - line: "46"                            # "46. Idaho income tax withheld."
+    field: PymntOtherCreditL46
+    type: money
+  - line: "47"                            # "47. 2023 Form 51 estimated payments and amount applied from 2022 return"
+    field: PymntOtherCreditL47
+    type: money
+  - line: 48.paid_by_entity              # "48. Paid by entity" (sub-entry)
+    field: PymntOtherCreditL48Paid
+    type: text
+  - line: 48.withheld                    # "48. Withheld" (sub-entry)
+    field: PymntOtherCreditL48Withheld
+    type: text
+  - line: 48.abe                         # "48. ABE" (sub-entry)
+    field: PymntOtherCreditL48ABE
+    type: text
+  - line: "48"                            # "48. ...the line-48 column entry"
+    field: PymntOtherCreditL48Amount
+    type: money
+  - line: 49.incentive                   # "49. Tax Reimbursement Incentive credit" (sub-entry)
+    field: PymntOtherCreditL49Incentive
+    type: text
+  - line: 49.claim_of_right             # "49. Claim of Right credit" (sub-entry)
+    field: PymntOtherCreditL49Claim
+    type: text
+  - line: "49"                            # "49. ...the line-49 column entry"
+    field: PymntOtherCreditL49Amount
+    type: money
+  - line: "50"                            # "50. Total Payments and Other Credits. Add lines 43 through 49"
+    field: PymntOtherCreditL50Total
+    type: money
+
+  # ---- Tax Due or Refund (lines 51-57)
+  - line: "51"                            # "51. Tax Due. If line 42 is more than line 50, subtract line 50 from line 42"
+    field: TxDueRefundL51
+    type: money
+  - line: 52.penalty                      # "52. Penalty"
+    field: TxDueRefundL52Penalty
+    type: money
+  - line: 52.interest                     # "52. Interest from the due date"
+    field: TxDueRefundL52Interest
+    type: money
+  - line: "52"                            # "52. ...Enter total" (the line-52 column entry)
+    field: TxDueRefundL52Total
+    type: money
+  - line: 52.msa_withdrawal               # "52. Check box if penalty is caused by an unqualified Idaho medical savings account withdrawal"
+    field: TxDueRefundCheckL52
+    type: checkbox
+    on_state: /Yes
+  - line: "53"                            # "53. Nonrefundable credit from a prior year return."
+    field: L53
+    type: money
+  - line: "54"                            # "54. Total Due. Add lines 51 and 52, then subtract line 53"
+    field: TxDueRefundL54
+    type: money
+  - line: "55"                            # "55. Overpaid. If line 42 is less than line 50, subtract lines 42 and 52 from line 50"
+    field: TxDueRefundL55
+    type: money
+  - line: "56"                            # "56. Refund"
+    field: RefundedL56
+    type: money
+  - line: 56.apply_to_2024               # "56. Apply to 2024"
+    field: AppliedL56
+    type: money
+
+  # ---- Direct Deposit (line 57)
+  - line: 57.outside_us                   # "57. Check if final deposit destination is outside the U.S."
+    field: DirectDepositCheckL57
+    type: checkbox
+    on_state: /Yes
+  - line: 57.routing_number              # "Routing No."
+    field: DirectDepositL57Route
+    type: text
+    maxlen: 9
+  - line: 57.account_number              # "Account No."
+    field: DirectDepositL57Acct
+    type: text
+    maxlen: 17
+  - line: 57.account_type.checking       # "Type of Account: Checking"
+    field: DirectDepositChecking
+    type: checkbox
+    on_state: /Yes
+  - line: 57.account_type.savings        # "Type of Account: Savings"
+    field: "DirectDepositSavings "
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Amended Return Only (lines 58-61)
+  - line: "58"                            # "58. Total due (line 54) or overpaid (line 55) on this return"
+    field: AmendL58
+    type: money
+  - line: "59"                            # "59. Refund from original return plus additional refunds"
+    field: AmendL59
+    type: money
+  - line: "60"                            # "60. Tax paid with original return plus additional tax paid"
+    field: AmendL60
+    type: money
+  - line: "61"                            # "61. Amended tax due or refund. Add lines 58 and 59 then subtract line 60"
+    field: AmendL61
+    type: money
+
+  # ---- Signature block / preparer
+  - line: signature.authorize_discussion # "...the Idaho State Tax Commission may discuss this return with the paid preparer..."
+    field: CheckBox180Days
+    type: checkbox
+    on_state: /Yes
+  - line: signature.date                  # "Date"
+    field: "DateSign 2"
+    type: text
+  - line: preparer.id_number              # "Preparer's EIN, SSN, PTIN"
+    field: EIN SSN PTIN
+    type: text
+  - line: taxpayer_phone_number           # "Taxpayer's phone number"
+    field: TaxpayerPhoneNo
+    type: text
+  - line: preparer.address                # "Preparer's address"
+    field: PreparerAddress
+    type: text
+  - line: preparer.state                  # "State"
+    field: PreparerState
+    type: text
+    maxlen: 6
+  - line: preparer.zip                    # "ZIP Code"
+    field: PreparerZIPCode
+    type: text
+  - line: preparer.phone                  # "Preparer's phone number"
+    field: PreparerPhoneNo
+    type: text
+relations:
+  - "9 == 7 + 8"                          # 9 "Total. Add lines 7 and 8"
+  - "26 == 22 + 23 + 24 + 25"             # 26 "Total Credits. Add lines 22 through 25"
+  - "42 == 33 + 34 + 35 + 36 + 37 + 38 + 39 + 40 + 41"  # 42 "Total Tax Plus Donations. Add lines 33 through 41"
+cross_form:
+  # Line 7 "Enter your federal adjusted gross income from federal Form 1040 or
+  # 1040-SR, line 11" -- federal AGI from Form 1040 line 11.
+  - "7 == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null
