@@ -57,7 +57,15 @@ jobs:
           assert load_knowledge("federal", 2023).tax_year == 2023
           assert load_state_knowledge("ca", 2023).jurisdiction == "states/ca"
           assert load_form_pack("f1040", 2023, "federal").fields, "f1040 field map missing"
-          assert len(list_forms("federal", 2023)) >= 8
+          # Every federal 2023 form pack must be staged into the wheel -- guards against a
+          # missing scripts/stage_data.py re-run after adding packs (a real near-miss).
+          fed_2023 = {f.form_key for f in list_forms("federal", 2023)}
+          required = {"f1040","f1040nr","f8843","f8863","f2555","f4868","f1040es","f1040x","fw7",
+                      "sched_1","sched_2","sched_3","sched_a","sched_b","sched_c","sched_d","sched_e","sched_oi","sched_se"}
+          missing = required - fed_2023
+          assert not missing, f"federal 2023 packs missing from the installed wheel (re-run stage_data.py): {sorted(missing)}"
+          for fk in ("f4868","f1040es","f1040x","fw7"):
+              assert load_form_pack(fk, 2023, "federal").fields, f"{fk} field map missing from wheel"
           tools = asyncio.run(s.mcp.list_tools())
           assert len(tools) == 21, f"expected 21 tools, got {len(tools)}"
           print(f"OK — installed wheel is self-contained; {len(tools)} tools register")

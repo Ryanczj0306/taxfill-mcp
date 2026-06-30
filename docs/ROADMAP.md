@@ -46,8 +46,8 @@ Form 8863, Form 2555. state — **18 states** (22 packs): CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, **AL, CO, MN, WI**. **57 form packs total** (35 federal + 22 state).
 
-> ⚠️ Four finished state packs (**AL, CO, MN, WI**) are currently **untracked in
-> the working tree** — see Phase 0 below; commit them first.
+> ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
+> (Phase 0, 2026-06-28) and counted above.
 
 **Quality bar (non-negotiable, applies to every item below):** no invented
 numbers — every figure cited to a .gov/.us source or shipped with an explicit
@@ -60,17 +60,17 @@ before it ships; tests green; feature-branch → `--no-ff` merge.
 
 Cheap, high-credibility cleanup that the audit surfaced. No new features.
 
-- [ ] **Commit the 4 untracked state packs** (`formpacks/states/{al,co,mn,wi}/`)
-      after a green `test_formpacks_states.py` round-trip. They are finished work
-      sitting outside git — invisible to CI and at risk of loss.
+- [x] **Commit the 4 formerly-untracked state packs** (`formpacks/states/{al,co,mn,wi}/`)
+      — DONE (2026-06-28) after a green `test_formpacks_states.py` round-trip; merged
+      via `feat/state-rollout-al-co-mn-wi`. Working tree is now clean.
 - [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
       and a full run (**exit 0, no collection errors**): the suite is **1,323 tests,
       all green** (1,288 at audit + 3 eval scenarios k/l/m + 8 each for Forms 4868,
       1040-ES, 1040-X, and W-7). The earlier figures
       were stale/under-counted (old ROADMAP *1222*, README *~1076*, audit-sandbox
-      *~903* — the sandbox couldn't run collection). README + this file now quote **1,291**.
+      *~903* — the sandbox couldn't run collection). README + this file now quote **1,323**.
 - [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
-      done, 18 states (not 14), 53 packs (not 49), Phase B done, drift CI done.
+      done, 18 states (not 14), 57 packs (not 49), Phase B done, drift CI done.
 
 **Acceptance:** working tree clean (no untracked packs), README + this file quote
 one verified test count, CI green.
@@ -85,10 +85,13 @@ one verified test count, CI green.
 > [`docs/ACCEPTANCE.md`](ACCEPTANCE.md), [`docs/DEMO.md`](DEMO.md).
 
 - [ ] **A1 — Publish `taxfill-mcp` (+ `taxfill-core`) to PyPI.** **Verified
-      PyPI-ready (2026-06-28):** data re-staged, both packages rebuilt (now include
-      the AL/CO/MN/WI packs), `uvx twine check dist/*` PASSED, and the self-contained
-      smoke test passed in a clean off-repo venv (21 tools + data bundled). Only the
-      irreversible `uvx twine upload dist/*` remains. Enables `uvx taxfill-mcp`.
+      PyPI-ready (re-verified 2026-06-29):** data re-staged and both packages rebuilt
+      so the wheel now bundles **all 19 federal 2023 packs** (incl. the new f4868 /
+      f1040es / f1040x / fw7) **and** the AL/CO/MN/WI state packs; `uvx twine check
+      dist/*` PASSED; the self-contained off-repo smoke test passed (21 tools + the 4
+      new federal packs load from the installed wheel). **Re-run `stage_data.py` + `uv
+      build` immediately before upload** (dist/ is gitignored, so a stale wheel never
+      shows in the tree). Only the irreversible `uvx twine upload dist/*` remains.
       **Manual/blocked: needs maintainer PyPI token.**
 - [ ] **A2 — Tag the release.** `git tag v0.1.0` + GitHub release notes.
 - [~] **A3 — Build the `.mcpb` one-click bundle.** **Manifest finalized (2026-06-28):**
@@ -220,8 +223,8 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
 1. **Phase 0** (hours) — commit untracked packs, fix test-count truth. Do today.
 2. **Phase A** (1–2 wks) — ship v0.1. Highest leverage: flips the product from
    "from-source only" to installable. Only external dep is a PyPI token.
-3. **Phase E** (parallel, low cost) — close the 3 eval scenarios; hardens tax logic
-   before broad rollout.
+3. **Phase E** — DONE (all 13 eval scenarios a–m green); the only leftover is wiring
+   the verified test count into a CI badge / README line.
 4. **Phase C** (months, parallelizable) — the long pole. Roll out resident state
    packs by population using the `introspect` CLI; defer hard states (C3) until the
    downloader fix + overlay filler are built.
