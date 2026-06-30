@@ -1,0 +1,262 @@
+# Form IT-540 (IT-540-WEB), 2023 — Louisiana Resident Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every AcroForm widget rendered with its own field name) -> vision-map
+# workflow (each return page read at zoom to place every field on its printed
+# line) -> this map.
+#
+# Revision confirmed by READING the rendered pages: PDF page 2 prints
+# "IT-540-WEB (Page 1 of 4) / 2023 LOUISIANA RESIDENT"; pages 3/4/5 print
+# "2023 Form IT-540-WEB (Page 2 of 4 / 3 of 4 / 4 of 4)"; page 5 carries the
+# perjury declaration + "Your Signature" block + paid-preparer block + the
+# where-to-file addresses, and the IMPORTANT note "All four (4) pages of this
+# return MUST be mailed in together." The barcodes read 62430..62433.
+#
+# PAGES MAPPED vs EXCLUDED.
+#   MAPPED — PDF pages 2,3,4,5 = the filed four-page IT-540 return
+#     (return Page 1 of 4 .. 4 of 4): identity/exemptions, Lines 7-46, the
+#     direct-deposit block, the signature/preparer block.
+#   EXCLUDED — everything else in the 17-page booklet:
+#     - PDF page 1: the "Louisiana File Online" cover page (no widgets).
+#     - PDF pages 6-17: the ATTACH-IF-COMPLETED schedules and worksheets that
+#       are SEPARATE filed forms, not the IT-540 core return — Schedule C
+#       (Nonrefundable Priority 1, p.6), Schedule D (Donations, p.7),
+#       Schedule E (Adjustments, p.8), the School Expense Deduction Worksheet
+#       (p.9), Schedule F (Refundable Priority 2, p.10), Schedule G/H/I/J
+#       (pp.11-13), and the refundable/nonrefundable child-care & school-
+#       readiness credit worksheets (pp.14-17). Each is its own attachment
+#       ("ATTACH TO RETURN IF COMPLETED") with its own line numbering and would
+#       be a distinct pack; mapping them here would mix non-IT-540 lines into
+#       this form's line map (same discipline as 1040 schedules vs the 1040).
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw sentinel
+# ids the form ships, e.g. "PRMFN", "FEDAGI", "TAXWTH"). The dependent-detail
+# grid uses dotted row ids ("FN(6C).0".."BD(6C).5"); the direct-deposit
+# "forwarded outside US?" radio uses kids "OUTSIDEUS.Y"/"OUTSIDEUS.N".
+#
+# SSN combs. PRMSSN / SPOSSN are 9-cell comb boxes (the printed instruction
+# "enter your SSN ... in the same order as shown on your federal return"); they
+# are comb:true, format:ssn_digits_only, maxlen:9 (dashes would overflow the
+# cells). PRMSSN is repeated as a header echo on return pages 2,3,4 — mapped as
+# identifying_number.page<N> echoes.
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix and is
+# mapped `money` (Lines 7-46 and their sub-lines 8A-8D, 13A/13B, 22A/22B). Boxes
+# that hold a COUNT or a single code digit are `text` (the schema has no int
+# type): the exemption-total boxes 6/6C/6D/6E/6F, the filing-status box FILSTA
+# (enter 1-5), the school-readiness "R" code digits, the refund-method digit
+# REFUNDOPT (enter 2 or 3). Names, address, dates, phone, bank routing/account,
+# preparer block are `text`.
+#
+# Checkboxes / radio groups.
+#   - The six "Mark Box" header flags (Name Change .. NOL Carryback), the six
+#     6A/6B exemption flags, and the lone FEDNRQ / SDE / FARMER (L32) / FARMER2
+#     (L45) / PPSELFEMP flags are each an independent single /Yes checkbox.
+#   - Line 22A "CONSUMER USE TAX — mark one of these boxes" is two separate
+#     widgets (No use tax due = /no ; Amount from worksheet = /Yes) answering
+#     ONE question -> shared group use_tax_22a. Line 22B likewise (group
+#     road_usage_22b).
+#   - Direct-deposit account Type is two widgets (Checking = /1 ; Savings =
+#     /yes) answering one question -> group deposit_account_type. The
+#     "forwarded outside the U.S.?" Yes/No is ONE field OUTSIDEUS with kids
+#     .Y/.N (on_state /yes each) -> they MUST share group deposit_forwarded_us.
+#   on_state values were read from the blank's appearance dicts, never guessed.
+#
+# Relations. Only equalities printed on the form face with every operand mapped
+# to a single line are declared. Lines that floor at zero ("if less than zero,
+# enter 0": L9, L12, L21, L31, L38), branch on a comparison (L19 overpayment,
+# L33 adjusted overpayment), or sum sub-lines spanning credit ranges (L17, L23,
+# L30, L46) are OMITTED per the conservative house style. L8D ("Subtract 8C from
+# 8B") and L23 ("Add 21, 22A, and 22B") are clean adds and are declared.
+#
+# Cross_form. Line 7's printed label is "FEDERAL ADJUSTED GROSS INCOME"; the
+# IT-540 starts from federal AGI, so the single cross_form equality
+# 7 == f1040.11 (Form 1040, 2023, line 11 = AGI) is declared.
+#
+# Coverage. 4 filed pages. 6E NAME / ND / ND(2) free-text helper lines and the
+# 30-widget dependent-detail grid ARE mapped (real printed boxes). PRMSSN (SSN)
+# and LSTNAM (last-name echo) are each a SINGLE AcroForm field whose widgets
+# repeat on every return page, so each is mapped exactly once. 109 field entries
+# mapped below.
+form: IT-540
+jurisdiction: states/la
+tax_year: 2023
+source_url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
+pdf_sha256: 3556780d8bb383fee4c06208fff63e40f5b41d55d8f82f1c349de476290af8ce
+acroform_root: ''
+fields:
+  # ===================================================== return Page 1 of 4
+  # ---- "Mark Box" header flags (each an independent single checkbox)
+  - { line: name_change, field: NAMCHG, type: checkbox, on_state: /Yes }
+  - { line: decedent_filing, field: DCDANT, type: checkbox, on_state: /Yes }
+  - { line: spouse_decedent, field: DCDSPO, type: checkbox, on_state: /Yes }
+  - { line: address_change, field: ADDRSCHG, type: checkbox, on_state: /Yes }
+  - { line: amended_return, field: AMMEND, type: checkbox, on_state: /Yes }
+  - { line: nol_carryback, field: NOL, type: checkbox, on_state: /Yes }
+  # ---- name / suffix
+  - { line: name.first, field: PRMFN, type: text }
+  - { line: name.middle_initial, field: PRMMN, type: text, maxlen: 1 }
+  - { line: name.last, field: PRMLN, type: text }
+  - { line: name.suffix, field: PRMSFX, type: text, maxlen: 4 }
+  - { line: spouse.name.first, field: SPOFN, type: text }
+  - { line: spouse.name.middle_initial, field: SPOMN, type: text, maxlen: 1 }
+  - { line: spouse.name.last, field: SPOLN, type: text }
+  - { line: spouse.name.suffix, field: SPOSFX, type: text, maxlen: 4 }
+  # ---- address
+  - { line: mailing_address.street, field: STADDR, type: text }
+  - { line: mailing_address.unit_type, field: UT, type: text, maxlen: 5 }
+  - { line: mailing_address.unit_number, field: UN, type: text, maxlen: 5 }
+  - { line: mailing_address.city, field: CITY, type: text }
+  - { line: mailing_address.state, field: STATE, type: text, maxlen: 2 }
+  - { line: mailing_address.zip, field: ZIPCD, type: text, maxlen: 10 }
+  - { line: mailing_address.foreign_nation, field: FOREIGNNATION, type: text }
+  # ---- SSN combs / phone / DOB
+  - { line: identifying_number, field: PRMSSN, type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: spouse.identifying_number, field: SPOSSN, type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: daytime_phone, field: PHNNUM, type: text, maxlen: 10 }
+  - { line: date_of_birth, field: YDOB, type: text, maxlen: 8 }
+  - { line: spouse.date_of_birth, field: SDOB, type: text, maxlen: 8 }
+  # ---- filing status (enter 1-5 in one box) and exemptions
+  - { line: filing_status, field: FILSTA, type: text, maxlen: 1 }
+  - { line: 6a.65_older, field: EXM65A, type: checkbox, on_state: /Yes }   # 6A Yourself 65 or older
+  - { line: 6a.blind, field: EXMBA, type: checkbox, on_state: /Yes }       # 6A Yourself Blind
+  - { line: 6a.qualifying_surviving_spouse, field: EXMWDA, type: checkbox, on_state: /Yes }
+  - { line: 6b.spouse, field: SPOSS6B, type: checkbox, on_state: /Yes }    # 6B Spouse exemption
+  - { line: 6b.65_older, field: EXM65B, type: checkbox, on_state: /Yes }   # 6B Spouse 65 or older
+  - { line: 6b.blind, field: EXMBB, type: checkbox, on_state: /Yes }       # 6B Spouse Blind
+  - { line: "6", field: EXMT6, type: text, maxlen: 1 }                     # Total of 6A & 6B
+  - { line: 4_qualifying_person_name, field: ND, type: text }             # HOH qualifying-person name
+  - { line: 5_qualifying_person_name, field: ND(2), type: text }          # QSS qualifying-person name
+  - { line: 6c, field: EXMT6C, type: text, maxlen: 2 }                     # Dependents claimed on federal
+  # ---- 6C dependent-detail grid (rows 0..5; columns First/Last/SSN/Rel/BD)
+  - { line: dependent_1.first_name, field: FN(6C).0, type: text }
+  - { line: dependent_1.last_name, field: LN(6C).0, type: text }
+  - { line: dependent_1.ssn, field: SSN(6C).0, type: text }
+  - { line: dependent_1.relationship, field: Relationship(6C).0, type: text }
+  - { line: dependent_1.birth_date, field: BD(6C).0, type: text }
+  - { line: dependent_2.first_name, field: FN(6C).1, type: text }
+  - { line: dependent_2.last_name, field: LN(6C).1, type: text }
+  - { line: dependent_2.ssn, field: SSN(6C).1, type: text }
+  - { line: dependent_2.relationship, field: Relationship(6C).1, type: text }
+  - { line: dependent_2.birth_date, field: BD(6C).1, type: text }
+  - { line: dependent_3.first_name, field: FN(6C).2, type: text }
+  - { line: dependent_3.last_name, field: LN(6C).2, type: text }
+  - { line: dependent_3.ssn, field: SSN(6C).2, type: text }
+  - { line: dependent_3.relationship, field: Relationship(6C).2, type: text }
+  - { line: dependent_3.birth_date, field: BD(6C).2, type: text }
+  - { line: dependent_4.first_name, field: FN(6C).3, type: text }
+  - { line: dependent_4.last_name, field: LN(6C).3, type: text }
+  - { line: dependent_4.ssn, field: SSN(6C).3, type: text }
+  - { line: dependent_4.relationship, field: Relationship(6C).3, type: text }
+  - { line: dependent_4.birth_date, field: BD(6C).3, type: text }
+  - { line: dependent_5.first_name, field: FN(6C).4, type: text }
+  - { line: dependent_5.last_name, field: LN(6C).4, type: text }
+  - { line: dependent_5.ssn, field: SSN(6C).4, type: text }
+  - { line: dependent_5.relationship, field: Relationship(6C).4, type: text }
+  - { line: dependent_5.birth_date, field: BD(6C).4, type: text }
+  - { line: dependent_6.first_name, field: FN(6C).5, type: text }
+  - { line: dependent_6.last_name, field: LN(6C).5, type: text }
+  - { line: dependent_6.ssn, field: SSN(6C).5, type: text }
+  - { line: dependent_6.relationship, field: Relationship(6C).5, type: text }
+  - { line: dependent_6.birth_date, field: BD(6C).5, type: text }
+  - { line: 6d, field: EXMT6D, type: text, maxlen: 2 }                     # Total of 6A, 6B, and 6C
+  - { line: 6e, field: EXMT6E, type: text, maxlen: 2 }                     # Dependents for certain adoptions
+  - { line: 6e_name, field: 6E NAME, type: text }
+  - { line: 6f, field: EXMT6F, type: text, maxlen: 2 }                     # Total exemptions (6D - 6E)
+
+  # ===================================================== return Page 2 of 4
+  # (PRMSSN / LSTNAM are single AcroForm fields whose widgets repeat the SSN /
+  # last-name echo on every return page — mapped once on Page 1 / once below.)
+  - { line: federal_wages_if_not_required, field: FEDWAG, type: money }    # "If not required to file federal, indicate wages"
+  - { line: not_required_federal, field: FEDNRQ, type: checkbox, on_state: /Yes }  # "Mark this box and enter zero on Line 12"
+  - { line: schedule_e_attached, field: SDE, type: checkbox, on_state: /Yes }      # Line 7 "From Louisiana Schedule E, attached"
+  - { line: "7", field: FEDAGI, type: money }                              # Federal adjusted gross income
+  - { line: 8a, field: FEDITM, type: money }                               # Federal itemized deductions
+  - { line: 8b, field: STDDED, type: money }                               # Federal itemized for medical/dental
+  - { line: 8c, field: EXCESS, type: money }                               # Federal standard deduction
+  - { line: 8d, field: FEDTAX, type: money }                               # Excess federal itemized (8B - 8C)
+  - { line: "9", field: LATXBL, type: money }                              # Louisiana tax table income (7 - 8D)
+  - { line: "10", field: LATAX, type: money }                              # Louisiana income tax (from table)
+  - { line: "11", field: ONRP1CRS, type: money }                          # Nonrefundable Priority 1 credits (Sch C, L6)
+  - { line: "12", field: TLNRP1CRS, type: money }                         # Tax liability after Priority 1 credits
+  - { line: "13", field: RFCCC, type: money }                              # Refundable child care credit
+  - { line: 13a, field: QRFCCC, type: money }                             # Qualified expense (worksheet L3)
+  - { line: 13b, field: RFCCCW6, type: money }                            # Worksheet L6
+  - { line: "14", field: RFSRCR, type: money }                            # Refundable school readiness credit
+  - { line: 14_code_5, field: REF5ST, type: text, maxlen: 1 }             # School-readiness star rating "5"
+  - { line: 14_code_4, field: REF4ST, type: text, maxlen: 1 }             # "4"
+  - { line: 14_code_3, field: REF3ST, type: text, maxlen: 1 }             # "3"
+  - { line: 14_code_2, field: REF2ST, type: text, maxlen: 1 }             # "2"
+  - { line: "15", field: LAEIC, type: money }                             # Earned income credit (LA EIC worksheet L3)
+  - { line: "16", field: INSCRDREDUCED, type: money }                     # Other Refundable Priority 2 credits (Sch F, L9)
+  - { line: "17", field: ORP2CRS, type: money }                           # Total Refundable Priority 2 credits
+  - { line: "18", field: TLRFP2CRS, type: money }                         # Tax liability after Refundable Priority 2
+  - { line: "19", field: OPARP2C, type: money }                           # Overpayment after Refundable Priority 2
+  - { line: "20", field: NRP3CRS, type: money }                           # Nonrefundable Priority 3 credits (Sch J, L16)
+  - { line: "21", field: ADLATX, type: money }                            # Adjusted Louisiana income tax (18 - 20)
+  - { line: last_name_first4, field: LSTNAM, type: text, maxlen: 4 }       # "first 4 letters of your last name" (repeats every page)
+
+  # ===================================================== return Page 3 of 4
+  - { line: 22a.no_use_tax_due, field: 22A_USE_NO, type: checkbox, on_state: /no, group: use_tax_22a }
+  - { line: 22a.amount_from_worksheet, field: 22A_USE_YS, type: checkbox, on_state: /Yes, group: use_tax_22a }
+  - { line: 22a, field: USETAX, type: money }                             # Consumer use tax
+  - { line: 22b.no_usage_fee_due, field: 22B_USE_NO, type: checkbox, on_state: /no, group: road_usage_22b }
+  - { line: 22b.amount_from_r19000a, field: 22B_USE_YS, type: checkbox, on_state: /Yes, group: road_usage_22b }
+  - { line: 22b, field: E&HVRUFEE, type: money }                          # Electric & hybrid vehicle road usage fee
+  - { line: "23", field: INUSTX, type: money }                            # Total income tax, use tax, and road usage fee
+  - { line: "24", field: OPORP2C, type: money }                           # Overpayment of Refundable Priority 2 (from L19)
+  - { line: "25", field: RFP4CRS, type: money }                           # Refundable Priority 4 credits (Sch I, L6)
+  - { line: "26", field: TAXWTH, type: money }                            # Louisiana tax withheld for 2023
+  - { line: "27", field: AMTFWD, type: money }                            # Credit carried forward from 2022
+  - { line: "28", field: ESTPAY, type: money }                            # Estimated payments made for 2023
+  - { line: "29", field: EXTPAY, type: money }                            # Extension payment
+  - { line: "30", field: TTLCR&PAY, type: money }                         # Total refundable credits and payments
+  - { line: "31", field: OPYMNT, type: money }                            # Overpayment (30 - 23)
+  - { line: 32_farmer, field: FARMER, type: checkbox, on_state: /Yes }    # L32 "If you are a farmer, check the box"
+  - { line: "32", field: UNPYMT, type: money }                            # Underpayment penalty
+  - { line: "33", field: ADJOPT, type: money }                            # Adjusted overpayment
+  - { line: "34", field: TOTALDONATIONS, type: money }                    # Total donations (Sch D, L22)
+  - { line: "35", field: SUBTOT, type: money }                            # Subtotal (33 - 34)
+  - { line: "36", field: CRDFWD, type: money }                            # Amount of L35 credited to 2024 income tax
+  - { line: "37", field: REFUND, type: money }                            # Amount to be refunded (35 - 36)
+  - { line: 37_refund_method, field: REFUNDOPT, type: text, maxlen: 1 }   # enter 2 (paper check) or 3 (direct deposit)
+  - { line: deposit_account_type.checking, field: CHECKING, type: checkbox, on_state: /1, group: deposit_account_type }
+  - { line: deposit_account_type.savings, field: SAVINGS, type: checkbox, on_state: /yes, group: deposit_account_type }
+  - { line: deposit_forwarded_outside_us.yes, field: OUTSIDEUS.Y, type: checkbox, on_state: /yes, group: deposit_forwarded_us }
+  - { line: deposit_forwarded_outside_us.no, field: OUTSIDEUS.N, type: checkbox, on_state: /yes, group: deposit_forwarded_us }
+  - { line: routing_number, field: BKROUTING, type: text, maxlen: 9 }
+  - { line: account_number, field: BKACCT, type: text, maxlen: 17 }
+
+  # ===================================================== return Page 4 of 4
+  - { line: "38", field: TAXDUE, type: money }                            # Amount you owe (23 - 30)
+  - { line: "39", field: ADDMFF, type: money }                            # Additional donation: Military Family Assistance Fund
+  - { line: "40", field: ADDCPR, type: money }                            # Additional donation: Coastal Protection & Restoration
+  - { line: "41", field: ADDFBK, type: money }                            # Additional donation: Louisiana Food Bank Association
+  - { line: "42", field: INTINT, type: money }                            # Interest (Interest Calculation Worksheet, L5)
+  - { line: "43", field: INTDP, type: money }                             # Delinquent filing penalty
+  - { line: "44", field: INTLP, type: money }                             # Delinquent payment penalty
+  - { line: 45_farmer, field: FARMER2, type: checkbox, on_state: /Yes }   # L45 "If you are a farmer, check the box"
+  - { line: "45", field: INTUP, type: money }                             # Underpayment penalty
+  - { line: "46", field: TTLDUE, type: money }                            # Balance due Louisiana (add 38 through 45)
+  # ---- Sign Here / paid-preparer block (signatures are handwritten)
+  - { line: signature_date, field: Pg4 Date(A), type: text }
+  - { line: spouse.signature_date, field: Pg4 Date(B), type: text }
+  - { line: preparer.name, field: PreparerName, type: text }
+  - { line: preparer.signature_date, field: Pg4 Date(C), type: text }
+  - { line: preparer.self_employed, field: PPSELFEMP, type: checkbox, on_state: /Yes }
+  - { line: preparer.firm_name, field: FIRMNAME, type: text }
+  - { line: preparer.firm_fein, field: FIRMFEIN, type: text }
+  - { line: preparer.firm_address, field: FIRMADDRS, type: text }
+  - { line: preparer.telephone, field: PAIDPREPTEL, type: text }
+  - { line: preparer.ptin, field: PAIDPREPID, type: text, maxlen: 10 }
+relations:
+  - "8d == 8b - 8c"        # Line 8D "EXCESS FEDERAL ITEMIZED DEDUCTIONS — Subtract Line 8C from Line 8B."
+  - "23 == 21 + 22a + 22b" # Line 23 "Add Lines 21, 22A, AND 22B."
+cross_form:
+  - "7 == f1040.11"        # Line 7 "FEDERAL ADJUSTED GROSS INCOME" = Form 1040 (2023) line 11 (AGI).
+identity_fields:
+  - PRMSSN
+  - PRMFN
+  - PRMLN
+signature: { page: 5 }
+mailing: null

@@ -1,0 +1,268 @@
+# Form OR-40, 2023 — Oregon Individual Income Tax Return for Full-year Residents.
+#
+# Provenance. Blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title ("2023 Form OR-40 / Oregon
+# Individual Income Tax Return for Full-year Residents") and the form number
+# 150-101-040 (Rev. 03-21-24, ver. 01) before pinning pdf_sha256 (freshness
+# protocol). pdf_sha256 verified with shasum -a 256.
+#
+# Layout. FLAT AcroForm (acroform_root empty; field names are the raw sentinel
+# ids the form ships with, e.g. "or-40-p1-11", "or-40-p2-5", "or-40-p3-1").
+# This is a single 8-page return — every page is the FILED OR-40 itself; there
+# are NO worksheet / tax-table / instruction pages embedded in this PDF (those
+# live in the separate OR-40 instructions booklet). Page roles:
+#   page 1 — header: fiscal-year/amended/election checkboxes, six "filed with"
+#            checkboxes (Extension filed, Form OR-24, Form OR-243, Federal Form
+#            8379, Federal Form 8886, Disaster relief), taxpayer & spouse
+#            name/DOB/SSN, mailing address, phone, Filing Status (1-5);
+#   page 2 — header (last name + SSN repeat), Exemptions 6a/6b with their
+#            "check boxes that apply" sub-boxes, Dependents 1-3, lines 6c-6e;
+#   page 3 — header repeat, lines 7-19 (income, subtractions, deductions),
+#            standard-deduction age/blind checkboxes 17a-17d;
+#   page 4 — header repeat, lines 20-31 (Oregon tax, alt-method boxes 20a-20c,
+#            standard & carryforward credits);
+#   page 5 — header repeat, lines 32-44 (payments & refundable credits, tax to
+#            pay or refund), line 44a exception number + 44b annualized box;
+#   page 6 — header repeat, lines 45-55 (refund/owe, estimated-tax application,
+#            charitable & party checkoffs 50a/50b, 529, net refund, direct
+#            deposit 54, kicker donation 55a/55b);
+#   page 7 — header repeat, Sign Here block (taxpayer/spouse/preparer dates,
+#            preparer phone/license/name/address/city/state/zip);
+#   page 8 — header repeat, Amended statement free-text box.
+#
+# Field-name repeats. The header "Last name" (or-40-p1-14) and "SSN"
+# (or-40-p1-15) widgets carry the SAME flat field name on EVERY page (pages
+# 1-8). One field => the filler writes all eight header copies from a single
+# value. They are mapped ONCE here, as the identity name/identifying_number.
+#
+# Coverage. The blank PDF has 165 AcroForm widget entries; introspect counts
+# 123 text + 42 checkbox. The header name/SSN pair (or-40-p1-14, or-40-p1-15)
+# appears 8 times each but is one field, so distinct mappable fields = 165 -
+# 7*2 (the seven duplicate header copies on pages 2-8) - 1 ("Button - Clear
+# form" JS pushbutton) = 150. All 150 are mapped below. The "Button - Clear
+# form" widget is intentionally OMITTED: it is a JavaScript pushbutton (its
+# only "on_states" are appearance-dict keys /BBox /Filter /Matrix ... not a
+# fillable export value) — the blue "Clear form" button, not a data field.
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix in its
+# own two-cell box and is mapped `money`. Genuine text widgets stay text:
+# names, mailing address/city/country, the comb date boxes (MM/DD/YYYY), the
+# SSN comb cells, state (2 char), ZIP halves, phone, party codes, exemption
+# COUNT boxes 6a/6b/6c/6d/6e (counts, not dollars), dependent codes, the
+# Form OR-10 exception number 44a, routing/account numbers, preparer fields,
+# and the amended-statement box. Comb fields carry maxlen to avoid clipping.
+#
+# Relations. Only on-face unconditional equalities with every operand mapped
+# to a single line are declared (Add lines …). Lines whose printed instruction
+# floors at zero ("If line X is more than line Y, enter 0": lines 19, 29) or
+# branch on a comparison (41 overpayment vs 42 net tax) are OMITTED.
+#
+# Cross_form. Line 7's printed label is "Federal adjusted gross income from
+# federal Form 1040, 1040-SR, or 1040-NR, line 11", so the single cross_form
+# equality 7 == f1040.11 (Form 1040, 2023, line 11 = federal AGI) is declared.
+#
+# Signature. Sign Here block is on page 7.
+form: OR-40
+jurisdiction: states/or
+tax_year: 2023
+source_url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40_101-040_2023.pdf
+pdf_sha256: cf6f5342bc456a0be08dc9453b741469b1ad6436c064bffa4c7dd470ae26be9a
+acroform_root: ''
+fields:
+  # ============================================ page 1 — header / elections
+  - { line: fiscal_year_ending_date, field: or-40-p1-1, type: text, maxlen: 10 }   # "Fiscal year ending date (MM/DD/YYYY)"
+  - { line: amended_return.yes, field: or-40-p1-2, type: checkbox, on_state: /Yes }  # "Amended return."
+  - { line: amended_nol_tax_year, field: or-40-p1-3, type: text, maxlen: 4 }        # "NOL tax year (YYYY)"
+  - { line: calculated_as_if_federal.yes, field: or-40-p1-4, type: checkbox, on_state: /Yes }  # 'Calculated with "as if" federal return'
+  - { line: short_year_tax_election.yes, field: or-40-p1-5, type: checkbox, on_state: /Yes }   # "Short-year tax election"
+  # ---- right column "filed with return" checkboxes (each its own question)
+  - { line: extension_filed.yes, field: or-40-p1-6, type: checkbox, on_state: /Yes }     # "Extension filed"
+  - { line: form_or_24.yes, field: or-40-p1-7, type: checkbox, on_state: /Yes }          # "Form OR-24"
+  - { line: form_or_243.yes, field: or-40-p1-8, type: checkbox, on_state: /Yes }         # "Form OR-243"
+  - { line: federal_form_8379.yes, field: or-40-p1-9, type: checkbox, on_state: /Yes }   # "Federal Form 8379"
+  - { line: federal_form_8886.yes, field: or-40-p1-10a, type: checkbox, on_state: /Yes } # "Federal Form 8886"
+  - { line: disaster_relief.yes, field: or-40-p1-10b, type: checkbox, on_state: /Yes }   # "Disaster relief"
+  # ---- taxpayer identity
+  - { line: name.first, field: or-40-p1-11, type: text, maxlen: 16 }   # "First name"
+  - { line: name.initial, field: or-40-p1-12, type: text, maxlen: 1 }  # "Initial"
+  - { line: date_of_birth, field: or-40-p1-13, type: text, maxlen: 10 }  # "Date of birth (MM/DD/YYYY)"
+  - { line: name, field: or-40-p1-14, type: text, maxlen: 21 }         # "Last name" (header repeats pages 2-8 via same field)
+  - { line: identifying_number, field: or-40-p1-15, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Social Security number (SSN)"
+  - { line: ssn_first_time.yes, field: or-40-p1-16, type: checkbox, on_state: /Yes }  # "First time using this SSN"
+  - { line: applied_for_itin.yes, field: or-40-p1-17, type: checkbox, on_state: /Yes }  # "Applied for ITIN"
+  - { line: deceased.yes, field: or-40-p1-18, type: checkbox, on_state: /Yes }        # "Deceased"
+  # ---- spouse identity
+  - { line: spouse_name.first, field: or-40-p1-19, type: text, maxlen: 16 }  # "Spouse first name"
+  - { line: spouse_name.initial, field: or-40-p1-20, type: text, maxlen: 1 } # "Initial"
+  - { line: spouse_date_of_birth, field: or-40-p1-21, type: text, maxlen: 10 }  # "Spouse date of birth (MM/DD/YYYY)"
+  - { line: spouse_name.last, field: or-40-p1-22, type: text, maxlen: 21 }   # "Spouse last name"
+  - { line: spouse_ssn, field: or-40-p1-23, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Spouse SSN"
+  - { line: spouse_ssn_first_time.yes, field: or-40-p1-24, type: checkbox, on_state: /Yes }  # "First time using this SSN"
+  - { line: spouse_applied_for_itin.yes, field: or-40-p1-25, type: checkbox, on_state: /Yes }  # "Applied for ITIN"
+  - { line: spouse_deceased.yes, field: or-40-p1-26, type: checkbox, on_state: /Yes }  # "Deceased"
+  # ---- mailing address
+  - { line: mailing_address.street, field: or-40-p1-27, type: text, maxlen: 35 }  # "Current mailing address"
+  - { line: mailing_address.city, field: or-40-p1-28, type: text, maxlen: 21 }    # "City"
+  - { line: mailing_address.state, field: or-40-p1-29, type: text, maxlen: 2 }    # "State"
+  - { line: mailing_address.zip, field: or-40-p1-30a, type: text, maxlen: 5 }     # "ZIP code" (first 5)
+  - { line: mailing_address.zip_plus4, field: or-40-p1-30b, type: text, maxlen: 4 }  # "ZIP code" (+4)
+  - { line: mailing_address.country, field: or-40-p1-31, type: text, maxlen: 21 } # "Country"
+  - { line: phone, field: or-40-p1-32, type: text, maxlen: 12 }                   # "Phone"
+  # ---- Filing Status (one /Btn field, five mutually exclusive choices)
+  - { line: filing_status.single, field: or-40_p1_33, type: checkbox, on_state: /Choice1, group: filing_status }                # 1. Single
+  - { line: filing_status.married_filing_jointly, field: or-40_p1_33, type: checkbox, on_state: /Choice2, group: filing_status } # 2. Married filing jointly
+  - { line: filing_status.married_filing_separately, field: or-40_p1_33, type: checkbox, on_state: /Choice3, group: filing_status } # 3. Married filing separately
+  - { line: filing_status.head_of_household, field: or-40_p1_33, type: checkbox, on_state: /Choice4, group: filing_status }      # 4. Head of household
+  - { line: filing_status.qualifying_surviving_spouse, field: or-40_p1_33, type: checkbox, on_state: /Choice5, group: filing_status }  # 5. Qualifying surviving spouse
+
+  # ============================================ page 2 — exemptions / dependents
+  - { line: 6a, field: or-40-p2-1, type: text, maxlen: 2 }   # "6a. Credits for yourself" (count)
+  - { line: 6a.regular, field: or-40-p2-2, type: checkbox, on_state: /Yes }            # 6a "Regular"
+  - { line: 6a.severely_disabled, field: or-40-p2-3, type: checkbox, on_state: /Yes }  # 6a "Severely disabled"
+  - { line: 6a.someone_else_can_claim, field: or-40-p2-4, type: checkbox, on_state: /Yes }  # 6a "Someone else can claim you as a dependent"
+  - { line: 6b, field: or-40-p2-5, type: text, maxlen: 2 }   # "6b. Credits for your spouse" (count)
+  - { line: 6b.regular, field: or-40-p2-6, type: checkbox, on_state: /Yes }            # 6b "Regular"
+  - { line: 6b.severely_disabled, field: or-40-p2-7, type: checkbox, on_state: /Yes }  # 6b "Severely disabled"
+  - { line: 6b.someone_else_can_claim, field: or-40-p2-8, type: checkbox, on_state: /Yes }  # 6b "Someone else can claim you as a dependent"
+  # ---- Dependent 1
+  - { line: dependent_1.first_name, field: or-40-p2-11, type: text, maxlen: 12 }  # "Dependent 1: First name"
+  - { line: dependent_1.initial, field: or-40-p2-12, type: text, maxlen: 1 }      # "Initial"
+  - { line: dependent_1.last_name, field: or-40-p2-13, type: text, maxlen: 21 }   # "Dependent 1: Last name"
+  - { line: dependent_1.date_of_birth, field: or-40-p2-14, type: text, maxlen: 10 }  # "Dependent 1: Date of birth (MM/DD/YYYY)"
+  - { line: dependent_1.ssn, field: or-40-p2-15, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Dependent 1: SSN"
+  - { line: dependent_1.code, field: or-40-p2-16, type: text, maxlen: 2 }         # "Code *" (relationship code)
+  - { line: dependent_1.qualifying_disability, field: or-40-p2-17, type: checkbox, on_state: /Yes }  # "Dependent 1: Check if child has a qualifying disability"
+  # ---- Dependent 2
+  - { line: dependent_2.first_name, field: or-40-p2-18, type: text, maxlen: 12 }  # "Dependent 2: First name"
+  - { line: dependent_2.initial, field: or-40-p2-19, type: text, maxlen: 1 }      # "Initial"
+  - { line: dependent_2.last_name, field: or-40-p2-20, type: text, maxlen: 21 }   # "Dependent 2: Last name"
+  - { line: dependent_2.date_of_birth, field: or-40-p2-21, type: text, maxlen: 10 }  # "Dependent 2: Date of birth"
+  - { line: dependent_2.ssn, field: or-40-p2-22, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Dependent 2: SSN"
+  - { line: dependent_2.code, field: or-40-p2-23, type: text, maxlen: 2 }         # "Code *"
+  - { line: dependent_2.qualifying_disability, field: or-40-p2-24, type: checkbox, on_state: /Yes }  # "Dependent 2: Check if child has a qualifying disability"
+  # ---- Dependent 3
+  - { line: dependent_3.first_name, field: or-40-p2-25, type: text, maxlen: 12 }  # "Dependent 3: First name"
+  - { line: dependent_3.initial, field: or-40-p2-26, type: text, maxlen: 1 }      # "Initial"
+  - { line: dependent_3.last_name, field: or-40-p2-27, type: text, maxlen: 21 }   # "Dependent 3: Last name"
+  - { line: dependent_3.date_of_birth, field: or-40-p2-28, type: text, maxlen: 10 }  # "Dependent 3: Date of birth"
+  - { line: dependent_3.ssn, field: or-40-p2-29, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Dependent 3: SSN"
+  - { line: dependent_3.code, field: or-40-p2-30, type: text, maxlen: 2 }         # "Code *"
+  - { line: dependent_3.qualifying_disability, field: or-40-p2-31, type: checkbox, on_state: /Yes }  # "Dependent 3: Check if child has a qualifying disability"
+  - { line: 6c, field: or-40-p2-32, type: text, maxlen: 2 }  # "6c. Total number of dependents" (count)
+  - { line: 6d, field: or-40-p2-33, type: text, maxlen: 2 }  # "6d. Total number of dependent children with a qualifying disability" (count)
+  - { line: 6e, field: or-40-p2-34, type: text, maxlen: 2 }  # "6e. Total exemptions. Add lines 6a through 6d" (count)
+
+  # ============================================ page 3 — lines 7-19
+  - { line: "7", field: or-40-p3-1, type: money }   # "Federal adjusted gross income from federal Form 1040 ... line 11"
+  - { line: "8", field: or-40-p3-2, type: money }   # "Total additions from Schedule OR-ASC, line A5"
+  - { line: "9", field: or-40-p3-3, type: money }   # "Income after additions. Add lines 7 and 8"
+  - { line: "10", field: or-40-p3-4, type: money }  # "2023 federal tax liability"
+  - { line: "11", field: or-40-p3-5, type: money }  # "Social Security amount on federal Form 1040 or 1040-SR, line 6b"
+  - { line: "12", field: or-40-p3-6, type: money }  # "Oregon income tax refund included in federal income"
+  - { line: "13", field: or-40-p3-7, type: money }  # "Total subtractions from Schedule OR-ASC, line B7"
+  - { line: "14", field: or-40-p3-8, type: money }  # "Total subtractions. Add lines 10 through 13"
+  - { line: "15", field: or-40-p3-9, type: money }  # "Income after subtractions. Line 9 minus line 14"
+  - { line: "16", field: or-40-p3-10, type: money } # "Oregon itemized deductions ... Schedule OR-A, line 23"
+  - { line: "17", field: or-40-p3-11, type: money } # "Standard deduction"
+  - { line: 17a.yes, field: or-40-p3-12, type: checkbox, on_state: /Yes }  # 17a "You were: 65 or older"
+  - { line: 17b.yes, field: or-40-p3-13, type: checkbox, on_state: /Yes }  # 17b "You were: Blind"
+  - { line: 17c.yes, field: or-40-p3-14, type: checkbox, on_state: /Yes }  # 17c "Your spouse was: 65 or older"
+  - { line: 17d.yes, field: or-40-p3-15, type: checkbox, on_state: /Yes }  # 17d "Your spouse was: Blind"
+  - { line: "18", field: or-40-p3-16, type: money } # "Enter the larger of line 16 or 17"
+  - { line: "19", field: or-40-p3-17, type: money } # "Oregon taxable income. Line 15 minus line 18"
+
+  # ============================================ page 4 — lines 20-31
+  - { line: "20", field: or-40-p4-1, type: money }  # "Tax (see instructions)"
+  - { line: 20a.yes, field: or-40-p4-2a, type: checkbox, on_state: /Yes }  # 20a "Schedule OR-FIA-40"
+  - { line: 20b.yes, field: or-40-p4-2b, type: checkbox, on_state: /Yes }  # 20b "Worksheet FCG"
+  - { line: 20c.yes, field: or-40-p4-2c, type: checkbox, on_state: /Yes }  # 20c "Schedule OR-PTE-FY"
+  - { line: "21", field: or-40-p4-4, type: money }  # "Interest on certain installment sales"
+  - { line: "22", field: or-40-p4-5, type: money }  # "Total tax recaptures from Schedule OR-ASC, line C5"
+  - { line: "23", field: or-40-p4-6, type: money }  # "Total additions to tax. Line 21 plus line 22"
+  - { line: "24", field: or-40-p4-7, type: money }  # "Total tax before credits. Add lines 20 and 23"
+  - { line: "25", field: or-40-p4-8, type: money }  # "Exemption credit"
+  - { line: "26", field: or-40-p4-9, type: money }  # "Political contribution credit"
+  - { line: "27", field: or-40-p4-10, type: money } # "Total standard credits from Schedule OR-ASC, line D16"
+  - { line: "28", field: or-40-p4-11, type: money } # "Total standard credits. Add lines 25 through 27"
+  - { line: "29", field: or-40-p4-12, type: money } # "Tax minus standard credits. Line 24 minus line 28"
+  - { line: "30", field: or-40-p4-13, type: money } # "Total carryforward credits used this year from Schedule OR-ASC, line E9"
+  - { line: "31", field: or-40-p4-14, type: money } # "Tax after standard and carryforward credits. Line 29 minus line 30"
+
+  # ============================================ page 5 — lines 32-44
+  - { line: "32", field: or-40-p5-1, type: money }  # "Oregon income tax withheld"
+  - { line: "33", field: or-40-p5-2, type: money }  # "Amount applied from your prior year's tax refund"
+  - { line: "34", field: or-40-p5-3, type: money }  # "Estimated tax payments for 2023"
+  - { line: "35", field: or-40-p5-4, type: money }  # "Tax payments from a pass-through entity"
+  - { line: "36", field: or-40-p5-5, type: money }  # "Earned income credit"
+  - { line: "37", field: or-40-p5-6, type: money }  # "Oregon Kids Credit"
+  - { line: "38", field: or-40-p5-7, type: money }  # "Kicker (Oregon surplus credit)"
+  - { line: "39", field: or-40-p5-8, type: money }  # "Total refundable credits from Schedule OR-ASC, line F7"
+  - { line: "40", field: or-40-p5-9, type: money }  # "Total payments and refundable credits. Add lines 32 through 39"
+  - { line: "41", field: or-40-p5-10, type: money } # "Overpayment of tax. Line 40 minus line 31"
+  - { line: "42", field: or-40-p5-11, type: money } # "Net tax. Line 31 minus line 40"
+  - { line: "43", field: or-40-p5-12, type: money } # "Penalty and interest for filing or paying late"
+  - { line: "44", field: or-40-p5-13, type: money } # "Interest on underpayment of estimated tax. Include Form OR-10"
+  - { line: 44a, field: or-40-p5-14, type: text, maxlen: 1 }  # "Exception number from Form OR-10, line 1"
+  - { line: 44b.yes, field: or-40-p5-15, type: checkbox, on_state: /Yes }  # "Check box if you annualized"
+
+  # ============================================ page 6 — lines 45-55, direct deposit
+  - { line: "45", field: or-40-p6-1a, type: money } # "Total penalty and interest due. Add lines 43 and 44"
+  - { line: "46", field: or-40-p6-1b, type: money } # "Net tax including penalty and interest. Line 42 plus line 45"
+  - { line: "47", field: or-40-p6-2, type: money }  # "Overpayment less penalty and interest. Line 41 minus line 45"
+  - { line: "48", field: or-40-p6-3, type: money }  # "Estimated tax. Portion of line 47 applied to your estimated tax account"
+  - { line: "49", field: or-40-p6-4, type: money }  # "Charitable checkoff donations from Schedule OR-DONATE, line 30"
+  - { line: "50", field: or-40-p6-5, type: money }  # "Political party $3 checkoff"
+  - { line: 50a, field: or-40-p6-6, type: text, maxlen: 3 }  # "Party code: 50a. You"
+  - { line: 50b, field: or-40-p6-7, type: text, maxlen: 3 }  # "50b. Spouse"
+  - { line: "51", field: or-40-p6-8, type: money }  # "Oregon 529 college savings plan deposits from Schedule OR-529, line 5"
+  - { line: "52", field: or-40-p6-9, type: money }  # "Total. Add lines 48 through 51"
+  - { line: "53", field: or-40-p6-10, type: money } # "Net refund. Line 47 minus line 52"
+  - { line: 54.outside_us.yes, field: or-40-p6-11, type: checkbox, on_state: /Yes }  # 54 "Check the box if the final deposit destination is outside the United States"
+  - { line: 54.account_type.checking, field: or-40-p6-12, type: checkbox, on_state: /Choice1, group: account_type }  # "Checking"
+  - { line: 54.account_type.savings, field: or-40-p6-12, type: checkbox, on_state: /Choice2, group: account_type }   # "Savings"
+  - { line: 54.routing_number, field: or-40-p6-14, type: text, maxlen: 9 }    # "Routing number"
+  - { line: 54.account_number, field: or-40-p6-15, type: text, maxlen: 17 }   # "Account number"
+  - { line: 55a.yes, field: or-40-p6-16, type: checkbox, on_state: /Yes }  # "55a. If you elect to donate your kicker to the State School Fund, check this box"
+  - { line: 55b, field: or-40-p6-17, type: money }  # "55b. ... enter the amount here"
+
+  # ============================================ page 7 — Sign Here
+  - { line: your_signature_date, field: or-40-p7-1, type: text, maxlen: 10 }   # "Your signature / Date (MM/DD/YYYY)"
+  - { line: spouse_signature_date, field: or-40-p7-2, type: text, maxlen: 10 } # "Spouse signature / Date (MM/DD/YYYY)"
+  - { line: preparer_signature_date, field: or-40-p7-3, type: text, maxlen: 10 }  # "Signature of preparer / Date (MM/DD/YYYY)"
+  - { line: preparer_phone, field: or-40-p7-4, type: text, maxlen: 12 }   # "Preparer phone"
+  - { line: preparer_license_number, field: or-40-p7-5, type: text, maxlen: 10 }  # "Preparer license number"
+  - { line: preparer_first_name, field: or-40-p7-6, type: text, maxlen: 12 }  # "Preparer first name"
+  - { line: preparer_initial, field: or-40-p7-7, type: text, maxlen: 1 }      # "Initial"
+  - { line: preparer_last_name, field: or-40-p7-8, type: text, maxlen: 21 }   # "Preparer last name"
+  - { line: preparer_address, field: or-40-p7-9, type: text, maxlen: 35 }     # "Preparer address"
+  - { line: preparer_city, field: or-40-p7-10, type: text, maxlen: 21 }       # "City"
+  - { line: preparer_state, field: or-40-p7-11, type: text, maxlen: 2 }       # "State"
+  - { line: preparer_zip, field: or-40-p7-13, type: text, maxlen: 5 }         # "ZIP code" (first 5)
+  - { line: preparer_zip_plus4, field: or-40-p7-14, type: text, maxlen: 4 }   # "ZIP code" (+4)
+
+  # ============================================ page 8 — Amended statement
+  - { line: amended_statement, field: or-40-p8-1, type: text }  # "Amended statement" free-text box
+
+relations:
+  - "9 == 7 + 8"                       # Line 9 "Income after additions. Add lines 7 and 8."
+  - "14 == 10 + 11 + 12 + 13"          # Line 14 "Total subtractions. Add lines 10 through 13."
+  - "15 == 9 - 14"                     # Line 15 "Income after subtractions. Line 9 minus line 14."
+  - "23 == 21 + 22"                    # Line 23 "Total additions to tax. Line 21 plus line 22."
+  - "24 == 20 + 23"                    # Line 24 "Total tax before credits. Add lines 20 and 23."
+  - "28 == 25 + 26 + 27"               # Line 28 "Total standard credits. Add lines 25 through 27."
+  - "31 == 29 - 30"                    # Line 31 "Tax after standard and carryforward credits. Line 29 minus line 30."
+  - "40 == 32 + 33 + 34 + 35 + 36 + 37 + 38 + 39"  # Line 40 "Total payments and refundable credits. Add lines 32 through 39."
+  - "45 == 43 + 44"                    # Line 45 "Total penalty and interest due. Add lines 43 and 44."
+  - "46 == 42 + 45"                    # Line 46 "Net tax including penalty and interest. Line 42 plus line 45."
+  - "47 == 41 - 45"                    # Line 47 "Overpayment less penalty and interest. Line 41 minus line 45."
+  - "52 == 48 + 49 + 50 + 51"          # Line 52 "Total. Add lines 48 through 51."
+  - "53 == 47 - 52"                    # Line 53 "Net refund. Line 47 minus line 52."
+cross_form:
+  - "7 == f1040.11"                    # Line 7 "Federal adjusted gross income from federal Form 1040 ... line 11."
+identity_fields:
+  - or-40-p1-14
+  - or-40-p1-15
+  - or-40-p1-27
+signature:
+  page: 7
+mailing: null
