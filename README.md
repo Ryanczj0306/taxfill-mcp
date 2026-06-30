@@ -168,14 +168,14 @@ taxfill/
 
 ## MCP tool surface
 
-Available today (from source); `extract_document` and `state_scope` are the two not-yet-built entries, noted below.
+All 21 tools are available today (from source); the server registers exactly 21 (CI-asserted).
 
 | Tool | Purpose |
 |---|---|
 | `intake_checklist` | Next interview questions + required documents |
-| `extract_document` *(planned)* | Parse W-2/1099/1098/I-94/etc. into fields with provenance; today the agent reads documents with its own vision and you confirm |
+| `extract_document` | Structure + validate your reading of a W-2/1099/1098/1042-S/etc. into provenance-tagged fields |
 | `residency` | Federal NRA/RA/dual-status via the Substantial Presence Test, work shown |
-| `state_scope` *(M5)* | Which states to file, in what role, with which forms and candidate benefits |
+| `state_scope` | Which states to file, in what role, with which forms and candidate benefits |
 | `list_forms` / `get_form_map` | Discover form packs; line-to-field maps + math relations |
 | `fetch_blank` | Download the official blank PDF, checksum-verify |
 | `fill_form` | Deterministic fill; comb/format handling; rejects unknown lines |
