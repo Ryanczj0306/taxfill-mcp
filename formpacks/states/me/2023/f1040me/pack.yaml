@@ -1,0 +1,630 @@
+# Form 1040ME, 2023 -- Maine Individual Income Tax Return (resident return; the
+# single form serves resident / part-year / nonresident via a RESIDENCY STATUS
+# checkbox block, lines 8-11a).
+#
+# Provenance / freshness. Blank downloaded from the official source_url below.
+# STEP 0 year gate: the MAIN-page sweep PNG (PDF page 1) was READ and prints the
+# big "2023" upper-left next to the Maine state outline, title "MAINE INDIVIDUAL
+# INCOME TAX / FORM 1040ME", "For tax period 1/1/2023 to 12/31/2023", and the
+# scan barcode "*2302100*"; pages 2 and 3 headers print "2023 FORM 1040ME, Page
+# 2" / "Page 3" (barcodes *2302101* / *2302111*). printed_year_verified = 2023.
+# pdf_sha256 pinned to the exact cached file (golden test verifies it).
+#
+# Layout / what is FILED. This is a single 3-page PDF and ALL THREE PAGES ARE THE
+# FILED RETURN (no instruction/worksheet pages in this file):
+#   page 1 -- header (names + MI for you/spouse, two single-box SSNs, mailing
+#             address with foreign country/province/postal, home + work phones,
+#             AMENDED flag, tax-period dates), line A Property/Sales Tax Fairness
+#             box, line 1 Maine Clean Election Fund (You/Spouse), line 2 commercial
+#             farming/fishing, FILING STATUS lines 3-7 (ONE /Btn radio "radStatus"
+#             with distinct on_states), Year-spouse-died (line 7), RESIDENCY STATUS
+#             lines 8-11a (ONE /Btn radio "Residency status") + Schedule NRH box,
+#             line 12 age/blind flags (12a-12d), line 13 total exemptions, line 13a
+#             qualifying children/dependents count, lines 14-18 (federal AGI,
+#             income modifications, Maine AGI, deduction Standard/Itemized radio,
+#             exemption).
+#   page 2 -- lines 19-24 (taxable income, income tax, recapture, total tax, tax
+#             credits Schedule A, nonresident credit, net tax), line 25 tax
+#             payments 25a-25f, lines 26-29 (amended overpayment, 25f-26, overpaid,
+#             underpaid), lines 30/30a/31 (use tax, casual rental sales tax,
+#             charitable contributions), line 32 net overpayment, line 33 applied-
+#             to-2024 (33a) + refund (33b), direct deposit (33c routing, 33d
+#             account, 33e type, outside-US box).
+#   page 3 -- name/SSN header echo, line 34 (34a tax due, 34b underpayment penalty
+#             + Form 2210ME box, 34c total amount due), deceased dates of death
+#             (taxpayer + spouse), HEALTH CARE COVERAGE 35a-35d + 35e preferred
+#             contact method (ONE /Btn radio), Third Party Designee (Yes/No radio +
+#             name/phone/PIN), signature block (taxpayer/spouse sign dates +
+#             occupations + email, preparer date/phone/name/PTIN), Payment Plan +
+#             Injured Spouse boxes.
+#
+# AcroForm. FLAT form: acroform_root = '' . Every widget's /T is the raw flat id
+# the form ships with (descriptive English). 129 fields reported; 4 are the
+# JavaScript "CLEAR ALL" / "PRINT" pushbuttons (page 1 + page 3, no value/real
+# appearance states) and are EXCLUDED. The remaining 125 fillable widgets are
+# mapped.
+#
+# Shared /Btn radios (one AcroForm field, many physical kids -- mapped once per
+# physical box with distinct on_state, sharing one group per CONVENTIONS):
+#   * "radStatus"  -- FILING STATUS lines 3-7. NOTE the kid on_state names are
+#     misleading: the box at the line-6 row carries on_state /Qualifying widow(er)
+#     but is physically "Head of household", and the line-7 row box carries
+#     /Qualifying surviving spouse. Mapped by PHYSICAL position (verified against
+#     the render): 3 Single, 4 MFJ, 5 MFS, 6 HoH (/Qualifying widow(er)),
+#     7 QSS (/Qualifying surviving spouse).
+#   * "Residency status" -- lines 8 Resident, 8a Safe harbor, 9 Part-year,
+#     10 Nonresident, 11 Nonresident alien (Maine nonresident), 11a Nonresident
+#     alien (Maine resident).
+#   * "Type of filing" -- line 17 deduction Standard / Itemized.
+#   * "Type of account" -- line 33e Checking / Savings.
+#   * "Preferred method of contact" -- line 35e Mailing(/Choice1) / Phone(/Choice2)
+#     / Email(/Choice3).
+#   * "Do you want someone else to discuss with MRS" -- Third Party Designee
+#     Yes / No.
+# Every OTHER checkbox is its own independent single-state /Btn (on_state /Yes):
+# Amended flag, line A fairness box, clean-election You/Spouse, commercial
+# farming/fishing, line 12 age/blind (12a-12d), Schedule NRH, 34b Form 2210ME
+# box, 33d outside-US box, 35a-35d health-coverage flags, Payment Plan, Injured
+# Spouse.
+#
+# Money vs text. Every numbered dollar line ("DO NOT ENTER $ signs, commas, or
+# decimals" with a printed ".00" suffix) is mapped `money`: 14, 15a, 15b, 16, 17,
+# 18, 19, 20, 20a, 21, 22, 23, 24, 25a-25f, 26, 27, 28, 29, 30, 30a, 31, 32, 33a,
+# 33b, 34a, 34b, 34c. SSNs are single boxes (maxlen 11) kept `text`. Counts (line
+# 13 exemptions, 13a dependents), date M/D/Y segments, year-spouse-died, routing/
+# account numbers, names, occupations, phones, email, designee PIN stay `text`.
+#
+# Relations (on-face arithmetic, every operand mapped, unconditional only):
+#   16  "Line 14 plus line 15a, minus line 15b"            -> 16 == 14 + 15a - 15b
+#   22  "TOTAL TAX. Line 20 plus line 20a minus line 21"   -> 22 == 20 + 20a - 21
+#   24  "NET TAX. Line 22 minus line 23"                   -> 24 == 22 - 23
+#   25f "TOTAL. Add lines 25a, b, c, d, and e"             -> 25f == 25a+25b+25c+25d+25e
+#   27  "Line 25f minus line 26"                           -> 27 == 25f - 26
+#   34c "TOTAL AMOUNT DUE. Add lines 34a and 34b"          -> 34c == 34a + 34b
+# OMITTED (conditional / floor-at-zero / branch): 19 ("Line 16 minus lines 17 and
+# 18"), 28 (overpaid if 27>24), 29 (underpaid if 24>27), 32 (28 minus 30,30a,31
+# with branch to 34a), 34a (add 29,30,30a,31 if total>line28).
+#
+# Cross_form. Line 14 "FEDERAL ADJUSTED GROSS INCOME" == federal AGI Form 1040
+# line 11.
+form: "1040ME"
+jurisdiction: states/me
+tax_year: 2023
+source_url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040_ME_dwnld_ff.pdf
+pdf_sha256: "13d4b15111d39caf1c1f89942c0351be77cd9d80fdc47bc33534adce5fd0e525"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header
+  - line: name.first                     # "Your First Name"
+    field: Form 1040ME Your First Name
+    type: text
+    maxlen: 15
+  - line: name.middle_initial            # "MI"
+    field: Form 1040ME Middle Initial
+    type: text
+    maxlen: 1
+  - line: name.last                      # "Your Last Name"
+    field: Form 1040ME Last name
+    type: text
+    maxlen: 20
+  - line: spouse.name.first              # "Spouse's First Name"
+    field: Form 1040ME Spouse's first name
+    type: text
+    maxlen: 15
+  - line: spouse.name.middle_initial     # spouse "MI"
+    field: Form 1040 S M I
+    type: text
+    maxlen: 1
+  - line: spouse.name.last               # "Spouse's Last Name"
+    field: Form 1040ME Spouse's last name
+    type: text
+    maxlen: 20
+  - line: identifying_number             # "Your Social Security Number" (single box)
+    field: Form 1040ME Your social security number
+    type: text
+    maxlen: 11
+  - line: spouse.identifying_number      # "Spouse's Social Security Number" (single box)
+    field: Form 1040ME Spouse's social security number
+    type: text
+    maxlen: 11
+  - line: mailing_address.street         # "Current Mailing Address (P.O. Box, street, and apartment number)"
+    field: Form 1040ME Current mailing address
+    type: text
+  - line: mailing_address.city           # "City or Town"
+    field: Form 1040ME City or town
+    type: text
+    maxlen: 20
+  - line: mailing_address.state          # "State"
+    field: Form 1040ME State
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip            # "ZIP Code"
+    field: Form 1040ME Zip code
+    type: text
+    maxlen: 5
+  - line: foreign_country                # "Foreign country name"
+    field: Form 1040ME Foreign country name
+    type: text
+  - line: foreign_province               # "Foreign province/state/county" (narrow box)
+    field: Form 1040ME Foreign province/state/county
+    type: text
+    maxlen: 4
+  - line: foreign_postal_code            # "Foreign postal code"
+    field: Form 1040ME Foreign postal code
+    type: text
+    maxlen: 7
+  - line: home_phone.area                # "Home Phone Number" (area)
+    field: Form 1040ME Home area code
+    type: text
+    maxlen: 3
+  - line: home_phone.number              # "Home Phone Number"
+    field: Form 1040ME Home phone number
+    type: text
+    maxlen: 8
+  - line: work_phone.area                # "Work Phone Number" (area)
+    field: Form 1040MEWork area code
+    type: text
+    maxlen: 3
+  - line: work_phone.number              # "Work Phone Number"
+    field: Form 1040ME Work phone number
+    type: text
+    maxlen: 8
+  - line: amended.yes                    # "Check here if this is an AMENDED return."
+    field: Form 1040ME Check if Amended
+    type: checkbox
+    on_state: /Yes
+  # ---- tax period dates (alternate fiscal-year period)
+  - line: tax_period.begin.month         # "For tax period 1/1/2023 to 12/31/2023 or ___" begin month (narrow box)
+    field: Form 1040 month begin
+    type: text
+    maxlen: 2
+  - line: tax_period.begin.day           # begin day (narrow box)
+    field: Form 1040 day begin
+    type: text
+    maxlen: 2
+  - line: tax_period.end.month           # "to ___" end month
+    field: Form 1040ME month
+    type: text
+    maxlen: 2
+  - line: tax_period.end.day             # end day
+    field: 1040ME day
+    type: text
+    maxlen: 2
+  - line: tax_period.end.year            # end year
+    field: 1040ME year
+    type: text
+    maxlen: 4
+
+  # ---- Line A: Property Tax Fairness Credit / Sales Tax Fairness Credit filing-only box
+  - line: a.yes                          # "Check this box if you are filing a return only to claim..."
+    field: Form 1040ME Maine property tax fairness credit/maine sales tax credit
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Line 1: Maine Clean Election Fund
+  - line: 1.you                          # "want $3 to go to this fund" You
+    field: Form 1040ME Maine clean election fund (you)
+    type: checkbox
+    on_state: /Yes
+  - line: 1.spouse                       # Spouse
+    field: Form 1040ME Spouse
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Line 2: Commercial farming or fishing
+  - line: 2.yes                          # "Check here if you were engaged in COMMERCIAL FARMING OR FISHING during 2023"
+    field: Form 1040ME Check here if you were engaged in commercial farming or fishing during 2018
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Lines 3-7: FILING STATUS (ONE /Btn "radStatus", physical position mapped)
+  - line: filing_status.single                       # 3 Single
+    field: radStatus
+    type: checkbox
+    on_state: /Single
+    group: filing_status
+  - line: filing_status.married_filing_jointly       # 4 Married filing jointly
+    field: radStatus
+    type: checkbox
+    on_state: /Married filing jointly
+    group: filing_status
+  - line: filing_status.married_filing_separately    # 5 Married filing separately
+    field: radStatus
+    type: checkbox
+    on_state: /Married filing seperately
+    group: filing_status
+  - line: filing_status.head_of_household            # 6 Head of household (kid on_state mislabeled /Qualifying widow(er))
+    field: radStatus
+    type: checkbox
+    on_state: /Qualifying widow(er)
+    group: filing_status
+  - line: filing_status.qualifying_surviving_spouse  # 7 Qualifying surviving spouse with dependent child
+    field: radStatus
+    type: checkbox
+    on_state: /Qualifying surviving spouse
+    group: filing_status
+  - line: 7.year_spouse_died             # 7 "(Year spouse died ___)"
+    field: FORM1040ME Year spouse died
+    type: text
+    maxlen: 4
+
+  # ---- Lines 8-11a: RESIDENCY STATUS (ONE /Btn "Residency status")
+  - line: residency_status.resident                  # 8 Resident
+    field: Residency status
+    type: checkbox
+    on_state: /Resident
+    group: residency_status
+  - line: residency_status.safe_harbor_resident      # 8a Safe Harbor Resident
+    field: Residency status
+    type: checkbox
+    on_state: /Safe harbor
+    group: residency_status
+  - line: residency_status.part_year_resident        # 9 Part-year Resident
+    field: Residency status
+    type: checkbox
+    on_state: /Part-year resident
+    group: residency_status
+  - line: residency_status.nonresident               # 10 Nonresident
+    field: Residency status
+    type: checkbox
+    on_state: /Nonresident
+    group: residency_status
+  - line: residency_status.nonresident_alien_maine_nonresident  # 11 Nonresident Alien (Maine Nonresident)
+    field: Residency status
+    type: checkbox
+    on_state: /Nonresident alien Maine nonresident
+    group: residency_status
+  - line: residency_status.nonresident_alien_maine_resident     # 11a Nonresident Alien (Maine Resident)
+    field: Residency status
+    type: checkbox
+    on_state: /Nonresident alien Maine resident
+    group: residency_status
+  - line: schedule_nrh.yes               # "Check here if you are filing Schedule NRH"
+    field: NRH
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Line 12: age 65+ / blind flags
+  - line: 12a                            # 12a You 65 or over
+    field: 65 or over
+    type: checkbox
+    on_state: /Yes
+  - line: 12b                            # 12b You Blind
+    field: Blind
+    type: checkbox
+    on_state: /Yes
+  - line: 12c                            # 12c Spouse 65 or over
+    field: Spouse 65 or over
+    type: checkbox
+    on_state: /Yes
+  - line: 12d                            # 12d Spouse Blind
+    field: Spouse blind
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Line 13 / 13a: exemptions and dependents counts
+  - line: "13"                           # 13 Enter the TOTAL number of EXEMPTIONS
+    field: 1040ME Total number of exemptions
+    type: text
+    maxlen: 1
+  - line: 13a                            # 13a TOTAL number of qualifying children and dependents
+    field: 1040ME Total qualifying children and dependents
+    type: text
+    maxlen: 2
+
+  # ---- Lines 14-18: Calculate Your Taxable Income
+  - line: "14"                           # 14 FEDERAL ADJUSTED GROSS INCOME
+    field: 1040ME Federal adjusted gross income
+    type: money
+  - line: 15a                            # 15a INCOME ADDITION MODIFICATIONS (Schedule 1A line 12)
+    field: 1040ME Income modifications additions
+    type: money
+  - line: 15b                            # 15b INCOME SUBTRACTION MODIFICATIONS (Schedule 1S line 27)
+    field: 1040ME Income modifications subtractions
+    type: money
+  - line: "16"                           # 16 MAINE ADJUSTED GROSS INCOME (Line 14 plus 15a minus 15b)
+    field: 1040ME Maine adjusted gross income
+    type: money
+  - line: 17.standard                    # 17 DEDUCTION Standard
+    field: Type of filing
+    type: checkbox
+    on_state: /Standard
+    group: deduction_type
+  - line: 17.itemized                    # 17 DEDUCTION Itemized
+    field: Type of filing
+    type: checkbox
+    on_state: /Itemized
+    group: deduction_type
+  - line: "17"                           # 17 DEDUCTION amount
+    field: 1040ME Deduction
+    type: money
+  - line: "18"                           # 18 EXEMPTION (Multiply line 13 x $4,700)
+    field: 1040ME Exemption
+    type: money
+    maxlen: 4
+
+  # ============================================ page 2 -- lines 19-33
+  - line: "19"                           # 19 TAXABLE INCOME (Line 16 minus lines 17 and 18)
+    field: 1040ME Taxable income
+    type: money
+  - line: "20"                           # 20 INCOME TAX (tax table)
+    field: 1040ME Income tax
+    type: money
+  - line: 20a                            # 20a TAX CREDIT RECAPTURE AMOUNTS
+    field: 1040ME Tax credit recapture
+    type: money
+  - line: "21"                           # 21 NONRESIDENT CREDIT (Schedule NR line 9 or NRH line 11)
+    field: 1040ME Nonresident credit
+    type: money
+  - line: "22"                           # 22 TOTAL TAX (Line 20 plus 20a minus 21)
+    field: 1040ME Total tax
+    type: money
+  - line: "23"                           # 23 NONREFUNDABLE TAX CREDITS (Maine Schedule A line 23)
+    field: 1040ME Tax credits
+    type: money
+  - line: "24"                           # 24 NET TAX (Line 22 minus line 23)
+    field: 1040ME Net tax
+    type: money
+  - line: 25a                            # 25a Maine income tax withheld
+    field: 1040ME Tax payments
+    type: money
+  - line: 25b                            # 25b estimated payments / carry forward / real estate withholding
+    field: 1040ME 2019 estimated payments and 2018 carry forwards, and real estate withholding payments
+    type: money
+  - line: 25c                            # 25c REFUNDABLE TAX CREDITS (Maine Schedule A line 7)
+    field: 1040ME Refunable tax credit
+    type: money
+  - line: 25d                            # 25d Property Tax Fairness Credit (Schedule PTFC/STFC line 15)
+    field: 1040ME Property tax fairness credit
+    type: money
+  - line: 25e                            # 25e Sales Tax Fairness Credit (Schedule PTFC/STFC line 16 or 16a)
+    field: 1040ME Sales tax fairness credit
+    type: money
+  - line: 25f                            # 25f TOTAL (Add lines 25a, b, c, d, and e)
+    field: 1040ME Total
+    type: money
+  - line: "26"                           # 26 If amended return, enter overpayment on original return
+    field: 1040ME If amended return, enter overpayment
+    type: money
+  - line: "27"                           # 27 Line 25f minus line 26
+    field: 1040ME Line 25f minus line 26
+    type: money
+  - line: "28"                           # 28 INCOME TAX OVERPAID (line 27 minus line 24)
+    field: 1040ME Income tax overpaid
+    type: money
+  - line: "29"                           # 29 INCOME TAX UNDERPAID (line 24 minus line 27)
+    field: 1040ME Income tax underpaid
+    type: money
+  - line: "30"                           # 30 USE TAX (SALES TAX)
+    field: 1040ME Use tax (sales tax)
+    type: money
+  - line: 30a                            # 30a SALES TAX ON CASUAL RENTALS OF LIVING QUARTERS
+    field: 1040ME Sales tax on casual rentals of living quarters
+    type: money
+  - line: "31"                           # 31 CHARITABLE CONTRIBUTIONS and PARK PASSES (Schedule CP line 12)
+    field: 1040ME Charitable contributions and park passes
+    type: money
+  - line: "32"                           # 32 NET OVERPAYMENT (Line 28 minus lines 30, 30a and 31)
+    field: 1040ME Net overpayment
+    type: money
+  - line: 33a                            # 33a Amount of line 32 to be CREDITED to 2024 estimated tax
+    field: 1040ME Amount to be credited to 2019 estimated tax
+    type: money
+  - line: 33b                            # 33b REFUND
+    field: 1040ME Refund
+    type: money
+  - line: 33c                            # 33c Routing Number
+    field: 1040ME Routing number
+    type: text
+    maxlen: 9
+  - line: 33d                            # 33d Account Number
+    field: 1040ME Account number
+    type: text
+    maxlen: 17
+  - line: 33d.outside_us                 # "Check here if this refund will go to an account outside the United States"
+    field: Check if refund will go to an account outside of the US
+    type: checkbox
+    on_state: /Yes
+  - line: 33e.checking                   # 33e Type of Account: Checking
+    field: Type of account
+    type: checkbox
+    on_state: /Checking
+    group: account_type
+  - line: 33e.savings                    # 33e Type of Account: Savings
+    field: Type of account
+    type: checkbox
+    on_state: /Savinbgs
+    group: account_type
+
+  # ============================================ page 3
+  - line: name                           # "Name(s) as shown on Form 1040ME" (header echo)
+    field: 1040ME First name last name
+    type: text
+  - line: identifying_number.echo        # "Your Social Security Number" (page 3 header echo)
+    field: 1040ME Your social security number again
+    type: text
+    maxlen: 11
+  - line: 34a                            # 34a TAX DUE (Add lines 29, 30, 30a, and 31)
+    field: 1040ME Tax due
+    type: money
+  - line: 34b.form_2210me                # 34b "Check here if you checked the box on Form 2210ME, line 17"
+    field: 1040ME Check here if you checked the box on form 2210, line 17
+    type: checkbox
+    on_state: /Yes
+  - line: 34b                            # 34b Underpayment Penalty
+    field: 1040ME Underpayment penalty
+    type: money
+  - line: 34c                            # 34c TOTAL AMOUNT DUE (Add lines 34a and 34b)
+    field: 1040ME Total amount due
+    type: money
+
+  # ---- Deceased dates of death
+  - line: deceased.taxpayer.month        # "If taxpayer is deceased, enter date of death" (Month)
+    field: 1040ME Taxpayer's month of death
+    type: text
+    maxlen: 2
+  - line: deceased.taxpayer.day          # (Day)
+    field: 1040ME Taxpayer's day of death
+    type: text
+    maxlen: 2
+  - line: deceased.taxpayer.year         # (Year)
+    field: 1040ME Taxpayer's yr of death
+    type: text
+    maxlen: 4
+  - line: deceased.spouse.month          # "If spouse is deceased, enter date of death" (Month)
+    field: 1040ME Spouse's month of death1
+    type: text
+    maxlen: 2
+  - line: deceased.spouse.day            # (Day)
+    field: 1040ME Spouse's day of death1
+    type: text
+    maxlen: 2
+  - line: deceased.spouse.year           # (Year)
+    field: 1040ME Spouse's year of death1
+    type: text
+    maxlen: 4
+
+  # ---- Health Care Coverage 35a-35e
+  - line: 35a                            # 35a authorize MRS to share info with CoverME.gov
+    field: Check Box10
+    type: checkbox
+    on_state: /Yes
+  - line: 35b                            # 35b I do not have health care coverage
+    field: Check Box11
+    type: checkbox
+    on_state: /Yes
+  - line: 35c                            # 35c My spouse does not have health care coverage
+    field: Check Box12
+    type: checkbox
+    on_state: /Yes
+  - line: 35d                            # 35d One or more of my dependents do not have health care coverage
+    field: Check Box13
+    type: checkbox
+    on_state: /Yes
+  - line: 35e.mailing_address            # 35e preferred contact: Mailing address listed on page 1
+    field: Preferred method of contact
+    type: checkbox
+    on_state: /Choice1
+    group: preferred_contact
+  - line: 35e.phone_number               # 35e preferred contact: Phone number listed on page 1
+    field: Preferred method of contact
+    type: checkbox
+    on_state: /Choice2
+    group: preferred_contact
+  - line: 35e.email_address              # 35e preferred contact: Email address listed below
+    field: Preferred method of contact
+    type: checkbox
+    on_state: /Choice3
+    group: preferred_contact
+
+  # ---- Third Party Designee
+  - line: third_party_designee.yes       # "Do you want to allow another person to discuss...? Yes"
+    field: Do you want someone else to discuss with MRS
+    type: checkbox
+    on_state: /Yes
+    group: third_party_designee
+  - line: third_party_designee.no        # "... No."
+    field: Do you want someone else to discuss with MRS
+    type: checkbox
+    on_state: /No
+    group: third_party_designee
+  - line: third_party_designee.name      # "Designee's name"
+    field: 1040ME Designee's name
+    type: text
+  - line: third_party_designee.phone     # "Phone no."
+    field: 1040ME designee's phone number
+    type: text
+    maxlen: 12
+  - line: third_party_designee.pin       # "Personal identification #"
+    field: 1040ME Personal identification number
+    type: text
+    maxlen: 5
+
+  # ---- Signature block
+  - line: signature.taxpayer_date.month  # "Date signed" (taxpayer) Month
+    field: 1040ME your signature month
+    type: text
+    maxlen: 2
+  - line: signature.taxpayer_date.day    # (Day)
+    field: 1040ME your signature day
+    type: text
+    maxlen: 2
+  - line: signature.taxpayer_date.year   # (Year)
+    field: 1040ME your signature year
+    type: text
+    maxlen: 4
+  - line: signature.taxpayer_occupation  # "Your occupation"
+    field: 1040ME Your occupation
+    type: text
+  - line: signature.spouse_date.month    # "Date signed" (spouse) Month
+    field: 1040ME spouse month
+    type: text
+    maxlen: 2
+  - line: signature.spouse_date.day      # (Day)
+    field: 1040ME spouse day
+    type: text
+    maxlen: 2
+  - line: signature.spouse_date.year     # (Year)
+    field: 1040ME spouse year
+    type: text
+    maxlen: 4
+  - line: signature.spouse_occupation    # "Spouse's occupation"
+    field: 1040ME Spouse's occupation
+    type: text
+  - line: signature.email                # "Your email address"
+    field: 1040ME your email address
+    type: text
+  - line: preparer.date.month            # preparer "Date signed" Month
+    field: 1040ME preparer month
+    type: text
+    maxlen: 2
+  - line: preparer.date.day              # (Day)
+    field: 1040ME preparer day
+    type: text
+    maxlen: 2
+  - line: preparer.date.year             # (Year)
+    field: 1040ME preparer year
+    type: text
+    maxlen: 4
+  - line: preparer.phone                 # "Preparer's phone number"
+    field: 1040ME Preparer's phone number
+    type: text
+    maxlen: 12
+  - line: preparer.name                  # "Print preparer's name and name of business"
+    field: 1040ME Print preparer's name and name of business
+    type: text
+  - line: preparer.ptin                  # "Preparer's SSN or PTIN"
+    field: 1040ME Preparer's SS# or PTIN
+    type: text
+    maxlen: 11
+
+  # ---- Payment Plan / Injured Spouse
+  - line: payment_plan.yes               # "Payment Plan"
+    field: 1040ME Payment Plan
+    type: checkbox
+    on_state: /Yes
+  - line: injured_spouse.yes             # "Injured Spouse"
+    field: 1040ME Injured spouse
+    type: checkbox
+    on_state: /Yes
+
+relations:
+  - "16 == 14 + 15a - 15b"               # 16 "Line 14 plus line 15a, minus line 15b"
+  - "22 == 20 + 20a - 21"                # 22 "TOTAL TAX. Line 20 plus line 20a minus line 21"
+  - "24 == 22 - 23"                      # 24 "NET TAX. Line 22 minus line 23"
+  - "25f == 25a + 25b + 25c + 25d + 25e" # 25f "TOTAL. Add lines 25a, b, c, d, and e"
+  - "27 == 25f - 26"                     # 27 "Line 25f minus line 26"
+  - "34c == 34a + 34b"                   # 34c "TOTAL AMOUNT DUE. Add lines 34a and 34b"
+cross_form:
+  # Line 14 "FEDERAL ADJUSTED GROSS INCOME" == federal AGI Form 1040 line 11.
+  - "14 == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 3}
+mailing: null
