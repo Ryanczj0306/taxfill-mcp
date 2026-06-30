@@ -13,7 +13,7 @@ plan for what is **not yet done**, as of **2026-06-28**.
 
 ## Where we are (verified)
 
-Done and on `main` (**1,323 tests, all green** — verified `pytest` run, exit 0):
+Done and on `main` (**1,335 tests, all green** — verified `pytest` run, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (21 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -42,9 +42,10 @@ Done and on `main` (**1,323 tests, all green** — verified `pytest` run, exit 0
 
 **Form packs that can be FILLED today (introspect→vision-map→adversarial-audit→
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E,
-Form 8863, Form 2555. state — **18 states** (22 packs): CA (540 + 540NR +
+Form 8863, Form 2555. state — **21 states** (25 packs): CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
-IN, MO, MD, **AL, CO, MN, WI**. **57 form packs total** (35 federal + 22 state).
+IN, MO, MD, AL, CO, MN, WI, **KY (740), OR (OR-40), LA (IT-540)**. **60 form packs
+total** (35 federal + 25 state).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
 > (Phase 0, 2026-06-28) and counted above.
@@ -64,13 +65,13 @@ Cheap, high-credibility cleanup that the audit surfaced. No new features.
       — DONE (2026-06-28) after a green `test_formpacks_states.py` round-trip; merged
       via `feat/state-rollout-al-co-mn-wi`. Working tree is now clean.
 - [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
-      and a full run (**exit 0, no collection errors**): the suite is **1,323 tests,
+      and a full run (**exit 0, no collection errors**): the suite is **1,335 tests,
       all green** (1,288 at audit + 3 eval scenarios k/l/m + 8 each for Forms 4868,
       1040-ES, 1040-X, and W-7). The earlier figures
       were stale/under-counted (old ROADMAP *1222*, README *~1076*, audit-sandbox
-      *~903* — the sandbox couldn't run collection). README + this file now quote **1,323**.
+      *~903* — the sandbox couldn't run collection). README + this file now quote **1,335**.
 - [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
-      done, 18 states (not 14), 57 packs (not 49), Phase B done, drift CI done.
+      done, 21 states (not 14), 60 packs (not 49), Phase B done, drift CI done.
 
 **Acceptance:** working tree clean (no untracked packs), README + this file quote
 one verified test count, CI green.
@@ -118,17 +119,19 @@ The dominant remaining body of work. Use the proven pipeline:
 vision-mapping → `assemble_*` → adversarial vision audit → `test_formpacks_states.py`
 golden round-trip.
 
-### C1 — Remaining resident state form packs (24 jurisdictions)
+### C1 — Remaining resident state form packs (21 jurisdictions)
 
-18 of 42 income-tax jurisdictions are fillable. **24 remain** (23 states + DC),
-all have knowledge packs but no fillable form pack yet:
+**21 of 42** income-tax jurisdictions are now fillable (✅ first C1 tranche **KY / OR / LA**
+shipped 2026-06-30 via the introspect→vision-map→adversarial-audit→golden pipeline).
+**21 remain** (20 states + DC), all have knowledge packs but no fillable form pack yet:
 
-`AR · CT · DC · DE · HI · IA · ID · KS · KY · LA · MA · ME · MS · MT · ND · NE ·
-NM · OK · OR · RI · SC · UT · VT · WV`
+`AR · CT · DC · DE · HI · IA · ID · KS · MA · ME · MS · MT · ND · NE ·
+NM · OK · RI · SC · UT · VT · WV`
 
-- [ ] Roll out the **easy AcroForm states by population first**: KY → OR → LA →
-      UT → KS → AR → OK → ID → NE → ME → MS → HI → NM-flat? → RI → MT → ND → DE →
-      VT → DC. (~one feature branch per 3–5 states, `--no-ff` merge per tranche.)
+- [x] Tranche 1 — **KY (740), OR (OR-40), LA (IT-540)** — DONE (2026-06-30).
+- [ ] Roll out the remaining **easy AcroForm states by population**: UT → KS → AR →
+      OK → ID → NE → ME → MS → HI → RI → MT → ND → DE → VT → DC (NM may be XFA).
+      (~one feature branch per 3–5 states, `--no-ff` merge per tranche.)
 - [ ] Per state: introspect → vision-map (≈6 agents) → assemble `pack.yaml`
       (relations from printed labels; `cross_form` line = federal AGI) → audit
       every page → re-audit → golden round-trip.
@@ -212,7 +215,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       recommendation, dollar delta, and joint-liability caveat), **(m)** NRA-spouse
       §6013(g) election (MFJ dropped → MFS, election + worldwide-income trade-off
       surfaced in both estimate and intake, authority via `get_sources`).
-- [ ] Wire the true test count (1,323) into a CI badge / README line.
+- [ ] Wire the true test count (1,335) into a CI badge / README line.
 
 **Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
 
