@@ -16,7 +16,7 @@ recipe so the build is a mechanical step at release time, not a rediscovery.
 ## Build
 
 `manifest.json` is **already pre-filled** in this directory (auto-generated from
-the live server's `list_tools()` so the 21-tool list and version stay accurate).
+the live server's `list_tools()` so the 22-tool list and version stay accurate).
 So `mcpb init` is replaced by a review of that file; only `validate` + `pack`
 remain at release:
 
@@ -41,7 +41,7 @@ list after any server tool change with the snippet in `docs/PUBLISHING.md`.
   PyPI release · **license:** MIT
 - **server:** launch the published server with uvx, e.g. command `uvx` with
   args `["taxfill-mcp"]` (Python server; uvx bootstraps the interpreter and deps).
-- **tools:** the 21 tools the server exposes (see
+- **tools:** the 22 tools the server exposes (see
   [`packages/mcp-server/src/taxfill_mcp/server.py`](../packages/mcp-server/src/taxfill_mcp/server.py)
   and the table in the top-level [README](../README.md)).
 - **Permissions / network:** declare outbound network (only to download blank

@@ -889,6 +889,47 @@ def _eval_relation_sides(
     return lhs, rhs, list(dict.fromkeys(blanks))
 
 
+def evaluate_expression(
+    expr: str,
+    values: Mapping[str, float | int | Decimal],
+    line_names: frozenset[str] | None = None,
+) -> Decimal:
+    """Evaluate ONE arithmetic expression in the relation grammar against ``values``.
+
+    Supports ``+ - * /``, parentheses, ``max()/min()/sum(1a..1h)`` and line-id
+    references — the same grammar the verifier uses for ``lhs == rhs`` relations,
+    exposed here for one-sided evaluation. Missing/blank refs count as 0
+    (IRS blank-means-zero). ``line_names`` is the set of ids that are real lines
+    (a bare integer NOT in the set is a numeric literal); defaults to ``values`` keys.
+    Raises :class:`ValueError` on a malformed expression (a pack-authoring error).
+
+    This is the compute engine behind the hand-fill worksheet for print-only forms
+    (:mod:`taxfill_core.handfill`).
+    """
+    names = frozenset(line_names) if line_names is not None else frozenset(values)
+
+    def resolve(line: str) -> Decimal:
+        value = values.get(line)
+        if value is None:
+            return Decimal(0)
+        if isinstance(value, bool):
+            raise _BadOperand(line, value)
+        try:
+            number = Decimal(str(value).strip())
+        except InvalidOperation:
+            raise _BadOperand(line, value) from None
+        if not number.is_finite():
+            raise _BadOperand(line, value)
+        return number
+
+    toks = _Tokens(expr)
+    result = _parse_expr(toks, names, resolve)
+    trailing_kind, trailing = toks.peek()
+    if trailing_kind is not None:
+        raise _grammar_error(expr, f"unexpected trailing token {trailing!r}")
+    return result
+
+
 def _check_relation(
     relation: str,
     values: Mapping[str, float | int | Decimal],

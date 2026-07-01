@@ -38,6 +38,7 @@ from taxfill_core import (
 from taxfill_core.discovery import get_form_map as _get_form_map, list_forms as _list_forms, load_form_pack
 from taxfill_core.extract import extract_document as _extract_document, list_document_kinds as _list_document_kinds
 from taxfill_core.fetch import fetch_blank as _fetch_blank
+from taxfill_core.handfill import hand_fill_worksheet as _hand_fill_worksheet, load_hand_fill_pack_for
 from taxfill_core.estimate import IncomeSnapshot
 from taxfill_core.file_and_pay import FilingManifestItem
 from taxfill_core.residency import classify as _classify
@@ -307,6 +308,17 @@ def filing_summary(manifest: list[dict]) -> dict:
 def file_and_pay(manifest: list[dict]) -> dict:
     """Last-mile checklist per return: pay, sign, assemble, mail, records, deadlines. Same manifest as filing_summary."""
     return _dump(_file_and_pay([FilingManifestItem.model_validate(m) for m in manifest]))
+
+
+@mcp.tool()
+def hand_fill_worksheet(form: str, year: int, jurisdiction: str, values: dict[str, Any] | None = None) -> dict:
+    """Print-only state forms (no fillable AcroForm fields — e.g. HI N-11): compute a
+    line->value worksheet to hand-write onto the printed blank. `values` maps line ids to
+    entered amounts/text/checkbox; lines with a compute expression are derived from earlier
+    lines. Returns the ordered worksheet (line, label, value, source) + the print_url of the
+    official blank. Only for jurisdictions that ship a print-only pack; use fill_form otherwise."""
+    pack = load_hand_fill_pack_for(form, year, jurisdiction)
+    return _dump(_hand_fill_worksheet(pack, values or {}))
 
 
 def main() -> None:
