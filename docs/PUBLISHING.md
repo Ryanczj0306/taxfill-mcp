@@ -66,7 +66,7 @@ from taxfill_core.datadir import data_root
 from taxfill_core import load_state_knowledge
 assert 'site-packages' in str(data_root())
 assert load_state_knowledge('ca', 2023).jurisdiction == 'states/ca'
-assert len(asyncio.run(s.mcp.list_tools())) == 21
+assert len(asyncio.run(s.mcp.list_tools())) == 22
 print('self-contained OK')
 " )
 ```
@@ -112,7 +112,7 @@ mcpb validate && mcpb pack   # manifest.json already finalized — just validate
 the current CLI schema (v0.2): the `$schema_note` draft marker was dropped,
 `server.entry_point` added, and the `permissions` block removed (the v0.2/v0.3
 schema has no permissions field — Claude Desktop prompts for file/network consent
-at install time). It declares the **21 tools**; the README disclaimer applies.
+at install time). It declares the **22 tools**; the README disclaimer applies.
 
 ## 7. Demo GIF
 
