@@ -22,6 +22,7 @@ EXPECTED_TOOLS = {
     "estimate_refund", "get_sources", "filing_summary", "file_and_pay", "state_scope",
     "list_document_kinds", "extract_document",
     "workspace_save", "workspace_load", "workspace_record_position", "workspace_reconcile",
+    "hand_fill_worksheet",
 }
 
 
