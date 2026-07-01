@@ -15,7 +15,6 @@ Usage (release step, see docs/PUBLISHING.md):
 from __future__ import annotations
 
 import shutil
-import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]

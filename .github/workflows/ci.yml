@@ -18,8 +18,19 @@ jobs:
           python-version: "3.11"
       - name: Sync workspace
         run: uv sync
-      - name: Run tests (offline — network golden round-trips run in the drift job)
+      - name: Run tests (offline — live-.gov round-trips run in the network-tests job)
         run: uv run pytest -m "not network"
+
+  lint:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Ruff lint (config in pyproject.toml [tool.ruff])
+        run: uvx ruff check .
 
   packaging:
     # Guards the v0.1 ship invariant: the published wheel must be self-contained —
@@ -85,3 +96,20 @@ jobs:
         run: uv sync
       - name: Check source/form drift
         run: uv run python scripts/check_drift.py
+
+  network-tests:
+    # The network-marked golden round-trips (live .gov blank downloads) are kept out of
+    # the push-blocking `test` job to keep PR CI fast and non-flaky. Run them on the
+    # nightly schedule and on demand, so a change that breaks a live round-trip is still
+    # caught. (The `drift` job checks source freshness via check_drift.py, not pytest.)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Sync workspace
+        run: uv sync
+      - name: Run network golden round-trips
+        run: uv run pytest -m network
