@@ -276,15 +276,31 @@ def test_widowed_qss_not_primary_when_maintained_home_explicitly_false():
 
 def test_widowed_qss_is_primary_when_maintained_home_confirmed_true():
     # M1: confirmed-True on the QSS gating fact makes qualifying_surviving_spouse the
-    # primary (mirrors the HOH confirmed-for-primary pattern).
+    # primary (mirrors the HOH confirmed-for-primary pattern) — WITHIN the death-year
+    # window (spouse died 2022 -> valid for tax years 2023 and 2024).
     profile = Profile(
         household=Household(
             marital_status=_ans("widowed"),
+            spouse_death_year=_ans(2022),
             maintained_home_for_dependent_child=_ans(True),
         )
     )
     est = estimate_refund(profile, 2023, IncomeSnapshot(wages=50000, federal_withholding=6000))
     assert est.filing_status_used == "qualifying_surviving_spouse"
+
+
+def test_widowed_qss_denied_outside_death_year_window():
+    # QSS is available only for the two tax years AFTER death. Spouse died 2018, so tax year
+    # 2023 is out of window (5 years) — single, not QSS, even with maintained_home True.
+    profile = Profile(
+        household=Household(
+            marital_status=_ans("widowed"),
+            spouse_death_year=_ans(2018),
+            maintained_home_for_dependent_child=_ans(True),
+        )
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=90000, federal_withholding=10000))
+    assert est.filing_status_used == "single"
 
 
 def test_roadmap_nonresident_branch_returns_1040nr_and_8843():

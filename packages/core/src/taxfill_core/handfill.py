@@ -11,7 +11,7 @@ never a filled PDF — so it adds no risk to the fillable-form pipeline and no n
 """
 from __future__ import annotations
 
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
 from typing import Literal, Mapping
 
@@ -109,7 +109,14 @@ def hand_fill_worksheet(
         provided = values.get(ln.line)
         if ln.type == "money":
             if provided is not None and str(provided).strip() != "":
-                num = Decimal(str(provided).strip())
+                raw = str(provided).strip()
+                try:
+                    num = Decimal(raw)
+                except InvalidOperation:
+                    raise ValueError(
+                        f"line {ln.line} ({ln.label!r}) expects a money amount, got {raw!r} — "
+                        f"enter a number (or omit it to leave the line blank)"
+                    )
                 resolved[ln.line] = num
                 out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
                                          value=_fmt_money(num), source="entered", note=ln.note))

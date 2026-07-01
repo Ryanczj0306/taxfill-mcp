@@ -1698,75 +1698,103 @@ def _identity_checks(
     return checks
 
 
+_ADDR_TOKEN_RE = re.compile(r"[a-z0-9]+")
+
+
+def _addr_tokens(text: str) -> set[str]:
+    """Significant alphanumeric tokens of an address, lowercased — order/punctuation-agnostic."""
+    return set(_ADDR_TOKEN_RE.findall(text.casefold()))
+
+
 def _confirmed_address_checks(
     forms: Sequence[tuple[str, FormPack, Mapping[str, str]]],
     confirmed_current_address: str,
 ) -> list[IdentityCheck]:
-    """Compare every on-disk address line against the user-confirmed current address.
+    """Compare each form's TAXPAYER MAILING address against the user-confirmed current address.
 
-    Pitfall P-002's original shape: ONE wrong historical address landing
-    consistently on every form passes the cross-form consistency check —
-    only a comparison against the address the user confirmed they receive
-    mail at TODAY can catch it.
+    Pitfall P-002's original shape: ONE wrong historical address landing consistently on
+    every form passes the cross-form consistency check — only a comparison against the
+    address the user confirmed they receive mail at TODAY can catch it.
+
+    Only the filer's mailing address participates: lines named ``mailing_address`` or
+    ``mailing_address.<component>``. Other address-typed lines (home-country, business,
+    preparer, physician, landlord, foreign, e-mail) are deliberately excluded. A
+    component-split mailing address (street/city/state/zip on separate lines) is joined
+    before comparison, and matching is by significant-token containment so formatting and
+    ordering differences don't cause false failures — a genuinely outdated address (a
+    different street/city/zip) still fails.
     """
-    want = normalize_text(confirmed_current_address)
-    if not want:
+    if not normalize_text(confirmed_current_address):
         raise ValueError(
             "confirmed_current_address is blank — pass the user's CURRENT mailing address "
             "(where they receive mail TODAY, from intake), or omit the parameter"
         )
-    values_by_form: dict[str, str] = {}
+    want_tokens = _addr_tokens(confirmed_current_address)
+    field_label = "mailing_address (vs user-confirmed current address)"
+
+    per_form: dict[str, dict[str, str]] = {}
     for key, pack, fields in forms:
         for pack_field in pack.fields:
-            if pack_field.type == "checkbox" or "address" not in pack_field.line.casefold():
+            if pack_field.type == "checkbox":
+                continue
+            line = pack_field.line
+            if not (line == "mailing_address" or line.startswith("mailing_address.")):
                 continue
             raw = _lookup_raw(pack, pack_field, fields)
             if raw is None:
                 continue
-            values_by_form[f"{key}.{pack_field.line}"] = normalize_on_disk(pack_field, raw)
-    field_label = "mailing_address (vs user-confirmed current address)"
-    if not values_by_form:
+            value = normalize_on_disk(pack_field, raw)
+            if value:
+                per_form.setdefault(key, {})[line] = value
+
+    if not per_form:
         return [
             IdentityCheck(
                 field=field_label,
                 status=FAIL,
                 detail=(
-                    "confirmed_current_address was supplied but no pack in this filing maps an "
-                    "address line — add the form's address field (a line key containing "
-                    "'address') to the pack's fields[] so the P-002 cross-check can run, or omit "
-                    "the parameter"
+                    "confirmed_current_address was supplied but no pack in this filing maps a "
+                    "filled 'mailing_address' line — fill the taxpayer's mailing address (line "
+                    "'mailing_address' or 'mailing_address.*') so the P-002 cross-check can run, "
+                    "or omit the parameter"
                 ),
             )
         ]
-    mismatched = {
-        key: value for key, value in values_by_form.items() if value.casefold() != want.casefold()
-    }
-    if mismatched:
-        listing = ", ".join(f"{key}={value!r}" for key, value in mismatched.items())
-        return [
-            IdentityCheck(
-                field=field_label,
-                status=FAIL,
-                values=values_by_form,
-                detail=(
-                    f"the return address differs from the user-confirmed CURRENT mailing address "
-                    f"{want!r}: {listing} — a consistent but outdated address still sends IRS "
-                    f"bills and notices to the wrong place (pitfall P-002); refill the address "
-                    f"line(s) with the confirmed current address and re-verify"
-                ),
+
+    checks: list[IdentityCheck] = []
+    for key, comps in per_form.items():
+        on_disk = ", ".join(comps[k] for k in sorted(comps))
+        # A significant on-disk token (>= 3 chars, so state abbreviations / directionals /
+        # short unit numbers don't trip it) absent from the confirmed address means the
+        # form carries a different (likely outdated) mailing address.
+        extra = sorted({t for t in _addr_tokens(on_disk) if len(t) >= 3} - want_tokens)
+        if extra:
+            checks.append(
+                IdentityCheck(
+                    field=field_label,
+                    status=FAIL,
+                    values=comps,
+                    detail=(
+                        f"form {key!r} mailing address {on_disk!r} differs from the user-confirmed "
+                        f"CURRENT mailing address {confirmed_current_address!r} (unexpected: {extra}) — "
+                        f"a consistent but outdated address still sends IRS bills and notices to the "
+                        f"wrong place (pitfall P-002); refill the mailing address and re-verify"
+                    ),
+                )
             )
-        ]
-    return [
-        IdentityCheck(
-            field=field_label,
-            status=PASS,
-            values=values_by_form,
-            detail=(
-                f"return address matches the user-confirmed current mailing address {want!r} "
-                f"on {len(values_by_form)} address line(s)"
-            ),
-        )
-    ]
+        else:
+            checks.append(
+                IdentityCheck(
+                    field=field_label,
+                    status=PASS,
+                    values=comps,
+                    detail=(
+                        f"form {key!r} mailing address {on_disk!r} matches the user-confirmed current "
+                        f"mailing address"
+                    ),
+                )
+            )
+    return checks
 
 
 # ---------------------------------------------------------------------------

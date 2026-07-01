@@ -106,7 +106,7 @@ def main() -> int:
             failed.append((code, str(exc)[:140]))
             continue
         header = path.read_text().split("\n")
-        comment = "\n".join(l for l in header if l.startswith("#"))
+        comment = "\n".join(ln for ln in header if ln.startswith("#"))
         path.write_text((comment + "\n" if comment else "") + yaml.dump(new, sort_keys=False, allow_unicode=True, width=110))
         wrote.append(code)
         total_credits += len(credits)

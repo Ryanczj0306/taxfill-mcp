@@ -21,6 +21,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlparse
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -189,7 +190,17 @@ class FormPack(BaseModel):
     @field_validator("source_url")
     @classmethod
     def _check_source_url(cls, value: str) -> str:
-        return _require_http_url(value, "source_url")
+        # source_url drives the only outbound fetch (see fetch.fetch_blank), so enforce the
+        # official-government-host guarantee at load time too (.gov/.mil/.us — many state DORs
+        # publish on .us). Defence-in-depth alongside the fetch-time host allowlist.
+        value = _require_http_url(value, "source_url")
+        host = (urlparse(value).hostname or "").lower()
+        if not any(host == tld or host.endswith("." + tld) for tld in ("gov", "mil", "us")):
+            raise ValueError(
+                f"source_url must point to an official US government host (.gov/.mil/.us), got "
+                f"{host!r} — blank forms are downloaded only from official government sites"
+            )
+        return value
 
     @field_validator("pdf_sha256")
     @classmethod
@@ -216,6 +227,40 @@ class FormPack(BaseModel):
                     f"must map to exactly one AcroForm field"
                 )
             seen.add(f.line)
+        return self
+
+    @model_validator(mode="after")
+    def _check_identity_fields_reference_lines(self) -> "FormPack":
+        # identity_fields must be logical line keys (the 'line:' values), NOT AcroForm
+        # 'field:' names — the verifier's identity cross-check matches on line key, so a
+        # field-name entry never matches and turns every filing FAIL (it also silently
+        # disables the name/SSN consistency guarantee for that form).
+        lines = {f.line for f in self.fields}
+        unknown = [k for k in self.identity_fields if k not in lines]
+        if unknown:
+            raise ValueError(
+                f"identity_fields entries must be logical line keys (the 'line:' values), "
+                f"not AcroForm 'field:' names — {unknown} match no line in this pack. "
+                f"Use line keys, e.g. [name, identifying_number, mailing_address.street]"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def _check_cross_form_local_refs(self) -> "FormPack":
+        # A cross_form operand containing a dot is parsed as '<form_key>.<line>'. A LOCAL
+        # line id that itself contains a dot and is digit-led (e.g. '5.b') is misread as
+        # form key '5' and the rule is SILENTLY skipped (never PASS/FAIL) — false confidence.
+        # Forbid it: rename the line to avoid the dot (e.g. '5_b').
+        token_re = re.compile(r"[A-Za-z0-9_.]+")
+        for rule in self.cross_form:
+            for tok in token_re.findall(rule):
+                head, _, rest = tok.partition(".")
+                if rest and head.isdigit() and not rest.isdigit():  # digit-led dotted id, not a float literal
+                    raise ValueError(
+                        f"cross_form rule {rule!r}: operand {tok!r} is a dotted, digit-led local "
+                        f"line id — the cross-form parser reads {head!r} as a form key and silently "
+                        f"skips the rule. Rename the line to avoid the dot (e.g. {tok.replace('.', '_')!r})."
+                    )
         return self
 
 

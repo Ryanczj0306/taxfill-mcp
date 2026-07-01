@@ -22,3 +22,13 @@ addopts = "-q"
 markers = [
     "network: needs internet access to download official blank PDFs from .gov URLs (skips gracefully when offline; deselect with -m 'not network')",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+# Ruff's default rule set: Pyflakes (F) + a curated pycodestyle subset (E4/E7/E9).
+# E501/line-length is intentionally NOT enabled — long, data-dense lines (field maps,
+# citations, relation strings) are idiomatic here and wrapping them hurts readability.
+select = ["E4", "E7", "E9", "F"]

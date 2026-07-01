@@ -13,7 +13,6 @@ from taxfill_core.schemas.profile import (
     Profile,
     Provenance,
     ResidencyFacts,
-    Spouse,
     VisaPeriod,
 )
 
