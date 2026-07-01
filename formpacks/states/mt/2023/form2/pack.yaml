@@ -1,0 +1,2715 @@
+# Montana Form 2, tax year 2023 -- Montana Individual Income Tax Return (the
+# single Form 2 serves resident full-year / nonresident full-year / part-year
+# via a RESIDENCY STATUS radio on page 1). This pack maps the RESIDENT full-year
+# return (residency.resident_full_year). LARGE integrated return: 11 filed PDF
+# pages, 791 widgets / 755 unique AcroForm fields.
+#
+# Provenance / freshness. Blank downloaded from source_url below.
+# STEP 0 YEAR GATE: the page-1 sweep PNG was READ and prints the large title
+# "2023 Montana Individual Income Tax Return", "Form 2", "For the year Jan 1 -
+# Dec 31, 2023", scan barcode "*23CE0101*", footer "2023v3 / 11/2023". Every
+# subsequent page header prints "Form 2-Page N-2023" with barcodes *23CE0N01*.
+# printed_year_verified = 2023. pdf_sha256 pinned to the exact cached file
+# (golden verifies it): 13f2a0e0...421d06da.
+#
+# Pages mapped: ALL 11 pages are the FILED return -- Form 2 integrates its
+# schedules and worksheets into the single filed document (Montana files the
+# whole booklet). No page is a detachable instruction/tax-table page, so none
+# are excluded. Page contents:
+#   p1  Form 2 main body: identity header, filing status (radio /1 Single,
+#       /3 HoH, /4 MFJ, /2a-/2c MFS variants), residency status (radio /1 res
+#       full-year, /2 nonres full-year, /3 res part-year) + separate ND-recip /
+#       Military-Spouse boxes, up to 3 dependents, exemptions rows a/b (65+/blind
+#       flags, on_state /Spouse) and exemption-count boxes 16a-16d, income & tax
+#       lines 1-27. Lines carry TWO money columns: Column A (you / joint) and
+#       Column B (spouse, only when filing status 2a). Mapped <line>.a / <line>.b.
+#       Line 23a (federal EITC) is a single Column-A-only box -> line "23a".
+#   p2  Filing Status 2a Payment Schedule (status2a), Refund Schedule (refund),
+#       Direct Deposit (dd.*, incl. 529/529A dd529.2/dd529.3), signature block,
+#       paid preparer, third-party designee, farming NOL carryback waiver,
+#       Amended Return information table.
+#   p3  Schedule 1 (federal add'l income & adjustments, sch1 lines 1-25) +
+#       Montana Medical Savings Account schedule (msa). NOTE: the MSA /T names
+#       run "MSA ... Line 1..11": lines 1-5 = the Subtraction sub-part (printed
+#       1-5), lines 6-11 = the Nonqualified Withdrawal & Penalty sub-part
+#       (printed 1-6). Kept as msa.1..msa.11 to preserve unique field identity.
+#   p4  Montana Additions schedule (add 1-18) + Recovery of amounts deducted in
+#       earlier years (recovery 1-16).
+#   p5  Montana Subtractions schedule (sub 1-38).
+#   p6  Partial Pension/Annuity income exemption worksheet (pension) + Taxable
+#       Social Security / Tier-1 benefits worksheet (benefits).
+#   p7  Standard Deduction worksheet (stdded 1-6) + Montana Itemized Deductions
+#       schedule (itemized 1-19).
+#   p8  Part-Year/Nonresident Ratio schedule (ratio, incl. line-18 whole/decimal
+#       split .18/.18.decimal) + Tax Liability schedule (liability).
+#   p9  Nonrefundable Credits schedule (nrcredits) + Credit for tax paid to
+#       another state/country (othertax; line 6/8 whole+decimal ratio splits).
+#   p10 Elderly Homeowner/Renter Credit worksheet (ehrc, single Column-A layout;
+#       lines 13/21 whole+decimal splits) + Long-Term Care rent worksheet (ltc).
+#   p11 Other Payments & Refundable Credits (payments 1-11), Voluntary
+#       Contributions (volcontrib; per line a-d a $5/$10/$20 radio + Other text
+#       box, Column A & B) , Contributions/Penalties/Interest (cpi) + its farming
+#       & annualization flags, Underpayment Interest schedule (upint 1-13).
+#
+# AcroForm. FLAT form: acroform_root = ''. Field /T names are descriptive and
+# unique (755 distinct top-level fields); the "Col A/B Line N" and
+# "<Section> Col A/B Line N" naming encodes section+column+printed line, which
+# was mapped to <namespace>.<line>.a/.b. Verified against physical render
+# position, not the /T name alone, for radios and the misaligned Amended rows.
+#
+# SHARED fields mapped ONCE (one /T, many widgets):
+#   * "Primary Taxpayer's SSN" -> identifying_number: ONE comb field whose kid
+#     widget echoes on every page header; mapped a single time.
+#   * Radios (one /Btn, distinct on_state per option, one shared group):
+#     "Filing Status" (6 options), "Residency Status" (3), "Bank Account Type"
+#     (Checking/Savings), "Line 2/3 - 529 or 529A" (529/529A), and the eight
+#     "Vol Contribution Col A/B Line a-d" ($5/$10/$20) radios.
+#
+# NOTABLE on_state oddities (dumped from the blank, never guessed):
+#   * exemptions 65+/blind and Spouse boxes all use on_state "/Spouse".
+#   * "Foreign bank account" (refund to account outside US) uses on_state
+#     "/Savings".
+#   * Amended Return reason rows are independent single checkboxes whose /T
+#     labels are offset from their appearance states: row c field on_state /d,
+#     row d field on_state /c. Each mapped to its PHYSICAL row with its own real
+#     on_state -- one field per row, no field+state collision.
+#
+# comb / format. Fields with the PDF comb flag set AND a MaxLen are mapped
+# type: text, comb: true, maxlen: <cells>; SSN combs additionally carry
+# format: ssn_digits_only. All numbered dollar boxes are type: money. Decimal
+# sub-boxes for ratio/percentage lines (ratio.18.decimal, othertax.6/8.decimal,
+# ehrc.13/21.decimal) are text with their MaxLen.
+#
+# relations: []  -- all arithmetic on this form is per-COLUMN and every money
+# line is a column-split dotted id (e.g. 9.a / 9.b); the relation grammar's LINE
+# token is [0-9]+[a-z]? and cannot reference dotted ids, so no on-face relation
+# can be expressed cleanly. Left empty rather than approximated.
+# cross_form: []  -- Federal AGI is page-1 line 11, but it is column-split
+# (11.a / 11.b); cross_form refs must be undotted local lines, so no clean
+# federal-AGI reference is expressible.
+form: "2"
+jurisdiction: states/mt
+tax_year: 2023
+source_url: https://revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/2023_Montana_Individual_Income_Tax_Return_Form_2.pdf
+pdf_sha256: "13f2a0e05c0fa278305e316f1923cc1ac22ac9e6d59a542d6b12176e421d06da"
+acroform_root: ''
+fields:
+
+  # ============================================ page 1 -- Form 2 main return: header/identity, filing & residency status, dependents, exemptions, income & tax lines 1-27 (Column A = you/joint; Column B = spouse for filing status 2a)
+  - line: tax_year.begin
+    field: Tax Year Beginning
+    type: text
+    comb: true
+    maxlen: 8
+  - line: tax_year.end
+    field: Tax Year ending
+    type: text
+    comb: true
+    maxlen: 8
+  - line: name.first
+    field: "Primary Taxpayer's First Name"
+    type: text
+  - line: name.middle_initial
+    field: "Primary Taxpayer's Middle Initial"
+    type: text
+    maxlen: 1
+  - line: name.last
+    field: "Primary Taxpayer's Last Name"
+    type: text
+  - line: identifying_number
+    field: "Primary Taxpayer's SSN"
+    type: text
+    comb: true
+    maxlen: 9
+    format: ssn_digits_only
+  - line: deceased.taxpayer.date
+    field: "Primary Taxpayer's Date of Death"
+    type: text
+    comb: true
+    maxlen: 8
+  - line: amended.yes
+    field: Amended Return Designation
+    type: checkbox
+    on_state: "/Yes"
+  - line: spouse.name.first
+    field: "Spouse's First Name"
+    type: text
+  - line: spouse.name.middle_initial
+    field: "Spouse's Middle Initial"
+    type: text
+    maxlen: 1
+  - line: spouse.name.last
+    field: "Spouse's Last Name"
+    type: text
+  - line: spouse.identifying_number
+    field: "Spouse's SSN"
+    type: text
+    comb: true
+    maxlen: 9
+    format: ssn_digits_only
+  - line: deceased.spouse.date
+    field: "Spouse's Date of Death"
+    type: text
+    comb: true
+    maxlen: 8
+  - line: mailing_address.zip
+    field: Zip+4 Code
+    type: text
+    comb: true
+    maxlen: 9
+  - line: mailing_address.street
+    field: Mailing Address
+    type: text
+  - line: mailing_address.city
+    field: City
+    type: text
+  - line: mailing_address.state
+    field: State
+    type: text
+    comb: true
+    maxlen: 2
+  - line: residency.nd_reciprocity
+    field: North Dakota reciprocity
+    type: checkbox
+    on_state: "/Yes"
+  - line: residency.resident_full_year
+    field: Residency Status
+    type: checkbox
+    on_state: "/1"
+    group: residency_status
+  - line: residency.nonresident_full_year
+    field: Residency Status
+    type: checkbox
+    on_state: "/2"
+    group: residency_status
+  - line: residency.resident_part_year
+    field: Residency Status
+    type: checkbox
+    on_state: "/3"
+    group: residency_status
+  - line: filing_status.single
+    field: Filing Status
+    type: checkbox
+    on_state: "/1"
+    group: filing_status
+  - line: filing_status.head_of_household
+    field: Filing Status
+    type: checkbox
+    on_state: "/3"
+    group: filing_status
+  - line: filing_status.married_filing_jointly
+    field: Filing Status
+    type: checkbox
+    on_state: "/4"
+    group: filing_status
+  - line: filing_status.married_filing_separately_same_form
+    field: Filing Status
+    type: checkbox
+    on_state: "/2a"
+    group: filing_status
+  - line: filing_status.married_filing_separately_separate_forms
+    field: Filing Status
+    type: checkbox
+    on_state: "/2b"
+    group: filing_status
+  - line: filing_status.married_filing_separately_spouse_not_filing
+    field: Filing Status
+    type: checkbox
+    on_state: "/2c"
+    group: filing_status
+  - line: residency.military_spouse
+    field: Miltary Spouse
+    type: checkbox
+    on_state: "/Yes"
+  - line: filing_status.spouse_ssn
+    field: "2b/2c Spouse's SSN"
+    type: text
+    comb: true
+    maxlen: 9
+    format: ssn_digits_only
+  - line: dependent_1.first_name
+    field: "Dependent's First Name 1"
+    type: text
+  - line: dependent_1.last_name
+    field: "Dependent's Last Name 1"
+    type: text
+  - line: dependent_1.ssn
+    field: "Dependent's SSN 1"
+    type: text
+    comb: true
+    maxlen: 9
+    format: ssn_digits_only
+  - line: dependent_1.relationship
+    field: Relationship 1
+    type: text
+  - line: dependent_1.disabled
+    field: Dependent disability 1
+    type: checkbox
+    on_state: "/Yes"
+  - line: dependent_2.first_name
+    field: "Dependent's First Name 2"
+    type: text
+  - line: dependent_2.last_name
+    field: "Dependent's Last Name 2"
+    type: text
+  - line: dependent_2.ssn
+    field: "Dependent's SSN 2"
+    type: text
+    comb: true
+    maxlen: 9
+    format: ssn_digits_only
+  - line: dependent_2.relationship
+    field: Relationship 2
+    type: text
+  - line: dependent_2.disabled
+    field: Dependent disability 2
+    type: checkbox
+    on_state: "/Yes"
+  - line: dependent_3.first_name
+    field: "Dependent's First Name 3"
+    type: text
+  - line: dependent_3.last_name
+    field: "Dependent's Last Name 3"
+    type: text
+  - line: dependent_3.ssn
+    field: "Dependent's SSN 3"
+    type: text
+    comb: true
+    maxlen: 9
+    format: ssn_digits_only
+  - line: dependent_3.relationship
+    field: Relationship 3
+    type: text
+  - line: dependent_3.disabled
+    field: Dependent disability 3
+    type: checkbox
+    on_state: "/Yes"
+  - line: exemptions.a.age65
+    field: Primary 65
+    type: checkbox
+    on_state: "/Spouse"
+  - line: exemptions.a.blind
+    field: Primary Blind
+    type: checkbox
+    on_state: "/Spouse"
+  - line: "16a.a"
+    field: Col A Line a
+    type: money
+  - line: exemptions.b.spouse
+    field: Spouse
+    type: checkbox
+    on_state: "/Spouse"
+  - line: exemptions.b.age65
+    field: Spouse 65
+    type: checkbox
+    on_state: "/Spouse"
+  - line: exemptions.b.blind
+    field: Spouse Blind
+    type: checkbox
+    on_state: "/Spouse"
+  - line: "16b.a"
+    field: Col A Line b
+    type: money
+  - line: "16b.b"
+    field: Col B Line b
+    type: money
+  - line: "16c.a"
+    field: Col A Line c
+    type: money
+  - line: "16c.b"
+    field: Col B Line c
+    type: money
+  - line: "16d.a"
+    field: Col A Line d
+    type: money
+  - line: "16d.b"
+    field: Col B Line d
+    type: money
+  - line: "1.a"
+    field: Col A Line 1
+    type: money
+  - line: "1.b"
+    field: Col B Line 1
+    type: money
+  - line: "2a.a"
+    field: Col A Line 2a
+    type: money
+  - line: "2a.b"
+    field: Col B Line 2a
+    type: money
+  - line: "2b.a"
+    field: Col A Line 2b
+    type: money
+  - line: "2b.b"
+    field: Col B Line 2b
+    type: money
+  - line: "3a.a"
+    field: Col A Line 3a
+    type: money
+  - line: "3a.b"
+    field: Col B Line 3a
+    type: money
+  - line: "3b.a"
+    field: Col A Line 3b
+    type: money
+  - line: "3b.b"
+    field: Col B Line 3b
+    type: money
+  - line: "4b.a"
+    field: Col A Line 4b
+    type: money
+  - line: "4b.b"
+    field: Col B Line 4b
+    type: money
+  - line: "4a.a"
+    field: Col A Line 4a
+    type: money
+  - line: "4a.b"
+    field: Col B Line 4a
+    type: money
+  - line: "5b.a"
+    field: Col A Line 5b
+    type: money
+  - line: "5b.b"
+    field: Col B Line 5b
+    type: money
+  - line: "5a.a"
+    field: Col A Line 5a
+    type: money
+  - line: "5a.b"
+    field: Col B Line 5a
+    type: money
+  - line: "6b.a"
+    field: Col A Line 6b
+    type: money
+  - line: "6b.b"
+    field: Col B Line 6b
+    type: money
+  - line: "6a.a"
+    field: Col A Line 6a
+    type: money
+  - line: "6a.b"
+    field: Col B Line 6a
+    type: money
+  - line: "7.not_required"
+    field: Schedule D not required
+    type: checkbox
+    on_state: "/Yes"
+  - line: "7.a"
+    field: Col A Line 7
+    type: money
+  - line: "7.b"
+    field: Col B Line 7
+    type: money
+  - line: "8.a"
+    field: Col A Line 8
+    type: money
+  - line: "8.b"
+    field: Col B Line 8
+    type: money
+  - line: "9.a"
+    field: Col A Line 9
+    type: money
+  - line: "9.b"
+    field: Col B Line 9
+    type: money
+  - line: "10.b"
+    field: Col B Line 10
+    type: money
+  - line: "10.a"
+    field: Col A Line 10
+    type: money
+  - line: "11.a"
+    field: Col A Line 11
+    type: money
+  - line: "11.b"
+    field: Col B Line 11
+    type: money
+  - line: "12.a"
+    field: Col A Line 12
+    type: money
+  - line: "12.b"
+    field: Col B Line 12
+    type: money
+  - line: "13.a"
+    field: Col A Line 13
+    type: money
+  - line: "13.b"
+    field: Col B Line 13
+    type: money
+  - line: "14.a"
+    field: Col A Line 14
+    type: money
+  - line: "14.b"
+    field: Col B Line 14
+    type: money
+  - line: "15.b"
+    field: Col B Line 15
+    type: money
+  - line: "15.a"
+    field: Col A Line 15
+    type: money
+  - line: "15.itemize_elect"
+    field: Itemized Deductions
+    type: checkbox
+    on_state: "/Yes"
+  - line: "16.b"
+    field: Col B Line 16
+    type: money
+  - line: "16.a"
+    field: Col A Line 16
+    type: money
+  - line: "17.a"
+    field: Col A Line 17
+    type: money
+  - line: "17.b"
+    field: Col B Line 17
+    type: money
+  - line: "18.a"
+    field: Col A Line 18
+    type: money
+  - line: "18.b"
+    field: Col B Line 18
+    type: money
+  - line: "19.a"
+    field: Col A Line 19
+    type: money
+  - line: "19.b"
+    field: Col B Line 19
+    type: money
+  - line: "20.a"
+    field: Col A Line 20
+    type: money
+  - line: "20.b"
+    field: Col B Line 20
+    type: money
+  - line: "21.b"
+    field: Col B Line 21
+    type: money
+  - line: "21.a"
+    field: Col A Line 21
+    type: money
+  - line: "22.a"
+    field: Col A Line 22
+    type: money
+  - line: "22.b"
+    field: Col B Line 22
+    type: money
+  - line: "23a"
+    field: Col A Line 23a
+    type: money
+  - line: "23b.a"
+    field: Col A Line 23b
+    type: money
+  - line: "23b.b"
+    field: Col B Line 23b
+    type: money
+  - line: "24.a"
+    field: Col A Line 24
+    type: money
+  - line: "24.b"
+    field: Col B Line 24
+    type: money
+  - line: "25.a"
+    field: Col A Line 25
+    type: money
+  - line: "25.b"
+    field: Col B Line 25
+    type: money
+  - line: "26.a"
+    field: Col A Line 26
+    type: money
+  - line: "26.b"
+    field: Col B Line 26
+    type: money
+  - line: "27.a"
+    field: Col A Line 27
+    type: money
+  - line: "27.b"
+    field: Col B Line 27
+    type: money
+
+  # ============================================ page 2 -- Filing Status 2a Payment Schedule, Refund Schedule, Direct Deposit (incl. 529/529A), signature/preparer/third-party designee, farming NOL waiver, Amended Return information
+  - line: status2a.1.b
+    field: Status 2a Payment Sch Col B Line 1
+    type: money
+  - line: status2a.2.b
+    field: Status 2a Payment Sch Col B Line 2
+    type: money
+  - line: status2a.3.b
+    field: Status 2a Payment Sch Col B Line 3
+    type: money
+  - line: status2a.4.b
+    field: Status 2a Payment Sch Col B Line 4
+    type: money
+  - line: refund.1.a
+    field: Refund Sch Col A Line 1
+    type: money
+  - line: refund.1.b
+    field: Refund Sch Col B Line 1
+    type: money
+  - line: refund.2.a
+    field: Refund Sch Col A Line 2
+    type: money
+  - line: refund.2.b
+    field: Refund Sch Col B Line 2
+    type: money
+  - line: refund.3.a
+    field: Refund Sch Col A Line 3
+    type: money
+  - line: refund.3.b
+    field: Refund Sch Col B Line 3
+    type: money
+  - line: refund.4.a
+    field: Refund Sch Col A Line 4
+    type: money
+  - line: refund.4.b
+    field: Refund Sch Col B Line 4
+    type: money
+  - line: dd.checking
+    field: Bank Account Type
+    type: checkbox
+    on_state: "/Checking"
+    group: dd_account_type
+  - line: dd.savings
+    field: Bank Account Type
+    type: checkbox
+    on_state: "/Savings"
+    group: dd_account_type
+  - line: dd.routing
+    field: Bank Routing Number
+    type: text
+    comb: true
+    maxlen: 9
+  - line: dd.account
+    field: Bank Account Number
+    type: text
+    comb: true
+    maxlen: 17
+  - line: dd.outside_us
+    field: Foreign bank account
+    type: checkbox
+    on_state: "/Savings"
+  - line: dd529.2.deposit_amount
+    field: "Line 2 - 529/529A Deposit Amount"
+    type: money
+  - line: dd529.2.529
+    field: Line 2 - 529 or 529A
+    type: checkbox
+    on_state: "/529"
+    group: dd529_2_type
+  - line: dd529.2.529a
+    field: Line 2 - 529 or 529A
+    type: checkbox
+    on_state: "/529A"
+    group: dd529_2_type
+  - line: dd529.2.routing
+    field: "Line 2 - 529/529A Routing Number"
+    type: text
+    comb: true
+    maxlen: 9
+  - line: dd529.2.account
+    field: "Line 2 - 529/529A Bank Account Number"
+    type: text
+    comb: true
+    maxlen: 17
+  - line: dd529.3.529
+    field: Line 3 - 529 or 529A
+    type: checkbox
+    on_state: "/529"
+    group: dd529_3_type
+  - line: dd529.3.529a
+    field: Line 3 - 529 or 529A
+    type: checkbox
+    on_state: "/529A"
+    group: dd529_3_type
+  - line: dd529.3.deposit_amount
+    field: "Line 3 - 529/529A Deposit Amount"
+    type: money
+  - line: dd529.3.routing
+    field: "Line 3 - 529/529A Routing Number"
+    type: text
+    comb: true
+    maxlen: 9
+  - line: dd529.3.account
+    field: "Line 3 - 529/529A Bank Account Number"
+    type: text
+    comb: true
+    maxlen: 17
+  - line: signature.taxpayer_date
+    field: Signature Date
+    type: text
+    comb: true
+    maxlen: 8
+  - line: signature.taxpayer_phone
+    field: Taxpayer daytime telephone number
+    type: text
+    comb: true
+    maxlen: 10
+  - line: signature.spouse_date
+    field: "Spouse's Signature Date"
+    type: text
+    comb: true
+    maxlen: 8
+  - line: signature.spouse_phone
+    field: "Spouse's Taxpayer daytime telephone number"
+    type: text
+    comb: true
+    maxlen: 10
+  - line: preparer.ptin
+    field: "Preparer's PTIN"
+    type: text
+    comb: true
+    maxlen: 9
+  - line: preparer.fein
+    field: "Firm's FEIN"
+    type: text
+    comb: true
+    maxlen: 9
+  - line: preparer.phone
+    field: Preparer daytime telephone number
+    type: text
+    comb: true
+    maxlen: 10
+  - line: preparer.is_third_party_designee
+    field: Preparer as 3rd Party Designee
+    type: checkbox
+    on_state: "/Yes"
+  - line: third_party_designee.yes
+    field: 3rd Party Designee
+    type: checkbox
+    on_state: "/Yes"
+  - line: third_party_designee.name
+    field: Third-party Name
+    type: text
+    maxlen: 55
+  - line: third_party_designee.phone
+    field: Third-party daytime telephone number
+    type: text
+    comb: true
+    maxlen: 10
+  - line: farming_nol_waiver.yes
+    field: NOL
+    type: checkbox
+    on_state: "/Yes"
+  - line: amended.reason_a
+    field: Amended Return a
+    type: checkbox
+    on_state: "/a"
+  - line: amended.reason_b
+    field: Amended Return b
+    type: checkbox
+    on_state: "/b"
+  - line: amended.table.1.form
+    field: Amended Form or Schedule 1
+    type: text
+  - line: amended.table.1.line
+    field: Amended Line or Box 1
+    type: text
+  - line: amended.table.1.reason
+    field: Amended Reason 1
+    type: text
+  - line: amended.reason_c
+    field: Amended Return c
+    type: checkbox
+    on_state: "/d"
+  - line: amended.table.2.form
+    field: Amended Form or Schedule 2
+    type: text
+  - line: amended.table.2.line
+    field: Amended Line or Box 2
+    type: text
+  - line: amended.table.2.reason
+    field: Amended Reason 2
+    type: text
+  - line: amended.reason_d
+    field: Amended Return d
+    type: checkbox
+    on_state: "/c"
+  - line: amended.reason_e
+    field: Amended Return e
+    type: checkbox
+    on_state: "/e"
+  - line: amended.table.3.form
+    field: Amended Form or Schedule 3
+    type: text
+  - line: amended.table.3.line
+    field: Amended Line or Box 3
+    type: text
+  - line: amended.table.3.reason
+    field: Amended Reason 3
+    type: text
+
+  # ============================================ page 3 -- Schedule 1 (federal add'l income & adjustments 1-25) + Montana Medical Savings Account schedule (msa 1-5 subtraction, 6-11 nonqualified withdrawal & penalty)
+  - line: sch1.1.a
+    field: Schedule 1 Col A Line 1
+    type: money
+  - line: sch1.2a.a
+    field: Schedule 1 Col A Line 2a
+    type: money
+  - line: sch1.2a.b
+    field: Schedule 1 Col B Line 2a
+    type: money
+  - line: sch1.1.b
+    field: Schedule 1 Col B Line 1
+    type: money
+  - line: sch1.2b.date
+    field: "Schedule 1, line 2b, Date of divorce or separation"
+    type: text
+    comb: true
+    maxlen: 8
+  - line: sch1.3.a
+    field: Schedule 1 Col A Line 3
+    type: money
+  - line: sch1.3.b
+    field: Schedule 1 Col B Line 3
+    type: money
+  - line: sch1.4.a
+    field: Schedule 1 Col A Line 4
+    type: money
+  - line: sch1.4.b
+    field: Schedule 1 Col B Line 4
+    type: money
+  - line: sch1.5.a
+    field: Schedule 1 Col A Line 5
+    type: money
+  - line: sch1.5.b
+    field: Schedule 1 Col B Line 5
+    type: money
+  - line: sch1.6.a
+    field: Schedule 1 Col A Line 6
+    type: money
+  - line: sch1.6.b
+    field: Schedule 1 Col B Line 6
+    type: money
+  - line: sch1.7.a
+    field: Schedule 1 Col A Line 7
+    type: money
+  - line: sch1.7.b
+    field: Schedule 1 Col B Line 7
+    type: money
+  - line: sch1.8a.a
+    field: Schedule 1 Col A Line 8a
+    type: money
+  - line: sch1.8a.b
+    field: Schedule 1 Col B Line 8a
+    type: money
+  - line: sch1.8b.a
+    field: Schedule 1 Col A Line 8b
+    type: money
+  - line: sch1.8b.b
+    field: Schedule 1 Col B Line 8b
+    type: money
+  - line: sch1.8c.a
+    field: Schedule 1 Col A Line 8c
+    type: money
+  - line: sch1.8c.b
+    field: Schedule 1 Col B Line 8c
+    type: money
+  - line: sch1.8d.a
+    field: Schedule 1 Col A Line 8d
+    type: money
+  - line: sch1.8d.b
+    field: Schedule 1 Col B Line 8d
+    type: money
+  - line: sch1.8o.a
+    field: Schedule 1 Col A Line 8o
+    type: money
+  - line: sch1.8o.b
+    field: Schedule 1 Col B Line 8o
+    type: money
+  - line: sch1.8x.a
+    field: Schedule 1 Col A Line 8x
+    type: money
+  - line: sch1.8x.b
+    field: Schedule 1 Col B Line 8x
+    type: money
+  - line: sch1.9.a
+    field: Schedule 1 Col A Line 9
+    type: money
+  - line: sch1.9.b
+    field: Schedule 1 Col B Line 9
+    type: money
+  - line: sch1.10.a
+    field: Schedule 1 Col A Line 10
+    type: money
+  - line: sch1.10.b
+    field: Schedule 1 Col B Line 10
+    type: money
+  - line: sch1.11.a
+    field: Schedule 1 Col A Line 11
+    type: money
+  - line: sch1.11.b
+    field: Schedule 1 Col B Line 11
+    type: money
+  - line: sch1.12.a
+    field: Schedule 1 Col A Line 12
+    type: money
+  - line: sch1.12.b
+    field: Schedule 1 Col B Line 12
+    type: money
+  - line: sch1.13.a
+    field: Schedule 1 Col A Line 13
+    type: money
+  - line: sch1.13.b
+    field: Schedule 1 Col B Line 13
+    type: money
+  - line: sch1.14.a
+    field: Schedule 1 Col A Line 14
+    type: money
+  - line: sch1.14.b
+    field: Schedule 1 Col B Line 14
+    type: money
+  - line: sch1.15.a
+    field: Schedule 1 Col A Line 15
+    type: money
+  - line: sch1.15.b
+    field: Schedule 1 Col B Line 15
+    type: money
+  - line: sch1.16.a
+    field: Schedule 1 Col A Line 16
+    type: money
+  - line: sch1.16.b
+    field: Schedule 1 Col B Line 16
+    type: money
+  - line: sch1.17.a
+    field: Schedule 1 Col A Line 17
+    type: money
+  - line: sch1.17.b
+    field: Schedule 1 Col B Line 17
+    type: money
+  - line: sch1.18.a
+    field: Schedule 1 Col A Line 18
+    type: money
+  - line: sch1.18.b
+    field: Schedule 1 Col B Line 18
+    type: money
+  - line: sch1.19a.a
+    field: Schedule 1 Col A Line 19a
+    type: money
+  - line: sch1.19a.b
+    field: Schedule 1 Col B Line 19a
+    type: money
+  - line: sch1.19b.recipient_ssn
+    field: "Schedule 1, line 19b, Recipient's SSN"
+    type: text
+    comb: true
+    maxlen: 9
+    format: ssn_digits_only
+  - line: sch1.19c.date
+    field: "Schedule 1, line 19c, Date of divorce or separation"
+    type: text
+    comb: true
+    maxlen: 8
+  - line: sch1.20.a
+    field: Schedule 1 Col A Line 20
+    type: money
+  - line: sch1.20.b
+    field: Schedule 1 Col B Line 20
+    type: money
+  - line: sch1.21.b
+    field: Schedule 1 Col B Line 21
+    type: money
+  - line: sch1.21.a
+    field: Schedule 1 Col A Line 21
+    type: money
+  - line: sch1.23.a
+    field: Schedule 1 Col A Line 23
+    type: money
+  - line: sch1.23.b
+    field: Schedule 1 Col B Line 23
+    type: money
+  - line: sch1.24.description
+    field: Schedule 1 Other income Line 24
+    type: text
+  - line: sch1.24.a
+    field: Schedule 1 Col A Line 24
+    type: money
+  - line: sch1.24.b
+    field: Schedule 1 Col B Line 24
+    type: money
+  - line: sch1.25.a
+    field: Schedule 1 Col A Line 25
+    type: money
+  - line: sch1.25.b
+    field: Schedule 1 Col B Line 25
+    type: money
+  - line: msa.1.a
+    field: MSA Col A Line 1
+    type: money
+  - line: msa.1.b
+    field: MSA Col B Line 1
+    type: money
+  - line: msa.2.a
+    field: MSA Col A Line 2
+    type: money
+  - line: msa.2.b
+    field: MSA Col B Line 2
+    type: money
+  - line: msa.3.a
+    field: MSA Col A Line 3
+    type: money
+  - line: msa.3.b
+    field: MSA Col B Line 3
+    type: money
+  - line: msa.4.a
+    field: MSA Col A Line 4
+    type: money
+  - line: msa.4.b
+    field: MSA Col B Line 4
+    type: money
+  - line: msa.5.a
+    field: MSA Col A Line 5
+    type: money
+  - line: msa.5.b
+    field: MSA Col B Line 5
+    type: money
+  - line: msa.6.a
+    field: MSA Col A Line 6
+    type: money
+  - line: msa.6.b
+    field: MSA Col B Line 6
+    type: money
+  - line: msa.7.a
+    field: MSA Col A Line 7
+    type: money
+  - line: msa.7.b
+    field: MSA Col B Line 7
+    type: money
+  - line: msa.8.a
+    field: MSA Col A Line 8
+    type: money
+  - line: msa.8.b
+    field: MSA Col B Line 8
+    type: money
+  - line: msa.9.a
+    field: MSA Col A Line 9
+    type: money
+  - line: msa.9.b
+    field: MSA Col B Line 9
+    type: money
+  - line: msa.10.a
+    field: MSA Col A Line 10
+    type: money
+  - line: msa.10.b
+    field: MSA Col B Line 10
+    type: money
+  - line: msa.11.a
+    field: MSA Col A Line 11
+    type: money
+  - line: msa.11.b
+    field: MSA Col B Line 11
+    type: money
+
+  # ============================================ page 4 -- Montana Additions schedule (add 1-18) + Recovery of amounts deducted in earlier years (recovery 1-16)
+  - line: add.1.a
+    field: MT Additions Col A Line 1
+    type: money
+  - line: add.1.b
+    field: MT Additions Col B Line 1
+    type: money
+  - line: add.2.a
+    field: MT Additions Col A Line 2
+    type: money
+  - line: add.2.b
+    field: MT Additions Col B Line 2
+    type: money
+  - line: add.3.a
+    field: MT Additions Col A Line 3
+    type: money
+  - line: add.3.b
+    field: MT Additions Col B Line 3
+    type: money
+  - line: add.4.a
+    field: MT Additions Col A Line 4
+    type: money
+  - line: add.4.b
+    field: MT Additions Col B Line 4
+    type: money
+  - line: add.5.a
+    field: MT Additions Col A Line 5
+    type: money
+  - line: add.5.b
+    field: MT Additions Col B Line 5
+    type: money
+  - line: add.6.a
+    field: MT Additions Col A Line 6
+    type: money
+  - line: add.6.b
+    field: MT Additions Col B Line 6
+    type: money
+  - line: add.7.a
+    field: MT Additions Col A Line 7
+    type: money
+  - line: add.7.b
+    field: MT Additions Col B Line 7
+    type: money
+  - line: add.8.a
+    field: MT Additions Col A Line 8
+    type: money
+  - line: add.8.b
+    field: MT Additions Col B Line 8
+    type: money
+  - line: add.9.a
+    field: MT Additions Col A Line 9
+    type: money
+  - line: add.9.b
+    field: MT Additions Col B Line 9
+    type: money
+  - line: add.10.a
+    field: MT Additions Col A Line 10
+    type: money
+  - line: add.10.b
+    field: MT Additions Col B Line 10
+    type: money
+  - line: add.11.a
+    field: MT Additions Col A Line 11
+    type: money
+  - line: add.11.b
+    field: MT Additions Col B Line 11
+    type: money
+  - line: add.12.a
+    field: MT Additions Col A Line 12
+    type: money
+  - line: add.12.b
+    field: MT Additions Col B Line 12
+    type: money
+  - line: add.13.a
+    field: MT Additions Col A Line 13
+    type: money
+  - line: add.13.b
+    field: MT Additions Col B Line 13
+    type: money
+  - line: add.14.a
+    field: MT Additions Col A Line 14
+    type: money
+  - line: add.14.b
+    field: MT Additions Col B Line 14
+    type: money
+  # The "Other additions. Specify:" box physically sits on printed line 15 (line 14 is
+  # "State income tax deduction", no specify box); the widget /T is mislabeled "Line 14".
+  # Mapped by PHYSICAL position -> line 15.
+  - line: add.15.description
+    field: "MT Additions Sch, Line 14, Other additions"
+    type: text
+  - line: add.15.a
+    field: MT Additions Col A Line 15
+    type: money
+  - line: add.15.b
+    field: MT Additions Col B Line 15
+    type: money
+  - line: add.16.a
+    field: MT Additions Col A Line 16
+    type: money
+  - line: add.16.b
+    field: MT Additions Col B Line 16
+    type: money
+  - line: add.17.a
+    field: MT Additions Col A Line 17
+    type: money
+  - line: add.17.b
+    field: MT Additions Col B Line 17
+    type: money
+  - line: add.18.a
+    field: MT Additions Col A Line 18
+    type: money
+  - line: add.18.b
+    field: MT Additions Col B Line 18
+    type: money
+  - line: recovery.1.a
+    field: Recovery Col A Line 1
+    type: money
+  - line: recovery.1.b
+    field: Recovery Col B Line 1
+    type: money
+  - line: recovery.2.a
+    field: Recovery Col A Line 2
+    type: money
+  - line: recovery.2.b
+    field: Recovery Col B Line 2
+    type: money
+  - line: recovery.3.a
+    field: Recovery Col A Line 3
+    type: money
+  - line: recovery.3.b
+    field: Recovery Col B Line 3
+    type: money
+  - line: recovery.4.a
+    field: Recovery Col A Line 4
+    type: money
+  - line: recovery.4.b
+    field: Recovery Col B Line 4
+    type: money
+  - line: recovery.5.a
+    field: Recovery Col A Line 5
+    type: money
+  - line: recovery.5.b
+    field: Recovery Col B Line 5
+    type: money
+  - line: recovery.6.a
+    field: Recovery Col A Line 6
+    type: money
+  - line: recovery.6.b
+    field: Recovery Col B Line 6
+    type: money
+  - line: recovery.7.a
+    field: Recovery Col A Line 7
+    type: money
+  - line: recovery.7.b
+    field: Recovery Col B Line 7
+    type: money
+  - line: recovery.8.a
+    field: Recovery Col A Line 8
+    type: money
+  - line: recovery.8.b
+    field: Recovery Col B Line 8
+    type: money
+  - line: recovery.9.a
+    field: Recovery Col A Line 9
+    type: money
+  - line: recovery.9.b
+    field: Recovery Col B Line 9
+    type: money
+  - line: recovery.10.a
+    field: Recovery Col A Line 10
+    type: money
+  - line: recovery.10.b
+    field: Recovery Col B Line 10
+    type: money
+  - line: recovery.11.a
+    field: Recovery Col A Line 11
+    type: money
+  - line: recovery.11.b
+    field: Recovery Col B Line 11
+    type: money
+  - line: recovery.12.a
+    field: Recovery Col A Line 12
+    type: money
+  - line: recovery.12.b
+    field: Recovery Col B Line 12
+    type: money
+  - line: recovery.13.a
+    field: Recovery Col A Line 13
+    type: money
+  - line: recovery.13.b
+    field: Recovery Col B Line 13
+    type: money
+  - line: recovery.14.a
+    field: Recovery Col A Line 14
+    type: money
+  - line: recovery.14.b
+    field: Recovery Col B Line 14
+    type: money
+  - line: recovery.15.a
+    field: Recovery Col A Line 15
+    type: money
+  - line: recovery.15.b
+    field: Recovery Col B Line 15
+    type: money
+  - line: recovery.16.a
+    field: Recovery Col A Line 16
+    type: money
+  - line: recovery.16.b
+    field: Recovery Col B Line 16
+    type: money
+
+  # ============================================ page 5 -- Montana Subtractions schedule (sub 1-38)
+  - line: sub.1.a
+    field: Subtractions Col A Line 1
+    type: money
+  - line: sub.1.b
+    field: Subtractions Col B Line 1
+    type: money
+  - line: sub.2.a
+    field: Subtractions Col A Line 2
+    type: money
+  - line: sub.2.b
+    field: Subtractions Col B Line 2
+    type: money
+  - line: sub.3.a
+    field: Subtractions Col A Line 3
+    type: money
+  - line: sub.3.b
+    field: Subtractions Col B Line 3
+    type: money
+  - line: sub.4.a
+    field: Subtractions Col A Line 4
+    type: money
+  - line: sub.4.b
+    field: Subtractions Col B Line 4
+    type: money
+  - line: sub.5.a
+    field: Subtractions Col A Line 5
+    type: money
+  - line: sub.5.b
+    field: Subtractions Col B Line 5
+    type: money
+  - line: sub.6.a
+    field: Subtractions Col A Line 6
+    type: money
+  - line: sub.6.b
+    field: Subtractions Col B Line 6
+    type: money
+  - line: sub.7.a
+    field: Subtractions Col A Line 7
+    type: money
+  - line: sub.7.b
+    field: Subtractions Col B Line 7
+    type: money
+  - line: sub.8.a
+    field: Subtractions Col A Line 8
+    type: money
+  - line: sub.8.b
+    field: Subtractions Col B Line 8
+    type: money
+  - line: sub.9.a
+    field: Subtractions Col A Line 9
+    type: money
+  - line: sub.9.b
+    field: Subtractions Col B Line 9
+    type: money
+  - line: sub.10.a
+    field: Subtractions Col A Line 10
+    type: money
+  - line: sub.10.b
+    field: Subtractions Col B Line 10
+    type: money
+  - line: sub.11.a
+    field: Subtractions Col A Line 11
+    type: money
+  - line: sub.11.b
+    field: Subtractions Col B Line 11
+    type: money
+  - line: sub.12a.a
+    field: Subtractions Col A Line 12a
+    type: money
+  - line: sub.12b.a
+    field: Subtractions Col A Line 12b
+    type: money
+  - line: sub.12a.b
+    field: Subtractions Col B Line 12a
+    type: money
+  - line: sub.13.a
+    field: Subtractions Col A Line 13
+    type: money
+  - line: sub.12b.b
+    field: Subtractions Col B Line 12b
+    type: money
+  - line: sub.14.a
+    field: Subtractions Col A Line 14
+    type: money
+  - line: sub.13.b
+    field: Subtractions Col B Line 13
+    type: money
+  - line: sub.15.a
+    field: Subtractions Col A Line 15
+    type: money
+  - line: sub.14.b
+    field: Subtractions Col B Line 14
+    type: money
+  - line: sub.16.a
+    field: Subtractions Col A Line 16
+    type: money
+  - line: sub.15.b
+    field: Subtractions Col B Line 15
+    type: money
+  - line: sub.16.b
+    field: Subtractions Col B Line 16
+    type: money
+  - line: sub.17.a
+    field: Subtractions Col A Line 17
+    type: money
+  - line: sub.17.b
+    field: Subtractions Col B Line 17
+    type: money
+  - line: sub.18.a
+    field: Subtractions Col A Line 18
+    type: money
+  - line: sub.18.b
+    field: Subtractions Col B Line 18
+    type: money
+  - line: sub.19.a
+    field: Subtractions Col A Line 19
+    type: money
+  - line: sub.19.b
+    field: Subtractions Col B Line 19
+    type: money
+  - line: sub.20.a
+    field: Subtractions Col A Line 20
+    type: money
+  - line: sub.20.b
+    field: Subtractions Col B Line 20
+    type: money
+  - line: sub.21.a
+    field: Subtractions Col A Line 21
+    type: money
+  - line: sub.21.b
+    field: Subtractions Col B Line 21
+    type: money
+  - line: sub.22.a
+    field: Subtractions Col A Line 22
+    type: money
+  - line: sub.22.b
+    field: Subtractions Col B Line 22
+    type: money
+  - line: sub.23.a
+    field: Subtractions Col A Line 23
+    type: money
+  - line: sub.23.b
+    field: Subtractions Col B Line 23
+    type: money
+  - line: sub.24.a
+    field: Subtractions Col A Line 24
+    type: money
+  - line: sub.24.b
+    field: Subtractions Col B Line 24
+    type: money
+  - line: sub.25.a
+    field: Subtractions Col A Line 25
+    type: money
+  - line: sub.25.b
+    field: Subtractions Col B Line 25
+    type: money
+  - line: sub.26.a
+    field: Subtractions Col A Line 26
+    type: money
+  - line: sub.26.b
+    field: Subtractions Col B Line 26
+    type: money
+  - line: sub.27.a
+    field: Subtractions Col A Line 27
+    type: money
+  - line: sub.27.b
+    field: Subtractions Col B Line 27
+    type: money
+  - line: sub.28.a
+    field: Subtractions Col A Line 28
+    type: money
+  - line: sub.28.b
+    field: Subtractions Col B Line 28
+    type: money
+  - line: sub.29.a
+    field: Subtractions Col A Line 29
+    type: money
+  - line: sub.29.b
+    field: Subtractions Col B Line 29
+    type: money
+  - line: sub.30.a
+    field: Subtractions Col A Line 30
+    type: money
+  - line: sub.30.b
+    field: Subtractions Col B Line 30
+    type: money
+  - line: sub.31.a
+    field: Subtractions Col A Line 31
+    type: money
+  - line: sub.31.b
+    field: Subtractions Col B Line 31
+    type: money
+  - line: sub.32.a
+    field: Subtractions Col A Line 32
+    type: money
+  - line: sub.32.b
+    field: Subtractions Col B Line 32
+    type: money
+  - line: sub.33.a
+    field: Subtractions Col A Line 33
+    type: money
+  - line: sub.33.b
+    field: Subtractions Col B Line 33
+    type: money
+  - line: sub.34.a
+    field: Subtractions Col A Line 34
+    type: money
+  - line: sub.34.b
+    field: Subtractions Col B Line 34
+    type: money
+  - line: sub.35.a
+    field: Subtractions Col A Line 35
+    type: money
+  - line: sub.35.b
+    field: Subtractions Col B Line 35
+    type: money
+  - line: sub.36.a
+    field: Subtractions Col A Line 36
+    type: money
+  - line: sub.36.b
+    field: Subtractions Col B Line 36
+    type: money
+  - line: sub.37.a
+    field: Subtractions Col A Line 37
+    type: money
+  - line: sub.37.b
+    field: Subtractions Col B Line 37
+    type: money
+  - line: sub.38.a
+    field: Subtractions Col A Line 38
+    type: money
+  - line: sub.38.b
+    field: Subtractions Col B Line 38
+    type: money
+
+  # ============================================ page 6 -- Partial Pension/Annuity income exemption worksheet + Taxable Social Security/Tier-1 benefits worksheet
+  - line: pension.2.a
+    field: "Pension/Annuity Col A Line 2"
+    type: money
+  - line: pension.2.b
+    field: "Pension/Annuity Col B Line 2"
+    type: money
+  - line: pension.3a.a
+    field: "Pension/Annuity Col A Line 3a"
+    type: money
+  - line: pension.3a.b
+    field: "Pension/Annuity Col B Line 3a"
+    type: money
+  - line: pension.3b.a
+    field: "Pension/Annuity Col A Line 3b"
+    type: money
+  - line: pension.4.a
+    field: "Pension/Annuity Col A Line 4"
+    type: money
+  - line: pension.4.b
+    field: "Pension/Annuity Col B Line 4"
+    type: money
+  - line: pension.6.a
+    field: "Pension/Annuity Col A Line 6"
+    type: money
+  - line: pension.6.b
+    field: "Pension/Annuity Col B Line 6"
+    type: money
+  - line: pension.7.a
+    field: "Pension/Annuity Col A Line 7"
+    type: money
+  - line: pension.7.b
+    field: "Pension/Annuity Col B Line 7"
+    type: money
+  - line: benefits.1.a
+    field: Taxable Benefits Col A Line 1
+    type: money
+  - line: benefits.1.b
+    field: Taxable Benefits Col B Line 1
+    type: money
+  - line: benefits.2.a
+    field: Taxable Benefits Col A Line 2
+    type: money
+  - line: benefits.2.b
+    field: Taxable Benefits Col B Line 2
+    type: money
+  - line: benefits.3.a
+    field: Taxable Benefits Col A Line 3
+    type: money
+  - line: benefits.3.b
+    field: Taxable Benefits Col B Line 3
+    type: money
+  - line: benefits.4.a
+    field: Taxable Benefits Col A Line 4
+    type: money
+  - line: benefits.4.b
+    field: Taxable Benefits Col B Line 4
+    type: money
+  - line: benefits.5.a
+    field: Taxable Benefits Col A Line 5
+    type: money
+  - line: benefits.5.b
+    field: Taxable Benefits Col B Line 5
+    type: money
+  - line: benefits.6.a
+    field: Taxable Benefits Col A Line 6
+    type: money
+  - line: benefits.6.b
+    field: Taxable Benefits Col B Line 6
+    type: money
+  - line: benefits.7.a
+    field: Taxable Benefits Col A Line 7
+    type: money
+  - line: benefits.7.b
+    field: Taxable Benefits Col B Line 7
+    type: money
+  - line: benefits.8.a
+    field: Taxable Benefits Col A Line 8
+    type: money
+  - line: benefits.8.b
+    field: Taxable Benefits Col B Line 8
+    type: money
+  - line: benefits.9.a
+    field: Taxable Benefits Col A Line 9
+    type: money
+  - line: benefits.9.b
+    field: Taxable Benefits Col B Line 9
+    type: money
+  - line: benefits.10.a
+    field: Taxable Benefits Col A Line 10
+    type: money
+  - line: benefits.10.b
+    field: Taxable Benefits Col B Line 10
+    type: money
+  - line: benefits.11.a
+    field: Taxable Benefits Col A Line 11
+    type: money
+  - line: benefits.11.b
+    field: Taxable Benefits Col B Line 11
+    type: money
+  - line: benefits.12.a
+    field: Taxable Benefits Col A Line 12
+    type: money
+  - line: benefits.12.b
+    field: Taxable Benefits Col B Line 12
+    type: money
+  - line: benefits.13.a
+    field: Taxable Benefits Col A Line 13
+    type: money
+  - line: benefits.13.b
+    field: Taxable Benefits Col B Line 13
+    type: money
+  - line: benefits.14.a
+    field: Taxable Benefits Col A Line 14
+    type: money
+  - line: benefits.14.b
+    field: Taxable Benefits Col B Line 14
+    type: money
+  - line: benefits.15.a
+    field: Taxable Benefits Col A Line 15
+    type: money
+  - line: benefits.15.b
+    field: Taxable Benefits Col B Line 15
+    type: money
+  - line: benefits.16.a
+    field: Taxable Benefits Col A Line 16
+    type: money
+  - line: benefits.16.b
+    field: Taxable Benefits Col B Line 16
+    type: money
+  - line: benefits.17.a
+    field: Taxable Benefits Col A Line 17
+    type: money
+  - line: benefits.17.b
+    field: Taxable Benefits Col B Line 17
+    type: money
+  - line: benefits.18.a
+    field: Taxable Benefits Col A Line 18
+    type: money
+  - line: benefits.18.b
+    field: Taxable Benefits Col B Line 18
+    type: money
+  - line: benefits.19.a
+    field: Taxable Benefits Col A Line 19
+    type: money
+  - line: benefits.19.b
+    field: Taxable Benefits Col B Line 19
+    type: money
+  - line: benefits.20.a
+    field: Taxable Benefits Col A Line 20
+    type: money
+  - line: benefits.20.b
+    field: Taxable Benefits Col B Line 20
+    type: money
+  - line: benefits.21.a
+    field: Taxable Benefits Col A Line 21
+    type: money
+  - line: benefits.21.b
+    field: Taxable Benefits Col B Line 21
+    type: money
+  - line: benefits.23.a
+    field: Taxable Benefits Col A Line 23
+    type: money
+  - line: benefits.23.b
+    field: Taxable Benefits Col B Line 23
+    type: money
+  - line: benefits.24.a
+    field: Taxable Benefits Col A Line 24
+    type: money
+  - line: benefits.24.b
+    field: Taxable Benefits Col B Line 24
+    type: money
+
+  # ============================================ page 7 -- Standard Deduction worksheet (stdded 1-6) + Montana Itemized Deductions schedule (itemized 1-19)
+  - line: stdded.1.a
+    field: Standard Col A Line 1
+    type: money
+  - line: stdded.1.b
+    field: Standard Col B Line 1
+    type: money
+  - line: stdded.2.a
+    field: Standard Col A Line 2
+    type: money
+  - line: stdded.2.b
+    field: Standard Col B Line 2
+    type: money
+  - line: stdded.3.a
+    field: Standard Col A Line 3
+    type: money
+  - line: stdded.3.b
+    field: Standard Col B Line 3
+    type: money
+  - line: stdded.4.a
+    field: Standard Col A Line 4
+    type: money
+  - line: stdded.4.b
+    field: Standard Col B Line 4
+    type: money
+  - line: stdded.5.a
+    field: Standard Col A Line 5
+    type: money
+  - line: stdded.5.b
+    field: Standard Col B Line 5
+    type: money
+  - line: stdded.6.a
+    field: Standard Col A Line 6
+    type: money
+  - line: stdded.6.b
+    field: Standard Col B Line 6
+    type: money
+  - line: itemized.1a.a
+    field: Itemized Col A Line 1a
+    type: money
+  - line: itemized.1a.b
+    field: Itemized Col B Line 1a
+    type: money
+  - line: itemized.1b.a
+    field: Itemized Col A Line 1b
+    type: money
+  - line: itemized.1b.b
+    field: Itemized Col B Line 1b
+    type: money
+  - line: itemized.1c.b
+    field: Itemized Col B Line 1c
+    type: money
+  - line: itemized.1c.a
+    field: Itemized Col A Line 1c
+    type: money
+  - line: itemized.1.a
+    field: Itemized Col A Line 1
+    type: money
+  - line: itemized.1.b
+    field: Itemized Col B Line 1
+    type: money
+  - line: itemized.2.a
+    field: Itemized Col A Line 2
+    type: money
+  - line: itemized.2.b
+    field: Itemized Col B Line 2
+    type: money
+  - line: itemized.3.a
+    field: Itemized Col A Line 3
+    type: money
+  - line: itemized.3.b
+    field: Itemized Col B Line 3
+    type: money
+  - line: itemized.4a.a
+    field: Itemized Col A Line 4a
+    type: money
+  - line: itemized.4a.b
+    field: Itemized Col B Line 4a
+    type: money
+  - line: itemized.4b.a
+    field: Itemized Col A Line 4b
+    type: money
+  - line: itemized.4b.b
+    field: Itemized Col B Line 4b
+    type: money
+  - line: itemized.4c.a
+    field: Itemized Col A Line 4c
+    type: money
+  - line: itemized.4c.b
+    field: Itemized Col B Line 4c
+    type: money
+  - line: itemized.4d.a
+    field: Itemized Col A Line 4d
+    type: money
+  - line: itemized.4d.b
+    field: Itemized Col B Line 4d
+    type: money
+  - line: itemized.4.a
+    field: Itemized Col A Line 4
+    type: money
+  - line: itemized.4.b
+    field: Itemized Col B Line 4
+    type: money
+  - line: itemized.5a.b
+    field: Itemized Col B Line 5a
+    type: money
+  - line: itemized.5a.a
+    field: Itemized Col A Line 5a
+    type: money
+  - line: itemized.5b.b
+    field: Itemized Col B Line 5b
+    type: money
+  - line: itemized.5b.a
+    field: Itemized Col A Line 5b
+    type: money
+  - line: itemized.5c.b
+    field: Itemized Col B Line 5c
+    type: money
+  - line: itemized.5d.b
+    field: Itemized Col B Line 5d
+    type: money
+  - line: itemized.5c.a
+    field: Itemized Col A Line 5c
+    type: money
+  - line: itemized.5d.a
+    field: Itemized Col A Line 5d
+    type: money
+  - line: itemized.5.a
+    field: Itemized Col A Line 5
+    type: money
+  - line: itemized.5.b
+    field: Itemized Col B Line 5
+    type: money
+  - line: itemized.6.a
+    field: Itemized Col A Line 6
+    type: money
+  - line: itemized.6.b
+    field: Itemized Col B Line 6
+    type: money
+  - line: itemized.7.a
+    field: Itemized Col A Line 7
+    type: money
+  - line: itemized.7.b
+    field: Itemized Col B Line 7
+    type: money
+  - line: itemized.8.description
+    field: Itemized Additional Information Line 8
+    type: text
+  - line: itemized.8.a
+    field: Itemized Col A Line 8
+    type: money
+  - line: itemized.8.b
+    field: Itemized Col B Line 8
+    type: money
+  - line: itemized.9.description
+    field: Itemized Additional Information Line 9
+    type: text
+  - line: itemized.9.a
+    field: Itemized Col A Line 9
+    type: money
+  - line: itemized.9.b
+    field: Itemized Col B Line 9
+    type: money
+  - line: itemized.10.a
+    field: Itemized Col A Line 10
+    type: money
+  - line: itemized.10.b
+    field: Itemized Col B Line 10
+    type: money
+  - line: itemized.11.a
+    field: Itemized Col A Line 11
+    type: money
+  - line: itemized.11.b
+    field: Itemized Col B Line 11
+    type: money
+  - line: itemized.12.a
+    field: Itemized Col A Line 12
+    type: money
+  - line: itemized.12.b
+    field: Itemized Col B Line 12
+    type: money
+  - line: itemized.13.a
+    field: Itemized Col A Line 13
+    type: money
+  - line: itemized.13.b
+    field: Itemized Col B Line 13
+    type: money
+  - line: itemized.14.a
+    field: Itemized Col A Line 14
+    type: money
+  - line: itemized.14.b
+    field: Itemized Col B Line 14
+    type: money
+  - line: itemized.15.a
+    field: Itemized Col A Line 15
+    type: money
+  - line: itemized.15.b
+    field: Itemized Col B Line 15
+    type: money
+  - line: itemized.16.a
+    field: Itemized Col A Line 16
+    type: money
+  - line: itemized.16.b
+    field: Itemized Col B Line 16
+    type: money
+  - line: itemized.17.a
+    field: Itemized Col A Line 17
+    type: money
+  - line: itemized.17.b
+    field: Itemized Col B Line 17
+    type: money
+  - line: itemized.18.description
+    field: Itemized Additional Information Line 18
+    type: text
+  - line: itemized.18.a
+    field: Itemized Col A Line 18
+    type: money
+  - line: itemized.18.b
+    field: Itemized Col B Line 18
+    type: money
+  - line: itemized.19.a
+    field: Itemized Col A Line 19
+    type: money
+  - line: itemized.19.b
+    field: Itemized Col B Line 19
+    type: money
+
+  # ============================================ page 8 -- Part-Year/Nonresident Ratio schedule (ratio) + Tax Liability schedule (liability)
+  - line: ratio.residency_change_date
+    field: Date of Residency Change
+    type: text
+    comb: true
+    maxlen: 8
+  - line: ratio.state_moved_to
+    field: Part-Year state moved to
+    type: text
+    comb: true
+    maxlen: 2
+  - line: ratio.state_moved_from
+    field: Part-Year state moved from
+    type: text
+    comb: true
+    maxlen: 2
+  - line: ratio.1.a
+    field: Resident Ratio Col A Line 1
+    type: money
+  - line: ratio.1.b
+    field: Resident Ratio Col B Line 1
+    type: money
+  - line: ratio.2.a
+    field: Resident Ratio Col A Line 2
+    type: money
+  - line: ratio.3.a
+    field: Resident Ratio Col A Line 3
+    type: money
+  - line: ratio.2.b
+    field: Resident Ratio Col B Line 2
+    type: money
+  - line: ratio.4.a
+    field: Resident Ratio Col A Line 4
+    type: money
+  - line: ratio.3.b
+    field: Resident Ratio Col B Line 3
+    type: money
+  - line: ratio.5.a
+    field: Resident Ratio Col A Line 5
+    type: money
+  - line: ratio.4.b
+    field: Resident Ratio Col B Line 4
+    type: money
+  - line: ratio.6.a
+    field: Resident Ratio Col A Line 6
+    type: money
+  - line: ratio.5.b
+    field: Resident Ratio Col B Line 5
+    type: money
+  - line: ratio.7.a
+    field: Resident Ratio Col A Line 7
+    type: money
+  - line: ratio.6.b
+    field: Resident Ratio Col B Line 6
+    type: money
+  - line: ratio.8.a
+    field: Resident Ratio Col A Line 8
+    type: money
+  - line: ratio.7.b
+    field: Resident Ratio Col B Line 7
+    type: money
+  - line: ratio.8.b
+    field: Resident Ratio Col B Line 8
+    type: money
+  - line: ratio.9.a
+    field: Resident Ratio Col A Line 9
+    type: money
+  - line: ratio.9.b
+    field: Resident Ratio Col B Line 9
+    type: money
+  - line: ratio.carried_over_losses
+    field: Resident Ratio Carried over Losses
+    type: checkbox
+    on_state: "/Yes"
+  - line: ratio.10.a
+    field: Resident Ratio Col A Line 10
+    type: money
+  - line: ratio.10.b
+    field: Resident Ratio Col B Line 10
+    type: money
+  - line: ratio.11.a
+    field: Resident Ratio Col A Line 11
+    type: money
+  - line: ratio.11.b
+    field: Resident Ratio Col B Line 11
+    type: money
+  - line: ratio.12.a
+    field: Resident Ratio Col A Line 12
+    type: money
+  - line: ratio.12.b
+    field: Resident Ratio Col B Line 12
+    type: money
+  - line: ratio.13.a
+    field: Resident Ratio Col A Line 13
+    type: money
+  - line: ratio.13.b
+    field: Resident Ratio Col B Line 13
+    type: money
+  - line: ratio.14.a
+    field: Resident Ratio Col A Line 14
+    type: money
+  - line: ratio.14.b
+    field: Resident Ratio Col B Line 14
+    type: money
+  - line: ratio.15.a
+    field: Resident Ratio Col A Line 15
+    type: money
+  - line: ratio.15.b
+    field: Resident Ratio Col B Line 15
+    type: money
+  - line: ratio.16.a
+    field: Resident Ratio Col A Line 16
+    type: money
+  - line: ratio.16.b
+    field: Resident Ratio Col B Line 16
+    type: money
+  - line: ratio.17.a
+    field: Resident Ratio Col A Line 17
+    type: money
+  - line: ratio.17.b
+    field: Resident Ratio Col B Line 17
+    type: money
+  - line: ratio.18.a
+    field: Resident Ratio Col A Line 18
+    type: text
+    comb: true
+    maxlen: 1
+  - line: ratio.18.decimal.a
+    field: Resident Ratio Decimal Col A Line 18
+    type: text
+    comb: true
+    maxlen: 6
+  - line: ratio.18.b
+    field: Resident Ratio Col B Line 18
+    type: text
+    comb: true
+    maxlen: 1
+  - line: ratio.18.decimal.b
+    field: Resident Ratio Decimal Col B Line 18
+    type: text
+    comb: true
+    maxlen: 6
+  - line: liability.1.a
+    field: Liability Col A Line 1
+    type: money
+  - line: liability.1.b
+    field: Liability Col B Line 1
+    type: money
+  - line: liability.recapture_code_1
+    field: Recapture Code 1
+    type: text
+    comb: true
+    maxlen: 2
+  - line: liability.recapture_code_2
+    field: Recapture Code 2
+    type: text
+    comb: true
+    maxlen: 2
+  - line: liability.2.a
+    field: Liability Col A Line 2
+    type: money
+  - line: liability.2.b
+    field: Liability Col B Line 2
+    type: money
+  - line: liability.3a.a
+    field: Liability Col A Line 3a
+    type: money
+  - line: liability.3a.b
+    field: Liability Col B Line 3a
+    type: money
+  - line: liability.3b.a
+    field: Liability Col A Line 3b
+    type: money
+  - line: liability.3b.b
+    field: Liability Col B Line 3b
+    type: money
+  - line: liability.4.a
+    field: Liability Col A Line 4
+    type: money
+  - line: liability.4.b
+    field: Liability Col B Line 4
+    type: money
+  - line: liability.5.a
+    field: Liability Col A Line 5
+    type: money
+  - line: liability.5.b
+    field: Liability Col B Line 5
+    type: money
+  - line: liability.6.a
+    field: Liability Col A Line 6
+    type: money
+  - line: liability.6.b
+    field: Liability Col B Line 6
+    type: money
+
+  # ============================================ page 9 -- Nonrefundable Credits schedule (nrcredits) + Credit for tax paid to another state/country (othertax)
+  - line: nrcredits.1.a
+    field: Nonrefundable Credits Col A Line 1
+    type: money
+  - line: nrcredits.1.b
+    field: Nonrefundable Credits Col B Line 1
+    type: money
+  - line: nrcredits.2.a
+    field: Nonrefundable Credits Col A Line 2
+    type: money
+  - line: nrcredits.2.b
+    field: Nonrefundable Credits Col B Line 2
+    type: money
+  - line: nrcredits.3.a
+    field: Nonrefundable Credits Col A Line 3
+    type: money
+  - line: nrcredits.3.b
+    field: Nonrefundable Credits Col B Line 3
+    type: money
+  - line: nrcredits.4.a
+    field: Nonrefundable Credits Col A Line 4
+    type: money
+  - line: nrcredits.4.b
+    field: Nonrefundable Credits Col B Line 4
+    type: money
+  - line: nrcredits.5.a
+    field: Nonrefundable Credits Col A Line 5
+    type: money
+  - line: nrcredits.5.b
+    field: Nonrefundable Credits Col B Line 5
+    type: money
+  - line: nrcredits.6.a
+    field: Nonrefundable Credits Col A Line 6
+    type: money
+  - line: nrcredits.6.b
+    field: Nonrefundable Credits Col B Line 6
+    type: money
+  - line: nrcredits.7.a
+    field: Nonrefundable Credits Col A Line 7
+    type: money
+  - line: nrcredits.7.b
+    field: Nonrefundable Credits Col B Line 7
+    type: money
+  - line: nrcredits.8.cert_1
+    field: Nonrefundable Credits Line 8 Credit Certificate 1
+    type: text
+    comb: true
+    maxlen: 10
+  - line: nrcredits.8.cert_2
+    field: Nonrefundable Credits Line 8 Credit Certificate 2
+    type: text
+    comb: true
+    maxlen: 10
+  - line: nrcredits.8.cert_3
+    field: Nonrefundable Credits Line 8 Credit Certificate 3
+    type: text
+    comb: true
+    maxlen: 10
+  - line: nrcredits.8.a
+    field: Nonrefundable Credits Col A Line 8
+    type: money
+  - line: nrcredits.8.b
+    field: Nonrefundable Credits Col B Line 8
+    type: money
+  - line: nrcredits.9.cert_1
+    field: Nonrefundable Credits Line 9 Credit Certificate 1
+    type: text
+    comb: true
+    maxlen: 10
+  - line: nrcredits.9.cert_2
+    field: Nonrefundable Credits Line 9 Credit Certificate 2
+    type: text
+    comb: true
+    maxlen: 10
+  - line: nrcredits.9.cert_3
+    field: Nonrefundable Credits Line 9 Credit Certificate 3
+    type: text
+    comb: true
+    maxlen: 10
+  - line: nrcredits.9.a
+    field: Nonrefundable Credits Col A Line 9
+    type: money
+  - line: nrcredits.9.b
+    field: Nonrefundable Credits Col B Line 9
+    type: money
+  - line: nrcredits.10.cgr_flag
+    field: Check Box1
+    type: checkbox
+    on_state: "/Yes"
+  - line: nrcredits.10.cgr_account_id
+    field: CGR Account ID
+    type: text
+    comb: true
+    maxlen: 10
+  - line: nrcredits.10.a
+    field: Nonrefundable Credits Col A Line 10
+    type: money
+  - line: nrcredits.10.b
+    field: Nonrefundable Credits Col B Line 10
+    type: money
+  - line: nrcredits.11.a
+    field: Nonrefundable Credits Col A Line 11
+    type: money
+  - line: nrcredits.11.b
+    field: Nonrefundable Credits Col B Line 11
+    type: money
+  - line: nrcredits.12.b
+    field: Nonrefundable Credits Col B Line 12
+    type: money
+  - line: nrcredits.12.a
+    field: Nonrefundable Credits Col A Line 12
+    type: money
+  - line: nrcredits.13.ucrn_1
+    field: Nonrefundable Credits Line 13 UCRN_1
+    type: text
+    comb: true
+    maxlen: 24
+  - line: nrcredits.13.ucrn_2
+    field: Nonrefundable Credits Line 13 UCRN_2
+    type: text
+    comb: true
+    maxlen: 24
+  - line: nrcredits.13.a
+    field: Nonrefundable Credits Col A Line 13
+    type: money
+  - line: nrcredits.13.b
+    field: Nonrefundable Credits Col B Line 13
+    type: money
+  - line: nrcredits.14.cert
+    field: Nonrefundable Credits Line 14 Credit certificate number
+    type: text
+    comb: true
+    maxlen: 16
+  - line: nrcredits.14.a
+    field: Nonrefundable Credits Col A Line 14
+    type: money
+  - line: nrcredits.14.b
+    field: Nonrefundable Credits Col B Line 14
+    type: money
+  - line: nrcredits.15a.year
+    field: Nonrefundable Credits Line 15a
+    type: text
+    comb: true
+    maxlen: 4
+  - line: nrcredits.15a.a
+    field: Nonrefundable Credits Col A Line 15a
+    type: money
+  - line: nrcredits.15a.b
+    field: Nonrefundable Credits Col B Line 15a
+    type: money
+  - line: nrcredits.15b.year
+    field: Nonrefundable Credits Line 15b
+    type: text
+    comb: true
+    maxlen: 4
+  - line: nrcredits.15b.a
+    field: Nonrefundable Credits Col A Line 15b
+    type: money
+  - line: nrcredits.15b.b
+    field: Nonrefundable Credits Col B Line 15b
+    type: money
+  - line: nrcredits.15c.year
+    field: Nonrefundable Credits Line 15c
+    type: text
+    comb: true
+    maxlen: 4
+  - line: nrcredits.15c.a
+    field: Nonrefundable Credits Col A Line 15c
+    type: money
+  - line: nrcredits.15c.b
+    field: Nonrefundable Credits Col B Line 15c
+    type: money
+  - line: nrcredits.16.a
+    field: Nonrefundable Credits Col A Line 16
+    type: money
+  - line: nrcredits.16.b
+    field: Nonrefundable Credits Col B Line 16
+    type: money
+  - line: othertax.1.a
+    field: Other Tax Paid Col A Line 1
+    type: money
+  - line: othertax.1.b
+    field: Other Tax Paid Col B Line 1
+    type: money
+  - line: othertax.2.state
+    field: Other Tax Paid Other State Line 2
+    type: text
+    comb: true
+    maxlen: 2
+  - line: othertax.2.a
+    field: Other Tax Paid Col A Line 2
+    type: money
+  - line: othertax.2.b
+    field: Other Tax Paid Col B Line 2
+    type: money
+  - line: othertax.3.a
+    field: Other Tax Paid Col A Line 3
+    type: money
+  - line: othertax.3.b
+    field: Other Tax Paid Col B Line 3
+    type: money
+  - line: othertax.4.a
+    field: Other Tax Paid Col A Line 4
+    type: money
+  - line: othertax.4.b
+    field: Other Tax Paid Col B Line 4
+    type: money
+  - line: othertax.5.a
+    field: Other Tax Paid Col A Line 5
+    type: money
+  - line: othertax.5.b
+    field: Other Tax Paid Col B Line 5
+    type: money
+  - line: othertax.6.a
+    field: Other Tax Paid Col A Line 6
+    type: text
+    comb: true
+    maxlen: 3
+  - line: othertax.6.decimal.a
+    field: Other Tax Paid Decimal Col A Line 6
+    type: text
+    comb: true
+    maxlen: 2
+  - line: othertax.6.b
+    field: Other Tax Paid Col B Line 6
+    type: text
+    comb: true
+    maxlen: 3
+  - line: othertax.6.decimal.b
+    field: Other Tax Paid Decimal Col B Line 6
+    type: text
+    comb: true
+    maxlen: 2
+  - line: othertax.7.a
+    field: Other Tax Paid Col A Line 7
+    type: money
+  - line: othertax.7.b
+    field: Other Tax Paid Col B Line 7
+    type: money
+  - line: othertax.8.a
+    field: Other Tax Paid Col A Line 8
+    type: text
+    comb: true
+    maxlen: 3
+  - line: othertax.8.decimal.a
+    field: Other Tax Paid Decimal Col A Line 8
+    type: text
+    comb: true
+    maxlen: 2
+  - line: othertax.8.b
+    field: Other Tax Paid Col B Line 8
+    type: text
+    comb: true
+    maxlen: 3
+  - line: othertax.8.decimal.b
+    field: Other Tax Paid Decimal Col B Line 8
+    type: text
+    comb: true
+    maxlen: 2
+  - line: othertax.9.a
+    field: Other Tax Paid Col A Line 9
+    type: money
+  - line: othertax.9.b
+    field: Other Tax Paid Col B Line 9
+    type: money
+  - line: othertax.10.a
+    field: Other Tax Paid Col A Line 10
+    type: money
+  - line: othertax.10.b
+    field: Other Tax Paid Col B Line 10
+    type: money
+
+  # ============================================ page 10 -- Elderly Homeowner/Renter Credit worksheet (ehrc) + Long-Term Care rent worksheet (ltc)
+  - line: ehrc.physical_address
+    field: EHRC Physical Address
+    type: text
+  - line: ehrc.city
+    field: EHRC City
+    type: text
+  - line: ehrc.1
+    field: EHRC Line 1
+    type: money
+  - line: ehrc.2
+    field: EHRC Line 2
+    type: money
+  - line: ehrc.3
+    field: EHRC Line 3
+    type: money
+  - line: ehrc.4
+    field: EHRC Line 4
+    type: money
+  - line: ehrc.5
+    field: EHRC Line 5
+    type: money
+  - line: ehrc.6
+    field: EHRC Line 6
+    type: money
+  - line: ehrc.7
+    field: EHRC Line 7
+    type: money
+  - line: ehrc.8
+    field: EHRC Line 8
+    type: money
+  - line: ehrc.9
+    field: EHRC Line 9
+    type: money
+  - line: ehrc.10
+    field: EHRC Line 10
+    type: money
+  - line: ehrc.12
+    field: EHRC Line 12
+    type: money
+  - line: ehrc.13
+    field: EHRC Line 13
+    type: text
+    comb: true
+    maxlen: 1
+  - line: ehrc.13.decimal
+    field: EHRC Decimal Line 13
+    type: text
+    comb: true
+    maxlen: 3
+  - line: ehrc.14
+    field: EHRC Line 14
+    type: money
+  - line: ehrc.15
+    field: EHRC Line 15
+    type: money
+  - line: ehrc.16
+    field: EHRC Line 16
+    type: money
+  - line: ehrc.17
+    field: EHRC Line 17
+    type: money
+  - line: ehrc.18
+    field: EHRC Line 18
+    type: money
+  - line: ehrc.19
+    field: EHRC Line 19
+    type: money
+  - line: ehrc.20
+    field: EHRC Line 20
+    type: money
+  - line: ehrc.21
+    field: EHRC Line 21
+    type: text
+    maxlen: 2
+  - line: ehrc.21.decimal
+    field: EHRC Decimal Line 21
+    type: text
+    comb: true
+    maxlen: 2
+  - line: ehrc.22
+    field: EHRC Line 22
+    type: money
+  - line: ltc.1
+    field: LTC Rent Line 1
+    type: money
+  - line: ltc.2
+    field: LTC Rent Line 2
+    type: money
+  - line: ltc.3
+    field: LTC Rent Line 3
+    type: money
+  - line: ltc.4
+    field: LTC Rent Line 4
+    type: money
+
+  # ============================================ page 11 -- Other Payments & Refundable Credits (payments), Voluntary Contributions (volcontrib), Contributions/Penalties/Interest (cpi), Underpayment Interest (upint)
+  - line: payments.1.a
+    field: Payments Col A Line 1
+    type: money
+  - line: payments.1.b
+    field: Payments Col B Line 1
+    type: money
+  - line: payments.2.a
+    field: Payments Col A Line 2
+    type: money
+  - line: payments.2.b
+    field: Payments Col B Line 2
+    type: money
+  - line: payments.3.a
+    field: Payments Col A Line 3
+    type: money
+  - line: payments.3.b
+    field: Payments Col B Line 3
+    type: money
+  - line: payments.4.a
+    field: Payments Col A Line 4
+    type: money
+  - line: payments.4.b
+    field: Payments Col B Line 4
+    type: money
+  - line: payments.5.a
+    field: Payments Col A Line 5
+    type: money
+  - line: payments.5.b
+    field: Payments Col B Line 5
+    type: money
+  - line: payments.6.a
+    field: Payments Col A Line 6
+    type: money
+  - line: payments.6.b
+    field: Payments Col B Line 6
+    type: money
+  - line: payments.7.a
+    field: Payments Col A Line 7
+    type: money
+  - line: payments.8.a
+    field: Payments Col A Line 8
+    type: money
+  - line: payments.8.b
+    field: Payments Col B Line 8
+    type: money
+  - line: payments.9.a
+    field: Payments Col A Line 9
+    type: money
+  - line: payments.9.b
+    field: Payments Col B Line 9
+    type: money
+  - line: payments.10.a
+    field: Payments Col A Line 10
+    type: money
+  - line: payments.10.b
+    field: Payments Col B Line 10
+    type: money
+  - line: payments.11.a
+    field: Payments Col A Line 11
+    type: money
+  - line: payments.11.b
+    field: Payments Col B Line 11
+    type: money
+  - line: volcontrib.a.a.5
+    field: Vol Contribution Col A Line a
+    type: checkbox
+    on_state: "/5"
+    group: volcontrib_a_a
+  - line: volcontrib.a.a.10
+    field: Vol Contribution Col A Line a
+    type: checkbox
+    on_state: "/10"
+    group: volcontrib_a_a
+  - line: volcontrib.a.a.20
+    field: Vol Contribution Col A Line a
+    type: checkbox
+    on_state: "/20"
+    group: volcontrib_a_a
+  - line: volcontrib.a.other.a
+    field: Vol Contribution Col A Line a Other
+    type: text
+  - line: volcontrib.a.b.5
+    field: Vol Contribution Col B Line a
+    type: checkbox
+    on_state: "/5"
+    group: volcontrib_a_b
+  - line: volcontrib.a.b.10
+    field: Vol Contribution Col B Line a
+    type: checkbox
+    on_state: "/10"
+    group: volcontrib_a_b
+  - line: volcontrib.a.b.20
+    field: Vol Contribution Col B Line a
+    type: checkbox
+    on_state: "/20"
+    group: volcontrib_a_b
+  - line: volcontrib.a.other.b
+    field: Vol Contribution Col B Line a Other
+    type: text
+  - line: volcontrib.b.a.5
+    field: Vol Contribution Col A Line b
+    type: checkbox
+    on_state: "/5"
+    group: volcontrib_b_a
+  - line: volcontrib.b.a.10
+    field: Vol Contribution Col A Line b
+    type: checkbox
+    on_state: "/10"
+    group: volcontrib_b_a
+  - line: volcontrib.b.a.20
+    field: Vol Contribution Col A Line b
+    type: checkbox
+    on_state: "/20"
+    group: volcontrib_b_a
+  - line: volcontrib.b.other.a
+    field: Vol Contribution Col A Line b Other
+    type: text
+  - line: volcontrib.b.b.5
+    field: Vol Contribution Col B Line b
+    type: checkbox
+    on_state: "/5"
+    group: volcontrib_b_b
+  - line: volcontrib.b.b.10
+    field: Vol Contribution Col B Line b
+    type: checkbox
+    on_state: "/10"
+    group: volcontrib_b_b
+  - line: volcontrib.b.b.20
+    field: Vol Contribution Col B Line b
+    type: checkbox
+    on_state: "/20"
+    group: volcontrib_b_b
+  - line: volcontrib.b.other.b
+    field: Vol Contribution Col B Line b Other
+    type: text
+  - line: volcontrib.c.a.5
+    field: Vol Contribution Col A Line c
+    type: checkbox
+    on_state: "/5"
+    group: volcontrib_c_a
+  - line: volcontrib.c.a.10
+    field: Vol Contribution Col A Line c
+    type: checkbox
+    on_state: "/10"
+    group: volcontrib_c_a
+  - line: volcontrib.c.a.20
+    field: Vol Contribution Col A Line c
+    type: checkbox
+    on_state: "/20"
+    group: volcontrib_c_a
+  - line: volcontrib.c.other.a
+    field: Vol Contribution Col A Line c Other
+    type: text
+  - line: volcontrib.c.b.5
+    field: Vol Contribution Col B Line c
+    type: checkbox
+    on_state: "/5"
+    group: volcontrib_c_b
+  - line: volcontrib.c.b.10
+    field: Vol Contribution Col B Line c
+    type: checkbox
+    on_state: "/10"
+    group: volcontrib_c_b
+  - line: volcontrib.c.b.20
+    field: Vol Contribution Col B Line c
+    type: checkbox
+    on_state: "/20"
+    group: volcontrib_c_b
+  - line: volcontrib.c.other.b
+    field: Vol Contribution Col B Line c Other
+    type: text
+  - line: volcontrib.d.a.5
+    field: Vol Contribution Col A Line d
+    type: checkbox
+    on_state: "/5"
+    group: volcontrib_d_a
+  - line: volcontrib.d.a.10
+    field: Vol Contribution Col A Line d
+    type: checkbox
+    on_state: "/10"
+    group: volcontrib_d_a
+  - line: volcontrib.d.a.20
+    field: Vol Contribution Col A Line d
+    type: checkbox
+    on_state: "/20"
+    group: volcontrib_d_a
+  - line: volcontrib.d.other.a
+    field: Vol Contribution Col A Line d Other
+    type: text
+  - line: volcontrib.d.b.5
+    field: Vol Contribution Col B Line d
+    type: checkbox
+    on_state: "/5"
+    group: volcontrib_d_b
+  - line: volcontrib.d.b.10
+    field: Vol Contribution Col B Line d
+    type: checkbox
+    on_state: "/10"
+    group: volcontrib_d_b
+  - line: volcontrib.d.b.20
+    field: Vol Contribution Col B Line d
+    type: checkbox
+    on_state: "/20"
+    group: volcontrib_d_b
+  - line: volcontrib.d.other.b
+    field: Vol Contribution Col B Line d Other
+    type: text
+  - line: cpi.1.a
+    field: "Contributions, P&I Col A Line 1"
+    type: money
+  - line: cpi.1.b
+    field: "Contributions, P&I Col B Line 1"
+    type: money
+  - line: cpi.2.a
+    field: "Contributions, P&I Col A Line 2"
+    type: money
+  - line: cpi.2.b
+    field: "Contributions, P&I Col B Line 2"
+    type: money
+  - line: cpi.3.a
+    field: "Contributions, P&I Col A Line 3"
+    type: money
+  - line: cpi.farming_gross_income
+    field: "2/3 Farming Gross Income"
+    type: checkbox
+    on_state: "/Yes"
+  - line: cpi.annualization_method
+    field: Annualization Method
+    type: checkbox
+    on_state: "/Yes"
+  - line: cpi.4.a
+    field: "Contributions, P&I Col A Line 4"
+    type: money
+  - line: cpi.4.b
+    field: "Contributions, P&I Col B Line 4"
+    type: money
+  - line: cpi.5.a
+    field: "Contributions, P&I Col A Line 5"
+    type: money
+  - line: cpi.5.b
+    field: "Contributions, P&I Col B Line 5"
+    type: money
+  - line: cpi.6.a
+    field: "Pg10 Contributions, P&I Col A Line 6"
+    type: money
+  - line: cpi.6.b
+    field: "Contributions, P&I Col B Line 6"
+    type: money
+  - line: upint.1
+    field: Underpayment Interest Line 1
+    type: money
+  - line: upint.2
+    field: Underpayment Interest Line 2
+    type: money
+  - line: upint.3
+    field: Underpayment Interest Line 3
+    type: money
+  - line: upint.4
+    field: Underpayment Interest Line 4
+    type: money
+  - line: upint.5
+    field: Underpayment Interest Line 5
+    type: money
+  - line: upint.6
+    field: Underpayment Interest Line 6
+    type: money
+  - line: upint.7
+    field: Underpayment Interest Line 7
+    type: money
+  - line: upint.8
+    field: Underpayment Interest Line 8
+    type: money
+  - line: upint.9
+    field: Underpayment Interest Line 9
+    type: money
+  - line: upint.10
+    field: Underpayment Interest Line 10
+    type: money
+  - line: upint.11
+    field: Underpayment Interest Line 11
+    type: money
+  - line: upint.12
+    field: Underpayment Interest Line 12
+    type: money
+  - line: upint.13
+    field: Underpayment Interest Line 13
+    type: money
+
+relations: []
+cross_form: []
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null
