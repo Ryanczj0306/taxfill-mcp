@@ -8,7 +8,7 @@ from datetime import date
 import pytest
 
 from taxfill_core.file_and_pay import FilingManifestItem
-from taxfill_core.filing_summary import FilingSummary, filing_summary
+from taxfill_core.filing_summary import filing_summary
 
 TODAY = date(2026, 6, 17)
 
