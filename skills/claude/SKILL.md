@@ -56,7 +56,7 @@ Show the user which step they're on and that they can stop and resume anytime.
 | `verify_form(form, year, pdf_path, expected?)` | assertions + relation math + recompute + clipping + checkbox audit |
 | `verify_filing(items)` | cross-form identity + inter-form relations across the whole filing |
 | `render_form(pdf_path, pages?)` | page PNGs returned as image content — vision-review every page |
-| `calc(op, args)` | tax / standard_deduction / se_tax — every result shows its work + citation |
+| `calc(op, args)` | tax / standard_deduction / se_tax / additional_medicare_tax / niit — every result shows its work + citation |
 | `get_sources(topic, year, jurisdiction?)` | ranked .gov sources + freshness channels |
 | `filing_summary(manifest)` | plain-language bottom line per jurisdiction for the user to approve |
 | `file_and_pay(manifest)` | pay / sign / assemble / mail / records / deadlines checklist |

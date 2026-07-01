@@ -62,6 +62,8 @@ def test_state_pack_has_cited_credits(code: str):
     # and the pack carries the verification caveat.
     from urllib.parse import urlparse
 
+    from taxfill_core.knowledge import is_official_gov_host
+
     pack = load_state_knowledge(code, 2023, base_dir=REPO_ROOT / "knowledge")
     credits = getattr(pack, "credits", None) or []
     assert credits, f"{code}: no credits block"
@@ -69,7 +71,7 @@ def test_state_pack_has_cited_credits(code: str):
     for c in credits:
         url = c["citation"]["url"]
         host = (urlparse(url).hostname or "").lower()
-        assert any(host == t or host.endswith("." + t) for t in ("gov", "mil", "us")), f"{code}: {c['name']} cites non-gov {url}"
+        assert is_official_gov_host(host), f"{code}: {c['name']} cites non-gov {url}"
         assert c.get("type") in ("refundable", "nonrefundable"), f"{code}: {c['name']} bad type"
 
 
@@ -100,13 +102,15 @@ def test_all_citation_urls_are_gov_hosted(code: str):
     import yaml
     from urllib.parse import urlparse
 
+    from taxfill_core.knowledge import is_official_gov_host
+
     raw = yaml.safe_load((REPO_ROOT / "knowledge" / "states" / code / "2023.yaml").read_text())
     for url in _iter_citation_urls(raw):
         host = (urlparse(url).hostname or "").lower()
         if host in _ALLOWED_NONGOV_CITATION_HOSTS:
             continue
-        assert any(host == t or host.endswith("." + t) for t in ("gov", "mil", "us")), (
-            f"{code}: citation URL host {host!r} ({url}) is not an official .gov/.mil/.us source"
+        assert is_official_gov_host(host), (
+            f"{code}: citation URL host {host!r} ({url}) is not an official government source"
         )
 
 
