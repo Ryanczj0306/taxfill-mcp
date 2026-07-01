@@ -191,14 +191,18 @@ class FormPack(BaseModel):
     @classmethod
     def _check_source_url(cls, value: str) -> str:
         # source_url drives the only outbound fetch (see fetch.fetch_blank), so enforce the
-        # official-government-host guarantee at load time too (.gov/.mil/.us — many state DORs
-        # publish on .us). Defence-in-depth alongside the fetch-time host allowlist.
+        # official-government-host guarantee at load time too — shared rule with
+        # knowledge.is_official_gov_host (.gov/.mil/*.state.<xx>.us; bare .us is an open
+        # registry and is refused). Defence-in-depth alongside the fetch-time allowlist.
+        from taxfill_core.knowledge import is_official_gov_host
+
         value = _require_http_url(value, "source_url")
         host = (urlparse(value).hostname or "").lower()
-        if not any(host == tld or host.endswith("." + tld) for tld in ("gov", "mil", "us")):
+        if not is_official_gov_host(host):
             raise ValueError(
-                f"source_url must point to an official US government host (.gov/.mil/.us), got "
-                f"{host!r} — blank forms are downloaded only from official government sites"
+                f"source_url must point to an official US government host (.gov, .mil, or "
+                f"*.state.<xx>.us), got {host!r} — blank forms are downloaded only from "
+                f"official government sites"
             )
         return value
 
