@@ -255,8 +255,8 @@ relations:
 cross_form:
   - "7 == f1040.11"        # Line 7 "FEDERAL ADJUSTED GROSS INCOME" = Form 1040 (2023) line 11 (AGI).
 identity_fields:
-  - PRMSSN
-  - PRMFN
-  - PRMLN
+  - identifying_number
+  - name.first
+  - name.last
 signature: { page: 5 }
 mailing: null

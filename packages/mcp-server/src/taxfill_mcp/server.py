@@ -160,9 +160,13 @@ def render_form(pdf_path: str, pages: list[int] | None = None, dpi: float = 170)
 
     `pages` is 1-based; omit to render every page. Vision-review every page before 'done'.
     """
-    out_dir = Path(tempfile.mkdtemp(prefix="taxfill_render_"))
-    rendered = _render_pdf(pdf_path, out_dir, pages=pages, dpi=dpi)
-    return [Image(path=str(p.path)) for p in rendered]
+    # Render into a temp dir, return the PNG bytes INLINE, and delete the files on the way
+    # out: a filled return's pages are full PII (SSN, wages, address) and must not pile up in
+    # the shared temp dir (the 100%-local / no-PII-scatter guarantee). FastMCP base64-embeds
+    # the bytes into the response either way, so the on-disk copy is pure residue.
+    with tempfile.TemporaryDirectory(prefix="taxfill_render_") as out_dir:
+        rendered = _render_pdf(pdf_path, Path(out_dir), pages=pages, dpi=dpi)
+        return [Image(data=Path(p.path).read_bytes(), format="png") for p in rendered]
 
 
 # ── calc / residency ───────────────────────────────────────────────────────────

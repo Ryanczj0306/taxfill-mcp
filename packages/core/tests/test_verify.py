@@ -717,7 +717,44 @@ def test_confirmed_address_with_no_address_line_fails_prescriptively():
     report = verify_form(pack, {}, confirmed_current_address="100 Current St")
     assert report.ok is False
     confirmed = next(check for check in report.identity if "user-confirmed" in check.field)
-    assert "no pack in this filing maps an address line" in confirmed.detail
+    assert "maps a filled 'mailing_address' line" in confirmed.detail
+
+
+def test_component_split_mailing_address_matches_and_ignores_nonmailing_lines():
+    # Regression: (1) a component-split mailing address (street/city/state/zip on separate
+    # lines) must MATCH the confirmed address instead of each component failing against the
+    # whole string, and (2) a non-mailing 'address' line (a foreign home-country address)
+    # must NOT be compared against the confirmed mailing address.
+    pack = make_pack(
+        [
+            text_field("name"),
+            text_field("identifying_number"),
+            text_field("mailing_address.street"),
+            text_field("mailing_address.city"),
+            text_field("mailing_address.state"),
+            text_field("mailing_address.zip"),
+            text_field("home_country_address"),
+        ],
+        identity_fields=["name", "identifying_number"],
+    )
+    correct = {
+        "name": "Pat", "identifying_number": "000000000",
+        "mailing_address.street": "100 Current St", "mailing_address.city": "Testville",
+        "mailing_address.state": "CA", "mailing_address.zip": "00000",
+        "home_country_address": "5 Rue de Paris, France",  # foreign — must be ignored
+    }
+    report = verify_form(pack, disk_fields(pack, correct),
+                         confirmed_current_address="100 Current St, Testville, CA 00000")
+    assert report.ok is True
+    assert any(c.id == "P-002" and c.status == "PASS" for c in report.pitfall_checks)
+
+    # An outdated component-split mailing address still fails.
+    stale = {**correct, "mailing_address.street": "9 Old Rd", "mailing_address.city": "Pastburg",
+             "mailing_address.state": "NY", "mailing_address.zip": "11111"}
+    stale_report = verify_form(pack, disk_fields(pack, stale),
+                               confirmed_current_address="100 Current St, Testville, CA 00000")
+    assert stale_report.ok is False
+    assert any(c.id == "P-002" and c.status == "FAIL" for c in stale_report.pitfall_checks)
 
 
 def test_identity_ssn_comb_normalization_matches_dashed_vs_digits():

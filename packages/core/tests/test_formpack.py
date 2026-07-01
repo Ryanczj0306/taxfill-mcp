@@ -26,7 +26,7 @@ def test_dev_plan_example_pack_parses_and_validates():
     assert pack.pdf_sha256 == "..."  # authoring placeholder allowed by the schema
     assert pack.acroform_root == "topmostSubform[0]"
 
-    assert len(pack.fields) == 3
+    assert len(pack.fields) == 5
     ssn = pack.fields[0]
     assert ssn.line == "identifying_number"
     assert ssn.field == "Page1[0].f1_7[0]"
@@ -61,6 +61,30 @@ def test_dev_plan_example_pack_parses_and_validates():
     assert pack.mailing.no_payment == "Department of the Treasury, IRS, Austin, TX 73301-0215"
     assert pack.mailing.with_payment == "IRS, P.O. Box 1303, Charlotte, NC 28201-1303"
     assert pack.mailing.verify_url == "https://www.irs.gov/filing/..."
+
+
+def test_identity_field_referencing_acroform_name_rejected():
+    # identity_fields must be line keys, not AcroForm field names (the LA/OR/WI bug class).
+    raw = fixture_dict()
+    raw["identity_fields"] = ["Page1[0].f1_7[0]"]  # the field: name of identifying_number
+    with pytest.raises(ValidationError, match="identity_fields"):
+        FormPack.model_validate(raw)
+
+
+def test_cross_form_digit_led_dotted_local_ref_rejected():
+    # A digit-led dotted local id ('5.b') is misread as form key '5' and silently skipped (KY bug).
+    raw = fixture_dict()
+    raw["cross_form"] = ["5.b == f1040.11"]
+    with pytest.raises(ValidationError, match="cross_form"):
+        FormPack.model_validate(raw)
+
+
+def test_source_url_non_gov_host_rejected():
+    # source_url drives the only outbound fetch; it must be an official government host.
+    raw = fixture_dict()
+    raw["source_url"] = "https://evil.example.com/form.pdf"
+    with pytest.raises(ValidationError, match="official US government host"):
+        FormPack.model_validate(raw)
 
 
 def test_unknown_field_type_rejected():

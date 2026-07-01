@@ -73,6 +73,43 @@ def test_state_pack_has_cited_credits(code: str):
         assert c.get("type") in ("refundable", "nonrefundable"), f"{code}: {c['name']} bad type"
 
 
+# The AWS-backed document store that tax.newmexico.gov links to for its instruction PDFs —
+# a knowingly-accepted, self-disclosed exception (see the `unverified` note in nm/2023.yaml).
+# Any OTHER non-gov citation host is a defect.
+_ALLOWED_NONGOV_CITATION_HOSTS = {"klvg4oyd4j.execute-api.us-west-2.amazonaws.com"}
+
+
+def _iter_citation_urls(obj):
+    """Yield the url of every citation-shaped dict (has both 'source' and a string 'url')."""
+    if isinstance(obj, dict):
+        if isinstance(obj.get("url"), str) and "source" in obj:
+            yield obj["url"]
+        for v in obj.values():
+            yield from _iter_citation_urls(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _iter_citation_urls(v)
+
+
+@pytest.mark.parametrize("code", STATE_CODES, ids=lambda c: c)
+def test_all_citation_urls_are_gov_hosted(code: str):
+    # Not just credits[].citation: EVERY citation-shaped block (deadlines, all_citations,
+    # residency, mailing, ...) must cite an official .gov/.mil/.us host. StateKnowledge uses
+    # extra='allow', so these untyped blocks are otherwise never host-validated. Service URLs
+    # (payment portals, etc.) are bare 'url:' with no 'source' sibling and are not authority.
+    import yaml
+    from urllib.parse import urlparse
+
+    raw = yaml.safe_load((REPO_ROOT / "knowledge" / "states" / code / "2023.yaml").read_text())
+    for url in _iter_citation_urls(raw):
+        host = (urlparse(url).hostname or "").lower()
+        if host in _ALLOWED_NONGOV_CITATION_HOSTS:
+            continue
+        assert any(host == t or host.endswith("." + t) for t in ("gov", "mil", "us")), (
+            f"{code}: citation URL host {host!r} ({url}) is not an official .gov/.mil/.us source"
+        )
+
+
 def test_known_nonconforming_states_are_flagged():
     flagged = {c for c in STATE_CODES if not load_state_knowledge(c, 2023, base_dir=REPO_ROOT / "knowledge").conforms_to_federal_treaties}
     # Every confirmed add-back state present in the repo must be flagged non-conforming.

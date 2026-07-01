@@ -29,6 +29,7 @@ import argparse
 import asyncio
 import base64
 import json
+import re
 import sys
 import tempfile
 from datetime import datetime
@@ -37,6 +38,16 @@ from pathlib import Path
 from taxfill_core.workspace import Workspace
 
 DEFAULT_ROOT = "taxfill-workspace"
+
+# Mask SSN/ITIN-like ids and long digit runs (account/routing numbers) before printing an
+# error to stderr — a shell agent may capture/log it, and tool exceptions (e.g. a Pydantic
+# ValidationError) can embed the offending input value.
+_SSN_RE = re.compile(r"\b\d{3}-?\d{2}-?\d{4}\b")
+_LONGNUM_RE = re.compile(r"\b\d{6,}\b")
+
+
+def _redact(text: str) -> str:
+    return _LONGNUM_RE.sub("[redacted-number]", _SSN_RE.sub("[redacted-id]", text))
 
 
 def _now() -> str:
@@ -173,7 +184,7 @@ def _cmd_call(args) -> int:
         else:
             call_args = {}
     except json.JSONDecodeError as e:
-        print(json.dumps({"error": "invalid JSON arguments", "detail": str(e)}), file=sys.stderr)
+        print(json.dumps({"error": "invalid JSON arguments", "detail": _redact(str(e))}), file=sys.stderr)
         return 2
     if not isinstance(call_args, dict):
         print(json.dumps({"error": "arguments must be a JSON object"}), file=sys.stderr)
@@ -192,7 +203,7 @@ def _cmd_call(args) -> int:
     try:
         res = asyncio.run(mcp.call_tool(args.name, call_args))
     except Exception as e:
-        print(json.dumps({"error": type(e).__name__, "detail": str(e)}), file=sys.stderr)
+        print(json.dumps({"error": type(e).__name__, "detail": _redact(str(e))}), file=sys.stderr)
         return 1
     content, structured = res if isinstance(res, tuple) else (res, None)
 

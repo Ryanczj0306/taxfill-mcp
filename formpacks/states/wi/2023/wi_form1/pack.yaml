@@ -735,6 +735,8 @@ relations:
 cross_form:
   - "1 == f1040.11"                    # Line 1 "Federal adjusted gross income from Form 1040, line 11."
 identity_fields:
-  - ss3
-  - fname
-  - lname
+  - your_last_name
+  - your_first_name
+  - your_ssn_first3
+  - your_ssn_mid2
+  - your_ssn_last4

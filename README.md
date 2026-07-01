@@ -6,10 +6,10 @@
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 1,411 passing](https://img.shields.io/badge/tests-1%2C411%20passing-brightgreen)
+![Tests: 1,459 passing](https://img.shields.io/badge/tests-1%2C459%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,411 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,459 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -216,7 +216,7 @@ the exit code.
 
 - **Everything runs locally.** Your documents and SSN never leave your computer.
 - **The only internet access** is downloading blank tax forms from official .gov URLs (checksum-verified).
-- **No telemetry, no accounts, no uploads.** Logs are PII-redacted (SSNs and account numbers masked).
+- **No telemetry, no accounts, no uploads.** The tool keeps no logs of its own; the CLI masks SSN/account-number patterns in any error it prints.
 - Any documents you save locally hold sensitive data at rest — keep OS disk encryption on (FileVault / BitLocker).
 - The local workspace (saved profile, documents, drafts) can be wiped any time with a single `taxfill purge <year>`, which overwrites the file bytes before deleting; also delete any other files you saved yourself when you're done.
 
