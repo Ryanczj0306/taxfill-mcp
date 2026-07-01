@@ -155,6 +155,13 @@ def test_unsupported_scheme_is_rejected(cache: Path):
         fetch_blank("ftp://example.gov/f0000.pdf", cache_dir=cache)
 
 
+def test_non_gov_host_is_refused(cache: Path):
+    # The only outbound request is the blank download — a non-.gov/.us host must be refused
+    # before any network call ("outbound only to official .gov" guarantee; blocks SSRF).
+    with pytest.raises(ValueError, match="official US government hosts"):
+        fetch_blank("https://evil.example.com/form.pdf", cache_dir=cache)
+
+
 def test_non_pdf_content_is_rejected(tmp_path: Path, cache: Path):
     page = tmp_path / "f0000.pdf"
     page.write_bytes(b"<html><body>404 not found</body></html>")

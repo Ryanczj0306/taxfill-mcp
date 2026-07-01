@@ -398,13 +398,15 @@ def test_se_tax_typical_profit():
     #   4a: 50,000 x 0.9235 = 46,175.00
     #   10: 46,175.00 x 0.124 = 5,725.70
     #   11: 46,175.00 x 0.029 = 1,339.075 -> 1,339.08 (cents, half up)
-    #   12: 7,064.78 -> 7,065   13: 3,532.39 -> 3,532
+    #   12: 7,064.78 -> 7,065
+    #   13: half of the WHOLE-DOLLAR line 12 (7,065 x 0.50 = 3,532.50) -> 3,533 (half up),
+    #       NOT half of the cents-level line 12 — a filer works the form line-by-line.
     result = se_tax(50000, knowledge_dir=KNOWLEDGE_DIR)
     assert result.net_earnings == Decimal("46175.00")
     assert result.ss_portion == Decimal("5725.70")
     assert result.medicare_portion == Decimal("1339.08")
     assert result.se_tax == 7065
-    assert result.deduction_half == 3532
+    assert result.deduction_half == 3533
     assert result.citation.url == SE_URL
     assert "92.35" in result.work or "0.9235" in result.work
 

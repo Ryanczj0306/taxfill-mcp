@@ -260,9 +260,9 @@ relations:
 cross_form:
   - "7 == f1040.11"                    # Line 7 "Federal adjusted gross income from federal Form 1040 ... line 11."
 identity_fields:
-  - or-40-p1-14
-  - or-40-p1-15
-  - or-40-p1-27
+  - name
+  - identifying_number
+  - mailing_address.street
 signature:
   page: 7
 mailing: null

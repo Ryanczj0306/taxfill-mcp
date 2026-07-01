@@ -219,6 +219,19 @@ def fetch_blank(
             f"from official https:// .gov URLs ({_OFFICIAL_PATTERNS_HINT}); "
             f"file:// is accepted for offline tests"
         )
+    if scheme in ("https", "http"):
+        # Outbound only to official US government hosts (.gov/.mil/.us) — mirrors
+        # knowledge.validate_gov_url. source_url is the ONLY field that triggers a network
+        # request, so a maliciously-authored or typo'd pack (e.g. loaded via TAXFILL_DATA_DIR)
+        # must not fetch — or SSRF to — an arbitrary host. This is the documented
+        # "only outbound traffic is downloading blank forms from official .gov URLs" guarantee.
+        host = (urllib.parse.urlparse(url).hostname or "").lower()
+        if not any(host == tld or host.endswith("." + tld) for tld in ("gov", "mil", "us")):
+            raise ValueError(
+                f"refusing to fetch {url!r}: blank forms are downloaded only from official US "
+                f"government hosts (.gov/.mil/.us), not {host!r} — a pack's source_url must be an "
+                f"official government URL ({_OFFICIAL_PATTERNS_HINT})"
+            )
     expected_digest = _validate_sha256(sha256) if sha256 is not None else None
 
     cache_dir = Path(cache_dir) if cache_dir is not None else default_cache_dir()

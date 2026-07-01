@@ -162,7 +162,22 @@ def _confirmed_true(answer) -> bool:
     return answer is not None and answer.value is True
 
 
-def _candidate_statuses(profile: Profile, classification: str | None = None) -> tuple[list[str], bool]:
+def _qss_window_open(hh, year: int | None) -> bool:
+    """Qualifying surviving spouse is available ONLY for the two tax years AFTER the spouse's
+    death (tax year == death year + 1 or + 2).
+
+    The year of death itself is normally a joint-return year, and more than two years out is
+    single/HOH. An unknown death year or unknown tax year returns False (conservative).
+    """
+    if hh is None or year is None:
+        return False
+    dy = hh.spouse_death_year
+    return dy is not None and dy.value is not None and 1 <= year - dy.value <= 2
+
+
+def _candidate_statuses(
+    profile: Profile, classification: str | None = None, year: int | None = None
+) -> tuple[list[str], bool]:
     """Return (ordered candidate statuses, status_assumed). Primary (headline) is first.
 
     ``classification`` is the computed federal residency result ('resident' /
@@ -181,14 +196,17 @@ def _candidate_statuses(profile: Profile, classification: str | None = None) -> 
         return ["married_filing_jointly", "married_filing_separately"], True
     if _marital(profile) == "widowed":
         # Recent widow(er) who maintained a home for a dependent child may file as a
-        # qualifying surviving spouse — confirmed-True makes QSS the PRIMARY (headline),
-        # symmetric to the HOH branch below. When the fact is None but dependents exist,
-        # QSS stays a NON-primary candidate so the range still brackets it; explicitly
-        # False does not offer QSS as primary.
-        if hh is not None and _confirmed_true(hh.maintained_home_for_dependent_child):
-            return ["qualifying_surviving_spouse", "single"], True
-        if hh is not None and hh.maintained_home_for_dependent_child is None and hh.dependents:
-            return ["single", "qualifying_surviving_spouse"], True
+        # qualifying surviving spouse — but ONLY within the death-year window (the two tax
+        # years after death). Outside it (unknown death year, the year of death itself, or
+        # >2 years out), QSS is unavailable and single is the fallback. Within the window,
+        # confirmed-True makes QSS the PRIMARY (headline), symmetric to the HOH branch below;
+        # a None fact with dependents keeps QSS as a NON-primary candidate so the range still
+        # brackets it; explicitly False never offers QSS.
+        if _qss_window_open(hh, year):
+            if _confirmed_true(hh.maintained_home_for_dependent_child):
+                return ["qualifying_surviving_spouse", "single"], True
+            if hh.maintained_home_for_dependent_child is None and hh.dependents:
+                return ["single", "qualifying_surviving_spouse"], True
         return ["single"], True
     # Unmarried. Head of household is offered only as the PRIMARY (headline) when the
     # qualifying-person test is confirmed True; otherwise single is the conservative
@@ -370,7 +388,7 @@ def estimate_refund(
     residency_result = _classify_residency(profile, year)
     classification = residency_result.classification if residency_result is not None else None
 
-    statuses, status_assumed = _candidate_statuses(profile, classification)
+    statuses, status_assumed = _candidate_statuses(profile, classification, year)
 
     outcomes = {s: _bottom_line(income, s, year, knowledge_dir) for s in statuses}
     primary = statuses[0]
