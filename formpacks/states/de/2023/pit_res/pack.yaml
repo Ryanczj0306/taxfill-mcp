@@ -1,0 +1,785 @@
+# Form PIT-RES, 2023 -- Delaware Individual RESIDENT Income Tax Return
+# (formerly Form 200-01). Resident return.
+#
+# Provenance / freshness. Blank downloaded from the official source_url below.
+# STEP 0 year gate: the MAIN-page sweep PNG (PDF page 1) was READ and prints the
+# big "2023" upper-right beside "DELAWARE / DIVISION OF REVENUE / FORM PIT-RES",
+# title "DELAWARE INDIVIDUAL RESIDENT INCOME TAX RETURN"; the footer prints
+# "DFPITRES2023019999V1 / Revision 20231113 / Page 1". Pages 2 and 3 footers
+# print "DFPITRES2023029999V1 ... Page 2" / "DFPITRES2023039999V1 ... Page 3".
+# printed_year_verified = 2023. pdf_sha256 pinned to the exact cached file
+# (golden test verifies it).
+#
+# Layout / what is FILED. Single 3-page PDF; ALL THREE PAGES ARE THE FILED RETURN
+# (no instruction/worksheet pages in this file). Every dollar line has TWO printed
+# columns: COLUMN A (spouse, Filing Status 4 -- Married & Filing Combined Separate
+# -- only) and COLUMN B (all other filing statuses). Each split dollar line is
+# mapped with a single-letter column suffix: <line>a (Column A) and <line>b
+# (Column B), so the ids stay digit+letter (referenceable in relations). The two
+# printed lines that ALREADY carry a letter (8a, 8b) take their columns as the
+# dotted ids 8a.a/8a.b and 8b.a/8b.b.
+#   page 1 -- header (two 9-box comb Taxpayer IDs you/spouse; first/MI/last/suffix
+#             for you + spouse; home address + apartment merged into one street
+#             box; city/state/zip; fiscal-year begin/end; Amended flag; Form
+#             PIT-UND attached flag; Claimed-as-dependent flag; part-year residency
+#             start/end dates), FILING STATUS lines 1-5 (ONE /Btn radio
+#             "filingStatusRadio", 5 distinct on_states), SECTION A additions
+#             lines 1-4, SECTION B subtractions 5-12 (line 6 military-pension
+#             spouse/self flags; line 8b 529/ABLE spouse/self flags), SECTION C
+#             deductions 13-21 (line 19 standard/itemized election ONE /Btn
+#             "ln19DeductionType"; line 20 age65/blind flags spouse/self), SECTION
+#             D calculations 22-24.
+#   page 2 -- SECTION D continued lines 25-46 (26a exemption count + per-column
+#             counts; 26b 60-or-over flags spouse/self + boxes-checked count; 28
+#             volunteer-firefighter company # spouse/self; line 33 EITC refundable
+#             /non-refundable ONE /Btn "eitcRefundable"). Lines 42-46 and 43 are
+#             COLUMN B only (no Column A widget). SECTION E direct deposit (account
+#             type checking/savings ONE /Btn; routing; account; outside-US Yes/No
+#             ONE /Btn "foreignAccount"); DMV State ID; signature block (you/spouse
+#             sign dates, home/business phone, email); Paid Preparer block.
+#   page 3 -- FOR AMENDED RETURNS ONLY: lines 47-58 (47-54 have Column A + B; 55-58
+#             Column B only); line 59 amended-federal Yes/No + detail; line 60
+#             audit-advised Yes/No; line 61 protective-claim Yes/No + detail.
+#
+# AcroForm. FLAT form: acroform_root = '' . Every widget /T is the raw flat id the
+# form ships with (descriptive: fiscalStart, ln01ColA, filingStatusRadio, ...). No
+# /Parent chain. 190 widget entries reported. EXCLUDED: 'resetForm' + 'printForm'
+# (JavaScript RESET/PRINT pushbuttons, page 1, their "on_states" are just XObject
+# dict keys /BBox /Filter /Matrix /Resources /Subtype, not real states) and
+# 'machPrintID' (a 7pt machine-print scan id in the page-1 margin, not a fillable
+# taxpayer field). All other widgets are mapped.
+#
+# Shared /Btn radios (ONE AcroForm field, many physical kid widgets; mapped once
+# per physical box with distinct on_state, sharing one group per CONVENTIONS):
+#   * "filingStatusRadio" -- FILING STATUS lines 1-5, mapped by PHYSICAL position
+#     verified against the render: 1 Single/Divorced/Widow(er) (/SINGLE), 2 Joint
+#     (/JOINT), 3 Married & Filing Separate Forms (/MFS), 4 Married & Filing
+#     Combined Separate on this form (/MFC), 5 Head of Household (/HOH).
+#   * "ln19DeductionType" -- line 19 election: 19a Standard (/STANDARD) / 19b
+#     Itemized (/ITEMIZED). (Two widget copies share this one field.)
+#   * "eitcRefundable" -- line 33 EITC: Refundable (/REFUNDABLE) / Non-refundable
+#     (/NONREFUNDABLE).
+#   * "directDepositType" -- Section E account type: Checking (/CHECKING) /
+#     Savings (/SAVINGS).
+#   * "foreignAccount" -- Section E "account located outside the US?" Yes (/YES) /
+#     No (/NO).
+#   * "amendedFederal" (line 59) / "auditAdvised" (line 60) / "protectiveClaim"
+#     (line 61) -- each ONE /Btn with Yes (/YES) / No (/NO).
+# Every OTHER checkbox is its own independent single-state /Btn: Amended flag
+# (/Yes), PIT-UND attached (/X), Claimed-as-dependent (/X), line 6 military
+# pension spouse/self (/X), line 8b 529/ABLE spouse/self (/X), line 20 age65/blind
+# spouse/self (/Yes), line 26b 60-or-over spouse/self (/Yes).
+#
+# Money vs text. Every numbered dollar line prints a "$ ... .00" whole-dollar cell
+# and is mapped `money` (lines 1-58, split a/b where both columns exist). The
+# two Taxpayer IDs are 9-char comb SSN boxes -> text, maxlen 9, format
+# ssn_digits_only. Counts (26a number-of-exemptions + per-column, 26b boxes
+# checked), the line-28 volunteer-firefighter company #s, names, address, city/
+# state/zip, fiscal & part-year dates, routing/account numbers, DMV ID, phones,
+# email, signature dates, preparer address/city/state/zip/EIN/phone/email, and the
+# line 59/61 free-text explanations stay `text`.
+#
+# Relations (on-face arithmetic, unconditional, every operand mapped; declared for
+# Column B which every filing status uses). OMITTED: conditional / floor-at-zero /
+# branch lines (10 "subtract 9 from 4", 22 "subtract 21 from 12 [if positive]", 32
+# balance floored at 0, 40/41 balance-due vs overpayment branch, 45/46 net, and
+# all amended-only page-3 conditionals).
+#   4  "TOTAL - Add Lines 1 through 3"            -> 4b == 1b + 2b + 3b
+#   16 "SUBTOTAL - Add Line 13 through Line 15"   -> 16b == 13b + 14b + 15b
+#   21 "TOTAL DEDUCTIONS - Add Line 19 and 20"    -> 21b == 19b + 20b
+#   25 "TOTAL TAX - Add Line 23 and Line 24"      -> 25b == 23b + 24b
+# Line 9 ("Add Lines 5 through 8b") OMITTED: operands 8a/8b use dotted column ids.
+#
+# Cross_form. SECTION A line 1 "FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040" ==
+# federal AGI Form 1040 line 11 (Column B, used by all non-status-4 filers).
+form: "PIT-RES"
+jurisdiction: states/de
+tax_year: 2023
+source_url: https://revenuefiles.delaware.gov/2023/PIT-RES_2023-01_PaperInteractive.pdf
+pdf_sha256: "448045f09af6c9b329978a0efb347b6a1f736736bb80e5b54c8ed1d92b434b1d"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header
+  - line: identifying_number             # "Your Taxpayer ID" (9-box comb)
+    field: taxPayerID
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: spouse.identifying_number      # "Spouse Taxpayer ID" (9-box comb)
+    field: spouseTaxpayerID
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: name.first                     # "Your First Name"
+    field: firstName
+    type: text
+  - line: name.middle_initial            # "M.I."
+    field: middleInitial
+    type: text
+    maxlen: 1
+  - line: name.last                      # "Last Name"
+    field: lastName
+    type: text
+  - line: name.suffix                    # "Suffix"
+    field: suffix
+    type: text
+    maxlen: 4
+  - line: spouse.name.first              # "Spouse First Name"
+    field: spouseFirstName
+    type: text
+  - line: spouse.name.middle_initial     # spouse "M.I."
+    field: spouseMiddleInitial
+    type: text
+    maxlen: 1
+  - line: spouse.name.last               # spouse "Last Name"
+    field: spouseLastName
+    type: text
+  - line: spouse.name.suffix             # spouse "Suffix"
+    field: spouseSuffix
+    type: text
+    maxlen: 4
+  - line: mailing_address.street         # "Present Home Address (Number and Street)" + Apartment #
+    field: homeAddress
+    type: text
+  - line: mailing_address.city           # "City"
+    field: city
+    type: text
+  - line: mailing_address.state          # "State"
+    field: state
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip            # "Zip Code"
+    field: zip
+    type: text
+    maxlen: 5
+  - line: fiscal_year.begin              # "For Fiscal Year beginning"
+    field: fiscalStart
+    type: text
+  - line: fiscal_year.end                # "and ending"
+    field: fiscalEnd
+    type: text
+  - line: amended.yes                    # "Amended Return" flag (top right)
+    field: amendedChk
+    type: checkbox
+    on_state: /Yes
+  - line: pit_und_attached.yes           # "Form PIT-UND Attached"
+    field: pitund
+    type: checkbox
+    on_state: /X
+  - line: claimed_as_dependent.yes       # "Claimed as Dependant on someone else's return"
+    field: PITRES_ClaimDependent
+    type: checkbox
+    on_state: /X
+  - line: part_year.start                # "If you were a part-year resident in 2023, give the dates..." (start, mm-dd-yyyy)
+    field: partYearStart
+    type: text
+  - line: part_year.end                  # part-year residency end date (mm-dd-yyyy)
+    field: partYearEnd
+    type: text
+
+  # ---- Filing Status lines 1-5 (ONE /Btn "filingStatusRadio", physical position)
+  - line: filing_status.single           # 1 Single, Divorced, Widow(er)
+    field: filingStatusRadio
+    type: checkbox
+    on_state: /SINGLE
+    group: filing_status
+  - line: filing_status.joint            # 2 Joint
+    field: filingStatusRadio
+    type: checkbox
+    on_state: /JOINT
+    group: filing_status
+  - line: filing_status.married_filing_separate  # 3 Married & Filing Separate Forms
+    field: filingStatusRadio
+    type: checkbox
+    on_state: /MFS
+    group: filing_status
+  - line: filing_status.married_filing_combined_separate  # 4 Married & Filing Combined Separate on this form
+    field: filingStatusRadio
+    type: checkbox
+    on_state: /MFC
+    group: filing_status
+  - line: filing_status.head_of_household  # 5 Head of Household
+    field: filingStatusRadio
+    type: checkbox
+    on_state: /HOH
+    group: filing_status
+
+  # ============================================ SECTION A -- ADDITIONS (lines 1-4)
+  - line: 1a                            # 1 FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040 (Col A)
+    field: ln01ColA
+    type: money
+  - line: 1b                            # 1 (Col B)
+    field: ln01ColB
+    type: money
+  - line: 2a                            # 2 INTEREST ON STATE & LOCAL OBLIGATIONS OTHER THAN DELAWARE (Col A)
+    field: ln02ColA
+    type: money
+  - line: 2b                            # 2 (Col B)
+    field: ln02ColB
+    type: money
+  - line: 3a                            # 3 FIDUCIARY ADJUSTMENT, OIL DEPLETION (Col A)
+    field: ln03ColA
+    type: money
+  - line: 3b                            # 3 (Col B)
+    field: ln03ColB
+    type: money
+  - line: 4a                            # 4 TOTAL - Add Lines 1 through 3 (Col A)
+    field: ln04ColA
+    type: money
+  - line: 4b                            # 4 (Col B)
+    field: ln04ColB
+    type: money
+
+  # ============================================ SECTION B -- SUBTRACTIONS (5-12)
+  - line: 5a                            # 5 INTEREST RECEIVED ON U.S. OBLIGATIONS (Col A)
+    field: ln05ColA
+    type: money
+  - line: 5b                            # 5 (Col B)
+    field: ln05ColB
+    type: money
+  - line: 6.spouse_military_pension      # 6 "Column A if Spouse had a Military Pension"
+    field: ln06SpouseMP
+    type: checkbox
+    on_state: /X
+  - line: 6.self_military_pension        # 6 "Column B if You had a Military Pension"
+    field: ln06SelfMP
+    type: checkbox
+    on_state: /X
+  - line: 6a                            # 6 PENSION/RETIREMENT EXCLUSIONS (Col A)
+    field: ln06ColA
+    type: money
+  - line: 6b                            # 6 (Col B)
+    field: ln06ColB
+    type: money
+  - line: 7a                            # 7 DE STATE TAX REFUND, FIDUCIARY ADJ, WOTC, DE NOL CARRYFORWARD (Col A)
+    field: ln07ColA
+    type: money
+  - line: 7b                            # 7 (Col B)
+    field: ln07ColB
+    type: money
+  - line: 8a.a                           # 8a TAXABLE SOCIAL SECURITY/RR/HIGHER ED EXCLUSION/LUMP SUM (Col A)
+    field: ln08ColA
+    type: money
+  - line: 8a.b                           # 8a (Col B)
+    field: ln08ColB
+    type: money
+  - line: 8b.spouse_529                  # 8b "Column A if Spouse 529"
+    field: ln08bSpouse529
+    type: checkbox
+    on_state: /X
+  - line: 8b.spouse_able                 # 8b "Column A if Spouse ABLE"
+    field: ln08bSpouseABLE
+    type: checkbox
+    on_state: /X
+  - line: 8b.self_529                    # 8b "Column B if You 529"
+    field: ln08bSelf529
+    type: checkbox
+    on_state: /X
+  - line: 8b.self_able                   # 8b "Column B if You ABLE"
+    field: ln08bSelfABLE
+    type: checkbox
+    on_state: /X
+  - line: 8b.a                           # 8b 529 CONTRIBUTION TO DE-SPONSORED TUITION OR ABLE PROGRAM (Col A)
+    field: ln08bColA
+    type: money
+  - line: 8b.b                           # 8b (Col B)
+    field: ln08bColB
+    type: money
+  - line: 9a                            # 9 Add Lines 5 through 8b (Col A)
+    field: ln09ColA
+    type: money
+  - line: 9b                            # 9 (Col B)
+    field: ln09ColB
+    type: money
+  - line: 10a                           # 10 Subtract Line 9 from Line 4 (Col A)
+    field: ln10ColA
+    type: money
+  - line: 10b                           # 10 (Col B)
+    field: ln10ColB
+    type: money
+  - line: 11a                           # 11 EXCLUSION FOR CERTAIN PERSONS 60 AND OVER OR DISABLED (Col A)
+    field: ln11ColA
+    type: money
+  - line: 11b                           # 11 (Col B)
+    field: ln11ColB
+    type: money
+  - line: 12a                           # 12 DELAWARE ADJUSTED GROSS INCOME. Subtract Line 11 from Line 10 (Col A)
+    field: ln12ColA
+    type: money
+  - line: 12b                           # 12 (Col B)
+    field: ln12ColB
+    type: money
+
+  # ============================================ SECTION C -- DEDUCTIONS (13-21)
+  - line: 13a                           # 13 TOTAL ITEMIZED DEDUCTIONS FROM DELAWARE SCHEDULE A (Col A)
+    field: ln13ColA
+    type: money
+  - line: 13b                           # 13 (Col B)
+    field: ln13ColB
+    type: money
+  - line: 14a                           # 14 FOREIGN TAXES PAID (Col A)
+    field: ln14ColA
+    type: money
+  - line: 14b                           # 14 (Col B)
+    field: ln14ColB
+    type: money
+  - line: 15a                           # 15 CHARITABLE MILEAGE DEDUCTION (Col A)
+    field: ln15ColA
+    type: money
+  - line: 15b                           # 15 (Col B)
+    field: ln15ColB
+    type: money
+  - line: 16a                           # 16 SUBTOTAL - Add Line 13 through Line 15 (Col A)
+    field: ln16ColA
+    type: money
+  - line: 16b                           # 16 (Col B)
+    field: ln16ColB
+    type: money
+  - line: 17a                           # 17 FORM PIT-CRS TAX CREDIT ADJUSTMENT (Col A)
+    field: ln17ColA
+    type: money
+  - line: 17b                           # 17 (Col B)
+    field: ln17ColB
+    type: money
+  - line: 18a                           # 18 NET ITEMIZED DEDUCTIONS - Subtract Line 17 from Line 16 (Col A)
+    field: ln18ColA
+    type: money
+  - line: 18b                           # 18 (Col B)
+    field: ln18ColB
+    type: money
+  - line: 19.standard                    # 19a "If you elect the DELAWARE STANDARD DEDUCTION check here"
+    field: ln19DeductionType
+    type: checkbox
+    on_state: /STANDARD
+    group: deduction_type
+  - line: 19.itemized                    # 19b "If you elect DELAWARE ITEMIZED DEDUCTIONS check here"
+    field: ln19DeductionType
+    type: checkbox
+    on_state: /ITEMIZED
+    group: deduction_type
+  - line: 19a                           # 19 deduction amount (Col A)
+    field: ln19ColA
+    type: money
+  - line: 19b                           # 19 (Col B)
+    field: ln19ColB
+    type: money
+  - line: 20.spouse_over_65              # 20 "Column A - if Spouse was: 65 or over"
+    field: ln20ColAover65
+    type: checkbox
+    on_state: /Yes
+  - line: 20.spouse_blind                # 20 "Column A - if Spouse was: blind"
+    field: ln20ColAblind
+    type: checkbox
+    on_state: /Yes
+  - line: 20.self_over_65                # 20 "Column B - if You were: 65 or over"
+    field: ln20ColBover65
+    type: checkbox
+    on_state: /Yes
+  - line: 20.self_blind                  # 20 "Column B - if You were: blind"
+    field: ln20ColBblind
+    type: checkbox
+    on_state: /Yes
+  - line: 20a                           # 20 ADDITIONAL STANDARD DEDUCTIONS (Col A)
+    field: ln20ColA
+    type: money
+  - line: 20b                           # 20 (Col B)
+    field: ln20ColB
+    type: money
+  - line: 21a                           # 21 TOTAL DEDUCTIONS - Add Line 19 and Line 20 (Col A)
+    field: ln21ColA
+    type: money
+  - line: 21b                           # 21 (Col B)
+    field: ln21ColB
+    type: money
+
+  # ============================================ SECTION D -- CALCULATIONS (22-24 p1)
+  - line: 22a                           # 22 TAXABLE INCOME - Subtract Line 21 from Line 12 (Col A)
+    field: ln22ColA
+    type: money
+  - line: 22b                           # 22 (Col B)
+    field: ln22ColB
+    type: money
+  - line: 23a                           # 23 TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (Col A)
+    field: ln23ColA
+    type: money
+  - line: 23b                           # 23 (Col B)
+    field: ln23ColB
+    type: money
+  - line: 24a                           # 24 TAX ON LUMP SUM DISTRIBUTION (Form PIT-STC) (Col A)
+    field: ln24ColA
+    type: money
+  - line: 24b                           # 24 (Col B)
+    field: ln24ColB
+    type: money
+
+  # ============================================ page 2 -- SECTION D continued (25-46)
+  - line: 25a                           # 25 TOTAL TAX - Add Line 23 and Line 24 (Col A)
+    field: ln25ColA
+    type: money
+  - line: 25b                           # 25 (Col B)
+    field: ln25ColB
+    type: money
+  - line: 26a.exemptions                 # 26a "Enter number of exemptions" (x $110)
+    field: ln26aNoOfExemptions
+    type: text
+    maxlen: 2
+  - line: 26a.exemptions_a               # 26a number of exemptions for Column A
+    field: ln26aNoOfExemptionsColA
+    type: text
+    maxlen: 2
+  - line: 26a.exemptions_b               # 26a number of exemptions for Column B
+    field: ln26aNoOfExemptionsColB
+    type: text
+    maxlen: 2
+  - line: 26a.a                          # 26a PERSONAL CREDITS (Col A)
+    field: ln26aColA
+    type: money
+  - line: 26a.b                          # 26a (Col B)
+    field: ln26aColB
+    type: money
+  - line: 26b.spouse_over_60             # 26b "Spouse 60 or over (Column A)"
+    field: ln26bChkBoxSpouseOver65
+    type: checkbox
+    on_state: /Yes
+  - line: 26b.self_over_60               # 26b "Self 60 or over (Column B)"
+    field: ln26bChkBoxSelfOver65
+    type: checkbox
+    on_state: /Yes
+  - line: 26b.boxes_checked              # 26b "Enter number of boxes checked on Line 26b" (x $110)
+    field: ln26bnumberBoxesChecked
+    type: text
+    maxlen: 2
+  - line: 26b.a                          # 26b credit amount (Col A)
+    field: ln26bColA
+    type: money
+  - line: 26b.b                          # 26b (Col B)
+    field: ln26bColB
+    type: money
+  - line: 27a                           # 27 TAX IMPOSED BY OTHER STATES (Col A)
+    field: ln27ColA
+    type: money
+  - line: 27b                           # 27 (Col B)
+    field: ln27ColB
+    type: money
+  - line: 28.spouse_company              # 28 VOLUNTEER FIREFIGHTER CO. # Spouse (Column A)
+    field: ln28SpouseFirefighter
+    type: text
+    maxlen: 4
+  - line: 28.self_company                # 28 VOLUNTEER FIREFIGHTER CO. # Self (Column B)
+    field: ln28SelfFirefighter
+    type: text
+    maxlen: 4
+  - line: 28a                           # 28 volunteer firefighter credit amount (Col A)
+    field: ln28ColA
+    type: money
+  - line: 28b                           # 28 (Col B)
+    field: ln28ColB
+    type: money
+  - line: 29a                           # 29 OTHER NON-REFUNDABLE CREDITS (Col A)
+    field: ln29ColA
+    type: money
+  - line: 29b                           # 29 (Col B)
+    field: ln29ColB
+    type: money
+  - line: 30a                           # 30 CHILD CARE CREDIT (Form 2441, 50% of Federal credit) (Col A)
+    field: ln30ColA
+    type: money
+  - line: 30b                           # 30 (Col B)
+    field: ln30ColB
+    type: money
+  - line: 31a                           # 31 TOTAL NON-REFUNDABLE CREDITS (Col A)
+    field: ln31ColA
+    type: money
+  - line: 31b                           # 31 (Col B)
+    field: ln31ColB
+    type: money
+  - line: 32a                           # 32 BALANCE - Subtract Line 31 from Line 25 (Col A)
+    field: ln32ColA
+    type: money
+  - line: 32b                           # 32 (Col B)
+    field: ln32ColB
+    type: money
+  - line: 33.refundable                  # 33 EARNED INCOME TAX CREDIT - REFUNDABLE
+    field: eitcRefundable
+    type: checkbox
+    on_state: /REFUNDABLE
+    group: eitc_type
+  - line: 33.non_refundable              # 33 EARNED INCOME TAX CREDIT - NON-REFUNDABLE
+    field: eitcRefundable
+    type: checkbox
+    on_state: /NONREFUNDABLE
+    group: eitc_type
+  - line: 33a                           # 33 EARNED INCOME TAX CREDIT (Col A)
+    field: ln33ColA
+    type: money
+  - line: 33b                           # 33 (Col B)
+    field: ln33ColB
+    type: money
+  - line: 34a                           # 34 DELAWARE TAX WITHHELD (Attach W2s/1099s) (Col A)
+    field: ln34ColA
+    type: money
+  - line: 34b                           # 34 (Col B)
+    field: ln34ColB
+    type: money
+  - line: 35a                           # 35 ESTIMATED TAX PAID & PAYMENTS WITH EXTENSIONS (Col A)
+    field: ln35ColA
+    type: money
+  - line: 35b                           # 35 (Col B)
+    field: ln35ColB
+    type: money
+  - line: 36a                           # 36 S CORP PAYMENTS (Col A)
+    field: ln36ColA
+    type: money
+  - line: 36b                           # 36 (Col B)
+    field: ln36ColB
+    type: money
+  - line: 37a                           # 37 REFUNDABLE BUSINESS CREDITS (Col A)
+    field: ln37ColA
+    type: money
+  - line: 37b                           # 37 (Col B)
+    field: ln37ColB
+    type: money
+  - line: 38a                           # 38 CAPITAL GAINS TAX PAYMENTS (Form REW-EST) (Col A)
+    field: ln38ColA
+    type: money
+  - line: 38b                           # 38 (Col B)
+    field: ln38ColB
+    type: money
+  - line: 39a                           # 39 TOTAL REFUNDABLE CREDITS (Col A)
+    field: ln39ColA
+    type: money
+  - line: 39b                           # 39 (Col B)
+    field: ln39ColB
+    type: money
+  - line: 40a                           # 40 BALANCE DUE (Col A)
+    field: ln40ColA
+    type: money
+  - line: 40b                           # 40 (Col B)
+    field: ln40ColB
+    type: money
+  - line: 41a                           # 41 OVERPAYMENT (Col A)
+    field: ln41ColA
+    type: money
+  - line: 41b                           # 41 (Col B)
+    field: ln41ColB
+    type: money
+  - line: 42b                           # 42 CONTRIBUTIONS TO SPECIAL FUNDS (Col B only)
+    field: ln42ColB
+    type: money
+  - line: 43b                           # 43 AMOUNT OF LINE 41 TO BE APPLIED TO 2024 ESTIMATED TAX (Col B only)
+    field: ln43ColB
+    type: money
+  - line: 44b                           # 44 PENALTIES AND INTEREST DUE (Col B only)
+    field: ln44ColB
+    type: money
+  - line: 45b                           # 45 NET BALANCE DUE (Col B only)
+    field: ln45ColB
+    type: money
+  - line: 46b                           # 46 NET REFUND (Col B only)
+    field: ln46ColB
+    type: money
+
+  # ---- SECTION E -- DIRECT DEPOSIT INFORMATION
+  - line: direct_deposit.type.checking   # "ACCOUNT TYPE: CHECKING"
+    field: directDepositType
+    type: checkbox
+    on_state: /CHECKING
+    group: account_type
+  - line: direct_deposit.type.savings    # "ACCOUNT TYPE: SAVINGS"
+    field: directDepositType
+    type: checkbox
+    on_state: /SAVINGS
+    group: account_type
+  - line: direct_deposit.routing         # "ROUTING NUMBER"
+    field: directDepositRoutingNum
+    type: text
+    maxlen: 9
+  - line: direct_deposit.account         # "ACCOUNT NUMBER"
+    field: directDepositAcctNum
+    type: text
+    maxlen: 17
+  - line: direct_deposit.outside_us.yes  # "Is this refund going to ... an account located outside the United States? YES"
+    field: foreignAccount
+    type: checkbox
+    on_state: /YES
+    group: outside_us
+  - line: direct_deposit.outside_us.no   # "... NO"
+    field: foreignAccount
+    type: checkbox
+    on_state: /NO
+    group: outside_us
+
+  - line: dmv_state_id                   # "DMV STATE ID #"
+    field: dmvStateID
+    type: text
+
+  # ---- signature block
+  - line: signature.taxpayer_date        # "YOUR SIGNATURE ... DATE"
+    field: sigDate
+    type: text
+  - line: signature.spouse_date          # "SPOUSE SIGNATURE ... DATE"
+    field: spouseSigDate
+    type: text
+  - line: home_phone                     # "HOME PHONE NUMBER"
+    field: homePhone
+    type: text
+    maxlen: 10
+  - line: business_phone                 # "BUSINESS PHONE NUMBER"
+    field: busPhone
+    type: text
+    maxlen: 10
+  - line: email                          # "EMAIL ADDRESS"
+    field: emailAddress
+    type: text
+
+  # ---- Paid Preparer block
+  - line: preparer.date                  # PAID PREPARER "DATE"
+    field: ppSigDate
+    type: text
+  - line: preparer.address               # preparer "ADDRESS"
+    field: ppSigAddress
+    type: text
+  - line: preparer.city                  # preparer "CITY"
+    field: ppSigCity
+    type: text
+  - line: preparer.state                 # preparer "STATE"
+    field: ppSigState
+    type: text
+    maxlen: 2
+  - line: preparer.zip                   # preparer "ZIP CODE"
+    field: ppSigZip
+    type: text
+  - line: preparer.ein_ssn_ptin          # "EIN, SSN or PTIN"
+    field: ppSigEINSSNPTIN
+    type: text
+    maxlen: 9
+  - line: preparer.phone                 # preparer "PHONE NUMBER"
+    field: ppSigPhone
+    type: text
+    maxlen: 10
+  - line: preparer.email                 # preparer "EMAIL ADDRESS"
+    field: ppSigEmail
+    type: text
+
+  # ============================================ page 3 -- FOR AMENDED RETURNS ONLY
+  - line: 47a                           # 47 TOTAL REFUNDABLE CREDITS - Add Line 39 and any EITC on Line 33 (Col A)
+    field: ln47ColA
+    type: money
+  - line: 47b                           # 47 (Col B)
+    field: ln47ColB
+    type: money
+  - line: 48a                           # 48 AMOUNT PAID ON ORIGINAL RETURN (Col A)
+    field: ln48ColA
+    type: money
+  - line: 48b                           # 48 (Col B)
+    field: ln48ColB
+    type: money
+  - line: 49a                           # 49 SUBTOTAL. Add Lines 47 and 48 (Col A)
+    field: ln49ColA
+    type: money
+  - line: 49b                           # 49 (Col B)
+    field: ln49ColB
+    type: money
+  - line: 50a                           # 50 REFUND RECEIVED (Col A)
+    field: ln50ColA
+    type: money
+  - line: 50b                           # 50 (Col B)
+    field: ln50ColB
+    type: money
+  - line: 51a                           # 51 Estimated tax carryover and/or Special Funds contributions (Col A)
+    field: ln51ColA
+    type: money
+  - line: 51b                           # 51 (Col B)
+    field: ln51ColB
+    type: money
+  - line: 52a                           # 52 Subtract Line 50 and Line 51 from Line 49 (Col A)
+    field: ln52ColA
+    type: money
+  - line: 52b                           # 52 (Col B)
+    field: ln52ColB
+    type: money
+  - line: 53a                           # 53 BALANCE DUE (Col A)
+    field: ln53ColA
+    type: money
+  - line: 53b                           # 53 (Col B)
+    field: ln53ColB
+    type: money
+  - line: 54a                           # 54 OVERPAYMENT (Col A)
+    field: ln54ColA
+    type: money
+  - line: 54b                           # 54 (Col B)
+    field: ln54ColB
+    type: money
+  - line: 55b                           # 55 AMOUNT OF LINE 54 TO BE APPLIED TO ESTIMATED TAX (Col B only)
+    field: ln55ColB
+    type: money
+  - line: 56b                           # 56 PENALTIES AND INTEREST DUE (Col B only)
+    field: ln56ColB
+    type: money
+  - line: 57b                           # 57 NET BALANCE DUE (Col B only)
+    field: ln57ColB
+    type: money
+  - line: 58b                           # 58 NET REFUND (Col B only)
+    field: ln58ColB
+    type: money
+  - line: 59.yes                         # 59 "Is an amended Federal return being filed? Yes"
+    field: amendedFederal
+    type: checkbox
+    on_state: /YES
+    group: amended_federal
+  - line: 59.no                          # 59 "... No"
+    field: amendedFederal
+    type: checkbox
+    on_state: /NO
+    group: amended_federal
+  - line: 59.detail                      # 59 "If no, please explain..." free-text
+    field: ln59Detail
+    type: text
+  - line: 60.yes                         # 60 "Has the DE Division of Revenue advised you your original return is being audited? Yes"
+    field: auditAdvised
+    type: checkbox
+    on_state: /YES
+    group: audit_advised
+  - line: 60.no                          # 60 "... No"
+    field: auditAdvised
+    type: checkbox
+    on_state: /NO
+    group: audit_advised
+  - line: 61.yes                         # 61 "Is this amended return being filed as a protective claim? Yes"
+    field: protectiveClaim
+    type: checkbox
+    on_state: /YES
+    group: protective_claim
+  - line: 61.no                          # 61 "... No"
+    field: protectiveClaim
+    type: checkbox
+    on_state: /NO
+    group: protective_claim
+  - line: 61.detail                      # 61 detailed explanation free-text
+    field: ln61Detail
+    type: text
+
+relations:
+  # Column-split lines use a single-letter suffix (Column A = <line>a, Column B =
+  # <line>b) so they parse as digit+letter line ids. Relations declared for
+  # Column B (used by every filing status). Line 9 ("Add Lines 5 through 8b") is
+  # OMITTED: two of its operands are printed lines 8a/8b whose column widgets are
+  # ids "8a.b"/"8b.b" (dotted, since the printed label already carries a letter)
+  # and the relation grammar accepts only undotted digit+letter ids.
+  - "4b == 1b + 2b + 3b"                 # 4 "TOTAL - Add Lines 1 through 3"
+  - "16b == 13b + 14b + 15b"             # 16 "SUBTOTAL - Add Line 13 through Line 15"
+  - "21b == 19b + 20b"                   # 21 "TOTAL DEDUCTIONS - Add Line 19 and Line 20"
+  - "25b == 23b + 24b"                   # 25 "TOTAL TAX - Add Line 23 and Line 24"
+cross_form:
+  # SECTION A line 1 "FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040" == federal AGI 1040 line 11.
+  - "1b == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null

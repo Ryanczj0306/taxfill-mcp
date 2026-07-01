@@ -1,0 +1,583 @@
+# Form D-40, 2023 -- District of Columbia Individual Income Tax Return (resident
+# return; the single D-40 serves full-year and part-year residents via the line-2
+# part-year residency block).
+#
+# Provenance / freshness. Blank downloaded from the official OTR source_url below.
+# STEP 0 year gate: the MAIN-page sweep PNG (PDF page 1) was READ and prints the
+# black "2023" box next to the title "D-40  Individual Income Tax Return",
+# "Government of the District of Columbia", scan barcode "2304001100002", and the
+# footer "Revised 01/2024". Page 2 header prints "D-40  PAGE 2" (barcode
+# 2304001200002) and page 3 "D-40  PAGE 3" (barcode 2304001300002).
+# printed_year_verified = 2023. pdf_sha256 pinned to the exact cached file
+# (golden test verifies it).
+#
+# Layout / what is FILED. This is a single 3-page PDF and ALL THREE PAGES ARE THE
+# FILED RETURN (no instruction/worksheet pages in this file):
+#   page 1 -- header (Personal information: daytime phone, AMENDED flag, two TINs
+#             + two dates of birth, your/spouse first name + MI + last name, two
+#             "Fill in if Deceased" flags, two home-address lines, city/state/zip/
+#             zip+4, email), FILING STATUS line 1 (ONE /Btn radio "FS" with 9
+#             on_states /1../9), line 2 part-year resident flag + from/to month
+#             boxes, line 3 health-care-coverage Yes/No (ONE /Btn radio "HSR
+#             Coverage"), Income Information lines a-d (each with a "Fill in if
+#             loss" flag), line 4 federal AGI (+ "Fill in if loss" flag).
+#   page 2 -- name/TIN header echo (SAME AcroForm fields as page 1 -- see below),
+#             Additions lines 5-7 (7 has a loss flag), Subtractions lines 8-16
+#             (16 has a loss flag), line 17 deduction type Standard/Itemized (ONE
+#             /Btn radio "Deduction_Type"), line 18 deduction amount, line 19 DC
+#             taxable income (loss flag), line 20 tax (+ MFS-on-same-return "Fill
+#             in" flag), line 21 child/dependent care (21 calc box CHILDCARCAL x
+#             .32 + result), lines 22-26, DC EITC line 27 (27a qualified-children
+#             count, 27b earned income, 27c FED_EIC calc box x .70, 27d result,
+#             27e result-without-children), line 28 property tax credit.
+#   page 3 -- name/TIN header echo (SAME AcroForm fields), lines 29-43 (30 total
+#             refundable credits, 31 DC withheld, 32 est pmts, 33 FR-127, 34/35
+#             amended pmts/refunds, 36 total payments, 37 tax due, 38 overpaid, 39
+#             applied to 2024, 40 underpayment interest + Form D-2210 oval, 41
+#             contribution, 42 total amount due, 43 net refund), line 43
+#             outside-US Yes/No (ONE /Btn radio "IAT_FLAG"), line 44 injured-spouse
+#             flag, Refund Options (ONE /Btn radio "choice": Direct deposit/
+#             Reliacard/Paper check), direct-deposit checking/savings (ONE /Btn
+#             radio "Direct Deposit") + routing/account numbers, 1099-G electronic
+#             flag, Third party designee (flag + name + phone), signature block
+#             (taxpayer date, spouse date, preparer date, preparer PTIN, preparer
+#             phone).
+#
+# AcroForm. FLAT form: acroform_root = '' . Every widget's /T is the raw flat id
+# the form ships with. 119 widget entries reported. EXCLUDED (not filed data):
+# the "Print_Form" and "Reset_Form" JavaScript pushbuttons on page 1 (no real
+# value / appearance states -- their on_states are PDF stream dict keys, not
+# checkbox states). All 117 remaining widgets are accounted for below.
+#
+# SHARED /T ACROSS PAGES (one AcroForm field, many physical widgets -- map ONCE).
+# Two header fields are repeated at the top of every page as the SAME AcroForm
+# field (identical /T, so filling one fills all three copies):
+#   * "LAST_NAME"    -- pages 1/2/3 -> mapped once as identity name.last.
+#   * "TAX ID_NUM_1" -- pages 1/2/3 -> mapped once as identity identifying_number.
+# The page-2/3 header echoes are the SAME field and are NOT re-mapped (mapping
+# them twice on the same field would make fill_form raise).
+#
+# SHARED /Btn radios (one AcroForm field, distinct on_state per physical box,
+# one group per CONVENTIONS -- mapped by PHYSICAL position verified against the
+# render):
+#   * "FS" -- FILING STATUS line 1, on_states /1../9 read left-to-right, top-to-
+#     bottom: /1 Single, /2 MFJ, /3 MFS, /4 Dependent claimed by someone else,
+#     /5 MFS on same return, /6 RDP filing jointly, /7 RDP filing separately on
+#     same return, /8 Head of household, /9 Qualifying widow(er) with dependent
+#     child.
+#   * "HSR Coverage" -- line 3 health-care-coverage Yes(/Choice1) / No(/Choice2).
+#   * "Deduction_Type" -- line 17 Standard(/S) / Itemized(/I).
+#   * "IAT_FLAG" -- line 43 refund-outside-US Yes(/YES) / No(/NO).
+#   * "choice" -- Refund Options: Direct deposit(/1) / Reliacard(/2) / Paper
+#     check(/3).
+#   * "Direct Deposit" -- direct-deposit account Checking(/C) / Savings(/S).
+# Every OTHER checkbox is its own independent single-state /Btn: AMENDED (/1),
+# DECEASED_TP1/DECEASED_TP2 (/1), the four income "Fill in if loss" flags
+# BUS_LOSS/LOSS_GAIN_LOSS/BUS_HOLDINGS_LOSS/HFED_ADY_GROSS_LOSS (/Yes), line-7
+# ADD_FEDAGI_MINUS (/Yes), line-16 ASJUSTED_GROSS_INCOME_LOSS (/Yes), line-19
+# TAX_INCOME_LOSS (/Yes), line-20 MFS_Indicator (/1), part-year PART_YR_TOTAL
+# (/Yes), line-40 2210-D oval (/1), line-44 INJ SP (/1), 1099G (/Yes),
+# Third_Party (/1).
+#
+# Money vs text. Every numbered dollar line (printed ".00" suffix, "Round cents
+# to nearest dollar") is mapped `money`: 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+# 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27b, 27d, 27e, 28, 29, 30, 31, 32,
+# 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, and the four unnumbered Income
+# Information amounts a-d. Kept `text`: TINs (single 9-char boxes), dates of
+# birth, part-year month boxes, counts (27a qualified children), the 21/27c calc-
+# input boxes (CHILDCARCAL, FED_EIC), routing/account numbers, phone, email,
+# names, designee name, signature/preparer date free-text boxes.
+#
+# Relations (on-face arithmetic, every operand mapped, unconditional only):
+#   7  "Add Lines 4, 5 and 6."                 -> 7 == 4 + 5 + 6
+#   15 "Total subtractions ... Lines 8-14."    -> 15 == 8+9+10+11+12+13+14
+#   16 "DC adjusted gross income, Line 7 minus Line 15." -> 16 == 7 - 15
+#   23 "Total non-refundable credits. Add Line 21 and Line 22." -> 23 == 21 + 22
+#   26 "Total tax ... Add Line 24 and Line 25." -> 26 == 24 + 25
+# OMITTED (conditional / floor-at-zero / branch / tax-table / worksheet):
+#   19 (16 minus 18, loss branch), 20 (tax table), 21 (calc x .32), 24 (20 minus
+#   23, floor at zero), 27d/27e (calc x .70 / special), 30 (add 27d/27e through
+#   29, branch), 36 (add 30 through 34, excludes 35), 37 (36 minus 26, due),
+#   38 (26 minus 36, overpaid), 42 (add 37,40,41), 43 (38 minus 39,40,41).
+#
+# Cross_form. Line 4 "Federal adjusted gross income" == federal AGI Form 1040
+# line 11.
+form: "D-40"
+jurisdiction: states/dc
+tax_year: 2023
+source_url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Form_0002_01222024.pdf
+pdf_sha256: "a01aab3c44b9f448c5ad3486ebc0b83076f41f68e2218fdc0825b4a9825e90bd"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header / personal info
+  - line: daytime_phone                  # "Your telephone number"
+    field: DAYTIME_PHONE
+    type: text
+    maxlen: 10
+  - line: amended.yes                    # "Fill in if: Filing an amended return."
+    field: AMENDED
+    type: checkbox
+    on_state: /1
+  - line: identifying_number             # "Your taxpayer identification number (TIN)" (single box; echoed pages 2/3)
+    field: TAX ID_NUM_1
+    type: text
+    maxlen: 9
+  - line: dob                            # "and Date of Birth (MMDDYYYY)" -- your DOB
+    field: Primary_DOB
+    type: text
+    maxlen: 8
+  - line: spouse.identifying_number      # "Spouse's/registered domestic partner's TIN"
+    field: TAX ID NUMBER_2
+    type: text
+    maxlen: 9
+  - line: spouse.dob                     # spouse "Date of Birth (MMDDYYYY)"
+    field: Spouse_DOB
+    type: text
+    maxlen: 8
+  - line: name.first                     # "Your first name"
+    field: fIRST_NAME
+    type: text
+    maxlen: 20
+  - line: name.middle_initial            # "M.I."
+    field: MI
+    type: text
+    maxlen: 1
+  - line: name.last                      # "Last name" (single box; echoed pages 2/3)
+    field: LAST_NAME
+    type: text
+    maxlen: 30
+  - line: deceased.taxpayer              # "Fill in if Deceased" (your)
+    field: DECEASED_TP1
+    type: checkbox
+    on_state: /1
+  - line: spouse.name.first              # "Spouse's/registered domestic partner's first name"
+    field: SPOUSE_FIRST_NAME
+    type: text
+    maxlen: 20
+  - line: spouse.name.middle_initial     # spouse "M.I."
+    field: SPOUSE_MI
+    type: text
+    maxlen: 1
+  - line: spouse.name.last               # spouse "Last name"
+    field: SPOUSE_LAST_NAME
+    type: text
+    maxlen: 30
+  - line: deceased.spouse                # "Fill in if Deceased" (spouse)
+    field: DECEASED_TP2
+    type: checkbox
+    on_state: /1
+  - line: mailing_address.street         # "Home address (number, street and suite/apartment number if applicable)"
+    field: ADDRESS_1
+    type: text
+    maxlen: 30
+  - line: mailing_address.street2        # second home-address line
+    field: ADDRESS_2
+    type: text
+    maxlen: 30
+  - line: mailing_address.city           # "City"
+    field: CITY_1
+    type: text
+    maxlen: 20
+  - line: mailing_address.state          # "State"
+    field: STATE_1
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip            # "Zip Code +4" (5-digit box)
+    field: ZIP_1
+    type: text
+    maxlen: 5
+  - line: mailing_address.zip4           # "Zip Code +4" (plus-4 box)
+    field: ZIP plus 4
+    type: text
+    maxlen: 4
+  - line: email                          # "Email Address"
+    field: EMAIL ADDRESS
+    type: text
+    maxlen: 35
+
+  # ---- Line 1: FILING STATUS (ONE /Btn "FS", physical position mapped /1../9)
+  - line: filing_status.single                          # /1 Single
+    field: FS
+    type: checkbox
+    on_state: /1
+    group: filing_status
+  - line: filing_status.married_filing_jointly          # /2 Married filing jointly
+    field: FS
+    type: checkbox
+    on_state: /2
+    group: filing_status
+  - line: filing_status.married_filing_separately       # /3 Married filing separately
+    field: FS
+    type: checkbox
+    on_state: /3
+    group: filing_status
+  - line: filing_status.dependent_claimed_by_other      # /4 Dependent claimed by someone else
+    field: FS
+    type: checkbox
+    on_state: /4
+    group: filing_status
+  - line: filing_status.married_filing_separately_same_return  # /5 MFS on same return
+    field: FS
+    type: checkbox
+    on_state: /5
+    group: filing_status
+  - line: filing_status.registered_domestic_partners_jointly   # /6 RDP filing jointly
+    field: FS
+    type: checkbox
+    on_state: /6
+    group: filing_status
+  - line: filing_status.registered_domestic_partners_separately_same_return  # /7 RDP filing separately on same return
+    field: FS
+    type: checkbox
+    on_state: /7
+    group: filing_status
+  - line: filing_status.head_of_household               # /8 Head of household
+    field: FS
+    type: checkbox
+    on_state: /8
+    group: filing_status
+  - line: filing_status.qualifying_widow                # /9 Qualifying widow(er) with dependent child
+    field: FS
+    type: checkbox
+    on_state: /9
+    group: filing_status
+
+  # ---- Line 2: part-year resident
+  - line: 2.yes                          # "Fill in if you are: Part-year resident in DC"
+    field: PART_YR_TOTAL
+    type: checkbox
+    on_state: /Yes
+  - line: 2.from                         # "from ___ (MMDDYYYY)"
+    field: PY_Month_1
+    type: text
+    maxlen: 8
+  - line: 2.to                           # "to ___ (MMDDYYYY)"
+    field: PY_Month_2
+    type: text
+    maxlen: 8
+
+  # ---- Line 3: health care coverage (ONE /Btn "HSR Coverage")
+  - line: 3.yes                          # "... qualifying health care coverage ...? Yes"
+    field: HSR Coverage
+    type: checkbox
+    on_state: /Choice1
+    group: health_care_coverage
+  - line: 3.no                           # "... No"
+    field: HSR Coverage
+    type: checkbox
+    on_state: /Choice2
+    group: health_care_coverage
+
+  # ---- Income Information a-d (unnumbered; each with a "Fill in if loss" flag)
+  - line: a                              # "a Wages, salaries, unemployment compensation and/or tips"
+    field: WAGES_SALARY_TIPS
+    type: money
+  - line: b.loss                         # "b Business income or loss" -- Fill in if loss
+    field: BUS_LOSS
+    type: checkbox
+    on_state: /Yes
+  - line: b                              # "b Business income or loss"
+    field: BUS_INCOME
+    type: money
+  - line: c.loss                         # "c Capital gain or loss" -- Fill in if loss
+    field: LOSS_GAIN_LOSS
+    type: checkbox
+    on_state: /Yes
+  - line: c                              # "c Capital gain or loss"
+    field: LOSS_GAIN
+    type: money
+  - line: d.loss                         # "d Rental real estate, royalties, partnerships, etc." -- Fill in if loss
+    field: BUS_HOLDINGS_LOSS
+    type: checkbox
+    on_state: /Yes
+  - line: d                              # "d Rental real estate, royalties, partnerships, etc."
+    field: BUS_HOLDINGS
+    type: money
+
+  # ---- Line 4: Federal adjusted gross income
+  - line: 4.loss                         # "Fill in if loss" (line 4)
+    field: HFED_ADY_GROSS_LOSS
+    type: checkbox
+    on_state: /Yes
+  - line: "4"                            # 4 "Federal adjusted gross income."
+    field: HFED_ADJ_GORSS
+    type: money
+
+  # ============================================ page 2 -- lines 5-28
+  # (LAST_NAME + TAX ID_NUM_1 header echoes are the SAME AcroForm fields already
+  #  mapped on page 1 as name.last / identifying_number; NOT re-mapped here.)
+  - line: "5"                            # 5 "Franchise tax deducted on federal forms"
+    field: FRANTAXDED
+    type: money
+  - line: "6"                            # 6 "Other additions from DC Schedule I, Calculation A, Line 9."
+    field: Other ADD from Sch I, Cal A
+    type: money
+  - line: 7.loss                         # "Fill in if loss" (line 7)
+    field: ADD_FEDAGI_MINUS
+    type: checkbox
+    on_state: /Yes
+  - line: "7"                            # 7 "Add Lines 4, 5 and 6."
+    field: ADD-FEDAGI
+    type: money
+  - line: "8"                            # 8 "Part year residents, enter income received during period of nonresidence"
+    field: INCNON_RESI
+    type: money
+  - line: "9"                            # 9 "Taxable refunds, credits or offsets of state and local income tax."
+    field: TAXABLE_RCO
+    type: money
+  - line: "10"                           # 10 "Taxable amount of social security and tier 1 railroad retirement"
+    field: TAXABLE_SOC
+    type: money
+  - line: "11"                           # 11 "Income reported and taxed this year on a DC franchise or fiduciary return."
+    field: TAX_CO_FID
+    type: money
+  - line: "12"                           # 12 "DC and federal government survivor benefits"
+    field: SURV_BNEFT
+    type: money
+  - line: "13"                           # 13 "Unemployment Insurance Benefits"
+    field: UI_BNEFT
+    type: money
+  - line: "14"                           # 14 "Other subtractions from DC Schedule I, Calculation B, Line 16."
+    field: OTH_FROM_B
+    type: money
+  - line: "15"                           # 15 "Total subtractions from DC income, Lines 8-14."
+    field: SUB_L_8_14
+    type: money
+  - line: 16.loss                        # "Fill in if loss" (line 16)
+    field: ASJUSTED_GROSS_INCOME_LOSS
+    type: checkbox
+    on_state: /Yes
+  - line: "16"                           # 16 "DC adjusted gross income, Line 7 minus Line 15."
+    field: ADJUSTED_GROSS_INCOME
+    type: money
+  - line: 17.standard                    # 17 "Deduction type ... Standard"
+    field: Deduction_Type
+    type: checkbox
+    on_state: /S
+    group: deduction_type
+  - line: 17.itemized                    # 17 "... Itemized"
+    field: Deduction_Type
+    type: checkbox
+    on_state: /I
+    group: deduction_type
+  - line: "18"                           # 18 "DC deduction amount."
+    field: DED_AMT
+    type: money
+  - line: 19.loss                        # "Fill in if loss" (line 19)
+    field: TAX_INCOME_LOSS
+    type: checkbox
+    on_state: /Yes
+  - line: "19"                           # 19 "DC taxable income. Subtract Line 18 from Line 16."
+    field: DC TAXABLE INCOME
+    type: money
+  - line: "20"                           # 20 "Tax."
+    field: D40_Line 20
+    type: money
+  - line: 20.mfs_same_return             # 20 "Fill in if filing separately on same return."
+    field: MFS_Indicator
+    type: checkbox
+    on_state: /1
+  - line: 21.calc                        # 21 child/dependent care calc-input box (from federal 2441) x .32
+    field: CHILDCARCAL
+    type: text
+    maxlen: 4
+  - line: "21"                           # 21 "Credit for child and dependent care expenses"
+    field: Child Care Exp
+    type: money
+  - line: "22"                           # 22 "Non-refundable credits from DC Schedule U, Part 1a, Line 7."
+    field: NONREFCR
+    type: money
+  - line: "23"                           # 23 "Total non-refundable credits. Add Line 21 and Line 22."
+    field: TOTAL_NR_CREDIT
+    type: money
+  - line: "24"                           # 24 "Subtract Line 23 from Line 20."
+    field: D40_Line_24
+    type: money
+  - line: "25"                           # 25 "DC Health Care Shared Responsibility"
+    field: DC HSR
+    type: money
+  - line: "26"                           # 26 "Total tax and DC Health Care Shared Responsibility. Add Line 24 and Line 25."
+    field: D40_Line_26
+    type: money
+  - line: 27a                            # 27a "Enter the number of qualified EITC children."
+    field: QLFY_CHILD
+    type: text
+    maxlen: 2
+  - line: 27b                            # 27b "Enter earned income amount"
+    field: EARNED_INC_AMT
+    type: money
+  - line: 27c.calc                       # 27c "Enter calculated federal EIC amount" calc-input box x .70
+    field: FED_EIC
+    type: text
+    maxlen: 4
+  - line: 27d                            # 27d "For filers with qualifying children." result
+    field: D40_Line_26d
+    type: money
+  - line: 27e                            # 27e "For filers without qualifying children." result
+    field: D40_Line_26e
+    type: money
+  - line: "28"                           # 28 "Property Tax Credit. From your DC Schedule H"
+    field: PROP_TX_CR
+    type: money
+
+  # ============================================ page 3 -- lines 29-44 + refund/sig
+  # (LAST_NAME + TAX ID_NUM_1 header echoes are the SAME AcroForm fields already
+  #  mapped on page 1; NOT re-mapped here.)
+  - line: "29"                           # 29 "Refundable credits from DC Schedule U, Part 1b, Line 3."
+    field: REFUNDABLECR
+    type: money
+  - line: "30"                           # 30 "Total refundable credits. Add Line 27d or 27e through Line 29."
+    field: TOTALCR
+    type: money
+  - line: "31"                           # 31 "DC income tax withheld shown on Forms W-2 and 1099."
+    field: DC_TAX_WITHHELD
+    type: money
+  - line: "32"                           # 32 "2023 estimated income tax payments and amount applied from 2022 return."
+    field: EST_PMT
+    type: money
+  - line: "33"                           # 33 "Tax paid with Form FR-127 Extension of Time to File."
+    field: EXTEN
+    type: money
+  - line: "34"                           # 34 "If this is an amended 2023 return, enter payments made with original 2023 D-40 return."
+    field: TAX AMEND PAID
+    type: money
+  - line: "35"                           # 35 "If this is an amended 2023 return, enter refunds requested with original 2023 D-40 return."
+    field: TAX AMEND REF
+    type: money
+  - line: "36"                           # 36 "Total payments and refundable credits. Add Line 30 through Line 34."
+    field: TOTAL_PAYMENT
+    type: money
+  - line: "37"                           # 37 "Tax Due. Subtract Line 36 from Line 26."
+    field: TAX_DUE
+    type: money
+  - line: "38"                           # 38 "Amount overpaid. Subtract Line 26 from Line 36."
+    field: OVERPAYMENT
+    type: money
+  - line: "39"                           # 39 "Amount to be applied to your 2024 estimated tax."
+    field: EST_TAX
+    type: money
+  - line: 40.form_d2210                  # 40 "Underpayment Interest. Fill in the oval and attach Form D-2210."
+    field: 2210-D
+    type: checkbox
+    on_state: /1
+  - line: "40"                           # 40 "Underpayment Interest."
+    field: UNDERPAYMENT
+    type: money
+  - line: "41"                           # 41 "Contribution amount from Schedule U, Part II, Line 5."
+    field: CONT_AMT_REF
+    type: money
+  - line: "42"                           # 42 "Total Amount Due. Add Lines 37, 40 and 41."
+    field: TOTAL AMOUNT DUE
+    type: money
+  - line: "43"                           # 43 "Net Refund. Subtract total of Lines 39, 40 and 41 from Line 38."
+    field: NET_REFUND
+    type: money
+  - line: 43.outside_us.yes              # 43 "Will this refund go to an account outside the U.S.? Yes"
+    field: IAT_FLAG
+    type: checkbox
+    on_state: /YES
+    group: refund_outside_us
+  - line: 43.outside_us.no               # 43 "... No"
+    field: IAT_FLAG
+    type: checkbox
+    on_state: /NO
+    group: refund_outside_us
+  - line: "44"                           # 44 "Fill in if either spouse is claiming injured spouse protection."
+    field: INJ SP
+    type: checkbox
+    on_state: /1
+
+  # ---- Refund Options (ONE /Btn "choice") + direct-deposit account type
+  - line: refund_options.direct_deposit  # "Mark one refund choice: Direct deposit"
+    field: choice
+    type: checkbox
+    on_state: /1
+    group: refund_options
+  - line: refund_options.reliacard       # "Reliacard"
+    field: choice
+    type: checkbox
+    on_state: /2
+    group: refund_options
+  - line: refund_options.paper_check      # "Paper check"
+    field: choice
+    type: checkbox
+    on_state: /3
+    group: refund_options
+  - line: direct_deposit.checking        # "Direct Deposit ... checking"
+    field: Direct Deposit
+    type: checkbox
+    on_state: /C
+    group: account_type
+  - line: direct_deposit.savings         # "... savings account"
+    field: Direct Deposit
+    type: checkbox
+    on_state: /S
+    group: account_type
+  - line: direct_deposit.routing         # "Routing Number"
+    field: DD_ID_BANK
+    type: text
+    maxlen: 9
+  - line: direct_deposit.account         # "Account Number"
+    field: DD_ID_ACCT_ORIG
+    type: text
+    maxlen: 18
+  - line: form_1099g.yes                 # "Fill in if you agree to receive your 1099-G Income Tax refund statement electronically"
+    field: 1099G
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Third party designee
+  - line: third_party_designee.yes       # "Third party designee ... fill in here"
+    field: Third_Party
+    type: checkbox
+    on_state: /1
+  - line: third_party_designee.name      # "Designee's name"
+    field: ThirdParty_Designee
+    type: text
+    maxlen: 35
+  - line: third_party_designee.phone     # "Phone number"
+    field: ThirdParty_Telephone
+    type: text
+    maxlen: 10
+
+  # ---- Signature block
+  - line: signature.taxpayer_date        # "Your signature ... Date"
+    field: DATE
+    type: text
+    maxlen: 8
+  - line: signature.spouse_date          # "Spouse's ... signature ... Date"
+    field: sp_DATE
+    type: text
+    maxlen: 8
+  - line: preparer.date                  # "Preparer's signature ... Date"
+    field: Preparer's DATE
+    type: text
+    maxlen: 8
+  - line: preparer.ptin                  # "Preparer's Tax Identification Number (PTIN)"
+    field: PREPARER_ID
+    type: text
+    maxlen: 9
+  - line: preparer.phone                 # "PTIN telephone number"
+    field: Preparer_Telephone
+    type: text
+    maxlen: 10
+
+relations:
+  - "7 == 4 + 5 + 6"                        # 7 "Add Lines 4, 5 and 6."
+  - "15 == 8 + 9 + 10 + 11 + 12 + 13 + 14"  # 15 "Total subtractions from DC income, Lines 8-14."
+  - "16 == 7 - 15"                          # 16 "DC adjusted gross income, Line 7 minus Line 15."
+  - "23 == 21 + 22"                         # 23 "Total non-refundable credits. Add Line 21 and Line 22."
+  - "26 == 24 + 25"                         # 26 "Total tax and DC Health Care Shared Responsibility. Add Line 24 and Line 25."
+cross_form:
+  # Line 4 "Federal adjusted gross income" == federal AGI Form 1040 line 11.
+  - "4 == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 3}
+mailing: null

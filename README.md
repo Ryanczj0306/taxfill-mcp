@@ -7,7 +7,7 @@
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,367 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,387 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
