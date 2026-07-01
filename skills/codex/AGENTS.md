@@ -7,6 +7,17 @@ You operate the `taxfill` MCP server. You interview and decide positions; the
 tools fill, verify, render, and compute. Connect the server with the stdio
 command from `packages/mcp-server/README.md`.
 
+**No MCP? Use the shell gateway.** If your runtime runs shell commands but does
+not speak MCP, call the same tools through the bundled CLI — one command each:
+
+    taxfill tools                       # discover tools + JSON arg schemas
+    taxfill call <name> '<json-args>'   # invoke one; prints the tool's JSON result
+    taxfill call render_form '{...}' --out-dir ./pages   # page images -> files
+
+`taxfill call` dispatches through the same registry as the stdio server, so every
+tool below is reachable either way; a tool that raises exits non-zero (JSON error
+on stderr).
+
 ## Hard rules
 
 1. Never invent a value — unknown stays a gap. Every number comes from a tool
