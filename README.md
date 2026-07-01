@@ -5,6 +5,8 @@
 ![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange)
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
+![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
+![Tests: 1,401 passing](https://img.shields.io/badge/tests-1%2C401%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 > **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,401 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
@@ -208,9 +210,9 @@ Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
 - [x] **M2 — Federal packs:** f8843 (2019–2024), f1040-NR + schedules (2022–2023), f1040 + schedules (2023–2024) — field-map + relation audits clean
 - [x] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge **2019–2024** (irs.gov-cited), sources registry, filing summary, file & pay
 - [x] **M4 — MCP server:** stdio server, 22 tools, image content for renders, client quickstarts
-- [x] **M5 — State support v1:** California packs (540 + 540NR) + knowledge, all-50-state + DC knowledge packs with cited credits, no-income-tax states, state scoping
+- [x] **M5 — State support:** fillable form packs for **34 states + DC** (39 AcroForm packs — CA 540/540NR + Schedule CA, NY IT-201/IT-203, and 32 more) plus HI via print/hand-fill; all-50-state + DC knowledge packs with cited credits; no-income-tax states; state scoping
 - [~] **M6 — Skill + README + launch:** ✅ agent skills with cookbook, ✅ eval harness, ✅ this README, ✅ self-contained packaging + drift CI; remaining: `.mcpb` bundle, demo GIF, PyPI publish
-- [~] **M7 — Scale-out:** ✅ pack-authoring CLI (`taxfill introspect`), ✅ document extraction (`extract_document`), ✅ persistent workspace + `taxfill purge`, ✅ Schedule SE/D/E + Form 8863/2555 via the introspect pipeline, ✅ extensions (Form 4868), ✅ estimated-tax vouchers (Form 1040-ES), ✅ amended returns (Form 1040-X), ✅ ITIN application (Form W-7); remaining: more state form packs (NY/MA/IL/NJ…), more years
+- [~] **M7 — Scale-out:** ✅ pack-authoring CLI (`taxfill introspect`), ✅ document extraction (`extract_document`), ✅ persistent workspace + `taxfill purge`, ✅ Schedule SE/D/E + Form 8863/2555 via the introspect pipeline, ✅ extensions (Form 4868), ✅ estimated-tax vouchers (Form 1040-ES), ✅ amended returns (Form 1040-X), ✅ ITIN application (Form W-7); remaining: the hard-to-source states (CT/IA/MA/NM/SC/UT), nonresident/part-year forms beyond CA & NY, and more tax years for state packs
 
 ---
 
