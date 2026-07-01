@@ -21,6 +21,14 @@ fields:
   - line: "1a"
     field: "Page1[0].f1_28[0]"
     type: money
+  # name + mailing_address are referenced by identity_fields below, so a valid
+  # pack must define them (the schema enforces identity_fields ⊆ line keys).
+  - line: "name"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "mailing_address"
+    field: "Page1[0].f1_4[0]"
+    type: text
 relations:                               # enforced by verifier
   - "1z == sum(1a..1h)"
   - "11 == 9 - 10"

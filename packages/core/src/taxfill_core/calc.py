@@ -27,8 +27,7 @@ Contents:
 
 These functions are pure: no logging, no side effects; the only I/O is
 reading the versioned knowledge pack. They never echo the value being
-validated (routing/account numbers are sensitive; see the redaction rules
-in the dev plan, section 8).
+validated (routing/account numbers are sensitive).
 """
 
 from __future__ import annotations
@@ -530,7 +529,11 @@ def se_tax(
     medicare_portion = _cents(net_earnings * params.medicare_rate)
     line_12 = ss_portion + medicare_portion
     se_tax_amount = irs_round(line_12)
-    deduction_half = irs_round(line_12 * Decimal("0.5"))
+    # Line 13 = 50% of the WHOLE-DOLLAR line 12 that's actually entered on the form (a filer
+    # works it line-by-line), NOT 50% of the cents-level sum — the two diverge by $1 when
+    # rounding line 12 flips whether x0.5 crosses a half-dollar. This also matches the
+    # sched_se relation "13 == 12 * 0.5" the verifier checks against the filled whole dollars.
+    deduction_half = irs_round(Decimal(se_tax_amount) * Decimal("0.5"))
 
     capped = net_earnings > params.ss_wage_base
     ss_text = (
@@ -546,8 +549,8 @@ def se_tax(
         f"line 11 Medicare portion = {params.medicare_rate * 100:.1f}% x {_money(net_earnings)} "
         f"= {_money(medicare_portion)} (no cap); "
         f"line 12 SE tax = {_money(line_12)}, rounded = {_dollars(se_tax_amount)}; "
-        f"line 13 deduction for one-half of SE tax = 50% x {_money(line_12)} "
-        f"= {_money(line_12 * Decimal('0.5'))}, rounded = {_dollars(deduction_half)}. "
+        f"line 13 deduction for one-half of SE tax = 50% x {_dollars(se_tax_amount)} "
+        f"(the whole-dollar line 12) = {_dollars(deduction_half)}. "
         f"Cents kept through intermediate lines; only final entries rounded."
     )
     return SeTaxResult(

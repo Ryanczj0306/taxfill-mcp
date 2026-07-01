@@ -36,7 +36,7 @@ def _pack(lines: list[dict]) -> HandFillPack:
 
 
 def _by_line(ws: Worksheet) -> dict[str, tuple[str, str]]:
-    return {l.line: (l.value, l.source) for l in ws.lines}
+    return {ln.line: (ln.value, ln.source) for ln in ws.lines}
 
 
 # ── the shared expression evaluator (also used by the verifier) ────────────
@@ -103,7 +103,7 @@ def test_worksheet_blank_entered_text_and_checkbox():
 def test_worksheet_preserves_printed_order_and_metadata():
     pack = _pack([{"line": "1", "label": "L1", "type": "money"}, {"line": "2", "label": "L2", "type": "money"}])
     ws = hand_fill_worksheet(pack, {"1": 5})
-    assert [l.line for l in ws.lines] == ["1", "2"]
+    assert [ln.line for ln in ws.lines] == ["1", "2"]
     assert ws.form == "TEST" and ws.tax_year == 2023
     assert ws.print_url == "https://example.gov/blank.pdf"
     assert "no fillable fields" in ws.instructions.lower()
@@ -162,7 +162,7 @@ def test_hi_n11_income_chain_computes():
         pytest.skip("HI N-11 pack not present")
     pack = load_hand_fill_pack(hi[0])
     ws = hand_fill_worksheet(pack, {"7": 80000, "8": 2000, "13": 5000, "14": 3000})
-    by = {l.line: (l.value, l.source) for l in ws.lines}
+    by = {ln.line: (ln.value, ln.source) for ln in ws.lines}
     assert by["11"] == ("2,000", "computed")   # 8 + 9 + 10 = 2000
     assert by["12"] == ("82,000", "computed")  # 7 + 11
     assert by["19"] == ("8,000", "computed")   # 13 + 14 + ... = 8000

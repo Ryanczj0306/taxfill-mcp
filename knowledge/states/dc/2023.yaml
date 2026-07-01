@@ -67,13 +67,14 @@ credits:
     in the D-40 instructions. Investment income must be $11,000 or less.
   amount: Computed from the DC 'EITC Worksheet For Filers Without A Qualifying Child' in the D-40 instructions;
     the maximum DC EITC for filers without a qualifying child increased to $600 for TY2023 (up from $560).
-  income_limit_2023: Earned income / federal AGI must be at or below the federal childless-EIC threshold ($28,xxx
-    range cited in the worksheet); investment income $11,000 or less.
+  income_limit_2023: Earned income / federal AGI at or below $28,963 for TY2023 (DC sets its own childless-EITC
+    income limit under its eligibility expansion — higher than the federal childless-EIC ceiling, so some filers who
+    exceed the federal limit still qualify for DC); investment income $11,000 or less.
   claimed_on: Form D-40, Line 27e (amount from the DC EITC childless worksheet)
   citation:
     source: 'DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax booklet: ''New for 2023'' (childless
-      EITC max increased from $560 to $600; investment-income limit $11,000) and the DC EITC Worksheet For Filers
-      Without A Qualifying Child'
+      EITC max increased from $560 to $600; income test limit increased to $28,963; investment-income limit $11,000)
+      and the DC EITC Worksheet For Filers Without A Qualifying Child'
     url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_012324.pdf
 - name: Schedule H — Homeowner and Renter Property Tax Credit ('circuit-breaker')
   type: refundable

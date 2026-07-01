@@ -5,9 +5,11 @@
 ![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange)
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
+![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
+![Tests: 1,459 passing](https://img.shields.io/badge/tests-1%2C459%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,401 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,459 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -144,7 +146,7 @@ An abbreviated, anonymized walkthrough (simple W-2, single filer, 2023):
 - **Permission prompts on first run** — your OS may ask to allow network access (only for downloading blank forms from irs.gov) and file access (the folder where filled PDFs are written). Both are expected.
 - **The client doesn't see the `taxfill` tools** — make sure the MCP command uses the **absolute** path to the checkout (`uv run --project /ABS/PATH …`), then fully restart the client. `uv run taxfill-mcp` should start without errors in that folder.
 - **Where are my filled PDFs?** — wherever you (or the agent) set `out_path` in `fill_form`. Ask the agent to use a folder you can find, e.g. `~/Documents/taxes-2023/`.
-- **How do I resume later?** — in v0.1 the progress lives in your conversation with the agent, so continue in the same chat. A persistent on-disk workspace (and a `taxfill purge` to wipe it) is on the roadmap.
+- **How do I resume later?** — progress can persist to a local workspace: the agent saves your profile and decisions (`workspace_save` / `workspace_record_position`) and resumes them in a later session with `workspace_load`, so you can stop and pick up days later. Wipe it any time with `taxfill purge <year>`.
 
 ---
 
@@ -187,15 +189,36 @@ All 22 tools are available today (from source); the server registers exactly 22 
 | `filing_summary` | Plain-language bottom line per jurisdiction before printing |
 | `file_and_pay` | Personalized pay/print/sign/assemble/mail checklist |
 
+### Calling the tools from a shell (non-MCP agents)
+
+An agent that can run a shell command but doesn't speak MCP (Codex CLI, a script,
+CI) can reach the **same tools** through the bundled `taxfill` CLI. It dispatches
+through the same FastMCP registry as the stdio server, so it always covers every
+tool with no extra wiring:
+
+```bash
+taxfill tools                         # discover: tool names + which args each takes
+taxfill tools --json                  # machine-readable (name, description, inputSchema)
+
+taxfill call list_forms '{"jurisdiction": "federal", "year": 2023}'
+echo '{"path": "w2.png", "kind": "W-2", "fields": {}}' | taxfill call extract_document --stdin
+taxfill call render_form '{"pdf_path": "filled.pdf", "pages": [1], "dpi": 150}' --out-dir ./pages
+```
+
+`call` prints the tool's structured result as JSON on stdout; `render_form`'s page
+images are written to files (their paths returned under `"images"`). A tool that
+raises exits non-zero with a JSON error on stderr — so shell agents can branch on
+the exit code.
+
 ---
 
 ## Privacy, in plain words
 
 - **Everything runs locally.** Your documents and SSN never leave your computer.
 - **The only internet access** is downloading blank tax forms from official .gov URLs (checksum-verified).
-- **No telemetry, no accounts, no uploads.** Logs are PII-redacted (SSNs and account numbers masked).
+- **No telemetry, no accounts, no uploads.** The tool keeps no logs of its own; the CLI masks SSN/account-number patterns in any error it prints.
 - Any documents you save locally hold sensitive data at rest — keep OS disk encryption on (FileVault / BitLocker).
-- A persistent on-disk workspace with a one-command `taxfill purge <year>` wipe is on the roadmap; in v0.1, delete any files you saved yourself when you're done.
+- The local workspace (saved profile, documents, drafts) can be wiped any time with a single `taxfill purge <year>`, which overwrites the file bytes before deleting; also delete any other files you saved yourself when you're done.
 
 ---
 
@@ -208,9 +231,9 @@ Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
 - [x] **M2 — Federal packs:** f8843 (2019–2024), f1040-NR + schedules (2022–2023), f1040 + schedules (2023–2024) — field-map + relation audits clean
 - [x] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge **2019–2024** (irs.gov-cited), sources registry, filing summary, file & pay
 - [x] **M4 — MCP server:** stdio server, 22 tools, image content for renders, client quickstarts
-- [x] **M5 — State support v1:** California packs (540 + 540NR) + knowledge, all-50-state + DC knowledge packs with cited credits, no-income-tax states, state scoping
+- [x] **M5 — State support:** fillable form packs for **34 states + DC** (39 AcroForm packs — CA 540/540NR + Schedule CA, NY IT-201/IT-203, and 32 more) plus HI via print/hand-fill; all-50-state + DC knowledge packs with cited credits; no-income-tax states; state scoping
 - [~] **M6 — Skill + README + launch:** ✅ agent skills with cookbook, ✅ eval harness, ✅ this README, ✅ self-contained packaging + drift CI; remaining: `.mcpb` bundle, demo GIF, PyPI publish
-- [~] **M7 — Scale-out:** ✅ pack-authoring CLI (`taxfill introspect`), ✅ document extraction (`extract_document`), ✅ persistent workspace + `taxfill purge`, ✅ Schedule SE/D/E + Form 8863/2555 via the introspect pipeline, ✅ extensions (Form 4868), ✅ estimated-tax vouchers (Form 1040-ES), ✅ amended returns (Form 1040-X), ✅ ITIN application (Form W-7); remaining: more state form packs (NY/MA/IL/NJ…), more years
+- [~] **M7 — Scale-out:** ✅ pack-authoring CLI (`taxfill introspect`), ✅ document extraction (`extract_document`), ✅ persistent workspace + `taxfill purge`, ✅ Schedule SE/D/E + Form 8863/2555 via the introspect pipeline, ✅ extensions (Form 4868), ✅ estimated-tax vouchers (Form 1040-ES), ✅ amended returns (Form 1040-X), ✅ ITIN application (Form W-7); remaining: the hard-to-source states (CT/IA/MA/NM/SC/UT), nonresident/part-year forms beyond CA & NY, and more tax years for state packs
 
 ---
 

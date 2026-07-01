@@ -85,7 +85,7 @@ def test_punctuation_only_money_is_invalid_not_blank():
 def test_unrecognized_checkbox_is_invalid_not_silently_unchecked():
     doc = extract_document("documents/w2.png", "W-2", {"13_retirement": "see attached"})
     cb = next(f for f in doc.fields if f.key == "13_retirement")
-    assert cb.status == "invalid" and cb.value != False  # never fabricated as "unchecked"
+    assert cb.status == "invalid" and cb.value is not False  # never fabricated as "unchecked"
     # recognized negative tokens DO resolve to a real False
     doc2 = extract_document("documents/w2.png", "W-2", {"13_retirement": "no"})
     assert next(f for f in doc2.fields if f.key == "13_retirement").value is False

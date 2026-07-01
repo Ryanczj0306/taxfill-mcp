@@ -1,4 +1,4 @@
-"""`taxfill` CLI — local workspace management (dev plan section 2).
+"""`taxfill` CLI — local workspace management + a shell gateway to the MCP tools.
 
 Subcommands:
 
@@ -6,21 +6,48 @@ Subcommands:
     taxfill reconcile <year>     regenerate RECONCILIATION.md + CHECKLIST.md
     taxfill purge <year>         securely wipe a year's workspace (overwrite + delete)
     taxfill introspect <pdf>     emit a skeleton pack.yaml from a blank AcroForm PDF
+    taxfill tools                list the callable MCP tools (name, description, args)
+    taxfill call <name> [json]   invoke one MCP tool and print its JSON result
 
-The workspace lives under ``./taxfill-workspace`` by default (``--root`` to
-override). `purge` is destructive and PII-bearing, so it confirms interactively
-unless ``--yes`` is given.
+The `tools`/`call` pair is a thin shell gateway over the same FastMCP tool
+registry the stdio server exposes — so an agent that can run a shell command but
+does not speak MCP (Codex CLI, a script, CI) can call every tool. It dispatches
+through the live registry, so it always covers all tools with no per-tool code:
+
+    taxfill call list_forms '{"jurisdiction": "federal", "year": 2023}'
+    echo '{"year": 2023, "profile": {...}}' | taxfill call intake_checklist --stdin
+    taxfill call render_form '{"form": "1040", "year": 2023, ...}' --out-dir ./pages
+
+`call` prints the tool's structured JSON on stdout (image output — `render_form`
+— is written to files and their paths returned). The workspace lives under
+``./taxfill-workspace`` by default (``--root`` to override). `purge` is
+destructive and PII-bearing, so it confirms interactively unless ``--yes`` is given.
 """
 from __future__ import annotations
 
 import argparse
+import asyncio
+import base64
+import json
+import re
 import sys
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
 from taxfill_core.workspace import Workspace
 
 DEFAULT_ROOT = "taxfill-workspace"
+
+# Mask SSN/ITIN-like ids and long digit runs (account/routing numbers) before printing an
+# error to stderr — a shell agent may capture/log it, and tool exceptions (e.g. a Pydantic
+# ValidationError) can embed the offending input value.
+_SSN_RE = re.compile(r"\b\d{3}-?\d{2}-?\d{4}\b")
+_LONGNUM_RE = re.compile(r"\b\d{6,}\b")
+
+
+def _redact(text: str) -> str:
+    return _LONGNUM_RE.sub("[redacted-number]", _SSN_RE.sub("[redacted-id]", text))
 
 
 def _now() -> str:
@@ -115,6 +142,108 @@ def _cmd_introspect(args) -> int:
     return 0
 
 
+def _server_mcp():
+    """Lazily import the FastMCP server object (keeps status/purge/introspect light)."""
+    from taxfill_mcp.server import mcp
+
+    return mcp
+
+
+def _cmd_tools(args) -> int:
+    mcp = _server_mcp()
+    tools = sorted(asyncio.run(mcp.list_tools()), key=lambda t: t.name)
+    if args.json:
+        payload = [
+            {"name": t.name, "description": t.description, "inputSchema": t.inputSchema}
+            for t in tools
+        ]
+        print(json.dumps(payload, indent=2, ensure_ascii=False, default=str))
+        return 0
+    for t in tools:
+        schema = t.inputSchema or {}
+        props = schema.get("properties", {}) or {}
+        required = set(schema.get("required", []) or [])
+        params = ", ".join(f"{k}*" if k in required else f"{k}?" for k in props) or "(none)"
+        desc = (t.description or "").strip().splitlines()[0] if t.description else ""
+        print(f"{t.name} — {desc}")
+        print(f"    args: {params}")
+    print(f"\n{len(tools)} tools ( * = required ). Invoke one with:")
+    print("    taxfill call <name> '<json-args>'      (or pipe JSON with --stdin)")
+    return 0
+
+
+def _cmd_call(args) -> int:
+    mcp = _server_mcp()
+    # 1. resolve the JSON arguments (positional string, --stdin, or none)
+    try:
+        if args.stdin:
+            raw = sys.stdin.read().strip()
+            call_args = json.loads(raw) if raw else {}
+        elif args.args_json:
+            call_args = json.loads(args.args_json)
+        else:
+            call_args = {}
+    except json.JSONDecodeError as e:
+        print(json.dumps({"error": "invalid JSON arguments", "detail": _redact(str(e))}), file=sys.stderr)
+        return 2
+    if not isinstance(call_args, dict):
+        print(json.dumps({"error": "arguments must be a JSON object"}), file=sys.stderr)
+        return 2
+
+    # 2. validate the tool name against the live registry (nice error + discovery)
+    names = [t.name for t in asyncio.run(mcp.list_tools())]
+    if args.name not in names:
+        print(
+            json.dumps({"error": "unknown tool", "tool": args.name, "available": sorted(names)}),
+            file=sys.stderr,
+        )
+        return 2
+
+    # 3. invoke; a tool that raises (bad args, unmet precondition) -> stderr + exit 1
+    try:
+        res = asyncio.run(mcp.call_tool(args.name, call_args))
+    except Exception as e:
+        print(json.dumps({"error": type(e).__name__, "detail": _redact(str(e))}), file=sys.stderr)
+        return 1
+    content, structured = res if isinstance(res, tuple) else (res, None)
+
+    # 4. peel off image blocks (render_form) -> write to disk, return their paths
+    out_dir = Path(args.out_dir) if args.out_dir else None
+    images: list[str] = []
+    texts: list[str] = []
+    for i, block in enumerate(content or []):
+        btype = getattr(block, "type", None)
+        if btype == "image":
+            if out_dir is None:
+                out_dir = Path(tempfile.mkdtemp(prefix="taxfill-render-"))
+            out_dir.mkdir(parents=True, exist_ok=True)
+            ext = {"image/png": "png", "image/jpeg": "jpg"}.get(getattr(block, "mimeType", ""), "png")
+            path = out_dir / f"{args.name}_{i:02d}.{ext}"
+            path.write_bytes(base64.b64decode(block.data))
+            images.append(str(path))
+        elif btype == "text":
+            texts.append(block.text)
+
+    # 5. unwrap FastMCP's {"result": X} envelope (used for non-dict returns)
+    payload = structured
+    if isinstance(structured, dict) and list(structured.keys()) == ["result"]:
+        payload = structured["result"]
+    if payload is None and texts and not images:  # older SDK: no structured content
+        try:
+            payload = json.loads(texts[0])
+        except (json.JSONDecodeError, IndexError):
+            payload = {"text": texts}
+
+    if images:
+        base = payload if isinstance(payload, dict) else ({} if payload is None else {"result": payload})
+        out = {**base, "images": images}
+    else:
+        out = payload if payload is not None else {}
+    indent = None if args.indent is not None and args.indent < 0 else args.indent
+    print(json.dumps(out, indent=indent, ensure_ascii=False, default=str))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="taxfill", description="TaxFill local workspace management.")
     p.add_argument("--root", default=DEFAULT_ROOT, help=f"workspace root (default: {DEFAULT_ROOT})")
@@ -139,6 +268,18 @@ def main(argv: list[str] | None = None) -> int:
     ip.add_argument("--out", help="output dir (default: alongside the PDF)")
     ip.add_argument("--render", action="store_true", help="also render the sentinel sweep for vision mapping")
     ip.set_defaults(_fn=_cmd_introspect)
+
+    tp = sub.add_parser("tools", help="list the callable MCP tools (name, description, args)")
+    tp.add_argument("--json", action="store_true", help="emit the full tool list + JSON input schemas")
+    tp.set_defaults(_fn=_cmd_tools)
+
+    cp = sub.add_parser("call", help="invoke one MCP tool and print its JSON result")
+    cp.add_argument("name", help="tool name (see `taxfill tools`)")
+    cp.add_argument("args_json", nargs="?", help="tool arguments as a JSON object string")
+    cp.add_argument("--stdin", action="store_true", help="read the JSON arguments from stdin instead")
+    cp.add_argument("--out-dir", dest="out_dir", help="dir for image output (render_form); default: a temp dir")
+    cp.add_argument("--indent", type=int, default=2, help="JSON indent (default 2; negative = compact one line)")
+    cp.set_defaults(_fn=_cmd_call)
 
     args = p.parse_args(argv)
     return args._fn(args)

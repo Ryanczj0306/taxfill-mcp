@@ -152,6 +152,29 @@ def test_unknown_form_is_a_clean_tool_error():
     _run(go())
 
 
+def test_tool_surface_is_exactly_22_and_matches_manifest():
+    """Exact tool-surface guard (the other test is a subset check, so it misses ADDED tools).
+
+    Adding/removing/renaming a tool fails here until both EXPECTED_TOOLS and the shipped
+    bundle/manifest.json are updated — keeping the server, the tests, and the one-click
+    .mcpb manifest in lock-step (the packaging job also asserts 22 against the built wheel).
+    """
+    from pathlib import Path
+
+    names = {t.name for t in _run(mcp.list_tools())}
+    assert names == EXPECTED_TOOLS, (
+        f"server tool drift — unexpected: {names - EXPECTED_TOOLS}, missing: {EXPECTED_TOOLS - names}"
+    )
+    assert len(names) == 22
+
+    manifest = json.loads((Path(__file__).parents[3] / "bundle" / "manifest.json").read_text())
+    manifest_names = {t["name"] for t in manifest["tools"]}
+    assert manifest_names == names, (
+        f"manifest/server drift — only in manifest: {manifest_names - names}, "
+        f"only in server: {names - manifest_names}"
+    )
+
+
 # ── full chain on a real PDF (network or warm cache) ───────────────────────────
 
 
