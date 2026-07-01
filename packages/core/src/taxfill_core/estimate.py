@@ -27,7 +27,13 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field
 
 from taxfill_core import residency
-from taxfill_core.calc import se_tax, standard_deduction, tax_from_taxable_income
+from taxfill_core.calc import (
+    additional_medicare_tax,
+    niit,
+    se_tax,
+    standard_deduction,
+    tax_from_taxable_income,
+)
 from taxfill_core.knowledge import Citation
 from taxfill_core.schemas.profile import Profile
 
@@ -310,8 +316,12 @@ def _build_roadmap(profile: Profile, year: int, result=None) -> Roadmap:
     return Roadmap(returns_and_forms=forms, missing_documents=missing, estimated_time=time)
 
 
-def _bottom_line(income: IncomeSnapshot, status: str, year: int, knowledge_dir):
-    """Compute the signed bottom line for one filing status. Returns (value, composition, citations)."""
+def _bottom_line(income: IncomeSnapshot, status: str, year: int, knowledge_dir, *, nonresident: bool = False):
+    """Compute the signed bottom line for one filing status. Returns (value, composition, citations).
+
+    ``nonresident`` skips NIIT (Form 8960 does not apply to nonresident aliens);
+    Additional Medicare Tax applies to NRA Medicare wages, so it is kept.
+    """
     citations: list[Citation] = []
     comp: list[CompositionLine] = []
 
@@ -319,7 +329,9 @@ def _bottom_line(income: IncomeSnapshot, status: str, year: int, knowledge_dir):
     half_se = 0
     se_amount = 0
     if income.self_employment_net >= 400:
-        se = se_tax(income.self_employment_net, year, knowledge_dir)
+        # Schedule SE lines 8a-9: W-2 wages consume the social-security wage base first
+        # (box-1 wages stand in for box-3 SS wages — disclosed as an assumption).
+        se = se_tax(income.self_employment_net, year, knowledge_dir, w2_ss_wages=income.wages)
         se_amount, half_se = se.se_tax, se.deduction_half
         citations.append(se.citation)
         comp.append(CompositionLine(label="Less: ½ self-employment tax (adjustment)", amount=-half_se))
@@ -347,9 +359,42 @@ def _bottom_line(income: IncomeSnapshot, status: str, year: int, knowledge_dir):
     comp.append(CompositionLine(label="Income tax", amount=income_tax))
     if se_amount:
         comp.append(CompositionLine(label="Plus: self-employment tax", amount=se_amount))
-    total_tax = income_tax + se_amount
+
+    # High-income surtaxes (Schedule 2 lines 11/12). Computed on the same deterministic
+    # engine; zero for most filers, so composition lines appear only when they bite.
+    addmed_amount = 0
+    if income.wages or income.self_employment_net:
+        addmed = additional_medicare_tax(
+            income.wages, status, year, se_net_profit=income.self_employment_net, knowledge_dir=knowledge_dir
+        )
+        if addmed.additional_medicare_tax:
+            addmed_amount = addmed.additional_medicare_tax
+            citations.append(addmed.citation)
+            comp.append(
+                CompositionLine(
+                    label="Plus: Additional Medicare Tax (Form 8959, 0.9% over threshold)",
+                    amount=addmed_amount,
+                )
+            )
+
+    niit_amount = 0
+    investment_income = income.interest + income.dividends
+    if investment_income and not nonresident:  # NRAs are generally not subject to NIIT
+        niit_res = niit(investment_income, agi, status, year, knowledge_dir=knowledge_dir)
+        if niit_res.niit:
+            niit_amount = niit_res.niit
+            citations.append(niit_res.citation)
+            comp.append(
+                CompositionLine(
+                    label="Plus: Net investment income tax (Form 8960, 3.8% over MAGI threshold)",
+                    amount=niit_amount,
+                )
+            )
+
+    total_tax = income_tax + se_amount + addmed_amount + niit_amount
     comp.append(CompositionLine(label="Total tax", amount=total_tax))
-    comp.append(CompositionLine(label="Less: federal tax withheld / payments", amount=income.federal_withholding))
+    # Negative, like every other "Less:" composition line (it reduces what you owe).
+    comp.append(CompositionLine(label="Less: federal tax withheld / payments", amount=-income.federal_withholding))
 
     bottom = income.federal_withholding - total_tax
     comp.append(CompositionLine(label="Estimated refund (+) or amount owed (-)", amount=bottom))
@@ -390,7 +435,10 @@ def estimate_refund(
 
     statuses, status_assumed = _candidate_statuses(profile, classification, year)
 
-    outcomes = {s: _bottom_line(income, s, year, knowledge_dir) for s in statuses}
+    outcomes = {
+        s: _bottom_line(income, s, year, knowledge_dir, nonresident=(classification == "nonresident"))
+        for s in statuses
+    }
     primary = statuses[0]
     point, composition, citations = outcomes[primary]
     values = [v for (v, _c, _cit) in outcomes.values()]
@@ -418,6 +466,37 @@ def estimate_refund(
     if income.itemized_deductions is None:
         assumptions.append("Standard deduction assumed (no itemizing, and no age-65+/blind adjustment).")
     assumptions.append("Ordinary tax computation only — qualified dividends / capital gains at preferential rates are not modeled here.")
+    labels = " ".join(line.label for line in composition)
+    if "Form 8959" in labels:
+        assumptions.append(
+            "Additional Medicare Tax (Form 8959) included: 0.9% of wages/SE earnings over the status "
+            "threshold. Box 1 wages stand in for box 5 Medicare wages; if your employer already withheld "
+            "extra Medicare tax (W-2 box 6 above 1.45% of box 5), include that excess in the withholding "
+            "input — it credits against this."
+        )
+    if "Form 8960" in labels:
+        assumptions.append(
+            "Net investment income tax (Form 8960) included: 3.8% of interest + dividends over the MAGI "
+            "threshold, with MAGI approximated by AGI. Capital gains and other investment income are not "
+            "captured by this snapshot and would increase it."
+        )
+    if income.wages and income.self_employment_net >= 400:
+        assumptions.append(
+            "Self-employment tax applies Schedule SE lines 8a-9 (W-2 wages consume the Social Security "
+            "wage base first), using box-1 wages as the box-3 proxy — box 3 can differ (e.g. 401(k) deferrals)."
+        )
+    if status_assumed and {"married_filing_jointly", "married_filing_separately"} <= set(statuses):
+        assumptions.append(
+            "The married-filing-separately figure puts ALL combined income and withholding on one MFS "
+            "return — a worst-case bound, not a real two-return MFS outcome. Provide each spouse's own "
+            "amounts for a true MFJ-vs-MFS comparison."
+        )
+    assumptions.append(
+        "Not modeled in this estimate: above-the-line adjustments (student-loan interest, IRA/HSA), "
+        "capital gains/losses, taxable Social Security benefits, premium-tax-credit reconciliation "
+        "(Form 8962), education credits, excess Social Security withholding (multiple employers), "
+        "and AMT — each could change the number."
+    )
     assumptions.append("Before unclaimed credits — see what could change it.")
 
     # §6013(g)/(h) caveat (H1): surfaced in BOTH assumptions and what-would-change-it.

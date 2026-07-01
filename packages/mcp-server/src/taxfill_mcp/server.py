@@ -21,12 +21,14 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP, Image
 
 from taxfill_core import (
+    additional_medicare_tax as _additional_medicare_tax,
     estimate_refund as _estimate_refund,
     file_and_pay as _file_and_pay,
     fill_form as _fill_form,
     filing_summary as _filing_summary,
     get_sources as _get_sources,
     intake_checklist as _intake_checklist,
+    niit as _niit,
     render_pdf as _render_pdf,
     se_tax as _se_tax,
     standard_deduction as _standard_deduction,
@@ -174,12 +176,14 @@ def render_form(pdf_path: str, pages: list[int] | None = None, dpi: float = 170)
 
 @mcp.tool()
 def calc(op: str, args: dict[str, Any]) -> dict:
-    """Deterministic tax math. op in {tax, standard_deduction, se_tax}; every result shows its
-    work and cites the data pack.
+    """Deterministic tax math. op in {tax, standard_deduction, se_tax, additional_medicare_tax,
+    niit}; every result shows its work and cites the data pack.
 
     - tax: args {taxable_income, filing_status, year}
     - standard_deduction: args {filing_status, year, age_65_plus?, blind?}
     - se_tax: args {net_profit, year}
+    - additional_medicare_tax: args {medicare_wages, filing_status, year, se_net_profit?} (Form 8959)
+    - niit: args {net_investment_income, magi, filing_status, year} (Form 8960; NRAs exempt)
     """
     if op == "tax":
         return _dump(_tax(**args))
@@ -187,7 +191,14 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _dump(_standard_deduction(**args))
     if op == "se_tax":
         return _dump(_se_tax(**args))
-    raise ValueError(f"unknown calc op {op!r} — supported: tax, standard_deduction, se_tax")
+    if op == "additional_medicare_tax":
+        return _dump(_additional_medicare_tax(**args))
+    if op == "niit":
+        return _dump(_niit(**args))
+    raise ValueError(
+        f"unknown calc op {op!r} — supported: tax, standard_deduction, se_tax, "
+        f"additional_medicare_tax, niit"
+    )
 
 
 @mcp.tool()
