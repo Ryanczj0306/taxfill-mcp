@@ -13,7 +13,7 @@ plan for what is **not yet done**, as of **2026-06-28**.
 
 ## Where we are (verified)
 
-Done and on `main` (**1,387 tests, all green** — verified `pytest` run, exit 0):
+Done and on `main` (**1,391 tests, all green** — verified `pytest` run, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (21 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -42,12 +42,12 @@ Done and on `main` (**1,387 tests, all green** — verified `pytest` run, exit 0
 
 **Form packs that can be FILLED today (introspect→vision-map→adversarial-audit→
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E,
-Form 8863, Form 2555. state — **34 states** (38 packs): CA (540 + 540NR +
+Form 8863, Form 2555. state — **35 states** (39 packs): CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), **ME (1040ME), MS (80-105),
-RI (RI-1040), **MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40)**.
-**73 form packs total** (35 federal + 38 state).
+RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
+**WV (IT-140)**. **74 form packs total** (35 federal + 39 state).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
 > (Phase 0, 2026-06-28) and counted above.
@@ -67,13 +67,13 @@ Cheap, high-credibility cleanup that the audit surfaced. No new features.
       — DONE (2026-06-28) after a green `test_formpacks_states.py` round-trip; merged
       via `feat/state-rollout-al-co-mn-wi`. Working tree is now clean.
 - [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
-      and a full run (**exit 0, no collection errors**): the suite is **1,387 tests,
+      and a full run (**exit 0, no collection errors**): the suite is **1,391 tests,
       all green** (1,288 at audit + 3 eval scenarios k/l/m + 8 each for Forms 4868,
       1040-ES, 1040-X, and W-7). The earlier figures
       were stale/under-counted (old ROADMAP *1222*, README *~1076*, audit-sandbox
-      *~903* — the sandbox couldn't run collection). README + this file now quote **1,387**.
+      *~903* — the sandbox couldn't run collection). README + this file now quote **1,391**.
 - [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
-      done, 34 states (not 14), 73 packs (not 49), Phase B done, drift CI done.
+      done, 35 states (not 14), 74 packs (not 49), Phase B done, drift CI done.
 
 **Acceptance:** working tree clean (no untracked packs), README + this file quote
 one verified test count, CI green.
@@ -121,14 +121,15 @@ The dominant remaining body of work. Use the proven pipeline:
 vision-mapping → `assemble_*` → adversarial vision audit → `test_formpacks_states.py`
 golden round-trip.
 
-### C1 — Remaining resident state form packs (8 jurisdictions)
+### C1 — Remaining resident state form packs (7 jurisdictions) — **easy rollout COMPLETE**
 
-**34 of 42** income-tax jurisdictions are now fillable — **the easy-AcroForm rollout is
-essentially complete** (five C1 tranches, 16 states, shipped via the
-introspect→vision-map→adversarial-audit→golden pipeline). **8 remain**, and all but one
-are HARD (need the C3 engine work, not the pipeline):
+**35 of 42** income-tax jurisdictions are now fillable — **every easy fillable-AcroForm
+state has shipped** (six C1 tranches, 17 states, via the introspect→vision-map→
+adversarial-audit→golden pipeline; WV IT-140 was the last). The **7 that remain are ALL
+C3 hard states** — none can be done on the AcroForm pipeline; each needs the engine work
+in C3 below:
 
-`CT · HI · IA · MA · NM · SC · UT · WV`
+`CT · HI · IA · MA · NM · SC · UT`
 
 - [x] Tranche 1 (2026-06-30) — **KY (740), OR (OR-40), LA (IT-540)**.
 - [x] Tranche 2 (2026-06-30) — **KS (K-40), AR (AR1000F)**.
@@ -140,10 +141,11 @@ are HARD (need the C3 engine work, not the pipeline):
       DC (D-40)**. (MT is the largest state pack: 780 mapped widgets over 11 pages.
       A misnamed MT "Other additions" widget /T and two 529-deposit field types were
       corrected via the adversarial audit + hand-review before merge.)
-- [ ] **WV (IT-140)** is the only untested potentially-easy AcroForm state left — try
-      it next (introspect first to confirm it is a fillable AcroForm, not print-only).
-      Everything else is a C3 hard state: CT/SC/HI print-only, IA/NM XFA, MA fetch-blocked,
-      UT no-stable-2023-artifact.
+- [x] Tranche 6 (2026-07-01) — **WV (IT-140)** — the 45-page PIT packet scoped to the
+      resident IT-140 return + its schedules (Schedule A nonresident-only, WV4868, and
+      the tax-table/instruction pages excluded); 391 widgets, golden green + audit clean.
+- The 7 remaining states (CT, HI, IA, MA, NM, SC, UT) are all **C3 hard states** — see
+  the (investigated) C3 section below for the specific blocker + options per state.
 - [ ] **UT (TC-40) — deferred / sourcing blocker:** Utah serves a year-agnostic
       `tc-40.pdf`; the `…/forms/2023/tc-40.pdf` path actually returns the **2025**
       revision (confirmed by rendering — line 17 shows the 2025 phase-out thresholds,
@@ -163,12 +165,33 @@ Only **CA** (540NR + Schedule CA 540NR) and **NY** (IT-203) have them today.
 
 ### C3 — Hard states (need engine work, not just packs)
 
-- [ ] **MA Form 1** — fetch-blocked AcroForm; needs a **downloader fix** (mass.gov
-      fillable PDF the repo downloader can't retrieve).
-- [ ] **IA / NM** — flat-or-XFA forms; reuse the federal XFA handling.
-- [ ] **CT / SC / HI** — print-only (no AcroForm and no XFA — HI N-11 2023 was
-      confirmed flat: 0 fillable widgets); need an **OCR-positioned overlay filler**
-      engine (or a documented "print + hand-fill from computed values" fallback).
+**Investigated 2026-07-01.** Each hard state needs a heavyweight NEW subsystem or
+dependency — an architecture call for the maintainer, not a quick fix:
+
+- [ ] **MA Form 1** — the mass.gov PDF *is* a fillable AcroForm, but the download is
+      **bot-blocked at the edge (Akamai)**: `fetch_blank` gets **HTTP 403** and even
+      `curl` with a full desktop-browser header set (UA + Accept + Accept-Language +
+      Accept-Encoding) is refused with a 3 KB challenge page. This is TLS/JS-challenge
+      fingerprinting, NOT a missing-header problem — a header tweak to `fetch.py` will
+      not fix it. Options: (a) a **headless-browser fetch path** (Playwright/Chromium,
+      ~300 MB — heavy for a stdlib MCP); (b) a **manual cache-seed** flow (a human opens
+      the URL in a browser once and drops the PDF into `.cache/blanks/`, then the normal
+      pipeline runs); (c) an official non-challenged mirror if one exists. Once the blank
+      is in hand, MA is an ordinary AcroForm pack.
+- [ ] **IA / NM** — classify first (both candidate URLs 404'd during this pass — need
+      the current official URLs). NOTE: the engine's "XFA handling" only covers
+      **XFA-*derived* AcroForms** — forms that ship real AcroForm widgets with
+      hierarchical `topmostSubform[0].PageN[0]…` names (federal 1040, and RI-1040 which
+      shipped fine). It does NOT render **pure/dynamic XFA** (XFA-only, no AcroForm
+      widget layer). If IA/NM are XFA-derived AcroForms they go through the normal
+      pipeline; if pure-XFA or flat print-only they need (c) below.
+- [ ] **CT / SC / HI** — print-only (no AcroForm, no XFA — HI N-11 2023 confirmed flat:
+      0 fillable widgets). Need an **OCR-positioned overlay filler** engine (locate each
+      printed field by OCR/coordinates, stamp text at those positions) — a substantial
+      new subsystem — OR ship the lighter documented **"print + hand-fill from computed
+      values"** fallback (the engine computes every line and emits a line→value worksheet;
+      the user hand-writes the print-only form). The fallback needs no OCR and could ship
+      first.
 
 **Acceptance (each pack):** loads; golden round-trip clean (fill→verify→render all
 pages); field map audited clean. **Effort: XL. Deps:** C1/C2 pipeline ready;
@@ -234,7 +257,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       recommendation, dollar delta, and joint-liability caveat), **(m)** NRA-spouse
       §6013(g) election (MFJ dropped → MFS, election + worldwide-income trade-off
       surfaced in both estimate and intake, authority via `get_sources`).
-- [ ] Wire the true test count (1,387) into a CI badge / README line.
+- [ ] Wire the true test count (1,391) into a CI badge / README line.
 
 **Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
 
