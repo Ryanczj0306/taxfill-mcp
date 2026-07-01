@@ -1,0 +1,1532 @@
+# Form IT-140, 2023 -- West Virginia Personal Income Tax Return (RESIDENT).
+#
+# Provenance / freshness. The blank is the 45-page "2023 Personal Income Tax
+# Information and Instructions" PIT packet downloaded from the official
+# source_url below. STEP 0 year gate: the sweep PNG of the IT-140 MAIN page
+# (PDF page 1) was READ and prints the green banner "WEST VIRGINIA / PERSONAL
+# INCOME TAX RETURN" with form id "IT-140 REV 06-22 F" and the year "2023" in
+# the top-right corner -- printed_year_verified = 2023. Every mapped
+# return/schedule page header prints "... 2023" (Schedule M, RECAP, HEPTC-1,
+# FTC-1, E, F, UT, DP, Schedule H all print the 2023 revision year).
+# pdf_sha256 pinned to the exact cached file (golden test verifies it); the
+# real digest of the cached blank equals the value below.
+#
+# Layout / what is FILED vs SKIPPED. The packet is mostly an INSTRUCTION
+# BOOKLET (tax tables, worksheets, where-to-file). Fillable AcroForm widgets
+# cluster on PDF pages 1-5, 7-10, 12-14, 16-19; PDF pages 20-45 are
+# instruction/tax-table pages whose only widget is the shared page-footer
+# "Return to the first page" navigation button (plus a few JS calc-helper /
+# worksheet fields). Same discipline as OK 511 / LA IT-540, which mapped only
+# the filed return + attached schedules and SKIPPED the booklet. The IT-140
+# packet numbers its physical PDF pages differently from the printed "-N-"
+# footer; the map below is by 1-indexed PDF page (the introspect page index),
+# with the printed footer noted in parentheses.
+#
+# MAPPED pages (1-indexed PDF page):
+#   page 1  (printed -1-)  = Form IT-140 Page 1 -- header (2 SSNs + deceased
+#            flags, names/suffix/MI, mailing address, phone, email, extended-
+#            due-date), 4 top checkboxes (amended, nonresident special,
+#            nonresident/part-year, WV-8379 injured spouse), Filing Status (ONE
+#            /Btn radio, 5 on_states), Exemptions boxes (a)-(e), Dependents
+#            table (4 rows) + surviving-spouse decedent SSN / year-died, lines
+#            1-8 (line 8 has a ONE /Btn method radio: Tax Table / Rate Schedule
+#            / Nonresident-PY).
+#   page 2  (printed -2-)  = Form IT-140 Page 2 -- lines 9-26 (11 penalty-waiver
+#            flag; 12 no-use-tax flag; 14 NRSR-withholding flag; 24 donations
+#            24A/24B/24C + total), Direct Deposit (checking/savings radio +
+#            routing/account), discuss-with-preparer Yes/No, preparer NOT-to-
+#            efile flag, preparer EIN/signature/phone, signature block.
+#   pages 3-4 (printed -3-,-4-) = Schedule M "Modifications to Adjusted Gross
+#            Income" -- decreasing mods lines 27-49 (col A You / col B Spouse;
+#            31/44 have (a)/(b) sub-boxes; 32 has (a)/(b)/(c) social-security
+#            sub-boxes stored as M33*_*), line 47 age/disability grid, line 48
+#            surviving-spouse deduction, line 50 TOTAL SUBTRACTIONS (-> IT-140
+#            line 3), increasing mods lines 51-58, line 59 TOTAL ADDITIONS
+#            (-> IT-140 line 2). Namespaced sch_m.*.
+#   pages 5-6 (printed -5-,-6-) = Tax Credit RECAP Schedule -- credit lines
+#            1-26 (line 1 has 5 "for what states?" combo boxes) + line 27 TOTAL
+#            NON REFUNDABLE CREDITS (-> IT-140 line 9). Namespaced recap.*.
+#   page 9  (printed -9-)  = Schedule HEPTC-1 "Homestead Excess Property Tax
+#            Credit" -- Part I AMT flag + required-to-file Yes/No, Part II lines
+#            1-9 (line 4 has a-e sub-lines; line 8 eligibility Yes/No radio);
+#            line 9 -> IT-140 line 18. Namespaced heptc.*.
+#   page 10 (printed -11-) = Schedule FTC-1 "Family Tax Credit" -- lines 1-8;
+#            line 8 -> RECAP line 2. Namespaced ftc.*.
+#   page 12 (printed -13-) = Schedule H "Certification for Permanent and Total
+#            Disability" -- disabled-taxpayer name/SSN, physician name/FEIN/
+#            address/date. Supports the Schedule M disability modification.
+#            Namespaced sch_h.*.
+#   page 13 (printed -14-) = Schedule E "Credit for Income Tax Paid to Another
+#            State" -- residency-status radio (E_rg1), part-year sub-radio
+#            (E_rg2), date-of-move, state-abbrev combo, lines 1-10; line 10 ->
+#            RECAP line 1. Namespaced sch_e.*.
+#   page 14 (printed -41-) = Schedule F "Statement of Claimant to Refund Due
+#            Deceased Taxpayer" -- decedent/claimant identity, filing-as radio
+#            (Group1: A/B/C), and box-C Yes/No question pairs (lines 1, 2a, 2b,
+#            3). Namespaced sch_f.*.
+#   page 16 (printed -44-) = Schedule UT "West Virginia Purchaser's Use Tax
+#            Schedule" -- Part I state use tax (line 1 purchases, line 3 tax),
+#            Part II municipal rows 4-7 (a City / b purchases / c rate /
+#            d tax) + line 8 total, Part III lines 9-11; line 11 -> IT-140
+#            line 12. Namespaced sch_ut.*.
+#   page 18 (printed -47-) = Amended Return Information free-text box + written
+#            request for waiver of estimated penalty free-text box. Namespaced
+#            amended.* / penalty_waiver.*.
+#   page 19 (printed -49-) = Schedule DP "Schedule of Additional Dependents" --
+#            continuation rows for dependents 1-21 (first/last/SSN/DOB).
+#            Namespaced sch_dp.*.
+#
+# SKIPPED pages and why:
+#   pages 7-8 (Schedule A -- Nonresidents/Part-Year Residents Schedule of Income
+#            + Part I/II nonresident tax calc + reciprocal-state block): this is
+#            a RESIDENT return; Schedule A is filed ONLY by nonresidents/part-
+#            year residents ("To Be Completed By Nonresidents and Part-Year
+#            Residents Only"). Not part of a resident IT-140 -> SKIPPED.
+#   page 17 (WV4868 -- Application for Extension of Time to File): a STANDALONE
+#            form filed BEFORE the return's due date, with its own separate
+#            where-to-file (PO Box 2585). Not part of the filed return -> SKIPPED
+#            (its header widgets share the same /T as the IT-140 page-1 header,
+#            so they are already covered by the page-1 identity fields).
+#   page 11 (blank/instruction), page 15 (instruction), pages 20-45
+#            (tax tables, rate schedules, low-income-exclusion worksheet on
+#            page 34, senior-citizen worksheet on page 39, etc.): instruction /
+#            worksheet / table pages, not filed forms -> SKIPPED. Their only
+#            widgets are the shared "returnToFirstPage" nav button and internal
+#            JS calc/worksheet helper fields.
+#
+# AcroForm. FLAT form: acroform_root = ''. Every widget's /T is the raw flat id
+# the form ships with (descriptive names like "it140_1", "M50", "recap01",
+# "homestead09", "E10", "SchF_DOD", "totaluse", "fname_1"). No /Parent chain.
+# NAV / JS-helper widgets are NOT mapped: the per-page "returnToFirstPage"
+# footer button (43 copies), the page-1 header nav buttons
+# (headerNavigation*, calcOrderStartingPoint, "Test"), and every "*_button*" /
+# "Clear" / "*validate*" / "YouDisvalid*" / "Choice1" widget (these carry only
+# the bogus appearance-state list /BBox /Filter /FormType /Matrix /Resources
+# /Subtype /Type -- i.e. an XObject dict's keys, not real /AP on-states -- and
+# fire JavaScript rather than store a value).
+#
+# Shared /T across pages (map ONCE). The IT-140 page-1 header identity fields
+# (last name, primary SSN, spouse SSN, names/suffix/MI, address lines, city,
+# state combo, zip, phone, email, extended-due-date MM/DD/CCYY) are echoed as
+# read-only header repeaters on PDF pages 2, 8, 17, 18 that SHARE the same /T;
+# they are mapped ONCE here (on page 1 / page 2) and the duplicate header copies
+# are intentionally NOT re-mapped. (The sweep introspect exposed only the leaf
+# /T of each widget, so the page-4 Schedule-M line-47 age/disability boxes LOOK
+# like one shared /T "yearOfBirthIf65OrOlder"/"yearOfDisability"; pypdf's
+# fully-qualified names reveal they are FOUR distinct fields --
+# scheduleM.comboBox.47.{you,spouse}.{yearOfBirthIf65OrOlder,yearOfDisability}
+# -- so You and Spouse are mapped separately below.) On page 16, Schedule UT
+# "total3" (line 3 = line
+# 9) and "totalmuni" (line 8 = line 10) each appear twice sharing one /T (the
+# subtotal is echoed in Part III); mapped ONCE.
+#
+# Money vs text. Every numbered dollar box prints a ".00" whole-dollar suffix
+# and is `money`. SSNs are text with format ssn_digits_only. Exemption count
+# boxes (ex1..ex6, maxlen 1/2), the RECAP "for what states?" combo boxes, the
+# Schedule E state-abbrev combo, dates of death/birth/move, names, addresses,
+# phones, email, EIN, and the two Amended/penalty free-text boxes stay `text`.
+#
+# Checkboxes / radio groups. Filing Status is ONE /Btn "it140_filingStatus_
+# radioGroup" with five distinct on_states -> shared group filing_status.
+# The line-8 tax-method selector is ONE /Btn "it140_8_radioGroup" with three
+# on_states -> group tax_method. Direct-deposit checking/savings is ONE /Btn
+# with two on_states -> group refund.account_type. Schedule H line-8 eligibility
+# ("homestead08_checkbox") is ONE /Btn Yes/No -> group heptc.8. Schedule E
+# residency ("E_rg1", 3 states) and part-year sub-status ("E_rg2", 3 states)
+# are each ONE /Btn -> groups sch_e.residency / sch_e.part_year. Schedule F
+# filing-as ("Group1", A/B/C) -> group sch_f.filing_as; its box-C Yes/No
+# questions are DISTINCT single-state /Btn fields (Check BoxA..H) each mapped as
+# its own line with a shared group per question. All other boxes are independent
+# single-state /Yes flags (deceased primary/spouse on /Primary; amended;
+# nonresident special; nonresident/PY; injured spouse; penalty-waiver-attached;
+# no-use-tax; NRSR; discuss Yes and No are two separate fields; preparer-not-
+# efile; HEPTC AMT flag on /FAMT; HEPTC required-to-file Yes and No are two
+# separate fields each on /Yes).
+#
+# Relations. Only single-box on-face arithmetic where every operand is mapped to
+# a bare digit line of THIS core return (IT-140 lines 1-26) is declared. The
+# relations evaluator accepts bare digit+letter ids only, not the dotted
+# namespaced schedule ids, so schedule internal sums (Schedule M line 50/59,
+# RECAP line 27, UT line 11, etc.) live only as comments. Lines that floor at
+# zero ("if less than zero enter zero": 7; "if line 9 > line 8 enter 0": 10) or
+# branch on a comparison (22/23/26 refund-vs-owe) are NOT declared.
+#
+# Cross_form. Form IT-140 line 1 prints "Federal Adjusted Gross Income or income
+# to claim senior citizen tax credit from Schedule SCTC-A" -- for a normal
+# resident return this is federal AGI = f1040.11.
+form: "IT-140"
+jurisdiction: states/wv
+tax_year: 2023
+source_url: https://tax.wv.gov/Documents/PIT/2023/it140.2023.pdf
+pdf_sha256: "3bdf69eefcdd542536dda99b790f47a63a2bc1d3641eac78d54ffecd3916aa1c"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- Form IT-140 Page 1 header
+  - line: identifying_number              # "SOCIAL SECURITY NUMBER" (primary)
+    field: "primaryTaxpayerSSN"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only
+  - line: deceased.taxpayer               # "Deceased / Date of Death*" primary flag
+    field: "it140_checkbox_deceasedPrimary"
+    type: checkbox
+    on_state: /Primary
+  - line: deceased.taxpayer.date_of_death # "Date of Death*" (primary)
+    field: "DOD_1"
+    type: text
+  - line: spouse.identifying_number       # "**SPOUSE'S SOCIAL SECURITY NUMBER"
+    field: "primaryTaxpayerSpouseSSN"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only
+  - line: spouse.deceased                 # "Deceased" spouse flag
+    field: "it140_checkbox_deceasedSpouse"
+    type: checkbox
+    on_state: /Primary
+  - line: spouse.deceased.date_of_death   # "Date of Death*" (spouse)
+    field: "DOD_2"
+    type: text
+  - line: name.last                       # "LAST NAME"
+    field: "primaryTaxpayerLastName"
+    type: text
+  - line: name.suffix                     # "SUFFIX" (primary); narrow widget (~25pt) -> cap at 3
+    field: "it140_suffixPrimaryTaxpayer"
+    type: text
+    maxlen: 3
+  - line: name.first                      # "YOUR FIRST NAME"
+    field: "it140_PrimaryTaxpayerFirstName"
+    type: text
+  - line: name.middle_initial             # "MI" (primary)
+    field: "it140_middleInitialPrimaryTaxpayer"
+    type: text
+    maxlen: 1
+  - line: spouse.name.last                # "SPOUSE'S LAST NAME"
+    field: "it140_SpouseLastName"
+    type: text
+  - line: spouse.name.suffix              # "SUFFIX" (spouse)
+    field: "it140_suffixSpouse"
+    type: text
+    maxlen: 3
+  - line: spouse.name.first               # "SPOUSE'S FIRST NAME"
+    field: "it140_SpouseFirstName"
+    type: text
+  - line: spouse.name.middle_initial      # "MI" (spouse)
+    field: "it140_middleInitialSpouse"
+    type: text
+    maxlen: 1
+  - line: mailing_address.street          # "FIRST LINE OF ADDRESS"
+    field: "it140_PrimaryTaxPayerAddress1"
+    type: text
+  - line: mailing_address.street2         # "SECOND LINE OF ADDRESS"
+    field: "it140_PrimaryTaxPayerAddress2"
+    type: text
+  - line: mailing_address.city            # "CITY"
+    field: "it140_PrimaryTaxPayerCityOrPostOffice"
+    type: text
+  - line: mailing_address.state           # "STATE" (combo)
+    field: "it140_combobox_taxpayerState"
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip             # "ZIP CODE"
+    field: "it140_PrimaryTaxPayerZipCode"
+    type: text
+  - line: telephone_number                # "TELEPHONE NUMBER"
+    field: "it140_PrimaryTaxpayerDaytimeTelephoneNumber"
+    type: text
+  - line: email                           # "EMAIL"
+    field: "email3"
+    type: text
+    maxlen: 30
+  - line: extended_due_date.month         # "EXTENDED DUE DATE MM/DD/YYYY" MM
+    field: "it140_extendedDueDateMM"
+    type: text
+  - line: extended_due_date.day           # DD
+    field: "it140_extendedDueDateDD"
+    type: text
+  - line: extended_due_date.year          # YYYY
+    field: "it140_extendedDueDateCCYY"
+    type: text
+
+  # ---- top-row single checkboxes
+  - line: amended_return.yes              # "AMENDED RETURN"
+    field: "it140.isAmendedReturn.checkBox"
+    type: checkbox
+    on_state: /Yes
+  - line: nonresident_special.yes         # "NONRESIDENT SPECIAL"
+    field: "it140_checkbox_filingAsNonResidentSpecial"
+    type: checkbox
+    on_state: /Yes
+  - line: nonresident_part_year.yes       # "NONRESIDENT/PART YEAR RESIDENT"
+    field: "it140_checkbox_filingAsNonOrPartYearResident"
+    type: checkbox
+    on_state: /Yes
+  - line: injured_spouse.yes              # "FORM WV-8379 FILED AS AN INJURED SPOUSE"
+    field: "it140_isFormWV8379FiledAsAnInjuredSpouse"
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Filing Status (ONE /Btn radio, group filing_status)
+  - line: filing_status.single            # "1 SINGLE"
+    field: "it140_filingStatus_radioGroup"
+    type: checkbox
+    on_state: /Single
+    group: filing_status
+  - line: filing_status.head_of_household # "2 HEAD OF HOUSEHOLD"
+    field: "it140_filingStatus_radioGroup"
+    type: checkbox
+    on_state: /Head of Household
+    group: filing_status
+  - line: filing_status.married_filing_joint  # "3 MARRIED, FILING JOINT"
+    field: "it140_filingStatus_radioGroup"
+    type: checkbox
+    on_state: /Married Filing Joint
+    group: filing_status
+  - line: filing_status.married_filing_separate  # "4 MARRIED, FILING SEPARATE"
+    field: "it140_filingStatus_radioGroup"
+    type: checkbox
+    on_state: /Married filing Separate
+    group: filing_status
+  - line: filing_status.widow             # "5 WIDOW(ER) WITH DEPENDENT CHILD"
+    field: "it140_filingStatus_radioGroup"
+    type: checkbox
+    on_state: /Widower with Dependent child
+    group: filing_status
+
+  # ---- Exemptions boxes (a) Yourself, (b) Spouse, (c) Dependents, (d) surviving spouse, (e) Total
+  - line: exemptions.a                    # "(a) YOURSELF" (enter 1)
+    field: "it140_ex1"
+    type: text
+    maxlen: 1
+  - line: exemptions.b                    # "(b) SPOUSE" (enter 1)
+    field: "it140_ex2"
+    type: text
+    maxlen: 1
+  - line: exemptions.c                    # "(c) DEPENDENTS -- total number of dependents"
+    field: "it140_ex3"
+    type: text
+    maxlen: 2
+  - line: exemptions.d                    # "(d) SURVIVING SPOUSE" box
+    field: "it140_ex4"
+    type: text
+    maxlen: 1
+  - line: exemptions.e                    # "(e) Total Exemptions (add boxes a,b,c,d)"
+    field: "it140_totex5"
+    type: text
+  - line: exemptions.d.decedent_ssn       # "(d) (See page 21) Decedents SSN"
+    field: "it140_exemptionsDecedentSSN"
+    type: text
+  - line: exemptions.d.year_spouse_died   # "(d) Year Spouse Died"
+    field: "it140_exemptions_yearSpouseDied"
+    type: text
+
+  # ---- Dependents table (4 rows on page 1; more on Schedule DP page 19)
+  - line: dependent_1.name.first
+    field: "firstname_1"
+    type: text
+  - line: dependent_1.name.last
+    field: "lastname_1"
+    type: text
+  - line: dependent_1.ssn
+    field: "ssnum_1"
+    type: text
+  - line: dependent_1.date_of_birth
+    field: "DOB_1"
+    type: text
+  - line: dependent_2.name.first
+    field: "firstname_2"
+    type: text
+  - line: dependent_2.name.last
+    field: "lastname_2"
+    type: text
+  - line: dependent_2.ssn
+    field: "ssnum_2"
+    type: text
+  - line: dependent_2.date_of_birth
+    field: "DOB_2"
+    type: text
+  - line: dependent_3.name.first
+    field: "firstname_3"
+    type: text
+  - line: dependent_3.name.last
+    field: "lastname_3"
+    type: text
+  - line: dependent_3.ssn
+    field: "ssnum_3"
+    type: text
+  - line: dependent_3.date_of_birth
+    field: "DOB_3"
+    type: text
+  - line: dependent_4.name.first
+    field: "firstname_4"
+    type: text
+  - line: dependent_4.name.last
+    field: "lastname_4"
+    type: text
+  - line: dependent_4.ssn
+    field: "ssnum_4"
+    type: text
+  - line: dependent_4.date_of_birth
+    field: "DOB_4"
+    type: text
+
+  # ---- Lines 1-8 (Part: WV AGI & tax)
+  - line: "1"                             # 1 Federal Adjusted Gross Income (or SCTC-A income)
+    field: "it140_1"
+    type: money
+  - line: "2"                             # 2 Additions to income (line 59 of Schedule M)
+    field: "it140_2"
+    type: money
+  - line: "3"                             # 3 Subtractions from income (line 50 of Schedule M)
+    field: "it140_3"
+    type: money
+  - line: "4"                             # 4 WV Adjusted Gross Income (line 1 plus line 2 minus line 3)
+    field: "it140_4"
+    type: money
+  - line: "5"                             # 5 Low-Income Earned Income Exclusion
+    field: "it140_5"
+    type: money
+  - line: 6.count                         # 6 "Total Exemptions as shown above on Exemption Box (e)" count
+    field: "it140_ex6"
+    type: text
+    maxlen: 2
+  - line: "6"                             # 6 Total Exemptions x $2,000 (amount)
+    field: "it140_6"
+    type: money
+  - line: "7"                             # 7 WV Taxable Income (line 4 minus lines 5 & 6; if < 0 enter 0)
+    field: "it140_7"
+    type: money
+  - line: "8"                             # 8 Income Tax Due (Check One)
+    field: "it140_8"
+    type: money
+  # line 8 method selector (ONE /Btn radio, group tax_method)
+  - line: 8.method.tax_table              # 8 "Tax Table"
+    field: "it140_8_radioGroup"
+    type: checkbox
+    on_state: /Tax Table
+    group: tax_method
+  - line: 8.method.rate_schedule          # 8 "Rate Schedule"
+    field: "it140_8_radioGroup"
+    type: checkbox
+    on_state: /Rate Schedule
+    group: tax_method
+  - line: 8.method.nonresident_part_year  # 8 "Nonresident/Part-Year Resident Calculation Schedule"
+    field: "it140_8_radioGroup"
+    type: checkbox
+    on_state: /Nonresident/Part Year Resident
+    group: tax_method
+
+  # ============================================ page 2 -- Form IT-140 Page 2
+  - line: "9"                             # 9 Credits from Tax Credit Recap Schedule
+    field: "it140_9"
+    type: money
+  - line: "10"                            # 10 Total Income Tax Due (line 8 minus 9; if 9>8 enter 0)
+    field: "it140_10"
+    type: money
+  - line: "11"                            # 11 Overpayment previously refunded or credited (amended only)
+    field: "it140_11"
+    type: money
+  - line: 11.penalty_waiver_requested     # "Penalty Due -- CHECK IF REQUESTING WAIVER/ANNUALIZED"
+    field: "it140_RequestingWaiverOrAnnualizedWorksheetAttached"
+    type: checkbox
+    on_state: /Yes
+  - line: "12"                            # 12 West Virginia Use Tax Due on out-of-state purchases
+    field: "it140_12"
+    type: money
+  - line: 12.no_use_tax                   # 12 "CHECK IF NO USE TAX DUE"
+    field: "it140_NoTaxDue"
+    type: checkbox
+    on_state: /Yes
+  - line: "13"                            # 13 Add lines 10 through 12. Total amount due.
+    field: "it140_13"
+    type: money
+  - line: "14"                            # 14 West Virginia Income Tax Withheld
+    field: "it140_14"
+    type: money
+  - line: 14.nrsr_withholding             # 14 "Check if withholding from NRSR (Nonresident Sale of Real Estate)"
+    field: "it140_NRSR"
+    type: checkbox
+    on_state: /Yes
+  - line: "15"                            # 15 Estimated Tax Payments and Payments with Schedule 4868
+    field: "it140_15"
+    type: money
+  - line: "16"                            # 16 Non-Family Adoption Tax Credit
+    field: "it140_16"
+    type: money
+  - line: "17"                            # 17 Senior Citizen Tax Credit (Schedule SCTC-A)
+    field: "it140_17"
+    type: money
+  - line: "18"                            # 18 Homestead Excess Property Tax Credit (Schedule HEPTC-1)
+    field: "it140_18"
+    type: money
+  - line: "19"                            # 19 Build WV Property Value Adjustment Refundable Tax Credit
+    field: "it140_19"
+    type: money
+  - line: "20"                            # 20 Amount paid with original return (amended only)
+    field: "it140_20"
+    type: money
+  - line: "21"                            # 21 Payments and Refundable Credits (add lines 14 through 20)
+    field: "it140_21"
+    type: money
+  - line: "22"                            # 22 Balance Due (line 13 minus line 21)
+    field: "it140_22"
+    type: money
+  - line: "23"                            # 23 Line 21 minus line 13. Overpayment.
+    field: "it140_23"
+    type: money
+  - line: 24a                             # 24A Children's Trust Fund
+    field: "it140_24A"
+    type: money
+  - line: 24b                             # 24B WV Dept. of Veterans Assistance
+    field: "it140_24B"
+    type: money
+  - line: 24c                             # 24C State Veterans Cemetery
+    field: "it140_24C"
+    type: money
+  - line: "24"                            # 24 Donations (sum of 24A, 24B, 24C)
+    field: "it140_24"
+    type: money
+  - line: "25"                            # 25 Overpayment credited to 2024 estimated tax
+    field: "it140_25"
+    type: money
+  - line: "26"                            # 26 Refund due to you (line 23 minus line 24 and line 25)
+    field: "it140_26"
+    type: money
+
+  # ---- Direct Deposit of Refund
+  - line: refund.account_type.checking    # "Direct Deposit of Refund: CHECKING"
+    field: "it140_DirectDepositOfRefund_RadioGroup"
+    type: checkbox
+    on_state: /Checking
+    group: refund.account_type
+  - line: refund.account_type.savings     # "... SAVINGS"
+    field: "it140_DirectDepositOfRefund_RadioGroup"
+    type: checkbox
+    on_state: /Savings
+    group: refund.account_type
+  - line: refund.routing_number           # "ROUTING NUMBER"
+    field: "it140_DirectDepositOfRefund_RoutingNumber"
+    type: text
+    maxlen: 10
+  - line: refund.account_number           # "ACCOUNT NUMBER"
+    field: "it140_DirectDepositOfRefundAccountNumber"
+    type: text
+    maxlen: 30
+
+  # ---- Signature block
+  - line: signature.discuss_with_preparer.yes  # "authorize the Tax Division to discuss ... YES"
+    field: "Check Box1"
+    type: checkbox
+    on_state: /Yes
+    group: signature.discuss_with_preparer
+  - line: signature.discuss_with_preparer.no   # "... NO"
+    field: "Check Box2"
+    type: checkbox
+    on_state: /No
+    group: signature.discuss_with_preparer
+  - line: preparer.not_efile               # "Preparer: Check HERE if client is requesting NOT to efile"
+    field: "Check Box3"
+    type: checkbox
+    on_state: /Yes
+  - line: preparer.id_number               # "Preparer's EIN"
+    field: "it140_PreparerEIN"
+    type: text
+    maxlen: 10
+  - line: preparer.signature               # "Signature of preparer other than above"
+    field: "Preparer’s Signature"
+    type: text
+  - line: preparer.telephone               # preparer "Telephone Number"
+    field: "PreparerTelephone"
+    type: text
+
+  # ============================================ pages 3-4 -- Schedule M (Modifications to AGI)
+  # Modifications DECREASING federal AGI (col A You / col B Spouse)
+  - line: sch_m.27a                        # 27 Interest/dividends on US/WV obligations exempt from state tax
+    field: "M27A"
+    type: money
+  - line: sch_m.27b
+    field: "M27B"
+    type: money
+  - line: sch_m.28a                        # 28 Benefit from federal retirement systems (retired fed LEO)
+    field: "M28A"
+    type: money
+  - line: sch_m.28b
+    field: "M28B"
+    type: money
+  - line: sch_m.29a                        # 29 Benefit from WV state/local police/deputy/firemen retirement
+    field: "M29A"
+    type: money
+  - line: sch_m.29b
+    field: "M29B"
+    type: money
+  - line: sch_m.30a                        # 30 Military Retirement Modification
+    field: "M30A"
+    type: money
+  - line: sch_m.30b
+    field: "M30B"
+    type: money
+  - line: sch_m.31a.a                      # 31(a) WV Teachers' & Public Employees' Retirement (col A)
+    field: "M31A_a"
+    type: money
+  - line: sch_m.31a.b                      # 31(b) Federal Retirement Systems Title 4 USC 111 (col A)
+    field: "M31A_b"
+    type: money
+  - line: sch_m.31b.a                      # 31(a) col B
+    field: "M31B_a"
+    type: money
+  - line: sch_m.31b.b                      # 31(b) col B
+    field: "M31B_b"
+    type: money
+  - line: sch_m.31a                        # 31 Other Retirement Modification total (col A) -- max $2000
+    field: "M31A"
+    type: money
+  - line: sch_m.31b                        # 31 total (col B)
+    field: "M31B"
+    type: money
+  - line: sch_m.32a.a                      # 32(a) TOTAL Social Security Benefits (col A)
+    field: "M33A_1"
+    type: money
+  - line: sch_m.32b.a                      # 32(a) col B
+    field: "M33A_2"
+    type: money
+  - line: sch_m.32a.b                      # 32(b) Benefits exempt for Federal tax (col A)
+    field: "M33B_1"
+    type: money
+  - line: sch_m.32b.b                      # 32(b) col B
+    field: "M33B_2"
+    type: money
+  - line: sch_m.32a                        # 32(c) Benefits taxable for Federal (a minus b) (col A)
+    field: "M32A"
+    type: money
+  - line: sch_m.32b                        # 32(c) col B
+    field: "M32B"
+    type: money
+  - line: sch_m.33a                        # 33 Certain assets held by subchapter S Corporation bank
+    field: "M33A"
+    type: money
+  - line: sch_m.33b
+    field: "M33B"
+    type: money
+  - line: sch_m.34a                        # 34 Certain Active Duty Military pay
+    field: "M34A"
+    type: money
+  - line: sch_m.34b
+    field: "M34B"
+    type: money
+  - line: sch_m.35a                        # 35 Active Military Separation
+    field: "M35A"
+    type: money
+  - line: sch_m.35b
+    field: "M35B"
+    type: money
+  - line: sch_m.36a                        # 36 Refunds of state and local income taxes reported as income
+    field: "M36A"
+    type: money
+  - line: sch_m.36b
+    field: "M36B"
+    type: money
+  - line: sch_m.37a                        # 37 Contributions to WV Prepaid Tuition/Savings Plan Trust Funds
+    field: "M37A"
+    type: money
+  - line: sch_m.37b
+    field: "M37B"
+    type: money
+  - line: sch_m.38a                        # 38 Railroad Retirement Board Income received
+    field: "M38A"
+    type: money
+  - line: sch_m.38b
+    field: "M38B"
+    type: money
+  - line: sch_m.39a                        # 39 Long-Term Care Insurance
+    field: "M39A"
+    type: money
+  - line: sch_m.39b
+    field: "M39B"
+    type: money
+  - line: sch_m.40a                        # 40 IRC 1341 Repayments
+    field: "M40A"
+    type: money
+  - line: sch_m.40b
+    field: "M40B"
+    type: money
+  - line: sch_m.41a                        # 41 Autism Modification
+    field: "M41A"
+    type: money
+  - line: sch_m.41b
+    field: "M41B"
+    type: money
+  - line: sch_m.42a                        # 42 ABLE Act
+    field: "M42A"
+    type: money
+  - line: sch_m.42b
+    field: "M42B"
+    type: money
+  - line: sch_m.43a                        # 43 WV Jumpstart Savings Program deposits
+    field: "M43A"
+    type: money
+  - line: sch_m.43b
+    field: "M43B"
+    type: money
+  - line: sch_m.44a.a                      # 44(a) retirement benefits from employer plan (col A)
+    field: "M44A_a"
+    type: money
+  - line: sch_m.44a.b                      # 44(b) retirement benefits actually received from PBGC (col A)
+    field: "M44A_b"
+    type: money
+  - line: sch_m.44b.a                      # 44(a) col B
+    field: "M44B_a"
+    type: money
+  - line: sch_m.44b.b                      # 44(b) col B
+    field: "M44B_b"
+    type: money
+  - line: sch_m.44a                        # 44 PBGC Modification (subtract 44b from 44a) (col A)
+    field: "M44A"
+    type: money
+  - line: sch_m.44b                        # 44 col B
+    field: "M44B"
+    type: money
+  - line: sch_m.45a                        # 45 Qualified Opportunity Zone business income
+    field: "M45A"
+    type: money
+  - line: sch_m.45b
+    field: "M45B"
+    type: money
+  - line: sch_m.46a                        # 46 Gambling losses (not greater than winnings)
+    field: "M46A_1"
+    type: money
+  - line: sch_m.46b
+    field: "M46B_1"
+    type: money
+  # ---- page 4: line 47 age/disability grid + lines 48-59
+  - line: sch_m.47a.year_of_birth          # 47(a) Year of birth (65 or older) -- You
+    field: "scheduleM.comboBox.47.you.yearOfBirthIf65OrOlder"
+    type: text
+  - line: sch_m.47a.year_of_disability     # 47(b) Year of disability -- You
+    field: "scheduleM.comboBox.47.you.yearOfDisability"
+    type: text
+  - line: sch_m.47b.year_of_birth          # 47(a) Year of birth (65 or older) -- Spouse
+    field: "scheduleM.comboBox.47.spouse.yearOfBirthIf65OrOlder"
+    type: text
+  - line: sch_m.47b.year_of_disability     # 47(b) Year of disability -- Spouse
+    field: "scheduleM.comboBox.47.spouse.yearOfDisability"
+    type: text
+  - line: sch_m.47c.a                       # 47(c) Income not included in lines 33-46 (NTE $8000) -- You
+    field: "M47C1"
+    type: money
+  - line: sch_m.47c.b                       # 47(c) Spouse
+    field: "M47C2"
+    type: money
+  - line: sch_m.47d.a                       # 47(d) Add lines 27 through 32 -- You
+    field: "M47D1"
+    type: money
+  - line: sch_m.47d.b                       # 47(d) Spouse
+    field: "M47D2"
+    type: money
+  - line: sch_m.47a                         # 47 Subtract 47(d) from 47(c) (col A You)
+    field: "M47_1"
+    type: money
+  - line: sch_m.47b                         # 47 (col B Spouse)
+    field: "M47_2"
+    type: money
+  - line: sch_m.48a                         # 48 Surviving spouse deduction (col A)
+    field: "M48A"
+    type: money
+  - line: sch_m.48b
+    field: "M48B"
+    type: money
+  - line: sch_m.49a                         # 49 Add lines 27 through 48 for each column (col A)
+    field: "M49A"
+    type: money
+  - line: sch_m.49b
+    field: "M49B"
+    type: money
+  - line: sch_m.50                          # 50 TOTAL SUBTRACTIONS (49 col A + 49 col B) -> IT-140 line 3
+    field: "M50"
+    type: money
+  # ---- Modifications INCREASING federal AGI (single column)
+  - line: sch_m.51                          # 51 Interest/dividend on federal obligations exempt fed / taxable state
+    field: "M51"
+    type: money
+  - line: sch_m.52                          # 52 Interest/dividend on state & local bonds (other than WV)
+    field: "M52"
+    type: money
+  - line: sch_m.53                          # 53 Interest on money borrowed to purchase exempt bonds
+    field: "M53"
+    type: money
+  - line: sch_m.54                          # 54 Qualifying 402(e) lump-sum income
+    field: "M54"
+    type: money
+  - line: sch_m.55                          # 55 Other income deducted from federal AGI but subject to state tax
+    field: "M55"
+    type: money
+  - line: sch_m.56                          # 56 Withdrawals from WV Prepaid Tuition/Savings not for qualifying
+    field: "M56"
+    type: money
+  - line: sch_m.57                          # 57 ABLE ACT withdrawals not for qualifying expenses
+    field: "M57"
+    type: money
+  - line: sch_m.58                          # 58 WV Jumpstart Savings withdrawals not for qualifying expenses
+    field: "M58"
+    type: money
+  - line: sch_m.59                          # 59 TOTAL ADDITIONS (add lines 51-58) -> IT-140 line 2
+    field: "M59"
+    type: money
+
+  # ============================================ pages 5-6 -- Tax Credit RECAP Schedule
+  - line: recap.1                           # 1 Credit for Income Tax paid to another state (Schedule E)
+    field: "recap01"
+    type: money
+  - line: recap.1.state_1                   # 1 "For what states?" (5 combo boxes)
+    field: "it140_combobox_taxpayerState1"
+    type: text
+    maxlen: 2
+  - line: recap.1.state_2
+    field: "it140_combobox_taxpayerState2"
+    type: text
+    maxlen: 2
+  - line: recap.1.state_3
+    field: "it140_combobox_taxpayerState3"
+    type: text
+    maxlen: 2
+  - line: recap.1.state_4
+    field: "it140_combobox_taxpayerState4"
+    type: text
+    maxlen: 2
+  - line: recap.1.state_5
+    field: "it140_combobox_taxpayerState5"
+    type: text
+    maxlen: 2
+  - line: recap.2                           # 2 Family Tax Credit (Schedule FTC-1)
+    field: "recap02"
+    type: money
+  - line: recap.3                           # 3 General Economic Opportunity Tax Credit (EOTC-PIT)
+    field: "recap03"
+    type: money
+  - line: recap.4                           # 4 High Technology Manufacturing Business (EOTC-HTM)
+    field: "recap04"
+    type: money
+  - line: recap.5                           # 5 WV Environmental Agricultural Equipment Credit (AG-1)
+    field: "recap05"
+    type: money
+  - line: recap.6                           # 6 WV Military Incentive Credit (J)
+    field: "recap06"
+    type: money
+  - line: recap.7                           # 7 Neighborhood Investment Program Credit (NIPA-2)
+    field: "recap07"
+    type: money
+  - line: recap.8                           # 8 Historic Rehabilitated Buildings Investment Credit (RBIC)
+    field: "recap08"
+    type: money
+  - line: recap.9                           # 9 Qualified Residential Rehabilitated Buildings (RBIC-A)
+    field: "recap09"
+    type: money
+  - line: recap.10                          # 10 Apprenticeship Training Tax Credit (ATTC-1)
+    field: "recap10"
+    type: money
+  - line: recap.11                          # 11 Alternative-Fuel Tax Credit (AFTC-1)
+    field: "recap11"
+    type: money
+  - line: recap.12                          # 12 Conceal Carry Gun Permit Credit (CCGP-1)
+    field: "recap12"
+    type: money
+  - line: recap.13                          # 13 Farm to Food Bank Tax Credit
+    field: "recap13"
+    type: money
+  - line: recap.14                          # 14 Downstream Natural Gas Manufacturing (DNG-2)
+    field: "recap14"
+    type: money
+  - line: recap.15                          # 15 Post Coal Mine Site Business Credit (PCM-2)
+    field: "recap15"
+    type: money
+  - line: recap.16                          # 16 Natural Gas Liquids (NGL-2)
+    field: "recap16"
+    type: money
+  - line: recap.17                          # 17 Donation or Sale of Vehicle to Qualified Charities (DSV-1)
+    field: "recap17"
+    type: money
+  - line: recap.18                          # 18 Small Arms And Ammunition Manufacturers Credit (SAAM-1)
+    field: "recap18"
+    type: money
+  - line: recap.19                          # 19 WV Jumpstart Savings Program Credit (JSP-1)
+    field: "recap19"
+    type: money
+  - line: recap.20                          # 20 Capital Investment in Child-Care Property Tax Credit (CIP)
+    field: "recap20"
+    type: money
+  - line: recap.21                          # 21 Operating Costs of Child Care Property Tax Credit (OCF)
+    field: "recap21"
+    type: money
+  - line: recap.22                          # 22 Industrial Advancement Act Tax Credit
+    field: "recap22"
+    type: money
+  - line: recap.23                          # 23 WV Film Industry Investment Tax Credit (WV FIIA-TCS)
+    field: "recap23"
+    type: money
+  - line: recap.24                          # 24 Volunteer Firefighter Tax Credit (VFTC-1)
+    field: "recap24"
+    type: money
+  - line: recap.25                          # 25 Build WV Property Value Adjustment Tax Credit (PVA-2)
+    field: "recap25"
+    type: money
+  - line: recap.26                          # 26 Elective Income Credit for tax paid by pass through entity (EK-1)
+    field: "recap26"
+    type: money
+  - line: recap.27                          # 27 TOTAL NON REFUNDABLE CREDITS (add recap lines) -> IT-140 line 9
+    field: "total_recap"
+    type: money
+
+  # ============================================ page 9 -- Schedule HEPTC-1 (Homestead Excess Property Tax Credit)
+  - line: heptc.amt_required                # Part I: "Check here if required to pay Federal AMT"
+    field: "FAMT_1"
+    type: checkbox
+    on_state: /FAMT
+  - line: heptc.required_federal_return.yes # "Are you required to file a federal return? YES"
+    field: "homesteadY_checkbox"
+    type: checkbox
+    on_state: /Yes
+  - line: heptc.required_federal_return.no  # "... NO"
+    field: "homesteadN_checkbox"
+    type: checkbox
+    on_state: /Yes
+  - line: heptc.1                           # 1 Total WV property tax paid on OWNER-OCCUPIED home in 2023
+    field: "homestead01"
+    type: money
+  - line: heptc.2                           # 2 Allowable Senior Citizen Tax Credit from line 2 of Form SCTC-A
+    field: "homestead02"
+    type: money
+  - line: heptc.3                           # 3 Subtract line 2 from line 1
+    field: "homestead03"
+    type: money
+  - line: heptc.4                           # 4 Federal Adjusted Gross Income
+    field: "homestead04"
+    type: money
+  - line: heptc.4a                          # 4a Increasing income modifications (Schedule M line 59)
+    field: "homestead04a"
+    type: money
+  - line: heptc.4b                          # 4b Federal tax-exempt interest income
+    field: "homestead04b"
+    type: money
+  - line: heptc.4c                          # 4c Earnings replacement insurance (Workers' Comp)
+    field: "homestead04c"
+    type: money
+  - line: heptc.4d                          # 4d Social Security benefits (SSI/SSDI) not in Federal AGI
+    field: "homestead04d"
+    type: money
+  - line: heptc.4e                          # 4e Income of household members filing a separate return
+    field: "homestead04e"
+    type: money
+  - line: heptc.5                           # 5 Add lines 4a, 4b, 4c, 4d, and 4e
+    field: "homestead05"
+    type: money
+  - line: heptc.6                           # 6 Total Gross Income (line 4 plus line 5)
+    field: "homestead06"
+    type: money
+  - line: heptc.7                           # 7 Multiply line 6 by 4% (0.04)
+    field: "homestead07"
+    type: money
+  - line: heptc.8.yes                       # 8 "Is line 3 greater than line 7? Yes"
+    field: "homestead08_checkbox"
+    type: checkbox
+    on_state: /Yes
+    group: heptc.8
+  - line: heptc.8.no                        # 8 "... No. Stop"
+    field: "homestead08_checkbox"
+    type: checkbox
+    on_state: /No
+    group: heptc.8
+  - line: heptc.9                           # 9 Subtract line 7 from line 3 or $1,000 (lower) -> IT-140 line 18
+    field: "homestead09"
+    type: money
+
+  # ============================================ page 10 -- Schedule FTC-1 (Family Tax Credit)
+  - line: ftc.1                             # 1 Federal Adjusted Gross Income (line 1 of Form IT-140)
+    field: "ftcw1"
+    type: money
+  - line: ftc.2                             # 2 Increasing WV modifications (line 2 of Form IT-140)
+    field: "ftcw2"
+    type: money
+  - line: ftc.3                             # 3 Tax-exempt interest reported on federal return
+    field: "ftcw3"
+    type: money
+  - line: ftc.4                             # 4 Add lines 1-3 (Modified Federal AGI for Family Tax Credit)
+    field: "ftcw4"
+    type: money
+  - line: ftc.5                             # 5 Number of exemptions from Form IT-140 (boxes a,b,c) = family size
+    field: "ftcw5"
+    type: text
+    maxlen: 2
+  - line: ftc.6                             # 6 Family Tax Credit Percentage (from tables)
+    field: "ftcw6"
+    type: text
+  - line: ftc.7                             # 7 Income tax due from line 8 of Form IT-140
+    field: "ftcw7"
+    type: money
+  - line: ftc.8                             # 8 Multiply line 7 by line 6 -> RECAP line 2
+    field: "ftcw8"
+    type: money
+
+  # ============================================ page 12 -- Schedule H (Certification for Permanent and Total Disability)
+  - line: sch_h.disabled_taxpayer_name      # "Name of Disabled Taxpayer"
+    field: "schedulesHE_NameOfDisabledTaxpayer"
+    type: text
+  - line: sch_h.physician_name              # "Physician's Name"
+    field: "schedulesHE_PhysiciansName"
+    type: text
+  - line: sch_h.physician_fein              # "Physician's FEIN Number"
+    field: "schedulesHE_PhysiciansFEIN"
+    type: text
+  - line: sch_h.physician_address           # "Physician's Street Address"
+    field: "schedulesHE_PhysiciansStreetAddress"
+    type: text
+  - line: sch_h.physician_city              # "City"
+    field: "schedulesHE_PhysiciansCityOrPostOffice"
+    type: text
+
+  # ============================================ page 13 -- Schedule E (Credit for Income Tax Paid to Another State)
+  - line: sch_e.residency.resident          # "RESIDENT"
+    field: "E_rg1"
+    type: checkbox
+    on_state: /Resident
+    group: sch_e.residency
+  - line: sch_e.residency.nonresident       # "NONRESIDENT"
+    field: "E_rg1"
+    type: checkbox
+    on_state: /Non-resident
+    group: sch_e.residency
+  - line: sch_e.residency.part_year         # "PART-YEAR RESIDENT"
+    field: "E_rg1"
+    type: checkbox
+    on_state: /Part-year resident
+    group: sch_e.residency
+  - line: sch_e.part_year.moved_in          # "MOVED INTO WEST VIRGINIA"
+    field: "E_rg2"
+    type: checkbox
+    on_state: /Moved into West Virginia
+    group: sch_e.part_year
+  - line: sch_e.part_year.moved_out_with_income  # "MOVED OUT ... HAD WV SOURCE INCOME DURING NONRESIDENT PERIOD"
+    field: "E_rg2"
+    type: checkbox
+    on_state: "/Moved out of West Virginia but had West Virginia source income during non resident period."
+    group: sch_e.part_year
+  - line: sch_e.part_year.moved_out_no_income    # "MOVED OUT ... HAD NO WV SOURCE INCOME DURING NONRESIDENT PERIOD"
+    field: "E_rg2"
+    type: checkbox
+    on_state: "/Moved out of West Virginia and had no West Virginia source income during non resident period."
+    group: sch_e.part_year
+  - line: sch_e.date_of_move.month          # "ENTER THE DATE OF YOUR MOVE MM"
+    field: "scheduleE_ResidencyStatusDateOfYourMoveMM"
+    type: text
+  - line: sch_e.date_of_move.day            # DD
+    field: "scheduleE_ResidencyStatusDateOfYourMoveDD"
+    type: text
+  - line: sch_e.date_of_move.year           # YYYY
+    field: "scheduleE_ResidencyStatusDateOfYourMoveCCYY"
+    type: text
+  - line: sch_e.1.state                      # 1 "STATE ABBREVIATION" (combo)
+    field: "scheduleE81_combobox"
+    type: text
+    maxlen: 2
+  - line: sch_e.1                            # 1 Income tax computed on your 2023 return
+    field: "E1"
+    type: money
+  - line: sch_e.2                            # 2 WV total income tax due (line 8 of Form IT-140)
+    field: "E2"
+    type: money
+  - line: sch_e.3                            # 3 Net income derived from above state included in WV total income
+    field: "E3"
+    type: money
+  - line: sch_e.4                            # 4 Total WV Adjusted Gross Income
+    field: "E4"
+    type: money
+  - line: sch_e.5                            # 5 Limitation of Credit (line 2 x line 3 / line 4)
+    field: "E5"
+    type: money
+  - line: sch_e.6                            # 6 Alternative WV Taxable Income
+    field: "E6"
+    type: money
+  - line: sch_e.7                            # 7 Alternative WV Total Income Tax
+    field: "E7"
+    type: money
+  - line: sch_e.8                            # 8 Limitation of Credit (line 2 minus line 7)
+    field: "E8"
+    type: money
+  - line: sch_e.9                            # 9 Maximum Credit
+    field: "E9"
+    type: money
+  - line: sch_e.10                           # 10 Total Credit (smallest of 1,2,5,8,9) -> RECAP line 1
+    field: "E10"
+    type: money
+
+  # ============================================ page 14 -- Schedule F (Statement of Claimant to Refund Due Deceased Taxpayer)
+  - line: sch_f.decedent_name                # "NAME OF DECEDENT"
+    field: "Sch F_Name_of_Decedent"
+    type: text
+  - line: sch_f.claimant_name                # "NAME OF CLAIMANT"
+    field: "Sch F_Name_of_C.laimant"
+    type: text
+  - line: sch_f.decedent_date_of_death       # "DATE OF DEATH"
+    field: "SchF_DOD"
+    type: text
+  - line: sch_f.decedent_ssn                  # decedent "SOCIAL SECURITY NUMBER"
+    field: "SchF_DecedentsSSN"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only
+  - line: sch_f.claimant_ssn                  # claimant "SOCIAL SECURITY NUMBER"
+    field: "SchF_ClaimantsSSN"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only
+  - line: sch_f.decedent_address              # decedent "ADDRESS"
+    field: "Sch F_DecedentTaxPayerCityOrPostOffice"
+    type: text
+  - line: sch_f.decedent_city                 # decedent "CITY"
+    field: "Sch F_DecedentTaxPayerCityOrPostOffice1"
+    type: text
+  - line: sch_f.decedent_state                # decedent "STATE" (combo)
+    field: "Sch F_combobox_taxpayerState"
+    type: text
+    maxlen: 2
+  - line: sch_f.decedent_zip                  # decedent "ZIP CODE"
+    field: "Sch F_DecedentsZipCode"
+    type: text
+  - line: sch_f.claimant_address              # claimant "ADDRESS"
+    field: "Sch F_ClaimantsCityOrPostOffice"
+    type: text
+  - line: sch_f.claimant_city                 # claimant "CITY"
+    field: "Sch F_ClaimantsCityOrPostOffice1"
+    type: text
+  - line: sch_f.claimant_state                # claimant "STATE" (combo)
+    field: "Sch F_combobox_taxpayerState1"
+    type: text
+    maxlen: 2
+  - line: sch_f.claimant_zip                  # claimant "ZIP CODE"
+    field: "Sch F_ClaimantsZipCode"
+    type: text
+  - line: sch_f.filing_as.a                   # "A. Surviving wife or husband, claiming refund based on joint return"
+    field: "Group1"
+    type: checkbox
+    on_state: /Check Box A
+    group: sch_f.filing_as
+  - line: sch_f.filing_as.b                   # "B. Administrator or executor"
+    field: "Group1"
+    type: checkbox
+    on_state: /Check Box B
+    group: sch_f.filing_as
+  - line: sch_f.filing_as.c                   # "C. Claimant for the estate of the decedent, other than above"
+    field: "Group1"
+    type: checkbox
+    on_state: /Check Box C
+    group: sch_f.filing_as
+  - line: sch_f.1.yes                         # 1 "Did the decedent leave a will? YES"
+    field: "Check BoxA"
+    type: checkbox
+    on_state: /Yes
+    group: sch_f.1
+  - line: sch_f.1.no                          # 1 "... NO"
+    field: "Check BoxB"
+    type: checkbox
+    on_state: /No
+    group: sch_f.1
+  - line: sch_f.2a.yes                        # 2(a) "Has an administrator/executor been appointed? YES"
+    field: "Check BoxC"
+    type: checkbox
+    on_state: /Yes
+    group: sch_f.2a
+  - line: sch_f.2a.no                         # 2(a) "... NO"
+    field: "Check BoxD"
+    type: checkbox
+    on_state: /No
+    group: sch_f.2a
+  - line: sch_f.2b.yes                        # 2(b) "If NO will one be appointed? YES"
+    field: "Check BoxE"
+    type: checkbox
+    on_state: /Yes
+    group: sch_f.2b
+  - line: sch_f.2b.no                         # 2(b) "... NO"
+    field: "Check BoxF"
+    type: checkbox
+    on_state: /No
+    group: sch_f.2b
+  - line: sch_f.3.yes                         # 3 "Will you disburse the refund per state law? YES"
+    field: "Check BoxG"
+    type: checkbox
+    on_state: /Yes
+    group: sch_f.3
+  - line: sch_f.3.no                          # 3 "... NO"
+    field: "Check BoxH"
+    type: checkbox
+    on_state: /No
+    group: sch_f.3
+
+  # ============================================ page 16 -- Schedule UT (Purchaser's Use Tax Schedule)
+  - line: sch_ut.1                            # Part I line 1 Amount of purchases subject to WV Use Tax
+    field: "foodtax1"
+    type: money
+  - line: sch_ut.3                            # Part I line 3 WV State Use Tax (= Part III line 9)
+    field: "total3"
+    type: money
+  - line: sch_ut.4a                           # 4a City/Town Name
+    field: "4a"
+    type: text
+  - line: sch_ut.4b                           # 4b Purchases subject to Municipal Use Tax
+    field: "4b"
+    type: money
+  - line: sch_ut.4c                           # 4c Tax Rate
+    field: "4c"
+    type: text
+  - line: sch_ut.4d                           # 4d Municipal Tax Due
+    field: "4d"
+    type: money
+  - line: sch_ut.5a
+    field: "5a"
+    type: text
+  - line: sch_ut.5b
+    field: "5b"
+    type: money
+  - line: sch_ut.5c
+    field: "5c"
+    type: text
+  - line: sch_ut.5d
+    field: "5d"
+    type: money
+  - line: sch_ut.6a
+    field: "6a"
+    type: text
+  - line: sch_ut.6b
+    field: "6b"
+    type: money
+  - line: sch_ut.6c
+    field: "6c"
+    type: text
+  - line: sch_ut.6d
+    field: "6d"
+    type: money
+  - line: sch_ut.7a
+    field: "7a"
+    type: text
+  - line: sch_ut.7b
+    field: "7b"
+    type: money
+  - line: sch_ut.7c
+    field: "7c"
+    type: text
+  - line: sch_ut.7d
+    field: "7d"
+    type: money
+  - line: sch_ut.8                            # 8 Total Municipal Use Tax (= Part III line 10)
+    field: "totalmuni"
+    type: money
+  - line: sch_ut.11                           # 11 Total Use Tax Due (lines 9 + 10) -> IT-140 line 12
+    field: "totaluse"
+    type: money
+
+  # ============================================ page 18 -- Amended Return / Penalty Waiver free-text
+  - line: amended.explanation                 # "AMENDED RETURN INFORMATION" explanation box
+    field: "schedulePBGC_AmendedReturnInformation"
+    type: text
+    maxlen: 1000
+  - line: penalty_waiver.explanation          # "written request for waiver of estimated penalty" box
+    field: "schedulePBGC_WrittenRequestForWaiverOfEstimatedPenalty"
+    type: text
+    maxlen: 1000
+
+  # ============================================ page 19 -- Schedule DP (Additional Dependents)
+  - line: sch_dp.dependent_1.name.first
+    field: "fname_1"
+    type: text
+  - line: sch_dp.dependent_1.name.last
+    field: "lname_1"
+    type: text
+  - line: sch_dp.dependent_1.ssn
+    field: "SSN_1"
+    type: text
+  - line: sch_dp.dependent_1.date_of_birth
+    field: "DOB1"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_2.name.first
+    field: "fname_2"
+    type: text
+  - line: sch_dp.dependent_2.name.last
+    field: "lname_2"
+    type: text
+  - line: sch_dp.dependent_2.ssn
+    field: "SSN_2"
+    type: text
+  - line: sch_dp.dependent_2.date_of_birth
+    field: "DOB2"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_3.name.first
+    field: "fname_3"
+    type: text
+  - line: sch_dp.dependent_3.name.last
+    field: "lname_3"
+    type: text
+  - line: sch_dp.dependent_3.ssn
+    field: "SSN_3"
+    type: text
+  - line: sch_dp.dependent_3.date_of_birth
+    field: "DOB3"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_4.name.first
+    field: "fname_4"
+    type: text
+  - line: sch_dp.dependent_4.name.last
+    field: "lname_4"
+    type: text
+  - line: sch_dp.dependent_4.ssn
+    field: "SSN_4"
+    type: text
+  - line: sch_dp.dependent_4.date_of_birth
+    field: "DOB4"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_5.name.first
+    field: "fname_5"
+    type: text
+  - line: sch_dp.dependent_5.name.last
+    field: "lname_5"
+    type: text
+  - line: sch_dp.dependent_5.ssn
+    field: "SSN_5"
+    type: text
+  - line: sch_dp.dependent_5.date_of_birth
+    field: "DOB5"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_6.name.first
+    field: "fname_6"
+    type: text
+  - line: sch_dp.dependent_6.name.last
+    field: "lname_6"
+    type: text
+  - line: sch_dp.dependent_6.ssn
+    field: "SSN_6"
+    type: text
+  - line: sch_dp.dependent_6.date_of_birth
+    field: "DOB6"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_7.name.first
+    field: "fname_7"
+    type: text
+  - line: sch_dp.dependent_7.name.last
+    field: "lname_7"
+    type: text
+  - line: sch_dp.dependent_7.ssn
+    field: "SSN_7"
+    type: text
+  - line: sch_dp.dependent_7.date_of_birth
+    field: "DOB7"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_8.name.first
+    field: "fname_8"
+    type: text
+  - line: sch_dp.dependent_8.name.last
+    field: "lname_8"
+    type: text
+  - line: sch_dp.dependent_8.ssn
+    field: "SSN_8"
+    type: text
+  - line: sch_dp.dependent_8.date_of_birth
+    field: "DOB8"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_9.name.first
+    field: "fname_9"
+    type: text
+  - line: sch_dp.dependent_9.name.last
+    field: "lname_9"
+    type: text
+  - line: sch_dp.dependent_9.ssn
+    field: "SSN_9"
+    type: text
+  - line: sch_dp.dependent_9.date_of_birth
+    field: "DOB9"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_10.name.first
+    field: "fname_10"
+    type: text
+  - line: sch_dp.dependent_10.name.last
+    field: "lname_10"
+    type: text
+  - line: sch_dp.dependent_10.ssn
+    field: "SSN_10"
+    type: text
+  - line: sch_dp.dependent_10.date_of_birth
+    field: "DOB10"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_11.name.first
+    field: "fname_11"
+    type: text
+  - line: sch_dp.dependent_11.name.last
+    field: "lname_11"
+    type: text
+  - line: sch_dp.dependent_11.ssn
+    field: "SSN_11"
+    type: text
+  - line: sch_dp.dependent_11.date_of_birth
+    field: "DOB11"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_12.name.first
+    field: "fname_12"
+    type: text
+  - line: sch_dp.dependent_12.name.last
+    field: "lname_12"
+    type: text
+  - line: sch_dp.dependent_12.ssn
+    field: "SSN_12"
+    type: text
+  - line: sch_dp.dependent_12.date_of_birth
+    field: "DOB12"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_13.name.first
+    field: "fname_13"
+    type: text
+  - line: sch_dp.dependent_13.name.last
+    field: "lname_13"
+    type: text
+  - line: sch_dp.dependent_13.ssn
+    field: "SSN_13"
+    type: text
+  - line: sch_dp.dependent_13.date_of_birth
+    field: "DOB13"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_14.name.first
+    field: "fname_14"
+    type: text
+  - line: sch_dp.dependent_14.name.last
+    field: "lname_14"
+    type: text
+  - line: sch_dp.dependent_14.ssn
+    field: "SSN_14"
+    type: text
+  - line: sch_dp.dependent_14.date_of_birth
+    field: "DOB14"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_15.name.first
+    field: "fname_15"
+    type: text
+  - line: sch_dp.dependent_15.name.last
+    field: "lname_15"
+    type: text
+  - line: sch_dp.dependent_15.ssn
+    field: "SSN_15"
+    type: text
+  - line: sch_dp.dependent_15.date_of_birth
+    field: "DOB15"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_16.name.first
+    field: "fname_16"
+    type: text
+  - line: sch_dp.dependent_16.name.last
+    field: "lname_16"
+    type: text
+  - line: sch_dp.dependent_16.ssn
+    field: "SSN_16"
+    type: text
+  - line: sch_dp.dependent_16.date_of_birth
+    field: "DOB16"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_17.name.first
+    field: "fname_17"
+    type: text
+  - line: sch_dp.dependent_17.name.last
+    field: "lname_17"
+    type: text
+  - line: sch_dp.dependent_17.ssn
+    field: "SSN_17"
+    type: text
+  - line: sch_dp.dependent_17.date_of_birth
+    field: "DOB17"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_18.name.first
+    field: "fname_18"
+    type: text
+  - line: sch_dp.dependent_18.name.last
+    field: "lname_18"
+    type: text
+  - line: sch_dp.dependent_18.ssn
+    field: "SSN_18"
+    type: text
+  - line: sch_dp.dependent_18.date_of_birth
+    field: "DOB18"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_19.name.first
+    field: "fname_19"
+    type: text
+  - line: sch_dp.dependent_19.name.last
+    field: "lname_19"
+    type: text
+  - line: sch_dp.dependent_19.ssn
+    field: "SSN_19"
+    type: text
+  - line: sch_dp.dependent_19.date_of_birth
+    field: "DOB19"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_20.name.first
+    field: "fname_20"
+    type: text
+  - line: sch_dp.dependent_20.name.last
+    field: "lname_20"
+    type: text
+  - line: sch_dp.dependent_20.ssn
+    field: "SSN_20"
+    type: text
+  - line: sch_dp.dependent_20.date_of_birth
+    field: "DOB20"
+    type: text
+    maxlen: 10
+  - line: sch_dp.dependent_21.name.first
+    field: "fname_21"
+    type: text
+  - line: sch_dp.dependent_21.name.last
+    field: "lname_21"
+    type: text
+  - line: sch_dp.dependent_21.ssn
+    field: "SSN_21"
+    type: text
+  - line: sch_dp.dependent_21.date_of_birth
+    field: "DOB21"
+    type: text
+    maxlen: 10
+relations:
+  # Core Form IT-140 on-face arithmetic (every operand mapped to a bare digit
+  # line; unconditional single-box sums only).
+  - "4 == 1 + 2 - 3"                       # 4 "line 1 plus line 2 minus line 3"
+  - "13 == 10 + 11 + 12"                   # 13 "Add lines 10 through 12"
+  - "21 == 14 + 15 + 16 + 17 + 18 + 19 + 20"  # 21 "add lines 14 through 20"
+  - "24 == 24a + 24b + 24c"                # 24 "sum of columns 24A, 24B, and 24C"
+  # NOTE: line 6 = box(e) count x $2,000, line 7 = line 4 - (5+6) floored at
+  # zero, line 8 = tax table/rate-schedule lookup, and lines 22/23/26 branch on
+  # a balance-due-vs-refund comparison; none are declared as unconditional
+  # single-box arithmetic. Schedule totals (Schedule M 50/59, RECAP 27, UT 11,
+  # HEPTC 9, FTC 8, E 10) are dotted namespaced ids the relations evaluator does
+  # not accept, so their on-face sums live only as comments beside their fields.
+cross_form:
+  # Form IT-140 line 1 "Federal Adjusted Gross Income" == federal AGI (1040 l.11).
+  - "1 == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null
