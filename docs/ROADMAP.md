@@ -13,16 +13,17 @@ plan for what is **not yet done**, as of **2026-06-28**.
 
 ## Where we are (verified)
 
-Done and on `main` (**1,391 tests, all green** — verified `pytest` run, exit 0):
+Done and on `main` (**1,401 tests, all green** — verified `pytest` run, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
-  server (21 tools, stdio, image content) · M5 state support · M6 code/docs.**
-- **MCP server — 21 tools, CI-gated** (`.github/workflows/ci.yml` asserts exactly
-  21): list_forms, get_form_map, fetch_blank, fill_form, verify_form,
+  server (22 tools, stdio, image content) · M5 state support · M6 code/docs.**
+- **MCP server — 22 tools, CI-gated** (`.github/workflows/ci.yml` asserts exactly
+  22): list_forms, get_form_map, fetch_blank, fill_form, verify_form,
   verify_filing, render_form (vision Image), calc, residency, intake_checklist,
   list_document_kinds, extract_document, workspace_save, workspace_load,
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
-  get_sources, filing_summary, file_and_pay. Core = 19 modules (~9.2k LOC).
+  get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
+  states). Core = 20 modules (~9.5k LOC).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/INT/DIV/B, 1098-T, 1042-S, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
@@ -67,11 +68,11 @@ Cheap, high-credibility cleanup that the audit surfaced. No new features.
       — DONE (2026-06-28) after a green `test_formpacks_states.py` round-trip; merged
       via `feat/state-rollout-al-co-mn-wi`. Working tree is now clean.
 - [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
-      and a full run (**exit 0, no collection errors**): the suite is **1,391 tests,
+      and a full run (**exit 0, no collection errors**): the suite is **1,401 tests,
       all green** (1,288 at audit + 3 eval scenarios k/l/m + 8 each for Forms 4868,
       1040-ES, 1040-X, and W-7). The earlier figures
       were stale/under-counted (old ROADMAP *1222*, README *~1076*, audit-sandbox
-      *~903* — the sandbox couldn't run collection). README + this file now quote **1,391**.
+      *~903* — the sandbox couldn't run collection). README + this file now quote **1,401**.
 - [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
       done, 35 states (not 14), 74 packs (not 49), Phase B done, drift CI done.
 
@@ -91,7 +92,7 @@ one verified test count, CI green.
       PyPI-ready (re-verified 2026-06-29):** data re-staged and both packages rebuilt
       so the wheel now bundles **all 19 federal 2023 packs** (incl. the new f4868 /
       f1040es / f1040x / fw7) **and** the AL/CO/MN/WI state packs; `uvx twine check
-      dist/*` PASSED; the self-contained off-repo smoke test passed (21 tools + the 4
+      dist/*` PASSED; the self-contained off-repo smoke test passed (22 tools + the 4
       new federal packs load from the installed wheel). **Re-run `stage_data.py` + `uv
       build` immediately before upload** (dist/ is gitignored, so a stale wheel never
       shows in the tree). Only the irreversible `uvx twine upload dist/*` remains.
@@ -185,13 +186,17 @@ dependency — an architecture call for the maintainer, not a quick fix:
       shipped fine). It does NOT render **pure/dynamic XFA** (XFA-only, no AcroForm
       widget layer). If IA/NM are XFA-derived AcroForms they go through the normal
       pipeline; if pure-XFA or flat print-only they need (c) below.
-- [ ] **CT / SC / HI** — print-only (no AcroForm, no XFA — HI N-11 2023 confirmed flat:
-      0 fillable widgets). Need an **OCR-positioned overlay filler** engine (locate each
-      printed field by OCR/coordinates, stamp text at those positions) — a substantial
-      new subsystem — OR ship the lighter documented **"print + hand-fill from computed
-      values"** fallback (the engine computes every line and emits a line→value worksheet;
-      the user hand-writes the print-only form). The fallback needs no OCR and could ship
-      first.
+- [~] **CT / SC / HI** — print-only (no AcroForm, no XFA — HI N-11 2023 confirmed flat:
+      0 fillable widgets). **The lighter "print + hand-fill from computed values" fallback
+      is BUILT (2026-07-01)** and shipped for **HI (N-11)**: a `render_mode: hand_fill`
+      pack is a line manifest (`handfill.yaml`), and `hand_fill_worksheet` (MCP tool #22,
+      engine `taxfill_core.handfill`, reusing the verifier's expression evaluator) computes
+      every derivable line and emits an ordered line→value worksheet to hand-write onto the
+      printed blank — no OCR, no new dependency, no risk to the AcroForm pipeline.
+      **Remaining:** add hand-fill packs for **CT (CT-1040)** and **SC (SC1040)** on the
+      same pattern (read the form, list lines + compute exprs). A true fillable experience
+      would still want the heavier **OCR-positioned overlay filler** (stamp text at located
+      field coordinates) — deferred.
 
 **Acceptance (each pack):** loads; golden round-trip clean (fill→verify→render all
 pages); field map audited clean. **Effort: XL. Deps:** C1/C2 pipeline ready;
@@ -257,7 +262,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       recommendation, dollar delta, and joint-liability caveat), **(m)** NRA-spouse
       §6013(g) election (MFJ dropped → MFS, election + worldwide-income trade-off
       surfaced in both estimate and intake, authority via `get_sources`).
-- [ ] Wire the true test count (1,391) into a CI badge / README line.
+- [ ] Wire the true test count (1,401) into a CI badge / README line.
 
 **Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
 
