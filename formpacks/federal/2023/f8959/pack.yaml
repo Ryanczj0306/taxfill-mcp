@@ -1,0 +1,99 @@
+# Form 8959 (2023) — Additional Medicare Tax.
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title ("Additional Medicare Tax")
+# and revision year "2023" ("Form 8959 (2023)" footer) before pinning
+# pdf_sha256 (freshness protocol, dev plan section 7).
+#
+# Field map: introspected from this exact revision (root topmostSubform[0]).
+# The filed form is ONE page; every one of its 26 text widgets is mapped below
+# (2 header + 24 money lines). The form has no checkboxes: the line 5/9/15
+# filing-status thresholds are printed amounts the filer copies into a money
+# box, not options to tick.
+#
+# Attachment to Form 1040/1040-SR/1040-NR/1040-SS (Attachment Sequence No. 71):
+# no signature block and no separate mailing address of its own.
+#
+# Carry-over notes:
+#   - line 18 is printed "Also include this amount on Schedule 2 (Form 1040),
+#     line 11" — Schedule 2 line 11 ("Additional Medicare Tax. Attach Form
+#     8959") carries exactly this amount, so the equality is encoded in
+#     cross_form; for a Form 1040-SS filer (no Schedule 2 in the filing) the
+#     rule is visibly SKIPPED, not failed.
+#   - line 24 is printed "Also include this amount WITH federal income tax
+#     withholding on Form 1040, 1040-SR, or 1040-NR, line 25c" — line 25c
+#     ("Other forms") is an AGGREGATE that may also carry withholding from
+#     other forms (e.g. 8805, 8288-A), so no cross_form equality is encoded.
+form: "8959"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f8959--2023.pdf
+pdf_sha256: "44c77b7b237e1b520a23a3aa6c3d869ca2a315656f0c8fada015eb28380b28c5"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- header ----------------------------------------------------------------
+  - { line: "name", field: "Page1[0].f1_1[0]", type: text }   # "Name(s) shown on return"
+  # "Your social security number" — plain text box (widget /MaxLen 11, NOT a
+  # comb); format ssn_digits_only keeps cross-form identity values consistent
+  # with the digits-only parent packs (f1040/f1040nr).
+  - { line: "identifying_number", field: "Page1[0].f1_2[0]", type: text, maxlen: 11, format: ssn_digits_only }
+  # ---- Part I: Additional Medicare Tax on Medicare Wages ----------------------
+  - { line: "1", field: "Page1[0].f1_3[0]", type: money }     # Medicare wages and tips from Form(s) W-2, box 5
+  - { line: "2", field: "Page1[0].f1_4[0]", type: money }     # Unreported tips from Form 4137, line 6
+  - { line: "3", field: "Page1[0].f1_5[0]", type: money }     # Wages from Form 8919, line 6
+  - { line: "4", field: "Page1[0].f1_6[0]", type: money }     # Add lines 1 through 3
+  - { line: "5", field: "Page1[0].f1_7[0]", type: money }     # Filing-status threshold (MFJ 250,000 / MFS 125,000 / other 200,000)
+  - { line: "6", field: "Page1[0].f1_8[0]", type: money }     # Subtract line 5 from line 4; if zero or less, -0-
+  - { line: "7", field: "Page1[0].f1_9[0]", type: money }     # Additional Medicare Tax on Medicare wages: line 6 x 0.9% (0.009)
+  # ---- Part II: Additional Medicare Tax on Self-Employment Income -------------
+  - { line: "8", field: "Page1[0].f1_10[0]", type: money }    # SE income from Schedule SE (Form 1040), Part I, line 6; loss -> -0-
+  - { line: "9", field: "Page1[0].f1_11[0]", type: money }    # Filing-status threshold (same printed amounts as line 5)
+  - { line: "10", field: "Page1[0].f1_12[0]", type: money }   # Enter the amount from line 4
+  - { line: "11", field: "Page1[0].f1_13[0]", type: money }   # Subtract line 10 from line 9; if zero or less, -0-
+  - { line: "12", field: "Page1[0].f1_14[0]", type: money }   # Subtract line 11 from line 8; if zero or less, -0-
+  - { line: "13", field: "Page1[0].f1_15[0]", type: money }   # Additional Medicare Tax on SE income: line 12 x 0.9% (0.009)
+  # ---- Part III: Additional Medicare Tax on RRTA Compensation -----------------
+  - { line: "14", field: "Page1[0].f1_16[0]", type: money }   # RRTA compensation and tips from Form(s) W-2, box 14
+  - { line: "15", field: "Page1[0].f1_17[0]", type: money }   # Filing-status threshold (same printed amounts as line 5)
+  - { line: "16", field: "Page1[0].f1_18[0]", type: money }   # Subtract line 15 from line 14; if zero or less, -0-
+  - { line: "17", field: "Page1[0].f1_19[0]", type: money }   # Additional Medicare Tax on RRTA compensation: line 16 x 0.9% (0.009)
+  # ---- Part IV: Total Additional Medicare Tax ---------------------------------
+  - { line: "18", field: "Page1[0].f1_20[0]", type: money }   # Add lines 7, 13, and 17 -> Schedule 2 (Form 1040), line 11
+  # ---- Part V: Withholding Reconciliation -------------------------------------
+  - { line: "19", field: "Page1[0].f1_21[0]", type: money }   # Medicare tax withheld from Form(s) W-2, box 6
+  - { line: "20", field: "Page1[0].f1_22[0]", type: money }   # Enter the amount from line 1
+  - { line: "21", field: "Page1[0].f1_23[0]", type: money }   # Regular Medicare tax withholding: line 20 x 1.45% (0.0145)
+  - { line: "22", field: "Page1[0].f1_24[0]", type: money }   # Subtract line 21 from line 19; if zero or less, -0-
+  - { line: "23", field: "Page1[0].f1_25[0]", type: money }   # Additional Medicare Tax withholding on RRTA compensation, W-2 box 14
+  - { line: "24", field: "Page1[0].f1_26[0]", type: money }   # Total Additional Medicare Tax withholding: add lines 22 and 23 -> 1040/1040-SR/1040-NR line 25c
+
+# Form-face math only (every printed add/subtract/multiply/copy instruction).
+relations:
+  - "4 == 1 + 2 + 3"           # "Add lines 1 through 3"
+  - "6 == max(0, 4 - 5)"       # "Subtract line 5 from line 4. If zero or less, enter -0-"
+  - "7 == 6 * 0.009"           # "Multiply line 6 by 0.9% (0.009)"
+  - "10 == 4"                  # "Enter the amount from line 4"
+  - "11 == max(0, 9 - 10)"     # "Subtract line 10 from line 9. If zero or less, enter -0-"
+  - "12 == max(0, 8 - 11)"     # "Subtract line 11 from line 8. If zero or less, enter -0-"
+  - "13 == 12 * 0.009"         # "Multiply line 12 by 0.9% (0.009)"
+  - "16 == max(0, 14 - 15)"    # "Subtract line 15 from line 14. If zero or less, enter -0-"
+  - "17 == 16 * 0.009"         # "Multiply line 16 by 0.9% (0.009)"
+  - "18 == 7 + 13 + 17"        # "Add lines 7, 13, and 17"
+  - "20 == 1"                  # "Enter the amount from line 1"
+  - "21 == 20 * 0.0145"        # "Multiply line 20 by 1.45% (0.0145)"
+  - "22 == max(0, 19 - 21)"    # "Subtract line 21 from line 19. If zero or less, enter -0-"
+  - "24 == 22 + 23"            # "Total Additional Medicare Tax withholding. Add lines 22 and 23"
+
+# Printed on line 18: "Also include this amount on Schedule 2 (Form 1040),
+# line 11" — an exact carry (Schedule 2 line 11 is 'Additional Medicare Tax.
+# Attach Form 8959'). Skipped (visibly) when the filing has no Schedule 2
+# (e.g. Form 1040-SS filers — see instructions).
+cross_form:
+  - "18 == sched_2.11"
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only form: no signature block of its own; mailed inside the
+# parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

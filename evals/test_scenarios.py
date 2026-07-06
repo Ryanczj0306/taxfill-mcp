@@ -5,20 +5,23 @@ behaviours the dev plan calls out per scenario letter. These are integration
 EVALS, not unit tests: they prove the M1-M4 stack does the right thing on
 realistic cases, including the honest-estimate and no-invented-numbers rules.
 
-All thirteen scenarios (a–m) run now: the federal cases (a, d, e, g, h, i, j) on
+All fourteen scenarios (a–n) run now: the federal cases (a, d, e, g, h, i, j) on
 the M1-M4 stack; the joint / separate / NRA-spouse cases (k, l, m) on the
 filing-status-aware engine (MFJ math, the both-ways comparison, and the §6013(g)/(h)
-election surface); and the state cases (b, c, f) on M5 (CA packs + state_scope).
+election surface); the state cases (b, c, f) on M5 (CA packs + state_scope); and
+the family-with-children case (n) on the Phase F credit-aware estimator (CTC/ACTC
++ EITC from dependents' DOB/SSN facts).
 Multi-form fill+verify on real PDFs is covered by
 packages/core/tests/test_filing_integration.py (the 1040 and 1040-NR stacks).
 """
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 
 import pytest
 
-from taxfill_core.calc import standard_deduction, tax_from_taxable_income
+from taxfill_core.calc import irs_round, standard_deduction, tax_from_taxable_income
 from taxfill_core.estimate import IncomeSnapshot, estimate_refund
 from taxfill_core.file_and_pay import FilingManifestItem, file_and_pay
 from taxfill_core.filing_summary import filing_summary
@@ -27,6 +30,7 @@ from taxfill_core.knowledge import load_knowledge
 from taxfill_core.residency import classify
 from taxfill_core.schemas.profile import (
     Answer,
+    Dependent,
     Household,
     Identity,
     Immigration,
@@ -347,3 +351,61 @@ def test_eval_m_nra_spouse_6013_election():
     # Cited: the authority is resolvable via get_sources (IRS .gov + freshness channels), like (i).
     src = get_sources("nonresident alien spouse 6013 election", 2023)
     assert "irs.gov" in src.retrieval_hint and src.change_channels
+
+
+# ── (n) family with children: CTC + EITC estimated from dependent facts ────────
+
+
+def test_eval_n_family_with_children_ctc_and_eitc():
+    # A head-of-household parent with two young kids (DOBs + SSNs on file) and one
+    # W-2. The estimator must fold in the Child Tax Credit (nonrefundable part +
+    # refundable ACTC) and the EITC — cross-checked against independent calc calls
+    # and the cited knowledge-pack parameters — while disclosing the formula
+    # approximations instead of presenting table-exact precision.
+    wages, withholding = 28_000, 1_000
+    profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(
+            marital_status=_ans("unmarried"),
+            hoh_qualifying_person=_ans(True),
+            filing_status=_ans("head_of_household"),
+            dependents=[
+                Dependent(name="Kid A", relationship="child", dob=date(2016, 4, 1), has_ssn=True, provenance=US),
+                Dependent(name="Kid B", relationship="child", dob=date(2019, 9, 15), has_ssn=True, provenance=US),
+            ],
+        ),
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=wages, federal_withholding=withholding))
+    assert est.label == "ESTIMATE"
+    labels = {c.label: c.amount for c in est.composition}
+
+    # The small HOH income tax is fully absorbed by the $4,000 CTC...
+    tax = tax_from_taxable_income(
+        wages - standard_deduction("head_of_household", 2023).amount, "head_of_household", 2023
+    ).tax
+    assert 0 < tax < 4_000
+    assert labels["Less: child tax credit / credit for other dependents (nonrefundable)"] == -tax
+
+    # ...and the leftover refunds as ACTC: min(leftover, per-child cap, 15% of
+    # earned income over $2,500) — parameters from the cited credits block.
+    ctc_cfg = load_knowledge("federal", 2023).credits.child_tax_credit
+    expected_actc = min(
+        4_000 - tax,
+        2 * ctc_cfg["additional_ctc_refundable_cap_per_child"],
+        irs_round(Decimal("0.15") * (wages - 2_500)),
+    )
+    assert labels["Less: additional child tax credit (refundable)"] == -expected_actc
+
+    # EITC (2 qualifying children, non-MFJ column) by the Rev. Proc. formula.
+    row = load_knowledge("federal", 2023).credits.earned_income_tax_credit["by_qualifying_children"]["2"]
+    max_credit = Decimal(row["max_credit"])
+    phaseout_rate = max_credit / Decimal(row["phaseout_complete_other"] - row["phaseout_begins_other"])
+    expected_eitc = irs_round(max_credit - phaseout_rate * Decimal(wages - row["phaseout_begins_other"]))
+    assert labels["Less: earned income tax credit (refundable, formula approximation)"] == -expected_eitc
+
+    # Bottom line = withholding + refundable credits (income tax fully offset).
+    assert est.point == withholding + expected_actc + expected_eitc
+    assert est.point > 0
+    # Honesty: the approximations are disclosed, never silent.
+    assert any("$50 income bands" in a for a in est.assumptions)
+    assert any("92.35%" in a for a in est.assumptions)
