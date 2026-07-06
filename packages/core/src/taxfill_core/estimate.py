@@ -488,6 +488,9 @@ def _bottom_line(
     *,
     nonresident: bool = False,
     deps: list[_DepInfo] | tuple[_DepInfo, ...] = (),
+    ss_withheld_groups: list[list[int]] | None = None,
+    se_persons: list[tuple[int, int]] | None = None,
+    notes: set[str] | None = None,
 ):
     """Compute the signed bottom line for one filing status. Returns (value, composition, citations).
 
@@ -498,10 +501,23 @@ def _bottom_line(
     repayment) -> payments and refundable credits (withholding, excess-SS, ACTC,
     EITC, refundable AOTC, net PTC).
 
-    ``nonresident`` skips NIIT (Form 8960 does not apply to nonresident aliens) and
-    the EITC (NRAs are ineligible); Additional Medicare Tax applies to NRA Medicare
-    wages, so it is kept. ``deps`` is the dependents' (age at year end, has_ssn)
-    list — the profile itself is never needed here. Pure and deterministic.
+    ``nonresident`` skips NIIT (Form 8960 does not apply to nonresident aliens),
+    the EITC, and education credits (NRAs are ineligible for both absent a
+    residency election); Additional Medicare Tax applies to NRA Medicare wages,
+    so it is kept. ``deps`` is the dependents' (age at year end, has_ssn)
+    list — the profile itself is never needed here.
+
+    Per-person taxes/credits on a COMBINED (joint) snapshot: both the excess-SS
+    credit and Schedule SE are per person, so the MFJ spouse-split path passes
+    ``ss_withheld_groups`` (one box-4 list per spouse — each computed
+    independently with its own 2+-employer gate) and ``se_persons`` (one
+    ``(se_net, own_wages)`` tuple per spouse — each spouse's own W-2 wages
+    consume only their own SS wage base). When None, the snapshot is treated
+    as one person's amounts (the single/no-split behavior).
+
+    ``notes`` is an optional accumulator of disclosure keys the caller turns
+    into assumptions (e.g. the below-100%-FPL PTC eligibility caveat, read off
+    the PtcAnnualResult). Pure and deterministic.
     """
     citations: list[Citation] = []
     comp: list[CompositionLine] = []
@@ -515,12 +531,20 @@ def _bottom_line(
 
     half_se = 0
     se_amount = 0
-    if income.self_employment_net >= 400:
-        # Schedule SE lines 8a-9: W-2 wages consume the social-security wage base first
-        # (box-1 wages stand in for box-3 SS wages — disclosed as an assumption).
-        se = se_tax(income.self_employment_net, year, knowledge_dir, w2_ss_wages=income.wages)
-        se_amount, half_se = se.se_tax, se.deduction_half
-        citations.append(se.citation)
+    # Schedule SE is PER PERSON: the MFJ spouse-split path passes each spouse's own
+    # (se_net, own_wages) so one spouse's W-2 wages never absorb the other spouse's
+    # SE wage base; without a split the snapshot is one person's amounts.
+    se_citation = None
+    for se_net, own_wages in (se_persons if se_persons is not None else [(income.self_employment_net, income.wages)]):
+        if se_net >= 400:
+            # Schedule SE lines 8a-9: W-2 wages consume the social-security wage base first
+            # (box-1 wages stand in for box-3 SS wages — disclosed as an assumption).
+            se = se_tax(se_net, year, knowledge_dir, w2_ss_wages=own_wages)
+            se_amount += se.se_tax
+            half_se += se.deduction_half
+            se_citation = se.citation
+    if se_citation is not None:
+        citations.append(se_citation)
 
     # Capital gains/losses: short + long combined; a net LOSS is deductible only up
     # to $3,000 per year ($1,500 MFS) — the disallowed remainder carries forward.
@@ -633,9 +657,10 @@ def _bottom_line(
     earned = _earned_income_proxy(income)
 
     # Education credits first — the Schedule 8812 credit-limit worksheet subtracts
-    # Schedule 3 credits before the CTC gets what is left.
+    # Schedule 3 credits before the CTC gets what is left. A nonresident alien
+    # cannot claim them (Form 8863 bars NRAs absent a residency election).
     aotc_refundable = 0
-    if income.aotc_qualified_expenses and pack_tax.education_credits is not None:
+    if income.aotc_qualified_expenses and not nonresident and pack_tax.education_credits is not None:
         edu = education_credits(
             income.aotc_qualified_expenses, 0, magi=agi, filing_status=status, year=year,
             knowledge_dir=knowledge_dir,
@@ -773,6 +798,9 @@ def _bottom_line(
         )
         citations.append(ptc_res.citation)
         net_ptc, ptc_repayment = ptc_res.net_ptc, ptc_res.repayment
+        if notes is not None and ptc_res.fpl_pct < 100:
+            # Below-100%-FPL applicable-taxpayer floor — surfaced as an assumption upstream.
+            notes.add("ptc_below_100_fpl_with_aptc" if income.aca_aptc > 0 else "ptc_below_100_fpl_no_aptc")
         if ptc_repayment:
             comp.append(
                 CompositionLine(
@@ -789,17 +817,27 @@ def _bottom_line(
     comp.append(CompositionLine(label="Less: federal tax withheld / payments", amount=-income.federal_withholding))
     payments = income.federal_withholding
 
-    if len(income.ss_withheld_by_employer) >= 2 and pack_tax.employee_social_security is not None:
-        # Two or more employers can over-withhold Social Security; a single employer's
-        # over-withholding is an employer error, never a return credit.
-        xss = excess_ss(list(income.ss_withheld_by_employer), year, knowledge_dir)
-        if xss.credit:
-            payments += xss.credit
-            citations.append(xss.citation)
+    # The excess-SS cap is PER PERSON (Schedule 3 / Topic 608): on a spouse-split
+    # joint return each spouse's box-4 list is computed independently — each with
+    # its own 2+-employer gate — and the credits are summed. Two or more employers
+    # can over-withhold Social Security; a single employer's over-withholding is
+    # an employer error, never a return credit.
+    if pack_tax.employee_social_security is not None:
+        xss_credit = 0
+        xss_citation = None
+        for group in (ss_withheld_groups if ss_withheld_groups is not None else [list(income.ss_withheld_by_employer)]):
+            if len(group) >= 2:
+                xss = excess_ss(list(group), year, knowledge_dir)
+                if xss.credit:
+                    xss_credit += xss.credit
+                    xss_citation = xss.citation
+        if xss_credit:
+            payments += xss_credit
+            citations.append(xss_citation)
             comp.append(
                 CompositionLine(
                     label="Less: excess Social Security withholding credit (Schedule 3)",
-                    amount=-xss.credit,
+                    amount=-xss_credit,
                 )
             )
 
@@ -814,7 +852,10 @@ def _bottom_line(
     # gated by the investment-income limit; needs positive earned income.
     eitc_cfg = getattr(credits_block, "earned_income_tax_credit", None) if credits_block is not None else None
     if eitc_cfg and not nonresident and not mfs and earned > 0:
-        eitc_investment_income = income.interest + income.dividends + max(0, st) + max(0, lt)
+        # Pub 596 Worksheet 1: investment income uses the NET capital gain (Form 1040
+        # line 7, floored at 0) — the loss-limited `capital` figure — never the gross
+        # positive short/long legs summed separately.
+        eitc_investment_income = income.interest + income.dividends + max(0, capital)
         if eitc_investment_income <= int(eitc_cfg["investment_income_limit"]):
             # EITC qualifying child: DOB known, under 19 at year end, with an SSN.
             # (19-23 full-time students and disabled children of any age are NOT
@@ -889,6 +930,7 @@ def estimate_refund(
     deps = _dependent_infos(profile, year)
     married = _is_married(profile)
     spouse_split = income.spouse is not None and married
+    notes: set[str] = set()  # disclosure keys accumulated across every candidate status
 
     def _outcome(status: str) -> tuple[int, list[CompositionLine], list[Citation]]:
         if spouse_split:
@@ -898,10 +940,10 @@ def estimate_refund(
                 # (disclosed as an assumption; reallocating them could change it).
                 self_income = income.model_copy(update={"spouse": None})
                 b_self, comp_self, cit_self = _bottom_line(
-                    self_income, status, year, knowledge_dir, nonresident=nonresident, deps=deps
+                    self_income, status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=notes
                 )
                 b_spouse, _comp_spouse, cit_spouse = _bottom_line(
-                    income.spouse, status, year, knowledge_dir, nonresident=nonresident, deps=[]
+                    income.spouse, status, year, knowledge_dir, nonresident=nonresident, deps=[], notes=notes
                 )
                 total = b_self + b_spouse
                 comp = [
@@ -910,10 +952,21 @@ def estimate_refund(
                     CompositionLine(label=_BOTTOM_LINE_LABEL, amount=total),
                 ]
                 return total, comp, [*cit_self, *cit_spouse]
+            # Combined (joint) return: income is summed, but the per-PERSON pieces —
+            # the excess-SS credit and Schedule SE — are computed per spouse.
             return _bottom_line(
-                income.combined_with_spouse(), status, year, knowledge_dir, nonresident=nonresident, deps=deps
+                income.combined_with_spouse(), status, year, knowledge_dir, nonresident=nonresident, deps=deps,
+                ss_withheld_groups=[
+                    list(income.ss_withheld_by_employer),
+                    list(income.spouse.ss_withheld_by_employer),
+                ],
+                se_persons=[
+                    (income.self_employment_net, income.wages),
+                    (income.spouse.self_employment_net, income.spouse.wages),
+                ],
+                notes=notes,
             )
-        return _bottom_line(income, status, year, knowledge_dir, nonresident=nonresident, deps=deps)
+        return _bottom_line(income, status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=notes)
 
     outcomes = {s: _outcome(s) for s in statuses}
     primary = statuses[0]
@@ -1012,6 +1065,21 @@ def estimate_refund(
                 "For the MFS split, ALL dependents were allocated to the primary taxpayer's return; "
                 "reallocating dependents between the spouses could change the comparison."
             )
+    if married and not spouse_split and len(income.ss_withheld_by_employer) >= 2:
+        assumptions.append(
+            "The excess-Social-Security credit treats every ss_withheld_by_employer entry as ONE "
+            "person's employers — on a joint return the per-person cap applies to each spouse "
+            "separately. If these entries mix both spouses' W-2s, provide each spouse's own amounts "
+            "(the spouse snapshot) for a per-spouse computation."
+        )
+    if income.spouse is not None and not spouse_split:
+        # Never infer 'married' from income data: the spouse snapshot is IGNORED until
+        # the marital-status fact is confirmed — disclosed loudly, never silently.
+        assumptions.append(
+            "IMPORTANT: a spouse income snapshot was provided but marital status is NOT confirmed as "
+            "married, so the spouse's amounts (wages, withholding, everything) were NOT included in "
+            "this estimate. Confirm your marital status to enable the MFJ/MFS spouse-split comparison."
+        )
 
     # Dependent-credit disclosures.
     n_no_dob = sum(1 for a, _s in deps if a is None)
@@ -1076,6 +1144,33 @@ def estimate_refund(
                 f"{year} (Form 8962 parameters ship for 2023-2024 only) — reconcile it separately; "
                 f"it could change the bottom line in either direction."
             )
+        elif _MFS in statuses:
+            assumptions.append(
+                "MFS filers are generally not eligible for the premium tax credit (IRC 36B(c)(1)(C)); "
+                "the estimate assumes no relief exception (domestic abuse / spousal abandonment) — "
+                "APTC is repaid up to the Table 5 cap."
+            )
+    if "ptc_below_100_fpl_no_aptc" in notes:
+        assumptions.append(
+            "Household income is below 100% of the federal poverty line and no advance PTC was paid, "
+            "so the estimated-income safe harbor cannot apply — the premium tax credit is $0 (the "
+            "lawfully-present-immigrant exception is not modeled)."
+        )
+    if "ptc_below_100_fpl_with_aptc" in notes:
+        assumptions.append(
+            "Household income is below 100% of the federal poverty line: the premium tax credit was "
+            "still computed assuming the estimated-income safe harbor applies (APTC was paid based on "
+            "a projected income of 100-400% FPL); if no exception (safe harbor / lawfully-present "
+            "immigrant) applies, the PTC is $0 and the APTC repayment could grow."
+        )
+    if nonresident and (
+        income.aotc_qualified_expenses
+        or (income.spouse is not None and income.spouse.aotc_qualified_expenses)
+    ):
+        assumptions.append(
+            "Education expenses were provided but NO education credit was estimated: nonresident "
+            "aliens cannot claim education credits (Form 8863 AOTC/LLC) absent a residency election."
+        )
     assumptions.append(
         "Not modeled in this estimate: AMT, LLC (available via the calc tool), itemized-deduction "
         "sub-limits, EITC official-table $50 banding (formula used), capital-loss carryovers, and "
@@ -1101,6 +1196,12 @@ def estimate_refund(
     changes: list[str] = []
     if residency_caveat is not None:
         changes.append(residency_caveat)
+    if income.spouse is not None and not spouse_split:
+        changes.append(
+            "A spouse income snapshot was provided but NOT included (marital status is unconfirmed, "
+            "and married is never inferred from income data); confirming your marital status enables "
+            "the MFJ/MFS spouse-split comparison and would change this estimate materially."
+        )
     pending = [d for d in profile.income_documents if d.status != "have"]
     if pending:
         kinds = ", ".join(sorted({d.kind for d in pending}))
