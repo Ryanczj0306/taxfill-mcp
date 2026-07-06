@@ -458,3 +458,313 @@ def test_estimate_skips_surtaxes_when_knowledge_pack_predates_the_blocks(tmp_pat
                           knowledge_dir=legacy)
     assert _comp_amount(est, "Form 8959") is None  # skipped, not crashed
     assert est.point is not None
+
+
+# ---------------------------------------------------------------------------
+# Phase F estimator pipeline: capital gains/losses, taxable SS, SLI, preferential
+# rates, CTC/ODC/ACTC, EITC, education credits, PTC, excess SS, MFS true split.
+# Every number is cross-checked against an independent calc call or the cited
+# knowledge-pack parameters (no magic numbers).
+# ---------------------------------------------------------------------------
+
+from decimal import Decimal  # noqa: E402
+
+from taxfill_core.calc import (  # noqa: E402
+    excess_ss,
+    irs_round,
+    ptc_annual,
+    student_loan_interest_deduction,
+    tax_with_preferential_rates,
+    taxable_social_security,
+)
+from taxfill_core.knowledge import load_knowledge  # noqa: E402
+
+
+def _labels(est: RefundEstimate) -> dict[str, int]:
+    return {c.label: c.amount for c in est.composition}
+
+
+def _kid(name: str, dob, has_ssn=True):
+    return Dependent(name=name, relationship="child", dob=dob, has_ssn=has_ssn, provenance=US)
+
+
+def _mfj_family(*dependents):
+    return Profile(
+        household=Household(
+            marital_status=_ans("married"),
+            filing_status=_ans("married_filing_jointly"),
+            dependents=list(dependents),
+        )
+    )
+
+
+def _single_parent(*dependents):
+    # Filing status confirmed 'single' so exactly one candidate is computed.
+    return Profile(
+        household=Household(
+            marital_status=_ans("unmarried"),
+            filing_status=_ans("single"),
+            dependents=list(dependents),
+        )
+    )
+
+
+def test_ctc_two_qualifying_children_mfj():
+    # Two kids with DOBs + SSNs -> $4,000 CTC, fully absorbed nonrefundably.
+    profile = _mfj_family(_kid("A", date(2015, 3, 1)), _kid("B", date(2018, 7, 4)))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=95_000, federal_withholding=8_000))
+    labels = _labels(est)
+    assert labels["Less: child tax credit / credit for other dependents (nonrefundable)"] == -4_000
+    # Bottom line cross-checked against independent calc calls.
+    taxable = 95_000 - standard_deduction("married_filing_jointly", 2023).amount
+    tax = tax_from_taxable_income(taxable, "married_filing_jointly", 2023).tax
+    assert tax > 4_000  # the income tax absorbs the whole credit -> no ACTC
+    assert "Less: additional child tax credit (refundable)" not in labels
+    assert est.point == 8_000 - (tax - 4_000)
+
+
+def test_ctc_phaseout_50_per_1000_rounds_the_fraction_up():
+    import math
+
+    profile = _mfj_family(_kid("A", date(2015, 3, 1)), _kid("B", date(2018, 7, 4)))
+    cfg = load_knowledge("federal", 2023).credits.child_tax_credit
+    threshold = cfg["magi_phaseout_threshold"]["married_filing_jointly"]
+
+    def _ctc_line(wages):
+        est = estimate_refund(profile, 2023, IncomeSnapshot(wages=wages, federal_withholding=120_000))
+        return _labels(est)["Less: child tax credit / credit for other dependents (nonrefundable)"]
+
+    # At exactly $410,000 MAGI: $10,000 excess -> 10 units -> $500 reduction.
+    assert _ctc_line(threshold + 10_000) == -(4_000 - 50 * math.ceil(10_000 / 1_000))
+    assert _ctc_line(threshold + 10_000) == -3_500
+    # One dollar more: the $1 FRACTION rounds UP to an 11th $1,000 unit -> $550.
+    assert _ctc_line(threshold + 10_001) == -(4_000 - 50 * math.ceil(10_001 / 1_000))
+    assert _ctc_line(threshold + 10_001) == -3_450
+
+
+def test_odc_for_itin_dependent():
+    # Known DOB but no work-eligible SSN (ITIN) -> the $500 ODC, never the CTC.
+    profile = _single_parent(_kid("Kid", date(2016, 5, 1), has_ssn=False))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=4_000))
+    labels = _labels(est)
+    assert labels["Less: child tax credit / credit for other dependents (nonrefundable)"] == -500
+    taxable = 40_000 - standard_deduction("single", 2023).amount
+    tax = tax_from_taxable_income(taxable, "single", 2023).tax
+    assert est.point == 4_000 - (tax - 500)
+
+
+def test_dependent_without_dob_excluded_with_assumption():
+    profile = _single_parent(Dependent(name="Kid", relationship="child", has_ssn=True, provenance=US))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=50_000, federal_withholding=6_000))
+    labels = _labels(est)
+    assert not any("child tax credit" in label for label in labels)  # excluded from CTC and ODC
+    assert est.point == _independent_refund(50_000, 6_000, "single")  # no credit folded in
+    assert any("date of birth" in a for a in est.assumptions)  # the user is told how to fix it
+
+
+_EITC_LABEL = "Less: earned income tax credit (refundable, formula approximation)"
+
+
+def test_eitc_single_one_child_phase_in_plateau_and_phase_out():
+    cfg = load_knowledge("federal", 2023).credits.earned_income_tax_credit
+    row = cfg["by_qualifying_children"]["1"]
+    profile = _single_parent(_kid("Kid", date(2015, 1, 1)))
+
+    # Earned $20,000: above the earned-income amount, below the phase-out begin ->
+    # the plateau pays exactly the maximum credit.
+    assert row["earned_income_amount"] < 20_000 < row["phaseout_begins_other"]
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=20_000))
+    assert _labels(est)[_EITC_LABEL] == -row["max_credit"]
+
+    # Earned $30,000: in the phase-out band -> the hand formula from the cited
+    # Rev. Proc. parameters (rate = max_credit / (complete - begin)).
+    max_credit = Decimal(row["max_credit"])
+    rate = max_credit / Decimal(row["phaseout_complete_other"] - row["phaseout_begins_other"])
+    expected = irs_round(max_credit - rate * Decimal(30_000 - row["phaseout_begins_other"]))
+    est2 = estimate_refund(profile, 2023, IncomeSnapshot(wages=30_000))
+    assert _labels(est2)[_EITC_LABEL] == -expected
+    assert 0 < expected < row["max_credit"]
+    # The formula approximation and the $50-band caveat are disclosed.
+    assert any("$50 income bands" in a for a in est2.assumptions)
+
+
+def test_eitc_blocked_by_investment_income():
+    cfg = load_knowledge("federal", 2023).credits.earned_income_tax_credit
+    over_limit = cfg["investment_income_limit"] + 1
+    profile = _single_parent(_kid("Kid", date(2015, 1, 1)))
+    est = estimate_refund(
+        profile, 2023, IncomeSnapshot(wages=20_000, interest=over_limit)
+    )
+    assert _EITC_LABEL not in _labels(est)
+    # Same earnings without the investment income DID get the credit (guard the gate).
+    est_ok = estimate_refund(profile, 2023, IncomeSnapshot(wages=20_000))
+    assert _EITC_LABEL in _labels(est_ok)
+
+
+def test_capital_loss_limited_to_3000_and_1500_for_mfs():
+    est = estimate_refund(
+        _single(), 2023, IncomeSnapshot(wages=60_000, capital_gain_long=-8_000, federal_withholding=7_000)
+    )
+    labels = _labels(est)
+    assert labels["Capital loss (limited to $3,000 — the annual capital-loss cap)"] == -3_000
+    assert labels["Total income"] == 60_000 - 3_000
+    assert est.point == _independent_refund(60_000 - 3_000, 7_000, "single")
+    assert any("carries FORWARD" in a for a in est.assumptions)  # carryover honesty
+
+    mfs = Profile(
+        household=Household(marital_status=_ans("married"), filing_status=_ans("married_filing_separately"))
+    )
+    est2 = estimate_refund(mfs, 2023, IncomeSnapshot(wages=60_000, capital_gain_long=-8_000, federal_withholding=7_000))
+    assert _labels(est2)["Capital loss (limited to $1,500 — the annual capital-loss cap)"] == -1_500
+
+
+def test_qualified_dividends_taxed_via_preferential_worksheet():
+    est = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(wages=100_000, dividends=20_000, qualified_dividends=20_000, federal_withholding=20_000),
+    )
+    taxable = 120_000 - standard_deduction("single", 2023).amount
+    expected = tax_with_preferential_rates(taxable, 20_000, 0, 0, "single", 2023).tax
+    label = "Income tax (qualified dividends / net capital gain at preferential rates)"
+    assert _labels(est)[label] == expected
+    # The worksheet must beat the all-ordinary computation for this filer.
+    assert expected < tax_from_taxable_income(taxable, "single", 2023).tax
+    assert any("preferential rates" in a for a in est.assumptions)
+
+
+def test_taxable_social_security_via_worksheet():
+    est = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(retirement_income_taxable=30_000, social_security_benefits=24_000, federal_withholding=3_000),
+    )
+    expected = taxable_social_security(24_000, 30_000, 0, filing_status="single", year=2023).taxable_benefits
+    labels = _labels(est)
+    assert expected > 0
+    assert labels["Taxable Social Security benefits (worksheet)"] == expected
+    assert labels["Total income"] == 30_000 + expected
+    assert est.point == _independent_refund(30_000 + expected, 3_000, "single")
+    assert any("tax-exempt interest" in a for a in est.assumptions)  # assumed $0, disclosed
+
+
+def test_student_loan_interest_deduction_with_phaseout():
+    est = estimate_refund(
+        _single(), 2023, IncomeSnapshot(wages=80_000, student_loan_interest_paid=2_500, federal_withholding=10_000)
+    )
+    # MAGI for section 221 = AGI without the SLI deduction = 80,000 here.
+    expected = student_loan_interest_deduction(2_500, 80_000, "single", 2023).deduction
+    assert 0 < expected < 2_500  # genuinely inside the 2023 single phase-out band
+    labels = _labels(est)
+    assert labels["Less: student loan interest deduction"] == -expected
+    assert labels["Adjusted gross income (AGI)"] == 80_000 - expected
+    assert est.point == _independent_refund(80_000 - expected, 10_000, "single")
+
+
+def test_excess_ss_credit_needs_two_employers():
+    est = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(wages=180_000, federal_withholding=40_000, ss_withheld_by_employer=[6_500, 5_500]),
+    )
+    expected = excess_ss([6_500, 5_500], 2023).credit
+    assert expected > 0
+    assert _labels(est)["Less: excess Social Security withholding credit (Schedule 3)"] == -expected
+
+    # A single employer's over-withholding is an employer error, never a return credit.
+    est1 = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(wages=180_000, federal_withholding=40_000, ss_withheld_by_employer=[12_000]),
+    )
+    assert "Less: excess Social Security withholding credit (Schedule 3)" not in _labels(est1)
+
+
+def test_ptc_net_credit_and_repayment_cases():
+    # Net PTC: low income, APTC below the computed credit.
+    est = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(wages=25_000, aca_premiums=6_000, aca_slcsp=5_500, aca_aptc=3_000),
+    )
+    res = ptc_annual(25_000, 1, 6_000, 5_500, 3_000, filing_status="single", year=2023, state="other")
+    assert res.net_ptc > 0
+    assert _labels(est)["Less: net premium tax credit (Form 8962)"] == -res.net_ptc
+    assert any("Form 8962 ANNUAL method" in a for a in est.assumptions)  # AK/HI + approximations disclosed
+
+    # Repayment: higher income, APTC above the computed credit (Table 5 cap applies).
+    est2 = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(wages=45_000, federal_withholding=4_000, aca_premiums=4_000, aca_slcsp=4_000, aca_aptc=4_000),
+    )
+    res2 = ptc_annual(45_000, 1, 4_000, 4_000, 4_000, filing_status="single", year=2023, state="other")
+    assert res2.repayment > 0
+    labels2 = _labels(est2)
+    assert labels2["Plus: excess advance premium tax credit repayment (Form 8962)"] == res2.repayment
+    tax = tax_from_taxable_income(45_000 - standard_deduction("single", 2023).amount, "single", 2023).tax
+    assert labels2["Total tax"] == tax + res2.repayment  # the repayment lands in total tax
+
+
+def test_ptc_inputs_without_a_ptc_block_are_skipped_with_assumption():
+    # 2022 ships no Form 8962 parameters: skip the computation, disclose the gap.
+    est = estimate_refund(
+        _single(), 2022,
+        IncomeSnapshot(wages=25_000, aca_premiums=6_000, aca_slcsp=5_500, aca_aptc=3_000),
+    )
+    labels = _labels(est)
+    assert "Less: net premium tax credit (Form 8962)" not in labels
+    assert "Plus: excess advance premium tax credit repayment (Form 8962)" not in labels
+    assert any("NOT computed for 2022" in a for a in est.assumptions)
+
+
+def test_arpa_2021_ctc_fully_refundable_3600_under_6():
+    profile = _single_parent(_kid("Kid", date(2017, 6, 1)))  # age 4 at the end of 2021
+    est = estimate_refund(profile, 2021, IncomeSnapshot(wages=30_000, federal_withholding=2_000))
+    labels = _labels(est)
+    # The whole $3,600 is refundable: no nonrefundable CTC line, no 15% ACTC math.
+    assert labels["Less: child tax credit (2021 — fully refundable)"] == -3_600
+    assert "Less: child tax credit / credit for other dependents (nonrefundable)" not in labels
+    assert "Less: additional child tax credit (refundable)" not in labels
+    # Bottom line ties out: withholding + RCTC + EITC - income tax (independent calc).
+    taxable = 30_000 - standard_deduction("single", 2021).amount
+    tax = tax_from_taxable_income(taxable, "single", 2021).tax
+    eitc = -labels[_EITC_LABEL]
+    row = load_knowledge("federal", 2021).credits.earned_income_tax_credit["by_qualifying_children"]["1"]
+    max_credit = Decimal(row["max_credit"])
+    rate = max_credit / Decimal(row["phaseout_complete_other"] - row["phaseout_begins_other"])
+    assert eitc == irs_round(max_credit - rate * Decimal(30_000 - row["phaseout_begins_other"]))
+    assert est.point == 2_000 + 3_600 + eitc - tax
+    # Advance-payment reconciliation honesty (Letter 6419).
+    assert any("Letter 6419" in a for a in est.assumptions)
+
+
+def test_spouse_split_gives_true_two_return_mfs_comparison():
+    income = IncomeSnapshot(
+        wages=90_000, federal_withholding=9_000,
+        spouse=IncomeSnapshot(wages=20_000, federal_withholding=1_500),
+    )
+    undecided = Profile(household=Household(marital_status=_ans("married")))
+    est = estimate_refund(undecided, 2023, income)
+    by_status = {c.status: c.bottom_line for c in est.comparison.candidates}
+    self_mfs = _independent_refund(90_000, 9_000, "married_filing_separately")
+    spouse_mfs = _independent_refund(20_000, 1_500, "married_filing_separately")
+    # The MFS candidate is the SUM of two separately computed MFS returns...
+    assert by_status["married_filing_separately"] == self_mfs + spouse_mfs
+    # ...and MFJ combines both spouses on one return.
+    assert by_status["married_filing_jointly"] == _independent_refund(110_000, 10_500, "married_filing_jointly")
+    # The worst-case wording is gone; the true-comparison disclosure replaces it.
+    assert not any("worst-case" in a for a in est.assumptions)
+    assert any("TRUE two-return comparison" in a for a in est.assumptions)
+
+    # With MFS confirmed, the composition itself carries the spouse's return.
+    decided = Profile(
+        household=Household(marital_status=_ans("married"), filing_status=_ans("married_filing_separately"))
+    )
+    est2 = estimate_refund(decided, 2023, income)
+    labels2 = _labels(est2)
+    assert labels2["Spouse's MFS return (computed separately)"] == spouse_mfs
+    assert est2.point == self_mfs + spouse_mfs
+
+
+def test_no_spouse_data_keeps_the_worst_case_fallback():
+    # Without per-spouse amounts the MFS candidate stays the all-on-one-return bound,
+    # and the estimate says so (regression guard for the F10 split gating).
+    income = IncomeSnapshot(wages=90_000, federal_withholding=9_000)
+    est = estimate_refund(Profile(household=Household(marital_status=_ans("married"))), 2023, income)
+    assert any("worst-case" in a for a in est.assumptions)
+    assert not any("TRUE two-return comparison" in a for a in est.assumptions)
