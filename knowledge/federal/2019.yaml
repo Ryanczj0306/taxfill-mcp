@@ -145,6 +145,125 @@ tax:
       head_of_household: 200000
       qualifying_surviving_spouse: 250000
 
+  # Maximum capital gains rate breakpoints under IRC section 1(h), indexed
+  # separately under section 1(j)(5): TAXABLE-INCOME ceilings for the 0% and
+  # 15% rates on adjusted net capital gain / qualified dividends (20% above
+  # the 15% ceiling), with ordinary income stacked first — the Qualified
+  # Dividends and Capital Gain Tax Worksheet line 6 / line 13 amounts. NOT
+  # equal to the ordinary bracket boundaries; never derive them from the rate
+  # schedules. MFS is exactly half of MFJ; a qualifying surviving spouse uses
+  # the MFJ amounts (the Rev. Proc. groups surviving spouses with joint returns).
+  # Rev. Proc. 2018-57 prints the MFS amounts only as one-half of the joint
+  # amounts; both were confirmed verbatim in the 2019 Schedule D Tax Worksheet,
+  # lines 15 and 26 (https://www.irs.gov/pub/irs-prior/i1040sd--2019.pdf).
+  capital_gains_brackets:
+    citation:
+      source: "Rev. Proc. 2018-57, Section 3.03 (Maximum Capital Gains Rate)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-18-57.pdf"
+    max_zero_rate_amount:
+      single: 39375
+      married_filing_jointly: 78750
+      married_filing_separately: 39375
+      head_of_household: 52750
+      qualifying_surviving_spouse: 78750
+    max_15_percent_rate_amount:
+      single: 434550
+      married_filing_jointly: 488850
+      married_filing_separately: 244425
+      head_of_household: 461700
+      qualifying_surviving_spouse: 488850
+
+  # Social Security Benefits Worksheet parameters (Form 1040 line 6b; line 5b
+  # in 2019). Statutory under IRC section 86(c) and never indexed — identical
+  # in every year 2019-2024. MFS splits by BEHAVIOR, not just status: lived
+  # apart from the spouse ALL year -> the single thresholds (write "D" next to
+  # the benefits line on paper returns); lived with the spouse at ANY time ->
+  # both tiers are $0 (mfs_living_with_spouse_base) and taxable benefits =
+  # min(0.85 x provisional income, 0.85 x benefits). The published worksheet
+  # prints the second tier as the line-10 gap ($9,000, or $12,000 for MFJ);
+  # the explicit IRC 86(c)(2) adjusted base amounts stored here are
+  # arithmetically identical.
+  taxable_social_security:
+    citation:
+      source: "2019 Instructions for Form 1040, Social Security Benefits Worksheet (lines 5a/5b, page 28); IRC section 86(c)"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2019.pdf"
+    base_amount:
+      single: 25000
+      married_filing_jointly: 32000
+      head_of_household: 25000
+      qualifying_surviving_spouse: 25000
+      married_filing_separately_lived_apart_all_year: 25000
+    adjusted_base_amount:
+      single: 34000
+      married_filing_jointly: 44000
+      head_of_household: 34000
+      qualifying_surviving_spouse: 34000
+      married_filing_separately_lived_apart_all_year: 34000
+    mfs_living_with_spouse_base: 0
+    inclusion_rate_tier1: 0.50
+    inclusion_rate_tier2: 0.85
+    max_taxable_share_of_benefits: 0.85
+
+  # Excess social security / tier 1 RRTA withholding credit parameters
+  # (Schedule 3 line 11).
+  # The cap is PER PERSON: each spouse's box-4 withholding is compared to the
+  # max separately, never combined. The credit exists only when MULTIPLE
+  # employers together over-withheld; a single employer's excess must be
+  # adjusted by that employer (Form 843 if it refuses) and is never claimable
+  # on the return. max_withholding = rate x wage base, exact to the cent.
+  employee_social_security:
+    citation:
+      source: "2019 Instructions for Form 1040, Schedule 3 line 11 (Excess Social Security and Tier 1 RRTA Tax Withheld); Pub 15 (2019), social security rate and wage base limit"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2019.pdf"
+    rate: 0.062
+    ss_wage_base: 132900
+    max_withholding: 8239.80
+
+  # Section 221 student-loan-interest deduction (Schedule 1). The $2,500 cap
+  # is statutory (IRC 221(b)(1)), not indexed. married_filing_separately is
+  # deliberately ABSENT: MFS may not take the deduction at all (IRC 221(e)(2))
+  # — a missing status means not-allowed. Reduction = tentative deduction
+  # (min(cap, interest paid)) x (MAGI - start) / (end - start); the span is
+  # $15,000 ($30,000 MFJ) in every supported year.
+  student_loan_interest:
+    citation:
+      source: "Rev. Proc. 2018-57, Section 3.30 (Interest on Education Loans)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-18-57.pdf"
+    max_deduction: 2500
+    phaseout:
+      single: { start: 70000, end: 85000 }
+      head_of_household: { start: 70000, end: 85000 }
+      qualifying_surviving_spouse: { start: 70000, end: 85000 }
+      married_filing_jointly: { start: 140000, end: 170000 }
+
+  # Form 8863 education credits. AOTC: 100% of the first $2,000 of qualified
+  # expenses PER STUDENT plus 25% of the next $2,000 (max $2,500 per student),
+  # 40% refundable unless the Form 8863 line 7 under-age-24 exception applies;
+  # its phaseout is statutory (IRC 25A(i)(4)) and identical in all years.
+  # LLC: 20% of up to $10,000 of expenses PER RETURN, nonrefundable. MFS may
+  # claim NEITHER credit (rule — hence no MFS keys). "other" = single /
+  # head_of_household / qualifying_surviving_spouse.
+  # In 2019 the LLC phaseout was still indexed separately, BELOW the AOTC's
+  # ranges (it was aligned to the AOTC only from 2021, by the CAA 2021).
+  education_credits:
+    citation:
+      source: "2019 Instructions for Form 8863 (Education Credits); LLC phaseout also in Rev. Proc. 2018-57, Section 3.06"
+      url: "https://www.irs.gov/pub/irs-prior/i8863--2019.pdf"
+    aotc:
+      per_student_cap: 2500
+      first_dollar_cap: 2000
+      second_rate: 0.25
+      refundable_fraction: 0.40
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+    llc:
+      per_return_expense_cap: 10000
+      rate: 0.20
+      phaseout:
+        married_filing_jointly: { start: 116000, end: 136000 }
+        other: { start: 58000, end: 68000 }
+
 # Pub 501 (2019) Table 1 (Filing Requirements Chart for Most Taxpayers): the
 # gross-income level at or above which a return is required, by status and age.
 # Non-elderly amounts equal that status's standard deduction; each 65+ person

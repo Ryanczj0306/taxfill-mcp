@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from taxfill_core import residency
 from taxfill_core.calc import (
@@ -50,11 +50,14 @@ _LABEL = "ESTIMATE"
 
 
 class IncomeSnapshot(BaseModel):
-    """Confirmed dollar amounts so far (whole dollars; taxpayer + spouse combined).
+    """Confirmed dollar amounts so far (whole dollars).
 
     Every field defaults to 0 so an estimate can run off a single confirmed
     document. ``itemized_deductions`` is None unless the user is itemizing (then
-    the larger of it and the standard deduction is used).
+    the larger of it and the standard deduction is used). For a married couple,
+    amounts are taxpayer + spouse COMBINED unless ``spouse`` is provided — then
+    this snapshot is the primary taxpayer's own amounts and ``spouse`` carries the
+    other spouse's, enabling a TRUE two-return MFS comparison (MFJ combines them).
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -62,13 +65,102 @@ class IncomeSnapshot(BaseModel):
     wages: int = Field(default=0, ge=0, description="W-2 box 1 wages (all W-2s).")
     federal_withholding: int = Field(default=0, ge=0, description="Federal income tax withheld + estimated payments.")
     interest: int = Field(default=0, ge=0, description="Taxable interest (1099-INT).")
-    dividends: int = Field(default=0, ge=0, description="Ordinary dividends (1099-DIV).")
-    self_employment_net: int = Field(default=0, ge=0, description="Net profit from self-employment (Schedule C line 31).")
+    dividends: int = Field(default=0, ge=0, description="Ordinary dividends, 1099-DIV box 1a (includes qualified).")
+    qualified_dividends: int = Field(
+        default=0, ge=0,
+        description="1099-DIV box 1b — the subset of `dividends` taxed at preferential rates.",
+    )
+    capital_gain_long: int = Field(
+        default=0,
+        description="Net LONG-term capital gain (+) or loss (-) — 1099-B/Schedule D. Signed.",
+    )
+    capital_gain_short: int = Field(
+        default=0,
+        description="Net SHORT-term capital gain (+) or loss (-) — taxed as ordinary income. Signed.",
+    )
+    self_employment_net: int = Field(
+        default=0,
+        description="Net profit (+) or loss (-) from self-employment (Schedule C line 31). Signed.",
+    )
+    retirement_income_taxable: int = Field(
+        default=0, ge=0, description="Taxable pension/IRA distributions (1099-R box 2a), taxed as ordinary income."
+    )
+    social_security_benefits: int = Field(
+        default=0, ge=0,
+        description="SSA-1099 box 5 net benefits; the TAXABLE portion is computed by the engine (0-85%).",
+    )
     other_income: int = Field(default=0, ge=0, description="Other taxable income not in the fields above.")
+    student_loan_interest_paid: int = Field(
+        default=0, ge=0,
+        description="1098-E box 1 — the engine applies the $2,500 cap and the MAGI phase-out (MFS: not allowed).",
+    )
+    pre_agi_adjustments: int = Field(
+        default=0, ge=0,
+        description=(
+            "Other above-the-line adjustments the agent has CONFIRMED eligible (IRA/HSA/educator...); "
+            "eligibility and limits are the agent's judgment, like itemized_deductions."
+        ),
+    )
+    ss_withheld_by_employer: list[int] = Field(
+        default_factory=list,
+        description="W-2 box 4 Social Security tax withheld, ONE ENTRY PER EMPLOYER (excess-SS credit needs 2+).",
+    )
+    aotc_qualified_expenses: list[int] = Field(
+        default_factory=list,
+        description="AOTC-qualified education expenses, one entry per eligible student (1098-T-informed).",
+    )
+    aca_premiums: int = Field(default=0, ge=0, description="Form 1095-A line 33A — annual enrollment premiums.")
+    aca_slcsp: int = Field(default=0, ge=0, description="Form 1095-A line 33B — annual SLCSP premiums.")
+    aca_aptc: int = Field(default=0, ge=0, description="Form 1095-A line 33C — annual advance PTC paid.")
     itemized_deductions: int | None = Field(default=None, ge=0, description="Total itemized deductions, if itemizing.")
+    spouse: "IncomeSnapshot | None" = Field(
+        default=None,
+        description="The spouse's own amounts (enables a true two-return MFS comparison). One level only.",
+    )
+
+    @model_validator(mode="after")
+    def _check_internal_consistency(self) -> "IncomeSnapshot":
+        if self.qualified_dividends > self.dividends:
+            raise ValueError(
+                f"qualified_dividends ({self.qualified_dividends}) cannot exceed dividends "
+                f"({self.dividends}) — box 1b is a subset of box 1a"
+            )
+        if self.spouse is not None and self.spouse.spouse is not None:
+            raise ValueError("spouse.spouse must be None — one nesting level only")
+        return self
 
     def total_income(self) -> int:
-        return self.wages + self.interest + self.dividends + self.self_employment_net + self.other_income
+        """Ordinary-income components only — capital gains/losses and the taxable part of
+        Social Security are status-dependent and computed by the estimate, not here."""
+        return (
+            self.wages + self.interest + self.dividends + self.self_employment_net
+            + self.retirement_income_taxable + self.other_income
+        )
+
+    def combined_with_spouse(self) -> "IncomeSnapshot":
+        """The MFJ view: every amount summed across both spouses (lists concatenated)."""
+        if self.spouse is None:
+            return self
+        s = self.spouse
+        return IncomeSnapshot(
+            **{
+                f: getattr(self, f) + getattr(s, f)
+                for f in (
+                    "wages", "federal_withholding", "interest", "dividends", "qualified_dividends",
+                    "capital_gain_long", "capital_gain_short", "self_employment_net",
+                    "retirement_income_taxable", "social_security_benefits", "other_income",
+                    "student_loan_interest_paid", "pre_agi_adjustments",
+                    "aca_premiums", "aca_slcsp", "aca_aptc",
+                )
+            },
+            ss_withheld_by_employer=[*self.ss_withheld_by_employer, *s.ss_withheld_by_employer],
+            aotc_qualified_expenses=[*self.aotc_qualified_expenses, *s.aotc_qualified_expenses],
+            itemized_deductions=(
+                None
+                if self.itemized_deductions is None and s.itemized_deductions is None
+                else (self.itemized_deductions or 0) + (s.itemized_deductions or 0)
+            ),
+        )
 
 
 class CompositionLine(BaseModel):
