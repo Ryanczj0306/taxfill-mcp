@@ -376,6 +376,490 @@ class NiitParams(_SurtaxParams):
     investment income or MAGI above the filing-status threshold (statutory, not indexed)."""
 
 
+# ── Phase F tax blocks: preferential rates, SS benefits, adjustments, education
+#    credits, PTC. Each block is DATA with a citation; the worksheet mechanics the
+#    calc ops must reproduce are recorded in the model docstrings. ──────────────
+
+
+class CapitalGainsBrackets(BaseModel):
+    """Maximum capital gains rate breakpoints (IRC section 1(h), indexed under
+    section 1(j)(5)): TAXABLE-INCOME ceilings for the 0% and 15% rates on
+    adjusted net capital gain / qualified dividends — 20% applies above the 15%
+    ceiling. These are the Qualified Dividends and Capital Gain Tax Worksheet
+    line 6 / line 13 amounts (ordinary income stacks first). Post-TCJA they are
+    indexed separately from the ordinary brackets and are NOT equal to bracket
+    boundaries — never derive them from the rate schedules."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    max_zero_rate_amount: dict[str, int] = Field(
+        description="Taxable-income ceiling for the 0% rate, per filing status (all five explicit)."
+    )
+    max_15_percent_rate_amount: dict[str, int] = Field(
+        description="Taxable-income ceiling for the 15% rate, per filing status; 20% applies above it."
+    )
+
+    @model_validator(mode="after")
+    def _check_statuses_and_ordering(self) -> "CapitalGainsBrackets":
+        for name, amounts in (
+            ("max_zero_rate_amount", self.max_zero_rate_amount),
+            ("max_15_percent_rate_amount", self.max_15_percent_rate_amount),
+        ):
+            missing = [s for s in _THRESHOLD_STATUSES if s not in amounts]
+            unknown = [s for s in amounts if s not in _THRESHOLD_STATUSES]
+            if missing or unknown:
+                raise ValueError(
+                    f"capital_gains_brackets.{name} must contain exactly the five filing statuses "
+                    f"{list(_THRESHOLD_STATUSES)} — missing {missing}, unknown {unknown}. "
+                    f"(qualifying_surviving_spouse is explicit — every Rev. Proc. section 3.03 groups it "
+                    f"with joint returns; estates/trusts amounts do not belong in this block)"
+                )
+            bad = {s: v for s, v in amounts.items() if v <= 0}
+            if bad:
+                raise ValueError(f"capital_gains_brackets.{name} must be positive whole-dollar amounts, got {bad}")
+        misordered = {
+            s: (self.max_zero_rate_amount[s], self.max_15_percent_rate_amount[s])
+            for s in _THRESHOLD_STATUSES
+            if self.max_zero_rate_amount[s] >= self.max_15_percent_rate_amount[s]
+        }
+        if misordered:
+            raise ValueError(
+                f"capital_gains_brackets: max_zero_rate_amount must be strictly below max_15_percent_rate_amount "
+                f"for every status, violated for {misordered} — copy both ceilings from the Rev. Proc. "
+                f"section 3.03 tables"
+            )
+        return self
+
+
+class MagiPhaseoutRange(BaseModel):
+    """A linear MAGI phase-out: full benefit at or below ``start``, fully
+    eliminated at MAGI >= ``end``, reduced pro rata in between."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    start: int = Field(gt=0, description="MAGI at which the phase-out begins (full benefit at or below this).")
+    end: int = Field(gt=0, description="MAGI at or above which the benefit is fully eliminated.")
+
+    @model_validator(mode="after")
+    def _check_range(self) -> "MagiPhaseoutRange":
+        if self.end <= self.start:
+            raise ValueError(
+                f"phase-out end ({self.end}) must be greater than start ({self.start}) — "
+                f"copy both bounds from the published phase-out range"
+            )
+        return self
+
+
+# The taxable-Social-Security worksheet buckets MFS by BEHAVIOR, not just status:
+# lived-apart-all-year uses the single thresholds (explicit key below); lived with
+# the spouse at any time gets $0 for both tiers (mfs_living_with_spouse_base).
+_TAXABLE_SS_STATUSES: tuple[str, ...] = (
+    "single",
+    "married_filing_jointly",
+    "head_of_household",
+    "qualifying_surviving_spouse",
+    "married_filing_separately_lived_apart_all_year",
+)
+
+
+class TaxableSocialSecurityParams(BaseModel):
+    """Social Security Benefits Worksheet parameters (Form 1040 line 6b; line 5b
+    in 2019). Statutory under IRC section 86(c), never indexed — identical every
+    supported year.
+
+    MFS who lived WITH the spouse at any time during the year is a RULE, not a
+    threshold column: both tiers are ``mfs_living_with_spouse_base`` ($0), the
+    worksheet skips lines 8-15, and taxable benefits =
+    min(0.85 x provisional income, 0.85 x benefits). The published worksheet
+    prints the second tier as the line-10 gap (adjusted base minus base:
+    $9,000, or $12,000 for MFJ); this block stores the explicit IRC 86(c)(2)
+    adjusted base amounts — the two forms are arithmetically identical."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    base_amount: dict[str, int] = Field(
+        description="First-tier provisional-income threshold (worksheet line 8), per status."
+    )
+    adjusted_base_amount: dict[str, int] = Field(
+        description="Second-tier threshold (IRC 86(c)(2)); the worksheet encodes it as the line-10 gap."
+    )
+    mfs_living_with_spouse_base: int = Field(
+        default=0,
+        ge=0,
+        description="Both tiers for MFS who lived with the spouse at any time during the year — $0 by rule.",
+    )
+    inclusion_rate_tier1: Decimal = Field(description="Worksheet line 2 factor, 0.50.")
+    inclusion_rate_tier2: Decimal = Field(description="Worksheet lines 15/17 factor, 0.85.")
+    max_taxable_share_of_benefits: Decimal = Field(
+        description="Taxable benefits never exceed this share of total benefits (line 17 cap), 0.85."
+    )
+
+    _coerce_rates = field_validator(
+        "inclusion_rate_tier1", "inclusion_rate_tier2", "max_taxable_share_of_benefits", mode="before"
+    )(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_amounts_and_rates(self) -> "TaxableSocialSecurityParams":
+        for name, amounts in (
+            ("base_amount", self.base_amount),
+            ("adjusted_base_amount", self.adjusted_base_amount),
+        ):
+            missing = [s for s in _TAXABLE_SS_STATUSES if s not in amounts]
+            unknown = [s for s in amounts if s not in _TAXABLE_SS_STATUSES]
+            if missing or unknown:
+                raise ValueError(
+                    f"taxable_social_security.{name} must contain exactly {list(_TAXABLE_SS_STATUSES)} — "
+                    f"missing {missing}, unknown {unknown}. (MFS living WITH the spouse is not a map key: "
+                    f"both of its tiers are $0 by rule — mfs_living_with_spouse_base)"
+                )
+        misordered = {
+            s: (self.base_amount[s], self.adjusted_base_amount[s])
+            for s in _TAXABLE_SS_STATUSES
+            if self.adjusted_base_amount[s] <= self.base_amount[s]
+        }
+        if misordered:
+            raise ValueError(
+                f"taxable_social_security: adjusted_base_amount must exceed base_amount for every status "
+                f"(IRC 86(c): 34,000 over 25,000; 44,000 over 32,000), violated for {misordered}"
+            )
+        for name in ("inclusion_rate_tier1", "inclusion_rate_tier2", "max_taxable_share_of_benefits"):
+            value = getattr(self, name)
+            if not (Decimal("0") < value <= Decimal("1")):
+                raise ValueError(
+                    f"taxable_social_security.{name} must be a fraction in (0, 1] (0.50 / 0.85), got {value}"
+                )
+        return self
+
+
+class EmployeeSocialSecurityParams(BaseModel):
+    """Employee social security (OASDI) withholding parameters — the excess-SS /
+    tier 1 RRTA credit on Schedule 3 (line 11 in 2019 and 2021-2024; line 10 on
+    the 2020 schedule).
+
+    ``max_withholding`` (rate x wage base, exact to the cent) is PER PERSON: on a
+    joint return each spouse's withholding is compared to the cap separately,
+    never combined. The credit exists only when MULTIPLE employers together
+    over-withheld; a single employer's excess must be adjusted by that employer
+    (Form 843 if it refuses) and is never claimable on the return."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    rate: Decimal = Field(description="Employee OASDI rate under IRC 3101(a), 0.062 (6.2%).")
+    ss_wage_base: int = Field(gt=0, description="Social security wage base limit for the year.")
+    max_withholding: Decimal = Field(
+        description="Maximum employee withholding for the year, in dollars and cents (rate x wage base)."
+    )
+
+    _coerce_decimals = field_validator("rate", "max_withholding", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_rate_and_cap(self) -> "EmployeeSocialSecurityParams":
+        if not (Decimal("0") < self.rate < Decimal("1")):
+            raise ValueError(
+                f"employee_social_security.rate must be a fraction strictly between 0 and 1 (e.g. 0.062), "
+                f"got {self.rate}"
+            )
+        expected = self.rate * self.ss_wage_base
+        if self.max_withholding != expected:
+            raise ValueError(
+                f"employee_social_security.max_withholding ({self.max_withholding}) must equal "
+                f"rate x ss_wage_base ({self.rate} x {self.ss_wage_base} = {expected}) — the published "
+                f"per-person cap is exactly that product; fix whichever value was mistranscribed"
+            )
+        return self
+
+
+# Statuses that may take the student-loan-interest deduction. MFS is deliberately
+# NOT here: the deduction is disallowed entirely for married filing separately.
+_SLI_STATUSES: tuple[str, ...] = (
+    "single",
+    "married_filing_jointly",
+    "head_of_household",
+    "qualifying_surviving_spouse",
+)
+
+
+class StudentLoanInterestParams(BaseModel):
+    """Section 221 student-loan-interest deduction (Schedule 1).
+
+    ``married_filing_separately`` is deliberately ABSENT from ``phaseout``: an
+    MFS filer may not take the deduction at all (IRC 221(e)(2)), so the calc op
+    treats a status missing from the map as NOT ALLOWED — never as unlimited.
+    Reduction = tentative deduction (min(max_deduction, interest paid)) x
+    (MAGI - start) / (end - start); the span is $15,000 ($30,000 MFJ) every
+    supported year."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    max_deduction: int = Field(
+        gt=0, description="Statutory cap (IRC 221(b)(1)), $2,500 — not inflation-indexed."
+    )
+    phaseout: dict[str, MagiPhaseoutRange]
+
+    @model_validator(mode="after")
+    def _check_statuses(self) -> "StudentLoanInterestParams":
+        if "married_filing_separately" in self.phaseout:
+            raise ValueError(
+                "student_loan_interest.phaseout must NOT contain married_filing_separately — the deduction "
+                "is disallowed entirely for MFS (IRC 221(e)(2)); a missing status means not-allowed, so "
+                "adding a range here would wrongly grant the deduction"
+            )
+        missing = [s for s in _SLI_STATUSES if s not in self.phaseout]
+        unknown = [s for s in self.phaseout if s not in _SLI_STATUSES]
+        if missing or unknown:
+            raise ValueError(
+                f"student_loan_interest.phaseout must contain exactly {list(_SLI_STATUSES)} — "
+                f"missing {missing}, unknown {unknown}"
+            )
+        return self
+
+
+class MfjOtherPhaseout(BaseModel):
+    """Per-status MAGI phase-outs where the source distinguishes only joint
+    returns vs everyone else. ``other`` = single / head_of_household /
+    qualifying_surviving_spouse; MFS has no key because it is barred from the
+    education credits entirely."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    married_filing_jointly: MagiPhaseoutRange
+    other: MagiPhaseoutRange
+
+
+class AotcParams(BaseModel):
+    """American opportunity credit: 100% of the first ``first_dollar_cap`` of
+    qualified expenses PER STUDENT plus ``second_rate`` of the next
+    ``first_dollar_cap``, up to ``per_student_cap``. ``refundable_fraction`` of
+    the allowed credit is refundable — unless the Form 8863 line 7 under-age-24
+    exception applies, which makes the whole credit nonrefundable."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    per_student_cap: int = Field(gt=0)
+    first_dollar_cap: int = Field(gt=0)
+    second_rate: Decimal
+    refundable_fraction: Decimal
+    phaseout: MfjOtherPhaseout
+
+    _coerce_rates = field_validator("second_rate", "refundable_fraction", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_fractions(self) -> "AotcParams":
+        for name in ("second_rate", "refundable_fraction"):
+            value = getattr(self, name)
+            if not (Decimal("0") < value < Decimal("1")):
+                raise ValueError(
+                    f"education_credits.aotc.{name} must be a fraction strictly between 0 and 1 "
+                    f"(0.25 / 0.40), got {value}"
+                )
+        return self
+
+
+class LlcParams(BaseModel):
+    """Lifetime learning credit: ``rate`` of up to ``per_return_expense_cap`` of
+    qualified expenses PER RETURN (regardless of student count); nonrefundable.
+    The same student cannot get both the AOTC and the LLC in one year."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    per_return_expense_cap: int = Field(gt=0)
+    rate: Decimal
+    phaseout: MfjOtherPhaseout
+
+    _coerce_rate = field_validator("rate", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_rate(self) -> "LlcParams":
+        if not (Decimal("0") < self.rate < Decimal("1")):
+            raise ValueError(
+                f"education_credits.llc.rate must be a fraction strictly between 0 and 1 (0.20), got {self.rate}"
+            )
+        return self
+
+
+class EducationCreditsParams(BaseModel):
+    """Form 8863 education credits (AOTC + LLC).
+
+    married_filing_separately may claim NEITHER credit in any year — a RULE,
+    not a phase-out (the calc op returns zero for MFS regardless of MAGI).
+    Phase-out is linear: tentative credit x (end - MAGI) / (end - start)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    aotc: AotcParams
+    llc: LlcParams
+
+
+class PtcApplicablePercentageBand(BaseModel):
+    """One row of the Form 8962 Table 2 band table. For integer FPL percentage
+    ``p`` with fpl_pct_at_least <= p < fpl_pct_less_than, the applicable figure
+    is the linear interpolation from ``initial`` to ``final`` across the band,
+    rounded HALF-UP to 4 decimal places (0.07225 -> 0.0723)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    fpl_pct_at_least: int = Field(ge=0, description="Inclusive lower bound of the band, in integer FPL percent.")
+    fpl_pct_less_than: int | None = Field(
+        description="Exclusive upper bound; null on the top ('400 or more') band."
+    )
+    initial: Decimal = Field(description="Applicable figure at the bottom of the band, as a DECIMAL (0.02 = 2%).")
+    final: Decimal = Field(description="Applicable figure approached at the top of the band, as a DECIMAL.")
+
+    _coerce_figures = field_validator("initial", "final", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_band(self) -> "PtcApplicablePercentageBand":
+        if not (Decimal("0") <= self.initial <= self.final < Decimal("1")):
+            raise ValueError(
+                f"ptc applicable-percentage band [{self.fpl_pct_at_least}, {self.fpl_pct_less_than}): "
+                f"initial/final must be DECIMAL fractions with 0 <= initial <= final < 1 (write 2.00% as 0.02, "
+                f"8.5% as 0.085 — normalize the Rev. Proc.'s percent-form numbers), got "
+                f"initial={self.initial}, final={self.final}"
+            )
+        if self.fpl_pct_less_than is not None and self.fpl_pct_less_than <= self.fpl_pct_at_least:
+            raise ValueError(
+                f"ptc applicable-percentage band: fpl_pct_less_than ({self.fpl_pct_less_than}) must exceed "
+                f"fpl_pct_at_least ({self.fpl_pct_at_least})"
+            )
+        return self
+
+
+class PtcFplTable(BaseModel):
+    """Federal poverty line amounts by household size (1-8), plus the increment
+    for each person above 8 (Form 8962 Tables 1-1 / 1-2 / 1-3)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    household_size: dict[int, int]
+    per_additional_person: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _check_sizes(self) -> "PtcFplTable":
+        if sorted(self.household_size) != list(range(1, 9)):
+            raise ValueError(
+                f"ptc federal_poverty_line household_size must have exactly the keys 1-8 (the published "
+                f"tables list sizes 1-8, then a per-additional-person increment), got {sorted(self.household_size)}"
+            )
+        if any(v <= 0 for v in self.household_size.values()):
+            raise ValueError("ptc federal_poverty_line amounts must be positive whole-dollar amounts")
+        return self
+
+
+class PtcFederalPovertyLine(BaseModel):
+    """FPL guidelines used on Form 8962 line 4. A tax year uses the PRIOR
+    calendar year's HHS guidelines (``guidelines_year``): TY2023 uses the 2022
+    guidelines, TY2024 the 2023 guidelines. Taxpayers who lived in both AK/HI
+    and elsewhere during the year (or spouses in different states) use the
+    table with the HIGHER amounts."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    guidelines_year: int = Field(ge=1990, le=2100)
+    contiguous_48_and_dc: PtcFplTable
+    alaska: PtcFplTable
+    hawaii: PtcFplTable
+
+
+class PtcRepaymentLimitationRow(BaseModel):
+    """One Form 8962 Table 5 row, keyed by line 5 (integer FPL%): the row
+    applies when line 5 < ``fpl_band_lt``. The last row (fpl_band_lt: null =
+    '400 or more') has null caps: NO limitation — the full excess APTC is
+    repaid (line 28 is left blank)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    fpl_band_lt: int | None = Field(description="Exclusive FPL% upper bound of the row; null = 400 or more.")
+    single: int | None
+    other: int | None = Field(
+        description="Every non-single filing status (MFJ, MFS, HoH, QSS) uses this column."
+    )
+
+    @model_validator(mode="after")
+    def _check_row(self) -> "PtcRepaymentLimitationRow":
+        if self.fpl_band_lt is None:
+            if self.single is not None or self.other is not None:
+                raise ValueError(
+                    "ptc repayment_limitation: the 400-or-more row (fpl_band_lt: null) must have null "
+                    "single/other — at 400% FPL or more there is NO repayment limitation (full excess "
+                    "APTC is repaid)"
+                )
+        elif self.single is None or self.other is None or self.single <= 0 or self.other <= 0:
+            raise ValueError(
+                f"ptc repayment_limitation row for FPL% below {self.fpl_band_lt} must carry positive "
+                f"dollar caps in both columns, got single={self.single}, other={self.other}"
+            )
+        return self
+
+
+class PtcParams(BaseModel):
+    """Form 8962 Premium Tax Credit parameters — the ARPA applicable-percentage
+    table as extended to taxable years 2023-2025 by IRA section 12001(a). The
+    regime EXPIRES after TY2025: never extrapolate these parameters forward.
+
+    Applicable-figure mechanics the calc op must reproduce exactly (Worksheet 2
+    + Table 2): line 5 = household income / FPL x 100 TRUNCATED to an integer
+    (drop decimals, never round — 3.997 becomes 399; enter literally 401 when
+    over 400%); the figure for the integer is the band's linear interpolation
+    rounded HALF-UP to 4 decimals (349 -> 0.0723, 399 -> 0.0848); at or above
+    400 the figure stays 0.0850 — there is NO eligibility cliff
+    (``no_400_pct_cliff``), but the repayment LIMITATION does vanish at 400%
+    (the last ``repayment_limitation`` row). Do not conflate the two."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    applicable_percentage_table: list[PtcApplicablePercentageBand] = Field(min_length=1)
+    federal_poverty_line: PtcFederalPovertyLine
+    repayment_limitation: list[PtcRepaymentLimitationRow] = Field(min_length=1)
+    no_400_pct_cliff: bool
+
+    @model_validator(mode="after")
+    def _check_tables(self) -> "PtcParams":
+        bands = self.applicable_percentage_table
+        if bands[0].fpl_pct_at_least != 0:
+            raise ValueError(
+                "ptc.applicable_percentage_table must start at fpl_pct_at_least: 0 — the 'less than 150%' "
+                "row also covers below-100%-FPL filers who qualify through an exception"
+            )
+        for i, band in enumerate(bands):
+            is_last = i == len(bands) - 1
+            if is_last and band.fpl_pct_less_than is not None:
+                raise ValueError(
+                    "ptc.applicable_percentage_table: the last band must have fpl_pct_less_than: null "
+                    "(the '400 or more' row has no upper bound)"
+                )
+            if not is_last:
+                if band.fpl_pct_less_than is None:
+                    raise ValueError(
+                        f"ptc.applicable_percentage_table: band {i} has fpl_pct_less_than: null but is not "
+                        f"the last band — only the top band is unbounded"
+                    )
+                if bands[i + 1].fpl_pct_at_least != band.fpl_pct_less_than:
+                    raise ValueError(
+                        f"ptc.applicable_percentage_table: band {i + 1} must start exactly where band {i} "
+                        f"ends ({band.fpl_pct_less_than}), got {bands[i + 1].fpl_pct_at_least} — bands must "
+                        f"be contiguous with no gaps or overlaps"
+                    )
+        rows = self.repayment_limitation
+        if rows[-1].fpl_band_lt is not None:
+            raise ValueError(
+                "ptc.repayment_limitation must end with the unlimited row (fpl_band_lt: null — 400% FPL "
+                "or more repays the full excess APTC)"
+            )
+        bounds = [row.fpl_band_lt for row in rows[:-1]]
+        if any(b is None for b in bounds) or bounds != sorted(bounds):
+            raise ValueError(
+                "ptc.repayment_limitation rows must be in ascending fpl_band_lt order, with null only on "
+                "the last row"
+            )
+        return self
+
+
 class TaxKnowledge(BaseModel):
     """The ``tax`` block of a knowledge pack: everything calc.py needs for one year.
 
@@ -394,6 +878,16 @@ class TaxKnowledge(BaseModel):
     # blocks still load; calc raises a prescriptive error when a year lacks them.
     additional_medicare_tax: AdditionalMedicareTaxParams | None = None
     niit: NiitParams | None = None
+    # Phase F blocks — also optional so older packs still load; calc raises a
+    # prescriptive error when a year lacks a block an operation needs.
+    capital_gains_brackets: CapitalGainsBrackets | None = None
+    taxable_social_security: TaxableSocialSecurityParams | None = None
+    employee_social_security: EmployeeSocialSecurityParams | None = None
+    student_loan_interest: StudentLoanInterestParams | None = None
+    education_credits: EducationCreditsParams | None = None
+    # Premium Tax Credit: shipped only for years whose ARPA/IRA table regime is
+    # verified (2023-2024; the regime runs through TY2025 and then expires).
+    ptc: PtcParams | None = None
 
     @model_validator(mode="after")
     def _check_table_worksheet_boundary(self) -> "TaxKnowledge":
