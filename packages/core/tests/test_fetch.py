@@ -156,10 +156,25 @@ def test_unsupported_scheme_is_rejected(cache: Path):
 
 
 def test_non_gov_host_is_refused(cache: Path):
-    # The only outbound request is the blank download — a non-.gov/.us host must be refused
+    # The only outbound request is the blank download — a non-government host must be refused
     # before any network call ("outbound only to official .gov" guarantee; blocks SSRF).
     with pytest.raises(ValueError, match="official US government hosts"):
         fetch_blank("https://evil.example.com/form.pdf", cache_dir=cache)
+
+
+def test_bare_us_host_is_refused_but_state_gov_us_is_not_host_blocked(cache: Path, monkeypatch):
+    # .us is an OPEN registry — a bare second-level .us host (anyone can buy evil.us)
+    # must be refused. The state-government namespace (*.state.<xx>.us) passes the host
+    # gate (the download itself is stubbed to fail afterwards, proving we got past it).
+    with pytest.raises(ValueError, match="official US government hosts"):
+        fetch_blank("https://evil.us/form.pdf", cache_dir=cache)
+
+    def _no_network(url, timeout):
+        raise OfflineFetchError("host gate passed; network stubbed")
+
+    monkeypatch.setattr("taxfill_core.fetch._download", _no_network)
+    with pytest.raises(OfflineFetchError, match="host gate passed"):
+        fetch_blank("https://www.revenue.state.mn.us/form.pdf", cache_dir=cache)
 
 
 def test_non_pdf_content_is_rejected(tmp_path: Path, cache: Path):

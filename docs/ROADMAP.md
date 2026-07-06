@@ -25,7 +25,8 @@ Done and on `main` (**1,401 tests, all green** — verified `pytest` run, exit 0
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
   states). Core = 20 modules (~9.5k LOC).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
-  1099-NEC/INT/DIV/B, 1098-T, 1042-S, with per-field provenance) and the resumable
+  1099-NEC/MISC/INT/DIV/G, 1098-T/E, 1042-S, with per-field provenance — NOT yet
+  1099-B/R, SSA-1099, K-1 or 1095-A; see Phase F) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
 - **Federal form packs — priority set DONE.** 35 packs across 2019–2024. M2 base
@@ -250,6 +251,50 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
 
 **Acceptance:** each new form type audited + golden-tested; any computed line
 backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
+
+---
+
+## Phase F — Estimator & tax-domain completeness (Effort: L–XL, itemized)
+
+> Found by the 2026-07-01 tax-domain audit (18 adversarially-verified findings). The
+> engine now computes NIIT (Form 8960) and Additional Medicare Tax (Form 8959) and
+> applies Schedule SE lines 8a-9; what remains below is ranked by (commonness x dollar
+> impact). Every omission is DISCLOSED in the estimate's assumptions until built.
+> Each item is a self-contained knowledge+calc+tests project on the existing pattern.
+
+- [ ] **F1 — Qualified dividends / LTCG preferential rates (QDCGT worksheet).** The
+      biggest silent mis-tax for investors: `IncomeSnapshot` needs `qualified_dividends`
+      + `capital_gain_long/short` fields, knowledge needs the per-year 0%/15%/20%
+      breakpoints (Rev. Proc. 2022-38 §3.03 for 2023 — the rp-22-38.pdf URL is already
+      cited in the pack), calc needs the worksheet, and extraction needs a 1099-B
+      DocSpec. extract already captures 1099-DIV box 1b/2a but the amounts have
+      nowhere to go today.
+- [ ] **F2 — CTC/ODC/EITC in the estimate.** `knowledge/federal/2023.yaml` already
+      ships cited CTC/ACTC/ODC/EITC parameters that NOTHING consumes; the estimate's
+      "before unclaimed credits" range could compute them. Prereq: dependent date-of-
+      birth (age tests) in the profile schema + earned-income definition. EITC needs
+      the phase-in/out math; CTC needs the $50-per-$1,000 MAGI step + ACTC 15% earned-
+      income refundability cap.
+- [ ] **F3 — Excess Social Security withholding credit (Schedule 3 line 11).** Two
+      employers over the wage base is common and pure arithmetic: needs a cited
+      employee-rate param (6.2%) + `excess_ss` calc op + per-employer withholding
+      inputs. W-2 boxes 3/4 are already extracted and the line is already fillable.
+- [ ] **F4 — Retirement income: SSA-1099 / 1099-R DocSpecs + the taxable-Social-
+      Security worksheet** ($25k/$32k/$34k/$44k bases) as a calc op + estimate field.
+- [ ] **F5 — Premium Tax Credit reconciliation (1095-A → Form 8962).** The one
+      omission that can flip a refund into a balance due. Minimum first step: an
+      intake question + assumption line (DONE — disclosed); full build = 1095-A
+      DocSpec + f8962 pack + FPL/applicable-percentage knowledge.
+- [ ] **F6 — Education credits (AOTC/LLC) parameters + calc**, connecting the
+      already-extracted 1098-T and the already-fillable Form 8863.
+- [ ] **F7 — Above-the-line adjustments** (student-loan interest w/ MAGI phase-out;
+      generic confirmed-adjustments field for IRA/HSA/educator).
+- [ ] **F8 — Signed amounts: capital losses (±$3,000 limit) and SE losses.** All
+      `IncomeSnapshot` fields are `ge=0` today, so losses cannot be represented.
+- [ ] **F9 — Form packs for 8959/8960** (fillable attachments; the amounts already
+      land on Schedule 2 lines 11/12) and, low priority, **AMT (Form 6251)**.
+- [ ] **F10 — True two-return MFS comparison** (per-spouse income splits; today's MFS
+      figure is a disclosed worst-case bound with combined income on one return).
 
 ---
 
