@@ -12,10 +12,17 @@ from taxfill_core.extract import DOC_SPECS, extract_document, list_document_kind
 
 
 def test_supported_kinds_are_cited_to_gov():
+    from urllib.parse import urlparse
+
+    from taxfill_core.knowledge import is_official_gov_host
+
     kinds = list_document_kinds()
-    assert {"W-2", "1099-NEC", "1099-INT", "1099-DIV", "1098-T", "1042-S"} <= {k["kind"] for k in kinds}
+    assert {"W-2", "1099-NEC", "1099-INT", "1099-DIV", "1098-T", "1042-S",
+            "SSA-1099", "1099-R", "1099-B", "1095-A"} <= {k["kind"] for k in kinds}
     for spec in DOC_SPECS.values():
-        assert spec.source_url.startswith("https://www.irs.gov/"), spec.kind
+        # Official layout docs live on irs.gov — except SSA-1099, whose issuer is ssa.gov.
+        host = (urlparse(spec.source_url).hostname or "").lower()
+        assert spec.source_url.startswith("https://") and is_official_gov_host(host), spec.kind
         assert spec.boxes
 
 

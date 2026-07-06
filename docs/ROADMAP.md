@@ -25,8 +25,8 @@ Done and on `main` (**1,401 tests, all green** — verified `pytest` run, exit 0
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
   states). Core = 20 modules (~9.5k LOC).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
-  1099-NEC/MISC/INT/DIV/G, 1098-T/E, 1042-S, with per-field provenance — NOT yet
-  1099-B/R, SSA-1099, K-1 or 1095-A; see Phase F) and the resumable
+  1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, with per-field
+  provenance — K-1 is the one common document still unsupported) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
 - **Federal form packs — priority set DONE.** 35 packs across 2019–2024. M2 base
@@ -256,44 +256,43 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
 
 ## Phase F — Estimator & tax-domain completeness (Effort: L–XL, itemized)
 
-> Found by the 2026-07-01 tax-domain audit (18 adversarially-verified findings). The
-> engine now computes NIIT (Form 8960) and Additional Medicare Tax (Form 8959) and
-> applies Schedule SE lines 8a-9; what remains below is ranked by (commonness x dollar
-> impact). Every omission is DISCLOSED in the estimate's assumptions until built.
-> Each item is a self-contained knowledge+calc+tests project on the existing pattern.
+> Found by the 2026-07-01 tax-domain audit; **BUILT 2026-07-06** (research: two-pass
+> web verification of every parameter against IRS primary sources, zero discrepancies;
+> engine: knowledge blocks 2019-2024 + calc ops + estimator integration + form packs,
+> each adversarially audited). Remaining sub-items are listed inline.
 
-- [ ] **F1 — Qualified dividends / LTCG preferential rates (QDCGT worksheet).** The
+- [x] **F1 — Qualified dividends / LTCG preferential rates — DONE.** `calc.tax_with_preferential_rates` (QDCGT worksheet, 0/15/20 stacking, per-year breakpoints 2019-2024), signed `capital_gain_long/short` + `qualified_dividends` snapshot fields, 1099-B/DIV extraction, estimator integration. *(was:* The
       biggest silent mis-tax for investors: `IncomeSnapshot` needs `qualified_dividends`
       + `capital_gain_long/short` fields, knowledge needs the per-year 0%/15%/20%
       breakpoints (Rev. Proc. 2022-38 §3.03 for 2023 — the rp-22-38.pdf URL is already
       cited in the pack), calc needs the worksheet, and extraction needs a 1099-B
       DocSpec. extract already captures 1099-DIV box 1b/2a but the amounts have
       nowhere to go today.
-- [ ] **F2 — CTC/ODC/EITC in the estimate.** `knowledge/federal/2023.yaml` already
+- [x] **F2 — CTC/ODC/EITC in the estimate — DONE.** DOB+SSN-based qualifying-child tests, $50-per-$1,000 ceil phaseout, ACTC 15% refundability, 2021 ARPA two-tier fully-refundable handling, EITC formula (disclosed $50-band approximation) with investment-income gate. *(was:* `knowledge/federal/2023.yaml` already
       ships cited CTC/ACTC/ODC/EITC parameters that NOTHING consumes; the estimate's
       "before unclaimed credits" range could compute them. Prereq: dependent date-of-
       birth (age tests) in the profile schema + earned-income definition. EITC needs
       the phase-in/out math; CTC needs the $50-per-$1,000 MAGI step + ACTC 15% earned-
       income refundability cap.
-- [ ] **F3 — Excess Social Security withholding credit (Schedule 3 line 11).** Two
+- [x] **F3 — Excess Social Security withholding credit — DONE.** `calc.excess_ss` (multiple-employers rule), cited per-year employee-SS params, `ss_withheld_by_employer` snapshot field. *(was:* Two
       employers over the wage base is common and pure arithmetic: needs a cited
       employee-rate param (6.2%) + `excess_ss` calc op + per-employer withholding
       inputs. W-2 boxes 3/4 are already extracted and the line is already fillable.
-- [ ] **F4 — Retirement income: SSA-1099 / 1099-R DocSpecs + the taxable-Social-
+- [x] **F4 — Retirement income — DONE.** SSA-1099 + 1099-R DocSpecs, `calc.taxable_social_security` (worksheet incl. both MFS paths), snapshot fields + estimator wiring. *(was: SSA-1099 / 1099-R DocSpecs + the taxable-Social-
       Security worksheet** ($25k/$32k/$34k/$44k bases) as a calc op + estimate field.
-- [ ] **F5 — Premium Tax Credit reconciliation (1095-A → Form 8962).** The one
+- [x] **F5 — Premium Tax Credit reconciliation — DONE (2023/2024).** 1095-A DocSpec, fillable f8962 pack (141 fields, vision-audited), `calc.ptc_annual` (FPL tables, integer Table-2 lookup, Table-5 repayment caps), estimator net-credit/repayment. Pre-2023 years raise prescriptively (pre-IRA tables not shipped). *(was:* The one
       omission that can flip a refund into a balance due. Minimum first step: an
       intake question + assumption line (DONE — disclosed); full build = 1095-A
       DocSpec + f8962 pack + FPL/applicable-percentage knowledge.
-- [ ] **F6 — Education credits (AOTC/LLC) parameters + calc**, connecting the
+- [x] **F6 — Education credits — DONE.** `calc.education_credits` (AOTC per-student + 40% refundable, LLC per-return, per-year phaseouts incl. pre-2021 LLC indexing); AOTC in the estimate; LLC via the calc op. *(was: parameters + calc*, connecting the
       already-extracted 1098-T and the already-fillable Form 8863.
-- [ ] **F7 — Above-the-line adjustments** (student-loan interest w/ MAGI phase-out;
+- [x] **F7 — Above-the-line adjustments — DONE.** `calc.student_loan_interest_deduction` (per-year MAGI phaseouts, MFS=0) + `pre_agi_adjustments` confirmed-amounts field. *(was:* (student-loan interest w/ MAGI phase-out;
       generic confirmed-adjustments field for IRA/HSA/educator).
-- [ ] **F8 — Signed amounts: capital losses (±$3,000 limit) and SE losses.** All
+- [x] **F8 — Signed amounts — DONE.** `self_employment_net` and capital fields signed; -3,000/-1,500 capital-loss clamp with carryover disclosure. *(was: capital losses and SE losses.* All
       `IncomeSnapshot` fields are `ge=0` today, so losses cannot be represented.
-- [ ] **F9 — Form packs for 8959/8960** (fillable attachments; the amounts already
+- [x] **F9 — Form packs for 8959/8960/8962 — DONE** (26/38/141 fields, independent adversarial vision audits clean; the audit caught and removed a text-line relation on 8962). **AMT (Form 6251) remains out of scope** — disclosed in the estimate's assumptions. *(was: packs for 8959/8960* (fillable attachments; the amounts already
       land on Schedule 2 lines 11/12) and, low priority, **AMT (Form 6251)**.
-- [ ] **F10 — True two-return MFS comparison** (per-spouse income splits; today's MFS
+- [x] **F10 — True two-return MFS comparison — DONE.** `IncomeSnapshot.spouse` sub-snapshot: MFJ combines, MFS computes two returns and sums; the worst-case bound (disclosed) remains only the no-spouse-data fallback. *(was:* (per-spouse income splits; today's MFS
       figure is a disclosed worst-case bound with combined income on one return).
 
 ---

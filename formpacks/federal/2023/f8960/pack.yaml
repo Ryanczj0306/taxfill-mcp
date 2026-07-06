@@ -1,0 +1,200 @@
+# Form 8960 (2023 revision) — Net Investment Income Tax — Individuals,
+# Estates, and Trusts. One page; attaches to Form 1040/1040-SR/1040-NR
+# (individuals, via Schedule 2 line 12) or Form 1041 (estates/trusts).
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title ("Net Investment Income Tax—
+# Individuals, Estates, and Trusts") and revision year "2023" before pinning
+# pdf_sha256 (freshness protocol, dev plan section 7).
+#
+# Field map: introspected from this exact revision and vision-verified against
+# a sentinel-sweep render (every box shows its own field name). All 38 page-1
+# widgets are mapped: 2 header text (name, SSN/EIN), 3 election checkboxes,
+# and 33 money lines. No widget is excluded.
+#
+# The three Part I election checkboxes (section 6013(g), section 6013(h),
+# regulations section 1.1411-10(g)) are three separate AcroForm fields and
+# three independent elections — the 1.1411-10(g) election can coexist with
+# either 6013 election — so they carry no shared group and are not required.
+#
+# Relations: only unconditional form-face math is declared. The printed
+# "18a: Net investment income (line 12 above)" copy rule is NOT declared:
+# lines 18a–21 are completed ONLY by estates and trusts ("Individuals,
+# complete lines 13–17. Estates and trusts, complete lines 18a–21", line 12),
+# so on every individual filing 18a is legitimately blank while line 12 is
+# nonzero — blank-as-zero would hard-fail the relation. The estates/trusts
+# internal math (18c, 19c, 20, 21) IS declared: on an individual filing every
+# operand is blank, so those relations reduce to 0 == 0 and stay harmless.
+# Likewise the individuals' math (15, 16, 17) reduces to 0 == 0 (16 ==
+# min(12, 15) reads min(12, 0) = 0) on an estate/trust filing.
+#
+# Cross-form: line 17 carries to Schedule 2 (Form 1040) line 12 ("Net
+# investment income tax. Attach Form 8960") — same style as sched_se
+# "12 == sched_2.4". SKIPPED (not FAIL) when the filing has no sched_2
+# (an estate/trust files Form 8960 with Form 1041 instead). Line 21 carries
+# to Form 1041 Schedule G line 4 — no f1041 form key exists, so no rule.
+form: "8960"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f8960--2023.pdf
+pdf_sha256: "6664676afef1b6391e8b350c30f47ac71163909d158f6e5e57f7ccaf36c77eec"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header ---------------------------------------------------------------
+  - line: name                       # "Name(s) shown on your tax return"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: identifying_number         # "Your social security number or EIN"
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only   # PDF MaxLen is 11 (fits a dashed SSN), but digits-only keeps cross-form identity values consistent (SSN and EIN are both 9 digits)
+
+  # ---- Part I header elections (three independent checkboxes) ---------------
+  - line: elections.section_6013g    # "Section 6013(g) election (see instructions)"
+    field: "Page1[0].PartI[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: elections.section_6013h    # "Section 6013(h) election (see instructions)"
+    field: "Page1[0].PartI[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: elections.regulations_1411_10g   # "Regulations section 1.1411-10(g) election (see instructions)"
+    field: "Page1[0].PartI[0].c1_3[0]"
+    type: checkbox
+    on_state: "/1"
+
+  # ---- Part I — Investment Income --------------------------------------------
+  - line: "1"            # Taxable interest
+    field: "Page1[0].f1_3[0]"
+    type: money
+  - line: "2"            # Ordinary dividends
+    field: "Page1[0].f1_4[0]"
+    type: money
+  - line: "3"            # Annuities
+    field: "Page1[0].f1_5[0]"
+    type: money
+  - line: "4a"           # Rental real estate, royalties, partnerships, S corps, trusts, etc.
+    field: "Page1[0].f1_6[0]"
+    type: money
+  - line: "4b"           # Adjustment for net income/loss from a non-section 1411 trade or business
+    field: "Page1[0].f1_7[0]"
+    type: money
+  - line: "4c"           # Combine lines 4a and 4b
+    field: "Page1[0].f1_8[0]"
+    type: money
+  - line: "5a"           # Net gain or loss from disposition of property
+    field: "Page1[0].f1_9[0]"
+    type: money
+  - line: "5b"           # Net gain/loss from disposition not subject to net investment income tax
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "5c"           # Adjustment from disposition of partnership interest or S corp stock
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: "5d"           # Combine lines 5a through 5c
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "6"            # Adjustments to investment income for certain CFCs and PFICs
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "7"            # Other modifications to investment income
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "8"            # Total investment income. Combine lines 1, 2, 3, 4c, 5d, 6, and 7
+    field: "Page1[0].f1_15[0]"
+    type: money
+
+  # ---- Part II — Investment Expenses Allocable to Investment Income ---------
+  - line: "9a"           # Investment interest expenses
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "9b"           # State, local, and foreign income tax
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "9c"           # Miscellaneous investment expenses
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: "9d"           # Add lines 9a, 9b, and 9c
+    field: "Page1[0].f1_19[0]"
+    type: money
+  - line: "10"           # Additional modifications
+    field: "Page1[0].f1_20[0]"
+    type: money
+  - line: "11"           # Total deductions and modifications. Add lines 9d and 10
+    field: "Page1[0].f1_21[0]"
+    type: money
+
+  # ---- Part III — Tax Computation --------------------------------------------
+  - line: "12"           # Net investment income. Subtract line 11 from line 8; if zero or less, -0-
+    field: "Page1[0].f1_22[0]"
+    type: money
+  # Individuals (lines 13-17):
+  - line: "13"           # Modified adjusted gross income
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "14"           # Threshold based on filing status
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: "15"           # Subtract line 14 from line 13; if zero or less, enter -0-
+    field: "Page1[0].f1_25[0]"
+    type: money
+  - line: "16"           # Enter the smaller of line 12 or line 15
+    field: "Page1[0].f1_26[0]"
+    type: money
+  - line: "17"           # NIIT for individuals: line 16 x 3.8% (0.038) -> tax return (Sched 2 line 12)
+    field: "Page1[0].f1_27[0]"
+    type: money
+  # Estates and Trusts (lines 18a-21):
+  - line: "18a"          # Net investment income (line 12 above)
+    field: "Page1[0].f1_28[0]"
+    type: money
+  - line: "18b"          # Deductions for distributions of NII and charitable deductions
+    field: "Page1[0].f1_29[0]"
+    type: money
+  - line: "18c"          # Undistributed NII. Subtract line 18b from line 18a; if zero or less, -0-
+    field: "Page1[0].f1_30[0]"
+    type: money
+  - line: "19a"          # Adjusted gross income
+    field: "Page1[0].f1_31[0]"
+    type: money
+  - line: "19b"          # Highest tax bracket for estates and trusts for the year
+    field: "Page1[0].f1_32[0]"
+    type: money
+  - line: "19c"          # Subtract line 19b from line 19a; if zero or less, enter -0-
+    field: "Page1[0].f1_33[0]"
+    type: money
+  - line: "20"           # Enter the smaller of line 18c or line 19c
+    field: "Page1[0].f1_34[0]"
+    type: money
+  - line: "21"           # NIIT for estates and trusts: line 20 x 3.8% (0.038) -> tax return
+    field: "Page1[0].f1_35[0]"
+    type: money
+
+# Form-face math only (see header comment for the one printed rule NOT
+# declared: the filer-type-conditional "18a = line 12 above" copy).
+relations:
+  - "4c == 4a + 4b"                  # "Combine lines 4a and 4b"
+  - "5d == sum(5a..5c)"              # "Combine lines 5a through 5c"
+  - "8 == 1 + 2 + 3 + 4c + 5d + 6 + 7"   # "Total investment income. Combine lines 1, 2, 3, 4c, 5d, 6, and 7"
+  - "9d == sum(9a..9c)"              # "Add lines 9a, 9b, and 9c"
+  - "11 == 9d + 10"                  # "Total deductions and modifications. Add lines 9d and 10"
+  - "12 == max(0, 8 - 11)"           # "Subtract Part II, line 11, from Part I, line 8 ... If zero or less, enter -0-"
+  - "15 == max(0, 13 - 14)"          # "Subtract line 14 from line 13. If zero or less, enter -0-"
+  - "16 == min(12, 15)"              # "Enter the smaller of line 12 or line 15"
+  - "17 == 16 * 0.038"               # "Multiply line 16 by 3.8% (0.038)"
+  - "18c == max(0, 18a - 18b)"       # "Subtract line 18b from line 18a ... If zero or less, enter -0-"
+  - "19c == max(0, 19a - 19b)"       # "Subtract line 19b from line 19a. If zero or less, enter -0-"
+  - "20 == min(18c, 19c)"            # "Enter the smaller of line 18c or line 19c"
+  - "21 == 20 * 0.038"               # "Multiply line 20 by 3.8% (0.038)"
+
+cross_form:
+  - "17 == sched_2.12"               # NIIT for individuals -> Schedule 2 (Form 1040), line 12
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only form: no signature block of its own; mailed inside the
+# parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

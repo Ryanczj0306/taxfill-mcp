@@ -167,6 +167,14 @@ class Dependent(BaseModel):
     name: str
     relationship: str | None = None
     dob: date | None = None
+    has_ssn: bool | None = Field(
+        default=None,
+        description=(
+            "True when the dependent has a work-eligible SSN (required for the Child Tax "
+            "Credit and to count as an EITC qualifying child); False for ITIN/ATIN "
+            "dependents (still eligible for the $500 ODC); None = not asked."
+        ),
+    )
     provenance: Provenance
 
 

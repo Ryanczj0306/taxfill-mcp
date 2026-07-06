@@ -67,7 +67,7 @@ def test_all_expected_tools_are_listed_with_schemas():
 
 def test_list_forms_and_get_form_map():
     data = _data(_run(_call("list_forms", {"jurisdiction": "federal", "year": 2023})))
-    assert len(data) == 19  # M2 (10) + Sched SE + Sched D/E + Form 8863/2555 + Form 4868 + 1040-ES + 1040-X + W-7
+    assert len(data) == 22  # M2 (10) + SE + D/E + 8863/2555 + 4868 + 1040-ES + 1040-X + W-7 + 8959/8960/8962
     fm = _data(_run(_call("get_form_map", {"form": "f1040", "year": 2023})))
     assert fm["form"] == "1040"
     assert "8 == sched_1.10" in fm["cross_form"]
@@ -109,6 +109,28 @@ def test_calc_tax_matches_engine():
     data = _data(_run(_call("calc", {"op": "tax", "args": {"taxable_income": 75800, "filing_status": "head_of_household", "year": 2023}})))
     assert data["tax"] == 10383
     assert data["citation"]["url"].startswith("https://www.irs.gov/")
+
+
+def test_calc_phase_f_ops_are_dispatched():
+    # One golden per new op (full derivations live in the core test suite).
+    qd = _data(_run(_call("calc", {"op": "tax_with_preferential_rates", "args": {
+        "taxable_income": 60000, "qualified_dividends": 10000, "filing_status": "single", "year": 2023}})))
+    assert qd["tax"] == 7813
+    ss = _data(_run(_call("calc", {"op": "taxable_social_security", "args": {
+        "benefits": 20000, "other_income": 30000, "filing_status": "single", "year": 2023}})))
+    assert ss["taxable_benefits"] == 9600
+    ex = _data(_run(_call("calc", {"op": "excess_ss", "args": {"withheld_by_employer": [6000, 6000], "year": 2023}})))
+    assert ex["credit"] == 2068
+    sli = _data(_run(_call("calc", {"op": "student_loan_interest_deduction", "args": {
+        "interest_paid": 3000, "magi": 82500, "filing_status": "single", "year": 2023}})))
+    assert sli["deduction"] == 1250
+    edu = _data(_run(_call("calc", {"op": "education_credits", "args": {
+        "aotc_expenses_per_student": [4000, 1000], "magi": 50000, "filing_status": "single", "year": 2023}})))
+    assert edu["total_credit"] == 3500 and edu["aotc_refundable"] == 1400
+    ptc = _data(_run(_call("calc", {"op": "ptc_annual", "args": {
+        "household_income": 27180, "household_size": 1, "annual_premiums": 7000,
+        "annual_slcsp": 6000, "year": 2023}})))
+    assert ptc["ptc"] == 5456 and ptc["contribution"] == 544
 
 
 def test_estimate_refund_is_labeled_and_computed():
