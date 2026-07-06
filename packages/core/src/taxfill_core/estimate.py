@@ -34,7 +34,7 @@ from taxfill_core.calc import (
     standard_deduction,
     tax_from_taxable_income,
 )
-from taxfill_core.knowledge import Citation
+from taxfill_core.knowledge import Citation, load_knowledge
 from taxfill_core.schemas.profile import Profile
 
 __all__ = [
@@ -362,8 +362,11 @@ def _bottom_line(income: IncomeSnapshot, status: str, year: int, knowledge_dir, 
 
     # High-income surtaxes (Schedule 2 lines 11/12). Computed on the same deterministic
     # engine; zero for most filers, so composition lines appear only when they bite.
+    # A knowledge pack predating the surtax blocks (schema keeps them optional for
+    # compatibility, e.g. a custom TAXFILL_DATA_DIR) skips them, matching pre-block behavior.
+    pack_tax = load_knowledge("federal", year, base_dir=knowledge_dir).tax
     addmed_amount = 0
-    if income.wages or income.self_employment_net:
+    if (income.wages or income.self_employment_net) and pack_tax.additional_medicare_tax is not None:
         addmed = additional_medicare_tax(
             income.wages, status, year, se_net_profit=income.self_employment_net, knowledge_dir=knowledge_dir
         )
@@ -379,7 +382,8 @@ def _bottom_line(income: IncomeSnapshot, status: str, year: int, knowledge_dir, 
 
     niit_amount = 0
     investment_income = income.interest + income.dividends
-    if investment_income and not nonresident:  # NRAs are generally not subject to NIIT
+    # NRAs are generally not subject to NIIT (Form 8960 instructions).
+    if investment_income and not nonresident and pack_tax.niit is not None:
         niit_res = niit(investment_income, agi, status, year, knowledge_dir=knowledge_dir)
         if niit_res.niit:
             niit_amount = niit_res.niit
@@ -466,7 +470,9 @@ def estimate_refund(
     if income.itemized_deductions is None:
         assumptions.append("Standard deduction assumed (no itemizing, and no age-65+/blind adjustment).")
     assumptions.append("Ordinary tax computation only — qualified dividends / capital gains at preferential rates are not modeled here.")
-    labels = " ".join(line.label for line in composition)
+    # Disclose a surtax whenever ANY candidate status includes it (the MFS low end can
+    # trigger Form 8959 while the MFJ headline does not).
+    labels = " ".join(line.label for (_v, comp, _c) in outcomes.values() for line in comp)
     if "Form 8959" in labels:
         assumptions.append(
             "Additional Medicare Tax (Form 8959) included: 0.9% of wages/SE earnings over the status "
