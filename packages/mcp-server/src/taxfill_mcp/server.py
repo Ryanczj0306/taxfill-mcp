@@ -181,7 +181,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
 
     - tax: args {taxable_income, filing_status, year}
     - standard_deduction: args {filing_status, year, age_65_plus?, blind?}
-    - se_tax: args {net_profit, year}
+    - se_tax: args {net_profit, year, w2_ss_wages?} (w2_ss_wages = W-2 box 3+7, Schedule SE lines 8a-9)
     - additional_medicare_tax: args {medicare_wages, filing_status, year, se_net_profit?} (Form 8959)
     - niit: args {net_investment_income, magi, filing_status, year} (Form 8960; NRAs exempt)
     """

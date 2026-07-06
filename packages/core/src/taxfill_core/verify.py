@@ -1723,18 +1723,47 @@ _STATE_CANON = {
     "utah": "ut", "vermont": "vt", "virginia": "va", "washington": "wa", "wisconsin": "wi",
     "wyoming": "wy",
 }
-# Tokens that carry no address identity (country designators, filler).
-_ADDR_NOISE = {"usa", "us", "united", "states", "of", "the", "and"}
+# Multi-word state names must collapse to their USPS code BEFORE tokenization —
+# tokenizing first would mangle them ("West Virginia" -> {'w','va'} = Virginia + a
+# directional) and false-FAIL every NY/NJ/NC/... filer who spelled the state out.
+_STATE_PHRASE_RE = re.compile(
+    r"\b(new york|new jersey|new hampshire|new mexico|north carolina|south carolina|"
+    r"north dakota|south dakota|rhode island|west virginia|district of columbia|puerto rico)\b"
+)
+_STATE_PHRASE_CODE = {
+    "new york": "ny", "new jersey": "nj", "new hampshire": "nh", "new mexico": "nm",
+    "north carolina": "nc", "south carolina": "sc", "north dakota": "nd", "south dakota": "sd",
+    "rhode island": "ri", "west virginia": "wv", "district of columbia": "dc", "puerto rico": "pr",
+}
+# "P.O. Box" / "PO Box" / "Post Office Box" all collapse to one token pre-tokenization
+# (otherwise "p", "o" splinters); zip+4 collapses to the 5-digit zip on BOTH sides.
+_PO_BOX_RE = re.compile(r"\b(?:p\.?\s*o\.?|post\s+office)\s*box\b")
+_ZIP4_RE = re.compile(r"\b(\d{5})-\d{4}\b")
+# Tokens that carry no address identity: country designators, filler, and bare unit
+# DESIGNATORS (the form prints "Apt. no." and holds just "4B", while the user's
+# confirmed string naturally reads "Apt 4B" — the unit NUMBER still carries identity).
+# "fl"(oor) is deliberately NOT noise: it is Florida's USPS code.
+_ADDR_NOISE = {"usa", "us", "united", "states", "of", "the", "and",
+               "apt", "ste", "unit", "bldg", "rm", "no", "number"}
 
 
 def _addr_tokens(text: str) -> set[str]:
     """Canonical address tokens, lowercased — order/punctuation/abbreviation-agnostic."""
+    t = text.casefold()
+    t = _ZIP4_RE.sub(r"\1", t)
+    t = _PO_BOX_RE.sub("pobox", t)
+    t = _STATE_PHRASE_RE.sub(lambda m: _STATE_PHRASE_CODE[m.group(1)], t)
     out = set()
-    for tok in _ADDR_TOKEN_RE.findall(text.casefold()):
+    for tok in _ADDR_TOKEN_RE.findall(t):
         tok = _ADDR_CANON.get(tok, _STATE_CANON.get(tok, tok))
         if tok not in _ADDR_NOISE:
             out.add(tok)
     return out
+
+
+# zip+4 lives in a SEPARATE component on some packs (DC zip4, OR zip_plus4, MO d.zipext);
+# it is optional precision, not address identity — exclude it from the joined comparison.
+_ZIP4_COMPONENT_RE = re.compile(r"(?i)zip.?(?:4|_?ext|_?plus_?4)$")
 
 
 # Which pack lines hold the FILER's own current mailing address. Shipped packs name it
@@ -1800,6 +1829,8 @@ def _confirmed_address_checks(
         for pack_field in pack.fields:
             if pack_field.type == "checkbox" or not _is_filer_address_line(pack_field.line):
                 continue
+            if _ZIP4_COMPONENT_RE.search(pack_field.line):
+                continue  # zip+4 is optional precision, not identity
             participating.add(key)
             raw = _lookup_raw(pack, pack_field, fields)
             if raw is None:

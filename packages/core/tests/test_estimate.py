@@ -435,3 +435,26 @@ def test_estimate_mfs_worst_case_disclosed_and_withholding_line_negative():
     labels = {c.label: c.amount for c in est.composition}
     assert labels["Less: federal tax withheld / payments"] == -9_000  # sign matches other "Less:" lines
     assert any("Not modeled in this estimate" in a for a in est.assumptions)
+
+
+def test_estimate_skips_surtaxes_when_knowledge_pack_predates_the_blocks(tmp_path):
+    # Review regression: the schema keeps the surtax blocks OPTIONAL for older packs;
+    # the estimator must skip them (not crash) when a custom knowledge dir lacks them.
+    import re
+    import shutil
+    from pathlib import Path
+
+    src = Path(__file__).resolve().parents[3] / "knowledge"
+    legacy = tmp_path / "knowledge"
+    (legacy / "federal").mkdir(parents=True)
+    text = (src / "federal" / "2023.yaml").read_text()
+    # Excise the two surtax blocks (from the marker comment through the niit thresholds).
+    text = re.sub(r"\n  # High-income surtaxes.*?qualifying_surviving_spouse: 250000\n", "\n", text, flags=re.S)
+    (legacy / "federal" / "2023.yaml").write_text(text)
+    shutil.copytree(src / "states", legacy / "states")
+
+    est = estimate_refund(_single(), 2023,
+                          IncomeSnapshot(wages=300_000, federal_withholding=70_000),
+                          knowledge_dir=legacy)
+    assert _comp_amount(est, "Form 8959") is None  # skipped, not crashed
+    assert est.point is not None

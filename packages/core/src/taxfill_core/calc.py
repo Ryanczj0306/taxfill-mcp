@@ -673,7 +673,9 @@ def additional_medicare_tax(
         se_excess = max(Decimal(0), net_earnings - reduced_threshold)
         se_portion = _cents(se_excess * params.rate)
 
-    total = irs_round(wage_portion + se_portion)
+    # The form rounds line 7 (wages) and line 13 (SE) SEPARATELY, then sums on line 18 —
+    # rounding the cents-sum once diverges by $1 when the two fractions straddle .50.
+    total = irs_round(wage_portion) + irs_round(se_portion)
     rate_pct = f"{params.rate * 100:.1f}%"
     work = (
         f"Form 8959 ({year}), {filing_status} threshold {_dollars(threshold)}: "

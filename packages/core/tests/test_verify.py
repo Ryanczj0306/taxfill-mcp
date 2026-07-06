@@ -1403,3 +1403,72 @@ def test_verify_form_from_pdf_path_catches_p001_end_to_end(filled_pdf):
     pitfalls = {check.id: check.status for check in report.pitfall_checks}
     assert pitfalls["P-001"] == "FAIL"
     assert pitfalls["P-003"] == "FAIL"  # the required checkbox is still /Off
+
+
+def test_confirmed_address_multiword_state_names_pass():
+    # Review regression: 'New York' must collapse to NY BEFORE tokenization —
+    # tokenizing first mangles multi-word states ('West Virginia' -> Virginia + 'w').
+    pack = make_pack([text_field("mailing_address"), text_field("state")])
+    filled = {"mailing_address": "100 Main St, Brooklyn", "state": "NY"}
+    ok = verify_form(pack, disk_fields(pack, filled),
+                     confirmed_current_address="100 Main St, Brooklyn, New York")
+    assert ok.ok is True
+    wv = verify_form(pack, disk_fields(pack, {**filled, "state": "WV"}),
+                     confirmed_current_address="100 Main St, Brooklyn, West Virginia")
+    assert wv.ok is True
+    # And a genuinely different state still fails.
+    bad = verify_form(pack, disk_fields(pack, {**filled, "state": "NJ"}),
+                      confirmed_current_address="100 Main St, Brooklyn, New York")
+    assert bad.ok is False
+
+
+def test_confirmed_address_unit_designator_pobox_and_zip4_variants_pass():
+    # Review regression: the form's apt box holds just '4B' while the confirmed string
+    # reads 'Apt 4B'; 'P.O. Box' vs 'PO Box'; zip+4 vs 5-digit — none are real mismatches.
+    pack = make_pack(
+        [
+            text_field("mailing_address.street"),
+            text_field("mailing_address.apt"),
+            text_field("mailing_address.city"),
+            text_field("mailing_address.state"),
+            text_field("mailing_address.zip"),
+        ]
+    )
+    filled = {
+        "mailing_address.street": "100 Main St",
+        "mailing_address.apt": "4B",
+        "mailing_address.city": "Chicago",
+        "mailing_address.state": "IL",
+        "mailing_address.zip": "60601",
+    }
+    ok = verify_form(pack, disk_fields(pack, filled),
+                     confirmed_current_address="100 Main St Apt 4B, Chicago, IL 60601-1234")
+    assert ok.ok is True
+    # A DIFFERENT unit number still fails (the number carries identity, the word doesn't).
+    bad = verify_form(pack, disk_fields(pack, {**filled, "mailing_address.apt": "9C"}),
+                      confirmed_current_address="100 Main St Apt 4B, Chicago, IL 60601")
+    assert bad.ok is False
+    # P.O. Box punctuation variants collapse to one token.
+    po = make_pack([text_field("mailing_address")])
+    ok2 = verify_form(po, disk_fields(po, {"mailing_address": "P.O. Box 12, Chicago, IL 60601"}),
+                      confirmed_current_address="PO Box 12, Chicago, IL 60601")
+    assert ok2.ok is True
+
+
+def test_confirmed_address_zip4_component_is_optional_precision():
+    # DC/OR/MO ship a separate zip+4 component; it must not fail a 5-digit confirmation.
+    pack = make_pack(
+        [
+            text_field("mailing_address.street"),
+            text_field("mailing_address.city"),
+            text_field("mailing_address.state"),
+            text_field("mailing_address.zip"),
+            text_field("mailing_address.zip4"),
+        ]
+    )
+    filled = {"mailing_address.street": "100 Main St", "mailing_address.city": "Washington",
+              "mailing_address.state": "DC", "mailing_address.zip": "20001",
+              "mailing_address.zip4": "1234"}
+    ok = verify_form(pack, disk_fields(pack, filled),
+                     confirmed_current_address="100 Main St, Washington, DC 20001")
+    assert ok.ok is True
