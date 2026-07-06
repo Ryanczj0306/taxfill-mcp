@@ -87,6 +87,17 @@ def test_source_url_non_gov_host_rejected():
         FormPack.model_validate(raw)
 
 
+def test_source_url_bare_us_rejected_but_state_gov_us_accepted():
+    # .us is an open registry: bare evil.us must be rejected; the state-government
+    # namespace (*.state.<xx>.us, e.g. Minnesota's DOR) must be accepted.
+    raw = fixture_dict()
+    raw["source_url"] = "https://evil.us/form.pdf"
+    with pytest.raises(ValidationError, match="official US government host"):
+        FormPack.model_validate(raw)
+    raw["source_url"] = "https://www.revenue.state.mn.us/form.pdf"
+    assert FormPack.model_validate(raw).source_url.endswith("state.mn.us/form.pdf")
+
+
 def test_unknown_field_type_rejected():
     raw = fixture_dict()
     raw["fields"][0]["type"] = "date"  # not one of text|checkbox|money

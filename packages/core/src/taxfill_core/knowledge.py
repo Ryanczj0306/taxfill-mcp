@@ -31,14 +31,32 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from taxfill_core.datadir import knowledge_dir
 
 
+_STATE_GOV_US_RE = re.compile(r"\.state\.[a-z]{2}\.us$")
+
+
+def is_official_gov_host(hostname: str) -> bool:
+    """True only for official US government hosts.
+
+    Accepted: ``.gov``, ``.mil``, and the STATE-GOVERNMENT ``.us`` namespace
+    (``*.state.<xx>.us``, e.g. revenue.state.mn.us — several state Departments
+    of Revenue publish there). Bare second-level ``.us`` hosts are REJECTED:
+    .us is an open registry anyone can buy into (evil.us), so it is not a
+    government signal by itself.
+    """
+    h = (hostname or "").lower()
+    if h == "gov" or h.endswith(".gov") or h == "mil" or h.endswith(".mil"):
+        return True
+    return bool(_STATE_GOV_US_RE.search(h))
+
+
 def validate_gov_url(value: str) -> str:
     """Validate a citation/source URL: http(s) scheme AND an official US gov host.
 
     Knowledge data and the source registry cite official government documents
     only: federal ``.gov`` (irs.gov, congress.gov, treasury.gov, ...), ``.mil``,
-    and state/local ``.us`` (e.g. revenue.state.mn.us) — many state Departments
-    of Revenue publish on a ``.us`` host rather than ``.gov``. Blogs/commercial
-    sites are never authority. Scheme and host failures raise distinct messages.
+    and the state-government ``.us`` namespace (e.g. revenue.state.mn.us).
+    Blogs/commercial sites are never authority. Scheme and host failures raise
+    distinct messages.
     """
     if not value.startswith(("https://", "http://")):
         raise ValueError(
@@ -46,12 +64,13 @@ def validate_gov_url(value: str) -> str:
             "(knowledge data is cited to official government sources only)"
         )
     hostname = (urlparse(value).hostname or "").lower()
-    if not any(hostname == tld or hostname.endswith("." + tld) for tld in ("gov", "mil", "us")):
+    if not is_official_gov_host(hostname):
         raise ValueError(
             f"url must point to an official US government host — a federal/.gov site "
-            f"(irs.gov, treasury.gov), a .mil site, or a state/local .us site "
-            f"(e.g. revenue.state.mn.us), got host {hostname!r}. Blogs/commercial "
-            f"sites are never authority for tax data."
+            f"(irs.gov, treasury.gov), a .mil site, or a state-government .us host "
+            f"(*.state.<xx>.us, e.g. revenue.state.mn.us), got host {hostname!r}. "
+            f"Bare .us domains are an open registry and blogs/commercial sites are "
+            f"never authority for tax data."
         )
     return value
 
@@ -308,6 +327,55 @@ class SeTaxParams(BaseModel):
         return self
 
 
+# The five threshold keys Forms 8959/8960 use. Qualifying surviving spouse is listed
+# EXPLICITLY (not aliased to the MFJ column like the bracket tables) because the two
+# forms bucket it differently: Form 8959 groups QSS with single/HoH at $200,000 while
+# Form 8960 groups it with MFJ at $250,000 — an alias would silently get one form wrong.
+_THRESHOLD_STATUSES: tuple[str, ...] = FILING_STATUSES + ("qualifying_surviving_spouse",)
+
+
+class _SurtaxParams(BaseModel):
+    """Shared shape for the two high-income surtaxes: a flat rate over a status threshold."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    rate: Decimal = Field(description="Flat surtax rate as a fraction, e.g. 0.009 (0.9%) or 0.038 (3.8%).")
+    thresholds: dict[str, int] = Field(
+        description="Threshold in whole dollars per filing status — all five statuses explicit."
+    )
+
+    _coerce_rate = field_validator("rate", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_rate_and_thresholds(self) -> "_SurtaxParams":
+        if not (Decimal("0") < self.rate < Decimal("1")):
+            raise ValueError(f"rate must be a fraction strictly between 0 and 1 (e.g. 0.009), got {self.rate}")
+        missing = [s for s in _THRESHOLD_STATUSES if s not in self.thresholds]
+        unknown = [s for s in self.thresholds if s not in _THRESHOLD_STATUSES]
+        if missing or unknown:
+            raise ValueError(
+                f"thresholds must contain exactly the five filing statuses "
+                f"{list(_THRESHOLD_STATUSES)} — missing {missing}, unknown {unknown}. "
+                f"(qualifying_surviving_spouse is explicit: Form 8959 buckets it at the "
+                f"single/$200,000 level, Form 8960 at the MFJ/$250,000 level)"
+            )
+        bad = {s: v for s, v in self.thresholds.items() if v <= 0}
+        if bad:
+            raise ValueError(f"thresholds must be positive whole-dollar amounts, got {bad}")
+        return self
+
+
+class AdditionalMedicareTaxParams(_SurtaxParams):
+    """Form 8959 parameters: 0.9% Additional Medicare Tax on Medicare wages + SE
+    earnings above the filing-status threshold (statutory since 2013, not indexed)."""
+
+
+class NiitParams(_SurtaxParams):
+    """Form 8960 parameters: 3.8% Net Investment Income Tax on the lesser of net
+    investment income or MAGI above the filing-status threshold (statutory, not indexed)."""
+
+
 class TaxKnowledge(BaseModel):
     """The ``tax`` block of a knowledge pack: everything calc.py needs for one year.
 
@@ -322,6 +390,10 @@ class TaxKnowledge(BaseModel):
     tax_computation_worksheet: TaxComputationWorksheet
     standard_deduction: StandardDeduction
     se_tax: SeTaxParams
+    # High-income surtaxes (Schedule 2 lines 11/12). Optional so packs predating the
+    # blocks still load; calc raises a prescriptive error when a year lacks them.
+    additional_medicare_tax: AdditionalMedicareTaxParams | None = None
+    niit: NiitParams | None = None
 
     @model_validator(mode="after")
     def _check_table_worksheet_boundary(self) -> "TaxKnowledge":

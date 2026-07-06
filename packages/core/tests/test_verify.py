@@ -717,7 +717,106 @@ def test_confirmed_address_with_no_address_line_fails_prescriptively():
     report = verify_form(pack, {}, confirmed_current_address="100 Current St")
     assert report.ok is False
     confirmed = next(check for check in report.identity if "user-confirmed" in check.field)
-    assert "maps a filled 'mailing_address' line" in confirmed.detail
+    assert "maps a filer mailing-address line" in confirmed.detail
+
+
+def test_confirmed_address_abbreviation_and_state_name_variants_pass():
+    # Regression: 'Street' vs 'St' and 'Illinois' vs 'IL' are the same address —
+    # canonicalization must make the comparison abbreviation- and name-agnostic
+    # in BOTH directions.
+    pack = make_pack(
+        [
+            text_field("mailing_address.street"),
+            text_field("mailing_address.city"),
+            text_field("mailing_address.state"),
+            text_field("mailing_address.zip"),
+        ]
+    )
+    filled = {
+        "mailing_address.street": "100 Current Street",
+        "mailing_address.city": "Testville",
+        "mailing_address.state": "Illinois",
+        "mailing_address.zip": "00000",
+    }
+    report = verify_form(pack, disk_fields(pack, filled),
+                         confirmed_current_address="100 Current St, Testville, IL 00000")
+    assert report.ok is True
+    # And the reverse direction: abbreviated on disk, expanded in the confirmation.
+    report2 = verify_form(pack, disk_fields(pack, {**filled, "mailing_address.street": "100 Current St",
+                                                   "mailing_address.state": "IL"}),
+                          confirmed_current_address="100 Current Street, Testville, Illinois 00000")
+    assert report2.ok is True
+
+
+def test_confirmed_address_wrong_short_house_number_fails():
+    # Regression (false PASS): '10' vs '100' is a DIFFERENT house — numeric tokens
+    # are always significant regardless of length.
+    pack = make_pack([text_field("mailing_address")])
+    report = verify_form(pack, disk_fields(pack, {"mailing_address": "10 Current St, Testville, CA 00000"}),
+                         confirmed_current_address="100 Current St, Testville, CA 00000")
+    assert report.ok is False
+    confirmed = next(check for check in report.identity if "user-confirmed" in check.field)
+    assert confirmed.status == "FAIL"
+
+
+def test_confirmed_address_blank_participating_form_fails_explicitly():
+    # Regression (silent skip): a form that MAPS the mailing address but left it
+    # blank is exactly the P-002 hazard — it must FAIL, not silently drop out.
+    pack = make_pack([text_field("mailing_address"), money_field("1a")])
+    report = verify_form(pack, disk_fields(pack, {"1a": "100"}),
+                         confirmed_current_address="100 Current St")
+    assert report.ok is False
+    confirmed = next(check for check in report.identity if "user-confirmed" in check.field)
+    assert "BLANK" in confirmed.detail
+
+
+def test_confirmed_address_state_style_line_names_participate():
+    # Regression: 14 shipped packs name the filer address home_address /
+    # address_line1 / present_address + city/state/zip — the check must cover them.
+    pack = make_pack(
+        [
+            text_field("home_address"),
+            text_field("city"),
+            text_field("state"),
+            text_field("zip_code"),
+        ]
+    )
+    good = {"home_address": "100 Current St", "city": "Testville", "state": "CA", "zip_code": "00000"}
+    ok = verify_form(pack, disk_fields(pack, good),
+                     confirmed_current_address="100 Current St, Testville, CA 00000")
+    assert ok.ok is True
+    stale = {**good, "home_address": "9 Old Rd", "city": "Pastburg", "state": "NY", "zip_code": "11111"}
+    bad = verify_form(pack, disk_fields(pack, stale),
+                      confirmed_current_address="100 Current St, Testville, CA 00000")
+    assert bad.ok is False
+
+
+def test_filer_address_line_selection_matches_reviewed_fixture():
+    # The include/exclude patterns were validated by hand against every shipped pack
+    # (preparer / school / physical / moving-expense / home-country addresses excluded;
+    # all 51 filer-address blocks included). Pin that review: if a new pack's address
+    # lines fall through the selector — or a pattern change alters a selection — this
+    # fails loudly instead of silently disabling the P-002 check for that pack.
+    import json
+    from pathlib import Path
+
+    import yaml as _yaml
+
+    from taxfill_core.verify import _is_filer_address_line
+
+    repo = Path(__file__).resolve().parents[3]
+    golden = json.loads((Path(__file__).parent / "fixtures" / "filer_address_lines.json").read_text())
+    actual = {}
+    for pack_path in sorted(repo.glob("formpacks/**/pack.yaml")):
+        raw = _yaml.safe_load(pack_path.read_text())
+        actual[str(pack_path.relative_to(repo / "formpacks"))] = [
+            f["line"] for f in raw.get("fields", [])
+            if isinstance(f, dict) and f.get("type") != "checkbox" and _is_filer_address_line(f["line"])
+        ]
+    assert actual == golden, (
+        "filer-address selection drifted from the reviewed fixture — review the diff and, "
+        "if intentional, regenerate packages/core/tests/fixtures/filer_address_lines.json"
+    )
 
 
 def test_component_split_mailing_address_matches_and_ignores_nonmailing_lines():
@@ -1304,3 +1403,72 @@ def test_verify_form_from_pdf_path_catches_p001_end_to_end(filled_pdf):
     pitfalls = {check.id: check.status for check in report.pitfall_checks}
     assert pitfalls["P-001"] == "FAIL"
     assert pitfalls["P-003"] == "FAIL"  # the required checkbox is still /Off
+
+
+def test_confirmed_address_multiword_state_names_pass():
+    # Review regression: 'New York' must collapse to NY BEFORE tokenization —
+    # tokenizing first mangles multi-word states ('West Virginia' -> Virginia + 'w').
+    pack = make_pack([text_field("mailing_address"), text_field("state")])
+    filled = {"mailing_address": "100 Main St, Brooklyn", "state": "NY"}
+    ok = verify_form(pack, disk_fields(pack, filled),
+                     confirmed_current_address="100 Main St, Brooklyn, New York")
+    assert ok.ok is True
+    wv = verify_form(pack, disk_fields(pack, {**filled, "state": "WV"}),
+                     confirmed_current_address="100 Main St, Brooklyn, West Virginia")
+    assert wv.ok is True
+    # And a genuinely different state still fails.
+    bad = verify_form(pack, disk_fields(pack, {**filled, "state": "NJ"}),
+                      confirmed_current_address="100 Main St, Brooklyn, New York")
+    assert bad.ok is False
+
+
+def test_confirmed_address_unit_designator_pobox_and_zip4_variants_pass():
+    # Review regression: the form's apt box holds just '4B' while the confirmed string
+    # reads 'Apt 4B'; 'P.O. Box' vs 'PO Box'; zip+4 vs 5-digit — none are real mismatches.
+    pack = make_pack(
+        [
+            text_field("mailing_address.street"),
+            text_field("mailing_address.apt"),
+            text_field("mailing_address.city"),
+            text_field("mailing_address.state"),
+            text_field("mailing_address.zip"),
+        ]
+    )
+    filled = {
+        "mailing_address.street": "100 Main St",
+        "mailing_address.apt": "4B",
+        "mailing_address.city": "Chicago",
+        "mailing_address.state": "IL",
+        "mailing_address.zip": "60601",
+    }
+    ok = verify_form(pack, disk_fields(pack, filled),
+                     confirmed_current_address="100 Main St Apt 4B, Chicago, IL 60601-1234")
+    assert ok.ok is True
+    # A DIFFERENT unit number still fails (the number carries identity, the word doesn't).
+    bad = verify_form(pack, disk_fields(pack, {**filled, "mailing_address.apt": "9C"}),
+                      confirmed_current_address="100 Main St Apt 4B, Chicago, IL 60601")
+    assert bad.ok is False
+    # P.O. Box punctuation variants collapse to one token.
+    po = make_pack([text_field("mailing_address")])
+    ok2 = verify_form(po, disk_fields(po, {"mailing_address": "P.O. Box 12, Chicago, IL 60601"}),
+                      confirmed_current_address="PO Box 12, Chicago, IL 60601")
+    assert ok2.ok is True
+
+
+def test_confirmed_address_zip4_component_is_optional_precision():
+    # DC/OR/MO ship a separate zip+4 component; it must not fail a 5-digit confirmation.
+    pack = make_pack(
+        [
+            text_field("mailing_address.street"),
+            text_field("mailing_address.city"),
+            text_field("mailing_address.state"),
+            text_field("mailing_address.zip"),
+            text_field("mailing_address.zip4"),
+        ]
+    )
+    filled = {"mailing_address.street": "100 Main St", "mailing_address.city": "Washington",
+              "mailing_address.state": "DC", "mailing_address.zip": "20001",
+              "mailing_address.zip4": "1234"}
+    ok = verify_form(pack, disk_fields(pack, filled),
+                     confirmed_current_address="100 Main St, Washington, DC 20001")
+    assert ok.ok is True

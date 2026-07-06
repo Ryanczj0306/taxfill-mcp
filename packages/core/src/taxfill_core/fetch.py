@@ -220,17 +220,19 @@ def fetch_blank(
             f"file:// is accepted for offline tests"
         )
     if scheme in ("https", "http"):
-        # Outbound only to official US government hosts (.gov/.mil/.us) — mirrors
-        # knowledge.validate_gov_url. source_url is the ONLY field that triggers a network
-        # request, so a maliciously-authored or typo'd pack (e.g. loaded via TAXFILL_DATA_DIR)
-        # must not fetch — or SSRF to — an arbitrary host. This is the documented
-        # "only outbound traffic is downloading blank forms from official .gov URLs" guarantee.
+        # Outbound only to official US government hosts — shared rule with
+        # knowledge.validate_gov_url (.gov/.mil/state-government *.state.<xx>.us; bare
+        # .us is an OPEN registry and is refused). source_url is the ONLY field that
+        # triggers a network request, so a maliciously-authored or typo'd pack (e.g.
+        # loaded via TAXFILL_DATA_DIR) must not fetch — or SSRF to — an arbitrary host.
+        from taxfill_core.knowledge import is_official_gov_host
+
         host = (urllib.parse.urlparse(url).hostname or "").lower()
-        if not any(host == tld or host.endswith("." + tld) for tld in ("gov", "mil", "us")):
+        if not is_official_gov_host(host):
             raise ValueError(
                 f"refusing to fetch {url!r}: blank forms are downloaded only from official US "
-                f"government hosts (.gov/.mil/.us), not {host!r} — a pack's source_url must be an "
-                f"official government URL ({_OFFICIAL_PATTERNS_HINT})"
+                f"government hosts (.gov, .mil, or *.state.<xx>.us), not {host!r} — a pack's "
+                f"source_url must be an official government URL ({_OFFICIAL_PATTERNS_HINT})"
             )
     expected_digest = _validate_sha256(sha256) if sha256 is not None else None
 

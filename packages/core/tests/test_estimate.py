@@ -349,3 +349,112 @@ def test_golden_2023_single_published_tax_table_value():
     assert standard_deduction("single", 2023).amount == 13850
     est = estimate_refund(_single(), 2023, IncomeSnapshot(wages=50000, federal_withholding=6000))
     assert est.point == 6000 - PUBLISHED_2023_TAX
+
+
+# ---------------------------------------------------------------------------
+# High-income surtaxes in the estimate (Forms 8959 / 8960)
+# ---------------------------------------------------------------------------
+
+def _comp_amount(est: RefundEstimate, needle: str):
+    lines = [line for line in est.composition if needle in line.label]
+    return lines[0].amount if lines else None
+
+
+def test_estimate_includes_additional_medicare_for_high_wages():
+    from taxfill_core.calc import additional_medicare_tax
+
+    est = estimate_refund(_single(), 2023, IncomeSnapshot(wages=300_000, federal_withholding=70_000))
+    expected = additional_medicare_tax(300_000, "single", 2023).additional_medicare_tax
+    assert expected > 0
+    assert _comp_amount(est, "Form 8959") == expected
+    # The bottom line reflects it: withholding - (income tax + surtax).
+    taxable = 300_000 - standard_deduction("single", 2023).amount
+    income_tax = tax_from_taxable_income(taxable, "single", 2023).tax
+    assert est.point == 70_000 - (income_tax + expected)
+    assert any("Form 8959" in a for a in est.assumptions)
+
+
+def test_estimate_includes_niit_on_investment_income():
+    from taxfill_core.calc import niit as _niit
+
+    est = estimate_refund(
+        _single(), 2023, IncomeSnapshot(wages=200_000, dividends=60_000, federal_withholding=60_000)
+    )
+    agi = 260_000
+    expected_niit = _niit(60_000, agi, "single", 2023).niit
+    assert expected_niit > 0
+    assert _comp_amount(est, "Form 8960") == expected_niit
+    # Wages 200,000 = exactly the 8959 threshold -> no Additional Medicare line.
+    assert _comp_amount(est, "Form 8959") is None
+    assert any("Form 8960" in a for a in est.assumptions)
+
+
+def test_estimate_surtaxes_silent_for_ordinary_incomes():
+    est = estimate_refund(_single(), 2023, IncomeSnapshot(wages=50_000, federal_withholding=6_000))
+    assert _comp_amount(est, "Form 8959") is None
+    assert _comp_amount(est, "Form 8960") is None
+    assert not any("Form 8959" in a or "Form 8960" in a for a in est.assumptions)
+
+
+def test_estimate_skips_niit_for_confirmed_nonresident():
+    # Form 8960 does not apply to nonresident aliens; Additional Medicare Tax does.
+    profile = Profile(
+        household=Household(marital_status=_ans("unmarried")),
+        identity=Identity(us_person=_ans(False)),
+        immigration=_nra_immigration(),
+        residency_facts=_nra_residency(),
+    )
+    est = estimate_refund(
+        profile, 2023, IncomeSnapshot(wages=250_000, dividends=80_000, federal_withholding=80_000)
+    )
+    assert _comp_amount(est, "Form 8960") is None      # NIIT skipped for the NRA
+    assert _comp_amount(est, "Form 8959") is not None  # AddMed still applies to wages
+
+
+def test_estimate_se_tax_nets_w2_wages_against_the_ss_base():
+    # Schedule SE lines 8a-9 threaded: high wages + side gig -> SE tax computed on
+    # the remaining base, checked against an independent calc call.
+    from taxfill_core.calc import se_tax
+
+    est = estimate_refund(
+        _single(), 2023, IncomeSnapshot(wages=170_000, self_employment_net=30_000, federal_withholding=40_000)
+    )
+    with_wages = se_tax(30_000, 2023, w2_ss_wages=170_000)
+    without = se_tax(30_000, 2023)
+    assert with_wages.se_tax < without.se_tax  # the base is consumed -> smaller SE tax
+    labels = {c.label: c.amount for c in est.composition}
+    assert labels["Plus: self-employment tax"] == with_wages.se_tax
+    assert any("8a-9" in a for a in est.assumptions)
+
+
+def test_estimate_mfs_worst_case_disclosed_and_withholding_line_negative():
+    income = IncomeSnapshot(wages=90_000, federal_withholding=9_000)
+    undecided = Profile(household=Household(marital_status=_ans("married")))
+    est = estimate_refund(undecided, 2023, income)
+    assert any("worst-case" in a for a in est.assumptions)          # MFS combined-income bound disclosed
+    labels = {c.label: c.amount for c in est.composition}
+    assert labels["Less: federal tax withheld / payments"] == -9_000  # sign matches other "Less:" lines
+    assert any("Not modeled in this estimate" in a for a in est.assumptions)
+
+
+def test_estimate_skips_surtaxes_when_knowledge_pack_predates_the_blocks(tmp_path):
+    # Review regression: the schema keeps the surtax blocks OPTIONAL for older packs;
+    # the estimator must skip them (not crash) when a custom knowledge dir lacks them.
+    import re
+    import shutil
+    from pathlib import Path
+
+    src = Path(__file__).resolve().parents[3] / "knowledge"
+    legacy = tmp_path / "knowledge"
+    (legacy / "federal").mkdir(parents=True)
+    text = (src / "federal" / "2023.yaml").read_text()
+    # Excise the two surtax blocks (from the marker comment through the niit thresholds).
+    text = re.sub(r"\n  # High-income surtaxes.*?qualifying_surviving_spouse: 250000\n", "\n", text, flags=re.S)
+    (legacy / "federal" / "2023.yaml").write_text(text)
+    shutil.copytree(src / "states", legacy / "states")
+
+    est = estimate_refund(_single(), 2023,
+                          IncomeSnapshot(wages=300_000, federal_withholding=70_000),
+                          knowledge_dir=legacy)
+    assert _comp_amount(est, "Form 8959") is None  # skipped, not crashed
+    assert est.point is not None

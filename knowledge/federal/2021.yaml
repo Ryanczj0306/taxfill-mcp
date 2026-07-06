@@ -123,6 +123,34 @@ tax:
     ss_wage_base: 142800
     minimum_net_earnings: 400
 
+  # High-income surtaxes (Schedule 2 lines 11/12). Both are STATUTORY amounts,
+  # unchanged since 2013 and not inflation-indexed, so the same values apply to
+  # every supported year. Qualifying surviving spouse is explicit in both maps
+  # because the two forms bucket it differently (8959: $200,000 with single/HoH;
+  # 8960: $250,000 with MFJ).
+  additional_medicare_tax:
+    citation:
+      source: "IRS Topic No. 560, Additional Medicare Tax (Form 8959): 0.9% of Medicare wages and self-employment income above the filing-status threshold; thresholds statutory under IRC section 3101(b)(2), not indexed"
+      url: "https://www.irs.gov/taxtopics/tc560"
+    rate: 0.009
+    thresholds:
+      married_filing_jointly: 250000
+      married_filing_separately: 125000
+      single: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+  niit:
+    citation:
+      source: "IRS Topic No. 559, Net Investment Income Tax (Form 8960): 3.8% of the lesser of net investment income or MAGI above the filing-status threshold; thresholds statutory under IRC section 1411, not indexed"
+      url: "https://www.irs.gov/taxtopics/tc559"
+    rate: 0.038
+    thresholds:
+      married_filing_jointly: 250000
+      married_filing_separately: 125000
+      single: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 250000
+
 # Pub 501 (2021) Table 1 (Filing Requirements Chart for Most Taxpayers): the
 # gross-income level at or above which a return is required, by status and age.
 # Non-elderly amounts equal that status's standard deduction; each 65+ person

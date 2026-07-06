@@ -26,7 +26,9 @@ from pathlib import Path
 import pytest
 
 from taxfill_core.calc import (
+    additional_medicare_tax,
     irs_round,
+    niit,
     presence_days,
     presence_days_by_year,
     se_tax,
@@ -534,3 +536,161 @@ def test_presence_malformed_period_rejected():
         presence_days([("01/05/2023", "01/10/2023")])  # not ISO
     with pytest.raises(TypeError, match="datetime.date"):
         presence_days([(20230101, 20230110)])
+
+
+# ---------------------------------------------------------------------------
+# Additional Medicare Tax (Form 8959) — thresholds statutory since 2013:
+# $250,000 MFJ / $125,000 MFS / $200,000 single, HoH, AND qualifying surviving
+# spouse (Topic 560). Hand-derived per the Form 8959 line sequence.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("wages", "status", "expected"),
+    [
+        (300_000, "single", 900),                       # 0.9% x 100,000
+        (300_000, "married_filing_jointly", 450),       # 0.9% x 50,000
+        (130_000, "married_filing_separately", 45),     # 0.9% x 5,000
+        (220_000, "head_of_household", 180),            # 0.9% x 20,000
+        (200_000, "single", 0),                         # at the threshold -> no excess
+        (50_000, "single", 0),
+    ],
+)
+def test_additional_medicare_wages_only(wages, status, expected):
+    result = additional_medicare_tax(wages, status, 2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert result.additional_medicare_tax == expected
+    assert result.se_portion == Decimal("0.00")
+    assert result.citation.url.startswith("https://www.irs.gov/")
+
+
+def test_additional_medicare_qss_uses_the_200k_bucket_not_mfj():
+    # Form 8959 groups qualifying surviving spouse with single/HoH at $200,000 —
+    # NOT with MFJ at $250,000 (that grouping belongs to Form 8960). An MFJ alias
+    # here would understate the tax by 0.9% x 50,000 = $450.
+    qss = additional_medicare_tax(260_000, "qualifying_surviving_spouse", 2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert qss.threshold == 200_000
+    assert qss.additional_medicare_tax == 540      # 0.9% x 60,000
+    mfj = additional_medicare_tax(260_000, "married_filing_jointly", 2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert mfj.additional_medicare_tax == 90       # 0.9% x 10,000 — must differ
+
+
+def test_additional_medicare_se_component_uses_wage_reduced_threshold():
+    # Form 8959 Part II: wages 150,000 leave a reduced threshold of 50,000; SE net
+    # earnings = 100,000 x 0.9235 = 92,350; excess 42,350 x 0.9% = 381.15 -> 381.
+    result = additional_medicare_tax(150_000, "single", 2023, se_net_profit=100_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert result.wage_portion == Decimal("0.00")
+    assert result.se_portion == Decimal("381.15")
+    assert result.additional_medicare_tax == 381
+
+
+def test_additional_medicare_wages_and_se_both_bite():
+    # Wages 250,000 single: Part I = 0.9% x 50,000 = 450.00. Reduced threshold 0;
+    # SE net earnings = 50,000 x 0.9235 = 46,175; Part II = 0.9% x 46,175 = 415.575
+    # -> 415.58 cents; total 865.58 -> 866.
+    result = additional_medicare_tax(250_000, "single", 2023, se_net_profit=50_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert result.wage_portion == Decimal("450.00")
+    assert result.se_portion == Decimal("415.58")
+    assert result.additional_medicare_tax == 866
+
+
+def test_additional_medicare_se_below_schedule_se_minimum_has_no_se_component():
+    # Net earnings 400 x 0.9235 = 369.40 < $400 -> no Schedule SE, no Part II.
+    result = additional_medicare_tax(210_000, "single", 2023, se_net_profit=400, knowledge_dir=KNOWLEDGE_DIR)
+    assert result.se_portion == Decimal("0.00")
+    assert result.additional_medicare_tax == 90    # wages-only: 0.9% x 10,000
+
+
+def test_additional_medicare_negative_wages_rejected():
+    with pytest.raises(ValueError, match="medicare_wages"):
+        additional_medicare_tax(-1, "single", 2023, knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_additional_medicare_unknown_status_prescriptive():
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        additional_medicare_tax(300_000, "widowed", 2023, knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Net Investment Income Tax (Form 8960) — 3.8% of the LESSER of net investment
+# income or the MAGI excess. MAGI thresholds statutory: $250,000 MFJ AND QSS /
+# $125,000 MFS / $200,000 single, HoH (Topic 559).
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("nii", "magi", "status", "expected"),
+    [
+        (50_000, 250_000, "single", 1_900),            # excess 50,000; base = min = 50,000
+        (30_000, 260_000, "married_filing_jointly", 380),  # excess 10,000 binds
+        (20_000, 130_000, "married_filing_separately", 190),  # excess 5,000 binds
+        (10_000, 190_000, "single", 0),                # below the MAGI threshold
+        (0, 400_000, "single", 0),                     # no investment income
+    ],
+)
+def test_niit_lesser_of_rule(nii, magi, status, expected):
+    result = niit(nii, magi, status, 2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert result.niit == expected
+    assert result.citation.url.startswith("https://www.irs.gov/")
+
+
+def test_niit_qss_uses_the_mfj_250k_bucket():
+    # Form 8960 groups qualifying surviving spouse WITH MFJ at $250,000 — the
+    # opposite bucketing from Form 8959. A single/$200,000 alias here would
+    # overstate NIIT by 3.8% x 50,000 = $1,900.
+    qss = niit(30_000, 260_000, "qualifying_surviving_spouse", 2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert qss.threshold == 250_000
+    assert qss.niit == 380
+    single = niit(30_000, 260_000, "single", 2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert single.niit == 1_140                        # excess 60,000 > NII -> base 30,000
+
+
+def test_niit_investment_loss_is_floored_at_zero():
+    assert niit(-5_000, 300_000, "single", 2023, knowledge_dir=KNOWLEDGE_DIR).niit == 0
+
+
+@pytest.mark.parametrize("year", [2019, 2020, 2021, 2022, 2023, 2024])
+def test_surtax_blocks_ship_for_every_supported_year(year):
+    # The thresholds are statutory (not indexed) — identical for every year we ship.
+    am = additional_medicare_tax(250_000, "single", year, knowledge_dir=KNOWLEDGE_DIR)
+    assert am.additional_medicare_tax == 450
+    ni = niit(10_000, 210_000, "single", year, knowledge_dir=KNOWLEDGE_DIR)
+    assert ni.niit == 380
+
+
+# ---------------------------------------------------------------------------
+# Schedule SE lines 8a-9 — W-2 social security wages consume the wage base first
+# ---------------------------------------------------------------------------
+
+
+def test_se_tax_w2_wages_reduce_the_ss_base():
+    # 2023 base $160,200. Wages $140,000 leave $20,200 of base; SE net earnings
+    # 40,000 x 0.9235 = 36,940. Line 10 = 12.4% x 20,200 = 2,504.80;
+    # line 11 = 2.9% x 36,940 = 1,071.26; line 12 = 3,576.06 -> 3,576;
+    # line 13 = 50% x 3,576 = 1,788.
+    r = se_tax(40_000, 2023, knowledge_dir=KNOWLEDGE_DIR, w2_ss_wages=140_000)
+    assert r.ss_portion == Decimal("2504.80")
+    assert r.medicare_portion == Decimal("1071.26")
+    assert r.se_tax == 3576
+    assert r.deduction_half == 1788
+    assert "8a-9" in r.work
+
+
+def test_se_tax_wages_at_or_over_the_base_zero_the_ss_portion_not_medicare():
+    # Wages already at the 2023 base: NO social security portion on the side gig;
+    # Medicare (uncapped) still applies. 30,000 x 0.9235 = 27,705;
+    # line 11 = 2.9% x 27,705 = 803.445 -> 803.45 -> line 12 rounds to 803.
+    r = se_tax(30_000, 2023, knowledge_dir=KNOWLEDGE_DIR, w2_ss_wages=160_200)
+    assert r.ss_portion == Decimal("0.00")
+    assert r.medicare_portion == Decimal("803.45")
+    assert r.se_tax == 803
+
+
+def test_se_tax_without_wages_unchanged():
+    # Golden regression: the no-wages path must be identical to the pre-8a behavior.
+    assert se_tax(50_000, knowledge_dir=KNOWLEDGE_DIR).se_tax == 7065
+    assert se_tax(50_000, knowledge_dir=KNOWLEDGE_DIR, w2_ss_wages=0).se_tax == 7065
+
+
+def test_se_tax_negative_w2_wages_rejected():
+    with pytest.raises(ValueError, match="w2_ss_wages"):
+        se_tax(50_000, knowledge_dir=KNOWLEDGE_DIR, w2_ss_wages=-1)

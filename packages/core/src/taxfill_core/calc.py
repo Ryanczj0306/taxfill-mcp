@@ -470,6 +470,7 @@ def se_tax(
     net_profit: int | float | Decimal | str,
     year: int = 2023,
     knowledge_dir: str | Path | None = None,
+    w2_ss_wages: int | float | Decimal | str = 0,
 ) -> SeTaxResult:
     """Self-employment tax from Schedule C net profit (Schedule SE Part I).
 
@@ -480,10 +481,12 @@ def se_tax(
     * line 4c: if net earnings are less than $400, stop — no SE tax (and no
       half-SE-tax deduction). The threshold is applied to the exact
       cents-level net earnings, not a rounded value.
+    * lines 8a-9: ``w2_ss_wages`` (W-2 box 3 social security wages + box 7
+      tips, all employers) reduces the wage base available to SE earnings —
+      line 9 = max(0, wage base - line 8a). A filer whose W-2 wages already
+      reach the base owes NO social security portion on the side gig.
     * line 10: social security portion = 12.4% of net earnings capped at the
-      wage base ($160,200 for 2023; the cap assumes no W-2 social security
-      wages — pass the Schedule SE line 8a path through a future parameter
-      if wages must be netted against the base).
+      REMAINING wage base (line 9).
     * line 11: Medicare portion = 2.9% of net earnings, uncapped.
     * line 12/13: SE tax and the one-half deduction.
 
@@ -493,10 +496,15 @@ def se_tax(
     are rounded to whole dollars.
     """
     profit = _to_decimal(net_profit, "net_profit")
+    w2_ss = _to_decimal(w2_ss_wages, "w2_ss_wages")
+    if w2_ss < 0:
+        raise ValueError(f"w2_ss_wages must be >= 0, got {w2_ss}")
     pack = _load_federal(year, knowledge_dir)
     params = pack.tax.se_tax
     citation = params.citation
     inputs: dict[str, Any] = {"net_profit": str(profit), "year": year}
+    if w2_ss > 0:
+        inputs["w2_ss_wages"] = str(w2_ss)
 
     # Line 4a: "If line 3 is more than zero, multiply line 3 by 92.35%.
     # Otherwise, enter amount from line 3."
@@ -524,7 +532,9 @@ def se_tax(
             citation=citation,
         )
 
-    ss_taxable = min(net_earnings, Decimal(params.ss_wage_base))
+    # Lines 8a-9: W-2 social security wages consume the wage base first.
+    remaining_base = max(Decimal(0), Decimal(params.ss_wage_base) - min(w2_ss, Decimal(params.ss_wage_base)))
+    ss_taxable = min(net_earnings, remaining_base)
     ss_portion = _cents(ss_taxable * params.ss_rate)
     medicare_portion = _cents(net_earnings * params.medicare_rate)
     line_12 = ss_portion + medicare_portion
@@ -535,10 +545,18 @@ def se_tax(
     # sched_se relation "13 == 12 * 0.5" the verifier checks against the filled whole dollars.
     deduction_half = irs_round(Decimal(se_tax_amount) * Decimal("0.5"))
 
-    capped = net_earnings > params.ss_wage_base
+    capped = net_earnings > remaining_base
+    base_text = (
+        f"the {_dollars(params.ss_wage_base)} wage base"
+        if w2_ss == 0
+        else (
+            f"the remaining wage base {_money(remaining_base)} "
+            f"(lines 8a-9: {_dollars(params.ss_wage_base)} base - W-2 social security wages {_money(w2_ss)})"
+        )
+    )
     ss_text = (
         f"line 10 social security portion = {params.ss_rate * 100:.1f}% x {_money(ss_taxable)}"
-        + (f" (net earnings capped at the {_dollars(params.ss_wage_base)} wage base)" if capped else "")
+        + (f" (net earnings capped at {base_text})" if capped else (f" ({base_text} applies)" if w2_ss > 0 else ""))
         + f" = {_money(ss_portion)}"
     )
     work = (
@@ -562,6 +580,203 @@ def se_tax(
         inputs=inputs,
         work=work,
         citation=citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Additional Medicare Tax (Form 8959 -> Schedule 2 line 11)
+# ---------------------------------------------------------------------------
+
+
+def _surtax_threshold(thresholds: dict[str, int], filing_status: str, where: str) -> int:
+    """Resolve a Form 8959/8960 threshold. All five statuses are explicit in the data
+    (QSS buckets differently on the two forms), so no MFJ aliasing happens here."""
+    if filing_status not in thresholds:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} for {where} — use one of: "
+            f"{', '.join(sorted(thresholds))}"
+        )
+    return thresholds[filing_status]
+
+
+class AdditionalMedicareTaxResult(BaseModel):
+    """Result of :func:`additional_medicare_tax`: Form 8959 Parts I-II."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    additional_medicare_tax: int = Field(
+        description="Form 8959 line 18, rounded to whole dollars (goes on Schedule 2 line 11)."
+    )
+    wage_portion: Decimal = Field(description="Part I tax on Medicare wages above the threshold, in cents.")
+    se_portion: Decimal = Field(description="Part II tax on SE earnings above the wage-reduced threshold, in cents.")
+    threshold: int = Field(description="The filing-status threshold applied (statutory, not indexed).")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def additional_medicare_tax(
+    medicare_wages: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2023,
+    se_net_profit: int | float | Decimal | str = 0,
+    knowledge_dir: str | Path | None = None,
+) -> AdditionalMedicareTaxResult:
+    """Additional Medicare Tax (Form 8959): 0.9% of Medicare wages and SE earnings
+    above the filing-status threshold.
+
+    Mechanics per Form 8959:
+
+    * Part I (wages): 0.9% x max(0, Medicare wages - threshold).
+    * Part II (self-employment): the threshold is first REDUCED by Medicare wages
+      (floor 0), then 0.9% applies to SE net earnings (Schedule SE line 6 =
+      net profit x 92.35%) above the reduced threshold. Below the $400 Schedule SE
+      minimum no SE component applies (no Schedule SE is filed).
+    * Thresholds are statutory (unchanged since 2013): $250,000 MFJ, $125,000 MFS,
+      $200,000 single / head of household / qualifying surviving spouse. NOTE the
+      QSS bucket differs from NIIT's — the data carries all five explicitly.
+    * RRTA compensation (Part III, railroad) is out of scope.
+
+    Any Additional Medicare Tax an employer already withheld (W-2 box 6 above
+    1.45% of box 5) is credited as federal income tax withholding via Part IV —
+    it offsets this liability on the return but is not modeled here.
+    """
+    wages = _to_decimal(medicare_wages, "medicare_wages")
+    profit = _to_decimal(se_net_profit, "se_net_profit")
+    if wages < 0:
+        raise ValueError(f"medicare_wages must be >= 0, got {wages}")
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.additional_medicare_tax
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.additional_medicare_tax block — "
+            f"add it (rate 0.009 + the five statutory thresholds) with a citation"
+        )
+    threshold = _surtax_threshold(params.thresholds, filing_status, "additional_medicare_tax")
+    inputs: dict[str, Any] = {
+        "medicare_wages": str(wages),
+        "se_net_profit": str(profit),
+        "filing_status": filing_status,
+        "year": year,
+    }
+
+    wage_excess = max(Decimal(0), wages - threshold)
+    wage_portion = _cents(wage_excess * params.rate)
+
+    # Part II: SE net earnings above the wage-reduced threshold. Reuse the Schedule SE
+    # parameters so the 92.35% factor and the $400 minimum stay single-sourced.
+    se_params = pack.tax.se_tax
+    net_earnings = _cents(profit * se_params.net_earnings_factor) if profit > 0 else Decimal(0)
+    se_portion = Decimal("0.00")
+    reduced_threshold = max(Decimal(0), Decimal(threshold) - wages)
+    if net_earnings >= se_params.minimum_net_earnings:
+        se_excess = max(Decimal(0), net_earnings - reduced_threshold)
+        se_portion = _cents(se_excess * params.rate)
+
+    # The form rounds line 7 (wages) and line 13 (SE) SEPARATELY, then sums on line 18 —
+    # rounding the cents-sum once diverges by $1 when the two fractions straddle .50.
+    total = irs_round(wage_portion) + irs_round(se_portion)
+    rate_pct = f"{params.rate * 100:.1f}%"
+    work = (
+        f"Form 8959 ({year}), {filing_status} threshold {_dollars(threshold)}: "
+        f"Part I wages {_money(wages)} - threshold = {_money(wage_excess)} excess, "
+        f"x {rate_pct} = {_money(wage_portion)}"
+        + (
+            f"; Part II SE net earnings {_money(net_earnings)} vs threshold reduced by wages "
+            f"to {_money(reduced_threshold)} = {_money(max(Decimal(0), net_earnings - reduced_threshold))} "
+            f"excess, x {rate_pct} = {_money(se_portion)}"
+            if net_earnings >= se_params.minimum_net_earnings
+            else "; Part II: no SE component (below the $400 Schedule SE minimum)"
+        )
+        + f"; total Additional Medicare Tax = {_dollars(total)} (Schedule 2 line 11). "
+        f"Employer box-6 excess withholding credits against this via Part IV."
+    )
+    return AdditionalMedicareTaxResult(
+        additional_medicare_tax=total,
+        wage_portion=wage_portion,
+        se_portion=se_portion,
+        threshold=threshold,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Net Investment Income Tax (Form 8960 -> Schedule 2 line 12)
+# ---------------------------------------------------------------------------
+
+
+class NiitResult(BaseModel):
+    """Result of :func:`niit`: Form 8960 lines 8/13-17 (simplified: no investment-expense
+    allocations; net investment income is passed in already netted)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    niit: int = Field(description="Form 8960 line 17, rounded to whole dollars (goes on Schedule 2 line 12).")
+    base: Decimal = Field(description="The lesser of net investment income or the MAGI excess, in cents.")
+    magi_excess: Decimal = Field(description="max(0, MAGI - threshold), in cents.")
+    threshold: int = Field(description="The filing-status MAGI threshold applied (statutory, not indexed).")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def niit(
+    net_investment_income: int | float | Decimal | str,
+    magi: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2023,
+    knowledge_dir: str | Path | None = None,
+) -> NiitResult:
+    """Net Investment Income Tax (Form 8960): 3.8% of the LESSER of net investment
+    income or MAGI above the filing-status threshold.
+
+    * Investment income = interest, dividends, capital gains, rental/royalty and
+      passive income — NOT wages or self-employment income. Pass it already netted
+      of allocable investment expenses (this helper does no expense allocation).
+    * Thresholds are statutory: $250,000 MFJ AND qualifying surviving spouse,
+      $125,000 MFS, $200,000 single / head of household. NOTE the QSS bucket
+      differs from Form 8959's — the data carries all five explicitly.
+    * Nonresident aliens are generally NOT subject to NIIT (Form 8960 instructions);
+      callers handling NRA filers should skip this computation.
+    """
+    nii = _to_decimal(net_investment_income, "net_investment_income")
+    magi_d = _to_decimal(magi, "magi")
+    if nii < 0:
+        nii = Decimal(0)  # a net investment LOSS just means no NIIT base
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.niit
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.niit block — "
+            f"add it (rate 0.038 + the five statutory MAGI thresholds) with a citation"
+        )
+    threshold = _surtax_threshold(params.thresholds, filing_status, "niit")
+    inputs: dict[str, Any] = {
+        "net_investment_income": str(nii),
+        "magi": str(magi_d),
+        "filing_status": filing_status,
+        "year": year,
+    }
+
+    magi_excess = _cents(max(Decimal(0), magi_d - threshold))
+    base = min(_cents(nii), magi_excess)
+    amount = irs_round(base * params.rate)
+    work = (
+        f"Form 8960 ({year}), {filing_status} MAGI threshold {_dollars(threshold)}: "
+        f"MAGI {_money(magi_d)} - threshold = {_money(magi_excess)} excess; "
+        f"net investment income {_money(_cents(nii))}; base = lesser = {_money(base)}; "
+        f"x {params.rate * 100:.1f}% = NIIT {_dollars(amount)} (Schedule 2 line 12)."
+    )
+    return NiitResult(
+        niit=amount,
+        base=base,
+        magi_excess=magi_excess,
+        threshold=threshold,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
     )
 
 

@@ -1700,10 +1700,100 @@ def _identity_checks(
 
 _ADDR_TOKEN_RE = re.compile(r"[a-z0-9]+")
 
+# USPS street/unit/directional abbreviations + full state names, canonicalized to ONE
+# form so "100 Current Street, Illinois" and "100 Current St, IL" compare equal. The
+# form/user may abbreviate either side, so both sides are canonicalized before diffing.
+_ADDR_CANON = {
+    "street": "st", "avenue": "ave", "boulevard": "blvd", "road": "rd", "drive": "dr",
+    "lane": "ln", "court": "ct", "circle": "cir", "place": "pl", "terrace": "ter",
+    "parkway": "pkwy", "highway": "hwy", "square": "sq", "trail": "trl", "way": "way",
+    "apartment": "apt", "suite": "ste", "unit": "unit", "building": "bldg",
+    "floor": "fl", "room": "rm", "north": "n", "south": "s", "east": "e", "west": "w",
+    "northeast": "ne", "northwest": "nw", "southeast": "se", "southwest": "sw",
+    "post": "po", "box": "box",
+}
+_STATE_CANON = {
+    "alabama": "al", "alaska": "ak", "arizona": "az", "arkansas": "ar", "california": "ca",
+    "colorado": "co", "connecticut": "ct", "delaware": "de", "florida": "fl", "georgia": "ga",
+    "hawaii": "hi", "idaho": "id", "illinois": "il", "indiana": "in", "iowa": "ia",
+    "kansas": "ks", "kentucky": "ky", "louisiana": "la", "maine": "me", "maryland": "md",
+    "massachusetts": "ma", "michigan": "mi", "minnesota": "mn", "mississippi": "ms",
+    "missouri": "mo", "montana": "mt", "nebraska": "ne", "nevada": "nv", "ohio": "oh",
+    "oklahoma": "ok", "oregon": "or", "pennsylvania": "pa", "tennessee": "tn", "texas": "tx",
+    "utah": "ut", "vermont": "vt", "virginia": "va", "washington": "wa", "wisconsin": "wi",
+    "wyoming": "wy",
+}
+# Multi-word state names must collapse to their USPS code BEFORE tokenization —
+# tokenizing first would mangle them ("West Virginia" -> {'w','va'} = Virginia + a
+# directional) and false-FAIL every NY/NJ/NC/... filer who spelled the state out.
+_STATE_PHRASE_RE = re.compile(
+    r"\b(new york|new jersey|new hampshire|new mexico|north carolina|south carolina|"
+    r"north dakota|south dakota|rhode island|west virginia|district of columbia|puerto rico)\b"
+)
+_STATE_PHRASE_CODE = {
+    "new york": "ny", "new jersey": "nj", "new hampshire": "nh", "new mexico": "nm",
+    "north carolina": "nc", "south carolina": "sc", "north dakota": "nd", "south dakota": "sd",
+    "rhode island": "ri", "west virginia": "wv", "district of columbia": "dc", "puerto rico": "pr",
+}
+# "P.O. Box" / "PO Box" / "Post Office Box" all collapse to one token pre-tokenization
+# (otherwise "p", "o" splinters); zip+4 collapses to the 5-digit zip on BOTH sides.
+_PO_BOX_RE = re.compile(r"\b(?:p\.?\s*o\.?|post\s+office)\s*box\b")
+_ZIP4_RE = re.compile(r"\b(\d{5})-\d{4}\b")
+# Tokens that carry no address identity: country designators, filler, and bare unit
+# DESIGNATORS (the form prints "Apt. no." and holds just "4B", while the user's
+# confirmed string naturally reads "Apt 4B" — the unit NUMBER still carries identity).
+# "fl"(oor) is deliberately NOT noise: it is Florida's USPS code.
+_ADDR_NOISE = {"usa", "us", "united", "states", "of", "the", "and",
+               "apt", "ste", "unit", "bldg", "rm", "no", "number"}
+
 
 def _addr_tokens(text: str) -> set[str]:
-    """Significant alphanumeric tokens of an address, lowercased — order/punctuation-agnostic."""
-    return set(_ADDR_TOKEN_RE.findall(text.casefold()))
+    """Canonical address tokens, lowercased — order/punctuation/abbreviation-agnostic."""
+    t = text.casefold()
+    t = _ZIP4_RE.sub(r"\1", t)
+    t = _PO_BOX_RE.sub("pobox", t)
+    t = _STATE_PHRASE_RE.sub(lambda m: _STATE_PHRASE_CODE[m.group(1)], t)
+    out = set()
+    for tok in _ADDR_TOKEN_RE.findall(t):
+        tok = _ADDR_CANON.get(tok, _STATE_CANON.get(tok, tok))
+        if tok not in _ADDR_NOISE:
+            out.add(tok)
+    return out
+
+
+# zip+4 lives in a SEPARATE component on some packs (DC zip4, OR zip_plus4, MO d.zipext);
+# it is optional precision, not address identity — exclude it from the joined comparison.
+_ZIP4_COMPONENT_RE = re.compile(r"(?i)zip.?(?:4|_?ext|_?plus_?4)$")
+
+
+# Which pack lines hold the FILER's own current mailing address. Shipped packs name it
+# many ways (mailing_address.street, home_address + city + zip_code, address_line1, ...),
+# and many packs also carry addresses that must NOT participate (preparer, spouse-deceased,
+# physician, school, landlord, moving-expense, MD's separate PHYSICAL address, ...).
+# _FILER_ADDR_INCLUDE selects candidate lines; _FILER_ADDR_EXCLUDE vetoes non-filer ones.
+# test_verify pins the exact per-pack selection as a reviewed golden fixture, so a new
+# pack whose address lines fall through gets caught by the suite, not in production.
+_FILER_ADDR_INCLUDE = re.compile(
+    r"""(?ix)^ (?:voucher_\d+\.)? (?:
+          mailing_address (?:$|[._])           # mailing_address, .street/.city/..., _line1
+        | (?:current_home_|home_|present_)?address (?:_?line_?\d)? $
+        | mailing_(?:city|zip|state) \w*
+        | city (?:_(?:or_)?(?:town|post_office))? (?:_or_post_office)? (?:_town_post_office)? $
+        | city_town_or_post_office $
+        | state $
+        | zip (?:_?code|_or_postal_code|_ext)? $
+        | d\.zip (?:code|ext) $                 # MO's letter-prefixed zip cells
+    )"""
+)
+_FILER_ADDR_EXCLUDE = re.compile(
+    r"(?i)spouse|preparer|prep|firm|employer|physician|landlord|school|schhbc|business|"
+    r"foreign|home_country|email|crp|movexp|nri_|physical|deceased|estate|voucher\.name|"
+    r"^22[ab]\.|in_care_of|care_of"
+)
+
+
+def _is_filer_address_line(line: str) -> bool:
+    return bool(_FILER_ADDR_INCLUDE.match(line)) and not _FILER_ADDR_EXCLUDE.search(line)
 
 
 def _confirmed_address_checks(
@@ -1716,13 +1806,14 @@ def _confirmed_address_checks(
     every form passes the cross-form consistency check — only a comparison against the
     address the user confirmed they receive mail at TODAY can catch it.
 
-    Only the filer's mailing address participates: lines named ``mailing_address`` or
-    ``mailing_address.<component>``. Other address-typed lines (home-country, business,
-    preparer, physician, landlord, foreign, e-mail) are deliberately excluded. A
-    component-split mailing address (street/city/state/zip on separate lines) is joined
-    before comparison, and matching is by significant-token containment so formatting and
-    ordering differences don't cause false failures — a genuinely outdated address (a
-    different street/city/zip) still fails.
+    Only the FILER's own mailing address participates (see ``_is_filer_address_line``);
+    preparer/spouse/physician/school/landlord/physical/foreign addresses are excluded.
+    Component-split addresses are joined, both sides are canonicalized (USPS
+    abbreviations + state names), and the canonical token SETS must match exactly —
+    symmetric, so a wrong house number ('10' vs '100'), a missing city, an extra unit,
+    or a stale street all FAIL, while 'Street' vs 'St' and 'Illinois' vs 'IL' PASS.
+    A participating form whose address lines are all blank FAILs explicitly (a blank
+    return address is exactly the P-002 hazard).
     """
     if not normalize_text(confirmed_current_address):
         raise ValueError(
@@ -1733,42 +1824,56 @@ def _confirmed_address_checks(
     field_label = "mailing_address (vs user-confirmed current address)"
 
     per_form: dict[str, dict[str, str]] = {}
+    participating: set[str] = set()
     for key, pack, fields in forms:
         for pack_field in pack.fields:
-            if pack_field.type == "checkbox":
+            if pack_field.type == "checkbox" or not _is_filer_address_line(pack_field.line):
                 continue
-            line = pack_field.line
-            if not (line == "mailing_address" or line.startswith("mailing_address.")):
-                continue
+            if _ZIP4_COMPONENT_RE.search(pack_field.line):
+                continue  # zip+4 is optional precision, not identity
+            participating.add(key)
             raw = _lookup_raw(pack, pack_field, fields)
             if raw is None:
                 continue
             value = normalize_on_disk(pack_field, raw)
             if value:
-                per_form.setdefault(key, {})[line] = value
+                per_form.setdefault(key, {})[pack_field.line] = value
 
-    if not per_form:
+    if not participating:
         return [
             IdentityCheck(
                 field=field_label,
                 status=FAIL,
                 detail=(
                     "confirmed_current_address was supplied but no pack in this filing maps a "
-                    "filled 'mailing_address' line — fill the taxpayer's mailing address (line "
-                    "'mailing_address' or 'mailing_address.*') so the P-002 cross-check can run, "
-                    "or omit the parameter"
+                    "filer mailing-address line — map the taxpayer's mailing address (e.g. "
+                    "'mailing_address.street' / 'home_address' + 'city' + 'zip_code') so the "
+                    "P-002 cross-check can run, or omit the parameter"
                 ),
             )
         ]
 
     checks: list[IdentityCheck] = []
-    for key, comps in per_form.items():
+    for key in sorted(participating):
+        comps = per_form.get(key)
+        if not comps:
+            checks.append(
+                IdentityCheck(
+                    field=field_label,
+                    status=FAIL,
+                    detail=(
+                        f"form {key!r} maps filer mailing-address lines but they are all BLANK — "
+                        f"fill the current mailing address via fill_form and re-verify (a blank "
+                        f"return address is pitfall P-002: IRS mail cannot reach the filer)"
+                    ),
+                )
+            )
+            continue
         on_disk = ", ".join(comps[k] for k in sorted(comps))
-        # A significant on-disk token (>= 3 chars, so state abbreviations / directionals /
-        # short unit numbers don't trip it) absent from the confirmed address means the
-        # form carries a different (likely outdated) mailing address.
-        extra = sorted({t for t in _addr_tokens(on_disk) if len(t) >= 3} - want_tokens)
-        if extra:
+        disk_tokens = _addr_tokens(on_disk)
+        missing = sorted(want_tokens - disk_tokens)
+        extra = sorted(disk_tokens - want_tokens)
+        if missing or extra:
             checks.append(
                 IdentityCheck(
                     field=field_label,
@@ -1776,7 +1881,9 @@ def _confirmed_address_checks(
                     values=comps,
                     detail=(
                         f"form {key!r} mailing address {on_disk!r} differs from the user-confirmed "
-                        f"CURRENT mailing address {confirmed_current_address!r} (unexpected: {extra}) — "
+                        f"CURRENT mailing address {confirmed_current_address!r}"
+                        f"{' (missing: ' + ', '.join(missing) + ')' if missing else ''}"
+                        f"{' (unexpected: ' + ', '.join(extra) + ')' if extra else ''} — "
                         f"a consistent but outdated address still sends IRS bills and notices to the "
                         f"wrong place (pitfall P-002); refill the mailing address and re-verify"
                     ),
