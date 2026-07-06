@@ -111,6 +111,28 @@ def test_calc_tax_matches_engine():
     assert data["citation"]["url"].startswith("https://www.irs.gov/")
 
 
+def test_calc_phase_f_ops_are_dispatched():
+    # One golden per new op (full derivations live in the core test suite).
+    qd = _data(_run(_call("calc", {"op": "tax_with_preferential_rates", "args": {
+        "taxable_income": 60000, "qualified_dividends": 10000, "filing_status": "single", "year": 2023}})))
+    assert qd["tax"] == 7813
+    ss = _data(_run(_call("calc", {"op": "taxable_social_security", "args": {
+        "benefits": 20000, "other_income": 30000, "filing_status": "single", "year": 2023}})))
+    assert ss["taxable_benefits"] == 9600
+    ex = _data(_run(_call("calc", {"op": "excess_ss", "args": {"withheld_by_employer": [6000, 6000], "year": 2023}})))
+    assert ex["credit"] == 2068
+    sli = _data(_run(_call("calc", {"op": "student_loan_interest_deduction", "args": {
+        "interest_paid": 3000, "magi": 82500, "filing_status": "single", "year": 2023}})))
+    assert sli["deduction"] == 1250
+    edu = _data(_run(_call("calc", {"op": "education_credits", "args": {
+        "aotc_expenses_per_student": [4000, 1000], "magi": 50000, "filing_status": "single", "year": 2023}})))
+    assert edu["total_credit"] == 3500 and edu["aotc_refundable"] == 1400
+    ptc = _data(_run(_call("calc", {"op": "ptc_annual", "args": {
+        "household_income": 27180, "household_size": 1, "annual_premiums": 7000,
+        "annual_slcsp": 6000, "year": 2023}})))
+    assert ptc["ptc"] == 5456 and ptc["contribution"] == 544
+
+
 def test_estimate_refund_is_labeled_and_computed():
     profile = {"household": {"marital_status": {"value": "unmarried", "provenance": {"kind": "user_stated"}},
                              "filing_status": {"value": "single", "provenance": {"kind": "user_stated"}}}}

@@ -24,6 +24,12 @@ Contents:
 * ``presence_days`` / ``presence_days_by_year`` — I-94-style day counting
   (any partial day counts as a full day; overlaps merged) feeding the
   Substantial Presence Test in residency.py.
+* Phase F worksheet ops: ``tax_with_preferential_rates`` (Qualified
+  Dividends and Capital Gain Tax Worksheet), ``taxable_social_security``
+  (Social Security Benefits Worksheet), ``excess_ss`` (Schedule 3
+  excess-social-security credit), ``student_loan_interest_deduction``
+  (section 221), ``education_credits`` (Form 8863 AOTC/LLC), and
+  ``ptc_annual`` (Form 8962 Premium Tax Credit, annual method).
 
 These functions are pure: no logging, no side effects; the only I/O is
 reading the versioned knowledge pack. They never echo the value being
@@ -44,6 +50,7 @@ from taxfill_core.knowledge import (
     Citation,
     FilingStatus,
     KnowledgePack,
+    MagiPhaseoutRange,
     RateBracket,
     TaxTable,
     load_knowledge,
@@ -774,6 +781,990 @@ def niit(
         base=base,
         magi_excess=magi_excess,
         threshold=threshold,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Tax with preferential rates (Qualified Dividends and Capital Gain Tax
+# Worksheet -> Form 1040 line 16)
+# ---------------------------------------------------------------------------
+
+
+class PreferentialRatesTaxResult(BaseModel):
+    """Result of :func:`tax_with_preferential_rates`: the Qualified Dividends and
+    Capital Gain Tax Worksheet (2023 line numbering; the 2019 edition computed
+    Form 1040 line 12a — same arithmetic)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    tax: int = Field(
+        description="Worksheet line 25 — the SMALLER of the worksheet tax and the all-ordinary tax — for Form 1040 line 16."
+    )
+    preferential_income: Decimal = Field(
+        description="Line 4 clamped to taxable income (line 10): qualified dividends + net capital gain, in cents."
+    )
+    ordinary_part: Decimal = Field(
+        description="Line 5: taxable income minus preferential income (floor 0), in cents — stacked BELOW the preferential income."
+    )
+    amount_at_0pct: Decimal = Field(description="Line 9: preferential income absorbed by the 0% bracket, in cents.")
+    amount_at_15pct: Decimal = Field(description="Line 17: preferential income taxed at 15%, in cents.")
+    amount_at_20pct: Decimal = Field(description="Line 20: preferential income taxed at 20%, in cents.")
+    tax_on_ordinary_part: int = Field(
+        description="Line 22: ordinary tax on line 5 (Tax Table below $100,000, rate schedule at/above)."
+    )
+    all_ordinary_tax: int = Field(
+        description="Line 24: ordinary tax on the whole taxable income — the line-25 comparison value."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def tax_with_preferential_rates(
+    taxable_income: int | float | Decimal | str,
+    qualified_dividends: int | float | Decimal | str,
+    net_long_term_gain: int | float | Decimal | str = 0,
+    net_short_term_gain: int | float | Decimal | str = 0,
+    filing_status: str = "single",
+    year: int = 2023,
+    knowledge_dir: str | Path | None = None,
+) -> PreferentialRatesTaxResult:
+    """Form 1040 line 16 tax WITH qualified dividends / net capital gain — the
+    Qualified Dividends and Capital Gain Tax Worksheet.
+
+    This is the worksheet :func:`tax_from_taxable_income` explicitly scopes
+    out: any return with qualified dividends or a net capital gain computes
+    line 16 here EVEN BELOW $100,000. Line sequence (2023 numbering):
+
+    * lines 1-4: preferential income = qualified dividends + net capital
+      gain. Net capital gain is Schedule D's "smaller of line 15 or line 16,
+      but not less than zero", i.e. max(0, net_LT + min(net_ST, 0)): a
+      short-term LOSS offsets the long-term gain, a short-term GAIN is
+      ordinary income (never preferential), and a long-term loss leaves
+      qualified dividends only.
+    * line 5: ordinary part = taxable income - preferential (floor 0). The
+      worksheet stacks ordinary income BELOW preferential income, so the
+      ordinary part fills the rate brackets first.
+    * lines 6-9: whatever room the zero-rate breakpoint (line 6, from the
+      knowledge pack's ``capital_gains_brackets.max_zero_rate_amount``)
+      leaves above the ordinary part is taxed at 0%.
+    * lines 13-18: the slice up to the 15% breakpoint (line 13,
+      ``max_15_percent_rate_amount``) is taxed at 15%.
+    * lines 19-21: any remainder is taxed at 20%.
+    * lines 22/24: ordinary tax on line 5 / line 1 via
+      :func:`tax_from_taxable_income` (the worksheet's own rule — Tax Table
+      below $100,000, Tax Computation Worksheet at or above — is exactly
+      that function's switch).
+    * line 25: the SMALLER of line 23 (worksheet total) and line 24
+      (all-ordinary tax).
+
+    Rounding: like a filer working the printed worksheet, each tax COMPONENT
+    is rounded to whole dollars where the form computes it — line 18
+    (x 0.15) and line 21 (x 0.20) individually, lines 22/24 already
+    whole-dollar — and line 23 sums the whole-dollar entries. Income amounts
+    keep cents through lines 1-20.
+
+    Out of scope: the Schedule D Tax Worksheet's 25%/28% components
+    (unrecaptured section 1250 gain, collectibles) — a return with either
+    must use that worksheet instead.
+    """
+    income = _to_decimal(taxable_income, "taxable_income")
+    qd = _to_decimal(qualified_dividends, "qualified_dividends")
+    lt = _to_decimal(net_long_term_gain, "net_long_term_gain")
+    st = _to_decimal(net_short_term_gain, "net_short_term_gain")
+    if income < 0:
+        raise ValueError(
+            f"taxable_income cannot be negative (got {income}) — Form 1040 line 15 cannot go below zero; "
+            f"pass 0 for a zero-or-negative taxable income"
+        )
+    if qd < 0:
+        raise ValueError(
+            f"qualified_dividends must be >= 0 (got {qd}) — Form 1040 line 3a is never negative; "
+            f"capital LOSSES belong in net_long_term_gain/net_short_term_gain"
+        )
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.capital_gains_brackets
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.capital_gains_brackets block — add it "
+            f"(the Rev. Proc. section 3.03 maximum zero-rate and 15%-rate taxable-income ceilings, "
+            f"all five statuses explicit) with a citation"
+        )
+    status = str(filing_status)
+    zero_ceiling = _surtax_threshold(params.max_zero_rate_amount, status, "capital_gains_brackets")
+    fifteen_ceiling = _surtax_threshold(params.max_15_percent_rate_amount, status, "capital_gains_brackets")
+    inputs: dict[str, Any] = {
+        "taxable_income": str(income),
+        "qualified_dividends": str(qd),
+        "net_long_term_gain": str(lt),
+        "net_short_term_gain": str(st),
+        "filing_status": status,
+        "year": year,
+    }
+
+    zero = Decimal(0)
+    net_capital_gain = max(zero, lt + min(st, zero))  # line 3 (Sch D smaller of 15/16, floor 0)
+    line4 = _cents(qd + net_capital_gain)  # total preferential income
+    line5 = max(zero, income - line4)  # ordinary part
+    line7 = min(income, Decimal(zero_ceiling))
+    line8 = min(line5, line7)
+    line9 = line7 - line8  # taxed at 0%
+    line10 = min(income, line4)  # preferential income, clamped to taxable income
+    line12 = line10 - line9
+    line14 = min(income, Decimal(fifteen_ceiling))
+    line15 = line5 + line9
+    line16 = max(zero, line14 - line15)
+    line17 = min(line12, line16)  # taxed at 15%
+    line18 = irs_round(_cents(line17 * Decimal("0.15")))
+    line20 = line10 - (line9 + line17)  # taxed at 20%
+    line21 = irs_round(_cents(line20 * Decimal("0.20")))
+    line22 = tax_from_taxable_income(line5, filing_status, year, knowledge_dir).tax
+    line23 = line18 + line21 + line22
+    line24 = tax_from_taxable_income(income, filing_status, year, knowledge_dir).tax
+    tax = min(line23, line24)
+
+    gain_text = (
+        f"net capital gain = max(0, LT {_money(lt)} + min(ST {_money(st)}, 0)) = {_money(net_capital_gain)}"
+    )
+    work = (
+        f"Qualified Dividends and Capital Gain Tax Worksheet ({year}, {status}): taxable income "
+        f"{_money(income)}; {gain_text}; preferential income = qualified dividends {_money(qd)} + "
+        f"{_money(net_capital_gain)} = {_money(line4)} (line 10 clamps it to {_money(line10)}); "
+        f"line 5 ordinary part = {_money(line5)} (stacked below the preferential income). "
+        f"0% bracket to {_dollars(zero_ceiling)}: {_money(line9)} taxed at 0%; "
+        f"15% bracket to {_dollars(fifteen_ceiling)}: {_money(line17)} x 15% = {_dollars(line18)}; "
+        f"20% above: {_money(line20)} x 20% = {_dollars(line21)}; "
+        f"line 22 ordinary tax on {_money(line5)} = {_dollars(line22)}; "
+        f"line 23 worksheet tax = {_dollars(line23)}; line 24 all-ordinary tax on {_money(income)} = "
+        f"{_dollars(line24)}; line 25 tax = smaller = {_dollars(tax)} (Form 1040 line 16). "
+        f"Each tax component rounded to whole dollars where the worksheet computes it."
+    )
+    return PreferentialRatesTaxResult(
+        tax=tax,
+        preferential_income=_cents(line10),
+        ordinary_part=_cents(line5),
+        amount_at_0pct=_cents(line9),
+        amount_at_15pct=_cents(line17),
+        amount_at_20pct=_cents(line20),
+        tax_on_ordinary_part=line22,
+        all_ordinary_tax=line24,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Taxable Social Security benefits (SS Benefits Worksheet -> Form 1040 line 6b)
+# ---------------------------------------------------------------------------
+
+
+class TaxableSocialSecurityResult(BaseModel):
+    """Result of :func:`taxable_social_security`: the Social Security Benefits
+    Worksheet (Form 1040 line 6b; line 5b in 2019)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    taxable_benefits: int = Field(
+        description="Worksheet line 18, rounded to whole dollars (goes on Form 1040 line 6b)."
+    )
+    provisional_income: Decimal = Field(
+        description="Worksheet line 7: other income + tax-exempt interest + 50% of benefits, in cents."
+    )
+    base_amount: int = Field(description="First-tier threshold applied (line 8); 0 for MFS who lived with the spouse.")
+    adjusted_base_amount: int = Field(
+        description="Second-tier threshold applied (IRC 86(c)(2)); 0 for MFS who lived with the spouse."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def taxable_social_security(
+    benefits: int | float | Decimal | str,
+    other_income: int | float | Decimal | str,
+    tax_exempt_interest: int | float | Decimal | str = 0,
+    filing_status: str = "single",
+    year: int = 2023,
+    mfs_lived_with_spouse: bool = False,
+    knowledge_dir: str | Path | None = None,
+) -> TaxableSocialSecurityResult:
+    """Taxable Social Security benefits — the Social Security Benefits Worksheet
+    (Form 1040 line 6b; line 5b in 2019). Thresholds are statutory (IRC 86(c),
+    never indexed), identical in every supported year.
+
+    ``other_income`` is total income WITHOUT Social Security (the worksheet's
+    line 3 concept — 1040 lines 1z, 2b, 3b, 4b, 5b, 7, 8 for 2023), already
+    net of the line-6 adjustments EXCLUDING the student-loan-interest
+    deduction (IRC 86(b)(2) figures modified AGI without section 221).
+
+    Line sequence, per the 2023 worksheet:
+
+    * line 2: 50% of benefits; line 7 provisional income = other income +
+      tax-exempt interest + line 2.
+    * MFS who lived WITH the spouse at ANY time during the year (a RULE, not
+      a threshold column): skip lines 8-15 — taxable =
+      min(0.85 x provisional income, 0.85 x benefits).
+    * line 8: base amount (25,000 / 32,000 MFJ; MFS who lived apart ALL year
+      uses the single amounts and writes "D" next to the benefits line). At
+      or below it, nothing is taxable.
+    * lines 9-14 (50% tier): the excess over the base, capped at the line-10
+      gap (adjusted base - base: 9,000 / 12,000 MFJ), is halved and capped
+      at line 2.
+    * line 15 (85% tier): 85% of the excess over the ADJUSTED base amount.
+    * lines 16-18: taxable = min(tier sum, 0.85 x benefits).
+
+    Cents are kept through every intermediate line; only the final line-18
+    entry is rounded to whole dollars.
+
+    Out of scope (Pub 915 worksheets required): savings-bond interest,
+    employer adoption benefits, foreign earned income / territory exclusions,
+    and the covered-by-workplace-plan IRA-deduction interaction.
+    """
+    b = _to_decimal(benefits, "benefits")
+    other = _to_decimal(other_income, "other_income")
+    tei = _to_decimal(tax_exempt_interest, "tax_exempt_interest")
+    if b < 0:
+        raise ValueError(f"benefits must be >= 0, got {b} — pass the SSA-1099 box 5 total")
+    if tei < 0:
+        raise ValueError(f"tax_exempt_interest must be >= 0, got {tei}")
+    status = str(filing_status)
+    if mfs_lived_with_spouse and status != "married_filing_separately":
+        raise ValueError(
+            f"mfs_lived_with_spouse=True only applies to filing_status 'married_filing_separately' "
+            f"(got {status!r}) — the lived-with-spouse rule is an MFS behavior split"
+        )
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.taxable_social_security
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.taxable_social_security block — add it "
+            f"(the IRC 86(c) base/adjusted-base amounts and 0.50/0.85 rates) with a citation"
+        )
+    inputs: dict[str, Any] = {
+        "benefits": str(b),
+        "other_income": str(other),
+        "tax_exempt_interest": str(tei),
+        "filing_status": status,
+        "year": year,
+    }
+    if status == "married_filing_separately":
+        inputs["mfs_lived_with_spouse"] = mfs_lived_with_spouse
+
+    line2 = _cents(b * params.inclusion_rate_tier1)
+    provisional = _cents(line2 + other + tei)  # line 7
+
+    if status == "married_filing_separately" and mfs_lived_with_spouse:
+        line16 = _cents(max(Decimal(0), provisional) * params.inclusion_rate_tier2)
+        line17 = _cents(b * params.max_taxable_share_of_benefits)
+        taxable = irs_round(min(line16, line17))
+        base = adjusted = params.mfs_living_with_spouse_base
+        work = (
+            f"Social Security Benefits Worksheet ({year}), married filing separately having lived WITH "
+            f"the spouse during the year: both thresholds are $0 by rule (IRC 86(c)), so lines 8-15 are "
+            f"skipped. Provisional income = other income {_money(other)} + tax-exempt interest "
+            f"{_money(tei)} + 50% x benefits {_money(b)} = {_money(provisional)}; taxable = "
+            f"min(85% x provisional = {_money(line16)}, 85% x benefits = {_money(line17)}) "
+            f"= {_dollars(taxable)} (Form 1040 line 6b)."
+        )
+        return TaxableSocialSecurityResult(
+            taxable_benefits=taxable,
+            provisional_income=provisional,
+            base_amount=base,
+            adjusted_base_amount=adjusted,
+            inputs=inputs,
+            work=work,
+            citation=params.citation,
+        )
+
+    key = "married_filing_separately_lived_apart_all_year" if status == "married_filing_separately" else status
+    if key not in params.base_amount:
+        raise ValueError(
+            f"unknown filing_status {status!r} for taxable_social_security — use one of: single, "
+            f"married_filing_jointly, married_filing_separately, head_of_household, "
+            f"qualifying_surviving_spouse (for married_filing_separately, set mfs_lived_with_spouse)"
+        )
+    base = params.base_amount[key]
+    adjusted = params.adjusted_base_amount[key]
+    status_label = status if key == status else f"{status} (lived apart from the spouse all year)"
+    prefix = (
+        f"Social Security Benefits Worksheet ({year}, {status_label}): provisional income = other income "
+        f"{_money(other)} + tax-exempt interest {_money(tei)} + 50% x benefits {_money(b)} "
+        f"= {_money(provisional)}"
+    )
+
+    if provisional <= base:
+        work = (
+            f"{prefix}; at or below the {_dollars(base)} base amount (line 8), so NO benefits are "
+            f"taxable — Form 1040 line 6b is 0."
+        )
+        return TaxableSocialSecurityResult(
+            taxable_benefits=0,
+            provisional_income=provisional,
+            base_amount=base,
+            adjusted_base_amount=adjusted,
+            inputs=inputs,
+            work=work,
+            citation=params.citation,
+        )
+
+    line9 = provisional - base
+    line10 = Decimal(adjusted - base)  # the printed line-10 gap (9,000 / 12,000 MFJ)
+    line11 = max(Decimal(0), line9 - line10)
+    line12 = min(line9, line10)
+    line13 = _cents(line12 / 2)
+    line14 = min(line2, line13)
+    line15 = _cents(line11 * params.inclusion_rate_tier2)
+    line16 = line14 + line15
+    line17 = _cents(b * params.max_taxable_share_of_benefits)
+    taxable = irs_round(min(line16, line17))
+    work = (
+        f"{prefix}; excess over the {_dollars(base)} base = {_money(line9)}; 50% tier = "
+        f"min(half of min(excess, {_dollars(line10)} gap) = {_money(line13)}, half of benefits "
+        f"{_money(line2)}) = {_money(line14)}; 85% tier = 85% x {_money(line11)} excess over the "
+        f"{_dollars(adjusted)} adjusted base = {_money(line15)}; sum {_money(line16)} capped at "
+        f"85% x benefits = {_money(line17)}; taxable = {_dollars(taxable)} (Form 1040 line 6b). "
+        f"Cents kept through intermediate lines; only the final entry rounded."
+    )
+    return TaxableSocialSecurityResult(
+        taxable_benefits=taxable,
+        provisional_income=provisional,
+        base_amount=base,
+        adjusted_base_amount=adjusted,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Excess social security withholding credit (Schedule 3 line 11; line 10 in 2020)
+# ---------------------------------------------------------------------------
+
+
+class ExcessSsResult(BaseModel):
+    """Result of :func:`excess_ss`: the excess-social-security / tier 1 RRTA
+    withholding credit (Schedule 3, Part II)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    credit: int = Field(
+        description="The claimable credit, rounded to whole dollars (Schedule 3 line 11; line 10 on the 2020 schedule)."
+    )
+    max_withholding: Decimal = Field(description="The year's per-person maximum withholding (rate x wage base).")
+    counted_total: Decimal = Field(
+        description="Sum of per-employer withholding with each employer capped at the maximum, in cents."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def excess_ss(
+    withheld_by_employer: list,
+    year: int = 2023,
+    knowledge_dir: str | Path | None = None,
+) -> ExcessSsResult:
+    """Excess social security withholding credit (Schedule 3, Part II).
+
+    ``withheld_by_employer`` is ONE PERSON's W-2 box 4 amounts, one entry per
+    employer. The cap is PER PERSON: on a joint return compute each spouse
+    separately, never combined.
+
+    Rules per the Form 1040 instructions (Schedule 3) and Topic 608:
+
+    * The credit exists only with MULTIPLE employers: with fewer than two
+      entries the credit is 0 — a single employer's over-withholding must be
+      recovered FROM THE EMPLOYER (it adjusts the error; file Form 843 if it
+      refuses), never claimed on the return.
+    * With two or more employers, any single employer's withholding ABOVE the
+      per-person maximum is likewise an employer error — it is excluded from
+      the credit (clipped to the maximum) and flagged in ``work``.
+    * credit = max(0, sum of the capped per-employer amounts - the per-person
+      maximum), rounded to whole dollars at the end (cents kept until then).
+
+    Tier 1 RRTA follows the same rate/cap; excess TIER 2 RRTA is never
+    claimable on Form 1040 (Form 843 only) and is out of scope here.
+    """
+    if isinstance(withheld_by_employer, (str, bytes)) or not isinstance(withheld_by_employer, (list, tuple)):
+        raise TypeError(
+            f"withheld_by_employer must be a list of per-employer W-2 box 4 amounts "
+            f"(one entry per employer, one person's W-2s only), got {type(withheld_by_employer).__name__}"
+        )
+    amounts = [_to_decimal(v, f"withheld_by_employer[{i}]") for i, v in enumerate(withheld_by_employer)]
+    for i, amount in enumerate(amounts):
+        if amount < 0:
+            raise ValueError(f"withheld_by_employer[{i}] must be >= 0, got {amount}")
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.employee_social_security
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.employee_social_security block — add it "
+            f"(the 6.2% employee rate, wage base, and per-person maximum withholding) with a citation"
+        )
+    max_wh = params.max_withholding
+    inputs: dict[str, Any] = {
+        "withheld_by_employer": [str(a) for a in amounts],
+        "year": year,
+    }
+    capped = [min(a, max_wh) for a in amounts]
+    counted_total = _cents(sum(capped, Decimal(0)))
+
+    if len(amounts) < 2:
+        if not amounts:
+            detail = "no employers were given, so there is no withholding and no credit."
+        elif amounts[0] > max_wh:
+            detail = (
+                f"the single employer withheld {_money(amounts[0])}, {_money(amounts[0] - max_wh)} OVER the "
+                f"{_money(max_wh)} per-person maximum — that excess is an employer error and can NEVER be "
+                f"claimed on the return: the employer must adjust/refund it; if it refuses, file Form 843."
+            )
+        else:
+            detail = (
+                f"the single employer withheld {_money(amounts[0])}, within the {_money(max_wh)} per-person "
+                f"maximum — nothing was over-withheld."
+            )
+        work = (
+            f"Excess social security withholding ({year}): the credit exists only when MULTIPLE employers "
+            f"together withheld more than {_money(max_wh)} (6.2% x the {_dollars(params.ss_wage_base)} wage "
+            f"base); {detail} Credit = $0."
+        )
+        return ExcessSsResult(
+            credit=0,
+            max_withholding=max_wh,
+            counted_total=counted_total,
+            inputs=inputs,
+            work=work,
+            citation=params.citation,
+        )
+
+    clipped = [i for i, a in enumerate(amounts) if a > max_wh]
+    credit_exact = max(Decimal(0), counted_total - max_wh)
+    credit = irs_round(credit_exact)
+    clip_text = (
+        " Employer(s) "
+        + ", ".join(
+            f"#{i + 1} ({_money(amounts[i])}, counted as {_money(max_wh)})" for i in clipped
+        )
+        + " withheld more than the per-person maximum — that excess is an employer error, excluded from "
+        "the credit (recover it from the employer; Form 843 if it refuses)."
+        if clipped
+        else ""
+    )
+    work = (
+        f"Excess social security withholding ({year}), {len(amounts)} employers: per-person maximum = "
+        f"{_money(max_wh)} (6.2% x {_dollars(params.ss_wage_base)} wage base); counted withholding = "
+        f"{' + '.join(_money(c) for c in capped)} = {_money(counted_total)}; credit = "
+        f"{_money(counted_total)} - {_money(max_wh)} = {_money(credit_exact)}, rounded = {_dollars(credit)} "
+        f"(Schedule 3{', line 10 in 2020' if year == 2020 else ' line 11'}). Computed per person — "
+        f"never combine spouses' withholding.{clip_text}"
+    )
+    return ExcessSsResult(
+        credit=credit,
+        max_withholding=max_wh,
+        counted_total=counted_total,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Student loan interest deduction (section 221 -> Schedule 1)
+# ---------------------------------------------------------------------------
+
+
+class StudentLoanInterestResult(BaseModel):
+    """Result of :func:`student_loan_interest_deduction` (Schedule 1 line 21 in 2023)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    deduction: int = Field(description="The allowed deduction, rounded to whole dollars (Schedule 1).")
+    tentative: Decimal = Field(
+        description="min(interest paid, the statutory cap), in cents — what the phase-out ratio applies to."
+    )
+    reduction: Decimal = Field(description="Phase-out reduction subtracted from the tentative deduction, in cents.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def student_loan_interest_deduction(
+    interest_paid: int | float | Decimal | str,
+    magi: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2023,
+    knowledge_dir: str | Path | None = None,
+) -> StudentLoanInterestResult:
+    """Student loan interest deduction (IRC section 221; the Pub 970 / Schedule 1
+    worksheet).
+
+    * Tentative deduction = min(interest paid, the statutory $2,500 cap).
+    * MFS: married filing separately may not take the deduction AT ALL
+      (IRC 221(e)(2)) — the result is $0 by rule (not an error), regardless
+      of MAGI or interest paid.
+    * Phase-out (per the Pub 970 worksheet): reduction = tentative x
+      (MAGI - start) / (end - start) — the ratio applies to the TENTATIVE
+      deduction, not to a flat $2,500; fully eliminated at MAGI >= end.
+    * Rounding: the reduction is computed exactly (cents) and the final
+      deduction is rounded to whole dollars with :func:`irs_round` at the
+      end. (The printed worksheet rounds the ratio to at least three decimal
+      places, which can differ by up to a dollar; exact-then-round is used
+      here so the derivation is reproducible.)
+
+    Out of scope (caller judgment): the taxpayer being claimable as a
+    dependent (deduction disallowed), and the section 221 MAGI definition
+    (AGI before this deduction and before the foreign income exclusions).
+    """
+    paid = _to_decimal(interest_paid, "interest_paid")
+    magi_d = _to_decimal(magi, "magi")
+    if paid < 0:
+        raise ValueError(f"interest_paid must be >= 0, got {paid}")
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.student_loan_interest
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.student_loan_interest block — add it "
+            f"(the $2,500 cap and per-status MAGI phase-out ranges, no MFS key) with a citation"
+        )
+    status = str(filing_status)
+    inputs: dict[str, Any] = {
+        "interest_paid": str(paid),
+        "magi": str(magi_d),
+        "filing_status": status,
+        "year": year,
+    }
+
+    if status == "married_filing_separately":
+        work = (
+            f"Student loan interest deduction ({year}): married filing separately may not take the "
+            f"deduction at all (IRC 221(e)(2)) — $0 regardless of MAGI or interest paid. This is a rule, "
+            f"not a phase-out."
+        )
+        return StudentLoanInterestResult(
+            deduction=0,
+            tentative=Decimal("0.00"),
+            reduction=Decimal("0.00"),
+            inputs=inputs,
+            work=work,
+            citation=params.citation,
+        )
+    if status not in params.phaseout:
+        raise ValueError(
+            f"unknown filing_status {status!r} for student_loan_interest_deduction — use one of: "
+            f"{', '.join(sorted(params.phaseout))}, married_filing_separately (which gets $0 by rule)"
+        )
+    rng = params.phaseout[status]
+    tentative = _cents(min(paid, Decimal(params.max_deduction)))
+    if magi_d >= rng.end:
+        reduction = tentative
+        deduction = 0
+        phase_text = (
+            f"MAGI {_money(magi_d)} is at or above the {_dollars(rng.end)} phase-out end, so the "
+            f"deduction is fully eliminated"
+        )
+    elif magi_d <= rng.start:
+        reduction = Decimal("0.00")
+        deduction = irs_round(tentative)
+        phase_text = f"MAGI {_money(magi_d)} is at or below the {_dollars(rng.start)} phase-out start (no reduction)"
+    else:
+        reduction = _cents(tentative * (magi_d - rng.start) / Decimal(rng.end - rng.start))
+        deduction = irs_round(tentative - reduction)
+        phase_text = (
+            f"phase-out: {_money(tentative)} x (MAGI {_money(magi_d)} - {_dollars(rng.start)}) / "
+            f"{_dollars(rng.end - rng.start)} = {_money(reduction)} reduction"
+        )
+    work = (
+        f"Student loan interest deduction ({year}, {status}): tentative = min(interest paid {_money(paid)}, "
+        f"{_dollars(params.max_deduction)} cap) = {_money(tentative)}; {phase_text}; deduction = "
+        f"{_dollars(deduction)} (rounded to whole dollars at the end)."
+    )
+    return StudentLoanInterestResult(
+        deduction=deduction,
+        tentative=tentative,
+        reduction=reduction,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Education credits (Form 8863: AOTC + LLC)
+# ---------------------------------------------------------------------------
+
+
+def _phaseout_multiplier(magi: Decimal, rng: MagiPhaseoutRange) -> Decimal:
+    """Form 8863-style linear phase-out multiplier: (end - MAGI) / (end - start), clamped to [0, 1]."""
+    if magi <= rng.start:
+        return Decimal(1)
+    if magi >= rng.end:
+        return Decimal(0)
+    return (Decimal(rng.end) - magi) / Decimal(rng.end - rng.start)
+
+
+class EducationCreditsResult(BaseModel):
+    """Result of :func:`education_credits`: Form 8863 (AOTC per student + LLC per return)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    total_credit: int = Field(description="AOTC + LLC after phase-out, whole dollars.")
+    aotc_total: int = Field(description="American opportunity credit after phase-out, whole dollars.")
+    aotc_refundable: int = Field(
+        description="Refundable part of the AOTC (40% of the post-phase-out credit, Form 8863 line 8)."
+    )
+    llc_amount: int = Field(description="Lifetime learning credit after phase-out, whole dollars (nonrefundable).")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def education_credits(
+    aotc_expenses_per_student: list,
+    llc_expenses: int | float | Decimal | str = 0,
+    magi: int | float | Decimal | str = 0,
+    filing_status: str = "single",
+    year: int = 2023,
+    knowledge_dir: str | Path | None = None,
+) -> EducationCreditsResult:
+    """Education credits (Form 8863): American opportunity credit + lifetime
+    learning credit.
+
+    * AOTC, PER STUDENT: 100% of the first $2,000 of qualified expenses plus
+      25% of the next $2,000 — at most $2,500 per student; sum over
+      ``aotc_expenses_per_student``.
+    * LLC, PER RETURN: 20% of at most $10,000 of qualified expenses
+      regardless of student count. The same student's expenses can never
+      feed both credits in one year (caller responsibility).
+    * Each credit is phased out linearly by its OWN MAGI range (Form 8863
+      lines 2-7 / 13-18): tentative x (end - MAGI) / (end - start), where
+      the range depends only on joint-vs-other (single, head of household,
+      and a qualifying surviving spouse share the lower range).
+    * MFS: married filing separately may claim NEITHER credit — both are $0
+      by rule (not an error), regardless of MAGI.
+    * ``aotc_refundable`` = 40% of the post-phase-out AOTC (Form 8863
+      line 8). The line-7 under-age-24 exception (which makes the whole AOTC
+      nonrefundable) is caller judgment — flagged in ``work``.
+    * Rounding: each credit is computed exactly and rounded to whole dollars
+      individually (AOTC, then 40% of that whole-dollar AOTC, then LLC), the
+      way the form's line entries are made.
+    """
+    if isinstance(aotc_expenses_per_student, (str, bytes)) or not isinstance(aotc_expenses_per_student, (list, tuple)):
+        raise TypeError(
+            f"aotc_expenses_per_student must be a list of per-student qualified-expense amounts "
+            f"(one entry per eligible student; [] for none), got {type(aotc_expenses_per_student).__name__}"
+        )
+    expenses = [_to_decimal(v, f"aotc_expenses_per_student[{i}]") for i, v in enumerate(aotc_expenses_per_student)]
+    for i, amount in enumerate(expenses):
+        if amount < 0:
+            raise ValueError(f"aotc_expenses_per_student[{i}] must be >= 0, got {amount}")
+    llc_exp = _to_decimal(llc_expenses, "llc_expenses")
+    if llc_exp < 0:
+        raise ValueError(f"llc_expenses must be >= 0, got {llc_exp}")
+    magi_d = _to_decimal(magi, "magi")
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.education_credits
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.education_credits block — add it "
+            f"(Form 8863 AOTC/LLC parameters and MAGI phase-outs) with a citation"
+        )
+    status = str(filing_status)
+    inputs: dict[str, Any] = {
+        "aotc_expenses_per_student": [str(e) for e in expenses],
+        "llc_expenses": str(llc_exp),
+        "magi": str(magi_d),
+        "filing_status": status,
+        "year": year,
+    }
+
+    if status == "married_filing_separately":
+        work = (
+            f"Education credits ({year}): married filing separately may claim NEITHER the American "
+            f"opportunity credit nor the lifetime learning credit (Form 8863 rule) — both are $0 "
+            f"regardless of MAGI. This is a rule, not a phase-out."
+        )
+        return EducationCreditsResult(
+            total_credit=0,
+            aotc_total=0,
+            aotc_refundable=0,
+            llc_amount=0,
+            inputs=inputs,
+            work=work,
+            citation=params.citation,
+        )
+    if status == "married_filing_jointly":
+        aotc_rng = params.aotc.phaseout.married_filing_jointly
+        llc_rng = params.llc.phaseout.married_filing_jointly
+    elif status in ("single", "head_of_household", "qualifying_surviving_spouse"):
+        aotc_rng = params.aotc.phaseout.other
+        llc_rng = params.llc.phaseout.other
+    else:
+        raise ValueError(
+            f"unknown filing_status {status!r} for education_credits — use one of: single, "
+            f"married_filing_jointly, married_filing_separately (which gets $0 by rule), "
+            f"head_of_household, qualifying_surviving_spouse"
+        )
+
+    aotc = params.aotc
+    first_cap = Decimal(aotc.first_dollar_cap)
+    per_student: list[str] = []
+    aotc_tentative = Decimal(0)
+    for i, exp in enumerate(expenses):
+        tier1 = min(exp, first_cap)
+        tier2_base = min(max(Decimal(0), exp - first_cap), first_cap)
+        tier2 = _cents(tier2_base * aotc.second_rate)
+        credit_i = min(_cents(tier1 + tier2), Decimal(aotc.per_student_cap))
+        aotc_tentative += credit_i
+        per_student.append(
+            f"student {i + 1} (expenses {_money(exp)}): 100% x {_money(tier1)}"
+            + (f" + 25% x {_money(tier2_base)} = {_money(credit_i)}" if tier2_base > 0 else f" = {_money(credit_i)}")
+        )
+    aotc_mult = _phaseout_multiplier(magi_d, aotc_rng)
+    aotc_total = irs_round(_cents(aotc_tentative * aotc_mult))
+    aotc_refundable = irs_round(Decimal(aotc_total) * aotc.refundable_fraction)
+
+    llc = params.llc
+    llc_counted = min(llc_exp, Decimal(llc.per_return_expense_cap))
+    llc_tentative = _cents(llc_counted * llc.rate)
+    llc_mult = _phaseout_multiplier(magi_d, llc_rng)
+    llc_amount = irs_round(_cents(llc_tentative * llc_mult))
+    total = aotc_total + llc_amount
+
+    def _mult_text(mult: Decimal, rng: MagiPhaseoutRange) -> str:
+        if mult == 1:
+            return f"no phase-out (MAGI at or below {_dollars(rng.start)})"
+        if mult == 0:
+            return f"fully phased out (MAGI at or above {_dollars(rng.end)})"
+        return (
+            f"phase-out x ({_dollars(rng.end)} - {_money(magi_d)}) / {_dollars(rng.end - rng.start)}"
+        )
+
+    aotc_text = (
+        "AOTC: no eligible students"
+        if not expenses
+        else "AOTC per student: " + "; ".join(per_student) + f"; tentative total {_money(aotc_tentative)}, "
+        f"{_mult_text(aotc_mult, aotc_rng)} -> {_dollars(aotc_total)}, refundable 40% = "
+        f"{_dollars(aotc_refundable)} (Form 8863 line 8; $0 instead if the line-7 under-age-24 "
+        f"exception applies)"
+    )
+    llc_text = (
+        "LLC: no expenses"
+        if llc_exp == 0
+        else f"LLC: 20% x min(expenses {_money(llc_exp)}, {_dollars(llc.per_return_expense_cap)} per return) "
+        f"= {_money(llc_tentative)}, {_mult_text(llc_mult, llc_rng)} -> {_dollars(llc_amount)} (nonrefundable)"
+    )
+    work = (
+        f"Education credits ({year}, {status}, MAGI {_money(magi_d)}): {aotc_text}. {llc_text}. "
+        f"Total = {_dollars(total)}. Each credit rounded to whole dollars individually."
+    )
+    return EducationCreditsResult(
+        total_credit=total,
+        aotc_total=aotc_total,
+        aotc_refundable=aotc_refundable,
+        llc_amount=llc_amount,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Premium Tax Credit (Form 8962, annual method)
+# ---------------------------------------------------------------------------
+
+_PTC_STATES = ("other", "alaska", "hawaii")
+
+
+class PtcAnnualResult(BaseModel):
+    """Result of :func:`ptc_annual`: Form 8962 lines 1-29, ANNUAL method (no
+    monthly allocation, no shared-policy or marriage-year alternatives)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    fpl_amount: int = Field(description="Line 4: the federal poverty line for the household size and state table.")
+    fpl_pct: int = Field(
+        description="Line 5: household income as % of the FPL, TRUNCATED to an integer (literally 401 when over 400%)."
+    )
+    applicable_figure: Decimal = Field(description="Line 7: the Table 2 applicable figure (4 decimals).")
+    contribution: int = Field(description="Line 8a: annual contribution amount = income x figure, whole dollars.")
+    ptc: int = Field(description="Line 24: annual premium tax credit = min(premiums, SLCSP - contribution), floor 0.")
+    net_ptc: int = Field(description="Line 26: PTC in excess of APTC (0 when APTC exceeds PTC).")
+    repayment: int = Field(
+        description="Line 29: excess APTC repayment after the Table 5 limitation (0 when PTC covers APTC)."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def ptc_annual(
+    household_income: int | float | Decimal | str,
+    household_size: int,
+    annual_premiums: int | float | Decimal | str,
+    annual_slcsp: int | float | Decimal | str,
+    annual_aptc: int | float | Decimal | str = 0,
+    filing_status: str = "single",
+    year: int = 2023,
+    state: str = "other",
+    knowledge_dir: str | Path | None = None,
+) -> PtcAnnualResult:
+    """Premium Tax Credit (Form 8962), ANNUAL method — lines 1-29 with a single
+    full-year policy (no monthly allocation, shared policy, or alternative
+    marriage-year computation).
+
+    Line sequence, per the Form 8962 instructions:
+
+    * line 4: the federal poverty line — Tables 1-1/1-2/1-3 by ``state``
+      ('other' = the 48 contiguous states and DC, 'alaska', 'hawaii'), for
+      the household size (sizes above 8 add the per-person increment). A tax
+      year uses the PRIOR year's HHS guidelines (already encoded in the pack).
+    * line 5 (Worksheet 2): household income / FPL x 100, TRUNCATED to an
+      integer — drop the decimals, never round (3.997 -> 399); enter
+      literally 401 when over 400%.
+    * line 7 (Table 2): the applicable figure for the INTEGER percentage —
+      linear interpolation within its band, rounded HALF UP to 4 decimals
+      (349 -> 0.0723, 399 -> 0.0848; 0.0850 flat at 400 or more — there is
+      NO eligibility cliff). Below-150 rows are 0.0000 per the table.
+    * line 8a: contribution = household income x figure, whole dollars.
+    * line 24: annual PTC = min(premiums, SLCSP - contribution), floor 0.
+    * lines 25-29: against APTC — a surplus is ``net_ptc`` (Schedule 3);
+      a shortfall is repaid, capped by the Table 5 limitation for the FPL
+      band ('single' vs any other filing status), UNCAPPED at 400% FPL or
+      more (Schedule 2). The 400% figure cap and the vanishing repayment
+      limitation are different rules — do not conflate them.
+    """
+    income = _to_decimal(household_income, "household_income")
+    premiums = _to_decimal(annual_premiums, "annual_premiums")
+    slcsp = _to_decimal(annual_slcsp, "annual_slcsp")
+    aptc = _to_decimal(annual_aptc, "annual_aptc")
+    if income < 0:
+        raise ValueError(f"household_income must be >= 0, got {income} — pass 0 for a negative household income")
+    for name, value in (("annual_premiums", premiums), ("annual_slcsp", slcsp), ("annual_aptc", aptc)):
+        if value < 0:
+            raise ValueError(f"{name} must be >= 0, got {value}")
+    if isinstance(household_size, bool) or not isinstance(household_size, int) or household_size < 1:
+        raise ValueError(
+            f"household_size must be an int >= 1 (the Form 8962 line 1 tax family size), got {household_size!r}"
+        )
+    _resolve_filing_status(str(filing_status))  # validates the five statuses
+    if state not in _PTC_STATES:
+        raise ValueError(
+            f"state must be one of 'other' (the 48 contiguous states and DC), 'alaska', 'hawaii' — "
+            f"got {state!r}. A household that lived in both AK/HI and elsewhere uses the table with "
+            f"the HIGHER amounts."
+        )
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.ptc
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.ptc block — the Premium Tax Credit ships only "
+            f"for tax years 2023 and 2024 (the ARPA applicable-percentage table as extended to 2023-2025 "
+            f"by IRA section 12001(a); pre-2023 years use different indexed tables and post-2025 the "
+            f"regime expires). Use 2023 or 2024, or author the year's block from its Form 8962 "
+            f"instructions with citations."
+        )
+    fpl_table = {
+        "other": params.federal_poverty_line.contiguous_48_and_dc,
+        "alaska": params.federal_poverty_line.alaska,
+        "hawaii": params.federal_poverty_line.hawaii,
+    }[state]
+    if household_size <= 8:
+        fpl = fpl_table.household_size[household_size]
+    else:
+        fpl = fpl_table.household_size[8] + (household_size - 8) * fpl_table.per_additional_person
+    inputs: dict[str, Any] = {
+        "household_income": str(income),
+        "household_size": household_size,
+        "annual_premiums": str(premiums),
+        "annual_slcsp": str(slcsp),
+        "annual_aptc": str(aptc),
+        "filing_status": str(filing_status),
+        "state": state,
+        "year": year,
+    }
+
+    ratio_pct = income * 100 / Decimal(fpl)
+    fpl_pct = int(ratio_pct)  # Worksheet 2: TRUNCATE — drop the decimals, never round
+    entered_401 = fpl_pct > 400
+    if entered_401:
+        fpl_pct = 401
+
+    band = next(
+        b
+        for b in params.applicable_percentage_table
+        if b.fpl_pct_at_least <= fpl_pct and (b.fpl_pct_less_than is None or fpl_pct < b.fpl_pct_less_than)
+    )
+    if band.fpl_pct_less_than is None or band.final == band.initial:
+        figure = band.initial.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+        figure_text = f"Table 2 figure for {fpl_pct} = {figure}"
+    else:
+        span = band.fpl_pct_less_than - band.fpl_pct_at_least
+        figure = (
+            band.initial + (band.final - band.initial) * (fpl_pct - band.fpl_pct_at_least) / Decimal(span)
+        ).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+        figure_text = (
+            f"Table 2 figure for {fpl_pct} (band {band.fpl_pct_at_least}-{band.fpl_pct_less_than}: "
+            f"{band.initial}-{band.final}, interpolated on the integer % and rounded half up to "
+            f"4 decimals) = {figure}"
+        )
+
+    contribution = irs_round(income * figure)
+    ptc_amount = irs_round(min(premiums, max(Decimal(0), slcsp - contribution)))
+    aptc_whole = irs_round(aptc)
+    diff = ptc_amount - aptc_whole
+    if diff >= 0:
+        net_ptc, repayment = diff, 0
+        settle_text = (
+            f"PTC {_dollars(ptc_amount)} - APTC {_dollars(aptc_whole)} = net premium tax credit "
+            f"{_dollars(net_ptc)} (Schedule 3)."
+        )
+    else:
+        excess = -diff
+        row = next(r for r in params.repayment_limitation if r.fpl_band_lt is None or fpl_pct < r.fpl_band_lt)
+        cap = row.single if str(filing_status) == "single" else row.other
+        net_ptc = 0
+        if cap is None:
+            repayment = excess
+            settle_text = (
+                f"APTC {_dollars(aptc_whole)} exceeds PTC {_dollars(ptc_amount)} by {_dollars(excess)}; at "
+                f"400% FPL or more there is NO repayment limitation (Table 5) — repay the full "
+                f"{_dollars(repayment)} (Schedule 2)."
+            )
+        else:
+            repayment = min(excess, cap)
+            settle_text = (
+                f"APTC {_dollars(aptc_whole)} exceeds PTC {_dollars(ptc_amount)} by {_dollars(excess)}; "
+                f"Table 5 limitation for FPL% {fpl_pct} "
+                f"({'single' if str(filing_status) == 'single' else 'any other filing status'} column) = "
+                f"{_dollars(cap)}; repayment = {_dollars(repayment)} (Schedule 2)."
+            )
+
+    state_label = {"other": "48 contiguous states/DC", "alaska": "Alaska", "hawaii": "Hawaii"}[state]
+    pct_text = (
+        f"{fpl_pct} (over 400% — enter literally 401)"
+        if entered_401
+        else f"{fpl_pct} (TRUNCATED from {ratio_pct:.2f} — decimals dropped, never rounded)"
+    )
+    work = (
+        f"Form 8962 ({year}, annual method): line 4 FPL ({state_label} table, household of "
+        f"{household_size}) = {_dollars(fpl)}; line 5 = household income {_money(income)} / FPL x 100 = "
+        f"{pct_text}; {figure_text}; line 8a contribution = {_money(income)} x {figure} = "
+        f"{_dollars(contribution)}; line 24 annual PTC = min(premiums {_money(premiums)}, SLCSP "
+        f"{_money(slcsp)} - contribution = {_money(slcsp - contribution)}, floor 0) = "
+        f"{_dollars(ptc_amount)}. {settle_text}"
+    )
+    return PtcAnnualResult(
+        fpl_amount=fpl,
+        fpl_pct=fpl_pct,
+        applicable_figure=figure,
+        contribution=contribution,
+        ptc=ptc_amount,
+        net_ptc=net_ptc,
+        repayment=repayment,
         inputs=inputs,
         work=work,
         citation=params.citation,
