@@ -6,10 +6,10 @@
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 1,501 passing](https://img.shields.io/badge/tests-1%2C501%20passing-brightgreen)
+![Tests: 1,501 passing](https://img.shields.io/badge/tests-1%2C605%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,501 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,605 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -183,7 +183,7 @@ All 22 tools are available today (from source); the server registers exactly 22 
 | `fill_form` | Deterministic fill; comb/format handling; rejects unknown lines |
 | `verify_form` / `verify_filing` | Assertion diffs, relation math, clipping scan, checkbox audit, cross-form consistency |
 | `render_form` | Page PNGs returned as MCP image content for agent vision review |
-| `calc` | Tax tables, SE tax, Additional Medicare Tax (8959), NIIT (8960), presence-day counting, rounding, routing-number checksum |
+| `calc` | Tax tables, QDCGT preferential rates, SE tax, Additional Medicare Tax (8959), NIIT (8960), taxable Social Security, excess-SS credit, student-loan interest, education credits, PTC (8962), presence-day counting, rounding, routing-number checksum |
 | `estimate_refund` | Early refund/owed range from a partial profile, with composition and assumption list — always labeled ESTIMATE |
 | `get_sources` | Ranked official .gov sources per topic (freshness protocol) |
 | `filing_summary` | Plain-language bottom line per jurisdiction before printing |
