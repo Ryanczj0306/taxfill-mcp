@@ -768,3 +768,208 @@ def test_no_spouse_data_keeps_the_worst_case_fallback():
     est = estimate_refund(Profile(household=Household(marital_status=_ans("married"))), 2023, income)
     assert any("worst-case" in a for a in est.assumptions)
     assert not any("TRUE two-return comparison" in a for a in est.assumptions)
+
+
+# ---------------------------------------------------------------------------
+# Final-review regressions: per-person excess-SS and Schedule SE on the MFJ
+# spouse split, the MFS/below-100%-FPL PTC gates, the EITC net-capital-gain
+# investment-income gate, NRA education credits, and the spouse-snapshot-
+# ignored disclosure. Repro numbers come from the adversarial review findings;
+# every expected value is re-derived through calc (no magic numbers).
+# ---------------------------------------------------------------------------
+
+_XSS_LABEL = "Less: excess Social Security withholding credit (Schedule 3)"
+
+
+def _mfj_confirmed():
+    return Profile(
+        household=Household(marital_status=_ans("married"), filing_status=_ans("married_filing_jointly"))
+    )
+
+
+def test_mfj_spouse_split_excess_ss_is_per_person():
+    # Review repro: each spouse has ONE employer at the 2023 per-person max ($9,932.40).
+    # The credit is $0 per person (a single employer can never over-withhold on the
+    # return), NOT the $9,932 the concatenated two-spouse list would mint.
+    from taxfill_core.calc import additional_medicare_tax
+    income = IncomeSnapshot(
+        wages=160_200, federal_withholding=30_000, ss_withheld_by_employer=[9_932],
+        spouse=IncomeSnapshot(wages=160_200, federal_withholding=30_000, ss_withheld_by_employer=[9_932]),
+    )
+    est = estimate_refund(_mfj_confirmed(), 2023, income)
+    assert _XSS_LABEL not in _labels(est)
+    assert excess_ss([9_932], 2023).credit == 0  # the per-person contract the split must honor
+    # Correct bottom line, re-derived: MFJ tax on combined wages + Form 8959 (combined
+    # Medicare wages exceed the joint threshold) against combined withholding.
+    taxable = 320_400 - standard_deduction("married_filing_jointly", 2023).amount
+    tax = tax_from_taxable_income(taxable, "married_filing_jointly", 2023).tax
+    addmed = additional_medicare_tax(320_400, "married_filing_jointly", 2023).additional_medicare_tax
+    assert est.point == 60_000 - (tax + addmed)
+
+
+def test_mfj_spouse_split_excess_ss_sums_each_spouses_own_credit():
+    # Each spouse independently has 2+ employers: the per-person credits are summed.
+    income = IncomeSnapshot(
+        wages=170_000, federal_withholding=30_000, ss_withheld_by_employer=[6_500, 5_500],
+        spouse=IncomeSnapshot(wages=170_000, federal_withholding=30_000, ss_withheld_by_employer=[6_000, 6_000]),
+    )
+    est = estimate_refund(_mfj_confirmed(), 2023, income)
+    expected = excess_ss([6_500, 5_500], 2023).credit + excess_ss([6_000, 6_000], 2023).credit
+    assert expected > 0
+    assert _labels(est)[_XSS_LABEL] == -expected
+
+
+def test_married_combined_ss_entries_disclosed_as_one_person():
+    # Married WITHOUT a spouse split: 2+ box-4 entries are treated as one person's
+    # employers, and the estimate must say so (joint returns compute per spouse).
+    income = IncomeSnapshot(wages=180_000, federal_withholding=40_000, ss_withheld_by_employer=[6_500, 5_500])
+    est = estimate_refund(Profile(household=Household(marital_status=_ans("married"))), 2023, income)
+    assert any("ONE person's employers" in a for a in est.assumptions)
+    # A single filer with the same entries is genuinely one person — no disclosure.
+    est_single = estimate_refund(_single(), 2023, income)
+    assert not any("ONE person's employers" in a for a in est_single.assumptions)
+
+
+def test_mfj_spouse_split_se_tax_is_per_person():
+    # Review repro: A has 200k wages and no SE; B has 100k SE and NO wages. B's own
+    # Schedule SE gets the FULL wage base — A's wages must not absorb it.
+    from taxfill_core.calc import se_tax
+    income = IncomeSnapshot(
+        wages=200_000, federal_withholding=40_000,
+        spouse=IncomeSnapshot(self_employment_net=100_000),
+    )
+    est = estimate_refund(_mfj_confirmed(), 2023, income)
+    labels = _labels(est)
+    expected = se_tax(100_000, 2023)  # B alone: w2_ss_wages=0
+    assert labels["Plus: self-employment tax"] == expected.se_tax
+    assert labels["Less: ½ self-employment tax (adjustment)"] == -expected.deduction_half
+    # Sanity: the combined-snapshot computation (the old bug) would be much smaller.
+    assert se_tax(100_000, 2023, w2_ss_wages=200_000).se_tax < expected.se_tax
+
+
+def test_mfj_spouse_split_se_tax_sums_both_spouses_schedules():
+    # Both spouses self-employed at 150k: TWO per-person Schedule SEs, each with its
+    # own wage base — not one Schedule SE on 300k.
+    from taxfill_core.calc import se_tax
+    income = IncomeSnapshot(
+        self_employment_net=150_000, federal_withholding=30_000,
+        spouse=IncomeSnapshot(self_employment_net=150_000, federal_withholding=30_000),
+    )
+    est = estimate_refund(_mfj_confirmed(), 2023, income)
+    per_person = se_tax(150_000, 2023)
+    labels = _labels(est)
+    assert labels["Plus: self-employment tax"] == 2 * per_person.se_tax
+    assert labels["Less: ½ self-employment tax (adjustment)"] == -2 * per_person.deduction_half
+    assert 2 * per_person.se_tax > se_tax(300_000, 2023).se_tax  # combined would understate
+
+
+def _mfs_confirmed():
+    return Profile(
+        household=Household(marital_status=_ans("married"), filing_status=_ans("married_filing_separately"))
+    )
+
+
+def test_mfs_candidate_gets_no_ptc_by_rule():
+    # Review repro: MFS + 1095-A with no APTC. IRC 36B(c)(1)(C) denies the PTC, so
+    # there is no credit line and the bottom line is plain withholding - tax.
+    income = IncomeSnapshot(wages=30_000, federal_withholding=2_000,
+                            aca_premiums=8_000, aca_slcsp=7_500, aca_aptc=0)
+    est = estimate_refund(_mfs_confirmed(), 2023, income)
+    labels = _labels(est)
+    assert "Less: net premium tax credit (Form 8962)" not in labels
+    assert est.point == _independent_refund(30_000, 2_000, "married_filing_separately")
+    assert any("36B(c)(1)(C)" in a for a in est.assumptions)
+
+
+def test_mfs_candidate_repays_aptc_up_to_the_table_5_cap():
+    # Same MFS filer with APTC 6,000: the whole APTC is excess (PTC 0 by rule) and the
+    # repayment is the Table 5 'other'-column cap — cross-checked via ptc_annual's
+    # new default (household income = AGI = 30,000, household size 1).
+    income = IncomeSnapshot(wages=30_000, federal_withholding=2_000,
+                            aca_premiums=8_000, aca_slcsp=7_500, aca_aptc=6_000)
+    est = estimate_refund(_mfs_confirmed(), 2023, income)
+    res = ptc_annual(30_000, 1, 8_000, 7_500, 6_000, filing_status="married_filing_separately", year=2023)
+    assert res.ptc == 0 and res.net_ptc == 0 and 0 < res.repayment < 6_000
+    labels = _labels(est)
+    assert labels["Plus: excess advance premium tax credit repayment (Form 8962)"] == res.repayment
+    assert est.point == 2_000 - (tax_from_taxable_income(
+        30_000 - standard_deduction("married_filing_separately", 2023).amount,
+        "married_filing_separately", 2023).tax + res.repayment)
+    assert any("36B(c)(1)(C)" in a for a in est.assumptions)
+
+
+def test_eitc_investment_gate_uses_net_capital_gain():
+    # Review repro: st -12,000 + lt +12,500 = net +500, far under the 2023 $11,000
+    # limit — the gate must use the loss-limited NET figure (Pub 596 Worksheet 1),
+    # never the gross positive legs summed (12,500 wrongly denied the whole credit).
+    profile = _single_parent(_kid("Kid", date(2015, 1, 1)))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(
+        wages=18_000, capital_gain_short=-12_000, capital_gain_long=12_500))
+    control = estimate_refund(profile, 2023, IncomeSnapshot(wages=18_000, capital_gain_long=500))
+    assert _EITC_LABEL in _labels(est)
+    # Identical AGI and net gain -> identical EITC and identical bottom line.
+    assert _labels(est)[_EITC_LABEL] == _labels(control)[_EITC_LABEL]
+    assert est.point == control.point
+
+
+def test_nonresident_gets_no_education_credits():
+    # Review repro: an F-1 classified nonresident cannot claim Form 8863 credits
+    # (no residency election modeled) — neither the nonrefundable part nor the
+    # refundable 40% AOTC — and the estimate says why.
+    profile = Profile(
+        household=Household(marital_status=_ans("unmarried")),
+        identity=Identity(us_person=_ans(False)),
+        immigration=_nra_immigration(),
+        residency_facts=_nra_residency(),
+    )
+    income = IncomeSnapshot(wages=40_000, federal_withholding=4_000, aotc_qualified_expenses=[4_000])
+    est = estimate_refund(profile, 2023, income)
+    labels = _labels(est)
+    assert "Less: education credits (nonrefundable part)" not in labels
+    assert "Less: American opportunity credit (refundable 40%)" not in labels
+    assert est.point == _independent_refund(40_000, 4_000, "single")
+    assert any("residency election" in a for a in est.assumptions)
+    # Control: the same income for a resident single filer DOES get both parts.
+    est_res = estimate_refund(_single(), 2023, income)
+    assert "Less: education credits (nonrefundable part)" in _labels(est_res)
+    assert "Less: American opportunity credit (refundable 40%)" in _labels(est_res)
+
+
+def test_spouse_snapshot_without_confirmed_marriage_is_loudly_disclosed():
+    # Review repro: nothing confirmed + a spouse snapshot. Married is never inferred
+    # from income data, so the spouse's amounts are EXCLUDED — but never silently:
+    # a loud assumption and a what-would-change-it entry must disclose it.
+    profile = Profile(household=Household())
+    income = IncomeSnapshot(
+        wages=60_000, federal_withholding=5_000,
+        spouse=IncomeSnapshot(wages=80_000, federal_withholding=6_000),
+    )
+    est = estimate_refund(profile, 2023, income)
+    assert est.point == _independent_refund(60_000, 5_000, "single")  # primary only
+    assert any(
+        "IMPORTANT" in a and "spouse" in a and "NOT included" in a for a in est.assumptions
+    )
+    assert any(
+        "spouse" in c and "marital status" in c for c in est.what_would_change_it
+    )
+    # Confirming 'married' actually enables the split (the disclosure disappears).
+    est_married = estimate_refund(Profile(household=Household(marital_status=_ans("married"))), 2023, income)
+    assert not any("NOT included in this estimate" in a for a in est_married.assumptions)
+    assert any("TRUE two-return comparison" in a for a in est_married.assumptions)
+
+
+def test_estimate_surfaces_below_100_fpl_ptc_caveats():
+    # Below-100%-FPL 1095-A filer, no APTC: no PTC line (the safe harbor cannot
+    # apply) and the eligibility caveat is an assumption, not buried in calc work.
+    income = IncomeSnapshot(wages=13_000, aca_premiums=6_000, aca_slcsp=5_000, aca_aptc=0)
+    est = estimate_refund(_single(), 2023, income)
+    labels = _labels(est)
+    assert "Less: net premium tax credit (Form 8962)" not in labels
+    assert any("below 100%" in a and "safe harbor" in a for a in est.assumptions)
+    # With APTC the credit is computed (safe-harbor assumption) and disclosed as such.
+    income2 = IncomeSnapshot(wages=13_000, aca_premiums=6_000, aca_slcsp=5_000, aca_aptc=3_000)
+    est2 = estimate_refund(_single(), 2023, income2)
+    res = ptc_annual(13_000, 1, 6_000, 5_000, 3_000, filing_status="single", year=2023)
+    assert res.net_ptc > 0
+    assert _labels(est2)["Less: net premium tax credit (Form 8962)"] == -res.net_ptc
+    assert any("below 100%" in a and "safe harbor" in a for a in est2.assumptions)

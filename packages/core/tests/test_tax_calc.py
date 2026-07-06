@@ -1150,6 +1150,78 @@ def test_ptc_over_400_percent_enters_401_and_repays_in_full():
     assert r.repayment == 3000
 
 
+def test_ptc_mfs_denied_by_rule_full_aptc_excess_capped():
+    # IRC 36B(c)(1)(C): a married-filing-separately filer without relief is NOT an
+    # applicable taxpayer. Income 20,000 (147% FPL) would compute PTC 5,000; instead
+    # line 24 = 0, net PTC = 0, and the FULL 4,000 APTC is excess — capped by the
+    # Table 5 'other' column below 200% FPL = 700.
+    r = ptc_annual(20_000, 1, 6_000, 5_000, annual_aptc=4_000,
+                   filing_status="married_filing_separately", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 147
+    assert r.ptc == 0
+    assert r.net_ptc == 0
+    assert r.repayment == 700
+    # The work trail explains the rule AND the relief exception.
+    assert "36B(c)(1)(C)" in r.work
+    assert "relief" in r.work
+    assert r.inputs["mfs_relief_exception"] is False
+
+
+def test_ptc_mfs_relief_exception_restores_the_computation():
+    # The domestic-abuse/spousal-abandonment relief (Form 8962 'relief' checkbox):
+    # figure 0.0000 -> contribution 0 -> PTC = min(6,000, 5,000) = 5,000; APTC 4,000
+    # -> net PTC 1,000 — exactly the pre-gate computation, with the relief noted.
+    r = ptc_annual(20_000, 1, 6_000, 5_000, annual_aptc=4_000,
+                   filing_status="married_filing_separately", mfs_relief_exception=True,
+                   knowledge_dir=KNOWLEDGE_DIR)
+    assert r.ptc == 5_000
+    assert r.net_ptc == 1_000
+    assert r.repayment == 0
+    assert "relief" in r.work
+    assert r.inputs["mfs_relief_exception"] is True
+
+
+def test_ptc_mfs_denied_repayment_uncapped_at_400_percent():
+    # The MFS denial is still subject to Table 5, which VANISHES at 400%+ FPL:
+    # the whole APTC is repaid (mirrors the over-400 rule for other statuses).
+    r = ptc_annual(60_000, 1, 7_000, 4_000, annual_aptc=3_000,
+                   filing_status="married_filing_separately", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.ptc == 0
+    assert r.repayment == 3_000
+
+
+def test_ptc_mfs_relief_flag_rejected_for_other_statuses():
+    # Mirrors taxable_social_security's mfs_lived_with_spouse contract.
+    with pytest.raises(ValueError, match="mfs_relief_exception"):
+        ptc_annual(20_000, 1, 6_000, 5_000, filing_status="single",
+                   mfs_relief_exception=True, knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_ptc_below_100_fpl_without_aptc_is_zero():
+    # 13,000 / 13,590 = 95% FPL with NO APTC: the estimated-income safe harbor cannot
+    # apply (it requires APTC paid), so the filer is not an applicable taxpayer
+    # (IRC 36B(c)(1)(A)) and line 24 is $0 — not the 5,000 the table would give.
+    r = ptc_annual(13_000, 1, 6_000, 5_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 95
+    assert r.ptc == 0
+    assert r.net_ptc == 0
+    assert r.repayment == 0
+    assert "below 100%" in r.work
+    assert "safe harbor" in r.work
+
+
+def test_ptc_below_100_fpl_with_aptc_computes_with_caveat():
+    # APTC was paid, so the estimated-income safe harbor can apply: keep the
+    # computation (figure 0.0000 -> PTC = min(6,000, 5,000) = 5,000; net 2,000)
+    # but spell out the eligibility caveat in the work trail.
+    r = ptc_annual(13_000, 1, 6_000, 5_000, annual_aptc=3_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 95
+    assert r.ptc == 5_000
+    assert r.net_ptc == 2_000
+    assert "CAVEAT" in r.work
+    assert "safe harbor" in r.work
+
+
 def test_ptc_alaska_table_and_large_household():
     # Alaska household of 1: FPL 16,990; income 33,980 = 200% -> contribution 680 (679.60 up).
     ak = ptc_annual(33_980, 1, 7_000, 6_000, state="alaska", knowledge_dir=KNOWLEDGE_DIR)

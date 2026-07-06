@@ -1610,6 +1610,7 @@ def ptc_annual(
     filing_status: str = "single",
     year: int = 2023,
     state: str = "other",
+    mfs_relief_exception: bool = False,
     knowledge_dir: str | Path | None = None,
 ) -> PtcAnnualResult:
     """Premium Tax Credit (Form 8962), ANNUAL method — lines 1-29 with a single
@@ -1636,6 +1637,21 @@ def ptc_annual(
       band ('single' vs any other filing status), UNCAPPED at 400% FPL or
       more (Schedule 2). The 400% figure cap and the vanishing repayment
       limitation are different rules — do not conflate them.
+
+    Applicable-taxpayer gates (IRC 36B(c)(1)):
+
+    * MARRIED FILING SEPARATELY is not an applicable taxpayer
+      (IRC 36B(c)(1)(C)): by default line 24 PTC = 0, net_ptc = 0, and the
+      FULL APTC is excess subject to the Table 5 'other'-column limitation
+      (unlimited at 400% FPL or more). ``mfs_relief_exception=True`` claims
+      the domestic-abuse/spousal-abandonment relief (the Form 8962 'relief'
+      checkbox) and computes the credit normally; it is rejected for any
+      other filing status.
+    * BELOW 100% FPL (IRC 36B(c)(1)(A)): with NO APTC paid the
+      estimated-income safe harbor cannot apply, so line 24 PTC = 0 (the
+      lawfully-present-immigrant exception is not modeled). With APTC paid
+      the credit is computed normally (the safe harbor commonly applies) and
+      the eligibility caveat is spelled out in ``work``.
     """
     income = _to_decimal(household_income, "household_income")
     premiums = _to_decimal(annual_premiums, "annual_premiums")
@@ -1650,7 +1666,13 @@ def ptc_annual(
         raise ValueError(
             f"household_size must be an int >= 1 (the Form 8962 line 1 tax family size), got {household_size!r}"
         )
-    _resolve_filing_status(str(filing_status))  # validates the five statuses
+    status = str(filing_status)
+    _resolve_filing_status(status)  # validates the five statuses
+    if mfs_relief_exception and status != "married_filing_separately":
+        raise ValueError(
+            f"mfs_relief_exception=True only applies to filing_status 'married_filing_separately' "
+            f"(got {status!r}) — the domestic-abuse/spousal-abandonment relief is an MFS behavior split"
+        )
     if state not in _PTC_STATES:
         raise ValueError(
             f"state must be one of 'other' (the 48 contiguous states and DC), 'alaska', 'hawaii' — "
@@ -1682,10 +1704,12 @@ def ptc_annual(
         "annual_premiums": str(premiums),
         "annual_slcsp": str(slcsp),
         "annual_aptc": str(aptc),
-        "filing_status": str(filing_status),
+        "filing_status": status,
         "state": state,
         "year": year,
     }
+    if status == "married_filing_separately":
+        inputs["mfs_relief_exception"] = mfs_relief_exception
 
     ratio_pct = income * 100 / Decimal(fpl)
     fpl_pct = int(ratio_pct)  # Worksheet 2: TRUNCATE — drop the decimals, never round
@@ -1713,8 +1737,51 @@ def ptc_annual(
         )
 
     contribution = irs_round(income * figure)
-    ptc_amount = irs_round(min(premiums, max(Decimal(0), slcsp - contribution)))
+    computed_ptc = irs_round(min(premiums, max(Decimal(0), slcsp - contribution)))
     aptc_whole = irs_round(aptc)
+
+    # Applicable-taxpayer gates (IRC 36B(c)(1)) — line 24 becomes $0 by RULE.
+    mfs_denied = status == "married_filing_separately" and not mfs_relief_exception
+    below_100 = fpl_pct < 100
+    computed_text = (
+        f"min(premiums {_money(premiums)}, SLCSP {_money(slcsp)} - contribution = "
+        f"{_money(slcsp - contribution)}, floor 0) = {_dollars(computed_ptc)}"
+    )
+    if mfs_denied:
+        ptc_amount = 0
+        line24_text = (
+            f"line 24 annual PTC = $0 — a married-filing-separately filer is NOT an applicable "
+            f"taxpayer (IRC 36B(c)(1)(C)), so the computed {computed_text} is disallowed and the "
+            f"full APTC is excess. The only exception is the domestic-abuse/spousal-abandonment "
+            f"relief (the Form 8962 'relief' checkbox) — pass mfs_relief_exception=True to compute "
+            f"with it"
+        )
+    elif below_100 and aptc_whole == 0:
+        ptc_amount = 0
+        line24_text = (
+            f"line 24 annual PTC = $0 — household income is below 100% of the federal poverty line "
+            f"({fpl_pct}%), so the filer is not an applicable taxpayer (IRC 36B(c)(1)(A)); with NO "
+            f"advance PTC paid the estimated-income safe harbor cannot apply (it requires APTC), and "
+            f"the lawfully-present-immigrant exception is not modeled here, so the computed "
+            f"{computed_text} is disallowed"
+        )
+    else:
+        ptc_amount = computed_ptc
+        line24_text = f"line 24 annual PTC = {computed_text}"
+        if status == "married_filing_separately" and mfs_relief_exception:
+            line24_text += (
+                " (married filing separately WITH the domestic-abuse/spousal-abandonment relief "
+                "exception claimed — the IRC 36B(c)(1)(C) bar does not apply; check the Form 8962 "
+                "'relief' box)"
+            )
+        if below_100:
+            line24_text += (
+                f". CAVEAT: household income is below 100% of the federal poverty line ({fpl_pct}%), "
+                f"where eligibility requires an exception — the estimated-income safe harbor (APTC was "
+                f"paid based on a projected income of 100-400% FPL) or the lawfully-present-immigrant "
+                f"rule; if neither applies, line 24 PTC is $0 and the full APTC is excess"
+            )
+
     diff = ptc_amount - aptc_whole
     if diff >= 0:
         net_ptc, repayment = diff, 0
@@ -1725,7 +1792,7 @@ def ptc_annual(
     else:
         excess = -diff
         row = next(r for r in params.repayment_limitation if r.fpl_band_lt is None or fpl_pct < r.fpl_band_lt)
-        cap = row.single if str(filing_status) == "single" else row.other
+        cap = row.single if status == "single" else row.other
         net_ptc = 0
         if cap is None:
             repayment = excess
@@ -1739,7 +1806,7 @@ def ptc_annual(
             settle_text = (
                 f"APTC {_dollars(aptc_whole)} exceeds PTC {_dollars(ptc_amount)} by {_dollars(excess)}; "
                 f"Table 5 limitation for FPL% {fpl_pct} "
-                f"({'single' if str(filing_status) == 'single' else 'any other filing status'} column) = "
+                f"({'single' if status == 'single' else 'any other filing status'} column) = "
                 f"{_dollars(cap)}; repayment = {_dollars(repayment)} (Schedule 2)."
             )
 
@@ -1753,9 +1820,7 @@ def ptc_annual(
         f"Form 8962 ({year}, annual method): line 4 FPL ({state_label} table, household of "
         f"{household_size}) = {_dollars(fpl)}; line 5 = household income {_money(income)} / FPL x 100 = "
         f"{pct_text}; {figure_text}; line 8a contribution = {_money(income)} x {figure} = "
-        f"{_dollars(contribution)}; line 24 annual PTC = min(premiums {_money(premiums)}, SLCSP "
-        f"{_money(slcsp)} - contribution = {_money(slcsp - contribution)}, floor 0) = "
-        f"{_dollars(ptc_amount)}. {settle_text}"
+        f"{_dollars(contribution)}; {line24_text}. {settle_text}"
     )
     return PtcAnnualResult(
         fpl_amount=fpl,

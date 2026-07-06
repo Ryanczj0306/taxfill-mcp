@@ -202,7 +202,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     - education_credits: args {aotc_expenses_per_student: [...], llc_expenses?, magi, filing_status,
       year} (Form 8863 AOTC + LLC; MFS gets $0)
     - ptc_annual: args {household_income, household_size, annual_premiums, annual_slcsp, annual_aptc?,
-      filing_status, year, state?} (Form 8962 annual method; state in other|alaska|hawaii; 2023-2024 only)
+      filing_status, year, state?, mfs_relief_exception?} (Form 8962 annual method; state in
+      other|alaska|hawaii; 2023-2024 only. MFS gets PTC $0 by rule — IRC 36B(c)(1)(C) — unless
+      mfs_relief_exception claims the domestic-abuse/abandonment relief; below-100%-FPL with no APTC
+      also gets $0)
     """
     if op == "tax":
         return _dump(_tax(**args))
