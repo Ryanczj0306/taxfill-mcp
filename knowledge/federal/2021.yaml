@@ -151,6 +151,122 @@ tax:
       head_of_household: 200000
       qualifying_surviving_spouse: 250000
 
+  # Maximum capital gains rate breakpoints under IRC section 1(h), indexed
+  # separately under section 1(j)(5): TAXABLE-INCOME ceilings for the 0% and
+  # 15% rates on adjusted net capital gain / qualified dividends (20% above
+  # the 15% ceiling), with ordinary income stacked first — the Qualified
+  # Dividends and Capital Gain Tax Worksheet line 6 / line 13 amounts. NOT
+  # equal to the ordinary bracket boundaries; never derive them from the rate
+  # schedules. MFS is exactly half of MFJ; a qualifying surviving spouse uses
+  # the MFJ amounts (the Rev. Proc. groups surviving spouses with joint returns).
+  capital_gains_brackets:
+    citation:
+      source: "Rev. Proc. 2020-45, Section 3.03 (Maximum Capital Gains Rate)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-20-45.pdf"
+    max_zero_rate_amount:
+      single: 40400
+      married_filing_jointly: 80800
+      married_filing_separately: 40400
+      head_of_household: 54100
+      qualifying_surviving_spouse: 80800
+    max_15_percent_rate_amount:
+      single: 445850
+      married_filing_jointly: 501600
+      married_filing_separately: 250800
+      head_of_household: 473750
+      qualifying_surviving_spouse: 501600
+
+  # Social Security Benefits Worksheet parameters (Form 1040 line 6b; line 5b
+  # in 2019). Statutory under IRC section 86(c) and never indexed — identical
+  # in every year 2019-2024. MFS splits by BEHAVIOR, not just status: lived
+  # apart from the spouse ALL year -> the single thresholds (write "D" next to
+  # the benefits line on paper returns); lived with the spouse at ANY time ->
+  # both tiers are $0 (mfs_living_with_spouse_base) and taxable benefits =
+  # min(0.85 x provisional income, 0.85 x benefits). The published worksheet
+  # prints the second tier as the line-10 gap ($9,000, or $12,000 for MFJ);
+  # the explicit IRC 86(c)(2) adjusted base amounts stored here are
+  # arithmetically identical.
+  taxable_social_security:
+    citation:
+      source: "2021 Instructions for Form 1040, Social Security Benefits Worksheet (lines 6a/6b); IRC section 86(c)"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2021.pdf"
+    base_amount:
+      single: 25000
+      married_filing_jointly: 32000
+      head_of_household: 25000
+      qualifying_surviving_spouse: 25000
+      married_filing_separately_lived_apart_all_year: 25000
+    adjusted_base_amount:
+      single: 34000
+      married_filing_jointly: 44000
+      head_of_household: 34000
+      qualifying_surviving_spouse: 34000
+      married_filing_separately_lived_apart_all_year: 34000
+    mfs_living_with_spouse_base: 0
+    inclusion_rate_tier1: 0.50
+    inclusion_rate_tier2: 0.85
+    max_taxable_share_of_benefits: 0.85
+
+  # Excess social security / tier 1 RRTA withholding credit parameters
+  # (Schedule 3 line 11).
+  # The cap is PER PERSON: each spouse's box-4 withholding is compared to the
+  # max separately, never combined. The credit exists only when MULTIPLE
+  # employers together over-withheld; a single employer's excess must be
+  # adjusted by that employer (Form 843 if it refuses) and is never claimable
+  # on the return. max_withholding = rate x wage base, exact to the cent.
+  employee_social_security:
+    citation:
+      source: "2021 Instructions for Form 1040, Schedule 3 line 11 (Excess Social Security and Tier 1 RRTA Tax Withheld); Pub 15 (2021), social security rate and wage base limit"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2021.pdf"
+    rate: 0.062
+    ss_wage_base: 142800
+    max_withholding: 8853.60
+
+  # Section 221 student-loan-interest deduction (Schedule 1). The $2,500 cap
+  # is statutory (IRC 221(b)(1)), not indexed. married_filing_separately is
+  # deliberately ABSENT: MFS may not take the deduction at all (IRC 221(e)(2))
+  # — a missing status means not-allowed. Reduction = tentative deduction
+  # (min(cap, interest paid)) x (MAGI - start) / (end - start); the span is
+  # $15,000 ($30,000 MFJ) in every supported year.
+  student_loan_interest:
+    citation:
+      source: "Rev. Proc. 2020-45, Section 3.30 (Interest on Education Loans)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-20-45.pdf"
+    max_deduction: 2500
+    phaseout:
+      single: { start: 70000, end: 85000 }
+      head_of_household: { start: 70000, end: 85000 }
+      qualifying_surviving_spouse: { start: 70000, end: 85000 }
+      married_filing_jointly: { start: 140000, end: 170000 }
+
+  # Form 8863 education credits. AOTC: 100% of the first $2,000 of qualified
+  # expenses PER STUDENT plus 25% of the next $2,000 (max $2,500 per student),
+  # 40% refundable unless the Form 8863 line 7 under-age-24 exception applies;
+  # its phaseout is statutory (IRC 25A(i)(4)) and identical in all years.
+  # LLC: 20% of up to $10,000 of expenses PER RETURN, nonrefundable. MFS may
+  # claim NEITHER credit (rule — hence no MFS keys). "other" = single /
+  # head_of_household / qualifying_surviving_spouse.
+  # 2021 is the FIRST year the LLC phaseout equals the AOTC's (CAA 2021 set a
+  # fixed section 25A(d) phaseout; before this the LLC ranges were lower).
+  education_credits:
+    citation:
+      source: "2021 Instructions for Form 8863 (Education Credits), including 'What's New' (LLC phaseout raised to the AOTC ranges)"
+      url: "https://www.irs.gov/pub/irs-prior/i8863--2021.pdf"
+    aotc:
+      per_student_cap: 2500
+      first_dollar_cap: 2000
+      second_rate: 0.25
+      refundable_fraction: 0.40
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+    llc:
+      per_return_expense_cap: 10000
+      rate: 0.20
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+
 # Pub 501 (2021) Table 1 (Filing Requirements Chart for Most Taxpayers): the
 # gross-income level at or above which a return is required, by status and age.
 # Non-elderly amounts equal that status's standard deduction; each 65+ person
@@ -183,6 +299,7 @@ credits:
     # ARPA: the credit is $3,600 per qualifying child under age 6 at the end
     # of 2021, and $3,000 per other qualifying child under age 18 at the end
     # of 2021. (Pre-ARPA base remained $2,000 per child.)
+    arpa_expanded: true                     # ARPA (Pub. L. 117-2) section 9611 — tax year 2021 only
     per_qualifying_child: 3000              # qualifying child age 6-17 (under 18, not under 6)
     per_qualifying_child_under_6: 3600      # qualifying child who has not attained age 6 by end of 2021
     pre_arpa_base_per_child: 2000           # the non-enhanced base (used in the two-tier phase-out)
@@ -190,6 +307,7 @@ credits:
     fully_refundable: true                  # for taxpayers with a principal place of abode in the US (50 states + DC) for more than half of 2021
     credit_for_other_dependents: 500        # ODC was NOT enhanced for 2021
     qualifying_child_age_test: "under age 18 at the end of 2021 (under age 6 for the higher $3,600 amount)"
+    child_under_age: 18                     # 2021 only; every other year is under 17
     # Two-tier phase-out (2021 Schedule 8812 Line 5 Worksheet + Line 9):
     #   First phase-out reduces only the ARPA INCREASE above the $2,000 base,
     #   at $50 per $1,000 (5%) of MAGI over the thresholds below.
@@ -199,8 +317,21 @@ credits:
       head_of_household: 112500
       married_filing_jointly: 150000
       qualifying_surviving_spouse: 150000
+    # Line 5 Worksheet line 6 caps the first phase-out at 5% x (second-tier
+    # threshold - first-tier threshold). QSS's cap is only $2,500 because the
+    # SECOND tier groups it with "all other statuses" at $200,000 — an engine
+    # without these caps overstates the reduction for QSS between $150k-$200k.
+    increased_amount_phaseout_cap:
+      married_filing_jointly: 12500
+      qualifying_surviving_spouse: 2500
+      head_of_household: 4375
+      single: 6250
+      married_filing_separately: 6250
     #   Second phase-out reduces the remaining $2,000 base at the regular
     #   thresholds, at $50 per $1,000 (5%) of MAGI over the threshold.
+    #   (Filers who check NEITHER residency box A/B fall back to the pre-ARPA
+    #   Part I-C ACTC: $1,400/child cap per Rev. Proc. 2020-45 Section 3.05,
+    #   15% of earned income over $2,500.)
     base_credit_phaseout_threshold:
       married_filing_jointly: 400000
       single: 200000
@@ -210,17 +341,20 @@ credits:
     phaseout_step: "each phase-out reduces the affected amount $50 for each $1,000 (or fraction) of MAGI above its threshold (5%)"
   earned_income_tax_credit:
     # ARPA (section 9621) raised the childless (0-child) EITC for 2021 only:
-    # bigger credit, wider phase-out, lower minimum age (19, no upper age cap;
-    # special ages for students / former foster / homeless youth), and raised
-    # the investment income limit to $10,000. The 1/2/3+ child amounts are the
-    # Rev. Proc. 2020-45 figures (unchanged by ARPA), confirmed in Pub 596 (2021).
+    # bigger credit ($1,502 max; 15.3% rates per IRC 32(n)), wider phase-out,
+    # lower minimum age (19, no upper age cap; special ages for students /
+    # former foster / homeless youth), and raised the investment income limit
+    # to $10,000 (ARPA section 9624 — permanent, indexed after 2021). The
+    # as-amended 2021 table is Rev. Proc. 2021-23 Section 4, which modifies
+    # AND SUPERSEDES Rev. Proc. 2020-45 Section 3.07 — never use 2020-45's
+    # childless column ($543 max). The 1/2/3+ columns are identical in both.
     citation:
-      source: "Pub 596 (2021) and ARPA section 9621 (childless EITC, $10,000 investment-income limit); Rev. Proc. 2020-45 Section 3.07 (1/2/3+ child amounts, unchanged by ARPA)"
-      url: "https://www.irs.gov/pub/irs-prior/p596--2021.pdf"
+      source: "Rev. Proc. 2021-23, Section 4 (2021 Earned Income Credit as amended by ARPA sections 9621/9624; modifies and supersedes Rev. Proc. 2020-45 Section 3.07)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-21-23.pdf"
     investment_income_limit: 10000          # ARPA raised this from the Rev. Proc. $3,650 to $10,000 for 2021
     # keyed by number of qualifying children: 0, 1, 2, 3+ (3+ shares the 2-child earned-income amount)
     by_qualifying_children:
-      "0": { earned_income_amount: 9820, max_credit: 1502, phaseout_begins_other: 11610, phaseout_begins_mfj: 17550, phaseout_complete_other: 21430, phaseout_complete_mfj: 27380 }
+      "0": { earned_income_amount: 9820, max_credit: 1502, phaseout_begins_other: 11610, phaseout_begins_mfj: 17560, phaseout_complete_other: 21430, phaseout_complete_mfj: 27380 }
       "1": { earned_income_amount: 10640, max_credit: 3618, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 42158, phaseout_complete_mfj: 48108 }
       "2": { earned_income_amount: 14950, max_credit: 5980, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 47915, phaseout_complete_mfj: 53865 }
       "3+": { earned_income_amount: 14950, max_credit: 6728, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 51464, phaseout_complete_mfj: 57414 }
