@@ -27,13 +27,19 @@ import pytest
 
 from taxfill_core.calc import (
     additional_medicare_tax,
+    education_credits,
+    excess_ss,
     irs_round,
     niit,
     presence_days,
     presence_days_by_year,
+    ptc_annual,
     se_tax,
     standard_deduction,
+    student_loan_interest_deduction,
     tax_from_taxable_income,
+    tax_with_preferential_rates,
+    taxable_social_security,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -694,3 +700,596 @@ def test_se_tax_without_wages_unchanged():
 def test_se_tax_negative_w2_wages_rejected():
     with pytest.raises(ValueError, match="w2_ss_wages"):
         se_tax(50_000, knowledge_dir=KNOWLEDGE_DIR, w2_ss_wages=-1)
+
+
+# ---------------------------------------------------------------------------
+# Qualified Dividends and Capital Gain Tax Worksheet (Phase F) — hand-derived
+# per the 2023 worksheet lines 1-25 and Rev. Proc. 2022-38 section 3.03
+# breakpoints (single: 0% up to 44,625; 15% up to 492,300; 20% above).
+# ---------------------------------------------------------------------------
+
+
+def test_qdcgt_ordinary_income_fills_the_zero_band_first():
+    # Single 2023, taxable 60,000 with 10,000 QD -> ordinary part 50,000.
+    # The worksheet stacks ordinary income BELOW preferential income:
+    #   line 7 = min(60,000, 44,625) = 44,625; line 8 = min(50,000, 44,625) = 44,625
+    #   line 9 (0%) = 44,625 - 44,625 = 0  (the 0% band is fully consumed by ordinary income)
+    #   line 17 (15%) = 10,000 -> line 18 = 1,500
+    #   line 22 = tax(50,000) = table row 50,000-50,050, midpoint 50,025:
+    #             5,147 + 22% x 5,300 = 6,313
+    #   line 23 = 1,500 + 6,313 = 7,813; line 24 = tax(60,000) = 8,513 (published row)
+    #   line 25 = min = 7,813
+    r = tax_with_preferential_rates(60_000, 10_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.amount_at_0pct == Decimal("0.00")
+    assert r.amount_at_15pct == Decimal("10000.00")
+    assert r.amount_at_20pct == Decimal("0.00")
+    assert r.tax_on_ordinary_part == 6313
+    assert r.all_ordinary_tax == 8513
+    assert r.tax == 7813
+    assert r.citation.url == "https://www.irs.gov/pub/irs-drop/rp-22-38.pdf"
+
+
+def test_qdcgt_zero_band_absorbs_all_preferential_income():
+    # Single 2023, taxable 40,000 with 10,000 QD -> ordinary part 30,000.
+    # Zero-band room above the ordinary part: min(40,000, 44,625) - 30,000 = 10,000 >= QD,
+    # so ALL the preferential income is taxed at 0% and the total equals tax(30,000):
+    #   tax(30,000) = row 30,000-30,050, midpoint 30,025: 1,100 + 12% x 19,025 = 3,383.
+    r = tax_with_preferential_rates(40_000, 10_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.amount_at_0pct == Decimal("10000.00")
+    assert r.amount_at_15pct == Decimal("0.00")
+    assert r.tax == 3383
+    assert r.tax == tax_from_taxable_income(30_000, "single", knowledge_dir=KNOWLEDGE_DIR).tax
+
+
+def test_qdcgt_short_term_loss_offsets_long_term_gain():
+    # Net capital gain = max(0, LT 10,000 + min(ST -4,000, 0)) = 6,000; + QD 2,000 = 8,000
+    # preferential. Taxable 50,000 -> ordinary part 42,000.
+    #   line 9 (0%) = 44,625 - 42,000 = 2,625
+    #   line 17 (15%) = min(8,000 - 2,625, 50,000 - (42,000 + 2,625)) = 5,375 -> 806.25 -> 806
+    #   line 22 = tax(42,000) = midpoint 42,025: 1,100 + 12% x 31,025 = 4,823
+    #   line 23 = 806 + 4,823 = 5,629 < line 24 = tax(50,000) = 6,313
+    r = tax_with_preferential_rates(50_000, 2_000, 10_000, -4_000, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.preferential_income == Decimal("8000.00")
+    assert r.amount_at_0pct == Decimal("2625.00")
+    assert r.amount_at_15pct == Decimal("5375.00")
+    assert r.tax == 5629
+
+
+def test_qdcgt_long_term_loss_leaves_qd_only():
+    # A net LT LOSS offsets nothing preferential (Schedule D line 16 smaller-of, floor 0):
+    # preferential = QD only, even with an ST gain (ST gain is ordinary income).
+    r = tax_with_preferential_rates(50_000, 5_000, -5_000, 3_000, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.preferential_income == Decimal("5000.00")
+    assert r.ordinary_part == Decimal("45000.00")
+
+
+def test_qdcgt_20_percent_band():
+    # Single 2023, taxable 600,000 with 200,000 QD -> ordinary part 400,000.
+    #   0% band fully consumed (400,000 > 44,625) -> line 9 = 0
+    #   15% band: line 14 = min(600,000, 492,300); line 16 = 492,300 - 400,000 = 92,300
+    #     -> line 18 = 13,845
+    #   20%: 200,000 - 92,300 = 107,700 -> line 21 = 21,540
+    #   line 22 = tax(400,000) = 52,832 + 35% x 168,750 = 111,894.50 -> 111,895
+    #   line 23 = 13,845 + 21,540 + 111,895 = 147,280 < line 24 = tax(600,000) = 182,332
+    r = tax_with_preferential_rates(600_000, 200_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.amount_at_0pct == Decimal("0.00")
+    assert r.amount_at_15pct == Decimal("92300.00")
+    assert r.amount_at_20pct == Decimal("107700.00")
+    assert r.tax_on_ordinary_part == 111895
+    assert r.all_ordinary_tax == 182332
+    assert r.tax == 147280
+
+
+def test_qdcgt_clamps_preferential_to_taxable_income():
+    # QD can exceed taxable income (deductions); line 10 clamps: preferential = 30,000,
+    # ordinary part 0, all of it inside the 44,625 zero band -> tax 0.
+    r = tax_with_preferential_rates(30_000, 50_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.preferential_income == Decimal("30000.00")
+    assert r.ordinary_part == Decimal("0.00")
+    assert r.tax == 0
+
+
+@pytest.mark.parametrize(
+    ("taxable", "qd", "lt", "st"),
+    [
+        (60_000, 10_000, 0, 0),
+        (40_000, 10_000, 0, 0),
+        (50_000, 2_000, 10_000, -4_000),
+        (50_000, 5_000, -5_000, 3_000),   # LT loss + ST gain -> QD only
+        (50_000, 0, -3_000, 8_000),       # LT loss + ST gain, no QD -> nothing preferential
+        (100_000, 0, 20_000, 0),
+        (600_000, 200_000, 0, 0),
+        (25_000, 25_000, 0, 0),
+        (0, 0, 0, 0),
+    ],
+)
+def test_qdcgt_never_exceeds_the_all_ordinary_tax(taxable, qd, lt, st):
+    # Worksheet line 25 is the SMALLER of the worksheet tax and the ordinary tax,
+    # so the result can never exceed tax_from_taxable_income on the same income.
+    r = tax_with_preferential_rates(taxable, qd, lt, st, "single", knowledge_dir=KNOWLEDGE_DIR)
+    ordinary = tax_from_taxable_income(taxable, "single", knowledge_dir=KNOWLEDGE_DIR).tax
+    assert r.all_ordinary_tax == ordinary
+    assert r.tax <= ordinary
+
+
+def test_qdcgt_qss_uses_the_explicit_qss_breakpoints():
+    # capital_gains_brackets carries qualifying_surviving_spouse EXPLICITLY (grouped
+    # with MFJ in every Rev. Proc. section 3.03): zero-band up to 89,250 for 2023.
+    qss = tax_with_preferential_rates(
+        80_000, 20_000, filing_status="qualifying_surviving_spouse", knowledge_dir=KNOWLEDGE_DIR
+    )
+    # ordinary part 60,000; zero-band room = min(80,000, 89,250) - 60,000 = 20,000 >= QD
+    assert qss.amount_at_0pct == Decimal("20000.00")
+    assert qss.tax == tax_from_taxable_income(60_000, "qualifying_surviving_spouse", knowledge_dir=KNOWLEDGE_DIR).tax
+
+
+def test_qdcgt_rejects_negative_qd_and_negative_taxable_income():
+    with pytest.raises(ValueError, match="qualified_dividends"):
+        tax_with_preferential_rates(50_000, -1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="taxable_income"):
+        tax_with_preferential_rates(-1, 0, knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Taxable Social Security benefits (Phase F) — hand-derived per the 2023
+# Social Security Benefits Worksheet (statutory IRC 86(c) thresholds).
+# ---------------------------------------------------------------------------
+
+
+def test_taxable_ss_classic_50_85_mix():
+    # Single, benefits 20,000, other income 30,000:
+    #   line 2 = 10,000; provisional (line 7) = 40,000; base 25,000 -> line 9 = 15,000
+    #   line 10 gap = 9,000 -> line 11 = 6,000; line 12 = 9,000; line 13 = 4,500
+    #   line 14 = min(10,000, 4,500) = 4,500; line 15 = 85% x 6,000 = 5,100
+    #   line 16 = 9,600 < line 17 = 17,000 -> taxable 9,600
+    r = taxable_social_security(20_000, 30_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.provisional_income == Decimal("40000.00")
+    assert r.base_amount == 25_000
+    assert r.adjusted_base_amount == 34_000
+    assert r.taxable_benefits == 9_600
+
+
+def test_taxable_ss_below_the_base_amount_is_zero():
+    # Single, benefits 10,000, other 10,000: provisional 15,000 < 25,000 -> nothing taxable.
+    r = taxable_social_security(10_000, 10_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.taxable_benefits == 0
+    assert "NO benefits are taxable" in r.work
+
+
+def test_taxable_ss_85_percent_cap_binds_at_high_income():
+    # Single, benefits 20,000, other 100,000: provisional 110,000; line 16 = 4,500 + 85% x 76,000
+    # = 69,100, capped at line 17 = 85% x 20,000 = 17,000.
+    r = taxable_social_security(20_000, 100_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.taxable_benefits == 17_000
+
+
+def test_taxable_ss_mfj_mid_tier_50_percent_band():
+    # MFJ, benefits 12,000, other 30,000: line 2 = 6,000; provisional 36,000; base 32,000
+    #   line 9 = 4,000 (within the 12,000 gap) -> line 11 = 0; line 13 = 2,000
+    #   line 14 = min(6,000, 2,000) = 2,000; line 16 = 2,000 < line 17 = 10,200 -> 2,000
+    r = taxable_social_security(12_000, 30_000, filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.base_amount == 32_000
+    assert r.taxable_benefits == 2_000
+
+
+def test_taxable_ss_tax_exempt_interest_counts_in_provisional_income():
+    # Same MFJ case but 4,000 tax-exempt interest pushes provisional to 40,000:
+    #   line 9 = 8,000 -> line 13 = 4,000; line 14 = min(6,000, 4,000) = 4,000 -> taxable 4,000
+    r = taxable_social_security(
+        12_000, 30_000, tax_exempt_interest=4_000, filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR
+    )
+    assert r.provisional_income == Decimal("40000.00")
+    assert r.taxable_benefits == 4_000
+
+
+def test_taxable_ss_mfs_lived_with_spouse_85_percent_path():
+    # MFS who lived WITH the spouse: both thresholds $0; taxable =
+    # min(85% x provisional, 85% x benefits). Benefits 10,000, other 20,000:
+    # provisional 25,000 -> min(21,250, 8,500) = 8,500 (benefits cap binds).
+    r = taxable_social_security(
+        10_000, 20_000, filing_status="married_filing_separately",
+        mfs_lived_with_spouse=True, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.base_amount == 0 and r.adjusted_base_amount == 0
+    assert r.taxable_benefits == 8_500
+    # Benefits 20,000, other 2,000: provisional 12,000 -> min(10,200, 17,000) = 10,200
+    # (the provisional-income side binds).
+    r2 = taxable_social_security(
+        20_000, 2_000, filing_status="married_filing_separately",
+        mfs_lived_with_spouse=True, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r2.taxable_benefits == 10_200
+
+
+def test_taxable_ss_mfs_lived_apart_all_year_uses_single_thresholds():
+    r = taxable_social_security(
+        20_000, 30_000, filing_status="married_filing_separately",
+        mfs_lived_with_spouse=False, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.base_amount == 25_000
+    assert r.taxable_benefits == 9_600  # identical to the single case
+    assert "lived apart" in r.work
+
+
+def test_taxable_ss_mfs_flag_rejected_for_other_statuses():
+    with pytest.raises(ValueError, match="mfs_lived_with_spouse"):
+        taxable_social_security(10_000, 10_000, filing_status="single",
+                                mfs_lived_with_spouse=True, knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_taxable_ss_unknown_status_prescriptive():
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        taxable_social_security(10_000, 10_000, filing_status="widowed", knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Excess social security withholding credit (Phase F) — 2023 per-person max
+# 9,932.40 (6.2% x 160,200), multiple employers only.
+# ---------------------------------------------------------------------------
+
+
+def test_excess_ss_two_employers():
+    # 6,000 + 6,000 = 12,000 counted vs the 9,932.40 max -> 2,067.60 -> 2,068.
+    r = excess_ss([6_000, 6_000], knowledge_dir=KNOWLEDGE_DIR)
+    assert r.max_withholding == Decimal("9932.40")
+    assert r.counted_total == Decimal("12000.00")
+    assert r.credit == 2068
+
+
+def test_excess_ss_single_employer_gets_no_credit_even_when_over_withheld():
+    # A single employer's over-withholding is recovered FROM THE EMPLOYER, never on the return.
+    r = excess_ss([12_000], knowledge_dir=KNOWLEDGE_DIR)
+    assert r.credit == 0
+    assert "employer" in r.work and "Form 843" in r.work
+    # A single employer under the max: still no credit, different explanation.
+    r2 = excess_ss([5_000], knowledge_dir=KNOWLEDGE_DIR)
+    assert r2.credit == 0
+    assert "MULTIPLE employers" in r2.work
+
+
+def test_excess_ss_entry_over_the_max_is_clipped_and_flagged():
+    # Employer #1 withheld 10,000 > 9,932.40: only the max counts toward the credit
+    # (the rest is an employer error); credit = 9,932.40 + 5,000 - 9,932.40 = 5,000.
+    r = excess_ss([10_000, 5_000], knowledge_dir=KNOWLEDGE_DIR)
+    assert r.counted_total == Decimal("14932.40")
+    assert r.credit == 5000
+    assert "employer error" in r.work and "#1" in r.work
+
+
+def test_excess_ss_input_validation():
+    with pytest.raises(TypeError, match="list"):
+        excess_ss(6_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match=r"withheld_by_employer\[1\]"):
+        excess_ss([6_000, -1], knowledge_dir=KNOWLEDGE_DIR)
+    assert excess_ss([], knowledge_dir=KNOWLEDGE_DIR).credit == 0
+
+
+# ---------------------------------------------------------------------------
+# Student loan interest deduction (Phase F) — 2023: cap 2,500; single phase-out
+# 75,000-90,000 (Rev. Proc. 2022-38 section 3.30); MFS barred by rule.
+# ---------------------------------------------------------------------------
+
+
+def test_sli_below_phaseout_full_capped_deduction():
+    r = student_loan_interest_deduction(3_000, 70_000, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tentative == Decimal("2500.00")
+    assert r.reduction == Decimal("0.00")
+    assert r.deduction == 2500
+
+
+def test_sli_midpoint_of_the_phaseout_halves():
+    # MAGI 82,500 is the exact midpoint of 75,000-90,000: reduction = 2,500 x 7,500/15,000 = 1,250.
+    r = student_loan_interest_deduction(3_000, 82_500, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.reduction == Decimal("1250.00")
+    assert r.deduction == 1250
+
+
+def test_sli_phaseout_applies_to_the_tentative_not_the_flat_cap():
+    # Pub 970's own example shape: interest 1,000 (< cap) at the midpoint -> reduction 500.
+    r = student_loan_interest_deduction(1_000, 82_500, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tentative == Decimal("1000.00")
+    assert r.deduction == 500
+
+
+def test_sli_fully_phased_out_at_the_end():
+    assert student_loan_interest_deduction(3_000, 90_000, "single", knowledge_dir=KNOWLEDGE_DIR).deduction == 0
+    assert student_loan_interest_deduction(3_000, 200_000, "single", knowledge_dir=KNOWLEDGE_DIR).deduction == 0
+
+
+def test_sli_mfs_is_zero_by_rule_not_an_error():
+    r = student_loan_interest_deduction(3_000, 50_000, "married_filing_separately", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.deduction == 0
+    assert "221(e)(2)" in r.work and "rule" in r.work
+
+
+def test_sli_qss_uses_the_lower_range_and_unknown_status_rejected():
+    # QSS phases out on the single/HoH range (75,000-90,000), NOT the MFJ range.
+    r = student_loan_interest_deduction(3_000, 82_500, "qualifying_surviving_spouse", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.deduction == 1250
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        student_loan_interest_deduction(3_000, 50_000, "married", knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Education credits (Phase F) — Form 8863: AOTC 100% of first 2,000 + 25% of
+# next 2,000 per student (40% refundable); LLC 20% of up to 10,000 per return;
+# 2023 phase-out 80,000-90,000 (160,000-180,000 MFJ); MFS barred.
+# ---------------------------------------------------------------------------
+
+
+def test_education_aotc_per_student_math():
+    # Student 1 (4,000): 2,000 + 25% x 2,000 = 2,500; student 2 (1,000): 100% x 1,000 = 1,000.
+    r = education_credits([4_000, 1_000], magi=50_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.aotc_total == 3500
+    assert r.aotc_refundable == 1400  # 40% of the post-phase-out AOTC
+    assert r.llc_amount == 0
+    assert r.total_credit == 3500
+    assert "student 1" in r.work and "student 2" in r.work
+
+
+def test_education_aotc_expenses_above_4000_still_cap_at_2500():
+    r = education_credits([10_000], magi=50_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.aotc_total == 2500
+
+
+def test_education_llc_is_20_percent_per_return():
+    r = education_credits([], llc_expenses=8_000, magi=50_000, filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.llc_amount == 1600
+    assert r.aotc_total == 0 and r.aotc_refundable == 0
+    assert r.total_credit == 1600
+    # Per-return cap: 25,000 of expenses still yields 20% x 10,000 = 2,000.
+    assert education_credits([], llc_expenses=25_000, magi=50_000, filing_status="single",
+                             knowledge_dir=KNOWLEDGE_DIR).llc_amount == 2000
+
+
+def test_education_phaseout_midpoint_halves_both_credits():
+    # Single MAGI 85,000 = midpoint of 80,000-90,000 for BOTH credits in 2023:
+    # AOTC 2,500 -> 1,250 (refundable 500); LLC 1,600 -> 800.
+    r = education_credits([4_000], llc_expenses=8_000, magi=85_000, filing_status="single",
+                          knowledge_dir=KNOWLEDGE_DIR)
+    assert r.aotc_total == 1250
+    assert r.aotc_refundable == 500
+    assert r.llc_amount == 800
+    assert r.total_credit == 2050
+
+
+def test_education_fully_phased_out_and_mfj_range():
+    assert education_credits([4_000], magi=90_000, filing_status="single",
+                             knowledge_dir=KNOWLEDGE_DIR).total_credit == 0
+    # MFJ uses 160,000-180,000: MAGI 90,000 is NOT phased out on a joint return.
+    r = education_credits([4_000], magi=90_000, filing_status="married_filing_jointly",
+                          knowledge_dir=KNOWLEDGE_DIR)
+    assert r.aotc_total == 2500
+
+
+def test_education_mfs_gets_neither_credit_by_rule():
+    r = education_credits([4_000], llc_expenses=8_000, magi=50_000,
+                          filing_status="married_filing_separately", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.total_credit == 0 and r.aotc_total == 0 and r.aotc_refundable == 0 and r.llc_amount == 0
+    assert "NEITHER" in r.work and "rule" in r.work
+
+
+def test_education_input_validation():
+    with pytest.raises(TypeError, match="list"):
+        education_credits(4_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match=r"aotc_expenses_per_student\[0\]"):
+        education_credits([-1], knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        education_credits([4_000], filing_status="widowed", knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Premium Tax Credit, annual method (Phase F) — Form 8962 for 2023: FPL from
+# the 2022 guidelines (13,590 for a household of 1, contiguous states), the
+# ARPA/IRA applicable-figure table, Table 5 repayment limitation.
+# ---------------------------------------------------------------------------
+
+
+def test_ptc_200_percent_fpl_golden():
+    # Income 27,180 = exactly 2 x 13,590 -> line 5 = 200 -> figure 0.0200
+    #   contribution = 27,180 x 0.02 = 543.60 -> 544
+    #   PTC = min(premiums 7,000, SLCSP 6,000 - 544 = 5,456) = 5,456; no APTC -> net PTC 5,456.
+    r = ptc_annual(27_180, 1, 7_000, 6_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_amount == 13_590
+    assert r.fpl_pct == 200
+    assert r.applicable_figure == Decimal("0.0200")
+    assert r.contribution == 544
+    assert r.ptc == 5456
+    assert r.net_ptc == 5456
+    assert r.repayment == 0
+
+
+def test_ptc_applicable_figure_interpolation_checkpoints():
+    # IRS Table 2 checkpoints the interpolation must reproduce exactly (round HALF UP
+    # to 4 decimals on the INTEGER percentage): 349 -> 0.0723, 399 -> 0.0848.
+    r349 = ptc_annual(47_500, 1, 6_000, 6_000, knowledge_dir=KNOWLEDGE_DIR)  # 47,500/13,590 = 349.52 -> 349
+    assert r349.fpl_pct == 349
+    assert r349.applicable_figure == Decimal("0.0723")
+    r399 = ptc_annual(54_300, 1, 6_000, 6_000, knowledge_dir=KNOWLEDGE_DIR)  # 54,300/13,590 = 399.55 -> 399
+    assert r399.fpl_pct == 399
+    assert r399.applicable_figure == Decimal("0.0848")
+
+
+def test_ptc_line5_truncates_never_rounds():
+    # 54,359/13,590 x 100 = 399.99...: Worksheet 2 says drop the decimals -> 399, not 400.
+    r = ptc_annual(54_359, 1, 6_000, 6_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 399
+    assert r.applicable_figure == Decimal("0.0848")
+    # Exactly 400% stays 400 (the literal 401 entry is only for OVER 400%).
+    assert ptc_annual(54_360, 1, 6_000, 6_000, knowledge_dir=KNOWLEDGE_DIR).fpl_pct == 400
+
+
+def test_ptc_repayment_capped_below_200_percent_single():
+    # Income 20,000 (147% FPL): figure 0.0000, contribution 0, PTC = min(2,000, 3,000) = 2,000.
+    # APTC 5,000 -> excess 3,000, Table 5 single cap below 200% = 350 -> repayment 350.
+    r = ptc_annual(20_000, 1, 2_000, 3_000, annual_aptc=5_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 147
+    assert r.applicable_figure == Decimal("0.0000")
+    assert r.ptc == 2000
+    assert r.net_ptc == 0
+    assert r.repayment == 350
+
+
+def test_ptc_repayment_cap_other_statuses_column():
+    # MFJ (any non-single status) uses the higher Table 5 column: 700 below 200% FPL.
+    r = ptc_annual(25_000, 2, 2_000, 3_000, annual_aptc=5_000,
+                   filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 136
+    assert r.repayment == 700
+
+
+def test_ptc_over_400_percent_enters_401_and_repays_in_full():
+    # 60,000/13,590 = 441% -> line 5 is literally 401; figure 0.0850 (NO eligibility cliff);
+    # contribution = 60,000 x 0.085 = 5,100 > SLCSP 4,000 -> PTC 0; but the repayment
+    # LIMITATION vanishes at 400%+ -> the full 3,000 APTC is repaid.
+    r = ptc_annual(60_000, 1, 7_000, 4_000, annual_aptc=3_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 401
+    assert r.applicable_figure == Decimal("0.0850")
+    assert r.contribution == 5100
+    assert r.ptc == 0
+    assert r.repayment == 3000
+
+
+def test_ptc_mfs_denied_by_rule_full_aptc_excess_capped():
+    # IRC 36B(c)(1)(C): a married-filing-separately filer without relief is NOT an
+    # applicable taxpayer. Income 20,000 (147% FPL) would compute PTC 5,000; instead
+    # line 24 = 0, net PTC = 0, and the FULL 4,000 APTC is excess — capped by the
+    # Table 5 'other' column below 200% FPL = 700.
+    r = ptc_annual(20_000, 1, 6_000, 5_000, annual_aptc=4_000,
+                   filing_status="married_filing_separately", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 147
+    assert r.ptc == 0
+    assert r.net_ptc == 0
+    assert r.repayment == 700
+    # The work trail explains the rule AND the relief exception.
+    assert "36B(c)(1)(C)" in r.work
+    assert "relief" in r.work
+    assert r.inputs["mfs_relief_exception"] is False
+
+
+def test_ptc_mfs_relief_exception_restores_the_computation():
+    # The domestic-abuse/spousal-abandonment relief (Form 8962 'relief' checkbox):
+    # figure 0.0000 -> contribution 0 -> PTC = min(6,000, 5,000) = 5,000; APTC 4,000
+    # -> net PTC 1,000 — exactly the pre-gate computation, with the relief noted.
+    r = ptc_annual(20_000, 1, 6_000, 5_000, annual_aptc=4_000,
+                   filing_status="married_filing_separately", mfs_relief_exception=True,
+                   knowledge_dir=KNOWLEDGE_DIR)
+    assert r.ptc == 5_000
+    assert r.net_ptc == 1_000
+    assert r.repayment == 0
+    assert "relief" in r.work
+    assert r.inputs["mfs_relief_exception"] is True
+
+
+def test_ptc_mfs_denied_repayment_uncapped_at_400_percent():
+    # The MFS denial is still subject to Table 5, which VANISHES at 400%+ FPL:
+    # the whole APTC is repaid (mirrors the over-400 rule for other statuses).
+    r = ptc_annual(60_000, 1, 7_000, 4_000, annual_aptc=3_000,
+                   filing_status="married_filing_separately", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.ptc == 0
+    assert r.repayment == 3_000
+
+
+def test_ptc_mfs_relief_flag_rejected_for_other_statuses():
+    # Mirrors taxable_social_security's mfs_lived_with_spouse contract.
+    with pytest.raises(ValueError, match="mfs_relief_exception"):
+        ptc_annual(20_000, 1, 6_000, 5_000, filing_status="single",
+                   mfs_relief_exception=True, knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_ptc_below_100_fpl_without_aptc_is_zero():
+    # 13,000 / 13,590 = 95% FPL with NO APTC: the estimated-income safe harbor cannot
+    # apply (it requires APTC paid), so the filer is not an applicable taxpayer
+    # (IRC 36B(c)(1)(A)) and line 24 is $0 — not the 5,000 the table would give.
+    r = ptc_annual(13_000, 1, 6_000, 5_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 95
+    assert r.ptc == 0
+    assert r.net_ptc == 0
+    assert r.repayment == 0
+    assert "below 100%" in r.work
+    assert "safe harbor" in r.work
+
+
+def test_ptc_below_100_fpl_with_aptc_computes_with_caveat():
+    # APTC was paid, so the estimated-income safe harbor can apply: keep the
+    # computation (figure 0.0000 -> PTC = min(6,000, 5,000) = 5,000; net 2,000)
+    # but spell out the eligibility caveat in the work trail.
+    r = ptc_annual(13_000, 1, 6_000, 5_000, annual_aptc=3_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 95
+    assert r.ptc == 5_000
+    assert r.net_ptc == 2_000
+    assert "CAVEAT" in r.work
+    assert "safe harbor" in r.work
+
+
+def test_ptc_alaska_table_and_large_household():
+    # Alaska household of 1: FPL 16,990; income 33,980 = 200% -> contribution 680 (679.60 up).
+    ak = ptc_annual(33_980, 1, 7_000, 6_000, state="alaska", knowledge_dir=KNOWLEDGE_DIR)
+    assert ak.fpl_amount == 16_990
+    assert ak.contribution == 680
+    # Household of 10 (contiguous): 46,630 + 2 x 4,720 = 56,070.
+    big = ptc_annual(56_070, 10, 7_000, 6_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert big.fpl_amount == 56_070
+    assert big.fpl_pct == 100
+
+
+def test_ptc_input_validation():
+    with pytest.raises(ValueError, match="state"):
+        ptc_annual(27_180, 1, 7_000, 6_000, state="guam", knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="household_size"):
+        ptc_annual(27_180, 0, 7_000, 6_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        ptc_annual(27_180, 1, 7_000, 6_000, filing_status="widowed", knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_ptc_unshipped_year_error_is_prescriptive():
+    with pytest.raises(ValueError, match=r"no tax\.ptc block.*2023"):
+        ptc_annual(27_180, 1, 7_000, 6_000, year=2019, knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Phase F ops across every supported year: the five statutory/indexed ops ship
+# for 2019-2024 (capital-gains breakpoints DIFFER per year — Rev. Procs
+# 2018-57 .. 2023-34); the PTC block exists only for 2023-2024.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("year", "expected_qdcgt", "expected_excess"),
+    [
+        # QDCGT spot: single, taxable 41,000 ALL qualified dividends. The slice above
+        # that year's zero-rate breakpoint is taxed at 15% (ordinary part is 0):
+        #   2019: breakpoint 39,375 -> 1,625 x 15% = 243.75 -> 244
+        #   2020: 40,000 -> 1,000 x 15% = 150      2021: 40,400 -> 600 x 15% = 90
+        #   2022: 41,675 / 2023: 44,625 / 2024: 47,025 -> all at 0% -> tax 0
+        # excess_ss spot: [6,000, 6,000] vs that year's per-person max (6.2% x wage base):
+        #   2019: 12,000 - 8,239.80 -> 3,760   2020: - 8,537.40 -> 3,463
+        #   2021: - 8,853.60 -> 3,146          2022: - 9,114.00 -> 2,886
+        #   2023: - 9,932.40 -> 2,068          2024: - 10,453.20 -> 1,547
+        (2019, 244, 3760),
+        (2020, 150, 3463),
+        (2021, 90, 3146),
+        (2022, 0, 2886),
+        (2023, 0, 2068),
+        (2024, 0, 1547),
+    ],
+)
+def test_phase_f_ops_ship_for_every_supported_year(year, expected_qdcgt, expected_excess):
+    qd = tax_with_preferential_rates(41_000, 41_000, filing_status="single", year=year, knowledge_dir=KNOWLEDGE_DIR)
+    assert qd.tax == expected_qdcgt
+    assert excess_ss([6_000, 6_000], year=year, knowledge_dir=KNOWLEDGE_DIR).credit == expected_excess
+    # Statutory IRC 86(c) thresholds: identical result in every year.
+    assert taxable_social_security(20_000, 30_000, filing_status="single", year=year,
+                                   knowledge_dir=KNOWLEDGE_DIR).taxable_benefits == 9_600
+    # SLI: MAGI 0 is below every year's phase-out start -> the full 2,500 cap.
+    assert student_loan_interest_deduction(3_000, 0, "single", year=year,
+                                           knowledge_dir=KNOWLEDGE_DIR).deduction == 2500
+    # AOTC: statutory formula, identical in every year at low MAGI.
+    assert education_credits([4_000], magi=0, filing_status="single", year=year,
+                             knowledge_dir=KNOWLEDGE_DIR).aotc_total == 2500
+    # PTC ships only for 2023/2024 (ARPA table extended by IRA sec. 12001(a)).
+    if year in (2023, 2024):
+        assert ptc_annual(30_000, 1, 6_000, 5_000, year=year, knowledge_dir=KNOWLEDGE_DIR).ptc >= 0
+    else:
+        with pytest.raises(ValueError, match=r"no tax\.ptc block"):
+            ptc_annual(30_000, 1, 6_000, 5_000, year=year, knowledge_dir=KNOWLEDGE_DIR)

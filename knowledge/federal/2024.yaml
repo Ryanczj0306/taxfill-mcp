@@ -143,6 +143,166 @@ tax:
       head_of_household: 200000
       qualifying_surviving_spouse: 250000
 
+  # Maximum capital gains rate breakpoints under IRC section 1(h), indexed
+  # separately under section 1(j)(5): TAXABLE-INCOME ceilings for the 0% and
+  # 15% rates on adjusted net capital gain / qualified dividends (20% above
+  # the 15% ceiling), with ordinary income stacked first — the Qualified
+  # Dividends and Capital Gain Tax Worksheet line 6 / line 13 amounts. NOT
+  # equal to the ordinary bracket boundaries; never derive them from the rate
+  # schedules. MFS is exactly half of MFJ; a qualifying surviving spouse uses
+  # the MFJ amounts (the Rev. Proc. groups surviving spouses with joint returns).
+  capital_gains_brackets:
+    citation:
+      source: "Rev. Proc. 2023-34, Section 3.03 (Maximum Capital Gains Rate)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-23-34.pdf"
+    max_zero_rate_amount:
+      single: 47025
+      married_filing_jointly: 94050
+      married_filing_separately: 47025
+      head_of_household: 63000
+      qualifying_surviving_spouse: 94050
+    max_15_percent_rate_amount:
+      single: 518900
+      married_filing_jointly: 583750
+      married_filing_separately: 291850
+      head_of_household: 551350
+      qualifying_surviving_spouse: 583750
+
+  # Social Security Benefits Worksheet parameters (Form 1040 line 6b; line 5b
+  # in 2019). Statutory under IRC section 86(c) and never indexed — identical
+  # in every year 2019-2024. MFS splits by BEHAVIOR, not just status: lived
+  # apart from the spouse ALL year -> the single thresholds (write "D" next to
+  # the benefits line on paper returns); lived with the spouse at ANY time ->
+  # both tiers are $0 (mfs_living_with_spouse_base) and taxable benefits =
+  # min(0.85 x provisional income, 0.85 x benefits). The published worksheet
+  # prints the second tier as the line-10 gap ($9,000, or $12,000 for MFJ);
+  # the explicit IRC 86(c)(2) adjusted base amounts stored here are
+  # arithmetically identical.
+  taxable_social_security:
+    citation:
+      source: "2024 Instructions for Form 1040, Social Security Benefits Worksheet (lines 6a/6b); IRC section 86(c)"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2024.pdf"
+    base_amount:
+      single: 25000
+      married_filing_jointly: 32000
+      head_of_household: 25000
+      qualifying_surviving_spouse: 25000
+      married_filing_separately_lived_apart_all_year: 25000
+    adjusted_base_amount:
+      single: 34000
+      married_filing_jointly: 44000
+      head_of_household: 34000
+      qualifying_surviving_spouse: 34000
+      married_filing_separately_lived_apart_all_year: 34000
+    mfs_living_with_spouse_base: 0
+    inclusion_rate_tier1: 0.50
+    inclusion_rate_tier2: 0.85
+    max_taxable_share_of_benefits: 0.85
+
+  # Excess social security / tier 1 RRTA withholding credit parameters
+  # (Schedule 3 line 11).
+  # The cap is PER PERSON: each spouse's box-4 withholding is compared to the
+  # max separately, never combined. The credit exists only when MULTIPLE
+  # employers together over-withheld; a single employer's excess must be
+  # adjusted by that employer (Form 843 if it refuses) and is never claimable
+  # on the return. max_withholding = rate x wage base, exact to the cent.
+  employee_social_security:
+    citation:
+      source: "2024 Instructions for Form 1040, Schedule 3 line 11 (Excess Social Security and Tier 1 RRTA Tax Withheld); Pub 15 (2024), social security rate and wage base limit"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2024.pdf"
+    rate: 0.062
+    ss_wage_base: 168600
+    max_withholding: 10453.20
+
+  # Section 221 student-loan-interest deduction (Schedule 1). The $2,500 cap
+  # is statutory (IRC 221(b)(1)), not indexed. married_filing_separately is
+  # deliberately ABSENT: MFS may not take the deduction at all (IRC 221(e)(2))
+  # — a missing status means not-allowed. Reduction = tentative deduction
+  # (min(cap, interest paid)) x (MAGI - start) / (end - start); the span is
+  # $15,000 ($30,000 MFJ) in every supported year.
+  student_loan_interest:
+    citation:
+      source: "Rev. Proc. 2023-34, Section 3.30 (Interest on Education Loans)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-23-34.pdf"
+    max_deduction: 2500
+    phaseout:
+      single: { start: 80000, end: 95000 }
+      head_of_household: { start: 80000, end: 95000 }
+      qualifying_surviving_spouse: { start: 80000, end: 95000 }
+      married_filing_jointly: { start: 165000, end: 195000 }
+
+  # Form 8863 education credits. AOTC: 100% of the first $2,000 of qualified
+  # expenses PER STUDENT plus 25% of the next $2,000 (max $2,500 per student),
+  # 40% refundable unless the Form 8863 line 7 under-age-24 exception applies;
+  # its phaseout is statutory (IRC 25A(i)(4)) and identical in all years.
+  # LLC: 20% of up to $10,000 of expenses PER RETURN, nonrefundable. MFS may
+  # claim NEITHER credit (rule — hence no MFS keys). "other" = single /
+  # head_of_household / qualifying_surviving_spouse.
+  education_credits:
+    citation:
+      source: "2024 Instructions for Form 8863 (Education Credits)"
+      url: "https://www.irs.gov/pub/irs-prior/i8863--2024.pdf"
+    aotc:
+      per_student_cap: 2500
+      first_dollar_cap: 2000
+      second_rate: 0.25
+      refundable_fraction: 0.40
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+    llc:
+      per_return_expense_cap: 10000
+      rate: 0.20
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+
+  # Premium Tax Credit (Form 8962) — the ARPA 0%-8.5% applicable percentage
+  # table, extended to taxable years 2023-2025 by IRA section 12001(a) and
+  # expiring after TY2025 (never extrapolate forward). CITATION WARNING: the
+  # pre-IRA indexed table printed in Rev. Proc. 2022-34 Section 2.01
+  # (1.92%-9.12%) is INOPERATIVE for 2023 — never transcribe it; the extension
+  # is confirmed in Rev. Proc. 2023-29, footnote 1
+  # (https://www.irs.gov/pub/irs-drop/rp-23-29.pdf).
+  # Mechanics (Worksheet 2 + Table 2): line 5 = household income / FPL x 100,
+  # TRUNCATED to an integer (3.997 -> 399, never rounded; enter literally 401
+  # when over 400%); the applicable figure equals linear interpolation within
+  # the band rounded HALF-UP to 4 decimals (349 -> 0.0723, 399 -> 0.0848);
+  # 0.0850 flat from 400% up — no eligibility cliff, but the repayment
+  # LIMITATION vanishes at 400% (full excess APTC is repaid). Initial/final
+  # are stored as DECIMAL fractions (the Rev. Proc. prints percent form).
+  ptc:
+    citation:
+      source: "2024 Instructions for Form 8962 (Table 2, Worksheet 2, Tables 1-1 to 1-3, Table 5); Rev. Proc. 2023-29, Section 2.01 (2024 Applicable Percentage Table)"
+      url: "https://www.irs.gov/pub/irs-prior/i8962--2024.pdf"
+    applicable_percentage_table:
+      - { fpl_pct_at_least: 0, fpl_pct_less_than: 150, initial: 0.00, final: 0.00 }
+      - { fpl_pct_at_least: 150, fpl_pct_less_than: 200, initial: 0.00, final: 0.02 }
+      - { fpl_pct_at_least: 200, fpl_pct_less_than: 250, initial: 0.02, final: 0.04 }
+      - { fpl_pct_at_least: 250, fpl_pct_less_than: 300, initial: 0.04, final: 0.06 }
+      - { fpl_pct_at_least: 300, fpl_pct_less_than: 400, initial: 0.06, final: 0.085 }
+      - { fpl_pct_at_least: 400, fpl_pct_less_than: null, initial: 0.085, final: 0.085 }
+    federal_poverty_line:
+      guidelines_year: 2023   # Form 8962 line 4: for 2024, the 2023 federal poverty lines are used
+      contiguous_48_and_dc:
+        household_size: { 1: 14580, 2: 19720, 3: 24860, 4: 30000, 5: 35140, 6: 40280, 7: 45420, 8: 50560 }
+        per_additional_person: 5140
+      alaska:
+        household_size: { 1: 18210, 2: 24640, 3: 31070, 4: 37500, 5: 43930, 6: 50360, 7: 56790, 8: 63220 }
+        per_additional_person: 6430
+      hawaii:
+        household_size: { 1: 16770, 2: 22680, 3: 28590, 4: 34500, 5: 40410, 6: 46320, 7: 52230, 8: 58140 }
+        per_additional_person: 5910
+    # Table 5 repayment limitation, keyed by line 5 (integer FPL%): "Single"
+    # vs every other filing status (MFJ, MFS, HoH and QSS all use the higher
+    # column). Last row = 400% or more: NO limitation, line 28 left blank.
+    repayment_limitation:
+      - { fpl_band_lt: 200, single: 375, other: 750 }
+      - { fpl_band_lt: 300, single: 950, other: 1900 }
+      - { fpl_band_lt: 400, single: 1575, other: 3150 }
+      - { fpl_band_lt: null, single: null, other: null }
+    no_400_pct_cliff: true
+
 # Pub 501 (2024) Table 1 (Filing Requirements Chart for Most Taxpayers): the
 # gross-income level at or above which a return is required, by status and age.
 # Non-elderly amounts equal that status's standard deduction; each 65+ person

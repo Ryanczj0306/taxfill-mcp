@@ -22,18 +22,24 @@ from mcp.server.fastmcp import FastMCP, Image
 
 from taxfill_core import (
     additional_medicare_tax as _additional_medicare_tax,
+    education_credits as _education_credits,
     estimate_refund as _estimate_refund,
+    excess_ss as _excess_ss,
     file_and_pay as _file_and_pay,
     fill_form as _fill_form,
     filing_summary as _filing_summary,
     get_sources as _get_sources,
     intake_checklist as _intake_checklist,
     niit as _niit,
+    ptc_annual as _ptc_annual,
     render_pdf as _render_pdf,
     se_tax as _se_tax,
     standard_deduction as _standard_deduction,
     state_scope as _state_scope,
+    student_loan_interest_deduction as _student_loan_interest_deduction,
     tax_from_taxable_income as _tax,
+    tax_with_preferential_rates as _tax_with_preferential_rates,
+    taxable_social_security as _taxable_social_security,
     verify_filing as _verify_filing,
     verify_form as _verify_form,
 )
@@ -176,17 +182,35 @@ def render_form(pdf_path: str, pages: list[int] | None = None, dpi: float = 170)
 
 @mcp.tool()
 def calc(op: str, args: dict[str, Any]) -> dict:
-    """Deterministic tax math. op in {tax, standard_deduction, se_tax, additional_medicare_tax,
-    niit}; every result shows its work and cites the data pack.
+    """Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
+    additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
+    education_credits, ptc_annual}; every result shows its work and cites the data pack.
 
-    - tax: args {taxable_income, filing_status, year}
+    - tax: args {taxable_income, filing_status, year} (ORDINARY line 16 only — with qualified
+      dividends or capital gains use tax_with_preferential_rates instead, even below $100,000)
+    - tax_with_preferential_rates: args {taxable_income, qualified_dividends, net_long_term_gain?,
+      net_short_term_gain?, filing_status, year} (Qualified Dividends and Capital Gain Tax Worksheet)
     - standard_deduction: args {filing_status, year, age_65_plus?, blind?}
     - se_tax: args {net_profit, year, w2_ss_wages?} (w2_ss_wages = W-2 box 3+7, Schedule SE lines 8a-9)
     - additional_medicare_tax: args {medicare_wages, filing_status, year, se_net_profit?} (Form 8959)
     - niit: args {net_investment_income, magi, filing_status, year} (Form 8960; NRAs exempt)
+    - taxable_social_security: args {benefits, other_income, tax_exempt_interest?, filing_status,
+      year, mfs_lived_with_spouse?} (SS Benefits Worksheet -> Form 1040 line 6b)
+    - excess_ss: args {withheld_by_employer: [per-employer W-2 box 4, ONE person], year}
+      (Schedule 3 excess-SS credit; multiple employers only)
+    - student_loan_interest_deduction: args {interest_paid, magi, filing_status, year} (MFS gets $0)
+    - education_credits: args {aotc_expenses_per_student: [...], llc_expenses?, magi, filing_status,
+      year} (Form 8863 AOTC + LLC; MFS gets $0)
+    - ptc_annual: args {household_income, household_size, annual_premiums, annual_slcsp, annual_aptc?,
+      filing_status, year, state?, mfs_relief_exception?} (Form 8962 annual method; state in
+      other|alaska|hawaii; 2023-2024 only. MFS gets PTC $0 by rule — IRC 36B(c)(1)(C) — unless
+      mfs_relief_exception claims the domestic-abuse/abandonment relief; below-100%-FPL with no APTC
+      also gets $0)
     """
     if op == "tax":
         return _dump(_tax(**args))
+    if op == "tax_with_preferential_rates":
+        return _dump(_tax_with_preferential_rates(**args))
     if op == "standard_deduction":
         return _dump(_standard_deduction(**args))
     if op == "se_tax":
@@ -195,9 +219,20 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _dump(_additional_medicare_tax(**args))
     if op == "niit":
         return _dump(_niit(**args))
+    if op == "taxable_social_security":
+        return _dump(_taxable_social_security(**args))
+    if op == "excess_ss":
+        return _dump(_excess_ss(**args))
+    if op == "student_loan_interest_deduction":
+        return _dump(_student_loan_interest_deduction(**args))
+    if op == "education_credits":
+        return _dump(_education_credits(**args))
+    if op == "ptc_annual":
+        return _dump(_ptc_annual(**args))
     raise ValueError(
-        f"unknown calc op {op!r} — supported: tax, standard_deduction, se_tax, "
-        f"additional_medicare_tax, niit"
+        f"unknown calc op {op!r} — supported: tax, tax_with_preferential_rates, standard_deduction, "
+        f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
+        f"student_loan_interest_deduction, education_credits, ptc_annual"
     )
 
 

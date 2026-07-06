@@ -212,6 +212,79 @@ _SPECS: list[DocSpec] = [
             _b("13l", "Box 13l — Recipient's country code", "text"),
         ],
     ),
+    DocSpec(
+        kind="SSA-1099",
+        title="Social Security Benefit Statement",
+        source_url="https://www.ssa.gov/manage-benefits/get-tax-form-10991042s",
+        boxes=[
+            _b("2", "Box 2 — Beneficiary's Social Security number", "ssn", required=True),
+            _b("3", "Box 3 — Benefits paid in the year", "money"),
+            _b("4", "Box 4 — Benefits repaid to SSA in the year", "money"),
+            _b("5", "Box 5 — Net benefits (box 3 minus box 4)", "money", required=True),
+            _b("6", "Box 6 — Voluntary federal income tax withheld", "money"),
+        ],
+    ),
+    DocSpec(
+        kind="1099-R",
+        title="Distributions From Pensions, Annuities, Retirement or Profit-Sharing Plans, IRAs, etc.",
+        source_url="https://www.irs.gov/forms-pubs/about-form-1099-r",
+        boxes=[
+            _b("payer_tin", "Payer's TIN", "tin"),
+            _b("recipient_tin", "Recipient's TIN", "tin", required=True),
+            _b("1", "Box 1 — Gross distribution", "money", required=True),
+            _b("2a", "Box 2a — Taxable amount", "money"),
+            _b("2b_not_determined", "Box 2b — Taxable amount not determined", "checkbox"),
+            _b("2b_total_distribution", "Box 2b — Total distribution", "checkbox"),
+            _b("4", "Box 4 — Federal income tax withheld", "money"),
+            _b("7", "Box 7 — Distribution code(s)", "code", required=True),
+            _b("7_ira_sep_simple", "Box 7 — IRA/SEP/SIMPLE", "checkbox"),
+        ],
+    ),
+    DocSpec(
+        kind="1099-B",
+        title="Proceeds From Broker and Barter Exchange Transactions",
+        source_url="https://www.irs.gov/forms-pubs/about-form-1099-b",
+        boxes=[
+            _b("payer_tin", "Payer's TIN", "tin"),
+            _b("recipient_tin", "Recipient's TIN", "tin", required=True),
+            _b("1a", "Box 1a — Description of property", "text"),
+            _b("1b", "Box 1b — Date acquired", "text"),
+            _b("1c", "Box 1c — Date sold or disposed", "text"),
+            _b("1d", "Box 1d — Proceeds", "money", required=True),
+            _b("1e", "Box 1e — Cost or other basis", "money"),
+            _b("1g", "Box 1g — Wash sale loss disallowed", "money"),
+            _b("2_short_term", "Box 2 — Short-term gain or loss", "checkbox"),
+            _b("2_long_term", "Box 2 — Long-term gain or loss", "checkbox"),
+            _b("4", "Box 4 — Federal income tax withheld", "money"),
+            _b("5", "Box 5 — Noncovered security", "checkbox"),
+        ],
+    ),
+    DocSpec(
+        kind="1095-A",
+        title="Health Insurance Marketplace Statement",
+        source_url="https://www.irs.gov/forms-pubs/about-form-1095-a",
+        boxes=[
+            _b("marketplace_state", "Part I line 1 — Marketplace state", "state"),
+            _b("policy_number", "Part I line 2 — Marketplace-assigned policy number", "text"),
+            # Part III monthly rows (lines 21-32), columns A (premium) / B (SLCSP) / C (APTC).
+            *[
+                _b(f"{line}{col}", f"Part III line {line}{col.upper()} — {month} {label}", "money")
+                for line, month in zip(
+                    range(21, 33),
+                    ("January", "February", "March", "April", "May", "June", "July",
+                     "August", "September", "October", "November", "December"),
+                )
+                for col, label in (
+                    ("a", "monthly enrollment premium"),
+                    ("b", "SLCSP premium"),
+                    ("c", "advance payment of PTC"),
+                )
+            ],
+            _b("33a", "Line 33A — Annual premium total", "money", required=True),
+            _b("33b", "Line 33B — Annual SLCSP premium total", "money", required=True),
+            _b("33c", "Line 33C — Annual advance PTC total", "money", required=True),
+        ],
+    ),
 ]
 
 DOC_SPECS: dict[str, DocSpec] = {s.kind: s for s in _SPECS}

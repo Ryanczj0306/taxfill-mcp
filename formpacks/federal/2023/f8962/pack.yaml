@@ -1,0 +1,387 @@
+# Form 8962 (2023 revision) — Premium Tax Credit (PTC). Two pages; attaches to
+# Form 1040, 1040-SR, or 1040-NR (line 26 -> Schedule 3 line 9; line 29 ->
+# Schedule 2 line 2).
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title ("Premium Tax Credit (PTC)")
+# and revision year "2023" ("Form 8962 (2023)" footer on both pages) before
+# pinning pdf_sha256 (freshness protocol, dev plan section 7).
+#
+# Field map: introspected from this exact revision and vision-verified against
+# a sentinel-sweep render (every box shows its own field name). ALL 141
+# fillable widgets are mapped: page 1 has 95 text + 8 checkbox widgets, page 2
+# has 36 text + 2 checkbox widgets. No widget is excluded.
+#
+# Line 6 ("Reserved for future use") is a greyed-out row with NO AcroForm field
+# in this blank — the field names f1_12 and c1_3 are simply absent from the
+# PDF (the numbering jumps f1_11 -> f1_13 and c1_2 -> c1_4), so there is
+# nothing to map or exclude for it.
+#
+# Checkbox shapes (export values dumped from the blank, never guessed):
+#   - Box A (MFS-exception, header) is a single optional checkbox c1_1 (/1).
+#   - Line 4's three federal-poverty-table boxes (a Alaska / b Hawaii /
+#     c Other 48 states and DC) are THREE separate fields c1_2[0..2] with
+#     distinct states /1 /2 /3 — one question, so they share group fpl_table;
+#     every filer checks exactly one ("Check the appropriate box"), so the
+#     group is required.
+#   - Lines 9, 10 and 34 are Yes/No pairs on separate fields (/1 = Yes,
+#     /2 = No). Line 9 is answered by every filer (required); line 10 is
+#     reached only when line 9 is "No", and line 34 only by Part IV filers,
+#     so those groups are not required.
+#
+# Relations: only unconditional form-face math is declared.
+#   - "8a == 3 * 7" is intentionally NOT declared: line 7 (applicable
+#     figure) is a DECIMAL text line (e.g. "0.0850"), not money, so the
+#     verifier reads it blank-as-zero from disk and the relation would
+#     hard-FAIL every correctly filled form through the MCP verify tools
+#     (adversarial audit finding). The line-8a math is enforced by the
+#     engine's own calc.ptc_annual instead.
+#   - Line 24/25 print an either-or rule ("amount from line 11(e) OR add
+#     lines 12(e) through 23(e)"): encoded as 11e + 12e + ... + 23e, exact in
+#     both methods because the annual row and the monthly rows are mutually
+#     exclusive (line 10), so the unused block sums to zero. (sum() ranges
+#     cannot span rows 12..23 — endpoints must share one numeric prefix.)
+#   - NOT declared, deliberately:
+#     * "29 == min(27, 28)" — the printed "smaller of line 27 or line 28"
+#       breaks when line 5 is 400 or more: the instructions then say to SKIP
+#       line 28 (leave it blank, no repayment limitation) and enter the line
+#       27 amount on line 29, so blank-as-zero min(27, 0) = 0 would hard-fail
+#       that legitimate filing. Same reasoning as the f8960 18a copy rule.
+#     * the column (c) copy rules — annual "(line 8a)" and monthly "(amount
+#       from line 8b or alternative marriage monthly calculation)" — are
+#       method-conditional: on a monthly-method filing row 11 is blank while
+#       8a is nonzero (and vice versa), and Part V filers use alternative
+#       amounts, so blank-as-zero would hard-fail legitimate filings.
+#
+# Cross-form: line 26 carries to Schedule 3 (Form 1040) line 9 and line 29 to
+# Schedule 2 (Form 1040) line 2, both printed on the form face. SKIPPED (not
+# FAIL) when the filing has no sched_3/sched_2 — a net-PTC filing needs no
+# Schedule 2 leg and a repayment filing needs no Schedule 3 leg.
+form: "8962"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f8962--2023.pdf
+pdf_sha256: "74c8dae38348e5236d1bffb4e07333181d96a6029b872da7d001efe53763deff"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header ---------------------------------------------------------------
+  - line: name                       # "Name shown on your return"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: identifying_number         # "Your social security number"
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only   # PDF MaxLen is 11 (fits a dashed SSN), but digits-only keeps cross-form identity values consistent
+  # Box A: "You cannot take the PTC if your filing status is married filing
+  # separately unless you qualify for an exception ... If you qualify, check
+  # the box" — optional single checkbox, only for MFS-exception filers.
+  - line: a
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+
+  # ---- Part I — Annual and Monthly Contribution Amount -----------------------
+  - line: "1"            # Tax family size (a count, not dollars)
+    field: "Page1[0].f1_3[0]"
+    type: text
+  - line: "2a"           # Modified AGI
+    field: "Page1[0].f1_4[0]"
+    type: money
+  - line: "2b"           # Total of dependents' modified AGI
+    field: "Page1[0].f1_5[0]"
+    type: money
+  - line: "3"            # Household income. Add the amounts on lines 2a and 2b
+    field: "Page1[0].f1_6[0]"
+    type: money
+  # Line 4's federal-poverty-table boxes — one question, three separate fields.
+  - line: "4.alaska"                 # "a [] Alaska"
+    field: "Page1[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+    group: fpl_table
+    required: true                   # "Check the appropriate box for the federal poverty table used"
+  - line: "4.hawaii"                 # "b [] Hawaii"
+    field: "Page1[0].c1_2[1]"
+    type: checkbox
+    on_state: "/2"
+    group: fpl_table
+  - line: "4.other_48_states"        # "c [] Other 48 states and DC"
+    field: "Page1[0].c1_2[2]"
+    type: checkbox
+    on_state: "/3"
+    group: fpl_table
+  - line: "4"            # Federal poverty line amount (Table 1-1, 1-2, or 1-3)
+    field: "Page1[0].f1_7[0]"
+    type: money
+  - line: "5"            # Household income as a percentage of federal poverty line — integer, the form prints the "%" sign
+    field: "Page1[0].f1_8[0]"
+    type: text
+  # Line 6 "Reserved for future use" — greyed row, no field in the blank (see header).
+  - line: "7"            # Applicable figure — a DECIMAL from the instructions table (e.g. "0.0850"), not money
+    field: "Page1[0].f1_9[0]"
+    type: text
+  - line: "8a"           # Annual contribution amount. Multiply line 3 by line 7, round to whole dollars
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "8b"           # Monthly contribution amount. Divide line 8a by 12, round to whole dollars
+    field: "Page1[0].f1_11[0]"
+    type: money
+
+  # ---- Part II — PTC Claim and Reconciliation of APTC ------------------------
+  # Line 9: allocating policy amounts / alternative year-of-marriage calculation?
+  - line: "9.yes"        # "Yes. Skip to Part IV ... or Part V"
+    field: "Page1[0].c1_4[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line9
+    required: true                   # every filer answers line 9
+  - line: "9.no"         # "No. Continue to line 10"
+    field: "Page1[0].c1_4[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line9
+  # Line 10: can you use line 11 (annual calculation)? Reached only when line 9 is "No".
+  - line: "10.yes"       # "Yes. Continue to line 11 ... skip lines 12-23"
+    field: "Page1[0].c1_5[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line10
+  - line: "10.no"        # "No. Continue to lines 12-23"
+    field: "Page1[0].c1_5[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line10
+
+  # Line 11 — Annual Calculation. Columns: (a) annual enrollment premiums
+  # (1095-A line 33A), (b) annual applicable SLCSP premium (33B), (c) annual
+  # contribution amount (line 8a), (d) annual maximum premium assistance
+  # ((b)-(c), floor 0), (e) annual PTC allowed (smaller of (a) or (d)),
+  # (f) annual APTC (1095-A line 33C).
+  - { line: "11a", field: "Page1[0].Part2Table1[0].BodyRow1[0].f1_13[0]", type: money }
+  - { line: "11b", field: "Page1[0].Part2Table1[0].BodyRow1[0].f1_14[0]", type: money }
+  - { line: "11c", field: "Page1[0].Part2Table1[0].BodyRow1[0].f1_15[0]", type: money }
+  - { line: "11d", field: "Page1[0].Part2Table1[0].BodyRow1[0].f1_16[0]", type: money }
+  - { line: "11e", field: "Page1[0].Part2Table1[0].BodyRow1[0].f1_17[0]", type: money }
+  - { line: "11f", field: "Page1[0].Part2Table1[0].BodyRow1[0].f1_18[0]", type: money }
+
+  # Lines 12-23 — Monthly Calculation, January..December. Columns: (a) monthly
+  # enrollment premiums (1095-A lines 21-32 col A), (b) monthly applicable
+  # SLCSP premium (col B), (c) monthly contribution amount (line 8b or
+  # alternative marriage monthly calculation), (d) monthly maximum premium
+  # assistance ((b)-(c), floor 0), (e) monthly PTC allowed (smaller of (a) or
+  # (d)), (f) monthly APTC (col C).
+  - { line: "12a", field: "Page1[0].Part2Table2[0].BodyRow1[0].f1_19[0]", type: money }   # January
+  - { line: "12b", field: "Page1[0].Part2Table2[0].BodyRow1[0].f1_20[0]", type: money }
+  - { line: "12c", field: "Page1[0].Part2Table2[0].BodyRow1[0].f1_21[0]", type: money }
+  - { line: "12d", field: "Page1[0].Part2Table2[0].BodyRow1[0].f1_22[0]", type: money }
+  - { line: "12e", field: "Page1[0].Part2Table2[0].BodyRow1[0].f1_23[0]", type: money }
+  - { line: "12f", field: "Page1[0].Part2Table2[0].BodyRow1[0].f1_24[0]", type: money }
+  - { line: "13a", field: "Page1[0].Part2Table2[0].BodyRow2[0].f1_25[0]", type: money }   # February
+  - { line: "13b", field: "Page1[0].Part2Table2[0].BodyRow2[0].f1_26[0]", type: money }
+  - { line: "13c", field: "Page1[0].Part2Table2[0].BodyRow2[0].f1_27[0]", type: money }
+  - { line: "13d", field: "Page1[0].Part2Table2[0].BodyRow2[0].f1_28[0]", type: money }
+  - { line: "13e", field: "Page1[0].Part2Table2[0].BodyRow2[0].f1_29[0]", type: money }
+  - { line: "13f", field: "Page1[0].Part2Table2[0].BodyRow2[0].f1_30[0]", type: money }
+  - { line: "14a", field: "Page1[0].Part2Table2[0].BodyRow3[0].f1_31[0]", type: money }   # March
+  - { line: "14b", field: "Page1[0].Part2Table2[0].BodyRow3[0].f1_32[0]", type: money }
+  - { line: "14c", field: "Page1[0].Part2Table2[0].BodyRow3[0].f1_33[0]", type: money }
+  - { line: "14d", field: "Page1[0].Part2Table2[0].BodyRow3[0].f1_34[0]", type: money }
+  - { line: "14e", field: "Page1[0].Part2Table2[0].BodyRow3[0].f1_35[0]", type: money }
+  - { line: "14f", field: "Page1[0].Part2Table2[0].BodyRow3[0].f1_36[0]", type: money }
+  - { line: "15a", field: "Page1[0].Part2Table2[0].BodyRow4[0].f1_37[0]", type: money }   # April
+  - { line: "15b", field: "Page1[0].Part2Table2[0].BodyRow4[0].f1_38[0]", type: money }
+  - { line: "15c", field: "Page1[0].Part2Table2[0].BodyRow4[0].f1_39[0]", type: money }
+  - { line: "15d", field: "Page1[0].Part2Table2[0].BodyRow4[0].f1_40[0]", type: money }
+  - { line: "15e", field: "Page1[0].Part2Table2[0].BodyRow4[0].f1_41[0]", type: money }
+  - { line: "15f", field: "Page1[0].Part2Table2[0].BodyRow4[0].f1_42[0]", type: money }
+  - { line: "16a", field: "Page1[0].Part2Table2[0].BodyRow5[0].f1_43[0]", type: money }   # May
+  - { line: "16b", field: "Page1[0].Part2Table2[0].BodyRow5[0].f1_44[0]", type: money }
+  - { line: "16c", field: "Page1[0].Part2Table2[0].BodyRow5[0].f1_45[0]", type: money }
+  - { line: "16d", field: "Page1[0].Part2Table2[0].BodyRow5[0].f1_46[0]", type: money }
+  - { line: "16e", field: "Page1[0].Part2Table2[0].BodyRow5[0].f1_47[0]", type: money }
+  - { line: "16f", field: "Page1[0].Part2Table2[0].BodyRow5[0].f1_48[0]", type: money }
+  - { line: "17a", field: "Page1[0].Part2Table2[0].BodyRow6[0].f1_49[0]", type: money }   # June
+  - { line: "17b", field: "Page1[0].Part2Table2[0].BodyRow6[0].f1_50[0]", type: money }
+  - { line: "17c", field: "Page1[0].Part2Table2[0].BodyRow6[0].f1_51[0]", type: money }
+  - { line: "17d", field: "Page1[0].Part2Table2[0].BodyRow6[0].f1_52[0]", type: money }
+  - { line: "17e", field: "Page1[0].Part2Table2[0].BodyRow6[0].f1_53[0]", type: money }
+  - { line: "17f", field: "Page1[0].Part2Table2[0].BodyRow6[0].f1_54[0]", type: money }
+  - { line: "18a", field: "Page1[0].Part2Table2[0].BodyRow7[0].f1_55[0]", type: money }   # July
+  - { line: "18b", field: "Page1[0].Part2Table2[0].BodyRow7[0].f1_56[0]", type: money }
+  - { line: "18c", field: "Page1[0].Part2Table2[0].BodyRow7[0].f1_57[0]", type: money }
+  - { line: "18d", field: "Page1[0].Part2Table2[0].BodyRow7[0].f1_58[0]", type: money }
+  - { line: "18e", field: "Page1[0].Part2Table2[0].BodyRow7[0].f1_59[0]", type: money }
+  - { line: "18f", field: "Page1[0].Part2Table2[0].BodyRow7[0].f1_60[0]", type: money }
+  - { line: "19a", field: "Page1[0].Part2Table2[0].BodyRow8[0].f1_61[0]", type: money }   # August
+  - { line: "19b", field: "Page1[0].Part2Table2[0].BodyRow8[0].f1_62[0]", type: money }
+  - { line: "19c", field: "Page1[0].Part2Table2[0].BodyRow8[0].f1_63[0]", type: money }
+  - { line: "19d", field: "Page1[0].Part2Table2[0].BodyRow8[0].f1_64[0]", type: money }
+  - { line: "19e", field: "Page1[0].Part2Table2[0].BodyRow8[0].f1_65[0]", type: money }
+  - { line: "19f", field: "Page1[0].Part2Table2[0].BodyRow8[0].f1_66[0]", type: money }
+  - { line: "20a", field: "Page1[0].Part2Table2[0].BodyRow9[0].f1_67[0]", type: money }   # September
+  - { line: "20b", field: "Page1[0].Part2Table2[0].BodyRow9[0].f1_68[0]", type: money }
+  - { line: "20c", field: "Page1[0].Part2Table2[0].BodyRow9[0].f1_69[0]", type: money }
+  - { line: "20d", field: "Page1[0].Part2Table2[0].BodyRow9[0].f1_70[0]", type: money }
+  - { line: "20e", field: "Page1[0].Part2Table2[0].BodyRow9[0].f1_71[0]", type: money }
+  - { line: "20f", field: "Page1[0].Part2Table2[0].BodyRow9[0].f1_72[0]", type: money }
+  - { line: "21a", field: "Page1[0].Part2Table2[0].BodyRow10[0].f1_73[0]", type: money }  # October
+  - { line: "21b", field: "Page1[0].Part2Table2[0].BodyRow10[0].f1_74[0]", type: money }
+  - { line: "21c", field: "Page1[0].Part2Table2[0].BodyRow10[0].f1_75[0]", type: money }
+  - { line: "21d", field: "Page1[0].Part2Table2[0].BodyRow10[0].f1_76[0]", type: money }
+  - { line: "21e", field: "Page1[0].Part2Table2[0].BodyRow10[0].f1_77[0]", type: money }
+  - { line: "21f", field: "Page1[0].Part2Table2[0].BodyRow10[0].f1_78[0]", type: money }
+  - { line: "22a", field: "Page1[0].Part2Table2[0].BodyRow11[0].f1_79[0]", type: money }  # November
+  - { line: "22b", field: "Page1[0].Part2Table2[0].BodyRow11[0].f1_80[0]", type: money }
+  - { line: "22c", field: "Page1[0].Part2Table2[0].BodyRow11[0].f1_81[0]", type: money }
+  - { line: "22d", field: "Page1[0].Part2Table2[0].BodyRow11[0].f1_82[0]", type: money }
+  - { line: "22e", field: "Page1[0].Part2Table2[0].BodyRow11[0].f1_83[0]", type: money }
+  - { line: "22f", field: "Page1[0].Part2Table2[0].BodyRow11[0].f1_84[0]", type: money }
+  - { line: "23a", field: "Page1[0].Part2Table2[0].BodyRow12[0].f1_85[0]", type: money }  # December
+  - { line: "23b", field: "Page1[0].Part2Table2[0].BodyRow12[0].f1_86[0]", type: money }
+  - { line: "23c", field: "Page1[0].Part2Table2[0].BodyRow12[0].f1_87[0]", type: money }
+  - { line: "23d", field: "Page1[0].Part2Table2[0].BodyRow12[0].f1_88[0]", type: money }
+  - { line: "23e", field: "Page1[0].Part2Table2[0].BodyRow12[0].f1_89[0]", type: money }
+  - { line: "23f", field: "Page1[0].Part2Table2[0].BodyRow12[0].f1_90[0]", type: money }
+
+  - line: "24"           # Total PTC: amount from line 11(e) OR add lines 12(e) through 23(e)
+    field: "Page1[0].f1_91[0]"
+    type: money
+  - line: "25"           # APTC: amount from line 11(f) OR add lines 12(f) through 23(f)
+    field: "Page1[0].f1_92[0]"
+    type: money
+  - line: "26"           # Net PTC: line 24 - line 25 (blank when line 25 > line 24) -> Schedule 3 line 9
+    field: "Page1[0].f1_93[0]"
+    type: money
+
+  # ---- Part III — Repayment of Excess APTC -----------------------------------
+  - line: "27"           # Excess APTC: line 25 - line 24 (when line 25 > line 24)
+    field: "Page1[0].f1_94[0]"
+    type: money
+  - line: "28"           # Repayment limitation (instructions Table 5; BLANK when line 5 is 400 or more)
+    field: "Page1[0].f1_95[0]"
+    type: money
+  - line: "29"           # Excess APTC repayment: smaller of line 27 or line 28 (line 27 when 28 is blank) -> Schedule 2 line 2
+    field: "Page1[0].f1_96[0]"
+    type: money
+
+  # ---- Part IV — Allocation of Policy Amounts (page 2) ------------------------
+  # Four identical allocation blocks, lines 30-33. Columns: (a) policy number
+  # (Form 1095-A line 2), (b) SSN of other taxpayer, (c) allocation start
+  # month, (d) allocation stop month, (e) premium percentage, (f) SLCSP
+  # percentage, (g) advance payment of the PTC percentage. The percentages and
+  # months are entries, not dollars — no relations.
+  - { line: "30a", field: "Page2[0].f2_1[0]", type: text }
+  - { line: "30b", field: "Page2[0].f2_2[0]", type: text, maxlen: 9, format: ssn_digits_only }   # PDF MaxLen 11; digits-only keeps SSNs consistent
+  - { line: "30c", field: "Page2[0].f2_3[0]", type: text }
+  - { line: "30d", field: "Page2[0].f2_4[0]", type: text }
+  - { line: "30e", field: "Page2[0].Lines30e-g[0].f2_5[0]", type: text }
+  - { line: "30f", field: "Page2[0].Lines30e-g[0].f2_6[0]", type: text }
+  - { line: "30g", field: "Page2[0].Lines30e-g[0].f2_7[0]", type: text }
+  - { line: "31a", field: "Page2[0].f2_8[0]", type: text }
+  - { line: "31b", field: "Page2[0].f2_9[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  - { line: "31c", field: "Page2[0].f2_10[0]", type: text }
+  - { line: "31d", field: "Page2[0].f2_11[0]", type: text }
+  - { line: "31e", field: "Page2[0].Lines31e-g[0].f2_12[0]", type: text }
+  - { line: "31f", field: "Page2[0].Lines31e-g[0].f2_13[0]", type: text }
+  - { line: "31g", field: "Page2[0].Lines31e-g[0].f2_14[0]", type: text }
+  - { line: "32a", field: "Page2[0].f2_15[0]", type: text }
+  - { line: "32b", field: "Page2[0].f2_16[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  - { line: "32c", field: "Page2[0].f2_17[0]", type: text }
+  - { line: "32d", field: "Page2[0].f2_18[0]", type: text }
+  - { line: "32e", field: "Page2[0].Lines32e-g[0].f2_19[0]", type: text }
+  - { line: "32f", field: "Page2[0].Lines32e-g[0].f2_20[0]", type: text }
+  - { line: "32g", field: "Page2[0].Lines32e-g[0].f2_21[0]", type: text }
+  - { line: "33a", field: "Page2[0].f2_22[0]", type: text }
+  - { line: "33b", field: "Page2[0].f2_23[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  - { line: "33c", field: "Page2[0].f2_24[0]", type: text }
+  - { line: "33d", field: "Page2[0].f2_25[0]", type: text }
+  - { line: "33e", field: "Page2[0].Lines33e-g[0].f2_26[0]", type: text }
+  - { line: "33f", field: "Page2[0].Lines33e-g[0].f2_27[0]", type: text }
+  - { line: "33g", field: "Page2[0].Lines33e-g[0].f2_28[0]", type: text }
+  # Line 34: "Have you completed all policy amount allocations?" — answered
+  # only by Part IV filers, so the group is not required.
+  - line: "34.yes"
+    field: "Page2[0].c2_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line34
+  - line: "34.no"
+    field: "Page2[0].c2_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line34
+
+  # ---- Part V — Alternative Calculation for Year of Marriage (page 2) ---------
+  # Line 35 (your SSN) / line 36 (spouse's SSN). Columns: (a) alternative
+  # family size (a count), (b) alternative monthly contribution amount
+  # (dollars), (c) alternative start month, (d) alternative stop month.
+  - { line: "35a", field: "Page2[0].f2_29[0]", type: text }
+  - { line: "35b", field: "Page2[0].f2_30[0]", type: money }
+  - { line: "35c", field: "Page2[0].f2_31[0]", type: text }
+  - { line: "35d", field: "Page2[0].f2_32[0]", type: text }
+  - { line: "36a", field: "Page2[0].f2_33[0]", type: text }
+  - { line: "36b", field: "Page2[0].f2_34[0]", type: money }
+  - { line: "36c", field: "Page2[0].f2_35[0]", type: text }
+  - { line: "36d", field: "Page2[0].f2_36[0]", type: text }
+
+# Form-face math only. See the header comment for the printed rules that are
+# deliberately NOT declared (line 29 "smaller of", the column (c) copy rules)
+# and for line 7's supplemental-value requirement.
+relations:
+  - "3 == 2a + 2b"                   # "Household income. Add the amounts on lines 2a and 2b"
+  - "8b == 8a / 12"                  # "Divide line 8a by 12. Round to nearest whole dollar amount"
+  # Row math printed in the column heads: (d) "subtract (c) from (b); if zero
+  # or less, enter -0-" and (e) "smaller of (a) or (d)". An unused row is
+  # entirely blank, so its relations reduce to 0 == 0 and stay harmless.
+  - "11d == max(0, 11b - 11c)"
+  - "11e == min(11a, 11d)"
+  - "12d == max(0, 12b - 12c)"
+  - "12e == min(12a, 12d)"
+  - "13d == max(0, 13b - 13c)"
+  - "13e == min(13a, 13d)"
+  - "14d == max(0, 14b - 14c)"
+  - "14e == min(14a, 14d)"
+  - "15d == max(0, 15b - 15c)"
+  - "15e == min(15a, 15d)"
+  - "16d == max(0, 16b - 16c)"
+  - "16e == min(16a, 16d)"
+  - "17d == max(0, 17b - 17c)"
+  - "17e == min(17a, 17d)"
+  - "18d == max(0, 18b - 18c)"
+  - "18e == min(18a, 18d)"
+  - "19d == max(0, 19b - 19c)"
+  - "19e == min(19a, 19d)"
+  - "20d == max(0, 20b - 20c)"
+  - "20e == min(20a, 20d)"
+  - "21d == max(0, 21b - 21c)"
+  - "21e == min(21a, 21d)"
+  - "22d == max(0, 22b - 22c)"
+  - "22e == min(22a, 22d)"
+  - "23d == max(0, 23b - 23c)"
+  - "23e == min(23a, 23d)"
+  # Either-or totals (see header): the annual row and monthly rows are
+  # mutually exclusive, so one straight sum is exact for both methods.
+  - "24 == 11e + 12e + 13e + 14e + 15e + 16e + 17e + 18e + 19e + 20e + 21e + 22e + 23e"
+  - "25 == 11f + 12f + 13f + 14f + 15f + 16f + 17f + 18f + 19f + 20f + 21f + 22f + 23f"
+  # "If line 24 is greater than line 25, subtract line 25 from line 24 ... If
+  # line 24 equals line 25, enter -0- ... If line 25 is greater than line 24,
+  # leave this line blank" — max() covers all three printed cases (blank = 0).
+  - "26 == max(0, 24 - 25)"
+  # "If line 25 is greater than line 24, subtract line 24 from line 25" —
+  # blank (0) when there is no excess, so max() again covers both cases.
+  - "27 == max(0, 25 - 24)"
+
+# Printed carry-overs on the form face; SKIPPED when the schedule is
+# legitimately absent from the filing (see header comment).
+cross_form:
+  - "26 == sched_3.9"                # Net PTC -> Schedule 3 (Form 1040), line 9
+  - "29 == sched_2.2"                # Excess APTC repayment -> Schedule 2 (Form 1040), line 2
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only form: no signature block of its own; mailed inside the
+# parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

@@ -71,7 +71,7 @@ jobs:
           # Every federal 2023 form pack must be staged into the wheel -- guards against a
           # missing scripts/stage_data.py re-run after adding packs (a real near-miss).
           fed_2023 = {f.form_key for f in list_forms("federal", 2023)}
-          required = {"f1040","f1040nr","f8843","f8863","f2555","f4868","f1040es","f1040x","fw7",
+          required = {"f1040","f1040nr","f8843","f8863","f2555","f4868","f1040es","f1040x","fw7","f8959","f8960","f8962",
                       "sched_1","sched_2","sched_3","sched_a","sched_b","sched_c","sched_d","sched_e","sched_oi","sched_se"}
           missing = required - fed_2023
           assert not missing, f"federal 2023 packs missing from the installed wheel (re-run stage_data.py): {sorted(missing)}"
