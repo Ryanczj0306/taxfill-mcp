@@ -370,3 +370,29 @@ def test_plain_1040_never_cites_the_1040nr_booklet(year):
 def test_1040nr_deadline_cites_the_nr_instructions(year):
     r = _only([FilingManifestItem(form="1040-NR", tax_year=year, bottom_line=-100)])
     assert any("i1040nr" in c.url for c in r.citations)
+
+
+# ── Tier-2: the §6013(g)/(h) election statement reaches the assembly checklist ──
+
+
+def test_section_6013_election_statement_leads_the_assembly_checklist():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-500, state="Texas",
+                                  filing_jointly=True, section_6013_election=True)])
+    statement = r.assemble[0]  # prominent: it LEADS the checklist, before the generic steps
+    assert "§6013(g)/(h)" in statement and "SIGNED BY BOTH SPOUSES" in statement
+    assert "first joint return" in statement
+    assert "nonresident alien" in statement and "U.S. citizen or resident" in statement
+    assert "name" in statement and "address" in statement and "SSN/ITIN" in statement
+    # Cited inline (a stable irs.gov page — verified 200 before pinning) AND as a citation.
+    assert "https://www.irs.gov/individuals/international-taxpayers/nonresident-spouse" in statement
+    assert any(c.url.endswith("/nonresident-spouse") for c in r.citations)
+    # The statement itself is signed by both spouses (sign checklist).
+    assert any("election statement" in s and "BOTH" in s for s in r.sign)
+
+
+def test_no_election_flag_no_statement_item():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-500, state="Texas",
+                                  filing_jointly=True)])
+    assert not any("6013" in a for a in r.assemble)
+    assert not any("6013" in s for s in r.sign)
+    assert not any("nonresident-spouse" in c.url for c in r.citations)

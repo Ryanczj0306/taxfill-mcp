@@ -1220,3 +1220,143 @@ def test_fix7_nonresident_fica_withheld_disclosed_as_off_return_recovery():
         IncomeSnapshot(wages=18_000, federal_withholding=1_400, ss_withheld_by_employer=[1_116]),
     )
     assert not any("Form 843" in a for a in est_res.assumptions)
+
+
+# ---------------------------------------------------------------------------
+# Tier-2: the NRA-SPOUSE direction of the §6013(g)/(h) caveat (the Tier-1
+# branches fired only when the PRIMARY filer was the nonresident — the common
+# citizen/RA-filer + NRA-spouse direction priced MFJ silently), and the
+# treaty-exempt income field (1042-S box 2 / Schedule OI). Expected values are
+# re-derived through calc (no magic numbers).
+# ---------------------------------------------------------------------------
+
+from taxfill_core.schemas.profile import Spouse  # noqa: E402
+
+
+def _us_filer_married(spouse: Spouse | None = None) -> Profile:
+    return Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(marital_status=_ans("married"), spouse=spouse),
+    )
+
+
+def test_nra_spouse_direction_fires_6013_caveat_and_keeps_mfj_candidate():
+    # THE bug under test: a us_person filer with a declared non-US-person spouse
+    # used to get MFJ headlined with ZERO §6013 caveat.
+    est = estimate_refund(
+        _us_filer_married(Spouse(us_person=_ans(False))), 2023,
+        IncomeSnapshot(wages=90_000, federal_withholding=9_000),
+    )
+    statuses = {c.status for c in est.comparison.candidates}
+    assert "married_filing_jointly" in statuses  # MFJ STAYS a candidate (election direction)
+    caveats = [a for a in est.assumptions if "§6013" in a]
+    assert len(caveats) == 1
+    c = caveats[0]
+    assert "WORLDWIDE" in c and "other_income" in c and "overstates the MFJ advantage" in c
+    assert "signed by BOTH spouses" in c            # the statement requirement is named
+    assert "may be a nonresident alien" in c        # conditional — no spouse facts yet
+    # No spouse tax_id on file -> the W-7/ITIN last mile rides along.
+    assert "Form W-7" in c and "WITH the return" in c and "Austin" in c and "'NRA'" in c
+    # Surfaced in BOTH assumptions and what_would_change_it.
+    assert any("§6013" in ch for ch in est.what_would_change_it)
+
+
+def test_nra_spouse_confirmed_by_own_facts_asserts_the_caveat():
+    # us_person never asked, but the spouse's OWN facts (F-2 exempt family) classify
+    # nonresident — detection must key on the facts, not only the declared flag.
+    spouse = Spouse(
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-2", start=date(2022, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in {2021: 0, 2022: 140, 2023: 330}.items()}),
+    )
+    est = estimate_refund(_us_filer_married(spouse), 2023, IncomeSnapshot(wages=90_000, federal_withholding=9_000))
+    caveats = [a for a in est.assumptions if "§6013" in a]
+    assert len(caveats) == 1
+    assert caveats[0].startswith("Your spouse's own residency result is NONRESIDENT alien")
+    assert "may be a nonresident alien" not in caveats[0]
+
+
+def test_nra_spouse_with_tin_gets_no_w7_note():
+    est = estimate_refund(
+        _us_filer_married(Spouse(us_person=_ans(False), tax_id=_ans("999-88-7777"))), 2023,
+        IncomeSnapshot(wages=90_000, federal_withholding=9_000),
+    )
+    caveats = [a for a in est.assumptions if "§6013" in a]
+    assert caveats and "Form W-7" not in caveats[0]
+    # The 'NRA' box literal is a no-TIN marker, not a TIN: the W-7 note stays.
+    est_nra = estimate_refund(
+        _us_filer_married(Spouse(us_person=_ans(False), tax_id=_ans("NRA"))), 2023,
+        IncomeSnapshot(wages=90_000, federal_withholding=9_000),
+    )
+    assert any("Form W-7" in a for a in est_nra.assumptions if "§6013" in a)
+
+
+def test_both_us_person_couple_control_has_no_6013_caveat():
+    est = estimate_refund(
+        _us_filer_married(Spouse(us_person=_ans(True))), 2023,
+        IncomeSnapshot(wages=90_000, federal_withholding=9_000),
+    )
+    assert not any("6013" in a for a in est.assumptions)
+    assert not any("6013" in c for c in est.what_would_change_it)
+
+
+def test_spouse_resident_by_own_facts_has_no_6013_caveat():
+    # H-4 present 365 days x3: the spouse's own facts classify RESIDENT — a joint
+    # return needs no election, so no caveat (classify runs only because facts exist).
+    spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-4", start=date(2021, 1, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(365) for y in (2021, 2022, 2023)}),
+    )
+    est = estimate_refund(_us_filer_married(spouse), 2023, IncomeSnapshot(wages=90_000, federal_withholding=9_000))
+    assert not any("6013" in a for a in est.assumptions)
+
+
+_TREATY_LABEL = "Less: treaty-exempt income (tax treaty — confirm the article and your state's conformity)"
+
+
+def test_treaty_exempt_income_reduces_the_nra_taxable_base():
+    # Part-D repro: NRA F-1, wages 18,000, treaty-exempt 5,000 -> taxable base
+    # 13,000, cross-checked against an independent calc call.
+    est = estimate_refund(
+        _nra_profile(), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, treaty_exempt_income=5_000),
+    )
+    labels = _labels(est)
+    assert labels[_TREATY_LABEL] == -5_000
+    assert labels["Total income"] == 18_000             # gross — the exclusion is its own line
+    assert labels["Adjusted gross income (AGI)"] == 13_000
+    assert labels["Taxable income"] == 13_000           # NRA deduction $0 (itemized-only)
+    assert est.point == 1_400 - tax_from_taxable_income(13_000, "single", 2023).tax
+    # Trust-the-agent semantics + the state-conformity reminder are disclosed.
+    treaty_notes = [a for a in est.assumptions if "does NOT validate treaty eligibility" in a]
+    assert len(treaty_notes) == 1
+    note = treaty_notes[0]
+    assert "itemized_deductions" in note and "get_sources" in note   # like-itemized trust semantics
+    assert "Schedule OI" in note and "1040-NR line 1k" in note
+    assert "state_scope" in note                                      # conformity reminder
+    assert not any("CLAMPED" in a for a in est.assumptions)
+
+
+def test_treaty_exempt_income_clamped_to_income_floor_and_disclosed():
+    est = estimate_refund(
+        _nra_profile(), 2023,
+        IncomeSnapshot(wages=3_000, federal_withholding=300, treaty_exempt_income=5_000),
+    )
+    labels = _labels(est)
+    assert labels[_TREATY_LABEL] == -3_000   # clamped: income components never go negative overall
+    assert labels["Taxable income"] == 0
+    assert est.point == 300                  # tax 0 -> the whole withholding back
+    assert any("CLAMPED" in a for a in est.assumptions)
+
+
+def test_treaty_exempt_income_combines_with_spouse():
+    income = IncomeSnapshot(
+        wages=50_000, federal_withholding=5_000, treaty_exempt_income=5_000,
+        spouse=IncomeSnapshot(wages=20_000, federal_withholding=1_500, treaty_exempt_income=3_000),
+    )
+    est = estimate_refund(_mfj_confirmed(), 2023, income)
+    labels = _labels(est)
+    assert labels[_TREATY_LABEL] == -8_000   # summed across the couple (combined_with_spouse)
+    # Resident MFJ: the standard deduction still applies after the exclusion.
+    assert est.point == _independent_refund(70_000 - 8_000, 6_500, "married_filing_jointly")
+    assert any("does NOT validate treaty eligibility" in a for a in est.assumptions)
