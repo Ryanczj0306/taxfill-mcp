@@ -6,10 +6,10 @@
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 1,501 passing](https://img.shields.io/badge/tests-1%2C622%20passing-brightgreen)
+![Tests: 1,741 passing](https://img.shields.io/badge/tests-1%2C741%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,622 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2024), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC, and the MCP server all work today and are covered by 1,741 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -46,7 +46,7 @@ INTAKE → EXTRACT & CONFIRM → ESTIMATE & ROADMAP ↺ → RESIDENCY & SCOPE �
 ```
 
 1. **Intake** — a guided interview. The server tells the agent exactly what to ask and which documents to collect; you answer in chat and snap photos of your tax docs.
-2. **Extract & confirm** — the agent reads each document (today, with its own vision; an automated `extract_document` parser is on the roadmap) into a table of values, each with a record of where it came from. You confirm the table before anything gets filled. Hard rule: **unknown values stay blank** — nothing is ever invented.
+2. **Extract & confirm** — the agent reads each document (its vision does the reading; `extract_document` structures and validates the reading) into a table of values, each with a record of where it came from. You confirm the table before anything gets filled. Hard rule: **unknown values stay blank** — nothing is ever invented.
 3. **Estimate & roadmap** — as soon as your first W-2/1099 is confirmed, you get a preliminary refund/owed **range** with its assumptions stated, plus a personalized roadmap (which forms, which documents are still missing). It is refreshed after every later step — with "what changed" — until it converges to the exact summary number. Always labeled ESTIMATE, never fake precision.
 4. **Residency & scope** — computes your federal residency status (resident / nonresident / dual-status) and which states you owe a return to, producing the exact list of forms you need.
 5. **Positions** — you and the agent decide elections, treaty articles, filing status (including married-filing-jointly vs separately), and credits. The agent records every decision and its legal authority in a `RECONCILIATION.md` — your audit trail.
@@ -130,15 +130,15 @@ An abbreviated, anonymized walkthrough (simple W-2, single filer, 2023):
 >
 > **You:** *(answers; uploads a photo of the W-2)*
 >
-> **Agent:** From your W-2 I read **wages $52,000** and **federal tax withheld $5,400** — can you confirm those two numbers? *(you confirm)* *(calls `estimate_refund`)* Preliminary **ESTIMATE: a refund of about $1,200** — assuming single, standard deduction, no other income or credits. I'll tighten it as we go.
+> **Agent:** From your W-2 I read **wages $52,000** and **federal tax withheld $5,400** — can you confirm those two numbers? *(you confirm)* *(calls `estimate_refund`)* Preliminary **ESTIMATE: a refund of about $1,039** — assuming single, standard deduction, no other income or credits. I'll tighten it as we go.
 >
 > **Agent:** *(calls `calc`, `fill_form` for Form 1040, then `verify_form`)* Filled and verified — all math checks pass. *(calls `render_form`)* Here are your pages — please look them over. *(shows images)*
 >
-> **Agent:** *(calls `filing_summary`)* **Bottom line — Federal 2023: refund $1,200**, because your employer withheld more than you owe. The refund-claim deadline is around 2027-04-15. Approve and I'll prepare the mailing checklist?
+> **Agent:** *(calls `filing_summary`)* **Bottom line — Federal 2023: refund $1,039**, because your employer withheld more than you owe. The refund-claim deadline is around 2027-04-15. Approve and I'll prepare the mailing checklist?
 >
 > **You:** Approved.
 >
-> **Agent:** *(calls `file_and_pay`)* Print the form pages single-sided, sign and date page 2, attach your W-2, and mail to **Ogden, UT 84201-0002** (California, refund). Photograph the signed pages and keep a copy. Done — you review, sign, and mail it yourself.
+> **Agent:** *(calls `file_and_pay`)* Print only the form pages (not the instructions), single-sided; sign and date the return in ink; attach your W-2; and mail to **Ogden, UT 84201-0002** (California, refund). Photograph the signed pages and keep a copy. Done — you review, sign, and mail it yourself.
 
 ## Troubleshooting
 

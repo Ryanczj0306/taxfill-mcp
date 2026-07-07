@@ -157,6 +157,60 @@ def test_treaty_filer_detected_via_visa_timeline_when_us_person_unset():
     assert any("treaties" in w.lower() for w in ca.warnings)
 
 
+def test_conforming_state_emits_positive_treaty_line_for_treaty_filers():
+    # Regression: VA conforms (conforms_to_federal_treaties: true + a researched
+    # treaty_note) but state_scope said NOTHING about treaties, so an agent could
+    # not tell "evaluated: conforms" from "never evaluated". A treaty filer in a
+    # conforming state must get the positive flows-through line + the pack note.
+    footprint = [_rp("VA", date(2023, 1, 1), date(2023, 12, 31))]
+    nra = Profile(identity=Identity(us_person=_ans(False)),
+                  state_footprint={2023: StateFootprintYear(lived=footprint)})
+    va = _by_state(state_scope(nra, 2023))["VA"]
+    conforming = [w for w in va.warnings if "conforms to federal treaty treatment" in w]
+    assert conforming, va.warnings
+    line = conforming[0]
+    assert "excluded from VA income" in line
+    assert "do not add it back" in line.lower()
+    # the pack's researched treaty_note (with its own caveats) reaches the user
+    assert "State note:" in line and "federal adjusted gross income" in line
+    # and it must never read as a non-conformity warning
+    assert "does NOT conform" not in line
+
+
+def test_conforming_state_treaty_line_only_for_treaty_filers():
+    # A U.S. citizen has no treaty position — VA stays silent about treaties.
+    footprint = [_rp("VA", date(2023, 1, 1), date(2023, 12, 31))]
+    cit = Profile(identity=Identity(us_person=_ans(True)),
+                  state_footprint={2023: StateFootprintYear(lived=footprint)})
+    va = _by_state(state_scope(cit, 2023))["VA"]
+    assert not any("treaty" in w.lower() for w in va.warnings)
+
+
+def test_treaty_filer_conforming_vs_nonconforming_contrast():
+    # The same NRA profile gets the positive line in VA and the loud warning in CA.
+    def scope(st):
+        p = Profile(identity=Identity(us_person=_ans(False)),
+                    state_footprint={2023: StateFootprintYear(
+                        lived=[_rp(st, date(2023, 1, 1), date(2023, 12, 31))])})
+        return _by_state(state_scope(p, 2023))[st]
+
+    va, ca = scope("VA"), scope("CA")
+    assert any("conforms to federal treaty treatment" in w for w in va.warnings)
+    assert any("does NOT conform to federal tax treaties" in w for w in ca.warnings)
+    assert not any("does NOT conform" in w for w in va.warnings)
+    assert not any("conforms to federal treaty treatment" in w for w in ca.warnings)
+
+
+def test_nonconforming_treaty_warning_includes_the_pack_note():
+    # The CA pack's researched treaty_note must reach the user with the warning.
+    nra = Profile(identity=Identity(us_person=_ans(False)),
+                  state_footprint={2023: StateFootprintYear(
+                      lived=[_rp("CA", date(2023, 1, 1), date(2023, 12, 31))])})
+    ca = _by_state(state_scope(nra, 2023))["CA"]
+    warning = next(w for w in ca.warnings if "does NOT conform" in w)
+    assert "State note:" in warning
+
+
 def test_ca_credits_caveat_is_surfaced():
     # The unverified credit-limit caveat must reach the user alongside benefits.
     ca = _by_state(state_scope(_profile(lived=[_rp("CA", date(2023, 1, 1), date(2023, 12, 31))]), 2023))["CA"]

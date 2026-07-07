@@ -279,6 +279,25 @@ federal:
           position; per-country eligibility details.
         cadence: as treaties are signed or amended (rare; check per use)
 
+    # ── Foreign earned income (FEIE / Form 2555) ──
+    foreign_earned_income:
+      - url: https://www.irs.gov/forms-pubs/about-form-2555
+        answers: >-
+          Form 2555 and its Instructions, Foreign Earned Income: the foreign
+          earned income exclusion (FEIE) — the year's maximum exclusion
+          amount, the physical presence test and bona fide residence test,
+          the foreign housing exclusion/deduction, and how the exclusion is
+          claimed on Form 2555.
+        cadence: annual (per tax year; the exclusion cap is inflation-adjusted)
+      - url: https://www.irs.gov/forms-pubs/about-publication-54
+        answers: >-
+          Pub 54, Tax Guide for U.S. Citizens and Resident Aliens Abroad:
+          who qualifies for the foreign earned income exclusion (FEIE),
+          tax home abroad, physical presence and bona fide residence
+          qualification details, and the interaction with the foreign tax
+          credit for citizens and residents working overseas.
+        cadence: annual (per tax year)
+
     # ── Education ──
     education:
       - url: https://www.irs.gov/publications/p970
