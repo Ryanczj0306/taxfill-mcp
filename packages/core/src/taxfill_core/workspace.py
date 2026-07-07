@@ -209,6 +209,21 @@ class Workspace:
             lines += [f"- [ ] **{p.topic}** — {p.status}: {p.value or p.rationale or 'needs an authoritative source'}" for p in open_]
         else:
             lines.append("- [x] All recorded positions are decided and cited.")
+        # A recorded §6013(g)/(h) position means the joint election is in play: the
+        # election is only VALID with a statement signed by both spouses attached to
+        # the first joint return, so the checklist carries that last-mile item
+        # whenever any position's topic mentions 6013 (whatever its status).
+        if any("6013" in p.topic.lower() for p in positions):
+            lines += [
+                "",
+                "## §6013(g)/(h) election — required attachment",
+                "- [ ] Attach the ELECTION STATEMENT to the first joint return: a statement SIGNED BY BOTH "
+                "SPOUSES declaring that one spouse was a nonresident alien and the other a U.S. citizen or "
+                "resident on the last day of the tax year, and that both choose to be treated as U.S. "
+                "residents for the entire year, with each spouse's full name, address, and SSN/ITIN "
+                "(https://www.irs.gov/individuals/international-taxpayers/nonresident-spouse). A joint "
+                "return with a nonresident-alien spouse is not valid without it.",
+            ]
         lines += ["", "## Missing inputs"]
         if gaps:
             lines += [f"- [ ] {g}" for g in gaps]

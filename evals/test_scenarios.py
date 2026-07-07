@@ -5,12 +5,15 @@ behaviours the dev plan calls out per scenario letter. These are integration
 EVALS, not unit tests: they prove the M1-M4 stack does the right thing on
 realistic cases, including the honest-estimate and no-invented-numbers rules.
 
-All fourteen scenarios (a–n) run now: the federal cases (a, d, e, g, h, i, j) on
+All fifteen scenarios (a–o) run now: the federal cases (a, d, e, g, h, i, j) on
 the M1-M4 stack; the joint / separate / NRA-spouse cases (k, l, m) on the
 filing-status-aware engine (MFJ math, the both-ways comparison, and the §6013(g)/(h)
-election surface); the state cases (b, c, f) on M5 (CA packs + state_scope); and
+election surface); the state cases (b, c, f) on M5 (CA packs + state_scope);
 the family-with-children case (n) on the Phase F credit-aware estimator (CTC/ACTC
-+ EITC from dependents' DOB/SSN facts).
++ EITC from dependents' DOB/SSN facts); and the US-citizen + NRA-spouse couple (o)
+on the Tier-2 spouse-residency battery (intake election questions, the MFJ-with-
+caveat estimate, and the signed election-statement assembly item), plus the
+treaty-exempt-income (China Art. 20(c) student) estimator surface.
 Multi-form fill+verify on real PDFs is covered by
 packages/core/tests/test_filing_integration.py (the 1040 and 1040-NR stacks).
 """
@@ -409,3 +412,89 @@ def test_eval_n_family_with_children_ctc_and_eitc():
     # Honesty: the approximations are disclosed, never silent.
     assert any("$50 income bands" in a for a in est.assumptions)
     assert any("92.35%" in a for a in est.assumptions)
+
+
+# ── (o) US-citizen + NRA-spouse couple: the §6013(g)/(h) election end-to-end ───
+
+
+def test_eval_o_us_citizen_nra_spouse_couple():
+    # A US-citizen filer married to a spouse who is (or may be) a nonresident alien
+    # with no SSN/ITIN. The election must SURFACE at intake, price with a caveat at
+    # estimate (MFJ stays a candidate — never silently), and the signed statement
+    # must reach the assembly checklist. Silence at any stage fails the eval.
+
+    # 1) INTAKE — the spouse battery. First the gate question...
+    couple = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(marital_status=_ans("married")),
+    )
+    cl = intake_checklist(couple, tax_year=2023)
+    assert any(q.id == "household.spouse.us_person" for q in cl.next_questions)
+    # ...then, once the spouse is declared a non-US person, the full battery:
+    # the spouse's own visa/day facts, the election question, and the W-7 route.
+    couple.household.spouse = Spouse(us_person=_ans(False))
+    cl = intake_checklist(couple, tax_year=2023)
+    ids = {q.id for q in cl.next_questions}
+    assert {"household.spouse.visa_timeline", "household.spouse.days_in_us",
+            "household.spouse.section_6013_election"} <= ids
+    election_q = next(q for q in cl.next_questions if q.id == "household.spouse.section_6013_election")
+    assert "§6013(g)/(h)" in election_q.prompt
+    assert "WORLDWIDE" in election_q.disambiguation           # the trade-off is surfaced
+    assert "'NRA'" in election_q.disambiguation                # the MFS no-TIN box literal
+    tin_q = next(q for q in cl.next_questions if q.id == "household.spouse.tax_id")
+    assert "Form W-7" in tin_q.disambiguation and "WITH the return" in tin_q.disambiguation
+    assert "Austin" in tin_q.disambiguation                    # the ITIN Operation route
+
+    # 2) ESTIMATE — MFJ stays a candidate, both directions are priced, and the
+    # §6013 caveat (worldwide income + the W-7/ITIN note) rides in the assumptions.
+    est = estimate_refund(couple, 2023, IncomeSnapshot(wages=90_000, federal_withholding=11_000))
+    by_status = {c.status: c.bottom_line for c in est.comparison.candidates}
+    assert {"married_filing_jointly", "married_filing_separately"} <= set(by_status)
+    assert by_status["married_filing_jointly"] == _calc_refund(90_000, 11_000, "married_filing_jointly")
+    assert by_status["married_filing_separately"] == _calc_refund(90_000, 11_000, "married_filing_separately")
+    caveat = next(a for a in est.assumptions if "§6013" in a)
+    assert "worldwide" in caveat.lower() and "W-7" in caveat
+    assert any("§6013" in c for c in est.what_would_change_it)
+
+    # 3) LAST MILE — the manifest flag produces the signed-statement assembly item.
+    item = FilingManifestItem(form="1040", tax_year=2023,
+                              bottom_line=by_status["married_filing_jointly"],
+                              state="CA", filing_jointly=True, section_6013_election=True)
+    r = file_and_pay([item]).returns[0]
+    statement = next(a for a in r.assemble if "6013" in a)
+    assert "SIGNED BY BOTH SPOUSES" in statement
+    assert "nonresident-spouse" in statement                   # cited inline (irs.gov)
+    assert any("nonresident-spouse" in c.url for c in r.citations)
+    assert any("BOTH spouses" in s for s in r.sign)            # joint return signatures
+
+
+# ── (o addendum, part D) treaty-exempt income: the China Art. 20(c) student ────
+
+
+def test_eval_treaty_china_student_estimate():
+    # Chinese F-1 whose employer put the whole $23,000 in W-2 box 1 (no 1042-S).
+    # The agent confirms the US-China Art. 20(c) $5,000 student exemption and
+    # supplies it as treaty_exempt_income: the estimate excludes it BEFORE tax
+    # (cross-checked vs calc) and discloses that eligibility is the agent's cited
+    # judgment — the engine never validates a treaty claim — plus the
+    # state-conformity reminder.
+    student = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2021, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2021: _ans(150), 2022: _ans(300), 2023: _ans(300)}),
+        household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")),
+    )
+    # Precondition: an exempt F-1 -> nonresident (the 1040-NR path).
+    assert classify([{"status": "F-1", "start": "2021-08-01", "end": None}],
+                    {2021: 150, 2022: 300, 2023: 300}, 2023).classification == "nonresident"
+    est = estimate_refund(student, 2023,
+                          IncomeSnapshot(wages=23_000, federal_withholding=2_400, treaty_exempt_income=5_000))
+    labels = {c.label: c.amount for c in est.composition}
+    treaty_label = next(label for label in labels if "treaty-exempt income" in label)
+    assert labels[treaty_label] == -5_000
+    assert "confirm the article" in treaty_label               # the line itself hedges
+    assert labels["Taxable income"] == 18_000                  # 23,000 - 5,000; NRA deduction $0
+    assert est.point == 2_400 - tax_from_taxable_income(18_000, "single", 2023).tax
+    assert est.roadmap.returns_and_forms == ["Form 1040-NR", "Form 8843"]
+    note = next(a for a in est.assumptions if "does NOT validate treaty eligibility" in a)
+    assert "get_sources" in note and "state_scope" in note and "Schedule OI" in note

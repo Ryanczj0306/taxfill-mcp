@@ -111,3 +111,22 @@ def test_status_reports_position_breakdown(tmp_path):
     st = ws.status()
     assert st["positions"] == {"total": 2, "decided": 1, "unverified": 1, "open": 0}
     assert st["has_profile"] is False
+
+
+def test_checklist_6013_position_adds_the_signed_statement_item(tmp_path):
+    # Tier-2: a recorded §6013 position (any status) means the joint election is in
+    # play — CHECKLIST.md must carry the attach-signed-statement last-mile item.
+    ws = Workspace.open(tmp_path, 2023)
+    ws.record_position(Position(topic="§6013(g) election — treat NRA spouse as resident",
+                                value="elected", citation=CITE))
+    md = ws.write_checklist().read_text()
+    assert "§6013(g)/(h) election — required attachment" in md
+    assert "SIGNED BY BOTH" in md and "nonresident-spouse" in md
+    assert "name, address, and SSN/ITIN" in md
+
+
+def test_checklist_without_6013_topic_has_no_statement_item(tmp_path):
+    ws = Workspace.open(tmp_path, 2023)
+    ws.record_position(Position(topic="Std deduction", value="13850", citation=CITE))
+    md = ws.write_checklist().read_text()
+    assert "6013" not in md

@@ -108,12 +108,14 @@ def _marital(profile: Profile) -> str | None:
     return str(hh.marital_status.value)
 
 
-def _residency_classification(profile: Profile, tax_year: int | None) -> str | None:
-    """Best-effort federal residency classification, or None when not yet computable.
+def _classification_from_facts(imm, rf, tax_year: int | None) -> str | None:
+    """Best-effort federal residency classification from explicit facts, or None.
 
-    Returns one of 'nonresident' / 'resident' / 'dual_status_candidate' only when the
-    profile has both a visa timeline and per-year day counts (and a target year);
-    otherwise None so callers gate conditionally rather than asserting a result.
+    Works on any person's immigration + residency facts (the taxpayer's, or the
+    spouse's own facts on the §6013(g)/(h) path). Returns 'nonresident' /
+    'resident' / 'dual_status_candidate' only when both a visa timeline and
+    per-year day counts (and a target year) are present; otherwise None so
+    callers gate conditionally rather than asserting a result.
 
     A 'nonresident' result that rests on treating a MISSING preceding lookback year as
     0 days (the visa timeline covers tax_year-1/tax_year-2 but days_in_us lacks them)
@@ -122,8 +124,6 @@ def _residency_classification(profile: Profile, tax_year: int | None) -> str | N
     """
     if tax_year is None:
         return None
-    imm = profile.immigration
-    rf = profile.residency_facts
     if imm is None or not imm.visa_timeline or rf is None or not rf.days_in_us:
         return None
     days_by_year = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
@@ -135,11 +135,31 @@ def _residency_classification(profile: Profile, tax_year: int | None) -> str | N
         # Incomplete or contradictory inputs — cannot classify yet; gate conditionally.
         return None
     if classification == "nonresident" and any(
-        y not in days_by_year and y in _period_covered_years(profile, tax_year)
+        y not in days_by_year and y in _covered_years_from(imm, tax_year)
         for y in (tax_year - 1, tax_year - 2)
     ):
         return None
     return classification
+
+
+def _residency_classification(profile: Profile, tax_year: int | None) -> str | None:
+    """The TAXPAYER's best-effort federal residency classification (see
+    :func:`_classification_from_facts` for the trust rules)."""
+    return _classification_from_facts(profile.immigration, profile.residency_facts, tax_year)
+
+
+def _spouse_classification(profile: Profile, tax_year: int | None) -> str | None:
+    """The SPOUSE's own best-effort residency classification, or None.
+
+    Runs on the spouse's OWN visa timeline and day counts (Spouse.immigration /
+    Spouse.residency_facts) — whether the couple even needs the §6013(g)/(h)
+    election is decided by the spouse's classification, never the taxpayer's.
+    """
+    hh = profile.household
+    sp = hh.spouse if hh is not None else None
+    if sp is None:
+        return None
+    return _classification_from_facts(sp.immigration, sp.residency_facts, tax_year)
 
 
 def _has_f1_period(profile: Profile) -> bool:
@@ -158,9 +178,8 @@ def _has_fj_period(profile: Profile) -> bool:
     return any(p.status.strip().upper().startswith(("F", "J")) for p in imm.visa_timeline)
 
 
-def _period_covered_years(profile: Profile, tax_year: int) -> set[int]:
+def _covered_years_from(imm, tax_year: int) -> set[int]:
     """Calendar years up to ``tax_year`` overlapped by ANY declared status period."""
-    imm = profile.immigration
     if imm is None:
         return set()
     years: set[int] = set()
@@ -170,14 +189,15 @@ def _period_covered_years(profile: Profile, tax_year: int) -> set[int]:
     return years
 
 
-def _exempt_category_years(profile: Profile, tax_year: int) -> set[int]:
+def _exempt_category_years_from(imm, tax_year: int) -> set[int]:
     """Calendar years up to ``tax_year`` overlapped by an F/J/M/Q exempt-category period.
 
     residency.classify() rejects the call unless days_in_us has an entry for every
     one of these years, so intake must ask for exactly this set (plus the SPT's
     three lookback years) — otherwise the interview dead-ends on a classify error.
+    Takes the Immigration facts directly so the same rule covers the taxpayer AND
+    the spouse (whose own classification drives the §6013(g)/(h) path).
     """
-    imm = profile.immigration
     if imm is None:
         return set()
     years: set[int] = set()
@@ -254,7 +274,7 @@ def _residency_questions(profile: Profile, out: list[IntakeQuestion], tax_year: 
         # classify() needs the tax year, its two preceding years, and every calendar
         # year an F/J/M/Q exempt-category period overlaps — ask for exactly that set,
         # following up on whichever years the profile still lacks.
-        needed = {tax_year, tax_year - 1, tax_year - 2} | _exempt_category_years(profile, tax_year)
+        needed = {tax_year, tax_year - 1, tax_year - 2} | _exempt_category_years_from(profile.immigration, tax_year)
         missing = sorted(y for y in needed if y not in years_known)
         if missing:
             year_list = ", ".join(str(y) for y in missing)
@@ -309,6 +329,14 @@ def _household_questions(
     married = marital == "married"
     widowed = marital == "widowed"
 
+    # The SPOUSE's own residency direction (§6013(g)/(h) path): a declared
+    # non-US-person spouse whose own facts do NOT classify resident is (or may
+    # be) a nonresident alien — a joint return then requires the election.
+    sp = hh.spouse
+    spouse_non_us = married and sp is not None and _has(sp.us_person) and sp.us_person.value is False
+    spouse_class = _spouse_classification(profile, tax_year) if spouse_non_us else None
+    spouse_nra_path = spouse_non_us and spouse_class != "resident"
+
     if married:
         if not _has(hh.filing_status):
             note = ("Married couples choose married-filing-jointly (one combined return, usually lower tax, but both "
@@ -317,18 +345,36 @@ def _household_questions(
             if nonresident_path:
                 note += (" If a spouse is a nonresident alien, filing jointly requires the §6013(g)/(h) election to "
                          "treat them as a U.S. resident — which makes their worldwide income taxable.")
+            elif spouse_nra_path:
+                note += (" Your spouse is (or may be) a nonresident alien: filing jointly requires the §6013(g)/(h) "
+                         "election to treat them as a U.S. resident — which makes their worldwide income taxable; "
+                         "without the election you file married-filing-separately.")
             out.append(_q("household.filing_status", "household",
                           "Do you want to file jointly with your spouse or separately?",
                           "It changes your brackets, standard deduction, and credit eligibility.",
                           "household.filing_status", disambiguation=note))
         # Spouse as a second taxpayer on a married path.
-        sp = hh.spouse
         if sp is None or not _has(sp.name):
             out.append(_q("household.spouse.name", "household", "What is your spouse's full legal name?",
                           "A joint (or separate) return needs the spouse's identity.", "household.spouse.name"))
         if sp is None or not _has(sp.tax_id):
-            out.append(_q("household.spouse.tax_id", "household", "What is your spouse's SSN or ITIN?",
-                          "Both taxpayers are identified on the return.", "household.spouse.tax_id"))
+            if spouse_nra_path:
+                # A possible-NRA spouse may hold NEITHER an SSN nor an ITIN — the plain
+                # "what is it?" phrasing is a dead end there; say what each path needs.
+                out.append(_q("household.spouse.tax_id", "household",
+                              "Does your spouse have an SSN or ITIN? If so, what is it?",
+                              "Both taxpayers are identified on the return.", "household.spouse.tax_id",
+                              disambiguation="If your spouse has NEITHER an SSN nor an ITIN: filing jointly (the "
+                                             "§6013(g)/(h) election) requires applying for an ITIN — Form W-7 is "
+                                             "filed WITH the return, and the whole package (return, Form W-7, and "
+                                             "the applicant's identity documents) mails to the IRS ITIN Operation "
+                                             "in Austin, TX, not the normal where-to-file address. For married-"
+                                             "filing-separately you may instead write 'NRA' in the spouse-SSN box — "
+                                             "answer 'NRA' here to record that."))
+            else:
+                out.append(_q("household.spouse.tax_id", "household", "What is your spouse's SSN or ITIN?",
+                              "Both taxpayers are identified on the return.", "household.spouse.tax_id"))
+        _spouse_residency_questions(profile, out, notes, tax_year)
     elif widowed:
         # Qualifying-surviving-spouse routing: a recent widow(er) with a dependent child
         # may file as a qualifying surviving spouse — symmetric to the HOH routed question.
@@ -436,9 +482,14 @@ def _household_questions(
             notes.append("Nonresident-alien filers (Form 1040-NR) cannot use married-filing-jointly or head of "
                          "household; the available statuses are single, married-filing-separately, or qualifying "
                          "surviving spouse.")
-        elif is_resident:
+        elif is_resident and not spouse_nra_path:
             notes.append("Your residency result is resident alien, so all filing statuses are available — "
                          "married-filing-jointly and head of household included.")
+        elif is_resident and spouse_nra_path:
+            # "All statuses available" would be wrong law here: §6013(a)(1) bars a
+            # joint return when EITHER spouse is a nonresident alien, absent the
+            # election — the spouse-direction note below carries the restriction.
+            pass
         elif residency_unknown:
             notes.append("If your residency result is nonresident alien, Form 1040-NR has no married-filing-jointly "
                          "or head-of-household box — the available statuses would be single, married-filing-"
@@ -475,6 +526,111 @@ def _household_questions(
                           f"household.dependents[{i}].has_ssn",
                           disambiguation="Answer yes for an SSN that is valid for employment (most SSNs are); "
                                          "answer no if the dependent has an ITIN or ATIN instead of an SSN."))
+
+
+def _spouse_residency_questions(
+    profile: Profile, out: list[IntakeQuestion], notes: list[str], tax_year: int | None
+) -> None:
+    """The NRA-spouse §6013(g)/(h) battery (married path only).
+
+    A joint return generally requires both spouses to be U.S. persons or
+    residents (§6013(a)(1)); whether the couple needs the §6013(g)/(h) election
+    is decided by the SPOUSE'S own residency, so intake asks, in dependency
+    order and without ever looping (each answered fact stops its question):
+
+    - household.spouse.us_person (the gate — mirrors identity.us_person);
+    - the spouse's own visa timeline + per-year day counts (enough for
+      residency.classify on the spouse's own facts) when the spouse is not a
+      US person;
+    - whether the couple wants to evaluate the §6013(g)/(h) election when the
+      spouse is (or may be) a nonresident alien — the answer IS the filing-
+      status choice, so the question stops once household.filing_status is set.
+    """
+    hh = profile.household
+    sp = hh.spouse
+    if sp is None or not _has(sp.us_person):
+        out.append(_q("household.spouse.us_person", "household",
+                      "Is your spouse a U.S. citizen or lawful permanent resident (green-card holder)?",
+                      "A joint return generally requires both spouses to be U.S. persons or residents — a "
+                      "nonresident-alien spouse changes the filing-status options (§6013(g)/(h)).",
+                      "household.spouse.us_person",
+                      disambiguation="Answer yes only for citizens and green-card holders. A spouse on an "
+                                     "F/J/H/L/etc. visa — or living abroad with no U.S. immigration status — "
+                                     "answers no; we then check the spouse's own residency by their days in "
+                                     "the U.S."))
+        return  # the rest of the battery depends on this answer; ask it first.
+    if sp.us_person.value is not False:
+        return  # a US-person spouse needs no residency check and no election.
+
+    imm = sp.immigration
+    if imm is None or not imm.visa_timeline:
+        out.append(_q("household.spouse.visa_timeline", "household",
+                      "List each U.S. immigration status your spouse has held and its exact start/end dates "
+                      "(if your spouse has never held U.S. status — e.g. lives abroad — say so).",
+                      "The spouse's own residency (their visa periods plus days in the U.S.) decides whether a "
+                      "joint return needs the §6013(g)/(h) election.",
+                      "household.spouse.immigration.visa_timeline",
+                      disambiguation="Use date ranges, not a single 'current status' — mid-year changes matter, "
+                                     "exactly as for your own timeline (pitfall P-004)."))
+
+    rf = sp.residency_facts
+    years_known = set(rf.days_in_us) if rf else set()
+    spouse_days_why = ("The Substantial Presence Test runs on the SPOUSE'S own days — it decides whether they "
+                       "are already a U.S. resident (no election needed to file jointly) or a nonresident alien "
+                       "(joint filing then needs the §6013(g)/(h) election).")
+    spouse_days_disambiguation = ("Give a count for EVERY listed year — 0 is a valid answer for a year your "
+                                  "spouse spent entirely outside the U.S. Their I-94 travel history gives exact "
+                                  "dates; exact dates beat a guess.")
+    if tax_year is not None:
+        needed = {tax_year, tax_year - 1, tax_year - 2} | _exempt_category_years_from(imm, tax_year)
+        missing = sorted(y for y in needed if y not in years_known)
+        if missing:
+            year_list = ", ".join(str(y) for y in missing)
+            out.append(_q("household.spouse.days_in_us", "household",
+                          f"How many days was your spouse physically present in the U.S. in each of these years: "
+                          f"{year_list}? (One count per year; answer 0 for a year spent entirely outside the U.S.)",
+                          spouse_days_why,
+                          "household.spouse.residency_facts.days_in_us",
+                          disambiguation=spouse_days_disambiguation))
+    elif rf is None or not years_known:
+        out.append(_q("household.spouse.days_in_us", "household",
+                      "How many days was your spouse physically present in the U.S. in the tax year AND in each "
+                      "of the two preceding years (plus any year they held F/J/M/Q status)?",
+                      spouse_days_why,
+                      "household.spouse.residency_facts.days_in_us",
+                      disambiguation=spouse_days_disambiguation))
+
+    classification = _spouse_classification(profile, tax_year)
+    if classification == "resident":
+        notes.append("Your spouse's own residency result is RESIDENT alien (they pass the Substantial Presence "
+                     "Test), so a joint return is available without a §6013(g)/(h) election.")
+        return
+    if _has(hh.filing_status):
+        return  # the election decision is recorded as the chosen filing status — stop asking.
+    confirmed = classification == "nonresident"
+    lead = ("Your spouse's residency result is NONRESIDENT alien."
+            if confirmed else
+            "Your spouse may be a nonresident alien (their residency is not confirmed yet).")
+    out.append(_q("household.spouse.section_6013_election", "household",
+                  f"{lead} Do you want to evaluate the §6013(g)/(h) election — treating your spouse as a U.S. "
+                  f"resident so you can file jointly?",
+                  "A joint return with a nonresident-alien spouse is only valid WITH the election (§6013(a)(1) "
+                  "bars it otherwise); the choice changes the tax, whose income is taxed, and what must be "
+                  "attached to the return.",
+                  "household.filing_status",
+                  disambiguation="Electing under §6013(g)/(h) treats the nonresident spouse as a U.S. RESIDENT: "
+                                 "you file married-filing-jointly on your combined WORLDWIDE income — the "
+                                 "spouse's foreign income becomes taxable too — and the election statement "
+                                 "(signed by BOTH spouses) is attached to the first joint return. Declining "
+                                 "means married-filing-separately: write 'NRA' in the spouse-SSN box if your "
+                                 "spouse has no SSN or ITIN."))
+    notes.append(
+        ("Your spouse's residency result is nonresident alien: " if confirmed else
+         "If your spouse is a nonresident alien: ")
+        + "a joint return is only available by electing under §6013(g)/(h) to treat them as a U.S. resident "
+          "(their worldwide income becomes taxable); without the election a married couple with a "
+          "nonresident-alien spouse files married-filing-separately."
+    )
 
 
 def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
