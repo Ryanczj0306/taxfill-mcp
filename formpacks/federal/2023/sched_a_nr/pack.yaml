@@ -1,0 +1,103 @@
+# Schedule A (Form 1040-NR) — Itemized Deductions — tax year 2023 revision.
+# Revision verified by rendering page 1 of the downloaded blank and reading
+# the printed title "SCHEDULE A (Form 1040-NR) Itemized Deductions", the
+# printed year 2023, Attachment Sequence No. 7A, and the footer
+# "Schedule A (Form 1040-NR) 2023" before pinning pdf_sha256.
+#
+# Field map: introspected from this exact revision. The form is ONE page with
+# 20 fillable widgets (all /Tx, none read-only, no checkboxes) — every one is
+# mapped below: 2 header + 9 money lines + 9 line-7 write-in text rows.
+#
+# Nonresident itemized deductions: state/local income taxes (1a/1b), gifts to
+# U.S. charities (2-5), casualty and theft losses (6), other itemized
+# deductions (7), total (8). Unlike Schedule A (Form 1040) there is no
+# medical, mortgage-interest, or sales-tax section.
+form: "Schedule A (Form 1040-NR)"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040nra--2023.pdf
+pdf_sha256: "680098612656cd24a2c8cbcfc9d37d451d20d3f3de286da1b0e3c10c80549ee7"
+acroform_root: "form1040-NR[0]"
+fields:
+  # ----- header -----
+  - line: "name"                       # Name shown on Form 1040-NR
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "identifying_number"         # Your identifying number (plain text box, widget /MaxLen 11 — NOT a comb)
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only            # digits-only keeps cross-form identity values consistent with f1040nr
+  # ----- Taxes You Paid -----
+  - line: "1a"                         # State and local income taxes
+    field: "Page1[0].Line1a_ReadOrder[0].f1_3[0]"
+    type: money
+  - line: "1b"                         # Enter the smaller of line 1a or $10,000 ($5,000 if married filing separately)
+    field: "Page1[0].f1_4[0]"
+    type: money
+  # ----- Gifts to U.S. Charities -----
+  - line: "2"                          # Gifts by cash or check (see instructions if any gift of $250 or more)
+    field: "Page1[0].Line2_ReadOrder[0].f1_5[0]"
+    type: money
+  - line: "3"                          # Other than by cash or check (Form 8283 if over $500)
+    field: "Page1[0].f1_6[0]"
+    type: money
+  - line: "4"                          # Carryover from prior year
+    field: "Page1[0].f1_7[0]"
+    type: money
+  - line: "5"                          # Add lines 2 through 4
+    field: "Page1[0].f1_8[0]"
+    type: money
+  # ----- Casualty and Theft Losses -----
+  - line: "6"                          # Casualty and theft loss(es) from a federally declared disaster, Form 4684 line 18
+    field: "Page1[0].f1_9[0]"
+    type: money
+  # ----- Other Itemized Deductions -----
+  - line: "7.type"                     # Other—from list in instructions. List type and amount: (inline first write-in)
+    field: "Page1[0].f1_10[0]"
+    type: text
+  - line: "7.type_cont"                # write-in continuation (dotted row 2)
+    field: "Page1[0].f1_11[0]"
+    type: text
+  - line: "7.type_cont2"               # write-in continuation (dotted row 3)
+    field: "Page1[0].f1_12[0]"
+    type: text
+  - line: "7.type_cont3"               # write-in continuation (dotted row 4)
+    field: "Page1[0].f1_13[0]"
+    type: text
+  - line: "7.type_cont4"               # write-in continuation (dotted row 5)
+    field: "Page1[0].f1_14[0]"
+    type: text
+  - line: "7.type_cont5"               # write-in continuation (dotted row 6)
+    field: "Page1[0].f1_15[0]"
+    type: text
+  - line: "7.type_cont6"               # write-in continuation (dotted row 7)
+    field: "Page1[0].f1_16[0]"
+    type: text
+  - line: "7.type_cont7"               # write-in continuation (dotted row 8)
+    field: "Page1[0].f1_17[0]"
+    type: text
+  - line: "7.type_cont8"               # write-in continuation (dotted row 9, last)
+    field: "Page1[0].f1_18[0]"
+    type: text
+  - line: "7"                          # Other itemized deductions amount (right column)
+    field: "Page1[0].f1_19[0]"
+    type: money
+  # ----- Total Itemized Deductions -----
+  - line: "8"                          # Add the amounts in the far right column for lines 1b through 7 -> Form 1040-NR, line 12
+    field: "Page1[0].f1_20[0]"
+    type: money
+relations:
+  # Form-face arithmetic only. The SALT cap on line 1b IS printed on the form
+  # face ("Enter the smaller of line 1a or $10,000"). CAVEAT: the printed cap
+  # is $5,000 for married filing separately — relations cannot branch on
+  # filing status, so the $10,000 form-face text is encoded (same caveat and
+  # treatment as Schedule A (Form 1040) line 5e).
+  - "1b == min(1a, 10000)"
+  - "5 == 2 + 3 + 4"                   # "Add lines 2 through 4"
+  - "8 == 1b + 5 + 6 + 7"              # "Add the amounts in the far right column for lines 1b through 7"
+cross_form:
+  - "8 == f1040nr.12"                  # "Also, enter this amount on Form 1040-NR, line 12"
+identity_fields: [name, identifying_number]
+signature: null                        # attachment-only schedule: no signature block of its own
+mailing: null                          # mailed inside the parent Form 1040-NR envelope
