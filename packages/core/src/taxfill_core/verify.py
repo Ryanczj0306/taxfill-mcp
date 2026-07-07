@@ -278,6 +278,11 @@ def expected_rendering(pack_field: PackField, value: object) -> str:
         return render_money(parsed)
     text = str(value)
     if pack_field.comb or pack_field.format == "ssn_digits_only":
+        # The sanctioned literal 'NRA' on a spouse SSN line (Form 1040 instructions:
+        # MFS with an NRA spouse who has no TIN) must survive normalization — otherwise
+        # both sides digit-strip to "" and the assertion would also pass on a BLANK box.
+        if text.strip().upper() == "NRA" and "spouse" in pack_field.line:
+            return "NRA"
         return digits_only(text)
     return normalize_text(text)
 
@@ -292,6 +297,8 @@ def normalize_on_disk(pack_field: PackField, raw: str) -> str:
         parsed = parse_money(raw)
         return render_money(parsed) if parsed is not None else normalize_text(raw)
     if pack_field.comb or pack_field.format == "ssn_digits_only":
+        if raw.strip().upper() == "NRA" and "spouse" in pack_field.line:
+            return "NRA"
         return digits_only(raw)
     return normalize_text(raw)
 
@@ -1242,10 +1249,10 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
                     name=widget.name,
                     status=FAIL,
                     detail=(
-                        f"value is {length} characters but MaxLen is {widget.max_len} — the "
-                        f"last {overflow} character(s) would be silently clipped (pitfall "
-                        f"P-001); shorten the value and refill (SSN/EIN comb fields take "
-                        f"digits only: use format 'ssn_digits_only')"
+                        f"field '{widget.name}': value is {length} characters but MaxLen is "
+                        f"{widget.max_len} — the last {overflow} character(s) would be silently "
+                        f"clipped (pitfall P-001); shorten the value and refill (SSN/EIN comb "
+                        f"fields take digits only: use format 'ssn_digits_only')"
                     ),
                 )
             )
@@ -1256,7 +1263,7 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
                 ClippingCheck(
                     name=widget.name,
                     status=PASS,
-                    detail="auto-sized font (0 Tf) — the viewer shrinks text to fit; safe",
+                    detail=f"field '{widget.name}': auto-sized font (0 Tf) — the viewer shrinks text to fit; safe",
                 )
             )
             continue
@@ -1270,8 +1277,8 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
                     name=widget.name,
                     status=PASS,
                     detail=(
-                        "widget width unknown (rect width 0) — width heuristic skipped; "
-                        "MaxLen check passed, confirm visually with render_form"
+                        f"field '{widget.name}': widget width unknown (rect width 0) — width "
+                        f"heuristic skipped; MaxLen check passed, confirm visually with render_form"
                     ),
                 )
             )
@@ -1283,11 +1290,11 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
                     name=widget.name,
                     status=FAIL,
                     detail=(
-                        f"estimated text width {estimated:.1f}pt (len {length} x 0.5 x "
-                        f"{font_size:g}pt Helvetica heuristic{assumed}) exceeds the widget "
-                        f"width {widget.rect_width:.1f}pt — text may be visually clipped "
-                        f"(pitfall P-001); shorten the value or switch the field to "
-                        f"auto-size, then re-render to confirm"
+                        f"field '{widget.name}': estimated text width {estimated:.1f}pt (len "
+                        f"{length} x 0.5 x {font_size:g}pt Helvetica heuristic{assumed}) exceeds "
+                        f"the widget width {widget.rect_width:.1f}pt — text may be visually "
+                        f"clipped (pitfall P-001); shorten this field's value or switch the "
+                        f"field to auto-size, then re-render to confirm"
                     ),
                 )
             )
@@ -1297,8 +1304,8 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
                     name=widget.name,
                     status=PASS,
                     detail=(
-                        f"fits: estimated {estimated:.1f}pt within the {widget.rect_width:.1f}pt "
-                        f"widget{assumed}"
+                        f"field '{widget.name}': fits — estimated {estimated:.1f}pt within the "
+                        f"{widget.rect_width:.1f}pt widget{assumed}"
                     ),
                 )
             )
@@ -1340,9 +1347,9 @@ def _pack_maxlen_checks(
                     name=f"{qualified} (line {pack_field.line})",
                     status=FAIL,
                     detail=(
-                        f"value is {length} characters but the pack's maxlen is "
-                        f"{pack_field.maxlen} — the last {overflow} character(s) would be "
-                        f"silently clipped (pitfall P-001); refill line '{pack_field.line}' "
+                        f"line '{pack_field.line}': value is {length} characters but the pack's "
+                        f"maxlen is {pack_field.maxlen} — the last {overflow} character(s) would "
+                        f"be silently clipped (pitfall P-001); refill line '{pack_field.line}' "
                         f"with a value that fits (comb fields take digits only)"
                     ),
                 )
@@ -1352,7 +1359,7 @@ def _pack_maxlen_checks(
                 ClippingCheck(
                     name=f"{qualified} (line {pack_field.line})",
                     status=PASS,
-                    detail=f"{length} character(s) within maxlen {pack_field.maxlen}",
+                    detail=f"line '{pack_field.line}': {length} character(s) within maxlen {pack_field.maxlen}",
                 )
             )
     return checks

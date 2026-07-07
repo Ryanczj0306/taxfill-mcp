@@ -651,6 +651,125 @@ def test_one_member_per_group_on_separate_fields_is_allowed(tmp_path: Path):
     assert result.written[f"{ROOT}.Page1[0].c1_9[0]"] == "/1"
 
 
+# --- the spouse-SSN 'NRA' literal (MFS with a no-SSN nonresident-alien spouse) --
+# Form 1040 instructions (Filing Status): an MFS filer whose NRA spouse has no
+# SSN/ITIN (and needs none) enters 'NRA' in the spouse identifying-number box.
+# Only SPOUSE lines accept the literal; the taxpayer's own SSN stays strict.
+
+
+NRA_PACK = mini_pack(
+    [
+        {
+            "line": "identifying_number",
+            "field": "Page1[0].f1_7[0]",
+            "type": "text",
+            "maxlen": 9,
+            "comb": True,
+            "format": "ssn_digits_only",
+        },
+        {
+            "line": "spouse.identifying_number",
+            "field": "Page1[0].f1_9[0]",
+            "type": "text",
+            "maxlen": 9,
+            "comb": True,
+            "format": "ssn_digits_only",
+        },
+    ]
+)
+
+
+@pytest.fixture
+def nra_blank_pdf(tmp_path: Path) -> Path:
+    """Synthetic blank with taxpayer + spouse 9-cell SSN comb fields."""
+    return make_acroform_pdf(
+        tmp_path / "nra_blank.pdf",
+        [
+            {"name": f"{ROOT}.Page1[0].f1_7[0]", "maxlen": 9, "comb": True},
+            {"name": f"{ROOT}.Page1[0].f1_9[0]", "maxlen": 9, "comb": True},
+        ],
+    )
+
+
+def test_spouse_ssn_accepts_nra_literal(nra_blank_pdf: Path, tmp_path: Path):
+    out = tmp_path / "filled.pdf"
+    result = fill_form(NRA_PACK, {"spouse.identifying_number": "NRA"}, nra_blank_pdf, out)
+    qualified = f"{ROOT}.Page1[0].f1_9[0]"
+    assert result.written == {qualified: "NRA"}
+    assert PdfReader(out).get_fields()[qualified].value == "NRA"
+
+
+def test_spouse_ssn_nra_is_case_insensitive_and_writes_uppercase(nra_blank_pdf: Path, tmp_path: Path):
+    for raw in ("nra", "Nra", " NRA "):
+        out = tmp_path / "filled_ci.pdf"
+        result = fill_form(NRA_PACK, {"spouse.identifying_number": raw}, nra_blank_pdf, out)
+        assert result.written[f"{ROOT}.Page1[0].f1_9[0]"] == "NRA", raw
+
+
+def test_taxpayer_ssn_rejects_nra_prescriptively(nra_blank_pdf: Path, tmp_path: Path):
+    # The taxpayer's own identifying number is never 'NRA' — and the error must
+    # be followable (say WHERE 'NRA' belongs), not "strip the letters".
+    with pytest.raises(ValueError) as exc:
+        fill_form(NRA_PACK, {"identifying_number": "NRA"}, nra_blank_pdf, tmp_path / "out.pdf")
+    message = str(exc.value)
+    assert "SPOUSE" in message
+    assert "taxpayer's own 9-digit SSN or ITIN" in message
+    assert "Filing Status" in message  # cites the 1040-instructions mechanic
+
+
+def test_spouse_ssn_stays_strict_for_non_nra_letters(nra_blank_pdf: Path, tmp_path: Path):
+    # The NRA carve-out must not weaken normal SSN validation on the spouse line.
+    for bad in ("12A456789", "NRAX", "N-R-A-1"):
+        with pytest.raises(ValueError, match=r"digits only"):
+            fill_form(NRA_PACK, {"spouse.identifying_number": bad}, nra_blank_pdf, tmp_path / "out.pdf")
+    # A real dashed spouse SSN still normalizes to 9 digits.
+    out = tmp_path / "real_ssn.pdf"
+    result = fill_form(NRA_PACK, {"spouse.identifying_number": "000-00-0000"}, nra_blank_pdf, out)
+    assert result.written[f"{ROOT}.Page1[0].f1_9[0]"] == "000000000"
+
+
+def test_nra_on_plain_comb_line_without_ssn_format_still_rejected(blank_pdf: Path, tmp_path: Path):
+    # The carve-out is scoped to ssn_digits_only lines: a plain comb field
+    # (zip) gets the ordinary digits-only error even for the value 'NRA'.
+    with pytest.raises(ValueError, match=r"digits only"):
+        fill_form(PACK, {"zip": "NRA"}, blank_pdf, tmp_path / "out.pdf")
+
+
+@pytest.mark.network
+def test_real_f1040_2023_spouse_nra_roundtrip(tmp_path: Path):
+    """The finding's repro on the REAL f1040 pack + cached official blank."""
+    from taxfill_core.fetch import OfflineFetchError, fetch_blank
+    from taxfill_core.schemas.formpack import load_pack
+
+    repo_root = Path(__file__).resolve().parents[3]
+    pack = load_pack(repo_root / "formpacks" / "federal" / "2023" / "f1040" / "pack.yaml")
+    try:
+        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+    except OfflineFetchError as exc:
+        pytest.skip(f"cache empty and network unreachable: {exc}")
+
+    out = tmp_path / "f1040_nra.pdf"
+    result = fill_form(
+        pack,
+        {
+            "identifying_number": "000-00-0000",
+            "spouse.identifying_number": "NRA",
+            "filing_status.mfs": True,
+        },
+        blank,
+        out,
+    )
+    fields = PdfReader(out).get_fields()
+    spouse_field = f"{pack.acroform_root}.Page1[0].f1_09[0]"
+    assert result.written[spouse_field] == "NRA"
+    assert fields[spouse_field].value == "NRA"
+    assert fields[f"{pack.acroform_root}.Page1[0].f1_06[0]"].value == "000000000"
+
+    # The taxpayer's own SSN line on the real pack still rejects 'NRA'.
+    with pytest.raises(ValueError, match=r"SPOUSE"):
+        fill_form(pack, {"identifying_number": "NRA"}, blank, tmp_path / "reject.pdf")
+
+
 # --- misc behavior ------------------------------------------------------------
 
 

@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP, Image
+from pydantic import ValidationError
 
 from taxfill_core import (
     additional_medicare_tax as _additional_medicare_tax,
@@ -66,10 +67,14 @@ mcp = FastMCP(
         "Deterministic tax-prep execution layer. You interview the user and decide positions; "
         "these tools fill, verify, render, and compute — never do tax arithmetic yourself, and "
         "never invent a value (unknown stays a gap). Always treat output as a review draft: the "
-        "user reviews, signs, and files. Typical flow: intake_checklist -> (extract+confirm) -> "
-        "estimate_refund -> list_forms/get_form_map -> fetch_blank -> fill_form -> verify_form/"
-        "verify_filing (loop until ok) -> render_form (vision-review every page) -> filing_summary "
-        "(approve) -> file_and_pay."
+        "user reviews, signs, and files. Full flow (workspace_load first when resuming): "
+        "intake_checklist -> extract_document (+ user confirms each value) -> workspace_save -> "
+        "estimate_refund -> residency (visa/day-count filers) -> state_scope (which states must "
+        "file) -> decide positions + workspace_record_position (each with its authority) -> "
+        "list_forms/get_form_map -> fetch_blank -> fill_form -> verify_form/verify_filing "
+        "(pass `independent` calc results so the independent recompute runs; loop until ok) -> "
+        "render_form (vision-review every page) -> filing_summary (user approves) -> "
+        "file_and_pay -> workspace_reconcile."
     ),
 )
 
@@ -78,19 +83,43 @@ def _dump(model: Any) -> Any:
     return model.model_dump(mode="json")
 
 
-def _report_summary(report: VerifyReport) -> dict:
-    """Compact, agent-actionable view of a VerifyReport (ok + per-section failures)."""
+def _report_summary(report: VerifyReport, *, recompute_ran: bool = True) -> dict:
+    """Compact, agent-actionable view of a VerifyReport (ok + per-section failures).
+
+    ``recompute_ran=False`` (the caller supplied no ``independent`` set) stamps the
+    recompute section with an explicit not-run note, so ok:true is never mistaken
+    for "the numbers were independently recomputed" — checked:0 alone is ambiguous.
+    """
     sections: dict[str, Any] = {}
     for name in ("assertions", "relations", "recompute", "clipping", "checkboxes", "identity", "cross_form"):
         checks = getattr(report, name) or []
         fails = [c.detail for c in checks if getattr(c, "status", None) == "FAIL"]
         sections[name] = {"checked": len(checks), "failed": len(fails), "failures": fails}
+    if not recompute_ran:
+        sections["recompute"]["note"] = (
+            "not run — pass `independent` ({line: calc result}, e.g. line 16 tax from "
+            "taxable_income/filing_status/year; keyed per form_key for verify_filing) to enable "
+            "the independent recompute; without it this report proves internal consistency only"
+        )
     return {
         "ok": report.ok,
         "form_keys": report.form_keys,
         "sections": sections,
         "pitfalls": [{"id": p.id, "status": p.status, "detail": p.detail} for p in report.pitfall_checks],
     }
+
+
+def _validation_problems(exc: ValidationError) -> str:
+    """PII-safe one-liner for a pydantic ValidationError: field paths + messages only.
+
+    Input values are never echoed (``include_input=False``) — a wrong-shaped call can
+    still carry SSNs/wages, and tool errors travel back through the agent transcript.
+    """
+    problems = []
+    for err in exc.errors(include_url=False, include_input=False):
+        loc = ".".join(str(part) for part in err["loc"]) or "(top level)"
+        problems.append(f"{loc}: {err['msg']}")
+    return "; ".join(problems)
 
 
 # ── discovery ────────────────────────────────────────────────────────────────
@@ -137,21 +166,40 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
 
 @mcp.tool()
 def verify_form(
-    form: str, year: int, pdf_path: str, expected: dict[str, Any] | None = None, jurisdiction: str = "federal"
+    form: str,
+    year: int,
+    pdf_path: str,
+    expected: dict[str, Any] | None = None,
+    independent: dict[str, float] | None = None,
+    jurisdiction: str = "federal",
 ) -> dict:
     """Verify a filled form against its pack: assertions, relation math + independent recompute,
-    clipping scan, required-checkbox audit, and the pitfall registry. Returns ok + failures."""
+    clipping scan, required-checkbox audit, and the pitfall registry. Returns ok + failures.
+
+    `independent` maps line id -> the amount YOU recomputed via the calc tool over the versioned
+    tables (never copied from the form or from your own fill values) — e.g. {"16": 36036, "12": 27700}
+    where 36036 came from calc(op="tax", args={"taxable_income": 205150, "filing_status":
+    "married_filing_jointly", "year": 2023}) and 27700 from calc(op="standard_deduction", ...).
+    This is the no-LLM-arithmetic backstop for the table-lookup lines no relation covers
+    (1040 lines 12/16/19/27, 1040-NR 16). When omitted, the recompute does NOT run and the
+    report's recompute section says so — relation math alone only proves internal consistency.
+    """
     pack = load_form_pack(form, year, jurisdiction)
-    report = _verify_form(pack, pdf_path, expected=expected)
-    return _report_summary(report)
+    report = _verify_form(pack, pdf_path, expected=expected, independent=independent)
+    return _report_summary(report, recompute_ran=independent is not None)
 
 
 @mcp.tool()
-def verify_filing(items: list[dict]) -> dict:
+def verify_filing(items: list[dict], independent: dict[str, dict[str, float]] | None = None) -> dict:
     """Verify a whole filing across forms: cross-form identity + inter-form relations.
 
     Each item: {form, year, pdf_path, jurisdiction?, form_key?}. form_key (defaults to `form`)
     is the key other forms' cross_form rules reference (e.g. 'sched_1', 'sched_oi').
+
+    `independent` is keyed form_key -> {line id: amount YOU recomputed via the calc tool}, e.g.
+    {"f1040": {"16": 36036}} — the per-form shape matches verify_form's `independent`. It is the
+    no-LLM-arithmetic backstop for table-lookup lines (1040 line 16 etc.); when omitted, the
+    recompute does NOT run and the report's recompute section says so.
     """
     filing_items = []
     for it in items:
@@ -159,7 +207,8 @@ def verify_filing(items: list[dict]) -> dict:
         filing_items.append(
             FilingItem(form_key=it.get("form_key", it["form"]), pack=pack, pdf_path=Path(it["pdf_path"]))
         )
-    return _report_summary(_verify_filing(filing_items))
+    report = _verify_filing(filing_items, independent=independent)
+    return _report_summary(report, recompute_ran=independent is not None)
 
 
 @mcp.tool(structured_output=False)
@@ -300,11 +349,29 @@ def workspace_load(year: int, root: str = WORKSPACE_ROOT) -> dict:
 def workspace_record_position(year: int, position: dict, root: str = WORKSPACE_ROOT) -> dict:
     """Record one decided position with its authority into the audit trail.
 
+    `position` shape: {topic, value, citation: {source, url}, rationale?, references?, status?}
+    — topic: what was decided; value: the figure/decision as it will appear on the return;
+    citation: the authoritative source (.gov URL); references?: forms/lines touched, e.g.
+    ["f1040.12"]; status?: decided|open|unverified. Example: {"topic": "1040 line 12 — standard
+    deduction", "value": "13850", "citation": {"source": "Rev. Proc. 2022-38, Section 3.15",
+    "url": "https://www.irs.gov/pub/irs-drop/rp-22-38.pdf"}}.
+
     A position with no `citation` is stored as `unverified` (never `decided`) — the return
     is not ready while any remain. Recording the same `topic` again replaces it (corrections).
     """
+    try:
+        pos = Position.model_validate(position)
+    except ValidationError as exc:
+        raise ValueError(
+            f"invalid `position` — {_validation_problems(exc)}. Expected shape: "
+            '{"topic": str, "value": str, "citation": {"source": str, "url": ".gov URL"}, '
+            '"rationale"?: str, "references"?: ["f1040.12"], "status"?: decided|open|unverified} '
+            '— e.g. {"topic": "1040 line 12 — standard deduction", "value": "13850", '
+            '"citation": {"source": "Rev. Proc. 2022-38, Section 3.15", '
+            '"url": "https://www.irs.gov/pub/irs-drop/rp-22-38.pdf"}}'
+        ) from None
     ws = Workspace.open(root, year, now=_now())
-    saved = ws.record_position(Position.model_validate(position), now=_now())
+    saved = ws.record_position(pos, now=_now())
     return {"recorded": _dump(saved), "status": ws.status()}
 
 
@@ -332,10 +399,36 @@ def state_scope(profile: dict, year: int) -> dict:
 def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     """Early bottom-line ESTIMATE (a range) from a partial profile + confirmed income amounts.
 
-    income fields: wages, federal_withholding, interest, dividends, self_employment_net,
-    other_income, itemized_deductions? (all whole dollars, optional).
+    `income` fields (whole dollars; every field optional, defaults 0; unknown fields rejected):
+    - income: wages (W-2 box 1), federal_withholding (withheld + estimated payments), interest,
+      dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
+      capital_gain_short (signed), self_employment_net (signed), retirement_income_taxable
+      (1099-R 2a), social_security_benefits (SSA-1099 box 5), other_income
+    - adjustments: student_loan_interest_paid (1098-E), pre_agi_adjustments (confirmed-eligible
+      above-the-line), itemized_deductions? (only if itemizing; else standard deduction)
+    - credit inputs: ss_withheld_by_employer [W-2 box 4 per employer], aotc_qualified_expenses
+      [per eligible student]
+    - ACA (Form 1095-A line 33): aca_premiums, aca_slcsp, aca_aptc
+    - spouse: nested income object with the spouse's OWN amounts (same fields; enables a true
+      two-return MFS comparison — otherwise amounts are couple-combined)
     """
-    return _dump(_estimate_refund(Profile.model_validate(profile), year, IncomeSnapshot.model_validate(income)))
+    try:
+        prof = Profile.model_validate(profile)
+    except ValidationError as exc:
+        raise ValueError(
+            f"invalid `profile` — {_validation_problems(exc)}. Top-level profile sections: "
+            f"{', '.join(Profile.model_fields)}; build it with intake_checklist and pass its "
+            f"answers back unchanged."
+        ) from None
+    try:
+        snapshot = IncomeSnapshot.model_validate(income)
+    except ValidationError as exc:
+        raise ValueError(
+            f"invalid `income` — {_validation_problems(exc)}. Valid income fields: "
+            f"{', '.join(IncomeSnapshot.model_fields)}. Whole dollars; capital gains go in "
+            f"capital_gain_long/capital_gain_short (signed), not 'capital_gains'."
+        ) from None
+    return _dump(_estimate_refund(prof, year, snapshot))
 
 
 @mcp.tool()

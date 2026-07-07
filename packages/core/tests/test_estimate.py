@@ -927,7 +927,9 @@ def test_nonresident_gets_no_education_credits():
     labels = _labels(est)
     assert "Less: education credits (nonrefundable part)" not in labels
     assert "Less: American opportunity credit (refundable 40%)" not in labels
-    assert est.point == _independent_refund(40_000, 4_000, "single")
+    # FIX-1 (intentional change): a 1040-NR filer gets NO standard deduction, so the
+    # cross-check is withholding minus the tax on the FULL wages (itemized $0).
+    assert est.point == 4_000 - tax_from_taxable_income(40_000, "single", 2023).tax
     assert any("residency election" in a for a in est.assumptions)
     # Control: the same income for a resident single filer DOES get both parts.
     est_res = estimate_refund(_single(), 2023, income)
@@ -973,3 +975,248 @@ def test_estimate_surfaces_below_100_fpl_ptc_caveats():
     assert res.net_ptc > 0
     assert _labels(est2)["Less: net premium tax credit (Form 8962)"] == -res.net_ptc
     assert any("below 100%" in a and "safe harbor" in a for a in est2.assumptions)
+
+
+# ---------------------------------------------------------------------------
+# Tier-1 persona-review regressions (FIX-1..FIX-7): nonresident deduction law,
+# NRA investment-income rates, dual-status status restrictions, the has_ssn=None
+# CTC demotion, vanishing 1098-E, §6013 worldwide-income input caveat, and
+# FICA-withheld-in-error disclosure. Repro numbers come from the confirmed
+# findings; every expected value is re-derived through calc (no magic numbers).
+# ---------------------------------------------------------------------------
+
+_NRA_DEDUCTION_LABEL = "Less: itemized deductions (1040-NR — nonresidents cannot take the standard deduction)"
+
+
+def _nra_profile(marital="unmarried", **household_kwargs):
+    return Profile(
+        household=Household(marital_status=_ans(marital), **household_kwargs),
+        identity=Identity(us_person=_ans(False)),
+        immigration=_nra_immigration(),
+        residency_facts=_nra_residency(),
+    )
+
+
+def test_fix1_nonresident_deduction_is_itemized_only():
+    # FIX-1 repro: F-1 nonresident, wages 18,000, withholding 1,400, state tax
+    # withheld 650 itemized. The 1040-NR deduction is the itemized 650 — NEVER
+    # max(650, standard deduction) — flipping the sign from refund to owed.
+    est = estimate_refund(
+        _nra_profile(), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, itemized_deductions=650),
+    )
+    labels = _labels(est)
+    assert "Less: standard deduction" not in labels          # no standard-deduction line
+    assert labels[_NRA_DEDUCTION_LABEL] == -650               # the supplied itemized only
+    assert labels["Taxable income"] == 18_000 - 650
+    tax = tax_from_taxable_income(18_000 - 650, "single", 2023).tax
+    assert est.point == 1_400 - tax
+    assert est.point < 0  # the persona OWES (~$465) — the old code showed a fake refund
+    # The itemized-only rule AND the India Art. 21(2) exception are both disclosed.
+    assert any("cannot take the standard deduction" in a for a in est.assumptions)
+    assert any("Art. 21(2)" in a and "India" in a for a in est.assumptions)
+
+
+def test_fix1_nonresident_without_itemized_gets_zero_deduction():
+    # FIX-1 repro (ra-dual-status persona numbers): wages 95,000 / withholding 14,000.
+    # No itemized supplied -> deduction $0, never the standard deduction.
+    est = estimate_refund(
+        _nra_profile(), 2023, IncomeSnapshot(wages=95_000, federal_withholding=14_000)
+    )
+    labels = _labels(est)
+    assert "Less: standard deduction" not in labels
+    assert labels[_NRA_DEDUCTION_LABEL] == 0
+    assert est.point == 14_000 - tax_from_taxable_income(95_000, "single", 2023).tax
+    assert est.point < 0  # owes (~$2,213), not the old +$834 "refund"
+    # The wrong-law 'Standard deduction assumed' disclosure must NOT appear.
+    assert not any(a.startswith("Standard deduction assumed") for a in est.assumptions)
+    assert any("$0 of itemized deductions" in a for a in est.assumptions)
+
+
+def test_fix2_nonresident_investment_income_uses_ordinary_rates_and_discloses_fdap():
+    # FIX-2 repro: NRA + qualified dividends. The resident QDCGT worksheet must NOT
+    # run (FDAP income is flat 30%/treaty-rate law, not preferential rates), and the
+    # ECI/FDAP + 871(i) deposit-interest caveats must be disclosed.
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400,
+        dividends=2_000, qualified_dividends=2_000, interest=2_000,
+    )
+    est = estimate_refund(_nra_profile(), 2023, income)
+    labels = _labels(est)
+    pref_label = "Income tax (qualified dividends / net capital gain at preferential rates)"
+    assert pref_label not in labels
+    taxable = 18_000 + 2_000 + 2_000  # deduction $0 (no itemized, 1040-NR)
+    assert labels["Income tax"] == tax_from_taxable_income(taxable, "single", 2023).tax
+    assert any("FDAP" in a and "Schedule NEC" in a for a in est.assumptions)
+    assert any("871(i)" in a and "OVERTAX" in a for a in est.assumptions)
+    assert not any("Qualified Dividends and Capital Gain Tax Worksheet" in a for a in est.assumptions)
+    # Control: the same income for a resident single filer DOES use the worksheet.
+    est_res = estimate_refund(_single(), 2023, income)
+    assert pref_label in _labels(est_res)
+    assert not any("FDAP" in a for a in est_res.assumptions)
+
+
+def _dual_status_profile(marital="married", **household_kwargs):
+    # The ra-dual-status finding's repro timeline: F-1 -> H-1B during 2023, still
+    # inside the exempt window -> residency classifies dual_status_candidate.
+    return Profile(
+        household=Household(marital_status=_ans(marital), **household_kwargs),
+        immigration=Immigration(
+            visa_timeline=[
+                VisaPeriod(status="F-1", start=date(2021, 8, 20), end=date(2023, 3, 31), provenance=US),
+                VisaPeriod(status="H-1B", start=date(2023, 4, 1), end=None, provenance=US),
+            ]
+        ),
+        residency_facts=ResidencyFacts(
+            days_in_us={y: _ans(d) for y, d in {2021: 130, 2022: 350, 2023: 365}.items()}
+        ),
+    )
+
+
+def test_fix3_dual_status_candidate_married_drops_mfj_and_discloses_split_year():
+    # FIX-3 repro: a married dual-status candidate must NOT be steered to MFJ with a
+    # dollar delta; the split-year restrictions must be a loud assumption.
+    from taxfill_core.residency import classify
+
+    assert classify(
+        [
+            {"status": "F-1", "start": "2021-08-20", "end": "2023-03-31"},
+            {"status": "H-1B", "start": "2023-04-01", "end": None},
+        ],
+        {2021: 130, 2022: 350, 2023: 365},
+        2023,
+    ).classification == "dual_status_candidate"
+
+    est = estimate_refund(
+        _dual_status_profile(), 2023, IncomeSnapshot(wages=95_000, federal_withholding=14_000)
+    )
+    assert est.filing_status_used == "married_filing_separately"
+    assert est.comparison is None  # MFJ dropped -> one candidate, no MFJ recommendation
+    surfaced = " ".join(est.assumptions + est.what_would_change_it)
+    assert "DUAL-STATUS" in surfaced
+    assert "§6013" in surfaced and "worldwide income" in surfaced.lower()
+    assert "NO standard deduction" in surfaced
+    assert "FULL-YEAR approximation" in surfaced          # numbers are full-year math
+    assert "Form 1040 + Form 1040-NR" in surfaced          # the real split-year return
+    # Surfaced in BOTH assumptions and what_would_change_it.
+    assert any("DUAL-STATUS" in a for a in est.assumptions)
+    assert any("DUAL-STATUS" in c for c in est.what_would_change_it)
+
+
+def test_fix3_dual_status_candidate_unmarried_does_not_offer_hoh():
+    profile = _dual_status_profile(
+        marital="unmarried",
+        dependents=[Dependent(name="Kid", relationship="child", provenance=US)],
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=50_000, federal_withholding=6_000))
+    assert est.filing_status_used == "single"
+    statuses = {c.status for c in est.comparison.candidates} if est.comparison else {"single"}
+    assert "head_of_household" not in statuses
+    assert any("DUAL-STATUS" in a for a in est.assumptions)
+
+
+def test_fix4_dependent_with_unconfirmed_ssn_is_demoted_loudly():
+    # FIX-4 repro: two under-17 kids with DOBs but has_ssn NEVER ASKED (None).
+    # The conservative $500-ODC math stays, but the demotion is disclosed with the
+    # count and the dollar path in BOTH assumptions and what_would_change_it.
+    cfg = load_knowledge("federal", 2023).credits.child_tax_credit
+    per_child, odc = cfg["per_qualifying_child"], cfg["credit_for_other_dependents"]
+    income = IncomeSnapshot(wages=100_000, federal_withholding=7_000)
+    est = estimate_refund(
+        _mfj_family(_kid("A", date(2015, 3, 1), has_ssn=None), _kid("B", date(2018, 7, 4), has_ssn=None)),
+        2023, income,
+    )
+    labels = _labels(est)
+    assert labels["Less: child tax credit / credit for other dependents (nonrefundable)"] == -2 * odc
+    demotion = [a for a in est.assumptions if "ONLY because SSN status was not confirmed" in a]
+    assert len(demotion) == 1
+    assert "2 dependent(s)" in demotion[0]
+    assert f"${odc:,}" in demotion[0] and f"${per_child:,}" in demotion[0]  # the dollar path
+    assert f"${(per_child - odc) * 2:,}" in demotion[0]                     # the total delta
+    assert "has_ssn" in demotion[0]
+    assert any("ONLY because SSN status was not confirmed" in c for c in est.what_would_change_it)
+    # Control: confirmed SSNs -> full CTC and NO demotion disclosure.
+    est_ok = estimate_refund(
+        _mfj_family(_kid("A", date(2015, 3, 1)), _kid("B", date(2018, 7, 4))), 2023, income
+    )
+    assert _labels(est_ok)[
+        "Less: child tax credit / credit for other dependents (nonrefundable)"
+    ] == -2 * per_child
+    assert not any("ONLY because SSN status was not confirmed" in a for a in est_ok.assumptions)
+
+
+def test_fix5_student_loan_interest_phased_out_to_zero_is_disclosed():
+    # FIX-5 repro: $1,200 of 1098-E interest at MAGI $232,850 MFJ -> the deduction is
+    # fully phased out. The line disappears from the composition, but the WHY must not.
+    assert student_loan_interest_deduction(1_200, 232_850, "married_filing_jointly", 2023).deduction == 0
+    est = estimate_refund(
+        _mfj_confirmed(), 2023,
+        IncomeSnapshot(wages=232_850, student_loan_interest_paid=1_200, federal_withholding=40_000),
+    )
+    assert "Less: student loan interest deduction" not in _labels(est)
+    note = [a for a in est.assumptions if "student-loan interest (1098-E)" in a]
+    assert len(note) == 1
+    assert "$1,200" in note[0] and "$0" in note[0] and "phase-out" in note[0]
+    assert "pre_agi_adjustments" in note[0]  # the do-not-double-enter guard
+    # Control: inside the phase-out band the deduction line is present and NO $0 note.
+    est_ok = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(wages=80_000, student_loan_interest_paid=2_500, federal_withholding=10_000),
+    )
+    assert "Less: student loan interest deduction" in _labels(est_ok)
+    assert not any("student-loan interest (1098-E)" in a for a in est_ok.assumptions)
+
+
+def test_fix5_student_loan_interest_mfs_zero_is_disclosed():
+    # The MFS-by-rule $0 is equally disclosed (IRC 221 bars MFS entirely).
+    est = estimate_refund(
+        _mfs_confirmed(), 2023,
+        IncomeSnapshot(wages=60_000, student_loan_interest_paid=1_200, federal_withholding=8_000),
+    )
+    assert "Less: student loan interest deduction" not in _labels(est)
+    note = [a for a in est.assumptions if "student-loan interest (1098-E)" in a]
+    assert len(note) == 1
+    assert "married-filing-separately" in note[0] and "$1,200" in note[0]
+
+
+def test_fix6_section_6013_caveat_requires_spouse_worldwide_income_in_inputs():
+    # FIX-6 (tier-1 disclosure): whenever the §6013 caveat fires, it must say the
+    # elected-MFJ figure is only valid with the NRA spouse's foreign income in the
+    # inputs (spouse snapshot's other_income) — else the MFJ delta is overstated.
+    est = estimate_refund(
+        _nra_profile(marital="married"), 2023,
+        IncomeSnapshot(wages=90_000, federal_withholding=9_000),
+    )
+    caveats = [a for a in est.assumptions if "§6013" in a]
+    assert caveats and all("other_income" in c for c in caveats)
+    assert any("overstates the MFJ advantage" in c for c in caveats)
+    assert any("other_income" in c for c in est.what_would_change_it)
+    # The conditional (residency-not-yet-computed) caveat carries the same warning.
+    pending = Profile(
+        household=Household(marital_status=_ans("married")),
+        identity=Identity(us_person=_ans(False)),
+    )
+    est2 = estimate_refund(pending, 2023, IncomeSnapshot(wages=90_000, federal_withholding=9_000))
+    caveats2 = [a for a in est2.assumptions if "§6013" in a]
+    assert caveats2 and all("other_income" in c for c in caveats2)
+
+
+def test_fix7_nonresident_fica_withheld_disclosed_as_off_return_recovery():
+    # FIX-7 repro: exempt F-1 with $1,116 of Social Security tax withheld in error.
+    # The estimate must say it is recovered via employer / Form 843 + 8316 — NOT on
+    # the 1040-NR — in both assumptions and what_would_change_it.
+    est = estimate_refund(
+        _nra_profile(), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, ss_withheld_by_employer=[1_116]),
+    )
+    notes = [a for a in est.assumptions if "Form 843" in a]
+    assert len(notes) == 1
+    assert "$1,116" in notes[0] and "Form 8316" in notes[0] and "FICA-EXEMPT" in notes[0]
+    assert "NOT on the 1040-NR" in notes[0]
+    assert any("Form 843" in c for c in est.what_would_change_it)
+    # Control: the same W-2 for a resident filer gets no FICA-in-error note.
+    est_res = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, ss_withheld_by_employer=[1_116]),
+    )
+    assert not any("Form 843" in a for a in est_res.assumptions)

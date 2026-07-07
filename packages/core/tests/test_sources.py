@@ -65,6 +65,38 @@ def test_credit_queries_resolve_to_the_right_credit_not_eitc():
         assert "credits_energy" not in eitc and "credits_ctc" not in eitc, q
 
 
+def test_feie_query_resolves_to_form_2555_and_pub54_not_eitc_or_dependent_care():
+    # Regression: 'foreign earned income exclusion' used to return matched=True
+    # with Pub 503 (dependent care) and Pub 596 (EITC) — promoted by nothing
+    # but the generic bigram 'earned income'. It must resolve to the FEIE block.
+    res = get_sources("foreign earned income exclusion", 2023)
+    assert res.matched is True
+    assert {s.topic for s in res.sources} == {"foreign_earned_income"}
+    urls = " ".join(s.url for s in res.sources)
+    assert "about-form-2555" in urls
+    assert "about-publication-54" in urls
+    # the old wrong authorities are absent
+    assert "p503" not in urls and "p596" not in urls
+
+
+def test_feie_keyword_variants_resolve_to_the_feie_block():
+    for q in ("FEIE", "Form 2555", "foreign earned income", "physical presence test", "bona fide residence"):
+        res = get_sources(q, 2023)
+        assert res.matched is True, q
+        assert {s.topic for s in res.sources} == {"foreign_earned_income"}, q
+
+
+def test_generic_bigram_overlap_cannot_promote_an_unrelated_topic():
+    # Coverage gate: a topic sharing well under half of a query's distinctive
+    # tokens must be a clean miss (matched=False -> the cite-or-refuse fallback
+    # fires), never a wrong matched=True citation. 'distributions' alone must
+    # not promote the retirement block, nor 'foreign' the treaty/FEIE blocks.
+    res = get_sources("foreign pension distributions", 2023)
+    assert res.matched is False
+    assert res.sources == []
+    assert any("coverage rule" in n for n in res.notes)
+
+
 def test_lone_generic_word_overlap_is_a_clean_miss():
     # A query that only shares a generic family word with the registry must be a
     # clean miss (matched=False) so the cite-or-refuse fallback fires — never a

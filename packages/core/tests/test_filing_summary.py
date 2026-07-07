@@ -88,3 +88,60 @@ def test_back_filing_multiple_years():
 def test_empty_manifest_rejected():
     with pytest.raises(ValueError, match="at least one"):
         filing_summary([])
+
+
+ALL_PACK_YEARS = (2019, 2020, 2021, 2022, 2023, 2024)
+
+
+# ── FIX: standalone 8843 (information return) must not threaten penalties ──
+
+
+def test_standalone_8843_summary_is_information_only_with_no_penalty_threat():
+    it = _one(FilingManifestItem(form="8843", tax_year=2023, bottom_line=0))
+    assert "Form 8843" in it.headline and "no tax due" in it.headline
+    assert it.refund == 0 and it.owed == 0
+    # Not the balanced-1040 boilerplate ("withholding/payments matched your tax").
+    assert "withholding" not in it.plain_explanation.lower()
+    assert "information only" in it.plain_explanation
+    # TODAY (2026) is past due: the stake is the exempt-individual day exclusion,
+    # never late-filing/late-payment penalties or interest.
+    assert "exempt-individual" in it.deadline_status
+    assert "expect that letter" not in it.deadline_status
+    if "penalt" in it.deadline_status.lower():
+        assert "no late-filing/late-payment penalties" in it.deadline_status
+    # The due date shown is the pack's no-wage 1040-NR date, not April 15.
+    assert "2024-06-17" in it.deadline_status
+    # Cited to the Form 8843 instructions (plus the NR deadline authority).
+    assert any("about-form-8843" in c.url for c in it.citations)
+
+
+def test_standalone_8843_summary_before_the_due_date():
+    it = filing_summary(
+        [FilingManifestItem(form="8843", tax_year=2023, bottom_line=0)], today=date(2024, 5, 1)
+    ).items[0]
+    assert it.deadline_status.startswith("File by 2024-06-17")
+    assert "penalt" not in it.deadline_status.lower()
+
+
+def test_8843_with_a_bottom_line_is_not_treated_as_standalone():
+    # An 8843 item carrying a (nonsensical) tax bottom line falls back to the
+    # generic path rather than silently claiming "no tax due".
+    it = _one(FilingManifestItem(form="8843", tax_year=2023, bottom_line=-100))
+    assert it.owed == 100
+
+
+# ── FIX: deadline citation follows the form family (1040 vs 1040-NR booklet) ──
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_plain_1040_deadline_never_cites_the_1040nr_booklet(year):
+    it = _one(FilingManifestItem(form="1040", tax_year=year, bottom_line=-100))
+    assert it.citations
+    assert not any("i1040nr" in c.url for c in it.citations)
+    assert any("1040" in c.source for c in it.citations)
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_1040nr_deadline_cites_the_nr_instructions(year):
+    it = _one(FilingManifestItem(form="1040-NR", tax_year=year, bottom_line=-100))
+    assert any("i1040nr" in c.url for c in it.citations)

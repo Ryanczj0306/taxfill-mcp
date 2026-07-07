@@ -23,24 +23,35 @@ on stderr).
 1. Never invent a value — unknown stays a gap. Every number comes from a tool
    (`calc`, `estimate_refund`, `fill_form`), never your own arithmetic.
 2. Confirm extracted document values with the user before filling.
-3. `verify_form`/`verify_filing` after every fill — loop until `ok: true` —
-   then `render_form` and review every page (P-001).
+3. `verify_form`/`verify_filing` after every fill — ALWAYS recompute the
+   table-lookup lines via `calc` and pass them as `independent` (e.g.
+   `{"16": 36036}`; keyed per form_key for `verify_filing`), or the
+   independent-recompute section does not run — loop until `ok: true` with
+   recompute checks > 0, then `render_form` and review every page (P-001).
 4. `estimate_refund` is a labeled RANGE with assumptions, never fake precision.
 5. Review draft only: the user signs and mails paper. No e-file.
 6. Year/benefit not in the shipped packs → `get_sources`, cite .gov, or refuse.
 
 ## Flow
 
-intake_checklist → extract & confirm → estimate_refund → residency → positions →
-fill_form → verify_form/verify_filing (↺) → render_form → filing_summary
-(approve) → file_and_pay.
+intake_checklist → extract_document & confirm → estimate_refund → residency &
+state_scope → positions (workspace_record_position) → fill_form →
+verify_form/verify_filing (↺) → render_form → filing_summary (approve) →
+file_and_pay.
+
+State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`:
+34 states + DC ship fillable packs (Hawaii via `hand_fill_worksheet`), and
+`state_scope` tells you which returns are required.
 
 ## Tools
 
-`intake_checklist`, `residency`, `estimate_refund`, `list_forms`,
-`get_form_map`, `fetch_blank`, `fill_form`, `verify_form`, `verify_filing`,
-`render_form`, `calc`, `get_sources`, `filing_summary`, `file_and_pay`.
+`intake_checklist`, `list_document_kinds`, `extract_document`, `residency`,
+`state_scope`, `estimate_refund`, `list_forms`, `get_form_map`, `fetch_blank`,
+`fill_form`, `verify_form`, `verify_filing`, `render_form`,
+`hand_fill_worksheet`, `calc`, `get_sources`, `workspace_save`,
+`workspace_load`, `workspace_record_position`, `workspace_reconcile`,
+`filing_summary`, `file_and_pay`.
 
-See SKILL.md for cookbook recipes (simple W-2; back-file 1040-NR/8843), the
-prescriptive-error handling, the freshness protocol, and the no-MCP Python
-fallback via `taxfill_core`.
+See SKILL.md for cookbook recipes (simple W-2; back-file 1040-NR/8843; add a
+state return), the prescriptive-error handling, the freshness protocol, and
+the no-MCP Python fallback via `taxfill_core`.
