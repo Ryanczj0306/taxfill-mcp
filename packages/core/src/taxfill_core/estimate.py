@@ -106,6 +106,16 @@ class IncomeSnapshot(BaseModel):
         description="SSA-1099 box 5 net benefits; the TAXABLE portion is computed by the engine (0-85%).",
     )
     other_income: int = Field(default=0, ge=0, description="Other taxable income not in the fields above.")
+    treaty_exempt_income: int = Field(
+        default=0, ge=0,
+        description=(
+            "Income exempt under a tax treaty (1042-S box 2, or the treaty-exempt part of W-2 wages when the "
+            "employer did not honor the treaty) — excluded from income before tax; on the return it goes on "
+            "Schedule OI item L / Form 1040-NR line 1k. The treaty country, article, dollar cap, and "
+            "saving-clause analysis are the AGENT'S confirmed judgment (trust-the-agent semantics, like "
+            "itemized_deductions) — the engine does not validate treaty eligibility."
+        ),
+    )
     student_loan_interest_paid: int = Field(
         default=0, ge=0,
         description="1098-E box 1 — the engine applies the $2,500 cap and the MAGI phase-out (MFS: not allowed).",
@@ -165,7 +175,7 @@ class IncomeSnapshot(BaseModel):
                     "wages", "federal_withholding", "interest", "dividends", "qualified_dividends",
                     "capital_gain_long", "capital_gain_short", "self_employment_net",
                     "retirement_income_taxable", "social_security_benefits", "other_income",
-                    "student_loan_interest_paid", "pre_agi_adjustments",
+                    "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
                     "aca_premiums", "aca_slcsp", "aca_aptc",
                 )
             },
@@ -352,14 +362,20 @@ _JOINT_LIABILITY_CAVEAT = (
 # Mirrors intake.py's §6013(g)/(h) wording: a nonresident alien filing 1040-NR cannot
 # use MFJ unless they elect to be treated as a U.S. resident, which taxes worldwide income.
 # The election makes the COUPLE'S worldwide income taxable, so an elected-MFJ number is
-# only meaningful when the nonresident spouse's foreign income is in the inputs.
+# only meaningful when the nonresident spouse's foreign income is in the inputs. The
+# shared worldwide-income-inputs warning is one fragment reused by every §6013 caveat
+# direction (primary-filer-NRA, conditional, and NRA-spouse).
+_WORLDWIDE_INPUT_WARNING = (
+    "an elected-MFJ figure is only valid when the nonresident "
+    "spouse's WORLDWIDE (foreign) income is included in the inputs — put it in the spouse "
+    "snapshot's other_income — otherwise an MFJ-vs-MFS comparison overstates the MFJ advantage."
+)
+
 _SECTION_6013_CAVEAT = (
     "As a nonresident alien (Form 1040-NR) you cannot file jointly (MFJ); filing jointly "
     "requires electing under §6013(g)/(h) to treat the nonresident alien as a U.S. resident "
     "— which makes their worldwide income taxable. Showing married-filing-separately instead. "
-    "If you weigh that election: an elected-MFJ figure is only valid when the nonresident "
-    "spouse's WORLDWIDE (foreign) income is included in the inputs — put it in the spouse "
-    "snapshot's other_income — otherwise an MFJ-vs-MFS comparison overstates the MFJ advantage."
+    "If you weigh that election: " + _WORLDWIDE_INPUT_WARNING
 )
 
 # When residency is not yet computable for a visa holder, the 1040-NR restriction is conditional.
@@ -371,6 +387,79 @@ _SECTION_6013_CONDITIONAL_CAVEAT = (
     "spouse's WORLDWIDE (foreign) income is included in the inputs (the spouse snapshot's "
     "other_income) — without it the MFJ-vs-MFS delta overstates the MFJ advantage."
 )
+
+# The OTHER direction of the same election (H1 follow-up): the PRIMARY filer is a US
+# person / resident alien, and it is the SPOUSE who is (or may be) the nonresident.
+# §6013(a)(1) bars a joint return when EITHER spouse is a nonresident alien absent the
+# election, so MFJ stays a CANDIDATE here but only with the election + its trade-offs.
+def _spouse_6013_caveat(direction: str, spouse_has_tin: bool) -> str:
+    """Compose the NRA-spouse §6013(g)/(h) caveat: confirmed vs conditional lead, the
+    shared worldwide-income-inputs warning, and the W-7/ITIN last mile when the spouse
+    has no SSN/ITIN on file."""
+    lead = (
+        "Your spouse's own residency result is NONRESIDENT alien"
+        if direction == "nonresident"
+        else "Your spouse may be a nonresident alien (their residency is not confirmed)"
+    )
+    text = (
+        f"{lead}: married-filing-jointly is shown as a candidate, but a joint return with a "
+        "nonresident-alien spouse is only valid by electing under §6013(g)/(h) to treat the "
+        "spouse as a U.S. resident — which makes the spouse's WORLDWIDE income taxable, and the "
+        "election statement (signed by BOTH spouses) must be attached to the first joint return. "
+        "If you weigh that election: " + _WORLDWIDE_INPUT_WARNING
+    )
+    if not spouse_has_tin:
+        text += (
+            " Your spouse has no SSN/ITIN on file: filing jointly requires applying for an ITIN — "
+            "Form W-7 is filed WITH the return, and the whole package mails to the IRS ITIN "
+            "Operation in Austin, TX; for married-filing-separately enter 'NRA' in the "
+            "spouse-SSN box instead."
+        )
+    return text
+
+
+def _spouse_nra_direction(profile: Profile, year: int) -> str | None:
+    """Detect the US-person/RA-filer + NRA-spouse direction from the profile.
+
+    Returns 'nonresident' when the spouse's OWN facts classify nonresident,
+    'conditional' when the spouse is a declared non-US-person whose residency is
+    not computable (unknown stays conditional — never asserted; a full classify
+    is not attempted when the facts are absent), and None when there is no NRA
+    direction (no spouse, a US-person spouse, or spouse facts classifying
+    resident).
+    """
+    hh = profile.household
+    sp = hh.spouse if hh is not None else None
+    if sp is None:
+        return None
+    if sp.us_person is not None and sp.us_person.value is True:
+        return None
+    imm, rf = sp.immigration, sp.residency_facts
+    if imm is not None and imm.visa_timeline and rf is not None and rf.days_in_us:
+        days_by_year = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+        if days_by_year:
+            try:
+                classification = residency.classify(imm.visa_timeline, days_by_year, year).classification
+            except (ValueError, AssertionError):
+                classification = None
+            if classification == "resident":
+                return None
+            if classification == "nonresident":
+                return "nonresident"
+            if classification == "dual_status_candidate":
+                return "conditional"
+    us_person_false = sp.us_person is not None and sp.us_person.value is False
+    return "conditional" if us_person_false else None
+
+
+def _spouse_has_tin(profile: Profile) -> bool:
+    """True when a real spouse SSN/ITIN is on file ('NRA' is the no-TIN box literal)."""
+    hh = profile.household
+    sp = hh.spouse if hh is not None else None
+    if sp is None or sp.tax_id is None or not sp.tax_id.value:
+        return False
+    return str(sp.tax_id.value).strip().upper() != "NRA"
+
 
 # A dual-status candidate year restricts the return itself (Pub 519): the estimate can
 # only show full-year approximations, and it must say so loudly.
@@ -621,6 +710,23 @@ def _bottom_line(
 
     total_income = base + capital + taxable_ss
     comp.append(CompositionLine(label="Total income", amount=total_income))
+
+    # Treaty-exempt income (1042-S box 2 / Schedule OI) comes off BEFORE tax. The
+    # exclusion is clamped so income can never go negative overall: it takes total
+    # income to a floor of 0, and a clamp is disclosed upstream (a treaty amount
+    # larger than the income entered is an input problem, never a negative income).
+    if income.treaty_exempt_income > 0:
+        treaty_excluded = min(income.treaty_exempt_income, max(0, total_income))
+        if treaty_excluded < income.treaty_exempt_income and notes is not None:
+            notes.add("treaty_exclusion_clamped")
+        if treaty_excluded:
+            comp.append(
+                CompositionLine(
+                    label="Less: treaty-exempt income (tax treaty — confirm the article and your state's conformity)",
+                    amount=-treaty_excluded,
+                )
+            )
+            total_income -= treaty_excluded
 
     # ── Above-the-line adjustments ──────────────────────────────────────────
     if half_se:
@@ -1084,6 +1190,25 @@ def estimate_refund(
             "portfolio/deposit-interest exemption, IRC 871(i)) — the interest entered was taxed "
             "as ordinary income here, so this estimate may OVERTAX it."
         )
+    treaty_amount = income.treaty_exempt_income + (
+        income.spouse.treaty_exempt_income if income.spouse is not None else 0
+    )
+    if treaty_amount > 0:
+        assumptions.append(
+            f"Treaty-exempt income (${treaty_amount:,}) was excluded exactly as supplied: this engine does NOT "
+            f"validate treaty eligibility — the treaty country, article, dollar cap, saving-clause analysis, and "
+            f"time limits are the agent's confirmed judgment (trust-the-agent semantics, like "
+            f"itemized_deductions); confirm the article against the treaty text via get_sources before filing. "
+            f"On the return it is reported on Schedule OI item L / Form 1040-NR line 1k (attach the 1042-S when "
+            f"one was issued). STATE conformity varies — some states re-tax federally treaty-exempt income; "
+            f"state_scope shows your state's treatment."
+        )
+    if "treaty_exclusion_clamped" in notes:
+        assumptions.append(
+            "The treaty-exempt amount entered exceeds the income in this snapshot, so the exclusion was CLAMPED "
+            "— income components never go negative overall here. Check the treaty-exempt amount against the "
+            "income actually entered before relying on this estimate."
+        )
     if "preferential rates" in labels:
         assumptions.append(
             "Qualified dividends / net capital gain taxed at preferential rates via the Qualified "
@@ -1319,6 +1444,7 @@ def estimate_refund(
     us_person_false = (
         ident is not None and ident.us_person is not None and ident.us_person.value is False
     )
+    spouse_direction = _spouse_nra_direction(profile, year) if _is_married(profile) else None
     residency_caveat: str | None = None
     if classification == "dual_status_candidate":
         # A dual-status year restricts statuses and the deduction; MFJ/HOH were
@@ -1330,6 +1456,12 @@ def estimate_refund(
     elif classification is None and us_person_false:
         # Visa holder whose residency is not yet determined — frame it conditionally.
         residency_caveat = _SECTION_6013_CONDITIONAL_CAVEAT
+    elif spouse_direction is not None:
+        # The common direction the primary-filer branches miss: a US-person or
+        # resident-alien filer whose SPOUSE is (or may be) the nonresident. MFJ
+        # stayed a candidate, so the §6013 election trade-offs (worldwide income,
+        # the signed statement, the W-7/ITIN last mile) must ride along.
+        residency_caveat = _spouse_6013_caveat(spouse_direction, _spouse_has_tin(profile))
     if residency_caveat is not None:
         assumptions.append(residency_caveat)
 

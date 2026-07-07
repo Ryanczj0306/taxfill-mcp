@@ -1,0 +1,237 @@
+# Schedule 8812 (Form 1040) — Credits for Qualifying Children and Other
+# Dependents — tax year 2023.
+#
+# Provenance: blank downloaded from the official source_url below; pages 1 and 2
+# were rendered and READ to confirm the printed heading "SCHEDULE 8812 (Form
+# 1040)", title "Credits for Qualifying Children and Other Dependents", the
+# printed year 2023 (page 1 header and the "Schedule 8812 (Form 1040) 2023"
+# footer on both pages), and Attachment Sequence No. 47 before pinning
+# pdf_sha256 (freshness protocol, dev plan section 7).
+#
+# Field map: introspected from this exact revision (root topmostSubform[0]).
+# ALL 41 widgets are mapped below (34 text + 7 checkboxes); checkbox on-states
+# were dumped from the blank PDF's appearance states, never guessed:
+#   c1_1[0]=/1 (line 12 No), c1_1[1]=/2 (line 12 Yes), c2_1[0]=/1 (line 15),
+#   c2_2[0]=/1 (line 19 No), c2_2[1]=/2 (line 19 Yes),
+#   c2_3[0]=/1 (line 20 Next No), c2_3[1]=/2 (line 20 Next Yes).
+#
+# Lines 4, 6, and 16b.num_children are COUNTS of children/dependents, not
+# dollar amounts; they are typed money so the verifier derives their on-disk
+# whole-number values for the printed multiplications (5 = 4 x $2,000,
+# 7 = 6 x $500) — a count renders as the same plain integer.
+#
+# Relations deliberately NOT encoded (grammar or conditionality limits):
+#   - line 10: "Subtract line 9 from line 3 ... if not a multiple of $1,000,
+#     enter the NEXT multiple of $1,000" — a round-UP-to-$1,000 (ceiling)
+#     step the relation grammar cannot express (no ceil()); omitted.
+#   - line 16b: printed "[number of QCs] x $1,600" uses the count box mapped
+#     as 16b.num_children, which relation math cannot reference (dotted line
+#     id); the TIP equates the count with line 4, but "16b == 4 * 1600" would
+#     false-FAIL every filer who stops before Part II-A (16a = 0, box 15
+#     checked, or a Form 2555 filer) and leaves 16b blank while line 4 is
+#     nonzero; omitted.
+#   - line 26: "Enter the larger of line 20 or line 25" applies only to
+#     Part II-B filers (3+ qualifying children / bona fide PR residents);
+#     everyone else leaves 26 blank while line 20 is nonzero, so
+#     "26 == max(20, 25)" would false-FAIL the common case; omitted.
+#   - line 16a: "Subtract line 14 from line 12" holds only for filers who
+#     ENTER Part II-A — a filer who checks box 15 (printed: skip Parts II-A
+#     and II-B, enter -0- on line 27) or claims Form 2555 leaves 16a blank
+#     while 12 - 14 > 0, so the relation false-FAILs the opt-out/2555
+#     population (adversarial audit finding); omitted.
+#   - line 27 (ACTC) has no single on-face formula — it is the smaller of
+#     line 17 or line 20, line 17 alone, or the smaller of line 17 or line 26
+#     depending on the printed branch taken; omitted.
+form: "Schedule 8812 (Form 1040)"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040s8--2023.pdf
+pdf_sha256: "d469afddb11b4b5c7ae52400d21379ad6cc08c5679e0728cf0d13753d208e106"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header ----------------------------------------------------------------
+  - line: name                        # "Name(s) shown on return"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: identifying_number          # "Your social security number" — plain text box (/MaxLen 11, not a comb)
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only           # digits-only keeps cross-form identity values consistent with f1040/f1040nr
+
+  # ---- Part I — Child Tax Credit and Credit for Other Dependents --------------
+  - line: "1"                         # Amount from line 11 of Form 1040/1040-SR/1040-NR
+    field: "Page1[0].f1_3[0]"
+    type: money
+  - line: "2a"                        # Income from Puerto Rico that you excluded
+    field: "Page1[0].f1_4[0]"
+    type: money
+  - line: "2b"                        # Amounts from lines 45 and 50 of Form 2555
+    field: "Page1[0].f1_5[0]"
+    type: money
+  - line: "2c"                        # Amount from line 15 of Form 4563
+    field: "Page1[0].f1_6[0]"
+    type: money
+  - line: "2d"                        # Add lines 2a through 2c
+    field: "Page1[0].f1_7[0]"
+    type: money
+  - line: "3"                         # Add lines 1 and 2d
+    field: "Page1[0].f1_8[0]"
+    type: money
+  - line: "4"                         # NUMBER of qualifying children under age 17 with the required SSN (a count, not dollars)
+    field: "Page1[0].f1_9[0]"
+    type: money
+  - line: "5"                         # Multiply line 4 by $2,000
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "6"                         # NUMBER of other dependents (a count, not dollars)
+    field: "Page1[0].Line6ReadOrder[0].f1_11[0]"
+    type: money
+  - line: "7"                         # Multiply line 6 by $500
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "8"                         # Add lines 5 and 7
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "9"                         # Filing-status threshold: MFJ $400,000 / all others $200,000
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "10"                        # Subtract line 9 from line 3; zero or less -> -0-; else round UP to the next $1,000 (no relation — see header)
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "11"                        # Multiply line 10 by 5% (0.05)
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "12.no"                     # "Is the amount on line 8 more than the amount on line 11?" — No. STOP; enter -0- on lines 14 and 27
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line12
+  - line: "12.yes"                    # Yes. Subtract line 11 from line 8; enter the result
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line12
+  - line: "12"                        # Line 12 amount (line 8 minus line 11 when Yes)
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "13"                        # Amount from Credit Limit Worksheet A (instructions worksheet — no relation)
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: "14"                        # Smaller of line 12 or line 13 — CTC/ODC -> Form 1040/1040-SR/1040-NR line 19
+    field: "Page1[0].f1_19[0]"
+    type: money
+
+  # ---- Part II-A — Additional Child Tax Credit for All Filers ------------------
+  - line: "15"                        # Check this box if you do NOT want to claim the additional child tax credit (optional single box)
+    field: "Page2[0].c2_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line15_opt_out
+  - line: "16a"                       # Subtract line 14 from line 12; if zero, stop (enter -0- on line 27)
+    field: "Page2[0].f2_1[0]"
+    type: money
+  - line: "16b.num_children"          # NUMBER of qualifying children under 17 with SSN used for 16b (TIP: same as line 4; a count, not dollars)
+    field: "Page2[0].f2_2[0]"
+    type: money
+  - line: "16b"                       # That number x $1,600 (no relation — see header)
+    field: "Page2[0].f2_3[0]"
+    type: money
+  - line: "17"                        # Smaller of line 16a or line 16b
+    field: "Page2[0].f2_4[0]"
+    type: money
+  - line: "18a"                       # Earned income (see instructions)
+    field: "Page2[0].f2_5[0]"
+    type: money
+  - line: "18b"                       # Nontaxable combat pay (see instructions)
+    field: "Page2[0].f2_6[0]"
+    type: money
+  - line: "19.no"                     # "Is the amount on line 18a more than $2,500?" — No. Leave line 19 blank; enter -0- on line 20
+    field: "Page2[0].c2_2[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line19
+  - line: "19.yes"                    # Yes. Subtract $2,500 from line 18a; enter the result
+    field: "Page2[0].c2_2[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line19
+  - line: "19"                        # Line 19 amount (line 18a minus $2,500 when Yes)
+    field: "Page2[0].f2_7[0]"
+    type: money
+  - line: "20"                        # Multiply line 19 by 15% (0.15)
+    field: "Page2[0].f2_8[0]"
+    type: money
+  - line: "20.next.no"                # "Next. On line 16b, is the amount $4,800 or more?" — No (PR residents go to 21; others: smaller of 17 or 20 on 27)
+    field: "Page2[0].c2_3[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line20_next
+  - line: "20.next.yes"               # Yes (if line 20 >= line 17, skip Part II-B and enter line 17 on line 27; otherwise go to line 21)
+    field: "Page2[0].c2_3[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line20_next
+
+  # ---- Part II-B — Certain Filers With Three or More Qualifying Children
+  #      and Bona Fide Residents of Puerto Rico --------------------------------
+  - line: "21"                        # Withheld social security, Medicare, and Additional Medicare taxes (W-2 boxes 4 and 6)
+    field: "Page2[0].f2_9[0]"
+    type: money
+  - line: "22"                        # Total of Schedule 1 line 15 and Schedule 2 lines 5, 6, and 13 (multi-form sum — not expressible as one cross_form ref)
+    field: "Page2[0].f2_10[0]"
+    type: money
+  - line: "23"                        # Add lines 21 and 22
+    field: "Page2[0].f2_11[0]"
+    type: money
+  - line: "24"                        # 1040/1040-SR: line 27 + Schedule 3 line 11; 1040-NR: Schedule 3 line 11 (parent-dependent sum — no cross_form)
+    field: "Page2[0].f2_12[0]"
+    type: money
+  - line: "25"                        # Subtract line 24 from line 23; if zero or less, -0-
+    field: "Page2[0].f2_13[0]"
+    type: money
+  - line: "26"                        # Larger of line 20 or line 25 (Part II-B filers only — no relation, see header)
+    field: "Page2[0].f2_14[0]"
+    type: money
+
+  # ---- Part II-C — Additional Child Tax Credit --------------------------------
+  - line: "27"                        # Additional child tax credit -> Form 1040/1040-SR/1040-NR line 28 (branch-dependent — no relation, see header)
+    field: "Page2[0].f2_15[0]"
+    type: money
+
+# Form-face math only — every printed add/subtract/multiply/smaller/larger
+# instruction that is unconditional under blank-means-zero (omissions and the
+# reasons for them are listed in the header comment).
+relations:
+  - "2d == sum(2a..2c)"          # "Add lines 2a through 2c"
+  - "3 == 1 + 2d"                # "Add lines 1 and 2d"
+  - "5 == 4 * 2000"              # "Multiply line 4 by $2,000"
+  - "7 == 6 * 500"               # "Multiply line 6 by $500"
+  - "8 == 5 + 7"                 # "Add lines 5 and 7"
+  - "11 == 10 * 0.05"            # "Multiply line 10 by 5% (0.05)"
+  - "12 == max(0, 8 - 11)"       # Yes: "Subtract line 11 from line 8"; No: 12 stays blank and 8 <= 11, so both sides are 0
+  - "14 == min(12, 13)"          # "Enter the smaller of line 12 or line 13"
+  - "17 == min(16a, 16b)"        # "Enter the smaller of line 16a or line 16b"
+  - "19 == max(0, 18a - 2500)"   # Yes: "Subtract $2,500 from the amount on line 18a"; No: 19 stays blank and 18a <= 2500
+  - "20 == 19 * 0.15"            # "Multiply the amount on line 19 by 15% (0.15)"
+  - "23 == 21 + 22"              # "Add lines 21 and 22"
+  - "25 == max(0, 23 - 24)"      # "Subtract line 24 from line 23. If zero or less, enter -0-"
+
+# The schedule attaches to EITHER Form 1040/1040-SR or Form 1040-NR — a filing
+# contains one parent, the other parent's rule is visibly SKIPPED (the sched_3
+# dual-parent pattern).
+cross_form:
+  - "1 == f1040.11"              # "Enter the amount from line 11 of your Form 1040, 1040-SR, or 1040-NR"
+  - "1 == f1040nr.11"
+  - "14 == f1040.19"             # "Enter this amount on Form 1040, 1040-SR, or 1040-NR, line 19"
+  - "14 == f1040nr.19"
+  - "27 == f1040.28"             # "Enter this amount on Form 1040, 1040-SR, or 1040-NR, line 28"
+  - "27 == f1040nr.28"
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only schedule (Attachment Sequence No. 47): no signature block of
+# its own; mailed inside the parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

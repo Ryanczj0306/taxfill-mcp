@@ -22,13 +22,10 @@ PITFALLS_PATH = REPO_ROOT / "knowledge" / "pitfalls.yaml"
 # knowledge/pitfalls.yaml too (the countermeasure text must say "DEFERRED").
 # When the countermeasure ships WITH its regression test, the entry must be
 # removed — test_deferred_allowlist_is_current fails otherwise.
-DEFERRED: dict[str, str] = {
-    "P-004": (
-        "per-period treaty eligibility: treaty rules are M3 knowledge data and the "
-        "eval scenario is M6; residency.py already flags the F-1 -> H-1B mid-year "
-        "split with tests (see pitfalls.yaml)"
-    ),
-}
+# (P-004 treaty eligibility shipped its countermeasure in Tier 2: the
+# treaty_exempt_income estimate path + eval scenario carry P-004-tagged tests,
+# so the deferral entry was removed per the rule above.)
+DEFERRED: dict[str, str] = {}
 
 
 def _pitfall_ids() -> list[str]:

@@ -23,7 +23,9 @@ from pydantic import ValidationError
 
 from taxfill_core import (
     additional_medicare_tax as _additional_medicare_tax,
+    child_tax_credit as _child_tax_credit,
     education_credits as _education_credits,
+    eitc as _eitc,
     estimate_refund as _estimate_refund,
     excess_ss as _excess_ss,
     file_and_pay as _file_and_pay,
@@ -233,7 +235,7 @@ def render_form(pdf_path: str, pages: list[int] | None = None, dpi: float = 170)
 def calc(op: str, args: dict[str, Any]) -> dict:
     """Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
-    education_credits, ptc_annual}; every result shows its work and cites the data pack.
+    education_credits, ptc_annual, child_tax_credit, eitc}; every result shows its work and cites the data pack.
 
     - tax: args {taxable_income, filing_status, year} (ORDINARY line 16 only — with qualified
       dividends or capital gains use tax_with_preferential_rates instead, even below $100,000)
@@ -255,6 +257,15 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       other|alaska|hawaii; 2023-2024 only. MFS gets PTC $0 by rule — IRC 36B(c)(1)(C) — unless
       mfs_relief_exception claims the domestic-abuse/abandonment relief; below-100%-FPL with no APTC
       also gets $0)
+    - child_tax_credit: args {qualifying_children_ssn, other_dependents, magi, income_tax_before_credits,
+      earned_income, filing_status, year, children_under_6?} (Schedule 8812: nonrefundable CTC/ODC for
+      1040 line 19 + refundable ACTC for line 28; income_tax_before_credits = the Credit Limit Worksheet
+      amount, i.e. line 18 tax minus earlier Schedule 3 credits; 2021 uses the ARPA expanded
+      fully-refundable rules with children_under_6 driving the $3,600 tier)
+    - eitc: args {earned_income, agi, qualifying_children, filing_status, year, investment_income?}
+      (earned income credit for 1040 line 27 by the Rev. Proc. formula; investment-income and MFS
+      gates; phases out on the GREATER of AGI or earned income; the printed EIC table's $50 bands can
+      differ by ~$27)
     """
     if op == "tax":
         return _dump(_tax(**args))
@@ -278,10 +289,14 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _dump(_education_credits(**args))
     if op == "ptc_annual":
         return _dump(_ptc_annual(**args))
+    if op == "child_tax_credit":
+        return _dump(_child_tax_credit(**args))
+    if op == "eitc":
+        return _dump(_eitc(**args))
     raise ValueError(
         f"unknown calc op {op!r} — supported: tax, tax_with_preferential_rates, standard_deduction, "
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
-        f"student_loan_interest_deduction, education_credits, ptc_annual"
+        f"student_loan_interest_deduction, education_credits, ptc_annual, child_tax_credit, eitc"
     )
 
 
@@ -405,7 +420,8 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       capital_gain_short (signed), self_employment_net (signed), retirement_income_taxable
       (1099-R 2a), social_security_benefits (SSA-1099 box 5), other_income
     - adjustments: student_loan_interest_paid (1098-E), pre_agi_adjustments (confirmed-eligible
-      above-the-line), itemized_deductions? (only if itemizing; else standard deduction)
+      above-the-line), treaty_exempt_income (1042-S box 2 / Schedule OI — agent-confirmed treaty
+      amount), itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only)
     - credit inputs: ss_withheld_by_employer [W-2 box 4 per employer], aotc_qualified_expenses
       [per eligible student]
     - ACA (Form 1095-A line 33): aca_premiums, aca_slcsp, aca_aptc
@@ -442,7 +458,8 @@ def filing_summary(manifest: list[dict]) -> dict:
     """Plain-language bottom line per return (refund/owed + deadline & refund-SOL status) for approval.
 
     Each manifest item: {form, tax_year, jurisdiction?, bottom_line (signed: +refund/-owed),
-    paid_online?, state?, direct_deposit?, filing_jointly?}.
+    paid_online?, state?, direct_deposit?, filing_jointly?, section_6013_election? (adds the
+    signed-by-both-spouses NRA-spouse election statement to the assembly checklist)}.
     """
     return _dump(_filing_summary([FilingManifestItem.model_validate(m) for m in manifest]))
 

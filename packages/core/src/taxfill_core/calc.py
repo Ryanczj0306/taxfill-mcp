@@ -30,6 +30,11 @@ Contents:
   excess-social-security credit), ``student_loan_interest_deduction``
   (section 221), ``education_credits`` (Form 8863 AOTC/LLC), and
   ``ptc_annual`` (Form 8962 Premium Tax Credit, annual method).
+* Family credit ops: ``child_tax_credit`` (Schedule 8812 — nonrefundable
+  CTC/ODC for Form 1040 line 19 plus the refundable ACTC for line 28,
+  including the 2021 ARPA expanded fully-refundable rules) and ``eitc``
+  (the earned income credit by the Rev. Proc. formula, with the
+  investment-income and married-filing-separately gates).
 
 These functions are pure: no logging, no side effects; the only I/O is
 reading the versioned knowledge pack. They never echo the value being
@@ -39,7 +44,7 @@ validated (routing/account numbers are sensitive).
 from __future__ import annotations
 
 from datetime import date, datetime
-from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
+from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Literal
 
@@ -1833,6 +1838,483 @@ def ptc_annual(
         inputs=inputs,
         work=work,
         citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Child tax credit / credit for other dependents / additional CTC
+# (Schedule 8812 -> Form 1040 lines 19 and 28)
+# ---------------------------------------------------------------------------
+
+# Schedule 8812 Part II-A lines 19-20: the refundable ACTC is 15% of earned
+# income over $2,500. Both figures are statutory (IRC 24(d)(1)(A) as amended
+# by TCJA), NOT indexed — identical in every supported non-ARPA year.
+_ACTC_EARNED_INCOME_FLOOR = 2500
+_ACTC_EARNED_INCOME_RATE = Decimal("0.15")
+
+
+def _credits_config(pack: KnowledgePack, year: int, name: str, contents: str) -> dict:
+    """Fetch ``credits.<name>`` from the pack as a dict, with a prescriptive error."""
+    block = getattr(pack.credits, name, None) if pack.credits is not None else None
+    if not isinstance(block, dict) or "citation" not in block:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no credits.{name} block — add it ({contents}) with a citation"
+        )
+    return block
+
+
+def _count_arg(value: Any, name: str, what: str) -> int:
+    """Validate a people-count argument: a non-negative int, never a bool."""
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(f"{name} must be an int ({what}), got {value!r}")
+    if value < 0:
+        raise ValueError(f"{name} must be >= 0 ({what}), got {value}")
+    return value
+
+
+def _status_amount(table: dict, filing_status: str, where: str) -> int:
+    """Resolve a per-status amount from a credits table (all five statuses explicit)."""
+    if filing_status not in table:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} for {where} — use one of: {', '.join(sorted(table))}"
+        )
+    return int(table[filing_status])
+
+
+def _ctc_phaseout_step(magi: Decimal, threshold: int) -> int:
+    """Schedule 8812 phase-out arithmetic: $50 per $1,000 OR FRACTION of MAGI above
+    the threshold — the excess is rounded UP to the next whole $1,000 FIRST (line 10:
+    'if not a multiple of $1,000, increase it to the next multiple of $1,000')."""
+    excess = magi - threshold
+    if excess <= 0:
+        return 0
+    thousands = int((excess / Decimal(1000)).to_integral_value(rounding=ROUND_CEILING))
+    return 50 * thousands
+
+
+class CtcResult(BaseModel):
+    """Result of :func:`child_tax_credit`: Schedule 8812 (CTC / ODC / ACTC)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ctc_odc_total: int = Field(
+        description="Line 8-style pre-phase-out, pre-limit total: per-child credit x qualifying children "
+        "+ $500 x other dependents (2021: the ARPA $3,600/$3,000 expanded per-child amounts)."
+    )
+    phaseout_reduction: int = Field(
+        description="Total MAGI phase-out reduction actually applied ($50 per $1,000 or fraction over the "
+        "threshold, capped at the available credit; 2021 applies its two tiers)."
+    )
+    credit_after_phaseout: int = Field(
+        description="Line 12: ctc_odc_total - phaseout_reduction (floor 0) — the credit before the "
+        "tax-liability limit."
+    )
+    nonrefundable_used: int = Field(
+        description="Line 14: the nonrefundable CTC/ODC usable against income_tax_before_credits "
+        "(goes on Form 1040 line 19). 2021: only the ODC part is nonrefundable."
+    )
+    actc_refundable: int = Field(
+        description="Line 27 additional child tax credit (goes on Form 1040 line 28). "
+        "2021: the fully refundable ARPA child tax credit remainder."
+    )
+    actc_cap_per_child: int = Field(
+        description="The year's refundable ACTC cap per qualifying child that was applied on line 16b "
+        "(e.g. $1,600 for 2023; for 2021 the ARPA credit is fully refundable, so no dollar cap binds)."
+    )
+    fully_refundable: bool = Field(
+        description="True only for 2021 (ARPA): the whole child tax credit refunds for a taxpayer with a "
+        "principal place of abode in the US for more than half the year (assumed — see work)."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def child_tax_credit(
+    qualifying_children_ssn: int,
+    other_dependents: int,
+    magi: int | float | Decimal | str,
+    income_tax_before_credits: int | float | Decimal | str,
+    earned_income: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2023,
+    children_under_6: int = 0,
+    knowledge_dir: str | Path | None = None,
+) -> CtcResult:
+    """Child tax credit / credit for other dependents / additional child tax credit
+    (Schedule 8812) — the numbers for Form 1040 lines 19 and 28.
+
+    Inputs (eligibility itself is caller judgment — this op does the worksheet math):
+
+    * ``qualifying_children_ssn``: dependents who meet the year's qualifying-child
+      age test (under 17 at year end; under 18 for 2021) AND have the required
+      work-eligible SSN. A child with an ITIN/ATIN belongs in ``other_dependents``.
+    * ``other_dependents``: every other claimed dependent ($500 ODC each; an SSN
+      is not required, but the dependent needs an ITIN/ATIN/SSN by the due date).
+    * ``magi``: Schedule 8812 line 3 (Form 1040 line 11 AGI plus the Puerto Rico /
+      Form 2555 / Form 4563 exclusions — line 1 = line 3 for most filers).
+    * ``income_tax_before_credits``: the Credit Limit Worksheet amount — Form 1040
+      line 18 tax MINUS the credits taken before this one (Schedule 3 lines 1-4,
+      5b, 6c, 6g, 6h — e.g. foreign tax and education credits), per the Schedule
+      8812 instructions. Pass the tax itself when no earlier credits apply.
+    * ``earned_income``: line 18a per the instructions' Earned Income Worksheet
+      (wages + SE net earnings - 1/2 SE tax, etc.); drives the refundable ACTC.
+    * ``children_under_6``: how many of the qualifying children had not turned 6
+      by year end — only changes the result for 2021 (the ARPA $3,600 tier).
+
+    Non-ARPA years (2019-2020, 2022+), following the 2023 Schedule 8812 line flow:
+
+    * line 5 = qualifying children x the per-child credit ($2,000); line 7 = other
+      dependents x $500; line 8 = their sum (``ctc_odc_total``).
+    * lines 9-11: the phase-out — $50 per $1,000 OR FRACTION (excess rounded UP to
+      the next $1,000) of MAGI over $400,000 MFJ / $200,000 otherwise; line 12 =
+      line 8 minus the reduction (if not above zero, the form says stop — no CTC,
+      ODC, or ACTC).
+    * lines 13-14: the nonrefundable credit = min(line 12, the credit limit)
+      (Form 1040 line 19).
+    * Part II-A (ACTC): line 16a leftover = line 12 - line 14; line 16b = the
+      year's refundable cap x qualifying children ($1,600 for 2023); line 20 = 15%
+      of earned income over $2,500; line 27 ACTC = the smallest of the three
+      (Form 1040 line 28). No qualifying children -> no ACTC (the ODC never
+      refunds). Part II-B (3+ children: the larger-of social-security-taxes
+      alternative) is NOT modeled — when it could apply, ``work`` says so (it can
+      only increase the ACTC).
+
+    2021 (ARPA, per the pack's ``arpa_expanded`` keys — Schedule 8812 (2021) and
+    its Line 5 Worksheet): $3,600 per child under 6 / $3,000 otherwise; the FIRST
+    phase-out trims only the increase over the $2,000 base ($50 per $1,000 or
+    fraction of MAGI over $75,000/$112,500/$150,000, capped by the Line 5
+    Worksheet's per-status cap); the SECOND trims the remainder at the regular
+    $400,000/$200,000 thresholds. The ODC part stays nonrefundable (line 14a);
+    the child-tax-credit remainder is FULLY refundable (no 15%-of-earned-income
+    rule) — assuming the line 13A US-principal-abode residency box applies, which
+    is a caller judgment disclosed in ``work``.
+    """
+    n_qc = _count_arg(qualifying_children_ssn, "qualifying_children_ssn",
+                      "qualifying children with the required SSN")
+    n_odc = _count_arg(other_dependents, "other_dependents", "other dependents eligible for the $500 ODC")
+    n_u6 = _count_arg(children_under_6, "children_under_6", "qualifying children under age 6 at year end")
+    if n_u6 > n_qc:
+        raise ValueError(
+            f"children_under_6 ({n_u6}) cannot exceed qualifying_children_ssn ({n_qc}) — it counts the "
+            f"subset of the qualifying children who had not turned 6 by year end"
+        )
+    magi_d = _to_decimal(magi, "magi")
+    limit_d = _to_decimal(income_tax_before_credits, "income_tax_before_credits")
+    if limit_d < 0:
+        raise ValueError(
+            f"income_tax_before_credits must be >= 0, got {limit_d} — pass 0 when no tax remains after "
+            f"the credits taken before this one"
+        )
+    earned = _to_decimal(earned_income, "earned_income")
+    if earned < 0:
+        raise ValueError(
+            f"earned_income cannot be negative (got {earned}) — the Schedule 8812 earned-income worksheet "
+            f"floors it at zero; pass 0"
+        )
+    status = str(filing_status)
+    pack = _load_federal(year, knowledge_dir)
+    cfg = _credits_config(
+        pack, year, "child_tax_credit",
+        "per-child amount, ODC amount, the refundable ACTC cap, and the MAGI phase-out thresholds",
+    )
+    citation = Citation(**cfg["citation"])
+    limit_whole = irs_round(limit_d)
+    inputs: dict[str, Any] = {
+        "qualifying_children_ssn": n_qc,
+        "other_dependents": n_odc,
+        "children_under_6": n_u6,
+        "magi": str(magi_d),
+        "income_tax_before_credits": str(limit_d),
+        "earned_income": str(earned),
+        "filing_status": status,
+        "year": year,
+    }
+    odc_amount = int(cfg["credit_for_other_dependents"])
+    odc_total = odc_amount * n_odc
+    cap_per_child = int(cfg["additional_ctc_refundable_cap_per_child"])
+    age_test = str(cfg.get("qualifying_child_age_test", "the qualifying-child age test"))
+
+    if cfg.get("arpa_expanded"):
+        # 2021 only — mirror the Schedule 8812 (2021) Line 5 Worksheet + lines 9-14.
+        per_child = int(cfg["per_qualifying_child"])  # 3,000 (age 6-17)
+        per_under_6 = int(cfg["per_qualifying_child_under_6"])  # 3,600
+        base_per_child = int(cfg["pre_arpa_base_per_child"])  # 2,000
+        expanded = per_under_6 * n_u6 + per_child * (n_qc - n_u6)
+        base_credit = base_per_child * n_qc
+        increase = expanded - base_credit
+        tier1_threshold = _status_amount(cfg["increased_amount_phaseout_threshold"], status, "child_tax_credit")
+        tier1_cap = _status_amount(cfg["increased_amount_phaseout_cap"], status, "child_tax_credit")
+        tier1_raw = _ctc_phaseout_step(magi_d, tier1_threshold)
+        tier1_reduction = min(tier1_raw, tier1_cap, increase)
+        line8 = expanded - tier1_reduction + odc_total
+        tier2_threshold = _status_amount(cfg["base_credit_phaseout_threshold"], status, "child_tax_credit")
+        tier2_raw = _ctc_phaseout_step(magi_d, tier2_threshold)
+        line12 = max(0, line8 - tier2_raw)
+        tier2_reduction = line8 - line12
+        total = expanded + odc_total
+        reduction = tier1_reduction + tier2_reduction
+        # The 2021 Schedule 8812 preserves the ODC first (line 14a); the child-tax-credit
+        # remainder is the fully refundable RCTC (Form 1040 line 28).
+        odc_part = min(odc_total, line12)
+        rctc = line12 - odc_part
+        used = min(odc_part, limit_whole)
+        work = (
+            f"Schedule 8812 (2021, ARPA, {status}): {n_qc} qualifying children ({age_test}, each with the "
+            f"required SSN) -> expanded credit = {n_u6} x {_dollars(per_under_6)} (under 6) + "
+            f"{n_qc - n_u6} x {_dollars(per_child)} = {_dollars(expanded)} "
+            f"(pre-ARPA base {_dollars(base_credit)}, increase {_dollars(increase)}). "
+            f"Line 5 Worksheet first-tier phase-out trims ONLY the increase: min($50 per $1,000 or fraction "
+            f"of MAGI {_money(magi_d)} over {_dollars(tier1_threshold)} = {_dollars(tier1_raw)}, the "
+            f"{_dollars(tier1_cap)} worksheet cap, the increase) = {_dollars(tier1_reduction)}; "
+            f"line 7 ODC = {n_odc} x {_dollars(odc_amount)} = {_dollars(odc_total)}; line 8 = {_dollars(line8)}. "
+            f"Second-tier phase-out over the {_dollars(tier2_threshold)} threshold = {_dollars(tier2_raw)} "
+            f"-> line 12 = {_dollars(line12)}. The ODC part {_dollars(odc_part)} stays nonrefundable: "
+            f"{_dollars(used)} usable against the {_dollars(limit_whole)} credit limit (Form 1040 line 19); "
+            f"the remaining {_dollars(rctc)} child tax credit is FULLY REFUNDABLE for 2021 (Form 1040 "
+            f"line 28) — this assumes a principal place of abode in the US for more than half of 2021 "
+            f"(Schedule 8812 box 13A, caller judgment); without it the pre-ARPA $1,400-cap ACTC rules "
+            f"apply instead."
+        )
+        return CtcResult(
+            ctc_odc_total=total,
+            phaseout_reduction=reduction,
+            credit_after_phaseout=line12,
+            nonrefundable_used=used,
+            actc_refundable=rctc,
+            actc_cap_per_child=cap_per_child,
+            fully_refundable=True,
+            inputs=inputs,
+            work=work,
+            citation=citation,
+        )
+
+    # Non-ARPA years: the 2023 Schedule 8812 line flow (2019/2020 print the same
+    # math in Pub 972's worksheet + Schedule 8812; line names follow the 2023 form).
+    per_child = int(cfg["per_qualifying_child"])
+    line5 = per_child * n_qc
+    line8 = line5 + odc_total
+    threshold = _status_amount(cfg["magi_phaseout_threshold"], status, "child_tax_credit")
+    line11 = _ctc_phaseout_step(magi_d, threshold)
+    line12 = max(0, line8 - line11)
+    reduction = line8 - line12
+    line14 = min(line12, limit_whole)
+    leftover = line12 - line14  # line 16a
+    line16b = cap_per_child * n_qc
+    line20 = irs_round(max(Decimal(0), _ACTC_EARNED_INCOME_RATE * (earned - _ACTC_EARNED_INCOME_FLOOR)))
+    actc = min(leftover, line16b, line20) if n_qc else 0
+
+    if n_qc == 0:
+        actc_text = "no qualifying children -> no additional child tax credit (the ODC never refunds)"
+    elif line12 == 0:
+        actc_text = "line 12 is $0, so the form stops — no CTC, ODC, or ACTC"
+    else:
+        actc_text = (
+            f"Part II-A: line 16a leftover = {_dollars(leftover)}; line 16b = {n_qc} x "
+            f"{_dollars(cap_per_child)} = {_dollars(line16b)}; line 18a earned income {_money(earned)} -> "
+            f"line 20 = 15% x max(0, earned - {_dollars(_ACTC_EARNED_INCOME_FLOOR)}) = {_dollars(line20)}; "
+            f"line 27 additional child tax credit = smallest = {_dollars(actc)} (Form 1040 line 28)"
+        )
+        if n_qc >= 3 and line20 < min(leftover, line16b):
+            actc_text += (
+                ". NOTE: with 3 or more qualifying children and line 20 below line 17, Part II-B (the "
+                "larger-of social-security-taxes alternative, lines 21-26) can only INCREASE the ACTC — "
+                "it is not modeled here; work it from the printed schedule"
+            )
+    work = (
+        f"Schedule 8812 ({year}, {status}): line 5 = {n_qc} qualifying children ({age_test}, each with the "
+        f"required SSN) x {_dollars(per_child)} = {_dollars(line5)}; line 7 = {n_odc} other dependents x "
+        f"{_dollars(odc_amount)} = {_dollars(odc_total)}; line 8 = {_dollars(line8)}. Line 3 MAGI "
+        f"{_money(magi_d)} vs the {_dollars(threshold)} line 9 threshold: lines 10-11 phase-out = "
+        f"{_dollars(line11)} ($50 per $1,000 or fraction over, excess rounded UP to the next $1,000) -> "
+        f"line 12 = {_dollars(line12)}. Line 13 credit limit (income tax minus earlier credits) = "
+        f"{_dollars(limit_whole)} -> line 14 nonrefundable child tax credit / credit for other dependents = "
+        f"{_dollars(line14)} (Form 1040 line 19). {actc_text}."
+    )
+    return CtcResult(
+        ctc_odc_total=line8,
+        phaseout_reduction=reduction,
+        credit_after_phaseout=line12,
+        nonrefundable_used=line14,
+        actc_refundable=actc,
+        actc_cap_per_child=cap_per_child,
+        fully_refundable=False,
+        inputs=inputs,
+        work=work,
+        citation=citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Earned income tax credit (Rev. Proc. formula -> Form 1040 line 27)
+# ---------------------------------------------------------------------------
+
+
+class EitcResult(BaseModel):
+    """Result of :func:`eitc`: the earned income credit by the Rev. Proc. formula."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    eitc: int = Field(
+        description="The earned income credit, whole dollars (Form 1040 line 27); 0 when disqualified."
+    )
+    phase: Literal["in", "plateau", "out"] | None = Field(
+        description="Which region bound the credit: 'in' (phase-in rate x earned income), 'plateau' "
+        "(the maximum credit), 'out' (phasing out on the GREATER of AGI or earned income); "
+        "None when disqualified by a gate."
+    )
+    disqualified_reason: str | None = Field(
+        description="Why the credit is $0 by rule (investment income over the limit, married filing "
+        "separately, or no positive earned income); None when the credit was computed."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def eitc(
+    earned_income: int | float | Decimal | str,
+    agi: int | float | Decimal | str,
+    qualifying_children: int,
+    filing_status: str = "single",
+    year: int = 2023,
+    investment_income: int | float | Decimal | str = 0,
+    knowledge_dir: str | Path | None = None,
+) -> EitcResult:
+    """Earned income tax credit (Form 1040 line 27) by the Rev. Proc. formula.
+
+    ``qualifying_children`` counts the EITC qualifying children (relationship /
+    age / residency / joint-return tests met, each with a valid SSN) — those
+    tests, and the taxpayer-level rules not modeled here (valid SSNs for the
+    filer and spouse, not being another person's qualifying child, the childless
+    age band, no Form 2555), are caller judgment. Three or more children share
+    the '3+' parameter column.
+
+    Mechanics (parameters from the year's cited Rev. Proc. table):
+
+    * gates, checked first: investment income over the year's limit denies the
+      credit entirely (Pub 596 Rule 6 — interest incl. tax-exempt, dividends,
+      net capital gain, and net passive/rental income); married filing
+      separately is denied by rule (see below); and the credit needs positive
+      earned income.
+    * phase-in: max_credit / earned_income_amount x earned income, capped at
+      the maximum credit (the plateau).
+    * phase-out: on the GREATER of AGI or earned income above the phase-out
+      threshold (the MFJ column's thresholds are higher than every other
+      status's — a qualifying surviving spouse uses the OTHER column, unlike
+      most MFJ aliasing), at max_credit / (complete - begin) per dollar, to
+      zero at the completion point. Floor 0, then IRS-rounded.
+
+    MFS: generally NOT eligible (IRC 32(d)). Since 2021 (ARPA section 9622)
+    there is a NARROW exception — an MFS filer who lived with their qualifying
+    child for more than half the year AND either did not live with the spouse
+    during the last 6 months or has a separation decree/agreement and lived
+    apart at year end. This op conservatively returns $0 for MFS and spells the
+    exception out in ``work``; a filer meeting it should be worked from Pub 596.
+
+    Approximation, same disclosure as the estimator: the official EIC table
+    uses $50 income bands (the formula evaluated at each band's midpoint), so a
+    printed-table lookup can differ from this exact-formula value by roughly
+    +/-$27 — re-derive from the printed table at filing time.
+    """
+    earned = _to_decimal(earned_income, "earned_income")
+    agi_d = _to_decimal(agi, "agi")
+    inv = _to_decimal(investment_income, "investment_income")
+    if inv < 0:
+        raise ValueError(f"investment_income must be >= 0, got {inv} — pass the Pub 596 Rule 6 total")
+    n_qc = _count_arg(qualifying_children, "qualifying_children", "EITC qualifying children")
+    status = str(filing_status)
+    _resolve_filing_status(status)  # validates the five statuses (the alias is NOT used: QSS is not MFJ here)
+    pack = _load_federal(year, knowledge_dir)
+    cfg = _credits_config(
+        pack, year, "earned_income_tax_credit",
+        "the investment-income limit and the by_qualifying_children parameter table",
+    )
+    citation = Citation(**cfg["citation"])
+    inv_limit = int(cfg["investment_income_limit"])
+    key = "3+" if n_qc >= 3 else str(n_qc)
+    inputs: dict[str, Any] = {
+        "earned_income": str(earned),
+        "agi": str(agi_d),
+        "qualifying_children": n_qc,
+        "investment_income": str(inv),
+        "filing_status": status,
+        "year": year,
+    }
+
+    def _denied(reason: str, detail: str) -> EitcResult:
+        return EitcResult(
+            eitc=0, phase=None, disqualified_reason=reason, inputs=inputs,
+            work=f"EITC ({year}, {status}): $0 — {detail}", citation=citation,
+        )
+
+    if status == "married_filing_separately":
+        return _denied(
+            "married filing separately is not eligible for the EITC (IRC 32(d))",
+            f"married filing separately is denied the credit by rule (IRC 32(d)). The only exception "
+            f"(post-2021, ARPA section 9622): the filer lived with their qualifying child for more than "
+            f"half of {year} AND either did not live with the spouse during the last 6 months of {year} "
+            f"or has a separation decree/agreement and lived apart at year end — if that applies, work "
+            f"the credit from Pub 596 (this op conservatively returns $0 for MFS).",
+        )
+    if inv > inv_limit:
+        return _denied(
+            f"investment income exceeds the {_dollars(inv_limit)} limit",
+            f"investment income {_money(inv)} exceeds the {_dollars(inv_limit)} limit for {year}, which "
+            f"denies the credit ENTIRELY (Pub 596 Rule 6 — count interest including tax-exempt, dividends, "
+            f"net capital gain, and net passive/rental income); no phase-out applies, the credit is simply $0.",
+        )
+    if earned <= 0:
+        return _denied(
+            "the EITC requires positive earned income",
+            f"earned income is {_money(earned)} — the credit phases in from earned income, so with none "
+            f"there is no credit (investment or unearned income alone never qualifies).",
+        )
+
+    row = cfg["by_qualifying_children"][key]
+    max_credit = Decimal(row["max_credit"])
+    ei_amount = Decimal(row["earned_income_amount"])
+    phase_in_amount = min(max_credit, max_credit / ei_amount * earned)
+    mfj = status == "married_filing_jointly"
+    begin = Decimal(row["phaseout_begins_mfj" if mfj else "phaseout_begins_other"])
+    complete = Decimal(row["phaseout_complete_mfj" if mfj else "phaseout_complete_other"])
+    phase_base = max(agi_d, earned)
+    column = "married-filing-jointly" if mfj else "single/HoH/QSS"
+    if phase_base > begin:
+        rate_out = max_credit / (complete - begin)
+        phase_out_amount = max_credit - rate_out * (phase_base - begin)
+        credit_exact = min(phase_in_amount, phase_out_amount)
+        phase: Literal["in", "plateau", "out"] = "out" if phase_out_amount <= phase_in_amount else "in"
+        phase_text = (
+            f"phase-out on the GREATER of AGI {_money(agi_d)} or earned income = {_money(phase_base)}, "
+            f"{_money(phase_base - begin)} over the {_dollars(begin)} {column} threshold, at "
+            f"{_dollars(max_credit)}/{_dollars(complete - begin)} per dollar -> {_money(max(Decimal(0), phase_out_amount))} "
+            f"(zero at {_dollars(complete)})"
+        )
+    else:
+        credit_exact = phase_in_amount
+        phase = "plateau" if earned >= ei_amount else "in"
+        phase_text = (
+            f"the greater of AGI {_money(agi_d)} or earned income is at or below the {_dollars(begin)} "
+            f"{column} phase-out threshold (no reduction)"
+        )
+    credit = irs_round(max(Decimal(0), credit_exact))
+    work = (
+        f"EITC ({year}, {status}, {key} qualifying children): investment income {_money(inv)} is within the "
+        f"{_dollars(inv_limit)} limit. Phase-in = min(max credit {_dollars(max_credit)}, "
+        f"{_dollars(max_credit)}/{_dollars(ei_amount)} x earned income {_money(earned)}) = "
+        f"{_money(phase_in_amount)}; {phase_text}; credit = {_dollars(credit)} (Form 1040 line 27), "
+        f"'{phase}' region. The official EIC table uses $50 income bands, so a printed-table lookup can "
+        f"differ from this exact formula by roughly +/-$27 — re-derive from the table at filing time. "
+        f"Qualifying-child and taxpayer-level eligibility tests are caller judgment."
+    )
+    return EitcResult(
+        eitc=credit,
+        phase=phase,
+        disqualified_reason=None,
+        inputs=inputs,
+        work=work,
+        citation=citation,
     )
 
 
