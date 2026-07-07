@@ -34,10 +34,13 @@ _STOPWORDS = frozenset({"the", "and", "for", "a", "an", "of", "to", "tax", "in",
 # They are ignored when scoring answers text; the distinctive token ("energy",
 # "child") is what disambiguates. They still count for topic-KEY matching.
 _GENERIC_TOKENS = frozenset({"credit", "credits", "deduction", "deductions", "income", "form", "forms"})
-# A topic must clear this score to be returned as a match. Exact-key (1000),
-# key-substring (100) and key-token (30/token) matches clear it on their own; a
-# lone incidental answers-token (1) does not — so a single shared word is a
-# clean miss, not a wrong (matched=True) citation that suppresses the fallback.
+# A topic must clear this score to be returned as a match — AND (see
+# _score_topic) cover at least half of the query's DISTINCTIVE tokens with its
+# key/answers text. The coverage gate is what keeps an incidental overlap (a
+# shared word or a generic bigram like "earned income") from promoting an
+# unrelated topic to matched=True: "foreign earned income exclusion" shares
+# only "earned" with the EITC/dependent-care entries (1 of 3 distinctive
+# tokens), so those are a clean miss and the cite-or-refuse fallback fires.
 _MATCH_THRESHOLD = 2
 
 
@@ -146,6 +149,17 @@ def _score_topic(key: str, entries: list, query: str, query_tokens: set[str]) ->
     # it must be a clean miss, never a substring/answers match on a family word.
     if not distinctive:
         return 0
+    answers_seq = _tokens(" ".join(str(e.get("answers", "")) for e in (entries or [])))
+    answers_tokens = set(answers_seq)
+    # Coverage gate: the topic's key + answers must cover at least HALF of the
+    # query's distinctive tokens, or it is a clean miss. Without this, a
+    # contiguous common phrase ("earned income" — every token individually
+    # weak, together a 40/token boost) promotes an unrelated topic: the EITC
+    # and dependent-care entries used to win "foreign earned income exclusion"
+    # on nothing but that bigram, hitting 1 of its 3 distinctive tokens.
+    covered = distinctive & (set(_tokens(key_norm)) | answers_tokens)
+    if 2 * len(covered) < len(distinctive):
+        return 0
     score = 0
     if query and (query in key_norm or key_norm in query):
         score += 100
@@ -153,8 +167,6 @@ def _score_topic(key: str, entries: list, query: str, query_tokens: set[str]) ->
     # key name (e.g. the "income" in `investment_income`) cannot incidentally
     # win an unrelated query ("earned income credit").
     score += 30 * len(distinctive & set(_tokens(key_norm)))
-    answers_seq = _tokens(" ".join(str(e.get("answers", "")) for e in (entries or [])))
-    answers_tokens = set(answers_seq)
     # 10 per distinctive token present (the real signal) + 1 per extra
     # occurrence (a fine tiebreaker: the topic that talks about the distinctive
     # word most is the better fit, e.g. "child" for CTC vs EITC).

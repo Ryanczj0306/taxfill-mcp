@@ -28,7 +28,11 @@ pypdf specifics encoded here (dev plan section 10):
   streams;
 - comb fields take digits only, and ``format: ssn_digits_only`` strips
   dashes/spaces *before* the MaxLen check — a dashed SSN written into a
-  9-cell comb field silently clips its last digits (pitfall P-001).
+  9-cell comb field silently clips its last digits (pitfall P-001);
+- one sanctioned non-digit exception: a SPOUSE identifying-number line
+  accepts the literal ``'NRA'`` (an MFS filer whose nonresident-alien
+  spouse has no SSN/ITIN and needs none writes 'NRA' there — Form 1040
+  instructions, Filing Status). The taxpayer's own SSN line never does.
 """
 
 from __future__ import annotations
@@ -47,6 +51,17 @@ from taxfill_core.schemas.formpack import FormPack, PackField
 # Add new formats here AND in the docstring of PackField.format.
 _SSN_DIGITS_ONLY = "ssn_digits_only"
 _KNOWN_FORMATS = frozenset({_SSN_DIGITS_ONLY})
+
+# An MFS filer whose nonresident-alien spouse has (and needs) no SSN/ITIN
+# writes the literal 'NRA' in the spouse identifying-number box (Form 1040
+# instructions, Filing Status). Only SPOUSE lines accept it — the taxpayer's
+# own identifying number is always a real 9-digit SSN/ITIN.
+_NRA_LITERAL = "NRA"
+
+
+def _accepts_nra(pf: PackField) -> bool:
+    """True for spouse identifying-number lines (the only lines where 'NRA' is legal)."""
+    return pf.format == _SSN_DIGITS_ONLY and "spouse" in pf.line.lower()
 
 # Checkbox answer words (case-insensitive). Anything else string-ish is
 # rejected with a prescriptive "supply yes|no" error rather than guessed at.
@@ -89,6 +104,20 @@ def _render_text(pf: PackField, value: object) -> str:
                 f"{sorted(_KNOWN_FORMATS)}; fix the pack or drop the format key"
             )
         if pf.format == _SSN_DIGITS_ONLY:
+            if text.strip().upper() == _NRA_LITERAL:
+                if _accepts_nra(pf):
+                    # MFS with a nonresident-alien spouse who has no SSN/ITIN
+                    # (and none is required): the Form 1040 instructions say to
+                    # enter 'NRA' in the spouse SSN box — write the literal,
+                    # skipping digit normalization (3 chars in a 9-cell comb is fine).
+                    return _NRA_LITERAL
+                raise ValueError(
+                    f"line '{pf.line}': 'NRA' is only accepted on the SPOUSE "
+                    f"identifying-number line — an MFS filer whose nonresident-alien "
+                    f"spouse has no SSN/ITIN (and needs none) writes 'NRA' there "
+                    f"(Form 1040 instructions, Filing Status); this line needs the "
+                    f"taxpayer's own 9-digit SSN or ITIN"
+                )
             # P-001: strip BEFORE the MaxLen check — dashes overflow comb cells.
             text = text.replace("-", "").replace(" ", "")
     return text
@@ -144,6 +173,8 @@ def _enforce_length(pf: PackField, rendered: str) -> None:
             f"field allows at most {pf.maxlen} — shorten it to {pf.maxlen} characters or fewer"
         )
     if pf.comb and rendered and not rendered.isdigit():
+        if rendered == _NRA_LITERAL and _accepts_nra(pf):
+            return  # sanctioned literal: 'NRA' in the spouse SSN comb, one letter per cell
         raise ValueError(
             f"line '{pf.line}': comb fields take digits only (one digit per cell) — "
             f"value '{rendered}' contains non-digits; strip dashes, spaces and letters "

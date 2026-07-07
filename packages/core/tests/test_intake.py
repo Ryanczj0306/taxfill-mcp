@@ -10,9 +10,11 @@ from taxfill_core.schemas.profile import (
     Identity,
     Immigration,
     IncomeDocument,
+    PriorFilings,
     Profile,
     Provenance,
     ResidencyFacts,
+    StateFootprintYear,
     VisaPeriod,
 )
 
@@ -69,6 +71,71 @@ def test_tax_year_targets_the_residency_day_count():
     profile = Profile(identity=Identity(us_person=_ans(False)))
     q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == "residency.days_in_us")
     assert "2023" in q.prompt
+
+
+def test_residency_days_question_asks_all_three_lookback_years():
+    # FIX: the SPT weighs the tax year AND the two preceding years — the question
+    # must ask for all three up front (a missing year silently counts as 0 and can
+    # misclassify a resident as nonresident).
+    profile = Profile(identity=Identity(us_person=_ans(False)))
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == "residency.days_in_us")
+    assert "2021, 2022, 2023" in q.prompt
+    assert "0 for a year spent entirely outside" in q.prompt
+    assert "treated as 0" in q.why and "misclassify" in q.why
+
+
+def test_residency_days_followup_when_preceding_years_missing():
+    # Finding repro (H-1B frequent traveler): the target year is on file but the
+    # two preceding period-covered years are not — intake must follow up, not
+    # report the section complete.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-1B", start=date(2020, 2, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(150)}),
+    )
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == "residency.days_in_us")
+    assert "2021, 2022" in q.prompt
+    assert "2023" not in q.prompt  # already on file — only the gaps are asked
+
+
+def test_residency_days_followup_covers_exempt_category_years():
+    # Finding repro (F-1 dead-end): classify() demands a count for EVERY F/J/M/Q
+    # calendar year; intake used to return zero residency questions here while
+    # classify raised — the interview could never supply 2019-2022.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status="F-1", start=date(2019, 8, 20), end=date(2023, 9, 30), provenance=US),
+            VisaPeriod(status="H-1B", start=date(2023, 10, 1), provenance=US),
+        ]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(365)}),
+    )
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == "residency.days_in_us")
+    assert "2019, 2020, 2021, 2022" in q.prompt
+
+
+def test_no_residency_days_followup_when_all_needed_years_known():
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2021, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2021: _ans(150), 2022: _ans(300), 2023: _ans(300)}),
+    )
+    assert "residency.days_in_us" not in _ids(intake_checklist(profile, tax_year=2023))
+
+
+def test_nonresident_note_hedged_while_covered_prior_years_missing():
+    # Amplifier from the finding: a 'nonresident' computed from a days map missing
+    # period-covered preceding years is NOT trustworthy — the MFJ/HOH restriction
+    # must stay CONDITIONAL (real 2021/2022 counts could flip this filer to resident).
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-1B", start=date(2020, 2, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(150)}),
+        household=Household(marital_status=_ans("married")),
+    )
+    cl = intake_checklist(profile, tax_year=2023)
+    assert not any("cannot use married-filing-jointly" in n for n in cl.notes)
+    assert any("if your residency result is nonresident" in n.lower() for n in cl.notes)
 
 
 def test_marital_status_asked_before_filing_status():
@@ -288,3 +355,187 @@ def test_resident_alien_passing_spt_keeps_mfj_and_hoh_available():
     # The §6013 election does NOT arise for a resident alien.
     fs = next(q for q in cl.next_questions if q.id == "household.filing_status")
     assert "6013" not in (fs.disambiguation or "")
+
+
+# ── FIX-3: the unmarried path must be able to reach ready_to_fill ──────────────
+
+
+def _single_filer_core(**household_kwargs) -> Profile:
+    return Profile(
+        identity=Identity(
+            name=_ans("Jordan Q Taxpayer"), tax_id=_ans("999001234"), dob=_ans(date(1990, 1, 1)),
+            us_person=_ans(True), mailing_address=_ans("500 Market St, San Jose CA 95113"),
+        ),
+        household=Household(marital_status=_ans("unmarried"), **household_kwargs),
+    )
+
+
+def test_unmarried_filer_gets_filing_status_confirmation_after_hoh_answer():
+    # Regression (finding): filing_status was never asked on the unmarried path, so
+    # ready_to_fill was unreachable through the interview alone.
+    profile = _single_filer_core(hoh_qualifying_person=_ans(False))
+    cl = intake_checklist(profile)
+    fs = next(q for q in cl.next_questions if q.id == "household.filing_status")
+    assert fs.answers_into == "household.filing_status"
+    assert "single" in fs.prompt
+
+
+def test_unmarried_hoh_filer_is_offered_head_of_household():
+    profile = _single_filer_core(hoh_qualifying_person=_ans(True))
+    fs = next(q for q in intake_checklist(profile).next_questions if q.id == "household.filing_status")
+    assert "head of household" in fs.prompt
+
+
+def test_unmarried_confirmed_nra_is_confirmed_single_not_hoh():
+    # Confirmed nonresident: the confirmation must steer to single (no HOH box on 1040-NR).
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2023, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(120)}),
+        household=Household(marital_status=_ans("unmarried"), hoh_qualifying_person=_ans(True)),
+    )
+    fs = next(q for q in intake_checklist(profile, tax_year=2023).next_questions
+              if q.id == "household.filing_status")
+    assert "single" in fs.prompt and "head-of-household" in fs.prompt  # names the 1040-NR restriction
+
+
+def test_widowed_filer_gets_filing_status_confirmation():
+    # The widowed path must also produce a filing_status once its facts are in.
+    profile = Profile(
+        household=Household(
+            marital_status=_ans("widowed"),
+            spouse_death_year=_ans(2022),
+            maintained_home_for_dependent_child=_ans(True),
+        )
+    )
+    fs = next(q for q in intake_checklist(profile, tax_year=2023).next_questions
+              if q.id == "household.filing_status")
+    assert "surviving spouse" in fs.prompt
+
+
+def test_interview_terminates_for_single_paper_check_filer():
+    # Finding repro: the modal filer (single, childless, W-2, no direct deposit)
+    # must reach ready_to_fill with ZERO questions left — the naive ask-resubmit
+    # loop terminates instead of re-asking dependents/banking forever.
+    profile = _single_filer_core(hoh_qualifying_person=_ans(False), filing_status=_ans("single"))
+    profile.state_footprint = {2023: StateFootprintYear()}
+    profile.income_documents = [
+        IncomeDocument(kind="W-2", status="have", provenance=US),
+        IncomeDocument(kind="1095-A", status="not_applicable", provenance=US),  # 'no marketplace coverage'
+    ]
+    profile.prior_filings = PriorFilings(filed_years=_ans([2022]))
+    cl = intake_checklist(profile, tax_year=2023)
+    assert cl.ready_to_fill is True
+    assert cl.next_questions == []  # banking stays None ('paper check') and nothing repeats
+
+
+def test_dependents_question_stops_once_filing_status_is_confirmed():
+    # Empty-list dependents ('none') is indistinguishable from not-asked in the
+    # schema, so the question is gated off once the filing status is confirmed.
+    asking = _single_filer_core(hoh_qualifying_person=_ans(False))
+    assert "household.dependents" in _ids(intake_checklist(asking))
+    confirmed = _single_filer_core(hoh_qualifying_person=_ans(False), filing_status=_ans("single"))
+    assert "household.dependents" not in _ids(intake_checklist(confirmed))
+
+
+def test_banking_question_only_accompanies_other_pending_questions():
+    # Declining direct deposit is unrepresentable (Banking checksum-validates), so
+    # the optional banking question must never be the lone repeating question.
+    assert "banking.account" in _ids(intake_checklist())  # normal interview: asked
+    complete = _single_filer_core(hoh_qualifying_person=_ans(False), filing_status=_ans("single"))
+    complete.state_footprint = {2023: StateFootprintYear()}
+    complete.income_documents = [
+        IncomeDocument(kind="W-2", status="have", provenance=US),
+        IncomeDocument(kind="1095-A", status="not_applicable", provenance=US),
+    ]
+    complete.prior_filings = PriorFilings(filed_years=_ans([2022]))
+    assert "banking.account" not in _ids(intake_checklist(complete, tax_year=2023))
+
+
+# ── FIX-4: Phase F facts the estimator depends on (Tier-1 subset) ──────────────
+
+
+def test_dependent_followups_asked_until_dob_and_ssn_known():
+    # A name-only dependent is EXCLUDED from CTC/ODC/EITC by the estimator — intake
+    # must chase the two gating facts per dependent.
+    profile = Profile(
+        household=Household(
+            marital_status=_ans("married"),
+            dependents=[Dependent(name="Casey Lee", relationship="child", provenance=US)],
+        )
+    )
+    cl = intake_checklist(profile)
+    dob_q = next(q for q in cl.next_questions if q.id == "household.dependents[0].dob")
+    ssn_q = next(q for q in cl.next_questions if q.id == "household.dependents[0].has_ssn")
+    assert "Casey Lee" in dob_q.prompt and "Child Tax Credit" in dob_q.why
+    assert "work-eligible" in ssn_q.prompt and "EITC" in ssn_q.why
+    assert dob_q.answers_into == "household.dependents[0].dob"
+
+
+def test_no_dependent_followups_when_facts_complete():
+    profile = Profile(
+        household=Household(
+            marital_status=_ans("married"),
+            dependents=[Dependent(name="Casey Lee", relationship="child",
+                                  dob=date(2015, 4, 1), has_ssn=True, provenance=US)],
+        )
+    )
+    ids = _ids(intake_checklist(profile))
+    assert not any(i.startswith("household.dependents[") for i in ids)
+
+
+def test_marketplace_coverage_asked_until_a_1095a_entry_exists():
+    # The 1095-A is the one document whose omission freezes refunds (Form 8962).
+    q = next(q for q in intake_checklist(tax_year=2023).next_questions
+             if q.id == "income_documents.marketplace_coverage")
+    assert "Marketplace" in q.prompt and "2023" in q.prompt
+    assert "8962" in q.why
+    assert "not_applicable" in (q.disambiguation or "")  # 'no' is recordable -> no loop
+    covered = Profile(income_documents=[IncomeDocument(kind="1095-A", status="have", provenance=US)])
+    assert "income_documents.marketplace_coverage" not in _ids(intake_checklist(covered, tax_year=2023))
+    declined = Profile(income_documents=[IncomeDocument(kind="1095-A", status="not_applicable", provenance=US)])
+    assert "income_documents.marketplace_coverage" not in _ids(intake_checklist(declined, tax_year=2023))
+
+
+# ── FIX-5: FICA withheld in error on exempt F/J filers ─────────────────────────
+
+
+def test_confirmed_nra_f1_gets_fica_recovery_note():
+    # F-1 exempt individuals owe no Social Security/Medicare; boxes 4/6 on a W-2
+    # mean employer error — the Form 843 + 8316 recovery path must be surfaced.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2023, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(120)}),
+    )
+    cl = intake_checklist(profile, tax_year=2023)
+    note = next(n for n in cl.notes if "FICA" in n)
+    assert "boxes 4 and 6" in note
+    assert "Form 843" in note and "Form 8316" in note
+    assert "3121(b)(19)" in note
+    assert "separate" in note.lower()  # recovery is NOT part of this return
+
+
+def test_fica_note_hedged_while_residency_unknown_and_absent_for_others():
+    # No day counts yet: the note is framed conditionally.
+    unknown = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="J-1 researcher", start=date(2023, 1, 1), provenance=US)]),
+    )
+    note = next(n for n in intake_checklist(unknown, tax_year=2023).notes if "FICA" in n)
+    assert note.startswith("If your residency result is nonresident")
+    # US persons and non-F/J visa holders get no FICA note.
+    assert not any("FICA" in n for n in intake_checklist(Profile(identity=Identity(us_person=_ans(True)))).notes)
+    h1b_only = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-1B", start=date(2022, 1, 1), provenance=US)]),
+    )
+    assert not any("FICA" in n for n in intake_checklist(h1b_only, tax_year=2023).notes)
+    # A computed RESIDENT alien (H-1B passing the SPT would be caught above; an F-1
+    # past the exempt window) is generally FICA-liable -> no note either.
+    resident_f1 = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2017, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(330) for y in range(2017, 2024)}),
+    )
+    assert not any("FICA" in n for n in intake_checklist(resident_f1, tax_year=2023).notes)

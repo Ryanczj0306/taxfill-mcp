@@ -7,9 +7,12 @@ forms, candidate benefits, and any warnings. No-income-tax states resolve to
 "nothing to file". Multi-state income ALLOCATION stays agent+user judgment;
 this tool provides the scoping, the rules, and the warnings.
 
-Critically: a state that does not conform to federal tax treaties (California)
-gets a loud warning when the filer has a treaty position — federally
-treaty-exempt income is still taxable there.
+Critically: a treaty filer always gets an explicit treaty-conformity line per
+income-tax state. A state that does not conform to federal tax treaties
+(California) gets a loud warning — federally treaty-exempt income is still
+taxable there. A CONFORMING state (e.g. Virginia) gets the positive note that
+the treaty-exempt amount stays excluded, plus the pack's researched
+``treaty_note`` caveat — so "evaluated: conforms" is never silent.
 """
 from __future__ import annotations
 
@@ -198,11 +201,24 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
             cv = getattr(sk, "credits_verification", None)
             if benefits and cv:
                 warnings.append(f"Credit amounts/limits are not independently verified: {cv}")
-            if not sk.conforms_to_federal_treaties and treaty_filer:
-                warnings.append(
-                    f"{st} does NOT conform to federal tax treaties: income exempt from federal tax under a "
-                    f"treaty is STILL taxable by {st}. Do not carry a federal treaty exclusion onto the state return."
-                )
+            # Treaty conformity: a treaty filer always gets an explicit line, so
+            # "evaluated: conforms" is distinguishable from "never evaluated" —
+            # silence used to leave the pack's researched treaty_note dead data.
+            if treaty_filer:
+                treaty_note = getattr(sk, "treaty_note", None)
+                if not sk.conforms_to_federal_treaties:
+                    warnings.append(
+                        f"{st} does NOT conform to federal tax treaties: income exempt from federal tax under a "
+                        f"treaty is STILL taxable by {st}. Do not carry a federal treaty exclusion onto the state return."
+                        + (f" State note: {treaty_note}" if treaty_note else "")
+                    )
+                else:
+                    warnings.append(
+                        f"{st} conforms to federal treaty treatment — income exempt from federal tax under a "
+                        f"treaty is also excluded from {st} income (it flows through the federal starting point; "
+                        f"do not add it back on the {st} return)."
+                        + (f" State note: {treaty_note}" if treaty_note else "")
+                    )
             if sk.citation:
                 cites.append(sk.citation)
         else:

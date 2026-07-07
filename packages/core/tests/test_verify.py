@@ -410,6 +410,7 @@ def test_clipping_p001_dashed_ssn_in_nine_cell_comb():
     assert "11 characters" in check.detail
     assert "MaxLen is 9" in check.detail
     assert "P-001" in check.detail
+    assert f"field '{widget.name}'" in check.detail  # the failure names its field
     assert "000-00-0000" not in check.detail  # never echo the (PII-shaped) value
 
 
@@ -426,6 +427,10 @@ def test_clipping_width_heuristic_overflow():
     check = clipping_scan([widget])[0]
     assert check.status == "FAIL"
     assert "120.0pt" in check.detail and "80.0pt" in check.detail
+    # The width-heuristic failure must NAME the field: the detail is all the MCP
+    # summary shows, and an anonymous geometry message strands the agent guessing
+    # which of the filled fields clipped.
+    assert "field 'w'" in check.detail
 
 
 def test_clipping_width_heuristic_fits():
@@ -606,6 +611,31 @@ def test_independent_recompute_match_mismatch_and_missing():
     assert "no-LLM-arithmetic" in by_line["24"].detail
     assert by_line["37"].status == "FAIL"
     assert "no filled value was supplied" in by_line["37"].detail
+
+
+def test_independent_recompute_catches_internally_consistent_wrong_tax():
+    # The persona-review repro: a 1040-shaped fill where line 16 carries a wrong
+    # tax-table number ($30,000 instead of calc's $36,036 for MFJ taxable income
+    # $205,150) but every downstream sum stays internally consistent. Relation
+    # math passes; ONLY the independent recompute can catch the $6,036
+    # understatement — so supplying it must flip ok to False.
+    pack = make_pack(
+        [money_field("15"), money_field("16"), money_field("17"), money_field("18")],
+        relations=["18 == 16 + 17"],
+    )
+    fields = disk_fields(pack, {"15": "205150", "16": "30000", "18": "30000"})
+
+    consistent = verify_form(pack, fields)  # no independent set -> nothing catches it
+    assert consistent.ok is True
+    assert consistent.recompute == []
+
+    caught = verify_form(pack, fields, independent={"16": 36036})
+    assert caught.ok is False
+    assert all(check.status == "PASS" for check in caught.relations)  # internally consistent
+    bad = next(check for check in caught.recompute if check.line == "16")
+    assert bad.status == "FAIL"
+    assert bad.filled == 30000 and bad.recomputed == 36036
+    assert "no-LLM-arithmetic" in bad.detail
 
 
 # ---------------------------------------------------------------------------
@@ -1018,6 +1048,7 @@ def test_verify_form_catches_maxlen_overflow_from_dump_alone():
     assert p001.status == "FAIL"
     assert report.clipping[0].status == "FAIL"
     assert "line identifying_number" in report.clipping[0].name
+    assert "line 'identifying_number'" in report.clipping[0].detail  # detail names the line too
 
 
 def test_verify_form_widgets_take_precedence_over_pack_maxlen():
