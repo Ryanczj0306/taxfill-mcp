@@ -17,7 +17,14 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from taxfill_core.file_and_pay import FilingManifestItem, _plus_years
+from taxfill_core.file_and_pay import (
+    FilingManifestItem,
+    _deadline_citation,
+    _is_nr_form,
+    _is_standalone_8843,
+    _pack_address_entry,
+    _plus_years,
+)
 from taxfill_core.knowledge import Citation, load_knowledge, load_state_knowledge
 
 __all__ = ["FilingSummaryItem", "FilingSummary", "filing_summary"]
@@ -64,6 +71,8 @@ def _federal_item(item: FilingManifestItem, today: date, knowledge_dir) -> Filin
         pack = load_knowledge("federal", item.tax_year, knowledge_dir)
     except FileNotFoundError:
         pack = None
+    if _is_standalone_8843(item):
+        return _standalone_8843_item(item, today, pack)
     citations: list[Citation] = []
     notes: list[str] = []
     refund = item.bottom_line if item.bottom_line > 0 else 0
@@ -85,7 +94,7 @@ def _federal_item(item: FilingManifestItem, today: date, knowledge_dir) -> Filin
     deadline_status = ""
     if pack is not None and pack.deadlines is not None:
         d = pack.deadlines
-        citations.append(d.citation)
+        citations.append(_deadline_citation(d, _is_nr_form(item.form)))
         due = d.filing_due_date
         if refund:
             sol = d.refund_statute_of_limitations
@@ -117,6 +126,47 @@ def _federal_item(item: FilingManifestItem, today: date, knowledge_dir) -> Filin
     return FilingSummaryItem(
         form=item.form, jurisdiction="federal", tax_year=item.tax_year, headline=headline,
         refund=refund, owed=owed, plain_explanation=plain, deadline_status=deadline_status,
+        citations=citations, notes=notes,
+    )
+
+
+def _standalone_8843_item(item: FilingManifestItem, today: date, pack) -> FilingSummaryItem:
+    """Form 8843 filed by itself: an information return — no tax due, no refund,
+    and NO monetary late penalties. The stake of filing late is losing the
+    exempt-individual day exclusion the form documents (Form 8843 instructions),
+    so the summary must not threaten late-payment penalties or interest."""
+    citations: list[Citation] = []
+    notes: list[str] = []
+    headline = f"Federal {item.tax_year}: Form 8843 — information return, no tax due"
+    plain = (
+        "Form 8843 documents your exempt-individual days (it reports information only) — there is no tax to pay "
+        "and no refund to claim."
+    )
+    # The pack's standalone-8843 entry carries the Form 8843 instructions citation.
+    _, addr_citation = _pack_address_entry(pack, "f8843_standalone")
+    if addr_citation:
+        citations.append(addr_citation)
+    deadline_status = ""
+    if pack is not None and pack.deadlines is not None:
+        d = pack.deadlines
+        citations.append(_deadline_citation(d, is_nr=True))
+        due = getattr(d, "nonwage_1040nr_due_date", None) or d.filing_due_date
+        if today.isoformat() <= due:
+            deadline_status = f"File by {due} — a standalone Form 8843 follows the Form 1040-NR due date."
+        else:
+            deadline_status = (
+                f"Past the {due} due date — no tax is due on this information return, so there are no late-filing/"
+                f"late-payment penalties or interest; file it as soon as possible, because filing late can cost "
+                f"you the exempt-individual day exclusion it claims (Form 8843 instructions)."
+            )
+    else:
+        notes.append(
+            f"Deadline data for {item.tax_year} is not in the knowledge pack — a standalone Form 8843 follows "
+            f"the Form 1040-NR due date; confirm it on irs.gov."
+        )
+    return FilingSummaryItem(
+        form=item.form, jurisdiction="federal", tax_year=item.tax_year, headline=headline,
+        refund=0, owed=0, plain_explanation=plain, deadline_status=deadline_status,
         citations=citations, notes=notes,
     )
 

@@ -86,6 +86,28 @@ def test_missing_years_count_as_zero_days():
     assert result.meets_spt is True
 
 
+def test_missing_preceding_years_flagged_in_work_with_flip_warning():
+    # A NOT-met result computed with missing preceding years is never silent:
+    # the work says they were treated as 0 and that real counts could flip it.
+    result = substantial_presence_test({2023: 150}, 2023)
+    assert result.meets_spt is False
+    assert "days for 2021, 2022 not provided — treated as 0" in result.work
+    assert "may flip to met (resident)" in result.work
+    assert "0 is a valid answer" in result.work
+
+
+def test_missing_years_note_is_mild_when_spt_already_met():
+    # Met is monotone-safe (more days cannot un-meet it) — noted, no flip warning.
+    result = substantial_presence_test({2024: 200}, 2024)
+    assert "not provided — treated as 0" in result.work
+    assert "may flip" not in result.work
+
+
+def test_no_missing_year_note_when_all_three_years_supplied():
+    result = substantial_presence_test({2024: 120, 2023: 120, 2022: 120}, 2024)
+    assert "not provided" not in result.work
+
+
 def test_string_year_keys_accepted():
     # JSON round-trips turn int keys into strings; accept digit strings.
     result = substantial_presence_test({"2024": 200, "2023": 30}, 2024)
@@ -455,11 +477,80 @@ def test_nonresident_weighted_over_183_but_under_31_days():
     assert any("Form 8840" in r for r in result.reasons)
 
 
+def test_missing_covered_prior_years_make_nonresident_caveat_prominent():
+    # Finding repro: H-1B since Feb 2020, only 2023 days supplied. The SPT treats
+    # the missing 2021/2022 as 0 and lands nonresident, but real counts for those
+    # period-covered years could flip it to resident — the caveat must lead the
+    # reasons, not hide in fine print.
+    result = classify([period("H-1B", date(2020, 2, 1))], {2023: 150}, 2023)
+    assert result.classification == "nonresident"
+    top = result.reasons[0]
+    assert top.startswith("IMPORTANT")
+    assert "may be WRONG" in top
+    assert "2021, 2022" in top
+    assert "FLIP to resident" in top
+    assert "0 is a valid answer" in top
+    # The SPT work carries the treated-as-0 note too.
+    assert "days for 2021, 2022 not provided — treated as 0" in result.spt.work
+
+
+def test_supplying_the_missing_years_flips_the_same_person_to_resident():
+    # Companion to the prominent caveat: the same H-1B with real counts is a
+    # resident — proving the missing-years zero was silently load-bearing before.
+    result = classify(
+        [period("H-1B", date(2020, 2, 1))], {2021: 320, 2022: 330, 2023: 150}, 2023
+    )
+    assert result.classification == "resident"
+    assert not any("may be WRONG" in r for r in result.reasons)
+
+
+def test_missing_years_not_flagged_without_period_coverage():
+    # First US status starts mid-target-year: no declared period covers 2022/2023,
+    # so their absence is expected (timeline assumed complete) — no missing-years
+    # reason fires and the dual-status flag is undisturbed.
+    result = classify([period("H-1B", date(2024, 3, 15))], {2024: 250}, 2024)
+    assert result.classification == "dual_status_candidate"
+    assert not any("no entry for" in r for r in result.reasons)
+
+
+def test_missing_years_note_not_prominent_below_31_days():
+    # 20 days present: the 31-day prong fails no matter what the missing years
+    # hold, so the nonresident answer cannot flip — plain note, standard lead reason.
+    result = classify([period("H-1B", date(2020, 2, 1))], {2023: 20}, 2023)
+    assert result.classification == "nonresident"
+    assert result.reasons[0].startswith("Substantial presence test NOT met")
+    note = next(r for r in result.reasons if "no entry for 2021, 2022" in r)
+    assert "31-day minimum" in note
+    assert "0 is a valid answer" in note
+
+
 def test_green_card_overrides_spt():
     result = classify([], {}, 2024, is_lawful_permanent_resident=True)
     assert result.classification == "resident"
     assert "Green card test" in result.reasons[0]
     assert any("green-card-test" in c.url for c in result.citations)
+
+
+def test_green_card_holder_abroad_flags_abandonment_and_tie_breaker():
+    # A green-card holder with (near-)zero US days is still a resident — and the
+    # reasons must say WHY that does not end by living abroad: LPR status persists
+    # until formally abandoned (I-407), a treaty tie-breaker (Form 8833) is the
+    # elective out, and worldwide income stays reportable meanwhile.
+    result = classify([], {2023: 0}, 2023, is_lawful_permanent_resident=True)
+    assert result.classification == "resident"
+    note = next(r for r in result.reasons if "I-407" in r)
+    assert "Form 8833" in note
+    assert "worldwide income" in note
+    assert "Form 8854" in note  # expatriation-tax side effect is named
+    assert "Pub. 519" in note  # cited like the neighboring reasons
+    assert any("green-card-test" in c.url for c in result.citations)
+
+
+def test_green_card_holder_with_substantial_presence_gets_no_abroad_flag():
+    # 300 days present: not the living-abroad pattern — no I-407/8833 noise.
+    result = classify([], {2024: 300}, 2024, is_lawful_permanent_resident=True)
+    assert result.classification == "resident"
+    assert not any("I-407" in r for r in result.reasons)
 
 
 def test_green_card_holder_is_not_blocked_on_incomplete_day_history():

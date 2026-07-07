@@ -348,6 +348,21 @@ mailing_addresses:
   f1040nr:
     no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215, U.S.A.
     with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303, U.S.A.
+  # A return filed WITH Form W-7 (ITIN application) attached goes to the Austin
+  # ITIN Operation — regardless of the filer's state and whether a payment is
+  # enclosed (the ITIN unit processes the W-7 and identity documents with the return).
+  itin_w7_with_return:
+    address: "Internal Revenue Service, ITIN Operation, P.O. Box 149342, Austin, TX 78714-9342"
+    citation:
+      source: 'Instructions for Form W-7, "Where To Apply" — mail Form W-7 with the attached tax return (and identity documents) to the ITIN Operation'
+      url: "https://www.irs.gov/instructions/iw7"
+  # Form 8843 filed by ITSELF (no income-tax return required) always mails to
+  # Austin; the address never depends on the filer's state.
+  f8843_standalone:
+    address: "Department of the Treasury, Internal Revenue Service Center, Austin, TX 73301-0215"
+    citation:
+      source: 'Form 8843 instructions, "When and Where To File" (filed on its own when no income-tax return is required)'
+      url: "https://www.irs.gov/forms-pubs/about-form-8843"
   f1040_groups:
   - states:
     - Alabama
@@ -424,10 +439,15 @@ mailing_addresses:
     no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215
     with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303
 deadlines:
+  # Primary citation = the plain-1040 authority; 1040-NR items cite the 1040-NR
+  # booklet via citation_1040nr (file_and_pay/filing_summary pick by form family).
   citation:
     source: 2022 Instructions for Form 1040 ("Due date of return", p. for line/general instructions);
-      2022 Instructions for Form 1040-NR ("Due date of return" / "Where To File"); IRC 6511(a)
+      IRC 6511(a)
     url: https://www.irs.gov/pub/irs-prior/i1040gi--2022.pdf
+  citation_1040nr:
+    source: 2022 Instructions for Form 1040-NR ("Due date of return" / "Where To File"); IRC 6511(a)
+    url: https://www.irs.gov/pub/irs-prior/i1040nr--2022.pdf
   filing_due_date: '2023-04-18'
   refund_statute_of_limitations:
     authority: IRC 6511(a)

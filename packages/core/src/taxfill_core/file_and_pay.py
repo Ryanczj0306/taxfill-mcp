@@ -17,11 +17,123 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from taxfill_core.knowledge import Citation, load_knowledge, load_state_knowledge
 
 __all__ = ["FilingManifestItem", "ReturnInstructions", "FilingInstructions", "file_and_pay"]
+
+# USPS two-letter codes -> full names (50 states + DC). The where-to-file tables
+# in the knowledge packs key on full names, but the rest of the product (profile,
+# state_scope) standardizes on two-letter codes — accept both.
+_STATE_NAMES: dict[str, str] = {
+    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California",
+    "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware", "DC": "District of Columbia",
+    "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois",
+    "IN": "Indiana", "IA": "Iowa", "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana",
+    "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota",
+    "MS": "Mississippi", "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada",
+    "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York",
+    "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma", "OR": "Oregon",
+    "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina", "SD": "South Dakota",
+    "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont", "VA": "Virginia",
+    "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming",
+}
+
+
+def _expand_state(state: str) -> str:
+    """Map a USPS two-letter code to the full name the where-to-file table uses;
+    anything else passes through unchanged (full names already match)."""
+    return _STATE_NAMES.get(state.strip().upper(), state)
+
+
+def _is_nr_form(form: str) -> bool:
+    """True for a Form 1040-NR item ('1040-NR', '1040NR', or the pack key 'f1040nr')."""
+    f = form.upper().replace(" ", "").replace("-", "")
+    if f.startswith("F1040NR"):
+        f = f[1:]
+    return f.startswith("1040NR")
+
+
+def _is_w7(name: str) -> bool:
+    """True for Form W-7 in any spelling ('W-7', 'W7', or the pack key 'fw7')."""
+    return name.upper().replace(" ", "").replace("-", "") in ("W7", "FW7", "FORMW7")
+
+
+def _filing_includes_w7(item: "FilingManifestItem") -> bool:
+    """Form W-7 anywhere in the package: attached to the return, or as the item itself."""
+    return _is_w7(item.form) or any(_is_w7(f) for f in item.attached_forms)
+
+
+def _is_standalone_8843(item: "FilingManifestItem") -> bool:
+    """A Form 8843 filed by ITSELF (information only — no return, no tax bottom line)."""
+    f = item.form.upper().replace(" ", "").replace("-", "")
+    return f in ("8843", "F8843", "FORM8843") and not item.bottom_line
+
+
+def _pack_address_entry(pack, key: str) -> tuple[str | None, Citation | None]:
+    """Read a fixed-address extra entry ({address, citation}) from the pack's
+    mailing_addresses block. These entries (ITIN Operation, standalone 8843) are
+    open extras on the schema, so they arrive as raw dicts — validate the citation
+    here and degrade to None rather than crash on a malformed pack."""
+    if pack is None or pack.mailing_addresses is None:
+        return None, None
+    entry = getattr(pack.mailing_addresses, key, None)
+    if not isinstance(entry, dict) or not entry.get("address"):
+        return None, None
+    citation = None
+    raw = entry.get("citation")
+    if isinstance(raw, dict):
+        try:
+            citation = Citation(**raw)
+        except ValidationError:
+            citation = None
+    return str(entry["address"]), citation
+
+
+def _deadline_citation(d, is_nr: bool) -> Citation:
+    """Deadlines citation for the item's form family: the pack's primary citation
+    (the year's Form 1040 instructions) for a plain 1040; the 1040-NR instructions
+    (``citation_1040nr``, an open extra on the deadlines block) for 1040-NR items.
+    Falls back to the primary citation when a pack has no NR-specific one."""
+    if is_nr:
+        raw = getattr(d, "citation_1040nr", None)
+        if isinstance(raw, dict):
+            try:
+                return Citation(**raw)
+            except ValidationError:
+                pass
+    return d.citation
+
+
+def _form_aware_memo(memo: str, item: "FilingManifestItem") -> str:
+    """The pack's check memo quotes the plain-1040 wording (e.g. 'Write "2023 Form
+    1040" (or "2023 Form 1040-SR")'). A 1040-NR filer must write "<year> Form
+    1040-NR" on the payment (Form 1040-V instructions) — substitute the actual
+    form; if a pack's phrasing is unrecognized, append an explicit correction
+    rather than silently keeping the wrong form name."""
+    if not _is_nr_form(item.form):
+        return memo
+    y = item.tax_year
+    target = f'"{y} Form 1040-NR"'
+    for pattern in (
+        f'"{y} Form 1040" (or "{y} Form 1040-SR")',
+        f'"{y} Form 1040" or "{y} Form 1040-SR"',
+        f'"{y} Form 1040"',
+    ):
+        if pattern in memo:
+            return memo.replace(pattern, target)
+    return memo + f" You are filing Form 1040-NR — write {target} on the payment, not \"Form 1040\"."
+
+
+def _dedupe_citations(citations: list[Citation]) -> list[Citation]:
+    seen, uniq = set(), []
+    for c in citations:
+        key = (c.source, c.url)
+        if key not in seen:
+            seen.add(key)
+            uniq.append(c)
+    return uniq
 
 
 class FilingManifestItem(BaseModel):
@@ -34,10 +146,10 @@ class FilingManifestItem(BaseModel):
     jurisdiction: str = Field(default="federal", description="'federal' (v1) or 'states/<xx>' (M5).")
     bottom_line: int = Field(description="Signed: positive = refund, negative = amount owed, 0 = balanced.")
     paid_online: bool = Field(default=False, description="True if an owed balance was already paid electronically.")
-    state: str | None = Field(default=None, description="Taxpayer's state (resolves the 1040 where-to-file address).")
+    state: str | None = Field(default=None, description="Taxpayer's state — two-letter USPS code ('CA') or full name ('California'); resolves the 1040 where-to-file address.")
     filing_jointly: bool = Field(default=False, description="MFJ — both spouses must sign.")
     direct_deposit: bool = Field(default=False, description="Refund requested by direct deposit.")
-    attached_forms: list[str] = Field(default_factory=list, description="Forms attached to this return (e.g. ['8843']) — NOT separately signed.")
+    attached_forms: list[str] = Field(default_factory=list, description="Forms attached to this return (e.g. ['8843', 'W-7']). Most attachments are not separately signed; Form W-7 IS — the applicant signs its own Sign Here block.")
 
 
 class ReturnInstructions(BaseModel):
@@ -97,7 +209,9 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
             f"deadlines below could not be auto-resolved; confirm them on irs.gov (prior-year instructions at "
             f"https://www.irs.gov/pub/irs-prior/) before mailing."
         )
-    is_nr = item.form.upper().replace(" ", "").startswith("1040-NR") or item.form.upper().replace(" ", "") == "1040NR"
+    if _is_standalone_8843(item):
+        return _standalone_8843_return(item, pack, notes)
+    is_nr = _is_nr_form(item.form)
     owes = item.bottom_line < 0
     refund = item.bottom_line > 0
     enclosing_check = owes and not item.paid_online
@@ -124,7 +238,7 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
         if paid:
             payment.append(f"Card/digital wallet ({', '.join(paid)}) works but the processor charges a fee.")
         payment.append(
-            f"By check or money order: make it payable to \"{po.check.payee}\". {po.check.memo}"
+            f"By check or money order: make it payable to \"{po.check.payee}\". {_form_aware_memo(po.check.memo, item)}"
         )
         payment.append("Verify before sending: the tax year, the amount, and your SSN on the payment.")
     elif refund and item.direct_deposit:
@@ -138,19 +252,44 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
             f"https://www.irs.gov/pub/irs-prior/) before paying."
         )
 
-    # Mailing address (resolved from knowledge).
+    # Mailing address (resolved from knowledge). A return filed WITH a Form W-7
+    # overrides the whole table: the package (return + W-7 + the applicant's
+    # identity documents) goes to the Austin ITIN Operation, regardless of the
+    # filer's state and regardless of payment (Form W-7 instructions).
     mailing_address = None
-    if pack is not None and pack.mailing_addresses is not None:
+    if _filing_includes_w7(item):
+        itin_address, itin_citation = _pack_address_entry(pack, "itin_w7_with_return")
+        if itin_address:
+            mailing_address = itin_address
+            if itin_citation:
+                citations.append(itin_citation)
+            notes.append(
+                "Form W-7 is filed with this return, so mail the WHOLE package — return, Form W-7, and the "
+                "applicant's original (or certified) identity documents — to the IRS ITIN Operation in Austin. "
+                "Returns with a W-7 attached go there regardless of your state and whether a payment is enclosed "
+                "(Form W-7 instructions); do NOT use the normal where-to-file address."
+            )
+        else:
+            notes.append(
+                "This filing includes Form W-7: mail it to the IRS ITIN Operation in Austin, NOT the normal "
+                "where-to-file address — the ITIN Operation address is not in this year's knowledge pack, so "
+                "confirm it in the Form W-7 instructions (https://www.irs.gov/instructions/iw7) before mailing."
+            )
+    elif pack is not None and pack.mailing_addresses is not None:
         ma = pack.mailing_addresses
         citations.append(ma.citation)
         if is_nr:
             mailing_address = ma.f1040nr.with_payment if enclosing_check else ma.f1040nr.no_payment
         elif item.state:
             try:
-                pair = ma.f1040_for_state(item.state)
+                pair = ma.f1040_for_state(_expand_state(item.state))
                 mailing_address = pair.with_payment if enclosing_check else pair.no_payment
             except KeyError:
-                notes.append(f"State {item.state!r} not found in the where-to-file table — confirm the address on irs.gov.")
+                notes.append(
+                    f"State {item.state!r} not found in the where-to-file table — pass the two-letter USPS code "
+                    f"(e.g. 'CA') or the full state name (e.g. 'California'); for a foreign address, U.S. "
+                    f"territory, or APO/FPO use the foreign/territory row, or confirm the address on irs.gov."
+                )
         else:
             notes.append("No state given — the 1040 mailing address depends on your state; provide it to resolve the exact address.")
     elif pack is not None and pack.mailing_addresses is None:
@@ -166,12 +305,29 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
     if item.filing_jointly:
         sign.append("This is a joint return — BOTH spouses must sign and date it; a missing signature voids the filing.")
     for attached in item.attached_forms:
-        sign.append(f"Form {attached} is attached to this return — do NOT sign it separately.")
+        if _is_w7(attached):
+            # Form W-7 is the exception among attachments: its own 'Sign Here'
+            # block MUST be signed by the ITIN applicant even when the W-7 rides
+            # attached to the return (an unsigned W-7 is rejected by the ITIN
+            # unit, which holds up the whole return).
+            sign.append(
+                f"Form {attached} IS signed separately even though it is attached: the ITIN applicant must sign "
+                f"and date the W-7's own 'Sign Here' block in ink (and include a daytime phone number) — an "
+                f"unsigned W-7 is rejected by the ITIN unit and holds up the whole return."
+            )
+        else:
+            sign.append(f"Form {attached} is attached to this return — do NOT sign it separately.")
 
     # Assemble.
+    attach_docs = (
+        "Attach a copy of every Form W-2, 1042-S, and any 1099s that show federal withholding to the front — "
+        "the 1040-NR requires the 1042-S copies attached (they also substantiate any treaty claim)."
+        if is_nr
+        else "Attach your W-2 and any 1099s that show federal withholding to the front."
+    )
     assemble = [
         "Print only the form pages (not the instruction pages), single-sided.",
-        "Attach your W-2 and any 1099s that show federal withholding to the front.",
+        attach_docs,
         "Order attachments by their 'Attachment Sequence No.' (top-right of each schedule).",
         "Do NOT staple; use a single paper clip if needed.",
     ]
@@ -197,7 +353,7 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
     deadlines: list[str] = []
     if pack is not None and pack.deadlines is not None:
         d = pack.deadlines
-        citations.append(d.citation)
+        citations.append(_deadline_citation(d, is_nr))
         deadlines.append(f"Original due date for tax year {item.tax_year}: {d.filing_due_date}.")
         # A 1040-NR filer with no US-withholding wages is due the 15th day of the
         # 6th month (data-driven; the manifest may not flag "no US wages", so
@@ -256,18 +412,79 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
             f"https://www.irs.gov/pub/irs-prior/) before filing."
         )
 
-    # De-dup citations.
-    seen, uniq = set(), []
-    for c in citations:
-        key = (c.source, c.url)
-        if key not in seen:
-            seen.add(key)
-            uniq.append(c)
-
     return ReturnInstructions(
         form=item.form, jurisdiction="federal", tax_year=item.tax_year, bottom_line=bottom,
         payment=payment, mailing_address=mailing_address, sign=sign, assemble=assemble, mail=mail,
-        records=records, deadlines=deadlines, citations=uniq, notes=notes,
+        records=records, deadlines=deadlines, citations=_dedupe_citations(citations), notes=notes,
+    )
+
+
+def _standalone_8843_return(item: FilingManifestItem, pack, notes: list[str]) -> ReturnInstructions:
+    """Form 8843 filed by ITSELF (no income-tax return required): an information
+    return. Nothing is due and nothing is refunded, the mailing address is the
+    fixed Austin service center (never state-dependent), the form IS signed when
+    filed standalone, and late filing carries no monetary penalty — the risk is
+    losing the exempt-individual day exclusion the form documents."""
+    citations: list[Citation] = []
+    bottom = "Form 8843 is an information return — no tax due and no refund; it documents your exempt-individual days."
+
+    mailing_address, addr_citation = _pack_address_entry(pack, "f8843_standalone")
+    if mailing_address:
+        if addr_citation:
+            citations.append(addr_citation)
+        notes.append(
+            "A standalone Form 8843 always mails to the Austin service center — the address does not depend on "
+            "your state (Form 8843 instructions, 'When and Where To File')."
+        )
+    elif pack is not None:
+        notes.append(
+            f"The standalone Form 8843 mailing address for {item.tax_year} is not in the knowledge pack — confirm "
+            f"it in the Form 8843 instructions (https://www.irs.gov/forms-pubs/about-form-8843) before mailing."
+        )
+
+    sign = [
+        "Print Form 8843 and sign and date it in ink at the bottom of page 2 — the signature IS required when the "
+        "8843 is filed by itself (it is only skipped when the 8843 rides attached to a Form 1040-NR)."
+    ]
+    assemble = [
+        "Print only the form pages (not the instruction pages), single-sided.",
+        "Nothing else goes in the envelope — a standalone Form 8843 has no payment and no income documents to attach.",
+    ]
+    mail = [
+        "Use one envelope per return (don't combine multiple years).",
+        "Send by USPS Certified Mail with Return Receipt (PS Form 3800) and ask for a postmark — that receipt is "
+        "your proof of timely filing; the IRS won't otherwise confirm receipt.",
+    ]
+    records = [
+        "Photograph every signed page before mailing.",
+        "Keep the certified-mail receipt and tracking number.",
+        "Keep a copy of the form and your RECONCILIATION.md (your audit trail) for at least 3 years.",
+    ]
+
+    deadlines: list[str] = []
+    if pack is not None and pack.deadlines is not None:
+        d = pack.deadlines
+        citations.append(_deadline_citation(d, is_nr=True))
+        due_line = f"File by the Form 1040-NR due date for tax year {item.tax_year}: {d.filing_due_date}"
+        nonwage_due = getattr(d, "nonwage_1040nr_due_date", None)
+        if nonwage_due:
+            due_line += f" — or {nonwage_due} if you had no US-withholding wages (the usual case for a standalone 8843)"
+        deadlines.append(due_line + ".")
+        deadlines.append(
+            "No tax is due with Form 8843, so filing late brings no late-payment penalty or interest — but it can "
+            "cost you the exempt-individual day exclusion the form claims (Form 8843 instructions), so file it "
+            "even if the due date has passed."
+        )
+    elif pack is not None:
+        notes.append(
+            f"The filing due date for {item.tax_year} is not in the knowledge pack — a standalone Form 8843 "
+            f"follows the Form 1040-NR due date; confirm it on irs.gov before filing."
+        )
+
+    return ReturnInstructions(
+        form=item.form, jurisdiction="federal", tax_year=item.tax_year, bottom_line=bottom,
+        payment=[], mailing_address=mailing_address, sign=sign, assemble=assemble, mail=mail,
+        records=records, deadlines=deadlines, citations=_dedupe_citations(citations), notes=notes,
     )
 
 
