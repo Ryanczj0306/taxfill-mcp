@@ -23,6 +23,8 @@ Design rules enforced here:
 """
 from __future__ import annotations
 
+import re
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from taxfill_core import residency
@@ -112,6 +114,11 @@ def _residency_classification(profile: Profile, tax_year: int | None) -> str | N
     Returns one of 'nonresident' / 'resident' / 'dual_status_candidate' only when the
     profile has both a visa timeline and per-year day counts (and a target year);
     otherwise None so callers gate conditionally rather than asserting a result.
+
+    A 'nonresident' result that rests on treating a MISSING preceding lookback year as
+    0 days (the visa timeline covers tax_year-1/tax_year-2 but days_in_us lacks them)
+    is NOT asserted — real counts for those years could flip it to resident, so this
+    returns None and intake keeps the conditional framing plus the follow-up question.
     """
     if tax_year is None:
         return None
@@ -123,10 +130,16 @@ def _residency_classification(profile: Profile, tax_year: int | None) -> str | N
     if not days_by_year:
         return None
     try:
-        return residency.classify(imm.visa_timeline, days_by_year, tax_year).classification
+        classification = residency.classify(imm.visa_timeline, days_by_year, tax_year).classification
     except (ValueError, AssertionError):
         # Incomplete or contradictory inputs — cannot classify yet; gate conditionally.
         return None
+    if classification == "nonresident" and any(
+        y not in days_by_year and y in _period_covered_years(profile, tax_year)
+        for y in (tax_year - 1, tax_year - 2)
+    ):
+        return None
+    return classification
 
 
 def _has_f1_period(profile: Profile) -> bool:
@@ -135,6 +148,45 @@ def _has_f1_period(profile: Profile) -> bool:
     if imm is None:
         return False
     return any(p.status.strip().upper().replace("-", "").startswith("F1") for p in imm.visa_timeline)
+
+
+def _has_fj_period(profile: Profile) -> bool:
+    """True when the visa timeline declares any F or J status period (FICA-exempt categories)."""
+    imm = profile.immigration
+    if imm is None:
+        return False
+    return any(p.status.strip().upper().startswith(("F", "J")) for p in imm.visa_timeline)
+
+
+def _period_covered_years(profile: Profile, tax_year: int) -> set[int]:
+    """Calendar years up to ``tax_year`` overlapped by ANY declared status period."""
+    imm = profile.immigration
+    if imm is None:
+        return set()
+    years: set[int] = set()
+    for p in imm.visa_timeline:
+        end_year = min(p.end.year if p.end else tax_year, tax_year)
+        years.update(range(p.start.year, end_year + 1))
+    return years
+
+
+def _exempt_category_years(profile: Profile, tax_year: int) -> set[int]:
+    """Calendar years up to ``tax_year`` overlapped by an F/J/M/Q exempt-category period.
+
+    residency.classify() rejects the call unless days_in_us has an entry for every
+    one of these years, so intake must ask for exactly this set (plus the SPT's
+    three lookback years) — otherwise the interview dead-ends on a classify error.
+    """
+    imm = profile.immigration
+    if imm is None:
+        return set()
+    years: set[int] = set()
+    for p in imm.visa_timeline:
+        if not residency.is_exempt_category_status(p.status):
+            continue
+        end_year = min(p.end.year if p.end else tax_year, tax_year)
+        years.update(range(p.start.year, end_year + 1))
+    return years
 
 
 # ── section handlers: each appends the questions still needed ─────────────────
@@ -192,15 +244,33 @@ def _residency_questions(profile: Profile, out: list[IntakeQuestion], tax_year: 
         return
     rf = profile.residency_facts
     years_known = set(rf.days_in_us) if rf else set()
-    need_year = tax_year is not None and tax_year not in years_known
-    if rf is None or not years_known or need_year:
-        yr = f" in {tax_year}" if tax_year else " for each relevant year"
+    days_why = ("The Substantial Presence Test weighs THREE years — all of the tax year's days plus 1/3 of the "
+                "first preceding year's and 1/6 of the second's — and every F/J/M/Q year needs a count too. A "
+                "year left unanswered is treated as 0 days, which can misclassify a resident as nonresident.")
+    days_disambiguation = ("Give a count for EVERY listed year — 0 is a valid answer for a year spent entirely "
+                           "outside the U.S. If you can share your I-94 travel history we compute the days for "
+                           "you; exact dates beat a guess.")
+    if tax_year is not None:
+        # classify() needs the tax year, its two preceding years, and every calendar
+        # year an F/J/M/Q exempt-category period overlaps — ask for exactly that set,
+        # following up on whichever years the profile still lacks.
+        needed = {tax_year, tax_year - 1, tax_year - 2} | _exempt_category_years(profile, tax_year)
+        missing = sorted(y for y in needed if y not in years_known)
+        if missing:
+            year_list = ", ".join(str(y) for y in missing)
+            out.append(_q("residency.days_in_us", "residency",
+                          f"How many days were you physically present in the U.S. in each of these years: "
+                          f"{year_list}? (One count per year; answer 0 for a year spent entirely outside the U.S.)",
+                          days_why,
+                          "residency_facts.days_in_us",
+                          disambiguation=days_disambiguation))
+    elif rf is None or not years_known:
         out.append(_q("residency.days_in_us", "residency",
-                      f"How many days were you physically present in the U.S.{yr}?",
-                      "The Substantial Presence Test counts these days to set resident vs nonresident status.",
+                      "How many days were you physically present in the U.S. in the tax year AND in each of the "
+                      "two preceding years (plus any year you held F/J/M/Q status)?",
+                      days_why,
                       "residency_facts.days_in_us",
-                      disambiguation="If you can share your I-94 travel history we compute the days for you — exact "
-                                     "dates beat a guess."))
+                      disambiguation=days_disambiguation))
     if rf is None or not _has(rf.home_country_address):
         out.append(_q("residency.home_country_address", "residency", "What is your home-country address?",
                       "Nonresident returns and some treaty claims require it.", "residency_facts.home_country_address"))
@@ -278,6 +348,28 @@ def _household_questions(
                           disambiguation="If yes (and your spouse died within the prior two tax years), you may file "
                                          "as a qualifying surviving spouse (the lower married-filing-jointly tax). "
                                          "If no, you file as single."))
+        elif _has(hh.spouse_death_year) and not _has(hh.filing_status):
+            # Both QSS facts answered -> confirm the filing status so the interview can
+            # actually complete (ready_to_fill requires household.filing_status).
+            death_year = hh.spouse_death_year.value
+            maintained = bool(hh.maintained_home_for_dependent_child.value)
+            if tax_year is not None and death_year == tax_year:
+                suggestion = ("your spouse died during the tax year, which is normally still a joint-return year "
+                              "— married filing jointly")
+            elif maintained and (tax_year is None or death_year in (tax_year - 1, tax_year - 2)):
+                suggestion = ("you likely qualify as a qualifying surviving spouse (taxed at the "
+                              "married-filing-jointly rates)")
+            else:
+                suggestion = "you likely file as single"
+            out.append(_q("household.filing_status", "household",
+                          f"Based on your answers, {suggestion} — please confirm your filing status.",
+                          "A confirmed filing status is required before a draft return can start — it sets your "
+                          "brackets, standard deduction, and credit eligibility.",
+                          "household.filing_status",
+                          disambiguation="Qualifying surviving spouse requires a spouse death in one of the two "
+                                         "prior tax years AND keeping up the main home of your dependent child; "
+                                         "otherwise an unmarried filer files single (or head of household with a "
+                                         "qualifying person)."))
         if nonresident_path:
             notes.append("If your residency result is nonresident alien, Form 1040-NR has a qualifying-surviving-"
                          "spouse box but no head-of-household box.")
@@ -309,6 +401,34 @@ def _household_questions(
                            "It records the qualifying-person fact, though a nonresident alien cannot use head of "
                            "household."),
                           "household.hoh_qualifying_person", disambiguation=disamb))
+        elif not _has(hh.filing_status):
+            # The HOH fact is in: confirm the derived filing status so the unmarried
+            # path can actually reach ready_to_fill through the interview alone.
+            hoh_fact = bool(hh.hoh_qualifying_person.value)
+            if is_nonresident:
+                prompt = ("Please confirm your filing status: as an unmarried nonresident alien you file as "
+                          "single (Form 1040-NR has no head-of-household box).")
+                disamb = "Answer 'single' to confirm, or correct any earlier answer that is wrong."
+            elif hoh_fact and residency_unknown:
+                prompt = ("Based on your answers you may qualify for head of household — please confirm your "
+                          "filing status: head of household or single?")
+                disamb = ("Head of household usually means lower tax than single — but if your residency result "
+                          "comes back nonresident alien, Form 1040-NR has no head-of-household box and you file "
+                          "single. Confirm residency first if it is still open.")
+            elif hoh_fact:
+                prompt = ("Based on your answers you likely qualify for head of household — please confirm your "
+                          "filing status: head of household or single?")
+                disamb = ("Head of household usually means lower tax than single; it requires paying more than "
+                          "half the cost of keeping up the home of a qualifying person who lived with you more "
+                          "than half the year.")
+            else:
+                prompt = "Based on your answers you file as single — please confirm your filing status."
+                disamb = ("Answer 'single' to confirm — or, if you actually did keep up a home for a qualifying "
+                          "person, say so and we revisit head of household.")
+            out.append(_q("household.filing_status", "household", prompt,
+                          "A confirmed filing status is required before a draft return can start — it sets your "
+                          "brackets, standard deduction, and credit eligibility.",
+                          "household.filing_status", disambiguation=disamb))
 
     # Residency-gated status restriction note (conditional when not yet computable).
     if not _has(hh.filing_status):
@@ -325,10 +445,36 @@ def _household_questions(
                          "separately, or qualifying surviving spouse. If you are a resident alien, all statuses are "
                          "available. Confirm residency to finalize.")
 
-    if hh is None or not hh.dependents:
-        out.append(_q("household.dependents", "household", "Do you have any dependents to claim? If so, list them.",
+    # An empty dependents list cannot distinguish "no dependents" from "not asked yet"
+    # (the schema has no None sentinel), so the question is asked only until the
+    # filing status is confirmed — the last household gate — instead of forever.
+    if not hh.dependents and not _has(hh.filing_status):
+        out.append(_q("household.dependents", "household",
+                      "Do you have any dependents to claim? If so, list each one (name and relationship); "
+                      "answer 'none' if you have no dependents.",
                       "Dependents drive the child tax credit, credit for other dependents, and EITC.",
-                      "household.dependents"))
+                      "household.dependents",
+                      disambiguation="We follow up per dependent for date of birth and SSN — those facts gate "
+                                     "the credits."))
+
+    # Per-dependent follow-ups: a name-only dependent cannot be evaluated for the
+    # CTC/ODC/EITC (the estimator EXCLUDES dependents with no DOB), so ask until
+    # every listed dependent has a date of birth and an SSN answer.
+    for i, dep in enumerate(hh.dependents):
+        if dep.dob is None:
+            out.append(_q(f"household.dependents[{i}].dob", "household",
+                          f"What is {dep.name}'s date of birth?",
+                          "Age gates the Child Tax Credit (under 17), the credit for other dependents, and the "
+                          "EITC — a dependent with no date of birth on file is EXCLUDED from these credits.",
+                          f"household.dependents[{i}].dob"))
+        if dep.has_ssn is None:
+            out.append(_q(f"household.dependents[{i}].has_ssn", "household",
+                          f"Does {dep.name} have a work-eligible Social Security number?",
+                          "The Child Tax Credit and EITC require the dependent to have a work-eligible SSN; a "
+                          "dependent with an ITIN/ATIN instead still gets the $500 credit for other dependents.",
+                          f"household.dependents[{i}].has_ssn",
+                          disambiguation="Answer yes for an SSN that is valid for employment (most SSNs are); "
+                                         "answer no if the dependent has an ITIN or ATIN instead of an SSN."))
 
 
 def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
@@ -344,7 +490,11 @@ def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_
                                  "state lines changes which states you file in."))
 
 
-def _income_document_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
+def _mentions_1095a(kind: str) -> bool:
+    return "1095A" in re.sub(r"[^0-9A-Z]", "", kind.upper())
+
+
+def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
     if not profile.income_documents:
         out.append(_q("income_documents.inventory", "income_documents",
                       "What income documents did you receive (W-2, 1099-NEC/INT/DIV/B, 1098-T, K-1, …)?",
@@ -352,16 +502,68 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion]) -> N
                       "income_documents",
                       disambiguation="Include 'have', 'still need', and 'not applicable' for each — we file from "
                                      "documents, never from memory."))
+    # Marketplace coverage is the one document users predictably forget to volunteer,
+    # and the one whose omission freezes refunds (Form 8962 reconciliation is
+    # mandatory when advance premium tax credit was paid) — ask explicitly until a
+    # 1095-A entry exists in ANY status ('not_applicable' records a 'no').
+    if not any(_mentions_1095a(d.kind) for d in profile.income_documents):
+        yr = str(tax_year) if tax_year is not None else "the tax year"
+        out.append(_q("income_documents.marketplace_coverage", "income_documents",
+                      f"Did you (or anyone on your return) have health insurance through the Marketplace — "
+                      f"healthcare.gov or a state exchange — at any point in {yr}?",
+                      "Marketplace coverage comes with Form 1095-A; if advance premium tax credit was paid, the "
+                      "return MUST reconcile it on Form 8962 — omitting it gets the refund frozen (IRS letter 12C).",
+                      "income_documents",
+                      disambiguation="If yes, add a 1095-A entry to the document inventory (status 'have', or "
+                                     "'missing' until you find it). If no, add a 1095-A entry with status "
+                                     "'not_applicable' so the interview records the answer and stops asking."))
 
 
 def _banking_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
-    if profile.banking is None:
-        out.append(_q("banking.account", "banking",
-                      "For a refund by direct deposit (or to pay electronically), what are your bank routing and account numbers?",
-                      "Direct deposit is the fastest refund; we checksum-validate the routing number.",
-                      "banking",
-                      disambiguation="Optional — you can also get a paper check or pay by check. Read the routing "
-                                     "number from the bottom-left of a check, not the deposit slip."))
+    if profile.banking is not None:
+        return
+    # 'No direct deposit, thanks' is not representable (Banking requires checksum-valid
+    # routing/account numbers), so this OPTIONAL question is only ever asked alongside
+    # other pending questions — declining it can never loop the interview forever.
+    if not out:
+        return
+    out.append(_q("banking.account", "banking",
+                  "For a refund by direct deposit (or to pay electronically), what are your bank routing and account numbers?",
+                  "Direct deposit is the fastest refund; we checksum-validate the routing number.",
+                  "banking",
+                  disambiguation="Optional — you can also get a paper check or pay by check; if you decline, just "
+                                 "skip this (the interview will not insist). Read the routing number from the "
+                                 "bottom-left of a check, not the deposit slip."))
+
+
+def _fica_exemption_note(profile: Profile, notes: list[str], tax_year: int | None) -> None:
+    """FICA-withheld-in-error note for F/J visa holders (IRC §3121(b)(19)).
+
+    Exempt-individual F/J nonresidents generally owe NO Social Security/Medicare tax,
+    yet employers commonly withhold it anyway (W-2 boxes 4/6). The recovery path
+    (employer refund, else Form 843 + Form 8316) is separate from the return and
+    invisible unless someone says so — intake says so. Skipped for a computed
+    RESIDENT (resident-alien F/J holders are generally FICA-liable); hedged
+    conditionally while residency is still open.
+    """
+    ident = profile.identity
+    if ident is None or not _has(ident.us_person) or ident.us_person.value is True:
+        return
+    if not _has_fj_period(profile):
+        return
+    classification = _residency_classification(profile, tax_year)
+    if classification == "resident":
+        return
+    lead = ("Because your residency result is nonresident alien, your wages as an F/J exempt individual are "
+            if classification == "nonresident" else
+            "If your residency result is nonresident alien, your wages as an F/J exempt individual are ")
+    notes.append(
+        lead + "generally EXEMPT from Social Security and Medicare (FICA) taxes (IRC §3121(b)(19)). Check W-2 "
+        "boxes 4 and 6: nonzero amounts there were likely withheld in error. Recovery is separate from this "
+        "return — ask the employer for a refund first; if the employer will not refund it, file Form 843 with "
+        "Form 8316 (mailed separately, NOT attached to the return; IRS Pub. 519, 'Refund of Taxes Withheld "
+        "in Error')."
+    )
 
 
 def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
@@ -439,9 +641,13 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     _residency_questions(profile, out, tax_year)
     _household_questions(profile, out, notes, tax_year)
     _state_footprint_questions(profile, out, tax_year)
-    _income_document_questions(profile, out)
-    _banking_questions(profile, out)
+    _income_document_questions(profile, out, tax_year)
     _prior_filings_questions(profile, out)
+    # Banking last: the optional direct-deposit question only accompanies other
+    # pending questions (declining it is unrepresentable, so it must never repeat
+    # alone and stall the interview) — the sort below restores the display order.
+    _banking_questions(profile, out)
+    _fica_exemption_note(profile, notes, tax_year)
 
     out.sort(key=lambda q: SECTIONS.index(q.section))
 

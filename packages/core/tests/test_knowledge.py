@@ -307,3 +307,45 @@ def test_extra_top_level_blocks_tolerated(raw_2023):
     raw["some_future_block_v9"] = {"hello": "world"}
     pack = KnowledgePack.model_validate(raw)
     assert pack.tax_year == 2023
+
+
+# ---------------------------------------------------------------------------
+# Last-mile address/citation entries consumed by file_and_pay / filing_summary
+# ---------------------------------------------------------------------------
+
+ALL_PACK_YEARS = (2019, 2020, 2021, 2022, 2023, 2024)
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_itin_w7_and_standalone_8843_entries_ship_with_gov_citations(year):
+    # itin_w7_with_return: a return filed with Form W-7 goes to the Austin ITIN
+    # Operation; f8843_standalone: a standalone 8843 always mails to Austin.
+    # Both are open extras on the mailing_addresses block, each cited to its
+    # form's instructions (the drift checker re-fetches these URLs nightly).
+    pack = load_knowledge("federal", year, base_dir=KNOWLEDGE_DIR)
+    itin = getattr(pack.mailing_addresses, "itin_w7_with_return", None)
+    assert isinstance(itin, dict), f"{year}: mailing_addresses.itin_w7_with_return missing"
+    assert itin["address"] == "Internal Revenue Service, ITIN Operation, P.O. Box 149342, Austin, TX 78714-9342"
+    assert itin["citation"]["url"] == "https://www.irs.gov/instructions/iw7"
+    assert "W-7" in itin["citation"]["source"]
+
+    standalone = getattr(pack.mailing_addresses, "f8843_standalone", None)
+    assert isinstance(standalone, dict), f"{year}: mailing_addresses.f8843_standalone missing"
+    assert standalone["address"] == "Department of the Treasury, Internal Revenue Service Center, Austin, TX 73301-0215"
+    assert standalone["citation"]["url"] == "https://www.irs.gov/forms-pubs/about-form-8843"
+    assert "8843" in standalone["citation"]["source"]
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_deadlines_citation_is_form_family_aware(year):
+    # The primary deadlines citation is the plain-1040 authority (never the
+    # 1040-NR booklet URL); NR items get their own citation_1040nr extra naming
+    # the 1040-NR instructions.
+    pack = load_knowledge("federal", year, base_dir=KNOWLEDGE_DIR)
+    d = pack.deadlines
+    assert "i1040nr" not in d.citation.url
+    assert "1040" in d.citation.source
+    nr = getattr(d, "citation_1040nr", None)
+    assert isinstance(nr, dict), f"{year}: deadlines.citation_1040nr missing"
+    assert "1040-NR" in nr["source"]
+    assert nr["url"].startswith("https://www.irs.gov/") and "i1040nr" in nr["url"]

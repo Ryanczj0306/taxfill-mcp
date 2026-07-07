@@ -50,10 +50,16 @@ def test_treaty_conformity_drives_the_nra_warning(code: str):
         )},
     )
     filing = next(s for s in state_scope(profile, 2023, base_dir=REPO_ROOT / "knowledge").states if s.state == code.upper())
-    warned = any("treat" in w.lower() for w in filing.warnings)
-    assert warned == (not pack.conforms_to_federal_treaties), (
-        f"{code}: treaty warning ({warned}) must match non-conformity ({not pack.conforms_to_federal_treaties})"
-    )
+    # A treaty filer ALWAYS gets an explicit conformity line — negative warning for
+    # non-conforming states, positive confirmation for conforming ones (never silent).
+    non_conform_warned = any("does not conform" in w.lower() for w in filing.warnings)
+    conform_noted = any("conforms to federal treaty treatment" in w.lower() for w in filing.warnings)
+    if pack.conforms_to_federal_treaties:
+        assert conform_noted and not non_conform_warned, (
+            f"{code}: conforming state must carry the positive conformity line only"
+        )
+    else:
+        assert non_conform_warned, f"{code}: non-conforming state must warn"
 
 
 @pytest.mark.parametrize("code", STATE_CODES, ids=lambda c: c)

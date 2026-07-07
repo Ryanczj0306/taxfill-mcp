@@ -350,6 +350,17 @@ def _coerce_date(value: Any, where: str, *, required: bool) -> date | None:
     )
 
 
+def is_exempt_category_status(status: str) -> bool:
+    """True when ``status`` is an F/J/M/Q exempt-category visa string (IRS Pub. 519).
+
+    Unlike the strict categorizer this never raises: a bare ``"J-1"`` (ambiguous
+    between student and teacher/trainee limits) still returns True — either way
+    its calendar years need day counts before :func:`classify` can run.
+    """
+    normalized = " ".join(status.lower().split())
+    return bool(_FM_STATUS_RE.match(normalized) or _JQ_STATUS_RE.match(normalized))
+
+
 def _categorize_status(status: str, *, index: int) -> ExemptCategory | None:
     """Map a visa status string to its exempt-individual category (None = days count normally)."""
     normalized = " ".join(status.lower().split())
@@ -469,7 +480,9 @@ def substantial_presence_test(days_by_year: Mapping[Any, int], target_year: int)
     """Run the substantial presence test for ``target_year`` (IRS Pub. 519).
 
     ``days_by_year`` maps calendar years to whole days physically present in
-    the US (years absent from the mapping count as 0 days). The test is met
+    the US (years absent from the mapping count as 0 days — never silently:
+    a missing preceding year is called out in ``work``, with a flip warning
+    when real counts for it could change a not-met result). The test is met
     when the taxpayer was present at least 31 days during ``target_year``
     AND the weighted 3-year total — all current-year days, plus 1/3 of the
     first preceding year's days, plus 1/6 of the second preceding year's
@@ -499,6 +512,24 @@ def substantial_presence_test(days_by_year: Mapping[Any, int], target_year: int)
         f"183-day test: {_fmt_fraction(weighted)} {'>= 183 -> met' if meets_183 else '< 183 -> NOT met'}. "
         f"Substantial presence test {'MET' if meets else 'NOT met'} for {year}."
     )
+    # Never treat missing preceding years as 0 SILENTLY: say so in the work, and
+    # when the not-met conclusion could flip on those years' real counts, say that.
+    missing_preceding = sorted(y for y in (year - 1, year - 2) if y not in days)
+    if missing_preceding:
+        yl = _year_list(missing_preceding)
+        plural = "s" if len(missing_preceding) > 1 else ""
+        work += f" NOTE: days for {yl} not provided — treated as 0."
+        if meets_31 and not meets_183:
+            work += (
+                f" If you were present in the US during {yl}, the weighted total is understated and this "
+                f"NOT-met result may flip to met (resident) — provide the day count{plural} for {yl} "
+                f"(0 is a valid answer for a year spent entirely outside the US)."
+            )
+        else:
+            work += (
+                f" Provide the actual count{plural} if you were in the US then "
+                f"(0 is a valid answer for a year spent entirely outside the US)."
+            )
     return SPTResult(
         target_year=year,
         meets_spt=meets,
@@ -808,7 +839,11 @@ def classify(
 
     The visa timeline must cover every year with counted presence days —
     add a period (e.g. ``"B-2 visitor"``) for stays under other statuses,
-    or the call is rejected with instructions.
+    or the call is rejected with instructions. Conversely, a preceding
+    lookback year (target-1 / target-2) that a declared period covers but
+    ``days_by_year`` lacks is counted as 0 WITH an explicit warning — made
+    prominent when a nonresident answer could flip to resident on the real
+    counts. Supply all three lookback years (0 is a valid answer).
     """
     year = _validate_target_year(target_year)
     days = _normalize_days(days_by_year)
@@ -844,9 +879,25 @@ def classify(
     work_lines: list[str] = [exempt.work]
     citations: list[Citation] = [CITATION_SPT, *exempt.citations]
 
+    # Preceding lookback years that a declared status period covers but days_by_year
+    # lacks: the SPT can only treat them as 0, which is monotone-safe for a resident
+    # conclusion but NOT for a nonresident one — flag them, never stay silent.
+    missing_prior: list[int] = (
+        []
+        if is_lawful_permanent_resident
+        else sorted(
+            y
+            for y in (year - 1, year - 2)
+            if y not in days and any(_ordinals_in_year(p, y) for p in periods)
+        )
+    )
+
     adjusted: dict[int, int] = {}
     partial_capped: list[int] = []  # partially exempt lookback years, counted at the maximum possible
     for y in lookback_years:
+        if y != year and y not in days:
+            # Leave the year absent (not a silent 0) so the SPT work flags it explicitly.
+            continue
         n = days.get(y, 0)
         if y in exempt.fully_exempt_years and n > 0:
             work_lines.append(
@@ -911,6 +962,20 @@ def classify(
             f"agent; not computed in v1.",
         )
         citations.append(CITATION_GREEN_CARD)
+        if days.get(year, 0) < 31:
+            # A green-card holder living abroad often assumes absence ends US tax
+            # residency — it does not. Flag abandonment and the treaty tie-breaker.
+            reasons.append(
+                f"You report only {days.get(year, 0)} day(s) of US presence in {year}, but living abroad does "
+                f"NOT end green-card residency: lawful-permanent-resident status persists for tax purposes "
+                f"until it is formally abandoned (Form I-407 or a final administrative or judicial "
+                f"determination), and worldwide income remains reportable on Form 1040 in the meantime "
+                f"(IRS Pub. 519, 'Green card test'). If you are treated as a tax resident of a country with a "
+                f"US income-tax treaty, you MAY take a treaty tie-breaker position to be taxed as a "
+                f"nonresident (disclosed on Form 8833) — that position has green-card/immigration and "
+                f"expatriation-tax consequences (Form 8854 can apply to long-term residents). Not computed "
+                f"in v1 — review IRS Pub. 519 with your agent before relying on either path."
+            )
     elif spt.meets_spt:
         triggers = _dual_status_triggers(periods, year, exempt)
         if triggers:
@@ -992,6 +1057,54 @@ def classify(
                 f"status — not computed in v1; review IRS Pub. 519 'Closer connection exception'."
             )
             citations.append(CITATION_CLOSER_CONNECTION)
+
+    if missing_prior:
+        yl = _year_list(missing_prior)
+        those = "that year" if len(missing_prior) == 1 else "those years"
+        base = (
+            f"days_by_year has no entry for {yl} even though your declared status timeline covers {those} — "
+            f"{those} counted as 0 days in the SPT"
+        )
+        provide = f"provide day counts for {yl} (0 is a valid answer for a year spent entirely outside the US)"
+        if classification == "nonresident":
+            # Could real presence in the missing years flip the result? Only when the
+            # 31-day current-year prong holds AND maximal presence could reach 183.
+            potential = (
+                Fraction(spt.days_current_year)
+                + Fraction(spt.days_first_preceding_year, 3)
+                + Fraction(spt.days_second_preceding_year, 6)
+                + sum(Fraction(_days_in_year(y), 3 if y == year - 1 else 6) for y in missing_prior)
+            )
+            if spt.meets_31_day_test and potential >= 183:
+                # A nonresident answer that rests on missing-years-as-zero is NOT
+                # monotone-safe: make the caveat the first thing the caller reads.
+                reasons.insert(
+                    0,
+                    f"IMPORTANT — this nonresident result may be WRONG: {base}. You were present "
+                    f"{adjusted[year]} day(s) in {year} (at least 31), so if you were in the US during {yl} "
+                    f"the weighted 3-year total could reach 183 and the classification would FLIP to "
+                    f"resident (worldwide income on Form 1040, not Form 1040-NR) — {provide} and "
+                    f"reclassify before relying on this result (IRS Pub. 519, substantial presence test).",
+                )
+            elif not spt.meets_31_day_test:
+                reasons.append(
+                    f"Note: {base}. This nonresident result does not turn on {those}: with "
+                    f"{adjusted[year]} day(s) present in {year} the 31-day minimum is not met, and "
+                    f"prior-year days cannot change that — still, {provide} for a complete record "
+                    f"(IRS Pub. 519)."
+                )
+            else:
+                reasons.append(
+                    f"Note: {base}. Even the maximum possible presence in {yl} could not bring the "
+                    f"weighted total to 183, so this nonresident result stands — still, {provide} for a "
+                    f"complete record (IRS Pub. 519)."
+                )
+        else:
+            reasons.append(
+                f"Note: {base}. A {classification.replace('_', '-')} conclusion is safe on that score "
+                f"(more presence days only push toward residency), but {provide} for a complete record "
+                f"(IRS Pub. 519)."
+            )
 
     return ClassificationResult(
         target_year=year,
