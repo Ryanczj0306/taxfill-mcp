@@ -1,0 +1,302 @@
+# Schedule NEC (Form 1040-NR), 2023 — Tax on Income Not Effectively Connected
+# With a U.S. Trade or Business.
+#
+# Provenance: blank downloaded from the official source_url below; page 1 was
+# rendered and READ to confirm the printed title ("Tax on Income Not
+# Effectively Connected With a U.S. Trade or Business"), header "SCHEDULE NEC
+# (Form 1040-NR)", revision year "2023" (footer "Schedule NEC (Form 1040-NR)
+# 2023", Attachment Sequence No. 7B) before pinning pdf_sha256 (freshness
+# protocol, dev plan section 7). One page.
+#
+# Field map: introspected from this exact revision (root form1040-NR[0]) and
+# vision-mapped against the sentinel sweep — every widget read in place.
+#
+# The form is a GRID: income rows x rate columns. Printed columns are
+# (a) 10%, (b) 15%, (c) 30%, (d) Other (specify) — and column (d) is TWO
+# side-by-side sub-columns, each with its own "%" rate box in the header.
+# Column keys used here: a, b, c, d (first "Other" sub-column), e (second
+# "Other" sub-column; no printed letter of its own). The two header rate
+# boxes are d.rate / e.rate.
+#
+# Line-id shapes (formpacks/CONVENTIONS.md grammar):
+#   - plain-numbered rows take dot-FREE composite ids ("3a" = line 3 column
+#     (a), ... "13e", "14c") so the printed column math can be declared in
+#     relations (the relation grammar cannot reference dotted ids);
+#   - sub-lettered rows keep the dotted convention of sched_d/sched_e
+#     ("1a.a" = line 1a column (a), "2c.d", "10c.c") — a second letter cannot
+#     be appended to a printed label like "1a";
+#   - the line 16 capital-gains table uses "16.row<n>.<col>" with the PRINTED
+#     column letters (a) kind of property ... (g) GAIN.
+#
+# Excluded widgets (5 of 137 fillable): the blank pre-greys cells that may
+# never carry income and marks them ReadOnly (/Ff bit 1); the filler never
+# writes them:
+#   - Line10b f1_72 / f1_73 / f1_76 — line 10c columns (a), (b) and the second
+#     "Other" sub-column (Canada-gambling net income goes in column (c));
+#   - Line11 f1_78 / f1_81 — line 11 columns (b) and the second "Other"
+#     sub-column.
+#
+# Relations: only unconditional form-face math whose operands are dot-free.
+#   Declared: 14a/14b/14c = 13a/13b/13c x printed column rate; 15 = add the
+#   line 14 columns; 18 = combine line 17 columns (f)/(g).
+#   NOT declared (and why):
+#   - "13 == add lines 1a through 12 per column": the line 1-2 operands are
+#     dotted ids (1a.a ...) which the relation grammar cannot reference —
+#     left to the recompute engine + human review (same call as sched_d);
+#   - 14d/14e: the column rate is FILER-SPECIFIED in the d.rate/e.rate header
+#     boxes (text, not a printed constant) — never encode a variable rate;
+#   - per-row line 16 math "(f)/(g) = subtract (d) from (e) / (e) from (d)":
+#     conditional and dotted-id operands;
+#   - line 18 -> line 9 carry ("enter the net gain here and on line 9
+#     above"): which line 9 COLUMN receives it depends on the treaty rate,
+#     so no single-cell equality exists;
+#   - line 10c "net income" (winnings less losses): the arithmetic lives in
+#     the instructions, and 10c.c is a dotted id anyway.
+#   Sign note: line 17 column (f) sits inside PRINTED parentheses — losses
+#   are entered as positive numbers — so "Combine columns (f) and (g) ...
+#   If a loss, enter -0-" is 18 == max(0, 17g - 17f).
+#
+# Carry-over: line 15 is printed "Enter the total here and on Form 1040-NR,
+# line 23a" — an exact carry to the ONLY parent this schedule ever attaches
+# to, so it is encoded in cross_form (same pattern as sched_d's
+# "16 == f1040.7").
+form: "Schedule NEC (Form 1040-NR)"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f1040nrn--2023.pdf
+pdf_sha256: "a821d10fb9b332e09addda40a92c83623fd57ebdd88fb4049ca1c2956ffdf8ce"
+acroform_root: "form1040-NR[0]"
+
+fields:
+  # ---- header ---------------------------------------------------------------
+  - line: name                       # "Name shown on Form 1040-NR"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: identifying_number         # "Your identifying number" (plain box, PDF /MaxLen 11, not a comb)
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only          # digits-only keeps cross-form identity values consistent with f1040nr
+
+  # ---- column (d) "Other (specify)" header rate boxes ------------------------
+  # Two side-by-side "%" boxes; the filer writes the treaty rate (e.g. "12.5").
+  # Text on purpose: a percentage, never whole-dollar money.
+  - line: d.rate                     # rate for the first "Other" sub-column (cells *d)
+    field: "Page1[0].Table_NatureOfIncome[0].Header[0].f1_3[0]"
+    type: text
+  - line: e.rate                     # rate for the second "Other" sub-column (cells *e)
+    field: "Page1[0].Table_NatureOfIncome[0].Header[0].f1_4[0]"
+    type: text
+
+  # ---- line 1: Dividends and dividend equivalents ----------------------------
+  # 1a Dividends paid by U.S. corporations
+  - { line: "1a.a", field: "Page1[0].Table_NatureOfIncome[0].Line1a[0].f1_5[0]", type: money }
+  - { line: "1a.b", field: "Page1[0].Table_NatureOfIncome[0].Line1a[0].f1_6[0]", type: money }
+  - { line: "1a.c", field: "Page1[0].Table_NatureOfIncome[0].Line1a[0].f1_7[0]", type: money }
+  - { line: "1a.d", field: "Page1[0].Table_NatureOfIncome[0].Line1a[0].f1_8[0]", type: money }
+  - { line: "1a.e", field: "Page1[0].Table_NatureOfIncome[0].Line1a[0].f1_9[0]", type: money }
+  # 1b Dividends paid by foreign corporations
+  - { line: "1b.a", field: "Page1[0].Table_NatureOfIncome[0].Line1b[0].f1_10[0]", type: money }
+  - { line: "1b.b", field: "Page1[0].Table_NatureOfIncome[0].Line1b[0].f1_11[0]", type: money }
+  - { line: "1b.c", field: "Page1[0].Table_NatureOfIncome[0].Line1b[0].f1_12[0]", type: money }
+  - { line: "1b.d", field: "Page1[0].Table_NatureOfIncome[0].Line1b[0].f1_13[0]", type: money }
+  - { line: "1b.e", field: "Page1[0].Table_NatureOfIncome[0].Line1b[0].f1_14[0]", type: money }
+  # 1c Dividend equivalent payments received with respect to section 871(m) transactions
+  - { line: "1c.a", field: "Page1[0].Table_NatureOfIncome[0].Line1c[0].f1_15[0]", type: money }
+  - { line: "1c.b", field: "Page1[0].Table_NatureOfIncome[0].Line1c[0].f1_16[0]", type: money }
+  - { line: "1c.c", field: "Page1[0].Table_NatureOfIncome[0].Line1c[0].f1_17[0]", type: money }
+  - { line: "1c.d", field: "Page1[0].Table_NatureOfIncome[0].Line1c[0].f1_18[0]", type: money }
+  - { line: "1c.e", field: "Page1[0].Table_NatureOfIncome[0].Line1c[0].f1_19[0]", type: money }
+
+  # ---- line 2: Interest -------------------------------------------------------
+  # 2a Mortgage
+  - { line: "2a.a", field: "Page1[0].Table_NatureOfIncome[0].Line2a[0].f1_20[0]", type: money }
+  - { line: "2a.b", field: "Page1[0].Table_NatureOfIncome[0].Line2a[0].f1_21[0]", type: money }
+  - { line: "2a.c", field: "Page1[0].Table_NatureOfIncome[0].Line2a[0].f1_22[0]", type: money }
+  - { line: "2a.d", field: "Page1[0].Table_NatureOfIncome[0].Line2a[0].f1_23[0]", type: money }
+  - { line: "2a.e", field: "Page1[0].Table_NatureOfIncome[0].Line2a[0].f1_24[0]", type: money }
+  # 2b Paid by foreign corporations
+  - { line: "2b.a", field: "Page1[0].Table_NatureOfIncome[0].Line2b[0].f1_25[0]", type: money }
+  - { line: "2b.b", field: "Page1[0].Table_NatureOfIncome[0].Line2b[0].f1_26[0]", type: money }
+  - { line: "2b.c", field: "Page1[0].Table_NatureOfIncome[0].Line2b[0].f1_27[0]", type: money }
+  - { line: "2b.d", field: "Page1[0].Table_NatureOfIncome[0].Line2b[0].f1_28[0]", type: money }
+  - { line: "2b.e", field: "Page1[0].Table_NatureOfIncome[0].Line2b[0].f1_29[0]", type: money }
+  # 2c Other
+  - { line: "2c.a", field: "Page1[0].Table_NatureOfIncome[0].Line2c[0].f1_30[0]", type: money }
+  - { line: "2c.b", field: "Page1[0].Table_NatureOfIncome[0].Line2c[0].f1_31[0]", type: money }
+  - { line: "2c.c", field: "Page1[0].Table_NatureOfIncome[0].Line2c[0].f1_32[0]", type: money }
+  - { line: "2c.d", field: "Page1[0].Table_NatureOfIncome[0].Line2c[0].f1_33[0]", type: money }
+  - { line: "2c.e", field: "Page1[0].Table_NatureOfIncome[0].Line2c[0].f1_34[0]", type: money }
+
+  # ---- line 3: Industrial royalties (patents, trademarks, etc.) ---------------
+  - { line: "3a", field: "Page1[0].Table_NatureOfIncome[0].Line3[0].f1_35[0]", type: money }
+  - { line: "3b", field: "Page1[0].Table_NatureOfIncome[0].Line3[0].f1_36[0]", type: money }
+  - { line: "3c", field: "Page1[0].Table_NatureOfIncome[0].Line3[0].f1_37[0]", type: money }
+  - { line: "3d", field: "Page1[0].Table_NatureOfIncome[0].Line3[0].f1_38[0]", type: money }
+  - { line: "3e", field: "Page1[0].Table_NatureOfIncome[0].Line3[0].f1_39[0]", type: money }
+  # ---- line 4: Motion picture or TV copyright royalties -----------------------
+  - { line: "4a", field: "Page1[0].Table_NatureOfIncome[0].Line4[0].f1_40[0]", type: money }
+  - { line: "4b", field: "Page1[0].Table_NatureOfIncome[0].Line4[0].f1_41[0]", type: money }
+  - { line: "4c", field: "Page1[0].Table_NatureOfIncome[0].Line4[0].f1_42[0]", type: money }
+  - { line: "4d", field: "Page1[0].Table_NatureOfIncome[0].Line4[0].f1_43[0]", type: money }
+  - { line: "4e", field: "Page1[0].Table_NatureOfIncome[0].Line4[0].f1_44[0]", type: money }
+  # ---- line 5: Other royalties (copyrights, recording, publishing, etc.) ------
+  - { line: "5a", field: "Page1[0].Table_NatureOfIncome[0].Line5[0].f1_45[0]", type: money }
+  - { line: "5b", field: "Page1[0].Table_NatureOfIncome[0].Line5[0].f1_46[0]", type: money }
+  - { line: "5c", field: "Page1[0].Table_NatureOfIncome[0].Line5[0].f1_47[0]", type: money }
+  - { line: "5d", field: "Page1[0].Table_NatureOfIncome[0].Line5[0].f1_48[0]", type: money }
+  - { line: "5e", field: "Page1[0].Table_NatureOfIncome[0].Line5[0].f1_49[0]", type: money }
+  # ---- line 6: Real property income and natural resources royalties -----------
+  - { line: "6a", field: "Page1[0].Table_NatureOfIncome[0].Line6[0].f1_50[0]", type: money }
+  - { line: "6b", field: "Page1[0].Table_NatureOfIncome[0].Line6[0].f1_51[0]", type: money }
+  - { line: "6c", field: "Page1[0].Table_NatureOfIncome[0].Line6[0].f1_52[0]", type: money }
+  - { line: "6d", field: "Page1[0].Table_NatureOfIncome[0].Line6[0].f1_53[0]", type: money }
+  - { line: "6e", field: "Page1[0].Table_NatureOfIncome[0].Line6[0].f1_54[0]", type: money }
+  # ---- line 7: Pensions and annuities -----------------------------------------
+  - { line: "7a", field: "Page1[0].Table_NatureOfIncome[0].Line7[0].f1_55[0]", type: money }
+  - { line: "7b", field: "Page1[0].Table_NatureOfIncome[0].Line7[0].f1_56[0]", type: money }
+  - { line: "7c", field: "Page1[0].Table_NatureOfIncome[0].Line7[0].f1_57[0]", type: money }
+  - { line: "7d", field: "Page1[0].Table_NatureOfIncome[0].Line7[0].f1_58[0]", type: money }
+  - { line: "7e", field: "Page1[0].Table_NatureOfIncome[0].Line7[0].f1_59[0]", type: money }
+  # ---- line 8: Social security benefits ---------------------------------------
+  - { line: "8a", field: "Page1[0].Table_NatureOfIncome[0].Line8[0].f1_60[0]", type: money }
+  - { line: "8b", field: "Page1[0].Table_NatureOfIncome[0].Line8[0].f1_61[0]", type: money }
+  - { line: "8c", field: "Page1[0].Table_NatureOfIncome[0].Line8[0].f1_62[0]", type: money }
+  - { line: "8d", field: "Page1[0].Table_NatureOfIncome[0].Line8[0].f1_63[0]", type: money }
+  - { line: "8e", field: "Page1[0].Table_NatureOfIncome[0].Line8[0].f1_64[0]", type: money }
+  # ---- line 9: Capital gain from line 18 below --------------------------------
+  # (line 18 says "enter the net gain here and on line 9 above"; the receiving
+  # COLUMN depends on the treaty rate, so no cross-cell relation is declared)
+  - { line: "9a", field: "Page1[0].Table_NatureOfIncome[0].Line9[0].f1_65[0]", type: money }
+  - { line: "9b", field: "Page1[0].Table_NatureOfIncome[0].Line9[0].f1_66[0]", type: money }
+  - { line: "9c", field: "Page1[0].Table_NatureOfIncome[0].Line9[0].f1_67[0]", type: money }
+  - { line: "9d", field: "Page1[0].Table_NatureOfIncome[0].Line9[0].f1_68[0]", type: money }
+  - { line: "9e", field: "Page1[0].Table_NatureOfIncome[0].Line9[0].f1_69[0]", type: money }
+
+  # ---- line 10: Gambling — Residents of Canada only ---------------------------
+  # "Enter net income in column (c). If zero or less, enter -0-."
+  - line: "10a"                      # 10a Winnings (write-in blank left of the grid)
+    field: "Page1[0].Table_NatureOfIncome[0].Line10a[0].Winnings[0].f1_70[0]"
+    type: money
+  - line: "10b"                      # 10b Losses (write-in blank left of the grid)
+    field: "Page1[0].Table_NatureOfIncome[0].Line10b[0].Losses[0].f1_71[0]"
+    type: money
+  # 10c grid cells: only columns (c) and the first "Other" sub-column are open;
+  # columns (a), (b) and the second "Other" sub-column are greyed + ReadOnly
+  # in the blank (f1_72/f1_73/f1_76, excluded — see header comment).
+  - { line: "10c.c", field: "Page1[0].Table_NatureOfIncome[0].Line10b[0].f1_74[0]", type: money }
+  - { line: "10c.d", field: "Page1[0].Table_NatureOfIncome[0].Line10b[0].f1_75[0]", type: money }
+
+  # ---- line 11: Gambling — Residents of countries other than Canada -----------
+  # "Note: Enter winnings only. Losses aren't allowed." Columns (b) and the
+  # second "Other" sub-column are greyed + ReadOnly (f1_78/f1_81, excluded).
+  - { line: "11a", field: "Page1[0].Table_NatureOfIncome[0].Line11[0].f1_77[0]", type: money }
+  - { line: "11c", field: "Page1[0].Table_NatureOfIncome[0].Line11[0].f1_79[0]", type: money }
+  - { line: "11d", field: "Page1[0].Table_NatureOfIncome[0].Line11[0].f1_80[0]", type: money }
+
+  # ---- line 12: Other (specify) ------------------------------------------------
+  - line: "12.type"                  # first write-in line of the description
+    field: "Page1[0].Table_NatureOfIncome[0].Line12[0].Other[0].f1_82[0]"
+    type: text
+  - line: "12.type_continued"        # second write-in line of the description
+    field: "Page1[0].Table_NatureOfIncome[0].Line12[0].Other[0].f1_83[0]"
+    type: text
+  - { line: "12a", field: "Page1[0].Table_NatureOfIncome[0].Line12[0].f1_84[0]", type: money }
+  - { line: "12b", field: "Page1[0].Table_NatureOfIncome[0].Line12[0].f1_85[0]", type: money }
+  - { line: "12c", field: "Page1[0].Table_NatureOfIncome[0].Line12[0].f1_86[0]", type: money }
+  - { line: "12d", field: "Page1[0].Table_NatureOfIncome[0].Line12[0].f1_87[0]", type: money }
+  - { line: "12e", field: "Page1[0].Table_NatureOfIncome[0].Line12[0].f1_88[0]", type: money }
+
+  # ---- line 13: Add lines 1a through 12 in columns (a) through (d) ------------
+  # (column-sum relations not declarable: line 1-2 operands are dotted ids)
+  - { line: "13a", field: "Page1[0].Table_NatureOfIncome[0].Line13[0].f1_89[0]", type: money }
+  - { line: "13b", field: "Page1[0].Table_NatureOfIncome[0].Line13[0].f1_90[0]", type: money }
+  - { line: "13c", field: "Page1[0].Table_NatureOfIncome[0].Line13[0].f1_91[0]", type: money }
+  - { line: "13d", field: "Page1[0].Table_NatureOfIncome[0].Line13[0].f1_92[0]", type: money }
+  - { line: "13e", field: "Page1[0].Table_NatureOfIncome[0].Line13[0].f1_93[0]", type: money }
+
+  # ---- line 14: Multiply line 13 by rate of tax at top of each column ---------
+  - { line: "14a", field: "Page1[0].Table_NatureOfIncome[0].Line14[0].f1_94[0]", type: money }
+  - { line: "14b", field: "Page1[0].Table_NatureOfIncome[0].Line14[0].f1_95[0]", type: money }
+  - { line: "14c", field: "Page1[0].Table_NatureOfIncome[0].Line14[0].f1_96[0]", type: money }
+  - { line: "14d", field: "Page1[0].Table_NatureOfIncome[0].Line14[0].f1_97[0]", type: money }
+  - { line: "14e", field: "Page1[0].Table_NatureOfIncome[0].Line14[0].f1_98[0]", type: money }
+
+  # ---- line 15: total tax on income not effectively connected ------------------
+  # "Add columns (a) through (d) of line 14. Enter the total here and on
+  # Form 1040-NR, line 23a."
+  - { line: "15", field: "Page1[0].f1_99[0]", type: money }
+
+  # ---- line 16: Capital Gains and Losses From Sales or Exchanges of Property ---
+  # Five table rows; printed columns: (a) kind of property and description,
+  # (b) date acquired mm/dd/yyyy, (c) date sold mm/dd/yyyy, (d) sales price,
+  # (e) cost or other basis, (f) LOSS, (g) GAIN. Losses in (f) are positive
+  # amounts per the printed column rule "If (e) is more than (d), subtract
+  # (d) from (e)".
+  - { line: "16.row1.a", field: "Page1[0].Table_Line16[0].BodyRow1[0].f1_100[0]", type: text }
+  - { line: "16.row1.b", field: "Page1[0].Table_Line16[0].BodyRow1[0].f1_101[0]", type: text, maxlen: 10 }
+  - { line: "16.row1.c", field: "Page1[0].Table_Line16[0].BodyRow1[0].f1_102[0]", type: text, maxlen: 10 }
+  - { line: "16.row1.d", field: "Page1[0].Table_Line16[0].BodyRow1[0].f1_103[0]", type: money }
+  - { line: "16.row1.e", field: "Page1[0].Table_Line16[0].BodyRow1[0].f1_104[0]", type: money }
+  - { line: "16.row1.f", field: "Page1[0].Table_Line16[0].BodyRow1[0].f1_105[0]", type: money }
+  - { line: "16.row1.g", field: "Page1[0].Table_Line16[0].BodyRow1[0].f1_106[0]", type: money }
+  - { line: "16.row2.a", field: "Page1[0].Table_Line16[0].BodyRow2[0].f1_107[0]", type: text }
+  - { line: "16.row2.b", field: "Page1[0].Table_Line16[0].BodyRow2[0].f1_108[0]", type: text, maxlen: 10 }
+  - { line: "16.row2.c", field: "Page1[0].Table_Line16[0].BodyRow2[0].f1_109[0]", type: text, maxlen: 10 }
+  - { line: "16.row2.d", field: "Page1[0].Table_Line16[0].BodyRow2[0].f1_110[0]", type: money }
+  - { line: "16.row2.e", field: "Page1[0].Table_Line16[0].BodyRow2[0].f1_111[0]", type: money }
+  - { line: "16.row2.f", field: "Page1[0].Table_Line16[0].BodyRow2[0].f1_112[0]", type: money }
+  - { line: "16.row2.g", field: "Page1[0].Table_Line16[0].BodyRow2[0].f1_113[0]", type: money }
+  - { line: "16.row3.a", field: "Page1[0].Table_Line16[0].BodyRow3[0].f1_114[0]", type: text }
+  - { line: "16.row3.b", field: "Page1[0].Table_Line16[0].BodyRow3[0].f1_115[0]", type: text, maxlen: 10 }
+  - { line: "16.row3.c", field: "Page1[0].Table_Line16[0].BodyRow3[0].f1_116[0]", type: text, maxlen: 10 }
+  - { line: "16.row3.d", field: "Page1[0].Table_Line16[0].BodyRow3[0].f1_117[0]", type: money }
+  - { line: "16.row3.e", field: "Page1[0].Table_Line16[0].BodyRow3[0].f1_118[0]", type: money }
+  - { line: "16.row3.f", field: "Page1[0].Table_Line16[0].BodyRow3[0].f1_119[0]", type: money }
+  - { line: "16.row3.g", field: "Page1[0].Table_Line16[0].BodyRow3[0].f1_120[0]", type: money }
+  - { line: "16.row4.a", field: "Page1[0].Table_Line16[0].BodyRow4[0].f1_121[0]", type: text }
+  - { line: "16.row4.b", field: "Page1[0].Table_Line16[0].BodyRow4[0].f1_122[0]", type: text, maxlen: 10 }
+  - { line: "16.row4.c", field: "Page1[0].Table_Line16[0].BodyRow4[0].f1_123[0]", type: text, maxlen: 10 }
+  - { line: "16.row4.d", field: "Page1[0].Table_Line16[0].BodyRow4[0].f1_124[0]", type: money }
+  - { line: "16.row4.e", field: "Page1[0].Table_Line16[0].BodyRow4[0].f1_125[0]", type: money }
+  - { line: "16.row4.f", field: "Page1[0].Table_Line16[0].BodyRow4[0].f1_126[0]", type: money }
+  - { line: "16.row4.g", field: "Page1[0].Table_Line16[0].BodyRow4[0].f1_127[0]", type: money }
+  - { line: "16.row5.a", field: "Page1[0].Table_Line16[0].BodyRow5[0].f1_128[0]", type: text }
+  - { line: "16.row5.b", field: "Page1[0].Table_Line16[0].BodyRow5[0].f1_129[0]", type: text, maxlen: 10 }
+  - { line: "16.row5.c", field: "Page1[0].Table_Line16[0].BodyRow5[0].f1_130[0]", type: text, maxlen: 10 }
+  - { line: "16.row5.d", field: "Page1[0].Table_Line16[0].BodyRow5[0].f1_131[0]", type: money }
+  - { line: "16.row5.e", field: "Page1[0].Table_Line16[0].BodyRow5[0].f1_132[0]", type: money }
+  - { line: "16.row5.f", field: "Page1[0].Table_Line16[0].BodyRow5[0].f1_133[0]", type: money }
+  - { line: "16.row5.g", field: "Page1[0].Table_Line16[0].BodyRow5[0].f1_134[0]", type: money }
+
+  # ---- line 17: Add columns (f) and (g) of line 16 -----------------------------
+  # 17f sits inside printed parentheses (a positive LOSS total).
+  - { line: "17f", field: "Page1[0].f1_135[0]", type: money }
+  - { line: "17g", field: "Page1[0].f1_136[0]", type: money }
+  # ---- line 18: Capital gain ----------------------------------------------------
+  # "Combine columns (f) and (g) of line 17. Enter the net gain here and on
+  # line 9 above. If a loss, enter -0-."
+  - { line: "18", field: "Page1[0].f1_137[0]", type: money }
+
+# Form-face math only, dot-free operands only (see header comment for the
+# printed math that is intentionally NOT declared and why).
+relations:
+  - "14a == 13a * 0.10"              # "Multiply line 13 by rate of tax at top of each column" — (a) 10%
+  - "14b == 13b * 0.15"              # — (b) 15%
+  - "14c == 13c * 0.30"              # — (c) 30%
+  - "15 == 14a + 14b + 14c + 14d + 14e"   # "Add columns (a) through (d) of line 14" ((d) spans two sub-columns)
+  - "18 == max(0, 17g - 17f)"        # "Combine columns (f) and (g) of line 17 ... If a loss, enter -0-" (17f is a positive loss)
+
+# Printed on line 15: "Enter the total here and on Form 1040-NR, line 23a".
+# Schedule NEC attaches ONLY to Form 1040-NR, so the child names its parent
+# (same pattern as sched_d's "16 == f1040.7"). Skipped (visibly) if a filing
+# somehow lacks the f1040nr item.
+cross_form:
+  - "15 == f1040nr.23a"
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only schedule (Attachment Sequence No. 7B): no signature block
+# of its own; mailed inside the parent 1040-NR's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

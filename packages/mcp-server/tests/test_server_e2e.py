@@ -67,7 +67,10 @@ def test_all_expected_tools_are_listed_with_schemas():
 
 def test_list_forms_and_get_form_map():
     data = _data(_run(_call("list_forms", {"jurisdiction": "federal", "year": 2023})))
-    assert len(data) == 22  # M2 (10) + SE + D/E + 8863/2555 + 4868 + 1040-ES + 1040-X + W-7 + 8959/8960/8962
+    # M2 (10) + SE + D/E + 8863/2555 + 4868 + 1040-ES + 1040-X + W-7 + 8959/8960/8962
+    # + Tier 2: sched_8812 (CTC/ACTC), sched_a_nr, sched_nec
+    assert len(data) == 25
+    assert any(f["form_key"] == "sched_8812" for f in data)  # the CTC is FILEABLE (persona-review fix)
     fm = _data(_run(_call("get_form_map", {"form": "f1040", "year": 2023})))
     assert fm["form"] == "1040"
     assert "8 == sched_1.10" in fm["cross_form"]
@@ -131,6 +134,32 @@ def test_calc_phase_f_ops_are_dispatched():
         "household_income": 27180, "household_size": 1, "annual_premiums": 7000,
         "annual_slcsp": 6000, "year": 2023}})))
     assert ptc["ptc"] == 5456 and ptc["contribution"] == 544
+
+
+def test_calc_family_credit_ops_are_dispatched():
+    # One golden per op (full derivations live in the core test suite): the family
+    # credits the persona review found unfileable — Schedule 8812 CTC/ODC/ACTC and
+    # the EITC — are reachable over MCP with work + citation.
+    ctc = _data(_run(_call("calc", {"op": "child_tax_credit", "args": {
+        "qualifying_children_ssn": 2, "other_dependents": 0, "magi": 95000,
+        "income_tax_before_credits": 7639, "earned_income": 95000,
+        "filing_status": "married_filing_jointly", "year": 2023}})))
+    assert ctc["nonrefundable_used"] == 4000 and ctc["actc_refundable"] == 0
+    assert "Schedule 8812" in ctc["work"] and ctc["citation"]["url"].startswith("https://www.irs.gov/")
+    actc = _data(_run(_call("calc", {"op": "child_tax_credit", "args": {
+        "qualifying_children_ssn": 2, "other_dependents": 0, "magi": 20000,
+        "income_tax_before_credits": 0, "earned_income": 20000,
+        "filing_status": "single", "year": 2023}})))
+    assert actc["actc_refundable"] == 2625  # 15% x (20,000 - 2,500) binds
+    ei = _data(_run(_call("calc", {"op": "eitc", "args": {
+        "earned_income": 15000, "agi": 15000, "qualifying_children": 1,
+        "filing_status": "single", "year": 2023}})))
+    assert ei["eitc"] == 3995 and ei["phase"] == "plateau" and ei["disqualified_reason"] is None
+    assert ei["citation"]["url"].startswith("https://www.irs.gov/")
+    gated = _data(_run(_call("calc", {"op": "eitc", "args": {
+        "earned_income": 15000, "agi": 15000, "qualifying_children": 1,
+        "filing_status": "married_filing_separately", "year": 2023}})))
+    assert gated["eitc"] == 0 and gated["disqualified_reason"]
 
 
 def test_estimate_refund_is_labeled_and_computed():

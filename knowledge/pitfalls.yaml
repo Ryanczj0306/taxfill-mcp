@@ -49,11 +49,12 @@ pitfalls:
       Treaty benefit nearly mis-scoped on a status-change year (F-1 to H1B
       still eligible for student-period income).
     countermeasure: >-
-      Treaty eligibility evaluated per visa period, encoded in
-      knowledge/federal/<year>.yaml treaty rules; covered by eval scenario.
-      DEFERRED: the treaty rules are M3 knowledge data and the eval scenario
-      is M6 — the deferral is enforced visibly by the pitfall-coverage
-      meta-test allowlist (packages/core/tests/test_pitfall_coverage.py),
-      which fails CI the moment a pitfall lacks both a regression test and
-      a documented deferral. M1 already ships the residency-side groundwork:
-      residency.py flags the F-1 -> H-1B mid-year split with tests.
+      Treaty eligibility is evaluated per visa PERIOD, never per year:
+      residency.py flags the F-1 -> H-1B mid-year split with tests, the
+      estimate carries the agent-confirmed amount via treaty_exempt_income
+      (with article/state-conformity disclosures and a P-004 regression
+      test), Schedule OI + the 1040-NR 1k == sched_oi.1e cross-form rule
+      enforce the reporting chain, and get_sources routes treaty authority
+      lookups. A full per-country treaty knowledge base (articles, amounts,
+      eligibility predicates) remains roadmap work — until then the amount
+      is the agent's recorded position, like itemized deductions.
