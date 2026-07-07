@@ -13,6 +13,12 @@ Sources (verified against the official PDFs):
 * 2023 rate schedules & standard deduction: Rev. Proc. 2022-38,
   https://www.irs.gov/pub/irs-drop/rp-22-38.pdf (Sections 3.01 and 3.15)
 * 2023 Schedule SE: https://www.irs.gov/pub/irs-prior/f1040sse--2023.pdf
+* 2023 Schedule 8812 (CTC/ODC/ACTC) and its instructions:
+  https://www.irs.gov/pub/irs-prior/f1040s8--2023.pdf; 2021 ARPA rules from
+  the 2021 Schedule 8812 instructions (i1040s8--2021.pdf)
+* EITC parameters: Rev. Proc. 2022-38 Section 3.06 (2023) and the per-year
+  Rev. Procs. cited in knowledge/federal/<year>.yaml (2021 as amended by
+  ARPA: Rev. Proc. 2021-23 Section 4)
 
 Rule from docs/DEV_PLAN.md section 10: if the implementation disagrees with
 ANY published row below, the implementation is wrong — fix it, never the
@@ -27,7 +33,9 @@ import pytest
 
 from taxfill_core.calc import (
     additional_medicare_tax,
+    child_tax_credit,
     education_credits,
+    eitc,
     excess_ss,
     irs_round,
     niit,
@@ -1293,3 +1301,402 @@ def test_phase_f_ops_ship_for_every_supported_year(year, expected_qdcgt, expecte
     else:
         with pytest.raises(ValueError, match=r"no tax\.ptc block"):
             ptc_annual(30_000, 1, 6_000, 5_000, year=year, knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Child tax credit / ODC / ACTC (Schedule 8812) — 2023: $2,000 per qualifying
+# child + $500 ODC, phase-out $50 per $1,000 (or fraction) of MAGI over
+# 400,000 MFJ / 200,000 other, ACTC capped at $1,600/child and 15% of earned
+# income over $2,500. 2021 uses the ARPA expanded two-tier fully-refundable
+# rules. Parameters from the cited credits blocks; goldens hand-derived.
+# ---------------------------------------------------------------------------
+
+
+def test_ctc_mfj_two_kids_nonrefundable_path():
+    # Wages 95,000 MFJ: taxable 67,300, table tax 7,639 comfortably exceeds the
+    # 4,000 credit, so it is used in full nonrefundably and no ACTC remains.
+    tax = tax_from_taxable_income(
+        95_000 - standard_deduction("married_filing_jointly", 2023, knowledge_dir=KNOWLEDGE_DIR).amount,
+        "married_filing_jointly", 2023, knowledge_dir=KNOWLEDGE_DIR,
+    ).tax
+    assert tax == 7_639
+    r = child_tax_credit(2, 0, magi=95_000, income_tax_before_credits=tax, earned_income=95_000,
+                         filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.ctc_odc_total == 4_000
+    assert r.phaseout_reduction == 0
+    assert r.credit_after_phaseout == 4_000
+    assert r.nonrefundable_used == 4_000  # Form 1040 line 19
+    assert r.actc_refundable == 0  # nothing left over for line 28
+    assert r.fully_refundable is False
+    assert "line 8" in r.work and "line 12" in r.work and "line 14" in r.work
+    assert r.citation.url.startswith("https://www.irs.gov/")
+
+
+def test_ctc_phaseout_rounds_the_excess_up_to_the_next_1000():
+    # Line 10: MAGI excess over the threshold rounds UP to the next $1,000 FIRST.
+    # MFJ threshold 400,000: excess 10,000 (exact multiple) -> 10 x $50 = $500;
+    # excess 10,001 (a $1 fraction into the next band) -> 11 x $50 = $550.
+    at = child_tax_credit(2, 0, magi=410_000, income_tax_before_credits=80_000, earned_income=410_000,
+                          filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    over = child_tax_credit(2, 0, magi=410_001, income_tax_before_credits=80_000, earned_income=410_001,
+                            filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert at.phaseout_reduction == 500
+    assert at.credit_after_phaseout == 3_500
+    assert over.phaseout_reduction == 550
+    assert over.credit_after_phaseout == 3_450
+    # At the threshold exactly there is no reduction at all.
+    assert child_tax_credit(2, 0, magi=400_000, income_tax_before_credits=80_000, earned_income=400_000,
+                            filing_status="married_filing_jointly",
+                            knowledge_dir=KNOWLEDGE_DIR).phaseout_reduction == 0
+
+
+def test_ctc_fully_phased_out_stops_the_form():
+    # MFJ MAGI 480,000: reduction 80 x $50 = 4,000 wipes the whole line 8 -> the
+    # form says stop; no CTC, ODC, or ACTC.
+    r = child_tax_credit(2, 0, magi=480_000, income_tax_before_credits=100_000, earned_income=480_000,
+                         filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.credit_after_phaseout == 0
+    assert r.nonrefundable_used == 0 and r.actc_refundable == 0
+    assert "stop" in r.work
+
+
+def test_ctc_odc_only_never_refunds():
+    # Two ITIN dependents: $1,000 of ODC offsets tax but can never become ACTC.
+    r = child_tax_credit(0, 2, magi=50_000, income_tax_before_credits=5_000, earned_income=50_000,
+                         filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.ctc_odc_total == 1_000
+    assert r.nonrefundable_used == 1_000
+    assert r.actc_refundable == 0
+    assert "ODC never refunds" in r.work
+    # With zero tax the ODC is simply lost — still no refund.
+    lost = child_tax_credit(0, 2, magi=50_000, income_tax_before_credits=0, earned_income=50_000,
+                            filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert lost.nonrefundable_used == 0 and lost.actc_refundable == 0
+
+
+def test_ctc_actc_low_income_15_percent_rule_then_per_child_cap():
+    # Tax 0, 2 qualifying children: leftover 4,000; per-child cap 2 x 1,600 = 3,200.
+    # Earned 20,000 -> 15% x 17,500 = 2,625 binds (the 15% rule).
+    r = child_tax_credit(2, 0, magi=20_000, income_tax_before_credits=0, earned_income=20_000,
+                         filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.nonrefundable_used == 0
+    assert r.actc_refundable == 2_625
+    assert r.actc_cap_per_child == 1_600
+    # Earned 30,000 -> 15% x 27,500 = 4,125, so the 3,200 per-child cap binds instead.
+    capped = child_tax_credit(2, 0, magi=30_000, income_tax_before_credits=0, earned_income=30_000,
+                              filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert capped.actc_refundable == 3_200
+
+
+def test_ctc_partial_tax_absorption_leaves_the_rest_for_actc():
+    # HOH wages 22,000: taxable 1,200 -> tax 121; line 14 = 121, leftover 3,879;
+    # cap 3,200; 15% x 19,500 = 2,925 binds -> ACTC 2,925.
+    tax = tax_from_taxable_income(
+        22_000 - standard_deduction("head_of_household", 2023, knowledge_dir=KNOWLEDGE_DIR).amount,
+        "head_of_household", 2023, knowledge_dir=KNOWLEDGE_DIR,
+    ).tax
+    assert tax == 121
+    r = child_tax_credit(2, 0, magi=22_000, income_tax_before_credits=tax, earned_income=22_000,
+                         filing_status="head_of_household", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.nonrefundable_used == 121
+    assert r.actc_refundable == 2_925
+
+
+def test_ctc_earned_income_at_or_below_2500_gives_no_actc():
+    r = child_tax_credit(1, 0, magi=2_500, income_tax_before_credits=0, earned_income=2_500,
+                         filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.actc_refundable == 0
+    assert r.credit_after_phaseout == 2_000  # the credit exists, it just cannot refund
+
+
+def test_ctc_three_plus_children_part_ii_b_caveat_is_flagged():
+    # 3 QCs, tax 0, earned 10,000: line 20 = 1,125 < line 17 -> Part II-B (the
+    # social-security-taxes alternative) could only INCREASE the ACTC; the op
+    # must disclose that it is not modeled.
+    r = child_tax_credit(3, 0, magi=10_000, income_tax_before_credits=0, earned_income=10_000,
+                         filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.actc_refundable == 1_125
+    assert "Part II-B" in r.work
+    # With 2 children the caveat never appears (Part II-B needs 3+).
+    two = child_tax_credit(2, 0, magi=10_000, income_tax_before_credits=0, earned_income=10_000,
+                           filing_status="single", knowledge_dir=KNOWLEDGE_DIR)
+    assert "Part II-B" not in two.work
+
+
+def test_ctc_2021_arpa_under_6_two_tier_phaseout():
+    # MFJ, 2 kids (1 under 6), MAGI 160,000: expanded 3,600 + 3,000 = 6,600
+    # (base 4,000, increase 2,600); tier 1 trims min(50 x 10, cap 12,500, 2,600)
+    # = 500; no tier 2 (below 400,000) -> 6,100, ALL of it refundable (no ODC).
+    r = child_tax_credit(2, 0, magi=160_000, income_tax_before_credits=5_000, earned_income=160_000,
+                         filing_status="married_filing_jointly", year=2021, children_under_6=1,
+                         knowledge_dir=KNOWLEDGE_DIR)
+    assert r.ctc_odc_total == 6_600
+    assert r.phaseout_reduction == 500
+    assert r.credit_after_phaseout == 6_100
+    assert r.nonrefundable_used == 0  # no ODC part; the CTC itself never touches line 19
+    assert r.actc_refundable == 6_100
+    assert r.fully_refundable is True
+    assert "FULLY REFUNDABLE" in r.work and "abode" in r.work
+
+
+def test_ctc_2021_arpa_qss_tier1_cap_binds():
+    # The 2021 Line 5 Worksheet caps the first-tier reduction per status; QSS's
+    # cap is only 2,500 (its SECOND tier groups with 'all other' at 200,000).
+    # QSS, 2 kids under 6, MAGI 220,000: raw tier 1 = 50 x 70 = 3,500, capped at
+    # 2,500 (< the 3,200 increase); tier 2 over 200,000 = 50 x 20 = 1,000.
+    r = child_tax_credit(2, 0, magi=220_000, income_tax_before_credits=30_000, earned_income=220_000,
+                         filing_status="qualifying_surviving_spouse", year=2021, children_under_6=2,
+                         knowledge_dir=KNOWLEDGE_DIR)
+    assert r.ctc_odc_total == 7_200
+    assert r.phaseout_reduction == 2_500 + 1_000
+    assert r.credit_after_phaseout == 3_700
+    assert r.actc_refundable == 3_700
+
+
+def test_ctc_2021_arpa_odc_part_stays_nonrefundable():
+    # Same ARPA family plus one ODC dependent: the 500 ODC is preserved FIRST
+    # (line 14a) and offsets tax nonrefundably; the CTC remainder is the RCTC.
+    r = child_tax_credit(2, 1, magi=160_000, income_tax_before_credits=5_000, earned_income=160_000,
+                         filing_status="married_filing_jointly", year=2021, children_under_6=1,
+                         knowledge_dir=KNOWLEDGE_DIR)
+    assert r.credit_after_phaseout == 6_600
+    assert r.nonrefundable_used == 500
+    assert r.actc_refundable == 6_100
+    # With zero tax the ODC part is lost, never refunded — even in 2021.
+    zero_tax = child_tax_credit(2, 1, magi=160_000, income_tax_before_credits=0, earned_income=160_000,
+                                filing_status="married_filing_jointly", year=2021, children_under_6=1,
+                                knowledge_dir=KNOWLEDGE_DIR)
+    assert zero_tax.nonrefundable_used == 0
+    assert zero_tax.actc_refundable == 6_100
+
+
+@pytest.mark.parametrize(
+    ("year", "expected_actc", "expected_fully_refundable"),
+    [
+        # Single, 1 qualifying child (6+), earned = MAGI = 20,000, tax 0.
+        # Non-ARPA years: ACTC = min(2,000 leftover, that year's per-child cap,
+        # 15% x 17,500 = 2,625) — the cap binds: 1,400 / 1,400 / 1,500 / 1,600 / 1,700.
+        # 2021 (ARPA): $3,000 credit, no phase-out at this income, FULLY refundable.
+        (2019, 1_400, False),
+        (2020, 1_400, False),
+        (2021, 3_000, True),
+        (2022, 1_500, False),
+        (2023, 1_600, False),
+        (2024, 1_700, False),
+    ],
+)
+def test_ctc_ships_for_every_supported_year(year, expected_actc, expected_fully_refundable):
+    r = child_tax_credit(1, 0, magi=20_000, income_tax_before_credits=0, earned_income=20_000,
+                         filing_status="single", year=year, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.nonrefundable_used == 0
+    assert r.actc_refundable == expected_actc
+    assert r.fully_refundable is expected_fully_refundable
+    assert r.citation.url.startswith("https://www.irs.gov/")
+
+
+def test_ctc_input_validation():
+    with pytest.raises(TypeError, match="qualifying_children_ssn"):
+        child_tax_credit(True, 0, 50_000, 5_000, 50_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="other_dependents"):
+        child_tax_credit(1, -1, 50_000, 5_000, 50_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="children_under_6.*cannot exceed"):
+        child_tax_credit(1, 0, 50_000, 5_000, 50_000, children_under_6=2, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="income_tax_before_credits"):
+        child_tax_credit(1, 0, 50_000, -1, 50_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="earned_income"):
+        child_tax_credit(1, 0, 50_000, 5_000, -1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        child_tax_credit(1, 0, 50_000, 5_000, 50_000, filing_status="married", knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Earned income tax credit — 2023 (Rev. Proc. 2022-38 section 3.06): 1 child
+# max 3,995 over earned-income amount 11,750; phase-out (other) 21,560-46,560,
+# (MFJ) 28,120-53,120; investment income limit 11,000; MFS barred by rule.
+# Goldens hand-derived from the Rev. Proc. formula.
+# ---------------------------------------------------------------------------
+
+
+def test_eitc_one_child_phase_in_plateau_phase_out():
+    # Phase-in: 3,995/11,750 = 0.34 exactly -> 0.34 x 6,000 = 2,040.
+    lo = eitc(6_000, 6_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert lo.eitc == 2_040 and lo.phase == "in" and lo.disqualified_reason is None
+    # Plateau: earned past 11,750, AGI below the 21,560 phase-out start.
+    mid = eitc(15_000, 15_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert mid.eitc == 3_995 and mid.phase == "plateau"
+    # Phase-out: 3,995 - 3,995/25,000 x (30,000 - 21,560) = 2,646.29 -> 2,646.
+    hi = eitc(30_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert hi.eitc == 2_646 and hi.phase == "out"
+    assert hi.citation.url.startswith("https://www.irs.gov/")
+
+
+def test_eitc_phases_out_on_the_greater_of_agi_or_earned_income():
+    # Same 2,646 whichever side is higher — the phase-out base is max(AGI, earned).
+    assert eitc(15_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 2_646
+    assert eitc(30_000, 15_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 2_646
+    assert eitc(15_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR).phase == "out"
+
+
+def test_eitc_mfj_uses_the_higher_thresholds_and_qss_does_not():
+    # MFJ phase-out starts at 28,120: 3,995 - 0.1598 x 1,880 = 3,694.58 -> 3,695.
+    mfj = eitc(30_000, 30_000, 1, "married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert mfj.eitc == 3_695
+    # A qualifying surviving spouse uses the OTHER column (the EIC table groups
+    # single/HoH/QSS), NOT the MFJ column — no aliasing here.
+    qss = eitc(30_000, 30_000, 1, "qualifying_surviving_spouse", knowledge_dir=KNOWLEDGE_DIR)
+    assert qss.eitc == 2_646
+
+
+def test_eitc_zero_children_and_three_plus_share_columns():
+    # Childless plateau: max 600 at earned = the 7,840 earned-income amount.
+    assert eitc(7_840, 7_840, 0, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 600
+    # 4 and 5 children both use the '3+' column: plateau max 7,430.
+    assert eitc(17_000, 17_000, 4, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 7_430
+    assert eitc(17_000, 17_000, 5, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 7_430
+
+
+def test_eitc_complete_phaseout_is_zero_but_not_disqualified():
+    r = eitc(46_560, 46_560, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.eitc == 0
+    assert r.phase == "out"
+    assert r.disqualified_reason is None
+
+
+def test_eitc_investment_income_gate():
+    # A dollar over the 11,000 limit denies the credit ENTIRELY (Pub 596 Rule 6).
+    over = eitc(15_000, 15_000, 1, "single", investment_income=11_001, knowledge_dir=KNOWLEDGE_DIR)
+    assert over.eitc == 0 and over.phase is None
+    assert "11,000" in over.disqualified_reason
+    assert "Rule 6" in over.work
+    # AT the limit the credit still computes.
+    assert eitc(15_000, 15_000, 1, "single", investment_income=11_000,
+                knowledge_dir=KNOWLEDGE_DIR).eitc == 3_995
+
+
+def test_eitc_mfs_gate_notes_the_narrow_post_2021_exception():
+    r = eitc(15_000, 15_000, 1, "married_filing_separately", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.eitc == 0 and r.phase is None
+    assert "married filing separately" in r.disqualified_reason
+    # The work trail spells out the ARPA section 9622 separated-spouse exception.
+    assert "exception" in r.work and "9622" in r.work and "last 6 months" in r.work
+
+
+def test_eitc_requires_positive_earned_income():
+    r = eitc(0, 15_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert r.eitc == 0 and r.phase is None
+    assert "earned income" in r.disqualified_reason
+
+
+def test_eitc_work_discloses_the_50_dollar_band_approximation():
+    r = eitc(30_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
+    assert "$50 income bands" in r.work
+
+
+@pytest.mark.parametrize(
+    ("year", "expected_max"),
+    [
+        # 1-child plateau at earned = AGI = 15,000 (over every year's earned-income
+        # amount, under every year's phase-out start): the Rev. Proc. maximums.
+        (2019, 3_526),
+        (2020, 3_584),
+        (2021, 3_618),
+        (2022, 3_733),
+        (2023, 3_995),
+        (2024, 4_213),
+    ],
+)
+def test_eitc_ships_for_every_supported_year(year, expected_max):
+    r = eitc(15_000, 15_000, 1, "single", year=year, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.eitc == expected_max
+    assert r.phase == "plateau"
+
+
+def test_eitc_2021_arpa_childless_expansion():
+    # ARPA (Rev. Proc. 2021-23 section 4) raised the 2021 childless maximum to
+    # 1,502 (never 2020-45's 543) and the investment limit to 10,000.
+    r = eitc(9_820, 9_820, 0, "single", year=2021, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.eitc == 1_502 and r.phase == "plateau"
+    assert eitc(9_820, 9_820, 0, "single", year=2021, investment_income=10_001,
+                knowledge_dir=KNOWLEDGE_DIR).eitc == 0
+
+
+def test_eitc_input_validation():
+    with pytest.raises(ValueError, match="qualifying_children"):
+        eitc(15_000, 15_000, -1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(TypeError, match="qualifying_children"):
+        eitc(15_000, 15_000, True, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="investment_income"):
+        eitc(15_000, 15_000, 1, investment_income=-1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        eitc(15_000, 15_000, 1, "widowed", knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# Cross-checks against the estimator: the standalone ops must reproduce the
+# adversarially-reviewed estimate_refund credit lines for identical inputs
+# (estimate_refund imported read-only; its knowledge-pack math is the oracle).
+# ---------------------------------------------------------------------------
+
+
+def _family_profile(marital, status, dependents, hoh=False):
+    from taxfill_core.schemas.profile import Answer, Dependent, Household, Profile, Provenance
+
+    us = Provenance.user_stated()
+    return Profile(household=Household(
+        marital_status=Answer(value=marital, provenance=us),
+        filing_status=Answer(value=status, provenance=us),
+        hoh_qualifying_person=Answer(value=True, provenance=us) if hoh else None,
+        dependents=[Dependent(name=n, relationship="child", dob=dob, has_ssn=True, provenance=us)
+                    for n, dob in dependents],
+    ))
+
+
+def test_ctc_matches_estimate_refund_nonrefundable_family():
+    from taxfill_core.estimate import IncomeSnapshot, estimate_refund
+
+    profile = _family_profile("married", "married_filing_jointly",
+                              [("Kid A", date(2016, 4, 1)), ("Kid B", date(2019, 9, 15))])
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=95_000, federal_withholding=10_000),
+                          knowledge_dir=KNOWLEDGE_DIR)
+    labels = {c.label: c.amount for c in est.composition}
+    r = child_tax_credit(2, 0, magi=95_000, income_tax_before_credits=labels["Income tax"],
+                         earned_income=95_000, filing_status="married_filing_jointly",
+                         knowledge_dir=KNOWLEDGE_DIR)
+    assert labels["Less: child tax credit / credit for other dependents (nonrefundable)"] == -r.nonrefundable_used
+    assert r.nonrefundable_used == 4_000
+    assert "Less: additional child tax credit (refundable)" not in labels
+
+
+def test_ctc_and_eitc_match_estimate_refund_low_income_family():
+    from taxfill_core.estimate import IncomeSnapshot, estimate_refund
+
+    wages = 22_000
+    profile = _family_profile("unmarried", "head_of_household",
+                              [("Kid A", date(2016, 4, 1)), ("Kid B", date(2019, 9, 15))], hoh=True)
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=wages, federal_withholding=500),
+                          knowledge_dir=KNOWLEDGE_DIR)
+    labels = {c.label: c.amount for c in est.composition}
+    tax = labels["Income tax"]
+    r = child_tax_credit(2, 0, magi=wages, income_tax_before_credits=tax, earned_income=wages,
+                         filing_status="head_of_household", knowledge_dir=KNOWLEDGE_DIR)
+    assert labels["Less: child tax credit / credit for other dependents (nonrefundable)"] == -r.nonrefundable_used
+    assert labels["Less: additional child tax credit (refundable)"] == -r.actc_refundable
+    e = eitc(wages, wages, 2, "head_of_household", knowledge_dir=KNOWLEDGE_DIR)
+    assert labels["Less: earned income tax credit (refundable, formula approximation)"] == -e.eitc
+    assert e.eitc == 6_511  # 6,604 - 6,604/31,358 x (22,000 - 21,560), rounded
+
+
+def test_ctc_2021_arpa_matches_estimate_refund():
+    from taxfill_core.estimate import IncomeSnapshot, estimate_refund
+
+    # Ages at end of 2021: born 2016 -> 5 (under 6, $3,600); born 2013 -> 8 ($3,000).
+    profile = _family_profile("married", "married_filing_jointly",
+                              [("Kid A", date(2016, 4, 1)), ("Kid B", date(2013, 9, 15))])
+    est = estimate_refund(profile, 2021, IncomeSnapshot(wages=160_000, federal_withholding=20_000),
+                          knowledge_dir=KNOWLEDGE_DIR)
+    labels = {c.label: c.amount for c in est.composition}
+    r = child_tax_credit(2, 0, magi=160_000, income_tax_before_credits=labels["Income tax"],
+                         earned_income=160_000, filing_status="married_filing_jointly", year=2021,
+                         children_under_6=1, knowledge_dir=KNOWLEDGE_DIR)
+    assert labels["Less: child tax credit (2021 — fully refundable)"] == -r.actc_refundable
+    assert r.actc_refundable == 6_100

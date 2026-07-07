@@ -126,6 +126,16 @@ def _form_aware_memo(memo: str, item: "FilingManifestItem") -> str:
     return memo + f" You are filing Form 1040-NR — write {target} on the payment, not \"Form 1040\"."
 
 
+# The §6013(g)/(h) election last mile. The page is the IRS's own "how to make the
+# choice" instruction set (verified live before pinning); it is cited inline in the
+# checklist string too, since text-only guidance must remain followable on its own.
+_SECTION_6013_URL = "https://www.irs.gov/individuals/international-taxpayers/nonresident-spouse"
+_SECTION_6013_CITATION = Citation(
+    source="IRS — Nonresident spouse (how to make the §6013(g)/(h) election, 'Attach a statement')",
+    url=_SECTION_6013_URL,
+)
+
+
 def _dedupe_citations(citations: list[Citation]) -> list[Citation]:
     seen, uniq = set(), []
     for c in citations:
@@ -150,6 +160,14 @@ class FilingManifestItem(BaseModel):
     filing_jointly: bool = Field(default=False, description="MFJ — both spouses must sign.")
     direct_deposit: bool = Field(default=False, description="Refund requested by direct deposit.")
     attached_forms: list[str] = Field(default_factory=list, description="Forms attached to this return (e.g. ['8843', 'W-7']). Most attachments are not separately signed; Form W-7 IS — the applicant signs its own Sign Here block.")
+    section_6013_election: bool = Field(
+        default=False,
+        description=(
+            "True when this joint return carries a §6013(g)/(h) election (a nonresident-alien spouse treated "
+            "as a U.S. resident): the FIRST joint return under the election must have the election statement "
+            "— signed by BOTH spouses, with each spouse's name, address, and SSN/ITIN — attached."
+        ),
+    )
 
 
 class ReturnInstructions(BaseModel):
@@ -333,6 +351,25 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
     ]
     if enclosing_check:
         assemble.append("Put Form 1040-V and the check on top — do not attach the payment to the return.")
+
+    # §6013(g)/(h) election statement — the compliance item that makes the joint
+    # election valid at all: a joint return with a nonresident-alien spouse mailed
+    # WITHOUT the signed statement is not a valid joint return, so it leads the
+    # assembly checklist rather than hiding among the generic steps.
+    if item.section_6013_election:
+        assemble.insert(0, (
+            "ATTACH THE §6013(g)/(h) ELECTION STATEMENT — required on the first joint return under the "
+            "election: a statement, SIGNED BY BOTH SPOUSES, declaring that on the last day of the tax year "
+            "one spouse was a nonresident alien and the other a U.S. citizen or resident, and that both "
+            "choose to be treated as U.S. residents for the entire tax year, with each spouse's full name, "
+            f"address, and SSN/ITIN ({_SECTION_6013_URL}). A joint return with a nonresident-alien spouse "
+            "is NOT a valid joint return without this statement."
+        ))
+        sign.append(
+            "The §6013(g)/(h) election statement is signed by BOTH spouses too — sign it in ink along with "
+            "the return itself."
+        )
+        citations.append(_SECTION_6013_CITATION)
 
     # Mail.
     mail = [

@@ -66,7 +66,7 @@ Show the user which step they're on and that they can stop and resume anytime
 | `verify_filing(items, independent?)` | cross-form identity + inter-form relations across the whole filing (`independent` keyed form_key→{line: calc result}) |
 | `render_form(pdf_path, pages?)` | page PNGs returned as image content — vision-review every page |
 | `hand_fill_worksheet(form, year, jurisdiction, values?)` | print-and-copy worksheet for non-AcroForm packs (e.g. Hawaii) |
-| `calc(op, args)` | tax / standard_deduction / se_tax / additional_medicare_tax / niit / tax_with_preferential_rates / taxable_social_security / excess_ss / student_loan_interest_deduction / education_credits / ptc_annual — every result shows its work + citation |
+| `calc(op, args)` | tax / standard_deduction / se_tax / additional_medicare_tax / niit / tax_with_preferential_rates / taxable_social_security / excess_ss / student_loan_interest_deduction / education_credits / ptc_annual / child_tax_credit / eitc — every result shows its work + citation |
 | `get_sources(topic, year, jurisdiction?)` | ranked .gov sources + freshness channels |
 | `workspace_save(year, profile)` / `workspace_load(year)` | persist / resume the intake profile between sessions |
 | `workspace_record_position(year, position)` / `workspace_reconcile(year, gaps?)` | record each position decision + authority; render the RECONCILIATION.md audit trail |
@@ -94,9 +94,15 @@ paid_online?, state?, direct_deposit?, filing_jointly?}`.
 ### Recipe B — back-file a nonresident return (1040-NR + 8843, e.g. an F-1 student)
 
 1. `residency(visa_periods, days_by_year, target_year)` → confirm nonresident (Form 1040-NR path). If the answer is dual-status or a First-Year-Choice election is possible, surface it.
-2. Required forms: `f1040nr` + `f8843`, plus `sched_oi` (treaty), `sched_1`, `sched_c` if self-employed. Treaty positions (e.g. US-China Art. 20(c) on student-period wages) are decided with the user and recorded; eligibility is per visa **period**.
+2. Required forms: `f1040nr` + `f8843`, plus `sched_oi` (treaty), `sched_a_nr` (itemized deductions — nonresidents cannot take the standard deduction except Indian students under Art. 21(2)), `sched_nec` (FDAP income at flat/treaty rates), `sched_1`, `sched_c` if self-employed. Treaty positions (e.g. US-China Art. 20(c) on student-period wages) are decided with the user and recorded (pass the confirmed amount as `treaty_exempt_income` in the estimate); eligibility is per visa **period**.
 3. Fill each form (`fill_form`), then `verify_filing([{form:"f1040nr",...}, {form:"f8843",...}, {form:"sched_oi", form_key:"sched_oi", ...}, ...], independent={"f1040nr": {"16": <calc tax>}})` — cross-form identity + the `1k == sched_oi.1e` treaty chain must pass, with the recompute running.
 4. `render_form` each page; `filing_summary`; `file_and_pay` (1040-NR mails to Austin TX for a refund, Charlotte NC with a payment; 8843 attaches to the 1040-NR and is **not** signed separately).
+
+### Recipe B2 — married to a nonresident spouse (§6013(g)/(h) election)
+
+1. Intake asks the spouse's US-person status, visa timeline, and days — answer them so the election surfaces; `estimate_refund` then prices MFJ-with-election (worldwide income — put the spouse's foreign income in the spouse snapshot's `other_income`) against MFS.
+2. Electing MFJ: record the position (`workspace_record_position`, topic mentioning "6013"); the reconcile CHECKLIST.md and `file_and_pay` (manifest flag `section_6013_election: true`) both add the signed-by-both-spouses statement attachment.
+3. Spouse without SSN/ITIN: fill `fw7` and file it WITH the return — `file_and_pay` routes the whole package to the Austin ITIN Operation and the W-7 IS signed separately. Declining the election and filing MFS: write `NRA` in the spouse-SSN box (`fill_form` accepts the literal).
 
 ### Recipe C — add a state return
 

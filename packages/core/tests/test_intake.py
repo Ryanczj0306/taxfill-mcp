@@ -14,6 +14,7 @@ from taxfill_core.schemas.profile import (
     Profile,
     Provenance,
     ResidencyFacts,
+    Spouse,
     StateFootprintYear,
     VisaPeriod,
 )
@@ -539,3 +540,146 @@ def test_fica_note_hedged_while_residency_unknown_and_absent_for_others():
         residency_facts=ResidencyFacts(days_in_us={y: _ans(330) for y in range(2017, 2024)}),
     )
     assert not any("FICA" in n for n in intake_checklist(resident_f1, tax_year=2023).notes)
+
+
+# ── Tier-2: the NRA-spouse §6013(g)/(h) battery (finding: Spouse.us_person/
+# immigration/residency_facts were dead fields — the election never surfaced for
+# a US-person filer with a nonresident spouse) ─────────────────────────────────
+
+
+def _citizen_married(spouse=None) -> Profile:
+    return Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(marital_status=_ans("married"), spouse=spouse),
+    )
+
+
+def test_married_path_asks_spouse_us_person_first():
+    cl = intake_checklist(_citizen_married(), tax_year=2023)
+    q = next(q for q in cl.next_questions if q.id == "household.spouse.us_person")
+    assert q.answers_into == "household.spouse.us_person"
+    assert "6013" in q.why
+    assert "green-card" in (q.disambiguation or "")
+    # The deeper battery waits for the gate answer (mirrors identity.us_person gating).
+    ids = _ids(cl)
+    assert "household.spouse.visa_timeline" not in ids
+    assert "household.spouse.days_in_us" not in ids
+    assert "household.spouse.section_6013_election" not in ids
+
+
+def test_us_person_spouse_ends_the_battery():
+    cl = intake_checklist(_citizen_married(Spouse(us_person=_ans(True))), tax_year=2023)
+    ids = _ids(cl)
+    assert "household.spouse.us_person" not in ids       # answered — never re-asked
+    assert "household.spouse.visa_timeline" not in ids
+    assert "household.spouse.days_in_us" not in ids
+    assert "household.spouse.section_6013_election" not in ids
+    assert not any("6013" in n for n in cl.notes)
+
+
+def test_nra_spouse_battery_asks_visa_days_and_election():
+    cl = intake_checklist(_citizen_married(Spouse(us_person=_ans(False))), tax_year=2023)
+    ids = _ids(cl)
+    assert {"household.spouse.visa_timeline", "household.spouse.days_in_us",
+            "household.spouse.section_6013_election"} <= ids
+    visa_q = next(q for q in cl.next_questions if q.id == "household.spouse.visa_timeline")
+    assert visa_q.answers_into == "household.spouse.immigration.visa_timeline"
+    assert "date ranges" in (visa_q.disambiguation or "")   # reuses the P-004 pattern
+    days_q = next(q for q in cl.next_questions if q.id == "household.spouse.days_in_us")
+    assert days_q.answers_into == "household.spouse.residency_facts.days_in_us"
+    assert "2021, 2022, 2023" in days_q.prompt              # the SPT lookback set, spouse's own facts
+    el = next(q for q in cl.next_questions if q.id == "household.spouse.section_6013_election")
+    assert el.answers_into == "household.filing_status"     # deciding the election IS the status choice
+    assert "may be a nonresident alien" in el.prompt        # conditional — residency not computable yet
+    d = el.disambiguation or ""
+    assert "WORLDWIDE" in d and "'NRA'" in d and "signed by BOTH spouses" in d
+    # The filing-status disambiguation carries the spouse-direction §6013 rider too.
+    fs = next(q for q in cl.next_questions if q.id == "household.filing_status")
+    assert "6013" in (fs.disambiguation or "") and "worldwide income" in fs.disambiguation
+
+
+def test_nra_spouse_tax_id_question_carries_the_w7_route():
+    # Finding repro: 'What is your spouse's SSN or ITIN?' was a literal dead end for
+    # a spouse with neither — the question must name the W-7-with-the-return path.
+    q = next(q for q in intake_checklist(_citizen_married(Spouse(us_person=_ans(False))),
+                                         tax_year=2023).next_questions
+             if q.id == "household.spouse.tax_id")
+    assert "Does your spouse have an SSN or ITIN" in q.prompt
+    d = q.disambiguation or ""
+    assert "Form W-7" in d and "WITH the return" in d
+    assert "ITIN Operation" in d and "Austin" in d
+    assert "'NRA'" in d  # the MFS no-TIN spouse-SSN-box literal
+
+
+def test_spouse_days_followup_asks_only_missing_years():
+    spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-2", start=date(2019, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(300)}),
+    )
+    q = next(q for q in intake_checklist(_citizen_married(spouse), tax_year=2023).next_questions
+             if q.id == "household.spouse.days_in_us")
+    assert "2019, 2020, 2021, 2022" in q.prompt  # exempt-category years + SPT lookbacks
+    assert "2023" not in q.prompt                # already on file — only the gaps are asked
+
+
+def test_spouse_resident_by_own_facts_needs_no_election():
+    # H-4 spouse present 365 days x3: their OWN facts classify resident — a joint
+    # return needs no §6013 election, and intake says so instead of asking.
+    spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-4", start=date(2021, 1, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(365) for y in (2021, 2022, 2023)}),
+    )
+    cl = intake_checklist(_citizen_married(spouse), tax_year=2023)
+    assert "household.spouse.section_6013_election" not in _ids(cl)
+    assert any("RESIDENT alien" in n and "without a §6013(g)/(h) election" in n for n in cl.notes)
+    fs = next(q for q in cl.next_questions if q.id == "household.filing_status")
+    assert "6013" not in (fs.disambiguation or "")
+
+
+def test_confirmed_nra_spouse_election_is_asserted_not_hedged():
+    # F-2 dependent (exempt-individual family): the spouse's own facts classify
+    # NONRESIDENT — the election question drops the conditional framing.
+    spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-2", start=date(2022, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2021: _ans(0), 2022: _ans(140), 2023: _ans(330)}),
+    )
+    cl = intake_checklist(_citizen_married(spouse), tax_year=2023)
+    el = next(q for q in cl.next_questions if q.id == "household.spouse.section_6013_election")
+    assert el.prompt.startswith("Your spouse's residency result is NONRESIDENT alien.")
+    assert "may be a nonresident alien" not in el.prompt
+    assert any(n.startswith("Your spouse's residency result is nonresident alien") for n in cl.notes)
+
+
+def test_ra_taxpayer_with_nra_spouse_does_not_get_all_statuses_note():
+    # Finding repro: an H-1B resident alien married to a declared non-US-person got
+    # the unconditional 'all filing statuses are available' note — wrong law when the
+    # spouse is an NRA (§6013(a)(1)). The spouse-direction §6013 note replaces it.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-1B", start=date(2021, 1, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(365) for y in (2021, 2022, 2023)}),
+        household=Household(marital_status=_ans("married"), spouse=Spouse(us_person=_ans(False))),
+    )
+    cl = intake_checklist(profile, tax_year=2023)
+    assert not any("all filing statuses" in n.lower() for n in cl.notes)
+    assert any("§6013(g)/(h)" in n and "worldwide income" in n for n in cl.notes)
+
+
+def test_spouse_battery_stops_when_all_facts_answered():
+    # No looping: every spouse fact answered + a chosen filing status leaves ZERO
+    # spouse questions (the 'NRA' literal records a no-TIN MFS spouse).
+    spouse = Spouse(
+        name=_ans("Ha-eun Kim"), tax_id=_ans("NRA"), us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-2", start=date(2022, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2021: _ans(0), 2022: _ans(140), 2023: _ans(330)}),
+    )
+    profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(marital_status=_ans("married"),
+                            filing_status=_ans("married_filing_separately"), spouse=spouse),
+    )
+    ids = _ids(intake_checklist(profile, tax_year=2023))
+    assert not any(i.startswith("household.spouse.") for i in ids)
