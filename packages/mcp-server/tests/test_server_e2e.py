@@ -174,6 +174,66 @@ def test_unknown_form_is_a_clean_tool_error():
     _run(go())
 
 
+def test_verify_tools_expose_independent_and_summary_flags_not_run():
+    """The verify gate's independent recompute is reachable over MCP (tool schema has the
+    `independent` parameter) and, when it is NOT supplied, the summary says the recompute
+    did not run — checked:0 alone must never masquerade as a fully-verified pass."""
+    async def go():
+        async with connect(mcp) as client:
+            tools = {t.name: t for t in (await client.list_tools()).tools}
+            assert "independent" in tools["verify_form"].inputSchema["properties"]
+            assert "independent" in tools["verify_filing"].inputSchema["properties"]
+            assert "calc" in tools["verify_form"].description  # docstring says where the numbers come from
+    _run(go())
+
+    from taxfill_core.verify import VerifyReport
+    from taxfill_mcp.server import _report_summary
+
+    not_run = _report_summary(VerifyReport(ok=True), recompute_ran=False)
+    rec = not_run["sections"]["recompute"]
+    assert rec["checked"] == 0 and rec["failed"] == 0
+    assert "not run" in rec["note"] and "independent" in rec["note"]
+    ran = _report_summary(VerifyReport(ok=True), recompute_ran=True)
+    assert "note" not in ran["sections"]["recompute"]
+
+
+def test_estimate_refund_unknown_income_field_error_is_prescriptive():
+    """A wrong-field guess (the 'capital_gains' repro) must name the bad field, list every
+    valid IncomeSnapshot field, and never echo the supplied amounts (PII masking)."""
+    async def go():
+        async with connect(mcp) as client:
+            r = await client.call_tool("estimate_refund", {
+                "profile": {}, "year": 2023,
+                "income": {"wages": 54321, "capital_gains": 1000},
+            })
+            assert r.isError is True
+            text = r.content[0].text
+            assert "capital_gains" in text  # names the offending field
+            for field in ("capital_gain_long", "capital_gain_short", "social_security_benefits",
+                          "aca_premiums", "spouse"):
+                assert field in text  # full valid-field list
+            assert "54321" not in text and "1000" not in text  # never echo input values
+    _run(go())
+
+
+def test_workspace_record_position_bad_shape_error_shows_expected_shape(tmp_path):
+    """The natural first guess ({topic, decision, authority}) must come back with the
+    canonical Position shape, not a raw pydantic dump."""
+    async def go():
+        async with connect(mcp) as client:
+            r = await client.call_tool("workspace_record_position", {
+                "year": 2023, "root": str(tmp_path / "ws"),
+                "position": {"topic": "filing_status", "decision": "single", "authority": "IRC 1(c)"},
+            })
+            assert r.isError is True
+            text = r.content[0].text
+            assert "decision" in text and "value" in text  # names bad keys AND required ones
+            assert '"citation": {"source"' in text  # shows the nested citation shape
+            assert "e.g." in text  # carries a copyable example
+            assert not (tmp_path / "ws").exists()  # invalid input creates no workspace
+    _run(go())
+
+
 def test_tool_surface_is_exactly_22_and_matches_manifest():
     """Exact tool-surface guard (the other test is a subset check, so it misses ADDED tools).
 
@@ -226,9 +286,60 @@ def test_full_chain_fetch_fill_verify_render(tmp_path):
             # The values we set must read back cleanly (assertion diff has no failures).
             assert report["sections"]["assertions"]["failed"] == 0
             assert report["sections"]["clipping"]["failed"] == 0
+            # No `independent` supplied -> the summary must say the recompute did not run.
+            assert "not run" in report["sections"]["recompute"]["note"]
 
             r = await client.call_tool("render_form", {"pdf_path": out, "pages": [1]})
             images = [c for c in r.content if isinstance(c, ImageContent)]
             assert images and images[0].mimeType == "image/png" and len(images[0].data) > 1000
+
+    _run(go())
+
+
+@pytest.mark.network
+def test_verify_form_independent_recompute_catches_wrong_tax_over_mcp(tmp_path):
+    """The persona-review $6,036 repro, end-to-end over MCP: a 1040 whose line 16 carries a
+    wrong tax-table number now FAILS verify_form when the calc result is passed as
+    `independent` — the gate the whole safety story rests on actually checks the number."""
+    async def go():
+        async with connect(mcp) as client:
+            try:
+                _data(await client.call_tool("fetch_blank", {"form": "f1040", "year": 2023}))
+            except Exception as exc:  # offline + cold cache
+                pytest.skip(f"cannot fetch blank: {exc}")
+
+            # Independent pass: the calc engine, not the agent, produces the tax number.
+            tax = _data(await client.call_tool("calc", {"op": "tax", "args": {
+                "taxable_income": 205150, "filing_status": "married_filing_jointly", "year": 2023}}))
+            assert tax["tax"] == 36036
+
+            # Fill line 16 with the understated 30000 (off by $6,036 from the tax table).
+            out = str(tmp_path / "f1040_wrong_tax.pdf")
+            _data(await client.call_tool("fill_form", {
+                "form": "f1040", "year": 2023,
+                "values": {"15": 205150, "16": 30000}, "out_path": out}))
+
+            report = _data(await client.call_tool("verify_form", {
+                "form": "f1040", "year": 2023, "pdf_path": out,
+                "independent": {"16": tax["tax"]}}))
+            assert report["ok"] is False
+            rec = report["sections"]["recompute"]
+            assert rec["checked"] == 1 and rec["failed"] == 1
+            assert "note" not in rec  # the recompute RAN — no not-run disclaimer
+            assert any("30000" in f and "36036" in f for f in rec["failures"])
+
+            # Same wrong PDF through verify_filing with the per-form_key independent shape.
+            filing = _data(await client.call_tool("verify_filing", {
+                "items": [{"form": "f1040", "year": 2023, "pdf_path": out}],
+                "independent": {"f1040": {"16": tax["tax"]}}}))
+            assert filing["ok"] is False
+            assert filing["sections"]["recompute"]["failed"] == 1
+            assert "note" not in filing["sections"]["recompute"]
+
+            # Without `independent`, the same PDF's summary must disclose the recompute gap.
+            silent = _data(await client.call_tool("verify_form", {
+                "form": "f1040", "year": 2023, "pdf_path": out}))
+            assert silent["sections"]["recompute"]["checked"] == 0
+            assert "not run" in silent["sections"]["recompute"]["note"]
 
     _run(go())

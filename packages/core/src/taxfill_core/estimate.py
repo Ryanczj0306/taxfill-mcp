@@ -15,7 +15,9 @@ Honesty rules baked in (UX principle 1; eval scenario (j)):
   disclosed as an assumption — never silently omitted and never silently
   invented;
 - qualified dividends / net capital gain use the preferential-rate worksheet
-  (``calc.tax_with_preferential_rates``) whenever such income is present.
+  (``calc.tax_with_preferential_rates``) whenever such income is present — for
+  RESIDENTS only: a nonresident's investment income follows ECI/FDAP rules the
+  estimate does not model, so it is taxed at ordinary rates and disclosed.
 
 The profile supplies the qualitative picture (filing status, dependents, which
 documents are still missing); ``income`` supplies the confirmed dollar amounts
@@ -296,14 +298,18 @@ def _candidate_statuses(
     'nonresident' / 'dual_status_candidate' / None). A confirmed NONRESIDENT
     alien files Form 1040-NR, which cannot use married_filing_jointly or
     head_of_household, so those statuses are dropped from the candidate set.
+    A DUAL-STATUS candidate year carries the same restrictions (Pub 519:
+    generally no joint return absent a §6013(g)/(h) election, no HOH), so
+    MFJ/HOH are dropped there too — disclosed loudly upstream.
     """
     hh = profile.household
     if hh is not None and hh.filing_status is not None and hh.filing_status.value:
         return [str(hh.filing_status.value)], False
-    nonresident = classification == "nonresident"
+    restricted = classification in ("nonresident", "dual_status_candidate")
     if _is_married(profile):
-        # A nonresident-alien (1040-NR) filer cannot use MFJ; the primary becomes MFS.
-        if nonresident:
+        # A nonresident-alien (1040-NR) filer cannot use MFJ; neither (generally) can a
+        # dual-status-year filer absent a §6013 election — the primary becomes MFS.
+        if restricted:
             return ["married_filing_separately"], True
         return ["married_filing_jointly", "married_filing_separately"], True
     if _marital(profile) == "widowed":
@@ -323,10 +329,11 @@ def _candidate_statuses(
     # Unmarried. Head of household is offered only as the PRIMARY (headline) when the
     # qualifying-person test is confirmed True; otherwise single is the conservative
     # headline but HoH stays in the candidate list (with a dependent) so the range
-    # still brackets the HoH outcome. A nonresident alien (1040-NR) cannot use HOH at all.
-    if hh is not None and not nonresident and _confirmed_true(hh.hoh_qualifying_person):
+    # still brackets the HoH outcome. A nonresident alien (1040-NR) cannot use HOH at
+    # all, and a dual-status-year filer generally cannot either (Pub 519).
+    if hh is not None and not restricted and _confirmed_true(hh.hoh_qualifying_person):
         return ["head_of_household", "single"], True
-    if hh is not None and not nonresident and hh.dependents:
+    if hh is not None and not restricted and hh.dependents:
         return ["single", "head_of_household"], True
     return ["single"], True
 
@@ -344,10 +351,15 @@ _JOINT_LIABILITY_CAVEAT = (
 
 # Mirrors intake.py's §6013(g)/(h) wording: a nonresident alien filing 1040-NR cannot
 # use MFJ unless they elect to be treated as a U.S. resident, which taxes worldwide income.
+# The election makes the COUPLE'S worldwide income taxable, so an elected-MFJ number is
+# only meaningful when the nonresident spouse's foreign income is in the inputs.
 _SECTION_6013_CAVEAT = (
     "As a nonresident alien (Form 1040-NR) you cannot file jointly (MFJ); filing jointly "
     "requires electing under §6013(g)/(h) to treat the nonresident alien as a U.S. resident "
-    "— which makes their worldwide income taxable. Showing married-filing-separately instead."
+    "— which makes their worldwide income taxable. Showing married-filing-separately instead. "
+    "If you weigh that election: an elected-MFJ figure is only valid when the nonresident "
+    "spouse's WORLDWIDE (foreign) income is included in the inputs — put it in the spouse "
+    "snapshot's other_income — otherwise an MFJ-vs-MFS comparison overstates the MFJ advantage."
 )
 
 # When residency is not yet computable for a visa holder, the 1040-NR restriction is conditional.
@@ -355,7 +367,20 @@ _SECTION_6013_CONDITIONAL_CAVEAT = (
     "If your residency result is nonresident alien, Form 1040-NR cannot use MFJ/HOH; filing "
     "jointly would then require electing under §6013(g)/(h) to treat the nonresident alien as a "
     "U.S. resident — which makes their worldwide income taxable. Confirm your residency to "
-    "tighten this."
+    "tighten this. Under that election any MFJ figure is only valid when the nonresident "
+    "spouse's WORLDWIDE (foreign) income is included in the inputs (the spouse snapshot's "
+    "other_income) — without it the MFJ-vs-MFS delta overstates the MFJ advantage."
+)
+
+# A dual-status candidate year restricts the return itself (Pub 519): the estimate can
+# only show full-year approximations, and it must say so loudly.
+_DUAL_STATUS_CAVEAT = (
+    "Your residency result flags a possible DUAL-STATUS year, but every number here is a "
+    "FULL-YEAR approximation — the real return is a split-year Form 1040 + Form 1040-NR. A "
+    "dual-status year restricts filing: generally NO joint return (absent a §6013(g)/(h) "
+    "election to be treated as a full-year resident, which makes worldwide income taxable), "
+    "NO head of household, and NO standard deduction (Pub 519). Confirm the split-year "
+    "treatment before relying on these numbers."
 )
 
 
@@ -504,8 +529,13 @@ def _bottom_line(
     ``nonresident`` skips NIIT (Form 8960 does not apply to nonresident aliens),
     the EITC, and education credits (NRAs are ineligible for both absent a
     residency election); Additional Medicare Tax applies to NRA Medicare wages,
-    so it is kept. ``deps`` is the dependents' (age at year end, has_ssn)
-    list — the profile itself is never needed here.
+    so it is kept. A nonresident also gets NO standard deduction (Form 1040-NR
+    line 12 is itemized-only — the supplied itemized_deductions or $0 is used,
+    never max()ed against the standard deduction) and NO preferential-rate
+    worksheet (NRA investment income follows ECI/FDAP rules the estimate does
+    not model — taxed at ordinary rates and disclosed upstream). ``deps`` is
+    the dependents' (age at year end, has_ssn) list — the profile itself is
+    never needed here.
 
     Per-person taxes/credits on a COMBINED (joint) snapshot: both the excess-SS
     credit and Schedule SE are per person, so the MFJ spouse-split path passes
@@ -607,6 +637,12 @@ def _bottom_line(
         if sli:
             citations.append(sli_res.citation)
             comp.append(CompositionLine(label="Less: student loan interest deduction", amount=-sli))
+        elif notes is not None:
+            # A supplied 1098-E must never vanish silently: the deduction computed
+            # to $0 (MFS by rule, or MAGI at/above the phase-out ceiling) — cite the
+            # op's own work and surface the why upstream.
+            citations.append(sli_res.citation)
+            notes.add("sli_zero_mfs" if mfs else "sli_zero_phaseout")
 
     if income.pre_agi_adjustments > 0:
         comp.append(
@@ -620,21 +656,36 @@ def _bottom_line(
     comp.append(CompositionLine(label="Adjusted gross income (AGI)", amount=agi))
 
     # ── Deduction and taxable income ────────────────────────────────────────
-    sd = standard_deduction(status, year, knowledge_dir=knowledge_dir)
-    citations.append(sd.citation)
-    if income.itemized_deductions is not None:
-        deduction = max(income.itemized_deductions, sd.amount)
-        label = "Less: itemized deductions" if deduction == income.itemized_deductions else "Less: standard deduction"
+    if nonresident:
+        # Form 1040-NR line 12 is ITEMIZED-ONLY (typically state/local income tax
+        # withheld): a nonresident alien cannot take the standard deduction (Pub 519;
+        # the India treaty Art. 21(2) student exception is disclosed upstream). The
+        # max(itemized, standard) logic must never run here.
+        deduction = income.itemized_deductions or 0
+        label = "Less: itemized deductions (1040-NR — nonresidents cannot take the standard deduction)"
     else:
-        deduction, label = sd.amount, "Less: standard deduction"
+        sd = standard_deduction(status, year, knowledge_dir=knowledge_dir)
+        citations.append(sd.citation)
+        if income.itemized_deductions is not None:
+            deduction = max(income.itemized_deductions, sd.amount)
+            label = "Less: itemized deductions" if deduction == income.itemized_deductions else "Less: standard deduction"
+        else:
+            deduction, label = sd.amount, "Less: standard deduction"
     comp.append(CompositionLine(label=label, amount=-deduction))
 
     taxable = max(0, agi - deduction)
     comp.append(CompositionLine(label="Taxable income", amount=taxable))
 
     # ── Income tax (preferential rates when QD / net capital gain present) ──
+    # Residents only: preferential rates never apply to a nonresident's non-ECI
+    # investment income (FDAP is flat 30%/treaty-rate on Schedule NEC — not modeled,
+    # disclosed upstream), so the NRA path stays on ordinary rates.
     net_gain_preferential = max(0, lt + min(st, 0))  # Schedule D 'smaller of 15/16, floor 0'
-    if (income.qualified_dividends + net_gain_preferential) > 0 and pack_tax.capital_gains_brackets is not None:
+    if (
+        (income.qualified_dividends + net_gain_preferential) > 0
+        and not nonresident
+        and pack_tax.capital_gains_brackets is not None
+    ):
         pref = tax_with_preferential_rates(
             taxable, income.qualified_dividends, lt, st, status, year, knowledge_dir
         )
@@ -997,8 +1048,42 @@ def estimate_refund(
         )
     else:
         assumptions.append(f"Filing status: {primary}.")
-    if income.itemized_deductions is None:
+    if income.itemized_deductions is None and not nonresident:
         assumptions.append("Standard deduction assumed (no itemizing, and no age-65+/blind adjustment).")
+    if nonresident:
+        # 1040-NR deduction law: itemized-only, never the standard deduction.
+        assumptions.append(
+            f"Nonresident aliens cannot take the standard deduction: Form 1040-NR line 12 is "
+            f"ITEMIZED-only (typically state/local income tax withheld), so this estimate used "
+            f"${income.itemized_deductions or 0:,} of itemized deductions."
+        )
+        assumptions.append(
+            "Exception: students/business apprentices from India MAY claim the standard deduction "
+            "under US-India treaty Art. 21(2) — confirm nationality and treaty eligibility, and if "
+            "it applies, rerun with itemized_deductions set to the standard-deduction amount."
+        )
+    nra_investment_income = nonresident and any(
+        snap is not None
+        and (snap.interest or snap.dividends or snap.capital_gain_long or snap.capital_gain_short)
+        for snap in (income, income.spouse)
+    )
+    if nra_investment_income:
+        assumptions.append(
+            "Nonresident investment income is NOT modeled: US-source FDAP income (dividends, "
+            "non-portfolio interest, certain gains) is taxed at a flat 30% or treaty rate on "
+            "Schedule NEC — never at the resident preferential rates — while only effectively "
+            "connected income uses graduated rates. This estimate taxed every amount entered as "
+            "ECI ordinary income; confirm the ECI-vs-FDAP treatment (Pub 519 ch. 4) before "
+            "relying on it."
+        )
+    if nonresident and (
+        income.interest or (income.spouse is not None and income.spouse.interest)
+    ):
+        assumptions.append(
+            "US bank deposit interest is typically NOT taxable to a nonresident (the "
+            "portfolio/deposit-interest exemption, IRC 871(i)) — the interest entered was taxed "
+            "as ordinary income here, so this estimate may OVERTAX it."
+        )
     if "preferential rates" in labels:
         assumptions.append(
             "Qualified dividends / net capital gain taxed at preferential rates via the Qualified "
@@ -1089,6 +1174,29 @@ def estimate_refund(
             f"Tax Credit / Credit for Other Dependents and the EITC — provide each dependent's date of "
             f"birth (and whether they have a work-eligible SSN) to include them."
         )
+    # A dependent with a known DOB but an UNANSWERED has_ssn (None — never asked) is
+    # conservatively demoted from the per-child CTC to the ODC. Keep the math
+    # conservative, but never silently: name the count and the dollar path.
+    ssn_demotion_msg: str | None = None
+    dep_ctc_cfg = None
+    if any(a is not None and a >= 0 and s is None for a, s in deps):
+        dep_credits = load_knowledge("federal", year, base_dir=knowledge_dir).credits
+        dep_ctc_cfg = getattr(dep_credits, "child_tax_credit", None) if dep_credits is not None else None
+    if dep_ctc_cfg:
+        child_age_limit = int(dep_ctc_cfg.get("child_under_age", 17))
+        n_ssn_unconfirmed = sum(1 for a, s in deps if a is not None and 0 <= a < child_age_limit and s is None)
+        if n_ssn_unconfirmed:
+            odc = int(dep_ctc_cfg["credit_for_other_dependents"])
+            per_child = int(dep_ctc_cfg["per_qualifying_child"])
+            ssn_demotion_msg = (
+                f"{n_ssn_unconfirmed} dependent(s) under {child_age_limit} were counted for the "
+                f"${odc:,} Credit for Other Dependents ONLY because SSN status was not confirmed — "
+                f"with a work-eligible SSN each qualifies for the ${per_child:,} Child Tax Credit "
+                f"instead (${(per_child - odc) * n_ssn_unconfirmed:,} more across "
+                f"{n_ssn_unconfirmed} dependent(s), and they would count for the EITC). Confirm "
+                f"each dependent's has_ssn."
+            )
+            assumptions.append(ssn_demotion_msg)
     if "fully refundable" in labels:
         assumptions.append(
             "2021 ARPA Child Tax Credit applied ($3,600 under age 6 / $3,000 under 18, two-tier "
@@ -1171,6 +1279,34 @@ def estimate_refund(
             "Education expenses were provided but NO education credit was estimated: nonresident "
             "aliens cannot claim education credits (Form 8863 AOTC/LLC) absent a residency election."
         )
+    # A supplied 1098-E that computes to a $0 deduction is disclosed, never dropped.
+    sli_paid = income.student_loan_interest_paid + (
+        income.spouse.student_loan_interest_paid if income.spouse is not None else 0
+    )
+    if "sli_zero_phaseout" in notes:
+        assumptions.append(
+            f"The ${sli_paid:,} of student-loan interest (1098-E) gives a $0 deduction — modified "
+            f"AGI is at or above the {year} IRC 221 phase-out ceiling for that status, so the "
+            f"deduction phases out entirely. It was computed, not ignored — do NOT re-enter it "
+            f"elsewhere (e.g. pre_agi_adjustments)."
+        )
+    if "sli_zero_mfs" in notes:
+        assumptions.append(
+            f"The ${sli_paid:,} of student-loan interest (1098-E) gives a $0 deduction on the "
+            f"married-filing-separately candidate — MFS filers are not allowed the student-loan-"
+            f"interest deduction (IRC 221). It was computed, not ignored."
+        )
+    # FICA withheld in error on an exempt nonresident is recovered OFF-return.
+    nra_fica_msg: str | None = None
+    if nonresident and sum(income.ss_withheld_by_employer) > 0:
+        nra_fica_msg = (
+            f"${sum(income.ss_withheld_by_employer):,} of Social Security tax (W-2 box 4) was "
+            f"withheld, but exempt F/J students and scholars are generally FICA-EXEMPT (IRC "
+            f"3121(b)(19)): Social Security/Medicare withheld in error is recovered from the "
+            f"EMPLOYER first, otherwise with Form 843 + Form 8316 — a separate claim, NOT on the "
+            f"1040-NR. This estimate does not include it."
+        )
+        assumptions.append(nra_fica_msg)
     assumptions.append(
         "Not modeled in this estimate: AMT, LLC (available via the calc tool), itemized-deduction "
         "sub-limits, EITC official-table $50 banding (formula used), capital-loss carryovers, and "
@@ -1184,7 +1320,11 @@ def estimate_refund(
         ident is not None and ident.us_person is not None and ident.us_person.value is False
     )
     residency_caveat: str | None = None
-    if classification == "nonresident" and _is_married(profile):
+    if classification == "dual_status_candidate":
+        # A dual-status year restricts statuses and the deduction; MFJ/HOH were
+        # dropped and the numbers are full-year approximations — say so loudly.
+        residency_caveat = _DUAL_STATUS_CAVEAT
+    elif classification == "nonresident" and _is_married(profile):
         # MFJ was dropped for a confirmed married NRA — explain the §6013 election.
         residency_caveat = _SECTION_6013_CAVEAT
     elif classification is None and us_person_false:
@@ -1196,6 +1336,10 @@ def estimate_refund(
     changes: list[str] = []
     if residency_caveat is not None:
         changes.append(residency_caveat)
+    if ssn_demotion_msg is not None:
+        changes.append(ssn_demotion_msg)
+    if nra_fica_msg is not None:
+        changes.append(nra_fica_msg)
     if income.spouse is not None and not spouse_split:
         changes.append(
             "A spouse income snapshot was provided but NOT included (marital status is unconfirmed, "

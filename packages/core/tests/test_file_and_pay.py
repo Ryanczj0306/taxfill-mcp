@@ -222,3 +222,151 @@ def test_partial_pack_warns_per_missing_block_not_silent_empty(tmp_path):
 def test_plus_years_feb_29_boundary():
     # Feb 29 in a leap year + 3 years lands on a non-leap year -> clamps to Feb 28.
     assert _plus_years("2024-02-29", 3) == "2027-02-28"
+
+
+ALL_PACK_YEARS = (2019, 2020, 2021, 2022, 2023, 2024)
+
+
+# ── FIX: a return filed with Form W-7 goes to the Austin ITIN Operation ──
+
+
+def test_w7_attached_overrides_mailing_address_to_itin_operation():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-1721, state="Texas",
+                                  filing_jointly=True, attached_forms=["W-7"])])
+    assert "ITIN Operation" in r.mailing_address
+    assert "P.O. Box 149342" in r.mailing_address and "78714-9342" in r.mailing_address
+    # NOT the normal Texas with-payment (Charlotte) address.
+    assert "Charlotte" not in r.mailing_address
+    # The override is explained (why it ignores state/payment) and cited to the W-7 instructions.
+    assert any("ITIN Operation" in n and "regardless" in n for n in r.notes)
+    assert any("instructions/iw7" in c.url for c in r.citations)
+    # It's a PO box -> the USPS-only guidance fires.
+    assert any("P.O. Box" in m for m in r.mail)
+
+
+def test_w7_override_applies_without_payment_and_for_the_fw7_pack_key():
+    # Refund case (no check enclosed) + the 'fw7' form-key spelling: still Austin ITIN.
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=900, state="California",
+                                  direct_deposit=True, attached_forms=["fw7"])])
+    assert "ITIN Operation" in r.mailing_address and "78714-9342" in r.mailing_address
+
+
+def test_w7_as_its_own_manifest_item_also_goes_to_itin_operation():
+    r = _only([FilingManifestItem(form="W-7", tax_year=2023, bottom_line=0)])
+    assert r.mailing_address and "ITIN Operation" in r.mailing_address
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_w7_itin_address_ships_for_every_pack_year(year):
+    r = _only([FilingManifestItem(form="1040", tax_year=year, bottom_line=-100, state="Texas",
+                                  attached_forms=["W-7"])])
+    assert r.mailing_address and "78714-9342" in r.mailing_address
+
+
+# ── FIX: the W-7 applicant MUST sign the attached W-7 (unlike 8843-style attachments) ──
+
+
+def test_attached_w7_sign_line_says_applicant_signs_it():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-100, state="Texas",
+                                  attached_forms=["W-7", "8843"])])
+    w7_lines = [s for s in r.sign if "W-7" in s]
+    assert w7_lines, "expected a W-7 sign line"
+    assert all("do NOT sign it separately" not in s for s in w7_lines)
+    assert any("Sign Here" in s and "applicant" in s for s in w7_lines)
+    # The 8843-style rule is unchanged: attached 8843 is NOT separately signed.
+    assert any("8843" in s and "do NOT sign it separately" in s for s in r.sign)
+
+
+# ── FIX: standalone 8843 (information return) last mile ──
+
+
+def test_standalone_8843_gets_the_fixed_austin_address_and_no_return_boilerplate():
+    r = _only([FilingManifestItem(form="8843", tax_year=2023, bottom_line=0)])
+    assert r.mailing_address == "Department of the Treasury, Internal Revenue Service Center, Austin, TX 73301-0215"
+    # No payment guidance, no W-2/1099/1040-V assembly boilerplate, no state demanded.
+    assert r.payment == []
+    assert not any("W-2" in a or "1099" in a or "1040-V" in a for a in r.assemble)
+    assert not any("mailing address depends on your state" in n for n in r.notes)
+    assert "information return" in r.bottom_line and "no tax due" in r.bottom_line
+    # Signed standalone (page 2), unlike when attached to a 1040-NR.
+    assert any("page 2" in s and "sign" in s.lower() for s in r.sign)
+    # Cited to the Form 8843 instructions.
+    assert any("about-form-8843" in c.url for c in r.citations)
+
+
+def test_standalone_8843_deadlines_have_no_monetary_penalty_threat():
+    r = _only([FilingManifestItem(form="8843", tax_year=2023, bottom_line=0)])
+    # Due by the 1040-NR due date; the no-wage June date is surfaced from the pack.
+    assert any("2024-06-17" in d for d in r.deadlines)
+    # The stake is the exempt-individual day exclusion — never monetary penalties.
+    assert any("exempt-individual" in d for d in r.deadlines)
+    for d in r.deadlines:
+        if "penalt" in d.lower():
+            assert "no late-payment penalty" in d
+    assert not any("4868" in d for d in r.deadlines)
+
+
+def test_standalone_8843_ignores_state_for_the_address():
+    r = _only([FilingManifestItem(form="8843", tax_year=2023, bottom_line=0, state="California")])
+    assert "73301-0215" in r.mailing_address and "Ogden" not in r.mailing_address
+
+
+# ── FIX: two-letter state codes resolve like full names ──
+
+
+@pytest.mark.parametrize("state", ["CA", "ca", "California"])
+def test_state_codes_and_full_names_both_resolve(state):
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-800, state=state)])
+    assert "Cincinnati, OH 45280-2501" in r.mailing_address
+
+
+def test_dc_code_resolves():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=500, state="DC")])
+    assert "Kansas City, MO 64999-0002" in r.mailing_address
+
+
+def test_unknown_state_note_is_prescriptive():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-800, state="Californai")])
+    assert r.mailing_address is None
+    note = next(n for n in r.notes if "where-to-file" in n)
+    # The note tells the agent exactly what formats work.
+    assert "two-letter USPS code" in note and "'California'" in note
+
+
+# ── FIX: 1040-NR check memo and attachments are form-aware ──
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_1040nr_check_memo_names_1040nr_every_pack_year(year):
+    r = _only([FilingManifestItem(form="1040-NR", tax_year=year, bottom_line=-465)])
+    memo = next(p for p in r.payment if "payable" in p)
+    assert f'"{year} Form 1040-NR"' in memo
+    assert f'"{year} Form 1040" (or' not in memo and f'"{year} Form 1040" or' not in memo
+
+
+def test_1040nr_assemble_names_1042s():
+    r = _only([FilingManifestItem(form="1040-NR", tax_year=2023, bottom_line=-465)])
+    assert any("1042-S" in a for a in r.assemble)
+
+
+def test_plain_1040_memo_and_assemble_unchanged():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-800, state="Texas")])
+    memo = next(p for p in r.payment if "payable" in p)
+    assert '"2023 Form 1040"' in memo and "1040-NR" not in memo
+    assert not any("1042-S" in a for a in r.assemble)
+
+
+# ── FIX: deadline citation follows the form family (1040 vs 1040-NR booklet) ──
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_plain_1040_never_cites_the_1040nr_booklet(year):
+    r = _only([FilingManifestItem(form="1040", tax_year=year, bottom_line=-100, state="Texas")])
+    assert r.citations
+    assert not any("i1040nr" in c.url for c in r.citations)
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_1040nr_deadline_cites_the_nr_instructions(year):
+    r = _only([FilingManifestItem(form="1040-NR", tax_year=year, bottom_line=-100)])
+    assert any("i1040nr" in c.url for c in r.citations)
