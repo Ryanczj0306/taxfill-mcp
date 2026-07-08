@@ -74,11 +74,12 @@ Cheap, high-credibility cleanup that the audit surfaced. No new features.
       — DONE (2026-06-28) after a green `test_formpacks_states.py` round-trip; merged
       via `feat/state-rollout-al-co-mn-wi`. Working tree is now clean.
 - [x] **Reconcile the headline test count.** Verified via `pytest --collect-only`
-      and a full run (**exit 0, no collection errors**): the suite is **1,401 tests,
-      all green** (1,288 at audit + 3 eval scenarios k/l/m + 8 each for Forms 4868,
-      1040-ES, 1040-X, and W-7). The earlier figures
-      were stale/under-counted (old ROADMAP *1222*, README *~1076*, audit-sandbox
-      *~903* — the sandbox couldn't run collection). README + this file now quote **1,401**.
+      and a full run (**exit 0, no collection errors**): the suite was **1,401 tests,
+      all green** at the time of this 2026-06-28 truth-up (1,288 at audit + 3 eval
+      scenarios k/l/m + 8 each for Forms 4868, 1040-ES, 1040-X, and W-7). The earlier
+      figures were stale/under-counted (old ROADMAP *1222*, README *~1076*,
+      audit-sandbox *~903*). The count has since grown with each phase (see the
+      header); the README tests badge is kept in sync with the verified number.
 - [x] **Update this ROADMAP to reflect reality** (this rewrite): state credits
       done, 35 states (not 14), 74 packs (not 49), Phase B done, drift CI done.
 
