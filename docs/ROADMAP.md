@@ -1,19 +1,23 @@
 # TaxFill — Completion Roadmap (remaining work)
 
 The design spec is [`docs/DEV_PLAN.md`](DEV_PLAN.md). This is the forward-looking
-plan for what is **not yet done**, as of **2026-06-28**.
+plan for what is **not yet done**, as of **2026-07-07**.
 
-> **Status note (2026-06-28 rewrite).** A full claimed-vs-actual audit of the repo
-> found the previous (2026-06-19) version of this file materially **understated
-> completion**. Corrected below. In short: the project is **~85% done and v0.1 is
-> functionally code-complete** — every engine/data workstream is finished and
-> merged; what genuinely remains is (1) **launch execution** to ship v0.1 and
-> (2) the **open-ended coverage breadth** (more state form packs + four new federal
-> form types). There are **no remaining code blockers** for v0.1.
+> **Status note (2026-07-07 update).** Since the 2026-06-28 truth-up: Phase F
+> (estimator/domain completeness, F1–F10) shipped; a 5-persona real-filer review
+> (MFJ family / NRA student / RA + dual-status / NRA-spouse §6013(g)(h) couple /
+> naive UX; 46 adversarially-verified findings) drove two fix waves — Tier 1
+> (25 wrong-law/UX point fixes: NRA standard deduction, verify's independent
+> recompute over MCP, W-7/8843 logistics, intake dead-ends) and Tier 2 (the four
+> broken paths: §6013 election end-to-end, Schedule 8812 + CTC/EITC calc ops,
+> Schedule A (1040-NR) + Schedule NEC, treaty_exempt_income). What remains is
+> (1) **launch execution** (Phase A — unchanged, user-gated), (2) coverage
+> breadth (Phases C/D), and (3) the **Phase G subsystems** below (the persona
+> review's Tier 3 — every gap is DISCLOSED in product output until built).
 
 ## Where we are (verified)
 
-Done and on `main` (**1,401 tests, all green** — verified `pytest` run, exit 0):
+Done and on `main` (**1,827 tests, all green** — offline 1,741 + live-.gov 86, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (22 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -23,7 +27,7 @@ Done and on `main` (**1,401 tests, all green** — verified `pytest` run, exit 0
   list_document_kinds, extract_document, workspace_save, workspace_load,
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
-  states). Core = 20 modules (~9.5k LOC).
+  states). The `calc` tool carries 13 deterministic ops (tax, standard_deduction, se_tax, additional_medicare_tax, niit, tax_with_preferential_rates, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, child_tax_credit, eitc).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, with per-field
   provenance — K-1 is the one common document still unsupported) and the resumable
@@ -43,13 +47,14 @@ Done and on `main` (**1,401 tests, all green** — verified `pytest` run, exit 0
   skeleton (`packbuild.py` + `cli.py`), tested.
 
 **Form packs that can be FILLED today (introspect→vision-map→adversarial-audit→
-golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E,
-Form 8863, Form 2555. state — **35 states** (39 packs): CA (540 + 540NR +
+golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
+Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
+8959, 8960, 8962. state — **35 states** (39 packs): CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), **ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
-**WV (IT-140)**. **74 form packs total** (35 federal + 39 state).
+**WV (IT-140)**. **80 form packs total** (41 federal + 39 state).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
 > (Phase 0, 2026-06-28) and counted above.
@@ -306,25 +311,88 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       recommendation, dollar delta, and joint-liability caveat), **(m)** NRA-spouse
       §6013(g) election (MFJ dropped → MFS, election + worldwide-income trade-off
       surfaced in both estimate and intake, authority via `get_sources`).
-- [ ] Wire the true test count (1,401) into a CI badge / README line.
+- [x] Wire the true test count into a CI badge / README line — DONE (2026-07-01): live CI-status badge + a tests badge kept in sync with the verified count.
 
 **Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
 
 ---
 
+## Phase G — Persona-review subsystems (Tier 3; Effort: L–XL each, independent)
+
+> The 2026-07-06 five-persona review surfaced six gaps that need a **new
+> subsystem or dependency**, not a point fix. Tier 1+2 already shipped the
+> stopgaps: every item below is currently a **disclosed limitation** (an
+> estimate assumption, a prescriptive error, or a get_sources pointer), so
+> nothing fails silently — these build the real capability. Items are
+> independent and can be scheduled in any order; suggested priority ranks by
+> (population hit × dollar impact).
+
+- [ ] **G1 — Per-country treaty knowledge base (L–XL; highest value for the
+      NRA persona).** Today `treaty_exempt_income` carries an agent-confirmed
+      amount (trust-the-agent semantics) and `get_sources` points at Pub 901/519.
+      Build: a `knowledge/treaties/` data layer — per country: article, income
+      class (student/teacher/researcher wages, scholarships), dollar/time limits,
+      saving-clause exceptions, eligibility predicates (visa category + period) —
+      cited to the treaty text + technical explanation on irs.gov; a calc op
+      `treaty_benefit(country, visa_periods, income_class, year)`; estimator/
+      Schedule OI integration (auto-fill articles/amounts). Start with the top
+      student countries (China, India, Korea, Canada, Mexico). The per-period
+      eligibility rule (pitfall P-004) already has engine groundwork in
+      residency.py.
+- [ ] **G2 — Form 2441 (child & dependent care credit) (M–L).** The persona
+      review showed its absence can flip an MFJ-vs-MFS recommendation. Build:
+      knowledge params (35%→20% AGI slide, $3,000/$6,000 caps, earned-income
+      limits), a calc op, a 2441 form pack (AcroForm, standard pipeline),
+      estimator field (care expenses + care-provider count), intake question.
+- [ ] **G3 — Form 8962 monthly method (M).** `ptc_annual` covers full-year
+      coverage; part-year/changing coverage (the common 1095-A case) needs the
+      lines 12–23 monthly grid: a `ptc_monthly` calc op taking 12 rows of
+      premium/SLCSP/APTC (the 1095-A DocSpec already extracts them), plus
+      estimator wiring. The f8962 pack already maps the monthly grid fields.
+- [ ] **G4 — State tax calc ops (L–XL, per state).** State returns fill/verify
+      today but the tax LINES are model arithmetic — no state calc op exists and
+      rates live only in pack comments. Build per adopted state: a knowledge
+      `tax` block (rates/brackets/exemptions, cited), a `state_tax` calc op
+      keyed by jurisdiction, and relation coverage. Start with the flat-rate
+      states (IL 4.95%, PA 3.07%, ...) where one op covers the whole return,
+      then CA/NY brackets.
+- [ ] **G5 — Dual-status return corridor (L).** residency correctly flags
+      `dual_status_candidate` and the estimator now restricts statuses and
+      discloses, but there is no prepared path for the actual split-year
+      filing (1040 + 1040-NR statement, first-year choice election text,
+      residency start-date math). Build: a dual-status guide surface (roadmap
+      steps + statement checklist in file_and_pay), first-year-choice election
+      support in workspace positions, and eval scenarios for the two common
+      shapes (F-1→H-1B October; arrival-year election).
+- [ ] **G6 — FICA-refund flow (Form 843 + 8316) (M).** Exempt F/J students
+      with erroneous Social Security/Medicare withholding get an intake note +
+      estimate disclosure today. Build: Form 843 + 8316 packs (plain AcroForms),
+      a file_and_pay path (separate mailing, NOT with the 1040-NR), and an
+      intake follow-up that computes the refund amount from W-2 boxes 4/6.
+
+**Acceptance (each item):** the current disclosure is REPLACED by the working
+capability; knowledge cited to primary sources (two-pass verification for
+year-varying numbers); calc ops golden-tested; packs vision-audited; an eval
+scenario exercises the persona that motivated it.
+
+---
+
 ## Phased sequencing (recommended order)
 
-1. **Phase 0** (hours) — commit untracked packs, fix test-count truth. Do today.
+1. **Phase 0** — DONE. **Phase E** — DONE. **Phase F** — DONE (2026-07-06).
+   Persona-review Tiers 1+2 — DONE (2026-07-07).
 2. **Phase A** (1–2 wks) — ship v0.1. Highest leverage: flips the product from
-   "from-source only" to installable. Only external dep is a PyPI token.
-3. **Phase E** — DONE (all 13 eval scenarios a–m green); the only leftover is wiring
-   the verified test count into a CI badge / README line.
-4. **Phase C** (months, parallelizable) — the long pole. Roll out resident state
-   packs by population using the `introspect` CLI; defer hard states (C3) until the
-   downloader fix + overlay filler are built.
-5. **Phase D** — new federal form types **DONE** (✅ 4868 + ✅ 1040-ES + ✅ 1040-X
-   + ✅ W-7); what remains in Phase D is breadth follow-ons (more tax years for
-   state packs, community pack-contribution pipeline).
+   "from-source only" to installable. Only external dep is a PyPI token; the
+   demo GIF and the 20-min acceptance run are the other human steps.
+3. **Phase G** (per-item, independent) — the persona-review subsystems above.
+   Suggested order: G1 treaty KB → G2 Form 2441 → G3 monthly 8962 → G6 FICA
+   843 → G5 dual-status corridor → G4 state calc (open-ended). Each replaces a
+   disclosed limitation, so nothing blocks Phase A.
+4. **Phase C** (months, parallelizable) — coverage breadth: C2 nonresident/
+   part-year state forms, C3 hard states (MA fetch, IA/NM classification,
+   CT/SC hand-fill, UT sourcing).
+5. **Phase D** — D1 DONE; D2 = more tax years for state packs + the community
+   pack-contribution pipeline.
 
 Phases A, E, and the start of C are largely independent and can run in parallel.
 Within C, resident packs (C1) are the long pole; the now-working `introspect` CLI
