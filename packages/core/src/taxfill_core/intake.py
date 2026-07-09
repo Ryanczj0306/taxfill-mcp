@@ -508,6 +508,26 @@ def _household_questions(
                       disambiguation="We follow up per dependent for date of birth and SSN — those facts gate "
                                      "the credits."))
 
+    # Dependent-care fact (Form 2441, Phase G item G2): asked once dependents
+    # exist, until a dependent-care entry is recorded in the document inventory
+    # (any status — 'not_applicable' records a 'no', mirroring the 1095-A
+    # pattern; the Household schema has no dedicated fact field).
+    if hh.dependents and not any(_mentions_dependent_care(d.kind) for d in profile.income_documents):
+        both = " (both spouses)" if married else ""
+        out.append(_q("household.dependent_care", "household",
+                      f"Did you pay anyone to care for a child or other qualifying person so you{both} "
+                      f"could work or look for work?",
+                      "Care paid so you could work can be worth the child and dependent care credit "
+                      "(Form 2441) — a credit that is silently lost if nobody asks.",
+                      "income_documents",
+                      disambiguation="If yes, add a 'dependent care provider statement' entry to the "
+                                     "document inventory (status 'have' or 'missing') — Form 2441 "
+                                     "requires each provider's name, address, and TIN (SSN or EIN), and "
+                                     "the credit computes from the calc op dependent_care_credit "
+                                     "(expenses + how many qualifying persons). If no, add the entry "
+                                     "with status 'not_applicable' so the answer is recorded and the "
+                                     "interview stops asking."))
+
     # Per-dependent follow-ups: a name-only dependent cannot be evaluated for the
     # CTC/ODC/EITC (the estimator EXCLUDES dependents with no DOB), so ask until
     # every listed dependent has a date of birth and an SSN answer.
@@ -650,6 +670,13 @@ def _mentions_1095a(kind: str) -> bool:
     return "1095A" in re.sub(r"[^0-9A-Z]", "", kind.upper())
 
 
+def _mentions_dependent_care(kind: str) -> bool:
+    """True for any inventory entry recording the dependent-care fact ('dependent
+    care provider statement', 'Form 2441', 'childcare receipts', ...)."""
+    k = re.sub(r"[^0-9A-Z]", "", kind.upper())
+    return "2441" in k or "DEPENDENTCARE" in k or "CHILDCARE" in k or "DAYCARE" in k
+
+
 def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
     if not profile.income_documents:
         out.append(_q("income_documents.inventory", "income_documents",
@@ -718,7 +745,11 @@ def _fica_exemption_note(profile: Profile, notes: list[str], tax_year: int | Non
         "boxes 4 and 6: nonzero amounts there were likely withheld in error. Recovery is separate from this "
         "return — ask the employer for a refund first; if the employer will not refund it, file Form 843 with "
         "Form 8316 (mailed separately, NOT attached to the return; IRS Pub. 519, 'Refund of Taxes Withheld "
-        "in Error')."
+        "in Error'). If boxes 4/6 are nonzero, ASK THE USER: did your employer refuse or fail to refund the "
+        "FICA withheld in error? If yes, the Form 843 + Form 8316 claim path applies — the claim amount is "
+        "W-2 box 4 + box 6 (Social Security plus Medicare tax) from each affected W-2, Form 8316 serves as "
+        "the employer-refusal statement, and file_and_pay (manifest form '843' with attached_forms "
+        "['8316']) produces the claim's own mailing checklist."
     )
 
 

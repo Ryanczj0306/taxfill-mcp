@@ -34,6 +34,7 @@ import pytest
 from taxfill_core.calc import (
     additional_medicare_tax,
     child_tax_credit,
+    dependent_care_credit,
     education_credits,
     eitc,
     excess_ss,
@@ -42,8 +43,10 @@ from taxfill_core.calc import (
     presence_days,
     presence_days_by_year,
     ptc_annual,
+    ptc_monthly,
     se_tax,
     standard_deduction,
+    state_tax,
     student_loan_interest_deduction,
     tax_from_taxable_income,
     tax_with_preferential_rates,
@@ -1256,6 +1259,142 @@ def test_ptc_unshipped_year_error_is_prescriptive():
 
 
 # ---------------------------------------------------------------------------
+# Premium Tax Credit, MONTHLY method (Phase G3) — Form 8962 lines 12-23 grid:
+# 8b = round(8a/12); per covered month (d) = max(0, SLCSP - 8b), (e) =
+# min(premium, (d)); line 24 = sum of (e); the SAME IRC 36B(c)(1) gates and
+# Table 5 limitation as the annual method.
+# ---------------------------------------------------------------------------
+
+
+def test_ptc_monthly_uniform_year_equals_annual_golden():
+    # GOLDEN equivalence: with 12 uniform months and line 8a divisible by 12 the
+    # monthly grid must reproduce the annual method exactly. MFJ household of 2,
+    # income 36,620 = exactly 2 x 18,310 -> line 5 = 200 -> figure 0.0200;
+    #   8a = 36,620 x 0.02 = 732.40 -> 732; 8b = 732/12 = 61 (no rounding drift).
+    #   Per month: (d) = 500 - 61 = 439; (e) = min(600, 439) = 439; line 24 = 12 x 439 = 5,268.
+    #   Line 25 = 12 x 300 = 3,600 -> net PTC 1,668.
+    monthly = [{"premium": 600, "slcsp": 500, "aptc": 300}] * 12
+    m = ptc_monthly(36_620, 2, monthly, filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    a = ptc_annual(36_620, 2, 7_200, 6_000, 3_600, filing_status="married_filing_jointly",
+                   knowledge_dir=KNOWLEDGE_DIR)
+    assert m.fpl_amount == a.fpl_amount == 18_310
+    assert m.fpl_pct == a.fpl_pct == 200
+    assert m.applicable_figure == a.applicable_figure == Decimal("0.0200")
+    assert m.contribution == a.contribution == 732
+    assert m.monthly_contribution == 61
+    assert m.months_covered == 12
+    assert m.ptc == a.ptc == 5_268
+    assert m.net_ptc == a.net_ptc == 1_668
+    assert m.repayment == a.repayment == 0
+    assert "monthly method" in m.work and "line 8b" in m.work
+
+
+def test_ptc_monthly_part_year_seven_months_hand_derived():
+    # Hand-derived part-year case (the common 1095-A shape): coverage Jan-Jul only.
+    # Income 27,180 (200% FPL): 8a = 543.60 -> 544; 8b = 544/12 = 45.33 -> 45.
+    # Per covered month: (d) = 420 - 45 = 375; (e) = min(450, 375) = 375; line 24 = 7 x 375 = 2,625.
+    # Line 25 = 7 x 380 = 2,660 -> excess 35, under the Table 5 single cap (900) -> repay 35.
+    monthly = [{"premium": 450, "slcsp": 420, "aptc": 380}] * 7 + [{}] * 5
+    r = ptc_monthly(27_180, 1, monthly, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 200
+    assert r.contribution == 544
+    assert r.monthly_contribution == 45
+    assert r.months_covered == 7
+    assert r.ptc == 2_625
+    assert r.net_ptc == 0
+    assert r.repayment == 35
+    # The work trail shows the grid month by month, only for covered months.
+    assert "Jul" in r.work and "Aug" not in r.work
+
+
+def test_ptc_monthly_part_year_repayment_capped():
+    # 5 covered months at 147% FPL (figure 0.0000, 8b = 0): PTC = 5 x min(300, 280) = 1,400;
+    # APTC = 5 x 700 = 3,500 -> excess 2,100, capped by Table 5 single below 200% = 350.
+    monthly = [{"premium": 300, "slcsp": 280, "aptc": 700}] * 5 + [{}] * 7
+    r = ptc_monthly(20_000, 1, monthly, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.fpl_pct == 147
+    assert r.monthly_contribution == 0
+    assert r.months_covered == 5
+    assert r.ptc == 1_400
+    assert r.net_ptc == 0
+    assert r.repayment == 350
+
+
+def test_ptc_monthly_inherits_mfs_gate_and_relief():
+    # The IRC 36B(c)(1)(C) MFS denial applies to the monthly method identically:
+    # PTC 0, full APTC (3,500) excess, capped by the Table 5 'other' column (700).
+    monthly = [{"premium": 300, "slcsp": 280, "aptc": 700}] * 5 + [{}] * 7
+    denied = ptc_monthly(20_000, 1, monthly, filing_status="married_filing_separately",
+                         knowledge_dir=KNOWLEDGE_DIR)
+    assert denied.ptc == 0
+    assert denied.net_ptc == 0
+    assert denied.repayment == 700
+    assert "36B(c)(1)(C)" in denied.work and "relief" in denied.work
+    assert denied.inputs["mfs_relief_exception"] is False
+    # The relief exception restores the monthly computation: PTC 1,400, APTC 500 -> net 900.
+    relief_rows = [{"premium": 300, "slcsp": 280, "aptc": 100}] * 5 + [{}] * 7
+    relief = ptc_monthly(20_000, 1, relief_rows, filing_status="married_filing_separately",
+                         mfs_relief_exception=True, knowledge_dir=KNOWLEDGE_DIR)
+    assert relief.ptc == 1_400
+    assert relief.net_ptc == 900
+    assert relief.repayment == 0
+    assert "relief" in relief.work
+
+
+def test_ptc_monthly_inherits_below_100_fpl_gates():
+    # 13,000 / 13,590 = 95% FPL. No APTC -> not an applicable taxpayer, PTC $0.
+    no_aptc = ptc_monthly(13_000, 1, [{"premium": 500, "slcsp": 420}] * 12, knowledge_dir=KNOWLEDGE_DIR)
+    assert no_aptc.fpl_pct == 95
+    assert no_aptc.ptc == 0 and no_aptc.net_ptc == 0 and no_aptc.repayment == 0
+    assert "below 100%" in no_aptc.work and "safe harbor" in no_aptc.work
+    # With APTC the estimated-income safe harbor can apply: compute, with the caveat.
+    with_aptc = ptc_monthly(13_000, 1, [{"premium": 500, "slcsp": 420, "aptc": 250}] * 12,
+                            knowledge_dir=KNOWLEDGE_DIR)
+    assert with_aptc.ptc == 5_040  # 12 x min(500, 420 - 0)
+    assert with_aptc.net_ptc == 2_040
+    assert "CAVEAT" in with_aptc.work and "safe harbor" in with_aptc.work
+
+
+def test_ptc_monthly_annual_aptc_cross_check():
+    monthly = [{"premium": 450, "slcsp": 420, "aptc": 380}] * 7 + [{}] * 5
+    # Consistent 1095-A line 33C passes and changes nothing.
+    ok = ptc_monthly(27_180, 1, monthly, annual_aptc=2_660, knowledge_dir=KNOWLEDGE_DIR)
+    assert ok.repayment == 35
+    # A mismatched total is rejected prescriptively (never silently preferred).
+    with pytest.raises(ValueError, match=r"annual_aptc.*33C"):
+        ptc_monthly(27_180, 1, monthly, annual_aptc=2_000, knowledge_dir=KNOWLEDGE_DIR)
+    # With NO monthly APTC breakdown, the annual total stands in as line 25.
+    no_breakdown = [{"premium": 450, "slcsp": 420}] * 7 + [{}] * 5
+    used = ptc_monthly(27_180, 1, no_breakdown, annual_aptc=2_660, knowledge_dir=KNOWLEDGE_DIR)
+    assert used.repayment == 35
+    assert "used as the line 25 total" in used.work
+
+
+def test_ptc_monthly_input_validation():
+    row = {"premium": 450, "slcsp": 420, "aptc": 380}
+    with pytest.raises(TypeError, match="list of 12"):
+        ptc_monthly(27_180, 1, row, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="EXACTLY 12"):
+        ptc_monthly(27_180, 1, [row] * 7, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(TypeError, match=r"monthly\[3\] \(April\)"):
+        ptc_monthly(27_180, 1, [row] * 3 + [420] + [row] * 8, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match=r"unknown key.*premiums"):
+        ptc_monthly(27_180, 1, [{"premiums": 450}] + [{}] * 11, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match=r"monthly\[0\]\.slcsp must be >= 0"):
+        ptc_monthly(27_180, 1, [{"slcsp": -1}] + [{}] * 11, knowledge_dir=KNOWLEDGE_DIR)
+    # The shared gates fire with the annual method's exact messages.
+    with pytest.raises(ValueError, match="household_size"):
+        ptc_monthly(27_180, 0, [row] * 12, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="state"):
+        ptc_monthly(27_180, 1, [row] * 12, state="guam", knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="mfs_relief_exception"):
+        ptc_monthly(27_180, 1, [row] * 12, filing_status="single",
+                    mfs_relief_exception=True, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match=r"no tax\.ptc block"):
+        ptc_monthly(27_180, 1, [row] * 12, year=2019, knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
 # Phase F ops across every supported year: the five statutory/indexed ops ship
 # for 2019-2024 (capital-gains breakpoints DIFFER per year — Rev. Procs
 # 2018-57 .. 2023-34); the PTC block exists only for 2023-2024.
@@ -1700,3 +1839,405 @@ def test_ctc_2021_arpa_matches_estimate_refund():
                          children_under_6=1, knowledge_dir=KNOWLEDGE_DIR)
     assert labels["Less: child tax credit (2021 — fully refundable)"] == -r.actc_refundable
     assert r.actc_refundable == 6_100
+
+
+# ---------------------------------------------------------------------------
+# Child & dependent care credit (Form 2441 -> Schedule 3 line 2) — Phase G, G2.
+# Golden values from the researched/verified per-year table: the f2441 line 8
+# decimal tables (i2441/f2441, 2019-2024; the 2021 i2441 Phaseout Schedule,
+# p. 6) and IRC 21 — every bracket checkpoint below is a published table row.
+# ---------------------------------------------------------------------------
+
+
+def test_dependent_care_low_agi_35_percent():
+    # 2023, AGI $0-15,000 bracket -> .35; one qualifying person caps expenses at $3,000.
+    r = dependent_care_credit(3_600, 1, 30_000, agi=14_000, year=2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.allowed_expenses == 3_000
+    assert r.applicable_percentage == Decimal("0.35")
+    assert r.credit == 1_050
+    assert r.refundable is False
+    assert "Credit Limit Worksheet" in r.work           # nonrefundable-limited-by-tax disclosure
+    assert "provider's name, address, and TIN" in r.work
+    assert r.citation.url == "https://www.irs.gov/pub/irs-prior/i2441--2023.pdf"
+
+
+def test_dependent_care_high_agi_20_percent_floor():
+    # "43,000 — No limit = .20" (2023 form line 8 table); two-or-more cap $6,000.
+    r = dependent_care_credit(9_000, 2, 80_000, agi=95_000, year=2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.allowed_expenses == 6_000
+    assert r.applicable_percentage == Decimal("0.20")
+    assert r.credit == 1_200
+
+
+@pytest.mark.parametrize(
+    ("agi", "pct"),
+    [
+        (15_000, "0.35"),   # boundary keeps the higher rate (over-X-but-not-over-Y)
+        (15_001, "0.34"),   # one dollar over -> or-fraction-thereof rounds UP
+        (29_000, "0.28"),   # published row 27,000-29,000 = .28
+        (43_000, "0.21"),   # published row 41,000-43,000 = .21 (exactly 43,000 stays .21)
+        (43_001, "0.20"),   # over 43,000 -> the .20 floor
+    ],
+)
+def test_dependent_care_percentage_slide_published_rows(agi, pct):
+    r = dependent_care_credit(3_000, 1, 50_000, agi=agi, year=2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.applicable_percentage == Decimal(pct)
+
+
+def test_dependent_care_2021_arpa_50_percent_and_refundable():
+    # 2021 ARPA: caps $8,000/$16,000, 50% at AGI <= $125,000, refundable (abode test).
+    r = dependent_care_credit(
+        20_000, 2, 60_000, spouse_earned_income=50_000, agi=120_000,
+        filing_status="married_filing_jointly", year=2021, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.allowed_expenses == 16_000
+    assert r.applicable_percentage == Decimal("0.50")
+    assert r.credit == 8_000
+    assert r.refundable is True
+    assert "principal place of abode" in r.work         # the line B test is caller judgment
+    assert "line B" in r.work
+
+
+@pytest.mark.parametrize(
+    ("agi", "pct"),
+    [
+        (125_000, "0.50"),  # "$125,000 or less" keeps .50
+        (150_000, "0.37"),  # 149,000-151,000 row of the 2021 Phaseout Schedule
+        (183_000, "0.21"),  # 181,000-183,000 = .21 (boundary keeps the higher rate)
+        (183_001, "0.20"),  # the .20 plateau begins
+        (400_000, "0.20"),  # plateau holds through 400,000
+        (410_000, "0.15"),  # second slide: 408,000-410,000 = .15
+        (438_000, "0.01"),  # 436,000-438,000 = .01 — exactly 438,000 is 19 increments
+        (438_001, "0.00"),  # "438,000 — No limit = .00" (the or-fraction rule's 20th step)
+        (500_000, "0.00"),
+    ],
+)
+def test_dependent_care_2021_dual_slide_published_rows(agi, pct):
+    r = dependent_care_credit(8_000, 1, 999_999, agi=agi, year=2021, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.applicable_percentage == Decimal(pct)
+
+
+def test_dependent_care_2021_zero_point_gives_no_credit_and_not_refundable():
+    r = dependent_care_credit(8_000, 1, 999_999, agi=440_000, year=2021, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.credit == 0
+    assert r.refundable is False  # a $0 credit is never flagged refundable
+
+
+def test_dependent_care_employer_benefit_offset():
+    # W-2 box 10 benefits reduce BOTH the cap (line 29) and the countable
+    # expenses (line 30): $6,000 expenses, $5,000 benefits -> $1,000 base.
+    r = dependent_care_credit(
+        6_000, 2, 40_000, spouse_earned_income=40_000, agi=90_000,
+        filing_status="married_filing_jointly", year=2023, employer_benefits=5_000,
+        knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.allowed_expenses == 1_000
+    assert r.credit == 200  # 20% x 1,000
+    assert "box 10" in r.work and "lines 24+25" in r.work  # the offset approximation is disclosed
+
+
+def test_dependent_care_mfj_spouse_earned_income_limitation():
+    # Line 6 is the SMALLEST of line 3/4/5 — the low-earning spouse binds.
+    r = dependent_care_credit(
+        6_000, 2, 50_000, spouse_earned_income=2_500, agi=60_000,
+        filing_status="married_filing_jointly", year=2023, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.allowed_expenses == 2_500
+    assert r.credit == 500  # 20% x 2,500
+
+
+def test_dependent_care_mfj_requires_spouse_earned_income():
+    with pytest.raises(ValueError) as exc:
+        dependent_care_credit(
+            6_000, 2, 50_000, agi=60_000, filing_status="married_filing_jointly",
+            year=2023, knowledge_dir=KNOWLEDGE_DIR,
+        )
+    msg = str(exc.value)
+    assert "spouse_earned_income" in msg
+    # The deemed-income rule is named so a student/disabled-spouse case is not a dead end.
+    assert "$250" in msg and "$500" in msg
+    assert "judgment" in msg
+
+
+def test_dependent_care_mfs_gate():
+    r = dependent_care_credit(
+        3_000, 1, 30_000, agi=20_000, filing_status="married_filing_separately",
+        year=2023, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.credit == 0 and r.allowed_expenses == 0
+    assert "married persons must file a joint return" in r.work
+    # All three treated-as-unmarried conditions are quoted.
+    assert "last 6 months" in r.work
+    assert "main home" in r.work
+    assert "more than half the cost" in r.work
+
+
+def test_dependent_care_earned_income_limitation_own_earnings():
+    # A single filer's own earned income binds when below the capped expenses.
+    r = dependent_care_credit(3_000, 1, 1_200, agi=1_200, year=2023, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.allowed_expenses == 1_200
+    assert r.credit == 420  # 35% x 1,200
+    # The deemed $250/$500 student/disabled rule is quoted as agent judgment.
+    assert "$250 per month" in r.work and "judgment" in r.work
+
+
+@pytest.mark.parametrize(
+    ("year", "cap_one", "cap_two", "max_pct"),
+    [
+        (2019, 3_000, 6_000, "0.35"),
+        (2020, 3_000, 6_000, "0.35"),
+        (2021, 8_000, 16_000, "0.50"),
+        (2022, 3_000, 6_000, "0.35"),
+        (2023, 3_000, 6_000, "0.35"),
+        (2024, 3_000, 6_000, "0.35"),
+    ],
+)
+def test_dependent_care_ships_for_every_supported_year(year, cap_one, cap_two, max_pct):
+    one = dependent_care_credit(99_999, 1, 99_999, agi=0, year=year, knowledge_dir=KNOWLEDGE_DIR)
+    two = dependent_care_credit(99_999, 2, 99_999, agi=0, year=year, knowledge_dir=KNOWLEDGE_DIR)
+    assert one.allowed_expenses == cap_one
+    assert two.allowed_expenses == cap_two
+    assert one.applicable_percentage == Decimal(max_pct)
+    assert one.citation.url == f"https://www.irs.gov/pub/irs-prior/i2441--{year}.pdf"
+
+
+def test_dependent_care_missing_block_error_is_prescriptive(tmp_path):
+    # A pack without tax.dependent_care must refuse with the exact fix.
+    import yaml
+
+    raw = yaml.safe_load((KNOWLEDGE_DIR / "federal" / "2023.yaml").read_text())
+    del raw["tax"]["dependent_care"]
+    fed = tmp_path / "federal"
+    fed.mkdir()
+    (fed / "2023.yaml").write_text(yaml.dump(raw, sort_keys=False))
+    with pytest.raises(ValueError, match=r"tax\.dependent_care") as exc:
+        dependent_care_credit(3_000, 1, 30_000, agi=20_000, year=2023, knowledge_dir=tmp_path)
+    assert "Form 2441" in str(exc.value)
+
+
+def test_dependent_care_input_validation():
+    with pytest.raises(ValueError, match="qualifying_persons must be >= 1"):
+        dependent_care_credit(3_000, 0, 30_000, agi=20_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="expenses must be >= 0"):
+        dependent_care_credit(-1, 1, 30_000, agi=20_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="earned_income must be >= 0"):
+        dependent_care_credit(3_000, 1, -5, agi=20_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="employer_benefits must be >= 0"):
+        dependent_care_credit(3_000, 1, 30_000, agi=20_000, employer_benefits=-1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        dependent_care_credit(3_000, 1, 30_000, agi=20_000, filing_status="widowed", knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ---------------------------------------------------------------------------
+# state_tax (Phase G item G4 — the flat-rate state income-tax line)
+# ---------------------------------------------------------------------------
+# Goldens are HAND-DERIVED from the verified 2023 state DOR data (rates and
+# exemption/deduction amounts quoted in each state pack's tax block):
+#   tax = irs_round(max(0, base - exemptions - standard deduction) x flat rate)
+
+
+def test_state_tax_il_golden_single_one_exemption():
+    # (50,000 - 2,425) x 0.0495 = 47,575 x 0.0495 = 2,354.9625 -> 2,355.
+    r = state_tax("il", 50_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tax == 2_355
+    assert r.base_after_exemptions == 47_575
+    assert r.rate == Decimal("0.0495")
+    assert r.base_kind == "federal_agi"
+    assert "IL-1040 Line 12" in r.work and "4.95%" in r.work
+    assert "tax.illinois.gov" in r.citation.url
+    # The base the CALLER must supply is documented in the work (fed AGI +/- IL mods).
+    assert "federal AGI" in r.work
+
+
+def test_state_tax_il_mfj_both_exemptions():
+    # (80,000 - 2 x 2,425) x 0.0495 = 75,150 x 0.0495 = 3,719.925 -> 3,720.
+    r = state_tax(
+        "il", 80_000, exemptions_count=2, filing_status="married_filing_jointly",
+        knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.tax == 3_720
+    assert r.base_after_exemptions == 75_150
+
+
+def test_state_tax_il_dependents_are_refused_as_unverified():
+    # IL's per-dependent amount (Line 10d via Schedule IL-E/EIC) was NOT independently
+    # verified, so the pack ships no 'dependent' amount — never a silent $0.
+    with pytest.raises(ValueError) as exc:
+        state_tax("il", 50_000, exemptions_count=1, dependents_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    msg = str(exc.value)
+    assert "dependent" in msg and "IL 2023" in msg
+    # The IL work string surfaces the unshipped-dependent disclosure from the pack notes.
+    r = state_tax("il", 50_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    assert "Schedule IL-E/EIC" in r.work and "not independently verified" in r.work
+
+
+def test_state_tax_pa_no_exemption_flat_multiply():
+    # PA: 61,000 x 0.0307 = 1,872.70 -> 1,873 — the op multiplies the supplied
+    # eight-class PA base only (no exemptions, no standard deduction).
+    r = state_tax("pa", 61_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tax == 1_873
+    assert r.base_after_exemptions == 61_000
+    assert r.rate == Decimal("0.0307")
+    assert r.base_kind == "state_gross_income"
+    assert "eight" in r.work and "loss in one class" in r.work.lower()
+    assert "no exemptions or standard deduction" in r.work
+    assert "pa.gov" in r.citation.url
+
+
+def test_state_tax_pa_rejects_exemption_counts():
+    with pytest.raises(ValueError, match="no 'personal' exemption"):
+        state_tax("pa", 61_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="no 'dependent' exemption"):
+        state_tax("pa", 61_000, dependents_count=2, knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_state_tax_in_golden_with_dependent():
+    # (50,000 - 1,000 personal - 1,000 dependent) x 0.0315 = 48,000 x 0.0315 = 1,512.
+    r = state_tax("in", 50_000, exemptions_count=1, dependents_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tax == 1_512
+    assert r.base_after_exemptions == 48_000
+    assert r.rate == Decimal("0.0315")
+    # County add-on taxes are disclosed as not modeled (prescriptive work note).
+    assert "COUNTY" in r.work or "county" in r.work
+    # The verifier's first-year $3,000 mechanics are quoted as a note, not encoded.
+    assert "could have been claimed" in r.work
+    assert "forms.in.gov" in r.citation.url
+
+
+def test_state_tax_mi_golden_exemptions_apply_to_dependents_too():
+    # MI: taxpayer, spouse, and dependents all take the same $5,400 (line 9a):
+    # (60,000 - 3 x 5,400) x 0.0405 = 43,800 x 0.0405 = 1,773.90 -> 1,774.
+    r = state_tax(
+        "mi", 60_000, exemptions_count=2, dependents_count=1,
+        filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.tax == 1_774
+    assert r.base_after_exemptions == 43_800
+    assert r.rate == Decimal("0.0405")
+    # The one-year-only rate caveat ships in the pack notes and reaches the work.
+    assert "ONE-YEAR" in r.work
+    assert "michigan.gov" in r.citation.url
+
+
+def test_state_tax_nc_standard_deduction_by_status():
+    # Single: (50,000 - 12,750) x 0.0475 = 37,250 x 0.0475 = 1,769.375 -> 1,769.
+    r = state_tax("nc", 50_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tax == 1_769
+    assert r.base_after_exemptions == 37_250
+    # MFJ: (80,000 - 25,500) x 0.0475 = 54,500 x 0.0475 = 2,588.75 -> 2,589.
+    mfj = state_tax("nc", 80_000, filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert mfj.tax == 2_589
+    # HoH: (50,000 - 19,125) x 0.0475 = 30,875 x 0.0475 = 1,466.5625 -> 1,467.
+    hoh = state_tax("nc", 50_000, filing_status="head_of_household", knowledge_dir=KNOWLEDGE_DIR)
+    assert hoh.tax == 1_467
+    # The AGI-tiered child deduction is NOT a per-dependent exemption here.
+    with pytest.raises(ValueError, match="child deduction"):
+        state_tax("nc", 50_000, dependents_count=2, knowledge_dir=KNOWLEDGE_DIR)
+    assert "child deduction" in r.work.lower()
+    assert "ncdor.gov" in r.citation.url
+
+
+def test_state_tax_nc_qss_uses_the_mfj_column():
+    qss = state_tax("nc", 80_000, filing_status="qualifying_surviving_spouse", knowledge_dir=KNOWLEDGE_DIR)
+    mfj = state_tax("nc", 80_000, filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert qss.tax == mfj.tax == 2_589
+    assert "married-filing-jointly column" in qss.work
+
+
+def test_state_tax_co_matches_the_booklet_tax_table_row():
+    # The 2023 CO booklet tax table row $30,700-$30,800 prints $1,353 — exactly
+    # 4.4% of the $30,750 midpoint: 30,750 x 0.044 = 1,353.00 -> 1,353.
+    r = state_tax("co", 30_750, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tax == 1_353
+    assert r.base_after_exemptions == 30_750
+    assert r.rate == Decimal("0.044")
+    assert r.base_kind == "federal_taxable_income"
+    # The caller supplies federal TAXABLE income (not AGI) — documented in the work,
+    # along with the booklet-table rounding caveat.
+    assert "TAXABLE income" in r.work
+    assert "tax table" in r.work
+    assert "tax.colorado.gov" in r.citation.url
+
+
+def test_state_tax_ky_one_standard_deduction_even_mfj():
+    # KY: ONE $2,980 standard deduction per return, NOT doubled for a joint return:
+    # (50,000 - 2,980) x 0.045 = 47,020 x 0.045 = 2,115.90 -> 2,116 for both statuses.
+    single = state_tax("ky", 50_000, knowledge_dir=KNOWLEDGE_DIR)
+    mfj = state_tax("ky", 50_000, filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert single.tax == mfj.tax == 2_116
+    assert single.base_after_exemptions == 47_020
+    assert single.rate == Decimal("0.045")
+    assert "ONE $2,980" in single.work or "NOT doubled" in single.work
+    # The unverified KY personal credits / family size credit are disclosed as not shipped.
+    assert "Family Size Tax Credit" in single.work
+    assert "revenue.ky.gov" in single.citation.url
+
+
+def test_state_tax_az_standard_deduction_and_verifier_exemption_lines():
+    # AZ single: (50,000 - 13,850) x 0.025 = 36,150 x 0.025 = 903.75 -> 904.
+    r = state_tax("az", 50_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tax == 904
+    assert r.base_after_exemptions == 36_150
+    assert r.rate == Decimal("0.025")
+    # MFJ: (100,000 - 27,700) x 0.025 = 72,300 x 0.025 = 1,807.50 -> 1,808.
+    mfj = state_tax("az", 100_000, filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert mfj.tax == 1_808
+    # The VERIFIER's corrected Form 140 line 38-41 exemptions ship as data and are
+    # disclosed (not applied): age 65+ $2,100 / blind $1,500 / other $2,300 /
+    # qualifying parent-grandparent $10,000.
+    for needle in ("$2,100", "$1,500", "$2,300", "$10,000", "Line 38", "Line 41"):
+        assert needle in r.work, needle
+    # Dependents are the Line 49 CREDIT in AZ, never a base exemption.
+    with pytest.raises(ValueError, match="no 'dependent' exemption"):
+        state_tax("az", 50_000, dependents_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    # AZ has no personal exemption either.
+    with pytest.raises(ValueError, match="no 'personal' exemption"):
+        state_tax("az", 50_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    assert "Dependent Tax Credit" in r.work
+    assert "azdor.gov" in r.citation.url
+
+
+def test_state_tax_base_never_goes_negative():
+    # Exemptions + deduction above the base clamp to $0, never negative tax.
+    r = state_tax("il", 2_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tax == 0 and r.base_after_exemptions == 0
+    assert "clamped to $0" in r.work
+    nc = state_tax("nc", 10_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert nc.tax == 0 and nc.base_after_exemptions == 0
+
+
+def test_state_tax_unknown_state_lists_the_supported_ones():
+    # TX has no income tax and no pack; the error must list the shipped flat states.
+    with pytest.raises(ValueError) as exc:
+        state_tax("tx", 50_000, knowledge_dir=KNOWLEDGE_DIR)
+    msg = str(exc.value)
+    for code in ("az", "co", "il", "in", "ky", "mi", "nc", "pa"):
+        assert code in msg
+    assert "get_sources" in msg
+
+
+def test_state_tax_state_without_block_is_refused_prescriptively():
+    # CA ships a pack (graduated rates) but no flat-rate tax block — same error shape.
+    with pytest.raises(ValueError) as exc:
+        state_tax("ca", 50_000, knowledge_dir=KNOWLEDGE_DIR)
+    msg = str(exc.value)
+    assert "'ca'" in msg
+    assert "il" in msg and "pa" in msg  # lists the supported states
+    assert "never invent" in msg
+
+
+def test_state_tax_input_validation():
+    with pytest.raises(ValueError, match="exemptions_count must be >= 0"):
+        state_tax("il", 50_000, exemptions_count=-1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(TypeError, match="dependents_count"):
+        state_tax("in", 50_000, dependents_count=True, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        state_tax("nc", 50_000, filing_status="married", knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="not a number"):
+        state_tax("pa", "lots", knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_state_tax_accepts_string_and_float_money():
+    assert state_tax("pa", "61,000", knowledge_dir=KNOWLEDGE_DIR).tax == 1_873
+    assert state_tax("pa", 61_000.00, knowledge_dir=KNOWLEDGE_DIR).tax == 1_873
+    assert state_tax("PA", 61_000, knowledge_dir=KNOWLEDGE_DIR).tax == 1_873  # case-insensitive

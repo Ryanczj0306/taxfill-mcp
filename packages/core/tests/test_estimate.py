@@ -315,9 +315,12 @@ def test_roadmap_nonresident_branch_returns_1040nr_and_8843():
     assert est.roadmap.returns_and_forms == ["Form 1040-NR", "Form 8843"]
 
 
-def test_roadmap_dual_status_branch_returns_both_forms():
+def test_roadmap_dual_status_branch_carries_the_concrete_split_year_steps():
     # Residency-driven roadmap: a DUAL-STATUS classification (F-1 transition still inside
-    # the exempt window) yields both 1040 and 1040-NR (closes the dual-status branch).
+    # the exempt window) yields the CONCRETE prepared path (G5), not a vague both-may-apply
+    # line: return-vs-statement roles, the residency start-date rule, the First-Year-Choice
+    # election as a recorded position, the no-standard-deduction/status restrictions, and
+    # the due-date nuance — each step cited to Pub 519.
     # Mirrors test_residency test_transition_within_exempt_window_flags_dual_status.
     profile = Profile(
         household=Household(marital_status=_ans("unmarried")),
@@ -332,11 +335,26 @@ def test_roadmap_dual_status_branch_returns_both_forms():
         ),
     )
     est = estimate_refund(profile, 2024, IncomeSnapshot(wages=50000, federal_withholding=6000))
-    assert est.roadmap.returns_and_forms == [
-        "Form 1040",
-        "Form 1040-NR (dual-status: both may apply for the split year)",
-        "Form 8843",
-    ]
+    steps = est.roadmap.returns_and_forms
+    # Both forms still lead the roadmap, now with their return-vs-statement roles.
+    assert steps[0].startswith("Form 1040 ") and "Dual-Status Return" in steps[0]
+    assert steps[1].startswith("Form 1040-NR ") and "Dual-Status Statement" in steps[1]
+    assert "DEPARTURE year" in steps[1] and "roles reverse" in steps[1]
+    assert steps[2].startswith("Form 8843")
+    joined = " ".join(steps)
+    # Residency start-date rule; the First-Year-Choice election as a recorded position.
+    assert "FIRST DAY" in joined and "Residency start" in joined
+    assert "First-Year Choice" in joined and "IRC 7701(b)(4)" in joined
+    assert "31 consecutive days" in joined and "75%" in joined and "FOLLOWING year" in joined
+    assert "workspace_record_position" in joined
+    # Restrictions: no standard deduction; MFS-or-single absent the §6013 election.
+    assert "NO standard deduction" in joined
+    assert "married-filing-separately" in joined and "§6013(g)/(h)" in joined
+    # Due-date nuance (June 15 for a no-withheld-wages departure year).
+    assert "June 15" in joined and "April 15" in joined
+    # Citation convention: roadmap items are plain strings, so each step carries
+    # its Pub 519 chapter inline.
+    assert all("Pub 519" in s for s in steps if not s.startswith("Form 8843"))
 
 
 def test_golden_2023_single_published_tax_table_value():
@@ -686,6 +704,8 @@ def test_ptc_net_credit_and_repayment_cases():
     assert res.net_ptc > 0
     assert _labels(est)["Less: net premium tax credit (Form 8962)"] == -res.net_ptc
     assert any("Form 8962 ANNUAL method" in a for a in est.assumptions)  # AK/HI + approximations disclosed
+    # The disclosure points part-year/month-varying coverage at the monthly calc op (G3).
+    assert any("ptc_monthly" in a and "12-23" in a for a in est.assumptions)
 
     # Repayment: higher income, APTC above the computed credit (Table 5 cap applies).
     est2 = estimate_refund(
@@ -1360,3 +1380,228 @@ def test_treaty_exempt_income_combines_with_spouse():
     # Resident MFJ: the standard deduction still applies after the exclusion.
     assert est.point == _independent_refund(70_000 - 8_000, 6_500, "married_filing_jointly")
     assert any("does NOT validate treaty eligibility" in a for a in est.assumptions)
+
+
+# ---------------------------------------------------------------------------
+# Phase G (item G1): the estimate cross-checks treaty_exempt_income against the
+# per-country treaty knowledge (calc.treaty_benefit) when the profile carries a
+# citizenship country with a shipped pack. Advisory only — never a hard block.
+# ---------------------------------------------------------------------------
+
+
+def _nra_profile_with_country(country: str):
+    p = _nra_profile()
+    return p.model_copy(
+        update={"identity": Identity(us_person=_ans(False), citizenship_country=_ans(country))}
+    )
+
+
+def test_treaty_over_limit_fires_the_country_cross_check():
+    # China Art. 20(c): $5,000/yr on student wages — $8,000 entered must be flagged
+    # (scholarship/abroad components can make it legitimate, so it is an assumption).
+    est = estimate_refund(
+        _nra_profile_with_country("China"), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, treaty_exempt_income=8_000),
+    )
+    cross = [a for a in est.assumptions if "EXCEEDS" in a]
+    assert len(cross) == 1
+    note = cross[0]
+    assert "$8,000" in note and "$5,000" in note and "Art. 20(c)" in note
+    assert "scholarship" in note.lower()  # confirm-the-breakdown guidance
+    assert "treaty_benefit" in note      # points at the calc op for each component
+    # NOT a hard block: the exclusion still applies exactly as supplied.
+    assert _labels(est)[_TREATY_LABEL] == -8_000
+    # The generic trust-the-agent disclosure still rides along.
+    assert any("does NOT validate treaty eligibility" in a for a in est.assumptions)
+
+
+def test_treaty_within_limit_stays_quiet():
+    est = estimate_refund(
+        _nra_profile_with_country("China"), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, treaty_exempt_income=5_000),
+    )
+    assert not any("EXCEEDS" in a for a in est.assumptions)
+    assert _labels(est)[_TREATY_LABEL] == -5_000
+
+
+def test_treaty_cross_check_korea_uses_its_own_2000_limit():
+    est = estimate_refund(
+        _nra_profile_with_country("South Korea"), 2023,  # alias normalization exercised too
+        IncomeSnapshot(wages=12_000, federal_withholding=900, treaty_exempt_income=2_500),
+    )
+    cross = [a for a in est.assumptions if "EXCEEDS" in a]
+    assert len(cross) == 1
+    assert "$2,000" in cross[0] and "Art. 21(1)(b)(iii)" in cross[0]
+
+
+def test_treaty_cross_check_india_flags_no_wage_exclusion():
+    # India has NO student dollar exclusion — any wages entered as treaty-exempt get
+    # the Art. 21(2) deduction-parity explanation, still without hard-blocking
+    # (payments from abroad are legitimately exempt under Art. 21(1)).
+    est = estimate_refund(
+        _nra_profile_with_country("India"), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, treaty_exempt_income=3_000),
+    )
+    cross = [a for a in est.assumptions if "NOT supported as student WAGES" in a]
+    assert len(cross) == 1
+    assert "Art. 21(2)" in cross[0] and "standard deduction" in cross[0]
+    assert _labels(est)[_TREATY_LABEL] == -3_000
+
+
+def test_treaty_unknown_country_keeps_the_generic_disclosure_only():
+    est = estimate_refund(
+        _nra_profile_with_country("Germany"), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, treaty_exempt_income=8_000),
+    )
+    assert any("does NOT validate treaty eligibility" in a for a in est.assumptions)
+    assert not any("EXCEEDS" in a for a in est.assumptions)
+    assert not any("NOT supported as student WAGES" in a for a in est.assumptions)
+
+
+def test_treaty_no_citizenship_on_file_keeps_todays_behavior():
+    est = estimate_refund(
+        _nra_profile(), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, treaty_exempt_income=8_000),
+    )
+    assert any("does NOT validate treaty eligibility" in a for a in est.assumptions)
+    assert not any("EXCEEDS" in a for a in est.assumptions)
+
+
+# ---------------------------------------------------------------------------
+# Phase G item G2: the dependent-care credit in the estimator (Form 2441),
+# cross-checked against the standalone calc op — never magic numbers — plus
+# the G6 FICA claim-amount extension.
+# ---------------------------------------------------------------------------
+
+from taxfill_core.calc import dependent_care_credit  # noqa: E402
+
+_DC_LABEL = "Less: child and dependent care credit (Form 2441, nonrefundable)"
+_DC_2021_LABEL = "Less: child and dependent care credit (2021 — refundable, Form 2441)"
+
+
+def _hoh_parent(*dependents):
+    return Profile(household=Household(
+        marital_status=_ans("unmarried"), hoh_qualifying_person=_ans(True),
+        filing_status=_ans("head_of_household"), dependents=list(dependents),
+    ))
+
+
+def test_dependent_care_credit_matches_calc_and_is_disclosed():
+    profile = _hoh_parent(_kid("Kid", date(2018, 1, 1)))
+    est = estimate_refund(
+        profile, 2023,
+        IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                       dependent_care_expenses=4_000, dependent_care_persons=1),
+    )
+    labels = _labels(est)
+    dc = dependent_care_credit(
+        4_000, 1, 60_000, agi=labels["Adjusted gross income (AGI)"],
+        filing_status="head_of_household", year=2023,
+    )
+    assert dc.credit == 600  # 20% x $3,000 cap (AGI over $43,000)
+    assert labels[_DC_LABEL] == -dc.credit
+    # The honesty disclosures ride along: provider TIN + the untracked box 10.
+    note = next(a for a in est.assumptions if "Form 2441" in a and "TIN" in a)
+    assert "box 10" in note and "REDUCE" in note
+    assert any("i2441--2023" in c.url for c in est.citations)
+
+
+def test_dependent_care_2021_refundable_joins_the_payments():
+    # 2021 ARPA: the credit refunds (abode test assumed + disclosed) — it must
+    # appear as a payments line, not capped by the income tax.
+    profile = Profile(household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")))
+    est = estimate_refund(
+        profile, 2021,
+        IncomeSnapshot(wages=20_000, federal_withholding=500,
+                       dependent_care_expenses=9_000, dependent_care_persons=1),
+    )
+    labels = _labels(est)
+    dc = dependent_care_credit(9_000, 1, 20_000, agi=20_000, filing_status="single", year=2021)
+    assert dc.refundable is True and dc.credit == 4_000  # 50% x $8,000 ARPA cap
+    assert labels[_DC_2021_LABEL] == -dc.credit
+    assert _DC_LABEL not in labels
+    # The refundable amount exceeds the income tax — proof it wasn't tax-capped.
+    assert dc.credit > labels["Income tax"]
+    assert any("REFUNDABLE" in a and "abode" in a for a in est.assumptions)
+
+
+def test_dependent_care_mfs_candidate_zero_is_disclosed_never_silent():
+    est = estimate_refund(
+        Profile(household=Household(marital_status=_ans("married"))), 2023,
+        IncomeSnapshot(wages=80_000, federal_withholding=9_000,
+                       dependent_care_expenses=5_000, dependent_care_persons=2),
+    )
+    # Both candidates computed: MFJ carries the credit, MFS discloses the gate.
+    assert any("INELIGIBLE" in a and "married-filing-separately" in a for a in est.assumptions)
+    # The MFJ combined-earned-income approximation is disclosed too.
+    assert any("BOTH spouses have earned income" in a for a in est.assumptions)
+
+
+def test_dependent_care_mfj_spouse_split_uses_per_spouse_earned_income():
+    # With the spouse snapshot, the LOWER-earning spouse's earned income binds —
+    # exactly what the calc op computes with per-spouse figures.
+    profile = Profile(household=Household(
+        marital_status=_ans("married"), filing_status=_ans("married_filing_jointly"),
+        spouse=Spouse(name=_ans("Spouse Q."), tax_id=_ans("123-45-6789")),
+    ))
+    est = estimate_refund(
+        profile, 2023,
+        IncomeSnapshot(wages=70_000, federal_withholding=8_000,
+                       dependent_care_expenses=6_000, dependent_care_persons=2,
+                       spouse=IncomeSnapshot(wages=1_500)),
+    )
+    labels = _labels(est)
+    dc = dependent_care_credit(
+        6_000, 2, 70_000, spouse_earned_income=1_500,
+        agi=labels["Adjusted gross income (AGI)"],
+        filing_status="married_filing_jointly", year=2023,
+    )
+    assert dc.allowed_expenses == 1_500  # the low-earning spouse binds
+    assert labels[_DC_LABEL] == -dc.credit
+    # The combined-earned approximation disclosure must NOT fire on the split path.
+    assert not any("BOTH spouses have earned income" in a for a in est.assumptions)
+
+
+def test_dependent_care_expenses_without_persons_rejected_prescriptively():
+    with pytest.raises(Exception, match="dependent_care_persons"):
+        IncomeSnapshot(wages=50_000, dependent_care_expenses=3_000)
+
+
+def test_dependent_care_inputs_without_pack_block_disclosed(tmp_path):
+    # A pack stripped of tax.dependent_care must disclose the uncomputed credit,
+    # never silently drop the supplied expenses.
+    import shutil
+    from pathlib import Path
+
+    import yaml
+
+    src = Path(__file__).resolve().parents[3] / "knowledge" / "federal" / "2023.yaml"
+    raw = yaml.safe_load(src.read_text())
+    del raw["tax"]["dependent_care"]
+    fed = tmp_path / "federal"
+    fed.mkdir()
+    (fed / "2023.yaml").write_text(yaml.dump(raw, sort_keys=False))
+    shutil.copytree(src.parents[1] / "treaties", tmp_path / "treaties")
+    est = estimate_refund(
+        _single(), 2023,
+        IncomeSnapshot(wages=50_000, federal_withholding=6_000,
+                       dependent_care_expenses=3_000, dependent_care_persons=1),
+        knowledge_dir=tmp_path,
+    )
+    assert _DC_LABEL not in _labels(est)
+    assert any("NOT computed" in a and "Form 2441" in a for a in est.assumptions)
+
+
+def test_g6_fica_note_names_the_concrete_claim_amount_and_medicare_gap():
+    # G6(c): the FICA disclosure carries the CONCRETE recoverable amount (box 4
+    # sum) and discloses that box-6 Medicare is unknown to this snapshot.
+    est = estimate_refund(
+        _nra_profile(), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400,
+                       ss_withheld_by_employer=[1_116, 500]),
+    )
+    note = next(a for a in est.assumptions if "Form 843" in a)
+    assert "AT LEAST" in note and "$1,616" in note              # the box-4 sum
+    assert "box-6 Medicare tax" in note and "not tracked" in note
+    assert "box 4 + box 6" in note                              # the actual claim amount
+    assert any("box 4 + box 6" in c for c in est.what_would_change_it)

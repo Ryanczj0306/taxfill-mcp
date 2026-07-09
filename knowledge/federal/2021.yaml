@@ -267,6 +267,76 @@ tax:
         married_filing_jointly: { start: 160000, end: 180000 }
         other: { start: 80000, end: 90000 }
 
+  # Form 2441 child & dependent care credit (IRC 21) — 2021 ARPA special rules
+  # under IRC 21(g), transcribed from i2441--2021 (Phaseout Schedule, p. 6) and
+  # f2441--2021, re-verified against IRC 21(g). Caps $8,000/$16,000 (previously
+  # $3,000/$6,000; form lines 3 and 27). Percentage: 50% for AGI up to $125,000,
+  # minus 1 pt per $2,000 OR FRACTION THEREOF over $125,000 down to a 20%
+  # plateau (reached for AGI over $183,000, held through $400,000), then a
+  # SECOND slide of 1 pt per $2,000 or fraction over $400,000 to ZERO for AGI
+  # over $438,000 (the table's ".01" bracket is $436,000-$438,000; "438,000 —
+  # No limit = .00"; form: if line 7 is over $438,000, enter zero on line 9a —
+  # a line 9b credit for 2020 expenses paid in 2021 may still be available).
+  # The statute (IRC 21(g)(4): 20% reduced, not below zero, by 1 point per
+  # $2,000 or fraction over $400,000) and the printed table agree EXACTLY at
+  # the zero point: AGI of exactly $438,000 is 19 full increments (.01), any
+  # amount above it is 20 (.00) — the zero point follows from the
+  # or-fraction-thereof rule, never a separate stored figure. REFUNDABLE
+  # (IRC 21(g)(1)) only when the abode test below is met (Form 2441 line B);
+  # otherwise nonrefundable and limited by tax (form line 11).
+  dependent_care:
+    citation:
+      source: "2021 Instructions for Form 2441 (ARPA caps, 50% rate, Phaseout Schedule p. 6, line B refundability); 2021 Form 2441; IRC 21(g)"
+      url: "https://www.irs.gov/pub/irs-prior/i2441--2021.pdf"
+    expense_cap:
+      one_qualifying_person: 8000
+      two_or_more_qualifying_persons: 16000
+    phase_downs:
+      # First slide: .49 for AGI over 125,000 but not over 127,000 ... .21 at
+      # 181,000-183,000, then the .20 plateau (183,000-400,000).
+      - { starts_above_agi: 125000, from_rate: 0.50, to_rate: 0.20 }
+      # Second slide: .19 at 400,000-402,000 ... .01 at 436,000-438,000, then
+      # "438,000 — No limit = .00" (follows from the or-fraction rule).
+      - { starts_above_agi: 400000, from_rate: 0.20, to_rate: 0.00 }
+    refundable_if_us_abode: true
+    refundable_condition: >-
+      Refundable ONLY if the taxpayer (or the spouse, if filing jointly) had a
+      principal place of abode in the United States — the 50 states or DC —
+      for MORE than half of 2021 (Form 2441 line B; IRC 21(g)(1)). US military
+      personnel stationed outside the US on extended active duty are treated
+      as meeting it. If the test is not met, the credit is NONREFUNDABLE and
+      limited by tax (form line 11).
+    earned_income_limitation: >-
+      Form 2441 line 6: the credit base is the SMALLEST of the capped qualified
+      expenses (line 3), your earned income (line 4), and — married filing
+      jointly — your spouse's earned income (line 5; all others enter the
+      line 4 amount).
+    deemed_income_per_month:
+      one_qualifying_person: 250
+      two_or_more_qualifying_persons: 500
+    student_spouse_rule: >-
+      A spouse (or the taxpayer) who was a full-time student — enrolled
+      full-time during some part of each of 5 calendar months of 2021 — or was
+      physically or mentally incapable of self-care is DEEMED to have earned
+      income of $250 per month ($500 with two or more qualifying persons) for
+      each such month or part month (IRC 21(d)(2)); only one spouse may use the
+      deemed amount for any given month, and a spouse who also worked that
+      month uses the HIGHER of actual or deemed earned income.
+    married_filing_separately_note: >-
+      Generally, married persons must file a joint return to claim the credit.
+      A married-filing-separately filer is treated as unmarried (and may claim
+      the credit, checking the Form 2441 married-filing-separately checkbox)
+      ONLY if ALL of: they lived apart from the spouse during the last 6 months
+      of 2021; their home was the qualifying person's main home for more than
+      half the year; and they paid more than half the cost of keeping up that
+      home for the year.
+    dependent_care_benefits:
+      exclusion_max: 10500       # ARPA increase ("previously $5,000"); form line 21
+      exclusion_max_mfs: 5250    # ("previously $2,500")
+      note: >-
+        Unused 2020 FSA carryovers permitted into 2021 are ADDED to the 2021
+        line 21 maximum (i2441--2021, line 13).
+
 # Pub 501 (2021) Table 1 (Filing Requirements Chart for Most Taxpayers): the
 # gross-income level at or above which a return is required, by status and age.
 # Non-elderly amounts equal that status's standard deduction; each 65+ person

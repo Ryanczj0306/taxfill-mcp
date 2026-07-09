@@ -134,3 +134,32 @@ unverified:
 - 'Whether the standalone NCDOR ''When, Where, and How to File'' web page reflects 2023 specifically: that page
   currently displays tax year 2025 content, so all 2023-specific figures above were taken from the dated 2023 D-401
   PDF booklet rather than that living web page.'
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified against the cited 2023 D-401 instructions (ncdor.gov).
+tax:
+  citation:
+    source: '2023 D-401 North Carolina Individual Income Tax Instructions — "For tax year 2023, the individual
+      income tax rate is 4.75%... multiply your North Carolina taxable income by 4.75% (0.0475)"; N.C. Standard
+      Deduction Chart (D-400 Line 11): $12,750 single / $25,500 MFJ-QSS / $12,750 MFS ($0 if spouse itemizes) /
+      $19,125 HoH; child deduction table (D-400 Line 10); D-400 Line 6 = federal AGI.'
+    url: https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open
+  flat_rate: 0.0475
+  base: federal_agi
+  tax_line: 'D-400 Line 15: multiply Line 14 (N.C. taxable income, full-year residents) by the income tax rate
+    of 4.75% (0.0475). Line 6 starts from federal AGI; Line 14 = federal AGI + additions - deductions - child
+    deduction (Line 10) - N.C. standard/itemized deduction (Line 11).'
+  exemptions: {}
+  standard_deduction:
+    single: 12750
+    married_filing_jointly: 25500
+    married_filing_separately: 12750
+    head_of_household: 19125
+  notes:
+  - 'Standard-deduction gates NOT modeled by calc.state_tax: MFS gets $0 if the spouse itemizes, and the N.C.
+    standard deduction is ZERO for anyone not eligible for the FEDERAL standard deduction (the chart lists
+    nonresident aliens at $0) — itemizers use D-400 Line 12 instead; compute those cases on the form.'
+  - 'N.C. child deduction (D-400 Line 10) is NOT modeled: up to $3,000 per qualifying child (a child allowed
+    the federal child tax credit), stepping down $3,000/$2,500/$2,000/$1,500/$1,000/$500/$0 by federal AGI
+    (MFJ brackets up to $40,000 ... over $140,000; HoH up to $30,000 ... over $105,000; Single/MFS up to
+    $20,000 ... over $70,000) — take it from the D-401 table, not from a per-dependent exemption.'
+  - 'North Carolina has no personal or dependent exemptions.'

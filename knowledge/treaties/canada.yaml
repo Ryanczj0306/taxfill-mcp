@@ -1,0 +1,70 @@
+# US-Canada treaty knowledge — per-country treaty benefits for individual NRA filers
+# (ROADMAP Phase G item G1). See china.yaml header for the transcription rules:
+# every value comes from the fetched official documents in each block's citation
+# (irs.gov only); dollar amounts are treaty-fixed, never inflation-indexed.
+#
+# Loaded by taxfill_core.knowledge.load_treaty; consumed by calc.treaty_benefit.
+
+country: canada
+treaty: "US-Canada Convention signed Washington 1980-09-26 (as amended by protocols; the irs.gov PDF consolidates through the 1983/1984 protocols)"
+
+disclaimer: >-
+  Treaty eligibility depends on facts the engine checks only PARTIALLY: the visa category and the
+  exact visa PERIOD the income was earned in (eligibility is per period, not per year — pitfall
+  P-004), the purpose of the visit (study/training vs teaching/research), residence in the treaty
+  country immediately before US entry, and the saving-clause analysis (whether the treaty's
+  exception preserves the benefit after the filer becomes a US resident — see each block's
+  saving_clause_exception fields). The calc op treaty_benefit validates articles and dollar limits;
+  the final eligibility judgment and the recorded position stay with the agent and the user.
+
+citation:
+  source: "US-Canada income tax convention (irs.gov consolidated text, signed Washington 1980-09-26); Pub 901 (Rev. September 2024), Canada entries"
+  url: "https://www.irs.gov/pub/irs-trty/canada.pdf"
+
+student:
+  article: "Art. XX (Students)"
+  compensation_limit: null            # NO student compensation exclusion of the China/Korea type
+  payments_from_abroad_exempt: true
+  payments_from_abroad_text: >-
+    Art. XX: payments for maintenance, education or training "made to him from outside that State"
+    are not taxed; must be present for FULL-TIME education or training
+  scholarship_exempt: false
+  scholarship_text: >-
+    no separate grant exclusion — a scholarship is exempt only if paid from outside the US under
+    Art. XX
+  time_limit_text: >-
+    none stated for students (duration of full-time education/training); apprentices and business
+    trainees limited to 1 year per Pub 901 (Rev. 9-2024) p. 30
+  saving_clause_exception: true
+  saving_clause_exception_text: >-
+    Art. XXIX(3)(b): Art. XX preserved "toward individuals who are neither citizens of, nor have
+    immigrant status in, that State"
+  citation:
+    source: "US-Canada convention Art. XX (Students) + Art. XXIX(3)(b); Pub 901 (Rev. September 2024) p. 30 (Canada — foreign payments only; apprentice/trainee 1-year limit)"
+    url: "https://www.irs.gov/pub/irs-trty/canada.pdf"
+
+# NO teacher/professor article exists in the current treaty (verified: no occurrence in the
+# treaty text; Pub 901 (Rev. 9-2024) lists no Canada entry in its Professors/Teachers section).
+teacher_researcher: null
+
+employment_de_minimis:
+  article: "Art. XV (Dependent Personal Services / Income from Employment)"
+  amount: 10000                       # per calendar year, treaty-fixed, ALL-OR-NOTHING (not a cap)
+  amount_text: >-
+    Art. XV(2)(a): remuneration taxable only in the residence state if it "does not exceed ten
+    thousand dollars ($10,000) in the currency of that other State" (per calendar year)
+  alternative_test: >-
+    Art. XV(2)(b): if over $10,000, exempt only if present <=183 days AND remuneration not borne
+    by a US-resident employer or US permanent establishment. NOTE: the irs.gov canada.pdf shows
+    the pre-2007 wording (183 days in the calendar year); Pub 901 (Rev. 9-2024) p. 5 states the
+    current Fifth-Protocol rule: <=183 days in any 12-month period beginning or ending in the tax
+    year, and income not paid by or on behalf of a US resident nor borne by a US PE.
+  citation:
+    source: "US-Canada convention Art. XV(2); Pub 901 (Rev. September 2024) p. 5 (Canada — $10,000 employment de-minimis; current Fifth-Protocol 183-day rule)"
+    url: "https://www.irs.gov/pub/irs-trty/canada.pdf"
+
+notes: >-
+  No student dollar-exclusion for US-source wages; the practical wage relief is the Art. XV
+  $10,000 de-minimis, available to any Canadian-resident employee, not only students. No
+  teacher/professor article exists in the current treaty (verified: no occurrence in the treaty
+  text; Pub 901 lists no Canada teacher entry).
