@@ -148,3 +148,36 @@ unverified:
   KY .gov page.
 - The exact 2023 Form 740-V payment-voucher mailing address was not separately pulled; payment-with-return mailing
   is confirmed as Frankfort, KY 40619-0008 from both the packet and the DOR E-file/Payment Options page.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified against the cited 2023 Form 740 instruction packet (revenue.ky.gov).
+# OMITTED as unverified: Kentucky's nonrefundable personal tax credits (65-or-older,
+# blind, National Guard) and the Family Size Tax Credit — their dollar amounts were
+# not extractable from the fetched packet text (they appear only in form-image text),
+# so they are omitted rather than guessed. Resolve them from the 740 packet before
+# claiming any.
+tax:
+  citation:
+    source: '2023 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT) (10-23)):
+      "STANDARD DEDUCTION — For 2023, the standard deduction is $2,980" (ONE $2,980 per joint return; $2,980
+      each column when married filing separately on a combined return); Line 5 = Federal Adjusted Gross Income;
+      Line 9 = Kentucky AGI; Line 11 = Taxable Income; Line 12 "Multiply line 11 by four and one-half percent
+      (.045)".'
+    url: https://revenue.ky.gov/Forms/740%20Packet%20Instructions%202023.pdf
+  flat_rate: 0.045
+  base: federal_agi
+  tax_line: 'Form 740 Line 12 = Line 11 (Taxable Income = Line 9 Kentucky AGI minus Line 10 deduction) x four
+    and one-half percent (.045). Line 5 starts from federal AGI ("Do not confuse federal adjusted gross income
+    with federal taxable income").'
+  exemptions: {}
+  standard_deduction:
+    single: 2980
+    married_filing_jointly: 2980
+    married_filing_separately: 2980
+    head_of_household: 2980
+  notes:
+  - 'Kentucky allows ONE $2,980 standard deduction per return — a joint return gets a single $2,980 (it is
+    NOT doubled); spouses filing separately on a combined return get $2,980 each column.'
+  - 'Kentucky has no personal or dependent exemptions; the nonrefundable personal tax credits (65-or-older,
+    blind, National Guard) and the Family Size Tax Credit are NOT shipped (amounts unverified — see the
+    comment above this block) and are NOT modeled by calc.state_tax.'
+  - 'Kentucky local occupational license taxes (county/city payroll taxes) are NOT modeled.'

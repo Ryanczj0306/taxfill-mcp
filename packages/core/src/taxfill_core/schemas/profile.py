@@ -149,6 +149,16 @@ class Identity(BaseModel):
             "section and residency determination. None means not yet asked (intake gates on it)."
         ),
     )
+    citizenship_country: Answer[str] | None = Field(
+        default=None,
+        description=(
+            "Country of citizenship (e.g. 'China', 'India') — drives the per-country tax-treaty "
+            "benefit lookup (knowledge/treaties/) and the estimate's treaty cross-check. Treaty "
+            "eligibility technically follows RESIDENCE in the treaty country immediately before "
+            "US entry, which usually matches citizenship for students/scholars — confirm with "
+            "the user when the two differ. None means not yet asked."
+        ),
+    )
     mailing_address: Answer[str] | None = Field(
         default=None,
         description=(

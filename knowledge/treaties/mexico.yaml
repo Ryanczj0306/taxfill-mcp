@@ -1,0 +1,64 @@
+# US-Mexico treaty knowledge — per-country treaty benefits for individual NRA filers
+# (ROADMAP Phase G item G1). See china.yaml header for the transcription rules:
+# every value comes from the fetched official documents in each block's citation
+# (irs.gov only); dollar amounts are treaty-fixed, never inflation-indexed.
+#
+# Loaded by taxfill_core.knowledge.load_treaty; consumed by calc.treaty_benefit.
+
+country: mexico
+treaty: "US-Mexico Convention signed Washington 1992-09-18 (with Protocol; Additional Protocol signed Mexico City 1994-09-08)"
+
+disclaimer: >-
+  Treaty eligibility depends on facts the engine checks only PARTIALLY: the visa category and the
+  exact visa PERIOD the income was earned in (eligibility is per period, not per year — pitfall
+  P-004), the purpose of the visit (study/training vs teaching/research), residence in the treaty
+  country immediately before US entry, and the saving-clause analysis (whether the treaty's
+  exception preserves the benefit after the filer becomes a US resident — see each block's
+  saving_clause_exception fields). The calc op treaty_benefit validates articles and dollar limits;
+  the final eligibility judgment and the recorded position stay with the agent and the user.
+
+citation:
+  source: "US-Mexico income tax convention (signed Washington 1992-09-18); Pub 901 (Rev. September 2024), Mexico entries"
+  url: "https://www.irs.gov/pub/irs-trty/mexico.pdf"
+
+student:
+  article: "Art. 21 (Students)"
+  compensation_limit: null            # NO student compensation exclusion
+  payments_from_abroad_exempt: true
+  payments_from_abroad_text: >-
+    Art. 21: payments for maintenance, education or training exempt "provided that such payments
+    arise from sources, or are remitted from, outside that State"; must be present SOLELY for
+    education or training
+  scholarship_exempt: false
+  scholarship_text: >-
+    no separate grant exclusion — only foreign-source / remitted-from-abroad payments are exempt
+    under Art. 21
+  time_limit_text: "none stated ('solely for the purpose of his education or training')"
+  saving_clause_exception: true
+  saving_clause_exception_text: >-
+    Art. 1(4)(b): Arts. 20, 21, 28 preserved for individuals "who are neither citizens of, nor
+    lawful permanent residents in" the US
+  citation:
+    source: "US-Mexico convention Art. 21 (Students) + Art. 1(4)(b); Pub 901 (Rev. September 2024), Mexico student entry (foreign-source payments only)"
+    url: "https://www.irs.gov/pub/irs-trty/mexico.pdf"
+
+# NO teacher/professor article exists in the treaty (verified: no occurrence in the treaty text;
+# Pub 901 (Rev. 9-2024) lists no Mexico entry in its Professors/Teachers section).
+teacher_researcher: null
+
+employment_de_minimis:
+  article: "Art. 15 (Dependent Personal Services)"
+  amount: null                        # VERIFIED: NO dollar threshold exists
+  amount_text: >-
+    VERIFIED: NO dollar threshold exists — the rumored $16,000 figure appears NOWHERE in the
+    treaty; the only dollar amount in the entire convention is $3,000 in Art. 18 (Artistes and
+    Athletes)
+  alternative_test: >-
+    Art. 15(2): employment income exempt only if ALL THREE: (a) present <=183 days in a 12-month
+    period; (b) paid by or on behalf of an employer who is not a US resident; (c) not borne by a
+    US permanent establishment or fixed base. Confirmed by Pub 901 (Rev. 9-2024) p. 16.
+  citation:
+    source: "US-Mexico convention Art. 15(2) (Dependent Personal Services); Pub 901 (Rev. September 2024) p. 16 (Mexico — 183-day three-part test, no dollar threshold)"
+    url: "https://www.irs.gov/pub/irs-trty/mexico.pdf"
+
+notes: "No student wage benefit and no dollar de-minimis for employment; only the 183-day three-part test."

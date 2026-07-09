@@ -396,3 +396,133 @@ def test_no_election_flag_no_statement_item():
     assert not any("6013" in a for a in r.assemble)
     assert not any("6013" in s for s in r.sign)
     assert not any("nonresident-spouse" in c.url for c in r.citations)
+
+
+# ── G5: the dual-status manifest flag leads the assembly checklist ──
+
+
+def test_dual_status_flag_leads_assembly_with_annotations():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-500, state="Texas",
+                                  dual_status=True)])
+    # The annotations LEAD the checklist, before the generic print/attach steps.
+    assert '"Dual-Status Return"' in r.assemble[0] and "across the top" in r.assemble[0]
+    assert "taxation-of-dual-status-individuals" in r.assemble[0]  # cited inline (irs.gov)
+    # Arrival year: the 1040 is the return, so the 1040-NR rides as the statement.
+    assert "Form 1040-NR" in r.assemble[1] and '"Dual-Status Statement"' in r.assemble[1]
+    assert "nonresident part" in r.assemble[1]
+    # The no-standard-deduction reminder is an assembly item too.
+    assert "NO standard deduction" in r.assemble[2] and "itemized" in r.assemble[2]
+    # The signature applies to the RETURN, never the statement.
+    sign_line = next(s for s in r.sign if "Dual-Status Statement" in s)
+    assert "RETURN" in sign_line and "NOT signed separately" in sign_line
+    assert any(c.url.endswith("taxation-of-dual-status-individuals") for c in r.citations)
+
+
+def test_dual_status_departure_year_reverses_return_and_statement_roles():
+    # Departure year: the 1040-NR is the RETURN, so the Form 1040 is the statement
+    # for the RESIDENT part of the year.
+    r = _only([FilingManifestItem(form="1040-NR", tax_year=2023, bottom_line=300, dual_status=True)])
+    assert '"Dual-Status Return"' in r.assemble[0] and "1040-NR" in r.assemble[0]
+    assert "Form 1040" in r.assemble[1] and '"Dual-Status Statement"' in r.assemble[1]
+    assert "resident part" in r.assemble[1] and "nonresident part" not in r.assemble[1]
+    assert any("Form 1040-NR" in s and "RETURN" in s for s in r.sign)
+
+
+def test_dual_status_leads_even_with_the_6013_statement_item():
+    # Both flags set: the dual-status annotations still lead, and the §6013
+    # statement item follows (both are prominent, neither is buried).
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-500, state="Texas",
+                                  filing_jointly=True, section_6013_election=True, dual_status=True)])
+    assert '"Dual-Status Return"' in r.assemble[0]
+    assert "§6013(g)/(h)" in r.assemble[3]  # right after the three dual-status items
+
+
+def test_no_dual_status_flag_no_annotations():
+    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-500, state="Texas")])
+    assert not any("Dual-Status" in a for a in r.assemble)
+    assert not any("Dual-Status" in s for s in r.sign)
+    assert not any("taxation-of-dual-status-individuals" in c.url for c in r.citations)
+
+
+# ── G6: the Form 843 + 8316 FICA withheld-in-error claim path ──────────────────
+
+
+def _fica_claim(**overrides):
+    base = dict(form="843", tax_year=2023, bottom_line=3_060, attached_forms=["8316"])
+    base.update(overrides)
+    return _only([FilingManifestItem(**base)])
+
+
+def test_fica_claim_mails_to_ogden_per_current_pub_519():
+    r = _fica_claim()
+    # The CURRENT Pub 519 (ch. 8, 'Refund of Taxes Withheld in Error') prints an
+    # unconditional Ogden address — verified live before pinning.
+    assert r.mailing_address == "Department of the Treasury, Internal Revenue Service Center, Ogden, UT 84201-0038"
+    note = next(n for n in r.notes if "Ogden" in n)
+    assert "Pub 519" in note and "Refund of Taxes Withheld in Error" in note
+    # Prescriptive re-confirm instruction (the IRS revises Pub 519 annually).
+    assert "re-confirm" in note and "p519.pdf" in note
+    assert any(c.url == "https://www.irs.gov/pub/irs-pdf/p519.pdf" for c in r.citations)
+    assert "claim of $3,060" in r.bottom_line and "withheld in error" in r.bottom_line
+
+
+def test_fica_claim_checklist_carries_the_pub_519_attachments():
+    r = _fica_claim()
+    joined = " ".join(r.assemble)
+    assert "W-2" in joined                      # proof of the withheld amounts
+    assert "visa" in joined and "I-94" in joined
+    assert "I-20" in joined and "DS-2019" in joined and "I-766" in joined
+    # Form 8316 serves as the employer-refusal statement.
+    assert "Form 8316" in joined and "employer will not issue the refund" in joined
+    # The reason box / tax type / line 2 / line 8 fill guidance names the pack line.
+    assert "reason.ss_medicare_rrta_in_error" in joined
+    assert "line 4a" in joined.lower() or "4a" in joined
+    assert "box 4 + box 6" in joined
+    # Keep copies.
+    assert any("Keep copies" in rec or "copies" in rec for rec in r.records)
+    assert any("Form 843 AND Form 8316" in rec for rec in r.records)
+
+
+def test_fica_claim_is_never_attached_to_the_1040nr():
+    r = _fica_claim()
+    assert r.assemble[0].startswith("DO NOT attach this claim to your Form 1040-NR")
+    assert "SEPARATE" in r.assemble[0]
+    assert any("own envelope" in m for m in r.mail)
+    assert any("separate Form 843 for each tax period" in m for m in r.mail)
+
+
+def test_fica_claim_signatures_follow_the_packs():
+    # Per the shipped packs: f843 signs on PAGE 2 (Rev. 12-2024 revision;
+    # signature: {page: 2}), and f8316 IS signed too — its own page-1 area.
+    r = _fica_claim()
+    f843_line = next(s for s in r.sign if "Form 843" in s)
+    assert "PAGE 2" in f843_line and "BOTH spouses" in f843_line
+    f8316_line = next(s for s in r.sign if "8316" in s)
+    assert "IS signed separately" in f8316_line and "page 1" in f8316_line
+    assert "do NOT sign" not in f8316_line
+
+
+def test_fica_claim_deadlines_cover_the_refund_sol_and_the_8959_caution():
+    r = _fica_claim()
+    sol = next(d for d in r.deadlines if "statute of limitations" in d.lower())
+    assert "3 years" in sol and "2 years" in sol  # IRC 6511, from the pack
+    # Pub 519's caution: Additional Medicare Tax never goes on Form 843.
+    assert any("Additional Medicare Tax" in d and "8959" in d for d in r.deadlines)
+    assert r.payment == []  # a refund claim owes nothing
+
+
+def test_843_without_8316_gets_prescriptive_address_guidance_not_a_guess():
+    r = _fica_claim(attached_forms=[], bottom_line=0)
+    assert r.mailing_address is None
+    note = next(n for n in r.notes if "CLAIM TYPE" in n)
+    # Prescriptive: how to determine the address, and the FICA path's fix.
+    assert "Form 843 instructions" in note
+    assert "Ogden" in note and "8316" in note
+    assert "never guess" in note
+    # The empty claim amount is flagged with the box 4 + box 6 rule.
+    assert any("line 2" in n and "box 4" in n for n in r.notes)
+
+
+def test_f843_form_key_spelling_also_routes_the_claim_path():
+    r = _fica_claim(form="f843")
+    assert r.mailing_address and "Ogden, UT 84201-0038" in r.mailing_address

@@ -24,6 +24,7 @@ from pydantic import ValidationError
 from taxfill_core import (
     additional_medicare_tax as _additional_medicare_tax,
     child_tax_credit as _child_tax_credit,
+    dependent_care_credit as _dependent_care_credit,
     education_credits as _education_credits,
     eitc as _eitc,
     estimate_refund as _estimate_refund,
@@ -35,14 +36,17 @@ from taxfill_core import (
     intake_checklist as _intake_checklist,
     niit as _niit,
     ptc_annual as _ptc_annual,
+    ptc_monthly as _ptc_monthly,
     render_pdf as _render_pdf,
     se_tax as _se_tax,
     standard_deduction as _standard_deduction,
     state_scope as _state_scope,
+    state_tax as _state_tax,
     student_loan_interest_deduction as _student_loan_interest_deduction,
     tax_from_taxable_income as _tax,
     tax_with_preferential_rates as _tax_with_preferential_rates,
     taxable_social_security as _taxable_social_security,
+    treaty_benefit as _treaty_benefit,
     verify_filing as _verify_filing,
     verify_form as _verify_form,
 )
@@ -235,7 +239,8 @@ def render_form(pdf_path: str, pages: list[int] | None = None, dpi: float = 170)
 def calc(op: str, args: dict[str, Any]) -> dict:
     """Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
-    education_credits, ptc_annual, child_tax_credit, eitc}; every result shows its work and cites the data pack.
+    education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
+    treaty_benefit, state_tax}; every result shows its work and cites the data pack.
 
     - tax: args {taxable_income, filing_status, year} (ORDINARY line 16 only — with qualified
       dividends or capital gains use tax_with_preferential_rates instead, even below $100,000)
@@ -257,6 +262,11 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       other|alaska|hawaii; 2023-2024 only. MFS gets PTC $0 by rule — IRC 36B(c)(1)(C) — unless
       mfs_relief_exception claims the domestic-abuse/abandonment relief; below-100%-FPL with no APTC
       also gets $0)
+    - ptc_monthly: args {household_income, household_size, monthly: [12 x {premium, slcsp, aptc}],
+      filing_status, year, state?, annual_aptc?, mfs_relief_exception?} (Form 8962 MONTHLY method —
+      the lines 12-23 grid for part-year/month-varying coverage; monthly rows are the 1095-A lines
+      21-32 columns A/B/C, EXACTLY 12 entries with uncovered months as zeros; annual_aptc (line 33C)
+      is an optional cross-check. Same eligibility gates and years as ptc_annual)
     - child_tax_credit: args {qualifying_children_ssn, other_dependents, magi, income_tax_before_credits,
       earned_income, filing_status, year, children_under_6?} (Schedule 8812: nonrefundable CTC/ODC for
       1040 line 19 + refundable ACTC for line 28; income_tax_before_credits = the Credit Limit Worksheet
@@ -266,6 +276,33 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       (earned income credit for 1040 line 27 by the Rev. Proc. formula; investment-income and MFS
       gates; phases out on the GREATER of AGI or earned income; the printed EIC table's $50 bands can
       differ by ~$27)
+    - dependent_care_credit: args {expenses, qualifying_persons, earned_income, spouse_earned_income?,
+      agi, filing_status, year, employer_benefits?} (Form 2441 -> Schedule 3 line 2: caps
+      $3,000/$6,000 by persons count (2021: $8,000/$16,000), minus employer benefits (W-2 box 10),
+      limited by the LOWER earned income — spouse_earned_income REQUIRED for MFJ; the AGI slide
+      35%->20% (2021: 50%->20%->0%, zero over $438,000); MFS gets $0 by rule; refundable for 2021
+      only if the US-abode test is met — that test and the deemed $250/$500 student/disabled-spouse
+      income are YOUR judgment, per the work string)
+    - treaty_benefit: args {country, income_class, amount, visa_periods?, year?, years_in_status?}
+      (validate a tax-treaty exemption for Schedule OI / Form 1040-NR line 1k from the per-country
+      treaty packs — china, india, korea, canada, mexico; income_class in student_wages | scholarship |
+      payments_from_abroad | teacher_wages. Student wage limits are treaty-fixed (China $5,000/yr,
+      Korea $2,000/yr; India gets Art. 21(2) standard-deduction parity instead — no exclusion;
+      Canada/Mexico have no student wage benefit, only the researched employment de-minimis / 183-day
+      shapes). teacher_wages requires years_in_status (India's 2-year window is a RETROACTIVE clawback
+      — exceed it and the whole visit's exemption is lost). Returns the exempt/taxable split + article
+      + citation; final eligibility (visa period, purpose, saving clause) stays YOUR judgment —
+      record the position with the returned citation)
+    - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
+      (the flat-rate STATE income-tax line for the 2023 flat-rate states — il, pa, in, mi, nc, co, ky,
+      az. taxable_base is the STATE's OWN base, already adjusted for the state's additions/subtractions:
+      IL = IL-1040 Line 9 base income (fed AGI ± IL mods); CO = fed TAXABLE income ± CO mods (DR 0104
+      Line 10); PA = the eight-class PA-source income (PA-40 Line 11 — no exemptions, no deduction, a
+      loss in one class never offsets another); the fed-AGI states = their form's state-AGI line. The op
+      subtracts only the pack's verified personal/dependent exemptions x your counts and the state's
+      standard deduction (NC/KY/AZ) — age-65/blind and other exemption kinds are disclosed, not applied;
+      county/city add-on taxes (IN counties, MI cities) and state credits are NOT modeled. Unknown state
+      or a state without the block errors, listing the supported states)
     """
     if op == "tax":
         return _dump(_tax(**args))
@@ -289,14 +326,23 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _dump(_education_credits(**args))
     if op == "ptc_annual":
         return _dump(_ptc_annual(**args))
+    if op == "ptc_monthly":
+        return _dump(_ptc_monthly(**args))
     if op == "child_tax_credit":
         return _dump(_child_tax_credit(**args))
     if op == "eitc":
         return _dump(_eitc(**args))
+    if op == "dependent_care_credit":
+        return _dump(_dependent_care_credit(**args))
+    if op == "treaty_benefit":
+        return _dump(_treaty_benefit(**args))
+    if op == "state_tax":
+        return _dump(_state_tax(**args))
     raise ValueError(
         f"unknown calc op {op!r} — supported: tax, tax_with_preferential_rates, standard_deduction, "
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
-        f"student_loan_interest_deduction, education_credits, ptc_annual, child_tax_credit, eitc"
+        f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
+        f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, state_tax"
     )
 
 
@@ -423,7 +469,8 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       above-the-line), treaty_exempt_income (1042-S box 2 / Schedule OI — agent-confirmed treaty
       amount), itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only)
     - credit inputs: ss_withheld_by_employer [W-2 box 4 per employer], aotc_qualified_expenses
-      [per eligible student]
+      [per eligible student], dependent_care_expenses + dependent_care_persons (Form 2441 —
+      qualified care expenses paid so you/both spouses could work, and how many qualifying persons)
     - ACA (Form 1095-A line 33): aca_premiums, aca_slcsp, aca_aptc
     - spouse: nested income object with the spouse's OWN amounts (same fields; enables a true
       two-return MFS comparison — otherwise amounts are couple-combined)
@@ -466,7 +513,13 @@ def filing_summary(manifest: list[dict]) -> dict:
 
 @mcp.tool()
 def file_and_pay(manifest: list[dict]) -> dict:
-    """Last-mile checklist per return: pay, sign, assemble, mail, records, deadlines. Same manifest as filing_summary."""
+    """Last-mile checklist per return: pay, sign, assemble, mail, records, deadlines. Same manifest as
+    filing_summary, plus `dual_status?` — true for a split-residency-year return makes the assembly
+    checklist lead with the "Dual-Status Return"/"Dual-Status Statement" annotations, the
+    no-standard-deduction reminder, and the sign-the-return-not-the-statement rule. A FICA
+    withheld-in-error claim is its own item: form "843" with attached_forms ["8316"] (bottom_line =
+    the claimed W-2 box 4 + box 6 total) — it gets the claim's separate mailing checklist (Ogden per
+    the current Pub 519), never attached to the 1040-NR."""
     return _dump(_file_and_pay([FilingManifestItem.model_validate(m) for m in manifest]))
 
 

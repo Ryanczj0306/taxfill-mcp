@@ -1,7 +1,7 @@
 # TaxFill — Completion Roadmap (remaining work)
 
 The design spec is [`docs/DEV_PLAN.md`](DEV_PLAN.md). This is the forward-looking
-plan for what is **not yet done**, as of **2026-07-07**.
+plan for what is **not yet done**, as of **2026-07-09**.
 
 > **Status note (2026-07-07 update).** Since the 2026-06-28 truth-up: Phase F
 > (estimator/domain completeness, F1–F10) shipped; a 5-persona real-filer review
@@ -12,12 +12,15 @@ plan for what is **not yet done**, as of **2026-07-07**.
 > broken paths: §6013 election end-to-end, Schedule 8812 + CTC/EITC calc ops,
 > Schedule A (1040-NR) + Schedule NEC, treaty_exempt_income). What remains is
 > (1) **launch execution** (Phase A — unchanged, user-gated), (2) coverage
-> breadth (Phases C/D), and (3) the **Phase G subsystems** below (the persona
-> review's Tier 3 — every gap is DISCLOSED in product output until built).
+> breadth (Phases C/D), and (3) the **Phase G subsystems** below — **BUILT
+> 2026-07-09** (G1/G2/G3/G5/G6 done; G4 first tranche = the 8 flat-rate
+> states, graduated states remain): treaty knowledge base (5 countries),
+> Form 2441 engine + pack, monthly 8962, dual-status corridor, FICA 843/8316
+> flow, state_tax calc op.
 
 ## Where we are (verified)
 
-Done and on `main` (**1,827 tests, all green** — offline 1,741 + live-.gov 86, exit 0):
+Done and on `main` (**2,005 tests, all green** — offline 1,916 + live-.gov 89, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (22 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -27,7 +30,7 @@ Done and on `main` (**1,827 tests, all green** — offline 1,741 + live-.gov 86,
   list_document_kinds, extract_document, workspace_save, workspace_load,
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
-  states). The `calc` tool carries 13 deterministic ops (tax, standard_deduction, se_tax, additional_medicare_tax, niit, tax_with_preferential_rates, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, child_tax_credit, eitc).
+  states). The `calc` tool carries 17 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, state_tax).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, with per-field
   provenance — K-1 is the one common document still unsupported) and the resumable
@@ -49,12 +52,12 @@ Done and on `main` (**1,827 tests, all green** — offline 1,741 + live-.gov 86,
 **Form packs that can be FILLED today (introspect→vision-map→adversarial-audit→
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
-8959, 8960, 8962. state — **35 states** (39 packs): CA (540 + 540NR +
+8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316. state — **35 states** (39 packs): CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), **ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
-**WV (IT-140)**. **80 form packs total** (41 federal + 39 state).
+**WV (IT-140)**. **83 form packs total** (44 federal + 39 state).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
 > (Phase 0, 2026-06-28) and counted above.
@@ -328,7 +331,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
 > independent and can be scheduled in any order; suggested priority ranks by
 > (population hit × dollar impact).
 
-- [ ] **G1 — Per-country treaty knowledge base (L–XL; highest value for the
+- [x] **G1 — DONE (2026-07-09).** knowledge/treaties/{china,india,korea,canada,mexico}.yaml (two-pass verified vs treaty texts + Pub 901 (9-2024), zero discrepancies) + `treaty_benefit` calc op (per-class validation incl. India Art. 21(2) parity + Art. 22 retroactive loss, Canada Art. XV $10,000 cliff, Mexico no-benefit) + estimator cross-check of treaty_exempt_income vs the country limit. *(was: Per-country treaty knowledge base (L–XL; highest value for the
       NRA persona).** Today `treaty_exempt_income` carries an agent-confirmed
       amount (trust-the-agent semantics) and `get_sources` points at Pub 901/519.
       Build: a `knowledge/treaties/` data layer — per country: article, income
@@ -340,24 +343,24 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       student countries (China, India, Korea, Canada, Mexico). The per-period
       eligibility rule (pitfall P-004) already has engine groundwork in
       residency.py.
-- [ ] **G2 — Form 2441 (child & dependent care credit) (M–L).** The persona
+- [x] **G2 — DONE (2026-07-09).** dependent_care knowledge blocks 2019-2024 (incl. 2021 ARPA 50%/8k/16k dual phase-down + refundability), `dependent_care_credit` calc op, f2441 pack (75 fields, vision-audited clean), estimator fields + intake question. *(was:* The persona
       review showed its absence can flip an MFJ-vs-MFS recommendation. Build:
       knowledge params (35%→20% AGI slide, $3,000/$6,000 caps, earned-income
       limits), a calc op, a 2441 form pack (AcroForm, standard pipeline),
       estimator field (care expenses + care-provider count), intake question.
-- [ ] **G3 — Form 8962 monthly method (M).** `ptc_annual` covers full-year
+- [x] **G3 — DONE (2026-07-09).** `ptc_monthly` calc op (12-row grid, line-8b monthly contribution, shared settle tail with ptc_annual — annual behavior byte-identical), e2e dispatch + goldens. *(was:* `ptc_annual` covers full-year
       coverage; part-year/changing coverage (the common 1095-A case) needs the
       lines 12–23 monthly grid: a `ptc_monthly` calc op taking 12 rows of
       premium/SLCSP/APTC (the 1095-A DocSpec already extracts them), plus
       estimator wiring. The f8962 pack already maps the monthly grid fields.
-- [ ] **G4 — State tax calc ops (L–XL, per state).** State returns fill/verify
+- [~] **G4 — FIRST TRANCHE DONE (2026-07-09): the 8 flat-rate states** (IL/PA/IN/MI/NC/CO/KY/AZ — typed StateTaxParams blocks, verifier-corrected data incl. AZ line 38-41 exemptions, `state_tax` calc op wired into Recipe C's verify-independent step). REMAINING: graduated-bracket states (CA/NY/...) need per-bracket schedules. *(was:* State returns fill/verify
       today but the tax LINES are model arithmetic — no state calc op exists and
       rates live only in pack comments. Build per adopted state: a knowledge
       `tax` block (rates/brackets/exemptions, cited), a `state_tax` calc op
       keyed by jurisdiction, and relation coverage. Start with the flat-rate
       states (IL 4.95%, PA 3.07%, ...) where one op covers the whole return,
       then CA/NY brackets.
-- [ ] **G5 — Dual-status return corridor (L).** residency correctly flags
+- [x] **G5 — DONE (2026-07-09).** Concrete dual-status roadmap steps (return+statement mechanics, First-Year-Choice election via workspace positions, no-standard-deduction, due-date nuance), file_and_pay `dual_status` manifest flag (top-annotation + statement assembly), sources.yaml dual_status topic, eval scenario (p), SKILL Recipe B3. *(was:* residency correctly flags
       `dual_status_candidate` and the estimator now restricts statuses and
       discloses, but there is no prepared path for the actual split-year
       filing (1040 + 1040-NR statement, first-year choice election text,
@@ -365,7 +368,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       steps + statement checklist in file_and_pay), first-year-choice election
       support in workspace positions, and eval scenarios for the two common
       shapes (F-1→H-1B October; arrival-year election).
-- [ ] **G6 — FICA-refund flow (Form 843 + 8316) (M).** Exempt F/J students
+- [x] **G6 — DONE (2026-07-09).** f843 (Rev. 12-2024, 85 fields) + f8316 (Rev. 1-2006) packs vision-audited clean; file_and_pay 843-claim path (Pub 519 verified LIVE: fixed Ogden UT 84201-0038 address — the old where-you-filed rule is gone), intake employer-refusal follow-up, eval scenario (q), SKILL Recipe B4. *(was:* Exempt F/J students
       with erroneous Social Security/Medicare withholding get an intake note +
       estimate disclosure today. Build: Form 843 + 8316 packs (plain AcroForms),
       a file_and_pay path (separate mailing, NOT with the 1040-NR), and an

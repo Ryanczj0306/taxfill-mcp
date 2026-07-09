@@ -1,0 +1,191 @@
+# Form 843 — Claim for Refund and Request for Abatement.
+#
+# REVISION-pinned, not year-pinned: the IRS publishes Form 843 as a single
+# current revision at the irs-pdf URL (no year-stamped irs-prior file exists
+# for it). Provenance: blank downloaded from the official source_url below;
+# BOTH pages were rendered and READ before pinning pdf_sha256 (freshness
+# protocol, dev plan section 7): title "Claim for Refund and Request for
+# Abatement", printed "(Rev. December 2024)" under the form number, footer
+# "Form 843 (Rev. 12-2024)" on both pages, OMB No. 1545-0024, Cat. No. 10180R.
+# tax_year is 2023 as the filing year this pack SERVES (the same Rev. 12-2024
+# file is what the IRS offers 2023-period claimants today).
+#
+# The Rev. 12-2024 revision is TWO pages (the older Rev. 8-2011 layout was
+# one): page 1 = reason-for-filing checkboxes, requester header, lines 1-4;
+# page 2 = lines 5-8, signature block, paid-preparer block.
+#
+# Field map: introspected from this exact revision (root topmostSubform[0]).
+# ALL 85 widgets are mapped below (41 text + 1 money + 43 checkboxes); checkbox
+# on-states were dumped from the blank PDF's appearance states, never guessed:
+#   c1_1[0..16] = /1../17 (reason block), c1_2..c1_8 = /1 (line 4 a-g),
+#   c2_1..c2_14 = /1 (line 5 a-n), c2_15[0..3] = /1../4 (line 7 a-d),
+#   c2_16 = /1 (preparer self-employed).
+#
+# Checkbox grouping decisions (adversarial-audit reasoning):
+#   - reason block ("Check the box below that indicates your reason for filing
+#     Form 843"): one question, mutually exclusive — the instructions require a
+#     SEPARATE Form 843 per claim — so all 17 boxes share group 'reason' and
+#     the group is required (P-003).
+#   - line 7 a-d: one question with a "None of the above" catch-all, so every
+#     filer can answer — group 'line7', required.
+#   - lines 4a-4g and 5a-5n carry printed "Check only one box unless an
+#     exception applies" (line 4 even says "Check the box(es)"): multiple boxes
+#     are LEGAL under the instructions' Special Situations, so they carry NO
+#     shared group — an at-most-one group audit would false-FAIL legitimate
+#     exception filings (same pattern as the f1040x line 15 source boxes).
+#
+# relations: [] — the form face carries NO arithmetic: line 2 is the claimed
+# amount the filer asserts, and no printed add/subtract/multiply instruction
+# exists anywhere on the form. cross_form: [] — no printed carry-over
+# equality to any other form.
+#
+# This form IS signed: the signature block is on PAGE 2 of this revision
+# (joint-return claims need both spouses' signatures; corporate claims an
+# authorized officer with title). The signature/date lines are ink-only (no
+# widgets); only the IP PIN combs beside them are fillable.
+#
+# mailing: null — the where-to-file address depends on the claim type (see
+# the Form 843 instructions); the engine's file_and_pay handles FICA-claim
+# routing separately.
+#
+# Exempt-F-1 FICA refund usage (why this pack exists): check
+# reason.ss_medicare_rrta_in_error ("Refund to employee of social security,
+# Medicare, or RRTA tax withheld in error, but only if your employer will not
+# adjust the overcollection"), tax type 4a (Employment), tax period on line 1,
+# the claimed amount on line 2, and the exemption explanation + computation on
+# line 8 (Form 8316 rides along in the same envelope).
+form: "843"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-pdf/f843.pdf
+pdf_sha256: "03ca49bde54cbde77b927968f632f459eb83506de5dde29e874fb59d4dd95bfc"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- Reason for filing (top of page 1; ONE question, 17 sibling boxes) ------
+  # "Check the box below that indicates your reason for filing Form 843."
+  # Tax:
+  - { line: "reason.tax_other", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1", group: reason, required: true }  # Abatement/refund of tax other than income, estate, or gift tax
+  - { line: "reason.tax_only_843", field: "Page1[0].c1_1[1]", type: checkbox, on_state: "/2", group: reason }               # Tax that can't be claimed on any form except Form 843
+  - { line: "reason.excess_ss_medicare_rrta", field: "Page1[0].c1_1[2]", type: checkbox, on_state: "/3", group: reason }    # Refund to employee of EXCESS SS/Medicare/RRTA withheld by any one employer (employer won't adjust)
+  - { line: "reason.excess_tier2_rrta", field: "Page1[0].c1_1[3]", type: checkbox, on_state: "/4", group: reason }          # Excess tier 2 RRTA (multiple railroad employers, over the tier 2 limit)
+  - { line: "reason.ss_medicare_rrta_in_error", field: "Page1[0].c1_1[4]", type: checkbox, on_state: "/5", group: reason }  # SS/Medicare/RRTA withheld IN ERROR (employer won't adjust) — the exempt-F-1 FICA box
+  - { line: "reason.tier1_rrta_employee_rep", field: "Page1[0].c1_1[5]", type: checkbox, on_state: "/6", group: reason }    # Tier 1 RRTA tax for an employee representative
+  # Penalty:
+  - { line: "reason.penalty_reasonable_cause", field: "Page1[0].c1_1[6]", type: checkbox, on_state: "/7", group: reason }   # Penalty due to reasonable cause or other reason allowed under the law
+  - { line: "reason.penalty_6672", field: "Page1[0].c1_1[7]", type: checkbox, on_state: "/8", group: reason }               # Section 6672 penalty (Trust Fund Recovery Penalty)
+  - { line: "reason.penalty_6695a", field: "Page1[0].c1_1[8]", type: checkbox, on_state: "/9", group: reason }              # Section 6695A penalty (misstatements due to incorrect appraisals)
+  - { line: "reason.penalty_6715", field: "Page1[0].c1_1[9]", type: checkbox, on_state: "/10", group: reason }              # Section 6715 penalty (misuse of dyed fuel)
+  - { line: "reason.penalty_6404f", field: "Page1[0].c1_1[10]", type: checkbox, on_state: "/11", group: reason }            # Section 6404(f): penalty attributable to erroneous written IRS advice
+  # Interest:
+  - { line: "reason.interest_6404e1", field: "Page1[0].c1_1[11]", type: checkbox, on_state: "/12", group: reason }          # Interest due to IRS error or delay under section 6404(e)(1)
+  - { line: "reason.net_interest_zero", field: "Page1[0].c1_1[12]", type: checkbox, on_state: "/13", group: reason }        # Net interest rate of zero under Rev. Proc. 2000-26
+  # Other:
+  - { line: "reason.print_notice", field: "Page1[0].c1_1[13]", type: checkbox, on_state: "/14", group: reason }             # Unable to read and timely respond to a standard print notice
+  - { line: "reason.branded_drug_fee", field: "Page1[0].c1_1[14]", type: checkbox, on_state: "/15", group: reason }         # Refund of branded prescription drug fee
+  - { line: "reason.health_insurance_fee", field: "Page1[0].c1_1[15]", type: checkbox, on_state: "/16", group: reason }     # Refund of annual fee on health insurance providers
+  - { line: "reason.other", field: "Page1[0].c1_1[16]", type: checkbox, on_state: "/17", group: reason }                    # Other (specify)
+  - { line: "reason.other_specify", field: "Page1[0].f1_1[0]", type: text }                                                 # Other (specify) — write-in text
+  # ---- Requester header --------------------------------------------------------
+  - { line: "name", field: "Page1[0].f1_2[0]", type: text }   # "Name of person requesting the refund or abatement"
+  # "Social security number (SSN)" — plain text box (widget /MaxLen 11, NOT a
+  # comb); format ssn_digits_only keeps cross-form identity values consistent
+  # with the digits-only parent packs (f1040/f1040nr).
+  - { line: "identifying_number", field: "Page1[0].f1_3[0]", type: text, maxlen: 11, format: ssn_digits_only }
+  - { line: "spouse.name", field: "Page1[0].f1_4[0]", type: text }   # "Name of spouse if filing Form 843 relating to a joint return"
+  - { line: "spouse.identifying_number", field: "Page1[0].f1_5[0]", type: text, maxlen: 11, format: ssn_digits_only }  # "Spouse's social security number (SSN)"
+  - { line: "mailing_address.street", field: "Page1[0].f1_6[0]", type: text }   # "Address (number and street or P.O. box ...)"
+  - { line: "mailing_address.apt", field: "Page1[0].f1_7[0]", type: text }      # "Apt., room, or suite no."
+  - { line: "mailing_address.city", field: "Page1[0].f1_8[0]", type: text }     # "City, town, or post office"
+  - { line: "mailing_address.state", field: "Page1[0].f1_9[0]", type: text, maxlen: 2 }
+  - { line: "mailing_address.zip", field: "Page1[0].f1_10[0]", type: text, maxlen: 10 }
+  - { line: "ein", field: "Page1[0].f1_11[0]", type: text, maxlen: 10 }         # "Employer ID number (EIN)" — business filers; XX-XXXXXXX fits the 10-char box
+  - { line: "mailing_address.foreign_country", field: "Page1[0].f1_12[0]", type: text }
+  - { line: "mailing_address.foreign_province", field: "Page1[0].f1_13[0]", type: text }   # "Foreign province/state/county"
+  - { line: "mailing_address.foreign_postal_code", field: "Page1[0].f1_14[0]", type: text }
+  - { line: "name_address_on_return", field: "Page1[0].f1_15[0]", type: text }  # "Name and address shown on return if different from above" (multiline)
+  - { line: "phone", field: "Page1[0].f1_16[0]", type: text }                   # "Daytime telephone number"
+  # ---- Line 1: tax period ------------------------------------------------------
+  # "Enter the tax period or fee year. Prepare a separate Form 843 for each
+  # tax period or fee year." Dates are MM/DD/YYYY (10-char boxes).
+  - { line: "1.beginning_date", field: "Page1[0].f1_17[0]", type: text, maxlen: 10 }
+  - { line: "1.ending_date", field: "Page1[0].f1_18[0]", type: text, maxlen: 10 }
+  # ---- Line 2: claimed amount ---------------------------------------------------
+  - { line: "2", field: "Page1[0].f1_19[0]", type: money }   # "Amount to be refunded or abated. $"
+  # ---- Line 3: dates of payment (a-l; MM/DD/YYYY) --------------------------------
+  # "Date(s) of payment(s) for which you are requesting a refund ... If you
+  # need more space, attach additional sheets."
+  - { line: "3a", field: "Page1[0].f1_20[0]", type: text, maxlen: 10 }
+  - { line: "3b", field: "Page1[0].f1_21[0]", type: text, maxlen: 10 }
+  - { line: "3c", field: "Page1[0].f1_22[0]", type: text, maxlen: 10 }
+  - { line: "3d", field: "Page1[0].f1_23[0]", type: text, maxlen: 10 }
+  - { line: "3e", field: "Page1[0].f1_24[0]", type: text, maxlen: 10 }
+  - { line: "3f", field: "Page1[0].f1_25[0]", type: text, maxlen: 10 }
+  - { line: "3g", field: "Page1[0].f1_26[0]", type: text, maxlen: 10 }
+  - { line: "3h", field: "Page1[0].f1_27[0]", type: text, maxlen: 10 }
+  - { line: "3i", field: "Page1[0].f1_28[0]", type: text, maxlen: 10 }
+  - { line: "3j", field: "Page1[0].f1_29[0]", type: text, maxlen: 10 }
+  - { line: "3k", field: "Page1[0].f1_30[0]", type: text, maxlen: 10 }
+  - { line: "3l", field: "Page1[0].f1_31[0]", type: text, maxlen: 10 }
+  # ---- Line 4: type of tax or fee (check-all-that-apply; NO group — see header) --
+  # "Check the box(es) with the type of tax or fee ... Check only one box
+  # unless an exception applies."
+  - { line: "4a", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1" }   # Employment — the FICA-claim box
+  - { line: "4b", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1" }   # Estate
+  - { line: "4c", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1" }   # Gift
+  - { line: "4d", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1" }   # Excise
+  - { line: "4e", field: "Page1[0].c1_6[0]", type: checkbox, on_state: "/1" }   # Income
+  - { line: "4f", field: "Page1[0].c1_7[0]", type: checkbox, on_state: "/1" }   # Fee
+  - { line: "4g", field: "Page1[0].c1_8[0]", type: checkbox, on_state: "/1" }   # Civil penalty
+  # ---- Line 5: type of fee or return filed (page 2; NO group — see header) -------
+  # "Indicate the type of fee or return, if any, filed to which the tax,
+  # interest, penalty, or addition to tax relates. Check only one box unless
+  # an exception applies."
+  - { line: "5a", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/1" }    # 706
+  - { line: "5b", field: "Page2[0].c2_2[0]", type: checkbox, on_state: "/1" }    # 709
+  - { line: "5c", field: "Page2[0].c2_3[0]", type: checkbox, on_state: "/1" }    # 940
+  - { line: "5d", field: "Page2[0].c2_4[0]", type: checkbox, on_state: "/1" }    # 941
+  - { line: "5e", field: "Page2[0].c2_5[0]", type: checkbox, on_state: "/1" }    # 943
+  - { line: "5f", field: "Page2[0].c2_6[0]", type: checkbox, on_state: "/1" }    # 944
+  - { line: "5g", field: "Page2[0].c2_7[0]", type: checkbox, on_state: "/1" }    # 945
+  - { line: "5h", field: "Page2[0].c2_8[0]", type: checkbox, on_state: "/1" }    # 990-PF
+  - { line: "5i", field: "Page2[0].c2_9[0]", type: checkbox, on_state: "/1" }    # 1040
+  - { line: "5j", field: "Page2[0].c2_10[0]", type: checkbox, on_state: "/1" }   # 1120
+  - { line: "5k", field: "Page2[0].c2_11[0]", type: checkbox, on_state: "/1" }   # 4720
+  - { line: "5l", field: "Page2[0].c2_12[0]", type: checkbox, on_state: "/1" }   # CT-2
+  - { line: "5m", field: "Page2[0].c2_13[0]", type: checkbox, on_state: "/1" }   # Branded Prescription Drug (BPD) Fee
+  - { line: "5n", field: "Page2[0].c2_14[0]", type: checkbox, on_state: "/1" }   # Other (specify)
+  - { line: "5n.specify", field: "Page2[0].f2_1[0]", type: text }                # Other (specify) — write-in text
+  # ---- Line 6: IRC section ------------------------------------------------------
+  - { line: "6", field: "Page2[0].f2_2[0]", type: text }   # "If the claim or request involves a penalty, enter the Internal Revenue Code section"
+  # ---- Line 7: reason for the request (one question, a-d; d = none apply) --------
+  - { line: "7a", field: "Page2[0].c2_15[0]", type: checkbox, on_state: "/1", group: line7, required: true }  # Interest was assessed as a result of IRS errors or delays
+  - { line: "7b", field: "Page2[0].c2_15[1]", type: checkbox, on_state: "/2", group: line7 }                  # Penalty/addition to tax from erroneous written IRS advice
+  - { line: "7c", field: "Page2[0].c2_15[2]", type: checkbox, on_state: "/3", group: line7 }                  # Reasonable cause or other reason allowed under the law
+  - { line: "7d", field: "Page2[0].c2_15[3]", type: checkbox, on_state: "/4", group: line7 }                  # None of the above reasons apply
+  # ---- Line 8: explanation ------------------------------------------------------
+  # "Explain why you believe this claim or request should be allowed and show
+  # how you computed the amount shown on line 2." Big multiline text area.
+  - { line: "8", field: "Page2[0].ExplainWhy[0].f2_3[0]", type: text }
+  # ---- Signature block (ink-only signature/date lines; the PINs are combs) -------
+  - { line: "identity_protection_pin", field: "Page2[0].f2_4[0]", type: text, maxlen: 6, comb: true }         # "If the IRS sent you an Identity Protection PIN, enter it here"
+  - { line: "spouse_identity_protection_pin", field: "Page2[0].f2_5[0]", type: text, maxlen: 6, comb: true }  # "If the IRS sent your spouse an Identity Protection PIN, enter it here"
+  # ---- Paid Preparer Use Only -----------------------------------------------------
+  - { line: "preparer.name", field: "Page2[0].f2_6[0]", type: text }
+  - { line: "preparer.self_employed", field: "Page2[0].c2_16[0]", type: checkbox, on_state: "/1" }
+  - { line: "preparer.ptin", field: "Page2[0].f2_7[0]", type: text, maxlen: 11 }
+  - { line: "preparer.firm_name", field: "Page2[0].f2_8[0]", type: text }
+  - { line: "preparer.firm_ein", field: "Page2[0].f2_9[0]", type: text, maxlen: 10 }
+  - { line: "preparer.firm_address", field: "Page2[0].f2_10[0]", type: text }
+  - { line: "preparer.firm_phone", field: "Page2[0].f2_11[0]", type: text }   # "Phone no."
+
+# The form face carries no arithmetic (see header) — nothing to relate.
+relations: []
+cross_form: []
+
+identity_fields: [name, identifying_number]
+
+# Signed on page 2 of this revision (joint claims: both spouses sign).
+signature: { page: 2 }
+# Where-to-file depends on the claim type (instructions); file_and_pay owns
+# FICA-claim routing.
+mailing: null

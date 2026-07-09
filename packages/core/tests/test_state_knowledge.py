@@ -8,11 +8,12 @@ treaty-non-conformity warning to a treaty filer via state_scope.
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
 
-from taxfill_core.knowledge import StateKnowledge, load_state_knowledge
+from taxfill_core.knowledge import StateKnowledge, StateTaxParams, load_state_knowledge
 from taxfill_core.schemas.profile import Answer, Identity, Profile, Provenance, ResidencePeriod, StateFootprintYear
 from taxfill_core.statescope import state_scope
 
@@ -124,3 +125,107 @@ def test_known_nonconforming_states_are_flagged():
     flagged = {c for c in STATE_CODES if not load_state_knowledge(c, 2023, base_dir=REPO_ROOT / "knowledge").conforms_to_federal_treaties}
     # Every confirmed add-back state present in the repo must be flagged non-conforming.
     assert (KNOWN_NONCONFORMING & set(STATE_CODES)) <= flagged
+
+
+# ── Phase G item G4: the flat-rate tax blocks (IL, PA, IN, MI, NC, CO, KY, AZ) ──
+
+# The eight shipped flat-rate 2023 states with their verified exact rates.
+FLAT_TAX_RATES = {
+    "il": Decimal("0.0495"),
+    "pa": Decimal("0.0307"),
+    "in": Decimal("0.0315"),
+    "mi": Decimal("0.0405"),
+    "nc": Decimal("0.0475"),
+    "co": Decimal("0.044"),
+    "ky": Decimal("0.045"),
+    "az": Decimal("0.025"),
+}
+
+
+@pytest.mark.parametrize("code", sorted(FLAT_TAX_RATES), ids=lambda c: c)
+def test_flat_state_tax_block_loads_typed_and_gov_cited(code: str):
+    # Every shipped flat-state yaml block loads through the TYPED model with a
+    # gov-cited URL (the Citation model runs validate_gov_url) and the exact rate.
+    from urllib.parse import urlparse
+
+    from taxfill_core.knowledge import is_official_gov_host
+
+    pack = load_state_knowledge(code, 2023, base_dir=REPO_ROOT / "knowledge")
+    assert isinstance(pack.tax, StateTaxParams), f"{code}: tax block missing or untyped"
+    assert pack.tax.flat_rate == FLAT_TAX_RATES[code]
+    assert is_official_gov_host((urlparse(pack.tax.citation.url).hostname or "").lower())
+    assert pack.tax.tax_line.strip()
+    for key, ex in pack.tax.exemptions.items():
+        assert ex.amount >= 0 and ex.note.strip(), f"{code}: exemption {key} incomplete"
+
+
+def test_flat_state_tax_bases_match_the_research():
+    kb = REPO_ROOT / "knowledge"
+    bases = {c: load_state_knowledge(c, 2023, base_dir=kb).tax.base for c in FLAT_TAX_RATES}
+    assert bases["pa"] == "state_gross_income"     # eight separately-computed classes
+    assert bases["co"] == "federal_taxable_income"  # DR 0104 line 1
+    for code in ("il", "in", "mi", "nc", "ky", "az"):
+        assert bases[code] == "federal_agi", code
+
+
+def test_az_exemptions_are_the_verifier_corrected_form_140_lines_38_41():
+    # The verifier's correction over the researcher: AZ DOES have exemptions —
+    # Form 140 lines 38-41, subtracted before Arizona taxable income. Only the
+    # plain dependent exemption was replaced by the Line 49 credit, so there is
+    # NO 'personal' or 'dependent' key.
+    tax = load_state_knowledge("az", 2023, base_dir=REPO_ROOT / "knowledge").tax
+    amounts = {k: v.amount for k, v in tax.exemptions.items()}
+    assert amounts == {
+        "age_65": 2100,
+        "blind": 1500,
+        "other": 2300,
+        "qualifying_parent_grandparent": 10000,
+    }
+    assert tax.exemptions["age_65"].note.startswith("Form 140 Line 38")
+    assert "mutually exclusive" in tax.exemptions["qualifying_parent_grandparent"].note
+    assert tax.standard_deduction == {
+        "single": 13850,
+        "married_filing_jointly": 27700,
+        "married_filing_separately": 13850,
+        "head_of_household": 20800,
+    }
+    assert any("Line 49" in n and "CREDIT" in n for n in tax.notes)
+
+
+def test_nc_and_ky_standard_deductions_match_the_charts():
+    kb = REPO_ROOT / "knowledge"
+    nc = load_state_knowledge("nc", 2023, base_dir=kb).tax
+    assert nc.standard_deduction == {
+        "single": 12750,
+        "married_filing_jointly": 25500,
+        "married_filing_separately": 12750,
+        "head_of_household": 19125,
+    }
+    ky = load_state_knowledge("ky", 2023, base_dir=kb).tax
+    # ONE $2,980 per return — the same figure in every column, never doubled for MFJ.
+    assert set(ky.standard_deduction.values()) == {2980}
+
+
+def test_il_omits_the_unverified_dependent_amount():
+    # The Schedule IL-E/EIC per-dependent multiplication was not independently
+    # verified, so IL ships personal/age_65/blind but NO 'dependent' key, and the
+    # omission is disclosed in the notes.
+    tax = load_state_knowledge("il", 2023, base_dir=REPO_ROOT / "knowledge").tax
+    assert tax.exemptions["personal"].amount == 2425
+    assert tax.exemptions["age_65"].amount == 1000
+    assert tax.exemptions["blind"].amount == 1000
+    assert "dependent" not in tax.exemptions
+    assert any("Schedule IL-E/EIC" in n and "NOT shipped" in n for n in tax.notes)
+
+
+def test_states_outside_the_flat_eight_ship_no_tax_block():
+    kb = REPO_ROOT / "knowledge"
+    for code in STATE_CODES:
+        pack = load_state_knowledge(code, 2023, base_dir=kb)
+        if code in FLAT_TAX_RATES:
+            assert pack.tax is not None, f"{code}: flat state must ship the tax block"
+        else:
+            assert pack.tax is None, (
+                f"{code}: unexpected tax block — graduated-rate states are NOT in the G4 "
+                f"first tranche; extend calc.state_tax before shipping one"
+            )

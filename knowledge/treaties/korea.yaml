@@ -1,0 +1,84 @@
+# US-Korea treaty knowledge — per-country treaty benefits for individual NRA filers
+# (ROADMAP Phase G item G1). See china.yaml header for the transcription rules:
+# every value comes from the fetched official documents in each block's citation
+# (irs.gov only); dollar amounts are treaty-fixed, never inflation-indexed.
+#
+# Loaded by taxfill_core.knowledge.load_treaty; consumed by calc.treaty_benefit.
+
+country: korea
+treaty: "US-Korea Convention signed Seoul 1976-06-04"
+
+disclaimer: >-
+  Treaty eligibility depends on facts the engine checks only PARTIALLY: the visa category and the
+  exact visa PERIOD the income was earned in (eligibility is per period, not per year — pitfall
+  P-004), the purpose of the visit (study/training vs teaching/research), residence in the treaty
+  country immediately before US entry, and the saving-clause analysis (whether the treaty's
+  exception preserves the benefit after the filer becomes a US resident — see each block's
+  saving_clause_exception fields). The calc op treaty_benefit validates articles and dollar limits;
+  the final eligibility judgment and the recorded position stay with the agent and the user.
+
+citation:
+  source: "US-Korea income tax convention (signed Seoul 1976-06-04); Pub 901 (Rev. September 2024), Korea entries"
+  url: "https://www.irs.gov/pub/irs-trty/korea.pdf"
+
+student:
+  article: "Art. 21(1) (Students and Trainees)"
+  compensation_limit: 2000            # USD per taxable year, treaty-fixed
+  compensation_limit_period: per_taxable_year
+  compensation_limit_ref: "Art. 21(1)(b)(iii)"
+  compensation_limit_text: >-
+    Art. 21(1)(b)(iii): personal-services income "not in excess of 2,000 United States dollars"
+    per taxable year
+  payments_from_abroad_exempt: true
+  payments_from_abroad_text: "Art. 21(1)(b)(i): remittances from abroad for maintenance, education, study, research, training"
+  scholarship_exempt: true
+  scholarship_text: >-
+    Art. 21(1)(b)(ii): "the grant, allowance, or award" from a governmental, religious, charitable,
+    scientific, literary or educational organization
+  time_limit_text: >-
+    5 taxable years from date of arrival (Art. 21(1)(a)); Art. 21(4): teacher (Art. 20) + student
+    (Art. 21(1)) benefits COMBINED may not exceed 5 taxable years from arrival
+  saving_clause_exception: true
+  saving_clause_exception_text: >-
+    Art. 4(5)(b): Arts. 20, 21, 22 benefits preserved for individuals "who are neither citizens
+    of, nor have immigrant status in" the US
+  citation:
+    source: "US-Korea convention Art. 21(1) (Students and Trainees) + Art. 4(5)(b); Pub 901 (Rev. September 2024), Korea student entry ($2,000 / 5 taxable years)"
+    url: "https://www.irs.gov/pub/irs-trty/korea.pdf"
+
+teacher_researcher:
+  article: "Art. 20 (Teachers)"
+  years: 2
+  years_basis: "from the date of arrival — exempt 'for a period not exceeding 2 years from the date of his arrival'"
+  retroactive_loss: false
+  retroactive_loss_text: >-
+    no clawback clause in the treaty text or Pub 901 (contrast the Luxembourg/Germany/India
+    entries, which state one)
+  conditions: >-
+    must be INVITED by the US government, a state/local government, or a university/recognized
+    educational institution, for a period not expected to exceed 2 years; research must be in the
+    public interest (Art. 20(2))
+  saving_clause_exception: true
+  saving_clause_exception_text: "Art. 4(5)(b) (see student block)."
+  citation:
+    source: "US-Korea convention Art. 20 (Teachers); Pub 901 (Rev. September 2024), Korea teacher entry (2 years)"
+    url: "https://www.irs.gov/pub/irs-trty/korea.pdf"
+
+extra_provisions:
+  - name: trainee_employee
+    text: >-
+      Art. 21(2): employee of / under contract with a Korean resident, here to acquire technical,
+      professional or business experience or to study — exempt up to $5,000 aggregate
+      personal-services income, max 1 year
+    citation:
+      source: "US-Korea convention Art. 21(2); Pub 901 (Rev. September 2024), Korea entry ($5,000 / 1 year)"
+      url: "https://www.irs.gov/pub/irs-trty/korea.pdf"
+  - name: government_program
+    text: >-
+      Art. 21(3): participant in a US-government-sponsored program (training, research or study),
+      present <=1 year — exempt up to $10,000 aggregate personal-services income
+    citation:
+      source: "US-Korea convention Art. 21(3); Pub 901 (Rev. September 2024), Korea entry ($10,000 / 1 year)"
+      url: "https://www.irs.gov/pub/irs-trty/korea.pdf"
+
+notes: "Combined 5-year cap of Art. 21(4) applies when Art. 20 and Art. 21(1) are taken together."

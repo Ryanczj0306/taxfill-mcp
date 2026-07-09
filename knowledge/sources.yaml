@@ -283,6 +283,26 @@ federal:
           position; per-country eligibility details.
         cadence: as treaties are signed or amended (rare; check per use)
 
+    # ── Dual-status year (split residency: 1040 return + 1040-NR statement) ──
+    dual_status:
+      - url: https://www.irs.gov/individuals/international-taxpayers/taxation-of-dual-status-individuals
+        answers: >-
+          IRS 'Taxation of dual-status individuals': the split-year filing
+          mechanics — file the return for your status on December 31 with the
+          other form attached as the statement, write 'Dual-Status Return' and
+          'Dual-Status Statement' across the tops, no standard deduction,
+          restricted filing statuses, and what income each part of the year
+          taxes.
+        cadence: standing page (re-check each filing season)
+      - url: https://www.irs.gov/publications/p519
+        answers: >-
+          Pub 519 ch. 1 and ch. 6, dual-status tax year: residency starting
+          and ending dates, the First-Year Choice election (IRC 7701(b)(4))
+          and its required statement, the no-standard-deduction and
+          filing-status restrictions, and the ch. 7 due dates (June 15 when a
+          year-end nonresident had no wages subject to withholding).
+        cadence: annual (per tax year)
+
     # ── Foreign earned income (FEIE / Form 2555) ──
     foreign_earned_income:
       - url: https://www.irs.gov/forms-pubs/about-form-2555
