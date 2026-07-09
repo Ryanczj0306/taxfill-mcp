@@ -160,3 +160,27 @@ unverified:
 - The online payment portal canonical URL displayed by the payment page is https://www.mypath.pa.gov/_/; the human-facing
   entry point mypath.pa.gov is cited in the 2023 PA-40 instructions. Confirm the current myPATH login URL at the
   DOR.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified against the cited 2023 PA-40 instruction booklet (pa.gov).
+tax:
+  citation:
+    source: '2023 PA-40 Personal Income Tax Return Instructions (PA-40IN) — "The state income tax rate for 2023
+      is 3.07 percent (0.0307)"; Line 12 PA Tax Liability "Multiply Line 11 by 3.07 percent (0.0307)"; "PA law
+      does not allow standard deductions, deductions for personal exemptions, itemized deductions or deductions
+      for personal expenses"; the eight income classes (Lines 1a-8).'
+    url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40in.pdf
+  flat_rate: 0.0307
+  base: state_gross_income
+  tax_line: 'PA-40 Line 12 (PA Tax Liability) = Line 11 (Adjusted PA Taxable Income = Line 9 minus Line 10)
+    x 3.07 percent (0.0307).'
+  exemptions: {}
+  notes:
+  - 'PA does NOT start from federal AGI: it taxes eight SEPARATELY-computed classes of income (Lines 1a-8 —
+    compensation; interest; dividends and capital gains distributions; net business/profession/farm income;
+    net gains from disposition of property; net rents/royalties/patents/copyrights; estate or trust income;
+    gambling and lottery winnings). A loss in one class may never offset income in another class.'
+  - '"PA law does not allow standard deductions, deductions for personal exemptions, itemized deductions or
+    deductions for personal expenses" — calc.state_tax multiplies the supplied PA taxable-income base only.'
+  - 'PA Tax Forgiveness (Schedule SP) and other low-income relief are OUTSIDE this flat-rate computation —
+    check Schedule SP eligibility separately.'
+  - 'Local earned-income taxes (PA municipalities/school districts) are NOT modeled here.'

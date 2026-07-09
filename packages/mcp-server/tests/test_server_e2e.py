@@ -69,7 +69,8 @@ def test_list_forms_and_get_form_map():
     data = _data(_run(_call("list_forms", {"jurisdiction": "federal", "year": 2023})))
     # M2 (10) + SE + D/E + 8863/2555 + 4868 + 1040-ES + 1040-X + W-7 + 8959/8960/8962
     # + Tier 2: sched_8812 (CTC/ACTC), sched_a_nr, sched_nec
-    assert len(data) == 25
+    # + Phase G: f2441, f843, f8316 — the pack set has settled, exact count restored.
+    assert len(data) == 28
     assert any(f["form_key"] == "sched_8812" for f in data)  # the CTC is FILEABLE (persona-review fix)
     fm = _data(_run(_call("get_form_map", {"form": "f1040", "year": 2023})))
     assert fm["form"] == "1040"
@@ -134,6 +135,11 @@ def test_calc_phase_f_ops_are_dispatched():
         "household_income": 27180, "household_size": 1, "annual_premiums": 7000,
         "annual_slcsp": 6000, "year": 2023}})))
     assert ptc["ptc"] == 5456 and ptc["contribution"] == 544
+    ptcm = _data(_run(_call("calc", {"op": "ptc_monthly", "args": {
+        "household_income": 27180, "household_size": 1, "year": 2023,
+        "monthly": [{"premium": 450, "slcsp": 420, "aptc": 380}] * 7 + [{}] * 5}})))
+    assert ptcm["ptc"] == 2625 and ptcm["monthly_contribution"] == 45
+    assert ptcm["months_covered"] == 7 and ptcm["repayment"] == 35
 
 
 def test_calc_family_credit_ops_are_dispatched():
@@ -160,6 +166,86 @@ def test_calc_family_credit_ops_are_dispatched():
         "earned_income": 15000, "agi": 15000, "qualifying_children": 1,
         "filing_status": "married_filing_separately", "year": 2023}})))
     assert gated["eitc"] == 0 and gated["disqualified_reason"]
+
+
+def test_calc_dependent_care_credit_is_dispatched():
+    # Phase G item G2: one golden per shape (full derivations live in the core
+    # test suite, packages/core/tests/test_tax_calc.py).
+    dc = _data(_run(_call("calc", {"op": "dependent_care_credit", "args": {
+        "expenses": 3600, "qualifying_persons": 1, "earned_income": 30000,
+        "agi": 14000, "filing_status": "single", "year": 2023}})))
+    assert dc["allowed_expenses"] == 3000 and dc["credit"] == 1050
+    assert dc["applicable_percentage"] == "0.35" and dc["refundable"] is False
+    assert dc["citation"]["url"] == "https://www.irs.gov/pub/irs-prior/i2441--2023.pdf"
+    arpa = _data(_run(_call("calc", {"op": "dependent_care_credit", "args": {
+        "expenses": 20000, "qualifying_persons": 2, "earned_income": 60000,
+        "spouse_earned_income": 50000, "agi": 120000,
+        "filing_status": "married_filing_jointly", "year": 2021}})))
+    assert arpa["credit"] == 8000 and arpa["refundable"] is True
+    gated = _data(_run(_call("calc", {"op": "dependent_care_credit", "args": {
+        "expenses": 3000, "qualifying_persons": 1, "earned_income": 30000,
+        "agi": 20000, "filing_status": "married_filing_separately", "year": 2023}})))
+    assert gated["credit"] == 0 and "joint return" in gated["work"]
+    # The MFJ-needs-spouse-earned-income prescriptive error travels over MCP.
+    err = _run(_call("calc", {"op": "dependent_care_credit", "args": {
+        "expenses": 3000, "qualifying_persons": 1, "earned_income": 30000,
+        "agi": 20000, "filing_status": "married_filing_jointly", "year": 2023}}))
+    assert err.isError is True and "spouse_earned_income" in err.content[0].text
+    # The unknown-op error lists the new op.
+    unknown = _run(_call("calc", {"op": "nope", "args": {}}))
+    assert "dependent_care_credit" in unknown.content[0].text
+
+
+def test_file_and_pay_dispatches_the_fica_claim_path():
+    # Phase G item G6: the 843+8316 FICA claim manifest shape works over MCP.
+    fp = _data(_run(_call("file_and_pay", {"manifest": [
+        {"form": "843", "tax_year": 2023, "bottom_line": 3060, "attached_forms": ["8316"]}]})))
+    claim = fp["returns"][0]
+    assert "Ogden, UT 84201-0038" in claim["mailing_address"]
+    assert any("DO NOT attach this claim to your Form 1040-NR" in a for a in claim["assemble"])
+    assert any("PAGE 2" in s for s in claim["sign"])  # f843 signature page per the pack
+
+
+def test_calc_treaty_benefit_is_dispatched():
+    # Phase G item G1: one golden per shape (full derivations live in the core
+    # test suite, packages/core/tests/test_treaties.py).
+    tb = _data(_run(_call("calc", {"op": "treaty_benefit", "args": {
+        "country": "china", "income_class": "student_wages", "amount": 8000, "year": 2023}})))
+    assert tb["exempt_amount"] == 5000 and tb["taxable_remainder"] == 3000
+    assert tb["article"] == "Art. 20 (Students and Trainees)"
+    assert tb["citation"]["url"] == "https://www.irs.gov/pub/irs-trty/china.pdf"
+    assert "VALIDATES" in tb["work"]  # eligibility judgment stays with the agent
+    teacher = _data(_run(_call("calc", {"op": "treaty_benefit", "args": {
+        "country": "india", "income_class": "teacher_wages", "amount": 70000,
+        "years_in_status": 3, "year": 2023}})))
+    assert teacher["exempt_amount"] == 0 and "RETROACTIVE LOSS" in teacher["work"]
+    # The unknown-op error lists the new op.
+    unknown = _run(_call("calc", {"op": "nope", "args": {}}))
+    assert unknown.isError is True
+    assert "treaty_benefit" in unknown.content[0].text
+
+
+def test_calc_state_tax_is_dispatched():
+    # Phase G item G4: one golden per shape (full derivations live in the core
+    # test suite, packages/core/tests/test_tax_calc.py).
+    il = _data(_run(_call("calc", {"op": "state_tax", "args": {
+        "state": "il", "taxable_base": 50000, "exemptions_count": 1, "year": 2023}})))
+    assert il["tax"] == 2355 and il["base_after_exemptions"] == 47575
+    assert il["rate"] == "0.0495" and il["base_kind"] == "federal_agi"
+    assert il["citation"]["url"].startswith("https://tax.illinois.gov/")
+    # PA: no exemptions, no deduction — the op multiplies the eight-class base only.
+    pa = _data(_run(_call("calc", {"op": "state_tax", "args": {
+        "state": "pa", "taxable_base": 61000, "year": 2023}})))
+    assert pa["tax"] == 1873 and "no exemptions or standard deduction" in pa["work"]
+    # The unsupported-state prescriptive error (listing the shipped states) travels over MCP.
+    err = _run(_call("calc", {"op": "state_tax", "args": {
+        "state": "ca", "taxable_base": 50000, "year": 2023}}))
+    assert err.isError is True
+    for code in ("az", "co", "il", "in", "ky", "mi", "nc", "pa"):
+        assert code in err.content[0].text
+    # The unknown-op error lists the new op.
+    unknown = _run(_call("calc", {"op": "nope", "args": {}}))
+    assert "state_tax" in unknown.content[0].text
 
 
 def test_estimate_refund_is_labeled_and_computed():

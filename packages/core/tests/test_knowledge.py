@@ -336,6 +336,107 @@ def test_itin_w7_and_standalone_8843_entries_ship_with_gov_citations(year):
     assert "8843" in standalone["citation"]["source"]
 
 
+# ---------------------------------------------------------------------------
+# Phase G item G2: the tax.dependent_care block (Form 2441 / IRC 21 parameters)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("year", ALL_PACK_YEARS)
+def test_dependent_care_block_ships_for_every_year_with_i2441_citation(year):
+    pack = load_knowledge("federal", year, base_dir=KNOWLEDGE_DIR)
+    dc = pack.tax.dependent_care
+    assert dc is not None, f"{year}: tax.dependent_care missing"
+    assert dc.citation.url == f"https://www.irs.gov/pub/irs-prior/i2441--{year}.pdf"
+    # Statutory caps (2021 = ARPA) and the slide's start rate.
+    if year == 2021:
+        assert dc.expense_cap.one_qualifying_person == 8000
+        assert dc.expense_cap.two_or_more_qualifying_persons == 16000
+        assert [(leg.starts_above_agi, leg.from_rate, leg.to_rate) for leg in dc.phase_downs] == [
+            (125000, Decimal("0.5"), Decimal("0.2")),
+            (400000, Decimal("0.2"), Decimal("0.0")),
+        ]
+        assert dc.refundable_if_us_abode is True
+        assert dc.refundable_condition and "abode" in dc.refundable_condition
+        assert dc.dependent_care_benefits.exclusion_max == 10500
+        assert dc.dependent_care_benefits.exclusion_max_mfs == 5250
+    else:
+        assert dc.expense_cap.one_qualifying_person == 3000
+        assert dc.expense_cap.two_or_more_qualifying_persons == 6000
+        assert [(leg.starts_above_agi, leg.from_rate, leg.to_rate) for leg in dc.phase_downs] == [
+            (15000, Decimal("0.35"), Decimal("0.2")),
+        ]
+        assert dc.refundable_if_us_abode is False
+        assert dc.dependent_care_benefits.exclusion_max == 5000
+        assert dc.dependent_care_benefits.exclusion_max_mfs == 2500
+    # The or-fraction-thereof step parameters (IRC 21(a)(2)/(g)(4)) are uniform.
+    for leg in dc.phase_downs:
+        assert leg.per_agi_step == 2000
+        assert leg.points_per_step == Decimal("0.01")
+    # The judgment rules ship as text.
+    assert dc.deemed_income_per_month.one_qualifying_person == 250
+    assert dc.deemed_income_per_month.two_or_more_qualifying_persons == 500
+    assert "$250" in dc.student_spouse_rule and "$500" in dc.student_spouse_rule
+    assert "joint return" in dc.married_filing_separately_note
+    assert "last 6 months" in dc.married_filing_separately_note
+
+
+def test_dependent_care_2022_notes_the_2021_fsa_carryover_addition():
+    # Verifier MINOR note (f2441--2022, line 21): 2022 also adds permitted 2021
+    # FSA carryovers to the $5,000/$2,500 exclusion ceiling.
+    dc = load_knowledge("federal", 2022, base_dir=KNOWLEDGE_DIR).tax.dependent_care
+    assert dc.dependent_care_benefits.note is not None
+    assert "2021" in dc.dependent_care_benefits.note and "carryover" in dc.dependent_care_benefits.note
+    raw_text = (KNOWLEDGE_DIR / "federal" / "2022.yaml").read_text(encoding="utf-8")
+    assert "2021 FSA-carryover" in raw_text  # the yaml comment carries the verifier note too
+
+
+def test_dependent_care_misordered_leg_rates_rejected(raw_2023):
+    raw = copy.deepcopy(raw_2023)
+    raw["tax"]["dependent_care"]["phase_downs"][0]["to_rate"] = 0.40  # above from_rate
+    with pytest.raises(ValidationError, match="to_rate < from_rate"):
+        KnowledgePack.model_validate(raw)
+
+
+def test_dependent_care_discontinuous_legs_rejected(raw_2023):
+    raw = copy.deepcopy(raw_2023)
+    raw["tax"]["dependent_care"]["phase_downs"].append(
+        {"starts_above_agi": 400000, "from_rate": 0.25, "to_rate": 0.0}  # 0.25 != prior leg's 0.20 floor
+    )
+    with pytest.raises(ValidationError, match="piecewise"):
+        KnowledgePack.model_validate(raw)
+
+
+def test_dependent_care_overlapping_legs_rejected(raw_2023):
+    raw = copy.deepcopy(raw_2023)
+    # A second leg starting before the first leg reaches its floor (above $43,000).
+    raw["tax"]["dependent_care"]["phase_downs"].append(
+        {"starts_above_agi": 30000, "from_rate": 0.20, "to_rate": 0.0}
+    )
+    with pytest.raises(ValidationError, match="must not overlap"):
+        KnowledgePack.model_validate(raw)
+
+
+def test_dependent_care_refundable_without_condition_rejected(raw_2023):
+    raw = copy.deepcopy(raw_2023)
+    raw["tax"]["dependent_care"]["refundable_if_us_abode"] = True  # no refundable_condition
+    with pytest.raises(ValidationError, match="refundable_condition"):
+        KnowledgePack.model_validate(raw)
+
+
+def test_dependent_care_cap_ordering_rejected(raw_2023):
+    raw = copy.deepcopy(raw_2023)
+    raw["tax"]["dependent_care"]["expense_cap"]["two_or_more_qualifying_persons"] = 2000
+    with pytest.raises(ValidationError, match="at least one_qualifying_person"):
+        KnowledgePack.model_validate(raw)
+
+
+def test_dependent_care_fractional_step_span_rejected(raw_2023):
+    raw = copy.deepcopy(raw_2023)
+    raw["tax"]["dependent_care"]["phase_downs"][0]["to_rate"] = 0.205  # 0.145 is not a whole step count
+    with pytest.raises(ValidationError, match="whole number"):
+        KnowledgePack.model_validate(raw)
+
+
 @pytest.mark.parametrize("year", ALL_PACK_YEARS)
 def test_deadlines_citation_is_form_family_aware(year):
     # The primary deadlines citation is the plain-1040 authority (never the

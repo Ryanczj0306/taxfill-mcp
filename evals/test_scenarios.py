@@ -5,15 +5,20 @@ behaviours the dev plan calls out per scenario letter. These are integration
 EVALS, not unit tests: they prove the M1-M4 stack does the right thing on
 realistic cases, including the honest-estimate and no-invented-numbers rules.
 
-All fifteen scenarios (a–o) run now: the federal cases (a, d, e, g, h, i, j) on
+All sixteen scenarios (a–p) run now: the federal cases (a, d, e, g, h, i, j) on
 the M1-M4 stack; the joint / separate / NRA-spouse cases (k, l, m) on the
 filing-status-aware engine (MFJ math, the both-ways comparison, and the §6013(g)/(h)
 election surface); the state cases (b, c, f) on M5 (CA packs + state_scope);
 the family-with-children case (n) on the Phase F credit-aware estimator (CTC/ACTC
-+ EITC from dependents' DOB/SSN facts); and the US-citizen + NRA-spouse couple (o)
++ EITC from dependents' DOB/SSN facts); the US-citizen + NRA-spouse couple (o)
 on the Tier-2 spouse-residency battery (intake election questions, the MFJ-with-
 caveat estimate, and the signed election-statement assembly item), plus the
-treaty-exempt-income (China Art. 20(c) student) estimator surface.
+treaty-exempt-income (China Art. 20(c) student) estimator surface; the
+dual-status corridor (p) on the G5 stack (the First-Year-Choice note, the
+concrete split-year roadmap, and the dual_status assembly checklist); and the
+FICA-withheld-in-error corridor (q) on the G6 stack (the intake employer-
+refusal note, the estimate's concrete claim-amount disclosure, and the
+Forms 843 + 8316 claim checklist out of file_and_pay).
 Multi-form fill+verify on real PDFs is covered by
 packages/core/tests/test_filing_integration.py (the 1040 and 1040-NR stacks).
 """
@@ -498,3 +503,150 @@ def test_eval_treaty_china_student_estimate():
     assert est.roadmap.returns_and_forms == ["Form 1040-NR", "Form 8843"]
     note = next(a for a in est.assumptions if "does NOT validate treaty eligibility" in a)
     assert "get_sources" in note and "state_scope" in note and "Schedule OI" in note
+
+
+# ── (p) dual-status corridor (G5): F-1 -> H-1B, October vs April transition ────
+
+
+def test_eval_p_october_transition_nonresident_with_first_year_choice_note():
+    # F-1 (still inside the exempt window) -> H-1B on Oct 1: at most 92 countable
+    # days, so the SPT cannot be met even assuming presence on every non-exempt
+    # day — the nonresident answer is DEFINITIVE, and the engine surfaces the
+    # First-Year-Choice election as the only path that could still change it.
+    result = classify(
+        [
+            {"status": "F-1", "start": "2021-08-01", "end": "2023-09-30"},
+            {"status": "H-1B", "start": "2023-10-01", "end": None},
+        ],
+        {2021: 140, 2022: 330, 2023: 350},
+        2023,
+    )
+    assert result.classification == "nonresident"
+    blob = " ".join(result.reasons)
+    assert "definitive" in blob                                # no recount can flip it
+    assert "First-Year Choice" in blob                         # ...but the election can
+    assert result.citations                                    # cited to Pub 519
+
+
+def test_eval_p_april_transition_dual_status_corridor_end_to_end():
+    # April transition (exempt F-1 days Jan-Mar, H-1B from Apr 1: 275 countable
+    # days meet the SPT) -> dual_status_candidate. The corridor: the estimate
+    # restricts statuses and discloses, the roadmap carries the CONCRETE
+    # split-year steps, and file_and_pay's dual_status flag produces the
+    # assembly annotations. Silence at any stage fails the eval.
+    timeline = [
+        {"status": "F-1", "start": "2021-08-20", "end": "2023-03-31"},
+        {"status": "H-1B", "start": "2023-04-01", "end": None},
+    ]
+    days = {2021: 130, 2022: 350, 2023: 365}
+    assert classify(timeline, days, 2023).classification == "dual_status_candidate"
+
+    profile = Profile(
+        household=Household(marital_status=_ans("married")),
+        immigration=Immigration(
+            visa_timeline=[
+                VisaPeriod(status="F-1", start=date(2021, 8, 20), end=date(2023, 3, 31), provenance=US),
+                VisaPeriod(status="H-1B", start=date(2023, 4, 1), end=None, provenance=US),
+            ]
+        ),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in days.items()}),
+    )
+
+    # 1) ESTIMATE — statuses restricted (MFS only, no MFJ recommendation), loud caveat.
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=95_000, federal_withholding=14_000))
+    assert est.filing_status_used == "married_filing_separately"
+    assert est.comparison is None
+    assert any("DUAL-STATUS" in a and "FULL-YEAR approximation" in a for a in est.assumptions)
+
+    # 2) ROADMAP — the concrete prepared path, cited to Pub 519.
+    steps = " ".join(est.roadmap.returns_and_forms)
+    assert "Dual-Status Return" in steps and "Dual-Status Statement" in steps
+    assert "FIRST DAY" in steps                                # residency start-date rule
+    assert "First-Year Choice" in steps and "IRC 7701(b)(4)" in steps
+    assert "workspace_record_position" in steps                # the election is a recorded position
+    assert "NO standard deduction" in steps
+    assert "§6013(g)/(h)" in steps                             # MFS-or-single absent the election
+    assert "June 15" in steps                                  # the due-date nuance
+    assert "Pub 519" in steps
+
+    # 3) LAST MILE — the dual_status manifest flag drives the assembly checklist.
+    r = file_and_pay([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-1_200,
+                                         state="WA", dual_status=True)]).returns[0]
+    assert '"Dual-Status Return"' in r.assemble[0] and "across the top" in r.assemble[0]
+    assert any("Form 1040-NR" in a and '"Dual-Status Statement"' in a for a in r.assemble)
+    assert any("NO standard deduction" in a for a in r.assemble)
+    assert any("Dual-Status Statement" in s and "NOT signed separately" in s for s in r.sign)
+    assert any("taxation-of-dual-status-individuals" in c.url for c in r.citations)
+
+    # 4) FRESHNESS — 'dual status' resolves to the registry topic backing the citation.
+    src = get_sources("dual status return", 2023)
+    assert src.matched
+    assert any("taxation-of-dual-status-individuals" in s.url for s in src.sources)
+    assert any("p519" in s.url for s in src.sources)
+
+
+# ── (q) FICA withheld in error on an exempt F-1 (G6: Forms 843 + 8316) ─────────
+
+
+def test_eval_q_exempt_f1_fica_withheld_in_error_end_to_end():
+    # An exempt F-1 nonresident whose employer withheld Social Security/Medicare
+    # in error ($2,480 box 4 + $580 box 6) and refuses to refund it. The corridor:
+    # intake surfaces the recovery path with the employer-refusal question, the
+    # estimate discloses the concrete recoverable amount (never folding it into
+    # the refund), and the 843 manifest item produces the claim's own checklist.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2021, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2021: _ans(150), 2022: _ans(300), 2023: _ans(300)}),
+        household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")),
+    )
+    assert classify([{"status": "F-1", "start": "2021-08-01", "end": None}],
+                    {2021: 150, 2022: 300, 2023: 300}, 2023).classification == "nonresident"
+
+    # 1) INTAKE — the FICA note fires with the 843+8316 path AND the follow-up
+    # question (did the employer refuse?) with the box 4 + box 6 amount rule.
+    note = next(n for n in intake_checklist(profile, tax_year=2023).notes if "FICA" in n)
+    assert "3121(b)(19)" in note and "Form 843" in note and "Form 8316" in note
+    assert "did your employer refuse or fail to refund" in note
+    assert "box 4 + box 6" in note
+
+    # 2) ESTIMATE — the withheld FICA is disclosed as an OFF-return claim with
+    # the concrete amount, never added to the 1040-NR refund.
+    est = estimate_refund(
+        profile, 2023,
+        IncomeSnapshot(wages=40_000, federal_withholding=4_200, ss_withheld_by_employer=[2_480]),
+    )
+    fica = next(a for a in est.assumptions if "Form 843" in a)
+    assert "$2,480" in fica and "NOT on the 1040-NR" in fica
+    assert "AT LEAST" in fica and "box-6 Medicare tax" in fica  # Medicare unknown — disclosed
+    assert any("Form 843" in c for c in est.what_would_change_it)
+    # The bottom line itself excludes the FICA (wages/withholding only).
+    assert est.point == 4_200 - tax_from_taxable_income(40_000, "single", 2023).tax
+
+    # 3) LAST MILE — the 843 item (8316 attached) gets the claim's own checklist.
+    r = file_and_pay([FilingManifestItem(form="843", tax_year=2023, bottom_line=2_480 + 580,
+                                         attached_forms=["8316"])]).returns[0]
+    # Address: the CURRENT Pub 519 ch. 8 fixed Ogden address, cited + re-confirmable.
+    assert r.mailing_address == "Department of the Treasury, Internal Revenue Service Center, Ogden, UT 84201-0038"
+    assert any("Pub 519" in n and "re-confirm" in n for n in r.notes)
+    assert any(c.url == "https://www.irs.gov/pub/irs-pdf/p519.pdf" for c in r.citations)
+    # The not-with-your-1040-NR warning leads the assembly checklist.
+    assert r.assemble[0].startswith("DO NOT attach this claim to your Form 1040-NR")
+    # Attachments per Pub 519: W-2 copy, visa/I-94, status documents, 8316 as the
+    # employer-refusal statement; keep copies.
+    joined = " ".join(r.assemble)
+    assert "W-2" in joined and "I-94" in joined and "I-20" in joined
+    assert "Form 8316" in joined and "employer will not issue the refund" in joined
+    assert any("copies" in rec for rec in r.records)
+    # Signatures PER THE PACKS: f843 signs on page 2 (signature: {page: 2} in
+    # formpacks/federal/2023/f843); f8316 signs too — its own page-1 area
+    # (signature: {page: 1} in formpacks/federal/2023/f8316).
+    assert any("Form 843" in s and "PAGE 2" in s for s in r.sign)
+    assert any("8316" in s and "IS signed separately" in s and "page 1" in s for s in r.sign)
+    # And the pack metadata this rests on stays true.
+    from taxfill_core.discovery import load_form_pack
+
+    f843 = load_form_pack("f843", 2023)
+    f8316 = load_form_pack("f8316", 2023)
+    assert f843.signature is not None and f843.signature.page == 2
+    assert f8316.signature is not None and f8316.signature.page == 1

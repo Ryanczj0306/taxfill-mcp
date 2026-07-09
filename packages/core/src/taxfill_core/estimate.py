@@ -11,9 +11,9 @@ Honesty rules baked in (UX principle 1; eval scenario (j)):
   unconfirmed (most importantly the filing status), computed by running calc
   under each plausible assumption;
 - credits are ESTIMATED whenever their inputs are present (CTC/ODC, EITC,
-  AOTC, premium tax credit, excess-SS withholding), with every approximation
-  disclosed as an assumption — never silently omitted and never silently
-  invented;
+  AOTC, the dependent-care credit, premium tax credit, excess-SS
+  withholding), with every approximation disclosed as an assumption — never
+  silently omitted and never silently invented;
 - qualified dividends / net capital gain use the preferential-rate worksheet
   (``calc.tax_with_preferential_rates``) whenever such income is present — for
   RESIDENTS only: a nonresident's investment income follows ECI/FDAP rules the
@@ -34,6 +34,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from taxfill_core import residency
 from taxfill_core.calc import (
     additional_medicare_tax,
+    dependent_care_credit,
     education_credits,
     excess_ss,
     irs_round,
@@ -45,6 +46,7 @@ from taxfill_core.calc import (
     tax_from_taxable_income,
     tax_with_preferential_rates,
     taxable_social_security,
+    treaty_benefit,
 )
 from taxfill_core.knowledge import Citation, load_knowledge
 from taxfill_core.schemas.profile import Profile
@@ -135,6 +137,20 @@ class IncomeSnapshot(BaseModel):
         default_factory=list,
         description="AOTC-qualified education expenses, one entry per eligible student (1098-T-informed).",
     )
+    dependent_care_expenses: int = Field(
+        default=0, ge=0,
+        description=(
+            "Qualified child/dependent-care expenses paid so you (and your spouse) could work — the "
+            "Form 2441 line 2 total, BEFORE the caps. Household-level: put it on the primary snapshot."
+        ),
+    )
+    dependent_care_persons: int = Field(
+        default=0, ge=0,
+        description=(
+            "Number of qualifying persons the care expenses were for (child under 13 / spouse or "
+            "dependent incapable of self-care) — 1 vs 2+ sets the Form 2441 expense cap."
+        ),
+    )
     aca_premiums: int = Field(default=0, ge=0, description="Form 1095-A line 33A — annual enrollment premiums.")
     aca_slcsp: int = Field(default=0, ge=0, description="Form 1095-A line 33B — annual SLCSP premiums.")
     aca_aptc: int = Field(default=0, ge=0, description="Form 1095-A line 33C — annual advance PTC paid.")
@@ -151,6 +167,12 @@ class IncomeSnapshot(BaseModel):
                 f"qualified_dividends ({self.qualified_dividends}) cannot exceed dividends "
                 f"({self.dividends}) — box 1b is a subset of box 1a"
             )
+        if self.dependent_care_expenses > 0 and self.dependent_care_persons < 1:
+            raise ValueError(
+                f"dependent_care_expenses ({self.dependent_care_expenses}) requires "
+                f"dependent_care_persons >= 1 — the number of qualifying persons sets the Form 2441 "
+                f"expense cap, so the credit cannot be estimated without it (never silently dropped)"
+            )
         if self.spouse is not None and self.spouse.spouse is not None:
             raise ValueError("spouse.spouse must be None — one nesting level only")
         return self
@@ -164,7 +186,10 @@ class IncomeSnapshot(BaseModel):
         )
 
     def combined_with_spouse(self) -> "IncomeSnapshot":
-        """The MFJ view: every amount summed across both spouses (lists concatenated)."""
+        """The MFJ view: every amount summed across both spouses (lists concatenated).
+
+        ``dependent_care_persons`` is household-level, so the combined view takes
+        the MAX (the same qualifying persons must never double the expense cap)."""
         if self.spouse is None:
             return self
         s = self.spouse
@@ -176,11 +201,12 @@ class IncomeSnapshot(BaseModel):
                     "capital_gain_long", "capital_gain_short", "self_employment_net",
                     "retirement_income_taxable", "social_security_benefits", "other_income",
                     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
-                    "aca_premiums", "aca_slcsp", "aca_aptc",
+                    "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
                 )
             },
             ss_withheld_by_employer=[*self.ss_withheld_by_employer, *s.ss_withheld_by_employer],
             aotc_qualified_expenses=[*self.aotc_qualified_expenses, *s.aotc_qualified_expenses],
+            dependent_care_persons=max(self.dependent_care_persons, s.dependent_care_persons),
             itemized_deductions=(
                 None
                 if self.itemized_deductions is None and s.itemized_deductions is None
@@ -452,6 +478,46 @@ def _spouse_nra_direction(profile: Profile, year: int) -> str | None:
     return "conditional" if us_person_false else None
 
 
+def _citizenship_country(profile: Profile) -> str | None:
+    """The filer's declared citizenship country (raw string), or None when not on file."""
+    ident = profile.identity
+    if ident is None or ident.citizenship_country is None or not ident.citizenship_country.value:
+        return None
+    return str(ident.citizenship_country.value)
+
+
+def _treaty_cross_check(country: str, treaty_amount: int, year: int, knowledge_dir) -> str | None:
+    """Cross-check the entered treaty-exempt amount against the country's student-wage rule.
+
+    Returns an ASSUMPTION string when the amount is not fully supported as
+    student WAGES (it exceeds the country's dollar limit, or the country has
+    no wage exclusion at all) — never a hard block, because scholarship /
+    payments-from-abroad components are legitimately exempt without the wage
+    limit. Returns None when the country is not a shipped treaty pack (the
+    generic trust-the-agent disclosure stands alone) or the amount is within
+    the wage limit.
+    """
+    try:
+        check = treaty_benefit(country, "student_wages", treaty_amount, year=year, knowledge_dir=knowledge_dir)
+    except FileNotFoundError:
+        return None  # country not shipped — keep today's generic disclosure only
+    if check.taxable_remainder <= 0:
+        return None
+    if check.exempt_amount > 0:
+        # A dollar limit exists (China $5,000 / Korea $2,000) and the entry exceeds it.
+        return (
+            f"${treaty_amount:,} entered as treaty-exempt EXCEEDS the {check.country} student-wage limit — "
+            f"{check.limits_applied[0]} — confirm the breakdown before filing: scholarship grants and "
+            f"payments from abroad are SEPARATELY exempt without that limit (so a mixed amount can be "
+            f"legitimate), but wages beyond it are not. Validate each component with the calc op "
+            f"treaty_benefit (income_class 'scholarship' / 'payments_from_abroad')."
+        )
+    return (
+        f"Treaty cross-check ({check.country}): the ${treaty_amount:,} entered as treaty-exempt is NOT "
+        f"supported as student WAGES by the {check.country} treaty pack. {check.work}"
+    )
+
+
 def _spouse_has_tin(profile: Profile) -> bool:
     """True when a real spouse SSN/ITIN is on file ('NRA' is the no-TIN box literal)."""
     hh = profile.household
@@ -517,8 +583,37 @@ def _build_roadmap(profile: Profile, year: int, result=None) -> Roadmap:
             forms = ["Form 1040"]
         elif result.classification == "nonresident":
             forms = ["Form 1040-NR", "Form 8843"]
-        else:  # dual_status_candidate — both may apply for one split year
-            forms = ["Form 1040", "Form 1040-NR (dual-status: both may apply for the split year)", "Form 8843"]
+        else:  # dual_status_candidate — ONE return + ONE statement for the split year (Pub 519 ch. 6)
+            forms = [
+                "Form 1040 — the dual-status RETURN for an arrival year (resident on December 31): "
+                "write 'Dual-Status Return' across the top; it reports worldwide income for the "
+                "resident part of the year (Pub 519 ch. 6).",
+                "Form 1040-NR — attached as the dual-status STATEMENT for the nonresident part of the "
+                "year, marked 'Dual-Status Statement' across the top (it is not signed separately). "
+                "For a DEPARTURE year (nonresident on December 31) the roles reverse: Form 1040-NR is "
+                "the return and Form 1040 is the statement (Pub 519 ch. 6).",
+                "Form 8843 — documents the exempt-individual days of the nonresident part of the year.",
+                "Residency start date: under the substantial presence test, residency starts on the "
+                "FIRST DAY you were present in the US during the year the test is met (days as an "
+                "exempt individual do not count); under the green-card test, on the first day you were "
+                "a lawful permanent resident (Pub 519 ch. 1, 'Residency starting date').",
+                "First-Year Choice election (IRC 7701(b)(4); Pub 519 ch. 1): if you arrived too late "
+                "to meet the SPT, you may ELECT residency from the first day of a qualifying presence "
+                "period — at least 31 consecutive days present, and present for at least 75% of the "
+                "days from that first day through December 31 — but only once the FOLLOWING year's SPT "
+                "is met (usually: extend with Form 4868 and wait). The election is a signed statement "
+                "attached to the return declaring the facts (the 31-day period, the presence dates, "
+                "that you were not a resident the prior year and meet the SPT the following year); it "
+                "is a recorded POSITION — record it with workspace_record_position, citing Pub 519.",
+                "Dual-status restrictions: NO standard deduction (deductions must be itemized), and "
+                "married filers use married-filing-separately (single if unmarried) — no joint return "
+                "and no head of household absent a §6013(g)/(h) election to be treated as a full-year "
+                "resident (Pub 519 ch. 6, 'Restrictions for Dual-Status Taxpayers').",
+                "Due date: an arrival-year dual-status return (resident at year end) is due April 15; "
+                "a departure-year return (nonresident at year end) is due April 15 when you had wages "
+                "subject to US withholding, otherwise June 15 — the 15th day of the 6th month "
+                "(Pub 519 ch. 7, 'When To File').",
+            ]
     else:
         ident = profile.identity
         if ident is not None and ident.us_person is not None and ident.us_person.value is True:
@@ -830,6 +925,62 @@ def _bottom_line(
             remaining_tax -= used_edu
             comp.append(CompositionLine(label="Less: education credits (nonrefundable part)", amount=-used_edu))
 
+    # Child and dependent care credit (Form 2441 -> Schedule 3 line 2), when the
+    # expenses and qualifying-person count are supplied. Per-spouse earned income
+    # comes from the spouse split (se_persons) when available; a combined MFJ
+    # snapshot assumes both spouses earn at least the allowed expenses — disclosed
+    # upstream. MFS gets $0 by rule inside the op (also disclosed). 2021 (ARPA):
+    # refundable per the pack flag — it joins the payments, not this bucket.
+    dc_refundable = 0
+    if (
+        income.dependent_care_expenses > 0
+        and income.dependent_care_persons > 0
+        and pack_tax.dependent_care is not None
+    ):
+        if mfs:
+            if notes is not None:
+                notes.add("dependent_care_mfs")
+        else:
+            if status == _MFJ:
+                if se_persons is not None and len(se_persons) >= 2:
+                    per_spouse_earned = [
+                        Decimal(w) + max(Decimal(0), Decimal("0.9235") * Decimal(max(0, se)))
+                        for se, w in se_persons
+                    ]
+                    dc_earned, dc_spouse_earned = per_spouse_earned[0], per_spouse_earned[1]
+                else:
+                    # Combined amounts cannot split earned income per spouse: assume
+                    # both spouses clear the limitation (disclosed as an assumption).
+                    dc_earned = dc_spouse_earned = earned
+                    if notes is not None:
+                        notes.add("dependent_care_mfj_combined")
+            else:
+                dc_earned, dc_spouse_earned = earned, None
+            dc = dependent_care_credit(
+                income.dependent_care_expenses,
+                income.dependent_care_persons,
+                dc_earned,
+                spouse_earned_income=dc_spouse_earned,
+                agi=max(0, agi),
+                filing_status=status,
+                year=year,
+                knowledge_dir=knowledge_dir,
+            )
+            if dc.credit:
+                citations.append(dc.citation)
+                if dc.refundable:
+                    dc_refundable = dc.credit
+                else:
+                    used_dc = min(dc.credit, remaining_tax)
+                    if used_dc:
+                        remaining_tax -= used_dc
+                        comp.append(
+                            CompositionLine(
+                                label="Less: child and dependent care credit (Form 2441, nonrefundable)",
+                                amount=-used_dc,
+                            )
+                        )
+
     # Child tax credit / credit for other dependents. Qualifying child = DOB known,
     # age at year end under the year's limit (17; 18 in 2021), and a work-eligible
     # SSN; every other dependent WITH a known DOB gets the $500 ODC. Dependents
@@ -1004,6 +1155,14 @@ def _bottom_line(
     if rctc:
         payments += rctc
         comp.append(CompositionLine(label="Less: child tax credit (2021 — fully refundable)", amount=-rctc))
+    if dc_refundable:
+        payments += dc_refundable
+        comp.append(
+            CompositionLine(
+                label="Less: child and dependent care credit (2021 — refundable, Form 2441)",
+                amount=-dc_refundable,
+            )
+        )
 
     # EITC: never for a nonresident alien or (as modeled) married filing separately;
     # gated by the investment-income limit; needs positive earned income.
@@ -1203,6 +1362,15 @@ def estimate_refund(
             f"one was issued). STATE conformity varies — some states re-tax federally treaty-exempt income; "
             f"state_scope shows your state's treatment."
         )
+        # Phase G cross-check: when the profile carries a citizenship country with a
+        # shipped treaty pack, sanity-check the entered amount against that country's
+        # student-wage rule. Advisory only — never a hard block (scholarship and
+        # payments-from-abroad components are separately exempt without the wage limit).
+        treaty_country = _citizenship_country(profile)
+        if treaty_country is not None:
+            cross_check = _treaty_cross_check(treaty_country, treaty_amount, year, knowledge_dir)
+            if cross_check is not None:
+                assumptions.append(cross_check)
     if "treaty_exclusion_clamped" in notes:
         assumptions.append(
             "The treaty-exempt amount entered exceeds the income in this snapshot, so the exclusion was CLAMPED "
@@ -1362,12 +1530,56 @@ def estimate_refund(
             "American opportunity credit: 40% treated as refundable — the Form 8863 line 7 "
             "under-age-24 exception (which makes the whole credit nonrefundable) is not evaluated."
         )
+    # Dependent-care credit (Form 2441) disclosures — the credit is never silently
+    # computed or silently dropped.
+    if "child and dependent care credit" in labels:
+        assumptions.append(
+            "Child and dependent care credit (Form 2441) estimated from the expenses and "
+            "qualifying-person count supplied. Not verified here: that the care let you (and your "
+            "spouse) work, the qualifying-person tests, and each provider's name/address/TIN — "
+            "Form 2441 Part I requires the provider TIN or the credit can be denied. "
+            "Employer-provided dependent care benefits (W-2 box 10) REDUCE the credit and are NOT "
+            "tracked in this snapshot — if box 10 is nonzero, recompute with the calc op "
+            "dependent_care_credit (employer_benefits). The deemed $250/$500-per-month income rule "
+            "for a full-time-student or disabled spouse is not applied."
+        )
+    if "child and dependent care credit (2021" in labels:
+        assumptions.append(
+            "2021 ARPA: the dependent-care credit was treated as REFUNDABLE, which requires a "
+            "principal place of abode in the US (50 states or DC) for more than half of 2021 "
+            "(Form 2441 line B) — if that test fails, the credit is nonrefundable and limited by tax."
+        )
+    if "dependent_care_mfs" in notes:
+        assumptions.append(
+            "The dependent-care credit is $0 on the married-filing-separately candidate — MFS filers "
+            "are generally INELIGIBLE (Form 2441); the narrow treated-as-unmarried exception (lived "
+            "apart the last 6 months + kept up the qualifying person's main home) is not modeled."
+        )
+    if "dependent_care_mfj_combined" in notes:
+        assumptions.append(
+            "The MFJ dependent-care credit assumed BOTH spouses have earned income of at least the "
+            "allowed expenses — couple-combined amounts cannot split earned income per spouse, and "
+            "the credit is limited by the LOWER-earning spouse's earned income (a spouse with no "
+            "earned income makes it $0 absent the student/disabled deemed-income rule). Provide each "
+            "spouse's own amounts (the spouse snapshot) for the real limitation."
+        )
+    if income.dependent_care_expenses > 0:
+        pack = load_knowledge("federal", year, base_dir=knowledge_dir)
+        if pack.tax.dependent_care is None:
+            assumptions.append(
+                f"Dependent-care expenses were provided but the child and dependent care credit is "
+                f"NOT computed for {year} (no Form 2441 parameters in the knowledge pack) — resolve "
+                f"it separately; it could change the bottom line."
+            )
     if "(Form 8962)" in labels:
         assumptions.append(
             "Premium tax credit reconciled with the Form 8962 ANNUAL method using the contiguous-48/DC "
             "poverty table; Alaska/Hawaii tables exist via the calc tool. Household income approximated "
-            "as AGI plus nontaxable Social Security; monthly allocation, shared policies, and the "
-            "alternative marriage-year computation are out of scope."
+            "as AGI plus nontaxable Social Security. The 1095-A amounts here are treated as FULL-YEAR "
+            "totals — for part-year or month-varying coverage, compute the real Form 8962 lines 12-23 "
+            "grid with the calc op ptc_monthly (12 rows of 1095-A monthly premium/SLCSP/APTC) and use "
+            "that result on the return; shared policies and the alternative marriage-year computation "
+            "remain out of scope."
         )
     if (income.aca_slcsp > 0 or income.aca_aptc > 0):
         pack = load_knowledge("federal", year, base_dir=knowledge_dir)
@@ -1424,18 +1636,23 @@ def estimate_refund(
     # FICA withheld in error on an exempt nonresident is recovered OFF-return.
     nra_fica_msg: str | None = None
     if nonresident and sum(income.ss_withheld_by_employer) > 0:
+        ss_total = sum(income.ss_withheld_by_employer)
         nra_fica_msg = (
-            f"${sum(income.ss_withheld_by_employer):,} of Social Security tax (W-2 box 4) was "
+            f"${ss_total:,} of Social Security tax (W-2 box 4) was "
             f"withheld, but exempt F/J students and scholars are generally FICA-EXEMPT (IRC "
             f"3121(b)(19)): Social Security/Medicare withheld in error is recovered from the "
             f"EMPLOYER first, otherwise with Form 843 + Form 8316 — a separate claim, NOT on the "
-            f"1040-NR. This estimate does not include it."
+            f"1040-NR. This estimate does not include it. The claim would recover AT LEAST the "
+            f"${ss_total:,} of box-4 Social Security tax PLUS the box-6 Medicare tax withheld — "
+            f"Medicare withholding is not tracked in this snapshot, so add box 4 + box 6 from each "
+            f"W-2 for the actual claim amount."
         )
         assumptions.append(nra_fica_msg)
     assumptions.append(
         "Not modeled in this estimate: AMT, LLC (available via the calc tool), itemized-deduction "
         "sub-limits, EITC official-table $50 banding (formula used), capital-loss carryovers, and "
-        "dependent-care/retirement-savers credits — each could change the number."
+        "the retirement-savers credit — each could change the number. (The dependent-care credit IS "
+        "estimated when dependent_care_expenses/persons are supplied.)"
     )
     assumptions.append("Before unclaimed credits not captured by these inputs — see what could change it.")
 

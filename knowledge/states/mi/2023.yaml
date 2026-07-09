@@ -145,3 +145,41 @@ unverified:
   'statutory resident' test, so no specific day threshold was confirmed.
 - Exact online-payment processing fees / accepted methods (eCheck vs card) were not individually verified beyond
   the official 'Make a Payment' page existence.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified against the cited 2023 MI-1040 instruction book (michigan.gov).
+tax:
+  citation:
+    source: '2023 Michigan MI-1040 Individual Income Tax book — "For tax year 2023, the Michigan income tax
+      rate is reduced to 4.05%"; "personal and stillbirth exemption allowances are $5,400"; special disabled
+      exemption $3,100; disabled veteran $400; claimed-as-dependent $1,500 (line 9e); Line 10 = federal AGI;
+      Line 17 "Tax. Multiply line 16 by 4.05% (0.0405)".'
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2023/BOOK_MI-1040.pdf
+  flat_rate: 0.0405
+  base: federal_agi
+  tax_line: 'MI-1040 Line 17: "Tax. Multiply line 16 by 4.05% (0.0405)" (Line 16 = taxable income; Line 15 =
+    exemption allowance; Line 10 starts from federal AGI).'
+  exemptions:
+    personal:
+      amount: 5400
+      note: 'Line 9a: $5,400 per exemption — taxpayer and spouse.'
+    dependent:
+      amount: 5400
+      note: 'Line 9a: dependents use the same $5,400 per-exemption allowance (taxpayer, spouse, and dependents
+        all count on line 9a).'
+    stillbirth:
+      amount: 5400
+      note: 'Line 9d: $5,400 stillbirth exemption (certificate of stillbirth). NOT applied by calc.state_tax.'
+    special_disabled:
+      amount: 3100
+      note: 'Line 9b: $3,100 special exemption — deaf, blind, hemiplegic, paraplegic, quadriplegic, or totally
+        and permanently disabled. NOT applied by calc.state_tax.'
+    disabled_veteran:
+      amount: 400
+      note: 'Line 9c: $400 qualified disabled veteran exemption. NOT applied by calc.state_tax.'
+  notes:
+  - 'The 4.05% rate is a ONE-YEAR statutory reduction for tax year 2023 only (the book says the rate is
+    "reduced to 4.05%" for 2023) — never carry it to any other year.'
+  - 'Claimed as a dependent by another: enter $0 on line 9a and $1,500 on line 9e instead of the $5,400
+    personal exemption — calc.state_tax does not model this; compute line 9e on the form.'
+  - 'Michigan CITY income taxes (Detroit and other cities, e.g. Form 5118/CF-1040) are NOT modeled —
+    calc.state_tax computes the state 4.05% line only.'
