@@ -3,9 +3,9 @@ name: CI
 on:
   push:
   pull_request:
-  schedule:
-    - cron: "17 8 * * *"   # nightly freshness/drift check (dev plan §7)
-  workflow_dispatch:
+  workflow_dispatch:   # freshness/drift + live-.gov round-trips are MANUAL now
+                       # (run from the Actions tab when you want a freshness check);
+                       # the nightly cron was removed — those jobs monitor, don't gate.
 
 jobs:
   test:
@@ -83,9 +83,10 @@ jobs:
           PY
 
   drift:
-    # Nightly (and manual) freshness check: re-fetch every official source URL and
-    # form blank, fail loudly on a moved page or a revised form (dev plan §7).
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    # MANUAL freshness check (run from the Actions tab): re-fetch every official
+    # source URL and form blank, fail loudly on a moved page or a revised form
+    # (dev plan §7). Not on push (it hits the network and monitors, not gates).
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -99,10 +100,10 @@ jobs:
 
   network-tests:
     # The network-marked golden round-trips (live .gov blank downloads) are kept out of
-    # the push-blocking `test` job to keep PR CI fast and non-flaky. Run them on the
-    # nightly schedule and on demand, so a change that breaks a live round-trip is still
-    # caught. (The `drift` job checks source freshness via check_drift.py, not pytest.)
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    # the push-blocking `test` job to keep PR CI fast and non-flaky, and run MANUALLY
+    # (from the Actions tab) when you want to confirm the live round-trips still pass.
+    # (The `drift` job checks source freshness via check_drift.py, not pytest.)
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
