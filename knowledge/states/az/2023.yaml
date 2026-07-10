@@ -161,3 +161,54 @@ unverified:
   a .gov page in this session; only the domicile-based resident definition from the Form 140 instructions was confirmed.
 - Filing thresholds ($13,850 / $20,800 / $27,700) came from azdor.gov search snippets of the Form 140 booklet, not
   a directly rendered .gov page.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified against the cited 2023 Form 140 booklet (azdor.gov), INCLUDING the
+# verifier's correction: Form 140 lines 38-41 are real exemptions subtracted before
+# Arizona taxable income (Line 42 Arizona AGI = line 37 minus lines 38-41) — only the
+# plain dependent exemption was replaced by the Line 49 Dependent Tax Credit.
+tax:
+  citation:
+    source: 'AZ DOR — 2023 Form 140 booklet: "2023 New Tax Rate of 2.5% for All Income Levels and Filing
+      Status"; Line 46 "Tax: Multiply line 45 by 2.5% (.025)" (Line 45 = Arizona taxable income); Line 12 =
+      federal AGI ("Arizona uses federal adjusted gross income as a starting point"); 2023 standard deduction
+      $13,850 single/MFS, $27,700 MFJ, $20,800 HoH (Line 43 — matches the printed 2023 federal amounts);
+      exemptions on lines 38-41 (age 65+ $2,100; blind $1,500; other exemptions $2,300; qualifying
+      parents/grandparents $10,000); Dependent Tax Credit on Line 49.'
+    url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140Booklet.pdf
+  flat_rate: 0.025
+  base: federal_agi
+  tax_line: 'Form 140 Line 46: "Tax: Multiply line 45 by 2.5% (.025)" (Line 45 = Arizona taxable income =
+    Line 42 Arizona AGI minus Lines 43-44; Line 12 starts from federal AGI).'
+  exemptions:
+    age_65:
+      amount: 2100
+      note: 'Form 140 Line 38: $2,100 per age-65-or-over box (subtracted before Arizona taxable income —
+        Line 42 = line 37 minus lines 38-41). NOT applied by calc.state_tax — enter it on Line 38.'
+    blind:
+      amount: 1500
+      note: 'Form 140 Line 39: $1,500 per blind box. NOT applied by calc.state_tax — enter it on Line 39.'
+    other:
+      amount: 2300
+      note: 'Form 140 Line 40: $2,300 per "Other Exemptions" person. NOT applied by calc.state_tax — enter it
+        on Line 40.'
+    qualifying_parent_grandparent:
+      amount: 10000
+      note: 'Form 140 Line 41: $10,000 per qualifying parent or grandparent — mutually exclusive with the
+        Line 40 other exemption / Line 49 dependent credit for the SAME individual. NOT applied by
+        calc.state_tax — enter it on Line 41.'
+  standard_deduction:
+    single: 13850
+    married_filing_jointly: 27700
+    married_filing_separately: 13850
+    head_of_household: 20800
+  notes:
+  - 'Arizona has NO personal exemption, and the plain dependent exemption was replaced by the Line 49
+    Dependent Tax Credit ($100 per dependent under 17, $25 per dependent 17 or over, phased down 5% per
+    $1,000 when federal AGI exceeds $200,000 — $400,000 MFJ). It is a CREDIT against tax, not a base
+    reduction, and is NOT modeled by calc.state_tax.'
+  - 'The 2023 Arizona standard deduction equals the printed 2023 federal amounts. Increased Standard
+    Deduction for charitable contributions (Line 44): non-itemizers may add 31% of qualified charitable
+    contributions (2023 rate, increased from 27%) — NOT modeled; claim it on Line 44.'
+  - 'Exemptions on Form 140 lines 38-41 (age 65+ $2,100; blind $1,500; other $2,300; qualifying
+    parent/grandparent $10,000) reduce Arizona AGI on the form — calc.state_tax does not apply them;
+    a 65+/blind filer computes lines 38-41 on the form.'

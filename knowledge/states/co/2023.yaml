@@ -167,3 +167,25 @@ unverified:
   printing a full canonical https URL; the exact current canonical URL should be confirmed at the DOR.'
 - DR 0104EZ availability/eligibility as a full-year simplified return was seen in DOR search listings (DR0104EZ_2023.pdf)
   but the eligibility criteria were not fully fetched — confirm at the DOR.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified against the cited 2023 Colorado 104 Book (tax.colorado.gov).
+tax:
+  citation:
+    source: '2023 Colorado 104 Book (DR 0104 instructions) — "The income tax rate is currently 4.4%" (the
+      document is the year-pinned 2023 filing guide); DR 0104 Line 1 = Federal Taxable Income from Form
+      1040/1040-SR/1040-NR/1040-SP; "Colorado income tax is based on your federal taxable income, which has
+      already considered your deductions"; Line 10 = Colorado Taxable Income; booklet tax table row
+      $30,700-$30,800 -> $1,353 (= 4.4% of the $30,750 midpoint).'
+    url: https://tax.colorado.gov/sites/tax/files/documents/Book0104_2023.pdf
+  flat_rate: 0.044
+  base: federal_taxable_income
+  tax_line: 'DR 0104 Line 11 (Colorado Tax): full-year residents take the amount from the booklet tax table
+    (built at 4.4%) for Line 10 Colorado Taxable Income (= Line 8 minus Line 9); part-year residents and
+    nonresidents use DR 0104PN Line 36.'
+  exemptions: {}
+  notes:
+  - 'Colorado starts from federal TAXABLE income (DR 0104 Line 1) — the federal standard/itemized deduction is
+    already embedded, so Colorado has no exemptions or separate standard deduction.'
+  - 'The DR 0104 form itself does not print a multiplication — Line 11 says to use the tax table (or DR 0104PN
+    Line 36). The booklet table is built at 4.4% but its $100-band rounding can differ from raw multiplication
+    by a few dollars; the printed table row controls on the filed form.'

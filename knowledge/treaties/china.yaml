@@ -1,0 +1,78 @@
+# US-China treaty knowledge — per-country treaty benefits for individual NRA filers
+# (ROADMAP Phase G item G1; docs/DEV_PLAN.md sections 3, 7, 10).
+#
+# All dollar amounts are TREATY-FIXED (written into the treaty text; NOT
+# inflation-indexed): identical amounts appear in the original treaty text and
+# in IRS Pub 901 (Rev. September 2024). Every value here was transcribed from
+# the fetched official documents named in each block's citation — do NOT edit
+# a number without re-verifying it against that source (irs.gov only).
+#
+# Loaded and validated by packages/core/src/taxfill_core/knowledge.py
+# (load_treaty); consumed by taxfill_core.calc.treaty_benefit.
+
+country: china
+treaty: "US-PRC Agreement signed Beijing 1984-04-30 (with Protocol 1 same date; Protocol 2 signed 1986-05-10)"
+
+disclaimer: >-
+  Treaty eligibility depends on facts the engine checks only PARTIALLY: the visa category and the
+  exact visa PERIOD the income was earned in (eligibility is per period, not per year — pitfall
+  P-004), the purpose of the visit (study/training vs teaching/research), residence in the treaty
+  country immediately before US entry, and the saving-clause analysis (whether the treaty's
+  exception preserves the benefit after the filer becomes a US resident — see each block's
+  saving_clause_exception fields). The calc op treaty_benefit validates articles and dollar limits;
+  the final eligibility judgment and the recorded position stay with the agent and the user.
+
+citation:
+  source: "US-China income tax agreement (signed Beijing 1984-04-30) with Protocols; Treasury Technical Explanation (chintech.pdf); Pub 901 (Rev. September 2024), China entries"
+  url: "https://www.irs.gov/pub/irs-trty/china.pdf"
+
+student:
+  article: "Art. 20 (Students and Trainees)"
+  compensation_limit: 5000            # USD per taxable year, treaty-fixed
+  compensation_limit_period: per_taxable_year
+  compensation_limit_ref: "Art. 20(c)"
+  compensation_limit_text: >-
+    Art. 20(c): "income from personal services performed in that Contracting State in an amount
+    not in excess of 5,000 United States dollars" per taxable year
+  payments_from_abroad_exempt: true
+  payments_from_abroad_text: "Art. 20(a): payments from abroad for maintenance, education, study, research, training"
+  scholarship_exempt: true
+  scholarship_text: "Art. 20(b): 'grants or awards from a government, scientific, educational or other tax-exempt organization'"
+  time_limit_text: >-
+    no fixed year count — benefits extend 'only for such period of time as is reasonably necessary
+    to complete the education or training' (Art. 20 flush language; Technical Explanation: e.g.
+    ~4 years undergraduate, up to ~7 for medicine)
+  saving_clause_exception: true
+  saving_clause_exception_text: >-
+    Protocol 1 (1984-04-30) para. 2: US may tax residents "[e]xcept as provided in ... Articles 18,
+    19, 20, 22, 23, 24 and 26". Technical Explanation, Art. 20: benefits "available to persons who
+    otherwise qualify even if they become U.S. residents." US citizens remain taxable. NOTE: the
+    exception is in the 1984 Protocol 1, NOT a "1987 protocol" (the treaty merely took effect
+    1987-01-01); Protocol 2 (1986-05-10) concerns only treaty shopping.
+  citation:
+    source: "US-China treaty Art. 20 (Students and Trainees) + Protocol 1 para. 2; Technical Explanation Art. 20; Pub 901 (Rev. September 2024), China student entry ($5,000)"
+    url: "https://www.irs.gov/pub/irs-trty/china.pdf"
+
+teacher_researcher:
+  article: "Art. 19 (Teachers, Professors and Researchers)"
+  years: 3                            # "for a period not exceeding three years in the aggregate"
+  years_basis: >-
+    aggregate — cumulative, not consecutive (Technical Explanation example: 1986+1987+1989 all
+    exempt; year 4 onward taxable)
+  retroactive_loss: false
+  retroactive_loss_text: >-
+    no clawback clause; the Technical Explanation shows loss is prospective only (excess years
+    taxable, earlier years keep the exemption)
+  conditions: >-
+    accredited educational or scientific research institution; research must be in the public
+    interest, not private benefit (Technical Explanation)
+  saving_clause_exception: true       # Art. 19 also listed in Protocol 1 para. 2 exceptions
+  saving_clause_exception_text: "Art. 19 is also listed in the Protocol 1 para. 2 saving-clause exceptions (see student block)."
+  citation:
+    source: "US-China treaty Art. 19 (Teachers, Professors and Researchers); Technical Explanation Art. 19; Pub 901 (Rev. September 2024), China teacher entry (3 years)"
+    url: "https://www.irs.gov/pub/irs-trty/china.pdf"
+
+notes: >-
+  China is the only one of the five shipped treaty countries whose saving-clause exception
+  (Arts. 19 & 20) is not limited to non-immigrants — the Protocol text excepts all US residents;
+  only citizens stay taxable.

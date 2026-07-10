@@ -303,6 +303,59 @@ tax:
       - { fpl_band_lt: null, single: null, other: null }
     no_400_pct_cliff: true
 
+  # Form 2441 child & dependent care credit (IRC 21) — Phase G item G2. Every
+  # figure transcribed from the year-pinned IRS PDFs named in the citation and
+  # re-verified against IRC 21 (govinfo.gov, 2023 ed.). Caps are STATUTORY
+  # (IRC 21(c)(1)/(2)), not inflation-indexed. Percentage slide (form line 8
+  # table): 35% for AGI up to $15,000, minus 1 point per $2,000 OR FRACTION
+  # THEREOF of AGI over $15,000, floor 20% for AGI over $43,000 (the table's
+  # "43,000 — No limit = .20" row). Bracket semantics: 'Over X — but not over
+  # Y', so AGI exactly at a boundary keeps the HIGHER rate (exactly $15,000 =
+  # .35; exactly $43,000 = .21) — the engine rounds the excess UP to the next
+  # $2,000. The caps are reduced by employer dependent care benefits actually
+  # deducted or excluded (Form 2441 line 27 minus line 28 -> line 29), NOT by
+  # the exclusion ceiling itself. Nonrefundable — limited by tax via the
+  # line 10 Credit Limit Worksheet.
+  dependent_care:
+    citation:
+      source: "2024 Instructions for Form 2441; 2024 Form 2441 line 8 table; IRC 21(a)(2), (c), (d), (e)"
+      url: "https://www.irs.gov/pub/irs-prior/i2441--2024.pdf"
+    expense_cap:
+      one_qualifying_person: 3000
+      two_or_more_qualifying_persons: 6000
+    phase_downs:
+      # 1 point per $2,000 (or fraction) of AGI over $15,000; .21 at
+      # 41,000-43,000, then "43,000 — No limit = .20".
+      - { starts_above_agi: 15000, from_rate: 0.35, to_rate: 0.20 }
+    refundable_if_us_abode: false
+    earned_income_limitation: >-
+      Form 2441 line 6: the credit base is the SMALLEST of the capped qualified
+      expenses (line 3), your earned income (line 4), and — married filing
+      jointly — your spouse's earned income (line 5; all others enter the
+      line 4 amount).
+    deemed_income_per_month:
+      one_qualifying_person: 250
+      two_or_more_qualifying_persons: 500
+    student_spouse_rule: >-
+      A spouse (or the taxpayer) who was a full-time student — enrolled
+      full-time during some part of each of 5 calendar months of 2024 — or was
+      physically or mentally incapable of self-care is DEEMED to have earned
+      income of $250 per month ($500 with two or more qualifying persons) for
+      each such month or part month (IRC 21(d)(2)); only one spouse may use the
+      deemed amount for any given month, and a spouse who also worked that
+      month uses the HIGHER of actual or deemed earned income.
+    married_filing_separately_note: >-
+      Generally, married persons must file a joint return to claim the credit.
+      A married-filing-separately filer is treated as unmarried (and may claim
+      the credit, checking the Form 2441 married-filing-separately checkbox)
+      ONLY if ALL of: they lived apart from the spouse during the last 6 months
+      of 2024; their home was the qualifying person's main home for more than
+      half the year; and they paid more than half the cost of keeping up that
+      home for the year.
+    dependent_care_benefits:
+      exclusion_max: 5000        # Form 2441 line 21
+      exclusion_max_mfs: 2500
+
 # Pub 501 (2024) Table 1 (Filing Requirements Chart for Most Taxpayers): the
 # gross-income level at or above which a return is required, by status and age.
 # Non-elderly amounts equal that status's standard deduction; each 65+ person
