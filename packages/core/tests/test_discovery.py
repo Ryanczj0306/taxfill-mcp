@@ -13,8 +13,9 @@ def test_list_all_packs():
     # = 31, + Form 4868 (2023) = 32, + Form 1040-ES (2023) = 33, + Form 1040-X
     # (2023, Rev. 2-2024) = 34, + Form W-7 (2023, Rev. 12-2024) = 35, + Forms
     # 8959/8960/8962 (2023, Phase F) = 38, + Schedule 8812 / Schedule A (1040-NR)
-    # / Schedule NEC (2023, Tier 2) = 41, plus the growing state packs.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 41
+    # / Schedule NEC (2023, Tier 2) = 41, + Forms 2441/843/8316 (Phase G) = 44,
+    # plus the growing state packs.
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 44
     assert any(s.jurisdiction.startswith("states/") for s in allf)
 
 

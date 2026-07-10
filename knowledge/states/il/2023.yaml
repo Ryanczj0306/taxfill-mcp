@@ -171,3 +171,44 @@ unverified:
   is based on the Line 2 and Line 3 'Other additions' enumerations in the IL-1040 instructions (pp.7), which list
   no treaty add-back. Confirm against the full 2023 Schedule M / Schedule M Instructions if a treaty-income edge
   case is in play.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified against the cited 2023 IL-1040 instruction booklet (IL DOR .gov).
+# OMITTED as unverified: the per-DEPENDENT exemption amount. IL-1040 Line 10d comes
+# from Schedule IL-E/EIC; the $2,425 figure below is the P.A. 103-0009 personal
+# exemption amount stated in the booklet — the Schedule IL-E/EIC per-dependent
+# multiplication itself was not independently confirmed. Resolve the dependent
+# amount from the 2023 Schedule IL-E/EIC instructions before applying it.
+tax:
+  citation:
+    source: '2023 Form IL-1040 Instructions (IL-1040 Instructions R-12/23) — "The Illinois income tax rate is
+      4.95 percent (.0495)"; Line 10 exemption allowance ($2,425 per P.A. 103-0009; $4,850 MFJ both; +$1,000
+      each 65-or-older / blind, Lines 10b/10c); Line 11 net income. Sourcing note: the booklet''s own Line 12
+      instruction reads "Illinois residents: Follow the instructions on the form" — the 4.95% rate and the
+      Line 11 net-income structure are what the booklet states; the Line 12 multiplication is printed on the
+      form itself.'
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf
+  flat_rate: 0.0495
+  base: federal_agi
+  tax_line: 'IL-1040 Line 12 (Tax) = Line 11 (net income = Line 9 base income minus Line 10 exemption allowance)
+    x 4.95% (.0495). Line 9 base income starts from federal AGI (Line 1) plus IL additions (Lines 2-3) minus
+    IL subtractions.'
+  exemptions:
+    personal:
+      amount: 2425
+      note: 'Per-exemption allowance for the taxpayer (and spouse), Line 10a — "the personal exemption amount
+        for tax year 2023 is $2,425" (P.A. 103-0009); married filing jointly, both spouses = $4,850.'
+    age_65:
+      amount: 1000
+      note: 'Additional $1,000 per 65-or-older checkbox, Line 10b (taxpayer and spouse each). NOT applied by
+        calc.state_tax — enter it on the form''s Line 10b.'
+    blind:
+      amount: 1000
+      note: 'Additional $1,000 per blind checkbox, Line 10c (taxpayer and spouse each). NOT applied by
+        calc.state_tax — enter it on the form''s Line 10c.'
+  notes:
+  - 'Dependent exemptions (Line 10d, via Schedule IL-E/EIC) are NOT shipped: the per-dependent multiplication
+    was not independently verified — resolve it from the 2023 Schedule IL-E/EIC instructions before claiming
+    dependents; never assume the personal amount applies.'
+  - 'Exemption phase-out: the entire Line 10 exemption allowance (including Lines 10b-10d) is $0 when federal
+    AGI exceeds $500,000 (married filing jointly) or $250,000 (all other statuses).'
+  - 'Claimed as a dependent by another: if base income exceeds $2,425, the filer''s own exemption is $0.'

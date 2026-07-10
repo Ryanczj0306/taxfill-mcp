@@ -683,3 +683,91 @@ def test_spouse_battery_stops_when_all_facts_answered():
     )
     ids = _ids(intake_checklist(profile, tax_year=2023))
     assert not any(i.startswith("household.spouse.") for i in ids)
+
+
+# ── Phase G item G2: the dependent-care (Form 2441) question ───────────────────
+
+
+def _parent_profile(**doc_kwargs):
+    docs = doc_kwargs.pop("income_documents", [])
+    return Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(
+            marital_status=_ans("unmarried"), hoh_qualifying_person=_ans(True),
+            filing_status=_ans("head_of_household"),
+            dependents=[Dependent(name="Kid", relationship="child", dob=date(2018, 1, 1),
+                                  has_ssn=True, provenance=US)],
+        ),
+        income_documents=docs,
+    )
+
+
+def test_dependent_care_question_fires_when_dependents_exist():
+    cl = intake_checklist(_parent_profile(), tax_year=2023)
+    q = next(q for q in cl.next_questions if q.id == "household.dependent_care")
+    assert "pay anyone to care" in q.prompt and "work" in q.prompt
+    assert "Form 2441" in q.why
+    d = q.disambiguation or ""
+    # The answer is recorded through the document inventory (1095-A pattern):
+    # a yes adds a provider-statement entry; a no records 'not_applicable'.
+    assert "dependent care provider statement" in d
+    assert "TIN" in d                      # Form 2441 Part I needs the provider TIN
+    assert "dependent_care_credit" in d    # the calc op is named
+    assert "not_applicable" in d
+    assert q.answers_into == "income_documents"
+
+
+def test_dependent_care_question_names_both_spouses_when_married():
+    profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(
+            marital_status=_ans("married"), filing_status=_ans("married_filing_jointly"),
+            spouse=Spouse(name=_ans("Spouse Q."), tax_id=_ans("123-45-6789"), us_person=_ans(True)),
+            dependents=[Dependent(name="Kid", relationship="child", dob=date(2018, 1, 1),
+                                  has_ssn=True, provenance=US)],
+        ),
+    )
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions
+             if q.id == "household.dependent_care")
+    assert "(both spouses)" in q.prompt
+
+
+def test_dependent_care_question_stops_once_recorded_any_status():
+    # A recorded entry in ANY status stops the question — including the
+    # 'not_applicable' no (and any kind wording mentioning dependent care/2441).
+    for kind, status in (
+        ("dependent care provider statement", "have"),
+        ("Form 2441 provider info", "missing"),
+        ("childcare receipts", "not_applicable"),
+    ):
+        profile = _parent_profile(
+            income_documents=[IncomeDocument(kind=kind, status=status, provenance=US)]
+        )
+        assert "household.dependent_care" not in _ids(intake_checklist(profile, tax_year=2023)), kind
+
+
+def test_dependent_care_question_absent_without_dependents():
+    no_deps = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")),
+    )
+    assert "household.dependent_care" not in _ids(intake_checklist(no_deps, tax_year=2023))
+
+
+# ── Phase G item G6: the FICA note asks about employer refusal (843 + 8316) ────
+
+
+def test_fica_note_asks_the_employer_refusal_question_with_the_claim_amount():
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2023, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(120)}),
+    )
+    note = next(n for n in intake_checklist(profile, tax_year=2023).notes if "FICA" in n)
+    # The follow-up question and the concrete claim-amount rule.
+    assert "did your employer refuse or fail to refund" in note
+    assert "box 4 + box 6" in note
+    # The 843+8316 path is named, with 8316 as the employer-refusal statement
+    # and the file_and_pay manifest shape.
+    assert "Form 8316 serves as" in note
+    assert "attached_forms" in note and "'843'" in note and "'8316'" in note
