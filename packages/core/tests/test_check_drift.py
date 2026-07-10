@@ -149,6 +149,12 @@ def test_not_drift_reason_classifies_transport_vs_move():
     blocked.__cause__ = _ue.HTTPError("u", 403, "Forbidden", {}, None)
     assert cd._not_drift_reason(blocked) == "blocked HTTP 403"      # warn, not drift
 
+    timed_out = TimeoutError("The read operation timed out")
+    assert cd._not_drift_reason(timed_out) == "timeout"            # transient flake, not a move
+    wrapped_timeout = OfflineFetchError("could not reach")
+    wrapped_timeout.__cause__ = _ue.URLError(TimeoutError("timed out"))
+    assert cd._not_drift_reason(wrapped_timeout) == "timeout"
+
     moved = FetchError("gone")
     moved.__cause__ = _ue.HTTPError("u", 404, "Not Found", {}, None)
     assert cd._not_drift_reason(moved) is None                      # genuine drift

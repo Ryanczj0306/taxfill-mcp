@@ -81,20 +81,27 @@ def _collect_mailing_urls(node, out: list[str]) -> None:
 def _not_drift_reason(exc: BaseException) -> str | None:
     """Classify a fetch failure that is NOT evidence a form moved/changed.
 
-    Returns a short warn label ('SSL cert' / 'blocked HTTP <code>') when the
-    failure is a transport/trust issue — an incomplete TLS chain (some state
-    .gov sites serve missing intermediates that browsers fetch via AIA but a
-    strict CA bundle rejects) or a 403/429 bot block — and ``None`` when it is
-    genuine drift (404/moved, DNS/refused/timeout). Walks the exception chain
-    because ``fetch._download`` wraps the original error in FetchError/
-    OfflineFetchError ``from exc``.
+    Returns a short warn label ('SSL cert' / 'blocked HTTP <code>' / 'timeout')
+    when the failure is a transport/trust issue — an incomplete TLS chain (some
+    state .gov sites serve missing intermediates that browsers fetch via AIA but
+    a strict CA bundle rejects), a 403/429 bot block, or a read/connect timeout
+    (the host answered but was slow — a transient flake) — and ``None`` when it
+    is genuine, actionable drift (404/moved, DNS-gone, connection refused).
+    Walks the exception chain because ``fetch._download`` wraps the original
+    error in FetchError/OfflineFetchError ``from exc``.
     """
     seen: BaseException | None = exc
     while seen is not None:
-        if isinstance(seen, ssl.SSLError) or isinstance(getattr(seen, "reason", None), ssl.SSLError):
+        reason = getattr(seen, "reason", None)
+        if isinstance(seen, ssl.SSLError) or isinstance(reason, ssl.SSLError):
             return "SSL cert"
         if isinstance(seen, urllib.error.HTTPError) and seen.code in (403, 429):
             return f"blocked HTTP {seen.code}"
+        # A read/connect TIMEOUT means we reached the host but it was slow — a
+        # transient flake, not a moved form (these state hosts return 200 most
+        # nights). Genuine drift is DNS-gone / refused / 404, which are NOT timeouts.
+        if isinstance(seen, TimeoutError) or isinstance(reason, TimeoutError):
+            return "timeout"
         seen = seen.__cause__ or seen.__context__
     return None
 
