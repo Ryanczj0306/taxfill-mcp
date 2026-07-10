@@ -23,7 +23,7 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from taxfill_core.knowledge import Citation, load_knowledge, load_state_knowledge
 
@@ -222,9 +222,23 @@ class FilingManifestItem(BaseModel):
             "True when this is a DUAL-STATUS return (a split residency year): the assembly checklist then "
             "leads with writing 'Dual-Status Return' across the top of the return, attaching the other-status "
             "return (1040-NR for a 1040 return, 1040 for a 1040-NR return) marked 'Dual-Status Statement', "
-            "the no-standard-deduction reminder, and the sign-the-RETURN-not-the-statement rule."
+            "the no-standard-deduction reminder, and the sign-the-RETURN-not-the-statement rule. "
+            "MUTUALLY EXCLUSIVE with section_6013_election (the election makes the couple full-year "
+            "residents — an ordinary joint 1040; a dual-status return cannot be joint)."
         ),
     )
+
+    @model_validator(mode="after")
+    def _dual_status_and_6013_are_alternatives(self) -> "FilingManifestItem":
+        if self.dual_status and self.section_6013_election:
+            raise ValueError(
+                "dual_status and section_6013_election cannot both be set on one return: the "
+                "§6013(g)/(h) election treats BOTH spouses as U.S. residents for the ENTIRE year, "
+                "so the return is an ordinary full-year joint Form 1040 (drop dual_status and keep "
+                "the election), while a true dual-status year cannot be a joint return at all "
+                "(Pub 519 ch. 6 restrictions) — pick the one that matches the recorded position"
+            )
+        return self
 
 
 class ReturnInstructions(BaseModel):

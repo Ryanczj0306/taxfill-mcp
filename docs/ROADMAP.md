@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,005 tests, all green** — offline 1,916 + live-.gov 89, exit 0):
+Done and on `main` (**2,008 tests, all green** — offline 1,919 + live-.gov 89, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (22 tools, stdio, image content) · M5 state support · M6 code/docs.**
