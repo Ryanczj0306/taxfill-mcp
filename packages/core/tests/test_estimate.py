@@ -1605,3 +1605,56 @@ def test_g6_fica_note_names_the_concrete_claim_amount_and_medicare_gap():
     assert "box-6 Medicare tax" in note and "not tracked" in note
     assert "box 4 + box 6" in note                              # the actual claim amount
     assert any("box 4 + box 6" in c for c in est.what_would_change_it)
+
+
+def test_canada_de_minimis_cliff_checked_against_total_wages():
+    # Final-review fix: Canada Art. XV's $10,000 rule is an ALL-OR-NOTHING cliff on
+    # TOTAL US employment remuneration — a partial claim under the threshold must
+    # still warn when total wages exceed it.
+    profile = _single()
+    profile.identity = Identity(citizenship_country=_ans("Canada"))
+    est = estimate_refund(
+        profile, 2023, IncomeSnapshot(wages=30_000, treaty_exempt_income=8_000, federal_withholding=3_000)
+    )
+    assert any("ALL-OR-NOTHING" in a and "10,000" in a for a in est.assumptions)
+    # Under the cliff with total wages under $10k: no cliff warning.
+    ok = estimate_refund(
+        profile, 2023, IncomeSnapshot(wages=9_000, treaty_exempt_income=8_000, federal_withholding=500)
+    )
+    assert not any("ALL-OR-NOTHING" in a for a in ok.assumptions)
+    # China control: total wages over $5k is FINE when the claimed amount is within
+    # the per-amount limit (China's limit caps the exempt portion, not total wages).
+    profile_cn = _single()
+    profile_cn.identity = Identity(citizenship_country=_ans("China"))
+    cn = estimate_refund(
+        profile_cn, 2023, IncomeSnapshot(wages=30_000, treaty_exempt_income=5_000, federal_withholding=3_000)
+    )
+    assert not any("ALL-OR-NOTHING" in a for a in cn.assumptions)
+
+
+def test_dependent_care_squeezed_to_zero_is_disclosed():
+    # Final-review fix: a computed 2441 credit fully squeezed out by earlier
+    # nonrefundable credits must be disclosed, never silently dropped.
+    profile = Profile(household=Household(marital_status=_ans("unmarried"),
+                                          filing_status=_ans("head_of_household")))
+    est = estimate_refund(
+        profile, 2023,
+        IncomeSnapshot(wages=28_000, federal_withholding=800,
+                       dependent_care_expenses=3_000, dependent_care_persons=1,
+                       aotc_qualified_expenses=[4_000]),
+    )
+    assert any("consumed the entire income tax" in a for a in est.assumptions)
+
+
+def test_dependent_care_zero_earned_spouse_is_disclosed():
+    # Final-review fix: the MFJ split with a zero-earned spouse yields a $0 credit —
+    # the deemed $250/$500 rule that could restore it must be surfaced.
+    profile = Profile(household=Household(marital_status=_ans("married"),
+                                          filing_status=_ans("married_filing_jointly")))
+    est = estimate_refund(
+        profile, 2023,
+        IncomeSnapshot(wages=90_000, federal_withholding=10_000,
+                       dependent_care_expenses=3_000, dependent_care_persons=1,
+                       spouse=IncomeSnapshot()),
+    )
+    assert any("NO earned income" in a and "deemed" in a for a in est.assumptions)
