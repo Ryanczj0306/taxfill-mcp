@@ -48,7 +48,7 @@ from taxfill_core.calc import (
     taxable_social_security,
     treaty_benefit,
 )
-from taxfill_core.knowledge import Citation, load_knowledge
+from taxfill_core.knowledge import Citation, load_knowledge, load_treaty
 from taxfill_core.schemas.profile import Profile
 
 __all__ = [
@@ -486,22 +486,45 @@ def _citizenship_country(profile: Profile) -> str | None:
     return str(ident.citizenship_country.value)
 
 
-def _treaty_cross_check(country: str, treaty_amount: int, year: int, knowledge_dir) -> str | None:
+def _treaty_cross_check(
+    country: str, treaty_amount: int, year: int, knowledge_dir, total_wages: int = 0
+) -> str | None:
     """Cross-check the entered treaty-exempt amount against the country's student-wage rule.
 
     Returns an ASSUMPTION string when the amount is not fully supported as
     student WAGES (it exceeds the country's dollar limit, or the country has
     no wage exclusion at all) — never a hard block, because scholarship /
     payments-from-abroad components are legitimately exempt without the wage
-    limit. Returns None when the country is not a shipped treaty pack (the
-    generic trust-the-agent disclosure stands alone) or the amount is within
-    the wage limit.
+    limit. ``total_wages`` (snapshot wages, spouse-combined) matters for the
+    de-minimis countries: their rule is an all-or-nothing cliff on TOTAL
+    employment remuneration, so a partial claim under the threshold is still
+    unsupported when total wages exceed it. Returns None when the country is
+    not a shipped treaty pack (the generic trust-the-agent disclosure stands
+    alone) or the amount is within the wage limit.
     """
     try:
         check = treaty_benefit(country, "student_wages", treaty_amount, year=year, knowledge_dir=knowledge_dir)
     except FileNotFoundError:
         return None  # country not shipped — keep today's generic disclosure only
     if check.taxable_remainder <= 0:
+        # Within the claimed-amount rule. But a de-minimis country's rule (Canada
+        # Art. XV) is an ALL-OR-NOTHING CLIFF on TOTAL US employment remuneration,
+        # not a cap on the claimed portion (final-review finding).
+        try:
+            pack = load_treaty(country, base_dir=knowledge_dir)
+        except (FileNotFoundError, ValueError):
+            return None
+        dm = pack.employment_de_minimis
+        has_wage_limit = pack.student is not None and pack.student.compensation_limit is not None
+        if dm is not None and dm.amount is not None and not has_wage_limit and total_wages > dm.amount:
+            return (
+                f"Treaty cross-check ({pack.country}): the {dm.article} ${dm.amount:,} rule is "
+                f"ALL-OR-NOTHING on TOTAL US employment remuneration — the wages entered "
+                f"(${total_wages:,}) exceed it, so NO part of them is exempt under that rule (the "
+                f"${treaty_amount:,} entered as treaty-exempt is unsupported as wages); only the "
+                f"treaty's alternative test (183-day/employer/PE) could exempt them. Validate with "
+                f"the calc op treaty_benefit before relying on this estimate."
+            )
         return None
     if check.exempt_amount > 0:
         # A dollar limit exists (China $5,000 / Korea $2,000) and the entry exceeds it.
@@ -980,6 +1003,16 @@ def _bottom_line(
                                 amount=-used_dc,
                             )
                         )
+                    elif notes is not None:
+                        # The credit computed but earlier credits consumed all the income
+                        # tax — supplied inputs must never vanish silently.
+                        notes.add("dependent_care_squeezed")
+            elif notes is not None:
+                # Credit computed to $0 — disclose WHY instead of dropping the inputs.
+                if dc_spouse_earned is not None and min(dc_earned, dc_spouse_earned) <= 0:
+                    notes.add("dependent_care_spouse_no_earned")
+                else:
+                    notes.add("dependent_care_zero")
 
     # Child tax credit / credit for other dependents. Qualifying child = DOB known,
     # age at year end under the year's limit (17; 18 in 2021), and a work-eligible
@@ -1368,7 +1401,10 @@ def estimate_refund(
         # payments-from-abroad components are separately exempt without the wage limit).
         treaty_country = _citizenship_country(profile)
         if treaty_country is not None:
-            cross_check = _treaty_cross_check(treaty_country, treaty_amount, year, knowledge_dir)
+            total_wages = income.wages + (income.spouse.wages if income.spouse is not None else 0)
+            cross_check = _treaty_cross_check(
+                treaty_country, treaty_amount, year, knowledge_dir, total_wages=total_wages
+            )
             if cross_check is not None:
                 assumptions.append(cross_check)
     if "treaty_exclusion_clamped" in notes:
@@ -1562,6 +1598,25 @@ def estimate_refund(
             "the credit is limited by the LOWER-earning spouse's earned income (a spouse with no "
             "earned income makes it $0 absent the student/disabled deemed-income rule). Provide each "
             "spouse's own amounts (the spouse snapshot) for the real limitation."
+        )
+    if "dependent_care_squeezed" in notes:
+        assumptions.append(
+            "The Form 2441 dependent-care credit computed a positive amount but earlier nonrefundable "
+            "credits already consumed the entire income tax, so $0 of it is used in this estimate — "
+            "it is nonrefundable and cannot exceed the tax (2021 was the one refundable year)."
+        )
+    if "dependent_care_spouse_no_earned" in notes:
+        assumptions.append(
+            "The dependent-care credit is $0 because one spouse shows NO earned income — the Form 2441 "
+            "limitation uses the LOWER-earning spouse. If that spouse was a full-time student or "
+            "disabled, the deemed $250/$500-per-month income rule can restore the credit (agent "
+            "judgment; recompute with calc op dependent_care_credit using the deemed amount)."
+        )
+    if "dependent_care_zero" in notes:
+        assumptions.append(
+            "The dependent-care expenses you supplied produced a $0 Form 2441 credit under the "
+            "earned-income and expense-cap limitations — the inputs were evaluated, not dropped; "
+            "see the calc op dependent_care_credit for the line-by-line work."
         )
     if income.dependent_care_expenses > 0:
         pack = load_knowledge("federal", year, base_dir=knowledge_dir)

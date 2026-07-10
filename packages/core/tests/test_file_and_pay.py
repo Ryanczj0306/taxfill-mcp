@@ -428,13 +428,16 @@ def test_dual_status_departure_year_reverses_return_and_statement_roles():
     assert any("Form 1040-NR" in s and "RETURN" in s for s in r.sign)
 
 
-def test_dual_status_leads_even_with_the_6013_statement_item():
-    # Both flags set: the dual-status annotations still lead, and the §6013
-    # statement item follows (both are prominent, neither is buried).
-    r = _only([FilingManifestItem(form="1040", tax_year=2023, bottom_line=-500, state="Texas",
-                                  filing_jointly=True, section_6013_election=True, dual_status=True)])
-    assert '"Dual-Status Return"' in r.assemble[0]
-    assert "§6013(g)/(h)" in r.assemble[3]  # right after the three dual-status items
+def test_dual_status_and_6013_election_are_mutually_exclusive():
+    # Final-review fix: the §6013(g)/(h) election makes the couple FULL-YEAR residents
+    # (an ordinary joint 1040), while a dual-status return cannot be joint — both flags
+    # on one item would emit a legally self-contradictory checklist, so it must raise.
+    import pytest as _pytest
+    from pydantic import ValidationError as _VE
+
+    with _pytest.raises(_VE, match="cannot both be set"):
+        FilingManifestItem(form="1040", tax_year=2023, bottom_line=-500, state="Texas",
+                           filing_jointly=True, section_6013_election=True, dual_status=True)
 
 
 def test_no_dual_status_flag_no_annotations():
