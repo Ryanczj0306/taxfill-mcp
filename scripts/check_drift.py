@@ -78,9 +78,30 @@ def _collect_mailing_urls(node, out: list[str]) -> None:
             _collect_mailing_urls(item, out)
 
 
+def _not_drift_reason(exc: BaseException) -> str | None:
+    """Classify a fetch failure that is NOT evidence a form moved/changed.
+
+    Returns a short warn label ('SSL cert' / 'blocked HTTP <code>') when the
+    failure is a transport/trust issue — an incomplete TLS chain (some state
+    .gov sites serve missing intermediates that browsers fetch via AIA but a
+    strict CA bundle rejects) or a 403/429 bot block — and ``None`` when it is
+    genuine drift (404/moved, DNS/refused/timeout). Walks the exception chain
+    because ``fetch._download`` wraps the original error in FetchError/
+    OfflineFetchError ``from exc``.
+    """
+    seen: BaseException | None = exc
+    while seen is not None:
+        if isinstance(seen, ssl.SSLError) or isinstance(getattr(seen, "reason", None), ssl.SSLError):
+            return "SSL cert"
+        if isinstance(seen, urllib.error.HTTPError) and seen.code in (403, 429):
+            return f"blocked HTTP {seen.code}"
+        seen = seen.__cause__ or seen.__context__
+    return None
+
+
 def _probe_urls(urls: list[str], label: str) -> list[str]:
-    """Confirm each URL still resolves. 403/429 are warn-only (blocked bot, not a
-    move); any other failure is drift. Returns the list of drift descriptions."""
+    """Confirm each URL still resolves. TLS-chain and 403/429 failures are warn-only
+    (transport/trust, not a move); any other failure is drift. Returns the drift list."""
     drift: list[str] = []
     print(f"\n=== {label} ({len(urls)} URLs) ===")
     for url in urls:
@@ -95,21 +116,13 @@ def _probe_urls(urls: list[str], label: str) -> list[str]:
             else:
                 drift.append(f"{label}: {url} -> HTTP {exc.code}")
                 print(f"  DRIFT  {exc.code} {url}")
-        except urllib.error.URLError as exc:
-            # TLS-chain quirks (incomplete intermediate certs served by some state
-            # .gov sites — urllib is stricter than browsers, which fetch missing
-            # intermediates via AIA) raise SSLCertVerificationError. The page is
-            # up, the cert just won't verify against a strict CA bundle, so — like
-            # a 403 — this is not a moved page. Warn, don't fail. A genuine
-            # connection failure (DNS, refused, timeout) is still drift.
-            if isinstance(getattr(exc, "reason", None), ssl.SSLError):
-                print(f"  warn   SSL cert (not drift) {url}")
+        except Exception as exc:
+            reason = _not_drift_reason(exc)
+            if reason is not None:
+                print(f"  warn   {reason} (not drift) {url}")
             else:
                 drift.append(f"{label}: {url} unreachable — {exc}")
                 print(f"  DRIFT  unreachable {url}")
-        except Exception as exc:
-            drift.append(f"{label}: {url} unreachable — {exc}")
-            print(f"  DRIFT  unreachable {url}")
     return drift
 
 
@@ -134,6 +147,14 @@ def check_form_blanks() -> list[str]:
             tmp.write_bytes(_download(pack.source_url, TIMEOUT))
             actual = compute_sha256(tmp)
         except Exception as exc:
+            # A TLS-chain / 403-block failure is a transport/trust issue, not a moved
+            # or revised form — warn like _probe_urls, don't fail the job. Only a genuine
+            # move (404/DNS/refused) counts as drift. (Fixes the recurring nightly-CI red
+            # from state hosts like www.dor.ms.gov serving an incomplete cert chain.)
+            reason = _not_drift_reason(exc)
+            if reason is not None:
+                print(f"  warn   {rel}: {reason} (not drift) {pack.source_url}")
+                continue
             drift.append(f"{rel}: source_url unreachable — {pack.source_url} ({exc})")
             print(f"  DRIFT  {rel}: UNREACHABLE {pack.source_url}")
             continue
