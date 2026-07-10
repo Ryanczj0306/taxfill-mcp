@@ -130,3 +130,29 @@ def test_mailing_addresses_checked_and_reachable_is_no_drift(monkeypatch):
 
     monkeypatch.setattr(cd.urllib.request, "urlopen", lambda *a, **k: _Resp(200))
     assert cd.check_mailing_addresses() == []
+
+
+def test_not_drift_reason_classifies_transport_vs_move():
+    # Regression: the SSL/403 tolerance must apply to the FORMPACK source_url check
+    # too (it was in _probe_urls but not the pack loop — the recurring nightly red on
+    # www.dor.ms.gov's incomplete cert chain). _download wraps the cause `from exc`.
+    import ssl as _ssl
+    import urllib.error as _ue
+
+    from taxfill_core.fetch import FetchError, OfflineFetchError
+
+    ssl_wrapped = OfflineFetchError("could not reach").with_traceback(None)
+    ssl_wrapped.__cause__ = _ue.URLError(_ssl.SSLCertVerificationError("verify failed"))
+    assert cd._not_drift_reason(ssl_wrapped) == "SSL cert"          # warn, not drift
+
+    blocked = FetchError("refused")
+    blocked.__cause__ = _ue.HTTPError("u", 403, "Forbidden", {}, None)
+    assert cd._not_drift_reason(blocked) == "blocked HTTP 403"      # warn, not drift
+
+    moved = FetchError("gone")
+    moved.__cause__ = _ue.HTTPError("u", 404, "Not Found", {}, None)
+    assert cd._not_drift_reason(moved) is None                      # genuine drift
+
+    refused = OfflineFetchError("dns")
+    refused.__cause__ = _ue.URLError(ConnectionRefusedError("refused"))
+    assert cd._not_drift_reason(refused) is None                    # genuine drift
