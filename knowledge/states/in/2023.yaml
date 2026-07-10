@@ -162,3 +162,46 @@ all_citations:
   url: https://www.in.gov/dor/i-am-a/individual/individual-income-tax-overview/
 - source: Indiana DOR - INTIME e-services payment portal
   url: https://intime.dor.in.gov
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified against the cited 2023 IT-40 booklet, Form IT-40, and Schedule 3
+# (State Form 53997 R14/9-23) on forms.in.gov (IN DOR .gov).
+tax:
+  citation:
+    source: 'Indiana DOR — 2023 IT-40 Full-Year Resident booklet ("The Individual Income Tax Rate is lowered to
+      3.15% for tax year 2023"); 2023 Form IT-40 Line 8 "State adjusted gross income tax: multiply line 7 by
+      3.15% (.0315)" (Line 7 = Line 5 minus Line 6 exemptions; Line 1 = federal AGI from Form 1040/1040-SR
+      line 11); 2023 Schedule 3: Exemptions (State Form 53997 R14/9-23) Lines 1-6.'
+    url: https://forms.in.gov/Download.aspx?id=15792
+  flat_rate: 0.0315
+  base: federal_agi
+  tax_line: 'IT-40 Line 8: "State adjusted gross income tax: multiply line 7 by 3.15% (.0315)" (Line 7 =
+    Indiana adjusted gross income = Line 5 minus Line 6 exemptions; Line 1 starts from federal AGI).'
+  exemptions:
+    personal:
+      amount: 1000
+      note: 'Schedule 3 Line 1: $1,000 per taxpayer ($2,000 married filing jointly — $1,000 each spouse).'
+    dependent:
+      amount: 1000
+      note: 'Schedule 3 Line 2: $1,000 per dependent.'
+    additional_dependent_child:
+      amount: 1500
+      note: 'Schedule 3 Line 3: additional $1,500 per qualifying dependent CHILD (under 19, or a full-time
+        student under 24). NOT applied by calc.state_tax — enter it on Schedule 3 Line 3.'
+    age_65_or_blind:
+      amount: 1000
+      note: 'Schedule 3 Line 4: $1,000 per 65-or-older / blind checkbox. NOT applied by calc.state_tax.'
+    age_65_low_income:
+      amount: 500
+      note: 'Schedule 3 Line 5: additional $500 per 65-or-older box when IT-40 Line 1 (federal AGI) is under
+        $40,000 (under $20,000 married filing separately). NOT applied by calc.state_tax.'
+    adopted_child:
+      amount: 3000
+      note: 'Schedule 3 Line 6: additional $3,000 per adopted child. NOT applied by calc.state_tax.'
+  notes:
+  - 'First-year $3,000 dependent-child amount (instead of $1,500) has NARROWER mechanics than "first year
+    claimed" — per the 2023 IT-40 booklet it is allowed only in "the first taxable year in which the additional
+    dependent exemption is allowable for that child" and is "not permitted if the child could have been claimed
+    for the $1,500 exemption in any previous year, regardless of whether the child had been claimed."
+    Eligibility gates on could-have-claimed, not first-actually-claimed — decide it on Schedule 3, not here.'
+  - 'Indiana COUNTY income taxes (IT-40 Schedule CT-40, county rates) are NOT modeled — calc.state_tax computes
+    the state 3.15% line only; most Indiana filers also owe a county add-on.'

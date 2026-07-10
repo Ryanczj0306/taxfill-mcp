@@ -1,0 +1,69 @@
+# US-India treaty knowledge — per-country treaty benefits for individual NRA filers
+# (ROADMAP Phase G item G1). See china.yaml header for the transcription rules:
+# every value comes from the fetched official documents in each block's citation
+# (irs.gov only); dollar amounts are treaty-fixed, never inflation-indexed.
+#
+# Loaded by taxfill_core.knowledge.load_treaty; consumed by calc.treaty_benefit.
+
+country: india
+treaty: "US-India Convention signed New Delhi 1989-09-12"
+
+disclaimer: >-
+  Treaty eligibility depends on facts the engine checks only PARTIALLY: the visa category and the
+  exact visa PERIOD the income was earned in (eligibility is per period, not per year — pitfall
+  P-004), the purpose of the visit (study/training vs teaching/research), residence in the treaty
+  country immediately before US entry, and the saving-clause analysis (whether the treaty's
+  exception preserves the benefit after the filer becomes a US resident — see each block's
+  saving_clause_exception fields). The calc op treaty_benefit validates articles and dollar limits;
+  the final eligibility judgment and the recorded position stay with the agent and the user.
+
+citation:
+  source: "US-India income tax convention (signed New Delhi 1989-09-12); Pub 901 (Rev. September 2024), India entries"
+  url: "https://www.irs.gov/pub/irs-trty/india.pdf"
+
+student:
+  article: "Art. 21 (Payments Received by Students and Apprentices)"
+  compensation_limit: null            # NO dollar exclusion for wages — India has no China/Korea-style amount
+  payments_from_abroad_exempt: true
+  payments_from_abroad_text: "Art. 21(1): payments arising outside the US for maintenance, education or training"
+  scholarship_exempt: false           # not flatly excluded; covered by the Art. 21(2) same-as-residents rule below
+  special_rule: >-
+    Art. 21(2): for grants, scholarships and remuneration from employment not covered by para. 1,
+    the student/business apprentice gets 'the same exemptions, reliefs or reductions in respect of
+    taxes available to residents' — i.e. the standard deduction (and personal/dependent exemptions
+    when in effect) on Form 1040-NR (Pub 901 (Rev. 9-2024) p. 33; Pub 519 ch. 5). It is a
+    deduction-parity rule, NOT a dollar exclusion.
+  time_limit_text: >-
+    no fixed year count — 'only for such period of time as may be reasonable or customarily
+    required to complete the education or training' (Art. 21(3))
+  saving_clause_exception: true
+  saving_clause_exception_text: >-
+    Art. 1(4)(b): Arts. 19, 21, 22, 29 benefits preserved "upon individuals who are neither
+    citizens of, nor have immigrant status in" the US
+  citation:
+    source: "US-India convention Art. 21 (Payments Received by Students and Apprentices); Pub 901 (Rev. September 2024) p. 33 (India students — standard deduction via Form 1040-NR)"
+    url: "https://www.irs.gov/pub/irs-trty/india.pdf"
+
+teacher_researcher:
+  article: "Art. 22 (Payments Received by Professors, Teachers and Research Scholars)"
+  years: 2
+  years_basis: >-
+    from the date of first visit — the exemption runs 'for a period not exceeding two years from
+    the date he first visits'; the individual must visit 'for a period not exceeding two years'
+  retroactive_loss: true
+  retroactive_loss_text: >-
+    Pub 901 (Rev. 9-2024) p. 25: "If the individual's visit to the United States exceeds 2 years,
+    the exemption is lost for the entire visit."
+  conditions: >-
+    university, college or other recognized educational institution; research only if in the
+    public interest (Art. 22(2))
+  saving_clause_exception: true
+  saving_clause_exception_text: "Art. 1(4)(b), non-citizens without immigrant status (see student block)."
+  citation:
+    source: "US-India convention Art. 22 (Payments Received by Professors, Teachers and Research Scholars); Pub 901 (Rev. September 2024) p. 25 (India teacher entry — retroactive loss)"
+    url: "https://www.irs.gov/pub/irs-trty/india.pdf"
+
+notes: >-
+  Personal/dependency exemptions referenced by Art. 21(2) are $0 for tax years 2018-2025 under
+  TCJA, so the practical benefit is the standard deduction. (TCJA context is general US law, not
+  text from the fetched treaty documents.)

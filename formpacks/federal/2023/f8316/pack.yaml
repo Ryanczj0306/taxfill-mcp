@@ -1,0 +1,100 @@
+# Form 8316 — Information Regarding Request for Refund of Social Security
+# Tax Erroneously Withheld on Wages Received by a Nonresident Alien on an
+# F, J, or M Type Visa.
+#
+# REVISION-pinned, not year-pinned: the IRS issues Form 8316 as one stable
+# revision that serves many filing years (like Form W-7); there is no
+# irs-prior year-stamped file. This pins the CURRENT irs-pdf revision —
+# page 1 was rendered and READ: header "Form 8316 / Rev. January 2006",
+# footer "Form 8316 (Rev. 1-2006)", Catalog Number 62323Y, OMB No.
+# 1545-1862 — before pinning pdf_sha256 (freshness protocol, dev plan
+# section 7). tax_year 2023 is the filing year this pack serves, not a
+# printed year on the form face.
+#
+# Provenance: blank downloaded from the official source_url below; the
+# printed title was confirmed against the render. Field map introspected
+# from this exact revision: the AcroForm is FLAT (top-level field names,
+# empty acroform_root). ALL 19 widgets are mapped below (8 text + 11
+# checkbox option widgets on 5 /Btn fields). Checkbox on-states were
+# dumped from the blank PDF's appearance states and tied to their printed
+# labels by kid-widget /Rect x-position (confirmed visually on a rendered
+# golden fill), never guessed:
+#   A: /1=Yes (x=66.5) /2=No (x=142.5)
+#   1: /1=Yes (x=142.5) /2=No (x=204.5)
+#   3: /1=Yes (x=143.5) /2=No (x=204.5)
+#   5: /1=Yes (x=143.5) /2=No (x=204.5) /3=Do not Know (x=267.5)
+#   7: /1=Yes (x=143.5) /2=No (x=204.5)
+#
+# Question A is the gatekeeper: item B printed on the face says that if you
+# checked "NO" the taxes were correctly withheld and you must NOT complete
+# the rest of the form — so only the question_a group is marked required;
+# lines 1/3/5/7 are answered only by the A=Yes population (a required flag
+# on them would false-FAIL every legitimate A=No filer).
+#
+# No relations and no cross_form: the form face prints no arithmetic —
+# lines 2/4/6/8 ("If yes, show amount") are standalone dollar facts, not
+# sums or carries. Item C says the completed form is ATTACHED TO FORM 843
+# (the actual refund claim); Form 843 is not a cross-form target key and
+# no printed equality links their lines.
+#
+# identity_fields is empty because the form carries NO name / identifying
+# number / address boxes of its own — identity travels on the attached
+# Form 843 claim.
+#
+# Signature: the form has its own "Your signature" + "Date" area at the
+# bottom of page 1 (ink-signed — the blank has no AcroForm fields there),
+# hence signature page 1. Mailed inside the Form 843 claim's envelope, so
+# mailing is null.
+form: "8316"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-pdf/f8316.pdf
+pdf_sha256: "4003c86d2637bad65f090b182d11d9accfc7198b3bb36b40e4b74a84fc1b8b8e"
+acroform_root: ""
+fields:
+  # ---- A: was the income directly related to your course of studies as
+  #      identified by the provisions of your entry visa? (gatekeeper) -----------
+  - { line: "a.yes", field: "A", type: checkbox, on_state: "/1", group: question_a, required: true }
+  - { line: "a.no", field: "A", type: checkbox, on_state: "/2", group: question_a }
+  # ---- employer-reimbursement questions (answered only when A = Yes) ----------
+  # 1. Has your employer paid you back for any part of the tax withheld
+  - { line: "1.yes", field: "1", type: checkbox, on_state: "/1", group: line1 }
+  - { line: "1.no", field: "1", type: checkbox, on_state: "/2", group: line1 }
+  - { line: "2", field: "FillText01", type: money }    # 2. If yes, show amount ($)
+  # 3. Have you authorized your employer to claim any part of the tax as a credit or refund
+  - { line: "3.yes", field: "3", type: checkbox, on_state: "/1", group: line3 }
+  - { line: "3.no", field: "3", type: checkbox, on_state: "/2", group: line3 }
+  - { line: "4", field: "FillText03", type: money }    # 4. If yes, show amount ($)
+  # 5. Has your employer claimed any part of the tax as a credit or refund
+  - { line: "5.yes", field: "5", type: checkbox, on_state: "/1", group: line5 }
+  - { line: "5.no", field: "5", type: checkbox, on_state: "/2", group: line5 }
+  - { line: "5.do_not_know", field: "5", type: checkbox, on_state: "/3", group: line5 }
+  - { line: "6", field: "FillText05", type: money }    # 6. If yes, show amount ($)
+  # Unnumbered: "If you cannot get a statement from your employer concerning
+  # the above information, please tell us why in the space below."
+  - { line: "why_no_employer_statement", field: "FillText06", type: text }
+  # 7. Have you claimed any part of the tax as credit against, or a refund of, your Federal income tax
+  - { line: "7.yes", field: "7", type: checkbox, on_state: "/1", group: line7 }
+  - { line: "7.no", field: "7", type: checkbox, on_state: "/2", group: line7 }
+  - { line: "8", field: "FillText10", type: money }    # 8. If yes, show amount ($)
+  # 9. Name and address of employer (include street, city, State and ZIP code) — one multi-line box
+  - { line: "9", field: "FillText7", type: text }
+  # ---- contact block (below the ink signature/date area) ----------------------
+  - { line: "phone", field: "FillText12", type: text }             # "Your telephone number (include area code)"
+  - { line: "convenient_hours", field: "FillText11", type: text }  # "Convenient hours for us to call"
+
+# No math is printed on the form face (the amounts on 2/4/6/8 are standalone
+# facts) — see the header comment.
+relations: []
+cross_form: []
+
+# The form carries no name/identifying-number/address boxes of its own; the
+# attached Form 843 claim carries the filer's identity.
+identity_fields: []
+
+# Signed in ink at the bottom of page 1 ("Your signature" / "Date" — no
+# AcroForm fields). Attached to Form 843 and mailed in that claim's
+# envelope, so no mailing block of its own.
+signature:
+  page: 1
+mailing: null

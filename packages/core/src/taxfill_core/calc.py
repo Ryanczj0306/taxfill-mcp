@@ -29,12 +29,33 @@ Contents:
   (Social Security Benefits Worksheet), ``excess_ss`` (Schedule 3
   excess-social-security credit), ``student_loan_interest_deduction``
   (section 221), ``education_credits`` (Form 8863 AOTC/LLC), and
-  ``ptc_annual`` (Form 8962 Premium Tax Credit, annual method).
+  ``ptc_annual`` / ``ptc_monthly`` (Form 8962 Premium Tax Credit — the
+  annual method and the lines 12-23 monthly grid for part-year coverage).
 * Family credit ops: ``child_tax_credit`` (Schedule 8812 — nonrefundable
   CTC/ODC for Form 1040 line 19 plus the refundable ACTC for line 28,
   including the 2021 ARPA expanded fully-refundable rules) and ``eitc``
   (the earned income credit by the Rev. Proc. formula, with the
   investment-income and married-filing-separately gates).
+* ``dependent_care_credit`` (Phase G) — the Form 2441 child & dependent
+  care credit line flow (Schedule 3 line 2): expense caps by qualifying-
+  person count, the employer-benefit (W-2 box 10) cap offset, the earned-
+  income smallest-of limitation (spouse required for MFJ), the AGI-driven
+  applicable-percentage slide (35%->20%; 2021 ARPA: 50%->20%->0% with the
+  $438,000 zero point), the MFS generally-ineligible gate, and the 2021
+  refundable-if-US-abode flag.
+* ``treaty_benefit`` (Phase G) — validates/computes a treaty exemption
+  (Schedule OI / Form 1040-NR line 1k) from the per-country
+  ``knowledge/treaties/<country>.yaml`` packs (China, India, Korea, Canada,
+  Mexico): student compensation limits, scholarship/abroad-payment
+  exemptions, teacher-article year windows (with India's retroactive-loss
+  clawback), and the Canada/Mexico employment de-minimis shapes. Final
+  eligibility judgment stays with the agent.
+* ``state_tax`` (Phase G, G4) — the flat-rate STATE income-tax line for the
+  eight flat-rate 2023 states whose packs ship a cited ``tax`` block (IL,
+  PA, IN, MI, NC, CO, KY, AZ): rate x (caller-supplied state taxable base
+  minus the state's verified personal/dependent exemptions and standard
+  deduction). County/city add-on taxes and state credits are NOT modeled —
+  the work string discloses exactly what was and was not applied.
 
 These functions are pure: no logging, no side effects; the only I/O is
 reading the versioned knowledge pack. They never echo the value being
@@ -48,17 +69,21 @@ from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Literal
 
+import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 from taxfill_core.knowledge import (
     FILING_STATUSES,
     Citation,
+    DependentCareParams,
     FilingStatus,
     KnowledgePack,
     MagiPhaseoutRange,
     RateBracket,
     TaxTable,
     load_knowledge,
+    load_state_knowledge,
+    load_treaty,
 )
 
 # ABA position weights for the 9-digit routing transit number checksum.
@@ -1578,10 +1603,190 @@ def education_credits(
 
 
 # ---------------------------------------------------------------------------
-# Premium Tax Credit (Form 8962, annual method)
+# Premium Tax Credit (Form 8962: annual method + lines 12-23 monthly method)
 # ---------------------------------------------------------------------------
 
 _PTC_STATES = ("other", "alaska", "hawaii")
+
+_PTC_STATE_LABELS = {"other": "48 contiguous states/DC", "alaska": "Alaska", "hawaii": "Hawaii"}
+
+
+def _ptc_validate_common(
+    income: Decimal, household_size: int, status: str, state: str, mfs_relief_exception: bool
+) -> None:
+    """Input gates shared by :func:`ptc_annual` and :func:`ptc_monthly` (identical messages)."""
+    if income < 0:
+        raise ValueError(f"household_income must be >= 0, got {income} — pass 0 for a negative household income")
+    if isinstance(household_size, bool) or not isinstance(household_size, int) or household_size < 1:
+        raise ValueError(
+            f"household_size must be an int >= 1 (the Form 8962 line 1 tax family size), got {household_size!r}"
+        )
+    _resolve_filing_status(status)  # validates the five statuses
+    if mfs_relief_exception and status != "married_filing_separately":
+        raise ValueError(
+            f"mfs_relief_exception=True only applies to filing_status 'married_filing_separately' "
+            f"(got {status!r}) — the domestic-abuse/spousal-abandonment relief is an MFS behavior split"
+        )
+    if state not in _PTC_STATES:
+        raise ValueError(
+            f"state must be one of 'other' (the 48 contiguous states and DC), 'alaska', 'hawaii' — "
+            f"got {state!r}. A household that lived in both AK/HI and elsewhere uses the table with "
+            f"the HIGHER amounts."
+        )
+
+
+def _ptc_params(year: int, knowledge_dir: str | Path | None):
+    """The pack's ``tax.ptc`` block, with the prescriptive unshipped-year error."""
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.ptc
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.ptc block — the Premium Tax Credit ships only "
+            f"for tax years 2023 and 2024 (the ARPA applicable-percentage table as extended to 2023-2025 "
+            f"by IRA section 12001(a); pre-2023 years use different indexed tables and post-2025 the "
+            f"regime expires). Use 2023 or 2024, or author the year's block from its Form 8962 "
+            f"instructions with citations."
+        )
+    return params
+
+
+def _ptc_lines_4_to_8a(
+    income: Decimal, household_size: int, state: str, params
+) -> tuple[int, int, str, Decimal, str, int]:
+    """Form 8962 lines 4-8a, shared by both methods.
+
+    Returns ``(fpl, fpl_pct, pct_text, figure, figure_text, contribution)`` —
+    the line 4 federal poverty line, the line 5 integer percentage (with the
+    literal-401 rule applied) and its work fragment, the line 7 Table 2 figure
+    and its work fragment, and the line 8a annual contribution amount.
+    """
+    fpl_table = {
+        "other": params.federal_poverty_line.contiguous_48_and_dc,
+        "alaska": params.federal_poverty_line.alaska,
+        "hawaii": params.federal_poverty_line.hawaii,
+    }[state]
+    if household_size <= 8:
+        fpl = fpl_table.household_size[household_size]
+    else:
+        fpl = fpl_table.household_size[8] + (household_size - 8) * fpl_table.per_additional_person
+
+    ratio_pct = income * 100 / Decimal(fpl)
+    fpl_pct = int(ratio_pct)  # Worksheet 2: TRUNCATE — drop the decimals, never round
+    entered_401 = fpl_pct > 400
+    if entered_401:
+        fpl_pct = 401
+    pct_text = (
+        f"{fpl_pct} (over 400% — enter literally 401)"
+        if entered_401
+        else f"{fpl_pct} (TRUNCATED from {ratio_pct:.2f} — decimals dropped, never rounded)"
+    )
+
+    band = next(
+        b
+        for b in params.applicable_percentage_table
+        if b.fpl_pct_at_least <= fpl_pct and (b.fpl_pct_less_than is None or fpl_pct < b.fpl_pct_less_than)
+    )
+    if band.fpl_pct_less_than is None or band.final == band.initial:
+        figure = band.initial.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+        figure_text = f"Table 2 figure for {fpl_pct} = {figure}"
+    else:
+        span = band.fpl_pct_less_than - band.fpl_pct_at_least
+        figure = (
+            band.initial + (band.final - band.initial) * (fpl_pct - band.fpl_pct_at_least) / Decimal(span)
+        ).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+        figure_text = (
+            f"Table 2 figure for {fpl_pct} (band {band.fpl_pct_at_least}-{band.fpl_pct_less_than}: "
+            f"{band.initial}-{band.final}, interpolated on the integer % and rounded half up to "
+            f"4 decimals) = {figure}"
+        )
+
+    contribution = irs_round(income * figure)
+    return fpl, fpl_pct, pct_text, figure, figure_text, contribution
+
+
+def _ptc_settle(
+    params,
+    status: str,
+    mfs_relief_exception: bool,
+    fpl_pct: int,
+    computed_ptc: int,
+    aptc_whole: int,
+    computed_text: str,
+    ptc_label: str,
+) -> tuple[int, int, int, str, str]:
+    """Form 8962 lines 24-29 tail shared by both methods: the applicable-taxpayer
+    gates (IRC 36B(c)(1) — the MFS rule and the below-100%-FPL floor), then the
+    APTC reconciliation with the Table 5 repayment limitation.
+
+    ``computed_text`` is the method's line 24 derivation fragment; ``ptc_label``
+    names the line 24 entry ('annual PTC' / 'total PTC (monthly method)').
+    Returns ``(ptc_amount, net_ptc, repayment, line24_text, settle_text)``.
+    """
+    mfs_denied = status == "married_filing_separately" and not mfs_relief_exception
+    below_100 = fpl_pct < 100
+    if mfs_denied:
+        ptc_amount = 0
+        line24_text = (
+            f"line 24 {ptc_label} = $0 — a married-filing-separately filer is NOT an applicable "
+            f"taxpayer (IRC 36B(c)(1)(C)), so the computed {computed_text} is disallowed and the "
+            f"full APTC is excess. The only exception is the domestic-abuse/spousal-abandonment "
+            f"relief (the Form 8962 'relief' checkbox) — pass mfs_relief_exception=True to compute "
+            f"with it"
+        )
+    elif below_100 and aptc_whole == 0:
+        ptc_amount = 0
+        line24_text = (
+            f"line 24 {ptc_label} = $0 — household income is below 100% of the federal poverty line "
+            f"({fpl_pct}%), so the filer is not an applicable taxpayer (IRC 36B(c)(1)(A)); with NO "
+            f"advance PTC paid the estimated-income safe harbor cannot apply (it requires APTC), and "
+            f"the lawfully-present-immigrant exception is not modeled here, so the computed "
+            f"{computed_text} is disallowed"
+        )
+    else:
+        ptc_amount = computed_ptc
+        line24_text = f"line 24 {ptc_label} = {computed_text}"
+        if status == "married_filing_separately" and mfs_relief_exception:
+            line24_text += (
+                " (married filing separately WITH the domestic-abuse/spousal-abandonment relief "
+                "exception claimed — the IRC 36B(c)(1)(C) bar does not apply; check the Form 8962 "
+                "'relief' box)"
+            )
+        if below_100:
+            line24_text += (
+                f". CAVEAT: household income is below 100% of the federal poverty line ({fpl_pct}%), "
+                f"where eligibility requires an exception — the estimated-income safe harbor (APTC was "
+                f"paid based on a projected income of 100-400% FPL) or the lawfully-present-immigrant "
+                f"rule; if neither applies, line 24 PTC is $0 and the full APTC is excess"
+            )
+
+    diff = ptc_amount - aptc_whole
+    if diff >= 0:
+        net_ptc, repayment = diff, 0
+        settle_text = (
+            f"PTC {_dollars(ptc_amount)} - APTC {_dollars(aptc_whole)} = net premium tax credit "
+            f"{_dollars(net_ptc)} (Schedule 3)."
+        )
+    else:
+        excess = -diff
+        row = next(r for r in params.repayment_limitation if r.fpl_band_lt is None or fpl_pct < r.fpl_band_lt)
+        cap = row.single if status == "single" else row.other
+        net_ptc = 0
+        if cap is None:
+            repayment = excess
+            settle_text = (
+                f"APTC {_dollars(aptc_whole)} exceeds PTC {_dollars(ptc_amount)} by {_dollars(excess)}; at "
+                f"400% FPL or more there is NO repayment limitation (Table 5) — repay the full "
+                f"{_dollars(repayment)} (Schedule 2)."
+            )
+        else:
+            repayment = min(excess, cap)
+            settle_text = (
+                f"APTC {_dollars(aptc_whole)} exceeds PTC {_dollars(ptc_amount)} by {_dollars(excess)}; "
+                f"Table 5 limitation for FPL% {fpl_pct} "
+                f"({'single' if status == 'single' else 'any other filing status'} column) = "
+                f"{_dollars(cap)}; repayment = {_dollars(repayment)} (Schedule 2)."
+            )
+    return ptc_amount, net_ptc, repayment, line24_text, settle_text
 
 
 class PtcAnnualResult(BaseModel):
@@ -1662,47 +1867,12 @@ def ptc_annual(
     premiums = _to_decimal(annual_premiums, "annual_premiums")
     slcsp = _to_decimal(annual_slcsp, "annual_slcsp")
     aptc = _to_decimal(annual_aptc, "annual_aptc")
-    if income < 0:
-        raise ValueError(f"household_income must be >= 0, got {income} — pass 0 for a negative household income")
     for name, value in (("annual_premiums", premiums), ("annual_slcsp", slcsp), ("annual_aptc", aptc)):
         if value < 0:
             raise ValueError(f"{name} must be >= 0, got {value}")
-    if isinstance(household_size, bool) or not isinstance(household_size, int) or household_size < 1:
-        raise ValueError(
-            f"household_size must be an int >= 1 (the Form 8962 line 1 tax family size), got {household_size!r}"
-        )
     status = str(filing_status)
-    _resolve_filing_status(status)  # validates the five statuses
-    if mfs_relief_exception and status != "married_filing_separately":
-        raise ValueError(
-            f"mfs_relief_exception=True only applies to filing_status 'married_filing_separately' "
-            f"(got {status!r}) — the domestic-abuse/spousal-abandonment relief is an MFS behavior split"
-        )
-    if state not in _PTC_STATES:
-        raise ValueError(
-            f"state must be one of 'other' (the 48 contiguous states and DC), 'alaska', 'hawaii' — "
-            f"got {state!r}. A household that lived in both AK/HI and elsewhere uses the table with "
-            f"the HIGHER amounts."
-        )
-    pack = _load_federal(year, knowledge_dir)
-    params = pack.tax.ptc
-    if params is None:
-        raise ValueError(
-            f"knowledge pack for federal {year} has no tax.ptc block — the Premium Tax Credit ships only "
-            f"for tax years 2023 and 2024 (the ARPA applicable-percentage table as extended to 2023-2025 "
-            f"by IRA section 12001(a); pre-2023 years use different indexed tables and post-2025 the "
-            f"regime expires). Use 2023 or 2024, or author the year's block from its Form 8962 "
-            f"instructions with citations."
-        )
-    fpl_table = {
-        "other": params.federal_poverty_line.contiguous_48_and_dc,
-        "alaska": params.federal_poverty_line.alaska,
-        "hawaii": params.federal_poverty_line.hawaii,
-    }[state]
-    if household_size <= 8:
-        fpl = fpl_table.household_size[household_size]
-    else:
-        fpl = fpl_table.household_size[8] + (household_size - 8) * fpl_table.per_additional_person
+    _ptc_validate_common(income, household_size, status, state, mfs_relief_exception)
+    params = _ptc_params(year, knowledge_dir)
     inputs: dict[str, Any] = {
         "household_income": str(income),
         "household_size": household_size,
@@ -1716,111 +1886,23 @@ def ptc_annual(
     if status == "married_filing_separately":
         inputs["mfs_relief_exception"] = mfs_relief_exception
 
-    ratio_pct = income * 100 / Decimal(fpl)
-    fpl_pct = int(ratio_pct)  # Worksheet 2: TRUNCATE — drop the decimals, never round
-    entered_401 = fpl_pct > 400
-    if entered_401:
-        fpl_pct = 401
-
-    band = next(
-        b
-        for b in params.applicable_percentage_table
-        if b.fpl_pct_at_least <= fpl_pct and (b.fpl_pct_less_than is None or fpl_pct < b.fpl_pct_less_than)
+    fpl, fpl_pct, pct_text, figure, figure_text, contribution = _ptc_lines_4_to_8a(
+        income, household_size, state, params
     )
-    if band.fpl_pct_less_than is None or band.final == band.initial:
-        figure = band.initial.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
-        figure_text = f"Table 2 figure for {fpl_pct} = {figure}"
-    else:
-        span = band.fpl_pct_less_than - band.fpl_pct_at_least
-        figure = (
-            band.initial + (band.final - band.initial) * (fpl_pct - band.fpl_pct_at_least) / Decimal(span)
-        ).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
-        figure_text = (
-            f"Table 2 figure for {fpl_pct} (band {band.fpl_pct_at_least}-{band.fpl_pct_less_than}: "
-            f"{band.initial}-{band.final}, interpolated on the integer % and rounded half up to "
-            f"4 decimals) = {figure}"
-        )
-
-    contribution = irs_round(income * figure)
     computed_ptc = irs_round(min(premiums, max(Decimal(0), slcsp - contribution)))
     aptc_whole = irs_round(aptc)
 
-    # Applicable-taxpayer gates (IRC 36B(c)(1)) — line 24 becomes $0 by RULE.
-    mfs_denied = status == "married_filing_separately" and not mfs_relief_exception
-    below_100 = fpl_pct < 100
+    # Applicable-taxpayer gates (IRC 36B(c)(1)) — line 24 becomes $0 by RULE —
+    # then the APTC reconciliation (Table 5), via the tail shared with ptc_monthly.
     computed_text = (
         f"min(premiums {_money(premiums)}, SLCSP {_money(slcsp)} - contribution = "
         f"{_money(slcsp - contribution)}, floor 0) = {_dollars(computed_ptc)}"
     )
-    if mfs_denied:
-        ptc_amount = 0
-        line24_text = (
-            f"line 24 annual PTC = $0 — a married-filing-separately filer is NOT an applicable "
-            f"taxpayer (IRC 36B(c)(1)(C)), so the computed {computed_text} is disallowed and the "
-            f"full APTC is excess. The only exception is the domestic-abuse/spousal-abandonment "
-            f"relief (the Form 8962 'relief' checkbox) — pass mfs_relief_exception=True to compute "
-            f"with it"
-        )
-    elif below_100 and aptc_whole == 0:
-        ptc_amount = 0
-        line24_text = (
-            f"line 24 annual PTC = $0 — household income is below 100% of the federal poverty line "
-            f"({fpl_pct}%), so the filer is not an applicable taxpayer (IRC 36B(c)(1)(A)); with NO "
-            f"advance PTC paid the estimated-income safe harbor cannot apply (it requires APTC), and "
-            f"the lawfully-present-immigrant exception is not modeled here, so the computed "
-            f"{computed_text} is disallowed"
-        )
-    else:
-        ptc_amount = computed_ptc
-        line24_text = f"line 24 annual PTC = {computed_text}"
-        if status == "married_filing_separately" and mfs_relief_exception:
-            line24_text += (
-                " (married filing separately WITH the domestic-abuse/spousal-abandonment relief "
-                "exception claimed — the IRC 36B(c)(1)(C) bar does not apply; check the Form 8962 "
-                "'relief' box)"
-            )
-        if below_100:
-            line24_text += (
-                f". CAVEAT: household income is below 100% of the federal poverty line ({fpl_pct}%), "
-                f"where eligibility requires an exception — the estimated-income safe harbor (APTC was "
-                f"paid based on a projected income of 100-400% FPL) or the lawfully-present-immigrant "
-                f"rule; if neither applies, line 24 PTC is $0 and the full APTC is excess"
-            )
-
-    diff = ptc_amount - aptc_whole
-    if diff >= 0:
-        net_ptc, repayment = diff, 0
-        settle_text = (
-            f"PTC {_dollars(ptc_amount)} - APTC {_dollars(aptc_whole)} = net premium tax credit "
-            f"{_dollars(net_ptc)} (Schedule 3)."
-        )
-    else:
-        excess = -diff
-        row = next(r for r in params.repayment_limitation if r.fpl_band_lt is None or fpl_pct < r.fpl_band_lt)
-        cap = row.single if status == "single" else row.other
-        net_ptc = 0
-        if cap is None:
-            repayment = excess
-            settle_text = (
-                f"APTC {_dollars(aptc_whole)} exceeds PTC {_dollars(ptc_amount)} by {_dollars(excess)}; at "
-                f"400% FPL or more there is NO repayment limitation (Table 5) — repay the full "
-                f"{_dollars(repayment)} (Schedule 2)."
-            )
-        else:
-            repayment = min(excess, cap)
-            settle_text = (
-                f"APTC {_dollars(aptc_whole)} exceeds PTC {_dollars(ptc_amount)} by {_dollars(excess)}; "
-                f"Table 5 limitation for FPL% {fpl_pct} "
-                f"({'single' if status == 'single' else 'any other filing status'} column) = "
-                f"{_dollars(cap)}; repayment = {_dollars(repayment)} (Schedule 2)."
-            )
-
-    state_label = {"other": "48 contiguous states/DC", "alaska": "Alaska", "hawaii": "Hawaii"}[state]
-    pct_text = (
-        f"{fpl_pct} (over 400% — enter literally 401)"
-        if entered_401
-        else f"{fpl_pct} (TRUNCATED from {ratio_pct:.2f} — decimals dropped, never rounded)"
+    ptc_amount, net_ptc, repayment, line24_text, settle_text = _ptc_settle(
+        params, status, mfs_relief_exception, fpl_pct, computed_ptc, aptc_whole, computed_text, "annual PTC"
     )
+
+    state_label = _PTC_STATE_LABELS[state]
     work = (
         f"Form 8962 ({year}, annual method): line 4 FPL ({state_label} table, household of "
         f"{household_size}) = {_dollars(fpl)}; line 5 = household income {_money(income)} / FPL x 100 = "
@@ -1832,6 +1914,208 @@ def ptc_annual(
         fpl_pct=fpl_pct,
         applicable_figure=figure,
         contribution=contribution,
+        ptc=ptc_amount,
+        net_ptc=net_ptc,
+        repayment=repayment,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+_MONTHS = ("January", "February", "March", "April", "May", "June",
+           "July", "August", "September", "October", "November", "December")
+_PTC_MONTH_KEYS = ("premium", "slcsp", "aptc")
+
+
+class PtcMonthlyResult(BaseModel):
+    """Result of :func:`ptc_monthly`: Form 8962 lines 1-29, MONTHLY method (the
+    lines 12-23 grid; no shared-policy allocation or marriage-year alternatives)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    fpl_amount: int = Field(description="Line 4: the federal poverty line for the household size and state table.")
+    fpl_pct: int = Field(
+        description="Line 5: household income as % of the FPL, TRUNCATED to an integer (literally 401 when over 400%)."
+    )
+    applicable_figure: Decimal = Field(description="Line 7: the Table 2 applicable figure (4 decimals).")
+    contribution: int = Field(description="Line 8a: annual contribution amount = income x figure, whole dollars.")
+    monthly_contribution: int = Field(
+        description="Line 8b: line 8a / 12, rounded to whole dollars — column (c) of every monthly row (lines 12c-23c)."
+    )
+    months_covered: int = Field(description="Months with coverage (a premium or SLCSP entry) among the 12 rows.")
+    ptc: int = Field(
+        description="Line 24: total premium tax credit = the sum of the monthly PTC column (lines 12e-23e), floor 0 per month."
+    )
+    net_ptc: int = Field(description="Line 26: PTC in excess of APTC (0 when APTC exceeds PTC).")
+    repayment: int = Field(
+        description="Line 29: excess APTC repayment after the Table 5 limitation (0 when PTC covers APTC)."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def ptc_monthly(
+    household_income: int | float | Decimal | str,
+    household_size: int,
+    monthly: list[dict],
+    filing_status: str = "single",
+    year: int = 2023,
+    state: str = "other",
+    annual_aptc: int | float | Decimal | str | None = None,
+    mfs_relief_exception: bool = False,
+    knowledge_dir: str | Path | None = None,
+) -> PtcMonthlyResult:
+    """Premium Tax Credit (Form 8962), MONTHLY method — the lines 12-23 grid for
+    part-year or month-varying coverage (no shared-policy allocation or
+    alternative marriage-year computation).
+
+    ``monthly`` is EXACTLY 12 rows, January..December, each
+    ``{premium, slcsp, aptc}`` from the Form 1095-A monthly lines 21-32
+    (columns A/B/C; omitted keys default to 0). A month WITHOUT coverage is
+    all zeros — never dropped from the list.
+
+    Line sequence, per the Form 8962 instructions:
+
+    * lines 4-8a: identical to :func:`ptc_annual` (FPL table by ``state``,
+      Worksheet 2 truncation, the Table 2 figure, contribution = income x
+      figure).
+    * line 8b: monthly contribution amount = line 8a / 12, rounded to whole
+      dollars — column (c) of every monthly row.
+    * lines 12-23, per month: column (d) = SLCSP - line 8b, floor 0; column
+      (e) monthly PTC = the smaller of the premium and (d). Each row uses the
+      row's own whole-dollar 1095-A entries.
+    * line 24: the sum of the monthly PTC column; line 25: the sum of the
+      monthly APTC column. ``annual_aptc`` (Form 1095-A line 33C) is an
+      optional cross-check — it must equal the monthly APTC sum; when the
+      rows carry NO monthly APTC breakdown it is used as line 25 directly.
+    * lines 26-29: the SAME applicable-taxpayer gates and Table 5 repayment
+      limitation as :func:`ptc_annual` (MFS denial unless
+      ``mfs_relief_exception``, the below-100%-FPL floor, the vanishing
+      limitation at 400% FPL or more).
+    """
+    income = _to_decimal(household_income, "household_income")
+    if isinstance(monthly, (str, bytes, dict)) or not isinstance(monthly, (list, tuple)):
+        raise TypeError(
+            f"monthly must be a list of 12 {{premium, slcsp, aptc}} rows (January..December, from the "
+            f"Form 1095-A monthly lines 21-32), got {type(monthly).__name__}"
+        )
+    if len(monthly) != 12:
+        raise ValueError(
+            f"monthly must have EXACTLY 12 entries (January..December — a month without coverage is "
+            f"all zeros, never dropped), got {len(monthly)}"
+        )
+    rows: list[dict[str, Decimal]] = []
+    for i, raw in enumerate(monthly):
+        if not isinstance(raw, dict):
+            raise TypeError(
+                f"monthly[{i}] ({_MONTHS[i]}) must be a dict {{premium, slcsp, aptc}}, got {type(raw).__name__}"
+            )
+        unknown = sorted(set(raw) - set(_PTC_MONTH_KEYS))
+        if unknown:
+            raise ValueError(
+                f"monthly[{i}] ({_MONTHS[i]}) has unknown key(s) {unknown} — each row carries only "
+                f"premium (1095-A column A), slcsp (column B), aptc (column C); omitted keys default to 0"
+            )
+        row: dict[str, Decimal] = {}
+        for key in _PTC_MONTH_KEYS:
+            value = _to_decimal(raw.get(key, 0), f"monthly[{i}].{key}")
+            if value < 0:
+                raise ValueError(f"monthly[{i}].{key} must be >= 0, got {value}")
+            row[key] = value
+        rows.append(row)
+    status = str(filing_status)
+    _ptc_validate_common(income, household_size, status, state, mfs_relief_exception)
+    aptc_total_given = None if annual_aptc is None else _to_decimal(annual_aptc, "annual_aptc")
+    if aptc_total_given is not None and aptc_total_given < 0:
+        raise ValueError(f"annual_aptc must be >= 0, got {aptc_total_given}")
+    params = _ptc_params(year, knowledge_dir)
+
+    inputs: dict[str, Any] = {
+        "household_income": str(income),
+        "household_size": household_size,
+        "monthly": [{k: str(r[k]) for k in _PTC_MONTH_KEYS} for r in rows],
+        "filing_status": status,
+        "state": state,
+        "year": year,
+    }
+    if aptc_total_given is not None:
+        inputs["annual_aptc"] = str(aptc_total_given)
+    if status == "married_filing_separately":
+        inputs["mfs_relief_exception"] = mfs_relief_exception
+
+    fpl, fpl_pct, pct_text, figure, figure_text, contribution = _ptc_lines_4_to_8a(
+        income, household_size, state, params
+    )
+    line_8b = irs_round(Decimal(contribution) / 12)
+
+    # Lines 12-23: each row from its own whole-dollar 1095-A entries. An uncovered
+    # month is all zeros, so its row math reduces to 0 exactly like a blank row.
+    month_lines: list[str] = []
+    months_covered = 0
+    computed_ptc = 0
+    monthly_aptc_sum = 0
+    for i, row in enumerate(rows):
+        prem = irs_round(row["premium"])
+        slcsp = irs_round(row["slcsp"])
+        monthly_aptc_sum += irs_round(row["aptc"])
+        if prem == 0 and slcsp == 0:
+            continue
+        months_covered += 1
+        max_assistance = max(0, slcsp - line_8b)  # column (d)
+        month_ptc = min(prem, max_assistance)  # column (e)
+        computed_ptc += month_ptc
+        month_lines.append(
+            f"{_MONTHS[i][:3]} min({_dollars(prem)}, max(0, {_dollars(slcsp)} - {_dollars(line_8b)}) = "
+            f"{_dollars(max_assistance)}) = {_dollars(month_ptc)}"
+        )
+
+    # Line 25. annual_aptc is a cross-check against the monthly column-C sum; with
+    # no monthly breakdown at all it stands in as the total (the tail only needs it).
+    aptc_note = ""
+    if aptc_total_given is None:
+        aptc_whole = monthly_aptc_sum
+    elif monthly_aptc_sum == 0:
+        aptc_whole = irs_round(aptc_total_given)
+        if aptc_whole:
+            aptc_note = " (annual_aptc supplied without a monthly APTC breakdown — used as the line 25 total)"
+    elif irs_round(aptc_total_given) != monthly_aptc_sum:
+        raise ValueError(
+            f"annual_aptc ({_dollars(irs_round(aptc_total_given))}) does not equal the sum of the monthly "
+            f"aptc entries ({_dollars(monthly_aptc_sum)}) — Form 1095-A line 33C is the sum of lines 21-32 "
+            f"column C; fix the inputs, or omit annual_aptc and let the monthly rows carry the APTC"
+        )
+    else:
+        aptc_whole = monthly_aptc_sum
+
+    computed_text = (
+        f"sum of the monthly PTC column (lines 12e-23e, {months_covered} covered month(s)) = "
+        f"{_dollars(computed_ptc)}"
+    )
+    ptc_amount, net_ptc, repayment, line24_text, settle_text = _ptc_settle(
+        params, status, mfs_relief_exception, fpl_pct, computed_ptc, aptc_whole, computed_text,
+        "total PTC (monthly method)",
+    )
+
+    state_label = _PTC_STATE_LABELS[state]
+    grid_text = "; ".join(month_lines) if month_lines else "no covered months (every row zero)"
+    work = (
+        f"Form 8962 ({year}, monthly method): line 4 FPL ({state_label} table, household of "
+        f"{household_size}) = {_dollars(fpl)}; line 5 = household income {_money(income)} / FPL x 100 = "
+        f"{pct_text}; {figure_text}; line 8a contribution = {_money(income)} x {figure} = "
+        f"{_dollars(contribution)}; line 8b monthly contribution = round({_dollars(contribution)} / 12) = "
+        f"{_dollars(line_8b)}. Lines 12-23 (per month: (d) = max(0, SLCSP - {_dollars(line_8b)}), "
+        f"(e) = min(premium, (d))): {grid_text}; {line24_text}; "
+        f"line 25 total APTC = {_dollars(aptc_whole)}{aptc_note}. {settle_text}"
+    )
+    return PtcMonthlyResult(
+        fpl_amount=fpl,
+        fpl_pct=fpl_pct,
+        applicable_figure=figure,
+        contribution=contribution,
+        monthly_contribution=line_8b,
+        months_covered=months_covered,
         ptc=ptc_amount,
         net_ptc=net_ptc,
         repayment=repayment,
@@ -2319,6 +2603,240 @@ def eitc(
 
 
 # ---------------------------------------------------------------------------
+# Child & dependent care credit (Form 2441 -> Schedule 3 line 2) — Phase G, G2
+# ---------------------------------------------------------------------------
+
+
+def _dependent_care_percentage(agi: Decimal, params: DependentCareParams) -> Decimal:
+    """The Form 2441 line 8 applicable percentage for an AGI, from the pack's slide.
+
+    Each leg reduces its ``from_rate`` by ``points_per_step`` per ``per_agi_step``
+    dollars OR FRACTION THEREOF of AGI above ``starts_above_agi`` (the excess is
+    rounded UP to the next step FIRST — IRC 21(a)(2)/(g)(4)), floored at
+    ``to_rate``. AGI exactly at a published boundary keeps the HIGHER rate
+    (exactly $15,000 -> 0.35; exactly $43,000 -> 0.21; 2021: exactly $438,000 ->
+    0.01, over it -> 0.00 — the zero point follows from the fraction rule).
+    """
+    rate = params.phase_downs[0].from_rate
+    for leg in params.phase_downs:
+        if agi > leg.starts_above_agi:
+            steps = int(
+                ((agi - leg.starts_above_agi) / leg.per_agi_step).to_integral_value(rounding=ROUND_CEILING)
+            )
+            rate = max(leg.to_rate, leg.from_rate - leg.points_per_step * steps)
+    return rate
+
+
+class DependentCareResult(BaseModel):
+    """Result of :func:`dependent_care_credit`: Form 2441 Part II (+ the Part III cap offset)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    allowed_expenses: int = Field(
+        description="Form 2441 line 6: the smallest of the capped (benefit-reduced) expenses and the "
+        "earned-income figures — the credit base."
+    )
+    applicable_percentage: Decimal = Field(
+        description="Form 2441 line 8 decimal from the AGI slide (0.20-0.35; 2021: 0.00-0.50)."
+    )
+    credit: int = Field(
+        description="Line 9a-style credit = percentage x allowed expenses, whole dollars — BEFORE the "
+        "tax-liability limit (line 10 Credit Limit Worksheet) when nonrefundable."
+    )
+    refundable: bool = Field(
+        description="True only for 2021 (ARPA, IRC 21(g)(1)) — and only IF the US-principal-abode test "
+        "is met (caller judgment, see work); every other year is nonrefundable."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def dependent_care_credit(
+    expenses: int | float | Decimal | str,
+    qualifying_persons: int,
+    earned_income: int | float | Decimal | str,
+    spouse_earned_income: int | float | Decimal | str | None = None,
+    agi: int | float | Decimal | str = 0,
+    filing_status: str = "single",
+    year: int = 2023,
+    employer_benefits: int | float | Decimal | str = 0,
+    knowledge_dir: str | Path | None = None,
+) -> DependentCareResult:
+    """Child and dependent care credit (Form 2441 -> Schedule 3 line 2), from the
+    pack's cited ``tax.dependent_care`` parameters.
+
+    Inputs (who counts as a qualifying person — under 13, or a spouse/dependent
+    incapable of self-care — and whether the care let you work are caller
+    judgment; this op does the form math):
+
+    * ``expenses``: total qualified care expenses paid for the year (Form 2441
+      line 2 column (d) total BEFORE the caps), including any paid through an
+      employer plan.
+    * ``qualifying_persons``: 1 vs 2-or-more selects the expense cap
+      ($3,000/$6,000; 2021: $8,000/$16,000).
+    * ``earned_income`` / ``spouse_earned_income``: Form 2441 lines 4/5. The
+      spouse figure is REQUIRED for married_filing_jointly (line 5; all other
+      statuses enter the line 4 amount, so it is ignored). The deemed
+      $250/$500-per-month rule for a full-time-student or disabled spouse is
+      the AGENT'S judgment — include any deemed amount in the figure you pass
+      (the work string quotes the rule).
+    * ``employer_benefits``: dependent care benefits (W-2 box 10). They reduce
+      BOTH the cap (line 27 - line 28 -> line 29) and the countable expenses
+      (line 30 excludes them); formally the offset is the amount actually
+      deducted + excluded (lines 24+25) — box 10 stands in for it when the
+      benefits were all excluded, which the work discloses.
+    * ``agi``: Form 1040/1040-NR line 11 — drives the line 8 percentage slide
+      (35% down to 20% above $15,000; 2021: 50% -> 20% above $125,000, then
+      20% -> 0% above $400,000, zero for AGI over $438,000).
+
+    Line flow: line 3 = min(cap - benefits, expenses - benefits); line 6 =
+    smallest of line 3 and the earned-income figures; credit = line 8
+    percentage x line 6 (IRS-rounded). Nonrefundable — limited by tax via the
+    line 10 Credit Limit Worksheet, which is applied DOWNSTREAM, not here —
+    except 2021 (ARPA): refundable when the US-principal-abode test is met
+    (Form 2441 line B — caller judgment, flagged in the work).
+
+    married_filing_separately: generally INELIGIBLE by rule — the op returns $0
+    and quotes the three treated-as-unmarried conditions (a filer meeting ALL
+    three claims the credit as if unmarried: rerun with their actual unmarried
+    status and check the form's MFS checkbox).
+    """
+    exp = _to_decimal(expenses, "expenses")
+    if exp < 0:
+        raise ValueError(f"expenses must be >= 0, got {exp} — pass the qualified care expenses paid")
+    n_persons = _count_arg(qualifying_persons, "qualifying_persons", "qualifying persons the care was for")
+    if n_persons < 1:
+        raise ValueError(
+            "qualifying_persons must be >= 1 — the credit requires at least one qualifying person "
+            "(a child under 13, or a spouse/dependent incapable of self-care); with none there is "
+            "no credit to compute"
+        )
+    earned = _to_decimal(earned_income, "earned_income")
+    if earned < 0:
+        raise ValueError(
+            f"earned_income must be >= 0, got {earned} — Form 2441 line 4 is earned income "
+            f"(include any deemed $250/$500 student/disabled amount you have decided applies)"
+        )
+    agi_d = _to_decimal(agi, "agi")
+    if agi_d < 0:
+        raise ValueError(f"agi must be >= 0, got {agi_d} — pass the Form 1040 line 11 amount")
+    benefits = _to_decimal(employer_benefits, "employer_benefits")
+    if benefits < 0:
+        raise ValueError(f"employer_benefits must be >= 0, got {benefits} — pass the W-2 box 10 total")
+    status = str(filing_status)
+    _resolve_filing_status(status)  # validates the five statuses; no aliasing is used here
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.dependent_care
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.dependent_care block — add it (Form 2441 "
+            f"expense caps, the line-8 percentage slide, the deemed-income and MFS rules) with a "
+            f"citation to the year's Instructions for Form 2441 (see knowledge/federal/2023.yaml)"
+        )
+    inputs: dict[str, Any] = {
+        "expenses": str(exp),
+        "qualifying_persons": n_persons,
+        "earned_income": str(earned),
+        "agi": str(agi_d),
+        "filing_status": status,
+        "year": year,
+        "employer_benefits": str(benefits),
+    }
+    if spouse_earned_income is not None:
+        inputs["spouse_earned_income"] = str(_to_decimal(spouse_earned_income, "spouse_earned_income"))
+
+    if status == "married_filing_separately":
+        work = (
+            f"Child and dependent care credit ({year}): $0 by RULE for married filing separately — "
+            f"{params.married_filing_separately_note} A filer meeting ALL of those conditions is "
+            f"treated as unmarried: rerun this op with the status the treated-as-unmarried rules give "
+            f"them and check the Form 2441 married-filing-separately checkbox on the form."
+        )
+        return DependentCareResult(
+            allowed_expenses=0,
+            applicable_percentage=Decimal("0"),
+            credit=0,
+            refundable=False,
+            inputs=inputs,
+            work=work,
+            citation=params.citation,
+        )
+
+    cap = (
+        params.expense_cap.one_qualifying_person
+        if n_persons == 1
+        else params.expense_cap.two_or_more_qualifying_persons
+    )
+    line29 = max(Decimal(0), Decimal(cap) - benefits)  # cap reduced by employer benefits
+    line30 = max(Decimal(0), exp - benefits)  # countable expenses exclude benefit-paid amounts
+    line3 = min(line29, line30)
+    candidates = [line3, earned]
+    if status == "married_filing_jointly":
+        if spouse_earned_income is None:
+            raise ValueError(
+                "married_filing_jointly requires spouse_earned_income (Form 2441 line 5) — the credit "
+                "is limited by the LOWER-earning spouse's earned income. If the spouse was a full-time "
+                "student or incapable of self-care, the deemed $250/$500-per-month rule may supply the "
+                "figure — that is YOUR judgment: " + params.student_spouse_rule
+            )
+        spouse_earned = _to_decimal(spouse_earned_income, "spouse_earned_income")
+        if spouse_earned < 0:
+            raise ValueError(f"spouse_earned_income must be >= 0, got {spouse_earned}")
+        candidates.append(spouse_earned)
+        earned_text = (
+            f"line 4 earned income {_money(earned)}, line 5 spouse's earned income {_money(spouse_earned)}"
+        )
+    else:
+        earned_text = f"line 4 earned income {_money(earned)} (line 5 = line 4 for non-MFJ statuses)"
+    line6 = max(Decimal(0), min(candidates))
+    allowed = irs_round(line6)
+    pct = _dependent_care_percentage(agi_d, params)
+    credit = irs_round(pct * allowed)
+    refundable = bool(params.refundable_if_us_abode and credit)
+
+    benefit_text = (
+        f" Employer dependent care benefits {_money(benefits)} (W-2 box 10) reduce both the cap "
+        f"(line 29 = {_dollars(cap)} - benefits = {_money(line29)}) and the countable expenses "
+        f"(line 30 = {_money(line30)}); the formal offset is the amount actually deducted + excluded "
+        f"(Form 2441 lines 24+25) — box 10 stands in for it here, which assumes the benefits were all "
+        f"excluded (complete Part III on the form to settle it)."
+        if benefits > 0
+        else ""
+    )
+    if refundable:
+        limit_text = (
+            f" REFUNDABLE for {year} (IRC 21(g)(1)) — but ONLY IF the abode test is met, which is YOUR "
+            f"judgment: {params.refundable_condition}"
+        )
+    else:
+        limit_text = (
+            " Nonrefundable: the credit is limited by tax via the Form 2441 line 10 Credit Limit "
+            "Worksheet (not applied here — apply it against the remaining income tax)."
+        )
+    work = (
+        f"Form 2441 ({year}, {status}): {n_persons} qualifying person(s) -> {_dollars(cap)} expense cap; "
+        f"line 3 = min(cap{' - benefits' if benefits > 0 else ''} {_money(line29)}, qualified expenses"
+        f"{' - benefits' if benefits > 0 else ''} {_money(line30)}) = {_money(line3)}; {earned_text}; "
+        f"line 6 = smallest = {_dollars(allowed)}. Line 8 applicable percentage for AGI {_money(agi_d)} "
+        f"= {pct} (1 point per $2,000 OR FRACTION of AGI over the slide start — AGI exactly at a "
+        f"boundary keeps the higher rate); line 9a credit = {pct} x {_dollars(allowed)} = "
+        f"{_dollars(credit)} (Schedule 3 line 2).{benefit_text}{limit_text} Deemed-income rule (agent "
+        f"judgment, include it in the earned income you pass): {params.student_spouse_rule} Form 2441 "
+        f"Part I requires each provider's name, address, and TIN — the credit can be denied without them."
+    )
+    return DependentCareResult(
+        allowed_expenses=allowed,
+        applicable_percentage=pct,
+        credit=credit,
+        refundable=refundable,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Presence-day counting (I-94 history -> Substantial Presence Test inputs)
 # ---------------------------------------------------------------------------
 
@@ -2420,3 +2938,574 @@ def presence_days_by_year(periods: list[tuple[_DateLike, _DateLike]]) -> dict[in
             year_end = min(end_ord, date(year, 12, 31).toordinal())
             days[year] = days.get(year, 0) + (year_end - year_start + 1)
     return days
+
+
+# ---------------------------------------------------------------------------
+# Treaty benefit (Schedule OI item L / Form 1040-NR line 1k) — Phase G item G1
+# ---------------------------------------------------------------------------
+
+TREATY_INCOME_CLASSES: tuple[str, ...] = (
+    "student_wages",
+    "scholarship",
+    "payments_from_abroad",
+    "teacher_wages",
+)
+
+# The eligibility facts this op does NOT decide — appended to every work string
+# so the number is never mistaken for an eligibility ruling.
+_TREATY_JUDGMENT_NOTE = (
+    " This op VALIDATES the article and dollar limits only — final eligibility (visa category and "
+    "the exact visa PERIOD the income was earned in, purpose of the visit, residence in the treaty "
+    "country before US entry, and the saving-clause analysis) stays the AGENT'S judgment with the "
+    "user; record the decided position with this citation."
+)
+
+
+class TreatyBenefitResult(BaseModel):
+    """Result of :func:`treaty_benefit`: the exempt/taxable split plus its audit trail."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    exempt_amount: int = Field(description="Whole-dollar amount the treaty article supports as exempt.")
+    taxable_remainder: int = Field(description="amount - exempt_amount: the part NO treaty article covers.")
+    country: str = Field(description="Normalized treaty-pack country key (e.g. 'china').")
+    income_class: str = Field(description="One of student_wages, scholarship, payments_from_abroad, teacher_wages.")
+    article: str | None = Field(
+        description="The treaty article relied on (None when the treaty has no article granting this benefit)."
+    )
+    limits_applied: list[str] = Field(description="Every limit/condition that shaped the number, spelled out.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def _treaty_saving_clause_text(saving_clause_exception: bool, text: str | None) -> str:
+    if saving_clause_exception:
+        detail = f" ({text})" if text else ""
+        return f" Saving-clause exception applies{detail}."
+    return " NO saving-clause exception — the benefit ends if the filer becomes a US resident."
+
+
+def treaty_benefit(
+    country: str,
+    income_class: str,
+    amount: int | float | Decimal | str,
+    visa_periods: list[dict[str, Any]] | None = None,
+    year: int = 2023,
+    years_in_status: int | None = None,
+    knowledge_dir: str | Path | None = None,
+) -> TreatyBenefitResult:
+    """Validate/compute a treaty exemption from the per-country treaty knowledge pack.
+
+    Replaces the pure trust-the-agent semantics of ``treaty_exempt_income``:
+    the dollar split comes from the versioned ``knowledge/treaties/<country>.yaml``
+    (China, India, Korea, Canada, Mexico — treaty-fixed amounts, cited to the
+    irs.gov treaty PDFs and Pub 901 (Rev. 9-2024)), never from model memory.
+    The op computes and VALIDATES; the final eligibility judgment (visa
+    category/period, purpose of visit, saving clause) stays with the agent —
+    every ``work`` string says so, and each pack carries a ``disclaimer``.
+
+    ``income_class`` semantics:
+
+    * ``student_wages`` — US-source personal-services income during study/
+      training. Exempt up to the treaty's compensation limit when one exists
+      (China Art. 20(c) $5,000/yr; Korea Art. 21(1)(b)(iii) $2,000/yr).
+      India has NO dollar exclusion: exempt $0, and the work explains the
+      Art. 21(2) standard-deduction-parity rule instead (the estimate models
+      it by setting itemized_deductions to the standard-deduction amount).
+      Canada has NO student exclusion either — the Art. XV $10,000 employment
+      de-minimis is applied instead (ALL-OR-NOTHING per calendar year, and it
+      belongs to every Canadian-resident employee, not only students). Mexico
+      has NO wage benefit and NO dollar de-minimis (verified) — only the
+      three-part 183-day test, which is a facts question left to the agent.
+    * ``scholarship`` — grant/fellowship amounts. Fully exempt where the
+      treaty exempts grants as such (China Art. 20(b), Korea Art. 21(1)(b)(ii));
+      $0 otherwise (India: Art. 21(2) parity instead; Canada/Mexico: only
+      payments from outside the US — use ``payments_from_abroad``).
+    * ``payments_from_abroad`` — maintenance/education payments arising
+      outside the US. Fully exempt under every shipped treaty, subject to the
+      source/purpose conditions quoted in the work.
+    * ``teacher_wages`` — requires ``years_in_status`` (which year of the
+      teacher-article window this is, counted on the treaty's basis). Fully
+      exempt within the window; $0 beyond it — and for India the loss is
+      RETROACTIVE (the WHOLE visit's exemption is lost, Pub 901 p. 25), which
+      the work flags loudly. Canada/Mexico have no teacher article at all.
+
+    ``visa_periods`` (optional, ``[{status, start, end?}, ...]``) is echoed
+    into the inputs and the work so the per-period eligibility analysis
+    (pitfall P-004) is attached to the number — it is NOT evaluated here.
+    ``year`` is contextual only: treaty dollar limits are treaty-fixed.
+    """
+    amt = _to_decimal(amount, "amount")
+    if amt < 0:
+        raise ValueError(f"amount must be >= 0, got {amt} — pass the income amount being tested")
+    if income_class not in TREATY_INCOME_CLASSES:
+        raise ValueError(
+            f"unknown income_class {income_class!r} — use one of: {', '.join(TREATY_INCOME_CLASSES)}"
+        )
+    # Prescriptive FileNotFoundError (lists shipped countries) propagates as-is.
+    pack = load_treaty(country, base_dir=knowledge_dir)
+    amount_whole = irs_round(amt)
+    label = pack.country.replace("_", " ").title()
+    inputs: dict[str, Any] = {
+        "country": pack.country,
+        "income_class": income_class,
+        "amount": str(amt),
+        "year": year,
+    }
+    if years_in_status is not None:
+        inputs["years_in_status"] = years_in_status
+    if visa_periods:
+        inputs["visa_periods"] = visa_periods
+    limits: list[str] = []
+    period_note = (
+        " Visa periods were supplied for YOUR per-period eligibility analysis (P-004) — they were "
+        "echoed, not evaluated."
+        if visa_periods
+        else ""
+    )
+
+    def _result(exempt: int, article: str | None, work: str, citation: Citation) -> TreatyBenefitResult:
+        return TreatyBenefitResult(
+            exempt_amount=exempt,
+            taxable_remainder=amount_whole - exempt,
+            country=pack.country,
+            income_class=income_class,
+            article=article,
+            limits_applied=limits,
+            inputs=inputs,
+            work=work + period_note + _TREATY_JUDGMENT_NOTE,
+            citation=citation,
+        )
+
+    student = pack.student
+    if student is None:  # defensive: every shipped pack has a student block
+        raise ValueError(
+            f"treaty pack for {pack.country!r} has no student block — author it from the treaty text "
+            f"and Pub 901 with a citation (see knowledge/treaties/china.yaml)"
+        )
+
+    if income_class == "student_wages":
+        if student.compensation_limit is not None:
+            limit = student.compensation_limit
+            exempt = min(amount_whole, limit)
+            limits.append(
+                f"{student.compensation_limit_ref} compensation limit: {_dollars(limit)} per taxable year "
+                f"(treaty-fixed, not indexed)"
+            )
+            limits.append(f"time limit: {student.time_limit_text}")
+            work = (
+                f"{label} student wages ({year}): {student.article} exempts US personal-services income up "
+                f"to {_dollars(limit)} per taxable year ({student.compensation_limit_ref}) — exempt = "
+                f"min({_dollars(amount_whole)}, {_dollars(limit)}) = {_dollars(exempt)}; taxable remainder "
+                f"{_dollars(amount_whole - exempt)}. Scholarship grants and payments from abroad are "
+                f"separately exempt WITHOUT this limit (use income_class 'scholarship' / "
+                f"'payments_from_abroad'). Time limit: {student.time_limit_text}."
+                + _treaty_saving_clause_text(student.saving_clause_exception, student.saving_clause_exception_text)
+            )
+            return _result(exempt, student.article, work, student.citation)
+        if student.special_rule is not None:  # India Art. 21(2): parity, not an exclusion
+            limits.append(f"no dollar exclusion for US-source wages under {student.article}")
+            work = (
+                f"{label} student wages ({year}): {student.article} provides NO dollar exclusion for "
+                f"US-source wages — exempt $0 of {_dollars(amount_whole)}. Instead: {student.special_rule} "
+                f"The engine models that parity rule on a Form 1040-NR estimate by setting "
+                f"itemized_deductions to the standard-deduction amount (see estimate_refund's India note) — "
+                f"do NOT enter the wages as treaty_exempt_income. Payments arising outside the US remain "
+                f"separately exempt (income_class 'payments_from_abroad')."
+                + _treaty_saving_clause_text(student.saving_clause_exception, student.saving_clause_exception_text)
+            )
+            return _result(0, student.article, work, student.citation)
+        dm = pack.employment_de_minimis
+        if dm is not None and dm.amount is not None:  # Canada Art. XV $10,000 all-or-nothing
+            if amount_whole <= dm.amount:
+                limits.append(
+                    f"{dm.article}: {_dollars(dm.amount)} calendar-year de-minimis — ALL-OR-NOTHING "
+                    f"(total US employment remuneration at or under the threshold is taxable only in the "
+                    f"residence state; one dollar over loses it entirely)"
+                )
+                work = (
+                    f"{label} student wages ({year}): {student.article} has NO student wage exclusion; the "
+                    f"applicable relief is {dm.amount_text} — an employment rule for ANY {label}-resident "
+                    f"employee, not a student benefit. {_dollars(amount_whole)} does not exceed "
+                    f"{_dollars(dm.amount)}, so the WHOLE amount is exempt — PROVIDED this is the filer's "
+                    f"TOTAL US employment remuneration for the calendar year (the threshold is "
+                    f"all-or-nothing, never a per-dollar cap)."
+                )
+                return _result(amount_whole, dm.article, work, dm.citation)
+            limits.append(
+                f"{dm.article}: {_dollars(dm.amount)} de-minimis is ALL-OR-NOTHING and "
+                f"{_dollars(amount_whole)} exceeds it — $0 exempt under the dollar rule"
+            )
+            work = (
+                f"{label} student wages ({year}): {student.article} has NO student wage exclusion, and "
+                f"{_dollars(amount_whole)} EXCEEDS the {dm.article} {_dollars(dm.amount)} all-or-nothing "
+                f"calendar-year de-minimis, so the dollar rule exempts $0 (it is a cliff, not a cap). The "
+                f"only remaining path is the alternative test — {dm.alternative_test} — a facts question "
+                f"this op does not decide."
+            )
+            return _result(0, dm.article, work, dm.citation)
+        if dm is not None:  # Mexico: no dollar de-minimis at all
+            limits.append(f"no student wage exclusion ({student.article}) and no dollar de-minimis ({dm.article})")
+            work = (
+                f"{label} student wages ({year}): {student.article} has NO wage exclusion, and there is NO "
+                f"dollar de-minimis for employment income — {dm.amount_text}. Exempt $0 of "
+                f"{_dollars(amount_whole)}. The only possible exemption is the three-part test — "
+                f"{dm.alternative_test} — a facts question this op does not decide. Payments arising from "
+                f"or remitted from outside the US remain separately exempt (income_class "
+                f"'payments_from_abroad')."
+            )
+            return _result(0, dm.article, work, dm.citation)
+        limits.append(f"no student wage benefit under the US-{label} treaty")
+        work = (
+            f"{label} student wages ({year}): the treaty provides no US-source wage benefit — exempt $0 of "
+            f"{_dollars(amount_whole)}."
+        )
+        return _result(0, student.article, work, student.citation)
+
+    if income_class == "scholarship":
+        if student.scholarship_exempt:
+            limits.append(f"scholarship exemption: {student.scholarship_text or student.article}")
+            limits.append(f"time limit: {student.time_limit_text}")
+            work = (
+                f"{label} scholarship/grant ({year}): {student.article} exempts qualifying grants in full — "
+                f"{student.scholarship_text}. Exempt {_dollars(amount_whole)} of {_dollars(amount_whole)}. "
+                f"Confirm the payor is a qualifying organization. Time limit: {student.time_limit_text}."
+                + _treaty_saving_clause_text(student.saving_clause_exception, student.saving_clause_exception_text)
+            )
+            return _result(amount_whole, student.article, work, student.citation)
+        limits.append(f"no scholarship exclusion as such under {student.article}")
+        alternative = (
+            f" Instead: {student.special_rule}"
+            if student.special_rule
+            else f" {student.scholarship_text}"
+            if student.scholarship_text
+            else ""
+        )
+        work = (
+            f"{label} scholarship/grant ({year}): {student.article} does NOT exempt grants as such — "
+            f"exempt $0 of {_dollars(amount_whole)}.{alternative} If the payments arise from or are "
+            f"remitted from outside the US, test them as income_class 'payments_from_abroad' instead."
+        )
+        return _result(0, student.article, work, student.citation)
+
+    if income_class == "payments_from_abroad":
+        if student.payments_from_abroad_exempt:
+            limits.append(f"source/purpose condition: {student.payments_from_abroad_text or student.article}")
+            limits.append(f"time limit: {student.time_limit_text}")
+            work = (
+                f"{label} payments from abroad ({year}): {student.article} exempts them in full — "
+                f"{student.payments_from_abroad_text}. Exempt {_dollars(amount_whole)} of "
+                f"{_dollars(amount_whole)}, PROVIDED the quoted source/purpose conditions hold (payments "
+                f"must actually arise/be remitted from outside the US). Time limit: {student.time_limit_text}."
+                + _treaty_saving_clause_text(student.saving_clause_exception, student.saving_clause_exception_text)
+            )
+            return _result(amount_whole, student.article, work, student.citation)
+        limits.append(f"no payments-from-abroad exemption under {student.article}")
+        work = (
+            f"{label} payments from abroad ({year}): {student.article} does not exempt them — exempt $0 of "
+            f"{_dollars(amount_whole)}."
+        )
+        return _result(0, student.article, work, student.citation)
+
+    # income_class == "teacher_wages"
+    teacher = pack.teacher_researcher
+    if teacher is None:
+        limits.append(f"no teacher/professor article exists in the US-{label} treaty (verified)")
+        work = (
+            f"{label} teacher/researcher wages ({year}): the US-{label} treaty has NO teacher/professor "
+            f"article (verified against the treaty text; Pub 901 (Rev. 9-2024) lists no {label} entry in "
+            f"its Professors/Teachers section) — there is NO such benefit to claim: exempt $0 of "
+            f"{_dollars(amount_whole)}. Do not put teacher wages on Schedule OI for this country."
+        )
+        return _result(0, None, work, pack.citation)
+    if years_in_status is None:
+        raise ValueError(
+            f"teacher_wages for {pack.country!r} requires years_in_status — which year of the "
+            f"{teacher.article} window this is, counted as: {teacher.years_basis}. The exemption runs "
+            f"{teacher.years} years; pass years_in_status=1 for the first year."
+        )
+    if years_in_status < 1:
+        raise ValueError(f"years_in_status must be >= 1 (the first exemption year is 1), got {years_in_status}")
+    conditions_note = f" Conditions: {teacher.conditions}."
+    if years_in_status <= teacher.years:
+        limits.append(
+            f"{teacher.years}-year window ({teacher.years_basis}): year {years_in_status} of "
+            f"{teacher.years} — within the window"
+        )
+        warning = ""
+        if teacher.retroactive_loss:
+            warning = (
+                f" WARNING — RETROACTIVE LOSS RISK: {teacher.retroactive_loss_text} If the visit ends up "
+                f"exceeding {teacher.years} years, the WHOLE exemption (including this year's) is lost and "
+                f"already-filed returns must be amended — confirm the expected visit length before claiming."
+            )
+            limits.append(
+                f"retroactive-loss clause: exceeding the {teacher.years}-year visit forfeits the ENTIRE "
+                f"exemption, not just the excess years"
+            )
+        work = (
+            f"{label} teacher/researcher wages ({year}): {teacher.article} exempts them in full for "
+            f"{teacher.years} years ({teacher.years_basis}); year {years_in_status} is within the window — "
+            f"exempt {_dollars(amount_whole)} of {_dollars(amount_whole)}.{conditions_note}{warning}"
+            + _treaty_saving_clause_text(teacher.saving_clause_exception, teacher.saving_clause_exception_text)
+        )
+        return _result(amount_whole, teacher.article, work, teacher.citation)
+    # Beyond the window.
+    if teacher.retroactive_loss:
+        limits.append(
+            f"{teacher.years}-year window exceeded (year {years_in_status}) with RETROACTIVE loss — the "
+            f"WHOLE exemption is lost, including prior years"
+        )
+        work = (
+            f"{label} teacher/researcher wages ({year}): year {years_in_status} EXCEEDS the "
+            f"{teacher.article} {teacher.years}-year window ({teacher.years_basis}) — exempt $0 of "
+            f"{_dollars(amount_whole)}. WARNING — RETROACTIVE LOSS: {teacher.retroactive_loss_text} The "
+            f"WHOLE exemption is lost for the ENTIRE visit — not just this year: exemptions already claimed "
+            f"for earlier years are forfeited too, and those returns must be AMENDED to add the income "
+            f"back.{conditions_note}"
+        )
+        return _result(0, teacher.article, work, teacher.citation)
+    limits.append(
+        f"{teacher.years}-year window exceeded (year {years_in_status}) — loss is prospective only; "
+        f"earlier years keep their exemption"
+    )
+    work = (
+        f"{label} teacher/researcher wages ({year}): year {years_in_status} EXCEEDS the {teacher.article} "
+        f"{teacher.years}-year window ({teacher.years_basis}) — exempt $0 of {_dollars(amount_whole)} for "
+        f"this year. The loss is PROSPECTIVE only ({teacher.retroactive_loss_text}): earlier in-window "
+        f"years keep their exemption.{conditions_note}"
+    )
+    return _result(0, teacher.article, work, teacher.citation)
+
+
+# ---------------------------------------------------------------------------
+# State flat-rate income tax (Phase G item G4 — the state tax line)
+# ---------------------------------------------------------------------------
+
+_STATE_TAX_BASE_LABELS = {
+    "federal_agi": (
+        "the state's own income base derived from federal AGI plus/minus the state's additions and "
+        "subtractions (NOT raw federal AGI when modifications apply)"
+    ),
+    "federal_taxable_income": (
+        "the state's own income base derived from federal TAXABLE income plus/minus the state's "
+        "additions and subtractions (the federal standard/itemized deduction is already embedded)"
+    ),
+    "state_gross_income": (
+        "the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight "
+        "separately-computed PA income classes, where a loss in one class never offsets another"
+    ),
+}
+
+
+def _states_with_tax_block(year: int, base_dir: str | Path | None) -> list[str]:
+    """The state codes whose ``knowledge/states/<st>/<year>.yaml`` ships a ``tax`` block."""
+    from taxfill_core.datadir import knowledge_dir as _default_knowledge_dir
+
+    base = Path(base_dir) if base_dir is not None else _default_knowledge_dir()
+    states_dir = base / "states"
+    if not states_dir.is_dir():
+        return []
+    shipped: list[str] = []
+    for path in sorted(states_dir.glob(f"*/{year}.yaml")):
+        try:
+            raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except yaml.YAMLError:
+            continue
+        if isinstance(raw, dict) and isinstance(raw.get("tax"), dict):
+            shipped.append(path.parent.name)
+    return shipped
+
+
+class StateTaxResult(BaseModel):
+    """Result of :func:`state_tax`: the state's flat-rate tax line plus its audit trail."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    tax: int = Field(description="Whole-dollar state income tax for the state form's tax line.")
+    rate: Decimal = Field(description="The state's flat rate as an exact decimal fraction (e.g. 0.0495).")
+    base_after_exemptions: int = Field(
+        description="max(0, taxable_base - applied exemptions - standard deduction), whole dollars — "
+        "the amount the rate was applied to."
+    )
+    state: str = Field(description="Two-letter lowercase state code the pack was loaded for.")
+    base_kind: str = Field(
+        description="Which figure the state's form starts from: federal_agi, federal_taxable_income, "
+        "or state_gross_income."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def state_tax(
+    state: str,
+    taxable_base: int | float | Decimal | str,
+    year: int = 2023,
+    exemptions_count: int = 0,
+    dependents_count: int = 0,
+    filing_status: str = "single",
+    knowledge_dir: str | Path | None = None,
+) -> StateTaxResult:
+    """The flat-rate STATE income-tax line, from the state pack's cited ``tax`` block.
+
+    First tranche (Phase G item G4): the eight flat-rate 2023 states — IL, PA,
+    IN, MI, NC, CO, KY, AZ. The op computes::
+
+        base_after = max(0, taxable_base
+                            - personal_exemption x exemptions_count
+                            - dependent_exemption x dependents_count
+                            - standard_deduction[filing_status])   # where the state ships one
+        tax        = irs_round(base_after x flat_rate)
+
+    ``taxable_base`` is the CALLER'S job and differs per state — supply the
+    state's OWN base, already adjusted for the state's additions/subtractions:
+
+    * IL — federal AGI +/- IL modifications (IL-1040 Line 9 base income);
+      the op subtracts the Line 10 personal exemptions and multiplies by 4.95%.
+    * IN — federal AGI +/- IN add-backs/deductions (IT-40 Line 5); the op
+      subtracts the Schedule 3 personal/dependent exemptions ($1,000 each)
+      and multiplies by 3.15%. Indiana COUNTY tax is NOT modeled.
+    * MI — federal AGI +/- Schedule 1 modifications (MI-1040 Line 14); the op
+      subtracts the $5,400 exemptions and multiplies by 4.05% (2023-only rate).
+      Michigan CITY income taxes are NOT modeled.
+    * NC — federal AGI +/- NC adjustments (D-400 Lines 6-9); the op subtracts
+      the N.C. standard deduction by filing status and multiplies by 4.75%.
+      The AGI-tiered child deduction (Line 10) and itemized deductions are NOT
+      modeled — pass dependents_count=0 and see the pack notes.
+    * KY — federal AGI +/- Schedule M modifications (Form 740 Line 9 Kentucky
+      AGI); the op subtracts the single $2,980 standard deduction (ONE per
+      return, even filing jointly) and multiplies by 4.5%.
+    * AZ — federal AGI +/- AZ modifications through Form 140 line 37, MINUS
+      any line 38-41 exemptions you compute on the form (age 65+ $2,100, blind
+      $1,500, other $2,300, qualifying parent/grandparent $10,000 — the op
+      does NOT apply them); the op subtracts the standard deduction (2023
+      federal amounts) and multiplies by 2.5%. AZ has NO personal exemption;
+      dependents are the Line 49 CREDIT, not a base reduction.
+    * CO — federal TAXABLE income +/- CO modifications (DR 0104 Line 10);
+      no exemptions or deduction (already embedded federally); 4.4%. The filed
+      form uses the booklet tax table, which can differ from raw
+      multiplication by a few dollars within its $100 bands.
+    * PA — the PA-source gross by class (PA-40 Line 11 adjusted PA taxable
+      income): the op multiplies the supplied base by 3.07% only — PA has no
+      exemptions and no standard deduction, and a loss in one class never
+      offsets another. Pass exemptions_count=0 and dependents_count=0.
+
+    ``exemptions_count`` counts the PERSONAL exemptions (taxpayer + spouse
+    boxes) for states that ship a ``personal`` amount; ``dependents_count``
+    counts dependents for states that ship a ``dependent`` amount. Passing a
+    nonzero count to a state without that verified amount raises a
+    prescriptive error (never a silent $0). Age-65/blind and the other
+    verified exemption kinds in a pack are DISCLOSED in the work but not
+    applied — compute those lines on the state form itself.
+
+    County/city add-on taxes (Indiana counties, Michigan cities, PA/KY local
+    earned-income taxes) and state credits are NEVER modeled here.
+
+    Raises a prescriptive error for an unknown state or a state whose pack
+    ships no ``tax`` block, listing the states that do.
+    """
+    code = str(state).strip().lower()
+    supported_hint = None
+    try:
+        pack = load_state_knowledge(code, year, base_dir=knowledge_dir)
+    except FileNotFoundError:
+        supported_hint = _states_with_tax_block(year, knowledge_dir)
+        pack = None
+    if pack is None or pack.tax is None:
+        shipped = supported_hint if supported_hint is not None else _states_with_tax_block(year, knowledge_dir)
+        raise ValueError(
+            f"no state tax computation block for state {state!r}, tax year {year} — state_tax covers the "
+            f"flat-rate states whose packs ship a cited tax block: "
+            f"{', '.join(shipped) if shipped else '(none for this year)'}. For any other state, compute "
+            f"the tax line on the state's own form/tables via get_sources (state DOR .gov only) and cite "
+            f"it — never invent a state rate or amount."
+        )
+    params = pack.tax
+    base = _to_decimal(taxable_base, "taxable_base")
+    n_exemptions = _count_arg(exemptions_count, "exemptions_count", "personal exemptions (taxpayer + spouse)")
+    n_dependents = _count_arg(dependents_count, "dependents_count", "dependents claimed")
+    status, alias_note = _resolve_filing_status(str(filing_status))
+
+    personal = params.exemptions.get("personal")
+    dependent = params.exemptions.get("dependent")
+    if n_exemptions and personal is None:
+        raise ValueError(
+            f"{code.upper()} {year}: exemptions_count was supplied but the pack ships no 'personal' "
+            f"exemption amount — this state has no personal exemption for state_tax to apply "
+            f"(verified exemption kinds shipped: {', '.join(sorted(params.exemptions)) or '(none)'}). "
+            f"Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+        )
+    if n_dependents and dependent is None:
+        raise ValueError(
+            f"{code.upper()} {year}: dependents_count was supplied but the pack ships no 'dependent' "
+            f"exemption amount — this state does not model dependents as a verified per-dependent base "
+            f"exemption (verified exemption kinds shipped: "
+            f"{', '.join(sorted(params.exemptions)) or '(none)'}). Pass dependents_count=0 and handle "
+            f"dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered "
+            f"child deduction, IL's unverified Schedule IL-E/EIC amount)."
+        )
+
+    inputs: dict[str, Any] = {
+        "state": code,
+        "taxable_base": str(base),
+        "year": year,
+        "exemptions_count": n_exemptions,
+        "dependents_count": n_dependents,
+        "filing_status": str(filing_status),
+    }
+
+    parts: list[str] = []
+    subtracted = Decimal(0)
+    if personal is not None and n_exemptions:
+        amount = Decimal(personal.amount) * n_exemptions
+        subtracted += amount
+        parts.append(f"{n_exemptions} personal exemption(s) x {_dollars(personal.amount)} = {_money(amount)}")
+    if dependent is not None and n_dependents:
+        amount = Decimal(dependent.amount) * n_dependents
+        subtracted += amount
+        parts.append(f"{n_dependents} dependent exemption(s) x {_dollars(dependent.amount)} = {_money(amount)}")
+    std = 0
+    if params.standard_deduction is not None:
+        std = params.standard_deduction[status]
+        subtracted += Decimal(std)
+        alias_text = f" ({alias_note})" if alias_note else ""
+        parts.append(f"standard deduction [{status}{alias_text}] = {_dollars(std)}")
+
+    base_after_exact = base - subtracted
+    clamped = base_after_exact < 0
+    base_after = irs_round(max(Decimal(0), base_after_exact))
+    tax = irs_round(Decimal(base_after) * params.flat_rate)
+
+    unapplied = sorted(k for k in params.exemptions if k not in ("personal", "dependent"))
+    unapplied_text = (
+        " Verified exemption kinds shipped but NOT applied by this op (compute them on the form): "
+        + "; ".join(f"{k} ({_dollars(params.exemptions[k].amount)} — {params.exemptions[k].note})" for k in unapplied)
+        if unapplied
+        else ""
+    )
+    subtraction_text = (
+        f" minus {', '.join(parts)} = {_money(base_after_exact)}"
+        + (" (clamped to $0 — exemptions/deduction exceed the base)" if clamped else "")
+        if parts
+        else " with no exemptions or standard deduction to subtract"
+    )
+    notes_text = (" Pack notes: " + " ".join(params.notes)) if params.notes else ""
+    work = (
+        f"{code.upper()} state income tax ({year}, flat rate): taxable_base {_money(base)} — which must be "
+        f"{_STATE_TAX_BASE_LABELS[params.base]} —{subtraction_text}; tax = {params.flat_rate} x "
+        f"{_dollars(base_after)} = {_dollars(tax)}. Tax line: {params.tax_line}{unapplied_text} This op "
+        f"computes the state's flat-rate tax line ONLY — county/city add-on taxes and state credits are "
+        f"NOT modeled.{notes_text}"
+    )
+    return StateTaxResult(
+        tax=tax,
+        rate=params.flat_rate,
+        base_after_exemptions=base_after,
+        state=code,
+        base_kind=params.base,
+        inputs=inputs,
+        work=work,
+        citation=params.citation,
+    )

@@ -860,6 +860,172 @@ class PtcParams(BaseModel):
         return self
 
 
+# ── Phase G item G2: Form 2441 child & dependent care credit parameters ──────
+
+
+class DependentCareExpenseCap(BaseModel):
+    """The IRC 21(c) qualified-expense caps by qualifying-person count (Form 2441
+    lines 3/27): statutory $3,000 / $6,000 (2021 ARPA: $8,000 / $16,000)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    one_qualifying_person: int = Field(gt=0)
+    two_or_more_qualifying_persons: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _check_ordering(self) -> "DependentCareExpenseCap":
+        if self.two_or_more_qualifying_persons < self.one_qualifying_person:
+            raise ValueError(
+                f"dependent_care.expense_cap: two_or_more_qualifying_persons "
+                f"({self.two_or_more_qualifying_persons}) must be at least one_qualifying_person "
+                f"({self.one_qualifying_person}) — copy both caps from the year's Form 2441 lines 3/27"
+            )
+        return self
+
+
+class DependentCarePhaseDown(BaseModel):
+    """One leg of the Form 2441 line-8 applicable-percentage slide.
+
+    ``from_rate`` is reduced by ``points_per_step`` for each ``per_agi_step``
+    dollars — OR FRACTION THEREOF — of AGI above ``starts_above_agi``, never
+    below ``to_rate``. The 'or fraction thereof' wording (IRC 21(a)(2) and, for
+    2021, 21(g)(4)) means the excess is rounded UP to the next step FIRST, so
+    AGI exactly at a published bracket boundary keeps the HIGHER percentage
+    (the printed tables' 'Over X — but not over Y' rows encode the same rule:
+    AGI of exactly $15,000 is still 35%, exactly $43,000 is still 21%).
+
+    Standard years ship ONE leg (0.35 -> 0.20 above $15,000). 2021 (ARPA)
+    ships TWO: 0.50 -> 0.20 above $125,000, then 0.20 -> 0.00 above $400,000 —
+    the 0.20 plateau between them and the zero point at AGI over $438,000 both
+    FOLLOW from this rule (the .01 bracket is $436,000-$438,000, matching the
+    2021 i2441 Phaseout Schedule exactly); they are never stored separately.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    starts_above_agi: int = Field(ge=0, description="The slide reduces the rate only for AGI ABOVE this amount.")
+    from_rate: Decimal = Field(description="Applicable percentage at or below starts_above_agi, as a decimal (0.35).")
+    to_rate: Decimal = Field(description="The floor this leg cannot go below (0.20; the 2021 second leg's 0.00).")
+    per_agi_step: int = Field(default=2000, gt=0, description="Dollars of AGI per reduction step ($2,000).")
+    points_per_step: Decimal = Field(
+        default=Decimal("0.01"), description="Rate reduction per step (1 percentage point = 0.01)."
+    )
+
+    _coerce_rates = field_validator("from_rate", "to_rate", "points_per_step", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_rates(self) -> "DependentCarePhaseDown":
+        if not (Decimal("0") <= self.to_rate < self.from_rate < Decimal("1")):
+            raise ValueError(
+                f"dependent_care phase-down leg: rates must satisfy 0 <= to_rate < from_rate < 1 "
+                f"(decimals, e.g. from 0.35 to 0.20), got from_rate={self.from_rate}, to_rate={self.to_rate}"
+            )
+        if self.points_per_step <= 0:
+            raise ValueError(f"dependent_care phase-down leg: points_per_step must be positive, got {self.points_per_step}")
+        span_steps = (self.from_rate - self.to_rate) / self.points_per_step
+        if span_steps != span_steps.to_integral_value():
+            raise ValueError(
+                f"dependent_care phase-down leg: (from_rate - to_rate) must be a whole number of "
+                f"points_per_step steps (the printed table steps 1 point per $2,000), got "
+                f"{self.from_rate} -> {self.to_rate} in {self.points_per_step} steps"
+            )
+        return self
+
+    def floor_reached_above_agi(self) -> int:
+        """The AGI above which this leg has fully phased down to ``to_rate``."""
+        steps = int((self.from_rate - self.to_rate) / self.points_per_step)
+        return self.starts_above_agi + self.per_agi_step * steps
+
+
+class DependentCareDeemedIncome(BaseModel):
+    """IRC 21(d)(2) deemed monthly earned income for a spouse (or taxpayer) who
+    was a full-time student or incapable of self-care: $250 / $500 per month by
+    qualifying-person count. Statutory, identical every supported year."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    one_qualifying_person: int = Field(gt=0)
+    two_or_more_qualifying_persons: int = Field(gt=0)
+
+
+class DependentCareBenefitsExclusion(BaseModel):
+    """Dependent care benefits exclusion ceilings (Form 2441 line 21): $5,000
+    ($2,500 MFS); 2021 ARPA: $10,500 ($5,250 MFS). ``note`` carries year quirks
+    (2021: 2020 FSA carryovers add to the max; 2022: 2021 carryovers likewise)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    exclusion_max: int = Field(gt=0)
+    exclusion_max_mfs: int = Field(gt=0)
+    note: str | None = None
+
+
+class DependentCareParams(BaseModel):
+    """Form 2441 / IRC 21 child & dependent care credit parameters (Phase G, G2).
+
+    Credit mechanics the calc op reproduces (Form 2441 Part II, with the Part III
+    cap reduction): allowed expenses = smallest of (expense cap minus employer
+    dependent care benefits, qualified expenses minus those benefits, the
+    taxpayer's earned income, and — MFJ — the spouse's earned income); credit =
+    the AGI-driven applicable percentage x allowed expenses. The percentage comes
+    from ``phase_downs`` (see :class:`DependentCarePhaseDown`); the deemed
+    $250/$500 student/disabled-spouse income rule and the MFS treated-as-unmarried
+    exception stay TEXT (they are facts-and-judgment rules, not engine math).
+    ``refundable_if_us_abode`` is 2021-only (IRC 21(g)(1)) and requires
+    ``refundable_condition`` quoting the abode test.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    expense_cap: DependentCareExpenseCap
+    phase_downs: list[DependentCarePhaseDown] = Field(min_length=1)
+    refundable_if_us_abode: bool = Field(
+        default=False,
+        description="2021 ARPA only: the credit is refundable when the US-principal-abode test is met.",
+    )
+    refundable_condition: str | None = Field(
+        default=None, description="The abode test wording (required when refundable_if_us_abode is true)."
+    )
+    earned_income_limitation: str = Field(
+        description="The line 4-6 smallest-of rule, as text (credit base limited by each spouse's earned income)."
+    )
+    deemed_income_per_month: DependentCareDeemedIncome
+    student_spouse_rule: str = Field(
+        description="The deemed $250/$500-per-month full-time-student / incapable-of-self-care rule, as text."
+    )
+    married_filing_separately_note: str = Field(
+        description="MFS generally-ineligible rule + the three treated-as-unmarried conditions, as text."
+    )
+    dependent_care_benefits: DependentCareBenefitsExclusion
+
+    @model_validator(mode="after")
+    def _check_legs_and_refundability(self) -> "DependentCareParams":
+        legs = self.phase_downs
+        for i in range(1, len(legs)):
+            prev, cur = legs[i - 1], legs[i]
+            if cur.from_rate != prev.to_rate:
+                raise ValueError(
+                    f"dependent_care.phase_downs: leg {i} must start at the rate leg {i - 1} floors to "
+                    f"({prev.to_rate}), got from_rate={cur.from_rate} — the slide is one continuous "
+                    f"piecewise function (2021: 0.50->0.20 then 0.20->0.00)"
+                )
+            if cur.starts_above_agi < prev.floor_reached_above_agi():
+                raise ValueError(
+                    f"dependent_care.phase_downs: leg {i} starts at AGI {cur.starts_above_agi} but leg "
+                    f"{i - 1} only reaches its floor above AGI {prev.floor_reached_above_agi()} — legs "
+                    f"must not overlap (the 2021 second leg starts at $400,000, well past the first "
+                    f"leg's $183,000 floor point)"
+                )
+        if self.refundable_if_us_abode and not self.refundable_condition:
+            raise ValueError(
+                "dependent_care.refundable_if_us_abode: true requires refundable_condition — quote the "
+                "IRC 21(g)(1) principal-place-of-abode test (Form 2441 line B) so the caller judgment "
+                "carries its authority"
+            )
+        return self
+
+
 class TaxKnowledge(BaseModel):
     """The ``tax`` block of a knowledge pack: everything calc.py needs for one year.
 
@@ -888,6 +1054,10 @@ class TaxKnowledge(BaseModel):
     # Premium Tax Credit: shipped only for years whose ARPA/IRA table regime is
     # verified (2023-2024; the regime runs through TY2025 and then expires).
     ptc: PtcParams | None = None
+    # Phase G item G2: Form 2441 child & dependent care credit (all shipped years;
+    # 2021 carries the ARPA caps/slide/refundability). Optional so packs predating
+    # the block still load; calc raises a prescriptive error when a year lacks it.
+    dependent_care: DependentCareParams | None = None
 
     @model_validator(mode="after")
     def _check_table_worksheet_boundary(self) -> "TaxKnowledge":
@@ -1149,14 +1319,115 @@ def load_knowledge(
 # ── State knowledge (dev plan section 6) ─────────────────────────────────────
 
 
+# The three starting bases the shipped flat-rate states use. The caller of
+# calc.state_tax must supply the taxable_base already adjusted per this kind
+# (see that op's docstring) — the base kind here just names which federal/state
+# figure the state's form starts from.
+StateFlatTaxBase = Literal["federal_agi", "federal_taxable_income", "state_gross_income"]
+
+
+class StateExemption(BaseModel):
+    """One state exemption kind: a verified per-item dollar amount + its pinpoint note.
+
+    Only VERIFIED amounts ship — an exemption the research could not confirm is
+    left out of the pack entirely (with a YAML comment naming where to resolve
+    it), never guessed.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    amount: int = Field(ge=0, description="Per-item whole-dollar amount, exactly as published.")
+    note: str = Field(description="Pinpoint (form line + who it covers), transcribed from the cited instructions.")
+
+    @field_validator("note")
+    @classmethod
+    def _note_nonempty(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError(
+                "exemption note must not be empty — record the form line and who the exemption covers, "
+                "transcribed from the cited state instructions"
+            )
+        return value
+
+
+_STATE_EXEMPTION_KEY_RE = re.compile(r"^[a-z][a-z0-9_]*$")
+
+
+class StateTaxParams(BaseModel):
+    """The ``tax`` block of a state pack: FLAT-RATE income-tax computation data.
+
+    Phase G item G4, first tranche: the eight flat-rate 2023 states (IL, PA,
+    IN, MI, NC, CO, KY, AZ). Consumed by :func:`taxfill_core.calc.state_tax`,
+    which applies ONLY the ``personal`` / ``dependent`` exemption keys (times
+    the caller's counts) and the per-status ``standard_deduction``. Every
+    other exemption key (age_65, blind, ...) is verified DATA the op discloses
+    but does not apply — those lines are computed on the state form itself.
+    ``notes`` carries the pack's disclosures (county/city add-on taxes not
+    modeled, PA's eight-class no-deduction system, ...) and the calc op quotes
+    them in its work string.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    flat_rate: Decimal = Field(description="The flat rate as an exact decimal fraction, e.g. 0.0495.")
+    base: StateFlatTaxBase = Field(
+        description="Which figure the state's form starts from: federal_agi, federal_taxable_income, "
+        "or state_gross_income (PA-style own-class income, never federal AGI)."
+    )
+    tax_line: str = Field(description="The state form's tax line, quoted from the cited instructions/form.")
+    exemptions: dict[str, StateExemption] = Field(
+        default_factory=dict,
+        description="Verified exemption kinds by snake_case key; calc applies only 'personal' and 'dependent'.",
+    )
+    standard_deduction: dict[FilingStatus, int] | None = Field(
+        default=None,
+        description="Per-filing-status standard deduction where the state has one (NC/KY/AZ); None otherwise.",
+    )
+    notes: list[str] = Field(
+        default_factory=list,
+        description="Cited disclosures/quirks the calc op must surface (not-modeled add-ons, special rules).",
+    )
+
+    _coerce_rate = field_validator("flat_rate", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_params(self) -> "StateTaxParams":
+        if not (Decimal("0") < self.flat_rate < Decimal("1")):
+            raise ValueError(
+                f"tax.flat_rate must be a fraction strictly between 0 and 1 (e.g. 0.0495 for 4.95%), "
+                f"got {self.flat_rate} — copy the exact decimal from the state instructions"
+            )
+        bad_keys = [k for k in self.exemptions if not _STATE_EXEMPTION_KEY_RE.fullmatch(k)]
+        if bad_keys:
+            raise ValueError(
+                f"tax.exemptions keys must be lowercase snake_case identifiers (personal, dependent, "
+                f"age_65, blind, ...), got {bad_keys}"
+            )
+        if self.standard_deduction is not None:
+            missing = [s for s in FILING_STATUSES if s not in self.standard_deduction]
+            if missing:
+                raise ValueError(
+                    f"tax.standard_deduction must define all four filing statuses; missing: "
+                    f"{', '.join(missing)} — copy each amount from the state's published chart "
+                    f"(qualifying surviving spouse resolves to the married_filing_jointly column in calc)"
+                )
+            bad = {s: v for s, v in self.standard_deduction.items() if v <= 0}
+            if bad:
+                raise ValueError(f"tax.standard_deduction amounts must be positive whole dollars, got {bad}")
+        return self
+
+
 class StateKnowledge(BaseModel):
     """One ``knowledge/states/<st>/<year>.yaml`` — a state's filing knowledge.
 
     Unlike the federal :class:`KnowledgePack`, a state pack has NO mandatory
-    ``tax`` computation block (state tax math is not computed in v1 — scoping,
-    rules, credits, and logistics are). Extra cited blocks (residency, credits,
-    mailing_addresses, payment, deadlines, filing_requirement, forms) are
-    allowed and grow per state.
+    ``tax`` computation block: the OPTIONAL typed :class:`StateTaxParams`
+    ships only for the flat-rate states whose tax line calc.state_tax computes
+    (Phase G item G4 — IL/PA/IN/MI/NC/CO/KY/AZ for 2023); everywhere else
+    scoping, rules, credits, and logistics are the pack's job. Extra cited
+    blocks (residency, credits, mailing_addresses, payment, deadlines,
+    filing_requirement, forms) are allowed and grow per state.
 
     The one firm, typed contract is ``conforms_to_federal_treaties`` — California
     does NOT, so a treaty-exempt-federally amount is still taxable to CA, which
@@ -1172,6 +1443,15 @@ class StateKnowledge(BaseModel):
         description="False means federal treaty-exempt income is still taxable by this state (e.g. California)."
     )
     citation: Citation | None = None
+    # Phase G item G4 (first tranche): flat-rate income-tax computation data for the
+    # eight flat-rate 2023 states (IL, PA, IN, MI, NC, CO, KY, AZ). Optional so every
+    # other state pack still loads; calc.state_tax raises a prescriptive error naming
+    # the shipped states when a pack lacks the block.
+    tax: StateTaxParams | None = Field(
+        default=None,
+        description="Flat-rate tax computation block (rate, base, exemptions, standard deduction); "
+        "None = state tax math is not shipped for this state/year.",
+    )
 
     @field_validator("jurisdiction")
     @classmethod
@@ -1219,5 +1499,249 @@ def load_state_knowledge(
         raise ValueError(
             f"{path}: file declares jurisdiction '{pack.jurisdiction}', tax_year {pack.tax_year} but was loaded "
             f"as state '{state}', year {year} — fix the file or move it to knowledge/states/{state}/{year}.yaml"
+        )
+    return pack
+
+
+# ── Treaty knowledge (Phase G item G1) ────────────────────────────────────────
+#
+# Per-country income-tax-treaty benefit parameters for individual NRA filers,
+# under ``knowledge/treaties/<country>.yaml``. Dollar amounts are TREATY-FIXED
+# (written into the treaty text, never inflation-indexed), so treaty packs are
+# per-country, not per-year. Consumed by :func:`taxfill_core.calc.treaty_benefit`,
+# which VALIDATES articles/limits — final eligibility judgment stays with the
+# agent (each pack carries a top-level ``disclaimer`` saying exactly what the
+# engine does not check).
+
+
+class TreatyStudentArticle(BaseModel):
+    """The treaty's student/trainee article parameters.
+
+    ``compensation_limit`` is the treaty-fixed USD-per-taxable-year cap on
+    exempt personal-services income (China $5,000 / Korea $2,000); ``null``
+    means the treaty has NO student dollar exclusion (India/Canada/Mexico —
+    India instead gets the Art. 21(2) deduction-parity rule in
+    ``special_rule``, and Canada's practical wage relief is the separate
+    ``employment_de_minimis`` block).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    article: str = Field(description="The student article, e.g. 'Art. 20 (Students and Trainees)'.")
+    compensation_limit: int | None = Field(
+        default=None,
+        gt=0,
+        description="Treaty-fixed USD cap on exempt personal-services income per period; null = no dollar exclusion.",
+    )
+    compensation_limit_period: Literal["per_taxable_year"] | None = Field(
+        default=None, description="Period the compensation limit applies to (the shipped treaties are all per taxable year)."
+    )
+    compensation_limit_ref: str | None = Field(
+        default=None, description="Pinpoint reference of the dollar limit, e.g. 'Art. 20(c)'."
+    )
+    compensation_limit_text: str | None = Field(
+        default=None, description="The treaty wording the limit was transcribed from."
+    )
+    payments_from_abroad_exempt: bool = Field(
+        description="Whether payments from abroad for maintenance/education/training are exempt."
+    )
+    payments_from_abroad_text: str | None = Field(
+        default=None, description="The treaty wording, including any source/purpose conditions."
+    )
+    scholarship_exempt: bool = Field(
+        description="Whether scholarship/fellowship grants are exempt as such (independent of foreign source)."
+    )
+    scholarship_text: str | None = Field(default=None, description="The treaty wording or why there is no grant exclusion.")
+    special_rule: str | None = Field(
+        default=None,
+        description="A benefit that is not a dollar exclusion (India Art. 21(2) standard-deduction parity).",
+    )
+    time_limit_text: str = Field(description="How long the student benefits last, exactly as the treaty states it.")
+    saving_clause_exception: bool = Field(
+        description="Whether the saving clause excepts this article (benefit can survive becoming a US resident)."
+    )
+    saving_clause_exception_text: str | None = Field(
+        default=None, description="The exception's pinpoint text, including who stays taxable (citizens/immigrants)."
+    )
+    citation: Citation
+
+    @model_validator(mode="after")
+    def _check_limit_fields(self) -> "TreatyStudentArticle":
+        if self.compensation_limit is not None and (
+            self.compensation_limit_period is None or self.compensation_limit_ref is None
+        ):
+            raise ValueError(
+                "student.compensation_limit requires compensation_limit_period and compensation_limit_ref "
+                "(the pinpoint, e.g. 'Art. 20(c)') — transcribe both from the treaty text"
+            )
+        return self
+
+
+class TreatyTeacherArticle(BaseModel):
+    """The treaty's teacher/professor/researcher article parameters.
+
+    ``retroactive_loss`` is the India trap: when True, exceeding the year
+    window loses the exemption for the ENTIRE visit (earlier years included),
+    not just the excess years — ``retroactive_loss_text`` carries the Pub 901
+    wording. When False the loss is prospective only.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    article: str
+    years: int = Field(gt=0, description="Length of the exemption window in years.")
+    years_basis: str = Field(
+        description="How the years are counted (aggregate vs from arrival vs from first visit), per the treaty text."
+    )
+    retroactive_loss: bool = Field(
+        description="True = exceeding the window loses the WHOLE exemption retroactively (India Art. 22)."
+    )
+    retroactive_loss_text: str | None = Field(
+        default=None, description="The authority for the clawback (or for its absence)."
+    )
+    conditions: str = Field(description="Institution/invitation/public-interest conditions, per the treaty text.")
+    saving_clause_exception: bool
+    saving_clause_exception_text: str | None = None
+    citation: Citation
+
+    @model_validator(mode="after")
+    def _check_retroactive_text(self) -> "TreatyTeacherArticle":
+        if self.retroactive_loss and not self.retroactive_loss_text:
+            raise ValueError(
+                "teacher_researcher.retroactive_loss: true requires retroactive_loss_text (the Pub 901 / "
+                "treaty wording for the clawback) — a whole-visit exemption loss must carry its authority"
+            )
+        return self
+
+
+class TreatyEmploymentDeMinimis(BaseModel):
+    """A dependent-personal-services de-minimis rule (Canada Art. XV / Mexico Art. 15).
+
+    ``amount`` is ALL-OR-NOTHING, not a cap: total US employment remuneration
+    at or under it is taxable only in the residence state; over it, only the
+    ``alternative_test`` (183-day/employer/PE) can exempt the income. ``null``
+    means NO dollar threshold exists (Mexico — verified against the full text).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    article: str
+    amount: int | None = Field(
+        default=None, gt=0, description="The all-or-nothing calendar-year threshold; null = no dollar threshold."
+    )
+    amount_text: str = Field(description="The treaty wording (or the verified absence of any threshold).")
+    alternative_test: str = Field(description="The 183-day/employer/permanent-establishment test, per the treaty text.")
+    citation: Citation
+
+
+class TreatyExtraProvision(BaseModel):
+    """One additional cited provision (e.g. Korea Art. 21(2)/21(3)) kept as free text."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    text: str
+    citation: Citation
+
+
+class TreatyKnowledge(BaseModel):
+    """One ``knowledge/treaties/<country>.yaml`` — a treaty's benefit parameters.
+
+    ``disclaimer`` is mandatory: it states that eligibility depends on facts
+    the engine checks only partially (visa category/period, purpose of visit,
+    prior residence) plus the saving-clause analysis — the calc op validates
+    articles and dollar limits, and the final judgment stays with the agent.
+    ``teacher_researcher: null`` is a real, verified shape (Canada/Mexico have
+    NO teacher/professor article), not missing data.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    country: str
+    treaty: str = Field(description="The treaty's identity: signing place/date and protocols.")
+    disclaimer: str
+    citation: Citation = Field(description="Top-level citation to the treaty document itself (irs.gov PDF).")
+    student: TreatyStudentArticle | None = None
+    teacher_researcher: TreatyTeacherArticle | None = None
+    employment_de_minimis: TreatyEmploymentDeMinimis | None = None
+    extra_provisions: list[TreatyExtraProvision] = Field(default_factory=list)
+    notes: str | None = None
+
+    @field_validator("country")
+    @classmethod
+    def _check_country(cls, value: str) -> str:
+        if not re.fullmatch(r"[a-z][a-z_]*", value):
+            raise ValueError(
+                f"treaty country must be a lowercase snake_case key matching the filename "
+                f"(e.g. 'china', 'korea'), got {value!r}"
+            )
+        return value
+
+
+# Common alternative names normalized onto the shipped file keys.
+_TREATY_COUNTRY_ALIASES = {
+    "peoples_republic_of_china": "china",
+    "people_s_republic_of_china": "china",
+    "pr_china": "china",
+    "prc": "china",
+    "south_korea": "korea",
+    "republic_of_korea": "korea",
+    "korea_south": "korea",
+}
+
+
+def normalize_treaty_country(country: str) -> str:
+    """Normalize a country name to its treaty-pack key: lowercase snake_case plus aliases."""
+    key = re.sub(r"[^a-z0-9]+", "_", country.strip().lower()).strip("_")
+    return _TREATY_COUNTRY_ALIASES.get(key, key)
+
+
+def list_treaty_countries(base_dir: str | Path | None = None) -> list[str]:
+    """The treaty-pack country keys shipped under ``<base_dir>/treaties/``."""
+    base = Path(base_dir) if base_dir is not None else _repo_knowledge_dir()
+    treaties = base / "treaties"
+    if not treaties.is_dir():
+        return []
+    return sorted(p.stem for p in treaties.glob("*.yaml"))
+
+
+def load_treaty(country: str, base_dir: str | Path | None = None) -> TreatyKnowledge:
+    """Load ``<base_dir>/treaties/<country>.yaml`` as a :class:`TreatyKnowledge`.
+
+    ``country`` is normalized (case/spacing/aliases: 'South Korea' -> 'korea',
+    'PRC' -> 'china'). ``base_dir`` defaults to the repo's ``knowledge/``
+    directory (or the wheel-staged copy), like :func:`load_knowledge`.
+
+    Raises:
+        FileNotFoundError: no pack for that country, listing the shipped
+            countries and the freshness path (never invent a treaty amount).
+        ValueError: non-mapping YAML or a pack whose declared country
+            disagrees with its filename.
+        pydantic.ValidationError: the pack violates the schema (including the
+            gov-host citation rule).
+    """
+    key = normalize_treaty_country(str(country))
+    base = Path(base_dir) if base_dir is not None else _repo_knowledge_dir()
+    path = base / "treaties" / f"{key}.yaml"
+    if not path.is_file():
+        available = list_treaty_countries(base)
+        raise FileNotFoundError(
+            f"no treaty knowledge pack for country {country!r} — looked for {path}. "
+            f"Shipped treaty countries: {', '.join(available) if available else '(none)'}. "
+            f"For any other treaty country, resolve the article and limits from the official treaty "
+            f"text and Pub 901 via get_sources (irs.gov only), cite them, and decide the position with "
+            f"the user — never invent a treaty amount or article."
+        )
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        raise ValueError(
+            f"{path}: a treaty knowledge pack must be a YAML mapping, got {type(raw).__name__} — "
+            f"see knowledge/treaties/china.yaml for the schema"
+        )
+    pack = TreatyKnowledge.model_validate(raw)
+    if pack.country != key:
+        raise ValueError(
+            f"{path}: file declares country '{pack.country}' but was loaded as '{key}' — fix the file's "
+            f"country field or move it to knowledge/treaties/{pack.country}.yaml"
         )
     return pack

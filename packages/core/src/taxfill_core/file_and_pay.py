@@ -11,13 +11,19 @@ options, deadlines) — never invented.
 v1 is federal-only (state where-to-file and portals ship with the state packs
 in M5); a non-federal item returns a clear "ships in M5" note rather than a
 guess.
+
+Special federal items with their own paths: a standalone Form 8843 (information
+return, fixed Austin address), a return filed WITH Form W-7 (the Austin ITIN
+Operation), and — Phase G item G6 — a Form 843 FICA withheld-in-error claim
+(form '843' with attached_forms ['8316']): a separate mailing to the Ogden
+service center per the current Pub 519 ch. 8, never attached to the 1040-NR.
 """
 from __future__ import annotations
 
 from datetime import date
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from taxfill_core.knowledge import Citation, load_knowledge, load_state_knowledge
 
@@ -69,6 +75,16 @@ def _is_standalone_8843(item: "FilingManifestItem") -> bool:
     """A Form 8843 filed by ITSELF (information only — no return, no tax bottom line)."""
     f = item.form.upper().replace(" ", "").replace("-", "")
     return f in ("8843", "F8843", "FORM8843") and not item.bottom_line
+
+
+def _is_843(form: str) -> bool:
+    """True for Form 843 in any spelling ('843', 'f843', 'Form 843')."""
+    return form.upper().replace(" ", "").replace("-", "") in ("843", "F843", "FORM843")
+
+
+def _is_8316(name: str) -> bool:
+    """True for Form 8316 in any spelling ('8316', 'f8316', 'Form 8316')."""
+    return name.upper().replace(" ", "").replace("-", "") in ("8316", "F8316", "FORM8316")
 
 
 def _pack_address_entry(pack, key: str) -> tuple[str | None, Citation | None]:
@@ -135,6 +151,38 @@ _SECTION_6013_CITATION = Citation(
     url=_SECTION_6013_URL,
 )
 
+# The FICA-withheld-in-error claim last mile (G6, Forms 843 + 8316). The address
+# was VERIFIED LIVE against the current Pub 519 (2025 edition, HTTP 200, text
+# extracted) before pinning: chapter 8, "Refund of Taxes Withheld in Error",
+# prints an unconditional "Send Form 843 (with attachments) to:" followed by the
+# Ogden service center — the older where-you-filed-the-return rule is GONE from
+# the current edition, so the address is a fixed value, not a conditional one.
+# Refund claims follow the CURRENT procedures regardless of the tax period
+# claimed; the checklist still tells the filer to re-confirm in Pub 519 ch. 8
+# because the IRS revises the publication annually.
+_FICA_CLAIM_ADDRESS = "Department of the Treasury, Internal Revenue Service Center, Ogden, UT 84201-0038"
+_FICA_CLAIM_CITATION = Citation(
+    source=(
+        "IRS Publication 519 (2025), ch. 8, 'Refund of Taxes Withheld in Error' — send Form 843 with "
+        "attachments to the Ogden service center; attachment list (W-2 copy, visa, I-94, I-20/DS-2019, "
+        "employer statement or Form 8316) from the same section (verified live before pinning)"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/p519.pdf",
+)
+
+# The dual-status last mile (G5). The page is the IRS's own dual-status filing
+# instruction set — the "Dual-Status Return"/"Dual-Status Statement" annotations,
+# the no-standard-deduction rule, and the sign-the-return rule (verified live,
+# HTTP 200, before pinning); cited inline in the checklist strings too.
+_DUAL_STATUS_URL = "https://www.irs.gov/individuals/international-taxpayers/taxation-of-dual-status-individuals"
+_DUAL_STATUS_CITATION = Citation(
+    source=(
+        "IRS — Taxation of dual-status individuals (write 'Dual-Status Return' across the top, attach "
+        "the statement marked 'Dual-Status Statement', no standard deduction)"
+    ),
+    url=_DUAL_STATUS_URL,
+)
+
 
 def _dedupe_citations(citations: list[Citation]) -> list[Citation]:
     seen, uniq = set(), []
@@ -159,7 +207,7 @@ class FilingManifestItem(BaseModel):
     state: str | None = Field(default=None, description="Taxpayer's state — two-letter USPS code ('CA') or full name ('California'); resolves the 1040 where-to-file address.")
     filing_jointly: bool = Field(default=False, description="MFJ — both spouses must sign.")
     direct_deposit: bool = Field(default=False, description="Refund requested by direct deposit.")
-    attached_forms: list[str] = Field(default_factory=list, description="Forms attached to this return (e.g. ['8843', 'W-7']). Most attachments are not separately signed; Form W-7 IS — the applicant signs its own Sign Here block.")
+    attached_forms: list[str] = Field(default_factory=list, description="Forms attached to this return (e.g. ['8843', 'W-7']; ['8316'] on a Form 843 FICA claim). Most attachments are not separately signed; Form W-7 IS — the applicant signs its own Sign Here block — and so is Form 8316 (its own page-1 signature area).")
     section_6013_election: bool = Field(
         default=False,
         description=(
@@ -168,6 +216,29 @@ class FilingManifestItem(BaseModel):
             "— signed by BOTH spouses, with each spouse's name, address, and SSN/ITIN — attached."
         ),
     )
+    dual_status: bool = Field(
+        default=False,
+        description=(
+            "True when this is a DUAL-STATUS return (a split residency year): the assembly checklist then "
+            "leads with writing 'Dual-Status Return' across the top of the return, attaching the other-status "
+            "return (1040-NR for a 1040 return, 1040 for a 1040-NR return) marked 'Dual-Status Statement', "
+            "the no-standard-deduction reminder, and the sign-the-RETURN-not-the-statement rule. "
+            "MUTUALLY EXCLUSIVE with section_6013_election (the election makes the couple full-year "
+            "residents — an ordinary joint 1040; a dual-status return cannot be joint)."
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _dual_status_and_6013_are_alternatives(self) -> "FilingManifestItem":
+        if self.dual_status and self.section_6013_election:
+            raise ValueError(
+                "dual_status and section_6013_election cannot both be set on one return: the "
+                "§6013(g)/(h) election treats BOTH spouses as U.S. residents for the ENTIRE year, "
+                "so the return is an ordinary full-year joint Form 1040 (drop dual_status and keep "
+                "the election), while a true dual-status year cannot be a joint return at all "
+                "(Pub 519 ch. 6 restrictions) — pick the one that matches the recorded position"
+            )
+        return self
 
 
 class ReturnInstructions(BaseModel):
@@ -229,6 +300,8 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
         )
     if _is_standalone_8843(item):
         return _standalone_8843_return(item, pack, notes)
+    if _is_843(item.form):
+        return _form_843_return(item, pack, notes)
     is_nr = _is_nr_form(item.form)
     owes = item.bottom_line < 0
     refund = item.bottom_line > 0
@@ -370,6 +443,29 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
             "the return itself."
         )
         citations.append(_SECTION_6013_CITATION)
+
+    # Dual-status year (G5): the split-year annotations LEAD the assembly checklist —
+    # a dual-status package without them is processed as an ordinary return, which is
+    # exactly the error the annotations exist to prevent. The statement is the
+    # OTHER-status return: 1040-NR statement on a 1040 return (arrival year), 1040
+    # statement on a 1040-NR return (departure year).
+    if item.dual_status:
+        statement_form = "Form 1040" if is_nr else "Form 1040-NR"
+        statement_part = "resident" if is_nr else "nonresident"
+        assemble[0:0] = [
+            f'Write "Dual-Status Return" across the top of the Form {item.form} — it marks the split '
+            f"residency year for IRS processing ({_DUAL_STATUS_URL}).",
+            f'Attach {statement_form} as the DUAL-STATUS STATEMENT for the {statement_part} part of the '
+            f'year, with "Dual-Status Statement" written across its top.',
+            "Reminder: NO standard deduction on a dual-status return — deductions must be itemized; "
+            "double-check the deduction line before printing (Pub 519 ch. 6).",
+        ]
+        sign.append(
+            f'Sign the Form {item.form} (the dual-status RETURN) only — the attached {statement_form} '
+            f'marked "Dual-Status Statement" is NOT signed separately; your signature on the return '
+            f"covers the whole filing."
+        )
+        citations.append(_DUAL_STATUS_CITATION)
 
     # Mail.
     mail = [
@@ -517,6 +613,129 @@ def _standalone_8843_return(item: FilingManifestItem, pack, notes: list[str]) ->
             f"The filing due date for {item.tax_year} is not in the knowledge pack — a standalone Form 8843 "
             f"follows the Form 1040-NR due date; confirm it on irs.gov before filing."
         )
+
+    return ReturnInstructions(
+        form=item.form, jurisdiction="federal", tax_year=item.tax_year, bottom_line=bottom,
+        payment=[], mailing_address=mailing_address, sign=sign, assemble=assemble, mail=mail,
+        records=records, deadlines=deadlines, citations=_dedupe_citations(citations), notes=notes,
+    )
+
+
+def _form_843_return(item: FilingManifestItem, pack, notes: list[str]) -> ReturnInstructions:
+    """Form 843 claim — the FICA-withheld-in-error refund path (G6).
+
+    An exempt F/J/M nonresident whose employer withheld Social Security/Medicare
+    in error and will not refund it claims the money back on Form 843, with
+    Form 8316 serving as the employer-refusal statement (Pub 519 ch. 8, 'Refund
+    of Taxes Withheld in Error'). The claim is a SEPARATE filing: its own
+    envelope, its own fixed address (the Ogden service center per the current
+    Pub 519 — verified live before pinning), never attached to the 1040-NR.
+    Both forms are signed (Form 843 on page 2 of the Rev. 12-2024 revision;
+    Form 8316 in its own signature area at the bottom of page 1) — per the
+    shipped f843/f8316 pack signature blocks.
+    """
+    citations: list[Citation] = [_FICA_CLAIM_CITATION]
+    has_8316 = any(_is_8316(f) for f in item.attached_forms)
+
+    claim = f" of {_money(item.bottom_line)}" if item.bottom_line > 0 else ""
+    bottom = (
+        f"Form 843 claim{claim} — refund of Social Security/Medicare (FICA) tax withheld in error"
+        + (" (Form 8316 attached as the employer-refusal statement)." if has_8316 else ".")
+    )
+    if item.bottom_line <= 0:
+        notes.append(
+            "No claim amount in the manifest — Form 843 line 2 carries the amount to be refunded: "
+            "W-2 box 4 (Social Security) + box 6 (Medicare) from each affected W-2, less anything "
+            "the employer already repaid."
+        )
+
+    if has_8316:
+        mailing_address = _FICA_CLAIM_ADDRESS
+        notes.append(
+            "A FICA withheld-in-error claim mails to the Ogden service center — the CURRENT Pub 519 "
+            "(2025 edition), ch. 8 'Refund of Taxes Withheld in Error', prints this address "
+            "unconditionally ('Send Form 843 (with attachments) to: ... Ogden, UT 84201-0038'); "
+            "refund claims follow the current procedures regardless of the tax year claimed. The IRS "
+            "revises Pub 519 annually — re-confirm the address in the current edition's ch. 8 before "
+            "mailing (https://www.irs.gov/pub/irs-pdf/p519.pdf)."
+        )
+    else:
+        mailing_address = None
+        notes.append(
+            "Where to file Form 843 depends on the CLAIM TYPE (Form 843 instructions, 'Where To "
+            "File') — no address was resolved because this item does not carry Form 8316. For the "
+            "FICA withheld-in-error employee claim, the current Pub 519 ch. 8 says the Ogden service "
+            f"center ({_FICA_CLAIM_ADDRESS}), and an F/J/M visa holder attaches Form 8316 as the "
+            "employer-refusal statement (add '8316' to attached_forms). For any OTHER Form 843 claim "
+            "type, determine the address from the Form 843 instructions for that claim — never guess."
+        )
+
+    sign = [
+        "Print Form 843 and sign and date it in ink on PAGE 2 (the Rev. 12-2024 revision's signature "
+        "block; joint-return claims need BOTH spouses' signatures).",
+    ]
+    for attached in item.attached_forms:
+        if _is_8316(attached):
+            sign.append(
+                "Form 8316 IS signed separately even though it rides in the same envelope: sign and "
+                "date its own signature area at the bottom of page 1 in ink."
+            )
+        else:
+            sign.append(f"Form {attached} is attached to this claim — do NOT sign it separately.")
+
+    assemble = [
+        "DO NOT attach this claim to your Form 1040-NR (or any income-tax return) — it is a SEPARATE "
+        "claim, mailed in its own envelope to its own address.",
+        "Check the Form 843 reason box for 'Refund to employee of social security, Medicare, or RRTA "
+        "tax withheld in error ... employer will not adjust' (the pack line "
+        "reason.ss_medicare_rrta_in_error), type of tax 'Employment' (line 4a), the tax period on "
+        "line 1, the claimed amount (box 4 + box 6) on line 2, and explain the FICA exemption + the "
+        "computation on line 8.",
+        "Attach a copy of each Form W-2 showing the Social Security/Medicare tax withheld in error "
+        "(it proves the amounts claimed).",
+        "Attach a copy of your visa, and Form I-94 (or other documentation of your arrival/departure "
+        "dates).",
+        "F-1 or M-1 visa: attach a complete copy of Form I-20; J-1 visa: attach a copy of Form "
+        "DS-2019; on OPT (optional practical training): attach Form I-766.",
+        "Attach the employer's statement of any reimbursement paid and any credit/refund claimed or "
+        "authorized — if you cannot get that statement, Form 8316 (or your own statement explaining "
+        "why) serves in its place, saying the employer will not issue the refund.",
+        "If you were FICA-exempt for only part of the year, attach pay statements covering the "
+        "exempt period.",
+    ]
+    mail = [
+        "Use its own envelope — never in the same envelope as a tax return (and one envelope per "
+        "claim: prepare a separate Form 843 for each tax period).",
+        "Send by USPS Certified Mail with Return Receipt (PS Form 3800) and ask for a postmark — "
+        "that receipt is your proof of timely filing; the IRS won't otherwise confirm receipt.",
+    ]
+    records = [
+        "Photograph every signed page (Form 843 AND Form 8316) before mailing.",
+        "Keep copies of the whole claim package — the forms, the W-2s, and the visa/I-94/I-20 "
+        "attachments — plus the certified-mail receipt and tracking number.",
+        "Keep a copy with your RECONCILIATION.md (your audit trail) for at least 3 years.",
+    ]
+
+    deadlines: list[str] = []
+    sol = pack.deadlines.refund_statute_of_limitations if pack is not None and pack.deadlines is not None else None
+    if sol is not None:
+        citations.append(pack.deadlines.citation)
+        deadlines.append(
+            f"Refund claim statute of limitations ({sol.authority}): file the claim within the later "
+            f"of {sol.years_from_filing} years from when the related return was filed or "
+            f"{getattr(sol, 'years_from_payment', 2)} years from when the tax was paid — after that "
+            f"the refund is forfeited."
+        )
+    else:
+        notes.append(
+            f"The refund statute-of-limitations parameters for {item.tax_year} are not in the "
+            f"knowledge pack — confirm the IRC 6511 claim window on irs.gov before assuming the "
+            f"claim is still timely."
+        )
+    deadlines.append(
+        "Do NOT use Form 843 for Additional Medicare Tax withheld in error — that is recovered on "
+        "the income-tax return via Form 8959 (or an amended return), per Pub 519 ch. 8."
+    )
 
     return ReturnInstructions(
         form=item.form, jurisdiction="federal", tax_year=item.tax_year, bottom_line=bottom,
