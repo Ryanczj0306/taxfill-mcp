@@ -2241,3 +2241,145 @@ def test_state_tax_accepts_string_and_float_money():
     assert state_tax("pa", "61,000", knowledge_dir=KNOWLEDGE_DIR).tax == 1_873
     assert state_tax("pa", 61_000.00, knowledge_dir=KNOWLEDGE_DIR).tax == 1_873
     assert state_tax("PA", 61_000, knowledge_dir=KNOWLEDGE_DIR).tax == 1_873  # case-insensitive
+
+
+# ── G4 second tranche: the graduated-bracket engine (synthetic schedules) ──
+# Real-state goldens live below the synthetic block; these prove the marginal
+# math itself with a made-up two-letter state so no live data is involved.
+
+SYNTHETIC_GRADUATED_YAML = """\
+jurisdiction: states/zz
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+tax:
+  citation:
+    source: "Synthetic engine fixture (not a real state)"
+    url: https://www.irs.gov/
+  base: federal_agi
+  tax_line: "ZZ-1 Line 9 (synthetic)"
+  brackets:
+    single: &zz_single
+      - {over: 0, but_not_over: 10000, rate: 0.02}
+      - {over: 10000, but_not_over: 50000, rate: 0.04}
+      - {over: 50000, but_not_over: null, rate: 0.06}
+    married_filing_separately: *zz_single
+    head_of_household:
+      - {over: 0, but_not_over: 15000, rate: 0.02}
+      - {over: 15000, but_not_over: 75000, rate: 0.04}
+      - {over: 75000, but_not_over: null, rate: 0.06}
+    married_filing_jointly:
+      - {over: 0, but_not_over: 20000, rate: 0.02}
+      - {over: 20000, but_not_over: 100000, rate: 0.04}
+      - {over: 100000, but_not_over: null, rate: 0.06}
+  exemptions:
+    personal: {amount: 1000, note: "ZZ-1 Line 6 (synthetic)"}
+    dependent: {amount: 500, note: "ZZ-1 Line 7 (synthetic)"}
+  standard_deduction:
+    single: 4000
+    married_filing_jointly: 8000
+    married_filing_separately: 4000
+    head_of_household: 6000
+  notes:
+    - "Synthetic pack for engine tests only."
+"""
+
+SYNTHETIC_ZERO_FLOOR_YAML = """\
+jurisdiction: states/zy
+tax_year: 2023
+income_tax: true
+conforms_to_federal_treaties: true
+tax:
+  citation:
+    source: "Synthetic zero-floor fixture (Ohio/Mississippi shape)"
+    url: https://www.irs.gov/
+  base: state_taxable_income
+  tax_line: "ZY-1 Line 3 (synthetic)"
+  brackets:
+    single: &zy_all
+      - {over: 0, but_not_over: 26050, rate: 0}
+      - {over: 26050, but_not_over: null, rate: 0.0275}
+    married_filing_jointly: *zy_all
+    married_filing_separately: *zy_all
+    head_of_household: *zy_all
+"""
+
+
+@pytest.fixture()
+def synthetic_state_dir(tmp_path):
+    for code, text in (("zz", SYNTHETIC_GRADUATED_YAML), ("zy", SYNTHETIC_ZERO_FLOOR_YAML)):
+        d = tmp_path / "states" / code
+        d.mkdir(parents=True)
+        (d / "2023.yaml").write_text(text, encoding="utf-8")
+    return tmp_path
+
+
+def test_state_tax_graduated_marginal_math(synthetic_state_dir):
+    # single, 1 exemption: base_after = 60,000 - 1,000 - 4,000 std = 55,000;
+    # tax = 2% x 10,000 + 4% x 40,000 + 6% x 5,000 = 200 + 1,600 + 300 = 2,100.
+    r = state_tax("zz", 60_000, exemptions_count=1, knowledge_dir=synthetic_state_dir)
+    assert r.tax == 2_100
+    assert r.base_after_exemptions == 55_000
+    assert r.rate is None
+    assert r.rate_structure == "graduated"
+    assert r.marginal_rate == Decimal("0.06")
+    assert r.base_kind == "federal_agi"
+    # Every bracket's contribution shows in the work, plus the schedule used.
+    assert "[single schedule]" in r.work
+    assert "$200.00" in r.work and "$1,600.00" in r.work and "$300.00" in r.work
+
+
+def test_state_tax_graduated_uses_the_status_schedule(synthetic_state_dir):
+    # MFJ same inputs: base_after = 60,000 - 2,000 - 8,000 = 50,000;
+    # tax = 2% x 20,000 + 4% x 30,000 = 400 + 1,200 = 1,600 — a different schedule,
+    # not a doubling of the single result.
+    r = state_tax(
+        "zz", 60_000, exemptions_count=2, filing_status="married_filing_jointly",
+        knowledge_dir=synthetic_state_dir,
+    )
+    assert r.tax == 1_600
+    assert r.base_after_exemptions == 50_000
+    assert r.marginal_rate == Decimal("0.04")
+    # Qualifying surviving spouse resolves to the MFJ schedule (same math).
+    qss = state_tax(
+        "zz", 60_000, exemptions_count=2, filing_status="qualifying_surviving_spouse",
+        knowledge_dir=synthetic_state_dir,
+    )
+    assert qss.tax == 1_600
+    assert "married_filing_jointly" in qss.work
+
+
+def test_state_tax_graduated_rounds_half_up(synthetic_state_dir):
+    # base_after = 10,011 (no exemptions/std? single std 4,000 applies):
+    # pick base 14,011 -> base_after 10,011; tax = 200 + 4% x 11 = 200.44 -> 200;
+    # base 14,014 -> base_after 10,014; tax = 200 + 0.56 = 200.56 -> 201.
+    assert state_tax("zz", 14_011, knowledge_dir=synthetic_state_dir).tax == 200
+    assert state_tax("zz", 14_014, knowledge_dir=synthetic_state_dir).tax == 201
+
+
+def test_state_tax_graduated_zero_floor(synthetic_state_dir):
+    # Ohio/Mississippi shape: 0% to $26,050 then 2.75%.
+    # 30,000: (30,000 - 26,050) x 2.75% = 3,950 x 0.0275 = 108.625 -> 109.
+    r = state_tax("zy", 30_000, knowledge_dir=synthetic_state_dir)
+    assert r.tax == 109
+    assert r.marginal_rate == Decimal("0.0275")
+    assert r.base_kind == "state_taxable_income"
+    # Below the floor: $0 tax, marginal rate is the floor's 0%.
+    low = state_tax("zy", 20_000, knowledge_dir=synthetic_state_dir)
+    assert low.tax == 0
+    assert low.marginal_rate == Decimal("0")
+
+
+def test_state_tax_graduated_dependent_exemptions_apply(synthetic_state_dir):
+    # base_after = 30,000 - 1,000 - 2 x 500 - 4,000 = 24,000;
+    # tax = 200 + 4% x 14,000 = 200 + 560 = 760.
+    r = state_tax("zz", 30_000, exemptions_count=1, dependents_count=2, knowledge_dir=synthetic_state_dir)
+    assert r.tax == 760
+    assert r.base_after_exemptions == 24_000
+
+
+def test_state_tax_flat_result_carries_the_new_structure_fields():
+    # The flat path is unchanged math-wise but now reports structure + marginal rate.
+    r = state_tax("il", 50_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.rate_structure == "flat"
+    assert r.marginal_rate == r.rate == Decimal("0.0495")
