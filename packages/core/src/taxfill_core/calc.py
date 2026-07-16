@@ -80,6 +80,7 @@ from taxfill_core.knowledge import (
     KnowledgePack,
     MagiPhaseoutRange,
     RateBracket,
+    StateRateBracket,
     TaxTable,
     load_knowledge,
     load_state_knowledge,
@@ -3280,7 +3281,7 @@ def treaty_benefit(
 
 
 # ---------------------------------------------------------------------------
-# State flat-rate income tax (Phase G item G4 — the state tax line)
+# State income tax (Phase G item G4 — the state tax line, flat or graduated)
 # ---------------------------------------------------------------------------
 
 _STATE_TAX_BASE_LABELS = {
@@ -3296,7 +3297,35 @@ _STATE_TAX_BASE_LABELS = {
         "the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight "
         "separately-computed PA income classes, where a loss in one class never offsets another"
     ),
+    "state_taxable_income": (
+        "the state form's OWN taxable-income line, with the state's deductions/exemptions already "
+        "computed on the form (this state's deduction is income-dependent or otherwise not a fixed "
+        "amount the op could subtract)"
+    ),
 }
+
+
+def _graduated_state_tax(
+    brackets: list["StateRateBracket"], base_after: int
+) -> tuple[Decimal, Decimal, list[str]]:
+    """Marginal-bracket tax over ``base_after``: (exact total, marginal rate, per-bracket work lines)."""
+    total = Decimal(0)
+    lines: list[str] = []
+    marginal = brackets[0].rate
+    for bracket in brackets:
+        if base_after <= bracket.over:
+            break
+        upper = base_after if bracket.but_not_over is None else min(base_after, bracket.but_not_over)
+        portion = Decimal(upper) - Decimal(bracket.over)
+        marginal = bracket.rate
+        amount = portion * bracket.rate
+        total += amount
+        lines.append(
+            f"{bracket.rate} x {_money(portion)} (the {_dollars(bracket.over)}"
+            + (f"-{_dollars(bracket.but_not_over)}" if bracket.but_not_over is not None else "+")
+            + f" bracket) = {_money(amount)}"
+        )
+    return total, marginal, lines
 
 
 def _states_with_tax_block(year: int, base_dir: str | Path | None) -> list[str]:
@@ -3319,20 +3348,28 @@ def _states_with_tax_block(year: int, base_dir: str | Path | None) -> list[str]:
 
 
 class StateTaxResult(BaseModel):
-    """Result of :func:`state_tax`: the state's flat-rate tax line plus its audit trail."""
+    """Result of :func:`state_tax`: the state's tax line plus its audit trail."""
 
     model_config = ConfigDict(extra="forbid")
 
     tax: int = Field(description="Whole-dollar state income tax for the state form's tax line.")
-    rate: Decimal = Field(description="The state's flat rate as an exact decimal fraction (e.g. 0.0495).")
+    rate: Decimal | None = Field(
+        description="The state's flat rate as an exact decimal fraction (e.g. 0.0495); "
+        "None for a graduated-bracket state (see marginal_rate and the work string)."
+    )
+    rate_structure: str = Field(description="'flat' or 'graduated' — which computation the state's pack ships.")
+    marginal_rate: Decimal = Field(
+        description="The marginal rate applied to the last dollar of the base: the flat rate for a "
+        "flat state, the rate of the bracket the base lands in for a graduated state."
+    )
     base_after_exemptions: int = Field(
         description="max(0, taxable_base - applied exemptions - standard deduction), whole dollars — "
-        "the amount the rate was applied to."
+        "the amount the rate/brackets were applied to."
     )
     state: str = Field(description="Two-letter lowercase state code the pack was loaded for.")
     base_kind: str = Field(
         description="Which figure the state's form starts from: federal_agi, federal_taxable_income, "
-        "or state_gross_income."
+        "state_gross_income, or state_taxable_income."
     )
     inputs: dict[str, Any]
     work: str
@@ -3348,16 +3385,30 @@ def state_tax(
     filing_status: str = "single",
     knowledge_dir: str | Path | None = None,
 ) -> StateTaxResult:
-    """The flat-rate STATE income-tax line, from the state pack's cited ``tax`` block.
+    """The STATE income-tax line, from the state pack's cited ``tax`` block.
 
-    First tranche (Phase G item G4): the eight flat-rate 2023 states — IL, PA,
-    IN, MI, NC, CO, KY, AZ. The op computes::
+    Phase G item G4. First tranche: the eight flat-rate 2023 states — IL, PA,
+    IN, MI, NC, CO, KY, AZ. Second tranche: the graduated-bracket states,
+    whose packs ship per-filing-status marginal schedules instead of a flat
+    rate. The op computes::
 
         base_after = max(0, taxable_base
                             - personal_exemption x exemptions_count
                             - dependent_exemption x dependents_count
                             - standard_deduction[filing_status])   # where the state ships one
-        tax        = irs_round(base_after x flat_rate)
+        tax        = irs_round(base_after x flat_rate)             # flat-rate states
+        tax        = irs_round(sum of marginal-bracket amounts)    # graduated states
+
+    For a graduated state the schedule for ``filing_status`` is applied
+    bracket by bracket (qualifying surviving spouse resolves to the
+    married_filing_jointly schedule) and the work string shows every
+    bracket's contribution. Pack ``notes`` — quoted in the work — carry the
+    state's own caveats: tax-table mandates below an income threshold (the
+    filed form must use the booklet table, which can differ from bracket math
+    by a few dollars within a band), surcharges/recaptures OUTSIDE the
+    schedule (e.g. CA's 1% Mental Health Services Tax over $1M; NY's
+    worksheet recapture above $107,650 NY AGI, where plain bracket math is
+    WRONG), and local add-on taxes (e.g. MD's mandatory county rate).
 
     ``taxable_base`` is the CALLER'S job and differs per state — supply the
     state's OWN base, already adjusted for the state's additions/subtractions:
@@ -3392,6 +3443,14 @@ def state_tax(
       exemptions and no standard deduction, and a loss in one class never
       offsets another. Pass exemptions_count=0 and dependents_count=0.
 
+    For the graduated second-tranche states the equivalent base guidance
+    ships in the pack itself — each pack's ``tax_line`` and ``notes`` (quoted
+    verbatim in the work string) name the exact form line to supply, and
+    ``base_kind`` says which figure it derives from. ``state_taxable_income``
+    packs take the form's OWN taxable-income line (the state's deduction is
+    income-dependent, e.g. WI's sliding standard deduction, so the caller
+    computes it on the form).
+
     ``exemptions_count`` counts the PERSONAL exemptions (taxpayer + spouse
     boxes) for states that ship a ``personal`` amount; ``dependents_count``
     counts dependents for states that ship a ``dependent`` amount. Passing a
@@ -3417,7 +3476,7 @@ def state_tax(
         shipped = supported_hint if supported_hint is not None else _states_with_tax_block(year, knowledge_dir)
         raise ValueError(
             f"no state tax computation block for state {state!r}, tax year {year} — state_tax covers the "
-            f"flat-rate states whose packs ship a cited tax block: "
+            f"states whose packs ship a cited tax block: "
             f"{', '.join(shipped) if shipped else '(none for this year)'}. For any other state, compute "
             f"the tax line on the state's own form/tables via get_sources (state DOR .gov only) and cite "
             f"it — never invent a state rate or amount."
@@ -3476,7 +3535,23 @@ def state_tax(
     base_after_exact = base - subtracted
     clamped = base_after_exact < 0
     base_after = irs_round(max(Decimal(0), base_after_exact))
-    tax = irs_round(Decimal(base_after) * params.flat_rate)
+    if params.flat_rate is not None:
+        rate_structure = "flat"
+        marginal_rate = params.flat_rate
+        tax = irs_round(Decimal(base_after) * params.flat_rate)
+        computation_text = f"tax = {params.flat_rate} x {_dollars(base_after)} = {_dollars(tax)}"
+    else:
+        rate_structure = "graduated"
+        assert params.brackets is not None  # the schema enforces exactly-one-of
+        schedule = params.brackets[status]
+        tax_exact, marginal_rate, bracket_lines = _graduated_state_tax(schedule, base_after)
+        tax = irs_round(tax_exact)
+        alias_text = f" ({alias_note})" if alias_note else ""
+        computation_text = (
+            f"graduated tax on {_dollars(base_after)} [{status}{alias_text} schedule]: "
+            + ("; ".join(bracket_lines) if bracket_lines else "$0.00 (base does not exceed the first bracket)")
+            + f"; total {_money(tax_exact)} -> {_dollars(tax)}"
+        )
 
     unapplied = sorted(k for k in params.exemptions if k not in ("personal", "dependent"))
     unapplied_text = (
@@ -3492,16 +3567,20 @@ def state_tax(
         else " with no exemptions or standard deduction to subtract"
     )
     notes_text = (" Pack notes: " + " ".join(params.notes)) if params.notes else ""
+    structure_label = "flat rate" if rate_structure == "flat" else "graduated brackets"
+    scope_label = "flat-rate tax line" if rate_structure == "flat" else "rate-schedule tax line"
     work = (
-        f"{code.upper()} state income tax ({year}, flat rate): taxable_base {_money(base)} — which must be "
-        f"{_STATE_TAX_BASE_LABELS[params.base]} —{subtraction_text}; tax = {params.flat_rate} x "
-        f"{_dollars(base_after)} = {_dollars(tax)}. Tax line: {params.tax_line}{unapplied_text} This op "
-        f"computes the state's flat-rate tax line ONLY — county/city add-on taxes and state credits are "
-        f"NOT modeled.{notes_text}"
+        f"{code.upper()} state income tax ({year}, {structure_label}): taxable_base {_money(base)} — which must be "
+        f"{_STATE_TAX_BASE_LABELS[params.base]} —{subtraction_text}; {computation_text}. "
+        f"Tax line: {params.tax_line}{unapplied_text} This op "
+        f"computes the state's {scope_label} ONLY — county/city add-on taxes, state credits, and any "
+        f"amounts outside the rate schedule are NOT modeled.{notes_text}"
     )
     return StateTaxResult(
         tax=tax,
         rate=params.flat_rate,
+        rate_structure=rate_structure,
+        marginal_rate=marginal_rate,
         base_after_exemptions=base_after,
         state=code,
         base_kind=params.base,

@@ -1323,7 +1323,9 @@ def load_knowledge(
 # calc.state_tax must supply the taxable_base already adjusted per this kind
 # (see that op's docstring) — the base kind here just names which federal/state
 # figure the state's form starts from.
-StateFlatTaxBase = Literal["federal_agi", "federal_taxable_income", "state_gross_income"]
+StateTaxBase = Literal["federal_agi", "federal_taxable_income", "state_gross_income", "state_taxable_income"]
+# Backwards-compatible alias from the flat-only first tranche.
+StateFlatTaxBase = StateTaxBase
 
 
 class StateExemption(BaseModel):
@@ -1353,27 +1355,74 @@ class StateExemption(BaseModel):
 _STATE_EXEMPTION_KEY_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
-class StateTaxParams(BaseModel):
-    """The ``tax`` block of a state pack: FLAT-RATE income-tax computation data.
+class StateRateBracket(BaseModel):
+    """One bracket of a state's graduated rate schedule: over / but_not_over / rate.
 
-    Phase G item G4, first tranche: the eight flat-rate 2023 states (IL, PA,
-    IN, MI, NC, CO, KY, AZ). Consumed by :func:`taxfill_core.calc.state_tax`,
+    Unlike the federal :class:`RateBracket`, a ZERO rate is allowed — several
+    states print a 0% floor as the bottom row of the schedule (Ohio's
+    $0–$26,050, Mississippi's first $10,000, ...).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    over: int = Field(ge=0, description="Income must exceed this amount (0 for the bottom bracket).")
+    but_not_over: int | None = Field(
+        default=None,
+        description="Upper bound of the bracket (income == bound is still in this bracket); null for the top bracket.",
+    )
+    rate: Decimal = Field(description="Marginal rate as a decimal fraction, e.g. 0.0575; 0 for a zero-rate floor.")
+
+    _coerce_rate = field_validator("rate", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _check_bracket(self) -> "StateRateBracket":
+        if not (Decimal("0") <= self.rate < Decimal("1")):
+            raise ValueError(
+                f"state bracket rate must be a fraction in [0, 1) (e.g. 0.0575 for 5.75%), got {self.rate}"
+            )
+        if self.but_not_over is not None and self.but_not_over <= self.over:
+            raise ValueError(
+                f"bracket but_not_over ({self.but_not_over}) must be greater than over ({self.over}) — "
+                f"copy the bounds exactly from the published state rate schedule"
+            )
+        return self
+
+
+class StateTaxParams(BaseModel):
+    """The ``tax`` block of a state pack: the state's income-tax computation data.
+
+    Phase G item G4. First tranche: the eight flat-rate 2023 states (IL, PA,
+    IN, MI, NC, CO, KY, AZ) via ``flat_rate``. Second tranche: the graduated
+    states via per-filing-status ``brackets`` (exactly ONE of ``flat_rate`` /
+    ``brackets`` must be set). Consumed by :func:`taxfill_core.calc.state_tax`,
     which applies ONLY the ``personal`` / ``dependent`` exemption keys (times
     the caller's counts) and the per-status ``standard_deduction``. Every
     other exemption key (age_65, blind, ...) is verified DATA the op discloses
     but does not apply — those lines are computed on the state form itself.
     ``notes`` carries the pack's disclosures (county/city add-on taxes not
-    modeled, PA's eight-class no-deduction system, ...) and the calc op quotes
-    them in its work string.
+    modeled, tax-table mandates, surcharges/recaptures outside the schedule,
+    PA's eight-class no-deduction system, ...) and the calc op quotes them in
+    its work string.
     """
 
     model_config = ConfigDict(extra="forbid")
 
     citation: Citation
-    flat_rate: Decimal = Field(description="The flat rate as an exact decimal fraction, e.g. 0.0495.")
-    base: StateFlatTaxBase = Field(
+    flat_rate: Decimal | None = Field(
+        default=None,
+        description="The flat rate as an exact decimal fraction, e.g. 0.0495; null for graduated states.",
+    )
+    brackets: dict[FilingStatus, list[StateRateBracket]] | None = Field(
+        default=None,
+        description="Per-filing-status ordered marginal brackets, copied exactly from the published "
+        "2023 rate schedule; null for flat-rate states. Qualifying surviving spouse resolves to the "
+        "married_filing_jointly schedule in calc.",
+    )
+    base: StateTaxBase = Field(
         description="Which figure the state's form starts from: federal_agi, federal_taxable_income, "
-        "or state_gross_income (PA-style own-class income, never federal AGI)."
+        "state_gross_income (PA-style own-class income, never federal AGI), or state_taxable_income "
+        "(the form's own taxable-income line — used when the state's deductions are income-dependent "
+        "and must be computed on the form)."
     )
     tax_line: str = Field(description="The state form's tax line, quoted from the cited instructions/form.")
     exemptions: dict[str, StateExemption] = Field(
@@ -1393,11 +1442,57 @@ class StateTaxParams(BaseModel):
 
     @model_validator(mode="after")
     def _check_params(self) -> "StateTaxParams":
-        if not (Decimal("0") < self.flat_rate < Decimal("1")):
+        if (self.flat_rate is None) == (self.brackets is None):
+            raise ValueError(
+                "tax must set exactly ONE of flat_rate (flat-rate state) or brackets (graduated state) — "
+                f"got flat_rate={self.flat_rate!r}, brackets={'set' if self.brackets is not None else None!r}"
+            )
+        if self.flat_rate is not None and not (Decimal("0") < self.flat_rate < Decimal("1")):
             raise ValueError(
                 f"tax.flat_rate must be a fraction strictly between 0 and 1 (e.g. 0.0495 for 4.95%), "
                 f"got {self.flat_rate} — copy the exact decimal from the state instructions"
             )
+        if self.brackets is not None:
+            missing = [s for s in FILING_STATUSES if s not in self.brackets]
+            if missing:
+                raise ValueError(
+                    f"tax.brackets must define all four filing statuses; missing: {', '.join(missing)} — "
+                    f"copy each status's published 2023 schedule (duplicate a shared schedule per status "
+                    f"rather than omitting one)"
+                )
+            for status, brackets in self.brackets.items():
+                if not brackets:
+                    raise ValueError(f"tax.brackets['{status}'] is empty — add the published brackets")
+                if brackets[0].over != 0:
+                    raise ValueError(
+                        f"tax.brackets['{status}']: the first bracket must start at over=0, "
+                        f"got over={brackets[0].over}"
+                    )
+                if all(b.rate == 0 for b in brackets):
+                    raise ValueError(
+                        f"tax.brackets['{status}']: every rate is 0 — a no-income-tax state ships no tax "
+                        f"block at all (see knowledge/states/no_income_tax.yaml)"
+                    )
+                for i, bracket in enumerate(brackets):
+                    is_last = i == len(brackets) - 1
+                    if is_last and bracket.but_not_over is not None:
+                        raise ValueError(
+                            f"tax.brackets['{status}']: the last bracket must have but_not_over: null "
+                            f"(the published top row has no upper bound)"
+                        )
+                    if not is_last:
+                        if bracket.but_not_over is None:
+                            raise ValueError(
+                                f"tax.brackets['{status}']: bracket {i} has but_not_over: null but is not "
+                                f"the last bracket — only the top bracket is unbounded"
+                            )
+                        nxt = brackets[i + 1]
+                        if nxt.over != bracket.but_not_over:
+                            raise ValueError(
+                                f"tax.brackets['{status}']: bracket {i + 1} must start exactly where "
+                                f"bracket {i} ends (over={bracket.but_not_over}), got over={nxt.over} — "
+                                f"brackets must be contiguous with no gaps or overlaps"
+                            )
         bad_keys = [k for k in self.exemptions if not _STATE_EXEMPTION_KEY_RE.fullmatch(k)]
         if bad_keys:
             raise ValueError(
@@ -1423,8 +1518,9 @@ class StateKnowledge(BaseModel):
 
     Unlike the federal :class:`KnowledgePack`, a state pack has NO mandatory
     ``tax`` computation block: the OPTIONAL typed :class:`StateTaxParams`
-    ships only for the flat-rate states whose tax line calc.state_tax computes
-    (Phase G item G4 — IL/PA/IN/MI/NC/CO/KY/AZ for 2023); everywhere else
+    ships only for the states whose tax line calc.state_tax computes
+    (Phase G item G4 — flat-rate first tranche IL/PA/IN/MI/NC/CO/KY/AZ, then
+    the graduated-bracket second tranche); everywhere else
     scoping, rules, credits, and logistics are the pack's job. Extra cited
     blocks (residency, credits, mailing_addresses, payment, deadlines,
     filing_requirement, forms) are allowed and grow per state.

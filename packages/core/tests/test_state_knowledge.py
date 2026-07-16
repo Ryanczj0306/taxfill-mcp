@@ -229,3 +229,88 @@ def test_states_outside_the_flat_eight_ship_no_tax_block():
                 f"{code}: unexpected tax block — graduated-rate states are NOT in the G4 "
                 f"first tranche; extend calc.state_tax before shipping one"
             )
+
+
+# ── G4 second tranche: the graduated-bracket StateTaxParams schema ──
+
+_ZZ_CITE = {"source": "synthetic", "url": "https://www.irs.gov/"}
+_ZZ_SCHEDULE = [
+    {"over": 0, "but_not_over": 10_000, "rate": "0.02"},
+    {"over": 10_000, "but_not_over": None, "rate": "0.04"},
+]
+
+
+def _graduated_params(**overrides):
+    payload = {
+        "citation": _ZZ_CITE,
+        "base": "state_taxable_income",
+        "tax_line": "ZZ-1 Line 9 (synthetic)",
+        "brackets": {
+            "single": _ZZ_SCHEDULE,
+            "married_filing_jointly": _ZZ_SCHEDULE,
+            "married_filing_separately": _ZZ_SCHEDULE,
+            "head_of_household": _ZZ_SCHEDULE,
+        },
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_state_tax_params_requires_exactly_one_of_flat_or_brackets():
+    with pytest.raises(ValueError, match="exactly ONE"):
+        StateTaxParams.model_validate(_graduated_params(flat_rate="0.05"))
+    with pytest.raises(ValueError, match="exactly ONE"):
+        StateTaxParams.model_validate(_graduated_params(brackets=None))
+    # Each alone is fine.
+    assert StateTaxParams.model_validate(_graduated_params()).flat_rate is None
+    flat = StateTaxParams.model_validate(_graduated_params(brackets=None, flat_rate="0.05"))
+    assert flat.brackets is None and flat.flat_rate == Decimal("0.05")
+
+
+def test_state_tax_params_bracket_integrity():
+    # All four statuses required.
+    with pytest.raises(ValueError, match="all four filing statuses"):
+        StateTaxParams.model_validate(_graduated_params(brackets={"single": _ZZ_SCHEDULE}))
+    # Contiguity: a gap between brackets is refused.
+    gapped = [
+        {"over": 0, "but_not_over": 10_000, "rate": "0.02"},
+        {"over": 12_000, "but_not_over": None, "rate": "0.04"},
+    ]
+    with pytest.raises(ValueError, match="contiguous"):
+        StateTaxParams.model_validate(
+            _graduated_params(brackets={s: gapped for s in (
+                "single", "married_filing_jointly", "married_filing_separately", "head_of_household")})
+        )
+    # Top bracket must be unbounded; bottom must start at 0.
+    bounded_top = [{"over": 0, "but_not_over": 10_000, "rate": "0.02"}]
+    with pytest.raises(ValueError, match="but_not_over: null"):
+        StateTaxParams.model_validate(
+            _graduated_params(brackets={s: bounded_top for s in (
+                "single", "married_filing_jointly", "married_filing_separately", "head_of_household")})
+        )
+    floating = [{"over": 5_000, "but_not_over": None, "rate": "0.02"}]
+    with pytest.raises(ValueError, match="over=0"):
+        StateTaxParams.model_validate(
+            _graduated_params(brackets={s: floating for s in (
+                "single", "married_filing_jointly", "married_filing_separately", "head_of_household")})
+        )
+
+
+def test_state_tax_params_zero_rate_floor_allowed_but_not_all_zero():
+    # A 0% bottom bracket is legal (Ohio/Mississippi shape) ...
+    floor = [
+        {"over": 0, "but_not_over": 26_050, "rate": "0"},
+        {"over": 26_050, "but_not_over": None, "rate": "0.0275"},
+    ]
+    params = StateTaxParams.model_validate(
+        _graduated_params(brackets={s: floor for s in (
+            "single", "married_filing_jointly", "married_filing_separately", "head_of_household")})
+    )
+    assert params.brackets["single"][0].rate == Decimal("0")
+    # ... but an all-zero schedule is a no-income-tax state, not a tax block.
+    all_zero = [{"over": 0, "but_not_over": None, "rate": "0"}]
+    with pytest.raises(ValueError, match="no-income-tax"):
+        StateTaxParams.model_validate(
+            _graduated_params(brackets={s: all_zero for s in (
+                "single", "married_filing_jointly", "married_filing_separately", "head_of_household")})
+        )
