@@ -178,3 +178,104 @@ unverified:
 - Kansas publishes a single PO Box (PO BOX 750260, TOPEKA KS 66699-0260) for both refund and with-payment returns;
   a separate distinct ZIP/box for balance-due returns was not found, so the with-payment vs refund mailing distinction
   could not be confirmed as different addresses — confirm at the DOR if a distinct balance-due box is expected.
+tax:
+  citation:
+    source: 'Kansas DOR, 2023 Individual Income Tax booklet (ip23.pdf): 2023 Tax Computation Worksheet (p. 32, printing
+      the 3.1%/5.25%/5.7% schedule for Married Filing Joint and for Single/Head of Household/Married Filing Separate);
+      2023 Kansas Tax Table ''for taxable income to $100,000'' (pp. 25-31); K-40 Instructions — Line 4 ''Kansas Standard
+      Deduction'' chart and ''WORKSHEET - Standard Deduction for People 65 or Older and/or Blind'' (p. 6), Line 5 exemption
+      allowance ($2,250 per exemption, p. 7), Line 8 tax-table/worksheet mandate (p. 7), Filing Status QSS-to-HOH instruction
+      (p. 6); 2023 Form K-40 lines 1-12 and exemption boxes (booklet forms section, pp. 19-20)'
+    url: https://www.ksrevenue.gov/pdf/ip23.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 15000, rate: 0.031}
+    - {over: 15000, but_not_over: 30000, rate: 0.0525}
+    - {over: 30000, but_not_over: null, rate: 0.057}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 30000, rate: 0.031}
+    - {over: 30000, but_not_over: 60000, rate: 0.0525}
+    - {over: 60000, but_not_over: null, rate: 0.057}
+    married_filing_separately:
+    - {over: 0, but_not_over: 15000, rate: 0.031}
+    - {over: 15000, but_not_over: 30000, rate: 0.0525}
+    - {over: 30000, but_not_over: null, rate: 0.057}
+    head_of_household:
+    - {over: 0, but_not_over: 15000, rate: 0.031}
+    - {over: 15000, but_not_over: 30000, rate: 0.0525}
+    - {over: 30000, but_not_over: null, rate: 0.057}
+  base: federal_agi
+  tax_line: '2023 Form K-40, Line 8: "Tax (from Tax Tables or Tax Computation Worksheet)". Instructions (booklet p.
+    7): "LINE 8 (Tax): If line 7 is $100,000 or less, use the Tax Tables beginning on page 25 to find the amount of
+    your tax. If line 7 is more than $100,000, you will need to use the Tax Computation Worksheet on page 32 to compute
+    your tax." Line 7 = Line 3 (KAGI) minus Line 6 (Line 4 standard/itemized deduction + Line 5 exemption allowance);
+    "if less than zero, enter 0".'
+  exemptions:
+    personal:
+      amount: 2250
+      note: 'K-40 Line 5 (Exemption allowance): ''$2,250 x number of exemptions claimed''. The taxpayer and spouse (if
+        applicable) each count as one exemption on the K-40 front (''Enter the total exemptions for you, your spouse (if
+        applicable), and each person you claim as a dependent''). Subtracted from Kansas AGI before the rate applies (a
+        base reduction, not a credit). If the taxpayer is claimed as a dependent by another taxpayer, Line 5 is $0.'
+    dependent:
+      amount: 2250
+      note: Each person claimed as a dependent counts as one exemption in the K-40 'Total Kansas exemptions' box, at the
+        same $2,250 per exemption on Line 5 — a base reduction subtracted from Kansas AGI before the rate applies.
+  standard_deduction:
+    single: 3500
+    married_filing_jointly: 8000
+    married_filing_separately: 4000
+    head_of_household: 6000
+  notes:
+  - 'Base guidance: Supply K-40 Line 3, Kansas adjusted gross income (KAGI) = Line 1 federal AGI ("Federal adjusted
+    gross income (as reported on your federal income tax return)") plus or minus Line 2 net modifications from Schedule
+    S Part A (line A25). Most filers have no Kansas modifications, in which case Line 3 equals federal AGI. The op
+    then subtracts the shipped standard deduction (K-40 Line 4) and the $2,250-per-exemption allowance (Line 5) to
+    reach Line 7 taxable income, to which the rate schedule applies.'
+  - 'Tax-table mandate below $100,000: K-40 Line 8 REQUIRES the Tax Tables (booklet pp. 25-31) when Line 7 taxable
+    income is $100,000 or less; the Tax Computation Worksheet (p. 32) is used only above $100,000. The table uses
+    $50-wide bands, so bracket math may differ by a few dollars within a table band — the filed form must use the
+    table.'
+  - 'Zero-liability floor is a CLIFF, not a marginal zero bracket: the 2023 Kansas Tax Table prints $0 tax for taxable
+    income of $2,500 or less (Single/HOH/MFS) and $5,000 or less (Married Filing Joint), and just above the threshold
+    tax is 3.1% of the ENTIRE taxable income (table: $2,501-$2,550 -> $78; MFJ $5,001-$5,050 -> $156). The Tax Computation
+    Worksheet''s income ranges likewise begin at $2,501/$5,001. This op''s marginal bracket math cannot represent
+    the cliff: for taxable income at or below $2,500/$5,000 the true Kansas tax is $0, and this op will overstate
+    it by up to about $78 (Single/HOH/MFS) or $155 (MFJ).'
+  - 'Rounded worksheet constants (Single/HOH/MFS only): the 2023 Tax Computation Worksheet subtraction amounts $323
+    (5.25% row) and $458 (5.7% row) are the exact cumulative-bracket values $322.50 and $457.50 rounded up by $0.50,
+    so for taxable income over $100,000 the filed worksheet result can be $1 LOWER than pure marginal bracket math
+    after rounding. The MFJ constants ($645 and $915) equal the exact cumulative sums, so MFJ worksheet results match
+    marginal math exactly.'
+  - One rate schedule covers Single, Head of Household, and Married Filing Separate (the booklet prints a single combined
+    column/schedule for all three); it is duplicated per status here. Married Filing Joint has its own schedule with
+    bracket breaks at exactly twice the other statuses' ($30,000/$60,000 vs $15,000/$30,000).
+  - 'Qualifying surviving spouse maps to HEAD OF HOUSEHOLD in Kansas, not MFJ: the 2023 booklet Filing Status instruction
+    says ''If your federal filing status is Qualifying Widow(er) with Dependent Child, check the Head of Household
+    box.'' Do not use a QSS->married_filing_jointly mapping for Kansas — compute QSS filers as head_of_household (including
+    the extra HOH exemption).'
+  - 'Head of household filers are allowed ONE ADDITIONAL Kansas exemption (K-40 front: ''If filing status above is
+    Head of household, add one exemption''; instructions p. 6: ''If your filing status is Head of Household, you are
+    allowed an additional Kansas exemption''). Include it in exemptions_count or the extra $2,250 allowance will be
+    missed.'
+  - 'Disabled Veteran Personal Exemption (new for tax year 2023): an additional $2,250 exemption for an honorably
+    discharged veteran certified by the VA as receiving disability compensation at the 100% rate (permanent, service-sustained).
+    Not auto-applied — include it in exemptions_count only if qualified.'
+  - 'If the taxpayer is claimed as a dependent by another taxpayer, the K-40 exemption allowance is $0 (instructions:
+    enter ''0'' in the Total Kansas exemptions box and on Line 5) — pass exemptions_count = 0.'
+  - 'Standard deduction for people 65 or older and/or blind is NOT modeled: the booklet worksheet replaces the base
+    amounts with $4,350/$5,200 (Single, 1/2 boxes), $8,700/$9,400/$10,100/$10,800 (MFJ, 1-4 boxes), $4,700/$5,400/$6,100/$6,800
+    (MFS, 1-4 boxes), $6,850/$7,700 (HOH, 1/2 boxes) — i.e., +$850 per checked box for Single/HOH and +$700 per box
+    for MFJ/MFS. Compute K-40 Line 4 from that worksheet in those cases.'
+  - Kansas itemized deductions (Kansas Schedule A, K-40 Line 4) may be claimed instead of the standard deduction even
+    if the federal return did not itemize — itemizers are not modeled; MFS spouses must both itemize if one does.
+  - 'CREDITS are not modeled by this op (they subtract from tax, not from income): the Food Sales Tax Credit is $125
+    per qualified exemption on K-40 Line 18 (nonrefundable, federal AGI $30,615 or less) — it is a CREDIT, not an
+    income exemption; the Kansas EITC is 17% of the federal EITC (Lines 17/23); credit for child and dependent care
+    expenses is 25% of the federal credit (Line 14); credit for taxes paid to other states (Line 13).'
+  - 'Kansas tax on lump sum distributions is not modeled: residents add 13% of the federal Form 4972 tax on K-40 Line
+    11; Line 12 total income tax = Line 8 + Line 11.'
+  - 'Nonresidents and part-year residents are not modeled: they compute the full-year tax on Line 8, then multiply
+    by the Schedule S line B23 nonresident allocation percentage (K-40 Lines 9-10) to get nonresident tax.'
+  - 'No mid-year 2023 rate change: the 3.1%/5.25%/5.7% schedule in the final 2023 booklet is the one the 2023 filing
+    season used.'

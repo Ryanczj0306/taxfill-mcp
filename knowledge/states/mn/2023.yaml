@@ -186,3 +186,97 @@ unverified:
 - Online portal exact product name (referred to as the department's 'online services'/'e-Services' and 'Make a Payment
   under Individuals') — URL https://www.revenue.state.mn.us/make-payment confirmed; specific e-Services payment
   URL not separately captured.
+tax:
+  citation:
+    source: 2023 Minnesota Individual Income Tax Forms and Instructions (Form M1), Minnesota Department of Revenue —
+      Tax Rate Schedules, p.32 (Single / Married filing jointly or qualifying widow(er) / Married filing separately
+      / Head of household); 2023 Tax Tables pp.25-31 with mandate 'If line 9 of Form M1 is less than $90,000, you must
+      use the tax table'; Standard Deduction Table for Line 4, p.13; Worksheets A & B for Line 4 - Standard Deduction
+      Limitation, p.14; Worksheet for Line 5 - Dependent Exemptions ($4,800), p.14; Line 10 - Tax From Table, p.16;
+      2023 Form M1 lines 1-10
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 30070, rate: 0.0535}
+    - {over: 30070, but_not_over: 98760, rate: 0.068}
+    - {over: 98760, but_not_over: 183340, rate: 0.0785}
+    - {over: 183340, but_not_over: null, rate: 0.0985}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 43950, rate: 0.0535}
+    - {over: 43950, but_not_over: 174610, rate: 0.068}
+    - {over: 174610, but_not_over: 304970, rate: 0.0785}
+    - {over: 304970, but_not_over: null, rate: 0.0985}
+    married_filing_separately:
+    - {over: 0, but_not_over: 21975, rate: 0.0535}
+    - {over: 21975, but_not_over: 87305, rate: 0.068}
+    - {over: 87305, but_not_over: 152485, rate: 0.0785}
+    - {over: 152485, but_not_over: null, rate: 0.0985}
+    head_of_household:
+    - {over: 0, but_not_over: 37010, rate: 0.0535}
+    - {over: 37010, but_not_over: 148730, rate: 0.068}
+    - {over: 148730, but_not_over: 243720, rate: 0.0785}
+    - {over: 243720, but_not_over: null, rate: 0.0985}
+  base: federal_agi
+  tax_line: 'Form M1 line 10: "Tax from the table or schedules in the Form M1 instructions". Instructions, Line 10
+    — Tax From Table: "Using the amount on line 9, find the tax amount in the column under your filing status." Tax
+    Rate Schedules, p.32: "You must use these schedules if line 9 of Form M1 is $90,000 or more... If line 9 of Form
+    M1 is less than $90,000, you must use the tax table on pages 25 through 31."'
+  exemptions:
+    dependent:
+      amount: 4800
+      note: 'M1 line 5 dependent exemption, a BASE reduction: Worksheet for Line 5 - Dependent Exemptions, step 2 ''Enter
+        $4,800'', multiplied by the number of dependents claimed on Schedule M1DQC. Phases out at high AGI (see notes;
+        phase-out not modeled). Minnesota has NO taxpayer/spouse personal exemption — line 5 is dependents only.'
+  standard_deduction:
+    single: 13825
+    married_filing_jointly: 27650
+    married_filing_separately: 13825
+    head_of_household: 20800
+  notes:
+  - 'Base guidance: Supply Form M1 line 1 = federal adjusted gross income (federal Form 1040/1040-SR line 11), adjusted
+    for Minnesota items if any apply: ADD M1 line 2 additions (Schedule M1M line 10 and Schedule M1MB line 9) and
+    SUBTRACT M1 line 6 (state income tax refund from federal Schedule 1 line 1) and M1 line 7 subtractions (Schedule
+    M1M line 35 and Schedule M1MB line 21). The op then subtracts the shipped per-status standard deduction (M1 line
+    4) and $4,800 per dependent (M1 line 5) to reach M1 line 9, Minnesota taxable income, to which the rate schedule
+    applies. Pass exemptions_count = 0 (Minnesota has no taxpayer/spouse personal exemption) and dependents_count
+    = number of dependents claimed on Schedule M1DQC.'
+  - 'TAX TABLE MANDATE below $90,000: ''If line 9 of Form M1 is less than $90,000, you must use the tax table on pages
+    25 through 31'' (2023 M1 instructions, p.32); the rate schedules are only for line 9 of $90,000 or more. The table
+    is built on $100-band midpoints, so bracket math may differ by a few dollars within table bands — the filed form
+    must use the table. (Spot-checked: table rows $89,900-$90,000 and $34,400-$34,500 match midpoint bracket math
+    for all statuses.)'
+  - 'Qualifying Surviving Spouse: the p.32 rate-schedule column is titled ''Married filing jointly or qualifying widow(er)''
+    — QSS uses the MFJ schedule exactly as mapped here, and the QSS standard deduction ($27,650 with 0 age/blind boxes)
+    equals MFJ.'
+  - 'Minnesota has NO personal exemption for the taxpayer or spouse: Form M1 line 5 is for DEPENDENTS only ($4,800
+    per dependent from Schedule M1DQC). Callers must pass exemptions_count = 0 and put dependents in dependents_count.'
+  - 'Dependent-exemption phase-out NOT modeled (Worksheet for Line 5, p.14): the $4,800-per-dependent total is reduced
+    by 2% for each $2,500 ($1,250 MFS) that M1 line 1 AGI exceeds $220,650 Single / $275,800 Head of Household / $330,950
+    MFJ-or-Surviving-Spouse / $165,475 MFS, and is $0 once the excess is more than $122,500 ($61,250 MFS).'
+  - 'Standard-deduction limitation NOT modeled (Worksheets A & B for Line 4, p.14): if M1 line 1 AGI exceeds $220,650
+    ($110,325 MFS), the deduction is reduced by the LESSER of 80% of the deduction or [3% of the excess over $220,650/$110,325
+    (capped: enter $84,320, or $42,160 MFS, if AGI exceeds $304,970/$152,485) + 10% of the excess over $304,970 ($152,485
+    MFS)]; if AGI exceeds $1,000,000, the deduction is 20% of the table amount (Worksheet B).'
+  - 'Additional standard deduction for age 65+/blind NOT modeled (Standard Deduction Table for Line 4, p.13): +$1,850
+    per checked box for Single and Head of Household (up to 2 boxes); +$1,450 per checked box for Married Filing Jointly
+    (up to 4), Married Filing Separately (up to 4), and Qualified Surviving Spouse (up to 2). Enter it on the form''s
+    line 4.'
+  - 'Standard-deduction gates NOT modeled: Married Filing Separately gets NO standard deduction if the spouse claims
+    itemized deductions (''Not allowed'' row, p.13); nonresident aliens may claim it only if allowed by a U.S. income
+    tax treaty; a filer claimable as another''s dependent uses the Worksheet for Line 4 - Dependent Standard Deduction
+    (greater of $1,200 or earned income + $350, capped at $13,825, plus age/blind additions) — itemizers use Schedule
+    M1SA instead.'
+  - 'Printed rate-schedule constants check: every ''$X +'' constant equals the exact cumulative sum of the prior brackets
+    rounded to the cent (divergence at most $0.005), EXCEPT the Head of Household top-bracket constant, printed $17,033.72
+    vs $17,033.71 exact cumulative (+$0.01, from chaining the rounded $9,577.00 constant). Maximum divergence from
+    pure marginal math: $0.01.'
+  - 'NOT modeled — amounts added after line 10: Minnesota Alternative Minimum Tax (Schedule M1MT, M1 line 11; can
+    apply even without federal AMT) and M1 line 14 other taxes (Schedule M1HOME first-time-homebuyer recapture, Schedule
+    M1529 education-savings-account recapture, Schedule M1LS tax on lump-sum distributions).'
+  - 'Part-year residents and nonresidents: tax is prorated by the Minnesota-source percentage on Schedule M1NR (M1
+    lines 13/13a/13b) — NOT modeled; this pack computes full-year-resident tax.'
+  - M1 line 9 (Minnesota taxable income) = line 3 (federal AGI + line 2 additions) - line 4 (standard/itemized deduction)
+    - line 5 (dependent exemptions) - line 6 (taxable state income tax refund) - line 7 (M1M/M1MB subtractions). If
+    additions, subtractions, or a taxable state refund apply, adjust the supplied taxable_base per base_guidance.
+  - 'Rounding: the M1 instructions say ''Round dollar amounts to the nearest whole dollar'' (p.11 Reminders); the
+    engine''s round-half-up to whole dollars matches.'

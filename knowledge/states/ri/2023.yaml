@@ -179,3 +179,101 @@ unverified:
   rather than from an explicit RI statement that treaty-exempt income is excluded. RI has no Schedule-CA-style treaty
   add-back, so treaty-exempt income flows through federal AGI untaxed; if a specific treaty article is at issue,
   confirm at the DOR.
+tax:
+  citation:
+    source: '2023 RHODE ISLAND TAX RATE SCHEDULE AND WORKSHEETS (RI Division of Taxation) — ''2023 Tax Rate Schedule
+      - FOR ALL FILING STATUS TYPES'' (over $0 but not over $73,450: 3.75%; over $73,450 but not over $166,950: pay
+      $2,754.38 + 4.75% of the amount over $73,450; over $166,950: pay $7,195.63 + 5.99% of the amount over $166,950),
+      STANDARD DEDUCTION WORKSHEET chart (Single $10,000; Married filing jointly $20,050; Qualifying widow(er) $20,050;
+      Married filing separately $10,025; Head of household $15,050; $233,750 phaseout threshold), and EXEMPTION WORKSHEET
+      (''Multiply $4,700 by the total number of exemptions''; $233,750 phaseout threshold). Corroborated by: 2023 Instructions
+      for Filing RI-1040, p. I-4 (Line 4 deduction list, Line 6 exemption amount $4,700) and p. I-11 (RHODE ISLAND TAX
+      COMPUTATION WORKSHEET: 3.75% / subtract $0.00, 4.75% / subtract $734.50, 5.99% / subtract $2,804.68) at https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf;
+      2023 Rhode Island Tax Table pp. T-1 and T-2 (tax-table mandate under $100,000) at https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%20RI%20Tax%20Tables_Complete.pdf;
+      2023 Form RI-1040 page 1 (Lines 1-8) at https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023_1040WE_w.pdf'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%20Tax%20Rate%20and%20Worksheets.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 73450, rate: 0.0375}
+    - {over: 73450, but_not_over: 166950, rate: 0.0475}
+    - {over: 166950, but_not_over: null, rate: 0.0599}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 73450, rate: 0.0375}
+    - {over: 73450, but_not_over: 166950, rate: 0.0475}
+    - {over: 166950, but_not_over: null, rate: 0.0599}
+    married_filing_separately:
+    - {over: 0, but_not_over: 73450, rate: 0.0375}
+    - {over: 73450, but_not_over: 166950, rate: 0.0475}
+    - {over: 166950, but_not_over: null, rate: 0.0599}
+    head_of_household:
+    - {over: 0, but_not_over: 73450, rate: 0.0375}
+    - {over: 73450, but_not_over: 166950, rate: 0.0475}
+    - {over: 166950, but_not_over: null, rate: 0.0599}
+  base: federal_agi
+  tax_line: 'RI-1040, Line 8: "RI income tax from Rhode Island Tax Table or Tax Computation Worksheet" (Line 7 "RI
+    TAXABLE INCOME. Subtract line 6 from line 5. If zero or less, enter 0"; Line 5 = Line 3 modified federal AGI minus
+    Line 4 RI standard deduction; Line 6 = number of exemptions x $4,700)'
+  exemptions:
+    personal:
+      amount: 4700
+      note: 'RI-1040 Line 6: ''Enter # of exemptions from RI Sch E, line 5 in box, multiply by $4,700''. RI Schedule E
+        counts yourself plus spouse (lines 1a/1b checkboxes) plus dependents in ONE total; every exemption is worth the
+        same $4,700 base reduction subtracted from income before the rate applies. Zero if someone else can claim you
+        as a dependent (''NOTE: If someone else can claim you on their return, your exemption amount is zero.''). Phases
+        out when Line 3 modified federal AGI exceeds $233,750 (see notes).'
+    dependent:
+      amount: 4700
+      note: Dependents are counted in the same RI Schedule E, line 5 total at the same $4,700 per exemption (there is
+        no separate dependent rate). Shipping personal and dependent at $4,700 each reproduces RI-1040 Line 6 = $4,700
+        x (taxpayer/spouse count + dependents count). Subject to the same $233,750 modified-federal-AGI phaseout.
+  standard_deduction:
+    single: 10000
+    married_filing_jointly: 20050
+    married_filing_separately: 10025
+    head_of_household: 15050
+  notes:
+  - 'Base guidance: Supply 2023 Form RI-1040, Line 3 ''Modified Federal AGI'' (Line 1 federal AGI from Federal Form
+    1040 or 1040-SR, line 11, combined with Line 2 net modifications from RI Schedule M; the instructions say to enter
+    0 on Line 2 if you have no modifications, in which case Line 3 equals federal AGI). Do NOT subtract anything yourself:
+    the op subtracts the shipped RI standard deduction (Line 4) and the shipped $4,700-per-person exemptions (Line
+    6) to reach RI TAXABLE INCOME (Line 7), then applies the rate schedule.'
+  - 'Adjudication note (two-pass): base is federal_agi — RI-1040 starts from federal AGI (line 1) and taxable_base
+    is Line 3 modified federal AGI (federal AGI +/- RI Schedule M modifications); the op subtracts the standard deduction
+    and $4,700-per-exemption Line 6 amount.'
+  - 'Single rate schedule for every filing status: the 2023 Rhode Island Tax Rate Schedule is captioned ''FOR ALL
+    FILING STATUS TYPES'' — the same three brackets (3.75% to $73,450; 4.75% to $166,950; 5.99% above) apply to Single,
+    MFJ, MFS, HoH, and Qualifying widow(er); the schedule is duplicated per status here. Qualifying widow(er)/surviving
+    spouse maps to married_filing_jointly: the RI standard deduction chart lists Qualifying widow(er) at the same
+    $20,050 as MFJ, so the mapping is exact.'
+  - 'Tax-table mandate below $100,000: the 2023 RI Tax Table header states ''Use if your Rhode Island taxable income
+    is less than $100,000. If your taxable income is $100,000 or more, use the Tax Rate Schedules located on page
+    T-1.'' The table uses $50 bands computed at the band midpoint (e.g. taxable income $25,300-$25,350 yields tax
+    $950 = $25,325 x 3.75% rounded), so bracket math may differ by a few dollars within table bands; the filed form
+    must use the table below $100,000.'
+  - 'Standard-deduction and exemption PHASEOUT is NOT modeled: if RI-1040 Line 3 (modified federal AGI) exceeds $233,750,
+    BOTH the standard deduction and the $4,700 exemptions phase down in 20-percentage-point steps (factors 0.8000/0.6000/0.4000/0.2000)
+    per $6,700 increment of the excess (rounded up to a whole increment), and both are $0 once the excess is more
+    than $26,800 (i.e. Line 3 above $260,550). This op ships the full amounts — taxpayers with Line 3 over $233,750
+    must use the Standard Deduction Worksheet and Exemption Worksheet from the 2023 RI Tax Rate Schedule and Worksheets
+    page instead.'
+  - Rhode Island does not allow the use of federal itemized deductions (2023 RI-1040 instructions, Line 4) — every
+    filer takes the RI standard deduction shipped here; there is no itemized alternative to model.
+  - If someone else can claim you as a dependent on their return, your RI exemption amount is zero (2023 RI-1040 instructions,
+    Line 6 NOTE) — not modeled; such filers should be computed with zero exemptions.
+  - taxable_base must be RI-1040 Line 3 (Modified Federal AGI = federal AGI plus/minus net RI Schedule M modifications).
+    Schedule M modifications (e.g. out-of-state municipal bond interest add-back, US-government-interest subtraction,
+    taxable-Social-Security and pension/annuity modifications, military service pension modification) are NOT computed
+    by this op; with no modifications Line 3 equals federal AGI (Federal Form 1040/1040-SR, line 11).
+  - 'Printed-constant rounding in the rate schedule: the ''Pay'' constants are rounded to the cent and each diverges
+    from the exact cumulative bracket sum by +$0.005 — printed $2,754.38 vs exact $2,754.375 (3.75% x $73,450), and
+    printed $7,195.63 vs exact $7,195.625. The instructions'' RI Tax Computation Worksheet (p. I-11) subtraction amounts
+    ($0.00 / $734.50 / $2,804.68) reproduce the exact marginal math to the tenth of a cent; this pack''s brackets
+    use the exact marginal math.'
+  - Rhode Island's personal and dependent exemptions ARE base reductions (subtracted from income on Line 6 before
+    the rate applies), so they are shipped as exemptions. By contrast, RI's credits — the 15% RI earned income credit
+    (Line 14d), 25% of the federal child and dependent care credit (RI Schedule I, carried to Line 9a), credit for
+    taxes paid to other states (Line 9b), the RI-1040H property-tax relief circuit breaker (Line 14c) — are subtracted
+    from TAX, not income, and are NOT applied by this op.
+  - 'No mid-year 2023 rate change: the 3.75%/4.75%/5.99% structure and the $73,450/$166,950 breakpoints are the final
+    inflation-adjusted figures from the December 2023 rate schedule the 2023 filing season used (''WHAT''S NEW FOR
+    TAX YEAR 2023'' lists only inflationary adjustments to the brackets, deduction, exemption, and phaseout amounts).'

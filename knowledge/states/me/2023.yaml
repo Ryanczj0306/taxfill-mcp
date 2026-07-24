@@ -181,3 +181,108 @@ unverified:
   here — confirm exact thresholds in the residency_guidance_2023.pdf / Rule 806.
 - Resident minimum-filing dollar thresholds are stated as a formula (standard deduction + personal exemption) rather
   than a fixed dollar chart; specific 2023 dollar amounts were not extracted from a .gov chart in this pass.
+tax:
+  citation:
+    source: '2023 MAINE Individual Income Tax Booklet — Form 1040ME General Instructions (23_1040me_book_gen_instr.pdf):
+      "2023 TAX RATE SCHEDULES" (p. 12, three schedules: #1 Single/MFS, #2 Head of Household, #3 Married/Surviving Spouses
+      Filing Jointly); Line 13 Personal exemptions chart (p. 3); Line 17 Deduction instruction + Worksheet for Standard/Itemized
+      Deductions (p. 4); Line 18 Exemption instruction ($4,700) + Worksheet for Phaseout of Personal Exemption Deduction
+      Amount (p. 4); "2023 Tax Year Quick Facts" standard-deduction base amounts (p. 10); 2023 MAINE INCOME TAX TABLE
+      (pp. 11-12). Cross-confirmed by the standalone MRS document "State of Maine - Individual Income Tax, 2023 Rates"
+      (Sept 15, 2022) and by the 2023 tax tables file (rate schedules on its last page).'
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_book_gen_instr.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 24500, rate: 0.058}
+    - {over: 24500, but_not_over: 58050, rate: 0.0675}
+    - {over: 58050, but_not_over: null, rate: 0.0715}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 49050, rate: 0.058}
+    - {over: 49050, but_not_over: 116100, rate: 0.0675}
+    - {over: 116100, but_not_over: null, rate: 0.0715}
+    married_filing_separately:
+    - {over: 0, but_not_over: 24500, rate: 0.058}
+    - {over: 24500, but_not_over: 58050, rate: 0.0675}
+    - {over: 58050, but_not_over: null, rate: 0.0715}
+    head_of_household:
+    - {over: 0, but_not_over: 36750, rate: 0.058}
+    - {over: 36750, but_not_over: 87100, rate: 0.0675}
+    - {over: 87100, but_not_over: null, rate: 0.0715}
+  base: federal_agi
+  tax_line: '2023 Form 1040ME, line 20: "INCOME TAX. (Find the tax for the amount on line 19 in the tax table in this
+    booklet or compute your tax using the tax table or tax rate schedules available at www.maine.gov/revenue/tax-return-forms.)"
+    — where line 19 is "TAXABLE INCOME. (Line 16 minus lines 17 and 18.)"'
+  exemptions:
+    personal:
+      amount: 4700
+      note: 'Maine personal exemption DEDUCTION, Form 1040ME line 18: ''Multiply the amount shown on line 13 by $4,700''
+        — subtracted from Maine AGI before the rate applies. Line 13 count: 1 if single, head of household, married filing
+        separately, or qualifying surviving spouse; 2 if married filing jointly; MFS enters 2 only if the taxpayer would
+        claim a federal personal exemption for the spouse but for the federal suspension; enter 0 if you may be claimed
+        as a dependent on another person''s return (MFJ: 0 if both spouses may be claimed, 1 if only one). Phases out
+        when line 16 Maine AGI exceeds $305,150 single / $335,650 HoH / $366,100 MFJ-QSS / $183,050 MFS (fully gone over
+        the next $125,000; $62,500 MFS) — phaseout NOT modeled by this op.'
+  standard_deduction:
+    single: 13850
+    married_filing_jointly: 27700
+    married_filing_separately: 13850
+    head_of_household: 20800
+  notes:
+  - 'Base guidance: Supply Form 1040ME, line 16 (Maine adjusted gross income) = line 14 federal adjusted gross income
+    (federal Form 1040 line 11 / 1040-SR line 11) + line 15a income addition modifications (Maine Schedule 1A) - line
+    15b income subtraction modifications (Maine Schedule 1S). The op then subtracts the shipped per-status standard
+    deduction (Form 1040ME line 17) and $4,700 x exemptions_count (line 18) to reproduce line 19 TAXABLE INCOME, and
+    applies the 2023 rate schedules to produce line 20. Do NOT pre-subtract the deduction or exemption from the figure
+    you supply. If you itemize (Schedule 2) or your line 16 exceeds a phaseout threshold (deduction: $91,500 single/MFS,
+    $137,300 HoH, $183,050 MFJ/QSS; exemption: $305,150 single, $335,650 HoH, $366,100 MFJ/QSS, $183,050 MFS), compute
+    lines 17-18 on the form''s worksheets instead — the op does not model those adjustments.'
+  - 'Adjudication note (two-pass): base is federal_agi — 2023 Form 1040ME line 14 is federal adjusted gross income
+    and line 16 Maine AGI = federal AGI +/- Schedule 1A/1S modifications; supply line 16 (the op subtracts the $4,700-per-exemption
+    line 18 deduction and the federal-amount standard deduction). Dependent counts are zero by design: Maine dependents
+    get the $300 Dependent Exemption Tax Credit, not an income exemption.'
+  - 'Rate schedule sharing: 2023 Tax Rate Schedule #1 is titled ''For Single Individuals and Married Persons Filing
+    Separate Returns'' — one schedule covers BOTH single and MFS, so the identical brackets are duplicated per status
+    (MFS is NOT half of MFJ in Maine; it equals single).'
+  - 'Qualifying surviving spouse maps to married_filing_jointly: Tax Rate Schedule #3 is titled ''For Married Individuals
+    and Surviving Spouses Filing Joint Returns'', and the booklet tax table''s MFJ column is footnoted ''*This column
+    must also be used by a surviving spouse with dependent child.'' QSS also uses the $27,700 standard deduction and
+    the MFJ phaseout thresholds.'
+  - 'Printed ''$X plus Y% of excess over $Z'' constants are rounded to whole dollars and do not exactly equal the
+    cumulative marginal sums: Single/MFS top-bracket constant $3,686 vs exact $3,685.625 (+$0.375); HoH constants
+    $2,132 vs exact $2,131.50 (+$0.50) and $5,531 vs exact $5,530.125 (+$0.875); MFJ constants $2,845 vs exact $2,844.90
+    (+$0.10) and $7,371 vs exact $7,370.775 (+$0.225). Pure marginal bracket math (what this op does) can therefore
+    differ from the printed-constant method by up to about $1 in the middle and top brackets.'
+  - 'Tax table: the booklet prints a 2023 MAINE INCOME TAX TABLE for line 19 taxable income under $100,000 in $100
+    bands; Form 1040ME line 20 authorizes computing tax with EITHER ''the tax table or tax rate schedules'', so bracket
+    math is a permitted method, but within a $100 band the table (built on band midpoints) may differ from exact bracket
+    math by a few dollars. At $100,000 and over the table itself directs the printed amount ''plus 7.15% of excess
+    over 100,000'' (Single/MFS and HoH columns) or the rate schedule (MFJ column).'
+  - 'Standard/itemized deduction PHASEOUT is NOT modeled: if Form 1040ME line 16 (Maine AGI) is more than $91,500
+    (single or MFS), $137,300 (HoH), or $183,050 (MFJ/QSS), the Worksheet for Standard/Itemized Deductions reduces
+    the line 17 deduction proportionally, reaching $0 once line 16 exceeds the threshold by $75,000 (single/MFS),
+    $112,500 (HoH), or $150,000 (MFJ/QSS) — i.e. fully phased out at $166,500 / $249,800 / $333,050. Above the threshold,
+    compute line 17 on the worksheet, not with the shipped standard deduction.'
+  - 'Personal exemption PHASEOUT is NOT modeled: if line 16 exceeds $305,150 (single), $335,650 (HoH), $366,100 (MFJ/QSS),
+    or $183,050 (MFS), the Worksheet for Phaseout of Personal Exemption Deduction Amount reduces the line 18 exemption
+    proportionally over the next $125,000 ($62,500 MFS).'
+  - 'DEPENDENTS GET A CREDIT, NOT AN EXEMPTION: Maine has no per-dependent income exemption. The Dependent Exemption
+    Tax Credit is $300 per qualifying child/dependent (Form 1040ME, Schedule A, line 8; nonrefundable for 2023), reduced
+    by $7.50 for every $1,000 of Maine AGI over $200,000 ($400,000 MFJ). It is subtracted from TAX, not from income,
+    and this op does not model it — dependents_count does not change the base.'
+  - 'Maine''s standard deduction ''is equal to the federal standard deduction amount'' (federal Form 1040 line 12);
+    the shipped figures are the 2023 BASE amounts. Additional amounts for age 65+ or blindness are NOT shipped because
+    they vary by marital status: $1,500 per occurrence if married (filing jointly or separately) or a qualified surviving
+    spouse (MFS may count spouse occurrences only if an exemption is claimable for the spouse); $1,850 per occurrence
+    if unmarried (single or HoH). Enter them via the federal standard deduction on the form.'
+  - 'Itemizers are not modeled: taxpayers who itemized federally complete Form 1040ME Schedule 2 (Maine itemized deductions,
+    limited to $33,200 except medical expenses) and use the larger of that or the standard deduction on line 17 —
+    except nonresident aliens MUST use itemized deductions.'
+  - Part-year residents, nonresidents, and safe-harbor residents compute line 20 tax on full Maine taxable income,
+    then subtract the nonresident credit on line 21 (Schedule NR or NRH) — not modeled by this op.
+  - Tax credit recapture (Form 1040ME line 20a) is added after line 20 and is not modeled.
+  - 'No mid-year 2023 rate change: rates 5.8% / 6.75% / 7.15% with bracket dollar amounts inflation-adjusted under
+    36 M.R.S. § 5403 (published by MRS Sept 15, 2022; 36 M.R.S. § 5111 sub-§§ 1-F, 2-F, 3-F).'
+  - 'Cross-source confirmation: the standalone MRS document ''State of Maine - Individual Income Tax, 2023 Rates''
+    prints identical rate schedules, the $4,700 personal exemption, and the standard deduction amounts (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2023.pdf);
+    the 2023 tax table file prints the same rate schedules on its final page (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_tax_tables.pdf);
+    the line 19/20 wording is from the 2023 Form 1040ME (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040_ME_dwnld_ff.pdf).'

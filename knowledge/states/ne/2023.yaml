@@ -164,3 +164,96 @@ unverified:
 - Whether PO Box 98934 ('returns not requesting a refund') is the literal address Nebraska intends for paper returns
   mailed WITH a check (Nebraska frames the split as refund vs. no-refund rather than refund vs. with-payment); confirm
   at the DOR before relying on it for a with-payment paper return.
+tax:
+  citation:
+    source: '2023 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2023), single page — all four filing-status
+      rate tables ("This calculation represents Nebraska income tax before any credits are applied. Enter on line 15,
+      Form 1040N."). Standard deduction and line instructions: 2023 Nebraska Individual Income Tax Booklet, Form 1040N
+      (8-307-2023) — Line 6 "Nebraska Standard Deduction Chart" (p.9), Line 15 Nebraska Income Tax and Line 18 personal
+      exemption credit (p.10), 2023 Nebraska Tax Table header and over-$71,560 worksheet (pp.38-41), at https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf'
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/Tax_Calculation_Schedule_2023_Final.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 3700, rate: 0.0246}
+    - {over: 3700, but_not_over: 22170, rate: 0.0351}
+    - {over: 22170, but_not_over: 35730, rate: 0.0501}
+    - {over: 35730, but_not_over: null, rate: 0.0664}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 7390, rate: 0.0246}
+    - {over: 7390, but_not_over: 44350, rate: 0.0351}
+    - {over: 44350, but_not_over: 71460, rate: 0.0501}
+    - {over: 71460, but_not_over: null, rate: 0.0664}
+    married_filing_separately:
+    - {over: 0, but_not_over: 3700, rate: 0.0246}
+    - {over: 3700, but_not_over: 22170, rate: 0.0351}
+    - {over: 22170, but_not_over: 35730, rate: 0.0501}
+    - {over: 35730, but_not_over: null, rate: 0.0664}
+    head_of_household:
+    - {over: 0, but_not_over: 6900, rate: 0.0246}
+    - {over: 6900, but_not_over: 35480, rate: 0.0351}
+    - {over: 35480, but_not_over: 52980, rate: 0.0501}
+    - {over: 52980, but_not_over: null, rate: 0.0664}
+  base: federal_agi
+  tax_line: 'Form 1040N, line 15 "Nebraska income tax" — the 2023 Tax Calculation Schedule states: "This calculation
+    represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N." Form 1040N line
+    15 text: "Nebraska income tax (Partial-year residents and nonresidents enter the result from line 9, Nebraska
+    Schedule III. Paper filers may use the Nebraska Tax Table. All others must use Tax Calculation Schedule.)"'
+  exemptions: {}
+  standard_deduction:
+    single: 7900
+    married_filing_jointly: 15800
+    married_filing_separately: 7900
+    head_of_household: 11600
+  notes:
+  - 'Base guidance: Supply Form 1040N line 5 — federal adjusted gross income, i.e. Federal Form 1040 or 1040-SR, line
+    11. The pack ships Nebraska''s standard deduction for the op to subtract, which reproduces line 14 (Nebraska Taxable
+    Income = line 5 minus line 10 deduction, plus line 12 minus line 13 Schedule I adjustments) whenever there are
+    no Nebraska Schedule I adjustments and the standard deduction is used. If Nebraska Schedule I adjustments apply,
+    supply line 5 plus line 12 minus line 13 instead, so that subtracting the shipped standard deduction still reproduces
+    line 14.'
+  - 'Adjudication note (two-pass): vector counts are zero by design — Nebraska personal exemptions are a $157-per-person
+    nonrefundable CREDIT on Form 1040N line 18, never an income exemption, so the pack ships no personal/dependent
+    keys and the engine refuses nonzero counts.'
+  - 'Nebraska personal exemptions are a TAX CREDIT, not an income exemption: Form 1040N line 18 gives RESIDENTS a
+    nonrefundable credit of $157 times the number of Nebraska personal exemptions on line 4 (yourself, spouse, and
+    dependents). It is subtracted from tax, not from income, so no personal/dependent amounts are shipped in exemptions
+    and calc.state_tax does not apply it — claim it on line 18 of the form (nonresidents and partial-year residents
+    claim it prorated on Nebraska Schedule III, line 7).'
+  - 'The shipped standard deduction is the 2023 chart amount with ZERO boxes checked on Form 1040N line 2a (under
+    65, not blind) for a filer who cannot be claimed as a dependent. Nebraska Standard Deduction Chart (booklet p.9)
+    with line-2a boxes checked: Single $9,750 (1 box) / $11,600 (2); Married Filing Jointly $17,300 / $18,800 / $20,300
+    / $21,800 (1-4 boxes); Qualifying surviving spouse $17,300 / $18,800 (1-2); Married Filing Separately $9,400 /
+    $10,900 / $12,400 / $13,900 (1-4; the spouse''s 65-and-over and blind boxes count only if the primary taxpayer
+    can claim a personal exemption for the spouse); Head of Household $13,450 / $15,300 (1-2). These are NOT applied
+    by calc.state_tax — use the chart amount on line 6.'
+  - If you or your spouse CAN be claimed as a dependent by another taxpayer (Form 1040N line 2b), your standard deduction
+    is the SMALLER of the federal standard deduction allowed on line 12 of Federal Form 1040/1040-SR or the Nebraska
+    chart amount — not modeled; compute on the form.
+  - 'Itemizers are not modeled: taxpayers who itemized on the federal return take the LARGER of the Nebraska standard
+    deduction or Nebraska itemized deductions (line 9 = federal Schedule A line 17 total minus line 5a state and local
+    income taxes); if you used the federal standard deduction you MUST use the Nebraska standard deduction (booklet
+    p.9, Line 6).'
+  - Nebraska Schedule I adjustments (Form 1040N line 12 adjustments increasing federal AGI, line 13 adjustments decreasing
+    federal AGI) are not modeled — if they apply, fold them into the supplied base per base_guidance or compute line
+    14 on the form.
+  - 'Tax table option (paper filers only): "Only taxpayers filing paper returns may use the Nebraska Tax Table" (booklet
+    p.38); electronic filers must use the Tax Calculation Schedule (booklet p.10, Line 15), which is the exact bracket
+    math this op implements. The table "calculates tax to the midpoint of the bracket" ($100-wide bands were observed)
+    and covers Nebraska taxable income up to $71,560, so a paper filer''s table amount may differ by a few dollars
+    from this op''s result within a band; above $71,560 the booklet worksheet is (taxable income - $71,560) x .0664
+    plus $3,798 Single/MFS, $2,844 MFJ/QSS, or $3,283 HoH.'
+  - 'Qualifying surviving spouse: the schedule''s second table is titled "Married Taxpayers, Filing Jointly and Qualifying
+    Surviving Spouses" — the engine''s QSS-to-MFJ mapping is exact for the brackets, and the QSS standard deduction
+    with zero boxes is the same $15,800.'
+  - Married filing separately is printed with the SAME schedule as Single on the 2023 Tax Calculation Schedule (identical
+    breakpoints $3,700/$22,170/$35,730 and constants) — copied from the MFS table, not derived.
+  - The schedule's printed '$X + Y% of excess over $Z' constants are the exact cumulative bracket sums rounded to
+    the nearest cent; maximum divergence from the exact sum is $0.007 (Single/MFS top constant $1,418.68 vs exact
+    $1,418.673; also $739.32 vs $739.317; MFJ $181.79 vs $181.794 and $2,837.30 vs $2,837.301; HoH $1,172.90 vs $1,172.898
+    and $2,049.65 vs $2,049.648) — after rounding to whole dollars the results agree.
+  - 'Nebraska other tax is NOT modeled: Form 1040N line 16 adds 29.6% (x .296) of federal tax on lump-sum distributions
+    of qualified retirement plans (Federal Form 4972) and federal tax on early distributions (lesser of Federal Form
+    5329 or Schedule 2 line 8); line 17 total tax = line 15 + line 16.'
+  - 'Nonresidents and partial-year residents are NOT modeled: they compute line 15 via Nebraska Schedule III (line
+    9), which apportions the tax by the Nebraska-income ratio.'
+  - 'Standard deduction chart source: 2023 Nebraska Individual Income Tax Booklet (8-307-2023), Line 6, p.9 — https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf'

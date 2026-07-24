@@ -173,3 +173,91 @@ unverified:
 - 'The with-payment check mailing address differs by filing method: paper Form 1 with payment goes to PO Box 268
   Madison WI 53790-0001 (per Form 1 instructions), while an e-filed return paid by check + Form PV goes to PO Box
   3028 Milwaukee WI 53201-3028 (per WI DOR payment FAQ). Confirm the correct box for the taxpayer''s filing method.'
+tax:
+  citation:
+    source: '2023 Wisconsin Form 1 Instructions (I-111), Wisconsin Department of Revenue — p.44 ''2023 Tax Computation
+      Worksheet – Line 12'' (Section A Single or Head of household: at least $100,000 but less than $304,170 x 5.3%
+      (.053) minus $372.96, $304,170 or over x 7.65% (.0765) minus $7,520.96; Section B Married filing jointly: less
+      than $405,550 x 5.3% minus $497.34, $405,550 or over x 7.65% minus $10,027.77; Section C Married filing separately:
+      less than $202,780 x 5.3% minus $248.67, $202,780 or over x 7.65% minus $5,014.00); p.1 ''New for 2023 — Tax Rates
+      Reduced'' ("The new tax rates for those brackets are 3.5% and 4.4% respectively"); p.16 Line 12 Tax (Tax Table
+      pp.38-43); p.35 2023 Standard Deduction Table; p.15 Line 10 Exemptions ($700 / $250). First- and second-bracket
+      dollar boundaries: Wisconsin Tax Bulletin 222 (July 2023), Item 6 ''Individual Income Tax Rate Decrease'' (2023
+      Wis. Act 19, amend sec. 71.06, Wis. Stats.), https://www.revenue.wi.gov/WisconsinTaxBulletin/222-07-23-WTB.pdf'
+    url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 13810, rate: 0.035}
+    - {over: 13810, but_not_over: 27630, rate: 0.044}
+    - {over: 27630, but_not_over: 304170, rate: 0.053}
+    - {over: 304170, but_not_over: null, rate: 0.0765}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 18420, rate: 0.035}
+    - {over: 18420, but_not_over: 36840, rate: 0.044}
+    - {over: 36840, but_not_over: 405550, rate: 0.053}
+    - {over: 405550, but_not_over: null, rate: 0.0765}
+    married_filing_separately:
+    - {over: 0, but_not_over: 9210, rate: 0.035}
+    - {over: 9210, but_not_over: 18420, rate: 0.044}
+    - {over: 18420, but_not_over: 202780, rate: 0.053}
+    - {over: 202780, but_not_over: null, rate: 0.0765}
+    head_of_household:
+    - {over: 0, but_not_over: 13810, rate: 0.035}
+    - {over: 13810, but_not_over: 27630, rate: 0.044}
+    - {over: 27630, but_not_over: 304170, rate: 0.053}
+    - {over: 304170, but_not_over: null, rate: 0.0765}
+  base: state_taxable_income
+  tax_line: 'Form 1, Line 12 "Tax (see table on page 38)". Instructions p.16: "Use the amount on line 11 to find your
+    tax in the Tax Table on pages 38-43... EXCEPTION If line 11 is $100,000 or more, use the Tax Computation Worksheet
+    on page 44 to compute your tax."'
+  exemptions: {}
+  notes:
+  - 'Base guidance: Supply 2023 Wisconsin Form 1, Line 11 ("Subtract line 10c from line 9. If line 10c is larger than
+    line 9, fill in 0. This is taxable income"). Line 11 = Wisconsin income (Line 7) minus the sliding-scale standard
+    deduction (Line 8, from the 2023 Standard Deduction Table, p.35) minus Line 10c exemptions ($700 x exemptions
+    on Line 10a + $250 x age-65 checkboxes on Line 10b). Those deductions/exemptions must be computed on the form
+    BEFORE supplying the base — this pack ships no standard deduction and no exemptions, so nothing is re-subtracted
+    here.'
+  - 'MID-YEAR RETROACTIVE RATE CUT: 2023 Wisconsin Act 19 (enacted July 2023, effective for taxable years beginning
+    after December 31, 2022) reduced the first-bracket rate from 3.54% to 3.50% and the second-bracket rate from 4.65%
+    to 4.40% (Wisconsin Tax Bulletin 222, July 2023, Item 6). Official 2023 documents printed BEFORE the act — notably
+    the 2023 Form 1-ES instructions (D-101A, rev. 1-23) rate schedules — still show 3.54%/4.65% and are superseded;
+    the filing-season 2023 Form 1 instructions (''New for 2023 — Tax Rates Reduced'', Tax Table, and Tax Computation
+    Worksheet) reflect the final rates shipped here.'
+  - 'SOURCE ASSEMBLY: the 2023 Form 1 booklet prints no single four-bracket rate schedule. Brackets 1-2 (rates and
+    dollar boundaries $13,810/$27,630 single-HOH, $18,420/$36,840 MFJ, $9,210/$18,420 MFS) are from Wisconsin Tax
+    Bulletin 222 Item 6 (2023 amounts, sec. 71.06 as amended by Act 19); brackets 3-4 (5.3% up to $304,170/$405,550/$202,780,
+    then 7.65%) are from the p.44 Tax Computation Worksheet. Cross-check: every worksheet subtraction constant equals
+    the cumulative sum of the prior brackets at the final rates — Single/HOH $372.96 exact and $7,520.96 vs exact
+    $7,520.955; MFJ $497.34 exact and $10,027.77 vs exact $10,027.765; MFS $248.67 and $5,014.00 exact — max divergence
+    $0.005 (cent rounding), immaterial.'
+  - TABLE MANDATE below $100,000 — Form 1 Line 12 requires the Tax Table (instructions pp.38-43) when Line 11 is under
+    $100,000; the table computes tax at the midpoint of each $50/$100 income band, so bracket math may differ by a
+    few dollars within table bands; the filed form must use the table. At $100,000 or more the mandated Tax Computation
+    Worksheet IS exact bracket math (identical to this pack).
+  - 'STANDARD DEDUCTION NOT SHIPPED (income-dependent): Wisconsin''s standard deduction is a sliding amount from the
+    2023 Standard Deduction Table (p.35) based on Line 7 income — maximums $12,760 single / $23,620 married filing
+    jointly / $11,220 married filing separately / $16,480 head of household, phasing to $0 as income rises (e.g.,
+    $0 for single at $124,733+). Filers claimable as a dependent use the Standard Deduction Worksheet for Dependents
+    (greater of $1,250 or earned income + $400, capped at the table amount); short-period filers and federal Form
+    4563 filers get $0. Compute it on Form 1 Line 8 — the supplied Line 11 base is already net of it.'
+  - 'EXEMPTIONS NOT SHIPPED (already inside the Line 11 base): Wisconsin''s exemptions ARE base reductions — $700
+    per exemption on Line 10a (taxpayer, spouse, and each dependent listed on federal Form 1040; $0 for a filer claimable
+    as a dependent on another return) plus $250 on Line 10b for taxpayer and/or spouse 65 or older on December 31,
+    2023 (only if allowed the $700 on Line 10a) — but they are subtracted on the form in arriving at Line 11, so this
+    pack ships none; do NOT re-subtract them from the supplied base.'
+  - Head of household uses the SAME rate schedule as single (Tax Table column 'Single or Head of a household'; Tax
+    Computation Worksheet Section A 'Single or Head of household'). Estates and trusts (fiduciaries) also use this
+    schedule.
+  - 'QUALIFYING SURVIVING SPOUSE — engine mapping is WRONG for Wisconsin: Wisconsin has no QSS status; per the Form
+    1 instructions (p.13), ''If you file your federal return as a qualifying surviving spouse, you may file your Wisconsin
+    return as head of household.'' A federal QSS (spouse died 2021 or 2022) must therefore use the head_of_household
+    brackets here, NOT married_filing_jointly. (A taxpayer whose spouse died during 2023 may still file 2023 as married
+    filing jointly.)'
+  - 'FULL-YEAR RESIDENT Form 1 ONLY: nonresidents and part-year residents file Form 1NPR and must PRORATE the tax
+    brackets by the ratio of Wisconsin income to federal adjusted gross income — applying these brackets unprorated
+    to a 1NPR filer is wrong.'
+  - 'Credits taken after Line 12 are NOT modeled (they are subtracted from tax, not from income): itemized deduction
+    credit (Line 13, Schedule 1 — claimed when certain federal itemized deductions exceed the Wisconsin standard deduction),
+    renter''s/homeowner''s school property tax credit (Line 15), married couple credit (Line 17, Schedule 2), and
+    other Form 1 credits.'

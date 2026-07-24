@@ -2217,12 +2217,12 @@ def test_state_tax_unknown_state_lists_the_supported_ones():
 
 
 def test_state_tax_state_without_block_is_refused_prescriptively():
-    # CA ships a pack (graduated rates) but no flat-rate tax block — same error shape.
+    # UT ships a pack (C3, not yet adopted) but no tax block — same error shape.
     with pytest.raises(ValueError) as exc:
-        state_tax("ca", 50_000, knowledge_dir=KNOWLEDGE_DIR)
+        state_tax("ut", 50_000, knowledge_dir=KNOWLEDGE_DIR)
     msg = str(exc.value)
-    assert "'ca'" in msg
-    assert "il" in msg and "pa" in msg  # lists the supported states
+    assert "'ut'" in msg
+    assert "il" in msg and "pa" in msg and "ca" in msg  # lists the supported states
     assert "never invent" in msg
 
 
@@ -2383,3 +2383,200 @@ def test_state_tax_flat_result_carries_the_new_structure_fields():
     r = state_tax("il", 50_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
     assert r.rate_structure == "flat"
     assert r.marginal_rate == r.rate == Decimal("0.0495")
+
+
+# ── G4 second tranche: real-state graduated goldens (two-pass verified data) ──
+# One row per shipped test vector from the verified 2023 packs (verification
+# pass 2026-07-24: every figure checked against the official state 2023
+# instructions; every vector recomputed by hand AND through the engine by
+# scripts/assemble_state_tax_blocks.py before the yaml was written). Rows tied
+# to printed booklet tax-table rows / worked examples are noted in the packs.
+GRADUATED_GOLDENS = [
+    # (state, taxable_base, filing_status, exemptions_count, dependents_count,
+    #  expected base_after_exemptions, expected tax)
+    ('al', 2_000, 'single', 0, 0, 2_000, 70),
+    ('al', 3_050, 'single', 0, 0, 3_050, 113),
+    ('al', 23_350, 'married_filing_jointly', 0, 0, 23_350, 1_088),
+    ('al', 50_000, 'head_of_household', 0, 0, 50_000, 2_460),
+    ('al', 150_000, 'married_filing_separately', 0, 0, 150_000, 7_460),
+    ('ar', 30_000, 'single', 0, 0, 27_660, 703),
+    ('ar', 60_000, 'married_filing_jointly', 0, 0, 55_320, 2_003),
+    ('ar', 12_000, 'single', 0, 0, 9_660, 87),
+    ('ar', 20_000, 'head_of_household', 0, 0, 17_660, 328),
+    ('ar', 91_940, 'married_filing_separately', 0, 0, 89_600, 3_614),
+    ('ca', 150_000, 'single', 0, 0, 144_637, 10_104),
+    ('ca', 800_000, 'married_filing_jointly', 0, 0, 789_274, 67_618),
+    ('ca', 60_000, 'head_of_household', 0, 0, 49_274, 777),
+    ('ca', 1_000_000, 'married_filing_separately', 0, 0, 994_637, 104_330),
+    ('dc', 85_000, 'single', 0, 0, 71_150, 4_448),
+    ('dc', 500_000, 'married_filing_jointly', 0, 0, 472_300, 40_213),
+    ('dc', 60_000, 'married_filing_separately', 0, 0, 46_150, 2_600),
+    ('dc', 45_000, 'head_of_household', 0, 0, 24_200, 1_252),
+    ('dc', 1_200_000, 'single', 0, 0, 1_186_150, 111_536),
+    ('de', 75_000, 'single', 0, 0, 71_750, 3_719),
+    ('de', 130_000, 'married_filing_jointly', 0, 0, 123_500, 7_135),
+    ('de', 30_000, 'married_filing_separately', 0, 0, 26_750, 1_098),
+    ('de', 18_000, 'head_of_household', 0, 0, 14_750, 489),
+    ('de', 4_000, 'single', 0, 0, 750, 0),
+    ('ga', 13_225, 'single', 0, 0, 5_125, 138),
+    ('ga', 92_378, 'married_filing_jointly', 0, 0, 77_878, 4_243),
+    ('ga', 60_000, 'single', 0, 0, 51_900, 2_812),
+    ('ga', 30_000, 'married_filing_separately', 0, 1, 19_750, 1_018),
+    ('ga', 16_600, 'head_of_household', 0, 1, 5_500, 130),
+    ('id', 60_000, 'single', 0, 0, 46_150, 2_416),
+    ('id', 100_000, 'married_filing_jointly', 0, 0, 72_300, 3_673),
+    ('id', 25_000, 'head_of_household', 0, 0, 4_200, 0),
+    ('id', 18_589, 'single', 0, 0, 4_739, 15),
+    ('id', 40_000, 'married_filing_separately', 0, 0, 26_150, 1_256),
+    ('ks', 50_750, 'single', 1, 0, 45_000, 2_108),
+    ('ks', 130_000, 'married_filing_jointly', 2, 2, 113_000, 5_526),
+    ('ks', 40_000, 'head_of_household', 2, 1, 27_250, 1_108),
+    ('ks', 20_000, 'married_filing_separately', 1, 0, 13_750, 426),
+    ('ks', 10_000, 'married_filing_jointly', 2, 0, 0, 0),
+    ('la', 16_125, 'single', 0, 0, 16_125, 275),
+    ('la', 32_125, 'married_filing_jointly', 0, 0, 32_125, 545),
+    ('la', 50_875, 'head_of_household', 0, 0, 50_875, 1_414),
+    ('la', 11_125, 'single', 0, 2, 9_125, 86),
+    ('la', 150_000, 'married_filing_jointly', 0, 2, 148_000, 4_961),
+    ('md', 50_000, 'single', 0, 0, 50_000, 2_323),
+    ('md', 140_000, 'single', 0, 0, 140_000, 6_735),
+    ('md', 300_000, 'married_filing_separately', 0, 0, 300_000, 15_635),
+    ('md', 200_000, 'married_filing_jointly', 0, 0, 200_000, 9_635),
+    ('md', 350_000, 'head_of_household', 0, 0, 350_000, 17_948),
+    ('me', 50_000, 'single', 1, 0, 31_450, 1_890),
+    ('me', 160_000, 'married_filing_jointly', 2, 0, 122_900, 7_857),
+    ('me', 30_000, 'head_of_household', 1, 0, 4_500, 261),
+    ('me', 60_000, 'married_filing_separately', 1, 0, 41_450, 2_565),
+    ('me', 30_800, 'single', 1, 0, 12_250, 711),
+    ('mn', 150_000, 'single', 0, 0, 136_175, 9_217),
+    ('mn', 130_000, 'married_filing_jointly', 0, 2, 92_750, 5_670),
+    ('mn', 200_000, 'married_filing_separately', 0, 0, 186_175, 14_053),
+    ('mn', 130_000, 'head_of_household', 0, 1, 104_400, 6_563),
+    ('mo', 3_090, 'single', 0, 0, 3_090, 41),
+    ('mo', 12_000, 'head_of_household', 0, 0, 12_000, 411),
+    ('mo', 60_000, 'married_filing_jointly', 0, 0, 60_000, 2_787),
+    ('mo', 1_000, 'married_filing_separately', 0, 0, 1_000, 0),
+    ('ms', 50_000, 'single', 0, 0, 41_700, 1_585),
+    ('ms', 100_000, 'married_filing_jointly', 0, 2, 80_400, 3_520),
+    ('ms', 15_000, 'head_of_household', 0, 1, 2_100, 0),
+    ('ms', 19_310, 'single', 0, 0, 11_010, 51),
+    ('ms', 40_000, 'married_filing_separately', 0, 0, 31_700, 1_085),
+    ('mt', 25_000, 'single', 0, 0, 25_000, 1_032),
+    ('mt', 60_000, 'married_filing_jointly', 0, 0, 60_000, 3_394),
+    ('mt', 12_000, 'head_of_household', 0, 0, 12_000, 284),
+    ('mt', 15_500, 'married_filing_separately', 0, 0, 15_500, 449),
+    ('mt', 3_000, 'single', 0, 0, 3_000, 30),
+    ('nd', 30_000, 'single', 0, 0, 30_000, 0),
+    ('nd', 90_375, 'married_filing_jointly', 0, 0, 90_375, 305),
+    ('nd', 150_000, 'single', 0, 0, 150_000, 2_053),
+    ('nd', 300_000, 'single', 0, 0, 300_000, 5_385),
+    ('nd', 400_000, 'married_filing_jointly', 0, 0, 400_000, 7_029),
+    ('nd', 275_000, 'head_of_household', 0, 0, 275_000, 4_328),
+    ('nd', 200_000, 'married_filing_separately', 0, 0, 200_000, 3_515),
+    ('ne', 60_000, 'single', 0, 0, 52_100, 2_506),
+    ('ne', 120_000, 'married_filing_jointly', 0, 0, 104_200, 5_011),
+    ('ne', 50_000, 'head_of_household', 0, 0, 38_400, 1_319),
+    ('ne', 30_000, 'married_filing_separately', 0, 0, 22_100, 737),
+    ('ne', 10_000, 'single', 0, 0, 2_100, 52),
+    ('nj', 60_000, 'single', 1, 0, 59_000, 1_767),
+    ('nj', 155_000, 'married_filing_jointly', 2, 2, 150_000, 5_513),
+    ('nj', 77_500, 'head_of_household', 1, 1, 75_000, 1_470),
+    ('nj', 40_000, 'married_filing_separately', 1, 0, 39_000, 683),
+    ('nj', 1_200_000, 'single', 1, 0, 1_199_000, 95_966),
+    ('ny', 50_000, 'single', 0, 0, 42_000, 2_145),
+    ('ny', 100_000, 'married_filing_jointly', 0, 2, 81_950, 4_175),
+    ('ny', 300_000, 'head_of_household', 0, 1, 287_800, 16_638),
+    ('ny', 1_500_000, 'married_filing_separately', 0, 0, 1_492_000, 111_407),
+    ('oh', 20_000, 'single', 0, 0, 20_000, 0),
+    ('oh', 60_000, 'married_filing_jointly', 0, 0, 60_000, 934),
+    ('oh', 110_000, 'single', 0, 0, 110_000, 2_402),
+    ('oh', 200_000, 'head_of_household', 0, 0, 200_000, 5_774),
+    ('ok', 50_000, 'single', 1, 0, 42_650, 1_837),
+    ('ok', 10_000, 'married_filing_separately', 1, 0, 2_650, 16),
+    ('ok', 20_000, 'head_of_household', 1, 1, 8_650, 103),
+    ('ok', 130_000, 'married_filing_jointly', 2, 2, 113_300, 5_027),
+    ('or', 80_710, 'married_filing_jointly', 0, 0, 75_500, 6_036),
+    ('or', 152_605, 'single', 0, 0, 150_000, 13_128),
+    ('or', 304_195, 'head_of_household', 0, 0, 300_000, 26_255),
+    ('or', 10_605, 'married_filing_separately', 0, 0, 8_000, 459),
+    ('ri', 60_000, 'single', 1, 0, 45_300, 1_699),
+    ('ri', 95_000, 'married_filing_separately', 1, 0, 80_275, 3_079),
+    ('ri', 150_000, 'married_filing_jointly', 2, 2, 111_150, 4_545),
+    ('ri', 220_000, 'head_of_household', 1, 2, 190_850, 8_627),
+    ('va', 60_000, 'single', 1, 0, 51_070, 2_679),
+    ('va', 120_000, 'married_filing_jointly', 2, 2, 100_280, 5_509),
+    ('va', 13_000, 'married_filing_separately', 1, 0, 4_070, 92),
+    ('va', 40_000, 'head_of_household', 1, 1, 30_140, 1_476),
+    ('va', 25_000, 'single', 1, 0, 16_070, 674),
+    ('vt', 105_750, 'married_filing_jointly', 2, 0, 82_000, 2_947),
+    ('vt', 261_850, 'single', 1, 0, 250_000, 16_659),
+    ('vt', 125_100, 'head_of_household', 1, 2, 100_000, 4_622),
+    ('vt', 131_850, 'married_filing_separately', 1, 0, 120_000, 6_970),
+    ('vt', 41_850, 'single', 1, 0, 30_000, 1_005),
+    ('wi', 150_000, 'single', 0, 0, 150_000, 7_577),
+    ('wi', 500_000, 'married_filing_jointly', 0, 0, 500_000, 28_222),
+    ('wi', 250_000, 'married_filing_separately', 0, 0, 250_000, 14_111),
+    ('wi', 20_050, 'head_of_household', 0, 0, 20_050, 758),
+    ('wv', 52_000, 'single', 1, 0, 50_000, 1_712),
+    ('wv', 90_000, 'married_filing_jointly', 2, 2, 82_000, 3_310),
+    ('wv', 35_000, 'married_filing_separately', 1, 1, 31_000, 1_143),
+    ('wv', 20_000, 'head_of_household', 1, 1, 16_000, 425),
+    ('wv', 11_000, 'single', 1, 0, 9_000, 212),]
+
+
+@pytest.mark.parametrize(
+    "code,base,status,n_ex,n_dep,expected_base_after,expected_tax",
+    GRADUATED_GOLDENS,
+    ids=[f"{r[0]}-{r[1]}-{r[2]}" for r in GRADUATED_GOLDENS],
+)
+def test_state_tax_graduated_golden(code, base, status, n_ex, n_dep, expected_base_after, expected_tax):
+    r = state_tax(
+        code, base, exemptions_count=n_ex, dependents_count=n_dep,
+        filing_status=status, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.base_after_exemptions == expected_base_after
+    assert r.tax == expected_tax
+    assert r.rate_structure == "graduated"
+    assert r.rate is None
+
+
+def test_state_tax_credit_exemption_states_refuse_counts():
+    # OR/NE/CA-style states give per-person CREDITS, not income exemptions —
+    # the packs ship no 'personal' key and the engine refuses nonzero counts
+    # (never a silent $0). ME ships 'personal' but its dependents get a CREDIT.
+    with pytest.raises(ValueError, match="no 'personal' exemption"):
+        state_tax("or", 50_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="no 'personal' exemption"):
+        state_tax("ne", 50_000, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="no 'dependent' exemption"):
+        state_tax("me", 50_000, exemptions_count=1, dependents_count=1, knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_state_tax_oh_discloses_the_360_69_schedule_jump():
+    # Ohio's published 2023 schedule is discontinuous ($360.69 at $26,050) —
+    # marginal math can't reproduce it, so the pack's CRITICAL note (quoted in
+    # the work) tells the caller exactly how the filed form differs.
+    r = state_tax("oh", 60_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.tax == 934  # engine marginal math
+    assert "360.69" in r.work and "BELOW the form's printed schedule" in r.work
+
+
+def test_state_tax_ny_discloses_the_recapture_worksheet_mandate():
+    # Above $107,650 NYAGI the filed form must use the benefit-recapture
+    # worksheets — plain bracket math is WRONG there, and the work says so.
+    r = state_tax("ny", 300_000, filing_status="head_of_household", dependents_count=1, knowledge_dir=KNOWLEDGE_DIR)
+    assert "107,650" in r.work
+    assert r.tax == 16_638
+
+
+def test_state_tax_la_exemption_is_inside_the_zero_floor():
+    # Louisiana's $4,500/$9,000 combined personal exemption-standard deduction
+    # is BUILT INTO the zero-rate floor of the printed tables — exemptions_count
+    # must be 0, and the head-of-household floor is the $9,000 one.
+    r = state_tax("la", 16_125, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.base_after_exemptions == 16_125  # nothing subtracted off the top
+    assert r.tax == 275
+    hoh = state_tax("la", 50_875, filing_status="head_of_household", knowledge_dir=KNOWLEDGE_DIR)
+    assert hoh.tax == 1_414
+    with pytest.raises(ValueError, match="no 'personal' exemption"):
+        state_tax("la", 16_125, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)

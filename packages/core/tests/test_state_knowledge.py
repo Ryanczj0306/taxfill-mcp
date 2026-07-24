@@ -218,17 +218,85 @@ def test_il_omits_the_unverified_dependent_amount():
     assert any("Schedule IL-E/EIC" in n and "NOT shipped" in n for n in tax.notes)
 
 
-def test_states_outside_the_flat_eight_ship_no_tax_block():
+# G4 second tranche (two-pass verified 2026-07-24): the 27 graduated-bracket
+# 2023 packs. Together with the flat eight, every adopted state ships a block.
+GRADUATED_TAX_STATES = sorted([
+    "al", "ar", "ca", "dc", "de", "ga", "id", "ks", "la", "md", "me", "mn", "mo",
+    "ms", "mt", "nd", "ne", "nj", "ny", "oh", "ok", "or", "ri", "va", "vt", "wi", "wv",
+])
+
+# The C3 hard states — no fillable/adopted pack yet, hence no tax block either.
+NO_TAX_BLOCK_YET = {"ct", "hi", "ia", "ma", "nm", "sc", "ut"}
+
+
+def test_tax_block_shipping_matches_the_g4_rollout():
+    # Flat eight + graduated 27 = every adopted state ships a cited tax block;
+    # ONLY the C3 not-yet-adopted states ship none.
     kb = REPO_ROOT / "knowledge"
     for code in STATE_CODES:
         pack = load_state_knowledge(code, 2023, base_dir=kb)
-        if code in FLAT_TAX_RATES:
-            assert pack.tax is not None, f"{code}: flat state must ship the tax block"
-        else:
+        if code in NO_TAX_BLOCK_YET:
             assert pack.tax is None, (
-                f"{code}: unexpected tax block — graduated-rate states are NOT in the G4 "
-                f"first tranche; extend calc.state_tax before shipping one"
+                f"{code}: unexpected tax block — C3 states ship one only after their "
+                f"pack is adopted and the data passes two-pass verification"
             )
+        else:
+            assert pack.tax is not None, f"{code}: adopted state must ship the tax block"
+    assert set(FLAT_TAX_RATES) | set(GRADUATED_TAX_STATES) == set(STATE_CODES) - NO_TAX_BLOCK_YET
+
+
+@pytest.mark.parametrize("code", GRADUATED_TAX_STATES, ids=lambda c: c)
+def test_graduated_state_tax_block_loads_typed_and_gov_cited(code: str):
+    # Every graduated block loads through the TYPED model: gov-cited, bracket
+    # schedules for all four statuses (contiguity/zero-floor rules are enforced
+    # by the schema itself), and disclosure notes present.
+    from urllib.parse import urlparse
+
+    from taxfill_core.knowledge import is_official_gov_host
+
+    pack = load_state_knowledge(code, 2023, base_dir=REPO_ROOT / "knowledge")
+    tax = pack.tax
+    assert isinstance(tax, StateTaxParams), f"{code}: tax block missing or untyped"
+    assert tax.flat_rate is None and tax.brackets is not None, f"{code}: expected a graduated block"
+    for status in ("single", "married_filing_jointly", "married_filing_separately", "head_of_household"):
+        assert tax.brackets[status], f"{code}: missing {status} schedule"
+    assert is_official_gov_host((urlparse(tax.citation.url).hostname or "").lower())
+    assert tax.tax_line.strip()
+    assert tax.notes, f"{code}: a graduated pack must carry its disclosure notes"
+    for key, ex in tax.exemptions.items():
+        assert ex.amount >= 0 and ex.note.strip(), f"{code}: exemption {key} incomplete"
+
+
+def test_graduated_state_verified_spot_data():
+    # A handful of two-pass-verified anchor figures, one per modeling pattern.
+    kb = REPO_ROOT / "knowledge"
+    ca = load_state_knowledge("ca", 2023, base_dir=kb).tax
+    # CA: exemptions are CREDITS ($144/$446) — never shipped as base reductions;
+    # the MFS schedule is the single schedule; the top marginal rate is 12.3%.
+    assert ca.exemptions == {}
+    assert ca.brackets["married_filing_separately"] == ca.brackets["single"]
+    assert ca.brackets["single"][-1].rate == Decimal("0.123")
+    oh = load_state_knowledge("oh", 2023, base_dir=kb).tax
+    # OH: zero-rate floor to $26,050 and the CRITICAL $360.69 schedule-jump note.
+    assert oh.brackets["single"][0].rate == 0 and oh.brackets["single"][0].but_not_over == 26_050
+    assert any("360.69" in n for n in oh.notes)
+    ms = load_state_knowledge("ms", 2023, base_dir=kb).tax
+    # MS: zero floor to $10,000; the per-status personal exemption is FOLDED
+    # into the shipped standard_deduction ($2,300 + $6,000 single).
+    assert ms.brackets["single"][0].but_not_over == 10_000
+    assert ms.standard_deduction["single"] == 8_300
+    wi = load_state_knowledge("wi", 2023, base_dir=kb).tax
+    # WI: sliding standard deduction -> the caller supplies the form's own
+    # taxable-income line and no standard_deduction ships.
+    assert wi.base == "state_taxable_income" and wi.standard_deduction is None
+    wv = load_state_knowledge("wv", 2023, base_dir=kb).tax
+    # WV: NO standard deduction (null, never zeros); $2,000 per exemption.
+    assert wv.standard_deduction is None
+    assert wv.exemptions["personal"].amount == 2_000 and wv.exemptions["dependent"].amount == 2_000
+    ks = load_state_knowledge("ks", 2023, base_dir=kb).tax
+    # KS: qualifying surviving spouse maps to HEAD OF HOUSEHOLD in Kansas —
+    # the pack warns against the engine's QSS->MFJ default.
+    assert any("HEAD OF HOUSEHOLD" in n for n in ks.notes)
 
 
 # ── G4 second tranche: the graduated-bracket StateTaxParams schema ──

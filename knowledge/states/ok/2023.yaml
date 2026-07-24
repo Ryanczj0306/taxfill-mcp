@@ -160,3 +160,126 @@ unverified:
 - 'Exact OkTAP payment portal URL: the 2023 packets and 511-V instruct taxpayers to visit ''tax.ok.gov'' and click
   the OkTAP / ''Make a Payment'' link rather than printing a literal payment URL. The OkTAP login domain is https://oktap.tax.ok.gov
   but the precise current payment landing URL should be confirmed at the DOR (tax.ok.gov).'
+tax:
+  citation:
+    source: '2023 Form 511 — Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission):
+      Form 511 page 2, lines 9-14a (line 10 prints the standard deduction amounts ''Single or Married Filing Separate:
+      $6,350 • Married Filing Joint or Qualifying Widow(er): $12,700 • Head of Household: $9,350''; line 11 prints ''Exemptions
+      ... X $1,000''); Select Line Instructions p.9 (lines 10-11) and Top of Form Instructions pp.8-9 (F Exemptions,
+      incl. Special 65+ AGI limits and Legally Blind); 2023 Oklahoma Income Tax Table pp.27-38, incl. p.38 worksheets
+      ''Calculating Tax on Taxable Income of $100,000 or more'' ($4,562 plus 0.0475 over $100,000 for Single/MFS; $4,395
+      plus 0.0475 over $100,000 for MFJ/HOH/Qualified Widow(er)). Bracket-by-bracket schedule verified verbatim against
+      68 O.S. § 2355(C) as in force for tax year 2023 (see notes).'
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2023/511-Pkt-2023.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 1000, rate: 0.0025}
+    - {over: 1000, but_not_over: 2500, rate: 0.0075}
+    - {over: 2500, but_not_over: 3750, rate: 0.0175}
+    - {over: 3750, but_not_over: 4900, rate: 0.0275}
+    - {over: 4900, but_not_over: 7200, rate: 0.0375}
+    - {over: 7200, but_not_over: null, rate: 0.0475}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 2000, rate: 0.0025}
+    - {over: 2000, but_not_over: 5000, rate: 0.0075}
+    - {over: 5000, but_not_over: 7500, rate: 0.0175}
+    - {over: 7500, but_not_over: 9800, rate: 0.0275}
+    - {over: 9800, but_not_over: 12200, rate: 0.0375}
+    - {over: 12200, but_not_over: null, rate: 0.0475}
+    married_filing_separately:
+    - {over: 0, but_not_over: 1000, rate: 0.0025}
+    - {over: 1000, but_not_over: 2500, rate: 0.0075}
+    - {over: 2500, but_not_over: 3750, rate: 0.0175}
+    - {over: 3750, but_not_over: 4900, rate: 0.0275}
+    - {over: 4900, but_not_over: 7200, rate: 0.0375}
+    - {over: 7200, but_not_over: null, rate: 0.0475}
+    head_of_household:
+    - {over: 0, but_not_over: 2000, rate: 0.0025}
+    - {over: 2000, but_not_over: 5000, rate: 0.0075}
+    - {over: 5000, but_not_over: 7500, rate: 0.0175}
+    - {over: 7500, but_not_over: 9800, rate: 0.0275}
+    - {over: 9800, but_not_over: 12200, rate: 0.0375}
+    - {over: 12200, but_not_over: null, rate: 0.0475}
+  base: state_gross_income
+  tax_line: 'Form 511, line 14(a): ''Oklahoma Income Tax from Tax Table (see pages 27-38 of instructions)'', computed
+    on line 13 ''Oklahoma Taxable Income (line 9 minus line 12)'', where line 12 = ''Total deductions and exemptions
+    (add lines 10 and 11 or amount from Sch. 511-E, line 5)''.'
+  exemptions:
+    personal:
+      amount: 1000
+      note: 'Regular exemption, Form 511 line 11: ''Oklahoma allows $1,000 for each exemption claimed on the top of the
+        return'' — one for yourself and one for your spouse (if not claimed as a dependent elsewhere). If you can be claimed
+        as a dependent on another person''s return, your own regular exemption is 0 (you still qualify for the Oklahoma
+        standard deduction).'
+    dependent:
+      amount: 1000
+      note: $1,000 for each dependent as defined in IRC Sec. 152 claimed at the top of Form 511 (usually equals the number
+        of dependents on your federal return); included in the Form 511 line 11 total (number of exemptions x $1,000).
+    age_65:
+      amount: 1000
+      note: '''Special'' additional $1,000 exemption per taxpayer/spouse who is 65 or older at the close of the tax year,
+        allowed ONLY if Form 511 line 1 Federal AGI does not exceed: $15,000 single / $25,000 joint / $12,500 married
+        filing separate / $19,000 head of household (Roth-conversion income is excluded when testing these limits). NOT
+        applied by calc.state_tax — if eligible, claim it in the exemption boxes at the top of Form 511 and it flows into
+        line 11.'
+    blind:
+      amount: 1000
+      note: Additional $1,000 exemption per taxpayer/spouse who is legally blind; part of the top-of-form exemption count
+        flowing into Form 511 line 11. NOT applied by calc.state_tax — claim it on the form.
+  standard_deduction:
+    single: 6350
+    married_filing_jointly: 12700
+    married_filing_separately: 6350
+    head_of_household: 9350
+  notes:
+  - 'Base guidance: Supply 2023 Form 511, line 9 ''Oklahoma income after adjustments (line 7 minus line 8)''. Line
+    1 starts from federal AGI; lines 2-8 apply Oklahoma subtractions (Schedule 511-A), out-of-state income (line 4),
+    Oklahoma additions (Schedule 511-B) and Oklahoma adjustments (Schedule 511-C) to reach line 9. The op then subtracts
+    the shipped per-status standard deduction (Form 511 line 10) and $1,000 per exemption/dependent (Form 511 line
+    11) to reproduce line 13 ''Oklahoma Taxable Income'', and applies the brackets to reproduce line 14a. Do NOT pre-subtract
+    deductions or exemptions from the figure you supply. If Form 511 line 4 (out-of-state income) is more than zero,
+    or you itemize, the shipped fixed deduction/exemption amounts do not apply — see notes.'
+  - 'Tax Table mandate below $100,000: Form 511 line 14a instructs ''Using Form 511, line 13, find your tax in the
+    Tax Table (pages 27-38)''. The table''s $50-wide bands compute tax at the band midpoint, so plain bracket math
+    may differ from the table by a few dollars within a band (e.g., the packet''s example: MFJ taxable income $14,793
+    -> table tax $347; exact bracket math gives $348). The filed form must use the table below $100,000.'
+  - 'Taxable income of $100,000 or more uses the packet''s page 38 worksheets: Single/MFS tax = $4,562 plus 0.0475
+    of the excess over $100,000; MFJ/HOH/Qualified Widow(er) tax = $4,395 plus 0.0475 of the excess over $100,000.'
+  - 'Printed worksheet constants vs exact bracket sums: the MFJ/HOH/QW constant $4,395 exactly equals the cumulative
+    bracket sum at $100,000; the Single/MFS constant $4,562 is the exact cumulative sum $4,561.50 rounded up $0.50,
+    so above $100,000 the form worksheet can come out $1 higher than exact marginal bracket math after whole-dollar
+    rounding.'
+  - 'Bracket schedule source: the 2023 Form 511 packet prints only the Tax Table and the $100,000+ worksheets, not
+    a marginal rate schedule. The brackets shipped here are copied verbatim from 68 O.S. § 2355(C) as in force for
+    tax year 2023 (''For all taxable years beginning on or after January 1, 2022''; version whose amendment history
+    ends with Laws 2022, SB 1802, superseded effective January 1, 2024 by Laws 2023, 1st Extr. Sess., HB 1040X), archived
+    on the official Oklahoma State Courts Network: https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=494781
+    . Every bracket boundary was cross-checked against the packet''s printed table rows and worksheet constants.'
+  - 'WARNING for future maintainers: the CURRENT OSCN text of 68 O.S. § 2355 (as rewritten in 2025) restates subsection
+    C as ''For tax years 2024 and 2025'' and widens the MFJ/HOH 3.75% band to ''next $4,600.00'' — that text does
+    NOT reproduce the 2023 (or the OTC-printed) table and must not be used for tax year 2023; use the archived version
+    cited above.'
+  - 'One schedule covers Single and Married Filing Separately (identical thresholds — 68 O.S. § 2355(C)(1)); a second
+    schedule covers Married Filing Jointly, surviving spouse, AND Head of Household (68 O.S. § 2355(C)(2)) — HOH is
+    NOT a separate schedule; it is duplicated from MFJ here. The tax table likewise has only two columns: ''Single
+    or married filing separate'' and ''Married filing joint or head of household''.'
+  - 'Qualifying widow(er)/surviving spouse uses the married-filing-jointly column and schedule (tax table footnote:
+    ''This column must also be used by a Qualified Widow(er)''; the statute includes surviving spouses in the MFJ
+    paragraph) — the engine''s QSS -> married_filing_jointly mapping is correct for Oklahoma.'
+  - 'Out-of-state income gate: if Form 511 line 4 (out-of-state income, except wages) is more than zero, do NOT complete
+    lines 10-11 — Schedule 511-E prorates deductions and exemptions instead, so the fixed standard deduction and $1,000
+    exemptions shipped here do not apply; compute on the form.'
+  - 'Itemizers: if you claimed itemized deductions on your federal return you MUST claim Oklahoma itemized deductions
+    (Schedule 511-D) instead of the standard deduction; Oklahoma itemized deductions are capped at $17,000 (charitable
+    contributions and medical expenses are not subject to the cap). The shipped standard deduction applies only to
+    federal standard-deduction claimants. You qualify for the Oklahoma standard deduction even when claimed as a dependent
+    on another return.'
+  - 'Form 511 line 14b add-ons are NOT modeled: the additional 10% tax on nonqualified Health Savings Account withdrawals,
+    recapture of the Oklahoma Affordable Housing Tax Credit, and IRC Section 965(h) installment payments. Farm Income
+    Averaging (Form 573, entered on line 14a with a ''1'' in the box) is also not modeled.'
+  - Oklahoma's personal/dependent allowances are true income-base exemptions (Form 511 line 11 is subtracted from
+    income before the rate applies via lines 12-13), not tax credits. Separately, Oklahoma's Child Care/Child Tax
+    Credit (line 15, Schedule 511-F), Oklahoma EIC (line 28, Schedule 511-G), Sales Tax Relief Credit (line 25, Form
+    538-S) and Property Tax Relief credit (line 24, Form 538-H) are CREDITS against tax and are not part of this computation.
+  - All Form 511 money entries are whole dollars ('00' boxes); the engine's round-half-up to whole dollars matches
+    the form's presentation.
