@@ -167,3 +167,134 @@ unverified:
   the DOR.
 - Whether any NJ-source treaty-exempt income on the NJ-1040NR is treated differently from resident wages was not
   separately confirmed.
+tax:
+  citation:
+    source: '2023 Form NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) — New Jersey Tax Rate
+      Schedules, booklet p.63 (Table A: Single / Married-CU partner filing separate; Table B: Married-CU couple filing
+      joint / Head of household / Qualifying widow(er)-surviving CU partner); Line 43 Tax instruction and Line 42 New
+      Jersey Taxable Income, p.31; Exemptions Lines 6-12, p.6; Line 13 Total Exemption Amount, p.7; Line 29 New Jersey
+      Gross Income and filing thresholds, p.20; Line 30 Exemption Amount and Lines 31-37c deductions, pp.23-24; Line
+      38 Total Exemptions and Deductions and Line 39 Taxable Income, p.25'
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 20000, rate: 0.014}
+    - {over: 20000, but_not_over: 35000, rate: 0.0175}
+    - {over: 35000, but_not_over: 40000, rate: 0.035}
+    - {over: 40000, but_not_over: 75000, rate: 0.05525}
+    - {over: 75000, but_not_over: 500000, rate: 0.0637}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0897}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 20000, rate: 0.014}
+    - {over: 20000, but_not_over: 50000, rate: 0.0175}
+    - {over: 50000, but_not_over: 70000, rate: 0.0245}
+    - {over: 70000, but_not_over: 80000, rate: 0.035}
+    - {over: 80000, but_not_over: 150000, rate: 0.05525}
+    - {over: 150000, but_not_over: 500000, rate: 0.0637}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0897}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    married_filing_separately:
+    - {over: 0, but_not_over: 20000, rate: 0.014}
+    - {over: 20000, but_not_over: 35000, rate: 0.0175}
+    - {over: 35000, but_not_over: 40000, rate: 0.035}
+    - {over: 40000, but_not_over: 75000, rate: 0.05525}
+    - {over: 75000, but_not_over: 500000, rate: 0.0637}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0897}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    head_of_household:
+    - {over: 0, but_not_over: 20000, rate: 0.014}
+    - {over: 20000, but_not_over: 50000, rate: 0.0175}
+    - {over: 50000, but_not_over: 70000, rate: 0.0245}
+    - {over: 70000, but_not_over: 80000, rate: 0.035}
+    - {over: 80000, but_not_over: 150000, rate: 0.05525}
+    - {over: 150000, but_not_over: 500000, rate: 0.0637}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0897}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+  base: state_gross_income
+  tax_line: 'Line 43 - Tax on Amount on Line 42: "If the income on line 42 is less than $100,000, use the Tax Table
+    on page 54. Otherwise, calculate the tax by using the Tax Rate Schedules on page 63. Use the correct column or
+    schedule for your filing status. Enter the tax on line 43." (Line 42 - New Jersey Taxable Income: "Subtract line
+    41 from line 39"; Line 39 Taxable Income = Line 29 gross income minus Line 38 total exemptions and deductions;
+    Line 38 = "Add lines 30 through 37c".)'
+  exemptions:
+    personal:
+      amount: 1000
+      note: 'Line 6 Regular Exemptions: ''$1,000 exemption for yourself and your spouse/CU partner (if filing a joint
+        return) or your domestic partner'' (2023 NJ-1040 instructions p.6). A registered NJ domestic partner who does
+        not file an NJ return counts as one additional Line 6 exemption. A true base reduction: Line 13 total flows to
+        Line 30 and is subtracted from gross income before the rates apply.'
+    dependent:
+      amount: 1500
+      note: 'Lines 10 and 11: ''$1,500 exemption for each child who qualifies as your dependent for federal tax purposes''
+        (Line 10, qualified dependent children) and ''$1,500 exemption for each other dependent who qualifies as your
+        dependent for federal tax purposes'' (Line 11, other dependents) — both categories are $1,500 each; count both
+        in dependents_count. Base reduction via Line 13 -> Line 30.'
+    age_65:
+      amount: 1000
+      note: 'Line 7 Senior 65+: $1,000 each for taxpayer and (if filing jointly) spouse who were 65 or older on the last
+        day of the tax year; NOT allowed for domestic partners or dependents. NOT applied by calc.state_tax — subtract
+        it from the supplied base yourself or claim it on Line 7.'
+    blind_or_disabled:
+      amount: 1000
+      note: 'Line 8 Blind or Disabled: $1,000 each for taxpayer and (if filing jointly) spouse who were blind or disabled
+        on the last day of the tax year; NOT allowed for domestic partners or dependents. NOT applied by calc.state_tax
+        — subtract it from the supplied base yourself or claim it on Line 8.'
+    veteran:
+      amount: 6000
+      note: 'Line 9 Veteran Exemptions: $6,000 each for taxpayer and (if filing jointly) spouse who are honorably discharged
+        military veterans; documentation required the first year. NOT applied by calc.state_tax — subtract it from the
+        supplied base yourself or claim it on Line 9.'
+    dependent_attending_college:
+      amount: 1000
+      note: 'Line 12 Dependents Attending Colleges: ADDITIONAL $1,000 per dependent student (must already be claimed on
+        Line 10 or 11, under age 22, full-time at an accredited college, taxpayer paid half or more of tuition/maintenance).
+        NOT applied by calc.state_tax — subtract it from the supplied base yourself or claim it on Line 12.'
+  notes:
+  - 'Base guidance: Supply Form NJ-1040 Line 29, New Jersey Gross Income (Line 27 total income minus Line 28c pension/retirement
+    exclusion). NJ never starts from federal AGI — gross income is built from NJ''s own categories (wages from W-2
+    box 16 State wages). The op subtracts $1,000 x exemptions_count (Line 6 regular exemptions: self, spouse/CU partner,
+    or registered domestic partner) and $1,500 x dependents_count (Line 10 qualified dependent children plus Line
+    11 other dependents) to approximate Line 42 New Jersey Taxable Income. If any UNMODELED subtraction applies —
+    Line 7 senior 65+ ($1,000 each), Line 8 blind/disabled ($1,000 each), Line 9 veteran ($6,000 each), Line 12 dependent
+    attending college ($1,000 each), Lines 31-37c deductions (medical over 2% of gross income, alimony, qualified
+    conservation, health enterprise zone, alternative business calculation, organ/bone marrow donation, NJBEST up
+    to $10,000, NJCLASS up to $2,500, tuition up to $10,000), or the Line 41 Property Tax Deduction (up to $15,000;
+    $7,500 MFS same home) — reduce the supplied base by those amounts too, or compute on the form; otherwise the result
+    will overstate Line 43.'
+  - 'Tax Table MANDATE below $100,000: Line 43 directs ''If the income on line 42 is less than $100,000, use the Tax
+    Table on page 54. Otherwise, calculate the tax by using the Tax Rate Schedules on page 63.'' Bracket math may
+    differ by a few dollars within table bands; the filed form must use the table below $100,000. The Tax Rate Schedules
+    (shipped here) govern at $100,000 and above.'
+  - 'Filing threshold = no tax due: you are not required to file (and owe no NJ tax) if New Jersey gross income (Line
+    29) is at or below $10,000 (single; married/CU partner filing separate) or $20,000 (married/CU couple filing joint;
+    head of household; qualifying widow(er)/surviving CU partner). NOT modeled — the brackets tax from the first dollar,
+    so below-threshold filers would be overstated; file only to recover withholding or refundable credits.'
+  - 'Printed-constant divergence (Table B only): the 70,000-80,000 bracket prints ''multiply by .035, subtract $1,154.50'',
+    but the exact cumulative constant is $1,155.00 — the printed schedule yields $0.50 MORE than exact marginal-bracket
+    math everywhere inside that bracket, and rejoins exactly at $80,000 (the next constant, $2,775.00, is exact).
+    Every other printed constant in Tables A and B equals the cumulative sum exactly.'
+  - 'One schedule covers three statuses: Table B applies identically to married/CU couple filing joint, head of household,
+    and qualifying widow(er)/surviving CU partner — the head_of_household brackets shipped here are Table B, identical
+    to married_filing_jointly, and the engine''s QSS->married_filing_jointly mapping is exact (no divergence). Table
+    A applies to single and married/CU partner filing separate (MFS is NOT half of MFJ; copied as printed). Civil-union
+    partners must use the corresponding married/CU filing statuses.'
+  - New Jersey has NO standard deduction — standard_deduction is null because none exists, not because it is income-dependent.
+    NJ instead allows specific deductions on Lines 31-37c (medical expenses over 2% of gross income, alimony, qualified
+    conservation contribution, health enterprise zone, alternative business calculation adjustment, organ/bone marrow
+    donation, up to $10,000 NJBEST 529 contributions, up to $2,500 NJCLASS loan principal and interest, up to $10,000
+    tuition) and the Line 41 Property Tax Deduction (property taxes paid or 18% of rent, capped at $15,000; $7,500
+    if married filing separately sharing the same main home). None of these are modeled.
+  - The op applies ONLY the $1,000 Line 6 regular exemption (x exemptions_count) and the $1,500 Line 10/11 dependent
+    exemption (x dependents_count). The result equals Form NJ-1040 Line 43 only when no other exemption (senior, blind/disabled,
+    veteran, college dependent) and no Lines 31-37c or Line 41 deduction applies; otherwise pre-subtract those amounts
+    from the base you supply.
+  - 'NJ exemptions are genuine BASE reductions (Line 13 total -> Line 30, subtracted from gross income before the
+    rates), not credits. Separately, NJ''s refundable CREDITS are not modeled: NJ Earned Income Tax Credit (Line 58,
+    40% of federal EIC), $50 Property Tax Credit (Line 56), Child and Dependent Care Credit (Line 64), NJ Child Tax
+    Credit (Line 65, up to $1,000 per child age 5 or younger), and the Credit for Income Taxes Paid to Other Jurisdictions
+    (Line 44).'
+  - Part-year residents must prorate the Line 13 exemption total on Line 30 by months of NJ residency (15+ days counts
+    as a month) — NOT modeled; full-year exemption amounts are shipped.
+  - 'No 2023 rate change: the 2023 schedules (top rate 10.75% over $1,000,000) are the final published schedules used
+    for the 2023 filing season; New Jersey had no mid-year retroactive rate legislation for 2023.'

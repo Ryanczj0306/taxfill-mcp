@@ -143,3 +143,120 @@ unverified:
   official Additions list / Schedule ADJ. Virginia provides no explicit statement that treaty-exempt income is excluded;
   it simply flows through federal AGI. Confirm at the Virginia Department of Taxation for any specific treaty-income
   situation.
+tax:
+  citation:
+    source: '2023 Virginia Form 760 Resident Individual Income Tax Booklet (Virginia Tax) — Tax Rate Schedule, booklet
+      p.35 (PDF p.41): ''Not over $3,000, your tax is 2% of your Virginia taxable income; $3,000–$5,000: $60 + 3%; $5,000–$17,000:
+      $120 + 5%; over $17,000: $720 + 5.75% of excess over $17,000''; Line 11 Standard Deduction, booklet p.12 (PDF
+      p.18): Filing Status 1 $8,000 / Status 2 $16,000 / Status 3 $8,000; Exemptions, booklet p.9 (PDF p.15): ''Multiply
+      the sum of exemptions claimed in the You, Spouse and Dependents boxes by $930... Multiply the sum of exemptions
+      claimed for 65 or older and Blind by $800''; 2023 Form 760 Lines 9–16 and Exemption Sections A/B (form PDF at
+      https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2023/760-2023.pdf)'
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2023-760-instructions.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 17000, rate: 0.05}
+    - {over: 17000, but_not_over: null, rate: 0.0575}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 17000, rate: 0.05}
+    - {over: 17000, but_not_over: null, rate: 0.0575}
+    married_filing_separately:
+    - {over: 0, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 17000, rate: 0.05}
+    - {over: 17000, but_not_over: null, rate: 0.0575}
+    head_of_household:
+    - {over: 0, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 17000, rate: 0.05}
+    - {over: 17000, but_not_over: null, rate: 0.0575}
+  base: federal_agi
+  tax_line: 'Form 760 Line 16: "Amount of Tax from Tax Table or Tax Rate Schedule (round to whole dollars)". Instructions,
+    Line 16 Amount of Tax: "To compute your tax, you can use either the tax table or the tax rate schedule on Page
+    35, or use the Tax Calculator on the Department''s website." Line 15 Virginia Taxable Income = Line 9 (VAGI) minus
+    Line 14 (Line 10 itemized OR Line 11 standard deduction, + Line 12 exemptions + Line 13 Schedule ADJ deductions).'
+  exemptions:
+    personal:
+      amount: 930
+      note: 'Form 760 Exemption Section A / Line 12: ''Multiply the sum of exemptions claimed in the You, Spouse and Dependents
+        boxes by $930.'' A BASE reduction: Line 12 is part of Line 14, subtracted from VAGI (Line 9) to get Virginia taxable
+        income (Line 15). Applies to taxpayer and spouse ($930 each); MFJ with both spouses = exemptions_count 2 = $1,860.'
+    dependent:
+      amount: 930
+      note: Same $930 per exemption for each dependent claimed in the Dependents box of Exemption Section A ('Generally,
+        you may claim the same number of dependent exemptions allowed on your federal return'). A base reduction via Line
+        12, not a credit.
+    age_65:
+      amount: 800
+      note: 'Exemption Section B: ''Multiply the sum of exemptions claimed for 65 or older and Blind by $800.'' Must be
+        65 or older on or before January 1, 2024. A base reduction via Line 12, but NOT applied by calc.state_tax (engine
+        applies only personal/dependent keys) — claim it on the form. Cannot be claimed if the Credit for Low-Income Individuals
+        is claimed on Line 23.'
+    blind:
+      amount: 800
+      note: 'Exemption Section B: $800 per blind exemption (blind for federal income tax purposes; taxpayer and spouse
+        each). A base reduction via Line 12, but NOT applied by calc.state_tax — claim it on the form. Cannot be claimed
+        if the Credit for Low-Income Individuals is claimed on Line 23.'
+  standard_deduction:
+    single: 8000
+    married_filing_jointly: 16000
+    married_filing_separately: 8000
+    head_of_household: 8000
+  notes:
+  - 'Base guidance: Supply Form 760 Line 9, Virginia Adjusted Gross Income (VAGI) = federal AGI (Line 1, ''Adjusted
+    Gross Income from federal return - Not federal taxable income'') + Virginia additions (Line 2, Schedule ADJ Line
+    3) - Line 8 subtractions (Line 4 age deduction, Line 5 taxable Social Security/Tier 1 Railroad Retirement benefits,
+    Line 6 state income tax refund reported as federal income, Line 7 Schedule ADJ subtractions). If the filer has
+    no Virginia additions or subtractions, VAGI equals federal AGI. The op then subtracts the shipped $930-per-exemption
+    amounts and the per-status standard deduction to reproduce Virginia taxable income (Line 15 = Line 9 - Line 14).'
+  - 'Adjudication note (two-pass): base is federal_agi — Form 760 line 1 is federal adjusted gross income and Line
+    9 VAGI = federal AGI +/- Virginia additions/subtractions; supply Line 9 (the op subtracts the standard deduction
+    and $930-per-exemption amounts).'
+  - 'Single rate schedule for ALL filing statuses: Virginia publishes one 2023 Tax Rate Schedule (2% to $3,000; $60
+    + 3% $3,000-$5,000; $120 + 5% $5,000-$17,000; $720 + 5.75% over $17,000) that applies regardless of filing status;
+    it is duplicated per status here. The printed constants $60/$120/$720 exactly equal the cumulative sums of the
+    prior brackets — no rounding divergence.'
+  - 'Virginia filing statuses are only 1 = Single, 2 = Joint, 3 = Married Filing Separately. Head of Household is
+    NOT a separate Virginia status: ''Fill in the Head of Household oval if your filing status is Single and you checked
+    the Head of Household box on your federal return'' — HOH filers use Filing Status 1 (Single) and the $8,000 standard
+    deduction, which is what this pack ships for head_of_household.'
+  - 'ZERO-TAX FILING THRESHOLD not applied by the engine: Form 760 Line 9 prints ''Note: If less than $11,950 for
+    Filing Status 1 or 3; or $23,900 for Filing Status 2, your tax is $0.00'', and the rate-schedule page instructs
+    ''If your Virginia Adjusted Gross Income is less than the filing threshold, do not use the rate schedule or tax
+    table below. Enter $0 as your tax instead.'' If VAGI is below the threshold, the correct Virginia tax is $0 even
+    though bracket math yields a positive number.'
+  - 'Tax table: Virginia''s tax table (booklet pp.35-43, covering taxable income up to $98,356) is OPTIONAL, not mandated
+    — ''The tax table can be used if your Virginia taxable income is listed in the table. Otherwise, use the Tax Rate
+    Schedule.'' Within table bands the table (band-midpoint based) may differ from exact bracket math by about $1;
+    Line 16 permits the table, the rate schedule, or the Department''s online Tax Calculator.'
+  - 'Spouse Tax Adjustment (STA) NOT modeled: couples filing jointly (Filing Status 2) may reduce their tax by up
+    to $259 on Form 760 Line 17 if both spouses have taxable income and combined taxable income exceeds $3,000 (STA
+    Worksheet, booklet p.13). The engine computes Line 16 only; a joint filer''s Line 18 net tax may be up to $259
+    lower.'
+  - Age 65+/blind exemptions ($800 each, Exemption Section B) are base reductions included in Line 12 but are NOT
+    applied by calc.state_tax (the op applies only the personal/dependent keys) — enter them on the form. They cannot
+    be claimed together with the Credit for Low-Income Individuals.
+  - Age Deduction (Line 4, up to $12,000 per qualifying taxpayer, birth-date- and income-based per the Age Deduction
+    Worksheet) and the Line 5 Social Security / Tier 1 Railroad Retirement subtraction, Line 6 state refund subtraction,
+    and Line 7 Schedule ADJ subtractions are all taken BEFORE VAGI — the caller must supply Form 760 Line 9 already
+    reflecting them.
+  - 'Itemizers: ''If you claimed itemized deductions on your federal return'' you MUST itemize on the Virginia return
+    (Line 10, Virginia Schedule A) and the standard deduction does not apply — the shipped standard_deduction is only
+    for standard-deduction filers. Under Filing Status 3, if one spouse itemizes the other must also itemize.'
+  - 'Dependent on another''s return: the standard deduction is limited to the amount of earned income (''Enter the
+    smaller of the amount of earned income or the standard deduction amount on Line 11'') — not modeled.'
+  - The 2023 standard deduction amounts ($8,000 single/MFS, $16,000 MFJ) come from 2022 General Assembly legislation
+    that raised them for Taxable Year 2023 (from $4,500/$9,000); the increase is scheduled to sunset after Taxable
+    Year 2025.
+  - Credit for Low-Income Individuals ($300 per exemption), the nonrefundable Virginia EITC (20% of federal EITC),
+    and the refundable Virginia EITC (15%) are CREDITS subtracted from tax on Form 760 Line 23 via Schedule ADJ Line
+    17 — they are NOT exemptions and are not modeled by this op.
+  - 'Rounding: Virginia rounds to whole dollars with 50-99 cents rounding up; the booklet''s own rate-schedule example
+    rounds $4,917.50 to $4,918, matching the engine''s half-up rounding.'
+  - 'Qualifying surviving spouse: the engine maps QSS to married_filing_jointly. The 2023 booklet lists only Filing
+    Statuses 1/2/3 and does not explicitly state which status a federal QSS filer uses; because Virginia has a single
+    rate schedule, only the standard deduction ($16,000 vs $8,000) would differ — confirm the correct status at tax.virginia.gov.'

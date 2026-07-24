@@ -181,3 +181,99 @@ unverified:
 - Nonresident/part-year (OR-40-N / OR-40-P) line-by-line starting point and any treaty-related apportionment were
   not individually verified from the OR-40-N/P booklet text (only the resident OR-40 booklet was parsed in full);
   the OR-40-N/P booklet was identified but its internal figures should be confirmed at the DOR.
+tax:
+  citation:
+    source: 2023 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 12-06-23)
+      — p. 16 line 20 tax computation (tax tables if line 19 < $50,000; rate-chart formula if $50,000 or more; booklet
+      Examples 1 and 2), p. 30 "2023 Tax rate charts" (Chart S / Chart J, $50,000-and-over segments) and 2023 Tax Tables,
+      p. 15 Table 5 "Standard deduction" ($2,605 single; $5,210 MFJ; $2,605/$0 MFS; $4,195 HoH; $5,210 QSS) plus age-65/blind
+      additions, p. 14 Table 4 federal tax liability subtraction AGI phaseout, p. 17 line 25 exemption credit worksheet
+      ($236/exemption CREDIT). Full four-bracket 2023 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,050/$10,200/$125,000
+      and $8,100/$20,400/$250,000) as printed in 2023 Publication OR-ESTIMATE, Oregon Estimated Income Tax Instructions
+      (150-101-026, Rev. 02-15-23), p. 3 of 6, https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2023.pdf
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 4050, rate: 0.0475}
+    - {over: 4050, but_not_over: 10200, rate: 0.0675}
+    - {over: 10200, but_not_over: 125000, rate: 0.0875}
+    - {over: 125000, but_not_over: null, rate: 0.099}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 8100, rate: 0.0475}
+    - {over: 8100, but_not_over: 20400, rate: 0.0675}
+    - {over: 20400, but_not_over: 250000, rate: 0.0875}
+    - {over: 250000, but_not_over: null, rate: 0.099}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4050, rate: 0.0475}
+    - {over: 4050, but_not_over: 10200, rate: 0.0675}
+    - {over: 10200, but_not_over: 125000, rate: 0.0875}
+    - {over: 125000, but_not_over: null, rate: 0.099}
+    head_of_household:
+    - {over: 0, but_not_over: 8100, rate: 0.0475}
+    - {over: 8100, but_not_over: 20400, rate: 0.0675}
+    - {over: 20400, but_not_over: 250000, rate: 0.0875}
+    - {over: 250000, but_not_over: null, rate: 0.099}
+  base: federal_agi
+  tax_line: 'Form OR-40, line 20 "Tax (see instructions)". Instructions p. 16: "Tax tables. Use the tax tables to
+    find your tax if your taxable income on line 19 is less than $50,000." and "Tax rate charts. If your taxable income
+    on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status.
+    Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is
+    married filing jointly, head of household, or qualifying surviving spouse."'
+  exemptions: {}
+  standard_deduction:
+    single: 2605
+    married_filing_jointly: 5210
+    married_filing_separately: 2605
+    head_of_household: 4195
+  notes:
+  - 'Base guidance: Supply 2023 Form OR-40, line 15 "Income after subtractions" (line 9 income after additions minus
+    line 14 total subtractions). Line 15 already reflects Oregon additions (Schedule OR-ASC) and all subtractions,
+    including the line 10 federal tax liability subtraction (2023 limit $7,800; $3,900 married filing separately;
+    phased down by federal AGI per Table 4 — $0 at AGI of $145,000+ single/MFS or $290,000+ MFJ/HoH/QSS). The op subtracts
+    only the Table 5 standard deduction to reach line 19 (Oregon taxable income) and applies the rate schedule. Filers
+    who itemize for Oregon (line 16 Schedule OR-A amount larger than line 17) or who claim the age-65+/blind additional
+    standard deduction must compute lines 18-19 on the form instead — the op models only the basic per-status standard
+    deduction.'
+  - 'Adjudication note (two-pass): base is federal_agi — Form OR-40 line 7 is federal adjusted gross income; supply
+    the pre-deduction Oregon income figure (line 19 taxable income = line 15 minus the line 17/18 deduction is what
+    the op reproduces by subtracting the standard deduction). Vector counts are zero by design: Oregon personal/dependent
+    exemptions are the $236-per-exemption CREDIT on line 21, income-limited, never a base reduction.'
+  - 'Tax-table mandate below $50,000: the 2023 OR-40 instructions (line 20, p. 16) REQUIRE the tax tables when Oregon
+    taxable income (line 19) is less than $50,000 — bracket math may differ by a few dollars within the table''s $100
+    bands (booklet Example 1: single, taxable income $19,525 — table tax $1,425 vs. pure bracket math $1,423); the
+    filed form must use the table. The rate-chart formula applies only at $50,000 or more.'
+  - 'Rounded printed constants (Chart S): the published ''$X plus Y% of excess'' constants $192, $607, and $10,652
+    are the exact cumulative bracket sums $192.375, $607.50, and $10,652.50 rounded DOWN, so pure marginal bracket
+    math (what this op computes) can be up to $1 higher than the printed chart formula (e.g., single at $150,000:
+    marginal math $13,127.50 -> $13,128 vs. chart $13,127). Chart J''s printed $385 is the exact $384.75 rounded up
+    $0.25; its $1,215 and $21,305 constants equal the exact cumulative sums.'
+  - One schedule covers married filing jointly, head of household, AND qualifying surviving spouse (Chart J / tax-table
+    Column J) — head of household brackets are identical to MFJ, and qualifying surviving spouse maps to married_filing_jointly
+    with no divergence. Single and married filing separately share Chart S / Column S. Oregon registered domestic
+    partners (RDPs) use the married statuses (Chart S is captioned 'single or married/RDP filing separately').
+  - 'Oregon''s personal/dependent exemption is a tax CREDIT, not a base reduction, and is NOT shipped as an exemption:
+    Form OR-40 line 25 ''Exemption credit'' = $236 per exemption (taxpayer, spouse, dependents, plus severely-disabled
+    and disabled-child exemptions), subtracted from tax after the rate applies; it is $0 when federal AGI exceeds
+    $200,000 ($100,000 if single or married filing separately). The calc op does not model this credit.'
+  - 'Standard-deduction gates NOT modeled: married filing separately gets $0 if the other spouse claims itemized deductions;
+    a non-U.S. citizen without permanent resident status gets $0 (but may itemize); a person claimable as a dependent
+    on another return is limited to the larger of earned income + $400 or $1,250, capped at the basic amount for their
+    status. Compute those cases on the form.'
+  - 'Age 65+/blind additional standard deduction NOT modeled: each applicable checkbox below line 17 adds $1,200 (single
+    or head of household) or $1,000 (all other filers) to the Table 5 standard deduction — enter it on the form; this
+    op applies only the basic per-status amount.'
+  - 'Federal tax liability subtraction is already inside the caller-supplied base (OR-40 line 10 flows into line 15):
+    2023 limit $7,800 ($3,900 married filing separately), phased down by federal AGI per Table 4 (single: $7,800 under
+    $125,000 stepping to $0 at $145,000+; MFS: $3,900 stepping to $0 at $145,000+; MFJ/HoH/QSS: $7,800 under $250,000
+    stepping to $0 at $290,000+).'
+  - '2023 kicker (Oregon surplus) credit NOT modeled: a refundable credit equal to 44.28% of your 2022 total Oregon
+    personal income tax liability (before payments and credits other than the credit for taxes paid to another state),
+    claimed on the 2023 return (Schedule OR-ASC / line 36-39 area per the instructions, p. 19).'
+  - 'Alternative tax computations on line 20 NOT modeled: Schedule OR-FIA-40 (farm income averaging, box 20a), Publication
+    OR-FCG worksheet (farm asset capital gain rate, box 20b), and Schedule OR-PTE-FY (qualified business income reduced
+    tax rate, box 20c) replace the table/chart math when elected.'
+  - 'Bracket source: the OR-40 booklet (p. 30) prints Chart S/Chart J only for taxable income of $50,000 or more (the
+    tables govern below); the full four-bracket 2023 Chart S/Chart J including the $4,050/$10,200 and $8,100/$20,400
+    breakpoints is printed in 2023 Publication OR-ESTIMATE (150-101-026, Rev. 02-15-23), p. 3: https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2023.pdf
+    — spot-checks of the booklet''s tax tables (e.g., Column J at $39,000-$39,100 = $2,847; Column S at $49,900-$50,000
+    = $4,085) match this schedule.'

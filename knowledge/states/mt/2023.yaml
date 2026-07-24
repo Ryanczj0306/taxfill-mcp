@@ -157,3 +157,105 @@ unverified:
   U.S. tax-treaty-exempt income; conformity is inferred (high confidence) from the federal-AGI starting point plus
   the absence of any treaty add-back among the enumerated Montana Additions Schedule lines (1-15). Recommend confirming
   treaty treatment with the MT DOR for any case with treaty-specific facts.
+tax:
+  citation:
+    source: '2023 Montana Form 2 Individual Income Tax Return Instructions (MT DOR), p.11 — ''Line 18–Tax Liability
+      Before Credits'' and the ''2023 Montana Individual Income Tax Table'' (If Your Taxable Income Is More Than / But
+      Not More Than / Multiply Your Taxable Income By / And Subtract: $0–$3,600 1% (0.010) $0; $3,600–$6,300 2% (0.020)
+      $36; $6,300–$9,700 3% (0.030) $99; $9,700–$13,000 4% (0.040) $196; $13,000–$16,800 5% (0.050) $326; $16,800–$21,600
+      6% (0.060) $494; More Than $21,600 6.75% (0.0675) $656); same schedule also printed on 2023 Form 2, page 8 (''2023
+      Montana Individual Income Tax Rates — If your taxable income (page 1, line 17) is''). Exemptions: instructions
+      p.11 ''Line 16–Exemptions. Multiply $2,960 times the number of exemptions''; standard deduction: 2023 Form 2,
+      page 7, Standard Deduction Worksheet (20% of line 14; max $5,540 single/MFS, $11,080 MFJ/HoH; min $2,460 single/MFS,
+      $4,920 MFJ/HoH).'
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 3600, rate: 0.01}
+    - {over: 3600, but_not_over: 6300, rate: 0.02}
+    - {over: 6300, but_not_over: 9700, rate: 0.03}
+    - {over: 9700, but_not_over: 13000, rate: 0.04}
+    - {over: 13000, but_not_over: 16800, rate: 0.05}
+    - {over: 16800, but_not_over: 21600, rate: 0.06}
+    - {over: 21600, but_not_over: null, rate: 0.0675}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 3600, rate: 0.01}
+    - {over: 3600, but_not_over: 6300, rate: 0.02}
+    - {over: 6300, but_not_over: 9700, rate: 0.03}
+    - {over: 9700, but_not_over: 13000, rate: 0.04}
+    - {over: 13000, but_not_over: 16800, rate: 0.05}
+    - {over: 16800, but_not_over: 21600, rate: 0.06}
+    - {over: 21600, but_not_over: null, rate: 0.0675}
+    married_filing_separately:
+    - {over: 0, but_not_over: 3600, rate: 0.01}
+    - {over: 3600, but_not_over: 6300, rate: 0.02}
+    - {over: 6300, but_not_over: 9700, rate: 0.03}
+    - {over: 9700, but_not_over: 13000, rate: 0.04}
+    - {over: 13000, but_not_over: 16800, rate: 0.05}
+    - {over: 16800, but_not_over: 21600, rate: 0.06}
+    - {over: 21600, but_not_over: null, rate: 0.0675}
+    head_of_household:
+    - {over: 0, but_not_over: 3600, rate: 0.01}
+    - {over: 3600, but_not_over: 6300, rate: 0.02}
+    - {over: 6300, but_not_over: 9700, rate: 0.03}
+    - {over: 9700, but_not_over: 13000, rate: 0.04}
+    - {over: 13000, but_not_over: 16800, rate: 0.05}
+    - {over: 16800, but_not_over: 21600, rate: 0.06}
+    - {over: 21600, but_not_over: null, rate: 0.0675}
+  base: state_taxable_income
+  tax_line: 'Form 2, page 1, line 18 ''Tax liability before credits (See instructions)''. Instructions p.11: ''Residents:
+    If you are a full-year resident, and you owe neither any recapture tax (see page 37), nor any taxes on lump-sum
+    distributions (see page 39), compute your tax using the following table and report the result on line 18.'' The
+    table is keyed to ''your taxable income (page 1, line 17)'' (Form 2, page 8, Tax Liability Schedule line 1 / line
+    6 ''Resident tax'').'
+  exemptions: {}
+  notes:
+  - 'Base guidance: Supply 2023 Montana Form 2, page 1, line 17 — ''Taxable income. Subtract lines 15 and 16 from
+    line 14. If zero or less, enter 0.'' Compute it on the form: line 11 federal AGI (from federal Form 1040) + line
+    12 Montana additions - line 13 Montana subtractions = line 14 Montana Adjusted Gross Income; then subtract line
+    15 standard or itemized deductions (standard deduction = 20% of line 14, capped at $5,540 single/MFS or $11,080
+    MFJ/HoH and floored at $2,460 single/MFS or $4,920 MFJ/HoH — income-dependent, so this op does NOT subtract it)
+    and line 16 exemptions ($2,960 x total exemptions from the Exemptions Section line d). The op subtracts NOTHING
+    further — line 17 already reflects all deductions and exemptions.'
+  - 'ONE rate schedule for ALL filing statuses: the 2023 Montana tax table (Form 2, page 8; instructions p.11) does
+    not vary by filing status — Single, Married Filing Jointly, Married Filing Separately, and Head of Household all
+    use the identical seven-bracket schedule, duplicated per status here.'
+  - '2023 Form 2 has NO qualifying-surviving-spouse filing status (statuses printed on the form: 1 Single, 2a Married
+    filing separately on the same form, 2b Married filing separately on separate forms, 2c Married filing separately
+    and spouse not filing, 3 Head of household, 4 Married filing jointly); the engine''s QSS-to-MFJ mapping is numerically
+    harmless because one schedule covers every status. Federal-conformed filing statuses (including qualifying widower)
+    arrive only in Tax Year 2024.'
+  - The printed 'And Subtract' constants ($0/$36/$99/$196/$326/$496... precisely $36, $99, $196, $326, $494, $656)
+    equal the cumulative sum of the prior brackets EXACTLY — no rounding divergence. The form's own example ($25,000
+    taxable income -> $25,000 x 6.75% = $1,688; $1,688 - $656 = $1,032) matches marginal bracket math with half-up
+    rounding ($1,031.50 -> $1,032).
+  - 'STANDARD DEDUCTION NOT SHIPPED (income-dependent): Montana''s 2023 standard deduction is 20% of Montana Adjusted
+    Gross Income (Form 2, line 14), capped at a MAXIMUM of $5,540 (single or married filing separately) / $11,080
+    (married filing jointly or head of household) and floored at a MINIMUM of $2,460 (single/MFS) / $4,920 (MFJ/HoH)
+    — Standard Deduction Worksheet, Form 2, page 7. Compute line 15 on the form (or use itemized deductions — Montana''s
+    itemized schedule allows federal income tax paid, among other items). Supply line 17, which already reflects line
+    15.'
+  - 'EXEMPTIONS NOT SHIPPED (already inside line 17): Form 2, line 16 = $2,960 x total exemptions from the Exemptions
+    Section, line d — one for yourself, one for your spouse, one per dependent, PLUS one ADDITIONAL exemption for
+    each ''65 or older'' checkbox and each ''Blind'' checkbox (taxpayer and spouse). Because the caller supplies line
+    17 taxable income, the op must not subtract exemptions again.'
+  - 'Resident Capital Gains Credit is a CREDIT, not a base reduction: 2% of net capital gains reported on Form 2,
+    line 7, claimed on the Nonrefundable Credits Schedule line 1 and subtracted from tax at Form 2, line 19 — NOT
+    modeled by this op.'
+  - Montana Earned Income Tax Credit (Form 2, line 23b = 3% of the federal EITC) is a refundable CREDIT — NOT modeled
+    by this op.
+  - Recapture taxes (e.g., the 6.75% Medical Savings Account / First-Time Home Buyer Account recapture) and the tax
+    on lump-sum distributions (federal Form 4972) are ADDED to line 18 via the Tax Liability Schedule (Form 2, page
+    8, lines 2 and 4) — NOT modeled; if owed, line 18 exceeds plain bracket math on line 17.
+  - 'Nonresidents and part-year residents: bracket math on line 17 yields only Tax Liability Schedule line 1; the
+    tax is then MULTIPLIED by the Montana-source ratio (Form 2, page 8, lines 3a or 5, ratio from the Nonresident/Part-Year
+    Resident Ratio Schedule). This op models the full-year RESIDENT computation (Tax Liability Schedule line 6 with
+    no recapture or lump-sum tax).'
+  - 'Married filing separately on the same form (status 2a): each spouse computes their own tax in their own column
+    (Columns A and B) — apply this op once per spouse, each using that spouse''s own line 17 taxable income.'
+  - 'No lookup-table mandate: Montana prints a rate FORMULA schedule (''Multiply Your Taxable Income By ... And Subtract''),
+    not a row-lookup tax table, so bracket math is exact at every income level.'
+  - '2023 is the FINAL year of this structure and there was NO mid-year 2023 rate change: under SB 399 (2021) and
+    SB 121 (2023), beginning Tax Year 2024 Montana starts from federal TAXABLE income, drops the Montana standard
+    deduction and exemptions, and condenses to two rates (4.7% / 5.9%; the 6.75% top rate ends after 2023). Do not
+    use this pack for tax year 2024.'

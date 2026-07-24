@@ -138,3 +138,97 @@ unverified:
 - Check-payee wording ('Idaho State Tax Commission', write SSN on check) is taken from the Form 40 instructions
   Line 54 narrative; the General Information document directs payment via Form ID-VP / E-Pay but does not restate
   the payee text verbatim.
+tax:
+  citation:
+    source: '2023 Idaho Individual Income Tax Instructions, Form 40/43/39R/39NR booklet (EIN00046, 11-06-2023) — Line
+      20 Tax Worksheet, page 9 (subtraction amounts $4,489 single/MFS and $8,978 MFJ/HOH/QSS; ''Multiply subtotal by
+      5.8%''); Standard Deduction section and Standard Deduction Worksheet, pages 8-9 ($13,850 single/MFS, $27,700 MFJ/QSS,
+      $20,800 HOH); ''What''s New for 2023 — Tax Rate Reduction: Effective January 1, 2023, the individual income tax
+      rate is 5.8%'', page 1; cross-checked against the Form 40 face (EFO00089, 08-23-2023), lines 7, 11, 13-20'
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_11-06-2023.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 4489, rate: 0}
+    - {over: 4489, but_not_over: null, rate: 0.058}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 8978, rate: 0}
+    - {over: 8978, but_not_over: null, rate: 0.058}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4489, rate: 0}
+    - {over: 4489, but_not_over: null, rate: 0.058}
+    head_of_household:
+    - {over: 0, but_not_over: 8978, rate: 0}
+    - {over: 8978, but_not_over: null, rate: 0.058}
+  base: federal_agi
+  tax_line: 'Form 40, line 20: ''Tax from worksheet. See instructions, page 9.'' Worksheet (instructions p.9): 1.
+    ''Enter the amount of Idaho taxable income from Form 40, line 19''; 2. ''Enter the amount shown below for your
+    filing status: Single or married filing separately, enter $4,489 — Married filing jointly, head of household,
+    or qualifying surviving spouse, enter $8,978''; 3. ''Subtract line 2 from line 1. Enter the subtotal''; 4. ''Multiply
+    subtotal by 5.8%''; 5. ''Idaho tax. Enter the total here and on Form 40, line 20.'''
+  exemptions:
+    age_65:
+      amount: 1500
+      note: 'NOT an exemption and NOT applied by calc.state_tax — it is an ADDITIONAL STANDARD DEDUCTION: $1,500 per age-65-or-older
+        box checked on Form 40 line 12a ($1,850 instead if single or head of household), added to the base standard deduction
+        via the Standard Deduction Worksheet, line 5 (instructions pp.8-9). Boxes must match the federal return.'
+    blind:
+      amount: 1500
+      note: 'NOT an exemption and NOT applied by calc.state_tax — it is an ADDITIONAL STANDARD DEDUCTION: $1,500 per blind
+        box checked on Form 40 line 12b ($1,850 instead if single or head of household), added to the base standard deduction
+        via the Standard Deduction Worksheet, line 5 (instructions pp.8-9). Boxes must match the federal return.'
+  standard_deduction:
+    single: 13850
+    married_filing_jointly: 27700
+    married_filing_separately: 13850
+    head_of_household: 20800
+  notes:
+  - 'Base guidance: Supply Form 40, line 11 ''Total Adjusted Income'' = federal AGI (Form 40 line 7, from federal
+    Form 1040/1040-SR line 11) plus Form 39R Part A additions minus Form 39R Part B subtractions. With no Idaho additions
+    or subtractions this equals federal AGI. The op subtracts only the per-status standard deduction (Form 40 line
+    16); if you claim the federal qualified business income deduction (Form 40 line 18 = federal 1040 line 13) or
+    itemize (Form 40 lines 13-15), the op will overstate tax — subtract your line 18 QBI amount from line 11 before
+    supplying it, or compute on the form.'
+  - 'Adjudication note (two-pass): base is federal_agi — Form 40 line 7 is federal adjusted gross income and Idaho
+    taxable income derives from it via Idaho additions/subtractions and the deduction lines; supply the pre-standard-deduction
+    figure as taxable_base (the op subtracts the federal-amount standard deduction; the line 18 QBI subtraction is
+    the caller/form job — see notes). Idaho per-person amounts are CREDITS, so vector counts are zero by design.'
+  - 'Structure: Idaho''s 2023 tax is a single 5.8% rate on Idaho taxable income ABOVE a filing-status threshold —
+    $4,489 (single or married filing separately) / $8,978 (married filing jointly, head of household, or qualifying
+    surviving spouse) — per the Form 40 line 20 worksheet (2023 instructions p.9). It is modeled here as a 0% bracket
+    up to the threshold and 5.8% above it; taxable income at or below the threshold owes $0.'
+  - Head of household uses the SAME $8,978 worksheet threshold as married filing jointly (instructions p.9), even
+    though its standard deduction ($20,800) differs from MFJ's ($27,700).
+  - Qualifying surviving spouse (Form 40 filing status 5) is listed in the worksheet with the same $8,978 amount as
+    married filing jointly, so the engine's QSS-to-MFJ mapping is exact for both the brackets and the $27,700 standard
+    deduction.
+  - '2023 rate change: the booklet''s ''What''s New for 2023'' (p.1) states ''Tax Rate Reduction — Effective January
+    1, 2023, the individual income tax rate is 5.8%.'' This flat 5.8% schedule is the FINAL one the 2023 filing season
+    used, replacing Idaho''s prior graduated schedule.'
+  - 'Qualified business income deduction NOT modeled: Form 40 line 18 subtracts the federal QBI deduction (federal
+    1040/1040-SR line 13) AFTER the standard/itemized deduction to reach Idaho taxable income (line 19). See base_guidance
+    for how to account for it.'
+  - 'Itemizers NOT modeled: Form 40 lines 13-15 use federal Schedule A itemized deductions MINUS state and local income
+    or general sales taxes (line 14 addback; capped per the federal $10,000/$5,000 SALT rule), and Idaho lets you
+    ADD any federal foreign tax credit amount to Idaho itemized deductions; filers use the LARGER of net itemized
+    (line 15) or the standard deduction (line 16). The op applies only the standard deduction.'
+  - 'Standard-deduction gates NOT modeled (Standard Deduction Worksheet and ''You Must Itemize If'', instructions
+    pp.8-9): married filing separately MUST itemize if the spouse itemizes; dual-status nonresident aliens must itemize;
+    a nonresident alien not from India gets a $0 standard deduction; a person claimable as another''s dependent is
+    limited to the greater of $1,250 or earned income + $400 (capped at the status amount); age-65+/blind boxes add
+    $1,500 per box ($1,850 if single or head of household). Compute those cases on the worksheet.'
+  - 'Idaho has NO personal or dependent exemptions. The per-person amounts on the return are TAX CREDITS subtracted
+    from tax, not base reductions, and are not modeled: the Idaho Child Tax Credit is $205 per qualifying child age
+    16 or under (Form 40 line 25, nonrefundable), and the grocery credit is $120 per qualifying person ($140 if 65+)
+    (Form 40 line 43, refundable).'
+  - $10 Permanent Building Fund tax (Form 40 line 32) is a separate flat tax owed by everyone required to file an
+    Idaho return (waived for those below the filing threshold, recipients of Idaho public assistance, and the legally
+    blind). It is outside the line 20 computation and NOT modeled.
+  - 'No tax-table mandate: the 2023 booklet contains no tax tables — every filer computes line 20 with the worksheet,
+    so bracket math reproduces the form exactly (whole-dollar rounding aside).'
+  - The line 20 worksheet prints no explicit 'if less than zero, enter zero' step; the 0% floor bracket implements
+    the $0 result for taxable income at or below the subtraction amount (the form provides no negative tax entry).
+  - Part-year residents and nonresidents file Form 43, not Form 40; Form 43 line 42 uses the identical worksheet (same
+    $4,489/$8,978 amounts, same 5.8%) applied to Form 43 line 41 Idaho taxable income (instructions p.34).
+  - 'Form 40 face cross-check: 2023 Form 40 (EFO00089, 08-23-2023), https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_08-23-2023.pdf
+    — line 20 reads ''Tax from worksheet. See instructions, page 9'', and the line-16 margin prints the standard deduction
+    amounts ($13,850 single/MFS, $20,800 HOH, $27,700 MFJ/QSS).'

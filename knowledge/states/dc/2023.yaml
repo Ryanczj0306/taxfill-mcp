@@ -183,3 +183,137 @@ unverified:
   for a return filed late in 2026 — addresses are from the 2023 booklet; confirm at OTR before mailing.
 - Whether DC accepted any extended/non-April-15 due date for TY2023 (e.g., disaster relief). Booklet states April
   15, 2024; no special extension was found, but confirm at DOR.
+tax:
+  citation:
+    source: 'DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax Forms and Instructions booklet (Revised
+      01/2024, file 2023_D40_Book_Final_041124.pdf): ''Reminders — Income Tax Rate Table'' p.3 and ''Calculation I/Tax
+      Rate Schedule'' p.17 (''Not over $10,000: 4% of the taxable income; Over $10,000 but not over $40,000: $400, plus
+      6% of the excess over $10,000; Over $40,000 but not over $60,000: $2,200, plus 6.5% of the excess over $40,000;
+      Over $60,000 but not over $250,000: $3,500, plus 8.5% of the excess over $60,000; Over $250,000 but not over $500,000:
+      $19,650, plus 9.25% of the excess over $250,000; Over $500,000 but not over $1,000,000: $42,775, plus 9.75% of
+      the excess over $500,000; Over $1,000,000: $91,525, plus 10.75% of the excess over $1,000,000''); ''Standard Deduction''
+      section p.10 ($13,850 single and married/registered domestic partners filing separately; $20,800 head of household;
+      $27,700 married/registered domestic partners filing jointly, qualifying widow(er)s with dependent children, and
+      married/registered domestic partners filing separately on the same return); Line 19 ''DC taxable income — Subtract
+      Line 18 from Line 16'' and Line 20 ''Tax'' instructions p.18; Standard Deduction Worksheet for Dependent Filers
+      and Standard Deduction Chart for People Born before January 2, 1959 or Blind, p.20; tax tables pp.83-92; 2023
+      Form D-40 Lines 4-20 (form pages inside the booklet)'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_041124.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10000, rate: 0.04}
+    - {over: 10000, but_not_over: 40000, rate: 0.06}
+    - {over: 40000, but_not_over: 60000, rate: 0.065}
+    - {over: 60000, but_not_over: 250000, rate: 0.085}
+    - {over: 250000, but_not_over: 500000, rate: 0.0925}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0975}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 10000, rate: 0.04}
+    - {over: 10000, but_not_over: 40000, rate: 0.06}
+    - {over: 40000, but_not_over: 60000, rate: 0.065}
+    - {over: 60000, but_not_over: 250000, rate: 0.085}
+    - {over: 250000, but_not_over: 500000, rate: 0.0925}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0975}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    married_filing_separately:
+    - {over: 0, but_not_over: 10000, rate: 0.04}
+    - {over: 10000, but_not_over: 40000, rate: 0.06}
+    - {over: 40000, but_not_over: 60000, rate: 0.065}
+    - {over: 60000, but_not_over: 250000, rate: 0.085}
+    - {over: 250000, but_not_over: 500000, rate: 0.0925}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0975}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    head_of_household:
+    - {over: 0, but_not_over: 10000, rate: 0.04}
+    - {over: 10000, but_not_over: 40000, rate: 0.06}
+    - {over: 40000, but_not_over: 60000, rate: 0.065}
+    - {over: 60000, but_not_over: 250000, rate: 0.085}
+    - {over: 250000, but_not_over: 500000, rate: 0.0925}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0975}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+  base: federal_agi
+  tax_line: 'Form D-40 Line 20: "Tax. If Line 19 is $100,000 or less, use tax tables to find the tax, if more, use
+    Calculation I instructions." Instructions p.18, Line 20 Tax: "If Line 19 is $100,000 or less, use the tax tables
+    on pages 83-92 to determine your tax. If Line 19 is more than $100,000, use Calculation I on page 17." Line 19
+    DC taxable income = Line 16 (DC adjusted gross income) minus Line 18 (DC deduction amount).'
+  exemptions: {}
+  standard_deduction:
+    single: 13850
+    married_filing_jointly: 27700
+    married_filing_separately: 13850
+    head_of_household: 20800
+  notes:
+  - 'Base guidance: Supply 2023 Form D-40 Line 16, ''DC adjusted gross income, Line 7 minus Line 15.'' Line 7 = Line
+    4 federal adjusted gross income (''From adjusted gross income lines on federal Forms 1040, 1040-SR, 1040-NR or
+    1040-NR-EZ'') plus DC additions (Line 5 franchise tax deducted on federal forms; Line 6 other additions from DC
+    Schedule I, Calculation A, Line 9); Lines 8-15 are DC subtractions (part-year nonresidence income, taxable state/local
+    refunds, taxable Social Security and tier 1 railroad retirement, income taxed on a DC franchise/fiduciary return,
+    DC/federal government survivor benefits, unemployment insurance benefits, other Schedule I Calculation B subtractions).
+    A filer with no DC additions or subtractions has DC AGI equal to federal AGI. The engine then subtracts the shipped
+    per-status standard deduction (Line 18 for a standard-deduction filer) to reproduce Line 19 DC taxable income,
+    and applies the rate schedule to reproduce Line 20.'
+  - 'Adjudication note (two-pass): base is federal_agi — the 2023 D-40 starts from a printed Federal adjusted gross
+    income line with Calculation A additions and Calculation B subtractions producing Line 16 DC AGI; supply Line
+    16 as taxable_base (the op subtracts the Line 17/18 deduction). Rate table independently confirmed on the OTR
+    rates page (4%/6%/6.5%/8.5%/9.25%/9.75%/10.75% with constants 400/2,200/3,500/19,650/42,775/91,525).'
+  - 'SINGLE RATE SCHEDULE FOR ALL FILING STATUSES: DC publishes one ''Income Tax Rate Table'' (''For taxable years
+    beginning January 1, 2022'', booklet p.3, repeated as ''Calculation I/Tax Rate Schedule'' p.17) that applies to
+    Line 19 DC taxable income regardless of filing status; it is duplicated per status here. Married filing separately
+    is NOT half of married filing jointly — every status uses the identical schedule.'
+  - 'PRINTED CONSTANTS VERIFIED EXACT: $400 = 4% x $10,000; $2,200 = $400 + 6% x $30,000; $3,500 = $2,200 + 6.5% x
+    $20,000; $19,650 = $3,500 + 8.5% x $190,000; $42,775 = $19,650 + 9.25% x $250,000; $91,525 = $42,775 + 9.75% x
+    $500,000 — each printed ''$X plus Y% of the excess over $Z'' constant equals the cumulative sum of the prior brackets
+    with no rounding divergence.'
+  - 'NO PERSONAL OR DEPENDENT EXEMPTIONS: the 2023 Form D-40 computes DC taxable income as Line 16 (DC adjusted gross
+    income) minus Line 18 (DC deduction amount) only — ''Line 19 DC taxable income. Subtract Line 18 from Line 16.''
+    There is no exemption line on the form and the booklet''s DC Taxable Income instructions (p.17-18) name only the
+    deduction, so this pack ships no exemption keys; test vectors use exemptions_count 0 and dependents_count 0.'
+  - 'TAX TABLE MANDATE below $100,000: Form D-40 Line 20 and the p.18 instructions direct filers with Line 19 taxable
+    income of $100,000 or less to ''use the tax tables on pages 83-92''; only above $100,000 is Calculation I (exact
+    bracket math) used. The tables are built on $50 income bands, so bracket math may differ from the printed table
+    by a few dollars within a band — the filed form must use the table when Line 19 is $100,000 or less.'
+  - 'DEDUCTION TYPE MUST MATCH FEDERAL: Line 17 — ''Take the same type as you took on your federal return.'' The shipped
+    standard_deduction applies only to standard-deduction filers. Itemizers enter DC itemized deductions on Line 18
+    via Calculation F (full-year residents) or Calculation D (part-year): DC does NOT allow a deduction for state
+    and local income taxes (state/local real estate taxes remain deductible), and if DC AGI exceeds $200,000 ($100,000
+    married filing separately) the itemized deduction (other than medical/dental, investment interest, and casualty/theft
+    losses) is reduced by 5% of DC AGI over the threshold.'
+  - 'ADDITIONAL STANDARD DEDUCTION for age/blindness NOT modeled: if born before January 2, 1959, or blind, an additional
+    standard deduction of $1,500 per checkbox applies ($1,850 if single or head of household) via Schedule S, Calculation
+    G-1 (booklet pp.3, 10, and the p.20 chart: e.g., single with 1 box = $15,700, 2 boxes = $17,550; MFJ up to 4 boxes
+    = $33,700). Spouse boxes may be claimed when married filing separately only if the spouse had no gross income,
+    is not filing, and cannot be claimed as a dependent. Claim it on the form — this pack ships only the base per-status
+    amounts.'
+  - 'DEPENDENT FILERS: a filer who can be claimed as a dependent (D-40 filing status ''Dependent claimed by someone
+    else'') must use the Standard Deduction Worksheet for Dependent Filers (booklet p.20): standard deduction = the
+    smaller of (earned income + $400, or $1,250 if earned income is $850 or less) and the regular status amount, plus
+    the age/blind add-on — an income-dependent amount NOT modeled by the shipped fixed standard_deduction.'
+  - 'MARRIED/REGISTERED DOMESTIC PARTNERS FILING SEPARATELY ON THE SAME RETURN not modeled: this combined-return status
+    takes a combined $27,700 standard deduction and computes each person''s tax separately using Calculation J on
+    Schedule S (each spouse''s separate federal AGI, additions, subtractions and deductions), then combines Lines
+    21-35 — per-couple math the engine does not reproduce. The engine''s married_filing_separately models a separate-return
+    MFS filer with the $13,850 standard deduction.'
+  - 'REGISTERED DOMESTIC PARTNERS: DC allows registered domestic partners to file jointly (use married_filing_jointly,
+    $27,700) or separately on the same return — statuses that do not exist federally.'
+  - 'QUALIFYING SURVIVING SPOUSE: DC''s ''Qualifying widow(er) with dependent child'' status takes the same $27,700
+    standard deduction as married filing jointly (booklet p.10 and the p.20 chart list it separately at $27,700) and
+    the same universal rate schedule, so the engine''s QSS -> married_filing_jointly mapping reproduces the correct
+    tax.'
+  - 'PART-YEAR RESIDENTS: must prorate the standard deduction (and credits) by days domiciled in DC divided by 365
+    (Part-Year Instructions, booklet p.15, and Calculation C) and subtract income received during the period of nonresidence
+    on Line 8 — the shipped full-year standard_deduction amounts do not apply as-is to part-year filers.'
+  - 'DC HEALTH CARE SHARED RESPONSIBILITY not modeled: Line 25 adds an individual-mandate payment (Schedule HSR, Part
+    IV, Line 17) to Line 24, producing Line 26 ''Total tax and DC Health Care Shared Responsibility.'' The engine
+    computes only Line 20 tax.'
+  - 'CREDITS not modeled (they are credits against tax, not base reductions): Line 21 credit for child and dependent
+    care expenses (federal Form 2441 amount x .32), Line 22 non-refundable credits from DC Schedule U, Line 27 DC
+    EITC (70% of federal EIC with a qualifying child; separate worksheet, max $600, for filers without one), Line
+    28 Schedule H homeowner/renter property tax credit (max $1,325), and Line 29 refundable Schedule U credits.'
+  - 'ROUNDING: the D-40 instructs ''Round cents to nearest dollar'' (form header); the engine''s round-half-up to
+    whole dollars matches for the Calculation I computation.'
+  - 'The 2023 standard deduction amounts track the federal amounts (''The standard deductions are increasing based
+    on the federal law; beginning January 1, 2023'', booklet p.3: $12,950 -> $13,850 single/MFS; $19,400 -> $20,800
+    HOH; $25,900 -> $27,700 MFJ and qualifying widow(er)).'
+  - The rate schedule has been in effect since taxable years beginning January 1, 2022 (no 2023 mid-year rate change);
+    the booklet lists it under 'Reminders.'

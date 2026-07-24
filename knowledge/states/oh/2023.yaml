@@ -175,3 +175,88 @@ unverified:
 - 'The exact OH|TAX eServices payment portal URL: instructions reference both tax.ohio.gov/pay (general ''how to
   pay'' page) and tax.ohio.gov/myportal (OH|TAX eServices login). Confirm the current canonical portal URL at the
   DOR.'
+tax:
+  citation:
+    source: 2023 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) — p. 46 table '2023 Ohio Income
+      Tax Brackets for Ohio IT 1040' (0.000% to $26,050; $360.69 + 2.750% over $26,050; $2,394.32 + 3.688% over $100,000;
+      $2,958.58 + 3.750% over $115,300); p. 17 'Line 8a – Tax on Line 7a' instruction and personal/dependent exemption
+      table ($2,400/$2,150/$1,900 by MAGI); pp. 47-52 '2023 Income Tax Table for Ohio IT 1040'. Form line labels (lines
+      1-8c) and Schedule of Business Income lines 12-16 (3% business tax, $250,000/$125,000 business income deduction)
+      verified from the 2023 IT 1040 form bundle at https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/1040-bundle-original.pdf
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 26050, rate: 0}
+    - {over: 26050, but_not_over: 100000, rate: 0.0275}
+    - {over: 100000, but_not_over: 115300, rate: 0.03688}
+    - {over: 115300, but_not_over: null, rate: 0.0375}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 26050, rate: 0}
+    - {over: 26050, but_not_over: 100000, rate: 0.0275}
+    - {over: 100000, but_not_over: 115300, rate: 0.03688}
+    - {over: 115300, but_not_over: null, rate: 0.0375}
+    married_filing_separately:
+    - {over: 0, but_not_over: 26050, rate: 0}
+    - {over: 26050, but_not_over: 100000, rate: 0.0275}
+    - {over: 100000, but_not_over: 115300, rate: 0.03688}
+    - {over: 115300, but_not_over: null, rate: 0.0375}
+    head_of_household:
+    - {over: 0, but_not_over: 26050, rate: 0}
+    - {over: 26050, but_not_over: 100000, rate: 0.0275}
+    - {over: 100000, but_not_over: 115300, rate: 0.03688}
+    - {over: 115300, but_not_over: null, rate: 0.0375}
+  base: state_taxable_income
+  tax_line: 'IT 1040 line 8a: "Nonbusiness income tax liability on line 7a (see instructions for tax tables)". Booklet
+    p. 46 table headings: "Taxable Nonbusiness Income (Ohio IT 1040, line 7)" -> "Nonbusiness Income Tax (enter on
+    Ohio IT 1040, line 8a)". Line 8c "Income tax liability before credits (line 8a plus line 8b)" adds the separate
+    3% business income tax (line 8b), which this op does not model.'
+  exemptions: {}
+  notes:
+  - 'Base guidance: Supply 2023 Ohio IT 1040 line 7 (= line 7a), ''Taxable nonbusiness income (line 5 minus line 6;
+    if negative, enter zero)''. Compute it on the form: line 3 Ohio adjusted gross income (federal AGI line 1 + Schedule
+    of Adjustments additions line 2a - deductions line 2b), minus line 4 exemption amount (MAGI-tiered, see notes)
+    = line 5 Ohio income tax base, minus line 6 taxable business income (Ohio Schedule of Business Income line 15)
+    = line 7. This pack ships NO standard deduction and NO exemptions, so the engine applies the brackets directly
+    to the figure you supply — do not pass federal AGI or Ohio AGI.'
+  - 'CRITICAL — printed-constant divergence at $26,050: Ohio''s published 2023 schedule (booklet p. 46) is discontinuous.
+    It reads 0.000% up to $26,050, then ''$360.69 plus 2.750% of the amount in excess of $26,050'' — but the cumulative
+    sum of the prior bracket is $0.00, not $360.69. Pure marginal bracket math cannot reproduce this fixed $360.69
+    jump, so this op''s result is exactly $360.69 BELOW the form''s printed schedule (and the booklet''s tax table,
+    which embeds it — e.g. the $26,050-$26,100 table band shows $361) for any line 7 amount over $26,050. The remaining
+    printed constants ARE internally consistent with the marginal rates: $360.69 + 2.75% x $73,950 = $2,394.315 vs
+    printed $2,394.32 (+$0.005), and $2,394.32 + 3.688% x $15,300 = $2,958.584 vs printed $2,958.58 (-$0.004). The
+    filed form must use the printed brackets/table (R.C. 5747.02(A)(3)) — add $360.69 to this op''s result when line
+    7 exceeds $26,050 to match the form.'
+  - 'Tax table below $115,300: for line 7 amounts under $115,300, tax ''has been calculated for you'' in the 2023
+    Income Tax Table (booklet pp. 47-52, $50-wide bands); p. 46 states taxpayers with taxable nonbusiness income of
+    $115,300 or more MUST use the brackets. The line 8a instruction (p. 17) says ''All taxpayers can utilize the Income
+    Tax Brackets'' and warns ''The tax amount listed in the Income Tax Table may be slightly lower or higher than
+    the tax amount computed by using the Income Tax Brackets'' — table-band tax can differ by a few dollars within
+    a band from exact bracket math.'
+  - 'Personal/dependent exemption NOT shipped because it is income-dependent (booklet p. 17): $2,400 per exemption
+    if modified adjusted gross income (MAGI) is $40,000 or less; $2,150 if MAGI is $40,001-$80,000; $1,900 if MAGI
+    is more than $80,000. The same tiered amount applies to the taxpayer, spouse, and each dependent (IT 1040 line
+    4). MAGI = Ohio adjusted gross income (line 3) plus the business income deduction (Schedule of Adjustments line
+    12) (booklet p. 8, R.C. 5747.01(II)). A filer who can be claimed as a dependent on someone else''s return gets
+    $0 exemption for themselves. Compute line 4 on the form; supply line 7 to this op.'
+  - Ohio has NO standard deduction and no itemized deduction; the only base reductions are the Schedule of Adjustments
+    deductions (line 2b) and the line 4 exemption, both already reflected in the line 7 figure you supply.
+  - 'Business income is taxed SEPARATELY and is not modeled: taxable business income (IT 1040 line 6, after the business
+    income deduction of $250,000 single/MFJ or $125,000 MFS) is taxed at a flat 3% on Ohio Schedule of Business Income
+    line 16 and reported on IT 1040 line 8b; total income tax liability before credits is line 8c = 8a + 8b. The line
+    7 figure supplied to this op already excludes business income.'
+  - 'One rate schedule for ALL filing statuses: Ohio''s 2023 brackets do not vary by filing status (the p. 46 schedule
+    prints a single set of brackets); the identical schedule is duplicated per status here. Qualifying surviving spouse
+    shares the form''s ''Single, head of household or qualifying surviving spouse'' checkbox and maps to married_filing_jointly
+    in the engine with an identical result.'
+  - Ohio school district income tax (form SD 100) is a separate ADDITIONAL tax on top of the IT 1040 for residents
+    of taxing school districts — not modeled by this op.
+  - 'Ohio''s personal/dependent-linked ''exemption credit'' is a CREDIT, not an exemption: $20 for each exemption
+    claimed, on the Ohio Schedule of Credits line 9, only if MAGI less exemptions is under $30,000 (R.C. 5747.022)
+    — it is subtracted from tax (IT 1040 line 9), never from income, and is not modeled. Other unmodeled credits include
+    the joint filing credit (5-20% of tax, max $650), retirement income credit, senior citizen credit ($50), and Ohio
+    EIC (30% of federal EIC).'
+  - '2023 rate change: the booklet''s ''Highlights for Tax Year 2023'' (p. 5) states ''Ohio has reduced the number
+    of tax brackets used to calculate tax on nonbusiness income and reduced two of the three tax rates.'' The p. 46
+    schedule shipped here is the final published schedule the 2023 filing season used.'
+  - 'Rounding: the form instructs ''Use whole dollars only'' / ''Round all figures to the nearest dollar.'''

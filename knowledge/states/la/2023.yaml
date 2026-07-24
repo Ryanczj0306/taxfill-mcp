@@ -169,3 +169,119 @@ unverified:
 - Specific standalone dollar filing thresholds were not located on a .gov page; LA ties the filing requirement to
   the federal filing obligation rather than a fixed LA-only gross-income threshold, so confirm any specific threshold
   at the DOR.
+tax:
+  citation:
+    source: '2023 Louisiana Tax Table (resident IT-540 instructions booklet, printed pp. 17-24): ''2023 LOUISIANA TAX
+      TABLE - Single or Married Filing Separately (Filing Status Box 1 or 3)'' / ''Married Filing Jointly or Qualifying
+      Surviving Spouse (Filing Status Box 2 or 5)'' / ''Head of Household (Filing Status Box 4)''; each header states
+      ''The $4,500 [Single/MFS] / $9,000 [MFJ-QSS, HOH] combined personal exemption-standard deduction and $1,000 for
+      each exemption over one [over two for MFJ-QSS] have been used in determining the tax shown in this table'', with
+      continuations ''Plus 4.25% of Tax Table Income in Excess of $51,000'' (Single/MFS, HOH) and ''Plus 4.25% of Tax
+      Table Income in Excess of $101,000'' (MFJ/QSS). Rates and bracket boundaries cross-verified against the 2023 IT-540B
+      instructions Tax Computation Worksheet, p. 4 (1.85% on the first $12,500/$25,000; 3.5% on the next $37,500/$75,000;
+      4.25% over $50,000/$100,000; Line C1 combined personal exemption-standard deduction $4,500 statuses 1/3, $9,000
+      statuses 2/4/5; Line C2 $1,000 per 65-or-over/blind box and per dependent; Lines E/F/G deduct it from the first
+      bracket), https://dam.ldr.la.gov/taxforms/IT540Bi(2023).pdf, and the 2023 IT-540 instructions, Lines 6-10, https://dam.ldr.la.gov/taxforms/IT540i%20WEB(2023)%20INSTRUCTIONS.pdf'
+    url: https://dam.ldr.la.gov/taxforms/IT540(2023)%20TT.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 4500, rate: 0}
+    - {over: 4500, but_not_over: 12500, rate: 0.0185}
+    - {over: 12500, but_not_over: 50000, rate: 0.035}
+    - {over: 50000, but_not_over: null, rate: 0.0425}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 9000, rate: 0}
+    - {over: 9000, but_not_over: 25000, rate: 0.0185}
+    - {over: 25000, but_not_over: 100000, rate: 0.035}
+    - {over: 100000, but_not_over: null, rate: 0.0425}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4500, rate: 0}
+    - {over: 4500, but_not_over: 12500, rate: 0.0185}
+    - {over: 12500, but_not_over: 50000, rate: 0.035}
+    - {over: 50000, but_not_over: null, rate: 0.0425}
+    head_of_household:
+    - {over: 0, but_not_over: 9000, rate: 0}
+    - {over: 9000, but_not_over: 12500, rate: 0.0185}
+    - {over: 12500, but_not_over: 50000, rate: 0.035}
+    - {over: 50000, but_not_over: null, rate: 0.0425}
+  base: federal_agi
+  tax_line: 'IT-540 Line 10: "YOUR LOUISIANA INCOME TAX - Enter the amount from the tax table that corresponds with
+    your filing status." Instructions, Line 10: "Use the tax table that corresponds with your filing status. Locate
+    the amount of your tax table income from Line 9 in the first two columns of the tax table. Read across to the
+    column numbered the same as the total number of exemptions claimed on Line 6F. The amount shown in that column
+    is your Louisiana tax liability. ... If you have more than 8 exemptions, refer to the instructions at the top
+    of the tax tables."'
+  exemptions:
+    dependent:
+      amount: 1000
+      note: 'Per exemption over the count built into the tax table (one for Single/MFS/HOH; two for MFJ/QSS): $1,000 for
+        each dependent claimed on IT-540 Line 6C (counted in Line 6F). Officially this is deducted from income taxed in
+        the LOWEST (1.85%) bracket - the tax table header says ''$1,000 for each exemption over one [two] have been used
+        in determining the tax'', and the 2023 IT-540B Tax Computation Worksheet subtracts it (Line C2 -> E) from the
+        first bracket, spilling any excess over the first bracket into the 3.5% bracket (Line G). calc.state_tax instead
+        subtracts it from the base, which is exact while your top rate is 1.85% but understates tax by up to $16.50 (3.5%
+        bracket) or $24.00 (4.25% bracket) per exemption at higher incomes. Note: for MORE than 8 exemptions Louisiana''s
+        own table instruction switches to base-reduction (''reduce your tax table income by $1,000 for each exemption
+        over eight'' and use the 8-exemption column). The IT-540B worksheet labels Line C2 ''Credit for Dependents'',
+        but mechanically it is an income deduction, not a tax credit. Dependents for whom the Deduction for Certain Adoptions
+        is claimed are excluded (Line 6E reduces Line 6F) - that $5,000 Schedule E deduction (code 30E) is ''in lieu of
+        the $1,000 dependency deduction.'''
+    age_65:
+      amount: 1000
+      note: $1,000 per '65 or older' box marked on IT-540 Lines 6A/6B (taxpayer and spouse each), counted in the Line
+        6F exemption total and deducted from the lowest bracket via the tax table column. NOT applied by calc.state_tax
+        - claim it on the form through the Line 6F exemption count.
+    blind:
+      amount: 1000
+      note: $1,000 per 'Blind' box marked on IT-540 Lines 6A/6B (taxpayer and spouse each), counted in the Line 6F exemption
+        total and deducted from the lowest bracket via the tax table column. NOT applied by calc.state_tax - claim it
+        on the form through the Line 6F exemption count.
+  notes:
+  - 'Base guidance: Supply 2023 Form IT-540, Line 9: "YOUR LOUISIANA TAX TABLE INCOME - Subtract Line 8D from Line
+    7. If less than zero, enter ''0.''" Line 7 is Federal Adjusted Gross Income (Federal Form 1040/1040-SR, Line 11;
+    if less than zero enter 0; if you have Louisiana additions/exempt income, Line 7 comes from Louisiana Schedule
+    E, Line 5 instead). Line 8D, "EXCESS FEDERAL ITEMIZED DEDUCTIONS," applies only to federal itemizers and equals
+    Line 8B (federal itemized deduction for medical and dental expenses, federal Schedule A Line 4) minus Line 8C
+    (federal standard deduction: $13,850 statuses 1/3, $27,700 statuses 2/5, $20,800 status 4), floor zero. IMPORTANT:
+    supply Line 9 UNREDUCED - do NOT subtract Louisiana''s $4,500/$9,000 combined personal exemption-standard deduction
+    yourself; it is encoded in the zero-rate bottom bracket shipped here (standard_deduction is null for that reason).'
+  - 'Adjudication note (two-pass): base is federal_agi — IT-540 Line 7 is federal adjusted gross income and Line 9
+    tax table income derives from it (see base-quirk note); supply Line 9. exemptions_count must be 0: the primary
+    personal exemptions are BUILT INTO the zero-rate floor ($4,500 single/MFS; $9,000 MFJ/QSS and Head of Household
+    per the printed table headers), never subtracted separately.'
+  - 'Table mandate below $51,000 ($101,000 for MFJ/QSS): IT-540 Line 10 requires taking the tax from the printed 2023
+    Louisiana Tax Table for your filing status and Line 6F exemption count - bracket math may differ by a few dollars
+    within table bands (the printed cells equal bracket math evaluated at the midpoint of each $250 income band in
+    every cell sampled); the filed form must use the table.'
+  - 'Louisiana has NO separate standard-deduction or exemption subtraction line on the IT-540: a combined personal
+    exemption-standard deduction of $4,500 (Single, MFS) or $9,000 (MFJ, QSS, HOH) is built into the tax tables and,
+    per the 2023 IT-540B Tax Computation Worksheet (nonresident instructions p. 4, the only 2023 LDR document that
+    prints the rates explicitly), it is deducted from income taxed in the LOWEST (1.85%) bracket - not from the top
+    of income. It is therefore shipped here as the zero-rate bottom bracket, and standard_deduction is null: supply
+    Line 9 tax table income unreduced and do not subtract $4,500/$9,000 yourself. Statutory bracket boundaries ($12,500/$50,000;
+    $25,000/$100,000 for statuses 2 and 5) are unchanged.'
+  - 'Above the table cap, the table itself prescribes ''Plus 4.25% of Tax Table Income in Excess of $51,000'' ($101,000
+    MFJ/QSS) added to the last printed row, which was computed at that band''s midpoint ($50,875/$100,875) - the official
+    method therefore comes out about $5 below exact bracket math (e.g., Single, one exemption, Line 9 exactly $51,000:
+    table method $1,498 vs bracket math $1,503).'
+  - Qualifying Surviving Spouse (filing status 5) shares the Married Filing Jointly tax table, brackets, and $9,000
+    combined deduction - the engine's QSS -> married_filing_jointly mapping is exact. Head of Household shares the
+    Single/MFS bracket boundaries ($12,500/$50,000) but gets the $9,000 combined personal exemption-standard deduction
+    ($4,500 more than Single) - hence its different zero-rate floor.
+  - The zero-rate floor covers only the base exemption count (one exemption for Single/MFS/HOH; two for MFJ/QSS -
+    the MFJ/QSS table has no one-exemption column, and Line 6 requires the same exemptions as your federal return
+    except for the dependent-on-another's-return, 65-or-over, and blind cases). Every additional Line 6F exemption
+    ($1,000 each - dependents, 65-or-over boxes, blind boxes) is handled per the shipped 'dependent'/'age_65'/'blind'
+    entries and their noted engine divergence.
+  - 'Louisiana credits are NOT modeled by this op and come off after Line 10: Nonrefundable Priority 1 credits (Schedule
+    C) on Line 11; refundable child care credit (federal AGI <= $25,000), refundable school readiness credit, and
+    the Louisiana Earned Income Credit (5% of the federal EIC) on Lines 13-15; other refundable Priority 2/4 credits
+    (Schedules F and I) and nonrefundable Priority 3 credits including the nonrefundable child care credit (Schedule
+    J) on Lines 16/20/25.'
+  - 'Base quirk (affects the figure you supply, not this computation): Louisiana''s only deduction between federal
+    AGI and tax table income is Line 8D ''EXCESS FEDERAL ITEMIZED DEDUCTIONS'' = federal itemized MEDICAL AND DENTAL
+    deduction (Schedule A Line 4) minus the federal standard deduction, floor zero, for federal itemizers only - since
+    tax year 2022 no other federal itemized excess is deductible; non-itemizers leave Lines 8A-8D blank.'
+  - 'Source URLs: tax tables https://dam.ldr.la.gov/taxforms/IT540(2023)%20TT.pdf ; resident instructions https://dam.ldr.la.gov/taxforms/IT540i%20WEB(2023)%20INSTRUCTIONS.pdf
+    ; resident form https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf ; IT-540B instructions (Tax Computation
+    Worksheet, p. 4) https://dam.ldr.la.gov/taxforms/IT540Bi(2023).pdf .'
