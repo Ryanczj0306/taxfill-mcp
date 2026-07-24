@@ -166,3 +166,114 @@ unverified:
   attach a check or money order'); treated as the standard payment-voucher process but exact mandatory-vs-optional
   wording not separately confirmed.
 - ATAP processing/convenience fees (if any) for online card payments — not stated in the reviewed instructions.
+tax:
+  citation:
+    source: 'Arkansas DFA, Revenue Division — ''2023 Indexed Tax Brackets'' (Individual Income Tax): full bracket table
+      (From / Less Than or Equal To / Percentage / Minus Adjustment: 0% to $5,299; 2% $5,300–$10,599 minus $105.98;
+      3% $10,600–$15,099 minus $211.97; 3.4% $15,100–$24,999 minus $272.37; 4.7% $25,000–$89,600 minus $597.35; then
+      $10-per-$100 adjustment phase-down $89,601–$94,200; 4.7% minus $153.70 at $94,201+), midpoint-of-band formula
+      examples, and Ark. Code Ann. 26-51-201(d)(1) indexing note. Cross-verified against the 2023 AR1000F and AR1000NR
+      Instructions booklet (https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf):
+      p.5 ''Special Information for Tax Year 2023'' (Act 532 top rate 4.7%), p.12 Personal Tax Credits ($29), p.14 Standard
+      Deduction chart and Lines 26–29, pp.25–31 2023 Low Income Tax Tables (Rev 09/21/2023) and Regular Income Tax Table
+      (Rev 10/4/2023) with ''For $100,001 and over, your tax is $4,544 + 4.7% of the excess over $100,000.'''
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/TaxBrackets_2023.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 5299, rate: 0}
+    - {over: 5299, but_not_over: 10599, rate: 0.02}
+    - {over: 10599, but_not_over: 15099, rate: 0.03}
+    - {over: 15099, but_not_over: 24999, rate: 0.034}
+    - {over: 24999, but_not_over: null, rate: 0.047}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 5299, rate: 0}
+    - {over: 5299, but_not_over: 10599, rate: 0.02}
+    - {over: 10599, but_not_over: 15099, rate: 0.03}
+    - {over: 15099, but_not_over: 24999, rate: 0.034}
+    - {over: 24999, but_not_over: null, rate: 0.047}
+    married_filing_separately:
+    - {over: 0, but_not_over: 5299, rate: 0}
+    - {over: 5299, but_not_over: 10599, rate: 0.02}
+    - {over: 10599, but_not_over: 15099, rate: 0.03}
+    - {over: 15099, but_not_over: 24999, rate: 0.034}
+    - {over: 24999, but_not_over: null, rate: 0.047}
+    head_of_household:
+    - {over: 0, but_not_over: 5299, rate: 0}
+    - {over: 5299, but_not_over: 10599, rate: 0.02}
+    - {over: 10599, but_not_over: 15099, rate: 0.03}
+    - {over: 15099, but_not_over: 24999, rate: 0.034}
+    - {over: 24999, but_not_over: null, rate: 0.047}
+  base: state_gross_income
+  tax_line: 'AR1000F Line 29: "Using the appropriate tax table locate the tax for your income and enter here" — the
+    tax on Line 28 ("Subtract Line 27 from Line 25. This is your Net Taxable Income."), per the 2023 AR1000F/AR1000NR
+    Instructions, Tax Computation, p.14.'
+  exemptions: {}
+  standard_deduction:
+    single: 2340
+    married_filing_jointly: 4680
+    married_filing_separately: 2340
+    head_of_household: 2340
+  notes:
+  - 'Base guidance: Supply AR1000F Line 25, ''Adjusted Gross Income (AGI)'' — Arkansas AGI, i.e. Line 23 Total Income
+    (built line-by-line from source documents, Lines 8–22: W-2 wages, interest, dividends, etc.; Arkansas does NOT
+    start from federal AGI or federal taxable income) minus Line 24 adjustments (Form AR1000ADJ). The op subtracts
+    the shipped per-status standard deduction (Line 27) to reach Line 28 Net Taxable Income and applies the brackets
+    (the Line 29 tax). If you itemize (Form AR3), the shipped standard deduction is wrong for you — compute Line 27
+    on the form instead.'
+  - 'Test-vector counts are zero by construction: Arkansas ships NO personal/dependent exemption keys (the $29-per-person
+    amounts are CREDITS against tax, AR1000F Line 7A) — the engine refuses nonzero counts for this state by design.'
+  - Arkansas has ONE bracket schedule for every filing status — the published 2023 Indexed Tax Brackets and the tax
+    tables do not vary by status, so all four statuses ship identical brackets. Filing Status 2 (married filing joint)
+    runs the couple's COMBINED Line 28 net taxable income through the same un-widened schedule; Arkansas instead offers
+    Filing Status 4 (married filing separately on the SAME return), where each spouse's own Line 28 income goes through
+    the schedule in a separate column (tax = Line 29(A) + Line 29(B), summed on Line 30) — often less total tax than
+    status 2. This op models a single run of one income through the schedule.
+  - Surviving Spouse is a SEPARATE Arkansas status (Filing Status 6) with a $2,340 standard deduction — NOT the $4,680
+    married-filing-joint amount. The engine maps qualifying surviving spouse to married_filing_jointly, which would
+    wrongly apply $4,680; an Arkansas surviving spouse gets $2,340 (compute as single for the deduction).
+  - 'Table mandate at ALL income levels: AR1000F Line 29 takes the tax from the 2023 tax tables (booklet pp.25–31),
+    which are computed at the MIDPOINT of each $100 income band and rounded to the whole dollar — ''If you use a formula
+    to calculate Arkansas income tax, the results must match the table exactly'' (2023 Indexed Tax Brackets). Bracket
+    math may differ from the table by a few dollars within a $100 band; the filed form must use the table.'
+  - CRITICAL — shipped brackets are exact ONLY for net taxable income up to $89,600. From $89,601 to $94,200 the official
+    schedule phases the 4.7% bracket's 'minus adjustment' down from $597.35 to $153.70 in $10-per-$100-band steps
+    (the $90,001–$90,200, $90,901–$91,100 and $93,601–$93,800 ranges intentionally span $200 per the Ark. Code Ann.
+    26-51-201(d)(1) rounding note), and at $94,201+ the tax is 4.7% x net taxable income - $153.70. The shipped bracket
+    math (equivalent to 4.7% x income - $597.35) UNDERSTATES the true tax above $89,600 — by $443.65 once net taxable
+    income reaches $94,201 — so above $89,600 compute from the official schedule/table, not from these brackets.
+  - 'The Regular Income Tax Table''s printed top rule — ''For $100,001 and over, your tax is $4,544 + 4.7% of the
+    excess over $100,000'' (booklet p.31, Rev 10/4/2023) — equals 4.7% x income - $156.00, while the 2023 Indexed
+    Tax Brackets constant for $100,001+ is $153.70 (4.7% x $100,000 - $153.70 = $4,546.30): a $2.30 divergence, because
+    $4,544 is the midpoint-rounded last table row ($99,901–$100,000). The filed form follows the printed table/formula.'
+  - The published 'minus adjustment' constants equal the cumulative sum of the prior brackets to the cent ($105.98
+    = 2% x $5,299 exactly; $211.97 exactly; $272.37 vs exact $272.366; $597.35 vs exact $597.353) — no material rounding
+    divergence, so the shipped marginal brackets reproduce the official formula to within one cent below $89,601.
+  - 'EXEMPTIONS ARE CREDITS IN ARKANSAS — none are shipped: Arkansas has no personal or dependent exemption that reduces
+    income. It gives $29-per-person PERSONAL TAX CREDITS instead (AR1000F Line 7A boxes: yourself, spouse, 65 or over,
+    ''65 Special'', blind, deaf, head-of-household/surviving-spouse; Line 7B: $29 per dependent; totaled on Line 7C
+    and subtracted from TAX on Line 34). These credits are not modeled by this op.'
+  - 'Other nonrefundable credits reduce the computed tax on the form but are NOT modeled: the ''Additional Tax Credit
+    for Qualified Individuals'' (up to $60 per individual, net taxable income up to $26,100, worksheet p.22) and the
+    one-time 2023 ''Inflationary Relief Income Tax Credit'' (Act 6, First Extraordinary Session of 2023: up to $150,
+    or $300 for Filing Status 2, phasing out up to $103,600/$207,200 net income, worksheet p.21); also the 20%-of-federal
+    Child and Dependent Care Credit (AR2441).'
+  - 'Low Income Tax Table (NOT modeled): full-year residents whose total income from all sources is within the limits
+    may take tax from the 2023 Low Income Tax Table applied to Line 25 AGI with NO deduction on Line 27 (''The Standard
+    Deduction is already built into the table''), which yields LESS tax than the shipped math at low incomes — tax
+    is $0 up to $13,849 (single), $19,691 / $23,472 (HoH or Surviving Spouse with 1-or-no / 2-or-more dependents),
+    $23,356 / $28,110 (MFJ with 1-or-no / 2-or-more dependents), and the table is usable up to AGI of $16,500 (single),
+    $23,900 / $27,400 (HoH/SS), $27,500 / $34,100 (MFJ). Married couples must file Status 2 to qualify; itemizers
+    and filers claiming military-compensation, military-retirement or employment-related-pension/IRA exclusions do
+    not qualify (unless they elect not to use the exclusion).'
+  - 'Standard-deduction gates not modeled: the deduction is capped at income (''If the amount on Line 25 is less than
+    the Standard Deduction, enter the amount from Line 25 on Line 27'' — consistent with the engine''s max(0, ...));
+    it ''does not apply to taxpayer''s dependent(s)''; itemizers use Form AR3 itemized deductions on Line 27 instead;
+    and for Filing Status 4 or 5, if one spouse itemizes both must itemize.'
+  - 'Retroactive 2023 rate cut: Act 532 of the 2023 General Session — ''Marginal Income Tax rates for 2023 have been
+    amended and the top rate will be reduced to 4.7%'' (booklet p.5, Special Information for Tax Year 2023). The shipped
+    schedule is the FINAL 2023 filing-season version: the 2023 Indexed Tax Brackets document and the tax tables (Low
+    Income Rev 09/21/2023; Regular Rev 10/4/2023) all print the 4.7% top rate.'
+  - 'Amounts not part of Line 29 bracket math are not modeled: Line 31 lump-sum distribution averaging (Form AR1000TD)
+    and Line 32 additional 10%-of-federal tax on early IRA/retirement distributions are ADDED to reach Line 33 total
+    tax on the form.'
+  - Round all amounts to the nearest whole dollar on the return (booklet p.12).

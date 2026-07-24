@@ -1539,14 +1539,15 @@ class StateKnowledge(BaseModel):
         description="False means federal treaty-exempt income is still taxable by this state (e.g. California)."
     )
     citation: Citation | None = None
-    # Phase G item G4 (first tranche): flat-rate income-tax computation data for the
-    # eight flat-rate 2023 states (IL, PA, IN, MI, NC, CO, KY, AZ). Optional so every
-    # other state pack still loads; calc.state_tax raises a prescriptive error naming
-    # the shipped states when a pack lacks the block.
+    # Phase G item G4: income-tax computation data — the eight flat-rate 2023 states
+    # (IL, PA, IN, MI, NC, CO, KY, AZ) via flat_rate, plus the 27 graduated-bracket
+    # states (two-pass verified 2026-07-24) via per-status brackets. Optional so the
+    # not-yet-adopted packs (CT/HI/IA/MA/NM/SC/UT) still load; calc.state_tax raises
+    # a prescriptive error naming the shipped states when a pack lacks the block.
     tax: StateTaxParams | None = Field(
         default=None,
-        description="Flat-rate tax computation block (rate, base, exemptions, standard deduction); "
-        "None = state tax math is not shipped for this state/year.",
+        description="Tax computation block (flat rate or graduated brackets, base, exemptions, "
+        "standard deduction); None = state tax math is not shipped for this state/year.",
     )
 
     @field_validator("jurisdiction")

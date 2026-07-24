@@ -114,3 +114,114 @@ deadlines:
   citation:
     source: "FTB — Extension to file (automatic 6-month extension)"
     url: "https://www.ftb.ca.gov/file/when-to-file/extension-to-file.html"
+tax:
+  citation:
+    source: 2023 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2023 California
+      Tax Rate Schedules' (Schedules X/Y/Z), p. 75; 'California Standard Deduction Chart for Most People' and Line 18/Line
+      19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Mental Health Services Tax
+      worksheet, p. 16; Form 540 (2023) Side 1-2, lines 7-11 (X $144 / X $446 exemption credits), lines 17-19, 31-32,
+      61-62
+    url: https://www.ftb.ca.gov/forms/2023/2023-540-booklet.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10412, rate: 0.01}
+    - {over: 10412, but_not_over: 24684, rate: 0.02}
+    - {over: 24684, but_not_over: 38959, rate: 0.04}
+    - {over: 38959, but_not_over: 54081, rate: 0.06}
+    - {over: 54081, but_not_over: 68350, rate: 0.08}
+    - {over: 68350, but_not_over: 349137, rate: 0.093}
+    - {over: 349137, but_not_over: 418961, rate: 0.103}
+    - {over: 418961, but_not_over: 698271, rate: 0.113}
+    - {over: 698271, but_not_over: null, rate: 0.123}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 20824, rate: 0.01}
+    - {over: 20824, but_not_over: 49368, rate: 0.02}
+    - {over: 49368, but_not_over: 77918, rate: 0.04}
+    - {over: 77918, but_not_over: 108162, rate: 0.06}
+    - {over: 108162, but_not_over: 136700, rate: 0.08}
+    - {over: 136700, but_not_over: 698274, rate: 0.093}
+    - {over: 698274, but_not_over: 837922, rate: 0.103}
+    - {over: 837922, but_not_over: 1396542, rate: 0.113}
+    - {over: 1396542, but_not_over: null, rate: 0.123}
+    married_filing_separately:
+    - {over: 0, but_not_over: 10412, rate: 0.01}
+    - {over: 10412, but_not_over: 24684, rate: 0.02}
+    - {over: 24684, but_not_over: 38959, rate: 0.04}
+    - {over: 38959, but_not_over: 54081, rate: 0.06}
+    - {over: 54081, but_not_over: 68350, rate: 0.08}
+    - {over: 68350, but_not_over: 349137, rate: 0.093}
+    - {over: 349137, but_not_over: 418961, rate: 0.103}
+    - {over: 418961, but_not_over: 698271, rate: 0.113}
+    - {over: 698271, but_not_over: null, rate: 0.123}
+    head_of_household:
+    - {over: 0, but_not_over: 20839, rate: 0.01}
+    - {over: 20839, but_not_over: 49371, rate: 0.02}
+    - {over: 49371, but_not_over: 63644, rate: 0.04}
+    - {over: 63644, but_not_over: 78765, rate: 0.06}
+    - {over: 78765, but_not_over: 93037, rate: 0.08}
+    - {over: 93037, but_not_over: 474824, rate: 0.093}
+    - {over: 474824, but_not_over: 569790, rate: 0.103}
+    - {over: 569790, but_not_over: 949649, rate: 0.113}
+    - {over: 949649, but_not_over: null, rate: 0.123}
+  base: federal_agi
+  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13: ''Line 31 – Tax. To figure your tax, use one or more of the
+    following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning
+    on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule
+    for your filing status on page 75.'' Rate schedule header (p. 75): ''If the amount on Form 540, line 19 is over
+    – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –''. Line 19 = line 17 (California
+    AGI) minus line 18 (larger of California itemized deductions or California standard deduction); ''If less than
+    zero, enter -0-''.'
+  exemptions: {}
+  standard_deduction:
+    single: 5363
+    married_filing_jointly: 10726
+    married_filing_separately: 5363
+    head_of_household: 10726
+  notes:
+  - 'Base guidance: Supply California adjusted gross income — 2023 Form 540, line 17 (''California adjusted gross
+    income. Combine line 15 and line 16''), i.e. federal AGI (line 13) plus California additions minus California
+    subtractions per Schedule CA (540). Do NOT supply unmodified federal AGI: California does not conform to federal
+    income tax treaties (treaty-exempt income is added back on Schedule CA) and has other adjustments. The op subtracts
+    the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and applies the
+    rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32) and special credits.'
+  - 'Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI
+    = federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18
+    standard deduction). California exemptions are $144/$446 CREDITS (lines 7-10), so vectors pass zero counts by
+    design.'
+  - 'EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS — the op does not model them: California''s personal exemption ($144
+    per exemption, Form 540 lines 7-9: personal, blind, senior) and dependent exemption ($446 per dependent, line
+    10) are exemption CREDITS totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce taxable
+    income. This op reproduces line 31 (tax before exemption credits) only; subtract line 32 credits (and any special
+    credits, lines 40-47) on the form.'
+  - 'Exemption-credit AGI limitation (not modeled): if federal AGI (Form 540 line 13) exceeds $237,035 (single/MFS),
+    $474,075 (MFJ/qualifying surviving spouse), or $355,558 (head of household), the line 32 exemption credits are
+    reduced via the AGI Limitation Worksheet (booklet p. 14).'
+  - 'Table mandate below $100,000 — ''Use only if your taxable income on Form 540, line 19 is more than $100,000.
+    If $100,000 or less, use the Tax Table'' (booklet pp. 13, 75): bracket math may differ by a few dollars within
+    table bands; the filed form must use the Tax Table (booklet pp. 69-74).'
+  - '1% Mental Health Services Tax is NOT modeled: if taxable income (line 19) exceeds $1,000,000, an additional 1%
+    of the excess over $1,000,000 is due on Form 540 line 62 (booklet p. 16 worksheet).'
+  - Alternative Minimum Tax (Form 540 line 61, Schedule P (540)) and other taxes/credit recapture (line 63, e.g. FTB
+    3805P early-distribution tax, IRC 409A NQDC 5% tax) are NOT modeled. FTB 3800 (tax for certain children with unearned
+    income) and FTB 3803 (parents' election to report child's interest/dividends) change the line 31 computation and
+    are NOT modeled.
+  - 'Standard-deduction gates NOT modeled: a person claimable as a dependent on another''s return must use the California
+    Standard Deduction Worksheet for Dependents (larger of earned income or the $1,250 minimum standard deduction,
+    capped at the regular per-status amount) — not the chart amount; married/RDP filing separately, both spouses must
+    either both itemize or both take the standard deduction; itemizers enter California itemized deductions from Schedule
+    CA (540) Part II line 30 on line 18 instead of the standard deduction.'
+  - Qualifying surviving spouse/RDP uses Schedule Y — identical to married/RDP filing jointly (engine's QSS-to-MFJ
+    mapping matches the published schedule exactly). Married/RDP filing separately uses Schedule X, the same printed
+    schedule as Single (copied from the schedule, not derived; note CA MFS is NOT half of MFJ at the bracket boundaries
+    — it equals the Single schedule).
+  - 'Base caution: Form 540 line 17 (California AGI) differs from federal AGI via Schedule CA (540) adjustments —
+    notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows
+    the foreign earned income exclusion and foreign tax credit, and subtracts items like Social Security benefits.
+    Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts.'
+  - 'Printed ''$X + Y% of amount over $Z'' constants verified against cumulative bracket sums: all 27 constants match
+    to the cent (largest print-rounding divergence $0.006, on Schedule Y''s $72,628.92 and $135,752.98 constants)
+    — bracket math and the printed schedule agree.'
+  - 'Rounding: the booklet''s worked example (p. 75) rounds the schedule result to whole dollars for line 31 ($5,082.80
+    entered as $5,083), consistent with this op''s round-half-up-to-whole-dollars behavior.'
+  - '2023 filing-season schedule confirmed final: California had no mid-year 2023 rate change; these are the inflation-indexed
+    schedules printed in the final 2023 booklet used for the 2024 filing season.'

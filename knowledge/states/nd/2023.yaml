@@ -176,3 +176,74 @@ unverified:
   Confirm the current ND TAP payment URL at the DOR.
 - Exact ND-EZ vs ND-1 eligibility questions were summarized, not fully enumerated; confirm the 'Which form to use'
   checklist (2023 booklet p.6) for a specific taxpayer.
+tax:
+  citation:
+    source: 2023 North Dakota Individual Income Tax Booklet (Forms ND-EZ and ND-1 instructions), ND Office of State
+      Tax Commissioner — '2023 Tax Rate Schedules', printed p.28 (PDF p.30); 2023 Tax Table pp.20-27; 'Line 20 - Tax'
+      instruction p.15; 'Income tax rate reduction' p.2; 2023 Form ND-1 (SFN 28702), page 1 lines 1b/18 and page 2 lines
+      19-20
+    url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/2023-individual-income-tax-booklet.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 44725, rate: 0}
+    - {over: 44725, but_not_over: 225975, rate: 0.0195}
+    - {over: 225975, but_not_over: null, rate: 0.025}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 74750, rate: 0}
+    - {over: 74750, but_not_over: 275100, rate: 0.0195}
+    - {over: 275100, but_not_over: null, rate: 0.025}
+    married_filing_separately:
+    - {over: 0, but_not_over: 37375, rate: 0}
+    - {over: 37375, but_not_over: 137550, rate: 0.0195}
+    - {over: 137550, but_not_over: null, rate: 0.025}
+    head_of_household:
+    - {over: 0, but_not_over: 59950, rate: 0}
+    - {over: 59950, but_not_over: 250550, rate: 0.0195}
+    - {over: 250550, but_not_over: null, rate: 0.025}
+  base: federal_taxable_income
+  tax_line: 'Form ND-1 (2023), page 2, line 20: "Tax - If full-year resident, enter tax on amount on line 19 from
+    Tax Table in instructions. If full-year nonresident or part-year resident, enter tax from Schedule ND-1NR, line
+    23. All filers: If you have farm income or sold a research credit, see instructions."'
+  exemptions: {}
+  notes:
+  - 'Base guidance: Supply federal taxable income — Form 1040/1040-SR line 15, which is entered on Form ND-1 line
+    1b. If any North Dakota additions (ND-1 lines 2-4a) or subtractions (lines 5-17, e.g. U.S.-obligation interest,
+    net long-term capital gain exclusion, qualified dividend exclusion, Social Security exclusion) apply, supply Form
+    ND-1 line 19 (North Dakota taxable income, carried from line 18 = line 1b + additions - subtractions, floored
+    at 0) instead. The brackets apply directly to that figure with nothing further subtracted: North Dakota has no
+    state standard deduction and no personal/dependent exemptions — the federal standard/itemized deduction is already
+    embedded in federal taxable income. Nonresident-alien edge case: ND does not conform to federal treaty exemptions;
+    an NRA must build a Pro Forma 1040NR disregarding treaty provisions and use its line 15 as ND-1 line 1b.'
+  - '2023 rate reform (final schedule used for the 2023 filing season): per the 2023 booklet p.2, ''Effective beginning
+    with tax year 2023, the existing five-bracket system for individuals, estates, and trusts was replaced with a
+    three-bracket system. Notably, there is now a 0% bracket and the highest rate was reduced from 2.9% to 2.5%.''
+    The shipped 0%/1.95%/2.5% schedules are the ones printed in the final 2023 booklet (p.28).'
+  - 'Tax Table mandate below $100,000: booklet p.15 ''Line 20 - Tax'' instructs full-year residents to ''use the Tax
+    Table on page 20 to calculate your tax''; the 2023 Tax Table (pp.20-27, $50 income bands) covers ND taxable income
+    under $100,000 and itself says ''If $100,000 or over — use the Tax Rate Schedules.'' Bracket math may differ from
+    the table by about a dollar within a band (table values appear to be the schedule evaluated at the band midpoint
+    — the booklet''s own example, MFJ $90,375, gives $305, which equals the bracket math rounded); the filed form
+    must use the table below $100,000.'
+  - Qualifying surviving spouse / qualifying widow(er) (Form ND-1 filing status 5) uses the Married filing jointly
+    column — the rate schedule is titled 'Married filing jointly and Qualifying widow(er)' and the footnote reads
+    'If a Qualifying widow(er), use the Married filing jointly column'; the engine's QSS-to-MFJ mapping is exactly
+    correct.
+  - 'Printed ''$X + Y% of excess over $Z'' constants reconcile exactly with cumulative bracket sums (cent-rounded):
+    Single $3,534.38 (exact 3,534.375), MFJ $3,906.83 (exact 3,906.825), MFS $1,953.41 (exact 1,953.4125), HoH $3,716.70
+    (exact); no divergence.'
+  - 'No state standard deduction and no personal or dependent exemptions: ND starts from federal taxable income (Form
+    1040 line 15 -> ND-1 line 1b), which already reflects the FEDERAL standard or itemized deduction; nothing further
+    is subtracted before the rates apply.'
+  - 'ND additions and subtractions (ND-1 lines 2-17: e.g. net long-term capital gain exclusion of 40% (line 6), qualified
+    dividend exclusion (line 13), Social Security benefit exclusion (line 15), U.S.-obligation interest (line 5))
+    are NOT modeled — if any apply, compute ND-1 line 18/19 on the form and supply that as the base.'
+  - Marriage penalty credit (Form ND-1 line 22, maximum $287 for 2023) is a nonrefundable CREDIT subtracted from tax
+    for joint filers, computed on the booklet worksheet — it is NOT an income exemption and is not modeled by this
+    op.
+  - 'Full-year nonresidents and part-year residents do not use this computation directly: their tax comes from Schedule
+    ND-1NR line 23 (the full-year tax prorated by the ND income ratio); this pack reproduces the full-year-resident
+    tax on ND-1 line 20 only.'
+  - 'Alternate computations not modeled: farm income averaging via Schedule ND-1FA and tax on proceeds from the sale
+    of a research expense credit via Schedule ND-1CS — ND-1 line 20 directs those filers to the instructions.'
+  - 'ND does NOT conform to federal income tax treaties (booklet p.5): treaty-exempt income is effectively rebuilt
+    into the base via a Pro Forma 1040NR that disregards treaty provisions, whose line 15 becomes ND-1 line 1b.'

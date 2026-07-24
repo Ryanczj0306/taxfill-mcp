@@ -237,11 +237,16 @@ def test_calc_state_tax_is_dispatched():
     pa = _data(_run(_call("calc", {"op": "state_tax", "args": {
         "state": "pa", "taxable_base": 61000, "year": 2023}})))
     assert pa["tax"] == 1873 and "no exemptions or standard deduction" in pa["work"]
+    # CA (graduated second tranche): the bracket math and structure fields travel over MCP.
+    ca = _data(_run(_call("calc", {"op": "state_tax", "args": {
+        "state": "ca", "taxable_base": 60000, "filing_status": "head_of_household", "year": 2023}})))
+    assert ca["tax"] == 777 and ca["rate_structure"] == "graduated"
+    assert ca["rate"] is None and ca["marginal_rate"] == "0.02"
     # The unsupported-state prescriptive error (listing the shipped states) travels over MCP.
     err = _run(_call("calc", {"op": "state_tax", "args": {
-        "state": "ca", "taxable_base": 50000, "year": 2023}}))
+        "state": "ut", "taxable_base": 50000, "year": 2023}}))
     assert err.isError is True
-    for code in ("az", "co", "il", "in", "ky", "mi", "nc", "pa"):
+    for code in ("az", "ca", "il", "ny", "pa", "wi"):
         assert code in err.content[0].text
     # The unknown-op error lists the new op.
     unknown = _run(_call("calc", {"op": "nope", "args": {}}))
