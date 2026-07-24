@@ -186,3 +186,100 @@ unverified:
   exact deep-link path was not independently re-fetched as a live page this session.
 - Private delivery service (FedEx/UPS) address Comptroller of Maryland, Revenue Administration Division, 110 Carroll
   Street, Annapolis, MD 21411-0001 is the same as the no-payment address per Instruction 24 (confirmed on .gov).
+tax:
+  citation:
+    source: 2023 Maryland State & Local Tax Forms & Instructions (Resident Booklet, Form 502 instructions) — Instruction
+      17 'FIGURE YOUR MARYLAND TAX', 2023 Tax Rate Schedules I and II (printed p.13); MARYLAND TAX COMPUTATION WORKSHEET
+      SCHEDULES (17A), Schedules I and II at the end of the 2023 Maryland Tax Table (printed p.31); Instruction 16 standard
+      deduction (printed p.13); Instruction 10 EXEMPTION AMOUNT CHART (10A) (printed p.4); Instruction 19 2023 LOCAL
+      TAX RATE CHART (printed p.16)
+    url: https://www.marylandtaxes.gov/forms/23_forms/Resident-Booklet.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 2000, rate: 0.03}
+    - {over: 2000, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: 100000, rate: 0.0475}
+    - {over: 100000, but_not_over: 125000, rate: 0.05}
+    - {over: 125000, but_not_over: 150000, rate: 0.0525}
+    - {over: 150000, but_not_over: 250000, rate: 0.055}
+    - {over: 250000, but_not_over: null, rate: 0.0575}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 2000, rate: 0.03}
+    - {over: 2000, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: 150000, rate: 0.0475}
+    - {over: 150000, but_not_over: 175000, rate: 0.05}
+    - {over: 175000, but_not_over: 225000, rate: 0.0525}
+    - {over: 225000, but_not_over: 300000, rate: 0.055}
+    - {over: 300000, but_not_over: null, rate: 0.0575}
+    married_filing_separately:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 2000, rate: 0.03}
+    - {over: 2000, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: 100000, rate: 0.0475}
+    - {over: 100000, but_not_over: 125000, rate: 0.05}
+    - {over: 125000, but_not_over: 150000, rate: 0.0525}
+    - {over: 150000, but_not_over: 250000, rate: 0.055}
+    - {over: 250000, but_not_over: null, rate: 0.0575}
+    head_of_household:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 2000, rate: 0.03}
+    - {over: 2000, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: 150000, rate: 0.0475}
+    - {over: 150000, but_not_over: 175000, rate: 0.05}
+    - {over: 175000, but_not_over: 225000, rate: 0.0525}
+    - {over: 225000, but_not_over: 300000, rate: 0.055}
+    - {over: 300000, but_not_over: null, rate: 0.0575}
+  base: state_taxable_income
+  tax_line: 'Form 502 line 21: ''Maryland tax (from Tax Table or Computation Worksheet Schedules I or II)'''
+  exemptions: {}
+  notes:
+  - 'Base guidance: Supply Form 502 line 20 ''Taxable net income (Subtract line 19 from line 18.)''. Compute it on
+    the form: line 1 federal AGI + additions (lines 2-6) - subtractions (lines 8-15) = line 16 Maryland adjusted gross
+    income; minus line 17 deduction (standard = 15% of line 16 clamped to $1,700-$2,550 for filing statuses 1/3/6
+    or $3,450-$5,150 for statuses 2/4/5 via Worksheet 16A, OR itemized = federal itemized deductions less state and
+    local income taxes) = line 18 net income; minus line 19 exemption amount (Exemption Amount Chart 10A: $3,200 per
+    person phased down by federal AGI, +$1,000 each age-65/blind) = line 20. Because Maryland''s standard deduction
+    is a percentage of income with min/max clamps and its exemptions phase out by federal AGI, neither is shipped
+    as a fixed amount — the caller must supply line 20 with deductions and exemptions already taken on the form.'
+  - 'Tax-table mandate below $100,000: Instruction 17 states ''You must use the tax tables if your taxable income
+    is less than $100,000'' and ''The 2023 Maryland tax rate schedules are shown so you can see the tax rate that
+    applies to all levels of income; however, do not use them to figure your tax.'' Bracket math may differ by a few
+    dollars within the $50 table bands (e.g. schedule math at exactly $50,000 single gives $2,322.50 while the table
+    band value differs slightly); the filed Form 502 must use the 2023 Maryland Tax Table for line-20 income under
+    $100,000 and Worksheet Schedules 17A at $100,000 or more.'
+  - 'Mandatory LOCAL income tax is NOT modeled: every Maryland county and Baltimore City levies a local income tax
+    on the SAME Form 502 line-20 taxable net income, entered on Form 502 line 28. 2023 Local Tax Rate Chart (Instruction
+    19) rates run from .0225 (Worcester County; also the nonresident rate) to .0320 (e.g. Baltimore City, Baltimore,
+    Howard, Montgomery, Prince George''s); Anne Arundel County is graduated for 2023 (.0270 on taxable income of $1-$50,000,
+    .0281 on the excess over $50,000 — use the Anne Arundel tax table/Worksheet 19D) and Frederick County is .0275
+    or .0296 depending on filing status and income. Local tax adds roughly 2.25%-3.20% of line-20 income on top of
+    the state tax computed here.'
+  - 'Standard deduction is NOT shipped because it is income-dependent: 15% of Maryland adjusted gross income (Form
+    502 line 16) with a minimum of $1,700 and maximum of $2,550 for filing statuses 1, 3, 6 (single, married filing
+    separately, dependent taxpayer) and a minimum of $3,450 and maximum of $5,150 for statuses 2, 4, 5 (joint, head
+    of household, qualifying surviving spouse) — Standard Deduction Worksheet 16A, Instruction 16. Itemizers instead
+    enter federal itemized deductions less state and local income taxes (lines 17a/17b). Take the deduction on Form
+    502 line 17 before supplying line 20 as the base.'
+  - 'Personal and dependent exemptions are NOT shipped because they phase out by federal AGI (Exemption Amount Chart
+    10A, Instruction 10): $3,200 each for taxpayer, spouse, and each dependent when federal AGI is $100,000 or less,
+    reduced to $1,600 (FAGI $100,000-$125,000), $800 ($125,000-$150,000), and $0 (over $150,000) for single/MFS, and
+    to $1,600 ($150,000-$175,000), $800 ($175,000-$200,000), and $0 (over $200,000) for joint/HoH/QSS; dependent taxpayers
+    (filing status 6) get $0 for themselves. An additional $1,000 each for age 65-or-over and/or blind (taxpayer and
+    spouse) is never phased out. These are genuine base reductions subtracted on Form 502 line 19 BEFORE the rate
+    applies — they are already inside the caller-supplied line-20 base.'
+  - 'Filing-status mapping: Maryland prints exactly two schedules. Tax Rate Schedule I covers Single, Married Filing
+    Separately, and Dependent Taxpayers (and fiduciaries); Tax Rate Schedule II covers Joint, Head of Household, and
+    Qualifying Surviving Spouse. Qualifying surviving spouse therefore maps to married_filing_jointly with no difference;
+    a dependent taxpayer (filing status 6) uses the shipped ''single'' brackets.'
+  - 'The printed ''$X plus Y% of excess over $Z'' constants in both 2023 schedules equal the exact cumulative sum
+    of the prior brackets (verified: Schedule I $90.00/$4,697.50/$5,947.50/$7,260.00/$12,760.00; Schedule II $90.00/$7,072.50/$8,322.50/$10,947.50/$15,072.50)
+    — no rounding divergence, so marginal bracket math reproduces the worksheet exactly.'
+  - 'Items after line 21 are NOT modeled: line 21a recaptured credit (Form 502CR Part DD) is added, and lines 22-26
+    CREDITS are subtracted from tax — Maryland earned income credit (50% of federal EIC, line 22, plus a refundable
+    portion up to 45% of federal EIC on line 42), poverty level credit (line 23), and Form 502CR credits (line 24).
+    These are tax CREDITS, not income exemptions, and must never be treated as base reductions.'
+  - This pack models the resident Form 502 only. Nonresidents file Form 505/505NR and pay a special nonresident tax
+    (the local-rate chart lists 'Nonresidents use .0225') in lieu of the county local tax; part-year residents must
+    prorate exemptions and deductions under Instruction 26.

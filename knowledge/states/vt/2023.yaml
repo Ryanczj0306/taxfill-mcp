@@ -172,3 +172,108 @@ unverified:
 - Whether a specific tax treaty article is recognized for a given taxpayer should be confirmed at the DOR; the general
   conformity conclusion is based on the federal-AGI starting point plus the explicit U.S.-law-exempt-income subtraction,
   with no observed treaty add-back.
+tax:
+  citation:
+    source: 2023 Vermont Income Tax Return Booklet / Form IN-111 Instructions (Rev. 10/23), Vermont Dept. of Taxes —
+      p.7 (Line 4 '2023 Vermont Standard Deduction' chart incl. $1,150-per-box additional deduction; Line 5e 'Multiply
+      Line 5d by $4,850' personal exemption; Line 7 Vermont Taxable Income; Line 8 Vermont Income Tax incl. 3%-of-AGI
+      minimum for federal AGI over $150,000) and p.12 '2023 Vermont Tax Rate Schedules' (Schedules X, Y-1, Y-2, Z; also
+      published standalone at https://tax.vermont.gov/sites/tax/files/documents/RateSched-2023.pdf p.1); pp.13-17 '2023
+      Vermont Tax Tables'. Standard-deduction amounts also printed in the filing-status boxes of 2023 Form IN-111 itself
+      (https://tax.vermont.gov/sites/tax/files/documents/IN-111-2023.pdf)
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 45400, rate: 0.0335}
+    - {over: 45400, but_not_over: 110050, rate: 0.066}
+    - {over: 110050, but_not_over: 229550, rate: 0.076}
+    - {over: 229550, but_not_over: null, rate: 0.0875}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 75850, rate: 0.0335}
+    - {over: 75850, but_not_over: 183400, rate: 0.066}
+    - {over: 183400, but_not_over: 279450, rate: 0.076}
+    - {over: 279450, but_not_over: null, rate: 0.0875}
+    married_filing_separately:
+    - {over: 0, but_not_over: 37925, rate: 0.0335}
+    - {over: 37925, but_not_over: 91700, rate: 0.066}
+    - {over: 91700, but_not_over: 139725, rate: 0.076}
+    - {over: 139725, but_not_over: null, rate: 0.0875}
+    head_of_household:
+    - {over: 0, but_not_over: 60850, rate: 0.0335}
+    - {over: 60850, but_not_over: 157150, rate: 0.066}
+    - {over: 157150, but_not_over: 254500, rate: 0.076}
+    - {over: 254500, but_not_over: null, rate: 0.0875}
+  base: federal_agi
+  tax_line: 'Form IN-111, Line 8: "Vermont Income Tax from tax table or tax rate schedule (If Line 1 is greater than
+    $150,000, see instructions)". Line 7: "Vermont Taxable Income (SUBTRACT Line 6 from Line 3. If less than zero,
+    enter -0-)", where Line 6 = Line 4 standard deduction + Line 5e personal exemption deduction.'
+  exemptions:
+    personal:
+      amount: 4850
+      note: 'IN-111 Line 5e: ''MULTIPLY Line 5d by $4,850 (2023 Personal Exemption)''. Count ''1'' for yourself on Line
+        5a ONLY if no one can claim you as a dependent, plus ''1'' for your jointly filed spouse/CU partner on Line 5b
+        if no one can claim them (do NOT enter the spouse ''1'' if filing status is Qualifying Widow(er) or Married Filing
+        Separately). This is a deduction from income (Line 6 = Line 4 + Line 5e, subtracted on Line 7), not a credit.'
+    dependent:
+      amount: 4850
+      note: 'IN-111 Line 5c: ''Enter number of OTHER dependents claimed on federal Form 1040'' — each dependent uses the
+        same $4,850 (2023) amount via the Line 5d x $4,850 multiplication on Line 5e. Base reduction, not a credit.'
+    age_65:
+      amount: 1150
+      note: 'Line 4 instructions (p.7): ''You also receive an additional deduction of $1,150 for each standard deduction
+        box checked on the federal Form 1040'' (born before Jan. 2, 1959). NOT applied by calc.state_tax — use the Line
+        4 chart (e.g., Single 1 box $8,150, 2 boxes $9,300; MFJ/QW up to 4 boxes $18,650; MFS up to 4 boxes $11,600; HoH
+        up to 2 boxes $12,850).'
+    blind:
+      amount: 1150
+      note: Same $1,150-per-checked-box additional standard deduction applies to blindness boxes on federal Form 1040
+        (Line 4 chart, p.7). NOT applied by calc.state_tax — enter it via the form's Line 4 chart.
+  standard_deduction:
+    single: 7000
+    married_filing_jointly: 14050
+    married_filing_separately: 7000
+    head_of_household: 10550
+  notes:
+  - 'Base guidance: Supply Form IN-111, Line 3 "Federal AGI with Modifications" = Line 1 federal AGI (federal Form
+    1040, Line 11) plus/minus Line 2 net modifications to federal AGI (Schedule IN-112, Part I, Line 18). With no
+    Vermont modifications, Line 3 equals federal AGI, so plain federal AGI is the correct input for most filers. The
+    op then subtracts the shipped Vermont standard deduction (IN-111 Line 4) and $4,850 per exemption (Lines 5a-5e)
+    to reproduce Line 7, Vermont Taxable Income.'
+  - 'Tax-table mandate below $75,000: each 2023 Vermont Tax Rate Schedule prints ''TAXABLE INCOME UNDER $75,000 USE
+    THE TAX TABLES'' across its sub-$75,000 rows. The 2023 Vermont Tax Tables (IN-111 Instr. pp.13-17) compute tax
+    at the midpoint of each $100 band, rounded to whole dollars (spot-verified: Single $30,000-$30,100 band = $1,007
+    vs $1,005 exact bracket math at $30,000; $74,900-$75,000 band matches midpoint math for all four statuses), so
+    bracket math may differ by a few dollars within table bands; the filed form must use the table below $75,000.'
+  - 'CRITICAL - 3% minimum tax not modeled: IN-111 Instr. p.7, Line 8: ''Taxpayers who have a federal Adjusted Gross
+    Income (AGI) greater than $150,000 must pay a minimum Vermont tax of 3% of federal AGI. If your federal AGI, Line
+    1, is greater than $150,000, enter the amount that is higher: 1) 3% of your federal AGI less interest from U.S.
+    obligations, or 2) tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule.''
+    This op computes only (2); when the 3% floor binds (typically large modifications/deductions relative to AGI),
+    plain bracket math understates Line 8.'
+  - 'Printed base-tax constants are rounded: the schedules'' ''VT Base Tax'' dollar constants are rounded to whole
+    dollars and differ from the exact cumulative bracket sums by up to $0.50 (e.g., Single $1,521.00 printed vs $1,520.90
+    exact; MFS $4,820.00 printed vs $4,819.64 exact; HoH $2,038.00 printed vs $2,038.48 exact). Form arithmetic using
+    the printed constants can therefore differ by $1 from this op''s exact marginal-bracket math.'
+  - The printed schedules break a row at exactly $75,000 solely to flag the tax-table mandate — the rate does NOT
+    change at $75,000 (e.g., MFJ 3.35% actually runs $0-$75,850; Single 6.60% runs $45,400-$110,050). Same-rate rows
+    are merged in the shipped brackets; the math is identical.
+  - 'Qualifying Widow(er)/surviving spouse: Schedule Y-1 is captioned ''Married Filing Jointly; Qualifying Widow(er);
+    or Civil Union Filing Jointly'' and the QW standard deduction is the same $14,050, so the engine''s QSS-to-MFJ
+    mapping matches Vermont exactly. Civil Union Filing Separately uses Schedule Y-2 (married_filing_separately);
+    Civil Union Filing Jointly uses Y-1.'
+  - 'Additional standard deduction not applied by the engine: $1,150 per standard-deduction box checked on federal
+    Form 1040 (born before Jan. 2, 1959, or blind) is added to the Line 4 standard deduction per the chart on IN-111
+    Instr. p.7 — compute those cases from the form''s chart.'
+  - 'Exemption gates not modeled: Line 5a counts yourself ONLY if no one can claim you as a dependent on a 2023 return;
+    Line 5b (spouse/CU partner) must be left blank if filing status is Qualifying Widow(er) or Married Filing Separately.'
+  - Vermont has no itemized-deduction option on the 2023 IN-111 — Line 4 offers only the Vermont standard deduction
+    (there is no itemized line on the form).
+  - 'Steps between Line 8 and the final Line 14 ''Vermont Income Tax'' are NOT modeled: Line 9 Net Adjustment to Vermont
+    Tax (Schedule IN-119 Part I — additions such as recapture of a Vermont tax credit and 24% of certain additional
+    federal taxes on IRA/HSA/MSA distributions, federal ITC recapture, Form 4972 lump-sum distributions; subtractions
+    such as the credit for the elderly or disabled, Vermont-based ITC, farm income averaging credit), and Lines 11-13
+    Vermont Charitable Contribution Deduction — despite the line caption, the instructions describe it as a nonrefundable
+    tax CREDIT equal to 5% of the first $20,000 of eligible charitable contributions (max $1,000, Line 13) subtracted
+    from tax on Line 14, not an income deduction.'
+  - 'Part-year residents and nonresidents: Line 15 income adjustment percentage (Schedule IN-113, Line 35) multiplies
+    Line 14 to get Line 16 Adjusted Vermont Income Tax — not modeled; full-year residents use 100%.'

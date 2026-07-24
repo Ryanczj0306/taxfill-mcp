@@ -176,3 +176,129 @@ unverified:
 - The exact GTC URL scheme (gtc.dor.ga.gov) was read from a DOR page via the WebFetch summarizer rather than viewing
   the rendered link directly; the canonical landing is https://dor.georgia.gov/taxes/how-do-i-make-tax-payment which
   routes to the Georgia Tax Center - confirm the live GTC URL at the DOR site.
+tax:
+  citation:
+    source: 'Georgia DOR, 2023 IT-511 Individual Income Tax Booklet (500 and 500EZ Forms and General Instructions) —
+      Georgia Tax Rate Schedule, p.59 (Single; Married Filing Joint or Head of Household; Married Filing Separate);
+      Georgia Tax Rate Worksheet and Examples 1-2, pp.60-61; Form 500 line instructions pp.11-12 (Line 11a standard
+      deduction $5,400 Single/HoH/QSS, $3,550 MFS, $7,100 MFJ, $1,300 additional deduction; Line 14a personal exemption
+      $2,700 status A/D, $3,700 status B/C; Line 14b $3,000 per dependent; Line 16 tax); Filing Requirements chart p.9
+      (combined standard deduction + personal exemptions: $8,100 Single/HoH/QSS, $14,500 MFJ, $7,250 MFS); Georgia Income
+      Tax Table pp.63-65; What''s New p.7 (2024 changes). Cross-checked against Form 500 (Rev. 08/30/23) pages 2-3 (Lines
+      10-16).'
+    url: https://dor.georgia.gov/document/document/2023-it-511-individual-income-tax-booklet/download
+  brackets:
+    single:
+    - {over: 0, but_not_over: 750, rate: 0.01}
+    - {over: 750, but_not_over: 2250, rate: 0.02}
+    - {over: 2250, but_not_over: 3750, rate: 0.03}
+    - {over: 3750, but_not_over: 5250, rate: 0.04}
+    - {over: 5250, but_not_over: 7000, rate: 0.05}
+    - {over: 7000, but_not_over: null, rate: 0.0575}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 1000, rate: 0.01}
+    - {over: 1000, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 7000, rate: 0.04}
+    - {over: 7000, but_not_over: 10000, rate: 0.05}
+    - {over: 10000, but_not_over: null, rate: 0.0575}
+    married_filing_separately:
+    - {over: 0, but_not_over: 500, rate: 0.01}
+    - {over: 500, but_not_over: 1500, rate: 0.02}
+    - {over: 1500, but_not_over: 2500, rate: 0.03}
+    - {over: 2500, but_not_over: 3500, rate: 0.04}
+    - {over: 3500, but_not_over: 5000, rate: 0.05}
+    - {over: 5000, but_not_over: null, rate: 0.0575}
+    head_of_household:
+    - {over: 0, but_not_over: 1000, rate: 0.01}
+    - {over: 1000, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 7000, rate: 0.04}
+    - {over: 7000, but_not_over: 10000, rate: 0.05}
+    - {over: 10000, but_not_over: null, rate: 0.0575}
+  base: federal_agi
+  tax_line: 'Form 500, Line 16 "Tax (Use Tax Rate Schedule in the IT-511 Tax Booklet)"; IT-511 p.12: "Line 16: Take
+    the amount from Line 15c and use the Tax Rate Schedule starting on page 59 to determine your tax liability."'
+  exemptions:
+    dependent:
+      amount: 3000
+      note: 'Form 500 Line 14b: number of dependents (Line 7c) x $3,000. A true base reduction (Line 15a = Line 13 minus
+        Line 14c), not a credit. Line 7c includes unborn dependents with a detectable heartbeat (Line 7b, Georgia LIFE
+        Act — see dor.georgia.gov/life-act-guidance); an unborn dependent cannot be claimed if the child is born during
+        the same tax year (a child born during the year goes on Line 7a instead).'
+    age_65:
+      amount: 1300
+      note: Additional standard deduction per '65 or over' checkbox, Form 500 Line 11b (self and spouse each; standard-deduction
+        filers only). NOT applied by calc.state_tax — enter it on Form 500 Line 11b.
+    blind:
+      amount: 1300
+      note: Additional standard deduction per 'Blind' checkbox, Form 500 Line 11b (self and spouse each; standard-deduction
+        filers only). NOT applied by calc.state_tax — enter it on Form 500 Line 11b.
+  standard_deduction:
+    single: 8100
+    married_filing_jointly: 14500
+    married_filing_separately: 7250
+    head_of_household: 8100
+  notes:
+  - 'Base guidance: Supply Form 500, Line 10 "Georgia adjusted gross income" (Line 8 federal AGI from Form 1040, net
+    of Line 9 adjustments from Form 500 Schedule 1) for a FULL-YEAR resident. The op then subtracts the shipped per-status
+    figure (which is Georgia''s standard deduction PLUS the per-status personal exemption — see notes) and $3,000
+    per dependent to reach Line 15c Georgia taxable income, then applies the Tax Rate Schedule. Pass exemptions_count=0
+    (no ''personal'' key is shipped; the personal exemption is already inside the per-status standard_deduction figure)
+    and dependents_count = Form 500 Line 7c (qualified dependents plus unborn dependents). Do not use this op if you
+    itemize deductions, claim a Georgia NOL (Line 15b), or file as a part-year resident/nonresident (Schedule 3 prorates
+    deductions and exemptions) — compute those on the form.'
+  - 'Adjudication note (two-pass): base is federal_agi — Form 500 Line 8 is federal AGI and Line 10 Georgia AGI =
+    federal AGI +/- Schedule 1 adjustments; supply Line 10 as taxable_base (the op subtracts the combined standard-deduction+personal-exemption
+    figure and per-dependent $3,000). Form 500 line roles cross-checked against the repo GA formpack (11a standard
+    deduction; 14a/14b exemptions; 14c=14a+14b).'
+  - 'COMPOSITION OF THE SHIPPED standard_deduction: it is Georgia''s printed standard deduction (Form 500 Line 11a:
+    $5,400 Single/HoH/QSS, $7,100 MFJ, $3,550 MFS) PLUS the per-status personal exemption (Form 500 Line 14a: $2,700
+    x 1 for status A Single and status D HoH/QSS; $3,700 x 2 = $7,400 for status B MFJ; $3,700 x 1 for status C MFS).
+    Georgia''s per-exemption amount varies by filing status ($2,700 vs $3,700), which the engine''s single ''personal''
+    scalar cannot express, so it is folded into the per-status figure. The combined totals $8,100 / $14,500 / $7,250
+    are printed as such in the booklet''s own ''standard deduction and personal exemptions'' filing-requirement chart
+    (IT-511 p.9). Pass exemptions_count=0 — no ''personal'' exemption key is shipped, so exemptions_count is ignored.'
+  - 'QUALIFYING SURVIVING SPOUSE: Georgia files QSS under filing status D ''Head of Household or Qualifying Surviving
+    Spouse'' — pass head_of_household to this op, NOT married_filing_jointly. The bracket schedule is identical to
+    MFJ, but the QSS/HoH deduction+exemption total is $8,100, not MFJ''s $14,500; mapping QSS to MFJ would understate
+    tax.'
+  - One printed bracket schedule covers 'Married Filing Joint or Head of Household' (IT-511 p.59) — the head_of_household
+    brackets here duplicate married_filing_jointly per that schedule; Single and Married Filing Separate have their
+    own printed schedules.
+  - 'ITEMIZERS NOT MODELED: the shipped figures assume the Georgia standard deduction. If you itemized on your federal
+    return (or are MFS and your spouse itemizes), you MUST itemize on the Georgia return (Line 12c = federal Schedule
+    A total less Georgia adjustments); if you used the federal standard deduction you must use the Georgia standard
+    deduction. Itemizers must compute Lines 12-16 on the form.'
+  - Additional standard deduction of $1,300 per checkbox (age 65 or over and/or blind, self and spouse each — up to
+    4 checkboxes, Form 500 Line 11b) is NOT applied by calc.state_tax; standard-deduction filers only. Enter on Line
+    11b.
+  - 'Georgia NOL not modeled: Form 500 Line 15b (Georgia NOL utilized, limited to 80% of Line 15a income for losses
+    from tax years 2018+) is subtracted before Line 15c taxable income.'
+  - 'Part-year residents and nonresidents not modeled: they skip Form 500 Lines 9-14 and use Schedule 3, which prorates
+    the standard deduction, additional deduction, and exemptions by the Georgia-income ratio (Schedule 3 Line 9).
+    This pack''s subtractions apply only to full-year residents. Taxpayers required to file federal Form 1040NR generally
+    may NOT take the Georgia standard deduction (IT-511 p.10: most are allowed only the personal exemption and limited
+    Form 1040NR Schedule A itemized deductions).'
+  - 'Printed ''Amount of Tax Is'' constants, Single schedule (IT-511 p.59): $8.00 / $38.00 / $83.00 / $143.00 versus
+    exact cumulative bracket sums $7.50 / $37.50 / $82.50 / $142.50 — each rounded up by $0.50; the top constant $230.00
+    equals the exact sum. Worksheet math using the printed constants can therefore differ from pure marginal bracket
+    math by up to $0.50 (at most $1 after rounding) for Single taxable income between $750 and $7,000. The MFJ/HoH
+    constants ($10/$50/$110/$190/$340) and MFS constants ($5/$25/$55/$95/$170) equal the exact cumulative sums.'
+  - 'Optional tax table, no mandate: IT-511 pp.63-65 print a Georgia Income Tax Table in $100 bands for taxable income
+    under $100,000, but its use is optional — ''A taxpayer can use the tax tables starting on page 63 or the Georgia
+    Tax Rate Schedule'' (p.59), and the table''s own footnote states: ''The tax table is not exact and may cause the
+    amounts on the return to be changed. It is recommended to use the tax rate schedule for the exact amount of tax.''
+    Table values (computed at band midpoints) may differ from bracket math by a few dollars within a band.'
+  - 'CREDITS (subtracted from tax, NOT modeled and NOT base reductions): Low Income Credit (Form 500 Line 17 — a per-exemption
+    CREDIT of $5-$26 for federal AGI under $20,000, not an exemption); Other State(s) Tax Credit (Line 18); IND-CR
+    series 200 credits (Line 19); Schedule 2 series 100 credits (Line 20). Total credits (Line 21) cannot exceed Line
+    16 tax.'
+  - '2023 is Georgia''s final graduated-rate year; no mid-2023 retroactive rate change applies to tax year 2023. Per
+    the 2023 IT-511 ''What''s New'' (p.7): ''Effective January 1, 2024, the income tax rate will be 5.39%. Additionally,
+    personal exemptions have been repealed except for the $4,000 dependent exemption. Finally, Georgia standard deductions
+    have increased to $24,000 for Married Filing Joint returns and $12,000 for Single, Head of Household, and Married
+    Filing Separate returns.'' Do not use this 2023 pack for 2024+.'
+  - 'Rounding: the booklet''s worked examples state amounts are ''rounded to the nearest dollar'' (IT-511 p.60); this
+    pack rounds half-up to whole dollars, which reproduces both booklet examples exactly ($5,125 Single -> $138; $77,878
+    MFJ -> $4,243).'

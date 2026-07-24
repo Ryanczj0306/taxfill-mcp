@@ -163,3 +163,114 @@ unverified:
 - MO-NRI form was identified by title/URL but its line-level mechanics were not fully read; the residency/usage
   description is drawn from the MO-1040 instructions and the DOR non-residents page rather than a line-by-line read
   of MO-NRI.
+tax:
+  citation:
+    source: 2023 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p. 26 '2023
+      Tax Chart' (Tax Rate Chart, Section A; Tax Calculation Worksheet, Section B; 'A separate tax must be computed
+      for you and your spouse'; 'Round to the nearest whole dollar'); p. 9 'Line 30 - Missouri Tax'; p. 8 'Line 12 -
+      Federal Tax Percentage', 'Line 13 - Federal Income Tax Deduction', 'Line 14 - Standard or Itemized Deductions',
+      'Line 15 - Head of Household and Qualifying Widow(er)'; Form MO-1040 (Revised 12-2023) Lines 6-30
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 1207, rate: 0}
+    - {over: 1207, but_not_over: 2414, rate: 0.02}
+    - {over: 2414, but_not_over: 3621, rate: 0.025}
+    - {over: 3621, but_not_over: 4828, rate: 0.03}
+    - {over: 4828, but_not_over: 6035, rate: 0.035}
+    - {over: 6035, but_not_over: 7242, rate: 0.04}
+    - {over: 7242, but_not_over: 8449, rate: 0.045}
+    - {over: 8449, but_not_over: null, rate: 0.0495}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 1207, rate: 0}
+    - {over: 1207, but_not_over: 2414, rate: 0.02}
+    - {over: 2414, but_not_over: 3621, rate: 0.025}
+    - {over: 3621, but_not_over: 4828, rate: 0.03}
+    - {over: 4828, but_not_over: 6035, rate: 0.035}
+    - {over: 6035, but_not_over: 7242, rate: 0.04}
+    - {over: 7242, but_not_over: 8449, rate: 0.045}
+    - {over: 8449, but_not_over: null, rate: 0.0495}
+    married_filing_separately:
+    - {over: 0, but_not_over: 1207, rate: 0}
+    - {over: 1207, but_not_over: 2414, rate: 0.02}
+    - {over: 2414, but_not_over: 3621, rate: 0.025}
+    - {over: 3621, but_not_over: 4828, rate: 0.03}
+    - {over: 4828, but_not_over: 6035, rate: 0.035}
+    - {over: 6035, but_not_over: 7242, rate: 0.04}
+    - {over: 7242, but_not_over: 8449, rate: 0.045}
+    - {over: 8449, but_not_over: null, rate: 0.0495}
+    head_of_household:
+    - {over: 0, but_not_over: 1207, rate: 0}
+    - {over: 1207, but_not_over: 2414, rate: 0.02}
+    - {over: 2414, but_not_over: 3621, rate: 0.025}
+    - {over: 3621, but_not_over: 4828, rate: 0.03}
+    - {over: 4828, but_not_over: 6035, rate: 0.035}
+    - {over: 6035, but_not_over: 7242, rate: 0.04}
+    - {over: 7242, but_not_over: 8449, rate: 0.045}
+    - {over: 8449, but_not_over: null, rate: 0.0495}
+  base: state_taxable_income
+  tax_line: 'Form MO-1040 Line 30: ''Tax (see tax chart on page 26 of the instructions)'', computed per column (30Y/30S)
+    from Line 29Y/29S. Instructions p. 26, ''2023 Tax Chart'': ''To identify your tax, use your Missouri taxable income
+    from Form MO-1040, Line 29Y and 29S and the tax chart in Section A below. A separate tax must be computed for
+    you and your spouse. ... Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and 30S.'''
+  exemptions: {}
+  notes:
+  - 'Base guidance: Supply 2023 Form MO-1040 Line 29 ''Taxable income'' — one column at a time: Line 29Y (yourself)
+    or Line 29S (spouse). Line 29 = total Missouri AGI (Line 6, which starts from federal AGI plus/minus Form MO-A
+    adjustments) minus total deductions (Line 25: the Line 8 pension/Social Security exemption; the Lines 9-13 FEDERAL
+    INCOME TAX DEDUCTION — Line 11 federal tax x a percentage set by Missouri AGI: 35% if Line 6 is $25,000 or less,
+    25% for $25,001-$50,000, 15% for $50,001-$100,000, 5% for $100,001-$125,000, 0% for $125,001 or more, capped at
+    $5,000 per individual / $10,000 combined; the Line 14 standard or itemized deduction; the Line 15 $1,400 head-of-household/qualifying-widow(er)
+    exemption; and other deductions on Lines 16-24), apportioned by each spouse''s income percentage (Line 7, applied
+    at Line 27), minus any Line 28 enterprise-zone/rural-empowerment modification. Single, married filing separately,
+    head of household, and qualifying widow(er) filers have one column — supply that Line 29 amount. MARRIED FILING
+    COMBINED: Missouri taxes each spouse''s column separately — run this op once with Line 29Y and once with Line
+    29S and add the two results (Form MO-1040 Lines 30Y + 30S -> Line 36); do NOT supply the couple''s combined taxable
+    income as one amount, or the tax will be overstated.'
+  - 'One rate schedule for all filing statuses: the 2023 Tax Rate Chart (MO-1040 instructions p. 26) makes no distinction
+    by filing status, so the identical schedule is shipped for all four statuses. Qualifying widow(er) maps to married_filing_jointly
+    here and uses the same chart.'
+  - 'CRITICAL for married filing combined: Missouri computes tax SEPARATELY for each spouse — ''A separate tax must
+    be computed for you and your spouse'' (instructions p. 26). Combined income is split by each spouse''s income
+    percentage (Line 7, applied at Line 27), producing Line 29Y and 29S, each run through the chart (Line 30Y/30S),
+    then added. Running a couple''s combined taxable income through the brackets as one amount OVERSTATES tax (by
+    up to about $235, a second pass through the below-4.95% brackets). Run this op once per spouse''s Line 29 column
+    and sum the results.'
+  - 'Printed-constant rounding (quantified): the chart''s flat add-on constants ($24 / $54 / $90 / $132 / $180 / $234)
+    are rounded from the exact cumulative marginal sums ($24.14 / $54.315 / $90.525 / $132.77 / $181.05 / $235.365);
+    the divergence grows to $1.365 at the top ($8,449) breakpoint. This op does exact marginal math, so for taxable
+    income over $2,414 its result can exceed the form worksheet''s result by up to ~$1 after rounding (e.g. taxable
+    income $12,000: exact marginal $411 vs worksheet $410). The filed return should use the p. 26 Tax Calculation
+    Worksheet''s printed constants or the DOR online calculator at dor.mo.gov/personal/individual/.'
+  - 'Federal income tax deduction (Missouri base quirk, NOT modeled): MO-1040 Lines 9-13 deduct Line 11 federal income
+    tax times a Missouri-AGI-based percentage (Line 12 chart: 35% if Line 6 is $25,000 or less; 25% $25,001-$50,000;
+    15% $50,001-$100,000; 5% $100,001-$125,000; 0% $125,001 or more), capped at $5,000 per individual / $10,000 married
+    filing combined. Because it is income-dependent it is not modeled — it must already be reflected in the Line 29
+    taxable income you supply.'
+  - 'standard_deduction ships as null because the base is Line 29 taxable income, from which the Line 14 deduction
+    was already subtracted — do not subtract it again. For reference, 2023 Missouri standard deductions (printed on
+    Form MO-1040 Line 14): $13,850 single or married filing separate; $20,800 head of household; $27,700 married filing
+    combined or qualifying widow(er). Additional standard deduction for each 65-or-older or blind condition (instructions
+    p. 8): $1,850 for single and head of household; $1,500 for married filing combined, married filing separate, or
+    qualifying widow(er). Itemizers use Form MO-A Part 2 instead.'
+  - 'Head of household / qualifying widow(er) additional exemption: $1,400 on MO-1040 Line 15 (instructions p. 8)
+    — a base reduction already included in the Line 29 base, so it is not shipped; the Missouri filing status must
+    match the federal filing status to claim it.'
+  - The 2023 MO-1040 has NO personal or dependent exemption lines — exemptions is intentionally empty; exemptions_count
+    and dependents_count have no effect for Missouri.
+  - 'Zero-rate floor: Missouri taxable income of $0 to $1,207 owes $0 (shipped as a rate-''0'' bottom bracket); the
+    state is graduated, not flat, for 2023.'
+  - 'Rounding rule (instructions p. 26): ''Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and
+    30S.'''
+  - 'No lookup-table mandate: Missouri publishes no tax table; all filers compute Line 30 from the Tax Rate Chart
+    / Tax Calculation Worksheet (or the DOR online calculator).'
+  - 'Not modeled — MO-1040 Line 34 other taxes: tax on lump-sum distributions (10% of the tax shown on federal Form
+    4972) and recapture of Missouri low-income housing credits (federal Form 8611); these are added after Line 30
+    on the form.'
+  - 'Not modeled — apportionment and credits after Line 30: nonresidents/part-year residents multiply Line 30 by the
+    Missouri income percentage (Line 32, Form MO-NRI), and residents may take the resident credit for taxes paid other
+    states (Line 31, Form MO-CR); this op produces the pre-apportionment Line 30 amount. Also not modeled (they are
+    CREDITS against tax, not base reductions): Property Tax Credit (Line 43, MO-PTS), Missouri Working Family Tax
+    Credit (Line 44, MO-WFTC), and miscellaneous credits (Line 42, MO-TC).'
+  - This pack follows the 2023 Form MO-1040 long form; the MO-1040A short form has its own computation and was not
+    examined.
