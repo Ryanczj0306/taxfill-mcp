@@ -62,6 +62,7 @@ KNOWN_FORM_KEYS = frozenset(
         "f1040nr",
         "f1040",
         "sched_1",
+        "sched_1a",
         "sched_2",
         "sched_3",
         "sched_a",
@@ -237,6 +238,10 @@ CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
         # ships.
         (2024, "f1040nr", "20"),
         (2024, "f1040nr", "31"),
+        # (The 2025 Schedule 3 f1040nr legs and the 2025 f1040 Schedule
+        # 1/2/1-A legs were allowlisted here while those packs were pending;
+        # the 2025 f1040nr, sched_1, sched_2, and sched_1a packs have all
+        # shipped, so those targets now resolve directly.)
         # The 2022 1040-NR keeps its Schedule 2/3 cross_form rules so the verifier
         # can emit its runtime "attach Schedule 2/3 and re-verify" caution when a
         # back-filer puts a nonzero amount on lines 17/20/23b/31, but the M2 2022
