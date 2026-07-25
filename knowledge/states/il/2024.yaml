@@ -1,0 +1,254 @@
+# IL state knowledge — tax year 2024. Fetched + cited from the IL DOR (.gov),
+# authored per the 2023 template (state-year knowledge program pilot). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 IL-1040
+# instruction booklet, then independently re-derived from a second official document
+# (the 2024 IL-1040 form itself, the 2024 Schedule IL-E/EITC form, or the 2024 Schedule
+# ICR instructions) — resolutions recorded inline where the passes differed.
+jurisdiction: states/il
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'IL-1040 starts from federal adjusted gross income: 2024 IL-1040 Step 2, Line 1 "Adjusted gross income
+  — Enter the adjusted gross income from your federal return." The instructions ("What is Illinois income?") confirm
+  "Your Illinois income includes the adjusted gross income (AGI) amount figured on your federal return, plus any
+  additional income that must be added to your AGI." Income exempt from federal tax under a U.S. income tax treaty
+  is already excluded from federal AGI, so it flows through and is not re-taxed. Illinois additions are limited:
+  Line 2 "Federally tax-exempt income" applies ONLY to federally tax-exempt interest and dividend income reported
+  on federal Form 1040 Line 2a (municipal bond interest), not to foreign treaty income; Line 3/Schedule M "Other
+  additions" enumerates specific items (child''s 8814 interest/dividends, pass-through additions, Section 529/ABLE
+  earnings, IL-4562 special depreciation, business expense recapture, etc.) and contains no add-back of federal
+  income-tax-treaty-exempt income. There is NO California-style Schedule CA treaty addback. Therefore treaty-exempt
+  income is not re-taxed and IL conforms.'
+citation:
+  source: 2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — cover/mailing addresses, due date, income
+    tax rate ("The Illinois income tax rate is 4.95 percent (.0495)"), exemption allowance ("The personal exemption
+    amount for tax year 2024 is $2,775")
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf
+starts_from: 'federal AGI (2024 IL-1040 Step 2, Line 1: "Adjusted gross income — Enter the adjusted gross income
+  from your federal return")'
+residency:
+  summary: You are an Illinois resident if you were domiciled in Illinois for the entire tax year; your domicile
+    is the place where you reside and intend to return after temporary absences (e.g., U.S. Armed Forces duty, residence
+    in a foreign country, out-of-state student or seasonal residence). A part-year resident is someone who was an
+    Illinois resident for only part of the year (e.g., moved into or out of Illinois) and files IL-1040 plus Schedule
+    NR. A nonresident is a person not domiciled in Illinois who has Illinois-source income; nonresidents and part-year
+    residents compute Illinois-taxable income on Schedule NR. Illinois does not publish a numeric day-count statutory-resident
+    test in the IL-1040 general information; residency turns on domicile. If a joint federal return is filed and
+    one spouse is an Illinois resident while the other is a nonresident or part-year resident, separate Illinois
+    returns may be filed; a joint Illinois return causes both to be taxed as residents.
+forms:
+  resident: Form IL-1040, Illinois Individual Income Tax Return
+  part_year_or_nonresident: Form IL-1040 with Schedule NR (Nonresident and Part-Year Resident Computation of Illinois
+    Tax)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Illinois Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: 'In general, anyone who qualified for the federal EITC also qualifies for the Illinois EITC. For
+    tax year 2023 and after, eligibility is expanded beyond the federal qualifications: taxpayers who meet all federal
+    EITC qualifications EXCEPT that they file with an IRS-issued ITIN (no valid SSN required for taxpayer, spouse,
+    or qualifying children), and/or are age 18-24 or 65+ with no qualifying child, may also claim it. Must have earned
+    income under the federal limits in Table 1, investment income below $11,600, not have filed federal Form 2555,
+    and meet the other federal EITC rules.'
+  amount: '20% of the federal Earned Income Tax Credit. 2024 Schedule IL-E/EITC Step 4, Line 7: "Multiply the amount
+    on Line 6 [federal EITC or Illinois Expanded EITC Worksheet amount] by 20% (0.2)." Nonresidents/part-year residents
+    prorate by the Illinois income percentage from Schedule NR Line 48 (Line 8).'
+  income_limit_2024: 'Federal EITC earned-income limits apply (2024, Schedule IL-E/EITC Table 1): no qualifying
+    children $18,591 ($25,511 MFJ); one child $49,084 ($56,004 MFJ); two children $55,768 ($62,688 MFJ); three children
+    $59,899 ($66,819 MFJ). Investment income must be below $11,600.'
+  claimed_on: Schedule IL-E/EITC, Step 4, Line 9; carried to Form IL-1040, Line 29 (Step 8 Payments and Refundable
+    Credit). The schedule notes the total Illinois EITC and Child Tax Credit may exceed the amount of tax (i.e.,
+    refundable). Note the 2024 schedule is renamed IL-E/EITC (2023 name was IL-E/EIC).
+  citation:
+    source: Illinois Department of Revenue — 2024 Schedule IL-E/EITC (form, Steps 4-5) and 2024 Schedule IL-E/EITC
+      Instructions (R-12/24)
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-il-e-eic-instr.pdf
+- name: Illinois Child Tax Credit
+  type: refundable
+  eligibility: NEW for tax year 2024 (Public Act 103-0592). Available to taxpayers who qualify for the Illinois
+    EITC and have at least one child that is their dependent and under the age of 12 years old as of the last day
+    of 2024.
+  amount: '20% of the taxpayer''s Illinois EITC. 2024 Schedule IL-E/EITC Step 5, Line 12: "Multiply the amount on
+    Line 11 [the Illinois EITC from Line 9] by 20% (0.2). This is your Illinois Child Tax Credit." The schedule notes
+    the total Illinois EITC and Child Tax Credit may exceed the amount of tax (refundable).'
+  income_limit_2024: Bounded by Illinois EITC eligibility (see the Illinois EITC entry's federal limits) — no separate
+    income limit.
+  claimed_on: Schedule IL-E/EITC, Step 5, Line 12; carried to Form IL-1040, Line 30 (Step 8 Payments and Refundable
+    Credit).
+  citation:
+    source: Illinois Department of Revenue — 2024 Schedule IL-E/EITC (form, Step 5) and 2024 Form IL-1040 Instructions
+      "What's New for 2024?" (Child Tax Credit added on Line 30 per P.A. 103-0592, calculated as 20% of the Illinois
+      EITC)
+    url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2024/individual/il-1040-schedule-il-e-eic.pdf
+- name: Illinois Property Tax Credit
+  type: nonrefundable
+  eligibility: Illinois residents who paid Illinois property tax in 2024 on their principal residence (not a vacation
+    home or rental property) for the time they owned and lived at the property during 2023, where that residence
+    was in Illinois. Not available for mobile home privilege tax, penalties/fees, property outside Illinois, or
+    the portion of property tax deductible as a business expense. Nonresidents may not take this credit.
+  amount: 5% of qualifying Illinois property tax paid on the principal residence (Schedule ICR Section A; the 2024
+    ICR instructions cap married-filing-separate spouses' combined claims at "5 percent of the qualifying property
+    tax"). The combined Property Tax + K-12 Education Expense + Volunteer Emergency Worker credits (Schedule ICR
+    Line 13) cannot exceed tax due (nonrefundable).
+  income_limit_2024: Not allowed if the taxpayer's adjusted gross income for the taxable year exceeds $500,000 for
+    returns with a federal filing status of married filing jointly, or $250,000 for all other returns.
+  claimed_on: Schedule ICR, Section A (Lines 4-5); total nonrefundable credit on Schedule ICR Line 13 carried to
+    Form IL-1040, Line 16.
+  citation:
+    source: Illinois Department of Revenue — 2024 Schedule ICR (form) and 2024 Schedule ICR Instructions (R-12/24)
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-icr-instr.pdf
+- name: K-12 Education Expense Credit
+  type: nonrefundable
+  eligibility: Parent or legal guardian of a full-time student who was under age 21 at the close of the school year,
+    where the taxpayer and student were Illinois residents when the expenses were paid, and the student attended
+    kindergarten through 12th grade at a public or nonpublic school in Illinois during 2024. Must complete Section
+    B of Schedule ICR including the K-12 Education Expense Credit Worksheet and keep school receipts.
+  amount: 25% of qualified K-12 education expenses paid in excess of the first $250, up to a maximum credit of $750
+    regardless of the number of qualifying students (2024 ICR instructions; for separately-filing parents/guardians,
+    combined credit "may not exceed $750").
+  income_limit_2024: Not allowed if the taxpayer's adjusted gross income for the taxable year exceeds $500,000 for
+    returns with a federal filing status of married filing jointly, or $250,000 for all other returns.
+  claimed_on: Schedule ICR, Section B (Lines 7-8) plus K-12 Education Expense Credit Worksheet; total nonrefundable
+    credit on Schedule ICR Line 13 carried to Form IL-1040, Line 16.
+  citation:
+    source: Illinois Department of Revenue — 2024 Schedule ICR (form) and 2024 Schedule ICR Instructions (R-12/24)
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-icr-instr.pdf
+- name: Volunteer Emergency Worker Credit
+  type: nonrefundable
+  eligibility: 'Available only to a person who received a 2024 Volunteer Emergency Worker Credit Certificate from
+    IDOR. Expanded for 2024 by Public Act 103-0592 to include volunteers registered with the Illinois Emergency
+    Management Agency (IEMA) and Office of Homeland Security (OHS) who volunteered at least 100 hours during the
+    immediately preceding calendar year, in addition to non-full-time fire department/fire protection district/fire
+    protection association volunteers. Must have served as a volunteer emergency worker at least 9 months during
+    the taxable year, not receive more than $5,000 in compensation for those services, apply with IDOR, and be one
+    of the first 10,000 qualified applicants. Note: the income limit that applies to the property tax / K-12 credits
+    does NOT apply to this credit.'
+  amount: $500 per awarded individual; $1,000 if married filing jointly and both spouses were awarded the credit
+    (Schedule ICR Line 10c). Statewide aggregate of all such credits awarded by the Department in a calendar year
+    may not exceed $5,000,000, awarded first-come first-served (credits awarded in February).
+  income_limit_2024: No adjusted-gross-income limit applies to this credit (the $500,000 MFJ / $250,000 other limit
+    applies only to the property tax and K-12 credits).
+  claimed_on: Schedule ICR, Section C (Lines 10-11); total nonrefundable credit on Schedule ICR Line 13 carried
+    to Form IL-1040, Line 16.
+  citation:
+    source: Illinois Department of Revenue — 2024 Schedule ICR (form) and 2024 Schedule ICR Instructions (R-12/24)
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-icr-instr.pdf
+filing_requirement:
+  note: An Illinois resident must file Form IL-1040 if (a) you were required to file a federal income tax return,
+    OR (b) you were not required to file federally but your Illinois base income from Line 9 is greater than your
+    Illinois exemption allowance. The personal exemption amount for tax year 2024 is $2,775. An Illinois resident
+    claimed as a dependent on another person's return must file if Illinois base income from Line 9 is greater than
+    $2,775 (or to get a refund of Illinois tax withheld). A nonresident must file IL-1040 and Schedule NR if Illinois
+    base income from Schedule NR Step 5, Line 46 exceeds the Schedule NR exemption allowance (Step 5, Line 50), or
+    to claim a refund of Illinois tax withheld in error. Even if not otherwise required, file to obtain a refund
+    of Illinois tax withheld, estimated payments, or pass-through withholding.
+mailing_addresses:
+  refund_or_no_payment: ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19041, SPRINGFIELD IL 62794-9041 (if no payment is
+    enclosed)
+  with_payment: ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19027, SPRINGFIELD IL 62794-9027 (if a payment is enclosed)
+  citation:
+    source: 2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — cover "Mailing your income tax return"
+      (also repeated in the Step-by-Step signature instructions)
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf
+payment:
+  check_payee: Illinois Department of Revenue (make check or money order payable to "Illinois Department of Revenue"
+    (not IRS); write the taxpayer's SSN, spouse's SSN if joint, and the tax year in the lower left corner; payments
+    must be U.S. negotiable currency drawn on a U.S. bank)
+  web_pay_url: https://mytax.illinois.gov
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — "The due date for filing your 2024 Form
+      IL-1040 and paying any tax you owe is April 15, 2025"
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf
+all_citations:
+- source: 2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — cover/mailing addresses, due date (April
+    15, 2025), income tax rate 4.95%, exemption allowance $2,775, What's New for 2024 (Child Tax Credit on Line 30,
+    Volunteer Emergency Worker Credit expanded, Schedule IL-E/EITC rename)
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf
+- source: 2024 IL-1040 Instructions, General Information pp.3-5 — Who must file, Who is an Illinois resident (domicile),
+    part-year/nonresident filing, dependent-filer $2,775 threshold
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf
+- source: 2024 IL-1040 Instructions, Step-by-Step — Line 1 'Adjusted gross income — Enter the adjusted gross income
+    from your federal return', Line 2 federally tax-exempt income (federal 1040 Line 2a), Line 3 other additions
+    / Schedule M enumeration, Line 10 exemption allowance chart ($2,775/$5,550; +$1,000 per 65-or-older/blind box;
+    $500,000 MFJ / $250,000 other AGI phase-out), Line 12 tax
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf
+- source: 2024 IL-1040 Instructions, Line 41 Amount you owe — payment options, check payable to 'Illinois Department
+    of Revenue' (not IRS), electronic payment via mytax.illinois.gov
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf
+- source: '2024 Form IL-1040 (Individual Income Tax Return) — Step 4 Line 10 exemption lines, Step 5 Line 12 "Residents:
+    Multiply Line 11 by 4.95% (.0495)" (second-pass verification of the rate and exemption structure)'
+  url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2024/individual/il-1040.pdf
+- source: 2024 Schedule IL-E/EITC (form) — Step 2 Line 1 dependent exemption 'Multiply the total number of dependents
+    you are claiming by $2,775'; Step 4 Line 7 EITC 20% (0.2); Step 5 Line 12 Child Tax Credit 20% (0.2) of Illinois
+    EITC
+  url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2024/individual/il-1040-schedule-il-e-eic.pdf
+- source: 2024 Schedule IL-E/EITC Instructions (R-12/24) — expanded eligibility (ITIN filers, 18-24/65+), Table 1
+    2024 federal EITC income limits, investment income below $11,600, Child Tax Credit qualification
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-il-e-eic-instr.pdf
+- source: 2024 Schedule ICR Instructions (R-12/24) — property tax credit 5%, K-12 credit 25% over $250 max $750,
+    Volunteer Emergency Worker Credit $500/$1,000 and IEMA/OHS expansion, $500,000/$250,000 AGI limits
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-icr-instr.pdf
+- source: 2024 Schedule NR IL-1040 Instructions (PDF) — part-year/nonresident computation
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-nr-instr.pdf
+unverified:
+- Schedule M was not opened line-by-line; the conclusion that Schedule M contains no foreign income-tax-treaty add-back
+  is based on the Line 2 and Line 3 'Other additions' enumerations in the 2024 IL-1040 instructions (which list no
+  treaty add-back; the 2024 Schedule M changes named in What's New — cannabis 280E clarification, fertility-fraud
+  subtraction — are subtractions, not treaty additions). Confirm against the full 2024 Schedule M / Schedule M Instructions
+  if a treaty-income edge case is in play.
+- The statutory source of the 2024 $2,775 personal exemption (the 2023 booklet attributed $2,425 to P.A. 103-0009)
+  was not re-derived from the Public Act text; the $2,775 figure itself is confirmed by BOTH the 2024 IL-1040 instructions
+  ("The personal exemption amount for tax year 2024 is $2,775") and the 2024 Schedule IL-E/EITC form (Step 2 Line 1).
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified two-pass against the cited 2024 IL-1040 instruction booklet and
+# the 2024 Form IL-1040 / 2024 Schedule IL-E/EITC forms themselves (IL DOR .gov).
+# NEW for 2024 vs the 2023 pack: the per-DEPENDENT exemption SHIPS ($2,775) — the
+# 2024 Schedule IL-E/EITC form prints the Step 2 Line 1 multiplication, so the
+# amount is verified at source (the 2023 pack had omitted it as unverified).
+tax:
+  citation:
+    source: '2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — "The Illinois income tax rate is 4.95 percent
+      (.0495)"; "The personal exemption amount for tax year 2024 is $2,775"; Line 10 exemption allowance chart ($2,775
+      per person, $5,550 MFJ both; +$1,000 each 65-or-older / blind, Lines 10b/10c; Line 10d dependents via Schedule
+      IL-E/EITC); Line 11 net income. Second pass: the 2024 Form IL-1040 itself prints Line 12 "Residents: Multiply
+      Line 11 by 4.95% (.0495)", and the 2024 Schedule IL-E/EITC form prints Step 2 Line 1 "Multiply the total number
+      of dependents you are claiming by $2,775" — both passes agree.'
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf
+  flat_rate: 0.0495
+  base: federal_agi
+  tax_line: 'IL-1040 Line 12 (Tax) = Line 11 (net income = Line 9 base income minus Line 10 exemption allowance) x
+    4.95% (.0495) — printed on the 2024 form: "Residents: Multiply Line 11 by 4.95% (.0495). Cannot be less than zero."
+    Line 9 base income starts from federal AGI (Line 1) plus IL additions (Lines 2-3) minus IL subtractions.'
+  exemptions:
+    personal:
+      amount: 2775
+      note: Per-exemption allowance for the taxpayer (and spouse), Line 10a — "the personal exemption amount for tax year
+        2024 is $2,775"; married filing jointly, both spouses = $5,550 (Line 10a chart).
+    dependent:
+      amount: 2775
+      note: 'Per-dependent allowance, Line 10d via 2024 Schedule IL-E/EITC Step 2, Line 1: "Multiply the total number
+        of dependents you are claiming by $2,775." (Verified on the schedule form itself for 2024 — the 2023 pack had
+        omitted this amount as unverified.)'
+    age_65:
+      amount: 1000
+      note: Additional $1,000 per 65-or-older checkbox, Line 10b (taxpayer and spouse each). NOT applied by calc.state_tax
+        — enter it on the form's Line 10b.
+    blind:
+      amount: 1000
+      note: Additional $1,000 per legally-blind checkbox, Line 10c (taxpayer and spouse each). NOT applied by calc.state_tax
+        — enter it on the form's Line 10c.
+  notes:
+  - 'Dependent exemptions (Line 10d) ship for 2024: the 2024 Schedule IL-E/EITC form prints the per-dependent multiplication
+    (Step 2 Line 1, $2,775 per dependent), so dependents_count is applied at $2,775 each. Attach Schedule IL-E/EITC
+    when claiming dependents.'
+  - 'Exemption phase-out: the entire Line 10 exemption allowance (including Lines 10b-10d) is $0 when federal AGI
+    exceeds $500,000 (married filing jointly) or $250,000 (all other statuses) — the ''Income Exceptions'' box in
+    the Line 10 instructions.'
+  - 'Claimed as a dependent by another: if base income exceeds $2,775, the filer''s own exemption is $0 (Line 10a
+    chart rows with the Step 1 Line C box checked).'
