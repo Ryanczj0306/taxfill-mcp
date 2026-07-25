@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,178 tests, all green** — offline 2,089 + live-.gov 89, exit 0):
+Done and on `main` (**2,225 tests, all green** — offline 2,129 + live-.gov 96, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (22 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -132,15 +132,15 @@ The dominant remaining body of work. Use the proven pipeline:
 vision-mapping → `assemble_*` → adversarial vision audit → `test_formpacks_states.py`
 golden round-trip.
 
-### C1 — Remaining resident state form packs (7 jurisdictions) — **easy rollout COMPLETE**
+### C1 — Resident state form packs — **COMPLETE, all 42 jurisdictions (2026-07-24)**
 
-**35 of 42** income-tax jurisdictions are now fillable — **every easy fillable-AcroForm
-state has shipped** (six C1 tranches, 17 states, via the introspect→vision-map→
-adversarial-audit→golden pipeline; WV IT-140 was the last). The **7 that remain are ALL
-C3 hard states** — none can be done on the AcroForm pipeline; each needs the engine work
-in C3 below:
+**42 of 42** income-tax jurisdictions ship a resident return pack — the easy
+fillable-AcroForm rollout finished 2026-07-01 (six C1 tranches, 17 states; WV
+IT-140 was the last), and the final 7 former C3 hard states shipped 2026-07-24
+(MA via Wayback cache-seed; IA via Iowa's own fillable variant; UT via the
+files.tax.utah.gov year path; CT/SC/NM/HI as hand-fill manifests):
 
-`CT · HI · IA · MA · NM · SC · UT`
+`CT · HI · IA · MA · NM · SC · UT` — all shipped (see C3 below for how each blocker fell)
 
 - [x] Tranche 1 (2026-06-30) — **KY (740), OR (OR-40), LA (IT-540)**.
 - [x] Tranche 2 (2026-06-30) — **KS (K-40), AR (AR1000F)**.
@@ -157,15 +157,15 @@ in C3 below:
       the tax-table/instruction pages excluded); 391 widgets, golden green + audit clean.
 - The 7 remaining states (CT, HI, IA, MA, NM, SC, UT) are all **C3 hard states** — see
   the (investigated) C3 section below for the specific blocker + options per state.
-- [ ] **UT (TC-40) — deferred / sourcing blocker:** Utah serves a year-agnostic
+- [x] **UT (TC-40) — RESOLVED (2026-07-24):** year-labeled artifacts DO exist: files.tax.utah.gov/tax/forms/<year>/tc-40.pdf serves 2023 (and 2024; /current/ = 2025) — the tax.utah.gov redirect strips the filename, which is why they looked missing. 2023 pack shipped (core TC-40 pages of the 9-page fillable packet, WV precedent). *(was: deferred / sourcing blocker:* Utah serves a year-agnostic
       `tc-40.pdf`; the `…/forms/2023/tc-40.pdf` path actually returns the **2025**
       revision (confirmed by rendering — line 17 shows the 2025 phase-out thresholds,
       line 2c "born in 2025"). A true 2023 TC-40 blank isn't available at a stable URL,
       so UT was NOT shipped as a 2023 pack (would mis-label the form). Revisit when a
       2023 artifact is locatable, or fold UT into a future 2024/2025 state tranche (D2).
-- [ ] Per state: introspect → vision-map (≈6 agents) → assemble `pack.yaml`
-      (relations from printed labels; `cross_form` line = federal AGI) → audit
-      every page → re-audit → golden round-trip.
+- [x] Per state: introspect → vision-map → assemble `pack.yaml` → audit every
+      page → golden round-trip — pipeline COMPLETE for all 42 jurisdictions
+      (2026-07-24).
 
 ### C2 — Nonresident / part-year forms
 
@@ -179,7 +179,13 @@ Only **CA** (540NR + Schedule CA 540NR) and **NY** (IT-203) have them today.
 **Investigated 2026-07-01.** Each hard state needs a heavyweight NEW subsystem or
 dependency — an architecture call for the maintainer, not a quick fix:
 
-- [ ] **MA Form 1** — the mass.gov PDF *is* a fillable AcroForm, but the download is
+- [x] **MA Form 1 — SHIPPED (2026-07-24) via option (b') Wayback cache-seed:** the
+      Wayback Machine archives the exact official mass.gov URL's AcroForm artifact
+      (172 widgets, digest-pinned); seeded into `.cache/blanks/` at the deterministic
+      name — `fetch_blank` is cache-first and will digest-verify if mass.gov ever
+      unblocks. 156 lines mapped, sentinel-audited. DOR's own AcroForm defect (the
+      taxpayer/spouse oval pairs named '0'/'1' share one field each) documented in
+      the pack header. *(was:* the mass.gov PDF *is* a fillable AcroForm, but the download is
       **bot-blocked at the edge (Akamai)**: `fetch_blank` gets **HTTP 403** and even
       `curl` with a full desktop-browser header set (UA + Accept + Accept-Language +
       Accept-Encoding) is refused with a 3 KB challenge page. This is TLS/JS-challenge
@@ -189,14 +195,22 @@ dependency — an architecture call for the maintainer, not a quick fix:
       the URL in a browser once and drops the PDF into `.cache/blanks/`, then the normal
       pipeline runs); (c) an official non-challenged mirror if one exists. Once the blank
       is in hand, MA is an ordinary AcroForm pack.
-- [ ] **IA / NM** — classify first (both candidate URLs 404'd during this pass — need
+- [x] **IA / NM — CLASSIFIED AND SHIPPED (2026-07-24):** IA was never hard —
+      revenue.iowa.gov publishes a FILLABLE AcroForm variant of every year's IA 1040
+      behind its Form Options gateway (2023 media/2747, plain names, no XFA); full
+      5-page pack incl. embedded Schedule 1 shipped, sentinel-audited. NM PIT-1 is
+      deliberately print-only in every year (TRD pushes TAP e-file) — shipped as a
+      complete hand-fill manifest. *(was:* classify first (both candidate URLs 404'd during this pass — need
       the current official URLs). NOTE: the engine's "XFA handling" only covers
       **XFA-*derived* AcroForms** — forms that ship real AcroForm widgets with
       hierarchical `topmostSubform[0].PageN[0]…` names (federal 1040, and RI-1040 which
       shipped fine). It does NOT render **pure/dynamic XFA** (XFA-only, no AcroForm
       widget layer). If IA/NM are XFA-derived AcroForms they go through the normal
       pipeline; if pure-XFA or flat print-only they need (c) below.
-- [~] **CT / SC / HI** — print-only (no AcroForm, no XFA — HI N-11 2023 confirmed flat:
+- [x] **CT / SC / HI — COMPLETE (2026-07-24):** CT-1040 and SC1040 hand-fill packs
+      shipped on the HI pattern — complete printed-line manifests (all pages/schedules,
+      face-printed arithmetic as compute exprs, table lookups as notes, printed mailing
+      addresses). *(was [~]:* print-only (no AcroForm, no XFA — HI N-11 2023 confirmed flat:
       0 fillable widgets). **The lighter "print + hand-fill from computed values" fallback
       is BUILT (2026-07-01)** and shipped for **HI (N-11)**: a `render_mode: hand_fill`
       pack is a line manifest (`handfill.yaml`), and `hand_fill_worksheet` (MCP tool #22,

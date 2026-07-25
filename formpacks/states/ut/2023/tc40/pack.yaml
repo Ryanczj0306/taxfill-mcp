@@ -1,0 +1,559 @@
+# Form TC-40, 2023 — Utah Individual Income Tax Return (core return, 3 pages).
+#
+# Provenance / freshness. source_url is the canonical DIRECT link on the
+# official files.tax.utah.gov subdomain. Note: the human-facing link
+# https://tax.utah.gov/forms/2023/tc-40.pdf redirects and STRIPS the filename
+# (it lands on the forms index, not the PDF), so the files. URL below is the
+# one to pin — it serves the PDF directly (verified live; the live download's
+# sha256 equals the pinned digest, so a cold-cache fetch digest-verifies).
+# STEP 0 year gate: page 1 of the blank was rendered and READ — it prints
+# "Utah State Tax Commission / Utah Individual Income Tax Return", "2023" and
+# "TC-40" in the top-right corner, USTC form code 40301 ("TC-4040301"
+# identity) — printed_year_verified = 2023.
+#
+# SCOPED PACKET (WV IT-140 precedent). The 9-page fillable file is the 2023
+# TC-40 PACKET: the core TC-40 return plus its schedule pages. Only the CORE
+# TC-40 pages — the pages whose printed header says "TC-40" — are mapped here:
+#   PDF page 1 (code 40301, TC-40 Pg. 1)  header/identity, filing status,
+#              dependents, election campaign fund, lines 4-22;
+#   PDF page 2 (code 40302, TC-40 Pg. 2)  lines 23-44, direct deposit,
+#              SIGN HERE strip, third-party designee, paid preparer;
+#   PDF page 3 (code 40303, TC-40 Pg. 3)  Parts 1-7 (deceased, fiscal year,
+#              8886, voluntary contributions, withholding, voluntary
+#              subtractions, residential-exemption termination) + the printed
+#              mailing addresses ("Submit page ONLY if data entered").
+# DELIBERATELY OUT OF SCOPE — separate future form keys, not mapped here:
+#   PDF pages 4-5 (codes 40304/40305) TC-40A Income Tax Supplemental Schedule;
+#   PDF page  6   (code  40306)       TC-40B Non and Part-year Resident Schedule;
+#   PDF page  7   (code  40308)       TC-40S Credit for Income Tax Paid to
+#                                     Another State;
+#   PDF pages 8-9 (codes 40309/40310) TC-40W Withholding Tax Schedule.
+# The schedule pages share NO AcroForm field names with the core pages
+# (verified against the introspect dump), so filling this pack touches only
+# the TC-40 pages.
+#
+# Authored via the taxfill pipeline: scripts/introspect_pdf.py (sentinel
+# sweep — every widget rendered with its own field name) -> vision-map over
+# the three core-page PNGs + pdftotext -layout of the printed face -> this
+# map -> scripts/audit_pack.py adversarial sentinel audit.
+#
+# Layout. Flat AcroForm (acroform_root empty) with raw human-readable field
+# names ("40 Line 4", "40 Your SSN", ...). The page-2/3 header SSN and Last
+# name repeaters SHARE the page-1 fields' /T ("40 Your SSN", "40 Your last
+# name") — mapped ONCE; filling them populates all three pages. Direct-deposit
+# field names say "Line 45" but the printed line is 44 — the map keys follow
+# the PRINTED label. The four Part 4 contribution rows are generic code/
+# amount/sch-dist rows (the taxpayer writes the fund code 02/03/05/15/16);
+# their raw names run "28a".."28d" after page-2 line 28 which they feed.
+# The ink-only blanks (taxpayer/spouse/preparer signatures and dates) carry
+# NO widgets — signing happens after printing.
+#
+# Coverage. Pages 1-3 carry 111 widgets = 107 unique field names (SSN + last
+# name repeat on all three pages). 106 are mapped below. The only omission is
+# "Clear form" (page-1 push button whose appearance-state list is the bogus
+# /BBox /Filter /FormType /Matrix /Resources /Subtype /Type — an XObject
+# dict's keys, i.e. a form ACTION, not a data field; same class as IL-1040's
+# Reset/Print buttons and the WV nav buttons).
+#
+# Money vs text. Every box printing a ".00" cents suffix is money (whole
+# dollars): lines 4-20, 22-43, the Part 4 amounts + total, Part 5 lines 1-3 +
+# total, Part 6 lines 1-2 + total. Codes and counts stay text: amended code,
+# filing-status code (1-5), dependent counts 2a-2d, campaign-fund party codes
+# (letter, or N), full-year-resident Y/N boxes, dates (mm/dd/yy boxes),
+# routing/account numbers, ids and phones. Line 21 ("qualified exempt
+# taxpayer, enter X") is a real checkbox widget, on_state /Yes.
+#
+# Relations. Only unconditional printed-face math is declared. OMITTED per
+# the conservative house style: 10 = 9 x 4.65% and 16 = 15 x 6% and
+# 19 = 18 x 1.3% (rate products, rounding); 11 = 2d x $1,941 (2d is a text
+# count box); 17 (fixed amount keyed to filing status); 18/20/22/25/27/39/42
+# (floored "not less than zero", 25 also branches full-year vs TC-40B line
+# 41); 33 (branches: page 3 Part 5 total OR TC-40W Part 1 total directly);
+# 43 <= 42 (inequality); contributions_total = sum of the four Part 4 row
+# amounts (dotted row ids — the relations evaluator accepts only undotted
+# line tokens, so that sum lives here as a comment only).
+#
+# Mailing. Printed on core page 3 (and on incometax.utah.gov, which lists the
+# same two addresses): returns WITH PAYMENTS -> 84134-0266; ALL OTHER returns
+# (refunds etc.) -> 84134-0260. verify_url is the official income-tax site
+# home page carrying both addresses (it serves a WAF 403 to plain fetchers,
+# like mass.gov; fine in a browser).
+form: UT TC-40
+jurisdiction: states/ut
+tax_year: 2023
+source_url: https://files.tax.utah.gov/tax/forms/2023/tc-40.pdf
+pdf_sha256: 8bdc18cf3dcb0beec7dbc28cbf43984f37620217099f14952502fcd2be91f50f
+acroform_root: ''
+fields:
+  # ================================================= header (page 1; SSN/last-name widgets repeat on pages 2-3, same /T)
+  - line: amended_code                     # "Amended Return - enter code" (1-5, see instructions)
+    field: 40 Amended box
+    type: text
+    maxlen: 1
+  - line: tp_ssn
+    field: 40 Your SSN
+    type: text
+    maxlen: 9
+  - line: tp_first_name
+    field: 40 Your first name
+    type: text
+    maxlen: 27
+  - line: tp_last_name
+    field: 40 Your last name
+    type: text
+    maxlen: 35
+  - line: tp_full_year_resident            # "Full-yr Resident? Y/N" — taxpayer row
+    field: 40 Residency 1
+    type: text
+    maxlen: 1
+  - line: spouse_ssn
+    field: 40 Spouse SSN
+    type: text
+    maxlen: 9
+  - line: spouse_first_name
+    field: 40 Spouse first name
+    type: text
+    maxlen: 27
+  - line: spouse_last_name
+    field: 40 Spouse last name
+    type: text
+    maxlen: 35
+  - line: spouse_full_year_resident        # "Full-yr Resident? Y/N" — spouse row
+    field: 40 Residency 2
+    type: text
+    maxlen: 1
+  - line: mailing_address.street
+    field: 40 Address 1
+    type: text
+    maxlen: 35
+  - line: tp_phone
+    field: 40 Telephone number
+    type: text
+    maxlen: 14
+  - line: mailing_address.city
+    field: 40 City
+    type: text
+    maxlen: 22
+  - line: mailing_address.state
+    field: 40 State
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip              # ZIP+4
+    field: 40 Zip code
+    type: text
+    maxlen: 10
+  - line: foreign_country                  # "Foreign country (if not U.S.)"
+    field: 40 Foreign Country
+    type: text
+    maxlen: 22
+
+  # ---- 1 Filing Status - enter code (1=Single 2=MFJ 3=MFS 4=HoH 5=QSS)
+  - line: "1"
+    field: 40 Filing status
+    type: text
+    maxlen: 1
+  # ---- 2 Qualifying Dependents (counts)
+  - line: 2a                               # dependents age 16 and under
+    field: 40 Exemption a
+    type: text
+    maxlen: 1
+  - line: 2b                               # other dependents
+    field: 40 Exemption b
+    type: text
+    maxlen: 1
+  - line: 2c                               # dependents born in 2023
+    field: 40 Exemption total c
+    type: text
+    maxlen: 2
+  - line: 2d                               # Total (add lines a, b and c)
+    field: 40 Exemption total d
+    type: text
+    maxlen: 2
+  # ---- 3 Election Campaign Fund (party code letter, or N)
+  - line: campaign_fund_taxpayer
+    field: 40 election you
+    type: text
+    maxlen: 1
+  - line: campaign_fund_spouse
+    field: 40 election spouse
+    type: text
+    maxlen: 1
+
+  # ---- income and tax (page 1)
+  - line: "4"                              # federal adjusted gross income from federal return
+    field: 40 Line 4
+    type: money
+    maxlen: 15
+  - line: "5"                              # additions to income from TC-40A, Part 1
+    field: 40 Line 5
+    type: money
+    maxlen: 15
+  - line: "6"                              # total income - add line 4 and line 5
+    field: 40 Line 6
+    type: money
+    maxlen: 15
+  - line: "7"                              # state tax refund included on federal form 1040, Schedule 1, line 1
+    field: 40 Line 7
+    type: money
+    maxlen: 15
+  - line: "8"                              # subtractions from income from TC-40A, Part 2
+    field: 40 Line 8
+    type: money
+    maxlen: 15
+  - line: "9"                              # Utah taxable income/loss - line 6 minus (7 + 8)
+    field: 40 Line 9
+    type: money
+    maxlen: 15
+  - line: "10"                             # Utah tax - line 9 x 4.65% (not less than zero)
+    field: 40 Line 10
+    type: money
+    maxlen: 15
+  - line: "11"                             # Utah personal exemption - line 2d x $1,941
+    field: 40 Line 11
+    type: money
+    maxlen: 15
+  - line: "12"                             # federal standard or itemized deductions
+    field: 40 Line 12
+    type: money
+    maxlen: 15
+  - line: "13"                             # add line 11 and line 12
+    field: 40 Line 13
+    type: money
+    maxlen: 15
+  - line: "14"                             # state income tax included in federal itemized deductions
+    field: 40 Line 14
+    type: money
+    maxlen: 15
+  - line: "15"                             # subtract line 14 from line 13
+    field: 40 Line 15
+    type: money
+    maxlen: 15
+  - line: "16"                             # initial credit before phase-out - line 15 x 6%
+    field: 40 Line 16
+    type: money
+    maxlen: 15
+  - line: "17"                             # $16,742 / $25,114 / $33,484 by filing status
+    field: 40 Line 17
+    type: money
+    maxlen: 15
+  - line: "18"                             # income subject to phase-out - line 9 minus line 17 (not < 0)
+    field: 40 Line 18
+    type: money
+    maxlen: 15
+  - line: "19"                             # phase-out amount - line 18 x 1.3%
+    field: 40 Line 19
+    type: money
+    maxlen: 15
+  - line: "20"                             # taxpayer tax credit - line 16 minus line 19 (not < 0)
+    field: 40 Line 20
+    type: money
+    maxlen: 15
+  - line: "21"                             # qualified exempt taxpayer - enter "X" (worksheet in instr.)
+    field: 40 Line 21 Check box
+    type: checkbox
+    on_state: /Yes
+  - line: "22"                             # Utah income tax - line 10 minus line 20 (not < 0)
+    field: 40 Line 22
+    type: money
+    maxlen: 15
+
+  # ===================================================== page 2 (code 40302)
+  - line: "23"                             # enter tax from TC-40, page 1, line 22
+    field: 40 Line 23
+    type: money
+    maxlen: 15
+  - line: "24"                             # apportionable nonrefundable credits from TC-40A, Part 3
+    field: 40 Line 24
+    type: money
+    maxlen: 15
+  - line: "25"                             # full-year: 23 - 24 (not < 0); non/part-year: TC-40B line 41
+    field: 40 Line 25
+    type: money
+    maxlen: 15
+  - line: "26"                             # nonapportionable nonrefundable credits from TC-40A, Part 4
+    field: 40 Line 26
+    type: money
+    maxlen: 15
+  - line: "27"                             # subtract line 26 from line 25 (not < 0)
+    field: 40 Line 27
+    type: money
+    maxlen: 15
+  - line: "28"                             # voluntary contributions from TC-40, page 3, Part 4
+    field: 40 Line 28
+    type: money
+    maxlen: 15
+  - line: "29"                             # AMENDED RETURN ONLY - previous refund
+    field: 40 Line 29
+    type: money
+    maxlen: 15
+  - line: "30"                             # recapture of low-income housing credit
+    field: 40 Line 30
+    type: money
+    maxlen: 15
+  - line: "31"                             # Utah use tax
+    field: 40 Line 31
+    type: money
+    maxlen: 15
+  - line: "32"                             # total tax, use tax and additions to tax - add lines 27 through 31
+    field: 40 Line 32
+    type: money
+    maxlen: 15
+  - line: "33"                             # total withholding (page 3 Part 5 total, or TC-40W Part 1 total)
+    field: 40 Line 33
+    type: money
+    maxlen: 15
+  - line: "34"                             # Utah taxes prepaid (TC-546) and 2022 refund applied to 2023
+    field: 40 Line 34
+    type: money
+    maxlen: 15
+  - line: "35"                             # AMENDED RETURN ONLY - previous payments
+    field: 40 Line 35
+    type: money
+    maxlen: 15
+  - line: "36"                             # nonapportionable refundable credits from TC-40A, Part 5
+    field: 40 Line 36
+    type: money
+    maxlen: 15
+  - line: "37"                             # apportionable refundable credits from TC-40A, Part 6, line c
+    field: 40 Line 37
+    type: money
+    maxlen: 15
+  - line: "38"                             # total withholding and refundable credits - add lines 33 through 37
+    field: 40 Line 38
+    type: money
+    maxlen: 15
+  - line: "39"                             # TAX DUE - line 32 minus line 38 (not < 0)
+    field: 40 Line 39
+    type: money
+    maxlen: 15
+  - line: "40"                             # penalty and interest
+    field: 40 Line 40
+    type: money
+    maxlen: 15
+  - line: "41"                             # TOTAL DUE - PAY THIS AMOUNT - add line 39 and line 40
+    field: 40 Line 41
+    type: money
+    maxlen: 15
+  - line: "42"                             # REFUND - line 38 minus line 32 (not < 0)
+    field: 40 Line 42
+    type: money
+    maxlen: 15
+  - line: "43"                             # voluntary subtractions from refund (not greater than line 42)
+    field: 40 Line 43
+    type: money
+    maxlen: 15
+  # ---- 44 REMAINING REFUND DIRECT DEPOSIT (raw field names say "45"; printed line is 44)
+  - line: 44_routing_number
+    field: 40 Line 45 routing
+    type: text
+    maxlen: 9
+  - line: 44_account_number
+    field: 40 Line 45 Account number
+    type: text
+  - line: 44_account_type.checking         # Type: checking / savings / foreign — one question, three boxes
+    field: 40 Line 45 Checking
+    type: checkbox
+    on_state: /Yes
+    group: 44_account_type
+  - line: 44_account_type.savings
+    field: 40 Line 45 Savings
+    type: checkbox
+    on_state: /Yes
+    group: 44_account_type
+  - line: 44_account_type.foreign
+    field: 40 Line 45 Foreign
+    type: checkbox
+    on_state: /Yes
+    group: 44_account_type
+
+  # ---- third party designee + paid preparer (page 2; signature/date blanks are ink-only, no widgets)
+  - line: designee_name
+    field: 40 Designee name
+    type: text
+    maxlen: 57
+  - line: designee_phone
+    field: 40 Designee phone
+    type: text
+    maxlen: 12
+  - line: designee_pin
+    field: 40 Designee PIN
+    type: text
+    maxlen: 9
+  - line: preparer_phone
+    field: 40 Preparer phone
+    type: text
+    maxlen: 12
+  - line: preparer_ptin
+    field: 40 Preparer SSN PTIN
+    type: text
+    maxlen: 9
+  - line: preparer_firm_name_address       # multiline "Firm's name and address" box
+    field: 40 Firm name and address
+    type: text
+  - line: preparer_ein
+    field: 40 Preparer EIN
+    type: text
+    maxlen: 9
+
+  # ===================================================== page 3 (code 40303) — "Submit page ONLY if data entered"
+  # ---- Part 1 - Deceased Taxpayer Information (mm/dd/yy boxes)
+  - line: deceased_taxpayer.mm
+    field: 40 deceased TP mm
+    type: text
+    maxlen: 2
+  - line: deceased_taxpayer.dd
+    field: 40 deceased TP dd
+    type: text
+    maxlen: 2
+  - line: deceased_taxpayer.yy
+    field: 40 deceased TP yy
+    type: text
+    maxlen: 2
+  - line: deceased_spouse.mm
+    field: 40 deceased SP mm
+    type: text
+    maxlen: 2
+  - line: deceased_spouse.dd
+    field: 40 deceased SP dd
+    type: text
+    maxlen: 2
+  - line: deceased_spouse.yy
+    field: 40 deceased SP yy
+    type: text
+    maxlen: 2
+  - line: deceased_refund_tc131            # claiming refund, not surviving spouse — attach TC-131
+    field: 40 pg3 part 1 TC-131
+    type: checkbox
+    on_state: /Yes
+  # ---- Part 2 - Fiscal Year Filer (fiscal year end mm/yy)
+  - line: fiscal_year.mm
+    field: 40 Fiscal year mm
+    type: text
+    maxlen: 2
+  - line: fiscal_year.yy
+    field: 40 Fiscal year yy
+    type: text
+    maxlen: 2
+  # ---- Part 3 - Federal Form 8886 filed
+  - line: form_8886
+    field: 40 Form 8886
+    type: checkbox
+    on_state: /Yes
+  # ---- Part 4 - Voluntary Contributions: four generic rows (write the fund
+  # ---- code 02/03/05/15/16 + amount; Sch Dist code only with fund 05)
+  - line: contrib_a.code
+    field: 40 Line 28a Code
+    type: text
+    maxlen: 2
+  - line: contrib_a.amount
+    field: 40 Line 28a Amount
+    type: money
+    maxlen: 15
+  - line: contrib_a.sch_dist
+    field: 40 Line 28a ST code
+    type: text
+    maxlen: 2
+  - line: contrib_b.code
+    field: 40 Line 28b Code
+    type: text
+    maxlen: 2
+  - line: contrib_b.amount
+    field: 40 Line 28b Amount
+    type: money
+    maxlen: 15
+  - line: contrib_b.sch_dist
+    field: 40 Line 28b ST Code
+    type: text
+    maxlen: 2
+  - line: contrib_c.code
+    field: 40 Line 28c Code
+    type: text
+    maxlen: 2
+  - line: contrib_c.amount
+    field: 40 Line 28c Amount
+    type: money
+    maxlen: 15
+  - line: contrib_c.sch_dist
+    field: 40 Line 28c ST Code
+    type: text
+    maxlen: 2
+  - line: contrib_d.code
+    field: 40 Line 28d Code
+    type: text
+    maxlen: 2
+  - line: contrib_d.amount
+    field: 40 Line 28d Amount
+    type: money
+    maxlen: 15
+  - line: contrib_d.sch_dist
+    field: 40 Line 28d ST Code
+    type: text
+    maxlen: 2
+  - line: contributions_total              # = contrib_a..d amounts (dotted ids — sum lives here as a comment); -> page 2, line 28
+    field: 40 pg 3 part 4 total v contr
+    type: money
+    maxlen: 15
+  # ---- Part 5 - Withholding
+  - line: withholding_tc40w                # 1. Utah income tax withheld shown on TC-40W, Part 1
+    field: 40 pg 3 pt 5 line 1
+    type: money
+    maxlen: 15
+  - line: withholding_mineral              # 2. mineral production withholding tax (TC-40W, Part 2)
+    field: 40 pg 3 pt 5 line 2
+    type: money
+    maxlen: 15
+  - line: withholding_passthrough          # 3. pass-through entity withholding tax (TC-40W, Part 3)
+    field: 40 pg 3 pt 5 line 3
+    type: money
+    maxlen: 15
+  - line: withholding_total                # total withholding -> page 2, line 33
+    field: 40 pg 3 pt 5 line 4
+    type: money
+    maxlen: 15
+  # ---- Part 6 - Voluntary Subtractions from Refund
+  - line: my529_deposit                    # 1. refund deposited into my529 account(s)
+    field: 40 pg 3 pt 6 line 1
+    type: money
+    maxlen: 15
+  - line: refund_applied_to_2024           # 2. refund applied to your 2024 taxes
+    field: 40 pg 3 pt 6 line 2
+    type: money
+    maxlen: 15
+  - line: voluntary_subtractions_total     # total voluntary subtractions -> page 2, line 43
+    field: 40 pg 3 pt 6 line 3
+    type: money
+    maxlen: 15
+  # ---- Part 7 - Property Owner's Residential Exemption Termination Declaration
+  - line: residential_exemption_terminated
+    field: 40 pg3 part 7 exempt prop
+    type: checkbox
+    on_state: /Yes
+  - line: residential_exemption_county     # county code where the residence is located
+    field: 40 pg 3 part 7 Code
+    type: text
+    maxlen: 2
+relations:
+  - "6 == 4 + 5"                           # 6 "Total income - add line 4 and line 5"
+  - "9 == 6 - (7 + 8)"                     # 9 "subtract the sum of lines 7 and 8 from line 6" (may be a loss)
+  - "13 == 11 + 12"                        # 13 "Add line 11 and line 12"
+  - "15 == 13 - 14"                        # 15 "Subtract line 14 from line 13"
+  - "23 == 22"                             # 23 "Enter tax from TC-40, page 1, line 22"
+  - "32 == 27 + 28 + 29 + 30 + 31"         # 32 "add lines 27 through 31"
+  - "38 == 33 + 34 + 35 + 36 + 37"         # 38 "add lines 33 through 37"
+  - "41 == 39 + 40"                        # 41 "TOTAL DUE - add line 39 and line 40"
+  - "28 == contributions_total"            # Part 4 "enter the total here and on TC-40, page 2, line 28"
+  - "43 == voluntary_subtractions_total"   # Part 6 "enter the total here and on TC-40, page 2, line 43"
+  - "withholding_total == withholding_tc40w + withholding_mineral + withholding_passthrough"  # Part 5 total
+  - "voluntary_subtractions_total == my529_deposit + refund_applied_to_2024"                  # Part 6 total
+cross_form:
+  - "4 == f1040.11"                        # 4 "Federal adjusted gross income from federal return" = 1040 line 11
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name
+signature:
+  page: 2                                  # SIGN HERE strip (ink-only — the PDF carries no signature widgets)
+mailing:
+  with_payment: "Utah State Tax Commission, 210 N 1950 W, Salt Lake City, UT 84134-0266"
+  no_payment: "Utah State Tax Commission, 210 N 1950 W, Salt Lake City, UT 84134-0260"
+  verify_url: https://incometax.utah.gov/  # official site lists both addresses (printed on form page 3 too)
