@@ -1,0 +1,252 @@
+# Federal Schedule 2 (Form 1040), TAX YEAR 2025 (OBBBA-era revision).
+#
+# Template-reconciled from the 2024 pack against the 2025 blank's real field
+# tree (pypdf full names; the introspect dump's short names hid the shifts).
+# 2024->2025 diffs, all verified row-by-row on y-coordinates + the printed face:
+# - Line 4 (SE tax) gained an exemption row: "Check if any exemption from:
+#   1 [] 4361  2 [] 4029  3 [] ____" -> three independent /1 checkboxes
+#   (c1_3/c1_4/c1_5) + a write-in (Line4_ReadOrder f1_14). The old bare f1_14
+#   money widget was CONSUMED by this container, shifting every later page-1
+#   money field's f-number by +1 (f1_15..f1_27 now = lines 4..16) — the
+#   unchanged-looking names f1_16..f1_26 all REBIND one line earlier than 2024.
+# - Line 8's not-required checkbox renamed c1_3 -> c1_6.
+# - Page 2: the two 17z description rows merged into ONE 2-row multiline
+#   widget (f2_19; maxlen capped at 79 for the clipping heuristic, same
+#   convention as sched_1 2025's 8z/24z merges); the tail shifted -1:
+#   f2_20=17z amount, f2_21=18, f2_22=19 (new face text: recapture of net EPE
+#   from Form 4255), f2_23=20 (965 installment), f2_24=21 total.
+# - Relations unchanged: the 2025 face prints the same math incl.
+#   "Add lines 4, 7 through 16, 18, and 19" on line 21.
+# - Line 10 prints "Reserved for future use" but its widget exists and stays
+#   mapped (sched_1 2025's reserved line 22 precedent; the printed line-21 sum
+#   nominally spans 7-16). Fillers should never supply it.
+form: Schedule 2 (Form 1040)
+jurisdiction: federal
+tax_year: 2025
+source_url: https://www.irs.gov/pub/irs-prior/f1040s2--2025.pdf
+pdf_sha256: 64d867b683334cfc533993e37ccb0d143449ec29428a78206be2e4de333941e8
+acroform_root: form1[0]
+fields:
+- line: name
+  field: Page1[0].f1_01[0]
+  type: text
+- line: identifying_number
+  field: Page1[0].f1_02[0]
+  type: text
+  maxlen: 9
+  format: ssn_digits_only
+- line: 1a
+  field: Page1[0].Line1a_ReadOrder[0].f1_03[0]
+  type: money
+- line: 1b
+  field: Page1[0].f1_04[0]
+  type: money
+- line: 1c
+  field: Page1[0].f1_05[0]
+  type: money
+- line: 1d
+  field: Page1[0].f1_06[0]
+  type: money
+- line: 1e.i
+  field: Page1[0].Line1e_ReadOrder[0].c1_1[0]
+  type: checkbox
+  on_state: /1
+  group: line1e_box
+- line: 1e.ii
+  field: Page1[0].Line1e_ReadOrder[0].c1_1[1]
+  type: checkbox
+  on_state: /2
+  group: line1e_box
+- line: 1e.iii
+  field: Page1[0].Line1e_ReadOrder[0].c1_1[2]
+  type: checkbox
+  on_state: /3
+  group: line1e_box
+- line: 1e.iv
+  field: Page1[0].Line1e_ReadOrder[0].c1_1[3]
+  type: checkbox
+  on_state: /4
+  group: line1e_box
+- line: 1e
+  field: Page1[0].f1_07[0]
+  type: money
+- line: 1f.i
+  field: Page1[0].Line1f_ReadOrder[0].c1_2[0]
+  type: checkbox
+  on_state: /1
+  group: line1f_box
+- line: 1f.ii
+  field: Page1[0].Line1f_ReadOrder[0].c1_2[1]
+  type: checkbox
+  on_state: /2
+  group: line1f_box
+- line: 1f.iii
+  field: Page1[0].Line1f_ReadOrder[0].c1_2[2]
+  type: checkbox
+  on_state: /3
+  group: line1f_box
+- line: 1f.iv
+  field: Page1[0].Line1f_ReadOrder[0].c1_2[3]
+  type: checkbox
+  on_state: /4
+  group: line1f_box
+- line: 1f
+  field: Page1[0].f1_08[0]
+  type: money
+- line: 1y.type
+  field: Page1[0].f1_09[0]
+  type: text
+- line: 1y
+  field: Page1[0].f1_10[0]
+  type: money
+- line: 1z
+  field: Page1[0].f1_11[0]
+  type: money
+- line: '2'
+  field: Page1[0].f1_12[0]
+  type: money
+- line: '3'
+  field: Page1[0].f1_13[0]
+  type: money
+- line: 4.exempt_4361
+  field: Page1[0].Line4_ReadOrder[0].c1_3[0]
+  type: checkbox
+  on_state: /1
+- line: 4.exempt_4029
+  field: Page1[0].Line4_ReadOrder[0].c1_4[0]
+  type: checkbox
+  on_state: /1
+- line: 4.exempt_other
+  field: Page1[0].Line4_ReadOrder[0].c1_5[0]
+  type: checkbox
+  on_state: /1
+- line: 4.exempt_other_type
+  field: Page1[0].Line4_ReadOrder[0].f1_14[0]
+  type: text
+- line: '4'
+  field: Page1[0].f1_15[0]
+  type: money
+- line: '5'
+  field: Page1[0].f1_16[0]
+  type: money
+- line: '6'
+  field: Page1[0].f1_17[0]
+  type: money
+- line: '7'
+  field: Page1[0].f1_18[0]
+  type: money
+- line: 8.not_required
+  field: Page1[0].Line8_ReadOrder[0].c1_6[0]
+  type: checkbox
+  on_state: /1
+  group: line8_not_required
+- line: '8'
+  field: Page1[0].f1_19[0]
+  type: money
+- line: '9'
+  field: Page1[0].f1_20[0]
+  type: money
+- line: '10'
+  field: Page1[0].f1_21[0]
+  type: money
+- line: '11'
+  field: Page1[0].f1_22[0]
+  type: money
+- line: '12'
+  field: Page1[0].f1_23[0]
+  type: money
+- line: '13'
+  field: Page1[0].f1_24[0]
+  type: money
+- line: '14'
+  field: Page1[0].f1_25[0]
+  type: money
+- line: '15'
+  field: Page1[0].f1_26[0]
+  type: money
+- line: '16'
+  field: Page1[0].f1_27[0]
+  type: money
+- line: 17a.type
+  field: Page2[0].Line17a_ReadOrder[0].Line17_ReadOrder[0].f2_01[0]
+  type: text
+- line: 17a
+  field: Page2[0].Line17a_ReadOrder[0].f2_02[0]
+  type: money
+- line: 17b
+  field: Page2[0].f2_03[0]
+  type: money
+- line: 17c
+  field: Page2[0].f2_04[0]
+  type: money
+- line: 17d
+  field: Page2[0].f2_05[0]
+  type: money
+- line: 17e
+  field: Page2[0].f2_06[0]
+  type: money
+- line: 17f
+  field: Page2[0].f2_07[0]
+  type: money
+- line: 17g
+  field: Page2[0].f2_08[0]
+  type: money
+- line: 17h
+  field: Page2[0].f2_09[0]
+  type: money
+- line: 17i
+  field: Page2[0].f2_10[0]
+  type: money
+- line: 17j
+  field: Page2[0].f2_11[0]
+  type: money
+- line: 17k
+  field: Page2[0].f2_12[0]
+  type: money
+- line: 17l
+  field: Page2[0].f2_13[0]
+  type: money
+- line: 17m
+  field: Page2[0].f2_14[0]
+  type: money
+- line: 17n
+  field: Page2[0].f2_15[0]
+  type: money
+- line: 17o
+  field: Page2[0].f2_16[0]
+  type: money
+- line: 17p
+  field: Page2[0].f2_17[0]
+  type: money
+- line: 17q
+  field: Page2[0].f2_18[0]
+  type: money
+- line: 17z.type
+  field: Page2[0].Line17z_ReadOrder[0].f2_19[0]
+  type: text
+  maxlen: 79
+- line: 17z
+  field: Page2[0].f2_20[0]
+  type: money
+- line: '18'
+  field: Page2[0].f2_21[0]
+  type: money
+- line: '19'
+  field: Page2[0].f2_22[0]
+  type: money
+- line: '20'
+  field: Page2[0].f2_23[0]
+  type: money
+- line: '21'
+  field: Page2[0].f2_24[0]
+  type: money
+relations:
+- 1z == sum(1a..1y)
+- 3 == 1z + 2
+- 7 == 5 + 6
+- 18 == sum(17a..17z)
+- 21 == 4 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 18 + 19
+cross_form: []
+identity_fields:
+- name
+- identifying_number
