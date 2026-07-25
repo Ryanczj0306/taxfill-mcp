@@ -14,8 +14,10 @@ def test_list_all_packs():
     # (2023, Rev. 2-2024) = 34, + Form W-7 (2023, Rev. 12-2024) = 35, + Forms
     # 8959/8960/8962 (2023, Phase F) = 38, + Schedule 8812 / Schedule A (1040-NR)
     # / Schedule NEC (2023, Tier 2) = 41, + Forms 2441/843/8316 (Phase G) = 44,
+    # + the TY2025 set (f1040, scheds 1/1a/2/3/A/B/C, 8843, f1040nr,
+    # scheds OI/NEC/A-NR — the OBBBA year, incl. the new Schedule 1-A) = 57,
     # plus the growing state packs.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 44
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 57
     assert any(s.jurisdiction.startswith("states/") for s in allf)
 
 
