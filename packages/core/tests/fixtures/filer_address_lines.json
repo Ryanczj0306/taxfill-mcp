@@ -116,6 +116,33 @@
  "federal/2024/sched_a/pack.yaml": [],
  "federal/2024/sched_b/pack.yaml": [],
  "federal/2024/sched_c/pack.yaml": [],
+ "federal/2025/f1040/pack.yaml": [
+  "mailing_address.street",
+  "mailing_address.apt",
+  "mailing_address.city",
+  "mailing_address.state",
+  "mailing_address.zip"
+ ],
+ "federal/2025/f1040nr/pack.yaml": [
+  "mailing_address.street",
+  "mailing_address.apt",
+  "mailing_address.city",
+  "mailing_address.state",
+  "mailing_address.zip"
+ ],
+ "federal/2025/f8843/pack.yaml": [
+  "mailing_address"
+ ],
+ "federal/2025/sched_1/pack.yaml": [],
+ "federal/2025/sched_1a/pack.yaml": [],
+ "federal/2025/sched_2/pack.yaml": [],
+ "federal/2025/sched_3/pack.yaml": [],
+ "federal/2025/sched_a/pack.yaml": [],
+ "federal/2025/sched_a_nr/pack.yaml": [],
+ "federal/2025/sched_b/pack.yaml": [],
+ "federal/2025/sched_c/pack.yaml": [],
+ "federal/2025/sched_nec/pack.yaml": [],
+ "federal/2025/sched_oi/pack.yaml": [],
  "states/al/2023/al40/pack.yaml": [
   "ADDRESS",
   "CITY",
@@ -181,6 +208,12 @@
   "state",
   "zip"
  ],
+ "states/ia/2023/ia1040/pack.yaml": [
+  "mailing_address.street",
+  "mailing_address.city",
+  "mailing_address.state",
+  "mailing_address.zip"
+ ],
  "states/id/2023/form40/pack.yaml": [
   "mailing_address.street",
   "mailing_address.city",
@@ -213,6 +246,12 @@
   "mailing_address.street",
   "mailing_address.unit_type",
   "mailing_address.unit_number",
+  "mailing_address.city",
+  "mailing_address.state",
+  "mailing_address.zip"
+ ],
+ "states/ma/2023/form1/pack.yaml": [
+  "mailing_address.street",
   "mailing_address.city",
   "mailing_address.state",
   "mailing_address.zip"
@@ -328,6 +367,12 @@
   "zip"
  ],
  "states/ri/2023/ri1040/pack.yaml": [
+  "mailing_address.street",
+  "mailing_address.city",
+  "mailing_address.state",
+  "mailing_address.zip"
+ ],
+ "states/ut/2023/tc40/pack.yaml": [
   "mailing_address.street",
   "mailing_address.city",
   "mailing_address.state",

@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,225 tests, all green** — offline 2,129 + live-.gov 96, exit 0):
+Done and on `main` (**2,297 tests, all green** — offline 2,192 + live-.gov 105, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (22 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -268,7 +268,7 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
 
 ### D2 — Breadth follow-ons
 
-- [ ] More tax years for the state packs (federal already spans 2019–2024).
+- [ ] More tax years for the state packs (states ship 2023 only; federal now spans 2019–2025 — the TY2025 OBBBA set (13 packs incl. the new Schedule 1-A) + knowledge/federal/2025.yaml (two-pass verified: OBBBA tips/overtime/car-loan/senior deductions, $2,200 CTC, SALT cap, consolidated 2025 where-to-file) shipped 2026-07-25).
 - [ ] Community pack-contribution pipeline (the `taxfill introspect` CLI is the
       seed; document the author→audit→PR flow).
 
