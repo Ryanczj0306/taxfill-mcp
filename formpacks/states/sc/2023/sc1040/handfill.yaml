@@ -1,0 +1,153 @@
+# South Carolina SC1040 (Rev. 4/18/23) — 2023 Individual Income Tax Return.
+#
+# PRINT-ONLY (C3): the official SC1040 PDF is a flat scannable form — NO
+# AcroForm widgets and NO XFA (introspect finds 0 fillable fields), so it
+# cannot be filled programmatically. HAND-FILL pack (render_mode: hand_fill):
+# the engine computes every derivable line and emits a line->value worksheet;
+# the filer PRINTS the blank at source_url and hand-writes the values.
+#
+# Provenance: blank downloaded from source_url (3 pages, serials 30751234/
+# 30752232/30753230); page-1 text verified "STATE OF SOUTH CAROLINA /
+# DEPARTMENT OF REVENUE / 2023 INDIVIDUAL INCOME TAX RETURN / SC1040
+# (Rev. 4/18/23) / 3075" before pinning pdf_sha256. SCOPE: complete — header/
+# status/dependents, income and adjustments (line 1, additions a-e,
+# subtractions f-w, lines 2-10), nonrefundable credits 11-15, payments and
+# refundable credits 16-23, overpayment/due 24-34, refund/payment options
+# 35-37. SC1040TT tax-table lookups stay manual notes. Line 4's f-through-w
+# sum stays manual (its addends include the dotted retirement/age-65
+# sub-lines the compute grammar cannot reference).
+form: "SC1040"
+jurisdiction: states/sc
+tax_year: 2023
+render_mode: hand_fill
+source_url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2023.pdf
+pdf_sha256: "5038784c88b810059864e2353e9da06546e030398355edfc6ea43ca9a31b2f93"
+signature_note: "Sign and date the printed return on page 3 (BOTH spouses must sign if filing jointly); answer the preparer-discussion Yes/No authorization."
+lines:
+  # ---- header / identity (page 1) -------------------------------------------
+  - { line: "identifying_number", label: "Your Social Security Number", type: text }
+  - { line: "spouse.identifying_number", label: "Spouse's Social Security Number", type: text }
+  - { line: "name.first", label: "First name and middle initial", type: text }
+  - { line: "name.last", label: "Last name", type: text }
+  - { line: "name.suffix", label: "Suffix", type: text }
+  - { line: "spouse.first_name", label: "Spouse's first name (if married filing jointly)", type: text }
+  - { line: "spouse.last_name", label: "Spouse's last name", type: text }
+  - { line: "new_address", label: "Check if new address", type: checkbox }
+  - { line: "mailing_address.street", label: "Mailing address (number and street, PO Box)", type: text }
+  - { line: "county_code", label: "County code", type: text }
+  - { line: "mailing_address.city", label: "City", type: text }
+  - { line: "mailing_address.state", label: "State", type: text }
+  - { line: "mailing_address.zip", label: "ZIP", type: text }
+  - { line: "phone", label: "Daytime phone number with area code", type: text }
+  - { line: "address_outside_us", label: "Check if address is outside US", type: checkbox }
+  - { line: "foreign_address", label: "Foreign country address including postal code", type: text }
+  # ---- return-type checkboxes -------------------------------------------------
+  - { line: "amended", label: "Amended Return (attach Schedule AMD)", type: checkbox }
+  - { line: "schedule_nr", label: "Part-year or nonresident filing an SC Schedule NR", type: checkbox }
+  - { line: "composite", label: "Composite return for a Partnership or S Corporation (NOT for individuals)", type: checkbox }
+  - { line: "extension", label: "Filed a federal or state extension", type: checkbox }
+  - { line: "combat_zone", label: "Served in a military combat zone during the filing period", type: checkbox }
+  - { line: "combat_zone_name", label: "Name of the combat zone", type: text }
+  # ---- federal filing status (check one) --------------------------------------
+  - { line: "filing_status.single", label: "(1) Single", type: checkbox }
+  - { line: "filing_status.mfj", label: "(2) Married filing jointly", type: checkbox }
+  - { line: "filing_status.mfs", label: "(3) Married filing separately (enter spouse's SSN)", type: checkbox }
+  - { line: "filing_status.mfs_spouse_ssn", label: "(3) Spouse's SSN for married filing separately", type: text }
+  - { line: "filing_status.hoh", label: "(4) Head of household", type: checkbox }
+  - { line: "filing_status.qss", label: "(5) Qualifying surviving spouse", type: checkbox }
+  # ---- dependents counts -------------------------------------------------------
+  - { line: "dependents_count", label: "Number of dependents claimed on your 2023 federal return", type: text }
+  - { line: "dependents_under6_count", label: "Dependents under age 6 as of December 31, 2023", type: text }
+  - { line: "taxpayers_65_count", label: "Number of taxpayers age 65 or older as of December 31, 2023", type: text }
+  # ---- income and adjustments (page 2) ----------------------------------------
+  - { line: "1", label: "Federal taxable income (zero if less; nonresidents use Schedule NR to line 5)", type: money }
+  - { line: "a", label: "Addition — state tax addback, if itemizing on federal return", type: money }
+  - { line: "b", label: "Addition — out-of-state losses (note type on the form)", type: money }
+  - { line: "c", label: "Addition — expenses related to National Guard and Military Reserve income", type: money }
+  - { line: "d", label: "Addition — interest on obligations of states other than South Carolina", type: money }
+  - { line: "e", label: "Addition — other additions to income (attach explanation)", type: money }
+  - { line: "2", label: "Total additions (add line a through line e)", type: money, compute: "a + b + c + d + e" }
+  - { line: "3", label: "Add line 1 and line 2", type: money, compute: "1 + 2" }
+  - { line: "f", label: "Subtraction — state tax refund, if included on your federal return", type: money }
+  - { line: "g", label: "Subtraction — total and permanent disability retirement income, if federally taxed", type: money }
+  - { line: "h", label: "Subtraction — out-of-state income/gain (not personal service; type on the form)", type: money }
+  - { line: "i", label: "Subtraction — 44% of net capital gains held more than one year", type: money }
+  - { line: "j", label: "Subtraction — volunteer deductions (type on the form)", type: money }
+  - { line: "k", label: "Subtraction — SC College Investment (Future Scholar) / Tuition Prepayment contributions", type: money }
+  - { line: "l", label: "Subtraction — Active Trade or Business Income deduction", type: money }
+  - { line: "m", label: "Subtraction — interest income from US government obligations", type: money }
+  - { line: "n", label: "Subtraction — certain nontaxable National Guard or Reserve pay", type: money }
+  - { line: "o", label: "Subtraction — Social Security / railroad retirement, if federally taxed", type: money }
+  - { line: "p.taxpayer", label: "Retirement Deduction — taxpayer (DOB on the form)", type: money }
+  - { line: "p.spouse", label: "Retirement Deduction — spouse (DOB on the form)", type: money }
+  - { line: "p.surviving_spouse", label: "Retirement Deduction — surviving spouse (deceased spouse's DOB on the form)", type: money }
+  - { line: "p.military_taxpayer", label: "Military Retirement Deduction — taxpayer", type: money }
+  - { line: "p.military_spouse", label: "Military Retirement Deduction — spouse", type: money }
+  - { line: "p.military_surviving_spouse", label: "Military Retirement Deduction — surviving spouse", type: money }
+  - { line: "q.taxpayer", label: "Age 65 and older deduction — taxpayer (DOB on the form)", type: money }
+  - { line: "q.spouse", label: "Age 65 and older deduction — spouse (DOB on the form)", type: money }
+  - { line: "r", label: "Subtraction — negative amount of federal taxable income", type: money }
+  - { line: "s", label: "Subtraction — subsistence allowance (days x $8; days on the form)", type: money }
+  - { line: "t", label: "Subtraction — dependents under age 6 on December 31 of the tax year", type: money }
+  - { line: "u", label: "Subtraction — Consumer Protection Services", type: money }
+  - { line: "v", label: "Subtraction — other subtractions (see instructions)", type: money }
+  - { line: "w", label: "Subtraction — South Carolina Dependent Exemption", type: money }
+  - { line: "4", label: "Total subtractions (add line f through line w)", type: money,
+      note: "Add every subtraction entry: f g h i j k l m n o, the six retirement/military sub-amounts under p, the two age-65 sub-amounts under q, r s t u v w. Left manual because the p/q sub-lines cannot appear in a compute expression." }
+  - { line: "5", label: "Residents: line 3 minus line 4 (zero floor) — SC INCOME SUBJECT TO TAX; nonresidents: Schedule NR line 48", type: money, compute: "max(0, 3 - 4)" }
+  - { line: "6", label: "TAX on SC Income Subject to Tax (SC1040TT)", type: money,
+      note: "MANDATED lookup: 2023 SC1040TT tax tables (or the schedule above the table cap) — SC's 0%/3%/6.4%(2023 rate) structure with the table's rounding, never plain bracket arithmetic." }
+  - { line: "7", label: "TAX on lump-sum distribution (attach SC4972)", type: money }
+  - { line: "8", label: "TAX on Active Trade or Business Income (attach I-335)", type: money }
+  - { line: "9", label: "TAX on excess Catastrophe Savings Account withdrawals", type: money }
+  - { line: "10", label: "TOTAL SOUTH CAROLINA TAX: add line 6 through line 9", type: money, compute: "6 + 7 + 8 + 9" }
+  # ---- nonrefundable credits (page 3) -----------------------------------------
+  - { line: "11", label: "Child and Dependent Care credit", type: money }
+  - { line: "12", label: "Two Wage Earner Credit", type: money }
+  - { line: "13", label: "Other nonrefundable credits (attach SC1040TC and other state returns)", type: money }
+  - { line: "14", label: "Total nonrefundable credits: add line 11 through line 13", type: money, compute: "11 + 12 + 13" }
+  - { line: "15", label: "Line 10 minus line 14 (zero floor)", type: money, compute: "max(0, 10 - 14)" }
+  # ---- payments and refundable credits ----------------------------------------
+  - { line: "16", label: "SC income tax withheld (attach W-2 or SC41)", type: money }
+  - { line: "17", label: "2023 estimated tax payments", type: money }
+  - { line: "18", label: "Amount paid with extension", type: money }
+  - { line: "19", label: "Nonresident sale of real estate (paid on I-290)", type: money }
+  - { line: "20", label: "Other SC withholding (attach 1099)", type: money }
+  - { line: "21", label: "Tuition tax credit (attach I-319)", type: money }
+  - { line: "22a", label: "Refundable — Anhydrous Ammonia (attach I-333)", type: money }
+  - { line: "22b", label: "Refundable — Milk Credit (attach I-334)", type: money }
+  - { line: "22c", label: "Refundable — Classroom Teacher Expenses (attach I-360)", type: money }
+  - { line: "22d", label: "Refundable — Parental Refundable Credit (attach I-361)", type: money }
+  - { line: "22", label: "Total refundable credits: add line 22a through line 22d (the printed 22e slot is reserved — never filled)", type: money, compute: "22a + 22b + 22c + 22d" }
+  - { line: "23", label: "TOTAL PAYMENTS: add line 16 through line 22 (amended returns compute via Schedule AMD)", type: money, compute: "16 + 17 + 18 + 19 + 20 + 21 + 22" }
+  # ---- overpayment / amount due -----------------------------------------------
+  - { line: "24", label: "Overpayment: if line 23 exceeds line 15, line 23 minus line 15", type: money, compute: "max(0, 23 - 15)" }
+  - { line: "25", label: "Amount due: if line 15 exceeds line 23, line 15 minus line 23", type: money, compute: "max(0, 15 - 23)" }
+  - { line: "26", label: "USE TAX on online/mail-order/out-of-state purchases (county sales-tax rate)", type: money }
+  - { line: "26.no_use_tax", label: "Certify that no Use Tax is due (check)", type: checkbox }
+  - { line: "27", label: "Amount of line 24 credited to your 2024 estimated tax", type: money }
+  - { line: "28", label: "Total contributions for check-offs (attach I-330)", type: money }
+  - { line: "29", label: "Add line 26 through line 28", type: money, compute: "26 + 27 + 28" }
+  - { line: "30", label: "REFUND: if line 29 is not larger than line 24, line 24 minus line 29 (line 35 choice required)", type: money, compute: "max(0, 24 - 29)" }
+  - { line: "31", label: "Tax due: line 25 plus line 29 (less line 24 when line 29 exceeds it)", type: money, compute: "25 + max(0, 29 - 24)" }
+  - { line: "32.penalties", label: "Late filing/payment — penalties portion", type: money }
+  - { line: "32.interest", label: "Late filing/payment — interest portion", type: money }
+  - { line: "32", label: "Late filing and/or late payment penalties and interest — total", type: money,
+      note: "Sum of the penalties and interest blanks (left manual: the sub-blanks cannot appear in a compute expression)." }
+  - { line: "33", label: "Penalty for underpayment of estimated tax (attach SC2210; exception code on the form)", type: money }
+  - { line: "34", label: "BALANCE DUE: add line 31 through line 33 (select payment option on line 36)", type: money, compute: "31 + 32 + 33" }
+  # ---- refund / payment options -------------------------------------------------
+  - { line: "35.direct_deposit", label: "Refund option — direct deposit (line 37 required; US accounts only)", type: checkbox }
+  - { line: "35.paper_check", label: "Refund option — paper check", type: checkbox }
+  - { line: "36.mydorway", label: "Payment option — MyDORWAY (dor.sc.gov/pay)", type: checkbox }
+  - { line: "36.ach_debit", label: "Payment option — ACH Debit (US bank info on line 37)", type: checkbox }
+  - { line: "36.withdrawal_date", label: "For payments only — withdrawal date", type: text }
+  - { line: "36.withdrawal_amount", label: "For payments only — withdrawal amount", type: money }
+  - { line: "37.checking", label: "Account type — checking", type: checkbox }
+  - { line: "37.savings", label: "Account type — savings", type: checkbox }
+  - { line: "37.routing", label: "Routing number (9 digits; first two 01-32)", type: text }
+  - { line: "37.account", label: "Bank account number (1-17 digits)", type: text }
+mailing:
+  no_payment: "SC1040 Processing Center, PO Box 101100, Columbia, SC 29211-0100 (refunds or zero tax)"
+  with_payment: "Taxable Processing Center, PO Box 101105, Columbia, SC 29211-0105 (balance due)"
+  verify_url: https://dor.sc.gov

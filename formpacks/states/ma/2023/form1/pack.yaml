@@ -1,0 +1,738 @@
+# Form 1, 2023 — Massachusetts Resident Income Tax Return (4 pages).
+#
+# Provenance. source_url is the exact official mass.gov document URL, but
+# mass.gov sits behind Akamai and returns 403 to plain (non-browser) fetchers.
+# The blank used to author and audit this pack was recovered from the Wayback
+# Machine's archive of that SAME official URL and is pinned here by sha256
+# (86233c2d…802c4). fetch_blank serves it from the shared cache
+# (.cache/blanks/) and will digest-verify the live download the moment
+# mass.gov unblocks — a mismatch fails closed, so the pinned artifact and the
+# official URL can never silently diverge.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) ->
+# vision-map over all 4 page PNGs + pdftotext -layout of the printed face ->
+# this map -> scripts/audit_pack.py adversarial sentinel audit.
+#
+# Layout. Flat AcroForm (acroform_root empty), raw DOR field names ("res5a"
+# binds printed line 5a, etc.). The header identity strip (fname/mi/lname/SSN)
+# repeats on every page but is ONE field per name with 4 widgets — mapped
+# once; filling it populates all four pages. Two raw-name quirks kept as-is:
+# "number of qualifying childer" (sic, DOR's typo) is line 43a and bare "43c"
+# is the line-43 EIC multiplier blank ("43b x ____ = 43").
+#
+# UNMAPPABLE OVALS (verified hazard — do not map). Eleven page-1 ovals are
+# nested kids named only '0' or '1' under the "Checkcash"/"Checktp1"
+# container fields (Checkcash.0.*.*, Checktp1.0-3.*). The five '0' widgets
+# and six '1' widgets share those leaf names, and filling any one of them
+# ticks ALL of them at once in DOR's own AcroForm. They are therefore NOT
+# independently fillable and are intentionally unmapped. Affected printed
+# ovals — hand-tick after printing if applicable:
+#   * Amended return / Federal amendment (Checkcash '0' kids)
+#   * Other jurisdiction change / Amended return due to IRS BBA Partnership
+#     Audit (Checkcash '1' kids)
+#   * Veteran of Operation Enduring Freedom/Iraqi Freedom/Noble Eagle/Sinai
+#     Peninsula — Taxpayer + Spouse ovals (Checktp1.0.*)
+#   * Taxpayer(s) deceased — Taxpayer + Spouse ovals (Checktp1.1.*)
+#   * Under age 18 — Taxpayer + Spouse ovals (Checktp1.2.*)
+#   * Noncustodial parent (Checktp1.3.1)
+# The date box of "Other jurisdiction change" (field "date") IS fillable and
+# is mapped. All other named ovals (Check112/Checkcash11 campaign fund,
+# Checktp112/Checktpsp name-changed, Checktp1.31/.48 Schedule TDS/FCI,
+# Checktp1.3.2 digital assets, Checktp1.41-.44 age-65/blindness You/Spouse,
+# check1a/1b/6a/6b/7/10 loss X-boxes, the filing-status radio, and the
+# page 2-4 Checktp* ovals) are individually fillable and mapped below.
+#
+# Coverage. 163 terminal fillable fields in the blank; 152 mapped (the 11
+# hazard ovals above are the only omissions), expressed as 156 logical lines
+# ("filing status" is ONE /Btn radio field carrying 4 option lines; "direct
+# deposit" is one field carrying 2).
+#
+# Money vs text. Every res* dollar box prints a ".00"/"0 0" cents suffix ->
+# money (whole dollars). Counts (2b/2c/2d totals, 43a, 46a), the campaign-fund
+# total, the EIC multiplier blank, dates, ids and phone/email stay text.
+# maxlen tightened where DOR's is wrong for the drawn box: 43a (PDF maxlen 10,
+# box is one cell — clamped 2) and "43c" (no PDF maxlen, tiny blank — 3).
+#
+# Relations. Only unconditional printed-face math is declared. OMITTED per
+# the conservative house style: 5 = 5a - 5b, 17 = 10 - 16, 19 = 17 - 18 and
+# 32 = 28 - (29..31) (all floored "not less than 0"); 10 = add 3..9 (lines
+# 6a/6b/7/10 hold unsigned amounts whose sign comes from the loss X-boxes);
+# 14 = 14a / 2 (capped by instructions); 22/23a/23b/24 (tax table / rate
+# products); 43 and 46 (multiplier comes from the instructions, not the
+# face); 51 and 54 (refund-vs-tax-due branches).
+form: MA Form 1
+jurisdiction: states/ma
+tax_year: 2023
+source_url: https://www.mass.gov/doc/2023-form-1-massachusetts-resident-income-tax-return/download
+pdf_sha256: 86233c2d989ebac9ef7cca7cc09d6e4c466b1dc0ed069708c5acf97759f802c4
+acroform_root: ''
+fields:
+  # ================================================= header (page 1; shared fields repeat on pages 2-4)
+  - line: tp_first_name
+    field: fname
+    type: text
+  - line: tp_mi
+    field: mi
+    type: text
+    maxlen: 1
+  - line: tp_last_name
+    field: lname
+    type: text
+  - line: tp_ssn
+    field: SSN
+    type: text
+    maxlen: 9
+  - line: spouse_first_name
+    field: Spfname
+    type: text
+  - line: spouse_mi
+    field: Spmi
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: Splname
+    type: text
+  - line: spouse_ssn
+    field: SSNSP
+    type: text
+    maxlen: 9
+  - line: mailing_address.street
+    field: madd
+    type: text
+  - line: mailing_address.city
+    field: city
+    type: text
+  - line: mailing_address.state
+    field: state
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip
+    field: zip
+    type: text
+    maxlen: 7
+  - line: foreign_province_state_county
+    field: fmadd
+    type: text
+  - line: foreign_country
+    field: fcity
+    type: text
+  - line: foreign_postal_code
+    field: fzip
+    type: text
+    maxlen: 7
+
+  # ---- "Fill in if" battery (page 1). The amended/jurisdiction/BBA, veteran,
+  # ---- deceased, under-18 and noncustodial ovals are the UNMAPPABLE '0'/'1'
+  # ---- kids — see header comment. Only their date box is fillable:
+  - line: other_jurisdiction_change_date   # MM DD YYYY, next to "Other jurisdiction change"
+    field: date
+    type: text
+    maxlen: 8
+  # State Election Campaign Fund ($1 Taxpayer / $1 Spouse ovals + "Total $" box)
+  - line: campaign_fund_taxpayer
+    field: Check112
+    type: checkbox
+    on_state: /Yes
+  - line: campaign_fund_spouse
+    field: Checkcash11
+    type: checkbox
+    on_state: /Yes
+  - line: campaign_fund_total              # Total $ (1 or 2)
+    field: BBAtotal
+    type: text
+    maxlen: 1
+  # "Fill in if name has changed" Taxpayer / Spouse ovals
+  - line: name_changed_taxpayer
+    field: Checktp112
+    type: checkbox
+    on_state: /Yes
+  - line: name_changed_spouse
+    field: Checktpsp
+    type: checkbox
+    on_state: /Yes
+  # "Fill in if filing the following schedule(s)"
+  - line: schedule_tds
+    field: Checktp1.31
+    type: checkbox
+    on_state: /Yes
+  - line: schedule_fci
+    field: Checktp1.48
+    type: checkbox
+    on_state: /Yes
+  # "Fill in if ... digital asset" oval
+  - line: digital_assets
+    field: Checktp1.3.2
+    type: checkbox
+    on_state: /Yes
+
+  # ---- pre-line-1 federal reference boxes
+  - line: a_loss                           # "IF A LOSS, MARK AN X IN BOX" for line a
+    field: check1a
+    type: checkbox
+    on_state: /On
+  - line: a                                # Total federal income (U.S. Form 1040, line 9)
+    field: res1a
+    type: money
+    maxlen: 8
+  - line: b_loss                           # "IF A LOSS, MARK AN X IN BOX" for line b
+    field: check1b
+    type: checkbox
+    on_state: /On
+  - line: b                                # Total federal adjusted gross income (U.S. Form 1040, line 11)
+    field: res1b
+    type: money
+    maxlen: 8
+
+  # ---- 1 FILING STATUS (ONE /Btn radio field; "Fill in one only")
+  - line: 1_filing_status::single
+    field: filing status
+    type: checkbox
+    on_state: /Single
+    group: 1_filing_status
+    required: true
+  - line: 1_filing_status::mfj
+    field: filing status
+    type: checkbox
+    on_state: /Married filing joint return
+    group: 1_filing_status
+  - line: 1_filing_status::mfs
+    field: filing status
+    type: checkbox
+    on_state: /Married filing separate return
+    group: 1_filing_status
+  - line: 1_filing_status::hoh
+    field: filing status
+    type: checkbox
+    on_state: /Head of household
+    group: 1_filing_status
+  - line: 1_custodial_parent               # custodial parent who released claim to exemption for child(ren)
+    field: custodial parent
+    type: checkbox
+    on_state: /Yes
+  - line: 1_nra                            # NRA (see instructions)
+    field: nonresident alien
+    type: checkbox
+    on_state: /Yes
+
+  # ---- 2 EXEMPTIONS
+  - line: 2a                               # personal exemptions ($4,400 / $6,800 / $8,800)
+    field: res2a
+    type: money
+    maxlen: 4
+  - line: 2b_total_dependents              # "Total" count box, x $1,000 = 2b
+    field: restotal1
+    type: text
+    maxlen: 2
+  - line: "2b"
+    field: res2b
+    type: money
+    maxlen: 5
+  - line: 2c_you                           # Age 65 or over before 2024 — You
+    field: Checktp1.41
+    type: checkbox
+    on_state: /Yes
+  - line: 2c_spouse                        # Age 65 or over before 2024 — Spouse
+    field: Checktp1.42
+    type: checkbox
+    on_state: /Yes
+  - line: 2c_total                         # "Total" count box, x $700 = 2c
+    field: restotal2
+    type: text
+    maxlen: 1
+  - line: 2c
+    field: res2c
+    type: money
+    maxlen: 4
+  - line: 2d_you                           # Blindness — You
+    field: Checktp1.43
+    type: checkbox
+    on_state: /Yes
+  - line: 2d_spouse                        # Blindness — Spouse
+    field: Checktp1.44
+    type: checkbox
+    on_state: /Yes
+  - line: 2d_total                         # "Total" count box, x $2,200 = 2d
+    field: restotal3
+    type: text
+    maxlen: 1
+  - line: 2d
+    field: res2d
+    type: money
+    maxlen: 4
+  - line: 2e                               # Medical/dental (U.S. Schedule A, line 4)
+    field: res2e
+    type: money
+    maxlen: 6
+  - line: 2f                               # Adoption
+    field: res2f
+    type: money
+    maxlen: 6
+  - line: 2g                               # TOTAL EXEMPTIONS. Add lines 2a through 2f
+    field: res2g
+    type: money
+    maxlen: 6
+
+  # ---- SIGN HERE strip (page 1)
+  - line: tp_signature
+    field: Signature
+    type: text
+  - line: tp_signature_date                # 54pt box, fixed 12pt font — 8 chars max (MMDDYYYY)
+    field: date3
+    type: text
+    maxlen: 8
+  - line: spouse_signature
+    field: Spsignature
+    type: text
+  - line: spouse_signature_date            # 54pt box, fixed 12pt font — 8 chars max (MMDDYYYY)
+    field: date4
+    type: text
+    maxlen: 8
+  - line: tp_email
+    field: email
+    type: text
+  - line: tp_phone
+    field: TPphone
+    type: text
+    maxlen: 10
+
+  # ===================================================== page 2 — INCOME
+  - line: "3"                              # wages, salaries, tips (Forms W-2)
+    field: res3
+    type: money
+    maxlen: 8
+  - line: "4"                              # taxable pensions and annuities
+    field: res4
+    type: money
+    maxlen: 8
+  - line: 5a                               # Massachusetts bank interest
+    field: res5a
+    type: money
+    maxlen: 8
+  - line: 5b                               # exemption amount ($200 MFJ / $100 otherwise)
+    field: res5b
+    type: money
+    maxlen: 3
+  - line: "5"                              # a - b (not less than 0)
+    field: res5
+    type: money
+    maxlen: 8
+  - line: 6a_loss                          # IF A LOSS X box for 6a
+    field: check6a
+    type: checkbox
+    on_state: /On
+  - line: 6a                               # business/profession income or loss (Schedule C)
+    field: res6a
+    type: money
+    maxlen: 8
+  - line: 6b_loss
+    field: check6b
+    type: checkbox
+    on_state: /On
+  - line: 6b                               # farming income or loss (U.S. Schedule F)
+    field: res6b
+    type: money
+    maxlen: 8
+  - line: 7_loss
+    field: check7
+    type: checkbox
+    on_state: /On
+  - line: "7"                              # rental/royalty/REMIC/partnership/S corp/trust
+    field: res7
+    type: money
+    maxlen: 8
+  - line: 8a                               # unemployment compensation
+    field: res8a
+    type: money
+    maxlen: 8
+  - line: 8b                               # Massachusetts state lottery winnings
+    field: res8b
+    type: money
+    maxlen: 8
+  - line: "9"                              # other income from Schedule X, line 7
+    field: res9
+    type: money
+    maxlen: 8
+  - line: 10_loss
+    field: check10
+    type: checkbox
+    on_state: /On
+  - line: "10"                             # TOTAL 5.0% INCOME (add 3-9, losses subtracted)
+    field: res10
+    type: money
+    maxlen: 8
+
+  # ---- DEDUCTIONS (lines 12/13 are "Reserved for future use": printed static zeros, no widget)
+  - line: 11a                              # amount you paid to SS/Medicare/RR/US/MA retirement (max $2,000)
+    field: res11a
+    type: money
+    maxlen: 4
+  - line: 11b                              # amount spouse paid (max $2,000)
+    field: res11b
+    type: money
+    maxlen: 4
+  - line: 14a                              # total qualified rent paid in 2023
+    field: res14a
+    type: money
+    maxlen: 5
+  - line: "14"                             # rental deduction (14a / 2, capped per instructions)
+    field: res14
+    type: money
+    maxlen: 4
+  - line: "15"                             # other deductions from Schedule Y, line 19
+    field: res15
+    type: money
+    maxlen: 8
+  - line: "16"                             # TOTAL DEDUCTIONS. Add lines 11 through 15
+    field: res16
+    type: money
+    maxlen: 8
+  - line: "17"                             # 5.0% income after deductions (10 - 16, not < 0)
+    field: res17
+    type: money
+    maxlen: 8
+  - line: "18"                             # total exemption amount (from line 2g)
+    field: res18
+    type: money
+    maxlen: 6
+  - line: "19"                             # 5.0% income after exemptions (17 - 18, not < 0)
+    field: res19
+    type: money
+    maxlen: 8
+  - line: "20"                             # interest and dividend income (Schedule B, line 38)
+    field: res20
+    type: money
+    maxlen: 8
+  - line: "21"                             # TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20
+    field: res21
+    type: money
+    maxlen: 8
+  - line: 22_optional_rate                 # "If choosing the optional 5.85% tax rate, fill in oval"
+    field: Checktp2222
+    type: checkbox
+    on_state: /Yes
+  - line: "22"                             # TAX ON 5.0% INCOME (tax table / x .05)
+    field: res22
+    type: money
+    maxlen: 8
+  - line: 23a_income                       # 8.5% income (Schedule B)
+    field: res23a
+    type: money
+    maxlen: 8
+  - line: 23a                              # 23a_income x .085
+    field: res23a1
+    type: money
+    maxlen: 8
+  - line: 23b_income                       # 12% income (Schedule B)
+    field: res23b
+    type: money
+    maxlen: 8
+  - line: 23b                              # 23b_income x .12
+    field: res23b1
+    type: money
+    maxlen: 8
+  - line: "23"                             # TOTAL TAX ON INCOME FROM SCHEDULE B. Add lines 23a and 23b
+    field: res23
+    type: money
+    maxlen: 8
+
+  # ===================================================== page 3
+  - line: 24_schedule_dis                  # "If filing Schedule D-IS, Installment Sales, fill in oval"
+    field: Checktp23
+    type: checkbox
+    on_state: /Yes
+  - line: "24"                             # tax on long-term capital gains (Schedule D, line 22)
+    field: res24
+    type: money
+    maxlen: 8
+  - line: excess_exemptions                # "If excess exemptions were used in calculating lines 20, 23 or 24"
+    field: Checktp234
+    type: checkbox
+    on_state: /Yes
+  - line: "25"                             # credit recapture amount (Schedule CRS)
+    field: res25
+    type: money
+    maxlen: 8
+  - line: "26"                             # additional tax on installment sales
+    field: res26
+    type: money
+    maxlen: 8
+  - line: "27"                             # No Tax Status oval ("fill in oval and enter 0 in line 28")
+    field: Checktp24
+    type: checkbox
+    on_state: /Yes
+  - line: 28a                              # income tax. Add lines 22 through 26
+    field: res28a
+    type: money
+    maxlen: 8
+  - line: 28b                              # 4% surtax (Schedule 4% Surtax, line 7)
+    field: res28b
+    type: money
+    maxlen: 8
+  - line: "28"                             # TOTAL TAX. Add lines 28a and 28b
+    field: res28
+    type: money
+    maxlen: 8
+  - line: "29"                             # Limited Income Credit
+    field: res29
+    type: money
+    maxlen: 8
+  - line: "30"                             # income tax due to another state or jurisdiction (Schedule OJC)
+    field: res30
+    type: money
+    maxlen: 8
+  - line: "31"                             # other credits (Schedule CMS)
+    field: res31
+    type: money
+    maxlen: 8
+  - line: "32"                             # INCOME TAX AFTER CREDITS (28 - sum(29..31), not < 0)
+    field: res32
+    type: money
+    maxlen: 8
+  - line: 33a                              # Endangered Wildlife Conservation
+    field: res33a
+    type: money
+    maxlen: 4
+  - line: 33b                              # Organ Transplant
+    field: res33b
+    type: money
+    maxlen: 4
+  - line: 33c                              # MA Public Health HIV and Hepatitis Fund
+    field: res33c
+    type: money
+    maxlen: 4
+  - line: 33d                              # Massachusetts U.S. Olympic
+    field: res33d
+    type: money
+    maxlen: 4
+  - line: 33e                              # Massachusetts Military Family Relief
+    field: res33e
+    type: money
+    maxlen: 4
+  - line: 33f                              # Homeless Animal Prevention And Care
+    field: res33f
+    type: money
+    maxlen: 4
+  - line: "33"                             # Total. Add lines 33a through 33f
+    field: res33
+    type: money
+    maxlen: 5
+  - line: "34"                             # use tax on out-of-state purchases
+    field: res34
+    type: money
+    maxlen: 5
+  - line: 35a                              # Health Care penalty — You
+    field: res35a
+    type: money
+    maxlen: 4
+  - line: 35b                              # Health Care penalty — Spouse
+    field: res35b
+    type: money
+    maxlen: 4
+  - line: "35"                             # Total. a + b = 35
+    field: res35
+    type: money
+    maxlen: 4
+  - line: "36"                             # AMENDED RETURN ONLY. Overpayment from original return
+    field: res36
+    type: money
+    maxlen: 8
+  - line: "37"                             # tax after credits/contributions/use tax/HC penalty. Add lines 32-36
+    field: res37
+    type: money
+    maxlen: 8
+  - line: 38a                              # MA income tax withheld from Form(s) W-2
+    field: res38a
+    type: money
+    maxlen: 8
+  - line: 38b                              # MA income tax withheld from Form(s) 1099
+    field: res38b
+    type: money
+    maxlen: 8
+  - line: 38c                              # MA income tax withheld from other forms
+    field: res38c
+    type: money
+    maxlen: 8
+  - line: "38"                             # Total. Add lines 38a through 38c
+    field: res38
+    type: money
+    maxlen: 8
+
+  # ===================================================== page 4 (line 45 is "Reserved for future use": static zeros, no widget)
+  - line: "39"                             # 2022 overpayment applied to 2023 estimated tax
+    field: res39
+    type: money
+    maxlen: 8
+  - line: "40"                             # 2023 MA estimated tax payments
+    field: res40
+    type: money
+    maxlen: 8
+  - line: "41"                             # payments made with extension
+    field: res41
+    type: money
+    maxlen: 8
+  - line: "42"                             # AMENDED RETURN ONLY. Payments made with original return
+    field: res42
+    type: money
+    maxlen: 8
+  - line: 43a                              # EIC: number of qualifying children (one-cell box; PDF maxlen 10 clamped)
+    field: number of qualifying childer
+    type: text
+    maxlen: 2
+  - line: 43b                              # EIC: amount from U.S. return
+    field: res43b
+    type: money
+    maxlen: 4
+  - line: 43_multiplier                    # EIC: the "43b x ____ = 43" blank (rate from instructions)
+    field: '43c'
+    type: text
+    maxlen: 3
+  - line: "43"                             # EARNED INCOME CREDIT (43b x multiplier)
+    field: res43c
+    type: money
+    maxlen: 4
+  - line: 43_mfs_exception                 # "Fill in oval if you qualify for this exception" (MFS EIC note)
+    field: Checktp5618
+    type: checkbox
+    on_state: /Yes
+  - line: "44"                             # Senior Circuit Breaker Credit (Schedule CB)
+    field: res44
+    type: money
+    maxlen: 4
+  - line: 46a                              # Child and Family Tax Credit: number of dependents
+    field: res46a
+    type: text
+    maxlen: 2
+  - line: 46_multiplier                    # the "x ______" per-dependent amount blank (from instructions)
+    field: res46b
+    type: money
+    maxlen: 4
+  - line: "46"                             # Child and Family Tax Credit
+    field: res46
+    type: money
+    maxlen: 4
+  - line: "47"                             # other refundable credits (Schedule CMS)
+    field: res47
+    type: money
+    maxlen: 8
+  - line: "48"                             # TOTAL REFUNDABLE CREDITS. Add lines 43 through 47
+    field: res48
+    type: money
+    maxlen: 8
+  - line: "49"                             # Excess Paid Family Leave withholding
+    field: res49
+    type: money
+    maxlen: 8
+  - line: "50"                             # TOTAL. Add lines 38 through 42 and lines 48 and 49
+    field: res50
+    type: money
+    maxlen: 8
+  - line: "51"                             # OVERPAYMENT (if 37 < 50: 50 - 37)
+    field: res51
+    type: money
+    maxlen: 8
+  - line: "52"                             # overpayment APPLIED to 2024 estimated tax
+    field: res52
+    type: money
+    maxlen: 8
+  - line: "53"                             # THIS IS YOUR REFUND. Subtract line 52 from line 51
+    field: res53
+    type: money
+    maxlen: 8
+  # ---- direct deposit of refund (ONE /Btn field, two options)
+  - line: 53_account_type::checking
+    field: direct deposit
+    type: checkbox
+    on_state: /Checking
+    group: 53_account_type
+  - line: 53_account_type::savings
+    field: direct deposit
+    type: checkbox
+    on_state: /Savings
+    group: 53_account_type
+  - line: 53_routing_number                # first two digits must be 01-12 or 21-32
+    field: res53a
+    type: text
+    maxlen: 9
+  - line: 53_account_number
+    field: res53b
+    type: text
+    maxlen: 17
+  - line: "54"                             # TAX DUE. Subtract line 50 from line 37
+    field: res54
+    type: money
+    maxlen: 8
+  - line: m2210_exception                  # "Exception. Enclose Form M-2210." oval
+    field: Checktp22
+    type: checkbox
+    on_state: /Yes
+  - line: 54a                              # Interest (amounts affecting refund or tax due)
+    field: res54a
+    type: money
+    maxlen: 5
+  - line: 54b                              # Penalty
+    field: res54b
+    type: money
+    maxlen: 5
+  - line: 54c                              # M-2210 amount
+    field: res54c
+    type: money
+    maxlen: 5
+
+  # ---- paid preparer strip (page 4)
+  - line: preparer_name
+    field: pname
+    type: text
+  - line: preparer_ssn_or_ptin
+    field: ptinorssn
+    type: text
+    maxlen: 9
+  - line: preparer_phone
+    field: pphone
+    type: text
+    maxlen: 10
+  - line: preparer_date
+    field: date2
+    type: text
+  - line: preparer_signature
+    field: signature
+    type: text
+  - line: preparer_ein
+    field: PaidEIN
+    type: text
+  - line: preparer_self_employed           # "Fill in if self-employed"
+    field: Checktp2545
+    type: checkbox
+    on_state: /Yes
+  - line: preparer_may_discuss             # "DOR may discuss this return with the preparer"
+    field: Checktp2645
+    type: checkbox
+    on_state: /Yes
+  - line: preparer_no_efile                # "I do not want my preparer to file my return electronically"
+    field: Checktp2745
+    type: checkbox
+    on_state: /Yes
+relations:
+  - "2g == sum(2a..2f)"                    # 2g "TOTAL EXEMPTIONS. Add lines 2a through 2f."
+  - "16 == 11a + 11b + 14 + 15"            # 16 "TOTAL DEDUCTIONS. Add lines 11 through 15" (12/13 reserved)
+  - "18 == 2g"                             # 18 "Total exemption amount (from line 2g)"
+  - "21 == 19 + 20"                        # 21 "TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20."
+  - "23 == 23a + 23b"                      # 23 "TOTAL TAX ON INCOME FROM SCHEDULE B. Add lines 23a and 23b."
+  - "28a == 22 + 23 + 24 + 25 + 26"        # 28a "Income tax. Add lines 22 through 26."
+  - "28 == 28a + 28b"                      # 28 "Total tax. Add lines 28a and 28b."
+  - "33 == sum(33a..33f)"                  # 33 "Total. Add lines 33a through 33f."
+  - "35 == 35a + 35b"                      # 35 "Total ... a + b = 35"
+  - "37 == 32 + 33 + 34 + 35 + 36"         # 37 "Add lines 32 through 36."
+  - "38 == sum(38a..38c)"                  # 38 "Total. Add lines 38a through 38c."
+  - "48 == 43 + 44 + 46 + 47"              # 48 "TOTAL REFUNDABLE CREDITS. Add lines 43 through 47" (45 reserved)
+  - "50 == 38 + 39 + 40 + 41 + 42 + 48 + 49"  # 50 "TOTAL. Add lines 38 through 42 and lines 48 and 49"
+  - "53 == 51 - 52"                        # 53 "THIS IS YOUR REFUND. Subtract line 52 from line 51."
+cross_form:
+  - "a == f1040.9"                         # line a "Total federal income (from U.S. Form 1040, line 9)"
+  - "b == f1040.11"                        # line b "Total federal adjusted gross income (from U.S. Form 1040, line 11)"
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name
+signature:
+  page: 1                                  # SIGN HERE strip at the bottom of page 1
+mailing: null                              # knowledge layer owns where-to-file (refund: PO Box 7000; payment: PO Box 7003, Boston MA)

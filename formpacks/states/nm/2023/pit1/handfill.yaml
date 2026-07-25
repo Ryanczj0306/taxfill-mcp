@@ -1,0 +1,145 @@
+# New Mexico 2023 PIT-1 — Personal Income Tax Return.
+#
+# PRINT-ONLY (C3): every published PIT-1 revision (2023/2024/2025 checked) is a
+# flat scannable form — NO AcroForm widgets and NO XFA (introspect finds 0
+# fillable fields); this is NM TRD's deliberate posture (they steer filers to
+# TAP e-file). HAND-FILL pack (render_mode: hand_fill): the engine computes
+# every derivable line and emits a line->value worksheet; the filer PRINTS the
+# blank at source_url and hand-writes the values.
+#
+# Provenance: blank downloaded from source_url (2 pages, scanline barcodes
+# *230180200* / *230190200*); page-1 text verified "2023 PIT-1 / NEW MEXICO
+# PERSONAL INCOME TAX RETURN" before pinning pdf_sha256. HOST NOTE: NM TRD
+# serves its document library from an AWS API Gateway host
+# (klvg4oyd4j.execute-api.us-west-2.amazonaws.com) — the SAME knowingly-
+# accepted, self-disclosed exception host documented for NM in
+# knowledge/states/nm/2023.yaml and allow-listed in test_state_knowledge.py;
+# realfile.tax.newmexico.gov (the .gov alias) serves only the CURRENT year.
+# The library rotates the UUID path segments over time — pdf_sha256 is the
+# durable identity; re-locate via tax.newmexico.gov Forms & Publications if
+# the URL goes stale. SCOPE: complete — both pages (header/status/dependents,
+# income lines 9-22, payments/credits 23-32, due/refund 33-42, Refund
+# Express, HSD box). The Tax Rate Table lookup (line 18) stays a manual note.
+form: "PIT-1"
+jurisdiction: states/nm
+tax_year: 2023
+render_mode: hand_fill
+source_url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/a102aa94-0678-4ddc-a1d6-37061cb001e1/2023pit-1.pdf
+pdf_sha256: "33d114f3084dfeba5ad6ca1cb52e1c0af33d34e3082d160a6cb2f15973e2008a"
+signature_note: "Sign and date page 2 (BOTH must sign if filing jointly, even if only one had income); each signer also enters driver's license/state ID number (or NONE/DECLINED), state, and expiration date. Submit ORIGINAL forms only — never a photocopy."
+lines:
+  # ---- taxpayer / spouse identity (page 1) -----------------------------------
+  - { line: "1a", label: "Your name (first, middle, last)", type: text }
+  - { line: "1b", label: "Your Social Security Number", type: text }
+  - { line: "1c", label: "Taxpayer blind", type: checkbox }
+  - { line: "1d", label: "Taxpayer age 65 or over", type: checkbox }
+  - { line: "1e", label: "Taxpayer residency status (R resident / N non-resident / F first-year / P part-year)", type: text }
+  - { line: "1f", label: "Taxpayer's date of birth", type: text }
+  - { line: "2a", label: "Spouse's name (first, middle, last) — include if married filing separately", type: text }
+  - { line: "2b", label: "Spouse's Social Security Number", type: text }
+  - { line: "2c", label: "Spouse blind", type: checkbox }
+  - { line: "2d", label: "Spouse age 65 or over", type: checkbox }
+  - { line: "2e", label: "Spouse residency status (R/N/F/P)", type: text }
+  - { line: "2f", label: "Spouse's date of birth", type: text }
+  - { line: "3a", label: "Mark if the address is new or changed", type: checkbox }
+  - { line: "3b", label: "Mailing address (number and street)", type: text }
+  - { line: "3c", label: "City, State, Postal/ZIP code", type: text }
+  - { line: "3d", label: "Foreign country / province / state (foreign addresses)", type: text }
+  - { line: "4a", label: "Deceased-taxpayer refund payee name (attach Form RPD-41083)", type: text }
+  - { line: "4b", label: "Deceased-taxpayer refund payee SSN", type: text }
+  - { line: "4c", label: "Taxpayer's date of death (if died before filing)", type: text }
+  - { line: "4d", label: "Spouse's date of death (if died before filing)", type: text }
+  - { line: "5", label: "EXEMPTIONS: taxpayer, spouse, dependents and other dependents from federal 1040 (00 if you are another taxpayer's dependent)", type: text }
+  - { line: "6a", label: "Federal or state extension of time to file", type: checkbox }
+  - { line: "6b", label: "Extension date", type: text }
+  # ---- filing status (mark only one) ------------------------------------------
+  - { line: "filing_status.single", label: "(1) Single", type: checkbox }
+  - { line: "filing_status.mfj", label: "(2) Married filing jointly", type: checkbox }
+  - { line: "filing_status.mfs", label: "(3) Married filing separately (spouse's name/SSN in 2a and 2b)", type: checkbox }
+  - { line: "filing_status.hoh", label: "(4) Head of household", type: checkbox }
+  - { line: "filing_status.hoh_person", label: "(4a) Name of qualifying person (if not a counted dependent)", type: text }
+  - { line: "filing_status.qss", label: "(5) Surviving spouse with dependent child", type: checkbox }
+  # ---- dependents table (first 5; more on Schedule PIT-S) ----------------------
+  - { line: "dep1.first", label: "Dependent 1 — first name", type: text }
+  - { line: "dep1.last", label: "Dependent 1 — last name", type: text }
+  - { line: "dep1.ssn", label: "Dependent 1 — SSN", type: text }
+  - { line: "dep1.dob", label: "Dependent 1 — date of birth (MM/DD/CCYY)", type: text }
+  - { line: "dep2.first", label: "Dependent 2 — first name", type: text }
+  - { line: "dep2.last", label: "Dependent 2 — last name", type: text }
+  - { line: "dep2.ssn", label: "Dependent 2 — SSN", type: text }
+  - { line: "dep2.dob", label: "Dependent 2 — date of birth", type: text }
+  - { line: "dep3.first", label: "Dependent 3 — first name", type: text }
+  - { line: "dep3.last", label: "Dependent 3 — last name", type: text }
+  - { line: "dep3.ssn", label: "Dependent 3 — SSN", type: text }
+  - { line: "dep3.dob", label: "Dependent 3 — date of birth", type: text }
+  - { line: "dep4.first", label: "Dependent 4 — first name", type: text }
+  - { line: "dep4.last", label: "Dependent 4 — last name", type: text }
+  - { line: "dep4.ssn", label: "Dependent 4 — SSN", type: text }
+  - { line: "dep4.dob", label: "Dependent 4 — date of birth", type: text }
+  - { line: "dep5.first", label: "Dependent 5 — first name", type: text }
+  - { line: "dep5.last", label: "Dependent 5 — last name", type: text }
+  - { line: "dep5.ssn", label: "Dependent 5 — SSN", type: text }
+  - { line: "dep5.dob", label: "Dependent 5 — date of birth", type: text }
+  # ---- income (page 1, lines 9-22) ---------------------------------------------
+  - { line: "9", label: "Federal adjusted gross income (federal Form 1040/1040-SR, line 11)", type: money }
+  - { line: "10", label: "(+) State and local tax deduction claimed on federal Schedule A, line 5a (itemizers; worksheet)", type: money }
+  - { line: "11", label: "(+) Total additions to federal AGI (PIT-ADJ, line 6; attach PIT-ADJ)", type: money }
+  - { line: "12", label: "(-) Federal standard or itemized deduction (federal Form 1040, line 12)", type: money }
+  - { line: "12a", label: "Mark if you itemized", type: checkbox }
+  - { line: "13", label: "(-) Deduction for certain dependents (worksheet)", type: money }
+  - { line: "14", label: "(-) New Mexico low- and middle-income tax exemption", type: money }
+  - { line: "15", label: "(-) Total deductions and exemptions from federal income (PIT-ADJ, line 27; attach)", type: money }
+  - { line: "16", label: "(-) Medical care expense deduction (complete BOTH 16 and 16a or it is denied)", type: money }
+  - { line: "16a", label: "Unreimbursed and uncompensated medical care expenses", type: money }
+  - { line: "17", label: "NEW MEXICO TAXABLE INCOME: lines 9+10+11 minus lines 12,13,14,15,16 (zero floor)",
+      type: money, compute: "max(0, 9 + 10 + 11 - 12 - 13 - 14 - 15 - 16)" }
+  - { line: "18", label: "New Mexico tax on line 17, or from PIT-B line 14", type: money,
+      note: "MANDATED lookup: 2023 NM Tax Rate Table (1.7%/3.2%/4.7%/5.9% brackets as printed) or PIT-B apportionment — take the table/schedule value, never plain bracket arithmetic." }
+  - { line: "18a", label: "Enter R if from the Tax Rate Table, B if from PIT-B line 14", type: text }
+  - { line: "19", label: "(+) Additional tax on lump-sum distributions", type: money }
+  - { line: "20", label: "(-) Credit for taxes paid to another state (residents; attach the other state's return)", type: money }
+  - { line: "21", label: "(-) Business-related income tax credits applied (Schedule PIT-CR, line A; attach)", type: money }
+  - { line: "22", label: "NET NEW MEXICO INCOME TAX: lines 18+19 minus lines 20,21 (zero floor)",
+      type: money, compute: "max(0, 18 + 19 - 20 - 21)" }
+  # ---- payments and credits (page 2) --------------------------------------------
+  - { line: "23", label: "Amount on line 22 from page 1", type: money, compute: "22" }
+  - { line: "24", label: "Total claimed on rebate and credit schedule (PIT-RC, line 26; attach)", type: money }
+  - { line: "25", label: "(+) Working families tax credit (complete 25, 25a, and 25b or denied)", type: money }
+  - { line: "25a", label: "Federal earned income credit (EIC) reported or calculated under NM Expansion", type: money }
+  - { line: "25b", label: "NM Expansion only: check if you did NOT qualify for the federal EIC", type: checkbox }
+  - { line: "26", label: "(+) Refundable business-related credits (Schedule PIT-CR, line B; attach)", type: money }
+  - { line: "27", label: "(+) New Mexico income tax withheld (attach annual statements)", type: money }
+  - { line: "28", label: "(+) NM tax withheld from oil and gas proceeds (attach 1099-MISC or RPD-41285)", type: money }
+  - { line: "29", label: "(+) NM tax withheld from or paid by a pass-through entity (attach 1099-MISC or RPD-41359)", type: money }
+  - { line: "30", label: "(+) 2023 estimated income tax payments", type: money }
+  - { line: "31", label: "(+) Other payments", type: money }
+  - { line: "32", label: "TOTAL PAYMENTS AND CREDITS: add lines 24 through 31",
+      type: money, compute: "24 + 25 + 26 + 27 + 28 + 29 + 30 + 31" }
+  # ---- tax due / overpayment ------------------------------------------------------
+  - { line: "33", label: "TAX DUE: if line 22 exceeds line 32, the difference", type: money, compute: "max(0, 22 - 32)" }
+  - { line: "34", label: "(+) Penalty on underpayment of estimated tax", type: money }
+  - { line: "35", label: "Special underpayment-penalty method code 1-5 (attach RPD-41272)", type: text }
+  - { line: "36", label: "(+) Penalty", type: money }
+  - { line: "37", label: "(+) Interest", type: money }
+  - { line: "38", label: "TAX, PENALTY, AND INTEREST DUE: add lines 33, 34, 36, and 37",
+      type: money, compute: "33 + 34 + 36 + 37" }
+  - { line: "39", label: "OVERPAYMENT: if line 23 is less than line 32, the difference", type: money, compute: "max(0, 32 - 23)" }
+  - { line: "40", label: "(-) Refund voluntary contributions (PIT-D, line 18; attach PIT-D)", type: money }
+  - { line: "41", label: "(-) Amount of line 39 applied to your 2024 estimated tax", type: money }
+  - { line: "42", label: "AMOUNT TO BE REFUNDED TO YOU: line 39 minus lines 40 and 41",
+      type: money, compute: "39 - 40 - 41" }
+  # ---- Refund Express (direct deposit) ---------------------------------------------
+  - { line: "re.routing", label: "RE.1 Routing number", type: text }
+  - { line: "re.account", label: "RE.2 Account number", type: text }
+  - { line: "re.checking", label: "RE.3 Account type — checking", type: checkbox }
+  - { line: "re.savings", label: "RE.3 Account type — savings", type: checkbox }
+  - { line: "re.foreign_yes", label: "RE.4 Refund goes to/through an account outside the US — Yes (cannot use this method)", type: checkbox }
+  - { line: "re.foreign_no", label: "RE.4 Refund goes to/through an account outside the US — No", type: checkbox }
+  # ---- HSD data-sharing box ----------------------------------------------------------
+  - { line: "hsd_share", label: "HSD.1 Check to let HSD/NMHIE screen your household for medical insurance (authorizes TRD data sharing)", type: checkbox }
+  - { line: "phone", label: "Taxpayer's phone number", type: text }
+  - { line: "email", label: "Taxpayer's email address", type: text }
+mailing:
+  no_payment: "New Mexico Taxation and Revenue Department, P.O. Box 25122, Santa Fe, New Mexico 87504-5122"
+  with_payment: "New Mexico Taxation and Revenue Department, P.O. Box 25122, Santa Fe, New Mexico 87504-5122 (same address printed on the form; payment vouchers use PIT-PV)"
+  verify_url: https://www.tax.newmexico.gov
