@@ -1643,7 +1643,7 @@ def _ptc_params(year: int, knowledge_dir: str | Path | None):
     if params is None:
         raise ValueError(
             f"knowledge pack for federal {year} has no tax.ptc block — the Premium Tax Credit ships only "
-            f"for tax years 2023 and 2024 (the ARPA applicable-percentage table as extended to 2023-2025 "
+            f"for tax years 2023-2025 (the ARPA applicable-percentage table as extended to 2023-2025 "
             f"by IRA section 12001(a); pre-2023 years use different indexed tables and post-2025 the "
             f"regime expires). Use 2023 or 2024, or author the year's block from its Form 8962 "
             f"instructions with citations."

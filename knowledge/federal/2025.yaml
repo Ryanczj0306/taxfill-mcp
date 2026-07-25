@@ -1,0 +1,761 @@
+# Federal knowledge pack — tax year 2025 (docs/DEV_PLAN.md sections 3, 7, 10).
+#
+# Tax math lives here as DATA with citations, never hardcoded in engine code
+# (the no-LLM-arithmetic rule, dev plan section 10). Every number in this file
+# was transcribed from the official IRS document named in its block's
+# citation (irs.gov only; see knowledge/sources.yaml). Mirrors the schema of
+# knowledge/federal/2024.yaml exactly. Do NOT edit a number without
+# re-verifying it against that source.
+#
+# 2025 is the OBBBA year: the One Big Beautiful Bill Act (P.L. 119-21, enacted
+# July 4, 2025) changed several mid-year figures AFTER Rev. Proc. 2024-40 was
+# published. Where the two disagree (standard deduction, CTC), the published
+# 2025 FORM INSTRUCTIONS are the final authority for what the 2026 filing
+# season actually used — each such block notes the supersession. OBBBA also
+# added four new above/below-the-line deductions on the new Schedule 1-A
+# (tips, overtime, car-loan interest, enhanced senior deduction — see
+# tax.obbba_schedule_1a) and raised the Schedule A SALT cap (tax.salt_cap).
+# 2025 Form 1040 line changes: AGI split into 11a/11b, deductions 12a-12e,
+# 13a QBI, 13b = Schedule 1-A line 38 (13c on the 1040-NR), 14 = 12e+13a+13b,
+# taxable income line 15 = 11b - 14.
+
+jurisdiction: federal
+tax_year: 2025
+
+tax:
+  # Section 1(j)(2) rate schedules for 2025, exactly as published in
+  # Rev. Proc. 2024-40, Section 2.01 (Tables 1-4):
+  #   Table 1: Married Individuals Filing Joint Returns and Surviving Spouses
+  #   Table 2: Heads of Households
+  #   Table 3: Unmarried Individuals (other than Surviving Spouses and HoH)
+  #   Table 4: Married Individuals Filing Separate Returns
+  # OBBBA made the TCJA rate structure permanent but did NOT change the 2025
+  # bracket dollar amounts (its extra 10%/12%-bracket inflation bump starts in
+  # 2026) — the Rev. Proc. 2024-40 tables are what the 2025 filing season used.
+  # Note the HoH 32% bracket starts at $250,500 (not the $250,525 the other
+  # unmarried schedules use) — transcribed exactly as published.
+  rate_schedules:
+    citation:
+      source: "Rev. Proc. 2024-40, Section 2.01 (2025 tax rate tables), Tables 1-4"
+      url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf"
+    schedules:
+      single:
+        - { over: 0, but_not_over: 11925, rate: 0.10 }
+        - { over: 11925, but_not_over: 48475, rate: 0.12 }
+        - { over: 48475, but_not_over: 103350, rate: 0.22 }
+        - { over: 103350, but_not_over: 197300, rate: 0.24 }
+        - { over: 197300, but_not_over: 250525, rate: 0.32 }
+        - { over: 250525, but_not_over: 626350, rate: 0.35 }
+        - { over: 626350, but_not_over: null, rate: 0.37 }
+      married_filing_jointly:
+        - { over: 0, but_not_over: 23850, rate: 0.10 }
+        - { over: 23850, but_not_over: 96950, rate: 0.12 }
+        - { over: 96950, but_not_over: 206700, rate: 0.22 }
+        - { over: 206700, but_not_over: 394600, rate: 0.24 }
+        - { over: 394600, but_not_over: 501050, rate: 0.32 }
+        - { over: 501050, but_not_over: 751600, rate: 0.35 }
+        - { over: 751600, but_not_over: null, rate: 0.37 }
+      married_filing_separately:
+        - { over: 0, but_not_over: 11925, rate: 0.10 }
+        - { over: 11925, but_not_over: 48475, rate: 0.12 }
+        - { over: 48475, but_not_over: 103350, rate: 0.22 }
+        - { over: 103350, but_not_over: 197300, rate: 0.24 }
+        - { over: 197300, but_not_over: 250525, rate: 0.32 }
+        - { over: 250525, but_not_over: 375800, rate: 0.35 }
+        - { over: 375800, but_not_over: null, rate: 0.37 }
+      head_of_household:
+        - { over: 0, but_not_over: 17000, rate: 0.10 }
+        - { over: 17000, but_not_over: 64850, rate: 0.12 }
+        - { over: 64850, but_not_over: 103350, rate: 0.22 }
+        - { over: 103350, but_not_over: 197300, rate: 0.24 }
+        - { over: 197300, but_not_over: 250500, rate: 0.32 }
+        - { over: 250500, but_not_over: 626350, rate: 0.35 }
+        - { over: 626350, but_not_over: null, rate: 0.37 }
+
+  # The published 2025 Tax Table — mandatory for the ORDINARY line 16
+  # computation when taxable income is below $100,000. Scope caution (same as
+  # 2024.yaml): qualified dividends / capital gains (Qualified Dividends and
+  # Capital Gain Tax Worksheet / Schedule D Tax Worksheet), Form 8615, or the
+  # Foreign Earned Income Tax Worksheet compute the tax from their own
+  # worksheet even below $100,000 — those are OUT OF SCOPE for
+  # calc.tax_from_taxable_income; never apply the table to preferential-rate
+  # income. Row structure is stable across years. PUBLICATION CHANGE for 2025:
+  # the tables booklet is now "Publication 1040" (Cat. No. 46895T) — the old
+  # i1040tt--<year>.pdf URL pattern redirects to p1040.pdf; the year-pinned
+  # archive copy is irs-prior/p1040--2025.pdf.
+  tax_table:
+    citation:
+      source: >-
+        2025 Tax Table, Publication 1040, "TAX AND EARNED INCOME CREDIT
+        TABLES" (Cat. No. 46895T), extracted from the 2025 Instructions for
+        Form 1040 (worked example: MFJ taxable income $25,300 -> $2,562)
+      url: "https://www.irs.gov/pub/irs-prior/p1040--2025.pdf"
+    applies_below: 100000
+    rounding: half_up
+    row_bands:
+      - { at_least: 0, below: 5, row_width: 5 }
+      - { at_least: 5, below: 25, row_width: 10 }
+      - { at_least: 25, below: 3000, row_width: 25 }
+      - { at_least: 3000, below: 100000, row_width: 50 }
+
+  tax_computation_worksheet:
+    citation:
+      source: >-
+        2025 Tax Computation Worksheet—Line 16 (Single, Married filing jointly
+        / Qualifying surviving spouse, Married filing separately, Head of
+        household), from Publication 1040 (2025), page 14
+      url: "https://www.irs.gov/pub/irs-prior/p1040--2025.pdf"
+    applies_at_or_above: 100000
+
+  # OBBBA SUPERSESSION: Rev. Proc. 2024-40, Section 2.15(1) originally set the
+  # 2025 base amounts at $15,000 single/MFS, $30,000 MFJ, $22,500 HoH. OBBBA
+  # (P.L. 119-21, enacted 2025-07-04) raised them mid-year; the amounts below
+  # are what the published 2025 Form 1040 instructions actually use (line 12e
+  # charts and Standard Deduction Worksheet line 3): $15,750 / $31,500 /
+  # $23,625. The additional standard deduction for the aged or the blind is
+  # UNCHANGED from Rev. Proc. 2024-40 Section 2.15(3): $1,600 per condition
+  # per person, increased to $2,000 if the individual is also unmarried and
+  # not a surviving spouse. Cross-checked against the instructions' printed
+  # chart (Single 1 box = $17,750, 2 = $19,750; MFJ 1-4 boxes = $33,100 /
+  # $34,700 / $36,300 / $37,900; MFS 1-4 = $17,350 / $18,950 / $20,550 /
+  # $22,150; HoH = $25,625 / $27,625). "Age 65" = born before January 2, 1961.
+  # Dependent standard deduction (Rev. Proc. 2024-40 Section 2.15(2)): greater
+  # of $1,350 or earned income + $450, capped at the regular amount.
+  standard_deduction:
+    citation:
+      source: >-
+        2025 Instructions for Form 1040, line 12e Standard Deduction charts and
+        Standard Deduction Worksheet for Dependents (OBBBA, P.L. 119-21,
+        amounts — supersede Rev. Proc. 2024-40, Section 2.15(1)); additional
+        aged/blind amounts per Rev. Proc. 2024-40, Section 2.15(3)
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf"
+    amounts:
+      single: 15750
+      married_filing_jointly: 31500
+      married_filing_separately: 15750
+      head_of_household: 23625
+    additional_aged_or_blind:
+      married: 1600
+      unmarried: 2000
+
+  # Schedule SE (Form 1040) 2025, Part I. Line 7 social security wage base
+  # for 2025 is $176,100.
+  se_tax:
+    citation:
+      source: "Schedule SE (Form 1040) 2025, Part I, lines 4a-13"
+      url: "https://www.irs.gov/pub/irs-prior/f1040sse--2025.pdf"
+    net_earnings_factor: 0.9235
+    ss_rate: 0.124
+    medicare_rate: 0.029
+    ss_wage_base: 176100
+    minimum_net_earnings: 400
+
+  # High-income surtaxes (Schedule 2 lines 11/12). Both are STATUTORY amounts,
+  # unchanged since 2013 and not inflation-indexed (OBBBA did not touch them),
+  # so the same values apply to every supported year. Qualifying surviving
+  # spouse is explicit in both maps because the two forms bucket it differently
+  # (8959: $200,000 with single/HoH; 8960: $250,000 with MFJ).
+  additional_medicare_tax:
+    citation:
+      source: "IRS Topic No. 560, Additional Medicare Tax (Form 8959): 0.9% of Medicare wages and self-employment income above the filing-status threshold; thresholds statutory under IRC section 3101(b)(2), not indexed"
+      url: "https://www.irs.gov/taxtopics/tc560"
+    rate: 0.009
+    thresholds:
+      married_filing_jointly: 250000
+      married_filing_separately: 125000
+      single: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+  niit:
+    citation:
+      source: "IRS Topic No. 559, Net Investment Income Tax (Form 8960): 3.8% of the lesser of net investment income or MAGI above the filing-status threshold; thresholds statutory under IRC section 1411, not indexed"
+      url: "https://www.irs.gov/taxtopics/tc559"
+    rate: 0.038
+    thresholds:
+      married_filing_jointly: 250000
+      married_filing_separately: 125000
+      single: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 250000
+
+  # Maximum capital gains rate breakpoints under IRC section 1(h), indexed
+  # separately under section 1(j)(5): TAXABLE-INCOME ceilings for the 0% and
+  # 15% rates on adjusted net capital gain / qualified dividends (20% above
+  # the 15% ceiling), with ordinary income stacked first — the Qualified
+  # Dividends and Capital Gain Tax Worksheet line 6 / line 13 amounts. NOT
+  # equal to the ordinary bracket boundaries; never derive them from the rate
+  # schedules. MFS is exactly half of MFJ; a qualifying surviving spouse uses
+  # the MFJ amounts (the Rev. Proc. groups surviving spouses with joint
+  # returns). Cross-checked against the 2025 Qualified Dividends and Capital
+  # Gain Tax Worksheet lines 6/13 in the 2025 Form 1040 instructions.
+  capital_gains_brackets:
+    citation:
+      source: "Rev. Proc. 2024-40, Section 2.03 (Maximum Capital Gains Rate)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf"
+    max_zero_rate_amount:
+      single: 48350
+      married_filing_jointly: 96700
+      married_filing_separately: 48350
+      head_of_household: 64750
+      qualifying_surviving_spouse: 96700
+    max_15_percent_rate_amount:
+      single: 533400
+      married_filing_jointly: 600050
+      married_filing_separately: 300000
+      head_of_household: 566700
+      qualifying_surviving_spouse: 600050
+
+  # Social Security Benefits Worksheet parameters (Form 1040 line 6b; the 2025
+  # worksheet is titled "Lines 6a and 6b"). Statutory under IRC section 86(c)
+  # and never indexed — identical in every year 2019-2025; OBBBA's senior
+  # relief is the separate Schedule 1-A Part V deduction, NOT a change to
+  # benefit taxability. MFS splits by BEHAVIOR, not just status: lived apart
+  # from the spouse ALL year -> the single thresholds (check the Form 1040
+  # line 6d box) — lived with the spouse at ANY time -> both tiers are $0
+  # (mfs_living_with_spouse_base) and taxable benefits =
+  # min(0.85 x provisional income, 0.85 x benefits). The published worksheet
+  # prints the second tier as the line-10 gap ($9,000, or $12,000 for MFJ);
+  # the explicit IRC 86(c)(2) adjusted base amounts stored here are
+  # arithmetically identical.
+  taxable_social_security:
+    citation:
+      source: "2025 Instructions for Form 1040, Social Security Benefits Worksheet (lines 6a and 6b); IRC section 86(c)"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf"
+    base_amount:
+      single: 25000
+      married_filing_jointly: 32000
+      head_of_household: 25000
+      qualifying_surviving_spouse: 25000
+      married_filing_separately_lived_apart_all_year: 25000
+    adjusted_base_amount:
+      single: 34000
+      married_filing_jointly: 44000
+      head_of_household: 34000
+      qualifying_surviving_spouse: 34000
+      married_filing_separately_lived_apart_all_year: 34000
+    mfs_living_with_spouse_base: 0
+    inclusion_rate_tier1: 0.50
+    inclusion_rate_tier2: 0.85
+    max_taxable_share_of_benefits: 0.85
+
+  # Excess social security / tier 1 RRTA withholding credit parameters
+  # (Schedule 3 line 11).
+  # The cap is PER PERSON: each spouse's box-4 withholding is compared to the
+  # max separately, never combined. The credit exists only when MULTIPLE
+  # employers together over-withheld; a single employer's excess must be
+  # adjusted by that employer (Form 843 if it refuses) and is never claimable
+  # on the return. max_withholding = rate x wage base, exact to the cent
+  # (0.062 x $176,100 = $10,918.20, printed in the 2025 instructions).
+  employee_social_security:
+    citation:
+      source: "2025 Instructions for Form 1040, Schedule 3 line 11 (Excess Social Security and Tier 1 RRTA Tax Withheld, $10,918.20 cap); Pub 15 (2025), social security rate and wage base limit"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf"
+    rate: 0.062
+    ss_wage_base: 176100
+    max_withholding: 10918.20
+
+  # Section 221 student-loan-interest deduction (Schedule 1). The $2,500 cap
+  # is statutory (IRC 221(b)(1)), not indexed. married_filing_separately is
+  # deliberately ABSENT: MFS may not take the deduction at all (IRC 221(e)(2))
+  # — a missing status means not-allowed. Reduction = tentative deduction
+  # (min(cap, interest paid)) x (MAGI - start) / (end - start); the span is
+  # $15,000 ($30,000 MFJ) in every supported year. 2025 phase-out moved up
+  # from 2024's $80,000-$95,000 / $165,000-$195,000.
+  student_loan_interest:
+    citation:
+      source: "Rev. Proc. 2024-40, Section 2.30 (Interest on Education Loans)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf"
+    max_deduction: 2500
+    phaseout:
+      single: { start: 85000, end: 100000 }
+      head_of_household: { start: 85000, end: 100000 }
+      qualifying_surviving_spouse: { start: 85000, end: 100000 }
+      married_filing_jointly: { start: 170000, end: 200000 }
+
+  # Form 8863 education credits. AOTC: 100% of the first $2,000 of qualified
+  # expenses PER STUDENT plus 25% of the next $2,000 (max $2,500 per student),
+  # 40% refundable unless the Form 8863 line 7 under-age-24 exception applies;
+  # its phaseout is statutory (IRC 25A(i)(4)) and identical in all years.
+  # LLC: 20% of up to $10,000 of expenses PER RETURN, nonrefundable. MFS may
+  # claim NEITHER credit (rule — hence no MFS keys). "other" = single /
+  # head_of_household / qualifying_surviving_spouse.
+  education_credits:
+    citation:
+      source: "2025 Instructions for Form 8863 (Education Credits)"
+      url: "https://www.irs.gov/pub/irs-prior/i8863--2025.pdf"
+    aotc:
+      per_student_cap: 2500
+      first_dollar_cap: 2000
+      second_rate: 0.25
+      refundable_fraction: 0.40
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+    llc:
+      per_return_expense_cap: 10000
+      rate: 0.20
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+
+  # Premium Tax Credit (Form 8962) — the ARPA 0%-8.5% applicable percentage
+  # table, extended to taxable years 2023-2025 by IRA section 12001(a).
+  # TY2025 IS THE LAST YEAR OF THIS REGIME — it expires after 2025; never
+  # extrapolate these parameters forward. The 2025 table is republished in
+  # Rev. Proc. 2024-35, Section 2.01 (identical bands to 2023/2024, indexing
+  # suspended for 2021-2025 by section 36B(b)(3)(A)(iii)).
+  # Mechanics (Worksheet 2 + Table 2): line 5 = household income / FPL x 100,
+  # TRUNCATED to an integer (3.997 -> 399, never rounded; enter literally 401
+  # when over 400%); the applicable figure equals linear interpolation within
+  # the band rounded HALF-UP to 4 decimals (349 -> 0.0723, 353 -> 0.0733);
+  # 0.0850 flat from 400% up — no eligibility cliff, but the repayment
+  # LIMITATION vanishes at 400% (full excess APTC is repaid). Initial/final
+  # are stored as DECIMAL fractions (the Rev. Proc. prints percent form).
+  ptc:
+    citation:
+      source: "2025 Instructions for Form 8962 (Table 2, Worksheet 2, Tables 1-1 to 1-3, Table 5); Rev. Proc. 2024-35, Section 2.01 (2025 Applicable Percentage Table); Rev. Proc. 2024-40, Section 2.07 (repayment limitation)"
+      url: "https://www.irs.gov/pub/irs-prior/i8962--2025.pdf"
+    applicable_percentage_table:
+      - { fpl_pct_at_least: 0, fpl_pct_less_than: 150, initial: 0.00, final: 0.00 }
+      - { fpl_pct_at_least: 150, fpl_pct_less_than: 200, initial: 0.00, final: 0.02 }
+      - { fpl_pct_at_least: 200, fpl_pct_less_than: 250, initial: 0.02, final: 0.04 }
+      - { fpl_pct_at_least: 250, fpl_pct_less_than: 300, initial: 0.04, final: 0.06 }
+      - { fpl_pct_at_least: 300, fpl_pct_less_than: 400, initial: 0.06, final: 0.085 }
+      - { fpl_pct_at_least: 400, fpl_pct_less_than: null, initial: 0.085, final: 0.085 }
+    federal_poverty_line:
+      guidelines_year: 2024   # Form 8962 line 4: for 2025, the 2024 federal poverty lines are used
+      contiguous_48_and_dc:
+        household_size: { 1: 15060, 2: 20440, 3: 25820, 4: 31200, 5: 36580, 6: 41960, 7: 47340, 8: 52720 }
+        per_additional_person: 5380
+      alaska:
+        household_size: { 1: 18810, 2: 25540, 3: 32270, 4: 39000, 5: 45730, 6: 52460, 7: 59190, 8: 65920 }
+        per_additional_person: 6730
+      hawaii:
+        household_size: { 1: 17310, 2: 23500, 3: 29690, 4: 35880, 5: 42070, 6: 48260, 7: 54450, 8: 60640 }
+        per_additional_person: 6190
+    # Table 5 repayment limitation, keyed by line 5 (integer FPL%): "Single"
+    # vs every other filing status (MFJ, MFS, HoH and QSS all use the higher
+    # column). Last row = 400% or more: NO limitation, line 28 left blank.
+    # 2025 amounts are INDEXED UP from 2024 (was 375/750, 950/1,900,
+    # 1,575/3,150) — verified against both Rev. Proc. 2024-40 Section 2.07 and
+    # the 2025 Form 8962 instructions Table 5.
+    repayment_limitation:
+      - { fpl_band_lt: 200, single: 375, other: 750 }
+      - { fpl_band_lt: 300, single: 975, other: 1950 }
+      - { fpl_band_lt: 400, single: 1625, other: 3250 }
+      - { fpl_band_lt: null, single: null, other: null }
+    no_400_pct_cliff: true
+
+  # Form 2441 child & dependent care credit (IRC 21). Every figure transcribed
+  # from the year-pinned IRS PDFs named in the citation. Caps are STATUTORY
+  # (IRC 21(c)(1)/(2)), not inflation-indexed, and unchanged for 2025 (OBBBA's
+  # rate-slide expansion and the $7,500 exclusion ceiling start in TY2026 —
+  # never apply them to 2025). Percentage slide (form line 8 table): 35% for
+  # AGI up to $15,000, minus 1 point per $2,000 OR FRACTION THEREOF of AGI
+  # over $15,000, floor 20% for AGI over $43,000 (the table's "43,000 — No
+  # limit = .20" row). Bracket semantics: 'Over X — but not over Y', so AGI
+  # exactly at a boundary keeps the HIGHER rate (exactly $15,000 = .35;
+  # exactly $43,000 = .21) — the engine rounds the excess UP to the next
+  # $2,000. The caps are reduced by employer dependent care benefits actually
+  # deducted or excluded (Form 2441 line 27 minus line 28 -> line 29), NOT by
+  # the exclusion ceiling itself. Nonrefundable — limited by tax via the
+  # line 10 Credit Limit Worksheet.
+  dependent_care:
+    citation:
+      source: "2025 Instructions for Form 2441; 2025 Form 2441 line 8 table; IRC 21(a)(2), (c), (d), (e)"
+      url: "https://www.irs.gov/pub/irs-prior/i2441--2025.pdf"
+    expense_cap:
+      one_qualifying_person: 3000
+      two_or_more_qualifying_persons: 6000
+    phase_downs:
+      # 1 point per $2,000 (or fraction) of AGI over $15,000; .21 at
+      # 41,000-43,000, then "43,000 — No limit = .20".
+      - { starts_above_agi: 15000, from_rate: 0.35, to_rate: 0.20 }
+    refundable_if_us_abode: false
+    earned_income_limitation: >-
+      Form 2441 line 6: the credit base is the SMALLEST of the capped qualified
+      expenses (line 3), your earned income (line 4), and — married filing
+      jointly — your spouse's earned income (line 5; all others enter the
+      line 4 amount).
+    deemed_income_per_month:
+      one_qualifying_person: 250
+      two_or_more_qualifying_persons: 500
+    student_spouse_rule: >-
+      A spouse (or the taxpayer) who was a full-time student — enrolled
+      full-time during some part of each of 5 calendar months of 2025 — or was
+      physically or mentally incapable of self-care is DEEMED to have earned
+      income of $250 per month ($500 with two or more qualifying persons) for
+      each such month or part month (IRC 21(d)(2)); only one spouse may use the
+      deemed amount for any given month, and a spouse who also worked that
+      month uses the HIGHER of actual or deemed earned income.
+    married_filing_separately_note: >-
+      Generally, married persons must file a joint return to claim the credit.
+      A married-filing-separately filer is treated as unmarried (and may claim
+      the credit, checking the Form 2441 married-filing-separately checkbox)
+      ONLY if ALL of: they lived apart from the spouse during the last 6 months
+      of 2025; their home was the qualifying person's main home for more than
+      half the year; and they paid more than half the cost of keeping up that
+      home for the year.
+    dependent_care_benefits:
+      exclusion_max: 5000        # Form 2441 line 21 — still $5,000 for 2025; OBBBA's $7,500 starts TY2026
+      exclusion_max_mfs: 2500
+
+  # ── OBBBA Schedule 1-A "Additional Deductions" (P.L. 119-21, TY2025-2028) ──
+  # Four new deductions, all available whether the filer itemizes or takes the
+  # standard deduction. Claimed on the new Schedule 1-A; the Part VI line 38
+  # total flows to Form 1040/1040-SR line 13b (Form 1040-NR line 13c) and
+  # reduces taxable income via Form 1040 line 14. MAGI for ALL FOUR = Form
+  # 1040 line 11b AGI + excluded Puerto Rico income + Form 2555 lines 45 and
+  # 50 + Form 4563 line 15 (Schedule 1-A Part I, lines 1-3). Every figure
+  # below was transcribed from the published 2025 Schedule 1-A itself and its
+  # instructions in the 2025 Form 1040 booklet (pages 101+). This block is
+  # engine-extra DATA (no calc op consumes it yet); the phase-out rounding
+  # rules differ between parts — copy them exactly.
+  obbba_schedule_1a:
+    citation:
+      source: "2025 Schedule 1-A (Form 1040), Additional Deductions (Cat. No. 95872Q), Parts I-VI; 2025 Instructions for Form 1040, Instructions for Schedule 1-A"
+      url: "https://www.irs.gov/pub/irs-prior/f1040s1a--2025.pdf"
+    effective_years: "2025 through 2028 (OBBBA, P.L. 119-21, enacted 2025-07-04)"
+    magi_definition: >-
+      Form 1040/1040-SR/1040-NR line 11b (AGI) + excluded Puerto Rico income +
+      Form 2555 lines 45 and 50 + Form 4563 line 15 (Schedule 1-A Part I).
+    # Part II, lines 4-13. The $25,000 cap applies PER RETURN regardless of
+    # filing status (MFJ does NOT double it — the instructions say the limit
+    # applies to combined qualified tip income, not per spouse). Reduction =
+    # floor(excess MAGI / $1,000) x $100 (line 11 rounds DOWN to the next
+    # lower whole number). Qualified tips must be from an occupation on the
+    # IRS list (IRS.gov/TippedOccupations) that customarily received tips on
+    # or before 2024-12-31; voluntary cash/charge tips only. Valid SSN
+    # required (the tipped spouse's, on a joint return); married filers MUST
+    # file jointly. Self-employed: deduction limited to the net income of the
+    # trade or business the tips were received in; tips received in a
+    # specified service trade or business (SSTB, IRC 199A) do not qualify.
+    # Inputs: W-2 box 7, Form 4137, 1099-NEC box 1, 1099-MISC box 3,
+    # 1099-K box 1a (2025 information returns were NOT updated to separately
+    # identify qualified tips — see the line 4a/5 instructions).
+    tips:
+      deduction_cap: 25000
+      cap_is_per_return: true
+      phaseout:
+        magi_threshold: { married_filing_jointly: 300000, other: 150000 }
+        reduction_per_1000_of_excess: 100
+        excess_rounding: down   # Schedule 1-A line 11: decrease to the next LOWER whole number
+      mfs_allowed: false
+    # Part III, lines 14-21. Cap $12,500 ($25,000 MFJ). Qualified overtime =
+    # the FLSA-required premium portion only (the half-time premium of
+    # time-and-a-half, not the whole overtime wage). Same $150,000/$300,000
+    # MAGI phase-out and floor(excess/$1,000) x $100 reduction as tips
+    # (line 19 rounds DOWN). Valid SSN required; married filers MUST file
+    # jointly.
+    overtime:
+      deduction_cap: { married_filing_jointly: 25000, other: 12500 }
+      phaseout:
+        magi_threshold: { married_filing_jointly: 300000, other: 150000 }
+        reduction_per_1000_of_excess: 100
+        excess_rounding: down   # Schedule 1-A line 19: decrease to the next LOWER whole number
+      mfs_allowed: false
+    # Part IV, lines 22-30. Cap $10,000 (all statuses). UNLIKE tips/overtime,
+    # the reduction rounds the excess UP: ceil(excess MAGI / $1,000) x $200
+    # (line 28 increases to the next HIGHER whole number), and the thresholds
+    # are $100,000 ($200,000 MFJ). Requirements: qualified passenger vehicle
+    # loan interest — personal-use NEW vehicle (original use commences with
+    # the taxpayer; used vehicles do not qualify), final assembly in the
+    # United States, loan originated after 2024-12-31 and secured by a lien
+    # on the vehicle, GVWR under 14,000 lbs (car/minivan/van/SUV/pickup/
+    # motorcycle); the VIN must be reported on line 22 column (i). Amounts
+    # already deducted on Schedule C/E/F are excluded (column (ii)).
+    car_loan_interest:
+      deduction_cap: 10000
+      phaseout:
+        magi_threshold: { married_filing_jointly: 200000, other: 100000 }
+        reduction_per_1000_of_excess: 200
+        excess_rounding: up   # Schedule 1-A line 28: increase to the next HIGHER whole number
+      loan_originated_after: "2024-12-31"
+      new_vehicle_only: true
+      us_final_assembly_required: true
+      vin_required_on_return: true
+    # Part V, lines 31-37. $6,000 per qualifying individual born before
+    # January 2, 1961 with a valid SSN ($12,000 max on MFJ when both spouses
+    # qualify). The phase-out reduces the PER-PERSON $6,000 by 6% of MAGI
+    # over $75,000 ($150,000 MFJ) — fully eliminated at MAGI $175,000
+    # ($250,000 MFJ, both-spouse case). Married filers MUST file jointly.
+    # This deduction is IN ADDITION to the age-65 additional standard
+    # deduction and is available whether standard or itemizing.
+    senior_deduction:
+      amount_per_qualifying_individual: 6000
+      birth_date_requirement: "born before January 2, 1961"
+      phaseout:
+        magi_threshold: { married_filing_jointly: 150000, other: 75000 }
+        rate: 0.06   # Schedule 1-A line 34: 6% of MAGI over the threshold, per person
+      mfs_allowed: false
+
+  # ── OBBBA SALT cap (Schedule A line 5e, TY2025) ──────────────────────────
+  # The state-and-local-tax deduction cap rose from $10,000/$5,000-MFS to
+  # $40,000 ($20,000 MFS) for 2025, with a phase-down for high incomes: the
+  # cap is reduced by 30% of MAGI over $500,000 ($250,000 MFS), but never
+  # below $10,000 ($5,000 MFS). MAGI here = Form 1040 line 11b + excluded
+  # Puerto Rico income + Form 2555 lines 45/50 + Form 4563 line 15 (State and
+  # Local Tax Deduction Worksheet lines 2-4; the MFS halving happens at
+  # worksheet line 10). Engine-extra DATA — the Schedule A form pack encodes
+  # the line 5e worksheet; recorded here so the 2025 figures are cited once.
+  salt_cap:
+    citation:
+      source: "2025 Instructions for Schedule A (Form 1040), line 5e State and Local Tax Deduction Worksheet (OBBBA, P.L. 119-21)"
+      url: "https://www.irs.gov/pub/irs-prior/i1040sca--2025.pdf"
+    cap: 40000
+    cap_mfs: 20000
+    phase_down:
+      magi_threshold: 500000
+      magi_threshold_mfs: 250000
+      reduction_rate: 0.30
+      floor: 10000
+      floor_mfs: 5000
+
+# Pub 501 (2025) Table 1 (Filing Requirements Chart for Most Taxpayers): the
+# gross-income level at or above which a return is required, by status and age.
+# Non-elderly amounts equal that status's OBBBA standard deduction; each 65+
+# person adds the additional standard deduction ($2,000 unmarried / $1,600
+# married). MFS is the exception: $5 regardless of age. Cross-confirmed
+# against Chart A in the 2025 Instructions for Form 1040, page 9.
+filing_thresholds:
+  citation:
+    source: "IRS Publication 501 (2025), Table 1 (2025 Filing Requirements Chart for Most Taxpayers), page 2"
+    url: "https://www.irs.gov/pub/irs-prior/p501--2025.pdf"
+  amounts:
+    single: { under_65: 15750, age_65_or_older: 17750 }
+    married_filing_jointly: { both_under_65: 31500, one_spouse_65_or_older: 33100, both_spouses_65_or_older: 34700 }
+    married_filing_separately: { any_age: 5 }
+    head_of_household: { under_65: 23625, age_65_or_older: 25625 }
+    qualifying_surviving_spouse: { under_65: 31500, age_65_or_older: 33100 }
+
+# Common credits with their 2025 parameters and eligibility predicates.
+credits:
+  citation:
+    source: "2025 Instructions for Schedule 8812 (CTC/ACTC/ODC); Rev. Proc. 2024-40 Section 2.06 (EITC)"
+    url: "https://www.irs.gov/pub/irs-prior/i1040s8--2025.pdf"
+  child_tax_credit:
+    citation:
+      source: "Schedule 8812 (Form 1040) 2025, line 5, and its Instructions ('What's New': CTC increased to $2,200 by OBBBA, P.L. 119-21; maximum ACTC $1,700 per Rev. Proc. 2024-40 Section 2.05)"
+      url: "https://www.irs.gov/pub/irs-prior/f1040s8--2025.pdf"
+    # OBBBA raised the per-child CTC from $2,000 to $2,200 beginning TY2025
+    # (Schedule 8812 line 5 prints "Multiply line 4 by $2,200"). The ACTC
+    # refundable cap stays at the Rev. Proc. 2024-40 Section 2.05 amount.
+    per_qualifying_child: 2200
+    additional_ctc_refundable_cap_per_child: 1700   # ACTC cap per child for 2025 (Credit Limit Worksheet B line 2; Rev. Proc. 2024-40 Section 2.05)
+    credit_for_other_dependents: 500
+    qualifying_child_age_test: "under age 17 at the end of 2025"
+    magi_phaseout_threshold:
+      married_filing_jointly: 400000
+      single: 200000
+      married_filing_separately: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+    phaseout_step: "reduced $50 for each $1,000 (or fraction) of MAGI above the threshold (Schedule 8812 lines 10-11: excess rounded UP to the next $1,000, then x 5%)"
+    taxpayer_ssn_requirement: >-
+      NEW for 2025 (OBBBA): the taxpayer must have a valid SSN to claim the
+      CTC or ACTC. On a joint return only one filer needs a valid SSN; the
+      other must have an SSN or an ITIN issued on or before the due date of
+      the return. A qualifying child still needs its own valid SSN (a child
+      with only an ITIN/ATIN can qualify for the $500 ODC instead).
+  earned_income_tax_credit:
+    citation:
+      source: "Rev. Proc. 2024-40, Section 2.06 (2025 Earned Income Credit)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf"
+    investment_income_limit: 11950
+    # keyed by number of qualifying children: 0, 1, 2, 3+ (3+ shares the 2-child earned-income amount)
+    by_qualifying_children:
+      "0": { earned_income_amount: 8490, max_credit: 649, phaseout_begins_other: 10620, phaseout_begins_mfj: 17730, phaseout_complete_other: 19104, phaseout_complete_mfj: 26214 }
+      "1": { earned_income_amount: 12730, max_credit: 4328, phaseout_begins_other: 23350, phaseout_begins_mfj: 30470, phaseout_complete_other: 50434, phaseout_complete_mfj: 57554 }
+      "2": { earned_income_amount: 17880, max_credit: 7152, phaseout_begins_other: 23350, phaseout_begins_mfj: 30470, phaseout_complete_other: 57310, phaseout_complete_mfj: 64430 }
+      "3+": { earned_income_amount: 17880, max_credit: 8046, phaseout_begins_other: 23350, phaseout_begins_mfj: 30470, phaseout_complete_other: 61555, phaseout_complete_mfj: 68675 }
+
+# One Big Beautiful Bill Act (P.L. 119-21, enacted 2025-07-04) deltas that are
+# LIVE for tax year 2025. All are final_form_published: the 2025 forms and
+# instructions carrying the figures are released (each figure is transcribed
+# into the blocks above with its own citation).
+effective_law_changes:
+  - description: >-
+      OBBBA raised the 2025 standard deduction to $15,750 single/MFS, $31,500
+      MFJ/QSS, $23,625 HoH, superseding Rev. Proc. 2024-40 Section 2.15(1)
+      ($15,000/$30,000/$22,500). Encoded in tax.standard_deduction.
+    citation:
+      source: "2025 Instructions for Form 1040, line 12e Standard Deduction charts (OBBBA, P.L. 119-21)"
+      url: "https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf"
+    status: final_form_published
+    source_topic: standard_deduction
+  - description: >-
+      OBBBA new Schedule 1-A deductions for 2025-2028 — qualified tips (up to
+      $25,000), qualified overtime ($12,500/$25,000 MFJ), car-loan interest
+      (up to $10,000, new US-assembled vehicles), and the $6,000-per-person
+      enhanced senior deduction — claimed via Form 1040 line 13b / 1040-NR
+      line 13c. Parameters encoded in tax.obbba_schedule_1a.
+    citation:
+      source: "2025 Schedule 1-A (Form 1040) and the Instructions for Schedule 1-A in the 2025 Instructions for Form 1040 (OBBBA, P.L. 119-21)"
+      url: "https://www.irs.gov/pub/irs-prior/f1040s1a--2025.pdf"
+    status: final_form_published
+  - description: >-
+      OBBBA raised the Schedule A line 5e SALT cap to $40,000 ($20,000 MFS)
+      for 2025, phased down by 30% of MAGI over $500,000 ($250,000 MFS) to a
+      $10,000 ($5,000 MFS) floor. Encoded in tax.salt_cap.
+    citation:
+      source: "2025 Instructions for Schedule A (Form 1040), line 5e worksheet (OBBBA, P.L. 119-21)"
+      url: "https://www.irs.gov/pub/irs-prior/i1040sca--2025.pdf"
+    status: final_form_published
+  - description: >-
+      OBBBA raised the child tax credit to $2,200 per qualifying child for
+      2025 and added the taxpayer valid-SSN requirement for CTC/ACTC. Encoded
+      in credits.child_tax_credit.
+    citation:
+      source: "2025 Instructions for Schedule 8812, What's New (OBBBA, P.L. 119-21)"
+      url: "https://www.irs.gov/pub/irs-prior/i1040s8--2025.pdf"
+    status: final_form_published
+
+# ─────────────────────────────────────────────────────────────────────────────
+# M3 filing-logistics blocks for 2025, fetched from the cited irs.gov sources
+# and re-verified. Year-specific (addresses/due dates differ by year).
+payment_options:
+  citation:
+    source: 2025 Instructions for Form 1040 (and 1040-SR), Line 37 "Amount You Owe" / "Pay Online" / "Pay
+      by Check or Money Order", pages 63-64; Form 1040-V (2025), "How To Prepare Your Payment" and "Pay
+      by cash"
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf
+  check:
+    payee: United States Treasury
+    memo: Write "2025 Form 1040" (or "2025 Form 1040-SR" / "2025 Form 1040-NR") plus your name, address,
+      daytime phone number, and SSN (on a joint return, the SSN shown first) on the payment; enter the
+      amount as $ XXX.XX with no dashes or lines; attach Form 1040-V; don't attach the payment to the
+      return and don't send cash. (For 2025 this wording lives on Form 1040-V itself — the 1040 booklet's
+      check section now just points to IRS.gov/Form1040V.)
+  electronic:
+  - name: IRS Direct Pay (online transfers directly from a checking/savings account)
+    fee: false
+    url: https://www.irs.gov/payments
+  - name: EFTPS (Electronic Federal Tax Payment System)
+    fee: false
+    url: https://www.eftps.gov
+    enrollment_required: true
+  - name: Debit card, credit card, or digital wallet (via approved processors)
+    fee: true
+    url: https://www.irs.gov/payments
+  cash:
+    limit_usd: 1000   # Form 1040-V (2025): in-person retail-partner payments, max $1,000 per day per transaction
+    url: https://www.irs.gov/payments
+mailing_addresses:
+  # 2025 CONSOLIDATION: the Where Do You File table shrank to four domestic
+  # groups + the foreign row, and every domestic with-payment address is now
+  # Charlotte (P.O. Box 1214) or Louisville (P.O. Box 931000) — the Cincinnati
+  # box the 2024 table used is GONE. Never reuse 2024 addresses for 2025.
+  citation:
+    source: 2025 Instructions for Forms 1040 and 1040-SR, "Where Do You File?", page 126; 2025 Instructions
+      for Form 1040-NR, "Where To File" (Individuals), pages 12-13
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf
+  f1040nr:
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215, U.S.A.
+    with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303, U.S.A.
+  # A return filed WITH Form W-7 (ITIN application) attached goes to the Austin
+  # ITIN Operation — regardless of the filer's state and whether a payment is
+  # enclosed (the ITIN unit processes the W-7 and identity documents with the return).
+  itin_w7_with_return:
+    address: "Internal Revenue Service, ITIN Operation, P.O. Box 149342, Austin, TX 78714-9342"
+    citation:
+      source: 'Instructions for Form W-7, "Where To Apply" — mail Form W-7 with the attached tax return (and identity documents) to the ITIN Operation'
+      url: "https://www.irs.gov/instructions/iw7"
+  # Form 8843 filed by ITSELF (no income-tax return required) always mails to
+  # Austin; the address never depends on the filer's state.
+  f8843_standalone:
+    address: "Department of the Treasury, Internal Revenue Service Center, Austin, TX 73301-0215"
+    citation:
+      source: 'Form 8843 instructions, "When and Where To File" (filed on its own when no income-tax return is required)'
+      url: "https://www.irs.gov/forms-pubs/about-form-8843"
+  f1040_groups:
+  - states:
+    - Alabama
+    - Florida
+    - Georgia
+    - Louisiana
+    - Mississippi
+    - North Carolina
+    - South Carolina
+    - Tennessee
+    - Texas
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 1214, Charlotte, NC 28201-1214
+  - states:
+    - Alaska
+    - California
+    - Colorado
+    - Hawaii
+    - Idaho
+    - Kansas
+    - Michigan
+    - Montana
+    - Nebraska
+    - Nevada
+    - North Dakota
+    - Ohio
+    - Oregon
+    - South Dakota
+    - Utah
+    - Washington
+    - Wyoming
+    no_payment: Department of the Treasury, Internal Revenue Service, Ogden, UT 84201-0002
+    with_payment: Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000
+  - states:
+    - Arizona
+    - Arkansas
+    - New Mexico
+    - Oklahoma
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0002
+    with_payment: Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000
+  - states:
+    - Connecticut
+    - Delaware
+    - District of Columbia
+    - Illinois
+    - Indiana
+    - Iowa
+    - Kentucky
+    - Maine
+    - Maryland
+    - Massachusetts
+    - Minnesota
+    - Missouri
+    - New Hampshire
+    - New Jersey
+    - New York
+    - Pennsylvania
+    - Rhode Island
+    - Vermont
+    - Virginia
+    - West Virginia
+    - Wisconsin
+    no_payment: Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0002
+    with_payment: Internal Revenue Service, P.O. Box 931000, Louisville, KY 40293-1000
+  - states:
+    - A foreign country, U.S. territory, APO/FPO address, Form 2555 or 4563 filer, or dual-status alien
+    no_payment: Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215
+    with_payment: Internal Revenue Service, P.O. Box 1303, Charlotte, NC 28201-1303
+deadlines:
+  # Primary citation = the plain-1040 authority; 1040-NR items cite the 1040-NR
+  # booklet via citation_1040nr (file_and_pay/filing_summary pick by form family).
+  citation:
+    source: 2025 Instructions for Form 1040 ("Amount You Owe"/installment and extension text, April 15,
+      2026); IRC 6511(a)
+    url: https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf
+  citation_1040nr:
+    source: 2025 Instructions for Form 1040-NR ("Due date of return"/"When and Where Should You File?");
+      IRC 6511(a)
+    url: https://www.irs.gov/pub/irs-prior/i1040nr--2025.pdf
+  filing_due_date: '2026-04-15'
+  refund_statute_of_limitations:
+    authority: IRC 6511(a)
+    years_from_filing: 3
+    years_from_payment: 2
+    note: Claim a refund within the later of 3 years from the time the return was filed or 2 years from
+      the time the tax was paid; a return filed before the due date is treated as filed on the due date
+      (IRC 6511(b)(2)/6513(a)).
+  postponement_note: No postponement applies to tax year 2025. April 15, 2026 is a Wednesday and not a
+    weekend or DC/federal holiday, so the statutory due date stands. (The COVID-era postponements affected
+    only TY2019 returns, moved 2020-04-15 -> 2020-07-15, and TY2020 returns, moved 2021-04-15 -> 2021-05-17;
+    neither applies here.)
+  nonwage_1040nr_due_date: '2026-06-15'   # June 15, 2026 is a Monday — no weekend shift (2024's was 2025-06-16)
