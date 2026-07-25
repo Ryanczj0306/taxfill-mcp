@@ -341,9 +341,8 @@ relations:
   - "33 == 25d + 26 + 32"                            # "Add lines 25d, 26, and 32. These are your total payments"
   - "34 == max(0, 33 - 24)"                          # "If line 33 is more than line 24, subtract line 24 from line 33"
   - "37 == max(0, 24 - 33)"                          # "Subtract line 33 from line 24. This is the amount you owe"
-# 2025 sched_1/sched_2/sched_1a packs have not shipped yet; their targets
-# are allowlisted in the harness (kept here so the verifier can warn at
-# runtime and the gap stays visible — same pattern as the 2024 f1040nr legs).
+# All cross_form targets below resolve against shipped 2025 packs
+# (sched_1, sched_1a, sched_2, sched_3).
 cross_form:
   - "8 == sched_1.10"    # "Additional income from Schedule 1, line 10"
   - "10 == sched_1.26"   # "Adjustments to income from Schedule 1, line 26"
