@@ -1,0 +1,140 @@
+# Federal Schedule A (Form 1040), TAX YEAR 2025 (OBBBA-era revision).
+#
+# Mapped from the sentinel sweep render (every binding visually confirmed).
+# 2024->2025 diffs:
+# - Line 2 reads from Form 1040 line 11b (the 2025 11a/11b AGI split).
+# - Line 5e prints the OBBBA SALT cap: smaller of 5d or $40,000 ($20,000 MFS),
+#   with the $500,000/$250,000 AGI look-through condition.
+# - The 6/8b/16 description write-ins each merged into ONE 2-row multiline
+#   widget (maxlen 79 per the sched_1/sched_2 2025 convention).
+# - Line 8d prints Reserved for future use but its widget exists (shaded) —
+#   kept mapped per the reserved-line precedent; the printed 8e sum spans
+#   8a-8c only and the relation follows the print.
+# - Line 17 total spans the far-right column (4+7+10+14+15+16), entered on
+#   Form 1040 line 12e (the 2025 deduction line).
+form: Schedule A (Form 1040)
+jurisdiction: federal
+tax_year: 2025
+source_url: https://www.irs.gov/pub/irs-prior/f1040sa--2025.pdf
+pdf_sha256: c14acf3478f4c33f27ac6e8ecd9f94b6fb25b16745b341728bd27847d2ef56bb
+acroform_root: form1[0]
+fields:
+- line: name
+  field: Page1[0].f1_1[0]
+  type: text
+- line: identifying_number
+  field: Page1[0].f1_2[0]
+  type: text
+  maxlen: 9
+  format: ssn_digits_only
+- line: '1'
+  field: Page1[0].f1_3[0]
+  type: money
+- line: '2'
+  field: Page1[0].Line2_ReadOrder[0].f1_4[0]
+  type: money
+- line: '3'
+  field: Page1[0].f1_5[0]
+  type: money
+- line: '4'
+  field: Page1[0].f1_6[0]
+  type: money
+- line: 5a.general_sales_tax
+  field: Page1[0].c1_1[0]
+  type: checkbox
+  on_state: /1
+- line: 5a
+  field: Page1[0].f1_7[0]
+  type: money
+- line: 5b
+  field: Page1[0].f1_8[0]
+  type: money
+- line: 5c
+  field: Page1[0].f1_9[0]
+  type: money
+- line: 5d
+  field: Page1[0].f1_10[0]
+  type: money
+- line: 5e
+  field: Page1[0].f1_11[0]
+  type: money
+- line: 6.type
+  field: Page1[0].f1_12[0]
+  type: text
+  maxlen: 79
+- line: '6'
+  field: Page1[0].f1_13[0]
+  type: money
+- line: '7'
+  field: Page1[0].f1_14[0]
+  type: money
+- line: 8.mortgage_not_for_home
+  field: Page1[0].Line8_ReadOrder[0].c1_2[0]
+  type: checkbox
+  on_state: /1
+- line: 8a
+  field: Page1[0].f1_15[0]
+  type: money
+- line: 8b.payee
+  field: Page1[0].Line8b_ReadOrder[0].f1_16[0]
+  type: text
+  maxlen: 79
+- line: 8b
+  field: Page1[0].f1_17[0]
+  type: money
+- line: 8c
+  field: Page1[0].f1_18[0]
+  type: money
+- line: 8d
+  field: Page1[0].f1_19[0]
+  type: money
+- line: 8e
+  field: Page1[0].f1_20[0]
+  type: money
+- line: '9'
+  field: Page1[0].f1_21[0]
+  type: money
+- line: '10'
+  field: Page1[0].f1_22[0]
+  type: money
+- line: '11'
+  field: Page1[0].f1_23[0]
+  type: money
+- line: '12'
+  field: Page1[0].f1_24[0]
+  type: money
+- line: '13'
+  field: Page1[0].f1_25[0]
+  type: money
+- line: '14'
+  field: Page1[0].f1_26[0]
+  type: money
+- line: '15'
+  field: Page1[0].f1_27[0]
+  type: money
+- line: 16.type
+  field: Page1[0].f1_28[0]
+  type: text
+  maxlen: 79
+- line: '16'
+  field: Page1[0].f1_29[0]
+  type: money
+- line: '17'
+  field: Page1[0].f1_30[0]
+  type: money
+- line: '18'
+  field: Page1[0].Line18_ReadOrder[0].c1_3[0]
+  type: checkbox
+  on_state: /1
+relations:
+- 4 == max(0, 1 - 3)
+- 5d == 5a + 5b + 5c
+- 7 == 5e + 6
+- 8e == 8a + 8b + 8c
+- 10 == 8e + 9
+- 14 == 11 + 12 + 13
+- 17 == 4 + 7 + 10 + 14 + 15 + 16
+cross_form: []
+identity_fields:
+- name
+- identifying_number
