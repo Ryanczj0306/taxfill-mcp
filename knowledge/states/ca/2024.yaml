@@ -1,0 +1,262 @@
+# California (FTB) state knowledge — tax year 2024 (state-year knowledge program pilot).
+#
+# Loaded by taxfill_core.knowledge.load_state_knowledge as a StateKnowledge.
+# Every figure is cited to ftb.ca.gov.
+#
+# Verification status (honest provenance — this project never ships unverified
+# numbers as authoritative):
+#   - treaty non-conformity + residency rules + forms: CONFIRMED verbatim
+#     against FTB Pub 1031 (2024), fetched directly from ftb.ca.gov.
+#   - credits + logistics (mailing addresses, filing thresholds, deadlines):
+#     transcribed from the 2024 Form 540 booklet PDF fetched directly from
+#     ftb.ca.gov, and re-confirmed against the separately published HTML
+#     booklet / standalone 2024 Form 540 PDF (two-pass; unlike the 2023 pack,
+#     the re-fetch was NOT blocked — no 403 caveat carries over).
+
+jurisdiction: states/ca
+tax_year: 2024
+income_tax: true
+
+# THE critical CA fact (confirmed verbatim, FTB Pub 1031 2024): California does
+# NOT conform to federal tax treaties — income exempt from federal tax under a
+# treaty is STILL taxable by California. Directly hits NRA / F-1 / J-1 filers.
+conforms_to_federal_treaties: false
+treaty_note: >-
+  California does not conform to federal income tax treaties; tax treaties that expressly limit
+  their application to federal income taxes do not apply to California. Income exempt from federal
+  tax under a U.S. treaty is generally still taxable by California unless the treaty specifically
+  excludes it from California tax. FTB Pub. 1031 (2024) worked example: a resident of China doing
+  research at a California university received $15,000 in wages excludable for federal purposes
+  under the U.S.-China treaty — those wages are nonetheless taxable by California and must be
+  included on Schedule CA (540NR), Part II, Section A, line 1a, column C. California also disallows
+  the foreign earned income exclusion and the foreign tax credit (Pub 1031, "Foreign Tax Credit or
+  Foreign Earned Income Exclusion").
+citation:
+  source: "FTB Publication 1031 (2024), Guidelines for Determining Resident Status — Tax Treaty section (p. 10)"
+  url: "https://www.ftb.ca.gov/forms/2024/2024-1031-publication.pdf"
+
+residency:
+  resident: "A California resident is taxed on ALL income (worldwide), regardless of source."
+  nonresident: "A nonresident is taxed only on income from California sources."
+  part_year: "A part-year resident is taxed on all income received while a California resident, plus California-source income received while a nonresident."
+  domicile: >-
+    Domicile is the one place you intend as your true, fixed, permanent home and to which you intend
+    to return whenever absent. You have only one domicile at a time. California distinguishes domicile
+    from residence — you can be domiciled in California but not a resident, or domiciled elsewhere but
+    a California resident for income-tax purposes.
+  closest_connection: "Residency follows your closest connections; it is the STRENGTH of your ties (home, family, time, licenses, registrations, bank accounts), not the number, that decides — no single factor is determinative."
+  citation:
+    source: "FTB Publication 1031 (2024), Sections G/H/I/L (residency, temporary or transitory purposes, income taxable by California, meaning of domicile)"
+    url: "https://www.ftb.ca.gov/forms/2024/2024-1031-publication.pdf"
+
+# Which California return each role files (confirmed, FTB Pub 1031 2024).
+forms:
+  resident: "540"
+  part_year_or_nonresident: "540NR"
+  schedule: "Schedule CA"
+
+# Common CA credits. Eligibility/structure are stable; the dollar limits are the
+# 2024 booklet figures, re-confirmed against the separately published HTML booklet.
+credits_verification: >-
+  Dollar limits below are transcribed from the cited 2024 FTB booklets and re-confirmed against the
+  FTB's HTML edition of the same booklet (two-pass). Confirm your eligibility at the cited URL
+  before relying on a figure. (The live FTB pages display current-year, inflation-adjusted figures.)
+credits:
+  - name: "Nonrefundable Renter's Credit"
+    type: nonrefundable
+    eligibility: "Full-year California resident who paid rent for at least half of 2024 on a non-tax-exempt principal residence in California; California AGI within the limit; did not claim (and spouse did not claim, subject to lived-apart exceptions) the homeowner's property tax exemption; not living more than half the year in the home of a person who can claim them as a dependent."
+    amount: "$60 (single / married-RDP filing separately); $120 (head of household / MFJ / qualifying surviving spouse). Special MFS split rules apply when both spouses qualify ($60 each or $120 to one)."
+    income_limit_2024: "California AGI (Form 540 line 17) <= $52,421 (single or MFS); <= $104,842 (MFJ, HoH, or QSS)"
+    claimed_on: "Form 540 line 46 (per the booklet's Nonrefundable Renter's Credit Qualification Record)"
+    citation:
+      source: "2024 Personal Income Tax Booklet (Form 540), Nonrefundable Renter's Credit Qualification Record, pp. 25-26"
+      url: "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+  - name: "California Earned Income Tax Credit (CalEITC)"
+    type: refundable
+    eligibility: "Requires California wage income and/or net earnings from self-employment of less than $31,951 (2024). You do not need a child to qualify. Computed on form FTB 3514."
+    claimed_on: "FTB 3514, then Form 540 line 75"
+    citation:
+      source: "2024 Personal Income Tax Booklet (Form 540), 'What's New and Other Important Information for 2024' — California Earned Income Tax Credit; form FTB 3514"
+      url: "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+  - name: "Young Child Tax Credit (YCTC)"
+    type: refundable
+    eligibility: "Available if you qualified for the California EITC (or would have but for earned income of zero dollars or less) and have at least one qualifying child younger than six years old as of the last day of the taxable year. Computed on form FTB 3514."
+    claimed_on: "FTB 3514, then Form 540 line 76"
+    citation:
+      source: "2024 Personal Income Tax Booklet (Form 540), 'What's New and Other Important Information for 2024' — Young Child Tax Credit; form FTB 3514"
+      url: "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+
+filing_requirement:
+  note: >-
+    California has its own gross-income and AGI threshold charts ('Do I Have to File?') that vary by
+    filing status, age (under 65 vs 65+), and number of dependents. 2024 examples: single or head of
+    household, under 65, 0 dependents — file if California gross income exceeds $22,273 or California
+    AGI exceeds $17,818; MFJ both under 65, 0 dependents — gross income over $44,550 or AGI over
+    $35,642. A dependent of another person (any filing status, any age) files if income exceeds their
+    standard deduction (use the Standard Deduction Worksheet for Dependents: larger of earned income
+    or the $1,300 minimum, capped at the per-status chart amount). Read the full charts in the booklet.
+  citation:
+    source: "2024 Personal Income Tax Booklet (Form 540), 'Do I Have to File?' charts, p. 4"
+    url: "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+
+mailing_addresses:
+  refund_or_no_payment: "Franchise Tax Board, PO Box 942840, Sacramento CA 94240-0001"
+  with_payment: "Franchise Tax Board, PO Box 942867, Sacramento CA 94267-0001"
+  citation:
+    source: "2024 Personal Income Tax Booklet (Form 540), 'Mailing Your Tax Return', p. 23"
+    url: "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+
+payment:
+  check_payee: "Franchise Tax Board (check or money order payable to the 'Franchise Tax Board'; write your SSN or ITIN and '2024 Form 540' on it; use form FTB 3582 if you e-filed)"
+  web_pay_url: "https://www.ftb.ca.gov/pay"
+  citation:
+    source: "2024 Personal Income Tax Booklet (Form 540), 'Payment Options' (Web Pay / check or money order)"
+    url: "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+
+deadlines:
+  filing_due_date: "2025-04-15"
+  automatic_extension: "California grants an automatic paper-filing extension to October 15, 2025 with no form required; tax owed must still be paid by April 15, 2025 (form FTB 3519) to avoid penalties/interest."
+  citation:
+    source: "2024 Personal Income Tax Booklet (Form 540), Important Dates — 'April 15, 2025: Last day to file and pay the 2024 amount you owe'; 'October 15, 2025: Last day to file or e-file your 2024 tax return' with interest from the original due date"
+    url: "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+
+all_citations:
+- source: 2024 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — Do I Have
+    to File charts, standard deduction chart/worksheet, line 31 tax methods, line 32 exemption-credit AGI limits,
+    renter's credit record, mailing addresses, important dates
+  url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf
+- source: 2024 Personal Income Tax Booklet, HTML edition (used as the independent second-pass source for the standard
+    deduction, AGI-limitation, renter's-credit and CalEITC figures)
+  url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html
+- source: 2024 California Tax Rate Schedules (standalone Schedule X/Y/Z PDF, identical to booklet p. 75)
+  url: https://www.ftb.ca.gov/forms/2024/2024-540-tax-rate-schedules.pdf
+- source: 2024 Form 540, California Resident Income Tax Return — lines 7-10 exemption credits (X $149 / X $461),
+    line 18 standard deduction amounts printed on the form, lines 17/19/31
+  url: https://www.ftb.ca.gov/forms/2024/2024-540.pdf
+- source: FTB Publication 1031 (2024), Guidelines for Determining Resident Status — residency, domicile, tax treaty
+    non-conformity, foreign tax credit / foreign earned income exclusion disallowance
+  url: https://www.ftb.ca.gov/forms/2024/2024-1031-publication.pdf
+- source: 2024 form FTB 3514 booklet, California Earned Income Tax Credit (CalEITC / YCTC / FYTC details)
+  url: https://www.ftb.ca.gov/forms/2024/2024-3514-booklet.html
+unverified:
+- The FTB 3514 booklet was confirmed reachable but its line-level 2024 CalEITC/YCTC computation tables were not
+  transcribed; the $31,951 earned-income ceiling comes from the 2024 Form 540 booklet's What's New section. Confirm
+  the credit tables at the cited FTB 3514 URL before computing a CalEITC amount.
+# Graduated-bracket tax computation block (Phase G item G4) — consumed by
+# calc.state_tax. Brackets/standard deduction verified two-pass: 2024 Form 540
+# booklet p. 75 vs the standalone 2024 Tax Rate Schedules PDF and 2024 Form 540
+# (ftb.ca.gov); all 27 printed schedule constants reconciled against cumulative
+# bracket sums (max print-rounding divergence $0.004).
+tax:
+  citation:
+    source: '2024 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — ''2024 California
+      Tax Rate Schedules'' (Schedules X/Y/Z), p. 75; ''California Standard Deduction Chart for Most People'' and Line
+      18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Mental Health Services
+      Tax worksheet, p. 16; Form 540 (2024) Side 1-2, lines 7-11 (X $149 / X $461 exemption credits), lines 17-19, 31-32,
+      61-62. Second pass: the standalone ''2024 California Tax Rate Schedules'' PDF and the standalone 2024 Form 540
+      PDF (ftb.ca.gov/forms/2024/) reproduce the same brackets, standard deduction, and credit amounts.'
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10756, rate: 0.01}
+    - {over: 10756, but_not_over: 25499, rate: 0.02}
+    - {over: 25499, but_not_over: 40245, rate: 0.04}
+    - {over: 40245, but_not_over: 55866, rate: 0.06}
+    - {over: 55866, but_not_over: 70606, rate: 0.08}
+    - {over: 70606, but_not_over: 360659, rate: 0.093}
+    - {over: 360659, but_not_over: 432787, rate: 0.103}
+    - {over: 432787, but_not_over: 721314, rate: 0.113}
+    - {over: 721314, but_not_over: null, rate: 0.123}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 21512, rate: 0.01}
+    - {over: 21512, but_not_over: 50998, rate: 0.02}
+    - {over: 50998, but_not_over: 80490, rate: 0.04}
+    - {over: 80490, but_not_over: 111732, rate: 0.06}
+    - {over: 111732, but_not_over: 141212, rate: 0.08}
+    - {over: 141212, but_not_over: 721318, rate: 0.093}
+    - {over: 721318, but_not_over: 865574, rate: 0.103}
+    - {over: 865574, but_not_over: 1442628, rate: 0.113}
+    - {over: 1442628, but_not_over: null, rate: 0.123}
+    married_filing_separately:
+    - {over: 0, but_not_over: 10756, rate: 0.01}
+    - {over: 10756, but_not_over: 25499, rate: 0.02}
+    - {over: 25499, but_not_over: 40245, rate: 0.04}
+    - {over: 40245, but_not_over: 55866, rate: 0.06}
+    - {over: 55866, but_not_over: 70606, rate: 0.08}
+    - {over: 70606, but_not_over: 360659, rate: 0.093}
+    - {over: 360659, but_not_over: 432787, rate: 0.103}
+    - {over: 432787, but_not_over: 721314, rate: 0.113}
+    - {over: 721314, but_not_over: null, rate: 0.123}
+    head_of_household:
+    - {over: 0, but_not_over: 21527, rate: 0.01}
+    - {over: 21527, but_not_over: 51000, rate: 0.02}
+    - {over: 51000, but_not_over: 65744, rate: 0.04}
+    - {over: 65744, but_not_over: 81364, rate: 0.06}
+    - {over: 81364, but_not_over: 96107, rate: 0.08}
+    - {over: 96107, but_not_over: 490493, rate: 0.093}
+    - {over: 490493, but_not_over: 588593, rate: 0.103}
+    - {over: 588593, but_not_over: 980987, rate: 0.113}
+    - {over: 980987, but_not_over: null, rate: 0.123}
+  base: federal_agi
+  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13: ''Line 31 – Tax. To figure your tax, use one or more of the
+    following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning
+    on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule
+    for your filing status on page 75.'' Rate schedule header (p. 75): ''If the amount on Form 540, line 19 is over
+    – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –''. Line 19 = line 17 (California
+    AGI) minus line 18 (larger of California itemized deductions or California standard deduction); ''Subtract line
+    18 from line 17. This is your taxable income. If less than zero, enter -0-''.'
+  exemptions: {}
+  standard_deduction:
+    single: 5540
+    married_filing_jointly: 11080
+    married_filing_separately: 5540
+    head_of_household: 11080
+  notes:
+  - 'Base guidance: Supply California adjusted gross income — 2024 Form 540, line 17 (''California adjusted gross
+    income. Combine line 15 and line 16''), i.e. federal AGI (line 13) plus California additions minus California
+    subtractions per Schedule CA (540). Do NOT supply unmodified federal AGI: California does not conform to federal
+    income tax treaties (treaty-exempt income is added back on Schedule CA) and has other adjustments. The op subtracts
+    the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and applies the
+    rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32) and special credits.'
+  - 'Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI
+    = federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18
+    standard deduction). California exemptions are $149/$461 CREDITS (lines 7-10), so vectors pass zero counts by
+    design.'
+  - 'EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS — the op does not model them: California''s personal exemption ($149
+    per exemption, 2024 Form 540 lines 7-9: personal, blind, senior) and dependent exemption ($461 per dependent,
+    line 10) are exemption CREDITS totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce
+    taxable income. This op reproduces line 31 (tax before exemption credits) only; subtract line 32 credits (and
+    any special credits, lines 40-47) on the form.'
+  - 'Exemption-credit AGI limitation (not modeled): if federal AGI (Form 540 line 13) exceeds $244,857 (single/MFS),
+    $489,719 (MFJ/qualifying surviving spouse), or $367,291 (head of household), the line 32 exemption credits are
+    reduced via the AGI Limitation Worksheet (booklet p. 14).'
+  - 'Table mandate below $100,000 — ''Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax
+    table beginning on page 69'' (booklet pp. 13, 75): bracket math may differ by a few dollars within table bands;
+    the filed form must use the Tax Table (booklet pp. 69-74).'
+  - '1% Mental Health Services Tax is NOT modeled: if taxable income (line 19) exceeds $1,000,000, an additional 1%
+    of the excess over $1,000,000 is due on Form 540 line 62 (booklet p. 16 worksheet).'
+  - Alternative Minimum Tax (Form 540 line 61, Schedule P (540)) and other taxes/credit recapture (line 63, e.g. FTB
+    3805P early-distribution tax, IRC 409A NQDC 5% tax) are NOT modeled. FTB 3800 (tax for certain children with unearned
+    income) and FTB 3803 (parents' election to report child's interest/dividends) change the line 31 computation and
+    are NOT modeled.
+  - 'Standard-deduction gates NOT modeled: a person claimable as a dependent on another''s return must use the California
+    Standard Deduction Worksheet for Dependents (larger of earned income or the $1,300 minimum standard deduction,
+    capped at the regular per-status amount) — not the chart amount; married/RDP filing separately, both spouses must
+    either both itemize or both take the standard deduction; itemizers enter California itemized deductions from Schedule
+    CA (540) Part II line 30 on line 18 instead of the standard deduction.'
+  - Qualifying surviving spouse/RDP uses Schedule Y — identical to married/RDP filing jointly (engine's QSS-to-MFJ
+    mapping matches the published schedule exactly). Married/RDP filing separately uses Schedule X, the same printed
+    schedule as Single (copied from the schedule, not derived; note CA MFS is NOT half of MFJ at the bracket boundaries
+    — it equals the Single schedule).
+  - 'Base caution: Form 540 line 17 (California AGI) differs from federal AGI via Schedule CA (540) adjustments —
+    notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows
+    the foreign earned income exclusion and foreign tax credit, and subtracts items like Social Security benefits.
+    Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts.'
+  - 'Printed ''$X + Y% of amount over $Z'' constants verified against cumulative bracket sums: all 27 constants match
+    to the cent (largest print-rounding divergence $0.004, on Schedule X''s $30,083.65 / $37,512.83 / $70,116.38 and
+    Schedule Y''s $60,167.30 / $140,232.77 constants) — bracket math and the printed schedule agree.'
+  - 'Rounding: the booklet''s worked example (p. 75) rounds the schedule result to whole dollars for line 31 ($4,920.48
+    entered as $4,920), consistent with this op''s round-half-up-to-whole-dollars behavior.'
+  - '2024 filing-season schedule confirmed final: California had no mid-year 2024 rate change; these are the inflation-indexed
+    schedules printed in the final 2024 booklet used for the 2025 filing season (and republished unchanged in the
+    standalone 2024 Tax Rate Schedules PDF).'
