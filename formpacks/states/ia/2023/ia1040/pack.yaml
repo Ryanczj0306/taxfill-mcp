@@ -1,0 +1,281 @@
+# Iowa IA 1040 (41-001a, 08/16/2023) — 2023 Individual Income Tax Return.
+#
+# C3 resolution: Iowa's old tax.iowa.gov URLs 404'd, but revenue.iowa.gov
+# publishes each year's IA 1040 in TWO variants behind a Form Options gateway
+# — a flat print PDF (media/2746) and this FILLABLE AcroForm (media/2747,
+# 5 pages, plain human-readable field names, no XFA). Normal pipeline.
+#
+# Mapping notes (verified against the printed face + sentinel audit):
+# - The printed face says "Enter Dollars and Cents": every money line has a
+#   separate 2-char cents box, mapped as <line>.cents text entries.
+# - DOR field-name vs printed-face mismatch: the line-1 FIELD is named
+#   "1 Federal adjusted gross income" but the printed line reads "Federal
+#   total income" (federal 1040 line 9 figure); labels follow the FACE.
+# - Field names contain literal periods (sentence-style, e.g. "11 Total
+#   Credits. Add lines 8, 9, and 10") — the full dotted names are used
+#   verbatim; Schedule 1's line 12/20 A and B totals are separate fields
+#   (s1.12a/s1.12b, s1.20a/s1.20b). The printed "Subtract ... column B from
+#   A" relations (s1.13, s1.21) are not encoded because dotted line ids
+#   cannot appear in relation expressions.
+# - Recycled checkbox export values are copied verbatim (e.g. the line-35
+#   annualized-method box and the deceased boxes use on_state "/Savings",
+#   the alternate-tax box uses "/Spouse over 65") — DOR artifacts.
+form: "IA 1040"
+jurisdiction: states/ia
+tax_year: 2023
+source_url: https://revenue.iowa.gov/media/2747/download
+pdf_sha256: "32db1d8cbce527d469eb5617397db89555aab0a0809f3e6397e514582cde4318"
+acroform_root: ""
+fields:
+  - { line: "fiscal_begin", field: "Fiscal Year beginning from MMDDYYYY", type: text, maxlen: 8 }  # Fiscal year beginning (MMDDYYYY)
+  - { line: "fiscal_end", field: "Fiscal Year beginning to MMDDYYYY", type: text, maxlen: 8 }  # Fiscal year ending (MMDDYYYY)
+  - { line: "amended", field: "Check the box if - Amended return", type: checkbox, on_state: "/Yes" }  # Amended return
+  - { line: "name.last", field: "Last Name", type: text }  # Last name
+  - { line: "name.first", field: "First Name", type: text }  # First name
+  - { line: "name.mi", field: "Middle Initial", type: text, maxlen: 1 }  # Middle initial
+  - { line: "identifying_number", field: "Social Security Number (SSN)", type: text, maxlen: 9 }  # Taxpayer's SSN
+  - { line: "spouse.last_name", field: "Spouse's Last Name", type: text }  # Spouse's last name
+  - { line: "spouse.first_name", field: "Spouse's First Name", type: text }  # Spouse's first name
+  - { line: "spouse.mi", field: "Spouse's Middle Initial", type: text, maxlen: 1 }  # Spouse's middle initial
+  - { line: "spouse.identifying_number", field: "Spouse's Social Security Number (SSN)", type: text, maxlen: 9 }  # Spouse's SSN
+  - { line: "mailing_address.street", field: "Current mailing address", type: text }  # Current mailing address
+  - { line: "mailing_address.city", field: "City", type: text }  # City
+  - { line: "mailing_address.state", field: "State", type: text, maxlen: 2 }  # State
+  - { line: "mailing_address.zip", field: "ZIP", type: text, maxlen: 5 }  # ZIP
+  - { line: "school_district", field: "School District Number", type: text, maxlen: 4 }  # School district number
+  - { line: "county", field: "County No", type: text, maxlen: 2 }  # County number
+  - { line: "filing_status.single", field: "Filing Status", type: checkbox, on_state: "/Single", group: filing_status }  # Single
+  - { line: "single_claimed.yes", field: "Single - Claimed on another person's return?", type: checkbox, on_state: "/Yes", group: single_claimed }  # Single: claimed on another person's return — Yes
+  - { line: "single_claimed.no", field: "Single - Claimed on another person's return?", type: checkbox, on_state: "/No", group: single_claimed }  # Single: claimed on another person's return — No
+  - { line: "filing_status.mfj", field: "Filing Status", type: checkbox, on_state: "/Married Joint", group: filing_status }  # Married filing jointly
+  - { line: "filing_status.mfs", field: "Filing Status", type: checkbox, on_state: "/Married Sep", group: filing_status }  # Married filing separately
+  - { line: "spouse_net_income", field: "Spouse's net income", type: money, maxlen: 15 }  # Spouse's net income (filing status 3)
+  - { line: "spouse_net_income.cents", field: "Spouse's net income (cents)", type: text, maxlen: 2 }  # Spouse's net income — cents
+  - { line: "filing_status.hoh", field: "Filing Status", type: checkbox, on_state: "/Head", group: filing_status }  # Head of household
+  - { line: "filing_status.qss", field: "Filing Status", type: checkbox, on_state: "/Widow", group: filing_status }  # Qualifying surviving spouse/widow(er)
+  - { line: "a", field: "III a Personal Credit", type: money, maxlen: 15 }  # Step 3 a: Personal Credit x $40
+  - { line: "a.cents", field: "III a Personal Credit (cents)", type: text, maxlen: 2 }  # Step 3 a — cents
+  - { line: "a.count", field: "a Personal Credit. Enter 1 (enter 2 if filing status 2 or 4)", type: text, maxlen: 1 }  # Step 3 a count: 1 (2 if filing status 2 or 4)
+  - { line: "b", field: "b Amount for IIIb", type: money, maxlen: 15 }  # Step 3 b: 65-or-older/blind credits x $20
+  - { line: "b.cents", field: "b Amount for IIIb (cents)", type: text, maxlen: 2 }  # Step 3 b — cents
+  - { line: "b.count", field: "b Enter 1 for each taxpayer 65 or older and/or 1 for each taxpayer who is blind", type: text, maxlen: 1 }  # Step 3 b count
+  - { line: "age65.you", field: "Check if - over 65", type: checkbox, on_state: "/over 65" }  # You are 65 or older
+  - { line: "blind.you", field: "Check if - blind", type: checkbox, on_state: "/blind" }  # You are blind
+  - { line: "age65.spouse", field: "Check if - spouse over 65", type: checkbox, on_state: "/Spouse over 65" }  # Spouse is 65 or older
+  - { line: "blind.spouse", field: "Check if - Spouse is blind", type: checkbox, on_state: "/Spouse blind" }  # Spouse is blind
+  - { line: "c.count", field: "IIIc Dependends", type: text, maxlen: 1 }  # Step 3 c count: 1 per dependent
+  - { line: "c", field: "IIIc Dependends - Amount", type: money, maxlen: 15 }  # Step 3 c: Dependents x $40
+  - { line: "c.cents", field: "IIIc Dependends - Amount (cents)", type: text, maxlen: 2 }  # Step 3 c — cents
+  - { line: "d", field: "IIIc Total. Add lines a, b, and c", type: money, maxlen: 15 }  # Step 3 d: Add lines a, b, and c
+  - { line: "d.cents", field: "IIIc Total. Add lines a, b, and c (cents)", type: text, maxlen: 2 }  # Step 3 d — cents
+  - { line: "header.name", field: "Taxpayers Name", type: text }  # Header — taxpayer name (shared field, pages 2-5)
+  - { line: "dep1.first", field: "1 Dependents first name", type: text }  # Dependent 1 — first name
+  - { line: "dep1.last", field: "1 Dependents last name", type: text }  # Dependent 1 — last name
+  - { line: "dep1.ssn", field: "1 Dependents SSN", type: text, maxlen: 9 }  # Dependent 1 — SSN
+  - { line: "dep1.relationship", field: "1 Relationship", type: text }  # Dependent 1 — relationship
+  - { line: "dep2.first", field: "2 Dependents first name", type: text }  # Dependent 2 — first name
+  - { line: "dep2.last", field: "2 Dependents last name", type: text }  # Dependent 2 — last name
+  - { line: "dep2.ssn", field: "2 Dependents SSN", type: text, maxlen: 9 }  # Dependent 2 — SSN
+  - { line: "dep2.relationship", field: "2 Relationship", type: text }  # Dependent 2 — relationship
+  - { line: "dep3.first", field: "3 Dependents first name", type: text }  # Dependent 3 — first name
+  - { line: "dep3.last", field: "3 Dependents last name", type: text }  # Dependent 3 — last name
+  - { line: "dep3.ssn", field: "3 Dependents SSN", type: text, maxlen: 9 }  # Dependent 3 — SSN
+  - { line: "dep3.relationship", field: "3 Relationship", type: text }  # Dependent 3 — relationship
+  - { line: "1", field: "1 Federal adjusted gross income", type: money, maxlen: 15 }  # Federal total income
+  - { line: "1.cents", field: "1 Federal adjusted gross income (cents)", type: text, maxlen: 2 }  # Federal total income — cents
+  - { line: "2", field: "2 Federal taxable income", type: money, maxlen: 15 }  # Federal taxable income
+  - { line: "2.cents", field: "2 Federal taxable income (cents)", type: text, maxlen: 2 }  # Federal taxable income — cents
+  - { line: "3", field: "3 Net Iowa modifications from IA 1040 Schedule 1, line 22", type: money, maxlen: 15 }  # Net Iowa modifications from IA 1040 Schedule 1, line 22
+  - { line: "3.cents", field: "3 Net Iowa modifications from IA 1040 Schedule 1, line 22 (cents)", type: text, maxlen: 2 }  # Net Iowa modifications from IA 1040 Schedule 1, line 22 — cents
+  - { line: "4", field: "4 Iowa taxable income. Add lines 2 and 3", type: money, maxlen: 15 }  # Iowa taxable income: add lines 2 and 3
+  - { line: "4.cents", field: "4 Iowa taxable income. Add lines 2 and 3 (cents)", type: text, maxlen: 2 }  # Iowa taxable income: add lines 2 and 3 — cents
+  - { line: "alt_tax_method", field: "Check if using alternate tax (line 5), tax reduction calculation (line 12), or low-income exemption", type: checkbox, on_state: "/Spouse over 65" }  # Using alternate tax / tax reduction / low-income exemption
+  - { line: "5", field: "5 Iowa Tax from tables or alternate tax", type: money, maxlen: 15 }  # Iowa tax from tables or alternate tax
+  - { line: "5.cents", field: "5 Iowa Tax from tables or alternate tax (cents)", type: text, maxlen: 2 }  # Iowa tax from tables or alternate tax — cents
+  - { line: "6", field: "6 Iowa lump-sum tax", type: money, maxlen: 15 }  # Iowa lump-sum tax
+  - { line: "6.cents", field: "6 Iowa lump-sum tax (cents)", type: text, maxlen: 2 }  # Iowa lump-sum tax — cents
+  - { line: "7", field: "7 Total Tax. Add lines 5 and 6", type: money, maxlen: 15 }  # Add lines 5 and 6
+  - { line: "7.cents", field: "7 Total Tax. Add lines 5 and 6 (cents)", type: text, maxlen: 2 }  # Add lines 5 and 6 — cents
+  - { line: "8", field: "8 Total exemption credit amount from Step 3", type: money, maxlen: 15 }  # Total exemption credit amount from Step 3
+  - { line: "8.cents", field: "8 Total exemption credit amount from Step 3 (cents)", type: text, maxlen: 2 }  # Total exemption credit amount from Step 3 — cents
+  - { line: "9", field: "9 Tuition and textbook credit for dependents K-12", type: money, maxlen: 15 }  # Tuition and textbook credit (K-12 dependents)
+  - { line: "9.cents", field: "9 Tuition and textbook credit for dependents K-12 (cents)", type: text, maxlen: 2 }  # Tuition and textbook credit (K-12 dependents) — cents
+  - { line: "10", field: "10 Volunteer firefighter/EMS/reserve peace officer credit", type: money, maxlen: 15 }  # Volunteer firefighter/EMS/reserve peace officer credit
+  - { line: "10.cents", field: "10 Volunteer firefighter/EMS/reserve peace officer credit (cents)", type: text, maxlen: 2 }  # Volunteer firefighter/EMS/reserve peace officer credit — cents
+  - { line: "11", field: "11 Total Credits. Add lines 8, 9, and 10", type: money, maxlen: 15 }  # Add lines 8, 9, and 10
+  - { line: "11.cents", field: "11 Total Credits. Add lines 8, 9, and 10 (cents)", type: text, maxlen: 2 }  # Add lines 8, 9, and 10 — cents
+  - { line: "12", field: "12 BALANCE. Subtract line 11 from line 7", type: money, maxlen: 15 }  # Subtract line 11 from line 7
+  - { line: "12.cents", field: "12 BALANCE. Subtract line 11 from line 7 (cents)", type: text, maxlen: 2 }  # Subtract line 11 from line 7 — cents
+  - { line: "13", field: "13 Nonresident or part-year resident credit", type: money, maxlen: 15 }  # Nonresident or part-year resident credit (IA 126)
+  - { line: "13.cents", field: "13 Nonresident or part-year resident credit (cents)", type: text, maxlen: 2 }  # Nonresident or part-year resident credit (IA 126) — cents
+  - { line: "14", field: "14 BALANCE. Subtract line 13 from line 12", type: money, maxlen: 15 }  # Subtract line 13 from line 12
+  - { line: "14.cents", field: "14 BALANCE. Subtract line 13 from line 12 (cents)", type: text, maxlen: 2 }  # Subtract line 13 from line 12 — cents
+  - { line: "15", field: "15 Out-of-State tax credit", type: money, maxlen: 15 }  # Out-of-state tax credit (IA 130)
+  - { line: "15.cents", field: "15 Out-of-State tax credit (cents)", type: text, maxlen: 2 }  # Out-of-state tax credit (IA 130) — cents
+  - { line: "16", field: "16 BALANCE. Subtract line 15 from line 14", type: money, maxlen: 15 }  # Subtract line 15 from line 14
+  - { line: "16.cents", field: "16 BALANCE. Subtract line 15 from line 14 (cents)", type: text, maxlen: 2 }  # Subtract line 15 from line 14 — cents
+  - { line: "17", field: "17 Other nonrefundable Iowa credits", type: money, maxlen: 15 }  # Other nonrefundable Iowa credits
+  - { line: "17.cents", field: "17 Other nonrefundable Iowa credits (cents)", type: text, maxlen: 2 }  # Other nonrefundable Iowa credits — cents
+  - { line: "18", field: "18 BALANCE. Subtract line 17 from line 16", type: money, maxlen: 15 }  # Subtract line 17 from line 16
+  - { line: "18.cents", field: "18 BALANCE. Subtract line 17 from line 16 (cents)", type: text, maxlen: 2 }  # Subtract line 17 from line 16 — cents
+  - { line: "19", field: "19 School district surtax or EMS surtax", type: money, maxlen: 15 }  # School district surtax or EMS surtax
+  - { line: "19.cents", field: "19 School district surtax or EMS surtax (cents)", type: text, maxlen: 2 }  # School district surtax or EMS surtax — cents
+  - { line: "20", field: "20 Total state and local tax. Add lines 18 and 19", type: money, maxlen: 15 }  # Total state and local tax: add lines 18 and 19
+  - { line: "20.cents", field: "20 Total state and local tax. Add lines 18 and 19 (cents)", type: text, maxlen: 2 }  # Total state and local tax: add lines 18 and 19 — cents
+  - { line: "21.fish_wildlife", field: "21 Contributions - Fish/wildlife", type: money, maxlen: 4 }  # Contribution — Fish/Wildlife
+  - { line: "21.fish_wildlife.cents", field: "21 Contributions - Fish/wildlife (cents)", type: text, maxlen: 2 }  # Contribution — Fish/Wildlife — cents
+  - { line: "21.state_fair", field: "21 Contributions - State Fair", type: money, maxlen: 4 }  # Contribution — State Fair
+  - { line: "21.state_fair.cents", field: "21 Contributions - State Fair (cents)", type: text, maxlen: 2 }  # Contribution — State Fair — cents
+  - { line: "21.firefighters_veterans", field: "21 Contributions - Firefighters/veterans", type: money, maxlen: 4 }  # Contribution — Firefighters/Veterans
+  - { line: "21.firefighters_veterans.cents", field: "21 Contributions - Firefighters/veterans (cents)", type: text, maxlen: 2 }  # Contribution — Firefighters/Veterans — cents
+  - { line: "21.child_abuse", field: "21 Contributions - Child Abuse", type: money, maxlen: 4 }  # Contribution — Child Abuse Prevention
+  - { line: "21.child_abuse.cents", field: "21 Contributions - Child Abuse (cents)", type: text, maxlen: 2 }  # Contribution — Child Abuse Prevention — cents
+  - { line: "21", field: "21 Enter total here", type: money, maxlen: 15 }  # Total contributions
+  - { line: "21.cents", field: "21 Enter total here (cents)", type: text, maxlen: 2 }  # Total contributions — cents
+  - { line: "22", field: "22 Total contributions. Add lines 20 and 21", type: money, maxlen: 15 }  # TOTAL STATE TAX, LOCAL TAX, AND CONTRIBUTIONS: add lines 20 and 21
+  - { line: "22.cents", field: "22 Total contributions. Add lines 20 and 21 (cents)", type: text, maxlen: 2 }  # TOTAL STATE TAX, LOCAL TAX, AND CONTRIBUTIONS: add lines 20 and 21 — cents
+  - { line: "23", field: "23 Iowa Fuel Tax Credit", type: money, maxlen: 15 }  # Iowa fuel tax credit
+  - { line: "23.cents", field: "23 Iowa Fuel Tax Credit (cents)", type: text, maxlen: 2 }  # Iowa fuel tax credit — cents
+  - { line: "24.child_dep_care", field: "24 Check one", type: checkbox, on_state: "/child and dep", group: line24_type }  # Line 24 type — child and dep
+  - { line: "24.early_childhood", field: "24 Check one", type: checkbox, on_state: "/early", group: line24_type }  # Line 24 type — early
+  - { line: "24", field: "24 Amount", type: money, maxlen: 15 }  # Child/dependent care credit OR early childhood development credit
+  - { line: "24.cents", field: "24 Amount (cents)", type: text, maxlen: 2 }  # Child/dependent care credit OR early childhood development credit — cents
+  - { line: "25", field: "25 Iowa Earned Income Tax Credit", type: money, maxlen: 15 }  # Iowa earned income tax credit
+  - { line: "25.cents", field: "25 Iowa Earned Income Tax Credit (cents)", type: text, maxlen: 2 }  # Iowa earned income tax credit — cents
+  - { line: "26", field: "26 Other refundable credits", type: money, maxlen: 15 }  # Other refundable credits
+  - { line: "26.cents", field: "26 Other refundable credits (cents)", type: text, maxlen: 2 }  # Other refundable credits — cents
+  - { line: "27", field: "27 Composite tax credit", type: money, maxlen: 15 }  # Composite tax credit
+  - { line: "27.cents", field: "27 Composite tax credit (cents)", type: text, maxlen: 2 }  # Composite tax credit — cents
+  - { line: "28", field: "28 Iowa income tax withheld", type: money, maxlen: 15 }  # Iowa income tax withheld
+  - { line: "28.cents", field: "28 Iowa income tax withheld (cents)", type: text, maxlen: 2 }  # Iowa income tax withheld — cents
+  - { line: "29", field: "29 Estimated and voucher payments", type: money, maxlen: 15 }  # Estimated and voucher payments
+  - { line: "29.cents", field: "29 Estimated and voucher payments (cents)", type: text, maxlen: 2 }  # Estimated and voucher payments — cents
+  - { line: "30", field: "30 TOTAL. Add lines 23 through 29", type: money, maxlen: 15 }  # Total credits and payments: add lines 23 through 29
+  - { line: "30.cents", field: "30 TOTAL. Add lines 23 through 29 (cents)", type: text, maxlen: 2 }  # Total credits and payments: add lines 23 through 29 — cents
+  - { line: "31", field: "31 If line 30 is more than line 22, subtract line 22 from line 30", type: money, maxlen: 15 }  # Overpayment: if line 30 exceeds line 22, line 30 minus line 22
+  - { line: "31.cents", field: "31 If line 30 is more than line 22, subtract line 22 from line 30 (cents)", type: text, maxlen: 2 }  # Overpayment: if line 30 exceeds line 22, line 30 minus line 22 — cents
+  - { line: "32", field: "32 Amount of line 31 to be REFUNDED", type: money, maxlen: 15 }  # Amount of line 31 to be REFUNDED
+  - { line: "32.cents", field: "32 Amount of line 31 to be REFUNDED (cents)", type: text, maxlen: 2 }  # Amount of line 31 to be REFUNDED — cents
+  - { line: "32c.checking", field: "32c Savings or Checking", type: checkbox, on_state: "/Checking", group: account_type }  # Direct deposit account — Checking
+  - { line: "32a", field: "32a Routing number", type: money, maxlen: 9 }  # Routing number
+  - { line: "32c.savings", field: "32c Savings or Checking", type: checkbox, on_state: "/Savings", group: account_type }  # Direct deposit account — Savings
+  - { line: "32b", field: "32b Accounting number", type: money, maxlen: 17 }  # Account number
+  - { line: "33", field: "33 Amount of line 31 to be applied to your estimated tax", type: money, maxlen: 15 }  # Amount of line 31 applied to 2024 estimated tax
+  - { line: "33.cents", field: "33 Amount of line 31 to be applied to your estimated tax (cents)", type: text, maxlen: 2 }  # Amount of line 31 applied to 2024 estimated tax — cents
+  - { line: "34", field: "34 If line 30 is less than line 22, subtract line 30 from line 22", type: money, maxlen: 15 }  # Amount due: if line 30 is less than line 22, line 22 minus line 30
+  - { line: "34.cents", field: "34 If line 30 is less than line 22, subtract line 30 from line 22 (cents)", type: text, maxlen: 2 }  # Amount due: if line 30 is less than line 22, line 22 minus line 30 — cents
+  - { line: "35a", field: "35 check if annualized income method used", type: checkbox, on_state: "/Savings" }  # Annualized income (IA 2210AI) or farmer/fisher (IA 2210F) method used
+  - { line: "35", field: "35 Penalty for underpayment of estimated tax", type: money, maxlen: 15 }  # Penalty for underpayment of estimated tax (IA 2210)
+  - { line: "35.cents", field: "35 Penalty for underpayment of estimated tax (cents)", type: text, maxlen: 2 }  # Penalty for underpayment of estimated tax (IA 2210) — cents
+  - { line: "36a", field: "36 a Penalty", type: money, maxlen: 15 }  # Penalty
+  - { line: "36a.cents", field: "36 a Penalty (cents)", type: text, maxlen: 2 }  # Penalty — cents
+  - { line: "36b", field: "36b Interest", type: money, maxlen: 15 }  # Interest
+  - { line: "36b.cents", field: "36b Interest (cents)", type: text, maxlen: 2 }  # Interest — cents
+  - { line: "36", field: "36 Penalty and Interest TOTAL", type: money, maxlen: 15 }  # Penalty and interest total
+  - { line: "36.cents", field: "36 Penalty and Interest TOTAL (cents)", type: text, maxlen: 2 }  # Penalty and interest total — cents
+  - { line: "37", field: "37 TOTAL AMOUNT DUE. ADD lines 34, 35 and 36", type: money, maxlen: 15 }  # TOTAL AMOUNT DUE: add lines 34, 35, and 36
+  - { line: "37.cents", field: "37 TOTAL AMOUNT DUE. ADD lines 34, 35 and 36 (cents)", type: text, maxlen: 2 }  # TOTAL AMOUNT DUE: add lines 34, 35, and 36 — cents
+  - { line: "s1.1b", field: "1B Interest", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 1B Interest
+  - { line: "s1.1b.cents", field: "1B Interest (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.1a", field: "1A Interest", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 1A Interest
+  - { line: "s1.1a.cents", field: "1A Interest (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.2a", field: "2A Dividends", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 2A Dividends
+  - { line: "s1.2a.cents", field: "2A Dividends (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.2b", field: "2B Dividends", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 2B Dividends
+  - { line: "s1.2b.cents", field: "2B Dividends (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.5b", field: "5B Social Security Benefits", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 5B Social Security Benefits
+  - { line: "s1.5b.cents", field: "5B Social Security Benefits (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.6b", field: "6B Active Duty Military Pay", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 6B Active Duty Military Pay
+  - { line: "s1.6b.cents", field: "6B Active Duty Military Pay (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.7", field: "7 IRA/Pension/Railroad Retirement Income", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 7 IRA/Pension/Railroad Retirement Income
+  - { line: "s1.7.cents", field: "7 IRA/Pension/Railroad Retirement Income (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.8", field: "8 Railroad Unemployment Income", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 8 Railroad Unemployment Income
+  - { line: "s1.8.cents", field: "8 Railroad Unemployment Income (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.9a", field: "9A Bonus Depreciation/Section 179 expenses", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 9A Bonus Depreciation/Section 179 expenses
+  - { line: "s1.9a.cents", field: "9A Bonus Depreciation/Section 179 expenses (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.9b", field: "9B Bonus Depreciation/Section 179 expenses", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 9B Bonus Depreciation/Section 179 expenses
+  - { line: "s1.9b.cents", field: "9B Bonus Depreciation/Section 179 expenses (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.10a", field: "10A Federal Net Operating Loss prior to January 1", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 10A Federal Net Operating Loss prior to January 1
+  - { line: "s1.10a.cents", field: "10A Federal Net Operating Loss prior to January 1 (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.11a", field: "11A Other Income", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 11A Other Income
+  - { line: "s1.11a.cents", field: "11A Other Income (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.11b", field: "11B Other Income", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 11B Other Income
+  - { line: "s1.11b.cents", field: "11B Other Income (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.12a", field: "12A Total modifications to federal total income. Add lines 1 through 11", type: money, maxlen: 15 }  # Sched 1 line 12 col A
+  - { line: "s1.12b", field: "12B Total modifications to federal total income. Add lines 1 through 11", type: money, maxlen: 15 }  # Sched 1 line 12 col B
+  - { line: "s1.12a.cents", field: "12A Total modifications to federal total income. Add lines 1 through 11 (cents)", type: text, maxlen: 2 }  # col A cents
+  - { line: "s1.12b.cents", field: "12B Total modifications to federal total income. Add lines 1 through 11 (cents)", type: text, maxlen: 2 }  # col B cents
+  - { line: "s1.13", field: "13 Net modifications to federal total income.Subtract line 12 column B from A", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — Subtract line 12 column B from A
+  - { line: "s1.13.cents", field: "13 Net modifications to federal total income.Subtract line 12 column B from A (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.14", field: "14 Federal income tax refund or overpayment received", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 14 Federal income tax refund or overpayment received
+  - { line: "s1.14.cents", field: "14 Federal income tax refund or overpayment received (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.15", field: "15 Health Insurance Deduction for taxpayers over 65", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 15 Health Insurance Deduction for taxpayers over 65
+  - { line: "s1.15.cents", field: "15 Health Insurance Deduction for taxpayers over 65 (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.16", field: "16 Capital Gains Deduction", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 16 Capital Gains Deduction
+  - { line: "s1.16.cents", field: "16 Capital Gains Deduction (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.17", field: "17 Iowa Net Operating Loss prior to January 1", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 17 Iowa Net Operating Loss prior to January 1
+  - { line: "s1.17.cents", field: "17 Iowa Net Operating Loss prior to January 1 (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.18", field: "18 Federal tax paid for prior years", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 18 Federal tax paid for prior years
+  - { line: "s1.18.cents", field: "18 Federal tax paid for prior years (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.19a", field: "19A Other Adjustments", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 19A Other Adjustments
+  - { line: "s1.19a.cents", field: "19A Other Adjustments (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.19b", field: "19B Other Adjustments", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — 19B Other Adjustments
+  - { line: "s1.19b.cents", field: "19B Other Adjustments (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.20a", field: "20A Total modifications to federal taxable income. Add lines 14 through 19", type: money, maxlen: 15 }  # Sched 1 line 20 col A
+  - { line: "s1.20b", field: "20B Total modifications to federal taxable income. Add lines 14 through 19", type: money, maxlen: 15 }  # Sched 1 line 20 col B
+  - { line: "s1.20a.cents", field: "20A Total modifications to federal taxable income. Add lines 14 through 19 (cents)", type: text, maxlen: 2 }  # col A cents
+  - { line: "s1.20b.cents", field: "20B Total modifications to federal taxable income. Add lines 14 through 19 (cents)", type: text, maxlen: 2 }  # col B cents
+  - { line: "s1.21", field: "21 Net modifications to federal taxable income. Subtract line 20 column B from A", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — Subtract line 20 column B from A
+  - { line: "s1.21.cents", field: "21 Net modifications to federal taxable income. Subtract line 20 column B from A (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "s1.22", field: "22 Net Iowa Modifications. Add lines 13 and 21", type: money, maxlen: 15 }  # IA 1040 Schedule 1 — Add lines 13 and 21
+  - { line: "s1.22.cents", field: "22 Net Iowa Modifications. Add lines 13 and 21 (cents)", type: text, maxlen: 2 }  # Schedule 1 cents
+  - { line: "designee.name", field: "Third Party Designee's Name", type: text }  # Third Party Designee's Name
+  - { line: "designee.street", field: "Third Party Designee's mailing address", type: text }  # Third Party Designee's mailing address
+  - { line: "designee.id", field: "Third Party Designee's ID Number", type: text }  # Third Party Designee's ID Number
+  - { line: "designee.city", field: "Third Party Designee's City", type: text }  # Third Party Designee's City
+  - { line: "designee.state", field: "Third Party Designee's State", type: text, maxlen: 2 }  # Third Party Designee's State
+  - { line: "designee.zip", field: "Third Party Designee's ZIP", type: text, maxlen: 5 }  # Third Party Designee's ZIP
+  - { line: "designee.phone", field: "Third Party Designee's phone number", type: text, maxlen: 10 }  # Third Party Designee's phone number
+  - { line: "designee.email", field: "Third Party Designee's email", type: text }  # Third Party Designee's email
+  - { line: "signature_date", field: "Signature date", type: text, maxlen: 8 }  # Signature date
+  - { line: "deceased", field: "Check if deceased", type: checkbox, on_state: "/Savings" }  # Check if deceased
+  - { line: "date_of_death", field: "Date of death", type: text, maxlen: 8 }  # Date of death
+  - { line: "spouse_signature_date", field: "Signature date Spouse", type: text, maxlen: 8 }  # Signature date Spouse
+  - { line: "spouse_deceased", field: "Check if spouse deceased", type: checkbox, on_state: "/Savings" }  # Check if spouse deceased
+  - { line: "spouse_date_of_death", field: "Spouse date of death", type: text, maxlen: 8 }  # Spouse date of death
+  - { line: "phone", field: "Taxpayers phone number", type: text, maxlen: 10 }  # Taxpayers phone number
+  - { line: "email", field: "Taxpayers email", type: text }  # Taxpayers email
+  - { line: "drivers_license", field: "Drivers license or ID Number", type: text }  # Drivers license or ID Number
+  - { line: "spouse_drivers_license", field: "Spouse Drivers license or ID Number", type: text }  # Spouse Drivers license or ID Number
+  - { line: "preparer.date", field: "Preparer Signature date", type: text, maxlen: 8 }  # Preparer Signature date
+  - { line: "preparer.ptin", field: "Preparer's ID", type: text, maxlen: 9 }  # Preparer's ID
+  - { line: "preparer.fein", field: "Firms Federal Employer Identification Number (FEIN)", type: text, maxlen: 9 }  # Firms Federal Employer Identification Number (FEIN)
+  - { line: "preparer.phone", field: "Preparers phone number", type: text, maxlen: 10 }  # Preparers phone number
+relations:
+  - "d == a + b + c"          # Step 3 d: "Add lines a, b, and c"
+  - "4 == 2 + 3"              # "Add lines 2 and 3"
+  - "7 == 5 + 6"              # "Add lines 5 and 6"
+  - "8 == d"                  # "Total exemption credit amount from Step 3"
+  - "11 == 8 + 9 + 10"        # "Add lines 8, 9, and 10"
+  - "12 == 7 - 11"            # "Subtract line 11 from line 7"
+  - "14 == 12 - 13"           # "Subtract line 13 from line 12"
+  - "16 == 14 - 15"           # "Subtract line 15 from line 14"
+  - "18 == 16 - 17"           # "Subtract line 17 from line 16"
+  - "20 == 18 + 19"           # "Add lines 18 and 19"
+  - "22 == 20 + 21"           # "TOTAL ... Add lines 20 and 21"
+  - "30 == 23 + 24 + 25 + 26 + 27 + 28 + 29"       # "Add lines 23 through 29"
+  - "36 == 36a + 36b"         # penalty + interest total
+  - "37 == 34 + 35 + 36"      # "ADD lines 34, 35 and 36"
+identity_fields:
+  - identifying_number
+  - name.first
+  - name.last
+signature:
+  page: 5
+mailing:
+  # Printed on page 5: "MAILING ADDRESS: Iowa Income Tax Document Processing,
+  # PO BOX 9187, Des Moines IA 50306-9187. Make checks payable to Iowa
+  # Department of Revenue." (single address, with or without payment)
+  no_payment: "Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187"
+  with_payment: "Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187 (make checks payable to Iowa Department of Revenue)"
+  verify_url: https://revenue.iowa.gov
