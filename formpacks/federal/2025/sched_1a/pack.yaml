@@ -43,16 +43,15 @@
 #     addition but cannot be encoded: the relation grammar has no dotted line
 #     refs, and the column-(iii) cells are mapped as 22a.iii / 22b.iii.
 #
-# Intended cross_form rules — NOT declared yet because no 2025 f1040 or
-# f1040nr pack exists at authoring time (declaring them would break the
-# cross-form target resolution gate; add these once those packs ship):
-#   - "1 == f1040.11b"     printed: "Enter the amount from Form 1040,
-#   - "1 == f1040nr.11b"   1040-SR, or 1040-NR, line 11b"
-#   - "38 == f1040.13b"    printed: "Enter here and on Form 1040 or 1040-SR,
-#   - "38 == f1040nr.13c"  line 13b, or on Form 1040-NR, line 13c"
+# Cross-form rules: the schedule attaches to a 1040 OR a 1040-NR, so both
+# legs are declared — a filing contains one of the two parents and the
+# matching rule applies (sched_3 2025 pattern):
+#   line 1  prints "Enter the amount from Form 1040, 1040-SR, or 1040-NR,
+#           line 11b"; line 38 prints "Enter here and on Form 1040 or
+#           1040-SR, line 13b, or on Form 1040-NR, line 13c".
 # (Other printed source references — Form 2555 lines 45/50 on 2b/2c, Form
 # 4563 line 15 on 2d, Form 4137 on 4b — point at forms with no 2025 packs
-# and stay out of cross_form for the same reason.)
+# and stay out of cross_form.)
 form: "Schedule 1-A (Form 1040)"
 jurisdiction: federal
 tax_year: 2025
@@ -246,7 +245,11 @@ relations:
   - "14c == 14a + 14b"                          # "Add lines 14a and 14b"
   - "37 == 36a + 36b"                           # "Add lines 36a and 36b"
   - "38 == 13 + 21 + 30 + 37"                   # "Add lines 13, 21, 30, and 37"
-cross_form: []                        # intended rules pending 2025 f1040/f1040nr packs — see header
+cross_form:
+  - "1 == f1040.11b"                  # "Enter the amount from Form 1040, 1040-SR, or 1040-NR, line 11b"
+  - "1 == f1040nr.11b"
+  - "38 == f1040.13b"                 # "Enter here and on Form 1040 or 1040-SR, line 13b, or on
+  - "38 == f1040nr.13c"               #  Form 1040-NR, line 13c"
 identity_fields: [name, identifying_number]
 signature: null                       # schedules carry no signature block of their own
 mailing: null                         # mailed inside the parent return's envelope
