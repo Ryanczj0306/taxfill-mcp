@@ -62,6 +62,7 @@ KNOWN_FORM_KEYS = frozenset(
         "f1040nr",
         "f1040",
         "sched_1",
+        "sched_1a",
         "sched_2",
         "sched_3",
         "sched_a",
@@ -237,6 +238,11 @@ CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
         # ships.
         (2024, "f1040nr", "20"),
         (2024, "f1040nr", "31"),
+        # Same story for the 2025 Schedule 3: the 2025 scope has no f1040nr
+        # pack, so its f1040nr legs cannot resolve. The f1040 legs are NOT
+        # allowlisted — they resolve once the in-flight 2025 f1040 pack ships.
+        (2025, "f1040nr", "20"),
+        (2025, "f1040nr", "31"),
         # The 2022 1040-NR keeps its Schedule 2/3 cross_form rules so the verifier
         # can emit its runtime "attach Schedule 2/3 and re-verify" caution when a
         # back-filer puts a nonzero amount on lines 17/20/23b/31, but the M2 2022
@@ -246,6 +252,16 @@ CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
         (2022, "sched_2", "21"),
         (2022, "sched_3", "8"),
         (2022, "sched_3", "15"),
+        # The 2025 f1040 keeps its Schedule 1/2/1-A cross_form rules (lines
+        # 8/10, 17/23, and 13b are printed on the form face) so the verifier
+        # can warn at runtime, but no 2025 sched_1/sched_2/sched_1a pack has
+        # shipped yet, so those targets cannot resolve. Remove once the 2025
+        # sched_1/sched_2/sched_1a packs ship.
+        (2025, "sched_1", "10"),
+        (2025, "sched_1", "26"),
+        (2025, "sched_2", "3"),
+        (2025, "sched_2", "21"),
+        (2025, "sched_1a", "38"),
     }
 )
 

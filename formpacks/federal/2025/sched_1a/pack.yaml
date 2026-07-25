@@ -1,0 +1,252 @@
+# Schedule 1-A (Form 1040) — Additional Deductions — 2025 revision.
+# BRAND-NEW form for TY2025 (OBBBA): no prior-year template exists. Two pages,
+# attachment sequence 1A, attached to Form 1040 / 1040-SR / 1040-NR; no
+# signature block, mailed in the parent return's envelope
+# (formpacks/CONVENTIONS.md). Page-1 footer of the official blank reads
+# "Schedule 1-A (Form 1040) 2025 Created 11/4/25".
+#
+# Part structure (printed lines):
+#   Part I   (1-3)    Modified Adjusted Gross Income (MAGI) Amount
+#   Part II  (4-13)   No Tax on Tips            -> line 13 qualified tips deduction
+#   Part III (14-21)  No Tax on Overtime        -> line 21 overtime deduction
+#   Part IV  (22-30)  No Tax on Car Loan Interest -> line 30 QPVLI deduction
+#   Part V   (31-37)  Enhanced Deduction for Seniors -> line 37
+#   Part VI  (38)     Total Additional Deductions
+#
+# AcroForm quirks (verbatim from the official blank):
+#   - the acroform root is "form1[0]", NOT the usual "topmostSubform[0]" of
+#     most IRS 1040 schedules (hybrid XFA/AcroForm PDF; the AcroForm widgets
+#     are fully present and are what we fill);
+#   - 54 terminal fields, ALL text — this form has NO checkboxes or radio
+#     groups (the filing-status-dependent thresholds on lines 9/15/17/26/32
+#     are printed in the line text, not selected via boxes);
+#   - the line 22 VIN table nests its fields under container nodes:
+#     Page2[0].Table_Line22[0].Line22a[0].VIN-1_Comb[0].f2_01[0] (and the
+#     Line22b[0].VIN-2_Comb[0].f2_04[0] twin) — 17-cell comb fields, one
+#     character per cell, sized for a 17-character VIN.
+#
+# Relations policy for this form (formpacks/CONVENTIONS.md — face math only):
+#   - ONLY the plain printed add lines are encoded below. The MAGI phase-out
+#     worksheet lines printed inside Parts II-V are NOT face math in the
+#     relations sense and are deliberately NOT encoded: the "enter the
+#     smaller of" caps (7, 15, 24), the conditional subtractions with jump
+#     instructions (10, 18, 27, 33), the divide-by-$1,000 with floor/CEILING
+#     rounding (11, 19, 28 — note Part IV rounds UP where Parts II/III round
+#     DOWN), the multiplies (12, 20, 29, 34), the clamped subtractions
+#     ("If zero or less, enter -0-": 13, 21, 30, 35), and the conditional
+#     birthdate/SSN-gated copies (36a, 36b).
+#   - The "Enter the amount from line 3" copies (8, 16, 25, 31) are also NOT
+#     encoded: each Part is filled out only when it applies (see the printed
+#     Caution paragraphs), so a legitimately blank Part would turn the copy
+#     rule into a false FAIL under blank-as-zero.
+#   - Line 23 ("Add lines 22a and 22b, column (iii)") IS plain printed
+#     addition but cannot be encoded: the relation grammar has no dotted line
+#     refs, and the column-(iii) cells are mapped as 22a.iii / 22b.iii.
+#
+# Intended cross_form rules — NOT declared yet because no 2025 f1040 or
+# f1040nr pack exists at authoring time (declaring them would break the
+# cross-form target resolution gate; add these once those packs ship):
+#   - "1 == f1040.11b"     printed: "Enter the amount from Form 1040,
+#   - "1 == f1040nr.11b"   1040-SR, or 1040-NR, line 11b"
+#   - "38 == f1040.13b"    printed: "Enter here and on Form 1040 or 1040-SR,
+#   - "38 == f1040nr.13c"  line 13b, or on Form 1040-NR, line 13c"
+# (Other printed source references — Form 2555 lines 45/50 on 2b/2c, Form
+# 4563 line 15 on 2d, Form 4137 on 4b — point at forms with no 2025 packs
+# and stay out of cross_form for the same reason.)
+form: "Schedule 1-A (Form 1040)"
+jurisdiction: federal
+tax_year: 2025
+source_url: https://www.irs.gov/pub/irs-prior/f1040s1a--2025.pdf
+pdf_sha256: "64f97b38ff4218e2f188fd55a8aab7043556687487c82bbefe0b6dd1a956ecd4"
+acroform_root: "form1[0]"
+fields:
+  # ---- header ----
+  - line: name                        # Name(s) shown on Form 1040, 1040-SR, or 1040-NR
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: identifying_number          # "Your social security number" — plain
+    field: "Page1[0].f1_02[0]"        # text box (not a comb field); the widget
+    type: text                        # carries /MaxLen=11, so a dashed SSN
+    maxlen: 11                        # ("000-00-0000") fits exactly
+  # ---- Part I — Modified Adjusted Gross Income (MAGI) Amount ----
+  - line: "1"                         # amount from Form 1040/1040-SR/1040-NR, line 11b
+    field: "Page1[0].f1_03[0]"
+    type: money
+  - line: 2a                          # income from Puerto Rico that you excluded
+    field: "Page1[0].f1_04[0]"
+    type: money
+  - line: 2b                          # Form 2555, line 45
+    field: "Page1[0].f1_05[0]"
+    type: money
+  - line: 2c                          # Form 2555, line 50
+    field: "Page1[0].f1_06[0]"
+    type: money
+  - line: 2d                          # Form 4563, line 15
+    field: "Page1[0].f1_07[0]"
+    type: money
+  - line: 2e                          # add lines 2a, 2b, 2c, and 2d
+    field: "Page1[0].f1_08[0]"
+    type: money
+  - line: "3"                         # MAGI: add lines 1 and 2e
+    field: "Page1[0].f1_09[0]"
+    type: money
+  # ---- Part II — No Tax on Tips ----
+  - line: 4a                          # qualified tips on Form W-2, box 7
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: 4b                          # qualified tips on Form 4137, line 1, row A, col (c)
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: 4c                          # employee tips (larger of 4a/4b if one employer; see instr.)
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "5"                         # tips received in a trade or business (1099-NEC/MISC/K)
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "6"                         # add lines 4c and 5
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "7"                         # smaller of line 6 or $25,000
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "8"                         # amount from line 3 (MAGI) — only if Part II applies
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "9"                         # $150,000 ($300,000 MFJ)
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "10"                        # line 8 - line 9; if <= 0, enter line 7 on line 13
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: "11"                        # line 10 / $1,000, floored to a whole number (a count,
+    field: "Page1[0].f1_19[0]"        # not dollars — money type still renders a plain integer)
+    type: money
+  - line: "12"                        # line 11 x $100
+    field: "Page1[0].f1_20[0]"
+    type: money
+  - line: "13"                        # QUALIFIED TIPS DEDUCTION: line 7 - line 12, floor 0
+    field: "Page1[0].f1_21[0]"
+    type: money
+  # ---- Part III — No Tax on Overtime ----
+  - line: 14a                         # qualified overtime in Form W-2, box 1
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: 14b                         # qualified overtime in Form 1099-NEC box 1 / 1099-MISC box 3
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: 14c                         # add lines 14a and 14b
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: "15"                        # smaller of line 14c or $12,500 ($25,000 MFJ)
+    field: "Page1[0].f1_25[0]"
+    type: money
+  - line: "16"                        # amount from line 3 (MAGI) — only if Part III applies
+    field: "Page1[0].f1_26[0]"
+    type: money
+  - line: "17"                        # $150,000 ($300,000 MFJ)
+    field: "Page1[0].f1_27[0]"
+    type: money
+  - line: "18"                        # line 16 - line 17; if <= 0, enter line 15 on line 21
+    field: "Page1[0].f1_28[0]"
+    type: money
+  - line: "19"                        # line 18 / $1,000, floored to a whole number (a count)
+    field: "Page1[0].f1_29[0]"
+    type: money
+  - line: "20"                        # line 19 x $100
+    field: "Page1[0].f1_30[0]"
+    type: money
+  - line: "21"                        # QUALIFIED OVERTIME DEDUCTION: line 15 - line 20, floor 0
+    field: "Page1[0].f1_31[0]"
+    type: money
+  # ---- Part IV — No Tax on Car Loan Interest (page 2) ----
+  # Line 22 table: rows a/b, columns (i) VIN, (ii) interest deducted on
+  # Schedule C/E/F, (iii) Schedule 1-A interest (total QPVLI less column (ii)).
+  - line: 22a.i                       # row a, col (i): VIN — 17 comb cells
+    field: "Page2[0].Table_Line22[0].Line22a[0].VIN-1_Comb[0].f2_01[0]"
+    type: text
+    maxlen: 17
+    comb: true
+  - line: 22a.ii                      # row a, col (ii): deducted on Sch C/E/F
+    field: "Page2[0].Table_Line22[0].Line22a[0].f2_02[0]"
+    type: money
+  - line: 22a.iii                     # row a, col (iii): Schedule 1-A interest
+    field: "Page2[0].Table_Line22[0].Line22a[0].f2_03[0]"
+    type: money
+  - line: 22b.i                       # row b, col (i): VIN — 17 comb cells
+    field: "Page2[0].Table_Line22[0].Line22b[0].VIN-2_Comb[0].f2_04[0]"
+    type: text
+    maxlen: 17
+    comb: true
+  - line: 22b.ii                      # row b, col (ii): deducted on Sch C/E/F
+    field: "Page2[0].Table_Line22[0].Line22b[0].f2_05[0]"
+    type: money
+  - line: 22b.iii                     # row b, col (iii): Schedule 1-A interest
+    field: "Page2[0].Table_Line22[0].Line22b[0].f2_06[0]"
+    type: money
+  - line: "23"                        # add lines 22a and 22b, column (iii) — plain printed
+    field: "Page2[0].f2_07[0]"        # addition, but dotted refs (22a.iii) are outside the
+    type: money                       # relation grammar, so no relation (see header)
+  - line: "24"                        # smaller of line 23 or $10,000
+    field: "Page2[0].f2_08[0]"
+    type: money
+  - line: "25"                        # amount from line 3 (MAGI) — only if Part IV applies
+    field: "Page2[0].f2_09[0]"
+    type: money
+  - line: "26"                        # $100,000 ($200,000 MFJ)
+    field: "Page2[0].f2_10[0]"
+    type: money
+  - line: "27"                        # line 25 - line 26; if <= 0, enter line 24 on line 30
+    field: "Page2[0].f2_11[0]"
+    type: money
+  - line: "28"                        # line 27 / $1,000, raised to the next whole number (a
+    field: "Page2[0].f2_12[0]"        # count; Part IV rounds UP, unlike lines 11/19)
+    type: money
+  - line: "29"                        # line 28 x $200
+    field: "Page2[0].f2_13[0]"
+    type: money
+  - line: "30"                        # QPVLI DEDUCTION: line 24 - line 29, floor 0
+    field: "Page2[0].f2_14[0]"
+    type: money
+  # ---- Part V — Enhanced Deduction for Seniors (page 2) ----
+  - line: "31"                        # amount from line 3 (MAGI) — only if Part V applies
+    field: "Page2[0].f2_15[0]"
+    type: money
+  - line: "32"                        # $75,000 ($150,000 MFJ)
+    field: "Page2[0].f2_16[0]"
+    type: money
+  - line: "33"                        # line 31 - line 32; if <= 0, enter $6,000 on line 35
+    field: "Page2[0].f2_17[0]"
+    type: money
+  - line: "34"                        # line 33 x 6% (0.06)
+    field: "Page2[0].f2_18[0]"
+    type: money
+  - line: "35"                        # $6,000 - line 34; if zero or less, enter -0-
+    field: "Page2[0].f2_19[0]"
+    type: money
+  - line: 36a                         # taxpayer born before Jan 2, 1961 w/ valid SSN: line 35
+    field: "Page2[0].f2_20[0]"
+    type: money
+  - line: 36b                         # MFJ spouse born before Jan 2, 1961 w/ valid SSN: line 35
+    field: "Page2[0].f2_21[0]"
+    type: money
+  - line: "37"                        # ENHANCED DEDUCTION FOR SENIORS: add lines 36a and 36b
+    field: "Page2[0].f2_22[0]"
+    type: money
+  # ---- Part VI — Total Additional Deductions (page 2) ----
+  - line: "38"                        # add lines 13, 21, 30, 37 -> Form 1040/1040-SR line 13b
+    field: "Page2[0].f2_23[0]"        # or Form 1040-NR line 13c
+    type: money
+relations:
+  # Plain printed additions only — see the header comment for why the
+  # phase-out worksheet lines, the smaller-of caps, the line-3 copies, and
+  # line 23 (dotted column refs) are not encoded.
+  - "2e == 2a + 2b + 2c + 2d"                   # "Add lines 2a, 2b, 2c, and 2d"
+  - "3 == 1 + 2e"                               # "Add lines 1 and 2e"
+  - "6 == 4c + 5"                               # "Add lines 4c and 5"
+  - "14c == 14a + 14b"                          # "Add lines 14a and 14b"
+  - "37 == 36a + 36b"                           # "Add lines 36a and 36b"
+  - "38 == 13 + 21 + 30 + 37"                   # "Add lines 13, 21, 30, and 37"
+cross_form: []                        # intended rules pending 2025 f1040/f1040nr packs — see header
+identity_fields: [name, identifying_number]
+signature: null                       # schedules carry no signature block of their own
+mailing: null                         # mailed inside the parent return's envelope
