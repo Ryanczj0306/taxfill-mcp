@@ -1,0 +1,328 @@
+# NY state knowledge — tax year 2024. Fetched + cited from the NY DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure was drafted from the 2024 IT-201-I HTML
+# instructions (tax.ny.gov publishes the instructions as HTML), then independently
+# re-derived from the separately published printer-friendly 2024 IT-201-I PDF and the
+# 2024 form PDFs (IT-201, IT-215, IT-214) — resolutions recorded inline where the
+# passes differed. Improvements over the 2023 pack: the check-payee wording, the
+# IT-216 credit percentages, and the mailing addresses are now confirmed at source
+# (all three were 2023 `unverified` carryovers).
+jurisdiction: states/ny
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'NY Form IT-201 begins from the federal return''s income items (line 1 = "wages, salaries, tips, etc."
+  from federal Form 1040 line 1z) and arrives at federal adjusted gross income on line 19. Because the return starts
+  from federal AGI, income that is exempt from federal tax under a U.S. income tax treaty is already excluded from
+  federal AGI and flows through to NY. NY''s additions to federal AGI (IT-201 lines 20-23, with "other additions"
+  detailed on Form IT-225) do not include any modification that adds back treaty-exempt income. The 2024 IT-225-I
+  addition-modification chart (codes A-101 through A-222) contains no code referencing a federal tax treaty,
+  treaty-exempt wages/income, or nonresident-alien treaty exclusions (the word "treaty" does not appear in the 2024
+  IT-225-I at all). Net effect: starts from federal AGI and has no treaty addback, so treaty-exempt income is NOT
+  re-taxed -> conforms = true. (Unlike CA, which adds treaty-exempt income back on Schedule CA, NY has no analogous
+  addback.)'
+citation:
+  source: Instructions for Form IT-201, Full-Year Resident Income Tax Return (2024) - starting point (line 1 = federal
+    1040 line 1z; line 19 federal AGI), additions lines 20-23, due date April 15 2025, filing threshold ($4,000 /
+    $3,100 dependent-single)
+  url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm
+starts_from: federal AGI (Form IT-201 builds federal income items on lines 1-16/17/18 and computes federal adjusted
+  gross income on line 19, which is the starting point for NY modifications)
+residency:
+  summary: 'You are a NY State resident if (a) your domicile is New York State, OR (b) you are a "statutory resident"
+    - you maintain a permanent place of abode in NY for substantially all of the taxable year (a period exceeding
+    11 months) AND spend 184 days or more in NY during the year (any part of a day counts as a day). Domicile is
+    your permanent home that you intend to return to; you can have only one domicile, while you may have multiple
+    residences. A nonresident is someone who was not a NY resident for any part of the year. A part-year resident
+    meets the resident definition for only part of the year and the nonresident definition for the rest; they pay
+    NY tax on all income received while a resident plus NY-source income received while a nonresident. (Note: the
+    NY .gov definitions page states the statutory-resident day threshold as 184 days, not 183.)'
+forms:
+  resident: Form IT-201, Resident Income Tax Return
+  part_year_or_nonresident: Form IT-203, Nonresident and Part-Year Resident Income Tax Return
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. (Unlike the 2023 pack, the IT-216 child
+  and dependent care credit percentages are now source-verified from the 2024 IT-216-I limitation table.)
+credits:
+- name: New York State Earned Income Credit (EITC)
+  type: refundable
+  eligibility: You must have claimed (or been able to claim based on your federal AGI) the federal earned income
+    credit for 2024, and not claim the Noncustodial parent earned income credit (Form IT-209) for the same year.
+    Valid SSNs required for you and each qualifying child by the return due date (including extensions). Full-year
+    residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.
+  amount: 30% of the allowable federal earned income credit, reduced by the amount of any household credit claimed
+    (the 2024 Form IT-215 prints the rate on line 11, "New York State earned income credit (NYS EIC) rate 30% (.30)",
+    and line 12 is "your New York State EIC before subtracting the amount of household credit allowed").
+  income_limit_2024: Same income/earnings eligibility as the 2024 federal EIC; phases out by family size and earnings
+    (the federal 2024 dollar thresholds apply; NY sets no separate dollar limit)
+  claimed_on: Form IT-215 (Claim for Earned Income Credit), line 16; amount carried to Form IT-201, line 65
+  citation:
+    source: 2024 Form IT-215, Claim for Earned Income Credit (lines 11-12, 16) and 2024 Form IT-215-I instructions;
+      2024 IT-201-I Line 65
+    url: https://www.tax.ny.gov/pdf/2024/inc/it215_2024_fill_in.pdf
+- name: Empire State Child Credit
+  type: refundable
+  eligibility: Full-year New York State resident (or married to a full-year resident, with spousal-split rules if
+    separate NY returns are required) with at least one qualifying child — a child under 17 on December 31, 2024,
+    who lived with you more than half the year, did not provide over half of their own support, is claimed as a
+    dependent on your federal return, and is a U.S. citizen/national/resident noncitizen. Valid SSN or ITIN required
+    for you and each child listed on Form IT-213.
+  amount: The greater of (a) 33% of the portion of the federal child tax credit and additional child tax credit
+    attributable to qualifying children (calculated using the federal credit amounts, income thresholds, and rules
+    in effect for tax year 2017, before Public Law 115-97), or (b) $100 times the number of qualifying children.
+  income_limit_2024: 'The 33% computation phases out (5% of the excess, per Worksheet A) above the 2017-rule thresholds:
+    $110,000 (married filing jointly); $75,000 (single, head of household, or qualifying surviving spouse); $55,000
+    (married filing separately)'
+  claimed_on: Form IT-213 (Claim for Empire State Child Credit); amount carried to Form IT-201, line 63
+  citation:
+    source: NY Dept. of Taxation and Finance - 2024 Instructions for Form IT-213 (33% / $100-per-child amounts,
+      under-17 qualifying child, Worksheet A thresholds); 2024 IT-201-I Line 63
+    url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it213i-2024.htm
+- name: Real Property Tax Credit (circuit-breaker, homeowners and renters)
+  type: refundable
+  eligibility: 'New York State resident for all of 2024 who occupied the same NY residence for at least six months,
+    was not claimed as a dependent on another taxpayer''s federal return, and whose residence was not completely
+    exempted from real property taxes. Homeowners: did not own real property with a current market value over $85,000
+    and paid real property taxes. Renters: average monthly rent (line 21) of $450 or less (excluding charges for
+    heat, gas, electricity, furnishings, or board — the 2024 IT-214 subtracts 25% of rent when those are included).'
+  amount: Maximum credit (2024 IT-214 credit limit chart) is $75 if all household members are under age 65; $375
+    if you, your spouse, or a dependent is age 65 or older (the chart phases both maxima down as household gross
+    income rises toward $18,000; the computed credit is 50% of the excess of real property taxes/rent-equivalent
+    over a percentage of income, 25% for homeowners electing the 65+ exemption on line 26).
+  income_limit_2024: Household gross income (IT-214 line 16) of $18,000 or less for 2024
+  claimed_on: Form IT-214 (Claim for Real Property Tax Credit), line 33; amount carried to Form IT-201, line 67
+    (or Form IT-214 filed by itself for a refund if not required to file)
+  citation:
+    source: 2024 Form IT-214 (lines 3, 16, 21-22, 26-33) and 2024 Form IT-214-I (credit limit chart, $375/$75 maxima)
+    url: https://www.tax.ny.gov/pdf/2024/inc/it214_2024_fill_in.pdf
+- name: Child and Dependent Care Credit (New York State)
+  type: refundable
+  eligibility: You are entitled to this credit if you qualified to claim the federal child and dependent care credit
+    for 2024 (whether or not you actually claimed it). Full-year residents get a fully refundable credit; nonresidents
+    nonrefundable; part-year residents partially refundable.
+  income_limit_2024: 'No flat income cap; the credit is the federal credit times a decimal from the 2024 IT-216-I
+    New York State child and dependent care credit limitation table, based on New York adjusted gross income: 1.100
+    (110% of the federal credit) at NYAGI of $25,000 or less, sliding by $200 band to 0.600 for NYAGI over $65,000
+    up to $150,000, and 0.200 for NYAGI over $150,000 (no upper limit).'
+  claimed_on: Form IT-216 (Claim for Child and Dependent Care Credit), line 14; amount carried to Form IT-201, line
+    64
+  citation:
+    source: NY Dept. of Taxation and Finance - 2024 Form IT-216-I, Instructions for Form IT-216 (New York State
+      child and dependent care credit limitation table, p. 7)
+    url: https://www.tax.ny.gov/pdf/2024/inc/it216i_2024.pdf
+- name: New York State Household Credit
+  type: nonrefundable
+  eligibility: New York State resident (full-year or part-year) who cannot be claimed as a dependent on another
+    taxpayer's federal income tax return (Form IT-201 item C marked No). Amount depends on filing status, federal
+    AGI, and (for tables 2 and 3) the number of dependents from item H plus one for you (and one for your spouse
+    on a joint return), looked up in the household credit tables in the Form IT-201 instructions.
+  amount: 'Determined from the 2024 IT-201-I household credit tables: table 1 (single) pays $75 (federal AGI up
+    to $5,000) phasing down ($60, $50, $45, $40, $20) to $0 once federal AGI exceeds $28,000; table 2 (filing statuses
+    2, 4, 5) pays $90-$180+ by household size at federal AGI up to $5,000, phasing to $20-$50 in the $28,000-$32,000
+    band; table 3 covers married filing separately (half-amounts of table 2 bands, combined-FAGI test).'
+  income_limit_2024: Federal AGI of $28,000 or less (single, table 1); $32,000 or less (married filing jointly,
+    qualifying surviving spouse, or head of household, table 2; married filing separately, table 3, using both spouses'
+    combined federal AGI)
+  claimed_on: Claimed directly on Form IT-201, line 40 (or Form IT-203, line 39, for nonresidents/part-year residents)
+  citation:
+    source: Instructions for Form IT-201 (2024), Line 40 — New York State household credit tables 1, 2, and 3
+    url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm
+filing_requirement:
+  note: Full-year residents file IT-201 if they must file a federal return, or if they did not have to file federally
+    but federal AGI plus New York additions was more than $4,000 ($3,100 if single and claimable as a dependent
+    on another taxpayer's federal return), or to claim a refund of NY/NYC/Yonkers withholding, estimated payments,
+    or any refundable or carryover credits (2024 IT-201-I, "New York State full-year residents Who must file?").
+    Part-year residents and nonresidents with NY-source income file IT-203. If one spouse is a full-year resident
+    and the other is not, separate NY returns are required (resident files IT-201) unless both elect to file a joint
+    IT-201 taxed as full-year residents.
+mailing_addresses:
+  refund_or_no_payment: STATE PROCESSING CENTER, PO BOX 61000, ALBANY NY 12261-0001 (paper return with no payment
+    / refund return)
+  with_payment: STATE PROCESSING CENTER, PO BOX 15555, ALBANY NY 12212-5555 (paper return enclosing a check or money
+    order with Form IT-201-V payment voucher)
+  citation:
+    source: Instructions for Form IT-201 (2024), "Where to file" — both PO Box addresses printed in the instructions
+      themselves (also in the Step 11 filing checklist); Publication 55 for private delivery services
+    url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm
+payment:
+  check_payee: New York State Income Tax (2024 IT-201-I, "Pay by check or money order", verbatim — "Make check or
+    money order payable in U.S. funds to New York State Income Tax and write the last four digits of your Social
+    Security number and 2024 Income Tax on it"; do not send cash; submit Form IT-201-V with any check/money order)
+  web_pay_url: https://www.tax.ny.gov/pay/ind/pay-income-tax-online.htm
+deadlines:
+  filing_due_date: '2025-04-15'
+  automatic_extension: Form IT-370 gives an automatic six-month extension to October 15, 2025, but must be filed
+    with payment of any tax due by April 15, 2025. June 16, 2025 due date if you qualify for the federal out-of-the-country
+    /military June deadline.
+  citation:
+    source: Instructions for Form IT-201 (2024), "When to file/Important dates" — April 15, 2025 filing/payment
+      date; IT-370 six-month extension to October 15, 2025; June 16, 2025 special federal-qualifier date
+    url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm
+all_citations:
+- source: Instructions for Form IT-201, Full-Year Resident Income Tax Return (2024), HTML edition - starting point
+    (line 1 = federal 1040 line 1z; line 19 federal AGI), Who must file ($4,000/$3,100), line 34 standard deduction
+    table, line 36 dependent exemptions ($1,000), line 39 tax computation, line 40 household credit tables, lines
+    63-67 credits, When to file (April 15, 2025), Where to file (PO Box addresses), Pay by check or money order
+    (payee wording)
+  url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm
+- source: Instructions for Form IT-201 (2024), printer-friendly PDF (IT-201-I pp. 33-35) — used as the independent
+    second-pass source for the NYS tax rate schedules, tax computation worksheets 1-6, standard deduction table,
+    and dependent exemption
+  url: https://www.tax.ny.gov/pdf/2024/inc/it201i_2024.pdf
+- source: 2024 Form IT-201, Resident Income Tax Return (fill-in PDF) — page 2 lines 33-38 (standard/itemized deduction,
+    dependent exemptions box, taxable income) and page 3 line 39 'NYS tax on line 38 amount' (third-pass structure
+    check)
+  url: https://www.tax.ny.gov/pdf/2024/inc/it201_2024_fill_in.pdf
+- source: Income tax definitions (resident, nonresident, part-year resident, domicile, statutory resident 184-day
+    rule, permanent place of abode, substantially all of the taxable year)
+  url: https://www.tax.ny.gov/pit/file/pit_definitions.htm
+- source: Instructions for Form IT-225, New York State Modifications (2024) - addition modifications chart codes
+    A-101 through A-222, no treaty-exempt-income addback (the word 'treaty' does not appear)
+  url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it225i-2024.htm
+- source: 2024 Instructions for Form IT-213, Claim for Empire State Child Credit — 33% / $100-per-child amounts,
+    under-17 qualifying child, SSN/ITIN requirement, Worksheet A phase-out thresholds ($110,000/$75,000/$55,000)
+  url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it213i-2024.htm
+- source: 2024 Form IT-215, Claim for Earned Income Credit (fill-in PDF) — line 11 'NYS EIC rate 30% (.30)', line
+    16 carried to IT-201 line 65
+  url: https://www.tax.ny.gov/pdf/2024/inc/it215_2024_fill_in.pdf
+- source: 2024 Form IT-214, Claim for Real Property Tax Credit (fill-in PDF), and 2024 IT-214-I — $85,000 property-value
+    gate, $18,000 household-gross-income limit, $450 average-monthly-rent limit, $375/$75 credit limit chart
+  url: https://www.tax.ny.gov/pdf/2024/inc/it214_2024_fill_in.pdf
+- source: 2024 Form IT-216-I, Instructions for Form IT-216 (Claim for Child and Dependent Care Credit) — New York
+    State child and dependent care credit limitation table (1.100 at NYAGI <= $25,000 down to 0.200 over $150,000)
+  url: https://www.tax.ny.gov/pdf/2024/inc/it216i_2024.pdf
+- source: New York State 2024 legislative changes summary (the IT-201-I 'What's new for 2024' pointer target)
+  url: https://www.tax.ny.gov/legal/2024/
+unverified:
+- The treaty-conformity conclusion relies on the parsed contents of the 2024 IT-201-I additions section and the 2024
+  IT-225-I addition-modification chart (codes A-101 through A-222, zero occurrences of 'treaty'); no NY .gov page
+  affirmatively states 'treaty income is not added back.' The conclusion is inferred from the absence of any treaty
+  addback modification, not from an explicit statement. Confirm at the DOR for cases involving treaty-exempt income.
+- The IT-203 (nonresident/part-year) instructions were not separately fetched this session; the April 15, 2025 due
+  date and the mailing addresses were confirmed from the 2024 IT-201-I, which states they apply to the resident return.
+  Confirm IT-203-specific logistics at the DOR if filing IT-203.
+- The 184-day statutory-resident summary is carried from the DOR's undated income-tax-definitions page (year-independent
+  URL); it was not re-fetched this session. The 11-month 'substantially all of the taxable year' convention is the
+  historical guidance figure — confirm at the definitions page for edge cases.
+tax:
+  citation:
+    source: 'Instructions for Form IT-201, Full-Year Resident Income Tax Return, New York State, tax year 2024 (IT-201-I)
+      — sections ''New York State tax rate schedule'' (Married filing jointly and qualifying surviving spouse—filing
+      status 2 and 5; Single and married filing separately—filing status 1 and 3; Head of household—filing status 4),
+      ''New York State standard deduction table'' (Line 34), ''Line 36: Dependent exemptions'' ($1,000 each), ''Line
+      39: New York State tax'', and ''Tax computation—New York adjusted gross income of more than $107,650'' (Tax computation
+      worksheets 1-6). Second pass: the printer-friendly 2024 IT-201-I PDF (pp. 33-35, https://www.tax.ny.gov/pdf/2024/inc/it201i_2024.pdf)
+      reproduces the same three schedules, worksheets, standard deduction table, and $1,000 dependent exemption; the
+      2024 Form IT-201 PDF pages 2-3 confirm the line 33-39 structure.'
+    url: https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm
+  brackets:
+    single:
+    - {over: 0, but_not_over: 8500, rate: 0.04}
+    - {over: 8500, but_not_over: 11700, rate: 0.045}
+    - {over: 11700, but_not_over: 13900, rate: 0.0525}
+    - {over: 13900, but_not_over: 80650, rate: 0.055}
+    - {over: 80650, but_not_over: 215400, rate: 0.06}
+    - {over: 215400, but_not_over: 1077550, rate: 0.0685}
+    - {over: 1077550, but_not_over: 5000000, rate: 0.0965}
+    - {over: 5000000, but_not_over: 25000000, rate: 0.103}
+    - {over: 25000000, but_not_over: null, rate: 0.109}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 17150, rate: 0.04}
+    - {over: 17150, but_not_over: 23600, rate: 0.045}
+    - {over: 23600, but_not_over: 27900, rate: 0.0525}
+    - {over: 27900, but_not_over: 161550, rate: 0.055}
+    - {over: 161550, but_not_over: 323200, rate: 0.06}
+    - {over: 323200, but_not_over: 2155350, rate: 0.0685}
+    - {over: 2155350, but_not_over: 5000000, rate: 0.0965}
+    - {over: 5000000, but_not_over: 25000000, rate: 0.103}
+    - {over: 25000000, but_not_over: null, rate: 0.109}
+    married_filing_separately:
+    - {over: 0, but_not_over: 8500, rate: 0.04}
+    - {over: 8500, but_not_over: 11700, rate: 0.045}
+    - {over: 11700, but_not_over: 13900, rate: 0.0525}
+    - {over: 13900, but_not_over: 80650, rate: 0.055}
+    - {over: 80650, but_not_over: 215400, rate: 0.06}
+    - {over: 215400, but_not_over: 1077550, rate: 0.0685}
+    - {over: 1077550, but_not_over: 5000000, rate: 0.0965}
+    - {over: 5000000, but_not_over: 25000000, rate: 0.103}
+    - {over: 25000000, but_not_over: null, rate: 0.109}
+    head_of_household:
+    - {over: 0, but_not_over: 12800, rate: 0.04}
+    - {over: 12800, but_not_over: 17650, rate: 0.045}
+    - {over: 17650, but_not_over: 20900, rate: 0.0525}
+    - {over: 20900, but_not_over: 107650, rate: 0.055}
+    - {over: 107650, but_not_over: 269300, rate: 0.06}
+    - {over: 269300, but_not_over: 1616450, rate: 0.0685}
+    - {over: 1616450, but_not_over: 5000000, rate: 0.0965}
+    - {over: 5000000, but_not_over: 25000000, rate: 0.103}
+    - {over: 25000000, but_not_over: null, rate: 0.109}
+  base: federal_agi
+  tax_line: '2024 Form IT-201, page 3: "39 NYS tax on line 38 amount". IT-201-I, Line 39: "Is line 33 (your New York
+    adjusted gross income) $107,650 or less? If Yes, find your New York State tax using the 2024 New York State Tax
+    Table; or if line 38 is $65,000 or more, use the New York State tax rate schedule below. Enter the tax due on
+    line 39. If No, see Tax computation - New York adjusted gross income of more than $107,650 below."'
+  exemptions:
+    dependent:
+      amount: 1000
+      note: 'IT-201 line 36 dependent exemption: ''The value of each New York State dependent exemption is $1,000'' (2024
+        IT-201-I, Line 36). Enter the number of dependents from item H; the form multiplies by $1,000 and subtracts it
+        from line 35 to reach taxable income. This is a true base reduction (subtracted from income before the rate),
+        so it is shipped. New York has NO personal (taxpayer/spouse) exemption — no ''personal'' key is shipped.'
+  standard_deduction:
+    single: 8000
+    married_filing_jointly: 16050
+    married_filing_separately: 8000
+    head_of_household: 11200
+  notes:
+  - 'Base guidance: Supply Form IT-201, line 33 (New York adjusted gross income) = federal AGI (line 19) + New York
+    additions (lines 20-23) - New York subtractions (lines 25-31). The op then subtracts the shipped NY standard deduction
+    (form line 34) and $1,000 per dependent (form line 36) to reproduce NY taxable income (lines 37/38 = line 33 -
+    line 34 - line 36), the amount the rate schedule is applied to. Do NOT supply federal AGI unless you have no NY
+    modifications; do NOT supply line 38 (taxable income) or the deduction/exemption would be subtracted twice.'
+  - 'Adjudication note (two-pass): the 2024 schedules, standard deduction table, and $1,000 dependent exemption were
+    drafted from the IT-201-I HTML edition and re-verified against the printer-friendly IT-201-I PDF (pp. 33-35) —
+    both passes agree on every bound, rate, and printed constant. New York did NOT index for 2024: all nine brackets,
+    all printed constants, and the 8,000/16,050/8,000/11,200 standard deduction are unchanged from 2023 (the mid-bracket
+    bounds 8,500/11,700/13,900/80,650/215,400/1,077,550/5,000,000/25,000,000 were re-checked digit by digit).'
+  - 'CRITICAL — benefit-recapture worksheet mandate: if New York adjusted gross income (IT-201 line 33) is more than
+    $107,650, the 2024 IT-201-I instructions MANDATE the ''Tax computation — New York adjusted gross income of more
+    than $107,650'' worksheets (worksheets 1-6, with fixed Recapture Base and Incremental Benefit amounts — e.g. MFJ
+    worksheet 2 recapture base $333 / incremental benefit $807, worksheet 3 $1,140/$2,747, worksheet 4 $3,887/$60,350
+    — phased in over $50,000 of NYAGI above each bracket threshold), so plain bracket math is WRONG (understates tax)
+    above that threshold; at NYAGI over $25,000,000 the worksheet taxes ALL taxable income at a flat 10.9%. The filed
+    form must use the worksheets.'
+  - 'Table mandate below $65,000: if NYAGI (line 33) is $107,650 or less and taxable income (line 38) is under $65,000,
+    the instructions require the 2024 New York State Tax Table (visit www.tax.ny.gov and search: table) — bracket
+    math may differ by a few dollars within table bands; the filed form must use the table. The rate schedule itself
+    applies only when line 38 is $65,000 or more.'
+  - One schedule covers Single AND Married filing separately ('Single and married filing separately—filing status
+    1 and 3') — the identical schedule is duplicated for both statuses here, copied, not derived. The MFJ schedule
+    is titled 'Married filing jointly and qualifying surviving spouse—filing status 2 and 5', so qualifying surviving
+    spouse maps exactly to married_filing_jointly as the engine assumes.
+  - 'The printed ''$X plus Y% of the excess over $Z'' constants in the 2024 schedule are rounded to whole dollars
+    and do NOT all equal the exact cumulative sum of prior brackets: max divergence is $0.50 (single $600 printed
+    vs $599.50 exact at $13,900) and roughly ±$0.25 elsewhere (e.g., MFJ $976 vs $976.25; single top constants $449,929/$2,509,929
+    vs exact +$0.45; HoH $434,163/$2,494,163 vs exact +$0.475) — identical to the 2023 print. Pure marginal accumulation
+    (what this engine does) can therefore differ from schedule arithmetic by under $1.'
+  - 'Standard-deduction gates NOT modeled: a Single filer who CAN be claimed as a dependent on another taxpayer''s
+    return (item C = Yes) gets $3,100, not the shipped $8,000; married-filing-separately spouses must both take the
+    standard deduction unless both itemize; itemizers enter the larger Form IT-196 amount on line 34 instead. Compute
+    those cases on the form.'
+  - New York has no personal (taxpayer/spouse) exemption — only the $1,000 per-dependent exemption on line 36. If
+    line 36 is more than line 35, the form says to leave lines 37 and 38 blank (taxable income zero) — the engine's
+    max(0, ...) floor matches.
+  - New York State household credit (IT-201 line 40, up to $75/$90-$180 by table for federal AGI under $28,000/$32,000),
+    NY EITC (line 65, 30% of federal), Empire State child credit (line 63), and child/dependent care credit (line
+    64) are TAX CREDITS subtracted from tax, not base reductions — none are shipped as exemptions and none are modeled
+    by this op.
+  - 'Local taxes on the same return are NOT modeled: New York City resident tax (IT-201 lines 47-47a, separate NYC
+    tax table / NYC tax rate schedule, own worksheets), NYC school tax credit, Yonkers resident income tax surcharge
+    (line 57, a percentage of net state tax) and Yonkers nonresident earnings tax (line 55), and the MCTMT for self-employed
+    individuals. New York State tax on line 39/44 only is modeled here.'
+  - The shipped standard deduction for qualifying surviving spouse equals MFJ ($16,050, filing status 5 in the 2024
+    standard deduction table), consistent with the engine's QSS-to-MFJ mapping.
+  - '2024 filing-season schedule confirmed final: New York had no mid-year 2024 rate change; these are the schedules
+    printed in the final 2024 IT-201-I used for the 2025 filing season (HTML and printer-friendly PDF editions agree).'
