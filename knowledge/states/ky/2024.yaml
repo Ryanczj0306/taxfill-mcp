@@ -1,0 +1,204 @@
+# KY state knowledge — tax year 2024. Fetched + cited from the KY DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 Form 740
+# instruction packet ("What's New": standard deduction $3,160; tax rate 4%; 2024 Family
+# Size Tax Credit thresholds; IRC reference date updated to December 31, 2023 by HB 8),
+# then independently re-checked against the 2024 Form 740 itself (42A740, 10-24) and the
+# 2024 Schedule ITC — resolutions recorded inline.
+jurisdiction: states/ky
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Kentucky''s resident return (Form 740) starts from federal adjusted gross income — 2024 Form 740 line
+  5 is federal AGI ("Enter the total amount of your federal adjusted gross income from your federal income tax return...
+  Do not confuse federal adjusted gross income with federal taxable income"), and the 2024 packet states Kentucky
+  law "requires that the individual income tax return begin with federal adjusted gross income and be adjusted for
+  any differences to arrive at Kentucky adjusted gross income." Modifications are made on Schedule M. The 2024 Schedule
+  M "Additions to Federal Adjusted Gross Income" (Part I, lines 1-5, totaled on line 6) are: (1) interest on other
+  states'' obligations / taxable mutual-fund dividends, (2) resident adjustment from Kentucky Schedule K-1, (3)
+  special depreciation/Section 179 differences, (4) federal net operating loss, and (5) "other additions" (reservist/National
+  Guard expenses, lump-sum distribution 20% capital-gains portion, passive activity loss adjustment, pension/IRA
+  basis differences, intangible-asset and post-9/10/2001 depreciable-property gain differences, Armed Forces moving
+  expenses, Kentucky excess business loss limitation). NONE of these add back federally tax-treaty-exempt income.
+  Because treaty-exempt income is already excluded from federal AGI and KY has no add-back for it, it is not re-taxed
+  by Kentucky — therefore KY conforms.'
+citation:
+  source: '2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What''s New (standard
+    deduction $3,160; individual income tax rate 4%; Family Size Tax Credit 2024 thresholds; HB 8 IRC reference
+    date December 31, 2023), starting point ("the individual income tax return begin with federal adjusted gross
+    income"), Form 740 line 5 Federal AGI, Schedule M additions list, due date April 15 2025, mailing addresses
+    (Refund 40618-0006 / Pay 40619-0008), check payable to Kentucky State Treasurer / Form 740-V'
+  url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf
+starts_from: 'federal AGI (Form 740, line 5 "Federal Adjusted Gross Income" from federal Form 1040/1040-SR line
+  11; packet: "the individual income tax return begin with federal adjusted gross income"); IRC reference date December
+  31, 2023 (updated from December 31, 2022 by HB 8, per the 2024 What''s New)'
+residency:
+  summary: 'Per the Form 740-NP instructions: individuals who maintain a permanent residence in Kentucky (i.e.,
+    are domiciled in Kentucky) for the entire tax year are full-year RESIDENTS and file Form 740. Persons not domiciled
+    in Kentucky but who live in Kentucky for more than 183 days during the tax year are ALSO considered residents
+    (a statutory-resident rule) but, since they are not full-year residents, file Form 740-NP. Individuals who established
+    or abandoned Kentucky residency during the year are PART-YEAR residents (file Form 740-NP), reporting income
+    from all sources while a resident plus Kentucky-source income while a nonresident. Full-year NONRESIDENTS report
+    only income from Kentucky sources on Form 740-NP. Full-year residents of reciprocal states (IL, IN, MI, OH,
+    VA, WV, WI) with only KY wage income use Form 740-NP-R. (Residency wording re-used from the 740-NP packet series;
+    see unverified.)'
+forms:
+  resident: Form 740 (Kentucky Individual Income Tax Return — Full-Year Resident)
+  part_year_or_nonresident: Form 740-NP (Kentucky Individual Income Tax Return — Nonresident or Part-Year Resident).
+    Reciprocal-state residents with only KY wages use Form 740-NP-R.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Family Size Tax Credit
+  type: nonrefundable
+  eligibility: Resident individuals/families with modified gross income (MGI) at or below 133% of the federal poverty
+    threshold for their family size. Family size is capped at 4 (yourself, spouse if living in same household, and
+    qualifying children). Available even to someone claimed as a dependent on a parent's return (family size 1).
+    To get ANY credit, 2024 MGI must be at or below $20,030 (family of 1), $27,185 (family of 2), $34,341 (family
+    of 3), or $41,496 (family of 4+) — the packet's line 20/21 instructions say "If your total MGI is $41,496 or
+    less, you may qualify."
+  amount: Calculated tax (Form 740 line 19) multiplied by a credit percentage from the 2024 Family Size Tax Credit
+    Table (Schedule ITC Section C). Percentage is 100% at/below the threshold ($15,060 fam.1 / $20,440 fam.2 / $25,820
+    fam.3 / $31,200 fam.4+) and steps down 90/80/70/60/50/40/30/20/10/0% as MGI rises through the table bands, reaching
+    0% above MGI of $20,030 (fam.1), $27,185 (fam.2), $34,341 (fam.3), $41,496 (fam.4+).
+  income_limit_2024: '2024 threshold (100% credit ceiling): $15,060 (family of 1), $20,440 (family of 2), $25,820
+    (family of 3), $31,200 (family of 4 or more) — printed in both the packet''s What''s New and the Schedule ITC
+    Section C table. Phases to 0% credit above MGI of $20,030 / $27,185 / $34,341 / $41,496 respectively.'
+  claimed_on: Form 740, lines 20 (family size) and 21 (line 19 tax x decimal percentage); percentage determined
+    from the Schedule ITC Section C Family Size Tax Credit Table
+  citation:
+    source: Kentucky Department of Revenue — 2024 Form 740 instruction packet (42A740(PKT)) What's New + lines 20-21,
+      and 2024 Schedule ITC (42A740-ITC), Section C Family Size Tax Credit Table (Tax Year 2024 bands)
+    url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2024).pdf
+- name: Child and Dependent Care Credit
+  type: nonrefundable
+  eligibility: Residents who qualified for and claimed the federal child and dependent care credit on federal Form
+    2441 (care expenses for a qualifying child/dependent so the taxpayer can work). If you did not meet federal
+    filing requirements but would have been entitled to the federal credit, you may still claim the Kentucky credit
+    by completing federal Form 2441 and stating on the form 'did not meet federal filing requirements.' Kentucky
+    has no separate income limit; eligibility tracks the federal credit.
+  amount: 20% (.20) of the federal child and dependent care credit from federal Form 2441, line 11 ("Multiply this
+    amount by 20 percent (.20), and enter result on line 24" — 2024 packet).
+  income_limit_2024: None specified by Kentucky; follows federal Form 2441 rules.
+  claimed_on: Form 740, line 24 (federal Form 2441 line 11 x 20%)
+  citation:
+    source: Kentucky Department of Revenue — 2024 Form 740 instruction packet (42A740(PKT)), instructions for line
+      24
+    url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf
+- name: Personal Tax Credits (age 65+, blind, or Kentucky National Guard)
+  type: nonrefundable
+  eligibility: Taxpayer (and spouse, if filing jointly or married filing separately on a combined return) who, as
+    of 12/31/2024, was age 65 or older, was legally blind, and/or was a member of the Kentucky National Guard. A
+    taxpayer can claim more than one (e.g., 65+ AND blind). No income limit.
+  amount: '$40 if 65 or older; $40 if legally blind; $20 if a member of the Kentucky National Guard (2024 Schedule
+    ITC Section B: "If you were 65 on or before 12/31/2024, enter 40... If you were legally blind on 12/31/2024,
+    enter 40... If you were a member of the Kentucky National Guard on 12/31/2024, enter 20"). Credits are additive
+    per person (e.g., a 65+ AND blind taxpayer = $80; not to exceed $100 per person / $200 MFJ per the assignment
+    lines). These are flat dollar credits that directly reduce the calculated tax.'
+  income_limit_2024: None.
+  claimed_on: Schedule ITC, Section B (lines 1-3 taxpayer, lines 5-7 spouse; totals assigned on lines 9-12), carried
+    to Form 740, line 17
+  citation:
+    source: Kentucky Department of Revenue — 2024 Schedule ITC (42A740-ITC), Section B Personal Tax Credits
+    url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2024).pdf
+filing_requirement:
+  note: 'A Kentucky individual income tax return must be filed if BOTH (1) modified gross income exceeds the threshold
+    for your family size in Chart A — 2024 thresholds: family size 1 = $15,060; 2 = $20,440; 3 = $25,820; 4+ = $31,200
+    — AND (2) Kentucky adjusted gross income exceeds the Chart B threshold for your filing status/age — 2024: $3,160
+    single or taxpayer+spouse both under 65; $4,160 if 65-or-over or blind (one); $5,160 if both conditions / both
+    spouses 65+. Self-employment exception: must file regardless of Chart B if Kentucky gross receipts from self-employment
+    exceed the Chart A modified-gross-income amount for the family size. A child meeting the filing requirements
+    must file even if claimed as a dependent. File to claim a refund of KY tax withheld even when the thresholds
+    are not met.'
+mailing_addresses:
+  refund_or_no_payment: Kentucky Department of Revenue, Frankfort, KY 40618-0006 (Refund/Other Returns)
+  with_payment: Kentucky Department of Revenue, Frankfort, KY 40619-0008 (Pay Returns)
+  citation:
+    source: 2024 Form 740 Instruction Packet (42A740(PKT)) — "When and Where to File" (postmark by April 15, 2025;
+      Refund/Other Returns Frankfort 40618-0006; Pay Returns Frankfort 40619-0008)
+    url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Kentucky State Treasurer ("Make check payable to Kentucky State Treasurer, write 'KY Income Tax–2024'
+    and your Social Security number on the face of the check"; use Form 740-V payment voucher if you filed electronically
+    and pay by check)
+  web_pay_url: https://epayment.ky.gov/EPAY
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 Form 740 Instruction Packet (42A740(PKT)) — "The income tax return for calendar year 2024 must
+      be postmarked or submitted electronically no later than April 15, 2025, to avoid penalties and interest";
+      six-month extensions via Form 740EXT or the federal automatic extension (enclose Form 4868 copy)
+    url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf
+all_citations:
+- source: '2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What''s New ($3,160
+    standard deduction; 4% rate; 2024 Family Size Tax Credit thresholds $15,060/$20,440/$25,820/$31,200; HB 8 IRC
+    date December 31, 2023; new Worksheet INV), Do You Have to File charts A and B, When and Where to File (April
+    15, 2025; 40618-0006 / 40619-0008), line 5 federal AGI, line 10 standard deduction, line 12 "Multiply line 11
+    by four percent (.04)", lines 20-21 Family Size Tax Credit, line 24 child and dependent care credit 20%, payment
+    options (Kentucky State Treasurer, Form 740-V, EPAY, revenue.ky.gov), Schedule M instructions (additions lines
+    1-5)'
+  url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf
+- source: '2024 Form 740 (42A740, 10-24) — second-pass verification: line 5 = federal Form 1040/1040-SR line 11,
+    line 9 Kentucky AGI, line 10 "Nonitemizers: Enter $3,160 in Columns A and/or B", line 11 Taxable Income, line
+    12 "Tax Computation: Multiply line 11 by 4% (.04)", line 21 Family Size Tax Credit decimal'
+  url: https://revenue.ky.gov/Forms/740%20(2024).pdf
+- source: 2024 Schedule ITC (42A740-ITC) — Section B Personal Tax Credits ($40 age 65+/$40 blind/$20 Kentucky National
+    Guard), Section C Family Size Tax Credit Table (Tax Year 2024 bands, 100% down to 0%)
+  url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2024).pdf
+- source: Kentucky Department of Revenue Electronic Payment portal (EPAY)
+  url: https://epayment.ky.gov/EPAY
+unverified:
+- No KY .gov page explicitly addresses tax-TREATY-exempt income by name; the conformity conclusion is inferred from
+  KY beginning at federal AGI plus the absence of any treaty add-back in the 2024 Schedule M additions list. This
+  is the standard federal-AGI-conformity case but the specific treaty-income treatment is not stated verbatim on
+  a KY .gov page.
+- 'Residency definitions (183-day statutory-resident rule, reciprocal states list) were carried from the Form 740-NP
+  packet series and the 2023 pack; the 2024 Form 740-NP packet was not re-fetched this pass — confirm at the cited
+  740-NP instructions if a nonresident/part-year case is in play.'
+- The exact 2024 Form 740-V mailing address was not separately pulled; payment-with-return mailing is confirmed
+  as Frankfort, KY 40619-0008 from the 2024 packet's When and Where to File.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified two-pass against the cited 2024 Form 740 instruction packet
+# (What's New: rate 4%, standard deduction $3,160) and the 2024 Form 740 itself
+# (42A740 10-24, line 10 "$3,160" / line 12 "Multiply line 11 by 4% (.04)").
+# UNLIKE the 2023 pack, the personal tax credit amounts ($40/$40/$20) WERE
+# extractable from the 2024 Schedule ITC and ship in the credits section above —
+# but they are credits against tax, not exemptions, so calc.state_tax still does
+# not model them (see notes).
+tax:
+  citation:
+    source: '2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What''s New — "STANDARD
+      DEDUCTION—For 2024, the standard deduction is $3,160" and "INDIVIDUAL INCOME TAX RATE—For 2024, the tax rate for
+      individual income tax is 4%"; Line 10 — "Nonitemizers, enter the standard deduction of $3,160. If married filing
+      separately on a combined return, enter $3,160 in both Columns A and B. If filing a joint return, only one $3,160
+      standard deduction is allowed"; Line 5 = Federal Adjusted Gross Income; Line 9 = Kentucky AGI; Line 11 = Taxable
+      Income; Line 12 "Multiply line 11 by four percent (.04)". Second pass: the 2024 Form 740 itself (42A740, 10-24)
+      prints line 10 "Nonitemizers: Enter $3,160 in Columns A and/or B" and line 12 "Tax Computation: Multiply line
+      11 by 4% (.04)" — both passes agree.'
+    url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf
+  flat_rate: 0.04
+  base: federal_agi
+  tax_line: 'Form 740 Line 12 = Line 11 (Taxable Income = Line 9 Kentucky AGI minus Line 10 deduction) x four percent
+    (.04) — printed on the 2024 form: "Tax Computation: Multiply line 11 by 4% (.04)". Line 5 starts from federal
+    AGI ("Do not confuse federal adjusted gross income with federal taxable income").'
+  exemptions: {}
+  standard_deduction:
+    single: 3160
+    married_filing_jointly: 3160
+    married_filing_separately: 3160
+    head_of_household: 3160
+  notes:
+  - 'Rate change: the 2024 rate is 4% (.04), down from 4.5% in 2023 (2024 packet What''s New); the standard deduction
+    rose to $3,160 (from $2,980).'
+  - Kentucky allows ONE $3,160 standard deduction per return — a joint return gets a single $3,160 (it is NOT doubled);
+    spouses filing separately on a combined return (Filing Status 2) get $3,160 each column.
+  - Kentucky has no personal or dependent exemptions; the nonrefundable personal tax credits ($40 age 65+, $40 blind,
+    $20 Kentucky National Guard — 2024 Schedule ITC Section B) and the Family Size Tax Credit (Form 740 lines 20-21)
+    are CREDITS against tax and are NOT modeled by calc.state_tax — compute them on Schedule ITC / the Family Size
+    Tax Credit Table.
+  - Kentucky local occupational license taxes (county/city payroll taxes) are NOT modeled.
