@@ -1,0 +1,301 @@
+# MO state knowledge — tax year 2024. Fetched + cited from the MO DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 Form MO-1040
+# instruction booklet, then independently re-derived from a second official document
+# (the 2024 Form MO-1040A short-form instructions, which print the identical 2024 Tax
+# Chart, or the DOR program pages) — resolutions recorded inline where the passes differed.
+# HEADLINE 2024 CHANGES: top individual rate cut to 4.8% (from 4.95%) with the tax-chart
+# income steps re-indexed to $1,273 increments (2023: $1,207); Working Family Tax Credit
+# doubled to 20% of the federal EIC (2023: 10%).
+jurisdiction: states/mo
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Missouri''s resident return starts from federal adjusted gross income and has no treaty-exempt income
+  add-back, so federally treaty-exempt income (already excluded from federal AGI) flows through untaxed -> conforms.
+  Form MO-1040 Line 1 is captioned "Federal adjusted gross income," and the 2024 MO-1040 instructions state "You
+  must begin your Missouri return with your total federal adjusted gross income, even if you have income from a
+  state other than Missouri." The only additions to federal AGI are on Form MO-A, Part 1, Lines 1-6 (interest on
+  state and local obligations other than Missouri source; partnership/fiduciary/S-corp/business-interest/NOL adjustments;
+  nonqualified 529-plan distributions; Food Pantry contributions included on federal Schedule A; nonresident property
+  tax modification; nonqualified ABLE-program distributions) — none of which add back federally treaty-exempt income
+  or foreign-earned income. Corroborating: the "Nonresident Alien" special filing instructions direct the filer
+  to "Enter your federal adjusted gross income from U.S. Nonresident Alien Income Tax Return (Federal Form 1040NR),
+  Line 11, on Form MO-1040, Line 1," meaning treaty-exempt income already excluded from 1040NR AGI carries to MO
+  Line 1 unchanged with no reattachment. Unlike California (which adds treaty income back on Schedule CA), Missouri
+  has no analogous addback. Cite: 2024 MO-1040 Instructions, Line 1 and Form MO-A Part 1.'
+citation:
+  source: 2024 Form MO-1040 Individual Income Tax Long Form & Instructions, Missouri Department of Revenue (Line
+    1 = Federal AGI; 'begin your Missouri return with your total federal adjusted gross income'; Form MO-A Part
+    1 additions; residency/domicile definitions; nonresident & part-year rules; April 15, 2025 due date; filing
+    requirement thresholds; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR
+    Line 11; check payable to Missouri Department of Revenue; 2024 Tax Chart p.26)
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf
+starts_from: federal AGI (Form MO-1040, Line 1 = "Federal adjusted gross income"; for Form 1040NR filers, federal
+  1040NR Line 11)
+residency:
+  summary: 'A Missouri resident is an individual who either (1) maintained a domicile in Missouri, or (2) did not
+    maintain a Missouri domicile but had permanent living quarters in Missouri and spent more than 183 days of the
+    taxable year in Missouri (statutory-resident rule). Exception: an individual domiciled in Missouri who did not
+    maintain permanent living quarters in Missouri, did maintain permanent living quarters elsewhere, and spent
+    30 days or less of the taxable year in Missouri is NOT a resident. "Domicile" is the place an individual intends
+    to be his or her permanent home, a place he or she intends to return to when absent; once established it continues
+    until the individual moves to a new location with the true intention of making a permanent home there, and an
+    individual can have only one domicile at a time. A nonresident is an individual who does not meet the definition
+    of resident; if required to file, nonresidents with income from another state must use Form MO-NRI (Missouri
+    Income Percentage) to determine income percentages. A part-year resident (one who establishes or changes Missouri
+    domicile during the year) is taxed on all income earned while living in Missouri and may either elect to be
+    taxed as a full-year resident using Form MO-CR (credit for taxes paid to other states) or use Form MO-NRI (Missouri
+    income percentage), whichever is more beneficial.'
+forms:
+  resident: Form MO-1040 (Individual Income Tax Long Form). The same MO-1040 is used by all filers; residents claiming
+    credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income
+    filers with no Missouri modifications.)
+  part_year_or_nonresident: Form MO-NRI (Missouri Income Percentage), filed with Form MO-1040, for nonresidents
+    and part-year residents. Part-year residents may alternatively use Form MO-CR (resident credit) with MO-1040,
+    whichever is more beneficial.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Property Tax Credit Claim (Circuit Breaker)
+  type: refundable
+  eligibility: 'Missouri residents who fall into one of four qualification categories (2024 Form MO-PTS): (A) age
+    65 or older and a full-year MO resident; (B) 100% disabled veteran as a result of military service; (C) 100%
+    disabled (per SSA letter or Form SSA-1099); or (D) age 60 or older and receiving surviving spouse Social Security
+    benefits. Available to both renters/part-year owners and full-year homeowners. Renters who rent from a facility
+    that does not pay real estate tax are not eligible.'
+  amount: Credit based on real estate tax or rent paid and net household income, per the official Property Tax Credit
+    Chart (2024 instructions pp.50-52). Maximum is $750 for rent paid (MO-PTS Line 12, total MO-CRP Line 9 amounts
+    or $750, whichever is less) and $1,100 for property tax paid (Line 11), with a combined Line 13 cap of $1,100.
+  income_limit_2024: 'Net household income (MO-PTS Line 10, after the Line 9 deduction of $0 single / $2,000 married
+    filing combined renting / $4,000 married filing combined owning): renters or part-year owners — $27,200 or less;
+    owners who occupied the home the entire year — $30,000 or less. Above the applicable limit, not eligible.'
+  claimed_on: Form MO-PTS attached to Form MO-1040 (credit carried to Form MO-1040, Line 45); or standalone Form
+    MO-PTC if not required to file an income tax return.
+  citation:
+    source: Missouri Department of Revenue - 2024 Form MO-1040 instruction booklet, Form MO-PTS section (Qualifications
+      A-D; Lines 9-14; $27,200/$30,000 net-household-income limits; $750 rent / $1,100 combined caps) and 2024 Property
+      Tax Credit Chart pp.50-52
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf
+- name: Missouri Working Family Tax Credit (state EITC)
+  type: nonrefundable
+  eligibility: Resident individual who was allowed a federal earned income credit (EIC) on the federal return for
+    the same tax year; filing status must be single, head of household, qualifying widow(er), or married filing
+    combined (married filing separately does not qualify); must have a tax liability remaining after the application
+    of all other credits. Form MO-WFTC and a copy of the federal return must be attached or the credit may be disallowed.
+  amount: 'NEW FOR 2024: 20 percent (up from 10 percent in 2023) of what the taxpayer''s federal earned income credit
+    would be under the EIC law as of January 1, 2021 (2024 instructions, Line 44: "The Missouri Working Family Tax
+    Credit (WFTC) is a credit for 20 percent of what your federal earned income credit (EIC) would be under the
+    EIC law as of January 1, 2021"). Limited to remaining MO tax liability; cannot be refunded.'
+  income_limit_2024: No separate state income limit beyond federal EIC eligibility.
+  claimed_on: Form MO-WFTC (2024 booklet pp.37-38), carried to Form MO-1040, Line 44.
+  citation:
+    source: Missouri Department of Revenue - 2024 Form MO-1040 instruction booklet, Line 44 Missouri Working Family
+      Tax Credit and Form MO-WFTC
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf
+- name: Food Pantry / Homeless Shelter / Soup Kitchen Tax Credit
+  type: nonrefundable
+  eligibility: Any taxpayer (individual, corporation, or trust) who donates cash or food supplies to a local food
+    pantry, homeless shelter, or soup kitchen in the county where the taxpayer resides. If the donation is also
+    reported as a federal Schedule A charitable contribution, the amount must be added back on Form MO-A, Part 1,
+    Line 4. Program sunsets December 31, 2026 (fully terminates September 1, 2027).
+  amount: 50 percent of donations, up to $2,500 per taxpayer per year. Limited to the taxpayer's tax liability;
+    excess may be carried forward three subsequent years. Subject to a cumulative statewide cap of $1,750,000 per
+    fiscal year (credits apportioned if claims exceed the cap; returns claiming it must be filed July 1 through
+    April 15).
+  income_limit_2024: No income limit.
+  claimed_on: Form MO-FPT, claimed through Form MO-TC (Miscellaneous Income Tax Credits), carried to Form MO-1040,
+    Line 43.
+  citation:
+    source: Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page and 2024 MO-1040 instruction
+      booklet (Form MO-A Part 1 Line 4; MO-TC credit code FPT)
+    url: https://dor.mo.gov/tax-credits/fpt.html
+filing_requirement:
+  note: 'Per the 2024 MO-1040 instructions: you do not have to file a Missouri return if you are not required to
+    file a federal return. If required to file a federal return, you may still not have to file a Missouri return
+    if you (a) are a resident with less than $1,200 of Missouri adjusted gross income; (b) are a nonresident with
+    less than $600 of Missouri income; or (c) have Missouri adjusted gross income less than the amount of your standard
+    deduction for your filing status. (If not required to file but Missouri tax was withheld, file to claim a refund.)'
+mailing_addresses:
+  refund_or_no_payment: 'Department of Revenue, P.O. Box 500, Jefferson City, MO 65105-0500 (refund or no amount
+    due). Note: returns printed from the Department''s 2-D barcode / fill-in auto-calculating forms use different
+    addresses: refund returns to P.O. Box 3222, Jefferson City, MO 65105-3222; refund returns claiming a property
+    tax credit to P.O. Box 3385, Jefferson City, MO 65105-3385.'
+  with_payment: 'Department of Revenue, P.O. Box 329, Jefferson City, MO 65105-0329 (balance due, with payment and
+    all required attachments). Note: 2-D barcode (fill-in/auto-calculating) balance-due returns use P.O. Box 3370,
+    Jefferson City, MO 65105-3370; balance-due returns claiming a property tax credit use P.O. Box 3395, Jefferson
+    City, MO 65105-3395.'
+  citation:
+    source: 2024 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Where to Mail Your Return' (P.O.
+      Box 500 refund / P.O. Box 329 balance due; 2-D barcode boxes 3222/3370 and property-tax-credit boxes 3385/3395;
+      also printed on the Form MO-1040 signature page)
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf
+payment:
+  check_payee: Missouri Department of Revenue (check or money order, U.S. funds only; by submitting payment by check
+    you authorize the Department to process it electronically; do not postdate; write your name, address, SSN, daytime
+    telephone number, and "2024 MO Income Tax" on the check; if paying after filing, use voucher Form MO-1040V to
+    P.O. Box 371, Jefferson City, MO 65105-0371)
+  web_pay_url: https://dor.mo.gov/taxation/individual/pay-online.html
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Calendar year taxpayers must file
+      no later than April 15, 2025'; automatic extension to October 15, 2025 granted with a federal extension (attach
+      Federal Form 4868) or by filing Form MO-60; an extension of time to file does not extend the time to pay
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf
+all_citations:
+- source: 2024 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; Form MO-A Part
+    1 additions Lines 1-6; residency/domicile definitions incl. 183-day statutory-resident and 30-day exception
+    rules; filing requirement thresholds $1,200/$600/standard deduction; April 15, 2025 due date; mailing addresses
+    incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; rounding rule 'Round $32.50
+    up to $33.00'; 2024 Tax Chart p.26; Line 44 WFTC 20%; Form MO-PTS property tax credit section)
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf
+- source: 2024 Form MO-1040A Single/Married (Income from One Spouse) Short Form Instructions — independent second
+    pass on the 2024 Tax Chart (identical Tax Rate Chart and Tax Calculation Worksheet, p.10) and the 2024 standard
+    deduction amounts
+  url: https://dor.mo.gov/forms/MO-1040A%20Instructions_2024.pdf
+- source: Missouri DOR - Nonresidents and Residents with Other State Income (resident/nonresident/part-year definitions;
+    MO-NRI / MO-CR usage with MO-1040)
+  url: https://dor.mo.gov/taxation/individual/additional-resources/non-residents.html
+- source: Missouri DOR - Food Pantry Tax Credit (FPT) program page (50% of donations, $2,500/taxpayer/year, $1,750,000
+    statewide fiscal-year cap, 3-year carryforward, December 31, 2026 sunset)
+  url: https://dor.mo.gov/tax-credits/fpt.html
+- source: Missouri DOR - Pay Individual Income Taxes Online (eCheck $0.50 fee; credit/debit card 2% + $0.25 convenience
+    fee)
+  url: https://dor.mo.gov/taxation/individual/pay-online.html
+unverified:
+- The Missouri standard deduction amounts are printed on the 2024 Form MO-1040 Line 14 ($14,600 single or married
+  filing separate; $21,900 head of household; $29,200 married filing combined or qualifying widow(er)) with additional
+  65-or-older/blind amounts of $1,950 (single/head of household) and $1,550 (married filing combined, married filing
+  separate, or qualified widow(er)) per the Line 14 instructions — these mirror the federal 2024 amounts; the DOR's
+  separate Standard-and-Additional-Standard-Deduction.pdf reference sheet was not fetched in this session.
+- The 2024 Form MO-WFTC worksheet itself (booklet pp.37-38) was not read line-by-line; the 20%-of-federal-EIC rate,
+  the 'EIC law as of January 1, 2021' computation basis, and the eligibility bullets are from the Line 44 instructions.
+  The 2023 booklet also listed an investment-income cap for the WFTC; whether a 2024 cap applies is stated on Form
+  MO-WFTC — confirm there before claiming.
+- MO-NRI form mechanics were not fully read; the residency/usage description is drawn from the MO-1040 instructions
+  and the DOR non-residents page rather than a line-by-line read of MO-NRI.
+tax:
+  citation:
+    source: '2024 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p.26 ''2024
+      Tax Chart'' (Tax Rate Chart, Section A: $0 to $1,273 -> $0; over $1,273 not over $2,546 -> 2.00% of excess over
+      $1,273; over $2,546 not over $3,819 -> $25 + 2.50%; over $3,819 not over $5,092 -> $57 + 3.00%; over $5,092 not
+      over $6,365 -> $95 + 3.50%; over $6,365 not over $7,638 -> $140 + 4.00%; over $7,638 not over $8,911 -> $191 +
+      4.50%; over $8,911 -> $248 + 4.80% of excess over $8,911; ''A separate tax must be computed for you and your spouse'';
+      ''Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and 30S''); Line 30 ''Tax (see tax chart
+      on page 26 of the instructions)''; Line 12 Federal Tax Percentage chart; Line 13 federal income tax deduction
+      caps; Line 14 standard deduction; Line 15 head of household / qualifying widow(er) $1,400. Second pass: the 2024
+      Form MO-1040A short-form instructions print the IDENTICAL 2024 Tax Rate Chart and Tax Calculation Worksheet (p.10)
+      — both passes agree.'
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 1273, rate: 0}
+    - {over: 1273, but_not_over: 2546, rate: 0.02}
+    - {over: 2546, but_not_over: 3819, rate: 0.025}
+    - {over: 3819, but_not_over: 5092, rate: 0.03}
+    - {over: 5092, but_not_over: 6365, rate: 0.035}
+    - {over: 6365, but_not_over: 7638, rate: 0.04}
+    - {over: 7638, but_not_over: 8911, rate: 0.045}
+    - {over: 8911, but_not_over: null, rate: 0.048}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 1273, rate: 0}
+    - {over: 1273, but_not_over: 2546, rate: 0.02}
+    - {over: 2546, but_not_over: 3819, rate: 0.025}
+    - {over: 3819, but_not_over: 5092, rate: 0.03}
+    - {over: 5092, but_not_over: 6365, rate: 0.035}
+    - {over: 6365, but_not_over: 7638, rate: 0.04}
+    - {over: 7638, but_not_over: 8911, rate: 0.045}
+    - {over: 8911, but_not_over: null, rate: 0.048}
+    married_filing_separately:
+    - {over: 0, but_not_over: 1273, rate: 0}
+    - {over: 1273, but_not_over: 2546, rate: 0.02}
+    - {over: 2546, but_not_over: 3819, rate: 0.025}
+    - {over: 3819, but_not_over: 5092, rate: 0.03}
+    - {over: 5092, but_not_over: 6365, rate: 0.035}
+    - {over: 6365, but_not_over: 7638, rate: 0.04}
+    - {over: 7638, but_not_over: 8911, rate: 0.045}
+    - {over: 8911, but_not_over: null, rate: 0.048}
+    head_of_household:
+    - {over: 0, but_not_over: 1273, rate: 0}
+    - {over: 1273, but_not_over: 2546, rate: 0.02}
+    - {over: 2546, but_not_over: 3819, rate: 0.025}
+    - {over: 3819, but_not_over: 5092, rate: 0.03}
+    - {over: 5092, but_not_over: 6365, rate: 0.035}
+    - {over: 6365, but_not_over: 7638, rate: 0.04}
+    - {over: 7638, but_not_over: 8911, rate: 0.045}
+    - {over: 8911, but_not_over: null, rate: 0.048}
+  base: state_taxable_income
+  tax_line: 'Form MO-1040 Line 30: ''Tax (see tax chart on page 26 of the instructions)'', computed per column (30Y/30S)
+    from Line 29Y/29S. Instructions p.26, ''2024 Tax Chart'': ''To identify your tax, use your Missouri taxable income
+    from Form MO-1040, Line 29Y and 29S and the tax chart in Section A below. A separate tax must be computed for
+    you and your spouse. ... Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and 30S.'''
+  exemptions: {}
+  notes:
+  - '2024 CHANGES: the top rate fell to 4.8% (from 4.95% in 2023) and the chart''s income steps re-indexed to $1,273
+    increments (2023: $1,207) — breakpoints $1,273 / $2,546 / $3,819 / $5,092 / $6,365 / $7,638 / $8,911; verified
+    against BOTH the 2024 MO-1040 instructions p.26 and the 2024 MO-1040A short-form instructions p.10 (identical
+    chart).'
+  - 'Base guidance: Supply 2024 Form MO-1040 Line 29 ''Taxable income'' — one column at a time: Line 29Y (yourself)
+    or Line 29S (spouse). Line 29 = total Missouri AGI (Line 6, which starts from federal AGI plus/minus Form MO-A
+    adjustments) minus total deductions (Line 25: the pension/Social Security exemption; the Lines 9-13 FEDERAL INCOME
+    TAX DEDUCTION — Line 11 federal tax x a percentage set by Missouri AGI: 35% if Line 6 is $25,000 or less, 25%
+    for $25,001-$50,000, 15% for $50,001-$100,000, 5% for $100,001-$125,000, 0% for $125,001 or more, capped at $5,000
+    per individual / $10,000 combined; the Line 14 standard or itemized deduction; the Line 15 $1,400 head-of-household/qualifying-widow(er)
+    exemption; and other deductions on Lines 16-24), apportioned by each spouse''s income percentage (Line 7, applied
+    at Line 27), minus any Line 28 enterprise-zone/rural-empowerment modification. Single, married filing separately,
+    head of household, and qualifying widow(er) filers have one column — supply that Line 29 amount. MARRIED FILING
+    COMBINED: Missouri taxes each spouse''s column separately — run this op once with Line 29Y and once with Line
+    29S and add the two results (Form MO-1040 Lines 30Y + 30S); do NOT supply the couple''s combined taxable income
+    as one amount, or the tax will be overstated.'
+  - 'One rate schedule for all filing statuses: the 2024 Tax Rate Chart (MO-1040 instructions p.26) makes no distinction
+    by filing status, so the identical schedule is shipped for all four statuses. Qualifying widow(er) maps to married_filing_jointly
+    here and uses the same chart.'
+  - 'CRITICAL for married filing combined: Missouri computes tax SEPARATELY for each spouse — ''A separate tax must
+    be computed for you and your spouse'' (instructions p.26). Combined income is split by each spouse''s income percentage
+    (Line 7, applied at Line 27), producing Line 29Y and 29S, each run through the chart (Line 30Y/30S), then added.
+    Running a couple''s combined taxable income through the brackets as one amount OVERSTATES tax (a second pass through
+    the below-4.8% brackets). Run this op once per spouse''s Line 29 column and sum the results.'
+  - 'Printed-constant rounding (quantified): the 2024 chart''s flat add-on constants ($25 / $57 / $95 / $140 / $191
+    / $248) are rounded from the exact cumulative marginal sums ($25.46 / $57.285 / $95.475 / $140.03 / $190.95 /
+    $248.235); the largest divergence is $0.475 at the $5,092 breakpoint. This op does exact marginal math, so its
+    result can differ from the form worksheet''s result by up to ~$1 after rounding (e.g. taxable income $12,000:
+    exact marginal 396.507 -> 397 vs worksheet 248 + 148.27 = 396.27 -> 396; the booklet''s own Example B prints 396).
+    The filed return should use the p.26 Tax Calculation Worksheet''s printed constants or the DOR online calculator
+    at dor.mo.gov/personal/individual/.'
+  - 'Federal income tax deduction (Missouri base quirk, NOT modeled): MO-1040 Lines 9-13 deduct Line 11 federal income
+    tax times a Missouri-AGI-based percentage (Line 12 chart: 35% if Line 6 is $25,000 or less; 25% $25,001-$50,000;
+    15% $50,001-$100,000; 5% $100,001-$125,000; 0% $125,001 or more), capped at $5,000 per individual / $10,000 married
+    filing combined. Because it is income-dependent it is not modeled — it must already be reflected in the Line 29
+    taxable income you supply.'
+  - 'standard_deduction ships as null because the base is Line 29 taxable income, from which the Line 14 deduction
+    was already subtracted — do not subtract it again. For reference, 2024 Missouri standard deductions (printed on
+    Form MO-1040 Line 14): $14,600 single or married filing separate; $21,900 head of household; $29,200 married filing
+    combined or qualifying widow(er). Additional standard deduction for each 65-or-older or blind condition (Line
+    14 instructions): $1,950 for single and head of household; $1,550 for married filing combined, married filing
+    separate, or qualified widow(er). Itemizers use Form MO-A Part 2 instead.'
+  - 'Head of household / qualifying widow(er) additional exemption: $1,400 on MO-1040 Line 15 (unchanged for 2024)
+    — a base reduction already included in the Line 29 base, so it is not shipped; the Missouri filing status must
+    match the federal filing status to claim it.'
+  - The 2024 MO-1040 has NO personal or dependent exemption lines — exemptions is intentionally empty; exemptions_count
+    and dependents_count have no effect for Missouri.
+  - 'Zero-rate floor: Missouri taxable income of $0 to $1,273 owes $0 (shipped as a rate-''0'' bottom bracket); the
+    state is graduated, not flat, for 2024.'
+  - 'Rounding rule (instructions p.26 and ''Dollars and Cents'': ''For 1 cent through 49 cents, round down ... For
+    50 cents through 99 cents, round up'', with the booklet''s own example ''Round $32.50 up to $33.00'') — matches
+    the engine''s half-up rounding.'
+  - 'No lookup-table mandate: Missouri publishes no tax table; all filers compute Line 30 from the Tax Rate Chart
+    / Tax Calculation Worksheet (or the DOR online calculator).'
+  - 'Not modeled — MO-1040 Line 34 other taxes: tax on lump-sum distributions (Federal Form 4972) and recapture of
+    low-income housing credits (Federal Form 8611); these are added after Line 30 on the form.'
+  - 'Not modeled — apportionment and credits after Line 30: nonresidents/part-year residents multiply Line 30 by the
+    Missouri income percentage (Line 32, Form MO-NRI), and residents may take the resident credit for taxes paid other
+    states (Line 31, Form MO-CR); this op produces the pre-apportionment Line 30 amount. Also not modeled (they are
+    CREDITS against tax, not base reductions): Property Tax Credit (Line 45, MO-PTS), Missouri Working Family Tax
+    Credit (Line 44, MO-WFTC — 20% of the federal EIC for 2024, up from 10%), and miscellaneous credits (Line 43,
+    MO-TC).'
+  - This pack follows the 2024 Form MO-1040 long form; the MO-1040A short form uses the same 2024 Tax Chart (its instructions
+    were the second-pass source) but has its own line layout.
