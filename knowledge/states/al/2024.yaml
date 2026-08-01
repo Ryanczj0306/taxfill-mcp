@@ -1,0 +1,280 @@
+# AL state knowledge — tax year 2024. Fetched + cited from the AL DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 Form 40 booklet
+# (Long Return, Residents and Part-Year Residents), then independently re-derived from a
+# second official document (the printed 2024 Form 40 itself, the 2024 Form 40NR booklet,
+# the 2024 Schedule OC instructions, or the live ADOR rate FAQ) — resolutions recorded
+# inline where the passes differed.
+# HEADLINE FOR 2024: NO structural tax change. The What's New page is credit-only
+# (Volunteer First Responder Mileage credit, Act 2023-510; Preceptor Tax Incentive
+# Program, Act 2023-519; new refund check-offs, Act 2023-327; MAT pre-approval now
+# required for certain credits). The 2%/4%/5% dual schedules, the sliding standard
+# deduction chart, the $1,500/$3,000 personal exemptions, the income-tiered dependent
+# exemption, and the over-$100,000 worksheet constants ($4,958/$4,918) are all
+# unchanged from 2023 — each was re-verified (not assumed) from the 2024 prints.
+jurisdiction: states/al
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'Alabama does NOT start the return from federal adjusted gross income. Both the resident Form 40 and
+  the nonresident Form 40NR build Alabama income from their own line items computed under Alabama law (Form 40 line
+  5 wages/salaries/tips from Schedule W-2, line 6 interest and dividends, line 7 other income; Form 40NR equivalents),
+  not by importing a federal AGI figure. Because the federal-AGI-conformity flow-through does not exist here, a treaty
+  exclusion that is already netted out of federal AGI does NOT automatically carry to the Alabama return. The 2024
+  Form 40NR booklet (24f40nrbk.pdf, Other Income/Foreign Income Exclusion) is explicit on the only foreign-income
+  mechanism it recognizes: ''All foreign income must be reported on your return, in order to receive any foreign
+  income exclusion,'' and that exclusion is the IRC sec. 911 foreign EARNED income exclusion, claimed as a negative
+  entry on line 8 Other Income with federal Form 2555 attached. There is NO Alabama line, schedule, or instruction
+  that recognizes or excludes income exempt under a U.S. income-TAX TREATY. Given (a) the separate Alabama income
+  build-up rather than a federal-AGI start, and (b) the affirmative ''report all foreign income'' rule with only a
+  sec. 911-style exclusion path, conformity to federal treaty exemptions is NOT established on any .gov page. Per
+  conservative handling this is set false and flagged. See unverified/notes.'
+citation:
+  source: 2024 Form 40 Booklet (Alabama Department of Revenue, Long Return — Residents and Part-Year Residents,
+    Forms and Instructions) — What's New For 2024 (p.2, credit-only changes); You Must File A Return If chart (p.5);
+    When To File / automatic extension to October 15, 2025 (p.5); Filing Status and Personal Exemption Lines 1-4
+    (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.8); Line 17 Figuring Your Tax tax-table
+    mandate (p.10); Where To File (p.12); Tax Table pp.25-30 and Over $100,000.00 worksheet (p.30)
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
+starts_from: 'Alabama gross income computed under Alabama law (separate line items: Form 40 line 5 wages/salaries/tips
+  from Schedule W-2, line 6 interest and dividend income, line 7 other income; Form 40NR equivalents) — it does NOT
+  start from federal adjusted gross income or federal taxable income.'
+residency:
+  summary: Residency is domicile-based. A resident is anyone domiciled in (a resident of) Alabama — domicile being
+    where one lives, has a permanent home, and intends to return when absent — and residents are taxed on their
+    entire income whether earned within or without Alabama. A part-year resident establishes or abandons Alabama
+    domicile during the year and reports income earned (with prorated itemized deductions but the FULL standard
+    deduction and personal/dependent exemptions) only during the period of Alabama residency. A nonresident has
+    no Alabama domicile/permanent home but is taxed on income from Alabama sources or services performed in Alabama;
+    the 2024 Form 40 booklet (p.4) repeats that a foreign citizen who comes to Alabama to work, buys a home, secures
+    an Alabama driver's license, and intends to ultimately return to the country of origin is considered to have
+    established Alabama domicile and is liable for Alabama income tax on income earned from all sources. Military
+    personnel whose legal residence is Alabama remain residents regardless of duty station; nonresident military
+    merely stationed in Alabama file only if they have non-military Alabama-source income (Form 40NR).
+forms:
+  resident: Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional
+    short form for full-year residents who do not itemize, claim no adjustments to income, have income only from
+    salaries/wages plus up to $1,500 of interest and dividends, no Schedule C/D/E/F income, and no other-state credit;
+    part-year residents use Form 40.)
+  part_year_or_nonresident: Form 40NR — Alabama Individual Income Tax Return (Nonresidents Only). Part-year residents
+    file the resident Form 40 (reporting only the resident-period income); a person who is part-year resident AND
+    has nonresident-period Alabama-source income files BOTH Form 40 and Form 40NR (personal and dependent exemptions
+    all claimed on the part-year Form 40, none on the 40NR).
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Credit for Taxes Paid to Another State
+  type: nonrefundable
+  eligibility: Legal residents of Alabama filing Form 40 who have income from sources outside Alabama that is taxed
+    by BOTH Alabama and another U.S. state or territory in the same tax year. (Part-year residents only if the AL
+    and other-state returns cover the same periods. No credit when the out-of-state income is totally offset by
+    a corresponding deduction. Schedule CR must be completed with a copy of the other state's return attached —
+    or W-2Gs if the taxing state does not allow a return to be filed for gambling winnings.)
+  amount: Credit equals the tax paid to the other state, limited per the 2024 Schedule OC instructions Part A to
+    the LESSER of (a) the Alabama tax liability multiplied by the ratio of other states' adjusted gross income to
+    Alabama AGI (lines A1-A4), or (b) the actual other-state tax from Schedule CR line 27 (line A5).
+  income_limit_2024: None (no income cap; the credit is capped by the lesser-of limitation above).
+  claimed_on: Form 40, page 1, line 18 (net tax due computed with Schedule OC — check the Schedule OC box), via
+    Schedule CR and Schedule OC, Part A.
+  citation:
+    source: Alabama Department of Revenue, 2024 Form 40 Booklet, 'Credits - Schedule OC' and 'Credit for Taxes Paid
+      to Another State' (p.10), and 2024 Schedule OC Instructions, Part A lines A1-A6.
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
+- name: Alabama Adoption Tax Credit
+  type: refundable
+  eligibility: 'Taxpayers who reside in Alabama and complete an adoption. Two cases: (1) a private adoption in which
+    the adopted child is a resident of Alabama, or a qualified foster child in the custody of the Alabama Department
+    of Human Resources; (2) an out-of-state adoption or where the adopted child is not otherwise an Alabama resident.
+    Schedule AAC must be completed.'
+  amount: $2,000 per child for a private adoption where the adopted child is an Alabama resident or a qualified
+    foster child in DHR custody; $1,000 per child for an out-of-state adoption / when the adopted child is not an
+    Alabama resident.
+  income_limit_2024: None stated.
+  claimed_on: Computed on Schedule AAC, Part III, carried to Schedule OC, Part M (line M1); the refundable amount
+    flows through Schedule OC, Section F (line F2) to Form 40, page 1, line 25 (Refundable Credit).
+  citation:
+    source: Alabama Department of Revenue, 2024 Schedule OC Instructions, Part M - Alabama Adoption Tax Credit ($2,000
+      per Alabama-resident/foster child, $1,000 out-of-state) and Section F; 2024 Form 40 Booklet Line 25 (refundable
+      portion of Alabama Accountability Act, Adoption Credit, or Historic Tax Rehabilitation Act of 2017 Credit).
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24schocinstr.pdf
+- name: Rural Physician Credit
+  type: nonrefundable
+  eligibility: Licensed physicians who practice and reside in a small or rural Alabama community of fewer than 25,000
+    residents, with admission privileges to a 'small or rural hospital' that has an emergency room (acute care hospital
+    with fewer than 105 beds, located more than 20 miles from another acute care facility, or receiving Medicare
+    rural reimbursement). Does not apply to physicians who met the requirements on/before May 5, 1993, nor to a
+    physician who previously practiced in such a community unless they return after practicing in a large/urban
+    community for at least three years.
+  amount: $5,000 per year for a qualifying physician ($10,000 if married filing jointly and both spouses qualify,
+    per 2024 Schedule OC instructions line D2). May be claimed for no more than five consecutive tax years.
+  income_limit_2024: None.
+  claimed_on: Schedule OC, Part D (lines D1-D3), carried to Schedule OC Section C; reduces net tax on Form 40, page
+    1, line 18.
+  citation:
+    source: Alabama Department of Revenue, 2024 Schedule OC Instructions, Part D - Rural Physician Credit (amount
+      $5,000.00 per year, max five consecutive years; D2 '$10,000' if MFJ and both spouses qualify).
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24schocinstr.pdf
+filing_requirement:
+  note: 'Domicile-based. Full-year residents (2024) must file if gross income is at least: Single $4,500; Head of
+    Family $8,200; Married Filing Joint $11,500; Married Filing Separate $5,750 — unchanged from 2023 (2024 Form
+    40 booklet p.5 ''You Must File A Return If'' chart; the same chart with the same amounts is printed in the 2024
+    Form 40NR booklet). Part-year residents use the same thresholds measured against gross income earned while an
+    Alabama resident. Nonresidents must file Form 40NR if Alabama-source income exceeds the allowable prorated personal
+    exemption. Even if below the threshold, file to claim a refund of any Alabama tax withheld.'
+mailing_addresses:
+  refund_or_no_payment: 'Receiving a refund (Form 40, line 35): Alabama Department of Revenue, P.O. Box 154, Montgomery,
+    AL 36135-0001. Neither a refund nor a payment: Alabama Department of Revenue, P.O. Box 327469, Montgomery, AL
+    36132-7469.'
+  with_payment: 'Making a payment (Form 40, line 30): Alabama Department of Revenue, P.O. Box 2401, Montgomery,
+    AL 36140-0001 (include Form 40V payment voucher). Prior-year/amended returns and correspondence go to Income
+    Tax Administration Division, P.O. Box 327464, Montgomery, AL 36132-7464.'
+  citation:
+    source: 2024 Form 40 Booklet, 'Where To File' (p.12) — refund P.O. Box 154 (36135-0001); payment P.O. Box 2401
+      (36140-0001) with Form 40V; neither P.O. Box 327469 (36132-7469); prior-year/amended P.O. Box 327464 (36132-7464).
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Alabama Department of Revenue (pay the full amount by check or money order payable to the "Alabama
+    Department of Revenue"; on your payment write your social security number, your daytime telephone number, and
+    "2024 Form 40", and remit your payment with Form 40V)
+  web_pay_url: https://myalabamataxes.alabama.gov
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 Form 40 Booklet, When To File (p.5) — 'You should file as soon as you can after January 1, 2025,
+      but no later than the due date of the federal return' (April 15, 2025); 'You will automatically be granted
+      an extension until October 15, 2025' (no application; payment with Form 40V, Automatic Extension Payment box
+      checked, is still due by the federal due date).
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
+all_citations:
+- source: 2024 Form 40 Booklet (Alabama Department of Revenue) — What's New For 2024 (credit-only changes; no rate
+    or deduction changes); You Must File A Return If chart p.5 ($4,500/$8,200/$11,500/$5,750); When To File p.5
+    (federal due date, automatic extension to October 15, 2025); Filing Status/Personal Exemption p.6 (box 1 $1,500,
+    box 2 $3,000, box 3 $1,500, box 4 Head of Family); Standard Deduction chart p.9; dependent exemption chart p.8
+    ($1,000/$500/$300 by AL AGI); Line 17 tax-table mandate p.10; Where To File p.12; Tax Table pp.25-30 with worked
+    example ($23,360 MFJ -> $1,088); Over $100,000.00 worksheet p.30 ($4,958.00 / $4,918.00 + 5%)
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
+- source: '2024 Alabama Form 40 (printed form) — second-pass verification: filing-status boxes print the personal
+    exemptions ''1 $1,500 Single; 2 $3,000 Married filing joint; 3 $1,500 Married filing separate; 4 $3,000 Head
+    of Family (with qualifying person)''; line 16 ''Taxable income. Subtract line 15 from line 10''; line 17 ''Income
+    Tax due. Enter amount from tax table or check if from Form NOL-85A'''
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40.pdf
+- source: 2024 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart (same
+    $4,500/$8,200/$11,500/$5,750), the identical tax table figures (e.g. $4,100-$4,200 row = $168 single / $146 MFJ),
+    and the Foreign Income Exclusion text ('All foreign income must be reported on your return, in order to receive
+    any foreign income exclusion' — IRC sec. 911 exclusion via federal Form 2555 only, no treaty mechanism)
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40nrbk.pdf
+- source: 2024 Schedule OC Instructions — Part A other-state credit lesser-of computation, Part D Rural Physician
+    Credit ($5,000 / $10,000 MFJ), Part M Alabama Adoption Tax Credit ($2,000 / $1,000), Section F refundable credits
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24schocinstr.pdf
+- source: ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' — '2% First $500 of taxable income, 4% Next $2,500,
+    5% All taxable income over $3,000' (single/head of family/MFS); '2% First $1,000, 4% Next $5,000, 5% All taxable
+    income over $6,000' (married filing joint) — live re-fetch, matches the 2024 booklet numerically
+  url: https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/
+- source: Forms Mailing Addresses — Form 40 / Form 40NR with-payment (Box 2401, 36140-0001) and refund/no-payment
+    (Box 154, 36135-0001)
+  url: https://www.revenue.alabama.gov/individual-corporate/forms-mailing-addresses/
+unverified:
+- 'TREATY CONFORMITY: No .gov page confirms whether income exempt under a U.S. income-tax TREATY is excluded for
+  Alabama purposes. Alabama does not start from federal AGI, and the only foreign-income mechanism the 2024 Form
+  40NR booklet describes is the IRC sec. 911 foreign EARNED income exclusion (claimed as a negative line-8 entry
+  with federal Form 2555), with an explicit instruction that ''all foreign income must be reported.'' Whether
+  treaty-exempt wages must be included in Alabama wages, or whether a treaty exclusion is honored, COULD NOT be
+  confirmed and should be confirmed with the Alabama DOR before relying on conformity. conforms_to_federal_treaties
+  was set false on the conservative basis that no pass-through/exclusion for treaty income is established.'
+- The April 15, 2025 due date for the 2024 return is inferred from the booklet rule 'no later than the due date
+  of the federal return' (April 15, 2025 was a Tuesday and the federal deadline) plus the printed automatic-extension
+  date of October 15, 2025. No .gov page was found stating the literal string '2025-04-15' for the 2024 tax year.
+- 'PRINTED CHART TYPO (both 2024 booklets): the Married Filing Joint standard-deduction column prints its third
+  band as ''$25,500 - $26,999 / $8,150'' where the surrounding rows make clear it means $26,500 - $26,999 (the
+  second band is $26,000 - $26,499 / $8,325). The engine does not ship the sliding chart, so nothing downstream
+  consumes the typo''d bound; noted for anyone reading the chart off the booklet.'
+- Form 40A short-form eligibility details are summarized from the 2024 Form 40 booklet's 'Which Form To File' section;
+  a separately published 2024 Form 40A booklet was not fetched.
+tax:
+  citation:
+    source: '2024 Alabama Form 40 Booklet (Individual Income Tax — Long Return, Residents and Part-Year Residents) —
+      Tax Table pp. 25-30 (based on Form 40 line 16 taxable income; one column for Single/Married-filing-separately/Head-of-Family,
+      one for Married-filing-jointly; worked example p. 25: MFJ $23,360 -> $1,088) and ''Over $100,000.00'' worksheet,
+      p. 30 (tax = $4,958.00 [Single/MFS/HoF] or $4,918.00 [MFJ] plus .05 x taxable income over $100,000 — both constants
+      re-derived for 2024, unchanged from 2023); Standard Deduction chart p. 9; dependent-exemption chart p. 8; personal
+      exemptions printed on the 2024 Form 40 filing-status boxes 1-4 ($1,500/$3,000/$1,500/$3,000). Rate schedule text
+      (2% first $500/$1,000, 4% next $2,500/$5,000, 5% over $3,000/$6,000) corroborated by the live ADOR FAQ ''What
+      is Alabama''s Individual Income Tax Rate?'' (revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/).
+      Second pass: the printed 2024 Form 40 (line 16 ''Taxable income. Subtract line 15 from line 10'', line 17 ''Income
+      Tax due. Enter amount from tax table or check if from Form NOL-85A'', the ''X $1,500 / $3,000'' filing-status
+      boxes) and the 2024 Form 40NR booklet''s identical tax-table rows — both passes agree; no 2024 changes.'
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 500, rate: 0.02}
+    - {over: 500, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: null, rate: 0.05}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 6000, rate: 0.04}
+    - {over: 6000, but_not_over: null, rate: 0.05}
+    married_filing_separately:
+    - {over: 0, but_not_over: 500, rate: 0.02}
+    - {over: 500, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: null, rate: 0.05}
+    head_of_household:
+    - {over: 0, but_not_over: 500, rate: 0.02}
+    - {over: 500, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: null, rate: 0.05}
+  base: state_taxable_income
+  tax_line: 'Form 40, line 17: ''Income Tax due. Enter amount from tax table or check if from Form NOL-85A'' (line
+    16: ''Taxable income. Subtract line 15 from line 10.''); booklet Line 17 Figuring Your Tax (p.10): ''You must
+    figure your tax from the Tax Tables unless you are claiming a carryover or carryback Net Operating Loss from another
+    year.'''
+  exemptions: {}
+  notes:
+  - '2024 UNCHANGED: the 2024 booklet''s What''s New page lists only credit changes (Volunteer First Responder Mileage
+    credit, Preceptor Tax Incentive, refund check-offs, MAT pre-approval) — the 2%/4%/5% dual schedules, sliding standard
+    deduction chart, $1,500/$3,000 personal exemptions, income-tiered dependent exemption, and the over-$100,000 worksheet
+    constants were each re-verified from the 2024 prints, not assumed.'
+  - 'Base guidance: Supply 2024 Alabama Form 40, page 1, line 16 ''Taxable income. Subtract line 15 from line 10.''
+    Alabama does NOT start from federal AGI: line 10 Alabama adjusted gross income is built from Alabama line items
+    (line 8 total income minus line 9 adjustments), and line 15 total deductions = line 11 (itemized OR sliding standard
+    deduction) + line 12 (FEDERAL income tax deduction, from the Federal Income Tax Deduction Worksheet) + line 13
+    (personal exemption $1,500/$3,000) + line 14 (income-dependent dependent exemption). All of those subtractions
+    must already be taken on the form before line 16 — this op subtracts nothing further.'
+  - 'Tax-table mandate: the 2024 Form 40 booklet (Line 17 instructions, p.10) states ''You must figure your tax from
+    the Tax Tables unless you are claiming a carryover or carryback Net Operating Loss from another year.'' The Tax
+    Table (booklet pp. 25-30) covers taxable income under $100,000 in $100-wide bands priced at the band midpoint,
+    so bracket math may differ by a few dollars within table bands (booklet example: MFJ $23,360 -> table $1,088 vs
+    bracket math $1,088.00 exact at the midpoint); the filed form must use the table.'
+  - 'Over $100,000: the 2024 booklet''s worksheet (p. 30) computes tax as $4,958.00 (Single/MFS/Head of Family) or
+    $4,918.00 (MFJ) plus 5% of taxable income over $100,000. Those printed constants are each $2 LESS than the exact
+    cumulative bracket sums ($4,960 / $4,920) because they carry forward the last tax-table row''s midpoint value
+    (the $99,900-$100,000 row prints $4,958/$4,918); above $100,000 the tax the form produces is therefore $2 lower
+    than this op''s pure bracket math.'
+  - 'FEDERAL income tax deduction quirk: Alabama allows a base deduction for federal income tax liability (Form 40
+    line 12; Federal Income Tax Deduction Worksheet, booklet p. 31: 2024 Form 1040/1040-SR/1040-NR line 22 plus Form
+    8960 line 17 net investment income tax, minus refundable EIC, Additional Child Tax Credit, American Opportunity
+    Credit, and Form 2439 credits). It is already inside the line 16 base this op consumes — do not re-subtract it.'
+  - 'standard_deduction is NOT shipped because Alabama''s standard deduction slides with Alabama AGI (2024 booklet
+    p. 9 chart, amounts unchanged from 2023): MFJ $8,500 (AL AGI $0-$25,999) phasing down to $5,000 at $35,500 and
+    above; MFS $4,250 ($0-$12,999) down to $2,500 at $17,750 and above; Head of Family $5,200 ($0-$25,999) down to
+    $2,500 at $35,500 and above; Single $3,000 ($0-$25,999) down to $2,500 at $35,500 and above. Take it from the
+    chart on Form 40 line 11; it is already inside line 16.'
+  - Personal exemption (Form 40 line 13) is $1,500 (Single or Married Filing Separately) / $3,000 (Married Filing
+    Jointly or Head of Family), printed on the 2024 Form 40 filing-status boxes 1-4. It is a base reduction, but it
+    is already inside the line 16 base this op consumes, so it is NOT shipped as an engine exemption.
+  - 'Dependent exemption (Form 40 line 14) is income-dependent and NOT shipped: $1,000 per dependent when Alabama
+    AGI (line 10) is $0-$50,000; $500 when $50,001-$100,000; $300 when over $100,000 (2024 booklet p. 8 chart, unchanged).
+    It is already inside line 16 — claim it on the form, not through this op.'
+  - One rate schedule covers Single, Married Filing Separately, and Head of Family (2% on the first $500, 4% on the
+    next $2,500, 5% over $3,000); Married Filing Jointly has its own schedule (2% on the first $1,000, 4% on the next
+    $5,000, 5% over $6,000).
+  - Alabama has no qualifying-surviving-spouse filing status (Form 40 boxes are Single / Married filing joint / Married
+    filing separate / Head of Family, and the booklet's Head-of-Family definition requires the individual 'is not
+    a surviving spouse'). The engine's QSS-to-MFJ mapping does not correspond to an Alabama status — a filer widowed
+    before 2024 files Single or Head of Family in Alabama, so do not rely on the MFJ schedule for a federal QSS filer.
+  - The 2%/4%/5% schedule text is printed on the ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' (https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/)
+    and was verified numerically against the 2024 booklet's Tax Table rows (e.g. $16,000-$16,100 -> $763 single /
+    $723 MFJ; $4,100-$4,200 -> $168 / $146) and the over-$100,000 worksheet.

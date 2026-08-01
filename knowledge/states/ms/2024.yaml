@@ -1,0 +1,316 @@
+# MS state knowledge — tax year 2024. Fetched + cited from the MS DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 Resident,
+# Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-24-1-1-000,
+# Rev. 10/24), then independently re-derived from a second official document (the 2024
+# Form 80-105 itself, Rev. 09/24 — which prints the filing-status exemption amounts next
+# to each checkbox and the line 10 'Line 9 x $1,500' multiplier — plus the 2024 Form
+# 80-106 payment voucher) — resolutions recorded inline where the passes differed.
+# HEADLINE 2024 CHANGE (HB 531, 2022 session, phase-in): the rate on taxable income in
+# excess of $10,000 DROPS to 4.7% (2023: 5%). The 0% band on the first $10,000 stays.
+# Exemptions ($6,000/$12,000/$8,000 + $1,500 dependent) and standard deductions
+# ($2,300/$4,600/$3,400) are UNCHANGED. Scheduled: 4.4% (2025), 4.0% (2026) — do NOT
+# use those for 2024, and do NOT source the 2024 rate from the live DOR FAQ (it already
+# shows the 2025 4.4% rate).
+jurisdiction: states/ms
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'Mississippi does NOT conform to federal tax treaties and re-taxes treaty-exempt income. Two .gov findings
+  establish this for 2024. (1) The MS DOR Individual Income Tax FAQ states verbatim: "Does Mississippi honor federal
+  income tax exemption treaties between the United States and other foreign counties? No, as a general rule, Mississippi
+  does not follow federal income tax exemption treaties. Any income earned on a 1042S should be reported on the
+  Mississippi return as taxable income." (2) Unlike most states, MS does NOT start from federal AGI — the 2024 Form
+  80-105 builds Mississippi income from scratch line-by-line (wages line 38 through other income line 48; "Total
+  income" line 49) and then applies MS-specific adjustments (lines 50-65) to reach "Mississippi adjusted gross income"
+  (line 66). Because the return is built from gross income items rather than inheriting the federal AGI exclusion,
+  treaty-exempt wages/income (e.g., reported on a 1042-S) are pulled into Mississippi taxable income directly; no
+  special add-back schedule is needed. Net effect: treaty-exempt income IS taxed by Mississippi, so conforms_to_federal_treaties
+  = false.'
+citation:
+  source: MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; resident/nonresident/part-year
+    forms; filing requirement; 1042-S taxable). CAUTION on rates — the live FAQ shows the CURRENT-year (2025, 4.4%)
+    rate; the 2024 filing-season rate (4.7%) is verified at the 2024 Form 80-100 instructions instead.
+  url: https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions
+starts_from: Mississippi gross income computed from scratch on the return (NOT federal AGI). The 2024 resident Form
+  80-105 starts from individual income line items (wages line 38 through other income line 48), totals them at line
+  49 "Total income," then subtracts MS adjustments (lines 50-65) to reach line 66 "Mississippi adjusted gross income."
+  There is no "federal adjusted gross income" starting line on the resident return.
+residency:
+  summary: 'Per the 2024 instructions (Form 80-100, "Am I a Resident or a Non-Resident?"): a legal resident is an
+    individual who maintains a home, apartment, or other place of abode in Mississippi, OR who exercises the rights
+    of citizenship in Mississippi by meeting the requirements as a voter, OR who enjoys the benefits of homestead
+    exemption. Residency is based on domicile/legal residence: an individual remains a legal resident of Mississippi
+    (even if temporarily absent for varying intervals) until citizenship rights are relinquished and a new legal
+    residence is established (changes in driver''s license, vehicle tags, voter registration, and property taxes
+    evidence intent to change legal residence). A part-year resident is someone who moved into or out of Mississippi
+    during the year; part-year residents file Form 80-205 and are taxed only on income earned while a Mississippi
+    resident, prorating deductions and exemptions. Nonresidents file Form 80-205 and are taxed only on Mississippi-source
+    income (e.g., wages for services performed in Mississippi), reporting total income from all sources solely to
+    prorate deductions and exemptions.'
+forms:
+  resident: Form 80-105, Mississippi Resident Individual Income Tax Return (2024; Form 80-105-24-8-1-000, Rev. 09/24)
+  part_year_or_nonresident: Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return
+    (2024)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Dependent Care Credit (2024 credit code 44)
+  type: nonrefundable
+  eligibility: Mississippi individuals who claim the federal income tax credit for certain dependent care expenses
+    on their federal return. The taxpayer must actually claim the federal credit and must have federal adjusted
+    gross income (AGI) of not more than $50,000.
+  amount: 25% of the amount of the federal dependent care credit claimed on the taxpayer's federal income tax return;
+    the credit is limited to the taxpayer's total Mississippi income tax liability.
+  income_limit_2024: Federal AGI must be not more than $50,000.
+  claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 44 per the 2024 TAX CREDIT CODES table (NOTE
+    — the code moved; in the 2023 booklet this credit was listed under a different code, and code 37 is the Endowment
+    Fund Charitable Credit for 2024); total carried to Form 80-105 line 19 (resident) or Form 80-205 line 21 (non-resident/part-year).
+  citation:
+    source: Mississippi Department of Revenue, 2024 Individual Income Tax Instructions (Form 80-100-24-1-1-000,
+      Rev. 10/24), 'Dependent Care Credit' section and TAX CREDIT CODES table (code 44)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf
+- name: Child Adoption Credit (credit code 25)
+  type: nonrefundable
+  eligibility: A Mississippi taxpayer who legally adopts a dependent child, for qualified adoption expenses paid
+    or incurred during the tax year for each child. The credit is claimed for the tax year in which the adoption
+    becomes final.
+  amount: Up to $10,000 per child for a dependent child residing in Mississippi before adoption; up to $5,000 per
+    child for a dependent child residing outside Mississippi before adoption. Any unused credit may be carried forward
+    5 years.
+  income_limit_2024: None stated.
+  claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 25; total carried to Form 80-105 line 19 (resident)
+    or Form 80-205 line 21 (non-resident/part-year).
+  citation:
+    source: Mississippi Department of Revenue, 2024 Individual Income Tax Instructions (Form 80-100-24-1-1-000),
+      'Child Adoption Credit' section and TAX CREDIT CODES table (code 25)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf
+- name: Long Term Care Credit (2024 credit code 27)
+  type: nonrefundable
+  eligibility: Mississippi individual taxpayers who pay premiums during the taxable year for certain qualified long-term
+    care insurance policies as defined in IRC Section 7702B. If more than one person is carried on the same policy,
+    the credit is available only for that one policy.
+  amount: 25% of premiums paid during the taxable year, not to exceed $500.00, or the taxpayer's income tax liability,
+    whichever is less, for each individual qualified long-term care insurance policy. No carryforward is allowed
+    for any unused portion.
+  income_limit_2024: None stated.
+  claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 27 per the 2024 TAX CREDIT CODES table; total
+    carried to Form 80-105 line 19 (resident) or Form 80-205 line 21 (non-resident/part-year).
+  citation:
+    source: Mississippi Department of Revenue, 2024 Individual Income Tax Instructions (Form 80-100-24-1-1-000),
+      'Long Term Care Credit' section and TAX CREDIT CODES table (code 27)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf
+- name: Credit for Income Tax Paid to Another State
+  type: nonrefundable
+  eligibility: A legal resident of Mississippi who earns income in another state and is required to pay income tax
+    to that other state, on income also taxed by Mississippi. The taxpayer MUST file a return with the other state
+    and attach a copy (plus Form 80-160); W-2 withholding amounts alone are not sufficient. Not applicable on the
+    Non-Resident return.
+  amount: 'Credit for the total income tax due to the other state, subject to three statutory limitations under
+    Miss. Code Ann. Sec. 27-7-77: (1) cannot exceed the Mississippi income tax due on line 17; (2) cannot exceed
+    income tax actually paid to the other state; (3) cannot exceed an amount computed by applying the highest applicable
+    Mississippi rates to the net taxable income reported to the other state.'
+  income_limit_2024: None (limited instead by the formula above).
+  claimed_on: Form 80-105 line 18 (resident return); supported by Form 80-160 with a copy of the other state's return
+    attached.
+  citation:
+    source: 'Mississippi Department of Revenue, 2024 Individual Income Tax Instructions (Form 80-100-24-1-1-000),
+      ''Line 18: Credit for Income Tax Paid to Another State'' section'
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf
+filing_requirement:
+  note: 'Per 2024 instructions (Form 80-100, "DO I HAVE TO FILE?"), file a Mississippi return if any apply: you
+    had Mississippi income tax withheld (other than gambling); you are a non-resident or part-year resident with
+    income taxed by Mississippi (other than gambling); single resident with gross income over $8,300 plus $1,500
+    per dependent; married resident (combined) with gross income over $16,600 plus $1,500 per dependent; a minor
+    resident with gross income over the personal exemption plus standard deduction for the filing status; residents
+    working outside Mississippi/abroad must report total gross income regardless of source. If not required to file
+    but Mississippi tax was withheld, file to obtain a refund.'
+mailing_addresses:
+  refund_or_no_payment: 'Returns requesting a REFUND: Department of Revenue, P.O. Box 23058, Jackson, MS 39225-3058.
+    (Per the 2024 Form 80-105 footer "Mail REFUND returns to" and the 2024 instructions, WHEN AND WHERE SHOULD I
+    FILE.)'
+  with_payment: 'All other returns (with payment or no tax due): Department of Revenue, P.O. Box 23050, Jackson,
+    MS 39225-3050. (Per the 2024 Form 80-105 footer "Mail all other returns to" and the 2024 instructions.) When
+    mailing the Form 80-106 payment voucher WITHOUT the return, send to: Department of Revenue, P.O. Box 23192,
+    Jackson, MS 39225-3192; WITH the return: P.O. Box 23050, Jackson, MS 39225-3050.'
+  citation:
+    source: MS DOR — 2024 Form 80-105 (mailing footer), 2024 Form 80-100 instructions (WHEN AND WHERE SHOULD I FILE),
+      and 2024 Form 80-106 payment voucher (with/without-return addresses)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105248.pdf
+payment:
+  check_payee: Department of Revenue (2024 Form 80-106 payment voucher — 'Make the check or money order payable
+    to Department of Revenue'; write the identification number on the check/money order).
+  web_pay_url: https://tap.dor.ms.gov
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: MS DOR — 2024 Form 80-100 instructions, WHEN AND WHERE SHOULD I FILE ('Calendar year returns must be
+      filed no later than April 15th annually')
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf
+all_citations:
+- source: MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; resident/nonresident/part-year
+    forms; 1042-S taxable). Rates on the live FAQ are CURRENT-year (2025) figures — not used for 2024.
+  url: https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions
+- source: 'MS DOR — 2024 Form 80-100 Resident, Non-Resident and Part-Year Resident Instructions (Form 80-100-24-1-1-000,
+    Rev. 10/24): LEGISLATIVE CHANGES (HB 531 — Tax Year 2024 excess of $10,000 @ 4.7%; 2025 4.4%; 2026 4%), TAX
+    RATES (p.21: 0% on the first $10,000.00 and 4.7% on the excess), SCHEDULE OF TAX COMPUTATION (x 0% / x 4.7%),
+    Filing Status and Exemptions table ($12,000/$4,600 MFJ and Married-Spouse Died 2024; $6,000/$2,300 MFS; $8,000/$3,400
+    Head of Family; $6,000/$2,300 single), Additional Exemptions chart ($1,500 dependent/age-65/blind), DO I HAVE
+    TO FILE thresholds, whole-dollar rounding, April 15th due date, mailing addresses'
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf
+- source: MS DOR — 2024 Form 80-105 Resident Individual Income Tax Return (Form 80-105-24-8-1-000, Rev. 09/24) —
+    second-pass verification (income built from line items 38-49, line 66 Mississippi adjusted gross income; filing-status
+    exemption amounts printed next to each checkbox; line 10 'Line 9 x $1,500'; line 17 'Income tax due (from Schedule
+    of Tax Computation)'; mailing footer)
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105248.pdf
+- source: MS DOR — 2024 Form 80-106 Individual/Fiduciary Income Tax Payment Voucher (check payee 'Department of
+    Revenue'; with/without-return mailing; TAP payment)
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80106248.pdf
+- source: MS DOR — Make Online Tax Payments / Taxpayer Access Point (TAP)
+  url: https://www.dor.ms.gov/forms-resources/make-online-tax-payments
+- source: MS DOR — Taxpayer Access Point (TAP) login system
+  url: https://tap.dor.ms.gov/_/
+unverified:
+- The 2024 Form 80-205 (Non-Resident/Part-Year) revision number was not separately pulled this pass; the 80-100
+  instructions cover both forms and the non-resident line mapping (line 16 -> 19, 17 -> 20, etc.) is quoted from
+  them. Confirm the exact 2024 Form 80-205 print at the DOR before relying on its line numbers.
+- The live DOR FAQ page's rate answer ('the remaining taxable income is taxed at 4.4%') reflects tax year 2025,
+  not 2024 — the 2024 4.7% rate is two-pass confirmed at the 2024 Form 80-100 instructions (TAX RATES p.21 + Schedule
+  of Tax Computation + HB 531 legislative-changes table). Do not source 2024 figures from the live FAQ.
+- The 2023 pack listed the Dependent Care Credit as code 37 and the Long Term Care Credit as code 17; the 2024 TAX
+  CREDIT CODES table prints Dependent Care = 44, Long Term Care = 27, and code 37 = Endowment Fund Charitable Credit.
+  The 2024 codes were taken from the 2024 booklet's table; confirm on Form 80-401 when claiming.
+tax:
+  citation:
+    source: '2024 Mississippi Resident, Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-24-1-1-000,
+      Rev. 10/24), MS DOR — ''TAX RATES'' (p.21): ''Income Tax: 0% on the first $10,000.00 of taxable income and 4.7%
+      on taxable income in excess of $10,000.00''; LEGISLATIVE CHANGES (HB 531, 2022 session: ''Tax Year 2024 — Excess
+      of $10,000 @ 4.7%; Tax Year 2025 — 4.4%; Tax Year 2026 — 4%''); ''SCHEDULE OF TAX COMPUTATION'' (line 1 First
+      $10,000 ($0-$10,000) x 0%, line 2 Remaining balance x 4.7%, line 4 total to page 1 line 17); ''Filing Status and
+      Exemptions'' table: exemption $12,000 married filing joint/combined and Married-Spouse Died 2024, $6,000 married
+      filing separate (each), $8,000 Head of Family, $6,000 single; standard deduction $4,600 / $4,600 / $2,300 / $3,400
+      / $2,300; ''Additional Exemptions'' chart: $1,500 each dependent, $1,500 age 65 or over (taxpayer/spouse only),
+      $1,500 blind (taxpayer/spouse only); Lines 13/14/15/16/17 instructions; whole-dollar rounding rule. Corroborated
+      (second pass) by the 2024 Form 80-105 (Form 80-105-24-8-1-000, Rev. 09/24), which prints the exemption amounts
+      next to each filing-status checkbox (''Married - Combined or Joint Return ($12,000)'' ... ''Single ($6,000)'')
+      and the line 10 ''Line 9 x $1,500'' multiplication — both passes agree on every figure.'
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10000, rate: 0}
+    - {over: 10000, but_not_over: null, rate: 0.047}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 10000, rate: 0}
+    - {over: 10000, but_not_over: null, rate: 0.047}
+    married_filing_separately:
+    - {over: 0, but_not_over: 10000, rate: 0}
+    - {over: 10000, but_not_over: null, rate: 0.047}
+    head_of_household:
+    - {over: 0, but_not_over: 10000, rate: 0}
+    - {over: 10000, but_not_over: null, rate: 0.047}
+  base: state_gross_income
+  tax_line: 'Form 80-105, page 1, line 17 ''Income tax due (from Schedule of Tax Computation, see instructions)''.
+    Instructions, Line 16: ''Subtract lines 14 and 15 from line 13 and enter the result on line 16... The amount of
+    income tax due is calculated based on this amount. Use the Schedule of Tax Computation... to compute the amount
+    of income tax due.'' Line 17: ''Using the taxable income amount(s) from line 16... the Schedule of Tax Computation...
+    should be completed to determine the total Mississippi income tax liability.'' Schedule of Tax Computation: line
+    1 ''First $10,000'' x 0%; line 2 ''Remaining balance'' x 4.7%; line 4 ''Total income tax - enter on page 1, line
+    17''.'
+  exemptions:
+    dependent:
+      amount: 1500
+      note: 'Line 10 = line 9 x $1,500 (2024 instructions, ''Additional Exemptions'': ''Each dependent, other than yourself
+        or spouse ... $1,500''). A dependency exemption is not authorized for yourself or your spouse. Head of Family
+        filers: the one required dependent IS counted here — ''you are allowed $8,000 on line 11 and $1,500 for the required
+        dependent listed on line 6 which totals $9,500''. MARRIED FILING SEPARATELY CAVEAT: line 15 halves the TOTAL line-12
+        exemption (($12,000 + $1,500 x dependents)/2), so the effective per-spouse dependent exemption is $750, not $1,500
+        — this pack overstates the MFS-with-dependents exemption; compute that case on the form.'
+    age_65:
+      amount: 1500
+      note: Additional $1,500 exemption per box checked on line 8, taxpayer or spouse ONLY (a person is 65 on the day
+        before the 65th birthday; no age exemption for dependents). It IS a base reduction (flows through lines 9-12 to
+        line 15) but is NOT applied by calc.state_tax — enter it on the form's lines 8-10.
+    blind:
+      amount: 1500
+      note: Additional $1,500 exemption per box checked on line 8 for blindness, taxpayer or spouse ONLY. It IS a base
+        reduction (flows through lines 9-12 to line 15) but is NOT applied by calc.state_tax — enter it on the form's
+        lines 8-10.
+  standard_deduction:
+    single: 8300
+    married_filing_jointly: 16600
+    married_filing_separately: 8300
+    head_of_household: 11400
+  notes:
+  - '2024 RATE CUT (HB 531 phase-in) — the rate on taxable income in excess of $10,000 DROPS to 4.7% (2023: 5%); the
+    0% band on the first $10,000 is unchanged. The booklet prints the year schedule: 4.7% (2024), 4.4% (2025), 4.0%
+    (2026). CAUTION: the live DOR FAQ already answers with the 2025 4.4% rate — the 2024 filing-season authority is
+    the 2024 Form 80-100 booklet (TAX RATES p.21 + Schedule of Tax Computation).'
+  - 'Base guidance: Supply Mississippi adjusted gross income: 2024 Form 80-105 (resident return), page 1, line 13,
+    which is carried from page 2, line 66 ''Mississippi adjusted gross income (line 49 minus line 65)''. Mississippi
+    does NOT start from federal AGI — the return builds MS income from its own line items (wages line 38 through other
+    income line 48, totaled at line 49) minus MS adjustments (lines 50-65). Do NOT supply federal AGI. The pack ships
+    the subtractions to get from line 13 to line 16 ''Mississippi taxable income'' for a standard-deduction filer:
+    the shipped standard_deduction for each status is the SUM of the MS standard deduction and the MS filing-status
+    exemption (see notes), and the shipped dependent exemption is $1,500 each; the rate schedule then reproduces line
+    17. Itemizers (Form 80-108 Schedule A) and nonresident/part-year filers (Form 80-205, which prorates deductions
+    and exemptions) must be computed on the form instead.'
+  - 'Adjudication note (two-pass): exemptions_count must be 0 — the Mississippi per-status personal exemption ($6,000
+    single/MFS, $12,000 MFJ, $8,000 Head of Family) is FOLDED INTO the shipped standard_deduction amounts (see modeling
+    note), never applied per count. Only dependents_count is applied ($1,500 each).'
+  - '2024 Mississippi rates (instructions p.21, ''TAX RATES''): 0% on the first $10,000.00 of taxable income and 4.7%
+    on taxable income in excess of $10,000.00. ONE schedule covers ALL filing statuses (the Schedule of Tax Computation
+    has no per-status rate columns); it is duplicated per status here.'
+  - 'MODELING NOTE — shipped standard_deduction is a COMBINED per-status amount: Mississippi''s personal exemption
+    is a fixed per-FILING-STATUS amount (Single $6,000; Married Filing Joint/Combined $12,000; Married Filing Separate
+    $6,000 per spouse; Head of Family $8,000), not a per-person amount, so it cannot be shipped as a ''personal''
+    per-item exemption (Head of Family''s $8,000 is not $6,000 x any count). The shipped standard_deduction = MS standard
+    deduction + MS filing-status exemption: Single $2,300 + $6,000 = $8,300; MFJ $4,600 + $12,000 = $16,600; MFS $2,300
+    + $6,000 = $8,300; Head of Family $3,400 + $8,000 = $11,400. No ''personal'' exemption key is shipped, so exemptions_count
+    has no effect. Corroboration: the booklet''s own filing thresholds are exactly these sums — ''Single... gross
+    income in excess of $8,300 plus $1,500 for each dependent; Married... in excess of $16,600 plus $1,500 for each
+    dependent.'' All amounts unchanged from 2023.'
+  - 'MARRIED COMBINED RETURN (two-column) math is NOT modeled — can OVERSTATE tax by up to $470 for two-income couples
+    in 2024: on a combined return where both spouses have positive taxable income (Form 80-105 columns A and B), the
+    Schedule of Tax Computation line 1 gives EACH column its own first $10,000 (or part) at 0%, so up to $20,000 of
+    the couple''s combined taxable income is taxed at 0% (the DOR FAQ confirms: ''If married filing joint, the first
+    $10,000 of each taxpayer''s taxable income is exempt''). This pack''s single-base married_filing_jointly computation
+    gives only one $10,000 zero band and matches the form only when all income is in Column A (one-income couple /
+    true joint return). If one column is positive and the other negative, the form nets them in Column A; if both
+    are negative, no tax is due.'
+  - 'MARRIED FILING SEPARATELY: Form 80-105 line 15 instruction — ''Enter the amount from line 12. If Married-Filing
+    Separate, divide this amount by 2.'' Each MFS spouse gets exactly half the total authorized exemptions (($12,000
+    + $1,500 x dependents)/2 = $6,000 + $750 per dependent), and any unused portion of one spouse''s standard deduction
+    ($2,300) or exemption ($6,000) may NOT be used by the other spouse. The shipped $8,300 is exact for MFS with zero
+    dependents; with dependents the shipped $1,500/dependent overstates the exemption by $750 each — compute on the
+    form. If one MFS spouse itemizes, the other must also itemize.'
+  - Head of Family (Mississippi's head-of-household status) REQUIRES at least one dependent living in the home the
+    entire year; that required dependent is listed on line 6, counted on line 7/9, and DOES receive the $1,500 dependent
+    exemption ('$8,000 on line 11 and $1,500 for the required dependent... totals $9,500') — pass it in dependents_count.
+  - 'Qualifying surviving spouse mapping: Mississippi''s ''Married - Spouse Died in Tax Year (2024)'' status uses
+    the identical $12,000 exemption and $4,600 standard deduction as Married Filing Joint/Combined, so it maps cleanly
+    to married_filing_jointly. Mississippi has no multi-year qualifying-surviving-spouse status.'
+  - Age 65-or-over and blind additional exemptions ($1,500 per box checked, taxpayer and spouse only, Form 80-105
+    line 8) are base reductions but are NOT applied by calc.state_tax — take them on the form (they are shipped as
+    informational 'age_65'/'blind' keys only).
+  - 'Itemized deductions: filers may itemize on Form 80-108 Schedule A instead of the standard deduction (state income
+    taxes and MS gaming losses are NOT deductible); this pack assumes the standard deduction.'
+  - 'Tax CREDITS are not modeled: line 18 credit for income tax paid to another state (Form 80-160) and line 19 other
+    credits (Form 80-401 — e.g. Dependent Care Credit, 2024 code 44, = 25% of the federal credit for federal AGI <=
+    $50,000; Child Adoption Credit code 25; Long Term Care Credit code 27) are subtracted from line 17 tax AFTER the
+    rate schedule; they are credits, not exemptions.'
+  - Consumer use tax and catastrophe savings tax are separate additions on the return and are NOT part of the line
+    17 income tax this pack computes.
+  - 'No tax-table mandate: Mississippi has no lookup-table requirement — every filer computes line 17 with the Schedule
+    of Tax Computation bracket math, so the pack''s marginal math matches the form exactly. The schedule prints no
+    ''$X + Y% of excess over $Z'' additive constants, so there is no rounded-constant divergence to quantify.'
+  - 'Rounding: the booklet mandates whole-dollar rounding (''All dollar amounts should be rounded to the nearest whole
+    dollar (no pennies). Round down to the next lower dollar amounts under $.50 and round up to the next higher dollar
+    amounts of $.50 and over'') — identical to the engine''s round-half-up.'
+  - Nonresidents and part-year residents file Form 80-205 (taxable income line 19, tax line 20) and must PRORATE deductions
+    and exemptions by the MS-income ratio — this pack models only the full-year resident Form 80-105.
+  - 'No mid-year 2024 rate change: HB 531 (2022 session) set the 4.7% rate for all of tax year 2024; the booklet''s
+    TAX RATES section and Schedule of Tax Computation both print 4.7% and there was no special-session amendment for
+    2024.'

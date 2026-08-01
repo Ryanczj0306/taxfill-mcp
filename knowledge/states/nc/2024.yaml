@@ -1,0 +1,190 @@
+# NC state knowledge — tax year 2024. Fetched + cited from the NC DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 D-401
+# instruction booklet, then independently re-checked against a second official document
+# (the 2024 Form D-400 web-fill itself) — resolutions recorded inline where a second
+# document does not print the figure.
+jurisdiction: states/nc
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'NC conforms. The 2024 D-401 instructions state on Line 6: "The starting point for determining North
+  Carolina taxable income is federal adjusted gross income" (IRC as of January 1, 2023 — the 2024 booklet keeps
+  the January 1, 2023 conformity date). Because federally treaty-exempt income is already excluded from federal
+  AGI, it flows through to NC untaxed UNLESS NC adds it back. The Form D-400 Schedule S, Part A "Additions to Federal
+  Adjusted Gross Income" list in the 2024 D-401 (Lines 1-16: non-NC state/local bond interest, Opportunity Fund
+  deferred gains, 85% bonus depreciation, 85% of the IRC 179 difference, S-corp built-in gains, federal-over-state
+  basis on 2024 dispositions, federal NOL, pass-through state/local/foreign income tax under IRC 164, non-qualifying
+  N.C. 529 withdrawals, discharge of qualified principal residence indebtedness, employer education-loan payments
+  under IRC 127(c), expenses allocable to exempt income, discharge of certain student loan debt, etc.) contains
+  NO add-back of treaty-exempt income. Since treaty-exempt income is not re-taxed, conforms_to_federal_treaties
+  = true. Note one nuance to flag for filers: Schedule S Part A Line 12 requires adding back EXPENSES allocable
+  to income exempt from NC tax, but it does not add back the exempt income itself.'
+citation:
+  source: 2024 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must
+    File, residency), When Must I File ("the 2024 return is due on or before April 15th, 2025"), What is the Tax
+    Rate? ("For tax year 2024, the individual income tax rate is 4.5%... multiply your North Carolina taxable income
+    by 4.5% (0.0450)"), Where Do I File / How Can I Pay (mailing addresses, payee), Line 6 federal AGI starting
+    point, Line 7 Additions / Schedule S Part A list, Filing Requirements Chart (p.6)
+  url: https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open
+starts_from: federal adjusted gross income (Form D-400, Line 6 — "The starting point for determining North Carolina
+  taxable income is federal adjusted gross income"); the NC starting basis is the Internal Revenue Code as of January
+  1, 2023 (the 2024 D-401 states all IRC changes as of January 1, 2023 apply for tax year 2024 unless NC specifically
+  decouples)
+residency:
+  summary: Residency is based on domicile. A North Carolina RESIDENT is an individual domiciled in NC at any time
+    during 2024, or who resided in NC during 2024 for other than a temporary or transitory purpose; an individual
+    present in NC for more than 183 days during the taxable year is presumed (rebuttably) to be a resident, though
+    absence for more than 183 days raises no presumption of non-residence. A PART-YEAR RESIDENT is one who moved
+    into and became a resident of NC during 2024, or who moved out of NC and became a resident of another state
+    during 2024 (a resident who moves away remains an NC resident until a definite new domicile is established elsewhere
+    and the NC domicile is abandoned). A NONRESIDENT is one who was not a resident at any time during 2024 but received
+    income from NC sources. A nonresident alien may be treated as resident, part-year, or nonresident for NC purposes;
+    nonresident aliens are required to file NC returns at the same time they are required to file their federal returns.
+forms:
+  resident: Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents
+  part_year_or_nonresident: Form D-400 with Form D-400 Schedule PN (2024 Part-Year Resident and Nonresident Schedule)
+    to compute the NC taxable percentage (D-400 Line 13); if needed, Form D-400 Schedule PN-1 (Other Additions and
+    Other Deductions). All filers, including part-year residents and nonresidents, file the same Form D-400.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L).'
+credits:
+- name: Credit for Income Tax Paid to Another State or Country
+  type: nonrefundable
+  eligibility: N.C. residents (and part-year residents for the resident period) only. Available when income earned
+    while a legal resident of North Carolina is taxed by both North Carolina and another U.S. state or a foreign
+    country because it was earned in or derived from sources in that other state/country. No credit for tax paid
+    to a city/county/other political subdivision or to the federal government. Nonresidents are NOT entitled to
+    this credit. A copy of the return filed with the other state/country and proof of payment must be attached
+    (the 2024 D-401 "What You Should Send Us" list requires a copy of the other state's return when the credit
+    is claimed on Form D-400TC, Part 1, Line 7a).
+  amount: Credit = the LESSER of (a) the proportion of N.C. income tax attributable to the double-taxed income
+    or (b) the net income tax actually paid to the other state/country on that income (2024 D-401, Form D-400TC
+    Part 1 instructions — "Line 6. Amount of Net Tax Paid to the Other State or Country on the Income Shown on
+    Line 2"). No fixed dollar amount. For multiple states/countries, a separate Out-of-State Tax Credit Worksheet
+    is used per jurisdiction.
+  income_limit_2024: 'No income limit. The credit is limited mechanically: total credits taken (D-400TC Part 3)
+    cannot exceed the N.C. income tax on D-400 Line 15.'
+  claimed_on: Form D-400TC, Part 1 (result flows through Part 3); then reported on Form D-400, Line 16 ("Tax Credits
+    (From Form D-400TC, Part 3, Line 20)" per the 2024 D-400 form).
+  citation:
+    source: NCDOR 2024 D-401 Individual Income Tax Instructions (Instructions for Form D-400TC, Part 1) and 2024
+      Form D-400 Line 16
+    url: https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open
+- name: Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L)
+  type: nonrefundable
+  eligibility: Narrow / not broadly applicable to ordinary residents. Available to taxpayers who incur qualified
+    rehabilitation expenditures/expenses on a certified historic structure or historic mill facility under Article
+    3D, Article 3H (historic mill facility), or Article 3L (Historic Rehabilitation Tax Credits Investment Program;
+    requires Form NC-Rehab attached to the front of Form D-400). Distinguishes income-producing vs. non-income-producing
+    structures.
+  income_limit_2024: No income limit, but total credits on D-400TC cannot exceed the N.C. income tax on D-400 Line
+    15. Specific credit percentages/caps vary by Article (3D/3H/3L) and are set in the respective General Statutes
+    / Form NC-Rehab, which were not extracted as exact figures here.
+  claimed_on: Form D-400TC, Part 2 (Article 3L requires Form NC-Rehab; the 2024 D-401 "What You Should Send Us"
+    list names Form NC-478 and Form NC-Rehab attachments); flows to D-400 Line 16.
+  citation:
+    source: NCDOR 2024 D-401 Instructions (Form D-400TC credits; What You Should Send Us — NC-478/NC-Rehab)
+    url: https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open
+  unverified: true
+filing_requirement:
+  note: 'A 2024 NC return is required if federal gross income for 2024 exceeds the filing threshold for your status
+    (2024 Filing Requirements Chart, D-401 p.6): Single $12,750; Married Filing Jointly $25,500; Married Filing
+    Separately $12,750 (if spouse does not claim itemized deductions) or $0 (if spouse claims itemized deductions);
+    Head of Household $19,125; Qualifying Widow(er)/Surviving Spouse $25,500; Nonresident Alien $0 (regardless of
+    filing status). NC minimum gross income filing requirements differ from the IRC because NC''s standard deduction
+    differs from the federal. A part-year resident or nonresident with NC-source income must file if total gross
+    income from all sources exceeds the threshold for the filing status.'
+mailing_addresses:
+  refund_or_no_payment: N.C. DEPARTMENT OF REVENUE, P.O. BOX R, RALEIGH, NC 27634-0001 (if due a refund and filing
+    on paper)
+  with_payment: N.C. DEPARTMENT OF REVENUE, P.O. BOX 25000, RALEIGH, NC 27640-0640 (if not due a refund — mail
+    the return, any payment due, and Form D-400V)
+  citation:
+    source: 2024 D-401 North Carolina Individual Income Tax Instructions — "Where Do I File?" (refund P.O. Box R;
+      payment P.O. Box 25000 with Form D-400V)
+    url: https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: N.C. Department of Revenue ("Make your check or money order payable to the N.C. Department of Revenue
+    for the full amount due. Write ''2024 D-400'' and your name, address, and last 4 digits of your SSN on the payment";
+    check/money order must be drawn on a U.S. (domestic) bank and payable in U.S. dollars; do not send cash)
+  web_pay_url: https://www.ncdor.gov/file-pay/file-pay-individuals
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 D-401 North Carolina Individual Income Tax Instructions — "When Must I File?" ("the 2024 return
+      is due on or before April 15th, 2025"); automatic four-month extension if out of the country on the due date;
+      federal automatic extension honored when the "Federal Extension" circle on D-400 page 1 is filled in (else
+      Form D-410)
+    url: https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open
+all_citations:
+- source: 2024 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must
+    File, residency/183-day presumption), When Must I File (April 15, 2025), What is the Tax Rate? (4.5% / 0.0450),
+    Where Do I File / How Can I Pay (mailing addresses, payee, "2024 D-400" memo), Line 6 federal AGI starting point
+    and IRC January 1, 2023 conformity date, Line 7 Additions / Schedule S Part A list, Line 10 Child Deduction
+    Worksheet and Table, Line 11 N.C. Standard Deduction Chart, Filing Requirements Chart (p.6), Form D-400TC Part
+    1 out-of-state credit instructions
+  url: https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open
+- source: '2024 Form D-400 (web-fill, D-400 Web-Fill 9-24) — Line 6 Federal Adjusted Gross Income, Line 7 additions
+    (Schedule S Part A Line 16), Line 9 deductions (Schedule S Part B Line 41), Line 10 child deduction, Line 11
+    standard/itemized deduction, Line 14 N.C. Taxable Income, Line 15 "Multiply Line 14 by 4.5% (0.0450)" (second-pass
+    verification of the rate), Line 16 Tax Credits (From Form D-400TC, Part 3, Line 20)'
+  url: https://www.ncdor.gov/2024-d-400-web-fill-version/open
+- source: NCDOR — File & Pay for Individuals (online payment by bank draft free; Mastercard/Visa $2 convenience
+    fee per $100 paid, per the 2024 D-401 "How Can I Pay?")
+  url: https://www.ncdor.gov/file-pay/file-pay-individuals
+unverified:
+- 'The exact online portal landing URL for paying 2024 individual income tax: the 2024 D-401 booklet says to pay
+  online via the Department''s website but does not print a specific deep-link URL — https://www.ncdor.gov/file-pay/file-pay-individuals
+  is the Department''s live File & Pay page; confirm the live payment link at ncdor.gov.'
+- 'Standard deduction second pass: the 2024 Form D-400 itself does not print the standard deduction amounts, so
+  the $12,750/$25,500/$19,125 chart was verified against two separate charts WITHIN the 2024 D-401 (the Line 11
+  N.C. Standard Deduction Chart and the p.6 Filing Requirements Chart, which NC pegs to the standard deduction)
+  rather than against a second document.'
+- Form D-400 Schedule S, Part A Lines 14-15 texts were not transcribed line-by-line from the 2024 booklet (Lines
+  1-13 and the Line 16 total were); the no-treaty-add-back conclusion rests on the transcribed lines plus the D-401's
+  enumeration containing no treaty item. Confirm the full 2024 Schedule S if a treaty-income edge case is in play.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified two-pass against the cited 2024 D-401 instructions and the 2024
+# Form D-400 web-fill itself (ncdor.gov): rate 4.5% (down from 4.75% in 2023),
+# standard deduction chart unchanged from 2023.
+tax:
+  citation:
+    source: '2024 D-401 North Carolina Individual Income Tax Instructions — "For tax year 2024, the individual income
+      tax rate is 4.5%. To calculate your North Carolina tax liability, multiply your North Carolina taxable income
+      by 4.5% (0.0450)"; N.C. Standard Deduction Chart (D-400 Line 11): $12,750 single / $25,500 MFJ-QSS / $12,750 MFS
+      ($0 if spouse itemizes) / $19,125 HoH; child deduction table (D-400 Line 10); D-400 Line 6 = federal AGI. Second
+      pass: the 2024 Form D-400 (web-fill 9-24) itself prints Line 15 "Multiply Line 14 by 4.5% (0.0450). If zero or
+      less, enter a zero." — both passes agree (the form does not print the standard-deduction chart; see pack unverified).'
+    url: https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open
+  flat_rate: 0.045
+  base: federal_agi
+  tax_line: 'D-400 Line 15: multiply Line 14 (N.C. taxable income, full-year residents) by the income tax rate of
+    4.5% (0.0450) — printed on the 2024 form: "Multiply Line 14 by 4.5% (0.0450). If zero or less, enter a zero."
+    Line 6 starts from federal AGI; Line 14 = federal AGI + additions - deductions - child deduction (Line 10) - N.C.
+    standard/itemized deduction (Line 11).'
+  exemptions: {}
+  standard_deduction:
+    single: 12750
+    married_filing_jointly: 25500
+    married_filing_separately: 12750
+    head_of_household: 19125
+  notes:
+  - 'Rate change: the individual income tax rate dropped to 4.5% (0.0450) for tax year 2024 (from 4.75% in 2023) —
+    2024 D-401 "What is the Tax Rate?"; the standard deduction chart is unchanged from 2023.'
+  - 'Standard-deduction gates NOT modeled by calc.state_tax: MFS gets $0 if the spouse itemizes, and the N.C. standard
+    deduction is ZERO for anyone not eligible for the FEDERAL standard deduction (see federal Pub 501; the filing
+    chart lists nonresident aliens at $0) — itemizers use D-400 Line 11 itemized deductions (Form D-400 Schedule A)
+    instead; compute those cases on the form.'
+  - 'N.C. child deduction (D-400 Line 10) is NOT modeled: up to $3,000 per qualifying child (a child for whom the
+    federal child tax credit was allowed), stepping down $3,000/$2,500/$2,000/$1,500/$1,000/$500/$0 by federal AGI
+    (MFJ/QSS brackets up to $40,000 ... over $140,000; HoH up to $30,000 ... over $105,000; Single/MFS up to $20,000
+    ... over $70,000) — the 2024 D-401 Child Deduction Table is unchanged from 2023; take it from the worksheet, not
+    from a per-dependent exemption.'
+  - North Carolina has no personal or dependent exemptions.

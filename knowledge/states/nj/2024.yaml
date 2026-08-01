@@ -1,0 +1,319 @@
+# NJ state knowledge — tax year 2024. Fetched + cited from the NJ DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure was drafted from the 2024 NJ-1040 resident
+# instruction booklet, then independently re-derived from the 2024 NJ-1040NR nonresident
+# instruction booklet (which prints the SAME 2024 Tax Rate Schedules) — resolutions
+# recorded inline where the passes differed.
+jurisdiction: states/nj
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'New Jersey does NOT start from federal AGI. The NJ Gross Income Tax is a self-contained system that
+  builds gross income from its own statutory categories. The 2024 NJ-1040 instructions explicitly direct: "Use ''State
+  Wages'' from box 16 of your W-2, not federal wages (box 1)" and note that New Jersey''s inclusion rules (e.g. 401(k)
+  is the only pre-tax plan excluded) "cause your State wages (box 16) to be higher than your federal wages (box 1)";
+  income taxable for NJ that is not in box 16 "must [be] add[ed] ... back into your State wages." Because NJ never
+  imports federal AGI, a federal tax-treaty exemption (which reduces federal box 1 / federal AGI) does NOT automatically
+  pass through. The word "treaty" does not appear anywhere in the 2024 NJ-1040 instructions, and NJ''s Gross Income
+  Tax Act contains no provision recognizing federal income tax treaties, so federally treaty-exempt wages are generally
+  still taxable for NJ purposes. This puts NJ in the "builds income from scratch, no treaty pass-through" category
+  -> conforms_to_federal_treaties = false. (Conservative reading; the precise NJ treatment of a specific treaty
+  article should be confirmed at the DOR.)'
+citation:
+  source: 2024 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) - Do You Have to File p.3
+    ($10,000 / $20,000 thresholds), Which Form to File / Domicile pp.4-5, Line 15 Wages (State wages box 16, not
+    federal box 1), How to Pay / check payable to 'State of New Jersey - TGI' pp.46-47, Where to Mail Your Return
+    (PO Box 555 refunds; PO Box 111 payments) p.47, When to File / April 15, 2025 p.4
+  url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+starts_from: state-computed (NJ gross income built from its own income categories; wages taken from W-2 box 16 "State
+  wages," NOT federal AGI or federal box 1 wages)
+residency:
+  summary: 'Residency is determined by domicile and a statutory-resident test. Domicile is "the place you consider
+    your permanent home — the place where you intend to return after a period of absence"; you have only one domicile
+    and it continues until you establish a new permanent home elsewhere. (1) If NJ is your domicile, you are a RESIDENT
+    unless you (a) did not maintain a permanent home in NJ, (b) maintained a permanent home outside NJ, AND (c)
+    did not spend more than 30 days in NJ. (2) If NJ is NOT your domicile, you are a resident only if you maintain
+    a permanent home in NJ and spend more than 183 days here (statutory resident). A NONRESIDENT has no NJ domicile
+    and does not meet the 183-day statutory test. PART-YEAR: there is no part-year resident return — if you change
+    domicile mid-year you file NJ-1040 (as a part-year resident) reporting income received during the resident period,
+    and if you also had NJ-source income while a nonresident you must also file NJ-1040NR.'
+forms:
+  resident: NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their
+    NJ residency period.
+  part_year_or_nonresident: NJ-1040NR (New Jersey Nonresident Income Tax Return). Used by nonresidents with NJ-source
+    income and by part-year nonresidents (indicate residency period). There is no separate part-year resident return.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: New Jersey Earned Income Tax Credit (NJEITC)
+  type: refundable
+  eligibility: New Jersey residents who work and have earned income and who claimed and were allowed the federal
+    Earned Income Credit (EIC). Residents at least 18 years old who meet all federal EIC requirements EXCEPT the
+    age requirement, have no qualifying child, and are not listed as a dependent on another return may claim a fixed
+    NJEITC ($253 for 2024) even without a federal EIC — the maximum age limit has been eliminated. Part-year residents
+    prorate by months of NJ residency.
+  amount: '40% of the taxpayer''s federal Earned Income Credit (EIC). 2024 instructions, Line 58: "The NJEITC is
+    40% of the federal EIC. If you claimed and were allowed a federal earned income credit (EIC), enter 40% of your
+    federal EIC amount." Age-expansion filers (18+, no qualifying child, no federal EIC solely due to age) enter
+    $253 for 2024.'
+  income_limit_2024: Tied to the federal EIC income limits for tax year 2024 (varies by filing status and number
+    of qualifying children). The state does not set a separate dollar income limit; eligibility follows federal
+    EIC qualification.
+  claimed_on: Form NJ-1040, Line 58
+  citation:
+    source: 2024 NJ-1040 Resident Income Tax Return Instructions, Line 58 (New Jersey Division of Taxation)
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+- name: Property Tax Deduction/Credit (homeowners and tenants)
+  type: refundable
+  eligibility: Residents who were domiciled in NJ and maintained a principal residence (main home) as a homeowner
+    or tenant during 2024 that was subject to property taxes (paid directly as a homeowner, or through rent for
+    tenants — 18% of rent, or 18% of mobile-home site fees, counts as property taxes paid). Taxpayer takes EITHER
+    the deduction OR the credit (whichever gives the greater benefit; Worksheet H decides). Seniors 65+ or blind/disabled
+    persons below the filing threshold can claim the credit on Form NJ-1040-HW without filing NJ-1040.
+  amount: 'Property Tax Credit: $50 ($25 if married/CU partner filing separately) — refundable, taken on Line 56;
+    do not claim it if you claimed the Line 41 deduction. Alternatively, Property Tax Deduction: property taxes
+    paid (or 18% of rent) up to a maximum of $15,000 ($7,500 if married/CU partner filing separately) — taken on
+    Line 41. Only one benefit may be claimed.'
+  income_limit_2024: No upper income limit to claim the deduction/credit. Those not otherwise required to file (gross
+    income at or below the $10,000 single-or-MFS / $20,000 other-statuses filing threshold) can still claim the
+    Property Tax Credit if age 65+ or blind/disabled, using Form NJ-1040-HW.
+  claimed_on: Form NJ-1040, Line 41 (Property Tax Deduction) or Line 56 (Property Tax Credit); or Form NJ-1040-HW
+    for eligible seniors/blind/disabled not required to file NJ-1040
+  citation:
+    source: 2024 NJ-1040 Resident Income Tax Return Instructions, Property Tax Deduction/Credit (Lines 40a, 41,
+      and 56, Worksheets G/H), and Form NJ-1040-HW instructions
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+- name: Child and Dependent Care Credit
+  type: refundable
+  eligibility: Resident taxpayers who have earned income, paid someone to care for one or more qualifying persons
+    so they could work or look for work, and who were allowed the federal child and dependent care credit (civil-union
+    and non-joint-federal filers compute a mock federal credit per the Worksheet J instructions). Married filing
+    separately is only eligible if the federal exceptions are met.
+  amount: 'A percentage of the taxpayer''s federal child and dependent care credit, tiered by NJ taxable income
+    (Worksheet J, 2024): 50% if NJ taxable income (line 42) is $30,000 or less; 40% if over $30,000 to $60,000;
+    30% if over $60,000 to $90,000; 20% if over $90,000 to $120,000; 10% if over $120,000 to $150,000; not eligible
+    if over $150,000. Part-year residents prorate by months of NJ residency.'
+  income_limit_2024: New Jersey taxable income of $150,000 or less (over $150,000 = not eligible).
+  claimed_on: Form NJ-1040, Line 64 (computed on Worksheet J, p.43; enclose federal Form 2441)
+  citation:
+    source: 2024 NJ-1040 Resident Income Tax Return Instructions, Line 64 / Worksheet J (New Jersey Division of
+      Taxation)
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+- name: New Jersey Child Tax Credit
+  type: refundable
+  eligibility: Resident taxpayers with NJ taxable income (line 42) of $80,000 or less, claiming a credit for each
+    dependent who is age 5 or younger (born 2019 or later) on the last day of the tax year. The dependent must be
+    claimed on Lines 10/11 of the NJ-1040. Married filing separately is not eligible. Part-year residents prorate
+    by months of NJ residency.
+  amount: 'Per qualifying child (age 5 or younger), by NJ taxable income: $1,000 if $30,000 or less; $800 if over
+    $30,000 to $40,000; $600 if over $40,000 to $50,000; $400 if over $50,000 to $60,000; $200 if over $60,000 to
+    $80,000. Multiply the per-child amount by the number of qualifying dependents.'
+  income_limit_2024: New Jersey taxable income of $80,000 or less.
+  claimed_on: Form NJ-1040, Line 65
+  citation:
+    source: 2024 NJ-1040 Resident Income Tax Return Instructions, Line 65 (New Jersey Division of Taxation)
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+filing_requirement:
+  note: 'For 2024, you must file an NJ return if your gross income (from everywhere) for the entire year was more
+    than the filing threshold: $10,000 for Single or Married/CU partner filing separate return; $20,000 for Married/CU
+    couple filing joint, Head of household, or Qualifying widow(er)/surviving CU partner. Also file if NJ tax was
+    withheld and you are due a refund, if you paid NJ estimated tax for 2024 and are due a refund, or if you are
+    eligible for the NJ EITC or another refundable credit. (2024 NJ-1040 instructions, p.3; restated in the Line
+    29 instructions.)'
+mailing_addresses:
+  refund_or_no_payment: State of New Jersey, Division of Taxation, Revenue Processing Center - Refunds, PO Box 555,
+    Trenton NJ 08647-0555
+  with_payment: State of New Jersey, Division of Taxation, Revenue Processing Center - Payments, PO Box 111, Trenton
+    NJ 08645-0111
+  citation:
+    source: 2024 NJ-1040 Resident Income Tax Return Instructions, 'Where to Mail Your Return' p.47 (Payment Due
+      Label PO Box 111; Refund Label PO Box 555)
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+payment:
+  check_payee: State of New Jersey - TGI (2024 instructions, How to Pay, verbatim - 'Make your check or money order
+    payable to State of New Jersey - TGI. Write your Social Security number on the check or money order'; enclose
+    Form NJ-1040-V payment voucher; e-check and credit-card options at nj.gov/taxation)
+  web_pay_url: https://www.nj.gov/treasury/taxation/
+deadlines:
+  filing_due_date: '2025-04-15'
+  automatic_extension: NJ grants a six-month extension (to October 15, 2025) if you file Form NJ-630 (or have a
+    federal extension), pay at least 80% of the tax liability by April 15, 2025, and file the return by the extended
+    date; the extension application can be filed online until 11:59 p.m. April 15, 2025.
+  citation:
+    source: 2024 NJ-1040 Resident Income Tax Return Instructions - 'Your 2024 New Jersey Income Tax return is due
+      by April 15, 2025' (p.4) and extension-of-time text
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+all_citations:
+- source: 2024 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) - Do You Have to File p.3,
+    Domicile/Which Form pp.4-5, Exemptions Lines 6-12 pp.6-7, Line 15 Wages (State wages box 16, not federal box
+    1), Line 29 NJ Gross Income and thresholds, Line 30 Exemption Amount, Lines 31-37c deductions, Lines 38-43 (taxable
+    income and tax), Worksheet J p.43, Lines 56-58 and 64-65 credits, How to Pay pp.46-47, Where to Mail Your Return
+    p.47, Tax Table p.54, Tax Rate Schedules p.63
+  url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+- source: 2024 NJ-1040NR Nonresident Income Tax Return Instructions (NJ Division of Taxation) — used as the independent
+    second-pass source; prints the identical 2024 New Jersey Tax Rate Schedules (Tables A and B, p.43), including
+    the Table B -$1,154.50 constant
+  url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040nri.pdf
+- source: 2024 Form NJ-1040NR (nonresident return form)
+  url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040nr.pdf
+- source: NJ Division of Taxation Publication GIT-6, Part-Year Residents and Nonresidents - Domicile, Resident (30-day
+    / 183-day statutory) definitions, Income Filing Thresholds, NJ-1040 vs NJ-1040NR
+  url: https://www.nj.gov/treasury/taxation/pdf/pubs/tgi-ee/git6.pdf
+- source: NJ Division of Taxation - Income Tax Forms (Form NJ-1040-V payment voucher / blank vouchers)
+  url: https://www.nj.gov/treasury/taxation/prntgit.shtml
+unverified:
+- 'Exact NJ treatment of a SPECIFIC federal tax-treaty article (e.g., student/researcher/teacher exemptions): the
+  conforms_to_federal_treaties=false conclusion is inferred from NJ''s wholly independent Gross Income Tax base
+  (box-16 state wages, no federal-AGI starting point, no statutory treaty recognition; the word ''treaty'' does
+  not appear in the 2024 instructions) rather than from explicit treaty language. Confirm the specific treaty scenario
+  directly with the NJ Division of Taxation.'
+- The general online tax/payment portal URL (nj.gov/treasury/taxation -> nj.gov/taxation) was cited from the instructions
+  text; the exact direct e-check / 'Make a Payment' deep link was not separately verified for the 2024 cycle. Confirm
+  the current direct payment URL at the DOR.
+- GIT-6 (residency publication) was not re-fetched this session; the domicile / 30-day / 183-day summary was re-confirmed
+  from the 2024 NJ-1040 instructions' own residency flowchart and Domicile text instead.
+tax:
+  citation:
+    source: '2024 Form NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) — New Jersey Tax Rate
+      Schedules, booklet p.63 (Table A: Single / Married-CU partner filing separate; Table B: Married-CU couple filing
+      joint / Head of household / Qualifying widow(er)-surviving CU partner); Line 43 Tax instruction and Line 42 New
+      Jersey Taxable Income; Exemptions Lines 6-12, pp.6-7; Line 13 Total Exemption Amount; Line 29 New Jersey Gross
+      Income and filing thresholds; Line 30 Exemption Amount and Lines 31-37c deductions; Line 38 Total Exemptions and
+      Deductions and Line 39 Taxable Income. Second pass: the 2024 NJ-1040NR nonresident instructions print the identical
+      2024 Tax Rate Schedules (Tables A and B, p.43, https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040nri.pdf)
+      — both passes agree on every bound, rate, and printed subtraction constant, including Table B''s -$1,154.50.'
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 20000, rate: 0.014}
+    - {over: 20000, but_not_over: 35000, rate: 0.0175}
+    - {over: 35000, but_not_over: 40000, rate: 0.035}
+    - {over: 40000, but_not_over: 75000, rate: 0.05525}
+    - {over: 75000, but_not_over: 500000, rate: 0.0637}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0897}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 20000, rate: 0.014}
+    - {over: 20000, but_not_over: 50000, rate: 0.0175}
+    - {over: 50000, but_not_over: 70000, rate: 0.0245}
+    - {over: 70000, but_not_over: 80000, rate: 0.035}
+    - {over: 80000, but_not_over: 150000, rate: 0.05525}
+    - {over: 150000, but_not_over: 500000, rate: 0.0637}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0897}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    married_filing_separately:
+    - {over: 0, but_not_over: 20000, rate: 0.014}
+    - {over: 20000, but_not_over: 35000, rate: 0.0175}
+    - {over: 35000, but_not_over: 40000, rate: 0.035}
+    - {over: 40000, but_not_over: 75000, rate: 0.05525}
+    - {over: 75000, but_not_over: 500000, rate: 0.0637}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0897}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    head_of_household:
+    - {over: 0, but_not_over: 20000, rate: 0.014}
+    - {over: 20000, but_not_over: 50000, rate: 0.0175}
+    - {over: 50000, but_not_over: 70000, rate: 0.0245}
+    - {over: 70000, but_not_over: 80000, rate: 0.035}
+    - {over: 80000, but_not_over: 150000, rate: 0.05525}
+    - {over: 150000, but_not_over: 500000, rate: 0.0637}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0897}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+  base: state_gross_income
+  tax_line: 'Line 43 - Tax on Amount on Line 42: "If the income on line 42 is less than $100,000, use the Tax Table
+    on page 54. Otherwise, calculate the tax by using the Tax Rate Schedules on page 63. Use the correct column or
+    schedule for your filing status. Enter the tax on line 43." (Line 42 - New Jersey Taxable Income: "Subtract line
+    41 from line 39 and enter the result. If you did not claim a Property Tax Deduction, enter the amount from line
+    39"; Line 39 Taxable Income = Line 29 gross income minus Line 38 total exemptions and deductions; Line 38 = "Add
+    lines 30 through 37c".)'
+  exemptions:
+    personal:
+      amount: 1000
+      note: 'Line 6 Regular Exemptions: ''You can claim a $1,000 exemption for yourself and your spouse/CU partner (if
+        filing a joint return) or your domestic partner'' (2024 NJ-1040 instructions p.6). A registered NJ domestic partner
+        who does not file an NJ return counts as one additional Line 6 exemption. A true base reduction: Line 13 total
+        flows to Line 30 and is subtracted from gross income before the rates apply.'
+    dependent:
+      amount: 1500
+      note: 'Lines 10 and 11: ''You can claim a $1,500 exemption for each child who qualifies as your dependent for federal
+        tax purposes'' (Line 10, qualified dependent children) and ''a $1,500 exemption for each other dependent who qualifies
+        as your dependent for federal tax purposes'' (Line 11, other dependents) — both categories are $1,500 each; count
+        both in dependents_count. Base reduction via Line 13 -> Line 30.'
+    age_65:
+      amount: 1000
+      note: 'Line 7 Senior 65+: $1,000 each for taxpayer and (if filing jointly) spouse who were 65 or older on the last
+        day of the tax year (born in 1959 or earlier); NOT allowed for domestic partners or dependents. NOT applied by
+        calc.state_tax — subtract it from the supplied base yourself or claim it on Line 7.'
+    blind_or_disabled:
+      amount: 1000
+      note: 'Line 8 Blind or Disabled: $1,000 each for taxpayer and (if filing jointly) spouse who were blind or disabled
+        on the last day of the tax year; NOT allowed for domestic partners or dependents. NOT applied by calc.state_tax
+        — subtract it from the supplied base yourself or claim it on Line 8.'
+    veteran:
+      amount: 6000
+      note: 'Line 9 Veteran Exemptions: $6,000 each for taxpayer and (if filing jointly) spouse who are military veterans
+        honorably discharged or released under honorable circumstances from active duty; documentation required the first
+        year. NOT applied by calc.state_tax — subtract it from the supplied base yourself or claim it on Line 9.'
+    dependent_attending_college:
+      amount: 1000
+      note: 'Line 12 Dependents Attending Colleges: ADDITIONAL $1,000 per dependent student (must already be claimed on
+        Line 10 or 11, under age 22 on the last day of the tax year (born 2003 or later), full-time at an accredited college,
+        at school some part of each of five calendar months, taxpayer paid half or more of tuition/maintenance). NOT applied
+        by calc.state_tax — subtract it from the supplied base yourself or claim it on Line 12.'
+  notes:
+  - 'Base guidance: Supply Form NJ-1040 Line 29, New Jersey Gross Income (Line 27 total income minus Line 28c pension/retirement
+    exclusion). NJ never starts from federal AGI — gross income is built from NJ''s own categories (wages from W-2
+    box 16 State wages). The op subtracts $1,000 x exemptions_count (Line 6 regular exemptions: self, spouse/CU partner,
+    or registered domestic partner) and $1,500 x dependents_count (Line 10 qualified dependent children plus Line
+    11 other dependents) to approximate Line 42 New Jersey Taxable Income. If any UNMODELED subtraction applies —
+    Line 7 senior 65+ ($1,000 each), Line 8 blind/disabled ($1,000 each), Line 9 veteran ($6,000 each), Line 12 dependent
+    attending college ($1,000 each), Lines 31-37c deductions (medical over 2% of gross income, alimony, qualified
+    conservation, health enterprise zone, alternative business calculation, organ/bone marrow donation, NJBEST up
+    to $10,000, NJCLASS up to $2,500, tuition up to $10,000), or the Line 41 Property Tax Deduction (up to $15,000;
+    $7,500 MFS) — reduce the supplied base by those amounts too, or compute on the form; otherwise the result will
+    overstate Line 43.'
+  - 'Adjudication note (two-pass): the 2024 Tables A and B were drafted from the resident booklet (p.63) and re-verified
+    against the 2024 NJ-1040NR instructions (p.43) — identical schedules, and NJ''s brackets are statutory (unchanged
+    since the 2020 millionaire''s-tax addition; 2024 print matches 2023 exactly). All printed STEP 3 subtraction constants
+    were reconciled against exact cumulative bracket math: every constant is exact EXCEPT Table B''s -$1,154.50 (see
+    the misprint note).'
+  - 'Tax Table MANDATE below $100,000: Line 43 directs ''If the income on line 42 is less than $100,000, use the Tax
+    Table on page 54. Otherwise, calculate the tax by using the Tax Rate Schedules on page 63.'' Bracket math may
+    differ by a few dollars within table bands; the filed form must use the table below $100,000. The Tax Rate Schedules
+    (shipped here) govern at $100,000 and above.'
+  - 'Filing threshold = no tax due: you are not required to file (and owe no NJ tax) if New Jersey gross income (Line
+    29) is at or below $10,000 (single; married/CU partner filing separate) or $20,000 (married/CU couple filing joint;
+    head of household; qualifying widow(er)/surviving CU partner). NOT modeled — the brackets tax from the first dollar,
+    so below-threshold filers would be overstated; file only to recover withholding or refundable credits.'
+  - 'Printed-constant divergence (Table B only), the famous misprint constant: the 70,000-80,000 bracket prints ''multiply
+    by .035, subtract $1,154.50'', but the exact cumulative constant is $1,155.00 — the printed schedule yields $0.50
+    MORE than exact marginal-bracket math everywhere inside that bracket, and rejoins exactly at $80,000 (the next
+    constant, $2,775.00, is exact). Every other printed constant in Tables A and B equals the cumulative sum exactly.
+    The same $1,154.50 appears in both the 2024 resident (p.63) and nonresident (p.43) prints, as it has since 2020.'
+  - 'One schedule covers three statuses: Table B applies identically to married/CU couple filing joint, head of household,
+    and qualifying widow(er)/surviving CU partner — the head_of_household brackets shipped here are Table B, identical
+    to married_filing_jointly, and the engine''s QSS->married_filing_jointly mapping is exact (no divergence). Table
+    A applies to single and married/CU partner filing separate (MFS is NOT half of MFJ; copied as printed). Civil-union
+    partners must use the corresponding married/CU filing statuses.'
+  - New Jersey has NO standard deduction — standard_deduction is null because none exists, not because it is income-dependent.
+    NJ instead allows specific deductions on Lines 31-37c (medical expenses over 2% of gross income, alimony, qualified
+    conservation contribution, health enterprise zone, alternative business calculation adjustment, organ/bone marrow
+    donation, up to $10,000 NJBEST 529 contributions, up to $2,500 NJCLASS loan principal and interest, up to $10,000
+    tuition) and the Line 41 Property Tax Deduction (property taxes paid or 18% of rent, capped at $15,000; $7,500
+    if married/CU partner filing separately). None of these are modeled.
+  - The op applies ONLY the $1,000 Line 6 regular exemption (x exemptions_count) and the $1,500 Line 10/11 dependent
+    exemption (x dependents_count). The result equals Form NJ-1040 Line 43 only when no other exemption (senior, blind/disabled,
+    veteran, college dependent) and no Lines 31-37c or Line 41 deduction applies; otherwise pre-subtract those amounts
+    from the base you supply.
+  - 'NJ exemptions are genuine BASE reductions (Line 13 total -> Line 30, subtracted from gross income before the
+    rates), not credits. Separately, NJ''s refundable CREDITS are not modeled: NJ Earned Income Tax Credit (Line 58,
+    40% of federal EIC; $253 fixed amount for 2024 age-expansion filers), $50 Property Tax Credit (Line 56; $25 MFS),
+    Child and Dependent Care Credit (Line 64, Worksheet J), NJ Child Tax Credit (Line 65, up to $1,000 per child age
+    5 or younger), and the Credit for Income Taxes Paid to Other Jurisdictions (Line 44).'
+  - Part-year residents must prorate the Line 13 exemption total on Line 30 by months of NJ residency (15+ days counts
+    as a month) — NOT modeled; full-year exemption amounts are shipped.
+  - 'No 2024 rate change: the 2024 schedules (top rate 10.75% over $1,000,000) are the statutory schedules in force
+    since tax year 2020, republished unchanged in the final 2024 booklet used for the 2025 filing season; New Jersey
+    had no mid-year retroactive rate legislation for 2024.'

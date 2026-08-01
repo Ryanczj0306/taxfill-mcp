@@ -1,0 +1,350 @@
+# ME state knowledge — tax year 2024. Fetched + cited from the ME DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 MAINE Individual
+# Income Tax Booklet (24_1040me_book_gen_instr.pdf — general instructions + 2024 tax table
+# + 2024 tax rate schedules), then independently re-derived from a second official document
+# (the standalone MRS "State of Maine - Individual Income Tax, 2024 Rates" sheet of
+# Sept 15, 2023, and the 2024 Form 1040ME itself, which prints the "line 13 x $5,000"
+# exemption multiplier) — resolutions recorded inline where the passes differed.
+# HEADLINE 2024 CHANGES: brackets re-indexed (single 5.8% to $26,050 / 6.75% to $61,600 /
+# 7.15% above; HoH $39,050/$92,450; MFJ $52,100/$123,250 — 2023: $24,500/$58,050,
+# $36,750/$87,100, $49,050/$116,100); personal exemption ROSE $4,700 -> $5,000 (COLA 1.215);
+# standard deduction tracks the FEDERAL 2024 amounts $14,600/$29,200/$21,900; the Dependent
+# Exemption Tax Credit ($300) became REFUNDABLE for Maine residents/part-year residents
+# (L.D. 258; P.L. 2023, c. 412, Pt. ZZZ) and the PTFC 65+ maximums increased.
+jurisdiction: states/me
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Maine''s resident return (Form 1040ME) starts from federal adjusted gross income: 2024 Form 1040ME
+  line 14 is "FEDERAL ADJUSTED GROSS INCOME" and the instructions (Line 14) say to enter the federal adjusted gross
+  income shown on your federal return. Maine''s only income additions are on Schedule 1A (per 36 M.R.S. § 5122(1)),
+  and the full 2024 Schedule 1A list contains NO add-back of federally treaty-exempt income — the additions are
+  limited to specific items (line 1 non-Maine municipal/state bond interest; line 2 NOL recovery adjustment; line
+  3 MainePERS contributions; lines 4-5 bonus depreciation / Maine capital investment credit add-backs; line 6 fiduciary
+  adjustments; line 7 nonresident installment-sale gain election; line 8 pass-through financial-institution adjustments;
+  line 9 wellness programs credit adjustment; line 10 enrolled tribal members; line 11 reserved). Because treaty-exempt
+  income is already excluded from federal AGI and there is no Maine add-back, it flows through and is not re-taxed.
+  Maine therefore conforms to federal treaty exclusions (unlike California, which adds treaty income back on Schedule
+  CA). Basis: 2024 Form 1040ME instructions, Line 14 and Schedule 1A (24_1040me_book_gen_instr.pdf).'
+citation:
+  source: 2024 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — Line 14 federal AGI starting
+    point, Schedule 1A income additions (no treaty add-back), Who-must-file, due date Tuesday April 15 2025, payee
+    'Treasurer, State of Maine', Maine Tax Portal revenue.maine.gov, IMPORTANT CHANGES for 2024 (refundable dependent
+    exemption tax credit; PTFC 65+ increase; pension income deduction increase), 2024 Tax Year Quick Facts ($5,000
+    personal exemption; $14,600/$21,900/$29,200 standard deduction), 2024 MAINE INCOME TAX TABLE and 2024 TAX RATE
+    SCHEDULES
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf
+starts_from: federal AGI (Form 1040ME Line 14 = "FEDERAL ADJUSTED GROSS INCOME" from the federal return)
+residency:
+  summary: Maine taxes individuals based on domicile and a statutory-resident test. Per the 2024 booklet ("What
+    is my Residency Status?"), a full-year resident is one for whom (1) Maine was their domicile for the entire
+    year of 2024, or (2) they maintained a permanent place of abode in Maine for the entire year and spent a total
+    of more than 183 days in Maine. Domicile is the place an individual establishes as their permanent home, including
+    the place to which they intend to return after any period of absence; once established it continues until a
+    new, fixed and permanent home is acquired. A part-year resident was domiciled in Maine for part of the year
+    and was not a full-year resident. A nonresident was not a resident or part-year resident in 2024 but has Maine-source
+    income. A "safe harbor resident" is treated as a nonresident — General Safe Harbor (Maine domicile in 2024 but
+    no permanent place of abode in Maine, a permanent abode maintained outside Maine, and no more than 30 days spent
+    in Maine) or Foreign Safe Harbor (at least 450 days in a foreign country during any 548-day period occurring
+    partially or fully in the tax year, plus other criteria). Safe harbor residents, part-year residents, and nonresidents
+    file Form 1040ME with Schedule NR or NRH.
+forms:
+  resident: Form 1040ME (Maine Individual Income Tax Return) — resident return
+  part_year_or_nonresident: Form 1040ME with Schedule NR (Form 1040ME), "Schedule for Calculating the Nonresident
+    Credit"; married taxpayers electing to file as single may use Schedule NRH (Form 1040ME) instead. Used by nonresidents,
+    part-year residents, and safe harbor residents. (Full-year residents may not file Schedule NR.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Maine Earned Income Credit (EIC)
+  type: refundable
+  eligibility: Maine residents and part-year residents who properly claim the federal earned income tax credit
+    (including filers using an IRS-issued ITIN who would otherwise qualify, and filers at least age 18 with no qualifying
+    children who would otherwise qualify for the federal EIC). For nonresidents the credit is nonrefundable (Schedule
+    A, line 12) and may not reduce Maine tax below zero.
+  amount: 25% of the federal EIC (50% of the federal EIC for taxpayers with no qualifying children), for tax years
+    beginning on or after January 1, 2022 (which includes 2024).
+  income_limit_2024: No separate Maine income limit; eligibility tracks the federal EIC income limits (taxpayer
+    must otherwise qualify for the federal earned income tax credit).
+  claimed_on: Form 1040ME, Schedule A, line 4 (refundable, residents/part-year residents); Schedule A, line 12 for
+    nonresidents. Computed on the Earned Income Tax Credit Worksheet.
+  citation:
+    source: Maine Revenue Services - Maine Earned Income Credit (EIC) page ('For tax years beginning on or after
+      January 1, 2022, the Maine EIC is equal to 25% (50% for taxpayers with no qualifying children) of the federal
+      earned income tax credit'); and 2024 Form 1040ME booklet, Schedule A lines 4 and 12 instructions
+    url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/earned-income-credit
+- name: Property Tax Fairness Credit (PTFC)
+  type: refundable
+  eligibility: Maine residents and part-year residents who owned or rented a home in Maine during any part of 2024
+    and lived in it as their principal residence, and who paid property tax greater than 4% of total income OR rent
+    greater than 26.67% of total income. Cannot be claimed if filing status is married filing separately.
+  amount: 'Refundable credit up to $1,000 ($2,000 if you or your spouse were at least 65 — raised for 2024 from
+    $1,500 by L.D. 258, P.L. 2023, c. 412, Pt. S). Up to $2,000 ($4,000 if 65+) if you or your spouse is a U.S.
+    Armed Forces veteran rated 100% permanently and totally disabled by the VA. Credit = benefit base (property
+    tax, or rent x 15%, capped at the maximum benefit base: $2,450 single; $3,200 HoH with 0-1 dependents / $3,900
+    with more; $3,200 MFJ/QSS with 0 dependents / $3,900 with 1 or more; $4,000 for any filer 65+ regardless of
+    status/dependents) minus 4% of total income, capped at the applicable maximum.'
+  income_limit_2024: '2024 total income must be less than: Single $61,250; Head of Household $80,000 (0 or 1 dependent)
+    / $97,500 (more than 1 dependent); Married Filing Jointly or Qualifying Surviving Spouse $80,000 (0 dependents)
+    / $97,500 (1 or more dependents); OR less than $100,000 for any filer 65 years of age or older.'
+  claimed_on: Form 1040ME, line 25d; computed on Schedule PTFC/STFC, line 16.
+  citation:
+    source: 2024 Form 1040ME, Schedule PTFC/STFC (lines 7-16 and 'Who is eligible?' — $2,450/$3,200/$3,900 maximum
+      benefit base, $4,000 if 65+, line 12 $1,000/$2,000 maximums, veteran $2,000/$4,000) and 2024 booklet PTFC
+      page (income-limit table) + IMPORTANT CHANGES for 2024 (65+ maximums increased)
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_Sch%20PTFC_ff_0.pdf
+- name: Sales Tax Fairness Credit (STFC)
+  type: refundable
+  eligibility: Individuals who were Maine residents during any part of the 2024 tax year, are not married filing
+    separately, and cannot be claimed as a dependent on another person's return. Credit amount depends on the number
+    of qualifying children and dependents claimed on Form 1040ME, line 13a.
+  amount: Refundable credit up to $270 for 2024, depending on number of qualifying children and dependents (the
+    exact amount comes from the Schedule PTFC/STFC line 17 table based on filing status, total income, and dependents).
+  income_limit_2024: '2024 total income not more than: $31,750 if single; $49,850 if head of household; $62,500
+    if married filing jointly or qualifying surviving spouse.'
+  claimed_on: Form 1040ME, line 25e; computed on Schedule PTFC/STFC, line 17 (or line 17a if filing Schedule NR/NRH).
+  citation:
+    source: 2024 MAINE Individual Income Tax Booklet — SALES TAX FAIRNESS CREDIT section (up to $270; income limits
+      $31,750/$49,850/$62,500) and 2024 Tax Year Quick Facts
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf
+- name: Child Care Credit
+  type: refundable
+  eligibility: Maine residents and part-year residents (a nonrefundable portion is also available to nonresidents,
+    Schedule A line 10) who claimed the federal credit for child and dependent care expenses. The credit doubles
+    if the expenses are related to a quality child care provider.
+  amount: 25% of the federal child and dependent care credit (doubled — 50% — for expenses paid to a quality child
+    care provider). The credit is refundable up to $500 (Schedule A, line 2); any amount above $500 is claimed as
+    a nonrefundable credit (Schedule A, line 10).
+  income_limit_2024: No stated Maine income limit; the credit is a percentage of the federal child and dependent
+    care credit.
+  claimed_on: Form 1040ME, Schedule A, line 2 (refundable, up to $500) and line 10 (nonrefundable remainder); computed
+    on the Worksheet for Child Care Credit.
+  citation:
+    source: Maine Revenue Services — Credit for Child Care Expenses page ('equal to 25% of the federal credit...
+      doubles if the expenses are related to a quality child care provider... refundable up to $500', 36 M.R.S.
+      § 5218) and 2024 Form 1040ME booklet, Schedule A lines 2 and 10 instructions
+    url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/child-care-credit
+- name: Dependent Exemption Tax Credit
+  type: refundable
+  eligibility: Taxpayers with qualifying children and dependents (the number reported on Form 1040ME, line 13a)
+    for whom they are eligible to claim the federal child tax credit or the credit for other dependents under IRC
+    Section 24. NEW FOR 2024 — the credit is REFUNDABLE for Maine residents and part-year residents (L.D. 258; P.L.
+    2023, c. 412, Pt. ZZZ; 36 M.R.S. § 5219-SS); it remains nonrefundable for nonresidents (Schedule A, line 9).
+  amount: '$300 per qualifying child and dependent. Phases out for higher incomes: the credit may be limited if
+    Form 1040ME, line 16 Maine AGI exceeds $200,000 ($400,000 if married filing jointly) — computed on the Worksheet
+    for Dependent Exemption Tax Credit. Adjusted for inflation for tax years after 2024.'
+  income_limit_2024: Phaseout begins when Maine adjusted gross income exceeds $200,000 ($400,000 if married filing
+    jointly).
+  claimed_on: Form 1040ME, Schedule A, line 1 (refundable portion, residents/part-year residents — line 13a x $300)
+    or line 9 (nonrefundable, nonresidents); computed on the Worksheet for Dependent Exemption Tax Credit.
+  citation:
+    source: 2024 MAINE Individual Income Tax Booklet — IMPORTANT CHANGES for 2024 ('For tax years beginning on or
+      after January 1, 2024, the dependent exemption tax credit is refundable and for tax years beginning after
+      2024, the credit is adjusted for inflation. The credit is subject to phaseout.') and Schedule A lines 1/9
+      instructions ($300 per line 13a dependent; $200,000/$400,000 caution)
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf
+filing_requirement:
+  note: 'Per the 2024 Form 1040ME instructions ("Who must file?"): a Maine income tax return must be filed by April
+    15, 2025, if you are a Maine resident who is required to file a federal income tax return, OR if you are not
+    required to file a federal return but have income subject to Maine income tax resulting in a Maine income tax
+    liability. Even if required to file federally, a resident does not have to file a Maine return if they have
+    no income addition modifications (Schedule 1A, line 12) AND their income subject to Maine tax is less than the
+    sum of their Maine standard deduction plus personal exemption. A return must still be filed to claim a refund.
+    Generally, nonresidents/safe harbor residents with Maine-source income resulting in a Maine tax liability must
+    file (see Schedule NR instructions for minimum taxability thresholds; 36 M.R.S. § 5142(8-B) and Rule 806).'
+mailing_addresses:
+  refund_or_no_payment: Maine Revenue Services, P.O. Box 1066, Augusta, ME 04332-1066 (Form 1040ME if you are expecting
+    a refund / no balance due)
+  with_payment: Maine Revenue Services, P.O. Box 1067, Augusta, ME 04332-1067 (Form 1040ME if you are enclosing
+    a check for payment)
+  citation:
+    source: Maine Revenue Services — Mailing Addresses for Forms and Applications (Individual Income Tax Form 1040ME
+      with a check for payment = P.O. Box 1067; expecting a refund = P.O. Box 1066)
+    url: https://www.maine.gov/revenue/about/contact/mailing-addresses
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Treasurer, State of Maine (2024 booklet, Line 35 Total Amount Due — 'enclose (do not staple or tape)
+    a check or money order payable to Treasurer, State of Maine with your return. Include your complete name, address
+    and telephone number on your check or money order.' Payments of $1.00 or more may instead be remitted via the
+    Maine Tax Portal at revenue.maine.gov.)
+  web_pay_url: https://revenue.maine.gov
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: '2024 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — cover page ''Form 1040ME
+      due date: Tuesday, April 15, 2025'' and Who must file (''must be filed by April 15, 2025'')'
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf
+all_citations:
+- source: 2024 MAINE Individual Income Tax Booklet (Form 1040ME general instructions, 24_1040me_book_gen_instr.pdf)
+    — IMPORTANT CHANGES for 2024 (refundable dependent exemption tax credit, PTFC 65+ increase, pension income deduction
+    increase, Space Force, Lincoln Mill bonds), Who-must-file, residency/safe harbors, due date Tuesday April 15
+    2025, whole-dollar rounding rule, payee 'Treasurer, State of Maine', line 13/17/18 instructions with the Worksheet
+    for Standard/Itemized Deductions ($97,150/$145,750/$194,300 thresholds) and Worksheet for Phaseout of Personal
+    Exemption Deduction Amount ($323,900/$356,300/$388,650/$194,325), 2024 Tax Year Quick Facts, 2024 MAINE INCOME
+    TAX TABLE and 2024 TAX RATE SCHEDULES, Schedule 1A/1S/A instructions
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf
+- source: 'State of Maine - Individual Income Tax, 2024 Rates (MRS, September 15, 2023) — second-pass verification:
+    identical 2024 rate schedules (#1 Single/MFS $26,050/$61,600; #2 HoH $39,050/$92,450; #3 MFJ/Surviving Spouses
+    $52,100/$123,250), $5,000 personal exemption, standard deduction $14,600/$29,200/$21,900/$14,600, age/blindness
+    additional amounts $1,550 married / $1,950 unmarried, COLA multipliers 1.238/1.233 (brackets) and 1.215 (exemption)
+    under 36 M.R.S. § 5403'
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2024.pdf
+- source: 2024 Form 1040ME (Maine Individual Income Tax Return) — line 14 FEDERAL ADJUSTED GROSS INCOME, lines 15a/15b
+    modifications, line 16 MAINE ADJUSTED GROSS INCOME, line 17 DEDUCTION (standard/itemized), line 18 'EXEMPTION.
+    (Multiply line 13 x $5,000.)', line 19 TAXABLE INCOME, line 20 INCOME TAX (tax table or tax rate schedules)
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_ff.pdf
+- source: Maine Revenue Services — Mailing Addresses for Forms and Applications (1040ME with payment = PO Box 1067;
+    refund = PO Box 1066)
+  url: https://www.maine.gov/revenue/about/contact/mailing-addresses
+- source: Maine Revenue Services — Maine Earned Income Credit (EIC) page (25% / 50% no-qualifying-children, tax
+    years beginning on or after January 1, 2022)
+  url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/earned-income-credit
+- source: Maine Revenue Services — Credit for Child Care Expenses page (25% of the federal credit, doubled for quality
+    child care providers, refundable up to $500)
+  url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/child-care-credit
+- source: 2024 Schedule PTFC/STFC (Form 1040ME) — Property Tax Fairness Credit / Sales Tax Fairness Credit (2024
+    maximum benefit base table $2,450/$3,200/$3,900, $4,000 65+; line 12 $1,000/$2,000)
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_Sch%20PTFC_ff_0.pdf
+- source: Maine Revenue Services — Individual Income Tax (1040ME) program page
+  url: https://www.maine.gov/revenue/taxes/income-estate-tax/individual-income-tax-1040me
+unverified:
+- Whether 'Treasurer, State of Maine' is also the exact wording for estimated-tax/voucher payments (confirmed only
+  for the 1040ME balance-due check payee in the 2024 booklet, Line 35) — confirm at the DOR.
+- The nonresident employee de minimis rule (not required to file on personal-services income unless working in Maine
+  more than 12 days AND deriving more than $3,000 from Maine sources) was carried from the 2023 pack; the 2024 general-instructions
+  booklet defers minimum taxability thresholds to the Schedule NR instructions, which were not re-pulled this pass
+  — confirm at 36 M.R.S. § 5142(8-B) / Rule 806 / Schedule NR instructions.
+- Resident minimum-filing dollar thresholds are stated as a formula (standard deduction + personal exemption) rather
+  than a fixed dollar chart; specific 2024 dollar amounts were not extracted from a .gov chart in this pass.
+tax:
+  citation:
+    source: '2024 MAINE Individual Income Tax Booklet — Form 1040ME General Instructions (24_1040me_book_gen_instr.pdf):
+      ''2024 TAX RATE SCHEDULES'' (three schedules: #1 Single/MFS — less than $26,050 5.8%; $26,050-$61,600 $1,511 plus
+      6.75% of excess; $61,600 or more $3,911 plus 7.15% of excess; #2 Head of Household — $39,050 / $92,450, $2,265
+      / $5,870 constants; #3 Married/Surviving Spouses Filing Jointly — $52,100 / $123,250, $3,022 / $7,825 constants);
+      Line 13 Personal exemptions chart; Line 17 Deduction instruction + Worksheet for Standard/Itemized Deductions
+      ($97,150/$145,750/$194,300 thresholds); Line 18 Exemption instruction (''Multiply the amount shown on line 13
+      by $5,000'') + Worksheet for Phaseout of Personal Exemption Deduction Amount ($323,900/$356,300/$388,650/$194,325);
+      ''2024 Tax Year Quick Facts'' ($5,000 personal exemption; standard deduction base $14,600 single/MFS, $21,900
+      HoH, $29,200 MFJ/QSS); 2024 MAINE INCOME TAX TABLE. Second pass: the standalone MRS ''State of Maine - Individual
+      Income Tax, 2024 Rates'' sheet (Sept 15, 2023, https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2024.pdf)
+      prints identical rate schedules, the $5,000 personal exemption, and the $14,600/$29,200/$21,900/$14,600 standard
+      deductions (COLA 1.238/1.233 brackets, 1.215 exemption, 36 M.R.S. § 5403); the 2024 Form 1040ME itself prints
+      ''EXEMPTION. (Multiply line 13 x $5,000.)'' on line 18 — all passes agree.'
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 26050, rate: 0.058}
+    - {over: 26050, but_not_over: 61600, rate: 0.0675}
+    - {over: 61600, but_not_over: null, rate: 0.0715}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 52100, rate: 0.058}
+    - {over: 52100, but_not_over: 123250, rate: 0.0675}
+    - {over: 123250, but_not_over: null, rate: 0.0715}
+    married_filing_separately:
+    - {over: 0, but_not_over: 26050, rate: 0.058}
+    - {over: 26050, but_not_over: 61600, rate: 0.0675}
+    - {over: 61600, but_not_over: null, rate: 0.0715}
+    head_of_household:
+    - {over: 0, but_not_over: 39050, rate: 0.058}
+    - {over: 39050, but_not_over: 92450, rate: 0.0675}
+    - {over: 92450, but_not_over: null, rate: 0.0715}
+  base: federal_agi
+  tax_line: '2024 Form 1040ME, line 20: ''INCOME TAX. (Find the tax for the amount on line 19 in the tax table in
+    this booklet or compute your tax using the tax table or tax rate schedules available at maine.gov/revenue/tax-return-forms.)''
+    — where line 19 is ''TAXABLE INCOME. (Line 16 minus lines 17 and 18.)'''
+  exemptions:
+    personal:
+      amount: 5000
+      note: 'Maine personal exemption DEDUCTION, Form 1040ME line 18: ''EXEMPTION. (Multiply line 13 x $5,000.)'' — RAISED
+        from 2023''s $4,700 (COLA 1.215 applied to the 36 M.R.S. § 5126-A amount). Subtracted from Maine AGI before the
+        rate applies. Line 13 count: 1 if single, head of household, married filing separately, or qualifying surviving
+        spouse; 2 if married filing jointly; MFS enters 2 only if the taxpayer would claim a federal personal exemption
+        for the spouse but for the federal suspension; enter 0 if you may be claimed as a dependent on another person''s
+        return (MFJ: 0 if both spouses may be claimed, 1 if only one). Phases out when line 16 Maine AGI exceeds $323,900
+        single / $356,300 HoH / $388,650 MFJ-QSS / $194,325 MFS (fully gone over the next $125,000; $62,500 MFS) — phaseout
+        NOT modeled by this op.'
+  standard_deduction:
+    single: 14600
+    married_filing_jointly: 29200
+    married_filing_separately: 14600
+    head_of_household: 21900
+  notes:
+  - 'Base guidance: Supply Form 1040ME, line 16 (Maine adjusted gross income) = line 14 federal adjusted gross income
+    + line 15a income addition modifications (Maine Schedule 1A) - line 15b income subtraction modifications (Maine
+    Schedule 1S). The op then subtracts the shipped per-status standard deduction (Form 1040ME line 17) and $5,000
+    x exemptions_count (line 18) to reproduce line 19 TAXABLE INCOME, and applies the 2024 rate schedules to produce
+    line 20. Do NOT pre-subtract the deduction or exemption from the figure you supply. If you itemize (Schedule 2)
+    or your line 16 exceeds a phaseout threshold (deduction: $97,150 single/MFS, $145,750 HoH, $194,300 MFJ/QSS; exemption:
+    $323,900 single, $356,300 HoH, $388,650 MFJ/QSS, $194,325 MFS), compute lines 17-18 on the form''s worksheets
+    instead — the op does not model those adjustments.'
+  - 'Adjudication note (two-pass): base is federal_agi — 2024 Form 1040ME line 14 is FEDERAL ADJUSTED GROSS INCOME
+    and line 16 Maine AGI = federal AGI +/- Schedule 1A/1S modifications; supply line 16 (the op subtracts the $5,000-per-exemption
+    line 18 deduction and the federal-amount standard deduction). Dependent counts are zero by design: Maine dependents
+    get the $300 Dependent Exemption Tax Credit (REFUNDABLE for 2024 residents/part-year residents), not an income
+    exemption.'
+  - '2024 re-indexation (What''s New context): all three rate schedules keep the 5.8% / 6.75% / 7.15% rates but the
+    bracket boundaries rose (single/MFS $24,500/$58,050 -> $26,050/$61,600; HoH $36,750/$87,100 -> $39,050/$92,450;
+    MFJ/QSS $49,050/$116,100 -> $52,100/$123,250) — COLA 1.238 on the lowest dollar amounts and 1.233 on the highest
+    (36 M.R.S. § 5403, MRS 2024 Rates sheet). The personal exemption rose $4,700 -> $5,000 (COLA 1.215) and the standard
+    deduction tracks the FEDERAL 2024 amounts ($13,850/$27,700/$20,800 -> $14,600/$29,200/$21,900).'
+  - 'Rate schedule sharing: 2024 Tax Rate Schedule #1 is titled ''For Single Individuals and Married Persons Filing
+    Separate Returns'' — one schedule covers BOTH single and MFS, so the identical brackets are duplicated per status
+    (MFS is NOT half of MFJ in Maine; it equals single).'
+  - 'Qualifying surviving spouse maps to married_filing_jointly: Tax Rate Schedule #3 is titled ''For Married Individuals
+    and Surviving Spouses Filing Joint Returns'', and the tax table''s MFJ column is footnoted ''*This column must
+    also be used by a surviving spouse with dependent child.'' QSS also uses the $29,200 standard deduction and the
+    MFJ phaseout thresholds.'
+  - 'Printed ''$X plus Y% of excess over $Z'' constants are rounded to whole dollars and do not exactly equal the
+    cumulative marginal sums: Single/MFS constants $1,511 vs exact $1,510.90 (+$0.10) and $3,911 vs exact $3,910.525
+    (+$0.475); HoH constants $2,265 vs exact $2,264.90 (+$0.10) and $5,870 vs exact $5,869.40 (+$0.60); MFJ constants
+    $3,022 vs exact $3,021.80 (+$0.20) and $7,825 vs exact $7,824.425 (+$0.575). Pure marginal bracket math (what
+    this op does) can therefore differ from the printed-constant method by up to about $1 in the middle and top brackets.'
+  - 'Tax table: the booklet prints a 2024 MAINE INCOME TAX TABLE for line 19 taxable income under $100,000 in $100
+    bands; Form 1040ME line 20 authorizes computing tax with EITHER ''the tax table or tax rate schedules'', so bracket
+    math is a permitted method, but within a $100 band the table (built on band midpoints) may differ from exact bracket
+    math by a few dollars. At $100,000 and over the table itself directs the printed amount ''plus 7.15% of excess
+    over 100,000'' ($6,653 Single/MFS, $6,406 HoH) or the rate schedule (MFJ column).'
+  - 'SUPERSEDED-TABLES CAUTION: maine.gov hosts TWO 2024 tax-table files — the original 24_1040me_tax_tables.pdf prints
+    WRONG (2023-boundary) values and even reprints the 2023 rate schedules ($24,500/$58,050...) under a ''2024 TAX
+    RATE SCHEDULES'' heading; the corrected revision 24_1040me_tax_tables_2.pdf matches the booklet and the 2024 Rates
+    sheet. This pack''s schedules were verified against the booklet, the 2024 Rates sheet, and the corrected _2 revision
+    — do not source 2024 figures from the un-suffixed file.'
+  - 'Standard/itemized deduction PHASEOUT is NOT modeled: if Form 1040ME line 16 (Maine AGI) is more than $97,150
+    (single or MFS), $145,750 (HoH), or $194,300 (MFJ/QSS), the Worksheet for Standard/Itemized Deductions reduces
+    the line 17 deduction proportionally, reaching $0 once line 16 exceeds the threshold by $75,000 (single/MFS),
+    $112,500 (HoH), or $150,000 (MFJ/QSS) — i.e. fully phased out at $172,150 / $258,250 / $344,300. Above the threshold,
+    compute line 17 on the worksheet, not with the shipped standard deduction.'
+  - 'Personal exemption PHASEOUT is NOT modeled: if line 16 exceeds $323,900 (single), $356,300 (HoH), $388,650 (MFJ/QSS),
+    or $194,325 (MFS), the Worksheet for Phaseout of Personal Exemption Deduction Amount reduces the line 18 exemption
+    proportionally over the next $125,000 ($62,500 MFS).'
+  - 'DEPENDENTS GET A CREDIT, NOT AN EXEMPTION: Maine has no per-dependent income exemption. The Dependent Exemption
+    Tax Credit is $300 per qualifying child/dependent (Form 1040ME, Schedule A, line 1 — REFUNDABLE for Maine residents
+    and part-year residents beginning tax year 2024 per L.D. 258, P.L. 2023, c. 412, Pt. ZZZ; line 9 nonrefundable
+    for nonresidents), limited when Maine AGI exceeds $200,000 ($400,000 MFJ). It is subtracted from TAX, not from
+    income, and this op does not model it — dependents_count does not change the base.'
+  - 'Maine''s standard deduction is equal to the federal standard deduction amount (federal Form 1040, line 12); the
+    shipped figures are the 2024 BASE amounts. Additional amounts for age 65+ or blindness are NOT shipped because
+    they vary by marital status: $1,550 per occurrence if married (filing jointly or separately) or a qualified surviving
+    spouse (MFS may count spouse occurrences only if an exemption is claimable for the spouse); $1,950 per occurrence
+    if unmarried (single or HoH). Enter them via the federal standard deduction on the form.'
+  - 'Itemizers are not modeled: taxpayers who itemized federally complete Form 1040ME Schedule 2 (Maine itemized deductions,
+    limited to $35,250 for 2024 except medical expenses) and use the larger of that or the standard deduction on line
+    17 — except nonresident aliens MUST use itemized deductions.'
+  - Part-year residents, nonresidents, and safe-harbor residents compute line 20 tax on full Maine taxable income,
+    then subtract the nonresident credit on line 21 (Schedule NR or NRH) — not modeled by this op.
+  - Tax credit recapture (Form 1040ME line 20a) is added after line 20 and is not modeled.
+  - 'Rounding: use whole dollar amounts — ''Round down to the next lower dollar any amount less than 50 cents. Round
+    up to the next higher dollar any amount 50 cents or more'' (2024 booklet, Specific Instructions), matching the
+    engine''s half-up rounding.'
+  - 'No mid-year 2024 rate change: rates 5.8% / 6.75% / 7.15% with bracket dollar amounts inflation-adjusted under
+    36 M.R.S. § 5403 (published by MRS Sept 15, 2023; 36 M.R.S. § 5111 sub-§§ 1-F, 2-F, 3-F).'
+  - 'Cross-source confirmation: the standalone MRS document ''State of Maine - Individual Income Tax, 2024 Rates''
+    prints identical rate schedules, the $5,000 personal exemption, and the standard deduction amounts (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2024.pdf);
+    the corrected 2024 tax table file prints the same rate schedules on its final page (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_tax_tables_2.pdf);
+    the line 18/19/20 wording is from the 2024 Form 1040ME (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_ff.pdf).'
