@@ -1,0 +1,309 @@
+# RI state knowledge — tax year 2024. Fetched + cited from the RI DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the official 2024 RHODE
+# ISLAND TAX RATE SCHEDULE AND WORKSHEETS page, then independently re-derived from a
+# second official document (the 2024 Instructions for Filing RI-1040 'updated 12092024'
+# — its Line 4/Line 6 amounts and p. I-11 RHODE ISLAND TAX COMPUTATION WORKSHEET — plus
+# the 2024 RI Tax Table and the 2024 Form RI-1040 itself) — resolutions recorded inline
+# where the passes differed.
+# HEADLINE 2024 CHANGES: the RI EARNED INCOME CREDIT RISES TO 16% of the federal EITC
+# (was 15% for 2023; 2024 instructions, RI Schedule EIC: 'Line 40 - The Rhode Island
+# percentage is 16%'); the three-bracket structure is unchanged with breakpoints indexed
+# to $77,450/$176,050; the standard deduction, $4,950 exemption, and the $246,450
+# phaseout threshold are all indexed; the RI-1040H circuit-breaker maximum rises to $675
+# with a $39,275 household income limit.
+jurisdiction: states/ri
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'The RI-1040 resident return starts from federal adjusted gross income (2024 RI-1040 Line 1: "Federal
+  AGI (Federal Form 1040 or 1040-SR, line 11)"; instructions Line 1: "Enter your federal adjusted gross income
+  from Federal Form 1040 or Federal Form 1040-SR, line 11"), and the General Instructions state "the Rhode Island
+  income tax is based on your federal adjusted gross income." RI taxable income is built only via the RI Schedule
+  M modifications. The 2024 "Modifications Increasing Federal Adjusted Gross Income" on Schedule M are: out-of-state
+  municipal bond interest (2a), RI fiduciary adjustment (2b), recapture of Family Education Account modifications
+  (2c), bonus depreciation (2d), recapture of Tuition Savings Program/Section 529 modifications (2e), recapture
+  of previously-claimed tax-credit income (2f), recapture of Scituate Medical Savings Account modifications (2g),
+  pass-through entity tax taken as a federal deduction (2h), unemployment compensation not included in federal
+  AGI (2i), taxable Paycheck Protection Program loan amount (2j), and a reserved line (2k). NONE of these add back
+  income that is exempt from federal tax under a U.S. income tax treaty. Because treaty-exempt income is already
+  excluded from federal AGI and RI has no add-back of it, it flows through and is not re-taxed by Rhode Island.
+  Therefore RI conforms (treaty-exempt income is not re-taxed).'
+citation:
+  source: '2024 Instructions for Filing RI-1040 (Resident, updated 12/09/2024) — RI Division of Taxation: starting
+    point (Line 1 = federal AGI), Who Must File / Resident & domicile definitions (p. I-1), Where and When to File
+    / due date 4/15/2025 + mailing addresses 02908-5806 refund and 02908-5807 with-payment, Line 4 standard deduction
+    chart and Line 6 exemption amount $4,950 with the $246,450 phaseout, RI Schedule M modifications increasing/decreasing
+    federal AGI with no treaty add-back, RI Tax Computation Worksheet (p. I-11)'
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf
+starts_from: federal AGI (Federal Form 1040/1040-SR, line 11) — RI-1040 Line 1; RI taxable income then computed
+  via RI Schedule M modifications, RI standard deduction, and RI exemptions
+residency:
+  summary: 'Resident = an individual domiciled in Rhode Island, OR an individual who maintains a permanent place
+    of abode in Rhode Island and spends more than 183 days of the year in Rhode Island (statutory resident). Domicile
+    is "a place an individual regards as his or her permanent home - the place to which he or she intends to return
+    after a period of absence"; a domicile once established continues until a new fixed and permanent home is acquired.
+    Nonresident = any person not within the definition of a resident, who must file if they have income derived
+    from or connected with Rhode Island sources and are required to file a federal return. Part-year resident =
+    an individual who was a RI resident for a period of less than 12 months; files if required to file a federal
+    return. Nonresidents and part-year residents both use Form RI-1040NR (nonresidents complete Schedule II; part-year
+    residents complete Schedule III). Note: military pay of armed-forces members is taxed only by their state of
+    legal residence (Soldiers and Sailors Civil Relief Act); certain servicemember-spouse income may be exempt under
+    the Military Spouses Residency Relief Act.'
+forms:
+  resident: Form RI-1040 (Rhode Island Resident Individual Income Tax Return)
+  part_year_or_nonresident: Form RI-1040NR (Rhode Island Nonresident Individual Income Tax Return) — nonresidents
+    complete RI Schedule II; part-year residents complete RI Schedule III
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Rhode Island Earned Income Credit (RI EITC)
+  type: refundable
+  eligibility: Resident (and part-year/eligible nonresident) taxpayers who qualify for and claim the FEDERAL Earned
+    Income Tax Credit. RI does not impose its own separate eligibility test - if you receive the federal EITC, you
+    receive the RI EITC. You must claim the federal EITC (federal Form 1040/1040-SR, line 27) to claim the RI credit.
+  amount: '16% of the federal earned income credit for 2024 (INCREASED from 15% for 2023). Computed on RI Schedule
+    EIC: Line 39 = federal EITC; Line 40 = 16% (the Rhode Island percentage); Line 41 = Line 39 x Line 40.'
+  income_limit_2024: No separate Rhode Island income limit; eligibility and income limits track the federal EITC
+    (the federal EITC AGI/investment-income limits for the 2024 tax year apply).
+  claimed_on: RI Schedule EIC, line 41; carried to Form RI-1040, line 14d (within the Total Payments and Credits
+    section).
+  citation:
+    source: '2024 Instructions for Filing RI-1040 (RI Division of Taxation) - RI Schedule EIC instructions: ''Line
+      40 - The Rhode Island percentage is 16%.'' and ''Line 41 - Rhode Island Earned Income Credit: Multiply line
+      39 by line 40'', and Line 14d instructions'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf
+- name: Property Tax Relief Credit (Form RI-1040H, the RI property-tax "circuit breaker")
+  type: refundable
+  eligibility: 'Must answer YES to ALL eligibility questions on Form RI-1040H Part 1: (A) domiciled in Rhode Island
+    for all of 2024; (B) lived in a household or rented a dwelling that was subject to property tax in 2024; (C)
+    current on property taxes or rent due on the homestead for 2024 and all prior years; (D) you OR your spouse
+    were 65 years of age or older AND/OR disabled as of December 31, 2024; and (E) 2024 total household income was
+    $39,275 or less. Both homeowners (attach 2024 property tax bill) and renters (attach 2024 lease or rent receipts;
+    rent paid is multiplied by 20% as deemed property tax) may claim it.'
+  amount: 'Maximum credit is $675.00 for 2024 (up from $650 for 2023). Homeowners: tentative credit = property taxes
+    paid for 2024 minus (household income x table percentage), then the lesser of that amount or $675 (Form RI-1040H
+    lines 2-6). Renters: 20% of rent paid is treated as property tax, minus (household income x table percentage),
+    then the lesser of that amount or $675 (lines 7-12). The income-based percentage from the page-3 computation
+    table ranges from 3% up to 6% (e.g., 6% for the $16,836-$39,275 income band).'
+  income_limit_2024: Total household income of $39,275 or less for 2024 (Form RI-1040H, Part 1, question E).
+  claimed_on: Form RI-1040H, line 13 (Property Tax Relief); carried to Form RI-1040, line 14c. RI-1040H must be
+    filed by April 15, 2025; an extension to file RI-1040 does NOT extend the time to file RI-1040H.
+  citation:
+    source: 2024 Form RI-1040H (Rhode Island Property Tax Relief Claim), RI Division of Taxation - Part 1 eligibility
+      (income '$39,275 or less', age/disabled 'as of December 31, 2024'), line 6/line 12 ('Line 5/Line 11 or $675.00,
+      whichever is LESS'); income computation table on page 3.
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040H_w.pdf
+- name: Credit for Child and Dependent Care Expenses (Rhode Island portion of the allowable federal credit)
+  type: nonrefundable
+  eligibility: Taxpayers who claimed the federal Credit for Child and Dependent Care Expenses (federal Form 1040/1040-SR,
+    Schedule 3, line 2). Rhode Island allows a credit equal to a percentage of that federal care credit, limited
+    to the amount of Rhode Island income tax (so any excess is not refunded - it is nonrefundable).
+  amount: '25% of the federal Credit for Child and Dependent Care Expenses, capped at the Rhode Island income tax.
+    Computed on RI Schedule I: Line 20 = federal care credit (federal Schedule 3, line 2); Line 21 = Line 20 x 25%;
+    Line 22 (Maximum Credit) = lesser of RI income tax (line 19) or Line 21.'
+  income_limit_2024: No separate Rhode Island income limit stated; the federal child and dependent care credit rules
+    (federal AGI-based percentage and expense caps) govern the base amount.
+  claimed_on: RI Schedule I, line 22; carried to Form RI-1040, line 9a (Rhode Island Percentage of Allowable Federal
+    Credit), in the credits-against-tax section (lines 9a-9d, subtracted from tax - nonrefundable).
+  citation:
+    source: '2024 Instructions for Filing RI-1040 (RI Division of Taxation), RI Schedule I - Allowable Federal Credit:
+      ''Line 20 - Credit for Child and Dependent Care Expenses ... federal Form 1040 or 1040-SR, Schedule 3, line
+      2''; ''Line 21 - Multiply the amount on line 20 by 25%''; ''Line 22 - Maximum Credit: Enter the amount from
+      line 19 or 21, whichever is less.'''
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf
+- name: Credit for Income Taxes Paid to Another State
+  type: nonrefundable
+  eligibility: Rhode Island residents who also paid income tax to another state on income that is also taxed by
+    Rhode Island. Authorized under R.I. Gen. Laws section 44-30-18. If income tax was paid to more than one other
+    state, Form RI-1040MU must be used (a separate calculation for each state); a signed copy of each other-state
+    return must be attached.
+  amount: 'The smallest of the Rhode Island income tax less allowable federal credit, the tentative credit (RI tax
+    x the proportion of income from the other state), or the income tax actually due and paid to the other state.
+    Computed on RI Schedule II, line 29.'
+  income_limit_2024: None.
+  claimed_on: RI Schedule II, line 29; carried to Form RI-1040, line 9b (credits-against-tax section, lines 9a-9d
+    - nonrefundable).
+  citation:
+    source: '2024 Instructions for Filing RI-1040 (RI Division of Taxation), Line 9b and RI Schedule II - Credit
+      for Income Taxes Paid to Another State (R.I. Gen. Laws section 44-30-18); Form RI-1040MU for more than one
+      state'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf
+filing_requirement:
+  note: 'Every resident individual of Rhode Island who is required to file a federal income tax return must file
+    a RI individual income tax return (RI-1040). A resident not required to file a federal return may still need
+    to file a RI return if their RI income for the year exceeds the sum of their RI personal exemptions and applicable
+    standard deduction. Every nonresident individual required to file a federal return who has income derived from
+    or connected with Rhode Island sources must file (RI-1040NR). A part-year resident (RI resident for less than
+    12 months) must file if they are required to file a federal return. (Source: 2024 RI-1040 instructions, "Who
+    Must File a Return," p. I-1.)'
+mailing_addresses:
+  refund_or_no_payment: Rhode Island Division of Taxation, One Capitol Hill, Providence, RI 02908-5806
+  with_payment: Rhode Island Division of Taxation, One Capitol Hill, Providence, RI 02908-5807 (mail return, payment,
+    and Form RI-1040V together)
+  citation:
+    source: '2024 Instructions for Filing RI-1040 (Resident, updated 12/09/2024) — RI Division of Taxation: Where
+      and When to File — returns are timely if postmarked by Tuesday, April 15, 2025; refund returns to One Capitol
+      Hill, Providence, RI 02908-5806; with-payment returns to Providence, RI 02908-5807'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: 'R.I. Division of Taxation (per 2024 Form RI-1040V: "Make your check or money order payable to the
+    ''R.I. Division of Taxation.'' Do not send cash." Write "Form RI-1040V," daytime phone number, and SSN on the
+    check)'
+  web_pay_url: https://taxportal.ri.gov
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: '2024 Instructions for Filing RI-1040 (Resident, updated 12/09/2024) — RI Division of Taxation: Where
+      and When to File ("postmarked by Tuesday, April 15, 2025"); Form RI-1040H and Form RI-6238 must also be filed
+      on or before April 15, 2025'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf
+all_citations:
+- source: '2024 Instructions for Filing RI-1040 (Resident, updated 12/09/2024) — RI Division of Taxation: starting
+    point (Line 1 = federal AGI), Who Must File / Resident & domicile definitions (p. I-1), due date 4/15/2025 +
+    mailing addresses 5806 refund and 5807 with-payment, Line 4 standard deduction chart ($10,550/$21,150/$10,575/$15,850)
+    and Line 6 exemption $4,950 with $246,450 phaseout, RI Schedule EIC 16%, RI Schedule M modifications with no
+    treaty add-back, RI Tax Computation Worksheet (p. I-11)'
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf
+- source: 2024 RHODE ISLAND TAX RATE SCHEDULE AND WORKSHEETS (RI Division of Taxation) — 2024 Tax Rate Schedule
+    FOR ALL FILING STATUS TYPES (3.75% to $77,450; $2,904.38 + 4.75% to $176,050; $7,587.88 + 5.99% above), STANDARD
+    DEDUCTION WORKSHEET chart and $246,450/$7,050/$28,200 phaseout mechanics, EXEMPTION WORKSHEET ($4,950 per exemption,
+    same phaseout)
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%20Tax%20Rate%20and%20Worksheets.pdf
+- source: 2024 Rhode Island Tax Table / Tax Rate Schedule + Tax Computation Worksheet booklet — tax-table mandate
+    ('if your taxable income is less than $100,000 use the Rhode Island Tax Table'; $100,000 or more use the Tax
+    Computation Worksheet)
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%20RI%20Tax%20Tables_Complete.pdf
+- source: 2024 Form RI-1040 (Rhode Island Resident Individual Income Tax Return) — Lines 1-8 wording (Line 7 'RI
+    TAXABLE INCOME. Subtract line 6 from line 5. If zero or less, enter 0'; Line 8 'RI income tax from Rhode Island
+    Tax Table or Tax Computation Worksheet')
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024_1040WE_w.pdf
+- source: 2024 Form RI-1040H (Rhode Island Property Tax Relief Claim) — $39,275 income limit, $675 maximum credit,
+    computation table percentages
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040H_w.pdf
+- source: 2024 Form RI-1040V (Rhode Island Return Payment Voucher) — check payable to 'R.I. Division of Taxation,'
+    with-payment address One Capitol Hill, Providence, RI 02908-5807, and portal taxportal.ri.gov
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%20RI-1040V_w.pdf
+- source: Individual Tax Filing Requirements — RI Division of Taxation (resident/nonresident/part-year definitions,
+    domicile, 183-day statutory resident, RI-1040 vs RI-1040NR Schedule II/III)
+  url: https://tax.ri.gov/tax-sections/personal-income-tax/individual-tax-filing-requirements
+- source: Make a Payment Online — RI Division of Taxation (official Tax Portal URL taxportal.ri.gov)
+  url: https://tax.ri.gov/online-services/make-payment-online
+unverified:
+- The nonresident/part-year due date and mailing addresses were not separately read from the 2024 RI-1040NR instruction
+  booklet; they are assumed identical to the resident return (4/15/2025; refund to 02908-5806, with-payment to 02908-5807).
+  Confirm at the DOR via the RI-1040NR booklet.
+- Treaty conformity is inferred from the absence of any treaty add-back on the 2024 RI Schedule M (reviewed line-by-line
+  in the instructions) rather than from an explicit RI statement that treaty-exempt income is excluded. If a specific
+  treaty article is at issue, confirm at the DOR.
+- The statutory authority for the 2024 EITC increase to 16% (R.I. Gen. Laws § 44-30-2.6(c)(2)(N) as amended) was
+  not re-derived from the session law text; the 16% figure itself is printed in the cited 2024 Schedule EIC instructions.
+tax:
+  citation:
+    source: '2024 RHODE ISLAND TAX RATE SCHEDULE AND WORKSHEETS (RI Division of Taxation) — ''2024 Tax Rate Schedule
+      - FOR ALL FILING STATUS TYPES'' (over $0 but not over $77,450: 3.75%; over $77,450 but not over $176,050: pay
+      $2,904.38 + 4.75% of the amount over $77,450; over $176,050: pay $7,587.88 + 5.99% of the amount over $176,050),
+      STANDARD DEDUCTION WORKSHEET chart (Single $10,550; Married filing jointly $21,150; Qualifying widow(er) $21,150;
+      Married filing separately $10,575; Head of household $15,850; $246,450 phaseout threshold), and EXEMPTION WORKSHEET
+      (''Multiply $4,950 by the total number of exemptions''; $246,450 phaseout threshold). Corroborated by: 2024 Instructions
+      for Filing RI-1040 (updated 12/09/2024), Line 4 standard deduction list and Line 6 exemption amount $4,950, and
+      p. I-11 RHODE ISLAND TAX COMPUTATION WORKSHEET (3.75% / subtract $0.00, 4.75% / subtract $774.50, 5.99% / subtract
+      $2,957.52) at https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf;
+      2024 Rhode Island Tax Table booklet page T-1 (tax-table mandate under $100,000) at https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%20RI%20Tax%20Tables_Complete.pdf;
+      2024 Form RI-1040 page 1 (Lines 1-8) at https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024_1040WE_w.pdf
+      — both passes agree.'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%20Tax%20Rate%20and%20Worksheets.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 77450, rate: 0.0375}
+    - {over: 77450, but_not_over: 176050, rate: 0.0475}
+    - {over: 176050, but_not_over: null, rate: 0.0599}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 77450, rate: 0.0375}
+    - {over: 77450, but_not_over: 176050, rate: 0.0475}
+    - {over: 176050, but_not_over: null, rate: 0.0599}
+    married_filing_separately:
+    - {over: 0, but_not_over: 77450, rate: 0.0375}
+    - {over: 77450, but_not_over: 176050, rate: 0.0475}
+    - {over: 176050, but_not_over: null, rate: 0.0599}
+    head_of_household:
+    - {over: 0, but_not_over: 77450, rate: 0.0375}
+    - {over: 77450, but_not_over: 176050, rate: 0.0475}
+    - {over: 176050, but_not_over: null, rate: 0.0599}
+  base: federal_agi
+  tax_line: 'RI-1040, Line 8: "RI income tax from Rhode Island Tax Table or Tax Computation Worksheet" (Line 7 "RI
+    TAXABLE INCOME. Subtract line 6 from line 5. If zero or less, enter 0"; Line 5 = Line 3 modified federal AGI minus
+    Line 4 RI standard deduction; Line 6 = number of exemptions x $4,950)'
+  exemptions:
+    personal:
+      amount: 4950
+      note: 'RI-1040 Line 6: number of exemptions from RI Schedule E multiplied by $4,950 (2024 instructions: ''Exemption
+        Amount: Multiply the number of exemptions in the box by $4,950''). RI Schedule E counts yourself plus spouse plus
+        dependents in ONE total; every exemption is worth the same $4,950 base reduction subtracted from income before
+        the rate applies. Zero if someone else can claim you as a dependent (''NOTE: If someone else can claim you on
+        their return, your exemption amount is zero.''). Phases out when Line 3 modified federal AGI exceeds $246,450
+        (see notes).'
+    dependent:
+      amount: 4950
+      note: Dependents are counted in the same RI Schedule E total at the same $4,950 per exemption (there is no separate
+        dependent rate). Shipping personal and dependent at $4,950 each reproduces RI-1040 Line 6 = $4,950 x (taxpayer/spouse
+        count + dependents count). Subject to the same $246,450 modified-federal-AGI phaseout.
+  standard_deduction:
+    single: 10550
+    married_filing_jointly: 21150
+    married_filing_separately: 10575
+    head_of_household: 15850
+  notes:
+  - 'Base guidance: Supply 2024 Form RI-1040, Line 3 ''Modified Federal AGI'' (Line 1 federal AGI from Federal Form
+    1040 or 1040-SR, line 11, combined with Line 2 net modifications from RI Schedule M; with no modifications Line
+    3 equals federal AGI). Do NOT subtract anything yourself: the op subtracts the shipped RI standard deduction (Line
+    4) and the shipped $4,950-per-person exemptions (Line 6) to reach RI TAXABLE INCOME (Line 7), then applies the
+    rate schedule.'
+  - 'Adjudication note (two-pass): base is federal_agi — RI-1040 starts from federal AGI (line 1) and taxable_base
+    is Line 3 modified federal AGI (federal AGI +/- RI Schedule M modifications); the op subtracts the standard deduction
+    and $4,950-per-exemption Line 6 amount.'
+  - '2024 indexation: the three-bracket structure is unchanged from 2023; the breakpoints rose to $77,450/$176,050
+    (from $73,450/$166,950), the standard deduction to $10,550/$21,150/$10,575/$15,850, the exemption to $4,950 (from
+    $4,700), and the phaseout threshold to $246,450 (from $233,750) — all from the December 2024 official rate-and-worksheets
+    page.'
+  - 'Single rate schedule for every filing status: the 2024 Rhode Island Tax Rate Schedule is captioned ''FOR ALL
+    FILING STATUS TYPES'' — the same three brackets (3.75% to $77,450; 4.75% to $176,050; 5.99% above) apply to Single,
+    MFJ, MFS, HoH, and Qualifying widow(er); the schedule is duplicated per status here. Qualifying widow(er)/surviving
+    spouse maps to married_filing_jointly: the RI standard deduction chart lists Qualifying widow(er) at the same
+    $21,150 as MFJ, so the mapping is exact.'
+  - 'Tax-table mandate below $100,000: the 2024 RI Tax Table booklet instructs ''if your taxable income is less than
+    $100,000 use the Rhode Island Tax Table... If your taxable income is larger than $100,000, use the Rhode Island
+    Tax Computation Worksheet.'' The table uses $50 bands computed at the band midpoint (e.g. taxable income $25,300-$25,350
+    yields tax $950 = $25,325 x 3.75% rounded), so bracket math may differ by a few dollars within table bands; the
+    filed form must use the table below $100,000.'
+  - 'Standard-deduction and exemption PHASEOUT is NOT modeled: if RI-1040 Line 3 (modified federal AGI) exceeds $246,450,
+    BOTH the standard deduction and the $4,950 exemptions phase down in 20-percentage-point steps (factors 0.8000/0.6000/0.4000/0.2000)
+    per $7,050 increment of the excess (rounded up to a whole increment), and both are $0 once the excess is more
+    than $28,200 (i.e. Line 3 above $274,650). This op ships the full amounts — taxpayers with Line 3 over $246,450
+    must use the Standard Deduction Worksheet and Exemption Worksheet from the 2024 RI Tax Rate Schedule and Worksheets
+    page instead.'
+  - Rhode Island does not allow the use of federal itemized deductions (2024 RI-1040 instructions, Line 4) — every
+    filer takes the RI standard deduction shipped here; there is no itemized alternative to model.
+  - If someone else can claim you as a dependent on their return, your RI exemption amount is zero (2024 RI-1040 instructions,
+    Line 6 NOTE) — not modeled; such filers should be computed with zero exemptions.
+  - taxable_base must be RI-1040 Line 3 (Modified Federal AGI = federal AGI plus/minus net RI Schedule M modifications).
+    Schedule M modifications (e.g. out-of-state municipal bond interest add-back, US-government-interest subtraction,
+    taxable-Social-Security and pension/annuity modifications, military service pension modification) are NOT computed
+    by this op; with no modifications Line 3 equals federal AGI (Federal Form 1040/1040-SR, line 11).
+  - 'Printed-constant rounding in the rate schedule: the ''Pay'' constants are rounded to the cent and each diverges
+    from the exact cumulative bracket sum by +$0.005 — printed $2,904.38 vs exact $2,904.375 (3.75% x $77,450), and
+    printed $7,587.88 vs exact $7,587.875. The instructions'' RI Tax Computation Worksheet (p. I-11) subtraction amounts
+    ($0.00 / $774.50 / $2,957.52) reproduce the exact marginal math to the cent; this pack''s brackets use the exact
+    marginal math.'
+  - Rhode Island's personal and dependent exemptions ARE base reductions (subtracted from income on Line 6 before
+    the rate applies), so they are shipped as exemptions. By contrast, RI's credits — the 16% RI earned income credit
+    for 2024 (Line 14d, RI Schedule EIC line 41), 25% of the federal child and dependent care credit (RI Schedule
+    I, carried to Line 9a), credit for taxes paid to other states (Line 9b), the RI-1040H property-tax relief circuit
+    breaker (Line 14c, max $675 for 2024) — are subtracted from TAX, not income, and are NOT applied by this op.
+  - 'No mid-year 2024 rate change: the 3.75%/4.75%/5.99% structure and the $77,450/$176,050 breakpoints are the final
+    inflation-adjusted figures from the December 2024 rate schedule the 2025 filing season uses.'
