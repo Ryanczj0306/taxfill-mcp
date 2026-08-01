@@ -1,0 +1,316 @@
+# MD state knowledge — tax year 2024. Fetched + cited from the MD Comptroller (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure was drafted from the 2024 Resident Booklet
+# (marylandcomptroller.gov), then independently re-derived from a second official 2024
+# document (the 2024 Nonresident Booklet's identical rate-schedule print, the 2024 Form
+# 502 itself, or the 2024 Form 502CR) — resolutions recorded inline where the passes
+# differed. NOTE the 2024 changes vs 2023: indexed standard-deduction clamps
+# ($1,800-$2,700 / $3,650-$5,450), new GRADUATED local brackets in Anne Arundel and
+# Frederick counties (booklet cover: 'New local tax brackets for 2024'), Cecil County
+# cut to .0275, and 2024-adjusted credit thresholds (CDCC chart, poverty guidelines).
+jurisdiction: states/md
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'Maryland Form 502 starts from federal adjusted gross income (line 1 = "Adjusted gross income from
+  your federal return"), so treaty-exempt income is initially excluded — BUT Maryland then adds it back. Instruction
+  12 (Additions to Income), Line 5 "Other Additions to Income," code letter g reads verbatim: "Income exempt from
+  federal tax by federal law or treaty that is not exempt from Maryland tax." This is an explicit add-back of federally
+  treaty-exempt income (analogous to California''s Schedule CA addback), entered on Form 502 line 5 with code letter
+  g. Therefore treaty-exempt income IS re-taxed by Maryland and the state does NOT conform. Source: 2024 Resident
+  Booklet, Instruction 12, code letter g (marylandcomptroller.gov / marylandtaxes.gov).'
+citation:
+  source: 2024 Maryland Form 502 Resident Income Tax Return (COM/RAD-009) — line 1 'Adjusted gross income from your
+    federal return'; Additions lines 2-6 incl. line 5 'Other additions (Enter code letter(s) from Instruction 12.)';
+    lines 16-21 (Maryland AGI, deduction, exemption, taxable net income, Maryland tax); line 28 local tax
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2024/502.pdf
+starts_from: 'federal AGI (Form 502 line 1: "Adjusted gross income from your federal return"; Instruction 11: "Copy
+  the figure for federal adjusted gross income from Line 11 of your federal Form 1040/1040SR onto Line 1 of Form
+  502")'
+residency:
+  summary: 'You are a resident of Maryland if (a) your permanent home is or was in Maryland (domicile), OR (b) your
+    permanent home is outside Maryland but you maintained a place of abode (a place to live) in Maryland for more
+    than six months of the tax year AND you were physically present in the state for 183 days or more (statutory
+    resident) — in which case you must file a full-year resident return. Part-year residents (those who began or
+    ended legal residence in Maryland during 2024) file the resident Form 502 with adjustments per Instruction 26.
+    Nonresidents who had Maryland-source income (and were not Maryland residents) file the nonresident return (Form
+    505, or Form 515 for nonresidents employed in a Maryland local jurisdiction that imposes a local tax). Military
+    personnel domiciled in Maryland but stationed elsewhere generally retain Maryland residency (see Instruction
+    29). Source: 2024 Resident Booklet, "Who Is a Resident?" and Instructions 9 and 26.'
+forms:
+  resident: Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502
+    (per Instruction 26).
+  part_year_or_nonresident: 'Nonresidents: Form 505 — Maryland Nonresident Income Tax Return (COM/RAD-022), with
+    Form 505NR (Nonresident Income Tax Calculation) attached; Form 515 is used by nonresidents subject to the special
+    nonresident/local-jurisdiction rules. Part-year residents do NOT use 505 — they file the resident Form 502 with
+    part-year adjustments (Instruction 26).'
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. The 2024 credit thresholds shown here
+  (CDCC chart endpoints, refundable-CDCC FAGI caps, poverty income guidelines) are the 2024-adjusted figures — do
+  not reuse 2023 values.
+credits:
+- name: Maryland Earned Income Credit (state EITC) - nonrefundable portion
+  type: nonrefundable
+  eligibility: Maryland residents who qualify for the federal Earned Income Credit — including, for Maryland purposes,
+    taxpayers who miss the federal minimum-age requirement (calculate the federal EIC disregarding the age minimum)
+    and ITIN filers otherwise eligible (calculate disregarding the SSN requirement). Dependent taxpayers (filing
+    status 6) are excluded from the poverty level credit but may claim the EIC per the worksheet.
+  amount: 'Married couples (joint or separate) and taxpayers with at least one qualifying child: 50% of the federal
+    earned income credit (Worksheet 18A line 2: federal EIC x .50), entered on Form 502 line 22, limited to Maryland
+    tax (Worksheet 18A line 1). Individuals filing single, head of household, or qualifying surviving spouse WITHOUT
+    a qualifying child instead use Worksheet 18A.1 and may claim up to 100% of the federal EIC (refundable; amounts
+    to Lines 22 and 42).'
+  income_limit_2024: No separate Maryland income cap; eligibility tracks the federal EITC income limits for tax
+    year 2024.
+  claimed_on: Form 502, line 22 (computed on State Earned Income Credit Worksheet 18A / 18A.1 in Resident Booklet
+    Instruction 18).
+  citation:
+    source: Comptroller of Maryland - 2024 Resident Booklet (Form 502 Instructions), Instruction 18 and Worksheets
+      18A / 18A.1
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+- name: Maryland Refundable Earned Income Credit (refundable portion of state EITC)
+  type: refundable
+  eligibility: Residents whose Maryland earned income credit exceeds their Maryland tax. Available to a married
+    couple filing jointly or separately (with or without a qualifying child), or any taxpayer with at least one
+    qualifying child; individuals without a qualifying child use Worksheet 18A.1. Must have an entry on Form 502
+    line 22 and line 29 and zero on line 3 of Worksheet 18A.
+  amount: The amount by which 45% of your federal earned income credit exceeds your Maryland tax liability (Worksheet
+    21A line 1, 'ENTER your federal earned income credit x 45% (.45)').
+  income_limit_2024: No separate Maryland income cap; tracks federal EITC income limits for tax year 2024.
+  claimed_on: Form 502, line 42 (Refundable Earned Income Credit Worksheet 21A in Resident Booklet Instruction 21).
+  citation:
+    source: Comptroller of Maryland - 2024 Resident Booklet, Instruction 21 (Line 42) and Worksheet 21A
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+- name: Maryland State Poverty Level Credit
+  type: nonrefundable
+  eligibility: Residents whose earned income and federal adjusted gross income (plus additions) are below the poverty
+    income guidelines for the number of persons in the family/household claimed on the federal return, and generally
+    whose Maryland tax exceeds 50% of their federal earned income credit. NOT available if you checked filing status
+    6 (dependent taxpayer).
+  amount: '5% of your earned income (Worksheet 18B line 5: earned income x .05). This is not a refundable credit.'
+  income_limit_2024: Must be below the 2024 poverty income guidelines listed in the booklet, e.g. $15,060 (1 person),
+    $20,440 (2), $25,820 (3), $31,200 (4), $36,580 (5), $41,960 (6), $47,340 (7), $52,720 (8); add $5,380 per additional
+    person.
+  claimed_on: Form 502, line 23 (State Poverty Level Credit Worksheet 18B in Resident Booklet Instruction 18).
+  citation:
+    source: Comptroller of Maryland - 2024 Resident Booklet, Instruction 18 (Line 23) and 2024 Poverty Income Guidelines
+      chart
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+- name: Maryland Credit for Child and Dependent Care Expenses
+  type: nonrefundable
+  eligibility: Maryland residents only who were eligible for the federal Child and Dependent Care Credit (federal
+    Form 2441) for tax year 2024. (A separate refundable top-up exists for lower-income filers — Worksheet 21B;
+    for 2024 it is unavailable if FAGI exceeds $59,400 (individual) or $89,100 (joint); claimed on Form 502CR Part
+    CC line 7.)
+  amount: A percentage of the federal credit, starting at 32% (decimal 0.3200) and phasing down as FAGI rises (per
+    the 2024 Credit for Child and Dependent Care Expenses Chart in the Form 502CR instructions); the credit equals
+    federal Form 2441 credit x the chart decimal (Form 502CR Part B line 2 x line 3).
+  income_limit_2024: Phases to 0.0000 for FAGI of $109,301 and up (individual) or $169,901 and up (married filing
+    jointly) — the 2024 chart endpoints (higher than 2023's $103,650/$161,100).
+  claimed_on: Form 502CR, Part B (line 4), carried to Part AA line 2; total credits flow to Form 502 line 24.
+  citation:
+    source: Comptroller of Maryland - 2024 Form 502CR (Part B, Credit for Child and Dependent Care Expenses Chart,
+      and instructions)
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2024/502CR.pdf
+- name: Maryland Senior Tax Credit
+  type: nonrefundable
+  eligibility: Resident individuals who are at least age 65 (created by SB405, Acts of 2022). Subject to federal
+    AGI limits below. Part-year residents are not required to prorate the credit amount.
+  amount: $1,000 if FAGI does not exceed $100,000. For married filing jointly, qualifying surviving spouse, and
+    head of household whose FAGI does not exceed $150,000, the credit is $1,750 (reduced to $1,000 if only one spouse
+    on a joint return is at least age 65). Nonrefundable - excess is not refunded.
+  income_limit_2024: FAGI must not exceed $100,000 (single/other) or $150,000 (married filing jointly, qualifying
+    surviving spouse, head of household).
+  claimed_on: Form 502CR, Part M (line 1), carried to Part AA line 13; total flows to Form 502 line 24.
+  citation:
+    source: Comptroller of Maryland - 2024 Form 502CR (Part M instructions) and 2024 Resident Booklet Instruction
+      18 (Line 24, letter m)
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2024/502CR.pdf
+- name: Refundable Maryland Child Tax Credit
+  type: refundable
+  eligibility: Residents with a federal AGI of $15,000 or less AND one or more qualified dependents — a child under
+    age 6 on the last day of the tax year, or a child over age 5 and under age 17 who has a disability (physician
+    certification required with Form 502CR). No limit on the number of qualifying children.
+  amount: '$500 multiplied by the number of qualified children (Worksheet 21C: number of qualified children on Form
+    502B x $500).'
+  income_limit_2024: 'Federal adjusted gross income must be $15,000 or less (Worksheet 21C line 1: if Form 502 Line
+    1 is greater than $15,000, not eligible).'
+  claimed_on: Form 502CR, Part CC, line 8 (Refundable Maryland Child Tax Credit, Worksheet 21C).
+  citation:
+    source: Comptroller of Maryland - 2024 Resident Booklet, Instruction 21 (Line 43 item 8) and Refundable Child
+      Tax Credit Worksheet 21C
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+filing_requirement:
+  note: 'You generally must file a Maryland return if you are/were a Maryland resident and are required to file
+    a federal return, or if your Maryland gross income (total federal income plus Maryland additions, minus certain
+    subtractions) equals or exceeds the minimum filing level for your status. 2024 minimum filing levels for taxpayers
+    under 65 (Table 1): Single (incl. dependent taxpayers) $14,600; Joint $29,200; Married filing separately $14,600;
+    Head of household $21,900; Qualifying surviving spouse $29,200. Higher thresholds apply if 65 or over (Table
+    2: Single 65+ $16,550; Joint one 65+ $30,750; Joint both 65+ $32,300; MFS 65+ $14,600; HoH 65+ $23,850; QSS
+    65+ $30,750). You should also file to claim a refund if Maryland tax was withheld. Source: 2024 Resident Booklet,
+    Instruction 1 "Who Must File?" and Minimum Filing Levels Tables 1 and 2.'
+mailing_addresses:
+  refund_or_no_payment: Comptroller of Maryland, Revenue Administration Division, 110 Carroll Street, Annapolis,
+    MD 21411-0001
+  with_payment: Comptroller of Maryland, Payment Processing, PO Box 8888, Annapolis, MD 21401-8888 (attach check/money
+    order to Form PV; place Form PV with payment on top of Form 502)
+  citation:
+    source: 2024 Resident Booklet, Instruction 23 'MAILING YOUR RETURN' — Payment Processing PO Box 8888 (with payment)
+      and Revenue Administration Division, 110 Carroll Street (without payment; also the private delivery service
+      address)
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+payment:
+  check_payee: Comptroller of Maryland ('Make checks payable to Comptroller of Maryland. Do not attach Form PV or
+    check/money order to Form 502. Place Form PV with attached check/money order on top of Form 502.')
+  web_pay_url: https://interactive.marylandtaxes.gov/Individuals/Payment/
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 Resident Booklet — 'Your return is due by April 15, 2025' (Filing Information); telephone assistance
+      hours 'February 1 - April 15, 2025'
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+all_citations:
+- source: 2024 Maryland Form 502 Resident Income Tax Return (COM/RAD-009) — line 1 'Adjusted gross income from your
+    federal return'; lines 16-21; line 28 local tax boxes
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2024/502.pdf
+- source: 2024 Maryland State & Local Tax Forms & Instructions (Resident Booklet) — NEW FOR 2024 ('New local tax
+    brackets for 2024', new/updated subtraction modifications); Instruction 1 Who Must File + 2024 Minimum Filing
+    Levels Tables; Who Is a Resident (domicile / abode + 183-day statutory resident); Instruction 10 Exemption Amount
+    Chart (10A); Instruction 11 Income (copy federal AGI); Instruction 12 Additions, code letter g treaty addback;
+    Instruction 16 Standard Deduction Worksheet (16A); Instruction 17 Figure Your Maryland Tax + 2024 Tax Rate Schedules
+    I and II; Instruction 18 EIC/poverty/502CR credits; Instruction 19 2024 Local Tax Rate Chart + Anne Arundel/Frederick
+    graduated brackets + Worksheets 19A/19D; Instruction 21 refundable credits; Instruction 23 mailing; Instruction
+    26 part-year residents; MARYLAND TAX COMPUTATION WORKSHEET SCHEDULES (17A) at the end of the tax table
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+- source: 2024 Maryland Nonresident Booklet (Form 505 Instructions) — used as the independent second-pass source;
+    prints the identical 2024 Tax Rate Schedules I and II (Instruction 17) and 2024 poverty income guidelines
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Nonresident-Booklet.pdf
+- source: 2024 Maryland Form 502CR, Income Tax Credits for Individuals, and instructions — Part B CDCC 2024 chart
+    (0.3200 to 0.0000 at $109,301/$169,901), Part M Senior Tax Credit ($1,000 / $1,750), Part CC refundable credits
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2024/502CR.pdf
+- source: Maryland Comptroller Individual Bill Pay (online payment portal)
+  url: https://interactive.marylandtaxes.gov/Individuals/Payment/
+unverified:
+- Exact official title string of Form 515 was not opened on a .gov page in this session (referenced via the resident
+  booklet as the alternate nonresident/local-jurisdiction form); confirm at the Comptroller if precise Form 515 wording
+  is needed.
+- The online payment portal URL (interactive.marylandtaxes.gov/Individuals/Payment/) is carried from the 2023 pack
+  and the booklet's 'marylandtaxes.gov ... Bill Pay' direction; the deep-link path was not independently re-fetched
+  as a live page this session.
+- The 2024 Form 505NR (nonresident calculation) was not opened; nonresident special-rate mechanics are summarized
+  from the 2024 Nonresident Booklet's instructions and the local rate chart's 'Nonresidents use .0225' line.
+tax:
+  citation:
+    source: '2024 Maryland State & Local Tax Forms & Instructions (Resident Booklet, Form 502 instructions) — Instruction
+      17 ''FIGURE YOUR MARYLAND TAX'', 2024 Tax Rate Schedules I and II; MARYLAND TAX COMPUTATION WORKSHEET SCHEDULES
+      (17A), Schedules I and II at the end of the 2024 Maryland Tax Table; Instruction 16 Standard Deduction Worksheet
+      (16A); Instruction 10 EXEMPTION AMOUNT CHART (10A); Instruction 19 2024 LOCAL TAX RATE CHART incl. the new Anne
+      Arundel and Frederick graduated county brackets and Worksheet 19D. Second pass: the 2024 Nonresident Booklet (marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Nonresident-Booklet.pdf)
+      prints the identical 2024 Tax Rate Schedules I and II, and the 2024 Form 502 line 21 names the same two computation
+      sources — all constants agree across both passes.'
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 2000, rate: 0.03}
+    - {over: 2000, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: 100000, rate: 0.0475}
+    - {over: 100000, but_not_over: 125000, rate: 0.05}
+    - {over: 125000, but_not_over: 150000, rate: 0.0525}
+    - {over: 150000, but_not_over: 250000, rate: 0.055}
+    - {over: 250000, but_not_over: null, rate: 0.0575}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 2000, rate: 0.03}
+    - {over: 2000, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: 150000, rate: 0.0475}
+    - {over: 150000, but_not_over: 175000, rate: 0.05}
+    - {over: 175000, but_not_over: 225000, rate: 0.0525}
+    - {over: 225000, but_not_over: 300000, rate: 0.055}
+    - {over: 300000, but_not_over: null, rate: 0.0575}
+    married_filing_separately:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 2000, rate: 0.03}
+    - {over: 2000, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: 100000, rate: 0.0475}
+    - {over: 100000, but_not_over: 125000, rate: 0.05}
+    - {over: 125000, but_not_over: 150000, rate: 0.0525}
+    - {over: 150000, but_not_over: 250000, rate: 0.055}
+    - {over: 250000, but_not_over: null, rate: 0.0575}
+    head_of_household:
+    - {over: 0, but_not_over: 1000, rate: 0.02}
+    - {over: 1000, but_not_over: 2000, rate: 0.03}
+    - {over: 2000, but_not_over: 3000, rate: 0.04}
+    - {over: 3000, but_not_over: 150000, rate: 0.0475}
+    - {over: 150000, but_not_over: 175000, rate: 0.05}
+    - {over: 175000, but_not_over: 225000, rate: 0.0525}
+    - {over: 225000, but_not_over: 300000, rate: 0.055}
+    - {over: 300000, but_not_over: null, rate: 0.0575}
+  base: state_taxable_income
+  tax_line: '2024 Form 502 line 21: ''Maryland tax (from Tax Table or Computation Worksheet Schedules I or II)'''
+  exemptions: {}
+  notes:
+  - 'Base guidance: Supply Form 502 line 20 ''Taxable net income (Subtract line 19 from line 18.)''. Compute it on
+    the form: line 1 federal AGI + additions (lines 2-6) - subtractions (lines 8-15) = line 16 Maryland adjusted gross
+    income; minus line 17 deduction (standard = 15% of line 16 clamped to $1,800-$2,700 for filing statuses 1/3/6
+    or $3,650-$5,450 for statuses 2/4/5 via Worksheet 16A — the 2024 indexed clamps, up from $1,700-$2,550 / $3,450-$5,150
+    in 2023 — OR itemized = federal itemized deductions less state and local income taxes) = line 18 net income; minus
+    line 19 exemption amount (Exemption Amount Chart 10A: $3,200 per person phased down by federal AGI, +$1,000 each
+    age-65/blind) = line 20. Because Maryland''s standard deduction is a percentage of income with min/max clamps
+    and its exemptions phase out by federal AGI, neither is shipped as a fixed amount — the caller must supply line
+    20 with deductions and exemptions already taken on the form.'
+  - 'Adjudication note (two-pass): the 2024 Schedules I and II are UNCHANGED from 2023 — same bounds, rates, and printed
+    constants in the Instruction 17 print, the Worksheet 17A schedules at the end of the tax table, and the 2024 Nonresident
+    Booklet''s reprint. What DID change for 2024 is outside the state schedule: the standard-deduction clamps were
+    indexed and several LOCAL rates changed (see the local-tax note).'
+  - 'Tax-table mandate below $100,000: Instruction 17 states ''You must use the tax tables if your taxable income
+    is less than $100,000'' and ''The 2024 Maryland tax rate schedules are shown so you can see the tax rate that
+    applies to all levels of income; however, do not use them to figure your tax.'' Bracket math may differ by a few
+    dollars within the $50 table bands; the filed Form 502 must use the 2024 Maryland Tax Table for line-20 income
+    under $100,000 and Worksheet Schedules 17A at $100,000 or more.'
+  - 'Mandatory LOCAL income tax is NOT modeled: every Maryland county and Baltimore City levies a local income tax
+    on the SAME Form 502 line-20 taxable net income, entered on Form 502 line 28. The 2024 Local Tax Rate Chart (Instruction
+    19) runs from .0225 (Worcester County; also the nonresident rate) to .0320 (e.g. Baltimore City, Baltimore, Caroline,
+    Dorchester, Howard, Kent, Montgomery, Prince George''s, Queen Anne''s, Somerset, Wicomico). NEW FOR 2024 (''New
+    local tax brackets for 2024''): Anne Arundel County is now THREE-bracket graduated by filing status (single/MFS/dependent:
+    2.7% to $50,000, $1,350 + 2.81% of excess to $400,000, $11,185 + 3.2% over $400,000; joint/HoH/QSS: 2.7% to $75,000,
+    $2,025 + 2.81% to $480,000, $13,405.50 + 3.2% over $480,000 — use the Anne Arundel county tax table or Worksheet
+    19D), and Frederick County is FOUR-bracket graduated by filing status (.0225 to $25,000; .0275 to $50,000 single-side
+    / $100,000 joint-side; .0296 to $150,000 / $250,000; .0320 above). Cecil County dropped to .0275. Local tax adds
+    roughly 2.25%-3.20% of line-20 income on top of the state tax computed here.'
+  - 'Standard deduction is NOT shipped because it is income-dependent: 15% of Maryland adjusted gross income (Form
+    502 line 16) with a 2024 minimum of $1,800 and maximum of $2,700 for filing statuses 1, 3, 6 (single, married
+    filing separately, dependent taxpayer) and a 2024 minimum of $3,650 and maximum of $5,450 for statuses 2, 4, 5
+    (joint, head of household, qualifying surviving spouse) — Standard Deduction Worksheet 16A, Instruction 16 (flat
+    $1,800/$3,650 at or below $12,000/$24,333 of income; 15% between; flat $2,700/$5,450 at or above $18,000/$36,333).
+    Itemizers instead enter federal itemized deductions less state and local income taxes (lines 17a/17b). Take the
+    deduction on Form 502 line 17 before supplying line 20 as the base.'
+  - 'Personal and dependent exemptions are NOT shipped because they phase out by federal AGI (Exemption Amount Chart
+    10A, Instruction 10): $3,200 each for taxpayer, spouse, and each dependent when federal AGI is $100,000 or less,
+    reduced to $1,600 (FAGI $100,000-$125,000), $800 ($125,000-$150,000), and $0 (over $150,000) for single/MFS, and
+    to $1,600 ($150,000-$175,000), $800 ($175,000-$200,000), and $0 (over $200,000) for joint/HoH/QSS; dependent taxpayers
+    (filing status 6) get $0 for themselves. An additional $1,000 each for age 65-or-over and/or blind (taxpayer and
+    spouse) is never phased out. These are genuine base reductions subtracted on Form 502 line 19 BEFORE the rate
+    applies — they are already inside the caller-supplied line-20 base.'
+  - 'Filing-status mapping: Maryland prints exactly two schedules. Tax Rate Schedule I covers Single, Married Filing
+    Separately, and Dependent Taxpayers (and fiduciaries); Tax Rate Schedule II covers Joint, Head of Household, and
+    Qualifying Surviving Spouse. Qualifying surviving spouse therefore maps to married_filing_jointly with no difference;
+    a dependent taxpayer (filing status 6) uses the shipped ''single'' brackets.'
+  - 'The printed ''$X plus Y% of excess over $Z'' constants in both 2024 schedules equal the exact cumulative sum
+    of the prior brackets (verified: Schedule I $20.00/$50.00/$90.00/$4,697.50/$5,947.50/$7,260.00/$12,760.00; Schedule
+    II $20.00/$50.00/$90.00/$7,072.50/$8,322.50/$10,947.50/$15,072.50) — no rounding divergence, so marginal bracket
+    math reproduces the worksheet exactly; the Worksheet 17A subtraction-method rows are algebraically identical.'
+  - 'Items after line 21 are NOT modeled: line 21a recaptured credit (Form 502CR Part DD) is added, and lines 22-26
+    CREDITS are subtracted from tax — Maryland earned income credit (50% of federal EIC on line 22, 100% via Worksheet
+    18A.1 for no-child singles/HoH/QSS, plus a refundable portion up to 45% of federal EIC on line 42), poverty level
+    credit (line 23), and Form 502CR credits (line 24). These are tax CREDITS, not income exemptions, and must never
+    be treated as base reductions.'
+  - This pack models the resident Form 502 only. Nonresidents file Form 505/505NR and pay a special nonresident tax
+    (the 2024 local-rate chart lists 'Nonresidents use .0225') in lieu of the county local tax; part-year residents
+    must prorate exemptions and deductions under Instruction 26.
+  - 'No 2024 state rate change: the 2024 Schedules I and II are the same statutory schedules printed since 2012 (top
+    rate 5.75% over $250,000/$300,000); Maryland had no mid-year 2024 state rate legislation. The 2024 booklet''s
+    ''New local tax brackets for 2024'' cover-page item refers to the county (local) changes only.'

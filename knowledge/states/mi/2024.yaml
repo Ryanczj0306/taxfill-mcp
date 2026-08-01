@@ -1,0 +1,226 @@
+# MI state knowledge — tax year 2024. Fetched + cited from the MI Dept of Treasury (.gov),
+# authored per the 2023 template (state-year knowledge program pilot). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 MI-1040
+# instruction book (MI-1040-Instructions.pdf, TY2024), then independently re-derived
+# from a second official document (the 2024 MI-1040 form itself, the 2024 Schedule 1
+# form, or the 2024 MI-1040CR instructions) — resolutions recorded inline where the
+# passes differed. NOTE the 2024 rate REVERTS to 4.25%: 2023's 4.05% was a one-year
+# statutory reduction (the 2023 pack flagged exactly this).
+jurisdiction: states/mi
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'MI starts from federal AGI and has no treaty add-back, so federally treaty-exempt income (already
+  excluded from federal AGI) flows through untaxed -> conforms. Confirmed two ways from michigan.gov sources: (1)
+  The 2024 MI-1040 begins at line 10 "Adjusted Gross Income from your U.S. Form 1040" (the 2024 instructions say
+  to copy AGI "directly from your U.S. Form 1040, 1040NR or 1040SR"), and Michigan modifications are only the enumerated
+  additions on Schedule 1 (line 11) and subtractions (line 13). (2) The 2024 Schedule 1 "Additions to Income" lines
+  1-8 (totaled on line 9) contain NO addition for income exempt under a federal tax treaty (the additions are: non-Michigan
+  municipal interest/dividends, income taxes deducted federally including flow-through entity tax, MI-1040D/MI-4797
+  gains adjustments, losses attributable to other states, net loss from the federal column of MI-1040D/MI-4797,
+  oil/gas/nonferrous-minerals expenses (Form 5889), federal NOL deduction, and "Other"). The words "treaty"/"treaties"
+  appear zero times in the entire 2024 MI-1040 instruction book, so there is no Michigan add-back analogous to California''s
+  Schedule CA treaty addback.'
+citation:
+  source: 2024 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 'Adjusted Gross Income from your
+    U.S. Form 1040', line 11 'Additions from Schedule 1, line 9', line 17 'Tax. Multiply line 16 by 4.25% (0.0425)',
+    the printed exemption amounts (9a x $5,600, 9b x $3,300, 9c x $500, 9d x $5,600, 9e $1,500), and the printed
+    mailing addresses (Lansing, MI 48956 refund; Lansing, MI 48929 with payment)
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040.pdf
+starts_from: 'federal AGI (MI-1040 line 10: "Adjusted Gross Income from your U.S. Form 1040")'
+residency:
+  summary: 'Michigan uses a domicile-based residency definition. Resident: Michigan is your permanent home (the
+    place you intend to return to whenever you go away); a temporary absence (e.g., spending the winter in a southern
+    state) does not make you a part-year resident. Part-year resident: you move your permanent home into or out
+    of Michigan during the year, and you pay Michigan tax on income earned, received, or accrued while living in
+    Michigan (use Schedule NR to allocate; bonus/severance/deferred amounts accrued while a resident stay taxable;
+    1099-R deferred compensation and nonbusiness interest/dividends allocate to the state of residence when received).
+    Nonresident: you pay Michigan tax only on Michigan-source income (salary/wages for work performed in Michigan
+    unless from a reciprocal state, net rents/royalties from Michigan property, capital gains on Michigan real/tangible
+    property, patent/copyright royalties used in Michigan, income from a Michigan S corporation/partnership/business,
+    lottery winnings, prizes from Michigan casinos or licensed horse tracks) and file Schedule NR with an MI-1040.
+    Out-of-state students who live in Michigan while attending school are not considered Michigan residents or part-year
+    residents and should file as nonresidents. Reciprocal states (Illinois, Indiana, Kentucky, Minnesota, Ohio,
+    Wisconsin): residents of reciprocal states working in Michigan do not pay Michigan tax on salaries or wages
+    earned in Michigan (but do pay on Michigan business income). Note: the 2024 instruction book states the domicile-based
+    rules above but does not state a numeric statutory-resident day-count test, so any day-count "statutory resident"
+    concept is not asserted here.'
+forms:
+  resident: MI-1040 (Michigan Individual Income Tax Return)
+  part_year_or_nonresident: Schedule NR (Nonresident and Part-Year Resident Schedule), filed together with Form
+    MI-1040
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
+  figure): Home Heating Credit (low-income heating-cost credit).'
+credits:
+- name: Michigan Earned Income Tax Credit for Working Families (EITC)
+  type: refundable
+  eligibility: You must be eligible to claim an EITC on your federal return. If you do not qualify for the federal
+    EITC, you do not qualify for the Michigan EITC. Aimed at low-to-moderate-income working individuals and families;
+    the amount depends on the federal credit (which turns on income, filing status, and number of qualifying children).
+    The 30% rate (raised from 6% by the Lowering MI Costs plan / Public Act 4 of 2023, effective tax year 2023)
+    continues for 2024.
+  amount: 30% of the taxpayer's federal EITC (MI-1040 line 27a = federal EITC; line 27b = line 27a x 30% (0.30)
+    — the multiplication is printed on the 2024 form)
+  income_limit_2024: No separate Michigan income cap; the limit is whatever the federal EITC allows for the year
+    (based on federal AGI/earned income, filing status, and number of qualifying children).
+  claimed_on: MI-1040, line 27 (line 27a = federal EITC amount; line 27b = line 27a x 30%)
+  citation:
+    source: 2024 MI-1040 Individual Income Tax Forms and Instructions (MI-1040-Instructions.pdf), Line 27 instructions
+      ("a Michigan EITC equal to 30 percent of the taxpayer's federal credit"); 2024 MI-1040 form line 27 ("Multiply
+      line 27a by 30% (0.30)")
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040-Instructions.pdf
+- name: Homestead Property Tax Credit (general claimants)
+  type: refundable
+  eligibility: 'Available to Michigan resident homeowners and renters whose homestead is in Michigan and who were
+    a Michigan resident for at least 6 months of 2024. You must own and occupy the homestead (property taxes levied
+    in 2024), or have paid rent under a rental contract. Cannot claim if total household resources exceed $69,700,
+    or if the homestead''s taxable value exceeds $160,700 (excluding unoccupied farmland classified as agricultural).
+    Renters: in most cases 23% of rent paid is considered property tax eligible for the credit (10% for service-fee
+    housing). Separate, more generous computations apply to seniors (age 65+), the blind/disabled, paraplegic/hemiplegic/quadriplegic/deaf
+    claimants, and veterans/surviving spouses (MI-1040CR-2 where applicable).'
+  amount: Credit is based on property taxes (or 23% of rent for renters) that exceed 3.2% of total household resources
+    (MI-1040CR line 34, Table 2), multiplied by the applicable percentage (60% for most general claimants; seniors
+    use the Table A percentage, 100% down to 60% as resources rise from $21,000 to $30,001+). Maximum credit is
+    $1,800. The computed credit is reduced by 10% for every $1,000 (or part of $1,000) that total household resources
+    exceed $60,700 (full phase-out above $69,700).
+  income_limit_2024: Total household resources of $69,700 or less; credit phases out for total household resources
+    above $60,700 and reaches $0 above $69,700. Homestead taxable value must not exceed $160,700.
+  claimed_on: MI-1040, line 25, by attaching Form MI-1040CR (or MI-1040CR-2 for certain veterans/blind claimants)
+  citation:
+    source: 2024 MI-1040CR Homestead Property Tax Credit Claim Instructions (Who May Claim; $69,700 / $160,700 /
+      $60,700 10%-per-$1,000 reduction; Table 2 percent-of-income 3.2%; Table A senior reduction; $1,800 maximum
+      credit; line 34)
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040CR-Instructions.pdf
+- name: Home Heating Credit (low-income heating-cost credit)
+  type: refundable
+  eligibility: 'Helps qualified low-income Michigan homeowners and renters pay part of their home heating costs.
+    Eligibility and credit are determined by the number of exemptions and a corresponding income ceiling using a
+    standard-allowance method (MI-1040CR-7 Table A) or an alternate computation (Table B). Claimed on a separate
+    form, not on the MI-1040 itself. NOTE: the specific 2024 standard-allowance dollar amounts and income ceilings
+    were not independently confirmed from a tax-year-2024 official source in this research (the MI-1040CR-7 booklet
+    was not fetched), so the dollar figures are left blank and flagged unverified.'
+  claimed_on: Form MI-1040CR-7 (Home Heating Credit Claim), filed separately (not attached to the MI-1040)
+  citation:
+    source: 2024 MI-1040 Individual Income Tax Forms and Instructions (MI-1040-Instructions.pdf), references to
+      MI-1040CR-7 Home Heating Credit
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040-Instructions.pdf
+  unverified: true
+filing_requirement:
+  note: File a 2024 MI-1040 if you owe tax, are due a refund, or your AGI exceeds your exemption allowance (the
+    personal/stillbirth exemption allowance for 2024 is $5,600 per exemption; the 2024 income tax rate is 4.25%).
+    Treasury also advises filing a Michigan return if you file a federal return, even if you do not owe Michigan
+    tax. If your income subject to tax (line 14) is less than your personal exemption allowance (line 15) and Michigan
+    tax was withheld from your earnings, you must file to claim a refund. Dependents claimed on another's return
+    need not file if AGI is $1,500 or less (single/MFS) or $3,000 or less (joint), unless claiming a refund of withholding.
+mailing_addresses:
+  refund_or_no_payment: 'Refund, credit, or zero returns: Michigan Department of Treasury, Lansing, MI 48956'
+  with_payment: 'Returns with payment (pay amount on MI-1040 line 34): Michigan Department of Treasury, Lansing,
+    MI 48929 (mail check and return together; do not staple the check to the return)'
+  citation:
+    source: 2024 Michigan Individual Income Tax Return MI-1040 (form PDF) - printed mailing addresses ('Refund,
+      credit, or zero returns... Lansing, MI 48956'; 'Pay amount on line 34... Lansing, MI 48929'), repeated in
+      the instruction book
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited Treasury source before relying on a specific figure/address.
+payment:
+  check_payee: State of Michigan (make your check payable to "State of Michigan" and write the last four digits
+    of your Social Security number(s) and "2024 income tax" on the front of the check)
+  web_pay_url: https://www.michigan.gov/taxes/iit/iitpayments
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 MI-1040 Individual Income Tax Forms and Instructions - "Your return must be postmarked no later
+      than April 15, 2025, to avoid penalty and interest"; extension (Form 4) extends time to file, not to pay (payment
+      due April 15, 2025)
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040-Instructions.pdf
+all_citations:
+- source: 2024 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 federal AGI start, line 11 additions
+    from Schedule 1 line 9, lines 9a-9f printed exemption amounts ($5,600 / $3,300 / $500 / $5,600 stillbirth / $1,500
+    claimed-as-dependent), line 17 'Tax. Multiply line 16 by 4.25% (0.0425)', line 27 EITC 30%, printed Lansing mailing
+    addresses (second-pass verification of every figure)
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040.pdf
+- source: 2024 MI-1040 Individual Income Tax Forms and Instructions (MI-1040-Instructions.pdf) - 'For tax year 2024,
+    the Michigan income tax rate is 4.25%'; 'the personal and stillbirth exemption allowances are $5,600'; special
+    exemption $3,300; qualified disabled veteran $500; line 9e $1,500; residency definitions and reciprocal states;
+    who-must-file; April 15, 2025 due date; check payable to 'State of Michigan'; line 17 worked example ($47,400
+    x 0.0425 reported as $2,015)
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040-Instructions.pdf
+- source: 2024 MICHIGAN Schedule 1 Additions and Subtractions (Form 3423) - additions lines 1-8 totaled on line
+    9 (no treaty add-back; verified on the standalone form itself, which returned 403 for the 2023 pack)
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/Schedule-1.pdf
+- source: 2024 MI-1040CR Homestead Property Tax Credit Claim Instructions - $69,700 total household resources cap,
+    $160,700 taxable value cap, $60,700 phase-out start (10% per $1,000), $1,800 maximum credit, 3.2% of income
+    (Table 2), Table A senior percentages, 23% of rent
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040CR-Instructions.pdf
+- source: 2024 Individual Income Tax Forms and Instructions (michigan.gov forms index, lists MI-1040, instructions,
+    Schedule 1, MI-1040CR and Schedule NR for TY2024)
+  url: https://www.michigan.gov/taxes/iit-forms/2024-individual-income-tax-forms
+- source: Make a Payment - Michigan Individual Income Tax e-Payments (online payment portal)
+  url: https://www.michigan.gov/taxes/iit/iitpayments
+unverified:
+- The 2024 Schedule NR standalone PDF was not opened; the form name 'Nonresident and Part-Year Resident Schedule
+  (Schedule NR)' and its role are confirmed from the 2024 MI-1040 instruction book (which includes Worksheet 6, 'Exemption
+  Allowance for Schedule NR') and the TY2024 forms index, not from the standalone Schedule NR form image.
+- Home Heating Credit (MI-1040CR-7) 2024 standard-allowance dollar amounts and income ceilings were not fetched;
+  only the credit's existence and separate-filing mechanics are asserted, from the MI-1040 instruction book.
+- Michigan's residency definition is domicile-based per the 2024 instruction book; the book does not state a numeric
+  day-count 'statutory resident' test, so no specific day threshold was confirmed.
+- Exact online-payment processing fees / accepted methods (eCheck vs card) were not individually verified beyond
+  the official 'Make a Payment' page existence.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified two-pass against the cited 2024 MI-1040 instruction book and the
+# 2024 MI-1040 form itself (michigan.gov): rate 4.25% and every exemption amount are
+# PRINTED on the 2024 form (lines 9a-9e, line 17).
+# CHANGED for 2024 vs the 2023 pack: rate REVERTS 4.05% -> 4.25% (2023's 4.05% was a
+# one-year reduction, exactly as the 2023 pack warned); personal/stillbirth exemption
+# $5,400 -> $5,600; special disabled exemption $3,100 -> $3,300; disabled veteran
+# exemption $400 -> $500. The $1,500 claimed-as-dependent amount (line 9e) is unchanged.
+tax:
+  citation:
+    source: '2024 Michigan MI-1040 Individual Income Tax forms and instructions — instructions: "For tax year 2024,
+      the Michigan income tax rate is 4.25%"; "the personal and stillbirth exemption allowances are $5,600. The special
+      exemption allowance for deaf, blind, hemiplegic, paraplegic, quadriplegic, or totally and permanently disabled
+      is $3,300. The exemption allowance for qualified disabled veterans is $500"; Line 17 "Tax. Multiply the amount
+      on line 16 by 4.25 percent (0.0425)". Second pass: the 2024 MI-1040 form itself prints line 9a "x $5,600", 9b
+      "x $3,300", 9c "x $500", 9d "x $5,600", 9e $1,500, and line 17 "Tax. Multiply line 16 by 4.25% (0.0425)" — both
+      passes agree, and the instructions'' worked example ($53,000 - $5,600 = $47,400 x 0.0425 reported as $2,015) confirms
+      half-up whole-dollar rounding.'
+    url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040-Instructions.pdf
+  flat_rate: 0.0425
+  base: federal_agi
+  tax_line: 'MI-1040 Line 17: "Tax. Multiply line 16 by 4.25% (0.0425)" (Line 16 = taxable income = line 14 income
+    subject to tax minus line 15 exemption allowance; Line 10 starts from federal AGI).'
+  exemptions:
+    personal:
+      amount: 5600
+      note: 'Line 9a: $5,600 per exemption — taxpayer and spouse.'
+    dependent:
+      amount: 5600
+      note: 'Line 9a: dependents use the same $5,600 per-exemption allowance (taxpayer, spouse, and dependents all count
+        on line 9a).'
+    stillbirth:
+      amount: 5600
+      note: 'Line 9d: $5,600 stillbirth exemption (Certificate of Stillbirth from MDHHS). NOT applied by calc.state_tax.'
+    special_disabled:
+      amount: 3300
+      note: 'Line 9b: $3,300 special exemption — deaf, blind, hemiplegic, paraplegic, quadriplegic, or totally and permanently
+        disabled. NOT applied by calc.state_tax.'
+    disabled_veteran:
+      amount: 500
+      note: 'Line 9c: $500 qualified disabled veteran exemption. NOT applied by calc.state_tax.'
+  notes:
+  - 'The 4.25% rate is the REVERSION to Michigan''s standard rate: 2023''s 4.05% was a one-year statutory reduction
+    for tax year 2023 only — never carry either year''s rate to another year.'
+  - 'Claimed as a dependent by another: enter $0 on line 9a and $1,500 on line 9e instead of the $5,600 personal exemption
+    — calc.state_tax does not model this; compute line 9e on the form.'
+  - Michigan filing statuses are single / married filing jointly / married filing separately ONLY — if you filed your
+    federal return as head of household or qualifying surviving spouse, you must file your Michigan return as single
+    (2024 instructions, Line 7). The flat rate has no per-status schedule, so this mapping never changes the math
+    here.
+  - Michigan CITY income taxes (Detroit and other cities; City of Detroit returns are processed by Treasury and may
+    be filed with the Michigan return) are NOT modeled — calc.state_tax computes the state 4.25% line only.

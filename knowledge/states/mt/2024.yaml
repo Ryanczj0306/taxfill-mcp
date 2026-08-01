@@ -1,0 +1,294 @@
+# MT state knowledge — tax year 2024. Fetched + cited from the MT DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 Montana Form 2
+# Individual Income Tax Instructions (V5 12/17/2024), then independently re-derived from
+# the 2024 Form 2 itself (2024v5 11/2024), which prints the $20,500/$41,000/$30,750
+# breakpoints on page 2 line 5, the 3%/4.1% capital-gains lines, and the 10% EITC
+# multiplier on page 1 line 15 — resolutions recorded inline where the passes differed.
+# HEADLINE 2024 CHANGE — TOTAL RESTRUCTURE (SB 399 (2021) "Income Tax Simplification" +
+# SB 121 (2023)): the old 7-bracket 1%-6.75% system, the $2,960 exemptions, and the
+# 20%-of-AGI Montana standard deduction are ALL GONE. Montana now starts from FEDERAL
+# TAXABLE INCOME (Form 2 line 3 = 1040 line 11 minus the federal standard/adjusted
+# itemized deduction, QBI deduction NOT allowed), uses federal filing statuses (incl.
+# qualifying surviving spouse), and taxes ORDINARY income in TWO brackets — 4.7% up to
+# $20,500 single/MFS ($41,000 MFJ/QSS, $30,750 HoH) and 5.9% above. Net long-term
+# capital gains get separate 3.0%/4.1% rates (capital gains credit repealed). New $5,500
+# subtraction for 65+ ($11,000 MFJ both 65+). EITC rose 3% -> 10% of federal.
+# Do not carry ANY 2023 tax:-block figures forward.
+jurisdiction: states/mt
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'MT conforms. For tax year 2024 Montana starts from FEDERAL TAXABLE INCOME: 2024 Form 2, line 1 is
+  "Federal adjusted gross income from Form 1040, line 11", line 2 the federal standard deduction or adjusted federal
+  itemized deductions, and line 3 "your federal taxable income for Montana." Federally treaty-exempt income (excluded
+  from federal AGI under an applicable U.S. tax treaty) is therefore already absent from the MT starting figure.
+  Montana additions are "all items of income that are not included in federal taxable income and must be added
+  back to determine Montana taxable income" (2024 Schedule I instructions), and the enumerated addition lines are:
+  Line 1 interest/mutual-fund dividends from other states'' state/county/municipal bonds; Line 2 other recoveries
+  of amounts deducted in earlier years; Line 3 Montana MSA / First-Time Homebuyer Account nonqualified withdrawals;
+  Line 4 state income tax deduction included in federal taxable income; Line 5 expenses used to claim a Montana
+  tax credit; Line 6 other additions (codes AC S-corporation federal taxes, AF Farm and Ranch Risk Management distributions,
+  AG title plant depreciation, AZ other); Line 7 tax year 2024 transition adjustment. NONE is an add-back of treaty-exempt
+  income. Unlike California (Schedule CA), Montana has no treaty-income addback for 2024, so treaty-exempt income
+  is not re-taxed.'
+citation:
+  source: 2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024) — What's New / Income Tax
+    Simplification (SB 399 redesign, federal-taxable-income base, two rates, federal filing statuses, $5,500 65+
+    subtraction, repealed deductions), 2024 Montana Ordinary Income Tax Rates (p.14), Filing Requirements, Residency
+    Status, Due Dates (April 15, 2025), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment
+    (check payable to the Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+starts_from: 'federal TAXABLE income (2024 RESTRUCTURE): Form 2, line 1 = federal AGI (Form 1040, line 11); line
+  2 = federal standard deduction or adjusted federal itemized deductions (state income taxes removed per Worksheet
+  A; the federal QBI deduction is NOT included); line 3 = "federal taxable income for Montana." Montana taxable
+  income (line 7) = line 3 + line 4 Montana additions - line 5 Montana subtractions - line 6 $5,500 subtraction
+  for taxpayers 65 and older ($11,000 MFJ both 65+). NOTE: for tax year 2023 and earlier Montana started from federal
+  AGI with its own standard deduction and $2,960 exemptions — do not use this pack for those years.'
+residency:
+  summary: 'Montana recognizes three statuses. RESIDENT: "You are a Montana resident if you are domiciled or maintain
+    a permanent place of abode in Montana," and Montana taxes all of a resident''s income even if earned out-of-state.
+    Domicile/permanent-abode factors include a MT driver''s license or ID, voting/registering to vote in MT, MT
+    resident hunting/fishing licenses, claiming MT residency for college admission/financial aid or prior-year taxes,
+    concealed-weapon permit, motor-vehicle registration, where real estate is owned/rented/occupied, where mail
+    is regularly received, principal place of business, professional licenses, regular professional/financial/healthcare
+    services, place of worship, and club/lodge memberships (non-exhaustive; intentions considered). PART-YEAR RESIDENT:
+    a MT resident at the start of the year who established residency in another state during the year, OR a nonresident
+    who established MT residency during the year; MT taxes income received while living in MT plus MT-source income
+    received while not living in MT (Schedule II). NONRESIDENT: neither a resident nor a part-year resident; MT
+    taxes only Montana-source income. (Snowbirds who remain MT-domiciled, seasonal workers who do not establish
+    residency, and MT residents at out-of-state college are NOT part-year residents.) NEW for 2024 (HB 447): nonresidents
+    who earned ONLY wages for services performed in Montana for 30 days or less and worked in more than one state
+    have no filing requirement (exclusions apply — athletes, entertainers, per-event performers, construction workers,
+    salaries over $500,000, MEDIA-credit production employees). Montana keeps its North Dakota wage reciprocity
+    agreement and SCRA/MSRRA servicemember-spouse rules. A Montana resident filing jointly with a nonresident or
+    part-year resident spouse marks Part-year Resident and uses Schedule II.'
+forms:
+  resident: Montana Form 2 — Individual Income Tax Return (2024 redesign — most taxpayers complete only pages 1
+    and 2; Schedules I-V are separate pages included only when used).
+  part_year_or_nonresident: There is no separate nonresident/part-year individual form for 2024. Nonresidents and
+    part-year residents also file Montana Form 2 and complete Schedule II, "Tax on Montana Source Income" (which
+    replaced the old Nonresident/Part-Year Resident Ratio Schedule), to apportion the tax. (The new Form DE covers
+    Montana-source business income of single-member LLCs / sole proprietorships owned by nonresidents.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Montana Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Full-year Montana residents who claimed the federal Earned Income Tax Credit on their federal return.
+    Nonresidents do NOT qualify. Part-year residents, enrolled tribal members living on their reservation, members
+    of IRC section 501(d) agricultural organizations, and resident active-duty servicemembers use Worksheet B (Montana
+    EITC Reduction Worksheet) to reduce the credit by the Montana-earned-income ratio.
+  amount: 'NEW FOR 2024: 10% of the federal EITC (up from 3% in 2023, per SB 399/SB 121). 2024 Form 2, page 1, line
+    15: "Earned Income Credit. Federal EIC ___ Multiply Federal EIC by 10% (0.10)". Refundable — any excess over
+    the Montana tax liability is refunded.'
+  income_limit_2024: No separate Montana income limit; governed by federal EITC eligibility (the federal AGI/earned-income
+    limits that determine federal EITC qualification).
+  claimed_on: Form 2, page 1, line 15 (Worksheet B for part-year residents / tribal members / 501(d) members / servicemembers)
+  citation:
+    source: 2024 Montana Form 2 Instructions, Line 15 - Montana earned income tax credit ('You are allowed a Montana
+      earned income tax credit (EITC) of 10 percent of the federal EITC... refundable'), and What's New (credit
+      increased from 3% to 10%)
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- name: Elderly Homeowner/Renter Credit
+  type: refundable
+  eligibility: Montana taxpayers age 62 or older who lived in Montana for more than nine months during the tax year,
+    occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year,
+    and live in a household where the total income of all its members is less than $45,000. Available even to those
+    with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal). One credit
+    per household.
+  amount: Refundable credit of up to $1,150. The exact amount is determined by the household income / rent / property-tax
+    formula on Schedule 2EC (the 2024 What's New notes the calculation and amount are unchanged from 2023; the schedule
+    added an attestation section and a household-member count).
+  income_limit_2024: Total household income of all household members must be less than $45,000.
+  claimed_on: Schedule 2EC (Elderly Homeowner/Renter Credit), line 30, carried to Form 2, page 1, line 16
+  citation:
+    source: 2024 Montana Form 2 Instructions, Line 16 - Elderly Homeowner/Renter Credit (refundable up to $1,150;
+      age 62+; nine months in Montana; six months owner/renter; household income under $45,000) and Schedule 2EC
+      instructions
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- name: Montana Adoption Credit
+  type: refundable
+  eligibility: Montana residents who complete an adoption. Form ADPT and paperwork documenting the adoption (for
+    foster-care adoptions, the signed adoption confirmation letter from Montana DPHHS) must be included with the
+    return.
+  amount: $7,500 for the adoption of a child in the Montana foster care system; $5,000 for any other child under
+    age 18 or person physically or mentally incapable of self-care.
+  income_limit_2024: None stated.
+  claimed_on: Schedule III (Tax Credits), Part I, line 15 (refundable credits), carried to Form 2, page 1, line 17;
+    Form ADPT required
+  citation:
+    source: 2024 Montana Form 2 Instructions, Schedule III, Line 15 - Adoption Credit ($7,500 foster care / $5,000
+      other)
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- name: Credit for Income Taxes Paid to Another State or Country
+  type: nonrefundable
+  eligibility: Full-year or part-year Montana residents who paid income tax to another state or country on income
+    that is also taxed by Montana. Not available if the other state allowed a credit against its own tax for the
+    Montana tax on the same income, or for taxes paid on Montana-source income. Pass-through entity owners may claim
+    their share of qualifying entity-level income taxes (including composite and pass-through entity taxes).
+  income_limit_2024: No income limit; the credit is limited by the Schedule III Part II computation.
+  claimed_on: Schedule III (Tax Credits), Part II — NEW for 2024, the credit is calculated SEPARATELY for ordinary
+    income and for net long-term capital gains (because Montana now has two rate tables), each limited by an income-ratio
+    formula.
+  citation:
+    source: 2024 Montana Form 2 Instructions, Schedule III Part II - Credit for Income Taxes Paid to Another State
+      or Country (separate ordinary-income and net-long-term-capital-gains computations)
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+filing_requirement:
+  note: 'NEW STANDARD for 2024 (SB 399): "The Montana tax filing requirement follows the federal tax filing requirement
+    after considering any Montana additions and subtractions to federal taxable income." In general you must file
+    a 2024 Form 2 if, during the tax year, you were a Montana resident or part-year resident, or a nonresident who
+    received Montana source income, AND you had a federal filing requirement. If you had no federal filing requirement
+    but have a Montana addition or subtraction, you must still file. The old fixed dollar thresholds ($5,540 etc.)
+    are gone. You must also file to claim the Montana EITC or the Elderly Homeowner/Renter Credit, and taxpayers
+    with capital or passive losses must file to track loss sourcing. THIRTY-DAY EXCLUSION (HB 447, new): nonresidents
+    who earned only wages for services performed in Montana for 30 days or less and worked in more than one state
+    do not have to file or pay Montana tax on that income (exclusions: professional athletes, entertainers, per-event
+    performers, construction workers, salaries over $500,000, MEDIA-credit production employees). North Dakota residents''
+    Montana wages are exempt under reciprocity (file only to recover withholding).'
+mailing_addresses:
+  refund_or_no_payment: Montana Department of Revenue, PO Box 6577, Helena, MT 59604-6577
+  with_payment: Montana Department of Revenue, PO Box 6308, Helena, MT 59604-6308
+  citation:
+    source: 2024 Montana Form 2 Instructions, How to File / Paper Filing ('If you do not owe taxes or are expecting
+      a refund... PO Box 6577... If you are making a payment with your tax return... PO Box 6308')
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Montana Department of Revenue ('Make your check payable to the Montana Department of Revenue, sign
+    your check, and write your Social Security Number and "tax year 2024" on the memo line'; include the payment
+    voucher available at MTRevenue.gov. E-check or credit/debit card via the TransAction Portal — card payments
+    carry a fee.)
+  web_pay_url: https://tap.dor.mt.gov
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 Montana Form 2 Instructions, Due Dates ('File Form 2 and pay the tax due by April 15, 2025. An
+      automatic extension of six months applies for filing your return, but this extension does not apply to payments.')
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+all_citations:
+- source: 2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024) — What's New (SB 399 Income
+    Tax Simplification, federal filing statuses, two rates, federal-taxable-income base with no QBI deduction, $5,500/$11,000
+    65+ subtraction, repealed deductions, Montana NOL repealed, transition adjustments; SB 121 top rate 6.5% -> 5.9%;
+    EITC 3% -> 10%; SB 104 military retirement exemption; HB 447 30-day nonresident exclusion), Filing Requirements,
+    Residency Status, North Dakota Reciprocity, Page 1 and tax-calculation line instructions, 2024 Montana Ordinary
+    Income Tax Rates (p.14), Schedule I-V and Schedule 2EC instructions, Due Dates, mailing addresses, payment instructions
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- source: '2024 Montana Individual Income Tax Return Form 2 (2024v5 11/2024) — second-pass verification: federal
+    filing statuses printed (Single / MFJ / MFS / Qualifying Surviving Spouse / Head of Household); page 1 lines
+    1-7 (federal AGI, federal standard deduction or adjusted federal itemized deductions, federal taxable income
+    for Montana, Schedule I additions/subtractions, $5,500/$11,000 65+ subtraction, Montana taxable income); page
+    2 Montana Individual Income Tax worksheet lines 1-13 (net long-term capital gains lines 2-11 with the printed
+    $20,500/$41,000/$30,750 filing-status amounts on line 5, 3% (0.03) and 4.1% (0.041) multipliers, ordinary income
+    tax on line 12, resident tax line 13); page 1 line 15 ''Multiply Federal EIC by 10% (0.10)'''
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf
+- source: Montana DOR — Montana Individual Income Tax Return (Form 2) publication page
+  url: https://revenue.mt.gov/publications/montana-individual-income-tax-return-form-2
+unverified:
+- No explicit statement found in the 2024 Form 2 instructions that uses the word 'treaty' or directly addresses
+  U.S. tax-treaty-exempt income; conformity is inferred (high confidence) from the federal-taxable-income starting
+  point plus the absence of any treaty add-back among the enumerated Schedule I addition lines. Recommend confirming
+  treaty treatment with the MT DOR for any case with treaty-specific facts.
+- The Elderly Homeowner/Renter Credit amount (up to $1,150) and $45,000 household-income limit are from the 2024
+  instructions Line 16 text; the full Schedule 2EC computation (lines 1-30) was not re-derived line-by-line this
+  pass.
+- The $5,500/$11,000 age-65+ subtraction is stated to be inflation-adjusted annually BEGINNING with tax year 2025
+  — the 2024 amounts are fixed at $5,500/$11,000 per the booklet and the printed Form 2 line 6.
+tax:
+  citation:
+    source: '2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024), p.14 — ''2024 Montana Ordinary
+      Income Tax Rates'': Single and Married Filing Separately — $0 to less than $20,500 multiply by 4.7% less $0, $20,500
+      or greater multiply by 5.9% less $246; Married Filing Jointly and Qualifying Surviving Spouse — breakpoint $41,000,
+      5.9% less $492; Head of Household — breakpoint $30,750, 5.9% less $369. The rates apply to Montana ORDINARY income
+      (taxable income without net long-term capital gains). Worked example (instructions p.12): $50,000 single -> ''Her
+      Montana Ordinary Income Tax is $2,704'' — matching marginal bracket math (4.7% x 20,500 + 5.9% x 29,500 = 963.50
+      + 1,740.50 = 2,704). Second pass: the 2024 Form 2 itself (https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf)
+      prints the $20,500/$41,000/$30,750 filing-status amounts on page 2, line 5, and the What''s New confirms the two-rate
+      structure (SB 399 (2021); SB 121 (2023) reduced the top rate 6.5% -> 5.9%) — both passes agree.'
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 20500, rate: 0.047}
+    - {over: 20500, but_not_over: null, rate: 0.059}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 41000, rate: 0.047}
+    - {over: 41000, but_not_over: null, rate: 0.059}
+    married_filing_separately:
+    - {over: 0, but_not_over: 20500, rate: 0.047}
+    - {over: 20500, but_not_over: null, rate: 0.059}
+    head_of_household:
+    - {over: 0, but_not_over: 30750, rate: 0.047}
+    - {over: 30750, but_not_over: null, rate: 0.059}
+  base: federal_taxable_income
+  tax_line: 'Form 2, page 1, line 8 ''Tax liability before tax credits'', computed on the page 2 ''Montana Individual
+    Income Tax'' worksheet: line 12 ''figure your tax on the amount on line 1 [Montana taxable income, page 1 line
+    7] using the Montana Ordinary Income Tax Table'' (on line 4 — taxable income minus net long-term capital gains
+    — if you have net LTCG), plus the line 11 net long-term capital gains tax; residents enter the line 13 sum on
+    page 1, line 8.'
+  exemptions:
+    age_65:
+      amount: 5500
+      note: 'NEW 2024 subtraction, NOT an exemption in the old sense: Form 2, page 1, line 6 — ''$5,500 subtraction for
+        taxpayers 65 and older ($11,000 if married filing jointly and both are 65 and older)'', subtracted from federal
+        taxable income in computing line 7 Montana taxable income. NOT applied by calc.state_tax (the engine applies only
+        personal/dependent keys) — claim it on the form; the caller''s supplied line 7 base should already reflect it.
+        Inflation-adjusted beginning tax year 2025.'
+  notes:
+  - '2024 STRUCTURAL CHANGE (SB 399 (2021) + SB 121 (2023)) — DO NOT USE 2023 FIGURES: the seven-bracket 1%-6.75%
+    schedule, the $2,960-per-person exemptions, and the 20%-of-AGI Montana standard deduction (max $5,540/$11,080)
+    are ALL REPEALED. For 2024 Montana taxes ORDINARY income in two brackets — 4.7% to $20,500 (single/MFS), $41,000
+    (MFJ/QSS), $30,750 (HoH); 5.9% above — applied to Montana taxable income built from FEDERAL TAXABLE income. There
+    are no Montana personal or dependent exemptions and no Montana standard deduction (the federal one is embedded
+    in the base): pass exemptions_count=0 and dependents_count=0.'
+  - 'Base guidance: Supply 2024 Form 2, page 1, line 7 — ''Montana taxable income'' = line 3 federal taxable income
+    for Montana + line 4 Montana additions (Schedule I) - line 5 Montana subtractions (Schedule I) - line 6 the $5,500/$11,000
+    age-65+ subtraction; floored at 0. For a filer with no Montana adjustments, under 65, who took the FEDERAL STANDARD
+    deduction and has no federal QBI deduction, line 7 equals federal Form 1040, line 15 (federal taxable income).
+    CAVEATS in deriving line 3: itemizers must use Worksheet A to remove state income taxes from federal itemized
+    deductions (only to the extent the deduction stays above the federal standard deduction — MFS itemizers remove
+    ALL of it), and the federal qualified business income (QBI) deduction under IRC 199A is NEVER included — so 1040
+    line 15 understates line 3 for QBI claimants. The op subtracts NOTHING further — line 7 already reflects every
+    deduction and subtraction.'
+  - 'CRITICAL — the shipped brackets tax ORDINARY income only: Montana''s two-bracket 4.7%/5.9% schedule applies to
+    ''taxable income without long-term capital gains'' (Montana Ordinary Income, which includes qualified dividends).
+    NET LONG-TERM CAPITAL GAINS are taxed separately at 3.0% up to the same filing-status breakpoint (measured after
+    stacking on ordinary income, Form 2 page 2 lines 2-10) and 4.1% above. If the filer has NO net long-term capital
+    gains, this op''s bracket math on line 7 reproduces the page 2 line 12 tax exactly. If they do, compute the split
+    on the page 2 worksheet — running the full line 7 through these brackets OVERSTATES the tax (the LTCG portion
+    would be taxed at 4.7%/5.9% instead of 3.0%/4.1%). The old Resident Capital Gains Credit (2% of gains) is REPEALED.'
+  - 'FEDERAL FILING STATUSES (new 2024): taxpayers must use the same filing status as the federal return — including
+    QUALIFYING SURVIVING SPOUSE, which shares the MFJ schedule (the rate table is titled ''Married Filing Jointly
+    and Qualifying Surviving Spouse'' and the Form 2 line 5 prints $41,000 for both), so the engine''s QSS-to-MFJ
+    mapping is exactly correct. The old Montana statuses 2a/2b/2c (married filing separately on the same form, etc.)
+    are gone; MFS is allowed only if the couple filed separate federal returns. MFS uses the single-status schedule
+    ($20,500 breakpoint), NOT half of MFJ.'
+  - 'The printed ''multiply by ... Less'' constants are EXACT: $246 = (5.9% - 4.7%) x $20,500, $492 = (5.9% - 4.7%)
+    x $41,000, and $369 = (5.9% - 4.7%) x $30,750 to the cent — no rounding divergence between the printed worksheet
+    method (5.9% x income - constant) and pure marginal bracket math. The instructions'' own example ($50,000 single
+    -> $2,704) matches both methods exactly.'
+  - 'No lookup-table mandate: the ''Montana Ordinary Income Tax Table'' (p.14) is a rate FORMULA schedule (''Then
+    your tax rate is ... Less''), not a row-lookup table, so bracket math is exact at every income level.'
+  - 'Age 65+ subtraction NOT applied by the op: the $5,500 ($11,000 MFJ both 65+) line 6 subtraction is disclosed
+    as an informational ''age_65'' key but calc.state_tax does not subtract it — the supplied line 7 base must already
+    reflect it (it is a return line, not an engine adjustment).'
+  - Montana EITC (Form 2, page 1, line 15 = 10% of the federal EITC for 2024, up from 3% in 2023) is a refundable
+    CREDIT — NOT modeled by this op. Nonrefundable credits (Schedule III Part I) and refundable credits (Schedule
+    III lines 15-16, e.g. the $7,500/$5,000 Adoption Credit) reduce or supplement tax AFTER line 8 and are not modeled.
+  - Recapture taxes, lump-sum distribution taxes, penalties, and interest are reported on Schedule IV and added on
+    page 1, line 19 — NOT modeled; if owed, the return total exceeds plain bracket math on line 7.
+  - 'Nonresidents and part-year residents (and Montana residents filing jointly with nonresident/part-year spouses):
+    bracket math on line 7 yields only the resident tax (page 2 lines 11-12); the tax is then apportioned by the Montana-source
+    ratio on Schedule II (Tax on Montana Source Income) — page 2 line 12 goes to Schedule II line 19 and line 11 to
+    Schedule II line 24. This op models the full-year RESIDENT computation (page 2, line 13).'
+  - 'Rounding: the 2024 Form 2 is a whole-dollar return (every money field prints ''00'' cents); the engine''s half-up
+    rounding to whole dollars matches the form''s presentation. The instructions'' worked examples round the same
+    way ($2,704 exactly).'
+  - '2024 is the FIRST year of this structure and there was NO mid-year 2024 rate change: SB 399 (2021) set the redesign
+    effective tax year 2024 with a 6.5% top rate, and SB 121 (2023) lowered the top rate to 5.9% before the year began.
+    The 2023 pack (7 brackets, $2,960 exemptions, 20% standard deduction) must not be used for 2024, and this pack
+    must not be used for 2023 or earlier.'

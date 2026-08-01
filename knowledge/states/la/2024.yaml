@@ -1,0 +1,316 @@
+# LA state knowledge — tax year 2024. Fetched + cited from the LA DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 IT-540
+# instructions ('IT540i WEB 2024 INSTRUCTIONS'), then independently re-derived from a
+# second official document — the 2024 IT-540 form itself (IT-540-WEB-BC-2024-F, with the
+# credit worksheets), the 2024 Louisiana Tax Tables (IT540(2024)D13 TT), or the 2024
+# IT-540B instructions (whose Tax Computation Worksheet prints the rates explicitly) —
+# resolutions recorded inline where the passes differed.
+# 2024 STATUS: rates and structure UNCHANGED from 2023 (1.85%/3.5%/4.25% at
+# $12,500/$50,000 single — $25,000/$100,000 MFJ/QSS; $4,500/$9,000 combined personal
+# exemption-standard deduction zero-rate floors; $1,000 per extra exemption). The 2024
+# What's New lists only donation/credit-schedule housekeeping. NOTE: Louisiana moved to a
+# FLAT 3% tax for TAX YEAR 2025 (2024 Third Extraordinary Session) — do not use 2025
+# documents for 2024 figures.
+jurisdiction: states/la
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'LA''s resident return (IT-540) starts from Federal Adjusted Gross Income: Line 7 is "FEDERAL ADJUSTED
+  GROSS INCOME" and the 2024 instructions say "Line 7 – Enter the amount of your Federal Adjusted Gross Income (Federal
+  AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11. If your Federal AGI is less than zero, enter
+  0." Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The only
+  "additions" to federal AGI are on Schedule E, Lines 2A-2D: (2A) interest and dividend income from other states
+  and their political subdivisions, (2B) recapture of START contributions, (2C) recapture of START K12 contributions,
+  and (2D) add back of pass-through entity loss. There is NO add-back of tax-treaty-exempt income anywhere on the
+  IT-540 form, Schedule E, or in the instructions (the word "treaty" appears zero times in both the 2024 IT-540 form
+  PDF and the 2024 IT-540 instructions PDF). Because LA starts from federal AGI and has no treaty addback, treaty-exempt
+  income is not re-taxed -> conforms.'
+citation:
+  source: 'Louisiana DOR - 2024 IT-540 Resident Income Tax Return (form PDF, IT-540-WEB-BC-2024-F): Line 7 = Federal
+    Adjusted Gross Income; Schedule E additions Lines 2A-2D; mailing Address 1 P.O. Box 3550 (with payment) and Address
+    2 P.O. Box 3440 (all other); ''Calendar year return due 5/15/2025''; Refundable Child Care / School Readiness
+    / Nonrefundable Child Care credit worksheets'
+  url: https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf
+starts_from: federal AGI (IT-540 Line 7 = Federal Adjusted Gross Income from Federal Form 1040/1040-SR, Line 11;
+  if you have Louisiana additions/exempt income, Line 7 comes from Louisiana Schedule E, Line 5 instead)
+residency:
+  summary: 'Louisiana residency is domicile-based. A Louisiana resident is a person domiciled in Louisiana (or who
+    maintains a Louisiana residence while working in another state); per the 2024 IT-540 instructions, "A temporary
+    absence from Louisiana does not automatically change your domicile for income tax purposes" and you must affirmatively
+    establish a new domicile elsewhere (e.g., registering to vote, titling vehicles, obtaining a driver''s license,
+    homestead exemption) and abandon the Louisiana domicile to change it. Residents file IT-540 and report all income
+    from all sources. Nonresidents and part-year residents file IT-540B and are taxed only on Louisiana-source income
+    (the IT-540B computes a ratio of Louisiana AGI to Federal AGI and applies it). Part-year residents may elect
+    to file either a resident (IT-540) or nonresident (IT-540B) return, whichever is more beneficial (see LDR Revenue
+    Ruling 05-008). Nonresident professional athletes must electronically file Form IT-540B with Schedules NRPA-1
+    and NRPA-2. Note: unlike some states (e.g., NY), Louisiana does not use a statutory-resident day-count test;
+    residency turns on domicile.'
+forms:
+  resident: IT-540 (2024 Louisiana Resident Income Tax Return)
+  part_year_or_nonresident: IT-540B (2024 Louisiana Nonresident and Part-Year Resident Income Tax Return)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Louisiana Earned Income Credit (LA EIC)
+  type: refundable
+  eligibility: Resident individuals who claimed a Federal Earned Income Credit (EIC) for 2024. Authorized by R.S.
+    47:297.8. The Louisiana Earned Income Credit Worksheet must be attached to the return.
+  amount: '5% of the Federal Earned Income Credit ("The refundable credit is equal to 5 percent of your Federal
+    EIC", 2024 IT-540 instructions, Line 15).'
+  income_limit_2024: No separate Louisiana income cap stated; eligibility tracks the federal EIC income limits (you
+    must have claimed the Federal EIC).
+  claimed_on: Form IT-540, Line 15 (from the 2024 Louisiana Earned Income Credit Worksheet)
+  citation:
+    source: Louisiana Department of Revenue – 2024 IT-540 instructions, Line 15 (LA EIC, 5 percent of the Federal
+      EIC, R.S. 47:297.8)
+    url: https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf
+- name: Louisiana Refundable Child Care Credit (federal AGI $25,000 or less)
+  type: refundable
+  eligibility: Louisiana residents with federal adjusted gross income of $25,000 or less who incurred child and
+    dependent care expenses in Louisiana (under IRC Section 21) for a qualifying person, to allow the taxpayer (and
+    spouse if married filing jointly) to work or look for work. Refundable whether or not a federal child care credit
+    was claimed. Authorized by R.S. 47:297.4. The worksheet must be attached to the return.
+  amount: 'Qualified expenses capped at $3,000 for one qualifying person / $6,000 for two or more (2024 worksheet
+    Line 3), limited to earned income (Lines 4-6), multiplied by a federal-AGI-based decimal, then multiplied by
+    50% (Line 10 ''Multiply Line 9 by 50 percent''). 2024 decimal table verbatim: $0–$15,000 = .35; $15,000–$17,000
+    = .34; $17,000–$19,000 = .33; $19,000–$21,000 = .32; $21,000–$23,000 = .31; $23,000–$25,000 = .30.'
+  income_limit_2024: Federal adjusted gross income must be $25,000 or less to claim the refundable version.
+  claimed_on: Form IT-540, Line 13 (with expense/limit amounts on Lines 13A and 13B; from the 2024 Louisiana Refundable
+    Child Care Credit Worksheet, Line 11)
+  citation:
+    source: Louisiana Department of Revenue – 2024 Form IT-540 (Louisiana Refundable Child Care Credit Worksheet,
+      Lines 3-11 and decimal table) and 2024 IT-540 instructions, Lines 13/13A/13B
+    url: https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf
+- name: Louisiana Nonrefundable Child Care Credit (federal AGI greater than $25,000)
+  type: nonrefundable
+  eligibility: Louisiana residents with federal adjusted gross income greater than $25,000 who incurred qualifying
+    child and dependent care expenses (IRC Section 21) in Louisiana and claimed a federal child care credit. Unused
+    credit may be carried forward up to five years (for 2024, carryforwards from 2019 through 2023 may be applied;
+    2018 amounts have expired). Authorized by R.S. 47:297.4.
+  amount: 'Federal Child Care Credit (Federal Form 1040/1040-SR, Schedule 3, Line 2) multiplied by an AGI-based
+    percentage (2024 worksheet Line 1A): $25,001–$35,000 = 30% (.30); $35,001–$60,000 = 10% (.10); over $60,000
+    = 10% (.10). If federal AGI is greater than $60,000, the credit is limited to the LESSER of $25.00 or 10 percent
+    of the federal credit (worksheet Line 2A).'
+  income_limit_2024: Federal adjusted gross income must be greater than $25,000 to claim on this line; for AGI over
+    $60,000 the credit is capped at $25 (or 10% of the federal credit, whichever is less).
+  claimed_on: Form IT-540, Schedule J – Nonrefundable Priority 3 Credits, Line 2 (carryforward from 2019-2023 on
+    Line 3); from the 2024 Louisiana Nonrefundable Child Care Credit Worksheet
+  citation:
+    source: Louisiana Department of Revenue – 2024 Form IT-540 (2024 Louisiana Nonrefundable Child Care Credit Worksheet,
+      Lines 1-2A) and 2024 IT-540 instructions What's New (Schedule J carryforward years)
+    url: https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf
+- name: Louisiana School Readiness Child Care Expense Credit (refundable, federal AGI $25,000 or less)
+  type: refundable
+  eligibility: Taxpayers who claimed the Louisiana Refundable Child Care Credit (IT-540 Line 13) and who had a qualified
+    dependent under age six that attended a child care facility participating in the Quality Start Rating program
+    (administered by the Louisiana Dept. of Education) — facility must provide Form R-10614, and the facility license
+    number must be entered on the Refundable Child Care Credit Worksheet. Refundable version requires federal AGI
+    of $25,000 or less. Authorized by R.S. 47:6104.
+  amount: 'A percentage of the Louisiana refundable child care credit based on the facility''s Quality Star Rating
+    (2024 worksheet chart): Five Star = 200% (2.0); Four Star = 150% (1.5); Three Star = 100% (1.0); Two Star =
+    50% (.50); One Star = 0% (.00).'
+  income_limit_2024: Federal adjusted gross income of $25,000 or less for the refundable version (above $25,000
+    the credit is nonrefundable and claimed on Schedule J, with the 2019-2023 five-year carryforward).
+  claimed_on: Form IT-540, Line 14 (refundable; from the 2024 Louisiana Refundable School Readiness Credit Worksheet;
+    enter the number of qualified dependents per star rating in the boxes under Line 14). Nonrefundable version
+    (AGI > $25,000) is on Form IT-540, Schedule J, Lines 4-5.
+  citation:
+    source: Louisiana Department of Revenue – 2024 Form IT-540 (2024 Louisiana Refundable School Readiness Credit
+      Worksheet, star-rating chart) and 2024 IT-540 instructions, Line 14
+    url: https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf
+filing_requirement:
+  note: 'Per the 2024 IT-540 instructions ("WHO MUST FILE A RETURN"): (1) A Louisiana resident who is required to
+    file a federal individual income tax return must file a Louisiana return reporting all income earned in 2024.
+    (2) You must file to obtain a refund or credit if you overpaid through withholding, estimated tax, a credit
+    carried forward, or are claiming a 2024 refundable child care credit or Louisiana earned income credit. (3)
+    If you are not required to file a federal return but had Louisiana income tax withheld in 2024, you must file
+    to claim a refund (complete Lines 1-6F, enter wages/income in the boxes above Line 7, skip to Line 12 and enter
+    zero). Nonresidents/part-year residents with Louisiana-source income who must file a federal return file IT-540B.
+    The filing trigger keys off the federal filing requirement rather than a fixed standalone dollar threshold;
+    the IRS federal filing thresholds therefore govern.'
+mailing_addresses:
+  refund_or_no_payment: 'Department of Revenue, P.O. Box 3440, Baton Rouge, LA 70821-3440 (form Address 2: "Mail
+    All Other Individual Income Tax Returns" — refund / no-payment)'
+  with_payment: 'Department of Revenue, P.O. Box 3550, Baton Rouge, LA 70821-3550 (form Address 1: balance-due return
+    with payment). Print the last four digits of your SSN on the check/money order and attach it to the return.
+    Do not send cash.'
+  citation:
+    source: 'Louisiana DOR - 2024 IT-540 Resident Income Tax Return (form PDF): Address 1 P.O. Box 3550 (with payment)
+      and Address 2 P.O. Box 3440 (all other); 2024 IT-540 instructions WHERE TO FILE AND PAY TAX (''A return for
+      which a payment is due must be mailed to P.O. Box 3550 ... All other individual income tax returns must be
+      mailed to P.O. Box 3440'')'
+    url: https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf
+payment:
+  check_payee: 'Louisiana Department of Revenue (2024 IT-540 instructions: "Make your check or money order payable
+    to the Louisiana Department of Revenue. Print the last four digits of your social security number on your check
+    or money order and attach it to your return." Do not send cash. Credit card payments via www.revenue.louisiana.gov/MakeAPayment.)'
+  web_pay_url: https://www.revenue.louisiana.gov/latap
+deadlines:
+  filing_due_date: '2025-05-15'
+  citation:
+    source: 'Louisiana DOR - 2024 IT-540 form (''Calendar year return due 5/15/2025'') and 2024 IT-540 instructions
+      WHEN TO FILE (''A 2024 calendar year return is due on or before May 15, 2025''); automatic six-month extension
+      to November 15, 2025 (no extension form required; pay any tax due with voucher Form R-2868V by May 15, 2025)'
+    url: https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf
+all_citations:
+- source: 'Louisiana DOR - 2024 IT-540 Resident Income Tax Return (form PDF, IT-540-WEB-BC-2024-F): Line 7 = Federal
+    Adjusted Gross Income; Schedule E additions Lines 2A-2D (no treaty addback); mailing Address 1 P.O. Box 3550
+    / Address 2 P.O. Box 3440; ''Calendar year return due 5/15/2025''; 2024 Refundable Child Care Credit Worksheet
+    (decimal table .35-.30, x .50), Refundable School Readiness Credit Worksheet (star percentages 2.0/1.5/1.0/.50/.00),
+    Nonrefundable Child Care Credit Worksheet (30%/10%, $25 cap over $60,000)'
+  url: https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf
+- source: 'Louisiana DOR - 2024 IT-540 Resident Income Tax Return Instructions (IT540i WEB 2024): WHAT''S NEW FOR
+    LOUISIANA 2024 (no rate/structure change; Schedule E education-deduction limits raised to $6,000 per dependent
+    by Act 423 of 2023; Schedule J carryforward years 2019-2023); ''Line 7 - Enter the amount of your Federal Adjusted
+    Gross Income ... from Federal Form 1040 or 1040-SR, Line 11''; Line 8C federal standard deduction $14,600 statuses
+    1/3, $29,200 statuses 2/5, $21,900 status 4; Lines 9-10 tax table income and tax; WHO MUST FILE A RETURN; WHEN
+    TO FILE (May 15, 2025; automatic six-month extension to November 15, 2025); WHERE TO FILE AND PAY (P.O. Box
+    3550 / P.O. Box 3440); ''Make your check or money order payable to the Louisiana Department of Revenue''; Line
+    15 LA EIC 5%'
+  url: https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf
+- source: Louisiana DOR - 2024 Louisiana Tax Table (IT540(2024)D13 TT) — three printed tables (Single/MFS box 1
+    or 3; MFJ/QSS box 2 or 5; Head of Household box 4) with the $4,500/$9,000 combined personal exemption-standard
+    deduction headers and the 'Plus 4.25% of Tax Table Income in Excess of $51,000/$101,000' continuations
+  url: https://dam.ldr.la.gov/taxforms/IT540(2024)D13%20TT.pdf
+- source: Louisiana DOR - 2024 IT-540B Nonresident/Part-Year Resident Instructions (IT540Bi(2024)D10) — Tax Computation
+    Worksheet (the only 2024 LDR document that prints the rates explicitly; 1.85% first bracket to $12,500/$25,000,
+    3.5% next $37,500/$75,000, 4.25% over $50,000/$100,000; Line C1 combined personal exemption-standard deduction
+    $4,500 statuses 1/3, $9,000 statuses 2/4/5; Line C2 $1,000 per 65-or-over/blind box and per dependent; Lines
+    E/F/G deduct it from the first bracket)
+  url: https://dam.ldr.la.gov/taxforms/IT540Bi(2024)D10.pdf
+- source: 'Louisiana DOR - Individual Income Tax (general resources): residency/domicile, IT-540 vs IT-540B, returns
+    and payments due May 15th of the following year, filing requirement tied to federal filing obligation'
+  url: https://revenue.louisiana.gov/individuals/general-resources/individual-income-tax/
+- source: Louisiana DOR - Tax Forms for Individuals (2024 IT-540 form/instruction/tax-table listing and titles)
+  url: https://revenue.louisiana.gov/tax-forms/individuals/
+unverified:
+- The 'refund/no-payment' address is the same P.O. Box 3440 used for 'all other individual income tax returns' (the
+  form/instructions label it Address 2 for all non-payment returns rather than a dedicated 'refund' box); confirm
+  at the DOR if a return is specifically a refund return.
+- The 2025 flat-tax legislation (2024 Third Extraordinary Session; flat 3% for tax years beginning 1/1/2025) was
+  not pulled from a .gov session-law page in this pass — it is noted only as a caution that 2025 documents must not
+  be used for 2024. The 2024 rates/structure themselves are two-pass confirmed at the cited 2024 documents.
+- The School Readiness Child Care Directors and Staff credit amount (Schedule F Code 66F) is CPI-adjusted annually
+  and published only at www.revenue.louisiana.gov/SchoolReadiness; the 2024 dollar amount was not captured.
+- IT-540B part-year mechanics beyond the Tax Computation Worksheet (ratio Line 9 proration) were not parsed line-by-line;
+  confirm against the IT-540B instructions when filing IT-540B.
+tax:
+  citation:
+    source: '2024 Louisiana Tax Table (IT540(2024)D13 TT, printed with the resident IT-540): ''2024 LOUISIANA TAX TABLE
+      - Single or Married Filing Separately (Filing Status Box 1 or 3)'' / ''Married Filing Jointly or Qualifying Surviving
+      Spouse (Filing Status Box 2 or 5)'' / ''Head of Household (Filing Status Box 4)''; each header states ''The $4,500
+      [Single/MFS] / $9,000 [MFJ-QSS, HOH] combined personal exemption-standard deduction and $1,000 for each exemption
+      over one [over two for MFJ-QSS] have been used in determining the tax shown in this table'', with continuations
+      ''Plus 4.25% of Tax Table Income in Excess of $51,000'' (Single/MFS, HOH) and ''Plus 4.25% of Tax Table Income
+      in Excess of $101,000'' (MFJ/QSS). Rates and bracket boundaries cross-verified against the 2024 IT-540B instructions
+      Tax Computation Worksheet (1.85% on the first $12,500/$25,000; 3.5% on the next $37,500/$75,000; 4.25% over $50,000/$100,000;
+      Line C1 combined personal exemption-standard deduction $4,500 statuses 1/3, $9,000 statuses 2/4/5; Line C2 $1,000
+      per 65-or-over/blind box and per dependent; Lines E/F/G deduct it from the first bracket), https://dam.ldr.la.gov/taxforms/IT540Bi(2024)D10.pdf,
+      and the 2024 IT-540 instructions, Lines 6-10, https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf
+      — 2024 rates and boundaries are UNCHANGED from 2023 (Louisiana''s flat 3% applies only from tax year 2025).'
+    url: https://dam.ldr.la.gov/taxforms/IT540(2024)D13%20TT.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 4500, rate: 0}
+    - {over: 4500, but_not_over: 12500, rate: 0.0185}
+    - {over: 12500, but_not_over: 50000, rate: 0.035}
+    - {over: 50000, but_not_over: null, rate: 0.0425}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 9000, rate: 0}
+    - {over: 9000, but_not_over: 25000, rate: 0.0185}
+    - {over: 25000, but_not_over: 100000, rate: 0.035}
+    - {over: 100000, but_not_over: null, rate: 0.0425}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4500, rate: 0}
+    - {over: 4500, but_not_over: 12500, rate: 0.0185}
+    - {over: 12500, but_not_over: 50000, rate: 0.035}
+    - {over: 50000, but_not_over: null, rate: 0.0425}
+    head_of_household:
+    - {over: 0, but_not_over: 9000, rate: 0}
+    - {over: 9000, but_not_over: 12500, rate: 0.0185}
+    - {over: 12500, but_not_over: 50000, rate: 0.035}
+    - {over: 50000, but_not_over: null, rate: 0.0425}
+  base: federal_agi
+  tax_line: 'IT-540 Line 10: ''YOUR LOUISIANA INCOME TAX''. 2024 instructions, Line 10: ''Use the tax table that corresponds
+    with your filing status. Locate the amount of your tax table income from Line 9 in the first two columns of the
+    tax table. Read across to the column numbered the same as the total number of exemptions claimed on Line 6F. The
+    amount shown in that column is your Louisiana tax liability. Enter this amount on Line 10. If you have more than
+    eight exemptions, refer to the instructions at the top of the tax tables.'''
+  exemptions:
+    dependent:
+      amount: 1000
+      note: 'Per exemption over the count built into the tax table (one for Single/MFS/HOH; two for MFJ/QSS): $1,000 for
+        each dependent claimed on IT-540 Line 6C (counted in Line 6F). Officially this is deducted from income taxed in
+        the LOWEST (1.85%) bracket - the 2024 tax table header says ''$1,000 for each exemption over one [two] have been
+        used in determining the tax'', and the 2024 IT-540B Tax Computation Worksheet subtracts it (Line C2 -> E) from
+        the first bracket, spilling any excess over the first bracket into the 3.5% bracket (Line G). calc.state_tax instead
+        subtracts it from the base, which is exact while your top rate is 1.85% but understates tax by up to $16.50 (3.5%
+        bracket) or $24.00 (4.25% bracket) per exemption at higher incomes. Note: for MORE than 8 exemptions Louisiana''s
+        own table instruction switches to base-reduction (''reduce your tax table income by $1,000 for each exemption
+        over eight'' and use the 8-exemption column). The IT-540B worksheet labels Line C2 ''Credit for Dependents'',
+        but mechanically it is an income deduction, not a tax credit. Dependents for whom the Deduction for Certain Adoptions
+        is claimed are excluded (Line 6E reduces Line 6F). Unchanged from 2023.'
+    age_65:
+      amount: 1000
+      note: $1,000 per '65 or older' box marked on IT-540 Lines 6A/6B (taxpayer and spouse each), counted in the Line
+        6F exemption total and deducted from the lowest bracket via the tax table column. NOT applied by calc.state_tax
+        - claim it on the form through the Line 6F exemption count. Unchanged from 2023.
+    blind:
+      amount: 1000
+      note: $1,000 per 'Blind' box marked on IT-540 Lines 6A/6B (taxpayer and spouse each), counted in the Line 6F exemption
+        total and deducted from the lowest bracket via the tax table column. NOT applied by calc.state_tax - claim it
+        on the form through the Line 6F exemption count. Unchanged from 2023.
+  notes:
+  - 'Base guidance: Supply 2024 Form IT-540, Line 9: ''Subtract Line 8D from Line 7. If less than zero, enter zero
+    0'' (YOUR LOUISIANA TAX TABLE INCOME). Line 7 is Federal Adjusted Gross Income (Federal Form 1040/1040-SR, Line
+    11; if less than zero enter 0; if you have Louisiana additions/exempt income, Line 7 comes from Louisiana Schedule
+    E, Line 5 instead). Line 8D, ''EXCESS FEDERAL ITEMIZED DEDUCTIONS,'' applies only to federal itemizers and equals
+    Line 8B (federal itemized deduction for medical and dental expenses, federal Schedule A Line 4) minus Line 8C
+    (2024 federal standard deduction: $14,600 statuses 1/3, $29,200 statuses 2/5, $21,900 status 4), floor zero. IMPORTANT:
+    supply Line 9 UNREDUCED - do NOT subtract Louisiana''s $4,500/$9,000 combined personal exemption-standard deduction
+    yourself; it is encoded in the zero-rate bottom bracket shipped here (standard_deduction is null for that reason).'
+  - 'Adjudication note (two-pass): base is federal_agi — IT-540 Line 7 is federal adjusted gross income and Line 9
+    tax table income derives from it (see base-quirk note); supply Line 9. exemptions_count must be 0: the primary
+    personal exemptions are BUILT INTO the zero-rate floor ($4,500 single/MFS; $9,000 MFJ/QSS and Head of Household
+    per the printed 2024 table headers), never subtracted separately. 2024 rates, boundaries, and floors verified
+    identical to 2023 in both the printed tax tables and the IT-540B Tax Computation Worksheet.'
+  - '2024 IS THE LAST GRADUATED YEAR: Louisiana adopted a FLAT 3% individual income tax effective for tax years beginning
+    on or after January 1, 2025 (2024 Third Extraordinary Session). The 2025 IT-540 documents print the flat structure
+    — never source 2024 figures from them, and never use this 2024 pack for 2025.'
+  - 'Table mandate below $51,000 ($101,000 for MFJ/QSS): IT-540 Line 10 requires taking the tax from the printed 2024
+    Louisiana Tax Table for your filing status and Line 6F exemption count - bracket math may differ by a few dollars
+    within table bands (the printed cells equal the IT-540B worksheet math evaluated at the midpoint of each $250
+    income band in every cell sampled — e.g., Single 1-exemption $12,500-$12,750 cell prints 152 = 1.85% x 8,000 +
+    3.5% x 125 at midpoint 12,625 rounded; MFJ 2-exemption $89,750-$90,000 cell prints 2,567 = 296 + 3.5% x 64,875
+    at midpoint 89,875 rounded); the filed form must use the table.'
+  - Above the table cap, the table itself prescribes 'Plus 4.25% of Tax Table Income in Excess of $51,000' ($101,000
+    MFJ/QSS) added to the last printed row, which was computed at that band's midpoint ($50,875/$100,875) - the official
+    method therefore comes out about $5 below exact bracket math.
+  - Qualifying Surviving Spouse (filing status 5) shares the Married Filing Jointly tax table, brackets, and $9,000
+    combined deduction - the engine's QSS -> married_filing_jointly mapping is exact. Head of Household shares the
+    Single/MFS bracket boundaries ($12,500/$50,000) but gets the $9,000 combined personal exemption-standard deduction
+    ($4,500 more than Single) - hence its different zero-rate floor.
+  - The zero-rate floor covers only the base exemption count (one exemption for Single/MFS/HOH; two for MFJ/QSS -
+    the MFJ/QSS table has no one-exemption column, and Line 6 requires the same exemptions as your federal return
+    except for the dependent-on-another's-return, 65-or-over, and blind cases). Every additional Line 6F exemption
+    ($1,000 each - dependents, 65-or-over boxes, blind boxes) is handled per the shipped 'dependent'/'age_65'/'blind'
+    entries and their noted engine divergence.
+  - 'Louisiana credits are NOT modeled by this op and come off after Line 10: Nonrefundable Priority 1 credits (Schedule
+    C) on Line 11; refundable child care credit (federal AGI <= $25,000, worksheet decimal .35-.30 x 50%), refundable
+    school readiness credit (star-rated 200%/150%/100%/50%), and the Louisiana Earned Income Credit (5% of the federal
+    EIC) on Lines 13-15; other refundable Priority 2/4 credits (Schedules F and I) and nonrefundable Priority 3 credits
+    including the nonrefundable child care credit (Schedule J, 30%/10% with the $25 cap over $60,000 AGI) on Lines
+    16/20/25.'
+  - 'Base quirk (affects the figure you supply, not this computation): Louisiana''s only deduction between federal
+    AGI and tax table income is Line 8D ''EXCESS FEDERAL ITEMIZED DEDUCTIONS'' = federal itemized MEDICAL AND DENTAL
+    deduction (Schedule A Line 4) minus the 2024 federal standard deduction ($14,600/$29,200/$21,900), floor zero,
+    for federal itemizers only - non-itemizers skip Lines 8A-8D.'
+  - Consumer Use Tax (Line 22A boxes) and the Electric/Hybrid Vehicle Road Usage Fee (Line 22B) are separate amounts
+    added on the 2024 return after the income tax - NOT modeled.
+  - 'Source URLs: tax tables https://dam.ldr.la.gov/taxforms/IT540(2024)D13%20TT.pdf ; resident instructions https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf
+    ; resident form https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf ; IT-540B instructions (Tax Computation
+    Worksheet) https://dam.ldr.la.gov/taxforms/IT540Bi(2024)D10.pdf .'

@@ -1,0 +1,343 @@
+# DC state knowledge — tax year 2024. Fetched + cited from the DC OTR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 D-40 booklet
+# (2024_D40_Booklet_062325.pdf), then independently re-derived from a second official
+# source (the live otr.cfo.dc.gov 'DC Individual and Fiduciary Income Tax Rates' page,
+# or a second in-booklet print) — resolutions recorded inline where the passes differed.
+# HEADLINE FOR 2024: rates UNCHANGED (the same seven-bracket table in effect for taxable
+# years beginning January 1, 2022); the standard deduction ROSE with federal law to
+# $14,600 single/MFS, $21,900 HOH, $29,200 MFJ/QW. New for 2024 is otherwise credit-side
+# only: childless DC EITC max $632 (income test $30,019, investment income $11,600);
+# Schedule H max $1,375 (AGI limits $63,900/$87,100); Schedule ELC max $1,160 per child;
+# new Schedule U Line 6 housing provider credit; QHTC 3% capital-gain rate repealed.
+jurisdiction: states/dc
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'DC''s Form D-40 begins from federal adjusted gross income (D-40 Line 4 and Schedule I Calculation
+  A are titled around ''Federal Adjusted Gross Income''), and DC''s only mechanism for adding income back is Schedule
+  I, Calculation A ''Additions to federal adjusted gross income.'' The verified addition categories on the 2024
+  Schedule I (Cal. A, Revised 09/2024) are: (1) part-year resident adjustment, (2) income distributions eligible
+  for federal income averaging (Form 4972), (3) 100% federal bonus depreciation / extra IRC sec.179, (4) discrimination
+  award subject to income averaging, (5) S-corp deductions from Sch K-1 (1120-S), (6) pass-through losses from DC
+  unincorporated businesses exceeding the $12,000 threshold, (7) ''Other ... items not subject to federal tax but
+  subject to DC tax,'' and (8) capital gains deferred on the federal return due to investment in a Qualified Opportunity
+  Fund. There is NO line that adds back income that is exempt from federal tax under a U.S. income tax treaty (contrast
+  California''s explicit Schedule CA treaty addback). Because treaty-exempt income is already excluded from federal
+  AGI and DC has no treaty addback, it flows through and is NOT re-taxed by DC. Therefore DC conforms (treaty-exempt
+  income remains exempt). Source: 2024 D-40 Instruction Booklet, Schedule I Calculation A and line-by-line instructions.'
+citation:
+  source: 'DC OTR — 2024 D-40 Individual Income Tax Forms and Instructions (Booklet PDF, 2024_D40_Booklet_062325.pdf):
+    New for 2024 Income Tax Returns (filing deadline April 15, 2025; standard deduction increases to $14,600/$21,900/$29,200;
+    childless EITC max $632; Schedule H max $1,375; Schedule ELC max $1,160), Who must file, When are your taxes
+    due (April 15, 2025), By mail addresses (PO Box 96145 refund/no-money-due; PO Box 96169 with payment), check
+    payable to DC Treasurer, Reminders Income Tax Rate Table + Calculation I/Tax Rate Schedule, Schedule I Calculation
+    A additions (no treaty addback) and Calculation B subtractions, D-40 starts from federal adjusted gross income'
+  url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+starts_from: federal AGI (Form D-40 income computation starts from 'Federal adjusted gross income'; Schedule I then
+  applies Calculation A additions and Calculation B subtractions to arrive at DC adjusted gross income)
+residency:
+  summary: 'Per the 2024 D-40 booklet ''Who must file a DC Income tax return?'' (p.5): you must file a DC Individual
+    Income Tax Return (Form D-40) if you were a DC resident in 2024 and were required to file a federal return —
+    and ''a resident is an individual domiciled in DC at any time during the taxable year.'' You are also a (statutory)
+    resident, and must file, if you maintained a place of abode in DC for a total of 183 days or more during 2024,
+    even if your permanent home was outside DC. Part-year residents (DC resident for only part of the year) file
+    Form D-40 and must prorate the standard deduction and applicable credits by days domiciled in DC divided by
+    365 (366 if leap year — 2024 is one). True nonresidents are not subject to DC income tax on a regular return;
+    DC has no general nonresident income tax return — a nonresident whose employer erroneously withheld DC tax files
+    Form D-40B (Nonresident Request for Refund) with W-2s/1099s attached (military spouses include DD Form 2058).
+    Exempt: elected members of the US government not domiciled in DC, personal staff of an elected member of Congress
+    who are bona fide residents of the same state as the member, Senate-confirmed Presidential appointees, and US
+    Supreme Court justices not domiciled in DC.'
+forms:
+  resident: Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)
+  part_year_or_nonresident: Part-year residents file Form D-40 (prorating deductions/credits). DC has no general
+    nonresident income tax return; a nonresident with DC tax erroneously withheld files Form D-40B, Nonresident
+    Request for Refund.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: DC Earned Income Tax Credit (DC EITC) — filers WITH a qualifying child
+  type: refundable
+  eligibility: DC residents who qualify for the federal Earned Income Credit and have a qualifying child — or who
+    would qualify but for lacking an SSN (ITIN filers compute the federal EIC amount ignoring the SSN requirement).
+    Each qualifying child must have an SSN or ITIN. Cannot be claimed by a filer whose status is 'Dependent claimed
+    by someone else.'
+  amount: '70% of your federal Earned Income Credit (D-40 Line 27d: ''Multiply the calculated federal EIC amount
+    x .70''). For taxable years starting January 1, 2024: if the DC EITC allowed is at least $1,200 you may CHOOSE
+    (by filling the Line 27 oval) to receive it in 12 equal monthly payments instead of one payment — no longer
+    automatic as it was for TY2023.'
+  income_limit_2024: Same earned-income / AGI phase-out limits as the federal EIC (tied to number of qualifying
+    children and filing status; DC does not impose a separate cap for filers with a qualifying child).
+  claimed_on: Form D-40, Lines 27a-27d (Line 27c x .70 = Line 27d) for filers with a qualifying child
+  citation:
+    source: 'DC OTR — 2024 D-40 booklet: DC Earned Income Tax Credit section p.10 (''The DC EITC is equal to 70%
+      of federal EIC''; monthly-payment election for credits of $1,200+), D-40 Line 27d (''x .70'' printed on the
+      form), and the cover letter (''For the 2024 tax year, this credit continues to be 70%'')'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+- name: DC Earned Income Tax Credit (DC EITC) — filers WITHOUT a qualifying child
+  type: refundable
+  eligibility: DC residents age 25 up to (not) 65 at the end of 2024 without a qualifying child (ITIN filers eligible);
+    uses the DC 'EITC Worksheet For Filers Without a Qualifying Child' (booklet pp.21-22). Not eligible if filing
+    federal Form 2555, Form 4797, or Schedule E, if claimable as a dependent, or if a qualifying child of another.
+  amount: Computed on the worksheet — if earned income is less than $8,261, tentative credit = earned income x 0.0765;
+    otherwise $632 ('$632 is the maximum amount that can be claimed', up from $600 for TY2023), then phased by the
+    worksheet.
+  income_limit_2024: Earned income / federal AGI must not be greater than $30,019 for TY2024 (DC's own childless-EITC
+    limit, higher than the federal childless ceiling); investment income must be $11,600 or less (up from $11,000).
+  claimed_on: Form D-40, Line 27e (amount from the DC EITC childless worksheet)
+  citation:
+    source: 'DC OTR — 2024 D-40 booklet: ''New for 2024'' (childless EITC max increased from $600 to $632; investment-income
+      test increased from $11,000 to $11,600) and the DC EITC Worksheet For Filers Without a Qualifying Child, Section
+      C (''If your earned income or federal adjusted gross income (fed AGI) is greater than $30,019, STOP'')'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+- name: Schedule H — Homeowner and Renter Property Tax Credit ('circuit-breaker')
+  type: refundable
+  eligibility: DC residents who owned or rented their DC home and were not claimed as a dependent (with an age-70
+    exception path). Renters' property tax is deemed = 20% of rent paid; homeowners use actual DC real property
+    tax. One claim per tax filing unit; cannot claim for an exempt property owned by a government, house of worship,
+    or nonprofit. Can be filed standalone (electronically via MyTax.DC.gov or by mail) if not required to file a
+    D-40.
+  amount: Maximum credit $1,375 for TY2024 (increased from $1,325). Computed via the Schedule H worksheets.
+  income_limit_2024: Federal AGI of the tax filing unit must not exceed $63,900 (under age 70) or $87,100 (age 70
+    or older) for TY2024.
+  claimed_on: Schedule H, carried to Form D-40, Line 28 (or filed standalone)
+  citation:
+    source: DC OTR — 2024 D-40 booklet 'New for 2024' (maximum property tax credit limit increased from $1,325 to
+      $1,375; federal AGI eligibility thresholds $63,900 under age 70 / $87,100 age 70 or older) and 'Instructions
+      for Schedule H'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+- name: Keep Child Care Affordable Tax Credit (Schedule ELC; formerly Early Learning Tax Credit)
+  type: refundable
+  eligibility: DC taxpayer who paid eligible child-care expenses to a licensed 'child development facility' for
+    an eligible child — a dependent under age 4 as of 9/30/2024 — and whose DC taxable income does not exceed the
+    limit. Child must not be a recipient of the District's subsidized child-care program; expenses reimbursed by
+    a state social service agency do not count.
+  amount: Maximum credit $1,160 per eligible child for TY2024 (increased); equals the eligible child-care expenses
+    paid up to the per-child cap.
+  income_limit_2024: 'DC taxable income must not exceed (TY2024): $74,300 for Single and Head of Household; $174,300
+    for Married/Registered Domestic Partners filing jointly and Married/RDP filing separately on the same return;
+    $87,100 for Married/RDP filing separately.'
+  claimed_on: Schedule ELC, totaled to Schedule U Part 1B Line 2, then Form D-40, Line 29
+  citation:
+    source: DC OTR — 2024 D-40 booklet, 'New for 2024' (maximum credit increased to $1,160 per eligible child) and
+      Schedule ELC instructions (eligible child under age 4 as of 9/30/24; District taxable income limits $74,300
+      single/HOH, $174,300 MFJ and MFS-same-return, $87,100 MFS)
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+- name: Credit for Child and Dependent Care Expenses
+  type: nonrefundable
+  eligibility: DC full-year or statutory residents who claimed (or were eligible for) the federal child and dependent
+    care credit on federal Form 2441 for the care of a qualifying dependent so the taxpayer could work or look for
+    work. Part-year residents use DC Form D-2441 instead.
+  amount: 32% of the federal child and dependent care credit ('multiply the amount from federal Form 2441, Line
+    9c by .32'). If eligible but not claimed federally, complete federal Form 2441 anyway and multiply the result
+    by .32.
+  income_limit_2024: No separate DC income limit; the underlying federal Form 2441 credit limits apply.
+  claimed_on: Form D-40, Line 21
+  citation:
+    source: DC OTR — 2024 D-40 booklet, Line 21 instructions ('multiply the amount from federal Form 2441, Line
+      9c by .32 ... Do not use the DC Form D-2441' for full-year residents)
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+filing_requirement:
+  note: 'Per the 2024 D-40 booklet ''Who must file a DC Income tax return?'' (p.5): you must file Form D-40 if (a)
+    you were a DC resident in 2024 and were required to file a federal income tax return (a resident is an individual
+    domiciled in DC at any time during the taxable year); or (b) you maintained a place of abode in DC for a total
+    of 183 days or more during 2024 even if your permanent home was outside DC; or (c) you were a part-year DC resident
+    in 2024; or (d) you were a member of the US armed forces and DC was your legal residence for tax purposes for
+    all or part of 2024 — or if you want a refund of DC withholding/estimated payments or to claim the refundable
+    DC EITC, Schedule N, Schedule H, or Schedule ELC credits. The DC filing requirement for residents is keyed to
+    the federal filing requirement rather than a separate DC dollar threshold. You do NOT need to file if you were
+    not required to file a 2024 federal return and were not considered a DC resident during 2024 (certain elected
+    members of Congress, their bona-fide-same-state staff, Senate-confirmed Presidential appointees, and US Supreme
+    Court justices not domiciled in DC are also exempt).'
+mailing_addresses:
+  refund_or_no_payment: Office of Tax and Revenue, PO Box 96145, Washington, DC 20090-6145 (use for a refund-request
+    return or a no-money-due return).
+  with_payment: Office of Tax and Revenue, PO Box 96169, Washington, DC 20090-6169 (D-40 return with payment; attach
+    the payment to the Form D-40P voucher, but do not attach the payment or D-40P to the return).
+  citation:
+    source: 'DC OTR — 2024 D-40 booklet, ''Filing your return / By mail'' (p.5-6): with a payment PO Box 96169;
+      refund request or no money due PO Box 96145; Form D-40P voucher instructions (''Use the PO Box 96169 mailing
+      label from the back flap of the return envelope'')'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: DC Treasurer (include a check or money order, in US dollars, payable to the DC Treasurer; write your
+    Taxpayer Identification Number (TIN), daytime telephone number, tax year 2024 and Form D-40 on your payment,
+    and attach it to the Form D-40P voucher)
+  web_pay_url: https://mytax.dc.gov
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 'DC OTR — 2024 D-40 booklet: ''New for 2024 Income Tax Returns — Filing Deadline: For Tax Year 2024
+      the filing deadline is April 15, 2025'' and ''When are your taxes due? April 15, 2025 is the deadline for
+      filing your return and paying any taxes due.'' Extension: FR-127 (6 months) due by April 15, 2025; additional
+      6 months available if living or traveling outside the U.S.'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+all_citations:
+- source: 'DC OTR — 2024 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): New for 2024 (deadline
+    April 15, 2025; standard deductions $14,600/$21,900/$29,200 ''increasing based on the federal law''; additional
+    standard deduction $1,550/$1,950; childless EITC max $632 and investment-income test $11,600; Schedule H max
+    $1,375 with AGI limits $63,900/$87,100; Schedule ELC max $1,160; new Schedule U Line 6 housing provider credit;
+    QHTC 3% capital-gain rate repealed), Reminders Income Tax Rate Table (in effect since TY2022), Who must file,
+    mailing addresses, DC Treasurer payee, Schedule I Calculations A/B'
+  url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+- source: DC OTR — 2024 D-40 Booklet publication landing page
+  url: https://otr.cfo.dc.gov/publication/2024-d-40-booklet
+- source: 'DC OTR — DC Individual and Fiduciary Income Tax Rates (live page) — second-pass verification: ''The tax
+    rates for tax years beginning after 12/31/2021'' table matches the booklet exactly (4% / $400+6% / $2,200+6.5%
+    / $3,500+8.5% / $19,650+9.25% / $42,775+9.75% / $91,525+10.75%)'
+  url: https://otr.cfo.dc.gov/page/dc-individual-and-fiduciary-income-tax-rates
+- source: DC OTR — MyTax.DC.gov online tax portal (electronic filing and payment)
+  url: https://mytax.dc.gov
+unverified:
+- Whether DC's 'Other' addition (Schedule I, Calculation A, Line 7 — 'items not subject to federal tax but subject
+  to DC tax') could in some interpretation capture a specific federal treaty exclusion. The booklet does NOT list
+  treaty income as an example; no treaty addback is enumerated, so conformity is assessed as true, but the open-ended
+  'Other' line was not exhaustively cross-checked against DC Code sec.47-1803.02(a) additions — confirm at OTR for
+  an unusual treaty position.
+- The 2024 D-40B (Nonresident Request for Refund) mailing address was not re-verified this session — the 2023 form
+  mailed to PO Box 96147, Washington, DC 20090-6147; confirm on the 2024 D-40B itself before mailing.
+- The dependent-filer standard deduction worksheet (booklet p.20) prints partially garbled in text extraction; the
+  legible fragments ('earned income more than $850? Yes. Add $450 to your earned income', minimum consistent with
+  $1,300) match the federal 2024 dependent standard deduction rule (greater of $1,300 or earned income + $450, capped
+  at the regular status amount). Confirm exact worksheet lines on the printed page before relying on them.
+tax:
+  citation:
+    source: 'DC Office of Tax and Revenue — 2024 D-40 Individual Income Tax Forms and Instructions booklet (2024_D40_Booklet_062325.pdf):
+      ''Reminders — Income Tax Rate Table - For taxable years beginning January 1, 2022'' (p.3) and ''Calculation I/Tax
+      Rate Schedule'' (p.17): ''Not over $10,000: 4% of the taxable income; Over $10,000 but not over $40,000: $400,
+      plus 6% of the excess over $10,000; Over $40,000 but not over $60,000: $2,200, plus 6.5% of the excess over $40,000;
+      Over $60,000 but not over $250,000: $3,500, plus 8.5% of the excess over $60,000; Over $250,000 but not over $500,000:
+      $19,650, plus 9.25% of the excess over $250,000; Over $500,000 but not over $1,000,000: $42,775, plus 9.75% of
+      the excess over $500,000; Over $1,000,000: $91,525, plus 10.75% of the excess over $1,000,000''; ''New for 2024''
+      + ''Standard Deduction'' section p.10 ($14,600 single and married/registered domestic partners filing separately;
+      $21,900 head of household; $29,200 married/registered domestic partners filing jointly, qualifying widow(er)s
+      with dependent children, and married/RDP filing separately on the same return — increased from $13,850/$20,800/$27,700
+      ''based on the federal law''); Line 19 ''DC taxable income — Subtract Line 18 from Line 16'' and Line 20 ''Tax''
+      instructions p.18; tax tables for taxable income of $100,000 or less, pp.85-94. Second pass: the live OTR ''DC
+      Individual and Fiduciary Income Tax Rates'' page (otr.cfo.dc.gov/page/dc-individual-and-fiduciary-income-tax-rates)
+      prints the identical post-12/31/2021 schedule — both passes agree. Recorded resolution: the p.3 Reminders print
+      carries a typo ''.8.5%'' for the $60,000-$250,000 row; the p.17 Calculation I print and the live rates page both
+      read 8.5%, and the printed constants ($19,650 = $3,500 + 8.5% x $190,000) prove 8.5% is correct.'
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10000, rate: 0.04}
+    - {over: 10000, but_not_over: 40000, rate: 0.06}
+    - {over: 40000, but_not_over: 60000, rate: 0.065}
+    - {over: 60000, but_not_over: 250000, rate: 0.085}
+    - {over: 250000, but_not_over: 500000, rate: 0.0925}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0975}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 10000, rate: 0.04}
+    - {over: 10000, but_not_over: 40000, rate: 0.06}
+    - {over: 40000, but_not_over: 60000, rate: 0.065}
+    - {over: 60000, but_not_over: 250000, rate: 0.085}
+    - {over: 250000, but_not_over: 500000, rate: 0.0925}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0975}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    married_filing_separately:
+    - {over: 0, but_not_over: 10000, rate: 0.04}
+    - {over: 10000, but_not_over: 40000, rate: 0.06}
+    - {over: 40000, but_not_over: 60000, rate: 0.065}
+    - {over: 60000, but_not_over: 250000, rate: 0.085}
+    - {over: 250000, but_not_over: 500000, rate: 0.0925}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0975}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+    head_of_household:
+    - {over: 0, but_not_over: 10000, rate: 0.04}
+    - {over: 10000, but_not_over: 40000, rate: 0.06}
+    - {over: 40000, but_not_over: 60000, rate: 0.065}
+    - {over: 60000, but_not_over: 250000, rate: 0.085}
+    - {over: 250000, but_not_over: 500000, rate: 0.0925}
+    - {over: 500000, but_not_over: 1000000, rate: 0.0975}
+    - {over: 1000000, but_not_over: null, rate: 0.1075}
+  base: federal_agi
+  tax_line: 'Form D-40 Line 20: ''Tax'' — instructions p.18: ''If Line 19 is $100,000 or less, use the tax tables
+    on pages 85-94 to determine your tax. If Line 19 is more than $100,000, use Calculation I on page 17.'' Line 19
+    DC taxable income = Line 16 (DC adjusted gross income) minus Line 18 (DC deduction amount): ''Subtract Line 18
+    from Line 16. Enter the result; if a loss, fill in the oval.'''
+  exemptions: {}
+  standard_deduction:
+    single: 14600
+    married_filing_jointly: 29200
+    married_filing_separately: 14600
+    head_of_household: 21900
+  notes:
+  - '2024 CHANGE — STANDARD DEDUCTION ROSE WITH FEDERAL LAW (rates unchanged): ''The standard deductions are increasing
+    based on the federal law; beginning January 1, 2024, from $13,850 to $14,600 for single and married/registered
+    domestic partner filers filing separately; $20,800 to $21,900 for head of household filers; $27,700 to $29,200
+    for married/registered partners filing jointly and qualifying widow(er) with dependent child(ren) filers'' (New
+    for 2024, booklet p.3, restated in the Standard Deduction section p.10). The rate table itself is the same one
+    in effect ''for taxable years beginning January 1, 2022.'''
+  - 'Base guidance: Supply 2024 Form D-40 Line 16, ''DC adjusted gross income'' (Line 7 total DC gross income minus
+    Line 15 total subtractions). Line 7 = Line 4 federal adjusted gross income (from the federal 1040/1040-SR/1040-NR)
+    plus DC additions (Line 5 franchise tax deducted; Line 6 other additions from DC Schedule I, Calculation A); Lines
+    8-14 are DC subtractions (taxable state/local refunds, taxable Social Security and tier 1 railroad retirement,
+    income taxed on a DC franchise/fiduciary return, DC/federal government survivor benefits, unemployment insurance
+    benefits, other Schedule I Calculation B subtractions). A filer with no DC additions or subtractions has DC AGI
+    equal to federal AGI. The engine then subtracts the shipped per-status standard deduction (Line 18 for a standard-deduction
+    filer) to reproduce Line 19 DC taxable income, and applies the rate schedule to reproduce Line 20.'
+  - 'SINGLE RATE SCHEDULE FOR ALL FILING STATUSES: DC publishes one ''Income Tax Rate Table'' (booklet p.3, repeated
+    as ''Calculation I/Tax Rate Schedule'' p.17) that applies to Line 19 DC taxable income regardless of filing status;
+    it is duplicated per status here. Married filing separately is NOT half of married filing jointly — every status
+    uses the identical schedule.'
+  - 'PRINTED CONSTANTS VERIFIED EXACT (re-derived for 2024): $400 = 4% x $10,000; $2,200 = $400 + 6% x $30,000; $3,500
+    = $2,200 + 6.5% x $20,000; $19,650 = $3,500 + 8.5% x $190,000; $42,775 = $19,650 + 9.25% x $250,000; $91,525 =
+    $42,775 + 9.75% x $500,000 — each printed ''$X plus Y% of the excess over $Z'' constant equals the cumulative
+    sum of the prior brackets with no rounding divergence.'
+  - 'NO PERSONAL OR DEPENDENT EXEMPTIONS: the 2024 Form D-40 computes DC taxable income as Line 16 minus Line 18 only
+    — there is no exemption line on the form, so this pack ships no exemption keys; test vectors use exemptions_count
+    0 and dependents_count 0.'
+  - 'TAX TABLE MANDATE below $100,000: Form D-40 Line 20 and the p.18 instructions direct filers with Line 19 taxable
+    income of $100,000 or less to ''use the tax tables on pages 85-94''; only above $100,000 is Calculation I (exact
+    bracket math) used. The 2024 tables are built on $50 income bands, so bracket math may differ from the printed
+    table by a dollar or two within a band (observed: $61,100-$61,149 prints $3,595 vs $3,596 at the band midpoint)
+    — the filed form must use the table when Line 19 is $100,000 or less.'
+  - 'DEDUCTION TYPE MUST MATCH FEDERAL: Line 17 — you must take the same type of deduction on your DC return as you
+    took on your federal return. The shipped standard_deduction applies only to standard-deduction filers. Itemizers
+    enter DC itemized deductions on Line 18 via Calculation F (full-year/statutory residents) or Calculation D (part-year):
+    DC does NOT allow a deduction for state and local income taxes (state/local real estate taxes remain deductible),
+    and if DC AGI exceeds $200,000 ($100,000 for a separate return filed by a married individual) the itemized deduction
+    (other than medical/dental, investment interest, and casualty/theft losses) is reduced by 5% of DC AGI over the
+    threshold.'
+  - 'ADDITIONAL STANDARD DEDUCTION for age/blindness NOT modeled: if born before January 2, 1960, or blind, an additional
+    standard deduction of $1,550 per checkbox applies ($1,950 if single or head of household) via Schedule S, Calculation
+    G-1 (New for 2024, booklet p.3 — up from $1,500/$1,850 for 2023). When married filing separately, the spouse boxes
+    may be claimed only if the spouse had no gross income, is not filing, and cannot be claimed as a dependent. Claim
+    it on the form — this pack ships only the base per-status amounts.'
+  - 'DEPENDENT FILERS: a filer who can be claimed as a dependent must use the Standard Deduction Worksheet for Dependent
+    Filers (booklet p.20; ''An updated worksheet is available for use by dependent filers'' per New for 2024) — an
+    income-dependent amount (earned income + $450 when earned income exceeds $850, floor consistent with the federal
+    $1,300, capped at the regular status amount) NOT modeled by the shipped fixed standard_deduction.'
+  - 'MARRIED/REGISTERED DOMESTIC PARTNERS FILING SEPARATELY ON THE SAME RETURN not modeled: this combined-return status
+    takes a combined $29,200 standard deduction and computes each person''s tax separately using Calculation J on
+    Schedule S (each spouse''s separate federal AGI, additions, subtractions and deductions), then combines Lines
+    21-35 — per-couple math the engine does not reproduce. The engine''s married_filing_separately models a separate-return
+    MFS filer with the $14,600 standard deduction.'
+  - 'REGISTERED DOMESTIC PARTNERS: DC allows registered domestic partners to file jointly (use married_filing_jointly,
+    $29,200) or separately on the same return — statuses that do not exist federally.'
+  - 'QUALIFYING SURVIVING SPOUSE: DC''s ''qualifying widow(er) with dependent child'' status takes the same $29,200
+    standard deduction as married filing jointly (booklet pp.3 and 10) and the same universal rate schedule, so the
+    engine''s QSS -> married_filing_jointly mapping reproduces the correct tax.'
+  - 'PART-YEAR RESIDENTS: must prorate the standard deduction (and credits) by days domiciled in DC divided by 365
+    (366 if leap year — 2024 is a leap year; booklet pp.15-16, e.g. 71 days / 365 = 0.1945 worked example) and subtract
+    income received during the period of nonresidence — the shipped full-year standard_deduction amounts do not apply
+    as-is to part-year filers.'
+  - 'DC HEALTH CARE SHARED RESPONSIBILITY not modeled: Line 25 adds an individual-mandate payment (Schedule HSR, Part
+    IV, Line 17) to Line 24, producing Line 26 ''Total tax and DC Health Care Shared Responsibility.'' The engine
+    computes only Line 20 tax.'
+  - 'CREDITS not modeled (they are credits against tax, not base reductions): Line 21 credit for child and dependent
+    care expenses (federal Form 2441 Line 9c x .32), Line 22 non-refundable credits from DC Schedule U (including
+    the NEW 2024 Line 6 DHCD Rental Accommodations Division housing provider credit and the Calculation K out-of-state
+    income tax credit), Line 27 DC EITC (70% of federal EIC with a qualifying child; separate worksheet, max $632,
+    for filers without one), Line 28 Schedule H homeowner/renter property tax credit (max $1,375), and Line 29 refundable
+    Schedule U credits (including Schedule ELC, max $1,160 per child).'
+  - 'ROUNDING: the D-40 instructs dollars-only entries (''Dollars only, do not enter cents''); the engine''s round-half-up
+    to whole dollars matches for the Calculation I computation.'

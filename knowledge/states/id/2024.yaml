@@ -1,0 +1,263 @@
+# ID state knowledge — tax year 2024. Fetched + cited from the ID State Tax Commission
+# (.gov), authored per the 2023 template (state-year knowledge program). Loaded as a
+# StateKnowledge. conforms_to_federal_treaties: whether federally treaty-exempt income
+# flows through (most states start from federal AGI) or is added back (CA/CT/MD/MS-style).
+# Figures the fetch could not independently confirm are in `unverified` — confirm at the
+# cited source. Two-pass verification: every key figure below was drafted from the 2024
+# Form 40/43/39R/39NR instruction booklet (EIN00046, 10-23-2024), then independently
+# re-derived from a second official document (the printed 2024 Form 40, EFO00089
+# 09-04-2024, or the live tax.idaho.gov Noncitizens guidance) — resolutions recorded
+# inline where the passes differed.
+# HEADLINE 2024 CHANGE (What's New): the individual income tax rate was CUT to 5.695%
+# effective January 1, 2024 (from 2023's 5.8%), and the Line 20 worksheet's zero-floor
+# subtraction amounts were RE-INDEXED to $4,673 (single/MFS) and $9,346 (MFJ/HOH/QSS)
+# (from 2023's $4,489/$8,978). The standard deduction tracks federal 2024 amounts:
+# $14,600 single/MFS, $29,200 MFJ/QSS, $21,900 HOH. The 2024 worksheet also now prints
+# an explicit 'If zero or less, enter zero' on its final line.
+jurisdiction: states/id
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Idaho''s resident return (Form 40) starts on line 7 from federal adjusted gross income (federal Form
+  1040/1040-SR, line 11), and the only statutory additions are on Form 39R, Part A (2024 instructions pp.30-31):
+  federal NOL deduction, capital loss carryover incurred outside the state before becoming an Idaho resident, non-Idaho
+  state/local bond interest and dividends, Idaho college savings account withdrawal, bonus depreciation, and other
+  additions. There is NO add-back of federally treaty-exempt income (unlike CA''s Schedule CA). Because treaty-exempt
+  income is already excluded from federal AGI and is not added back, it flows through untaxed. Idaho also affirmatively
+  confirms this in its Noncitizens guidance (re-fetched live this session): ''Idaho honors all tax treaties recognized
+  by the United States'' and ''Gross income amounts exempt by treaty are not included in the gross income filing
+  requirement for Idaho.'' Therefore Idaho conforms to federal treaty exemptions.'
+citation:
+  source: 2024 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 10-23-2024) — What's
+    New for 2024 ('Effective January 1, 2024, the individual income tax rate is 5.695%'; IRC conformity as of January
+    1, 2024), Who Must File and resident filing requirements, Which Form to Use, When to File and Pay (April 15,
+    2025), Where to File mailing addresses, Line 20 Tax Worksheet ($4,673/$9,346 subtraction amounts), Standard
+    Deduction Worksheet ($14,600/$29,200/$21,900), grocery credit and other credit instructions
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf
+starts_from: federal AGI (Form 40, line 7 = federal Form 1040/1040-SR, line 11)
+residency:
+  summary: Idaho residency is domicile-based with a statutory-resident overlay. You are a RESIDENT if Idaho is your
+    permanent home / the place you intend to return to; you are ALSO a (statutory) resident if you maintain a home
+    in Idaho the entire year AND spend more than 270 days in Idaho during the tax year. You are a PART-YEAR resident
+    if you moved into or out of Idaho during the year (you remain a resident if you only temporarily moved outside
+    Idaho and moved back after a temporary absence). You are a NONRESIDENT if your permanent home is outside Idaho
+    all year (a detailed safe-harbor also treats certain people as nonresidents if they lived outside Idaho at least
+    445 days in a 15-month period and meet other conditions). Military and Military Spouses Residency Relief Act
+    rules can override these (a spouse or dependent of a nonresident military person stationed in Idaho can still
+    be an Idaho resident or part-year resident).
+forms:
+  resident: Form 40 (Individual Income Tax Return); residents claiming additions, subtractions, or certain credits
+    also file Form 39R (Resident Supplemental Schedule)
+  part_year_or_nonresident: Form 43 (Part-year Resident and Nonresident Income Tax Return); part-year/nonresident
+    filers claiming additions, subtractions, or certain credits also file Form 39NR (Part-year Resident and Nonresident
+    Supplemental Schedule)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Idaho Grocery Credit (Food Tax Credit)
+  type: refundable
+  eligibility: Idaho residents only. Claimed for yourself, spouse, and each qualifying Idaho-resident dependent.
+    If someone else can claim you as a dependent, you cannot claim it. Does NOT qualify for any month (or part of
+    a month) a person received federal food stamp (SNAP) assistance, was incarcerated, or lived illegally in the
+    US. Members of the Armed Forces domiciled in Idaho can take it; nonresidents under the Servicemembers Civil
+    Relief Act cannot. Refundable even if you are not required to file an income tax return (file Form 40, or Form
+    24 if not filing — Form 24 due by April 15, 2025).
+  amount: $120 each for taxpayer, spouse, and each qualifying dependent for the full year (prorated at $10/qualified
+    month). Additional $20 each for taxpayer and/or spouse who is age 65 or older on December 31, 2024 (i.e., $140
+    for a full-year resident 65+; prorated at $11.67 per qualified month). The credit may also be donated to the
+    Cooperative Welfare Fund.
+  income_limit_2024: None
+  claimed_on: Form 40, line 43 (Grocery Credit Worksheet, 2024 instructions pp.11-12). Nonfilers may use Form 24.
+  citation:
+    source: Idaho State Tax Commission, 2024 Form 40 instructions (EIN00046, 10-23-2024), Line 43 Grocery Credit
+      and Grocery Credit Worksheet ($120 / $140 if 65+; $10 or $11.67 per qualified month)
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf
+- name: Idaho Child Tax Credit
+  type: nonrefundable
+  eligibility: You must have a qualifying child (per the federal qualifying-child definition) who is age 16 or under
+    as of December 31, 2024. For divorced parents or parents who don't live together, only one parent can claim
+    a qualifying child — typically the custodial parent. No qualifying child means no credit.
+  amount: '$205 per qualifying child. Per the Line 25 worksheet: multiply the number of qualifying children by $205,
+    then limit to the remaining tax after subtracting Form 40 lines 22-24 credits (worksheet line 7: if less than
+    zero, enter zero; line 8: enter the lesser).'
+  income_limit_2024: None stated; the credit is limited to your remaining Idaho tax liability after certain other
+    credits (nonrefundable).
+  claimed_on: Form 40, line 25 (Idaho Child Tax Credit Worksheet, 2024 instructions pp.9-10). Nonresidents don't
+    qualify (Form 43, line 46 instructions).
+  citation:
+    source: Idaho State Tax Commission, 2024 Form 40 instructions (EIN00046, 10-23-2024), Line 25 Idaho Child Tax
+      Credit Worksheet ('Multiply line 1 by $205')
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf
+- name: Credit for Maintaining a Home for a Family Member Age 65 or Older or with a Developmental Disability
+  type: refundable
+  eligibility: You maintained a household during 2024 for an immediate family member who is (a) age 65 or older
+    (not counting yourself or your spouse), or (b) has a developmental disability (may include yourself or your
+    spouse) AND you did NOT claim the $1,000-per-person deduction for that family member on Form 39R, Part B, line
+    15. You can claim this credit even if your gross income is below the filing requirement.
+  amount: $100 per qualifying person, up to a maximum of $300.
+  income_limit_2024: None (claimable even if gross income is below the filing threshold).
+  claimed_on: Form 40, line 44 (requires Form 39R).
+  citation:
+    source: Idaho State Tax Commission, 2024 Form 40 instructions (EIN00046, 10-23-2024), Line 44 Maintaining a
+      Home for a Family Member Age 65 or Older or a Family Member with a Developmental Disability
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf
+filing_requirement:
+  note: '2024 thresholds (EIN00046 General Information, ''Who Must File'' / Idaho Resident Filing Requirements chart):
+    every Idaho resident who must file a federal return must file; every part-year resident with more than $2,500
+    total gross income (all sources while resident + Idaho sources while nonresident) must file; every nonresident
+    with more than $2,500 gross income from Idaho sources must file. Resident gross-income thresholds for 2024 (federal-linked):
+    Single under 65 = $14,600 (65+ = $16,550); Head of household under 65 = $21,900 (65+ = $23,850); MFJ under 65
+    (both) = $29,200 (one 65+ = $30,750, both = $32,300); Qualifying surviving spouse under 65 = $29,200; Married
+    filing separately (any age) = $5. Treaty-exempt amounts are excluded from the gross-income filing test. A resident
+    filing a federal return only to pay self-employment tax need not file.'
+mailing_addresses:
+  refund_or_no_payment: 'Return only / no payment: Idaho State Tax Commission, PO Box 56, Boise ID 83756-0056. (Delivery
+    service requiring a physical address: Idaho State Tax Commission, 11321 W Chinden Blvd, Boise ID 83714.)'
+  with_payment: 'Return and payment: Idaho State Tax Commission, PO Box 83784, Boise ID 83707-3784. (Payment without
+    a return: send with Form ID-VP to Idaho State Tax Commission, PO Box 83784, Boise ID 83707-3784.)'
+  citation:
+    source: 2024 Idaho Individual Income Tax instructions (EIN00046, 10-23-2024), Where to File — return and payment
+      PO Box 83784; return only PO Box 56; physical-address delivery 11321 W Chinden Blvd, Boise
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Idaho State Tax Commission (make check or money order payable to the Idaho State Tax Commission;
+    don't send cash)
+  web_pay_url: https://tax.idaho.gov/epay
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: '2024 Idaho Individual Income Tax instructions (EIN00046, 10-23-2024), When to File and Pay: ''File
+      your return and pay any tax due ... By April 15, 2025, for the 2024 calendar year''; extension payments via
+      Form 51 by April 15, 2025.'
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf
+all_citations:
+- source: 2024 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 10-23-2024) — What's
+    New for 2024 (rate 5.695% effective January 1, 2024; IRC conformity January 1, 2024), Who Must File / filing
+    thresholds chart, residency definitions (domicile + 270-day statutory resident; 445-day safe harbor), Which
+    Form to Use, When to File and Pay (April 15, 2025), Where to File, Line 20 Tax Worksheet ($4,673 single/MFS,
+    $9,346 MFJ/HOH/QSS; 'Multiply subtotal by 5.695%'; 'If zero or less, enter zero'), Standard Deduction Worksheet
+    ($14,600/$29,200/$21,900; $1,550/$1,950 age-65/blind add-on; dependent-filer $1,300 / earned income + $450),
+    Line 25 Idaho Child Tax Credit ($205), Line 32 PBF $10, Line 43 grocery credit, Line 44 maintaining-a-home credit
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf
+- source: '2024 Idaho Form 40 (EFO00089, 09-04-2024) — second-pass verification of the form face: line-16 margin
+    prints the standard deduction amounts ($14,600 single/MFS, $21,900 HOH, $29,200 MFJ); line 19 ''Idaho taxable
+    income. Subtract line 18 from line 17. If less than zero, enter zero''; line 20 ''Tax from worksheet. See instructions,
+    page 9'''
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_09-04-2024.pdf
+- source: 'Idaho State Tax Commission — Noncitizens guidance (re-fetched live this session): ''Idaho honors all
+    tax treaties recognized by the United States''; ''Gross income amounts exempt by treaty are not included in
+    the gross income filing requirement for Idaho''; worked example using the $2,500 nonresident filing threshold'
+  url: https://tax.idaho.gov/taxes/income-tax/individual-income/specific-guidance-for-individual-income-tax/specific-guidance-for-individuals-noncitizens/
+unverified:
+- 'STATUTORY CITE FOR THE 2024 RATE CUT: the booklet''s What''s New states only ''Effective January 1, 2024, the
+  individual income tax rate is 5.695%'' without naming the session law (2024 House Bill 521). The 5.695% rate and
+  the $4,673/$9,346 worksheet amounts are two-pass confirmed at the cited official documents; the bill-number attribution
+  was not re-derived from the session-law text.'
+- The $4,673/$9,346 zero-floor subtraction amounts are printed identically in the Form 40 line 20 worksheet (p.9)
+  and the Form 43 line 42 worksheet (p.34) of the same booklet — a within-document double print, not two independent
+  documents; no separate official source restates them.
+- Check-payee wording ('Idaho State Tax Commission') is taken from the payment instructions in the 2024 booklet;
+  the ID-VP voucher form itself was not separately fetched.
+tax:
+  citation:
+    source: '2024 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 10-23-2024) — Line
+      20 Tax Worksheet, page 9: ''1. Enter the amount of Idaho taxable income from Form 40, line 19; 2. Enter the amount
+      shown below for your filing status: Single or married filing separately, enter $4,673 — Married filing jointly,
+      head of household, or qualifying surviving spouse, enter $9,346; 3. Subtract line 2 from line 1; 4. Multiply subtotal
+      by 5.695%; 5. Idaho tax ... If zero or less, enter zero''; ''What''s New for 2024 — Tax Rate Reduction: Effective
+      January 1, 2024, the individual income tax rate is 5.695%'' (page 1, CUT from 2023''s 5.8%; subtraction amounts
+      re-indexed from $4,489/$8,978); Standard Deduction Worksheet, page 8 ($14,600 single/MFS, $29,200 MFJ/QSS, $21,900
+      HOH — 2024 federal amounts). Second pass: the 2024 Form 40 face (EFO00089, 09-04-2024) — the line-16 margin prints
+      $14,600/$21,900/$29,200, line 19 reads ''Idaho taxable income. Subtract line 18 from line 17. If less than zero,
+      enter zero'', and line 20 reads ''Tax from worksheet. See instructions, page 9''; the Form 43 line 42 worksheet
+      (booklet p.34) prints the identical $4,673/$9,346 amounts and 5.695% — both passes agree.'
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 4673, rate: 0}
+    - {over: 4673, but_not_over: null, rate: 0.05695}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 9346, rate: 0}
+    - {over: 9346, but_not_over: null, rate: 0.05695}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4673, rate: 0}
+    - {over: 4673, but_not_over: null, rate: 0.05695}
+    head_of_household:
+    - {over: 0, but_not_over: 9346, rate: 0}
+    - {over: 9346, but_not_over: null, rate: 0.05695}
+  base: federal_agi
+  tax_line: 'Form 40, line 20: ''Tax from worksheet. See instructions, page 9.'' Worksheet (2024 instructions p.9):
+    1. ''Enter the amount of Idaho taxable income from Form 40, line 19''; 2. ''Enter the amount shown below for your
+    filing status: Single or married filing separately, enter $4,673 — Married filing jointly, head of household,
+    or qualifying surviving spouse, enter $9,346''; 3. ''Subtract line 2 from line 1. Enter the subtotal''; 4. ''Multiply
+    subtotal by 5.695%''; 5. ''Idaho tax. Enter the total here and on Form 40, line 20. If zero or less, enter zero.'''
+  exemptions:
+    age_65:
+      amount: 1550
+      note: 'NOT an exemption and NOT applied by calc.state_tax — it is an ADDITIONAL STANDARD DEDUCTION: $1,550 per age-65-or-older
+        box checked on Form 40 line 12a ($1,950 instead if single or head of household), added to the base standard deduction
+        via the Standard Deduction Worksheet, line 5 (2024 instructions pp.8-9; born before January 2, 1960). Boxes must
+        match the federal return.'
+    blind:
+      amount: 1550
+      note: 'NOT an exemption and NOT applied by calc.state_tax — it is an ADDITIONAL STANDARD DEDUCTION: $1,550 per blind
+        box checked on Form 40 line 12b ($1,950 instead if single or head of household), added to the base standard deduction
+        via the Standard Deduction Worksheet, line 5 (2024 instructions pp.8-9). Boxes must match the federal return.'
+  standard_deduction:
+    single: 14600
+    married_filing_jointly: 29200
+    married_filing_separately: 14600
+    head_of_household: 21900
+  notes:
+  - '2024 CHANGE — RATE CUT AND RE-INDEXED FLOOR: ''Effective January 1, 2024, the individual income tax rate is 5.695%''
+    (What''s New, p.1) — down from 2023''s 5.8% — and the Line 20 worksheet''s zero-floor subtraction amounts were
+    re-indexed to $4,673 (single/MFS) and $9,346 (MFJ/HOH/QSS), from 2023''s $4,489/$8,978. Do not use the 2023 rate
+    or amounts for 2024.'
+  - 'Base guidance: Supply Form 40, line 11 ''Total Adjusted Income'' = federal AGI (Form 40 line 7, from federal
+    Form 1040/1040-SR line 11) plus Form 39R Part A additions minus Form 39R Part B subtractions. With no Idaho additions
+    or subtractions this equals federal AGI. The op subtracts only the per-status standard deduction (Form 40 line
+    16); if you claim the federal qualified business income deduction (Form 40 line 18 = federal 1040 line 13) or
+    itemize (Form 40 lines 13-15), the op will overstate tax — subtract your line 18 QBI amount from line 11 before
+    supplying it, or compute on the form.'
+  - 'Structure: Idaho''s 2024 tax is a single 5.695% rate on Idaho taxable income ABOVE a filing-status threshold
+    — $4,673 (single or married filing separately) / $9,346 (married filing jointly, head of household, or qualifying
+    surviving spouse) — per the Form 40 line 20 worksheet (2024 instructions p.9). It is modeled here as a 0% bracket
+    up to the threshold and 5.695% above it; taxable income at or below the threshold owes $0.'
+  - Head of household uses the SAME $9,346 worksheet threshold as married filing jointly (instructions p.9), even
+    though its standard deduction ($21,900) differs from MFJ's ($29,200).
+  - Qualifying surviving spouse (Form 40 filing status 5) is listed in the worksheet with the same $9,346 amount as
+    married filing jointly, so the engine's QSS-to-MFJ mapping is exact for both the brackets and the $29,200 standard
+    deduction.
+  - 'The 2024 worksheet prints an explicit zero clause — line 5: ''If zero or less, enter zero'' (new wording versus
+    2023, which left it implicit); the 0% floor bracket implements the $0 result for taxable income at or below the
+    subtraction amount.'
+  - 'Qualified business income deduction NOT modeled: Form 40 line 18 subtracts the federal QBI deduction (federal
+    1040/1040-SR line 13) AFTER the standard/itemized deduction to reach Idaho taxable income (line 19). See base
+    guidance for how to account for it.'
+  - 'Itemizers NOT modeled: Form 40 lines 13-15 use federal Schedule A itemized deductions MINUS state and local income
+    or general sales taxes (line 14 addback), and Idaho lets you ADD any federal foreign tax credit amount to Idaho
+    itemized deductions (''If you claim the federal foreign tax credit, Idaho allows that amount as a deduction'');
+    filers use the LARGER of net itemized or the standard deduction. The op applies only the standard deduction.'
+  - 'Standard-deduction gates NOT modeled (Standard Deduction Worksheet and ''You Must Itemize If'', 2024 instructions
+    p.8): married filing separately MUST itemize if the spouse itemizes; dual-status nonresident aliens must itemize;
+    a person claimable as another''s dependent is limited to the greater of $1,300 or earned income + $450 (capped
+    at the status amount); age-65+/blind boxes add $1,550 per box ($1,950 if single or head of household). Compute
+    those cases on the worksheet.'
+  - 'Idaho has NO personal or dependent exemptions (''Idaho conforms to the Internal Revenue Code (IRC), which no
+    longer allows personal exemptions'' — Noncitizens guidance). The per-person amounts on the return are TAX CREDITS
+    subtracted from tax, not base reductions, and are not modeled: the Idaho Child Tax Credit is $205 per qualifying
+    child age 16 or under (Form 40 line 25, nonrefundable), and the grocery credit is $120 per qualifying person ($140
+    if 65+) (Form 40 line 43, refundable).'
+  - $10 Permanent Building Fund (PBF) tax (Form 40 line 32) is a separate flat tax owed by everyone required to file
+    an Idaho return (waived for those below the filing threshold ('NRF'), recipients of Idaho public assistance at
+    year-end, and the legally blind). It is outside the line 20 computation and NOT modeled.
+  - 'No tax-table mandate: the 2024 booklet contains no tax tables — every filer computes line 20 with the worksheet,
+    so bracket math reproduces the form exactly (whole-dollar rounding aside).'
+  - Part-year residents and nonresidents file Form 43, not Form 40; Form 43 line 42 uses the identical worksheet (same
+    $4,673/$9,346 amounts, same 5.695%) applied to Form 43 line 41 Idaho taxable income (2024 instructions p.34).
+  - 'Form 40 face cross-check: 2024 Form 40 (EFO00089, 09-04-2024), https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_09-04-2024.pdf
+    — line 20 reads ''Tax from worksheet. See instructions, page 9'', line 19 reads ''Idaho taxable income. Subtract
+    line 18 from line 17. If less than zero, enter zero'', and the line-16 margin prints the standard deduction amounts
+    ($14,600 single/MFS, $21,900 HOH, $29,200 MFJ).'

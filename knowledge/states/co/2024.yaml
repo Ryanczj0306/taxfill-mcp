@@ -1,0 +1,227 @@
+# CO state knowledge — tax year 2024. Fetched + cited from the CO DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 DR 0104 Book
+# (the year-pinned 2024 filing guide, which includes the form, tax table, DR 0104AD,
+# DR 0104CR and DR 0104PN), then independently re-checked against the standalone 2024
+# DR 0104 form PDF and the 2024 DR 0104CN form — resolutions recorded inline.
+# NOTE the 2024 line renumbering: additions now run Lines 2-8 (new Line 5 business-meals
+# addback), subtotal Line 9, subtractions Line 10, Colorado Taxable Income Line 11, and
+# Colorado Tax Line 12 (2023: taxable income Line 10, tax Line 11).
+jurisdiction: states/co
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Colorado''s DR 0104 begins at "Federal Taxable Income" (2024 line 1, "from your federal income tax
+  form 1040, 1040 SR, or 1040 SP, line 15"). Federally treaty-exempt income is already excluded from federal taxable
+  income, so it flows through to Colorado untaxed UNLESS Colorado has an explicit addback. The 2024 DR 0104''s complete
+  Additions to Federal Taxable Income (lines 2-8) are: state income tax addback (Schedule A), Qualified Business
+  Income Deduction addback, Standard/Itemized Federal Deduction addback (federal AGI over $300,000), business meals
+  deduction addback (IRC 274(k) — NEW line 5 for 2024), nonqualified CollegeInvest distributions, nonqualified Colorado
+  ABLE distributions, and Line 8 "Other Additions" (whose enumerated items in the 2024 booklet are: non-Colorado
+  state/local bond interest, charitable conservation easement amounts also claimed for a CO credit, unauthorized
+  alien labor expenses, partnership/fiduciary adjustments increasing federal taxable income, restricted-membership
+  club expenses, and non-eligible medical savings account distributions). NONE of these is an addback of federally
+  treaty-exempt or foreign-source income. Therefore treaty-exempt income is not re-taxed and Colorado conforms.
+  (Confirmed against the official 2024 DR 0104 Book and the standalone 2024 DR 0104 form PDF on tax.colorado.gov.)'
+citation:
+  source: Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book; includes DR 0104
+    form, instructions, 2024 tax table at 4.25%, DR 0104AD, DR 0104CR, DR 0104PN, DR 0900, DR 0158-I)
+  url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+starts_from: federal taxable income (2024 DR 0104 line 1 — "Federal Taxable Income from your federal income tax
+  form 1040, 1040 SR, or 1040 SP line 15"; booklet — "Colorado income tax is based on your federal taxable income,
+  which has already considered your deductions")
+residency:
+  summary: An individual is a Colorado full-year resident if domiciled in Colorado (domicile being the permanent
+    home to which one intends to return when away), OR if they maintain a permanent place of abode in Colorado and
+    spend, in aggregate, more than six months of the tax year in Colorado (the statutory "six-month rule"). A part-year
+    resident is domiciled in Colorado for only part of the year (e.g., moved into or out of Colorado during 2024)
+    and is taxed on income received while a resident plus Colorado-source income; a nonresident did not reside in
+    Colorado during the year and is taxed only on Colorado-source income. Part-year residents and nonresidents prorate
+    their tax using the DR 0104PN ("Tax is prorated so that it is calculated only on income received in Colorado
+    or from sources within Colorado" — 2024 booklet). Under federal law a military servicemember's state of legal
+    residence does not change solely because of assignment in another state. (The domicile + six-month statutory
+    definitions come from the CO DOR Residency Status / Individual Income Tax Guide pages; the 2024 booklet itself
+    states the proration rule and the military domicile rule.)
+forms:
+  resident: DR 0104 (Colorado Individual Income Tax Return) — full-year residents mark the "Full-Year" residency
+    box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns (2024 booklet, "Who
+    Must File This Tax Return" — full-year residents "must file DR 0104 or DR 0104EZ").
+  part_year_or_nonresident: DR 0104 with the DR 0104PN (Part-Year Resident/Nonresident Tax Calculation Schedule)
+    attached — mark the "Part-Year Resident/Nonresident" box on the DR 0104 (also when filing jointly and one spouse
+    is a full-year resident and the other is not).
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not re-verified for 2024 (dropped from
+  this pack rather than carried unverified): the DR 0347 child-care-credit percentages (50% / low-income 25%) and
+  the Property Tax/Rent/Heat (PTC) Rebate income limits — resolve them from the 2024 DR 0347 and 2024 DR 0104PTC
+  Book before claiming.'
+credits:
+- name: Colorado Earned Income Tax Credit (COEITC) - SSN filers
+  type: refundable
+  eligibility: Full-year or part-year Colorado residents who claim the federal Earned Income Tax Credit (EITC).
+    Part-year residents apportion by the DR 0104PN line 34 percentage (capped at 100%). (ITIN filers, filers whose
+    SSN is not valid for employment, and certain filers under 25 without qualifying children use form DR 0104TN
+    and claim on DR 0104CR line 9 instead.)
+  amount: '50% of the federal EITC you claimed for tax year 2024 — 2024 DR 0104CR line 5: "Multiply line 4 [federal
+    EITC from Form 1040 line 27] by 50% (0.50) to calculate your Colorado E I T C."'
+  income_limit_2024: No separate Colorado income limit; eligibility tracks the federal EITC income limits for 2024.
+  claimed_on: DR 0104CR (Individual Credit Schedule), Part I, lines 3-6 (refundable); ITIN/under-25 filers via DR
+    0104TN on DR 0104CR line 9
+  citation:
+    source: Colorado DOR, 2024 DR 0104 Book — DR 0104CR Individual Credit Schedule instructions, lines 3 through
+      6 (COEITC for SSN filers) and line 9 (COEITC for ITIN filers or certain filers under age 25)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+- name: Colorado Child Tax Credit (2024 = regular credit + NEW Family Affordability Tax Credit)
+  type: refundable
+  eligibility: 'Full-year and part-year Colorado residents (nonresidents are NOT eligible). The 2024 Colorado child
+    tax credit computed on form DR 0104CN comprises BOTH: (a) the regular Colorado child tax credit — per qualifying
+    child UNDER AGE 6 (born 2019 or later), not allowed if federal AGI exceeds $75,000 ($85,000 joint); and (b)
+    the family affordability tax credit (NEW for 2024) — per qualifying child UNDER AGE 17 (born 2008 or later),
+    not allowed if federal AGI exceeds $85,000 ($95,000 joint). Qualifying child follows the IRS Pub 501 relationship/residence/support/joint-return
+    tests. Part-year residents apportion via DR 0104PN line 34.'
+  amount: 'Regular credit (under-6): $1,200 per child if federal AGI <= $25,000 single/HoH/MFS ($35,000 joint);
+    $600 if $25,001-$50,000 ($35,001-$60,000 joint); $200 if $50,001-$75,000 ($60,001-$85,000 joint). Family affordability
+    credit: per-child amounts step down by AGI band — under-6 table from $3,200 (AGI <= $15,000 single / $25,000
+    joint) down to $120, $0 above $85,000 single ($95,000 joint); ages 6-16 table from $2,400 down to $90, $0 above
+    the same ceilings. Sum on DR 0104CN line 11 (line 13 for part-year residents).'
+  income_limit_2024: Regular credit unavailable above federal AGI of $75,000 ($85,000 joint); family affordability
+    credit unavailable above $85,000 ($95,000 joint).
+  claimed_on: Computed on DR 0104CN (2024 Colorado Child Tax Credit), line 11 (or line 13 for part-year residents);
+    entered on DR 0104CR Part I, line 1 (refundable); requires the DR 0104 Dependents table "Child Tax Credit" boxes
+  citation:
+    source: Colorado DOR, 2024 Form DR 0104CN Colorado Child Tax Credit (11/07/24) — eligibility, Regular Child
+      Tax Credit Table, Age 5 and Under / Age 6 to 16 Family Affordability Tax Credit Tables
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104CN_2024.pdf
+- name: Child Care Expenses Credit (Colorado child & dependent care credit)
+  type: refundable
+  eligibility: Taxpayers who paid child care expenses during the year and whose adjusted gross income is $60,000
+    or less ("Taxpayers who pay child care expenses during the year and whose Adjusted Gross Income is $60,000 or
+    less may be able to claim a child care expenses credit" — 2024 booklet, DR 0104CR line 2). Computed on form
+    DR 0347, which must be submitted along with the DR 0104CR.
+  amount: A percentage of the federal child and dependent care credit per form DR 0347 (the 2024 DR 0347 percentages
+    were not independently re-verified by this pack — the 2023 rates were 50% of the federal credit, and 25% of
+    expenses capped $500/$1,000 for the low-income variant; confirm on the 2024 DR 0347).
+  income_limit_2024: Adjusted gross income of $60,000 or less (2024 booklet).
+  claimed_on: Computed on DR 0347 (Child Care Expenses Tax Credit); entered on DR 0104CR Part I, line 2 (refundable)
+  citation:
+    source: Colorado DOR, 2024 DR 0104 Book — DR 0104CR line 2 (Child Care Expenses Credit, DR 0347, $60,000 AGI
+      limit)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+  unverified: true
+- name: TABOR State Sales Tax Refund (claimed on the 2024 return)
+  type: refundable
+  eligibility: Full-year Colorado residents born before 2006 (or full-year residents under eighteen who are required
+    to file a return) who file a 2024 DR 0104 by the extension due date. Lines 31-34 of the 2024 DR 0104 compute
+    a Modified AGI solely to size the refund; it does not affect the income tax computation.
+  amount: 'Tiered by 2024 Modified AGI (DR 0104 line 34): single filers $177 (MAGI <= $53,000) / $240 ($53,001-$105,000)
+    / $277 ($105,001-$166,000) / $323 ($166,001-$233,000) / $350 ($233,001-$302,000) / $565 ($302,001 or more);
+    joint filers exactly double ($354/$480/$554/$646/$700/$1,130). Applied first against income tax liability, remainder
+    refunded (DR 0104 line 35).'
+  income_limit_2024: No ceiling — the refund amount varies by Modified AGI tier (see amount).
+  claimed_on: DR 0104 lines 31-35 (Modified AGI lines 31-34; refund on line 35 from the Modified AGI Tiers table)
+  citation:
+    source: Colorado DOR — 2024 DR 0104, Colorado Individual Income Tax Return, lines 31-35 and "Modified A G I
+      Tiers for TABOR State Sales Tax Refund" table
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR_0104_2024.pdf
+filing_requirement:
+  note: 'You must file a 2024 DR 0104 if you are required to file a federal income tax return with the IRS for the
+    tax year, or have a Colorado income tax liability for the tax year, AND you are: (a) a full-year Colorado resident
+    (file DR 0104 or DR 0104EZ), (b) a part-year Colorado resident who received taxable income while residing here
+    (file DR 0104 + DR 0104PN), or (c) not a Colorado resident but received income from Colorado sources (file DR
+    0104 + DR 0104PN). Colorado residents must file whenever a federal return is required even with no Colorado
+    tax liability; filing is also the only way to claim a refund. You must use the same filing status on the federal
+    and Colorado returns. (2024 DR 0104 Book, "Who Must File This Tax Return.")'
+mailing_addresses:
+  refund_or_no_payment: Colorado Department of Revenue, Denver, CO 80261-0005 (without payment; these addresses
+    and zip codes are exclusive to the Colorado Department of Revenue — a street address is not required)
+  with_payment: Colorado Department of Revenue, Denver, CO 80261-0006 (with payment)
+  citation:
+    source: Colorado DOR — 2024 DR 0104 Book, "Mailing Address For Form DR 0104" (With Payment 80261-0006 / Without
+      Payment 80261-0005)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+payment:
+  check_payee: Colorado Department of Revenue ("Make your check or money order payable to 'Colorado Department of
+    Revenue' and clearly write your Social Security number and '2024 DR 0104' on the memo line"; if you file electronically
+    but pay by mail, complete form DR 0900 and mail it with your payment)
+  web_pay_url: https://www.colorado.gov/revenueonline
+deadlines:
+  filing_due_date: '2025-04-15'
+  automatic_extension: An automatic extension to file is granted until October 15, but there is no extension to
+    pay (use form DR 0158-I to pay before filing). Taxpayers traveling or residing abroad on April 15 have until
+    June 15 to file, and automatically until October 15 if more time is needed; interest applies from April 15.
+  citation:
+    source: Colorado DOR — 2024 DR 0104 Book, "Due Date" ("Your Colorado income tax return and payment for any tax
+      owed are due April 15... An automatic extension to file is granted until October 15, but there is no extension
+      to pay") and "Persons Traveling or Residing Abroad"
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+all_citations:
+- source: Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Who Must File,
+    Due Date, mailing addresses, line 1 Federal Taxable Income, Additions lines 2-8 (incl. NEW line 5 business meals
+    addback), line 11 Colorado Taxable Income, line 12 Colorado Tax ("The income tax rate is currently 4.25%"),
+    2024 Colorado Income Tax Table ("with tax rate of 4.25%"), tax-over-$100,000 worksheet ("Multiply by 4.25% X
+    .0425"), DR 0104CR credit instructions (COEITC 50%, child care $60,000 limit), TABOR Modified AGI tiers, payment
+    options (payee, DR 0900, Revenue Online)
+  url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+- source: Colorado DOR — standalone 2024 DR 0104, Colorado Individual Income Tax Return (form PDF; second-pass verification
+    of line 1 'Federal Taxable Income ... 1040 ... line 15', additions lines 2-8, line 9 subtotal, line 10 subtractions,
+    line 11 Colorado Taxable Income, line 12 'Colorado Tax from tax table or the DR 0104PN line 36', TABOR lines
+    31-35 tiers table)
+  url: https://tax.colorado.gov/sites/tax/files/documents/DR_0104_2024.pdf
+- source: Colorado DOR — 2024 Form DR 0104CN Colorado Child Tax Credit (regular credit + family affordability tax
+    credit tables)
+  url: https://tax.colorado.gov/sites/tax/files/documents/DR0104CN_2024.pdf
+- source: Colorado DOR — DR 0104 Booklet landing page (names DR0104_book_2024.pdf as the 2024 edition)
+  url: https://tax.colorado.gov/DR0104Booklet
+- source: Colorado DOR — Residency Status page (domicile + six-month rule)
+  url: https://tax.colorado.gov/residency-status
+- source: Colorado DOR — Individual Income Tax Guide (federal taxable income starting point; residency)
+  url: https://tax.colorado.gov/individual-income-tax-guide
+unverified:
+- Exact statutory residency wording (domicile definition and the >6-month 'six-month rule') comes from CO DOR Residency
+  Status / Individual Income Tax Guide HTML pages as in the 2023 pack; the 2024 booklet confirms the proration and
+  military-domicile rules but does not restate the six-month statutory test — confirm the statutory wording at the
+  DOR.
+- 'Online payment portal URL: the 2024 booklet references ''Colorado.gov/RevenueOnline'' (a redirect alias) rather
+  than printing a full canonical https URL; the exact current canonical URL should be confirmed at the DOR.'
+- The 2024 DR 0347 child-care-credit percentages and the 2024 DR 0104PTC (Property Tax/Rent/Heat Rebate) figures
+  were not fetched; the 2023 pack's figures (50% of the federal credit; low-income 25% capped $500/$1,000; PTC income
+  limits) were NOT carried into this pack — resolve them from the 2024 DR 0347 / 104PTC Book before claiming.
+- DR 0104EZ eligibility criteria for 2024 were not fetched (the booklet's Who Must File names DR 0104EZ as an option
+  for full-year residents) — confirm at the DOR.
+# Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
+# Figures verified two-pass against the cited 2024 DR 0104 Book (rate printed three
+# ways: Line 12 instructions "currently 4.25%", the 2024 tax table header, and the
+# over-$100,000 worksheet X .0425 — the 2024 rate is 4.25%, down from 4.4% in 2023)
+# and the standalone 2024 DR 0104 form PDF (tax.colorado.gov). Three test vectors
+# reproduce printed booklet tax-table rows exactly.
+tax:
+  citation:
+    source: '2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Line 12 instructions: "The
+      income tax rate is currently 4.25%" (the document is the year-pinned 2024 filing guide); "2024 Colorado Income
+      Tax Table with tax rate of 4.25%"; tax-over-$100,000 worksheet "Multiply by 4.25% X .0425"; DR 0104 Line 1 = Federal
+      Taxable Income from Form 1040/1040-SR/1040-SP line 15; "Colorado income tax is based on your federal taxable income,
+      which has already considered your deductions"; Line 11 = Colorado Taxable Income (line 9 subtotal minus line 10
+      subtractions). Booklet table rows verified at 4.25%: $5,100-$5,200 -> $219; $30,800-$30,900 -> $1,311; $49,900-$50,000
+      -> $2,123 (each = 4.25% of the band midpoint). Second pass: the standalone 2024 DR 0104 form PDF prints the same
+      line structure (line 1 federal taxable income, line 11 Colorado Taxable Income, line 12 Colorado Tax from tax
+      table or DR 0104PN line 36).'
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+  flat_rate: 0.0425
+  base: federal_taxable_income
+  tax_line: 'DR 0104 Line 12 (Colorado Tax): full-year residents take the amount from the 2024 booklet tax table (built
+    at 4.25%) for Line 11 Colorado Taxable Income (= Line 9 subtotal minus Line 10 subtractions); the tax-over-$100,000
+    worksheet multiplies Line 11 by 4.25% (.0425); part-year residents and nonresidents use the apportioned tax from
+    the DR 0104PN.'
+  exemptions: {}
+  notes:
+  - 'Rate change: the 2024 rate is 4.25% (down from 4.4% in 2023) — printed three ways in the 2024 DR 0104 Book (Line
+    12 instructions, the 2024 tax table header, and the over-$100,000 worksheet''s X .0425).'
+  - Colorado starts from federal TAXABLE income (DR 0104 Line 1) — the federal standard/itemized deduction is already
+    embedded, so Colorado has no exemptions or separate standard deduction.
+  - '2024 line renumbering: additions are Lines 2-8 (new Line 5 business-meals addback), subtotal Line 9, subtractions
+    Line 10, Colorado Taxable Income Line 11, Colorado Tax Line 12 (2023: taxable income Line 10, tax Line 11).'
+  - The DR 0104 form itself does not print a multiplication — Line 12 says to use the tax table (or the DR 0104PN
+    apportionment). The booklet table is built at 4.25% but its $100-band midpoint rounding can differ from raw multiplication
+    by a few dollars; the printed table row controls on the filed form.
