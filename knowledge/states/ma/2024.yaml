@@ -1,0 +1,304 @@
+# MA state knowledge — tax year 2024. Fetched + cited from the MA DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 Form 1
+# instructions, then independently re-checked against the 2024 Form 1 blank itself
+# (which prints the $4,400/$6,800/$8,800 line 2a exemptions, the $1,000/$1,700/$2,200
+# line 2b-2d multipliers, the line 22 '$24,000 / multiply by .05' tax line, and the
+# line 28b 4% surtax line). mass.gov sits behind Akamai and 403s non-browser fetchers,
+# so BOTH documents were recovered from the Wayback Machine's archive of the SAME
+# official mass.gov URLs — the identical provenance path the shipped MA form pack used.
+# HEADLINE 2024 CHANGES (Major 2024 Tax Changes): (1) the up-to-$100/$200 deduction for
+# Massachusetts bank interest is REPEALED for tax years beginning on or after 1/1/2024
+# (2024 Form 1 line 5 no longer carries the exemption boxes); (2) married couples who
+# file a joint federal return MUST file a joint Massachusetts return (TIR 24-4);
+# (3) the 4% surtax threshold indexed to $1,053,750; (4) Child and Family Tax Credit
+# rose $310 -> $440 per qualifying individual, with a noncustodial-parent expansion
+# (TIR 24-13); (5) Senior Circuit Breaker maximum rose to $2,730 (income limits
+# $72,000/$91,000/$109,000; valuation cap $1,172,000); (6) Angel Investor Tax Credit
+# repealed.
+jurisdiction: states/ma
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Net result: treaty-exempt income is NOT re-taxed by MA, so conforms = true — but the mechanism is
+  an EXPLICIT DEDUCTION, not passive federal-AGI conformity. Important nuance: MA''s Form 1 does NOT start from
+  federal AGI. It builds Massachusetts gross income from its own categories. Line 3 (Wages) is taken from W-2 state
+  wages (Box 16), and Massachusetts gross income can include items not subject to U.S. income tax. So treaty-exempt
+  income that an employer reports in state wages would otherwise land in MA income. MA neutralizes this with the
+  dedicated Schedule Y, Line 4 deduction: ''Amounts Excludible Under MGL Ch 41, § 111F or U.S. Tax Treaty Included
+  in Form 1, Line 3'' — the 2024 Form 1 instructions repeat the 2023 rule: a taxpayer with income exempt under a
+  United States tax treaty enters the excludible amount that was included in Form 1, line 3 on Schedule Y line 4
+  and fills in the treaty oval. Because Schedule Y reduces income, the treaty-exempt amount is deducted back out
+  and is not taxed. PRACTICAL NOTE: unlike a pure federal-AGI conformity state where treaty income flows out automatically,
+  in MA the taxpayer must affirmatively claim the Schedule Y, Line 4 deduction (and fill the treaty oval) — if treaty
+  wages appear in W-2 Box 16/Form 1 line 3 and the deduction is not claimed, the income would be taxed. Source:
+  2024 Form 1 Instructions, Schedule Y Line 4 (income exempt under a U.S. tax treaty) and Line 3 (Wages, Salaries,
+  Tips).'
+citation:
+  source: 2024 Form 1 Instructions (MA DOR) — Major 2024 Tax Changes (bank-interest deduction repeal; joint-filing
+    mandate TIR 24-4; 4% surtax threshold $1,053,750; Child and Family Tax Credit $440 with TIR 24-13 expansion;
+    Circuit Breaker maximum $2,730), residency definitions, $8,000 threshold, MA gross income definition, Line 3
+    wages from W-2 state wages, Schedule Y Line 4 U.S. tax treaty deduction, Filing Due Dates (April 15, 2025),
+    mailing PO Box 7000 / 7003, mass.gov/masstaxconnect. Retrieved via the Wayback Machine archive of the official
+    mass.gov URL (mass.gov 403s non-browser fetchers).
+  url: https://www.mass.gov/doc/2024-form-1-instructions/download
+starts_from: 'federal wages (W-2 state wages, Box 16) — NOT federal AGI. MA Form 1 builds Massachusetts gross income
+  from its own income categories (5.0% income incl. wages from W-2; interest/dividends on Schedule B; capital gains
+  on Schedule D); it does not begin from a single federal AGI line. The header boxes a/b (total federal income from
+  U.S. Form 1040 line 9; total federal AGI from U.S. Form 1040 line 11) are informational. NOTE (2024 change): Form
+  1 line 5 is now plain ''Massachusetts bank interest'' — the former up-to-$100/$200 exemption boxes are gone (deduction
+  repealed for tax years beginning on or after 1/1/2024).'
+residency:
+  summary: 'MA recognizes four statuses (MGL ch 62). FULL-YEAR RESIDENT: your residence (domicile) is in Massachusetts
+    for the entire year, OR you maintain a permanent place of abode in MA and spend more than 183 days in the aggregate
+    in the state during the year (the statutory-resident test) — file Form 1. ''Residence'' and ''domicile'' denote
+    the place where you have your permanent home and to which, whenever absent, you intend to return. NONRESIDENT:
+    not a MA resident but received Massachusetts-source income (e.g., from a MA job) — file Form 1-NR/PY. PART-YEAR
+    RESIDENT: you moved into or out of MA during the year; income/deductions/exemptions are apportioned based on
+    days resident or MA-source income — file Form 1-NR/PY. NONRESIDENT AND PART-YEAR RESIDENT: meet both criteria;
+    file Form 1-NR/PY and complete Schedule R/NR (Resident/Nonresident Worksheet). NEW for 2024 (TIR 24-4): married
+    couples must file a joint Massachusetts return for any year in which they file a joint federal return, unless
+    an exception applies.'
+forms:
+  resident: Form 1 — Massachusetts Resident Income Tax Return (2024)
+  part_year_or_nonresident: Form 1-NR/PY — Massachusetts Nonresident or Part-Year Resident Income Tax Return (2024).
+    Taxpayers who are both nonresident and part-year resident also complete Schedule R/NR (Resident/Nonresident
+    Worksheet).
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Massachusetts Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Massachusetts residents (full- or part-year) who qualify for and claim the federal Earned Income
+    Credit — earned income under $66,819 for 2024 (maximum may be lower depending on filing status and number of
+    eligible children). MA adopts the federal expansion rules; a married person who is a victim of domestic abuse,
+    living apart from their spouse at filing, may file married filing separately and still claim the MA EIC. Part-year
+    residents prorate the credit by days resided in MA.
+  amount: 40% of the federal earned income credit claimed on the taxpayer's federal return (U.S. Form 1040, line
+    27). Refundable to the extent the credit exceeds total income tax payable.
+  income_limit_2024: No separate MA income limit; tied to the federal EITC income/AGI limits for 2024 (federal earned-income
+    ceiling referenced as $66,819).
+  claimed_on: 2024 Form 1 (Resident), line 43 (enter qualifying children in 43a, federal EIC in 43b, multiply by
+    40%); Form 1-NR/PY for nonresidents/part-year.
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR), Line 43 Earned Income Credit — 40% of the federal amount; $66,819
+      earned-income ceiling; domestic-abuse MFS rule
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+- name: Senior Circuit Breaker Tax Credit (Real Estate Tax Credit for persons age 65+)
+  type: refundable
+  eligibility: Taxpayer must be age 65 or older, own or rent and occupy a principal residence in Massachusetts,
+    and meet income/valuation limits. Married taxpayers generally must file jointly to claim.
+  amount: 'For homeowners: the amount by which 2024 real estate tax payments exceed 10% of total income, capped
+    at the 2024 maximum credit of $2,730. For renters: the amount by which 25% of rent paid for the principal residence
+    exceeds 10% of total income, also capped at $2,730. Homeowners enter Schedule CB line 17; renters line 21.'
+  income_limit_2024: '2024 total income may not exceed $72,000 (single, not head of household), $91,000 (head of
+    household), or $109,000 (married filing jointly). Homeowners: assessed valuation of the principal residence
+    for tax year 2024 may not exceed $1,172,000. Thresholds are adjusted annually for inflation.'
+  claimed_on: 2024 Form 1, line 44 (enclose Schedule CB, Circuit Breaker Credit); Form 1-NR/PY for part-year residents.
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR) — Annual Update of Circuit Breaker Tax Credit (maximum $2,730; income
+      limits $72,000/$91,000/$109,000; valuation cap $1,172,000) and Line 44 instructions
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+- name: Child and Family Tax Credit
+  type: refundable
+  eligibility: 'Resident (or part-year resident for the period of residency) maintaining a household that includes
+    a qualifying individual: a dependent under age 13, a dependent age 65 or older or disabled, or a dependent or
+    spouse physically or mentally incapable of self-care who principally lives with the taxpayer. NEW for 2024 (TIR
+    24-13): a noncustodial parent may claim the credit for a child dependent age 13 or older who is physically or
+    mentally incapable of caring for himself or herself. Cannot be claimed by a full-year nonresident.'
+  amount: $440 for each qualifying individual for tax years beginning on or after Jan 1, 2024 (up from $310 in 2023),
+    with no cap on the number of qualifying individuals (enter the count in line 46a and multiply by $440).
+  income_limit_2024: No income limit specified.
+  claimed_on: 2024 Form 1, line 46 (count in 46a x $440); Schedule DI for dependent information; Form 1-NR/PY for
+    nonresidents/part-year residents.
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR), Line 46 Child and Family Tax Credit ($440 per qualifying individual;
+      TIR 24-13 noncustodial-parent expansion)
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+- name: Limited Income Credit (with No Tax Status)
+  type: nonrefundable
+  eligibility: 'Low-income MA filers whose Massachusetts AGI exceeds the No Tax Status threshold but falls within
+    the Limited Income Credit range. 2024 No Tax Status: MA AGI $8,000 or less (single); $14,400 or less plus $1,000
+    per dependent (head of household); $16,400 or less plus $1,000 per dependent (married filing jointly). Limited
+    Income Credit range: MA AGI up to $14,000 (single); $14,400-$25,200 plus $1,750 per dependent (head of household);
+    $16,400-$28,700 plus $1,750 per dependent (married filing jointly). Married filing separately qualifies for
+    neither. Computed via the Massachusetts AGI Worksheet / Line 29 worksheet in the Form 1 instructions.'
+  claimed_on: 2024 Form 1 — No Tax Status oval on line 27 (enter 0 in line 28); Limited Income Credit on line 29;
+    Schedule NTS-L-NR/PY for nonresidents and part-year residents.
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR) — Massachusetts AGI worksheet, No Tax Status and Limited Income Credit
+      thresholds and Line 27/29 instructions
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+filing_requirement:
+  note: 'RESIDENT: Must file Form 1 if a MA resident and gross income (from all sources, inside or outside MA) was
+    more than $8,000; if $8,000 or less, no return required. NONRESIDENT: Must file Form 1-NR/PY if Massachusetts-source
+    income exceeded the lesser of (a) $8,000, OR (b) the prorated personal exemption (personal exemption amount
+    multiplied by the ratio of MA-source income to total income). PART-YEAR RESIDENT: Must file Form 1-NR/PY if
+    gross income during the residency period was more than $8,000. NEW for 2024 (TIR 24-4): married couples filing
+    a joint federal return must file a joint Massachusetts return unless an exception applies. Source: 2024 Form
+    1 Instructions (Filing Your Massachusetts Return; Major 2024 Tax Changes).'
+mailing_addresses:
+  refund_or_no_payment: Massachusetts Department of Revenue, PO Box 7000, Boston, MA 02204 (Form 1, refunds / no
+    payments)
+  with_payment: Massachusetts Department of Revenue, PO Box 7003, Boston, MA 02204 (Form 1, with payments)
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR) — mailing addresses (PO Box 7000 for refunds/no payments; PO Box 7003
+      for payments)
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Commonwealth of Massachusetts (make check or money order payable to 'Commonwealth of Massachusetts';
+    write your Social Security number on the front — carried forward from the 2023 instructions and not re-verified
+    verbatim this pass, see unverified)
+  web_pay_url: https://mass.gov/masstaxconnect
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR) — 'Filing Due Dates. Form 1 is due on or before April 15, 2025.'
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+all_citations:
+- source: 2024 Form 1 Instructions (MA DOR) — Major 2024 Tax Changes (bank-interest deduction repeal; TIR 24-4 joint-filing
+    mandate; 4% surtax threshold $1,053,750 per TIR 23-12 and the 4% Surtax FAQs; Child and Family Tax Credit $440
+    and TIR 24-13; Circuit Breaker $2,730/$72,000/$91,000/$109,000/$1,172,000; Angel Investor Tax Credit repeal;
+    TIR 24-15 veterans-hire credit), 2024 Personal Income Tax Rates (5% most classes; 8.5% short-term gains; 12%
+    collectibles), $8,000 filing threshold, No Tax Status / Limited Income Credit thresholds, Line 22 tax (tax table
+    below $24,000, else x .05; optional 5.85% rate), Line 43 EITC 40%, Line 44 Circuit Breaker, Line 46 CFTC $440,
+    Schedule Y Line 4 tax-treaty deduction, whole-dollar rounding, due date April 15 2025, PO Box 7000/7003
+  url: https://www.mass.gov/doc/2024-form-1-instructions/download
+- source: '2024 Form 1 Massachusetts Resident Income Tax Return (MA DOR; second-pass verification: line 2a personal
+    exemptions $4,400/$6,800/$8,800; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $1,700; line
+    2d blindness x $2,200; line 5 plain ''Massachusetts bank interest'' with the former exemption boxes REMOVED;
+    line 17/18/19 deduction-exemption sequence; line 21 total taxable 5.0% income; line 22 ''TAX ON 5.0% INCOME
+    (from tax table). If line 21 is more than $24,000, multiply by .05''; line 23a/23b 8.5%/12% Schedule B tax; line
+    24 Schedule D tax; line 28b 4% Surtax from Schedule 4% Surtax line 7)'
+  url: https://www.mass.gov/doc/2024-form-1-massachusetts-resident-income-tax-return/download
+- source: 2024 Massachusetts Personal Income Tax Forms and Instructions (MA DOR list page)
+  url: https://www.mass.gov/lists/2024-massachusetts-personal-income-tax-forms-and-instructions
+unverified:
+- mass.gov returns HTTP 403 to automated fetch; the 2024 Form 1 and its instructions were retrieved from the Wayback
+  Machine's archives of the official mass.gov document URLs (captures 20250321230102 and 20250318064905). No fact
+  in this record relies on a non-.gov-originated document.
+- The exact 2024 check-payee sentence ('Commonwealth of Massachusetts') was carried forward from the 2023 instructions;
+  the 2024 instructions text confirms DOR payment context but the verbatim payee/SSN sentence was not re-located
+  in the fetched capture this pass.
+- The 2024 Form 1 tax table pages (mandatory for line 21 amounts under $24,000) were not included in the fetched
+  instructions capture; the table's band structure and any within-band divergence from exact 5% multiplication were
+  not re-verified.
+- Form 1-NR/PY 2024 instructions were not fetched; nonresident/part-year specifics are carried from the resident
+  instructions' summaries.
+# Flat-rate tax computation block (Phase G item G4, formerly-C3 adoption tranche) —
+# consumed by calc.state_tax. Two-pass verification: figures drafted from the 2024
+# Form 1 face (line 2a $4,400/$6,800/$8,800 personal exemptions; line 22 'from tax
+# table. If line 21 is more than $24,000, multiply by .05'; line 28b 4% surtax), then
+# independently re-checked against the 2024 Form 1 instructions (Line 22 text; the
+# 2024 surtax threshold $1,053,750; the excess-exemptions worksheet). Both documents
+# recovered from the Wayback archive of the official mass.gov URLs (mass.gov 403s
+# non-browser fetchers), the same provenance path as the shipped MA form pack.
+# Modeling decisions carried forward from 2023: flat_rate 0.05 on Part B (5.0%) income
+# ONLY — the 4% surtax and the 8.5%/12%/Schedule D classes are CRITICAL notes, never
+# brackets (MA taxes classes separately, PA-style). The line 2a personal exemption is
+# a fixed PER-STATUS base deduction on the Form 1 face, so it ships in the per-status
+# standard_deduction slot (the per-person 'personal' key cannot express HoH's $6,800);
+# line 2b dependents ship as an applied 'dependent' key; age-65/blind ship
+# disclosed-only. 2024 deltas: surtax threshold $1,053,750; the line 5 bank-interest
+# exemption is repealed (base note updated); exemption amounts unchanged.
+tax:
+  citation:
+    source: 'MA DOR — 2024 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a ''Personal exemptions.
+      If single or married filing separately, enter $4,400. If head of household, enter $6,800. If married filing jointly,
+      enter $8,800''; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $1,700; line 2d blindness x
+      $2,200; line 17 ''5.0% INCOME AFTER DEDUCTIONS''; line 18 total exemption amount (from line 2g); line 19 ''5.0%
+      INCOME AFTER EXEMPTIONS... Not less than 0''; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line
+      21 ''TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20''; line 22 ''TAX ON 5.0% INCOME (from tax table). If line
+      21 is more than $24,000, multiply by .05''; line 28b ''4% Surtax (from Schedule 4% Surtax, line 7)''. Second pass:
+      2024 Form 1 Instructions — Line 22: ''If line 21 is less than $24,000, find the proper tax by using the tax tables
+      found in the back of this booklet. If line 21 is greater than $24,000 multiply by 0.05''; ''For the 2024 tax year,
+      the threshold is $1,053,750'' (4% surtax, TIR 23-12 and the 4% Surtax FAQs); Major 2024 Tax Changes (bank-interest
+      deduction repeal; TIR 24-4 joint-filing mandate) — both passes agree. (mass.gov returns HTTP 403 to non-browser
+      fetchers; both documents were retrieved from the Wayback Machine''s archive of the SAME official mass.gov URLs,
+      the same provenance path as the shipped MA form pack.)'
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+  flat_rate: 0.05
+  base: state_gross_income
+  tax_line: 'Form 1 line 22: ''TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05''
+    (line 21 = TOTAL TAXABLE 5.0% INCOME = line 19 income after exemptions + line 20 Schedule B interest and dividend
+    income).'
+  exemptions:
+    dependent:
+      amount: 1000
+      note: 'Form 1 line 2b: $1,000 per dependent (do not include yourself or your spouse; enclose Schedule DI). APPLIED
+        by calc.state_tax via dependents_count.'
+    age_65:
+      amount: 1700
+      note: 'Form 1 line 2c: $1,700 per age-65-or-over-before-2025 box (You/Spouse). NOT applied by calc.state_tax — subtract
+        it from the supplied base or compute line 2c on the form.'
+    blind:
+      amount: 2200
+      note: 'Form 1 line 2d: $2,200 per blindness box (You/Spouse). NOT applied by calc.state_tax — subtract it from the
+        supplied base or compute line 2d on the form.'
+  standard_deduction:
+    single: 4400
+    married_filing_jointly: 8800
+    married_filing_separately: 4400
+    head_of_household: 6800
+  notes:
+  - 'Figures unchanged from 2023 (both passes re-verified for 2024): the 5.0% rate, the line 2a-2d exemption amounts,
+    and the $24,000 tax-table cutoff are identical; the 4% surtax threshold INDEXED UP to $1,053,750 (2023: $1,000,000),
+    and the former line 5 up-to-$100/$200 Massachusetts bank interest exemption is REPEALED for 2024 (line 5 is now
+    plain ''Massachusetts bank interest'').'
+  - 'Base guidance: supply 2024 Form 1 line 17 (''5.0% INCOME AFTER DEDUCTIONS'' = line 10 TOTAL 5.0% INCOME minus
+    line 16 total deductions) PLUS line 20 (interest and dividend income from Schedule B, line 38) — i.e., the Part
+    B 5.0% taxable income BEFORE the line 18 exemptions. The op subtracts the line 2a personal exemption (shipped
+    per filing status in standard_deduction) and $1,000 per dependent (line 2b), reproducing lines 18-21, then multiplies
+    by 5% (line 22). Filers with line 2c-2f exemptions (age 65+ $1,700 each, blindness $2,200 each, medical/dental
+    from U.S. Schedule A line 4, adoption) must subtract those amounts from the supplied base themselves.'
+  - 'Modeling decision — standard_deduction carries the Form 1 line 2a PERSONAL EXEMPTION: Massachusetts has NO standard
+    deduction; line 2a is a fixed per-filing-status base reduction ($4,400 single or married filing separately, $6,800
+    head of household, $8,800 married filing jointly) and ships in the per-status standard_deduction slot because
+    the per-person ''personal'' exemption key cannot represent the $6,800 head-of-household amount. Pass exemptions_count=0
+    — the taxpayer/spouse exemption is already inside the per-status amount.'
+  - 'CRITICAL — 4% surtax NOT modeled: ''Starting with tax year 2023, personal income taxpayers must pay an additional
+    4% (4% surtax) on taxable income over $1,000,000, increased annually for inflation (surtax threshold). For the
+    2024 tax year, the threshold is $1,053,750'' (2024 Form 1 instructions; TIR 23-12 and the 4% Surtax FAQs). The
+    surtax is computed on Schedule 4% Surtax and entered on Form 1 line 28b, and it applies to the SUM of all classes
+    of taxable income (the 5.0% Part B income modeled here PLUS Schedule B 8.5%/12% income PLUS Schedule D long-term
+    capital gains) over $1,053,750. It is NOT a marginal bracket of the 5.0% schedule — encoding it as one would misstate
+    Massachusetts'' class-separated system. If total taxable income across all classes exceeds $1,053,750, complete
+    Schedule 4% Surtax on the form.'
+  - 'Class separation (PA-like): Massachusetts taxes income classes separately, and this op computes ONLY the Form
+    1 line 22 tax on 5.0% income. Not modeled: Schedule B 8.5% income (line 23a x .085 — short-term capital gains
+    and certain other gains), 12% income (line 23b x .12 — collectibles, subject to a 50% deduction), and Schedule
+    D long-term capital gain tax (line 24). Never merge those classes into the supplied base.'
+  - 'Tax-table mandate: ''If line 21 is less than $24,000, find the proper tax by using the tax tables found in the
+    back of this booklet. If line 21 is greater than $24,000 multiply by 0.05'' (Line 22 instructions, unchanged for
+    2024). Below $24,000 the filed form uses the booklet table, which can differ from exact multiplication by a small
+    amount within a table band; the fetched instructions capture did not include the table pages, so the band structure
+    was not re-verified this session.'
+  - 'Optional 5.85% rate (NOT modeled): Form 1 line 22 carries an oval to voluntarily pay tax at 5.85% on income otherwise
+    taxed at 5.0%; the election does not apply to 8.5%/12% items.'
+  - 'Excess exemptions: if line 18 exemptions exceed line 17, the form sets line 19 to 0 and the excess may be applied
+    against interest and dividend income and 8.5%/12% income (Schedule B line 36 via the instructions worksheet),
+    then against long-term capital gains (Schedule D line 20). Because this op subtracts the exemptions from the combined
+    line 17 + line 20 base, the offset against Part B interest/dividends is reproduced automatically; the offset against
+    the 8.5%/12% and long-term-gain classes is NOT modeled.'
+  - 'No Tax Status / Limited Income Credit (Form 1 lines 27-29, NOT modeled): Massachusetts AGI of $8,000 or less
+    (single), $14,400 or less plus $1,000 per dependent (head of household), or $16,400 or less plus $1,000 per dependent
+    (married filing jointly) qualifies for No Tax Status — line 28 tax becomes 0 (married filing separately never
+    qualifies). Limited Income Credit ranges: up to $14,000 single; $14,400-$25,200 plus $1,750 per dependent HoH;
+    $16,400-$28,700 plus $1,750 per dependent MFJ. Check the Massachusetts AGI worksheet before relying on the computed
+    tax.'
+  - 'Massachusetts gross income is built from MA''s OWN categories, not federal AGI: Form 1 line 3 wages come from
+    W-2 state wages (Box 16); income exempt under a U.S. tax treaty that landed in line 3 must be deducted on Schedule
+    Y line 4 (fill the treaty oval). The header boxes a/b (federal total income / federal AGI) are informational only.
+    NEW for 2024 (TIR 24-4): married couples filing a joint federal return must file a joint Massachusetts return
+    unless an exception applies.'
+  - 'Rounding: the instructions direct whole-dollar entry (''amounts between $1.50 and $2.00 should be entered as
+    $2.00'' — a .50 tie rounds UP), consistent with this op''s rounding.'
+  - 'Not modeled — credits and later lines: Limited Income Credit (line 29), taxes due other jurisdictions (line 30,
+    Schedule OJC), Schedule CMS credits (line 31), the refundable 40%-of-federal Massachusetts EITC (line 43), the
+    $440-per-qualifying-individual Child and Family Tax Credit (line 46, 2024 amount, up from $310), the Senior Circuit
+    Breaker credit up to $2,730 (line 44), use tax (line 34), and the Schedule HC health-care penalty (line 35).'

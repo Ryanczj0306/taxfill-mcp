@@ -1,0 +1,256 @@
+# SC state knowledge — tax year 2024. Fetched + cited from the SC DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure was drafted from the 2024 SC1040 instructions
+# and 2024 SC1040 form, then independently re-verified against the 2024 SC1040TT
+# (tax tables + $100,000-or-more rate schedule) and the 2024 SC4972's printed
+# '2024 Tax Computation Schedule' — resolutions recorded inline where the passes
+# differed. TY2024 headline change: the top rate fell 6.4% -> 6.2% (the Act 228
+# of 2022 annual step-down), the bracket bounds indexed to $3,460/$17,330, and
+# the dependent exemption rose to $4,790.
+jurisdiction: states/sc
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: SC1040 line 1 starts from FEDERAL TAXABLE INCOME ("Enter federal taxable income from your federal
+  form. If zero or less, enter zero" - 2024 SC1040, line 1). Federally treaty-exempt income is already excluded
+  from federal taxable income before the SC return begins. SC's additions to income (SC1040 lines a-e) do NOT include
+  any add-back of tax-treaty-exempt income. The only foreign-related add-back is on line e ("Add back foreign area
+  allowances, cost of living allowances, and income from US possessions" - 2024 SC1040 instructions), which is distinct
+  from income exempt under a federal income tax treaty and does not re-capture treaty income. Because treaty-exempt
+  income is neither in the federal taxable-income starting point nor added back, it is NOT re-taxed by SC -> conforms.
+  (SC conforms to the IRC as amended through December 31, 2023, except as otherwise provided.)
+citation:
+  source: 2024 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) - Line 1 federal taxable income;
+    Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back; IRC conformity through
+    12/31/2023; due date April 15, 2025; refund claim deadline April 15, 2028; Line w dependent exemption $4,790
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf
+starts_from: federal taxable income
+residency:
+  summary: 'Resident: domiciled in / maintains SC as permanent home - SC return treats you as a resident even if
+    living outside SC if all are true: (1) intention to maintain SC as your permanent home, (2) SC is the center
+    of your financial, social, and family life, (3) when away you intend to return to SC. Nonresident: permanent
+    home is outside SC for the entire year and none of the resident tests apply. Part-year resident (moved into
+    or out of SC during the year): may elect to file either as a full-year resident (SC1040, report all income,
+    claim credit for taxes paid to another state via SC1040TC) OR as a nonresident (SC1040 with Schedule NR, taxed
+    only on income earned while an SC resident plus SC-source income, prorate deductions); may choose whichever
+    method is more beneficial. Residency is domicile-based (true, fixed, permanent home with intent to return);
+    see SCDOR "Determining a Taxpayer''s Domicile for Income Tax Purposes" at dor.sc.gov/policy. Special military
+    rules apply. (Framework unchanged from 2023.)'
+forms:
+  resident: SC1040 (South Carolina Individual Income Tax Return)
+  part_year_or_nonresident: Schedule NR (Nonresident Schedule), attached to a completed SC1040. Nonresidents and
+    part-year residents electing to file as a nonresident complete Schedule NR; Column A = income from the federal
+    return, Column B = income earned while an SC resident or from SC sources.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. Not independently confirmed for 2024
+  (verify the figure): South Carolina Earned Income Tax Credit (the 2024 TC-60 revision was not retrievable); Tuition
+  Tax Credit 2024 private-institution tuition cap.'
+credits:
+- name: South Carolina Earned Income Tax Credit (EITC)
+  type: nonrefundable
+  eligibility: Full-year South Carolina residents who were eligible for and claimed the federal Earned Income Tax
+    Credit on their federal return for the same tax year. The TC-60 instructs the taxpayer to STOP (no credit) if
+    they were not a full-year SC resident or were not eligible for the federal EITC.
+  amount: 125% of the federal Earned Income Tax Credit allowed on the taxpayer's federal return (fully phased in
+    beginning tax year 2023 under S.C. Code Section 12-6-3632; the same 125% applies for 2024).
+  income_limit_2024: No separate SC income limit stated; eligibility tracks the federal EITC, so the federal EITC
+    income limits effectively apply (taxpayer must qualify for the federal EITC).
+  claimed_on: Computed on SC Schedule TC-60; the result flows through the SC1040TC (nonrefundable credit schedule)
+    to SC1040 line 13 (Other nonrefundable credits).
+  citation:
+    source: SC DOR Form TC-60, South Carolina Earned Income Tax Credit (125% of federal, fully phased in from tax
+      year 2023; 2023 revision — the 2024 revision was not retrievable at fetch time), and 2024 SC1040 instructions
+      Line 13 (other nonrefundable credits via SC1040TC)
+    url: https://dor.sc.gov/forms-site/Forms/TC60_2023.pdf
+  unverified: true
+- name: Two Wage Earner Credit
+  type: nonrefundable
+  eligibility: Married couples filing jointly when both spouses have earned income taxed to South Carolina. Not
+    allowed for filing statuses Single, Married Filing Separately, or Head of Household. If either spouse's qualified
+    earned income is zero or less, the credit cannot be taken.
+  amount: 'For 2024: .007 (0.7%) multiplied by the lesser of $50,000 or the SC qualified earned income of the spouse
+    with the LOWER SC qualified earned income; maximum credit $350. (2024 instructions'' own example: spouse wages
+    $17,000 - $1,000 IRA deduction = $16,000 qualified earned income; $16,000 x .007 = $112.) SC qualified earned
+    income = SC earned income minus certain federal adjustments (deductible part of self-employment tax, self-employed
+    SEP/SIMPLE/qualified plans, self-employed health insurance deduction, IRA deduction, repayment of sub-pay).'
+  income_limit_2024: The credit base is capped at $50,000 of the lower-earning spouse's SC qualified earned income;
+    there is no upper income cutoff that disqualifies the taxpayer, but the cap limits the maximum credit to $350.
+  claimed_on: SC1040 line 12 (computed via the Worksheet for Two Wage Earner Credit in the SC1040 instructions).
+  citation:
+    source: 'SC DOR 2024 SC1040 Individual Income Tax Instructions, Line 12: Two Wage Earner Credit ("For 2024,
+      the credit is computed at .007 of the lesser of $50,000 or the South Carolina qualified earned income of the
+      spouse with the lower South Carolina qualified earned income")'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf
+- name: Child and Dependent Care Credit
+  type: nonrefundable
+  eligibility: Full-year SC residents who incurred federal child and dependent care expenses (reported on federal
+    Form 2441). Part-year residents/nonresidents qualify only if they are residents of a state that offers a comparable
+    credit to nonresidents, and then only on a prorated basis. Cannot be claimed if filing status is Married Filing
+    Separately.
+  amount: '7% of the federal child and dependent care expense (from federal Form 2441). Maximum credit is $210 for
+    one child or $420 for two or more children. (2024 instructions'' own examples: $2,000 federal expense x .07
+    = $140; part-year: $2,000 x 30% proration x .07 = $42.)'
+  income_limit_2024: No SC income limit stated; the credit is a flat 7% of the qualifying federal expense, subject
+    to the $210 / $420 caps.
+  claimed_on: SC1040 line 11.
+  citation:
+    source: 'SC DOR 2024 SC1040 Individual Income Tax Instructions, Line 11: Child and Dependent Care Credit'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf
+- name: Tuition Tax Credit
+  type: refundable
+  eligibility: A SC resident student (or a parent/legal guardian/other person who can claim the student as a dependent
+    and who paid the tuition) attending a qualifying SC 2-year or 4-year college/university, meeting the I-319 requirements
+    (SC high school diploma or qualifying equivalent, enrollment within 12 months, in-state tuition rate, credit-hour
+    minimums, no disqualifying scholarships/convictions/defaults; claimable at most four consecutive years).
+  amount: 50% of qualified tuition paid (after subtracting scholarships/grants used for tuition), not to exceed
+    $1,500 per tax year. For 4-year independent (private) institutions, qualifying tuition is capped at an indexed
+    amount ($12,268 for 2023; the 2024 indexed cap was not re-verified — see the I-319 for 2024).
+  income_limit_2024: No income limit stated; the credit is limited by the 50%-of-tuition calculation and the $1,500
+    annual cap.
+  claimed_on: 'Computed on Form I-319 (one per student); the total is entered on SC1040 line 21 (Tuition tax credit),
+    in the SC1040 "Tax Payments and Refundable Credits" section ("Line 21: Tuition Tax Credit — Refer to the I-319,
+    available at dor.sc.gov/forms" - 2024 instructions).'
+  citation:
+    source: SC DOR 2024 SC1040 Individual Income Tax Instructions, Line 21 (Tuition Tax Credit via Form I-319)
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf
+  unverified: true
+filing_requirement:
+  note: 'You must file an SC Individual Income Tax return if you answer YES to any: Resident under 65 - you were
+    required to file a federal return that included income taxable by SC (SC residents are taxed on their entire
+    income regardless of where earned, unless specifically exempted), or you had SC Income Tax withheld. Resident
+    65+ - MFJ (both 65+): gross income greater than the federal gross-income filing requirement amount plus $30,000;
+    any other status: greater than the federal amount plus $15,000; or SC tax was withheld. Nonresidents - you had
+    SC Income Tax withheld, or you had SC gross income (e.g., rental property, businesses, or other SC investments).
+    Find the federal gross-income filing requirement in the federal 1040 instructions at irs.gov. (Framework unchanged
+    from the 2023 SC General Information; the 2024 due date is April 15, 2025, and the deadline to claim a 2024
+    refund is April 15, 2028, per the 2024 SC1040 instructions ''Before You Begin''.)'
+mailing_addresses:
+  refund_or_no_payment: SC1040 Processing Center, PO Box 101100, Columbia, SC 29211-0100 (2024 SC1040, 'REFUNDS
+    OR ZERO TAX DUE')
+  with_payment: Taxable Processing Center, PO Box 101105, Columbia, SC 29211-0105 (2024 SC1040, 'BALANCE DUE')
+  citation:
+    source: '2024 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - MAIL TO addresses printed on
+      the signature page: Refunds/Zero Tax PO Box 101100; Balance Due PO Box 101105'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2024.pdf
+payment:
+  check_payee: SCDOR (South Carolina Department of Revenue). The 2024 SC1040 itself pushes electronic payment ('PAYMENT
+    OPTIONS Have a balance due? Pay electronically! It's quick and easy!' - MyDORWAY at dor.sc.gov/pay, or ACH debit
+    on line 37); mailed checks use the SC1040-V voucher payable to SCDOR.
+  web_pay_url: https://mydorway.dor.sc.gov
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: '2024 SC1040 Individual Income Tax Instructions, Before You Begin: "For tax year 2024, unless you have
+      a valid extension, the due date is April 15, 2025, and the deadline to claim a refund is April 15, 2028."'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf
+all_citations:
+- source: 2024 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) - Line 1 federal taxable income;
+    Additions lines a-e incl. line e foreign add-back; IRC conformity through 12/31/2023; due date April 15, 2025;
+    Line w dependent exemption $4,790; Line 11/12 credit computations; Line 6 tax-table/rate-schedule mandate
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf
+- source: '2024 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - line 1 ''Enter federal taxable
+    income''; line w dependent exemption; line 6 TAX (see SC1040TT); MAIL TO addresses; electronic payment options
+    (MyDORWAY / ACH debit)'
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2024.pdf
+- source: 2024 South Carolina Individual Income Tax Tables SC1040TT (Revised 7/11/24) - mandatory tax tables below
+    $100,000 and the 2024 Tax Rate Schedule for $100,000 or more (6.2% minus $659, worked example $101,000 -> $5,603)
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2024.pdf
+- source: '2024 SC4972 (Tax on Lump-Sum Distributions) - printed ''2024 Tax Computation Schedule'': $0-$3,460 0%;
+    $3,460-$17,330 3% times the amount minus $104; $17,330 or more 6.2% times the amount minus $659'
+  url: https://dor.sc.gov/sites/dor/files/forms/SC4972_2024.pdf
+- source: SCDOR Individual Income Tax page - '0 to a top rate of 6.2% for tax year 2024'; MyDORWAY payment portal
+  url: https://dor.sc.gov/iit
+unverified:
+- The 2024 revision of Form TC-60 (SC EITC) was not retrievable at the documented URLs (TC60_2024.pdf returns the
+  site's error page); the 125% rate is the fully-phased statutory rate under S.C. Code Section 12-6-3632 first effective
+  for tax year 2023 and the 2024 SC1040 instructions still route the credit through the SC1040TC to line 13 — confirm
+  the 2024 TC-60 at dor.sc.gov/forms before claiming.
+- The Tuition Tax Credit's indexed private-institution tuition cap for 2024 (2023 value $12,268) was not re-verified;
+  confirm on the 2024 Form I-319.
+- Check payee is given as 'SCDOR' per the 2023 General Information and the SC1040-V voucher convention; the 2024
+  SC1040 form itself only offers electronic options (MyDORWAY/ACH) on its face, so confirm the exact payee wording
+  on the 2024 SC1040-V if paying a 2024 balance due by mailed check.
+- The 2024 'SC Individual Income Tax General Information and FAQs' document (the 2023 pack's who-must-file source)
+  was not re-fetched; the filing-requirement framework is carried from 2023 with the 2024 dates confirmed from the
+  2024 instructions.
+tax:
+  citation:
+    source: '2024 South Carolina Individual Income Tax Tables SC1040TT (Revised 7/11/24) — the mandatory tax tables
+      for taxable income under $100,000 and the ''2024 Tax Rate Schedule for taxable income of $100,000 or more'' (''1.
+      Multiply the amount on line 5 by 6.2%; 2. Subtract $659'', with the worked example $101,000 -> $5,603); 2024 SC1040
+      Instructions Line 6 (''If your income subject to tax on line 5 is less than $100,000, use the SC1040TT... If ...
+      $100,000 or more, use the tax rate schedule'') and Line w (dependent exemption $4,790). Second pass (bracket bounds
+      and constants): 2024 SC4972, ''2024 Tax Computation Schedule'' — $0 to $3,460: 0% times the amount; $3,460 to
+      $17,330: 3% times the amount minus $104; $17,330 or more: 6.2% times the amount minus $659 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2024.pdf).
+      TY2024 changes vs 2023: top rate 6.4% -> 6.2% (Act 228 of 2022 step-down; SCDOR: ''0 to a top rate of 6.2% for
+      tax year 2024''), bounds indexed $3,330/$16,680 -> $3,460/$17,330, constants $100/$670 -> $104/$659.'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2024.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 3460, rate: 0}
+    - {over: 3460, but_not_over: 17330, rate: 0.03}
+    - {over: 17330, but_not_over: null, rate: 0.062}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 3460, rate: 0}
+    - {over: 3460, but_not_over: 17330, rate: 0.03}
+    - {over: 17330, but_not_over: null, rate: 0.062}
+    married_filing_separately:
+    - {over: 0, but_not_over: 3460, rate: 0}
+    - {over: 3460, but_not_over: 17330, rate: 0.03}
+    - {over: 17330, but_not_over: null, rate: 0.062}
+    head_of_household:
+    - {over: 0, but_not_over: 3460, rate: 0}
+    - {over: 3460, but_not_over: 17330, rate: 0.03}
+    - {over: 17330, but_not_over: null, rate: 0.062}
+  base: federal_taxable_income
+  tax_line: '2024 Form SC1040, line 6: ''TAX on your South Carolina Income Subject to Tax (see SC1040TT)''. Line 5
+    (South Carolina Income Subject to Tax) = line 1 federal taxable income (''Enter federal taxable income from your
+    federal form'') + line 2 SC additions (lines a-e) - line 4 SC subtractions (lines f-w, including the line w dependent
+    exemption this block ships).'
+  exemptions:
+    dependent:
+      amount: 4790
+      note: 'SC1040 line w, ''South Carolina Dependent Exemption (see instructions)'' — $4,790 for each eligible dependent
+        for 2024 (2024 SC1040 instructions, Line w worksheet: ''South Carolina dependent exemption amount ... $4,790''),
+        including both qualifying children and qualifying relatives; part of the line 4 subtractions, a true base reduction
+        before line 5 South Carolina Income Subject to Tax. Indexed annually (was $4,610 for 2023).'
+  notes:
+  - 'TY2024 RATE STEP-DOWN: the top rate fell from 6.4% to 6.2% (the annual Act 228 of 2022 reduction toward 6%; SCDOR:
+    ''0 to a top rate of 6.2% for tax year 2024''), the bracket bounds indexed to $3,460/$17,330 (from $3,330/$16,680),
+    and the subtraction constants became $104/$659 (from $100/$670).'
+  - 'Base guidance: supply SC1040 line 5 (South Carolina Income Subject to Tax) BEFORE the line w dependent exemption
+    — i.e. line 1 federal TAXABLE income (federal 1040 line 15; the federal standard/itemized deduction is already
+    embedded, never subtract it again) plus SC additions (lines a-e) minus the other SC subtractions (lines f-v) —
+    and pass dependents_count so the op subtracts the shipped $4,790-per-dependent line w amount to reproduce line
+    5. South Carolina has NO personal exemption and NO state standard deduction of its own.'
+  - 'Adjudication note (two-pass): pass 1 = the 2024 SC1040TT (mandatory tables below $100,000 + the printed $100,000-or-more
+    schedule ''6.2% minus $659''); pass 2 = the 2024 SC4972''s printed ''2024 Tax Computation Schedule'' ($0-$3,460
+    0%; $3,460-$17,330 3% times the amount minus $104; $17,330+ 6.2% times the amount minus $659). Both passes agree
+    on every bound and rate. NOTE: the SC1040 instruction booklet itself prints NO bracket dollar bounds — the SC4972
+    schedule is the official in-form statement of them.'
+  - 'CRITICAL — SC''s filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation
+    is ''rate x ENTIRE income - constant'', and the printed constants are ROUNDED in the taxpayer''s favor ($104 vs
+    the exact marginal $103.80; $659 vs the exact $658.36). Pure marginal accumulation (this engine) therefore comes
+    out up to ~$1 HIGHER than the filed method above $17,330 — e.g. $101,000 -> engine $5,604 vs the SC1040TT''s own
+    printed example $5,603 (6.2% x $101,000 - $659). The filed return must use the SC1040TT table or the $100,000+
+    schedule; treat this block''s output as an estimate within ~$1-3 (table bands add their own few-dollar spread).'
+  - 'Tax-table mandate: taxable income under $100,000 MUST use the SC1040TT tax tables (2024 SC1040 instructions,
+    Line 6); the tables are built in $50/$100 bands from the subtraction formulas at band midpoints (rounded), so
+    a row can differ from exact arithmetic by a few dollars in either direction (e.g. exact $12,000 -> engine $256,
+    but the $12,000-$12,100 row prints $258). Taxable income of $100,000 or more MUST use the rate schedule (6.2%
+    x line 5 - $659).'
+  - ONE rate schedule for every filing status — the SC1040TT states 'Use this Tax Rate Schedule for any filing status
+    claimed on the SC1040'; the identical schedule is duplicated across all four statuses here, copied, not derived
+    (qualifying surviving spouse included).
+  - 'Zero-rate floor: the first $3,460 of SC taxable income is taxed at 0% (the schema''s zero-rate bottom bracket,
+    like OH/MS) — a filer at or below $3,460 owes $0 with no exemption needed.'
+  - 'Credits are NOT modeled (tax credits, not base reductions): Two Wage Earner Credit (line 12, .007 x up to $50,000
+    of the lower-earning spouse''s qualified earned income, max $350), Child and Dependent Care Credit (line 11, 7%
+    of the federal expense, max $210/$420), SC Earned Income Tax Credit (125% of the federal EITC via TC-60 -> SC1040TC
+    -> line 13, nonrefundable), and the refundable Tuition Tax Credit (line 21, Form I-319).'
+  - 'Out of scope on the same return: TAX on Lump-Sum Distribution (line 7, SC4972) is a separate additional tax;
+    Active Trade or Business income electing the flat 3% rate (Form I-335) is excluded from this schedule; both are
+    computed on their own forms.'

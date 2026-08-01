@@ -163,3 +163,79 @@ unverified:
   the SC1040 form's printed payment line did not show a literal payee string in the extracted text, so the exact
   wording for a mailed SC1040 balance-due check (SCDOR vs. South Carolina Department of Revenue) should be confirmed
   at the DOR.
+tax:
+  citation:
+    source: '2023 South Carolina Individual Income Tax Tables SC1040TT (Revised 4/4/23) — the mandatory tax tables for
+      taxable income under $100,000 and the ''2023 Tax Rate Schedule for taxable income of $100,000 or more'' (''1.
+      Multiply the amount on line 5 by 6.4%; 2. Subtract $670'', with the worked example $101,000 -> $5,794); 2023 SC1040
+      Instructions Line 6 (''If your income subject to tax on line 5 is less than $100,000, use the SC1040TT... If ...
+      $100,000 or more, use the tax rate schedule'') and Line w (dependent exemption $4,610). Second pass (bracket bounds
+      and constants): 2023 SC4972, ''2023 Tax Computation Schedule'' — $0 to $3,330: 0% times the amount; $3,330 to
+      $16,680: 3% times the amount minus $100; $16,680 or more: 6.4% times the amount minus $670 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2023.pdf);
+      corroborated by the SC Revenue and Fiscal Affairs Office 2023 State IIT Comparisons Report (Tax Year 2023: >$0
+      0%, >$3,330 3%, >$16,680 6.4%; rfa.sc.gov).'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2023.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 3330, rate: 0}
+    - {over: 3330, but_not_over: 16680, rate: 0.03}
+    - {over: 16680, but_not_over: null, rate: 0.064}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 3330, rate: 0}
+    - {over: 3330, but_not_over: 16680, rate: 0.03}
+    - {over: 16680, but_not_over: null, rate: 0.064}
+    married_filing_separately:
+    - {over: 0, but_not_over: 3330, rate: 0}
+    - {over: 3330, but_not_over: 16680, rate: 0.03}
+    - {over: 16680, but_not_over: null, rate: 0.064}
+    head_of_household:
+    - {over: 0, but_not_over: 3330, rate: 0}
+    - {over: 3330, but_not_over: 16680, rate: 0.03}
+    - {over: 16680, but_not_over: null, rate: 0.064}
+  base: federal_taxable_income
+  tax_line: '2023 Form SC1040, line 6: ''TAX on your South Carolina Income Subject to Tax (see SC1040TT)''. Line 5
+    (South Carolina Income Subject to Tax) = line 1 federal taxable income (''Enter federal taxable income from your
+    federal form'') + line 2 SC additions (lines a-e) - line 4 SC subtractions (lines f-w, including the line w dependent
+    exemption this block ships).'
+  exemptions:
+    dependent:
+      amount: 4610
+      note: 'SC1040 line w, ''South Carolina Dependent Exemption (see instructions)'' — $4,610 for each eligible dependent
+        for 2023 (2023 SC1040 instructions, Line w worksheet: ''South Carolina dependent exemption amount ... $4,610''),
+        including both qualifying children and qualifying relatives; part of the line 4 subtractions, a true base reduction
+        before line 5 South Carolina Income Subject to Tax. Indexed annually ($4,790 for 2024).'
+  notes:
+  - 'Base guidance: supply SC1040 line 5 (South Carolina Income Subject to Tax) BEFORE the line w dependent exemption
+    — i.e. line 1 federal TAXABLE income (federal 1040 line 15; the federal standard/itemized deduction is already
+    embedded, never subtract it again) plus SC additions (lines a-e) minus the other SC subtractions (lines f-v) —
+    and pass dependents_count so the op subtracts the shipped $4,610-per-dependent line w amount to reproduce line
+    5. South Carolina has NO personal exemption and NO state standard deduction of its own.'
+  - 'Adjudication note (two-pass): pass 1 = the 2023 SC1040TT (mandatory tables below $100,000 + the printed $100,000-or-more
+    schedule ''6.4% minus $670''); pass 2 = the 2023 SC4972''s printed ''2023 Tax Computation Schedule'' ($0-$3,330
+    0%; $3,330-$16,680 3% times the amount minus $100; $16,680+ 6.4% times the amount minus $670), corroborated by
+    the SC Revenue and Fiscal Affairs Office 2023 report (>$0 0%, >$3,330 3%, >$16,680 6.4%). Both passes agree on
+    every bound and rate. NOTE: the SC1040 instruction booklet itself prints NO bracket dollar bounds — the SC4972
+    schedule is the official in-form statement of them.'
+  - 'CRITICAL — SC''s filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation
+    is ''rate x ENTIRE income - constant'', and the printed constants are ROUNDED in the taxpayer''s favor ($100 vs
+    the exact marginal $99.90; $670 vs the exact $667.02). Pure marginal accumulation (this engine) therefore comes
+    out UP TO $2.98 + rounding HIGHER than the filed method above $16,680 — e.g. $101,000 -> engine $5,797 vs the
+    SC1040TT''s own printed example $5,794 (6.4% x $101,000 - $670). The filed return must use the SC1040TT table
+    or the $100,000+ schedule; treat this block''s output as an estimate within $3.'
+  - 'Tax-table mandate: taxable income under $100,000 MUST use the SC1040TT tax tables (2023 SC1040 instructions,
+    Line 6); the tables are built in $50/$100 bands from the subtraction formulas at band midpoints, so a row can
+    differ from exact arithmetic by a few dollars in either direction (e.g. exact $12,000 -> engine $260, but the
+    $12,000-$12,100 row prints $262; $16,800-$16,900 prints $408 vs engine $409 at $16,805). Taxable income of $100,000
+    or more MUST use the rate schedule (6.4% x line 5 - $670).'
+  - ONE rate schedule for every filing status — the SC1040TT states 'Use this Tax Rate Schedule for any filing status
+    claimed on the SC1040'; the identical schedule is duplicated across all four statuses here, copied, not derived
+    (qualifying surviving spouse included).
+  - 'Zero-rate floor: the first $3,330 of SC taxable income is taxed at 0% (the schema''s zero-rate bottom bracket,
+    like OH/MS) — a filer at or below $3,330 owes $0 with no exemption needed.'
+  - 'Credits are NOT modeled (tax credits, not base reductions): Two Wage Earner Credit (line 12, .007 x up to $50,000
+    of the lower-earning spouse''s qualified earned income, max $350), Child and Dependent Care Credit (line 11, 7%
+    of the federal expense, max $210/$420), SC Earned Income Tax Credit (125% of the federal EITC via TC-60 -> SC1040TC
+    -> line 13, nonrefundable), and the refundable Tuition Tax Credit (line 21, Form I-319).'
+  - 'Out of scope on the same return: TAX on Lump-Sum Distribution (line 7, SC4972) is a separate additional tax;
+    Active Trade or Business income electing the flat 3% rate (Form I-335) is excluded from this schedule; both are
+    computed on their own forms.'

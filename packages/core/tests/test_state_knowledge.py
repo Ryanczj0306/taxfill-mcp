@@ -139,6 +139,9 @@ FLAT_TAX_RATES = {
     "co": Decimal("0.044"),
     "ky": Decimal("0.045"),
     "az": Decimal("0.025"),
+    # Formerly-C3 flat states, adopted + verified 2026-08-01:
+    "ut": Decimal("0.0465"),  # TC-40 line 10 (4.55% for 2024)
+    "ma": Decimal("0.05"),    # Form 1 line 21 5% Part B (4% surtax >$1M is a notes-disclosed add-on)
 }
 
 
@@ -223,26 +226,23 @@ def test_il_omits_the_unverified_dependent_amount():
 GRADUATED_TAX_STATES = sorted([
     "al", "ar", "ca", "dc", "de", "ga", "id", "ks", "la", "md", "me", "mn", "mo",
     "ms", "mt", "nd", "ne", "nj", "ny", "oh", "ok", "or", "ri", "va", "vt", "wi", "wv",
+    # Formerly-C3 graduated states, adopted + verified 2026-08-01:
+    "ct", "sc", "nm", "hi", "ia",
 ])
 
-# The C3 hard states — no fillable/adopted pack yet, hence no tax block either.
-NO_TAX_BLOCK_YET = {"ct", "hi", "ia", "ma", "nm", "sc", "ut"}
+# Rollout complete (2026-08-01): every jurisdiction ships a verified tax block.
+NO_TAX_BLOCK_YET: set[str] = set()
 
 
 def test_tax_block_shipping_matches_the_g4_rollout():
-    # Flat eight + graduated 27 = every adopted state ships a cited tax block;
-    # ONLY the C3 not-yet-adopted states ship none.
+    # ALL 42 adopted jurisdictions ship a cited tax block for 2023 — the former
+    # C3 seven (ct/hi/ia/ma/nm/sc/ut) joined 2026-08-01 once their form packs
+    # were adopted and the data passed two-pass verification.
     kb = REPO_ROOT / "knowledge"
     for code in STATE_CODES:
         pack = load_state_knowledge(code, 2023, base_dir=kb)
-        if code in NO_TAX_BLOCK_YET:
-            assert pack.tax is None, (
-                f"{code}: unexpected tax block — C3 states ship one only after their "
-                f"pack is adopted and the data passes two-pass verification"
-            )
-        else:
-            assert pack.tax is not None, f"{code}: adopted state must ship the tax block"
-    assert set(FLAT_TAX_RATES) | set(GRADUATED_TAX_STATES) == set(STATE_CODES) - NO_TAX_BLOCK_YET
+        assert pack.tax is not None, f"{code}: adopted state must ship the tax block"
+    assert set(FLAT_TAX_RATES) | set(GRADUATED_TAX_STATES) == set(STATE_CODES)
 
 
 @pytest.mark.parametrize("code", GRADUATED_TAX_STATES, ids=lambda c: c)
