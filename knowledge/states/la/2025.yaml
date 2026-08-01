@@ -1,0 +1,238 @@
+# LA state knowledge — tax year 2025. Fetched + cited from the LA DOR (.gov),
+# authored per the 2023/2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2025 IT-540
+# instructions ('WHAT'S NEW FOR LOUISIANA 2025 INDIVIDUAL INCOME TAX?', IT540i-WEB-2025),
+# then independently re-derived from a second official document — Revenue Information
+# Bulletin No. 25-012 (Louisiana Individual Income Tax Reform), which prints the pre/post
+# rate tables and the standard-deduction increase table — resolutions recorded inline.
+# 2025 STRUCTURAL CHANGE (Act 11 of the 2024 Third Extraordinary Legislative Session):
+# Louisiana went FLAT. The graduated 1.85%/3.5%/4.25% brackets and the combined personal
+# exemption-standard-deduction zero-rate floor are GONE. For tax years beginning on or
+# after 1/1/2025 the rate is a FLAT 3% (IT-540 Line 11 = Line 10 x .03). The standard
+# deduction is now a real Line 8 subtraction: $12,500 single/MFS, $25,000 MFJ/QSS/HOH
+# (nearly tripled from $4,500/$9,000). The additional $1,000 exemptions for dependents,
+# 65-or-older, and blind (old Lines 6A/6B/6D/6E/6F) were ALL REPEALED and the lines
+# removed from the form. Do NOT carry 2024 graduated figures forward.
+jurisdiction: states/la
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'LA''s resident return (IT-540) starts from Federal Adjusted Gross Income: Line 7 is "FEDERAL ADJUSTED
+  GROSS INCOME" and the 2025 instructions say "Line 7 - Enter the amount of your Federal Adjusted Gross Income (Federal
+  AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11. If your Federal AGI is less than zero, enter
+  0." Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The only
+  "additions" to federal AGI are on Schedule E; there is NO add-back of tax-treaty-exempt income anywhere on the
+  IT-540 form, Schedule E, or in the 2025 instructions. Because LA starts from federal AGI and has no treaty addback,
+  treaty-exempt income is not re-taxed -> conforms. (Act 11''s 2025 flat-rate reform did not change LA''s federal-AGI
+  starting point or add any treaty addback.)'
+citation:
+  source: 'Louisiana DOR - 2025 IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025): WHAT''S NEW FOR
+    LOUISIANA 2025 - Act 11 of the 2024 Third Extraordinary Legislative Session changed the income tax rate to a flat
+    3% (Line 11), increased the standard deduction to $12,500 single/MFS and $25,000 MFJ/QSS/HOH (Line 8), and repealed
+    the additional $1,000 exemptions for dependents, 65-or-older, and blind (old Lines 6A/6B/6D/6E/6F removed); Line
+    7 Federal AGI; Line 10 = Line 7 minus Line 8 minus Line 9D; ''A 2025 calendar year return is due on or before May
+    15, 2026'''
+  url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+starts_from: federal AGI (IT-540 Line 7 = Federal Adjusted Gross Income from Federal Form 1040/1040-SR, Line 11;
+  if you have Louisiana additions/exempt income, Line 7 comes from Louisiana Schedule E instead). Line 10 (the amount
+  taxed) = Line 7 minus Line 8 standard deduction ($12,500/$25,000) minus Line 9D excess federal itemized deductions,
+  floor zero.
+residency:
+  summary: 'Louisiana residency is domicile-based. A Louisiana resident is a person domiciled in Louisiana (or who
+    maintains a Louisiana residence while working in another state); a temporary absence from Louisiana does not automatically
+    change domicile, and you must affirmatively establish a new domicile elsewhere (registering to vote, titling vehicles,
+    obtaining a driver''s license, homestead exemption) and abandon the Louisiana domicile to change it. Residents
+    file IT-540 and report all income from all sources. Nonresidents and part-year residents file IT-540B and are taxed
+    only on Louisiana-source income (the IT-540B computes a ratio of Louisiana AGI to Federal AGI and applies it).
+    Part-year residents may elect to file either a resident (IT-540) or nonresident (IT-540B) return, whichever is
+    more beneficial. Nonresident professional athletes must electronically file Form IT-540B with Schedules NRPA-1
+    and NRPA-2. Louisiana does not use a statutory-resident day-count test; residency turns on domicile.'
+forms:
+  resident: IT-540 (2025 Louisiana Resident Income Tax Return)
+  part_year_or_nonresident: IT-540B (2025 Louisiana Nonresident and Part-Year Resident Income Tax Return)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Louisiana Earned Income Credit (LA EIC)
+  type: refundable
+  eligibility: Resident individuals who claimed a Federal Earned Income Credit (EIC) for 2025. Authorized by R.S.
+    47:297.8. The Louisiana Earned Income Credit Worksheet must be attached to the return.
+  amount: '5 percent of the Federal Earned Income Credit ("The refundable credit is equal to 5 percent of your Federal
+    EIC", 2025 IT-540 instructions, Line 16).'
+  income_limit_2025: No separate Louisiana income cap stated; eligibility tracks the federal EIC income limits (you
+    must have claimed the Federal EIC).
+  claimed_on: Form IT-540, Line 16 (from the 2025 Louisiana Earned Income Credit Worksheet)
+  citation:
+    source: Louisiana Department of Revenue – 2025 IT-540 instructions, Line 16 (LA EIC, 5 percent of the Federal
+      EIC, R.S. 47:297.8)
+    url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+- name: Louisiana Refundable Child Care Credit (federal AGI $25,000 or less)
+  type: refundable
+  eligibility: Louisiana residents with federal adjusted gross income of $25,000 or less who incurred child and
+    dependent care expenses in Louisiana (under IRC Section 21) for a qualifying person. Refundable whether or not
+    a federal child care credit was claimed. Authorized by R.S. 47:297.4. The worksheet must be attached.
+  amount: Qualified expenses (federal-AGI-based decimal x 50 percent per the 2025 Louisiana Refundable Child Care
+    Credit Worksheet); refundable only when federal AGI is $25,000 or less.
+  income_limit_2025: Federal adjusted gross income must be $25,000 or less to claim the refundable version.
+  claimed_on: Form IT-540, Line 14 (from the 2025 Louisiana Refundable Child Care Credit Worksheet)
+  citation:
+    source: Louisiana Department of Revenue – 2025 IT-540 instructions, Line 14 (Louisiana Refundable Child Care
+      Credit; federal AGI $25,000 or less)
+    url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+- name: Louisiana Refundable School Readiness Child Care Expense Credit (federal AGI $25,000 or less)
+  type: refundable
+  eligibility: Taxpayers who claimed the Louisiana Refundable Child Care Credit (IT-540 Line 14) and who had a qualified
+    dependent under age six that attended a child care facility participating in the Quality Start Rating program.
+    Refundable version requires federal AGI of $25,000 or less. Authorized by R.S. 47:6104.
+  amount: A percentage of the Louisiana refundable child care credit based on the facility's Quality Star Rating
+    (Five Star 200%, Four Star 150%, Three Star 100%, Two Star 50%, One Star 0%).
+  income_limit_2025: Federal adjusted gross income of $25,000 or less for the refundable version (above $25,000 the
+    credit is nonrefundable and carried on Schedule J).
+  claimed_on: Form IT-540, Line 15 (refundable; from the 2025 Louisiana Refundable School Readiness Credit Worksheet)
+  citation:
+    source: Louisiana Department of Revenue – 2025 IT-540 instructions, Line 15 (Louisiana Refundable School Readiness
+      Credit)
+    url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+- name: Louisiana Nonrefundable Child Care Credit (federal AGI greater than $25,000)
+  type: nonrefundable
+  eligibility: Louisiana residents with federal adjusted gross income greater than $25,000 who incurred qualifying
+    child and dependent care expenses (IRC Section 21) in Louisiana and claimed a federal child care credit. Unused
+    credit may be carried forward up to five years. Authorized by R.S. 47:297.4.
+  amount: Federal Child Care Credit multiplied by an AGI-based percentage; for federal AGI over $60,000 the credit
+    is limited to the lesser of $25 or 10 percent of the federal credit.
+  income_limit_2025: Federal adjusted gross income must be greater than $25,000 to claim on this line; for AGI over
+    $60,000 the credit is capped at $25 (or 10% of the federal credit, whichever is less).
+  claimed_on: Form IT-540, Schedule J – Nonrefundable Priority 3 Credits (from the 2025 Louisiana Nonrefundable Child
+    Care Credit Worksheet); carried to Line 20.
+  citation:
+    source: Louisiana Department of Revenue – 2025 IT-540 instructions (Louisiana Nonrefundable Child Care Credit
+      Worksheet; Schedule J)
+    url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+filing_requirement:
+  note: 'Per the 2025 IT-540 instructions ("WHO MUST FILE A RETURN"): a Louisiana resident who is required to file
+    a federal individual income tax return must file a Louisiana return reporting all income earned in 2025. You must
+    also file to obtain a refund/credit if you overpaid through withholding, estimated tax, a credit carried forward,
+    or are claiming a 2025 refundable child care credit or Louisiana earned income credit. Nonresidents/part-year
+    residents with Louisiana-source income who must file a federal return file IT-540B. The filing trigger keys off
+    the federal filing requirement rather than a fixed standalone dollar threshold; the IRS federal filing thresholds
+    therefore govern.'
+mailing_addresses:
+  refund_or_no_payment: 'Department of Revenue, P.O. Box 3440, Baton Rouge, LA 70821-3440 ("All other individual income
+    tax returns must be mailed to P.O. Box 3440" — refund / no-payment)'
+  with_payment: 'Department of Revenue, P.O. Box 3550, Baton Rouge, LA 70821-3550 ("A return for which a payment is
+    due must be mailed to P.O. Box 3550"). Print the last four digits of your SSN on the check/money order. Do not
+    send cash.'
+  citation:
+    source: 'Louisiana DOR - 2025 IT-540 instructions, WHERE TO FILE AND PAY TAX (''A return for which a payment is
+      due must be mailed to P.O. Box 3550, Baton Rouge, LA 70821-3550 ... All other individual income tax returns
+      must be mailed to P.O. Box 3440, Baton Rouge, LA 70821-3440'')'
+    url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+payment:
+  check_payee: 'Louisiana Department of Revenue (2025 IT-540 instructions: "Make your check or money order payable
+    to the Louisiana Department of Revenue. Print the last four digits of your social security number on your check
+    or money order." Do not send cash.)'
+  web_pay_url: https://www.revenue.louisiana.gov/latap
+deadlines:
+  filing_due_date: '2026-05-15'
+  citation:
+    source: 'Louisiana DOR - 2025 IT-540 instructions WHEN TO FILE (''A 2025 calendar year return is due on or before
+      May 15, 2026''); automatic six-month extension to November 15, 2026 (no extension form required; pay any tax
+      due with voucher Form R-2868V by May 15, 2026)'
+    url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+all_citations:
+- source: 'Louisiana DOR - 2025 IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025): WHAT''S NEW FOR
+    LOUISIANA 2025 (Act 11, 2024 Third Extraordinary Session — flat 3% rate at Line 11; standard deduction increased
+    to $12,500 single/MFS and $25,000 MFJ/QSS/HOH at Line 8; additional $1,000 exemptions for dependents, 65-or-older,
+    and blind REPEALED and old Lines 6A/6B/6D/6E/6F removed; annual retirement income exemption for 65+ raised from
+    $6,000 to $12,000); Line 7 Federal AGI; Line 8 standard deduction; Line 9A-9D excess federal itemized deductions;
+    Line 10 = Line 7 minus Lines 8 and 9D (floor 0); Line 11 = Line 10 x .03 (round to nearest dollar); Lines 14-16
+    refundable child care / school readiness / LA EIC (5%); WHO MUST FILE; WHEN TO FILE (May 15, 2026); mailing P.O.
+    Box 3550 (with payment) / P.O. Box 3440 (all other); payee Louisiana Department of Revenue'
+  url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+- source: 'Louisiana DOR - Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform): Act 11
+    of the 2024 Third Extraordinary Session repeals the graduated rates/brackets (formerly 1.85%/3.5%/4.25%) in favor
+    of a FLAT 3% tax effective for tax years beginning on or after 1/1/2025; nearly triples the standard deduction
+    ($4,500 -> $12,500 single/MFS; $9,000 -> $25,000 surviving spouse / head of household — MFJ likewise $25,000)
+    with an annual CPI-U inflation adjustment; the additional exemptions for dependents, blind, and 65-or-older were
+    repealed; annual retirement income exemption for 65+ raised from $6,000 to $12,000'
+  url: https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf
+- source: 'Louisiana DOR - Individual Income Tax (general resources): residency/domicile, IT-540 vs IT-540B, returns
+    and payments due May 15th of the following year, filing requirement tied to federal filing obligation'
+  url: https://revenue.louisiana.gov/individuals/general-resources/individual-income-tax/
+unverified:
+- The 'refund/no-payment' address is the same P.O. Box 3440 used for 'all other individual income tax returns' (the
+  instructions label it for all non-payment returns rather than a dedicated 'refund' box); confirm at the DOR if a
+  return is specifically a refund return.
+- The 2025 flat-tax legislation (Act 11 of the 2024 Third Extraordinary Session) is cited here from the 2025 IT-540
+  instructions and RIB 25-012 rather than the session-law text itself; the flat 3% rate, the $12,500/$25,000 standard
+  deductions, and the exemption repeal are two-pass confirmed at those two official 2025 documents.
+- The 2025 refundable child care / school readiness worksheet decimal tables and star-rating percentages were not
+  re-transcribed line-by-line this pass (they are unchanged in structure from 2024); confirm the exact 2025 decimals
+  on the worksheets when claiming.
+- IT-540B part-year mechanics (ratio proration on the 2025 Nonresident Tax Computation Worksheet) were not parsed
+  line-by-line; confirm against the 2025 IT-540B instructions when filing IT-540B.
+tax:
+  citation:
+    source: '2025 Louisiana IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025), LA DOR - WHAT''S NEW FOR
+      LOUISIANA 2025: ''Your Louisiana Income Tax - Line 11 - Act 11 of the 2024 Third Extraordinary Legislative Session
+      changed the income tax rate to a flat tax rate of 3%''; ''Louisiana Standard Deduction - Line 8 ... The amount
+      of the deduction is $12,500 for individuals filing single and married filing separate; $25,000 for individuals
+      filing married filing joint, qualifying surviving spouse and head of household''; Line 8 instruction ''If your
+      filing status is 1 or 3, enter $12,500; 2, 4, or 5, enter $25,000''; Line 10 ''Subtract Lines 8 and 9D from Line
+      7. If less than zero, enter zero 0''; Line 11 ''Multiply Line 10 by .03. Round to the nearest dollar''. Second
+      pass: Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform) prints the pre/post rate
+      tables (graduated 1.85%/3.5%/4.25% -> flat 3%) and the standard-deduction increase table ($4,500 -> $12,500 single/MFS;
+      $9,000 -> $25,000 surviving spouse/head of household), and states the additional exemptions for dependents, blind,
+      and 65-or-older were repealed - https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf
+      - both passes agree.'
+    url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+  flat_rate: 0.03
+  base: federal_agi
+  tax_line: 'IT-540 Line 11: ''YOUR LOUISIANA INCOME TAX''. 2025 instructions, Line 11: ''Multiply Line 10 by .03.
+    Round to the nearest dollar.'' Line 10 = Line 7 Federal Adjusted Gross Income minus Line 8 standard deduction
+    ($12,500 filing status 1/3; $25,000 filing status 2/4/5) minus Line 9D excess federal itemized deductions, floor
+    zero (''Subtract Lines 8 and 9D from Line 7. If less than zero, enter zero 0'').'
+  exemptions: {}
+  standard_deduction:
+    single: 12500
+    married_filing_jointly: 25000
+    married_filing_separately: 12500
+    head_of_household: 25000
+  notes:
+  - '2025 STRUCTURAL CHANGE (Act 11 of the 2024 Third Extraordinary Legislative Session): Louisiana went FLAT. The
+    graduated 1.85%/3.5%/4.25% brackets and the combined personal exemption-standard-deduction zero-rate floor of
+    2023/2024 are GONE. For tax years beginning on or after 1/1/2025 the rate is a FLAT 3% (IT-540 Line 11 = Line
+    10 x .03). Do NOT use this pack for 2024 or earlier, and do NOT carry 2024 graduated figures into 2025.'
+  - 'Base guidance: supply IT-540 Line 10 as taxable_base -> the op recomputes it here as Line 7 Federal AGI minus
+    the per-status Line 8 standard deduction, so supply Line 7 FEDERAL ADJUSTED GROSS INCOME (Federal Form 1040/1040-SR,
+    Line 11; if less than zero enter 0; if you have Louisiana additions/exempt income, Line 7 comes from Louisiana
+    Schedule E instead) as taxable_base and the op subtracts the standard deduction. IMPORTANT: if you are a FEDERAL
+    ITEMIZER you must also subtract Line 9D ''EXCESS FEDERAL ITEMIZED DEDUCTIONS'' yourself before supplying the base
+    (this op models only the standard deduction, not Line 9D). Non-itemizers skip Lines 9A-9D.'
+  - 'Standard deduction (Line 8, Act 11): $12,500 for filing status 1 (single) or 3 (married filing separately); $25,000
+    for filing status 2 (married filing jointly), 4 (head of household), or 5 (qualifying surviving spouse) - nearly
+    tripled from the 2024 $4,500/$9,000 combined floors. The op''s QSS -> married_filing_jointly mapping is exact
+    ($25,000). Head of Household ALSO gets $25,000 for 2025 (up from the old $9,000 combined floor and no longer sharing
+    the single boundary) - the shipped head_of_household amount reflects this. The standard deduction is CPI-U indexed
+    annually starting after 2025; these are the 2025 amounts.'
+  - 'Exemptions REPEALED: Act 11 repealed the additional $1,000 deductions for dependents, persons 65 or older, and
+    blind persons (old Lines 6A/6B/6D/6E/6F), and those lines were removed from the 2025 form. This pack ships NO
+    exemption keys - pass exemptions_count=0 and dependents_count=0. (The prior graduated packs'' ''dependent''/''age_65''/''blind''
+    $1,000 entries do not exist for 2025.)'
+  - 'No tax table: 2025 Line 11 is a straight multiplication printed on the form (''Multiply Line 10 by .03. Round
+    to the nearest dollar'') - the 2024 Louisiana Tax Table no longer applies. This op''s irs_round matches the form''s
+    round-to-nearest-dollar.'
+  - 'Louisiana credits are NOT modeled by this op and come off after Line 11: Nonrefundable Priority 1 credits (Schedule
+    C) on Line 12; refundable child care credit (federal AGI <= $25,000) on Line 14; refundable school readiness credit
+    (star-rated) on Line 15; Louisiana Earned Income Credit (5% of the federal EIC) on Line 16; other refundable Priority
+    2/4 and nonrefundable Priority 3 credits (Schedules F/I/J) on later lines.'
+  - Annual Retirement Income Exemption for taxpayers 65 or older (Schedule E Code 06E) increased from $6,000 to $12,000
+    per person for 2025 (Act 11) - this is a Schedule E base subtraction reached on Line 7, not part of this Line
+    11 computation; supply Line 7 already net of any Schedule E exemptions.
+  - Consumer Use Tax (Line 23A) and the Electric/Hybrid Vehicle Road Usage Fee are separate amounts added on the 2025
+    return after the income tax - NOT modeled.
+  - 'Source URL: 2025 resident instructions https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf ; reform bulletin
+    https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf .'
