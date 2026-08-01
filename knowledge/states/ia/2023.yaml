@@ -179,3 +179,94 @@ unverified:
   payment-enclosed returns was not located on a .gov page. Confirm at the DOR.'
 - The general GovConnectIowa base URL (govconnect.iowa.gov) is given; the deep 'Make a Payment' link returned by
   the DOR page (govconnect.iowa.gov/tap/?Link=MakePayment) should be re-verified as current.
+# Graduated-bracket tax computation block (Phase G item G4, formerly-C3 adoption
+# tranche) — consumed by calc.state_tax. Two-pass verification: brackets drafted from
+# the 2023 Tax Calculation Worksheet (41-026, joint vs non-joint schedules with exact
+# Column C constants and two worked examples), then independently re-checked against
+# the 2023 IA 1040 form face (Step 4 line 4 = federal taxable income + Schedule 1
+# modifications; Step 5 line 5 tax line; Step 3 $40/$20/$40 exemption CREDITS) and the
+# 2023 IA 1040 Expanded Instructions (line 5; 6% alternate tax over $13,500/$32,000).
+# Modeling decisions: Iowa prints only TWO schedules — joint (status 2) and non-joint
+# (statuses 1/3/4/5) — so single/MFS/HoH ship the identical non-joint schedule; Iowa
+# status 5 (QSS) is NON-JOINT, so the op's QSS->MFJ aliasing is flagged CRITICAL in the
+# notes (pass 'single' for a QSS filer). Step 3 amounts are CREDITS against tax (line
+# 8), never base reductions -> exemptions ships empty, standard_deduction ships null
+# (the federal deduction is already inside federal taxable income).
+tax:
+  citation:
+    source: 'Iowa Department of Revenue — 2023 Tax Calculation Worksheet (41-026): NON-JOINT FILERS (filing status 1,
+      3, 4, or 5) $0-$6,000 at 4.40% (.044), $6,000-$30,000 at 4.82% (.0482) plus $264.00, $30,000-$75,000 at 5.70%
+      (.057) plus $1,420.80, $75,000-and-over at 6.00% (.06) plus $3,985.80; JOINT FILERS (filing status 2) $0-$12,000
+      at 4.40%, $12,000-$60,000 at 4.82% plus $528.00, $60,000-$150,000 at 5.70% plus $2,841.60, $150,000-and-over at
+      6.00% plus $7,971.60; worked examples $25,000 -> $1,179.80 (non-joint) and $50,000 -> $2,359.60 (joint). Second
+      pass: 2023 IA 1040 (41-001) Step 4 ''Iowa taxable income. Add lines 2 and 3'' (line 2 = federal taxable income;
+      line 3 = net Iowa modifications from IA 1040 Schedule 1, line 22) and Step 5 line 5 ''Iowa Tax from tax rate schedule
+      or alternate tax'', Step 3 $40/$20/$40 exemption CREDITS; 2023 IA 1040 Expanded Instructions line 5 (''Use the
+      Tax Calculation Worksheet (41-026) or the 2023 IA 1040 Tax Calculator''; alternate tax = 6% of income over $13,500/$32,000)
+      — both passes agree.'
+    url: https://revenue.iowa.gov/media/2748/download?inline
+  brackets:
+    single:
+    - {over: 0, but_not_over: 6000, rate: 0.044}
+    - {over: 6000, but_not_over: 30000, rate: 0.0482}
+    - {over: 30000, but_not_over: 75000, rate: 0.057}
+    - {over: 75000, but_not_over: null, rate: 0.06}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 12000, rate: 0.044}
+    - {over: 12000, but_not_over: 60000, rate: 0.0482}
+    - {over: 60000, but_not_over: 150000, rate: 0.057}
+    - {over: 150000, but_not_over: null, rate: 0.06}
+    married_filing_separately:
+    - {over: 0, but_not_over: 6000, rate: 0.044}
+    - {over: 6000, but_not_over: 30000, rate: 0.0482}
+    - {over: 30000, but_not_over: 75000, rate: 0.057}
+    - {over: 75000, but_not_over: null, rate: 0.06}
+    head_of_household:
+    - {over: 0, but_not_over: 6000, rate: 0.044}
+    - {over: 6000, but_not_over: 30000, rate: 0.0482}
+    - {over: 30000, but_not_over: 75000, rate: 0.057}
+    - {over: 75000, but_not_over: null, rate: 0.06}
+  base: federal_taxable_income
+  tax_line: 'IA 1040 (41-001) Step 5, line 5: ''Iowa Tax from tax rate schedule or alternate tax'' — computed on IA
+    1040 line 4 ''Iowa taxable income'' via the 2023 Tax Calculation Worksheet (41-026) or the 2023 IA 1040 Tax Calculator
+    (line 4 = line 2 federal taxable income + line 3 net Iowa modifications).'
+  exemptions: {}
+  notes:
+  - 'Base guidance: supply 2023 IA 1040 line 4 ''Iowa taxable income'' = line 2 federal taxable income (federal 1040,
+    line 15) + line 3 net Iowa modifications (IA 1040 Schedule 1, line 22). The 2023 redesign starts the IA 1040 from
+    FEDERAL TAXABLE INCOME, so the federal standard/itemized deduction and QBI deduction are already inside the base
+    — Iowa has no state standard deduction or base personal exemptions, and this op subtracts nothing before the schedule.'
+  - 'Two schedules only: the 2023 Tax Calculation Worksheet (41-026) prints one schedule for JOINT filers (Iowa filing
+    status 2) and one for NON-JOINT filers (statuses 1, 3, 4, and 5) — single, married filing separately, and head
+    of household ship the identical non-joint schedule; married_filing_jointly ships the joint schedule.'
+  - 'CRITICAL — qualifying surviving spouse: Iowa status 5 (qualifying surviving spouse) is a NON-JOINT filer on the
+    41-026 worksheet, but this op''s status aliasing resolves qualifying-surviving-spouse to the married_filing_jointly
+    schedule, which would UNDERSTATE Iowa tax. For an Iowa QSS filer, pass filing_status=''single'' (the identical
+    non-joint schedule).'
+  - 'Printed worksheet constants are EXACT for 2023: the Column C flat add-ons ($264.00 / $1,420.80 / $3,985.80 non-joint;
+    $528.00 / $2,841.60 / $7,971.60 joint) equal the exact cumulative marginal sums, so this op''s marginal math reproduces
+    the worksheet to the cent (worksheet examples: $25,000 non-joint -> $1,179.80; $50,000 joint -> $2,359.60). This
+    op then rounds to whole dollars.'
+  - 'Cents vs whole dollars: the IA 1040 is captioned ''Enter Dollars and Cents'' and the worksheet computes tax to
+    the cent; whole-dollar rounding is OPTIONAL (''To round, drop amounts under 50 cents and increase amounts from
+    50 to 99 cents to the next dollar'' — a .50 tie rounds UP, matching this op). No tax-table mandate: Iowa retired
+    its tax tables with the 2023 redesign; all filers use the 41-026 worksheet or the online IA 1040 Tax Calculator.'
+  - 'Exemption CREDITS, not base exemptions (NOT modeled): IA 1040 Step 3 computes personal credits at $40 (enter
+    1; 2 if filing status 2 or 4), $20 per 65-or-older or blind condition, and $40 per dependent; the Step 3 total
+    is a CREDIT against tax on line 8 — never a base reduction. exemptions ships empty; pass exemptions_count=0 and
+    dependents_count=0.'
+  - 'Alternate tax (NOT modeled): all statuses except single may compute an alternate tax — 6% (.06) of the alternate-tax-worksheet
+    income above $13,500 ($32,000 if you or your spouse was 65 or older on 12/31/23) — and enter the SMALLER amount
+    on line 5 (check the Step 5 box); status-3 spouses prorate it. Single taxpayers may instead qualify for the Iowa
+    Income Tax Reduction Worksheet. Check these when income is just above the threshold.'
+  - 'Low-income exemption (NOT modeled): filers whose Iowa taxable income plus specified add-backs is at or below
+    $9,000 (single/married filing separately; $24,000 if 65+), or $13,500 (all other statuses; $32,000 if 65+), owe
+    no Iowa income tax (check the box between Steps 4 and 5); a dependent filer''s threshold is $5,000.'
+  - 'Not modeled — later lines: Iowa lump-sum tax (line 6), the Step 3 exemption credits (line 8), tuition and textbook
+    credit (line 9), volunteer firefighter/EMS/reserve peace officer credit (line 10), the IA 126 nonresident/part-year
+    credit (line 13), out-of-state tax credit (line 15), SCHOOL DISTRICT SURTAX and EMS surtax (Step 6 — a local percentage
+    of the line 16 balance), the 15%-of-federal Iowa EITC (line 25), and the child and dependent care / early childhood
+    development credits (line 24).'
+  - 'Rate provenance: 2022 Iowa Acts (HF 2317) consolidated the 2023 schedule to four brackets by status as printed
+    on the 2023 41-026 worksheet; the pre-2023 nine-bracket schedule and the net-income starting point are GONE —
+    do not carry pre-2023 figures forward.'
