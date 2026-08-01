@@ -161,3 +161,97 @@ unverified:
 - 'Whether DRS observed any non-April-15 due date adjustment for 2023 (e.g., weekend/holiday or emergency extension):
   the 2023 CT-1040 form prints ''Due date: April 15, 2024'' (April 15, 2024 was a Monday), so no adjustment applies,
   but confirm at DOR if relying on a different date.'
+tax:
+  citation:
+    source: '2023 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 12/23) — Tax Calculation Schedule
+      (page 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line
+      5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6);
+      Table A - Personal Exemptions (p. 19); Table B - Initial Tax Calculation (p. 20, all three schedules with the
+      DRS worked examples $450/$33,298/$725/$70,090/$680/$52,228); Table C - 3% Tax Rate Phase-Out Add-Back (p. 21);
+      Table D - Tax Recapture (p. 22); Table E - Personal Tax Credits (p. 23); Line 6 Income Tax (no-tax floors, optional
+      tax tables at CT AGI <= $102,000). Second pass: the 2023 Form CT-1040NR/PY instructions (Rev. 12/23, https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040nrpy-instructions_1223.pdf)
+      print identical Tables A-E — every bound, rate, printed constant, phase-out and recapture amount matches.'
+    url: https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10000, rate: 0.03}
+    - {over: 10000, but_not_over: 50000, rate: 0.05}
+    - {over: 50000, but_not_over: 100000, rate: 0.055}
+    - {over: 100000, but_not_over: 200000, rate: 0.06}
+    - {over: 200000, but_not_over: 250000, rate: 0.065}
+    - {over: 250000, but_not_over: 500000, rate: 0.069}
+    - {over: 500000, but_not_over: null, rate: 0.0699}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 20000, rate: 0.03}
+    - {over: 20000, but_not_over: 100000, rate: 0.05}
+    - {over: 100000, but_not_over: 200000, rate: 0.055}
+    - {over: 200000, but_not_over: 400000, rate: 0.06}
+    - {over: 400000, but_not_over: 500000, rate: 0.065}
+    - {over: 500000, but_not_over: 1000000, rate: 0.069}
+    - {over: 1000000, but_not_over: null, rate: 0.0699}
+    married_filing_separately:
+    - {over: 0, but_not_over: 10000, rate: 0.03}
+    - {over: 10000, but_not_over: 50000, rate: 0.05}
+    - {over: 50000, but_not_over: 100000, rate: 0.055}
+    - {over: 100000, but_not_over: 200000, rate: 0.06}
+    - {over: 200000, but_not_over: 250000, rate: 0.065}
+    - {over: 250000, but_not_over: 500000, rate: 0.069}
+    - {over: 500000, but_not_over: null, rate: 0.0699}
+    head_of_household:
+    - {over: 0, but_not_over: 16000, rate: 0.03}
+    - {over: 16000, but_not_over: 80000, rate: 0.05}
+    - {over: 80000, but_not_over: 160000, rate: 0.055}
+    - {over: 160000, but_not_over: 320000, rate: 0.06}
+    - {over: 320000, but_not_over: 400000, rate: 0.065}
+    - {over: 400000, but_not_over: 800000, rate: 0.069}
+    - {over: 800000, but_not_over: null, rate: 0.0699}
+  base: federal_agi
+  tax_line: '2023 Form CT-1040, Line 6: ''Income Tax''. Computed on the Tax Calculation Schedule (2023 CT-1040 instructions,
+    p. 19): Line 1 = Connecticut AGI (Form CT-1040, Line 5); Line 2 = Table A personal exemption; Line 3 = Connecticut
+    Taxable Income (Line 1 - Line 2, not less than zero); Line 4 = Table B Initial Tax Calculation (the rate schedules
+    this block ships); Lines 5-6 add Table C (3% phase-out) and Table D (recapture); Line 8-9 subtract the Table E
+    personal-credit percentage; Line 10 ''Connecticut Income Tax: Subtract Line 9 from Line 7. Enter here and on Form
+    CT-1040, Line 6.'''
+  exemptions: {}
+  notes:
+  - 'Base guidance: supply Tax Calculation Schedule Line 3 (Connecticut Taxable Income) = Connecticut AGI (Form CT-1040
+    Line 5 = federal AGI + Schedule 1 additions - Schedule 1 subtractions) MINUS the Table A personal exemption. The
+    Table A exemption (up to $15,000 single / $24,000 MFJ-QSS / $12,000 MFS / $19,000 HoH) is INCOME-DEPENDENT — it
+    falls $1,000 for each $1,000 (or part) of CT AGI over $30,000 / $48,000 / $24,000 / $38,000 and is $0 at CT AGI
+    of $44,000 / $71,000 / $35,000 / $56,000 or more — so it is NOT shipped as a key; compute Table A on the form.
+    At or above the zero point, Line 3 = CT AGI. Do NOT supply raw federal AGI when CT modifications apply, and do
+    NOT subtract the exemption twice.'
+  - 'Adjudication note (two-pass): drafted from the 2023 CT-1040 instructions (Rev. 12/23) Tables A-E and independently
+    re-verified against the 2023 CT-1040NR/PY instructions (Rev. 12/23) — identical tables, zero discrepancies. Every
+    printed ''$X plus Y% of the excess over $Z'' constant in Table B equals the EXACT cumulative sum of the prior
+    brackets (300/2,300/5,050/11,050/14,300/31,550 single-MFS; 600/4,600/10,100/22,100/28,600/63,100 MFJ; 480/3,680/8,080/17,680/22,880/50,480
+    HoH), so pure marginal accumulation reproduces Table B to the half-dollar; the only divergence is IRS half-up
+    rounding of a trailing $.50 (e.g. the DRS''s own printed examples $33,298 at single $525,000 and $52,228 at HoH
+    $825,000 round 25,000 x .0699 = $1,747.50 up).'
+  - 'CRITICAL — Table C 3% Tax Rate Phase-Out Add-Back NOT modeled: if CT AGI (Tax Calculation Schedule Line 1, NOT
+    taxable income) exceeds $56,500 single / $100,500 MFJ-QSS / $50,250 MFS / $78,500 HoH, Line 5 ADDS BACK $20-to-$200
+    (single/MFS, max above $101,500/$72,750), $40-to-$400 (MFJ, max above $145,500), or $32-to-$320 (HoH, max above
+    $114,500), clawing back the benefit of the 3% bottom rate. Plain bracket math (this op) UNDERSTATES the filed
+    tax by the Table C amount — compute Line 5 on the form.'
+  - 'CRITICAL — Table D Tax Recapture NOT modeled: if CT AGI exceeds $200,000 single/MFS / $400,000 MFJ-QSS / $320,000
+    HoH, Line 6 adds a recapture amount rising in steps ($90/$180/$140 per band) to a plateau of $2,700/$5,400/$4,200,
+    then a second phase above $500,000/$1,000,000/$800,000 CT AGI to the maximum $3,150 (single/MFS, CT AGI over $540,000),
+    $6,300 (MFJ, over $1,080,000), $4,920 (HoH, over $864,000). Plain bracket math understates the filed tax by the
+    Table D amount at those AGI levels — CT''s Tax Calculation Schedule is the filed method.'
+  - 'Table E Personal Tax Credits NOT modeled (a TAX CREDIT, not a base reduction): a CT-AGI-keyed decimal (.75 down
+    to .01) multiplies the Line 7 tax and is subtracted on Line 9 for low/moderate incomes — e.g. .75 for single CT
+    AGI $15,000-$18,800 — fully phased out above CT AGI $64,500 single / $100,500 MFJ-QSS / $52,500 MFS / $78,500
+    HoH.'
+  - 'No-tax floor (2023 CT-1040 instructions, Line 6): if CT AGI (Line 5) is $12,000 or less MFS / $15,000 or less
+    single / $19,000 or less HoH / $24,000 or less MFJ-QSS, enter ''0'' on Line 6 — no income tax is owed. This coincides
+    with the full Table A exemption at those AGI levels (the engine''s max(0, ...) floor matches).'
+  - 'Tax tables are OPTIONAL, not mandated: at CT AGI of $102,000 or less the filer ''may'' use the DRS website Tax
+    Tables (portal.ct.gov/DRS/DRS-Forms/Current-Year-Forms/Calculators-and-Tables); the Tax Calculation Schedule is
+    the universal filed method at any income (table bands can differ from schedule arithmetic by a few dollars).'
+  - One Table B schedule covers 'Single or Married Filing Separately' — duplicated for both statuses here, copied,
+    not derived (Table A/C/E amounts DO differ between single and MFS). The MFJ schedule is titled 'Married Filing
+    Jointly/Qualifying Surviving Spouse', so qualifying surviving spouse maps exactly to married_filing_jointly as
+    the engine assumes.
+  - Connecticut has no county or municipal income taxes and no standard deduction; the Table A personal exemption
+    and the personal credit are the only general-relief mechanisms, both income-dependent, both computed on the Tax
+    Calculation Schedule.

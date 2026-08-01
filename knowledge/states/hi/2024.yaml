@@ -1,10 +1,15 @@
+# HI 2024 pack — derived from the verified 2023 pack. 2024 verification
+# (2026-08-01, official 2024 N-11 instructions): rate schedules DIGIT-IDENTICAL
+# to 2023 (HB 2404 widening begins TY2025); standard deduction INCREASED by
+# Act 45 SLH 2024 to $4,400 Single/MFS, $6,424 HoH, $8,800 MFJ/QSS (What's New
+# verbatim); $1,144 personal exemption unchanged ($2,288 for 65+).
 # HI state knowledge — tax year 2023. Fetched + cited from the HI DOR (.gov) and
 # assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
 jurisdiction: states/hi
-tax_year: 2023
+tax_year: 2024
 income_tax: true
 conforms_to_federal_treaties: true
 treaty_note: 'Hawaii''s resident return (Form N-11) line 7 starts from "Federal adjusted gross income (AGI)" reported
@@ -22,7 +27,7 @@ treaty_note: 'Hawaii''s resident return (Form N-11) line 7 starts from "Federal 
 citation:
   source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
     income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
-  url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+  url: https://files.hawaii.gov/tax/forms/2024/n11_i.pdf
 starts_from: 'federal AGI (Form N-11, line 7: "Federal adjusted gross income (AGI)")'
 residency:
   summary: 'Per Hawaii''s N-11 instructions: a RESIDENT is (1) every individual domiciled in Hawaii, and (2) every
@@ -60,7 +65,7 @@ credits:
   claimed_on: Form N-311; result entered on Form N-11, line 28 (or Form N-15, line 45)
   citation:
     source: Hawaii Department of Taxation, Form N-311 (Rev. 2023), Refundable Food/Excise Tax Credit
-    url: https://files.hawaii.gov/tax/forms/2023/n311_i.pdf
+    url: https://files.hawaii.gov/tax/forms/2024/n311_i.pdf
 - name: Refundable Earned Income Tax Credit (Hawaii EITC)
   type: refundable
   eligibility: A qualifying individual taxpayer who (a) files a federal return and claims the federal earned income
@@ -75,7 +80,7 @@ credits:
   claimed_on: Form N-356; new credit amount carried to Schedule CR (refundable credits section)
   citation:
     source: Hawaii Department of Taxation, Form N-356 (Rev. 2023), Earned Income Tax Credit
-    url: https://files.hawaii.gov/tax/forms/2023/n356_i.pdf
+    url: https://files.hawaii.gov/tax/forms/2024/n356_i.pdf
 - name: Credit for Low-Income Household Renters
   type: refundable
   eligibility: Hawaii resident present in Hawaii more than nine months during 2023 who occupies and pays rent for
@@ -92,7 +97,7 @@ credits:
   citation:
     source: Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2023), Part I; and 2023 Form N-11 Instructions,
       Line 29
-    url: https://files.hawaii.gov/tax/forms/2023/schx_i.pdf
+    url: https://files.hawaii.gov/tax/forms/2024/schx_i.pdf
   unverified: true
 - name: Credit for Child and Dependent Care Expenses
   type: nonrefundable
@@ -111,7 +116,7 @@ credits:
   citation:
     source: Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2023), Part II; and 2023 Form N-11
       Instructions, Line 30
-    url: https://files.hawaii.gov/tax/forms/2023/schx_i.pdf
+    url: https://files.hawaii.gov/tax/forms/2024/schx_i.pdf
   unverified: true
 filing_requirement:
   note: 'A full-year resident must file Form N-11 if gross income subject to Hawaii income tax exceeds the filing
@@ -129,30 +134,30 @@ mailing_addresses:
   citation:
     source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
       income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
-    url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+    url: https://files.hawaii.gov/tax/forms/2024/n11_i.pdf
   verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
     at the cited DOR source before relying on a specific figure/address.
 payment:
   check_payee: Hawaii State Tax Collector
   web_pay_url: https://hitax.hawaii.gov
 deadlines:
-  filing_due_date: '2024-04-22'
+  filing_due_date: '2025-04-22'
   citation:
     source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
       income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
-    url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+    url: https://files.hawaii.gov/tax/forms/2024/n11_i.pdf
 all_citations:
 - source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
     income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
-  url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+  url: https://files.hawaii.gov/tax/forms/2024/n11_i.pdf
 - source: Hawaii 2023 N-11 Resident Income Tax Instructions — residency/domicile definitions, 200-day presumption,
     which form to file, due date April 22 2024, mailing addresses, check payee 'Hawaii State Tax Collector', hitax.hawaii.gov
     portal, Line 10 additions list, filing thresholds
-  url: https://files.hawaii.gov/tax/forms/2023/n11ins.pdf
+  url: https://files.hawaii.gov/tax/forms/2024/n11ins.pdf
 - source: Hawaii Form N-15 (Rev. 2023) Individual Income Tax Return — Nonresident and Part-Year Resident
-  url: https://files.hawaii.gov/tax/forms/2023/n15_f.pdf
+  url: https://files.hawaii.gov/tax/forms/2024/n15_f.pdf
 - source: Hawaii 2023 N-15 Nonresident/Part-Year Resident Instructions
-  url: https://files.hawaii.gov/tax/forms/2023/n15ins.pdf
+  url: https://files.hawaii.gov/tax/forms/2024/n15ins.pdf
 - source: Hawaii Department of Taxation — Individual Income Tax (Resident and Nonresident) forms page
   url: https://tax.hawaii.gov/forms/a1_b1_1income/
 unverified:
@@ -164,12 +169,12 @@ unverified:
   3559 addresses) but should be confirmed against n15ins.pdf at the DOR.
 tax:
   citation:
-    source: 'HI DOTAX — 2023 Form N-11 Instructions (files.hawaii.gov/tax/forms/2023/n11ins.pdf), Tax Rate Schedules
+    source: 'HI DOTAX — 2024 Form N-11 Instructions (files.hawaii.gov/tax/forms/2024/n11ins.pdf), Tax Rate Schedules
       p.36: Schedule I (Single/MFS) 12 brackets 1.40%..11.00% at 2,400/4,800/9,600/14,400/19,200/24,000/36,000/48,000/150,000/175,000/200,000;
       Schedule II (MFJ/QSS) exactly double; Schedule III (HoH) exactly 1.5x; printed base-tax constants are whole-dollar
-      roundings of exact sums (34 vs 33.60 etc.). SD $2,200/$4,400/$3,212 (2023). Personal exemption $1,144 per exemption
-      ($2,288 age 65+, disclosed).'
-    url: https://files.hawaii.gov/tax/forms/2023/n11ins.pdf
+      roundings of exact sums (34 vs 33.60 etc.). SD increased by Act 45 SLH 2024 to $4,400/$8,800/$6,424 (What''s New).
+      Personal exemption $1,144 per exemption ($2,288 age 65+, disclosed).'
+    url: https://files.hawaii.gov/tax/forms/2024/n11ins.pdf
   brackets:
     single:
     - {over: 0, but_not_over: 2400, rate: 0.014}
@@ -224,7 +229,7 @@ tax:
     - {over: 262500, but_not_over: 300000, rate: 0.10}
     - {over: 300000, but_not_over: null, rate: 0.11}
   base: federal_agi
-  tax_line: '2023 Form N-11 line 27: tax on line 26 taxable income (line 20 Hawaii AGI minus line 22/23 deductions
+  tax_line: '2024 Form N-11 line 27: tax on line 26 taxable income (line 20 Hawaii AGI minus line 22/23 deductions
     and line 25 exemptions); tax table mandated below $100,000, Tax Rate Schedules above.'
   exemptions:
     personal:
@@ -236,16 +241,17 @@ tax:
       amount: 1144
       note: Dependents are part of the same $1,144-per-exemption Line 6 total — same amount as personal.
   standard_deduction:
-    single: 2200
-    married_filing_jointly: 4400
-    married_filing_separately: 2200
-    head_of_household: 3212
+    single: 4400
+    married_filing_jointly: 8800
+    married_filing_separately: 4400
+    head_of_household: 6424
   notes:
   - 'Printed-constant divergence: the schedules print whole-dollar base-tax constants (e.g. $34 at $2,400 vs exact
     $33.60), so the filed schedule can differ from exact marginal math by up to $1; the tax TABLE is mandated below
     $100,000 taxable income.'
   - 'Schedule structure: II = exactly 2x Schedule I boundaries, III = exactly 1.5x — verified digit-by-digit from
     the printed schedules.'
-  - 'TY2023 standard deduction: $2,200 Single/MFS, $3,212 HoH, $4,400 MFJ/QSS (pre-Act 45 amounts printed in the 2023
-    instructions).'
+  - 'TY2024 verification: the printed 2024 schedules are DIGIT-IDENTICAL to 2023 (layout-only diff); the HB 2404 bracket
+    widening applies beginning TY2025. The Act 45 (SLH 2024) standard-deduction increase DOES apply to 2024: $4,400
+    Single/MFS, $6,424 HoH, $8,800 MFJ/QSS (What''s New verbatim).'
   - Hawaii is print-only for filing (render_mode hand_fill pack ships); this op powers the worksheet Line 27 value.

@@ -162,3 +162,57 @@ all_citations:
   url: https://tax.utah.gov/forms/2023/tc-40.pdf
 - source: Utah State Tax Commission — Income Tax line-by-line instructions portal
   url: https://incometax.utah.gov/instructions
+# Flat-rate tax computation block (Phase G item G4, formerly-C3 adoption tranche) —
+# consumed by calc.state_tax. Two-pass verification: figures drafted from the 2023
+# TC-40 form face (line 10 prints 'multiply line 9 by 4.65% (.0465)'), then
+# independently re-checked against the 2023 TC-40 instructions (What's New: HB 54
+# lowered the rate 4.85% -> 4.65%; Line 10 'Multiply line 9 by 4.65 percent (.0465)').
+# Modeling decision: Utah is a CREDIT state — the $1,941 personal exemption and the
+# federal standard/itemized deduction feed the Line 16-20 Taxpayer Tax Credit, never
+# the Line 9 base, so exemptions ships empty and standard_deduction ships null.
+tax:
+  citation:
+    source: 'Utah State Tax Commission — 2023 Utah TC-40 form: Line 4 ''Federal adjusted gross income from federal return'';
+      Line 9 ''Utah taxable income/loss - subtract the sum of lines 7 and 8 from line 6''; Line 10 ''Utah tax - multiply
+      line 9 by 4.65% (.0465) (not less than zero)''; Lines 11-20 Taxpayer Tax Credit (Line 11 personal exemption $1,941
+      x line 2d; Line 16 initial credit 6% (.06); Line 17 phase-out base $16,742 single/MFS, $25,114 HoH, $33,484 MFJ/QSS;
+      Line 19 phase-out 1.3% (.013)). Second pass: 2023 TC-40 Instructions — What''s New ''The 2023 Utah Legislature
+      passed HB 54, lowering the individual income tax rate from 4.85 percent to 4.65 percent''; Line 10 ''Multiply
+      line 9 by 4.65 percent (.0465). If the result is zero or less, enter 0''; Line 11 ''The Utah personal exemption
+      is $1,941 per dependent''; ''Rounding Off to Whole Dollars: Round down if under 50 cents; round up if 50 cents
+      and above'' — both passes agree.'
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+  flat_rate: 0.0465
+  base: federal_agi
+  tax_line: 'Form TC-40 Line 10: ''Utah tax - multiply line 9 by 4.65% (.0465) (not less than zero)'' (Line 9 = Utah
+    taxable income/loss = Line 6 total income minus Lines 7-8; Line 4 starts from federal AGI).'
+  exemptions: {}
+  notes:
+  - 'Base guidance: supply 2023 Form TC-40 Line 9 ''Utah taxable income/loss'' — Line 4 federal adjusted gross income
+    plus Line 5 additions (TC-40A Part 1, codes 51-69) minus Line 7 (state tax refund included on federal Schedule
+    1, line 1) and Line 8 subtractions (TC-40A Part 2). The op multiplies it by 4.65%, producing the Line 10 tax before
+    credits.'
+  - 'CRITICAL — Taxpayer Tax Credit (TC-40 Lines 11-20, NOT modeled): Utah has no standard deduction and no base personal
+    exemptions; their function is replaced by a nonrefundable CREDIT against the Line 10 tax. Line 16 initial credit
+    = 6% (.06) of [Line 11 Utah personal exemption ($1,941 x line 2d qualifying dependents — dependents ONLY, not
+    taxpayer/spouse) + Line 12 federal standard or itemized deductions - Line 14 state income tax included in federal
+    itemized deductions]. It phases out at 1.3% (.013) of Line 9 income above the Line 17 base: $16,742 single or
+    married filing separately; $25,114 head of household; $33,484 married filing jointly or qualifying surviving spouse.
+    Line 22 Utah income tax = Line 10 minus Line 20 (not less than zero). This op returns the LINE 10 amount — compute
+    Lines 11-22 on the form.'
+  - 'exemptions ships empty and standard_deduction ships null intentionally: the $1,941 personal exemption and the
+    federal standard/itemized deduction are inputs to the Line 20 CREDIT, never subtractions from the Line 9 base
+    — pass exemptions_count=0 and dependents_count=0.'
+  - 'Qualified exempt taxpayer (TC-40 Line 21, NOT modeled): if federal adjusted gross income is less than or equal
+    to the federal standard deduction (excluding the extra age-65/blind amounts), the filer is exempt from Utah income
+    tax entirely — check the Line 21 worksheet before relying on the computed tax.'
+  - 'Zero floor: Line 10 prints ''not less than zero'' — a Line 9 loss produces $0 tax (the op clamps a negative base
+    to $0).'
+  - 'Rounding (instructions p.3, ''Rounding Off to Whole Dollars''): ''Round off cents to the nearest whole dollar.
+    Round down if under 50 cents; round up if 50 cents and above'' — matches this op''s whole-dollar rounding.'
+  - 'Not modeled — credits and later lines: apportionable nonrefundable credits on Line 24 (TC-40A Part 3, e.g. the
+    20%-of-federal Utah EITC code AM, the $450 retirement credit code 18, the Social Security benefits credit code
+    AH), nonapportionable credits (Line 26), use tax (Line 31), and the TC-40B non/part-year resident apportionment
+    (Line 25) all come after Line 10 on the form.'
+  - 'Rate provenance: 2023 HB 54 lowered the individual income tax rate from 4.85% to 4.65% (2023 TC-40 instructions,
+    What''s New); the 4.65% rate appears on the printed Line 10 of the 2023 TC-40 itself.'
