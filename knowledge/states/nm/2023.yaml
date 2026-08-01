@@ -168,3 +168,88 @@ unverified:
   line-by-line from the federal-filing-requirement charts; the requirement is stated as keyed to the federal filing
   requirement plus NM residency/NM-source income. Confirm specific dollar thresholds against the federal Form 1040
   instructions / NM PIT-1 booklet at the DOR.
+tax:
+  citation:
+    source: 'Statutory rate schedules of Section 7-2-7 NMSA 1978 as enacted by 2019 House Bill 6 (Laws 2019, ch. 270),
+      ''for any taxable year beginning on or after January 1, 2021'' and unchanged for 2023 — MFS 1.7% to $4,000 / $68
+      + 3.2% to $8,000 / $196 + 4.7% to $12,000 / $384 + 4.9% to $157,500 / $7,513.50 + 5.9%; HoH-QSS-MFJ 1.7% to $8,000
+      / $136 + 3.2% to $16,000 / $392 + 4.7% to $24,000 / $768 + 4.9% to $315,000 / $15,027 + 5.9%; Single (and estates/trusts)
+      1.7% to $5,500 / $93.50 + 3.2% to $11,000 / $269.50 + 4.7% to $16,000 / $504.50 + 4.9% to $210,000 / $10,010.50
+      + 5.9%. Second pass: the Department''s 2023 TAX RATE TABLE (PIT-TRT) — the mandated tax look-up table for PIT-1
+      line 18 (worked example: MFJ taxable income $25,325 -> table $834) and its continuation schedules (''If line 17
+      of Form PIT-1 (Taxable Income) is over $96,000'': Single $4,422 + 4.9% of excess over $96,000 to $210,000, then
+      $10,008 + 5.9%; MFJ/HoH $4,294 + 4.9% to $315,000, then $15,025 + 5.9%; MFS $4,498 + 4.9% to $157,500, then $7,512
+      + 5.9%; footnote ''* This column must also be used by surviving spouse''), retrieved from the Department''s public-files
+      library, the AWS-backed document store linked from tax.newmexico.gov (the NM pack''s documented host exception):
+      https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/89e01cee-3d91-46d0-bd4b-72c8b0d6ed00/2023trt.pdf'
+    url: https://www.nmlegis.gov/Sessions/19%20Regular/final/HB0006.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 5500, rate: 0.017}
+    - {over: 5500, but_not_over: 11000, rate: 0.032}
+    - {over: 11000, but_not_over: 16000, rate: 0.047}
+    - {over: 16000, but_not_over: 210000, rate: 0.049}
+    - {over: 210000, but_not_over: null, rate: 0.059}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 8000, rate: 0.017}
+    - {over: 8000, but_not_over: 16000, rate: 0.032}
+    - {over: 16000, but_not_over: 24000, rate: 0.047}
+    - {over: 24000, but_not_over: 315000, rate: 0.049}
+    - {over: 315000, but_not_over: null, rate: 0.059}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4000, rate: 0.017}
+    - {over: 4000, but_not_over: 8000, rate: 0.032}
+    - {over: 8000, but_not_over: 12000, rate: 0.047}
+    - {over: 12000, but_not_over: 157500, rate: 0.049}
+    - {over: 157500, but_not_over: null, rate: 0.059}
+    head_of_household:
+    - {over: 0, but_not_over: 8000, rate: 0.017}
+    - {over: 8000, but_not_over: 16000, rate: 0.032}
+    - {over: 16000, but_not_over: 24000, rate: 0.047}
+    - {over: 24000, but_not_over: 315000, rate: 0.049}
+    - {over: 315000, but_not_over: null, rate: 0.059}
+  base: state_taxable_income
+  tax_line: '2023 Form PIT-1, line 18: ''New Mexico Tax'' with line 18a Rate Table Indicator (''R = Rate tables'').
+    2023 PIT-1 instructions, LINE 18: ''Unless you qualify for Schedule CC, calculate your New Mexico tax by using
+    one of these methods and then complete line 18a: If you have income from sources inside and outside New Mexico,
+    use your entry on PIT-B, line 14 or; Use the rate tables from the PIT-1 instructions, starting on page 1T.'' Applied
+    to line 17 New Mexico Taxable Income (''Add lines 9, 10, and 11, then subtract lines 12, 13, 14, 15, and 16. If
+    the result is negative, enter zero.'').'
+  exemptions: {}
+  notes:
+  - 'Base guidance: supply Form PIT-1, line 17 (New Mexico Taxable Income) = lines 9 (federal AGI) + 10 (SALT add-back
+    for itemizers) + 11 (PIT-ADJ additions) MINUS lines 12-16, zero floor. Every deduction/exemption is computed ON
+    THE FORM, so none ship as keys: line 12 is the filer''s OWN federal standard or itemized deduction amount (whatever
+    was allowable on federal Form 1040 line 12); line 13 is the $4,000 ''Deduction for Certain Dependents'' (HoH or
+    MFJ filers only, and the worksheet multiplies $4,000 by total dependents MINUS ONE — do not model it as a flat
+    per-dependent amount); line 14 is the New Mexico low- and middle-income tax exemption (up to $2,500 per federal
+    exemption, phasing with AGI and filing status); line 15 is PIT-ADJ deductions/exemptions; line 16 the medical
+    care expense deduction. Do NOT supply raw federal AGI.'
+  - 'Adjudication note (two-pass): pass 1 = the 2023 PIT-TRT look-up table and its printed continuation schedules;
+    pass 2 = the statutory Section 7-2-7 NMSA 1978 schedules (2019 HB 6, in force for 2021+, unchanged for 2023).
+    The statutory ''plus'' constants are EXACT cumulative sums ($93.50/$269.50/$504.50/$10,010.50 single; $136/$392/$768/$15,027
+    HoH-QSS-MFJ; $68/$196/$384/$7,513.50 MFS), so this engine''s marginal accumulation reproduces the statute to the
+    cent.'
+  - 'CRITICAL — the filed line 18 value comes from the MANDATED look-up table, which sits a few dollars BELOW statutory
+    marginal math: for line 17 of $96,000 or less the TRT table row (in $100 bands, computed at band midpoints) is
+    the filed figure; over $96,000 the TRT continuation schedule CHAINS FROM THE LAST TABLE ROW (''Your Tax is $4,422
+    + 4.9% of excess over $96,000'' single; $4,294 MFJ/HoH; $4,498 MFS) instead of the statutory cumulative ($4,424.50
+    / $4,296 / $4,500), so the filed figure runs about $2-$3 below this engine''s statutory bracket math at high incomes
+    (TRT top-tier constants $10,008/$15,025/$7,512 vs statutory $10,010.50/$15,027/$7,513.50). The filed form must
+    take the table/schedule value — never plain bracket arithmetic (the NM hand-fill pack''s line 18 carries the same
+    mandate).'
+  - 'Statuses: the statute groups ''heads of household, surviving spouses and married individuals filing joint returns''
+    on ONE schedule — head_of_household here is the SAME schedule as married_filing_jointly (copied per the schema,
+    not derived), and the TRT prints identical MFJ and HoH columns with the footnote ''* This column must also be
+    used by surviving spouse'', so qualifying surviving spouse maps to married_filing_jointly exactly as the engine
+    assumes.'
+  - 'The single schedule also applies to estates and trusts (Section 7-2-7(C) NMSA 1978: ''For single individuals
+    and for estates and trusts'').'
+  - 'Not modeled on the same return: line 19 additional tax on lump-sum distributions (NM''s 5x averaging method,
+    Line 19 worksheet); PIT-B allocation/apportionment for income from sources inside and outside New Mexico (line
+    18 then comes from PIT-B line 14, indicator B); line 20 credit for taxes paid to another state; PIT-CR business
+    credits; and the refundable credits/rebates (Working Families Tax Credit 25% of the federal EIC, Child Income
+    Tax Credit, PIT-RC rebates) — all tax credits or separate computations, never base reductions.'
+  - New Mexico has no state-defined standard deduction or personal exemption of its own — the federal deduction flows
+    through on line 12 (federal Form 1040 line 12 amount), which is why the caller supplies the form's own taxable-income
+    line.

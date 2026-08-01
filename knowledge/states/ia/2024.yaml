@@ -1,0 +1,302 @@
+# IA state knowledge — tax year 2024. Fetched + cited from the IA DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the official 2024 IA 1040
+# Expanded Instructions PDF (revenue.iowa.gov media/4152), then independently re-checked
+# against the 2024 IA 1040 blank form (which prints the Step 4 line 1a-1e federal
+# reference lines, the line 4 'Add lines 2 and 3' base, the Step 3 $40/$20/$40 exemption
+# CREDIT multipliers, the April 30 2025 due date, the PO Box 9187 mailing address, and
+# 'Make checks payable to Iowa Department of Revenue') and the 2024 Tax Calculation
+# Worksheet (41-026) — both passes agree on every figure.
+# HEADLINE 2024 CHANGES (What's New): (1) the four 2023 brackets CONSOLIDATED TO THREE
+# — top rate now 5.70% (2023: 6.00%), bracket bounds indexed ($6,210/$31,050 non-joint;
+# $12,420/$62,100 joint); 'For tax year 2025, Iowa will have a single tax rate of 3.8%'
+# (SF 2442 flat tax begins TY2025 — NOT 2024); (2) the alternate tax percentage dropped
+# to 5.7%; (3) Schedule 1 renumbered (net modifications now line 21; military retirement
+# exclusion line 4; new surviving-spouse pension exemption; 529->Roth transfer exemption;
+# ISave 529 deduction limit $5,500/beneficiary); (4) federal income tax refunds received
+# in 2024+ are no longer reported; (5) two checkoffs repealed.
+jurisdiction: states/ia
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: Iowa conforms. The 2024 IA 1040 keeps the 2023 redesign's starting point — "federal taxable income"
+  — with Step 4 computing Iowa taxable income as federal taxable income (IA 1040 line 2, from federal 1040 line
+  15) plus net Iowa modifications from IA 1040 Schedule 1 (line 3, from Schedule 1 line 21 for 2024). Lines 1a-1e
+  (federal total income, adjustments, AGI, standard/itemized deduction, QBI deduction) are printed for reference
+  only ("Do not include lines 1a through 1e"). Iowa applies rolling IRC conformity. Federally treaty-exempt income
+  is excluded from federal AGI/federal taxable income before it ever reaches the Iowa return, and there is NO treaty/foreign-income
+  re-inclusion among the 2024 Schedule 1 Column A additions (interest from non-exempt state/municipal securities,
+  certain dividends, partnership/S-corp modifications, depreciation/Section 179 nonconformity, and NOL carryforward
+  items). This is reinforced by Iowa Admin. Code rule 701—300.17, which states a resident is taxed on all income
+  "except when an item of income is specifically exempted from taxation by a provision of federal or Iowa law."
+  Therefore treaty-exempt income is not re-taxed.
+citation:
+  source: '2024 IA 1040 Iowa Individual Income Tax Return (form 41-001, blank/print version) - Step 4 lines 1a-1e
+    federal reference lines, line 2 Federal taxable income, line 3 Net Iowa modifications from IA 1040 Schedule
+    1 line 21, line 4 Iowa taxable income (Add lines 2 and 3), Step 5 line 5 Iowa tax, Step 3 exemption credits,
+    due date April 30 2025, mailing address and check payee'
+  url: https://revenue.iowa.gov/media/4091/download?inline
+starts_from: 'federal taxable income (federal Form 1040, line 15; IA 1040 line 2). The 2024 form adds informational
+  lines 1a-1e (federal total income from fed 1040 line 9; federal adjustments; federal AGI; standard/itemized deduction;
+  QBI deduction) but Iowa taxable income (line 4) is still line 2 federal taxable income plus line 3 Schedule 1
+  modifications — "Do not include lines 1a through 1e."'
+residency:
+  summary: Per Iowa Admin. Code 701—300.17(422), an individual is a "resident" if they either (1) maintain a permanent
+    place of abode in Iowa, or (2) are domiciled in Iowa, and a resident is taxed on all income regardless of source
+    (except income specifically exempted by federal or Iowa law). "Domicile" is where one intends to permanently
+    or indefinitely reside and to return when absent; every person has exactly one domicile, and an established
+    Iowa domicile is retained until the person abandons it, removes to another state, and forms a bona fide intent
+    to remain there (Julson v. Julson). There is a rebuttable presumption of a "permanent place of abode" if the
+    person maintains an abode in Iowa and spends more than 183 days of the tax year in Iowa, though 183 days alone
+    neither establishes nor abandons domicile. A part-year resident is an Iowa resident for only part of the year;
+    a nonresident is domiciled outside Iowa with Iowa-source income. Nonresidents and part-year residents use the
+    IA 126 to compute the credit limiting Iowa tax to the Iowa-source portion of income.
+forms:
+  resident: IA 1040 (Iowa Individual Income Tax Return), form number 41-001
+  part_year_or_nonresident: IA 126 (Iowa Nonresident and Part-Year Resident Credit Schedule), form number 41-126,
+    filed together with the IA 1040. (Iowa does not use a separate nonresident return; nonresidents/part-year residents
+    file the IA 1040 and attach the IA 126.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Iowa Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Available only to taxpayers who qualify for the federal Earned Income Tax Credit (EITC). Iowa simply
+    piggybacks on federal EITC eligibility (earned income, AGI, investment-income, and qualifying-child rules are
+    determined at the federal level). A taxpayer who qualifies for the Iowa low-income exemption may file an Iowa
+    return solely to claim a refund of this credit (check the box between Steps 4 and 5, skip lines 5-19, enter
+    zero on lines 20 and 22, and enter the EITC on lines 25, 30, 31, and 32).
+  amount: 15% (.15) of the taxpayer's federal EITC (nonresidents/part-year residents multiply by the IA 126 Iowa
+    income percentage)
+  income_limit_2024: No separate Iowa income limit; bounded by the federal EITC income limits for 2024
+  claimed_on: IA 1040, line 25
+  citation:
+    source: Iowa Department of Revenue — 2024 IA 1040 Expanded Instructions (PDF), 'Iowa Earned Income Tax Credit',
+      Line 25
+    url: https://revenue.iowa.gov/media/4152/download?inline
+- name: Child and Dependent Care Credit
+  type: refundable
+  eligibility: Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying child/dependent
+    care expenses and qualify for the federal child and dependent care credit (must include completed federal Form
+    2441). For married filing jointly, both spouses' Iowa taxable income is combined to test the $90,000 limit.
+    Only one of the Child & Dependent Care Credit OR the Early Childhood Development Credit may be claimed per year.
+    Generally cannot be claimed if filing status is married filing separately (see IRS Pub. 503).
+  amount: 'A percentage of the federal Form 2441 line 9c amount, set by Iowa taxable income (IA 1040 line 4): less
+    than $10,000 = 75%; $10,000-$19,999 = 65%; $20,000-$24,999 = 55%; $25,000-$34,999 = 50%; $35,000-$39,999 = 40%;
+    $40,000-$89,999 = 30%; $90,000 and over = not eligible (unchanged from 2023)'
+  income_limit_2024: Iowa taxable income must be less than $90,000 (combined for married filing jointly)
+  claimed_on: IA 1040, line 24 (check the 'Child and Dependent Care Credit' box)
+  citation:
+    source: Iowa Department of Revenue — 2024 IA 1040 Expanded Instructions (PDF), 'Child and Dependent Care Credit
+      or Early Childhood Development Credit', Line 24
+    url: https://revenue.iowa.gov/media/4152/download?inline
+- name: Early Childhood Development Credit
+  type: refundable
+  eligibility: Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying early
+    childhood development expenses for a dependent aged three through five. Claimed in lieu of (not in addition
+    to) the Child and Dependent Care Credit — only one of the two may be taken per year. For married separate filers
+    the $90,000 limit applies only to the income of the spouse claiming the dependent.
+  amount: 25% of the first $1,000 of qualifying expenses paid in 2024 for each dependent ages three through five
+    (maximum $250 per qualifying dependent)
+  income_limit_2024: Iowa taxable income must be less than $90,000 (combined for married filing jointly; for married
+    separate filers, only the claiming spouse's income counts)
+  claimed_on: IA 1040, line 24 (check the 'Early Childhood Development Credit' box)
+  citation:
+    source: Iowa Department of Revenue — 2024 IA 1040 Expanded Instructions (PDF), 'Early Childhood Development
+      Credit', Line 24
+    url: https://revenue.iowa.gov/media/4152/download?inline
+- name: Tuition and Textbook Credit (K-12)
+  type: nonrefundable
+  eligibility: A parent/taxpayer who claims a dependent attending grades K-12 at an accredited Iowa school (nonprofit,
+    Civil-Rights-Act-adherent) or receiving qualifying private instruction (Iowa Code 422.12), and who paid tuition
+    and textbook expenses for that dependent. Only the spouse/parent claiming a given dependent may claim that dependent's
+    expenses; expenses paid with 529-account distributions may qualify. NEW for 2024 — purchases made from Students
+    First Educational Savings Account (ESA) funds under Iowa Code 257.11B are NOT eligible.
+  amount: 25% of the first $2,000 of qualifying tuition and textbook expenses paid for each dependent (maximum $500
+    credit per dependent)
+  income_limit_2024: No income limit
+  claimed_on: IA 1040, line 9
+  citation:
+    source: Iowa Department of Revenue — 2024 IA 1040 Expanded Instructions (PDF), 'Tuition and Textbook Credit
+      (K-12 Only)', Line 9
+    url: https://revenue.iowa.gov/media/4152/download?inline
+- name: Low-Income Exemption (with elevated threshold for filers age 65+)
+  type: nonrefundable
+  eligibility: This is an exemption from Iowa income tax (not a dollar-amount credit) functioning as Iowa's primary
+    low-income and senior relief on the IA 1040 — Iowa has no separate 'elderly credit' line. A taxpayer is exempt
+    from Iowa income tax if Iowa taxable income (IA 1040 line 4, with required add-backs incl. the line 1d standard/itemized
+    deduction, line 1e QBI deduction, lump-sum distributions, and Schedule 1 line 17b NOL carryover) is at or below
+    the threshold for their filing status. Senior filers (taxpayer or spouse 65 or older on 12/31/24) qualify under
+    a substantially higher threshold.
+  amount: Not a dollar credit — it eliminates Iowa income-tax liability when income is at or below the threshold
+    (income above the threshold is fully taxed).
+  income_limit_2024: 'Single: Iowa taxable income $9,000 or less ($24,000 or less if age 65+ on 12/31/24); or under
+    $5,000 if claimed as a dependent. Married filing jointly / head of household / qualifying surviving spouse:
+    $13,500 or less ($32,000 or less if taxpayer or spouse is 65+ on 12/31/24). Married filing separately: each
+    spouse $9,000 or less AND combined $13,500 or less. (Unchanged from 2023.)'
+  claimed_on: IA 1040 — check the low-income exemption box between Steps 4 and 5
+  citation:
+    source: Iowa Department of Revenue — 2024 IA 1040 Expanded Instructions (PDF), low-income exemption instructions
+      (Step 5)
+    url: https://revenue.iowa.gov/media/4152/download?inline
+filing_requirement:
+  note: A resident or part-year resident must file if Iowa taxable income (IA 1040 line 4, with specified add-backs
+    incl. the line 1d standard/itemized deduction capped at the line 2 amount, the line 1e QBI deduction, lump-sum
+    distributions, and the Schedule 1 line 17 Iowa NOL carryforward) is more than $9,000 for single/married-filing-separately
+    ($24,000 if 65 or older on 12/31/24), or more than $13,500 for married filing jointly, head of household, or
+    qualifying surviving spouse ($32,000 if you or spouse is 65 or older). A dependent must file if Iowa taxable
+    income is $5,000 or more. A nonresident or part-year resident must file if Iowa-source net income (IA 126, line
+    25) was $1,000 or more, unless below the thresholds above. Anyone with Iowa tax withheld who wants a refund
+    must also file. (2024 IA 1040 Expanded Instructions, "Who Must File")
+mailing_addresses:
+  refund_or_no_payment: Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187
+  with_payment: Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187 (include an IA 1040V
+    Payment Voucher with a check/money order)
+  citation:
+    source: '2024 IA 1040 Iowa Individual Income Tax Return (form 41-001) - printed footer: ''This return is due
+      April 30, 2025. Sign, include federal return, W-2s, and verify SSNs. MAILING ADDRESS: Iowa Income Tax Document
+      Processing, PO BOX 9187, Des Moines IA 50306-9187. Make checks payable to Iowa Department of Revenue'''
+    url: https://revenue.iowa.gov/media/4091/download?inline
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Iowa Department of Revenue (write the type of tax and tax year on the check; include the IA 1040V
+    voucher; do not send cash)
+  web_pay_url: https://govconnect.iowa.gov/
+deadlines:
+  filing_due_date: '2025-04-30'
+  citation:
+    source: '2024 IA 1040 (form 41-001) printed footer: ''This return is due April 30, 2025''; Iowa DOR Individual
+      Taxes page: ''Iowa tax returns are due April 30.'' Iowa''s individual due date is April 30, NOT the federal
+      April 15.'
+    url: https://revenue.iowa.gov/media/4091/download?inline
+all_citations:
+- source: 2024 IA 1040 Iowa Individual Income Tax Return (form 41-001, blank/print version) — Step 2 filing statuses
+    1-5; Step 3 exemption credits ($40 personal x 1 or 2, $20 per 65+/blind, $40 per dependent); Step 4 lines 1a-1e
+    and line 4 Iowa taxable income; Step 5 line 5 tax line with alternate-tax/low-income-exemption checkbox; due
+    date April 30, 2025; PO Box 9187; payee Iowa Department of Revenue
+  url: https://revenue.iowa.gov/media/4091/download?inline
+- source: 2024 IA 1040 Tax Calculation Worksheet (41-026) — non-joint (statuses 1, 3, 4, 5) and joint (status 2)
+    three-bracket schedules with Column C constants and worked examples
+  url: https://revenue.iowa.gov/media/4093/download?inline
+- source: 2024 IA 1040 Expanded Instructions (archived PDF) — What's New (bracket rate decreases; 2025 single rate
+    3.8%; Schedule 1 renumbering; ISave 529 limit $5,500; federal tax refund reporting ends), Who Must File thresholds,
+    low-income exemption, line 5 tax / 5.7% alternate tax over $13,500/$32,000, exemption credits, line 9 tuition
+    and textbook credit, line 24 child and dependent care / early childhood credits, line 25 EITC 15%, rounding
+    rules
+  url: https://revenue.iowa.gov/media/4152/download?inline
+- source: Iowa Administrative Code 701—300.17(422) Resident determination (eff. 02-22-2023) - resident/permanent
+    place of abode/domicile definitions; resident taxed on all income except items exempted by federal or Iowa law
+  url: https://www.legis.iowa.gov/docs/iac/rule/02-22-2023.701.300.17.pdf
+- source: Iowa Department of Revenue - Individual Taxes (filing due date April 30)
+  url: https://revenue.iowa.gov/taxes/file-my-taxes/individual-taxes
+- source: Iowa Department of Revenue - 1040 Expanded Instructions portal (live site serves the current instruction
+    year; the 2024 pages were also read from Wayback captures and match the archived 2024 PDF)
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions
+- source: GovConnectIowa payment portal
+  url: https://govconnect.iowa.gov/tap/?Link=MakePayment
+unverified:
+- The 2024 IA 126 (nonresident/part-year credit schedule) itself was not fetched; its treatment is summarized from
+  the IA 1040 form and expanded instructions.
+- Whether Iowa publishes a separate lockbox for payment-enclosed returns was re-checked on the 2024 form, which
+  again prints a single processing address (PO BOX 9187); no separate with-payment address was located on a .gov
+  page.
+- The school district surtax / EMS surtax rate tables (Step 6) and the volunteer firefighter/EMS/reserve peace officer
+  credit amount (line 10) were not transcribed this pass; confirm at the cited instructions.
+# Graduated-bracket tax computation block (Phase G item G4, formerly-C3 adoption
+# tranche) — consumed by calc.state_tax. Two-pass verification: brackets drafted from
+# the 2024 Tax Calculation Worksheet (41-026, joint vs non-joint schedules with Column
+# C constants and worked examples), then independently re-checked against the 2024
+# IA 1040 form face (Step 4/Step 5) and the official 2024 IA 1040 Expanded
+# Instructions PDF (What's New: 'The tax rates for each tax bracket have decreased.
+# For tax year 2025, Iowa will have a single tax rate of 3.8%'; alternate tax 5.7%).
+# VERIFIED: 2024 is THREE brackets (4.40% / 4.82% / 5.70%) — the four-bracket 2023
+# schedule lost its 6% top rate, and the SF 2442 flat 3.8% rate begins TAX YEAR 2025,
+# not 2024. Modeling decisions carried forward from 2023: joint (status 2) vs
+# non-joint (statuses 1/3/4/5) schedules — single/MFS/HoH ship the identical non-joint
+# schedule; Iowa status 5 (QSS) is NON-JOINT, so the op's QSS->MFJ aliasing is flagged
+# CRITICAL in the notes (pass 'single' for a QSS filer). Step 3 amounts are CREDITS
+# against tax (line 8), never base reductions -> exemptions ships empty,
+# standard_deduction ships null (the federal deduction is already inside federal
+# taxable income).
+tax:
+  citation:
+    source: 'Iowa Department of Revenue — 2024 Tax Calculation Worksheet (41-026): NON-JOINT FILERS (filing status 1,
+      3, 4, or 5) $0-$6,210 at 4.40% (.044), $6,210-$31,050 at 4.82% (.0482) plus $273.24, $31,050-and-over at 5.70%
+      (.057) plus $1,470.53; JOINT FILERS (filing status 2) $0-$12,420 at 4.40%, $12,420-$62,100 at 4.82% plus $546.48,
+      $62,100-and-over at 5.70% plus $2,941.06; worked example $25,000 non-joint -> $1,178.92. Second pass: 2024 IA
+      1040 (41-001) Step 4 ''Iowa taxable income. Add lines 2 and 3. Do not include lines 1a through 1e'' (line 2 =
+      federal taxable income from federal 1040 line 15; line 3 = net Iowa modifications from IA 1040 Schedule 1, line
+      21) and Step 5 line 5 ''Iowa tax from tax rate schedule or alternate tax'', Step 3 $40/$20/$40 exemption CREDITS;
+      2024 IA 1040 Expanded Instructions — What''s New: ''Line 5: The tax rates for each tax bracket have decreased.
+      For tax year 2025, Iowa will have a single tax rate of 3.8%'' (the flat rate begins TY2025, NOT TY2024); alternate
+      tax = 5.7% of income over $13,500/$32,000 — both passes agree.'
+    url: https://revenue.iowa.gov/media/4093/download?inline
+  brackets:
+    single:
+    - {over: 0, but_not_over: 6210, rate: 0.044}
+    - {over: 6210, but_not_over: 31050, rate: 0.0482}
+    - {over: 31050, but_not_over: null, rate: 0.057}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 12420, rate: 0.044}
+    - {over: 12420, but_not_over: 62100, rate: 0.0482}
+    - {over: 62100, but_not_over: null, rate: 0.057}
+    married_filing_separately:
+    - {over: 0, but_not_over: 6210, rate: 0.044}
+    - {over: 6210, but_not_over: 31050, rate: 0.0482}
+    - {over: 31050, but_not_over: null, rate: 0.057}
+    head_of_household:
+    - {over: 0, but_not_over: 6210, rate: 0.044}
+    - {over: 6210, but_not_over: 31050, rate: 0.0482}
+    - {over: 31050, but_not_over: null, rate: 0.057}
+  base: federal_taxable_income
+  tax_line: 'IA 1040 (41-001) Step 5, line 5: ''Iowa tax from tax rate schedule or alternate tax'' — computed on IA
+    1040 line 4 ''Iowa taxable income'' via the 2024 Tax Calculation Worksheet (41-026) or the IA 1040 Tax Calculator
+    (line 4 = line 2 federal taxable income + line 3 net Iowa modifications; ''Do not include lines 1a through 1e'').'
+  exemptions: {}
+  notes:
+  - '2024 schedule change (VERIFIED): the four 2023 brackets consolidated to THREE — the 6.00% top bracket is gone
+    and 5.70% now applies to all income over $31,050 (non-joint) / $62,100 (joint); bracket bounds indexed up from
+    $6,000/$30,000 and $12,000/$60,000. Iowa''s single flat rate of 3.8% (SF 2442) begins TAX YEAR 2025 — do NOT apply
+    it to 2024.'
+  - 'Base guidance: supply 2024 IA 1040 line 4 ''Iowa taxable income'' = line 2 federal taxable income (federal 1040,
+    line 15) + line 3 net Iowa modifications (IA 1040 Schedule 1, line 21 — renumbered from line 22 in 2023). Lines
+    1a-1e (federal total income, adjustments, AGI, standard/itemized deduction, QBI deduction) are printed for reference
+    only. The federal standard/itemized deduction and QBI deduction are already inside federal taxable income — Iowa
+    has no state standard deduction or base personal exemptions, and this op subtracts nothing before the schedule.'
+  - 'Two schedules only: the 2024 Tax Calculation Worksheet (41-026) prints one schedule for JOINT filers (Iowa filing
+    status 2) and one for NON-JOINT filers (statuses 1, 3, 4, and 5) — single, married filing separately, and head
+    of household ship the identical non-joint schedule; married_filing_jointly ships the joint schedule.'
+  - 'CRITICAL — qualifying surviving spouse: Iowa status 5 (qualifying surviving spouse) is a NON-JOINT filer on the
+    41-026 worksheet, but this op''s status aliasing resolves qualifying-surviving-spouse to the married_filing_jointly
+    schedule, which would UNDERSTATE Iowa tax. For an Iowa QSS filer, pass filing_status=''single'' (the identical
+    non-joint schedule).'
+  - 'Printed-constant rounding (quantified): the 2024 top-bracket Column C constants are the exact cumulative sums
+    rounded to the CENT — non-joint $1,470.53 vs exact $1,470.528 (+$0.002), joint $2,941.06 vs exact $2,941.056 (+$0.004);
+    the first constants ($273.24 / $546.48) are exact. This op does exact marginal math, so worksheet results can
+    exceed it by less than half a cent — immaterial after whole-dollar rounding.'
+  - 'Cents vs whole dollars: the IA 1040 is captioned ''Enter Dollars and Cents'' and the worksheet computes tax to
+    the cent; whole-dollar rounding is OPTIONAL (''To round, drop amounts under 50 cents and increase amounts from
+    50 to 99 cents to the next dollar'' — a .50 tie rounds UP, matching this op). No tax-table mandate: all filers
+    use the 41-026 worksheet or the online IA 1040 Tax Calculator.'
+  - 'Exemption CREDITS, not base exemptions (NOT modeled): IA 1040 Step 3 computes personal credits at $40 (enter
+    1 for statuses 1, 3, and 5; 2 for statuses 2 and 4), $20 per 65-or-older (on or before January 1, 2025) or blind
+    condition, and $40 per dependent; the Step 3 total is a CREDIT against tax on line 8 — never a base reduction.
+    exemptions ships empty; pass exemptions_count=0 and dependents_count=0.'
+  - 'Alternate tax (NOT modeled): all statuses except single may compute an alternate tax — 5.7% (.057) for 2024 (down
+    from 6% in 2023) of the alternate-tax-worksheet income above $13,500 ($32,000 if you or your spouse was 65 or
+    older on 12/31/2024) — and enter the SMALLER amount on line 5 (check the Step 5 box); status-3 spouses prorate
+    it. Single taxpayers may instead qualify for the Iowa Income Tax Reduction Worksheet (41-146). Check these when
+    income is just above the threshold.'
+  - 'Low-income exemption (NOT modeled): filers whose Iowa taxable income plus specified add-backs is at or below
+    $9,000 (single/married filing separately; $24,000 if 65+ on 12/31/24), or $13,500 (married filing jointly / head
+    of household / qualifying surviving spouse; $32,000 if 65+), owe no Iowa income tax (check the box between Steps
+    4 and 5); a dependent filer''s threshold is $5,000; MFS also requires combined income of $13,500 or less.'
+  - 'Not modeled — later lines: Iowa lump-sum tax (line 6), the Step 3 exemption credits (line 8), tuition and textbook
+    credit (line 9 — 2024: Students First ESA purchases not eligible), volunteer firefighter/EMS/reserve peace officer
+    credit (line 10), the IA 126 nonresident/part-year credit (line 13), out-of-state tax credit (line 15), SCHOOL
+    DISTRICT SURTAX and EMS surtax (Step 6 — a local percentage of the line 16 balance), the 15%-of-federal Iowa EITC
+    (line 25), and the child and dependent care / early childhood development credits (line 24).'

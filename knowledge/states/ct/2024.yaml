@@ -1,0 +1,275 @@
+# CT state knowledge — tax year 2024. Fetched + cited from the CT DRS (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure was drafted from the 2024 Form CT-1040
+# instructions (Rev. 01/25) and independently re-verified against the 2024 Form
+# CT-1040NR/PY instructions (Rev. 01/25) and the 2024 Form CT-1040 itself —
+# resolutions recorded inline where the passes differed. TY2024 headline change:
+# the bottom two rates were CUT (3% -> 2% and 5% -> 4.5%, Connecticut's first
+# income-tax rate cut since the mid-1990s), Table C became the '2% Phase-Out
+# Add-Back' (new maxima $250/$500/$250/$400), and Table D recapture now begins
+# at CT AGI over $105,000/$210,000/$168,000 (new maxima $3,400/$6,800/$5,320).
+# Improvement over the 2023 pack: the check-payee wording is now confirmed from
+# the 2024 form's own payment box ('Make your check payable to: Commissioner of
+# Revenue Services ... write your SSN(s) (optional) and "2024 Form CT-1040"').
+jurisdiction: states/ct
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'CT''s resident return (Form CT-1040) starts from federal AGI (Line 1 = "Federal adjusted gross income
+  from your 2024 federal income tax return"), so treaty-exempt income is initially excluded. HOWEVER, CT has an
+  EXPLICIT ADD-BACK: the 2024 CT-1040 instructions (Schedule 1 additions, Line 37 "Other") and the 2024 CT-1040NR/PY
+  instructions (Schedule 1 additions, Line 39 "Other") both direct: "1. Add back any treaty income reported on federal
+  Form 1040NR if a nonresident alien. Enter the words ''treaty income'' in the space provided." Because CT requires
+  nonresident aliens to add federally treaty-exempt income back into Connecticut adjusted gross income, CT does NOT
+  conform to federal treaty exemptions for affected filers (analogous to California''s Schedule CA add-back). Note:
+  this add-back is scoped to nonresident aliens filing federal Form 1040NR; a filer with no treaty income / not a
+  nonresident alien is unaffected, but the statutory rule re-taxes treaty income, so conforms_to_federal_treaties
+  = false. (Unchanged from 2023 — the identical sentence appears in both 2024 instruction booklets.)'
+citation:
+  source: '2024 Form CT-1040 Connecticut Resident Income Tax Return (Line 1 = federal AGI; Line 2 additions from
+    Schedule 1, Line 38; ''Due date: April 15, 2025''; mailing addresses PO Box 2976/2977; check payable to Commissioner
+    of Revenue Services)'
+  url: https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf
+starts_from: federal AGI (Form CT-1040, Line 1 = "Federal adjusted gross income from your 2024 federal income tax
+  return"; then Line 2 additions from Schedule 1, Line 38 and Line 4 subtractions from Schedule 1, Line 50 produce
+  Connecticut adjusted gross income on Line 5.)
+residency:
+  summary: Connecticut taxes by domicile and statutory residence. You are a RESIDENT if Connecticut was your domicile
+    (permanent home you intend to return to) for the entire taxable year, OR (statutory resident) if you maintained
+    a permanent place of abode in Connecticut during the entire taxable year AND spent more than 183 days of the
+    taxable year in Connecticut. A PART-YEAR RESIDENT changed legal residence by moving into or out of Connecticut
+    during the year. A NONRESIDENT is neither a resident nor a part-year resident; a nonresident is taxed only on
+    Connecticut-source income and prorates the tax. (The statutory domicile/permanent-place-of-abode + 183-day framework
+    is unchanged for 2024; the DRS Tax-Information page states the same rules.)
+forms:
+  resident: Form CT-1040, Connecticut Resident Income Tax Return
+  part_year_or_nonresident: Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return
+    (use Schedule CT-SI to report Connecticut-source income)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Connecticut Earned Income Tax Credit (CT EITC)
+  type: refundable
+  eligibility: Connecticut full-year residents who claimed and were allowed the 2024 federal Earned Income Credit.
+    Taxpayer (and spouse/qualifying children, if applicable) must have valid Social Security Numbers by the return
+    due date, must have earned income from employment or self-employment, and must meet all federal EITC rules.
+    Either qualify with a qualifying child, or as a worker without a qualifying child aged 25-64.
+  amount: 40% (.40) of the federal earned income credit allowed on the 2024 federal return ("For the tax year 2024,
+    the CT EITC is 40% (.40) of the federal earned income credit" — 2024 CT-1040 instructions, Schedule CT-EITC).
+  income_limit_2024: Mirrors federal EITC income limits; additionally, investment income must be $11,600 or less
+    for 2024 ("You cannot claim the CT EITC if your investment income is more than $11,600").
+  claimed_on: Schedule CT-EITC (Line 16), carried to Form CT-1040, Line 20a (or Form CT-1040X, Line 20a)
+  citation:
+    source: CT DRS - 2024 Form CT-1040 Instructions (Rev. 01/25), Line 20a and Schedule CT-EITC line instructions
+      (40% rate; $11,600 investment-income limit)
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+- name: Property Tax Credit (Schedule 3)
+  type: nonrefundable
+  eligibility: Connecticut residents who paid qualifying property tax during 2024 to a Connecticut political subdivision
+    on their primary residence and/or a privately owned or leased motor vehicle. Single/MFS/HOH limited to one motor
+    vehicle; MFJ/qualifying surviving spouse limited to two. Cannot be claimed if Form CT-1040 Line 10 is zero.
+  amount: Maximum credit is $300 per return regardless of filing status; limited to the lesser of qualifying property
+    tax paid or $300, then phased down by Connecticut AGI per the Property Tax Credit Table. Full $300 (no reduction)
+    allowed if Connecticut AGI is at or below the filing-status threshold below; above it, the credit is multiplied
+    by a decimal that decreases as AGI rises.
+  income_limit_2024: 'Full credit allowed at Connecticut AGI of: Single $49,500 or less; MFJ/qualifying surviving
+    spouse $70,500 or less; Married filing separately $35,250 or less; Head of household $54,500 or less (unchanged
+    from 2023). Above these the credit phases out per the Property Tax Credit Table.'
+  claimed_on: Form CT-1040, Schedule 3 (Lines 60-68), carried to Form CT-1040, Line 11
+  citation:
+    source: CT DRS - 2024 Form CT-1040 Instructions (Rev. 01/25), Line 11 / Schedule 3 - Property Tax Credit and
+      Property Tax Credit Table
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+- name: Personal Tax Credit (low-income credit, Table E)
+  type: nonrefundable
+  eligibility: Connecticut resident individuals whose Connecticut AGI falls within the Table E phase-out ranges
+    for their filing status. Taxpayers below the no-tax threshold owe no income tax and need no credit; the personal
+    credit reduces the income tax for low-to-moderate income filers just above that threshold.
+  amount: 'A decimal percentage reduction of the calculated Connecticut income tax, up to .75 (75%), declining in
+    steps to .00 as Connecticut AGI rises. Example (Single): .75 for AGI over $15,000 up to $18,800; stepping down
+    to .00 once AGI exceeds $64,500. (2024 Table E is identical to 2023.)'
+  income_limit_2024: 'Credit fully phases out (decimal = .00) above: Single $64,500; MFJ/qualifying surviving spouse
+    $100,500; Married filing separately $52,500; Head of household $78,500. Filers at or below the no-tax floor
+    (MFS $12,000 / Single $15,000 / HOH $19,000 / MFJ $24,000) owe no tax.'
+  claimed_on: Tax Calculation Schedule, Line 8 (decimal from Table E), reducing the income tax reported on Form
+    CT-1040, Line 6
+  citation:
+    source: CT DRS - 2024 Form CT-1040 Instructions (Rev. 01/25), Table E - Personal Tax Credits; Tax Calculation
+      Schedule Line 8; Line 6 no-tax floors
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+- name: Credit for Income Taxes Paid to Qualifying Jurisdictions (Schedule 2)
+  type: nonrefundable
+  eligibility: Connecticut residents (and part-year residents) whose income reported on the CT return is also subject
+    to income tax in another qualifying jurisdiction (another U.S. state, a local jurisdiction within another state,
+    or the District of Columbia) where the taxpayer filed a return and paid income tax. Prevents double taxation
+    of the same income. A copy of the other jurisdiction's return must be attached.
+  amount: Limited to the lesser of (a) the income tax actually paid to the qualifying jurisdiction on income also
+    taxed by Connecticut, or (b) the proportion of Connecticut income tax attributable to that income (Connecticut
+    income tax multiplied by the ratio of income taxed in the other jurisdiction to Connecticut AGI). Computed on
+    Schedule 2.
+  income_limit_2024: No specific income limit; the credit amount is capped by the formula above.
+  claimed_on: Form CT-1040, Schedule 2 (Line 59), carried to Form CT-1040, Line 7
+  citation:
+    source: CT DRS - 2024 Form CT-1040 Instructions (Rev. 01/25), Line 7 / Schedule 2 - Credit for Income Taxes
+      Paid to Qualifying Jurisdictions
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+filing_requirement:
+  note: 'Connecticut uses a "Gross Income Test." A resident generally must file Form CT-1040 if Connecticut gross
+    income exceeds the threshold for their filing status: $12,000 (married filing separately), $15,000 (single),
+    $19,000 (head of household), or $24,000 (married filing jointly or qualifying surviving spouse) — unchanged
+    for 2024 (the 2024 CT-1040 instructions print the same dollar levels as the Line 6 no-tax floors). You must
+    also file if you had Connecticut income tax withheld, made estimated payments, meet the Gross Income Test, had
+    a federal alternative minimum tax liability, or are claiming a Connecticut refund. Nonresidents/part-year residents
+    file CT-1040NR/PY if they meet the Gross Income Test or had federal AMT liability (and, for nonresidents, had
+    Connecticut-source income).'
+mailing_addresses:
+  refund_or_no_payment: Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976 (for refunds and all
+    other tax forms without payment)
+  with_payment: Department of Revenue Services, PO Box 2977, Hartford CT 06104-2977 (for all tax forms with payment)
+  citation:
+    source: '2024 Form CT-1040 Connecticut Resident Income Tax Return, page 4 mailing box: ''For all tax forms with
+      payment: PO Box 2977''; ''For refunds and all other tax forms without payment: PO Box 2976'''
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf
+payment:
+  check_payee: 'Commissioner of Revenue Services (2024 Form CT-1040, page 4 payment box — "Make your check payable
+    to: Commissioner of Revenue Services. To ensure proper posting, write your SSN(s) (optional) and ''2024 Form
+    CT-1040'' on your check.")'
+  web_pay_url: https://portal.ct.gov/DRS-myconneCT
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: '2024 Form CT-1040, page 1: ''Due date: April 15, 2025 - Attach a copy of all applicable schedules and
+      forms to this return.'''
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf
+all_citations:
+- source: '2024 Form CT-1040 Connecticut Resident Income Tax Return (Line 1 = federal AGI; Line 2 additions from
+    Schedule 1, Line 38; ''Due date: April 15, 2025''; mailing addresses PO Box 2976/2977; check payable to Commissioner
+    of Revenue Services)'
+  url: https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf
+- source: '2024 Form CT-1040 Instructions (Rev. 01/25) - Schedule 1 Line 37 ''Other'' additions: ''1. Add back any
+    treaty income reported on federal Form 1040NR if a nonresident alien''; Line 6 no-tax floors and optional tax
+    tables at CT AGI <= $102,000; Tax Calculation Schedule and Tables A-E (2%/4.5% rate cut, 2% Phase-Out Add-Back,
+    new Tax Recapture bands); CT EITC 40% / $11,600 investment-income limit; Property Tax Credit Table'
+  url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+- source: '2024 Form CT-1040NR/PY Instructions (Rev. 01/25) - Schedule 1 Line 39 ''Other'' additions: ''1. Add back
+    any treaty income reported on federal Form 1040NR if a nonresident alien''; second-pass source for Tables A-E
+    (identical bounds, rates, printed constants, phase-out and recapture amounts)'
+  url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040nrpy-instructions_1224.pdf
+- source: 'CT DRS Resident Income Tax - Tax Information (residency definitions: domicile, statutory resident permanent
+    place of abode + 183 days; Gross Income Test thresholds)'
+  url: https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information
+unverified:
+- 'The 2024 resident instruction booklet (Rev. 01/25) does not restate the Who-Must-File Gross Income Test dollar
+  chart in its body text; the $12,000/$15,000/$19,000/$24,000 thresholds were confirmed from the booklet''s Line 6
+  no-tax floors (same dollar levels) and the DRS Tax-Information page framework. Confirm the 2024-specific Gross
+  Income Test chart at the DRS Tax-Information page if a pinpoint citation is required.'
+- 'Whether DRS observed any non-April-15 due date adjustment for 2024: the 2024 CT-1040 form prints ''Due date:
+  April 15, 2025'' (a Tuesday), so no adjustment applies, but confirm at the DRS if relying on a different date.'
+- The 2024 Form CT-1040NR/PY return PDF itself was not fetched (its instructions were); Schedule CT-SI mechanics
+  are presumed unchanged from 2023 — confirm at the DRS if filing a 2024 nonresident/part-year return.
+tax:
+  citation:
+    source: '2024 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 01/25) — Tax Calculation Schedule
+      (page 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line
+      5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6);
+      Table A - Personal Exemptions; Table B - Initial Tax Calculation (p. 20, all three schedules with the DRS worked
+      examples $335/$32,998/$513/$69,490/$500/$51,748 — TY2024 cuts the bottom two rates to 2% and 4.5%, Connecticut''s
+      first rate cut since the mid-1990s); Table C - 2% Phase-Out Add-Back (p. 21); Table D - Tax Recapture (p. 22,
+      now beginning at CT AGI over $105,000/$210,000/$168,000); Table E - Personal Tax Credits; Line 6 Income Tax (no-tax
+      floors, optional tax tables at CT AGI <= $102,000). Second pass: the 2024 Form CT-1040NR/PY instructions (Rev.
+      01/25, https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040nrpy-instructions_1224.pdf) print identical
+      Tables A-E — every bound, rate, printed constant, phase-out and recapture amount matches.'
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10000, rate: 0.02}
+    - {over: 10000, but_not_over: 50000, rate: 0.045}
+    - {over: 50000, but_not_over: 100000, rate: 0.055}
+    - {over: 100000, but_not_over: 200000, rate: 0.06}
+    - {over: 200000, but_not_over: 250000, rate: 0.065}
+    - {over: 250000, but_not_over: 500000, rate: 0.069}
+    - {over: 500000, but_not_over: null, rate: 0.0699}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 20000, rate: 0.02}
+    - {over: 20000, but_not_over: 100000, rate: 0.045}
+    - {over: 100000, but_not_over: 200000, rate: 0.055}
+    - {over: 200000, but_not_over: 400000, rate: 0.06}
+    - {over: 400000, but_not_over: 500000, rate: 0.065}
+    - {over: 500000, but_not_over: 1000000, rate: 0.069}
+    - {over: 1000000, but_not_over: null, rate: 0.0699}
+    married_filing_separately:
+    - {over: 0, but_not_over: 10000, rate: 0.02}
+    - {over: 10000, but_not_over: 50000, rate: 0.045}
+    - {over: 50000, but_not_over: 100000, rate: 0.055}
+    - {over: 100000, but_not_over: 200000, rate: 0.06}
+    - {over: 200000, but_not_over: 250000, rate: 0.065}
+    - {over: 250000, but_not_over: 500000, rate: 0.069}
+    - {over: 500000, but_not_over: null, rate: 0.0699}
+    head_of_household:
+    - {over: 0, but_not_over: 16000, rate: 0.02}
+    - {over: 16000, but_not_over: 80000, rate: 0.045}
+    - {over: 80000, but_not_over: 160000, rate: 0.055}
+    - {over: 160000, but_not_over: 320000, rate: 0.06}
+    - {over: 320000, but_not_over: 400000, rate: 0.065}
+    - {over: 400000, but_not_over: 800000, rate: 0.069}
+    - {over: 800000, but_not_over: null, rate: 0.0699}
+  base: federal_agi
+  tax_line: '2024 Form CT-1040, Line 6: ''Income Tax''. Computed on the Tax Calculation Schedule (2024 CT-1040 instructions,
+    p. 19): Line 1 = Connecticut AGI (Form CT-1040, Line 5); Line 2 = Table A personal exemption; Line 3 = Connecticut
+    Taxable Income (Line 1 - Line 2, not less than zero); Line 4 = Table B Initial Tax Calculation (the rate schedules
+    this block ships); Lines 5-6 add Table C (2% phase-out) and Table D (recapture); Line 8-9 subtract the Table E
+    personal-credit percentage; Line 10 ''Connecticut Income Tax: Subtract Line 9 from Line 7. Enter here and on Form
+    CT-1040, Line 6.'''
+  exemptions: {}
+  notes:
+  - 'TY2024 RATE CUT (first since the mid-1990s): the bottom two rates fell from 3% to 2% and from 5% to 4.5%; the
+    upper five rates (5.5%/6%/6.5%/6.9%/6.99%) and every bracket bound are unchanged from 2023. Table C was renamed
+    the ''2% Phase-Out Add-Back'' with new amounts, and Table D recapture was restructured to begin at much lower
+    CT AGI (see the CRITICAL notes).'
+  - 'Base guidance: supply Tax Calculation Schedule Line 3 (Connecticut Taxable Income) = Connecticut AGI (Form CT-1040
+    Line 5 = federal AGI + Schedule 1 additions - Schedule 1 subtractions) MINUS the Table A personal exemption. The
+    Table A exemption (up to $15,000 single / $24,000 MFJ-QSS / $12,000 MFS / $19,000 HoH — unchanged for 2024) is
+    INCOME-DEPENDENT — it falls $1,000 for each $1,000 (or part) of CT AGI over $30,000 / $48,000 / $24,000 / $38,000
+    and is $0 at CT AGI of $44,000 / $71,000 / $35,000 / $56,000 or more — so it is NOT shipped as a key; compute
+    Table A on the form. At or above the zero point, Line 3 = CT AGI. Do NOT supply raw federal AGI when CT modifications
+    apply, and do NOT subtract the exemption twice.'
+  - 'Adjudication note (two-pass): drafted from the 2024 CT-1040 instructions (Rev. 01/25) Tables A-E and independently
+    re-verified against the 2024 CT-1040NR/PY instructions (Rev. 01/25) — identical tables, zero discrepancies. Every
+    printed ''$X plus Y% of the excess over $Z'' constant in Table B equals the EXACT cumulative sum of the prior
+    brackets (200/2,000/4,750/10,750/14,000/31,250 single-MFS; 400/4,000/9,500/21,500/28,000/62,500 MFJ; 320/3,200/7,600/17,200/22,400/50,000
+    HoH), so pure marginal accumulation reproduces Table B to the half-dollar; the only divergence is IRS half-up
+    rounding of a trailing $.50 (the DRS''s own printed examples round $2,500 x .045 = $112.50 to $113 at MFJ $22,500
+    and $25,000 x .0699 = $1,747.50 up at single $525,000 -> $32,998).'
+  - 'CRITICAL — Table C 2% Phase-Out Add-Back NOT modeled: if CT AGI (Tax Calculation Schedule Line 1, NOT taxable
+    income) exceeds $56,500 single / $100,500 MFJ-QSS / $50,250 MFS / $78,500 HoH, Line 5 ADDS BACK $25-to-$250 (single/MFS,
+    max above $101,500/$72,750), $50-to-$500 (MFJ, max above $145,500), or $40-to-$400 (HoH, max above $114,500),
+    clawing back the benefit of the 2% bottom rate. Plain bracket math (this op) UNDERSTATES the filed tax by the
+    Table C amount — compute Line 5 on the form. (Same AGI bands as 2023 but larger add-backs, since the phased-out
+    benefit is now 2%-vs-4.5%.)'
+  - 'CRITICAL — Table D Tax Recapture NOT modeled and RESTRUCTURED for 2024: recapture now begins at CT AGI over $105,000
+    single/MFS / $210,000 MFJ-QSS / $168,000 HoH (2023: $200,000/$400,000/$320,000), recapturing the 4.5%-rate benefit
+    in $25/$50/$40 steps to a first plateau of $250/$500/$400 at CT AGI $150,000-$200,000 / $300,000-$400,000 / $240,000-$320,000,
+    then a second phase in $90/$180/$140 steps to a plateau of $2,950/$5,900/$4,600, then a third phase above CT AGI
+    $500,000/$1,000,000/$800,000 to the maximum $3,400 (single/MFS, over $540,000), $6,800 (MFJ, over $1,080,000),
+    $5,320 (HoH, over $864,000). Plain bracket math understates the filed tax by the Table D amount — CT''s Tax Calculation
+    Schedule is the filed method.'
+  - 'Table E Personal Tax Credits NOT modeled (a TAX CREDIT, not a base reduction): a CT-AGI-keyed decimal (.75 down
+    to .01) multiplies the Line 7 tax and is subtracted on Line 9 for low/moderate incomes — e.g. .75 for single CT
+    AGI $15,000-$18,800 — fully phased out above CT AGI $64,500 single / $100,500 MFJ-QSS / $52,500 MFS / $78,500
+    HoH (identical to 2023).'
+  - 'No-tax floor (2024 CT-1040 instructions, Line 6): if CT AGI (Line 5) is $12,000 or less MFS / $15,000 or less
+    single / $19,000 or less HoH / $24,000 or less MFJ-QSS, enter ''0'' on Line 6 — no income tax is owed. This coincides
+    with the full Table A exemption at those AGI levels (the engine''s max(0, ...) floor matches).'
+  - 'Tax tables are OPTIONAL, not mandated: at CT AGI of $102,000 or less the filer ''may'' use the DRS website Tax
+    Tables (portal.ct.gov/DRS/DRS-Forms/Current-Year-Forms/Calculators-and-Tables); the Tax Calculation Schedule is
+    the universal filed method at any income (table bands can differ from schedule arithmetic by a few dollars).'
+  - One Table B schedule covers 'Single or Married Filing Separately' — duplicated for both statuses here, copied,
+    not derived (Table A/C/E amounts DO differ between single and MFS). The MFJ schedule is titled 'Married Filing
+    Jointly/Qualifying Surviving Spouse', so qualifying surviving spouse maps exactly to married_filing_jointly as
+    the engine assumes.
+  - Connecticut has no county or municipal income taxes and no standard deduction; the Table A personal exemption
+    and the personal credit are the only general-relief mechanisms, both income-dependent, both computed on the Tax
+    Calculation Schedule.

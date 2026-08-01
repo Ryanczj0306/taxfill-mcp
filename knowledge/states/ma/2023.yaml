@@ -170,3 +170,107 @@ unverified:
   1-NR/PY instruction PDFs, which are authoritative. No fact in this record relies on a non-.gov source.
 - Whether MA DOR maintains a separate dedicated 'with-payment' courier/overnight street address beyond the PO Box
   was not checked; the two PO Box addresses above are the standard mailing addresses stated in the 2023 Form 1 instructions.
+# Flat-rate tax computation block (Phase G item G4, formerly-C3 adoption tranche) —
+# consumed by calc.state_tax. Two-pass verification: figures drafted from the 2023
+# Form 1 face (line 2a $4,400/$6,800/$8,800 personal exemptions; line 22 'from tax
+# table. If line 21 is more than $24,000, multiply by .05'; line 28b 4% surtax), then
+# independently re-checked against the 2023 Form 1 instructions (Line 22 text; the
+# $1,000,000 surtax threshold per TIR 23-12; the excess-exemptions worksheet). Both
+# documents recovered from the Wayback archive of the official mass.gov URLs (mass.gov
+# 403s non-browser fetchers), the same provenance path as the shipped MA form pack.
+# Modeling decisions: flat_rate 0.05 on Part B (5.0%) income ONLY — the 4% surtax and
+# the 8.5%/12%/Schedule D classes are CRITICAL notes, never brackets (MA taxes classes
+# separately, PA-style). The line 2a personal exemption is a fixed PER-STATUS base
+# deduction on the Form 1 face, so it ships in the per-status standard_deduction slot
+# (the per-person 'personal' key cannot express HoH's $6,800); line 2b dependents ship
+# as an applied 'dependent' key; age-65/blind ship disclosed-only.
+tax:
+  citation:
+    source: 'MA DOR — 2023 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a ''Personal exemptions.
+      If single or married filing separately, enter $4,400. If head of household, enter $6,800. If married filing jointly,
+      enter $8,800''; line 2b dependents x $1,000; line 2c age 65 or over x $1,700; line 2d blindness x $2,200; line
+      17 ''5.0% INCOME AFTER DEDUCTIONS''; line 18 total exemption amount (from line 2g); line 19 ''5.0% INCOME AFTER
+      EXEMPTIONS... Not less than 0''; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line 21 ''TOTAL TAXABLE
+      5.0% INCOME. Add lines 19 and 20''; line 22 ''TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000,
+      multiply by .05''; line 28b ''4% Surtax (from Schedule 4% Surtax, line 7)''. Second pass: 2023 Form 1 Instructions
+      — Line 22: ''If line 21 is less than $24,000, find the proper tax by using the tax tables found in the back of
+      this booklet. If line 21 is greater than $24,000 multiply by 0.05''; ''4% Surtax on Taxable Income Over $1 Million...
+      In 2023, this threshold is $1,000,000'' (TIR 23-12); the excess-exemptions worksheet; No Tax Status thresholds
+      — both passes agree. (mass.gov returns HTTP 403 to non-browser fetchers; both documents were retrieved from the
+      Wayback Machine''s archive of the SAME official mass.gov URLs, the same provenance path as the shipped MA form
+      pack, which pins the identical 2023 Form 1 blank by sha256.)'
+    url: https://www.mass.gov/doc/2023-form-1-instructions/download
+  flat_rate: 0.05
+  base: state_gross_income
+  tax_line: 'Form 1 line 22: ''TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05''
+    (line 21 = TOTAL TAXABLE 5.0% INCOME = line 19 income after exemptions + line 20 Schedule B interest and dividend
+    income).'
+  exemptions:
+    dependent:
+      amount: 1000
+      note: 'Form 1 line 2b: $1,000 per dependent (do not include yourself or your spouse; enclose Schedule DI). APPLIED
+        by calc.state_tax via dependents_count.'
+    age_65:
+      amount: 1700
+      note: 'Form 1 line 2c: $1,700 per age-65-or-over-before-2024 box (You/Spouse). NOT applied by calc.state_tax — subtract
+        it from the supplied base or compute line 2c on the form.'
+    blind:
+      amount: 2200
+      note: 'Form 1 line 2d: $2,200 per blindness box (You/Spouse). NOT applied by calc.state_tax — subtract it from the
+        supplied base or compute line 2d on the form.'
+  standard_deduction:
+    single: 4400
+    married_filing_jointly: 8800
+    married_filing_separately: 4400
+    head_of_household: 6800
+  notes:
+  - 'Base guidance: supply 2023 Form 1 line 17 (''5.0% INCOME AFTER DEDUCTIONS'' = line 10 TOTAL 5.0% INCOME minus
+    line 16 total deductions) PLUS line 20 (interest and dividend income from Schedule B, line 38) — i.e., the Part
+    B 5.0% taxable income BEFORE the line 18 exemptions. The op subtracts the line 2a personal exemption (shipped
+    per filing status in standard_deduction) and $1,000 per dependent (line 2b), reproducing lines 18-21, then multiplies
+    by 5% (line 22). Filers with line 2c-2f exemptions (age 65+ $1,700 each, blindness $2,200 each, medical/dental
+    from U.S. Schedule A line 4, adoption) must subtract those amounts from the supplied base themselves.'
+  - 'Modeling decision — standard_deduction carries the Form 1 line 2a PERSONAL EXEMPTION: Massachusetts has NO standard
+    deduction; line 2a is a fixed per-filing-status base reduction ($4,400 single or married filing separately, $6,800
+    head of household, $8,800 married filing jointly) and ships in the per-status standard_deduction slot because
+    the per-person ''personal'' exemption key cannot represent the $6,800 head-of-household amount. Pass exemptions_count=0
+    — the taxpayer/spouse exemption is already inside the per-status amount.'
+  - 'CRITICAL — 4% surtax NOT modeled: ''For tax years beginning on or after January 1, 2023, MGL ch 62 taxpayers
+    must pay an additional 4% (4% surtax) on taxable income over a certain threshold. In 2023, this threshold is $1,000,000''
+    (2023 Form 1 instructions; TIR 23-12; annually inflation-adjusted). The surtax is computed on Schedule 4% Surtax
+    and entered on Form 1 line 28b, and it applies to the SUM of all classes of taxable income (the 5.0% Part B income
+    modeled here PLUS Schedule B 8.5%/12% income PLUS Schedule D long-term capital gains) over $1,000,000. It is NOT
+    a marginal bracket of the 5.0% schedule — encoding it as one would misstate Massachusetts'' class-separated system.
+    If total taxable income across all classes exceeds $1,000,000, complete Schedule 4% Surtax on the form.'
+  - 'Class separation (PA-like): Massachusetts taxes income classes separately, and this op computes ONLY the Form
+    1 line 22 tax on 5.0% income. Not modeled: Schedule B 8.5% income (line 23a x .085 — short-term capital gains
+    and certain other gains), 12% income (line 23b x .12 — collectibles/pre-1996 installment sales), and Schedule
+    D long-term capital gain tax (line 24). Never merge those classes into the supplied base.'
+  - 'Tax-table mandate: ''If line 21 is less than $24,000, find the proper tax by using the tax tables found in the
+    back of this booklet. If line 21 is greater than $24,000 multiply by 0.05'' (Line 22 instructions). Below $24,000
+    the filed form uses the booklet table, which can differ from exact multiplication by a small amount within a table
+    band; the fetched instructions capture did not include the table pages, so the band structure was not re-verified
+    this session.'
+  - 'Optional 5.85% rate (NOT modeled): Form 1 line 22 carries an oval to voluntarily pay tax at 5.85% on income otherwise
+    taxed at 5.0% (''If choosing the optional 5.85% tax rate, multiply line 21 and Schedule D, line 21 by 0.0585 and
+    fill in the oval''); the election does not apply to 8.5%/12% items.'
+  - 'Excess exemptions: if line 18 exemptions exceed line 17, the form sets line 19 to 0 and the excess may be applied
+    against interest and dividend income and 8.5%/12% income (Schedule B line 36 via the instructions worksheet),
+    then against long-term capital gains (Schedule D line 20). Because this op subtracts the exemptions from the combined
+    line 17 + line 20 base, the offset against Part B interest/dividends is reproduced automatically; the offset against
+    the 8.5%/12% and long-term-gain classes is NOT modeled.'
+  - 'No Tax Status / Limited Income Credit (Form 1 lines 27-29, NOT modeled): Massachusetts AGI of $8,000 or less
+    (single), $14,400 or less plus $1,000 per dependent (head of household), or $16,400 or less plus $1,000 per dependent
+    (married filing jointly) qualifies for No Tax Status — line 28 tax becomes 0 (married filing separately never
+    qualifies). Filers just above may take the line 29 Limited Income Credit. Check the Massachusetts AGI worksheet
+    before relying on the computed tax.'
+  - 'Massachusetts gross income is built from MA''s OWN categories, not federal AGI: Form 1 line 3 wages come from
+    W-2 state wages (Box 16); IRC sec.911 foreign earned income exclusions are added back; income exempt under a U.S.
+    tax treaty that landed in line 3 must be deducted on Schedule Y line 4 (fill the treaty oval). The header boxes
+    a/b (federal total income / federal AGI) are informational only.'
+  - 'Rounding: the instructions direct whole-dollar entry (''amounts between $1.50 and $2.00 should be entered as
+    $2.00'' — a .50 tie rounds UP), consistent with this op''s rounding.'
+  - 'Not modeled — credits and later lines: Limited Income Credit (line 29), taxes due other jurisdictions (line 30,
+    Schedule OJC), Schedule CMS credits (line 31), the refundable 40%-of-federal Massachusetts EITC (line 43), the
+    $310-per-qualifying-individual Child and Family Tax Credit (line 46, 2023 amount), the Senior Circuit Breaker
+    credit up to $2,590 (line 44), use tax (line 34), and the Schedule HC health-care penalty (line 35).'

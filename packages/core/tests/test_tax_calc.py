@@ -2216,13 +2216,20 @@ def test_state_tax_unknown_state_lists_the_supported_ones():
     assert "get_sources" in msg
 
 
-def test_state_tax_state_without_block_is_refused_prescriptively():
-    # UT ships a pack (C3, not yet adopted) but no tax block — same error shape.
+def test_state_tax_state_without_block_is_refused_prescriptively(tmp_path):
+    # Every real 2023 pack now ships a block, so the refusal path is proven
+    # with a synthetic pack that has none — same prescriptive error shape.
+    d = tmp_path / "states" / "zx"
+    d.mkdir(parents=True)
+    (d / "2023.yaml").write_text(
+        "jurisdiction: states/zx\ntax_year: 2023\nincome_tax: true\n"
+        "conforms_to_federal_treaties: true\n",
+        encoding="utf-8",
+    )
     with pytest.raises(ValueError) as exc:
-        state_tax("ut", 50_000, knowledge_dir=KNOWLEDGE_DIR)
+        state_tax("zx", 50_000, knowledge_dir=tmp_path)
     msg = str(exc.value)
-    assert "'ut'" in msg
-    assert "il" in msg and "pa" in msg and "ca" in msg  # lists the supported states
+    assert "'zx'" in msg
     assert "never invent" in msg
 
 
