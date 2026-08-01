@@ -1,0 +1,335 @@
+# KS state knowledge — tax year 2024. Fetched + cited from the KS DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 Individual Income
+# Tax Booklet (ip24.pdf), then independently re-derived from a second official document
+# (the 2024 Form K-40 itself, which prints the $18,320/$9,160/$2,320/$2,250 exemption
+# boxes verbatim, plus the 2024 Homestead booklet and 2024 Form K-40V) — resolutions
+# recorded inline where the passes differed.
+# HEADLINE 2024 CHANGE (SB 1, 2024 Special Session): Kansas RESTRUCTURED its income tax.
+# TWO brackets replace 2023's three: 5.2% up to $23,000 ($46,000 married filing joint)
+# and 5.58% above (2023: 3.1%/5.25%/5.7%). Standard deductions ROSE to $3,605 single /
+# $8,240 MFJ / $6,180 HoH / $4,120 MFS. The exemption allowance was RESTRUCTURED from
+# $2,250 per person to a filing-status allowance of $18,320 (MFJ) / $9,160 (all others)
+# PLUS $2,320 per dependent (+$2,320 additional for Head of Household; +$2,250 disabled
+# veteran). The 2023 tax table's $0-tax cliff ($2,500/$5,000) is GONE — the 2024 table
+# starts at $26-$50 -> $2. Do not carry ANY 2023 tax:-block figures forward.
+jurisdiction: states/ks
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Kansas Form K-40 starts from federal adjusted gross income (2024 K-40 Line 1: "Federal adjusted gross
+  income (as reported on your federal income tax return)"), and Kansas modifications are made only on Schedule S
+  Part A. The 2024 Schedule S Part A "Additions to Federal Adjusted Gross Income" are an enumerated, closed list
+  (lines A1-A7): A1 state/municipal bond interest, A2 KPERS contributions, A3 Kansas expensing recapture (K-120EX),
+  A4 charitable contributions used for the Low Income Student Scholarship credit (K-70), A5 IRC 163(j) business
+  interest expense carryforward, A6 unqualified First-Time Home Buyer savings account withdrawals, and A7 "other
+  additions" (whose instructions list only federal income tax refunds, partnership/S-corp/fiduciary adjustments,
+  community service contribution credit add-back, LQESP nonqualified withdrawals, energy-credit amortization, nonresident
+  ad valorem taxes, and abortion-expense credits). There is NO add-back for federally tax-treaty-exempt income anywhere
+  in Part A. Because income exempt under a U.S. tax treaty is already excluded from federal AGI and Kansas has no
+  add-back, it flows through and is not re-taxed by Kansas -> conforms. (Source: 2024 Individual Income Tax Booklet,
+  ip24.pdf, K-40 Line 1 and Schedule S Part A line-by-line instructions.)'
+citation:
+  source: 'Kansas DOR — 2024 Individual Income Tax Booklet (ip24.pdf): K-40 Line 1 federal AGI starting point; Schedule
+    S Part A additions list and line-by-line instructions (no treaty add-back); residency definitions (Who Must
+    File); 2024 filing thresholds; Important Information (April 15, 2025 due date; new standard deduction and exemption
+    amounts; new Workforce Retention K-93 and Pregnancy Resource Act K-94 credits); 2024 Kansas Tax Table and 2024
+    Tax Computation Worksheet (5.2%/5.58%); payment options/payee'
+  url: https://www.ksrevenue.gov/pdf/ip24.pdf
+starts_from: federal AGI (K-40 Line 1 = "Federal adjusted gross income (as reported on your federal income tax return)")
+residency:
+  summary: Kansas taxes by domicile/residence. Per the 2024 booklet, "A Kansas resident for income tax purposes
+    is anyone who lives in Kansas, regardless of where they are employed. An individual who is away from Kansas
+    for a period of time and has intentions of returning to Kansas is a resident" — a domicile/intent-to-return
+    concept; a full-year resident is taxed on all income. A PART-YEAR RESIDENT is a Kansas resident for less than
+    12 months during the tax year, must enter the Kansas residency dates on the K-40, and completes Schedule S Part
+    B to allocate income. A NONRESIDENT is someone not a resident of Kansas who received income from Kansas sources;
+    they must file regardless of the amount of Kansas-source income and complete Schedule S Part B. Military pay
+    is taxable only to the service member's state of legal residency; nonresident service members stationed in Kansas
+    are taxed only on Kansas-source income.
+forms:
+  resident: Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents
+    complete K-40 (with Schedule S Part A only if they have modifications)
+  part_year_or_nonresident: Same Form K-40, with Schedule S (Supplemental Schedule) Part B "Income Allocation for
+    Nonresidents and Part-Year Residents" required to compute the nonresident percentage (K-40 line 9 / Schedule
+    S line B23). Kansas does not have a separate standalone nonresident form.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Kansas Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Kansas residents only (not part-year residents or nonresidents) who qualify for and claim the federal
+    Earned Income Tax Credit. A valid SSN is required for the full year for the taxpayer, spouse (if MFJ), and each
+    dependent claimed.
+  amount: 'Equal to 17% of the taxpayer''s federal EITC. Computed on the EITC Worksheet in the 2024 K-40 instructions:
+    Kansas EITC = federal EITC x 17%. The portion that offsets Kansas tax liability goes on line 17 (nonrefundable
+    use), and the remainder (worksheet line 4) is refundable and entered on line 23.'
+  income_limit_2024: No separate Kansas income limit; eligibility and income phase-out follow the federal EITC rules
+    (you must qualify for the federal EITC).
+  claimed_on: Form K-40, line 17 (credit against tax) and line 23 (refundable portion); computed on the Earned Income
+    Tax Credit (EITC) Worksheet in the 2024 K-40 instructions.
+  citation:
+    source: Kansas Department of Revenue, 2024 Individual Income Tax Booklet (Form K-40 instructions, ip24.pdf),
+      Line 17 / Line 23 instructions and EITC Worksheet (multiply federal EITC by 17%)
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+- name: Food Sales Tax Credit
+  type: nonrefundable
+  eligibility: 'Must be a Kansas resident for ALL of 2024, AND meet at least one taxpayer-status condition (2024
+    K-40 front, lines A-C): (1) had a dependent child who lived with you all year and was under age 18 all of 2024;
+    or (2) you (or spouse) were 55 or older all of 2024 (born before January 1, 1969); or (3) you (or spouse) were
+    totally and permanently disabled or blind all of 2024, regardless of age. Nonrefundable — it offsets tax on
+    line 18 only.'
+  amount: $125 for each qualified exemption (2024 K-40 front, Line H = line G qualifying exemptions x $125). Dependents
+    age 18 or older (born before January 1, 2007) are subtracted from the exemption count (Line F) and do not qualify,
+    and no additional exemption is allowed for head-of-household filing status for this credit.
+  income_limit_2024: Federal adjusted gross income of $30,615 or less.
+  claimed_on: Form K-40, line 18; computed on lines A through H on the front of Form K-40.
+  citation:
+    source: Kansas Department of Revenue, 2024 Individual Income Tax Booklet (ip24.pdf), 'Food Sales Tax Credit'
+      section and 2024 Form K-40 front (lines A-H)
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+- name: Credit for Child and Dependent Care Expenses
+  type: nonrefundable
+  eligibility: Kansas residents only - nonresidents and part-year residents are NOT eligible. Available to taxpayers
+    who claimed the federal child and dependent care credit on federal Form 2441.
+  amount: 'NEW PERCENTAGE FOR 2024: 50% of the amount of the federal credit allowed on federal Form 2441 (2024 booklet,
+    Line 14: "Multiply amount of credit allowed on (federal Form 2441) by 50% and enter the result on line 14").
+    The 2023 percentage was 25% — do not use it for 2024.'
+  income_limit_2024: No separate Kansas income limit stated; tied to the federal Form 2441 credit (which has its
+    own federal limits).
+  claimed_on: Form K-40, line 14.
+  citation:
+    source: Kansas Department of Revenue, 2024 Individual Income Tax Booklet (Form K-40 instructions, ip24.pdf),
+      Line 14 (Credit for child and dependent care expenses — 50% of the federal Form 2441 credit)
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+- name: Homestead Refund (property tax / circuit-breaker relief)
+  type: refundable
+  eligibility: 'Kansas resident the entire year of 2024 who OWNED and occupied a Kansas home (homeowners only -
+    the 2024 booklet states the program "is not available to renters"), AND meets one of: (1) born before January
+    1, 1969 (i.e., 55 or older); or (2) blind or totally and permanently disabled or a disabled veteran all of 2024;
+    or (3) had a dependent child who lived with you the entire year, born before January 1, 2024 and under age 18
+    all of 2024. Related claims: K-40PT property tax relief (65+ with household income of $24,500 or less) and K-40SVR
+    (65+ or disabled veteran or their surviving spouse, household income not more than $56,450); only ONE of K-40H/K-40PT/K-40SVR
+    may be filed per household.'
+  amount: Refund is a percentage of general property tax paid, based on total household income; the maximum refund
+    is $700.
+  income_limit_2024: Total household income of $42,600 or less for 2024 (K-40H).
+  claimed_on: Form K-40H (Kansas Homestead Claim) - a separate form, not the K-40.
+  citation:
+    source: Kansas Department of Revenue, 2024 Homestead or Property Tax Refund for Homeowners booklet (k-40hbook24.pdf),
+      Homestead refund overview and qualifications ($42,600 income limit, $700 maximum refund; K-40PT $24,500; K-40SVR
+      $56,450)
+    url: https://www.ksrevenue.gov/pdf/k-40hbook24.pdf
+- name: Credit for Taxes Paid to Other States
+  type: nonrefundable
+  eligibility: Kansas residents whose Kansas adjusted gross income (KAGI, line 3 of K-40) includes income earned
+    in another state and who were required to pay income tax to that other state on that income. (Part-year residents
+    filing as nonresidents may claim a version via a separate worksheet.) No credit for income from a state with
+    no income tax. A copy of the other state's tax return must be enclosed (W-2s are not acceptable).
+  amount: 'Determined by the ''Worksheet for Residents'': the credit equals the lesser of (a) the 2024 income tax
+    actually paid to the other state (including local political subdivisions), or (b) the maximum credit allowable
+    = total Kansas tax x (other-state income included in KAGI / KAGI). The credit cannot exceed the tax liability
+    shown on the other state''s return.'
+  income_limit_2024: No income limit; the credit is limited by the formula above rather than by an income ceiling.
+  claimed_on: Form K-40, line 13; computed on the Worksheet for Residents (or Worksheet for Part-Year Residents
+    filing as Nonresidents) in the K-40 instructions.
+  citation:
+    source: Kansas Department of Revenue, 2024 Individual Income Tax Booklet (Form K-40 instructions, ip24.pdf),
+      Line 13 (Credit for taxes paid to other states) and Worksheet for Residents
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+filing_requirement:
+  note: 'A full-year Kansas resident must file a 2024 K-40 if (1) they are required to file a federal return, OR
+    (2) their Kansas adjusted gross income exceeds the total of their Kansas standard deduction and exemption allowance.
+    Minimum gross-income filing thresholds (2024 booklet table — raised by the SB 1 restructure): Single under 65
+    = $12,765 (65+ or blind = $13,615; both = $14,465); Married Filing Joint both under 65 = $26,560 (rising to
+    $29,360 with all four 65/blind conditions); Head of Household under 65 = $17,660; Married Filing Separate under
+    65 = $13,280. Nonresidents must file if they received ANY income from Kansas sources, regardless of amount.
+    File to receive a refund of any Kansas withholding regardless of income. (Source: ip24.pdf, "Who Must File a
+    Return.")'
+mailing_addresses:
+  refund_or_no_payment: 'INDIVIDUAL INCOME TAX, KANSAS DEPARTMENT OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260
+    (printed on the 2024 Form K-40 as "Mail to: Kansas Income Tax, Kansas Dept. of Revenue, PO Box 750260, Topeka,
+    KS 66699-0260")'
+  with_payment: INDIVIDUAL INCOME TAX, KANSAS DEPARTMENT OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260 (Kansas
+    uses the same PO Box for both refund/no-balance returns and returns with payment; if paying by check/money order,
+    enclose Form K-40V payment voucher — the 2024 K-40V directs payment with voucher to KANSAS INCOME TAX, KANSAS
+    DEPARTMENT OF REVENUE, PO BOX 750260, TOPEKA KS 66699-0260)
+  citation:
+    source: 2024 Form K-40 (k-4024.pdf, 'Mail to' block) and 2024 Form K-40V payment voucher (k-40v24.pdf)
+    url: https://www.ksrevenue.gov/pdf/k-4024.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Kansas Income Tax (2024 Form K-40V - 'Make your check or money order payable to "Kansas Income Tax"')
+  web_pay_url: https://www.ksrevenue.gov/taxpayment.html
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 'Kansas DOR — 2024 Individual Income Tax Booklet (ip24.pdf), Important Information: "Due date for filing
+      - April 15, 2025 is the due date for filing 2024 income tax returns."'
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+all_citations:
+- source: 'Kansas DOR — 2024 Individual Income Tax Booklet (ip24.pdf): Important Information (April 15, 2025 due
+    date; 2024 standard deductions $3,605/$8,240/$6,180/$4,120; exemption allowance $18,320 MFJ / $9,160 single-HoH-MFS
+    + $2,320 per dependent + $2,250 disabled veteran; new K-93/K-94 credits); Who Must File and 2024 filing thresholds;
+    Exemptions and Dependents instructions (incl. HoH additional $2,320 and QSS-to-HOH filing status rule); Line
+    4 standard deduction and 65-or-older/blind worksheet; Line 5 exemption allowance; Line 8 tax-table/worksheet
+    mandate; 2024 Kansas Tax Table (starting $26-$50 -> $2, no zero cliff) and 2024 Tax Computation Worksheet (MFJ
+    5.2% to $46,000, then 5.58% minus $175; Single/HoH/MFS 5.2% to $23,000, then 5.58% minus $87); Schedule S Part
+    A additions; credits (EITC 17%, food sales $125, child care 50%, taxes paid to other states)'
+  url: https://www.ksrevenue.gov/pdf/ip24.pdf
+- source: 'Kansas DOR — 2024 Form K-40 (k-4024.pdf) — second-pass verification: the form itself prints the exemption
+    boxes verbatim ("Married individuals filing a joint return ... enter ''2'' ... and enter $18,320"; "Married
+    individuals filing a separate return, individuals with a filing status of Single, or Head of Household ... enter
+    ''1'' ... and $9,160"; "If Filing Status above is Head of Household, enter $2,320"; "Dependents ... X $2,320";
+    "Disabled Veteran Personal Exemption ... X $2,250"), lines 1-8, the food sales credit lines A-H ($30,615 / x
+    $125), and the PO Box 750260 mailing block'
+  url: https://www.ksrevenue.gov/pdf/k-4024.pdf
+- source: 'Kansas DOR — 2024 Schedule S (schs24.pdf): Part A modifications to federal AGI and Part B income allocation
+    for nonresidents/part-year residents'
+  url: https://www.ksrevenue.gov/pdf/schs24.pdf
+- source: 'Kansas DOR — 2024 K-40V Individual Income Tax Payment Voucher (k-40v24.pdf): check payable to ''Kansas
+    Income Tax'', mailing address PO BOX 750260 TOPEKA KS 66699-0260'
+  url: https://www.ksrevenue.gov/pdf/k-40v24.pdf
+- source: Kansas DOR — 2024 Homestead or Property Tax Refund for Homeowners booklet (k-40hbook24.pdf)
+  url: https://www.ksrevenue.gov/pdf/k-40hbook24.pdf
+- source: Kansas DOR — Electronic Services / Tax Payment vendor list (online payment portal)
+  url: https://www.ksrevenue.gov/taxpayment.html
+unverified:
+- No explicit Kansas statutory '183-day' statutory-resident bright-line was found in the 2024 booklet; Kansas residency
+  is stated in domicile/intent-to-return terms only (the precise day-count statutory test, if any, was not confirmed
+  on a .gov page).
+- Kansas publishes a single PO Box (PO BOX 750260, TOPEKA KS 66699-0260) for both refund and with-payment returns;
+  a separate distinct ZIP/box for balance-due returns was not found, so the with-payment vs refund mailing distinction
+  could not be confirmed as different addresses — confirm at the DOR if a distinct balance-due box is expected.
+- The 2024 booklet's Exemptions and Dependents instruction zeroes only the DEPENDENTS box for a filer claimed as
+  a dependent by another taxpayer ('If you are claimed as a dependent by another taxpayer, enter "0" in the number
+  of dependents box'); unlike the 2023 booklet it prints NO rule zeroing the filing-status allowance itself for
+  dependent filers. Whether a dependent filer claims the full $9,160 allowance was not restated elsewhere in the
+  booklet — confirm at the DOR for a dependent-filer return.
+- The statutory citation (2024 Special Session Senate Bill 1) for the two-bracket 5.2%/5.58% structure, the raised
+  standard deductions, and the $9,160/$18,320/$2,320 exemption allowances was not re-derived from the session-law
+  text; all amounts are two-pass confirmed at the cited official 2024 booklet and 2024 Form K-40.
+tax:
+  citation:
+    source: 'Kansas DOR, 2024 Individual Income Tax booklet (ip24.pdf): 2024 Tax Computation Worksheet (printing the
+      two-bracket schedule: Married Filing Joint ''$0 - $46,000'' at ''5.2% (.052)'' subtracting $0, ''$46,001 and over''
+      at ''5.58% (.0558)'' subtracting $175; Single/Head of Household/Married Filing Separate ''$0 - $23,000'' at 5.2%
+      subtracting $0, ''$23,001 and over'' at 5.58% subtracting $87); 2024 Kansas Tax Table ''for taxable income to
+      $100,000''; Important Information + K-40 Instructions — Line 4 Kansas Standard Deduction ($3,605 Single / $8,240
+      Married Filing Joint / $6,180 Head of Household / $4,120 Married Filing Separate) and ''WORKSHEET - Standard Deduction
+      for People 65 or Older and/or Blind''; Exemptions and Dependents instructions ($18,320 MFJ / $9,160 single-HoH-MFS
+      filing-status allowance, $2,320 per dependent, $2,320 additional for Head of Household, $2,250 disabled veteran);
+      Line 5 exemption allowance; Line 8 tax-table/worksheet mandate; Filing Status QSS-to-HOH instruction. Second pass:
+      the 2024 Form K-40 itself (https://www.ksrevenue.gov/pdf/k-4024.pdf) prints the exemption boxes verbatim (''enter
+      "2" ... and enter $18,320''; ''enter "1" ... and $9,160''; ''If Filing Status above is Head of Household, enter
+      $2,320''; ''Dependents ... X $2,320''; ''Disabled Veteran ... X $2,250'') — both passes agree.'
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 23000, rate: 0.052}
+    - {over: 23000, but_not_over: null, rate: 0.0558}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 46000, rate: 0.052}
+    - {over: 46000, but_not_over: null, rate: 0.0558}
+    married_filing_separately:
+    - {over: 0, but_not_over: 23000, rate: 0.052}
+    - {over: 23000, but_not_over: null, rate: 0.0558}
+    head_of_household:
+    - {over: 0, but_not_over: 23000, rate: 0.052}
+    - {over: 23000, but_not_over: null, rate: 0.0558}
+  base: federal_agi
+  tax_line: '2024 Form K-40, Line 8: ''Tax (from Tax Tables or Tax Computation Schedule)''. Instructions: ''LINE 8
+    (Tax): If line 7 is $100,000 or less, use the Tax Tables ... to find the amount of your tax. If line 7 is more
+    than $100,000, you will need to use the Tax Computation Worksheet ... to compute your tax.'' Line 7 = Line 3 (KAGI)
+    minus Line 6 (Line 4 standard/itemized deduction + Line 5 exemption allowance); ''if less than zero, enter 0''.'
+  exemptions:
+    personal:
+      amount: 9160
+      note: '2024 RESTRUCTURED filing-status allowance (SB 1, 2024 Special Session), not a per-person $2,250 anymore:
+        the K-40 front prints ''Married individuals filing a joint return ... enter "2" in the box ... and enter $18,320''
+        and ''Married individuals filing a separate return, individuals with a filing status of Single, or Head of Household
+        ... enter "1" ... and $9,160''. Ship $9,160 per exemption: pass exemptions_count=1 for single/HoH/MFS and 2 for
+        MFJ (2 x $9,160 = $18,320 exactly). Flows into K-40 Line 5 via the Total Kansas Exemption Amount box — a base
+        reduction, not a credit.'
+    dependent:
+      amount: 2320
+      note: '''Dependents, enter the number of individuals you may claim as a dependent ... multiply by $2,320'' (2024
+        K-40 front; do NOT include yourself or your spouse). A filer claimed as a dependent by another taxpayer enters
+        0 in the dependents box. HEAD OF HOUSEHOLD: the form also grants HoH filers an additional $2,320 (''If Filing
+        Status above is Head of Household, enter $2,320'') — the amount equals the per-dependent allowance, so HoH filers
+        must ADD 1 to dependents_count to capture it (see notes).'
+    disabled_veteran:
+      amount: 2250
+      note: 'Disabled Veteran Personal Exemption: additional $2,250 per honorably discharged veteran certified by the
+        VA as receiving disability compensation at the 100% rate (permanent, service-sustained), 2024 K-40 front ''X $2,250''
+        box. NOT applied by calc.state_tax (its $2,250 amount differs from both shipped keys) — claim it on the form and
+        it flows into Line 5.'
+  standard_deduction:
+    single: 3605
+    married_filing_jointly: 8240
+    married_filing_separately: 4120
+    head_of_household: 6180
+  notes:
+  - '2024 STRUCTURAL CHANGE (SB 1, 2024 Special Session) — DO NOT USE 2023 FIGURES: Kansas replaced the 3.1%/5.25%/5.7%
+    three-bracket schedule with TWO brackets — 5.2% on taxable income up to $23,000 ($46,000 married filing joint)
+    and 5.58% above. Standard deductions rose to $3,605/$8,240/$6,180/$4,120 (single/MFJ/HoH/MFS). The exemption allowance
+    was restructured from $2,250 per person to $18,320 (MFJ) / $9,160 (all other statuses) PLUS $2,320 per dependent,
+    $2,320 additional for Head of Household, and $2,250 per disabled veteran.'
+  - 'Base guidance: Supply K-40 Line 3, Kansas adjusted gross income (KAGI) = Line 1 federal AGI (''as reported on
+    your federal income tax return'') plus or minus Line 2 net modifications from Schedule S Part A (line A25). Most
+    filers have no Kansas modifications, in which case Line 3 equals federal AGI. The op then subtracts the shipped
+    standard deduction (K-40 Line 4) and the exemption allowance (Line 5) to reach Line 7 taxable income, to which
+    the two-bracket schedule applies.'
+  - 'EXEMPTION COUNT CONVENTION (2024): pass exemptions_count=1 for single/MFS filers and 2 for married filing jointly
+    — the $9,160-per-count math reproduces the form''s $9,160/$18,320 filing-status allowance exactly. Pass dependents_count
+    = number of federal dependents (each $2,320; never count yourself or your spouse).'
+  - 'HEAD OF HOUSEHOLD: pass exemptions_count=1 AND add 1 to dependents_count — the form grants HoH an additional
+    $2,320 exemption (''If Filing Status above is Head of Household, enter $2,320''), which equals the per-dependent
+    amount. Example: HoH with 1 dependent -> exemptions_count=1, dependents_count=2 (= $9,160 + $4,640). Missing it
+    understates the exemption by $2,320. (For the FOOD SALES TAX CREDIT the HoH extra does NOT count — the booklet
+    notes ''Head of Household is not allowed an additional exemption for food sales tax credit.'')'
+  - 'QUALIFYING SURVIVING SPOUSE maps to HEAD OF HOUSEHOLD in Kansas, not MFJ: the 2024 booklet Filing Status instruction
+    says ''If your federal filing status is Qualifying Widow(er) with Dependent Child, check the Head of Household
+    box.'' Do not use a QSS->married_filing_jointly mapping for Kansas — compute QSS filers as head_of_household (single-status
+    brackets, $6,180 standard deduction, $9,160 allowance + the extra $2,320 via dependents_count).'
+  - 'Tax-table mandate below $100,000: K-40 Line 8 REQUIRES the Tax Tables when Line 7 taxable income is $100,000
+    or less; the Tax Computation Worksheet is used only above $100,000. The table uses $50-wide bands (computed at
+    band midpoints), so bracket math may differ by a dollar or two within a table band — the filed form must use the
+    table.'
+  - 'NO zero-tax cliff for 2024 (change from 2023): the 2024 Kansas Tax Table starts at ''$26 - $50 -> $2'' and the
+    Tax Computation Worksheet brackets start at $0 — the 2023 table''s $0 rows up to $2,500/$5,000 and the cliff they
+    created are GONE. Marginal bracket math applies from the first dollar.'
+  - 'Rounded worksheet constants (re-derived for 2024): the Tax Computation Worksheet computes tax as 5.58% x the
+    ENTIRE taxable income minus a subtraction amount. The exact continuity constants are $87.40 (Single/HoH/MFS: 5.58%
+    x 23,000 - 5.2% x 23,000 = 1,283.40 - 1,196.00) and $174.80 (MFJ, at $46,000); the printed constants are $87 and
+    $175. So above the breakpoint the filed worksheet result can be up to $0.40 HIGHER (Single/HoH/MFS) or $0.20 LOWER
+    (MFJ) than exact marginal bracket math — up to $1 difference after whole-dollar rounding.'
+  - One rate schedule covers Single, Head of Household, and Married Filing Separate ($23,000 breakpoint — the worksheet
+    prints a single combined schedule for all three); it is duplicated per status here. Married Filing Joint has its
+    own schedule with the breakpoint at exactly twice that ($46,000).
+  - 'Standard deduction for people 65 or older and/or blind is NOT modeled: the 2024 booklet worksheet replaces the
+    base amounts with $4,455/$5,305 (Single, 1/2 boxes), $8,940/$9,640/$10,340/$11,040 (MFJ, 1-4 boxes), $4,820/$5,520/$6,220/$6,920
+    (MFS, 1-4 boxes), $7,030/$7,880 (HOH, 1/2 boxes) — i.e., +$850 per checked box for Single/HOH and +$700 per box
+    for MFJ/MFS. Compute K-40 Line 4 from that worksheet in those cases.'
+  - Kansas itemized deductions (Kansas Schedule A, K-40 Line 4) may be claimed instead of the standard deduction even
+    if the federal return did not itemize — itemizers are not modeled; MFS spouses must both use the same method (if
+    one itemizes, both must).
+  - 'Claimed as a dependent by another taxpayer: the 2024 instructions zero only the DEPENDENTS box (''enter "0" in
+    the number of dependents box''); unlike 2023 they print no rule zeroing the filing-status allowance itself. Confirm
+    the dependent-filer treatment at the DOR before relying on the $9,160 allowance for such a filer (see the pack''s
+    unverified list).'
+  - 'CREDITS are not modeled by this op (they subtract from tax, not from income): the Food Sales Tax Credit is $125
+    per qualified exemption on K-40 Line 18 (nonrefundable, federal AGI $30,615 or less); the Kansas EITC is 17% of
+    the federal EITC (Lines 17/23, refundable remainder); credit for child and dependent care expenses is 50% of the
+    federal Form 2441 credit for 2024 (Line 14 — up from 25% in 2023); credit for taxes paid to other states (Line
+    13); NEW 2024 certificate credits (Workforce Retention K-93, Pregnancy Resource Act K-94) via Line 15.'
+  - 'Kansas tax on lump sum distributions is not modeled: residents add 13% of the federal Form 4972 tax on K-40 Line
+    11.'
+  - 'Nonresidents and part-year residents are not modeled: they compute the full-year tax on Line 8, then multiply
+    by the Schedule S line B23 nonresident allocation percentage (K-40 Lines 9-10) to get nonresident tax.'
+  - All K-40 money entries are whole dollars ('ENTER AMOUNTS IN WHOLE DOLLARS ONLY' printed on the 2024 form); the
+    engine's round-half-up to whole dollars matches the form's presentation.
