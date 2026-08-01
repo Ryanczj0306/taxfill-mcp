@@ -1,0 +1,330 @@
+# MN state knowledge — tax year 2024. Fetched + cited from the MN DOR (.gov),
+# authored per the 2023 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2024 Form M1
+# instruction booklet (m1-inst-24), then independently re-derived from a second official
+# document — the 2024 Form M1 itself, the DOR press release 'Minnesota income tax
+# brackets, standard deduction and dependent exemption amounts for 2024' (Dec 12, 2023),
+# the Tax Year 2024 Tax Professional Desk Reference Chart, or the 2024 Schedule
+# M1CWFC/M1ED PDFs — resolutions recorded inline where the passes differed.
+# HEADLINE 2024 CHANGES (What's new for 2024?): the RENTER'S CREDIT moved ONTO the
+# income tax return (new Schedule M1RENT with Form M1 — do NOT file Form M1PR for rent
+# paid in 2024); a new 1%-style Net Investment Income Tax applies over $1,000,000 of net
+# investment income (Schedule NIIT, M1 line 14); taxpayers may elect ADVANCE PAYMENTS of
+# the 2025 Child Tax Credit on Schedule M1CWFC; brackets indexed +5.376%; standard
+# deduction $14,575/$29,150/$21,900; dependent exemption $5,050.
+jurisdiction: states/mn
+tax_year: 2024
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Minnesota''s resident return (Form M1) starts from federal adjusted gross income: the 2024 M1 instructions
+  for Line 1 state "Line 1—Federal Adjusted Gross Income. Enter your 2024 federal adjusted gross income from line
+  11 of Form 1040 or 1040-SR, or 1040-NR." Federally treaty-exempt income is already excluded from federal AGI and
+  therefore flows through. The Minnesota additions (M1 line 2 = Schedule M1M line 10 and Schedule M1MB line 9) contain
+  NO line that adds back income exempt under a U.S. income tax treaty. The only treaty references in the 2024 M1
+  instructions are FAVORABLE to the taxpayer (a nonresident alien may claim the standard deduction if allowed by
+  a U.S. income tax treaty — repeated in the What''s New standard-deduction section and the Line 4 Standard Deduction
+  Table note). Because there is no treaty addback, treaty-exempt income is not re-taxed -> conforms.'
+citation:
+  source: 2024 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted Gross Income
+    (federal Form 1040/1040-SR/1040-NR line 11); What's new for 2024 (Renter's Credit on Schedule M1RENT, NIIT,
+    advance Child Tax Credit payments, standard deduction and $5,050 dependent exemption); residency rules (domicile
+    + 183-day/abode); due date April 15, 2025; filing-requirement chart; Tax Tables pp.30-36 and Tax Rate Schedules
+    p.37; payment options; Mail Station 0010 mailing address
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+starts_from: federal AGI (Form M1 Line 1 = federal adjusted gross income, from line 11 of federal Form 1040/1040-SR/1040-NR)
+residency:
+  summary: 'Minnesota taxes by residency. You are a full-year resident if Minnesota was your permanent home in 2024
+    (the domicile test). A statutory-resident rule also applies: if your permanent residence is in another state
+    but you were physically in Minnesota for 183 days or more during the tax year AND you or your spouse owned,
+    rented, lived in, or leased an abode (house, townhouse, condominium, apartment, mobile home, or cabin, with
+    cooking and bathing facilities, that could be lived in year-round) in Minnesota, you are considered a Minnesota
+    resident for the length of time you maintained that abode. Part-year residents are those who moved into or out
+    of Minnesota during 2024 (file if 2024 Minnesota-source income is $14,575 or more); nonresidents have
+    Minnesota-source income but are domiciled elsewhere and do not meet the 183-day/abode test. Part-year residents
+    and nonresidents compute Minnesota tax on the share of income assignable to Minnesota using Schedule M1NR (M1
+    lines 13a/13b). (See Income Tax Fact Sheets 1 Residency, 2 Part-Year Residents, 3 Nonresidents.)'
+forms:
+  resident: Form M1, Individual Income Tax
+  part_year_or_nonresident: Schedule M1NR, Nonresidents/Part-Year Residents (filed together with Form M1)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Minnesota Working Family Credit (state Earned Income Tax Credit)
+  type: refundable
+  eligibility: Full-year or part-year MN residents who earned income from a job or self-employment, were self-employed,
+    or have qualifying children (mirrors federal EIC concepts; qualifying children determined on Schedule M1DQC).
+    Combined with the Child Tax Credit on Schedule M1CWFC. ITINs may be used if you, your spouse, or your qualifying
+    children have no SSN. Part-year residents qualify based on their percentage of income assignable to Minnesota.
+  amount: '4% of the first $9,220 of earned income, plus an additional amount for up to three qualifying older children.
+    2024 maximum Working Family Credit: $369 with zero qualifying older children, $1,339 with one, $2,579 with two,
+    $2,999 with three or more. You may claim the credit for qualifying older children even with no earned income.'
+  income_limit_2024: Credit is reduced when adjusted gross income exceeds $31,090 ($36,880 if Married Filing Jointly).
+    The reduction is 12% of AGI above the limit (9% if you have a qualifying older child but no qualifying child
+    for the Child Tax Credit).
+  claimed_on: Schedule M1CWFC (with Schedule M1DQC), flows to Schedule M1REF, then Form M1 line 22
+  citation:
+    source: 2024 Schedule M1CWFC, Minnesota Child and Working Family Credits (form + instructions — 'four percent
+      of your first $9,220 of earned income', 2024 maximums $369/$1,339/$2,579/$2,999, $31,090/$36,880 phase-out,
+      12%/9% reduction), MN Department of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-24.pdf
+- name: Minnesota Child Tax Credit
+  type: refundable
+  eligibility: Full-year or part-year MN residents with one or more qualifying children under age 18 at the end
+    of 2024 (qualifying child determined on Schedule M1DQC). ITIN may be used if no SSN. NEW for 2024 filings —
+    you may ELECT to receive advance payments of your 2025 Child Tax Credit on Schedule M1CWFC (electing also makes
+    you eligible for a 2025 Minimum Credit of up to 50% of the prior-year credit; paper filers who elect mail to
+    Mail Station 0015 instead of 0010).
+  amount: $1,750 for each qualifying child under age 18, with no cap on the number of qualifying children (2024
+    Schedule M1CWFC line 8, 'Multiply line 7 by $1,750').
+  income_limit_2024: Credit is reduced when adjusted gross income exceeds $31,090 ($36,880 if Married Filing Jointly);
+    the reduction is 12% of AGI above the limit. (Desk Reference phase-out endpoints, e.g. one qualifying child fully
+    phased out at $48,744 / $54,534 MFJ when receiving the full $369 Working Family Credit.)
+  claimed_on: Schedule M1CWFC (with Schedule M1DQC), flows to Schedule M1REF (qualifying children counted on M1REF),
+    then Form M1 line 22
+  citation:
+    source: 2024 Schedule M1CWFC, Minnesota Child and Working Family Credits ($1,750 per qualifying child; advance-payment
+      election; phase-out) and Tax Year 2024 Tax Professional Desk Reference Chart (phase-out table), MN Department
+      of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-24.pdf
+- name: Minnesota Child and Dependent Care Credit
+  type: refundable
+  eligibility: MN taxpayers who paid someone (other than a dependent child or stepchild younger than 19) to care
+    for a qualifying person while you (and your spouse if filing jointly) were working or looking for work — qualifying
+    person and expenses are the same as for the federal child and dependent care credit. Also available to licensed
+    family daycare operators caring for their own dependent child under age six, and for a child born in 2024 if
+    you did not participate in a pre-tax dependent care assistance program. Refundable, unlike the federal credit.
+  amount: A percentage of qualifying care expenses (federal Form 2441 mechanics). Computed on Schedule M1CD.
+  income_limit_2024: Federal adjusted gross income must be less than $74,410 with one qualifying person or less
+    than $86,410 with two or more qualifying persons (2024 M1 instructions, Schedule M1REF section).
+  claimed_on: Schedule M1CD, flows to Schedule M1REF (number of qualifying persons on M1REF line 1a), then Form
+    M1 line 22
+  citation:
+    source: 2024 Minnesota Individual Income Tax Return (M1) Instructions, 'Child and Dependent Care Credit (Schedule
+      M1CD)' — $74,410 / $86,410 2024 AGI limits, MN Department of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+- name: Renter's Credit (NEW on the income tax return for 2024)
+  type: refundable
+  eligibility: 'Minnesota residents who paid rent in 2024 on a building where property taxes (or payments in lieu)
+    were payable and who received a Certificate of Rent Paid (CRP). HEADLINE 2024 CHANGE: beginning with rent paid
+    in tax year 2024, renters claim this credit on Schedule M1RENT WITH the Form M1 income tax return — renters
+    should NOT complete Form M1PR (which remains only for homeowners'' Homestead Credit Refund). CRP information
+    must be provided with the return.'
+  amount: Based on household income and rent constituting property taxes, using the Renter's Credit Tables printed
+    in the 2024 M1 instruction booklet (pp.25-29). The maximum credit is $2,640 for 2024.
+  income_limit_2024: Household income must be less than $75,390 to qualify.
+  claimed_on: Schedule M1RENT, Renter's Credit, flows to Schedule M1REF, then Form M1 line 22
+  citation:
+    source: 2024 Minnesota Individual Income Tax Return (M1) Instructions — What's new for 2024 ('Renter's Credit
+      ... complete Schedule M1RENT ... Renters should not complete Form M1PR') and Line 22 section ('household income
+      was less than $75,390 ... The maximum credit is $2,640'), Renter's Credit Tables pp.25-29, MN Department of
+      Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+- name: K-12 Education Credit
+  type: refundable
+  eligibility: MN parents/guardians who paid education-related expenses in 2024 for a qualifying child in grades
+    K-12 (a qualifying child is the same as for the federal Earned Income Credit). Qualifying expenses include tutoring
+    by a qualified instructor, instructional materials, music lessons, and certain educational services (private
+    school tuition does NOT qualify for the credit — it is a Schedule M1M subtraction only). Refundable.
+  amount: 75% of qualifying K-12 education expenses (2024 Schedule M1ED line 11, 'Multiply line 10 by 75% (.75)'),
+    capped at $1,500 per qualifying child (line 12 multiplies the number of K-12 qualifying children by $1,500);
+    a phase-out worksheet applies if AGI is more than $73,760.
+  income_limit_2024: 'AGI limit varies by number of K-12 qualifying children: $79,760 (1 or 2 children), $82,760
+    (3), $85,760 (4), $88,760 (5), $91,760 plus $3,000 for each additional child (6 or more). Above the limit you
+    do not qualify (but may use the K-12 Education Subtraction instead).'
+  claimed_on: Schedule M1ED, flows to Schedule M1REF, then Form M1 line 22
+  citation:
+    source: 2024 Schedule M1ED, K-12 Education Credit (75% / $1,500-per-child / $73,760 worksheet trigger) and 2024
+      Form M1 instructions K-12 Education Credit AGI-limit table ($79,760 ... $91,760+$3,000), MN Department of
+      Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-02/m1ed-24.pdf
+filing_requirement:
+  note: 'Full-year residents must file a 2024 Form M1 if required to file a federal return, or if income exceeds
+    the filing-requirement chart amount for their filing status/age (Single born on/after Jan 2, 1960: $14,575;
+    born before: $16,525; Married Filing Jointly both born on/after Jan 2, 1960: $29,150; one spouse older: $30,700;
+    both older: $32,250; Head of Household: $21,900 / $23,850; Qualifying Surviving Spouse: $29,150 / $30,700;
+    Married Filing Separately any age: $5). Part-year residents and nonresidents: add (1) all income while a MN
+    resident plus (2) MN-source income while a nonresident; if the total is $14,575 or more they must file Form
+    M1 with Schedule M1NR. If not required to file, you can still file to claim refundable credits (K-12 Education,
+    Child and Working Family, Child and Dependent Care, Parents of Stillborn Children) or a withholding refund.
+    Source: 2024 Form M1 instructions, Filing Requirements (pp.6-7).'
+mailing_addresses:
+  refund_or_no_payment: Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010
+  with_payment: 'There is NO separate payment-only mailing address. The Form M1 return is mailed to Minnesota Department
+    of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010. Payment by check/money order is made
+    separately using a voucher created with the department''s Payment Voucher System ("If you are filing a paper
+    return, send the voucher and your check or money order separately from your return"). Special case: if electing
+    advance payments of the 2025 child tax credit on Schedule M1CWFC, the paper return goes to Mail Station 0015,
+    St. Paul, MN 55146-0015.'
+  citation:
+    source: 2024 Minnesota Individual Income Tax Return (M1) Instructions — Filing Instructions ('mail your forms
+      to Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010'; Mail Station
+      0015 for the advance-CTC election) and Payment Options p.21 (Payment Voucher System; send voucher and check
+      separately from the return)
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+payment:
+  check_payee: Check payments are made through the MN DOR Payment Voucher System (go to www.revenue.state.mn.us,
+    select Make a Payment under Individuals, then Check or Money Order, and create a voucher; the check authorizes
+    a one-time electronic fund transfer). Exact check PAYEE wording is not printed in the 2024 M1 booklet — see
+    unverified.
+  web_pay_url: https://www.revenue.state.mn.us/make-payment
+deadlines:
+  filing_due_date: '2025-04-15'
+  citation:
+    source: 2024 Minnesota Individual Income Tax Return (M1) Instructions — 'Your 2024 Minnesota income tax return
+      should be electronically filed, postmarked, or dropped off by April 15, 2025. Your tax payment is due in full
+      by April 15, 2025, even if you file your return later. ... To avoid a late filing penalty, file your return
+      by October 15, 2025.'
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+all_citations:
+- source: 2024 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted Gross Income;
+    What's new for 2024 (Renter's Credit / Schedule M1RENT, Net Investment Income Tax / Schedule NIIT, advance Child
+    Tax Credit payments, standard deduction $14,575/$29,150/$21,900, dependent exemption $5,050 with phase-out
+    thresholds); Filing Requirements chart; residency (domicile + 183-day/abode); Line 4 Standard Deduction Table
+    and Worksheets A/B; Worksheet for Line 5 — Dependent Exemptions; Line 10 Tax From Table; Tax Tables pp.30-36;
+    Tax Rate Schedules p.37; Renter's Credit Tables pp.25-29; April 15, 2025 due date; Mail Station 0010; Payment
+    Voucher System
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+- source: 2024 Form M1, Individual Income Tax (the form itself) — lines 1-10 structure (line 4 itemized/standard
+    deduction, line 5 exemptions from Schedule M1DQC, line 9 Minnesota taxable income 'If zero or less, leave blank',
+    line 10 tax from the table or schedules)
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-24.pdf
+- source: MN DOR press release, 'Minnesota income tax brackets, standard deduction and dependent exemption amounts
+    for 2024' (Dec 12, 2023) — second pass on all four 2024 bracket schedules (indexed +5.376%, rounded to the nearest
+    $10; married-separate brackets are half the married-joint amounts), the $14,575/$29,150/$21,900 standard deductions,
+    and the $5,050 dependent exemption
+  url: https://www.revenue.state.mn.us/press-release/2023-12-12/minnesota-income-tax-brackets-standard-deduction-and-dependent-exemption
+- source: Tax Year 2024 Minnesota Revenue Tax Professional Desk Reference Chart — third pass on the 2024 brackets,
+    standard deduction (incl. additional age-65/blind amounts $1,950/$1,550), $5,050 dependent exemption, $232,500/$116,250
+    limitation thresholds, and credit income limits (WFC $31,090/$36,880; M1CD $86,410; M1ED $79,760)
+  url: https://www.revenue.state.mn.us/sites/default/files/2025-01/tax-year-2024-tax-professional-desk-reference-chart.pdf
+- source: 2024 Schedule M1CWFC, Minnesota Child and Working Family Credits (form + instructions) — 4% of first $9,220,
+    maximums $369/$1,339/$2,579/$2,999, $1,750 Child Tax Credit, $31,090/$36,880 phase-out, advance-payment election
+  url: https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-24.pdf
+- source: 2024 Schedule M1ED, K-12 Education Credit — 75% of expenses, $1,500 per qualifying child, $73,760 phase-out
+    worksheet trigger
+  url: https://www.revenue.state.mn.us/sites/default/files/2025-02/m1ed-24.pdf
+- source: Filing a Paper Income Tax Return / Make a Payment — mailing address and Payment Voucher System
+  url: https://www.revenue.state.mn.us/make-payment
+unverified:
+- Exact check PAYEE wording — the 2024 M1 booklet instructs payment via the Payment Voucher System (voucher + check
+  mailed separately from the return) and does not print a 'make your check payable to ...' line; the payee 'Minnesota
+  Department of Revenue' is the historical convention. Confirm via the Payment Voucher System when paying.
+- The with-payment voucher's mailing destination is printed on the voucher itself ('send the voucher and your check
+  or money order separately from your return'); it was not captured verbatim.
+- The 2023-12-12 press release noted the 2024 standard deduction amounts 'assume a legislative solution in 2024 to
+  a drafting error in the 2023 tax bill'; the final 2024 M1 booklet and the Desk Reference both print $14,575/$29,150/$21,900,
+  so the fix is reflected in the filing-season documents — but the session-law citation for the fix was not pulled.
+- Renter's Credit table mechanics (Schedule M1RENT line-by-line) were not parsed; the $2,640 maximum and $75,390
+  household-income limit are from the M1 booklet's Line 22 credit summary.
+tax:
+  citation:
+    source: '2024 Minnesota Individual Income Tax Return (M1) Instructions, Minnesota Department of Revenue — Tax Rate
+      Schedules, p.37 (Single / Married filing jointly or qualifying widow(er) / Married filing separately / Head of
+      household; ''You must use these schedules if line 9 of Form M1 is $90,000 or more''); 2024 Tax Tables pp.30-36
+      with mandate ''If line 9 of Form M1 is less than $90,000, you must use the tax table on pages 30 through 36'';
+      Standard Deduction Table for Line 4 ($14,575/$29,150/$14,575/$21,900); Worksheets A & B for Line 4 - Standard
+      Deduction Limitation ($232,500/$116,250 thresholds); Worksheet for Line 5 - Dependent Exemptions ($5,050); Line
+      10 - Tax From Table; 2024 Form M1 lines 1-10. Second pass: MN DOR press release ''Minnesota income tax brackets,
+      standard deduction and dependent exemption amounts for 2024'' (Dec 12, 2023, indexed +5.376%, https://www.revenue.state.mn.us/press-release/2023-12-12/minnesota-income-tax-brackets-standard-deduction-and-dependent-exemption)
+      and the Tax Year 2024 Tax Professional Desk Reference Chart (https://www.revenue.state.mn.us/sites/default/files/2025-01/tax-year-2024-tax-professional-desk-reference-chart.pdf)
+      — all three sources agree on every 2024 boundary, rate, standard deduction, and the $5,050 dependent exemption.'
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 31690, rate: 0.0535}
+    - {over: 31690, but_not_over: 104090, rate: 0.068}
+    - {over: 104090, but_not_over: 193240, rate: 0.0785}
+    - {over: 193240, but_not_over: null, rate: 0.0985}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 46330, rate: 0.0535}
+    - {over: 46330, but_not_over: 184040, rate: 0.068}
+    - {over: 184040, but_not_over: 321450, rate: 0.0785}
+    - {over: 321450, but_not_over: null, rate: 0.0985}
+    married_filing_separately:
+    - {over: 0, but_not_over: 23165, rate: 0.0535}
+    - {over: 23165, but_not_over: 92020, rate: 0.068}
+    - {over: 92020, but_not_over: 160725, rate: 0.0785}
+    - {over: 160725, but_not_over: null, rate: 0.0985}
+    head_of_household:
+    - {over: 0, but_not_over: 39010, rate: 0.0535}
+    - {over: 39010, but_not_over: 156760, rate: 0.068}
+    - {over: 156760, but_not_over: 256880, rate: 0.0785}
+    - {over: 256880, but_not_over: null, rate: 0.0985}
+  base: federal_agi
+  tax_line: 'Form M1 line 10: "Tax from the table or schedules in the Form M1 instructions". Instructions, Line 10
+    — Tax From Table: "Using the amount on line 9, find the tax amount in the column under your filing status." Tax
+    Rate Schedules, p.37: "You must use these schedules if line 9 of Form M1 is $90,000 or more... If line 9 of Form
+    M1 is less than $90,000, you must use the tax table on pages 30 through 36."'
+  exemptions:
+    dependent:
+      amount: 5050
+      note: 'M1 line 5 dependent exemption, a BASE reduction: Worksheet for Line 5 - Dependent Exemptions, step 2 ''Enter
+        $5,050'' (2024, up from $4,800), multiplied by the number of dependents claimed on Schedule M1DQC. Phases out
+        at high AGI (see notes; phase-out not modeled). Minnesota has NO taxpayer/spouse personal exemption — line 5 is
+        dependents only.'
+  standard_deduction:
+    single: 14575
+    married_filing_jointly: 29150
+    married_filing_separately: 14575
+    head_of_household: 21900
+  notes:
+  - 'Base guidance: Supply Form M1 line 1 = federal adjusted gross income (federal Form 1040/1040-SR/1040-NR line
+    11), adjusted for Minnesota items if any apply: ADD M1 line 2 additions (Schedule M1M line 10 and Schedule M1MB
+    line 9) and SUBTRACT M1 line 6 (state income tax refund from federal Schedule 1 line 1) and M1 line 7 subtractions
+    (Schedule M1M line 35 and Schedule M1MB line 21). The op then subtracts the shipped per-status standard deduction
+    (M1 line 4) and $5,050 per dependent (M1 line 5) to reach M1 line 9, Minnesota taxable income, to which the rate
+    schedule applies. Pass exemptions_count = 0 (Minnesota has no taxpayer/spouse personal exemption) and dependents_count
+    = number of dependents claimed on Schedule M1DQC.'
+  - 'Adjudication note (two-pass): the 2024 schedules were drafted from the M1 booklet''s p.37 Tax Rate Schedules
+    and re-verified digit-by-digit against the DOR''s Dec 12, 2023 indexing press release AND the Tax Year 2024 Tax
+    Professional Desk Reference Chart — all three agree on every boundary (single 31,690/104,090/193,240; MFJ 46,330/184,040/321,450;
+    MFS 23,165/92,020/160,725 — exactly half of MFJ; HoH 39,010/156,760/256,880), the four rates (5.35%/6.80%/7.85%/9.85%,
+    unchanged from 2023), the standard deduction ($14,575/$29,150/$14,575/$21,900), and the $5,050 dependent exemption.
+    2024 indexing factor: +5.376%, rounded to the nearest $10.'
+  - 'TAX TABLE MANDATE below $90,000: ''If line 9 of Form M1 is less than $90,000, you must use the tax table on pages
+    30 through 36'' (2024 M1 instructions, p.37); the rate schedules are only for line 9 of $90,000 or more. The table
+    is built on $100-band midpoints chained from the printed schedule constants, so bracket math may differ by a few
+    dollars within table bands — the filed form must use the table. (Spot-checked: table row $83,300-$83,400 prints
+    5,208 / 4,996 / 5,332 / 5,102 for Single/MFJ/MFS/HoH — all four equal midpoint bracket math at $83,350.)'
+  - 'Qualifying Surviving Spouse: the p.37 rate-schedule column is titled ''Married filing jointly or qualifying widow(er)''
+    — QSS uses the MFJ schedule exactly as mapped here, and the QSS standard deduction ($29,150 with 0 age/blind boxes)
+    equals MFJ.'
+  - 'Minnesota has NO personal exemption for the taxpayer or spouse: Form M1 line 5 is for DEPENDENTS only ($5,050
+    per dependent from Schedule M1DQC). Callers must pass exemptions_count = 0 and put dependents in dependents_count.'
+  - 'Dependent-exemption phase-out NOT modeled (Worksheet for Line 5): the $5,050-per-dependent total is reduced by
+    2% for each $2,500 ($1,250 MFS) that M1 line 1 AGI exceeds $232,550 Single / $290,700 Head of Household / $348,850
+    MFJ-or-Surviving-Spouse / $174,425 MFS, and is $0 once the excess is more than $122,500 ($61,250 MFS).'
+  - 'Standard-deduction limitation NOT modeled (Worksheets A & B for Line 4): if M1 line 1 AGI exceeds $232,500 ($116,250
+    MFS), the deduction is reduced by the LESSER of 80% of the deduction or [3% of the excess over $232,500/$116,250
+    (capped: enter $88,850, or $44,425 MFS, if AGI exceeds $321,350/$160,675) + 10% of the excess over $321,350 ($160,675
+    MFS)]; if AGI exceeds $1,053,750, the deduction is reduced by 80% (Worksheet B).'
+  - 'Additional standard deduction for age 65+/blind NOT modeled (Standard Deduction Table for Line 4): +$1,950 per
+    checked box for Single and Head of Household (up to 2 boxes); +$1,550 per checked box for Married Filing Jointly
+    (up to 4), Married Filing Separately (up to 4), and Qualified Surviving Spouse (up to 2). Born before January
+    2, 1960 counts as 65 or older. Enter it on the form''s line 4.'
+  - 'Standard-deduction gates NOT modeled: Married Filing Separately gets NO standard deduction if the spouse claims
+    itemized deductions (''Not allowed'' row); nonresident aliens may claim it only if allowed by a U.S. income tax
+    treaty; a filer claimable as another''s dependent uses the Worksheet for Line 4 - Dependent Standard Deduction
+    (greater of $1,300 or earned income + $400, capped at $14,575, plus $1,950/$1,550 age/blind additions) — itemizers
+    use Schedule M1SA instead.'
+  - 'Printed rate-schedule constants check: every ''$X +'' constant equals the exact cumulative sum of the prior brackets
+    rounded to the cent (single 1,695.42/6,618.62 vs exact 1,695.415/6,618.615; MFJ 2,478.66/11,842.94 vs exact 2,478.655/11,842.935;
+    MFS 1,239.33/5,921.47 vs exact 1,239.3275/5,921.4675; HoH 2,087.04/10,094.04 vs exact 2,087.035/10,094.035), EXCEPT
+    the top-bracket constants, which chain the rounded prior constant: single $13,616.90 vs $13,616.89 exact, MFJ
+    $22,629.63 vs $22,629.62, HoH $17,953.46 vs $17,953.455 (MFS $11,314.81 is exact). Maximum divergence from pure
+    marginal math: $0.01.'
+  - 'NOT modeled — amounts added after line 10: Minnesota Alternative Minimum Tax (Schedule M1MT, M1 line 11; can
+    apply even without federal AMT) and M1 line 14 other taxes: Schedule M1HOME first-time-homebuyer recapture, Schedule
+    M1529 education-savings-account recapture, Schedule M1LS tax on lump-sum distributions, and — NEW for 2024 — the
+    Net Investment Income Tax (Schedule NIIT) on individuals with net investment income greater than $1,000,000.'
+  - 'Part-year residents and nonresidents: tax is prorated by the Minnesota-source percentage on Schedule M1NR (M1
+    lines 13/13a/13b) — NOT modeled; this pack computes full-year-resident tax.'
+  - M1 line 9 (Minnesota taxable income) = line 3 (federal AGI + line 2 additions) - line 4 (standard/itemized deduction)
+    - line 5 (dependent exemptions) - line 6 (taxable state income tax refund) - line 7 (M1M/M1MB subtractions). If
+    additions, subtractions, or a taxable state refund apply, adjust the supplied taxable_base per base_guidance.
+    The form says 'If zero or less, leave blank' — the engine's max(0, ...) floor matches.
+  - 'Rounding: the M1 instructions say ''Round the dollar amounts to the nearest dollar. For example: 129.49 becomes
+    129, and 129.50 becomes 130'' (Getting Started) — the engine''s round-half-up to whole dollars matches.'
