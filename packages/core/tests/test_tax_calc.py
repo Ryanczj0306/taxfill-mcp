@@ -2628,6 +2628,9 @@ CROSS_YEAR_GOLDENS = [
     ('nc', 2025, 53_350, 'married_filing_separately', 0, 0, 40_600, 1_726),  # 53,350 - 12,750 MFS SD = 40,600 x 4.25% = 1,725.50 -> 1,726 (.50 tie)
     ('az', 2025, 65_750, 'single', 0, 0, 50_000, 1_250),  # 65,750 - 15,750 OBBBA-tracking SD = 50,000 x 2.5% = 1,250
     ('co', 2025, 49_950, 'single', 0, 0, 49_950, 2_198),  # rate BACK to 4.4%: reproduces the printed 2025 table row $49,900-$50,000 -> $2,198
+    ('ky', 2025, 103_270, 'married_filing_jointly', 0, 0, 100_000, 4_000),  # ONE $3,270 SD per return (never doubled) x 4% = 4,000
+    ('ut', 2025, 45_100, 'single', 0, 0, 45_100, 2_030),  # HB 106 cut 4.55 -> 4.5%: 45,100 x 4.5% = 2,029.50 -> 2,030 (.50 tie); credit state, no SD
+    ('ma', 2025, 60_000, 'head_of_household', 0, 2, 51_200, 2_560),  # 60,000 - 6,800 line 2a HoH exemption - 2 x 1,000 dependents = 51,200 x 5% = 2,560
 ]
 
 

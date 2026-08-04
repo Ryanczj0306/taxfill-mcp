@@ -1,0 +1,332 @@
+# MA state knowledge — tax year 2025. Fetched + cited from the MA DOR (.gov),
+# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2025 Form 1
+# instructions, then independently re-checked against the 2025 Form 1 blank itself
+# (which prints the $4,400/$6,800/$8,800 line 2a exemptions, the $1,000/$1,700/$2,200
+# line 2b-2d multipliers, the line 22 '$24,000 / multiply by .05' tax line, and the
+# line 28b 4% surtax line). mass.gov sits behind Akamai and 403s non-browser fetchers,
+# so BOTH documents were recovered from the Wayback Machine's 200-status captures of the
+# SAME official mass.gov URLs (instructions capture 20260425134124; Form 1 capture
+# 20260420000228) — the identical provenance path the shipped MA form pack used.
+# HEADLINE 2025 CHANGES (Major 2025 Tax Changes): (1) the 4% surtax threshold indexed
+# $1,053,750 -> $1,083,150; (2) Senior Circuit Breaker maximum rose $2,730 -> $2,820
+# (income limits $75,000/$94,000/$112,000; valuation cap $1,298,000); (3) the federal
+# earned-income ceiling referenced for the MA EITC rose $66,819 -> $68,675 (the MA credit
+# stays 40% of the federal); (4) a NEW real-estate-closing withholding regime for
+# non-resident sellers (830 CMR 62B.2.4) applies to closings on or after November 1, 2025;
+# (5) a new Climatetech Tax Incentive Program plus other new/revised credits (TIR 24-16,
+# TIR 25-5); (6) employer-provided parking and combined transit-pass/commuter-highway-
+# vehicle monthly exclusions are $325 each. UNCHANGED for 2025: the 5.0% Part B rate, the
+# 8.5%/12% Schedule B classes, the line 2a-2d exemption amounts, the $24,000 tax-table
+# cutoff, the $8,000 filing threshold, the No Tax Status / Limited Income Credit
+# thresholds, and the $440 Child and Family Tax Credit.
+jurisdiction: states/ma
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Net result: treaty-exempt income is NOT re-taxed by MA, so conforms = true — but the mechanism is
+  an EXPLICIT DEDUCTION, not passive federal-AGI conformity. Important nuance: MA''s Form 1 does NOT start from federal
+  AGI. It builds Massachusetts gross income from its own categories. Line 3 (Wages) is taken from W-2 state wages
+  (Box 16), and Massachusetts gross income can include items not subject to U.S. income tax. So treaty-exempt income
+  that an employer reports in state wages would otherwise land in MA income. MA neutralizes this with the dedicated
+  Schedule Y, Line 4 deduction — for 2025 titled ''Amounts Excludible Under MGL Ch 41, § 111F or U.S. Tax Treaty
+  Included in Form 1, Line 3'' and SPLIT INTO TWO SUB-LINES: ''Massachusetts allows an exclusion from income of amounts
+  received by a firefighter or police officer incapacitated in the line of duty, per MGL ch 41, § 111F, and an exclusion
+  from income of amounts received by a qualifying student or taxpayer exempt under a U.S. tax treaty... If you were
+  a qualifying student or a taxpayer with income exempt under a United States tax treaty, enter any excludible amount
+  of income received that was exempt under such tax treaty in line 4b'' (the § 111F amount goes on line 4a). Because
+  Schedule Y reduces income, the treaty-exempt amount is deducted back out and is not taxed. PRACTICAL NOTE: unlike
+  a pure federal-AGI conformity state where treaty income flows out automatically, in MA the taxpayer must affirmatively
+  claim the Schedule Y, Line 4b deduction — if treaty wages appear in W-2 Box 16 / Form 1 line 3 and the deduction
+  is not claimed, the income would be taxed. Source: 2025 Form 1 Instructions, Schedule Y Line 4 (income exempt under
+  a U.S. tax treaty) and Line 3 (Wages, Salaries, Tips).'
+citation:
+  source: 2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker
+    maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing
+    withholding under 830 CMR 62B.2.4; Climatetech Tax Incentive Program; TIR 24-16 / TIR 25-5 credit changes; $325
+    parking and transit exclusions), residency definitions (183-day statutory-resident test), $8,000 filing threshold,
+    MA gross income definition, Line 3 wages from W-2 state wages, Line 22 tax on 5.0% income, Schedule Y Line 4b
+    U.S. tax treaty deduction, Filing Due Dates (April 15, 2026), mailing PO Box 7000 / 7003, check payable to the
+    Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture
+    of the official mass.gov URL (mass.gov 403s non-browser fetchers).
+  url: https://www.mass.gov/doc/2025-form-1-instructions/download
+starts_from: 'federal wages (W-2 state wages, Box 16) — NOT federal AGI. MA Form 1 builds Massachusetts gross income
+  from its own income categories (5.0% income incl. wages from W-2; interest/dividends on Schedule B; capital gains
+  on Schedule D); it does not begin from a single federal AGI line. The header boxes a/b (total federal income from
+  U.S. Form 1040, line 9; total federal AGI from U.S. Form 1040, line 11a) are informational.'
+residency:
+  summary: 'MA recognizes four statuses (MGL ch 62). FULL-YEAR RESIDENT: "You are a full-year resident if your residence
+    (domicile) is in Massachusetts or if you maintain a permanent place of abode in Massachusetts and during the year
+    spend more than 183 days, in the aggregate, in the state" — file Form 1. "The words residence and domicile are
+    used to denote the place where you have your permanent home and to which, whenever you are absent, you have the
+    intention of returning." NONRESIDENT: not a MA resident but received Massachusetts-source income (e.g., from a
+    MA job) — file Form 1-NR/PY. PART-YEAR RESIDENT: you moved into MA or terminated MA residency during the year;
+    income/deductions/exemptions are apportioned — file Form 1-NR/PY. NONRESIDENT AND PART-YEAR RESIDENT: meet both
+    criteria; file Form 1-NR/PY and complete Schedule R/NR (Resident/Nonresident Worksheet). MILITARY: nonresident
+    military personnel stationed in MA may be subject to MA tax and should file Form 1-NR/PY if they earn income from
+    outside military sources; the Military Spouses Residency Relief Act (P.L. 111-97) prevents a servicemember''s spouse
+    from gaining/losing MA domicile solely by accompanying the servicemember, and the Veterans Auto and Education Improvement
+    Act (P.L. 117-333, as of January 5, 2023) lets a servicemember and spouse elect as residence/domicile for each
+    taxable year of the marriage either spouse''s residence/domicile or the servicemember''s permanent duty station.
+    JOINT RETURNS: a joint Form 1 is generally not allowed unless both spouses were Massachusetts residents for the
+    same portion of 2025; NEW for 2025 there is an express exemption where one spouse has no MA filing requirement
+    because their Massachusetts gross income does not exceed $8,000 — that couple may choose married-filing-separate
+    status by filling in the "if joint filing exemption for spouses with Massachusetts gross income under $8,000" oval
+    on Form 1.'
+forms:
+  resident: Form 1 — Massachusetts Resident Income Tax Return (2025)
+  part_year_or_nonresident: Form 1-NR/PY — Massachusetts Nonresident or Part-Year Resident Income Tax Return (2025).
+    Taxpayers who are both nonresident and part-year resident also complete Schedule R/NR (Resident/Nonresident Worksheet).
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Massachusetts Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: Massachusetts residents (full- or part-year) who qualify for and claim the federal Earned Income Credit
+    — earned income under $68,675 for 2025 (the maximum may be lower depending on filing status and number of eligible
+    children). MA adopts the federal EIC expansion rules; a married person who is a victim of domestic abuse, living
+    apart from their spouse at the time of filing and unable to file jointly, may file married filing separately and
+    still claim the MA EIC (keep records such as a protective/restraining order or police report). Part-year residents
+    prorate the credit.
+  amount: A credit equal to 40% of the federal earned income credit claimed on the taxpayer's federal return. Refundable
+    to the extent the credit exceeds total income tax payable. Worksheet A filers use Worksheet A line 6 and Worksheet
+    B filers use Worksheet B line 11 for the "Amount from U.S. return" entry (see TIR 17-10).
+  income_limit_2025: No separate MA income limit; tied to the federal EITC income/AGI limits for 2025 (federal earned-income
+    ceiling referenced as $68,675, up from $66,819 for 2024).
+  claimed_on: 2025 Form 1 (Resident), line 43 (enter qualifying children in 43a, the federal EIC amount in 43b, multiply
+    by 40%); Form 1-NR/PY for nonresidents/part-year residents.
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR), Line 43 Earned Income Credit — credit equal to 40% of the federal amount;
+      $68,675 earned-income ceiling; domestic-abuse married-filing-separately exception; TIR 17-10
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+- name: Senior Circuit Breaker Tax Credit (Real Estate Tax Credit for persons age 65+)
+  type: refundable
+  eligibility: Taxpayer must be age 65 or older, own or rent residential property located in Massachusetts and occupy
+    it as their principal residence, and meet the income and assessed-valuation limits. Married taxpayers generally
+    must file jointly to claim.
+  amount: 'For homeowners: the amount by which 2025 real estate tax payments exceed 10% of total income. For renters:
+    the amount by which 25% of rent paid for the principal residence exceeds 10% of total income. Either way the credit
+    cannot exceed the 2025 maximum of $2,820 (up from $2,730 for 2024). Homeowners enter Schedule CB line 17; renters
+    line 21. Refundable — any excess over total income tax payable is refunded without interest.'
+  income_limit_2025: '2025 total income may not exceed $75,000 (single filer who is not a head of household), $94,000
+    (head of household), or $112,000 (joint filer). Homeowners: the assessed value of the principal residence for
+    tax year 2025 must not exceed $1,298,000. Total income and maximum credit thresholds are adjusted annually for
+    inflation.'
+  claimed_on: 2025 Form 1, line 44 (complete and enclose Schedule CB, Circuit Breaker Credit); Form 1-NR/PY for part-year
+    residents.
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR) — Circuit Breaker Tax Credit (maximum $2,820; income limits $75,000/$94,000/$112,000;
+      valuation cap $1,298,000) and Line 44 instructions
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+- name: Child and Family Tax Credit
+  type: refundable
+  eligibility: 'Resident (or part-year resident for the period of residency) who may claim the credit for an individual
+    who is (1) under the age of 13 and who qualifies for exemption as a dependent for federal purposes; (2) a dependent,
+    or the taxpayer''s spouse, who is physically or mentally incapable of taking care of himself or herself and principally
+    lives with the taxpayer; or (3) a dependent who is age 65 or over or disabled. For tax years beginning on or after
+    January 1, 2024 a noncustodial parent may claim the credit with respect to a child dependent age 13 or older who
+    is physically or mentally incapable of caring for himself or herself. Cannot be claimed by a full-year nonresident.'
+  amount: $440 for each qualifying individual, with no cap on the number of qualifying individuals — "Enter the number
+    of qualified dependents in line 46a and multiply that amount by $440." (Unchanged from 2024.)
+  income_limit_2025: No income limit specified.
+  claimed_on: 2025 Form 1, line 46 (count in 46a x $440); Schedule DI for dependent information; Form 1-NR/PY for
+    nonresidents/part-year residents.
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR), Line 46 Child and Family Tax Credit ($440 per qualifying individual;
+      noncustodial-parent rule for tax years beginning on or after January 1, 2024)
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+- name: Limited Income Credit (with No Tax Status)
+  type: nonrefundable
+  eligibility: 'Low-income MA filers whose Massachusetts AGI exceeds the No Tax Status threshold but falls within
+    the Limited Income Credit range. 2025 No Tax Status: MA AGI $8,000 or less (single); $14,400 or less plus $1,000
+    per dependent (head of household); $16,400 or less plus $1,000 per dependent (married filing jointly). 2025 Limited
+    Income Credit range: MA AGI between $8,000 and $14,000 (single); between $14,400 and $25,200 plus $1,750 per dependent
+    (head of household); between $16,400 and $28,700 plus $1,750 per dependent (married filing jointly). Married filing
+    separately qualifies for neither. The Limited Income Credit is an alternative tax calculation, computed via the
+    Massachusetts AGI Worksheet / Line 29 worksheet in the Form 1 instructions. (Thresholds unchanged from 2024.)'
+  claimed_on: 2025 Form 1 — No Tax Status oval on line 27 (enter 0 in line 28); Limited Income Credit on line 29;
+    Schedule NTS-L-NR/PY for nonresidents and part-year residents.
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR) — Massachusetts AGI worksheet, No Tax Status and Limited Income Credit
+      thresholds and the Line 27/29 instructions
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+filing_requirement:
+  note: 'RESIDENT: "If you were a resident of Massachusetts and your gross income was more than $8,000 — whether received
+    from sources inside or outside of Massachusetts — you are required to file a Massachusetts income tax return. If
+    your gross income was $8,000 or less, you do not need to file a return." NONRESIDENT: "If you did not live in
+    Massachusetts but received Massachusetts source income in excess of your personal exemption amount multiplied by
+    the ratio of your Massachusetts income to your total income, you must file as a nonresident on the Nonresident/Part-Year
+    Resident Income Tax Return, Form 1-NR/PY." PART-YEAR RESIDENT: if during the taxable year you moved to Massachusetts
+    or terminated MA residency, and gross income was more than $8,000 (from sources inside or outside MA), file as
+    a part-year resident on Form 1-NR/PY. A joint Form 1 is generally not allowed unless both spouses were MA residents
+    for the same portion of 2025; where one spouse''s Massachusetts gross income does not exceed $8,000 the couple
+    may elect married filing separate status via the Form 1 "joint filing exemption" oval. Source: 2025 Form 1 Instructions
+    (Filing Your Massachusetts Return; Major 2025 Tax Changes).'
+mailing_addresses:
+  refund_or_no_payment: Massachusetts Department of Revenue, PO Box 7000, Boston, MA 02204 (Form 1, refunds / no payments
+    — also the correct address for 2D barcode forms)
+  with_payment: Massachusetts Department of Revenue, PO Box 7003, Boston, MA 02204 (Form 1, with payments; amended
+    returns with a payment also go here)
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR) — mailing addresses ("Massachusetts Department of Revenue, PO Box 7000,
+      Boston, MA, 02204 for refunds or no payments, or Massachusetts Department of Revenue, PO Box 7003, Boston, MA,
+      02204 for payments")
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Commonwealth of Massachusetts (2025 Form 1 Instructions — send a "check or money order payable to Commonwealth
+    of Massachusetts"; write your Social Security number on the front of the check or money order in the lower left).
+    RE-VERIFIED for 2025 in the fetched capture, closing the 2024 pack's carried-forward gap.
+  web_pay_url: https://mass.gov/masstaxconnect
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR) — "Filing Due Dates. Form 1 is due on or before April 15, 2026."
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+all_citations:
+- source: 2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker
+    maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing
+    withholding under 830 CMR 62B.2.4 for closings on or after November 1, 2025; Climatetech Tax Incentive Program;
+    TIR 24-16 and TIR 25-5 credit changes; $325 employer-provided parking and $325 combined transit-pass/commuter-highway-vehicle
+    exclusions; health-insurance penalty), residency and the 183-day statutory-resident test, military/spouse residency
+    elections, joint-return rules and the new under-$8,000-spouse joint-filing exemption oval, $8,000 filing threshold,
+    No Tax Status / Limited Income Credit thresholds, Line 22 tax (tax table below $24,000, else x 0.05; optional 5.85%
+    election), Line 23a/23b 8.5%/12% Schedule B tax, Line 28b 4% Surtax, Line 43 EITC 40% with the $68,675 ceiling,
+    Line 44 Circuit Breaker $2,820, Line 46 Child and Family Tax Credit $440, Schedule Y Line 4a/4b (§ 111F and U.S.
+    tax treaty deductions), excess-exemptions worksheets, due date April 15 2026, PO Box 7000/7003, check payable to
+    Commonwealth of Massachusetts
+  url: https://www.mass.gov/doc/2025-form-1-instructions/download
+- source: '2025 Form 1 Massachusetts Resident Income Tax Return (MA DOR; second-pass verification: header boxes a/b
+    from U.S. Form 1040 lines 9 and 11a; line 1 filing statuses plus the new "if joint filing exemption for spouses
+    with Massachusetts gross income under $8,000" oval; line 2a personal exemptions "Single/Married filing separately
+    ($4,400), Head of household ($6,800), Married filing jointly ($8,800)"; line 2b dependents x $1,000; line 2c age
+    65 or over before 2026 x $1,700; line 2d blindness x $2,200; line 2e medical/dental; line 2f adoption; line 2g
+    total exemptions; line 17 "5.0% INCOME AFTER DEDUCTIONS"; line 18 total exemption amount; line 19 "5.0% INCOME
+    AFTER EXEMPTIONS ... Not less than 0"; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line 21 "TOTAL
+    TAXABLE 5.0% INCOME. Add lines 19 and 20"; line 22 "TAX ON 5.0% INCOME (from tax table). If line 21 is more than
+    $24,000, multiply by .05"; line 23a x .085 and 23b x .12; line 24 tax on long-term capital gains; line 27 No Tax
+    Status oval; line 28a income tax and line 28b "4% Surtax (from Schedule 4% Surtax, line 7)")'
+  url: https://www.mass.gov/doc/2025-form-1-massachusetts-resident-income-tax-return/download
+- source: 2025 Massachusetts Personal Income Tax Forms and Instructions (MA DOR list page)
+  url: https://www.mass.gov/lists/2025-massachusetts-personal-income-tax-forms-and-instructions
+unverified:
+- mass.gov returns HTTP 403 to automated fetch; the 2025 Form 1 and its instructions were retrieved from the Wayback
+  Machine's 200-status captures of the official mass.gov document URLs (instructions capture 20260425134124; Form
+  1 capture 20260420000228, digest PVUOCKIXXY7LBARA76BUJRFZWSQZIJF5, which is byte-identical across three separate
+  captures). No fact in this record relies on a non-.gov-originated document.
+- The 2025 Form 1 tax table pages (mandatory for line 21 amounts under $24,000) were not included in the fetched
+  instructions capture; the table's band structure and any within-band divergence from exact 5% multiplication were
+  not re-verified.
+- Form 1-NR/PY 2025 instructions were not fetched; nonresident/part-year specifics are carried from the resident
+  instructions' summaries. Note the 2025 resident-instruction wording of the NONRESIDENT threshold is the prorated
+  personal exemption alone (personal exemption x the ratio of MA income to total income) — it no longer states the
+  "lesser of $8,000 or the prorated exemption" formulation used in the 2024 pack. Confirm on Form 1-NR/PY.
+- The new/revised 2025 credits referenced only by TIR (TIR 24-16, TIR 25-5) and the Climatetech Tax Incentive Program
+  components (including the Climatetech Incentive Jobs Credit) were not transcribed; the new 830 CMR 62B.2.4 non-resident
+  real-estate-closing withholding regime is recorded as a change but its exemptions and rates were not extracted.
+tax:
+  citation:
+    source: 'MA DOR — 2025 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a ''Personal exemptions.
+      Single/Married filing separately ($4,400), Head of household ($6,800), Married filing jointly ($8,800)''; line
+      2b number of dependents x $1,000; line 2c age 65 or over before 2026 x $1,700; line 2d blindness x $2,200; line
+      17 ''5.0% INCOME AFTER DEDUCTIONS. Subtract line 16 from line 10. Not less than 0''; line 18 total exemption amount
+      (from line 2g); line 19 ''5.0% INCOME AFTER EXEMPTIONS. Subtract line 18 from line 17. Not less than 0''; line
+      20 INTEREST AND DIVIDEND INCOME (from Schedule B, line 38); line 21 ''TOTAL TAXABLE 5.0% INCOME. Add lines 19
+      and 20''; line 22 ''TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05''; line
+      28b ''4% Surtax (from Schedule 4% Surtax, line 7)''. Second pass: 2025 Form 1 Instructions — Line 22 ''If line
+      21 is less than $24,000, find the proper tax by using the tax tables found in the back of this booklet. If line
+      21 is greater than $24,000 multiply by 0.05 and enter the result in line 22''; 4% Surtax ''Starting with tax year
+      2023, personal income taxpayers must pay an additional 4% on taxable income over $1,000,000, increased annually
+      for inflation. For the 2025 tax year, the threshold is $1,083,150.'' — both passes agree. (mass.gov returns HTTP
+      403 to non-browser fetchers; both documents were retrieved from the Wayback Machine''s 200-status captures of
+      the SAME official mass.gov URLs, the same provenance path as the shipped MA form pack.)'
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+  flat_rate: 0.05
+  base: state_gross_income
+  tax_line: 'Form 1 line 22: ''TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05''
+    (line 21 = TOTAL TAXABLE 5.0% INCOME = line 19 income after exemptions + line 20 Schedule B interest and dividend
+    income).'
+  exemptions:
+    dependent:
+      amount: 1000
+      note: 'Form 1 line 2b: $1,000 per dependent (''Number of dependents (do not include yourself or your spouse). Enclose
+        Schedule DI ... x $1,000''). APPLIED by calc.state_tax via dependents_count.'
+    age_65:
+      amount: 1700
+      note: 'Form 1 line 2c: $1,700 per age-65-or-over-before-2026 box (You/Spouse). NOT applied by calc.state_tax — subtract
+        it from the supplied base or compute line 2c on the form.'
+    blind:
+      amount: 2200
+      note: 'Form 1 line 2d: $2,200 per blindness box (You/Spouse). NOT applied by calc.state_tax — subtract it from the
+        supplied base or compute line 2d on the form.'
+  standard_deduction:
+    single: 4400
+    married_filing_jointly: 8800
+    married_filing_separately: 4400
+    head_of_household: 6800
+  notes:
+  - 'Figures unchanged from 2024 (both passes re-verified for 2025): the 5.0% rate, the line 2a-2d exemption amounts
+    ($4,400/$6,800/$8,800 personal; $1,000 dependent; $1,700 age 65+; $2,200 blindness) and the $24,000 tax-table
+    cutoff are identical. What MOVED for 2025 is the 4% surtax threshold, indexed $1,053,750 -> $1,083,150, plus credit
+    figures outside this block (Senior Circuit Breaker maximum $2,730 -> $2,820; the MA EITC''s referenced federal
+    earned-income ceiling $66,819 -> $68,675).'
+  - 'Base guidance: supply 2025 Form 1 line 17 (''5.0% INCOME AFTER DEDUCTIONS'' = line 10 TOTAL 5.0% INCOME minus
+    line 16 total deductions) PLUS line 20 (interest and dividend income from Schedule B, line 38) — i.e., the Part
+    B 5.0% taxable income BEFORE the line 18 exemptions. The op subtracts the line 2a personal exemption (shipped
+    per filing status in standard_deduction) and $1,000 per dependent (line 2b), reproducing lines 18-21, then multiplies
+    by 5% (line 22). Filers with line 2c-2f exemptions (age 65+ $1,700 each, blindness $2,200 each, medical/dental
+    from U.S. Schedule A line 4, adoption) must subtract those amounts from the supplied base themselves.'
+  - 'Modeling decision — standard_deduction carries the Form 1 line 2a PERSONAL EXEMPTION: Massachusetts has NO standard
+    deduction; line 2a is a fixed per-filing-status base reduction ($4,400 single or married filing separately, $6,800
+    head of household, $8,800 married filing jointly) and ships in the per-status standard_deduction slot because
+    the per-person ''personal'' exemption key cannot represent the $6,800 head-of-household amount. Pass exemptions_count=0
+    — the taxpayer/spouse exemption is already inside the per-status amount.'
+  - 'CRITICAL — 4% surtax NOT modeled: ''Starting with tax year 2023, personal income taxpayers must pay an additional
+    4% on taxable income over $1,000,000, increased annually for inflation. For the 2025 tax year, the threshold is
+    $1,083,150'' (2025 Form 1 instructions, Major 2025 Tax Changes). The surtax is computed on Schedule 4% Surtax
+    and entered on Form 1 line 28b, and it applies to the SUM of all classes of taxable income (the 5.0% Part B income
+    modeled here PLUS Schedule B 8.5%/12% income PLUS Schedule D long-term capital gains) over $1,083,150. It is NOT
+    a marginal bracket of the 5.0% schedule — encoding it as one would misstate Massachusetts'' class-separated system.
+    If total taxable income across all classes exceeds $1,083,150, complete Schedule 4% Surtax on the form. (Related
+    2025 change: employers must withhold on wages once an employee''s wages equal or exceed $1,000,000.)'
+  - 'Class separation (PA-like): Massachusetts taxes income classes separately, and this op computes ONLY the Form
+    1 line 22 tax on 5.0% income. Not modeled: Schedule B 8.5% income (line 23a x .085 — short-term capital gains
+    and certain other gains), 12% income (line 23b x .12 — long-term gains on collectibles and pre-1996 installment
+    sales), and Schedule D long-term capital gain tax (line 24). Never merge those classes into the supplied base.'
+  - 'Tax-table mandate: ''If line 21 is less than $24,000, find the proper tax by using the tax tables found in the
+    back of this booklet. If line 21 is greater than $24,000 multiply by 0.05'' (Line 22 instructions, unchanged for
+    2025). Below $24,000 the filed form uses the booklet table, which can differ from exact multiplication by a small
+    amount within a table band; the fetched instructions capture did not include the table pages, so the band structure
+    was not re-verified this session.'
+  - 'Optional 5.85% rate (NOT modeled): Form 1 line 22 carries an oval to voluntarily pay tax at 5.85% on income that
+    would otherwise be taxed at 5.0%; the election does not apply to the 8.5%/12% items.'
+  - 'Excess exemptions: if line 18 exemptions exceed line 17, the form sets line 19 to 0 and the excess may be applied
+    against interest and dividend income and income taxed at 8.5% or 12%, then against long-term capital gain income
+    (the instructions'' Line 36 / Schedule D Line 20 worksheet, available to single, head of household and married-filing-jointly
+    filers). Because this op subtracts the exemptions from the combined line 17 + line 20 base, the offset against
+    Part B interest/dividends is reproduced automatically; the offset against the 8.5%/12% and long-term-gain classes
+    is NOT modeled (fill in the Form 1 line 24 oval if excess exemptions were used in calculating lines 20, 23 or
+    24).'
+  - 'No Tax Status / Limited Income Credit (Form 1 lines 27-29, NOT modeled): Massachusetts AGI of $8,000 or less
+    (single), $16,400 or less plus $1,000 per dependent (married filing jointly), or $14,400 or less plus $1,000 per
+    dependent (head of household) qualifies for No Tax Status — fill in the line 27 oval and enter 0 in line 28 (married
+    filing separately never qualifies). Limited Income Credit ranges for 2025: $8,000-$14,000 single; $14,400-$25,200
+    plus $1,750 per dependent head of household; $16,400-$28,700 plus $1,750 per dependent married filing jointly.
+    Check the Massachusetts AGI worksheet before relying on the computed tax.'
+  - 'Massachusetts gross income is built from MA''s OWN categories, not federal AGI: Form 1 line 3 wages come from
+    W-2 state wages (Box 16); income exempt under a U.S. tax treaty that landed in line 3 must be deducted on Schedule
+    Y line 4b (2025 splits line 4 into 4a for the MGL ch 41 § 111F firefighter/police exclusion and 4b for the U.S.
+    tax treaty exclusion). The header boxes a/b (federal total income from U.S. Form 1040 line 9 / federal AGI from
+    line 11a) are informational only. A joint Form 1 is generally not allowed unless both spouses were MA residents
+    for the same portion of 2025; NEW for 2025, where one spouse''s Massachusetts gross income does not exceed $8,000
+    the couple may elect married filing separate status via the Form 1 ''joint filing exemption for spouses with Massachusetts
+    gross income under $8,000'' oval.'
+  - 'Not modeled — credits and later lines: Limited Income Credit (line 29), taxes due another jurisdiction (line
+    30, Schedule OJC), Schedule CMS credits (line 31), credit recapture (line 25, Schedule CRS), additional tax on
+    installment sales (line 26), the refundable 40%-of-federal Massachusetts EITC (line 43), the $440-per-qualifying-individual
+    Child and Family Tax Credit (line 46), the Senior Circuit Breaker credit up to $2,820 (line 44), use tax, and
+    the Schedule HC health-care penalty.'

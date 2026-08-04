@@ -1,0 +1,252 @@
+# KY state knowledge — tax year 2025. Fetched + cited from the KY DOR (.gov),
+# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2025 Form 740 itself
+# (42A740, 10-25 — line 10 standard deduction $3,270, line 12 "Multiply line 11 by 4%
+# (.04)"), then independently re-checked against a second official source — the LIVE
+# KY DOR Individual Income Tax page ("The tax rate is four (4) percent"; IRC reference
+# date December 31, 2024) and the 2025 Schedule ITC (42A740-ITC, "TAX CREDIT SCHEDULE
+# 2025") — resolutions recorded inline and in `unverified`.
+# IMPORTANT SOURCING NOTE: the 2025 Form 740 instruction packet (the 42A740(PKT) that
+# carried "What's New" in prior years) could NOT be retrieved — every plausible
+# revenue.ky.gov/Forms URL for it returns HTTP 404 (see unverified). Facts that in the
+# 2024 pack came only from the packet (Chart B filing thresholds, the exact "April 15"
+# wording, residency definitions) are therefore flagged rather than asserted.
+# CHANGED for 2025 vs the 2024 pack: standard deduction $3,160 -> $3,270 (one per
+# return); Family Size Tax Credit table re-indexed (100% ceilings $15,650/$21,150/
+# $26,650/$32,150; credit gone above $20,815/$28,130/$35,445/$42,760); IRC reference
+# date December 31, 2023 -> December 31, 2024. UNCHANGED: the 4% (.04) rate, the
+# $40/$40/$20 personal tax credits, and the 20% child-and-dependent-care credit.
+jurisdiction: states/ky
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Kentucky''s resident return (Form 740) starts from federal adjusted gross income — 2025 Form 740 line
+  5 is "Enter amount from federal Form 1040 or 1040-SR, line 11a", i.e. federal AGI, and Kentucky law requires the
+  individual income tax return to begin with federal adjusted gross income and be adjusted for any differences to
+  arrive at Kentucky adjusted gross income (Form 740 line 6 additions from Schedule M line 6, line 8 subtractions
+  from Schedule M line 17, line 9 Kentucky AGI). The 2025 Schedule M "Additions to Federal Adjusted Gross Income"
+  (Part I, lines 1-5, totaled on line 6) are: (1) interest on other states'' obligations / taxable mutual-fund dividends,
+  (2) resident adjustment from Kentucky Schedule K-1, (3) special depreciation/Section 179 differences, (4) federal
+  net operating loss, and (5) "other additions" (reservist/National Guard expenses, the lump-sum distribution capital-gains
+  portion, passive activity loss adjustment, pension/IRA basis differences, intangible-asset and depreciable-property
+  gain differences, Armed Forces moving expenses, Kentucky excess business loss limitation). NONE of these add back
+  federally tax-treaty-exempt income. Because treaty-exempt income is already excluded from federal AGI and KY has
+  no add-back for it, it is not re-taxed by Kentucky — therefore KY conforms. (Kentucky''s starting basis is the
+  Internal Revenue Code in effect as of December 31, 2024, per the live KY DOR Individual Income Tax page.)'
+citation:
+  source: 'Kentucky Department of Revenue — 2025 Form 740, Kentucky Individual Income Tax Return, Full-Year Resident
+    (42A740, 10-25) — line 5 federal AGI (federal Form 1040/1040-SR line 11a) with the "$42,760 or less" Family Size
+    Tax Credit note, line 9 Kentucky Adjusted Gross Income, line 10 "Nonitemizers: Enter $3,270 in Columns A and/or
+    B", line 11 Taxable Income, line 12 "Tax Computation: Multiply line 11 by 4% (.04) or amount from Schedule J",
+    lines 20-21 Family Size Tax Credit, line 24 Child and Dependent Care Credit x 20% (.20), page-3 Enclose/Payment
+    block (Check Payable "Kentucky State Treasurer", "KY Income Tax—2025", Refund or No Payment Frankfort KY 40618-0006
+    / With Payment Frankfort KY 40619-0008)'
+  url: https://revenue.ky.gov/Forms/740%20(2025).pdf
+starts_from: 'federal AGI (2025 Form 740, line 5 "Enter amount from federal Form 1040 or 1040-SR, line 11a"); Kentucky''s
+  individual income tax law is based on the Internal Revenue Code in effect as of December 31, 2024 (live KY DOR
+  Individual Income Tax page — updated from December 31, 2023 for 2024)'
+residency:
+  summary: 'Per the Form 740-NP instructions series: individuals who maintain a permanent residence in Kentucky (i.e.,
+    are domiciled in Kentucky) for the entire tax year are full-year RESIDENTS and file Form 740. Persons not domiciled
+    in Kentucky but who live in Kentucky for more than 183 days during the tax year are ALSO considered residents
+    (a statutory-resident rule) but, since they are not full-year residents, file Form 740-NP. Individuals who established
+    or abandoned Kentucky residency during the year are PART-YEAR residents (file Form 740-NP), reporting income from
+    all sources while a resident plus Kentucky-source income while a nonresident. Full-year NONRESIDENTS report only
+    income from Kentucky sources on Form 740-NP. Full-year residents of reciprocal states (IL, IN, MI, OH, VA, WV,
+    WI) with only KY wage income use Form 740-NP-R. The live KY DOR Individual Income Tax page confirms the split
+    for 2025: "A full-year resident of Kentucky files Form 740 and a person who moves into or out of Kentucky during
+    the year or is a full-year nonresident files Form 740-NP." (The 183-day statutory-resident rule and the reciprocal-state
+    list are carried from the 740-NP packet series — the 2025 740-NP packet could not be fetched; see unverified.)'
+forms:
+  resident: Form 740 (2025 Kentucky Individual Income Tax Return — Full-Year Resident, 42A740, 10-25). Filing statuses
+    printed on the 2025 form are 1 Single, 2 Married filing separately on this combined return (if both had income),
+    3 Married filing joint return, 4 Married filing separate returns.
+  part_year_or_nonresident: Form 740-NP (Kentucky Individual Income Tax Return — Nonresident or Part-Year Resident).
+    Reciprocal-state residents with only KY wages use Form 740-NP-R (mailed to Frankfort, KY 40620-0012 per the live
+    DOR page).
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Family Size Tax Credit
+  type: nonrefundable
+  eligibility: Resident individuals/families with modified gross income (MGI) at or below the Schedule ITC Section
+    C table ceiling for their family size. Family size is capped at 4 (yourself, spouse if living in the same household,
+    and qualifying children). Available even to someone claimed as a dependent on a parent's return (family size
+    1). The 2025 Form 740 line 5 prints the outer gate directly — "If total of Columns A and B is $42,760 or less,
+    you may qualify for the Family Size Tax Credit."
+  amount: Calculated tax (Form 740 line 19) multiplied by a credit percentage from the 2025 Family Size Tax Credit
+    Table (Schedule ITC Section C, "Tax Year 2025"). The percentage is 100% at or below the family-size threshold
+    and steps down 90/80/70/60/50/40/30/20/10/0% as MGI rises through the printed bands.
+  income_limit_2025: '2025 threshold (100% credit ceiling): $15,650 (family of 1), $21,150 (family of 2), $26,650
+    (family of 3), $32,150 (family of 4 or more) — printed in the 2025 Schedule ITC Section C table. The credit reaches
+    0% above MGI of $20,815 (family of 1), $28,130 (2), $35,445 (3), $42,760 (4 or more). (Re-indexed upward from
+    2024''s $15,060/$20,440/$25,820/$31,200 and $20,030/$27,185/$34,341/$41,496.)'
+  claimed_on: Form 740, line 20 (check the box for total family size) and line 21 ("Multiply line 19 by Family Size
+    Tax Credit decimal amount ... from Schedule ITC"); percentage determined from the Schedule ITC Section C Family
+    Size Tax Credit Table.
+  citation:
+    source: Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC, "TAX CREDIT SCHEDULE 2025"), Section
+      C Family Size Tax Credit Table (Tax Year 2025 bands), and 2025 Form 740 lines 5, 20-21
+    url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2025).pdf
+- name: Child and Dependent Care Credit
+  type: nonrefundable
+  eligibility: Residents who qualified for and claimed the federal child and dependent care credit on federal Form
+    2441 (care expenses for a qualifying child/dependent so the taxpayer can work). Kentucky has no separate income
+    limit; eligibility tracks the federal credit.
+  amount: 20% (.20) of the federal child and dependent care credit from federal Form 2441, line 11 — printed on the
+    2025 Form 740 line 24 as "Enter Child and Dependent Care Credit from federal Form 2441, line 11 ... x 20% (.20)".
+  income_limit_2025: None specified by Kentucky; follows federal Form 2441 rules.
+  claimed_on: Form 740, line 24 (federal Form 2441 line 11 x 20%).
+  citation:
+    source: Kentucky Department of Revenue — 2025 Form 740 (42A740, 10-25), line 24
+    url: https://revenue.ky.gov/Forms/740%20(2025).pdf
+- name: Personal Tax Credits (age 65+, blind, or Kentucky National Guard)
+  type: nonrefundable
+  eligibility: Taxpayer (and spouse, if filing jointly or married filing separately on a combined return) who, as
+    of 12/31/2025, was age 65 or older, was legally blind, and/or was a member of the Kentucky National Guard. A
+    taxpayer can claim more than one (e.g., 65+ AND blind). No income limit.
+  amount: '$40 if 65 or older; $40 if legally blind; $20 if a member of the Kentucky National Guard (2025 Schedule
+    ITC Section B: "If you were 65 on or before 12/31/2025, enter 40... If you were legally blind on 12/31/2025,
+    enter 40... If you were a member of the Kentucky National Guard on 12/31/2025, enter 20"). Credits are additive
+    per person (a 65+ AND blind taxpayer = $80). These are flat dollar credits that directly reduce the calculated
+    tax. (Unchanged from 2024.)'
+  income_limit_2025: None.
+  claimed_on: Schedule ITC, Section B (lines 1-3 taxpayer, lines 5-7 spouse), carried to Form 740, line 17 ("Enter
+    personal tax credit amounts from Schedule ITC, Section B").
+  citation:
+    source: Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC), Section B Personal Tax Credits, and
+      2025 Form 740 line 17
+    url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2025).pdf
+filing_requirement:
+  note: 'Kentucky''s two-chart test applies: a return must be filed if BOTH (1) modified gross income exceeds the
+    Chart A threshold for your family size — 2025 thresholds VERIFIED from the Schedule ITC Section C 100% row: family
+    size 1 = $15,650; 2 = $21,150; 3 = $26,650; 4 or more = $32,150 — AND (2) Kentucky adjusted gross income exceeds
+    the Chart B threshold for your filing status/age, which Kentucky pegs to the standard deduction ($3,270 for 2025,
+    with higher amounts when the taxpayer and/or spouse is 65-or-over or blind). The exact 2025 Chart B amounts could
+    NOT be verified because the 2025 Form 740 instruction packet was unretrievable — see unverified; resolve Chart
+    B from the 2025 packet before relying on it. A self-employment exception applies (file regardless of Chart B if
+    Kentucky gross receipts from self-employment exceed the Chart A amount for the family size), a child meeting the
+    filing requirements must file even if claimed as a dependent, and you should file to claim a refund of KY tax
+    withheld even when the thresholds are not met.'
+mailing_addresses:
+  refund_or_no_payment: Kentucky Department of Revenue, Frankfort, KY 40618-0006 (Refund or No Payment — printed
+    on page 3 of the 2025 Form 740 and on the live DOR page)
+  with_payment: Kentucky Department of Revenue, Frankfort, KY 40619-0008 (With Payment)
+  citation:
+    source: Kentucky Department of Revenue — 2025 Form 740 (42A740, 10-25) page 3 "Enclose / Payment" block (Refund
+      or No Payment Frankfort KY 40618-0006; With Payment Frankfort KY 40619-0008), corroborated by the live KY DOR
+      Individual Income Tax page (which adds 740-NPR Frankfort KY 40620-0012 and the overnight address 501 High Street,
+      Frankfort KY 40601)
+    url: https://revenue.ky.gov/Forms/740%20(2025).pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: 'Kentucky State Treasurer (2025 Form 740 page 3 — "Check Payable: Kentucky State Treasurer"; "Include:
+    Your Social Security number and ''KY Income Tax—2025''")'
+  web_pay_url: https://epayment.ky.gov/EPAY
+  note: 'The 2025 Form 740 page 3 gives "E-Pay Options: www.revenue.ky.gov". Use Form 740-V if you filed electronically
+    and pay by check.'
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: Kentucky Department of Revenue — Individual Income Tax page (Kentucky individual income tax law, Chapter
+      141 of the Kentucky Revised Statutes; a calendar-year individual return is due the fifteenth day of the fourth
+      month after the close of the taxable year, i.e. April 15, 2026 for tax year 2025, with a six-month extension
+      via Form 740EXT or the federal automatic extension). NOTE the exact "postmarked or submitted electronically
+      no later than April 15, 2026" wording lives in the 2025 Form 740 instruction packet, which could not be retrieved
+      this pass — see the pack's `unverified` list.
+    url: https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx
+all_citations:
+- source: 'Kentucky Department of Revenue — 2025 Form 740, Kentucky Individual Income Tax Return, Full-Year Resident
+    (42A740, 10-25) — filing statuses 1-4, line 5 federal AGI (federal Form 1040/1040-SR line 11a) with the "$42,760
+    or less" Family Size Tax Credit gate, line 6/8 Schedule M additions and subtractions, line 9 Kentucky AGI, line
+    10 "Nonitemizers: Enter $3,270 in Columns A and/or B", line 11 Taxable Income, line 12 "Tax Computation: Multiply
+    line 11 by 4% (.04) or amount from Schedule J", line 15 Schedule ITC Section A credits, line 17 Schedule ITC Section
+    B personal tax credits, lines 20-21 Family Size Tax Credit, line 23 Education Tuition Tax Credit (Form 8863-K),
+    line 24 Child and Dependent Care Credit x 20% (.20), line 26 Income Tax Liability, line 27 Kentucky Use Tax, page-3
+    Enclose/Payment block (payee, "KY Income Tax—2025", mailing addresses)'
+  url: https://revenue.ky.gov/Forms/740%20(2025).pdf
+- source: Kentucky Department of Revenue — Individual Income Tax page (live DOR page; second-pass verification of
+    the rate — "Kentucky's individual income tax law is based on the Internal Revenue Code in effect as of December
+    31, 2024. The tax rate is four (4) percent and allows itemized deductions and certain income reducing deductions
+    as defined in KRS 141.019"; Form 740 vs Form 740-NP split; mailing addresses; Schedule P pension exclusion over
+    $31,110)
+  url: https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx
+- source: Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC, "TAX CREDIT SCHEDULE 2025") — Section B
+    Personal Tax Credits ($40 age 65+ / $40 blind / $20 Kentucky National Guard as of 12/31/2025), Section C Family
+    Size Tax Credit Table for Tax Year 2025 (100% ceilings $15,650/$21,150/$26,650/$32,150; 0% above $20,815/$28,130/$35,445/$42,760)
+  url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2025).pdf
+- source: Kentucky Department of Revenue — 2025 Schedule M (Kentucky Federal Adjusted Gross Income Modifications)
+    — Part I additions lines 1-5 totaled on line 6, Part II subtractions totaled on line 17
+  url: https://revenue.ky.gov/Forms/Schedule%20M%20(2025).pdf
+- source: Kentucky Department of Revenue Electronic Payment portal (EPAY)
+  url: https://epayment.ky.gov/EPAY
+unverified:
+- 'SOURCING GAP: the 2025 Form 740 instruction packet (42A740(PKT)) could not be retrieved — every plausible revenue.ky.gov/Forms
+  filename returns HTTP 404 (tried "740 instructions packet (2025)", "740 Instruction Packet (2025)", "740 Instructions
+  (2025)", "740 Booklet (2025)", "42A740(PKT)(2025)" and case/spacing variants). Everything the 2024 pack took from
+  the packet''s "What''s New" was therefore re-derived from the 2025 Form 740 itself plus the live DOR page and the
+  2025 Schedule ITC. Items still open: the packet''s Chart B (Kentucky AGI) filing thresholds, the exact "no later
+  than April 15, 2026" wording, the Modified Gross Income worksheet, and the Form 740EXT extension mechanics.'
+- 'Standard deduction second pass: $3,270 is printed on the 2025 Form 740 line 10 ("Nonitemizers: Enter $3,270 in
+  Columns A and/or B") but NO second official document confirming it could be fetched (the packet''s "What''s New"
+  is where the 2024 pack''s second confirmation came from). The 4% rate IS double-verified (Form 740 line 12 and
+  the live DOR page). Confirm $3,270 against the 2025 packet when it becomes retrievable.'
+- No KY .gov page explicitly addresses tax-TREATY-exempt income by name; the conformity conclusion is inferred from
+  KY beginning at federal AGI plus the absence of any treaty add-back in the 2025 Schedule M additions list. This
+  is the standard federal-AGI-conformity case but the specific treaty-income treatment is not stated verbatim on
+  a KY .gov page.
+- 'Residency definitions (the 183-day statutory-resident rule and the reciprocal-states list IL/IN/MI/OH/VA/WV/WI)
+  were carried from the Form 740-NP packet series and the 2023/2024 packs; the 2025 Form 740-NP and its packet both
+  404 on revenue.ky.gov/Forms — confirm at the 740-NP instructions if a nonresident/part-year case is in play. The
+  live DOR page does confirm the Form 740 vs 740-NP split for 2025.'
+- Any SCHEDULED future rate change is deliberately not recorded here. The verified 2025 rate is 4% (.04) from two
+  independent sources; never carry a rate to a different tax year without re-verifying that year's own form.
+tax:
+  citation:
+    source: 'Kentucky Department of Revenue — 2025 Form 740, Kentucky Individual Income Tax Return, Full-Year Resident
+      (42A740, 10-25): line 10 "Itemizers: Enter itemized deductions from Kentucky Schedule A. Nonitemizers: Enter $3,270
+      in Columns A and/or B"; line 11 "Subtract line 10 from line 9. This is your Taxable Income"; line 12 "Tax Computation:
+      Multiply line 11 by 4% (.04) or amount from Schedule J"; line 5 = federal AGI ("Enter amount from federal Form
+      1040 or 1040-SR, line 11a"); line 9 = Kentucky Adjusted Gross Income (line 7 minus Schedule M subtractions). Second
+      pass on the RATE: the live KY DOR Individual Income Tax page states "Kentucky''s individual income tax law is
+      based on the Internal Revenue Code in effect as of December 31, 2024. The tax rate is four (4) percent and allows
+      itemized deductions and certain income reducing deductions as defined in KRS 141.019" — both sources give 4%.
+      The 2025 Form 740 instruction packet (42A740(PKT)), which in prior years carried the "What''s New" standard-deduction
+      line, is unretrievable (HTTP 404 on every plausible URL), so $3,270 rests on the form itself — see the pack''s
+      `unverified` list.'
+    url: https://revenue.ky.gov/Forms/740%20(2025).pdf
+  flat_rate: 0.04
+  base: federal_agi
+  tax_line: 'Form 740 Line 12 = Line 11 (Taxable Income = Line 9 Kentucky AGI minus Line 10 deduction) x 4% (.04)
+    — printed on the 2025 form: "Tax Computation: Multiply line 11 by 4% (.04) or amount from Schedule J". Line 5
+    starts from federal AGI (federal Form 1040/1040-SR line 11a); Line 6 adds Schedule M line 6 additions and Line
+    8 subtracts Schedule M line 17 subtractions.'
+  exemptions: {}
+  standard_deduction:
+    single: 3270
+    married_filing_jointly: 3270
+    married_filing_separately: 3270
+    head_of_household: 3270
+  notes:
+  - 'Standard deduction change: $3,270 for 2025, up from $3,160 (2024) and $2,980 (2023). The rate is UNCHANGED at
+    4% (.04) — verified twice (2025 Form 740 line 12 and the live KY DOR Individual Income Tax page). Never carry
+    a Kentucky rate or standard deduction to another tax year without re-verifying that year''s own Form 740.'
+  - Kentucky allows ONE $3,270 standard deduction per return — a joint return gets a single $3,270 (it is NOT doubled);
+    spouses filing separately on a combined return (Filing Status 2) enter $3,270 in each of Columns A and B, which
+    is why the form says "in Columns A and/or B".
+  - 'Kentucky has NO head-of-household filing status. The 2025 Form 740 prints only four statuses: 1 Single, 2 Married
+    filing separately on this combined return, 3 Married filing joint return, 4 Married filing separate returns. The
+    head_of_household column exists only because the engine''s schema requires all four federal statuses; it carries
+    the same single $3,270 — a filer who is head of household federally files Kentucky as Single (or married, as applicable).'
+  - Kentucky has no personal or dependent exemptions; the nonrefundable personal tax credits ($40 age 65+, $40 blind,
+    $20 Kentucky National Guard as of 12/31/2025 — 2025 Schedule ITC Section B, Form 740 line 17), the Family Size
+    Tax Credit (Form 740 lines 20-21, from the Schedule ITC Section C Tax Year 2025 table; the form's line 5 gate
+    is federal AGI of $42,760 or less), the Education Tuition Tax Credit (line 23, Form 8863-K) and the 20% Child
+    and Dependent Care Credit (line 24) are all CREDITS against tax and are NOT modeled by calc.state_tax.
+  - 'Not modeled: Schedule J (farm income averaging) as an alternative to the line 12 multiplication, the line 13
+    add-ons (Form 4972-K lump-sum tax, Schedule RC-R / DS-R recapture, Angel Investor recapture), the line 27 Kentucky
+    Use Tax, and Kentucky LOCAL occupational license taxes (county/city payroll taxes).'

@@ -1,0 +1,331 @@
+# UT state knowledge — tax year 2025. Fetched + cited from the Utah State Tax
+# Commission (.gov), authored per the 2024 template (state-year knowledge program).
+# Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2025 TC-40 form face
+# (which prints the 4.5% line-10 rate, the $2,111 line-11 personal exemption and the
+# $18,213/$27,320/$36,426 line-17 phase-out bases), then independently re-checked against
+# the 2025 TC-40 instruction booklet (PDF title "2025 TC-40 Instructions" — What's New:
+# HB 106 rate cut; Line 10 "Multiply line 9 by 4.5 percent (.045)"; Line 11 "The Utah
+# personal exemption is $2,111 per dependent"; the Line 17 filing-status table) — both
+# passes agree on every figure.
+# HEADLINE 2025 CHANGES (What's New): (1) HB 106 (2025 General Session) lowered the
+# income tax rate from 4.55% to 4.5%; (2) HB 106 EXPANDED the child tax credit age
+# window — the credit now covers any qualifying child no more than FIVE years old on the
+# last day of 2025 (2024: ages 1-3); (3) HB 106 created two employer-provided-childcare
+# credits (codes AW construction / AX expenses); (4) HB 547 created the Diapering
+# Supplies Fund contribution and SB 151 the Statewide Hunger Relief Fund contribution;
+# (5) HB 60 extended the Pass-through Entity Taxpayer credit (AP) carryforward 5 -> 10
+# years. Indexed figures: personal exemption $2,046 -> $2,111; taxpayer-tax-credit
+# phase-out bases $17,652/$26,478/$35,304 -> $18,213/$27,320/$36,426; Social Security
+# Benefits Credit phase-out thresholds $37,500/$75,000/$45,000 -> $45,000/$90,000/$54,000.
+jurisdiction: states/ut
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Utah''s resident return (TC-40) starts from federal adjusted gross income (FAGI). 2025 TC-40 Line 4
+  is "Federal adjusted gross income from federal return." Federally treaty-exempt income is already excluded from
+  FAGI and flows through. The full list of 2025 TC-40A Part 1 "Codes for Additions to Income" — 51 (lump sum distribution),
+  53 (medical care savings account addback), 54 (my529 addback), 56 (child''s income excluded from parent''s return),
+  57 (municipal bond interest), 60 (untaxed income of a resident trust), 61 (untaxed income of a nonresident trust),
+  67 (tax paid on behalf of a pass-through entity taxpayer), 68 (Payroll Protection Program grant or loan addback),
+  69 (equitable adjustments) — contains NO add-back of income exempt under a federal tax treaty (the code list is
+  unchanged from 2024 and 2023). The instructions'' "Income from Other Countries" section reinforces this: "Utah residents
+  who live and work abroad must pay Utah tax on income earned in other countries if the income is included in federal
+  adjusted gross income on the federal return. There is no Utah credit for taxes paid to another country." The "Foreign
+  Nationals & Expatriates" section adds that a foreign national or expatriate who meets Utah domicile is a resident
+  and "must pay tax on income earned from Utah sources if that income is included in your adjusted gross income on
+  your federal return." Therefore treaty-exempt income is NOT re-taxed by Utah -> conforms = true.'
+citation:
+  source: 2025 Utah TC-40 Individual Income Tax Instructions (official PDF, title "2025 TC-40 Instructions") — What's
+    New (HB 106 rate cut 4.55% to 4.5%, expanded child tax credit, employer-provided childcare credits; HB 547 and
+    SB 151 voluntary contributions; HB 60 credit carryforward), Who Must File, Utah Domicile Tests 1 and 2 / Resident
+    / Nonresident / Part-Year Resident definitions, Line 4 Federal Adjusted Gross Income starting point, Line 10 tax
+    4.5 percent (.045), Line 11 personal exemption $2,111 per dependent, Line 17 phase-out bases, TC-40A Part 1 Additions
+    (codes 51-69), Income from Other Countries, Rounding Off to Whole Dollars, When to File and Pay (April 15, 2026),
+    paper-return mailing addresses (84134-0266 with payment / 84134-0260 all other returns), check payee, tap.utah.gov
+  url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+starts_from: federal AGI (2025 TC-40 Line 4 = federal adjusted gross income / FAGI from the federal return)
+residency:
+  summary: 'Resident: a person domiciled in Utah for any period during the tax year, but only for the duration of
+    that period (all income received during the residency period is taxable in Utah regardless of where earned).
+    Nonresident: a person who is not a resident (taxed only on Utah-source income). Part-Year Resident: a person who
+    is a resident for part of the year and a nonresident for the rest. Utah domicile (UCA 59-10-136) is a two-test
+    rule. TEST 1 — you are domiciled in Utah if you or your spouse (1) claimed a child tax credit (IRC 24) for a
+    dependent on your federal return AND that dependent is enrolled in a Utah public K-12 school (not applicable
+    to a noncustodial parent not married to the custodial parent), (2) are enrolled as a resident student in a Utah
+    state institution of higher education, or (3) voted in Utah during the tax year and were neither registered to
+    vote nor voted in another state. TEST 2 — even if Test 1 is not met, you are domiciled in Utah if you or your
+    spouse have a permanent home in Utah to which either intends to return after being absent AND have voluntarily
+    settled in Utah with the intent of making a permanent home (not for a special or temporary purpose), judged on
+    a preponderance of the evidence over an enumerated list of facts and circumstances (Utah driver''s license, residential
+    exemption on a primary residence under the Property Tax Act, an IRC 24 credit for a dependent enrolled as a resident
+    student at a Utah higher-ed institution, quality of Utah living accommodations, a spouse/dependent in Utah claimed
+    under IRC 24, where income is earned, vehicle registration state, Utah church/club membership, Utah address on
+    mail/telephone listings/government publications/tax returns, filing a Utah full-year or part-year resident return,
+    claiming Utah residency on a document...). SPOUSAL ATTRIBUTION: if your spouse has Utah domicile under Test 1
+    you do too; under Test 2 you do too unless you establish by a preponderance of the evidence that during the tax
+    year and the three prior years you did not (1) own Utah property, (2) spend more than 30 total days a year in
+    Utah, (3) receive earned income for services performed in Utah, (4) vote in Utah, or (5) hold a Utah driver''s
+    license — and the attribution does not apply if you are legally separated/divorced or both spouses filed federal
+    married-filing-separately returns. Special domicile rules apply to service members and spouses (Pub 57). Utah
+    residency rules apply fully to students. Certain nonresidents working in Utah 20 days or less with no other Utah
+    income who are residents of a state with no income tax (or that does not tax nonresident wages) need not file
+    — NOT available to professional athletes, professional entertainers, persons of prominence paid per event, real
+    property contractors/laborers, or prior-year key employees/officers/50-highest-paid employees of a non-corporate
+    employer.'
+forms:
+  resident: TC-40 (2025 Utah Individual Income Tax Return, form number 40501) — full-year residents file TC-40. Filing
+    status codes on line 1 are 1 Single, 2 Married filing jointly, 3 Married filing separately, 4 Head of household,
+    5 Qualifying surviving spouse.
+  part_year_or_nonresident: TC-40 with Schedule TC-40B (Non or Part-year Resident Schedule). Attach TC-40 page 3,
+    TC-40A, TC-40B, TC-40S and TC-40W as applicable.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Taxpayer Tax Credit
+  type: nonrefundable
+  eligibility: Available to essentially all Utah resident filers (and apportioned for part-year/nonresidents). It
+    is the broad general credit that offsets Utah's flat 4.5% income tax. The credit is reduced (phased out) as income
+    rises above a base amount tied to filing status, and reaches zero for higher earners. Filers whose federal AGI
+    is less than their federal standard deduction are instead "qualified exempt taxpayers" and owe no Utah tax (TC-40
+    line 21).
+  amount: Initial credit = 6% (.06) of the sum of the Utah personal exemption ($2,111 per qualifying dependent, line
+    11) plus federal standard/itemized deductions (line 12), less state income tax from federal Schedule A line 5e
+    reduced by lines 5b and 5c (line 14, not less than zero). Phase-out = 1.3% (.013) of Utah taxable income above
+    the filing-status base amount (TC-40 lines 18-19). Final credit = initial credit minus phase-out, not less than
+    0 (TC-40 line 20).
+  income_limit_2025: 'Phase-out base amounts (income above which the credit begins to shrink, TC-40 line 17): Single
+    $18,213; Married filing separately $18,213; Head of household $27,320; Married filing jointly $36,426; Qualifying
+    surviving spouse $36,426. (Indexed up from 2024''s $17,652/$26,478/$35,304.)'
+  claimed_on: Utah TC-40, line 20 (computed via lines 11-20); personal exemption on line 11, deductions on lines
+    12-15.
+  citation:
+    source: 2025 Utah TC-40 Individual Income Tax Instructions (Utah State Tax Commission), Lines 11-20 Taxpayer
+      Tax Credit and the Line 17 filing-status table ($18,213 Single / $36,426 Married filing jointly / $18,213 Married
+      filing separately / $27,320 Head of household / $36,426 Qualifying surviving spouse); second pass = the printed
+      2025 TC-40 lines 11 ($2,111), 16 (6%), 17 ($18,213/$27,320/$36,426) and 19 (1.3%)
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+- name: Utah Earned Income Tax Credit (EITC)
+  type: nonrefundable
+  eligibility: 'You must (1) qualify for and claim the federal earned income tax credit in the same tax year, and
+    (2) earn Utah income that is reported on a federal W-2. The credit is limited to the amount of Utah wages (Earned
+    Income Tax Credit Worksheet: enter the LESSER of 20% of the federal credit or total Utah W-2 box 16 wages). Nonrefundable:
+    it can reduce Utah income tax to zero but any excess is not refunded and cannot be carried forward or back.'
+  amount: 20 percent (0.2) of your federal earned income tax credit (federal Form 1040/1040-SR, line 27a), limited
+    to the lesser of that 20% amount or your total Utah wages shown on W-2 box 16. (Unchanged from 2024.)
+  income_limit_2025: No separate Utah income limit; eligibility tracks the federal EITC income limits (you must qualify
+    for and claim the federal EITC).
+  claimed_on: Utah TC-40A, Part 3 (apportionable nonrefundable credits), using code AM; total carried to TC-40, line
+    24.
+  citation:
+    source: 2025 Utah TC-40 Individual Income Tax Instructions, (AM) Earned Income Tax Credit (UCA 59-10-1044) and
+      Earned Income Tax Credit Worksheet
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+- name: Retirement Credit
+  type: nonrefundable
+  eligibility: 'You (and/or your spouse, if filing jointly) must have been born on or before Dec. 31, 1952. You may
+    NOT claim it if you (or your spouse) claim either the Social Security Benefits Credit (code AH) or the Military
+    Retirement Credit (code AJ). Nonrefundable: reduces tax to zero but no refund of excess; no carryforward/back.
+    Because the maximum is only $450, the instructions note many filers do better with the Social Security Benefits
+    Credit or the Military Retirement Credit.'
+  amount: Up to $450 per qualifying individual ($900 if both spouses qualify on a joint return). Reduced by 2.5%
+    (0.025) of modified adjusted gross income (MAGI) above the filing-status threshold (Retirement Credit Worksheet
+    line 9; credit = $450/$900 minus that amount, not below 0). MAGI = TC-40 line 6 total income, minus code-57 municipal
+    bond interest, plus federal Form 1040/1040-SR line 2a tax-exempt interest.
+  income_limit_2025: 'MAGI thresholds above which the $450/$900 credit begins to phase out (worksheet line 7): Married
+    filing separately $16,000; Married filing federal 1040NR $16,000; Married filing joint $32,000; Single $25,000;
+    Qualifying surviving spouse or head of household $32,000. (Unchanged from 2024 and 2023.)'
+  claimed_on: Utah TC-40A, Part 3, using code 18 (also enter birthdate(s)); total carried to TC-40, line 24.
+  citation:
+    source: 2025 Utah TC-40 Individual Income Tax Instructions, (18) Retirement Credit (UCA 59-10-1019) and Retirement
+      Credit Worksheet
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+- name: Social Security Benefits Credit
+  type: nonrefundable
+  eligibility: 'Available to filers (or spouses, if filing jointly) who received taxable Social Security retirement,
+    disability or survivor benefits included in adjusted gross income on the return. You may NOT also claim the Retirement
+    Credit (code 18). Nonrefundable: reduces tax to zero, no refund of excess, no carryforward/back.'
+  amount: Credit = 4.5% (0.045) of the Social Security benefits included in adjusted gross income (Social Security
+    Credit Worksheet line 4 = federal Form 1040/1040-SR line 6b, or 1040-NR Schedule NEC line 8, less any Social
+    Security benefit inside a code-77 Native American or code-78 Railroad Retirement subtraction, times .045), reduced
+    by 2.5% (0.025) of modified adjusted gross income above the filing-status threshold (worksheet line 12); result
+    not less than 0. The credit percentage tracks the new 4.5% tax rate (down from 4.55% in 2024).
+  income_limit_2025: 'MAGI thresholds above which the credit phases out (worksheet line 10): Married filing separately
+    $45,000; Married filing federal 1040-NR $45,000; Married filing joint $90,000; Single $54,000; Qualifying surviving
+    spouse or head of household $90,000. RAISED for 2025 from 2024''s $37,500/$37,500/$75,000/$45,000/$75,000.'
+  claimed_on: Utah TC-40A, Part 3, using code AH; total carried to TC-40, line 24.
+  citation:
+    source: 2025 Utah TC-40 Individual Income Tax Instructions, (AH) Social Security Benefits Credit (UCA 59-10-1042)
+      and Social Security Credit Worksheet
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+- name: Utah Child Tax Credit (age window EXPANDED for 2025)
+  type: nonrefundable
+  eligibility: Available for each child who (1) qualifies for the federal child tax credit under IRC 24, and (2)
+    was, on the last day of 2025, NO MORE THAN FIVE YEARS OLD. HB 106 (2025) expanded the window — for 2024 the child
+    had to be at least one and no more than three years old. Phased out by modified adjusted gross income. Nonrefundable;
+    no carryforward/back.
+  amount: $1,000 per qualifying child (Child Tax Credit Worksheet line 2 = number of qualifying children 5 and younger
+    on the last day of 2025 x $1,000), reduced by 10% (0.10) of modified adjusted gross income above the filing-status
+    threshold; result not less than 0. MAGI = TC-40 line 6 total income minus code-57 municipal bond interest plus
+    federal line 2a tax-exempt interest.
+  income_limit_2025: 'MAGI thresholds above which the credit phases out (worksheet line 8): Married filing separately
+    $27,000; Married filing federal 1040NR $27,000; Married filing joint $54,000; Single $43,000; Head of household
+    $43,000; Qualifying surviving spouse $54,000. (Unchanged from 2024.)'
+  claimed_on: Utah TC-40A, Part 3, using code AT; total carried to TC-40, line 24.
+  citation:
+    source: 2025 Utah TC-40 Individual Income Tax Instructions, (AT) Child Tax Credit (UCA 59-10-1047) and Child
+      Tax Credit Worksheet; What's New (HB 106 expanded eligibility age)
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+- name: At-Home Parent Credit
+  type: nonrefundable
+  eligibility: An at-home parent (biological mother/father, stepmother/stepfather, adoptive parents, foster parents,
+    legal guardian, or a person housing a child placed by a child-placing agency for legal adoption) who provides
+    full-time care in their residence for a child 12 months old or younger on the last day of 2025, with the child
+    claimed as a dependent on the at-home parent's return. The at-home parent's total W-2 wages/tips/compensation
+    plus federal Schedule C line 7 gross income must be $3,000 or less for the tax year, and federal adjusted gross
+    income (TC-40 line 4) must be $50,000 or less. Nonrefundable; no carryforward/back.
+  amount: $100 for each child 12 months old or younger on the last day of 2025. (Unchanged from 2024.)
+  income_limit_2025: At-home parent's wages/tips/compensation + Schedule C line 7 gross income must be $3,000 or
+    less; and federal adjusted gross income (TC-40 line 4) must be $50,000 or less.
+  claimed_on: Utah TC-40A, Part 4 (nonapportionable nonrefundable credits), using code 01 (no form; keep records);
+    total carried to TC-40, line 26.
+  citation:
+    source: 2025 Utah TC-40 Individual Income Tax Instructions, (01) At-Home Parent Credit (UCA 59-10-1005)
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+filing_requirement:
+  note: 'Per the 2025 TC-40 instructions ("Who Must File"), you must file a TC-40 return if you (1) are a Utah resident
+    or part-year resident who must file a federal return; (2) are a nonresident or part-year resident with income
+    from Utah sources who must file a federal return; or (3) want a refund of any income tax overpaid. Complete your
+    federal return first (even if you do not have to file with the IRS) because the Utah return is built from federal
+    figures. QUALIFIED EXEMPT TAXPAYER: "You may be exempt from Utah individual income tax if your federal adjusted
+    gross income is less than your federal standard deduction" (for this purpose the federal standard deduction does
+    NOT include the extra amounts for age or blindness) — see the TC-40 line 21 worksheet. You also need not file
+    if you are a nonresident whose only Utah-source income is from a partnership/S corporation/trust that withheld
+    Utah income tax on it, or if you are a nonresident who worked in Utah 20 days or less with no other Utah income
+    and are a resident of a state that has no income tax or does not tax nonresident wages (subject to the athlete/entertainer/person-of-prominence/real-property-contractor/prior-year-key-employee
+    exclusions).'
+mailing_addresses:
+  refund_or_no_payment: Utah State Tax Commission, 210 N 1950 W, Salt Lake City, UT 84134-0260 (ALL OTHER RETURNS,
+    including refunds)
+  with_payment: Utah State Tax Commission, 210 N 1950 W, Salt Lake City, UT 84134-0266 (ALL RETURNS WITH PAYMENTS;
+    include the TC-547 payment coupon)
+  citation:
+    source: 2025 Utah TC-40 Individual Income Tax Instructions, "Tax Commission Mailing address" — ALL RETURNS WITH
+      PAYMENTS 210 N 1950 W, Salt Lake City UT 84134-0266; ALL OTHER RETURNS (including refunds) 210 N 1950 W, Salt
+      Lake City UT 84134-0260
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Utah State Tax Commission ('To pay by check or money order, mail your check or money order with your
+    return. Make payable to the "Utah State Tax Commission" and write your daytime phone number and "2025 TC-40"
+    on the check. Do not staple to your return. Remove any check stub before sending. Do not mail cash with your
+    return.' Include a TC-547 coupon when paying by mail.)
+  web_pay_url: https://tap.utah.gov
+  note: Pay online at tap.utah.gov by credit card, electronic check (ACH debit) or other electronic options; online
+    payments may include a service fee.
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: 2025 Utah TC-40 Individual Income Tax Instructions, "When to File and Pay" — "You must file your return
+      and pay any tax due... by April 15, 2026, if you file on a calendar year basis (tax year ends Dec. 31, 2025)";
+      fiscal-year filers use the 15th day of the fourth month after year end; a weekend/legal-holiday due date moves
+      to the next business day; the due date may change if the IRS changes the federal due date
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+all_citations:
+- source: 2025 Utah TC-40 Individual Income Tax Instructions (official PDF, title "2025 TC-40 Instructions", CreationDate
+    2025-12-10) — What's New (HB 106 rate 4.55% -> 4.5%, expanded child tax credit age window, employer-provided childcare
+    credits AW/AX; HB 547 Diapering Supplies Fund; SB 151 Statewide Hunger Relief Fund; HB 60 pass-through entity
+    credit carryforward 5 -> 10 years), Who Must File and the qualified-exempt-taxpayer rule, Utah Domicile Tests
+    1 and 2 plus spousal attribution, Resident / Nonresident / Part-Year Resident definitions, the 20-day nonresident
+    exemption and its exclusions, Line 4 FAGI starting point, Line 10 tax = 4.5 percent (.045), Line 11 personal exemption
+    $2,111 per dependent, Line 17 phase-out bases $18,213/$36,426/$18,213/$27,320/$36,426, TC-40A Part 1 Additions
+    (codes 51-69), Income from Other Countries and Foreign Nationals & Expatriates, Rounding Off to Whole Dollars,
+    credit worksheets (AM/18/AH/AT/01/04/AJ/AS), When to File and Pay (April 15, 2026), mailing addresses (84134-0266
+    / 84134-0260), check payee, tap.utah.gov
+  url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+- source: '2025 Utah TC-40 form (official PDF, form number 40501, "202[5]" tax year on the face; second-pass verification:
+    Line 1 filing status codes 1-5; Line 2 qualifying dependents a (age 16 and under) / b (other dependents) / c
+    (dependents born in 2025) / d (total); Line 4 federal adjusted gross income; Line 9 "Utah taxable income/loss
+    - subtract the sum of lines 7 and 8 from line 6"; Line 10 "Utah tax - multiply line 9 by 4.5% (.045) (not less
+    than zero)"; Line 11 "Utah personal exemption (multiply line 2d by $2,111)"; Line 14 "State income tax from federal
+    1040, Schedule A, line 5e, less lines 5b and 5c (not less than zero)"; Line 16 initial credit 6% (.06); Line
+    17 "Enter: $18,213 (single or married filing separately); $27,320 (head of household); or $36,426 (married filing
+    jointly or qualifying surviving spouse)"; Line 19 phase-out 1.3% (.013); Line 21 qualified exempt taxpayer; Line
+    22 "Utah income tax - subtract line 20 from line 10 (not less than zero)")'
+  url: https://files.tax.utah.gov/tax/forms/current/tc-40.pdf
+- source: Utah State Tax Commission — Income Tax line-by-line instructions portal
+  url: https://incometax.utah.gov/instructions
+unverified:
+- 'CITATION-URL CAVEAT: Utah does not (yet) publish a year-pinned 2025 path — https://files.tax.utah.gov/tax/forms/2025/tc-40inst.pdf
+  returns HTTP 404, while the 2024 equivalent (.../2024/tc-40inst.pdf) resolves. The citations above therefore use
+  the ".../current/" path, which served the TY2025 documents when this pack was authored (verified from the PDF''s
+  own title "2025 TC-40 Instructions" and the form''s 2025 tax-year face). Once Utah rolls the year over, re-point
+  these citations at .../tax/forms/2025/tc-40inst.pdf and .../tax/forms/2025/tc-40.pdf.'
+- The 2025 my529 credit (code 20) amounts, the health benefit plan credit (code 23) details, the military retirement
+  credit (code AJ) is verified only as "4.5% of taxable military retirement pay", the nonrefundable adoption expenses
+  credit (AS, up to $3,500 with AGI windows $55,000-$110,000 MFJ / $27,500-$55,000 other) and the NEW employer-provided
+  childcare credits (AW construction / AX expenses, with their five-year recapture schedule) were not transcribed
+  in full this pass. Confirm any other TC-40A credit at the cited instructions.
+- The precise legislative history of the taxpayer-tax-credit base-amount indexation ($17,652 -> $18,213 etc.) and
+  of the Social Security Benefits Credit threshold increase ($45,000 -> $54,000 single etc.) was not separately confirmed
+  beyond the printed 2025 form/instruction figures themselves.
+- Utah Pub 57 (military personnel) and the TC-40B non/part-year apportionment schedule were not fetched this session;
+  their treatment is summarized from the TC-40 instructions only.
+tax:
+  citation:
+    source: 'Utah State Tax Commission — 2025 Utah TC-40 form (form 40501): Line 4 ''Federal adjusted gross income from
+      federal return''; Line 9 ''Utah taxable income/loss - subtract the sum of lines 7 and 8 from line 6''; Line 10
+      ''Utah tax - multiply line 9 by 4.5% (.045) (not less than zero)''; Lines 11-20 Taxpayer Tax Credit (Line 11 ''Utah
+      personal exemption (multiply line 2d by $2,111)''; Line 14 state income tax from federal 1040 Schedule A line
+      5e less lines 5b and 5c; Line 16 initial credit 6% (.06); Line 17 phase-out base $18,213 single/MFS, $27,320 HoH,
+      $36,426 MFJ/QSS; Line 19 phase-out 1.3% (.013)). Second pass: the 2025 TC-40 Instructions (PDF title ''2025 TC-40
+      Instructions'') — What''s New ''Utah Tax Rate: The 2025 Utah Legislature passed HB 106, lowering the income tax
+      rate from 4.55 percent to 4.5 percent''; Line 10 ''Multiply line 9 by 4.5 percent (.045). If the result is zero
+      or less, enter 0''; Line 11 ''The Utah personal exemption is $2,111 per dependent''; the Line 17 table ($18,213
+      Single / $36,426 Married filing jointly / $18,213 Married filing separately / $27,320 Head of household / $36,426
+      Qualifying surviving spouse); ''Rounding Off to Whole Dollars: Round off cents to the nearest whole dollar. Round
+      down if under 50 cents; round up if 50 cents and above'' — both passes agree.'
+    url: https://files.tax.utah.gov/tax/forms/current/tc-40inst.pdf
+  flat_rate: 0.045
+  base: federal_agi
+  tax_line: 'Form TC-40 Line 10: ''Utah tax - multiply line 9 by 4.5% (.045) (not less than zero)'' (Line 9 = Utah
+    taxable income/loss = Line 6 total income minus Lines 7-8; Line 4 starts from federal AGI).'
+  exemptions: {}
+  notes:
+  - 'Rate change for 2025: HB 106 (2025 General Session) lowered Utah''s flat individual income tax rate from 4.55%
+    to 4.5% (2025 TC-40 instructions, What''s New; the 4.5% rate is printed on Line 10 of the 2025 TC-40 itself).
+    Utah''s rate has now moved three years running — 4.65% (2023), 4.55% (2024), 4.5% (2025); never carry it forward.'
+  - 'Base guidance: supply 2025 Form TC-40 Line 9 ''Utah taxable income/loss'' — Line 4 federal adjusted gross income
+    plus Line 5 additions (TC-40A Part 1, codes 51-69) minus Line 7 (state tax refund included on federal Schedule
+    1) and Line 8 subtractions (TC-40A Part 2). The op multiplies it by 4.5%, producing the Line 10 tax before credits.'
+  - 'CRITICAL — Taxpayer Tax Credit (TC-40 Lines 11-20, NOT modeled): Utah has no standard deduction and no base personal
+    exemptions; their function is replaced by a nonrefundable CREDIT against the Line 10 tax. Line 16 initial credit
+    = 6% (.06) of [Line 11 Utah personal exemption ($2,111 x line 2d qualifying dependents — dependents ONLY, not
+    taxpayer/spouse) + Line 12 federal standard or itemized deductions - Line 14 state income tax from federal form
+    1040, Schedule A, line 5e less lines 5b and 5c]. It phases out at 1.3% (.013) of Line 9 income above the Line
+    17 base: $18,213 single or married filing separately; $27,320 head of household; $36,426 married filing jointly
+    or qualifying surviving spouse (RAISED for 2025 from $17,652/$26,478/$35,304). Line 22 Utah income tax = Line
+    10 minus Line 20 (not less than zero). This op returns the LINE 10 amount — compute Lines 11-22 on the form.'
+  - 'exemptions ships empty and standard_deduction ships null intentionally: the $2,111 personal exemption and the
+    federal standard/itemized deduction are inputs to the Line 20 CREDIT, never subtractions from the Line 9 base
+    — pass exemptions_count=0 and dependents_count=0. (The 2025 form also newly splits line 2 dependents into a =
+    age 16 and under, b = other dependents, c = dependents born in 2025, d = total; only the line 2d total feeds Line
+    11.)'
+  - 'Qualified exempt taxpayer (TC-40 Line 21, NOT modeled): if federal adjusted gross income is LESS THAN the federal
+    standard deduction (excluding the extra age-65/blind amounts), the filer is exempt from Utah income tax entirely
+    — check the Line 21 worksheet before relying on the computed tax.'
+  - 'Zero floor: Line 10 prints ''not less than zero'' and the instructions say ''If the result is zero or less, enter
+    0'' — a Line 9 loss produces $0 tax (the op clamps a negative base to $0).'
+  - 'Rounding (instructions, ''Rounding Off to Whole Dollars''): ''Round off cents to the nearest whole dollar. Round
+    down if under 50 cents; round up if 50 cents and above'' — matches this op''s whole-dollar half-up rounding exactly.'
+  - 'Not modeled — credits and later lines: apportionable nonrefundable credits on Line 24 (TC-40A Part 3 — the 20%-of-federal
+    Utah EITC code AM, the $450/$900 retirement credit code 18, the Social Security benefits credit code AH now at
+    4.5% with RAISED $45,000/$90,000/$54,000 phase-out thresholds, the $1,000-per-child child tax credit code AT whose
+    age window HB 106 EXPANDED to children five and younger, the 4.5% capital gain / gold-and-silver-coin credits,
+    the 4.5% military retirement credit AJ, and the new employer-provided childcare credits AW/AX), nonapportionable
+    credits (Line 26, e.g. the $100 at-home parent credit code 01), use tax (Line 31) and the TC-40B non/part-year
+    resident apportionment (Line 25) all come after Line 10 on the form.'
