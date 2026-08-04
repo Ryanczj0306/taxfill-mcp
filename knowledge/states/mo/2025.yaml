@@ -1,0 +1,345 @@
+# MO state knowledge — tax year 2025. Fetched + cited from the MO DOR (.gov),
+# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2025 Form MO-1040
+# instruction booklet, then independently re-derived from a second official document —
+# the 2025 Form MO-1040A short-form instructions, which print the IDENTICAL 2025 Tax Rate
+# Chart and Tax Calculation Worksheet — plus the booklet's own composite-return statement
+# ('The tax rate for a composite return is 4.7 percent') as a third corroboration of the
+# top rate. Resolutions recorded inline where the passes differed.
+# HEADLINE 2025 CHANGES: top individual rate cut AGAIN, to 4.7% (2024: 4.8%; 2023: 4.95%),
+# with the tax-chart income steps re-indexed to $1,313 increments (2024: $1,273); a NEW
+# 100%-of-federally-reported CAPITAL GAIN SUBTRACTION on Form MO-A, Part 1, Line 18 (total
+# subtractions moved from 2024's MO-A Line 18 to 2025's MO-A Line 19, and Form MO-1040 Line 4
+# now comes from MO-A Part 1 Line 19); standard deduction $15,750 single/MFS, $23,625 head of
+# household, $31,500 married filing combined or qualifying widow(er), with the additional
+# 65-or-older/blind amount now $2,000 single/HoH and $1,600 MFC/MFS/QW (2024: $1,950/$1,550);
+# MO-1040 credit lines renumbered (Miscellaneous credits MO-TC now Line 42, Property Tax
+# Credit now Line 43 — 2024 was 43/45 — Working Family Tax Credit stays Line 44), and
+# deduction Lines 20, 22, and 23 are 'Reserved'. The Working Family Tax Credit remains 20%
+# of the federal EIC.
+jurisdiction: states/mo
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Missouri''s resident return starts from federal adjusted gross income and has no treaty-exempt income
+  add-back, so federally treaty-exempt income (already excluded from federal AGI) flows through untaxed -> conforms.
+  Form MO-1040 Line 1 is captioned "Federal adjusted gross income from federal return," and the 2025 MO-1040 instructions
+  state "You must begin your Missouri return with your total federal adjusted gross income, even if you have income
+  from a state other than Missouri." The only additions to federal AGI are on Form MO-A, Part 1, Lines 1-6 (interest
+  on state and local obligations other than Missouri source; partnership/fiduciary/S-corp adjustments; nonqualified
+  529-plan distributions; Food Pantry contributions included on federal Schedule A; nonresident property tax modification;
+  nonqualified ABLE-program distributions) — none of which add back federally treaty-exempt income or foreign-earned
+  income. Corroborating: the 2025 "Nonresident Alien Special Filing Instructions" direct the filer to "Enter your
+  federal adjusted gross income from U.S. Nonresident Alien Income Tax Return (Federal Form 1040NR), Line 11a, on
+  Form MO-1040, Line 1," meaning treaty-exempt income already excluded from 1040NR AGI carries to MO Line 1 unchanged
+  with no reattachment. Unlike California (which adds treaty income back on Schedule CA), Missouri has no analogous
+  addback. Cite: 2025 MO-1040 Instructions, Line 1 and Form MO-A Part 1.'
+citation:
+  source: 2025 Form MO-1040 Individual Income Tax Long Form & Instructions, Missouri Department of Revenue (Line
+    1 = Federal AGI; 'begin your Missouri return with your total federal adjusted gross income'; Form MO-A Part
+    1 additions and the new Line 18 capital gain subtraction; residency/domicile definitions; nonresident & part-year
+    rules; April 15, 2026 due date; filing requirement thresholds; mailing addresses incl. 2-D barcode boxes; Nonresident
+    Alien instructions Line 1 = 1040NR Line 11a; check payable to Missouri Department of Revenue; 2025 Tax Chart
+    p.21)
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+starts_from: federal AGI (Form MO-1040, Line 1 = "Federal adjusted gross income from federal return"; for Form 1040NR
+  filers, federal 1040NR Line 11a)
+residency:
+  summary: 'A Missouri resident is an individual who either (1) maintained a domicile in Missouri, or (2) did not
+    maintain a domicile in Missouri but did have permanent living quarters and spent more than 183 days of the taxable
+    year in Missouri (statutory-resident rule). Exception: an individual domiciled in Missouri who did not maintain
+    permanent living quarters in Missouri, did maintain permanent living quarters elsewhere, and spent 30 days or
+    less of the taxable year in Missouri is NOT a resident. "Domicile" is the place an individual intends to be his
+    or her permanent home, a place he or she intends to return to when absent; once established it continues until
+    the individual moves to a new location with the true intention of making a permanent home there, and an individual
+    can have only one domicile at a time. A nonresident is an individual who does not meet the definition of resident;
+    if required to file, nonresidents with income from another state must use Form MO-NRI (Missouri Income Percentage)
+    to determine income percentages. A part-year resident is taxed on all income earned while living in Missouri
+    and may either elect to be taxed as a full-year resident using Form MO-CR (credit for taxes paid to other states)
+    or use Form MO-NRI (Missouri income percentage), whichever is more beneficial. Form MO-CR and Form MO-NRI may
+    not be used by the same taxpayer on Form MO-1040, but on a combined return one spouse may use MO-NRI and the
+    other MO-CR.'
+forms:
+  resident: Form MO-1040 (2025 Individual Income Tax Return - Long Form). The same MO-1040 is used by all filers;
+    residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for
+    single / married-one-income filers with no Missouri modifications.)
+  part_year_or_nonresident: Form MO-NRI (Missouri Income Percentage), filed with Form MO-1040, for nonresidents
+    and part-year residents (the percentage goes on MO-1040 Line 32). Part-year residents may alternatively use
+    Form MO-CR (resident credit, Line 31) with MO-1040, whichever is more beneficial.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Property Tax Credit Claim (Circuit Breaker)
+  type: refundable
+  eligibility: 'Missouri residents who fall into one of four qualification categories (2025 Form MO-PTS): (A) 65
+    years of age or older and a full-year MO resident (attach Form SSA-1099); (B) 100% disabled veteran as a result
+    of military service (attach a letter from the Department of Veterans Affairs); (C) 100% disabled (attach an SSA
+    letter or Form SSA-1099); or (D) 60 years of age or older and received surviving spouse benefits (attach Form
+    SSA-1099). Available to both renters/part-year owners and full-year homeowners. Renters who rent from a facility
+    that does not pay property tax are not eligible.'
+  amount: Credit based on real estate tax or rent paid and net household income, per the official Property Tax Credit
+    Chart (2025 instructions pp.50-52). Maximum is $750 for rent paid (MO-PTS Line 12, total MO-CRP Line 9 amounts
+    or $750, whichever is less) and $1,100 for property tax paid (Line 11), with a combined Line 13 cap of $1,100.
+  income_limit_2025: 'Net household income (MO-PTS Line 10, after the Line 9 deduction of $0 single or married living
+    separate / $2,000 married filing combined renting or not owning the whole year / $4,000 married filing combined
+    owning and occupying the whole year): renters or part-year owners — $27,200 or less; owners who occupied the
+    home the entire year — $30,000 or less. Above the applicable limit you are not eligible to file the claim.'
+  claimed_on: Form MO-PTS attached to Form MO-1040 (credit carried to Form MO-1040, Line 43 — renumbered from 2024's
+    Line 45); or standalone Form MO-PTC if not required to file an income tax return.
+  citation:
+    source: Missouri Department of Revenue - 2025 Form MO-1040 instruction booklet, Form MO-PTS section (Qualifications
+      A-D; Lines 9-14; $27,200/$30,000 net-household-income limits; $750 rent / $1,100 combined caps) and 2025 Property
+      Tax Credit Chart pp.50-52
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+- name: Missouri Working Family Tax Credit (state EITC)
+  type: nonrefundable
+  eligibility: Resident individual who was allowed a federal earned income credit (EIC) on the federal return for
+    the same tax year; filing status must be single, head of household, qualifying widow(er), or married filing
+    combined (married filing separately does not qualify); must have a tax liability after the application of all
+    other credits. Form MO-WFTC and a copy of the federal return must be attached or the credit may be disallowed.
+  amount: '20 percent of what the taxpayer''s federal earned income credit (EIC) would be under the EIC law as of
+    January 1, 2021 (2025 instructions, Line 44: "The Missouri Working Family Tax Credit (WFTC) is a credit for
+    20 percent of what your federal earned income credit (EIC) would be under the EIC law as of January 1, 2021").
+    Unchanged from 2024 (it was 10 percent in 2023). Limited to remaining MO tax liability; cannot be refunded.'
+  income_limit_2025: No separate state income limit beyond federal EIC eligibility.
+  claimed_on: Form MO-WFTC (2025 booklet p.43), carried to Form MO-1040, Line 44.
+  citation:
+    source: Missouri Department of Revenue - 2025 Form MO-1040 instruction booklet, Line 44 Missouri Working Family
+      Tax Credit and Form MO-WFTC
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+- name: Food Pantry / Homeless Shelter / Soup Kitchen Tax Credit
+  type: nonrefundable
+  eligibility: Any taxpayer (individual, corporation, or trust) who donates cash or food supplies to a local food
+    pantry, homeless shelter, or soup kitchen in the county where the taxpayer resides. If the donation is also
+    reported as a federal Schedule A charitable contribution, the amount must be added back on Form MO-A, Part 1,
+    Line 4 (2025 MO-A Line 4, 'Food Pantry contributions included on Federal Schedule A'). Program sunsets December
+    31, 2026 (fully terminates September 1, 2027), so tax year 2025 is still within the program.
+  amount: 50 percent of donations, up to $2,500 per taxpayer per year. Limited to the taxpayer's tax liability;
+    excess may be carried forward three subsequent years. Subject to a cumulative statewide cap of $1,750,000 per
+    fiscal year (credits apportioned if claims exceed the cap; returns claiming it must be filed July 1 through
+    April 15).
+  income_limit_2025: No income limit.
+  claimed_on: Form MO-FPT, claimed through Form MO-TC (2025 Miscellaneous Income Tax Credits, credit code FPT),
+    carried to Form MO-1040, Line 42 (renumbered from 2024's Line 43).
+  citation:
+    source: Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page and 2025 MO-1040 instruction
+      booklet (Form MO-A Part 1 Line 4; Form MO-TC credit code FPT / Form MO-FPT)
+    url: https://dor.mo.gov/tax-credits/fpt.html
+filing_requirement:
+  note: 'Per the 2025 MO-1040 instructions: you do not have to file a Missouri return if you are not required to
+    file a federal return. If required to file a federal return, you may still not have to file a Missouri return
+    if you (a) are a resident and have less than $1,200 of Missouri adjusted gross income; (b) are a nonresident
+    with less than $600 of Missouri income; or (c) have Missouri adjusted gross income less than the amount of your
+    standard deduction for your filing status. (If not required to file but a Form W-2 shows Missouri tax withheld,
+    file to claim a refund.)'
+mailing_addresses:
+  refund_or_no_payment: 'Department of Revenue, P.O. Box 500, Jefferson City, MO 65105-0500 (refund or no amount
+    due). Note — returns printed from the Department''s 2-D barcode / fill-in auto-calculating forms use different
+    boxes: refund returns to P.O. Box 3222, Jefferson City, MO 65105-3222; refund returns claiming a property tax
+    credit to P.O. Box 3385, Jefferson City, MO 65105-3385.'
+  with_payment: 'Department of Revenue, P.O. Box 329, Jefferson City, MO 65105-0329 (balance due, with payment and
+    all required attachments). Note — 2-D barcode (fill-in/auto-calculating) balance-due returns use P.O. Box 3370,
+    Jefferson City, MO 65105-3370; balance-due returns claiming a property tax credit use P.O. Box 3395, Jefferson
+    City, MO 65105-3395.'
+  citation:
+    source: 2025 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Where to Mail Your Return' (P.O.
+      Box 500 refund / P.O. Box 329 balance due; 2-D barcode boxes 3222/3370 and property-tax-credit boxes 3385/3395;
+      also printed on the Form MO-1040 signature page)
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+payment:
+  check_payee: Missouri Department of Revenue (check or money order, U.S. funds only; by submitting payment by check
+    you authorize the Department to process it electronically upon receipt; do not postdate; the Department may
+    electronically resubmit checks returned for insufficient funds; if you mail your payment after your return is
+    filed, attach it to Form MO-1040V, Individual Income Tax Payment Voucher, on page 49 of the booklet)
+  web_pay_url: https://dor.mo.gov/taxation/payment-options/
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: 2025 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Calendar year taxpayers must file
+      no later than April 15, 2026'; an automatic extension of time to file is granted until October 15, 2026 with
+      a federal extension (attach Federal Form 4868) or by filing Form MO-60; an extension of time to file does
+      not extend the time to pay (5% addition to tax if the tax is not paid by the original due date); payments
+      must be postmarked by April 15, 2026
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+all_citations:
+- source: 2025 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; Form MO-A Part
+    1 additions Lines 1-6 and the NEW Line 18 capital gain subtraction with total subtractions at Line 19; residency/domicile
+    definitions incl. 183-day statutory-resident and 30-day exception rules; filing requirement thresholds $1,200/$600/standard
+    deduction; April 15, 2026 due date; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions
+    Line 1 = 1040NR Line 11a; rounding rule 'Round $32.50 up to $33.00'; 2025 Tax Chart p.21; Line 12 Federal Tax
+    Percentage chart; Line 14 standard deductions $15,750/$23,625/$31,500 with $2,000/$1,600 additional amounts;
+    Line 15 $1,400 head-of-household/qualifying-widow(er) exemption; Line 42 MO-TC; Line 43 Property Tax Credit;
+    Line 44 WFTC 20%; composite-return rate 4.7%)
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+- source: 2025 Form MO-1040A Single/Married (Income from One Spouse) Short Form Instructions — independent second
+    pass on the 2025 Tax Chart (identical Tax Rate Chart and Tax Calculation Worksheet, including the $1,313 steps
+    and the 4.7% top rate) and the 2025 standard deduction amounts
+  url: https://dor.mo.gov/forms/MO-1040A%20Instructions_2025.pdf
+- source: Missouri DOR - Nonresidents and Residents with Other State Income (resident/nonresident/part-year definitions;
+    MO-NRI / MO-CR usage with MO-1040)
+  url: https://dor.mo.gov/taxation/individual/additional-resources/non-residents.html
+- source: Missouri DOR - Food Pantry Tax Credit (FPT) program page (50% of donations, $2,500/taxpayer/year, $1,750,000
+    statewide fiscal-year cap, 3-year carryforward, December 31, 2026 sunset)
+  url: https://dor.mo.gov/tax-credits/fpt.html
+- source: Missouri DOR - Payment Options (electronic payment, check/money order, Form MO-1040V voucher)
+  url: https://dor.mo.gov/taxation/payment-options/
+unverified:
+- The DOR's separate Standard-and-Additional-Standard-Deduction.pdf reference sheet (linked from the Line 14 instructions)
+  was not fetched; the 2025 amounts used here are printed on Form MO-1040 Line 14 itself ($15,750 single or married
+  filing separate; $23,625 head of household; $31,500 married filing combined or qualifying widow(er)) and the
+  additional 65-or-older/blind amounts ($2,000 single/head of household, $1,600 married filing combined, married
+  filing separately, or qualifying widow(er)) are from the Line 14 narrative.
+- The 2025 Form MO-WFTC worksheet itself (booklet p.43) was not read line-by-line; the 20%-of-federal-EIC rate,
+  the 'EIC law as of January 1, 2021' computation basis, and the eligibility bullets are from the Line 44 instructions.
+  Whether an investment-income cap applies for 2025 is stated on Form MO-WFTC — confirm there before claiming.
+- MO-NRI form mechanics were not fully read; the residency/usage description is drawn from the MO-1040 instructions
+  (Lines 31/32) and the DOR non-residents page rather than a line-by-line read of MO-NRI.
+- The scope and any conditions of the new 100% capital gain subtraction (Form MO-A Part 1 Line 18) beyond the printed
+  instruction text were not traced to the enacting session law; the pack records the instruction language ('a subtraction
+  from your federal adjusted gross income for 100 percent of your federally reported capital gains ... reported
+  on your Federal Form 1040 or 1040-SR, Line 7a', with $0 substituted for a negative Line 7a).
+tax:
+  citation:
+    source: '2025 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p.21 ''2025
+      Tax Chart'' (Tax Rate Chart, Section A: $0 to $1,313 -> $0; over $1,313 not over $2,626 -> 2.0% of the excess
+      over $1,313; over $2,626 not over $3,939 -> $26 plus 2.5%; over $3,939 not over $5,252 -> $59 plus 3.0%; over
+      $5,252 not over $6,565 -> $98 plus 3.5%; over $6,565 not over $7,878 -> $144 plus 4.0%; over $7,878 not over $9,191
+      -> $197 plus 4.5%; over $9,191 -> $256 plus 4.7% of the excess over $9,191; ''A separate tax must be computed
+      for you and your spouse''; ''Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and 30S'');
+      Line 30 - Missouri Tax (''Calculate your tax by using your taxable income from Form MO-1040, Line 29Y and 29S,
+      the Tax Rate Chart (page 21, Section A), and Tax Calculation Worksheet (page 21, Section B)''); Line 12 Federal
+      Tax Percentage chart; Line 13 federal income tax deduction caps; Line 14 standard deduction ($15,750/$23,625/$31,500);
+      Line 15 head of household / qualifying widow(er) $1,400. Second pass: the 2025 Form MO-1040A short-form instructions
+      print the IDENTICAL 2025 Tax Rate Chart and Tax Calculation Worksheet (https://dor.mo.gov/forms/MO-1040A%20Instructions_2025.pdf)
+      — both passes agree digit for digit. Third corroboration of the top rate: the booklet''s composite-return note,
+      ''The tax rate for a composite return is 4.7 percent.'''
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 1313, rate: 0}
+    - {over: 1313, but_not_over: 2626, rate: 0.02}
+    - {over: 2626, but_not_over: 3939, rate: 0.025}
+    - {over: 3939, but_not_over: 5252, rate: 0.03}
+    - {over: 5252, but_not_over: 6565, rate: 0.035}
+    - {over: 6565, but_not_over: 7878, rate: 0.04}
+    - {over: 7878, but_not_over: 9191, rate: 0.045}
+    - {over: 9191, but_not_over: null, rate: 0.047}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 1313, rate: 0}
+    - {over: 1313, but_not_over: 2626, rate: 0.02}
+    - {over: 2626, but_not_over: 3939, rate: 0.025}
+    - {over: 3939, but_not_over: 5252, rate: 0.03}
+    - {over: 5252, but_not_over: 6565, rate: 0.035}
+    - {over: 6565, but_not_over: 7878, rate: 0.04}
+    - {over: 7878, but_not_over: 9191, rate: 0.045}
+    - {over: 9191, but_not_over: null, rate: 0.047}
+    married_filing_separately:
+    - {over: 0, but_not_over: 1313, rate: 0}
+    - {over: 1313, but_not_over: 2626, rate: 0.02}
+    - {over: 2626, but_not_over: 3939, rate: 0.025}
+    - {over: 3939, but_not_over: 5252, rate: 0.03}
+    - {over: 5252, but_not_over: 6565, rate: 0.035}
+    - {over: 6565, but_not_over: 7878, rate: 0.04}
+    - {over: 7878, but_not_over: 9191, rate: 0.045}
+    - {over: 9191, but_not_over: null, rate: 0.047}
+    head_of_household:
+    - {over: 0, but_not_over: 1313, rate: 0}
+    - {over: 1313, but_not_over: 2626, rate: 0.02}
+    - {over: 2626, but_not_over: 3939, rate: 0.025}
+    - {over: 3939, but_not_over: 5252, rate: 0.03}
+    - {over: 5252, but_not_over: 6565, rate: 0.035}
+    - {over: 6565, but_not_over: 7878, rate: 0.04}
+    - {over: 7878, but_not_over: 9191, rate: 0.045}
+    - {over: 9191, but_not_over: null, rate: 0.047}
+  base: state_taxable_income
+  tax_line: 'Form MO-1040 Line 30: ''Tax (see tax chart on page 21 of the instructions)'', computed per column (30Y/30S)
+    from Line 29Y/29S. Instructions p.21, ''2025 Tax Chart'': ''To identify your tax, use your Missouri taxable income
+    from Form MO-1040, Line 29Y and 29S and the tax chart in Section A below. A separate tax must be computed for
+    you and your spouse. Calculate your Missouri tax using the online tax calculator at dor.mo.gov/personal/individual/
+    or by using the worksheet in Section B below. Round to the nearest whole dollar and enter on Form MO-1040, Line
+    30Y and 30S.'''
+  exemptions: {}
+  notes:
+  - '2025 CHANGES: the top rate fell AGAIN, to 4.7% (2024: 4.8%; 2023: 4.95%), and the chart''s income steps re-indexed
+    to $1,313 increments (2024: $1,273) — breakpoints $1,313 / $2,626 / $3,939 / $5,252 / $6,565 / $7,878 / $9,191,
+    with the printed constants $26 / $59 / $98 / $144 / $197 / $256. Verified against BOTH the 2025 MO-1040 instructions
+    p.21 and the 2025 MO-1040A short-form instructions (identical chart), and corroborated a third time by the booklet''s
+    composite-return note ''The tax rate for a composite return is 4.7 percent.'''
+  - '2025 BASE CHANGE — NEW 100% CAPITAL GAIN SUBTRACTION (affects the taxable_base you must supply): Form MO-A, Part
+    1, Line 18 is new for 2025 — ''The state of Missouri allows a subtraction from your federal adjusted gross income
+    for 100 percent of your federally reported capital gains. Enter the amount of capital gains reported on your Federal
+    Form 1040 or 1040-SR, Line 7a'' (if Line 7a is negative, enter $0). Total subtractions moved from 2024''s MO-A
+    Part 1 Line 18 to 2025''s Line 19, and Form MO-1040 Line 4 now carries MO-A Part 1 Line 19. A 2025 Missouri taxable
+    income computed without this subtraction will be OVERSTATED.'
+  - 'Base guidance: Supply 2025 Form MO-1040 Line 29 ''Taxable income'' — one column at a time: Line 29Y (yourself)
+    or Line 29S (spouse). Line 29 = total Missouri AGI (Line 6, which starts from federal AGI at Line 1 plus Form
+    MO-A Part 1 additions at Line 2 and minus Form MO-A Part 1 total subtractions at Line 4, now MO-A Line 19 including
+    the new 100% capital gain subtraction) minus total deductions (Line 25 = Line 8 plus Lines 13 through 24: the
+    pension/Social Security exemption; the Lines 9-13 FEDERAL INCOME TAX DEDUCTION — Line 11 federal tax x a percentage
+    set by Missouri AGI: 35% if Line 6 is $25,000 or less, 25% for $25,001-$50,000, 15% for $50,001-$100,000, 5% for
+    $100,001-$125,000, 0% for $125,001 or more, capped at $5,000 per individual / $10,000 married filing combined;
+    the Line 14 standard or itemized deduction; the Line 15 $1,400 head-of-household/qualifying-widow(er) exemption;
+    and the other deductions on Lines 16-24, with Lines 20, 22, and 23 ''Reserved'' for 2025), giving Line 26; then
+    apportioned by each spouse''s income percentage (Line 7Y/7S, applied at Line 27), minus any Line 28 enterprise-zone/rural-empowerment
+    modification = Line 29. Single, married filing separately, head of household, and qualifying widow(er) filers
+    have one column — supply that Line 29 amount. MARRIED FILING COMBINED: Missouri taxes each spouse''s column separately
+    — run this op once with Line 29Y and once with Line 29S and add the two results (Form MO-1040 Lines 30Y + 30S);
+    do NOT supply the couple''s combined taxable income as one amount, or the tax will be overstated.'
+  - 'One rate schedule for all filing statuses: the 2025 Tax Rate Chart (MO-1040 instructions p.21) makes no distinction
+    by filing status, so the identical schedule is shipped for all four statuses. Qualifying widow(er) maps to married_filing_jointly
+    here and uses the same chart.'
+  - 'CRITICAL for married filing combined: Missouri computes tax SEPARATELY for each spouse — ''A separate tax must
+    be computed for you and your spouse'' (instructions p.21). Combined income is split by each spouse''s income percentage
+    (Line 7Y/7S, applied at Line 27), producing Line 29Y and 29S, each run through the chart (Line 30Y/30S), then
+    added at Line 36. Running a couple''s combined taxable income through the brackets as one amount OVERSTATES tax
+    (a second pass through the below-4.7% brackets). Run this op once per spouse''s Line 29 column and sum the results.'
+  - 'Printed-constant rounding (quantified for 2025): the chart''s flat add-on constants ($26 / $59 / $98 / $144 /
+    $197 / $256) are rounded from the exact cumulative marginal sums ($26.26 / $59.085 / $98.475 / $144.43 / $196.95
+    / $256.035); the largest divergence is $0.475 at the $5,252 breakpoint. This op does exact marginal math, so its
+    result can differ from the form worksheet''s result by up to ~$1 after rounding. Both agree on the booklet''s
+    own worked examples (Example A, taxable income $3,090: worksheet 26 + 11.60 = 37.60 -> 38, exact marginal 26.26
+    + 11.60 = 37.86 -> 38; Example B, $12,000: worksheet 256 + 132.03 = 388.03 -> 388, exact marginal 256.035 + 132.023
+    = 388.058 -> 388). Where they can split is a top-bracket amount whose exact total lands on a .50 tie (exact =
+    printed + $0.035 there), e.g. taxable income $9,286: exact 260.50 -> 261 while the worksheet''s 256 + 4.465 =
+    260.465 -> 260. The filed return should use the p.21 Tax Calculation Worksheet''s printed constants or the DOR
+    online calculator at dor.mo.gov/personal/individual/.'
+  - 'Federal income tax deduction (Missouri base quirk, NOT modeled): MO-1040 Lines 9-13 deduct Line 11 federal income
+    tax times a Missouri-AGI-based percentage (Line 12 chart: 35% if Line 6 is $25,000 or less; 25% $25,001-$50,000;
+    15% $50,001-$100,000; 5% $100,001-$125,000; 0% $125,001 or more), capped at $5,000 per individual / $10,000 married
+    filing combined. Because it is income-dependent it is not modeled — it must already be reflected in the Line 29
+    taxable income you supply.'
+  - 'standard_deduction ships as null because the base is Line 29 taxable income, from which the Line 14 deduction
+    was already subtracted — do not subtract it again. For reference, 2025 Missouri standard deductions (printed on
+    Form MO-1040 Line 14): $15,750 single or married filing separate; $23,625 head of household; $31,500 married filing
+    combined or qualifying widow(er). Additional standard deduction for each 65-or-older or blind condition (Line
+    14 instructions, CHANGED for 2025): $2,000 for single and head of household (2024: $1,950); $1,600 for married
+    filing combined, married filing separately, or qualifying widow(er) (2024: $1,550). A net qualified disaster loss
+    increase to the federal standard deduction increases the Missouri one by the same amount (paper filing required).
+    Itemizers use Form MO-A Part 2 instead — note the 2025 MO-A Part 2 worksheet trigger at federal Schedule A Line
+    5d over $40,000 ($20,000 MFS) or federal Form 1040 Line 11a over $500,000 ($250,000 MFS).'
+  - 'Head of household / qualifying widow(er) additional exemption: $1,400 on MO-1040 Line 15 (unchanged for 2025)
+    — a base reduction already included in the Line 29 base, so it is not shipped; the Missouri filing status must
+    match the federal filing status to claim it.'
+  - The 2025 MO-1040 has NO personal or dependent exemption lines — exemptions is intentionally empty; exemptions_count
+    and dependents_count have no effect for Missouri.
+  - 'Zero-rate floor: Missouri taxable income of $0 to $1,313 owes $0 (shipped as a rate-''0'' bottom bracket); the
+    state is graduated, not flat, for 2025.'
+  - 'Rounding rule (instructions ''Dollars and Cents'': ''For 1 cent through 49 cents, round down to the previous
+    whole dollar amount. For 50 cents through 99 cents, round up to the next whole dollar amount'', with the booklet''s
+    own examples ''Round $32.49 down to $32.00'' and ''Round $32.50 up to $33.00'') — matches the engine''s half-up
+    rounding, and vector 1 below is the exact .50 half-up tie.'
+  - 'No lookup-table mandate: Missouri publishes no tax table; all filers compute Line 30 from the Tax Rate Chart
+    / Tax Calculation Worksheet (Section B) or the DOR online calculator.'
+  - 'Not modeled — MO-1040 Line 34 other taxes: tax on lump-sum distributions (10% of the tax shown on Federal Form
+    4972) and recapture of low income housing credits (Federal Form 8611); these are added after Line 30 on the form.'
+  - 'Not modeled — apportionment and credits after Line 30: nonresidents/part-year residents multiply Line 30 by the
+    Missouri income percentage (Line 32, Form MO-NRI), and residents may take the resident credit for taxes paid to
+    other states (Line 31, Form MO-CR); this op produces the pre-apportionment Line 30 amount. Also not modeled (they
+    are CREDITS against tax, not base reductions): Property Tax Credit (Line 43 for 2025, renumbered from 2024''s
+    Line 45; Form MO-PTS), Missouri Working Family Tax Credit (Line 44, Form MO-WFTC — still 20% of the federal EIC),
+    and miscellaneous credits (Line 42 for 2025, renumbered from 2024''s Line 43; Form MO-TC).'
+  - This pack follows the 2025 Form MO-1040 long form; the MO-1040A short form uses the same 2025 Tax Chart (its instructions
+    were the second-pass source) but has its own line layout.
