@@ -1,0 +1,262 @@
+# VT 2025 pack — derived from the verified 2024 pack; every figure re-verified against
+# the official 2025 documents. Two-pass: pass 1 = the 2025 Form IN-111 Instructions
+# (tax.vermont.gov, pp.6/12-13 — the 2025 Vermont Tax Rate Schedules X/Y-1/Y-2/Z, the
+# 2025 Vermont Tax Tables, the Line 4 standard-deduction chart and the Line 5e personal
+# exemption); pass 2 = the 2025 GB-1210 'Income Tax Withholding Instructions, Tables,
+# and Charts' ANNUAL PAYROLLS percentage-method table, an independently-published
+# document whose wage bounds minus the built-in offsets ($3,825 single / $11,475 married)
+# reproduce the income-tax bracket bounds exactly and whose UNROUNDED cumulative
+# constants (1,654.90 / 6,294.70 / 16,174.70 single; 2,763.75 / 10,482.45 / 18,428.25
+# married) confirm the schedules' rounded printed 'VT Base Tax' figures. NOTE: unlike
+# 2024, direct https fetches of tax.vermont.gov succeeded with a browser User-Agent, so
+# these are live official copies, not Wayback captures. TY2025 indexation: SD
+# 7,650/15,300/7,650/11,450 (+$1,250 per federal standard-deduction box, born before
+# Jan. 2, 1961 or blind); personal exemption $5,300 x Line 5d; bracket bounds
+# X 49,400/119,700/249,700, Y-1 82,500/199,450/304,000, Y-2 exactly half Y-1
+# (41,250/99,725/152,000), Z 66,200/171,000/276,850; rates unchanged at
+# 3.35/6.60/7.60/8.75%; 3%-of-AGI minimum over $150,000 federal AGI retained; tax-table
+# mandate under $75,000 retained. New for 2025: the refundable Veteran Tax Credit
+# (Act 71 of 2025).
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/vt
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Vermont''s resident return starts from federal adjusted gross income and does NOT add back federally treaty-exempt income; it explicitly SUBTRACTS it. Form IN-111 Line 1 is ''Federal Adjusted Gross Income REQUIRED entry. Enter the amount from your federal Form 1040 or, if applicable, from the recomputed federal Form 1040'' (2025 IN-111 Instructions). The DOR ''Resident'' page states: ''If you are a Vermont resident, your income starts with federal adjusted gross income minus the following: Income exempted from state taxation by the laws of the United States...''. Line 2 (Net Modifications to Federal AGI, from Schedule IN-112, Part I, Line 19) contains the standard state additions/subtractions — non-Vermont state/local obligation interest and federal bonus depreciation as additions; U.S.-obligation interest, the capital-gains exclusion, the retirement-income exemption, medical expenses, state/local taxes, railroad retirement, and military retirement/survivor benefits as subtractions — with no treaty-income add-back. Because treaty-exempt income is already excluded from federal AGI and is additionally listed as a Vermont subtraction (not an addition), it is not re-taxed -> conforms = true.'
+citation:
+  source: 'VT Dept of Taxes — 2025 Form IN-111 Instructions (PDF, 20 pages): Line 1 = Federal Adjusted Gross Income; Line 4 2025 Vermont Standard Deduction chart; Line 5e personal exemption $5,300; Line 8 tax from the 2025 tax table or rate schedule (3%-of-AGI minimum over $150,000); 2025 Vermont Tax Rate Schedules (p.12) and 2025 Vermont Tax Tables (pp.13-17); due date April 15, 2026; mailing addresses (PO Box 1881 refund/no tax due, PO Box 1779 balance due); check payable to Vermont Department of Taxes with 2025 Form IN-116; myVTax'
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+starts_from: 'federal AGI (Form IN-111 Line 1 = Federal Adjusted Gross Income from federal Form 1040; net modifications applied on Line 2 from Schedule IN-112, Part I, Line 19)'
+residency:
+  summary: 'Resident: you qualify as a Vermont resident for that part of the taxable year during which you are domiciled in Vermont, OR you maintain a permanent home in Vermont and are present in Vermont for more than 183 days of the taxable year (statutory residency). Part-year resident: a Vermont resident for only part of the tax year (typically moved into or out of Vermont) — combine income while a resident with Vermont-source income while a nonresident. Nonresident: does not qualify as a resident during any part of the year; taxed only on Vermont-source income. (Framework unchanged for 2025; nonresidents and part-year residents apportion on Schedule IN-113 and carry the Line 35 income adjustment percentage to IN-111 Line 15.)'
+forms:
+  resident: Form IN-111, Vermont Income Tax Return
+  part_year_or_nonresident: 'Form IN-111 (same return) plus Schedule IN-113, Vermont Income Adjustment Calculations (nonresidents and part-year residents complete IN-113 to apportion/allocate Vermont income; the IN-113 Line 35 percentage goes on IN-111 Line 15 and multiplies Line 14 to produce Line 16 Adjusted Vermont Income Tax)'
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed for 2025 (verify the figure): Renter Credit (renter rebate / circuit-breaker) — the per-county/per-household income limits and the credit calculator were not re-fetched.'
+credits:
+- name: Vermont Earned Income Tax Credit (EITC)
+  type: refundable
+  eligibility: 'Full-year and part-year Vermont residents who qualify for and receive the federal Earned Income Tax Credit. Available to all qualifying VT residents regardless of whether they, their spouse, or qualifying dependents have an SSN or ITIN (such returns must be paper-filed).'
+  amount: 'For a filer WITH qualifying children (Schedule IN-112, Part II, Line 5 greater than zero): 38% of the federal Earned Income Tax Credit (multiply the federal EITC by 0.38). For a filer with NO qualifying children on federal Schedule EIC (Line 5 is zero): 100% of the federal EITC — the 2025 Schedule IN-112 Line 7 reads ''If Line 5 is GREATER than zero, MULTIPLY Line 6 by 38% (0.38). If Line 5 is zero, enter the amount from Line 6.'' Part-year residents prorate the total refundable credits by the Vermont portion of income (IN-112 Lines 14-17).'
+  income_limit_2025: 'No separate Vermont income limit; eligibility tracks the federal EITC income limits (the federal EITC must be claimed on federal Form 1040).'
+  claimed_on: 'Schedule IN-112, Part II, Line 7 (federal EITC entered on Line 6, number of qualifying children on Line 5); the Part II Line 13 total refundable credits carries to Form IN-111, Line 26c (part-year residents: Line 17).'
+  citation:
+    source: 'Vermont Department of Taxes - 2025 Schedule IN-112 (form, Rev. 10/25) Part II Line 7 and 2025 Schedule IN-112 Instructions, Line 7'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-2025.pdf
+- name: Vermont Child Tax Credit
+  type: refundable
+  eligibility: 'Full-year and part-year Vermont resident families with a qualifying child age six or younger at the close of the tax year — the 2025 Schedule IN-112 says to list only children born 2019 through 2025. Available to all qualifying VT residents regardless of SSN/ITIN status of taxpayer, spouse, or dependents.'
+  amount: '$1,000 per qualifying child (Schedule IN-112, Part II, Line 4 = Line 3 x $1,000). Full credit if AGI (Form IN-111, Line 1) is $125,000 or less. Above $125,000 the credit is reduced by $20 for each additional $1,000 (or fraction) of AGI per the official Child Tax Credit Table in the 2025 IN-112 instructions (e.g. $720 at $138,001-$139,000, $500 at $149,001-$150,000, $20 at $173,001-$174,000, and $0 at $174,001 and above).'
+  income_limit_2025: 'Full credit at AGI up to $125,000; partial credit for AGI between $125,001 and $174,000; no credit at AGI of $174,001 or more.'
+  claimed_on: 'Schedule IN-112, Part II, Line 4 (number of qualifying children on Line 3); the Part II Line 13 total carries to Form IN-111, Line 26c (part-year residents: Line 17).'
+  citation:
+    source: 'Vermont Department of Taxes - 2025 Schedule IN-112 Instructions (Child Tax Credit Table and the $20-per-$1,000 phase-down above $125,000 AGI) and the 2025 Schedule IN-112 form, Part II Line 4'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2025.pdf
+- name: Vermont Child and Dependent Care Credit
+  type: refundable
+  eligibility: 'Full-year and part-year Vermont residents who earn income, pay dependent care expenses, and are eligible for the federal Child and Dependent Care Credit (federal Form 2441).'
+  amount: '72% of the federal Child and Dependent Care Credit (Schedule IN-112, Part II, Line 2 = federal Form 2441, Line 11 x 0.72). Part-year residents prorate by the Vermont portion of income.'
+  income_limit_2025: 'No separate Vermont income limit stated; eligibility tracks the federal Child and Dependent Care Credit.'
+  claimed_on: 'Schedule IN-112, Part II, Line 2 (federal amount on Line 1); the Part II Line 13 total carries to Form IN-111, Line 26c (part-year residents: Line 17).'
+  citation:
+    source: 'Vermont Department of Taxes - 2025 Schedule IN-112 (form, Rev. 10/25) Part II Line 2 (''MULTIPLY Line 1 by 72% (0.72)'') and the Tax Credits and Adjustments for Individuals page (''The tax credit amount is 72% of the federal Child and Dependent Care Tax Credit'')'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-2025.pdf
+- name: Vermont Veteran Tax Credit
+  type: refundable
+  eligibility: 'NEW FOR 2025 (signed into law June 25, 2025 as part of Act 71, effective beginning with the 2025 tax year). Any Vermont resident or part-year resident who has a discharge record or other record of separation from active duty verifying service in the uniformed services, whose adjusted gross income (Form IN-111, Line 1) is at or below the phase-out range.'
+  amount: '$250 if AGI is $25,000 or less. Above $25,000 the credit is reduced by $5 for each full $100 of AGI over $25,000 (Schedule IN-112, Part II: Line 9 = AGI - $25,000; Line 10 = Line 9 / 100 rounded DOWN to a whole number; Line 11 = Line 10 x $5; Line 12 = $250 - Line 11). No credit at AGI of $30,000 or more.'
+  income_limit_2025: 'Full $250 at AGI of $25,000 or less; phased down over $25,000 to $30,000; no credit at AGI of $30,000 or more.'
+  claimed_on: 'Schedule IN-112, Part II, Lines 8-12; the Part II Line 13 total carries to Form IN-111, Line 26c (part-year residents: Line 17).'
+  citation:
+    source: 'Vermont Department of Taxes - 2025 Schedule IN-112 Instructions, Veteran Tax Credit (''signed into law on June 25, 2025, as part of Act 71 ... $250 refundable tax credit if their adjusted gross income is less than or equal to $25,000 ... No credit is available for veterans with an adjusted gross income equal to or greater than $30,000'') and the 2025 Schedule IN-112 form, Part II Lines 8-12'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2025.pdf
+- name: Renter Credit (renter rebate / circuit-breaker)
+  type: refundable
+  eligibility: 'Vermont renters who meet all three 2025 requirements per the 2025 IN-111 instructions: (1) domiciled in Vermont for the entire calendar year 2025, (2) not claimed in 2025 as a dependent of another taxpayer, and (3) rented in Vermont for at least six months in 2025. Eligibility also depends on income, family size, and county of residency.'
+  amount: 'Income-based; the credit is computed from the renter''s income and 10% of the U.S. HUD fair market rent for an apartment of the household''s size in the renter''s county. Specific dollar amounts and the per-county/per-household income eligibility limits vary and are determined via the official Renter Credit Calculator and tables (not a single fixed figure).'
+  income_limit_2025: 'County- and household-size-specific income limits apply (set per the Renter Credit limits); a single statewide dollar limit was not confirmed from the cited source.'
+  claimed_on: 'Form RCC-146, Renter Credit Claim (filed separately from / alongside the income tax return). Due April 15, 2026; may be late-filed through Oct. 15, 2026 with no penalty for late filing. Can be filed at myVTax.'
+  citation:
+    source: 'Vermont Department of Taxes - 2025 Form IN-111 Instructions, Renter Credit Claim section (three eligibility requirements; April 15, 2026 due date, late-file to Oct. 15, 2026) and the Renter Credit page'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+  unverified: true
+- name: Elderly or Permanently Disabled Tax Credit
+  type: nonrefundable
+  eligibility: 'Taxpayers who qualify for and receive the federal Credit for the Elderly or the Disabled: you are age 65 or older, OR you retired on permanent and total disability and have taxable disability income, and your income is within the federal limits. Intended for seniors and disabled persons with little tax-exempt retirement or disability income.'
+  amount: 24% of the federal Credit for the Elderly or the Disabled.
+  income_limit_2025: 'Tracks the federal Credit for the Elderly or the Disabled income/AGI and nontaxable-benefit limits; no separate Vermont dollar limit confirmed from the cited source.'
+  claimed_on: 'Schedule IN-119, Vermont Tax Adjustments and Nonrefundable Credits, Part I (a subtraction from Vermont income tax); flows to Form IN-111, Line 9 ''Net Adjustment to Vermont Tax''.'
+  citation:
+    source: 'Vermont Department of Taxes - Tax Credits and Adjustments for Individuals page (''The Vermont tax credit is 24% of the federal Credit for the Elderly or the Disabled'') and the 2025 Form IN-111 Instructions, Line 9 (Schedule IN-119, Part I subtractions include the Credit for the Elderly or the Disabled)'
+    url: https://tax.vermont.gov/individuals/personal-income-tax/tax-credits
+filing_requirement:
+  note: 'A 2025 Vermont Income Tax Return must be filed by all full-year or part-year Vermont residents or nonresidents if you are required to file a 2025 federal income tax return, AND you earned or received more than $100 in Vermont income, OR you earned or received gross income of more than $1,000 as a nonresident (2025 Form IN-111 Instructions, ''Requirement to File a Vermont Income Tax Return''; see 32 V.S.A. sections 5861 and 5823(b) for sources of income). You must also file a Vermont Income Tax Return to claim a refund of Vermont withholding or estimated tax payments — you have up to three years from the due date of the return, including extensions, to file a claim for overpayment.'
+mailing_addresses:
+  refund_or_no_payment: Vermont Department of Taxes, PO Box 1881, Montpelier, VT 05601-1881
+  with_payment: 'Vermont Department of Taxes, PO Box 1779, Montpelier, VT 05601-1779 (attach your check to the lower left side of the return)'
+  citation:
+    source: 'VT Dept of Taxes — 2025 Form IN-111 Instructions, FILING THE RETURN: ''REFUND OR NO TAX DUE — Mail your return to: Vermont Department of Taxes, PO Box 1881, Montpelier, VT 05601-1881'' / ''BALANCE DUE — Attach your check to the lower left side of the return and mail to: Vermont Department of Taxes, PO Box 1779, Montpelier, VT 05601-1779'''
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+  verification: 'Some state facts could not be independently re-confirmed — see the pack''s `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.'
+payment:
+  check_payee: 'Vermont Department of Taxes (pay by check or money order payable to the Vermont Department of Taxes; include 2025 Form IN-116, Vermont Income Tax Payment Voucher). Electronic payment options are available at myVTax.'
+  web_pay_url: https://myvtax.vermont.gov
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: 'VT Dept of Taxes — 2025 Form IN-111 Instructions, Due Date: ''The 2025 Vermont Income Tax Return must be filed by April 15, 2026.'' An extension (Form IN-151, filable at myVTax) extends the filing deadline to Oct. 15, 2026 but does NOT extend the time to pay — late payment penalty and interest accrue after the April due date, and a $50 late-file penalty applies if the return is not filed by the extended Oct. 15, 2026 date.'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+all_citations:
+- source: 'VT Dept of Taxes — 2025 Form IN-111 Instructions (PDF): Line 1 federal AGI; Line 2 net modifications from Schedule IN-112 Part I Line 19; Line 4 2025 standard-deduction chart (7,650/15,300/7,650/11,450 plus $1,250 per federal standard-deduction box); Line 5e personal exemption $5,300; Line 7 Vermont Taxable Income; Line 8 tax and the 3%-of-AGI minimum over $150,000; 2025 Vermont Tax Rate Schedules X/Y-1/Y-2/Z; 2025 Vermont Tax Tables; Lines 11-13 charitable-contribution credit (5% of the first $20,000, max $1,000); due date April 15, 2026; mailing addresses; Form IN-116 payment voucher'
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+- source: 'VT Dept of Taxes — 2025 GB-1210, Income Tax Withholding Instructions, Tables, and Charts (effective January 1, 2025 - expires December 31, 2025): the Vermont Percentage Method Withholding Tables ANNUAL PAYROLLS rows, whose bounds net of the built-in offsets reproduce the 2025 income-tax bracket bounds and whose unrounded cumulative constants (1,654.90 / 6,294.70 / 16,174.70 single; 2,763.75 / 10,482.45 / 18,428.25 married) confirm the rate schedules'' rounded printed VT Base Tax figures'
+  url: https://tax.vermont.gov/sites/tax/files/documents/GB-1210-2025.pdf
+- source: 'VT Dept of Taxes — 2025 Form IN-111, Vermont Income Tax Return (form)'
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-2025.pdf
+- source: 'VT Dept of Taxes — 2025 Schedule IN-112, Vermont Tax Adjustments and Credits (form, Rev. 10/25): Part I Line 19 net modifications to federal AGI; Part II refundable credits — CDCC 72%, Child Tax Credit $1,000 per child born 2019-2025, EITC 38% (100% of the federal EITC when there are no qualifying children), Veteran Tax Credit $250 phased down $5 per $100 of AGI over $25,000'
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-2025.pdf
+- source: 'VT Dept of Taxes — 2025 Schedule IN-112 Instructions: the Child Tax Credit Table ($1,000 up to $125,000 AGI, down $20 per $1,000, $0 at $174,001+), EITC Line 7 rule, and the Veteran Tax Credit (Act 71 of 2025) description'
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2025.pdf
+- source: 'VT Dept of Taxes — Tax Credits and Adjustments for Individuals: Elderly or Permanently Disabled Tax Credit 24% of the federal credit; Child and Dependent Care Credit 72%; Vermont Veteran Tax Credit (Act 71, signed June 25, 2025, $250 refundable, phased out over $25,000-$30,000 AGI); Farm Income Averaging Credit 24%'
+  url: https://tax.vermont.gov/individuals/personal-income-tax/tax-credits
+- source: 'VT Dept of Taxes — Resident (Who Should File): residency definition (domicile or permanent home + 183 days); income starts with federal AGI minus income exempted from state taxation by the laws of the United States; $100 filing threshold'
+  url: https://tax.vermont.gov/individuals/who-should-file/resident
+- source: 'VT Dept of Taxes — Nonresident with Earned Vermont Income (Who Should File): nonresident filing threshold (net income > $100 or gross income > $1,000); Vermont-source income rules'
+  url: https://tax.vermont.gov/individuals/who-should-file/nonresident
+unverified:
+- 'The Renter Credit''s per-county / per-household-size income eligibility limits and the credit amounts for 2025 were NOT fetched — they are published as a separate calculator and table, not in the IN-111 instructions. Only the three threshold eligibility requirements and the RCC-146 due dates are verified here; run the official Renter Credit Calculator before claiming.'
+- 'Exact ZIP+4 routing was taken from the 2025 IN-111 Instructions; confirm current-year addresses at the DOR before mailing, as PO Box assignments can change between filing years.'
+- 'myVTax portal base URL (myvtax.vermont.gov) is cited from the IN-111 instructions; the exact deep-link for an individual income tax payment was not separately captured — confirm the payment path at the DOR.'
+- 'Whether a specific tax treaty article is recognized for a given taxpayer should be confirmed at the DOR; the general conformity conclusion is based on the federal-AGI starting point plus the explicit U.S.-law-exempt-income subtraction (Schedule IN-112, Part I, Line 7 interest from U.S. obligations, and the DOR Resident page''s ''income exempted from state taxation by the laws of the United States''), with no observed treaty add-back.'
+- 'The 2025 Schedule IN-119 (Vermont Tax Adjustments and Nonrefundable Credits) was not fetched; the Elderly-or-Disabled 24% figure comes from the DOR Tax Credits page and the IN-111 Line 9 subtraction list, not from the 2025 IN-119 itself.'
+tax:
+  citation:
+    source: 'VT Dept. of Taxes — 2025 Form IN-111 Instructions, p.12 ''2025 Vermont Tax Rate Schedules'': Schedule X
+      (Single) 49,400/119,700/249,700; Schedule Y-1 (Married Filing Jointly; Qualifying Widow(er); Civil Union Filing
+      Jointly) 82,500/199,450/304,000; Schedule Y-2 (Married Filing Separately; Civil Union Filing Separately) exactly
+      half Y-1 at 41,250/99,725/152,000; Schedule Z (Head of Household) 66,200/171,000/276,850; rates 3.35/6.60/7.60/8.75%;
+      printed ''VT Base Tax'' constants (X 1,655.00/6,295.00/16,175.00; Y-1 2,764.00/10,482.00/18,428.00; Y-2 1,382.00/5,241.00/9,214.00;
+      Z 2,218.00/9,135.00/17,179.00) are whole-dollar roundings of the exact cumulative sums; p.6 Line 4 ''2025 Vermont
+      Standard Deduction'' chart 7,650/15,300/7,650/11,450 (plus $1,250 per federal standard-deduction box) and Line
+      5e ''Vermont Personal Exemption Deduction. Multiply Line 5d by $5,300''; Line 8 3%-of-federal-AGI minimum when
+      federal AGI exceeds $150,000; ''TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES''; official worked example: VT
+      taxable income $85,000 MFJ -> $2,929. SECOND PASS (independent document): 2025 GB-1210, Income Tax Withholding
+      Instructions, Tables, and Charts, Vermont Percentage Method Withholding Tables, ANNUAL PAYROLLS — Single 3,825/53,225/123,525/253,525
+      with constants 0 / 1,654.90 / 6,294.70 / 16,174.70 and Married 11,475/93,975/210,925/315,475 with constants 0
+      / 2,763.75 / 10,482.45 / 18,428.25; netting the built-in offsets ($3,825 single, $11,475 married) reproduces the
+      Schedule X and Y-1 bounds EXACTLY (53,225-3,825=49,400; 123,525-3,825=119,700; 253,525-3,825=249,700; 93,975-11,475=82,500;
+      210,925-11,475=199,450; 315,475-11,475=304,000) and the unrounded constants equal the exact cumulative bracket
+      sums (https://tax.vermont.gov/sites/tax/files/documents/GB-1210-2025.pdf). TY2025 vs TY2024: rates unchanged;
+      every bound and dollar figure re-indexed (X 47,900/116,000/242,000 -> 49,400/119,700/249,700; Y-1 79,950/193,300/294,600
+      -> 82,500/199,450/304,000; Y-2 39,975/96,650/147,300 -> 41,250/99,725/152,000; Z 64,200/165,700/268,300 -> 66,200/171,000/276,850;
+      SD 7,400/14,850/7,400/11,100 -> 7,650/15,300/7,650/11,450; additional SD box $1,200 -> $1,250; personal exemption
+      $5,100 -> $5,300).'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 49400, rate: 0.0335}
+    - {over: 49400, but_not_over: 119700, rate: 0.066}
+    - {over: 119700, but_not_over: 249700, rate: 0.076}
+    - {over: 249700, but_not_over: null, rate: 0.0875}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 82500, rate: 0.0335}
+    - {over: 82500, but_not_over: 199450, rate: 0.066}
+    - {over: 199450, but_not_over: 304000, rate: 0.076}
+    - {over: 304000, but_not_over: null, rate: 0.0875}
+    married_filing_separately:
+    - {over: 0, but_not_over: 41250, rate: 0.0335}
+    - {over: 41250, but_not_over: 99725, rate: 0.066}
+    - {over: 99725, but_not_over: 152000, rate: 0.076}
+    - {over: 152000, but_not_over: null, rate: 0.0875}
+    head_of_household:
+    - {over: 0, but_not_over: 66200, rate: 0.0335}
+    - {over: 66200, but_not_over: 171000, rate: 0.066}
+    - {over: 171000, but_not_over: 276850, rate: 0.076}
+    - {over: 276850, but_not_over: null, rate: 0.0875}
+  base: federal_agi
+  tax_line: 'Form IN-111, Line 8: ''Vermont Income Tax'' — tax on Vermont Taxable Income (Line 7) from the 2025 tax
+    table or the applicable 2025 rate schedule; if federal AGI (Line 1) is greater than $150,000, Line 8 is the GREATER
+    of (1) 3% of federal AGI less interest from U.S. obligations or (2) the rate-schedule calculation. Line 7 ''Vermont
+    Taxable Income. Line 3 minus Line 6. If less than zero, enter -0-'', where Line 3 = Line 1 federal AGI + Line
+    2 net modifications (Schedule IN-112, Part I, Line 19) and Line 6 = Line 4 Vermont standard deduction + Line 5e
+    personal exemption deduction.'
+  exemptions:
+    personal:
+      amount: 5300
+      note: 'IN-111 Line 5e: ''Vermont Personal Exemption Deduction. Multiply Line 5d by $5,300'' (2025). Line 5d counts
+        yourself (5a, only if nobody can claim you as a dependent on a 2025 return), your jointly-filed spouse/civil union
+        partner (5b), and other dependents claimed on your 2025 federal Form 1040 (5c) — pass the TOTAL Line 5d count
+        as exemptions_count (dependents live inside Line 5d, so dependents_count stays 0). Indexed annually (was $5,100
+        for 2024).'
+  standard_deduction:
+    single: 7650
+    married_filing_jointly: 15300
+    married_filing_separately: 7650
+    head_of_household: 11450
+  notes:
+  - 'TY2025 re-indexation: the four rates are unchanged (3.35/6.60/7.60/8.75%) but every dollar figure moved — Schedule
+    X 49,400/119,700/249,700 (was 47,900/116,000/242,000), Y-1 82,500/199,450/304,000 (was 79,950/193,300/294,600),
+    Y-2 exactly half Y-1 at 41,250/99,725/152,000, Z 66,200/171,000/276,850 (was 64,200/165,700/268,300); standard
+    deduction 7,650/15,300/7,650/11,450 (was 7,400/14,850/7,400/11,100); the additional standard deduction per federal
+    box rose to $1,250 (was $1,200) and its birth-date test moved to ''born before Jan. 2, 1961''; the personal exemption
+    rose to $5,300 (was $5,100).'
+  - 'Two-pass sourcing (2025): pass 1 = the 2025 Form IN-111 Instructions'' printed ''2025 Vermont Tax Rate Schedules''
+    (p.12); pass 2 = the INDEPENDENT 2025 GB-1210 withholding booklet''s Vermont Percentage Method ANNUAL PAYROLLS
+    table, whose bounds net of the built-in offsets ($3,825 single, $11,475 married) reproduce Schedule X and Y-1
+    exactly and whose UNROUNDED constants (1,654.90 / 6,294.70 / 16,174.70 and 2,763.75 / 10,482.45 / 18,428.25) equal
+    the exact cumulative bracket sums this engine computes. Unlike TY2024, direct https fetches of tax.vermont.gov
+    succeeded with a browser User-Agent, so both documents are live official copies rather than Wayback captures.'
+  - 'Printed-constant divergence: the schedules'' ''VT Base Tax'' constants are whole-dollar roundings of the exact
+    cumulative sums (Y-1 at 82,500 prints 2,764.00 vs exact 2,763.75; X at 49,400 prints 1,655.00 vs exact 1,654.90;
+    Y-2 at 152,000 prints 9,214.00 vs exact 9,214.125; Z at 66,200 prints 2,218.00 vs exact 2,217.70), so form arithmetic
+    using the printed constants can differ from this op''s exact marginal math by up to $1. The booklet''s own $85,000
+    MFJ example prints $2,929 and exact math also gives $2,928.75 -> $2,929, so they agree there.'
+  - 'Base guidance: supply Form IN-111, Line 3 ''Federal Adjusted Gross Income with Modifications'' = Line 1 federal
+    AGI (federal Form 1040, Line 11) plus/minus Line 2 net modifications to federal AGI (Schedule IN-112, Part I,
+    Line 19 — note the 2025 line number; it was Line 18 on the 2024 schedule). With no Vermont modifications, Line
+    3 equals federal AGI, so plain federal AGI is the correct input for most filers. The op then subtracts the shipped
+    2025 Vermont standard deduction (IN-111 Line 4) and $5,300 per exemption (Lines 5a-5e) to reproduce Line 7, Vermont
+    Taxable Income.'
+  - 'Tax-table mandate below $75,000: each 2025 Vermont Tax Rate Schedule prints ''TAXABLE INCOME UNDER $75,000 USE
+    THE TAX TABLES'' across its sub-$75,000 rows. The 2025 Vermont Tax Tables (IN-111 Instr. pp.13-17) compute tax
+    at the MIDPOINT of each $100 band using the schedules'' PRINTED (rounded) base-tax constants, then round to whole
+    dollars — spot-verified: the Single $25,000-$25,100 band prints $839 (3.35% x $25,050 = $839.175) where exact
+    math at $25,000 gives $837.50; the $30,000-$30,100 band prints $1,007; the $74,900-$75,000 band prints Single
+    $3,341 / MFJ $2,511 / MFS $3,606 / HoH $2,796, and the HoH figure only reproduces from the PRINTED $2,218.00 constant
+    ($2,218.00 + 6.6% x $8,750 = $2,795.50 -> $2,796), not from the exact $2,217.70. Bracket math therefore differs
+    from the table by a few dollars inside a band; the filed form must use the table below $75,000.'
+  - 'CRITICAL - 3% minimum tax not modeled: 2025 IN-111 Instr. Line 8: ''Taxpayers who have a federal Adjusted Gross
+    Income (AGI) greater than $150,000 must pay a minimum Vermont tax of 3% of federal AGI. If your federal AGI, Line
+    1, is greater than $150,000, enter the amount that is higher: 1) 3% of your federal AGI less interest from U.S.
+    obligations, or 2) tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule.''
+    This op computes only (2); when the 3% floor binds (typically large modifications/deductions relative to AGI),
+    plain bracket math understates Line 8.'
+  - The printed schedules break a row at exactly $75,000 solely to flag the tax-table mandate — the rate does NOT
+    change at $75,000 (e.g. MFJ 3.35% actually runs $0-$82,500; Single 6.60% runs $49,400-$119,700; MFS 6.60% runs
+    $41,250-$99,725; HoH 6.60% runs $66,200-$171,000). Same-rate rows are merged in the shipped brackets; the math
+    is identical.
+  - 'Qualifying Widow(er)/surviving spouse: Schedule Y-1 is captioned ''Married Filing Jointly; Qualifying Widow(er);
+    or Civil Union Filing Jointly'' and the 2025 standard-deduction chart gives Qualifying Widow(er) the same $15,300
+    as MFJ, so the engine''s QSS-to-MFJ mapping matches Vermont exactly. Civil Union Filing Separately uses Schedule
+    Y-2 (married_filing_separately); Civil Union Filing Jointly uses Y-1.'
+  - 'Additional standard deduction not applied by the engine: $1,250 per standard-deduction box checked on federal
+    Form 1040 (born before Jan. 2, 1961, or blind) is added to the Line 4 standard deduction per the 2025 chart —
+    Single 8,900/10,150 for 1/2 boxes; MFJ or QW 16,550/17,800/19,050/20,300 for 1/2/3/4 boxes; MFS 8,900/10,150/11,400/12,650;
+    HoH 12,700/13,950. Compute those cases from the form''s chart.'
+  - 'Exemption gates not modeled: Line 5a counts yourself ONLY if no one can claim you as a dependent on a 2025 return;
+    Line 5b (spouse/civil union partner) must be left blank if filing status is Qualifying Widow(er) or Married Filing
+    Separately.'
+  - Vermont has no itemized-deduction option on the 2025 IN-111 — Line 4 offers only the Vermont standard deduction
+    (there is no itemized line on the form).
+  - 'Steps between Line 8 and the final Line 14 ''Vermont Income Tax'' are NOT modeled: Line 9 Net Adjustment to Vermont
+    Tax (Schedule IN-119 Part I — additions such as recapture of a Vermont tax credit and 24% of additional federal
+    tax on qualified retirement plan/IRA/HSA/MSA distributions, federal Investment Tax Credit recapture, and Form
+    4972 lump-sum distributions; subtractions such as the Credit for the Elderly or the Disabled, the Vermont-based
+    portion of the Investment Tax Credit, and the Farm Income Averaging Credit), and Lines 11-13 the Tax Deductible
+    Charitable Contribution — despite the caption, the 2025 instructions describe it as a nonrefundable tax CREDIT
+    equal to 5% of the first $20,000 of qualifying charitable contributions (max $1,000, Line 13) subtracted from
+    tax on Line 14, not an income deduction.'
+  - 'Part-year residents and nonresidents: Line 15 income adjustment percentage (Schedule IN-113, Line 35) multiplies
+    Line 14 to get Line 16 Adjusted Vermont Income Tax — not modeled; full-year residents enter 100%.'
