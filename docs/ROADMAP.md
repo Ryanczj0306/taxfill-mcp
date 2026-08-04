@@ -107,6 +107,17 @@ one verified test count, CI green.
       build` immediately before upload** (dist/ is gitignored, so a stale wheel never
       shows in the tree). Only the irreversible `uvx twine upload dist/*` remains.
       **Manual/blocked: needs maintainer PyPI token.**
+      **⚠️ Release blocker found + fixed 2026-08-04 by the first CI run in weeks:**
+      the MCP python-sdk released **2.0.0**, which REMOVED the high-level FastMCP
+      API from the `mcp` distribution (extracted upstream to a standalone
+      `fastmcp` package — the 2.0 wheel contains no fastmcp module), so the
+      unbounded `mcp>=1.2` dependency resolved to 2.0 in a clean venv and the
+      installed wheel died on `from mcp.server.fastmcp import FastMCP, Image`.
+      Dependency is now capped `mcp>=1.2,<2` (uv.lock already held 1.28, which is
+      why every local run stayed green — only the packaging job's clean-venv
+      install exposed it). **Follow-up before/at publish:** decide whether v0.1
+      ships on 1.x (cap stays) or migrates to the standalone `fastmcp` package /
+      mcp 2.x low-level server API; either way re-run the packaging smoke test.
 - [ ] **A2 — Tag the release.** `git tag v0.1.0` + GitHub release notes.
 - [~] **A3 — Build the `.mcpb` one-click bundle.** **Manifest finalized (2026-06-28):**
       dropped the `$schema_note` draft marker, added `server.entry_point`, removed the
@@ -392,6 +403,67 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
 capability; knowledge cited to primary sources (two-pass verification for
 year-varying numbers); calc ops golden-tested; packs vision-audited; an eval
 scenario exercises the persona that motivated it.
+
+---
+
+## Phase H — Planning mode, household granularity, no-experience onboarding (Effort: L)
+
+> From the **first real-user session** (2026-08-04), logged in
+> [`FIELD_NOTES.md`](FIELD_NOTES.md): an unmarried two-NRA household (F-1 OPT →
+> H-1B mid-year, partner on OPT) asking for a **TY2026 budget**. Unlike Phase G,
+> these are not disclosed limitations — they are places where the product either
+> asks the wrong-shaped question or fails closed. The data model is mostly right;
+> the elicitation and the forward-looking direction are missing.
+
+- [ ] **H1 — Visa sub-status + per-period tax attributes (N-1).** `VisaPeriod`
+      gains a controlled `sub_status` (`student / opt / stem_opt / cap_gap /
+      employment / dependent / other`) and a derived, cited `fica_exempt` per
+      period; `residency`'s prefix categorization keeps working unchanged (OPT is
+      F-1 for the exempt-individual rules) but FICA and per-segment income
+      questions stop being re-inferred from strings at each call site. Intake
+      collects the timeline **segment by segment** with a worked
+      F-1 → OPT → H-1B example, enforces contiguity, and asks for the H-1B start
+      as the **I-797 start date** (not the offer or onboarding date).
+- [ ] **H2 — Unmarried partner / multi-taxpayer household (N-2).**
+      `household.other_taxpayers[]` (relationship `unmarried_partner` / other,
+      own status + optional profile ref). Delivers: explicit "you file
+      separately, here are two returns" guidance; a guard against claiming an NRA
+      partner as a dependent (the citizen/national/resident requirement); a
+      household-level budget roll-up over two profiles; and a "if you marry in
+      <year>" branch that hands off to the existing §6013(g)/(h) election path.
+- [ ] **H3 — Segmented state-footprint elicitation + onboarding worksheet
+      (N-3, N-5).** Replace the single `state_footprint.lived_worked` question
+      (`intake.py:661`) with a segment loop (lived / worked / remote / employer
+      state per date range) plus a mandatory trigger checklist (mid-year move,
+      cross-state remote, >30-day assignment, school ≠ internship state, W-2
+      Box 15 mismatch, out-of-US periods, and no-tax-state segments still needing
+      dates). Promote [`INTAKE_WORKSHEET.zh-CN.md`](INTAKE_WORKSHEET.zh-CN.md) to
+      a canonical English surface emitted by `intake_checklist` (localizations
+      alongside), so a zero-experience user has something to fill in.
+- [ ] **H4 — Planning / projection mode (N-4).** A forward-looking path distinct
+      from `estimate_refund`'s ESTIMATE-for-a-closed-year semantics: label
+      **PROJECTION**, annualize from YTD paystub figures, project wages per
+      status segment. New calc ops: **employee FICA by status period** (7.65%
+      on/off at a status boundary, SS wage-base cap) and **withholding adequacy /
+      §6654 safe harbor** (90% current vs 100/110% prior year) — the latter needs
+      `PriorFilings` to gain prior-year AGI + total tax
+      (`schemas/profile.py:338` currently holds only `filed_years` /
+      `late_filing_context`).
+- [ ] **H5 — Current-year knowledge packs (prerequisite for H4).**
+      `knowledge/federal/2026.yaml` (and the year after, each year) authored under
+      the DEV_PLAN §7 freshness protocol — the annual inflation Rev. Proc. plus
+      the OBBBA-era amounts — so planning during the year works at all. Today
+      `calc {year: 2026}` fails closed and `list_forms {year: 2026}` is empty
+      (correct, but it makes mid-year planning impossible). Note the packs land
+      **before** the year's forms exist, so the pack must be usable for math with
+      no form pack present.
+
+**Acceptance:** H1/H2 ship schema + intake changes with regression tests and an
+eval scenario for the *unmarried two-NRA household, mid-year status change*
+persona; H3 ships the segment loop + the worksheet surface with a no-experience
+walkthrough in the skill; H4 ships golden-tested ops and a PROJECTION output
+contract that can never be mistaken for a filed number; H5 follows the two-pass
+verification rule for every figure.
 
 ---
 
