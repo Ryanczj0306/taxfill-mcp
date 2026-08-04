@@ -1049,7 +1049,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "mcp", specifier = ">=1.2" },
+    { name = "mcp", specifier = ">=1.2,<2" },
     { name = "taxfill-core", editable = "packages/core" },
 ]
 

@@ -6,7 +6,15 @@ requires-python = ">=3.11"
 license = "MIT"
 readme = "README.md"
 dependencies = [
-    "mcp>=1.2",
+    # Upper bound is load-bearing: the MCP python-sdk 2.0.0 (released 2026-08)
+    # REMOVED the high-level FastMCP API from the `mcp` distribution entirely
+    # (extracted upstream to the standalone `fastmcp` package — mcp 2.0's wheel
+    # contains no fastmcp module at all), so server.py's
+    # `from mcp.server.fastmcp import FastMCP, Image` cannot resolve on 2.x.
+    # A clean-venv install of an unbounded `mcp>=1.2` therefore produces an
+    # IMPORT-BROKEN wheel — exactly what the packaging CI job caught. Keep the
+    # cap until the 2.x migration is evaluated (see ROADMAP A1 follow-up).
+    "mcp>=1.2,<2",
     # Pin to the matching core release so `uvx taxfill-mcp` never resolves a
     # mismatched taxfill-core from PyPI. Keep in sync with the version bump
     # (see docs/PUBLISHING.md).
