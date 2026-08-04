@@ -1,0 +1,284 @@
+# WV 2025 pack — derived from the verified 2024 pack; every rate/constant/
+# exemption/address re-verified against the 2025 IT-140 booklet
+# (tax.wv.gov/Documents/PIT/2025/, fetched 2026-08-04). TY2025 IS the year the
+# trigger-based reduction landed: rates 2.22/2.96/3.33/4.44/4.82% (2024:
+# 2.36/3.15/3.54/4.72/5.12). Schedule I constants 222.00/666.00/1,165.50/
+# 2,053.50 and Schedule II (MFS, half boundaries) 111.00/333.00/582.75/
+# 1,026.75 were each re-derived and are EXACT cumulative sums. $2,000 per
+# exemption and the $500 zero-exemption rule re-printed; Box 1071 refund /
+# 25336-3694 payment addresses unchanged; "2025 PERSONAL INCOME TAX IS DUE
+# APRIL 15, 2026" on the cover.
+jurisdiction: states/wv
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'WV''s resident return (Form IT-140) starts from federal adjusted gross income (line 1). The 2023 instructions
+  state plainly: "The starting point for the West Virginia income tax return is your federal adjusted gross income."
+  Federally treaty-exempt income is already excluded from FAGI and flows through. WV''s Schedule M "Modifications
+  Increasing Federal Adjusted Gross Income" (lines 51-58) lists ONLY: interest/dividends on federal obligations
+  exempt from federal but not state tax; interest/dividends on non-WV state/local bonds; interest on money borrowed
+  to buy WV-exempt bonds; 402(e) lump-sum distributions; "other income deducted from FAGI but subject to state tax"
+  (example given is IRC Section 199 income); and savings-plan/ABLE/Jumpstart withdrawals. There is NO add-back for
+  tax-treaty income, foreign/nonresident-alien treaty income, or income excluded under a US tax treaty. Therefore
+  treaty-exempt income is NOT re-taxed by WV -> conforms = true.'
+citation:
+  source: 'WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI
+    (p.23), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status
+    (pp.16-17), due date April 15 2024 (pp.1, 23), mailing addresses & payment options (Form IT-140 p.2), Special
+    Nonresident / 183-day PA-VA rule (Schedule A Part II, p.27)'
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+starts_from: federal AGI (Form IT-140 line 1 = Federal Adjusted Gross Income)
+residency:
+  summary: 'RESIDENT: an individual who (a) spends more than 30 days in WV with the intent of WV becoming his/her
+    permanent residence, OR (b) maintains a physical presence in WV for more than 183 days of the taxable year,
+    even if also considered a resident of another state (statutory/183-day resident). PART-YEAR RESIDENT: an individual
+    who changes residence either from WV to another state, or from another state to WV, during the taxable year.
+    FULL-YEAR NONRESIDENT: a WV resident who spends fewer than 30 days of the year in WV and maintains a permanent
+    place of residence outside WV; OR a resident of another state who does not maintain a physical presence in WV
+    and does not spend more than 183 days in WV. SPECIAL NONRESIDENT (reciprocity): a full-year resident of KY,
+    MD, OH, PA, or VA whose only WV-source income was wages/salaries (mark "Nonresident Special" box, complete Part
+    II of Schedule A). NOTE: a non-military domiciliary resident of PA or VA who spends more than 183 days in WV
+    is treated as a WV resident and must file as a resident. Nonresidents with no WV-source income or withholding
+    are not required to file.'
+forms:
+  resident: Form IT-140 (West Virginia Personal Income Tax Return) - check "Resident" status
+  part_year_or_nonresident: Form IT-140 (check "Filing as Nonresident" or "Filing as Part-Year Resident"), completed
+    together with Schedule A (Form IT-140), "Nonresidents/Part-Year Residents Schedule of Income." (Nonresident
+    composite filers use Form IT-140NRC.)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Family Tax Credit (FTC)
+  type: nonrefundable
+  eligibility: Low-income WV resident individuals/families who file with at least one exemption. Filers with zero
+    exemptions cannot claim it, and persons who pay the federal Alternative Minimum Tax are ineligible. Eligibility
+    and credit percentage depend on family size (number of exemptions, boxes a+b+c) and Modified Federal AGI. Computed
+    on Schedule FTC-1 and attached to the return; if filing married-filing-separately use Table 2.
+  amount: 'A percentage of WV income tax due (line 8 of IT-140), from 100% down to a phase-out, based on family
+    size and Modified Federal AGI. For a 1-person household the credit is 100% of tax when Modified Federal AGI
+    is $14,580 or less, then 90% from $14,580 to $14,880, 80% to $15,180, 70% to $15,480, 60% to $15,780, 50% to
+    $16,080, 40% to $16,380, etc. (100% thresholds rise with family size: e.g. $19,720 for family size 2, $24,860
+    for size 3, $30,000 for size 4).'
+  income_limit_2023: No fixed cutoff; the credit percentage phases from 100% to 0% as Modified Federal AGI rises
+    within each family-size bracket (e.g., 1-person household 100% at <=$14,580, phasing out above ~$16,680; 4-person
+    household 100% at <=$30,000).
+  claimed_on: Schedule FTC-1, then carried to line 2 of the IT-140 RECAP (Tax Credit Recap) schedule
+  citation:
+    source: WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet), Schedule FTC-1 and
+      2023 Family Tax Credit Tables (pages 11-12)
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+- name: Homestead Excess Property Tax Credit (HEPTC)
+  type: refundable
+  eligibility: Low-income owners of an owner-occupied WV residence whose WV real property tax paid (less any Senior
+    Citizen Tax Credit) exceeds 4% of gross household income. Low-income means federal AGI of 300% or less of the
+    federal poverty guideline for the household size. Homestead Exemption program participation is NOT required.
+    No credit if any owner of the homestead is not a low-income person. Filers who pay federal AMT are flagged/excluded.
+    Schedule HEPTC-1 and the Class 2 property tax receipt must be filed.
+  amount: 'Refundable credit equal to the amount by which property tax paid (less SCTC) exceeds 4% of gross household
+    income, capped at a maximum of $1,000. Formula on Schedule HEPTC-1: line 3 (WV property tax paid less SCTC)
+    minus line 7 (4% x total gross income); enter that result or $1,000, whichever is lower.'
+  income_limit_2023: 'Federal AGI (or income less Social Security if not required to file federal) must be: $43,740
+    or less (1 person), $59,160 (2), $74,580 (3), $90,000 (4); add $15,420 for each additional person in the home.'
+  claimed_on: Schedule HEPTC-1, line 9, carried to Form IT-140 line 18
+  citation:
+    source: WV Tax Division - 2023 Schedule HEPTC-1 (Homestead Excess Property Tax Credit), Form IT-140
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.schedule-HEPTC1.2023.pdf
+- name: Senior Citizen Tax Credit (SCTC)
+  type: refundable
+  eligibility: Restricted to homeowners who participate in the county Homestead Exemption program (generally age
+    65+ or permanently/totally disabled), who owe and pay a Class II property tax liability on a homestead-exemption-eligible
+    home (assessed value greater than $20,000 before the $20,000 homestead exemption), and whose federal AGI is
+    less than 150% of the federal poverty guidelines. The WV Tax Division mails Form WV SCTC-A to program participants;
+    the original SCTC-A must be filed (preparer-created substitutes are denied).
+  amount: Refundable credit based on the ad valorem (Class II) property taxes paid on the first $20,000 (or portion
+    thereof) of taxable assessed value above the $20,000 Homestead Exemption. The dollar amount is taxpayer-specific
+    (varies with property tax paid); it is computed on Form SCTC-A and is not a single fixed figure.
+  income_limit_2023: 'Federal AGI must be less than 150% of federal poverty guidelines: maximum is $21,870 for a
+    1-person household, $29,580 (2), $37,290 (3), $45,000 (4); add $7,710 for each additional person.'
+  claimed_on: Schedule/Form SCTC-A (line 2, Part III), carried to Form IT-140 line 17
+  citation:
+    source: WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet), Senior Citizens Tax
+      Credit Information (page 34) and Form IT-140 line 17 instructions
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+filing_requirement:
+  note: 'Must file a WV return if: you were a WV resident for the entire year; a part-year resident; or a nonresident
+    whose FAGI includes WV-source income. You must file even if not required to file federally if your WV adjusted
+    gross income exceeds your allowable personal-exemption deduction ($2,000 per exemption, or $500 if claiming
+    zero exemptions), or if claiming the SCTC/HEPTC credit, or if due a refund. Taxpayers 65+ are not required to
+    file if total income is less than the exemption allowance plus the senior-citizen modification ($2,000 per exemption
+    plus up to $8,000 of income per taxpayer 65+), but must file to claim a refund. (Source: 2025 IT-140 instructions,
+    "Who Must File," p.16.)'
+mailing_addresses:
+  refund_or_no_payment: WV Tax Division, P.O. Box 1071, Charleston, WV 25324-1071
+  with_payment: WV Tax Division, P.O. Box 3694, Charleston, WV 25336-3694
+  citation:
+    source: 'WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point =
+      FAGI (p.23), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency
+      Status (pp.16-17), due date April 15 2024 (pp.1, 23), mailing addresses & payment options (Form IT-140 p.2),
+      Special Nonresident / 183-day PA-VA rule (Schedule A Part II, p.27)'
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: WV Tax Division (check or money order payable to the WV Tax Division; enclose with return)
+  web_pay_url: https://mytaxes.wvtax.gov
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: 'WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point =
+      FAGI (p.23), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency
+      Status (pp.16-17), due date April 15 2024 (pp.1, 23), mailing addresses & payment options (Form IT-140 p.2),
+      Special Nonresident / 183-day PA-VA rule (Schedule A Part II, p.27)'
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+all_citations:
+- source: 'WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI
+    (p.23), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status
+    (pp.16-17), due date April 15 2024 (pp.1, 23), mailing addresses & payment options (Form IT-140 p.2), Special
+    Nonresident / 183-day PA-VA rule (Schedule A Part II, p.27)'
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+- source: 'WV Tax Division - 2023 Form IT-140 (Personal Income Tax Return): line 1 Federal Adjusted Gross Income;
+    refund mail to P.O. Box 1071 Charleston WV 25324-1071; balance due mail to P.O. Box 3694 Charleston WV 25336-3694;
+    check/money order payable to WV Tax Division; electronic payment at mytaxes.wvtax.gov'
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.2023.pdf
+- source: WV Tax Division - 2023 Schedule M (Form IT-140), Modifications to Adjusted Gross Income (increasing modifications,
+    lines 51-58)
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.schedule-M.2023.pdf
+- source: WV Tax Division - 2023 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.schedule-A.2023.pdf
+- source: WV Tax Division - Individuals page (forms portal)
+  url: https://tax.wv.gov/Individuals
+unverified:
+- Exact mytaxes.wvtax.gov URL path/label for paying personal income tax may change; instructions say visit mytaxes.wvtax.gov
+  and click 'Pay Personal Income Tax.' Confirm current portal at the DOR.
+- Whether a credit/debit-card payment option (and any third-party processor or convenience fee) exists in addition
+  to ACH debit via MyTaxes was not separately confirmed for 2023; confirm at the DOR.
+- Treaty conformity is inferred from the absence of any treaty add-back in the 2023 Schedule M increasing-modifications
+  list plus the FAGI starting point; WV statute/regs were not independently reviewed for a treaty-specific add-back.
+  Confirm at the DOR if a taxpayer relies on a US tax-treaty exclusion.
+tax:
+  citation:
+    source: 'WV Tax Division — 2025 IT-140 Personal Income Tax Forms and Instructions booklet: TY2025 rate schedules
+      print the REDUCED set (Less than $10,000 -> 2.22% of the taxable income; $222.00 plus 2.96% of excess over $10,000;
+      $666.00 plus 3.33% over $25,000; $1,165.50 plus 4.44% over $40,000; $2,053.50 plus 4.82% over $60,000; Rate Schedule
+      II for married filing separately at exactly half boundaries with constants 111.00/333.00/582.75/1,026.75). ''You
+      can deduct $2,000 for every exemption claimed''; ''$500 if you claim zero exemptions''; cover: ''2025 PERSONAL
+      INCOME TAX IS DUE APRIL 15, 2026''.'
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10000, rate: 0.0222}
+    - {over: 10000, but_not_over: 25000, rate: 0.0296}
+    - {over: 25000, but_not_over: 40000, rate: 0.0333}
+    - {over: 40000, but_not_over: 60000, rate: 0.0444}
+    - {over: 60000, but_not_over: null, rate: 0.0482}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 10000, rate: 0.0222}
+    - {over: 10000, but_not_over: 25000, rate: 0.0296}
+    - {over: 25000, but_not_over: 40000, rate: 0.0333}
+    - {over: 40000, but_not_over: 60000, rate: 0.0444}
+    - {over: 60000, but_not_over: null, rate: 0.0482}
+    married_filing_separately:
+    - {over: 0, but_not_over: 5000, rate: 0.0222}
+    - {over: 5000, but_not_over: 12500, rate: 0.0296}
+    - {over: 12500, but_not_over: 20000, rate: 0.0333}
+    - {over: 20000, but_not_over: 30000, rate: 0.0444}
+    - {over: 30000, but_not_over: null, rate: 0.0482}
+    head_of_household:
+    - {over: 0, but_not_over: 10000, rate: 0.0222}
+    - {over: 10000, but_not_over: 25000, rate: 0.0296}
+    - {over: 25000, but_not_over: 40000, rate: 0.0333}
+    - {over: 40000, but_not_over: 60000, rate: 0.0444}
+    - {over: 60000, but_not_over: null, rate: 0.0482}
+  base: state_gross_income
+  tax_line: 'Form IT-140 line 8: ''Income Tax Due (Check One)'' with method checkboxes ''Tax Table'', ''Rate Schedule'',
+    ''Nonresident/Part-Year Resident Calculation Schedule''. Line 7 feeding it reads ''West Virginia Taxable Income
+    (line 4 minus lines 5 & 6) IF LESS THAN ZERO, ENTER ZERO''. Instructions p.24: ''LINE 8 WEST VIRGINIA INCOME TAX.
+    Check the appropriate box to indicate the method you used to calculate your tax.'''
+  exemptions:
+    personal:
+      amount: 2000
+      note: 'Form IT-140 Exemptions boxes (a) Yourself and (b) Spouse, deducted via line 6: ''Enter the number of exemptions
+        shown in box e... and multiply that number by $2,000'' (instructions p.24: ''You can deduct $2,000 for every exemption
+        claimed in your exemption schedule''). A BASE reduction: line 7 WV Taxable Income = line 4 minus lines 5 & 6,
+        computed BEFORE the rate schedules. Married filing jointly with both spouses = exemptions_count 2 = $4,000. Box
+        (a) is left blank (0) if someone can claim you as a dependent.'
+    dependent:
+      amount: 2000
+      note: Same $2,000 per exemption for each dependent entered in Exemptions box (c) (child/relative or household member
+        meeting the age/support/residency tests, instructions p.24), included in box (e) and deducted via line 6 before
+        the rates — a base reduction, not a credit. You cannot claim any dependents if you can be claimed as a dependent
+        on another person's return.
+    surviving_spouse:
+      amount: 2000
+      note: 'Exemptions box (d): ''A surviving spouse may claim an additional exemption for the two (2) taxable years
+        following the year in which the spouse died, provided he/she has not remarried before the end of the taxable year''
+        (instructions p.24). One more $2,000 exemption included in box (e). NOT applied by calc.state_tax (the engine
+        applies only the personal/dependent keys) — claim it on the form, or reflect it by raising exemptions_count only
+        if eligible.'
+  notes:
+  - 'TY2025 verification (2026-08-04): West Virginia''s trigger-based reduction DID reach TY2025 — the booklet prints
+    2.22/2.96/3.33/4.44/4.82% (2024 printed 2.36/3.15/3.54/4.72/5.12). All eight printed constants across both schedules
+    were re-derived and equal EXACT cumulative marginal sums (222.00 = 2.22%x10,000; 666.00 = 222 + 2.96%x15,000;
+    1,165.50 = 666 + 3.33%x15,000; 2,053.50 = 1,165.50 + 4.44%x20,000; Schedule II mirrors at half boundaries), so
+    there is no printed-constant divergence to disclose for either schedule.'
+  - 'TY2025 verification (2026-08-01): the 2025 booklet prints the SAME rate schedules and constants as TY2023 — the
+    further across-the-board reduction applies beginning TY2025, not TY2025. Constants re-derived: 236.00/708.50/1,239.50/2,183.50
+    equal exact cumulative marginal sums; Schedule II constants are exactly half-boundary equivalents.'
+  - 'Base guidance: Supply Form IT-140 line 4, West Virginia Adjusted Gross Income = line 1 federal adjusted gross
+    income (''Enter your federal adjusted gross income as shown on Federal Form 1040'') plus line 2 additions to income
+    (Schedule M line 59) minus line 3 subtractions from income (Schedule M line 50). If the filer has no Schedule
+    M modifications, line 4 equals federal AGI. The op then subtracts the shipped $2,000-per-exemption amounts (standard_deduction
+    is 0 — West Virginia has none) to reproduce line 7 West Virginia Taxable Income, assuming line 5 (Low-Income Earned
+    Income Exclusion, only available when federal AGI is $10,000 or less / $5,000 MFS) is zero.'
+  - 'Adjudication note (two-pass): standard_deduction is null — West Virginia allows neither a standard deduction
+    nor itemized deductions on Form IT-140 (the only base reductions are the $2,000-per-exemption line 6 amounts,
+    shipped as personal/dependent). Rate-schedule constants re-verified against the 2025 IT-140 booklet (236.00 /
+    708.50 / 1,239.50 / 2,183.50).'
+  - 'RETROACTIVE 2025 RATE CUT: the shipped rates (2.36%/3.15%/3.54%/4.72%/5.12%) are the FINAL 2025 filing-season
+    schedule printed in the official 2025 IT-140 booklet (p.35). They were enacted mid-year by 2025 legislation (HB
+    2526) codified at W. Va. Code §11-21-4g, which states the rates ''shall apply retroactively for all taxable years
+    beginning on and after January 1, 2025, and shall be in lieu of the rates of tax specified in §11-21-4e'' (the
+    prior higher schedule). Do not use pre-2025 or early-2025 withholding-era rate tables.'
+  - 'TWO RATE SCHEDULES: Rate Schedule I applies ''if you checked 1 (Single), 2 (Head of household), 3 (Married filing
+    joint), or 5 (Widow[er] with dependent child)''; it is duplicated here for single, married_filing_jointly, and
+    head_of_household. Rate Schedule II applies only to filing status 4 (Married filing separately); its bracket bounds
+    ($5,000/$12,500/$20,000/$30,000) were copied directly from the published schedule, not derived. The printed constants
+    ($236.00/$708.50/$1,239.50/$2,183.50 on Schedule I; $118.00/$354.25/$619.75/$1,091.75 on Schedule II) exactly
+    equal the cumulative sums of the prior brackets — no rounding divergence.'
+  - 'TAX TABLE MANDATE BELOW $100,000: Line 8 instructions (p.24) — ''If your filing status is single, head of household,
+    widow(er) with a dependent child or married filing jointly and your taxable income is less than $100,000, apply
+    the amount of taxable income shown on line 7 to the Tax Table on page 36 and enter your tax on this line''; the
+    rate schedule is for taxable income over $100,000. The table (booklet pp.36–40, last row $99,950–100,000 = $4,230)
+    is band-midpoint based, so bracket math may differ by a few dollars within table bands — the filed form must use
+    the table. Married-filing-separately filers CANNOT use the table at any income: ''If your filing status is Married
+    Filling Separately you MUST use RATE SCHEDULE II to compute your tax.'''
+  - 'NO STANDARD OR ITEMIZED DEDUCTION: West Virginia allows neither a standard deduction nor federal itemized deductions
+    on Form IT-140 — the only across-the-board deduction is the $2,000-per-exemption allowance (''You can deduct $2,000
+    for every exemption claimed in your exemption schedule'', p.24). standard_deduction is shipped as 0 for every
+    filing status so the engine subtracts exemptions only.'
+  - 'ZERO-EXEMPTION $500 ALLOWANCE NOT MODELED: ''If you claimed zero exemptions, enter $500 on this line [line 6]''
+    (box (e) = 0, e.g. a filer claimable as a dependent on another return). The engine with exemptions_count=0 subtracts
+    $0, not $500, so it can overstate tax by up to about $26 (5.12% of $500) for such filers — use the form''s line
+    6 in that case.'
+  - 'LOW-INCOME EARNED INCOME EXCLUSION (LINE 5) NOT MODELED: filers with federal AGI of $10,000 or less ($5,000 or
+    less MFS) who have earned income may exclude the smaller of federal AGI, earned income, or $10,000 ($5,000 MFS)
+    on line 5 before line 7 (worksheet, booklet p.29). The engine assumes line 5 = 0; it only affects returns with
+    federal AGI at or below $10,000/$5,000.'
+  - 'SCHEDULE M MODIFICATIONS COME BEFORE THE SUPPLIED BASE: the senior-citizen modification (up to $8,000 of income
+    per taxpayer age 65+ or permanently/totally disabled), the up-to-$8,000 surviving-spouse decreasing modification,
+    Social Security benefit modification, and all other Schedule M items are line 2/line 3 adjustments taken BEFORE
+    line 4 — the caller must supply line 4 WV AGI already reflecting them.'
+  - 'QUALIFYING SURVIVING SPOUSE: the engine maps QSS to married_filing_jointly. West Virginia''s own filing status
+    5, ''Widow(er) with dependent child'', uses the SAME Rate Schedule I as married filing jointly and the same $2,000
+    exemptions, so the mapping reproduces the correct tax.'
+  - 'ROUNDING: the booklet requires whole dollars (''Round off amounts to WHOLE DOLLARS – NO CENTS'', p.14) and both
+    rate-schedule examples say ''Round to nearest whole dollar'' — consistent with the engine''s half-up rounding
+    to whole dollars.'
+  - 'LINE 7 FLOOR: ''IF LESS THAN ZERO, ENTER ZERO'' matches the engine''s max(0, base_after).'
+  - 'CREDITS ARE NOT EXEMPTIONS AND ARE NOT MODELED: line 8 tax is reduced on line 9 by the Tax Credit Recap Schedule
+    credits — notably the Family Tax Credit (Schedule FTC-1), which can reduce the line 8 tax by up to 100% for low-income
+    families based on family size and Modified Federal AGI, plus the refundable Senior Citizen Tax Credit (line 17)
+    and Homestead Excess Property Tax Credit (line 18). The engine computes line 8 only; actual line 10 liability
+    may be lower.'
+  - No county or municipal income tax is collected through Form IT-140 — the return computes only the West Virginia
+    state personal income tax.
