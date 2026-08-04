@@ -18,8 +18,22 @@ from taxfill_core.schemas.profile import Answer, Identity, Profile, Provenance, 
 from taxfill_core.statescope import state_scope
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-STATE_KB = sorted((REPO_ROOT / "knowledge" / "states").glob("*/2023.yaml"))
-STATE_CODES = [p.parent.name for p in STATE_KB]
+
+# EVERY shipped state-year enrolls automatically: the generic invariants below run
+# per (code, year), so a new knowledge/states/<st>/<year>.yaml is covered the moment
+# it lands (no test edit needed). 2023 is the full-cohort baseline used by the
+# year-pinned spot tests further down.
+STATE_YEAR_PATHS = sorted((REPO_ROOT / "knowledge" / "states").glob("*/[0-9][0-9][0-9][0-9].yaml"))
+STATE_YEARS = [(p.parent.name, int(p.stem)) for p in STATE_YEAR_PATHS]
+SHIPPED_YEARS = sorted({y for _, y in STATE_YEARS})
+STATE_CODES = sorted({c for c, y in STATE_YEARS if y == 2023})
+# A year is COMPLETE once every 2023-cohort jurisdiction ships that year (mid-rollout
+# years are still checked pack-by-pack, just not for full-cohort coverage).
+COMPLETE_YEARS = sorted(
+    y for y in SHIPPED_YEARS if {c for c, yy in STATE_YEARS if yy == y} == set(STATE_CODES)
+)
+STATE_YEAR_IDS = [f"{c}-{y}" for c, y in STATE_YEARS]
+
 US = Provenance.user_stated()
 
 # Treaty NON-conformity — these add back / do not pass through federally
@@ -32,25 +46,26 @@ def test_state_knowledge_packs_exist():
     assert len(STATE_CODES) >= 42
 
 
-@pytest.mark.parametrize("code", STATE_CODES, ids=lambda c: c)
-def test_state_pack_loads_and_is_cited(code: str):
-    pack = load_state_knowledge(code, 2023, base_dir=REPO_ROOT / "knowledge")
+@pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
+def test_state_pack_loads_and_is_cited(code: str, year: int):
+    pack = load_state_knowledge(code, year, base_dir=REPO_ROOT / "knowledge")
+    assert pack.tax_year == year
     assert isinstance(pack, StateKnowledge)
     assert pack.jurisdiction == f"states/{code}"
     assert isinstance(pack.conforms_to_federal_treaties, bool)
     assert pack.citation is not None  # cited to an official gov host (validated by the model)
 
 
-@pytest.mark.parametrize("code", STATE_CODES, ids=lambda c: c)
-def test_treaty_conformity_drives_the_nra_warning(code: str):
-    pack = load_state_knowledge(code, 2023, base_dir=REPO_ROOT / "knowledge")
+@pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
+def test_treaty_conformity_drives_the_nra_warning(code: str, year: int):
+    pack = load_state_knowledge(code, year, base_dir=REPO_ROOT / "knowledge")
     profile = Profile(
         identity=Identity(us_person=Answer(value=False, provenance=US)),  # treaty filer
-        state_footprint={2023: StateFootprintYear(
-            lived=[ResidencePeriod(state=code.upper(), start=date(2023, 1, 1), end=date(2023, 12, 31), provenance=US)]
+        state_footprint={year: StateFootprintYear(
+            lived=[ResidencePeriod(state=code.upper(), start=date(year, 1, 1), end=date(year, 12, 31), provenance=US)]
         )},
     )
-    filing = next(s for s in state_scope(profile, 2023, base_dir=REPO_ROOT / "knowledge").states if s.state == code.upper())
+    filing = next(s for s in state_scope(profile, year, base_dir=REPO_ROOT / "knowledge").states if s.state == code.upper())
     # A treaty filer ALWAYS gets an explicit conformity line — negative warning for
     # non-conforming states, positive confirmation for conforming ones (never silent).
     non_conform_warned = any("does not conform" in w.lower() for w in filing.warnings)
@@ -63,15 +78,15 @@ def test_treaty_conformity_drives_the_nra_warning(code: str):
         assert non_conform_warned, f"{code}: non-conforming state must warn"
 
 
-@pytest.mark.parametrize("code", STATE_CODES, ids=lambda c: c)
-def test_state_pack_has_cited_credits(code: str):
+@pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
+def test_state_pack_has_cited_credits(code: str, year: int):
     # Every income-tax pack now ships a credits block; each credit cites a gov host
     # and the pack carries the verification caveat.
     from urllib.parse import urlparse
 
     from taxfill_core.knowledge import is_official_gov_host
 
-    pack = load_state_knowledge(code, 2023, base_dir=REPO_ROOT / "knowledge")
+    pack = load_state_knowledge(code, year, base_dir=REPO_ROOT / "knowledge")
     credits = getattr(pack, "credits", None) or []
     assert credits, f"{code}: no credits block"
     assert getattr(pack, "credits_verification", None), f"{code}: missing credits_verification caveat"
@@ -100,8 +115,8 @@ def _iter_citation_urls(obj):
             yield from _iter_citation_urls(v)
 
 
-@pytest.mark.parametrize("code", STATE_CODES, ids=lambda c: c)
-def test_all_citation_urls_are_gov_hosted(code: str):
+@pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
+def test_all_citation_urls_are_gov_hosted(code: str, year: int):
     # Not just credits[].citation: EVERY citation-shaped block (deadlines, all_citations,
     # residency, mailing, ...) must cite an official .gov/.mil/.us host. StateKnowledge uses
     # extra='allow', so these untyped blocks are otherwise never host-validated. Service URLs
@@ -111,7 +126,7 @@ def test_all_citation_urls_are_gov_hosted(code: str):
 
     from taxfill_core.knowledge import is_official_gov_host
 
-    raw = yaml.safe_load((REPO_ROOT / "knowledge" / "states" / code / "2023.yaml").read_text())
+    raw = yaml.safe_load((REPO_ROOT / "knowledge" / "states" / code / f"{year}.yaml").read_text())
     for url in _iter_citation_urls(raw):
         host = (urlparse(url).hostname or "").lower()
         if host in _ALLOWED_NONGOV_CITATION_HOSTS:
@@ -121,15 +136,86 @@ def test_all_citation_urls_are_gov_hosted(code: str):
         )
 
 
-def test_known_nonconforming_states_are_flagged():
-    flagged = {c for c in STATE_CODES if not load_state_knowledge(c, 2023, base_dir=REPO_ROOT / "knowledge").conforms_to_federal_treaties}
-    # Every confirmed add-back state present in the repo must be flagged non-conforming.
-    assert (KNOWN_NONCONFORMING & set(STATE_CODES)) <= flagged
+@pytest.mark.parametrize("year", SHIPPED_YEARS)
+def test_known_nonconforming_states_are_flagged(year: int):
+    kb = REPO_ROOT / "knowledge"
+    codes = {c for c, y in STATE_YEARS if y == year}
+    flagged = {c for c in codes if not load_state_knowledge(c, year, base_dir=kb).conforms_to_federal_treaties}
+    # Every confirmed add-back state shipped for this year must be flagged non-conforming
+    # (treaty conformity is structural — it must never silently flip between years).
+    assert (KNOWN_NONCONFORMING & codes) <= flagged
 
 
-# ── Phase G item G4: the flat-rate tax blocks (IL, PA, IN, MI, NC, CO, KY, AZ) ──
+# ── Phase G item G4: the tax blocks, per year ──
 
-# The eight shipped flat-rate 2023 states with their verified exact rates.
+# Verified flat rates per (year, state). Rates move almost every year — several
+# states legislate scheduled cuts (IN 3.15 -> 3.05 -> 3.00; MI's 4.05 was a
+# one-year dip back to 4.25; NC 4.75 -> 4.5 -> 4.25; KY 4.5 -> 4.0; CO's TABOR
+# adjustment; GA/IA/LA newly flat) — so this table is the drift alarm: a pack
+# whose rate changes silently fails here. Anything NOT listed for a year must be
+# a graduated block.
+FLAT_TAX_RATES_BY_YEAR: dict[int, dict[str, Decimal]] = {
+    2023: {
+        "az": Decimal("0.025"), "co": Decimal("0.044"), "il": Decimal("0.0495"),
+        "in": Decimal("0.0315"), "ky": Decimal("0.045"), "ma": Decimal("0.05"),
+        "mi": Decimal("0.0405"), "nc": Decimal("0.0475"), "pa": Decimal("0.0307"),
+        "ut": Decimal("0.0465"),
+    },
+    2024: {
+        "az": Decimal("0.025"), "co": Decimal("0.0425"), "ga": Decimal("0.0539"),
+        "il": Decimal("0.0495"), "in": Decimal("0.0305"), "ky": Decimal("0.04"),
+        "ma": Decimal("0.05"), "mi": Decimal("0.0425"), "nc": Decimal("0.045"),
+        "pa": Decimal("0.0307"), "ut": Decimal("0.0455"),
+    },
+    2025: {
+        "az": Decimal("0.025"), "ga": Decimal("0.0519"), "ia": Decimal("0.038"),
+        "il": Decimal("0.0495"), "in": Decimal("0.03"), "la": Decimal("0.03"),
+        "mi": Decimal("0.0425"), "nc": Decimal("0.0425"), "pa": Decimal("0.0307"),
+    },
+}
+
+
+@pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
+def test_every_shipped_state_year_ships_a_typed_gov_cited_tax_block(code: str, year: int):
+    # The one invariant every state-year must satisfy: a typed, gov-cited tax block
+    # whose SHAPE and (for flat states) exact rate match the verified year table.
+    from urllib.parse import urlparse
+
+    from taxfill_core.knowledge import is_official_gov_host
+
+    tax = load_state_knowledge(code, year, base_dir=REPO_ROOT / "knowledge").tax
+    assert isinstance(tax, StateTaxParams), f"{code} {year}: tax block missing or untyped"
+    expected_flat = FLAT_TAX_RATES_BY_YEAR.get(year, {}).get(code)
+    if expected_flat is not None:
+        assert tax.flat_rate == expected_flat, (
+            f"{code} {year}: flat rate drifted from the verified table — re-verify against "
+            f"the year's official instructions before changing FLAT_TAX_RATES_BY_YEAR"
+        )
+    else:
+        assert tax.flat_rate is None and tax.brackets is not None, (
+            f"{code} {year}: unexpected flat rate — add it to FLAT_TAX_RATES_BY_YEAR "
+            f"with a citation, or ship the graduated schedules"
+        )
+        for status in ("single", "married_filing_jointly", "married_filing_separately", "head_of_household"):
+            assert tax.brackets[status], f"{code} {year}: missing {status} schedule"
+    assert is_official_gov_host((urlparse(tax.citation.url).hostname or "").lower())
+    assert tax.tax_line.strip() and tax.notes
+    for key, ex in tax.exemptions.items():
+        assert ex.amount >= 0 and ex.note.strip(), f"{code} {year}: exemption {key} incomplete"
+
+
+@pytest.mark.parametrize("year", sorted(FLAT_TAX_RATES_BY_YEAR))
+def test_flat_rate_table_has_no_stale_entries(year: int):
+    # The table may not name a state-year that isn't shipped (catches typos and
+    # entries left behind when a pack is renamed or a year is rolled back).
+    shipped = {c for c, y in STATE_YEARS if y == year}
+    assert set(FLAT_TAX_RATES_BY_YEAR[year]) <= shipped, (
+        f"{year}: FLAT_TAX_RATES_BY_YEAR names unshipped states "
+        f"{sorted(set(FLAT_TAX_RATES_BY_YEAR[year]) - shipped)}"
+    )
+
+
+# The 2023 baseline, kept as its own name for the year-pinned spot tests below.
 FLAT_TAX_RATES = {
     "il": Decimal("0.0495"),
     "pa": Decimal("0.0307"),
@@ -234,15 +320,24 @@ GRADUATED_TAX_STATES = sorted([
 NO_TAX_BLOCK_YET: set[str] = set()
 
 
-def test_tax_block_shipping_matches_the_g4_rollout():
-    # ALL 42 adopted jurisdictions ship a cited tax block for 2023 — the former
-    # C3 seven (ct/hi/ia/ma/nm/sc/ut) joined 2026-08-01 once their form packs
-    # were adopted and the data passed two-pass verification.
+@pytest.mark.parametrize("year", COMPLETE_YEARS)
+def test_tax_block_shipping_matches_the_g4_rollout(year: int):
+    # For every COMPLETE year, all 42 adopted jurisdictions ship a cited tax block
+    # (the former C3 seven — ct/hi/ia/ma/nm/sc/ut — joined 2026-08-01 once their
+    # form packs were adopted and the data passed two-pass verification), and the
+    # flat/graduated split partitions the cohort exactly.
     kb = REPO_ROOT / "knowledge"
+    flat, graduated = set(), set()
     for code in STATE_CODES:
-        pack = load_state_knowledge(code, 2023, base_dir=kb)
-        assert pack.tax is not None, f"{code}: adopted state must ship the tax block"
-    assert set(FLAT_TAX_RATES) | set(GRADUATED_TAX_STATES) == set(STATE_CODES)
+        tax = load_state_knowledge(code, year, base_dir=kb).tax
+        assert tax is not None, f"{code} {year}: adopted state must ship the tax block"
+        (flat if tax.flat_rate is not None else graduated).add(code)
+    assert flat | graduated == set(STATE_CODES)
+    assert flat == set(FLAT_TAX_RATES_BY_YEAR[year]), (
+        f"{year}: flat-state cohort disagrees with FLAT_TAX_RATES_BY_YEAR"
+    )
+    if year == 2023:  # the documented baseline split
+        assert graduated == set(GRADUATED_TAX_STATES)
 
 
 @pytest.mark.parametrize("code", GRADUATED_TAX_STATES, ids=lambda c: c)

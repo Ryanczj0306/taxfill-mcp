@@ -1,0 +1,268 @@
+# MS state knowledge — tax year 2025. Fetched + cited from the MS DOR (.gov),
+# authored per the 2023/2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2025 Resident,
+# Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-25-1-1-000,
+# Rev. 12/25), then independently re-derived from the 2025 Form 80-105 itself
+# (Form 80-105-25-8-1-000, Rev. 09/25 — which prints the filing-status exemption amounts
+# next to each checkbox and the line 10 'Line 9 x $1,500' multiplier) — both passes agree.
+# HEADLINE 2025 CHANGE (HB 531 phase-in): the rate on taxable income in excess of $10,000
+# DROPS to 4.4% (2024: 4.7%). The 0% band on the first $10,000 is unchanged. Exemptions
+# ($6,000/$12,000/$8,000 + $1,500 dependent) and standard deductions ($2,300/$4,600/$3,400)
+# are UNCHANGED from 2024. The 2025 'Build Up Mississippi Act' (HB 1, eff. 7/1/2025) leaves
+# 2025 at 4.4% and 2026 at 4.0% and adds further cuts (2027 3.75%, 2028 3.5%, 2029 3.25%,
+# 2030+ 3%, with contingent reductions below 3% from 2031) — do NOT use those for 2025.
+jurisdiction: states/ms
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: false
+treaty_note: 'Mississippi does NOT conform to federal tax treaties and re-taxes treaty-exempt income. Two .gov findings
+  establish this. (1) The MS DOR Individual Income Tax FAQ states: "Does Mississippi honor federal income tax exemption
+  treaties between the United States and other foreign countries? No, as a general rule, Mississippi does not follow
+  federal income tax exemption treaties. Any income earned on a 1042S should be reported on the Mississippi return
+  as taxable income." (2) Unlike most states, MS does NOT start from federal AGI — the 2025 Form 80-105 builds Mississippi
+  income from scratch line-by-line (wages through other income; "Total income" line 49) and then applies MS-specific
+  adjustments to reach "Mississippi adjusted gross income" (line 66). Because the return is built from gross income
+  items rather than inheriting the federal AGI exclusion, treaty-exempt wages/income (e.g., reported on a 1042-S)
+  are pulled into Mississippi taxable income directly; no special add-back schedule is needed. Net effect: treaty-exempt
+  income IS taxed by Mississippi, so conforms_to_federal_treaties = false.'
+citation:
+  source: 'MS DOR — 2025 Form 80-100 Resident, Non-Resident and Part-Year Resident Instructions (Form 80-100-25-1-1-000,
+    Rev. 12/25): TAX RATES (p.22: ''Income Tax: 0% on the first $10,000.00 of taxable income and 4.4% on taxable income
+    in excess of $10,000.00''); SCHEDULE OF TAX COMPUTATION (First $10,000 x 0%, Remaining balance x 4.4%); Filing
+    Status and Exemptions table; LEGISLATIVE CHANGES (HB 1 Build Up Mississippi Act — 2027 3.75%, 2028 3.5%, 2029 3.25%,
+    2030+ 3%); April 15th due date; mailing addresses'
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+starts_from: Mississippi gross income computed from scratch on the return (NOT federal AGI). The 2025 resident Form
+  80-105 starts from individual income line items, totals them at line 49 "Total income," then subtracts MS adjustments
+  (lines 50-65) to reach line 66 "Mississippi adjusted gross income." There is no "federal adjusted gross income"
+  starting line on the resident return.
+residency:
+  summary: 'Per the 2025 instructions (Form 80-100, "Am I a Resident or a Non-Resident?"): a legal resident is an
+    individual who maintains a home, apartment, or other place of abode in Mississippi, OR who exercises the rights
+    of citizenship in Mississippi by meeting the requirements as a voter, OR who enjoys the benefits of homestead
+    exemption. Residency is based on domicile/legal residence: an individual remains a legal resident of Mississippi
+    (even if temporarily absent) until citizenship rights are relinquished and a new legal residence is established
+    (changes in driver''s license, vehicle tags, voter registration, and property taxes evidence intent to change
+    legal residence). A part-year resident moved into or out of Mississippi during the year; part-year residents file
+    Form 80-205 and are taxed only on income earned while a Mississippi resident, prorating deductions and exemptions.
+    Nonresidents file Form 80-205 and are taxed only on Mississippi-source income, reporting total income from all
+    sources solely to prorate deductions and exemptions.'
+forms:
+  resident: Form 80-105, Mississippi Resident Individual Income Tax Return (2025; Form 80-105-25-8-1-000, Rev. 09/25)
+  part_year_or_nonresident: Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return
+    (2025)
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Dependent Care Credit (2025 credit code 44)
+  type: nonrefundable
+  eligibility: Mississippi individuals who claim the federal income tax credit for certain dependent care expenses
+    on their federal return. The taxpayer must actually claim the federal credit and must have federal adjusted gross
+    income (AGI) of not more than $50,000.
+  amount: 25% of the amount of the federal dependent care credit claimed on the taxpayer's federal income tax return;
+    the credit is limited to the taxpayer's total Mississippi income tax liability.
+  income_limit_2025: Federal AGI must be not more than $50,000.
+  claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 44; total carried to Form 80-105 line 19 (resident).
+  citation:
+    source: Mississippi Department of Revenue, 2025 Individual Income Tax Instructions (Form 80-100-25-1-1-000),
+      'Dependent Care Credit' section and TAX CREDIT CODES table (code 44)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+- name: Child Adoption Credit (credit code 25)
+  type: nonrefundable
+  eligibility: A Mississippi taxpayer who legally adopts a dependent child, for qualified adoption expenses paid
+    or incurred during the tax year for each child. Claimed for the tax year in which the adoption becomes final.
+  amount: Up to $10,000 per child for a dependent child residing in Mississippi before adoption; up to $5,000 per
+    child for a dependent child residing outside Mississippi before adoption. Any unused credit may be carried forward
+    5 years.
+  income_limit_2025: None stated.
+  claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 25; total carried to Form 80-105 line 19 (resident).
+  citation:
+    source: Mississippi Department of Revenue, 2025 Individual Income Tax Instructions (Form 80-100-25-1-1-000),
+      'Child Adoption Credit' section and TAX CREDIT CODES table (code 25)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+- name: Credit for Income Tax Paid to Another State
+  type: nonrefundable
+  eligibility: A legal resident of Mississippi who earns income in another state and is required to pay income tax
+    to that other state, on income also taxed by Mississippi. The taxpayer MUST file a return with the other state
+    and attach a copy (plus Form 80-160); W-2 withholding amounts alone are not sufficient. Not applicable on the
+    Non-Resident return.
+  amount: 'Credit for the total income tax due to the other state, subject to three statutory limitations under Miss.
+    Code Ann. Sec. 27-7-77: (1) cannot exceed the Mississippi income tax due on line 17; (2) cannot exceed income
+    tax actually paid to the other state; (3) cannot exceed an amount computed by applying the highest applicable
+    Mississippi rates to the net taxable income reported to the other state.'
+  income_limit_2025: None (limited instead by the formula above).
+  claimed_on: Form 80-105 line 18 (resident return); supported by Form 80-160 with a copy of the other state's return
+    attached.
+  citation:
+    source: 'Mississippi Department of Revenue, 2025 Individual Income Tax Instructions (Form 80-100-25-1-1-000),
+      ''Line 18: Credit for Income Tax Paid to Another State'' section'
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+filing_requirement:
+  note: 'Per the 2025 instructions (Form 80-100, "DO I HAVE TO FILE?"), file a Mississippi return if any apply: you
+    had Mississippi income tax withheld (other than gambling); you are a non-resident or part-year resident with income
+    taxed by Mississippi (other than gambling); single resident with gross income over $8,300 plus $1,500 per dependent;
+    married resident (combined) with gross income over $16,600 plus $1,500 per dependent; a minor resident with gross
+    income over the personal exemption plus standard deduction for the filing status; residents working outside Mississippi/abroad
+    must report total gross income regardless of source. If not required to file but Mississippi tax was withheld,
+    file to obtain a refund.'
+mailing_addresses:
+  refund_or_no_payment: 'Returns requesting a REFUND: Department of Revenue, P.O. Box 23058, Jackson, MS 39225-3058.
+    (Per the 2025 Form 80-105 footer "Mail REFUND returns to" and the 2025 instructions, WHEN AND WHERE SHOULD I FILE.)'
+  with_payment: 'All other returns (with payment or no tax due): Department of Revenue, P.O. Box 23050, Jackson, MS
+    39225-3050. When mailing the Form 80-106 payment voucher WITHOUT the return, send to: Department of Revenue, P.O.
+    Box 23192, Jackson, MS 39225-3192; WITH the return: P.O. Box 23050, Jackson, MS 39225-3050.'
+  citation:
+    source: MS DOR — 2025 Form 80-100 instructions (WHEN AND WHERE SHOULD I FILE) and 2025 Form 80-105 mailing footer
+      (Department of Revenue, P.O. Box 23058 refund / P.O. Box 23050 all other)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+payment:
+  check_payee: Department of Revenue (2025 Form 80-106 payment voucher — 'Make the check or money order payable to
+    Department of Revenue'; write the identification number on the check/money order).
+  web_pay_url: https://tap.dor.ms.gov
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: MS DOR — 2025 Form 80-100 instructions, WHEN AND WHERE SHOULD I FILE ('Calendar year returns must be
+      filed no later than April 15th annually')
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+all_citations:
+- source: MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; resident/nonresident/part-year
+    forms; 1042-S taxable). The live FAQ now shows the 2025 rate (4.4%), corroborating the 2025 filing-season rate.
+  url: https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions
+- source: 'MS DOR — 2025 Form 80-100 Resident, Non-Resident and Part-Year Resident Instructions (Form 80-100-25-1-1-000,
+    Rev. 12/25): TAX RATES (p.22: 0% on the first $10,000.00 and 4.4% on the excess), SCHEDULE OF TAX COMPUTATION (First
+    $10,000 x 0% / Remaining balance x 4.4%), Filing Status and Exemptions table ($12,000/$4,600 MFJ and Married-Spouse
+    Died 2025; $6,000/$2,300 MFS; $8,000/$3,400 Head of Family; $6,000/$2,300 single), Additional Exemptions chart
+    ($1,500 dependent/age-65/blind), DO I HAVE TO FILE thresholds, whole-dollar rounding, April 15th due date, mailing
+    addresses; LEGISLATIVE CHANGES (HB 1 Build Up Mississippi Act, eff. 7/1/2025 — 2027 3.75%, 2028 3.5%, 2029 3.25%,
+    2030+ 3%, contingent reductions below 3% from 2031)'
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+- source: MS DOR — 2025 Form 80-105 Resident Individual Income Tax Return (Form 80-105-25-8-1-000, Rev. 09/25) —
+    second-pass verification (income built from line items, line 66 Mississippi adjusted gross income; filing-status
+    exemption amounts printed next to each checkbox — '($12,000)' MFJ/combined/spouse-died/MFS, '($8,000)' Head of
+    Family, '($6,000)' Single; line 10 'Line 9 x $1,500'; line 17 'Income tax due (from Schedule of Tax Computation)')
+  url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105258%201.pdf
+- source: MS DOR — Individual Income Tax landing page (forms, TAP payment, resident/nonresident return links)
+  url: https://www.dor.ms.gov/individual
+unverified:
+- The 2025 Form 80-205 (Non-Resident/Part-Year) revision number was not separately pulled this pass; the 80-100 instructions
+  cover both forms and the non-resident line mapping is quoted from them. Confirm the exact 2025 Form 80-205 print
+  at the DOR before relying on its line numbers.
+- The 2025 TAX CREDIT CODES table was not re-transcribed line-by-line this pass; the Dependent Care (44), Child Adoption
+  (25), and Long Term Care (27) codes are carried from the 2024 booklet. Confirm on Form 80-401 when claiming.
+- The 2025 Long Term Care Credit (25% of premiums, max $500, code 27) is carried from 2024 and not re-verified this
+  pass; confirm at the 2025 booklet.
+tax:
+  citation:
+    source: '2025 Mississippi Resident, Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-25-1-1-000,
+      Rev. 12/25), MS DOR - ''TAX RATES'' (p.22): ''Income Tax: 0% on the first $10,000.00 of taxable income and 4.4%
+      on taxable income in excess of $10,000.00''; ''SCHEDULE OF TAX COMPUTATION'' (line 1 First $10,000 x 0%, line
+      2 Remaining balance x 4.4%, line 4 total to page 1 line 17); ''Filing Status and Exemptions'' table: exemption
+      $12,000 MFJ/combined and Married-Spouse Died 2025, $6,000 MFS (each), $8,000 Head of Family, $6,000 single; standard
+      deduction $4,600 MFJ, $2,300 MFS, $3,400 Head of Family, $2,300 single; ''Additional Exemptions'' chart $1,500
+      each dependent, $1,500 age 65 or over (taxpayer/spouse only), $1,500 blind. Second pass: 2025 Form 80-105 (Form
+      80-105-25-8-1-000, Rev. 09/25) prints the exemption amounts next to each filing-status checkbox (''Married - Combined
+      or Joint Return ($12,000)'' ... ''Single ($6,000)'') and the line 10 ''Line 9 x $1,500'' - https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105258%201.pdf
+      - both passes agree. Only the rate changed from 2024 (4.7% -> 4.4%); exemptions and standard deductions are unchanged.'
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 10000, rate: 0}
+    - {over: 10000, but_not_over: null, rate: 0.044}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 10000, rate: 0}
+    - {over: 10000, but_not_over: null, rate: 0.044}
+    married_filing_separately:
+    - {over: 0, but_not_over: 10000, rate: 0}
+    - {over: 10000, but_not_over: null, rate: 0.044}
+    head_of_household:
+    - {over: 0, but_not_over: 10000, rate: 0}
+    - {over: 10000, but_not_over: null, rate: 0.044}
+  base: state_gross_income
+  tax_line: 'Form 80-105, page 1, line 17 ''Income tax due (from Schedule of Tax Computation, see instructions)''.
+    Line 16 ''Mississippi Taxable Income'' = line 13 Mississippi AGI minus line 14 (deductions) and line 15 (exemptions).
+    Schedule of Tax Computation: line 1 ''First $10,000'' x 0%; line 2 ''Remaining balance'' x 4.4%; line 4 ''Total
+    income tax - enter on page 1, line 17''.'
+  exemptions:
+    dependent:
+      amount: 1500
+      note: 'Line 10 = line 9 x $1,500 (2025 instructions, ''Additional Exemptions'': ''Each dependent, other than yourself
+        or spouse ... $1,500''). A dependency exemption is not authorized for yourself or your spouse. Head of Family
+        filers: the one required dependent IS counted here. MARRIED FILING SEPARATELY CAVEAT: line 15 halves the TOTAL
+        line-12 exemption, so the effective per-spouse dependent exemption is $750, not $1,500 - this pack overstates
+        the MFS-with-dependents exemption; compute that case on the form. Unchanged from 2024.'
+    age_65:
+      amount: 1500
+      note: Additional $1,500 exemption per box checked on line 8, taxpayer or spouse ONLY (no age exemption for dependents).
+        It IS a base reduction (flows through lines 9-12 to line 15) but is NOT applied by calc.state_tax - enter it on
+        the form's lines 8-10. Unchanged from 2024.
+    blind:
+      amount: 1500
+      note: Additional $1,500 exemption per box checked on line 8 for blindness, taxpayer or spouse ONLY. It IS a base
+        reduction (flows through lines 9-12 to line 15) but is NOT applied by calc.state_tax - enter it on the form's
+        lines 8-10. Unchanged from 2024.
+  standard_deduction:
+    single: 8300
+    married_filing_jointly: 16600
+    married_filing_separately: 8300
+    head_of_household: 11400
+  notes:
+  - '2025 RATE CUT (HB 531 phase-in): the rate on taxable income in excess of $10,000 DROPS to 4.4% (2024: 4.7%);
+    the 0% band on the first $10,000 is unchanged. This is the ONLY change from 2024 - exemptions and standard deductions
+    are identical. The 2025 Build Up Mississippi Act (HB 1, eff. 7/1/2025) keeps 2025 at 4.4% and 2026 at 4.0% and
+    adds later cuts (2027 3.75%, 2028 3.5%, 2029 3.25%, 2030+ 3%, contingent reductions below 3% from 2031) - do NOT
+    use those for 2025.'
+  - 'Base guidance: Supply Mississippi adjusted gross income: 2025 Form 80-105 (resident return), page 1, line 13
+    (from page 2, line 66 ''Mississippi adjusted gross income''). Mississippi does NOT start from federal AGI - the
+    return builds MS income from its own line items minus MS adjustments. Do NOT supply federal AGI. The pack ships
+    the subtractions to get from line 13 to line 16 ''Mississippi taxable income'' for a standard-deduction filer:
+    the shipped standard_deduction per status is the SUM of the MS standard deduction and the MS filing-status exemption,
+    and the shipped dependent exemption is $1,500 each; the rate schedule then reproduces line 17. Itemizers (Form
+    80-108 Schedule A) and nonresident/part-year filers (Form 80-205) must be computed on the form instead.'
+  - 'Adjudication note (two-pass): exemptions_count must be 0 - the Mississippi per-status personal exemption ($6,000
+    single/MFS, $12,000 MFJ, $8,000 Head of Family) is FOLDED INTO the shipped standard_deduction amounts, never applied
+    per count. Only dependents_count is applied ($1,500 each).'
+  - '2025 Mississippi rates (instructions p.22, ''TAX RATES''): 0% on the first $10,000.00 of taxable income and 4.4%
+    on taxable income in excess of $10,000.00. ONE schedule covers ALL filing statuses (the Schedule of Tax Computation
+    has no per-status rate columns); it is duplicated per status here.'
+  - 'MODELING NOTE - shipped standard_deduction is a COMBINED per-status amount: Mississippi''s personal exemption
+    is a fixed per-FILING-STATUS amount (Single $6,000; MFJ/Combined $12,000; MFS $6,000 per spouse; Head of Family
+    $8,000), not a per-person amount. The shipped standard_deduction = MS standard deduction + MS filing-status exemption:
+    Single $2,300 + $6,000 = $8,300; MFJ $4,600 + $12,000 = $16,600; MFS $2,300 + $6,000 = $8,300; Head of Family
+    $3,400 + $8,000 = $11,400. No ''personal'' exemption key is shipped, so exemptions_count has no effect. Corroboration:
+    the booklet''s own filing thresholds are exactly these sums (''Single... in excess of $8,300...; Married... in
+    excess of $16,600...''). All amounts unchanged from 2024.'
+  - 'MARRIED COMBINED RETURN (two-column) math is NOT modeled - can OVERSTATE tax by up to $440 for two-income couples
+    in 2025: on a combined return where both spouses have positive taxable income (Form 80-105 columns A and B), the
+    Schedule of Tax Computation line 1 gives EACH column its own first $10,000 at 0%, so up to $20,000 is taxed at
+    0% (the DOR FAQ confirms: ''If married filing joint, the first $10,000 of each taxpayer''s taxable income is exempt'').
+    This pack''s single-base married_filing_jointly computation gives only one $10,000 zero band and matches the form
+    only when all income is in Column A (one-income couple).'
+  - 'MARRIED FILING SEPARATELY: Form 80-105 line 15 instruction halves the total authorized exemptions (($12,000 +
+    $1,500 x dependents)/2 = $6,000 + $750 per dependent), and any unused portion of one spouse''s standard deduction
+    or exemption may NOT be used by the other spouse. The shipped $8,300 is exact for MFS with zero dependents; with
+    dependents the shipped $1,500/dependent overstates the exemption by $750 each - compute on the form.'
+  - Head of Family (Mississippi's head-of-household status) REQUIRES at least one dependent living in the home the
+    entire year; that required dependent IS counted and DOES receive the $1,500 dependent exemption - pass it in dependents_count.
+  - 'Qualifying surviving spouse mapping: Mississippi''s ''Married - Spouse Died in Tax Year (2025)'' status uses
+    the identical $12,000 exemption and $4,600 standard deduction as Married Filing Joint/Combined, so it maps cleanly
+    to married_filing_jointly. Mississippi has no multi-year qualifying-surviving-spouse status.'
+  - Age 65-or-over and blind additional exemptions ($1,500 per box checked, taxpayer and spouse only, Form 80-105
+    line 8) are base reductions but are NOT applied by calc.state_tax - take them on the form (shipped as informational
+    'age_65'/'blind' keys only).
+  - 'Itemized deductions: filers may itemize on Form 80-108 Schedule A instead of the standard deduction (state income
+    taxes and MS gaming losses are NOT deductible); this pack assumes the standard deduction.'
+  - 'Tax CREDITS are not modeled: line 18 credit for income tax paid to another state (Form 80-160) and line 19 other
+    credits (Form 80-401 - e.g. Dependent Care Credit 2025 code 44 = 25% of the federal credit for federal AGI <=
+    $50,000; Child Adoption Credit code 25) are subtracted from line 17 tax AFTER the rate schedule; they are credits,
+    not exemptions.'
+  - 'No tax-table mandate: Mississippi has no lookup-table requirement - every filer computes line 17 with the Schedule
+    of Tax Computation bracket math, so the pack''s marginal math matches the form exactly. The schedule prints no
+    additive constants, so there is no rounded-constant divergence to quantify.'
+  - 'Rounding: the booklet mandates whole-dollar rounding (round down amounts under $.50, round up amounts of $.50
+    and over) - identical to the engine''s round-half-up.'
+  - Nonresidents and part-year residents file Form 80-205 (taxable income line 19, tax line 20) and must PRORATE deductions
+    and exemptions by the MS-income ratio - this pack models only the full-year resident Form 80-105.

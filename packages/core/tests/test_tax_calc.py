@@ -2587,3 +2587,76 @@ def test_state_tax_la_exemption_is_inside_the_zero_floor():
     assert hoh.tax == 1_414
     with pytest.raises(ValueError, match="no 'personal' exemption"):
         state_tax("la", 16_125, exemptions_count=1, knowledge_dir=KNOWLEDGE_DIR)
+
+
+# ── Cross-year state goldens (TY2024 / TY2025 cohorts) ──
+# The 2023 GRADUATED_GOLDENS above cover the first cohort. These rows anchor the
+# LATER years, and every one is auditable from the comment: flat-state rows are
+# rate x base_after arithmetic (eight are exact .50 half-up ties), and the
+# graduated rows are official worked examples or printed-table reproductions
+# named in each pack's citation/notes. Rates move nearly every year — IN
+# 3.15 -> 3.05 -> 3.00, MI's one-year 4.05 dip back to 4.25, KY 4.5 -> 4.0,
+# GA 5.39 -> 5.19, LA/IA newly flat — so these rows are the year-to-year
+# regression net for calc.state_tax's data-driven year lookup.
+CROSS_YEAR_GOLDENS = [
+    # (state, year, taxable_base, filing_status, exemptions_count, dependents_count,
+    #  expected base_after_exemptions, expected tax)
+    ('pa', 2024, 45_000, 'single', 0, 0, 45_000, 1_382),  # 45,000 x 3.07% = 1,381.50 -> 1,382 (.50 tie); PA has no SD/exemptions
+    ('pa', 2025, 45_000, 'single', 0, 0, 45_000, 1_382),  # same rate 3.07% -> 1,382
+    ('il', 2024, 51_000, 'single', 0, 0, 51_000, 2_525),  # 51,000 x 4.95% = 2,524.50 -> 2,525 (.50 tie)
+    ('il', 2025, 51_000, 'single', 0, 0, 51_000, 2_525),  # rate held at 4.95% -> 2,525
+    ('in', 2024, 50_000, 'single', 0, 0, 50_000, 1_525),  # 50,000 x 3.05% = 1,525 exactly
+    ('in', 2025, 16_750, 'single', 0, 0, 16_750, 503),  # 16,750 x 3.00% = 502.50 -> 503 (.50 tie)
+    ('mi', 2024, 72_600, 'single', 0, 0, 72_600, 3_086),  # 72,600 x 4.25% = 3,085.50 -> 3,086 (.50 tie)
+    ('mi', 2025, 72_600, 'single', 0, 0, 72_600, 3_086),  # rate held 4.25% -> 3,086
+    ('ky', 2024, 53_160, 'single', 0, 0, 50_000, 2_000),  # 53,160 - 3,160 one-per-return SD = 50,000 x 4% = 2,000
+    ('az', 2024, 64_600, 'single', 0, 0, 50_000, 1_250),  # 64,600 - 14,600 federal-tracking SD = 50,000 x 2.5% = 1,250
+    ('ut', 2023, 50_000, 'single', 0, 0, 50_000, 2_325),  # 50,000 x 4.65% = 2,325 (credit state: no SD/exemptions)
+    ('ut', 2024, 50_000, 'single', 0, 0, 50_000, 2_275),  # 50,000 x 4.55% = 2,275
+    ('ma', 2024, 54_400, 'single', 0, 0, 50_000, 2_500),  # 54,400 - 4,400 exemption = 50,000 x 5% = 2,500
+    ('ga', 2024, 62_000, 'single', 0, 0, 50_000, 2_695),  # 62,000 - 12,000 SD = 50,000 x 5.39% = 2,695
+    ('ga', 2025, 62_000, 'single', 0, 0, 50_000, 2_595),  # 62,000 - 12,000 SD = 50,000 x 5.19% = 2,595
+    ('ia', 2025, 50_000, 'single', 0, 0, 50_000, 1_900),  # 50,000 x 3.8% flat (SF 2442) = 1,900
+    ('la', 2025, 50_000, 'single', 0, 0, 37_500, 1_125),  # 50,000 - 12,500 SD = 37,500 x 3% = 1,125
+    ('mt', 2024, 50_000, 'single', 0, 0, 50_000, 2_704),  # booklet's own worked example: 50,000 -> 2,704
+    ('co', 2024, 30_850, 'single', 0, 0, 30_850, 1_311),  # reproduces the printed DR 0104 tax-table row
+    ('nd', 2024, 100_000, 'single', 0, 0, 100_000, 1_031),  # 0%/1.95%/2.5% re-indexed schedule
+    ('oh', 2024, 87_450, 'single', 0, 0, 87_450, 1_689),  # 0% floor to 26,050 then 2.75%: 1,688.50 -> 1,689 (.50 tie)
+    ('wi', 2024, 29_380, 'single', 0, 0, 29_380, 1_171),  # re-indexed schedule: 1,170.50 -> 1,171 (.50 tie)
+    ('vt', 2024, 96_850, 'married_filing_jointly', 0, 0, 82_000, 2_814),  # booklet example base 82,000 after 14,850 SD; exact math 2,813.625 -> 2,814 (printed 2,813, $1 constant divergence)
+    ('ms', 2025, 50_000, 'single', 0, 0, 41_700, 1_395),  # 0% first 10,000 then 4.4% (HB 531 phase-in)
+    ('nc', 2025, 53_350, 'married_filing_separately', 0, 0, 40_600, 1_726),  # 53,350 - 12,750 MFS SD = 40,600 x 4.25% = 1,725.50 -> 1,726 (.50 tie)
+    ('az', 2025, 65_750, 'single', 0, 0, 50_000, 1_250),  # 65,750 - 15,750 OBBBA-tracking SD = 50,000 x 2.5% = 1,250
+]
+
+
+@pytest.mark.parametrize(
+    "code,year,base,status,n_ex,n_dep,expected_base_after,expected_tax",
+    CROSS_YEAR_GOLDENS,
+    ids=[f"{r[0]}-{r[1]}-{r[2]}" for r in CROSS_YEAR_GOLDENS],
+)
+def test_state_tax_cross_year_golden(
+    code, year, base, status, n_ex, n_dep, expected_base_after, expected_tax
+):
+    r = state_tax(
+        code, base, year=year, exemptions_count=n_ex, dependents_count=n_dep,
+        filing_status=status, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.base_after_exemptions == expected_base_after
+    assert r.tax == expected_tax
+    # The op must report the year's OWN citation, never a neighbouring year's.
+    assert str(year) in r.citation.source or str(year) in r.citation.url
+
+
+def test_state_tax_rate_progression_across_years():
+    # The scheduled cuts are real data, not copy-forward: assert the engine sees a
+    # DIFFERENT rate per year for the states that legislated changes.
+    def rate(code, year):
+        return state_tax(code, 10_000, year=year, knowledge_dir=KNOWLEDGE_DIR).rate
+
+    assert rate("in", 2023) > rate("in", 2024) > rate("in", 2025)      # 3.15 -> 3.05 -> 3.00
+    assert rate("mi", 2023) < rate("mi", 2024) == rate("mi", 2025)     # 4.05 was one-year only
+    assert rate("ky", 2023) > rate("ky", 2024)                          # 4.5 -> 4.0
+    assert rate("ga", 2024) > rate("ga", 2025)                          # 5.39 -> 5.19 (HB 111)
+    assert rate("ut", 2023) > rate("ut", 2024)                          # 4.65 -> 4.55 (SB 69)
+    assert rate("pa", 2023) == rate("pa", 2024) == rate("pa", 2025)     # 3.07 unmoved since 2004

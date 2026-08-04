@@ -242,12 +242,13 @@ def test_calc_state_tax_is_dispatched():
         "state": "ca", "taxable_base": 60000, "filing_status": "head_of_household", "year": 2023}})))
     assert ca["tax"] == 777 and ca["rate_structure"] == "graduated"
     assert ca["rate"] is None and ca["marginal_rate"] == "0.02"
-    # The unsupported-state prescriptive error (listing the shipped states) travels over MCP.
+    # The unsupported-YEAR prescriptive error (listing the shipped states) travels
+    # over MCP. Every jurisdiction now ships 2023/2024 blocks, so the refusal path
+    # is exercised with a year no state pack covers.
     err = _run(_call("calc", {"op": "state_tax", "args": {
-        "state": "ut", "taxable_base": 50000, "year": 2023}}))
+        "state": "il", "taxable_base": 50000, "year": 2019}}))
     assert err.isError is True
-    for code in ("az", "ca", "il", "ny", "pa", "wi"):
-        assert code in err.content[0].text
+    assert "never invent" in err.content[0].text
     # The unknown-op error lists the new op.
     unknown = _run(_call("calc", {"op": "nope", "args": {}}))
     assert "state_tax" in unknown.content[0].text
