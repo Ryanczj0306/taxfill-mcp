@@ -1,0 +1,341 @@
+# OH state knowledge — tax year 2025. Fetched + cited from the OH DOT (.gov),
+# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure was drafted from the 2025 Ohio IT 1040 / SD 100
+# instruction booklet (64 pages, PDF build 2026-01-23), then independently re-derived from
+# the 2025 IT 1040 form bundle (the form, Schedule of Adjustments, Schedule of Business
+# Income, Schedule of Credits) AND — for the rate schedule specifically — from Ohio Revised
+# Code 5747.02(A)(3)(b) itself on codes.ohio.gov.
+# HEADLINE 2025 CHANGE (Highlights for Tax Year 2025): "the highest tax rate has been
+# reduced to 3.125%". The structure is STILL THREE ROWS, not flat: 0% to $26,050, 2.75% to
+# $100,000, 3.125% over $100,000. The 2024 3.50% top rate is gone. The discontinuity
+# constant was RE-DERIVED, not copied: it is $342.00 for 2025 (2024: $360.69), while the
+# over-$100,000 constant $2,394.32 was left UNCHANGED from 2024 — which makes the 2025
+# printed schedule internally inconsistent by $18.695 at $100,000. Both the booklet and the
+# statute print it that way (see the CRITICAL note in tax.notes).
+# CONSOLIDATION TO A SINGLE RATE HAPPENS IN 2026, NOT 2025: R.C. 5747.02(A)(3)(c) reads
+# "For taxable years beginning in 2026 and thereafter, $332.00 plus 2.75% of the amount in
+# excess of $26,050" — one rate above the zero-bracket. Do not apply that to 2025.
+# Other 2025 changes: the exemption table gained a FOURTH tier ($0 at MAGI of $750,000 or
+# greater), the Joint Filing Credit now requires MAGI under $750,000, and form IT NRS is
+# discontinued in favor of an Ohio Nonresident Statement checkbox on IT 10 / IT 1040.
+jurisdiction: states/oh
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Ohio IT 1040 line 1 starts from federal adjusted gross income (2025 form line 1: "Federal adjusted
+  gross income (federal 1040 or 1040-SR, line 11a)"). Ohio AGI = line 1 + additions (Ohio Schedule of Adjustments,
+  line 12) - deductions (line 47). The 2025 Schedule of Adjustments additions list (non-Ohio state or local government
+  interest and dividends; pass-through entity add-back; taxes paid to another state or D.C. related to IRS notice
+  2020-75; 529 plan funds used for non-qualified expenses; losses from sale or disposition of Ohio public obligations;
+  nonmedical withdrawals from a medical savings account; reimbursement of expenses previously deducted on an Ohio
+  return; Ohio Homebuyer Plus non-eligible withdrawals; IRC 168(k)/179 depreciation add-back; federally exempt U.S.
+  obligation interest taxable by the state; federal conformity additions) contains NO add-back of federally treaty-exempt
+  income. Therefore income excluded from federal AGI under a U.S. tax treaty flows through and is not re-taxed by
+  Ohio. Federal-AGI common case, no treaty addback -> conforms.'
+citation:
+  source: 2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation, 64 pages, PDF build 2026-01-23)
+    - Line 1 federal AGI, Schedule of Adjustments additions/deductions, Who Must File an Ohio Income Tax Return?,
+    Ohio Residency (contact periods, the new Ohio Nonresident Statement checkbox), mailing addresses p. 3, due date
+    April 15 2026, payment / check payee ('Ohio Treasurer of State'), 2025 Ohio Income Tax Brackets (p. 18), personal
+    and dependent exemption table (p. 17)
+  url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+starts_from: federal AGI (Ohio IT 1040 line 1 = federal 1040/1040-SR line 11a; the 2025 form cites line 11a where
+  the 2024 form cited line 11)
+residency:
+  summary: 'Resident: domiciled in Ohio ("domiciled" and "resident" mean the same thing under Ohio law). Any individual
+    with an abode (owned or rented) in Ohio is presumed a resident; temporary absence, no matter how long, does
+    not change residency. Part-year resident: a resident for part of the tax year and a nonresident for the rest
+    (permanently moved into or out of Ohio during the year); entitled to the nonresident credit for income earned
+    while a resident of another state, and eligible for the resident credit. Nonresident: a resident of another
+    state for the entire tax year. The presumption of Ohio residency can be challenged using the contact period
+    test: with fewer than 213 contact periods in Ohio, the taxpayer must show by a preponderance of the evidence
+    that they were a nonresident; with 213 or more contact periods, clear and convincing documentation is required.
+    A contact period requires an abode outside Ohio, being away overnight from it, and spending any portion of two
+    consecutive days in Ohio. NEW FOR 2025: Ohio no longer uses form IT NRS — individuals who meet the required
+    criteria establish the irrebuttable nonresident presumption by checking the Ohio Nonresident Statement box on
+    form IT 10 or IT 1040 (booklet pp. 61-62). Authorities: R.C. 5747.01(I)(1) and R.C. 5747.24(B)-(D).'
+  citation:
+    source: 2025 Ohio IT 1040 / SD 100 Instruction Booklet - 'Ohio Residency', 'What Is a Contact Period?', and
+      the Ohio Nonresident Statement instructions (Highlights for Tax Year 2025 and pp. 61-62)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+forms:
+  resident: Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident)
+    is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.
+  part_year_or_nonresident: No separate nonresident/part-year return; nonresidents and part-year residents file
+    the same Ohio IT 1040 and check the part-year resident or nonresident box. They compute the Nonresident Credit
+    on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. Beginning with
+    tax year 2025 the optional nonresident-presumption statement is a CHECKBOX on form IT 10 or IT 1040 — form IT
+    NRS is discontinued.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice - confirm
+  each amount and your eligibility at the cited source before claiming it. Two 2025 changes: the Joint Filing Credit
+  now requires MAGI under $750,000 (its top tier reads $75,001-$749,999), and the Home School Expenses Credit changed
+  from $250 per RETURN to $250 per qualifying STUDENT.'
+credits:
+- name: Ohio Earned Income Credit (EIC)
+  type: nonrefundable
+  eligibility: Taxpayers who qualified for and claimed the federal Earned Income Tax Credit for tax year 2025 (federal
+    Form 1040/1040-SR, line 27a). Eligibility tracks the federal EIC.
+  amount: '30% of your federal EIC: ''Your nonrefundable Ohio earned income credit (EIC) equals 30% of your federal
+    EIC (federal 1040 and 1040-SR, line 27a).'' No state-level dollar cap for 2025.'
+  income_limit_2025: No separate Ohio income limit; bounded by the federal EIC income/investment-income thresholds
+    since the credit is a percentage of the federal credit.
+  claimed_on: Ohio Schedule of Credits, line 13 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 13 Earned Income Credit (R.C. 5747.71)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+- name: Retirement Income Credit
+  type: nonrefundable
+  eligibility: Taxpayer (and spouse, if filing jointly) who (a) has modified adjusted gross income less exemptions
+    under $100,000; (b) received income from a pension, profit-sharing, or retirement plan (such as a traditional
+    IRA or 401(k)) on account of retirement; (c) has that income included in Ohio adjusted gross income; and (d)
+    has not previously taken the Ohio lump sum retirement credit. Amounts deducted on the Ohio Schedule of Adjustments
+    (e.g. Social Security, uniformed-services retirement income) do not qualify.
+  amount: 'Table-based (2025 booklet Table 2, p. 44) on total eligible retirement income included in Ohio AGI: $0-$500
+    = $0; $501-$1,500 = $25; $1,501-$3,000 = $50; $3,001-$5,000 = $80; $5,001-$8,000 = $130; $8,001 or more = $200.
+    Maximum credit per return is $200. Unchanged from 2024.'
+  income_limit_2025: Modified adjusted gross income less exemptions must be less than $100,000.
+  claimed_on: Ohio Schedule of Credits, line 2 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 2 Retirement Income Credit and Table 2 p. 44 (R.C. 5747.055(B))
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+- name: Senior Citizen Credit
+  type: nonrefundable
+  eligibility: Taxpayer who (a) has modified adjusted gross income less exemptions under $100,000; (b) was 65 or
+    older at the end of the tax year; and (c) has not previously taken the Ohio lump sum distribution credit (taking
+    that credit permanently forfeits the senior citizen credit).
+  amount: $50 per return. Unchanged from 2024.
+  income_limit_2025: Modified adjusted gross income less exemptions must be less than $100,000.
+  claimed_on: Ohio Schedule of Credits, line 4 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 4 Senior Citizen Credit (R.C. 5747.055(F))
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+- name: Child Care and Dependent Care Credit
+  type: nonrefundable
+  eligibility: Taxpayer whose modified adjusted gross income is less than $40,000 AND who claimed the federal 'credit
+    for child and dependent care expenses' on federal Form 2441.
+  amount: 'Per the 2025 Child and Dependent Care Credit Worksheet (booklet p. 45): if Ohio MAGI is less than $20,000,
+    the full amount from federal Form 2441 line 9c; if MAGI is $20,000 or more but less than $40,000, 25% of the
+    amount on federal Form 2441 line 11. Unchanged from 2024.'
+  income_limit_2025: Modified adjusted gross income must be less than $40,000 (the worksheet says STOP at $40,000
+    or more).
+  claimed_on: Ohio Schedule of Credits, line 6 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 6 Child Care and Dependent Care Credit and the worksheet on p. 45 (R.C. 5747.054)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+- name: Joint Filing Credit
+  type: nonrefundable
+  eligibility: 'Married taxpayers filing a joint Ohio return where EACH spouse has at least $500 of ''qualifying
+    income'' (any amount included in Ohio AGI other than interest, dividends and distributions, capital gains, and
+    rents and royalties; amounts deducted on the Ohio Schedule of Adjustments — business income, state and local
+    tax refunds, Social Security and railroad retirement benefits, certain military compensation and retirement
+    — are not in Ohio AGI and therefore are not qualifying income). NEW FOR 2025: the couple must also have MAGI
+    less than $750,000.'
+  amount: 'A percentage of tax liability before the credit, by MAGI less exemptions: 20% for $0-$25,000; 15% for
+    $25,001-$50,000; 10% for $50,001-$75,000; 5% for $75,001-$749,999. The maximum credit per return is $650. (For
+    2024 the top tier had no upper bound; for 2025 it stops at $749,999 and the credit is unavailable at MAGI of
+    $750,000 or more.)'
+  income_limit_2025: MAGI must be less than $750,000; the 5% tier tops out at MAGI less exemptions of $749,999.
+  claimed_on: Ohio Schedule of Credits, line 12 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 12 Joint Filing Credit (percentage table, $650 maximum, the new MAGI-under-$750,000 requirement)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+- name: Exemption Credit
+  type: nonrefundable
+  eligibility: Taxpayers whose modified adjusted gross income (MAGI) less exemptions is less than $30,000.
+  amount: $20 for each exemption claimed on the return. Unchanged from 2024. This is a CREDIT against tax, never
+    an income exemption.
+  income_limit_2025: MAGI less exemptions must be less than $30,000.
+  claimed_on: Ohio Schedule of Credits, line 9 (attached to Ohio IT 1040)
+  citation:
+    source: Ohio Department of Taxation - 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 9 Exemption Credit (R.C. 5747.022)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+filing_requirement:
+  note: 'Every Ohio resident and every part-year resident is subject to the Ohio income tax, and every nonresident
+    having Ohio-sourced income must also file (Ohio-sourced income includes wages or other compensation earned in
+    Ohio, Ohio lottery/casino/sports gaming winnings, income or gain from Ohio property, income or gain from a sole
+    proprietorship doing business in Ohio, and income or gain from a pass-through entity doing business in Ohio).
+    You do NOT have to file an Ohio income tax return if: your Ohio adjusted gross income (IT 1040 line 3) is less
+    than or equal to $0; OR the total of your senior citizen credit, lump sum distribution credit, and joint filing
+    credit (Ohio Schedule of Credits lines 4, 5 and 12) equals or exceeds your income tax liability (IT 1040 line
+    8c) and you are not liable for school district income tax; OR your exemption amount (IT 1040 line 4) is the
+    same as or more than your Ohio adjusted gross income (line 3). Residents of a taxing school district may still
+    have to file the SD 100. (2025 booklet, ''Who Must File an Ohio Income Tax Return?'')'
+mailing_addresses:
+  refund_or_no_payment: 'IT 1040 WITHOUT payment: Ohio Department of Taxation, PO Box 2679, Columbus OH 43270-2679.
+    (SD 100 without payment: Ohio Department of Taxation, PO Box 182197, Columbus OH 43218-2197.)'
+  with_payment: 'IT 1040 WITH payment: Ohio Department of Taxation, PO Box 2057, Columbus OH 43270-2057. Individual
+    income tax payment only (no return): Ohio Department of Taxation, PO Box 182131, Columbus OH 43218-2131. (SD
+    100 with payment, and school district payment only: Ohio Department of Taxation, PO Box 182389, Columbus OH
+    43218-2389.)'
+  citation:
+    source: 2025 Ohio IT 1040 / SD 100 Instruction Booklet, p. 3 mailing-address table (IT 1040 without payment
+      / with payment / payment only, and the parallel SD 100 addresses)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+payment:
+  check_payee: 'Ohio Treasurer of State (2025 booklet, Line 22 Total Amount Due: ''This amount must be paid by April
+    15, 2026. Do not mail cash. Instead, make payment by electronic check, credit or debit card, paper check, or
+    money order. Make your check or money order payable to "Ohio Treasurer of State" and include an Ohio Universal
+    Payment Coupon.'')'
+  web_pay_url: https://tax.ohio.gov/OHTAX
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Line 22 Total Amount Due ('This amount must be paid
+      by April 15, 2026')
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+all_citations:
+- source: 2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation, 64 pages) - PASS 1 for every
+    engine figure. Highlights for Tax Year 2025 (top rate reduced to 3.125%; new pregnancy resource center contribution
+    deduction; Ohio educator expense deduction raised to $300 per taxpayer; home school expense credit now $250
+    per qualifying student; new transformational mixed-use development credit; IT NRS discontinued); mailing addresses
+    p. 3; Who Must File; Ohio Residency and contact periods; personal and dependent exemption table p. 17 ($2,400
+    / $2,150 / $1,900 / $0 by MAGI); Line 8a - Tax on Line 7 (R.C. 5747.02(A)(3), tax.ohio.gov/taxcalculator); 2025
+    Ohio Income Tax Brackets p. 18 with the worked $68,050 example; Ohio Schedule of Credits (lines 2, 4, 6, 9,
+    12, 13) and its worksheets/tables pp. 43-45; Line 22 payment and the April 15 2026 due date
+  url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+- source: '2025 Ohio IT 1040 form bundle (the return itself plus the Ohio Schedule of Adjustments, Schedule of Business
+    Income, Schedule of Credits and Schedule of Dependents) - SECOND PASS on structure: line 1 ''Federal adjusted
+    gross income (federal 1040 or 1040-SR, line 11a)'', lines 2a/2b, line 3 Ohio adjusted gross income, line 4 exemption
+    amount, line 5 Ohio income tax base, line 6 taxable business income, line 7 taxable nonbusiness income, line
+    8a nonbusiness income tax liability, line 8b business income tax liability, line 8c total before credits; Schedule
+    of Business Income lines 12-16 ($250,000 / $125,000 business income deduction and ''multiply line 15 by 3% (.03)'')'
+  url: https://tax.ohio.gov/static/forms/ohio_individual/individual/2025/1040-bundle-original-fi.pdf
+- source: 'Ohio Revised Code section 5747.02 (Tax rates), effective September 30, 2025, latest legislation House
+    Bill 96 of the 136th General Assembly - THIRD PASS on the rate schedule itself: division (A)(3)(b) ''For taxable
+    years beginning in 2025: More than $26,050 but not more than $100,000 - $342.00 plus 2.75% of the amount in
+    excess of $26,050; More than $100,000 - $2,394.32 plus 3.125% of the amount in excess of $100,000'', and division
+    (A)(3)(c) ''For taxable years beginning in 2026 and thereafter, $332.00 plus 2.75% of the amount in excess of
+    $26,050'''
+  url: https://codes.ohio.gov/ohio-revised-code/section-5747.02
+unverified:
+- 'The booklet''s own Highlights list several 2025 items this pack does not model in detail: the new deduction for
+  contributions to a qualifying pregnancy resource center (p. 22), the Ohio educator expense deduction increased
+  to $300 per taxpayer (p. 25), the home school expense credit changed to $250 per qualifying student (p. 30), and
+  a new certificate-based Transformational Mixed-Use Development Credit (p. 31). Their existence and headline amounts
+  are quoted from the Highlights page; the underlying instruction pages were not read in full.'
+- The 2025 Ohio Schedule of Adjustments deduction lines (line 47 total) were not enumerated one by one for 2025;
+  the additions list was read to support the treaty conclusion, and the deduction side is described only structurally.
+  Confirm a specific deduction at the booklet page cited on the schedule.
+- The Ohio school district income tax (form SD 100) shares this booklet but is NOT modeled anywhere in this pack
+  — the per-district rates and the traditional-vs-earned-income base election were not transcribed.
+- The 2025 form bundle PDF carries a stale 2020 creation date in its metadata; its content self-identifies as '2025
+  Ohio IT 1040' with the 2025 form barcode (25000189) and was used only as a structural second pass, with every
+  dollar figure independently confirmed in the booklet and (for the rate schedule) in the Ohio Revised Code.
+- MAGI for the exemption table and the credit thresholds is Ohio adjusted gross income plus the business income
+  deduction (R.C. 5747.01(II)); the 2025 booklet's MAGI worksheet (referenced as 'line 3 of the worksheet on page
+  40') was not transcribed line by line.
+tax:
+  citation:
+    source: '2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation, 64 pages, PDF build 2026-01-23)
+      — p. 18 table ''2025 Ohio Income Tax Brackets for Ohio IT 1040'' (0.000% of Ohio taxable nonbusiness income for
+      0 to $26,050; ''$342.00 plus 2.750% of the amount in excess of $26,050'' for $26,050-$100,000; ''$2,394.32 plus
+      3.125% of the amount in excess of $100,000'' over $100,000, with the booklet''s own worked $68,050 example); p.
+      17 ''Line 8a - Tax on Line 7'' (''Calculate your tax on your Ohio income tax base less business income using the
+      Income Tax Brackets found on page 18... the Department provides a tool to assist you with this calculation at
+      tax.ohio.gov/taxcalculator'', R.C. 5747.02(A)(3)) and the personal and dependent exemption table ($2,400 / $2,150
+      / $1,900 / $0 by MAGI). Second pass: form line labels (lines 1-8c) and Schedule of Business Income lines 12-16
+      (3% business tax, $250,000/$125,000 business income deduction) verified from the 2025 IT 1040 form bundle at https://tax.ohio.gov/static/forms/ohio_individual/individual/2025/1040-bundle-original-fi.pdf.
+      THIRD pass on the schedule itself: Ohio Revised Code 5747.02(A)(3)(b) (effective September 30, 2025, House Bill
+      96 of the 136th General Assembly, https://codes.ohio.gov/ohio-revised-code/section-5747.02) prints the identical
+      2025 constants and rates — $342.00 / 2.75% and $2,394.32 / 3.125%.'
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 26050, rate: 0}
+    - {over: 26050, but_not_over: 100000, rate: 0.0275}
+    - {over: 100000, but_not_over: null, rate: 0.03125}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 26050, rate: 0}
+    - {over: 26050, but_not_over: 100000, rate: 0.0275}
+    - {over: 100000, but_not_over: null, rate: 0.03125}
+    married_filing_separately:
+    - {over: 0, but_not_over: 26050, rate: 0}
+    - {over: 26050, but_not_over: 100000, rate: 0.0275}
+    - {over: 100000, but_not_over: null, rate: 0.03125}
+    head_of_household:
+    - {over: 0, but_not_over: 26050, rate: 0}
+    - {over: 26050, but_not_over: 100000, rate: 0.0275}
+    - {over: 100000, but_not_over: null, rate: 0.03125}
+  base: state_taxable_income
+  tax_line: 'IT 1040 line 8a: ''Nonbusiness income tax liability on line 7a (see tax.ohio.gov/taxcalculator or see
+    the instructions for the tax brackets)''. Booklet p. 18 table headings: ''Taxable Nonbusiness Income (Ohio IT
+    1040, line 7)'' -> ''Nonbusiness Income Tax (enter on Ohio IT 1040, line 8a)''. Line 8c ''Income tax liability
+    before credits (line 8a plus line 8b)'' adds the separate 3% business income tax (line 8b), which this op does
+    not model.'
+  exemptions: {}
+  notes:
+  - '2025 CHANGE — TOP RATE CUT TO 3.125%, STRUCTURE STILL THREE ROWS: ''Ohio Income Tax Brackets. For tax year 2025,
+    the highest tax rate has been reduced to 3.125%'' (Highlights for Tax Year 2025). The 2025 schedule (booklet p.
+    18) is 0.000% for 0 to $26,050, then 2.750% to $100,000, then 3.125% over $100,000. Ohio did NOT consolidate to
+    a single rate for 2025 — do not use the 2024 3.50% top rate, and do not flatten. R.C. 5747.02(A)(3)(c) shows the
+    consolidation arrives NEXT year: ''For taxable years beginning in 2026 and thereafter, $332.00 plus 2.75% of the
+    amount in excess of $26,050'' — a single rate above the zero bracket. That 2026 schedule must not be applied to
+    2025.'
+  - 'Base guidance: Supply 2025 Ohio IT 1040 line 7 (= line 7a), ''Taxable nonbusiness income (line 5 minus line 6;
+    if negative, enter zero)''. Compute it on the form: line 1 federal AGI (federal 1040/1040-SR line 11a) plus line
+    2a additions (Ohio Schedule of Adjustments line 12) minus line 2b deductions (Schedule of Adjustments line 47)
+    = line 3 Ohio adjusted gross income; minus line 4 exemption amount (MAGI-tiered, see below) = line 5 Ohio income
+    tax base; minus line 6 taxable business income (Ohio Schedule of Business Income line 15) = line 7. This pack
+    ships NO standard deduction and NO exemptions, so the engine applies the brackets directly to the figure you supply
+    — do not pass federal AGI or Ohio AGI.'
+  - 'CRITICAL — printed-constant divergence, RE-DERIVED for 2025 (the constants changed): Ohio''s published 2025 schedule
+    is discontinuous, and the jump is NOT 2024''s $360.69. The middle row reads ''$342.00 plus 2.750% of the amount
+    in excess of $26,050'' while the cumulative sum of the 0% bracket below it is $0.00, so between $26,050 and $100,000
+    this op''s marginal math is exactly $342.00 BELOW the form''s printed schedule. The booklet''s own example makes
+    the gap explicit: taxable nonbusiness income of $68,050 -> ''he owes $342 on the first $26,050 of income'', then
+    $42,000 x 0.0275 = $1,155, then ''$1,155 + $342 = $1,497'' on line 8a — while pure bracket math yields $1,155.
+    ABOVE $100,000 the divergence is DIFFERENT AGAIN, because Ohio changed the middle constant but left the top constant
+    untouched: $342.00 + 2.75% x $73,950 = $2,375.625, yet the printed top row starts at $2,394.32, which is $18.695
+    higher. So relative to this op''s cumulative $2,033.625 at $100,000, the printed schedule runs $360.695 ahead
+    above $100,000 (coincidentally the same gap as 2024) and $342.00 ahead in the middle bracket. This is NOT a booklet
+    typo: R.C. 5747.02(A)(3)(b) prints the same $342.00 and $2,394.32 pair, so the internal inconsistency is statutory.
+    The filed form must use the printed brackets — add $342.00 to this op''s result when line 7 is between $26,050
+    and $100,000, and $360.695 when line 7 exceeds $100,000.'
+  - 'NO tax table (unchanged from 2024): the 2025 booklet prints only the p. 18 Income Tax Brackets. Line 8a instructs
+    all filers to use the brackets or the Department''s calculator at tax.ohio.gov/taxcalculator.'
+  - 'Personal/dependent exemption NOT shipped because it is income-dependent, and it gained a FOURTH TIER for 2025
+    (booklet p. 17): $2,400 per exemption if modified adjusted gross income is $40,000 or less; $2,150 if MAGI is
+    $40,001-$80,000; $1,900 if MAGI is $80,001-$749,999; and $0 if MAGI is $750,000 or greater. The 2024 table had
+    no upper cutoff — the $1,900 tier ran to infinity — so a high-income 2025 filer now gets NO exemption. The same
+    tiered amount applies to the taxpayer, spouse, and each dependent (IT 1040 line 4; the booklet''s example: MAGI
+    $75,000, three exemptions = $6,450). MAGI = Ohio adjusted gross income plus the business income deduction (R.C.
+    5747.01(II)). A filer claimed as a dependent on someone else''s return gets $0 for themselves. Dependents claimed
+    require the Ohio Schedule of Dependents. Compute line 4 on the form; supply line 7 to this op.'
+  - Ohio has NO standard deduction and no itemized deduction; the only base reductions are the Schedule of Adjustments
+    deductions (line 2b) and the line 4 exemption, both already reflected in the line 7 figure you supply.
+  - 'Business income is taxed SEPARATELY and is not modeled: taxable business income (IT 1040 line 6, after the business
+    income deduction of $250,000 for single or married filing jointly, $125,000 for married filing separately, Schedule
+    of Business Income line 12) is taxed at a flat 3% on Schedule of Business Income line 16 (''multiply line 15 by
+    3% (.03)'') and reported on IT 1040 line 8b; total income tax liability before credits is line 8c = 8a + 8b. The
+    line 7 figure supplied to this op already excludes business income.'
+  - 'One rate schedule for ALL filing statuses: Ohio''s 2025 brackets do not vary by filing status (the p. 18 schedule
+    prints a single set); the identical schedule is duplicated per status here. Qualifying surviving spouse shares
+    the form''s ''Single, head of household or qualifying surviving spouse'' checkbox and maps to married_filing_jointly
+    in the engine with an identical result.'
+  - Ohio school district income tax (form SD 100) is a separate ADDITIONAL tax on top of the IT 1040 for residents
+    of taxing school districts — not modeled by this op. The traditional and earned-income tax bases and the per-district
+    rates live in the same booklet.
+  - 'Ohio''s personal/dependent-linked ''exemption credit'' is a CREDIT, not an exemption: $20 for each exemption
+    claimed, on the 2025 Ohio Schedule of Credits line 9, only if MAGI less exemptions is less than $30,000 (R.C.
+    5747.022) — it is subtracted from tax, never from income, and is not modeled. Other unmodeled credits: the joint
+    filing credit (20%/15%/10%/5% of tax by MAGI band, max $650, and NEW for 2025 requiring MAGI under $750,000),
+    the retirement income credit (Table 2, max $200), the lump sum retirement and lump sum distribution credits, the
+    senior citizen credit ($50), the child care and dependent care credit (MAGI under $40,000), the displaced worker
+    training credit (lesser of $500 or 50% of cost), the campaign contribution credit ($50/$100, being discontinued
+    after this tax year), the home school expenses credit ($250 per qualifying student for 2025), the nonchartered
+    non-public school tuition credit ($1,000/$1,500), and the Ohio EIC (30% of the federal EIC).'
+  - 'Rounding: the 2025 booklet''s Common Filing Tips instruct ''Round all figures to the nearest dollar'', and the
+    form is captioned ''Use whole dollars only'' — matching this op''s irs_round half-up behavior.'
+  - 'Filing-threshold shortcuts NOT modeled: a filer whose Ohio AGI (line 3) is $0 or less, or whose line 4 exemption
+    amount is at least their Ohio AGI, or whose senior citizen + lump sum distribution + joint filing credits equal
+    or exceed line 8c (and who owes no school district tax), does not have to file at all. The zero-rate first bracket
+    already produces $0 tax up to $26,050 of line 7.'

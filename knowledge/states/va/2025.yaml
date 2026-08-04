@@ -1,0 +1,356 @@
+# VA state knowledge — tax year 2025. Fetched + cited from the VA DOR (.gov),
+# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure was drafted from the 2025 Form 760 instruction
+# booklet (43 pages), then independently re-derived from the 2025 Form 763 nonresident
+# instructions (44 pages), which print the identical Tax Rate Schedule and the same
+# $8,750/$17,500 standard deduction — resolutions recorded in the tax.notes.
+# RESOLVED — THE 2024 PACK'S SUNSET FLAG: the 2024 pack warned that the $8,500/$17,000
+# standard deduction was scheduled to sunset after Taxable Year 2025 (reverting to
+# $3,000/$6,000) and that the live DOR page already showed TY2025 = $8,750/$17,500. The
+# 2025 booklet's own What's New resolves it: "Legislation enacted during the 2025 General
+# Assembly session increased the standard deduction for Taxable Years 2025 and 2026 from
+# $8,500 to $8,750 for single filers and from $17,000 to $17,500 for married filers filing
+# jointly. The increase in the standard deduction is scheduled to sunset after Taxable Year
+# 2026 and revert to the standard deduction amounts that applied prior to Taxable Year 2019:
+# $3,000 for single filers and $6,000 for married couples filing jointly." So TY2025 =
+# $8,750 / $17,500 (NOT $3,000/$6,000, and NOT the 2024 $8,500/$17,000), and the sunset
+# moved out one year to after TY2026.
+# Other 2025 changes: the refundable Virginia EITC rose from 15% to 20% (TY2025-2026); the
+# rate schedule (2% / 3% / 5% / 5.75%) and the $930 / $800 exemptions are UNCHANGED; the
+# detailed tax table is no longer printed in the booklet (online only); and Virginia's IRC
+# conformity is now a FIXED date of December 31, 2025.
+jurisdiction: states/va
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Virginia''s individual income tax computation starts from federal adjusted gross income (Form 760,
+  Line 1: "Adjusted Gross Income from federal return - Not federal taxable income"). The 2025 Schedule ADJ additions
+  are limited to Line 1 interest on obligations of other states, Line 2a conformity additions (bonus depreciation
+  and other conformity items) and the enumerated Lines 2b-2c codes (10 interest on federally exempt U.S. obligations;
+  11 accumulation distribution income; 12 lump-sum distribution income; 14 income from dealer disposition of property;
+  17 first-time home buyer savings accounts; 18 food donation; 19 federal partnership income addition; 20 pass-through
+  entity tax add back; 99 other) — NO addback for income exempt from federal tax under a U.S. tax treaty. The word
+  "treaty" appears ZERO times in the 2025 Form 760 instructions (re-counted this session across all 43 pages). Because
+  treaty-exempt income is already excluded from federal AGI and Virginia does not add it back, it flows through
+  and is NOT re-taxed -> conforms.'
+citation:
+  source: 2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — What's New (standard
+    deduction increased to $8,750/$17,500 for Taxable Years 2025 and 2026; refundable Virginia EITC raised to 20%;
+    fixed IRC conformity date of December 31, 2025), Line 1 Federal Adjusted Gross Income, Line 9 filing thresholds,
+    Line 11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options,
+    mailing addresses, May 1 2026 due date
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+starts_from: federal AGI (federal adjusted gross income; Form 760 Line 1 "Adjusted Gross Income from federal return
+  - Not federal taxable income")
+residency:
+  summary: 'Resident: a person who is a legal (domiciliary) resident of Virginia, OR an "actual" resident — one
+    who maintained an abode in Virginia or was physically present in Virginia for more than 183 total days during
+    the taxable year, even if a domiciliary resident of another state or country. File Form 760 if you were an actual
+    or domiciliary resident for the entire year, or for a portion of the year but all of your income for the entire
+    year was from Virginia sources. Part-year resident (Form 760PY): moved into Virginia during the year and became
+    an actual or domiciliary resident, or moved out and became a domiciliary resident of another state (without
+    moving back within six months). Nonresident (Form 763): not a resident or part-year resident but had income
+    from Virginia sources. Students follow the same rules as anyone else; special rules apply to members of Congress,
+    and servicemembers/military spouses may elect the member''s residence, the spouse''s residence, or the permanent
+    duty station under the SCRA as amended.'
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions - 'Residency Status and Choosing the Right
+      Form to File' (p. 5)
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+forms:
+  resident: Form 760 (Resident Individual Income Tax Return)
+  part_year_or_nonresident: 'Nonresident: Form 763 (Nonresident Individual Income Tax Return). Part-year resident:
+    Form 760PY (Part-Year Resident Individual Income Tax Return).'
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice - confirm
+  each amount and your eligibility at the cited source before claiming it. Two 2025 figures CHANGED from 2024: the
+  refundable Virginia EITC rose from 15% to 20% (for Taxable Years 2025 and 2026), and the poverty guideline table
+  used for the Credit for Low-Income Individuals was re-indexed.'
+credits:
+- name: Credit for Low-Income Individuals (CLI)
+  type: nonrefundable
+  eligibility: Virginia residents whose family Virginia Adjusted Gross Income (family VAGI, Schedule ADJ Line 10)
+    is equal to or less than the federal poverty amount for their family size. May NOT be claimed if you, your spouse,
+    or any dependent claims the age deduction, the blind/65-and-over exemption, the Virginia National Guard subtraction,
+    the basic military pay subtraction, or the federal & state employee subtraction, or if you are claimed as a
+    dependent on another taxpayer's return. Mutually exclusive with both Virginia EITC options — claim only the
+    one of the three that gives the greatest benefit.
+  amount: $300 per personal and dependent exemption reported on Form 760, excluding the age 65-or-older and blind
+    exemptions (Schedule ADJ Line 12 count x $300 on Line 13); nonrefundable, limited to Virginia income tax liability.
+  income_limit_2025: 'Family VAGI at or below the 2025 Poverty Guideline Table in the instructions: $15,650 (1 eligible
+    exemption), $21,150 (2), $26,650 (3), $32,150 (4), $37,650 (5), $43,150 (6), $48,650 (7), $54,150 (8); add $5,500
+    for each additional person, spouse, and dependent exemption. (2024: $15,060 through $52,720, +$5,380.)'
+  claimed_on: Virginia Schedule ADJ, Lines 9-13, carried to Schedule ADJ Line 17 and Form 760 Line 23
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions - 'Tax Credit for Low-Income Individuals or
+      Virginia Earned Income Tax Credit' (Schedule ADJ Lines 9-17), including the 2025 Poverty Guideline Table and
+      the Line 13 '$300' multiplier
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+- name: Virginia Earned Income Tax Credit (nonrefundable option)
+  type: nonrefundable
+  eligibility: Taxpayers who claimed an Earned Income Tax Credit on their federal return. Mutually exclusive with
+    the Credit for Low-Income Individuals and with the refundable Virginia EITC — the instructions direct the filer
+    to claim whichever of the three gives the greatest tax benefit. A married-filing-separately taxpayer must first
+    determine their proportion of the earned income used to qualify for the federal credit and apply that proportion
+    to the Virginia credit.
+  amount: 20% of the Earned Income Tax Credit claimed on the federal return; nonrefundable (limited to Virginia
+    tax liability).
+  income_limit_2025: No separate Virginia dollar cap; eligibility follows the federal EITC for tax year 2025.
+  claimed_on: Virginia Schedule ADJ, Lines 14-17, carried to Form 760 Line 23
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions - Schedule ADJ Line 14 instructions ('the
+      total Virginia Earned Income Credit, which is 20% of the federal Earned Income Tax Credit')
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+- name: Refundable Virginia Earned Income Tax Credit
+  type: refundable
+  eligibility: Full-year Virginia residents who claimed a federal Earned Income Tax Credit. Nonresidents and part-year
+    residents are INELIGIBLE for the refundable credit. Mutually exclusive with the Credit for Low-Income Individuals
+    and the nonrefundable 20% option.
+  amount: 'INCREASED FOR 2025: 20% of the federal Earned Income Tax Credit, refundable — up from 15% for taxable
+    years before 2025. The increase applies to Taxable Years 2025 and 2026 (''For taxable years Taxable Years 2025
+    and 2026, new legislation increased the refundable portion of the Virginia Earned Income Tax Credit from 15%
+    to 20%'').'
+  income_limit_2025: No separate Virginia dollar cap; eligibility follows the federal EITC for tax year 2025.
+  claimed_on: Form 760 refundable-credit line (via the Schedule ADJ earned income credit computation)
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions - What's New, 'Refundable Virginia Earned
+      Income Tax Credit' (15% -> 20% for Taxable Years 2025 and 2026; nonresidents and part-year residents ineligible)
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+- name: Credit for Taxes Paid to Another State
+  type: nonrefundable
+  eligibility: Virginia residents who paid income tax to another state on income also taxed by Virginia (computed
+    on Virginia Schedule OSC). Special rules apply for the reverse-credit states.
+  amount: The lesser of the tax actually paid to the other state on the qualifying income or the Virginia tax attributable
+    to that income (Schedule OSC computation); nonrefundable.
+  income_limit_2025: No income limit; the credit is limited by the Schedule OSC computation.
+  claimed_on: Virginia Schedule OSC, carried to Form 760 Line 24
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions - 'Credit for Taxes Paid to Another State'
+      and the Schedule OSC Line Instructions (pp. 31-33)
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+filing_requirement:
+  note: 'Every Virginia resident whose Virginia Adjusted Gross Income (VAGI) is at or above the minimum threshold
+    must file Form 760. For tax year 2025 the thresholds are UNCHANGED from 2024: Single and your VAGI is $11,950
+    or more; Married filing jointly and combined VAGI is $23,900 or more; Married filing separately and your VAGI
+    is $11,950 or more. If VAGI is below the threshold, Virginia tax is $0.00 and the rate schedule/tax table must
+    NOT be used (''If your Virginia Adjusted Gross Income is less than the filing threshold, do not use the rate
+    schedule or tax table. Enter $0 as your tax instead.''); a return is filed only to obtain a refund of withholding
+    or estimated tax paid.'
+mailing_addresses:
+  refund_or_no_payment: 'REFUND RETURNS: Virginia Department of Taxation, P.O. Box 1498, Richmond, VA 23218-1498.
+    Alternatively, returns may be filed with the Commissioner of the Revenue / Director of Finance / Director of
+    Tax Administration of the locality where the taxpayer lives, per the booklet''s ''List of Localities and Mailing
+    Addresses''.'
+  with_payment: 'TAX DUE RETURNS: Virginia Department of Taxation, P.O. Box 760, Richmond, VA 23218-0760. Alternatively,
+    may be filed/paid with the locality where the taxpayer lives, per the booklet''s locality list.'
+  citation:
+    source: '2025 Form 760 Resident Individual Income Tax Instructions, ''List of Localities and Mailing Addresses''
+      (booklet p. 36 onward) - ''You may mail your income tax return directly to the Department of Taxation at the
+      addresses listed to the right or to your Commissioner of the Revenue'': REFUND RETURNS P.O. Box 1498; TAX
+      DUE RETURNS P.O. Box 760'
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+payment:
+  check_payee: 'Department of Taxation (2025 instructions, Payment Options - ''Check: If you file your return locally,
+    make your check payable to the Treasurer or Director of Finance of the city or county in which you reside; otherwise,
+    make your check payable to the Department of Taxation.'' Make sure your Social Security Number is on the check
+    and note that it is your 2025 Virginia income tax payment. To pay separately from the return on or before May
+    1, use Form 760PMT.)'
+  web_pay_url: https://www.tax.virginia.gov/payments
+deadlines:
+  filing_due_date: '2026-05-01'
+  automatic_extension: All taxpayers are granted an AUTOMATIC 6-month extension of time to file (to November 1,
+    2026) — no application is required; however, any tentative tax due must be paid with extension voucher Form
+    760IP by the original May 1, 2026 due date. An extension penalty of 2% per month (maximum 12%) applies if the
+    return is filed within 6 months of the due date and the balance due exceeds 10% of total tax liability; a late
+    filing penalty of 30% applies if filed more than 6 months late. Taxpayers living or traveling outside the United
+    States and Puerto Rico (or in naval service on duty outside the U.S. and Puerto Rico) must file by July 1, 2026.
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions - 'your individual income tax return must
+      be postmarked no later than May 1, 2026, to avoid penalties and interest'; Reminders, 'Extension for Filing
+      Income Tax Returns' (automatic 6 months, Form 760IP); 'The due date for filing a calendar year return is May
+      1, and the automatic extension provisions apply to returns filed by November 1'; the July 1, 2026 out-of-country
+      date
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+all_citations:
+- source: 2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) - PASS 1 for every
+    engine figure. What's New (standard deduction $8,750/$17,500 for TY2025-2026 with the sunset moved to after
+    TY2026; refundable Virginia EITC 15% -> 20%; fixed IRC conformity date of December 31, 2025 replacing suspended
+    rolling conformity, conforming to most of 2025 H.R.1/P.L. 119-21); Reminders (automatic 6-month extension, Form
+    760IP); Do You Need to File (VAGI $11,950 / $23,900); Form 760 Line Instructions (Line 1 federal AGI, Line 4
+    age deduction up to $12,000 each, Line 9 VAGI and the zero-tax threshold, Line 11 standard deduction chart,
+    Line 12 exemptions $930 and $800, Line 16 amount of tax); Age 65 and Older Deduction Worksheet; Itemized or
+    Standard Deductions (p. 11); Spouse Tax Adjustment Worksheet (the $259 cap, p. 12); Payment Options (check payee);
+    Schedule ADJ Line Instructions (additions codes with no treaty addback; Credit for Low-Income Individuals /
+    Virginia EITC, 2025 Poverty Guideline Table, $300 per exemption, 20% of the federal EITC); TAX RATE SCHEDULE
+    p. 35; List of Localities and Mailing Addresses
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+- source: 2025 Virginia Form 763 Nonresident Individual Income Tax Instructions (44 pages) - the independent SECOND-PASS
+    source; prints the identical TAX RATE SCHEDULE (2% to $3,000; $60 + 3%; $120 + 5%; $720 + 5.75% over $17,000)
+    and the same increased standard deduction ($8,750 Filing Status 1 / $17,500 Filing Status 2, with the same TY2025-2026
+    window and post-TY2026 sunset language)
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf
+- source: Virginia Tax - individual income tax payment options (eForms / Individual Online Services / web payments)
+  url: https://www.tax.virginia.gov/payments
+unverified:
+- 'The 2025 Form 760 itself (the fillable return PDF) was NOT retrieved this session: the 2024-style URL pattern
+  (vatax-pdf/2025-760.pdf) returns 404. Every figure in this pack therefore comes from the two INSTRUCTION booklets
+  (Form 760 resident and Form 763 nonresident), which agree with each other on the rate schedule, the standard deduction,
+  and the $930/$800 exemption multipliers. The form''s own printed ''X $930'' / ''X $800'' multiplier boxes and
+  its Line 16 caption were not re-read for 2025 — confirm at tax.virginia.gov if the exact form wording matters.'
+- The 2025 detailed tax table is NO LONGER PRINTED in the Form 760 booklet (the rate-schedule page says only 'A
+  detailed tax table can be found at www.tax.virginia.gov'), and it was not fetched. Table amounts within a band
+  can differ from exact rate-schedule math by about a dollar; Line 16 permits the table, the rate schedule, or the
+  Department's online Tax Calculator.
+- 'Virginia''s 2025 conformity position is unusually late-breaking: the What''s New section describes 2026 General
+  Assembly action (the 2026 Amendments to the 2025 Appropriation Act) that replaced suspended rolling conformity
+  with a FIXED conformity date of December 31, 2025, and points to Tax Bulletin 26-1 for the required return adjustments.
+  Tax Bulletin 26-1 was not fetched. Filers with bonus depreciation, qualified production property, domestic research
+  and experimental expenditures, or business interest adjustments must consult it.'
+- 'Qualifying surviving spouse status: the 2025 booklet lists only Filing Status 1 (Single), 2 (Married Filing Jointly)
+  and 3 (Married Filing Separately) and does not state which Virginia status a federal qualifying surviving spouse
+  uses. See the tax.notes caveat — only the standard deduction would differ.'
+- The Credit for Taxes Paid to Another State summary is a structural description from the booklet's Schedule OSC
+  section; the Schedule OSC form itself and the reverse-credit state list were not separately fetched.
+tax:
+  citation:
+    source: '2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — TAX RATE SCHEDULE,
+      p. 35: ''Not over $3,000, your tax is 2% of your Virginia taxable income; $3,000-$5,000: $60 + 3%; $5,000-$17,000:
+      $120 + 5%; over $17,000: $720 + 5.75% of excess over $17,000''; What''s New ''Increase in Standard Deduction''
+      and the Line 11 chart (Filing Status 1 $8,750 / Filing Status 2 $17,500 / Filing Status 3 $8,750, for Taxable
+      Years 2025 and 2026, sunsetting after TY2026 to $3,000/$6,000); Line 12 Exemptions (''Multiply the sum of exemptions
+      claimed in the You, Spouse and Dependents boxes by $930'' and ''Multiply the sum of exemptions claimed for 65
+      or over and Blind by $800''); Line 9 VAGI filing threshold; Spouse Tax Adjustment Worksheet ($259 cap). Second
+      pass: the 2025 Form 763 nonresident instructions independently print the identical TAX RATE SCHEDULE and the same
+      $8,750/$17,500 standard deduction chart (https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf)
+      — both passes agree on every bound, rate, printed constant, and deduction amount.'
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 17000, rate: 0.05}
+    - {over: 17000, but_not_over: null, rate: 0.0575}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 17000, rate: 0.05}
+    - {over: 17000, but_not_over: null, rate: 0.0575}
+    married_filing_separately:
+    - {over: 0, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 17000, rate: 0.05}
+    - {over: 17000, but_not_over: null, rate: 0.0575}
+    head_of_household:
+    - {over: 0, but_not_over: 3000, rate: 0.02}
+    - {over: 3000, but_not_over: 5000, rate: 0.03}
+    - {over: 5000, but_not_over: 17000, rate: 0.05}
+    - {over: 17000, but_not_over: null, rate: 0.0575}
+  base: federal_agi
+  tax_line: Form 760 Line 16, 'Amount of Tax from Tax Table or Tax Rate Schedule (round to whole dollars)', computed
+    on Line 15 Virginia Taxable Income = Line 9 (Virginia Adjusted Gross Income) minus Line 14 (Line 10 itemized OR
+    Line 11 standard deduction, plus Line 12 exemptions plus Line 13 Schedule ADJ deductions). For 2025 the booklet
+    no longer prints the tax table — the rate-schedule page states 'A detailed tax table can be found at www.tax.virginia.gov'.
+  exemptions:
+    personal:
+      amount: 930
+      note: 'Form 760 Exemption Section A / Line 12: ''Multiply the sum of exemptions claimed in the You, Spouse and Dependents
+        boxes by $930'' (2025 instructions, Line 12). A BASE reduction: Line 12 is part of Line 14, subtracted from VAGI
+        (Line 9) to get Virginia taxable income (Line 15). Applies to taxpayer and spouse ($930 each); MFJ with both spouses
+        = exemptions_count 2 = $1,860. UNCHANGED for 2025 (same $930 as 2023 and 2024).'
+    dependent:
+      amount: 930
+      note: Same $930 per exemption for each dependent claimed in the Dependents box of Exemption Section A. A base reduction
+        via Line 12, not a credit. Unchanged for 2025.
+    age_65:
+      amount: 800
+      note: 'Exemption Section B: ''Multiply the sum of exemptions claimed for 65 or over and Blind by $800.'' Must be
+        65 or older on or before January 1, 2026. A base reduction via Line 12, but NOT applied by calc.state_tax (the
+        op applies only the personal/dependent keys) — claim it on the form. Cannot be claimed together with the Credit
+        for Low-Income Individuals.'
+    blind:
+      amount: 800
+      note: 'Exemption Section B: $800 per blind exemption (blind for federal income tax purposes; taxpayer and spouse
+        each). A base reduction via Line 12, but NOT applied by calc.state_tax — claim it on the form. Cannot be claimed
+        together with the Credit for Low-Income Individuals.'
+  standard_deduction:
+    single: 8750
+    married_filing_jointly: 17500
+    married_filing_separately: 8750
+    head_of_household: 8750
+  notes:
+  - '2025 STANDARD DEDUCTION RESOLVED — $8,750 / $17,500, NOT the sunset amounts: the 2024 pack flagged that the $8,500/$17,000
+    deduction was scheduled to sunset after Taxable Year 2025 to $3,000/$6,000, and that the live DOR page already
+    showed $8,750/$17,500 for TY2025. The 2025 booklet''s own What''s New settles it: ''Legislation enacted during
+    the 2025 General Assembly session increased the standard deduction for Taxable Years 2025 and 2026 from $8,500
+    to $8,750 for single filers and from $17,000 to $17,500 for married filers filing jointly. The increase in the
+    standard deduction is scheduled to sunset after Taxable Year 2026 and revert to the standard deduction amounts
+    that applied prior to Taxable Year 2019: $3,000 for single filers and $6,000 for married couples filing jointly.''
+    The Line 11 chart prints Filing Status 1 $8,750, Filing Status 2 $17,500, Filing Status 3 $8,750, and the 2025
+    Form 763 nonresident instructions print the same amounts. So TY2025 = $8,750/$17,500, the sunset moved out one
+    year (now after TY2026), and $3,000/$6,000 must NOT be used for 2025.'
+  - 'Base guidance: Supply Form 760 Line 9, Virginia Adjusted Gross Income (VAGI) = federal AGI (Line 1, ''Adjusted
+    Gross Income from federal return - Not federal taxable income'') + Virginia additions (Line 2, Schedule ADJ Line
+    3) - Line 8 subtractions (Line 4 age deduction of up to $12,000 each, Line 5 taxable Social Security / Tier 1
+    Railroad Retirement benefits, Line 6 state income tax refund reported as federal income, Line 7 Schedule ADJ subtractions).
+    If the filer has no Virginia additions or subtractions, VAGI equals federal AGI. The op then subtracts the shipped
+    $930-per-exemption amounts and the per-status standard deduction to reproduce Virginia taxable income (Line 15
+    = Line 9 - Line 14). Schedule ADJ Line 13 deductions (Line 8 of Schedule ADJ) are NOT modeled — subtract them
+    from the base you supply.'
+  - 'Single rate schedule for ALL filing statuses, UNCHANGED for 2025: Virginia publishes one Tax Rate Schedule (2%
+    up to $3,000; $60 + 3% for $3,000-$5,000; $120 + 5% for $5,000-$17,000; $720 + 5.75% over $17,000) that applies
+    regardless of filing status; it is duplicated per status here. The printed constants $60/$120/$720 exactly equal
+    the cumulative sums of the prior brackets (2% x 3,000 = 60.00; 60 + 3% x 2,000 = 120.00; 120 + 5% x 12,000 = 720.00)
+    — no rounding divergence at all, so marginal accumulation reproduces the schedule exactly.'
+  - 'Adjudication note (two-pass, TY2025): the rate schedule, the $8,750/$17,500 standard deduction, and the $930/$800
+    exemption multipliers were drafted from the 2025 Form 760 instructions and re-verified against the 2025 Form 763
+    nonresident instructions, which reprint the identical rate schedule and standard deduction chart. The 2025 FORM
+    760 itself could not be retrieved (the 2024-style vatax-pdf/2025-760.pdf URL 404s), so the second pass used the
+    nonresident instructions instead of the form — recorded in `unverified`. The booklet''s own worked example was
+    used as a shipped test vector: taxable income $90,000 -> $720 + (.0575 x $73,000) = $4,917.50, ''which should
+    be rounded to $4,918''.'
+  - 'Virginia filing statuses are only 1 = Single, 2 = Married Filing Jointly, 3 = Married Filing Separately. Head
+    of Household is NOT a separate Virginia status: the instructions say to ''Fill in the Head of Household oval if
+    your filing status is Single and you checked the Head of Household box on your federal return'' — HoH filers use
+    Filing Status 1 (Single) and the $8,750 standard deduction, which is what this pack ships for head_of_household.'
+  - 'ZERO-TAX FILING THRESHOLD not applied by the engine: if Virginia Adjusted Gross Income (Line 9) is less than
+    $11,950 (Filing Status 1 or 3) or $23,900 (Filing Status 2, combined), Virginia tax is $0.00 — the 2025 rate-schedule
+    page states ''If your Virginia Adjusted Gross Income is less than the filing threshold, do not use the rate schedule
+    or tax table. Enter $0 as your tax instead.'' Bracket math on a below-threshold filer yields a positive number
+    that is WRONG; the correct answer is $0.'
+  - 'Tax table for 2025 is ONLINE ONLY and optional: unlike the 2024 booklet (which printed the table on pp. 35-43),
+    the 2025 booklet prints only the rate schedule and says ''A detailed tax table can be found at www.tax.virginia.gov''.
+    Line 16 permits the table, the rate schedule, or the Department''s online Tax Calculator; within table bands the
+    table may differ from exact bracket math by about a dollar.'
+  - 'Spouse Tax Adjustment (STA) NOT modeled: couples filing jointly (Filing Status 2) may reduce their tax by up
+    to $259 on Form 760 Line 17 if both spouses have taxable income (''The Spouse Tax Adjustment cannot exceed $259'';
+    the worksheet short-circuits to $259 above a stated income level). The engine computes Line 16 only, so a joint
+    filer''s net tax may be up to $259 lower than this op reports.'
+  - Age 65+/blind exemptions ($800 each, Exemption Section B) and the age deduction (up to $12,000 per qualifying
+    spouse, Line 4, income-based for individuals born after January 1, 1939) are real Virginia reductions that this
+    op does NOT apply — the age deduction belongs in the VAGI you supply and the $800 exemptions must be claimed on
+    the form. Neither may be combined with the Credit for Low-Income Individuals.
+  - 'Itemizers: if you claimed itemized deductions on your federal return you MUST itemize on the Virginia return
+    (Line 10, Virginia Schedule A) and the standard deduction does not apply — the shipped standard_deduction is only
+    for standard-deduction filers. For 2025 Virginia deconforms from the federal SALT cap and the new federal overall
+    limitation on itemized deductions but retains its own overall limitation (applying the federal SALT cap amount
+    within that computation) — see the revised 2025 Virginia Schedule A instructions.'
+  - 'Dependent on another''s return: the standard deduction is limited (''If you check this box and claim the Virginia
+    standard deduction on Line 11, see "Dependent on another''s return"... Your standard deduction may be limited'')
+    — not modeled.'
+  - 'Credits are NOT modeled and are never base reductions: the Credit for Low-Income Individuals ($300 per personal/dependent
+    exemption, 2025 poverty guidelines $15,650 for 1 up to $54,150 for 8, +$5,500 each additional), the nonrefundable
+    Virginia EITC (20% of the federal EITC), the REFUNDABLE Virginia EITC (raised from 15% to 20% for Taxable Years
+    2025 and 2026; nonresidents and part-year residents ineligible), and the Credit for Taxes Paid to Another State
+    (Schedule OSC) are subtracted from tax on Form 760 Lines 23-24. The three low-income/EITC options are mutually
+    exclusive.'
+  - 'Rounding: Virginia rounds to whole dollars with 50-99 cents rounding up; the 2025 booklet''s own rate-schedule
+    example rounds $4,917.50 to $4,918, matching this op''s irs_round half-up behavior exactly.'
+  - 'Qualifying surviving spouse: the engine maps QSS to married_filing_jointly. The 2025 booklet lists only Filing
+    Statuses 1/2/3 and does not explicitly state which status a federal QSS filer uses; because Virginia has a single
+    rate schedule, only the standard deduction ($17,500 vs $8,750) would differ — confirm the correct status at tax.virginia.gov.'
+  - 'No 2025 rate change: the four-bracket schedule (top rate 5.75% over $17,000) is unchanged from 2024 and 2023.
+    The 2025 changes are the standard deduction ($8,750/$17,500), the refundable EITC percentage (20%), a fixed IRC
+    conformity date of December 31, 2025 (2026 General Assembly action, see Tax Bulletin 26-1), and re-indexed poverty
+    guidelines. Return due May 1, 2026.'
