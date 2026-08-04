@@ -1,0 +1,392 @@
+# NE state knowledge — tax year 2025. Fetched + cited from the NE DOR (.gov),
+# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the standalone 2025 Nebraska
+# Tax Calculation Schedule (8-460-2025) and the 2025 Individual Income Tax Booklet (Form
+# 1040N instructions), then independently re-derived from second official documents — the
+# 2025 Form 1040N itself (line 5 federal AGI, line 6 printed standard deductions, line 18
+# '$171 times the number on line 4') and the standalone 2025 Nebraska Tax Table, whose
+# band-midpoint rows and over-$77,760 worksheet constants reproduce the same bracket math —
+# resolutions recorded inline where the passes differed.
+# HEADLINE 2025 CHANGES: (1) the TOP RATE IS CUT AGAIN, to 5.20% (2024: 5.84%; 2023: 6.64%)
+# — the LB 754 (2023) glide path continues toward 3.99% by 2027 — and all four schedules'
+# breakpoints are re-indexed (Single/MFS $4,030/$24,120/$38,870; MFJ/QSS $8,040/$48,250/
+# $77,730; HoH $7,510/$38,590/$57,630); the three lower rates stay 2.46%/3.51%/5.01%;
+# (2) the personal exemption CREDIT rises to $171 (2024: $166); (3) the standard deduction
+# rises to $8,600 single/MFS, $17,200 MFJ/QSS, $12,600 HoH; (4) Form PTC remains
+# COMMUNITY-COLLEGE-ONLY (school district property tax relief stays on the property tax
+# statement under LB 34); (5) many NEW credits arrive with tax year 2025 — the $500
+# refundable Intellectual and Developmental Disabilities Direct Support Professional credit
+# (Form 1040N line 51), the Nebraska Pregnancy Help Act credit, the Shortline Rail
+# Modernization credit, the Relocation Incentive Act refundable employer credit with its
+# employee Nebraska wage exclusion, and the Food Bank/Food Pantry/Food Rescue Donation
+# credit (2025 only); (6) Form 1040N's credit lines are RENUMBERED (refundable child/dependent
+# care 42, Nebraska EITC 44, community college property tax credit 45).
+jurisdiction: states/ne
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Nebraska''s resident return (Form 1040N) starts from federal adjusted gross income: 2025 line 5 is
+  "Federal adjusted gross income (AGI) (line 11a, Federal Form 1040 or 1040-SR) Do not leave blank." Federally treaty-exempt
+  income is already excluded from federal AGI and therefore flows through. The only additions to federal AGI are
+  on Nebraska Schedule I, Part A ("Adjustments Increasing Federal AGI"), whose 2025 line items are: (1) interest
+  income from state/local obligations exempt from federal tax, (2) exempt interest from Nebraska obligations, (3)
+  total taxable interest (line 1 minus line 2), (4) Financial Institution Tax Credit claimed, (5) Nebraska College
+  Savings Program recapture, (6) Nebraska Enable plan recapture, (7) federal net operating loss deduction, (8) S
+  corporation or LLC Non-Nebraska loss, (9) Nebraska PTET deducted under IRC section 164, (10) Relocation Incentive
+  Act employee recapture, (11) loss on the sale or exchange of gold or silver bullion included in federal AGI, and
+  (12) Food Bank/Food Pantry/Food Rescue donation amounts deducted as a federal charitable contribution. NONE of
+  these requires adding back income exempt under a U.S. income tax treaty. With no treaty add-back and a federal-AGI
+  starting point, treaty-exempt income is not re-taxed -> Nebraska conforms.'
+citation:
+  source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — What's New (the 2025 credit slate),
+    federal AGI starting point (Line 5), Nebraska Standard Deduction Chart (Line 6), Line 15 Nebraska Income Tax,
+    Line 18 personal exemption credit $171, residency definitions, Who Must File, due date, check payee
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+starts_from: federal AGI (Form 1040N line 5 = federal AGI from Federal Form 1040/1040-SR, line 11a)
+residency:
+  summary: 'Nebraska bases residency on domicile plus a statutory-resident (183-day) rule. RESIDENT: an individual
+    whose domicile is in Nebraska, OR an individual who is physically present in Nebraska and maintains a permanent
+    place of abode in the state for an aggregate of more than six months; specifically, if an individual maintains
+    a permanent place of abode in Nebraska and is present in Nebraska for at least 183 days during the tax year,
+    that individual is a Nebraska resident even if domiciled in another state (any part of a day in Nebraska counts
+    as a day in the state). DOMICILE is the place an individual has his or her permanent home, where the individual
+    intends to return even if absent at times; an individual establishes Nebraska domicile on the date of arrival
+    for other than temporary or transitory purposes, and once established it remains until abandoned (by leaving
+    the state, abandoning Nebraska domicile, and establishing domicile in another state while present there for other
+    than temporary or transitory purposes). PERMANENT PLACE OF ABODE is a dwelling place permanently maintained by
+    the taxpayer, whether or not owned by the taxpayer. PARTIAL-YEAR RESIDENT: an individual who is a resident for
+    part, but less than all, of the year, having changed domicile during the year by moving into or out of Nebraska.
+    NONRESIDENT: a non-domiciliary not meeting the statutory-resident test, taxed only on income derived from or
+    connected with Nebraska sources. (2025 booklet, Definitions.)'
+forms:
+  resident: Form 1040N — Nebraska Individual Income Tax Return
+  part_year_or_nonresident: Form 1040N with Nebraska Schedule III (Computation of Nebraska Tax for Nonresidents
+    and Partial-Year Residents); there is no separate nonresident form number — nonresidents and partial-year residents
+    file the same Form 1040N and must attach Schedule III.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Nebraska Earned Income Credit (state EITC)
+  type: refundable
+  eligibility: Full-year and partial-year Nebraska residents who qualify for and claim the federal Earned Income
+    Credit. Nonresidents may not claim it. If filing Nebraska married-filing-separately, eligibility depends on
+    whether the federal EIC is allowed on a federal MFS return. Paper filers must attach pages 1 and 2 of the federal
+    Form 1040 (or pages 1, 2, and 3 of Form 1040-SR).
+  amount: 10% of the federal earned income credit (a state credit equal to 10% of the federal credit, using the
+    federal credit from line 27a of Form 1040/1040-SR). Partial-year residents enter the amount calculated on line
+    12, Nebraska Schedule III.
+  income_limit_2025: 'Same income limits as the federal EITC. For 2025 the earned-income thresholds cited in the
+    booklet''s NOL worksheet are: $19,104 ($26,214 MFJ) for no qualifying children; $50,434 ($57,554 MFJ) for one
+    child; $57,310 ($64,430 MFJ) for two children; $61,555 ($68,675 MFJ) for three or more children.'
+  claimed_on: Form 1040N, line 44 (residents — RENUMBERED from 2024's line 42); Nebraska Schedule III, lines 11-12
+    (partial-year residents)
+  citation:
+    source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions), Line 44 instructions ('Nebraska
+      residents and partial-year residents who have a federal earned income credit are allowed a state credit equal
+      to 10% of the federal credit') and the Nebraska Earned Income Worksheet for Taxpayers Claiming a Net Operating
+      Loss Deduction
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+- name: Nebraska Child/Dependent Care Credit (refundable, AGI $29,000 or less)
+  type: refundable
+  eligibility: Full-year and partial-year residents whose federal AGI (Form 1040N, line 5) is $29,000 or less and
+    who have qualifying federal child & dependent care expenses. Must complete and attach Nebraska Form 2441N (the
+    federal Form 2441 alone is NOT accepted — the credit will be disallowed). Taxpayers who file federal MFJ but
+    Nebraska MFS cannot claim it; nonresidents cannot claim it.
+  amount: 'Refundable amount = (smallest of qualifying expenses/earned income, capped at $3,000 for one qualifying
+    person or $6,000 for two or more) x federal decimal (2025 Form 2441N line 8 table: .35 at AGI of $15,000 or
+    less, stepping down .34, .33, .32, .31, .30, .29, and .28 for AGI over $27,000 up to $29,000) x Nebraska state
+    decimal (2025 Form 2441N line 9 table: 1.00 for AGI of $22,000 or less, stepping down .90, .80, .70, .60, .50,
+    .40, and .30 for AGI over $28,000 up to $29,000).'
+  income_limit_2025: Federal AGI of $29,000 or less (Form 1040N line 5). Above $29,000 the credit is instead the
+    nonrefundable version on line 23 (25% of the federal credit).
+  claimed_on: Form 2441N, carried to Form 1040N, line 42 (residents — RENUMBERED from 2024's line 40); partial-year
+    residents use Form 2441N / Schedule III
+  citation:
+    source: 2025 Nebraska Form 2441N (Nebraska Child and Dependent Care Expenses) — 'File Form 2441N ONLY if your
+      federal adjusted gross income (AGI) is $29,000 or less' with the 2025 federal and state decimal tables — and
+      the 2025 Form 1040N booklet line 42 instructions
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_2441N.pdf
+- name: Nebraska Child/Dependent Care Nonrefundable Credit (AGI over $29,000)
+  type: nonrefundable
+  eligibility: Resident taxpayers with federal AGI greater than $29,000 who claim the federal child & dependent
+    care credit. Must include a copy of federal Form 2441 (credit disallowed if not received). Taxpayers who file
+    federal MFJ but Nebraska MFS cannot claim it; nonresidents may not claim it (partial-year residents use Schedule
+    III line 6c).
+  amount: 25% (.25) of the amount on line 2 of Schedule 3, Federal Form 1040 (i.e., 25% of the federal child & dependent
+    care credit).
+  income_limit_2025: Federal AGI greater than $29,000 (taxpayers at or below $29,000 use the refundable version
+    on line 42 instead).
+  claimed_on: Form 1040N, line 23 (residents); Nebraska Schedule III, line 6c (partial-year residents)
+  citation:
+    source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions), Line 23 instructions ('Resident
+      taxpayers with AGI greater than $29,000 can claim this credit ... Multiply the amount on line 2 of Schedule
+      3, Federal Form 1040 by 25% (.25)')
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+- name: Credit for Community College Property Taxes (Form PTC)
+  type: refundable
+  eligibility: 'Any individual (and other entities) who paid qualified Nebraska community college property taxes
+    during the 2025 calendar year, directly or through a mortgage escrow. Property taxes that were delinquent for
+    five years or more at the time of payment cannot be included. The completed Form PTC must be filed with the return;
+    the DOR Property Tax Look-up Tool computes qualified amounts. CONTINUING RULE: for tax years beginning on or
+    after January 1, 2024, Form PTC is used ONLY to claim a credit for community college property taxes — school
+    district property tax relief is applied directly on the property tax statement under the School District Property
+    Tax Relief Act (LB 34, 2024 special session), reducing property taxes before they are paid rather than refunding
+    them afterward.'
+  amount: The credit equals the qualified community college property taxes paid in 2025 as computed in Form PTC
+    Part B (Part A line 1 = the line 2a total — no percentage multiplier on the 2025 form).
+  income_limit_2025: None (not income-limited).
+  claimed_on: Form PTC, line 1, carried to Form 1040N line 45 (RENUMBERED from 2024's line 43)
+  citation:
+    source: 2025 Nebraska Property Tax Credit, Form PTC and its instructions (in the 2025 Form 1040N booklet) — Part
+      A Computation of the Credit, Part B Community College Property Taxes Paid in 2025, and the LB 34 School District
+      Property Tax Relief Act note
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+- name: Nebraska Personal Exemption Credit (residents only)
+  type: nonrefundable
+  eligibility: Nebraska residents may claim a credit for each Nebraska personal exemption reported on line 4, Form
+    1040N (taxpayer, spouse, and dependents). Nonresidents and partial-year residents claim a prorated version on
+    Schedule III line 7.
+  amount: $171 per Nebraska personal exemption for 2025 (multiply $171 by the number of exemptions on line 4, Form
+    1040N) — up from $166 in 2024 and $157 in 2023.
+  income_limit_2025: None (not income-limited).
+  claimed_on: Form 1040N, line 18 (residents); Nebraska Schedule III, line 7 (nonresidents/partial-year residents)
+  citation:
+    source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions), Line 18 instructions ('Residents
+      may claim a $171 credit for each Nebraska personal exemption reported on line 4, Form 1040N'); the 2025 Form
+      1040N line 18 prints '$171 times the number on line 4'
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+- name: Intellectual and Developmental Disabilities Direct Support Professional Tax Credit (NEW for 2025)
+  type: refundable
+  eligibility: 'An individual who worked at least six months AND at least 500 hours during the taxable year as a
+    direct support professional — any individual employed in Nebraska who provides direct care support or any other
+    form of treatment, services, or care for individuals with intellectual and developmental disabilities. Created
+    by LB 937 (2024), beginning with tax year 2025. The taxpayer must apply to and be approved by DOR BEFORE claiming
+    it: Form 3157-A (application) and Form 3157-E (employer verification) must be submitted electronically through
+    the Electronic Document & Application Submission Hub (eDASH). Enter the certificate number and credit amount
+    from the approved Form 3157-A. Total credits under the act are capped by the statutory limit for each State fiscal
+    year (employers may separately claim three nonrefundable credits of $500 / $1,000 / $1,000 per qualifying employee
+    or served individual).'
+  amount: $500 refundable credit per qualifying direct support professional.
+  income_limit_2025: None stated.
+  claimed_on: Form 1040N, line 51 (approved Form 3157-A certificate number and amount)
+  citation:
+    source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — What's New, 'Individuals with
+      Intellectual and Developmental Disabilities Support Act (LB 937, 2024)' ($500 refundable credit; six months
+      and 500 hours) and Line 51 instructions (Forms 3157-A / 3157-E via eDASH)
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+filing_requirement:
+  note: 'Per the 2025 Form 1040N booklet ("Who Must File?"): A Nebraska RESIDENT must file if they (a) are required
+    to file a federal individual income tax return reporting a federal tax liability before credits, OR (b) have
+    $5,000 or more of net Nebraska adjustments to federal AGI, including non-Nebraska state and local bond interest
+    exempt from federal tax (see the Nebraska Schedule I instructions). A PARTIAL-YEAR RESIDENT or NONRESIDENT must
+    file if they have income derived from or connected with Nebraska sources.'
+mailing_addresses:
+  refund_or_no_payment: 'Refund returns: Nebraska Department of Revenue, PO Box 98912, Lincoln, NE 68509-8912. (Note
+    — Nebraska splits addresses by refund vs. no-refund, not refund vs. payment. Returns NOT requesting a refund,
+    including balance-due/with-payment returns, go to PO Box 98934 below.)'
+  with_payment: 'Returns not requesting a refund (includes balance due / with payment): Nebraska Department of Revenue,
+    PO Box 98934, Lincoln, NE 68509-8934.'
+  citation:
+    source: '2025 Nebraska Form 1040N (Individual Income Tax Return) — ''Mail returns requesting a refund to: Nebraska
+      Department of Revenue, PO Box 98912, Lincoln, NE 68509-8912. Mail returns not requesting a refund to: Nebraska
+      Department of Revenue, PO Box 98934, Lincoln, NE 68509-8934.'''
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Nebraska Department of Revenue ('If you are not using one of the electronic payment options described
+    above, include a check or money order payable to the "Nebraska Department of Revenue"')
+  web_pay_url: https://revenue.nebraska.gov/individuals/electronic-payment-options-individual-income-tax
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — 'Due Date. Your income tax return
+      is due on the 15th day of the 4th month after the close of the tax year (April 15th for calendar-year filers).
+      If the due date falls on a Saturday, Sunday, or legal holiday' the return is timely on the next business day;
+      April 15, 2026 for calendar-year 2025 returns. An extension is available by filing Form 4868N on or before
+      the due date, but unpaid tax accrues interest at 8% from the original due date.
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+all_citations:
+- source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — What's New (LB 650/LB 208/LB 937/LB
+    1023/LB 644 credit changes; CDAA replacing CHIEF from 2026; Food Bank/Food Pantry/Food Rescue Donation credit
+    for 2025 only; Individuals with Intellectual and Developmental Disabilities Support Act; Nebraska Pregnancy
+    Help Act; Shortline Rail Modernization Act; Relocation Incentive Act and the employee Nebraska wage exclusion),
+    federal AGI starting point (Line 5), Nebraska Standard Deduction Chart (Line 6), Lines 7-14 deduction/adjustment
+    mechanics, Line 15 Nebraska Income Tax, Line 16 other tax 29.6%, Line 18 personal exemption credit $171, Lines
+    23 / 42 / 44 / 45 / 46 / 51 credits, residency definitions, Who Must File, due date, check payee, 2025 Nebraska
+    Tax Table with the over-$77,760 worksheet
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+- source: 2025 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2025) — all four filing-status
+    rate tables (2.46%/3.51%/5.01%/5.20%; Single/MFS breakpoints $4,030/$24,120/$38,870; MFJ/QSS $8,040/$48,250/$77,730;
+    HoH $7,510/$38,590/$57,630)
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Calculation_Schedule.pdf
+- source: 2025 Nebraska Tax Table (standalone) — paper-filer table to $77,760 plus the over-$77,760 worksheet ($3,566
+    single/MFS, $3,088 MFJ/QSS, $3,276 HoH constants + 5.20%) — second-pass corroboration of the rate schedule
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Tables.pdf
+- source: 2025 Nebraska Form 1040N (Individual Income Tax Return) — line 5 federal AGI wording (Form 1040/1040-SR
+    line 11a), line 6 printed standard deduction amounts ($8,600/$17,200/$8,600/$12,600), line 14 Nebraska taxable
+    income, line 17 total tax, line 18 '$171 times the number on line 4', mailing addresses
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf
+- source: 2025 Nebraska Schedules I, II, III (Form 1040N) — Schedule I Part A Adjustments Increasing Federal AGI
+    lines 1-12 (no treaty add-back; new lines for Relocation Incentive Act employee recapture, bullion losses, and
+    the food-donation addback), Schedule III lines 6c/7/9-12
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N_Schs.pdf
+- source: 2025 Nebraska Form 2441N (Nebraska Child and Dependent Care Expenses) — refundable-credit computation
+    and 2025 federal/state decimal tables
+  url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_2441N.pdf
+- source: Nebraska DOR — Electronic Payment Options for Individual Income Tax (e-pay portal / online payment)
+  url: https://revenue.nebraska.gov/individuals/electronic-payment-options-individual-income-tax
+unverified:
+- Exact direct deep-link URL of the Nebraska e-pay web application itself (the .gov electronic-payment-options page
+  links to it, but the standalone e-pay app URL was not quoted verbatim on a .gov page during this research). Confirm
+  the precise login URL at the DOR e-pay page.
+- Whether PO Box 98934 ('returns not requesting a refund') is the literal address Nebraska intends for paper returns
+  mailed WITH a check (Nebraska frames the split as refund vs. no-refund rather than refund vs. with-payment); confirm
+  at the DOR before relying on it for a with-payment paper return.
+- The statutory citation trail for the 2025 rate cut (LB 754, 2023, codified in Neb. Rev. Stat. section 77-2715.03)
+  was not re-derived from the session law text, and the booklet's What's New for 2025 does not restate the rate change
+  in prose. The 5.20% top rate and the re-indexed 2025 brackets are two-pass confirmed at the cited official documents
+  (Tax Calculation Schedule 8-460-2025 + the standalone 2025 Tax Table's over-$77,760 worksheet constants, which
+  recompute exactly from those brackets).
+- The 2025 statutory dollar cap on total Intellectual and Developmental Disabilities Support Act credits (the booklet
+  says only 'limited to statutory limit established for each State fiscal year') was not pulled.
+- The Nebraska Pregnancy Help Act, Shortline Rail Modernization Act, Relocation Incentive Act, Food Bank/Food Pantry/Food
+  Rescue Donation, Biodiesel, Stillborn Child, Child Care (line 48), School Readiness (line 49), Reverse Osmosis
+  (line 50), and Volunteer Emergency Responder ($250, line 46) credits were read only from the What's New and line
+  summaries, not from their own forms; confirm amounts and application deadlines before claiming.
+tax:
+  citation:
+    source: '2025 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2025), single page — all four filing-status
+      rate tables (''This calculation represents Nebraska income tax before any credits are applied. Enter on line 15,
+      Form 1040N.''): Single Taxpayers — 2.46% of Nebraska Taxable Income, line 14, Form 1040N, not over $4,030; $99.14
+      + 3.51% of the excess over $4,030 to $24,120; $804.30 + 5.01% of the excess over $24,120 to $38,870; $1,543.28
+      + 5.20% of the excess over $38,870. Married Taxpayers, Filing Jointly and Qualifying Surviving Spouses — 2.46%
+      not over $8,040; $197.78 + 3.51% to $48,250; $1,609.15 + 5.01% to $77,730; $3,086.10 + 5.20% over $77,730. Married
+      Taxpayers, Filing Separately — identical to Single ($4,030 / $24,120 / $38,870 with $99.14 / $804.30 / $1,543.28).
+      Head of Household Taxpayers — 2.46% not over $7,510; $184.75 + 3.51% to $38,590; $1,275.66 + 5.01% to $57,630;
+      $2,229.56 + 5.20% over $57,630. Standard deduction and line instructions: 2025 Nebraska Individual Income Tax
+      Booklet, Form 1040N — Line 6 Nebraska Standard Deduction Chart (Single $8,600 / Married Filing Jointly $17,200
+      / Qualifying surviving spouse $17,200 / Married Filing Separately $8,600 / Head of Household $12,600 with zero
+      boxes checked on line 2a), Line 15 Nebraska Income Tax, Line 18 personal exemption credit $171, and the 2025 Nebraska
+      Tax Table with its over-$77,760 worksheet, at https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf.
+      Second pass: the standalone 2025 Nebraska Tax Table (https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Tables.pdf)
+      reproduces the identical math — its $13,060-$13,160 row prints $418/$376/$418/$381, exactly the four schedules
+      at the $13,110 band midpoint (single 99.138 + 9,080 x .0351 = 417.846; MFJ 197.784 + 5,070 x .0351 = 375.741;
+      HoH 184.746 + 5,600 x .0351 = 381.306), and its over-$77,760 worksheet constants ($3,566 single/MFS, $3,088 MFJ/QSS,
+      $3,276 HoH, each + 5.20% of the excess) equal the schedule evaluated at $77,760 rounded to whole dollars (single
+      3,565.552; MFJ 3,087.663; HoH 3,276.318) — and the 2025 Form 1040N line 6 prints the same standard deduction amounts
+      and line 18 prints ''$171 times the number on line 4''. Both passes agree.'
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Calculation_Schedule.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 4030, rate: 0.0246}
+    - {over: 4030, but_not_over: 24120, rate: 0.0351}
+    - {over: 24120, but_not_over: 38870, rate: 0.0501}
+    - {over: 38870, but_not_over: null, rate: 0.052}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 8040, rate: 0.0246}
+    - {over: 8040, but_not_over: 48250, rate: 0.0351}
+    - {over: 48250, but_not_over: 77730, rate: 0.0501}
+    - {over: 77730, but_not_over: null, rate: 0.052}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4030, rate: 0.0246}
+    - {over: 4030, but_not_over: 24120, rate: 0.0351}
+    - {over: 24120, but_not_over: 38870, rate: 0.0501}
+    - {over: 38870, but_not_over: null, rate: 0.052}
+    head_of_household:
+    - {over: 0, but_not_over: 7510, rate: 0.0246}
+    - {over: 7510, but_not_over: 38590, rate: 0.0351}
+    - {over: 38590, but_not_over: 57630, rate: 0.0501}
+    - {over: 57630, but_not_over: null, rate: 0.052}
+  base: federal_agi
+  tax_line: 'Form 1040N, line 15 ''Nebraska income tax'' — the 2025 Tax Calculation Schedule states: ''This calculation
+    represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.'' Booklet Line 15
+    instruction: ''Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska
+    Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation
+    Schedule.'''
+  exemptions: {}
+  standard_deduction:
+    single: 8600
+    married_filing_jointly: 17200
+    married_filing_separately: 8600
+    head_of_household: 12600
+  notes:
+  - '2025 CHANGE — TOP RATE CUT TO 5.20% AND BRACKETS RE-INDEXED: the 2025 Tax Calculation Schedule (8-460-2025) prints
+    a 5.20% top rate, down from 5.84% in 2024 and 6.64% in 2023 — the LB 754 (2023) glide path continuing toward 3.99%
+    by tax year 2027. The three lower rates are unchanged at 2.46% / 3.51% / 5.01%, and all four schedules'' breakpoints
+    are re-indexed for 2025 (Single/MFS $4,030/$24,120/$38,870, 2024: $3,900/$23,370/$37,670; MFJ/QSS $8,040/$48,250/$77,730,
+    2024: $7,790/$46,760/$75,340; HoH $7,510/$38,590/$57,630, 2024: $7,270/$37,400/$55,850). Do NOT use 2024 tables
+    or the 2026/2027 legislated rates.'
+  - 'Base guidance: Supply Form 1040N line 5 — federal adjusted gross income, i.e. Federal Form 1040 or 1040-SR, line
+    11a. The pack ships Nebraska''s standard deduction for the op to subtract, which reproduces line 14 (Nebraska
+    Taxable Income = line 11 = line 5 minus the line 10 deduction, plus line 12 minus line 13 Schedule I adjustments)
+    whenever there are no Nebraska Schedule I adjustments and the standard deduction is used. If Nebraska Schedule
+    I adjustments apply, supply line 5 plus line 12 minus line 13 instead, so that subtracting the shipped standard
+    deduction still reproduces line 14. Form 1040N line 14 says ''If less than -0-, enter -0-'' — the engine''s max(0,
+    ...) floor matches.'
+  - 'Adjudication note (two-pass): vector exemption counts are zero by design — Nebraska personal exemptions are a
+    $171-per-person nonrefundable CREDIT on Form 1040N line 18 for 2025 (raised from $166 in 2024 and $157 in 2023),
+    never an income exemption, so the pack ships no personal/dependent keys and the engine refuses nonzero counts.'
+  - 'Nebraska personal exemptions are a TAX CREDIT, not an income exemption: Form 1040N line 18 gives RESIDENTS a
+    nonrefundable credit of $171 times the number of Nebraska personal exemptions on line 4 (yourself, spouse, and
+    dependents; the 2025 form prints ''$171 times the number on line 4''). It is subtracted from tax, not from income,
+    so no personal/dependent amounts are shipped in exemptions and calc.state_tax does not apply it — claim it on
+    line 18 of the form (nonresidents and partial-year residents claim it prorated on Nebraska Schedule III, line
+    7).'
+  - 'The shipped standard deduction is the 2025 chart amount with ZERO boxes checked on Form 1040N line 2a (under
+    65, not blind) for a filer who cannot be claimed by another taxpayer for the federal child tax credit or dependent
+    tax credit. Nebraska Standard Deduction Chart with line-2a boxes checked: Single $10,600 (1 box) / $12,600 (2);
+    Married Filing Jointly $18,850 / $20,500 / $22,150 / $23,800 (1-4 boxes); Qualifying surviving spouse $18,850
+    / $20,500 (1-2); Married Filing Separately $10,250 / $11,900 / $13,550 / $15,200 (1-4; the spouse''s 65-and-over
+    and blind boxes count only if the primary taxpayer can claim a personal exemption for the spouse); Head of Household
+    $14,600 / $16,600 (1-2). These are NOT applied by calc.state_tax — use the chart amount on line 6.'
+  - If you or your spouse CAN be claimed by another taxpayer for federal child tax credit or dependent tax credit
+    purposes, your standard deduction is the SMALLER of the federal standard deduction allowed on line 12e of Federal
+    Form 1040/1040-SR or the Nebraska chart amount — not modeled; compute on the form.
+  - 'Itemizers are not modeled: taxpayers who itemized on the federal return take the LARGER of the Nebraska standard
+    deduction (line 6) or Nebraska itemized deductions (line 9 = federal Schedule A line 17 total minus line 8, the
+    state and local income taxes reported on federal Schedule A line 5a — which must be entered even if the total
+    state and local taxes were limited to $40,000, or $20,000 married filing separately, on federal Schedule A line
+    5e). If you used the federal standard deduction you MUST use the Nebraska standard deduction (booklet, Line 6).'
+  - Nebraska Schedule I adjustments (Form 1040N line 12 adjustments increasing federal AGI from Schedule I line 13,
+    line 13 adjustments decreasing federal AGI from Schedule I line 44) are NOT modeled — if they apply, fold them
+    into the supplied base per the base guidance or compute line 14 on the form. New Schedule I Part A lines for 2025
+    include the Relocation Incentive Act employee recapture, losses on the sale or exchange of gold or silver bullion,
+    and the addback of food-donation amounts deducted federally.
+  - 'Tax table option (paper filers only): ''Only taxpayers filing paper returns may use the Nebraska Tax Table'';
+    electronic filers must use the Tax Calculation Schedule (booklet, Line 15), which is the exact bracket math this
+    op implements. The table calculates tax at the midpoint of each $100 band and covers Nebraska taxable income up
+    to $77,760 (2024: $75,360), so a paper filer''s table amount may differ by a few dollars from this op''s result
+    within a band; above $77,760 the booklet worksheet is (taxable income - $77,760) x .0520 plus $3,566 Single/MFS,
+    $3,088 MFJ/QSS, or $3,276 HoH — each of which is the shipped schedule evaluated at $77,760 and rounded to whole
+    dollars.'
+  - 'Qualifying surviving spouse: the schedule''s second table is titled ''Married Taxpayers, Filing Jointly and Qualifying
+    Surviving Spouses'' — the engine''s QSS-to-MFJ mapping is exact for the brackets, and the QSS standard deduction
+    with zero boxes is the same $17,200.'
+  - Married filing separately is printed with the SAME schedule as Single on the 2025 Tax Calculation Schedule (identical
+    breakpoints $4,030/$24,120/$38,870 and identical constants $99.14/$804.30/$1,543.28) — copied from the MFS table,
+    not derived by halving MFJ.
+  - The schedule's printed '$X + Y% of the excess over $Z' constants are the exact cumulative bracket sums rounded
+    to the nearest cent; maximum divergence from the exact sum is $0.008 (Single/MFS $99.14 vs exact $99.138, $804.30
+    vs $804.297, $1,543.28 vs $1,543.272; MFJ $197.78 vs $197.784, $1,609.15 vs $1,609.155, $3,086.10 vs $3,086.103;
+    HoH $184.75 vs $184.746, $1,275.66 vs $1,275.654, $2,229.56 vs $2,229.558) — after rounding to whole dollars the
+    printed-schedule result and pure marginal bracket math agree.
+  - 'Nebraska other tax is NOT modeled: Form 1040N line 16 adds 29.6% of the federal tax on lump-sum distributions
+    of qualified retirement plans and on early distributions of qualified retirement plans; line 17 total tax = line
+    15 + line 16.'
+  - 'Nonresidents and partial-year residents are NOT modeled: they compute line 15 via Nebraska Schedule III (line
+    9), which apportions the tax by the Nebraska-income ratio from Schedule III line 4.'
+  - 'Credits are NOT modeled (they reduce tax after line 17): the $171-per-exemption personal exemption credit (line
+    18), credit for tax paid to another state (line 19, Schedule II), the nonrefundable child/dependent care credit
+    (line 23, 25% of the federal credit when AGI exceeds $29,000), the refundable child/dependent care credit (line
+    42, Form 2441N, AGI $29,000 or less), the Beginning Farmer credit (line 43), the Nebraska EITC (line 44, 10% of
+    the federal EITC), the community-college-only property tax credit (line 45, Form PTC), the $250 volunteer emergency
+    responder credit (line 46), and — new or newly effective for 2025 — the stillborn child credit (line 47), child
+    care credit for a parent or legal guardian (line 48), school readiness credit (line 49), reverse osmosis system
+    credit (line 50), and the $500 refundable Intellectual and Developmental Disabilities Direct Support Professional
+    credit (line 51). Note the 2025 RENUMBERING versus 2024 (refundable child/dependent care moved 40 -> 42, Nebraska
+    EITC 42 -> 44, community college property tax credit 43 -> 45).'
+  - 'Standard deduction chart source: 2025 Nebraska Individual Income Tax Booklet, Form 1040N, Line 6 — https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf'
