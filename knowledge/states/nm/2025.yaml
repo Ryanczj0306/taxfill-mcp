@@ -1,0 +1,379 @@
+# NM state knowledge — tax year 2025. Fetched + cited from the NM Taxation and Revenue
+# Department, authored per the 2024 template (state-year knowledge program). Loaded as a
+# StateKnowledge. conforms_to_federal_treaties: whether federally treaty-exempt income flows
+# through (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: pass 1 = the statutory Section 7-2-7 NMSA 1978 rate schedules as
+# restructured by 2024 House Bill 252 (Laws 2024, ch. 67, Sec. 5, 'applicable to taxable years
+# beginning on or after January 1, 2025'), retrieved from nmlegis.gov, cross-read against the
+# Department's own 'Personal Income Tax Rates' publication (PIT rates_2005_2025.pdf, whose first
+# page prints the 2025 schedules digit-for-digit); pass 2 = the Department's 2025 PIT-TRT Tax
+# Rate Table and the 2025 PIT-1 / PIT-ADJ / PIT-RC instructions as printed in the 2025 Personal
+# Income Tax Packet, both retrieved from the Department's AWS-backed public-files library (the
+# documented host exception — see `unverified`).
+# TY2025 headline: the RESTRUCTURE landed. The five-bracket 1.7-5.9% schedule that ran TY2021
+# through TY2024 is replaced by a SIX-bracket 1.5/3.2/4.3/4.7/4.9/5.9% schedule with a new 4.3%
+# middle bracket and widened 4.7%/4.9% bands. Do NOT reuse the 2024 block. Two other 2025
+# changes: the filing due date is April 15, 2026 for BOTH paper and electronic returns (TY2024's
+# April 30 e-file/e-pay bonus date is gone), and PIT-1 line 16 (the medical care expense
+# deduction) is now 'Reserved for Future Use' — taxable income is lines 9+10+11 minus 12-15.
+jurisdiction: states/nm
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'NM''s resident return (PIT-1) starts from federal adjusted gross income: "LINE 9. Federal Adjusted
+  Gross Income — Enter the federal adjusted gross income as reported on your federal Form 1040 or 1040SR, line 11"
+  (2025 PIT-1 instructions). Income exempt from federal tax under a US tax treaty is already excluded from federal
+  AGI and therefore flows through to NM. NM''s additions to federal AGI are enumerated exclusively on Schedule
+  PIT-ADJ lines 1-5 (line 6 is their total, carried to PIT-1 line 11): (1) interest and dividend income from federal
+  tax-exempt bonds, (2) federal net operating loss carryover, (3) contributions refunded when closing a New Mexico
+  Section 529 account, (4) the charitable deduction claimed on the federal return for a land donation tied to the
+  NM land conservation credit, and (5) withholding tax paid by a pass-through entity. None of these is an add-back
+  of federally tax-treaty-exempt income (the word "treaty" does not appear anywhere in the 2025 PIT Packet). Because
+  there is no treaty add-back, federally treaty-exempt income is NOT re-taxed by New Mexico -> conforms. (Same
+  analysis and result as 2023 and 2024.)'
+citation:
+  source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
+  url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
+starts_from: federal AGI (PIT-1 line 9 = federal Form 1040/1040SR line 11)
+residency:
+  summary: 'Residency for income tax turns on (1) where you were domiciled during the tax year and (2) whether you
+    were physically present in NM for 185 days or more. RESIDENT: your domicile was in NM for the entire year, OR
+    you were physically present in NM for a total of 185 days or more during the tax year regardless of domicile
+    (count each day you were here for 24 hours; the 185 days need not be consecutive; residents include people
+    temporarily residing in NM who plan to return to an out-of-state residence — students, vacationers, people
+    temporarily assigned to work in NM). DOMICILE: the place you intend as your permanent home and return to
+    whenever away; you can have only one; a NM domicile is not changed until you show you abandoned it and
+    established a new one outside NM, and a change of domicile must be clear and convincing. FIRST-YEAR RESIDENT:
+    you moved to NM during 2025 intending to make it your permanent place of residence AND you are still in NM on
+    December 31, 2025 (no 185-day requirement); a former NM resident who returned after being a nonresident for at
+    least one full tax year may also file as a first-year resident. PART-YEAR RESIDENT: you were a NM resident for
+    part of the year, were NOT physically present 185 days or more, and on December 31 were no longer domiciled in
+    NM having moved to another state intending to maintain domicile there. NON-RESIDENT: not domiciled in NM for
+    any part of the year and not physically present at least 185 days. Special rules apply to military
+    servicemembers and their qualifying spouses (temporarily assigned to NM with residence established elsewhere =
+    non-residents) and to enrolled members of NM federally recognized Indian nations, tribes, or pueblos. (2025
+    PIT-1 instructions, Who Must File A PIT-1 Return / Definitions — framework unchanged from 2024.)'
+forms:
+  resident: Form PIT-1 (New Mexico Personal Income Tax Return)
+  part_year_or_nonresident: Form PIT-1 filed with Schedule PIT-B (Schedule of New Mexico Allocation and Apportionment
+    of Income); nonresidents and part-year residents use PIT-B to allocate/apportion NM-source income, and PIT-1
+    line 18 then comes from PIT-B line 14 with indicator B in box 18a. Mark residency status in box 1e on PIT-1 page
+    1 (R = resident, N = non-resident, P = part-year, F = first-year). A nonresident whose only NM income is gross
+    royalty income under $5,000 may instead enter that income on line 17 and mark Y in box 18a.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. For 2025 the PIT-RC instructions WERE
+  retrievable, so the Child Income Tax Credit per-child table, the Low Income Comprehensive Tax Rebate table, the
+  property tax rebate for persons 65 or older, and the child day care credit mechanics below are all quoted from
+  the Department''s own 2025 printing (this closes the three 2024 gaps). Not carried here (verify at the source if
+  you need it): the additional Low Income Property Tax Rebate for Los Alamos, Santa Fe, Dona Ana, and Bernalillo
+  county residents (PIT-RC Section 4, 2025 modified-gross-income gate $24,000 or less), and the PIT-CR
+  business-related income tax credits.'
+credits:
+- name: Working Families Tax Credit (New Mexico's state EITC)
+  type: refundable
+  eligibility: A New Mexico resident during any part of 2025 who files a PIT-1 and is eligible for the federal Earned
+    Income Credit for the same tax year.
+  amount: '25% of the federal Earned Income Credit (EIC/EITC) for which you are eligible for the same tax year (2025
+    PIT-1 instructions, LINES 25, 25a, and 25b: "The credit is 25% of the Earned Income Credit (EIC), also referred
+    to as the Earned Income Tax Credit (EITC), for which you are eligible the same tax year").'
+  income_limit_2025: No separate state income cap; bounded by federal EITC eligibility (the federal EITC phases out
+    by income and number of qualifying children).
+  claimed_on: Form PIT-1, lines 25, 25a, and 25b (complete all or the credit is denied)
+  citation:
+    source: 2025 PIT-1 New Mexico Personal Income Tax Return Instructions, LINES 25, 25a, and 25b (Working Families
+      Tax Credit, 25% of the federal EIC), as printed in the Department's 2025 Personal Income Tax Packet (see
+      `unverified` for the host note)
+    url: https://www.tax.newmexico.gov/forms-publications/
+- name: New Mexico Child Income Tax Credit
+  type: refundable
+  eligibility: 'A taxpayer who was a New Mexico resident during the tax year and is not eligible to be claimed as a
+    dependent of another taxpayer for 2025, for each qualifying child (Section 152(c) of the Internal Revenue Code,
+    plus a minor child or stepchild who would qualify federally but for public assistance support). Available for
+    taxable years beginning January 1, 2023 and prior to January 1, 2032.'
+  amount: 'Per qualifying child, from Table 4, 2025 Child Income Tax Credit Income Table, keyed to adjusted gross
+    income on PIT-1 line 9: $0-$25,000 = $637; $25,001-$50,000 = $424; $50,001-$75,000 = $212; $75,001-$100,000 =
+    $106; $100,001-$200,000 = $79; $200,001-$350,000 = $53; over $350,000 = $26. Multiply by the number of
+    qualifying children (Line 25 worksheet). AGI below zero uses the first row; AGI over $350,000 uses the last row.
+    Married individuals filing separately may each claim only one-half of the credit that would have been claimed on
+    a joint return. (These are the inflation-adjusted 2025 amounts — the statutory 2023 tiers were $600/$400/$200/
+    $100/$75/$50/$25.)'
+  income_limit_2025: No hard cutoff; the per-child amount declines with AGI to $26 for AGI over $350,000.
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, line 25 (Line 25 worksheet + Table 4), filed
+    with PIT-1
+  citation:
+    source: 2025 PIT-RC Instructions — Line 25, Child Income Tax Credit, with Table 4, 2025 Child Income Tax Credit
+      Income Table (page RC-10/RC-11), as printed in the Department's 2025 Personal Income Tax Packet; enacted by HB
+      144 (2023) amending Section 7-2-18.34 NMSA 1978, which indexes the amounts for inflation after 2023
+    url: https://www.tax.newmexico.gov/forms-publications/
+- name: Low Income Comprehensive Tax Rebate (LICTR)
+  type: refundable
+  eligibility: A New Mexico resident who files a PIT-1, was physically present in NM for at least six months during
+    2025, is not eligible to be claimed as a dependent of another taxpayer for 2025, and was not an inmate of a
+    public institution for more than six months of 2025. May be claimed even with no taxable income.
+  amount: 'A fixed rebate read off Table 1, 2025 Low-Income Comprehensive Tax Rebate Table by modified gross income
+    (PIT-RC line 13) and number of exemptions (PIT-RC line 13a). The 2025 table runs from $224 (modified gross
+    income $0-$1,000, one exemption) to a maximum of $839 (the $2,501-$8,000 rows, six or more exemptions), and
+    tapers to $17-$86 in the top $34,001-$36,000 row. The rebate amounts are inflation-indexed from TY2022, so they
+    differ from the printed 2022 table.'
+  income_limit_2025: 'Modified gross income of $36,000 or less (statutory ceiling, not inflation-indexed; printed on
+    the 2025 PIT-RC Modified Gross Income Limitations table: "$36,000 or less — Low Income Comprehensive Tax Rebate
+    (Section 2)").'
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section 2 (filed with PIT-1)
+  citation:
+    source: 2025 PIT-RC Instructions — Section 2 and Table 1, 2025 Low-Income Comprehensive Tax Rebate Table (page
+      RC-5), plus the Modified Gross Income Limitations for 2025 table (page RC-1), as printed in the Department's
+      2025 Personal Income Tax Packet; Section 7-2-14 NMSA 1978 as amended by HB 291 (2021)
+    url: https://www.tax.newmexico.gov/forms-publications/
+- name: New Mexico Child Day Care Credit
+  type: refundable
+  eligibility: A New Mexico resident who provided over half the cost of maintaining a household for one or more
+    qualifying dependent children who received day care during 2025, was gainfully employed during the period
+    claimed, and paid unreimbursed, uncompensated day care expenses. Requires the completed Child Day Care Credit
+    Worksheet (PIT-Childcare) plus Form PIT-CG, New Mexico Caregiver's Statement, for each caregiver — an incomplete
+    PIT-RC or a missing PIT-CG results in denial of the credit.
+  amount: '40% of qualifying day care expense, where the expense counted is capped at $8 per child per day (enter $8
+    even if you paid more); the per-child credit cannot exceed $480, and the total entered in PIT-RC Section 5
+    cannot exceed $1,200 (2025 Child Day Care Credit Worksheet, columns D/F/G instructions).'
+  income_limit_2025: 'Modified gross income of $30,160 or less (printed on the 2025 Schedule PIT-RC and in the 2025
+    PIT-RC instructions'' Modified Gross Income Limitations table: "$30,160 or less — New Mexico Child Day Care
+    Credit (Section 5)").'
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section 5 (with the Child Day Care Credit
+    Worksheet and PIT-CG; filed with PIT-1)
+  citation:
+    source: 2025 Schedule PIT-RC / 2025 PIT-RC Instructions — Section 5 New Mexico Child Day Care Credit, the
+      Modified Gross Income Limitations for 2025 table ($30,160 gate), and the Child Day Care Credit Worksheet
+      instructions ($8 per child per day, 0.40, $480 per child, $1,200 total), as printed in the Department's 2025
+      Personal Income Tax Packet
+    url: https://www.tax.newmexico.gov/forms-publications/
+- name: Property Tax Rebate for Persons 65 or Older
+  type: refundable
+  eligibility: A New Mexico resident who was age 65 or older on the last day of 2025, was physically present in NM
+    for at least six months in 2025, is not eligible to be claimed as a dependent of another taxpayer for 2025, was
+    not an inmate of a public institution for more than six months in 2025, and has modified gross income of $16,000
+    or less. Both homeowners (property tax billed) and renters (rent paid on the principal place of residence) may
+    qualify; no rebate is available for property that is not subject to property tax.
+  amount: 'A percentage of property tax liability (or the rent-equivalent, 6% of rent paid) on the principal place of
+    residence, computed on PIT-RC lines 15-18 against Table 2, 2025 Maximum Property Tax Liability Table. The rebate
+    cannot exceed $250, or $125 for a married taxpayer filing a separate return (2025 PIT-RC instructions, Section
+    3).'
+  income_limit_2025: 'Modified gross income of $16,000 or less (2025 PIT-RC Modified Gross Income Limitations table:
+    "$16,000 or less — Property Tax Rebate, if you are 65 or older (Section 3)").'
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section 3 (filed with PIT-1)
+  citation:
+    source: 2025 PIT-RC Instructions — Section 3, Property Tax Rebate for Persons 65 or Older ($250 cap, $125 for
+      married filing separately, $16,000 modified-gross-income gate, Table 2 2025 Maximum Property Tax Liability
+      Table), as printed in the Department's 2025 Personal Income Tax Packet; Sections 7-2-14.2/14.3 NMSA 1978
+    url: https://www.tax.newmexico.gov/forms-publications/
+- name: Refundable Medical Care Credit for Persons 65 or Older
+  type: refundable
+  eligibility: A taxpayer (or spouse) age 65 or older who paid unreimbursed or uncompensated medical care expenses of
+    $28,000 or more during 2025 for themselves, their spouse, or dependents, and who is not eligible to be claimed
+    as a dependent of another taxpayer for 2025.
+  amount: '$2,800 if you qualify. Married couples filing separate returns may each claim one-half of the credit
+    ($1,400) that would have been allowed on a joint return. A qualifying taxpayer is also eligible for the separate
+    medical care expense exemption reported on Schedule PIT-ADJ, line 18 (a base reduction, not a credit).'
+  income_limit_2025: No income limit; the gate is the $28,000 of unreimbursed/uncompensated medical care expense and
+    age 65 or older.
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section 6 line 23 (filed with PIT-1)
+  citation:
+    source: 2025 PIT-RC Instructions — refundable medical care credit for persons age 65 years or older ('If you
+      qualify for the credit, enter $2,800. Married couples filing separate returns may each claim one-half of the
+      credit ($1400)'), page RC-10, as printed in the Department's 2025 Personal Income Tax Packet
+    url: https://www.tax.newmexico.gov/forms-publications/
+- name: Special Needs Adopted Child Tax Credit
+  type: refundable
+  eligibility: A taxpayer who files a New Mexico PIT-1, is not a dependent of another taxpayer, adopted a special
+    needs child (certified as a 'difficult to place child' by the NM Children, Youth and Families Department or a
+    licensed child placement agency), and claimed that child as a dependent on the federal return. Attach the
+    certificate in the first year claimed for each qualifying child.
+  amount: '$1,500 for each special needs adopted child; $750 for each child if married filing separately (married
+    individuals filing separate returns may each claim one-half).'
+  income_limit_2025: No income limit stated for this credit.
+  claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, line 24 (filed with PIT-1)
+  citation:
+    source: 2025 PIT-RC Instructions — LINE 24, Special Needs Adopted Child Tax Credit ($1,500 per child; $750 if
+      married filing separately), page RC-10, as printed in the Department's 2025 Personal Income Tax Packet
+    url: https://www.tax.newmexico.gov/forms-publications/
+filing_requirement:
+  note: 'Per the 2025 PIT-1 instructions ("Who Must File A PIT-1 Return"): New Mexico''s law says every person who
+    meets BOTH of the following must file a PIT-1: (1) is a New Mexico resident or has income from New Mexico
+    sources, AND (2) is required to file a federal income tax return. A taxpayer who is not required to file a
+    federal return may still want or need to file a NM return — for example to claim a refund of withholding or to
+    claim the PIT-RC rebates and credits.'
+mailing_addresses:
+  refund_or_no_payment: NM Taxation and Revenue Dept., P.O. Box 25122, Santa Fe, NM 87504-5122 ('Mail refund returns
+    and returns without a payment attached to' — 2025 PIT-1 instructions, Where To Mail Paper Returns and Payments)
+  with_payment: NM Taxation and Revenue Dept., P.O. Box 8390, Santa Fe, NM 87504-8390 ('Mail returns with a payment
+    and voucher attached or payments and vouchers without a return to' — with Form PIT-PV payment voucher)
+  citation:
+    source: 2025 PIT-1 New Mexico Personal Income Tax Return Instructions — Where To Mail Paper Returns and Payments
+      (PO Box 25122 refund/no-payment; PO Box 8390 with payment/PIT-PV), page PIT-1-14, as printed in the
+      Department's 2025 Personal Income Tax Packet
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/2d774fd0-be97-4b57-8dae-68aed999da0f/2025pit-1-ins.pdf
+payment:
+  check_payee: 'New Mexico Taxation and Revenue Department (2025 PIT-1 instructions, Mailing a Payment and Voucher:
+    "Make it payable to New Mexico Taxation and Revenue Department" and "Write your social security number, PIT-PV,
+    and 2025 PIT-1 on it"; the filing checklist repeats "Did you make your check or money order payable to New
+    Mexico Taxation and Revenue Department?"). Mail the PIT-PV voucher with the payment, and never combine a 2025
+    balance-due payment with a 2026 estimated payment on one check.'
+  web_pay_url: https://tap.state.nm.us
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: '2025 PIT-1 New Mexico Personal Income Tax Return Instructions — Filing Due Date: "Both paper and
+      electronic PIT returns are due on or before April 15, 2026." (CHANGE from TY2024: there is no longer a later
+      April 30 due date for returns that are both e-filed and e-paid — the instructions state "April 15, 2026 is the
+      deadline for filing both electronic" and paper returns, and "Electronically-filed returns are due April 15,
+      2026". If April 15 falls on a weekend or observed holiday the return is due the next business day. New Mexico
+      accepts the IRS automatic six-month extension: with a federal Form 4868 for tax year 2025, October 15, 2026 is
+      the extended due date for calendar-year filers; an extension of time to file does not extend the time to pay,
+      so use a PIT-EXT voucher to stop interest.)'
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/2d774fd0-be97-4b57-8dae-68aed999da0f/2025pit-1-ins.pdf
+all_citations:
+- source: 2025 PIT-1 New Mexico Personal Income Tax Return Instructions (official, NM Taxation & Revenue Department
+    public files) — Line 9 Federal AGI, Who Must File / residency definitions (185-day rule), Filing Due Date (April
+    15, 2026 for both paper and electronic returns; October 15, 2026 extended), Where To Mail Paper Returns and
+    Payments (PO Box 25122 refund/no-payment; PO Box 8390 with payment), check payee and PIT-PV, TAP portal, Working
+    Families Tax Credit 25%, lines 9-18 tax computation flow, line 16 'Reserved for Future Use'
+  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/2d774fd0-be97-4b57-8dae-68aed999da0f/2025pit-1-ins.pdf
+- source: 2025 Personal Income Tax Packet (the Department's combined 2025 PIT booklet — PIT-1, PIT-ADJ, PIT-RC,
+    PIT-B, PIT-CR, PIT-D, PIT-ES and PIT-X instructions plus the 2025 Tax Rate Table starting on page T-1) — source
+    for the 2025 PIT-TRT look-up table and its over-$100,000 continuation schedules, the PIT-ADJ additions list
+    (lines 1-5), the PIT-RC 2025 rebate/credit tables (Table 1 LICTR, Table 4 Child Income Tax Credit, Table 2
+    maximum property tax liability), and the Modified Gross Income Limitations for 2025 table
+  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/0558a902-6362-47ca-8e3b-7cca3bc69b9d/2025%20PIT%20Packet_Final.pdf
+- source: NM Taxation and Revenue Department — 'Personal Income Tax Rates' publication (PIT rates_2005_2025.pdf), page
+    1 'PERSONAL INCOME TAX RATES FOR TAX YEARS STARTING 2025', printing Section 7-2-7 NMSA 1978 as amended (Laws
+    2024, Chapter 67, Section 5 — applicable to taxable years beginning on or after January 1, 2025)
+  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/fd8f3075-42e7-4cdd-88db-7cab84ef72de/PIT%20rates_2005_2025.pdf
+- source: New Mexico Legislature — 2024 House Bill 252 (HTRC/HB 252/a, final version), Section 5 amending Section
+    7-2-7 NMSA 1978 (INDIVIDUAL INCOME TAX RATES) for taxable years beginning on or after January 1, 2025
+  url: https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf
+- source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
+  url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
+- source: New Mexico Taxpayer Access Point (TAP) — official online filing/payment portal
+  url: https://tap.state.nm.us
+unverified:
+- The 2025 PIT-1 instructions, the 2025 Personal Income Tax Packet (which carries the 2025 PIT-TRT rate table and
+  the PIT-ADJ/PIT-RC instructions) and the Department's 'Personal Income Tax Rates' publication were retrieved from
+  the NM Taxation & Revenue Department's public-files host (klvg4oyd4j.execute-api.us-west-2.amazonaws.com), which
+  is the AWS-backed document store that tax.newmexico.gov links to from its Forms & Publications page rather than a
+  tax.newmexico.gov URL itself; content matches the Department's official 2025 PIT booklet but the host domain is an
+  AWS execute-api endpoint. Confirm at tax.newmexico.gov Forms & Publications if a tax.newmexico.gov-hosted copy is
+  required.
+- The additional Low Income Property Tax Rebate for Los Alamos, Santa Fe, Dona Ana, and Bernalillo county residents
+  (PIT-RC Section 4) is not carried in `credits`; the 2025 Modified Gross Income Limitations table gates it at
+  modified gross income of $24,000 or less, but its rebate computation was not transcribed here — see the 2025
+  PIT-RC instructions Section 4 before claiming.
+- Exact dollar filing-requirement thresholds (income amounts below which a return need not be filed) are keyed to
+  the federal filing requirement plus NM residency / NM-source income; confirm specific dollar thresholds against
+  the federal Form 1040 instructions and the NM PIT-1 booklet at the DOR.
+tax:
+  citation:
+    source: 'Statutory rate schedules of Section 7-2-7 NMSA 1978 as RESTRUCTURED by 2024 House Bill 252 (Laws 2024,
+      Chapter 67, Section 5), ''for any taxable year beginning on or after January 1, 2025'' — six brackets replacing
+      the 1.7-5.9% five-bracket schedule that ran TY2021-TY2024: MFJ/HoH/surviving spouse 1.5% to $8,000 / $120 + 3.2%
+      to $25,000 / $664 + 4.3% to $50,000 / $1,739 + 4.7% to $100,000 / $4,089 + 4.9% to $315,000 / $14,624 + 5.9%;
+      Single (and estates/trusts) 1.5% to $5,500 / $82.50 + 3.2% to $16,500 / $434.50 + 4.3% to $33,500 / $1,165.50
+      + 4.7% to $66,500 / $2,716.50 + 4.9% to $210,000 / $9,748 + 5.9%; MFS 1.5% to $4,000 / $60.00 + 3.2% to $12,500
+      / $332 + 4.3% to $25,000 / $869.50 + 4.7% to $50,000 / $2,044.50 + 4.9% to $157,500 / $7,312 + 5.9%. Second pass:
+      the Department''s own ''Personal Income Tax Rates'' publication (PIT rates_2005_2025.pdf, page 1 ''PERSONAL INCOME
+      TAX RATES FOR TAX YEARS STARTING 2025'') prints the same schedules digit-for-digit, and the Department''s 2025
+      PIT-TRT Tax Rate Table (2025 Personal Income Tax Packet, page T-1 ff.) implements them: the look-up table now
+      runs through $100,000 and its continuation schedules read ''If line 17 of Form PIT-1 (Taxable Income) is over
+      $100,000'': Single $4,356 + 4.9% of excess over $100,000 to $210,000, then $9,746 + 5.9%; Married Filing Jointly
+      and Head of Household $4,087 + 4.9% to $315,000, then $14,622 + 5.9%; Married Filing Separately $4,492 + 4.9%
+      to $157,500, then $7,310 + 5.9% (footnote ''* This column must also be used by surviving spouse''). Packet URL
+      (Department AWS-backed public-files library, the NM pack''s documented host exception): https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/0558a902-6362-47ca-8e3b-7cca3bc69b9d/2025%20PIT%20Packet_Final.pdf'
+    url: https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 5500, rate: 0.015}
+    - {over: 5500, but_not_over: 16500, rate: 0.032}
+    - {over: 16500, but_not_over: 33500, rate: 0.043}
+    - {over: 33500, but_not_over: 66500, rate: 0.047}
+    - {over: 66500, but_not_over: 210000, rate: 0.049}
+    - {over: 210000, but_not_over: null, rate: 0.059}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 8000, rate: 0.015}
+    - {over: 8000, but_not_over: 25000, rate: 0.032}
+    - {over: 25000, but_not_over: 50000, rate: 0.043}
+    - {over: 50000, but_not_over: 100000, rate: 0.047}
+    - {over: 100000, but_not_over: 315000, rate: 0.049}
+    - {over: 315000, but_not_over: null, rate: 0.059}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4000, rate: 0.015}
+    - {over: 4000, but_not_over: 12500, rate: 0.032}
+    - {over: 12500, but_not_over: 25000, rate: 0.043}
+    - {over: 25000, but_not_over: 50000, rate: 0.047}
+    - {over: 50000, but_not_over: 157500, rate: 0.049}
+    - {over: 157500, but_not_over: null, rate: 0.059}
+    head_of_household:
+    - {over: 0, but_not_over: 8000, rate: 0.015}
+    - {over: 8000, but_not_over: 25000, rate: 0.032}
+    - {over: 25000, but_not_over: 50000, rate: 0.043}
+    - {over: 50000, but_not_over: 100000, rate: 0.047}
+    - {over: 100000, but_not_over: 315000, rate: 0.049}
+    - {over: 315000, but_not_over: null, rate: 0.059}
+  base: state_taxable_income
+  tax_line: '2025 Form PIT-1, line 18: ''New Mexico Tax'', with line 18a Rate Table Indicator (''R = Rate tables'',
+    ''B = Schedule PIT-B''). 2025 PIT-1 instructions, LINE 18: ''Unless you qualify for Schedule CC, calculate your
+    New Mexico tax by using one of these methods and then complete line 18a: If you have income from sources inside
+    and outside New Mexico, use your entry on PIT-B, line 14 or; Use the rate tables from the PIT-1 instructions,
+    starting on page 1T.'' Applied to line 17 New Mexico Taxable Income (''Add lines 9, 10, and 11, then subtract
+    lines 12, 13, 14, and 15. If the result is negative, enter zero.'').'
+  exemptions: {}
+  notes:
+  - 'TY2025 = THE RESTRUCTURE YEAR: Section 7-2-7 NMSA 1978 now carries SIX brackets (1.5%, 3.2%, 4.3%, 4.7%, 4.9%,
+    5.9%) instead of the five (1.7%, 3.2%, 4.7%, 4.9%, 5.9%) that ran TY2021 through TY2024. 2024 House Bill 252 (Laws
+    2024, ch. 67, Sec. 5) cut the bottom rate 1.7% -> 1.5%, inserted a new 4.3% bracket, and widened the 3.2%/4.7%/4.9%
+    bands (single: 3.2% now to $16,500 not $11,000, 4.7% to $66,500, 4.9% starts at $66,500 not $16,000; MFJ/HoH:
+    3.2% to $25,000, 4.3% to $50,000, 4.7% to $100,000). The top 5.9% thresholds are unchanged ($210,000 single /
+    $315,000 MFJ-HoH / $157,500 MFS) but their constants moved ($9,748 / $14,624 / $7,312 for 2025 vs $10,010.50 /
+    $15,027 / $7,513.50 for 2024). Do NOT reuse the 2024 block, and do not reuse this block for 2024.'
+  - 'Base guidance: supply Form PIT-1, line 17 (New Mexico Taxable Income) = lines 9 (federal AGI) + 10 (SALT add-back
+    for itemizers) + 11 (PIT-ADJ additions) MINUS lines 12, 13, 14 and 15, zero floor. STRUCTURAL 2025 CHANGE: line
+    16 (the medical care expense deduction for persons 65+, which was subtracted on the 2024 return) is now ''Reserved
+    for Future Use. Do not use this line.'' — that exemption is claimed on Schedule PIT-ADJ line 18 and arrives inside
+    line 15 instead, so line 17 subtracts lines 12-15 only. Every deduction/exemption is computed ON THE FORM, so
+    none ship as keys: line 12 is the filer''s OWN federal standard or itemized deduction amount (federal Form 1040/1040SR
+    line 12); line 13 is the $4,000 ''Deduction for Certain Dependents'' (head-of-household or MFJ filers only, and
+    the worksheet multiplies $4,000 by total dependents MINUS ONE — never a flat per-dependent amount); line 14 is
+    the New Mexico low- and middle-income tax exemption (maximum $2,500 per qualified exemption, phasing with AGI
+    and filing status — 2025 gates: PIT-1 line 9 must be $36,667 or less single, $55,000 or less MFJ/surviving spouse/head
+    of household, $27,500 or less MFS); line 15 is the PIT-ADJ deductions and exemptions total. Do NOT supply raw
+    federal AGI.'
+  - 'Adjudication note (two-pass): pass 1 = the statutory schedules in 2024 HB 252 as retrieved from nmlegis.gov (printed
+    constants exact: $120/$664/$1,739/$4,089/$14,624 MFJ-HoH-surviving spouse; $82.50/$434.50/$1,165.50/$2,716.50/$9,748
+    single; $60.00/$332/$869.50/$2,044.50/$7,312 MFS — each constant reproduces exactly as the cumulative marginal
+    tax at the bracket floor, e.g. single $2,716.50 + 143,500 x 4.9% = $9,748). Pass 2 = the Department''s ''Personal
+    Income Tax Rates'' publication (identical text) plus the 2025 PIT-TRT look-up table''s over-$100,000 continuation
+    schedules, whose constants ($4,356/$4,087/$4,492 at $100,000 and $9,746/$14,622/$7,310 at the 5.9% thresholds)
+    sit $2-$2.50 below the statutory cumulative figures ($4,358/$4,089/$4,494.50 and $9,748/$14,624/$7,312) exactly
+    as expected from a table that chains from its last $100 midpoint row — the same offset the 2024 pack recorded
+    when it previewed the 2025 table (9,746/14,622/7,310).'
+  - 'CRITICAL — the filed line 18 value comes from the MANDATED look-up table, which sits a few dollars BELOW statutory
+    marginal math: for line 17 of $100,000 or less the 2025 PIT-TRT table row (in $100 bands, computed at band midpoints)
+    is the filed figure; over $100,000 the TRT continuation schedule CHAINS FROM THE LAST TABLE ROW (''Your Tax is
+    $4,356 + 4.9% of taxable income in excess of $100,000'' single; $4,087 MFJ/HoH; $4,492 MFS; then $9,746/$14,622/$7,310
+    + 5.9%) instead of the statutory cumulative ($4,358 / $4,089 / $4,494.50; $9,748 / $14,624 / $7,312), so the filed
+    figure runs about $2-$3 below this engine''s statutory bracket math at high incomes. The filed form must take
+    the table/schedule value — never plain bracket arithmetic (the NM hand-fill pack''s line 18 carries the same mandate).'
+  - 'Statuses: the statute groups ''married individuals filing joint returns, heads of household and surviving spouses''
+    on ONE schedule — head_of_household here is the SAME schedule as married_filing_jointly (copied per the schema,
+    not derived), and the 2025 PIT-TRT prints identical MFJ and Head of Household columns with the footnote ''* This
+    column must also be used by surviving spouse'', so qualifying surviving spouse maps to married_filing_jointly
+    exactly as the engine assumes.'
+  - 'The single schedule also applies to estates and trusts (Section 7-2-7(B) NMSA 1978 as amended for 2025: ''For
+    single individuals and for estates and trusts'').'
+  - 'Not modeled on the same return: line 19 additional tax on lump-sum distributions (New Mexico''s 5x averaging
+    method, Line 19 worksheet); PIT-B allocation/apportionment for income from sources inside and outside New Mexico
+    (line 18 then comes from PIT-B line 14, indicator B); Schedule CC alternative tax (gross sales of $100,000 or
+    less, no NM real estate); the nonresident gross-royalty-income election under $5,000 (indicator Y); line 20 credit
+    for taxes paid to another state; PIT-CR business credits; and the refundable credits/rebates (Working Families
+    Tax Credit 25% of the federal EIC, Child Income Tax Credit, PIT-RC rebates) — all tax credits or separate computations,
+    never base reductions.'
+  - New Mexico has no state-defined standard deduction or personal exemption of its own — the federal deduction flows
+    through on PIT-1 line 12 (the federal Form 1040/1040SR line 12 amount), which is why the caller supplies the form's
+    own taxable-income line and no standard_deduction or exemptions ship.
