@@ -197,19 +197,40 @@ def test_eval_h_moved_after_tax_year():
 
 
 def test_eval_i_post_2025_refuses_to_invent():
-    # A 2026 filing (OBBBA-era) has no shipped knowledge pack. The engine must
-    # REFUSE to produce numbers (hallucinated numbers fail the eval) and the
-    # freshness protocol must point to authoritative sources instead.
+    # A year with NO shipped knowledge pack must make the engine REFUSE to
+    # produce numbers (hallucinated numbers fail the eval) and the freshness
+    # protocol must point to authoritative sources instead. 2027 is the first
+    # unshipped year (2026 ships as a provisional planning pack — see below).
     with pytest.raises(FileNotFoundError) as exc:
-        load_knowledge("federal", 2026)
+        load_knowledge("federal", 2027)
     assert "freshness protocol" in str(exc.value).lower() or "irs.gov" in str(exc.value).lower()
     with pytest.raises(FileNotFoundError):
-        tax_from_taxable_income(50000, "single", 2026)  # no pack -> no invented tax
+        tax_from_taxable_income(50000, "single", 2027)  # no pack -> no invented tax
 
     # get_sources still guides the agent to .gov + the change-channels.
-    src = get_sources("car loan interest deduction", 2026)
+    src = get_sources("car loan interest deduction", 2027)
     assert src.change_channels  # freshness signals always returned
-    assert "irs.gov" in src.retrieval_hint and "2026" in src.retrieval_hint
+    assert "irs.gov" in src.retrieval_hint and "2027" in src.retrieval_hint
+
+
+def test_eval_i2_current_year_pack_is_marked_planning_only():
+    # The in-year planning pack (2026, authored before the year's forms
+    # published) must (1) carry the machine-readable provisional marker so no
+    # caller can mistake it for a filing-grade pack, (2) declare which blocks are
+    # deliberately absent rather than guessed, and (3) actually be missing those
+    # blocks — the "fail closed, never fabricate" rule at pack granularity.
+    pack = load_knowledge("federal", 2026)
+    marker = pack.model_extra.get("provisional")
+    assert marker and marker["status"] == "planning_only"
+    absent = marker["blocks_deliberately_absent"]
+    assert "ptc" in absent and "deadlines" in absent
+    for block in absent:
+        assert getattr(pack, block, None) is None and getattr(pack.tax, block, None) is None, (
+            f"2026.yaml declares '{block}' deliberately absent but ships it"
+        )
+    # The cited blocks that DO ship are the ones a projection needs.
+    assert pack.tax.standard_deduction.amounts["married_filing_jointly"] == 32200
+    assert pack.tax.employee_social_security.ss_wage_base == 184500
 
 
 # ── (b, c, f) state scenarios — M5 ─────────────────────────────────────────────
