@@ -21,8 +21,11 @@ US_STATES_PLUS_DC = 51  # 50 states + District of Columbia
 
 # Top-level pack keys that are metadata (not topic blocks needing a source) and
 # the freshness ledger itself (backed by sources.yaml change_channels, not by a
-# by_topic entry).
-NON_TOPIC_BLOCKS = frozenset({"jurisdiction", "tax_year", "effective_law_changes"})
+# by_topic entry). `provisional` is the mid-year planning marker a pack carries
+# when the year's forms/instructions have not published yet (2026.yaml): it
+# declares WHICH blocks are deliberately absent and what must be re-verified, so
+# it is metadata ABOUT sourcing rather than a sourced topic of its own.
+NON_TOPIC_BLOCKS = frozenset({"jurisdiction", "tax_year", "effective_law_changes", "provisional"})
 
 # Coverage rule (dev plan section 7, line 154): every top-level TOPIC BLOCK a
 # federal pack ships must be backed by sources.yaml by_topic entries. Block

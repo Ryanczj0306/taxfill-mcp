@@ -168,9 +168,10 @@ FLAT_TAX_RATES_BY_YEAR: dict[int, dict[str, Decimal]] = {
         "pa": Decimal("0.0307"), "ut": Decimal("0.0455"),
     },
     2025: {
-        "az": Decimal("0.025"), "ga": Decimal("0.0519"), "ia": Decimal("0.038"),
-        "il": Decimal("0.0495"), "in": Decimal("0.03"), "la": Decimal("0.03"),
-        "mi": Decimal("0.0425"), "nc": Decimal("0.0425"), "pa": Decimal("0.0307"),
+        "az": Decimal("0.025"), "co": Decimal("0.044"), "ga": Decimal("0.0519"),
+        "ia": Decimal("0.038"), "il": Decimal("0.0495"), "in": Decimal("0.03"),
+        "la": Decimal("0.03"), "mi": Decimal("0.0425"), "nc": Decimal("0.0425"),
+        "pa": Decimal("0.0307"),
     },
 }
 

@@ -2627,6 +2627,7 @@ CROSS_YEAR_GOLDENS = [
     ('ms', 2025, 50_000, 'single', 0, 0, 41_700, 1_395),  # 0% first 10,000 then 4.4% (HB 531 phase-in)
     ('nc', 2025, 53_350, 'married_filing_separately', 0, 0, 40_600, 1_726),  # 53,350 - 12,750 MFS SD = 40,600 x 4.25% = 1,725.50 -> 1,726 (.50 tie)
     ('az', 2025, 65_750, 'single', 0, 0, 50_000, 1_250),  # 65,750 - 15,750 OBBBA-tracking SD = 50,000 x 2.5% = 1,250
+    ('co', 2025, 49_950, 'single', 0, 0, 49_950, 2_198),  # rate BACK to 4.4%: reproduces the printed 2025 table row $49,900-$50,000 -> $2,198
 ]
 
 

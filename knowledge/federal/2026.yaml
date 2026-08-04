@@ -1,0 +1,266 @@
+# Federal knowledge pack — TAX YEAR 2026
+#
+# ⚠️ PROVISIONAL — PLANNING / PROJECTION ONLY. NOT FOR FILING A RETURN. ⚠️
+#
+# Authored 2026-08-04, mid-year, to make in-year budgeting possible (ROADMAP
+# Phase H5). At that date the IRS has published the 2026 *inflation-adjusted
+# amounts* (Rev. Proc. 2025-32, released 2025) and the 2026 employer figures
+# (Pub 15, Circular E), but NOT the 2026 Form 1040 / instructions / Tax Table
+# booklet — those publish near the end of the year. So:
+#
+#   * Every number below is cited to an irs.gov primary source that EXISTS today.
+#   * The blocks whose authority does not exist yet are simply ABSENT, not
+#     guessed — calc raises its prescriptive "no block for this year" error
+#     instead of returning a fabricated figure. Absent so far: ptc,
+#     taxable_social_security, student_loan_interest, education_credits,
+#     dependent_care, and every M3 logistics block (filing_thresholds, credits,
+#     payment_options, mailing_addresses, deadlines).
+#   * The one carried-forward STRUCTURE (not number) is tax_table.row_bands —
+#     see the citation note on that block.
+#
+# RE-VERIFY (two-pass, per DEV_PLAN section 7) when these publish:
+#   1. 2026 Instructions for Form 1040 — standard-deduction charts (confirm the
+#      Rev. Proc. amounts were not superseded mid-year the way OBBBA superseded
+#      the 2025 amounts in Rev. Proc. 2024-40 section 2.15(1)).
+#   2. 2026 Tax Table (Publication 1040) — confirm the row bands and spot-check
+#      published rows against the engine's midpoint computation.
+#   3. Schedule SE (Form 1040) 2026 — confirm line 7 wage base = $184,500.
+# Until 1 and 2 land, this pack must not back a filed return.
+
+jurisdiction: federal
+tax_year: 2026
+
+provisional:
+  status: planning_only
+  authored: "2026-08-04"
+  reason: >-
+    The 2026 forms, instructions, and Tax Table booklet are not published yet;
+    only the inflation-adjustment revenue procedure and Circular E are. Numbers
+    here are sufficient for projections (what will I owe / what should I set
+    aside / married-vs-separate comparisons) and insufficient for filing.
+  blocks_deliberately_absent:
+    - ptc
+    - taxable_social_security
+    - student_loan_interest
+    - education_credits
+    - dependent_care
+    - filing_thresholds
+    - credits
+    - payment_options
+    - mailing_addresses
+    - deadlines
+
+tax:
+  # Section 1(j)(2) rate schedules for 2026, transcribed exactly as published in
+  # Rev. Proc. 2025-32, SECTION 4 ("2026 ADJUSTED ITEMS"), .01 Tax Rate Tables:
+  #   TABLE 1: section 1(j)(2)(A) Married Individuals Filing Joint Returns and Surviving Spouses
+  #   TABLE 2: section 1(j)(2)(B) Heads of Households
+  #   TABLE 3: section 1(j)(2)(C) Unmarried Individuals (other than Surviving Spouses and HoH)
+  #   TABLE 4: section 1(j)(2)(D) Married Individuals Filing Separate Returns
+  # NOTE the numbering change vs prior years: the 2026 items live in SECTION 4 of
+  # Rev. Proc. 2025-32 (its section 3 instead MODIFIES the 2025 items of
+  # Rev. Proc. 2024-40 — that is where the OBBBA 2025 standard deductions were
+  # formally substituted). Do not cite "section 2.01" for a 2026 figure.
+  #
+  # Transcription was verified by recomputing every published bracket base from
+  # the bracket below it (each "$X plus Y% of the excess over Z" line must equal
+  # the cumulative tax at Z) — all four tables are internally consistent:
+  #   MFJ:  2,480 -> 11,600 -> 35,932 -> 82,048 -> 116,896 -> 206,583.50
+  #   HoH:  1,770 ->  7,740 -> 16,155 -> 39,207 ->  56,631 -> 191,171
+  #   Single/MFS: 1,240 -> 5,800 -> 17,966 -> 41,024 -> 58,448 -> then
+  #               192,979.25 (single, top starts $640,600) /
+  #               103,291.75 (MFS,   top starts $384,350 = half of MFJ's)
+  # Quirks transcribed as published, NOT normalized: the HoH 24%/32%/35%
+  # thresholds are $201,750 / $256,200 while the unmarried and MFS schedules use
+  # $201,775 / $256,225 (the same $25 offset the 2025 tables carried at
+  # $250,500 vs $250,525).
+  rate_schedules:
+    citation:
+      source: "Rev. Proc. 2025-32, Section 4.01 (2026 tax rate tables), Tables 1-4"
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    schedules:
+      single:
+        - { over: 0, but_not_over: 12400, rate: 0.10 }
+        - { over: 12400, but_not_over: 50400, rate: 0.12 }
+        - { over: 50400, but_not_over: 105700, rate: 0.22 }
+        - { over: 105700, but_not_over: 201775, rate: 0.24 }
+        - { over: 201775, but_not_over: 256225, rate: 0.32 }
+        - { over: 256225, but_not_over: 640600, rate: 0.35 }
+        - { over: 640600, but_not_over: null, rate: 0.37 }
+      married_filing_jointly:
+        - { over: 0, but_not_over: 24800, rate: 0.10 }
+        - { over: 24800, but_not_over: 100800, rate: 0.12 }
+        - { over: 100800, but_not_over: 211400, rate: 0.22 }
+        - { over: 211400, but_not_over: 403550, rate: 0.24 }
+        - { over: 403550, but_not_over: 512450, rate: 0.32 }
+        - { over: 512450, but_not_over: 768700, rate: 0.35 }
+        - { over: 768700, but_not_over: null, rate: 0.37 }
+      married_filing_separately:
+        - { over: 0, but_not_over: 12400, rate: 0.10 }
+        - { over: 12400, but_not_over: 50400, rate: 0.12 }
+        - { over: 50400, but_not_over: 105700, rate: 0.22 }
+        - { over: 105700, but_not_over: 201775, rate: 0.24 }
+        - { over: 201775, but_not_over: 256225, rate: 0.32 }
+        - { over: 256225, but_not_over: 384350, rate: 0.35 }
+        - { over: 384350, but_not_over: null, rate: 0.37 }
+      head_of_household:
+        - { over: 0, but_not_over: 17700, rate: 0.10 }
+        - { over: 17700, but_not_over: 67450, rate: 0.12 }
+        - { over: 67450, but_not_over: 105700, rate: 0.22 }
+        - { over: 105700, but_not_over: 201750, rate: 0.24 }
+        - { over: 201750, but_not_over: 256200, rate: 0.32 }
+        - { over: 256200, but_not_over: 640600, rate: 0.35 }
+        - { over: 640600, but_not_over: null, rate: 0.37 }
+
+  # PROVISIONAL BLOCK — STRUCTURE carried forward, numbers are not.
+  # The 2026 Tax Table booklet does not exist yet. The row-band structure below
+  # is byte-identical in every shipped pack 2019-2025 (5 / 10 / 25 / 50-dollar
+  # bands up to $100,000, midpoint rule, half-up rounding), and the engine
+  # reproduces published table values from it exactly for those years — so it is
+  # the best-supported structure for 2026, but it is an assumption about
+  # PRESENTATION, not a cited 2026 figure. The tax it produces is the
+  # Rev. Proc. 2025-32 rate schedule evaluated at the row midpoint, which is how
+  # the IRS generates the table. Differences from the eventual published 2026
+  # table, if any, are single dollars — acceptable for a projection, NOT for a
+  # filed line 16. Re-verify against Publication 1040 (2026) when it publishes.
+  # Same scope caution as every year: never apply the table to preferential-rate
+  # income (QDCGT worksheet / Schedule D worksheet / Form 8615 / FEI worksheet).
+  tax_table:
+    citation:
+      source: >-
+        PROVISIONAL (authored 2026-08-04): the 2026 Tax Table (Publication 1040)
+        is not yet published. Underlying tax authority is Rev. Proc. 2025-32,
+        Section 4.01; the row-band structure is carried forward unchanged from
+        the published 2019-2025 tables, which the engine reproduces exactly.
+        MUST be re-verified against Publication 1040 (2026) before any 2026
+        return is filed.
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    applies_below: 100000
+    rounding: half_up
+    row_bands:
+      - { at_least: 0, below: 5, row_width: 5 }
+      - { at_least: 5, below: 25, row_width: 10 }
+      - { at_least: 25, below: 3000, row_width: 25 }
+      - { at_least: 3000, below: 100000, row_width: 50 }
+
+  # At or above $100,000 the tax comes straight from the rate schedule (the
+  # published Tax Computation Worksheet is exactly that arithmetic), so this
+  # block needs no 2026-specific source beyond Rev. Proc. 2025-32. The
+  # $100,000 boundary is structural and has been stable for decades.
+  tax_computation_worksheet:
+    citation:
+      source: >-
+        Rev. Proc. 2025-32, Section 4.01 rate schedules (the Tax Computation
+        Worksheet is the published presentation of the same section 1(j)(2)
+        arithmetic). The $100,000 table/worksheet boundary is carried forward
+        from the published 2019-2025 instructions; re-verify with the 2026
+        Instructions for Form 1040.
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    applies_at_or_above: 100000
+
+  # Rev. Proc. 2025-32, Section 4.14: (1) in general — MFJ/SS $32,200,
+  # HoH $24,150, unmarried $16,100, MFS $16,100. (3) aged or blind — $1,650 per
+  # condition per person, increased to $2,050 if the individual is also
+  # unmarried and not a surviving spouse. (2) dependent cap — greater of $1,350
+  # or earned income + $450 (not modeled as its own field here; same shape as
+  # prior years' Standard Deduction Worksheet for Dependents).
+  # CAUTION for 2025 -> 2026 comparisons: the 2025 amounts in Rev. Proc. 2024-40
+  # were superseded mid-year by OBBBA; 2026's were published post-OBBBA and
+  # already reflect it. Nonresident aliens generally get NO standard deduction
+  # (the India treaty article 21(2) exception aside) — that restriction lives in
+  # the engine, not in this block.
+  standard_deduction:
+    citation:
+      source: "Rev. Proc. 2025-32, Section 4.14(1) (Standard Deduction, 2026) and Section 4.14(3) (aged or blind)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    amounts:
+      single: 16100
+      married_filing_jointly: 32200
+      married_filing_separately: 16100
+      head_of_household: 24150
+    additional_aged_or_blind:
+      married: 1650
+      unmarried: 2050
+
+  # Rates are statutory (IRC 1401: 12.4% OASDI + 2.9% HI; 92.35% net-earnings
+  # factor; $400 filing floor) and unchanged. The only year-varying number is
+  # the social security wage base: $184,500 for 2026, stated in Pub 15 (2026),
+  # "Tax rates and the social security wage base limit" ("The social security
+  # wage base limit is $184,500."), and repeated at the motion-picture-project
+  # and Form W-2 checks. Schedule SE (2026) line 7 will restate it — re-verify
+  # when that form publishes.
+  se_tax:
+    citation:
+      source: >-
+        Pub 15 (2026), Circular E, "Tax rates and the social security wage base
+        limit" — social security wage base limit $184,500 for 2026; rates and
+        the 92.35% factor statutory under IRC sections 1401/1402(a)(12)
+      url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+    net_earnings_factor: 0.9235
+    ss_rate: 0.124
+    medicare_rate: 0.029
+    ss_wage_base: 184500
+    minimum_net_earnings: 400
+
+  # Employee side (IRC 3101(a)): 6.2% up to the same $184,500 base, so the
+  # maximum employee withholding for 2026 is 184,500 x 0.062 = $11,439.00
+  # exactly (2025: $10,918.20 on $176,100). This is the block that makes the
+  # F/J-to-H-1B FICA switch computable: F-1/J-1 student wages are exempt under
+  # IRC 3121(b)(19); H-1B wages are not.
+  employee_social_security:
+    citation:
+      source: >-
+        Pub 15 (2026), Circular E — employee social security rate 6.2% (IRC
+        3101(a)) and the $184,500 social security wage base limit for 2026;
+        maximum withholding 184,500 x 6.2% = $11,439.00
+      url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+    rate: 0.062
+    ss_wage_base: 184500
+    max_withholding: 11439.00
+
+  # Both surtaxes are STATUTORY and not inflation-indexed (unchanged since 2013;
+  # OBBBA did not touch them), so the 2026 values are identical to every shipped
+  # year. Same citations as 2019-2025.
+  additional_medicare_tax:
+    citation:
+      source: "IRS Topic No. 560, Additional Medicare Tax (Form 8959): 0.9% of Medicare wages and self-employment income above the filing-status threshold; thresholds statutory under IRC section 3101(b)(2), not indexed"
+      url: "https://www.irs.gov/taxtopics/tc560"
+    rate: 0.009
+    thresholds:
+      married_filing_jointly: 250000
+      married_filing_separately: 125000
+      single: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+  niit:
+    citation:
+      source: "IRS Topic No. 559, Net Investment Income Tax (Form 8960): 3.8% of the lesser of net investment income or MAGI above the filing-status threshold; thresholds statutory under IRC section 1411, not indexed"
+      url: "https://www.irs.gov/taxtopics/tc559"
+    rate: 0.038
+    thresholds:
+      married_filing_jointly: 250000
+      married_filing_separately: 125000
+      single: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+
+  # Rev. Proc. 2025-32, Section 4.03 (Maximum Capital Gains Rate, sections 1(h)
+  # and 1(j)(5)). Published by "Filing Status" rows: MFJ/SS, MFS, HoH, All Other
+  # Individuals, Estates and Trusts. "All Other Individuals" is the single
+  # column here; qualifying_surviving_spouse takes the MFJ amounts.
+  capital_gains_brackets:
+    citation:
+      source: "Rev. Proc. 2025-32, Section 4.03 (Maximum Capital Gains Rate, 2026)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    max_zero_rate_amount:
+      single: 49450
+      married_filing_jointly: 98900
+      married_filing_separately: 49450
+      head_of_household: 66200
+      qualifying_surviving_spouse: 98900
+    max_15_percent_rate_amount:
+      single: 545500
+      married_filing_jointly: 613700
+      married_filing_separately: 306850
+      head_of_household: 579600
+      qualifying_surviving_spouse: 613700
