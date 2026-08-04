@@ -1,0 +1,420 @@
+# DE state knowledge — tax year 2025. Fetched + cited from the DE DOR (.gov),
+# authored per the shipped 2024 template (state-year knowledge program). Loaded as
+# a StateKnowledge. conforms_to_federal_treaties: whether federally treaty-exempt
+# income flows through (most states start from federal AGI) or is added back
+# (CA/CT/MD/MS-style). Figures the fetch could not independently confirm are in
+# `unverified` — confirm at the cited source.
+#
+# Two-pass verification: every key figure below was drafted from the 2025 Form
+# PIT-RES instructions (PIT-RES_Instructions_2025-01.pdf), then independently
+# re-derived from a second official document — the printed 2025 Form PIT-RES
+# itself (PIT-RES_2025-01_PaperInteractiveIPM.pdf, Revision 20260407), the 2025
+# State Income Tax Table & Schedule (TY25_taxtable.pdf), or 30 Del. C.
+# sec. 1102(a)(14) fetched live from delcode.delaware.gov.
+#
+# HEADLINE FOR 2025: NO tax change. The statutory brackets are still the
+# "taxable years beginning after December 31, 2013" schedule (zero-rate floor to
+# $2,000, then 2.2% / 3.9% / 4.8% / 5.2% / 5.55% to $60,000 and 6.6% above), the
+# standard deduction is still $3,250 / $6,500, the additional standard deduction
+# is still $2,500 per box, the personal credits are still $110, and the 2025 tax
+# schedule re-prints "$2,943.50 plus 6.60% (.066) ... for the portion over
+# $60,000" with the same $67,751 -> $3,455.06 -> $3,455 worked example.
+#
+# THE 2025 LINE-NUMBER ANSWER (the 2024 pack recorded a renumbering, so 2025's
+# numbering was re-checked line by line): Sections A-D are UNCHANGED from 2024 —
+# deduction election Line 20, additional standard deduction Line 21, total
+# deductions Line 22, TAXABLE INCOME Line 23, TAX LIABILITY Line 24, lump-sum tax
+# Line 25, total tax Line 26, personal credits Lines 27a/27b, other-state credit
+# Line 28, volunteer firefighter Line 29, child care Line 31, EITC Line 34,
+# withholding Line 35, total refundable credits Line 40. The TAIL shifted by one:
+# a new Line 39 "CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)" pushed the
+# settle-up lines down, so for 2025 balance due is Line 41, overpayment Line 42,
+# contributions Line 43, applied-to-2026-estimated Line 44, penalties/interest
+# Line 45, NET BALANCE DUE Line 46 (was 45) and NET REFUND Line 47 (was 46). The
+# mailing table in the 2025 instructions cites the new numbers ("If Enclosing
+# Payment w/ Balance Due (from Line 46)"; "If Refund Due (from Line 47)").
+jurisdiction: states/de
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Delaware''s resident return (PIT-RES) starts at Section A, Line 1 = "FEDERAL AGI AMOUNT FROM FEDERAL
+  FORM 1040." Section A - Additions contains ONLY Line 2 (INTEREST ON STATE & LOCAL OBLIGATIONS OTHER THAN DELAWARE)
+  and Line 3 (FIDUCIARY ADJUSTMENT, OIL DEPLETION) — verified verbatim on the 2025 form. There is no add-back of federally
+  treaty-exempt income anywhere in the additions schedule, and the word "treaty" appears ZERO times in either the 2025
+  PIT-RES instructions or the 2025 PIT-RES form (re-counted this session). Because income excluded by treaty is already
+  excluded from federal AGI and Delaware has no treaty add-back, that income flows through untaxed -> conforms. Note:
+  the resident form''s Section C "Foreign Taxes Paid" line is an itemized-deduction adjustment for those who took the
+  federal Foreign Tax Credit, NOT a treaty-exempt-income add-back.'
+citation:
+  source: 'DE Division of Revenue - 2025 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must
+    File thresholds (unchanged: under-60 $9,400 single / $15,450 joint), Who is a Resident (domicile any part of year,
+    or abode + more than 183 days), When to File (due 4/30/2026; PIT-EXT extension to 10/15/2026), Section A Additions
+    (federal AGI start; Lines 2-3 only), Line 24 tax table/schedule mandate, mailing addresses (P.O. Box 508 / 8710
+    / 8711), check payee ''DE Division of Revenue'', portal tax.delaware.gov'
+  url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+starts_from: 'federal AGI (Federal Form 1040), entered on 2025 PIT-RES Section A, Line 1 ("FEDERAL AGI AMOUNT FROM
+  FEDERAL FORM 1040")'
+residency:
+  summary: 'Verbatim from the 2025 PIT-RES instructions, "Who is a Resident?": a resident is an individual who either
+    "Is domiciled in this State for any part of the taxable year; or Maintains a place of abode in this State and spends
+    more than 183 days of the taxable year in this State." "A domicile is the place an individual intends to be his
+    permanent home; a place to which he intends to return whenever he may be absent. An individual can have only one
+    domicile. A domicile, once established, continues until the individual moves to a new location and exhibits a bona
+    fide intention of making it his or her permanent home." Full-time students with a legal residence in another state
+    remain legal residents of that state unless they exhibit intentions to make Delaware their permanent residence.
+    A foreign-traveler exception applies to an individual out of the United States for at least 495 days in the last
+    18 consecutive months who did not maintain a Delaware permanent place of abode occupied by the individual, spouse,
+    children or parents. A part-year resident is one who changes legal residence during the year; part-year residents
+    may elect to file either as a full-year resident (PIT-RES) or as a non-resident (PIT-NON), whichever is more advantageous
+    (the Volunteer Firefighter, Child Care, and Earned Income Tax Credits cannot be taken on PIT-NON). A non-resident
+    is someone who is neither domiciled nor a statutory resident but has gross income from Delaware sources; non-residents
+    must file if they had any gross income from Delaware sources during the year. Military compensation follows the
+    servicemember''s legal residence, and all income of a non-military spouse is taxed in the state of the spouse''s
+    legal residence (Form W-4DE for withholding exemption).'
+  citation:
+    source: 'DE Division of Revenue - 2025 Form PIT-RES Instructions, "Who is a Resident?", "Members of Armed Forces",
+      "Military Spouses" and the Foreign Travelers note'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+forms:
+  resident: 'Form PIT-RES (Delaware Individual Resident Income Tax Return; formerly Form 200-01)'
+  part_year_or_nonresident: 'Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02).
+    Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident
+    treatment), whichever is more advantageous.'
+credits_verification: 'State credits were researched from the cited DOR sources (the 2025 PIT-RES instructions, with
+  every rate and dollar amount confirmed against the printed 2025 Form PIT-RES itself) and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.'
+credits:
+- name: 'Earned Income Tax Credit (Delaware EITC)'
+  type: refundable
+  eligibility: 'Resident individuals who claimed (and qualified for) the federal Earned Income Credit. The taxpayer
+    ELECTS one of two options: a REFUNDABLE credit equal to 4.5% of the federal EITC, OR a NONREFUNDABLE credit equal
+    to 20% of the federal EITC. Computed on DE Schedule II (Form PIT-RSS); check the Refundable or Non-Refundable box
+    on Line 34. Do NOT complete PIT-RSS Schedule II if you did not take the Earned Income Credit on your federal return.
+    For spouses filing separate/combined-separate Delaware returns from a joint federal return, the credit may only
+    be applied against the tax of the spouse with the HIGHER Line 23 taxable income.'
+  amount: 'Refundable: 4.5% of the federal earned income credit (federal EITC x 0.045). Nonrefundable alternative:
+    20% of the federal earned income credit (federal EITC x 0.20). Unchanged from 2024.'
+  income_limit_2025: 'No separate Delaware income limit; eligibility and amount are tied to the federal EITC (which
+    has its own income limits based on filing status and number of qualifying children).'
+  claimed_on: 'Form PIT-RES, Line 34 (Refundable / Non-Refundable box checked); computed on DE Schedule II of Form
+    PIT-RSS'
+  citation:
+    source: 'Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 34 Earned Income Tax Credit ("A Resident
+      individual is allowed a refundable credit of 4.5% of the federal earned income credit or a nonrefundable credit
+      of 20% of the federal earned income credit") and DE Schedule II (PIT-RSS)'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+- name: 'Child Care Credit (Child and Dependent Care Credit)'
+  type: nonrefundable
+  eligibility: 'Resident individuals who claimed the federal child and dependent care credit. Must attach a copy of
+    federal Form 2441. For spouses who file a joint federal return but separate/combined-separate Delaware returns,
+    the credit may only be applied against the tax of the spouse with the LOWER Line 23 taxable income. This is the
+    child/dependent CARE credit — the federal Child Tax Credit is not an allowable credit on the Delaware return.'
+  amount: '50% of the federal child and dependent care credit (Line 31 Worksheet — the federal Form 2441 credit "must
+    be attached" and is multiplied "by 50% (.50)"). Do not enter an amount in excess of $3,000. The 2025 Form PIT-RES
+    Line 31 prints "CHILD CARE CREDIT. Must attach Form 2441. (Enter 50% of Federal credit)".'
+  income_limit_2025: 'No stated Delaware income limit; amount derives from the federal Form 2441 credit.'
+  claimed_on: 'Form PIT-RES, Line 31 (Line 31 Worksheet - Child Care Credit)'
+  citation:
+    source: 'Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 31 Child Care Credit and Line 31 Worksheet
+      (50% of the federal Form 2441 credit; maximum $3,000); confirmed against the printed 2025 Form PIT-RES Line 31'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+- name: 'Personal Credits (exemption credit)'
+  type: nonrefundable
+  eligibility: 'Resident individuals are allowed a credit for each personal exemption. If you were not required to
+    file a federal return, "enter $110 for each spouse reporting income plus $110 for each person who could have been
+    listed as a dependent." NOT available if you are claimed as a dependent on another person''s return. The number
+    of personal credits is verified against the federal return with the IRS.'
+  amount: '$110 per personal exemption (number of exemptions x $110; e.g. married filing joint with no dependents =
+    $220). Unchanged from 2024. The 2025 Form PIT-RES Line 27a prints "Enter number of exemptions ___ x $110".'
+  income_limit_2025: 'No income limit.'
+  claimed_on: 'Form PIT-RES, Line 27a'
+  citation:
+    source: 'Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 27a Personal Credits; printed 2025
+      Form PIT-RES Line 27a ("Enter number of exemptions ___ x $110")'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+- name: 'Additional Personal Credit (age 60 or over)'
+  type: nonrefundable
+  eligibility: 'Resident taxpayer and/or spouse who were 60 years of age or over on December 31, 2025. Check the appropriate
+    box(es) for Self (Column B) and/or Spouse (Column A) on Line 27b. This is Delaware''s main senior-relief credit
+    on the income-tax return (separate senior relief is also provided via the pension exclusion and the Section B exclusion
+    for certain persons 60 or over, which are income exclusions rather than credits).'
+  amount: '$110 per qualifying person age 60 or over (number of boxes checked x $110). Unchanged from 2024.'
+  income_limit_2025: 'No income limit.'
+  claimed_on: 'Form PIT-RES, Line 27b'
+  citation:
+    source: 'Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 27b Additional Personal Credits and
+      the Persons 60 or Over Checklist ("You are entitled to an additional personal credit of $110"); printed 2025
+      Form PIT-RES Line 27b'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+- name: 'Credit for Income Taxes Paid to Another State'
+  type: nonrefundable
+  eligibility: 'Delaware residents (or those electing to be taxed as residents) who paid income tax to another state
+    on income earned in that state that is also included in Delaware taxable income. Must attach a signed copy of the
+    income tax return filed with the other state(s). Does not include city wage taxes or county taxes paid directly
+    to the county; the District of Columbia counts as a "State" for this credit. Use Form PIT-RSS DE Schedule I if
+    claiming credit for more than one state (list states highest-to-lowest credit).'
+  amount: 'Formula (Line 28 Worksheet): the credit is the SMALLEST of (a) the Delaware tax liability, (b) the tax due
+    and paid to the other state after all credits, or (c) Delaware tax (Line 24) multiplied by the ratio of other-state
+    AGI to Delaware AGI (Line 12). No fixed dollar amount.'
+  income_limit_2025: 'No income limit.'
+  claimed_on: 'Form PIT-RES, Line 28 (Line 28 Worksheet; DE Schedule I / Form PIT-RSS if multiple states)'
+  citation:
+    source: 'Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 28 Tax Imposed by Other States and
+      the Line 28 Worksheet; printed 2025 Form PIT-RES Line 28 ("TAX IMPOSED BY OTHER STATES (Must attach copy of
+      PIT-RSS and other state return.)")'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+- name: 'Volunteer Firefighter Credit'
+  type: nonrefundable
+  eligibility: 'Delaware residents who are active volunteer firefighters, members of a fire company auxiliary, or active
+    members of an organized rescue squad in a Delaware volunteer company. Active status is verified annually with the
+    volunteer fire companies; the Fire Company number must be entered on Line 29 (Spouse Column A and/or Self Column
+    B). Only one $1,000 credit may be claimed by each spouse.'
+  amount: '$1,000 per qualifying volunteer (maximum one $1,000 per spouse). Unchanged from 2024.'
+  income_limit_2025: 'No income limit.'
+  claimed_on: 'Form PIT-RES, Line 29'
+  citation:
+    source: 'Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 29 Volunteer Firefighter Credit ("one
+      $1,000 credit may be claimed by each spouse"); printed 2025 Form PIT-RES Line 29'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+filing_requirement:
+  note: 'Full-year residents must file a 2025 return if their INDIVIDUAL Delaware adjusted gross income exceeds the
+    age/status threshold — the 2025 chart is unchanged from 2024 and 2023: Under 60 — $9,400 (single filing status)
+    / $15,450 (married filing joint) / $9,400 (married filing separate) / $5,250 (claimed as a dependent on another
+    person''s return); 60 to 64 — $12,200 / $17,950 / $12,200 / $5,250; 65 and over OR blind — $14,700 / $20,450 /
+    $14,700 / $7,750; 65 and over AND blind — $17,200 / $22,950 / $17,200 / $10,250. The booklet stresses: "This dollar
+    amount represents your individual Adjusted Gross Income, NOT a total combined with anyone else" and the age/blindness
+    rows assume only one spouse meets the criteria. Part-year residents must file if they had income from any source
+    while a DE resident, or DE-source income while a non-resident. Non-residents must file if they had any gross income
+    from Delaware sources during 2025.'
+  citation:
+    source: 'DE Division of Revenue - 2025 Form PIT-RES Instructions, "Who Must File" chart ("If you are a Full-Year
+      Resident of the State, you must file a tax return for 2025 if, based on your Age/Status, your individual Delaware
+      adjusted gross income (AGI) exceeds the amount shown below")'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+mailing_addresses:
+  refund_or_no_payment: 'Refund due (2025 PIT-RES Line 47): State of Delaware, Division of Revenue, P.O. Box 8710,
+    Wilmington, DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division of Revenue,
+    P.O. Box 8711, Wilmington, DE 19899-8711.'
+  with_payment: 'Enclosing payment / balance due (2025 PIT-RES Line 46): State of Delaware, Division of Revenue, P.O.
+    Box 508, Wilmington, DE 19899-508.'
+  citation:
+    source: 'DE Division of Revenue - 2025 Form PIT-RES Instructions, Step 5 mailing table: "If Enclosing Payment w/
+      Balance Due (from Line 46): State of Delaware, Division of Revenue, P.O. Box 508, Wilmington, DE 19899-508";
+      "If Refund Due (from Line 47): ... P.O. Box 8710, Wilmington, DE 19899-8710"; "Zero Due returns or returns without
+      payment: ... P.O. Box 8711, Wilmington, DE 19899-8711" — note the 2025 line numbers are one higher than 2024''s'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+  verification: 'Some state facts could not be independently re-confirmed — see the pack''s `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.'
+payment:
+  check_payee: 'DE Division of Revenue ("Make check payable to: DE Division of Revenue")'
+  web_pay_url: 'https://tax.delaware.gov'
+  citation:
+    source: 'DE Division of Revenue - 2025 Form PIT-RES Instructions, Line 46 Net Balance Due ("Make check payable
+      to: DE Division of Revenue") and the on-line payment/portal references to tax.delaware.gov'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+deadlines:
+  filing_due_date: '2026-04-30'
+  citation:
+    source: 'DE Division of Revenue - 2025 Form PIT-RES Instructions, When to File: "Individual income tax returns
+      are due on or before April 30, 2026 for all taxpayers filing on a calendar year basis." Extension: submit Form
+      PIT-EXT with payment of the estimated balance to the Division of Revenue no later than April 30, 2026 to extend
+      the filing date from April 30, 2026 to October 15, 2026 (no extension of time for payment). Delaware''s due date
+      is April 30, NOT the federal April 15.'
+    url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+all_citations:
+- source: 'DE Division of Revenue - 2025 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must
+    File thresholds, Who is a Resident (domicile / abode + 183 days), When to File (due 4/30/2026, PIT-EXT to 10/15/2026),
+    Section A Additions, Line 20 standard deduction / Line 21 additional standard deduction / Line 24 tax table-schedule
+    mandate, Lines 27a-34 credit instructions, Line 46 payee, mailing addresses, Rounding Off Dollars'
+  url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
+- source: '2025 Form PIT-RES (Revision 20260407, paper interactive) — second-pass verification of every line number
+    and printed amount: Section A Line 1 "FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040", Line 2 interest on non-Delaware
+    state/local obligations, Line 3 fiduciary adjustment/oil depletion, Line 12 Delaware AGI, Line 20 standard deduction
+    election ("Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status
+    4 enter $3250 in Column A and in Column B"), Line 21 additional standard deductions (x $2500), Line 22 total deductions,
+    Line 23 "TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount", Line 24 "TAX LIABILITY
+    FROM TAX RATE TABLE/SCHEDULE", Line 25 lump-sum tax, Line 26 total tax, Line 27a personal credits (x $110), Line
+    27b 60-or-over credits (x $110), Line 28 other states, Line 29 volunteer firefighter, Line 31 child care (50% of
+    federal), Line 34 EITC refundable/non-refundable boxes, new Line 39 capital gains tax payments, Lines 41-47 settle-up'
+  url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf'
+- source: 'Delaware 2025 State Income Tax Table & Schedule (TY25_taxtable.pdf) — "2025 STATE INCOME TAX SCHEDULE: If
+    taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus
+    6.60% (.066) over, for the portion over $60,000" with worked example taxable income $67,751 -> Tax on $60,000 $2,943.50
+    + $511.56 = $3,455.06 (Round to $3,455); table for taxable incomes of less than $60,000 in $50 bands'
+  url: 'https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf'
+- source: '30 Del. C. sec. 1102(a)(14) (official Delaware Code) — "For taxable years beginning after December 31, 2013,
+    the amount of tax shall be determined as follows: 2.2% of taxable income in excess of $2,000 but not in excess
+    of $5,000; 3.9% ... $5,000-$10,000; 4.8% ... $10,000-$20,000; 5.2% ... $20,000-$25,000; 5.55% ... $25,000-$60,000;
+    and 6.6% of taxable income in excess of $60,000" — statutory second pass on the sub-$60,000 rates, re-fetched live
+    this session and still the operative paragraph for 2025 (paragraph (13), which ended at 6.75%, remains the superseded
+    prior-year rule)'
+  url: 'https://delcode.delaware.gov/title30/c011/sc01/index.html'
+- source: 'DE Division of Revenue - Personal Income Tax Forms index (source of the 2025 file URLs, including the 2025
+    PIT-RES instructions, the 2025 paper-interactive PIT-RES and TY25_taxtable.pdf)'
+  url: 'https://revenue.delaware.gov/personal-income-tax-forms/'
+unverified:
+- 'Canonical online payment portal URL: the 2025 instructions cite "tax.delaware.gov" as the portal for on-line PIT-EXT
+  filing, estimated payments and refund status; structured here as https://tax.delaware.gov. The exact landing URL
+  for a balance-due payment was not independently re-confirmed on a live page beyond the instruction-booklet references
+  — confirm at the DOR.'
+- 'The 2025 PIT-NON instructions were not fetched this session; the PIT-NON side of the part-year election and its
+  Line 42 taxable-income line are taken from the 2025 tax-table/schedule header ("Line 23 of DE PIT-RES or Line 42
+  of DE PIT-NON") and the PIT-RES instructions'' cross-references.'
+- 'Whether the federal-AGI start on the 2025 form ("FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040", no federal line number
+  printed) corresponds to federal Form 1040 Line 11 was not restated on the 2025 form itself; the 2025 federal 1040
+  keeps AGI on Line 11, so the mapping is unambiguous in practice.'
+- 'The new 2025 Form PIT-RES Line 39 "CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)" and DE Schedule IV were not
+  researched beyond their appearance on the form and in the Line 39 instruction; Form REW-EST itself was not fetched.
+  This is the line that shifted the 2025 settle-up numbering.'
+- 'The 2025 tax table (TY25_taxtable.pdf) was spot-checked, not transcribed: the $2,750-$2,800 band prints $17, $16,750-$16,800
+  prints $586, $43,500-$43,550 prints $2,029, $45,400-$45,450 prints $2,135, $49,500-$49,550 prints $2,362 and $50,000-$50,050
+  prints $2,390 — every sampled band equals band-midpoint bracket math under 30 Del. C. sec. 1102(a)(14), rounded
+  half-up.'
+tax:
+  citation:
+    source: 'Delaware Division of Revenue, 2025 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions
+      (PIT-RES_Instructions_2025-01.pdf) — Line 24 Tax Liability From Tax Rate Table/Schedule: ''If Line 23 is less
+      than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule
+      at the end of the tax table''; Rounding Off Dollars; Who Must File thresholds. Standard deduction and line numbers
+      second-passed on the printed 2025 Form PIT-RES (Revision 20260407): Line 20 ''Filing Statuses 1, 3, & 5 enter
+      $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column A and in Column
+      B''; Line 21 additional standard deductions (x $2500, standard-deduction electors only); Line 22 ''TOTAL DEDUCTIONS'';
+      Line 23 ''TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount''; Line 24 ''TAX LIABILITY
+      FROM TAX RATE TABLE/SCHEDULE (See instructions)''. Rate schedule: Delaware 2025 State Income Tax Table & Schedule
+      (https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf), last page: ''2025 STATE INCOME TAX SCHEDULE - If taxable
+      income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60%
+      (.066) over, for the portion over $60,000'' with worked example taxable income $67,751 -> $2,943.50 + $511.56
+      = $3,455.06 (Round to $3,455). Sub-$60,000 marginal rates: 30 Del. C. sec. 1102(a)(14) (taxable years beginning
+      after December 31, 2013), official Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html,
+      re-fetched live this session — cross-checks exactly against the 2025 table''s band values (e.g. $43,500-$43,550
+      -> $2,029; $16,750-$16,800 -> $586; $2,750-$2,800 -> $17) and the printed $2,943.50 constant. Three sources agree;
+      no 2025 change.'
+    url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 2000, rate: 0}
+    - {over: 2000, but_not_over: 5000, rate: 0.022}
+    - {over: 5000, but_not_over: 10000, rate: 0.039}
+    - {over: 10000, but_not_over: 20000, rate: 0.048}
+    - {over: 20000, but_not_over: 25000, rate: 0.052}
+    - {over: 25000, but_not_over: 60000, rate: 0.0555}
+    - {over: 60000, but_not_over: null, rate: 0.066}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 2000, rate: 0}
+    - {over: 2000, but_not_over: 5000, rate: 0.022}
+    - {over: 5000, but_not_over: 10000, rate: 0.039}
+    - {over: 10000, but_not_over: 20000, rate: 0.048}
+    - {over: 20000, but_not_over: 25000, rate: 0.052}
+    - {over: 25000, but_not_over: 60000, rate: 0.0555}
+    - {over: 60000, but_not_over: null, rate: 0.066}
+    married_filing_separately:
+    - {over: 0, but_not_over: 2000, rate: 0}
+    - {over: 2000, but_not_over: 5000, rate: 0.022}
+    - {over: 5000, but_not_over: 10000, rate: 0.039}
+    - {over: 10000, but_not_over: 20000, rate: 0.048}
+    - {over: 20000, but_not_over: 25000, rate: 0.052}
+    - {over: 25000, but_not_over: 60000, rate: 0.0555}
+    - {over: 60000, but_not_over: null, rate: 0.066}
+    head_of_household:
+    - {over: 0, but_not_over: 2000, rate: 0}
+    - {over: 2000, but_not_over: 5000, rate: 0.022}
+    - {over: 5000, but_not_over: 10000, rate: 0.039}
+    - {over: 10000, but_not_over: 20000, rate: 0.048}
+    - {over: 20000, but_not_over: 25000, rate: 0.052}
+    - {over: 25000, but_not_over: 60000, rate: 0.0555}
+    - {over: 60000, but_not_over: null, rate: 0.066}
+  base: federal_agi
+  tax_line: '2025 Form PIT-RES Line 24: ''TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)''. Line 23:
+    ''TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount''. Instructions, Line 24: ''If
+    Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater,
+    use the tax schedule at the end of the tax table to compute your tax liability.'' NOTE — these are the SAME line
+    numbers as 2024: the 2025 form did NOT renumber Sections A-D (only the post-Line-38 settle-up lines shifted by
+    one, because a new Line 39 ''CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)'' was inserted).'
+  exemptions: {}
+  standard_deduction:
+    single: 3250
+    married_filing_jointly: 6500
+    married_filing_separately: 3250
+    head_of_household: 3250
+  notes:
+  - '2025 UNCHANGED TAX AND (for the tax lines) UNCHANGED FORM NUMBERING: the brackets, the $3,250/$6,500 standard
+    deduction, the $2,500 additional standard deduction, and the $110 personal credits are all unchanged from 2024,
+    and — unlike the 2023-to-2024 transition, which renumbered them — the 2025 PIT-RES keeps the deduction election
+    on Line 20, additional standard deduction Line 21, total deductions Line 22, TAXABLE INCOME Line 23, TAX LIABILITY
+    Line 24, lump-sum tax Line 25, total tax Line 26 and personal credits Lines 27a/27b. Only the settle-up tail shifted:
+    a new Line 39 ''CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)'' pushed balance due to Line 41, overpayment
+    42, contributions 43, applied-to-2026-estimated 44, penalties/interest 45, NET BALANCE DUE 46 (was 45) and NET
+    REFUND 47 (was 46) — and the 2025 mailing table cites the new numbers.'
+  - 'Base guidance: Supply 2025 Form PIT-RES Line 12, DELAWARE ADJUSTED GROSS INCOME = Line 1 federal AGI (from federal
+    Form 1040) + Section A additions (Line 2 interest on non-Delaware state/local obligations; Line 3 fiduciary adjustment
+    / oil depletion) - Section B subtractions (U.S.-obligation interest; pension/retirement exclusions; Delaware state
+    tax refund, fiduciary adjustment, work opportunity credit, Delaware NOL carryforward; taxable Social Security
+    / Railroad Retirement benefits, higher-education exclusion, certain lump-sum distributions; 529/ABLE contribution
+    deduction) - the exclusion for certain persons 60 and over or disabled. If the filer has no Delaware additions
+    or subtractions, Line 12 equals federal AGI. The op then subtracts the shipped per-status standard deduction to
+    reproduce Line 23 taxable income (Line 23 = Line 12 - Line 22 total deductions).'
+  - 'NO income-based exemptions are shipped (exemptions = {}): Delaware''s per-person allowances are TAX CREDITS,
+    not subtractions from income. 2025 Form PIT-RES Line 27a Personal Credits = $110 x the number of exemptions (''Enter
+    number of exemptions ___ x $110''; e.g. MFJ with no dependents = $220), and Line 27b Additional Personal Credits
+    = $110 per taxpayer/spouse age 60 or over on December 31, 2025 — both are subtracted from the Line 26 total tax,
+    not from income. They are NOT applied by calc.state_tax; claim them on the form. exemptions_count and dependents_count
+    must therefore be 0 for this pack. A filer claimed as a dependent on another person''s return gets $0 personal
+    credit.'
+  - 'SINGLE rate schedule for ALL filing statuses: 30 Del. C. sec. 1102(a)(14) publishes one rate table with no filing-status
+    variation, and the 2025 State Income Tax Table has no filing-status columns; the schedule is duplicated per status
+    here. Only the standard deduction differs by status ($6,500 Filing Status 2 vs $3,250 Statuses 1, 3, 4, 5).'
+  - 'TAX TABLE MANDATE below $60,000 — bracket math may differ by a dollar or two within table bands; the filed form
+    must use the table: ''If Line 23 is less than $60,000, use the tax table to compute your tax liability'' (Line
+    24 instructions). The 2025 table uses $50-wide bands and every sampled band equals band-MIDPOINT bracket math
+    rounded half-up: taxable $2,750-$2,800 prints $17 (midpoint $2,775 -> 2.2% x $775 = $17.05); $16,750-$16,800 prints
+    $586 (midpoint -> $586.20); $43,500-$43,550 prints $2,029 (midpoint -> $2,029.14); $45,400-$45,450 prints $2,135;
+    $49,500-$49,550 prints $2,362; $50,000-$50,050 prints $2,390. So at the BOTTOM of a band the op can read $1 lower
+    than the table (e.g. exactly $43,500 computes $2,027.75 -> $2,028 vs the table''s $2,029). At $60,000 or over
+    the printed schedule ($2,943.50 + 6.60% of the portion over $60,000) IS exact marginal math.'
+  - 'Printed-constant check (re-derived for 2025): the schedule''s $2,943.50 at $60,000 exactly equals the cumulative
+    sum of the prior brackets (0.022 x 3,000 = 66.00; + 0.039 x 5,000 = 195.00; + 0.048 x 10,000 = 480.00; + 0.052
+    x 5,000 = 260.00; + 0.0555 x 35,000 = 1,942.50; total 2,943.50) — no divergence. The DOR''s own worked example
+    then adds 6.6% x $7,751 = $511.56 for $3,455.06.'
+  - 'Provenance of the sub-$60,000 rates: the 2025 DOR booklet and tax-table PDF print a rate schedule ONLY for taxable
+    income of $60,000 or over (below that they mandate the table). The 2.2%/3.9%/4.8%/5.2%/5.55% marginal rates and
+    their $2,000/$5,000/$10,000/$20,000/$25,000/$60,000 breakpoints are copied from 30 Del. C. sec. 1102(a)(14) (official
+    Delaware Code site, ''For taxable years beginning after December 31, 2013'' — re-fetched live and still the operative
+    paragraph for 2025; the superseded paragraph (13) ended at 6.75%) and cross-check exactly against the 2025 DOR
+    table''s band values and the printed $2,943.50 constant.'
+  - 'The first bracket is a zero-rate floor: sec. 1102(a)(14) imposes no tax on the first $2,000 of taxable income
+    (the rate schedule starts at ''2.2% of taxable income in excess of $2,000''), and the 2025 tax table shows $0
+    tax for taxable income under $2,000.'
+  - 'Additional standard deduction NOT applied by the engine: Line 21 allows $2,500 per box checked for taxpayer/spouse
+    age 65 or over and/or blind (maximum $5,000 per individual), ONLY for filers electing the Delaware standard deduction
+    (''ADDITIONAL STANDARD DEDUCTIONS (Not Allowed with Itemized Deductions)'' on the 2025 form). Enter it on the
+    form; the shipped standard_deduction covers Line 20a only.'
+  - 'Itemizers: the standard deduction is in lieu of itemizing. Filers may itemize on the Delaware return (Section
+    C + Form PIT-RSA, checked on Line 20b) even if they took the federal standard deduction; the shipped standard_deduction
+    applies only to standard-deduction electors. For Filing Status 3 or 4, if one spouse itemizes the other must itemize;
+    if one takes the standard deduction the other must too.'
+  - Delaware filing statuses are 1 Single/Divorced/Widow(er); 2 Married Filing Joint; 3 Married Filing Separate Forms;
+    4 Married Filing Combined Separate (two separate computations in Columns A and B of one form, $3,250 standard
+    deduction per column); 5 Head of Household. The engine's married_filing_separately corresponds to Status 3 or
+    per-column Status 4 (both $3,250).
+  - 'QUALIFYING SURVIVING SPOUSE caution: the engine maps QSS to married_filing_jointly ($6,500 standard deduction),
+    but PIT-RES Filing Status 1 covers ''Single, Divorced, Widow(er)'' and the 2025 booklet never mentions the federal
+    QSS status. A widow(er) not remarried at year-end appears to file Delaware Status 1 ($3,250 standard deduction)
+    — the brackets are identical either way, but the deduction differs by $3,250. Confirm the correct Delaware status
+    at revenue.delaware.gov before relying on the QSS-to-MFJ mapping.'
+  - 'Tax on lump-sum distributions is NOT modeled: 2025 Form PIT-RES Line 25 adds a separate tax on qualified lump-sum
+    distributions computed on Form PIT-STC (30 Del. C. sec. 1102(b) separate tax, equal to the initial separate tax
+    times the ordinary-income fraction); the engine computes Line 24 only (Line 26 TOTAL TAX = Line 24 + Line 25).'
+  - 'Base subtractions taken BEFORE Line 12 are the caller''s responsibility: the pension/retirement exclusion, the
+    exclusion for certain persons 60 and over or disabled, the DE 529/ABLE contribution deduction, U.S.-obligation
+    interest, and taxable Social Security / Railroad Retirement benefits — supply Line 12 Delaware AGI already reflecting
+    them.'
+  - Delaware EITC (elect refundable 4.5% or nonrefundable 20% of the federal EITC, Line 34), child care credit (50%
+    of the federal Form 2441 credit, maximum $3,000, Line 31), other-state credit (Line 28), volunteer firefighter
+    credit ($1,000 per spouse, Line 29), and the $110 personal credits (Lines 27a/27b) are all CREDITS against tax
+    — none of them are exemptions and none are modeled by this op. All are unchanged for 2025.
+  - 'Rounding: ''Dollar amounts on your return must be rounded off to the nearest whole dollar. This means that amounts
+    from 50 to 99 cents are increased to the next dollar'' — matches the engine''s half-up rounding, and the 2025
+    tax-schedule example rounds $3,455.06 to $3,455.'
+  - No local income tax is collected on Form PIT-RES (the return has no local/county tax line). Part-year residents
+    may elect to file either PIT-RES (full-year resident treatment) or PIT-NON, whichever is more advantageous; this
+    pack models the resident form PIT-RES. Delaware's filing deadline is April 30, 2026 — NOT the federal April 15.
