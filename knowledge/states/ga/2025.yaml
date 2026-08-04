@@ -1,0 +1,249 @@
+# GA state knowledge — tax year 2025. Fetched + cited from the GA DOR (.gov),
+# authored per the 2023/2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2025 IT-511 Individual
+# Income Tax Instruction Booklet (What's New: 'Effective January 1, 2025, the income tax
+# rate is 5.19%'; Standard Deductions chart; Line 14 dependent exemption $4,000; Line 16
+# 'Multiply the amount on Line 15c by 5.19%'), then independently re-derived from the 2025
+# Form 500 blank return itself (Line 11 '$12,000 ... or $24,000', Line 14 'Multiply by
+# $4,000', Line 16 'Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar)') —
+# both passes agree.
+# HEADLINE 2025 CHANGE (HB 111, 2025 session): Georgia's flat rate DROPS again to 5.19%
+# (2024: 5.39%), accelerating the HB 1015/HB 1437 schedule. The $12,000/$24,000 standard
+# deductions and the $4,000 dependent exemption are UNCHANGED from 2024; personal exemptions
+# remain repealed (only the dependent exemption survives). Form 500EZ is DISCONTINUED for
+# 2025 — all filers use Form 500. Do not carry the 2024 5.39% rate into 2025.
+jurisdiction: states/ga
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Georgia conforms. The resident return (Form 500) starts from federal adjusted gross income (2025 Form
+  500, Line 8: "Federal adjusted gross income (From Federal Form 1040)" with the warning "Do not use FEDERAL TAXABLE
+  INCOME"), and adjustments are made only on Form 500 Schedule 1. The Schedule 1 ADDITIONS do not include any add-back
+  of federally treaty-exempt income (unlike California''s Schedule CA add-back). To the contrary, the IT-511 booklet
+  expressly lists as a SUBTRACTION item income specifically exempted by Federal law or treaty. Because treaty-exempt
+  income is already excluded from federal AGI and GA neither adds it back nor otherwise re-taxes it (and explicitly
+  recognizes the treaty exemption), it flows through untaxed.'
+citation:
+  source: GA Form 500 (2025) blank return - Line 8 'Federal adjusted gross income (From Federal Form 1040)', Line
+    9 Schedule 1 adjustments, Line 5 filing statuses (A Single / B MFJ / C MFS / D Head of household or Qualifying
+    surviving spouse), Line 11 standard deduction ($12,000 status A/C/D, $24,000 status B), Line 14 dependent exemption
+    (Line 7c x $4,000), Line 16 tax (Line 15c x 5.19%, round to nearest dollar)
+  url: https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download
+starts_from: federal adjusted gross income (Form 500, Line 8, "Federal adjusted gross income (From Federal Form
+  1040)"; then Line 9 = adjustments from Form 500 Schedule 1; Line 10 = Georgia adjusted gross income)
+residency:
+  summary: Residency is determined by legal residence (domicile). A full-year resident (residency status 1) "lived
+    in Georgia the entire year, regardless of temporary living arrangements"; full-year residents are taxed on all
+    income (except tax-exempt income) regardless of source. A part-year resident (status 2) is a legal resident of
+    Georgia for only a portion of the tax year and, if required to file federally, must file a Georgia return listing
+    the dates of Georgia residency. A nonresident (status 3) works in Georgia or receives income from Georgia sources;
+    nonresidents (and individuals required to file federal Form 1040NR) file Georgia Form 500 and complete Schedule 3
+    to compute Georgia-source taxable income. (Legal residents of other states are not required to file if their only
+    Georgia activity is services as an employee whose wages do not exceed the lesser of 5% of total wages or $5,000.)
+    The 2025 IT-511 booklet states the rule in legal-residence/domicile terms; no fixed 183-day statutory-resident
+    day-count test is published.
+forms:
+  resident: Form 500 (Georgia Individual Income Tax Return) for tax year 2025. NOTE — Form 500-EZ is DISCONTINUED
+    for tax years beginning on or after January 1, 2025; all filers use Form 500.
+  part_year_or_nonresident: Form 500 with Schedule 3 (part-year residents and nonresidents file the same Form 500,
+    omit Lines 9-14, and complete Form 500 Schedule 3 to calculate Georgia taxable income). The residency status box
+    on Form 500 Line 4 (1=full-year resident, 2=part-year resident, 3=nonresident) designates status.
+credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it.
+credits:
+- name: Low Income Tax Credit
+  type: nonrefundable
+  eligibility: Georgia residents whose Federal adjusted gross income (FAGI) is less than $20,000 and who are not
+    claimed (or eligible to be claimed) as a dependent on another taxpayer's federal or Georgia return. Cannot be
+    claimed by an inmate in a correctional facility. Part-year residents qualify only if they were Georgia residents
+    at the end of the tax year.
+  amount: 'Per-exemption credit based on FAGI bracket, multiplied by number of exemptions (Form 500 Line 17c): FAGI
+    under $6,000 = $26 per exemption; $6,000 but not more than $7,999 = $20; $8,000 but not more than $9,999 = $14;
+    $10,000 but not more than $14,999 = $8; $15,000 but not more than $19,999 = $5. Credit cannot exceed the taxpayer''s
+    income tax liability.'
+  income_limit_2025: Federal AGI must be less than $20,000
+  claimed_on: Form 500, Line 17 (17a = number of exemptions, 17b = per-exemption credit from table, 17c = total)
+    using the Low Income Credit Worksheet in the 2025 IT-511 booklet
+  citation:
+    source: Georgia DOR 2025 IT-511 Individual Income Tax Instruction Booklet, Low Income Credit Worksheet and Line
+      17 instructions
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+- name: Georgia Resident Itemizer Tax Credit
+  type: nonrefundable
+  eligibility: Full-year residents and part-year residents living in Georgia at the end of the year who itemized
+    deductions on their returns.
+  amount: Up to $300 per taxpayer. The credit cannot be greater than the tax liability from Line 16 and cannot be
+    carried forward to future returns.
+  income_limit_2025: None stated
+  claimed_on: Form 500, Line 19
+  citation:
+    source: Georgia DOR 2025 IT-511 booklet, Line 19 instructions (Georgia Resident Itemizer Tax Credit)
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+- name: Child and Dependent Care Expense Credit (Credit Code 202)
+  type: nonrefundable
+  eligibility: Georgia taxpayers who claimed and were allowed the federal child & dependent care expense credit
+    under Internal Revenue Code Section 21 on their federal Form 1040.
+  amount: 30% of the federal IRC Section 21 child & dependent care credit claimed and allowed on the federal Form
+    1040. Cannot be carried forward or back; cannot exceed the taxpayer's income tax liability.
+  income_limit_2025: No separate Georgia income limit stated (governed by federal Section 21 rules)
+  claimed_on: Form IND-CR Schedule 202 (included with Form 500/500X); result carried to the IND-CR Summary Worksheet,
+    whose total flows to Form 500, Line 20
+  citation:
+    source: Georgia DOR 2025 IT-511 booklet, IND-CR 202 Child and Dependent Care Expense Credit (Tax Credit 202),
+      O.C.G.A. Section 48-7-29.10
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+- name: Qualified Caregiving Expense Credit (Credit Code 204)
+  type: nonrefundable
+  eligibility: Taxpayers who pay qualified caregiving expenses for a qualifying family member who is at least age
+    62 OR has been determined disabled by the Social Security Administration. Qualified services must be obtained
+    from an organization or individual NOT related to the taxpayer or family member.
+  amount: 10% of the cost of qualified caregiving expenses, but the credit cannot exceed $150. No carryover or carryback;
+    cannot exceed the taxpayer's income tax liability. (Regulation 560-7-8-.43.)
+  income_limit_2025: None stated
+  claimed_on: Form IND-CR Schedule 204 (included with Form 500/500X); result carried to the IND-CR Summary Worksheet,
+    whose total flows to Form 500, Line 20
+  citation:
+    source: Georgia DOR 2025 IT-511 booklet, IND-CR 204 Qualified Caregiving Expense Credit (Tax Credit 204), O.C.G.A.
+      Section 48-7-29.2
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+- name: Disabled Person Home Purchase or Retrofit Credit (Credit Code 201)
+  type: nonrefundable
+  eligibility: A permanently disabled person (the taxpayer or the taxpayer's spouse on a joint return) who has been
+    issued a permanent parking permit by the Department of Revenue, and who purchases a new single-family home containing
+    all four required accessibility features, or retrofits an existing single-family home with one or more of those
+    features.
+  amount: 'For a qualifying new-home purchase: the lesser of $500 per residence or the taxpayer''s income tax liability.
+    For retrofitting an existing home: the lesser of cost or $125 per feature, not to exceed $500 per residence. Unused
+    credit may be carried forward 3 years. (Regulation 560-7-8-.44.)'
+  income_limit_2025: None
+  claimed_on: Form IND-CR Schedule 201 (included with Form 500/500X); result carried to the IND-CR Summary Worksheet,
+    whose total flows to Form 500, Line 20
+  citation:
+    source: Georgia DOR 2025 IT-511 booklet, IND-CR 201 Disabled Person Home Purchase or Retrofit Credit (Tax Credit
+      201), O.C.G.A. Section 48-7-29.1
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+filing_requirement:
+  note: 'A full-year resident must file a Georgia return if required to file a federal return, if they have income
+    subject to Georgia tax but not federal tax, or if income exceeds the standard deduction per the 2025 IT-511 Filing
+    Requirements chart — the thresholds ARE the standard deductions: Married filing jointly $24,000; Single $12,000;
+    Married filing separately $12,000; Head of household $12,000; Qualifying surviving spouse $12,000. Part-year residents
+    and nonresidents who work in Georgia or have Georgia-source income and are required to file a federal return must
+    file Form 500 with Schedule 3. Individuals required to file federal Form 1040NR must file Georgia Form 500.'
+mailing_addresses:
+  refund_or_no_payment: 'Form 500 without payment: PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740392,
+    ATLANTA, GA 30374-0392'
+  with_payment: 'Form 500 with payment: PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740399, ATLANTA,
+    GA 30374-0399. (Form 500X amended: PO BOX 740318, ATLANTA, GA 30374-0318.)'
+  citation:
+    source: Georgia DOR 2025 IT-511 booklet, 'Mailing Address' page (Form 500 without payment PO Box 740392 / with
+      payment PO Box 740399; 500X PO Box 740318)
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: Georgia Department of Revenue (2025 IT-511 filing checklist — make your check or money order payable
+    to the Georgia Department of Revenue; send with the 525-TV voucher when paying by check)
+  web_pay_url: https://gtc.dor.ga.gov/ (Georgia Tax Center, GTC)
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: Georgia DOR 2025 IT-511 booklet, 'When to File' — 'Calendar year taxpayers are required to file on or
+      before April 15, 2026'
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+all_citations:
+- source: GA 2025 IT-511 Individual Income Tax Instruction Booklet - What's New ('Effective January 1, 2025, the
+    income tax rate is 5.19%'; Form 500EZ discontinued for 2025); Standard Deductions chart ($24,000 MFJ; $12,000
+    Single/MFS/Head of household/Qualifying surviving spouse); Line 14 dependent exemption (Line 7c x $4,000); Line
+    16 tax (Line 15c x 5.19%, round to nearest dollar); Filing Requirements chart; 'file on or before April 15, 2026';
+    mailing addresses; Low Income Credit Worksheet; IND-CR 201/202/204
+  url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+- source: 'GA Form 500 (2025) blank return — second-pass verification: Line 8 federal AGI; Line 5 filing statuses
+    A Single / B Married filing jointly / C Married filing separately / D Head of household or Qualifying surviving
+    spouse; Line 11 ''Enter $12,000 if the filing status from Line 5 is A, C, or D. If the filing status is B, enter
+    $24,000''; Line 14 ''Enter the number from Line 7c. Multiply by $4,000''; Line 16 ''Tax (Multiply Line 15c by 5.19%.
+    Round to the nearest dollar)'''
+  url: https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download
+- source: GA DOR - Gov. Kemp Signs Legislation (2025-04-17 press release) — HB 111 accelerates the Georgia income
+    tax rate to 5.19% for tax year 2025 (delivering over $1 billion in tax cuts and relief)
+  url: https://dor.georgia.gov/press-releases/2025-04-17/gov-kemp-signs-legislation-delivering-more-1-billion-tax-cuts-and-relief
+unverified:
+- The statutory citation for the 2025 rate acceleration (HB 111, 2025 session) is taken from the GA DOR press release
+  and cross-referenced to the 2025 IT-511 What's New; the 5.19% rate, the $12,000/$24,000 standard deductions, and
+  the $4,000 dependent exemption are two-pass confirmed at the cited official 2025 IT-511 booklet and 2025 Form 500.
+- Exact gross-income filing thresholds for nonresidents/part-year residents as a standalone dollar figure (the IT-511
+  chart thresholds are framed for full-year residents; nonresidents/part-year file Form 500+Schedule 3 if required
+  to file federally and they have GA-source income) — confirm at DOR if a precise nonresident threshold is needed.
+- The 2025 IND-CR credit percentages/caps and the Low Income Credit Worksheet table were carried from 2024 and not
+  line-by-line re-transcribed this pass; confirm at the cited 2025 IT-511 booklet when claiming.
+tax:
+  citation:
+    source: 'Georgia DOR, 2025 IT-511 Individual Income Tax Instruction Booklet — What''s New: ''Effective January 1,
+      2025, the income tax rate is 5.19%. Form 500EZ has been discontinued''; Standard Deductions chart (Married filing
+      jointly $24,000; Single, Married filing separately, Head of household, Qualifying surviving spouse $12,000 each);
+      Line 14 dependent exemption ''multiply by $4,000''; Line 16 ''Multiply the amount on Line 15c by 5.19%. Round
+      to nearest dollar.'' Second pass: the 2025 Form 500 prints Line 11 ''Enter $12,000 if the filing status from Line
+      5 is A, C, or D. If the filing status is B, enter $24,000'', Line 14 ''Enter the number from Line 7c. Multiply
+      by $4,000'', and Line 16 ''Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar)'' (https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download)
+      — both passes agree. HB 111 (2025 session) accelerated the rate to 5.19% (from 2024''s 5.39%); the $12,000/$24,000
+      standard deductions and the $4,000 dependent exemption are unchanged from 2024.'
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+  flat_rate: 0.0519
+  base: federal_agi
+  tax_line: 'Form 500, Line 16: ''Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar)''. Line 15c Georgia
+    Taxable Income = Line 10 Georgia AGI minus Line 11 standard deduction (or Line 12c itemized), minus Line 14 dependent
+    exemption (Line 7c x $4,000), minus Line 15b Georgia NOL utilized.'
+  exemptions:
+    dependent:
+      amount: 4000
+      note: 'Form 500 Line 14: number of dependents (Line 7c) x $4,000 (unchanged from 2024; the 2024 legislation that
+        raised it from $3,000 to $4,000 and repealed the personal exemptions still governs — only the dependent exemption
+        survives). A true base reduction (Line 15a = Line 13 minus Line 14), not a credit. Line 7c includes unborn dependents
+        with a detectable heartbeat (Line 7b, Georgia LIFE Act); an unborn dependent cannot be claimed if the child is
+        born during the same tax year.'
+  standard_deduction:
+    single: 12000
+    married_filing_jointly: 24000
+    married_filing_separately: 12000
+    head_of_household: 12000
+  notes:
+  - '2025 STRUCTURAL CHANGE — HB 111 ACCELERATED THE FLAT RATE: for tax years beginning on or after January 1, 2025
+    the Georgia flat rate DROPS to 5.19% (2024: 5.39%), per the 2025 IT-511 What''s New (''Effective January 1, 2025,
+    the income tax rate is 5.19%'') and Form 500 Line 16. The $12,000/$24,000 standard deductions and the $4,000 dependent
+    exemption are UNCHANGED from 2024; personal exemptions remain repealed (only the dependent exemption survives).
+    Do NOT carry the 2024 5.39% rate into 2025, and do NOT use this pack for 2024.'
+  - 'Base guidance: Supply Form 500, Line 10 ''Georgia adjusted gross income'' (Line 8 federal AGI from Form 1040,
+    net of Line 9 adjustments from Form 500 Schedule 1) for a FULL-YEAR resident. The op subtracts the per-status
+    Line 11 standard deduction and $4,000 per dependent (Line 14) to reach Line 15c Georgia taxable income (assuming
+    no Line 15b NOL), then multiplies by 5.19%. Pass exemptions_count=0 — Georgia has NO personal exemption (repealed);
+    pass dependents_count = Form 500 Line 7c (qualified dependents plus unborn dependents). Do not use this op if
+    you itemize deductions, claim a Georgia NOL (Line 15b), or file as a part-year resident/nonresident (they omit
+    Lines 9-14 and use Schedule 3, which prorates the deduction) — compute those on the form.'
+  - 'QUALIFYING SURVIVING SPOUSE (CRITICAL): Georgia files QSS under filing status D ''Head of Household or Qualifying
+    Surviving Spouse'' with a $12,000 standard deduction (both the 2025 Form 500 Line 5 status list and the IT-511
+    Standard Deductions chart, which prints ''Qualifying surviving spouse $12,000'') — pass head_of_household to this
+    op, NOT married_filing_jointly. The engine''s default QSS -> married_filing_jointly mapping would apply MFJ''s
+    $24,000 and UNDERSTATE tax.'
+  - 'AGE-65/BLIND ADDITIONAL DEDUCTION: none for Georgia — the flat $12,000/$24,000 amounts are the entire standard
+    deduction; the old (pre-2024) $1,300-per-checkbox additional standard deduction is gone. No age_65/blind keys
+    ship.'
+  - 'ITEMIZERS NOT MODELED: if you itemized on your federal return (or are MFS and your spouse itemizes), you MUST
+    itemize on the Georgia return (Line 12c = federal Schedule A total less Georgia adjustments) and the standard
+    deduction does not apply. Itemizing residents may claim the Georgia Resident Itemizer Tax Credit of up to $300
+    per taxpayer on Form 500 Line 19 — a CREDIT against Line 16 tax, not a base reduction, and not modeled.'
+  - 'NO tax table and NO rate schedule: Line 16 is a straight multiplication printed on the form (''Multiply Line
+    15c by 5.19%. Round to the nearest dollar'').'
+  - 'Georgia NOL not modeled: Form 500 Line 15b (Georgia NOL utilized, limited to 80% of Line 15a income for losses
+    from tax years 2018+) is subtracted before Line 15c taxable income.'
+  - 'Part-year residents and nonresidents not modeled: they omit Form 500 Lines 9-14 and use Schedule 3, which prorates
+    the standard deduction and dependent exemption by the Georgia-income ratio. This pack''s subtractions apply only
+    to full-year residents. Taxpayers required to file federal Form 1040NR generally may NOT take the Georgia standard
+    deduction. NOTE: Form 500-EZ is DISCONTINUED for 2025 — all filers use Form 500.'
+  - 'CREDITS (subtracted from tax, NOT modeled and NOT base reductions): Low Income Credit (Form 500 Line 17 — a per-exemption
+    CREDIT of $5-$26 for federal AGI under $20,000); Other State(s) Tax Credit (Line 18); Georgia Resident Itemizer
+    Tax Credit (Line 19, up to $300 per itemizing taxpayer); IND-CR series 200 credits (Line 20); Schedule 2 series
+    100 credits (Line 21). Total credits used (Line 22) cannot exceed Line 16 tax.'
+  - 'Rounding: the Form 500 Line 16 instruction itself mandates ''Round to the nearest dollar''; this pack rounds
+    half-up to whole dollars (irs_round), matching the form''s presentation.'
