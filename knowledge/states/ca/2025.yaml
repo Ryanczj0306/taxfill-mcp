@@ -1,0 +1,342 @@
+# California (FTB) state knowledge — tax year 2025 (state-year knowledge program).
+#
+# Loaded by taxfill_core.knowledge.load_state_knowledge as a StateKnowledge.
+# Every figure is cited to ftb.ca.gov and was authored per the shipped, two-pass
+# verified 2024 pack (same structure, same tax: modeling decisions, same CRITICAL
+# notes) with every number RE-DERIVED from the 2025 documents — nothing carried
+# forward.
+#
+# Verification status (honest provenance — this project never ships unverified
+# numbers as authoritative):
+#   - treaty non-conformity + residency rules + forms: CONFIRMED verbatim against
+#     FTB Pub 1031 (2025) p. 10 "Tax Treaty" (the China-treaty $15,000 worked
+#     example survives verbatim into the 2025 edition), fetched from ftb.ca.gov.
+#   - brackets / standard deduction / exemption credits: THREE independent 2025
+#     sources agree — the 2025 Form 540 booklet PDF (pp. 74-75 rate schedules,
+#     p. 13 line 18/19/31, p. 14 line 32), the standalone "2025 California Tax
+#     Rate Schedules" PDF, and the separately published HTML edition of the same
+#     booklet (all 24 bracket bounds re-grepped out of the HTML).
+#   - credits + logistics (mailing addresses, filing thresholds, deadlines):
+#     transcribed from the 2025 Form 540 booklet PDF and re-confirmed against the
+#     HTML booklet edition and the standalone 2025 Form 540 PDF.
+#
+# 2025 CHANGES vs the 2024 pack (all found in the 2025 booklet, none inferred):
+#   - Every bracket bound moved: California applied a 3.0% inflation factor to the
+#     2024 Schedule X/Z bounds (Schedule Y = exactly 2x Schedule X). Verified by
+#     re-deriving each 2025 bound as round(2024_bound x 1.03) — all 18 primitive
+#     bounds reproduce to the dollar, and all 27 printed "$X + Y%" constants
+#     reconcile against cumulative bracket sums.
+#   - Standard deduction $5,540/$11,080 -> $5,706/$11,412; dependent minimum
+#     standard deduction $1,300 -> $1,350.
+#   - Exemption credits $149/$461 -> $153/$475; the line 32 AGI limitation
+#     thresholds $244,857/$489,719/$367,291 -> $252,203/$504,411/$378,310.
+#   - The 1% surcharge over $1,000,000 taxable income was RENAMED: the Mental
+#     Health Services Act became the Behavioral Health Services Act for taxable
+#     years beginning on or after 2025-01-01, so Form 540 line 62 is now the
+#     "Behavioral Health Services Tax". Same 1% rate, same $1,000,000 threshold,
+#     same line — still NOT modeled (see tax.notes).
+#   - CalEITC earned-income ceiling $31,951 -> $32,901; renter's credit CA AGI
+#     limits $52,421/$104,842 -> $53,994/$107,988 (credit still $60/$120).
+
+jurisdiction: states/ca
+tax_year: 2025
+income_tax: true
+
+# THE critical CA fact (confirmed verbatim, FTB Pub 1031 2025 p. 10): California
+# does NOT conform to federal tax treaties — income exempt from federal tax under
+# a treaty is STILL taxable by California. Directly hits NRA / F-1 / J-1 filers.
+conforms_to_federal_treaties: false
+treaty_note: 'California does not conform to federal income tax treaties. FTB Pub. 1031 (2025), Section on Tax
+  Treaty, p. 10, verbatim: "A tax treaty between the U.S. Government and a foreign country may exempt some types
+  of income from federal taxation. Generally, unless the treaty specifically excludes the income from taxation by
+  California, the income is taxable." Worked Example 1 (unchanged from the 2024 edition): a resident of China doing
+  research at a California university received $15,000 of teaching/research wages excludable for federal purposes
+  under the U.S.-China treaty — determination: "Although the wages may be exempt from income for federal income
+  tax purposes, the wages will be taxable by California... Tax treaties between the United States and other countries
+  which expressly limit their application to federal income taxes do not apply to California." The $15,000 is included
+  on Schedule CA (540NR), Part II, Section A, line 1a, column C. California also disallows the foreign tax credit
+  and the foreign earned income exclusion (same publication, "Foreign Tax Credit or Foreign Earned Income Exclusion").'
+citation:
+  source: 'FTB Publication 1031 (2025), Guidelines for Determining Resident Status — Tax Treaty section (p. 10)'
+  url: 'https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf'
+
+residency:
+  resident: 'A California resident is taxed on ALL income (worldwide), regardless of source.'
+  nonresident: 'A nonresident is taxed only on income from California sources. Nonresidents of California are not
+    taxed on pensions received after December 31, 1995.'
+  part_year: 'A part-year resident is taxed on all income received while a California resident, plus California-source
+    income received while a nonresident. Form 540NR computes taxable income as if you were a California resident
+    for the entire year, then prorates.'
+  domicile: 'Domicile is the place where you voluntarily establish yourself and family, not merely for a special
+    or limited purpose, but with the present intention of making it your true, fixed, permanent home and principal
+    establishment — the place to which you intend to return whenever absent. You can have only one domicile at a
+    time; once acquired you retain it until you acquire another. A change of domicile requires abandonment of the
+    prior domicile, physically moving to and residing in the new locality, and intent to remain there permanently
+    or indefinitely as demonstrated by your actions. Maintenance of a marital abode in California is a significant
+    factor in establishing California domicile.'
+  closest_connection: 'Residency follows your closest connections; in using the factors (home, family, time, licenses,
+    registrations, bank accounts, voter registration) it is the STRENGTH of your ties, not the number, that decides
+    — no one factor is determinative and all must be considered.'
+  citation:
+    source: 'FTB Publication 1031 (2025), Guidelines for Determining Resident Status — residency/temporary or transitory
+      purposes/income taxable by California/meaning of domicile sections (pp. 5-11)'
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf'
+
+# Which California return each role files (confirmed, 2025 Form 540 booklet).
+forms:
+  resident: '540'
+  part_year_or_nonresident: '540NR'
+  schedule: 'Schedule CA'
+
+# Common California credits. Eligibility/structure are stable; the dollar limits
+# are the 2025 booklet figures, re-confirmed against the HTML booklet edition.
+credits_verification: 'Dollar limits below are transcribed from the cited 2025 FTB booklet and re-confirmed against
+  the FTB HTML edition of the same booklet (two-pass: the $53,994/$107,988 renter''s-credit AGI ceilings and the
+  $32,901 CalEITC earned-income ceiling were re-grepped out of the independently published HTML). Confirm your eligibility
+  at the cited URL before relying on a figure.'
+credits:
+- name: 'Nonrefundable Renter''s Credit'
+  type: nonrefundable
+  eligibility: 'Full-year California resident who paid rent for at least half of 2025 on a non-property-tax-exempt
+    principal residence in California; California AGI within the limit; did not claim (and spouse/RDP did not claim,
+    subject to lived-apart exceptions) the homeowner''s property tax exemption; not living for more than half the
+    year in the home of a person who can claim them as a dependent.'
+  amount: '$60 (single); $120 (head of household, qualifying surviving spouse/RDP, or married/RDP filing jointly).
+    Married/RDP filing separately: if both qualify and lived in the same rental, one may claim the full $120 or each
+    may claim $60; if they lived apart all year, $60 each.'
+  income_limit_2025: 'California adjusted gross income (Form 540 line 17) $53,994 or less (single or married/RDP filing
+    separately); $107,988 or less (married/RDP filing jointly, head of household, or qualifying surviving spouse/RDP)'
+  claimed_on: 'Form 540 line 46 (per the booklet Nonrefundable Renter''s Credit Qualification Record, pp. 25-26)'
+  citation:
+    source: '2025 Personal Income Tax Booklet (Form 540), Nonrefundable Renter''s Credit Qualification Record, pp.
+      25-26; line 46 instructions'
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
+- name: 'California Earned Income Tax Credit (CalEITC)'
+  type: refundable
+  eligibility: 'Requires California wage income and/or net earnings from self-employment of less than $32,901 (2025).
+    You do not need a child to qualify. Computed on form FTB 3514.'
+  claimed_on: 'FTB 3514, then Form 540 line 75'
+  citation:
+    source: '2025 Personal Income Tax Booklet (Form 540), "$$$ for You" — California Earned Income Tax Credit (less
+      than $32,901 of California wage income and/or self-employment net earnings); Form 540 line 75 instructions'
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
+- name: 'Young Child Tax Credit (YCTC)'
+  type: refundable
+  eligibility: 'Available if you qualified for the California EITC (or would have been allowed it but for earned
+    income of zero dollars or less) and have at least one qualifying child younger than six years old as of the last
+    day of the taxable year. Computed on form FTB 3514.'
+  claimed_on: 'FTB 3514, then Form 540 line 76'
+  citation:
+    source: '2025 Personal Income Tax Booklet (Form 540), "$$$ for You" — Young Child Tax Credit; form FTB 3514'
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
+
+filing_requirement:
+  note: 'California has its own gross-income and AGI threshold charts ("Do I Have to File?") that vary by filing
+    status, age (under 65 vs 65 or older on 12/31/25) and number of dependents. 2025 chart values: single or head
+    of household, under 65 — file if California gross income exceeds $22,941 (0 dependents), $38,774 (1), $50,649
+    (2 or more), or if California AGI exceeds $18,353 / $34,186 / $46,061; single or HoH 65 or older — $30,591 /
+    $42,466 / $51,966 gross and $26,003 / $37,878 / $47,378 AGI; married/RDP filing jointly or separately with both
+    under 65 — $45,887 / $61,720 / $73,595 gross and $36,711 / $52,544 / $64,419 AGI (one spouse/RDP 65 or older
+    $53,537 / $65,412 / $74,912 gross, $44,361 / $56,236 / $65,736 AGI; both 65 or older $61,187 / $73,062 / $82,562
+    gross, $52,011 / $63,886 / $73,386 AGI); qualifying surviving spouse/RDP under 65 — $38,774 (1 dependent) /
+    $50,649 (2 or more) gross and $34,186 / $46,061 AGI. A dependent of another person (any filing status, any age)
+    files if income exceeds their standard deduction computed on the California Standard Deduction Worksheet for
+    Dependents (larger of earned income or the $1,350 minimum, capped at the per-status chart amount). Read the full
+    charts in the booklet.'
+  citation:
+    source: '2025 Personal Income Tax Booklet (Form 540), "Do I Have to File?" Steps 1-4 and the gross income / adjusted
+      gross income chart, p. 4'
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
+
+mailing_addresses:
+  refund_or_no_payment: 'Franchise Tax Board, PO Box 942840, Sacramento CA 94240-0001'
+  with_payment: 'Franchise Tax Board, PO Box 942867, Sacramento CA 94267-0001'
+  citation:
+    source: '2025 Personal Income Tax Booklet (Form 540), "Mailing Your Tax Return" (amount due -> PO Box 942867;
+      refund or no amount due -> PO Box 942840)'
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
+
+payment:
+  check_payee: 'Franchise Tax Board (check or money order payable to the "Franchise Tax Board" in U.S. dollars drawn
+    on a U.S. financial institution; write your SSN or ITIN and "2025 Form 540" on it; do not combine the 2025 payment
+    with a 2026 estimated payment; if you e-filed, mail it with form FTB 3582)'
+  web_pay_url: 'https://www.ftb.ca.gov/pay'
+  citation:
+    source: '2025 Personal Income Tax Booklet (Form 540), "Payment Options" — Web Pay / credit card (ACI Payments,
+      jurisdiction code 1555) / check or money order'
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
+
+deadlines:
+  filing_due_date: '2026-04-15'
+  automatic_extension: 'California grants an automatic paper-filing extension to October 15, 2026 with no form required;
+    tax owed must still be paid by April 15, 2026 (form FTB 3519) to avoid penalties and interest. Taxpayers living
+    or traveling outside the United States on April 15, 2026 get the federal-style extended dates.'
+  citation:
+    source: '2025 Personal Income Tax Booklet (Form 540), Important Dates, p. 3 — "April 15, 2026: Last day to file
+      and pay the 2025 amount you owe to avoid penalties and interest"; "October 15, 2026: Last day to file or e-file
+      your 2025 tax return to avoid a late filing penalty and interest computed from the original due date of April
+      15, 2026"'
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
+
+all_citations:
+- source: '2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — Important
+    Dates p. 3, Do I Have to File charts p. 4, standard deduction chart/worksheet + line 18/19/31 instructions p.
+    13, line 32 exemption-credit AGI limits + AGI Limitation Worksheet p. 14, line 62 Behavioral Health Services
+    Tax worksheet, renter''s credit record pp. 25-26, mailing addresses, payment options, tax table pp. 69-74, 2025
+    California Tax Rate Schedules pp. 74-75'
+  url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
+- source: '2025 Personal Income Tax Booklet, HTML edition (used as the independent second-pass source for all 24
+    bracket bounds, the standard deduction, the AGI limitation thresholds, the renter''s-credit AGI ceilings and the
+    CalEITC ceiling)'
+  url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html'
+- source: '2025 California Tax Rate Schedules (standalone Schedule X/Y/Z PDF, identical to booklet pp. 74-75, including
+    the worked $125,000 MFJ example that lands on $4,768)'
+  url: 'https://www.ftb.ca.gov/forms/2025/2025-540-tax-rate-schedules.pdf'
+- source: '2025 Form 540, California Resident Income Tax Return — lines 7-9 personal/blind/senior exemption credits
+    (X $153), line 10 dependent exemption credits (X $475), line 11 exemption amount, line 18 standard deduction
+    amounts printed on the form ($5,706 / $11,412), lines 13-17, 19, 31-32, 46, 61-63, 75-76'
+  url: 'https://www.ftb.ca.gov/forms/2025/2025-540.pdf'
+- source: 'FTB Publication 1031 (2025), Guidelines for Determining Resident Status — residency, domicile, tax treaty
+    non-conformity (p. 10), foreign tax credit / foreign earned income exclusion disallowance'
+  url: 'https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf'
+- source: '2025 form FTB 3514 booklet, California Earned Income Tax Credit (CalEITC / YCTC / FYTC computation) —
+    confirmed published and reachable for 2025'
+  url: 'https://www.ftb.ca.gov/forms/2025/2025-3514-booklet.html'
+unverified:
+- 'The FTB 3514 booklet was confirmed published and reachable for 2025 (HTTP 200) but its line-level 2025 CalEITC/YCTC
+  computation tables were NOT transcribed; the $32,901 earned-income ceiling comes from the 2025 Form 540 booklet
+  "$$$ for You" section. Confirm the credit tables at the cited FTB 3514 URL before computing a CalEITC or YCTC amount.'
+- 'The 2025 Form 540NR and Schedule CA (540NR) instructions were not separately fetched; the nonresident/part-year
+  forms and the Schedule CA (540NR) Part II Section A line 1a column C treaty add-back location come from FTB Pub
+  1031 (2025). Confirm line numbers in the 2025 540NR booklet if filing 540NR.'
+- 'The 2025 California Tax Table (booklet pp. 69-74, mandatory when taxable income is $100,000 or less) was not transcribed
+  cell by cell; only the table''s existence, page range and $100 band structure were confirmed. Within a band the
+  table amount can differ from rate-schedule math by a few dollars — see the tax.notes table mandate.'
+tax:
+  citation:
+    source: '2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — ''2025 California
+      Tax Rate Schedules'' (Schedules X/Y/Z), pp. 74-75; ''California Standard Deduction Chart for Most People'' and
+      Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Behavioral Health
+      Services Tax worksheet; Form 540 (2025) Side 1-2, lines 7-11 (X $153 / X $475 exemption credits), lines 13-19,
+      31-32, 61-63. Second pass: the standalone ''2025 California Tax Rate Schedules'' PDF and the separately published
+      HTML edition of the booklet reproduce all 24 bracket bounds, the $5,706/$11,412 standard deduction, and the $252,203/$504,411/$378,310
+      AGI limits; the standalone 2025 Form 540 PDF reproduces the $153/$475 credits and the printed standard deduction.'
+    url: https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 11079, rate: 0.01}
+    - {over: 11079, but_not_over: 26264, rate: 0.02}
+    - {over: 26264, but_not_over: 41452, rate: 0.04}
+    - {over: 41452, but_not_over: 57542, rate: 0.06}
+    - {over: 57542, but_not_over: 72724, rate: 0.08}
+    - {over: 72724, but_not_over: 371479, rate: 0.093}
+    - {over: 371479, but_not_over: 445771, rate: 0.103}
+    - {over: 445771, but_not_over: 742953, rate: 0.113}
+    - {over: 742953, but_not_over: null, rate: 0.123}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 22158, rate: 0.01}
+    - {over: 22158, but_not_over: 52528, rate: 0.02}
+    - {over: 52528, but_not_over: 82904, rate: 0.04}
+    - {over: 82904, but_not_over: 115084, rate: 0.06}
+    - {over: 115084, but_not_over: 145448, rate: 0.08}
+    - {over: 145448, but_not_over: 742958, rate: 0.093}
+    - {over: 742958, but_not_over: 891542, rate: 0.103}
+    - {over: 891542, but_not_over: 1485906, rate: 0.113}
+    - {over: 1485906, but_not_over: null, rate: 0.123}
+    married_filing_separately:
+    - {over: 0, but_not_over: 11079, rate: 0.01}
+    - {over: 11079, but_not_over: 26264, rate: 0.02}
+    - {over: 26264, but_not_over: 41452, rate: 0.04}
+    - {over: 41452, but_not_over: 57542, rate: 0.06}
+    - {over: 57542, but_not_over: 72724, rate: 0.08}
+    - {over: 72724, but_not_over: 371479, rate: 0.093}
+    - {over: 371479, but_not_over: 445771, rate: 0.103}
+    - {over: 445771, but_not_over: 742953, rate: 0.113}
+    - {over: 742953, but_not_over: null, rate: 0.123}
+    head_of_household:
+    - {over: 0, but_not_over: 22173, rate: 0.01}
+    - {over: 22173, but_not_over: 52530, rate: 0.02}
+    - {over: 52530, but_not_over: 67716, rate: 0.04}
+    - {over: 67716, but_not_over: 83805, rate: 0.06}
+    - {over: 83805, but_not_over: 98990, rate: 0.08}
+    - {over: 98990, but_not_over: 505208, rate: 0.093}
+    - {over: 505208, but_not_over: 606251, rate: 0.103}
+    - {over: 606251, but_not_over: 1010417, rate: 0.113}
+    - {over: 1010417, but_not_over: null, rate: 0.123}
+  base: federal_agi
+  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13: ''Line 31 – Tax. To figure your tax, use one or more of the
+    following methods and check the matching box(es) on line 31, as applicable: Tax Table – If your taxable income
+    on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable
+    income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.'' Rate schedule
+    header (booklet p. 74): ''If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line
+    31 [$X + Y%] of the amount over –''. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized
+    deductions or the California standard deduction); ''Subtract line 18 from line 17. This is your taxable income.'''
+  exemptions: {}
+  standard_deduction:
+    single: 5706
+    married_filing_jointly: 11412
+    married_filing_separately: 5706
+    head_of_household: 11412
+  notes:
+  - 'Base guidance: Supply California adjusted gross income — 2025 Form 540, line 17 (''California adjusted gross
+    income. Combine line 15 and line 16''), i.e. federal AGI (line 13) plus California additions minus California
+    subtractions per Schedule CA (540). Do NOT supply unmodified federal AGI: California does not conform to federal
+    income tax treaties (treaty-exempt income is added back on Schedule CA) and has many other adjustments. The op
+    subtracts the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and applies
+    the rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32) and special credits.'
+  - 'Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI
+    = federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18
+    standard deduction). California exemptions are $153/$475 CREDITS (lines 7-10), so vectors pass zero counts by
+    design. Bracket bounds were adjudicated three ways: the booklet pp. 74-75 schedules, the standalone 2025 Tax Rate
+    Schedules PDF, and the HTML booklet edition all print the same 24 bounds; independently, every 2025 bound reproduces
+    as round(2024 bound x 1.03) with Schedule Y = exactly 2x Schedule X, so the 3.0% indexing is confirmed rather
+    than assumed.'
+  - 'EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS — the op does not model them: California''s personal exemption ($153
+    per exemption, 2025 Form 540 lines 7-9: personal, blind, senior) and dependent exemption ($475 per dependent,
+    line 10) are exemption CREDITS totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce
+    taxable income. This op reproduces line 31 (tax before exemption credits) only; subtract the line 32 credits (and
+    any special credits, lines 40-47) on the form.'
+  - 'Exemption-credit AGI limitation (not modeled): if federal AGI (Form 540 line 13) exceeds $252,203 (single or
+    married/RDP filing separately), $504,411 (MFJ or qualifying surviving spouse/RDP), or $378,310 (head of household),
+    the line 32 exemption credits are reduced via the AGI Limitation Worksheet (booklet p. 14). These 2025 thresholds
+    replace the 2024 $244,857/$489,719/$367,291.'
+  - 'Table mandate below $100,000 — ''Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax
+    table beginning on page 69'' and ''Use only if your taxable income on Form 540, line 19 is more than $100,000.
+    If $100,000 or less, use the Tax Table'' (booklet pp. 13, 74): bracket math may differ by a few dollars from the
+    table amount within a $100 band; the filed form must use the Tax Table (booklet pp. 69-74).'
+  - '1% surcharge over $1,000,000 taxable income is NOT modeled, and it was RENAMED for 2025: ''Behavioral Health
+    Services Act – For taxable years beginning on or after January 1, 2025, the Mental Health Services Act has been
+    renamed to the Behavioral Health Services Act. Therefore, references to the Mental Health Services Tax have been
+    renamed to Behavioral Health Services Tax'' (2025 booklet, 2025 Tax Law Changes/What''s New). Form 540 line 62
+    is now the Behavioral Health Services Tax: taxable income (line 19) less $1,000,000, times 1%, whole dollars only.
+    Same rate, same threshold, same line as the 2024 Mental Health Services Tax.'
+  - Alternative Minimum Tax (Form 540 line 61, Schedule P (540)) and other taxes/credit recapture (line 63, e.g. FTB
+    3805P early-distribution tax, IRC 409A NQDC 5% tax) are NOT modeled. FTB 3800 (tax for certain children with unearned
+    income) and FTB 3803 (parents' election to report a child's interest/dividends) change the line 31 computation
+    and are NOT modeled.
+  - 'Standard-deduction gates NOT modeled: a person claimable as a dependent on another''s return must use the California
+    Standard Deduction Worksheet for Dependents (larger of earned income or the $1,350 minimum standard deduction
+    for 2025, up from $1,300 for 2024, capped at the regular per-status amount) — not the chart amount; married/RDP
+    filing separately, both spouses/RDPs must either both itemize or both take the standard deduction; itemizers enter
+    California itemized deductions from Schedule CA (540) Part II line 30 on line 18 instead of the standard deduction.
+    For California, deductions for net disaster losses are allowed only to itemizers (no standard-deduction add-on
+    as federally).'
+  - Qualifying surviving spouse/RDP uses Schedule Y — identical to married/RDP filing jointly (the engine's QSS-to-MFJ
+    mapping matches the published schedule exactly). Married/RDP filing separately uses Schedule X, the same printed
+    schedule as Single (copied from the schedule, not derived; note CA MFS is NOT half of MFJ at the bracket boundaries
+    — it equals the Single schedule, and Schedule Y is exactly 2x Schedule X).
+  - 'Base caution: Form 540 line 17 (California AGI) differs from federal AGI via Schedule CA (540) adjustments —
+    notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows
+    the foreign earned income exclusion and the foreign tax credit, and subtracts items like Social Security benefits.
+    Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts (FTB
+    Pub. 737).'
+  - 'Printed ''$X + Y% of the amount over $Z'' constants verified against cumulative bracket sums: all 27 constants
+    (9 per schedule) reconcile, largest print-rounding divergence $0.01 (Schedule X''s $30,986.19 / $38,638.27 / $72,219.84
+    half-cent chain) — bracket math and the printed schedules agree.'
+  - 'Rounding: the booklet''s worked example (p. 75) rounds the schedule result to whole dollars for line 31 — Chris
+    and Pat Smith, MFJ, taxable income $125,000: $3,974.82 + 8% x $9,916 = $4,768.10, entered as $4,768 — consistent
+    with this op''s round-half-up-to-whole-dollars behavior.'
+  - '2025 filing-season schedule confirmed final: California had no mid-year 2025 rate change; the nine rates 1/2/4/6/8/9.3/10.3/11.3/12.3%
+    are unchanged from 2024 and only the bounds were indexed (3.0%). These are the schedules printed in the final
+    2025 booklet used for the 2026 filing season and republished unchanged in the standalone 2025 Tax Rate Schedules
+    PDF.'
