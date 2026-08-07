@@ -1391,10 +1391,12 @@ class StateRateBracket(BaseModel):
 class StateTaxParams(BaseModel):
     """The ``tax`` block of a state pack: the state's income-tax computation data.
 
-    Phase G item G4. First tranche: the eight flat-rate 2023 states (IL, PA,
-    IN, MI, NC, CO, KY, AZ) via ``flat_rate``. Second tranche: the graduated
-    states via per-filing-status ``brackets`` (exactly ONE of ``flat_rate`` /
-    ``brackets`` must be set). Consumed by :func:`taxfill_core.calc.state_tax`,
+    Phase G item G4, now COMPLETE for every adopted jurisdiction: flat-rate
+    states set ``flat_rate``, graduated states set per-filing-status
+    ``brackets`` (exactly ONE of the two must be set). Which state is which
+    is DATA, not a constant — and it moves by year (GA converted to flat for
+    2024; IA and LA for 2025), so never hardcode a roster against this model.
+    Consumed by :func:`taxfill_core.calc.state_tax`,
     which applies ONLY the ``personal`` / ``dependent`` exemption keys (times
     the caller's counts) and the per-status ``standard_deduction``. Every
     other exemption key (age_65, blind, ...) is verified DATA the op discloses
@@ -1539,11 +1541,12 @@ class StateKnowledge(BaseModel):
         description="False means federal treaty-exempt income is still taxable by this state (e.g. California)."
     )
     citation: Citation | None = None
-    # Phase G item G4: income-tax computation data — the eight flat-rate 2023 states
-    # (IL, PA, IN, MI, NC, CO, KY, AZ) via flat_rate, plus the 27 graduated-bracket
-    # states (two-pass verified 2026-07-24) via per-status brackets. Optional so the
-    # not-yet-adopted packs (CT/HI/IA/MA/NM/SC/UT) still load; calc.state_tax raises
-    # a prescriptive error naming the shipped states when a pack lacks the block.
+    # Phase G item G4: income-tax computation data — flat-rate states via flat_rate,
+    # graduated states via per-status brackets, both two-pass verified. COMPLETE for
+    # all 42 income-tax jurisdictions in 2023 and 2024, and 41 of 42 in 2025 (RI
+    # pending). Stays Optional so an in-flight or future-year pack still loads;
+    # calc.state_tax raises a prescriptive error naming the shipped states when a
+    # pack lacks the block.
     tax: StateTaxParams | None = Field(
         default=None,
         description="Tax computation block (flat rate or graduated brackets, base, exemptions, "

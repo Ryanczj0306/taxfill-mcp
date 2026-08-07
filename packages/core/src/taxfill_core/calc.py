@@ -50,12 +50,18 @@ Contents:
   exemptions, teacher-article year windows (with India's retroactive-loss
   clawback), and the Canada/Mexico employment de-minimis shapes. Final
   eligibility judgment stays with the agent.
-* ``state_tax`` (Phase G, G4) — the flat-rate STATE income-tax line for the
-  eight flat-rate 2023 states whose packs ship a cited ``tax`` block (IL,
-  PA, IN, MI, NC, CO, KY, AZ): rate x (caller-supplied state taxable base
-  minus the state's verified personal/dependent exemptions and standard
-  deduction). County/city add-on taxes and state credits are NOT modeled —
-  the work string discloses exactly what was and was not applied.
+* ``state_tax`` (Phase G, G4) — the STATE income-tax line for every
+  jurisdiction whose pack ships a cited ``tax`` block: all 42 income-tax
+  jurisdictions (41 states + DC) for 2023 and 2024, and 41 of 42 for 2025
+  (RI pending). Flat-rate packs multiply; graduated packs apply the
+  per-filing-status marginal schedule bracket by bracket. Which shape a
+  state has is the PACK's business and it MOVES BY YEAR (GA converted to
+  flat for 2024; IA and LA for 2025) — never hardcode a roster. In both
+  shapes the base is the caller-supplied state taxable base minus the
+  state's verified personal/dependent exemptions and standard deduction
+  where the state ships one. County/city add-on taxes and state credits are
+  NOT modeled — the work string discloses exactly what was and was not
+  applied, including out-of-schedule surcharges and recapture worksheets.
 
 These functions are pure: no logging, no side effects; the only I/O is
 reading the versioned knowledge pack. They never echo the value being
