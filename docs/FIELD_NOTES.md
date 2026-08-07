@@ -9,15 +9,23 @@ Roadmap items derived from these live in [`ROADMAP.md`](ROADMAP.md).
 
 ## 2026-08-04 — Two unmarried NRAs, one household; F-1 OPT → H-1B; TY2026 *budget*
 
-**Situation.** User asked for a **forward-looking 2026 tax budget** (not a filing) for a
-household of two unmarried nonresident aliens: user is F-1 OPT transitioning to H-1B during
-2026; partner is an NRA on OPT. The filer's own words are omitted here for privacy
-(see the privacy note at the head of this entry).
+> **Privacy note.** This entry is written up as an anonymized persona. The filer's own
+> words, their income and account balances, and the identifying details of their household
+> have been removed; what remains is the engineering finding and the **statutory** figures
+> (limits, brackets, phase-out thresholds), which are public tax law. Where an example
+> amount is needed to make a mechanism legible it is marked *illustrative* and is not a
+> real figure. Keep it that way when adding entries: field notes exist to record what the
+> product got wrong, and none of that requires a real person's numbers.
+
+**Situation.** The filer asked for a **forward-looking 2026 tax budget** (not a filing) for a
+household of two unmarried nonresident aliens: one is F-1 OPT transitioning to H-1B during
+2026, the other an NRA on OPT.
 
 **What went wrong (before any tool was called).** The agent (me) opened with a three-option
-multiple-choice question — tax year / "status" / state — with coarse buckets (an "F-1 / J-1 student or
-scholar" status bucket; a state bucket of two named states, "no-income-tax state" and "moved mid-year"). The filer rejected it as too coarse, twice,
-and was right both times. Note the failure is **not** an engine limitation:
+multiple-choice question — tax year / "status" / state — with coarse buckets (an
+"F-1 / J-1 student or scholar" status bucket; a state bucket offering a couple of named
+states, "no-income-tax state", and "moved mid-year"). The filer rejected it as too coarse,
+twice, and was right both times. Note the failure is **not** an engine limitation:
 `VisaPeriod` (`packages/core/src/taxfill_core/schemas/profile.py:104`) is already a
 `{status, start, end}` *period list*, and `StateFootprintYear`
 (`…/schemas/profile.py:293`) is already `lived[] / worked[]` date ranges with a `remote`
@@ -31,13 +39,13 @@ into one word.
 `residency._categorize_status` (`…/residency.py:364`) and the intake helpers
 `_has_f1_period` / `_has_f_or_j_period` (`…/intake.py:170,178`, `startswith("F")`).
 
-Consequences for exactly this user:
+Consequences for this persona:
 
 - **OPT / STEM OPT / cap-gap are invisible.** All three are F-1 (so the prefix match is
-  *correct* for the exempt-individual rules), but they are the periods where the user is
+  *correct* for the exempt-individual rules), but they are the periods where the filer is
   **working full-time**, and they are the periods whose **end date** sets the H-1B
   boundary. Nothing in the profile distinguishes "F-1 studying" from "F-1 working on OPT".
-- **No per-period FICA attribute.** The single biggest cash-flow fact in this user's 2026 —
+- **No per-period FICA attribute.** The single biggest cash-flow fact in this persona's 2026 —
   employee FICA (7.65%) switching **on** at the H-1B start date — is derivable only by
   re-inferring it from status strings at every call site. G6 (Form 843/8316) handles the
   *erroneously withheld* case retroactively; there is no forward-looking per-period model.
@@ -62,7 +70,7 @@ international-student-couple household.
 
 Why it matters even though they file separately:
 
-- The user asked for a **household** budget. Two returns, one rent, one cash-flow question.
+- The filer asked for a **household** budget. Two returns, one rent, one cash-flow question.
   The agent has to carry the second person entirely out-of-band.
 - Two conclusions the tool should be *stating*, not leaving to the agent's memory:
   (a) unmarried ⇒ **no MFJ**, each files their own return (`single` for an NRA — see the
@@ -84,7 +92,8 @@ Why it matters even though they file separately:
 Intake asks it once (`…/intake.py:661`): *"For the tax year, where did you LIVE and where
 did you WORK, with date ranges?"* — with a one-sentence disambiguation. For someone who has
 never filed, that question does not surface the things that actually create a second state
-return. The filer's complaint — that the state question could not be answered in one line — is about this.
+return. The filer's complaint — that the state question was impossible to answer in one
+line — is about this.
 
 **Fix shape:** replace the single question with a **segment loop** (one row per date range:
 lived-state / worked-state / remote / employer state) plus an explicit trigger checklist the
@@ -128,7 +137,7 @@ year pack, budgeting needs ops that do not exist:
 
 ### N-5 — Nothing for a user with zero filing experience to fill in
 
-There was no artifact to hand the user. Written in this session:
+There was no artifact to hand the filer. Written in this session:
 [`INTAKE_WORKSHEET.zh-CN.md`](INTAKE_WORKSHEET.zh-CN.md) — a fill-in worksheet whose three
 opening rules are *"don't guess, write 不知道"*, *"every identity/address fact is a date
 range, not a word"*, and *"one worksheet per person; unmarried ⇒ two taxpayers"*. It should
@@ -203,29 +212,31 @@ data/knowledge gap far more than an engine gap.
 - **N-11 — no Roth-vs-pre-tax modeling, and no excess-contribution detection.** Two separate
   findings, both worth real money: (a) a filer's Roth 401(k) share changes AGI, which cascades
   into six different phase-outs — the tool has no way to represent "of my elective deferral,
-  this portion is Roth and the rest pre-tax"; (b) the session surfaced a live **Roth IRA contribution made while ineligible** (a single
-  filer whose MAGI sat above the $153,000–$168,000 phase-out) — a 6%-per-year excise-tax error that a
-  tool holding both the profile and the limits should flag automatically, and which flips to
-  *compliant* if they marry and file jointly, because IRA eligibility is tested at year end.
+  this portion is Roth and the rest is pre-tax"; (b) the session surfaced a live **Roth IRA
+  contribution made while ineligible** — a single filer whose MAGI sat above the
+  $153,000–$168,000 phase-out — which is a 6%-per-year excise-tax error that a tool holding
+  both the profile and the limits should flag automatically, and which flips to *compliant*
+  on a year-end MFJ filing status, because IRA eligibility is tested at year end.
 - **N-12 — supplemental-wage withholding.** A bonus is withheld at the flat 22%
-  (Pub 15 (2026)) while a filer in the 32% bracket owes more than that on it — an April shortfall
-  that no current surface would predict. Belongs with H4's withholding work.
+  (Pub 15 (2026)) while a filer in the 32% bracket owes more than that on it — a predictable
+  April shortfall that no current surface would forecast. Belongs with H4's withholding work.
 - **N-13 — MAGI needs to be a first-class object.** This session used at least six MAGI
   tests with different thresholds (NIIT $200k/$250k, 8959's wage test, Roth IRA
   $153–168k/$242–252k, deductible-IRA $81k/$129k, Schedule 1-A $100k/$150k/$300k, §221
-  $85k/$175k). The UX signal was the filer asking why their MAGI came out below their
-  headline salary: the answer is a **ladder** (gross → box 1 → AGI → each
-  test's MAGI), and the tool should render it, because every planning lever works by moving
-  a number up or down that ladder.
-- **N-14 — naming misleads, and the tool should push back.** The user twice reached a wrong
-  conclusion straight from a label: *"married ⇒ she loses the NRA interest exclusion"* (no —
-  the **§6013(g) election** does, not the marriage) and *"no tax on overtime ⇒ overtime is
-  untaxed"* (no — only the **premium half** is deductible, and it is a **below-AGI**
-  deduction, so the overtime still raises every MAGI test above). Both are places where the
-  product should state the distinction unprompted rather than answer the question as asked.
-- **N-15 — planning is iterative; one-shot answers are the wrong shape.** The user revised
-  four facts mid-session (a residency day-count, which household member a debt belonged to, the
-  Roth/traditional 401(k) split, a newly-disclosed bonus), and each revision required a full
-  re-computation of all three scenarios. H7's comparison surface must therefore be a
+  $85k/$175k). The UX signal was the filer asking why their MAGI came out *below* their
+  headline salary: the answer is a **ladder** (gross → box 1 → AGI → each test's MAGI), and
+  the tool should render it, because every planning lever works by moving a number up or
+  down that ladder.
+- **N-14 — naming misleads, and the tool should push back.** The session twice produced a
+  wrong conclusion drawn straight from a label: *"married ⇒ the NRA spouse loses the bank-
+  interest exclusion"* (no — the **§6013(g) election** does, not the marriage) and *"no tax
+  on overtime ⇒ overtime is untaxed"* (no — only the **premium half** is deductible, and it
+  is a **below-AGI** deduction, so the overtime still raises every MAGI test above). Both are
+  places where the product should state the distinction unprompted rather than answer the
+  question as asked.
+- **N-15 — planning is iterative; one-shot answers are the wrong shape.** Four input facts
+  were revised mid-session (a residency day-count, which household member a debt belonged to,
+  a Roth/traditional deferral split, and a newly-disclosed bonus), and each revision required
+  a full re-computation of all three scenarios. H7's comparison surface must therefore be a
   **persisted, re-runnable model** over the workspace profile, not a single call — "change
   this one fact and re-diff" is the actual interaction.

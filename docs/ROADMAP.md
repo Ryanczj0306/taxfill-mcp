@@ -522,8 +522,10 @@ scenario exercises the persona that motivated it.
       the engine has every primitive but no way to run and diff a set. Build a
       `compare_scenarios` surface over the projection path that returns per-scenario
       bottom lines plus the itemized deltas that explain the difference — the
-      deltas must sum exactly to the headline number, which is the acceptance
-      criterion for this item. It must be **persisted and re-runnable**
+      **deltas must sum exactly to the headline number**, which is the acceptance
+      criterion (in the motivating session five itemized deltas, four positive and
+      one negative, reconciled to the headline to the dollar). It must be
+      **persisted and re-runnable**
       against the workspace profile, not a one-shot call: the motivating session
       revised four facts mid-flight and each revision re-ran every scenario.
 - [ ] **H8 — tax-advantaged account knowledge (N-10, N-11, N-12, N-13).** The
@@ -543,8 +545,8 @@ scenario exercises the persona that motivated it.
         not a scalar) because the pre-tax share moves AGI and cascades into every
         phase-out.
       * an **eligibility/excess-contribution guard**: the session caught a live
-        Roth IRA contribution by a single filer whose MAGI was above the
-        $153,000–$168,000 phase-out; 6% excise per year) that flips to compliant
+        Roth IRA contribution made by a single filer whose MAGI was above the
+        $153,000–$168,000 phase-out (6% excise per year), which flips to compliant
         on a year-end MFJ filing status. A tool holding the profile and the limits
         should raise this without being asked.
       * a **MAGI ladder** output (gross → W-2 box 1 → AGI → each test's MAGI with
