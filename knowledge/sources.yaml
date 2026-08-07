@@ -330,6 +330,33 @@ federal:
           1098-T handling, scholarship taxability, student-loan interest.
         cadence: annual (per tax year)
 
+    # OBBBA (P.L. 119-21) Schedule 1-A deduction family, TY2025-2028. Added
+    # 2026-08-07: the tax.obbba_schedule_1a block shipped in the 2025 pack while
+    # this registry had NO topic for it, so get_sources mis-routed every query —
+    # "qualified overtime" went to itemized_charitable (Pub 526), "car loan
+    # interest deduction" to education (Pub 970), "no tax on tips" to
+    # dual_status (Pub 519), "Schedule 1-A" to investment_income (Pub 550) —
+    # a live DEV_PLAN section-7 coverage-rule violation.
+    obbba_schedule_1a_deductions:
+      - url: https://www.irs.gov/pub/irs-prior/f1040s1a--2025.pdf
+        answers: >-
+          Schedule 1-A (Form 1040), Additional Deductions: the four new OBBBA
+          deductions — no tax on tips (qualified tips, Part II), no tax on
+          overtime (the qualified overtime premium half, Part III), qualified
+          passenger car loan interest (Part IV), and the senior deduction for
+          filers 65-plus (Part V) — each with its MAGI phase-out, cap, and the
+          married-filing-jointly requirement where one applies. Attaches to
+          Form 1040 line 13b and Form 1040-NR line 13c.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/newsroom/working-families-tax-cuts
+        answers: >-
+          IRS "working families tax cuts" landing page for the One Big
+          Beautiful Bill Act (P.L. 119-21): the statute-level summary of the
+          tips / overtime / car-loan-interest / senior deductions, effective
+          years (2025-2028), and links to the implementing guidance as it
+          publishes.
+        cadence: as legislation/guidance publishes
+
   change_channels:
     - url: https://www.irs.gov/newsroom
       answers: >-
