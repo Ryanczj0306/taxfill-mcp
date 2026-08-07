@@ -654,7 +654,35 @@ def _spouse_residency_questions(
 
 
 def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
-    if tax_year is not None and tax_year in profile.state_footprint:
+    # Completeness is judged PER YEAR and PER DIMENSION. The old logic returned
+    # early whenever ANY footprint entry existed, so a 2023 answer silenced the
+    # question for a 2025 interview, an empty entry passed for an answered one,
+    # and lived-without-worked passed for complete — three ways for state_scope
+    # to run on a footprint the user never actually gave for the asked year.
+    if tax_year is not None:
+        entry = profile.state_footprint.get(tax_year)
+        if entry is not None and entry.is_complete():
+            return
+        missing = []
+        if entry is None or not (entry.lived or entry.no_us_residence):
+            missing.append("LIVED")
+        if entry is None or not (entry.worked or entry.no_us_work):
+            missing.append("WORKED")
+        stale = sorted(y for y in profile.state_footprint if y != tax_year)
+        stale_note = (
+            f" The footprint on file covers {', '.join(map(str, stale))} — a different year's answer "
+            f"never carries over; states and dates change year to year." if stale else ""
+        )
+        out.append(_q("state_footprint.lived_worked", "state_footprint",
+                      f"For {tax_year}: where did you {' and where did you '.join(missing)}, with date ranges?",
+                      "It determines which state returns (if any) you must file and how income is sourced."
+                      + stale_note,
+                      "state_footprint",
+                      disambiguation="List the states and the dates for each — moving mid-year or working remotely "
+                                     "across state lines changes which states you file in. If you had no US "
+                                     "residence (lived abroad all year) set no_us_residence: true, and if you had "
+                                     "no US work set no_us_work: true — an explicit 'none' ends this question; an "
+                                     "empty list does not."))
         return
     if profile.state_footprint:
         return
@@ -663,7 +691,9 @@ def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_
                   "It determines which state returns (if any) you must file and how income is sourced.",
                   "state_footprint",
                   disambiguation="List the states and the dates for each — moving mid-year or working remotely across "
-                                 "state lines changes which states you file in."))
+                                 "state lines changes which states you file in. If you had no US residence or no US "
+                                 "work for the year, set no_us_residence / no_us_work to true — an explicit 'none' "
+                                 "ends this question; an empty list does not."))
 
 
 def _mentions_1095a(kind: str) -> bool:

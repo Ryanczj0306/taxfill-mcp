@@ -13,11 +13,25 @@ from taxfill_core.schemas.profile import (
     PriorFilings,
     Profile,
     Provenance,
+    ResidencePeriod,
     ResidencyFacts,
     Spouse,
     StateFootprintYear,
     VisaPeriod,
+    WorkPeriod,
 )
+
+# A complete single-state footprint: the modal filer LIVES and WORKS somewhere.
+# The old shortcut `StateFootprintYear()` (an empty entry) only passed for
+# "answered" because of the short-circuit bug this suite now guards against —
+# an empty entry would make state_scope report NO state returns for a filer who
+# plainly has one.
+def _one_state_footprint(year, state="CA"):
+    from datetime import date
+    return StateFootprintYear(
+        lived=[ResidencePeriod(state=state, start=date(year, 1, 1), end=date(year, 12, 31), provenance=US)],
+        worked=[WorkPeriod(state=state, start=date(year, 1, 1), end=date(year, 12, 31), provenance=US)],
+    )
 
 US = Provenance.user_stated()
 
@@ -419,7 +433,7 @@ def test_interview_terminates_for_single_paper_check_filer():
     # must reach ready_to_fill with ZERO questions left — the naive ask-resubmit
     # loop terminates instead of re-asking dependents/banking forever.
     profile = _single_filer_core(hoh_qualifying_person=_ans(False), filing_status=_ans("single"))
-    profile.state_footprint = {2023: StateFootprintYear()}
+    profile.state_footprint = {2023: _one_state_footprint(2023)}
     profile.income_documents = [
         IncomeDocument(kind="W-2", status="have", provenance=US),
         IncomeDocument(kind="1095-A", status="not_applicable", provenance=US),  # 'no marketplace coverage'
@@ -444,7 +458,7 @@ def test_banking_question_only_accompanies_other_pending_questions():
     # the optional banking question must never be the lone repeating question.
     assert "banking.account" in _ids(intake_checklist())  # normal interview: asked
     complete = _single_filer_core(hoh_qualifying_person=_ans(False), filing_status=_ans("single"))
-    complete.state_footprint = {2023: StateFootprintYear()}
+    complete.state_footprint = {2023: _one_state_footprint(2023)}
     complete.income_documents = [
         IncomeDocument(kind="W-2", status="have", provenance=US),
         IncomeDocument(kind="1095-A", status="not_applicable", provenance=US),
@@ -771,3 +785,43 @@ def test_fica_note_asks_the_employer_refusal_question_with_the_claim_amount():
     # and the file_and_pay manifest shape.
     assert "Form 8316 serves as" in note
     assert "attached_forms" in note and "'843'" in note and "'8316'" in note
+
+
+# ── The state-footprint short-circuit (Stage 0 correctness fix) ────────────────
+# The old logic returned early whenever ANY footprint entry existed, so three
+# real configurations produced ZERO state questions for the asked year — and
+# state_scope then ran on a footprint the user never gave. Reproduced 2026-08-07.
+
+
+def _footprint_qs(profile, tax_year):
+    return [q for q in intake_checklist(profile, tax_year=tax_year).next_questions if q.section == "state_footprint"]
+
+
+def test_a_different_years_footprint_never_silences_the_asked_year():
+    profile = Profile(state_footprint={2023: _one_state_footprint(2023)})
+    qs = _footprint_qs(profile, 2025)
+    assert qs, "a 2023 answer must not pass for a 2025 one"
+    # The question names the asked year and warns that the stale year does not carry.
+    assert "2025" in qs[0].prompt
+    assert "2023" in qs[0].why and "never carries over" in qs[0].why
+
+
+def test_an_empty_footprint_entry_is_not_an_answer():
+    profile = Profile(state_footprint={2025: StateFootprintYear()})
+    assert _footprint_qs(profile, 2025), "an empty entry is 'not asked yet', not 'none'"
+
+
+def test_lived_without_worked_keeps_asking_for_the_missing_dimension():
+    lived_only = StateFootprintYear(lived=_one_state_footprint(2025).lived)
+    qs = _footprint_qs(Profile(state_footprint={2025: lived_only}), 2025)
+    assert qs
+    assert "WORKED" in qs[0].prompt and "LIVED" not in qs[0].prompt  # only the missing half is re-asked
+
+
+def test_the_explicit_none_sentinels_terminate_the_question():
+    # Someone with no US job (or abroad all year) must still be able to FINISH
+    # the interview — an explicit 'none' ends the question; an empty list never does.
+    lived_no_work = StateFootprintYear(lived=_one_state_footprint(2025).lived, no_us_work=True)
+    assert not _footprint_qs(Profile(state_footprint={2025: lived_no_work}), 2025)
+    abroad = StateFootprintYear(no_us_residence=True, no_us_work=True)
+    assert not _footprint_qs(Profile(state_footprint={2025: abroad}), 2025)
