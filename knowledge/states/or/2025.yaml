@@ -1,0 +1,338 @@
+# OR state knowledge — tax year 2025. Fetched + cited from the OR DOR (.gov),
+# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Two-pass verification: every key figure below was drafted from the 2025 Form OR-40
+# instruction booklet (150-101-040-1, Rev. 01-29-26 — the booklet was reissued on
+# January 29, 2026 to correct the Oregon Kids Credit instructions and worksheet), then
+# independently re-derived from the 2025 Form OR-40-N/OR-40-P instructions
+# (150-101-048-1, Rev. 12-30-25), which print the FULL four-bracket 2025 tax rate charts
+# that the resident booklet abbreviates to its $50,000-and-over segments.
+# HEADLINE 2025 ITEMS (New information): the KICKER IS BACK — Oregon's surplus credit is
+# claimed on the 2025 return (line 32) at 9.863% of the filer's 2024 total Oregon personal
+# income tax liability (a CREDIT, never a base or rate change); federal tax liability
+# subtraction limit rose to $8,500 ($4,250 MFS); every bracket boundary was re-indexed
+# (Chart S 4,400/11,100/125,000; Chart J 8,800/22,200/250,000); standard deduction rose to
+# $2,835/$5,670/$4,560; the exemption CREDIT rose to $256; the Oregon Kids Credit is $1,050
+# per qualifying dependent (full credit to $26,550 of qualifying income, phasing out at
+# $31,550); and new subtractions mirror the federal tip-income, overtime-wage and passenger
+# vehicle loan interest deductions, plus a first-time home buyer savings account (FTHBSA)
+# subtraction with Form OR-HOME. The 4.75/6.75/8.75/9.9% RATES are unchanged.
+jurisdiction: states/or
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'Oregon''s resident return (Form OR-40) starts from federal adjusted gross income: 2025 Form OR-40
+  line 7 is the filer''s federal AGI from Form 1040, 1040-SR, or 1040-NR, line 11 (or Form 1040-X, line 1C). Oregon
+  taxable income is then built by applying additions (Schedule OR-ASC) and subtractions to that federal AGI. The
+  2025 OR-40 instruction booklet contains no general addition/add-back of federally treaty-exempt income (unlike
+  California''s Schedule CA, or CT/MD/MS). Because federally treaty-exempt income is already excluded from federal
+  AGI on the 1040 and there is no Oregon addition code restoring it, the treaty exclusion flows through and is NOT
+  re-taxed by Oregon -> conforms. Caveat: confirm against the full Schedule OR-ASC / OR-ASC-NP addition code list
+  (Publication OR-CODES) and Publication OR-17 for any niche addition that could touch a specific treaty article.'
+citation:
+  source: 2025 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev.
+    01-29-26) — line 7 federal AGI starting point, residency definitions and the 200-day rule, April 15 2026 due
+    date, filing thresholds (Table 1), Table 5 standard deduction, line 20 tax computation and the 2025 tax rate
+    charts (p.32), line 25 exemption credit worksheet ($256), New information (kicker on the 2025 return, federal
+    tax subtraction $8,500/$4,250, FTHBSA subtraction), line 32 kicker (9.863%), line 37 earned income credit
+    (Table 9), line 38 Oregon Kids Credit ($1,050), tax return mailing addresses (PO Box 14700 / PO Box 14555),
+    check payee and Revenue Online payment
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+starts_from: federal AGI (Form OR-40 line 7 = federal adjusted gross income from federal Form 1040/1040-SR/1040-NR
+  line 11, or Form 1040-X line 1C)
+residency:
+  summary: 'Full-year resident: your domicile is in Oregon — you think of Oregon as your permanent home, the center
+    of your financial, social, and family life is in Oregon, and you intend to return to Oregon when you are away.
+    You remain a full-year resident through a temporary absence (or a temporary move back) during 2025. You may ALSO
+    be taxed as a full-year resident even if your domicile is outside Oregon if you maintained a permanent home in
+    Oregon and spent more than 200 days in the state during 2025, unless you can show you were in Oregon only for a
+    temporary purpose. NONRESIDENT: your domicile is outside Oregon AND, if you maintain a permanent home in Oregon,
+    you did not spend more than 200 days in the state during 2025 (or were here only for a temporary purpose); a
+    recreational vehicle is not a permanent home outside Oregon. SPECIAL-CASE OREGON RESIDENT: you may be taxed as a
+    nonresident even though domiciled in Oregon if you meet all the booklet''s conditions (including maintaining no
+    permanent home in Oregon, having a permanent home elsewhere the entire year, and spending 30 days or less in
+    Oregon). PART-YEAR RESIDENT: you moved into or out of Oregon during 2025 (Form OR-40-P). Military personnel are
+    taxed as full-year residents only if the booklet''s military conditions are all true; a nonresident
+    servicemember''s spouse and Oregon residents living abroad have their own rules. Oregon registered domestic
+    partners (RDPs) file using the married statuses with an ''as if'' federal return.'
+forms:
+  resident: Form OR-40 - Oregon Individual Income Tax Return for Full-year Residents (2025)
+  part_year_or_nonresident: Form OR-40-P (part-year resident) or Form OR-40-N (nonresident), 2025 — instructions
+    150-101-048-1; a part-year or nonresident filer prorates deductions, the federal tax liability subtraction and
+    certain credits by the Oregon percentage.
+credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
+  each amount and your eligibility at the cited source before claiming it. The Oregon Kids Credit figures are taken
+  from the January 29, 2026 reissue of the 2025 booklet (the reissue exists specifically to correct that credit''s
+  instructions and worksheet), so use the Rev. 01-29-26 booklet and not an earlier printing. Not carried here (see
+  Publication OR-17): the political contribution credit''s full rules, the credit for income taxes paid to another
+  state, the retirement income credit, the working family household and dependent care credit, and every Schedule
+  OR-ASC coded credit.'
+credits:
+- name: Oregon Surplus Credit ('kicker')
+  type: refundable
+  eligibility: 'To be eligible for the 2025 kicker you must (1) file your 2024 Oregon return before you file your
+    2025 return, (2) have had an Oregon personal income tax liability for 2024, and (3) file a 2025 Oregon return
+    even if you do not otherwise have a filing requirement. If the 2024 return is later amended or adjusted downward,
+    the kicker may be reduced and billed back with interest or penalty.'
+  amount: '9.863% of your 2024 total Oregon personal income tax liability, as adjusted or amended (total liability =
+    Oregon income tax before all payments and credits other than the credit for income taxes paid to another state on
+    mutually-taxed income). Claimed on the return in the same way as a payment; you may elect instead to donate the
+    entire kicker to the State School Fund. Look up your figure with "What''s my Kicker?" on Revenue Online.'
+  income_limit_2025: No income limit — the credit is a percentage of your own prior-year liability.
+  claimed_on: Form OR-40, line 32 ('Oregon surplus credit (kicker)').
+  citation:
+    source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - New information ('Oregon surplus (kicker).
+      Oregon's surplus, known as the kicker, will be claimed as a credit on your 2025 tax return. See the instructions
+      for line 32.') and line 32 instructions ('For 2025, your kicker is 9.863 percent of your 2024 total Oregon
+      personal income tax liability.')
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+- name: Oregon Kids Credit
+  type: refundable
+  eligibility: 'You must (1) use a filing status other than married filing separately, (2) have one or more dependents
+    age five or younger at the end of 2025 listed on your Oregon return, and (3) have qualifying income under $31,550
+    (income after subtractions with excluded foreign earned income and total losses over $20,000 added back, and with
+    deducted tip income, overtime wages and passenger vehicle interest added back). A child listed as your dependent
+    only because the custodial parent released the exemption to you does not qualify; a custodial parent may claim the
+    credit even if the exemption was released.'
+  amount: 'For 2025 the maximum credit is $1,050 per qualifying dependent for up to five dependents (maximum $5,250).
+    Full credit if qualifying income is $26,550 or less; more than $26,550 but less than $31,550 phases the credit
+    down on the Oregon Kids Credit worksheet.'
+  income_limit_2025: Qualifying income under $31,550 (full credit at $26,550 or less).
+  claimed_on: Form OR-40, line 38 (Oregon Kids Credit worksheet in the instructions).
+  citation:
+    source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - line 38 Oregon Kids Credit and its worksheet
+      (as corrected by the January 29, 2026 reissue)
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+- name: Oregon Earned Income Credit
+  type: refundable
+  eligibility: Filers who claimed the federal earned income tax credit (EITC) on their federal return. Oregon RDPs
+    may claim it if they would otherwise qualify using their 'as if' federal return. Filers who cannot claim some or
+    all of the federal EITC because they, their spouse, or their children lack an SSN valid for work (ITIN filers)
+    may instead qualify for Oregon's earned income credit for ITIN filers on Schedule OR-EIC-ITIN.
+  amount: 'A percentage of the federal EITC claimed on the federal return, keyed to the age of your youngest dependent
+    at the end of the tax year (2025 Table 9): 12 percent (0.12) if the youngest dependent is younger than 3; 9 percent
+    (0.09) if the youngest dependent is at least 3 years old, or if you have no dependents.'
+  income_limit_2025: No separate Oregon income limit; eligibility follows the federal EITC limits.
+  claimed_on: Form OR-40, line 37 (earned income credit worksheet; Schedule OR-EIC-ITIN for ITIN filers).
+  citation:
+    source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - line 37 Earned income credit, Table 9 EITC
+      percentage and the earned income credit worksheet
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+- name: Exemption Credit
+  type: nonrefundable
+  eligibility: Filers whose federal AGI is $100,000 or less (single or married filing separately) or $200,000 or less
+    (all other statuses) may claim a credit for the exemptions claimed on line 6 of the return — regular exemptions
+    for the taxpayer, spouse and dependents, plus severe-disability exemptions and exemptions for children with a
+    qualifying disability. Above those AGI thresholds the credit is 0. The severe-disability and disabled-child
+    counts drop out once federal AGI exceeds $100,000 for any status.
+  amount: $256 per allowed exemption for 2025 (exemption credit worksheet, line 4 count multiplied by $256; the 2024
+    amount was $249). This is a CREDIT against tax, never a reduction of taxable income.
+  income_limit_2025: Federal AGI of $100,000 (single/married filing separately) or $200,000 (all others); above that
+    the credit is 0.
+  claimed_on: Form OR-40, line 25 ('Exemption credit'), computed on the booklet's exemption credit worksheet.
+  citation:
+    source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - line 25 Exemption credit and the exemption
+      credit worksheet ('Line 4 multiplied by $256. This is your exemption credit.')
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+- name: Political Contribution Credit
+  type: nonrefundable
+  eligibility: Filers whose federal AGI is not more than $75,000 ($150,000 on a joint return) who made cash
+    contributions during 2025 to a qualifying candidate, political party, or political action committee.
+  amount: A standard credit of up to $50 ($100 on a joint return) for cash political contributions made during 2025.
+  income_limit_2025: Federal AGI not more than $75,000 ($150,000 if filing a joint return).
+  claimed_on: Form OR-40, line 26 ('Political contribution credit').
+  citation:
+    source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - line 26 Political contribution credit
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+filing_requirement:
+  note: 'Full-year residents file if gross income is more than the Table 1 threshold for their status and number of
+    boxes checked (2025 Table 1): single $7,935 / $9,135 / $10,335 for 0 / 1 / 2 boxes; married filing jointly
+    $15,865 / $16,865 / $17,865 / $18,865 / $19,865 for 0-4 boxes; married filing separately $7,935 / $8,935 / $9,935;
+    head of household $9,950 / $11,150 / $12,350; qualifying surviving spouse $11,060 / $12,060 / $13,060. A person
+    who can be claimed as a dependent files at the larger of $1,350 or earned income plus $450, up to the standard
+    deduction for their status (including any age-65-or-older or blind addition). In addition, file a return if you
+    had $1 or more of Oregon income tax withheld and want a refund, or if you may qualify for a refundable credit
+    (the kicker specifically requires filing a 2025 return even with no filing obligation).'
+mailing_addresses:
+  refund_or_no_payment: 'REFUND, PO Box 14700, Salem OR 97309-0930 (2025 booklet, Tax return mailing addresses: ''Mail
+    refund returns or no-tax-due returns to'').'
+  with_payment: 'Oregon Department of Revenue, PO Box 14555, Salem OR 97309-0940 (2025 booklet, Tax return mailing
+    addresses: ''Mail tax-to-pay returns to''). Place the check, cashier''s check, or money order on top of the return;
+    do not mail cash and do not use a payment voucher with the return.'
+  citation:
+    source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - 'Tax return mailing addresses' (REFUND PO
+      Box 14700 Salem OR 97309-0930; tax-to-pay Oregon Department of Revenue PO Box 14555 Salem OR 97309-0940) and
+      'Avoid processing delays' (payment on top of the return, no cash, no voucher, no staples)
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+payment:
+  check_payee: Oregon Department of Revenue ('Make your check or money order payable to "Oregon Department of
+    Revenue"'; do not mail cash; place the payment on top of the return rather than using a voucher). Electronic
+    payments are made through Revenue Online at www.oregon.gov/dor.
+  web_pay_url: https://revenueonline.dor.oregon.gov/tap/_/
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: '2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) — ''April 15, 2026 is the due date for filing
+      your return and paying your tax due''; ''Your 2025 Oregon tax is due April 15, 2026'' even on extension (Oregon
+      accepts the federal extension; the extended filing due date is October 15, 2026, but an extension of time to
+      file is not an extension of time to pay — pay the tax you expect to owe by April 15, 2026 or interest and
+      penalties accrue).'
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+all_citations:
+- source: 2025 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev.
+    01-29-26) — New information (kicker claimed on the 2025 return; federal tax liability subtraction limit $8,500 /
+    $4,250 MFS; FTHBSA subtraction and Form OR-HOME; new federal tip/overtime/vehicle-loan-interest deductions);
+    Table 1 filing thresholds; residency and the 200-day rule; Table 4 federal tax liability subtraction AGI
+    phaseout; Table 5 standard deduction ($2,835 single, $5,670 MFJ, $2,835 or $0 MFS, $4,560 head of household,
+    $5,670 qualifying surviving spouse) with the age-65/blind additions and the dependent worksheet ($1,350 minimum);
+    line 20 tax computation (tax tables below $50,000, rate charts at $50,000 or more, Examples 1 and 2) and the 2025
+    tax rate charts on p.32; line 25 exemption credit ($256); line 26 political contribution credit; line 32 kicker
+    (9.863%); line 37 earned income credit (Table 9 percentages 9% or 12%); line 38 Oregon Kids Credit ($1,050 per qualifying
+    dependent, up to five); tax return mailing addresses; check payee; April 15, 2026 due date
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+- source: 2025 Form OR-40-N and Form OR-40-P Instructions, Oregon Individual Income Tax for Nonresidents and
+    Part-year Residents (150-101-048-1, Rev. 12-30-25) — p.21 '2025 Tax rate charts', which print the FULL four-bracket
+    Chart S and Chart J (including the $4,400 / $11,100 and $8,800 / $22,200 breakpoints that the resident booklet
+    omits because its tax tables govern below $50,000), plus the worked chart examples and the Oregon-percentage
+    proration of deductions and the federal tax liability subtraction
+  url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf
+unverified:
+- 'Revenue Online payment URL: the 2025 booklet directs filers to www.oregon.gov/dor and to click on ''Revenue
+  Online'' rather than printing a literal payment URL; the portal address recorded in `payment.web_pay_url`
+  (revenueonline.dor.oregon.gov) is the login domain that link resolves to — confirm at www.oregon.gov/dor.'
+- The 2-D barcode tax-to-pay mailing address (PO Box 14720), which the 2024 Form OR-40 printed alongside PO Box
+  14555, does not appear in the 2025 instruction booklet's 'Tax return mailing addresses' block; only PO Box 14700
+  (refund/no tax due) and PO Box 14555 (tax to pay) are printed there. If your software prints a 2-D barcode return,
+  confirm the address on the form itself.
+- Publication OR-17 (the full guide) and Publication OR-CODES (the addition/subtraction/credit code list) were not
+  read for this pack; the treaty-conformity conclusion rests on the absence of any treaty add-back in the OR-40
+  booklet. Confirm any niche addition code against Publication OR-17 for a treaty-specific fact pattern.
+- Credits not carried in `credits` (retirement income credit, working family household and dependent care credit,
+  credit for income taxes paid to another state, and all Schedule OR-ASC coded credits) were out of scope for this
+  pack — see Publication OR-17.
+tax:
+  citation:
+    source: '2025 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 01-29-26)
+      — p.16 line 20 tax computation (tax tables if line 19 is less than $50,000; rate-chart formula if $50,000 or more;
+      booklet Examples 1 and 2), p.32 ''2025 Tax rate charts'' (Chart S / Chart J, $50,000-and-over segments: Chart
+      S ''your tax is $4,065 plus 8.75% of excess over $50,000'' / ''$10,627 plus 9.9% of excess over $125,000''; Chart
+      J ''$3,756 plus 8.75% of excess over $50,000'' / ''$21,256 plus 9.9% of excess over $250,000''), p.16 Table 5
+      ''Standard deduction'' ($2,835 single; $5,670 married filing jointly; $2,835 married filing separately if the
+      spouse claims the standard deduction, $0 if the spouse itemizes; $4,560 head of household; $5,670 qualifying surviving
+      spouse) plus the age-65/blind additions, p.14 Table 4 federal tax liability subtraction AGI phaseout ($8,500 /
+      $4,250 for 2025), p.17 line 25 exemption credit worksheet ($256 per exemption CREDIT). Second pass: the FULL four-bracket
+      2025 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,400 / $11,100 / $125,000 for S and $8,800 /
+      $22,200 / $250,000 for J, with printed constants $209 / $661 / $10,627 and $418 / $1,323 / $21,256) as printed
+      in the 2025 Form OR-40-N and OR-40-P Instructions (150-101-048-1, Rev. 12-30-25), p.21 ''2025 Tax rate charts'':
+      https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf — the resident booklet''s
+      $50,000-and-over constants chain exactly onto that schedule (S: $661 + 8.75% x $38,900 = $4,064.75 -> printed
+      $4,065; J: $1,323 + 8.75% x $27,800 = $3,755.50 -> printed $3,756), so both passes agree on every rate, breakpoint
+      and constant.'
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+  brackets:
+    single:
+    - {over: 0, but_not_over: 4400, rate: 0.0475}
+    - {over: 4400, but_not_over: 11100, rate: 0.0675}
+    - {over: 11100, but_not_over: 125000, rate: 0.0875}
+    - {over: 125000, but_not_over: null, rate: 0.099}
+    married_filing_jointly:
+    - {over: 0, but_not_over: 8800, rate: 0.0475}
+    - {over: 8800, but_not_over: 22200, rate: 0.0675}
+    - {over: 22200, but_not_over: 250000, rate: 0.0875}
+    - {over: 250000, but_not_over: null, rate: 0.099}
+    married_filing_separately:
+    - {over: 0, but_not_over: 4400, rate: 0.0475}
+    - {over: 4400, but_not_over: 11100, rate: 0.0675}
+    - {over: 11100, but_not_over: 125000, rate: 0.0875}
+    - {over: 125000, but_not_over: null, rate: 0.099}
+    head_of_household:
+    - {over: 0, but_not_over: 8800, rate: 0.0475}
+    - {over: 8800, but_not_over: 22200, rate: 0.0675}
+    - {over: 22200, but_not_over: 250000, rate: 0.0875}
+    - {over: 250000, but_not_over: null, rate: 0.099}
+  base: federal_agi
+  tax_line: '2025 Form OR-40, line 20 ''Tax (see instructions)''. Instructions p.16: ''Tax tables. Use the tax tables
+    to find your tax if your taxable income on line 19 is less than $50,000.'' and ''Tax rate charts. If your taxable
+    income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing
+    status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status
+    is married filing jointly, head of household, or qualifying surviving spouse.'''
+  exemptions: {}
+  standard_deduction:
+    single: 2835
+    married_filing_jointly: 5670
+    married_filing_separately: 2835
+    head_of_household: 4560
+  notes:
+  - 'Base guidance: supply 2025 Form OR-40, line 15 ''Income after subtractions'' (line 9 income after additions minus
+    line 14 total subtractions). Line 15 already reflects Oregon additions (Schedule OR-ASC) and all subtractions,
+    including the line 10 federal tax liability subtraction (2025 limit $8,500; $4,250 married filing separately;
+    phased down by federal AGI per Table 4 — $0 at AGI of $145,000 or more for single/MFS, and at $290,000 or more
+    for MFJ/head of household/qualifying surviving spouse) and the new 2025 subtractions that mirror the federal tip-income,
+    overtime-wage and passenger vehicle loan interest deductions plus the first-time home buyer savings account (FTHBSA)
+    subtraction. The op subtracts only the Table 5 standard deduction to reach line 19 (Oregon taxable income) and
+    applies the rate schedule to reproduce line 20. Filers who itemize for Oregon (line 16 Schedule OR-A amount larger
+    than the standard deduction) or who claim the age-65-or-older/blind additional standard deduction must compute
+    lines 16-19 on the form instead — the op models only the basic per-status standard deduction.'
+  - 'Adjudication note (two-pass): base is federal_agi — Form OR-40 line 7 is federal adjusted gross income, and the
+    caller supplies the pre-deduction Oregon figure (line 15) so the op can reproduce line 19 by subtracting the standard
+    deduction. Vector exemption counts are zero BY DESIGN: Oregon''s personal/dependent exemptions are the $256-per-exemption
+    CREDIT on line 25 for 2025 (up from $249 in 2024), income-limited, never a base reduction — exemptions ship as
+    {}. Every 2025 boundary was re-indexed upward from 2024 ($4,300 -> $4,400 and $10,750 -> $11,100 on Chart S; $8,600
+    -> $8,800 and $21,500 -> $22,200 on Chart J), while the $125,000 / $250,000 top-bracket thresholds and all four
+    rates (4.75/6.75/8.75/9.9%) are unchanged; verified across the resident booklet''s $50,000+ chart segments and
+    the OR-40-N/OR-40-P full charts.'
+  - 'Tax-table mandate below $50,000: the 2025 OR-40 instructions (line 20, p.16) REQUIRE the tax tables when Oregon
+    taxable income (line 19) is less than $50,000. The table is built from the rounded chart constants at $100-band
+    midpoints, so bracket math may differ by a dollar or two within a band — booklet Example 1: a single filer with
+    taxable income $19,525 uses the $19,500-to-$19,600 row and enters $1,400 on line 20, where exact marginal math
+    on this schedule is $1,398.44 -> $1,398. The filed form must use the table; the rate-chart formula applies only
+    at $50,000 or more.'
+  - 'Rounded printed constants: Chart S''s published constants are the exact cumulative bracket sums rounded DOWN
+    ($209 is exact; $661 vs $661.25 exact; $10,627 vs $10,627.50 exact; the $50,000+ segment prints $4,065, which
+    is both the exact cumulative sum and the value chained from $661), so at and above $125,000 pure marginal bracket
+    math (what this op computes) can be up to $1 HIGHER than the printed chart formula. Chart J''s constants are rounded
+    UP ($418 is exact; $1,323 vs $1,322.50 exact; $21,256 = $1,323 + 8.75% x $227,800 = $21,255.50 rounded, vs $21,255.00
+    exact; the $50,000+ segment prints $3,756 vs $3,755.00 exact), so Chart J formula results run about $1 HIGHER
+    than marginal math — booklet Example 2: married filing jointly with taxable income $75,500 computes $3,756 + 8.75%
+    x $25,500 = $5,987 on the chart, where exact marginal math gives $5,986.25 -> $5,986.'
+  - One schedule covers married filing jointly, head of household, AND qualifying surviving spouse (Chart J / tax-table
+    Column J) — head of household brackets are identical to MFJ, and qualifying surviving spouse maps to married_filing_jointly
+    with no divergence. Single and married filing separately share Chart S / Column S. Oregon registered domestic
+    partners (RDPs) use the married statuses with an 'as if' federal return.
+  - 'Oregon''s personal/dependent exemption is a tax CREDIT, not a base reduction, and is NOT shipped as an exemption:
+    Form OR-40 line 25 ''Exemption credit'' = $256 per exemption for 2025 (taxpayer, spouse, dependents, plus severe-disability
+    and disabled-child exemptions), subtracted from tax after the rate applies; it is $0 when federal AGI exceeds
+    $200,000 ($100,000 if single or married filing separately), and the severe-disability/disabled-child counts drop
+    out above $100,000 for every status. The calc op does not model this credit.'
+  - 'THE 2025 KICKER IS A CREDIT, NOT A RATE OR BASE CHANGE: Oregon''s surplus credit returns on the 2025 return (it
+    is claimed in odd tax years — 44.28% on 2023 returns, none on 2024 returns). For 2025 the kicker is 9.863% of
+    the filer''s 2024 total Oregon personal income tax liability, claimed on Form OR-40 line 32 in the same way as
+    a payment (or donated to the State School Fund). Eligibility requires filing the 2024 return before the 2025 return,
+    having had a 2024 Oregon liability, and filing a 2025 return even with no filing requirement. It never touches
+    this rate schedule or the base — do not adjust brackets or the standard deduction for it.'
+  - 'Standard-deduction gates NOT modeled: married filing separately gets $0 if the other spouse claims itemized deductions
+    (the shipped $2,835 assumes the spouse claims the standard deduction); a non-U.S. citizen without permanent resident
+    status gets $0 (but may itemize); a person claimable as a dependent on another return is limited to the larger
+    of earned income plus $450 or the $1,350 minimum, capped at the basic amount for their status. Compute those cases
+    on the form.'
+  - 'Age 65-or-older/blind additional standard deduction NOT modeled: each applicable checkbox adds $1,200 (single
+    or head of household) or $1,000 (all other filers) to the Table 5 amount — the booklet''s example has a married-filing-jointly
+    couple with one spouse who turned 65 by 1/1/2026 entering $6,670 ($5,670 + $1,000). Enter it on the form; this
+    op applies only the basic per-status amount.'
+  - 'Federal tax liability subtraction is already inside the caller-supplied base (OR-40 line 10 flows into line 15):
+    the 2025 limit is $8,500 ($4,250 married filing separately), phased down by federal AGI per Table 4 (single: $8,500
+    under $125,000, then $6,800 / $5,100 / $3,400 / $1,700 in $5,000 steps to $0 at $145,000 or more; MFS: $4,250
+    under $125,000 stepping to $0 at $145,000 or more; MFJ/head of household/qualifying surviving spouse: $8,500 under
+    $250,000, then $6,800 / $5,100 / $3,400 / $1,700 in $10,000 steps to $0 at $290,000 or more).'
+  - 'Alternative tax computations on line 20 NOT modeled: Schedule OR-FIA-40 (farm income averaging, box 20a), Worksheet
+    FCG in Publication OR-FCG (farm asset capital gain rate, box 20b), and Schedule OR-PTE-FY (Oregon qualified business
+    income reduced tax rate, box 20c — an irrevocable election that must be made on the original return) replace the
+    table/chart math when elected.'
+  - 'Bracket source: the resident OR-40 booklet (p.32) prints Chart S/Chart J only for taxable income of $50,000 or
+    more (the tax tables govern below that). The full four-bracket 2025 Chart S/Chart J, including the $4,400 / $11,100
+    and $8,800 / $22,200 breakpoints shipped here, is printed in the 2025 Form OR-40-N/OR-40-P instructions (150-101-048-1,
+    Rev. 12-30-25) p.21, whose own worked examples corroborate the constants (''Tax on the first $22,200 $1,323 (from
+    the chart)'' for a joint filer with $76,200 of taxable income; ''Tax on the first $11,100 $661'' for a single
+    filer with $41,100).'

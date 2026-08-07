@@ -18,14 +18,41 @@
 #   * The one carried-forward STRUCTURE (not number) is tax_table.row_bands —
 #     see the citation note on that block.
 #
-# RE-VERIFY (two-pass, per DEV_PLAN section 7) when these publish:
-#   1. 2026 Instructions for Form 1040 — standard-deduction charts (confirm the
-#      Rev. Proc. amounts were not superseded mid-year the way OBBBA superseded
-#      the 2025 amounts in Rev. Proc. 2024-40 section 2.15(1)).
-#   2. 2026 Tax Table (Publication 1040) — confirm the row bands and spot-check
-#      published rows against the engine's midpoint computation.
-#   3. Schedule SE (Form 1040) 2026 — confirm line 7 wage base = $184,500.
-# Until 1 and 2 land, this pack must not back a filed return.
+# TWO-PASS VERIFICATION (DEV_PLAN section 7) — pass 2 DONE 2026-08-04 against an
+# independent, already-published 2026 IRS form: Form 1040-ES (2026) (Cat. No.
+# 11340T, dated Feb 12, 2026), https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf
+#   * "2026 Tax Rate Schedules" (Schedules X / Y-1 / Y-2 / Z) — ALL FOUR match the
+#     Rev. Proc. 2025-32 transcription line for line, including the HoH-vs-unmarried
+#     $201,750/$201,775 and $256,200/$256,225 offsets and the MFS $384,350 top.
+#   * "Standard deduction amount increased" chart — $32,200 MFJ/QSS, $24,150 HoH,
+#     $16,100 single or MFS; dependent floor "greater of $1,350, or earned income
+#     plus $450" — matches Rev. Proc. 2025-32 section 4.14 exactly.
+#   * 2026 Self-Employment Tax and Deduction Worksheet line 5 "Social security tax
+#     maximum income $184,500" — matches Pub 15 (2026).
+# So rate_schedules, standard_deduction, and the wage base are two-source verified.
+#
+# WHAT IS STILL OUTSTANDING — exactly ONE item is a blocker:
+#
+#   BLOCKER (1 of 1):
+#     * 2026 Tax Table (Publication 1040) — `tax_table.row_bands` is the ONLY block
+#       in this pack still resting on a carried-forward STRUCTURE. When the booklet
+#       publishes, confirm the row bands and spot-check published rows against the
+#       engine's midpoint computation. Until this lands, the pack must not back a
+#       filed return.
+#
+#   FORMALITY (already two-source corroborated above; re-confirm on publication,
+#   but neither one is holding anything up):
+#     * 2026 Instructions for Form 1040 — standard-deduction charts. Guard against a
+#       mid-year supersession like the one where OBBBA superseded the 2025 amounts in
+#       Rev. Proc. 2024-40 section 2.15(1). Form 1040-ES (2026) already corroborates.
+#     * Schedule SE (Form 1040) 2026 — line 7 wage base = $184,500. Form 1040-ES
+#       (2026)'s SE worksheet line 5 already corroborates.
+#
+# NOTE on `provisional.second_pass.verified_blocks` below: entries are paths
+# relative to the `tax:` mapping. A bare name (`rate_schedules`) is a whole block;
+# a dotted name (`se_tax.ss_wage_base`) is one field inside a block. This differs
+# from `blocks_deliberately_absent`, which is bare names only — anyone walking
+# verified_blocks with a plain getattr must split on "." first.
 
 jurisdiction: federal
 tax_year: 2026
@@ -33,6 +60,13 @@ tax_year: 2026
 provisional:
   status: planning_only
   authored: "2026-08-04"
+  second_pass:
+    date: "2026-08-04"
+    source: "Form 1040-ES (2026), Cat. No. 11340T (Feb 12, 2026) — 2026 Tax Rate Schedules + standard-deduction chart + SE worksheet line 5"
+    url: "https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf"
+    verified_blocks: [rate_schedules, standard_deduction, se_tax.ss_wage_base, employee_social_security.ss_wage_base]
+    result: "all figures matched the Rev. Proc. 2025-32 / Pub 15 (2026) transcription exactly; zero discrepancies"
+  still_assumed: "tax_table.row_bands (2026 Publication 1040 not yet published)"
   reason: >-
     The 2026 forms, instructions, and Tax Table booklet are not published yet;
     only the inflation-adjustment revenue procedure and Circular E are. Numbers
@@ -76,7 +110,11 @@ tax:
   # $250,500 vs $250,525).
   rate_schedules:
     citation:
-      source: "Rev. Proc. 2025-32, Section 4.01 (2026 tax rate tables), Tables 1-4"
+      source: >-
+        Rev. Proc. 2025-32, Section 4.01 (2026 tax rate tables), Tables 1-4;
+        independently verified line-for-line against the "2026 Tax Rate Schedules"
+        (Schedules X, Y-1, Y-2, Z) in Form 1040-ES (2026), Cat. No. 11340T
+        (https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf) — zero discrepancies
       url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
     schedules:
       single:
@@ -171,7 +209,11 @@ tax:
   # the engine, not in this block.
   standard_deduction:
     citation:
-      source: "Rev. Proc. 2025-32, Section 4.14(1) (Standard Deduction, 2026) and Section 4.14(3) (aged or blind)"
+      source: >-
+        Rev. Proc. 2025-32, Section 4.14(1) (Standard Deduction, 2026) and Section 4.14(3)
+        (aged or blind); the base amounts independently verified against the "Standard
+        deduction amount increased" chart in Form 1040-ES (2026), Cat. No. 11340T
+        (https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf) — $32,200 / $24,150 / $16,100
       url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
     amounts:
       single: 16100
@@ -194,7 +236,9 @@ tax:
       source: >-
         Pub 15 (2026), Circular E, "Tax rates and the social security wage base
         limit" — social security wage base limit $184,500 for 2026; rates and
-        the 92.35% factor statutory under IRC sections 1401/1402(a)(12)
+        the 92.35% factor statutory under IRC sections 1401/1402(a)(12).
+        Corroborated by Form 1040-ES (2026) "2026 Self-Employment Tax and Deduction
+        Worksheet" line 5 ("Social security tax maximum income $184,500")
       url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
     net_earnings_factor: 0.9235
     ss_rate: 0.124
@@ -211,7 +255,8 @@ tax:
     citation:
       source: >-
         Pub 15 (2026), Circular E — employee social security rate 6.2% (IRC
-        3101(a)) and the $184,500 social security wage base limit for 2026;
+        3101(a)) and the $184,500 social security wage base limit for 2026
+        (same base confirmed by Form 1040-ES (2026) SE worksheet line 5);
         maximum withholding 184,500 x 6.2% = $11,439.00
       url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
     rate: 0.062
