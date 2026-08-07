@@ -39,9 +39,15 @@ state_scope → positions (workspace_record_position) → fill_form →
 verify_form/verify_filing (↺) → render_form → filing_summary (approve) →
 file_and_pay.
 
-State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`:
-34 states + DC ship fillable packs (Hawaii via `hand_fill_worksheet`), and
-`state_scope` tells you which returns are required.
+State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
+All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
+38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)
+via `hand_fill_worksheet`; `state_scope` tells you which returns are required.
+`calc("state_tax", …)` covers **every** jurisdiction for 2023/2024 and 41 for
+2025 (RI pending) — flat or graduated is the PACK's call, and the split moves by
+year, so never assume and never do state tax arithmetic yourself. Note the year
+mismatch: state KNOWLEDGE spans 2023-2025 but state FORM packs are **2023 only**,
+so a 2024/2025 state return computes but cannot be filled.
 
 ## Tools
 

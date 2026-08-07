@@ -294,15 +294,24 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       + citation; final eligibility (visa period, purpose, saving clause) stays YOUR judgment —
       record the position with the returned citation)
     - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
-      (the flat-rate STATE income-tax line for the 2023 flat-rate states — il, pa, in, mi, nc, co, ky,
-      az. taxable_base is the STATE's OWN base, already adjusted for the state's additions/subtractions:
-      IL = IL-1040 Line 9 base income (fed AGI ± IL mods); CO = fed TAXABLE income ± CO mods (DR 0104
-      Line 10); PA = the eight-class PA-source income (PA-40 Line 11 — no exemptions, no deduction, a
-      loss in one class never offsets another); the fed-AGI states = their form's state-AGI line. The op
-      subtracts only the pack's verified personal/dependent exemptions x your counts and the state's
-      standard deduction (NC/KY/AZ) — age-65/blind and other exemption kinds are disclosed, not applied;
-      county/city add-on taxes (IN counties, MI cities) and state credits are NOT modeled. Unknown state
-      or a state without the block errors, listing the supported states)
+      (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
+      2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
+      multiply, graduated states apply the per-filing-status marginal schedule bracket by bracket and
+      the work string shows each bracket's contribution. Do NOT assume which shape a state is and do
+      NOT carry a roster forward — the split moves by year (GA converted to flat for 2024; IA and LA
+      for 2025). taxable_base is the STATE's OWN base, already adjusted for the state's
+      additions/subtractions: IL = IL-1040 Line 9 base income (fed AGI ± IL mods); CO = fed TAXABLE
+      income ± CO mods (DR 0104 Line 10); PA = the eight-class PA-source income (PA-40 Line 11 — no
+      exemptions, no deduction, a loss in one class never offsets another); the fed-AGI states = their
+      form's state-AGI line, named in each pack's tax_line/notes. The op subtracts only the pack's
+      verified personal/dependent exemptions x your counts and the state's standard deduction where the
+      state ships one — age-65/blind and other exemption kinds are disclosed, not applied, and the
+      credit-exemption states (ca, or, ne, ar) REFUSE counts because their per-person amounts are
+      credits, not exemptions. County/city add-on taxes (IN counties, MI cities, MD counties, OH school
+      districts) and state credits are NOT modeled. Out-of-schedule surcharges and recaptures are
+      disclosed in the work string, not computed — CA's 1% Mental Health Services Tax over $1M and NY's
+      recapture worksheets above $107,650 NY AGI are cases where plain bracket math is WRONG. Unknown
+      state or a state without the block errors, listing the supported states)
     """
     if op == "tax":
         return _dump(_tax(**args))
@@ -525,7 +534,9 @@ def file_and_pay(manifest: list[dict]) -> dict:
 
 @mcp.tool()
 def hand_fill_worksheet(form: str, year: int, jurisdiction: str, values: dict[str, Any] | None = None) -> dict:
-    """Print-only state forms (no fillable AcroForm fields — e.g. HI N-11): compute a
+    """Print-only state forms (no fillable AcroForm fields) — the four such jurisdictions are
+    CT (ct1040), HI (n11), NM (pit1) and SC (sc1040). These packs are NOT returned by
+    list_forms, so an empty list_forms for those states is expected, not an error: compute a
     line->value worksheet to hand-write onto the printed blank. `values` maps line ids to
     entered amounts/text/checkbox; lines with a compute expression are derived from earlier
     lines. Returns the ordered worksheet (line, label, value, source) + the print_url of the
