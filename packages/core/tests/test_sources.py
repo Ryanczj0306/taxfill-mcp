@@ -138,3 +138,42 @@ def test_result_is_serializable():
     res = get_sources("filing_basics", 2023)
     assert isinstance(res, SourcesResult)
     SourcesResult.model_validate_json(res.model_dump_json())  # round-trips
+
+
+# ── OBBBA / Schedule 1-A routing (Stage 0 correctness fix, 2026-08-07) ────────
+# The tax.obbba_schedule_1a block shipped in the 2025 pack while this registry
+# had no topic for it, so every query about the new deductions mis-routed to an
+# unrelated publication: "qualified overtime" -> itemized_charitable (Pub 526),
+# "car loan interest deduction" -> education (Pub 970), "no tax on tips" ->
+# dual_status (Pub 519), "Schedule 1-A" -> investment_income (Pub 550). An
+# agent following those pointers researches the WRONG law — worse than a miss.
+
+
+def test_obbba_schedule_1a_queries_route_to_their_own_topic():
+    for query in (
+        "qualified overtime",
+        "overtime deduction",
+        "car loan interest deduction",
+        "tips deduction",
+        "no tax on tips",
+        "senior deduction",
+        "Schedule 1-A",
+    ):
+        r = get_sources(query, 2025)
+        assert r.matched, query
+        topics = {s.topic for s in r.sources}
+        assert topics == {"obbba_schedule_1a_deductions"}, f"{query!r} routed to {topics}"
+
+
+def test_obbba_topic_does_not_steal_the_neighbouring_topics_queries():
+    # The words this topic adds (deduction, interest, tips...) overlap several
+    # older topics; their canonical queries must keep resolving to themselves.
+    for query, expected in (
+        ("charitable contributions", "itemized_charitable"),
+        ("student loan interest", "education"),
+        ("dual status", "dual_status"),
+        ("capital gains", "investment_income"),
+        ("standard deduction", "standard_deduction"),
+    ):
+        r = get_sources(query, 2025)
+        assert r.matched and {s.topic for s in r.sources} == {expected}, query
