@@ -6,10 +6,10 @@
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 2,178 passing](https://img.shields.io/badge/tests-2%2C297%20passing-brightgreen)
+![Tests: 2,816 passing](https://img.shields.io/badge/tests-2%2C816%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 2,297 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 2,816 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -228,12 +228,12 @@ Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
 
 - [x] **M0 — Scaffold:** monorepo, pack & profile schemas, CI, license + disclaimer, CONTRIBUTING
 - [x] **M1 — Core engine:** formpack loader, filler, verifier, render, calc (data-driven tax tables, source-verified), residency (SPT + exempt years)
-- [x] **M2 — Federal packs:** f8843 (2019–2024), f1040-NR + schedules (2022–2023), f1040 + schedules (2023–2024) — field-map + relation audits clean
-- [x] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge **2019–2024** (irs.gov-cited), sources registry, filing summary, file & pay
+- [x] **M2 — Federal packs:** **57 packs** — f8843 (2019–2025), f1040-NR + schedules (2022–2023, 2025), f1040 + schedules (2023–2025, incl. the OBBBA TY2025 set with the new Schedule 1-A) — field-map + relation audits clean. Known year holes: **no f1040-NR chain for 2024**, and the common attachments (Schedule D/E/SE, 8812, 8962, 2441, 8863, 8959, 8960) are **2023-only**
+- [x] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge **2019–2026** (irs.gov-cited; 2026 ships `provisional: planning_only` — projection math only, not for filing), sources registry, filing summary, file & pay
 - [x] **M4 — MCP server:** stdio server, 22 tools, image content for renders, client quickstarts
-- [x] **M5 — State support:** fillable form packs for **34 states + DC** (39 AcroForm packs — CA 540/540NR + Schedule CA, NY IT-201/IT-203, and 32 more) plus HI via print/hand-fill; all-50-state + DC knowledge packs with cited credits; no-income-tax states; state scoping
+- [x] **M5 — State support:** resident return packs for all **42 income-tax jurisdictions** (41 states + DC) — 38 via fillable AcroForm (**42 packs**: CA 540/540NR + both Schedule CAs, NY IT-201/IT-203, and 34 more) plus **4 via print/hand-fill** (CT, HI, NM, SC). Knowledge packs for all 50 states + DC with cited credits and typed `tax` blocks: **2023 42/42, 2024 42/42, 2025 41/42** (RI pending). No-income-tax states; state scoping. **State form packs are TY2023 only** — 2024/2025 state returns can be *computed* but not yet *filled*
 - [~] **M6 — Skill + README + launch:** ✅ agent skills with cookbook, ✅ eval harness, ✅ this README, ✅ self-contained packaging + drift CI; remaining: `.mcpb` bundle, demo GIF, PyPI publish
-- [~] **M7 — Scale-out:** ✅ pack-authoring CLI (`taxfill introspect`), ✅ document extraction (`extract_document`), ✅ persistent workspace + `taxfill purge`, ✅ Schedule SE/D/E + Form 8863/2555 via the introspect pipeline, ✅ extensions (Form 4868), ✅ estimated-tax vouchers (Form 1040-ES), ✅ amended returns (Form 1040-X), ✅ ITIN application (Form W-7); remaining: the hard-to-source states (CT/IA/MA/NM/SC/UT), nonresident/part-year forms beyond CA & NY, and more tax years for state packs
+- [~] **M7 — Scale-out:** ✅ pack-authoring CLI (`taxfill introspect`), ✅ document extraction (`extract_document`), ✅ persistent workspace + `taxfill purge`, ✅ Schedule SE/D/E + Form 8863/2555 via the introspect pipeline, ✅ extensions (Form 4868), ✅ estimated-tax vouchers (Form 1040-ES), ✅ amended returns (Form 1040-X), ✅ ITIN application (Form W-7), ✅ the hard-to-source states (CT/IA/MA/NM/SC/UT — all shipped 2026-07-24); remaining: nonresident/part-year forms beyond CA & NY, more tax years for **state form** packs (knowledge already spans 2023–2025), and the federal year holes listed under M2
 
 ---
 

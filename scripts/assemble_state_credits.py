@@ -3,12 +3,17 @@
 
 Reads the state-credits-fetch workflow output (a {result:[...]} JSON) and adds a
 `credits` block (+ a `credits_verification` caveat) to knowledge/states/<st>/
-2023.yaml, mirroring the CA pack's shape. Honest provenance: every credit keeps
+<YEAR>.yaml, mirroring the CA pack's shape. Honest provenance: every credit keeps
 its DOR citation; any figure the research could not independently confirm is kept
 with `unverified: true` and named in the caveat. Validates each pack against
 StateKnowledge before writing.
 
-Usage: python scripts/assemble_state_credits.py /tmp/credits_raw.json
+Usage: python scripts/assemble_state_credits.py /tmp/credits_raw.json [YEAR]
+
+YEAR defaults to 2023 (the cohort this script was written for). It drives both
+the target pack file and the `income_limit_<YEAR>` key, which MUST agree with
+the pack's tax_year — four packs shipped with a stale `income_limit_2023` key
+because that suffix used to be a hardcoded literal (fixed 2026-08-07).
 """
 from __future__ import annotations
 
@@ -22,6 +27,8 @@ import yaml
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
 from taxfill_core.knowledge import StateKnowledge, load_state_knowledge  # noqa: E402
+
+YEAR = int(sys.argv[2]) if len(sys.argv) > 2 else 2023
 
 NAME_TO_CODE = {
     "indiana": "in", "new mexico": "nm", "oklahoma": "ok", "vermont": "vt",
@@ -53,7 +60,7 @@ def _build_credits(entry: dict) -> tuple[list[dict], str]:
         if c.get("amount"):
             item["amount"] = c["amount"]
         if c.get("income_limit"):
-            item["income_limit_2023"] = c["income_limit"]
+            item[f"income_limit_{YEAR}"] = c["income_limit"]
         if c.get("claimed_on"):
             item["claimed_on"] = c["claimed_on"]
         item["citation"] = {
@@ -80,7 +87,7 @@ def main() -> int:
     wrote, failed, total_credits = [], [], 0
     for entry in data:
         code = _code(entry["state"])
-        path = REPO / "knowledge" / "states" / code / "2023.yaml"
+        path = REPO / "knowledge" / "states" / code / f"{YEAR}.yaml"
         if not path.exists():
             failed.append((code, "pack file not found"))
             continue
@@ -119,7 +126,7 @@ def main() -> int:
     # smoke: reload a couple and confirm benefits surface
     for code in ("ar", "ny", "co"):
         if code in wrote:
-            sk = load_state_knowledge(code, 2023, base_dir=REPO / "knowledge")
+            sk = load_state_knowledge(code, YEAR, base_dir=REPO / "knowledge")
             print(f"  {code}: {len(getattr(sk, 'credits', []) or [])} credits load OK")
     return 1 if failed else 0
 
