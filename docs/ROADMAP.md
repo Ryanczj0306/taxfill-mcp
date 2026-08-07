@@ -370,7 +370,18 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       recommendation, dollar delta, and joint-liability caveat), **(m)** NRA-spouse
       §6013(g) election (MFJ dropped → MFS, election + worldwide-income trade-off
       surfaced in both estimate and intake, authority via `get_sources`).
-- [x] Wire the true test count into a CI badge / README line — DONE (2026-07-01): live CI-status badge + a tests badge kept in sync with the verified count.
+- [x] Wire the true test count into a CI badge / README line — DONE (2026-07-01):
+      live CI-status badge + a tests badge kept in sync with the verified count.
+      **Re-done properly 2026-08-07:** the 2026-07-01 version was a *human* promise
+      to keep the number in sync, and it broke four times — most visibly when the
+      badge's alt text (2,178) came to disagree with its own shields.io URL (2,297)
+      while the real figure was 2,824. The suites are glob-parametrized over the
+      knowledge/formpack YAMLs, so the count moves whenever a pack lands and no
+      amount of discipline holds it. Now derived, never typed:
+      `scripts/sync_test_count.py` computes the counts from
+      `pytest --collect-only` and either rewrites all four quoted sites
+      (`--write`) or fails with an exact instruction (`--check`), and the
+      **`test-count` CI job** runs `--check` on every push.
 
 **Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
 
