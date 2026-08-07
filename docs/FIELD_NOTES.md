@@ -9,14 +9,22 @@ honest fix. Roadmap items derived from these live in [`ROADMAP.md`](ROADMAP.md).
 
 ## Planning-surface gap catalogue (N-1 to N-15) — multi-period visa timelines, multi-taxpayer households, planning-year budgets
 
+> **Privacy note.** This entry uses a hypothetical demo case. Example amounts are
+> illustrative demo numbers;
+> the engineering finding stands on its own, alongside the **statutory** figures
+> illustrative demo numbers; statutory figures (limits, brackets, phase-out thresholds) are
+(text revised)
+> public tax law. Keep it that way when adding entries: field notes record what the product
+> got wrong, and none of that needs a real person's facts.
+
 **Situation.** A hypothetical demo case: a **forward-looking 2026 tax budget** (not a filing) for a
 household with more than one taxpayer, in which one member's visa status changes during
-the year. Every amount here is an illustrative demo number
-(see the privacy note at the head of this entry).
+the year.
 
 **What goes wrong (before any tool is called).** An agent that opens with a three-option
-multiple-choice question — tax year / "status" / state — with coarse buckets (an "F-1 / J-1 student or
-scholar" status bucket; a state bucket of two named states, "no-income-tax state" and "moved mid-year") gets answers too coarse to use,
+(text revised)
+buckets — one "status" word (an "F-1 / J-1 student or scholar" bucket), one "state" word
+states, "no-income-tax state", and "moved mid-year") gets answers too coarse to use,
 because every one of those facts is multi-period. Note the failure is **not** an engine limitation:
 `VisaPeriod` (`packages/core/src/taxfill_core/schemas/profile.py:104`) is already a
 `{status, start, end}` *period list*, and `StateFootprintYear`
@@ -84,7 +92,8 @@ Why it matters even though they file separately:
 Intake asks it once (`…/intake.py:661`): *"For the tax year, where did you LIVE and where
 did you WORK, with date ranges?"* — with a one-sentence disambiguation. For someone who has
 never filed, that question does not surface the things that actually create a second state
-return. The usual complaint — that the state question cannot be answered in one line — is about this.
+return. The usual complaint — that the state question is impossible to answer in one
+(text revised)
 
 **Fix shape:** replace the single question with a **segment loop** (one row per date range:
 lived-state / worked-state / remote / employer state) plus an explicit trigger checklist the
@@ -203,29 +212,31 @@ is exactly what does **not** happen: such a drive rediscovers a large pile of ci
 - **N-11 — no Roth-vs-pre-tax modeling, and no excess-contribution detection.** Two separate
   findings, both worth real money: (a) a filer's Roth 401(k) share changes AGI, which cascades
   into six different phase-outs — the tool has no way to represent "of my elective deferral,
-  this portion is Roth and the rest pre-tax"; (b) a direct **Roth IRA contribution made while ineligible** (by a
-  filer whose MAGI sits above the $153,000–$168,000 phase-out) — a 6%-per-year excise-tax error that a
-  tool holding both the profile and the limits should flag automatically, and which flips to
-  *compliant* on a year-end joint return, because IRA eligibility is tested at year end.
+  this portion is Roth and the rest is pre-tax"; (b) a direct **Roth IRA
+  contribution made while ineligible** — by a filer whose MAGI sits above the
+  is a 6%-per-year excise-tax error.
+  corrected. A tool holding both the profile and the limits should flag that
+  (text revised)
 - **N-12 — supplemental-wage withholding.** A bonus is withheld at the flat 22%
-  (Pub 15 (2026)) while a filer in the 32% bracket owes more than that on it — an April shortfall
-  that no current surface would predict. Belongs with H4's withholding work.
+  (Pub 15 (2026)) while a filer in the 32% bracket owes more than that on it — a predictable
+  April shortfall that no current surface would forecast. Belongs with H4's withholding work.
 - **N-13 — MAGI needs to be a first-class object.** A planning question can touch at least six MAGI
   at least six MAGI tests with different thresholds (NIIT $200k/$250k, 8959's wage test,
   Roth IRA $153–168k/$242–252k, deductible-IRA $81k/$129k, Schedule 1-A $100k/$150k/$300k,
-  $85k/$175k). A common UX question is why MAGI comes out below the
-  headline salary: the answer is a **ladder** (gross → box 1 → AGI → each
-  test's MAGI), and the tool should render it, because every planning lever works by moving
-  a number up or down that ladder.
-- **N-14 — naming misleads, and the tool should push back.** Two labels invite a wrong
-  conclusion straight from a label: *"married ⇒ the NRA spouse loses the interest exclusion"* (no —
-  the **§6013(g) election** does, not the marriage) and *"no tax on overtime ⇒ overtime is
-  untaxed"* (no — only the **premium half** is deductible, and it is a **below-AGI**
-  deduction, so the overtime still raises every MAGI test above). Both are places where the
-  product should state the distinction unprompted rather than answer the question as asked.
-- **N-15 — planning is iterative; one-shot answers are the wrong shape.** A filer can revise
-  facts mid-conversation (a residency day-count, for example, an income figure, or the
-  deferral split), and each revision requires a full
-  re-computation of all three scenarios. H7's comparison surface must therefore be a
+  $85k/$175k). A common UX question is why MAGI comes out *below* the
+  salary: the answer is a **ladder** (gross → box 1 → AGI → each test's MAGI), and
+  the tool should render it, because every planning lever works by moving a number up or
+  down that ladder.
+- **N-14 — naming misleads, and the tool should push back.** Two labels invite a
+  (text revised)
+  (text revised)
+  (text revised)
+  (text revised)
+  (text revised)
+  (text revised)
+- **N-15 — planning is iterative; one-shot answers are the wrong shape.** Input facts
+  can be revised mid-conversation (a residency day-count, for example, an income figure, or
+  a deferral split), and each revision requires
+  (text revised)
   (text revised)
   (text revised)
