@@ -78,6 +78,7 @@ Why it matters even though they file separately:
 (b) the anti-dependent guard, (c) a household-level budget roll-up across two profiles, and
 (d) a "if you marry in <year>" planning branch.
 
+
 ### N-3 — State footprint is one open-ended question
 
 Intake asks it once (`…/intake.py:661`): *"For the tax year, where did you LIVE and where
@@ -103,7 +104,18 @@ knowledge/federal/2026.yaml … follow the freshness protocol (DEV_PLAN §7)
 
 `list_forms {"year": 2026}` → `[]`. Both are the designed behavior, but they mean the
 product cannot answer *"what will I owe / what should I set aside"* — which is what a user
-asks **during** the year, i.e. the highest-frequency question there is. Beyond the missing
+asks **during** the year, i.e. the highest-frequency question there is.
+
+> **Update 2026-08-07 — this premise no longer holds.** `knowledge/federal/2026.yaml`
+> shipped as a `provisional: planning_only` pack (H5 first tranche), so **8 of the 17
+> `calc` ops now succeed for TY2026** (tax, standard_deduction, the preferential-rate
+> path, se_tax, the two surtaxes, …); the 9 that still fail closed are the ones whose
+> 2026 authority is unpublished (ptc, taxable_social_security, student_loan_interest,
+> education_credits, dependent_care, and the M3 logistics blocks). `list_forms {"year":
+> 2026}` is still `[]`. The gap this note describes has therefore **moved**: the problem
+> is no longer that 2026 fails closed, it is that (a) `estimate_refund` will happily
+> return a confident-looking `ESTIMATE` for 2026 — exactly what H4 exists to prevent —
+> and (b) nothing stops a provisional pack from backing a filed return. Beyond the missing
 year pack, budgeting needs ops that do not exist:
 
 - **employee FICA by status period** (7.65% on/off at a status boundary, SS wage base cap);
@@ -122,3 +134,98 @@ opening rules are *"don't guess, write 不知道"*, *"every identity/address fac
 range, not a word"*, and *"one worksheet per person; unmarried ⇒ two taxpayers"*. It should
 become a first-class, localized, canonical-in-English product surface, ideally emitted by
 `intake_checklist` itself rather than living only as a doc.
+
+**Follow-up (same session, after the real numbers came in).** The household asked for a
+marry-vs-stay-single comparison. Running it exposed four more gaps, all of which had to be
+computed OUTSIDE the engine in a scratch script — every one of them changed the answer by
+hundreds to thousands of dollars:
+
+- **N-6 — Schedule 1-A (OBBBA) is not modeled at all.** The 2026 return carries four new
+  deductions (tips / overtime / car-loan interest / senior) on a new schedule that
+  *explicitly attaches to Form 1040-NR too* (line 38 → "Form 1040-NR, line 13c"), plus the
+  new §170(p) non-itemizer charitable deduction and the new 0.5%-AGI floor for itemized
+  charity. Two of their marry-vs-single deltas came entirely from this: the overtime
+  deduction is **forfeited by anyone married who does not file jointly** ("If married, you
+  must file jointly to claim this deduction" — Part III caution), and the car-loan interest
+  deduction phases out at a MAGI the household crosses only *after* marrying. Needed: a
+  `sched_1a` knowledge block (caps, thresholds, the $100-per-$1,000-rounded-down vs
+  $200-per-$1,000-rounded-**up** asymmetry between Parts III and IV) and a calc op.
+- **N-7 — no employee-FICA-by-status-period op** (already scoped as H4), and the related
+  trap: the F/J student FICA exemption is **status-based, not marital**, so a §6013(g)
+  election does not start FICA on an OPT spouse's wages — but nothing in the engine states
+  that, and on a two-earner NRA household it is a four-figure annual question.
+- **N-8 — the NRA bank-deposit-interest exclusion (§871(i)(2)(A)) is not modeled.** The
+  bank sends a 1099-INT; on a 1040-NR that interest is exempt, and it becomes taxable the
+  moment a §6013(g) election makes the payee a resident. `extract_document` happily structures
+  the 1099-INT with no note that the payee's status decides whether it is income at all.
+- **N-9 — there is no "compare filing scenarios" surface.** The whole deliverable was a
+  three-way comparison (unmarried / married-MFS / married-with-§6013(g)-election). The
+  engine has every primitive and no way to say "run these three and diff them"; the
+  estimator answers one scenario at a time. This is the shape a *planning* question always
+  takes.
+
+### The coverage verdict (the most useful thing this session produced)
+
+Of the **22 MCP tools**, the session used **four** — `intake_checklist`, `state_scope`,
+`get_sources`, and `calc` — and within `calc`, **five of its 17 ops** (`standard_deduction`,
+`tax_with_preferential_rates`, `additional_medicare_tax`, `niit`, plus `treaty_benefit`).
+Every number that actually **decided the user's answer** was produced outside the engine, in
+a throwaway scratch script over hand-verified irs.gov figures:
+
+| What decided the answer | Where it came from |
+|---|---|
+| Schedule 1-A phase-outs (overtime, car-loan interest) | hand-coded from the form PDF |
+| The three-scenario diff and its per-line attribution | scratch script |
+| Employee FICA, and the F/J exemption surviving §6013(g) | hand reasoning + Pub 519 |
+| NRA bank-deposit-interest exclusion | Pub 519 ch. 3, hand-applied |
+| 401(k)/HSA/IRA/FSA/commuter limits and their scoping | Notice 2025-67, Rev. Proc. 2025-19/-32 |
+| §6654 safe harbor (110% rule) | Form 1040-ES (2026), hand-read |
+| Excess Roth IRA contribution detection | noticed by the agent, not the tool |
+
+The engine's job — "stop agents rediscovering versioned knowledge every session" (README) —
+is exactly what did **not** happen: this session rediscovered a large pile of citable 2026
+data that should have been shipped as pack data. That is the gap to close, and it is a
+data/knowledge gap far more than an engine gap.
+
+### Later-session gaps (same 2026-08-04 session, after the numbers landed)
+
+- **N-10 — no knowledge of tax-advantaged account limits, and none of their SCOPING.** The
+  user's actual question was *"is the 401(k) limit one per person?"* — and the interesting
+  answer is that the four limits are scoped four different ways: §402(g) $24,500 is **per
+  person across all employers** (and traditional + Roth share it), §415(c) $72,000 is **per
+  employer plan** (which is what makes a mega-backdoor possible), the HSA limit is **per
+  coverage tier** (so two unmarried people with self-only HDHPs get $4,400 × 2 = $8,800,
+  *more* than the $8,750 family limit), and §125(i) $3,400 is **per employee per employer**.
+  None of this is in the repo. Needed: a `contribution_limits` knowledge block, and a
+  ranking op — "what does one marginal dollar save in each bucket" — which must know that
+  a payroll HSA/FSA/commuter dollar also saves FICA while a 401(k) dollar does not, and that
+  above the SS wage base the FICA saving is only 1.45% + 0.9%, not 7.65%.
+- **N-11 — no Roth-vs-pre-tax modeling, and no excess-contribution detection.** Two separate
+  findings, both worth real money: (a) a filer's Roth 401(k) share changes AGI, which cascades
+  into six different phase-outs — the tool has no way to represent "of my elective deferral,
+  this portion is Roth and the rest pre-tax"; (b) the session surfaced a live **Roth IRA contribution made while ineligible** (a single
+  filer whose MAGI sat above the $153,000–$168,000 phase-out) — a 6%-per-year excise-tax error that a
+  tool holding both the profile and the limits should flag automatically, and which flips to
+  *compliant* if they marry and file jointly, because IRA eligibility is tested at year end.
+- **N-12 — supplemental-wage withholding.** A bonus is withheld at the flat 22%
+  (Pub 15 (2026)) while a filer in the 32% bracket owes more than that on it — an April shortfall
+  that no current surface would predict. Belongs with H4's withholding work.
+- **N-13 — MAGI needs to be a first-class object.** This session used at least six MAGI
+  tests with different thresholds (NIIT $200k/$250k, 8959's wage test, Roth IRA
+  $153–168k/$242–252k, deductible-IRA $81k/$129k, Schedule 1-A $100k/$150k/$300k, §221
+  $85k/$175k). The UX signal was the filer asking why their MAGI came out below their
+  headline salary: the answer is a **ladder** (gross → box 1 → AGI → each
+  test's MAGI), and the tool should render it, because every planning lever works by moving
+  a number up or down that ladder.
+- **N-14 — naming misleads, and the tool should push back.** The user twice reached a wrong
+  conclusion straight from a label: *"married ⇒ she loses the NRA interest exclusion"* (no —
+  the **§6013(g) election** does, not the marriage) and *"no tax on overtime ⇒ overtime is
+  untaxed"* (no — only the **premium half** is deductible, and it is a **below-AGI**
+  deduction, so the overtime still raises every MAGI test above). Both are places where the
+  product should state the distinction unprompted rather than answer the question as asked.
+- **N-15 — planning is iterative; one-shot answers are the wrong shape.** The user revised
+  four facts mid-session (a residency day-count, which household member a debt belonged to, the
+  Roth/traditional 401(k) split, a newly-disclosed bonus), and each revision required a full
+  re-computation of all three scenarios. H7's comparison surface must therefore be a
+  **persisted, re-runnable model** over the workspace profile, not a single call — "change
+  this one fact and re-diff" is the actual interaction.

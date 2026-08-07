@@ -20,7 +20,8 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,297 tests, all green** — offline 2,192 + live-.gov 105, exit 0):
+Done and on `main` (**2,816 tests, all green** — offline 2,711 + live-.gov 105, exit 0;
+re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (22 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -36,7 +37,8 @@ Done and on `main` (**2,297 tests, all green** — offline 2,192 + live-.gov 105
   provenance — K-1 is the one common document still unsupported) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
-- **Federal form packs — priority set DONE.** 35 packs across 2019–2024. M2 base
+- **Federal form packs — priority set DONE.** **57 packs across 2019–2025**
+  (2019:1, 2020:1, 2021:1, 2022:5, 2023:28, 2024:8, 2025:13). M2 base
   set + Schedule SE/D/E + Form 8863 + Form 2555 all ship (2023), audited, golden;
   + **all four Phase-D new form types** — **Form 4868** (extension), **Form 1040-ES**
   (estimated-tax vouchers), **Form 1040-X** (amended return, Rev. 2-2024), and
@@ -52,12 +54,18 @@ Done and on `main` (**2,297 tests, all green** — offline 2,192 + live-.gov 105
 **Form packs that can be FILLED today (introspect→vision-map→adversarial-audit→
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
-8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316. state — **35 states** (39 packs): CA (540 + 540NR +
+8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316. state — **all 42 income-tax
+jurisdictions**: **38 via fillable AcroForm (42 packs)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
-AR (AR1000F), ID (40), NE (1040N), OK (511), **ME (1040ME), MS (80-105),
+AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
-**WV (IT-140)**. **83 form packs total** (44 federal + 39 state).
+WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
+manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
+**103 form packs total** — 99 `pack.yaml` (57 federal + 42 state) + 4 `handfill.yaml`.
+> ⚠️ Every **state** form pack is **TY2023 only**. State *knowledge* now spans
+> 2023–2025, so `calc.state_tax` computes years that no pack can fill — the single
+> largest coverage asymmetry in the repo (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
 > (Phase 0, 2026-06-28) and counted above.
@@ -279,7 +287,24 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
 
 ### D2 — Breadth follow-ons
 
-- [ ] More tax years for the state packs (states ship 2023 only; federal now spans 2019–2025 — the TY2025 OBBBA set (13 packs incl. the new Schedule 1-A) + knowledge/federal/2025.yaml (two-pass verified: OBBBA tips/overtime/car-loan/senior deductions, $2,200 CTC, SALT cap, consolidated 2025 where-to-file) shipped 2026-07-25).
+- [~] More tax years for the state packs — **KNOWLEDGE DONE, FORM PACKS NOT STARTED.**
+      State *knowledge* now spans three years: 2023 42/42, 2024 42/42, 2025 41/42
+      (**RI 2025 is the only hole**), every pack carrying the same 18 blocks incl. a
+      typed `tax` block, auto-enrolled into the suite by the glob at
+      `test_state_knowledge.py:26`. State *form* packs remain **TY2023 only** — so a
+      2024/2025 state return computes but cannot be filled. Federal spans 2019–2025
+      for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs incl. the
+      new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25; the
+      provisional 2026 planning pack shipped 2026-08-04).
+      **Remaining:** (a) RI 2025; (b) a 2024→2025 **state form pack** tranche — 46
+      packs/year, and the pipeline is NOT ready to make it cheap: `fetch_blank` takes
+      a literal URL+digest, only 34 of 46 state URLs carry a substitutable year token,
+      MA needs a Wayback cache-seed every year, and there is no generic assembler;
+      (c) `assemble_state_knowledge.py` is still 2023-hardcoded and reads `/tmp/*.json`
+      inputs that no longer exist, so the 2024/2025 cohorts are **not reproducible from
+      the repo** (`assemble_state_credits.py` gained a `[YEAR]` argument 2026-08-07);
+      (d) DEV_PLAN §7.2 `effective_law_changes` blocks — **0 of 125** state packs and
+      **0 of 8** federal packs carry one.
 - [ ] Community pack-contribution pipeline (the `taxfill introspect` CLI is the
       seed; document the author→audit→PR flow).
 
@@ -449,21 +474,88 @@ scenario exercises the persona that motivated it.
       `PriorFilings` to gain prior-year AGI + total tax
       (`schemas/profile.py:338` currently holds only `filed_years` /
       `late_filing_context`).
-- [ ] **H5 — Current-year knowledge packs (prerequisite for H4).**
+- [~] **H5 — first tranche DONE 2026-08-04:** `knowledge/federal/2026.yaml` ships
+      as a `provisional: planning_only` pack — rate schedules (Rev. Proc. 2025-32
+      §4.01), standard deduction (§4.14), capital-gains brackets (§4.03), SE +
+      employee social security ($184,500 wage base, Pub 15 (2026)), and the
+      statutory surtaxes. **Two-pass verified** against Form 1040-ES (2026)
+      (Cat. No. 11340T): all four rate schedules and the standard-deduction chart
+      match line for line. Blocks whose 2026 authority does not exist yet
+      (`ptc`, `taxable_social_security`, `student_loan_interest`,
+      `education_credits`, `dependent_care`, all M3 logistics) are **declared
+      absent** in the marker and enforced by
+      `test_eval_i2_current_year_pack_is_marked_planning_only`; the
+      "refuse to invent" eval moved to 2027. Remaining: the 2026 Tax Table
+      (`tax_table.row_bands` is still a carried-forward structure), and a
+      **guard that stops `fill_form`/`verify_form` from backing a filed return
+      with a provisional pack** — today only the YAML comments say so
+      (confirmed absent 2026-08-07: `grep provisional` in `filler.py` / `verify.py`
+      / `server.py` returns nothing, so the marker is read by exactly one eval).
+      *(was: **Current-year knowledge packs (prerequisite for H4).*
       `knowledge/federal/2026.yaml` (and the year after, each year) authored under
       the DEV_PLAN §7 freshness protocol — the annual inflation Rev. Proc. plus
       the OBBBA-era amounts — so planning during the year works at all. Today
       `calc {year: 2026}` fails closed and `list_forms {year: 2026}` is empty
       (correct, but it makes mid-year planning impossible). Note the packs land
       **before** the year's forms exist, so the pack must be usable for math with
-      no form pack present.
+      no form pack present.*)
+- [ ] **H6 — Schedule 1-A + the OBBBA deduction family (N-6, N-8).** 2026 returns
+      carry four new deductions (tips / overtime / car-loan interest / senior) on
+      Schedule 1-A — which **attaches to Form 1040-NR as well** (line 38 → 1040-NR
+      line 13c) — plus §170(p) non-itemizer charity ($1,000/$2,000) and the new
+      0.5%-AGI floor on itemized charity. Build: a `sched_1a` knowledge block
+      (caps $25,000 / $12,500-$25,000 / $10,000 / $6,000; MAGI thresholds
+      $150k-$300k / $100k-$200k / $75k-$150k; and the **asymmetric** rounding —
+      Part III reduces $100 per whole $1,000 rounded DOWN, Part IV $200 per $1,000
+      rounded UP, Part V a flat 6% of the excess), a calc op, and the pack. Encode
+      two traps that swing real money: the tips/overtime/senior deductions are
+      **forfeited by a married taxpayer who does not file jointly**, and NRA
+      bank-deposit interest is excluded under §871(i)(2)(A) until a §6013(g)
+      election makes the payee a resident.
+- [ ] **H7 — scenario comparison surface (N-9, N-15).** Planning questions arrive
+      as "compare A vs B vs C" (unmarried / married-MFS / married + §6013(g)), and
+      the engine has every primitive but no way to run and diff a set. Build a
+      `compare_scenarios` surface over the projection path that returns per-scenario
+      bottom lines plus the itemized deltas that explain the difference — the
+      deltas must sum exactly to the headline number, which is the acceptance
+      criterion for this item. It must be **persisted and re-runnable**
+      against the workspace profile, not a one-shot call: the motivating session
+      revised four facts mid-flight and each revision re-ran every scenario.
+- [ ] **H8 — tax-advantaged account knowledge (N-10, N-11, N-12, N-13).** The
+      highest-frequency in-year question after "what will I owe" is "where do I put
+      money to owe less". Build:
+      * a `contribution_limits` knowledge block, cited, that records not just the
+        amounts but the **scoping** of each: §402(g) $24,500 per PERSON across all
+        employers with traditional + Roth sharing it; §415(c) $72,000 per EMPLOYER
+        PLAN; HSA $4,400/$8,750 per COVERAGE TIER (so two unmarried self-only
+        HDHPs beat the family limit); §125(i) $3,400 per employee per employer;
+        §132(f) $340+$340 monthly; IRA $7,500 per person across traditional + Roth.
+      * a **marginal-dollar ranking** op: what one more dollar saves in each
+        bucket, knowing that payroll HSA/FSA/commuter dollars also avoid FICA
+        while 401(k) dollars do not, and that above the SS wage base the FICA
+        saving is 1.45% + 0.9%, not 7.65%.
+      * **Roth-vs-pre-tax representation** on the profile (a deferral is a split,
+        not a scalar) because the pre-tax share moves AGI and cascades into every
+        phase-out.
+      * an **eligibility/excess-contribution guard**: the session caught a live
+        Roth IRA contribution by a single filer whose MAGI was above the
+        $153,000–$168,000 phase-out; 6% excise per year) that flips to compliant
+        on a year-end MFJ filing status. A tool holding the profile and the limits
+        should raise this without being asked.
+      * a **MAGI ladder** output (gross → W-2 box 1 → AGI → each test's MAGI with
+        its own threshold), since at least six different phase-out tests fired in
+        one session and users cannot see why their MAGI differs from their salary.
+      * withholding realism: the flat **22% supplemental-wage rate** (Pub 15) vs a
+        32% marginal rate is a predictable April shortfall on any bonus.
 
 **Acceptance:** H1/H2 ship schema + intake changes with regression tests and an
 eval scenario for the *unmarried two-NRA household, mid-year status change*
 persona; H3 ships the segment loop + the worksheet surface with a no-experience
 walkthrough in the skill; H4 ships golden-tested ops and a PROJECTION output
 contract that can never be mistaken for a filed number; H5 follows the two-pass
-verification rule for every figure.
+verification rule for every figure; H6 ships golden-tested phase-out math for all
+five Schedule 1-A parts including the MFS-forfeiture rules; H7 ships a diff whose
+line items sum to the headline delta.
 
 ---
 
@@ -478,13 +570,27 @@ verification rule for every figure.
    Suggested order: G1 treaty KB → G2 Form 2441 → G3 monthly 8962 → G6 FICA
    843 → G5 dual-status corridor → G4 state calc (open-ended). Each replaces a
    disclosed limitation, so nothing blocks Phase A.
-4. **Phase C** (months, parallelizable) — coverage breadth: C2 nonresident/
+4. **Phase H** (the first real-user session, 2026-08-04) — **do H5→H8→H4→H7
+   before H1–H3.** Rationale from [`FIELD_NOTES.md`](FIELD_NOTES.md): that
+   session used 4 of the 22 tools and every number that decided the user's
+   answer was computed *outside* the engine, over irs.gov figures the agent
+   re-researched live. So the binding constraint is **knowledge/data, not engine
+   code** — which is the cheap half. Order:
+   **H5** current-year pack (first tranche DONE) → **H8** account-limit knowledge
+   + MAGI ladder (pure data + one op; every 2026 figure already verified in the
+   session) → **H4** projection mode + withholding/safe-harbor → **H7**
+   persisted, re-runnable scenario diff → **H6** Schedule 1-A engine → then the
+   intake/schema work **H1–H3**, which is the largest code change and the least
+   blocking (the profile model already *can* express the periods; it is the
+   elicitation that is thin).
+5. **Phase C** (months, parallelizable) — coverage breadth: C2 nonresident/
    part-year state forms, C3 hard states (MA fetch, IA/NM classification,
    CT/SC hand-fill, UT sourcing).
-5. **Phase D** — D1 DONE; D2 = more tax years for state packs + the community
+6. **Phase D** — D1 DONE; D2 = more tax years for state packs + the community
    pack-contribution pipeline.
 
 Phases A, E, and the start of C are largely independent and can run in parallel.
+Phase H is independent of C/D (different files) and can run alongside them.
 Within C, resident packs (C1) are the long pole; the now-working `introspect` CLI
 is the force multiplier. **C3 hard states are now the only items needing new engine
 code** (a downloader fix for fetch-blocked AcroForms + an OCR-positioned overlay
