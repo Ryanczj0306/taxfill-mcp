@@ -69,9 +69,14 @@ provisional:
   still_assumed: "tax_table.row_bands (2026 Publication 1040 not yet published)"
   reason: >-
     The 2026 forms, instructions, and Tax Table booklet are not published yet;
-    only the inflation-adjustment revenue procedure and Circular E are. Numbers
-    here are sufficient for projections (what will I owe / what should I set
-    aside / married-vs-separate comparisons) and insufficient for filing.
+    only the inflation-adjustment revenue procedure and Circular E are. The
+    numbers that ARE here are citable and projection-grade (what will I owe /
+    what should I set aside / married-vs-separate comparisons), but the absent
+    blocks mean a bottom line built on this pack can OMIT real items — e.g. a
+    family's child tax credit and EITC price at $0 until the 2026 credits
+    block publishes — so any consumer must surface which engaged inputs went
+    unestimated (the estimator emits 'NOT ESTIMATED' assumptions for them).
+    Insufficient for filing in every case.
   blocks_deliberately_absent:
     - ptc
     - taxable_social_security

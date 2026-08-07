@@ -325,6 +325,35 @@ def test_eval_i4_the_provisional_guard_covers_every_surface_not_just_the_obvious
     assert filing_grade.label == projection.label == "ESTIMATE"
 
 
+def test_eval_i5_a_planning_year_names_every_credit_it_could_not_price():
+    # Regression for a silent $2,126 swing. Same household — head of household,
+    # one SSN-holding child, $60k wages — estimated on 2025 (filing-grade) and
+    # 2026 (planning-only): the 2025 composition carried a -$2,200 child tax
+    # credit line; the 2026 one simply had NO credit line and NO assumption
+    # saying so, because the pack declares its credits block deliberately
+    # absent and the estimator priced the child at $0 without a word. calc
+    # fails closed on absent blocks; the estimator must fail LOUD.
+    kid = Dependent(name="Kid", dob=date(2019, 5, 1), has_ssn=True, relationship="child", provenance=US)
+    profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(
+            marital_status=_ans("unmarried"), filing_status=_ans("head_of_household"), dependents=[kid]
+        ),
+    )
+    income = IncomeSnapshot(wages=60000, federal_withholding=4000)
+
+    projection = estimate_refund(profile, 2026, income)
+    dropped = [a for a in projection.assumptions if a.startswith("NOT ESTIMATED")]
+    assert dropped, "a dependent whose credits priced at $0 must be named, never silent"
+    assert any("child tax credit" in a for a in dropped)
+    assert any("UNDERSTATES" in a for a in dropped), "the disclosure must state the direction of the error"
+
+    # The filing-grade year computes the credit and therefore discloses nothing.
+    estimate = estimate_refund(profile, 2025, income)
+    assert not [a for a in estimate.assumptions if a.startswith("NOT ESTIMATED")]
+    assert any("child tax credit" in c.label.lower() for c in estimate.composition)
+
+
 # ── (b, c, f) state scenarios — M5 ─────────────────────────────────────────────
 
 

@@ -262,9 +262,12 @@ def _stamp_provisional(result: Any, args: dict[str, Any]) -> Any:
         "authored": marker.authored,
         "meaning": (
             f"PROJECTION-GRADE ONLY. The {jurisdiction} {year} knowledge pack was authored before "
-            f"that year's forms, instructions and Tax Table published. This figure is sound for "
-            f"budgeting and scenario comparison and must NOT be put on a filed return — fill_form "
-            f"and verify_form refuse it. Label it a PROJECTION when you show it to the user."
+            f"that year's forms, instructions and Tax Table published, and some blocks are "
+            f"deliberately ABSENT (calc fails closed on those rather than inventing figures) — so "
+            f"a bottom line built on this year can omit real items (credits, worksheets) that a "
+            f"filing-grade year would include. Check the result's assumptions for 'NOT ESTIMATED' "
+            f"entries before comparing it against another year. Never put this figure on a filed "
+            f"return — fill_form and verify_form refuse it. Label it a PROJECTION to the user."
         ),
         "still_assumed": marker.still_assumed,
     }
