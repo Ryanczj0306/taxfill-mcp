@@ -7,8 +7,10 @@ server wraps this for AI clients.
 
 Every number this library produces comes from a versioned, **cited** knowledge
 pack (`knowledge/<jurisdiction>/<year>.yaml`); it never invents a figure and
-refuses to fill a line it cannot cite. The knowledge packs (federal 2019–2024;
-all 50 states + DC) and form-pack field maps ship inside the wheel, so an
+refuses to fill a line it cannot cite. The knowledge packs (federal 2019–2026,
+where 2026 is `provisional: planning_only` — projection math, not for filing;
+all 50 states + DC, income-tax packs for 2023–2025) and form-pack field maps
+ship inside the wheel, so an
 installed copy is self-contained — no network access except to download **blank**
 official forms from `.gov` URLs on demand.
 
