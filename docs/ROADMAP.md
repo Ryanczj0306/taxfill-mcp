@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,817 tests, all green** — offline 2,712 + live-.gov 105, exit 0;
+Done and on `main` (**2,824 tests, all green** — offline 2,719 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -287,24 +287,29 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
 
 ### D2 — Breadth follow-ons
 
-- [~] More tax years for the state packs — **KNOWLEDGE DONE, FORM PACKS NOT STARTED.**
-      State *knowledge* now spans three years: 2023 42/42, 2024 42/42, 2025 41/42
-      (**RI 2025 is the only hole**), every pack carrying the same 18 blocks incl. a
-      typed `tax` block, auto-enrolled into the suite by the glob at
-      `test_state_knowledge.py:26`. State *form* packs remain **TY2023 only** — so a
-      2024/2025 state return computes but cannot be filled. Federal spans 2019–2025
-      for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs incl. the
-      new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25; the
-      provisional 2026 planning pack shipped 2026-08-04).
-      **Remaining:** (a) RI 2025; (b) a 2024→2025 **state form pack** tranche — 46
+- [~] More tax years for the state packs — **KNOWLEDGE DONE (126/126), FORM PACKS NOT STARTED.**
+      State *knowledge* now spans three COMPLETE years: **2023 42/42, 2024 42/42,
+      2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
+      same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
+      glob at `test_state_knowledge.py:26`. State *form* packs remain **TY2023 only**
+      — so a 2024/2025 state return computes but cannot be filled. Federal spans
+      2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
+      incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
+      the provisional 2026 planning pack shipped 2026-08-04).
+      **Remaining:** (a) a 2024→2025 **state form pack** tranche — 46
       packs/year, and the pipeline is NOT ready to make it cheap: `fetch_blank` takes
       a literal URL+digest, only 34 of 46 state URLs carry a substitutable year token,
       MA needs a Wayback cache-seed every year, and there is no generic assembler;
-      (c) `assemble_state_knowledge.py` is still 2023-hardcoded and reads `/tmp/*.json`
+      (b) `assemble_state_knowledge.py` is still 2023-hardcoded and reads `/tmp/*.json`
       inputs that no longer exist, so the 2024/2025 cohorts are **not reproducible from
       the repo** (`assemble_state_credits.py` gained a `[YEAR]` argument 2026-08-07);
-      (d) DEV_PLAN §7.2 `effective_law_changes` blocks — **0 of 125** state packs and
-      **0 of 8** federal packs carry one.
+      (c) DEV_PLAN §7.2 `effective_law_changes` blocks — **0 of 126** state packs and
+      **0 of 8** federal packs carry one. RI 2025 is the case in point: Rhode Island
+      decoupled from four OBBBA (P.L. 119-21) deductions via a brand-new Schedule HR1,
+      and that delta lives in pack `notes` prose instead of a machine-readable block;
+      (d) `knowledge/sources.yaml` still has `states: {}` — 126 state packs ship and
+      `get_sources(..., 'states/xx')` matches nothing, so the freshness protocol is
+      federal-only. This is the upstream blocker for any state TY2026 planning pack.
 - [ ] Community pack-contribution pipeline (the `taxfill introspect` CLI is the
       seed; document the author→audit→PR flow).
 
