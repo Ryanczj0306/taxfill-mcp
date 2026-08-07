@@ -1658,6 +1658,63 @@ def estimate_refund(
                 "the estimate assumes no relief exception (domestic abuse / spousal abandonment) — "
                 "APTC is repaid up to the Table 5 cap."
             )
+    # ── Engaged-but-absent blocks: name every input that ENGAGED a block this
+    # year's pack does not carry, with the direction of the error. The 2026
+    # planning pack declares whole blocks deliberately absent, and before this
+    # disclosure the estimator silently priced them at ZERO — a HoH parent's
+    # $2,200 child tax credit simply vanished between the 2025 and 2026 numbers
+    # with not one word in the assumptions. That violates this file's own
+    # "evaluated, not dropped" rule and made the provisional marker's
+    # "sufficient for projections" claim an overstatement. dependent_care and
+    # ptc already had this treatment above; these are the gates that did not.
+    # (excess-SS / Additional Medicare Tax / NIIT ship in every current pack —
+    # instrumenting those gates lands with H4's ledger, not here.)
+    pack_for_gaps = load_knowledge("federal", year, base_dir=knowledge_dir)
+    known_dep_count = sum(1 for a, s in deps if a is not None and a >= 0)
+    if known_dep_count and (
+        pack_for_gaps.credits is None or getattr(pack_for_gaps.credits, "child_tax_credit", None) is None
+    ):
+        assumptions.append(
+            f"NOT ESTIMATED — child tax credit / credit for other dependents (and the EITC): the {year} "
+            f"pack carries no credits block, so the {known_dep_count} dependent(s) on the profile added "
+            f"$0 here. On a filing-grade year these credits are typically worth four figures per child, "
+            f"so this bottom line likely UNDERSTATES your refund. Resolve them separately before "
+            f"relying on a year-over-year comparison."
+        )
+    if income.social_security_benefits > 0 and pack_for_gaps.tax.taxable_social_security is None:
+        assumptions.append(
+            f"NOT ESTIMATED — taxable Social Security: benefits were supplied but the {year} pack has "
+            f"no taxable-Social-Security worksheet, so they were treated as $0 taxable. Up to 85% is "
+            f"typically taxable, so this bottom line likely OVERSTATES your refund."
+        )
+    if (
+        not nonresident
+        and income.aotc_qualified_expenses
+        and pack_for_gaps.tax.education_credits is None
+    ):
+        assumptions.append(
+            f"NOT ESTIMATED — education credits: 1098-T expenses were supplied but the {year} pack has "
+            f"no Form 8863 parameters, so no AOTC/LLC was credited. This bottom line likely "
+            f"UNDERSTATES your refund."
+        )
+    if (
+        income.student_loan_interest_paid + (income.spouse.student_loan_interest_paid if income.spouse else 0)
+    ) > 0 and pack_for_gaps.tax.student_loan_interest is None:
+        assumptions.append(
+            f"NOT ESTIMATED — student-loan interest deduction: 1098-E interest was supplied but the "
+            f"{year} pack has no IRC 221 phase-out parameters, so the deduction was $0. This bottom "
+            f"line likely UNDERSTATES your refund."
+        )
+    if (
+        not nonresident
+        and (income.qualified_dividends > 0 or income.capital_gain_long > 0)
+        and pack_for_gaps.tax.capital_gains_brackets is None
+    ):
+        assumptions.append(
+            f"NOT ESTIMATED — preferential rates: qualified dividends / long-term gains were supplied "
+            f"but the {year} pack has no 0/15/20% breakpoints, so they were taxed at ORDINARY rates. "
+            f"This bottom line likely OVERSTATES your tax."
+        )
     if "ptc_below_100_fpl_no_aptc" in notes:
         assumptions.append(
             "Household income is below 100% of the federal poverty line and no advance PTC was paid, "
@@ -1797,9 +1854,11 @@ def estimate_refund(
             "authored": marker.authored,
             "meaning": (
                 f"PROJECTION-GRADE ONLY. The federal {year} knowledge pack was authored before that "
-                f"year's forms, instructions and Tax Table published. Present this as a PROJECTION for "
-                f"budgeting, never as an estimate of a return you can file — fill_form, verify_form and "
-                f"verify_filing all refuse this year."
+                f"year's forms, instructions and Tax Table published, and some blocks are deliberately "
+                f"ABSENT — any 'NOT ESTIMATED' entries in the assumptions name real items this bottom "
+                f"line omits, so read them before comparing it against a filing-grade year. Present "
+                f"this as a PROJECTION, never as an estimate of a return you can file — fill_form, "
+                f"verify_form and verify_filing all refuse this year."
             ),
             "still_assumed": marker.still_assumed,
         }
