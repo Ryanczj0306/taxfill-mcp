@@ -225,6 +225,33 @@ def test_bare_j1_status_is_rejected_as_ambiguous():
         exempt_individual_years([period("J-1", date(2022, 9, 1))], 2024)
 
 
+@pytest.mark.parametrize(
+    "status", ["OPT", "STEM OPT", "cap-gap", "cap gap", "CPT", "Optional Practical Training"]
+)
+def test_bare_work_authorization_status_is_rejected_not_silently_counted(status):
+    # Regression for a silent nonresident->resident flip: these strings are how a
+    # real user describes their situation ('OPT'), but they name a WORK
+    # AUTHORIZATION, not a visa status. Before the guard, they matched no
+    # F/M/J/Q prefix, the days counted toward the SPT, and classify() returned
+    # `resident` while the identical facts entered as 'F-1 OPT' returned
+    # `nonresident` — a filing-grade wrong answer on a wording difference.
+    days = {2021: 150, 2022: 330, 2023: 330, 2024: 330, 2025: 330}
+    with pytest.raises(ValueError, match="WORK AUTHORIZATION"):
+        classify([period(status, date(2021, 8, 1))], days, 2025)
+    # The error is prescriptive: it says exactly what to resubmit.
+    with pytest.raises(ValueError, match="F-1 OPT"):
+        classify([period(status, date(2021, 8, 1))], days, 2025)
+
+
+def test_status_with_visa_class_plus_work_authorization_still_classifies():
+    # The fix must not regress the correctly-phrased inputs: 'F-1 OPT' names the
+    # class, matches the F/M student rule, and stays nonresident (exempt years).
+    days = {2021: 150, 2022: 330, 2023: 330, 2024: 330, 2025: 330}
+    for status in ("F-1 OPT", "F-1 STEM OPT", "M-1 OPT"):
+        result = classify([period(status, date(2021, 8, 1))], days, 2025)
+        assert result.classification == "nonresident", status
+
+
 def test_h1b_only_timeline_has_no_exempt_years():
     result = exempt_individual_years([period("H-1B", date(2022, 10, 1))], 2024)
     assert result.records == []
