@@ -32,6 +32,26 @@ jobs:
       - name: Ruff lint (config in pyproject.toml [tool.ruff])
         run: uvx ruff check .
 
+  test-count:
+    # The headline test count is quoted in the README badge (alt text AND the
+    # shields.io URL), the README status paragraph, and the ROADMAP. All four were
+    # maintained by hand and went stale four times — at one point the badge's alt
+    # text disagreed with its own URL. The suites are glob-parametrized over the
+    # knowledge/formpack YAMLs, so the number moves whenever a pack lands. Derive
+    # it, never type it: this fails the build with an exact fix instruction.
+    # Uses --collect-only, so it imports test modules but runs no tests (seconds).
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - name: Sync workspace
+        run: uv sync
+      - name: Quoted test counts match reality
+        run: uv run python scripts/sync_test_count.py --check
+
   packaging:
     # Guards the v0.1 ship invariant: the published wheel must be self-contained —
     # knowledge/ + formpacks/ data resolves from inside the installed package, with
