@@ -39,7 +39,7 @@ from taxfill_core.filing_summary import filing_summary
 from taxfill_core.filler import fill_form
 from taxfill_core.intake import intake_checklist
 from taxfill_core.knowledge import ProvisionalPackError, load_knowledge
-from taxfill_core.verify import verify_form
+from taxfill_core.verify import FilingItem, verify_filing, verify_form
 from taxfill_core.residency import classify
 from taxfill_core.schemas.profile import (
     Answer,
@@ -283,6 +283,46 @@ def test_eval_i3_a_planning_pack_can_never_back_a_filed_return():
     # sail past it and fail for its own reasons, never for this one.
     with pytest.raises(FileNotFoundError):
         fill_form(pack, {}, "/nonexistent.pdf", "/tmp/never-written.pdf")
+
+
+def test_eval_i4_the_provisional_guard_covers_every_surface_not_just_the_obvious_ones():
+    # Regression for two holes found the same day the guard shipped, both by the
+    # same mistake: guarding the surface you thought of instead of enumerating them.
+    #
+    #   1. verify_filing does NOT route through verify_form, so it was unguarded —
+    #      the SINGLE-form gate refused a provisional year while the MULTI-form
+    #      gate, which is the one a real return actually passes through, waved it
+    #      through. That is worse than having no guard, because it reads as covered.
+    #   2. estimate_refund returned a bottom line for TY2026 that was shaped
+    #      exactly like a filing-grade one — label 'ESTIMATE', a single confident
+    #      point value, and not one word in `assumptions` about the pack being
+    #      planning-only. It is the surface an agent leads with.
+    pack = load_form_pack("f1040", 2025)
+    planning_pack = pack.model_copy(update={"tax_year": 2026})
+
+    # (1) BOTH verify gates must refuse, not just the single-form one.
+    with pytest.raises(ProvisionalPackError):
+        verify_form(planning_pack, {})
+    with pytest.raises(ProvisionalPackError):
+        verify_filing([FilingItem(form_key="f1040", pack=planning_pack, fields={})])
+
+    # (2) estimate_refund must not refuse — projecting is the whole point of a
+    # planning pack — but it must be unmistakable about what it handed back.
+    profile = Profile(household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")))
+    income = IncomeSnapshot(wages=150_000, federal_withholding=25_000)
+
+    projection = estimate_refund(profile, 2026, income)
+    assert projection.provisional, "a planning-year estimate must carry the provisional marker"
+    assert projection.provisional["status"] == "planning_only"
+    assert projection.headline.startswith("PROJECTION"), projection.headline
+    assert "PROJECTION" in projection.assumptions[0], "the disclosure must lead the assumptions, not trail them"
+
+    # A filing-grade year is untouched — no marker, no PROJECTION prefix, and the
+    # label stays ESTIMATE (the ESTIMATE/PROJECTION contract itself is H4's job).
+    filing_grade = estimate_refund(profile, 2025, income)
+    assert filing_grade.provisional is None
+    assert not filing_grade.headline.startswith("PROJECTION")
+    assert filing_grade.label == projection.label == "ESTIMATE"
 
 
 # ── (b, c, f) state scenarios — M5 ─────────────────────────────────────────────

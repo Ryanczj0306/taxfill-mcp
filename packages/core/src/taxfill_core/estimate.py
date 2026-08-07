@@ -48,7 +48,7 @@ from taxfill_core.calc import (
     taxable_social_security,
     treaty_benefit,
 )
-from taxfill_core.knowledge import Citation, load_knowledge, load_treaty
+from taxfill_core.knowledge import Citation, load_knowledge, load_treaty, provisional_marker
 from taxfill_core.schemas.profile import Profile
 
 __all__ = [
@@ -290,6 +290,14 @@ class RefundEstimate(BaseModel):
         description="Side-by-side status comparison (eval (l)); present whenever >=2 candidate statuses were computed.",
     )
     roadmap: Roadmap | None = Field(default=None, description="Returns/forms, missing documents, and time-to-finish.")
+    provisional: dict | None = Field(
+        default=None,
+        description=(
+            "Set when the year's knowledge pack is planning-only (authored before that year's forms "
+            "published). The bottom line is then PROJECTION-grade: sound for budgeting, never for a "
+            "filed return. Absent on filing-grade years."
+        ),
+    )
     assumptions: list[str] = Field(default_factory=list)
     what_would_change_it: list[str] = Field(default_factory=list)
     citations: list[Citation] = Field(default_factory=list)
@@ -1777,6 +1785,31 @@ def estimate_refund(
     else:
         headline = f"Estimate ranges from {_phrase(low)} to {_phrase(high)} (estimate — see assumptions)."
 
+    # A planning-only year (a pack authored before that year's forms published) must
+    # never hand back a bottom line shaped exactly like a filing-grade one. calc got
+    # this treatment when the guard landed; estimate_refund is the surface an agent
+    # actually leads with, so it needs it more, not less.
+    marker = provisional_marker("federal", year, base_dir=knowledge_dir)
+    provisional = None
+    if marker is not None:
+        provisional = {
+            "status": marker.status,
+            "authored": marker.authored,
+            "meaning": (
+                f"PROJECTION-GRADE ONLY. The federal {year} knowledge pack was authored before that "
+                f"year's forms, instructions and Tax Table published. Present this as a PROJECTION for "
+                f"budgeting, never as an estimate of a return you can file — fill_form, verify_form and "
+                f"verify_filing all refuse this year."
+            ),
+            "still_assumed": marker.still_assumed,
+        }
+        assumptions = [
+            f"PROJECTION, not an estimate of a filed return: the {year} federal knowledge pack is "
+            f"marked '{marker.status}' because that year's forms and Tax Table are not published yet.",
+            *assumptions,
+        ]
+        headline = f"PROJECTION (not filing-grade) — {headline}"
+
     return RefundEstimate(
         year=year,
         filing_status_used=primary,
@@ -1788,6 +1821,7 @@ def estimate_refund(
         composition=composition,
         comparison=comparison,
         roadmap=roadmap,
+        provisional=provisional,
         assumptions=assumptions,
         what_would_change_it=changes,
         citations=unique_citations,

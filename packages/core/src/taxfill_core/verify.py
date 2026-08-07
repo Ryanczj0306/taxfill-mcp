@@ -2129,6 +2129,14 @@ def verify_filing(
     address line against it — the P-002 incident shape where ONE wrong
     historical address lands consistently on every form. ``pitfall_checks``
     reports P-001, P-002 (the address used across the filing), and P-003.
+
+    Raises:
+        ProvisionalPackError: any item's year ships a planning-only knowledge
+            pack. verify_filing does NOT route through :func:`verify_form`, so
+            it needs its own call to the guard — without it, the multi-form
+            gate (the one a real return actually passes through) would green-
+            light a filing built on projection-grade numbers while the
+            single-form gate refused.
     """
     filing_items = [item if isinstance(item, FilingItem) else FilingItem.model_validate(item) for item in items]
     if not filing_items:
@@ -2136,6 +2144,8 @@ def verify_filing(
             "verify_filing needs at least one filing item — pass "
             "[{form_key, pack, fields|pdf_path, values}] for every form in the filing"
         )
+    for item in filing_items:
+        assert_filing_grade(item.pack.jurisdiction, item.pack.tax_year, action="verify a filing")
     items_by_key: dict[str, FilingItem] = {}
     for item in filing_items:
         if item.form_key in items_by_key:
