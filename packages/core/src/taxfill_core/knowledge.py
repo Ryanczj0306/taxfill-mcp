@@ -1231,6 +1231,67 @@ class EffectiveLawChange(BaseModel):
     )
 
 
+class ProvisionalSecondPass(BaseModel):
+    """The independent second source a provisional pack was checked against.
+
+    DEV_PLAN section 7 requires two-pass verification for year-varying numbers.
+    A planning pack is authored before the year's forms publish, so pass 2 has
+    to come from whatever official 2026-dated artifact DOES exist (for the 2026
+    pack that was Form 1040-ES (2026), which prints the rate schedules and the
+    standard-deduction chart months before Form 1040 itself).
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    date: str
+    source: str
+    url: str
+    verified_blocks: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Paths relative to the pack's `tax` mapping. A bare name ('rate_schedules') is a whole "
+            "block; a dotted name ('se_tax.ss_wage_base') is one field inside a block — split on '.' "
+            "before resolving. This differs from blocks_deliberately_absent, which is bare names only."
+        ),
+    )
+    result: str = ""
+
+
+class Provisional(BaseModel):
+    """The ``provisional`` marker: this pack is PLANNING-GRADE, not filing-grade.
+
+    A pack carries this when it was authored before its year's authority fully
+    published — the annual inflation Rev. Proc. and Circular E exist, the forms,
+    instructions and Tax Table booklet do not. Such a pack is sufficient for
+    projections ("what will I owe", "what should I set aside", married-vs-separate
+    comparisons) and INSUFFICIENT for filing.
+
+    Typed (rather than left in ``model_extra``) as of 2026-08-07 so the guard in
+    :func:`assert_filing_grade` can be enforced by the engine instead of by YAML
+    comments. Before that, the only thing standing between a planning pack and a
+    filed return was prose.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    status: Literal["planning_only"]
+    authored: str
+    reason: str = ""
+    blocks_deliberately_absent: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Blocks whose authority does not exist yet. Declared rather than guessed: calc raises its "
+            "prescriptive 'no block for this year' error instead of returning a fabricated figure."
+        ),
+    )
+    second_pass: ProvisionalSecondPass | None = None
+    still_assumed: str = ""
+
+
+class ProvisionalPackError(RuntimeError):
+    """Raised when a provisional (planning-only) pack is asked to back a filed return."""
+
+
 class KnowledgePack(BaseModel):
     """One ``knowledge/<jurisdiction>/<year>.yaml`` file, validated.
 
@@ -1243,6 +1304,10 @@ class KnowledgePack(BaseModel):
     jurisdiction: str
     tax_year: int = Field(ge=1990, le=2100)
     tax: TaxKnowledge
+    provisional: Provisional | None = Field(
+        default=None,
+        description="Present only on planning-grade packs; see Provisional and assert_filing_grade.",
+    )
     filing_thresholds: FilingThresholds | None = None
     payment_options: PaymentOptions | None = None
     mailing_addresses: MailingAddresses | None = None
@@ -1314,6 +1379,62 @@ def load_knowledge(
             f"fields or move the file to knowledge/{pack.jurisdiction}/{pack.tax_year}.yaml"
         )
     return pack
+
+
+def provisional_marker(
+    jurisdiction: str,
+    year: int,
+    base_dir: str | Path | None = None,
+) -> Provisional | None:
+    """The pack's planning-only marker, or ``None`` if it is filing-grade.
+
+    Also returns ``None`` when no pack exists for that jurisdiction/year at all:
+    a missing pack is a different failure, already reported prescriptively by
+    :func:`load_knowledge` at the point the caller actually needs the data. This
+    helper answers one question only — "may this year's numbers back a filed
+    return?" — and must never be the thing that turns a missing pack into a
+    confusing error at fill time.
+    """
+    try:
+        return load_knowledge(jurisdiction, year, base_dir=base_dir).provisional
+    except (FileNotFoundError, ValueError):
+        return None
+
+
+def assert_filing_grade(
+    jurisdiction: str,
+    year: int,
+    action: str = "file",
+    base_dir: str | Path | None = None,
+) -> None:
+    """Refuse to let a planning-only pack back a filed return.
+
+    Until 2026-08-07 the ``provisional`` marker was read by exactly one eval and
+    by no engine code, so the ONLY thing stopping a projection pack from backing
+    a real filing was a YAML comment saying not to. That is the precise failure
+    the freshness protocol (DEV_PLAN section 7) exists to prevent, and it gets
+    materially riskier as soon as planning mode (H4) starts driving traffic at
+    the current-year pack.
+
+    Raises:
+        ProvisionalPackError: the year's pack is planning-only, with the reason,
+            what is still assumed, and the two honest ways forward.
+    """
+    marker = provisional_marker(jurisdiction, year, base_dir=base_dir)
+    if marker is None:
+        return
+    still = f" Still resting on a carried-forward assumption: {marker.still_assumed}." if marker.still_assumed else ""
+    raise ProvisionalPackError(
+        f"refusing to {action} against the {jurisdiction} {year} knowledge pack: it is marked "
+        f"'{marker.status}' (authored {marker.authored}) and must not back a filed return. "
+        f"{marker.reason.strip()}{still} "
+        f"Use it for PROJECTIONS only (what will I owe / what should I set aside / "
+        f"married-vs-separate comparisons). To file for {year}, either wait for the year's "
+        f"final forms and instructions to publish and re-author the pack under the two-pass "
+        f"freshness protocol (docs/DEV_PLAN.md section 7), or file for a year whose pack is "
+        f"filing-grade. Blocks deliberately absent from this pack (calc fails closed on each "
+        f"rather than inventing a figure): {', '.join(marker.blocks_deliberately_absent) or 'none'}."
+    )
 
 
 # ── State knowledge (dev plan section 6) ─────────────────────────────────────

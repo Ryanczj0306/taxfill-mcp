@@ -78,6 +78,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from taxfill_core.knowledge import assert_filing_grade
 from taxfill_core.schemas.formpack import FormPack, PackField
 
 __all__ = [
@@ -2043,7 +2044,16 @@ def verify_form(
     P-002 address comparison. Clipping and the checkbox audit always run;
     ``pitfall_checks`` always reports P-001 and P-003, plus P-002 when
     ``confirmed_current_address`` is given.
+
+    Raises:
+        ProvisionalPackError: the year's knowledge pack is planning-only. Verify
+            is the mandatory gate before a return is printed and signed, so it
+            refuses for the same reason fill does — a green verify against
+            projection-grade numbers is exactly the false assurance the marker
+            exists to prevent.
     """
+    assert_filing_grade(pack.jurisdiction, pack.tax_year, action="verify a form")
+
     if isinstance(fields, (str, Path)):
         pdf_path = Path(fields)
         fields = read_pdf_fields(pdf_path)

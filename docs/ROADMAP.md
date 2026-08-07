@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,816 tests, all green** — offline 2,711 + live-.gov 105, exit 0;
+Done and on `main` (**2,817 tests, all green** — offline 2,712 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP

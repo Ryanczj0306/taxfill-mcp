@@ -54,6 +54,7 @@ from taxfill_core.discovery import get_form_map as _get_form_map, list_forms as 
 from taxfill_core.extract import extract_document as _extract_document, list_document_kinds as _list_document_kinds
 from taxfill_core.fetch import fetch_blank as _fetch_blank
 from taxfill_core.handfill import hand_fill_worksheet as _hand_fill_worksheet, load_hand_fill_pack_for
+from taxfill_core.knowledge import provisional_marker
 from taxfill_core.estimate import IncomeSnapshot
 from taxfill_core.file_and_pay import FilingManifestItem
 from taxfill_core.residency import classify as _classify
@@ -235,12 +236,52 @@ def render_form(pdf_path: str, pages: list[int] | None = None, dpi: float = 170)
 # ── calc / residency ───────────────────────────────────────────────────────────
 
 
+def _stamp_provisional(result: Any, args: dict[str, Any]) -> Any:
+    """Attach the planning-only marker to any result computed off a provisional pack.
+
+    Without this, `calc {op: standard_deduction, year: 2026}` returns $16,100 with a
+    Rev. Proc. citation and NOTHING telling the agent it is projection-grade — the
+    number is shaped exactly like a filing-grade one. fill_form/verify_form now refuse
+    outright (taxfill_core.knowledge.assert_filing_grade), but calc must NOT refuse:
+    projections are the whole point of a planning pack. So it answers, and says what
+    it answered with.
+    """
+    if not isinstance(result, dict):
+        return result
+    year = args.get("year")
+    if not isinstance(year, int):
+        return result
+    jurisdiction = "federal"
+    if isinstance(args.get("state"), str):
+        jurisdiction = f"states/{args['state'].strip().lower()}"
+    marker = provisional_marker(jurisdiction, year)
+    if marker is None:
+        return result
+    result["provisional"] = {
+        "status": marker.status,
+        "authored": marker.authored,
+        "meaning": (
+            f"PROJECTION-GRADE ONLY. The {jurisdiction} {year} knowledge pack was authored before "
+            f"that year's forms, instructions and Tax Table published. This figure is sound for "
+            f"budgeting and scenario comparison and must NOT be put on a filed return — fill_form "
+            f"and verify_form refuse it. Label it a PROJECTION when you show it to the user."
+        ),
+        "still_assumed": marker.still_assumed,
+    }
+    return result
+
+
 @mcp.tool()
 def calc(op: str, args: dict[str, Any]) -> dict:
     """Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, state_tax}; every result shows its work and cites the data pack.
+
+    A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
+    authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
+    key. When you see it, call the number a PROJECTION to the user and never place it on a
+    return: fill_form and verify_form refuse that year outright.
 
     - tax: args {taxable_income, filing_status, year} (ORDINARY line 16 only — with qualified
       dividends or capital gains use tax_with_preferential_rates instead, even below $100,000)
@@ -314,39 +355,39 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       state or a state without the block errors, listing the supported states)
     """
     if op == "tax":
-        return _dump(_tax(**args))
+        return _stamp_provisional(_dump(_tax(**args)), args)
     if op == "tax_with_preferential_rates":
-        return _dump(_tax_with_preferential_rates(**args))
+        return _stamp_provisional(_dump(_tax_with_preferential_rates(**args)), args)
     if op == "standard_deduction":
-        return _dump(_standard_deduction(**args))
+        return _stamp_provisional(_dump(_standard_deduction(**args)), args)
     if op == "se_tax":
-        return _dump(_se_tax(**args))
+        return _stamp_provisional(_dump(_se_tax(**args)), args)
     if op == "additional_medicare_tax":
-        return _dump(_additional_medicare_tax(**args))
+        return _stamp_provisional(_dump(_additional_medicare_tax(**args)), args)
     if op == "niit":
-        return _dump(_niit(**args))
+        return _stamp_provisional(_dump(_niit(**args)), args)
     if op == "taxable_social_security":
-        return _dump(_taxable_social_security(**args))
+        return _stamp_provisional(_dump(_taxable_social_security(**args)), args)
     if op == "excess_ss":
-        return _dump(_excess_ss(**args))
+        return _stamp_provisional(_dump(_excess_ss(**args)), args)
     if op == "student_loan_interest_deduction":
-        return _dump(_student_loan_interest_deduction(**args))
+        return _stamp_provisional(_dump(_student_loan_interest_deduction(**args)), args)
     if op == "education_credits":
-        return _dump(_education_credits(**args))
+        return _stamp_provisional(_dump(_education_credits(**args)), args)
     if op == "ptc_annual":
-        return _dump(_ptc_annual(**args))
+        return _stamp_provisional(_dump(_ptc_annual(**args)), args)
     if op == "ptc_monthly":
-        return _dump(_ptc_monthly(**args))
+        return _stamp_provisional(_dump(_ptc_monthly(**args)), args)
     if op == "child_tax_credit":
-        return _dump(_child_tax_credit(**args))
+        return _stamp_provisional(_dump(_child_tax_credit(**args)), args)
     if op == "eitc":
-        return _dump(_eitc(**args))
+        return _stamp_provisional(_dump(_eitc(**args)), args)
     if op == "dependent_care_credit":
-        return _dump(_dependent_care_credit(**args))
+        return _stamp_provisional(_dump(_dependent_care_credit(**args)), args)
     if op == "treaty_benefit":
-        return _dump(_treaty_benefit(**args))
+        return _stamp_provisional(_dump(_treaty_benefit(**args)), args)
     if op == "state_tax":
-        return _dump(_state_tax(**args))
+        return _stamp_provisional(_dump(_state_tax(**args)), args)
     raise ValueError(
         f"unknown calc op {op!r} — supported: tax, tax_with_preferential_rates, standard_deduction, "
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "

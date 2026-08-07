@@ -29,12 +29,17 @@ from decimal import Decimal
 
 import pytest
 
+from urllib.parse import urlparse
+
 from taxfill_core.calc import irs_round, standard_deduction, tax_from_taxable_income
+from taxfill_core.discovery import load_form_pack
 from taxfill_core.estimate import IncomeSnapshot, estimate_refund
 from taxfill_core.file_and_pay import FilingManifestItem, file_and_pay
 from taxfill_core.filing_summary import filing_summary
+from taxfill_core.filler import fill_form
 from taxfill_core.intake import intake_checklist
-from taxfill_core.knowledge import load_knowledge
+from taxfill_core.knowledge import ProvisionalPackError, load_knowledge
+from taxfill_core.verify import verify_form
 from taxfill_core.residency import classify
 from taxfill_core.schemas.profile import (
     Answer,
@@ -220,9 +225,9 @@ def test_eval_i2_current_year_pack_is_marked_planning_only():
     # deliberately absent rather than guessed, and (3) actually be missing those
     # blocks — the "fail closed, never fabricate" rule at pack granularity.
     pack = load_knowledge("federal", 2026)
-    marker = pack.model_extra.get("provisional")
-    assert marker and marker["status"] == "planning_only"
-    absent = marker["blocks_deliberately_absent"]
+    marker = pack.provisional  # typed as of 2026-08-07; was an untyped model_extra key
+    assert marker and marker.status == "planning_only"
+    absent = marker.blocks_deliberately_absent
     assert "ptc" in absent and "deadlines" in absent
     for block in absent:
         assert getattr(pack, block, None) is None and getattr(pack.tax, block, None) is None, (
@@ -231,6 +236,53 @@ def test_eval_i2_current_year_pack_is_marked_planning_only():
     # The cited blocks that DO ship are the ones a projection needs.
     assert pack.tax.standard_deduction.amounts["married_filing_jointly"] == 32200
     assert pack.tax.employee_social_security.ss_wage_base == 184500
+
+    # (4) The two-pass verification (DEV_PLAN section 7) must be RECORDED, not just
+    # claimed in a YAML comment: an independent 2026-dated irs.gov artifact, which
+    # blocks it corroborated, and what is still carried forward. Until 2026-08-07
+    # nothing asserted on these keys, so they could have been silently dropped.
+    sp = marker.second_pass
+    assert sp is not None, "a provisional pack must record its independent second source"
+    assert urlparse(sp.url).hostname.endswith("irs.gov"), sp.url
+    assert sp.verified_blocks, "second_pass must name the blocks it corroborated"
+    for entry in sp.verified_blocks:
+        # Bare name = whole block; dotted = one field inside a block (documented in the pack).
+        target, _, field = entry.partition(".")
+        block = getattr(pack.tax, target, None)
+        assert block is not None, f"second_pass claims '{entry}' but pack.tax has no '{target}'"
+        if field:
+            assert getattr(block, field, None) is not None, f"second_pass claims '{entry}' but it is unset"
+    assert "tax_table" in marker.still_assumed, (
+        "the one carried-forward structure must stay named in still_assumed until Publication 1040 lands"
+    )
+
+
+def test_eval_i3_a_planning_pack_can_never_back_a_filed_return():
+    # The other half of i2. A marker nothing reads is a comment: before
+    # 2026-08-07 `grep planning_only packages/` returned nothing, so the engine
+    # would happily fill and verify a 2026 return off a pack whose own YAML said
+    # it was projection-only. Now both gates refuse, and the refusal explains the
+    # two honest ways forward instead of just failing.
+    pack = load_form_pack("f1040", 2025)  # any filing-grade pack; we retarget its year
+    planning_pack = pack.model_copy(update={"tax_year": 2026})
+
+    with pytest.raises(ProvisionalPackError) as exc:
+        fill_form(planning_pack, {}, "/nonexistent.pdf", "/tmp/never-written.pdf")
+    msg = str(exc.value)
+    assert "planning_only" in msg and "must not back a filed return" in msg
+    assert "PROJECTIONS only" in msg  # the supported use is named, not just refused
+    assert "tax_table" in msg  # what is still assumed
+    assert "ptc" in msg  # which blocks fail closed
+
+    # Verify is the mandatory gate before printing and signing, so it refuses too —
+    # a green verify over projection-grade numbers is the false assurance to avoid.
+    with pytest.raises(ProvisionalPackError):
+        verify_form(planning_pack, {})
+
+    # And the guard is scoped to provisional packs ONLY: a filing-grade year must
+    # sail past it and fail for its own reasons, never for this one.
+    with pytest.raises(FileNotFoundError):
+        fill_form(pack, {}, "/nonexistent.pdf", "/tmp/never-written.pdf")
 
 
 # ── (b, c, f) state scenarios — M5 ─────────────────────────────────────────────
