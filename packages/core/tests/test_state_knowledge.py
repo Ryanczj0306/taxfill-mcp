@@ -32,6 +32,12 @@ STATE_CODES = sorted({c for c, y in STATE_YEARS if y == 2023})
 COMPLETE_YEARS = sorted(
     y for y in SHIPPED_YEARS if {c for c, yy in STATE_YEARS if yy == y} == set(STATE_CODES)
 )
+# Years that ship SOME packs but not the full cohort. This must be declared, because
+# COMPLETE_YEARS alone is self-silencing: an incomplete year is quietly exempted from
+# test_tax_block_shipping_matches_the_g4_rollout — the very test that would report it
+# incomplete. RI/2025 hid here for weeks that way. Empty means every shipped year is
+# complete; a year appearing here without an entry below is a hard failure.
+KNOWN_INCOMPLETE_YEARS: dict[int, str] = {}
 STATE_YEAR_IDS = [f"{c}-{y}" for c, y in STATE_YEARS]
 
 US = Provenance.user_stated()
@@ -340,6 +346,26 @@ def test_tax_block_shipping_matches_the_g4_rollout(year: int):
     )
     if year == 2023:  # the documented baseline split
         assert graduated == set(GRADUATED_TAX_STATES)
+
+
+def test_every_shipped_year_is_a_complete_cohort():
+    # The guard on the guard. test_tax_block_shipping_matches_the_g4_rollout only runs
+    # for COMPLETE_YEARS, so a year missing a jurisdiction exempts ITSELF from the only
+    # test that checks full-cohort coverage. RI/2025 sat in that blind spot: 41 of 42
+    # packs shipped, 2025 dropped out of COMPLETE_YEARS, and nothing went red.
+    #
+    # So assert the exemption list is empty. A deliberate mid-rollout year is allowed,
+    # but it has to be WRITTEN DOWN in KNOWN_INCOMPLETE_YEARS with a reason — the point
+    # is that an incomplete cohort can never again be silent.
+    incomplete = {y: sorted(set(STATE_CODES) - {c for c, yy in STATE_YEARS if yy == y}) for y in SHIPPED_YEARS}
+    incomplete = {y: missing for y, missing in incomplete.items() if missing}
+    undeclared = {y: missing for y, missing in incomplete.items() if y not in KNOWN_INCOMPLETE_YEARS}
+    assert not undeclared, (
+        f"state-year cohort holes that no test would otherwise report: {undeclared}. "
+        f"Ship the missing pack(s), or declare the year in KNOWN_INCOMPLETE_YEARS with a reason."
+    )
+    stale = sorted(set(KNOWN_INCOMPLETE_YEARS) - set(incomplete))
+    assert not stale, f"KNOWN_INCOMPLETE_YEARS lists {stale}, which are now complete — drop the entries"
 
 
 @pytest.mark.parametrize("code", GRADUATED_TAX_STATES, ids=lambda c: c)
