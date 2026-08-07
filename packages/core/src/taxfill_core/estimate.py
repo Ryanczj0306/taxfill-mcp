@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -54,6 +55,9 @@ from taxfill_core.schemas.profile import Profile
 __all__ = [
     "IncomeSnapshot",
     "CompositionLine",
+    "BottomLineResult",
+    "DeltaLine",
+    "MissingBlock",
     "StatusComparison",
     "Roadmap",
     "RefundEstimate",
@@ -216,12 +220,156 @@ class IncomeSnapshot(BaseModel):
 
 
 class CompositionLine(BaseModel):
-    """One line of the 'how we got here' breakdown."""
+    """One line of the 'how we got here' breakdown — and one row of a reconciling LEDGER.
+
+    The breakdown reads as a worksheet narrative (income → AGI → taxable income →
+    tax → credits → payments), so the raw ``amount`` column deliberately mixes
+    altitudes and does NOT sum to the bottom line. ``slot``/``role``/``effect``
+    are the machine-readable layer underneath the narrative:
+
+    * ``slot`` — a stable key from the closed ``_LEDGER_SLOTS`` registry, so two
+      computations of the same shape (two filing statuses, two scenarios, two
+      years) can be diffed row-by-row instead of by fuzzy label matching.
+    * ``role`` — ``operand`` rows are the ones that independently move the bottom
+      line; ``explanatory`` rows (income items, adjustments, the deduction) only
+      explain HOW the income-tax operand got its magnitude; ``subtotal`` rows
+      (Total income, AGI, Taxable income, Total tax, the bottom line itself) are
+      printed running totals.
+    * ``effect`` — the row's signed contribution to the bottom line (+ pushes
+      toward refund). Zero for every non-operand row. The invariant the whole
+      Phase H stack leans on: ``sum(line.effect) == bottom``, exactly, in
+      integers — enforced at runtime by ``_reconcile``, so a new line added
+      without its effect fails loudly instead of silently unbalancing every
+      downstream delta.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
     label: str
     amount: int
+    slot: str = Field(default="", description="Stable ledger key from _LEDGER_SLOTS ('' only in legacy constructions).")
+    role: Literal["operand", "explanatory", "subtotal"] = Field(
+        default="explanatory",
+        description="operand = independently moves the bottom line; explanatory/subtotal = narrative only.",
+    )
+    effect: int = Field(
+        default=0,
+        description="Signed contribution to the bottom line (+ toward refund); 0 for non-operand rows.",
+    )
+
+
+_OPERAND, _EXPLANATORY, _SUBTOTAL = "operand", "explanatory", "subtotal"
+
+# The closed slot registry. Adding a composition line means adding its slot HERE
+# first — _line() refuses unknown slots, so the ledger vocabulary can never grow
+# by accident, and every consumer (status comparison today; H4's projection and
+# H7's scenario diff next) can treat the set as total.
+_LEDGER_SLOTS: dict[str, str] = {
+    # narrative (effect 0)
+    "capital_gain": _EXPLANATORY,
+    "capital_loss": _EXPLANATORY,
+    "taxable_social_security": _EXPLANATORY,
+    "treaty_exempt_exclusion": _EXPLANATORY,
+    "half_se_adjustment": _EXPLANATORY,
+    "student_loan_interest_deduction": _EXPLANATORY,
+    "other_adjustments": _EXPLANATORY,
+    "deduction": _EXPLANATORY,
+    "total_income": _SUBTOTAL,
+    "agi": _SUBTOTAL,
+    "taxable_income": _SUBTOTAL,
+    "total_tax": _SUBTOTAL,
+    "bottom_line": _SUBTOTAL,
+    # operands (effect = -amount unless overridden)
+    "income_tax": _OPERAND,
+    "education_credits_nonrefundable": _OPERAND,
+    "dependent_care_credit_nonrefundable": _OPERAND,
+    "odc_nonrefundable": _OPERAND,
+    "ctc_odc_nonrefundable": _OPERAND,
+    "se_tax": _OPERAND,
+    "additional_medicare_tax": _OPERAND,
+    "niit": _OPERAND,
+    "aptc_repayment": _OPERAND,
+    "withholding": _OPERAND,
+    "excess_ss_credit": _OPERAND,
+    "actc_refundable": _OPERAND,
+    "ctc_refundable_2021": _OPERAND,
+    "dependent_care_credit_refundable_2021": _OPERAND,
+    "eitc": _OPERAND,
+    "aotc_refundable": _OPERAND,
+    "net_ptc": _OPERAND,
+    # the true-two-return MFS path folds the spouse's whole return into one row;
+    # its effect is +amount (the spouse's bottom line adds directly), the one
+    # exception to effect = -amount.
+    "spouse_mfs_return": _OPERAND,
+}
+
+
+def _line(slot: str, label: str, amount: int, *, effect: int | None = None) -> CompositionLine:
+    """Build a ledger-aware composition line; the slot decides the role and default effect."""
+    role = _LEDGER_SLOTS.get(slot)
+    if role is None:
+        raise RuntimeError(
+            f"composition slot {slot!r} is not in _LEDGER_SLOTS — register it (and decide its role) "
+            f"before emitting it; the closed registry is what keeps status/scenario diffs total"
+        )
+    if effect is None:
+        effect = -amount if role == _OPERAND else 0
+    if role != _OPERAND and effect != 0:
+        raise RuntimeError(f"slot {slot!r} is {role}, whose effect must be 0 — got {effect}")
+    return CompositionLine(label=label, amount=amount, slot=slot, role=role, effect=effect)
+
+
+def _reconcile(bottom: int, lines: list[CompositionLine]) -> None:
+    """Enforce the ledger invariant: the operand effects sum EXACTLY to the bottom line.
+
+    Runs on every computation (it is integer arithmetic over a few dozen rows, not
+    a test-only property), so a composition line added without its effect — or an
+    operand mislabeled explanatory — fails the very first estimate it touches
+    instead of silently unbalancing every downstream comparison and scenario diff.
+    """
+    unslotted = [ln.label for ln in lines if ln.slot not in _LEDGER_SLOTS]
+    if unslotted:
+        raise RuntimeError(
+            f"composition line(s) built without a registered slot: {unslotted} — construct lines "
+            f"via _line() so the ledger stays total"
+        )
+    total_effect = sum(ln.effect for ln in lines)
+    if total_effect != bottom:
+        by_slot = {ln.slot: ln.effect for ln in lines if ln.effect}
+        raise RuntimeError(
+            f"ledger does not reconcile: sum(effect) = {total_effect} but bottom = {bottom} "
+            f"(residue {bottom - total_effect}); nonzero effects: {by_slot}. A line that moves "
+            f"the bottom line was added without its effect (or with the wrong sign) — fix the "
+            f"emitting site, never this check."
+        )
+
+
+class BottomLineResult(BaseModel):
+    """One filing status's computed bottom line with its reconciling ledger."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    bottom: int = Field(description="Signed bottom line (+ refund, - owed).")
+    lines: list[CompositionLine]
+    citations: list[Citation]
+
+
+class MissingBlock(BaseModel):
+    """A knowledge block an INPUT engaged but the year's pack does not carry.
+
+    The machine-readable twin of the 'NOT ESTIMATED' assumptions: same gates,
+    same computation, produced side by side — prose for the human, this for the
+    consumers (H4's projection contract and H7's scenario diff need to know which
+    rows of a planning-year ledger are missing rather than zero).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    block: str = Field(description="Pack path of the absent block, e.g. 'credits.child_tax_credit'.")
+    item: str = Field(description="The human item that went unpriced, e.g. 'child tax credit / ODC (and EITC)'.")
+    direction: Literal["understates_refund", "overstates_refund", "either"] = Field(
+        description="Which way the ABSENCE skews this estimate's bottom line."
+    )
 
 
 class StatusCandidate(BaseModel):
@@ -231,6 +379,24 @@ class StatusCandidate(BaseModel):
 
     status: str
     bottom_line: int = Field(description="Signed bottom line under this status (+ refund, - owed).")
+
+
+class DeltaLine(BaseModel):
+    """One ledger row of the best-vs-worst diff: WHERE the dollar difference comes from.
+
+    ``delta`` is the row's contribution to the headline difference (best minus
+    worst, in bottom-line effect terms). The rows sum EXACTLY to
+    ``StatusComparison.delta`` — enforced at construction — which is the property
+    the one real planning session had to rebuild by hand in a scratch script.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    slot: str = Field(description="Ledger slot from the closed registry (same key on both sides).")
+    label: str = Field(description="Human label for the row (taken from the best side when both have it).")
+    best_effect: int = Field(description="This slot's signed bottom-line effect under the recommended status.")
+    worst_effect: int = Field(description="This slot's signed bottom-line effect under the worst status.")
+    delta: int = Field(description="best_effect - worst_effect; the rows sum exactly to the headline delta.")
 
 
 class StatusComparison(BaseModel):
@@ -246,6 +412,13 @@ class StatusComparison(BaseModel):
     candidates: list[StatusCandidate] = Field(description="Every computed status with its signed bottom line.")
     recommended_status: str = Field(description="The status with the highest signed bottom line (most refund / least owed).")
     delta: int = Field(description="Absolute dollar difference between the best and worst computed status.")
+    delta_lines: list[DeltaLine] = Field(
+        default_factory=list,
+        description=(
+            "Itemized best-vs-worst attribution: which ledger slots the delta comes from, largest "
+            "first. The rows sum exactly to `delta` — a diff that does not reconcile is never emitted."
+        ),
+    )
     joint_liability_caveat: str | None = Field(
         default=None,
         description=(
@@ -296,6 +469,14 @@ class RefundEstimate(BaseModel):
             "Set when the year's knowledge pack is planning-only (authored before that year's forms "
             "published). The bottom line is then PROJECTION-grade: sound for budgeting, never for a "
             "filed return. Absent on filing-grade years."
+        ),
+    )
+    missing_blocks: list[MissingBlock] = Field(
+        default_factory=list,
+        description=(
+            "Knowledge blocks an input ENGAGED but the year's pack does not carry — the structured twin "
+            "of the 'NOT ESTIMATED' assumptions. Empty on a fully-covered year; never silently empty on "
+            "a planning year whose absent blocks were engaged."
         ),
     )
     assumptions: list[str] = Field(default_factory=list)
@@ -570,21 +751,71 @@ _DUAL_STATUS_CAVEAT = (
 )
 
 
-def _build_comparison(outcomes: dict[str, tuple[int, list, list]]) -> StatusComparison | None:
+def _slot_effects(lines: list[CompositionLine]) -> tuple[dict[str, int], dict[str, str]]:
+    """Aggregate a ledger's operand effects (and a label) per slot."""
+    effects: dict[str, int] = {}
+    lbls: dict[str, str] = {}
+    for ln in lines:
+        if ln.role != _OPERAND:
+            continue
+        effects[ln.slot] = effects.get(ln.slot, 0) + ln.effect
+        lbls.setdefault(ln.slot, ln.label)
+    return effects, lbls
+
+
+def _delta_lines(best: "BottomLineResult", worst: "BottomLineResult") -> list[DeltaLine]:
+    """Itemize best-minus-worst per ledger slot; the rows sum EXACTLY to the headline delta.
+
+    This is the attribution the _build_comparison of old threw away (it kept only
+    the two bottom lines), forcing the one real planning session to rebuild the
+    "where does the difference come from" table by hand in a scratch script.
+    Because both sides reconcile (sum(effect) == bottom, enforced per computation),
+    the per-slot differences sum to best.bottom - worst.bottom by construction —
+    still re-checked here so a future aggregation bug fails loudly, never quietly.
+    """
+    best_fx, best_lbl = _slot_effects(best.lines)
+    worst_fx, worst_lbl = _slot_effects(worst.lines)
+    rows = []
+    for slot in best_fx.keys() | worst_fx.keys():
+        b, w = best_fx.get(slot, 0), worst_fx.get(slot, 0)
+        if b == w:
+            continue
+        rows.append(DeltaLine(
+            slot=slot,
+            label=best_lbl.get(slot) or worst_lbl.get(slot) or slot,
+            best_effect=b,
+            worst_effect=w,
+            delta=b - w,
+        ))
+    rows.sort(key=lambda r: (-abs(r.delta), r.slot))
+    residue = (best.bottom - worst.bottom) - sum(r.delta for r in rows)
+    if residue != 0:
+        raise RuntimeError(
+            f"delta attribution does not reconcile: rows sum to "
+            f"{sum(r.delta for r in rows)} but the bottom lines differ by "
+            f"{best.bottom - worst.bottom} (residue {residue}) — a ledger stopped reconciling "
+            f"or a non-operand row grew a nonzero effect; fix the emitting site, never this check."
+        )
+    return rows
+
+
+def _build_comparison(outcomes: dict[str, "BottomLineResult"]) -> StatusComparison | None:
     """Build the side-by-side comparison when >=2 statuses were computed (eval (l))."""
     if len(outcomes) < 2:
         return None
-    candidates = [StatusCandidate(status=s, bottom_line=v) for s, (v, _c, _cit) in outcomes.items()]
+    candidates = [StatusCandidate(status=s, bottom_line=r.bottom) for s, r in outcomes.items()]
     values = [c.bottom_line for c in candidates]
     # Recommended = the most-favorable signed bottom line (most refund / least owed).
-    recommended = max(candidates, key=lambda c: c.bottom_line).status
+    best_status = max(outcomes, key=lambda s: outcomes[s].bottom)
+    worst_status = min(outcomes, key=lambda s: outcomes[s].bottom)
     delta = abs(max(values) - min(values))
     statuses = {c.status for c in candidates}
     caveat = _JOINT_LIABILITY_CAVEAT if {_MFJ, _MFS} <= statuses else None
     return StatusComparison(
         candidates=candidates,
-        recommended_status=recommended,
+        recommended_status=best_status,
         delta=delta,
+        delta_lines=_delta_lines(outcomes[best_status], outcomes[worst_status]),
         joint_liability_caveat=caveat,
     )
 
@@ -797,19 +1028,19 @@ def _bottom_line(
     combined_gain = st + lt
     capital = combined_gain
     if combined_gain > 0:
-        comp.append(CompositionLine(label="Capital gain (net short-term + long-term)", amount=capital))
+        comp.append(_line("capital_gain", label="Capital gain (net short-term + long-term)", amount=capital))
     elif combined_gain < 0:
         loss_cap = 1500 if mfs else 3000
         capital = max(combined_gain, -loss_cap)
         if capital != combined_gain:
             comp.append(
-                CompositionLine(
+                _line("capital_loss", 
                     label=f"Capital loss (limited to ${loss_cap:,} — the annual capital-loss cap)",
                     amount=capital,
                 )
             )
         else:
-            comp.append(CompositionLine(label="Capital loss (net short-term + long-term)", amount=capital))
+            comp.append(_line("capital_loss", label="Capital loss (net short-term + long-term)", amount=capital))
 
     # Taxable Social Security (worksheet). The worksheet's 'other income' input is
     # approximated as every other AGI item net of the above-the-line adjustments
@@ -831,11 +1062,11 @@ def _bottom_line(
         citations.append(ss_res.citation)
         if taxable_ss:
             comp.append(
-                CompositionLine(label="Taxable Social Security benefits (worksheet)", amount=taxable_ss)
+                _line("taxable_social_security", label="Taxable Social Security benefits (worksheet)", amount=taxable_ss)
             )
 
     total_income = base + capital + taxable_ss
-    comp.append(CompositionLine(label="Total income", amount=total_income))
+    comp.append(_line("total_income", label="Total income", amount=total_income))
 
     # Treaty-exempt income (1042-S box 2 / Schedule OI) comes off BEFORE tax. The
     # exclusion is clamped so income can never go negative overall: it takes total
@@ -847,7 +1078,7 @@ def _bottom_line(
             notes.add("treaty_exclusion_clamped")
         if treaty_excluded:
             comp.append(
-                CompositionLine(
+                _line("treaty_exempt_exclusion", 
                     label="Less: treaty-exempt income (tax treaty — confirm the article and your state's conformity)",
                     amount=-treaty_excluded,
                 )
@@ -856,7 +1087,7 @@ def _bottom_line(
 
     # ── Above-the-line adjustments ──────────────────────────────────────────
     if half_se:
-        comp.append(CompositionLine(label="Less: ½ self-employment tax (adjustment)", amount=-half_se))
+        comp.append(_line("half_se_adjustment", label="Less: ½ self-employment tax (adjustment)", amount=-half_se))
 
     sli = 0
     if income.student_loan_interest_paid > 0 and pack_tax.student_loan_interest is not None:
@@ -868,7 +1099,7 @@ def _bottom_line(
         sli = sli_res.deduction  # MFS gets $0 by rule inside the op
         if sli:
             citations.append(sli_res.citation)
-            comp.append(CompositionLine(label="Less: student loan interest deduction", amount=-sli))
+            comp.append(_line("student_loan_interest_deduction", label="Less: student loan interest deduction", amount=-sli))
         elif notes is not None:
             # A supplied 1098-E must never vanish silently: the deduction computed
             # to $0 (MFS by rule, or MAGI at/above the phase-out ceiling) — cite the
@@ -878,14 +1109,14 @@ def _bottom_line(
 
     if income.pre_agi_adjustments > 0:
         comp.append(
-            CompositionLine(
+            _line("other_adjustments", 
                 label="Less: other above-the-line adjustments (confirmed)",
                 amount=-income.pre_agi_adjustments,
             )
         )
 
     agi = total_income - half_se - sli - income.pre_agi_adjustments
-    comp.append(CompositionLine(label="Adjusted gross income (AGI)", amount=agi))
+    comp.append(_line("agi", label="Adjusted gross income (AGI)", amount=agi))
 
     # ── Deduction and taxable income ────────────────────────────────────────
     if nonresident:
@@ -903,10 +1134,10 @@ def _bottom_line(
             label = "Less: itemized deductions" if deduction == income.itemized_deductions else "Less: standard deduction"
         else:
             deduction, label = sd.amount, "Less: standard deduction"
-    comp.append(CompositionLine(label=label, amount=-deduction))
+    comp.append(_line("deduction", label=label, amount=-deduction))
 
     taxable = max(0, agi - deduction)
-    comp.append(CompositionLine(label="Taxable income", amount=taxable))
+    comp.append(_line("taxable_income", label="Taxable income", amount=taxable))
 
     # ── Income tax (preferential rates when QD / net capital gain present) ──
     # Residents only: preferential rates never apply to a nonresident's non-ECI
@@ -924,7 +1155,7 @@ def _bottom_line(
         income_tax = pref.tax
         citations.append(pref.citation)
         comp.append(
-            CompositionLine(
+            _line("income_tax", 
                 label="Income tax (qualified dividends / net capital gain at preferential rates)",
                 amount=income_tax,
             )
@@ -933,7 +1164,7 @@ def _bottom_line(
         tax_res = tax_from_taxable_income(taxable, status, year, knowledge_dir)
         income_tax = tax_res.tax
         citations.append(tax_res.citation)
-        comp.append(CompositionLine(label="Income tax", amount=income_tax))
+        comp.append(_line("income_tax", label="Income tax", amount=income_tax))
 
     # ── Nonrefundable credits (limited by the income tax, floor 0) ──────────
     remaining_tax = income_tax
@@ -954,7 +1185,7 @@ def _bottom_line(
         used_edu = min(edu.total_credit - edu.aotc_refundable, remaining_tax)
         if used_edu:
             remaining_tax -= used_edu
-            comp.append(CompositionLine(label="Less: education credits (nonrefundable part)", amount=-used_edu))
+            comp.append(_line("education_credits_nonrefundable", label="Less: education credits (nonrefundable part)", amount=-used_edu))
 
     # Child and dependent care credit (Form 2441 -> Schedule 3 line 2), when the
     # expenses and qualifying-person count are supplied. Per-spouse earned income
@@ -1006,7 +1237,7 @@ def _bottom_line(
                     if used_dc:
                         remaining_tax -= used_dc
                         comp.append(
-                            CompositionLine(
+                            _line("dependent_care_credit_nonrefundable", 
                                 label="Less: child and dependent care credit (Form 2441, nonrefundable)",
                                 amount=-used_dc,
                             )
@@ -1064,7 +1295,7 @@ def _bottom_line(
             if used_odc:
                 remaining_tax -= used_odc
                 comp.append(
-                    CompositionLine(label="Less: credit for other dependents (nonrefundable)", amount=-used_odc)
+                    _line("odc_nonrefundable", label="Less: credit for other dependents (nonrefundable)", amount=-used_odc)
                 )
         elif qc_ages or n_odc:
             per_child = int(ctc_cfg["per_qualifying_child"])
@@ -1076,7 +1307,7 @@ def _bottom_line(
             if used_ctc:
                 remaining_tax -= used_ctc
                 comp.append(
-                    CompositionLine(
+                    _line("ctc_odc_nonrefundable", 
                         label="Less: child tax credit / credit for other dependents (nonrefundable)",
                         amount=-used_ctc,
                     )
@@ -1093,7 +1324,7 @@ def _bottom_line(
 
     # ── Other taxes (Schedule 2) ────────────────────────────────────────────
     if se_amount:
-        comp.append(CompositionLine(label="Plus: self-employment tax", amount=se_amount))
+        comp.append(_line("se_tax", label="Plus: self-employment tax", amount=se_amount))
 
     addmed_amount = 0
     if (income.wages or income.self_employment_net) and pack_tax.additional_medicare_tax is not None:
@@ -1104,7 +1335,7 @@ def _bottom_line(
             addmed_amount = addmed.additional_medicare_tax
             citations.append(addmed.citation)
             comp.append(
-                CompositionLine(
+                _line("additional_medicare_tax", 
                     label="Plus: Additional Medicare Tax (Form 8959, 0.9% over threshold)",
                     amount=addmed_amount,
                 )
@@ -1119,7 +1350,7 @@ def _bottom_line(
             niit_amount = niit_res.niit
             citations.append(niit_res.citation)
             comp.append(
-                CompositionLine(
+                _line("niit", 
                     label="Plus: Net investment income tax (Form 8960, 3.8% over MAGI threshold)",
                     amount=niit_amount,
                 )
@@ -1152,18 +1383,18 @@ def _bottom_line(
             notes.add("ptc_below_100_fpl_with_aptc" if income.aca_aptc > 0 else "ptc_below_100_fpl_no_aptc")
         if ptc_repayment:
             comp.append(
-                CompositionLine(
+                _line("aptc_repayment", 
                     label="Plus: excess advance premium tax credit repayment (Form 8962)",
                     amount=ptc_repayment,
                 )
             )
 
     total_tax = income_tax_after_credits + se_amount + addmed_amount + niit_amount + ptc_repayment
-    comp.append(CompositionLine(label="Total tax", amount=total_tax))
+    comp.append(_line("total_tax", label="Total tax", amount=total_tax))
 
     # ── Payments and refundable credits ─────────────────────────────────────
     # Negative, like every other "Less:" composition line (they reduce what you owe).
-    comp.append(CompositionLine(label="Less: federal tax withheld / payments", amount=-income.federal_withholding))
+    comp.append(_line("withholding", label="Less: federal tax withheld / payments", amount=-income.federal_withholding))
     payments = income.federal_withholding
 
     # The excess-SS cap is PER PERSON (Schedule 3 / Topic 608): on a spouse-split
@@ -1184,7 +1415,7 @@ def _bottom_line(
             payments += xss_credit
             citations.append(xss_citation)
             comp.append(
-                CompositionLine(
+                _line("excess_ss_credit", 
                     label="Less: excess Social Security withholding credit (Schedule 3)",
                     amount=-xss_credit,
                 )
@@ -1192,14 +1423,14 @@ def _bottom_line(
 
     if actc:
         payments += actc
-        comp.append(CompositionLine(label="Less: additional child tax credit (refundable)", amount=-actc))
+        comp.append(_line("actc_refundable", label="Less: additional child tax credit (refundable)", amount=-actc))
     if rctc:
         payments += rctc
-        comp.append(CompositionLine(label="Less: child tax credit (2021 — fully refundable)", amount=-rctc))
+        comp.append(_line("ctc_refundable_2021", label="Less: child tax credit (2021 — fully refundable)", amount=-rctc))
     if dc_refundable:
         payments += dc_refundable
         comp.append(
-            CompositionLine(
+            _line("dependent_care_credit_refundable_2021", 
                 label="Less: child and dependent care credit (2021 — refundable, Form 2441)",
                 amount=-dc_refundable,
             )
@@ -1223,7 +1454,7 @@ def _bottom_line(
                 payments += eitc
                 citations.append(Citation(**eitc_cfg["citation"]))
                 comp.append(
-                    CompositionLine(
+                    _line("eitc", 
                         label="Less: earned income tax credit (refundable, formula approximation)",
                         amount=-eitc,
                     )
@@ -1232,15 +1463,16 @@ def _bottom_line(
     if aotc_refundable:
         payments += aotc_refundable
         comp.append(
-            CompositionLine(label="Less: American opportunity credit (refundable 40%)", amount=-aotc_refundable)
+            _line("aotc_refundable", label="Less: American opportunity credit (refundable 40%)", amount=-aotc_refundable)
         )
     if net_ptc:
         payments += net_ptc
-        comp.append(CompositionLine(label="Less: net premium tax credit (Form 8962)", amount=-net_ptc))
+        comp.append(_line("net_ptc", label="Less: net premium tax credit (Form 8962)", amount=-net_ptc))
 
     bottom = payments - total_tax
-    comp.append(CompositionLine(label=_BOTTOM_LINE_LABEL, amount=bottom))
-    return bottom, comp, citations
+    comp.append(_line("bottom_line", label=_BOTTOM_LINE_LABEL, amount=bottom))
+    _reconcile(bottom, comp)
+    return BottomLineResult(bottom=bottom, lines=comp, citations=citations)
 
 
 def estimate_refund(
@@ -1289,26 +1521,37 @@ def estimate_refund(
     spouse_split = income.spouse is not None and married
     notes: set[str] = set()  # disclosure keys accumulated across every candidate status
 
-    def _outcome(status: str) -> tuple[int, list[CompositionLine], list[Citation]]:
+    def _outcome(status: str) -> BottomLineResult:
         if spouse_split:
             if status == _MFS:
                 # F10: a TRUE two-return MFS comparison — one MFS return per spouse,
                 # bottom lines summed. All dependents go to the primary taxpayer
                 # (disclosed as an assumption; reallocating them could change it).
                 self_income = income.model_copy(update={"spouse": None})
-                b_self, comp_self, cit_self = _bottom_line(
+                res_self = _bottom_line(
                     self_income, status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=notes
                 )
-                b_spouse, _comp_spouse, cit_spouse = _bottom_line(
+                res_spouse = _bottom_line(
                     income.spouse, status, year, knowledge_dir, nonresident=nonresident, deps=[], notes=notes
                 )
-                total = b_self + b_spouse
+                total = res_self.bottom + res_spouse.bottom
                 comp = [
-                    *comp_self[:-1],  # drop the per-return bottom line
-                    CompositionLine(label="Spouse's MFS return (computed separately)", amount=b_spouse),
-                    CompositionLine(label=_BOTTOM_LINE_LABEL, amount=total),
+                    *res_self.lines[:-1],  # drop the per-return bottom line (a zero-effect subtotal)
+                    # The spouse's whole return folds into ONE operand row; its bottom
+                    # line ADDS to the combined total, so effect = +amount — the single
+                    # exception to the effect = -amount convention.
+                    _line(
+                        "spouse_mfs_return",
+                        label="Spouse's MFS return (computed separately)",
+                        amount=res_spouse.bottom,
+                        effect=res_spouse.bottom,
+                    ),
+                    _line("bottom_line", label=_BOTTOM_LINE_LABEL, amount=total),
                 ]
-                return total, comp, [*cit_self, *cit_spouse]
+                _reconcile(total, comp)
+                return BottomLineResult(
+                    bottom=total, lines=comp, citations=[*res_self.citations, *res_spouse.citations]
+                )
             # Combined (joint) return: income is summed, but the per-PERSON pieces —
             # the excess-SS credit and Schedule SE — are computed per spouse.
             return _bottom_line(
@@ -1327,8 +1570,8 @@ def estimate_refund(
 
     outcomes = {s: _outcome(s) for s in statuses}
     primary = statuses[0]
-    point, composition, citations = outcomes[primary]
-    values = [v for (v, _c, _cit) in outcomes.values()]
+    point, composition, citations = outcomes[primary].bottom, outcomes[primary].lines, outcomes[primary].citations
+    values = [r.bottom for r in outcomes.values()]
     low, high = min(values), max(values)
 
     comparison = _build_comparison(outcomes)
@@ -1344,9 +1587,10 @@ def estimate_refund(
 
     # Everything the candidates' compositions mention, for conditional disclosures
     # (the MFS low end can trigger a line the headline status does not).
-    labels = " ".join(line.label for (_v, comp, _c) in outcomes.values() for line in comp)
+    labels = " ".join(line.label for r in outcomes.values() for line in r.lines)
 
     assumptions: list[str] = []
+    missing_blocks: list[MissingBlock] = []
     if status_assumed:
         assumptions.append(
             f"Filing status not confirmed — showing the range across {', '.join(statuses)}. "
@@ -1629,6 +1873,11 @@ def estimate_refund(
     if income.dependent_care_expenses > 0:
         pack = load_knowledge("federal", year, base_dir=knowledge_dir)
         if pack.tax.dependent_care is None:
+            missing_blocks.append(MissingBlock(
+                block="tax.dependent_care",
+                item="child and dependent care credit (Form 2441)",
+                direction="understates_refund",
+            ))
             assumptions.append(
                 f"Dependent-care expenses were provided but the child and dependent care credit is "
                 f"NOT computed for {year} (no Form 2441 parameters in the knowledge pack) — resolve "
@@ -1647,6 +1896,11 @@ def estimate_refund(
     if (income.aca_slcsp > 0 or income.aca_aptc > 0):
         pack = load_knowledge("federal", year, base_dir=knowledge_dir)
         if pack.tax.ptc is None:
+            missing_blocks.append(MissingBlock(
+                block="tax.ptc",
+                item="premium tax credit reconciliation (Form 8962)",
+                direction="either",
+            ))
             assumptions.append(
                 f"Form 1095-A amounts were provided but the premium tax credit is NOT computed for "
                 f"{year} (Form 8962 parameters ship for 2023-2024 only) — reconcile it separately; "
@@ -1674,6 +1928,11 @@ def estimate_refund(
     if known_dep_count and (
         pack_for_gaps.credits is None or getattr(pack_for_gaps.credits, "child_tax_credit", None) is None
     ):
+        missing_blocks.append(MissingBlock(
+            block="credits.child_tax_credit",
+            item="child tax credit / credit for other dependents (and the EITC)",
+            direction="understates_refund",
+        ))
         assumptions.append(
             f"NOT ESTIMATED — child tax credit / credit for other dependents (and the EITC): the {year} "
             f"pack carries no credits block, so the {known_dep_count} dependent(s) on the profile added "
@@ -1682,6 +1941,11 @@ def estimate_refund(
             f"relying on a year-over-year comparison."
         )
     if income.social_security_benefits > 0 and pack_for_gaps.tax.taxable_social_security is None:
+        missing_blocks.append(MissingBlock(
+            block="tax.taxable_social_security",
+            item="taxable Social Security worksheet",
+            direction="overstates_refund",
+        ))
         assumptions.append(
             f"NOT ESTIMATED — taxable Social Security: benefits were supplied but the {year} pack has "
             f"no taxable-Social-Security worksheet, so they were treated as $0 taxable. Up to 85% is "
@@ -1692,6 +1956,11 @@ def estimate_refund(
         and income.aotc_qualified_expenses
         and pack_for_gaps.tax.education_credits is None
     ):
+        missing_blocks.append(MissingBlock(
+            block="tax.education_credits",
+            item="education credits (Form 8863 AOTC/LLC)",
+            direction="understates_refund",
+        ))
         assumptions.append(
             f"NOT ESTIMATED — education credits: 1098-T expenses were supplied but the {year} pack has "
             f"no Form 8863 parameters, so no AOTC/LLC was credited. This bottom line likely "
@@ -1700,6 +1969,11 @@ def estimate_refund(
     if (
         income.student_loan_interest_paid + (income.spouse.student_loan_interest_paid if income.spouse else 0)
     ) > 0 and pack_for_gaps.tax.student_loan_interest is None:
+        missing_blocks.append(MissingBlock(
+            block="tax.student_loan_interest",
+            item="student-loan interest deduction (IRC 221)",
+            direction="understates_refund",
+        ))
         assumptions.append(
             f"NOT ESTIMATED — student-loan interest deduction: 1098-E interest was supplied but the "
             f"{year} pack has no IRC 221 phase-out parameters, so the deduction was $0. This bottom "
@@ -1710,6 +1984,11 @@ def estimate_refund(
         and (income.qualified_dividends > 0 or income.capital_gain_long > 0)
         and pack_for_gaps.tax.capital_gains_brackets is None
     ):
+        missing_blocks.append(MissingBlock(
+            block="tax.capital_gains_brackets",
+            item="preferential rates for qualified dividends / net capital gain",
+            direction="understates_refund",
+        ))
         assumptions.append(
             f"NOT ESTIMATED — preferential rates: qualified dividends / long-term gains were supplied "
             f"but the {year} pack has no 0/15/20% breakpoints, so they were taxed at ORDINARY rates. "
@@ -1881,6 +2160,7 @@ def estimate_refund(
         comparison=comparison,
         roadmap=roadmap,
         provisional=provisional,
+        missing_blocks=missing_blocks,
         assumptions=assumptions,
         what_would_change_it=changes,
         citations=unique_citations,

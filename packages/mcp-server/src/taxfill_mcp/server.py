@@ -527,6 +527,14 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     - ACA (Form 1095-A line 33): aca_premiums, aca_slcsp, aca_aptc
     - spouse: nested income object with the spouse's OWN amounts (same fields; enables a true
       two-return MFS comparison — otherwise amounts are couple-combined)
+
+    The result's `composition` is a reconciling LEDGER: each line carries a stable `slot`, a
+    `role`, and an `effect` (its signed contribution to the bottom line; the effects sum EXACTLY
+    to `point`). When >=2 statuses were computed, `comparison.delta_lines` itemizes WHERE the
+    best-vs-worst difference comes from, largest first, summing exactly to `comparison.delta` —
+    show that table when the user asks which status wins and why. `missing_blocks` lists any
+    input that engaged a block the year's pack does not carry (planning years): each names the
+    unpriced item and the direction of the error — surface those before comparing years.
     """
     try:
         prof = Profile.model_validate(profile)

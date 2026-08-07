@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,839 tests, all green** — offline 2,734 + live-.gov 105, exit 0;
+Done and on `main` (**2,844 tests, all green** — offline 2,739 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -588,19 +588,51 @@ line items sum to the headline delta.
    Suggested order: G1 treaty KB → G2 Form 2441 → G3 monthly 8962 → G6 FICA
    843 → G5 dual-status corridor → G4 state calc (open-ended). Each replaces a
    disclosed limitation, so nothing blocks Phase A.
-4. **Phase H** (the first real-user session, 2026-08-04) — **do H5→H8→H4→H7
-   before H1–H3.** Rationale from [`FIELD_NOTES.md`](FIELD_NOTES.md): that
-   session used 4 of the 22 tools and every number that decided the user's
-   answer was computed *outside* the engine, over irs.gov figures the agent
-   re-researched live. So the binding constraint is **knowledge/data, not engine
-   code** — which is the cheap half. Order:
-   **H5** current-year pack (first tranche DONE) → **H8** account-limit knowledge
-   + MAGI ladder (pure data + one op; every 2026 figure already verified in the
-   session) → **H4** projection mode + withholding/safe-harbor → **H7**
-   persisted, re-runnable scenario diff → **H6** Schedule 1-A engine → then the
-   intake/schema work **H1–H3**, which is the largest code change and the least
-   blocking (the profile model already *can* express the periods; it is the
-   elicitation that is thin).
+4. **Phase H** (the first real-user session, 2026-08-04). Rationale from
+   [`FIELD_NOTES.md`](FIELD_NOTES.md): that session used 4 of the 22 tools and
+   every number that decided the user's answer was computed *outside* the
+   engine, over irs.gov figures the agent re-researched live.
+   **ORDER CORRECTED 2026-08-07** by a 9-agent design review + three
+   adversarial critics, each load-bearing claim re-reproduced against the code
+   (the review also surfaced three FILING-grade correctness bugs that were
+   fixed out of band as "Stage 0" — the bare-'OPT' residency flip, the silent
+   planning-year credit drop, the state-footprint short-circuit — all of which
+   outranked every planning item). *(was: **do H5→H8→H4→H7 before H1–H3** on
+   the theory that the binding constraint is knowledge/data; refuted — H6 was
+   half-built already and is a live filing-path defect, H8 is not "pure data +
+   one op", and H1 hid a one-day correctness fix that is a prerequisite for
+   the whole planning stack.)* The corrected order:
+   * **[x] STAGE 2 — the shared ledger spine (DONE 2026-08-07).** H4-WI1,
+     H7-W1 and H8-W5 all wanted to restructure `_bottom_line`'s composition,
+     each declaring "depends: nothing" — a three-way collision. Restructured
+     ONCE instead: every composition line carries `slot` (closed
+     `_LEDGER_SLOTS` registry) / `role` (operand · explanatory · subtotal) /
+     `effect` (signed contribution to the bottom line); `_bottom_line` returns
+     a typed `BottomLineResult`; TWO invariants are enforced at RUNTIME on
+     every computation — `sum(effect) == bottom` exactly in integers
+     (`_reconcile`), and `StatusComparison.delta_lines` sum exactly to
+     `delta` (`_delta_lines`, the attribution `_build_comparison` used to
+     throw away — the table the real session rebuilt by hand). Plus
+     `missing_blocks`: the machine-readable twin of the Stage-0
+     "NOT ESTIMATED" prose, so H4/H7 can see which planning-year rows are
+     MISSING rather than zero. Property-tested over 240 seeded randomized
+     profiles spanning 2021 ARPA, spouse-split MFS, NRA and planning-year
+     paths, with negative tests proving each guard bites.
+   * **H6** Schedule 1-A calc op (data + form pack ALREADY ship for 2025; the
+     op is the only missing piece, and TY2025 returns are being filed now —
+     the one Phase H item that is also a live filing-path defect) →
+   * **H4** projection mode + FICA-by-status-period + §6654 + withholding
+     realism (new ledger slots on the spine) →
+   * **H8** account-limit knowledge + MAGI ladder (data first; its ranking op
+     waits for H4's FICA so there is one FICA implementation, not two) →
+   * **H7** persisted, re-runnable scenario diff (inherits a reconciling diff
+     from the spine regardless of order) →
+   * then the remaining intake/schema work **H1–H3** (their correctness
+     slices already shipped in Stage 0; what is left is genuinely
+     elicitation).
+   A hard-dated December 2026 TY2026 form-pack sprint is booked AROUND this
+   sequence — the IRS publishes the 2026 forms Dec 2026–Jan 2027 and they must
+   ship before the season opens; Phase H flexes, the sprint does not.
 5. **Phase C** (months, parallelizable) — coverage breadth: C2 nonresident/
    part-year state forms, C3 hard states (MA fetch, IA/NM classification,
    CT/SC hand-fill, UT sourcing).
