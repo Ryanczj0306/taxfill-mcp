@@ -291,12 +291,38 @@ class WorkPeriod(DateRange):
 
 
 class StateFootprintYear(BaseModel):
-    """Lived/worked date ranges for one tax year."""
+    """Lived/worked date ranges for one tax year.
+
+    An empty ``lived`` or ``worked`` list is AMBIGUOUS on its own — it can mean
+    "not asked yet" or "genuinely none". The sentinels below resolve it: intake
+    keeps asking until each dimension is either populated or explicitly denied,
+    so a partial answer can never silently pass for a complete one, and a filer
+    with no US residence or no US work can still terminate the interview.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
     lived: list[ResidencePeriod] = Field(default_factory=list)
     worked: list[WorkPeriod] = Field(default_factory=list)
+    no_us_residence: bool | None = Field(
+        default=None,
+        description=(
+            "True = the filer confirmed they had NO US residence at any point in this year "
+            "(lived abroad all year); None = not asked. Set it instead of leaving `lived` "
+            "ambiguously empty."
+        ),
+    )
+    no_us_work: bool | None = Field(
+        default=None,
+        description=(
+            "True = the filer confirmed NO US work in this year (no job, or worked only "
+            "abroad); None = not asked. Set it instead of leaving `worked` ambiguously empty."
+        ),
+    )
+
+    def is_complete(self) -> bool:
+        """Both dimensions answered: each is populated or explicitly denied."""
+        return bool(self.lived or self.no_us_residence) and bool(self.worked or self.no_us_work)
 
 
 class IncomeDocument(BaseModel):
