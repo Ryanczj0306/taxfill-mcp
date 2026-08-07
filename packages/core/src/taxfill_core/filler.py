@@ -45,6 +45,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
 from pypdf.generic import NameObject
 
+from taxfill_core.knowledge import assert_filing_grade
 from taxfill_core.schemas.formpack import FormPack, PackField
 
 # The one input-normalization format the filler understands today.
@@ -347,7 +348,13 @@ def fill_form(
             violations, or pack fields missing from the PDF — every message
             says what to do next.
         FileNotFoundError: ``blank_pdf`` does not exist.
+        ProvisionalPackError: the year's knowledge pack is planning-only, so
+            filling a return for that year would rest on projection-grade
+            numbers. Checked FIRST, before any other validation, so the caller
+            learns the year is unfilable before spending effort on values.
     """
+    assert_filing_grade(pack.jurisdiction, pack.tax_year, action="fill a form")
+
     blank_pdf = Path(blank_pdf)
     out_path = Path(out_path)
 
