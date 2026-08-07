@@ -147,6 +147,15 @@ _NEAR_183_WEIGHTED = 165
 _FM_STATUS_RE = re.compile(r"^[fm](?:\d|\b)")
 # J and Q visas split into students vs teachers/trainees by program category.
 _JQ_STATUS_RE = re.compile(r"^[jq](?:\d|\b)")
+# WORK AUTHORIZATIONS users routinely type in place of the visa status. OPT /
+# STEM OPT / cap-gap / CPT are periods OF F-1 (or M-1) student status — the
+# person's exempt-individual category is unchanged while working. Before this
+# guard existed, a period entered as bare 'OPT' matched no prefix, its days
+# silently counted toward the SPT, and classify() flipped nonresident→resident
+# on a wording difference ('F-1 OPT' vs 'OPT', identical facts). "practical
+# training" catches the spelled-out forms (Optional/Curricular Practical
+# Training); \b keeps 'opt' from firing inside ordinary words.
+_WORK_AUTH_RE = re.compile(r"\b(?:opt|cpt|cap[- ]gap|practical training)\b")
 # Foreign government-related A/G visas (exempt with no year limit; v1 rejects
 # them prescriptively, except A-3/G-5 which are NOT exempt and count normally).
 _AG_STATUS_RE = re.compile(r"^([ag])\s*-?\s*([1-5])\b")
@@ -355,10 +364,18 @@ def is_exempt_category_status(status: str) -> bool:
 
     Unlike the strict categorizer this never raises: a bare ``"J-1"`` (ambiguous
     between student and teacher/trainee limits) still returns True — either way
-    its calendar years need day counts before :func:`classify` can run.
+    its calendar years need day counts before :func:`classify` can run. A bare
+    work-authorization string ('OPT', 'STEM OPT', 'cap-gap', 'CPT') also returns
+    True: those are periods of F-1/M-1 student status, so intake must collect
+    the same day counts — classify() itself will then raise the prescriptive
+    rename error rather than silently counting the days.
     """
     normalized = " ".join(status.lower().split())
-    return bool(_FM_STATUS_RE.match(normalized) or _JQ_STATUS_RE.match(normalized))
+    return bool(
+        _FM_STATUS_RE.match(normalized)
+        or _JQ_STATUS_RE.match(normalized)
+        or _WORK_AUTH_RE.search(normalized)
+    )
 
 
 def _categorize_status(status: str, *, index: int) -> ExemptCategory | None:
@@ -388,6 +405,16 @@ def _categorize_status(status: str, *, index: int) -> ExemptCategory | None:
             f"other than A-3/G-5) are exempt individuals with NO calendar-year limit (IRS Pub. 519) and are "
             f"not supported in v1 — exclude those days from days_by_year yourself, record the exclusion in "
             f"RECONCILIATION.md, and resubmit without the A/G period."
+        )
+    if _WORK_AUTH_RE.search(normalized):
+        raise ValueError(
+            f"visa_periods[{index}] status {status!r} names a WORK AUTHORIZATION, not a visa status: "
+            f"OPT / STEM OPT / cap-gap / CPT are periods OF F-1 (or M-1) STUDENT status, and the "
+            f"exempt-individual rules (IRS Pub. 519) turn on the status. Treating this period as a "
+            f"non-student would silently count its days toward the Substantial Presence Test and can "
+            f"flip the classification to resident on a wording difference. Resubmit with the underlying "
+            f"visa class in the status, e.g. 'F-1 OPT' or 'F-1 STEM OPT' (the class is printed on the "
+            f"I-20; an M-1 student's practical training is 'M-1 OPT')."
         )
     return None
 
