@@ -34,6 +34,11 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from taxfill_core.knowledge import Citation
+
+__all__ = ["Position", "WorkspaceMeta", "Workspace", "default_workspace_root"]
+
+
 WORKSPACE_ROOT_ENV = "TAXFILL_WORKSPACE"
 
 
@@ -66,9 +71,6 @@ def default_workspace_root() -> Path:
         return legacy
     return Path.home() / "taxfill-workspace"
 
-from taxfill_core.knowledge import Citation
-
-__all__ = ["Position", "WorkspaceMeta", "Workspace"]
 
 
 class Position(BaseModel):

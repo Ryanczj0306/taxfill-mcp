@@ -29,23 +29,20 @@ import argparse
 import asyncio
 import base64
 import json
-import re
 import sys
 import tempfile
 from datetime import datetime
 from pathlib import Path
 
-from taxfill_core.workspace import Workspace
-from taxfill_core.workspace import default_workspace_root
+# _redact masks SSN/ITIN-like ids and long digit runs before an error prints to
+# stderr — a shell agent may capture/log it. One shared implementation
+# (taxfill_core.redact) serves the CLI AND the engine's own value-echoing
+# errors, so the README's masking promise holds on the MCP path too.
+from taxfill_core.redact import redact as _redact
+from taxfill_core.workspace import Workspace, default_workspace_root
 
 # The SAME resolver the server uses — what the server writes, purge can wipe.
 DEFAULT_ROOT = str(default_workspace_root())
-
-# Mask SSN/ITIN-like ids and long digit runs before printing an error to stderr —
-# a shell agent may capture/log it. One shared implementation (taxfill_core.redact)
-# now serves the CLI AND the engine's own value-echoing errors, so the README's
-# masking promise holds on the MCP path too, not only here.
-from taxfill_core.redact import redact as _redact  # noqa: E402
 
 
 def _now() -> str:
