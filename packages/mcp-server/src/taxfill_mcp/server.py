@@ -41,6 +41,7 @@ from taxfill_core import (
     se_tax as _se_tax,
     standard_deduction as _standard_deduction,
     state_scope as _state_scope,
+    schedule_1a_deductions as _schedule_1a_deductions,
     state_tax as _state_tax,
     student_loan_interest_deduction as _student_loan_interest_deduction,
     tax_from_taxable_income as _tax,
@@ -279,7 +280,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     """Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
-    treaty_benefit, state_tax}; every result shows its work and cites the data pack.
+    treaty_benefit, schedule_1a_deductions, state_tax}; every result shows its work and cites the data pack.
 
     A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
     authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
@@ -337,6 +338,18 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       — exceed it and the whole visit's exemption is lost). Returns the exempt/taxable split + article
       + citation; final eligibility (visa period, purpose, saving clause) stays YOUR judgment —
       record the position with the returned citation)
+    - schedule_1a_deductions: args {magi, filing_status?, year?, qualified_tips?, qualified_overtime?,
+      car_loan_interest?, seniors_qualifying?} (the four OBBBA Schedule 1-A deductions, TY2025-2028 —
+      line 38 -> Form 1040 line 13b / 1040-NR line 13c, reduces taxable income whether itemizing or not.
+      ONE MAGI (AGI + PR-excluded income + Form 2555 lines 45/50 + Form 4563 line 15) feeds all four
+      parts. TRAPS the op enforces: tips/overtime/senior are FORFEITED on married-filing-separately
+      (car-loan interest is NOT); the tips $25,000 cap is PER RETURN (a joint return does not double
+      it); the phase-out rounding is ASYMMETRIC (tips/overtime $100 per $1,000 of excess rounded DOWN,
+      car loan $200 per $1,000 rounded UP, senior 6% of excess per person); qualifying surviving spouse
+      takes the OTHER thresholds (each statute keys on 'a joint return'). qualified_overtime is the FLSA
+      premium HALF only, never the whole overtime wage. Eligibility stays YOUR judgment, quoted in the
+      work: tipped-occupation list, new-vehicle/US-assembly/VIN rules, valid SSNs, seniors born before
+      1961-01-02)
     - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
       (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
       2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
@@ -389,13 +402,15 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_dependent_care_credit(**args)), args)
     if op == "treaty_benefit":
         return _stamp_provisional(_dump(_treaty_benefit(**args)), args)
+    if op == "schedule_1a_deductions":
+        return _stamp_provisional(_dump(_schedule_1a_deductions(**args)), args)
     if op == "state_tax":
         return _stamp_provisional(_dump(_state_tax(**args)), args)
     raise ValueError(
         f"unknown calc op {op!r} — supported: tax, tax_with_preferential_rates, standard_deduction, "
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
         f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
-        f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, state_tax"
+        f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, state_tax"
     )
 
 

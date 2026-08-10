@@ -50,6 +50,13 @@ Contents:
   exemptions, teacher-article year windows (with India's retroactive-loss
   clawback), and the Canada/Mexico employment de-minimis shapes. Final
   eligibility judgment stays with the agent.
+* ``schedule_1a_deductions`` (Phase H, H6) — the four OBBBA Schedule 1-A
+  deductions (tips / overtime / car-loan interest / senior; P.L. 119-21,
+  TY2025-2028): per-status caps, the asymmetric per-$1,000 phase-out rounding
+  (down for tips/overtime, UP for car loan), the 6%-per-person senior
+  phase-out, and the MFS forfeiture on tips/overtime/senior. Line 38 flows to
+  Form 1040 line 13b / 1040-NR line 13c. Eligibility requirements stay caller
+  judgment, quoted in the work.
 * ``state_tax`` (Phase G, G4) — the STATE income-tax line for every
   jurisdiction whose pack ships a cited ``tax`` block: all 42 income-tax
   jurisdictions (41 states + DC) for 2023 and 2024, and 41 of 42 for 2025
@@ -85,6 +92,7 @@ from taxfill_core.knowledge import (
     FilingStatus,
     KnowledgePack,
     MagiPhaseoutRange,
+    ObbbaSchedule1aParams,
     RateBracket,
     StateRateBracket,
     TaxTable,
@@ -2839,6 +2847,278 @@ def dependent_care_credit(
         refundable=refundable,
         inputs=inputs,
         work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# OBBBA Schedule 1-A additional deductions (Phase H, H6)
+# ---------------------------------------------------------------------------
+
+
+class Schedule1APart(BaseModel):
+    """One Schedule 1-A part's outcome (Parts II-V)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    part: str = Field(description="Form part: 'II' tips, 'III' overtime, 'IV' car-loan interest, 'V' senior.")
+    form_line: str = Field(
+        description="The Schedule 1-A line this part's deduction lands on (13 / 21 / 30 / 37) — key "
+        "verify_form's `independent` by it; line 38 is the sum of the four."
+    )
+    name: str
+    input_amount: int = Field(
+        description="Dollars entered for this part BEFORE the cap (Part V: qualifying count x the per-person amount)."
+    )
+    cap_applied: int = Field(description="The per-return cap for this filing status (Part V: count x per-person).")
+    tentative: int = Field(description="min(input, cap) — the amount the MAGI reduction then applies to.")
+    magi_threshold: int = Field(description="The phase-out threshold used (joint-return column only on MFJ).")
+    magi_excess: int = Field(description="max(0, MAGI - threshold), whole dollars.")
+    reduction: int = Field(description="The MAGI-driven reduction actually applied (never more than tentative).")
+    deduction: int = Field(description="This part's deduction after cap, reduction, and any MFS forfeiture.")
+    forfeited_reason: str | None = Field(
+        default=None,
+        description="Set when the part is FORFEITED outright (married filing separately on tips/overtime/senior).",
+    )
+
+
+class Schedule1AResult(BaseModel):
+    """Result of :func:`schedule_1a_deductions`: Schedule 1-A Parts II-V and the line 38 total."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    total_deduction: int = Field(
+        description="Schedule 1-A line 38 -> Form 1040/1040-SR line 13b (Form 1040-NR line 13c). Reduces "
+        "taxable income whether the filer itemizes or takes the standard deduction."
+    )
+    parts: list[Schedule1APart] = Field(
+        description="Only the parts an input engaged; a forfeited part still appears with its reason."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def _sched1a_step_units(excess: Decimal, rounding: str) -> int:
+    """excess/$1,000 as a whole number, rounded per the form line's own direction.
+
+    Lines 11 and 19 say "decrease to the next LOWER whole number" (floor); line 28
+    says "increase to the next HIGHER whole number" (ceil). The direction comes
+    from pack data — this helper never chooses it.
+    """
+    whole, remainder = divmod(excess, Decimal(1000))
+    units = int(whole)
+    if rounding == "up" and remainder > 0:
+        units += 1
+    return units
+
+
+def schedule_1a_deductions(
+    magi: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2025,
+    qualified_tips: int | float | Decimal | str = 0,
+    qualified_overtime: int | float | Decimal | str = 0,
+    car_loan_interest: int | float | Decimal | str = 0,
+    seniors_qualifying: int = 0,
+    knowledge_dir: str | Path | None = None,
+) -> Schedule1AResult:
+    """The four OBBBA Schedule 1-A deductions (P.L. 119-21, TY2025-2028), from the
+    pack's cited ``tax.obbba_schedule_1a`` block.
+
+    Eligibility stays CALLER judgment — quoted in the work, never silently assumed:
+    qualified tips must be from an occupation on the IRS tipped-occupation list
+    (voluntary tips only; SSTB tips excluded; valid SSN required); qualified
+    overtime is the FLSA-required PREMIUM HALF of time-and-a-half, not the whole
+    overtime wage; car-loan interest requires a personal-use NEW vehicle,
+    US final assembly, a post-2024-12-31 loan secured by the vehicle, and the VIN
+    on the return, net of amounts deducted on Schedule C/E/F; a senior qualifies
+    when born before January 2, 1961 with a valid SSN.
+
+    What the op DOES enforce, because they are form math, not judgment:
+
+    * ``magi``: Schedule 1-A Part I — AGI + excluded Puerto Rico income + Form
+      2555 lines 45/50 + Form 4563 line 15. One MAGI feeds all four parts.
+    * Per-status caps ($25,000 tips PER RETURN — a joint return does NOT double
+      it; $12,500/$25,000-MFJ overtime; $10,000 car loan; $6,000 per qualifying
+      senior).
+    * The phase-outs with their ASYMMETRIC rounding: tips/overtime reduce $100
+      per $1,000 of excess rounded DOWN (lines 11/19); car loan reduces $200 per
+      $1,000 rounded UP (line 28); the senior amount reduces by 6% of the excess
+      per person (line 34).
+    * The MFS forfeiture: tips, overtime and the senior deduction are FORFEITED
+      by a married taxpayer who does not file jointly. Car-loan interest is NOT
+      — the statute has no joint-filing rule for it.
+    * A qualifying surviving spouse files a NON-joint return, so QSS takes the
+      ``other`` thresholds and caps here (UNLIKE the rate schedules, where QSS
+      maps to the MFJ column).
+
+    ``seniors_qualifying`` is the COUNT of qualifying individuals (0-2; two only
+    on a joint return where both spouses qualify).
+
+    Raises a prescriptive ValueError for a year without the block: the deduction
+    family exists for 2025-2028 only, and the 2026 planning pack declares it
+    deliberately absent until the 2026 Schedule 1-A publishes.
+    """
+    if filing_status not in FILING_STATUSES and filing_status != _QSS:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+    magi_d = _to_decimal(magi, "magi")
+    tips_d = _to_decimal(qualified_tips, "qualified_tips")
+    overtime_d = _to_decimal(qualified_overtime, "qualified_overtime")
+    car_d = _to_decimal(car_loan_interest, "car_loan_interest")
+    for name, val in (("qualified_tips", tips_d), ("qualified_overtime", overtime_d), ("car_loan_interest", car_d)):
+        if val < 0:
+            raise ValueError(f"{name} must be >= 0 — pass the qualified dollar amount, got {val}")
+    if not isinstance(seniors_qualifying, int) or isinstance(seniors_qualifying, bool) or seniors_qualifying < 0:
+        raise ValueError("seniors_qualifying must be a whole count >= 0 (people born before January 2, 1961)")
+    if seniors_qualifying > 2:
+        raise ValueError("seniors_qualifying cannot exceed 2 — only the taxpayer and a spouse can qualify")
+    if seniors_qualifying == 2 and filing_status != "married_filing_jointly":
+        raise ValueError(
+            f"seniors_qualifying=2 requires married_filing_jointly (the taxpayer AND the spouse) — a "
+            f"{filing_status} return has one taxpayer, so at most 1 qualifying individual"
+        )
+
+    pack = _load_federal(year, knowledge_dir)
+    params: ObbbaSchedule1aParams | None = pack.tax.obbba_schedule_1a
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.obbba_schedule_1a block. The Schedule 1-A "
+            f"deductions (tips / overtime / car-loan interest / senior) exist for tax years 2025-2028 "
+            f"only (P.L. 119-21) — for an earlier year there is nothing to compute; for 2026+ the block "
+            f"ships once that year's Schedule 1-A publishes and is two-pass verified (the 2026 planning "
+            f"pack declares it deliberately absent rather than carrying forward unverified figures)."
+        )
+
+    mfs = filing_status == "married_filing_separately"
+    magi_whole = irs_round(magi_d)
+    parts: list[Schedule1APart] = []
+    work_lines = [
+        f"Schedule 1-A ({year}) — MAGI (Part I) = ${magi_whole:,}; filing status {filing_status}.",
+    ]
+    if filing_status == _QSS:
+        work_lines.append(
+            "Qualifying surviving spouse files a NON-joint return: the `other` thresholds and caps "
+            "apply here (each statute keys on 'a joint return'), UNLIKE the rate schedules where QSS "
+            "uses the married-filing-jointly column."
+        )
+
+    _MFS_FORFEIT = (
+        "forfeited on married filing separately — the instructions require a married taxpayer to "
+        "file JOINTLY to claim this deduction"
+    )
+
+    def _step_part(
+        part_id: str,
+        form_line: str,
+        name: str,
+        amount: Decimal,
+        cap: int,
+        phaseout,
+        *,
+        forfeit_on_mfs: bool,
+        lines_note: str,
+        cap_note: str = "",
+    ) -> None:
+        input_whole = irs_round(amount)
+        threshold = phaseout.magi_threshold.for_status(filing_status)
+        if forfeit_on_mfs and mfs:
+            parts.append(Schedule1APart(
+                part=part_id, form_line=form_line, name=name, input_amount=input_whole, cap_applied=cap,
+                tentative=0, magi_threshold=threshold, magi_excess=0, reduction=0, deduction=0,
+                forfeited_reason=_MFS_FORFEIT,
+            ))
+            work_lines.append(f"Part {part_id} ({name}): ${input_whole:,} entered but {_MFS_FORFEIT}. Deduction $0.")
+            return
+        tentative = min(input_whole, cap)
+        excess = max(Decimal(0), magi_d - threshold)
+        units = _sched1a_step_units(excess, phaseout.excess_rounding)
+        reduction = min(units * phaseout.reduction_per_1000_of_excess, tentative)
+        deduction = tentative - reduction
+        parts.append(Schedule1APart(
+            part=part_id, form_line=form_line, name=name, input_amount=input_whole, cap_applied=cap,
+            tentative=tentative, magi_threshold=threshold, magi_excess=irs_round(excess),
+            reduction=reduction, deduction=deduction,
+        ))
+        rounding_word = "DOWN to the next lower" if phaseout.excess_rounding == "down" else "UP to the next higher"
+        work_lines.append(
+            f"Part {part_id} ({name}, {lines_note}): min(${input_whole:,}, ${cap:,} cap{cap_note}) = "
+            f"${tentative:,}; MAGI excess over ${threshold:,} = ${irs_round(excess):,} -> "
+            f"{units:,} whole $1,000 unit(s) (quotient rounded {rounding_word} whole number) x "
+            f"${phaseout.reduction_per_1000_of_excess} = ${units * phaseout.reduction_per_1000_of_excess:,} "
+            f"reduction -> deduction ${deduction:,}."
+        )
+
+    if tips_d > 0:
+        cap_note = " — per RETURN; a joint return does NOT double it" if params.tips.cap_is_per_return else ""
+        _step_part("II", "13", "No Tax on Tips", tips_d, params.tips.deduction_cap, params.tips.phaseout,
+                   forfeit_on_mfs=not params.tips.mfs_allowed, lines_note="lines 4-13", cap_note=cap_note)
+    if overtime_d > 0:
+        _step_part("III", "21", "No Tax on Overtime", overtime_d,
+                   params.overtime.deduction_cap.for_status(filing_status), params.overtime.phaseout,
+                   forfeit_on_mfs=not params.overtime.mfs_allowed, lines_note="lines 14-21")
+    if car_d > 0:
+        _step_part("IV", "30", "Qualified passenger vehicle loan interest", car_d,
+                   params.car_loan_interest.deduction_cap, params.car_loan_interest.phaseout,
+                   forfeit_on_mfs=False, lines_note="lines 22-30")
+    if seniors_qualifying > 0:
+        sd = params.senior_deduction
+        per_person = sd.amount_per_qualifying_individual
+        threshold = sd.phaseout.magi_threshold.for_status(filing_status)
+        total_base = per_person * seniors_qualifying
+        if mfs and not sd.mfs_allowed:
+            parts.append(Schedule1APart(
+                part="V", form_line="37", name="Senior deduction", input_amount=total_base,
+                cap_applied=total_base, tentative=0, magi_threshold=threshold, magi_excess=0,
+                reduction=0, deduction=0, forfeited_reason=_MFS_FORFEIT,
+            ))
+            work_lines.append(f"Part V (Senior deduction): {seniors_qualifying} qualifying but {_MFS_FORFEIT}. Deduction $0.")
+        else:
+            excess = max(Decimal(0), magi_d - threshold)
+            reduction_pp = min(irs_round(sd.phaseout.rate * excess), per_person)
+            per_person_ded = per_person - reduction_pp
+            deduction = per_person_ded * seniors_qualifying
+            parts.append(Schedule1APart(
+                part="V", form_line="37", name="Senior deduction", input_amount=total_base,
+                cap_applied=total_base, tentative=total_base, magi_threshold=threshold,
+                magi_excess=irs_round(excess), reduction=reduction_pp * seniors_qualifying,
+                deduction=deduction,
+            ))
+            work_lines.append(
+                f"Part V (Senior deduction, lines 31-37): {seniors_qualifying} qualifying individual(s) "
+                f"({sd.birth_date_requirement}, valid SSN) x ${per_person:,}; MAGI excess over "
+                f"${threshold:,} = ${irs_round(excess):,} x {sd.phaseout.rate} = ${reduction_pp:,} "
+                f"reduction PER PERSON -> ${per_person_ded:,} each -> deduction ${deduction:,}."
+            )
+
+    total = sum(p.deduction for p in parts)
+    work_lines.append(
+        f"Line 38 total = ${total:,} -> Form 1040/1040-SR line 13b (Form 1040-NR line 13c); reduces "
+        f"taxable income whether itemizing or taking the standard deduction."
+    )
+    work_lines.append(
+        "Caller-judgment requirements NOT verified here: tipped-occupation list (IRS.gov/TippedOccupations, "
+        "voluntary tips only, no SSTB tips); overtime = the FLSA premium HALF only; car loan = personal-use "
+        "NEW vehicle, US final assembly, loan after 2024-12-31 secured by the vehicle, VIN on line 22, net "
+        "of Schedule C/E/F amounts; valid SSNs where required."
+    )
+
+    return Schedule1AResult(
+        total_deduction=total,
+        parts=parts,
+        inputs={
+            "magi": magi_whole,
+            "filing_status": filing_status,
+            "year": year,
+            "qualified_tips": irs_round(tips_d),
+            "qualified_overtime": irs_round(overtime_d),
+            "car_loan_interest": irs_round(car_d),
+            "seniors_qualifying": seniors_qualifying,
+        },
+        work="\n".join(work_lines),
         citation=params.citation,
     )
 

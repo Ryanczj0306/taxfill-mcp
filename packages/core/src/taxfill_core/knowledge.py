@@ -1026,6 +1026,135 @@ class DependentCareParams(BaseModel):
         return self
 
 
+# ── OBBBA Schedule 1-A "Additional Deductions" (P.L. 119-21, TY2025-2028) ─────
+# Typed models for the tax.obbba_schedule_1a block, shaped to fit the SHIPPED
+# YAML exactly (the block was two-pass verified against the published 2025
+# Schedule 1-A before any op consumed it — the models adapt to the data, never
+# the reverse). Every threshold is keyed married_filing_jointly vs other
+# because each statute says "in the case of a JOINT return": a qualifying
+# surviving spouse files a NON-joint return and therefore takes the `other`
+# column here, even though the rate schedules map QSS to the MFJ column.
+
+
+class Sched1aAmountByStatus(BaseModel):
+    """A dollar figure that doubles on a joint return: {married_filing_jointly, other}."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    married_filing_jointly: int = Field(gt=0)
+    other: int = Field(gt=0, description="Every non-joint status, INCLUDING qualifying surviving spouse.")
+
+    def for_status(self, filing_status: str) -> int:
+        return self.married_filing_jointly if filing_status == "married_filing_jointly" else self.other
+
+    @model_validator(mode="after")
+    def _joint_at_least_other(self) -> "Sched1aAmountByStatus":
+        if self.married_filing_jointly < self.other:
+            raise ValueError(
+                f"obbba_schedule_1a: the joint-return figure ({self.married_filing_jointly}) must be >= "
+                f"the other-status figure ({self.other}) — check the transcription against the form"
+            )
+        return self
+
+
+class Sched1aStepPhaseout(BaseModel):
+    """The tips/overtime/car-loan phase-out shape: $X per whole $1,000 of excess MAGI.
+
+    ``excess_rounding`` is the asymmetry the field notes flagged as a money trap:
+    Schedule 1-A lines 11 and 19 round the excess/$1,000 quotient DOWN to the next
+    lower whole number, line 28 rounds it UP to the next higher — the direction is
+    DATA copied from the form, never a branch in calc.py.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    magi_threshold: Sched1aAmountByStatus
+    reduction_per_1000_of_excess: int = Field(gt=0)
+    excess_rounding: Literal["down", "up"]
+
+
+class Sched1aRatePhaseout(BaseModel):
+    """The senior-deduction phase-out shape: a flat rate times the excess MAGI, per person."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    magi_threshold: Sched1aAmountByStatus
+    rate: Decimal = Field(gt=0, le=1, description="Schedule 1-A line 34: 6% (0.06) of MAGI over the threshold.")
+
+    _rate_exact = field_validator("rate", mode="before")(_as_exact_decimal)
+
+
+class Sched1aTipsParams(BaseModel):
+    """Part II — 'No Tax on Tips' (lines 4-13)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    deduction_cap: int = Field(gt=0)
+    cap_is_per_return: bool = Field(
+        description="True: the cap applies to COMBINED qualified tips on a joint return (MFJ does not double it)."
+    )
+    phaseout: Sched1aStepPhaseout
+    mfs_allowed: bool = Field(description="False: a married filer must file JOINTLY to claim it (forfeited on MFS).")
+
+
+class Sched1aOvertimeParams(BaseModel):
+    """Part III — 'No Tax on Overtime' (lines 14-21). The deduction covers the FLSA premium HALF only."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    deduction_cap: Sched1aAmountByStatus
+    phaseout: Sched1aStepPhaseout
+    mfs_allowed: bool = Field(description="False: a married filer must file JOINTLY to claim it (forfeited on MFS).")
+
+
+class Sched1aCarLoanParams(BaseModel):
+    """Part IV — qualified passenger vehicle loan interest (lines 22-30).
+
+    Deliberately carries NO ``mfs_allowed`` field: unlike tips/overtime/senior,
+    the statute imposes no joint-filing requirement, so a married-filing-
+    separately filer keeps this deduction (at the `other` MAGI threshold).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    deduction_cap: int = Field(gt=0)
+    phaseout: Sched1aStepPhaseout
+    loan_originated_after: str = Field(description="Loans originated after this date qualify (2024-12-31).")
+    new_vehicle_only: bool
+    us_final_assembly_required: bool
+    vin_required_on_return: bool
+
+
+class Sched1aSeniorParams(BaseModel):
+    """Part V — the senior deduction (lines 31-37): $6,000 per qualifying individual."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    amount_per_qualifying_individual: int = Field(gt=0)
+    birth_date_requirement: str = Field(description="'born before January 2, 1961' — age 65 by year end.")
+    phaseout: Sched1aRatePhaseout
+    mfs_allowed: bool = Field(description="False: a married filer must file JOINTLY to claim it (forfeited on MFS).")
+
+
+class ObbbaSchedule1aParams(BaseModel):
+    """The ``tax.obbba_schedule_1a`` block: the four OBBBA Schedule 1-A deductions.
+
+    Consumed by :func:`taxfill_core.calc.schedule_1a_deductions`. The line 38
+    total flows to Form 1040 line 13b / Form 1040-NR line 13c and reduces
+    taxable income whether the filer itemizes or takes the standard deduction.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    effective_years: str
+    magi_definition: str
+    tips: Sched1aTipsParams
+    overtime: Sched1aOvertimeParams
+    car_loan_interest: Sched1aCarLoanParams
+    senior_deduction: Sched1aSeniorParams
+
+
 class TaxKnowledge(BaseModel):
     """The ``tax`` block of a knowledge pack: everything calc.py needs for one year.
 
@@ -1058,6 +1187,10 @@ class TaxKnowledge(BaseModel):
     # 2021 carries the ARPA caps/slide/refundability). Optional so packs predating
     # the block still load; calc raises a prescriptive error when a year lacks it.
     dependent_care: DependentCareParams | None = None
+    # Phase H item H6: the OBBBA Schedule 1-A deductions (P.L. 119-21, TY2025-2028
+    # only — earlier packs never carry it; 2026 declares it deliberately absent
+    # until the 2026 form publishes). calc.schedule_1a_deductions consumes it.
+    obbba_schedule_1a: ObbbaSchedule1aParams | None = None
 
     @model_validator(mode="after")
     def _check_table_worksheet_boundary(self) -> "TaxKnowledge":

@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,844 tests, all green** — offline 2,739 + live-.gov 105, exit 0;
+Done and on `main` (**2,861 tests, all green** — offline 2,756 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -31,7 +31,7 @@ re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
   list_document_kinds, extract_document, workspace_save, workspace_load,
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
-  states). The `calc` tool carries 17 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, state_tax).
+  states). The `calc` tool carries 18 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, state_tax).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, with per-field
   provenance — K-1 is the one common document still unsupported) and the resumable
@@ -515,19 +515,36 @@ scenario exercises the persona that motivated it.
       (correct, but it makes mid-year planning impossible). Note the packs land
       **before** the year's forms exist, so the pack must be usable for math with
       no form pack present.*)
-- [ ] **H6 — Schedule 1-A + the OBBBA deduction family (N-6, N-8).** 2026 returns
-      carry four new deductions (tips / overtime / car-loan interest / senior) on
-      Schedule 1-A — which **attaches to Form 1040-NR as well** (line 38 → 1040-NR
-      line 13c) — plus §170(p) non-itemizer charity ($1,000/$2,000) and the new
-      0.5%-AGI floor on itemized charity. Build: a `sched_1a` knowledge block
-      (caps $25,000 / $12,500-$25,000 / $10,000 / $6,000; MAGI thresholds
-      $150k-$300k / $100k-$200k / $75k-$150k; and the **asymmetric** rounding —
-      Part III reduces $100 per whole $1,000 rounded DOWN, Part IV $200 per $1,000
-      rounded UP, Part V a flat 6% of the excess), a calc op, and the pack. Encode
-      two traps that swing real money: the tips/overtime/senior deductions are
-      **forfeited by a married taxpayer who does not file jointly**, and NRA
-      bank-deposit interest is excluded under §871(i)(2)(A) until a §6013(g)
-      election makes the payee a resident.
+- [x] **H6 — Schedule 1-A calc op — DONE 2026-08-09** (N-6; the calc op is
+      `schedule_1a_deductions`, the 18th op). The item turned out HALF-BUILT:
+      the `tax.obbba_schedule_1a` knowledge block (two-pass verified, with the
+      asymmetric rounding as DATA) and the 54-field `sched_1a` form pack had
+      shipped 2026-07-25 with the YAML itself noting "no calc op consumes it
+      yet". Shipped: typed models (`ObbbaSchedule1aParams` + five sub-models —
+      the models fit the SHIPPED YAML, no re-key; the senior 6% rate now loads
+      as an exact Decimal via `_as_exact_decimal`, closing a float bug) and the
+      op with all four parts. Traps golden-tested: the tips/overtime/senior
+      **MFS forfeiture** (car-loan interest is NOT forfeited — its statute has
+      no joint-filing rule); the tips **$25,000 per-RETURN cap** (a joint
+      return does not double it); the **asymmetric rounding** (lines 11/19
+      round the excess/$1,000 quotient DOWN, line 28 rounds it UP, line 34 is
+      6% of excess per person); and **QSS takes the non-joint thresholds**
+      (each statute keys on "a joint return" — the opposite of the rate
+      schedules' QSS→MFJ mapping). 2026 declares the block deliberately absent
+      until the 2026 Schedule 1-A publishes (statutory caps are fixed through
+      2026, but the freshness protocol wants the form, not a paraphrase).
+      *(was: scoped to also include §170(p) non-itemizer charity and the
+      0.5%-AGI itemized-charity floor, and described the deductions as on
+      "2026 returns". Corrected by the design review: both charity provisions
+      are effective for tax years beginning AFTER 2025 — TY2026+, not TY2025 —
+      and neither is a Schedule 1-A part (§170(p) is a Form 1040 line, the
+      0.5% floor is a Schedule A computation), so they carve out to a separate
+      2026-only knowledge item with no op until the 2026 forms publish; and
+      the four deductions are on TY2025 returns, being filed NOW, which is
+      what made H6 the only Phase H item that was also a live filing-path
+      defect.)* Still open from the original H6 scope: **N-8**, the NRA
+      bank-deposit-interest exclusion (§871(i)(2)(A)) — an extract_document /
+      estimator note, tracked with H4's projection work.
 - [ ] **H7 — scenario comparison surface (N-9, N-15).** Planning questions arrive
       as "compare A vs B vs C" (unmarried / married-MFS / married + §6013(g)), and
       the engine has every primitive but no way to run and diff a set. Build a
