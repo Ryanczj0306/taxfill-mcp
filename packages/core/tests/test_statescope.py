@@ -252,3 +252,60 @@ def test_income_tax_state_without_pack_still_must_file(tmp_path):
     assert ny.must_file is True and ny.filing_role == "resident" and ny.income_tax is True
     assert ny.forms == ["(see state DOR — resident vs nonresident form)"]
     assert any("knowledge pack" in n.lower() for n in r.notes)
+
+
+# ── H3: the remote-work employer-state trap (convenience-of-the-employer) ──────
+
+
+def _wp_emp(state, start, end, employer_state, remote=True):
+    return WorkPeriod(state=state, start=start, end=end, remote=remote,
+                      employer_state=employer_state, provenance=US)
+
+
+def test_remote_employer_state_raises_the_convenience_warning_without_asserting_a_filing():
+    # Lived+worked WA (no income tax) for an employer sitting in NY: NY may source
+    # the wages under its convenience rule, but no pack carries that rule yet — so
+    # the result warns loudly and does NOT assert an NY filing.
+    r = state_scope(_profile(
+        year=2025,
+        lived=[_rp("WA", date(2025, 1, 1), date(2025, 12, 31))],
+        worked=[_wp_emp("WA", date(2025, 1, 1), date(2025, 12, 31), "NY")],
+    ), 2025)
+    assert all(s.state != "NY" for s in r.states)  # never asserted as must_file
+    note = next(n for n in r.notes if "convenience-of-the-employer" in n)
+    assert "NY" in note and "DOR" in note and "Box 15" in note
+
+
+def test_convenience_warning_attaches_to_the_employer_state_when_it_is_already_scoped():
+    # Part-year NY resident who then works remotely from CA for the NY employer:
+    # NY already has a filing entry — the warning belongs ON it, not in the notes.
+    r = state_scope(_profile(
+        year=2025,
+        lived=[_rp("NY", date(2025, 1, 1), date(2025, 5, 31)),
+               _rp("CA", date(2025, 6, 1), date(2025, 12, 31))],
+        worked=[_wp_emp("CA", date(2025, 6, 1), date(2025, 12, 31), "NY")],
+    ), 2025)
+    ny = _by_state(r)["NY"]
+    assert any("convenience-of-the-employer" in w for w in ny.warnings)
+    assert not any("convenience-of-the-employer" in n for n in r.notes)
+
+
+def test_employer_in_a_no_tax_state_is_silent():
+    # Employer sits in TX: nothing to source into — no warning, no noise.
+    r = state_scope(_profile(
+        year=2025,
+        lived=[_rp("CA", date(2025, 1, 1), date(2025, 12, 31))],
+        worked=[_wp_emp("CA", date(2025, 1, 1), date(2025, 12, 31), "TX")],
+    ), 2025)
+    assert not any("convenience" in n for n in r.notes)
+    assert not any("convenience" in w for s in r.states for w in s.warnings)
+
+
+def test_employer_in_the_worked_state_is_silent():
+    r = state_scope(_profile(
+        year=2025,
+        lived=[_rp("CA", date(2025, 1, 1), date(2025, 12, 31))],
+        worked=[_wp_emp("CA", date(2025, 1, 1), date(2025, 12, 31), "CA")],
+    ), 2025)
+    assert not any("convenience" in n for n in r.notes)
+    assert not any("convenience" in w for s in r.states for w in s.warnings)

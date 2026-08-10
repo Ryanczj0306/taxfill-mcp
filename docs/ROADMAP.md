@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,910 tests, all green** — offline 2,805 + live-.gov 105, exit 0;
+Done and on `main` (**2,945 tests, all green** — offline 2,840 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -459,31 +459,46 @@ scenario exercises the persona that motivated it.
 > asks the wrong-shaped question or fails closed. The data model is mostly right;
 > the elicitation and the forward-looking direction are missing.
 
-- [ ] **H1 — Visa sub-status + per-period tax attributes (N-1).** `VisaPeriod`
-      gains a controlled `sub_status` (`student / opt / stem_opt / cap_gap /
-      employment / dependent / other`) and a derived, cited `fica_exempt` per
-      period; `residency`'s prefix categorization keeps working unchanged (OPT is
-      F-1 for the exempt-individual rules) but FICA and per-segment income
-      questions stop being re-inferred from strings at each call site. Intake
-      collects the timeline **segment by segment** with a worked
-      F-1 → OPT → H-1B example, enforces contiguity, and asks for the H-1B start
-      as the **I-797 start date** (not the offer or onboarding date).
-- [ ] **H2 — Unmarried partner / multi-taxpayer household (N-2).**
-      `household.other_taxpayers[]` (relationship `unmarried_partner` / other,
-      own status + optional profile ref). Delivers: explicit "you file
-      separately, here are two returns" guidance; a guard against claiming an NRA
-      partner as a dependent (the citizen/national/resident requirement); a
-      household-level budget roll-up over two profiles; and a "if you marry in
-      <year>" branch that hands off to the existing §6013(g)/(h) election path.
-- [ ] **H3 — Segmented state-footprint elicitation + onboarding worksheet
-      (N-3, N-5).** Replace the single `state_footprint.lived_worked` question
-      (`intake.py:661`) with a segment loop (lived / worked / remote / employer
-      state per date range) plus a mandatory trigger checklist (mid-year move,
-      cross-state remote, >30-day assignment, school ≠ internship state, W-2
-      Box 15 mismatch, out-of-US periods, and no-tax-state segments still needing
-      dates). Promote [`INTAKE_WORKSHEET.zh-CN.md`](INTAKE_WORKSHEET.zh-CN.md) to
-      a canonical English surface emitted by `intake_checklist` (localizations
-      alongside), so a zero-experience user has something to fill in.
+- [x] **H1 — Visa sub-status + per-period tax attributes (N-1) — DONE 2026-08-10.**
+      `VisaPeriod.sub_status` (`student / opt / stem_opt / cap_gap / employment /
+      dependent / other`) + the DERIVED (never stored) `fica_exempt_hint()`
+      citing IRC 3121(b)(19)/Pub 519 per period — exempt for every F-1 posture
+      including OPT/STEM OPT/cap-gap, FICA from the boundary for employment
+      statuses, agnostic-with-instructions otherwise; `residency`'s prefix rules
+      unchanged; `_has_f1_period` prefers the vocabulary. Intake asks the
+      timeline **segment by segment** with the worked F-1 → OPT → H-1B example,
+      notes contiguity gaps and open-ended predecessors, and pins the H-1B start
+      to the **I-797 start date**.
+- [x] **H2 — Unmarried partner / multi-taxpayer household (N-2) — DONE
+      2026-08-10.** `household.other_taxpayers[]` (`OtherTaxpayer`: relationship,
+      own `us_person`, note) + the `no_other_taxpayers` sentinel (an empty list
+      means "not asked", never "none"). Asked only for unmarried filers; delivers
+      the three push-backs as intake NOTES: file SEPARATELY (two returns, no
+      MFJ); an NRA partner is NOT claimable as a dependent (§152(b)(3)); the
+      marry-in-year branch is PRICED via compare_scenarios
+      (`us_resident_election: true`) instead of guessed. *(Deferred: the
+      household-level budget ROLL-UP over two profiles — a presentation surface;
+      each partner's own numbers already compute.)*
+- [x] **H3 — Segmented state-footprint elicitation + onboarding worksheet
+      (N-3, N-5) — DONE 2026-08-10.** The `state_footprint.lived_worked`
+      question is segment-shaped (one row per date range: lived / worked /
+      remote / employer state) with the mandatory 7-trigger checklist (mid-year
+      move, cross-state remote, >30-day assignment, school ≠ internship state,
+      W-2 Box 15 mismatch, out-of-US periods, no-tax-state segments still dated).
+      `WorkPeriod.employer_state` + a follow-up question that chases it on every
+      remote segment, and `state_scope` raises a convenience-of-the-employer
+      warning (verify-at-DOR, NEVER an asserted must_file — no pack carries
+      convenience rules yet; silent when the employer sits in a no-wage-tax
+      state). The worksheet is canonical ENGLISH in
+      [`INTAKE_WORKSHEET.md`](INTAKE_WORKSHEET.md), shipped inside the wheel as
+      `taxfill_core.worksheet` (zh-CN alongside, both sync-tested byte-for-byte)
+      and emitted by `intake_checklist` on the start state. Also landed with the
+      tranche: `retirement_contributions` (the N-11 Roth/pre-tax deferral split,
+      asked for planning years only — closed years read W-2 box 12 — with the
+      6%-excise pointer note on a recorded Roth IRA amount) and the N-14
+      push-backs (the §6013 ELECTION-not-the-marriage note; Schedule 1-A Part
+      III's premium-half / below-AGI-line work line). Eval r covers the full
+      persona (unmarried two-NRA household, mid-year status change).
 - [x] **H4 — Planning / projection mode — DONE 2026-08-09** (N-4, N-7b, N-8,
       N-12; ops 19-21). Shipped:
       * **The PROJECTION output contract**: `RefundEstimate.label` is now
@@ -649,6 +664,46 @@ scenario exercises the persona that motivated it.
       representation** — the ops take explicit arguments today, so the
       capability exists agent-composed; persisting the deferral split on the
       profile is intake/schema work and lands with that tranche.)*
+
+- [ ] **H9 — reward / other-income characterization + the NRA FDAP corner
+      (field session 2026-08-10).** A real user asked whether a brokerage
+      cash-management account's annual "engagement bonus" (a premium-card
+      annual-fee reimbursement) is taxable. The engine could price the tax ONCE the
+      characterization was known and could resolve the residency branch
+      (`residency` + the `nonresident_and_treaties` topic returns Pub 519 +
+      the Treasury treaty texts) — but the characterization itself came
+      entirely from the agent's head, which is the exact failure the freshness
+      protocol exists to prevent. Three gaps, plus one regression:
+      * **`sources.yaml` topic `other_income_and_rewards`** — Pub 525 (Other
+        Income), and the rebate-vs-income line: rewards earned by SPENDING are
+        a purchase-price rebate and not income (the Rev. Rul. 76-96 lineage),
+        while a bonus for OPENING or MAINTAINING a deposit relationship is
+        income the bank reports (1099-MISC box 3 / 1099-INT). `get_sources`
+        currently returns a clean MISS for "credit card rewards taxable",
+        "bank account bonus income" and "other income 1099-MISC".
+      * **`sources.yaml` topic `nonresident_fdap`** — Pub 519 ch. 4, the
+        Schedule NEC instructions, the §871(a) 30% statutory rate, Form 1042-S,
+        and the ECI-vs-FDAP split. `FDAP` and "effectively connected income"
+        are clean misses today; "nonresident FDAP income" mis-routes to
+        `nonresident_spouse_election` and "30% withholding nonresident" to
+        `dual_status`.
+      * **⚠️ REGRESSION introduced by H6 (2026-08-09):** `get_sources("Schedule
+        NEC")` now routes to `obbba_schedule_1a_deductions` — the token
+        "Schedule" pulls toward Schedule 1-A. Schedule NEC is the 1040-NR FDAP
+        schedule; pointing an agent at the OBBBA deduction page for it is the
+        WRONG-LAW failure the H6 sources fix was written to prevent, and the
+        new topic caused a fresh instance of it. Fix with the NEC topic above
+        and extend `test_sources.py`'s neighbour-theft test to cover it.
+      * **`pitfalls.yaml` P-005** — the rebate-vs-income confusion as a
+        permanent registry entry (rules that do not vary by year live there,
+        not in a year pack; only the §871(a) 30% rate and any treaty
+        "other income" article rate are figures, and the treaty packs cover
+        only the student/teacher articles today, not Art. 22-style other
+        income).
+      **Acceptance:** every query in the three bullets above resolves to its
+      own topic, no neighbouring topic is stolen, and an agent asked "is this
+      bonus taxable" reaches Pub 525 + Pub 519 ch. 4 without the operator
+      supplying the law.
 
 **Acceptance:** H1/H2 ship schema + intake changes with regression tests and an
 eval scenario for the *unmarried two-NRA household, mid-year status change*

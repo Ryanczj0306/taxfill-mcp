@@ -502,7 +502,13 @@ def residency(
 
 @mcp.tool()
 def intake_checklist(profile: dict | None = None, tax_year: int | None = None) -> dict:
-    """Next interview questions + required documents for a (partial) profile. Empty profile = start."""
+    """Next interview questions + required documents for a (partial) profile. Empty profile = start.
+
+    The start state (empty profile) also returns `worksheet`: a fill-in-the-blank onboarding
+    worksheet (markdown) to hand a no-experience user BEFORE interviewing them — status and
+    state facts as date-ranged SEGMENTS, never single words. Record their answers into the
+    profile and re-call; the interview then asks only what is still missing.
+    """
     prof = Profile.model_validate(profile) if profile else None
     return _dump(_intake_checklist(prof, tax_year=tax_year))
 

@@ -3,8 +3,10 @@
 > **What this is.** A fill-in-the-blank worksheet a tax-inexperienced user can complete
 > *before* (or during) the agent interview, so the agent gets date-ranged facts instead of
 > one-word answers. Sourced from the 2026-08-04 real session (see
-> [`FIELD_NOTES.md`](FIELD_NOTES.md) — gap N-1/N-2/N-3). Canonical English version: TODO
-> (ROADMAP Phase H, H3).
+> [`FIELD_NOTES.md`](FIELD_NOTES.md) — gap N-1/N-2/N-3). Canonical English version:
+> [`INTAKE_WORKSHEET.md`](INTAKE_WORKSHEET.md) — both are emitted at runtime by
+> `intake_checklist` via `taxfill_core.worksheet` (this file is the zh-CN localization
+> and is sync-tested against that module).
 
 **三条规则，比表格本身重要：**
 

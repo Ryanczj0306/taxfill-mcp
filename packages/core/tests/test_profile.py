@@ -295,3 +295,48 @@ def test_joint_return_carries_spouse_as_second_taxpayer():
 def test_spouse_rejects_unknown_field():
     with pytest.raises(ValidationError):
         Spouse.model_validate({"middle_name": "x"})
+
+
+# ── H1: VisaPeriod.sub_status + the derived FICA hint ──────────────────────────
+
+
+def _vp(status, sub_status=None, start=date(2024, 6, 1), end=None):
+    return VisaPeriod(status=status, sub_status=sub_status, start=start, end=end,
+                      provenance=Provenance.user_stated())
+
+
+def test_fica_hint_is_exempt_for_every_f1_posture():
+    # OPT / STEM OPT / cap-gap are still F-1: the exemption is STATUS-based
+    # (IRC 3121(b)(19)) and the hint must say so for each posture.
+    for sub in ("student", "opt", "stem_opt", "cap_gap"):
+        hint, why = _vp("F-1", sub).fica_exempt_hint()
+        assert hint is True, sub
+        assert "3121(b)(19)" in why and "STATUS-based" in why
+
+
+def test_fica_hint_survives_missing_sub_status_on_an_f_or_j_prefix():
+    hint, why = _vp("J-1").fica_exempt_hint()
+    assert hint is True and "classify()" in why
+
+
+def test_fica_hint_starts_at_the_employment_boundary_for_h1b():
+    hint, why = _vp("H-1B", "employment").fica_exempt_hint()
+    assert hint is False
+    assert "I-797" in why  # the start date is the approval date, never onboarding
+
+
+def test_fica_hint_stays_agnostic_when_no_rule_derives():
+    hint, why = _vp("B-2", "other").fica_exempt_hint()
+    assert hint is None and "employee_fica" in why
+
+
+def test_sub_status_vocabulary_is_closed():
+    with pytest.raises(ValidationError):
+        _vp("F-1", "internship")
+
+
+def test_old_profiles_without_new_h_fields_still_load():
+    # Every H1-H3 field defaults: a profile saved before the tranche round-trips.
+    p = Profile.model_validate({"income_documents": []})
+    assert p.retirement_contributions == {}
+    assert Profile.model_validate(p.model_dump(mode="json")) == p

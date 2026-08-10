@@ -49,7 +49,7 @@ def test_empty_profile_opens_with_identity_questions():
     ids = _ids(cl)
     assert {"identity.name", "identity.tax_id", "identity.us_person", "identity.mailing_address"} <= ids
     assert cl.ready_to_fill is False
-    assert cl.progress == "0 of 8 sections started"
+    assert cl.progress == "0 of 9 sections started"
 
 
 def test_mailing_address_carries_the_p002_disambiguation():
@@ -77,9 +77,12 @@ def test_nonresident_gets_immigration_and_residency_questions():
     assert "immigration.visa_timeline" in ids
     assert "residency.days_in_us" in ids
     visa_q = next(q for q in intake_checklist(profile).next_questions if q.id == "immigration.visa_timeline")
-    # Visa facts captured as date-range periods (part of the treaty-mis-scoping
-    # countermeasure; the full per-period treaty logic + eval remain deferred).
-    assert visa_q.disambiguation and "date ranges" in visa_q.disambiguation
+    # Visa facts captured as date-range periods, SEGMENT BY SEGMENT (P-004 + H1):
+    # the question carries a worked F-1→OPT→H-1B example, the sub_status
+    # vocabulary, and the I-797 disambiguation for the H-1B start date.
+    assert "SEGMENT BY SEGMENT" in visa_q.prompt and "start/end dates" in visa_q.prompt
+    assert visa_q.disambiguation and "Worked example" in visa_q.disambiguation
+    assert "I-797" in visa_q.disambiguation and "stem_opt" in visa_q.disambiguation
 
 
 def test_tax_year_targets_the_residency_day_count():
@@ -376,6 +379,9 @@ def test_resident_alien_passing_spt_keeps_mfj_and_hoh_available():
 
 
 def _single_filer_core(**household_kwargs) -> Profile:
+    # no_other_taxpayers answers the H2 household question (an unmarried filer is
+    # asked who else in the household files their own return, until answered).
+    household_kwargs.setdefault("no_other_taxpayers", _ans(True))
     return Profile(
         identity=Identity(
             name=_ans("Jordan Q Taxpayer"), tax_id=_ans("999001234"), dob=_ans(date(1990, 1, 1)),
@@ -825,3 +831,190 @@ def test_the_explicit_none_sentinels_terminate_the_question():
     assert not _footprint_qs(Profile(state_footprint={2025: lived_no_work}), 2025)
     abroad = StateFootprintYear(no_us_residence=True, no_us_work=True)
     assert not _footprint_qs(Profile(state_footprint={2025: abroad}), 2025)
+
+
+# ── Phase H (H1): segment-by-segment visa elicitation + contiguity ─────────────
+
+
+def test_visa_timeline_gap_between_periods_gets_a_contiguity_note():
+    # F-1 ends May 15, H-1B starts Oct 1 — the uncovered months are exactly where
+    # residency day counts and FICA flip, so the gap must be surfaced, not skipped.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status="F-1", sub_status="student", start=date(2021, 8, 20), end=date(2025, 5, 15), provenance=US),
+            VisaPeriod(status="H-1B", sub_status="employment", start=date(2025, 10, 1), provenance=US),
+        ]),
+    )
+    notes = intake_checklist(profile).notes
+    assert any("Visa timeline gap" in n and "F-1" in n and "H-1B" in n for n in notes)
+
+
+def test_visa_period_with_no_end_before_a_later_period_gets_a_note():
+    # An open-ended earlier period with a successor is a data error: the boundary
+    # date IS the tax answer (I-797 start for an F-1→H-1B change).
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status="F-1", sub_status="opt", start=date(2024, 6, 1), provenance=US),
+            VisaPeriod(status="H-1B", sub_status="employment", start=date(2026, 10, 1), provenance=US),
+        ]),
+    )
+    notes = intake_checklist(profile).notes
+    assert any("no end" in n and "I-797" in n for n in notes)
+
+
+def test_contiguous_timeline_gets_no_gap_note():
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status="F-1", sub_status="opt", start=date(2024, 6, 1), end=date(2026, 9, 30), provenance=US),
+            VisaPeriod(status="H-1B", sub_status="employment", start=date(2026, 10, 1), provenance=US),
+        ]),
+    )
+    assert not any("gap" in n.lower() for n in intake_checklist(profile).notes)
+
+
+def test_sub_status_alone_marks_an_f1_period():
+    # _has_f1_period must prefer the H1 vocabulary: OPT recorded with a bare
+    # status string still counts as an F-1 posture via sub_status.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status="Optional Practical Training", sub_status="opt", start=date(2025, 6, 1), provenance=US),
+        ]),
+    )
+    docs = {d.kind for d in intake_checklist(profile).required_documents}
+    # The NRA-student document seeding keys on _has_f1_period.
+    assert {"W-2", "1098-T"} <= docs
+
+
+# ── Phase H (H2): other taxpayers in the household ─────────────────────────────
+
+
+def test_unmarried_filer_is_asked_who_else_files_until_answered():
+    profile = _single_filer_core(no_other_taxpayers=None)
+    q = next(q for q in intake_checklist(profile).next_questions if q.id == "household.other_taxpayers")
+    assert "file their own tax return" in q.prompt
+    assert q.disambiguation and "no_other_taxpayers" in q.disambiguation
+    # The sentinel ends it; an empty list does not.
+    answered = _single_filer_core()  # helper sets no_other_taxpayers=True
+    assert "household.other_taxpayers" not in _ids(intake_checklist(answered))
+
+
+def test_married_filer_is_not_asked_about_other_taxpayers():
+    profile = Profile(household=Household(marital_status=_ans("married")))
+    assert "household.other_taxpayers" not in _ids(intake_checklist(profile))
+
+
+def test_nra_partner_household_gets_the_three_guard_notes():
+    from taxfill_core.schemas.profile import OtherTaxpayer
+
+    profile = _single_filer_core(other_taxpayers=[
+        OtherTaxpayer(name="Partner P", relationship="unmarried_partner", us_person=False,
+                      note="NRA on OPT, files 1040-NR", provenance=US),
+    ])
+    notes = intake_checklist(profile).notes
+    assert any("file SEPARATELY" in n for n in notes)                       # two returns, no MFJ
+    assert any("§152(b)(3)" in n for n in notes)                            # no dependent claim for an NRA partner
+    assert any("compare_scenarios" in n and "6013" in n for n in notes)     # price the marry-in-year branch
+
+
+def test_us_person_partner_skips_the_dependent_guard():
+    from taxfill_core.schemas.profile import OtherTaxpayer
+
+    profile = _single_filer_core(other_taxpayers=[
+        OtherTaxpayer(name="Partner P", relationship="unmarried_partner", us_person=True, provenance=US),
+    ])
+    notes = intake_checklist(profile).notes
+    assert any("file SEPARATELY" in n for n in notes)
+    assert not any("§152(b)(3)" in n for n in notes)
+
+
+# ── Phase H (H3): segment loop, triggers, remote employer follow-up ────────────
+
+
+def test_state_footprint_question_is_segment_shaped_with_the_trigger_checklist():
+    qs = _footprint_qs(Profile(), 2023)
+    q = qs[0]
+    assert "SEGMENTS" in q.prompt
+    d = q.disambiguation or ""
+    # The 7-trigger checklist from the worksheet's Part 4.
+    for marker in ("moved across state lines", "REMOTELY", "~30 days", "internship",
+                   "W-2 Box 15", "outside the US", "WA/TX/FL/NV/SD/WY/AK/TN/NH"):
+        assert marker in d, f"missing trigger: {marker}"
+    assert "no_us_residence" in d  # the sentinels stay explained
+
+
+def test_remote_segment_without_employer_state_gets_a_followup():
+    fp = StateFootprintYear(
+        lived=[ResidencePeriod(state="WA", start=date(2025, 1, 1), end=date(2025, 12, 31), provenance=US)],
+        worked=[WorkPeriod(state="WA", start=date(2025, 1, 1), end=date(2025, 12, 31), remote=True, provenance=US)],
+    )
+    qs = _footprint_qs(Profile(state_footprint={2025: fp}), 2025)
+    assert [q.id for q in qs] == ["state_footprint.remote_employer_state"]
+    assert "convenience-of-the-employer" in qs[0].why
+
+
+def test_employer_state_answer_ends_the_remote_followup():
+    fp = StateFootprintYear(
+        lived=[ResidencePeriod(state="WA", start=date(2025, 1, 1), end=date(2025, 12, 31), provenance=US)],
+        worked=[WorkPeriod(state="WA", start=date(2025, 1, 1), end=date(2025, 12, 31), remote=True,
+                           employer_state="WA", provenance=US)],
+    )
+    assert not _footprint_qs(Profile(state_footprint={2025: fp}), 2025)
+
+
+def test_non_remote_segments_get_no_employer_followup():
+    assert not _footprint_qs(Profile(state_footprint={2025: _one_state_footprint(2025)}), 2025)
+
+
+# ── Phase H (N-11): the Roth/pre-tax deferral split, planning years only ───────
+
+
+def test_planning_year_asks_for_the_deferral_split():
+    q = next(q for q in intake_checklist(Profile(), tax_year=2026).next_questions
+             if q.id == "retirement.deferral_split")
+    assert "TAX CHARACTER" in q.prompt
+    assert q.disambiguation and "402(g)" in q.disambiguation and "6%" in q.disambiguation
+
+
+def test_closed_year_does_not_ask_for_the_deferral_split():
+    # For a closed year the split is a W-2 box 12 fact — re-asking collects a
+    # worse copy of a document.
+    assert "retirement.deferral_split" not in _ids(intake_checklist(Profile(), tax_year=2023))
+
+
+def test_answered_deferral_split_stops_the_question_and_counts_as_a_section():
+    from taxfill_core.schemas.profile import RetirementContributionsYear
+
+    rc = RetirementContributionsYear(pretax_401k=_ans(12000), roth_401k=_ans(6000))
+    profile = Profile(retirement_contributions={2026: rc})
+    cl = intake_checklist(profile, tax_year=2026)
+    assert "retirement.deferral_split" not in _ids(cl)
+    assert cl.progress == "1 of 9 sections started"
+
+
+def test_recorded_roth_ira_amount_gets_the_excise_pointer_note():
+    from taxfill_core.schemas.profile import RetirementContributionsYear
+
+    rc = RetirementContributionsYear(roth_ira=_ans(7000))
+    cl = intake_checklist(Profile(retirement_contributions={2026: rc}), tax_year=2026)
+    assert any("ira_contribution_eligibility" in n and "6%" in n and "YEAR-END" in n for n in cl.notes)
+
+
+# ── Phase H (N-14): the election-not-the-marriage push-back ────────────────────
+
+
+def test_nra_spouse_note_distinguishes_the_election_from_the_marriage():
+    # Two real sessions concluded "married ⇒ the §871(i) exclusion is gone" straight
+    # from the label; the note must state the distinction unprompted.
+    profile = Profile(
+        household=Household(
+            marital_status=_ans("married"),
+            spouse=Spouse(name=_ans("Spouse S"), us_person=_ans(False)),
+        )
+    )
+    notes = intake_checklist(profile).notes
+    assert any("ELECTION, not the marriage" in n and "871(i)" in n for n in notes)
+    assert any("FICA" in n and "STATUS-based" in n for n in notes)

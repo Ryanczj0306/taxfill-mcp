@@ -29,6 +29,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from taxfill_core import residency
 from taxfill_core.schemas.profile import Answer, Profile
+from taxfill_core.worksheet import intake_worksheet
 
 __all__ = ["IntakeQuestion", "RequiredDocument", "IntakeChecklist", "intake_checklist"]
 
@@ -40,6 +41,7 @@ SECTIONS = (
     "household",
     "state_footprint",
     "income_documents",
+    "retirement",
     "banking",
     "prior_filings",
 )
@@ -82,8 +84,16 @@ class IntakeChecklist(BaseModel):
         default=False,
         description="True when the minimum facts to begin a draft return are present (more may still sharpen it).",
     )
-    progress: str = Field(default="", description="Human-readable progress, e.g. '3 of 8 sections started'.")
+    progress: str = Field(default="", description="Human-readable progress, e.g. '3 of 9 sections started'.")
     notes: list[str] = Field(default_factory=list, description="Gating explanations and assumptions surfaced to the user.")
+    worksheet: str | None = Field(
+        default=None,
+        description=(
+            "The full onboarding worksheet (markdown), present ONLY on the start state (empty "
+            "profile): a zero-experience user fills it in once instead of being interviewed cold. "
+            "Other languages via taxfill_core.worksheet.intake_worksheet('zh-CN')."
+        ),
+    )
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -163,11 +173,18 @@ def _spouse_classification(profile: Profile, tax_year: int | None) -> str | None
 
 
 def _has_f1_period(profile: Profile) -> bool:
-    """True when the visa timeline declares an F-1 (student) period."""
+    """True when the visa timeline declares an F-1 (student) period.
+
+    Prefers the H1 sub_status vocabulary (student/opt/stem_opt/cap_gap are all
+    F-1 postures) and falls back to the status prefix for older profiles."""
     imm = profile.immigration
     if imm is None:
         return False
-    return any(p.status.strip().upper().replace("-", "").startswith("F1") for p in imm.visa_timeline)
+    return any(
+        p.sub_status in ("student", "opt", "stem_opt", "cap_gap")
+        or p.status.strip().upper().replace("-", "").startswith("F1")
+        for p in imm.visa_timeline
+    )
 
 
 def _has_fj_period(profile: Profile) -> bool:
@@ -246,12 +263,37 @@ def _immigration_questions(profile: Profile, out: list[IntakeQuestion], notes: l
     imm = profile.immigration
     if imm is None or not imm.visa_timeline:
         out.append(_q("immigration.visa_timeline", "immigration",
-                      "List each U.S. immigration status you have held and its exact start/end dates.",
-                      "Treaty benefits and residency are decided per visa period, not per year.",
+                      "Walk your U.S. immigration timeline SEGMENT BY SEGMENT: for each period, the status, "
+                      "what you were doing in it (sub_status), and exact start/end dates.",
+                      "Treaty benefits, residency AND the FICA switch-on are decided per visa period, not per year.",
                       "immigration.visa_timeline",
-                      disambiguation="Use date ranges, not a single 'current status'. Mid-year changes matter: an "
-                                     "F-1→H-1B year can still claim a student-period treaty benefit on income earned "
-                                     "while you were the student (pitfall P-004)."))
+                      disambiguation="Worked example — F-1 student Aug 2021 → F-1 OPT Jun 2025 (sub_status: opt; "
+                                     "still F-1: residency rules unchanged, but now WORKING) → H-1B Oct 2026 "
+                                     "(sub_status: employment). sub_status vocabulary: student / opt / stem_opt / "
+                                     "cap_gap / employment / dependent / other. Consecutive periods should be "
+                                     "CONTIGUOUS (each start = the prior end + 1 day); an H-1B period starts on the "
+                                     "I-797 APPROVAL start date — never the offer or onboarding date. Mid-year "
+                                     "changes matter: an F-1→H-1B year can still claim a student-period treaty "
+                                     "benefit on income earned while you were the student (pitfall P-004), and FICA "
+                                     "starts at the employment boundary (calc op employee_fica takes these segments)."))
+    if imm is not None and len(imm.visa_timeline) >= 2:
+        ordered = sorted(imm.visa_timeline, key=lambda p: p.start)
+        for prev, nxt in zip(ordered, ordered[1:]):
+            if prev.end is None:
+                notes.append(
+                    f"Visa timeline: the {prev.status} period starting {prev.start.isoformat()} has no end "
+                    f"date but a later {nxt.status} period follows — set the earlier period's end (for an "
+                    f"F-1→H-1B change, the day before the I-797 start)."
+                )
+                break
+            gap = (nxt.start - prev.end).days
+            if gap > 1:
+                notes.append(
+                    f"Visa timeline gap: {prev.status} ends {prev.end.isoformat()} but {nxt.status} starts "
+                    f"{nxt.start.isoformat()} ({gap - 1} day(s) uncovered) — fill the gap (cap-gap? travel "
+                    f"abroad?) or correct the dates; residency day counts and FICA both key on the boundary."
+                )
+                break
     if imm is None or not _has(imm.first_us_entry):
         out.append(_q("immigration.first_us_entry", "immigration", "When did you first enter the U.S.?",
                       "It anchors the exempt-individual count in the Substantial Presence Test.",
@@ -547,6 +589,43 @@ def _household_questions(
                           disambiguation="Answer yes for an SSN that is valid for employment (most SSNs are); "
                                          "answer no if the dependent has an ITIN or ATIN instead of an SSN."))
 
+    # ── H2: other taxpayers in the household (the unmarried-couple persona) ──
+    # Asked only for UNMARRIED filers (a spouse already has a full model) and
+    # only until answered: the sentinel makes an empty list mean "none", not
+    # "never asked" — the same ambiguity the state-footprint sentinels resolve.
+    if hh is not None and _marital(profile) == "unmarried":
+        if not hh.other_taxpayers and not _has(hh.no_other_taxpayers):
+            out.append(_q("household.other_taxpayers", "household",
+                          "Does anyone else in your household file their own tax return (an unmarried "
+                          "partner, a roommate, an adult relative)?",
+                          "A shared household is two returns and one budget: knowing who else files stops "
+                          "wrong dependent claims and unlocks household-level planning.",
+                          "household.other_taxpayers",
+                          disambiguation="List each person with their relationship (unmarried_partner / roommate / "
+                                         "relative / other) and whether they are a U.S. citizen or resident — or "
+                                         "answer 'nobody' (set no_other_taxpayers: true). An unmarried partner is "
+                                         "NOT a spouse and NOT (usually) a dependent; they file their own return."))
+        partners = [ot for ot in hh.other_taxpayers if ot.relationship == "unmarried_partner"]
+        if partners:
+            names = ", ".join(ot.name for ot in partners)
+            notes.append(
+                f"Unmarried partner in the household ({names}): you file SEPARATELY — two returns, no "
+                f"MFJ. Married-filing-jointly exists only for spouses; an unmarried couple is two single "
+                f"(or HoH) filers, whatever the household economics."
+            )
+            if any(ot.us_person is False for ot in partners):
+                notes.append(
+                    "Do NOT claim the partner as a dependent: §152(b)(3) requires a dependent to be a "
+                    "U.S. citizen, national or resident (or a Canada/Mexico resident) — a nonresident "
+                    "partner fails that gate no matter how much support you paid, which is exactly the "
+                    "mistake the 'qualifying relative' label invites."
+                )
+            notes.append(
+                "If you marry mid-plan: marriage opens MFJ — and with a nonresident spouse, only via the "
+                "§6013(g)/(h) election (worldwide income becomes taxable; FICA does NOT start on an "
+                "exempt spouse's wages). Price the branch TODAY with compare_scenarios "
+                "(us_resident_election: true) instead of guessing."
+            )
 
 def _spouse_residency_questions(
     profile: Profile, out: list[IntakeQuestion], notes: list[str], tax_year: int | None
@@ -649,8 +728,59 @@ def _spouse_residency_questions(
          "If your spouse is a nonresident alien: ")
         + "a joint return is only available by electing under §6013(g)/(h) to treat them as a U.S. resident "
           "(their worldwide income becomes taxable); without the election a married couple with a "
-          "nonresident-alien spouse files married-filing-separately."
+          "nonresident-alien spouse files married-filing-separately. "
+          # N-14: the label misleads — push back unprompted. Two real sessions
+          # concluded "married ⇒ the exclusion is gone" straight from the word.
+          "It is the ELECTION, not the marriage, that changes the spouse's tax attributes: the §871(i) "
+          "exclusion of US bank-deposit interest survives the marriage and ends only if the election is "
+          "made — while the F/J FICA exemption is STATUS-based and survives even the election."
     )
+
+
+# The H3 trigger checklist (worksheet Part 4): each item is a way a one-state
+# answer hides a second state return, observed in the 2026-08-04 real session.
+_FOOTPRINT_TRIGGERS = (
+    "Then confirm each trigger explicitly: (1) moved across state lines mid-year — give the move dates; "
+    "(2) lived in one state while working REMOTELY for an employer in another — this often triggers "
+    "returns in BOTH states, so give the employer's state per segment; (3) business travel or a short "
+    "assignment over ~30 days in another state — which state, how many days; (4) school in one state, "
+    "internship in another; (5) the state you lived in and W-2 Box 15 disagree; (6) any period outside "
+    "the US; (7) no-income-tax states (WA/TX/FL/NV/SD/WY/AK/TN/NH) still get real date ranges — the "
+    "OTHER segment in a taxing state is what makes you file there."
+)
+
+_FOOTPRINT_SENTINELS = (
+    "If you had no US residence (lived abroad all year) set no_us_residence: true, and if you had no US "
+    "work set no_us_work: true — an explicit 'none' ends this question; an empty list does not."
+)
+
+
+def _remote_employer_followup(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
+    """The remote-work second-state trap (N-3): a remote segment without the
+    employer's state is complete enough to END the interview but not complete
+    enough to SCOPE — a convenience-of-the-employer state can source those wages
+    to the employer's state, so state_scope cannot warn without knowing it."""
+    years = [tax_year] if tax_year is not None else sorted(profile.state_footprint)
+    segments = []
+    for y in years:
+        entry = profile.state_footprint.get(y)
+        if entry is None:
+            continue
+        for p in entry.worked:
+            if p.remote and p.employer_state is None and p.state.upper() != "ABROAD":
+                until = p.end.isoformat() if p.end else "present"
+                segments.append(f"{p.start.isoformat()} to {until}, worked from {p.state.upper()}")
+    if not segments:
+        return
+    out.append(_q("state_footprint.remote_employer_state", "state_footprint",
+                  f"For your remote work segment(s) ({'; '.join(segments)}): in which state does the "
+                  f"employer sit?",
+                  "A convenience-of-the-employer state can source remote wages to the EMPLOYER's state — a "
+                  "second state return that 'where did you work' alone never reveals.",
+                  "state_footprint",
+                  disambiguation="Set employer_state (two-letter code) on each remote work period. If the "
+                                 "employer sits in the same state you worked from, set employer_state equal to "
+                                 "state — an explicit answer ends this question; leaving it blank does not."))
 
 
 def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
@@ -662,6 +792,7 @@ def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_
     if tax_year is not None:
         entry = profile.state_footprint.get(tax_year)
         if entry is not None and entry.is_complete():
+            _remote_employer_followup(profile, out, tax_year)
             return
         missing = []
         if entry is None or not (entry.lived or entry.no_us_residence):
@@ -674,26 +805,30 @@ def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_
             f"never carries over; states and dates change year to year." if stale else ""
         )
         out.append(_q("state_footprint.lived_worked", "state_footprint",
-                      f"For {tax_year}: where did you {' and where did you '.join(missing)}, with date ranges?",
+                      f"For {tax_year}: cut the year into SEGMENTS and give, per segment, where you "
+                      f"{' and where you '.join(missing)} (with exact date ranges).",
                       "It determines which state returns (if any) you must file and how income is sourced."
                       + stale_note,
                       "state_footprint",
-                      disambiguation="List the states and the dates for each — moving mid-year or working remotely "
-                                     "across state lines changes which states you file in. If you had no US "
-                                     "residence (lived abroad all year) set no_us_residence: true, and if you had "
-                                     "no US work set no_us_work: true — an explicit 'none' ends this question; an "
-                                     "empty list does not."))
+                      disambiguation="One segment per row of the worksheet's Part 4 table: dates, lived state, "
+                                     "worked state, remote or not, and the employer's state when it differs from "
+                                     "where you worked. Never answer with a single state name — 'I'm in CA' and "
+                                     "'I moved WA→CA on March 1' are different returns. " + _FOOTPRINT_TRIGGERS
+                                     + " " + _FOOTPRINT_SENTINELS))
         return
     if profile.state_footprint:
+        _remote_employer_followup(profile, out, None)
         return
     out.append(_q("state_footprint.lived_worked", "state_footprint",
-                  "For the tax year, where did you LIVE and where did you WORK, with date ranges?",
+                  "For the tax year, cut the year into SEGMENTS: for each, where you LIVED and where you "
+                  "WORKED, with exact date ranges.",
                   "It determines which state returns (if any) you must file and how income is sourced.",
                   "state_footprint",
-                  disambiguation="List the states and the dates for each — moving mid-year or working remotely across "
-                                 "state lines changes which states you file in. If you had no US residence or no US "
-                                 "work for the year, set no_us_residence / no_us_work to true — an explicit 'none' "
-                                 "ends this question; an empty list does not."))
+                  disambiguation="One segment per row of the worksheet's Part 4 table: dates, lived state, "
+                                 "worked state, remote or not, and the employer's state when it differs from "
+                                 "where you worked. Never answer with a single state name — 'I'm in CA' and "
+                                 "'I moved WA→CA on March 1' are different returns. " + _FOOTPRINT_TRIGGERS
+                                 + " " + _FOOTPRINT_SENTINELS))
 
 
 def _mentions_1095a(kind: str) -> bool:
@@ -789,6 +924,41 @@ def _is_planning_year(tax_year: int) -> bool:
     from taxfill_core.knowledge import provisional_marker
 
     return provisional_marker("federal", tax_year) is not None
+
+
+def _retirement_questions(profile: Profile, out: list[IntakeQuestion], notes: list[str], tax_year: int | None) -> None:
+    """The Roth/pre-tax deferral split (N-11) — asked for a PLANNING year only.
+
+    For a closed year the split is already on the W-2 (box 12 codes D/AA, W), so
+    re-asking would collect a worse copy of a document fact. For a planning year
+    it is an ELECTION still open, the fact agents kept carrying in their heads
+    ("this portion is Roth and the rest is pre-tax"), and the input every H8 op
+    (contribution_limits / ira_contribution_eligibility / marginal_dollar_savings
+    / magi_ladder) needs a persisted home for."""
+    if tax_year is None or not _is_planning_year(tax_year):
+        return
+    entry = profile.retirement_contributions.get(tax_year)
+    if entry is None:
+        out.append(_q("retirement.deferral_split", "retirement",
+                      f"For {tax_year}: what are you putting into retirement/health accounts, split by "
+                      f"TAX CHARACTER — pre-tax 401(k) vs Roth 401(k), traditional vs Roth IRA, HSA?",
+                      "Pre-tax dollars lower this year's box 1 wages; Roth dollars do not — the split moves "
+                      "every MAGI test differently, and a budget that ignores it prices the wrong year.",
+                      "retirement_contributions",
+                      disambiguation="Amounts per year, not per paycheck; $0 is an answer (an empty section "
+                                     "means 'not asked'). Pre-tax + Roth 401(k) SHARE one 402(g) limit — check "
+                                     "calc op contribution_limits for the year's caps, and run "
+                                     "ira_contribution_eligibility BEFORE recording any Roth IRA amount: an "
+                                     "ineligible contribution accrues a 6%-per-year excise until withdrawn."))
+        return
+    roth_ira = entry.roth_ira
+    if roth_ira is not None and roth_ira.value and roth_ira.value > 0:
+        notes.append(
+            f"A {tax_year} Roth IRA contribution is recorded (${roth_ira.value:,}): confirm eligibility with "
+            f"calc op ira_contribution_eligibility (MAGI phase-out, tested at YEAR-END filing status) — an "
+            f"ineligible contribution accrues a 6%-per-year excise tax until corrected, and the same MAGI can "
+            f"be excess when single but compliant on a joint return after a year-end marriage."
+        )
 
 
 def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None = None) -> None:
@@ -890,6 +1060,7 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     _household_questions(profile, out, notes, tax_year)
     _state_footprint_questions(profile, out, tax_year)
     _income_document_questions(profile, out, tax_year)
+    _retirement_questions(profile, out, notes, tax_year)
     _prior_filings_questions(profile, out, tax_year)
     # Banking last: the optional direct-deposit question only accompanies other
     # pending questions (declining it is unrepresentable, so it must never repeat
@@ -906,6 +1077,11 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
         ready_to_fill=_ready_to_fill(profile),
         progress=f"{started} of {len(SECTIONS)} sections started",
         notes=notes,
+        # The start state hands over the whole onboarding worksheet (H3): a
+        # zero-experience user fills in date-ranged tables once instead of
+        # being interviewed cold. Any started section drops it — from then on
+        # the targeted questions above carry the interview.
+        worksheet=intake_worksheet() if started == 0 else None,
     )
 
 
@@ -922,6 +1098,8 @@ def _sections_started(profile: Profile) -> int:
     if profile.state_footprint:
         started += 1
     if profile.income_documents:
+        started += 1
+    if profile.retirement_contributions:
         started += 1
     if profile.banking is not None:
         started += 1

@@ -210,3 +210,16 @@ def test_each_part_names_its_form_line_for_the_verify_flow():
     )
     assert [(p.part, p.form_line) for p in r.parts] == [("II", "13"), ("III", "21"), ("IV", "30"), ("V", "37")]
     assert sum(p.deduction for p in r.parts) == r.total_deduction
+
+
+def test_overtime_work_pushes_back_on_the_marketing_name():
+    # N-14: "no tax on overtime" produced a real wrong conclusion ("overtime is
+    # untaxed"). The work must state the two distinctions unprompted: only the
+    # FLSA premium half qualifies, and the deduction sits BELOW the AGI line, so
+    # the overtime still raises every MAGI test.
+    r = schedule_1a_deductions(80_000, "single", 2025, qualified_overtime=4_000)
+    assert "PREMIUM HALF" in r.work and "BELOW-the-AGI-line" in r.work
+    assert "MAGI" in r.work
+    # No overtime input -> no push-back noise.
+    r2 = schedule_1a_deductions(80_000, "single", 2025, qualified_tips=1_000)
+    assert "PREMIUM HALF" not in r2.work

@@ -3076,6 +3076,15 @@ def schedule_1a_deductions(
         _step_part("III", "21", "No Tax on Overtime", overtime_d,
                    params.overtime.deduction_cap.for_status(filing_status), params.overtime.phaseout,
                    forfeit_on_mfs=not params.overtime.mfs_allowed, lines_note="lines 14-21")
+        # N-14 push-back: the marketing name produced a wrong conclusion in a real
+        # session ("no tax on overtime ⇒ overtime is untaxed") — state the
+        # distinction unprompted, in the work the user actually reads.
+        work_lines.append(
+            "Push-back on the name 'No Tax on Overtime': (1) only the FLSA-required PREMIUM HALF of "
+            "time-and-a-half qualifies — the whole overtime wage is still taxable wages; (2) this is a "
+            "BELOW-the-AGI-line deduction, so the overtime still raises AGI and every MAGI-tested item "
+            "above it (IRA phase-outs, NIIT, this schedule's own phase-outs)."
+        )
     if car_d > 0:
         _step_part("IV", "30", "Qualified passenger vehicle loan interest", car_d,
                    params.car_loan_interest.deduction_cap, params.car_loan_interest.phaseout,

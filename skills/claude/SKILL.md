@@ -55,7 +55,7 @@ Show the user which step they're on and that they can stop and resume anytime
 
 | tool | use |
 |---|---|
-| `intake_checklist(profile?, tax_year?)` | next questions + required documents for the interview |
+| `intake_checklist(profile?, tax_year?)` | next questions + required documents for the interview. On an EMPTY profile the result carries `worksheet`: a fill-in-the-blank onboarding worksheet (markdown; zh-CN via `taxfill_core.worksheet`) — show or save it for a no-experience user BEFORE interviewing them, then read their answers back into the profile. Status/state facts are date-ranged SEGMENTS, never single words: the visa timeline takes `sub_status` per period (student/opt/stem_opt/cap_gap/employment/dependent/other; H-1B starts on the I-797 start date), the state footprint takes one row per segment (lived, worked, remote?, employer's state when it differs — remote segments get a follow-up until `employer_state` is answered), and a planning year asks for the Roth-vs-pre-tax deferral split (`retirement_contributions`) |
 | `list_document_kinds()` / `extract_document(path, kind, fields, page?)` | which documents are parseable; structure + validate your reading of one into provenance-tagged fields |
 | `residency(visa_periods, days_by_year, target_year, is_lawful_permanent_resident?)` | NRA/RA/dual-status via the Substantial Presence Test (shows the day-count work) |
 | `state_scope(profile, year)` | which states require a return, role, forms, candidate credits, treaty-conformity warnings |
@@ -82,6 +82,20 @@ dual_status?}` — a FICA claim is its own item: `form: "843"`,
 `attached_forms: ["8316"]` (Recipe B4).
 
 ## Cookbook
+
+### Recipe A0 — a user with no tax experience (the onboarding worksheet)
+
+1. `intake_checklist({})` → the result's `worksheet` field is a complete fill-in-the-blank
+   self-report (identity + visa timeline with a worked F-1→OPT→H-1B example, days-in-US,
+   household, state segments with the 7-trigger checklist, income documents, tax already
+   paid, planning inputs). Save it to a file or paste it to the user.
+2. The user fills it in at their own pace ("don't know" is a valid answer — never let them
+   guess). Read the completed worksheet back and record each row into the profile with
+   user-stated provenance.
+3. Re-run `intake_checklist(profile, tax_year)` — it now asks only what the worksheet
+   left blank, and its `notes` carry the built-in push-backs (unmarried partners file
+   separately; the §6013(g) ELECTION, not the marriage, changes an NRA spouse's tax
+   attributes; a recorded Roth IRA amount gets an eligibility check pointer).
 
 ### Recipe A — simple W-2 federal return (2023)
 

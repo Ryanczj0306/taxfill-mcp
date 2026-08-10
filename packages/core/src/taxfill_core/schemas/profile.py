@@ -101,11 +101,62 @@ class DateRange(BaseModel):
         return self
 
 
+VisaSubStatus = Literal["student", "opt", "stem_opt", "cap_gap", "employment", "dependent", "other"]
+
+
 class VisaPeriod(DateRange):
-    """One period of the visa status timeline (eligibility is per-period, not per-year)."""
+    """One period of the visa status timeline (eligibility is per-period, not per-year).
+
+    ``sub_status`` is the H1 vocabulary the bare status string cannot carry: OPT,
+    STEM OPT and cap-gap are all F-1 — the prefix rules for exempt-individual
+    residency are unchanged — but they are the periods where the filer is WORKING
+    full-time, whose end date sets the H-1B boundary, and whose FICA answer a
+    planning session turns on. An H-1B period's start is the I-797 approval
+    start date, never the offer or onboarding date.
+    """
 
     status: str = Field(description="Immigration status during the period, e.g. 'F-1', 'H-1B', 'J-1'.")
+    sub_status: VisaSubStatus | None = Field(
+        default=None,
+        description=(
+            "What the person was DOING inside the status: student / opt / stem_opt / cap_gap "
+            "(all F-1; work authorization changes, residency prefix rules do not) / employment "
+            "(H-1B etc.) / dependent / other. None = not asked (older profiles load unchanged)."
+        ),
+    )
     provenance: Provenance
+
+    def fica_exempt_hint(self) -> tuple[bool | None, str]:
+        """(hint, why): whether this period's wages are typically FICA-exempt.
+
+        DERIVED, never stored, so it cannot contradict the timeline. The rule is
+        STATUS-based (IRC 3121(b)(19); Pub 519): F/J student periods — including
+        OPT / STEM OPT / cap-gap, which are still F-1 — are exempt WHILE the
+        person is a nonresident exempt individual; employment statuses are not,
+        and FICA starts at the status boundary (the I-797 start date). The
+        residency half of the test is classify()'s job — this hint plus that
+        result feed calc op employee_fica's per-segment fica_exempt input.
+        """
+        f_or_j = self.status.strip().upper().startswith(("F", "J"))
+        if self.sub_status in ("student", "opt", "stem_opt", "cap_gap") or (
+            self.sub_status is None and f_or_j
+        ):
+            if f_or_j:
+                return True, (
+                    "F/J student-category period (incl. OPT/STEM OPT/cap-gap — still F-1): wages are "
+                    "FICA-exempt while a nonresident exempt individual (IRC 3121(b)(19); Pub 519). The "
+                    "exemption is STATUS-based, not marital — a §6013(g) election does not end it. "
+                    "Confirm the residency half with classify()."
+                )
+        if self.sub_status == "employment" or self.status.strip().upper().startswith("H"):
+            return False, (
+                "Employment status: FICA applies from the status boundary — for H-1B that is the I-797 "
+                "approval start date, never the offer or onboarding date."
+            )
+        return None, (
+            "No FICA rule derivable from this status/sub_status alone — decide per Pub 15/Pub 519 and "
+            "pass the judgment to calc op employee_fica explicitly."
+        )
 
 
 class Immigration(BaseModel):
@@ -185,6 +236,16 @@ class Dependent(BaseModel):
             "dependents (still eligible for the $500 ODC); None = not asked."
         ),
     )
+    is_us_citizen_national_or_resident: bool | None = Field(
+        default=None,
+        description=(
+            "The §152(b)(3) gate: a dependent must be a U.S. citizen, national or resident (or a "
+            "resident of Canada/Mexico) — an NRA partner or relative abroad CANNOT be claimed no "
+            "matter how much support was paid, which is exactly the mistake a no-experience filer "
+            "makes after reading 'qualifying relative'. False = fails the gate (excluded from every "
+            "credit with a disclosure); None = not asked (counted as before)."
+        ),
+    )
     provenance: Provenance
 
 
@@ -217,6 +278,29 @@ class Spouse(BaseModel):
         default=None, description="Spouse's visa timeline — drives the NRA-spouse §6013(g)/(h) decision."
     )
     residency_facts: ResidencyFacts | None = None
+
+
+class OtherTaxpayer(BaseModel):
+    """Another taxpayer in the SAME household who files their own return (H2, N-2).
+
+    The modal international-student household is an unmarried couple: two
+    returns, one rent, one budget. Modeling the second person is what lets the
+    product SAY the three things the field notes caught agents carrying in
+    their heads: you file separately; an NRA partner cannot be claimed as a
+    dependent (§152(b)(3)); and marrying mid-plan opens the §6013(g)/(h)
+    election — which compare_scenarios can price as a what-if TODAY.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    relationship: Literal["unmarried_partner", "roommate", "relative", "other"]
+    us_person: bool | None = Field(
+        default=None,
+        description="Their own citizen/resident answer (None = not asked); drives the dependent guard note.",
+    )
+    note: str = Field(default="", description="Free context, e.g. 'NRA on OPT, files 1040-NR'.")
+    provenance: Provenance
 
 
 class Household(BaseModel):
@@ -258,6 +342,18 @@ class Household(BaseModel):
             "spouse_death_year) for the qualifying_surviving_spouse status; None means not asked."
         ),
     )
+    other_taxpayers: list[OtherTaxpayer] = Field(
+        default_factory=list,
+        description="Other people in the household who file their OWN returns (unmarried partner, roommate).",
+    )
+    no_other_taxpayers: Answer[bool] | None = Field(
+        default=None,
+        description=(
+            "True = the filer confirmed nobody else in the household files their own return; None = "
+            "not asked. The sentinel that lets an empty other_taxpayers list mean 'none' instead of "
+            "'never asked' (the same ambiguity StateFootprintYear's sentinels resolve)."
+        ),
+    )
     filing_status: Answer[FilingStatusInput] | None = Field(
         default=None,
         description=(
@@ -285,8 +381,17 @@ class ResidencePeriod(DateRange):
 class WorkPeriod(DateRange):
     """Where the user WORKED for a date range; remote vs on-site matters for state sourcing."""
 
-    state: str = Field(description="Two-letter state/territory code, e.g. 'CA', or 'ABROAD'.")
+    state: str = Field(description="Two-letter state/territory code, e.g. 'CA', or 'ABROAD' — where the WORK was performed.")
     remote: bool | None = Field(default=None, description="True if the work was performed remotely.")
+    employer_state: str | None = Field(
+        default=None,
+        description=(
+            "Where the EMPLOYER sits when that differs from where the work was performed — the "
+            "remote-work trap: a convenience-of-the-employer state (NY, DE, NE, PA, ...) can source "
+            "remote wages to the employer's state, creating a second state return the worked-state "
+            "answer alone never reveals. None = same as `state` / not asked."
+        ),
+    )
     provenance: Provenance
 
 
@@ -388,6 +493,39 @@ class PriorFilings(BaseModel):
     )
 
 
+class RetirementContributionsYear(BaseModel):
+    """Elective deferrals / contributions for one year, split by TAX CHARACTER (N-11, N-15).
+
+    The Roth-vs-pre-tax split is a fact agents kept carrying in their heads
+    ("this portion is Roth and the rest is pre-tax") and re-stating on every
+    revision: pre-tax 401(k) dollars lower W-2 box 1 today, Roth dollars do
+    not, and the two move every MAGI test differently (calc op ``magi_ladder``).
+    The calc ops (``contribution_limits`` / ``ira_contribution_eligibility`` /
+    ``marginal_dollar_savings``) take explicit arguments — this section just
+    PERSISTS the split so a revised number re-runs scenarios instead of a
+    memory. For a CLOSED year the actuals come off the W-2 (box 12 codes D/AA,
+    W) — this section is for the planning year's elections.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    pretax_401k: Answer[int] | None = Field(
+        default=None, description="Traditional (pre-tax) elective deferral for the year (W-2 box 12 code D).")
+    roth_401k: Answer[int] | None = Field(
+        default=None, description="Roth 401(k) elective deferral for the year (W-2 box 12 code AA) — shares the 402(g) limit with pre-tax.")
+    traditional_ira: Answer[int] | None = Field(
+        default=None, description="Traditional IRA contribution for the year (deductibility depends on employer-plan coverage + MAGI).")
+    roth_ira: Answer[int] | None = Field(
+        default=None,
+        description=(
+            "Roth IRA contribution for the year. Record it only AFTER calc op ira_contribution_eligibility "
+            "confirms the MAGI phase-out — an ineligible contribution accrues a 6%-per-year excise until fixed."
+        ),
+    )
+    hsa: Answer[int] | None = Field(
+        default=None, description="HSA contribution for the year (limit depends on the COVERAGE TIER — see contribution_limits).")
+
+
 class Profile(BaseModel):
     """The whole intake profile. Every section is optional — intake fills it incrementally."""
 
@@ -402,5 +540,9 @@ class Profile(BaseModel):
         description="Lived/worked date ranges keyed by tax year.",
     )
     income_documents: list[IncomeDocument] = Field(default_factory=list)
+    retirement_contributions: dict[int, RetirementContributionsYear] = Field(
+        default_factory=dict,
+        description="Roth/pre-tax deferral split keyed by tax year (planning-year elections; N-11).",
+    )
     banking: Banking | None = None
     prior_filings: PriorFilings | None = None
