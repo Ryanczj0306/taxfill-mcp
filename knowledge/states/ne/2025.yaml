@@ -390,3 +390,29 @@ tax:
     credit (line 51). Note the 2025 RENUMBERING versus 2024 (refundable child/dependent care moved 40 -> 42, Nebraska
     EITC 42 -> 44, community college property tax credit 43 -> 45).'
   - 'Standard deduction chart source: 2025 Nebraska Individual Income Tax Booklet, Form 1040N, Line 6 — https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf'
+
+# H3 remote-work trap: the convenience-of-the-employer rule as CITED data (verified
+# 2026-08-10 from the Nebraska DOR legislative-changes page). NOTE: LB 1023 AMENDED the
+# rule effective TY2025 — the pre-2025 rule reached further; this block states the law
+# for THIS pack year only, which is why the 2023/2024 NE packs do not carry it.
+convenience_rule:
+  summary: >-
+    Nebraska's convenience-of-the-employer rule as AMENDED by LB 1023 for taxable years
+    beginning on or after January 1, 2025: where a nonresident is paid for services performed
+    outside Nebraska that are directly related to a business, trade, or profession carried on
+    within Nebraska and, except for the nonresident's convenience, could have been performed in
+    Nebraska — "Only the compensation paid for services performed within Nebraska constitutes
+    Nebraska sourced income of the nonresident under this provision."
+  trigger: >-
+    A nonresident working remotely for a Nebraska business, trade, or profession (the pre-2025
+    rule sourced convenience-based out-of-state wages TO Nebraska; the TY2025 amendment narrows
+    Nebraska-source income to Nebraska-performed services).
+  exceptions: >-
+    Conference/training safe harbor (TY2025+): wages are not Nebraska-sourced when they are paid
+    while present in Nebraska for a conference or training, the employee is present and earning
+    wages in Nebraska for seven days or less during the taxable year, earned not more than
+    $5,000 during the taxable year, and earned wages for work performed in more than one state
+    during the taxable year.
+  citation:
+    source: Nebraska Department of Revenue, "2024 Nebraska Legislative Changes" — LB 1023 nonresident compensation sourcing, effective for taxable years beginning on or after 2025-01-01.
+    url: https://revenue.nebraska.gov/about/2024-nebraska-legislative-changes

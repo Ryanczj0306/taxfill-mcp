@@ -345,13 +345,16 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     - treaty_benefit: args {country, income_class, amount, visa_periods?, year?, years_in_status?}
       (validate a tax-treaty exemption for Schedule OI / Form 1040-NR line 1k from the per-country
       treaty packs — china, india, korea, canada, mexico; income_class in student_wages | scholarship |
-      payments_from_abroad | teacher_wages. Student wage limits are treaty-fixed (China $5,000/yr,
-      Korea $2,000/yr; India gets Art. 21(2) standard-deduction parity instead — no exclusion;
+      payments_from_abroad | teacher_wages | other_income. Student wage limits are treaty-fixed (China
+      $5,000/yr, Korea $2,000/yr; India gets Art. 21(2) standard-deduction parity instead — no exclusion;
       Canada/Mexico have no student wage benefit, only the researched employment de-minimis / 183-day
       shapes). teacher_wages requires years_in_status (India's 2-year window is a RETROACTIVE clawback
-      — exceed it and the whole visit's exemption is lost). Returns the exempt/taxable split + article
-      + citation; final eligibility (visa period, purpose, saving clause) stays YOUR judgment —
-      record the position with the returned citation)
+      — exceed it and the whole visit's exemption is lost). other_income answers the bank-bonus /
+      1099-MISC box 3 corner from the verbatim Other Income article: in ALL five treaties US-arising
+      other income stays US-taxable — Schedule NEC at the statutory 30%, no treaty reduction (Korea
+      verifiably has NO other-income article; Art. 4's source rule applies). Returns the exempt/taxable
+      split + article + citation; final eligibility (visa period, purpose, saving clause) stays YOUR
+      judgment — record the position with the returned citation)
     - schedule_1a_deductions: args {magi, filing_status?, year?, qualified_tips?, qualified_overtime?,
       car_loan_interest?, seniors_qualifying?} (the four OBBBA Schedule 1-A deductions, TY2025-2028 —
       line 38 -> Form 1040 line 13b / 1040-NR line 13c, reduces taxable income whether itemizing or not.
@@ -726,7 +729,10 @@ def filing_summary(manifest: list[dict]) -> dict:
 
     Each manifest item: {form, tax_year, jurisdiction?, bottom_line (signed: +refund/-owed),
     paid_online?, state?, direct_deposit?, filing_jointly?, section_6013_election? (adds the
-    signed-by-both-spouses NRA-spouse election statement to the assembly checklist)}.
+    signed-by-both-spouses NRA-spouse election statement to the assembly checklist),
+    taxpayer? (label each return's owner — "me" / "Partner P" — and a 2+-person household gets
+    `household_rollup`: per-person subtotals + the household net, framed as one budget across
+    TWO taxpayers whose refunds/balances never offset each other at the IRS)}.
     """
     return _dump(_filing_summary([FilingManifestItem.model_validate(m) for m in manifest]))
 

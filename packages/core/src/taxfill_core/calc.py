@@ -4261,6 +4261,7 @@ TREATY_INCOME_CLASSES: tuple[str, ...] = (
     "scholarship",
     "payments_from_abroad",
     "teacher_wages",
+    "other_income",
 )
 
 # The eligibility facts this op does NOT decide — appended to every work string
@@ -4342,6 +4343,16 @@ def treaty_benefit(
       exempt within the window; $0 beyond it — and for India the loss is
       RETROACTIVE (the WHOLE visit's exemption is lost, Pub 901 p. 25), which
       the work flags loudly. Canada/Mexico have no teacher article at all.
+    * ``other_income`` — the bank-bonus / 1099-MISC box 3 corner (H9,
+      pitfall P-005): validates against the treaty's Other Income article,
+      transcribed verbatim into the pack. No dollar limit exists — the
+      answer is an ARTICLE rule, and in all five shipped treaties US-arising
+      other income of a treaty-country resident REMAINS US-taxable (China
+      Art. 21(3) / India Art. 23(3) / Canada Art. XXII(1) carve it back to
+      the source state; Mexico Art. 23 is source-state-only in form; Korea
+      (1976) verifiably has NO other-income article, so Art. 4(1)'s source
+      rule applies). Exempt is always $0; the work carries the law and the
+      Schedule NEC 30% consequence.
 
     ``visa_periods`` (optional, ``[{status, start, end?}, ...]``) is echoed
     into the inputs and the work so the per-period eligibility analysis
@@ -4389,6 +4400,39 @@ def treaty_benefit(
             work=work + period_note + _TREATY_JUDGMENT_NOTE,
             citation=citation,
         )
+
+    # H9/P-005: the Other Income article decides whether a US-arising item not
+    # covered by any named article (bank bonus, 1099-MISC box 3) gets a treaty
+    # rate. Handled before the student-block check — it needs no student data.
+    if income_class == "other_income":
+        oi = pack.other_income
+        if oi is None:
+            raise ValueError(
+                f"treaty pack for {pack.country!r} has no other_income block — author it from the "
+                f"treaty text with a verbatim citation (see knowledge/treaties/china.yaml); do NOT "
+                f"assume either a shelter or its absence"
+            )
+        limits.append("no dollar exemption — the other-income analysis is an ARTICLE question, not a limit")
+        if oi.article is None:
+            opening = (
+                f"{label} other income ({year}): the treaty has NO Other Income article (verified "
+                f"absence). {oi.rule_text.strip()}"
+            )
+        else:
+            opening = f"{label} other income ({year}): {oi.article}. {oi.rule_text.strip()}"
+        consequence = (
+            " Consequence: US-arising other income of a treaty-country resident REMAINS US-taxable — "
+            "on Form 1040-NR it lands on Schedule NEC at the statutory 30% rate (IRC 871(a)) unless a "
+            "DIFFERENT article covers the specific item; there is no other-income treaty reduction. "
+            "Exempt $0 of the amount tested."
+            if oi.us_source_other_income_taxable_by_us
+            else " Consequence: see the article text — source-state taxation is limited; record the "
+                 "position with the article citation."
+        )
+        work = opening + (f" {oi.notes.strip()}" if oi.notes.strip() else "") + consequence
+        # No shipped treaty shelters US-arising other income, and a rate question
+        # is not a dollar split — exempt stays 0 either way; the work carries the law.
+        return _result(0, oi.article, work, oi.citation)
 
     student = pack.student
     if student is None:  # defensive: every shipped pack has a student block

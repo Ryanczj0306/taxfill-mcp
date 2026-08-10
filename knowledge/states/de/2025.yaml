@@ -418,3 +418,26 @@ tax:
   - No local income tax is collected on Form PIT-RES (the return has no local/county tax line). Part-year residents
     may elect to file either PIT-RES (full-year resident treatment) or PIT-NON, whichever is more advantageous; this
     pack models the resident form PIT-RES. Delaware's filing deadline is April 30, 2026 — NOT the federal April 15.
+
+# H3 remote-work trap: the convenience-of-the-employer rule as CITED data (verbatim-
+# verified 2026-08-10 from the 2025 Form PIT-SCW itself, both pages read).
+convenience_rule:
+  summary: >-
+    Delaware Schedule W (Form PIT-SCW): a nonresident whose Delaware-sourced employment includes
+    income earned while working outside Delaware gets an allowance "equivalent to the ratio of
+    days worked outside of the State versus the total number of Delaware sourced employment
+    working days. Any allowance claimed must be based on necessity of work outside the State of
+    Delaware in performance of duties for the employer, as opposed to solely for the convenience
+    of the employee."
+  trigger: >-
+    A nonresident apportioning wages from Delaware-sourced employment on Schedule W; every
+    out-of-state day must be itemized on page 2 with date, location and the purpose of the
+    out-of-state business.
+  exceptions: >-
+    Verbatim from the form: "Working from an office out of your home does not satisfy the
+    requirements of 'necessity' of duties for your employer and is considered for the
+    convenience of the employee unless working from home is a requirement of employment with
+    your employer."
+  citation:
+    source: 2025 Delaware Schedule W — Apportionment Worksheet (Form PIT-SCW, Revision 20250515), page 1 apportionment instructions + page 2 days-worked-outside-Delaware log.
+    url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-SCW_2025-01_PaperInteractiveIPM.pdf

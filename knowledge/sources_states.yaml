@@ -619,6 +619,12 @@ states:
           the 2025 PIT-RES instructions, the 2025 paper-interactive PIT-RES and TY25_taxtable.pdf)
         cadence: annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      remote_work_sourcing:
+      - url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-SCW_2025-01_PaperInteractiveIPM.pdf
+        answers: 2025 Delaware Schedule W — Apportionment Worksheet (Form PIT-SCW, Revision 20250515), page 1 apportionment
+          instructions + page 2 days-worked-outside-Delaware log.
+        cadence: annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       tax_rates_and_brackets:
       - url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf
         answers: 'Delaware Division of Revenue, 2025 Delaware Individual Resident Income Tax Return (Form PIT-RES)
@@ -2279,6 +2285,12 @@ states:
         answers: Nebraska DOR — Electronic Payment Options for Individual Income Tax (e-pay portal / online payment)
         cadence: annual (per tax year; the newest shipped NE pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      remote_work_sourcing:
+      - url: https://revenue.nebraska.gov/about/2024-nebraska-legislative-changes
+        answers: Nebraska Department of Revenue, "2024 Nebraska Legislative Changes" — LB 1023 nonresident compensation
+          sourcing, effective for taxable years beginning on or after 2025-01-01.
+        cadence: annual (per tax year; the newest shipped NE pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       tax_rates_and_brackets:
       - url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Calculation_Schedule.pdf
         answers: '2025 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2025), single page — all
@@ -2536,6 +2548,14 @@ states:
           New York State child and dependent care credit limitation table (1.100 at NYAGI of $25,000 or less, 1.000
           across $40,000-$50,000, 0.600 over $65,000 to $150,000, 0.200 over $150,000) and the New York City limitation
           table (0.750 down to 0.000 over $30,000)
+        cadence: annual (per tax year; the newest shipped NY pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      remote_work_sourcing:
+      - url: https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf
+        answers: TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), "New York Tax Treatment of Nonresidents
+          and Part-Year Residents — Application of the Convenience of the Employer Test to Telecommuters and Others",
+          quoting 20 NYCRR 132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor
+          test.
         cadence: annual (per tax year; the newest shipped NY pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       tax_rates_and_brackets:
@@ -2826,6 +2846,11 @@ states:
         answers: PA DOR - Make a Personal Income Tax Payment (myPATH online portal)
         cadence: annual (per tax year; the newest shipped PA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      remote_work_sourcing:
+      - url: https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/061/chapter109/s109.8.html
+        answers: 61 Pa. Code § 109.8 (Compensation of nonresidents) — operative allowance sentence transcribed verbatim.
+        cadence: annual (per tax year; the newest shipped PA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       tax_rates_and_brackets:
       - url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf
         answers: '2025 PA-40 Personal Income Tax Return Instructions (PA-40 IN 04-25) — "The state income tax rate
@@ -2912,6 +2937,13 @@ states:
       - url: https://tax.ri.gov/forms/individual-tax-forms/personal-income-tax-forms
         answers: Personal Income Tax Forms — RI Division of Taxation (the forms index the instructions point to
           for RI Schedule W, RI Schedule EIC and the other 2025 schedules)
+        cadence: annual (per tax year; the newest shipped RI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      law_changes:
+      - url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
+        answers: '2025 INSTRUCTIONS FOR FILING RI-1040 (Revised 11/2025) — RI Division of Taxation: WHAT''S NEW
+          FOR TAX YEAR 2025 (p. I-1), the new RI Schedule HR1 P.L. 119-21 add-backs (IRC 163(j) business interest,
+          174A research and experimental amortization, 179(b) depreciation, 181 qualified sound recording production).'
         cadence: annual (per tax year; the newest shipped RI pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       tax_rates_and_brackets:

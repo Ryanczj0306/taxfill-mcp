@@ -262,7 +262,7 @@ def test_country_filename_mismatch_is_rejected(tmp_path):
 
 
 def test_income_classes_constant():
-    assert TREATY_INCOME_CLASSES == ("student_wages", "scholarship", "payments_from_abroad", "teacher_wages")
+    assert TREATY_INCOME_CLASSES == ("student_wages", "scholarship", "payments_from_abroad", "teacher_wages", "other_income")
 
 
 def test_china_student_wages_over_limit_split():
@@ -448,3 +448,43 @@ def test_result_serializes_for_the_mcp_layer():
     dumped = r.model_dump(mode="json")
     assert dumped["exempt_amount"] == 2000 and dumped["taxable_remainder"] == 1000
     assert dumped["citation"]["url"].startswith("https://www.irs.gov/")
+
+
+# ── other_income (H9, P-005): the bank-bonus / 1099-MISC box 3 corner ──────────
+
+
+def test_other_income_gives_no_shelter_in_any_shipped_treaty():
+    # All five Other Income articles were transcribed verbatim from the irs.gov
+    # treaty PDFs: China Art. 21(3), India Art. 23(3) and Canada Art. XXII(1)
+    # carve US-arising items back to source-state taxation, Mexico Art. 23 is
+    # source-state-only in form — US-arising other income stays US-taxable.
+    from taxfill_core.calc import treaty_benefit
+
+    for country, article_fragment in (
+        ("china", "Art. 21"), ("india", "Art. 23"), ("canada", "Art. XXII"), ("mexico", "Art. 23"),
+    ):
+        r = treaty_benefit(country, "other_income", 695)
+        assert r.exempt_amount == 0 and r.taxable_remainder == 695, country
+        assert r.article and article_fragment in r.article
+        assert "Schedule NEC" in r.work and "30%" in r.work
+        assert "irs-trty" in r.citation.url
+
+
+def test_korea_has_verifiably_no_other_income_article():
+    # The 1976 convention's Table of Articles (1-32) contains no Other Income
+    # article — article: null is VERIFIED ABSENCE, and Art. 4(1)'s general
+    # source rule leaves US-arising other income US-taxable anyway.
+    from taxfill_core.calc import treaty_benefit
+
+    r = treaty_benefit("korea", "other_income", 100)
+    assert r.article is None
+    assert "NO Other Income article" in r.work and "Art. 4(1)" in r.work
+    assert r.exempt_amount == 0
+
+
+def test_other_income_is_a_rate_question_never_a_dollar_split():
+    from taxfill_core.calc import treaty_benefit
+
+    r = treaty_benefit("china", "other_income", 50_000)
+    assert r.exempt_amount == 0  # never a split, whatever the amount
+    assert any("ARTICLE question" in lim for lim in r.limits_applied)

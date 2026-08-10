@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,955 tests, all green** — offline 2,850 + live-.gov 105, exit 0;
+Done and on `main` (**2,968 tests, all green** — offline 2,863 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -34,8 +34,8 @@ re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
   states). The `calc` tool carries 25 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
-  1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, with per-field
-  provenance — K-1 is the one common document still unsupported) and the resumable
+  1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, and — since
+  2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
 - **Federal form packs — priority set DONE.** **57 packs across 2019–2025**
@@ -479,9 +479,11 @@ scenario exercises the persona that motivated it.
       the three push-backs as intake NOTES: file SEPARATELY (two returns, no
       MFJ); an NRA partner is NOT claimable as a dependent (§152(b)(3)); the
       marry-in-year branch is PRICED via compare_scenarios
-      (`us_resident_election: true`) instead of guessed. *(Deferred: the
-      household-level budget ROLL-UP over two profiles — a presentation surface;
-      each partner's own numbers already compute.)*
+      (`us_resident_election: true`) instead of guessed. *(The household-level
+      budget ROLL-UP shipped 2026-08-10: `FilingManifestItem.taxpayer` labels
+      each return's owner and `filing_summary` emits `household_rollup` —
+      per-person subtotals + the household net, framed as one budget across TWO
+      taxpayers whose refunds/balances never offset each other at the IRS.)*
 - [x] **H3 — Segmented state-footprint elicitation + onboarding worksheet
       (N-3, N-5) — DONE 2026-08-10.** The `state_footprint.lived_worked`
       question is segment-shaped (one row per date range: lived / worked /
@@ -490,9 +492,14 @@ scenario exercises the persona that motivated it.
       W-2 Box 15 mismatch, out-of-US periods, no-tax-state segments still dated).
       `WorkPeriod.employer_state` + a follow-up question that chases it on every
       remote segment, and `state_scope` raises a convenience-of-the-employer
-      warning (verify-at-DOR, NEVER an asserted must_file — no pack carries
-      convenience rules yet; silent when the employer sits in a no-wage-tax
-      state). The worksheet is canonical ENGLISH in
+      warning (NEVER an asserted must_file; silent when the employer sits in a
+      no-wage-tax state). *(Upgraded 2026-08-10: NY/PA carry verbatim-cited
+      `convenience_rule` blocks for all three shipped years — TSB-M-06(5)I's
+      bona-fide-employer-office factor test; 61 Pa. Code § 109.8 — and DE/NE for
+      2025 (the 2025 PIT-SCW home-office sentence; NE's LB 1023-AMENDED rule,
+      deliberately year-aware because the pre-2025 rule reached further). An
+      employer state whose pack carries the block gets the state's actual cited
+      rule; anywhere else stays the generic verify-at-DOR fallback.)* The worksheet is canonical ENGLISH in
       [`INTAKE_WORKSHEET.md`](INTAKE_WORKSHEET.md), shipped inside the wheel as
       `taxfill_core.worksheet` (zh-CN alongside, both sync-tested byte-for-byte)
       and emitted by `intake_checklist` on the start state. Also landed with the
@@ -705,9 +712,16 @@ scenario exercises the persona that motivated it.
       * **`pitfalls.yaml` P-005** — the rebate-vs-income characterization as a
         permanent registry entry (year-invariant rules live there, not in a
         year pack; only the §871(a) 30% rate and any treaty "other income"
-        article rate are figures, and the treaty packs cover only the
-        student/teacher articles today, not Art. 22-style other income). The
-        P-005 regression suite is the routing test block in `test_sources.py`.
+        article rate are figures). *(Closed 2026-08-10, same day: all five
+        treaty packs now carry verbatim-verified `other_income` blocks and
+        `treaty_benefit` gained the `other_income` income class — China
+        Art. 21(3) / India Art. 23(3) / Canada Art. XXII(1) carve US-arising
+        items back to source-state taxation, Mexico Art. 23 is
+        source-state-only in form, Korea (1976) verifiably has NO other-income
+        article — so US-arising other income gets NO treaty reduction under
+        any shipped treaty.)* The P-005 regression suite is the routing test
+        block in `test_sources.py` + the other_income tests in
+        `test_treaties.py`.
       **Acceptance — met:** every query above resolves to its own topic, no
       neighbouring topic is stolen, and an agent asked "is this bonus taxable"
       reaches Pub 525 + Pub 519 ch. 4 without the operator supplying the law.

@@ -67,3 +67,24 @@ notes: >-
   Personal/dependency exemptions referenced by Art. 21(2) are $0 for tax years 2018-2025 under
   TCJA, so the practical benefit is the standard deduction. (TCJA context is general US law, not
   text from the fetched treaty documents.)
+
+# H9/P-005: the Other Income article, verbatim-verified 2026-08-10 from the irs.gov
+# treaty PDF (Art. 23, PDF pp. 42-43). Art. 23(3) carves US-arising other income back
+# to source-state taxation — no treaty shelter.
+other_income:
+  article: "Art. 23 (Other Income)"
+  rule_text: >-
+    Art. 23(1): "Subject to the provisions of paragraph 2, items of income of a resident of a
+    Contracting state, wherever arising, which are not expressly dealt with in the foregoing
+    Articles of this Convention shall be taxable only in that Contracting state." Art. 23(3):
+    "Notwithstanding the provisions of paragraphs 1 and 2, items of income of a resident of a
+    Contracting state not dealt with in the foregoing articles of this Convention and arising
+    in the other Contracting state may also be taxed in that other State"
+  us_source_other_income_taxable_by_us: true
+  notes: >-
+    Paragraph 2 excepts income attributable to a US permanent establishment / fixed base
+    (Articles 7/15 apply instead). US-arising other income of an India-resident NRA stays
+    US-taxable under Art. 23(3) — Schedule NEC at the statutory 30%, no treaty reduction.
+  citation:
+    source: "US-India income tax convention (1989), Article 23 (Other Income), paragraphs 1-3 transcribed verbatim from the treaty text (PDF pp. 42-43)."
+    url: "https://www.irs.gov/pub/irs-trty/india.pdf"

@@ -273,7 +273,9 @@ def test_remote_employer_state_raises_the_convenience_warning_without_asserting_
     ), 2025)
     assert all(s.state != "NY" for s in r.states)  # never asserted as must_file
     note = next(n for n in r.notes if "convenience-of-the-employer" in n)
-    assert "NY" in note and "DOR" in note and "Box 15" in note
+    assert "NY" in note and "NONRESIDENT NY return" in note
+    # (NY now carries the CITED rule — the generic verify-at-DOR fallback is
+    # covered by test_nebraska_rule_is_year_aware's 2024 branch.)
 
 
 def test_convenience_warning_attaches_to_the_employer_state_when_it_is_already_scoped():
@@ -340,3 +342,60 @@ def test_law_change_model_defaults_are_the_safe_ones():
     # modeled defaults FALSE: an unannotated change is surfaced, never silently
     # assumed to be inside the engine's math.
     assert c.modeled is False and c.affects == []
+
+
+# ── The convenience rule as CITED data (Batch 2: NY/PA all years, DE/NE 2025) ──
+
+
+def test_ny_employer_upgrades_the_generic_warning_to_the_cited_rule():
+    r = state_scope(_profile(
+        year=2025,
+        lived=[_rp("WA", date(2025, 1, 1), date(2025, 12, 31))],
+        worked=[_wp_emp("WA", date(2025, 1, 1), date(2025, 12, 31), "NY")],
+    ), 2025)
+    w = next(n for n in r.notes if "Remote-work trap" in n)
+    assert "HAS a convenience-of-the-employer sourcing rule" in w
+    assert "TSB-M-06(5)I" in w and "bona fide employer office" in w
+    assert "m06_5i.pdf" in w  # the citation rides in the note text
+    assert "no researched convenience rule" not in w
+
+
+def test_nebraska_rule_is_year_aware():
+    # LB 1023 AMENDED Nebraska's rule effective TY2025 — the 2025 pack carries
+    # the amended rule; 2024 deliberately carries none (the old rule reached
+    # further and its text was not re-verified), so 2024 falls back to the
+    # generic verify-at-DOR warning. Writing one year-invariant NE rule would
+    # have stated superseded law for one year or the other.
+    fp_kwargs = dict(lived=[_rp("WA", date(2025, 1, 1), date(2025, 12, 31))])
+    r25 = state_scope(_profile(year=2025, worked=[_wp_emp("WA", date(2025, 1, 1), date(2025, 12, 31), "NE")], **fp_kwargs), 2025)
+    w25 = next(n for n in r25.notes if "Remote-work trap" in n)
+    assert "LB 1023" in w25 and "seven days" in w25
+
+    fp24 = dict(lived=[_rp("WA", date(2024, 1, 1), date(2024, 12, 31))])
+    r24 = state_scope(_profile(year=2024, worked=[_wp_emp("WA", date(2024, 1, 1), date(2024, 12, 31), "NE")], **fp24), 2024)
+    w24 = next(n for n in r24.notes if "Remote-work trap" in n)
+    assert "no researched convenience rule" in w24
+
+
+def test_cited_rule_attaches_to_an_existing_filing_with_its_citation():
+    # Part-year NY resident later working remotely from CA for the NY employer:
+    # the warning and the TSB-M citation land ON the NY filing entry.
+    r = state_scope(_profile(
+        year=2025,
+        lived=[_rp("NY", date(2025, 1, 1), date(2025, 5, 31)),
+               _rp("CA", date(2025, 6, 1), date(2025, 12, 31))],
+        worked=[_wp_emp("CA", date(2025, 6, 1), date(2025, 12, 31), "NY")],
+    ), 2025)
+    ny = _by_state(r)["NY"]
+    assert any("HAS a convenience-of-the-employer" in w for w in ny.warnings)
+    assert any("m06_5i" in c.url for c in ny.citations)
+
+
+def test_delaware_and_pennsylvania_rules_are_loaded():
+    from taxfill_core.knowledge import load_state_knowledge
+
+    de = load_state_knowledge("de", 2025).convenience_rule
+    assert de is not None and "requirement of employment" in de.exceptions
+    for year in (2023, 2024, 2025):
+        pa = load_state_knowledge("pa", year).convenience_rule
+        assert pa is not None and "of necessity" in pa.summary

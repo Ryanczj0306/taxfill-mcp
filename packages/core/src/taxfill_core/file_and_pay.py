@@ -203,6 +203,15 @@ class FilingManifestItem(BaseModel):
     tax_year: int
     jurisdiction: str = Field(default="federal", description="'federal' (v1) or 'states/<xx>' (M5).")
     bottom_line: int = Field(description="Signed: positive = refund, negative = amount owed, 0 = balanced.")
+    taxpayer: str | None = Field(
+        default=None,
+        description=(
+            "Whose return this is, for the HOUSEHOLD roll-up (H2/N-2): an unmarried household is "
+            "two separate taxpayers — label each person's returns (e.g. 'me', 'Partner P') and "
+            "filing_summary adds per-person subtotals + the household net. None = single-taxpayer "
+            "filing, no roll-up."
+        ),
+    )
     paid_online: bool = Field(default=False, description="True if an owed balance was already paid electronically.")
     state: str | None = Field(default=None, description="Taxpayer's state — two-letter USPS code ('CA') or full name ('California'); resolves the 1040 where-to-file address.")
     filing_jointly: bool = Field(default=False, description="MFJ — both spouses must sign.")

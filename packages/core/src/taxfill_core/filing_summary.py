@@ -54,6 +54,14 @@ class FilingSummary(BaseModel):
 
     label: str = "REVIEW DRAFT — approve the bottom line before printing"
     items: list[FilingSummaryItem] = Field(default_factory=list)
+    household_rollup: list[str] = Field(
+        default_factory=list,
+        description=(
+            "H2/N-2: when the manifest labels returns for 2+ taxpayers (an unmarried household is "
+            "two taxpayers, one budget), per-person subtotals + the household net + the "
+            "two-returns framing. Empty for a single-taxpayer filing."
+        ),
+    )
     approval_prompt: str = Field(
         default=(
             "Review each bottom line above. This is a draft you approve, sign, and file yourself — "
@@ -203,7 +211,45 @@ def filing_summary(
             items.append(_federal_item(item, today, knowledge_dir))
         else:
             items.append(_state_item(item, knowledge_dir))
-    return FilingSummary(items=items)
+    return FilingSummary(items=items, household_rollup=_household_rollup(manifest))
+
+
+def _household_rollup(manifest: list[FilingManifestItem]) -> list[str]:
+    """H2/N-2: per-person subtotals + the household net, when returns are labeled.
+
+    The modal international-student household is an unmarried couple: TWO
+    taxpayers, two returns, one budget. The roll-up is the budget view the
+    field session composed by hand — with the framing that stops the wrong
+    conclusions: each person signs and files only their own return, and one
+    person's refund never nets against the other's balance due at the IRS."""
+    labeled = [m for m in manifest if m.taxpayer]
+    people = sorted({m.taxpayer for m in labeled})
+    if len(people) < 2:
+        return []
+    lines: list[str] = []
+    for person in people:
+        theirs = [m for m in labeled if m.taxpayer == person]
+        subtotal = sum(m.bottom_line for m in theirs)
+        parts = ", ".join(f"{m.form} {m.tax_year} ({m.jurisdiction}) {_signed(m.bottom_line)}" for m in theirs)
+        lines.append(f"{person}: {parts} -> subtotal {_signed(subtotal)}")
+    unlabeled = [m for m in manifest if not m.taxpayer]
+    if unlabeled:
+        lines.append(
+            f"{len(unlabeled)} return(s) carry no taxpayer label and are EXCLUDED from the roll-up — "
+            f"label every return when you want the household view."
+        )
+    household = sum(m.bottom_line for m in labeled)
+    lines.append(f"HOUSEHOLD net (labeled returns): {_signed(household)}")
+    lines.append(
+        "One budget, TWO taxpayers: each person signs and files only their own return(s), and a "
+        "refund on one return never offsets a balance due on the other person's — pay each balance "
+        "due in full; the household net is a budgeting number, not an IRS position."
+    )
+    return lines
+
+
+def _signed(n: int) -> str:
+    return f"+{_money(n)} refund" if n > 0 else (f"-{_money(n)} owed" if n < 0 else "$0 balanced")
 
 
 def _state_item(item: FilingManifestItem, knowledge_dir) -> FilingSummaryItem:
