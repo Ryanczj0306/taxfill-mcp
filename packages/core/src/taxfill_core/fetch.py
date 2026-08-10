@@ -92,7 +92,11 @@ def default_cache_dir() -> Path:
     2. ``<repo root>/.cache/blanks`` — the repo root is found by walking up
        from this file to the first directory containing both ``formpacks/``
        and ``pyproject.toml`` (works for editable installs from a checkout);
-    3. ``<cwd>/.cache/blanks`` as a last resort (site-packages installs).
+    3. ``<workspace root>/.cache/blanks`` (site-packages installs) — the same
+       user-owned root the workspace resolver picks, so everything taxfill
+       writes lives under ONE findable directory. The old last resort was
+       ``<cwd>/.cache/blanks``, which for an MCP server meant "wherever the
+       client launched from": unfindable, and a crash on a read-only cwd.
 
     The directory is NOT created here; :func:`fetch_blank` creates it.
     """
@@ -102,7 +106,9 @@ def default_cache_dir() -> Path:
     for parent in Path(__file__).resolve().parents:
         if (parent / "formpacks").is_dir() and (parent / "pyproject.toml").is_file():
             return parent / ".cache" / "blanks"
-    return Path.cwd() / ".cache" / "blanks"
+    from taxfill_core.workspace import default_workspace_root
+
+    return default_workspace_root() / ".cache" / "blanks"
 
 
 def _validate_sha256(sha256: str) -> str:

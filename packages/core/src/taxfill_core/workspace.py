@@ -34,6 +34,38 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+WORKSPACE_ROOT_ENV = "TAXFILL_WORKSPACE"
+
+
+def default_workspace_root() -> Path:
+    """Where the workspace lives when the caller does not say.
+
+    Resolution order:
+
+    1. the ``TAXFILL_WORKSPACE`` environment variable, when set;
+    2. ``./taxfill-workspace`` — ONLY when it already exists (backward
+       compatibility: earlier releases resolved the relative default against
+       whatever the process cwd happened to be, and existing users' data must
+       stay findable);
+    3. ``~/taxfill-workspace`` — an ABSOLUTE, visible, user-owned location.
+
+    Why 3 matters: the MCP server's cwd is chosen by the CLIENT (Claude
+    Desktop, an IDE), not the user. A relative default meant SSN-bearing
+    profile.json files landed wherever the client happened to launch from —
+    unfindable by the user, missed by ``taxfill purge``, and a hard crash on a
+    read-only cwd. The server, the CLI and ``purge`` all resolve through THIS
+    function, so what one writes the other can always wipe. Deliberately NOT a
+    hidden dotdir: the product's promise is "you keep your data", so the data
+    lives somewhere the user can see.
+    """
+    env = os.environ.get(WORKSPACE_ROOT_ENV)
+    if env:
+        return Path(env)
+    legacy = Path("taxfill-workspace")
+    if legacy.is_dir():
+        return legacy
+    return Path.home() / "taxfill-workspace"
+
 from taxfill_core.knowledge import Citation
 
 __all__ = ["Position", "WorkspaceMeta", "Workspace"]

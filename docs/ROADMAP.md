@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,861 tests, all green** — offline 2,756 + live-.gov 105, exit 0;
+Done and on `main` (**2,886 tests, all green** — offline 2,781 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -31,7 +31,7 @@ re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
   list_document_kinds, extract_document, workspace_save, workspace_load,
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
-  states). The `calc` tool carries 18 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, state_tax).
+  states). The `calc` tool carries 21 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, state_tax).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, with per-field
   provenance — K-1 is the one common document still unsupported) and the resumable
@@ -46,8 +46,10 @@ re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 - **State credits — DONE for all 42 jurisdictions** (41 income-tax states + DC):
   every `knowledge/states/<st>/2023.yaml` carries a cited `credits` block (~174
   entries total); `state_scope` surfaces them as `benefits_candidates`.
-- **Drift CI — DONE.** Scheduled cron job runs `scripts/check_drift.py` (form-blank
-  SHA256 + source URLs + mailing addresses), 9 tests, SSL-tolerance fix merged.
+- **Drift CI — DONE** (restored 2026-08-10 after a spell as workflow_dispatch-only,
+  i.e. never running). `freshness.yml` runs `scripts/check_drift.py` (form-blank
+  SHA256 + source URLs + mailing addresses) AND the live-.gov golden round-trips
+  weekly, in its own workflow so monitoring failures never repaint the code badge.
 - **Pack-authoring CLI — DONE.** `taxfill introspect <blank.pdf>` emits a pack
   skeleton (`packbuild.py` + `cli.py`), tested.
 

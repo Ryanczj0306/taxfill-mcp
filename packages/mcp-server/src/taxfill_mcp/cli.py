@@ -36,18 +36,16 @@ from datetime import datetime
 from pathlib import Path
 
 from taxfill_core.workspace import Workspace
+from taxfill_core.workspace import default_workspace_root
 
-DEFAULT_ROOT = "taxfill-workspace"
+# The SAME resolver the server uses — what the server writes, purge can wipe.
+DEFAULT_ROOT = str(default_workspace_root())
 
-# Mask SSN/ITIN-like ids and long digit runs (account/routing numbers) before printing an
-# error to stderr — a shell agent may capture/log it, and tool exceptions (e.g. a Pydantic
-# ValidationError) can embed the offending input value.
-_SSN_RE = re.compile(r"\b\d{3}-?\d{2}-?\d{4}\b")
-_LONGNUM_RE = re.compile(r"\b\d{6,}\b")
-
-
-def _redact(text: str) -> str:
-    return _LONGNUM_RE.sub("[redacted-number]", _SSN_RE.sub("[redacted-id]", text))
+# Mask SSN/ITIN-like ids and long digit runs before printing an error to stderr —
+# a shell agent may capture/log it. One shared implementation (taxfill_core.redact)
+# now serves the CLI AND the engine's own value-echoing errors, so the README's
+# masking promise holds on the MCP path too, not only here.
+from taxfill_core.redact import redact as _redact  # noqa: E402
 
 
 def _now() -> str:

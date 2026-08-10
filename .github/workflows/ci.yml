@@ -3,9 +3,9 @@ name: CI
 on:
   push:
   pull_request:
-  workflow_dispatch:   # freshness/drift + live-.gov round-trips are MANUAL now
-                       # (run from the Actions tab when you want a freshness check);
-                       # the nightly cron was removed — those jobs monitor, don't gate.
+  workflow_dispatch:   # freshness/drift + live-.gov round-trips run WEEKLY in
+                       # freshness.yml (plus on demand from its Actions tab) —
+                       # they monitor, don't gate, so they live outside this badge.
 
 jobs:
   test:
@@ -86,7 +86,17 @@ jobs:
           import taxfill_mcp.server as s
           assert "site-packages" in str(data_root()), f"data not packaged: {data_root()}"
           assert load_knowledge("federal", 2023).tax_year == 2023
+          # The wheel must carry the NEWER years too — this job once asserted only
+          # federal 2023 and would have passed unchanged if every 2024/2025/2026
+          # knowledge pack and every state-2025 pack vanished from the wheel.
+          assert load_knowledge("federal", 2025).tax.obbba_schedule_1a is not None, "2025 pack stale in wheel"
+          assert load_knowledge("federal", 2026).provisional is not None, "2026 planning pack missing from wheel"
           assert load_state_knowledge("ca", 2023).jurisdiction == "states/ca"
+          from pathlib import Path as _P
+          from taxfill_core.datadir import knowledge_dir
+          for _y in (2023, 2024, 2025):
+              _n = len(list(_P(knowledge_dir()).glob(f"states/*/{_y}.yaml")))
+              assert _n == 42, f"state {_y} knowledge packs in wheel: {_n} != 42"
           assert load_form_pack("f1040", 2023, "federal").fields, "f1040 field map missing"
           # Every federal 2023 form pack must be staged into the wheel -- guards against a
           # missing scripts/stage_data.py re-run after adding packs (a real near-miss).
@@ -102,35 +112,7 @@ jobs:
           print(f"OK — installed wheel is self-contained; {len(tools)} tools register")
           PY
 
-  drift:
-    # MANUAL freshness check (run from the Actions tab): re-fetch every official
-    # source URL and form blank, fail loudly on a moved page or a revised form
-    # (dev plan §7). Not on push (it hits the network and monitors, not gates).
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
-        with:
-          python-version: "3.11"
-      - name: Sync workspace
-        run: uv sync
-      - name: Check source/form drift
-        run: uv run python scripts/check_drift.py
-
-  network-tests:
-    # The network-marked golden round-trips (live .gov blank downloads) are kept out of
-    # the push-blocking `test` job to keep PR CI fast and non-flaky, and run MANUALLY
-    # (from the Actions tab) when you want to confirm the live round-trips still pass.
-    # (The `drift` job checks source freshness via check_drift.py, not pytest.)
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
-        with:
-          python-version: "3.11"
-      - name: Sync workspace
-        run: uv sync
-      - name: Run network golden round-trips
-        run: uv run pytest -m network
+# The drift + network-tests jobs moved to freshness.yml (weekly cron +
+# workflow_dispatch): scheduled monitoring must not repaint this workflow's
+# badge — the README's public health signal for the CODE — when a .gov source
+# moves or a form is revised.

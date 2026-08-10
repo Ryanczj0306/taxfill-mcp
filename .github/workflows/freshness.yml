@@ -1,0 +1,57 @@
+# Scheduled freshness monitoring — dev plan §7.
+#
+# The 99+ pinned blank-PDF digests, the source-registry URLs and the shipped
+# mailing addresses are snapshots of MOVING official sources. These jobs
+# re-fetch them and fail loudly when a form is revised or a page moves.
+#
+# They live in their OWN workflow (not ci.yml) deliberately:
+#   * ci.yml's badge is the README's public health signal — it must track the
+#     CODE. A .gov outage or a mid-season form revision should page the
+#     maintainer via THIS workflow's failure email, not repaint the project
+#     badge red;
+#   * ci.yml once carried these jobs behind `workflow_dispatch`-only guards,
+#     which meant that in normal operation ZERO of the golden round-trips and
+#     zero drift checks ever ran — the digests were rotting silently while the
+#     ROADMAP claimed a scheduled cron existed. This file makes the claim true
+#     again.
+#
+# Monday 09:13 UTC: weekly is enough for drift (forms revise on a monthly-ish
+# cadence outside January), and the odd minute avoids the top-of-hour
+# scheduled-job stampede that gets cron runs delayed or dropped.
+
+name: freshness
+
+on:
+  schedule:
+    - cron: "13 9 * * 1"
+  workflow_dispatch:
+
+jobs:
+  drift:
+    # Re-fetch every official source URL and form blank; fail on a moved page
+    # or a revised form (scripts/check_drift.py — digest + reachability).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - name: Sync workspace
+        run: uv sync
+      - name: Check source/form drift
+        run: uv run python scripts/check_drift.py
+
+  network-tests:
+    # The network-marked golden round-trips: live .gov blank downloads through
+    # fetch -> fill -> verify. Kept out of the push-blocking `test` job so PR
+    # CI stays fast and non-flaky; run here weekly instead of never.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - name: Sync workspace
+        run: uv sync
+      - name: Run network golden round-trips
+        run: uv run pytest -m network

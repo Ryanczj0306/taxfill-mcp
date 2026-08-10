@@ -103,6 +103,19 @@ lands on Schedule 3 line 2, and Form 2441 Part I requires each care provider's
 name/address/TIN — the credit can be denied without them). MFS is generally
 ineligible; 2021 used the ARPA $8,000/$16,000 caps and was refundable with a US abode.
 
+> ⚠️ **Federal year holes — check before promising a fill.** The federal pack
+> years are uneven: `f1040nr` (and its chain — `sched_oi`, `sched_nec`,
+> `sched_a_nr`) ships for **2022, 2023 and 2025 but NOT 2024** even though
+> `f8843` covers 2024 — so a TY2024 nonresident return cannot be filled today.
+> The common attachments (`sched_d`/`sched_e`/`sched_se`, `sched_8812`,
+> `f8962`, `f2441`, `f8863`, `f8959`, `f8960`) are **2023-only**; note
+> `sched_c` ships for 2024/2025 while `sched_se` does not, so a recent-year
+> self-employment filing computes SE tax via `calc` but has no SE form to
+> attach. `f843`/`f8316`/`fw7` are revision-dated (not annual) and parked
+> under 2023 — they remain valid for later years. When a needed pack is
+> missing, say so up front and fall back to `get_sources` + the official
+> blank; never silently truncate a filing.
+
 ### Recipe B — back-file a nonresident return (1040-NR + 8843, e.g. an F-1 student)
 
 1. `residency(visa_periods, days_by_year, target_year)` → confirm nonresident (Form 1040-NR path). If the answer is dual-status or a First-Year-Choice election is possible, surface it (Recipe B3).
@@ -172,7 +185,7 @@ applies; conforming states get the flows-through note instead).
 ## Prescriptive errors
 
 Tool errors tell you exactly what to do — follow them literally:
-- `"value '000-00-0000' exceeds comb MaxLen 9 — resubmit digits only"` → resend the SSN as 9 digits, no dashes.
+- `"value '[redacted-id]' (11 characters) exceeds comb MaxLen 9 — resubmit digits only"` → resend the SSN as 9 digits, no dashes (errors never echo the digits — identifier-shaped values are redacted).
 - MFS with a nonresident-alien spouse who has no SSN/ITIN (and needs none): submit the literal `"NRA"` for `spouse.identifying_number` — the filler writes `NRA` per the Form 1040 instructions (Filing Status). The taxpayer's own SSN line never accepts it.
 - `"required checkbox group 'line12' unanswered — supply yes|no"` → ask the user, then refill that group.
 - `verify_form` returns failures → fix the named lines (recompute with `calc`) and re-verify; never hand-edit a value to make it pass.
