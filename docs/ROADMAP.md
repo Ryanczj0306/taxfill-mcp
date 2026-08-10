@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,886 tests, all green** — offline 2,781 + live-.gov 105, exit 0;
+Done and on `main` (**2,902 tests, all green** — offline 2,797 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -31,7 +31,7 @@ re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
   list_document_kinds, extract_document, workspace_save, workspace_load,
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
-  states). The `calc` tool carries 21 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, state_tax).
+  states). The `calc` tool carries 25 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, with per-field
   provenance — K-1 is the one common document still unsupported) and the resumable
@@ -590,32 +590,45 @@ scenario exercises the persona that motivated it.
       **persisted and re-runnable**
       against the workspace profile, not a one-shot call: the motivating session
       revised four facts mid-flight and each revision re-ran every scenario.
-- [ ] **H8 — tax-advantaged account knowledge (N-10, N-11, N-12, N-13).** The
-      highest-frequency in-year question after "what will I owe" is "where do I put
-      money to owe less". Build:
-      * a `contribution_limits` knowledge block, cited, that records not just the
-        amounts but the **scoping** of each: §402(g) $24,500 per PERSON across all
-        employers with traditional + Roth sharing it; §415(c) $72,000 per EMPLOYER
-        PLAN; HSA $4,400/$8,750 per COVERAGE TIER (so two unmarried self-only
-        HDHPs beat the family limit); §125(i) $3,400 per employee per employer;
-        §132(f) $340+$340 monthly; IRA $7,500 per person across traditional + Roth.
-      * a **marginal-dollar ranking** op: what one more dollar saves in each
-        bucket, knowing that payroll HSA/FSA/commuter dollars also avoid FICA
-        while 401(k) dollars do not, and that above the SS wage base the FICA
-        saving is 1.45% + 0.9%, not 7.65%.
-      * **Roth-vs-pre-tax representation** on the profile (a deferral is a split,
-        not a scalar) because the pre-tax share moves AGI and cascades into every
-        phase-out.
-      * an **eligibility/excess-contribution guard**: the session caught a live
-        Roth IRA contribution made by a single filer whose MAGI was above the
-        $153,000–$168,000 phase-out (6% excise per year), which flips to compliant
-        on a year-end MFJ filing status. A tool holding the profile and the limits
-        should raise this without being asked.
-      * a **MAGI ladder** output (gross → W-2 box 1 → AGI → each test's MAGI with
-        its own threshold), since at least six different phase-out tests fired in
-        one session and users cannot see why their MAGI differs from their salary.
-      * withholding realism: the flat **22% supplemental-wage rate** (Pub 15) vs a
-        32% marginal rate is a predictable April shortfall on any bonus.
+- [x] **H8 — tax-advantaged account knowledge — DONE 2026-08-10** (N-10, N-11,
+      N-13; ops 22-25; N-12's withholding realism shipped earlier with H4).
+      * **`contribution_limits` TOP-LEVEL knowledge block** (2025 + 2026) with
+        the SCOPING as machine-readable Literals, because the scoping IS the
+        answer: §402(g) per PERSON across all employers (traditional + Roth
+        share it), §415(c) per EMPLOYER PLAN, IRA per person across both
+        kinds, HSA per COVERAGE TIER (2×$4,400 self-only = $8,800 > the
+        $8,750 family limit — encoded and tested), §125(i) per employee per
+        employer, §132(f) monthly. Top-level on purpose — nested blocks evade
+        the sources-coverage meta-test; a `contribution_limits` sources topic
+        + BLOCK_TO_REQUIRED_TOPICS mapping back it. Every figure transcribed
+        with verbatim quotes by seven fetch agents before authoring — which
+        caught a live sourcing trap: **the irs-drop copy of Notice 2025-67 is
+        DEFECTIVE** (its IRA section repeats the 2025 figures from Notice
+        2024-80); the 2026 block cites the authoritative IRB 2025-49
+        publication and warns against the drop copy in its citation.
+      * **`ira_contribution_eligibility` (op 23) — the excess-contribution
+        guard**: the Pub 590-A reduced-limit worksheet (round UP to $10, $200
+        floor while partially phased), both the Roth-contribution and the
+        traditional-DEDUCTION phase-out families (incl. the spousal-coverage
+        range and the no-coverage-anywhere = no-phase-out rule), the
+        MFS-lived-apart exception, and the 6%/yr excise on any excess — the
+        live $194,600 error is now a machine verdict (allowed $0, excise
+        $450/yr) with the year-end MFJ flip shown mechanically.
+      * **`marginal_dollar_savings` (op 24)**: payroll HSA/FSA/commuter
+        dollars avoid income tax AND FICA; 401(k)/deductible-IRA dollars
+        income tax only; the FICA tier is computed (7.65% below the wage
+        base, 1.45% between the base and $200k, 2.35% above), never assumed.
+      * **`magi_ladder` (op 25)**: every MAGI test the year's packs carry in
+        one table — NIIT (AGI+FEIE), Additional Medicare (a WAGE test AGI
+        cannot move), student-loan interest (with the MFS hard bar),
+        Schedule 1-A parts, Roth-IRA and deductible-IRA — each with its own
+        definition, threshold and headroom; rows come only from shipped
+        blocks, never guesses. The work narrates the full ladder (gross →
+        box 1 → AGI → per-test MAGI).
+      *(Deferred to H1-H3 by design: the **Roth-vs-pre-tax profile
+      representation** — the ops take explicit arguments today, so the
+      capability exists agent-composed; persisting the deferral split on the
+      profile is intake/schema work and lands with that tranche.)*
 
 **Acceptance:** H1/H2 ship schema + intake changes with regression tests and an
 eval scenario for the *unmarried two-NRA household, mid-year status change*

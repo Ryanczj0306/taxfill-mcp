@@ -52,7 +52,7 @@ def _runtime_calc_ops() -> set[str]:
     """The ops `calc` actually dispatches, read from the dispatch chain itself."""
     src = (REPO / "packages" / "mcp-server" / "src" / "taxfill_mcp" / "server.py").read_text()
     ops = set(re.findall(r'if op == "([a-z0-9_]+)"', src))
-    assert len(ops) == 21, f"calc op count changed ({len(ops)}) — update the skills, then this number"
+    assert len(ops) == 25, f"calc op count changed ({len(ops)}) — update the skills, then this number"
     return ops
 
 
@@ -94,7 +94,7 @@ def test_no_skill_file_invents_a_tool(name: str) -> None:
 
 
 def test_every_calc_op_is_named_in_the_full_skill() -> None:
-    """`calc` is one MCP tool wrapping 21 ops — the ops are only discoverable in prose."""
+    """`calc` is one MCP tool wrapping 25 ops — the ops are only discoverable in prose."""
     text = FULL_SKILL.read_text()
     missing = sorted(op for op in _runtime_calc_ops() if op not in text)
     assert not missing, f"skills/claude/SKILL.md never mentions these calc ops: {missing}"

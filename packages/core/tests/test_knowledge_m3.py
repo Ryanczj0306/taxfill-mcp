@@ -40,6 +40,9 @@ BLOCK_TO_REQUIRED_TOPICS = {
     "mailing_addresses": ("mailing_addresses",),
     "deadlines": ("deadlines",),
     "credits": ("credits_ctc", "credits_eitc"),
+    # Phase H item H8: the tax-advantaged account limits (top-level on purpose —
+    # nesting under `tax` would evade this very rule).
+    "contribution_limits": ("contribution_limits",),
 }
 
 

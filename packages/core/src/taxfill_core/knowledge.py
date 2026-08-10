@@ -1245,6 +1245,180 @@ class SupplementalWithholdingParams(BaseModel):
     _coerce_decimals = field_validator("flat_rate", "high_rate", mode="before")(_as_exact_decimal)
 
 
+# ── Tax-advantaged account contribution limits (Phase H, H8) ─────────────────
+# The insight the block exists to carry is the SCOPING, not the amounts: the
+# one real planning session's question was "is the 401(k) limit one per
+# person?", and the interesting answer is that the four big limits are scoped
+# four different ways. Scope is a closed Literal per bucket — machine-readable,
+# never prose. The block is TOP-LEVEL (not under `tax`) deliberately: nested
+# blocks evade the sources-coverage meta-test, and this one must not.
+
+ContributionScope = Literal[
+    "per_person_all_employers",   # 402(g): traditional + Roth deferrals share ONE limit across every job
+    "per_employer_plan",          # 415(c): each unrelated employer's plan has its own — the mega-backdoor door
+    "per_person_all_accounts",    # IRA: traditional + Roth share one limit
+    "per_coverage_tier",          # HSA: the limit follows the HDHP tier — two self-only people can beat one family
+    "per_employee_per_employer",  # 125(i) health FSA
+    "per_month",                  # 132(f) commuter benefits
+]
+
+
+class MagiRange(BaseModel):
+    """One MAGI phase-out range: full benefit at/below start, none at/above end."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    start: int = Field(ge=0)
+    end: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _ordered(self) -> "MagiRange":
+        if self.end <= self.start:
+            raise ValueError(f"phase-out range must have end > start, got {self.start}..{self.end}")
+        return self
+
+
+class RothIraPhaseouts(BaseModel):
+    """Roth IRA MAGI phase-out ranges by filing status (the eligibility guard's data)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    single_hoh: MagiRange
+    married_filing_jointly: MagiRange = Field(description="Also qualifying surviving spouse.")
+    married_filing_separately: MagiRange = Field(
+        description="$0-$10,000, STATUTORY and never indexed — an MFS filer who lived with their spouse "
+        "is phased out almost immediately (lived-apart-all-year MFS uses the single range instead)."
+    )
+
+
+class DeductibleIraPhaseouts(BaseModel):
+    """Traditional-IRA DEDUCTION phase-outs when covered by an employer plan."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    single_hoh: MagiRange
+    married_filing_jointly_covered: MagiRange = Field(description="The CONTRIBUTOR is the covered spouse.")
+    married_filing_jointly_spouse_covered: MagiRange = Field(
+        description="The contributor is NOT covered but their spouse is — a much higher range."
+    )
+    married_filing_separately: MagiRange
+
+
+class IraWorksheetRules(BaseModel):
+    """The Pub 590-A reduced-limit worksheet mechanics (round-up + minimum)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    round_up_to: int = Field(gt=0, description="Round the reduced limit UP to the nearest multiple ($10).")
+    minimum_if_partial: int = Field(
+        gt=0, description="If the reduced limit is above $0 but below this, use this instead ($200)."
+    )
+
+
+class ElectiveDeferral402g(BaseModel):
+    """IRC 402(g): the employee elective-deferral limit."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    limit: int = Field(gt=0)
+    catch_up_50: int | None = Field(default=None, description="Age-50 catch-up, where published.")
+    catch_up_60_63: int | None = Field(default=None, description="SECURE 2.0 age-60-63 higher catch-up, where published.")
+    scope: Literal["per_person_all_employers"] = "per_person_all_employers"
+    shared_by_roth: bool = Field(
+        default=True, description="Traditional AND Roth deferrals share this one limit — a split changes AGI, never the cap."
+    )
+    payroll_fica_exempt: bool = Field(
+        default=False, description="False: a 401(k) dollar still pays FICA — unlike cafeteria-plan HSA/FSA/commuter dollars."
+    )
+
+
+class AnnualAdditions415c(BaseModel):
+    """IRC 415(c): the per-plan annual-additions limit (employee + employer + after-tax)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    limit: int = Field(gt=0)
+    scope: Literal["per_employer_plan"] = "per_employer_plan"
+
+
+class IraLimits(BaseModel):
+    """IRA contribution limit + both MAGI phase-out families + the excess excise."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    limit: int = Field(gt=0)
+    catch_up_50: int | None = None
+    scope: Literal["per_person_all_accounts"] = "per_person_all_accounts"
+    roth_magi_phaseout: RothIraPhaseouts
+    deduction_magi_phaseout_active: DeductibleIraPhaseouts
+    worksheet: IraWorksheetRules
+    excess_excise_rate: Decimal = Field(
+        description="IRC 4973: 6% of the excess PER YEAR until withdrawn/absorbed — the live-error tax."
+    )
+    eligibility_tested_at: str = Field(
+        description="When eligibility is measured — year-end status/MAGI, contributions allowed to the filing deadline."
+    )
+
+    _rate_exact = field_validator("excess_excise_rate", mode="before")(_as_exact_decimal)
+
+
+class HsaLimits(BaseModel):
+    """IRC 223: HSA limits — scoped by COVERAGE TIER, not by household."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    self_only: int = Field(gt=0)
+    family: int = Field(gt=0)
+    catch_up_55: int | None = Field(default=None, description="Age-55 catch-up (statutory $1,000, IRC 223(b)(3)).")
+    scope: Literal["per_coverage_tier"] = "per_coverage_tier"
+    payroll_fica_exempt: bool = Field(
+        default=True, description="True when contributed through a cafeteria plan — the dollar also avoids FICA."
+    )
+
+
+class HealthFsa125i(BaseModel):
+    """IRC 125(i): the health-FSA salary-reduction cap."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    limit: int = Field(gt=0)
+    carryover: int | None = Field(default=None, description="The maximum unused-amount carryover, where published.")
+    scope: Literal["per_employee_per_employer"] = "per_employee_per_employer"
+    payroll_fica_exempt: bool = True
+
+
+class Commuter132f(BaseModel):
+    """IRC 132(f): qualified transportation fringe — monthly, transit and parking separately."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    transit_monthly: int = Field(gt=0)
+    parking_monthly: int = Field(gt=0)
+    scope: Literal["per_month"] = "per_month"
+    payroll_fica_exempt: bool = True
+
+
+class ContributionLimitsParams(BaseModel):
+    """The top-level ``contribution_limits`` block: every bucket with its SCOPING."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    elective_deferral_402g: ElectiveDeferral402g
+    annual_additions_415c: AnnualAdditions415c
+    ira: IraLimits
+    hsa: HsaLimits
+    health_fsa_125i: HealthFsa125i
+    commuter_132f: Commuter132f
+
+
 class TaxKnowledge(BaseModel):
     """The ``tax`` block of a knowledge pack: everything calc.py needs for one year.
 
@@ -1540,6 +1714,9 @@ class KnowledgePack(BaseModel):
     mailing_addresses: MailingAddresses | None = None
     deadlines: Deadlines | None = None
     credits: Credits | None = None
+    # Phase H item H8: tax-advantaged account limits with machine-readable
+    # SCOPING. Top-level on purpose — see the block comment on the models.
+    contribution_limits: ContributionLimitsParams | None = None
     effective_law_changes: list[EffectiveLawChange] = Field(default_factory=list)
 
     @field_validator("jurisdiction")

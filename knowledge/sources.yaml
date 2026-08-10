@@ -337,6 +337,28 @@ federal:
     # interest deduction" to education (Pub 970), "no tax on tips" to
     # dual_status (Pub 519), "Schedule 1-A" to investment_income (Pub 550) —
     # a live DEV_PLAN section-7 coverage-rule violation.
+    contribution_limits:
+      - url: https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-contributions
+        answers: >-
+          The retirement-plan contribution limits landing page: elective
+          deferrals (402(g)), annual additions (415(c)), IRA limits and
+          catch-ups, with links to the year's COLA notice — the change channel
+          for every per-year figure in the contribution_limits block.
+        cadence: annual (COLA notice each November)
+      - url: https://www.irs.gov/publications/p590a
+        answers: >-
+          Pub 590-A, Contributions to IRAs: the Roth and deductible-IRA MAGI
+          phase-out worksheets (the round-up-to-$10 / $200-minimum mechanics),
+          the Roth MAGI definition, the filing-deadline contribution window,
+          and the 6% excess-contribution excise (IRC 4973).
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/publications/p969
+        answers: >-
+          Pub 969, HSAs and other tax-favored health plans: HSA eligibility,
+          the self-only/family coverage-tier limits, the age-55 catch-up, and
+          the payroll (cafeteria-plan) FICA treatment.
+        cadence: annual (per tax year)
+
     obbba_schedule_1a_deductions:
       - url: https://www.irs.gov/pub/irs-prior/f1040s1a--2025.pdf
         answers: >-

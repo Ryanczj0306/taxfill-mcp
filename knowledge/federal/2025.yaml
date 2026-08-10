@@ -815,3 +815,104 @@ deadlines:
     only TY2019 returns, moved 2020-04-15 -> 2020-07-15, and TY2020 returns, moved 2021-04-15 -> 2021-05-17;
     neither applies here.)
   nonwage_1040nr_due_date: '2026-06-15'   # June 15, 2026 is a Monday — no weekend shift (2024's was 2025-06-16)
+
+# ── Tax-advantaged account contribution limits (Phase H, H8) ──────────────────
+# TOP-LEVEL block on purpose (nested blocks evade the sources-coverage
+# meta-test). The insight this block carries is the SCOPING, not the amounts:
+# 402(g) is per PERSON across all employers (traditional + Roth share it),
+# 415(c) is per EMPLOYER PLAN (the mega-backdoor door), the HSA limit follows
+# the COVERAGE TIER (two self-only people beat one family plan), 125(i) is per
+# employee per employer, 132(f) is monthly. Every figure transcribed with a
+# verbatim quote from the cited document before authoring.
+contribution_limits:
+  citation:
+    source: >-
+      IRS Notice 2024-80, "2025 Amounts Relating to Retirement Plans and IRAs, as Adjusted for Changes
+      in Cost-of-Living" — the umbrella COLA notice for the retirement-side figures below; each bucket
+      carries its own pinpoint citation.
+    url: "https://www.irs.gov/pub/irs-drop/n-24-80.pdf"
+  elective_deferral_402g:
+    citation:
+      source: >-
+        Notice 2024-80, p. 1: "The limitation under section 402(g)(1) on the exclusion for elective
+        deferrals ... is increased from $23,000 to $23,500"; age-50 catch-up under 414(v)(2)(B)(i)
+        "remains $7,500"; the SECURE 2.0 age-60-63 catch-up under 414(v)(2)(E)(i) "is $11,250"
+        (pp. 1-2; non-SIMPLE amounts).
+      url: "https://www.irs.gov/pub/irs-drop/n-24-80.pdf"
+    limit: 23500
+    catch_up_50: 7500
+    catch_up_60_63: 11250
+  annual_additions_415c:
+    citation:
+      source: >-
+        Notice 2024-80, p. 1: "The limitation for defined contribution plans under section 415(c)(1)(A)
+        is increased in 2025 from $69,000 to $70,000." Employee + employer + after-tax combined, PER
+        PLAN of unrelated employers.
+      url: "https://www.irs.gov/pub/irs-drop/n-24-80.pdf"
+    limit: 70000
+  ira:
+    citation:
+      source: >-
+        Notice 2024-80: IRA limit under 219(b)(5)(A) "remains $7,000" and the age-50 increase under
+        219(b)(5)(B)(ii) "remains $1,000" (p. 4). Traditional-IRA deduction phase-outs for active
+        participants (p. 4): single/HoH $79,000-$89,000; MFJ contributor covered $126,000-$146,000;
+        contributor not covered but spouse covered $236,000-$246,000; MFS $0-$10,000 ("not subject to
+        an annual cost-of-living adjustment"). Roth IRA MAGI phase-outs (p. 5): single/HoH
+        $150,000-$165,000; MFJ $236,000-$246,000; MFS $0-$10,000.
+      url: "https://www.irs.gov/pub/irs-drop/n-24-80.pdf"
+    limit: 7000
+    catch_up_50: 1000
+    roth_magi_phaseout:
+      single_hoh: { start: 150000, end: 165000 }
+      married_filing_jointly: { start: 236000, end: 246000 }
+      married_filing_separately: { start: 0, end: 10000 }
+    deduction_magi_phaseout_active:
+      single_hoh: { start: 79000, end: 89000 }
+      married_filing_jointly_covered: { start: 126000, end: 146000 }
+      married_filing_jointly_spouse_covered: { start: 236000, end: 246000 }
+      married_filing_separately: { start: 0, end: 10000 }
+    worksheet:
+      citation:
+        source: >-
+          Pub 590-A (2025 edition), Worksheet 2-2 (Roth reduced contribution limit): round the result
+          UP to the nearest $10; "if the result is more than $0 but less than $200, enter $200". The
+          traditional-IRA deduction worksheet uses the same $10 rounding and $200 minimum. Excess
+          contributions: 6% per year on amounts remaining at year end, capped at 6% of the combined
+          value of all IRAs at year end (the excise is statutory IRC 4973 — the Pub states the rule
+          without citing the section); fixable without the excise by withdrawing the contribution PLUS
+          earnings by the return due date INCLUDING extensions.
+        url: "https://www.irs.gov/pub/irs-pdf/p590a.pdf"
+      round_up_to: 10
+      minimum_if_partial: 200
+    excess_excise_rate: 0.06
+    eligibility_tested_at: >-
+      Year-end filing status and full-year MAGI; contributions for a year may be made until the
+      return's due date NOT including extensions, and an excess is fixable without the 6% excise by
+      withdrawing it (plus earnings) by the due date INCLUDING extensions (Pub 590-A).
+  hsa:
+    citation:
+      source: >-
+        Rev. Proc. 2024-25 (2025 HSA inflation amounts): self-only $4,300, family $8,550. The age-55
+        catch-up is a fixed statutory $1,000 under IRC 223(b)(3) and is deliberately NOT restated in
+        the annual HSA revenue procedure.
+      url: "https://www.irs.gov/pub/irs-drop/rp-24-25.pdf"
+    self_only: 4300
+    family: 8550
+    catch_up_55: 1000
+  health_fsa_125i:
+    citation:
+      source: >-
+        Rev. Proc. 2024-40 (2025 inflation adjustments), section 125(i) health-FSA salary-reduction
+        limit $3,300; maximum unused-amount carryover $660.
+      url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf"
+    limit: 3300
+    carryover: 660
+  commuter_132f:
+    citation:
+      source: >-
+        Rev. Proc. 2024-40 (2025 inflation adjustments), section 132(f): $325/month for the aggregate
+        of transportation in a commuter highway vehicle plus transit passes, and $325/month for
+        qualified parking, separately.
+      url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf"
+    transit_monthly: 325
+    parking_monthly: 325

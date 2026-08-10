@@ -42,6 +42,10 @@ from taxfill_core import (
     standard_deduction as _standard_deduction,
     state_scope as _state_scope,
     annualize_ytd as _annualize_ytd,
+    contribution_limits as _contribution_limits,
+    ira_contribution_eligibility as _ira_contribution_eligibility,
+    magi_ladder as _magi_ladder,
+    marginal_dollar_savings as _marginal_dollar_savings,
     employee_fica as _employee_fica,
     estimated_tax_safe_harbor as _estimated_tax_safe_harbor,
     schedule_1a_deductions as _schedule_1a_deductions,
@@ -288,6 +292,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
+    contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
     state_tax}; every result shows its work and cites the data pack.
 
     A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
@@ -377,6 +382,28 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       calendar-day proration — the deterministic home for the one arithmetic step every projection
       needs. ASSUMES LEVEL PAY: annualize each status segment separately, never annualize one-time
       amounts like bonuses/RSU vests)
+    - contribution_limits: args {year?} (every tax-advantaged bucket WITH ITS SCOPING — the real
+      answer to "is the 401(k) limit one per person?": 402(g) per PERSON across all employers with
+      traditional+Roth sharing it; 415(c) per EMPLOYER PLAN (the mega-backdoor door); IRA per person
+      across both kinds; HSA per COVERAGE TIER (two self-only holders can beat one family plan);
+      125(i) FSA per employee per employer; 132(f) commuter monthly. Quote the scoping strings)
+    - ira_contribution_eligibility: args {magi, filing_status?, year?, ira_type?: roth|
+      traditional_deduction, contributed?, age_50_plus?, covered_by_employer_plan?,
+      spouse_covered_by_employer_plan?, mfs_lived_apart_all_year?} (the Pub 590-A reduced-limit
+      worksheet: round UP to $10, $200 floor while partially phased. Run it BEFORE any IRA
+      contribution is recorded — it catches the live 6%/yr-excise error (IRC 4973) and shows the
+      year-end-status flip: the same MAGI can be excess when single and compliant on MFJ. The
+      deduction path needs the employer-plan coverage facts; no coverage anywhere = no phase-out)
+    - marginal_dollar_savings: args {taxable_income, wages, filing_status?, year?} ("where does one
+      more pre-tax dollar save the most": payroll HSA/FSA/commuter dollars avoid income tax AND FICA;
+      401(k)/deductible-IRA dollars avoid income tax only; ABOVE the SS wage base the FICA saving is
+      1.45%+0.9% over $200k, never 7.65%. Federal only — state rates stack; Roth saves $0 today by
+      design)
+    - magi_ladder: args {agi, filing_status?, year?, wages?, foreign_earned_income_exclusion?,
+      excluded_puerto_rico_income?} (every MAGI test the year's packs carry, one table — because MAGI
+      is not one number: NIIT adds back the FEIE, Additional Medicare is a WAGE test that AGI cannot
+      move, Schedule 1-A / Roth-IRA / deductible-IRA each define their own. Show it when the user asks
+      why their MAGI differs from their salary; every planning lever moves a number on this ladder)
     - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
       (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
       2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
@@ -437,6 +464,14 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_estimated_tax_safe_harbor(**args)), args)
     if op == "annualize_ytd":
         return _dump(_annualize_ytd(**args))
+    if op == "contribution_limits":
+        return _stamp_provisional(_dump(_contribution_limits(**args)), args)
+    if op == "ira_contribution_eligibility":
+        return _stamp_provisional(_dump(_ira_contribution_eligibility(**args)), args)
+    if op == "marginal_dollar_savings":
+        return _stamp_provisional(_dump(_marginal_dollar_savings(**args)), args)
+    if op == "magi_ladder":
+        return _stamp_provisional(_dump(_magi_ladder(**args)), args)
     if op == "state_tax":
         return _stamp_provisional(_dump(_state_tax(**args)), args)
     raise ValueError(
@@ -444,7 +479,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
         f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
-        f"employee_fica, estimated_tax_safe_harbor, annualize_ytd, state_tax"
+        f"employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, "
+        f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax"
     )
 
 

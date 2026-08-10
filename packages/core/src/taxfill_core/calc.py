@@ -64,6 +64,12 @@ Contents:
   100/110% prior, the $1,000 de minimis, the flat-22% supplemental-wage trap
   quoted), and YTD->full-year calendar-day proration (disclosed arithmetic,
   no citation — it is an assumption, and the work says when it breaks).
+* ``contribution_limits`` / ``ira_contribution_eligibility`` /
+  ``marginal_dollar_savings`` / ``magi_ladder`` (Phase H, H8) — the
+  account-limit quartet: limits WITH machine-readable scoping, the Pub 590-A
+  reduced-limit worksheet (the 6%/yr-excise guard and its year-end-status
+  flip), the where-does-the-next-dollar-go ranking (payroll dollars beat
+  401(k) dollars by the FICA saving), and the per-test MAGI table.
 * ``state_tax`` (Phase G, G4) — the STATE income-tax line for every
   jurisdiction whose pack ships a cited ``tax`` block: all 42 income-tax
   jurisdictions (41 states + DC) for 2023 and 2024, and 41 of 42 for 2025
@@ -100,6 +106,8 @@ from taxfill_core.knowledge import (
     FilingStatus,
     KnowledgePack,
     MagiPhaseoutRange,
+    ContributionLimitsParams,
+    MagiRange,
     ObbbaSchedule1aParams,
     RateBracket,
     StateRateBracket,
@@ -3519,6 +3527,615 @@ def annualize_ytd(
         days_in_year=days_in_year,
         inputs={"ytd_amount": irs_round(amount), "through": through_d.isoformat(), "year": year},
         work=work,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Tax-advantaged account ops (Phase H, H8): the limits lookup, the IRA
+# eligibility guard, the marginal-dollar ranking, and the MAGI ladder
+# ---------------------------------------------------------------------------
+
+
+def _require_contribution_limits(pack: KnowledgePack, year: int) -> ContributionLimitsParams:
+    params = pack.contribution_limits
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no contribution_limits block — add it with citations "
+            f"to that year's COLA notice (retirement), HSA revenue procedure, and inflation-adjustment "
+            f"revenue procedure (see knowledge/federal/2025.yaml)"
+        )
+    return params
+
+
+class ContributionLimitsResult(BaseModel):
+    """Result of :func:`contribution_limits`: every bucket with its SCOPING spelled out."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    limits: ContributionLimitsParams
+    scoping: dict[str, str] = Field(description="Bucket -> one-sentence scoping answer, quotable to the user.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def contribution_limits(
+    year: int = 2025,
+    knowledge_dir: str | Path | None = None,
+) -> ContributionLimitsResult:
+    """The year's tax-advantaged account limits WITH their scoping — because the
+    real question is never just the amount.
+
+    The motivating session's question was "is the 401(k) limit one per person?",
+    and the useful answer is that the big limits are scoped four different ways:
+
+    * 402(g) elective deferral — per PERSON across every employer, and
+      traditional + Roth deferrals share the one limit (a split moves AGI,
+      never the cap);
+    * 415(c) annual additions — per EMPLOYER PLAN (employee + employer +
+      after-tax), which is what makes a mega-backdoor possible;
+    * IRA — per person across traditional + Roth combined;
+    * HSA — per COVERAGE TIER, so two unmarried self-only HDHP holders can
+      contribute more together than one family plan allows;
+    * 125(i) health FSA — per employee per employer;
+    * 132(f) commuter — per month, transit and parking separately.
+
+    Payroll HSA/FSA/commuter dollars also avoid FICA; 401(k) dollars do not —
+    :func:`marginal_dollar_savings` turns that into a ranking.
+    """
+    pack = _load_federal(year, knowledge_dir)
+    params = _require_contribution_limits(pack, year)
+    d = params.elective_deferral_402g
+    scoping = {
+        "elective_deferral_402g": (
+            f"${d.limit:,} per PERSON across ALL employers for {year}; traditional and Roth deferrals "
+            f"share this one limit"
+            + (f"; age-50 catch-up ${d.catch_up_50:,}" if d.catch_up_50 else "")
+            + (f"; age-60-63 higher catch-up ${d.catch_up_60_63:,}" if d.catch_up_60_63 else "")
+            + ". A 401(k) dollar still pays FICA."
+        ),
+        "annual_additions_415c": (
+            f"${params.annual_additions_415c.limit:,} per EMPLOYER PLAN (employee + employer + "
+            f"after-tax contributions combined) — separate employers get separate {year} limits, which "
+            f"is what makes after-tax 'mega-backdoor' room possible."
+        ),
+        "ira": (
+            f"${params.ira.limit:,} per person across traditional + Roth IRAs combined for {year}"
+            + (f" (+${params.ira.catch_up_50:,} at 50+)" if params.ira.catch_up_50 else "")
+            + "; Roth eligibility and the traditional DEDUCTION phase out on MAGI — check "
+            + "ira_contribution_eligibility before contributing."
+        ),
+        "hsa": (
+            f"${params.hsa.self_only:,} self-only / ${params.hsa.family:,} family for {year} — the limit "
+            f"follows the HDHP COVERAGE TIER, not the household: two unmarried people with self-only "
+            f"coverage get ${2 * params.hsa.self_only:,} together, "
+            f"{'MORE than' if 2 * params.hsa.self_only > params.hsa.family else 'vs'} the family "
+            f"${params.hsa.family:,}. Payroll HSA dollars also avoid FICA."
+        ),
+        "health_fsa_125i": (
+            f"${params.health_fsa_125i.limit:,} per EMPLOYEE per EMPLOYER for {year}"
+            + (f" (carryover up to ${params.health_fsa_125i.carryover:,})" if params.health_fsa_125i.carryover else "")
+            + "; payroll FSA dollars also avoid FICA."
+        ),
+        "commuter_132f": (
+            f"${params.commuter_132f.transit_monthly:,}/month transit and "
+            f"${params.commuter_132f.parking_monthly:,}/month parking for {year}, separately; "
+            f"payroll commuter dollars also avoid FICA."
+        ),
+    }
+    work = f"Contribution limits and SCOPING for {year}:\n" + "\n".join(f"* {k}: {v}" for k, v in scoping.items())
+    return ContributionLimitsResult(
+        limits=params, scoping=scoping, inputs={"year": year}, work=work, citation=params.citation
+    )
+
+
+class IraEligibilityResult(BaseModel):
+    """Result of :func:`ira_contribution_eligibility`: the reduced limit + any excess."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    allowed: int = Field(description="The MAGI-reduced contribution (Roth) or deduction (traditional) limit.")
+    full_limit: int = Field(description="The unreduced limit used (incl. the age-50 catch-up when claimed).")
+    phaseout: dict[str, int] = Field(description="{start, end} of the range applied.")
+    magi_position: Literal["below", "within", "above"]
+    excess: int = Field(description="max(0, contributed - allowed) — the amount the 6% excise bites.")
+    excise_per_year: int = Field(description="IRC 4973: 6% of the excess, charged EVERY year until fixed.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def ira_contribution_eligibility(
+    magi: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2025,
+    ira_type: str = "roth",
+    contributed: int | float | Decimal | str = 0,
+    age_50_plus: bool = False,
+    covered_by_employer_plan: bool | None = None,
+    spouse_covered_by_employer_plan: bool | None = None,
+    mfs_lived_apart_all_year: bool = False,
+    knowledge_dir: str | Path | None = None,
+) -> IraEligibilityResult:
+    """The Pub 590-A reduced-limit worksheet: how much Roth IRA contribution (or
+    traditional-IRA DEDUCTION) the MAGI actually allows — and the 6%-per-year
+    excise on any excess already contributed.
+
+    This op exists because the one real planning session caught a LIVE error of
+    exactly this shape: a single filer contributing to a Roth IRA with MAGI
+    above the phase-out — a 6%-per-year excise (IRC 4973) that nobody notices
+    until it has compounded. Two facts the work always states:
+
+    * eligibility is tested on the YEAR-END filing status and full-year MAGI —
+      an ineligible contribution can FLIP TO COMPLIANT by marrying and filing
+      jointly, because the MFJ range is far higher (and vice versa: MFS is
+      phased out almost immediately unless the spouses lived apart ALL year,
+      in which case the single range applies — set mfs_lived_apart_all_year);
+    * an excess is fixable without the excise by withdrawing the contribution
+      plus earnings before the filing deadline, or recharacterizing.
+
+    ``ira_type``: 'roth' (contribution eligibility) or 'traditional_deduction'
+    (the deduction phase-out — a NONDEDUCTIBLE traditional contribution is
+    always allowed up to the limit regardless of MAGI). The deduction path
+    needs ``covered_by_employer_plan`` (and, on a joint return,
+    ``spouse_covered_by_employer_plan``): no coverage anywhere means NO
+    phase-out at all.
+
+    Worksheet mechanics from the pack (Pub 590-A): the reduced limit rounds UP
+    to the nearest $10, and a partial phase-out never drops below $200.
+    """
+    if filing_status not in FILING_STATUSES and filing_status != _QSS:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+    if ira_type not in ("roth", "traditional_deduction"):
+        raise ValueError(
+            f"ira_type must be 'roth' or 'traditional_deduction', got {ira_type!r} — a nondeductible "
+            f"traditional contribution needs no eligibility check (always allowed up to the limit)"
+        )
+    magi_d = _to_decimal(magi, "magi")
+    contributed_i = irs_round(_to_decimal(contributed, "contributed"))
+    if contributed_i < 0:
+        raise ValueError("contributed must be >= 0")
+    pack = _load_federal(year, knowledge_dir)
+    params = _require_contribution_limits(pack, year)
+    ira = params.ira
+    full_limit = ira.limit + (ira.catch_up_50 or 0 if age_50_plus else 0)
+
+    mfj_like = filing_status in ("married_filing_jointly", _QSS)
+    mfs = filing_status == "married_filing_separately"
+    notes: list[str] = []
+    if ira_type == "roth":
+        if mfs and mfs_lived_apart_all_year:
+            rng = ira.roth_magi_phaseout.single_hoh
+            notes.append(
+                "MFS but lived apart from the spouse ALL year: Pub 590-A treats this as the single "
+                "range (your judgment — the default MFS range is $0-$10,000)."
+            )
+        elif mfs:
+            rng = ira.roth_magi_phaseout.married_filing_separately
+        elif mfj_like:
+            rng = ira.roth_magi_phaseout.married_filing_jointly
+        else:
+            rng = ira.roth_magi_phaseout.single_hoh
+    else:
+        if covered_by_employer_plan is None:
+            raise ValueError(
+                "traditional_deduction needs covered_by_employer_plan (True/False) — the phase-out "
+                "exists ONLY for active participants; with no coverage anywhere the deduction is "
+                "unlimited by MAGI (on a joint return also pass spouse_covered_by_employer_plan)"
+            )
+        if not covered_by_employer_plan:
+            if mfj_like and spouse_covered_by_employer_plan is None:
+                raise ValueError(
+                    "on a joint return with covered_by_employer_plan=False, pass "
+                    "spouse_covered_by_employer_plan (True/False) — a covered SPOUSE triggers the "
+                    "higher spousal phase-out range"
+                )
+            if mfj_like and spouse_covered_by_employer_plan:
+                rng = ira.deduction_magi_phaseout_active.married_filing_jointly_spouse_covered
+                notes.append("Not covered yourself, but the spouse is: the higher spousal range applies.")
+            else:
+                # No employer plan anywhere: fully deductible regardless of MAGI.
+                work = (
+                    f"Traditional-IRA deduction {year}: neither spouse is an active participant in an "
+                    f"employer plan, so NO MAGI phase-out applies — deductible up to the "
+                    f"${full_limit:,} limit (IRC 219; Pub 590-A). Contributed ${contributed_i:,} -> "
+                    f"excess ${max(0, contributed_i - full_limit):,}."
+                )
+                excess = max(0, contributed_i - full_limit)
+                return IraEligibilityResult(
+                    allowed=full_limit, full_limit=full_limit,
+                    phaseout={"start": 0, "end": 0}, magi_position="below",
+                    excess=excess, excise_per_year=irs_round(ira.excess_excise_rate * excess),
+                    inputs={"magi": irs_round(magi_d), "filing_status": filing_status, "year": year,
+                            "ira_type": ira_type, "contributed": contributed_i},
+                    work=work, citation=ira.citation,
+                )
+        else:
+            if mfs:
+                rng = ira.deduction_magi_phaseout_active.married_filing_separately
+            elif mfj_like:
+                rng = ira.deduction_magi_phaseout_active.married_filing_jointly_covered
+            else:
+                rng = ira.deduction_magi_phaseout_active.single_hoh
+
+    if magi_d <= rng.start:
+        allowed, position = full_limit, "below"
+    elif magi_d >= rng.end:
+        allowed, position = 0, "above"
+    else:
+        position = "within"
+        span = Decimal(rng.end - rng.start)
+        raw = Decimal(full_limit) * (Decimal(rng.end) - magi_d) / span
+        # Pub 590-A: round UP to the nearest $10; a partial phase-out never goes below $200.
+        step = Decimal(ira.worksheet.round_up_to)
+        allowed_d = (raw / step).to_integral_value(rounding="ROUND_CEILING") * step
+        allowed = int(allowed_d)
+        if 0 < allowed < ira.worksheet.minimum_if_partial:
+            allowed = ira.worksheet.minimum_if_partial
+
+    excess = max(0, contributed_i - allowed)
+    excise = irs_round(ira.excess_excise_rate * excess)
+    kind = "Roth IRA contribution" if ira_type == "roth" else "traditional-IRA deduction"
+    work_lines = [
+        f"{kind} eligibility ({year}, {filing_status}): MAGI ${irs_round(magi_d):,} vs the "
+        f"${rng.start:,}-${rng.end:,} phase-out -> {position}; limit ${full_limit:,}"
+        + (f" (incl. ${ira.catch_up_50:,} age-50 catch-up)" if age_50_plus and ira.catch_up_50 else "")
+        + f" -> allowed ${allowed:,}"
+        + (
+            f" (worksheet: limit x (range end - MAGI)/range span, rounded UP to the nearest "
+            f"${ira.worksheet.round_up_to}, minimum ${ira.worksheet.minimum_if_partial} while partially "
+            f"phased)" if position == "within" else ""
+        )
+        + ".",
+    ]
+    work_lines.extend(notes)
+    if excess:
+        work_lines.append(
+            f"EXCESS: contributed ${contributed_i:,} -> ${excess:,} over the allowed amount. IRC 4973 "
+            f"charges {ira.excess_excise_rate:%} of the excess (${excise:,}) EVERY year until it is "
+            f"withdrawn or absorbed — fixable WITHOUT the excise by withdrawing the contribution plus "
+            f"earnings before the filing deadline, or recharacterizing."
+        )
+    work_lines.append(
+        f"Eligibility is tested at YEAR END: {ira.eligibility_tested_at} A contribution that is excess "
+        f"under today's status can flip to compliant on a year-end married-filing-jointly return "
+        f"(the MFJ range is far higher) — and the reverse."
+    )
+    return IraEligibilityResult(
+        allowed=allowed, full_limit=full_limit,
+        phaseout={"start": rng.start, "end": rng.end}, magi_position=position,
+        excess=excess, excise_per_year=excise,
+        inputs={"magi": irs_round(magi_d), "filing_status": filing_status, "year": year,
+                "ira_type": ira_type, "contributed": contributed_i, "age_50_plus": age_50_plus},
+        work="\n".join(work_lines), citation=ira.citation,
+    )
+
+
+class MarginalDollarRow(BaseModel):
+    """One bucket's saving on the NEXT pre-tax dollar."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    bucket: str
+    income_tax_saving: Decimal = Field(description="The federal marginal rate applied to $1.")
+    fica_saving: Decimal = Field(description="The payroll FICA avoided on $1 (0 where the dollar still pays FICA).")
+    total_per_dollar: Decimal
+    note: str
+
+
+class MarginalDollarResult(BaseModel):
+    """Result of :func:`marginal_dollar_savings`: the buckets ranked by savings per dollar."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    marginal_rate: Decimal
+    fica_tier: str = Field(description="Which FICA tier the next wage dollar sits in, and why.")
+    rows: list[MarginalDollarRow] = Field(description="Largest saving first.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def marginal_dollar_savings(
+    taxable_income: int | float | Decimal | str,
+    wages: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2025,
+    knowledge_dir: str | Path | None = None,
+) -> MarginalDollarResult:
+    """"Where does one more pre-tax dollar save the most?" — the ranking the one
+    real planning session built by hand.
+
+    The two facts the ranking turns on, both from pack data:
+
+    * a payroll HSA/FSA/commuter dollar (cafeteria plan) avoids FICA as well as
+      income tax; a 401(k) or deductible-IRA dollar avoids income tax only;
+    * ABOVE the social security wage base the FICA saving is only Medicare
+      (1.45%, plus 0.9% over $200,000) — never the full 7.65%.
+
+    Federal income tax only (state marginal rates stack on top — disclosed);
+    Roth dollars save $0 today by design, so they are not rows here — the
+    now-vs-retirement trade is judgment, not arithmetic.
+    """
+    if filing_status not in FILING_STATUSES and filing_status != _QSS:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+    taxable_d = _to_decimal(taxable_income, "taxable_income")
+    wages_d = _to_decimal(wages, "wages")
+    if taxable_d < 0 or wages_d < 0:
+        raise ValueError("taxable_income and wages must be >= 0")
+    pack = _load_federal(year, knowledge_dir)
+    _require_contribution_limits(pack, year)  # the buckets must exist for the year
+    ess = pack.tax.employee_social_security
+    if ess is None or ess.medicare_rate is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no employee-side FICA parameters — add the "
+            f"medicare fields to employee_social_security (see knowledge/federal/2025.yaml)"
+        )
+    status_key, alias_note = _resolve_filing_status(filing_status)
+    schedule = pack.tax.rate_schedules.schedules[status_key]
+    marginal = schedule[0].rate
+    for bracket in schedule:
+        if taxable_d > bracket.over:
+            marginal = bracket.rate
+
+    threshold = Decimal(ess.additional_medicare_withholding_threshold)
+    if wages_d < ess.ss_wage_base:
+        fica = ess.rate + ess.medicare_rate
+        tier = (
+            f"wages ${irs_round(wages_d):,} are BELOW the ${ess.ss_wage_base:,} wage base -> a payroll "
+            f"dollar avoids the full {fica:%} (SS {ess.rate:%} + Medicare {ess.medicare_rate:%})"
+        )
+    elif wages_d < threshold:
+        fica = ess.medicare_rate
+        tier = (
+            f"wages ${irs_round(wages_d):,} are ABOVE the ${ess.ss_wage_base:,} wage base -> SS is "
+            f"already capped; a payroll dollar avoids only Medicare {fica:%}, never 7.65%"
+        )
+    else:
+        fica = ess.medicare_rate + ess.additional_medicare_withholding_rate
+        tier = (
+            f"wages ${irs_round(wages_d):,} exceed ${irs_round(threshold):,} -> a payroll dollar avoids "
+            f"Medicare {ess.medicare_rate:%} + Additional Medicare {ess.additional_medicare_withholding_rate:%} "
+            f"= {fica:%} (SS already capped)"
+        )
+
+    zero = Decimal("0")
+    rows = [
+        MarginalDollarRow(
+            bucket="hsa_payroll", income_tax_saving=marginal, fica_saving=fica,
+            total_per_dollar=marginal + fica,
+            note="Cafeteria-plan HSA: income tax AND FICA avoided; triple-advantaged on the way out too.",
+        ),
+        MarginalDollarRow(
+            bucket="health_fsa", income_tax_saving=marginal, fica_saving=fica,
+            total_per_dollar=marginal + fica,
+            note="FSA: same payroll savings as HSA, but use-it-or-lose-it beyond the carryover.",
+        ),
+        MarginalDollarRow(
+            bucket="commuter_132f", income_tax_saving=marginal, fica_saving=fica,
+            total_per_dollar=marginal + fica,
+            note="Commuter: same payroll savings, capped monthly, only against actual transit/parking spend.",
+        ),
+        MarginalDollarRow(
+            bucket="401k_pretax", income_tax_saving=marginal, fica_saving=zero,
+            total_per_dollar=marginal,
+            note="Pre-tax 401(k): income tax deferred, but the dollar still pays FICA.",
+        ),
+        MarginalDollarRow(
+            bucket="traditional_ira_deductible", income_tax_saving=marginal, fica_saving=zero,
+            total_per_dollar=marginal,
+            note="Deductible IRA: income tax only (post-payroll money) — and the deduction itself phases "
+                 "out for active participants; check ira_contribution_eligibility first.",
+        ),
+    ]
+    rows.sort(key=lambda r: (-r.total_per_dollar, r.bucket))
+    work_lines = [
+        f"Marginal-dollar savings ({year}, {filing_status}): federal marginal rate {marginal:%} at "
+        f"taxable income ${irs_round(taxable_d):,}." + (f" ({alias_note}.)" if alias_note else ""),
+        tier,
+        *(f"* {r.bucket}: {r.income_tax_saving:%} income tax + {r.fica_saving:%} FICA = "
+          f"{r.total_per_dollar:%} per $1 — {r.note}" for r in rows),
+        "Federal only: a state marginal rate stacks on the income-tax side (calc op state_tax's "
+        "jurisdiction rules). Roth dollars save $0 TODAY by design — the now-vs-retirement trade is "
+        "judgment, not arithmetic. Employer match is free money ahead of everything here.",
+    ]
+    return MarginalDollarResult(
+        marginal_rate=marginal, fica_tier=tier, rows=rows,
+        inputs={"taxable_income": irs_round(taxable_d), "wages": irs_round(wages_d),
+                "filing_status": filing_status, "year": year},
+        work="\n".join(work_lines), citation=pack.tax.rate_schedules.citation,
+    )
+
+
+class MagiLadderRow(BaseModel):
+    """One MAGI test: its own definition, its own threshold, this filer's position."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    test: str
+    magi_used: int = Field(description="The MAGI (or wage figure) THIS test measures — they differ by test.")
+    threshold: str = Field(description="The trigger: a single threshold or a phase-out range, as printed.")
+    position: Literal["below", "within", "above"]
+    headroom: int = Field(description="Dollars until the test starts to bite (0 when already within/above).")
+    definition: str = Field(description="What this test adds back on top of AGI (why its MAGI is its own).")
+
+
+class MagiLadderResult(BaseModel):
+    """Result of :func:`magi_ladder`: every MAGI test the year's packs carry, one table."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    agi: int
+    rows: list[MagiLadderRow]
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def magi_ladder(
+    agi: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2025,
+    wages: int | float | Decimal | str = 0,
+    foreign_earned_income_exclusion: int | float | Decimal | str = 0,
+    excluded_puerto_rico_income: int | float | Decimal | str = 0,
+    knowledge_dir: str | Path | None = None,
+) -> MagiLadderResult:
+    """Every MAGI test the year's packs carry, in ONE table — because "MAGI" is
+    not one number.
+
+    The one real planning session fired at least six different MAGI tests with
+    six different thresholds, and the user's own question — "why is my MAGI
+    under $200,000 when I make $220,000?" — is the UX signal: the answer is a
+    LADDER. Gross pay is not box 1 (pre-tax 401(k)/HSA/FSA/commuter come out
+    first); box 1 is not AGI (above-the-line adjustments); and AGI is not any
+    test's MAGI (each test defines its own add-backs). This op renders the
+    per-test half of the ladder from AGI down; the gross-to-box-1 half is
+    payroll arithmetic the work explains.
+
+    Rows come from the blocks the year's pack actually ships (NIIT, Additional
+    Medicare — a WAGE test, not an AGI test — student-loan interest, the
+    Schedule 1-A parts for OBBBA years, Roth IRA and deductible IRA); a block
+    the pack lacks is simply not a row, never guessed.
+    """
+    if filing_status not in FILING_STATUSES and filing_status != _QSS:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+    agi_i = irs_round(_to_decimal(agi, "agi"))
+    wages_i = irs_round(_to_decimal(wages, "wages"))
+    feie_i = irs_round(_to_decimal(foreign_earned_income_exclusion, "foreign_earned_income_exclusion"))
+    pr_i = irs_round(_to_decimal(excluded_puerto_rico_income, "excluded_puerto_rico_income"))
+    pack = _load_federal(year, knowledge_dir)
+    status_key, _ = _resolve_filing_status(filing_status)
+    mfs = filing_status == "married_filing_separately"
+    mfj_like = filing_status in ("married_filing_jointly", _QSS)
+    rows: list[MagiLadderRow] = []
+
+    def _threshold_row(test, magi_used, threshold_amount, definition):
+        position = "above" if magi_used > threshold_amount else "below"
+        rows.append(MagiLadderRow(
+            test=test, magi_used=magi_used, threshold=f"${threshold_amount:,}",
+            position=position, headroom=max(0, threshold_amount - magi_used), definition=definition,
+        ))
+
+    def _range_row(test, magi_used, rng: MagiRange, definition):
+        if magi_used < rng.start:
+            position, headroom = "below", rng.start - magi_used
+        elif magi_used >= rng.end:
+            position, headroom = "above", 0
+        else:
+            position, headroom = "within", 0
+        rows.append(MagiLadderRow(
+            test=test, magi_used=magi_used, threshold=f"${rng.start:,}-${rng.end:,}",
+            position=position, headroom=headroom, definition=definition,
+        ))
+
+    if pack.tax.niit is not None:
+        _threshold_row(
+            "Net investment income tax (Form 8960, 3.8%)",
+            agi_i + feie_i,
+            int(pack.tax.niit.thresholds[status_key]),
+            "MAGI = AGI + the foreign earned income exclusion (IRC 1411(d)); investment income above "
+            "the threshold pays 3.8%.",
+        )
+    if pack.tax.additional_medicare_tax is not None:
+        _threshold_row(
+            "Additional Medicare Tax (Form 8959, 0.9%)",
+            wages_i,
+            int(pack.tax.additional_medicare_tax.thresholds[status_key]),
+            "A WAGE test, not an AGI test: Medicare wages (plus SE income) over the threshold — moving "
+            "AGI does not move this one.",
+        )
+    sli = pack.tax.student_loan_interest
+    if sli is not None:
+        sli_rng = getattr(sli, "phaseouts", None)
+        rng = sli_rng.get(status_key) if isinstance(sli_rng, dict) else None
+        if rng is not None:
+            _range_row(
+                "Student-loan interest deduction (IRC 221)",
+                agi_i + feie_i + pr_i,
+                MagiRange(start=int(rng.start), end=int(rng.end)),
+                "MAGI = AGI without this deduction itself, + foreign/PR exclusions; MFS is not allowed "
+                "the deduction at all.",
+            )
+        elif mfs:
+            rows.append(MagiLadderRow(
+                test="Student-loan interest deduction (IRC 221)", magi_used=agi_i,
+                threshold="not allowed on MFS", position="above", headroom=0,
+                definition="IRC 221(e)(2): married filing separately may not take the deduction — no MAGI can fix it.",
+            ))
+    s1a = pack.tax.obbba_schedule_1a
+    if s1a is not None:
+        s1a_magi = agi_i + pr_i + feie_i
+        for name, part in (
+            ("Schedule 1-A tips/overtime", s1a.tips), ("Schedule 1-A car-loan interest", s1a.car_loan_interest),
+            ("Schedule 1-A senior deduction", s1a.senior_deduction),
+        ):
+            _threshold_row(
+                f"{name} phase-out start",
+                s1a_magi,
+                part.phaseout.magi_threshold.for_status(filing_status),
+                "MAGI = AGI + excluded Puerto Rico income + Form 2555 amounts (Schedule 1-A Part I) — "
+                "one MAGI feeds all four parts.",
+            )
+    cl = pack.contribution_limits
+    if cl is not None:
+        roth = cl.ira.roth_magi_phaseout
+        rng = (
+            roth.married_filing_separately if mfs
+            else roth.married_filing_jointly if mfj_like
+            else roth.single_hoh
+        )
+        _range_row(
+            "Roth IRA contribution phase-out",
+            agi_i + feie_i,
+            rng,
+            "Pub 590-A MAGI: AGI + foreign exclusions, MINUS Roth conversion income (conversions never "
+            "phase you out of contributing).",
+        )
+        ded = cl.ira.deduction_magi_phaseout_active
+        drng = (
+            ded.married_filing_separately if mfs
+            else ded.married_filing_jointly_covered if mfj_like
+            else ded.single_hoh
+        )
+        _range_row(
+            "Traditional-IRA deduction phase-out (active participant)",
+            agi_i + feie_i,
+            drng,
+            "Applies ONLY when covered by an employer plan (the spousal-coverage range is higher; no "
+            "coverage anywhere = no phase-out).",
+        )
+
+    rows.sort(key=lambda r: (0 if r.position == "within" else 1, r.headroom))
+    work_lines = [
+        f"MAGI ladder ({year}, {filing_status}), AGI ${agi_i:,}"
+        + (f", wages ${wages_i:,}" if wages_i else "") + ":",
+        "THE LADDER: gross pay -> W-2 box 1 (pre-tax 401(k)/HSA/FSA/commuter come OUT — a Roth 401(k) "
+        "split does NOT reduce box 1) -> AGI (above-the-line adjustments) -> each test's OWN MAGI "
+        "(each adds back different items). Every planning lever works by moving a number up or down "
+        "this ladder; the rows below show where each test bites.",
+        *(f"* {r.test}: MAGI ${r.magi_used:,} vs {r.threshold} -> {r.position.upper()}"
+          + (f" (headroom ${r.headroom:,})" if r.position == "below" else "")
+          + f" — {r.definition}" for r in rows),
+        "Rows come only from blocks this year's pack ships; a missing block is a missing row, never a "
+        "guess. Roth-conversion income and rental/passive add-backs are not modeled — supply the "
+        "adjusted figures where a test needs them.",
+    ]
+    return MagiLadderResult(
+        agi=agi_i, rows=rows,
+        inputs={"agi": agi_i, "filing_status": filing_status, "year": year, "wages": wages_i,
+                "foreign_earned_income_exclusion": feie_i, "excluded_puerto_rico_income": pr_i},
+        work="\n".join(work_lines),
+        citation=(cl.citation if cl is not None else pack.tax.rate_schedules.citation),
     )
 
 
