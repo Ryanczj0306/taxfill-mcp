@@ -58,3 +58,32 @@ pitfalls:
       lookups. A full per-country treaty knowledge base (articles, amounts,
       eligibility predicates) remains roadmap work — until then the amount
       is the agent's recorded position, like itemized deductions.
+
+  - id: P-005
+    incident: >-
+      A bank's annual "engagement bonus" (a credit-card-fee reimbursement)
+      was nearly characterized from its label alone: reward-shaped payments
+      pattern-match to "credit card rewards are not taxable" (the
+      purchase-price-rebate doctrine, Rev. Rul. 76-96 lineage), but a bonus
+      for OPENING or MAINTAINING an account is taxable other income the
+      bank reports (1099-MISC box 3 / 1099-INT) even when styled as a
+      reimbursement — and for a nonresident it can land in the Schedule NEC
+      30%-FDAP corner instead of a resident's Schedule 1. The sources
+      registry had no topic for either half, so the characterization came
+      from the agent's head, and "Schedule NEC" mis-routed to the OBBBA
+      Schedule 1-A deduction page (a wrong-law pointer, worse than a miss).
+    countermeasure: >-
+      The characterization rule is year-invariant and lives HERE, never in
+      a year pack: rewards earned by spending = rebate, not income; a bonus
+      for opening/maintaining an account = other income; in-kind travel
+      promotional benefits sit under Announcement 2002-18's no-enforcement
+      line UNLESS converted to cash. get_sources now routes the authority —
+      topics other_income_and_rewards (Pub 525 Other Income + the Cash
+      rebates paragraph; Announcement 2002-18) and nonresident_fdap
+      (Pub 519 ch. 4 "The 30% Tax", the IRS FDAP and ECI pages, the
+      Schedule NEC instructions, Form 1042-S) — with routing regression
+      tests in test_sources.py including the Schedule NEC neighbour-theft
+      case. Only the statutory 30% rate (IRC 871(a)) and any treaty
+      other-income article rate are figures; the treaty packs cover only
+      student/teacher articles today, so a treaty other-income position
+      stays the agent's recorded, cited judgment.

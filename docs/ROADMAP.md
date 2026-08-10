@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,945 tests, all green** — offline 2,840 + live-.gov 105, exit 0;
+Done and on `main` (**2,948 tests, all green** — offline 2,843 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -665,45 +665,49 @@ scenario exercises the persona that motivated it.
       capability exists agent-composed; persisting the deferral split on the
       profile is intake/schema work and lands with that tranche.)*
 
-- [ ] **H9 — reward / other-income characterization + the NRA FDAP corner
-      (field session 2026-08-10).** A real user asked whether a brokerage
-      cash-management account's annual "engagement bonus" (a premium-card
-      annual-fee reimbursement) is taxable. The engine could price the tax ONCE the
-      characterization was known and could resolve the residency branch
-      (`residency` + the `nonresident_and_treaties` topic returns Pub 519 +
-      the Treasury treaty texts) — but the characterization itself came
-      entirely from the agent's head, which is the exact failure the freshness
-      protocol exists to prevent. Three gaps, plus one regression:
-      * **`sources.yaml` topic `other_income_and_rewards`** — Pub 525 (Other
-        Income), and the rebate-vs-income line: rewards earned by SPENDING are
-        a purchase-price rebate and not income (the Rev. Rul. 76-96 lineage),
-        while a bonus for OPENING or MAINTAINING a deposit relationship is
-        income the bank reports (1099-MISC box 3 / 1099-INT). `get_sources`
-        currently returns a clean MISS for "credit card rewards taxable",
-        "bank account bonus income" and "other income 1099-MISC".
-      * **`sources.yaml` topic `nonresident_fdap`** — Pub 519 ch. 4, the
-        Schedule NEC instructions, the §871(a) 30% statutory rate, Form 1042-S,
-        and the ECI-vs-FDAP split. `FDAP` and "effectively connected income"
-        are clean misses today; "nonresident FDAP income" mis-routes to
-        `nonresident_spouse_election` and "30% withholding nonresident" to
-        `dual_status`.
-      * **⚠️ REGRESSION introduced by H6 (2026-08-09):** `get_sources("Schedule
-        NEC")` now routes to `obbba_schedule_1a_deductions` — the token
-        "Schedule" pulls toward Schedule 1-A. Schedule NEC is the 1040-NR FDAP
-        schedule; pointing an agent at the OBBBA deduction page for it is the
-        WRONG-LAW failure the H6 sources fix was written to prevent, and the
-        new topic caused a fresh instance of it. Fix with the NEC topic above
-        and extend `test_sources.py`'s neighbour-theft test to cover it.
-      * **`pitfalls.yaml` P-005** — the rebate-vs-income confusion as a
-        permanent registry entry (rules that do not vary by year live there,
-        not in a year pack; only the §871(a) 30% rate and any treaty
-        "other income" article rate are figures, and the treaty packs cover
-        only the student/teacher articles today, not Art. 22-style other
-        income).
-      **Acceptance:** every query in the three bullets above resolves to its
-      own topic, no neighbouring topic is stolen, and an agent asked "is this
-      bonus taxable" reaches Pub 525 + Pub 519 ch. 4 without the operator
-      supplying the law.
+- [x] **H9 — reward / other-income characterization + the NRA FDAP corner
+      (field session 2026-08-10) — DONE 2026-08-10.** A real user asked whether
+      a brokerage cash-management account's annual "engagement bonus" (a
+      premium-card annual-fee reimbursement) is taxable. The engine could price
+      the tax ONCE the characterization was known and could resolve the
+      residency branch — but the characterization itself came entirely from the
+      agent's head, which is the exact failure the freshness protocol exists to
+      prevent. Shipped (every cited page fetched and content-verified before
+      authoring):
+      * **`sources.yaml` topic `other_income_and_rewards`** — Pub 525's Other
+        Income chapter with the rebate-vs-income line (rewards earned by
+        SPENDING are a purchase-price rebate, the Rev. Rul. 76-96 lineage; a
+        bonus for OPENING or MAINTAINING an account is reportable other income,
+        1099-MISC box 3 / 1099-INT) + Announcement 2002-18 (in-kind travel
+        promotional benefits: no-enforcement UNLESS converted to cash or paid
+        as compensation). "credit card rewards taxable", "bank account bonus
+        income", "other income 1099-MISC" and "cash rebate income" now route
+        here (they were clean misses).
+      * **`sources.yaml` topic `nonresident_fdap`** — Pub 519 ch. 4 ("The 30%
+        Tax"), the IRS FDAP page (30%-or-treaty on the GROSS amount, no
+        deductions or netting), the ECI page (graduated rates after
+        deductions — the split that decides page 1 vs Schedule NEC), the
+        Schedule NEC instructions (30/15/10%/other rate columns), and Form
+        1042-S. "FDAP", "effectively connected income", "nonresident FDAP
+        income" (was → `nonresident_spouse_election`), "30% withholding
+        nonresident" (was → `dual_status`) and "Form 1042-S" now route here.
+      * **The H6-introduced regression is FIXED:** `get_sources("Schedule
+        NEC")` routed to `obbba_schedule_1a_deductions` (the token "Schedule"
+        pulled toward Schedule 1-A) — a WRONG-LAW pointer, the exact failure
+        the H6 sources fix was written to prevent. It now routes to
+        `nonresident_fdap`, and `test_sources.py` carries the extended
+        neighbour-theft suite (the new topics must not steal
+        `nonresident_and_treaties` / `nonresident_spouse_election` /
+        `dual_status` / the OBBBA topic's canonical queries, and vice versa).
+      * **`pitfalls.yaml` P-005** — the rebate-vs-income characterization as a
+        permanent registry entry (year-invariant rules live there, not in a
+        year pack; only the §871(a) 30% rate and any treaty "other income"
+        article rate are figures, and the treaty packs cover only the
+        student/teacher articles today, not Art. 22-style other income). The
+        P-005 regression suite is the routing test block in `test_sources.py`.
+      **Acceptance — met:** every query above resolves to its own topic, no
+      neighbouring topic is stolen, and an agent asked "is this bonus taxable"
+      reaches Pub 525 + Pub 519 ch. 4 without the operator supplying the law.
 
 **Acceptance:** H1/H2 ship schema + intake changes with regression tests and an
 eval scenario for the *unmarried two-NRA household, mid-year status change*

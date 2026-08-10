@@ -177,3 +177,59 @@ def test_obbba_topic_does_not_steal_the_neighbouring_topics_queries():
     ):
         r = get_sources(query, 2025)
         assert r.matched and {s.topic for s in r.sources} == {expected}, query
+
+
+# ── Reward / other-income + NRA FDAP routing (H9, pitfall P-005) ───────────────
+# Field session 2026-08-10: the characterization of a bank "engagement bonus"
+# came entirely from the agent's head — every query below was a clean miss or,
+# worse, a WRONG-LAW pointer: the H6 OBBBA topic made "Schedule NEC" (the
+# 1040-NR FDAP schedule) route to the Schedule 1-A deduction page. These tests
+# are the P-005 regression suite.
+
+
+def test_reward_income_queries_route_to_other_income_and_rewards():
+    for query in (
+        "credit card rewards taxable",
+        "bank account bonus income",
+        "other income 1099-MISC",
+        "cash rebate income",
+    ):
+        r = get_sources(query, 2025)
+        assert r.matched, query
+        topics = {s.topic for s in r.sources}
+        assert topics == {"other_income_and_rewards"}, f"{query!r} routed to {topics}"
+
+
+def test_nra_fdap_queries_route_to_nonresident_fdap():
+    for query in (
+        "Schedule NEC",            # the H6-introduced regression: used to hit obbba_schedule_1a_deductions
+        "FDAP",
+        "nonresident FDAP income", # used to mis-route to nonresident_spouse_election
+        "effectively connected income",
+        "30% withholding nonresident",  # used to mis-route to dual_status
+        "Form 1042-S",
+    ):
+        r = get_sources(query, 2025)
+        assert r.matched, query
+        topics = {s.topic for s in r.sources}
+        assert topics == {"nonresident_fdap"}, f"{query!r} routed to {topics}"
+
+
+def test_h9_topics_do_not_steal_their_neighbours_queries():
+    # The words these topics add (nonresident, treaty, interest, income,
+    # schedule, rewards...) overlap several older topics; the canonical
+    # queries must keep resolving to themselves — the SAME guarantee the
+    # OBBBA neighbour-theft test pins, extended to the new arrivals.
+    for query, expected in (
+        ("nonresident and treaties", "nonresident_and_treaties"),
+        ("nonresident spouse election", "nonresident_spouse_election"),
+        ("dual status", "dual_status"),
+        ("Schedule 1-A", "obbba_schedule_1a_deductions"),
+        ("no tax on tips", "obbba_schedule_1a_deductions"),
+        ("capital gains", "investment_income"),
+        ("estimated tax", "estimated_tax"),
+    ):
+        r = get_sources(query, 2025)
+        assert r.matched and {s.topic for s in r.sources} == {expected}, (
+            f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+        )

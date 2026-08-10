@@ -379,6 +379,82 @@ federal:
           publishes.
         cadence: as legislation/guidance publishes
 
+    # Reward/other-income characterization + the NRA FDAP corner (H9, pitfall
+    # P-005). Added 2026-08-10 from a field session: a real user asked whether
+    # a bank's annual "engagement bonus" (a card-fee reimbursement) is taxable.
+    # The engine priced the tax and resolved the residency branch, but the
+    # characterization came entirely from the agent's head — "credit card
+    # rewards taxable", "bank account bonus income" and "other income
+    # 1099-MISC" were clean get_sources misses, "FDAP" and "effectively
+    # connected income" missed too, and (worse) the H6 OBBBA topic made
+    # "Schedule NEC" mis-route to the Schedule 1-A deduction page — pointing
+    # an agent at the WRONG LAW, the exact failure that topic was added to
+    # fix. The two topics below carry the go-look-here authority; the
+    # year-invariant characterization RULE lives in knowledge/pitfalls.yaml
+    # (P-005) — only the statutory 30% rate (IRC 871(a)) and any treaty
+    # other-income article rate are figures.
+    other_income_and_rewards:
+      - url: https://www.irs.gov/publications/p525
+        answers: >-
+          Pub 525, Taxable and Nontaxable Income — the Other Income chapter,
+          with the rebate-vs-income line: credit card rewards earned by
+          SPENDING (cash back or points on purchases) are a purchase-price
+          rebate, not income (the Cash rebates paragraph; the Rev. Rul. 76-96
+          purchase-price-adjustment lineage), while a bonus paid for OPENING
+          or MAINTAINING a bank or deposit account relationship is taxable
+          other income the bank reports on 1099-MISC box 3 or 1099-INT —
+          even when it is styled as a fee reimbursement or reward.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/pub/irs-drop/a-02-18.pdf
+        answers: >-
+          Announcement 2002-18: the IRS will not assert that a taxpayer
+          understated liability by reason of the receipt or personal use of
+          frequent flyer miles or other IN-KIND promotional benefits
+          attributable to business or official travel — but the relief does
+          NOT apply to benefits converted to cash or paid as compensation,
+          which is exactly the boundary a cash bank bonus sits on.
+        cadence: standing announcement (future guidance applies prospectively)
+
+    nonresident_fdap:
+      - url: https://www.irs.gov/publications/p519
+        answers: >-
+          Pub 519 ch. 4, How Income of Aliens Is Taxed — "The 30% Tax": which
+          income of a nonresident is taxed at the flat 30% rate as not
+          effectively connected with a US trade or business, versus
+          effectively connected income taxed at the regular graduated rates.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/individuals/international-taxpayers/fixed-determinable-annual-periodical-fdap-income
+        answers: >-
+          FDAP income of nonresident aliens: US-source fixed, determinable,
+          annual or periodical income is taxed at a 30% (or lower treaty)
+          rate on the GROSS amount — deductions and netting are not allowed —
+          collected by a flat 30% withholding at source.
+        cadence: standing page (re-check each filing season)
+      - url: https://www.irs.gov/individuals/international-taxpayers/effectively-connected-income-eci
+        answers: >-
+          Effectively connected income (ECI): income connected with a US
+          trade or business is taxed AFTER allowable deductions at the same
+          graduated rates that apply to citizens and residents — the ECI-vs-
+          FDAP split decides whether an amount lands on Form 1040-NR page 1
+          or on Schedule NEC.
+        cadence: standing page (re-check each filing season)
+      - url: https://www.irs.gov/instructions/i1040nr
+        answers: >-
+          Instructions for Form 1040-NR — the Schedule NEC section (Tax on
+          Income Not Effectively Connected With a US Trade or Business): the
+          30% / 15% / 10% rate columns, column (d) for any other rate
+          including a treaty rate or 0%, and how the Schedule NEC tax carries
+          to the return.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/forms-pubs/about-form-1042-s
+        answers: >-
+          Form 1042-S, Foreign Person's U.S. Source Income Subject to
+          Withholding: the information return that reports the US-source
+          income paid to a foreign person and the amounts withheld — the
+          document that substantiates a Schedule NEC line and any
+          withholding credit claimed against it.
+        cadence: annual (per tax year)
+
   change_channels:
     - url: https://www.irs.gov/newsroom
       answers: >-
