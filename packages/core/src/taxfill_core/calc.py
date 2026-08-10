@@ -57,6 +57,13 @@ Contents:
   phase-out, and the MFS forfeiture on tips/overtime/senior. Line 38 flows to
   Form 1040 line 13b / 1040-NR line 13c. Eligibility requirements stay caller
   judgment, quoted in the work.
+* ``employee_fica`` / ``estimated_tax_safe_harbor`` / ``annualize_ytd``
+  (Phase H, H4) — the projection trio: employee-side FICA across visa-status
+  segments (the F/J exemption is STATUS-based, not marital — §6013(g) does not
+  start FICA), the IRC 6654(d) required annual payment (90% current vs
+  100/110% prior, the $1,000 de minimis, the flat-22% supplemental-wage trap
+  quoted), and YTD->full-year calendar-day proration (disclosed arithmetic,
+  no citation — it is an assumption, and the work says when it breaks).
 * ``state_tax`` (Phase G, G4) — the STATE income-tax line for every
   jurisdiction whose pack ships a cited ``tax`` block: all 42 income-tax
   jurisdictions (41 states + DC) for 2023 and 2024, and 41 of 42 for 2025
@@ -80,6 +87,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
+from collections.abc import Mapping, Sequence
 from typing import Any, Literal
 
 import yaml
@@ -3120,6 +3128,397 @@ def schedule_1a_deductions(
         },
         work="\n".join(work_lines),
         citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Projection-mode ops (Phase H, H4): employee FICA by status period, the
+# IRC 6654 estimated-tax safe harbor, and YTD annualization
+# ---------------------------------------------------------------------------
+
+
+class FicaSegment(BaseModel):
+    """One wage segment's FICA outcome (a visa-status period, an employer, a scenario leg)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    label: str
+    wages: int
+    fica_exempt: bool
+    social_security: Decimal = Field(description="6.2% of this segment's wages within the remaining wage base.")
+    medicare: Decimal = Field(description="1.45% of this segment's wages — Medicare has NO wage base.")
+    additional_medicare: Decimal = Field(
+        description="0.9% withholding on this segment's share of wages over the $200,000 trigger."
+    )
+    total: Decimal
+    exempt_reason: str | None = Field(
+        default=None, description="Set on exempt segments: why no FICA was withheld (caller-confirmed status)."
+    )
+
+
+class EmployeeFicaResult(BaseModel):
+    """Result of :func:`employee_fica`: the employee-side payroll tax projection."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    total_fica: Decimal = Field(description="Sum of every segment's SS + Medicare + Additional Medicare.")
+    social_security: Decimal
+    medicare: Decimal
+    additional_medicare: Decimal
+    segments: list[FicaSegment]
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def employee_fica(
+    wage_segments: Sequence[Mapping[str, Any]],
+    year: int = 2025,
+    knowledge_dir: str | Path | None = None,
+) -> EmployeeFicaResult:
+    """Employee-side FICA (social security + Medicare withholding) across wage
+    segments — the projection op for a year whose FICA status CHANGES mid-year.
+
+    Each segment is ``{wages, fica_exempt, label?}``, in chronological order.
+    Whether a segment is exempt is CALLER judgment (quoted in the work), and the
+    biggest trap is N-7b: **the F/J student FICA exemption is STATUS-based, not
+    marital** — an exempt-individual nonresident on F-1/OPT/STEM OPT pays no
+    FICA (IRC 3121(b)(19), Pub 519), and a §6013(g) election that makes the
+    couple file jointly does NOT start FICA on the OPT spouse's wages. FICA
+    switches on at the STATUS boundary (e.g. the H-1B start date), which is why
+    the op takes segments rather than one annual wage figure.
+
+    Mechanics enforced here, per Pub 15 section 9:
+
+    * social security 6.2% up to the year's wage base, applied across the
+      non-exempt segments in order (the base is one annual pool per person);
+    * Medicare 1.45% on every non-exempt dollar — no wage base;
+    * Additional Medicare Tax withholding 0.9% on non-exempt wages over
+      $200,000, attributed to the segments that cross the trigger.
+
+    Two per-employer nuances are disclosed, not modeled: an EMPLOYER applies the
+    wage base and the $200,000 trigger to its own wages only, so a multi-employer
+    year can over-withhold social security (recovered via the Schedule 3
+    excess-SS credit — calc op ``excess_ss``) and mis-withhold the 0.9%
+    (reconciled on Form 8959). This op computes the PERSON-level projection.
+    """
+    if not wage_segments:
+        raise ValueError(
+            "wage_segments must be a non-empty list of {wages, fica_exempt, label?} — one segment per "
+            "FICA-status period (e.g. the OPT months and the H-1B months are two segments)"
+        )
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.employee_social_security
+    if params is None or params.medicare_rate is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no employee-side FICA parameters "
+            f"(employee_social_security with medicare_rate / additional_medicare_withholding_*) — add "
+            f"them with a citation to that year's Pub 15 section 9 (see knowledge/federal/2025.yaml)"
+        )
+
+    segments: list[FicaSegment] = []
+    remaining_base = Decimal(params.ss_wage_base)
+    cumulative_medicare_wages = Decimal(0)
+    threshold = Decimal(params.additional_medicare_withholding_threshold)
+    work_lines = [
+        f"Employee FICA projection ({year}) — Pub 15 section 9: social security "
+        f"{params.rate:%} up to the ${params.ss_wage_base:,} wage base; Medicare {params.medicare_rate:%} "
+        f"with no wage base; Additional Medicare Tax withholding "
+        f"{params.additional_medicare_withholding_rate:%} on wages over ${params.additional_medicare_withholding_threshold:,}.",
+    ]
+    exempt_note = (
+        "fica_exempt per your confirmed status: an exempt-individual nonresident on F-1 (incl. OPT / "
+        "STEM OPT / cap-gap) owes no FICA (IRC 3121(b)(19); Pub 519). The exemption is STATUS-based, "
+        "not marital — a §6013(g)/(h) election does NOT start FICA on the exempt spouse's wages."
+    )
+
+    for i, raw in enumerate(wage_segments):
+        if not isinstance(raw, Mapping):
+            raise ValueError(f"wage_segments[{i}] must be a mapping {{wages, fica_exempt, label?}}")
+        if "fica_exempt" not in raw or isinstance(raw.get("fica_exempt"), (int, float)) and not isinstance(raw.get("fica_exempt"), bool):
+            raise ValueError(
+                f"wage_segments[{i}] needs an explicit boolean fica_exempt — the status judgment is yours "
+                f"(F/J exempt individual: True; H-1B and other statuses: False); never omit it"
+            )
+        exempt = bool(raw["fica_exempt"])
+        wages = irs_round(_to_decimal(raw.get("wages", 0), f"wage_segments[{i}].wages"))
+        if wages < 0:
+            raise ValueError(f"wage_segments[{i}].wages must be >= 0, got {wages}")
+        label = str(raw.get("label") or f"segment {i + 1}")
+        if exempt:
+            segments.append(FicaSegment(
+                label=label, wages=wages, fica_exempt=True,
+                social_security=Decimal("0.00"), medicare=Decimal("0.00"),
+                additional_medicare=Decimal("0.00"), total=Decimal("0.00"),
+                exempt_reason=exempt_note,
+            ))
+            work_lines.append(f"{label}: ${wages:,} wages, FICA-EXEMPT -> $0.00 ({exempt_note})")
+            continue
+        wages_d = Decimal(wages)
+        ss_taxable = min(wages_d, remaining_base)
+        remaining_base -= ss_taxable
+        ss = (params.rate * ss_taxable).quantize(_CENT, rounding=ROUND_HALF_UP)
+        medicare = (params.medicare_rate * wages_d).quantize(_CENT, rounding=ROUND_HALF_UP)
+        before = max(Decimal(0), cumulative_medicare_wages - threshold)
+        cumulative_medicare_wages += wages_d
+        after = max(Decimal(0), cumulative_medicare_wages - threshold)
+        addl = (params.additional_medicare_withholding_rate * (after - before)).quantize(
+            _CENT, rounding=ROUND_HALF_UP
+        )
+        total = ss + medicare + addl
+        segments.append(FicaSegment(
+            label=label, wages=wages, fica_exempt=False,
+            social_security=ss, medicare=medicare, additional_medicare=addl, total=total,
+        ))
+        capped = " (wage base reached)" if remaining_base == 0 and ss_taxable < wages_d else ""
+        work_lines.append(
+            f"{label}: ${wages:,} wages -> SS {params.rate:%} x ${ss_taxable:,.0f}{capped} = ${ss:,}; "
+            f"Medicare {params.medicare_rate:%} = ${medicare:,}; Additional Medicare on "
+            f"${(after - before):,.0f} over the trigger = ${addl:,}; segment total ${total:,}."
+        )
+
+    ss_total = sum((s.social_security for s in segments), Decimal("0.00"))
+    med_total = sum((s.medicare for s in segments), Decimal("0.00"))
+    addl_total = sum((s.additional_medicare for s in segments), Decimal("0.00"))
+    grand = ss_total + med_total + addl_total
+    work_lines.append(
+        f"Totals: social security ${ss_total:,} + Medicare ${med_total:,} + Additional Medicare "
+        f"${addl_total:,} = ${grand:,} employee FICA for the year."
+    )
+    work_lines.append(
+        "Per-employer nuances NOT modeled (disclosed): each employer applies the wage base and the "
+        "$200,000 trigger to its own wages only — a multi-employer year can over-withhold social "
+        "security (recover via the Schedule 3 excess-SS credit, calc op excess_ss) and the 0.9% "
+        "withholding reconciles against the status-based thresholds on Form 8959."
+    )
+    return EmployeeFicaResult(
+        total_fica=grand,
+        social_security=ss_total,
+        medicare=med_total,
+        additional_medicare=addl_total,
+        segments=segments,
+        inputs={"wage_segments": [dict(s) for s in wage_segments], "year": year},
+        work="\n".join(work_lines),
+        citation=params.citation,
+    )
+
+
+class SafeHarborResult(BaseModel):
+    """Result of :func:`estimated_tax_safe_harbor`: the IRC 6654(d) required annual payment."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    required_annual_payment: int = Field(
+        description="min(current-year prong, prior-year prong) — withholding at or above this is SAFE."
+    )
+    current_year_prong: int = Field(description="90% of the projected current-year tax.")
+    prior_year_prong: int | None = Field(
+        description="100%/110% of the prior year's tax; None when the prior figures were not supplied."
+    )
+    prior_pct_applied: Decimal | None = Field(
+        description="The prior-year percentage used (1.00 or 1.10); None without prior figures."
+    )
+    estimated_payments_required: bool = Field(
+        description="True when the expected balance is at least the $1,000 de minimis AND withholding "
+        "falls short of the required annual payment."
+    )
+    shortfall: int = Field(description="required_annual_payment - expected withholding, floored at 0.")
+    quarterly_payment: int = Field(description="The shortfall spread over four installments (rounded).")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def estimated_tax_safe_harbor(
+    projected_tax: int | float | Decimal | str,
+    expected_withholding: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2025,
+    prior_year_agi: int | None = None,
+    prior_year_total_tax: int | None = None,
+    knowledge_dir: str | Path | None = None,
+) -> SafeHarborResult:
+    """The IRC 6654(d) estimated-tax safe harbor (Form 1040-ES, 'General Rule'):
+    will the year's withholding be enough to avoid an underpayment penalty?
+
+    ``projected_tax`` is the CURRENT year's expected total tax (the Form 1040
+    line 24 equivalent — for a planning year, project it with the calc/estimate
+    surface first). ``prior_year_agi`` / ``prior_year_total_tax`` come off the
+    PRIOR year's filed return (lines 11 and 24; intake stores them on
+    PriorFilings) — supply BOTH or NEITHER. The prior-year prong exists only
+    when the prior return covered all 12 months (caller judgment, disclosed).
+
+    Rules enforced exactly as printed: required annual payment = the smaller of
+    90% of the current year's tax and 100% of the prior year's — 110% when the
+    PRIOR year's AGI exceeded $150,000 ($75,000 when the CURRENT year's status
+    is married filing separately: the AGI is last year's, the status test is
+    this year's). No estimated payments are due at all when the expected
+    balance after withholding is under the $1,000 de minimis. Farmers/fishermen
+    substitution (66 2/3%) is quoted, never computed.
+
+    The work also quotes the N-12 withholding-realism trap: supplemental wages
+    (bonuses) are withheld at the FLAT 22% no matter your marginal rate, so a
+    higher-bracket filer under-withholds on every bonus — project
+    ``expected_withholding`` accordingly (bonus withholding = 22% x bonus).
+    """
+    if filing_status not in FILING_STATUSES and filing_status != _QSS:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+    tax_d = _to_decimal(projected_tax, "projected_tax")
+    wh_d = _to_decimal(expected_withholding, "expected_withholding")
+    if tax_d < 0 or wh_d < 0:
+        raise ValueError("projected_tax and expected_withholding must be >= 0")
+    if (prior_year_agi is None) != (prior_year_total_tax is None):
+        raise ValueError(
+            "supply BOTH prior_year_agi and prior_year_total_tax (prior return lines 11 and 24) or "
+            "NEITHER — the 110%-vs-100% tier needs the AGI, and the prong needs the tax; one without "
+            "the other cannot be evaluated"
+        )
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.tax.estimated_tax_safe_harbor
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no estimated_tax_safe_harbor block — add it with a "
+            f"citation to that year's Form 1040-ES 'General Rule' (see knowledge/federal/2025.yaml)"
+        )
+
+    current_prong = irs_round(params.current_year_pct * tax_d)
+    threshold = (
+        params.high_income_agi_threshold_mfs
+        if filing_status == "married_filing_separately"
+        else params.high_income_agi_threshold
+    )
+    prior_prong: int | None = None
+    prior_pct: Decimal | None = None
+    if prior_year_total_tax is not None:
+        assert prior_year_agi is not None
+        if prior_year_agi < 0 or prior_year_total_tax < 0:
+            raise ValueError("prior_year_agi and prior_year_total_tax must be >= 0")
+        prior_pct = (
+            params.high_income_prior_year_pct if prior_year_agi > threshold else params.prior_year_pct
+        )
+        prior_prong = irs_round(prior_pct * Decimal(prior_year_total_tax))
+    required = current_prong if prior_prong is None else min(current_prong, prior_prong)
+    balance = irs_round(tax_d - wh_d)
+    payments_required = balance >= params.underpayment_de_minimis and irs_round(wh_d) < required
+    shortfall = max(0, required - irs_round(wh_d)) if payments_required else 0
+    quarterly = irs_round(Decimal(shortfall) / 4) if shortfall else 0
+
+    work_lines = [
+        f"IRC 6654(d) safe harbor ({year}), filing status {filing_status}:",
+        f"Current-year prong: {params.current_year_pct:%} x ${irs_round(tax_d):,} projected tax = ${current_prong:,}.",
+    ]
+    if prior_prong is not None:
+        tier = (
+            f"prior-year AGI ${prior_year_agi:,} > ${threshold:,} -> {params.high_income_prior_year_pct:%}"
+            if prior_pct == params.high_income_prior_year_pct
+            else f"prior-year AGI ${prior_year_agi:,} <= ${threshold:,} -> {params.prior_year_pct:%}"
+        )
+        work_lines.append(
+            f"Prior-year prong: {tier} x ${prior_year_total_tax:,} prior tax = ${prior_prong:,} "
+            f"(valid only if the prior return covered all 12 months — your judgment; the MFS "
+            f"${params.high_income_agi_threshold_mfs:,} threshold keys on the CURRENT year's status)."
+        )
+    else:
+        work_lines.append(
+            "Prior-year prong NOT evaluated (prior_year_agi / prior_year_total_tax not supplied) — the "
+            "required payment shown uses the 90% prong alone; the prior-year prong is often SMALLER, so "
+            "supplying the prior return's lines 11 and 24 can only help."
+        )
+    work_lines.append(
+        f"Required annual payment = ${required:,}; expected withholding ${irs_round(wh_d):,}; expected "
+        f"balance ${balance:,} vs the ${params.underpayment_de_minimis:,} de minimis -> estimated "
+        f"payments {'REQUIRED' if payments_required else 'not required'}"
+        + (f"; shortfall ${shortfall:,} (${quarterly:,}/quarter over four installments)." if shortfall else ".")
+    )
+    work_lines.append(params.farmers_fishermen_note)
+    sw = pack.tax.supplemental_withholding
+    if sw is not None:
+        work_lines.append(
+            f"Withholding realism (Pub 15 section 7): supplemental wages (bonuses) are withheld at the "
+            f"FLAT {sw.flat_rate:%} regardless of your marginal rate ({sw.high_rate:%} only on the "
+            f"excess over ${sw.high_threshold:,}) — a filer in a higher bracket under-withholds on "
+            f"every bonus, and the gap lands in this shortfall. Project expected_withholding as "
+            f"{sw.flat_rate:%} x bonus for supplemental pay."
+        )
+
+    return SafeHarborResult(
+        required_annual_payment=required,
+        current_year_prong=current_prong,
+        prior_year_prong=prior_prong,
+        prior_pct_applied=prior_pct,
+        estimated_payments_required=payments_required,
+        shortfall=shortfall,
+        quarterly_payment=quarterly,
+        inputs={
+            "projected_tax": irs_round(tax_d),
+            "expected_withholding": irs_round(wh_d),
+            "filing_status": filing_status,
+            "year": year,
+            "prior_year_agi": prior_year_agi,
+            "prior_year_total_tax": prior_year_total_tax,
+        },
+        work="\n".join(work_lines),
+        citation=params.citation,
+    )
+
+
+class AnnualizeResult(BaseModel):
+    """Result of :func:`annualize_ytd`. No citation: this is disclosed arithmetic, not tax law."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    annualized: int
+    ytd_amount: int
+    days_elapsed: int
+    days_in_year: int
+    inputs: dict[str, Any]
+    work: str
+
+
+def annualize_ytd(
+    ytd_amount: int | float | Decimal | str,
+    through: date | datetime | str,
+    year: int,
+) -> AnnualizeResult:
+    """Project a year-to-date paystub figure to a full-year amount by calendar-day
+    proration: ``ytd x days_in_year / days_elapsed``.
+
+    Deterministic home for the one arithmetic step every projection needs (hard
+    rule #1: the agent never does the math itself). Carries NO citation — there
+    is no authority for straight-line proration; it is an ASSUMPTION, and the
+    work says exactly when it breaks: level pay only. A raise, a bonus, or a
+    mid-year FICA-status change breaks linearity — annualize each segment
+    separately (and bonuses are not annualized at all; they are one-time).
+    """
+    amount = _to_decimal(ytd_amount, "ytd_amount")
+    if amount < 0:
+        raise ValueError("ytd_amount must be >= 0 — annualize income and withholding separately")
+    through_d = _as_date(through, "through")
+    if through_d.year != year:
+        raise ValueError(
+            f"through date {through_d.isoformat()} is not in year {year} — pass the paystub's "
+            f"period-end date for the year being projected"
+        )
+    days_elapsed = (through_d - date(year, 1, 1)).days + 1
+    days_in_year = (date(year, 12, 31) - date(year, 1, 1)).days + 1
+    annualized = irs_round(amount * days_in_year / days_elapsed)
+    work = (
+        f"Annualize ({year}): ${irs_round(amount):,} through {through_d.isoformat()} "
+        f"({days_elapsed} of {days_in_year} days) x {days_in_year}/{days_elapsed} = ${annualized:,}. "
+        f"ASSUMES LEVEL PAY: a raise, a bonus, or a mid-year FICA-status change breaks straight-line "
+        f"proration — annualize each segment separately, and never annualize one-time amounts "
+        f"(bonuses, RSU vests); add those at face value."
+    )
+    return AnnualizeResult(
+        annualized=annualized,
+        ytd_amount=irs_round(amount),
+        days_elapsed=days_elapsed,
+        days_in_year=days_in_year,
+        inputs={"ytd_amount": irs_round(amount), "through": through_d.isoformat(), "year": year},
+        work=work,
     )
 
 

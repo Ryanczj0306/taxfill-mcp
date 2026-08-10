@@ -41,6 +41,9 @@ from taxfill_core import (
     se_tax as _se_tax,
     standard_deduction as _standard_deduction,
     state_scope as _state_scope,
+    annualize_ytd as _annualize_ytd,
+    employee_fica as _employee_fica,
+    estimated_tax_safe_harbor as _estimated_tax_safe_harbor,
     schedule_1a_deductions as _schedule_1a_deductions,
     state_tax as _state_tax,
     student_loan_interest_deduction as _student_loan_interest_deduction,
@@ -280,7 +283,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     """Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
-    treaty_benefit, schedule_1a_deductions, state_tax}; every result shows its work and cites the data pack.
+    treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
+    state_tax}; every result shows its work and cites the data pack.
 
     A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
     authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
@@ -350,6 +354,25 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       premium HALF only, never the whole overtime wage. Eligibility stays YOUR judgment, quoted in the
       work: tipped-occupation list, new-vehicle/US-assembly/VIN rules, valid SSNs, seniors born before
       1961-01-02)
+    - employee_fica: args {wage_segments: [{wages, fica_exempt, label?}...], year?} (employee-side
+      payroll FICA across STATUS periods — the projection op for a year where FICA switches on
+      mid-year, e.g. F-1 OPT (exempt individual, NO FICA) -> H-1B (FICA from the I-797 start date).
+      fica_exempt is YOUR status judgment per segment; the trap the work quotes: the F/J exemption is
+      STATUS-based, not marital — a §6013(g) election does NOT start FICA on the OPT spouse's wages.
+      Enforces the SS wage base across segments in order, Medicare with no base, and the 0.9%
+      Additional Medicare withholding over $200,000; per-employer nuances disclosed)
+    - estimated_tax_safe_harbor: args {projected_tax, expected_withholding, filing_status?, year?,
+      prior_year_agi?, prior_year_total_tax?} (IRC 6654(d): required annual payment = min(90% of the
+      current year's tax, 100% of the prior year's — 110% when PRIOR-year AGI > $150,000/$75,000-MFS,
+      the status test keyed on the CURRENT year). Supply prior_year_agi AND prior_year_total_tax
+      together (prior return lines 11/24 — intake stores them on prior_filings) or omit both; the
+      prior prong needs a 12-month prior return (your judgment). Reports the $1,000 de-minimis, the
+      shortfall and the quarterly installment; the work quotes the flat-22% supplemental-wage trap —
+      every bonus under-withholds for a higher-bracket filer)
+    - annualize_ytd: args {ytd_amount, through, year} (project a YTD paystub figure to full-year by
+      calendar-day proration — the deterministic home for the one arithmetic step every projection
+      needs. ASSUMES LEVEL PAY: annualize each status segment separately, never annualize one-time
+      amounts like bonuses/RSU vests)
     - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
       (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
       2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
@@ -404,13 +427,20 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_treaty_benefit(**args)), args)
     if op == "schedule_1a_deductions":
         return _stamp_provisional(_dump(_schedule_1a_deductions(**args)), args)
+    if op == "employee_fica":
+        return _stamp_provisional(_dump(_employee_fica(**args)), args)
+    if op == "estimated_tax_safe_harbor":
+        return _stamp_provisional(_dump(_estimated_tax_safe_harbor(**args)), args)
+    if op == "annualize_ytd":
+        return _dump(_annualize_ytd(**args))
     if op == "state_tax":
         return _stamp_provisional(_dump(_state_tax(**args)), args)
     raise ValueError(
         f"unknown calc op {op!r} — supported: tax, tax_with_preferential_rates, standard_deduction, "
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
         f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
-        f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, state_tax"
+        f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
+        f"employee_fica, estimated_tax_safe_harbor, annualize_ytd, state_tax"
     )
 
 

@@ -248,11 +248,67 @@ tax:
   # (0.062 x $176,100 = $10,918.20, printed in the 2025 instructions).
   employee_social_security:
     citation:
-      source: "2025 Instructions for Form 1040, Schedule 3 line 11 (Excess Social Security and Tier 1 RRTA Tax Withheld, $10,918.20 cap); Pub 15 (2025), social security rate and wage base limit"
+      source: >-
+        2025 Instructions for Form 1040, Schedule 3 line 11 (Excess Social Security and Tier 1 RRTA Tax
+        Withheld, $10,918.20 cap); Pub 15 (2025), Section 9: social security rate 6.2% and the $176,100
+        wage base ("The social security wage base limit is $176,100", p. 28), employee Medicare rate
+        ("The tax rate for Medicare is 1.45% (amount withheld) each for the employee and employer
+        (2.9% total). There is no wage base limit for Medicare tax", p. 28), and the Additional Medicare
+        Tax withholding trigger ("you must withhold a 0.9% Additional Medicare Tax from wages you pay to
+        an employee in excess of $200,000 in a calendar year", p. 28 — a PER-EMPLOYER withholding rule
+        with no filing-status qualifier; the status-based thresholds belong to the Form 8959 TAX)
       url: "https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf"
     rate: 0.062
     ss_wage_base: 176100
     max_withholding: 10918.20
+    medicare_rate: 0.0145
+    additional_medicare_withholding_rate: 0.009
+    additional_medicare_withholding_threshold: 200000
+
+  # ── H4 projection parameters ──────────────────────────────────────────────
+  # The IRC 6654(d) safe harbor, transcribed from Form 1040-ES (2025) page 1
+  # ("Who Must Make Estimated Tax Payments", General Rule + Special Rules) and
+  # restated at the page-6 Line 12b instructions. Statutory percentages, not
+  # indexed. Two details the op must respect: the 110% test uses the PRIOR
+  # year's AGI but the CURRENT year's filing status for the $75,000 MFS
+  # variant; and the prior-year prong requires the prior return to cover all
+  # 12 months (caller judgment).
+  estimated_tax_safe_harbor:
+    citation:
+      source: >-
+        Form 1040-ES (2025), page 1: General Rule item 1 ("You expect to owe at least $1,000 in tax for
+        2025, after subtracting your withholding and refundable credits"), item 2a ("90% of the tax to be
+        shown on your 2025 tax return"), item 2b ("100% of the tax shown on your 2024 tax return. Your
+        2024 tax return must cover all 12 months"); Special Rules, Higher income taxpayers ("If your
+        adjusted gross income (AGI) for 2024 was more than $150,000 ($75,000 if your filing status for
+        2025 is married filing separately), substitute 110% for 100% in (2b)"). Statutory: IRC 6654(d).
+      url: "https://www.irs.gov/pub/irs-prior/f1040es--2025.pdf"
+    current_year_pct: 0.90
+    prior_year_pct: 1.00
+    high_income_prior_year_pct: 1.10
+    high_income_agi_threshold: 150000
+    high_income_agi_threshold_mfs: 75000
+    underpayment_de_minimis: 1000
+    farmers_fishermen_note: >-
+      Farming and fishing: if at least two-thirds of gross income for 2024 or 2025 is from farming or
+      fishing, 66 2/3% substitutes for the 90% current-year prong — and the 110% higher-income rule
+      does NOT apply (Form 1040-ES (2025), page 1, Special Rules). Not computed by the op; quoted.
+
+  # Pub 15 (2025) Section 7, Supplemental Wages — the N-12 withholding-realism
+  # trap: bonuses are withheld at the FLAT rate regardless of the filer's
+  # marginal rate, so higher-bracket filers under-withhold on every bonus.
+  supplemental_withholding:
+    citation:
+      source: >-
+        Pub 15 (2025), Section 7 Supplemental Wages, p. 22: the optional flat rate ("Withhold a flat
+        22%...") for separately-identified supplemental wages, and the mandatory high rate ("If a
+        supplemental wage payment, together with other supplemental wage payments made to the employee
+        during the calendar year, exceeds $1 million, the excess is subject to withholding at 37% (or
+        the highest rate of income tax for the year)"), applied without regard to Form W-4.
+      url: "https://www.irs.gov/pub/irs-prior/p15--2025.pdf"
+    flat_rate: 0.22
+    high_rate: 0.37
+    high_threshold: 1000000
 
   # Section 221 student-loan-interest deduction (Schedule 1). The $2,500 cap
   # is statutory (IRC 221(b)(1)), not indexed. married_filing_separately is

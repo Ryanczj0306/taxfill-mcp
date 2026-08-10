@@ -362,12 +362,30 @@ class Banking(BaseModel):
 
 
 class PriorFilings(BaseModel):
-    """Which years were filed before, plus late-filing context."""
+    """Which years were filed before, plus late-filing context.
+
+    ``prior_year_agi`` / ``prior_year_total_tax`` feed the §6654 estimated-tax
+    safe harbor (calc op ``estimated_tax_safe_harbor``): the required annual
+    payment is the smaller of 90% of the current year's tax and 100% of the
+    prior year's (110% when prior AGI is high) — so a mid-year planning session
+    cannot answer "am I withholding enough?" without these two figures. Both
+    come straight off the prior-year Form 1040 (AGI = line 11; total tax =
+    line 24). New fields default None, so profiles saved before they existed
+    still load.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
     filed_years: Answer[list[int]] | None = None
     late_filing_context: Answer[str] | None = None
+    prior_year_agi: Answer[int] | None = Field(
+        default=None,
+        description="The PRIOR year's AGI (that return's Form 1040 line 11) — drives the 110%-vs-100% safe-harbor tier.",
+    )
+    prior_year_total_tax: Answer[int] | None = Field(
+        default=None,
+        description="The PRIOR year's total tax (that return's Form 1040 line 24) — the base the safe-harbor percentage applies to.",
+    )
 
 
 class Profile(BaseModel):

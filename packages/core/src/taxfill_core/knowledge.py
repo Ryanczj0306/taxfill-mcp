@@ -552,8 +552,27 @@ class EmployeeSocialSecurityParams(BaseModel):
     max_withholding: Decimal = Field(
         description="Maximum employee withholding for the year, in dollars and cents (rate x wage base)."
     )
+    # Employee-side Medicare withholding (Pub 15 section 9) — optional so packs
+    # predating the H4 projection work still load; calc.employee_fica fails
+    # closed prescriptively when a year lacks them. Medicare has NO wage base;
+    # the 0.9% Additional Medicare Tax WITHHOLDING trigger is $200,000 of wages
+    # from one employer in the calendar year, with no filing-status qualifier
+    # (the status-based thresholds belong to the Form 8959 TAX, a different
+    # block — reconciliation happens on the return).
+    medicare_rate: Decimal | None = Field(
+        default=None, description="Employee Medicare rate (1.45%), no wage base limit."
+    )
+    additional_medicare_withholding_rate: Decimal | None = Field(
+        default=None, description="Additional Medicare Tax withholding rate (0.9%)."
+    )
+    additional_medicare_withholding_threshold: int | None = Field(
+        default=None,
+        description="Wages from one employer in a calendar year above which the 0.9% withholding starts ($200,000).",
+    )
 
-    _coerce_decimals = field_validator("rate", "max_withholding", mode="before")(_as_exact_decimal)
+    _coerce_decimals = field_validator(
+        "rate", "max_withholding", "medicare_rate", "additional_medicare_withholding_rate", mode="before"
+    )(_as_exact_decimal)
 
     @model_validator(mode="after")
     def _check_rate_and_cap(self) -> "EmployeeSocialSecurityParams":
@@ -1155,6 +1174,77 @@ class ObbbaSchedule1aParams(BaseModel):
     senior_deduction: Sched1aSeniorParams
 
 
+class EstimatedTaxSafeHarborParams(BaseModel):
+    """IRC 6654(d) required-annual-payment parameters (Form 1040-ES, 'General Rule').
+
+    The safe harbor is the smaller of the current-year prong (90% of the tax to
+    be shown on this year's return) and the prior-year prong (100% of the prior
+    year's tax — 110% when the PRIOR year's AGI exceeded the threshold, tested
+    against the CURRENT year's filing status for the MFS variant). The
+    prior-year prong exists only when the prior return covered all 12 months —
+    caller judgment, quoted in the op's work. Farmers/fishermen substitute
+    66 2/3% for the 90% prong and are exempt from the 110% rule — disclosed as
+    text, never computed.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    current_year_pct: Decimal = Field(description="The 90% current-year prong (General Rule item 2a).")
+    prior_year_pct: Decimal = Field(description="The 100% prior-year prong (General Rule item 2b).")
+    high_income_prior_year_pct: Decimal = Field(description="110% — replaces 100% for higher-income filers.")
+    high_income_agi_threshold: int = Field(gt=0, description="PRIOR-year AGI above which 110% applies ($150,000).")
+    high_income_agi_threshold_mfs: int = Field(
+        gt=0, description="The threshold when the CURRENT year's status is married filing separately ($75,000)."
+    )
+    underpayment_de_minimis: int = Field(
+        gt=0,
+        description="No estimated tax is due when the expected balance after withholding is under this ($1,000).",
+    )
+    farmers_fishermen_note: str = Field(
+        description="The 66 2/3% substitution rule, quoted — it replaces the 90% prong ONLY and disables the 110% rule."
+    )
+
+    _coerce_decimals = field_validator(
+        "current_year_pct", "prior_year_pct", "high_income_prior_year_pct", mode="before"
+    )(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _sane(self) -> "EstimatedTaxSafeHarborParams":
+        if not (Decimal(0) < self.current_year_pct <= self.prior_year_pct <= self.high_income_prior_year_pct):
+            raise ValueError(
+                "estimated_tax_safe_harbor: expected current_year_pct <= prior_year_pct <= "
+                "high_income_prior_year_pct (0.90 <= 1.00 <= 1.10) — check the transcription"
+            )
+        if self.high_income_agi_threshold_mfs > self.high_income_agi_threshold:
+            raise ValueError(
+                "estimated_tax_safe_harbor: the MFS threshold must not exceed the general threshold "
+                "($75,000 vs $150,000) — check the transcription"
+            )
+        return self
+
+
+class SupplementalWithholdingParams(BaseModel):
+    """Pub 15 section 7: the flat withholding rate on supplemental wages (bonuses).
+
+    The N-12 trap: a bonus is withheld at the FLAT rate no matter the filer's
+    marginal rate, so anyone in a higher bracket predictably under-withholds on
+    every bonus — the gap surfaces as an April balance due. The op quotes this
+    in its work; the rates here make the arithmetic citable.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    flat_rate: Decimal = Field(description="The optional flat rate on separately-identified supplemental wages (22%).")
+    high_rate: Decimal = Field(
+        description="The MANDATORY rate on supplemental wages over the threshold (37%), applied without regard to Form W-4."
+    )
+    high_threshold: int = Field(gt=0, description="Supplemental wages to one employee in the year ($1,000,000).")
+
+    _coerce_decimals = field_validator("flat_rate", "high_rate", mode="before")(_as_exact_decimal)
+
+
 class TaxKnowledge(BaseModel):
     """The ``tax`` block of a knowledge pack: everything calc.py needs for one year.
 
@@ -1191,6 +1281,10 @@ class TaxKnowledge(BaseModel):
     # only — earlier packs never carry it; 2026 declares it deliberately absent
     # until the 2026 form publishes). calc.schedule_1a_deductions consumes it.
     obbba_schedule_1a: ObbbaSchedule1aParams | None = None
+    # Phase H item H4: projection-mode parameters. Optional so earlier packs
+    # still load; the ops fail closed prescriptively when a year lacks them.
+    estimated_tax_safe_harbor: EstimatedTaxSafeHarborParams | None = None
+    supplemental_withholding: SupplementalWithholdingParams | None = None
 
     @model_validator(mode="after")
     def _check_table_worksheet_boundary(self) -> "TaxKnowledge":

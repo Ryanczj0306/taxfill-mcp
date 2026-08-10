@@ -481,15 +481,47 @@ scenario exercises the persona that motivated it.
       dates). Promote [`INTAKE_WORKSHEET.zh-CN.md`](INTAKE_WORKSHEET.zh-CN.md) to
       a canonical English surface emitted by `intake_checklist` (localizations
       alongside), so a zero-experience user has something to fill in.
-- [ ] **H4 — Planning / projection mode (N-4).** A forward-looking path distinct
-      from `estimate_refund`'s ESTIMATE-for-a-closed-year semantics: label
-      **PROJECTION**, annualize from YTD paystub figures, project wages per
-      status segment. New calc ops: **employee FICA by status period** (7.65%
-      on/off at a status boundary, SS wage-base cap) and **withholding adequacy /
-      §6654 safe harbor** (90% current vs 100/110% prior year) — the latter needs
-      `PriorFilings` to gain prior-year AGI + total tax
-      (`schemas/profile.py:338` currently holds only `filed_years` /
-      `late_filing_context`).
+- [x] **H4 — Planning / projection mode — DONE 2026-08-09** (N-4, N-7b, N-8,
+      N-12; ops 19-21). Shipped:
+      * **The PROJECTION output contract**: `RefundEstimate.label` is now
+        `PROJECTION` (never `ESTIMATE`) whenever the year's pack is
+        provisional — with the headline prefix, the leading assumption, the
+        `provisional` marker and the `missing_blocks` data that landed with
+        the guard/spine work. `ESTIMATE` = partial data for a CLOSED year,
+        converging to the filed number; `PROJECTION` can never converge —
+        fill/verify refuse the year. Eval i4 asserts the contract both ways.
+      * **`employee_fica`** — employee-side FICA across STATUS segments (the
+        F-1-OPT→H-1B year): SS 6.2% across one annual wage-base pool, Medicare
+        1.45% with no base, the 0.9% Additional Medicare withholding over
+        $200,000 attributed to the crossing segment. The work quotes N-7b —
+        the F/J exemption is STATUS-based, not marital; a §6013(g) election
+        does NOT start FICA on the OPT spouse's wages — and the per-employer
+        nuances (excess-SS recovery, Form 8959 reconciliation).
+      * **`estimated_tax_safe_harbor`** — IRC 6654(d): min(90% current,
+        100/110% prior), the 110% tier keyed on PRIOR-year AGI but the
+        CURRENT year's status for the $75,000 MFS variant, the $1,000
+        de-minimis, the 12-month-prior-return caveat, quarterly installments,
+        and the N-12 trap quoted (bonuses withheld at the FLAT 22% —
+        `supplemental_withholding` block — under-withhold for every
+        higher-bracket filer). `PriorFilings` gained `prior_year_agi` /
+        `prior_year_total_tax` (backward-compatible), and intake asks for
+        them once a filed prior year exists.
+      * **`annualize_ytd`** — YTD→full-year calendar-day proration; carries
+        NO citation by design (it is disclosed ARITHMETIC, and the work says
+        exactly when the level-pay assumption breaks).
+      * **N-8 closed**: the 1099-INT DocSpec now appends a status note to
+        every extraction — US bank-deposit interest paid to an NRA is
+        generally NOT income (IRC 871(i)(2)(A)), and the §6013(g) ELECTION,
+        not the marriage, ends the exclusion (the estimator's may-OVERTAX
+        disclosure already existed).
+      Knowledge: `estimated_tax_safe_harbor` + `supplemental_withholding`
+      blocks and the employee-Medicare fields authored for 2025 AND 2026,
+      every figure transcribed with verbatim quotes from Form 1040-ES
+      (2025/2026) and Pub 15 (2025/2026) by four independent fetch agents
+      before authoring. What remains agent-COMPOSED rather than engine-owned:
+      per-segment wage projection is `annualize_ytd` per segment +
+      `employee_fica` segments — the persisted, re-runnable scenario surface
+      over these ops is H7.
 - [~] **H5 — first tranche DONE 2026-08-04:** `knowledge/federal/2026.yaml` ships
       as a `provisional: planning_only` pack — rate schedules (Rev. Proc. 2025-32
       §4.01), standard deduction (§4.14), capital-gains brackets (§4.03), SE +
