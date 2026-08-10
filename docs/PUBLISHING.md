@@ -34,6 +34,20 @@ For the first real release, drop the `.dev0` suffix → `0.1.0`. Also flip the
 `packages/mcp-server/README.md`'s quickstart from the source-checkout form to
 `uvx taxfill-mcp`, and the status lines in the root `pyproject.toml`.
 
+**Re-read the four PyPI-immutable surfaces before every upload** — once a
+version is on PyPI they cannot be corrected without a new version number:
+
+- `packages/core/pyproject.toml` → `description` (the PyPI summary line)
+- `packages/mcp-server/pyproject.toml` → `description`
+- `packages/mcp-server/README.md` (the rendered long description — its tool
+  list and counts must match the runtime; it once said 14 tools against a
+  22-tool server and would have shipped that way)
+- `packages/core/README.md` (same, for the core package)
+
+Cross-check the counts against the code, not memory: `pytest
+packages/mcp-server/tests/test_skills_sync.py` derives the tool and calc-op
+counts from the runtime and fails on drift.
+
 ## 2. Stage data + build
 
 ```bash

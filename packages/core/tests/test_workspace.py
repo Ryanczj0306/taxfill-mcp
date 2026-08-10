@@ -6,6 +6,8 @@ CHECKLIST.md from recorded positions, and proves `purge` wipes everything.
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 from taxfill_core.knowledge import Citation
 from taxfill_core.workspace import Position, Workspace
 
@@ -130,3 +132,47 @@ def test_checklist_without_6013_topic_has_no_statement_item(tmp_path):
     ws.record_position(Position(topic="Std deduction", value="13850", citation=CITE))
     md = ws.write_checklist().read_text()
     assert "6013" not in md
+
+
+# ── The default-root resolver (Stage 1, release item P1) ──────────────────────
+# A bare relative default ("taxfill-workspace") meant the MCP server wrote
+# SSN-bearing profile.json wherever the CLIENT launched it from — unfindable by
+# the user, missed by `taxfill purge` (which resolved its own relative default
+# against a DIFFERENT cwd), and a crash on a read-only cwd. One resolver now
+# serves the server, the CLI and purge.
+
+
+def test_default_root_env_var_wins(monkeypatch):
+    from taxfill_core.workspace import default_workspace_root
+
+    monkeypatch.setenv("TAXFILL_WORKSPACE", "/tmp/x-ws")
+    assert default_workspace_root() == Path("/tmp/x-ws")
+
+
+def test_default_root_keeps_legacy_relative_data_findable(tmp_path, monkeypatch):
+    from taxfill_core.workspace import default_workspace_root
+
+    monkeypatch.delenv("TAXFILL_WORKSPACE", raising=False)
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "taxfill-workspace").mkdir()
+    # An existing relative workspace (written by an earlier release) stays used.
+    assert default_workspace_root() == Path("taxfill-workspace")
+
+
+def test_default_root_is_absolute_and_user_owned_otherwise(tmp_path, monkeypatch):
+    from taxfill_core.workspace import default_workspace_root
+
+    monkeypatch.delenv("TAXFILL_WORKSPACE", raising=False)
+    monkeypatch.chdir(tmp_path)  # no legacy dir here
+    root = default_workspace_root()
+    assert root.is_absolute()
+    assert root == Path.home() / "taxfill-workspace"
+
+
+def test_server_and_cli_resolve_the_same_root():
+    # What the server writes, purge can wipe — the mismatch this guards against
+    # is the dangerous one (SSN data the purge command cannot find).
+    from taxfill_mcp.cli import DEFAULT_ROOT
+    from taxfill_mcp.server import WORKSPACE_ROOT
+
+    assert WORKSPACE_ROOT == DEFAULT_ROOT

@@ -64,9 +64,13 @@ from taxfill_core.file_and_pay import FilingManifestItem
 from taxfill_core.residency import classify as _classify
 from taxfill_core.schemas.profile import Profile
 from taxfill_core.verify import FilingItem, VerifyReport
-from taxfill_core.workspace import Position, Workspace
+from taxfill_core.workspace import Position, Workspace, default_workspace_root
 
-WORKSPACE_ROOT = "taxfill-workspace"
+# Resolved through the shared resolver (env var -> existing ./taxfill-workspace
+# -> ~/taxfill-workspace) so the server, the CLI and `taxfill purge` always
+# agree on where the SSN-bearing workspace lives. A bare relative default here
+# used to mean "wherever the MCP client launched from".
+WORKSPACE_ROOT = str(default_workspace_root())
 
 
 def _now() -> str:

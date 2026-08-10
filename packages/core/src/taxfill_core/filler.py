@@ -46,6 +46,7 @@ from pypdf import PdfWriter
 from pypdf.generic import NameObject
 
 from taxfill_core.knowledge import assert_filing_grade
+from taxfill_core.redact import redact
 from taxfill_core.schemas.formpack import FormPack, PackField
 
 # The one input-normalization format the filler understands today.
@@ -149,7 +150,7 @@ def _render_money(pf: PackField, value: object) -> tuple[str, str | None]:
             rounded = abs(rounded)
     except InvalidOperation:
         raise ValueError(
-            f"line '{pf.line}': {value!r} cannot be rendered as a whole-dollar amount — "
+            f"line '{pf.line}': {redact(repr(value))} cannot be rendered as a whole-dollar amount — "
             f"pass a finite number of dollars (e.g. 1234.56)"
         ) from None
     warning = None
@@ -165,12 +166,15 @@ def _enforce_length(pf: PackField, rendered: str) -> None:
     """MaxLen and comb digits-only checks (P-001 clipping class)."""
     if pf.maxlen is not None and len(rendered) > pf.maxlen:
         if pf.comb:
+            # Comb fields ARE the SSN/EIN fields, so this error echoes the single
+            # most identifier-shaped value in the whole engine — redacted. The
+            # message stays prescriptive: the caller knows what they just sent.
             raise ValueError(
-                f"line '{pf.line}': value '{rendered}' exceeds comb MaxLen {pf.maxlen} — "
-                f"resubmit digits only"
+                f"line '{pf.line}': value '{redact(rendered)}' ({len(rendered)} characters) exceeds "
+                f"comb MaxLen {pf.maxlen} — resubmit digits only"
             )
         raise ValueError(
-            f"line '{pf.line}': value '{rendered}' is {len(rendered)} characters but the "
+            f"line '{pf.line}': value '{redact(rendered)}' is {len(rendered)} characters but the "
             f"field allows at most {pf.maxlen} — shorten it to {pf.maxlen} characters or fewer"
         )
     if pf.comb and rendered and not rendered.isdigit():
@@ -178,7 +182,7 @@ def _enforce_length(pf: PackField, rendered: str) -> None:
             return  # sanctioned literal: 'NRA' in the spouse SSN comb, one letter per cell
         raise ValueError(
             f"line '{pf.line}': comb fields take digits only (one digit per cell) — "
-            f"value '{rendered}' contains non-digits; strip dashes, spaces and letters "
+            f"value '{redact(rendered)}' contains non-digits; strip dashes, spaces and letters "
             f"and resubmit"
         )
 
@@ -197,7 +201,7 @@ def _checkbox_state(pf: PackField, value: object) -> str:
             checked = False
         else:
             raise ValueError(
-                f"line '{pf.line}': cannot interpret {value!r} as a checkbox answer — "
+                f"line '{pf.line}': cannot interpret {redact(repr(value))} as a checkbox answer — "
                 f"supply yes|no (or true|false); to leave the box untouched, omit the line"
             )
     elif value is None:

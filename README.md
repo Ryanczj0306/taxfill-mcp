@@ -6,10 +6,10 @@
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 2,861 passing](https://img.shields.io/badge/tests-2%2C861%20passing-brightgreen)
+![Tests: 2,886 passing](https://img.shields.io/badge/tests-2%2C886%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 2,861 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 2,886 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -216,9 +216,12 @@ the exit code.
 
 - **Everything runs locally.** Your documents and SSN never leave your computer.
 - **The only internet access** is downloading blank tax forms from official .gov URLs (checksum-verified).
-- **No telemetry, no accounts, no uploads.** The tool keeps no logs of its own; the CLI masks SSN/account-number patterns in any error it prints.
+- **No telemetry, no accounts, no uploads.** The tool keeps no logs of its own.
+- **Errors are redacted.** Identifier-shaped content (SSN/ITIN patterns, long digit runs) is masked before any error echoes a value — in the engine's own errors AND the CLI, because tool errors land in your agent's transcript.
+- **Your data lives in one place you own:** `~/taxfill-workspace/<year>/` (override with `TAXFILL_WORKSPACE`; an existing `./taxfill-workspace` from an earlier release keeps working). The saved profile, source documents and filled drafts are all under it — nothing is scattered into whatever directory the MCP client launched from.
 - Any documents you save locally hold sensitive data at rest — keep OS disk encryption on (FileVault / BitLocker).
-- The local workspace (saved profile, documents, drafts) can be wiped any time with a single `taxfill purge <year>`, which overwrites the file bytes before deleting; also delete any other files you saved yourself when you're done.
+- The workspace can be wiped any time with a single `taxfill purge <year>`, which overwrites the file bytes before deleting (best-effort on copy-on-write filesystems/SSDs — see [SECURITY.md](SECURITY.md) for the honest caveat); also delete any files you saved yourself when you're done.
+- Found a way any of this fails? [SECURITY.md](SECURITY.md) has the private reporting channel.
 
 ---
 
