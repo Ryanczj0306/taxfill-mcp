@@ -82,3 +82,25 @@ extra_provisions:
       url: "https://www.irs.gov/pub/irs-trty/korea.pdf"
 
 notes: "Combined 5-year cap of Art. 21(4) applies when Art. 20 and Art. 21(1) are taken together."
+
+# H9/P-005: VERIFIED ABSENCE (2026-08-10) — the 1976 US-Korea convention has NO Other
+# Income article. The full Table of Articles (32 articles, PDF pp. 1-2) and the body were
+# checked: headings run Article 1-32 with no other-income article. article: null is the
+# same verified-absence convention as teacher_researcher: null in Canada/Mexico.
+other_income:
+  article: null
+  rule_text: >-
+    No Other Income article exists in the 1976 convention. The general rule applies —
+    Art. 4(1): "A resident of one of the Contracting States may be taxed by the other
+    Contracting State on any income from sources within that other Contracting State and
+    only on such income, subject to any limitations set forth in this Convention. For this
+    purpose, the rules set forth in Article 6 (Source of Income) shall be applied to
+    determine the source of income."
+  us_source_other_income_taxable_by_us: true
+  notes: >-
+    With no other-income article, a US-arising item not covered by a named article (bank
+    bonus, 1099-MISC box 3) is simply US-source income the US may tax under Art. 4(1) —
+    Schedule NEC at the statutory 30%, no treaty reduction.
+  citation:
+    source: "US-Korea income tax convention (1976): Table of Articles (Articles 1-32, PDF pp. 1-2 — no Other Income article) and Article 4(1) (General Rules of Taxation), transcribed verbatim."
+    url: "https://www.irs.gov/pub/irs-trty/korea.pdf"

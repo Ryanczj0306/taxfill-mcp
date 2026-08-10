@@ -44,6 +44,8 @@ _BLOCK_TO_TOPIC = {
     "deadlines": "filing_logistics",
     "payment": "filing_logistics",
     "filing_requirement": "filing_logistics",
+    "convenience_rule": "remote_work_sourcing",
+    "effective_law_changes": "law_changes",
 }
 _FALLBACK_TOPIC = "forms_and_instructions"
 

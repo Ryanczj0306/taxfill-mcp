@@ -301,6 +301,57 @@ _SPECS: list[DocSpec] = [
             _b("33c", "Line 33C — Annual advance PTC total", "money", required=True),
         ],
     ),
+    DocSpec(
+        # The last common document extract_document did not support (ROADMAP
+        # Phase B note). Part III layout transcribed from the 2025 Schedule K-1
+        # (Form 1065), read page-by-page 2026-08-10.
+        kind="K-1",
+        title="Schedule K-1 (Form 1065) — Partner's Share of Income, Deductions, Credits, etc.",
+        source_url="https://www.irs.gov/forms-pubs/about-schedule-k-1-form-1065",
+        status_note=(
+            "K-1 amounts can be LOSSES — enter them with a leading minus sign (a parenthesized "
+            "reading is flagged invalid on purpose). Box 14 self-employment earnings drive SE tax "
+            "(calc op se_tax); a checked box 16 means a Schedule K-3 with international items is "
+            "attached and must be read too; boxes 11/13/15/17/18/20 carry CODE letters whose "
+            "amounts live on an attached statement — record the codes and read the statement, "
+            "never total them blind. K-1s commonly arrive on extension (September): confirm the "
+            "filing is not waiting on one before calling the document inventory complete."
+        ),
+        boxes=[
+            _b("partnership_ein", "Part I item A — Partnership's employer identification number", "ein", required=True),
+            _b("partnership_name", "Part I item B — Partnership's name, address, city, state, and ZIP code", "text"),
+            _b("partner_tin", "Part II item E — Partner's SSN or TIN", "tin", required=True),
+            _b("partner_name", "Part II item F — Name and address of partner", "text"),
+            _b("foreign_partner", "Part II item H1 — Foreign partner (vs domestic)", "checkbox"),
+            _b("1", "Box 1 — Ordinary business income (loss)", "money"),
+            _b("2", "Box 2 — Net rental real estate income (loss)", "money"),
+            _b("3", "Box 3 — Other net rental income (loss)", "money"),
+            _b("4a", "Box 4a — Guaranteed payments for services", "money"),
+            _b("4b", "Box 4b — Guaranteed payments for capital", "money"),
+            _b("4c", "Box 4c — Total guaranteed payments", "money"),
+            _b("5", "Box 5 — Interest income", "money"),
+            _b("6a", "Box 6a — Ordinary dividends", "money"),
+            _b("6b", "Box 6b — Qualified dividends", "money"),
+            _b("6c", "Box 6c — Dividend equivalents", "money"),
+            _b("7", "Box 7 — Royalties", "money"),
+            _b("8", "Box 8 — Net short-term capital gain (loss)", "money"),
+            _b("9a", "Box 9a — Net long-term capital gain (loss)", "money"),
+            _b("9b", "Box 9b — Collectibles (28%) gain (loss)", "money"),
+            _b("9c", "Box 9c — Unrecaptured section 1250 gain", "money"),
+            _b("10", "Box 10 — Net section 1231 gain (loss)", "money"),
+            _b("11", "Box 11 — Other income (loss) (code letters; amounts on the attached statement)", "text"),
+            _b("12", "Box 12 — Section 179 deduction", "money"),
+            _b("13", "Box 13 — Other deductions (code letters; amounts on the attached statement)", "text"),
+            _b("14", "Box 14 — Self-employment earnings (loss)", "money"),
+            _b("15", "Box 15 — Credits (code letters; amounts on the attached statement)", "text"),
+            _b("16", "Box 16 — Schedule K-3 is attached if checked", "checkbox"),
+            _b("17", "Box 17 — Alternative minimum tax (AMT) items (code letters)", "text"),
+            _b("18", "Box 18 — Tax-exempt income and nondeductible expenses (code letters)", "text"),
+            _b("19", "Box 19 — Distributions", "money"),
+            _b("20", "Box 20 — Other information (code letters)", "text"),
+            _b("21", "Box 21 — Foreign taxes paid or accrued", "money"),
+        ],
+    ),
 ]
 
 DOC_SPECS: dict[str, DocSpec] = {s.kind: s for s in _SPECS}

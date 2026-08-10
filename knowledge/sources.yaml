@@ -392,7 +392,9 @@ federal:
     # fix. The two topics below carry the go-look-here authority; the
     # year-invariant characterization RULE lives in knowledge/pitfalls.yaml
     # (P-005) — only the statutory 30% rate (IRC 871(a)) and any treaty
-    # other-income article rate are figures.
+    # other-income article rate are figures, and the five treaty packs carry
+    # verbatim-verified other_income blocks (treaty_benefit income_class
+    # other_income): no shipped treaty reduces US tax on US-arising other income.
     other_income_and_rewards:
       - url: https://www.irs.gov/publications/p525
         answers: >-

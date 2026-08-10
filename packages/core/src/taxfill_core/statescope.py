@@ -276,16 +276,36 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
         employer_exposure.setdefault(emp, set()).add(p.state.upper())
     filings_by_state = {f.state: f for f in out}
     for emp, worked_from in sorted(employer_exposure.items()):
-        warning = (
-            f"Remote-work trap: work performed from {', '.join(sorted(worked_from))} for an employer "
-            f"sitting in {emp}. If {emp} applies a convenience-of-the-employer sourcing rule (New York's "
-            f"is the best-known), it can source those wages to {emp} and require a NONRESIDENT {emp} "
-            f"return that the physical footprint alone never shows — and the W-2's Box 15 often already "
-            f"names {emp}. The knowledge packs do not carry convenience rules yet: verify {emp}'s "
-            f"nonresident wage-sourcing rule at its DOR before assuming no {emp} filing."
-        )
+        # A pack that carries the employer state's convenience rule upgrades the
+        # generic verify-at-DOR warning to the state's actual CITED rule.
+        rule = None
+        try:
+            emp_sk = load_state_knowledge(emp.lower(), year, base_dir)
+            rule = emp_sk.convenience_rule
+        except FileNotFoundError:
+            pass
+        if rule is not None:
+            warning = (
+                f"Remote-work trap: work performed from {', '.join(sorted(worked_from))} for an employer "
+                f"sitting in {emp}, and {emp} HAS a convenience-of-the-employer sourcing rule. "
+                f"{rule.summary.strip()} Trigger: {rule.trigger.strip()}"
+                + (f" Exceptions: {rule.exceptions.strip()}" if rule.exceptions.strip() else "")
+                + f" [{rule.citation.source.strip()} — {rule.citation.url}] If the rule reaches these wages, "
+                  f"a NONRESIDENT {emp} return is required that the physical footprint alone never shows."
+            )
+        else:
+            warning = (
+                f"Remote-work trap: work performed from {', '.join(sorted(worked_from))} for an employer "
+                f"sitting in {emp}. If {emp} applies a convenience-of-the-employer sourcing rule (New York's "
+                f"is the best-known), it can source those wages to {emp} and require a NONRESIDENT {emp} "
+                f"return that the physical footprint alone never shows — and the W-2's Box 15 often already "
+                f"names {emp}. This {emp} pack year carries no researched convenience rule: verify {emp}'s "
+                f"nonresident wage-sourcing rule at its DOR before assuming no {emp} filing."
+            )
         if emp in filings_by_state:
             filings_by_state[emp].warnings.append(warning)
+            if rule is not None:
+                filings_by_state[emp].citations.append(rule.citation)
         else:
             notes.append(warning)
 

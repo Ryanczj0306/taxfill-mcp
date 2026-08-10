@@ -145,3 +145,45 @@ def test_plain_1040_deadline_never_cites_the_1040nr_booklet(year):
 def test_1040nr_deadline_cites_the_nr_instructions(year):
     it = _one(FilingManifestItem(form="1040-NR", tax_year=year, bottom_line=-100))
     assert any("i1040nr" in c.url for c in it.citations)
+
+
+# ── H2/N-2: the household roll-up over a multi-taxpayer manifest ───────────────
+
+
+def test_labeled_two_taxpayer_manifest_gets_the_household_rollup():
+    from taxfill_core.file_and_pay import FilingManifestItem
+
+    s = filing_summary([
+        FilingManifestItem(form="1040-NR", tax_year=2025, bottom_line=1200, taxpayer="me", state="WA"),
+        FilingManifestItem(form="1040-NR", tax_year=2025, bottom_line=-800, taxpayer="Partner P", state="WA"),
+    ], today=date(2026, 3, 1))
+    roll = s.household_rollup
+    assert any(ln.startswith("me:") and "+$1,200 refund" in ln for ln in roll)
+    assert any(ln.startswith("Partner P:") and "$800 owed" in ln for ln in roll)
+    assert any("HOUSEHOLD net" in ln and "+$400 refund" in ln for ln in roll)
+    # The N-2 push-back rides the numbers: two taxpayers, no cross-offsetting.
+    assert any("never offsets" in ln and "TWO taxpayers" in ln for ln in roll)
+
+
+def test_single_taxpayer_and_unlabeled_manifests_get_no_rollup():
+    from taxfill_core.file_and_pay import FilingManifestItem
+
+    one = filing_summary([FilingManifestItem(form="1040", tax_year=2023, bottom_line=500, taxpayer="me")],
+                         today=date(2024, 3, 1))
+    assert one.household_rollup == []
+    unlabeled = filing_summary([
+        FilingManifestItem(form="1040", tax_year=2023, bottom_line=500),
+        FilingManifestItem(form="1040-NR", tax_year=2023, bottom_line=-100),
+    ], today=date(2024, 3, 1))
+    assert unlabeled.household_rollup == []
+
+
+def test_unlabeled_returns_are_flagged_not_silently_dropped():
+    from taxfill_core.file_and_pay import FilingManifestItem
+
+    s = filing_summary([
+        FilingManifestItem(form="1040-NR", tax_year=2025, bottom_line=1200, taxpayer="me"),
+        FilingManifestItem(form="1040-NR", tax_year=2025, bottom_line=-800, taxpayer="Partner P"),
+        FilingManifestItem(form="8843", tax_year=2025, bottom_line=0),  # forgot the label
+    ], today=date(2026, 3, 1))
+    assert any("EXCLUDED from the roll-up" in ln for ln in s.household_rollup)

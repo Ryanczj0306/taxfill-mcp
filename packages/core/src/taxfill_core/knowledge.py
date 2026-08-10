@@ -2053,6 +2053,29 @@ class StateTaxParams(BaseModel):
         return self
 
 
+class ConvenienceRule(BaseModel):
+    """A state's convenience-of-the-employer wage-sourcing rule, as CITED data.
+
+    The remote-work trap H3 wired into ``state_scope``: some states source a
+    nonresident's remote-work wages to the EMPLOYER's location unless the
+    out-of-state work is a NECESSITY of the job. Until 2026-08-10 the scope
+    answer could only say "verify at the DOR"; a pack that carries this block
+    upgrades the warning to the state's actual rule with its citation. The
+    rule text is verbatim-verified from the named authority — never edit the
+    summary without re-verifying against the citation.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    summary: str = Field(description="The operative sourcing rule, faithful to the cited authority.")
+    trigger: str = Field(description="When the rule applies (e.g. NY: assigned/primary office at a bona fide employer office in-state).")
+    exceptions: str = Field(
+        default="",
+        description="The outs the authority itself names (bona fide employer office factors, requirement-of-employment, day/dollar thresholds).",
+    )
+    citation: Citation
+
+
 class StateKnowledge(BaseModel):
     """One ``knowledge/states/<st>/<year>.yaml`` — a state's filing knowledge.
 
@@ -2093,6 +2116,11 @@ class StateKnowledge(BaseModel):
     effective_law_changes: list[EffectiveLawChange] = Field(
         default_factory=list,
         description="Enacted-law deltas relevant to this filing year (DEV_PLAN §7.2), each cited with status.",
+    )
+    convenience_rule: ConvenienceRule | None = Field(
+        default=None,
+        description="The state's convenience-of-the-employer wage-sourcing rule, cited; None = no rule "
+        "researched for this state/year (state_scope falls back to the generic verify-at-DOR warning).",
     )
 
     @field_validator("jurisdiction")
@@ -2286,6 +2314,37 @@ class TreatyExtraProvision(BaseModel):
     citation: Citation
 
 
+class TreatyOtherIncomeArticle(BaseModel):
+    """The treaty's Other Income article — or its VERIFIED absence (H9/P-005).
+
+    The article that decides whether a US-arising item not covered by any
+    named article (the bank-bonus / 1099-MISC box 3 corner) gets a treaty
+    rate: in every shipped treaty the answer is NO shelter — China Art. 21(3),
+    India Art. 23(3) and Canada Art. XXII(1) carve US-arising items back to
+    source-state taxation, Mexico Art. 23 is source-state-only in form, and
+    Korea (1976) has no Other Income article at all (Article 4's general
+    source rule applies). ``article: null`` therefore means VERIFIED ABSENT,
+    the same convention as ``teacher_researcher: null``. Every ``rule_text``
+    is transcribed verbatim from the irs.gov treaty PDF — never edit without
+    re-verifying.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    article: str | None = Field(
+        description="e.g. 'Art. 21 (Other Income)'; None = the treaty verifiably has NO other-income article."
+    )
+    rule_text: str = Field(
+        description="Verbatim operative rule from the treaty text (or, for a missing article, the verified statement of what applies instead)."
+    )
+    us_source_other_income_taxable_by_us: bool = Field(
+        description="The Schedule NEC punchline: True when the article (or its absence) leaves the US free "
+        "to tax US-arising other income of a treaty-country resident — i.e. NO treaty rate reduction."
+    )
+    notes: str = ""
+    citation: Citation
+
+
 class TreatyKnowledge(BaseModel):
     """One ``knowledge/treaties/<country>.yaml`` — a treaty's benefit parameters.
 
@@ -2306,6 +2365,10 @@ class TreatyKnowledge(BaseModel):
     student: TreatyStudentArticle | None = None
     teacher_researcher: TreatyTeacherArticle | None = None
     employment_de_minimis: TreatyEmploymentDeMinimis | None = None
+    other_income: TreatyOtherIncomeArticle | None = Field(
+        default=None,
+        description="The Other Income article (or its verified absence); None = not researched for this pack.",
+    )
     extra_provisions: list[TreatyExtraProvision] = Field(default_factory=list)
     notes: str | None = None
 

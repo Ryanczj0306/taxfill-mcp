@@ -62,3 +62,22 @@ employment_de_minimis:
     url: "https://www.irs.gov/pub/irs-trty/mexico.pdf"
 
 notes: "No student wage benefit and no dollar de-minimis for employment; only the 183-day three-part test."
+
+# H9/P-005: the Other Income article, verbatim-verified 2026-08-10 from the irs.gov
+# treaty PDF (Art. 23, PDF p. 24). NOTE the shape: a single sentence, source-state-only —
+# it does NOT say "wherever arising" and has no residence-only paragraph.
+other_income:
+  article: "Art. 23 (Other Income)"
+  rule_text: >-
+    Art. 23 (the entire article, one sentence): "Items of income of a resident of a
+    Contracting State not dealt with in the foregoing Articles of this Convention and
+    arising in the other Contracting State may be taxed in that other State."
+  us_source_other_income_taxable_by_us: true
+  notes: >-
+    The article addresses ONLY income arising in the other State and permits that State to
+    tax it; it is silent on third-country income (the Letter of Submittal's residence-only
+    characterization is transmittal commentary, not article text). US-arising other income
+    of a Mexico-resident NRA stays US-taxable — Schedule NEC at the statutory 30%.
+  citation:
+    source: "US-Mexico income tax convention (1992), Article 23 (Other Income), transcribed verbatim (PDF p. 24)."
+    url: "https://www.irs.gov/pub/irs-trty/mexico.pdf"

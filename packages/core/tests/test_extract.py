@@ -120,3 +120,36 @@ def test_unsupported_kind_raises():
 def test_caveat_states_missing_is_blank():
     doc = extract_document("documents/w2.png", "W-2", {})
     assert "never inferred" in doc.caveat.lower() or "blank" in doc.caveat.lower()
+
+
+# ── Schedule K-1 (Form 1065) — the last common document (Batch 2) ─────────────
+
+
+def test_k1_extracts_losses_codes_and_the_k3_flag():
+    r = extract_document("k1.pdf", "K-1", {
+        "partnership_ein": "12-3456789",
+        "partner_tin": "999-00-1234",
+        "1": "-4,500",          # losses arrive with a minus sign
+        "5": "120",
+        "13": "W* (see stmt)",  # code letters stay text, statement-backed
+        "14": "-4,500",
+        "16": True,             # Schedule K-3 attached
+    })
+    by = {f.key: f for f in r.fields}
+    assert by["1"].value == "-4500" and by["14"].value == "-4500"
+    assert by["16"].value is True and by["13"].value == "W* (see stmt)"
+    assert not r.gaps
+
+
+def test_k1_parenthesized_loss_is_flagged_invalid_not_swallowed():
+    r = extract_document("k1.pdf", "K-1", {
+        "partnership_ein": "12-3456789", "partner_tin": "999-00-1234", "1": "(4,500)",
+    })
+    assert any(f.key == "1" and f.status == "invalid" for f in r.fields)
+
+
+def test_k1_status_note_carries_the_se_and_k3_pointers():
+    from taxfill_core.extract import DOC_SPECS
+
+    note = DOC_SPECS["K-1"].status_note
+    assert "minus sign" in note and "se_tax" in note and "K-3" in note
