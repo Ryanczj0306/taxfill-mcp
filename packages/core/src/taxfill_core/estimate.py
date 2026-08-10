@@ -65,6 +65,12 @@ __all__ = [
 ]
 
 _LABEL = "ESTIMATE"
+# The forward-looking sibling (H4): a bottom line computed on a PROVISIONAL
+# (planning-only) pack is labeled PROJECTION, never ESTIMATE. ESTIMATE means
+# "partial data for a CLOSED year — this converges to the filed number";
+# PROJECTION means "a future year whose forms do not exist — this can never
+# converge to a filed number, and fill/verify refuse the year outright".
+_PROJECTION_LABEL = "PROJECTION"
 
 # One dependent as threaded into the per-status computation: (age at the end of
 # the tax year, or None when the date of birth is unknown; has_ssn as answered).
@@ -445,11 +451,20 @@ class Roadmap(BaseModel):
 
 
 class RefundEstimate(BaseModel):
-    """A preliminary, honest bottom line. ``label`` is always 'ESTIMATE'."""
+    """A preliminary, honest bottom line.
+
+    ``label`` is the output CONTRACT (H4): 'ESTIMATE' for a closed year (partial
+    data converging to the filed number) and 'PROJECTION' for a planning year
+    computed on a provisional pack (can never converge to a filed number —
+    fill/verify refuse the year, and `provisional`/`missing_blocks` say why).
+    """
 
     model_config = ConfigDict(extra="forbid")
 
-    label: str = _LABEL
+    label: str = Field(
+        default=_LABEL,
+        description="'ESTIMATE' (closed year) or 'PROJECTION' (planning year on a provisional pack).",
+    )
     year: int
     filing_status_used: str = Field(description="The status the composition is shown for (primary candidate).")
     status_assumed: bool = Field(description="True when filing status was not confirmed and had to be assumed.")
@@ -2149,6 +2164,7 @@ def estimate_refund(
         headline = f"PROJECTION (not filing-grade) — {headline}"
 
     return RefundEstimate(
+        label=_PROJECTION_LABEL if provisional is not None else _LABEL,
         year=year,
         filing_status_used=primary,
         status_assumed=status_assumed,

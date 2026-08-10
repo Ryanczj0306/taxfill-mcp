@@ -268,6 +268,54 @@ tax:
     rate: 0.062
     ss_wage_base: 184500
     max_withholding: 11439.00
+    # Employee Medicare withholding, Pub 15 (2026) Section 9 (p. 29): "The tax
+    # rate for Medicare is 1.45% (amount withheld) each for the employee and
+    # employer (2.9% total)" — no wage base; "you must withhold a 0.9%
+    # Additional Medicare Tax from wages you pay to an employee in excess of
+    # $200,000 in a calendar year" (pp. 29-30) — per employer, no
+    # filing-status qualifier (the status thresholds are the Form 8959 TAX).
+    medicare_rate: 0.0145
+    additional_medicare_withholding_rate: 0.009
+    additional_medicare_withholding_threshold: 200000
+
+  # ── H4 projection parameters (statutory, both citable to PUBLISHED 2026
+  # documents — the same class as rate_schedules, NOT carried forward) ──────
+  estimated_tax_safe_harbor:
+    citation:
+      source: >-
+        Form 1040-ES (2026) (Cat. No. 11340T, Feb 12, 2026), page 1: General Rule item 1 ("You expect
+        to owe at least $1,000 in tax for 2026, after subtracting your withholding and refundable
+        credits"), item 2a ("90% of the tax to be shown on your 2026 tax return"), item 2b ("100% of
+        the tax shown on your 2025 tax return. Your 2025 tax return must cover all 12 months");
+        Special Rules, Higher income taxpayers ("If your adjusted gross income (AGI) for 2025 was more
+        than $150,000 ($75,000 if your filing status for 2026 is married filing separately),
+        substitute 110% for 100% in (2b)"); restated at page 8, Line 12b. Statutory: IRC 6654(d).
+      url: "https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf"
+    current_year_pct: 0.90
+    prior_year_pct: 1.00
+    high_income_prior_year_pct: 1.10
+    high_income_agi_threshold: 150000
+    high_income_agi_threshold_mfs: 75000
+    underpayment_de_minimis: 1000
+    farmers_fishermen_note: >-
+      Farming and fishing: if at least two-thirds of gross income for 2025 or 2026 is from farming or
+      fishing, 66 2/3% substitutes for the 90% current-year prong — and the 110% higher-income rule
+      does NOT apply (Form 1040-ES (2026), page 1, Special Rules). Not computed by the op; quoted.
+
+  supplemental_withholding:
+    citation:
+      source: >-
+        Pub 15 (2026) ("For use in 2026", Dec 15, 2025), Section 7 Supplemental Wages, p. 24: the
+        optional flat 22% rate for separately-identified supplemental wages, and the mandatory rate on
+        the excess over $1 million ("the excess is subject to withholding at 37% (or the highest rate
+        of income tax for the year)"), applied without regard to Form W-4; What's New, p. 2: "The
+        withholding rate on supplemental wages remains 22% (37% if supplemental wages paid to an
+        employee during the calendar year exceed $1 million) because P.L. 119-21 permanently extended
+        the individual income tax rates."
+      url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+    flat_rate: 0.22
+    high_rate: 0.37
+    high_threshold: 1000000
 
   # Both surtaxes are STATUTORY and not inflation-indexed (unchanged since 2013;
   # OBBBA did not touch them), so the 2026 values are identical to every shipped

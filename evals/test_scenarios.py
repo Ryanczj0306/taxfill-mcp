@@ -317,12 +317,16 @@ def test_eval_i4_the_provisional_guard_covers_every_surface_not_just_the_obvious
     assert projection.headline.startswith("PROJECTION"), projection.headline
     assert "PROJECTION" in projection.assumptions[0], "the disclosure must lead the assumptions, not trail them"
 
-    # A filing-grade year is untouched — no marker, no PROJECTION prefix, and the
-    # label stays ESTIMATE (the ESTIMATE/PROJECTION contract itself is H4's job).
+    # The H4 output contract: the LABEL itself carries the distinction. A closed
+    # year says ESTIMATE (partial data converging to the filed number); a planning
+    # year on a provisional pack says PROJECTION (can never converge — fill/verify
+    # refuse the year). Before H4 this line asserted both said ESTIMATE and noted
+    # the contract was deferred; the deferral is over.
     filing_grade = estimate_refund(profile, 2025, income)
     assert filing_grade.provisional is None
     assert not filing_grade.headline.startswith("PROJECTION")
-    assert filing_grade.label == projection.label == "ESTIMATE"
+    assert filing_grade.label == "ESTIMATE"
+    assert projection.label == "PROJECTION"
 
 
 def test_eval_i5_a_planning_year_names_every_credit_it_could_not_price():

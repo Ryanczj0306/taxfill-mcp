@@ -60,6 +60,13 @@ class DocSpec(BaseModel):
     title: str
     source_url: str = Field(description="Official .gov page documenting this form's layout.")
     boxes: list[BoxSpec]
+    status_note: str | None = Field(
+        default=None,
+        description=(
+            "A trap the RECIPIENT'S STATUS springs on this document — appended to every "
+            "extraction's caveat, because the box values alone cannot carry it."
+        ),
+    )
 
 
 def _b(key: str, label: str, type_: FieldType = "text", required: bool = False) -> BoxSpec:
@@ -122,6 +129,15 @@ _SPECS: list[DocSpec] = [
         kind="1099-INT",
         title="Interest Income",
         source_url="https://www.irs.gov/forms-pubs/about-form-1099-int",
+        # N-8: the bank sends this form regardless of the payee's status, but
+        # whether box 1 is INCOME AT ALL depends on that status.
+        status_note=(
+            "STATUS decides whether box 1 is income: US bank-deposit interest paid to a NONRESIDENT "
+            "alien is generally NOT taxable (the deposit-interest exclusion, IRC 871(i)(2)(A)) and does "
+            "not go on Form 1040-NR — and it BECOMES taxable the moment a §6013(g)/(h) election makes "
+            "the payee a resident (the election, not the marriage, ends the exclusion). Confirm the "
+            "payee's residency result before carrying box 1 to any return."
+        ),
         boxes=[
             _b("payer_name", "Payer's name", "text"),
             _b("recipient_tin", "Recipient's TIN", "tin"),
@@ -446,6 +462,8 @@ def extract_document(
         "as 'invalid' did not match the expected type and must be corrected; required boxes that are "
         "blank are listed in 'gaps'."
     )
+    if spec.status_note:
+        caveat = f"{caveat} {spec.status_note}"
     return ExtractedDocument(
         kind=spec.kind,
         file=path,

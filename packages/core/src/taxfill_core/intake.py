@@ -783,12 +783,43 @@ def _fica_exemption_note(profile: Profile, notes: list[str], tax_year: int | Non
     )
 
 
-def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
+def _is_planning_year(tax_year: int) -> bool:
+    """True when the year's federal pack is provisional (planning-only) — the only
+    case the safe-harbor figures are worth an interview question."""
+    from taxfill_core.knowledge import provisional_marker
+
+    return provisional_marker("federal", tax_year) is not None
+
+
+def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None = None) -> None:
     if profile.prior_filings is None:
         out.append(_q("prior_filings.history", "prior_filings",
                       "Which prior years have you filed, and are any years late or unfiled?",
                       "Late filings affect penalties and the 3-year refund statute of limitations.",
                       "prior_filings"))
+        return
+    # A mid-year PLANNING session cannot answer "am I withholding enough?"
+    # without the prior return's AGI and total tax (the IRC 6654 safe harbor —
+    # calc op estimated_tax_safe_harbor). Gated on the interview being FOR a
+    # planning year (a provisional pack): for a closed-year filing interview
+    # these figures are noise, and an ungated version broke the interview-
+    # terminates invariant for the modal filer. Only asked once a filed prior
+    # year exists to read them from; the fields default None so old profiles load.
+    if tax_year is None or not _is_planning_year(tax_year):
+        return
+    pf = profile.prior_filings
+    has_filed_prior = pf.filed_years is not None and bool(pf.filed_years.value)
+    if has_filed_prior and (pf.prior_year_agi is None or pf.prior_year_total_tax is None):
+        out.append(_q("prior_filings.safe_harbor_figures", "prior_filings",
+                      "From your most recent filed return: what were the AGI (Form 1040 line 11) and "
+                      "the total tax (line 24)?",
+                      "They set your estimated-tax safe harbor — withholding at least 100%/110% of last "
+                      "year's tax avoids an underpayment penalty even if this year's income jumps.",
+                      "prior_filings",
+                      disambiguation="Read both straight off the prior-year Form 1040: line 11 (adjusted "
+                                     "gross income) and line 24 (total tax). The 110% tier applies when "
+                                     "that AGI was over $150,000 ($75,000 if filing separately this "
+                                     "year). Skip if the prior year is still unfiled."))
 
 
 # ── required-document derivation ──────────────────────────────────────────────
@@ -859,7 +890,7 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     _household_questions(profile, out, notes, tax_year)
     _state_footprint_questions(profile, out, tax_year)
     _income_document_questions(profile, out, tax_year)
-    _prior_filings_questions(profile, out)
+    _prior_filings_questions(profile, out, tax_year)
     # Banking last: the optional direct-deposit question only accompanies other
     # pending questions (declining it is unrepresentable, so it must never repeat
     # alone and stall the interview) — the sort below restores the display order.
