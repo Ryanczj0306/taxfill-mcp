@@ -8,10 +8,10 @@ official `.gov` URLs. Every output is a review draft: you review, sign, and file
 > v0.1 is in development and not yet published to PyPI, so the quickstarts below
 > run it **from a source checkout** with `uv`.
 
-## Tools (dev plan §8) — all 22
+## Tools (dev plan §8) — all 23
 
 `intake_checklist` · `list_document_kinds` · `extract_document` · `residency` ·
-`state_scope` · `estimate_refund` · `list_forms` · `get_form_map` · `fetch_blank` ·
+`state_scope` · `estimate_refund` · `compare_scenarios` · `list_forms` · `get_form_map` · `fetch_blank` ·
 `fill_form` · `verify_form` · `verify_filing` · `render_form` (returns page
 images) · `hand_fill_worksheet` (print-only state forms) · `calc` (21
 deterministic ops over cited per-year data) · `get_sources` · `workspace_save` ·

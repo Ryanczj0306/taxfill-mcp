@@ -20,16 +20,17 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,902 tests, all green** — offline 2,797 + live-.gov 105, exit 0;
+Done and on `main` (**2,910 tests, all green** — offline 2,805 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
-  server (22 tools, stdio, image content) · M5 state support · M6 code/docs.**
-- **MCP server — 22 tools, CI-gated** (`.github/workflows/ci.yml` asserts exactly
-  22): list_forms, get_form_map, fetch_blank, fill_form, verify_form,
+  server (23 tools, stdio, image content) · M5 state support · M6 code/docs.**
+- **MCP server — 23 tools, CI-gated** (`.github/workflows/ci.yml` asserts exactly
+  23): list_forms, get_form_map, fetch_blank, fill_form, verify_form,
   verify_filing, render_form (vision Image), calc, residency, intake_checklist,
   list_document_kinds, extract_document, workspace_save, workspace_load,
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
+  compare_scenarios,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
   states). The `calc` tool carries 25 deterministic ops (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax).
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
@@ -579,17 +580,36 @@ scenario exercises the persona that motivated it.
       defect.)* Still open from the original H6 scope: **N-8**, the NRA
       bank-deposit-interest exclusion (§871(i)(2)(A)) — an extract_document /
       estimator note, tracked with H4's projection work.
-- [ ] **H7 — scenario comparison surface (N-9, N-15).** Planning questions arrive
-      as "compare A vs B vs C" (unmarried / married-MFS / married + §6013(g)), and
-      the engine has every primitive but no way to run and diff a set. Build a
-      `compare_scenarios` surface over the projection path that returns per-scenario
-      bottom lines plus the itemized deltas that explain the difference — the
-      **deltas must sum exactly to the headline number**, which is the acceptance
-      criterion (in the motivating session five itemized deltas, four positive and
-      one negative, reconciled to the headline to the dollar). It must be
-      **persisted and re-runnable**
-      against the workspace profile, not a one-shot call: the motivating session
-      revised four facts mid-flight and each revision re-ran every scenario.
+- [x] **H7 — scenario comparison surface — DONE 2026-08-10** (N-9, N-15; the
+      23rd MCP tool, `compare_scenarios`, + `taxfill_core.scenarios`).
+      * Runs 2+ deterministic scenarios (filing posture forced per scenario — a
+        confirmed status wins unconditionally in the candidate logic, which is
+        what makes the §6013(g)-election MFJ what-if runnable on an NRA
+        profile) and diffs each against the FIRST, with **two attributions,
+        both EXACT and runtime-checked**: the per-slot ledger diff (the Stage-2
+        spine invariant) and a **sequential input walk** whose steps telescope
+        to the headline delta — every intermediate is a real computed bottom
+        line, so "marry + election: +$1,105" decomposes into "MFJ brackets
+        +$7,721; spouse income −$6,352; her interest −$264" the way the
+        motivating session's hand-built table did. Order-dependence of the
+        walk is inherent and disclosed, never hidden.
+      * The election scenario auto-discloses the two traps the session had to
+        derive: worldwide income becomes taxable (the scenario is only as
+        complete as the income given), and the election does NOT start FICA
+        (N-7b, stated unprompted).
+      * **Persisted and re-runnable** (N-15's actual interaction): scenario
+        sets store INPUTS-only in the year's workspace (`scenarios.json` —
+        results recompute on every load, so pack corrections are picked up
+        silently); `load="name"` + `income_updates` makes "the bonus landed,
+        re-diff everything" ONE call. Covered by `taxfill purge`
+        automatically (rglob-based wipe).
+      * Cross-year what-ifs are labeled **PROJECTION** when any scenario runs
+        on a provisional pack, and each outcome carries its missing_blocks —
+        a silent cross-year diff was exactly the $2,126 credit-drop trap.
+      * Tool count 22 → 23, flipped at every gate (EXPECTED_TOOLS + the
+        exactly-N test, test_cli, ci.yml packaging, bundle/manifest.json —
+        whose stale 17-op calc description got trued up to 25 in passing —
+        README, ROADMAP, all three skills).
 - [x] **H8 — tax-advantaged account knowledge — DONE 2026-08-10** (N-10, N-11,
       N-13; ops 22-25; N-12's withholding realism shipped earlier with H4).
       * **`contribution_limits` TOP-LEVEL knowledge block** (2025 + 2026) with

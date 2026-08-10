@@ -80,6 +80,7 @@ from taxfill_core.calc import (
 )
 from taxfill_core.discovery import FormMap, FormSummary, LineMap, get_form_map, list_forms, load_form_pack
 from taxfill_core.estimate import CompositionLine, IncomeSnapshot, RefundEstimate, estimate_refund
+from taxfill_core.scenarios import ScenarioComparison, ScenarioSpec, compare_scenarios
 from taxfill_core.extract import ExtractedDocument, extract_document, list_document_kinds
 from taxfill_core.workspace import Position, Workspace
 from taxfill_core.file_and_pay import FilingInstructions, FilingManifestItem, ReturnInstructions, file_and_pay
@@ -202,6 +203,9 @@ __all__ = [
     "education_credits",
     "eitc",
     "estimate_refund",
+    "compare_scenarios",
+    "ScenarioSpec",
+    "ScenarioComparison",
     "excess_ss",
     "exempt_individual_years",
     "file_and_pay",

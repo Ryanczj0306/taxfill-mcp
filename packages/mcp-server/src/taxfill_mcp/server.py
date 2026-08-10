@@ -66,6 +66,7 @@ from taxfill_core.knowledge import provisional_marker
 from taxfill_core.estimate import IncomeSnapshot
 from taxfill_core.file_and_pay import FilingManifestItem
 from taxfill_core.residency import classify as _classify
+from taxfill_core.scenarios import compare_scenarios as _compare_scenarios
 from taxfill_core.schemas.profile import Profile
 from taxfill_core.verify import FilingItem, VerifyReport
 from taxfill_core.workspace import Position, Workspace, default_workspace_root
@@ -638,6 +639,73 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
             f"capital_gain_long/capital_gain_short (signed), not 'capital_gains'."
         ) from None
     return _dump(_estimate_refund(prof, year, snapshot))
+
+
+@mcp.tool()
+def compare_scenarios(
+    year: int,
+    scenarios: list[dict] | None = None,
+    income: dict | None = None,
+    profile: dict | None = None,
+    save_as: str | None = None,
+    load: str | None = None,
+    income_updates: dict | None = None,
+    root: str = WORKSPACE_ROOT,
+) -> dict:
+    """Run 2+ what-if scenarios and diff each against the FIRST (the baseline), with TWO exact
+    attributions per diff: the per-slot ledger view, and a sequential input walk whose steps
+    telescope to the headline delta (this is how "marry + \u00a76013(g) election: +$1,105" decomposes
+    into "MFJ brackets +$7,721; spouse income -$6,352; her interest -$264").
+
+    Each scenario: {name, filing_status (REQUIRED - deterministic, never candidate-selected),
+    year? (cross-year what-ifs - the result is labeled PROJECTION when any year's pack is
+    provisional, and per-scenario missing_blocks flag what a planning year could not price),
+    us_resident_election? (models \u00a76013(g)/(h): MFJ becomes available; worldwide-income and
+    FICA-is-status-based caveats auto-disclosed), income_overrides? ({IncomeSnapshot field: value};
+    'spouse' replaces the whole spouse snapshot; attribution applies them in this order), note?}.
+
+    PERSISTENCE (the "change one fact and re-diff" loop): pass save_as="name" to store the set
+    (INPUTS only - results recompute on every load) in the year's workspace; later call with
+    load="name" (+ optional income_updates to revise base facts, and/or a new scenarios list) to
+    re-run and re-save in one step. Saved sets are listed by workspace_load's status.
+    """
+    ws = Workspace.open(root, year, now=_now()) if (save_as or load) else None
+    if load:
+        stored = ws.load_scenario_set(load)
+        base_income = {**stored["income"], **(income_updates or {})}
+        specs = scenarios if scenarios is not None else stored["scenarios"]
+        prof_data = profile if profile is not None else stored.get("profile")
+        save_as = save_as or load
+    else:
+        if income is None or scenarios is None:
+            raise ValueError(
+                "compute mode needs `income` and `scenarios` (or pass load='name' to re-run a saved "
+                "set); the first scenario is the baseline"
+            )
+        base_income, specs, prof_data = income, scenarios, profile
+    try:
+        prof = Profile.model_validate(prof_data) if prof_data else Profile()
+    except ValidationError as exc:
+        raise ValueError(f"invalid `profile` — {_validation_problems(exc)}") from None
+    try:
+        snapshot = IncomeSnapshot.model_validate(base_income)
+    except ValidationError as exc:
+        raise ValueError(
+            f"invalid income — {_validation_problems(exc)}. Valid income fields: "
+            f"{', '.join(IncomeSnapshot.model_fields)}."
+        ) from None
+    result = _compare_scenarios(prof, year, snapshot, specs)
+    if save_as:
+        ws.save_scenario_set(save_as, {
+            "year": year,
+            "income": snapshot.model_dump(mode="json"),
+            "scenarios": [s if isinstance(s, dict) else s.model_dump(mode="json") for s in specs],
+            "profile": prof_data if isinstance(prof_data, dict) else None,
+        }, now=_now())
+    out = _dump(result)
+    if save_as:
+        out["saved_as"] = save_as
+    return out
 
 
 @mcp.tool()

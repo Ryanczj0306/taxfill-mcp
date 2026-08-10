@@ -3,7 +3,7 @@
   "name": "taxfill",
   "display_name": "TaxFill",
   "version": "0.1.0",
-  "description": "Draft-prepare a U.S. tax return from your documents \u2014 fills official IRS/state PDFs from cited, source-verified knowledge. Not tax advice; review-only, paper filing (no e-file).",
+  "description": "Draft-prepare a U.S. tax return from your documents — fills official IRS/state PDFs from cited, source-verified knowledge. Not tax advice; review-only, paper filing (no e-file).",
   "long_description": "TaxFill is a local MCP server that helps a person prepare a paper U.S. federal or state (all 41 income-tax states + DC) income-tax return for review. It downloads the official blank PDF, fills it from your confirmed inputs, computes lines from source-verified tax tables, and shows every figure's authority. It never invents numbers, never e-files, and is not a substitute for a professional.",
   "author": {
     "name": "TaxFill maintainers",
@@ -62,7 +62,7 @@
     },
     {
       "name": "calc",
-      "description": "Deterministic tax math. op in {tax, standard_deduction, se_tax, additional_medicare_tax, niit, tax_with_preferential_rates, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, state_tax}"
+      "description": "Deterministic tax math — 25 ops over cited per-year data: tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax"
     },
     {
       "name": "residency",
@@ -103,6 +103,10 @@
     {
       "name": "estimate_refund",
       "description": "Early bottom-line ESTIMATE (a range) from a partial profile + confirmed income amounts."
+    },
+    {
+      "name": "compare_scenarios",
+      "description": "Run 2+ what-if scenarios (filing postures, elections, revised facts, cross-year) and diff each against the baseline with exact itemized attributions; sets persist in the workspace for one-call re-runs."
     },
     {
       "name": "get_sources",

@@ -19,7 +19,8 @@ from taxfill_mcp.server import mcp
 EXPECTED_TOOLS = {
     "intake_checklist", "list_forms", "get_form_map", "fetch_blank", "fill_form",
     "verify_form", "verify_filing", "render_form", "calc", "residency",
-    "estimate_refund", "get_sources", "filing_summary", "file_and_pay", "state_scope",
+    "estimate_refund",
+    "compare_scenarios", "get_sources", "filing_summary", "file_and_pay", "state_scope",
     "list_document_kinds", "extract_document",
     "workspace_save", "workspace_load", "workspace_record_position", "workspace_reconcile",
     "hand_fill_worksheet",
@@ -355,12 +356,12 @@ def test_workspace_record_position_bad_shape_error_shows_expected_shape(tmp_path
     _run(go())
 
 
-def test_tool_surface_is_exactly_22_and_matches_manifest():
+def test_tool_surface_is_exactly_23_and_matches_manifest():
     """Exact tool-surface guard (the other test is a subset check, so it misses ADDED tools).
 
     Adding/removing/renaming a tool fails here until both EXPECTED_TOOLS and the shipped
     bundle/manifest.json are updated — keeping the server, the tests, and the one-click
-    .mcpb manifest in lock-step (the packaging job also asserts 22 against the built wheel).
+    .mcpb manifest in lock-step (the packaging job also asserts 23 against the built wheel).
     """
     from pathlib import Path
 
@@ -368,7 +369,7 @@ def test_tool_surface_is_exactly_22_and_matches_manifest():
     assert names == EXPECTED_TOOLS, (
         f"server tool drift — unexpected: {names - EXPECTED_TOOLS}, missing: {EXPECTED_TOOLS - names}"
     )
-    assert len(names) == 22
+    assert len(names) == 23
 
     manifest = json.loads((Path(__file__).parents[3] / "bundle" / "manifest.json").read_text())
     manifest_names = {t["name"] for t in manifest["tools"]}
