@@ -122,11 +122,22 @@ def test_retrieval_hint_mentions_year_and_prior_archive():
     assert "irs-prior" in res.retrieval_hint
 
 
-def test_unsupported_state_jurisdiction_reports_no_registry_yet():
-    res = get_sources("filing_basics", 2023, jurisdiction="states/ca")
+def test_registry_less_state_jurisdiction_reports_no_registry():
+    # A no-income-tax state ships no knowledge pack, so it has no generated
+    # registry block either — the caller is told to resolve at the DOR.
+    # (Income-tax states DO have blocks now — see the D2d tests below; this
+    # test used to pin states/ca as empty, which was the gap itself.)
+    res = get_sources("filing_basics", 2023, jurisdiction="states/tx")
     assert res.matched is False
     assert res.available_topics == []
     assert any("state" in n.lower() for n in res.notes)
+
+
+def test_income_tax_state_topic_mismatch_lists_available_topics():
+    res = get_sources("quantum levy", 2023, jurisdiction="states/ca")
+    assert res.matched is False
+    assert "forms_and_instructions" in res.available_topics
+    assert any("available_topics" in n for n in res.notes)
 
 
 def test_bad_jurisdiction_rejected():
@@ -233,3 +244,60 @@ def test_h9_topics_do_not_steal_their_neighbours_queries():
         assert r.matched and {s.topic for s in r.sources} == {expected}, (
             f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
         )
+
+
+# ── The per-state registry (D2d: sources.yaml shipped `states: {}` while 126
+# state packs were live — the freshness protocol was federal-only, blocking any
+# state TY2026 planning pack). knowledge/sources_states.yaml is GENERATED from
+# the packs' own verified citations; these tests pin coverage + freshness.
+
+
+def _repo_root():
+    from pathlib import Path
+
+    return Path(__file__).resolve().parents[3]
+
+
+def test_every_state_with_a_knowledge_pack_has_a_registry_block():
+    root = _repo_root()
+    packed = {d.name for d in (root / "knowledge" / "states").iterdir()
+              if d.is_dir() and any(p.stem.isdigit() for p in d.glob("*.yaml"))}
+    covered = set()
+    for st in sorted(packed):
+        r = get_sources("forms and instructions", 2026, f"states/{st}")
+        if r.available_topics:
+            covered.add(st)
+    missing = sorted(packed - covered)
+    assert not missing, f"states with packs but no source registry block: {missing}"
+    assert len(covered) >= 42
+
+
+def test_state_lookup_resolves_to_that_states_own_authority():
+    r = get_sources("tax rates and brackets", 2026, "states/ri")
+    assert r.matched
+    assert {s.topic for s in r.sources} == {"tax_rates_and_brackets"}
+    assert all("tax.ri.gov" in s.url for s in r.sources)
+    # The change channels carry the pack's primary authority + the IRS state directory.
+    urls = " ".join(c.url for c in r.change_channels)
+    assert "tax.ri.gov" in urls and "state-government-websites" in urls
+
+
+def test_state_retrieval_hint_is_state_shaped():
+    r = get_sources("forms and instructions", 2026, "states/ca")
+    assert "DOR" in r.retrieval_hint and "irs-prior" not in r.retrieval_hint
+    assert "Refuse to fill" in r.retrieval_hint
+
+
+def test_generated_state_registry_is_current():
+    # The same byte-equality guard the badge/skills use: regenerating from the
+    # packs must reproduce the committed file, so a pack edit that changes
+    # citations cannot silently strand the registry.
+    import subprocess
+    import sys
+
+    root = _repo_root()
+    proc = subprocess.run(
+        [sys.executable, str(root / "scripts" / "assemble_state_sources.py"), "--check"],
+        capture_output=True, text=True,
+    )
+    assert proc.returncode == 0, proc.stdout + proc.stderr

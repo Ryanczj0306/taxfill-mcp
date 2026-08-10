@@ -1630,6 +1630,15 @@ class EffectiveLawChange(BaseModel):
     source_topic: str | None = Field(
         default=None, description="Optional sources.yaml by_topic key this change feeds into."
     )
+    affects: list[str] = Field(
+        default_factory=list,
+        description="Pack blocks / form surfaces the change touches, e.g. ['starts_from', 'RI Schedule HR1'].",
+    )
+    modeled: bool = Field(
+        default=False,
+        description="True when the pack's own blocks already reflect the change; False (the safe default) "
+        "means the engine does NOT compute it and consumers (state_scope) surface the delta as a warning.",
+    )
 
 
 class ProvisionalSecondPass(BaseModel):
@@ -1708,6 +1717,10 @@ class KnowledgePack(BaseModel):
     provisional: Provisional | None = Field(
         default=None,
         description="Present only on planning-grade packs; see Provisional and assert_filing_grade.",
+    )
+    effective_law_changes: list[EffectiveLawChange] = Field(
+        default_factory=list,
+        description="Enacted-law deltas relevant to this filing year (DEV_PLAN §7.2), each cited with status.",
     )
     filing_thresholds: FilingThresholds | None = None
     payment_options: PaymentOptions | None = None
@@ -2076,6 +2089,10 @@ class StateKnowledge(BaseModel):
         default=None,
         description="Tax computation block (flat rate or graduated brackets, base, exemptions, "
         "standard deduction); None = state tax math is not shipped for this state/year.",
+    )
+    effective_law_changes: list[EffectiveLawChange] = Field(
+        default_factory=list,
+        description="Enacted-law deltas relevant to this filing year (DEV_PLAN §7.2), each cited with status.",
     )
 
     @field_validator("jurisdiction")

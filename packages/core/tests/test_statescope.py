@@ -309,3 +309,34 @@ def test_employer_in_the_worked_state_is_silent():
     ), 2025)
     assert not any("convenience" in n for n in r.notes)
     assert not any("convenience" in w for s in r.states for w in s.warnings)
+
+
+# ── DEV_PLAN §7.2: effective_law_changes surface (D2c) ─────────────────────────
+
+
+def test_unmodeled_law_change_is_surfaced_as_a_warning_with_its_citation():
+    # RI 2025 carries the first data instance repo-wide: the Schedule HR1
+    # OBBBA add-backs, modeled: false — the engine does not compute them, so
+    # the scope answer must say so instead of leaving the delta in pack prose.
+    r = state_scope(_profile(
+        year=2025,
+        lived=[_rp("RI", date(2025, 1, 1), date(2025, 12, 31))],
+        worked=[_wp("RI", date(2025, 1, 1), date(2025, 12, 31))],
+    ), 2025)
+    ri = _by_state(r)["RI"]
+    w = [w for w in ri.warnings if "Law change NOT modeled" in w]
+    assert len(w) == 1
+    assert "163(j)" in w[0] and "Schedule HR1" in w[0] and "Resolve via" in w[0]
+    assert any("tax.ri.gov" in c.url for c in ri.citations)
+
+
+def test_law_change_model_defaults_are_the_safe_ones():
+    from taxfill_core.knowledge import EffectiveLawChange
+
+    c = EffectiveLawChange(
+        description="d", status="enacted",
+        citation={"source": "s", "url": "https://www.irs.gov/newsroom"},
+    )
+    # modeled defaults FALSE: an unannotated change is surfaced, never silently
+    # assumed to be inside the engine's math.
+    assert c.modeled is False and c.affects == []
