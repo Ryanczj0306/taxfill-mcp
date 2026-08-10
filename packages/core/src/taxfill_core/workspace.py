@@ -152,6 +152,8 @@ class Workspace:
     def reconciliation_path(self) -> Path: return self.root / "RECONCILIATION.md"
     @property
     def checklist_path(self) -> Path: return self.root / "CHECKLIST.md"
+    @property
+    def scenarios_path(self) -> Path: return self.root / "scenarios.json"
 
     # ── profile ──────────────────────────────────────────────────────────────
     def save_profile(self, profile: dict | BaseModel, *, now: str = "") -> None:
@@ -163,6 +165,37 @@ class Workspace:
         if not self.profile_path.exists():
             return None
         return json.loads(self.profile_path.read_text())
+
+    # ── scenario sets (H7: persisted, re-runnable what-ifs) ──────────────────
+    def save_scenario_set(self, name: str, payload: dict, *, now: str = "") -> None:
+        """Store a named scenario set (base income + specs) so a revised fact is
+        one re-run, not a rebuild — N-15's actual interaction. The stored set is
+        INPUTS, never results: results are recomputed on every load, so a set
+        saved before a pack correction silently picks the correction up."""
+        if not name.strip():
+            raise ValueError("scenario set name must be non-empty")
+        sets = self._read_scenario_sets()
+        entry = {"saved_at": sets.get(name, {}).get("saved_at") or now, "updated_at": now, **payload}
+        sets[name] = entry
+        self._write_json(self.scenarios_path, sets)
+        self._touch(now)
+
+    def load_scenario_set(self, name: str) -> dict:
+        sets = self._read_scenario_sets()
+        if name not in sets:
+            raise ValueError(
+                f"no scenario set named {name!r} in the {self.year} workspace — saved sets: "
+                f"{sorted(sets) or '(none)'}"
+            )
+        return sets[name]
+
+    def scenario_set_names(self) -> list[str]:
+        return sorted(self._read_scenario_sets())
+
+    def _read_scenario_sets(self) -> dict:
+        if not self.scenarios_path.exists():
+            return {}
+        return json.loads(self.scenarios_path.read_text())
 
     # ── positions (the audit trail) ─────────────────────────────────────────
     def positions(self) -> list[Position]:
@@ -317,6 +350,7 @@ class Workspace:
                 "open": sum(p.status == "open" for p in positions),
             },
             "reconciliation": self.reconciliation_path.exists(),
+            "scenario_sets": self.scenario_set_names(),
         }
 
     # ── internals ──────────────────────────────────────────────────────────

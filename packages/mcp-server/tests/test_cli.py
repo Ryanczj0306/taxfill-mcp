@@ -66,7 +66,7 @@ def test_tools_json_lists_the_full_surface(capsys):
     assert main(["tools", "--json"]) == 0
     tools = json.loads(capsys.readouterr().out)
     names = {t["name"] for t in tools}
-    assert len(tools) == 22                                   # matches the CI-asserted count
+    assert len(tools) == 23                                   # matches the CI-asserted count
     assert {"list_forms", "fill_form", "render_form"} <= names
     fill = next(t for t in tools if t["name"] == "fill_form")
     assert set(fill["inputSchema"]["required"]) >= {"form", "year", "values", "out_path"}
@@ -75,7 +75,7 @@ def test_tools_json_lists_the_full_surface(capsys):
 def test_tools_human_readable(capsys):
     assert main(["tools"]) == 0
     out = capsys.readouterr().out
-    assert "22 tools" in out and "fill_form —" in out
+    assert "23 tools" in out and "fill_form —" in out
 
 
 def test_call_list_return_is_unwrapped(capsys):

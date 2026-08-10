@@ -43,8 +43,8 @@ State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
 All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
 38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)
 via `hand_fill_worksheet`; `state_scope` tells you which returns are required.
-`calc("state_tax", …)` covers **every** jurisdiction for 2023/2024 and 41 for
-2025 (RI pending) — flat or graduated is the PACK's call, and the split moves by
+`calc("state_tax", …)` covers **every** jurisdiction for 2023, 2024 AND 2025 —
+flat or graduated is the PACK's call, and the split moves by
 year, so never assume and never do state tax arithmetic yourself. Note the year
 mismatch: state KNOWLEDGE spans 2023-2025 but state FORM packs are **2023 only**,
 so a 2024/2025 state return computes but cannot be filled.
@@ -52,7 +52,7 @@ so a 2024/2025 state return computes but cannot be filled.
 ## Tools
 
 `intake_checklist`, `list_document_kinds`, `extract_document`, `residency`,
-`state_scope`, `estimate_refund`, `list_forms`, `get_form_map`, `fetch_blank`,
+`state_scope`, `estimate_refund`, `compare_scenarios`, `list_forms`, `get_form_map`, `fetch_blank`,
 `fill_form`, `verify_form`, `verify_filing`, `render_form`,
 `hand_fill_worksheet`, `calc`, `get_sources`, `workspace_save`,
 `workspace_load`, `workspace_record_position`, `workspace_reconcile`,
