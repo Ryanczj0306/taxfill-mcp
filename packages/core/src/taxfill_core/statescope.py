@@ -219,6 +219,18 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
                         f"do not add it back on the {st} return)."
                         + (f" State note: {treaty_note}" if treaty_note else "")
                     )
+            # DEV_PLAN §7.2: enacted-law deltas ship as typed data, and the scope
+            # answer surfaces every UNMODELED one — the engine will not compute
+            # it, so the caller must know their inputs have to carry it.
+            for change in sk.effective_law_changes:
+                if change.modeled:
+                    continue
+                lookup = f" Resolve via: {change.lookup_path}" if (change.lookup_path or "").strip() else ""
+                warnings.append(
+                    f"Law change NOT modeled by the engine (status {change.status}): "
+                    f"{change.description.strip()}{lookup}"
+                )
+                cites.append(change.citation)
             if sk.citation:
                 cites.append(sk.citation)
         else:

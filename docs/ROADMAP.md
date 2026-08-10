@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,948 tests, all green** — offline 2,843 + live-.gov 105, exit 0;
+Done and on `main` (**2,955 tests, all green** — offline 2,850 + live-.gov 105, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -302,17 +302,20 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       **Remaining:** (a) a 2024→2025 **state form pack** tranche — 46
       packs/year, and the pipeline is NOT ready to make it cheap: `fetch_blank` takes
       a literal URL+digest, only 34 of 46 state URLs carry a substitutable year token,
-      MA needs a Wayback cache-seed every year, and there is no generic assembler;
-      (b) `assemble_state_knowledge.py` is still 2023-hardcoded and reads `/tmp/*.json`
-      inputs that no longer exist, so the 2024/2025 cohorts are **not reproducible from
-      the repo** (`assemble_state_credits.py` gained a `[YEAR]` argument 2026-08-07);
-      (c) DEV_PLAN §7.2 `effective_law_changes` blocks — **0 of 126** state packs and
-      **0 of 8** federal packs carry one. RI 2025 is the case in point: Rhode Island
-      decoupled from four OBBBA (P.L. 119-21) deductions via a brand-new Schedule HR1,
-      and that delta lives in pack `notes` prose instead of a machine-readable block;
-      (d) `knowledge/sources.yaml` still has `states: {}` — 126 state packs ship and
-      `get_sources(..., 'states/xx')` matches nothing, so the freshness protocol is
-      federal-only. This is the upstream blocker for any state TY2026 planning pack.
+      MA needs a Wayback cache-seed every year, and there is no generic assembler.
+      **Done 2026-08-10:** (b) `assemble_state_knowledge.py` now takes `--year` +
+      `--input` (the 2023 /tmp input itself is gone for good — future cohorts commit
+      or reference their fetch input); (c) the `effective_law_changes` schema
+      (which had shipped in `knowledge.py` all along) gained `modeled`/`affects`,
+      `state_scope` surfaces every UNMODELED change as a warning with its citation,
+      and **RI 2025's Schedule HR1 OBBBA add-backs are the first data instance** —
+      moved out of pack prose (remaining: instances for the other 133 packs as their
+      years' law moves; the schema and surface now exist); (d) the per-state source
+      registry: `knowledge/sources_states.yaml` (GENERATED from each state's newest
+      pack's own verified citations by `scripts/assemble_state_sources.py`, byte-
+      equality-tested, hand overrides in `sources.yaml` win) — all **42** income-tax
+      jurisdictions now resolve `get_sources(topic, year, 'states/xx')` with
+      state-shaped retrieval hints, unblocking state TY2026 planning packs.
 - [ ] Community pack-contribution pipeline (the `taxfill introspect` CLI is the
       seed; document the author→audit→PR flow).
 

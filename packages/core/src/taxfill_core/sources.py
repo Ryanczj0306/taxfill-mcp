@@ -96,6 +96,16 @@ def _load_registry(base_dir: str | Path | None) -> dict:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError(f"{path}: sources.yaml must be a YAML mapping, got {type(raw).__name__}")
+    # The per-state registry is GENERATED from the state packs' own verified
+    # citations (scripts/assemble_state_sources.py) and lives in its own file so
+    # the hand-authored registry stays reviewable. Hand-authored entries in
+    # sources.yaml's `states:` mapping win over the generated block per state.
+    generated = base / "sources_states.yaml"
+    if generated.is_file():
+        gen_raw = yaml.safe_load(generated.read_text(encoding="utf-8")) or {}
+        merged = dict(gen_raw.get("states") or {})
+        merged.update(raw.get("states") or {})
+        raw["states"] = merged
     return raw
 
 
@@ -256,12 +266,21 @@ def get_sources(
                 f"is not in the registry (the coverage rule)."
             )
 
-    hint = (
-        f"For tax year {year}: shipped knowledge packs cover the math; for anything they do not cover, "
-        f"open these URLs (irs.gov/.gov only), confirm the figure for {year}, and record the citation in "
-        f"RECONCILIATION.md. Prior-year forms and instructions are at "
-        f"https://www.irs.gov/pub/irs-prior/<form>--{year}.pdf. Refuse to fill any line you cannot cite."
-    )
+    if jurisdiction == "federal":
+        hint = (
+            f"For tax year {year}: shipped knowledge packs cover the math; for anything they do not cover, "
+            f"open these URLs (irs.gov/.gov only), confirm the figure for {year}, and record the citation in "
+            f"RECONCILIATION.md. Prior-year forms and instructions are at "
+            f"https://www.irs.gov/pub/irs-prior/<form>--{year}.pdf. Refuse to fill any line you cannot cite."
+        )
+    else:
+        hint = (
+            f"For tax year {year}: shipped knowledge packs cover the math; for anything they do not cover, "
+            f"open these URLs (state .gov/.us only), find the {year} revision of the same document family "
+            f"(state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start "
+            f"from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. "
+            f"Refuse to fill any line you cannot cite."
+        )
 
     return SourcesResult(
         topic=topic,

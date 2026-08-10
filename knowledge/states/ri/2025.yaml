@@ -69,6 +69,37 @@ citation:
   url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
 starts_from: federal AGI (Federal Form 1040/1040-SR, line 11) — RI-1040 Line 1; RI taxable income then computed
   via RI Schedule M modifications and the new RI Schedule HR1 add-backs, the RI standard deduction, and RI exemptions
+# DEV_PLAN §7.2 effective_law_changes — the typed delta registry (schema shipped in
+# knowledge.py long before any pack used it; this is the FIRST data instance repo-wide,
+# D2c). The same facts were already in this pack's header prose; the typed block is what
+# lets state_scope surface the delta instead of an agent re-reading comments.
+# modeled: false = the engine does NOT compute the HR1 add-backs; the taxable_base a
+# caller passes to calc.state_tax must already include them.
+effective_law_changes:
+- description: >-
+    NEW RI Schedule HR1 — Individual (first RI add-back schedule aimed at P.L. 119-21,
+    the OBBBA): Rhode Island DECOUPLES from four federal business deductions and adds
+    them back to RI income — the business interest expense deduction (IRC 163(j)), the
+    section 174A research and experimental amortization adjustment, depreciation of
+    business assets (IRC 179(b)), and the qualified sound recording production deduction
+    (IRC 181). None of the four touches treaty-exempt income (see treaty_note).
+  status: final_form_published
+  lookup_path: >-
+    RI Schedule HR1 — Individual and its instructions inside the 2025 RI-1040 instructions
+    booklet (the citation URL); the add-back amounts come from the filer's federal return
+    (Forms 8990/4562 and the 174A/181 deductions actually taken).
+  affects:
+  - starts_from
+  - RI Schedule HR1
+  - calc.state_tax taxable_base (caller-supplied — must already include the HR1 add-backs)
+  modeled: false
+  citation:
+    source: >-
+      2025 INSTRUCTIONS FOR FILING RI-1040 (Revised 11/2025) — RI Division of Taxation:
+      WHAT'S NEW FOR TAX YEAR 2025 (p. I-1), the new RI Schedule HR1 P.L. 119-21 add-backs
+      (IRC 163(j) business interest, 174A research and experimental amortization, 179(b)
+      depreciation, 181 qualified sound recording production).
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
 residency:
   summary: 'Resident = an individual domiciled in the State of Rhode Island, OR an individual who maintains a permanent
     place of abode in Rhode Island and spends more than 183 days of the year in Rhode Island (statutory resident).

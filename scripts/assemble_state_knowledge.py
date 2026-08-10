@@ -1,16 +1,27 @@
 #!/usr/bin/env python
-"""Assemble per-state StateKnowledge packs (2023) from the all-states fetch.
+"""Assemble per-state StateKnowledge packs for one tax year from an all-states fetch.
 
-Reads /tmp/states_kb.json (the cited fetch output) and writes
-knowledge/states/<st>/2023.yaml for each state, mapped to the keys the engine
-reads (state_scope: forms/conforms_to_federal_treaties; file_and_pay/
-filing_summary: payment/mailing_addresses/deadlines). Honest provenance: each
-state's `unverified` items ship as a top-level caveat; nothing is asserted that
-the fetch flagged as unconfirmed. Validates every pack against StateKnowledge
-before writing.
+Usage:
+    python scripts/assemble_state_knowledge.py --year 2026 --input /path/to/states_kb.json
+
+The input JSON is the cited fetch output: {"<ST>": {...facts, "citations": [{source, url}],
+"unverified": [...]}} per state — produced by the verbatim-transcription fetch agents
+(never from memory). Writes knowledge/states/<st>/<year>.yaml for each state, mapped
+to the keys the engine reads (state_scope: forms/conforms_to_federal_treaties;
+file_and_pay/filing_summary: payment/mailing_addresses/deadlines). Honest provenance:
+each state's `unverified` items ship as a top-level caveat; nothing is asserted that
+the fetch flagged as unconfirmed. Validates every pack against StateKnowledge before
+writing.
+
+History: the 2023 cohort was assembled by this script from a /tmp fetch whose input
+no longer exists; the 2024/2025 cohorts were authored by per-state verification agents
+directly. The --year/--input parameters (added 2026-08-10, D2b) make future cohorts
+(TY2026+) re-runnable from a preserved input file — commit the input alongside the
+packs or note where it lives.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -22,7 +33,6 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
 from taxfill_core.knowledge import StateKnowledge  # noqa: E402
 
-KB = json.load(open("/tmp/states_kb.json"))
 
 
 def _is_gov_host(url: str) -> bool:
@@ -30,7 +40,7 @@ def _is_gov_host(url: str) -> bool:
     return any(host == t or host.endswith("." + t) for t in ("gov", "mil", "us"))
 
 
-def build(st: str, d: dict) -> dict:
+def build(st: str, d: dict, year: int) -> dict:
     cites = d.get("citations") or []
     # The typed Citation fields require a government host; some DORs serve form
     # PDFs from a CDN (e.g. NM on amazonaws.com) but also cite a .gov page — pick
@@ -41,7 +51,7 @@ def build(st: str, d: dict) -> dict:
         primary = {"source": f"{st} Department of Revenue", "url": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites"}
     pack = {
         "jurisdiction": f"states/{st.lower()}",
-        "tax_year": 2023,
+        "tax_year": year,
         "income_tax": True,
         "conforms_to_federal_treaties": bool(d["conforms_to_federal_treaties"]),
         "treaty_note": d["treaty_basis"],
@@ -76,18 +86,24 @@ def build(st: str, d: dict) -> dict:
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--year", type=int, required=True, help="tax year the fetch covers, e.g. 2026")
+    ap.add_argument("--input", type=Path, required=True, help="path to the cited all-states fetch JSON")
+    args = ap.parse_args()
+    kb = json.loads(args.input.read_text(encoding="utf-8"))
+
     wrote, failed = [], []
-    for st, d in KB.items():
-        pack = build(st, d)
+    for st, d in kb.items():
+        pack = build(st, d, args.year)
         try:
             StateKnowledge.model_validate(pack)
         except Exception as exc:
             failed.append((st, str(exc)[:120]))
             continue
-        out = REPO / "knowledge" / "states" / st.lower() / "2023.yaml"
+        out = REPO / "knowledge" / "states" / st.lower() / f"{args.year}.yaml"
         out.parent.mkdir(parents=True, exist_ok=True)
         header = (
-            f"# {st} state knowledge — tax year 2023. Fetched + cited from the {st} DOR (.gov) and\n"
+            f"# {st} state knowledge — tax year {args.year}. Fetched + cited from the {st} DOR (.gov) and\n"
             f"# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.\n"
             f"# conforms_to_federal_treaties: whether federally treaty-exempt income flows through\n"
             f"# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the\n"
@@ -100,7 +116,7 @@ def main() -> int:
         print(f"FAILED ({len(failed)}):")
         for st, e in failed:
             print(f"  {st}: {e}")
-    nonconf = [st for st, d in KB.items() if d["conforms_to_federal_treaties"] is False]
+    nonconf = [st for st, d in kb.items() if d["conforms_to_federal_treaties"] is False]
     print(f"treaty NON-conforming (warn NRA filers): {sorted(nonconf)}")
     return 0
 
