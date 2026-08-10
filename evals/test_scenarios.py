@@ -796,3 +796,84 @@ def test_eval_q_exempt_f1_fica_withheld_in_error_end_to_end():
     f8316 = load_form_pack("f8316", 2023)
     assert f843.signature is not None and f843.signature.page == 2
     assert f8316.signature is not None and f8316.signature.page == 1
+
+
+# ── (r) the Phase H stack: a mid-year status change and an unmarried household ──
+
+
+def test_eval_r_midyear_status_change_and_unmarried_household():
+    """A hypothetical Phase H fixture end-to-end: F-1 OPT → a cap-exempt H-1B mid-year,
+    an unmarried nonresident partner in the same household, TY2026 budget.
+
+    sub_status, and the FICA hint flips at the employment boundary. H3: the
+    household, on a closed year. H2: the household knows the partner files
+    not a dependent (§152(b)(3)), and the §6013(g) what-if is priced, not guessed.
+    remote segment chases the employer's state, and state_scope raises the
+    Fixture 3, a bare planning-year profile. N-11: a planning year asks for the
+    """
+    from taxfill_core.calc import employee_fica
+    from taxfill_core.schemas.profile import OtherTaxpayer
+
+    # Arrived Aug 2022: exempt years 2022-2026, so TY2025 counts only the H-1B
+    # days (Jul 15-Dec 31 = 170 < 183) — a confirmed NONRESIDENT despite full presence.
+    timeline = [
+        VisaPeriod(status="F-1", sub_status="student", start=date(2023, 8, 24), end=date(2025, 6, 15), provenance=US),
+        VisaPeriod(status="F-1", sub_status="opt", start=date(2025, 6, 16), end=date(2026, 7, 14), provenance=US),
+        VisaPeriod(status="H-1B", sub_status="employment", start=date(2026, 7, 15), provenance=US),
+    ]
+    result = classify(
+        [{"status": p.status, "start": p.start.isoformat(), "end": p.end.isoformat() if p.end else None}
+         for p in timeline],
+        days,
+        2026,
+    )
+    assert result.classification == "nonresident"
+
+    # H1 — the segments carry their own FICA answer: OPT exempt, H-1B not.
+    assert timeline[1].fica_exempt_hint()[0] is True
+    assert timeline[2].fica_exempt_hint()[0] is False
+    fica = employee_fica(
+        [{"wages": 56_000, "fica_exempt": True, "label": "OPT Jan-Jul"},
+         {"wages": 40_000, "fica_exempt": False, "label": "H-1B Jul-Dec"}],
+        year=2026,
+    )
+    assert fica.total_fica > 0  # FICA starts at the boundary, not zero and not full-year
+
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=timeline),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in days.items()}),
+                                                   # (fixture revised)
+        household=Household(
+            marital_status=_ans("unmarried"),
+            hoh_qualifying_person=_ans(False),
+            no_other_taxpayers=_ans(True),
+                                           us_person=False, note="NRA (J-1 scholar)", provenance=US)],
+        ),
+        state_footprint={2025: StateFootprintYear(
+            lived=[ResidencePeriod(state="NJ", start=date(2025, 1, 1), provenance=US)],
+            worked=[WorkPeriod(state="NJ", start=date(2025, 1, 1), remote=True, provenance=US)],
+        )},
+    )
+    cl = intake_checklist(profile, tax_year=2026)
+
+    # H2 — the three push-backs arrive as NOTES, unprompted.
+    assert any("file SEPARATELY" in n for n in cl.notes)
+    assert any("§152(b)(3)" in n for n in cl.notes)
+    assert any("compare_scenarios" in n and "6013" in n for n in cl.notes)
+
+    # H3 — the remote segment chases the employer's state until answered ...
+    ids = {q.id for q in cl.next_questions}
+    assert "state_footprint.remote_employer_state" in ids
+    # N-11 — the planning year asks for the Roth-vs-pre-tax split.
+    assert "retirement.deferral_split" in {q.id for q in planning.next_questions}
+
+    # ... and once answered (NY employer), state_scope raises the convenience
+    # warning without asserting an NY filing.
+    # (fixture revised)
+    planning = intake_checklist(Profile(), tax_year=2026)
+    assert all(s.state != "NY" for s in scope.states)
+    assert any("convenience-of-the-employer" in n and "NY" in n for n in scope.notes)
+    assert "state_footprint.remote_employer_state" not in {
+        # (fixture revised)
+    }

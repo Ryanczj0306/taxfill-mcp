@@ -3,8 +3,10 @@
 > **What this is.** A fill-in-the-blank worksheet a tax-inexperienced user can complete
 > *before* (or during) the agent interview, so the agent gets date-ranged facts instead of
 > one-word answers. Designed from the recorded intake gaps (see
-> [`FIELD_NOTES.md`](FIELD_NOTES.md) — gap N-1/N-2/N-3). Canonical English version: TODO
-> (ROADMAP Phase H, H3).
+> 让 agent 拿到带日期段的事实，而不是一个词的回答。它依据 [`FIELD_NOTES.md`](FIELD_NOTES.md)
+> 里记录的 intake 缺口 N-1/N-2/N-3 设计。英文正式版见 [`INTAKE_WORKSHEET.md`](INTAKE_WORKSHEET.md)；
+> 两个版本都由 `intake_checklist` 通过 `taxfill_core.worksheet` 在运行时生成（本文件是 zh-CN
+(text revised)
 
 **三条规则，比表格本身重要：**
 

@@ -245,6 +245,38 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
             reason=reason, benefits_candidates=benefits, warnings=warnings, citations=cites,
         ))
 
+    # H3 (N-3): the remote-work second-state trap. A work period may carry the
+    # EMPLOYER's state when it differs from where the work was performed; a
+    # convenience-of-the-employer state can source those wages to the employer's
+    # state — a nonresident return the physical footprint alone never reveals.
+    # No pack carries convenience rules yet, so this stays a loud verify-at-DOR
+    # warning, never an asserted must_file.
+    employer_exposure: dict[str, set[str]] = {}
+    for p in footprint.worked:
+        if not p.employer_state:
+            continue
+        emp = p.employer_state.upper()
+        if emp in (p.state.upper(), "ABROAD"):
+            continue
+        info = no_tax.get(emp)
+        if info is not None:  # employer sits in a state that does not tax wages — nothing to source into
+            continue
+        employer_exposure.setdefault(emp, set()).add(p.state.upper())
+    filings_by_state = {f.state: f for f in out}
+    for emp, worked_from in sorted(employer_exposure.items()):
+        warning = (
+            f"Remote-work trap: work performed from {', '.join(sorted(worked_from))} for an employer "
+            f"sitting in {emp}. If {emp} applies a convenience-of-the-employer sourcing rule (New York's "
+            f"is the best-known), it can source those wages to {emp} and require a NONRESIDENT {emp} "
+            f"return that the physical footprint alone never shows — and the W-2's Box 15 often already "
+            f"names {emp}. The knowledge packs do not carry convenience rules yet: verify {emp}'s "
+            f"nonresident wage-sourcing rule at its DOR before assuming no {emp} filing."
+        )
+        if emp in filings_by_state:
+            filings_by_state[emp].warnings.append(warning)
+        else:
+            notes.append(warning)
+
     notes.append("Multi-state income allocation (which dollars belong to which state) is your and the user's "
                  "judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.")
     return StateScopeResult(year=year, states=out, notes=notes)
