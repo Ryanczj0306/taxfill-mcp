@@ -16,8 +16,9 @@ def test_list_all_packs():
     # / Schedule NEC (2023, Tier 2) = 41, + Forms 2441/843/8316 (Phase G) = 44,
     # + the TY2025 set (f1040, scheds 1/1a/2/3/A/B/C, 8843, f1040nr,
     # scheds OI/NEC/A-NR — the OBBBA year, incl. the new Schedule 1-A) = 57,
+    # + f1040nr/sched_oi 2024 (the ported pair, 2026-08-10) = 59,
     # plus the growing state packs.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 57
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 59
     assert any(s.jurisdiction.startswith("states/") for s in allf)
 
 

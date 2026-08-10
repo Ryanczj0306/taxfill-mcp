@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,968 tests, all green** — offline 2,863 + live-.gov 105, exit 0;
+Done and on `main` (**2,984 tests, all green** — offline 2,877 + live-.gov 107, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -38,8 +38,10 @@ re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
-- **Federal form packs — priority set DONE.** **57 packs across 2019–2025**
-  (2019:1, 2020:1, 2021:1, 2022:5, 2023:28, 2024:8, 2025:13). M2 base
+- **Federal form packs — priority set DONE.** **59 packs across 2019–2025**
+  (2019:1, 2020:1, 2021:1, 2022:5, 2023:28, 2024:10, 2025:13 — f1040nr +
+  Schedule OI joined 2024 on 2026-08-10: identical-topology ports off the 2023
+  packs, digests pinned to the 2024 blanks, vision-audited page by page). M2 base
   set + Schedule SE/D/E + Form 8863 + Form 2555 all ship (2023), audited, golden;
   + **all four Phase-D new form types** — **Form 4868** (extension), **Form 1040-ES**
   (estimated-tax vouchers), **Form 1040-X** (amended return, Rev. 2-2024), and
@@ -65,7 +67,7 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**103 form packs total** — 99 `pack.yaml` (57 federal + 42 state) + 4 `handfill.yaml`.
+**105 form packs total** — 101 `pack.yaml` (59 federal + 42 state) + 4 `handfill.yaml`.
 > ⚠️ Every **state** form pack is **TY2023 only**. State *knowledge* now spans
 > 2023–2025, so `calc.state_tax` computes years that no pack can fill — the single
 > largest coverage asymmetry in the repo (see D2).
@@ -300,9 +302,15 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
       the provisional 2026 planning pack shipped 2026-08-04).
       **Remaining:** (a) a 2024→2025 **state form pack** tranche — 46
-      packs/year, and the pipeline is NOT ready to make it cheap: `fetch_blank` takes
-      a literal URL+digest, only 34 of 46 state URLs carry a substitutable year token,
-      MA needs a Wayback cache-seed every year, and there is no generic assembler.
+      packs/year. The pipeline HALF is now ready (2026-08-10):
+      `scripts/scaffold_state_year.py` derives + probes candidate URLs from the
+      base year's packs (**39 of 46** derivable for 2023→2025 — better than the
+      earlier 34-of-46 estimate; the rest, incl. MA's Wayback seed, are visible
+      work-list rows) and `docs/CONTRIBUTING-PACKS.md` documents the per-pack
+      quality gate. The packs themselves remain: each still travels
+      fetch+digest → introspect → vision map → adversarial audit → golden.
+      Federal: **f1040nr + Schedule OI now ship for 2024** (identical-topology
+      ports, vision-audited), closing the "f1040nr has no 2024 pack" gap.
       **Done 2026-08-10:** (b) `assemble_state_knowledge.py` now takes `--year` +
       `--input` (the 2023 /tmp input itself is gone for good — future cohorts commit
       or reference their fetch input); (c) the `effective_law_changes` schema
@@ -316,8 +324,16 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       equality-tested, hand overrides in `sources.yaml` win) — all **42** income-tax
       jurisdictions now resolve `get_sources(topic, year, 'states/xx')` with
       state-shaped retrieval hints, unblocking state TY2026 planning packs.
-- [ ] Community pack-contribution pipeline (the `taxfill introspect` CLI is the
-      seed; document the author→audit→PR flow).
+- [x] Community pack-contribution pipeline — **DONE 2026-08-10**:
+      [`docs/CONTRIBUTING-PACKS.md`](CONTRIBUTING-PACKS.md) documents the full
+      author→audit→PR flow (fetch+digest, `taxfill introspect`, vision field-map,
+      adversarial audit, golden test, gates-on-the-exact-tree), and
+      `scripts/scaffold_state_year.py` turns a year tranche into a managed
+      work-list (derives + optionally probes candidate URLs from the base year's
+      packs: **39 of 46** state URLs are derivable for 2023→2025; the other 7
+      need manual DOR research — visible rows, never silent truncation). The
+      92-pack 2024/2025 state tranche itself remains open (each pack still
+      travels the full quality gate).
 
 **Acceptance:** each new form type audited + golden-tested; any computed line
 backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
