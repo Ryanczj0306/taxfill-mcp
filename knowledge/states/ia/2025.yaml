@@ -239,3 +239,74 @@ tax:
     credit, out-of-state tax credit, SCHOOL DISTRICT SURTAX and EMS surtax (Step 6 — a local percentage of the balance),
     the 15%-of-federal Iowa EITC (line 25), and the child and dependent care / early childhood development credits
     (line 24).'
+# DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the header's
+# "2025 STRUCTURAL CHANGE (SF 2442, enacted May 2024)" block and the tax.notes flat-rate,
+# alternate-tax and low-income-exemption notes); transcription only, no new research and no new
+# sources. modeled: true for the flat conversion because tax.flat_rate already ships 3.8%; the
+# alternate tax and the federal senior-deduction add-back are modeled: false — calc.state_tax
+# computes neither.
+effective_law_changes:
+- description: >-
+    IOWA WENT FLAT (SF 2442, enacted May 2024): the three 2024 brackets (4.40% / 4.82% / 5.70%) are
+    GONE — for tax years beginning on or after 1/1/2025 there is a SINGLE flat rate of 3.8% on Iowa
+    taxable income, printed on the return as IA 1040 line 5 "Iowa tax. Multiply line 4 by 3.8%" and
+    restated in the Expanded Instructions ("Iowa now has a flat tax rate of 3.8%"). The base is still
+    federal taxable income plus Schedule 1 net modifications, and the Step 3 exemption CREDITS
+    ($40/$20/$40) are unchanged.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - IA 1040 Step 5 line 5
+  modeled: true
+  citation:
+    source: >-
+      Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, Line 05 'Iowa Tax' + What's
+      New: 'Iowa now has a flat tax rate of 3.8%' (SF 2442 flat tax begins TY2025); the federal
+      Enhanced Deduction for Seniors is added back for the low-income exemption / alternate tax / tax
+      reduction; ISave 529 deduction limit $5,800 per beneficiary
+    url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
+- description: >-
+    ALTERNATE TAX SURVIVES 2025 AT A REDUCED RATE AND IS THEN REPEALED: all statuses except single
+    may compute the alternate tax at 4.3% (.043) — DOWN from 5.7% in 2024 — on income above $13,500
+    ($32,000 if the taxpayer or spouse was 65 or older on 12/31/2025), entering the SMALLER of that
+    or 3.8% x IA 1040 line 4 on line 5 (status-3 MFS spouses prorate it). The provision is REPEALED
+    for tax years beginning on or after 1/1/2026.
+  status: final_form_published
+  lookup_path: >-
+    2025 IA 1040 Alternate Tax Worksheet (41-145, Rev. 10/17/2025) at the citation URL; single filers
+    use the Iowa Income Tax Reduction Worksheet (41-146) instead.
+  affects:
+  - IA 1040 Step 5 line 5 (alternate tax election)
+  - calc.state_tax (off-model — the op always applies the 3.8% flat rate)
+  modeled: false
+  citation:
+    source: >-
+      Iowa Department of Revenue — 2025 IA 1040 Alternate Tax Worksheet (41-145, Rev. 10/17/2025):
+      line 2 threshold $13,500 ($32,000 if you or your spouse was 65 or older on 12/31/2025); line 4
+      'Multiply line 3 by 4.3% (.043)'; line 5 'Multiply Iowa taxable income from IA 1040, line 4 by
+      3.8% (.038)'; take the SMALLER; single filers use the Iowa Income Tax Reduction Worksheet
+      (41-146) instead
+    url: https://revenue.iowa.gov/media/4386/download?inline
+- description: >-
+    NEW FOR 2025 — the federal "Enhanced Deduction for Seniors" is treated as a personal exemption
+    that must be ADDED BACK when calculating the Iowa low-income exemption, the alternate tax and the
+    tax-reduction worksheet, and it joins the IA 1040 informational reference lines (which became
+    1a-1f, "Do not include lines 1a through 1f"). The ISave 529 deduction limit is $5,800 per
+    beneficiary for 2025.
+  status: final_form_published
+  lookup_path: >-
+    2025 IA 1040 Expanded Instructions, What's New and the low-income exemption / alternate tax /
+    tax reduction instructions at the citation URL; the senior-deduction amount comes from the
+    filer's own federal return.
+  affects:
+  - filing_requirement (the add-back applies when testing the thresholds)
+  - credits (Low-Income Exemption)
+  - IA 1040 line 1f
+  modeled: false
+  citation:
+    source: >-
+      Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, Line 05 'Iowa Tax' + What's
+      New: 'Iowa now has a flat tax rate of 3.8%' (SF 2442 flat tax begins TY2025); the federal
+      Enhanced Deduction for Seniors is added back for the low-income exemption / alternate tax / tax
+      reduction; ISave 529 deduction limit $5,800 per beneficiary
+    url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new

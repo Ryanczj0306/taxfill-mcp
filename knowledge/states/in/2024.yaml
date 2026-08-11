@@ -256,3 +256,77 @@ tax:
     computes the state 3.05% line only; most Indiana filers also owe a county add-on.
   - 'Rate is year-specific: 3.05% applies to tax year 2024 only (2023 was 3.15%) — never carry either rate to another
     year.'
+# effective_law_changes — promoted on 2026-08-11 from this pack's own "CHANGED for 2024" header
+# note, `treaty_note` add-back prose and the booklet's 2024 Changes list quoted in `citation`
+# (DEV_PLAN §7.2). The rate cut is modeled: true (tax.flat_rate IS the changed law); the new
+# Schedule 1 add-back and the military-compensation deduction are modeled: false — both move
+# Indiana AGI, which the caller supplies as taxable_base.
+effective_law_changes:
+- description: >-
+    RATE CUT for tax year 2024 — the state adjusted gross income tax rate drops from 3.15% (2023) to
+    3.05%: the 2024 Form IT-40 Line 8 prints "State adjusted gross income tax: multiply line 7 by
+    3.05% (.0305)" and the booklet's Credit for Taxes Paid to Other States Group A Worksheet multiplies
+    by "3.05% (.0305)" with the worked example "$305 ($10,000 x .0305)". Indiana county income taxes
+    (Schedule CT-40) are separate and unaffected.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - tax.tax_line
+  - Form IT-40 Line 8
+  modeled: true
+  citation:
+    source: >-
+      Indiana DOR — 2024 Form IT-40 (State Form 154 R23/9-24) Line 8 "State adjusted gross income tax:
+      multiply line 7 by 3.05% (.0305)" (Line 7 = Line 5 minus Line 6 exemptions; Line 1 = federal AGI
+      from Form 1040/1040-SR line 11); 2024 Schedule 3: Exemptions (State Form 53997 R15/9-24) Lines 1-6.
+      Second pass: the 2024 IT-40 booklet (SP 265 R25/9-24) Credit for Taxes Paid to Other States Group A
+      Worksheet line B multiplies by "3.05% (.0305)" with the worked example "$305 ($10,000 x .0305)", and
+      the booklet's Schedule 3 line-by-line instructions repeat the $1,000/$2,000, $1,000-per-dependent
+      and $1,500 additional-dependent-child amounts — both passes agree.
+    url: https://forms.in.gov/Download.aspx?id=16344
+- description: >-
+    NEW Schedule 1 add-back for 2024 — the booklet's What's New adds one new add-back, NOL Reduction Due
+    to Debt Discharge, code 155, to Indiana's existing IRC-conformity/decoupling add-back list (bonus
+    depreciation, NOL deduction, out-of-state municipal interest, Section 179, excess business losses,
+    excess federal interest, repatriated dividends, employer student loan payments, conformity codes
+    120/147, etc.). Form IT-40 Line 1 assumes conformity with the Internal Revenue Code as amended and in
+    effect on Jan. 1, 2023. The add-back raises Indiana AGI above federal AGI on Line 5.
+  status: final_form_published
+  affects:
+  - starts_from
+  - Schedule 1 Add-Backs (code 155)
+  - Form IT-40 Line 2 / Line 5
+  - calc.state_tax taxable_base (caller-supplied — must already include the add-back)
+  modeled: false
+  lookup_path: >-
+    2024 IT-40 booklet Schedule 1 Add-Backs instructions, code 155 (NOL Reduction Due to Debt Discharge),
+    at the citation URL; the standalone 2024 Schedule 1 form (forms.in.gov Download.aspx?id=16352) was not
+    opened line-by-line — see `unverified`.
+  citation:
+    source: >-
+      Indiana DOR - 2024 IT-40 Full-Year Resident Individual Income Tax Booklet (SP 265, R25/9-24) - Line 1
+      federal AGI start; Schedule 1 Add-Backs (no treaty add-back); residency definitions; due date April 15,
+      2025; mailing addresses; check payee DOR; INTIME; filing requirement/exemption thresholds; 2024 Changes
+      (new credits, NOL-MOD schedule, 100% active-duty military compensation deduction)
+    url: https://forms.in.gov/Download.aspx?id=16379
+- description: >-
+    100% ACTIVE-DUTY MILITARY COMPENSATION DEDUCTION — named in the 2024 IT-40 booklet's 2024 Changes list
+    (alongside new credits and the new NOL-MOD schedule). This pack captured only the change itself, not the
+    line-level mechanics, so resolve the deduction's scope and the Schedule 2 line from the booklet's 2024
+    Changes / deduction instructions before applying it; it reduces Indiana AGI below federal AGI.
+  status: final_form_published
+  affects:
+  - starts_from
+  - Form IT-40 Schedule 2 (Deductions)
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    2024 IT-40 Full-Year Resident booklet (SP 265, R25/9-24) at the citation URL — the "2024 Changes" page
+    and the Schedule 2 deduction instructions for the active-duty military compensation deduction.
+  citation:
+    source: >-
+      Indiana DOR - 2024 IT-40 Full-Year Resident Individual Income Tax Booklet (SP 265, R25/9-24) - Line 1
+      federal AGI start; Schedule 1 Add-Backs (no treaty add-back); residency definitions; due date April 15,
+      2025; mailing addresses; check payee DOR; INTIME; filing requirement/exemption thresholds; 2024 Changes
+      (new credits, NOL-MOD schedule, 100% active-duty military compensation deduction)
+    url: https://forms.in.gov/Download.aspx?id=16379

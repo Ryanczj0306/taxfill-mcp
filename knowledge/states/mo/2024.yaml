@@ -299,3 +299,54 @@ tax:
     MO-TC).'
   - This pack follows the 2024 Form MO-1040 long form; the MO-1040A short form uses the same 2024 Tax Chart (its instructions
     were the second-pass source) but has its own line layout.
+# effective_law_changes promoted 2026-08-11 from this pack's OWN prose (the HEADLINE 2024
+# CHANGES header comment, the Working Family Tax Credit entry and the tax notes) per
+# DEV_PLAN §7.2 — no new research. The rate cut is modeled: true (it IS the shipped
+# tax.brackets top rate); the WFTC increase is modeled: false because calc.state_tax
+# produces the pre-credit Line 30 tax and never applies credits. The chart's $1,273 income
+# steps are the annual indexing of the same rate schedule, disclosed here only because the
+# top-rate cut and the re-indexing arrived in the same chart.
+effective_law_changes:
+- description: >-
+    Missouri's TOP INDIVIDUAL RATE was cut to 4.8% for tax year 2024, from 4.95% in 2023, and
+    the 2024 Tax Chart's income steps were re-indexed to $1,273 increments (2023: $1,207) —
+    breakpoints $1,273 / $2,546 / $3,819 / $5,092 / $6,365 / $7,638 / $8,911, with the top
+    bracket reading "over $8,911 -> $248 + 4.80% of excess over $8,911". Verified against both
+    the 2024 MO-1040 instructions p.26 and the 2024 MO-1040A short-form instructions p.10
+    (identical chart). Missouri remains graduated, not flat, with a 0% band up to $1,273.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - Form MO-1040 Line 30 (30Y/30S)
+  modeled: true
+  citation:
+    source: >-
+      2024 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI;
+      Form MO-A Part 1 additions Lines 1-6; residency/domicile definitions incl. 183-day
+      statutory-resident and 30-day exception rules; filing requirement thresholds
+      $1,200/$600/standard deduction; April 15, 2025 due date; mailing addresses incl. 2-D
+      barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; rounding rule
+      'Round $32.50 up to $33.00'; 2024 Tax Chart p.26; Line 44 WFTC 20%; Form MO-PTS property
+      tax credit section)
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf
+- description: >-
+    The Missouri WORKING FAMILY TAX CREDIT (state EITC) DOUBLED for 2024 — "The Missouri
+    Working Family Tax Credit (WFTC) is a credit for 20 percent of what your federal earned
+    income credit (EIC) would be under the EIC law as of January 1, 2021" (2024 instructions,
+    Line 44), up from 10 percent in 2023. It stays nonrefundable and limited to the MO tax
+    liability remaining after all other credits, requires Form MO-WFTC plus a copy of the
+    federal return, and is not available to married-filing-separately filers.
+  status: final_form_published
+  affects:
+  - credits (Missouri Working Family Tax Credit)
+  - Form MO-WFTC
+  - Form MO-1040 Line 44
+  modeled: false
+  lookup_path: >-
+    Form MO-WFTC in the 2024 MO-1040 instruction booklet, pp.37-38 (the citation URL); the
+    credit is applied against tax AFTER Line 30, which is where calc.state_tax stops.
+  citation:
+    source: >-
+      Missouri Department of Revenue - 2024 Form MO-1040 instruction booklet, Line 44 Missouri
+      Working Family Tax Credit and Form MO-WFTC
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf

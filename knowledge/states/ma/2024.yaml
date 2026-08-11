@@ -302,3 +302,68 @@ tax:
     Schedule OJC), Schedule CMS credits (line 31), the refundable 40%-of-federal Massachusetts EITC (line 43), the
     $440-per-qualifying-individual Child and Family Tax Credit (line 46, 2024 amount, up from $310), the Senior Circuit
     Breaker credit up to $2,730 (line 44), use tax (line 34), and the Schedule HC health-care penalty (line 35).'
+# DEV_PLAN §7.2 effective_law_changes — promoted on 2026-08-11 from this pack's OWN 'HEADLINE
+# 2024 CHANGES' header, tax.notes and credits prose; no new research. The 4% surtax threshold
+# ($1,053,750) and the Circuit Breaker maximum ($2,730) are annual INFLATION indexations and
+# are deliberately NOT recorded here. All three entries are modeled: false — calc.state_tax
+# computes only the Form 1 line 22 tax on a caller-supplied base, so a repealed line 5
+# deduction, a filing-status mandate, and a credit amount all sit outside it.
+effective_law_changes:
+- description: >-
+    The up-to-$100/$200 deduction for Massachusetts bank interest is REPEALED for tax years beginning
+    on or after 1/1/2024 (Major 2024 Tax Changes). The 2024 Form 1 line 5 is now plain "Massachusetts
+    bank interest" — the former exemption boxes are gone from the form, so the full amount of MA bank
+    interest flows into Part B 5.0% income.
+  status: final_form_published
+  lookup_path: >-
+    2024 Form 1 line 5 and its instruction in the 2024 Form 1 Instructions (Major 2024 Tax Changes) at
+    the citation URL — the amount is the filer's own Massachusetts bank interest, which must already be
+    inside the line 17 + line 20 base supplied to calc.state_tax with no $100/$200 exemption taken.
+  affects:
+  - Form 1 line 5
+  - starts_from
+  - calc.state_tax taxable_base (caller-supplied line 17 + line 20)
+  modeled: false
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR) — Major 2024 Tax Changes (bank-interest deduction repeal; joint-filing
+      mandate TIR 24-4; 4% surtax threshold $1,053,750; Child and Family Tax Credit $440 with TIR 24-13 expansion;
+      Circuit Breaker maximum $2,730), residency definitions, $8,000 threshold, MA gross income definition, Line 3
+      wages from W-2 state wages, Schedule Y Line 4 U.S. tax treaty deduction, Filing Due Dates (April 15, 2025),
+      mailing PO Box 7000 / 7003, mass.gov/masstaxconnect. Retrieved via the Wayback Machine archive of the official
+      mass.gov URL (mass.gov 403s non-browser fetchers).
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+- description: >-
+    NEW joint-filing mandate for 2024 (TIR 24-4): married couples who file a joint FEDERAL return MUST
+    file a joint Massachusetts return, unless an exception applies. This reverses the prior freedom to
+    split MA filing status away from the federal one and changes which return (and which per-status
+    exemption amount) a married couple may use.
+  status: final_form_published
+  affects:
+  - residency
+  - filing_requirement
+  - Form 1 line 1 (filing status)
+  modeled: false
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR) — Major 2024 Tax Changes (bank-interest deduction repeal; joint-filing
+      mandate TIR 24-4; 4% surtax threshold $1,053,750; Child and Family Tax Credit $440 with TIR 24-13 expansion;
+      Circuit Breaker maximum $2,730), residency definitions, $8,000 threshold, MA gross income definition, Line 3
+      wages from W-2 state wages, Schedule Y Line 4 U.S. tax treaty deduction, Filing Due Dates (April 15, 2025),
+      mailing PO Box 7000 / 7003, mass.gov/masstaxconnect. Retrieved via the Wayback Machine archive of the official
+      mass.gov URL (mass.gov 403s non-browser fetchers).
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download
+- description: >-
+    Child and Family Tax Credit rose to $440 for each qualifying individual for tax years beginning on
+    or after Jan 1, 2024 (up from $310 in 2023), still with no cap on the number of qualifying
+    individuals (count in line 46a x $440). NEW for 2024 (TIR 24-13): a NONCUSTODIAL PARENT may claim
+    the credit for a child dependent age 13 or older who is physically or mentally incapable of caring
+    for himself or herself.
+  status: final_form_published
+  affects:
+  - Form 1 line 46 / 46a
+  - Schedule DI
+  - credits
+  modeled: false
+  citation:
+    source: 2024 Form 1 Instructions (MA DOR), Line 46 Child and Family Tax Credit ($440 per qualifying individual;
+      TIR 24-13 noncustodial-parent expansion)
+    url: https://www.mass.gov/doc/2024-form-1-instructions/download

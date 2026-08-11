@@ -205,3 +205,48 @@ tax:
     Eligibility gates on could-have-claimed, not first-actually-claimed — decide it on Schedule 3, not here.'
   - 'Indiana COUNTY income taxes (IT-40 Schedule CT-40, county rates) are NOT modeled — calc.state_tax computes
     the state 3.15% line only; most Indiana filers also owe a county add-on.'
+# effective_law_changes — promoted on 2026-08-11 from this pack's own tax-block citation prose
+# and the Indiana EIC credit entry (DEV_PLAN §7.2). The rate cut is modeled: true (tax.flat_rate
+# IS the changed law); the EIC conformity change is modeled: false — calc.state_tax computes no
+# credits.
+effective_law_changes:
+- description: >-
+    RATE CUT for tax year 2023 — the 2023 IT-40 Full-Year Resident booklet states "The Individual
+    Income Tax Rate is lowered to 3.15% for tax year 2023", and the 2023 Form IT-40 Line 8 prints
+    "State adjusted gross income tax: multiply line 7 by 3.15% (.0315)". This is the state adjusted
+    gross income tax rate only; Indiana county income taxes (Schedule CT-40) are separate.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - tax.tax_line
+  - Form IT-40 Line 8
+  modeled: true
+  citation:
+    source: >-
+      Indiana DOR — 2023 IT-40 Full-Year Resident booklet ("The Individual Income Tax Rate is lowered
+      to 3.15% for tax year 2023"); 2023 Form IT-40 Line 8 "State adjusted gross income tax: multiply
+      line 7 by 3.15% (.0315)" (Line 7 = Line 5 minus Line 6 exemptions; Line 1 = federal AGI from
+      Form 1040/1040-SR line 11); 2023 Schedule 3: Exemptions (State Form 53997 R14/9-23) Lines 1-6.
+    url: https://forms.in.gov/Download.aspx?id=15792
+- description: >-
+    Indiana Earned Income Credit CONFORMED TO THE FEDERAL EIC for 2023 and later — "For 2023 and later
+    Indiana follows all federal EIC requirements and allowances (the prior Indiana-specific modifications
+    no longer apply)". The credit remains 10% of the federal EIC, but eligibility now tracks the federal
+    rules exactly, and Schedule IN-EIC (including dependent information) must be completed and enclosed
+    by all filers claiming it; part-year residents receive an apportioned credit.
+  status: final_form_published
+  affects:
+  - credits
+  - Form IT-40 Schedule 5 Line 6
+  - Schedule IN-EIC
+  modeled: false
+  lookup_path: >-
+    Schedule IN-EIC and the 2023 IT-40 booklet Schedule 5 Line 6 instructions (10% of the federal EIC,
+    with the Form IT-40 line 1 income ceiling of $63,398) — plus Income Tax Information Bulletin #92
+    at the citation URL. calc.state_tax computes only the 3.15% state line, so the credit is applied
+    after it.
+  citation:
+    source: >-
+      Indiana DOR Income Tax Information Bulletin #92, 'Individual Earned Income Tax Credit (EITC)
+      Procedures' (March 2024), corroborated by 2023 IT-40 Booklet (Schedule 5, line 6)
+    url: https://www.in.gov/dor/files/ib92.pdf

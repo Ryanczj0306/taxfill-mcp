@@ -328,3 +328,83 @@ tax:
     The form says 'If zero or less, leave blank' — the engine's max(0, ...) floor matches.
   - 'Rounding: the M1 instructions say ''Round the dollar amounts to the nearest dollar. For example: 129.49 becomes
     129, and 129.50 becomes 130'' (Getting Started) — the engine''s round-half-up to whole dollars matches.'
+# effective_law_changes promoted 2026-08-11 from this pack's OWN prose (the HEADLINE 2024
+# CHANGES header comment, the Renter's Credit / Child Tax Credit entries, and the tax notes)
+# per DEV_PLAN §7.2 — no new research. All three are modeled: false because calc.state_tax
+# computes only the Form M1 line 10 rate-schedule tax: a refundable credit, a line 14 other
+# tax, and an advance-payment election all sit outside the engine. The 2024 bracket indexing
+# (+5.376%), the $14,575/$29,150/$21,900 standard deduction and the $5,050 dependent exemption
+# are INFLATION adjustments already carried in the tax block, so they are not law changes.
+effective_law_changes:
+- description: >-
+    HEADLINE 2024 CHANGE — the RENTER'S CREDIT moved ONTO the income tax return. Beginning
+    with rent paid in tax year 2024, renters claim the credit on the NEW Schedule M1RENT
+    filed WITH Form M1 (flowing to Schedule M1REF, then Form M1 line 22): "Renter's Credit
+    ... complete Schedule M1RENT ... Renters should not complete Form M1PR", which now
+    remains only for homeowners' Homestead Credit Refund. For tax year 2023 the same relief
+    was claimed on the separate Form M1PR return (renter's property tax refund). CRP
+    information must be provided with the return; for 2024 the maximum credit is $2,640 and
+    household income must be less than $75,390.
+  status: final_form_published
+  affects:
+  - credits (Renter's Credit)
+  - Schedule M1RENT
+  - Form M1 line 22
+  modeled: false
+  lookup_path: >-
+    Renter's Credit Tables, pp.25-29 of the 2024 Form M1 instruction booklet (the citation
+    URL), keyed to household income and rent constituting property taxes on Schedule M1RENT;
+    calc.state_tax does not compute credits.
+  citation:
+    source: >-
+      2024 Minnesota Individual Income Tax Return (M1) Instructions — What's new for 2024
+      ('Renter's Credit ... complete Schedule M1RENT ... Renters should not complete Form
+      M1PR') and Line 22 section ('household income was less than $75,390 ... The maximum
+      credit is $2,640'), Renter's Credit Tables pp.25-29, MN Department of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+- description: >-
+    NEW for 2024 — a Minnesota NET INVESTMENT INCOME TAX on individuals with net investment
+    income greater than $1,000,000, computed on the new Schedule NIIT and reported among the
+    Form M1 line 14 other taxes (alongside the M1HOME first-time-homebuyer recapture, the
+    M1529 education-savings-account recapture and the M1LS lump-sum distribution tax). It is
+    an amount ADDED AFTER line 10, so it is outside the rate schedule entirely.
+  status: final_form_published
+  affects:
+  - Schedule NIIT
+  - Form M1 line 14
+  modeled: false
+  lookup_path: >-
+    Schedule NIIT and the Form M1 line 14 instructions in the 2024 M1 instruction booklet
+    (the citation URL); calc.state_tax stops at the line 10 tax and adds no line 14 other taxes.
+  citation:
+    source: >-
+      2024 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted
+      Gross Income; What's new for 2024 (Renter's Credit / Schedule M1RENT, Net Investment
+      Income Tax / Schedule NIIT, advance Child Tax Credit payments, standard deduction
+      $14,575/$29,150/$21,900, dependent exemption $5,050 with phase-out thresholds); Filing
+      Requirements chart; residency (domicile + 183-day/abode); Line 4 Standard Deduction Table
+      and Worksheets A/B; Worksheet for Line 5 — Dependent Exemptions; Line 10 Tax From Table;
+      Tax Tables pp.30-36; Tax Rate Schedules p.37; Renter's Credit Tables pp.25-29; April 15,
+      2025 due date; Mail Station 0010; Payment Voucher System
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf
+- description: >-
+    NEW for 2024 filings — a taxpayer may ELECT ADVANCE PAYMENTS of their 2025 Child Tax
+    Credit on Schedule M1CWFC; electing also makes them eligible for a 2025 Minimum Credit of
+    up to 50% of the prior-year credit, and paper filers who elect mail the return to Mail
+    Station 0015 instead of Mail Station 0010. The credit itself stays at $1,750 per qualifying
+    child under age 18 with no cap on the number of qualifying children.
+  status: final_form_published
+  affects:
+  - credits (Minnesota Child Tax Credit)
+  - Schedule M1CWFC
+  - mailing_addresses (Mail Station 0015 for electing paper filers)
+  modeled: false
+  lookup_path: >-
+    2024 Schedule M1CWFC and its instructions (the citation URL) — the election, the advance
+    payment amounts and the 2025 Minimum Credit are administered by the MN DOR, not computed here.
+  citation:
+    source: >-
+      2024 Schedule M1CWFC, Minnesota Child and Working Family Credits ($1,750 per qualifying
+      child; advance-payment election; phase-out) and Tax Year 2024 Tax Professional Desk
+      Reference Chart (phase-out table), MN Department of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-24.pdf

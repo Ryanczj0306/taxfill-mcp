@@ -225,3 +225,73 @@ tax:
   - The DR 0104 form itself does not print a multiplication — Line 12 says to use the tax table (or the DR 0104PN
     apportionment). The booklet table is built at 4.25% but its $100-band midpoint rounding can differ from raw multiplication
     by a few dollars; the printed table row controls on the filed form.
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the three TY2024 deltas this
+# pack already records — the rate cut (tax.notes "Rate change"), the NEW line 5 business-meals addback
+# (header comment, treaty_note, tax.notes) and the NEW family affordability tax credit (credits block).
+# modeled: true only for the rate cut, which IS tax.flat_rate; the addback and the credit are outside
+# what calc.state_tax computes.
+effective_law_changes:
+- description: >-
+    RATE CUT: Colorado's flat income tax rate fell to 4.25% for 2024, down from 4.4% in 2023. The 2024 DR
+    0104 Book prints it three ways — the Line 12 instructions ("The income tax rate is currently 4.25%"),
+    the "2024 Colorado Income Tax Table with tax rate of 4.25%" header, and the tax-over-$100,000
+    worksheet ("Multiply by 4.25% X .0425").
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - DR 0104 Line 12 (Colorado Tax)
+  - 2024 Colorado Income Tax Table / over-$100,000 worksheet
+  modeled: true
+  citation:
+    source: >-
+      Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book; includes DR 0104
+      form, instructions, 2024 tax table at 4.25%, DR 0104AD, DR 0104CR, DR 0104PN, DR 0900, DR 0158-I)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+- description: >-
+    NEW ADDBACK for 2024: a business meals deduction addback under IRC 274(k) appears as NEW Line 5 of the
+    DR 0104's Additions to Federal Taxable Income — a decoupling from the federal business-meals
+    deduction. It arrives with a line renumbering: additions now run Lines 2-8, subtotal Line 9,
+    subtractions Line 10, Colorado Taxable Income Line 11, Colorado Tax Line 12 (in 2023 taxable income
+    was Line 10 and tax was Line 11).
+  status: final_form_published
+  affects:
+  - starts_from (federal taxable income, DR 0104 Line 1)
+  - DR 0104 Line 5 (business meals deduction addback, IRC 274(k))
+  - DR 0104 Line 11 (Colorado Taxable Income)
+  - calc.state_tax taxable_base (caller-supplied — must already include the Line 5 addback)
+  modeled: false
+  lookup_path: >-
+    2024 DR 0104 Book, Additions to Federal Taxable Income, Line 5 instructions (the citation URL); the
+    added-back amount is the filer's own federal IRC 274(k) business-meals deduction. calc.state_tax
+    multiplies the Line 11 base the caller supplies and computes no additions.
+  citation:
+    source: >-
+      Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Who Must File,
+      Due Date, mailing addresses, line 1 Federal Taxable Income, Additions lines 2-8 (incl. NEW line 5 business meals
+      addback), line 11 Colorado Taxable Income, line 12 Colorado Tax ("The income tax rate is currently 4.25%"),
+      2024 Colorado Income Tax Table ("with tax rate of 4.25%"), tax-over-$100,000 worksheet ("Multiply by 4.25% X
+      .0425"), DR 0104CR credit instructions (COEITC 50%, child care $60,000 limit), TABOR Modified AGI tiers, payment
+      options (payee, DR 0900, Revenue Online)
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
+- description: >-
+    NEW REFUNDABLE CREDIT for 2024: the family affordability tax credit, computed on form DR 0104CN
+    alongside the pre-existing regular Colorado child tax credit. It runs per qualifying child UNDER AGE
+    17 (born 2008 or later) and is unavailable once federal AGI exceeds $85,000 ($95,000 joint), with
+    per-child amounts stepping down by AGI band — the under-6 table from $3,200 (AGI up to $15,000 single
+    / $25,000 joint) down to $120, and the ages 6-16 table from $2,400 down to $90. Full-year and
+    part-year residents only (nonresidents are NOT eligible); part-year residents apportion via DR 0104PN
+    line 34.
+  status: final_form_published
+  affects:
+  - credits (Colorado Child Tax Credit — regular credit plus family affordability tax credit)
+  - DR 0104CN lines 11 / 13
+  - DR 0104CR Part I line 1 (refundable)
+  modeled: false
+  lookup_path: >-
+    2024 Form DR 0104CN, "Age 5 and Under" and "Age 6 to 16" Family Affordability Tax Credit Tables (the
+    citation URL); calc.state_tax computes the DR 0104 Line 12 tax only and applies no Colorado credits.
+  citation:
+    source: >-
+      Colorado DOR, 2024 Form DR 0104CN Colorado Child Tax Credit (11/07/24) — eligibility, Regular Child
+      Tax Credit Table, Age 5 and Under / Age 6 to 16 Family Affordability Tax Credit Tables
+    url: https://tax.colorado.gov/sites/tax/files/documents/DR0104CN_2024.pdf

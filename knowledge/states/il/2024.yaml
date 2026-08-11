@@ -252,3 +252,55 @@ tax:
     the Line 10 instructions.'
   - 'Claimed as a dependent by another: if base income exceeds $2,775, the filer''s own exemption is $0 (Line 10a
     chart rows with the Step 1 Line C box checked).'
+# effective_law_changes — promoted on 2026-08-11 from this pack's own credits prose and the
+# booklet's "What's New for 2024" list quoted in `all_citations` (DEV_PLAN §7.2). Both entries
+# are modeled: false — they are credits against tax / refundable credits, and calc.state_tax
+# computes only the IL-1040 Line 12 flat-rate line.
+effective_law_changes:
+- description: >-
+    NEW Illinois Child Tax Credit for tax year 2024 (Public Act 103-0592), added on Form IL-1040
+    Line 30: available to taxpayers who qualify for the Illinois EITC and have at least one dependent
+    child under the age of 12 as of the last day of 2024, calculated as 20% of the taxpayer's Illinois
+    EITC (2024 Schedule IL-E/EITC Step 5, Line 12 'Multiply the amount on Line 11 by 20% (0.2). This
+    is your Illinois Child Tax Credit'). Refundable — the schedule notes the total Illinois EITC and
+    Child Tax Credit may exceed the amount of tax.
+  status: final_form_published
+  affects:
+  - credits
+  - Form IL-1040 Line 30
+  - Schedule IL-E/EITC Step 5
+  modeled: false
+  lookup_path: >-
+    2024 Schedule IL-E/EITC Step 5 (Lines 11-12) — 20% of the Illinois EITC computed in Step 4 —
+    carried to Form IL-1040 Line 30. calc.state_tax computes only the Line 12 tax, so the credit is
+    applied after it in Step 8 (Payments and Refundable Credit).
+  citation:
+    source: >-
+      Illinois Department of Revenue — 2024 Schedule IL-E/EITC (form, Step 5) and 2024 Form IL-1040
+      Instructions "What's New for 2024?" (Child Tax Credit added on Line 30 per P.A. 103-0592,
+      calculated as 20% of the Illinois EITC)
+    url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2024/individual/il-1040-schedule-il-e-eic.pdf
+- description: >-
+    Volunteer Emergency Worker Credit EXPANDED for 2024 by Public Act 103-0592 to include volunteers
+    registered with the Illinois Emergency Management Agency (IEMA) and Office of Homeland Security
+    (OHS) who volunteered at least 100 hours during the immediately preceding calendar year, in addition
+    to the previously covered non-full-time fire department / fire protection district / fire protection
+    association volunteers. The credit remains $500 per awarded individual ($1,000 if married filing
+    jointly and both spouses were awarded), certificate-based, capped statewide at $5,000,000 and at the
+    first 10,000 qualified applicants.
+  status: final_form_published
+  affects:
+  - credits
+  - Schedule ICR Section C (Lines 10-11)
+  - Form IL-1040 Line 16
+  modeled: false
+  lookup_path: >-
+    2024 Schedule ICR Section C (Lines 10-11) and its instructions (R-12/24) — requires a 2024
+    Volunteer Emergency Worker Credit Certificate issued by IDOR; the nonrefundable total on Schedule
+    ICR Line 13 is carried to Form IL-1040 Line 16 and cannot exceed tax due.
+  citation:
+    source: >-
+      2024 Schedule ICR Instructions (R-12/24) — property tax credit 5%, K-12 credit 25% over $250
+      max $750, Volunteer Emergency Worker Credit $500/$1,000 and IEMA/OHS expansion, $500,000/$250,000
+      AGI limits
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-icr-instr.pdf

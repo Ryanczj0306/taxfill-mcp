@@ -436,3 +436,101 @@ tax:
     are outside the rate schedule: the pension income deduction gained an FAGI phaseout ($125,000 single/MFS, $187,500
     HoH, $250,000 MFJ/surviving spouses) and now excludes certain pre-age-55 distributions; the Maine capital investment
     credit is repealed prospectively; the easy-enrollment health insurance checkoff is repealed.'
+# DEV_PLAN §7.2 effective_law_changes — promoted on 2026-08-11 from this pack's OWN 'HEADLINE
+# 2025 CHANGES' header, the IMPORTANT UPDATE / IMPORTANT CHANGES citation prose and tax.notes;
+# no new research. The re-indexed brackets (COLA 1.274/1.269), the $5,000 -> $5,150 personal
+# exemption (COLA 1.25), the $36,300 itemized cap and the $280 STFC maximum are INFLATION
+# movements under 36 M.R.S. 5403 and are deliberately NOT recorded here. All three entries are
+# modeled: false — the dependent credit is subtracted from TAX, the pension deduction is a
+# Schedule 1S subtraction inside the caller-supplied line 16, and the conformity position is
+# contingent on legislation (the pack's own unverified note), so it must surface as a warning
+# even though the shipped standard deduction already reflects the Dec 31 2024 conformity date.
+effective_law_changes:
+- description: >-
+    Dependent Exemption Tax Credit re-cut for 2025 (L.D. 210; P.L. 2025, c. 388, Pt. Q): "For tax years
+    beginning on or after January 1, 2025, the dependent exemption tax credit amount is doubled for each
+    qualifying dependent of the taxpayer who has not attained six years of age before the end of the
+    taxable year" — $305 for each qualifying child or dependent at least six years of age and $610 for
+    each under six (2024's flat $300 no longer applies). The phaseout was also re-cut to $20 for each
+    $500 (previously $7.50 for each $1,000) by which Maine AGI exceeds $100,000 single / $125,000 head of
+    household / $150,000 MFJ-surviving spouses / $75,000 MFS (2024: $200,000 / $400,000), with those
+    thresholds inflation-adjusted for tax years after 2025.
+  status: final_form_published
+  lookup_path: >-
+    2025 booklet IMPORTANT CHANGES for 2025 ('Dependent exemption tax credit'), the 2025 Tax Year Quick
+    Facts and the Worksheet for Dependent Exemption Tax Credit at the citation URL — the credit is
+    subtracted from TAX on Schedule A, so dependents_count never changes the base calc.state_tax uses.
+  affects:
+  - Form 1040ME Schedule A (refundable line / nonresident nonrefundable line)
+  - credits
+  modeled: false
+  citation:
+    source: 2025 MAINE Individual Income Tax Booklet — IMPORTANT CHANGES for 2025, 'Dependent exemption tax credit'
+      ('For tax years beginning on or after January 1, 2025, the dependent exemption tax credit amount is doubled
+      for each qualifying dependent of the taxpayer who has not attained six years of age before the end of the taxable
+      year' and the $20-per-$500 phaseout over $100,000 / $125,000 / $150,000 / $75,000), and 2025 Tax Year Quick
+      Facts ('up to $305 for each qualifying child or dependent that is at least six years of age, or $610 for each
+      qualifying child or dependent that is under six years of age')
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+- description: >-
+    Maine DECOUPLES from the federal One Big Beautiful Bill Act for 2025: "Under current law, Maine
+    conforms to the Internal Revenue Code (the 'Code') as of December 31, 2024", so the OBBBA (P.L.
+    119-21, enacted July 4, 2025) changes — including its standard-deduction increase to
+    $15,750/$31,500/$23,625 — do NOT apply in Maine for 2025 (Maine's 2025 standard deduction stays at
+    the pre-OBBBA $15,000 single/MFS, $30,000 MFJ/QSS, $22,500 HoH). OBBBA conformity is deferred to the
+    Second Regular Session of the 132nd Legislature, and the Governor's P.L. 2025, c. 336 directive
+    adopted federal treatment for only five items: qualified disaster losses, qualified farmland sales,
+    IRC 179 expensing, the business interest deduction, and research and experimental expenditures. The
+    booklet flags that the 2025 returns and instructions are contingent on the Legislature enacting the
+    conforming legislation.
+  status: final_form_published
+  lookup_path: >-
+    2025 booklet IMPORTANT UPDATE (conformity to the Code as of December 31, 2024; P.L. 2025, c. 336
+    adopt-ins) at the citation URL, plus the MRS conformity documents and Maine Tax Alerts — re-check
+    before relying on the shipped standard deduction late in the season, since retroactive OBBBA
+    conformity would change it.
+  affects:
+  - tax.standard_deduction
+  - Form 1040ME line 17
+  - Maine Schedule 1A / 1S modifications (the five P.L. 2025, c. 336 adopt-in items)
+  modeled: false
+  citation:
+    source: '2025 MAINE Individual Income Tax Booklet (Form 1040ME general instructions with cover page) — IMPORTANT
+      UPDATE (Maine conforms to the Code as of December 31, 2024; OBBBA conformity deferred to the Second Regular Session
+      of the 132nd Legislature, with the Governor directing limited administrative adopt-ins under P.L. 2025, c. 336),
+      IMPORTANT CHANGES for 2025, Who must file, residency and safe harbors, ''Form 1040ME due date: Wednesday, April
+      15, 2026'', whole-dollar rounding, payee ''Treasurer, State of Maine'' and the Maine Tax Portal at revenue.maine.gov,
+      Line 13/13a personal-exemption count chart, Line 17 Deduction + Maine Standard Deduction Chart and Worksheet for
+      Standard/Itemized Deductions, Line 18 Exemption (''Multiply the amount shown on line 13 by $5,150'') + Worksheet
+      for Phaseout of Personal Exemption Deduction Amount, 2025 Tax Year Quick Facts, the 2025 MAINE INCOME TAX TABLE,
+      and the 2025 TAX RATE SCHEDULES'
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+- description: >-
+    The pension income deduction gained an FAGI PHASEOUT for 2025 ($125,000 single/MFS, $187,500 head of
+    household, $250,000 MFJ/surviving spouses) and now EXCLUDES certain pre-age-55 distributions
+    (IMPORTANT CHANGES for 2025). Two further 2025 repeals from the same list: the Maine capital
+    investment credit is repealed prospectively, and the easy-enrollment health insurance checkoff is
+    repealed.
+  status: final_form_published
+  lookup_path: >-
+    2025 booklet IMPORTANT CHANGES for 2025 (pension income deduction phaseout $125,000/$187,500/$250,000
+    and pre-age-55 distribution exclusion) and the Schedule 1S instructions at the citation URL — the
+    pension deduction is a line 15b subtraction, so take it on the form before supplying line 16 Maine AGI
+    as taxable_base.
+  affects:
+  - Form 1040ME line 15b
+  - Maine Schedule 1S
+  - calc.state_tax taxable_base (caller-supplied line 16 Maine AGI)
+  - credits (Maine capital investment credit, repealed prospectively)
+  modeled: false
+  citation:
+    source: '2025 MAINE Individual Income Tax Booklet (Form 1040ME general instructions with cover page) — IMPORTANT
+      UPDATE (Maine conforms to the Code as of December 31, 2024; OBBBA conformity deferred to the Second Regular Session
+      of the 132nd Legislature, with the Governor directing limited administrative adopt-ins under P.L. 2025, c. 336),
+      IMPORTANT CHANGES for 2025, Who must file, residency and safe harbors, ''Form 1040ME due date: Wednesday, April
+      15, 2026'', whole-dollar rounding, payee ''Treasurer, State of Maine'' and the Maine Tax Portal at revenue.maine.gov,
+      Line 13/13a personal-exemption count chart, Line 17 Deduction + Maine Standard Deduction Chart and Worksheet for
+      Standard/Itemized Deductions, Line 18 Exemption (''Multiply the amount shown on line 13 by $5,150'') + Worksheet
+      for Phaseout of Personal Exemption Deduction Amount, 2025 Tax Year Quick Facts, the 2025 MAINE INCOME TAX TABLE,
+      and the 2025 TAX RATE SCHEDULES'
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf

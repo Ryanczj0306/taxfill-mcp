@@ -228,3 +228,64 @@ tax:
     over $105,000; Single/MFS up to $20,000 ... over $70,000) — the 2025 D-401 Child Deduction Table is unchanged
     from 2024; take it from the Child Deduction Worksheet, not from a per-dependent exemption.'
   - North Carolina has no personal or dependent exemptions.
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header
+# prose and tax.notes (nothing researched anew; every phrase below is already in this file).
+# modeled: true for the rate cut because tax.flat_rate already carries 4.25%; modeled: false
+# for the OBBBA non-conformity because the engine cannot stop a caller from folding federal
+# 2025 standard/itemized/Schedule 1-A amounts into the base it supplies.
+effective_law_changes:
+- description: >-
+    RATE CUT for tax year 2025: North Carolina's individual income tax rate dropped to 4.25%
+    (0.0425), down from 4.5% in 2024 and 4.75% in 2023. The 2025 D-401 "What is the Tax Rate?"
+    states "For tax year 2025, the individual income tax rate is 4.25%. To calculate your North
+    Carolina tax liability, multiply your North Carolina taxable income by 4.25% (0.0425)", and
+    the 2025 Form D-400 Line 15 prints "Multiply Line 14 by 4.25% (0.0425). If zero or less,
+    enter a zero." The NC Standard Deduction Chart ($12,750/$25,500/$12,750/$19,125) and the
+    Child Deduction Table are UNCHANGED from 2024 — this is a rate change only.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - tax.tax_line
+  - Form D-400 Line 15
+  modeled: true
+  citation:
+    source: 2025 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must
+      File, residency/183-day presumption), When Must I File (April 15, 2026), What is the Tax Rate? (4.25% / 0.0425),
+      Where Do I File / How Can I Pay (mailing addresses, payee, "2025 D-400" memo, $2-per-$100 card fee), Schedule
+      S federal-AGI starting point and the January 1, 2023 IRC conformity date (with the express statement that OBBBA
+      changes do not apply for 2025), Line 7 Additions / Schedule S Part A Lines 1-16, Line 10 Child Deduction Worksheet
+      and Child Deduction Table, Line 11 NC Standard Deduction Chart, Line 15 tax computation, Filing Requirements
+      Chart (p.6), Form D-400TC Part 1 out-of-state credit instructions
+    url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+- description: >-
+    NEW DISCLOSURE for 2025 — NC DECOUPLES from the 2025 federal reconciliation act ("OBBBA"):
+    the 2025 booklet keeps the January 1, 2023 IRC conformity date ("The starting point for North
+    Carolina taxable income is federal adjusted gross income as of January 1, 2023") and states
+    expressly that the federal changes made by the reconciliation act do NOT apply for NC tax year
+    2025 — NC "does not conform to the federal standard deduction amount, to the federal itemized
+    deduction amount, or to the federal additional deductions reported on federal Schedule 1-A."
+    Post-2023 federal changes do not apply unless NC specifically conforms; never substitute a
+    federal 2025 standard deduction for the NC chart amount. NC also did not adopt IRC 168(k) or
+    the new IRC 168(n) (Schedule S Part A Line 3 adds back 85% of bonus depreciation).
+  status: final_form_published
+  affects:
+  - starts_from
+  - treaty_note
+  - tax.standard_deduction
+  - Form D-400 Schedule S Part A
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    2025 D-401 Schedule S instructions and the Form D-400 Schedule S, Part A "Additions to Federal
+    Adjusted Gross Income" line list (Lines 1-16) inside the cited booklet; the add-back amounts
+    come from the filer's own federal return, and the NC deduction amounts come from the D-401
+    Line 11 NC Standard Deduction Chart — not from any federal 2025 figure.
+  citation:
+    source: 2025 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must
+      File, residency/183-day presumption), When Must I File (April 15, 2026), What is the Tax Rate? (4.25% / 0.0425),
+      Where Do I File / How Can I Pay (mailing addresses, payee, "2025 D-400" memo, $2-per-$100 card fee), Schedule
+      S federal-AGI starting point and the January 1, 2023 IRC conformity date (with the express statement that OBBBA
+      changes do not apply for 2025), Line 7 Additions / Schedule S Part A Lines 1-16, Line 10 Child Deduction Worksheet
+      and Child Deduction Table, Line 11 NC Standard Deduction Chart, Line 15 tax computation, Filing Requirements
+      Chart (p.6), Form D-400TC Part 1 out-of-state credit instructions
+    url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open

@@ -279,3 +279,37 @@ tax:
     by the Schedule S line B23 nonresident allocation percentage (K-40 Lines 9-10) to get nonresident tax.'
   - 'No mid-year 2023 rate change: the 3.1%/5.25%/5.7% schedule in the final 2023 booklet is the one the 2023 filing
     season used.'
+# effective_law_changes — promoted on 2026-08-11 from this pack's own tax-block note on the
+# Disabled Veteran Personal Exemption (DEV_PLAN §7.2). One entry only: the pack's other 2023
+# prose records NON-changes (the notes state explicitly that there was no mid-year 2023 rate
+# change). modeled: false — the engine applies $2,250 per exemption but cannot know the filer
+# qualifies, so the extra exemption must arrive in exemptions_count.
+effective_law_changes:
+- description: >-
+    NEW Disabled Veteran Personal Exemption for tax year 2023: an additional $2,250 Kansas exemption for
+    an honorably discharged veteran certified by the VA as receiving disability compensation at the 100%
+    rate (permanent, service-sustained). It is an extra exemption in the K-40 'Total Kansas exemptions'
+    box, taken at the same $2,250 per exemption on K-40 Line 5 — a base reduction subtracted from Kansas
+    AGI before the rate schedule applies, on top of the taxpayer/spouse/dependent exemptions (and the
+    extra head-of-household exemption).
+  status: final_form_published
+  affects:
+  - tax.exemptions.personal
+  - Form K-40 Total Kansas exemptions box
+  - Form K-40 Line 5
+  modeled: false
+  lookup_path: >-
+    2023 Individual Income Tax Booklet (ip23.pdf, the citation URL) — K-40 Line 5 exemption allowance
+    instructions and the Disabled Veteran Personal Exemption qualification (VA certification at the 100%
+    disability-compensation rate). It is NOT auto-applied: add 1 to exemptions_count only if the filer
+    qualifies, and the engine then allows the $2,250.
+  citation:
+    source: >-
+      Kansas DOR, 2023 Individual Income Tax booklet (ip23.pdf): 2023 Tax Computation Worksheet (p. 32,
+      printing the 3.1%/5.25%/5.7% schedule for Married Filing Joint and for Single/Head of Household/Married
+      Filing Separate); 2023 Kansas Tax Table 'for taxable income to $100,000' (pp. 25-31); K-40 Instructions
+      — Line 4 'Kansas Standard Deduction' chart and 'WORKSHEET - Standard Deduction for People 65 or Older
+      and/or Blind' (p. 6), Line 5 exemption allowance ($2,250 per exemption, p. 7), Line 8 tax-table/worksheet
+      mandate (p. 7), Filing Status QSS-to-HOH instruction (p. 6); 2023 Form K-40 lines 1-12 and exemption
+      boxes (booklet forms section, pp. 19-20)
+    url: https://www.ksrevenue.gov/pdf/ip23.pdf

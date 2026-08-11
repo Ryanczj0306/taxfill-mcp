@@ -261,3 +261,30 @@ tax:
     — line 20 reads ''Tax from worksheet. See instructions, page 9'', line 19 reads ''Idaho taxable income. Subtract
     line 18 from line 17. If less than zero, enter zero'', and the line-16 margin prints the standard deduction amounts
     ($14,600 single/MFS, $21,900 HOH, $29,200 MFJ).'
+# DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the header's
+# "HEADLINE 2024 CHANGE (What's New)" block and the tax.notes "2024 CHANGE — RATE CUT AND RE-INDEXED
+# FLOOR" note); transcription only, no new research and no new sources. modeled: true because
+# tax.brackets already ships the 5.695% rate and the re-indexed $4,673/$9,346 zero-floor.
+effective_law_changes:
+- description: >-
+    TAX RATE REDUCTION for 2024 — "What's New for 2024 — Tax Rate Reduction: Effective January 1,
+    2024, the individual income tax rate is 5.695%" (p.1), CUT from 2023's 5.8%. The Line 20
+    worksheet's zero-floor subtraction amounts were re-indexed with it to $4,673 (single/MFS) and
+    $9,346 (MFJ/HOH/QSS), from 2023's $4,489/$8,978, and the 2024 worksheet now prints an explicit
+    "If zero or less, enter zero" on its final line. Do not use the 2023 rate or amounts for 2024.
+    (The booklet's What's New names no session law for the cut — see this pack's `unverified` note on
+    the missing statutory cite.)
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - Form 40 line 20 Tax Worksheet (and the identical Form 43 line 42 worksheet)
+  modeled: true
+  citation:
+    source: >-
+      2024 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046,
+      10-23-2024) — What's New for 2024 ('Effective January 1, 2024, the individual income tax rate is
+      5.695%'; IRC conformity as of January 1, 2024), Who Must File and resident filing requirements,
+      Which Form to Use, When to File and Pay (April 15, 2025), Where to File mailing addresses, Line
+      20 Tax Worksheet ($4,673/$9,346 subtraction amounts), Standard Deduction Worksheet
+      ($14,600/$29,200/$21,900), grocery credit and other credit instructions
+    url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf

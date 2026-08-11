@@ -274,3 +274,64 @@ tax:
     Schedule OJC), Schedule CMS credits (line 31), the refundable 40%-of-federal Massachusetts EITC (line 43), the
     $310-per-qualifying-individual Child and Family Tax Credit (line 46, 2023 amount), the Senior Circuit Breaker
     credit up to $2,590 (line 44), use tax (line 34), and the Schedule HC health-care penalty (line 35).'
+# DEV_PLAN §7.2 effective_law_changes — promoted on 2026-08-11 from this pack's OWN prose
+# (the tax.notes '4% surtax' CRITICAL note and the credits entries' 2023 Tax Relief
+# legislation language); no new research. All three are modeled: false — calc.state_tax
+# computes only the Form 1 line 22 tax on 5.0% income, so the surtax (line 28b) and both
+# credit changes (lines 43/46) fall outside what the engine computes.
+effective_law_changes:
+- description: >-
+    NEW 4% surtax on high taxable income, first effective for 2023: "For tax years beginning on or
+    after January 1, 2023, MGL ch 62 taxpayers must pay an additional 4% (4% surtax) on taxable income
+    over a certain threshold. In 2023, this threshold is $1,000,000" (annually inflation-adjusted
+    thereafter). The surtax is computed on the new Schedule 4% Surtax and entered on Form 1 line 28b,
+    and it applies to the SUM of all classes of taxable income (5.0% Part B income PLUS Schedule B
+    8.5%/12% income PLUS Schedule D long-term capital gains) over $1,000,000 — it is NOT a marginal
+    bracket of the 5.0% schedule.
+  status: final_form_published
+  lookup_path: >-
+    Schedule 4% Surtax (line 7) and the 2023 Form 1 instructions' 4% surtax section / TIR 23-12 at the
+    citation URL — the threshold is annually inflation-adjusted, so resolve the year's figure there
+    rather than reusing the 2023 $1,000,000.
+  affects:
+  - Form 1 line 28b
+  - Schedule 4% Surtax
+  - calc.state_tax (line 22 only — the surtax is additional tax the engine does not compute)
+  modeled: false
+  citation:
+    source: 2023 Form 1 Instructions (MA DOR) — residency definitions, $8,000 threshold, MA gross income definition
+      incl. items not federally taxed, Line 3 wages from W-2 state wages with sec.911 add-back, Schedule Y Line 4
+      U.S. tax treaty deduction, IRC conformity (general non-conformity to post-1/1/2022 IRC), Filing Due Dates (April
+      17, 2024), mailing PO Box 7000 / 7003, payee 'Commonwealth of Massachusetts', mass.gov/masstaxconnect
+    url: https://www.mass.gov/doc/2023-form-1-instructions/download
+- description: >-
+    NEW refundable Child and Family Tax Credit, created by the 2023 Tax Relief legislation: $310 for
+    each qualifying individual for tax years beginning on or after Jan 1, 2023, with NO cap on the
+    number of qualifying individuals. It REPLACES the prior Household Dependent Care Credit /
+    Dependent Member of Household credit and removes the former two-dependent cap. Claimed on Form 1
+    line 46 (dependents reported on Schedule DI); cannot be claimed by a full-year nonresident or by
+    married taxpayers filing separate MA returns.
+  status: final_form_published
+  affects:
+  - Form 1 line 46
+  - Schedule DI
+  - credits
+  modeled: false
+  citation:
+    source: MA DOR Child and Family Tax Credit page; Governor's Budget Tax Expenditure Budget item 1.628 (Child
+      and Family Tax Credit); 2023 Massachusetts Tax Cuts Legislation
+    url: https://www.mass.gov/info-details/massachusetts-child-and-family-tax-credit
+- description: >-
+    Massachusetts Earned Income Tax Credit raised to 40% of the federal earned income credit
+    "effective for tax years beginning on or after Jan 1, 2023" (2023 Massachusetts Tax Cuts
+    legislation). Part-year residents prorate: 40% of the federal credit x (MA-resident days / total
+    days in year). Claimed on Form 1 line 43 (refundable credits section, totaled on line 48).
+  status: final_form_published
+  affects:
+  - Form 1 line 43
+  - credits
+  modeled: false
+  citation:
+    source: MA DOR Earned Income Tax Credit (EITC) page; Governor's Budget Tax Expenditure Budget item 1.605 (Earned
+      Income Credit); 2023 Massachusetts Tax Cuts Legislation
+    url: https://www.mass.gov/info-details/massachusetts-earned-income-tax-credit-eitc

@@ -279,3 +279,52 @@ tax:
   - 'Not modeled: the Line 47 tax from recapture of Form 301 credits (added to the Line 46 tax at Line 48), the Form
     140-SBI small-business-income election (lines 13-14 remove SBI from the Form 140 base and tax it on a separate
     return), and every Arizona credit (lines 49-58).'
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the two TY2025 deltas this
+# pack's header comment and tax.notes record as CHANGED (the standard deduction's statutory jump to the
+# OBBBA-raised federal figures, and the Line 44 charitable increase stepping 33% -> 34%). modeled: true
+# for the first (tax.standard_deduction ships the 2025 amounts) and false for the second (the Line 44
+# increase is computed on the form's page-3 worksheet, which calc.state_tax does not apply).
+effective_law_changes:
+- description: >-
+    Arizona's standard deduction is statutorily linked to the FEDERAL standard deduction, so for 2025 it
+    jumped to the federal amounts as RAISED by the federal reconciliation act ("OBBBA") — $15,750 single
+    and married filing separately, $31,500 married filing joint, $23,625 head of household (from
+    $14,600/$29,200/$21,900 in 2024). These are not the pre-OBBBA $15,000/$30,000/$22,500 projections.
+    The same figures also reset the "Do You Have to File?" gross-income filing thresholds. The 2.5% flat
+    rate and the lines 38-41 exemptions ($2,100/$1,500/$2,300/$10,000) are unchanged.
+  status: final_form_published
+  affects:
+  - tax.standard_deduction
+  - Form 140 Line 43 (Your Standard Deduction chart)
+  - filing_requirement (the same amounts set the gross-income thresholds)
+  modeled: true
+  citation:
+    source: >-
+      AZ DOR — 2025 Form 140 Resident Personal Income Tax Return Instructions (line 12 = Federal adjusted gross
+      income; additions lines 14-18; exemptions lines 38-41; standard deduction chart $15,750/$31,500/$15,750/$23,625;
+      line 44 increased standard deduction 34%; line 46 tax = 2.5% (.025); mailing addresses; make check payable to
+      Arizona Department of Revenue; AZTaxes.gov; April 15, 2026 due date)
+    url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
+- description: >-
+    The Increased Standard Deduction for charitable contributions (Form 140 Line 44) rose to 34% (.34) of
+    the qualified charitable contributions a non-itemizer could have deducted had they itemized — RAISED
+    for 2025 from 33% (2024), and 31% in 2022. Claimed via the Form 140 page-3 worksheet (line 7C) with
+    box 44C checked, or the increase may be denied.
+  status: final_form_published
+  affects:
+  - Form 140 Line 44 (increased standard deduction for charitable contributions)
+  - Form 140 page-3 Standard Deduction Increase for Charitable Contributions worksheet, line 7C
+  - calc.state_tax taxable_base (the op subtracts only the shipped Line 43 standard deduction)
+  modeled: false
+  lookup_path: >-
+    2025 Form 140 instructions, Line 44, and the page-3 Standard Deduction Increase for Charitable
+    Contributions worksheet on the 2025 Form 140 itself
+    (https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf) — the amount depends
+    on the filer's own qualified charitable contributions.
+  citation:
+    source: >-
+      AZ DOR — 2025 Form 140 Resident Personal Income Tax Return Instructions (line 12 = Federal adjusted gross
+      income; additions lines 14-18; exemptions lines 38-41; standard deduction chart $15,750/$31,500/$15,750/$23,625;
+      line 44 increased standard deduction 34%; line 46 tax = 2.5% (.025); mailing addresses; make check payable to
+      Arizona Department of Revenue; AZTaxes.gov; April 15, 2026 due date)
+    url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf

@@ -449,3 +449,109 @@ tax:
     raised to $1,200 per child). The DC Child Tax Credit is REPEALED for 2025.'
   - 'ROUNDING: the D-40 and Schedule I instruct dollars-only entries (''Dollars only, do not enter cents''); the engine''s
     round-half-up to whole dollars matches for the Calculation I computation.'
+# DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the
+# header's "2025 CHANGES vs the 2024 pack" list, the Standard Deduction / filing_requirement
+# notes and tax.notes); transcription only, no new research and no new sources. modeled: true
+# ONLY for the standard-deduction decoupling (tax.standard_deduction already ships
+# $15,000/$22,500/$30,000); the OBBBA add-backs and the credit changes are modeled: false
+# because calc.state_tax computes neither, so state_scope surfaces them as warnings. Three
+# further 2025 deltas the pack's prose records fell outside the 3-entry cap: DC's own D-40
+# filing threshold, the Schedule H maximum/limit increases, and the Schedule ELC increase.
+effective_law_changes:
+- description: >-
+    DC DECOUPLED ITS STANDARD DEDUCTION FROM FEDERAL LAW: "Starting with tax year 2025, the
+    District has established its own standard deduction amounts which are different from the
+    federal standard deduction amounts" — $15,000 (single, dependent filers, married/registered
+    domestic partner filing separately), $22,500 (head of household), $30,000 (married/RDP filing
+    jointly, qualifying widow(er) with dependent children, and married/RDP filing separately on the
+    same return), up from 2024's $14,600/$21,900/$29,200. These are DC's OWN statutory amounts, not
+    the 2024 pack's "increasing based on the federal law" mechanism: the D.C. Council's November
+    2025 law explicitly refuses the OBBBA "Higher federal basic standard deduction", so the 2025 DC
+    amounts deliberately do NOT match the OBBBA federal figures. The additional age/blind standard
+    deduction rose to $1,600 per checkbox ($2,000 if single, head of household or a dependent filer,
+    up from $1,550/$1,950), and the income-dependent "Standard Deduction Worksheet for Dependent
+    Filers" is GONE — a 2025 dependent filer simply takes the $15,000 basic amount.
+  status: final_form_published
+  affects:
+  - tax.standard_deduction
+  - Form D-40 Lines 17/18
+  - Schedule S, Calculation G-1 (additional age/blind amounts — not modeled)
+  modeled: true
+  citation:
+    source: >-
+      DC OTR — 2025 D-40 Individual Income Tax Forms and Instructions (Booklet PDF,
+      2025_D40_Book_Final_wLinks_030526_v1.0.pdf): Federal Tax Changes and the District (OBBBA
+      non-conformity), Tax Year 2025 Changes, New for 2025 Income Tax Returns (filing deadline
+      April 15, 2026; DC's own basic standard deduction $15,000/$22,500/$30,000; DC EITC 100% of
+      federal; childless EITC max $649; Schedule H max $1,425; Schedule ELC max $1,200), Who must
+      file plus the 2025 DC Individual Income Tax Filing Requirements Chart (p. 7), When are your
+      taxes due (April 15, 2026), mailing addresses (PO Box 96145 refund/no money due; PO Box 96169
+      with payment), check payable to DC Treasurer, Reminders Income Tax Rate Table + Calculation
+      I/Tax Rate Schedule (p. 20), Schedule I Calculation A additions (no treaty add-back) and
+      Calculation B subtractions, D-40 Lines 4/16/17/18/19/20
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+- description: >-
+    OBBBA NON-CONFORMITY — DC DECOUPLED FROM FEDERAL LAW: "In July 2025, the U.S. Congress passed
+    the One Big Beautiful Bill Act (OBBBA)... In November 2025, the D.C. Council passed a new law
+    limiting the number of OBBBA tax changes that will affect District taxpayers." DC will NOT
+    recognize the higher federal basic standard deduction, the tips / overtime / car-loan-interest
+    deductions, the enhanced senior deduction, or the QSBS capital-gain exclusion. For 2025 the
+    booklet ENUMERATES the open-ended Schedule I, Calculation A, Line 7 "Other" additions:
+    interest on obligations of other states and their political subdivisions (NEW for 2025),
+    capital gains on qualified small business stock, and the federal Schedule 1-A deductions DC
+    disallows (tips, overtime, car-loan interest, enhanced senior deduction). DC AGI therefore
+    diverges from federal AGI for far more filers than in 2024.
+  status: final_form_published
+  lookup_path: >-
+    Schedule I, Calculation A, Line 7 ("Other. Attach a Calculation A, Line 7 Statement") and its
+    2025 booklet instructions at the citation URL; the add-back amounts come from the filer's own
+    federal return (Schedule 1-A tips/overtime/car-loan-interest/senior deduction, QSBS gain
+    exclusion, out-of-state municipal bond interest).
+  affects:
+  - starts_from
+  - Schedule I, Calculation A, Line 7
+  - calc.state_tax taxable_base (caller-supplied — must already include the Line 7 additions)
+  modeled: false
+  citation:
+    source: >-
+      DC OTR — 2025 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Federal Tax
+      Changes and the District (OBBBA items DC will not recognize), Tax Year 2025 Changes (DC EITC
+      100%; Child Tax Credit repealed; out-of-state municipal bonds taxable; FAS 109 delayed to
+      after 12/31/2029; own D-40 filing requirement; Schedule H max $1,425 with limits
+      $66,000/$90,000), New for 2025 (deadline April 15, 2026; DC basic standard deduction
+      $15,000/$22,500/$30,000; additional standard deduction $1,600/$2,000; childless EITC max $649
+      and investment-income limit $11,950; Schedule ELC max $1,200; D-40B now electronic), Reminders
+      Income Tax Rate Table (in effect since TY2022), 2025 Filing Requirements Chart p. 7, Standard
+      Deduction section, Calculation I/Tax Rate Schedule p. 20, Calculation F itemized limitation,
+      Calculation G-1 additional standard deduction, tax tables pp. 93-102, mailing addresses, DC
+      Treasurer payee, Schedule I Calculations A/B
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+- description: >-
+    CREDIT CHANGES FOR 2025: the DC Earned Income Tax Credit is NOW 100% of the federal EIC (up
+    from 70% for 2024) — "The District EITC is now 100% of the federal EITC amount" — with the
+    childless-filer worksheet maximum raised from $632 to $649 (earned-income floor $8,484, DC
+    ceiling $30,941, phase-out start $23,288) and the investment-income limit raised from $11,600
+    to $11,950. In the same "Tax Year 2025 Changes" list the DC CHILD TAX CREDIT IS REPEALED for
+    2025.
+  status: final_form_published
+  lookup_path: >-
+    2025 D-40 Lines 27a-27e and the DC EITC Worksheet For Filers Without a Qualifying Child in the
+    booklet at the citation URL (this pack's `credits` block carries the transcribed figures).
+  affects:
+  - credits
+  - Form D-40 Lines 27a-27e
+  modeled: false
+  citation:
+    source: >-
+      DC OTR — 2025 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Federal Tax
+      Changes and the District (OBBBA items DC will not recognize), Tax Year 2025 Changes (DC EITC
+      100%; Child Tax Credit repealed; out-of-state municipal bonds taxable; FAS 109 delayed to
+      after 12/31/2029; own D-40 filing requirement; Schedule H max $1,425 with limits
+      $66,000/$90,000), New for 2025 (deadline April 15, 2026; DC basic standard deduction
+      $15,000/$22,500/$30,000; additional standard deduction $1,600/$2,000; childless EITC max $649
+      and investment-income limit $11,950; Schedule ELC max $1,200; D-40B now electronic), Reminders
+      Income Tax Rate Table (in effect since TY2022), 2025 Filing Requirements Chart p. 7, Standard
+      Deduction section, Calculation I/Tax Rate Schedule p. 20, Calculation F itemized limitation,
+      Calculation G-1 additional standard deduction, tax tables pp. 93-102, mailing addresses, DC
+      Treasurer payee, Schedule I Calculations A/B
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'

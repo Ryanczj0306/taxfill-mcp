@@ -339,3 +339,91 @@ tax:
     amount is at least their Ohio AGI, or whose senior citizen + lump sum distribution + joint filing credits equal
     or exceed line 8c (and who owes no school district tax), does not have to file at all. The zero-rate first bracket
     already produces $0 tax up to $26,050 of line 7.'
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the three most
+# consequential 2025 deltas already recorded in this pack's header comment, tax.notes and
+# credits prose (all sourced to the booklet's Highlights for Tax Year 2025, corroborated for
+# the rate by R.C. 5747.02(A)(3)(b) as amended by House Bill 96). modeled: true only for the
+# top-rate cut, which tax.brackets already ships; the two new $750,000 MAGI cutoffs are not
+# computed here (exemptions ships {} and calc.state_tax applies no Ohio credits). NOT promoted
+# from the same Highlights page: the new pregnancy-resource-center contribution deduction, the
+# educator expense deduction raised to $300, the home school expense credit changed to $250 per
+# qualifying student, the new Transformational Mixed-Use Development Credit, and the
+# discontinuation of form IT NRS (a form-surface change) — see `unverified`.
+effective_law_changes:
+- description: >-
+    RATE CUT for 2025 — "Ohio Income Tax Brackets. For tax year 2025, the highest tax rate has
+    been reduced to 3.125%" (Highlights for Tax Year 2025). The 2024 3.50% top rate is gone;
+    the 2025 schedule is 0.000% for 0 to $26,050, 2.750% to $100,000, then 3.125% over
+    $100,000 (booklet p. 18). The structure is STILL three rows — Ohio did not flatten for
+    2025: R.C. 5747.02(A)(3)(c) puts the single-rate consolidation ("For taxable years
+    beginning in 2026 and thereafter, $332.00 plus 2.75% of the amount in excess of $26,050")
+    in 2026, and that must not be applied to 2025. The middle printed constant also moved,
+    $360.69 (2024) to $342.00, while the over-$100,000 constant $2,394.32 was left unchanged —
+    see the CRITICAL note in tax.notes for the resulting statutory discontinuity.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - IT 1040 line 8a (nonbusiness income tax liability)
+  - 2025 Ohio Income Tax Brackets, booklet p. 18
+  modeled: true
+  citation:
+    source: >-
+      2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation, 64 pages) - PASS 1 for every
+      engine figure. Highlights for Tax Year 2025 (top rate reduced to 3.125%; new pregnancy resource center contribution
+      deduction; Ohio educator expense deduction raised to $300 per taxpayer; home school expense credit now $250
+      per qualifying student; new transformational mixed-use development credit; IT NRS discontinued); mailing addresses
+      p. 3; Who Must File; Ohio Residency and contact periods; personal and dependent exemption table p. 17 ($2,400
+      / $2,150 / $1,900 / $0 by MAGI); Line 8a - Tax on Line 7 (R.C. 5747.02(A)(3), tax.ohio.gov/taxcalculator); 2025
+      Ohio Income Tax Brackets p. 18 with the worked $68,050 example; Ohio Schedule of Credits (lines 2, 4, 6, 9,
+      12, 13) and its worksheets/tables pp. 43-45; Line 22 payment and the April 15 2026 due date
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+- description: >-
+    NEW high-income cutoff in the personal/dependent exemption table for 2025: the table gained
+    a FOURTH tier of $0 per exemption once modified adjusted gross income is $750,000 or greater
+    (booklet p. 17: $2,400 at MAGI $40,000 or less; $2,150 at $40,001-$80,000; $1,900 at
+    $80,001-$749,999; $0 at $750,000 or more). The 2024 table had NO upper cutoff — its $1,900
+    tier ran to infinity — so a high-income 2025 filer now gets no exemption at all on IT 1040
+    line 4. This is a structural cutoff, not the annual re-tiering of the amounts (the $2,400 /
+    $2,150 / $1,900 figures themselves are unchanged from 2024).
+  status: final_form_published
+  affects:
+  - tax.exemptions (ships {} — income-dependent, computed on the form)
+  - IT 1040 line 4 (exemption amount)
+  - calc.state_tax taxable_base (caller-supplied IT 1040 line 7 must already reflect line 4)
+  modeled: false
+  lookup_path: >-
+    2025 Ohio IT 1040 / SD 100 Instruction Booklet p. 17 personal and dependent exemption table
+    (the citation URL) plus the MAGI worksheet referenced on booklet p. 40 (MAGI = Ohio adjusted
+    gross income plus the business income deduction, R.C. 5747.01(II)); this pack ships no
+    exemptions because the amount depends on income.
+  citation:
+    source: >-
+      2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation, 64 pages) - PASS 1 for every
+      engine figure. Highlights for Tax Year 2025 (top rate reduced to 3.125%; new pregnancy resource center contribution
+      deduction; Ohio educator expense deduction raised to $300 per taxpayer; home school expense credit now $250
+      per qualifying student; new transformational mixed-use development credit; IT NRS discontinued); mailing addresses
+      p. 3; Who Must File; Ohio Residency and contact periods; personal and dependent exemption table p. 17 ($2,400
+      / $2,150 / $1,900 / $0 by MAGI); Line 8a - Tax on Line 7 (R.C. 5747.02(A)(3), tax.ohio.gov/taxcalculator); 2025
+      Ohio Income Tax Brackets p. 18 with the worked $68,050 example; Ohio Schedule of Credits (lines 2, 4, 6, 9,
+      12, 13) and its worksheets/tables pp. 43-45; Line 22 payment and the April 15 2026 due date
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+- description: >-
+    NEW for 2025: the Joint Filing Credit is now unavailable to high-income couples — the credit
+    requires MAGI less than $750,000, and its percentage table's top tier reads $75,001-$749,999
+    at 5%. For 2024 that top tier had no upper bound, so a joint couple above $750,000 loses a
+    credit worth up to $650. The $500-of-qualifying-income-per-spouse test, the 20%/15%/10%/5%
+    bands and the $650 maximum are otherwise unchanged.
+  status: final_form_published
+  affects:
+  - credits (Joint Filing Credit)
+  - Ohio Schedule of Credits line 12
+  modeled: false
+  lookup_path: >-
+    2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits Line 12 Joint Filing Credit
+    (the citation URL) for the percentage table and the new MAGI-under-$750,000 requirement;
+    calc.state_tax applies no Ohio credits — it returns IT 1040 line 8a only.
+  citation:
+    source: >-
+      Ohio Department of Taxation - 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits,
+      Line 12 Joint Filing Credit (percentage table, $650 maximum, the new MAGI-under-$750,000 requirement)
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf

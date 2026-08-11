@@ -241,3 +241,29 @@ tax:
     before 2023 files Single or Head of Family in Alabama, so do not rely on the MFJ schedule for a federal QSS filer.
   - The 2%/4%/5% schedule text is printed on the ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' (https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/)
     and was verified numerically against the 2023 booklet's Tax Table rows and over-$100,000 worksheet.
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the adoption-credit
+# delta recorded in the credits block and the booklet's What's New page. modeled: false because
+# calc.state_tax reproduces only the Form 40 line 17 rate-schedule tax and applies no credits.
+effective_law_changes:
+- description: >-
+    Act 2022-299, effective January 1, 2023, RAISED the Alabama Adoption Tax Credit to $2,000 per
+    child for a private adoption where the adopted child is an Alabama resident or a qualified foster
+    child in the permanent legal custody of the Alabama Department of Human Resources; the amount for
+    an out-of-state adoption (or where the adopted child is not otherwise an Alabama resident) stays
+    at $1,000 per child. The credit is refundable.
+  status: final_form_published
+  affects:
+  - credits (Alabama Adoption Tax Credit)
+  - Schedule AAC
+  - Schedule OC Part M / Section F lines F2-F4
+  - Form 40 (or 40NR) page 1 line 25 (Refundable Credit)
+  modeled: false
+  lookup_path: >-
+    2023 Schedule OC Instructions, Part M - Alabama Adoption Tax Credit and Section F (the citation
+    URL); the claimed amount is computed on Schedule AAC from the filer's actual adoption, and
+    calc.state_tax applies no Alabama credits.
+  citation:
+    source: >-
+      Alabama Department of Revenue, 2023 Schedule OC Instructions, Part M - Alabama Adoption Tax Credit and
+      Section F; corroborated by 2023 Form 40 Booklet 'What's New' (Act 2022-299).
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf

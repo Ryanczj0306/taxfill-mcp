@@ -312,3 +312,82 @@ tax:
     tax and are not part of this computation.
   - All Form 511 money entries are whole dollars ('00' boxes); the packet's rounding rule ('$2.50 to $2.99 - round
     up to $3.00') matches the engine's round-half-up to whole dollars.
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the three 2024
+# deltas already recorded in this pack's header comment, treaty_note, credits list and
+# tax.notes (all sourced to the packet's What's New page). modeled: true only for the
+# re-indexed MFJ/HOH/surviving-spouse top-two brackets, which tax.brackets already ships;
+# the new Parental Choice credit and the new bonus-depreciation add-back are NOT computed by
+# calc.state_tax (it reproduces Form 511 line 14a only and applies no Oklahoma credits and no
+# Schedule 511-B additions), so they stay false.
+effective_law_changes:
+- description: >-
+    BRACKET CHANGE for 2024 — the packet's What's New states "Income levels are adjusted for
+    the top two income tax rate brackets for income tax returns with a filing status of married
+    filing joint, head of household or surviving spouse." The MFJ/HOH/surviving-spouse 3.75%
+    band widened from $9,800-$12,200 (2023) to $9,800-$14,400, so the 4.75% top rate now starts
+    at $14,400, and the packet's $100,000-or-more worksheet constant fell from $4,395 (2023) to
+    $4,373. Confirmed against 68 O.S. 2355(C) as in force "For tax years 2024 and 2025" (3.75%
+    on the "next $4,600.00"), which superseded the schedule in force for 2023. Single/MFS
+    brackets, all six rates (0.25%-4.75%) and the standard deductions
+    ($6,350/$12,700/$9,350) are unchanged from 2023.
+  status: final_form_published
+  affects:
+  - tax.brackets (married_filing_jointly and head_of_household)
+  - Form 511 line 14a and the 2024 Oklahoma Income Tax Table pp. 27-38
+  - the $100,000-or-more tax computation worksheet constant ($4,373)
+  modeled: true
+  citation:
+    source: >-
+      2024 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission):
+      What's New (top-two MFJ/HOH/surviving-spouse bracket income levels adjusted; Parental Choice credits; 511-A/B
+      bonus depreciation lines); Form 511 lines 1-14a; line 10 standard deduction instructions ($6,350 single/MFS,
+      $12,700 MFJ/QSS, $9,350 HOH); line 11 exemptions x $1,000; 2024 Income Tax Tables pp. 27-38 incl. the $100,000+
+      worksheets ($4,562 plus 0.0475 Single/MFS; $4,373 plus 0.0475 MFJ/HOH/QW); Who Must File; residency definitions;
+      due date; mailing address; check payee
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2024/511-Pkt-2024.pdf
+- description: >-
+    NEW on Form 511 for 2024 (packet What's New): the Parental Choice Tax Credit for Homeschool
+    Expenses, a nonrefundable credit for qualified expenses paid to homeschool an eligible
+    student, computed on Form 591-D and entered on Form 511 line 29. The 2024 packet prints no
+    dollar maximum — it only directs filers to "Complete Form 591-D to determine the amount to
+    enter on line 29".
+  status: final_form_published
+  affects:
+  - credits (Parental Choice Tax Credit for Homeschool Expenses)
+  - Form 511 line 29
+  - Form 591-D
+  modeled: false
+  lookup_path: >-
+    2024 Form 511 packet What's New and Line 29 instructions (the citation URL) plus Form 591-D itself
+    at tax.ok.gov for the credit computation and any per-student maximum — the packet does not print it
+    (see `unverified`); calc.state_tax applies no Oklahoma credits.
+  citation:
+    source: >-
+      Oklahoma Tax Commission, 2024 Form 511 packet - What's New and Line 29 instructions (Parental Choice
+      Tax Credit for Homeschool Expenses, Form 591-D)
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2024/511-Pkt-2024.pdf
+- description: >-
+    NEW add-back for 2024: the Oklahoma bonus depreciation add-back, Schedule 511-B line B8 "(new
+    for 2024)" in this pack's enumerated 2024 additions list, with the matching Schedule 511-A
+    line the packet's What's New calls the new "511-A/B bonus depreciation lines". It feeds the
+    Schedule 511-B additions total behind Oklahoma AGI (Form 511 line 7) and therefore the line 9
+    figure calc.state_tax consumes; it does not touch treaty-exempt income (see treaty_note).
+  status: final_form_published
+  affects:
+  - starts_from
+  - Schedule 511-B line B8 (and the matching Schedule 511-A subtraction line)
+  - calc.state_tax taxable_base (caller-supplied Form 511 line 9 must already include it)
+  modeled: false
+  lookup_path: >-
+    2024 Form 511 packet Schedule 511-A / Schedule 511-B instructions (the citation URL) for the
+    bonus-depreciation add-back and its matching subtraction amounts; this pack ships no Schedule
+    511-A/B figures and calc.state_tax applies none.
+  citation:
+    source: >-
+      2024 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission):
+      What's New (top-two MFJ/HOH/surviving-spouse bracket income levels adjusted; Parental Choice credits; 511-A/B
+      bonus depreciation lines); Form 511 lines 1-14a; line 10 standard deduction instructions ($6,350 single/MFS,
+      $12,700 MFJ/QSS, $9,350 HOH); line 11 exemptions x $1,000; 2024 Income Tax Tables pp. 27-38 incl. the $100,000+
+      worksheets ($4,562 plus 0.0475 Single/MFS; $4,373 plus 0.0475 MFJ/HOH/QW); Who Must File; residency definitions;
+      due date; mailing address; check payee
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2024/511-Pkt-2024.pdf

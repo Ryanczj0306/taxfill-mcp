@@ -291,3 +291,51 @@ tax:
     property tax credit (Line 16, max $300/$150), married couple credit (Line 18, Schedule 2, max $480), earned income
     credit (Line 30, 4%/11%/34% of federal EIC), homestead credit (Line 33), and other Form 1 credits. Note the 2024
     Form 1 renumbered several credit lines vs 2023.'
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header prose
+# ("The 2024 What's New items are credit and subtraction changes"), the credits block and
+# tax.notes; no new research, and both citations are copied verbatim from citations already in
+# this pack. NOT promoted: the re-indexed bracket dollar boundaries (an inflation adjustment —
+# the four Act 19 rates are unchanged), the Form 1 credit-line renumbering (a form change),
+# and the bare $5,000 college-savings / $7,333 tuition subtraction figures (the pack states the
+# amounts but no statutory basis or effective date for them, so they are not asserted as law
+# changes here). modeled: false on both — Wisconsin credits are subtracted from tax after Form
+# 1 Line 12 and this pack models Line 12 only.
+effective_law_changes:
+- description: >-
+    Additional Child and Dependent Care Tax Credit INCREASED and restructured for 2024 — the
+    What's New item reads "The amount of qualifying expenses and maximum credit allowable have
+    been increased", and the credit is now computed on the NEW Schedule WI-2441 (its line 14
+    carried to Form 1 line 14) instead of being a flat 50% of the federal Form 2441 credit as
+    in 2023.
+  status: final_form_published
+  affects:
+  - credits (Additional Child and Dependent Care Tax Credit)
+  - Schedule WI-2441 (new for 2024)
+  - Form 1 Line 14
+  modeled: false
+  lookup_path: >-
+    2024 Schedule WI-2441 and its instructions for the increased qualifying-expense and maximum
+    credit amounts — the schedule was NOT read line-by-line for this pack (see `unverified`);
+    confirm the 2024 dollar caps there before computing the credit.
+  citation:
+    source: 2024 I-111 Form 1 Instructions (Wisconsin Department of Revenue), 'New in 2024' and Line 14 Additional
+      Child and Dependent Care Tax Credit / Schedule WI-2441
+    url: https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf
+- description: >-
+    NEW Blind Worker Transportation Services Credit for 2024 — a nonrefundable credit of up to
+    $1,500, claimed on Form 1 Line 15 (a credit line that did not exist on the 2023 Form 1).
+  status: final_form_published
+  affects:
+  - Form 1 Line 15 (blind worker transportation services credit, new for 2024)
+  modeled: false
+  lookup_path: >-
+    2024 Form 1 instructions (I-111), 'New in 2024' and the Line 15 instructions, for the
+    credit's eligibility conditions and the computation behind the $1,500 maximum.
+  citation:
+    source: 2024 Form 1 Instructions (I-111) - Line 1 federal AGI; Who Must File thresholds; dependent filing thresholds
+      ($1,300/$451); Where to File; due date April 15, 2025; New in 2024 (Schedule WI-2441 care credit, $5,000 college
+      savings subtraction, $7,333 tuition subtraction, $1,500 blind worker transportation credit); Line 10 exemptions
+      ($700/$250); Line 12 Tax (Tax Table pp.38-43, Tax Computation Worksheet p.44); Line 16 school property tax credit;
+      Line 18 married couple credit; Line 30 EITC (4%/11%/34%); Line 33 homestead credit; 2024 Standard Deduction
+      Table p.35 and Standard Deduction Worksheet for Dependents
+    url: https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf

@@ -236,3 +236,81 @@ tax:
     return after the income tax - NOT modeled.
   - 'Source URL: 2025 resident instructions https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf ; reform bulletin
     https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf .'
+# DEV_PLAN §7.2 effective_law_changes — promoted on 2026-08-11 from this pack's OWN header
+# comment, tax.notes, and all_citations prose (no new research). The Act 11 flat-rate
+# conversion and the tripled standard deduction / repealed $1,000 exemptions are
+# modeled: true because tax.flat_rate, tax.standard_deduction and the empty tax.exemptions
+# already implement them; the raised 65-or-older retirement income exemption is
+# modeled: false because it is a Schedule E base subtraction reached on Line 7 that the
+# caller must take before supplying taxable_base.
+effective_law_changes:
+- description: >-
+    Louisiana went FLAT. Act 11 of the 2024 Third Extraordinary Legislative Session "changed the
+    income tax rate to a flat tax rate of 3%" for tax years beginning on or after 1/1/2025: IT-540
+    Line 11 = Line 10 x .03 ("Multiply Line 10 by .03. Round to the nearest dollar"). The graduated
+    1.85%/3.5%/4.25% brackets and the combined personal exemption-standard-deduction zero-rate floor
+    of 2023/2024 are GONE, and the 2024 Louisiana Tax Table no longer applies (Line 11 is a straight
+    multiplication printed on the form). Do NOT carry 2024 graduated figures into 2025.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - tax.tax_line
+  - IT-540 Line 11
+  modeled: true
+  citation:
+    source: >-
+      Louisiana DOR - 2025 IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025): WHAT'S NEW FOR
+      LOUISIANA 2025 (Act 11, 2024 Third Extraordinary Session — flat 3% rate at Line 11; standard deduction increased
+      to $12,500 single/MFS and $25,000 MFJ/QSS/HOH at Line 8; additional $1,000 exemptions for dependents, 65-or-older,
+      and blind REPEALED and old Lines 6A/6B/6D/6E/6F removed; annual retirement income exemption for 65+ raised from
+      $6,000 to $12,000); Line 7 Federal AGI; Line 8 standard deduction; Line 9A-9D excess federal itemized deductions;
+      Line 10 = Line 7 minus Lines 8 and 9D (floor 0); Line 11 = Line 10 x .03 (round to nearest dollar); Lines 14-16
+      refundable child care / school readiness / LA EIC (5%); WHO MUST FILE; WHEN TO FILE (May 15, 2026); mailing P.O.
+      Box 3550 (with payment) / P.O. Box 3440 (all other); payee Louisiana Department of Revenue
+    url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+- description: >-
+    Act 11 turned the standard deduction into a real Line 8 subtraction and nearly tripled it —
+    $4,500 -> $12,500 for single/married filing separately and $9,000 -> $25,000 for married filing
+    jointly, qualifying surviving spouse and head of household ("If your filing status is 1 or 3,
+    enter $12,500; 2, 4, or 5, enter $25,000"), with an annual CPI-U inflation adjustment starting
+    after 2025. In the same act the additional $1,000 exemptions for dependents, persons 65 or older,
+    and blind persons were ALL REPEALED and old Lines 6A/6B/6D/6E/6F were removed from the form.
+  status: final_form_published
+  affects:
+  - tax.standard_deduction
+  - tax.exemptions
+  - IT-540 Line 8
+  - IT-540 old Lines 6A/6B/6D/6E/6F (removed)
+  modeled: true
+  citation:
+    source: >-
+      Louisiana DOR - Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform): Act 11
+      of the 2024 Third Extraordinary Session repeals the graduated rates/brackets (formerly 1.85%/3.5%/4.25%) in favor
+      of a FLAT 3% tax effective for tax years beginning on or after 1/1/2025; nearly triples the standard deduction
+      ($4,500 -> $12,500 single/MFS; $9,000 -> $25,000 surviving spouse / head of household — MFJ likewise $25,000)
+      with an annual CPI-U inflation adjustment; the additional exemptions for dependents, blind, and 65-or-older were
+      repealed; annual retirement income exemption for 65+ raised from $6,000 to $12,000
+    url: https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf
+- description: >-
+    Act 11 also raised the Annual Retirement Income Exemption for taxpayers 65 or older (Schedule E
+    code 06E) from $6,000 to $12,000 per person for 2025. This is a Schedule E base subtraction
+    reached on IT-540 Line 7, not part of the Line 11 computation.
+  status: final_form_published
+  lookup_path: >-
+    2025 IT-540 Schedule E (code 06E, Annual Retirement Income Exemption) and its instructions in
+    IT540i-WEB-2025 (the citation URL); the exempt amount comes from the filer's own retirement income
+    and must already be netted out of the Line 7 figure supplied as taxable_base.
+  affects:
+  - starts_from
+  - IT-540 Schedule E code 06E
+  - calc.state_tax taxable_base (caller-supplied Line 7, already net of Schedule E exemptions)
+  modeled: false
+  citation:
+    source: >-
+      Louisiana DOR - Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform): Act 11
+      of the 2024 Third Extraordinary Session repeals the graduated rates/brackets (formerly 1.85%/3.5%/4.25%) in favor
+      of a FLAT 3% tax effective for tax years beginning on or after 1/1/2025; nearly triples the standard deduction
+      ($4,500 -> $12,500 single/MFS; $9,000 -> $25,000 surviving spouse / head of household — MFJ likewise $25,000)
+      with an annual CPI-U inflation adjustment; the additional exemptions for dependents, blind, and 65-or-older were
+      repealed; annual retirement income exemption for 65+ raised from $6,000 to $12,000
+    url: https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf

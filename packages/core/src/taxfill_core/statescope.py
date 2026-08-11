@@ -32,6 +32,11 @@ __all__ = ["StateFiling", "StateScopeResult", "state_scope"]
 
 FilingRole = Literal["resident", "part_year", "nonresident", "none"]
 
+# Every treaty-conformity warning opens with this, so a treaty statement is never
+# confused with an IRC/deduction conformity statement in the same warnings list
+# (see the block comment where it is used). Consumers key on the prefix.
+_TREATY_CONFORMITY_PREFIX = "Treaty conformity —"
+
 
 class StateFiling(BaseModel):
     """The scope answer for one state."""
@@ -204,19 +209,33 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
             # Treaty conformity: a treaty filer always gets an explicit line, so
             # "evaluated: conforms" is distinguishable from "never evaluated" —
             # silence used to leave the pack's researched treaty_note dead data.
+            #
+            # The line is PREFIXED because "conformity" is not one question. A state
+            # can conform to federal TREATY treatment while decoupling from the
+            # federal Code for deductions (North Carolina 2025 does exactly that,
+            # and its law-change warning says "does not conform to the federal
+            # standard deduction"). Unlabelled, the two lines sit next to each other
+            # reading as a contradiction — the wrong-law hazard this whole surface
+            # exists to prevent. The prefix is also what consumers/tests key on,
+            # instead of grepping free text for "does not conform".
             if treaty_filer:
                 treaty_note = getattr(sk, "treaty_note", None)
                 if not sk.conforms_to_federal_treaties:
                     warnings.append(
-                        f"{st} does NOT conform to federal tax treaties: income exempt from federal tax under a "
-                        f"treaty is STILL taxable by {st}. Do not carry a federal treaty exclusion onto the state return."
+                        f"{_TREATY_CONFORMITY_PREFIX} {st} does NOT conform to federal tax treaties: income "
+                        f"exempt from federal tax under a treaty is STILL taxable by {st}. Do not carry a "
+                        f"federal treaty exclusion onto the state return. (This is about TREATY conformity "
+                        f"only — a state's Internal Revenue Code conformity date and its deduction/credit "
+                        f"conformity are separate questions; see any law-change lines below.)"
                         + (f" State note: {treaty_note}" if treaty_note else "")
                     )
                 else:
                     warnings.append(
-                        f"{st} conforms to federal treaty treatment — income exempt from federal tax under a "
-                        f"treaty is also excluded from {st} income (it flows through the federal starting point; "
-                        f"do not add it back on the {st} return)."
+                        f"{_TREATY_CONFORMITY_PREFIX} {st} conforms to federal treaty treatment — income "
+                        f"exempt from federal tax under a treaty is also excluded from {st} income (it flows "
+                        f"through the federal starting point; do not add it back on the {st} return). (This is "
+                        f"about TREATY conformity only — a state can conform on treaties while DECOUPLING "
+                        f"from the federal Code for deductions or credits; see any law-change lines below.)"
                         + (f" State note: {treaty_note}" if treaty_note else "")
                     )
             # DEV_PLAN §7.2: enacted-law deltas ship as typed data, and the scope

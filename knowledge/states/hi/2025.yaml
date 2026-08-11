@@ -440,3 +440,93 @@ tax:
   - Hawaii is print-only for filing (the render_mode hand_fill pack ships); this op powers the line 27 value. Hawaii's
     filing deadline is April 20, 2026 with an automatic 6-month extension to October 20, 2026 — NOT the federal April
     15.
+# DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the header's
+# "THE HEADLINE" / "What changed and what did NOT" block, the tax.notes bracket-widening and credits
+# notes, and the base-guidance note); transcription only, no new research and no new sources.
+# modeled: true only for the Act 45 bracket widening (tax.brackets ships the re-derived 2025
+# boundaries); the Act 58 PTE add-back and the military-duty-pay exclusion are modeled: false —
+# calc.state_tax applies neither, so they must reach it inside the caller-supplied taxable_base.
+effective_law_changes:
+- description: >-
+    TY2025 IS THE BRACKET-WIDENING YEAR — 2025 N-11 instructions "Changes to Note", verbatim: "For
+    the 2025 taxable year beginning after December 31, 2024, the individual income tax bracket
+    amounts were amended for all the filing statuses by increasing the income limits in each
+    bracket. (Act 45, SLH 2024)". The twelve RATES are unchanged (1.40 / 3.20 / 5.50 / 6.40 / 6.80 /
+    7.20 / 7.60 / 7.90 / 8.25 / 9.00 / 10.00 / 11.00 percent); only the boundaries moved. Schedule I
+    (Single/MFS) went from 2024's
+    2,400/4,800/9,600/14,400/19,200/24,000/36,000/48,000/150,000/175,000/200,000 to
+    9,600/14,400/19,200/24,000/36,000/48,000/125,000/175,000/225,000/275,000/325,000 — the 1.40%
+    bracket alone widened from $2,400 to $9,600 and the 11% top threshold rose from $200,000 to
+    $325,000. Schedule II (MFJ/QSS) remains exactly 2x and Schedule III (HoH) exactly 1.5x. The
+    standard deduction was NOT raised again for 2025 ($4,400 / $8,800 / $6,424, unchanged), and the
+    $1,144 personal exemption is unchanged; the filing thresholds moved with the 2024 deduction step.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - Form N-11 line 27
+  - 2025 Tax Rate Schedules p. 48 / Tax Table pp. 36-47
+  modeled: true
+  citation:
+    source: >-
+      Hawaii 2025 N-11 Resident Income Tax Instructions — "Changes to Note" (Act 45 SLH 2024 bracket
+      widening for TY2025; Act 123 SLH 2025 IRC conformity as of 12/31/2024; Act 25 SLH 2025 EITC
+      carryforward change effective after 12/31/2025; Act 58 SLH 2025 PTE credit add-back; $8,636
+      military reserve/Hawaii National Guard duty pay exclusion), due date April 20 2026 and the
+      automatic 6-month extension to October 20 2026, Who Must File threshold charts, Residency
+      Status, Where to File, check payee "Hawaii State Tax Collector", hitax.hawaii.gov portal, line
+      7 federal AGI and line 10 additions list, Line 23 Standard Deduction table, Regular Exemptions
+      $1,144, Line 27 Tax (tax table mandated below $100,000), Tax Table pp. 36-47, 2025 Tax Rate
+      Schedules p. 48
+    url: 'https://files.hawaii.gov/tax/forms/2025/n11ins.pdf'
+- description: >-
+    NEW ADD-BACK for 2025 (Act 58, SLH 2025), per "Changes to Note": all qualified members claiming
+    the Pass-Through Entity tax credit must ADD their share of the taxes paid by the electing PTE to
+    taxable income. This is an addition to the Hawaii base that did not exist for 2024.
+  status: final_form_published
+  lookup_path: >-
+    2025 N-11 instructions "Changes to Note" and the Hawaii additions instructions for lines 8-10
+    at the citation URL; the amount comes from the member's share of taxes paid by the electing
+    pass-through entity.
+  affects:
+  - starts_from
+  - Form N-11 lines 8-10 (Hawaii additions to federal AGI)
+  - calc.state_tax taxable_base (caller-supplied — must already include the PTE add-back)
+  modeled: false
+  citation:
+    source: >-
+      Hawaii 2025 N-11 Resident Income Tax Instructions — "Changes to Note" (Act 45 SLH 2024 bracket
+      widening for TY2025; Act 123 SLH 2025 IRC conformity as of 12/31/2024; Act 25 SLH 2025 EITC
+      carryforward change effective after 12/31/2025; Act 58 SLH 2025 PTE credit add-back; $8,636
+      military reserve/Hawaii National Guard duty pay exclusion), due date April 20 2026 and the
+      automatic 6-month extension to October 20 2026, Who Must File threshold charts, Residency
+      Status, Where to File, check payee "Hawaii State Tax Collector", hitax.hawaii.gov portal, line
+      7 federal AGI and line 10 additions list, Line 23 Standard Deduction table, Regular Exemptions
+      $1,144, Line 27 Tax (tax table mandated below $100,000), Tax Table pp. 36-47, 2025 Tax Rate
+      Schedules p. 48
+    url: 'https://files.hawaii.gov/tax/forms/2025/n11ins.pdf'
+- description: >-
+    NEW SUBTRACTION for 2025 per "Changes to Note": an exclusion of up to $8,636 of military reserve
+    or Hawaii National Guard duty pay, taken among the Hawaii subtractions (Form N-11 lines 13-19)
+    on the way from federal AGI to Hawaii AGI. It did not exist in the 2024 pack's subtraction list.
+  status: final_form_published
+  lookup_path: >-
+    2025 N-11 instructions "Changes to Note" and the line 13-19 Hawaii subtraction instructions at
+    the citation URL (the $8,636 ceiling is the booklet's own figure; the qualifying duty pay comes
+    from the filer's records).
+  affects:
+  - starts_from
+  - Form N-11 lines 13-19 (Hawaii subtractions)
+  - calc.state_tax taxable_base (caller-supplied — must already be net of the exclusion)
+  modeled: false
+  citation:
+    source: >-
+      Hawaii 2025 N-11 Resident Income Tax Instructions — "Changes to Note" (Act 45 SLH 2024 bracket
+      widening for TY2025; Act 123 SLH 2025 IRC conformity as of 12/31/2024; Act 25 SLH 2025 EITC
+      carryforward change effective after 12/31/2025; Act 58 SLH 2025 PTE credit add-back; $8,636
+      military reserve/Hawaii National Guard duty pay exclusion), due date April 20 2026 and the
+      automatic 6-month extension to October 20 2026, Who Must File threshold charts, Residency
+      Status, Where to File, check payee "Hawaii State Tax Collector", hitax.hawaii.gov portal, line
+      7 federal AGI and line 10 additions list, Line 23 Standard Deduction table, Regular Exemptions
+      $1,144, Line 27 Tax (tax table mandated below $100,000), Tax Table pp. 36-47, 2025 Tax Rate
+      Schedules p. 48
+    url: 'https://files.hawaii.gov/tax/forms/2025/n11ins.pdf'

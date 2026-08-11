@@ -358,3 +358,66 @@ tax:
     are the schedule evaluated at the midpoint and rounded half up (the $53,450-$53,500 single row''s $97.50 -> 98
     is the proof); the engine''s half-up rounding to whole dollars matches, and vector 1 below is the exact .50 half-up
     tie.'
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header prose,
+# credits list, and tax.notes (nothing researched anew). Both entries are modeled: false — the
+# engine computes neither the SB 2282 credit (a Schedule ECC credit against tax) nor the federal
+# taxable income the OBBBA conformity feeds in; the 2025 re-indexation of the bracket boundaries
+# is deliberately NOT an entry here (inflation adjustment, already in tax.brackets), and SB 2047's
+# military-pay withholding exemption is excluded because it begins with tax year 2026.
+effective_law_changes:
+- description: >-
+    NEW credit for 2025 — the Employer Child Care Contribution Income Tax Credit created by 2025
+    Senate Bill 2282, effective beginning with tax year 2025: 50% of the first $1,000 of qualified
+    child care contributions per employee (payments made directly to child care facilities, or to
+    employees as reimbursement of their child care costs, for qualified child care; qualified
+    payments include those to facilities licensed in North Dakota and to licensed facilities
+    located within 10 miles of North Dakota). Claimed on the new Schedule ECC and carried through
+    Schedule ND-1TC to Form ND-1.
+  status: final_form_published
+  affects:
+  - credits
+  - Schedule ECC
+  - Schedule ND-1TC
+  - Form ND-1 line 23
+  modeled: false
+  lookup_path: >-
+    2025 Individual Income Tax Booklet, 'New for 2025 — Employer Child Care Contribution Income Tax
+    Credit' plus Schedule ECC and its instructions (the citation URL); this pack's `unverified` list
+    records that Schedule ECC was not read line-by-line, so confirm the per-employee computation
+    there before claiming. calc.state_tax does not apply ND credits at all.
+  citation:
+    source: ND Office of State Tax Commissioner — 2025 Individual Income Tax Booklet, 'New for 2025 — Employer Child
+      Care Contribution Income Tax Credit' (Senate Bill 2282; 50% of the first $1,000 per employee; see Schedule
+      ECC and instructions)
+    url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+- description: >-
+    PERPETUAL FEDERAL CONFORMITY carries every OBBBA change straight into the 2025 ND base: the
+    booklet states "The starting point for computing North Dakota taxable income perpetually
+    conforms to the computation of federal taxable income. As a result, the federal changes to
+    income and deductions that impact the computation of federal taxable income are by default
+    included in the starting point for computing North Dakota taxable income for all years," and
+    names the increased federal standard deduction (with an additional $6,000 for some seniors),
+    the $40,000 state and local tax deduction, and the tip and overtime pay exclusions. Federal
+    changes to federal tax CREDITS have no direct impact on ND credits. So the base supplied for
+    2025 must be federal taxable income as actually computed under OBBBA.
+  status: final_form_published
+  affects:
+  - starts_from
+  - tax.base
+  - Form ND-1 line 1b
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    Form 1040/1040-SR line 15 for tax year 2025 as computed under the federal changes — entered on
+    Form ND-1 line 1b; the booklet's 'Changes Affecting You and Your Income Tax' section (the
+    citation URL) is where the conformity statement and the named federal changes are printed. ND
+    additions/subtractions on ND-1 lines 2-17 are likewise not modeled.
+  citation:
+    source: ND 2025 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions, 28702 12-2025) — Who must file (pp.5-6),
+      Statutory 7-month rule (210 days), treaty statement (p.5), Changes Affecting You and Your Income Tax (SB 2282
+      employer child care credit new for 2025; OBBBA perpetual conformity of the federal-taxable-income starting point;
+      SB 2047 military pay withholding exemption beginning tax year 2026; military retirement benefit exclusion), April
+      15 2026 due date, PO Box 5621, payee 'ND State Tax Commissioner', Line 20 Tax (tax-table mandate), Line 21 other-state
+      credit, Line 22 marriage penalty credit worksheet ($81,036/$47,550/$15,750/$312.00), 2025 Tax Table (pp.20-27),
+      2025 Tax Rate Schedules (p.28)
+    url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf

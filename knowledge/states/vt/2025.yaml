@@ -260,3 +260,35 @@ tax:
     tax on Line 14, not an income deduction.'
   - 'Part-year residents and nonresidents: Line 15 income adjustment percentage (Schedule IN-113, Line 35) multiplies
     Line 14 to get Line 16 Adjusted Vermont Income Tax — not modeled; full-year residents enter 100%.'
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header prose
+# and the credits block (no new research; the citation is copied verbatim from the Veteran Tax
+# Credit's own citation in this pack). Only ONE 2025 delta qualifies: the pack's other TY2025
+# movement is re-indexation (bracket bounds, standard deduction, the $1,250 additional
+# standard deduction, the $5,300 personal exemption) with the four rates UNCHANGED, which is
+# an inflation adjustment, not a law change. modeled: false — calc.state_tax computes Form
+# IN-111 Line 8 only and applies no credits.
+effective_law_changes:
+- description: >-
+    NEW refundable Vermont Veteran Tax Credit, "signed into law on June 25, 2025, as part of
+    Act 71", effective beginning with the 2025 tax year: any Vermont resident or part-year
+    resident with a discharge record or other record of separation from active duty verifying
+    service in the uniformed services gets a "$250 refundable tax credit if their adjusted
+    gross income is less than or equal to $25,000", reduced by $5 for each full $100 of AGI
+    over $25,000 — "No credit is available for veterans with an adjusted gross income equal to
+    or greater than $30,000".
+  status: final_form_published
+  affects:
+  - credits (Vermont Veteran Tax Credit)
+  - Schedule IN-112 Part II Lines 8-12
+  - Form IN-111 Line 26c (part-year residents Line 17)
+  modeled: false
+  lookup_path: >-
+    Compute on the 2025 Schedule IN-112, Part II, Lines 8-12 from Form IN-111 Line 1 AGI
+    (Line 9 = AGI - $25,000; Line 10 = Line 9 / 100 rounded DOWN to a whole number; Line 11 =
+    Line 10 x $5; Line 12 = $250 - Line 11), per the cited 2025 Schedule IN-112 Instructions.
+  citation:
+    source: 'Vermont Department of Taxes - 2025 Schedule IN-112 Instructions, Veteran Tax Credit (''signed into law
+      on June 25, 2025, as part of Act 71 ... $250 refundable tax credit if their adjusted gross income is less than
+      or equal to $25,000 ... No credit is available for veterans with an adjusted gross income equal to or greater
+      than $30,000'') and the 2025 Schedule IN-112 form, Part II Lines 8-12'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2025.pdf

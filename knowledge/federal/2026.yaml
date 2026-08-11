@@ -464,3 +464,70 @@ contribution_limits:
       url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
     transit_monthly: 340
     parking_monthly: 340
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own
+# prose (the Pub 15 (2026) What's New quote carried in tax.supplemental_withholding's
+# citation, the standard_deduction block's OBBBA note, and the
+# provisional.blocks_deliberately_absent comment on obbba_schedule_1a). No new
+# research: BOTH entries reuse the pack's ONLY P.L. 119-21 citation, the Pub 15
+# (2026) source above. Status is `enacted`, not final_form_published, for the same
+# reason the pack is provisional: the 2026 Form 1040, its instructions and the Tax
+# Table booklet are unpublished. NOT promoted: the Rev. Proc. 2025-32 inflation
+# adjustments themselves (bracket bounds, standard deduction, capital-gain
+# breakpoints, the $184,500 wage base, the account limits) — those are annual
+# indexation, not law changes.
+effective_law_changes:
+  - description: >-
+      P.L. 119-21 PERMANENTLY EXTENDED the individual income tax rates, so 2026 keeps
+      the seven-rate section 1(j)(2) structure rather than reverting: Pub 15 (2026)
+      What's New states "The withholding rate on supplemental wages remains 22% (37% if
+      supplemental wages paid to an employee during the calendar year exceed $1 million)
+      because P.L. 119-21 permanently extended the individual income tax rates." The
+      2026 inflation-adjusted amounts in Rev. Proc. 2025-32 were published POST-OBBBA
+      and already reflect it (its section 3 is where the OBBBA 2025 standard deductions
+      were formally substituted into Rev. Proc. 2024-40 — cite section 4 for a 2026
+      figure), so unlike 2025 there is no mid-year supersession to guard against here.
+    citation:
+      source: >-
+        Pub 15 (2026) ("For use in 2026", Dec 15, 2025), Section 7 Supplemental Wages, p. 24: the
+        optional flat 22% rate for separately-identified supplemental wages, and the mandatory rate on
+        the excess over $1 million ("the excess is subject to withholding at 37% (or the highest rate
+        of income tax for the year)"), applied without regard to Form W-4; What's New, p. 2: "The
+        withholding rate on supplemental wages remains 22% (37% if supplemental wages paid to an
+        employee during the calendar year exceed $1 million) because P.L. 119-21 permanently extended
+        the individual income tax rates."
+      url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+    status: enacted
+    affects:
+      - tax.rate_schedules
+      - tax.standard_deduction
+      - tax.supplemental_withholding
+    modeled: true
+  - description: >-
+      P.L. 119-21's Schedule 1-A additional deductions are NOT available from this pack
+      for 2026: their statutory caps are fixed by P.L. 119-21, but the 2026 Schedule 1-A
+      is unpublished, so obbba_schedule_1a is listed in
+      provisional.blocks_deliberately_absent ("ships after two-pass verification") rather
+      than guessed. A 2026 projection built on this pack therefore OMITS those deductions
+      — calc raises its prescriptive "no block for this year" error instead of returning a
+      fabricated figure, and any consumer must surface the omission (see provisional.reason).
+    citation:
+      source: >-
+        Pub 15 (2026) ("For use in 2026", Dec 15, 2025), Section 7 Supplemental Wages, p. 24: the
+        optional flat 22% rate for separately-identified supplemental wages, and the mandatory rate on
+        the excess over $1 million ("the excess is subject to withholding at 37% (or the highest rate
+        of income tax for the year)"), applied without regard to Form W-4; What's New, p. 2: "The
+        withholding rate on supplemental wages remains 22% (37% if supplemental wages paid to an
+        employee during the calendar year exceed $1 million) because P.L. 119-21 permanently extended
+        the individual income tax rates."
+      url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+    status: enacted
+    affects:
+      - provisional.blocks_deliberately_absent (obbba_schedule_1a)
+      - 2026 Schedule 1-A (Form 1040) — unpublished
+    modeled: false
+    lookup_path: >-
+      Resolve the 2026 amounts from the 2026 Schedule 1-A (Form 1040) and its instructions
+      when they publish (the block ships only after the DEV_PLAN §7 two-pass verification);
+      the shipped TY2025 parameters live in knowledge/federal/2025.yaml tax.obbba_schedule_1a.

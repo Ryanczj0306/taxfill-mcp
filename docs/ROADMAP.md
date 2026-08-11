@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**2,984 tests, all green** — offline 2,877 + live-.gov 107, exit 0;
+Done and on `main` (**3,007 tests, all green** — offline 2,895 + live-.gov 112, exit 0;
 re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
@@ -302,13 +302,23 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
       the provisional 2026 planning pack shipped 2026-08-04).
       **Remaining:** (a) a 2024→2025 **state form pack** tranche — 46
-      packs/year. The pipeline HALF is now ready (2026-08-10):
-      `scripts/scaffold_state_year.py` derives + probes candidate URLs from the
-      base year's packs (**39 of 46** derivable for 2023→2025 — better than the
-      earlier 34-of-46 estimate; the rest, incl. MA's Wayback seed, are visible
-      work-list rows) and `docs/CONTRIBUTING-PACKS.md` documents the per-pack
-      quality gate. The packs themselves remain: each still travels
-      fetch+digest → introspect → vision map → adversarial audit → golden.
+      packs/year. The pipeline half is ready (2026-08-10):
+      `scripts/scaffold_state_year.py` + `docs/CONTRIBUTING-PACKS.md`.
+      ⚠️ **Correction (2026-08-11):** the "39 of 46 URLs derivable" figure was
+      string derivation only and NEVER PROBED — it over-reported by ~2×. The
+      script now has `--triage`, which downloads each candidate and diffs the
+      blank's AcroForm against the base pack's field map. Measured:
+      * **TY2024** (42 AcroForm packs): **10 PORTABLE** (identical topology —
+        AR, NC, NJ, NY IT-201, NY IT-203, OH, PA, RI, UT, VA) + **4 NEAR-PORT**
+        (IL/ND 2 fields moved, OR 3, MO 25) + 9 RE-MAP + 12 URL-DEAD +
+        7 no-year-token.
+      * **TY2025**: **5 PORTABLE** (AR, NY IT-201, NY IT-203, OR, PA) +
+        0 near-port + 11 RE-MAP + **19 URL-DEAD** + 7 no-year-token.
+      So the tranche's real shape is: ~15 cheap ports, ~20 vision re-maps
+      (every CA pack is a full re-map — CA renames its fields yearly), and
+      ~26 URL-discovery tasks before those can even be assessed. Identical
+      field NAMES still do not prove the state kept its line NUMBERING, so
+      every port keeps the per-page vision audit.
       Federal: **f1040nr + Schedule OI now ship for 2024** (identical-topology
       ports, vision-audited), closing the "f1040nr has no 2024 pack" gap.
       **Done 2026-08-10:** (b) `assemble_state_knowledge.py` now takes `--year` +
@@ -329,11 +339,12 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       author→audit→PR flow (fetch+digest, `taxfill introspect`, vision field-map,
       adversarial audit, golden test, gates-on-the-exact-tree), and
       `scripts/scaffold_state_year.py` turns a year tranche into a managed
-      work-list (derives + optionally probes candidate URLs from the base year's
-      packs: **39 of 46** state URLs are derivable for 2023→2025; the other 7
-      need manual DOR research — visible rows, never silent truncation). The
-      92-pack 2024/2025 state tranche itself remains open (each pack still
-      travels the full quality gate).
+      work-list — `--triage` downloads each derived candidate and classifies the
+      port cost against the base pack's field map (PORTABLE / NEAR-PORT /
+      RE-MAP / URL-DEAD / no-year-token), so the tranche starts from measured
+      cost instead of an estimate (see D2 for the TY2024/TY2025 numbers). The
+      2024/2025 state tranche itself remains open (each pack still travels the
+      full quality gate).
 
 **Acceptance:** each new form type audited + golden-tested; any computed line
 backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.

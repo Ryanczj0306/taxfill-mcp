@@ -202,3 +202,55 @@ tax:
     are CREDITS against tax and are NOT modeled by calc.state_tax — compute them on Schedule ITC / the Family Size
     Tax Credit Table.
   - Kentucky local occupational license taxes (county/city payroll taxes) are NOT modeled.
+# effective_law_changes — promoted on 2026-08-11 from this pack's own header note, `starts_from`
+# and tax-block prose, all sourced to the 2024 packet's "What's New" (DEV_PLAN §7.2). The rate cut
+# is modeled: true (tax.flat_rate IS the changed law); the HB 8 IRC reference-date move is
+# modeled: false — it works through Schedule M into Kentucky AGI, which the caller supplies. The
+# $2,980 -> $3,160 standard deduction is Kentucky's annual cost-of-living adjustment, not a law
+# change, so it gets no entry (it already ships in tax.standard_deduction).
+effective_law_changes:
+- description: >-
+    RATE CUT for tax year 2024 — "INDIVIDUAL INCOME TAX RATE—For 2024, the tax rate for individual income
+    tax is 4%" (2024 Form 740 instruction packet, What's New), down from 4.5% for 2023. The 2024 Form 740
+    line 12 prints "Tax Computation: Multiply line 11 by 4% (.04)".
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - tax.tax_line
+  - Form 740 Line 12
+  modeled: true
+  citation:
+    source: >-
+      2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What's New
+      (standard deduction $3,160; individual income tax rate 4%; Family Size Tax Credit 2024 thresholds;
+      HB 8 IRC reference date December 31, 2023), starting point ("the individual income tax return begin
+      with federal adjusted gross income"), Form 740 line 5 Federal AGI, Schedule M additions list, due
+      date April 15 2025, mailing addresses (Refund 40618-0006 / Pay 40619-0008), check payable to Kentucky
+      State Treasurer / Form 740-V
+    url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf
+- description: >-
+    IRC REFERENCE DATE UPDATED to December 31, 2023 by HB 8 (from December 31, 2022), per the 2024 packet's
+    What's New. Kentucky law requires the individual income tax return to begin with federal adjusted gross
+    income and be adjusted for any differences to arrive at Kentucky adjusted gross income, so the conformity
+    date governs which federal provisions flow through and which are modified on Schedule M (special
+    depreciation/Section 179 differences, federal NOL, the Kentucky excess business loss limitation, etc.).
+  status: final_form_published
+  affects:
+  - starts_from
+  - Schedule M (additions and subtractions)
+  - Form 740 Lines 6/8/9 (Kentucky AGI)
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    2024 Form 740 instruction packet (42A740(PKT)) at the citation URL — What's New (HB 8 IRC reference date
+    December 31, 2023) and the Schedule M instructions, which enumerate the additions (lines 1-5, totaled on
+    line 6) and subtractions that implement the conformity differences.
+  citation:
+    source: >-
+      2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What's New
+      (standard deduction $3,160; individual income tax rate 4%; Family Size Tax Credit 2024 thresholds;
+      HB 8 IRC reference date December 31, 2023), starting point ("the individual income tax return begin
+      with federal adjusted gross income"), Form 740 line 5 Federal AGI, Schedule M additions list, due
+      date April 15 2025, mailing addresses (Refund 40618-0006 / Pay 40619-0008), check payable to Kentucky
+      State Treasurer / Form 740-V
+    url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf

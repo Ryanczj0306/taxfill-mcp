@@ -316,3 +316,52 @@ tax:
   - 'Nonresidents and partial-year residents are NOT modeled: they compute line 15 via Nebraska Schedule III (line
     9), which apportions the tax by the Nebraska-income ratio.'
   - 'Standard deduction chart source: 2024 Nebraska Individual Income Tax Booklet (8-307-2024), Line 6, p.9 — https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_Individual_Income_Tax_Booklet.pdf'
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header prose,
+# credits list, and tax.notes (nothing researched anew). modeled: true for the LB 754 rate cut
+# because tax.brackets already carries the 5.84% top rate; modeled: false for the LB 34 Form PTC
+# change because calc.state_tax applies no Nebraska credits. The $166 personal exemption credit
+# and the standard-deduction chart amounts are annual adjustments, not law changes, so they get
+# no entry here.
+effective_law_changes:
+- description: >-
+    TOP RATE CUT for tax year 2024 under LB 754 (2023): the booklet's What's New states
+    "Individual Income Tax Rate Change (LB 754, 2023). For the 2024 taxable year, the highest rate
+    for the Nebraska individual income tax is reduced to 5.84%" — down from 6.64% in 2023, while
+    the three lower rates stay 2.46% / 3.51% / 5.01%. All four filing-status schedules' breakpoints
+    are also re-indexed for 2024 (Single/MFS $3,900/$23,370/$37,670; MFJ/QSS $7,790/$46,760/$75,340;
+    HoH $7,270/$37,400/$55,850). Do not use 2023 tables or early-2024 withholding-era rates.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - 2024 Nebraska Tax Calculation Schedule (8-460-2024)
+  - Form 1040N line 15
+  modeled: true
+  citation:
+    source: 2024 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2024) — What's New (LB 754
+      top-rate cut to 5.84%; LB 34 School District Property Tax Relief Act; Form PTC community-college-only), federal
+      AGI starting point (Line 5), Standard Deduction Chart (Line 6, p.9), Line 15 Nebraska income tax, Line 18 personal
+      exemption credit $166, residency definitions, Who Must File, due date, check payee, 2024 Nebraska Tax Table
+      with over-$75,360 worksheet
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_Individual_Income_Tax_Booklet.pdf
+- description: >-
+    FORM PTC NARROWED TO COMMUNITY COLLEGE PROPERTY TAXES ONLY — for tax years beginning on or
+    after January 1, 2024, Form PTC is used ONLY to claim a credit for qualified Nebraska community
+    college property taxes; school district property tax relief is no longer claimed on the income
+    tax return but is applied directly on the property tax statement under the School District
+    Property Tax Relief Act (LB 34, 2024 special session). The 2024 Form PTC Part A line 1 equals
+    the Part B line 2a total with no percentage multiplier.
+  status: final_form_published
+  affects:
+  - credits
+  - Form PTC
+  - Form 1040N line 43
+  modeled: false
+  lookup_path: >-
+    2024 Nebraska Property Tax Credit, Form PTC and its instructions inside the 2024 Form 1040N
+    booklet (the citation URL), plus the Department's Property Tax Look-up Tool, which computes the
+    qualified community college amounts; school district relief must be read off the property tax
+    statement instead. calc.state_tax applies no Nebraska credits.
+  citation:
+    source: 2024 Nebraska Property Tax Credit, Form PTC instructions (in the 2024 Form 1040N booklet, 8-307-2024)
+      and What's New (Form PTC community-college-only; LB 34 School District Property Tax Relief Act)
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_Individual_Income_Tax_Booklet.pdf

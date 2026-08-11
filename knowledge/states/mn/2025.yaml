@@ -366,3 +366,66 @@ tax:
   - 'Rounding: the M1 instructions say ''Round the dollar amounts to the nearest dollar. For example: 129.49 becomes
     129, and 129.50 becomes 130'' (Getting Started) — the engine''s round-half-up to whole dollars matches, and vector
     1 below is the exact .50 half-up tie.'
+# effective_law_changes promoted 2026-08-11 from this pack's OWN prose (the HEADLINE 2025
+# CHANGES header comment, the Child Tax Credit entry, the filing_requirement note and the tax
+# notes) per DEV_PLAN §7.2 — no new research. Both entries are modeled: false: the engine
+# computes only the Form M1 line 10 rate-schedule tax, so an advance-payment reconciliation on
+# line 14b and new Schedule M1M subtractions must reach it through the caller's taxable_base /
+# be taken on the form. The +2.886% bracket indexing, the $14,950/$29,900/$14,950/$22,500
+# standard deduction, the $5,200 dependent exemption, the re-indexed $86,800 table-mandate
+# threshold and the $2,000 age-65 addition are INFLATION adjustments, not law changes.
+effective_law_changes:
+- description: >-
+    NEW for 2025 — advance Child Tax Credit payments must be RECONCILED on the return: a
+    taxpayer who elected advance payments of their 2025 Child Tax Credit on the 2024 return
+    MUST file a 2025 return to reconcile them, even if not otherwise required to file (and
+    even if Minnesota-source income is below $14,950). The repayment of advance Child Tax
+    Credit payments is computed on the new Schedule M1CWFC line 27 and reported on the new
+    Form M1 line 14b. The advance-payment election itself now covers the 2026 credit (paper
+    filers who elect mail to Mail Station 0015 instead of 0010).
+  status: final_form_published
+  affects:
+  - filing_requirement
+  - Schedule M1CWFC line 27
+  - Form M1 line 14b
+  - credits (Minnesota Child Tax Credit)
+  modeled: false
+  lookup_path: >-
+    2025 Schedule M1CWFC line 27 and the Form M1 line 14b instructions (the citation URL); the
+    advance payments actually received come from the MN DOR, and calc.state_tax adds no line 14
+    amounts.
+  citation:
+    source: >-
+      2025 Schedule M1CWFC, Minnesota Child and Working Family Credits ($1,750 per qualifying
+      child; advance-payment election and reconciliation) and Tax Year 2025 Minnesota Revenue
+      Tax Professional Desk Reference Chart (2025 Child Tax Credit phase-out table), MN
+      Department of Revenue
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1cwfc-25.pdf
+- description: >-
+    NEW Schedule M1M subtractions for 2025 — coerced debt, consumer-enforcement public
+    compensation, foreign-service retirement pay, and SEIU stipend payments. They are new
+    subtraction lines inside the Schedule M1M total that Form M1 line 7 carries (renumbered for
+    2025 to Schedule M1M line 40 / Schedule M1MB line 22, from 2024's M1M line 35 / M1MB line 21).
+  status: final_form_published
+  affects:
+  - Schedule M1M
+  - Form M1 line 7
+  - calc.state_tax taxable_base (caller-supplied — must already net these subtractions out)
+  modeled: false
+  lookup_path: >-
+    Schedule M1M and its instructions in the 2025 Form M1 instruction booklet (the citation URL);
+    the engine subtracts only the shipped standard deduction and dependent exemption, so the
+    supplied line 9 base must already reflect any M1M subtraction.
+  citation:
+    source: >-
+      2025 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted
+      Gross Income (line 11a of federal Form 1040/1040-SR, or 1040-NR); What's new for 2025
+      (standard deduction $14,950/$29,900/$14,950/$22,500 with the $238,950/$119,475 limitation
+      and $1,083,150 80%-reduction thresholds, dependent exemption $5,200 with
+      $358,550/$298,800/$239,050/$179,275 phase-out thresholds, advance Child Tax Credit payments
+      and reconciliation, new M1M subtractions); Filing Requirements chart; residency (domicile +
+      183-day/abode); Standard Deduction Table for Line 4 and Worksheets A/B; Worksheet for Line 5
+      — Dependent Exemptions ($5,200); Line 10 Tax From Table; Tax Tables pp.32-38; Tax Rate
+      Schedules p.39 ($86,800 mandate); Renter's Credit Tables pp.27-31; April 15, 2026 due date;
+      Mail Station 0010; Payment Voucher System
+    url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1-inst-25.pdf

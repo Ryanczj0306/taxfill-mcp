@@ -23,3 +23,6 @@ taxfill-workspace/
 
 # staged data copy for packaging (source of truth is repo-root knowledge/ + formpacks/)
 packages/core/src/taxfill_core/_data/
+
+# Downloaded blanks from scripts/scaffold_state_year.py --triage (network artifact, never committed)
+.cache/

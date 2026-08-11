@@ -67,13 +67,56 @@ def _probe(url: str, timeout: float = 20.0) -> str:
         return f"unreachable ({type(exc).__name__}: {str(exc)[:60]})"
 
 
+def _triage(url: str, mapped: set[str], cache: Path, timeout: float = 45.0) -> tuple[str, dict]:
+    """Download the candidate blank and classify the port cost against the base pack.
+
+    This is the measurement that string-derivation alone CANNOT give (and whose
+    absence made this script's first version over-optimistic: 39 of 46 URLs
+    *derive*, but only 16 of 42 actually resolve to a PDF for TY2025). A blank
+    whose AcroForm carries every field name the base pack maps is a cheap port
+    — the f1040nr path; anything else is real vision-mapping work.
+    """
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (taxfill-scaffold)"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+            data = resp.read()
+    except Exception as exc:  # noqa: BLE001
+        return f"URL-DEAD ({type(exc).__name__})", {}
+    if not data.startswith(b"%PDF"):
+        return "URL-DEAD (not a PDF)", {}
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    cache.write_bytes(data)
+    try:
+        from pypdf import PdfReader
+
+        names = set((PdfReader(str(cache)).get_fields() or {}).keys())
+    except Exception as exc:  # noqa: BLE001
+        return f"UNREADABLE ({type(exc).__name__})", {}
+    if not names:
+        return "NO-ACROFORM (print-only that year?)", {}
+    missing = [n for n in mapped if n not in names and not any(f.endswith("." + n) for f in names)]
+    detail = {"blank_fields": len(names), "mapped": len(mapped), "missing": len(missing),
+              "missing_sample": missing[:5]}
+    if not missing:
+        return "PORTABLE (identical topology)", detail
+    if len(missing) <= max(2, 0.05 * len(mapped)):
+        return f"NEAR-PORT ({len(missing)} fields moved)", detail
+    return f"RE-MAP ({len(missing)}/{len(mapped)} fields gone)", detail
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--base-year", type=int, required=True)
     ap.add_argument("--target-year", type=int, required=True)
     ap.add_argument("--probe", action="store_true", help="HTTP HEAD each candidate (network)")
+    ap.add_argument("--triage", action="store_true",
+                    help="DOWNLOAD each candidate and classify the port cost against the base pack's "
+                         "field map (network; implies --probe). This is the number that matters — "
+                         "string derivation alone over-reports by ~2x.")
+    ap.add_argument("--cache-dir", type=Path, default=None, help="where --triage stores downloaded blanks")
     ap.add_argument("--out", type=Path, default=None, help="work-list JSON path (default: stdout summary only)")
     args = ap.parse_args()
+    cache_dir = args.cache_dir or (REPO / ".cache" / "triage-blanks")
 
     rows = []
     for pack_path in sorted(STATES.glob(f"*/{args.base_year}/*/pack.yaml")) + sorted(
@@ -88,19 +131,32 @@ def main() -> int:
             continue
         candidate, changed = _candidate_url(url, args.base_year, args.target_year)
         status = "candidate" if changed else "no-year-token"
-        if changed and args.probe:
+        detail: dict = {}
+        if changed and args.triage:
+            mapped = {e["field"] for e in (raw.get("fields") or []) if isinstance(e, dict) and "field" in e}
+            status, detail = _triage(candidate, mapped, cache_dir / f"{state}-{form}-{args.target_year}.pdf")
+        elif changed and args.probe:
             status = _probe(candidate)
         rows.append({"state": state, "form": form, "kind": pack_path.name,
                      "base_url": url, "candidate_url": candidate if changed else "",
-                     "status": status})
+                     "status": status, **detail})
 
     n_candidates = sum(1 for r in rows if r["candidate_url"])
     n_blocked = len(rows) - n_candidates
     for r in rows:
-        print(f"{r['state']:>3} {r['form']:<16} {r['status']:<40} {r['candidate_url'] or r['base_url']}")
+        print(f"{r['state']:>3} {r['form']:<16} {r['status']:<44} {r['candidate_url'] or r['base_url']}")
     print(f"\n{len(rows)} packs: {n_candidates} with a derivable candidate URL, "
           f"{n_blocked} needing manual URL research (no year token / no source_url) — "
           f"none are done until they pass fetch_blank + introspect + vision audit + golden tests.")
+    if args.triage:
+        buckets: dict[str, int] = {}
+        for r in rows:
+            buckets[r["status"].split(" (")[0]] = buckets.get(r["status"].split(" (")[0], 0) + 1
+        print("Triage verdicts (this is the real cost breakdown):")
+        for verdict, count in sorted(buckets.items(), key=lambda kv: -kv[1]):
+            print(f"  {count:>3}  {verdict}")
+        print("  PORTABLE/NEAR-PORT = the cheap path (swap URL+digest, then STILL vision-audit every "
+              "page: identical field NAMES do not prove the state kept its line NUMBERING).")
     if args.out:
         args.out.write_text(json.dumps(
             {"base_year": args.base_year, "target_year": args.target_year, "packs": rows},

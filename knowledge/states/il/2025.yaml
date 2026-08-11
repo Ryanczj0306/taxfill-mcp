@@ -259,3 +259,57 @@ tax:
     chart rows with the Step 1 Line C box checked).'
   - Rate is UNCHANGED at 4.95% (.0495) for 2025; the exemption amount is year-specific ($2,850 for 2025, $2,775 for
     2024) — never carry an exemption amount to another year.
+# effective_law_changes — promoted on 2026-08-11 from this pack's own header "CHANGED for 2025"
+# note, credits prose and the booklet's "What's New for 2025" list quoted in `all_citations`
+# (DEV_PLAN §7.2). Both are modeled: false — a credit percentage and a Schedule M subtraction,
+# neither of which calc.state_tax computes. The $2,775 -> $2,850 exemption move is COLA
+# indexation, not a law change, so it gets no entry (it already lives in tax.exemptions).
+effective_law_changes:
+- description: >-
+    Illinois Child Tax Credit INCREASED to 40% of the Illinois Earned Income Tax Credit for 2025, up
+    from 20% for 2024 (What's New for 2025: "Illinois Child Tax Credit amount was increased to 40
+    percent of the Illinois Earned Income Tax Credit"). The 2025 Schedule IL-E/EITC Step 5, Line 12
+    prints "Multiply the amount on Line 11 [the Illinois EITC from Line 9] by 40% (0.4). This is your
+    Illinois Child Tax Credit." Eligibility is unchanged (qualify for the Illinois EITC and have at
+    least one dependent child under age 12 as of the last day of 2025); the credit stays refundable.
+  status: final_form_published
+  affects:
+  - credits
+  - Form IL-1040 Line 30
+  - Schedule IL-E/EITC Step 5 Line 12
+  modeled: false
+  lookup_path: >-
+    2025 Schedule IL-E/EITC Step 5 (Lines 11-12) — 40% of the Illinois EITC from Step 4 — carried to
+    Form IL-1040 Line 30. calc.state_tax computes only the Line 12 flat-rate tax, so the credit is
+    applied after it in Step 8 (Payments and Refundable Credit).
+  citation:
+    source: >-
+      Illinois Department of Revenue — 2025 Schedule IL-E/EITC (form, Step 5, Line 12 "by 40% (0.4)")
+      and 2025 Form IL-1040 Instructions "What's New for 2025?" (Illinois Child Tax Credit increased
+      to 40 percent of the Illinois EITC)
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-il-e-eic.pdf
+- description: >-
+    NEW Schedule M Line 18 subtraction for medical debt relief, named in the 2025 IL-1040 instructions'
+    What's New for 2025 (this pack's `unverified` note records it as one of the 2025 Schedule M changes
+    and classifies it as a SUBTRACTION, not an addition). It reduces Illinois base income below federal
+    AGI on IL-1040 Line 7 / Schedule M, so a filer with medical debt relief must fold it into the base
+    income supplied to the engine.
+  status: final_form_published
+  affects:
+  - starts_from
+  - Schedule M Line 18
+  - Form IL-1040 Line 7 (Total subtractions)
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    2025 Schedule M and its instructions, reached from the 2025 IL-1040 Instructions What's New for
+    2025 (the citation URL) — Line 18 medical debt relief subtraction; the pack did not open Schedule M
+    line-by-line (see `unverified`), so resolve the amount and eligibility there before subtracting it.
+  citation:
+    source: >-
+      2025 Form IL-1040 Instructions (PDF title "2025 IL-1040 Instructions"; internal label R-02/25) —
+      cover/mailing addresses, due date (April 15, 2026), income tax rate 4.95%, exemption allowance
+      $2,850, What's New for 2025 (personal exemption $2,850, Child Tax Credit increased to 40% of the
+      Illinois EITC, Schedule M Line 18 medical debt relief subtraction, full date of birth now required
+      on Line A)
+    url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf

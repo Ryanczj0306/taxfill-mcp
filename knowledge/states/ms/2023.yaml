@@ -279,3 +279,82 @@ tax:
     divergence to quantify.
   - Nonresidents and part-year residents file Form 80-205 (taxable income line 19, tax line 20) and must PRORATE deductions
     and exemptions by the MS-income ratio — this pack models only the full-year resident Form 80-105.
+# effective_law_changes promoted 2026-08-11 from this pack's OWN prose (the tax note '2023
+# legislative context (HB 531, 2022 session, p.3 What's New)' and the Dependent Care / Child
+# Adoption credit entries) per DEV_PLAN §7.2 — no new research. The HB 531 rate structure is
+# modeled: true (it IS the shipped 0%/5% tax.brackets); both credit changes are modeled: false
+# because they are credits subtracted from the line 17 tax AFTER the rate schedule, which is
+# where calc.state_tax stops.
+effective_law_changes:
+- description: >-
+    HB 531 (2022 session) took effect for tax year 2023: beginning tax year 2023 NO tax is
+    levied on taxable income up to and including $10,000, and the printed 2023 rate on the
+    excess is 5% — "Income Tax: 0% on the first $10,000.00 of taxable income and 5% on taxable
+    income in excess of $10,000.00" (instructions p.22, 'Tax Rates'; Schedule of Tax
+    Computation, p.27). One schedule covers all filing statuses. HB 531 schedules FUTURE cuts
+    on the excess over $10,000 — 4.7% (2024), 4.4% (2025), 4.0% (2026) — which do NOT apply to
+    2023, and there was no mid-year 2023 rate change.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - Form 80-105 line 17 (Schedule of Tax Computation, p.27)
+  modeled: true
+  citation:
+    source: >-
+      2023 Mississippi Resident, Non-Resident and Part-Year Resident Income Tax Instructions
+      (Form 80-100-23-1-1-000, Rev. 09/23), MS DOR — 'Tax Rates' (p.22): 'Income Tax: 0% on the
+      first $10,000.00 of taxable income and 5% on taxable income in excess of $10,000.00';
+      'Schedule of Tax Computation' (Appendix, p.27): line 1 first $10,000 ($0-$10,000) x 0%,
+      line 2 remaining balance x 5%, line 4 total to Form 80-105 page 1 line 17; 'Filing Status
+      and Exemptions' table (p.6): exemption $12,000 married filing joint/combined and
+      Married-Spouse Died 2023, $6,000 married filing separate (each), $8,000 Head of Family,
+      $6,000 single; standard deduction $4,600 / $4,600 / $2,300 / $3,400 / $2,300; 'Additional
+      Exemptions' chart (p.7): $1,500 each dependent, $1,500 age 65 or over (taxpayer/spouse
+      only), $1,500 blind (taxpayer/spouse only); Deductions and Line 14/15/16/17 instructions
+      (p.8); 'Round to the Nearest Dollar' (p.22). Corroborated by 2023 Form 80-105 (Form
+      80-105-23-8-1-000, Rev. 11/23) page 1, which prints the exemption amounts next to each
+      filing-status box and the line 10 'Line 9 x $1,500' multiplication.
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf
+- description: >-
+    NEW for tax year 2023 — the Mississippi DEPENDENT CARE CREDIT (credit code 37): 25% of the
+    federal Child and Dependent Care Credit actually claimed on the federal return, available
+    only to filers with federal AGI of not more than $50,000, nonrefundable and limited to the
+    taxpayer's total Mississippi income tax liability. Claimed on Form 80-401 (Tax Credit
+    Summary Schedule) and carried to Form 80-105 line 19 (resident) or Form 80-205 line 21.
+  status: final_form_published
+  affects:
+  - credits (Dependent Care Credit, code 37)
+  - Form 80-401
+  - Form 80-105 line 19
+  modeled: false
+  lookup_path: >-
+    The 'Dependent Care Credit' section of the 2023 Individual Income Tax Instructions (Form
+    80-100-23, the citation URL) plus Form 80-401; the amount depends on the federal credit
+    claimed, and calc.state_tax computes only the line 17 tax before credits.
+  citation:
+    source: >-
+      Mississippi Department of Revenue, 2023 Individual Income Tax Instructions (Form
+      80-100-23), 'Dependent Care Credit' section
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf
+- description: >-
+    The Mississippi CHILD ADOPTION CREDIT (credit code 25) was INCREASED effective calendar year
+    2023 and after (Senate Bill 2696): up to $10,000 per child for a dependent child residing in
+    Mississippi before the adoption, increased from $5,000, and up to $5,000 per child for a
+    dependent child residing outside Mississippi but legally adopted under Mississippi law. It is
+    claimed for the tax year in which the adoption becomes final, is nonrefundable, and any
+    unused credit may be carried forward 5 years.
+  status: final_form_published
+  affects:
+  - credits (Child Adoption Credit, code 25)
+  - Form 80-401
+  - Form 80-105 line 19
+  modeled: false
+  lookup_path: >-
+    The 'Child Adoption Credit' section of the 2023 Individual Income Tax Instructions (Form
+    80-100-23, the citation URL) and the 2023 legislative summary of Senate Bill 2696; the credit
+    is applied against the line 17 tax, after the rate schedule this pack models.
+  citation:
+    source: >-
+      Mississippi Department of Revenue, 2023 Individual Income Tax Instructions (Form
+      80-100-23), 'Child Adoption Credit' section and 2023 legislative summary (Senate Bill 2696)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf

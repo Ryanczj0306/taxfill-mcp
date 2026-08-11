@@ -399,3 +399,127 @@ def test_delaware_and_pennsylvania_rules_are_loaded():
     for year in (2023, 2024, 2025):
         pa = load_state_knowledge("pa", year).convenience_rule
         assert pa is not None and "of necessity" in pa.summary
+
+
+# Repo root for the data-instance tests below.
+from pathlib import Path  # noqa: E402
+
+REPO = Path(__file__).resolve().parents[3]
+
+
+# ── effective_law_changes: the shipped DATA instances (D2c, 2026-08-11) ────────
+# The schema shipped long before any pack used it; 2026-08-10 promoted RI 2025's
+# Schedule HR1, and 2026-08-11 promoted every other pack whose own prose already
+# carried verified law-delta research. These tests pin the invariants that make
+# the block trustworthy rather than decorative.
+
+
+def _all_state_packs_with_changes():
+    from taxfill_core.knowledge import load_state_knowledge
+
+    out = []
+    for d in sorted((REPO / "knowledge" / "states").iterdir()):
+        if not d.is_dir():
+            continue
+        for p in sorted(d.glob("*.yaml")):
+            if not p.stem.isdigit():
+                continue
+            pack = load_state_knowledge(d.name, int(p.stem), base_dir=REPO / "knowledge")
+            if pack.effective_law_changes:
+                out.append((d.name, int(p.stem), pack))
+    return out
+
+
+def _every_url_in(node) -> set[str]:
+    """Every URL anywhere in a pack's YAML — credits/notes carry their own citations,
+    nested arbitrarily deep, so this walks rather than enumerating known blocks."""
+    found: set[str] = set()
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == "url" and isinstance(value, str):
+                found.add(value.strip())
+            else:
+                found |= _every_url_in(value)
+    elif isinstance(node, list):
+        for item in node:
+            found |= _every_url_in(item)
+    return found
+
+
+def test_law_change_instances_ship_and_are_cited_from_within_the_pack():
+    """The promotion was a TRANSCRIPTION: each change's citation must be a URL the
+    pack already carried, so no entry can smuggle in a source nobody verified."""
+    import yaml as _yaml
+
+    packs = _all_state_packs_with_changes()
+    assert len(packs) >= 40, (
+        f"only {len(packs)} state packs carry effective_law_changes — the 2026-08-11 promotion "
+        f"covered every pack whose prose described a real delta; a big drop means blocks were lost"
+    )
+    for state, year, _pack in packs:
+        path = REPO / "knowledge" / "states" / state / f"{year}.yaml"
+        raw = _yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        pack_urls = _every_url_in({k: v for k, v in raw.items() if k != "effective_law_changes"})
+        for i, change in enumerate(raw.get("effective_law_changes") or []):
+            where = f"{state}/{year}[{i}]"
+            assert (change.get("description") or "").strip(), f"{where}: empty description"
+            url = ((change.get("citation") or {}).get("url") or "").strip()
+            assert url.startswith("http"), f"{where}: uncited change"
+            assert url in pack_urls, (
+                f"{where}: law-change citation {url} appears nowhere else in the pack — the "
+                f"promotion must transcribe a source the pack already verified, never introduce one"
+            )
+
+
+def test_not_yet_final_changes_carry_a_lookup_path():
+    """The schema's own contract: a figure without final published guidance is never
+    hardcoded — the entry records where to resolve it instead. (A
+    final_form_published change needs no lookup_path: its citation IS the path.)"""
+    for state, year, pack in _all_state_packs_with_changes():
+        for change in pack.effective_law_changes:
+            if change.status != "final_form_published":
+                assert (change.lookup_path or "").strip(), (
+                    f"{state}/{year}: status={change.status} with no lookup_path — a not-yet-final "
+                    f"figure must record where to resolve it rather than be treated as settled"
+                )
+
+
+def test_state_scope_surfaces_unmodeled_changes_and_stays_quiet_about_modeled_ones():
+    """The consumer contract: modeled changes are already in the math (silence is
+    correct); unmodeled ones must reach the user as a warning."""
+    from datetime import date
+
+    from taxfill_core.schemas.profile import Profile, Provenance, ResidencePeriod, StateFootprintYear
+    from taxfill_core.statescope import state_scope
+
+    us = Provenance.user_stated()
+    checked_modeled = checked_unmodeled = 0
+    for state, year, pack in _all_state_packs_with_changes():
+        if state in {"tx", "fl", "wa", "nv", "sd", "wy", "ak", "tn", "nh"}:
+            continue
+        profile = Profile(state_footprint={year: StateFootprintYear(
+            lived=[ResidencePeriod(state=state.upper(), start=date(year, 1, 1),
+                                   end=date(year, 12, 31), provenance=us)],
+            no_us_work=True,
+        )})
+        filings = {f.state: f for f in state_scope(profile, year).states}
+        entry = filings.get(state.upper())
+        if entry is None:
+            continue
+        warned = " ".join(entry.warnings)
+        for change in pack.effective_law_changes:
+            head = change.description.strip()[:40]
+            if change.modeled:
+                assert head not in warned, (
+                    f"{state}/{year}: a MODELED change is being warned about — the math already "
+                    f"includes it, so the warning is noise"
+                )
+                checked_modeled += 1
+            else:
+                assert "Law change NOT modeled" in warned, (
+                    f"{state}/{year}: an UNMODELED change never reached the scope warnings"
+                )
+                checked_unmodeled += 1
+    assert checked_unmodeled >= 10 and checked_modeled >= 1, (
+        f"coverage too thin to be meaningful (modeled={checked_modeled}, unmodeled={checked_unmodeled})"
+    )

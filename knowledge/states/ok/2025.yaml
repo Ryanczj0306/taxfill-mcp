@@ -356,3 +356,64 @@ tax:
     the credit for tax paid to another state (Form 511-TX, line 16), Form 511-CR other credits (which for 2025 newly
     include the Electric Vehicle Charging Tax Credit), and every refundable/nonrefundable credit in the pack''s credits
     block — all sit outside the rate schedule.'
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the two items on
+# the 2025 packet's What's New page, already recorded in this pack's header comment,
+# credits_verification and tax.notes. modeled: false for both — neither touches the rate
+# schedule, and calc.state_tax reproduces Form 511 line 14a only (no Schedule 511-C
+# exemptions, no Form 511-CR credits). NOT promoted: 2025 HB 2764, because its new 68 O.S.
+# 2355(D) three-bracket / 4.5%-top-rate schedule applies "For tax year 2026 and for subsequent
+# tax years" and leaves TY2025's six-bracket 4.75% schedule untouched (see tax.notes) — there
+# is no TY2025 computational delta to surface.
+effective_law_changes:
+- description: >-
+    NEW for 2025 (packet What's New): an exemption on Schedule 511-C line 6 for employers who
+    provide paid leave to employees serving as poll workers. It is an Oklahoma adjustment
+    reducing income on the way from Oklahoma AGI (Form 511 line 7) to line 9 "Oklahoma income
+    after adjustments", not a change to the rate schedule.
+  status: final_form_published
+  affects:
+  - Schedule 511-C line 6
+  - Form 511 line 8 (Oklahoma adjustments) and line 9
+  - calc.state_tax taxable_base (caller-supplied Form 511 line 9 must already reflect it)
+  modeled: false
+  lookup_path: >-
+    2025 Form 511 packet What's New and the Schedule 511-C line 6 instructions (the citation URL)
+    for who qualifies and how the exemption is computed; this pack ships no Schedule 511-C figures
+    and calc.state_tax applies none.
+  citation:
+    source: >-
+      2025 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax
+      Commission): What's New (poll-worker paid-leave exemption, Schedule 511-C line 6; Electric Vehicle Charging Tax
+      Credit added to Form 511-CR); Form 511 lines 1-14a; line 10 standard deduction instructions ($6,350 Single/MFS,
+      $12,700 MFJ/Qualifying Surviving Spouse, $9,350 Head of Household); line 11 exemptions X $1,000; Top of Form
+      Instructions F EXEMPTIONS (Special 65-or-older federal-AGI limits $15,000/$25,000/$12,500/$19,000; Legally Blind;
+      Dependents); 2025 Oklahoma Income Tax Table pp. 27-38 including the 'Tax Computation Worksheet ... $100,000 or
+      more' constants ($4,562 plus 0.0475 Single/Married Filing Separate; $4,373 plus 0.0475 Married Filing Joint/Head
+      of Household/Qualified Widow(er)); Who Must File; Resident Defined; Due Date; mailing address; check payee;
+      Schedules 511-A/511-B/511-C/511-D/511-E/511-F/511-G; Form 538-S
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+- description: >-
+    NEW for 2025 (packet What's New): the Electric Vehicle Charging Tax Credit was added to Form
+    511-CR, the other-credits schedule that feeds Form 511. It is a credit against tax, not a
+    change to the income base or the rate schedule, and this pack's `credits` list does not
+    carry it (Form 511-CR is a separate download and was not fetched — see `unverified`).
+  status: final_form_published
+  affects:
+  - Form 511-CR (other credits)
+  - credits (not carried in this pack)
+  modeled: false
+  lookup_path: >-
+    2025 Form 511 packet What's New (the citation URL) and Form 511-CR at tax.ok.gov for the credit's
+    eligibility and amount; calc.state_tax applies no Oklahoma credits.
+  citation:
+    source: >-
+      2025 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax
+      Commission): What's New (poll-worker paid-leave exemption, Schedule 511-C line 6; Electric Vehicle Charging Tax
+      Credit added to Form 511-CR); Form 511 lines 1-14a; line 10 standard deduction instructions ($6,350 Single/MFS,
+      $12,700 MFJ/Qualifying Surviving Spouse, $9,350 Head of Household); line 11 exemptions X $1,000; Top of Form
+      Instructions F EXEMPTIONS (Special 65-or-older federal-AGI limits $15,000/$25,000/$12,500/$19,000; Legally Blind;
+      Dependents); 2025 Oklahoma Income Tax Table pp. 27-38 including the 'Tax Computation Worksheet ... $100,000 or
+      more' constants ($4,562 plus 0.0475 Single/Married Filing Separate; $4,373 plus 0.0475 Married Filing Joint/Head
+      of Household/Qualified Widow(er)); Who Must File; Resident Defined; Due Date; mailing address; check payee;
+      Schedules 511-A/511-B/511-C/511-D/511-E/511-F/511-G; Form 538-S
+    url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf

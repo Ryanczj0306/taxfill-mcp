@@ -377,3 +377,36 @@ tax:
   - New Mexico has no state-defined standard deduction or personal exemption of its own — the federal deduction flows
     through on PIT-1 line 12 (the federal Form 1040/1040SR line 12 amount), which is why the caller supplies the form's
     own taxable-income line and no standard_deduction or exemptions ship.
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header prose and
+# tax.notes (nothing researched anew). ONE entry: the HB 252 restructure, modeled: true because
+# tax.brackets already ships the six-bracket 2025 schedule. The inflation-adjusted PIT-RC tables
+# (Child Income Tax Credit, LICTR) are indexation, not law changes; the PIT-1 line 16 'Reserved for
+# Future Use' relocation of the 65+ medical care expense deduction onto Schedule PIT-ADJ line 18 is
+# a form reorganization whose only source in this pack is an AWS-hosted (non-.gov) URL, so it gets
+# no entry rather than a constructed citation.
+effective_law_changes:
+- description: >-
+    THE RESTRUCTURE YEAR — Section 7-2-7 NMSA 1978 as amended by 2024 House Bill 252 (Laws 2024,
+    Chapter 67, Section 5) replaces, "for any taxable year beginning on or after January 1, 2025",
+    the five-bracket 1.7-5.9% schedule that ran TY2021 through TY2024 with a SIX-bracket
+    1.5 / 3.2 / 4.3 / 4.7 / 4.9 / 5.9% schedule: the bottom rate is cut 1.7% -> 1.5%, a new 4.3%
+    bracket is inserted, and the 3.2% / 4.7% / 4.9% bands are widened (single: 3.2% now to $16,500
+    not $11,000, 4.7% to $66,500, 4.9% starting at $66,500 not $16,000; MFJ/HoH: 3.2% to $25,000,
+    4.3% to $50,000, 4.7% to $100,000). The top 5.9% thresholds are unchanged ($210,000 single /
+    $315,000 MFJ-HoH / $157,500 MFS) but their constants moved ($9,748 / $14,624 / $7,312 for 2025
+    vs $10,010.50 / $15,027 / $7,513.50 for 2024). Do NOT reuse the 2024 block.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - 2025 PIT-TRT Tax Rate Table
+  - Form PIT-1 line 18
+  modeled: true
+  lookup_path: >-
+    The filed PIT-1 line 18 figure still comes from the MANDATED 2025 PIT-TRT look-up table and its
+    over-$100,000 continuation schedules (constants $4,356/$4,087/$4,492, then $9,746/$14,622/$7,310),
+    which sit about $2-$3 below the statutory cumulative math this pack's brackets reproduce — see
+    tax.notes; the table is printed in the Department's 2025 Personal Income Tax Packet.
+  citation:
+    source: New Mexico Legislature — 2024 House Bill 252 (HTRC/HB 252/a, final version), Section 5 amending Section
+      7-2-7 NMSA 1978 (INDIVIDUAL INCOME TAX RATES) for taxable years beginning on or after January 1, 2025
+    url: https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf

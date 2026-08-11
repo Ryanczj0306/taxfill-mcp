@@ -300,3 +300,78 @@ tax:
     credit (line 10), the IA 126 nonresident/part-year credit (line 13), out-of-state tax credit (line 15), SCHOOL
     DISTRICT SURTAX and EMS surtax (Step 6 — a local percentage of the line 16 balance), the 15%-of-federal Iowa EITC
     (line 25), and the child and dependent care / early childhood development credits (line 24).'
+# DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the header's
+# "HEADLINE 2024 CHANGES (What's New)" list, the tax block's pre-block comment and the tax.notes
+# "2024 schedule change" / alternate-tax notes); transcription only, no new research and no new
+# sources. modeled: true for the bracket consolidation because tax.brackets already ships the three
+# 2024 brackets; the alternate-tax rate drop and the Schedule 1 changes are modeled: false —
+# calc.state_tax computes neither.
+effective_law_changes:
+- description: >-
+    BRACKET CONSOLIDATION — the four 2023 brackets became THREE for 2024 (What's New: "Line 5: The
+    tax rates for each tax bracket have decreased"): the 6.00% top bracket is GONE and 5.70% now
+    applies to all income over $31,050 (non-joint, filing statuses 1/3/4/5) or $62,100 (joint, status
+    2); the remaining rates are 4.40% and 4.82%, and the bracket bounds moved up from 2023's
+    $6,000/$30,000 (non-joint) and $12,000/$60,000 (joint). Iowa's single flat rate of 3.8% (SF 2442)
+    begins TAX YEAR 2025 — it does NOT apply to 2024.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - IA 1040 Step 5 line 5
+  - 2024 IA 1040 Tax Calculation Worksheet (41-026)
+  modeled: true
+  citation:
+    source: >-
+      2024 IA 1040 Expanded Instructions (archived PDF) — What's New (bracket rate decreases; 2025
+      single rate 3.8%; Schedule 1 renumbering; ISave 529 limit $5,500; federal tax refund reporting
+      ends), Who Must File thresholds, low-income exemption, line 5 tax / 5.7% alternate tax over
+      $13,500/$32,000, exemption credits, line 9 tuition and textbook credit, line 24 child and
+      dependent care / early childhood credits, line 25 EITC 15%, rounding rules
+    url: https://revenue.iowa.gov/media/4152/download?inline
+- description: >-
+    ALTERNATE TAX PERCENTAGE DROPPED to 5.7% (.057) for 2024, down from 6% in 2023: all filing
+    statuses except single may compute the alternate tax on the alternate-tax-worksheet income above
+    $13,500 ($32,000 if the taxpayer or spouse was 65 or older on 12/31/2024) and enter the SMALLER
+    of that or the rate-schedule tax on IA 1040 line 5 (status-3 spouses prorate it).
+  status: final_form_published
+  lookup_path: >-
+    2024 IA 1040 Expanded Instructions, line 5 alternate-tax instructions at the citation URL (and
+    the Iowa Income Tax Reduction Worksheet 41-146 for single filers).
+  affects:
+  - IA 1040 Step 5 line 5 (alternate tax election)
+  - calc.state_tax (off-model — the op always applies the rate schedule)
+  modeled: false
+  citation:
+    source: >-
+      2024 IA 1040 Expanded Instructions (archived PDF) — What's New (bracket rate decreases; 2025
+      single rate 3.8%; Schedule 1 renumbering; ISave 529 limit $5,500; federal tax refund reporting
+      ends), Who Must File thresholds, low-income exemption, line 5 tax / 5.7% alternate tax over
+      $13,500/$32,000, exemption credits, line 9 tuition and textbook credit, line 24 child and
+      dependent care / early childhood credits, line 25 EITC 15%, rounding rules
+    url: https://revenue.iowa.gov/media/4152/download?inline
+- description: >-
+    IA 1040 SCHEDULE 1 MODIFICATIONS REWORKED for 2024: the schedule was renumbered (net
+    modifications now line 21, military retirement exclusion now line 4), a NEW surviving-spouse
+    pension exemption and a NEW exemption for 529-to-Roth transfers were added, the ISave 529
+    deduction limit is $5,500 per beneficiary, federal income tax refunds received in 2024 and later
+    are no longer reported, and two checkoffs were repealed. Separately, purchases made from Students
+    First Educational Savings Account (ESA) funds under Iowa Code 257.11B became NOT eligible for the
+    tuition and textbook credit.
+  status: final_form_published
+  lookup_path: >-
+    2024 IA 1040 Schedule 1 and its instructions inside the 2024 IA 1040 Expanded Instructions at
+    the citation URL; the net modification amount is the filer's own Schedule 1 line 21.
+  affects:
+  - starts_from
+  - IA 1040 Schedule 1 (line 21 net modifications; line 4 military retirement)
+  - IA 1040 line 9 tuition and textbook credit
+  - calc.state_tax taxable_base (caller-supplied line 4 = federal taxable income + Schedule 1 line 21)
+  modeled: false
+  citation:
+    source: >-
+      2024 IA 1040 Expanded Instructions (archived PDF) — What's New (bracket rate decreases; 2025
+      single rate 3.8%; Schedule 1 renumbering; ISave 529 limit $5,500; federal tax refund reporting
+      ends), Who Must File thresholds, low-income exemption, line 5 tax / 5.7% alternate tax over
+      $13,500/$32,000, exemption credits, line 9 tuition and textbook credit, line 24 child and
+      dependent care / early childhood credits, line 25 EITC 15%, rounding rules
+    url: https://revenue.iowa.gov/media/4152/download?inline
