@@ -190,3 +190,16 @@ def test_ladder_mfs_shows_the_sli_hard_bar():
     r = magi_ladder(60_000, "married_filing_separately", 2025)
     sli = next(row for row in r.rows if "221" in row.test)
     assert sli.position == "above" and "no MAGI can fix it" in sli.definition
+
+
+def test_commuter_scoping_carries_the_eligibility_rules_not_just_the_caps():
+    """P-006: a real session had the monthly caps and still had to research what
+    qualifies. The scoping string is where an agent meets the limit, so the
+    year-invariant eligibility rules ride along with it."""
+    scoping = contribution_limits(year=2026).scoping["commuter_132f"]
+    assert "EXHAUSTIVE list of three" in scoping
+    assert "EV charging" in scoping and "fuel" in scoping          # the never-eligible trap
+    assert "HOME is\nexpressly excluded" in scoping.replace(" ", " ") or "HOME" in scoping
+    assert "INCUR AND SUBSTANTIATE" in scoping and "BEFORE" in scoping
+    assert "WAGES" in scoping                                       # the failure consequence
+    assert "get_sources('commuter benefits')" in scoping            # the authority pointer

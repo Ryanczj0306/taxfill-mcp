@@ -3626,10 +3626,26 @@ def contribution_limits(
             + (f" (carryover up to ${params.health_fsa_125i.carryover:,})" if params.health_fsa_125i.carryover else "")
             + "; payroll FSA dollars also avoid FICA."
         ),
+        # The caps are only half the answer: pitfall P-006 is a real session that
+        # had the limits and still had to research WHAT QUALIFIES. The eligibility
+        # rules are year-invariant, so they ride the scoping string rather than the
+        # per-year pack.
         "commuter_132f": (
             f"${params.commuter_132f.transit_monthly:,}/month transit and "
             f"${params.commuter_132f.parking_monthly:,}/month parking for {year}, separately; "
-            f"payroll commuter dollars also avoid FICA."
+            f"payroll commuter dollars also avoid FICA. ELIGIBILITY (P-006, year-invariant): "
+            f"qualified transportation benefits are an EXHAUSTIVE list of three — a ride in a "
+            f"commuter highway vehicle (6+ adults excluding the driver, 80% of mileage "
+            f"commuting), a transit pass, and qualified parking. Vehicle ENERGY is never among "
+            f"them: fuel and EV charging are as ineligible as tolls and mileage. Qualified "
+            f"parking is parking on or near the EMPLOYER's premises, or near where the employee "
+            f"catches transit/vanpool/carpool — parking at or near the employee's HOME is "
+            f"expressly excluded, and employer-provided free parking leaves nothing to shelter. "
+            f"Reimbursement requires the employee to INCUR AND SUBSTANTIATE the expense BEFORE "
+            f"payment, and cash reimbursement for transit passes is barred wherever a "
+            f"transit-only voucher is readily available; amounts failing these tests are WAGES, "
+            f"not an exclusion (and cash can never fall back on the de minimis rule). "
+            f"Authority: get_sources('commuter benefits')."
         ),
     }
     work = f"Contribution limits and SCOPING for {year}:\n" + "\n".join(f"* {k}: {v}" for k, v in scoping.items())

@@ -59,6 +59,45 @@ pitfalls:
       eligibility predicates) remains roadmap work — until then the amount
       is the agent's recorded position, like itemized deductions.
 
+  - id: P-006
+    incident: >-
+      A real session asked what a commuter benefit covers. The engine could
+      quote the MONTHLY CAPS (contribution_limits' commuter_132f block) but
+      shipped nothing about what QUALIFIES, so eligibility had to be
+      researched from scratch — and get_sources("qualified parking")
+      mis-routed to obbba_schedule_1a_deductions (the token "qualified"
+      pulling toward the OBBBA topic), a wrong-law pointer of the Schedule
+      NEC kind. Two live misconceptions surfaced in the same session: an
+      employer that DIRECT-DEPOSITED the monthly caps to an employee's
+      checking account with no substantiation while excluding the amounts
+      from Form W-2, and the assumption that EV charging (or fuel, tolls,
+      mileage) can be run through the benefit.
+    countermeasure: >-
+      The eligibility RULES are year-invariant and live here; only the
+      monthly caps are figures (they stay in the year packs). (1) Qualified
+      transportation fringes are an EXHAUSTIVE list of three: a ride in a
+      commuter highway vehicle (6+ adults excluding the driver, 80% of
+      mileage commuting), a transit pass, and qualified parking. Vehicle
+      ENERGY is never among them — fuel and EV charging are as ineligible
+      as tolls and mileage. (2) Qualified parking is parking on or near the
+      employer's business premises, or on or near the place the employee
+      commutes from by transit/vanpool/carpool; parking at or near the
+      employee's HOME is expressly excluded. Free employer parking leaves
+      nothing to shelter. (3) A bona fide reimbursement arrangement
+      requires the employee to INCUR AND SUBSTANTIATE the expense BEFORE
+      reimbursement, and cash reimbursement for transit passes is barred
+      wherever a transit-only voucher is readily available; amounts failing
+      these tests are wages subject to income and employment taxes, not an
+      exclusion. (4) Cash and cash equivalents can never fall back on the
+      de minimis exclusion. get_sources now routes the authority via topic
+      commuter_and_fringe_benefits (Pub 15-B's Transportation (Commuting)
+      Benefits section, 26 CFR 1.132-9 Q-16..Q-22, Rev. Rul. 2014-32, and
+      the de minimis page), with routing regression tests in
+      test_sources.py including the "qualified parking" neighbour-theft
+      case. Year-varying note carried by the sources entry: P.L. 119-21
+      permanently eliminated the qualified bicycle commuting exclusion for
+      tax years beginning after 2025.
+
   - id: P-005
     incident: >-
       A bank's annual "engagement bonus" (a credit-card-fee reimbursement)

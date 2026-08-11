@@ -301,3 +301,57 @@ def test_generated_state_registry_is_current():
         capture_output=True, text=True,
     )
     assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+# ── Commuter / transportation fringe routing (P-006) ──────────────────────────
+# Field session 2026-08-11: the packs shipped the §132(f) monthly CAPS but no
+# eligibility authority, and "qualified parking" mis-routed to
+# obbba_schedule_1a_deductions — the token "qualified" pulling toward the OBBBA
+# topic, the same wrong-law failure Schedule NEC had. These are the P-006
+# regression tests.
+
+
+def test_commuter_queries_route_to_their_own_topic():
+    for query in (
+        "commuter benefits",
+        "qualified parking",       # was -> obbba_schedule_1a_deductions (wrong law)
+        "transit pass",            # was a clean miss
+        "transportation fringe benefits",
+        "commuter highway vehicle",
+        # The not-covered side is the same authority: an agent asking whether
+        # vehicle energy or tolls can ride the benefit must land on the page
+        # whose exhaustive three-item list answers "no", not on a clean miss.
+        "electric vehicle charging",
+        "EV charging reimbursement",
+        "tolls and mileage commuting",
+    ):
+        r = get_sources(query, 2026)
+        assert r.matched, query
+        topics = {s.topic for s in r.sources}
+        assert topics == {"commuter_and_fringe_benefits"}, f"{query!r} routed to {topics}"
+
+
+def test_the_commuter_topic_carries_eligibility_authority_not_just_limits():
+    """The gap that made this topic necessary: an agent must reach the text that
+    says WHAT QUALIFIES, not only the year's dollar caps."""
+    r = get_sources("qualified parking", 2026)
+    blob = " ".join(s.answers for s in r.sources)
+    assert "on or near your business premises" in blob
+    assert "doesn't include parking at or near your employee's home" in blob
+    assert "incur and substantiate expenses" in blob  # the bona fide arrangement rule
+    assert any("p15b" in s.url for s in r.sources) and any("1-132-9" in s.url for s in r.sources)
+
+
+def test_commuter_topic_does_not_steal_its_neighbours_queries():
+    for query, expected in (
+        ("Schedule 1-A", "obbba_schedule_1a_deductions"),
+        ("no tax on tips", "obbba_schedule_1a_deductions"),
+        ("contribution limits", "contribution_limits"),
+        ("credit card rewards taxable", "other_income_and_rewards"),
+        ("Schedule NEC", "nonresident_fdap"),
+        ("retirement", "retirement"),
+    ):
+        r = get_sources(query, 2026)
+        assert r.matched and {s.topic for s in r.sources} == {expected}, (
+            f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+        )

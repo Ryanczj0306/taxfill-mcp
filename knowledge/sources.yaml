@@ -457,6 +457,65 @@ federal:
           withholding credit claimed against it.
         cadence: annual (per tax year)
 
+    # Commuter / transportation fringe benefits (§132(f)) and the fringe-benefit
+    # characterization rules around them. Added 2026-08-11 from a field session:
+    # the packs ship the DOLLAR LIMITS (contribution_limits' commuter_132f block)
+    # but carried nothing about WHAT QUALIFIES, so the eligibility half had to be
+    # researched from scratch — the same split H9 fixed for reward income. Worse,
+    # get_sources("qualified parking") mis-routed to obbba_schedule_1a_deductions
+    # (the token "qualified" pulls toward the OBBBA topic) — a WRONG-LAW pointer
+    # of exactly the Schedule NEC kind. The year-invariant eligibility RULES live
+    # in knowledge/pitfalls.yaml (P-006); only the monthly caps are figures.
+    commuter_and_fringe_benefits:
+      - url: https://www.irs.gov/pub/irs-pdf/p15b.pdf
+        answers: >-
+          Pub 15-B, Employer's Tax Guide to Fringe Benefits — "Transportation
+          (Commuting) Benefits": the EXHAUSTIVE list of qualified transportation
+          benefits (a ride in a commuter highway vehicle, a transit pass, and
+          qualified parking — nothing else); the qualified-parking definition
+          ("parking you provide to your employees on or near your business
+          premises ... It doesn't include parking at or near your employee's
+          home"); the transit-pass and commuter-highway-vehicle (6+ adults, 80%
+          mileage) definitions; the bona fide reimbursement arrangement rule
+          ("requires that the employee incur and substantiate expenses ... BEFORE
+          reimbursement") and the cash-reimbursement/readily-available-voucher
+          limit; compensation reduction agreements; de minimis transportation.
+          Also carries the P.L. 119-21 change permanently eliminating the
+          qualified bicycle commuting exclusion for tax years beginning after 2025.
+          Because that three-item list is exhaustive, this is also the authority
+          for what is NOT covered — vehicle energy of any kind (gasoline, fuel,
+          and electric-vehicle charging), tolls, mileage, parking at the
+          employee's own home, and ordinary rideshare that is not a 6+ adult
+          commuter highway vehicle.
+        cadence: annual (per tax year; the monthly caps are inflation-adjusted)
+      - url: https://www.govinfo.gov/content/pkg/CFR-2012-title26-vol2/pdf/CFR-2012-title26-vol2-sec1-132-9.pdf
+        answers: >-
+          26 CFR 1.132-9, Qualified transportation fringes — the operative Q&A
+          regulation: Q-16 how section 132(f) applies to expense reimbursements
+          (the bona fide reimbursement arrangement and the rule that cash
+          reimbursement for transit passes is allowed only when no voucher
+          exchangeable solely for a transit pass is READILY AVAILABLE, judged by
+          a fare-media-charge test), Q-17 reimbursement periods longer than one
+          month, Q-18/Q-19 substantiation, Q-20/Q-21 parking valuation and
+          vanpools, Q-22 reporting and employment taxes on amounts that fail.
+        cadence: as the regulation is amended (rare; check for superseding guidance)
+      - url: https://www.irs.gov/pub/irs-drop/rr-14-32.pdf
+        answers: >-
+          Rev. Rul. 2014-32: how smart cards, debit/credit cards and other
+          electronic media may (and may not) be used to deliver qualified
+          transportation fringes, including when a cash reimbursement
+          arrangement is bona fide — the ruling Pub 15-B points to for card-based
+          commuter programs.
+        cadence: standing ruling (check for superseding guidance)
+      - url: https://www.irs.gov/government-entities/federal-state-local-governments/de-minimis-fringe-benefits
+        answers: >-
+          De minimis fringe benefits (IRC 132(e)): the frequency-and-value test,
+          and the hard rule that CASH and cash-equivalent benefits (gift cards,
+          charge/credit card use) are NEVER excludable as de minimis no matter
+          how small — the reason an employer's cash payment for commuting or
+          vehicle energy costs cannot ride the de minimis exclusion.
+        cadence: standing page (re-check each filing season)
+
   change_channels:
     - url: https://www.irs.gov/newsroom
       answers: >-
