@@ -250,3 +250,39 @@ tax:
   - 'Not modeled: Schedule J (farm income averaging) as an alternative to the line 12 multiplication, the line 13
     add-ons (Form 4972-K lump-sum tax, Schedule RC-R / DS-R recapture, Angel Investor recapture), the line 27 Kentucky
     Use Tax, and Kentucky LOCAL occupational license taxes (county/city payroll taxes).'
+# effective_law_changes — promoted on 2026-08-11 from this pack's own "CHANGED for 2025" header
+# note and `starts_from`/`treaty_note` prose (DEV_PLAN §7.2). One entry only: the 4% rate is
+# UNCHANGED for 2025, and the $3,160 -> $3,270 standard deduction plus the re-indexed Family Size
+# Tax Credit table are annual cost-of-living adjustments, not law changes (they already ship in
+# tax.standard_deduction and credits). modeled: false — the conformity date works through
+# Schedule M into Kentucky AGI, which the caller supplies as taxable_base.
+effective_law_changes:
+- description: >-
+    IRC REFERENCE DATE ADVANCED to December 31, 2024 for 2025, from December 31, 2023 for 2024 — the live
+    KY DOR Individual Income Tax page states "Kentucky's individual income tax law is based on the Internal
+    Revenue Code in effect as of December 31, 2024. The tax rate is four (4) percent and allows itemized
+    deductions and certain income reducing deductions as defined in KRS 141.019". The conformity date governs
+    which federal provisions flow through federal AGI and which are modified on Schedule M (special
+    depreciation/Section 179 differences, federal NOL, the Kentucky excess business loss limitation, etc.) to
+    reach Kentucky adjusted gross income on Form 740 line 9.
+  status: final_form_published
+  affects:
+  - starts_from
+  - Schedule M (Part I additions lines 1-5 / Part II subtractions)
+  - Form 740 Lines 6/8/9 (Kentucky AGI)
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    Live KY DOR Individual Income Tax page (the citation URL) for the December 31, 2024 conformity date, and
+    the 2025 Schedule M (Kentucky Federal Adjusted Gross Income Modifications,
+    https://revenue.ky.gov/Forms/Schedule%20M%20(2025).pdf) for the additions/subtractions that implement it.
+    NOTE the 2025 Form 740 instruction packet — which carried "What's New" in prior years — was unretrievable
+    this pass (see `unverified`), so the packet's own statement of the change could not be quoted.
+  citation:
+    source: >-
+      Kentucky Department of Revenue — Individual Income Tax page (live DOR page; second-pass verification of
+      the rate — "Kentucky's individual income tax law is based on the Internal Revenue Code in effect as of
+      December 31, 2024. The tax rate is four (4) percent and allows itemized deductions and certain income
+      reducing deductions as defined in KRS 141.019"; Form 740 vs Form 740-NP split; mailing addresses;
+      Schedule P pension exclusion over $31,110)
+    url: https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx

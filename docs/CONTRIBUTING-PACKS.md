@@ -23,13 +23,24 @@ wrong number reaches a real return.
 For a year tranche, generate the work-list first:
 
 ```bash
-python scripts/scaffold_state_year.py --base-year 2023 --target-year 2025 --probe
+python scripts/scaffold_state_year.py --base-year 2023 --target-year 2025 --triage
 ```
 
-Each row is one pack. `candidate` rows have a derivable URL; `no-year-token` /
-`unreachable` rows need you to find the year's blank on the DOR forms index
-(MA additionally needs a Wayback cache-seed — see the MA pack header). Open an
-issue naming the row(s) you are taking.
+`--triage` downloads each derived candidate and diffs its AcroForm against the
+base pack's field map, so each row comes with its real cost:
+
+| verdict | what it means | work |
+|---|---|---|
+| `PORTABLE` | the blank carries every field name the base pack maps | swap URL + digest, then **still vision-audit every page** |
+| `NEAR-PORT` | a handful of fields moved | re-map those fields, then audit |
+| `RE-MAP` | the naming scheme changed (every CA pack, yearly) | full introspect + vision map |
+| `URL-DEAD` | the derived URL 404s | find the year's blank on the DOR forms index |
+| `no-year-token` | no substitutable year in the URL | same, plus MA needs a Wayback cache-seed |
+
+**`PORTABLE` is not "done".** Identical field names do NOT prove the state kept
+its line numbering — a form that renumbered lines while keeping positional field
+names (`f1_12[0]`) will fill the wrong lines and only the render catches it.
+Open an issue naming the row(s) you are taking.
 
 ## Step 1 — fetch the blank, pin the digest
 

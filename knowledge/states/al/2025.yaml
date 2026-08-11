@@ -340,3 +340,84 @@ tax:
   - This op computes the state rate-schedule line only. Alabama credits (Schedule OC), the consumer use tax and Catastrophe
     Savings tax reported on Schedule ATP (Form 40 line 19), and the Alabama Election Campaign Fund contributions (lines
     20a/20b) are NOT modeled.
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the three most consequential
+# TY2025 deltas already recorded in this pack's header comment, tax.notes and unverified list — the
+# overtime-exemption sunset, the new-vehicle loan interest deduction, and the Sound Money bullion
+# exclusion. All three are modeled: false — this pack's tax block ships only the (unchanged) 2%/4%/5%
+# rate schedules, so each change lands in the Form 40 base the caller supplies, not in the engine.
+# (Capped at 3: the same What's New page also carries the Act 2024-0170 expanded military-pay exemption
+# and the Act 2024-302/2024-303 Workforce Housing and Childcare credits.)
+effective_law_changes:
+- description: >-
+    OVERTIME EXEMPTION SUNSET — the Alabama exclusion of overtime pay for full-time hourly employees
+    (Act 2023-421, as amended by Act 2024-437) ENDED June 30, 2025: per the ADOR notice of May 29, 2025,
+    "The Alabama state income tax exemption applicable to overtime wages ends on June 30, 2025. After
+    this date, any amounts paid/received as overtime compensation are subject to income tax." TY2025 is
+    therefore a HALF-YEAR exclusion — overtime earned while the exemption was in effect is denoted in
+    W-2 Box 14 as "EX OT WAGES" and is NOT included in Box 16 state wages, while overtime paid after
+    June 30, 2025 is fully taxable. Neither 2025 booklet mentions overtime at all (the rule lives in the
+    withholding/W-2 channel), and the successor Overtime Premium Deduction is a 2026-2028 provision that
+    does NOT apply to TY2025.
+  status: final_form_published
+  affects:
+  - tax (rate schedule only — the change is in the wage base, not the schedule)
+  - Form 40 line 5b (wages/salaries/tips from Schedule W-2 line 18 column I plus J)
+  - W-2 Box 14 "EX OT WAGES" / Box 16 state wages
+  - calc.state_tax taxable_base (caller-supplied — must reflect only the pre-July-1 exempt overtime)
+  modeled: false
+  lookup_path: >-
+    ADOR NOTICE of May 29, 2025, "Overtime Exemption Ends June 30, 2025" (the citation URL); the exempt
+    amount comes from the filer's W-2 Box 14 "EX OT WAGES". The allocation rule for overtime straddling
+    June 30, 2025 (paid-date versus earned-date) is NOT stated on any fetched .gov page — confirm with ADOR.
+  citation:
+    source: >-
+      ADOR NOTICE, May 29, 2025 — 'Overtime Exemption Ends June 30, 2025': 'The Alabama state income tax
+      exemption applicable to overtime wages ends on June 30, 2025. After this date, any amounts paid/received as
+      overtime compensation are subject to income tax.' Employers denote the exempt wages earned during the 2025
+      period in which the exemption was in effect in Box 14 of the W-2 using 'EX OT WAGES'; 'Do not include exempt
+      overtime wages in Box 16 of the W-2.'
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/06/250529_NOTICE_IT_OvertimeExemptionSunset.pdf
+- description: >-
+    NEW-VEHICLE LOAN INTEREST DEDUCTION — the 2025 Form 40 booklet's What's New For 2025 page adds a
+    deduction for new-vehicle loan interest under Ala. Code Sec. 40-18-15, available for tax years
+    2025-2028. It is a base deduction taken on the Form 40 before line 16 taxable income, not a credit.
+  status: final_form_published
+  affects:
+  - Form 40 deductions (already inside the line 16 taxable-income base)
+  - calc.state_tax taxable_base (caller-supplied — must already net the deduction)
+  modeled: false
+  lookup_path: >-
+    2025 Form 40 Booklet, What's New For 2025 (p.2) and the Sec. 40-18-15 deduction instructions in the
+    same booklet (the citation URL); this pack ships no figure for the deduction and calc.state_tax
+    subtracts nothing beyond the rate schedule's line 16 input.
+  citation:
+    source: >-
+      2025 Form 40 Booklet (Alabama Department of Revenue, Long Return — Residents and Part-Year Residents,
+      Forms and Instructions) — What's New For 2025 (p.2, credit/exclusion changes only); You Must File A Return
+      If chart (p.5); When To File / automatic extension to October 15, 2026 (p.5); Filing Status and Personal Exemption
+      Lines 1-4 (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.10, Line 14 instructions begin
+      p.8); Line 17 Figuring Your Tax tax-table mandate (p.10); Amount You Owe / Form 40V (p.11); Where To File (p.12);
+      Tax Tables pp.25-30 and Over $100,000.00 worksheet (p.30)
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf
+- description: >-
+    SOUND MONEY TAX NEUTRALITY ACT (Act 2024-0447) — beginning January 1, 2025, net capital gains on
+    precious metal bullion are EXCLUDED from Alabama income (2025 Form 40 booklet, What's New For 2025).
+    A new income exclusion, not a credit: it reduces the Alabama income built up on the Form 40 before
+    line 16.
+  status: final_form_published
+  affects:
+  - Form 40 income lines (already inside the line 16 taxable-income base)
+  - calc.state_tax taxable_base (caller-supplied — must already exclude the bullion gain)
+  modeled: false
+  lookup_path: >-
+    2025 Form 40 Booklet, What's New For 2025 (p.2), Sound Money Tax Neutrality Act / Act 2024-0447 (the
+    citation URL); the excluded amount is the filer's own net capital gain on precious metal bullion.
+  citation:
+    source: >-
+      2025 Form 40 Booklet (Alabama Department of Revenue, Long Return — Residents and Part-Year Residents,
+      Forms and Instructions) — What's New For 2025 (p.2, credit/exclusion changes only); You Must File A Return
+      If chart (p.5); When To File / automatic extension to October 15, 2026 (p.5); Filing Status and Personal Exemption
+      Lines 1-4 (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.10, Line 14 instructions begin
+      p.8); Line 17 Figuring Your Tax tax-table mandate (p.10); Amount You Owe / Form 40V (p.11); Where To File (p.12);
+      Tax Tables pp.25-30 and Over $100,000.00 worksheet (p.30)
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf

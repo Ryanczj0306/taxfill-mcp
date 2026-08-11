@@ -340,3 +340,35 @@ tax:
     are unchanged from 2024 and only the bounds were indexed (3.0%). These are the schedules printed in the final
     2025 booklet used for the 2026 filing season and republished unchanged in the standalone 2025 Tax Rate Schedules
     PDF.'
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the ONE non-inflation 2025
+# delta in this pack's header comment and tax.notes — the statutory renaming of the Mental Health
+# Services Act (and its 1% millionaire surcharge) to the Behavioral Health Services Act for taxable
+# years beginning on or after 2025-01-01. modeled: false — the 1% surcharge on taxable income over
+# $1,000,000 has never been computed by this block (Form 540 line 62 is left to the form). Everything
+# else that moved for 2025 (bracket bounds +3.0%, standard deduction, exemption credits, AGI limits,
+# CalEITC and renter's-credit ceilings) is inflation indexing and is not promoted here.
+effective_law_changes:
+- description: >-
+    The Mental Health Services Act was RENAMED the Behavioral Health Services Act, verbatim from the 2025
+    booklet's tax-law-changes/What's New section: "Behavioral Health Services Act – For taxable years
+    beginning on or after January 1, 2025, the Mental Health Services Act has been renamed to the
+    Behavioral Health Services Act. Therefore, references to the Mental Health Services Tax have been
+    renamed to Behavioral Health Services Tax." Form 540 line 62 is now the Behavioral Health Services
+    Tax — same 1% rate, same $1,000,000 taxable-income threshold, same line as the 2024 Mental Health
+    Services Tax.
+  status: final_form_published
+  affects:
+  - Form 540 line 62 (Behavioral Health Services Tax, formerly Mental Health Services Tax)
+  modeled: false
+  lookup_path: >-
+    2025 Personal Income Tax Booklet (Form 540), Line 62 Behavioral Health Services Tax worksheet (the
+    citation URL): taxable income (line 19) less $1,000,000, times 1%, whole dollars only. This block
+    reproduces line 31 only and never adds the surcharge.
+  citation:
+    source: >-
+      2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — Important
+      Dates p. 3, Do I Have to File charts p. 4, standard deduction chart/worksheet + line 18/19/31 instructions p.
+      13, line 32 exemption-credit AGI limits + AGI Limitation Worksheet p. 14, line 62 Behavioral Health Services
+      Tax worksheet, renter's credit record pp. 25-26, mailing addresses, payment options, tax table pp. 69-74, 2025
+      California Tax Rate Schedules pp. 74-75
+    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'

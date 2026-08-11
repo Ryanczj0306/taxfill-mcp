@@ -340,3 +340,34 @@ tax:
     the Tax Calculation Schedule. The CT EITC (Line 20a) was expanded for 2025 — still 40% of the federal EIC, plus
     an additional $250 for a taxpayer with at least one federal qualifying child — but it is a refundable payment/credit
     applied after Line 6 and is not part of this block.
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the single "2025 CHANGE FOUND"
+# in this pack's header comment (the CT EITC expansion), also recorded in the credits block and
+# tax.notes. modeled: false — the CT EITC is a refundable credit applied after Form CT-1040 Line 6, and
+# this pack's tax block reproduces the Tax Calculation Schedule only. Rates and Tables A-E are unchanged
+# from TY2024 (the TY2024 3% -> 2% / 5% -> 4.5% cut HELD), so there is no rate-side entry for 2025.
+effective_law_changes:
+- description: >-
+    CT EITC EXPANDED for 2025: the credit remains 40% (.40) of the federal earned income credit claimed
+    and allowed, but a new supplement was added — "Any taxpayer eligible for CT EITC that has at least one
+    qualifying child for federal income tax purposes for the same taxable year, is eligible to receive an
+    additional two hundred fifty dollars ($250)." The Schedule CT-EITC investment-income ceiling also rose
+    to $11,950 for 2025 (from $11,600 for 2024). The DRS records the expansion on its "What's New for
+    2025" page.
+  status: final_form_published
+  affects:
+  - credits (Connecticut Earned Income Tax Credit)
+  - Schedule CT-EITC
+  - Form CT-1040 Line 20a
+  modeled: false
+  lookup_path: >-
+    2025 Form CT-1040 Instructions (Rev. 12/25), Line 20a and the Schedule CT-EITC line instructions (the
+    citation URL); the credit amount derives from the filer's federal EIC. This pack's tax block computes
+    Line 6 income tax only and applies no refundable credits. (The Schedule CT-EITC form itself was not
+    fetched — see the pack's unverified list.)
+  citation:
+    source: >-
+      CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 20a Connecticut Earned Income Tax Credit (40%
+      of the federal EIC plus the additional $250 for a taxpayer with at least one federal qualifying child) and Schedule
+      CT-EITC line instructions ($11,950 investment-income limit); confirmed against the DRS "What's New for 2025"
+      EITC expansion note
+    url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf'

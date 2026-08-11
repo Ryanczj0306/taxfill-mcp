@@ -300,3 +300,54 @@ tax:
   - 'Qualifying surviving spouse: the engine maps QSS to married_filing_jointly. The 2024 booklet lists only Filing
     Statuses 1/2/3 and does not explicitly state which status a federal QSS filer uses; because Virginia has a single
     rate schedule, only the standard deduction ($17,000 vs $8,500) would differ — confirm the correct status at tax.virginia.gov.'
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the standard-deduction
+# increase recorded in this pack's header comment and tax.notes, plus the second What's New item
+# named in the pack's own citation string. modeled: true for the standard deduction, which
+# tax.standard_deduction already ships at $8,500/$17,000; false for the business interest
+# deduction, which is a Schedule ADJ / conformity item the caller must fold into the VAGI base.
+# Not promoted: the refundable 15% Virginia EITC, which the booklet dates to taxable years
+# beginning January 1, 2022 (not a 2024 delta), and the unchanged $930/$800 exemptions.
+effective_law_changes:
+- description: >-
+    STANDARD DEDUCTION RAISED for Taxable Year 2024: $8,500 for Filing Status 1 (single) and
+    Filing Status 3 (married filing separately) and $17,000 for Filing Status 2 (married filing
+    jointly), up from $8,000/$16,000 in 2023, per legislation enacted during the 2023 General
+    Assembly session (booklet What's New plus the Line 11 standard deduction chart, independently
+    confirmed in the 2024 Form 763 nonresident instructions). The increase is scheduled to SUNSET
+    after Taxable Year 2025 and revert to the pre-TY2019 amounts ($3,000 single / $6,000 MFJ).
+    Head of household is not a Virginia filing status — federal HOH filers use Filing Status 1
+    and the $8,500 amount. Caution: the live tax.virginia.gov/deductions page already shows the
+    TY2025 $8,750/$17,500 figures and must not be used for 2024.
+  status: final_form_published
+  affects:
+  - tax.standard_deduction
+  - Form 760 Line 11 (standard deduction) feeding Line 14 and Line 15 Virginia taxable income
+  modeled: true
+  citation:
+    source: >-
+      2024 Form 760 Resident Individual Income Tax Instructions (2614089 Rev. 09/24) — What's New (standard
+      deduction increased to $8,500 single / $17,000 MFJ for TY2024, sunset after TY2025 reverting to pre-TY2019 $3,000/$6,000;
+      business interest deduction 50%; credit changes), due date May 1, 2025, filing thresholds $11,950/$23,900
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2024-760-instructions.pdf
+- description: >-
+    Also on the 2024 What's New page: a business interest deduction of 50%. It is a Virginia
+    conformity/deduction item reaching the return through Schedule ADJ (the Line 2a conformity
+    additions and the corresponding subtraction), so it changes Virginia adjusted gross income
+    rather than the rate schedule or the standard deduction. This pack records only the What's
+    New headline — it does not carry the deduction's mechanics or the prior-year percentage.
+  status: final_form_published
+  affects:
+  - starts_from
+  - Schedule ADJ (Line 2a conformity additions and the matching subtraction)
+  - calc.state_tax taxable_base (caller-supplied Form 760 Line 9 VAGI must already reflect it)
+  modeled: false
+  lookup_path: >-
+    2024 Form 760 Resident Individual Income Tax Instructions What's New and the Schedule ADJ
+    additions/subtractions line instructions (the citation URL) for the business interest deduction's
+    computation; this pack ships no Schedule ADJ figures and calc.state_tax applies none.
+  citation:
+    source: >-
+      2024 Form 760 Resident Individual Income Tax Instructions (2614089 Rev. 09/24) — What's New (standard
+      deduction increased to $8,500 single / $17,000 MFJ for TY2024, sunset after TY2025 reverting to pre-TY2019 $3,000/$6,000;
+      business interest deduction 50%; credit changes), due date May 1, 2025, filing thresholds $11,950/$23,900
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2024-760-instructions.pdf

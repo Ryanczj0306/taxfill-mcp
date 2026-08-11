@@ -278,3 +278,54 @@ tax:
   - The 2%/4%/5% schedule text is printed on the ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' (https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/)
     and was verified numerically against the 2024 booklet's Tax Table rows (e.g. $16,000-$16,100 -> $763 single /
     $723 MFJ; $4,100-$4,200 -> $168 / $146) and the over-$100,000 worksheet.
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the two NEW credits on the
+# 2024 booklet's credit-only What's New page (the pack's header comment and tax.notes both record it).
+# modeled: false for both — calc.state_tax reproduces only the Form 40 line 17 rate-schedule tax and
+# applies no Alabama credits. (Not promoted, same page: the Act 2023-327 refund check-offs and the MAT
+# pre-approval requirement, which are administrative rather than tax-computation changes.)
+effective_law_changes:
+- description: >-
+    NEW for 2024 (2024 Form 40 booklet, What's New For 2024, p.2): the Volunteer First Responder Mileage
+    credit, enacted by Act 2023-510. It is a new Alabama credit claimed through Schedule OC; the 2024
+    What's New page is credit-only — no rate, standard-deduction or exemption change accompanies it.
+  status: final_form_published
+  affects:
+  - Schedule OC
+  - Form 40 page 1 line 18 (net tax due computed with Schedule OC)
+  modeled: false
+  lookup_path: >-
+    2024 Form 40 Booklet What's New For 2024 (p.2) and the 2024 Schedule OC instructions
+    (https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24schocinstr.pdf) for the Schedule OC
+    part and per-mile amount; this pack does not ship the credit's figures and calc.state_tax applies
+    no Alabama credits.
+  citation:
+    source: >-
+      2024 Form 40 Booklet (Alabama Department of Revenue, Long Return — Residents and Part-Year Residents,
+      Forms and Instructions) — What's New For 2024 (p.2, credit-only changes); You Must File A Return If chart (p.5);
+      When To File / automatic extension to October 15, 2025 (p.5); Filing Status and Personal Exemption Lines 1-4
+      (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.8); Line 17 Figuring Your Tax tax-table
+      mandate (p.10); Where To File (p.12); Tax Table pp.25-30 and Over $100,000.00 worksheet (p.30)
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
+- description: >-
+    NEW for 2024 (2024 Form 40 booklet, What's New For 2024, p.2): the Preceptor Tax Incentive Program
+    credit, enacted by Act 2023-519 — a new Alabama credit for qualifying clinical preceptors, claimed
+    through Schedule OC. Again credit-only: the 2%/4%/5% dual rate schedules, the sliding standard
+    deduction, the $1,500/$3,000 personal exemptions and the income-tiered dependent exemption are all
+    unchanged from 2023.
+  status: final_form_published
+  affects:
+  - Schedule OC
+  - Form 40 page 1 line 18 (net tax due computed with Schedule OC)
+  modeled: false
+  lookup_path: >-
+    2024 Form 40 Booklet What's New For 2024 (p.2) and the 2024 Schedule OC instructions
+    (https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24schocinstr.pdf) for the Schedule OC
+    part and the per-rotation amount; this pack does not ship the credit's figures.
+  citation:
+    source: >-
+      2024 Form 40 Booklet (Alabama Department of Revenue, Long Return — Residents and Part-Year Residents,
+      Forms and Instructions) — What's New For 2024 (p.2, credit-only changes); You Must File A Return If chart (p.5);
+      When To File / automatic extension to October 15, 2025 (p.5); Filing Status and Personal Exemption Lines 1-4
+      (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.8); Line 17 Figuring Your Tax tax-table
+      mandate (p.10); Where To File (p.12); Tax Table pp.25-30 and Over $100,000.00 worksheet (p.30)
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf

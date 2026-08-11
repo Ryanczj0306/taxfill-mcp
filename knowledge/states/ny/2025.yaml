@@ -430,3 +430,38 @@ convenience_rule:
       to Telecommuters and Others", quoting 20 NYCRR 132.18(a) and setting the primary /
       secondary / other bona-fide-employer-office factor test.
     url: https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf
+
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header prose,
+# credits list, and tax.notes (nothing researched anew; the convenience_rule block above is
+# untouched). ONE entry: New York again did NOT index for 2025 — rate schedules, standard
+# deduction table, $1,000 dependent exemption, household credit tables, the 30% EIC rate and the
+# IT-214/IT-216 limits are all verified unchanged from 2024 — so the Empire State child credit
+# decoupling is the only substantive 2025 change this pack's prose records. modeled: false because
+# the credit is subtracted from tax on IT-201 line 63 and calc.state_tax models no NY credits.
+effective_law_changes:
+- description: >-
+    NEW FOR 2025 — the Empire State child credit is DECOUPLED from the federal child tax credit.
+    The 33%-of-the-federal-credit (computed under the rules in effect for tax year 2017, before
+    Public Law 115-97) / $100-per-child computation used through 2024 no longer applies. The credit
+    now equals $1,000 per qualifying child under four years old plus $330 per qualifying child at
+    least four but less than 17 years old, reduced by $16.50 for every $1,000 (federal AGI rounded
+    DOWN to the nearest $1,000 on Form IT-213 line 6) by which federal AGI exceeds the filing-status
+    threshold — $110,000 married filing joint, $75,000 single / head of household / qualifying
+    surviving spouse, $55,000 married filing a separate return. If the computed Form IT-213 line 9
+    amount is zero or less the taxpayer is not eligible and must not complete or submit the form.
+  status: final_form_published
+  affects:
+  - credits
+  - Form IT-213
+  - Form IT-201 line 63
+  modeled: false
+  lookup_path: >-
+    2025 Instructions for Form IT-213 (IT-213-I), "New for 2025" and "Credit Calculation" at the
+    citation URL — the per-child amounts, the $16.50-per-$1,000 phase-down and the line 6 round-down
+    rule live there; the credit reduces tax on IT-201 line 63 and is never a base reduction, so
+    calc.state_tax does not compute it.
+  citation:
+    source: 2025 Instructions for Form IT-213, Claim for Empire State Child Credit - "New for 2025" DECOUPLING from
+      the federal child tax credit, $1,000 per qualifying child under four / $330 per qualifying child age four to
+      16, $16.50-per-$1,000 phase-down, $110,000/$75,000/$55,000 thresholds, line 6 round-down rule
+    url: https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm

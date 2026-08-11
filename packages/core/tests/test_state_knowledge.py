@@ -74,14 +74,23 @@ def test_treaty_conformity_drives_the_nra_warning(code: str, year: int):
     filing = next(s for s in state_scope(profile, year, base_dir=REPO_ROOT / "knowledge").states if s.state == code.upper())
     # A treaty filer ALWAYS gets an explicit conformity line — negative warning for
     # non-conforming states, positive confirmation for conforming ones (never silent).
-    non_conform_warned = any("does not conform" in w.lower() for w in filing.warnings)
-    conform_noted = any("conforms to federal treaty treatment" in w.lower() for w in filing.warnings)
+    #
+    # Keyed on the "Treaty conformity —" PREFIX, not on grepping every warning for
+    # "does not conform": conformity is not one question, and once law-change
+    # warnings joined this list a state could legitimately say it "does not conform
+    # to the federal standard deduction" while conforming on TREATIES (North
+    # Carolina 2025 does exactly that). The prefix is the structured signal.
+    treaty_lines = [w for w in filing.warnings if w.startswith("Treaty conformity —")]
+    assert len(treaty_lines) == 1, (
+        f"{code}: expected exactly one prefixed treaty-conformity line, got {treaty_lines}"
+    )
+    line = treaty_lines[0]
     if pack.conforms_to_federal_treaties:
-        assert conform_noted and not non_conform_warned, (
-            f"{code}: conforming state must carry the positive conformity line only"
+        assert "conforms to federal treaty treatment" in line and "does NOT conform" not in line, (
+            f"{code}: conforming state must carry the positive conformity line: {line}"
         )
     else:
-        assert non_conform_warned, f"{code}: non-conforming state must warn"
+        assert "does NOT conform to federal tax treaties" in line, f"{code}: non-conforming state must warn"
 
 
 @pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)

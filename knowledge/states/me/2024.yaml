@@ -348,3 +348,80 @@ tax:
     prints identical rate schedules, the $5,000 personal exemption, and the standard deduction amounts (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2024.pdf);
     the corrected 2024 tax table file prints the same rate schedules on its final page (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_tax_tables_2.pdf);
     the line 18/19/20 wording is from the 2024 Form 1040ME (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_ff.pdf).'
+# DEV_PLAN §7.2 effective_law_changes — promoted on 2026-08-11 from this pack's OWN header
+# ('HEADLINE 2024 CHANGES'), the citation strings' 'IMPORTANT CHANGES for 2024' list and the
+# credits/tax.notes prose; no new research. The re-indexed brackets (COLA 1.238/1.233), the
+# $4,700 -> $5,000 personal exemption (COLA 1.215) and the federal-tracking standard deduction
+# are INFLATION movements under 36 M.R.S. § 5403 and are deliberately NOT recorded here. All
+# three entries are modeled: false — they are tax credits and a Schedule 1S subtraction, none
+# of which calc.state_tax computes (dependents_count does not change the Maine base).
+effective_law_changes:
+- description: >-
+    The $300 Dependent Exemption Tax Credit became REFUNDABLE for Maine residents and part-year
+    residents: "For tax years beginning on or after January 1, 2024, the dependent exemption tax credit
+    is refundable and for tax years beginning after 2024, the credit is adjusted for inflation. The
+    credit is subject to phaseout." (L.D. 258; P.L. 2023, c. 412, Pt. ZZZ; 36 M.R.S. § 5219-SS.) It
+    remains NONREFUNDABLE for nonresidents (Schedule A, line 9), and it moved to Schedule A line 1 for
+    residents/part-year residents. Phaseout applies when Form 1040ME line 16 Maine AGI exceeds $200,000
+    ($400,000 if married filing jointly).
+  status: final_form_published
+  lookup_path: >-
+    2024 Form 1040ME Schedule A lines 1 and 9 plus the Worksheet for Dependent Exemption Tax Credit in
+    the 2024 booklet at the citation URL — the credit is subtracted from TAX, not from income, so it sits
+    entirely outside the base supplied to calc.state_tax.
+  affects:
+  - Form 1040ME Schedule A line 1 (refundable) / line 9 (nonresidents)
+  - credits
+  modeled: false
+  citation:
+    source: 2024 MAINE Individual Income Tax Booklet — IMPORTANT CHANGES for 2024 ('For tax years beginning on or
+      after January 1, 2024, the dependent exemption tax credit is refundable and for tax years beginning after
+      2024, the credit is adjusted for inflation. The credit is subject to phaseout.') and Schedule A lines 1/9
+      instructions ($300 per line 13a dependent; $200,000/$400,000 caution)
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf
+- description: >-
+    Property Tax Fairness Credit maximums for filers 65 or older were RAISED for 2024 by L.D. 258,
+    P.L. 2023, c. 412, Pt. S: the age-65-or-older maximum went from $1,500 to $2,000, and the maximum
+    for a 65-or-older filer who is (or whose spouse is) a U.S. Armed Forces veteran rated 100%
+    permanently and totally disabled by the VA went to $4,000. A single $4,000 maximum benefit base now
+    applies to any filer 65 or older regardless of status or dependent count, and a separate
+    under-$100,000 income limit applies to 65-or-older filers.
+  status: final_form_published
+  lookup_path: >-
+    2024 Schedule PTFC/STFC (Form 1040ME) lines 7-16 and the 2024 booklet's PTFC page / IMPORTANT CHANGES
+    for 2024 at the citation URL — the credit is computed on the schedule and entered on Form 1040ME line
+    25d, outside anything calc.state_tax computes.
+  affects:
+  - Form 1040ME line 25d
+  - Schedule PTFC/STFC
+  - credits
+  modeled: false
+  citation:
+    source: 2024 Form 1040ME, Schedule PTFC/STFC (lines 7-16 and 'Who is eligible?' — $2,450/$3,200/$3,900 maximum
+      benefit base, $4,000 if 65+, line 12 $1,000/$2,000 maximums, veteran $2,000/$4,000) and 2024 booklet PTFC
+      page (income-limit table) + IMPORTANT CHANGES for 2024 (65+ maximums increased)
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_Sch%20PTFC_ff_0.pdf
+- description: >-
+    The 2024 booklet's IMPORTANT CHANGES for 2024 list also includes a PENSION INCOME DEDUCTION INCREASE
+    (alongside the refundable dependent exemption tax credit and the PTFC 65+ increase). The pension
+    income deduction is a Maine Schedule 1S income SUBTRACTION reached on Form 1040ME line 15b, so it
+    changes the line 16 Maine AGI a caller supplies rather than anything the engine computes. This pack
+    did NOT transcribe the new deduction amount.
+  status: final_form_published
+  lookup_path: >-
+    2024 MAINE Individual Income Tax Booklet — IMPORTANT CHANGES for 2024 and the Schedule 1S instructions
+    at the citation URL; resolve the 2024 pension income deduction amount there and take it on line 15b
+    before supplying line 16 as taxable_base.
+  affects:
+  - Form 1040ME line 15b
+  - Maine Schedule 1S
+  - calc.state_tax taxable_base (caller-supplied line 16 Maine AGI)
+  modeled: false
+  citation:
+    source: 2024 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — Line 14 federal AGI starting
+      point, Schedule 1A income additions (no treaty add-back), Who-must-file, due date Tuesday April 15 2025, payee
+      'Treasurer, State of Maine', Maine Tax Portal revenue.maine.gov, IMPORTANT CHANGES for 2024 (refundable dependent
+      exemption tax credit; PTFC 65+ increase; pension income deduction increase), 2024 Tax Year Quick Facts ($5,000
+      personal exemption; $14,600/$21,900/$29,200 standard deduction), 2024 MAINE INCOME TAX TABLE and 2024 TAX RATE
+      SCHEDULES
+    url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf

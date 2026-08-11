@@ -629,6 +629,14 @@ credits:
 # LIVE for tax year 2025. All are final_form_published: the 2025 forms and
 # instructions carrying the figures are released (each figure is transcribed
 # into the blocks above with its own citation).
+# 2026-08-11 (DEV_PLAN §7.2): the `modeled` / `affects` judgments were promoted
+# onto the four existing entries from this pack's own block prose — descriptions,
+# citations and statuses are untouched. All four are modeled: true because THIS
+# pack already carries the figures (tax.standard_deduction, tax.obbba_schedule_1a,
+# tax.salt_cap, credits.child_tax_credit); note that obbba_schedule_1a and
+# salt_cap are engine-extra DATA (see their block comments — no calc op consumes
+# obbba_schedule_1a yet, and the Schedule A form pack encodes the line 5e
+# worksheet), so a consumer must read the block rather than expect a bottom line.
 effective_law_changes:
   - description: >-
       OBBBA raised the 2025 standard deduction to $15,750 single/MFS, $31,500
@@ -639,6 +647,11 @@ effective_law_changes:
       url: "https://www.irs.gov/pub/irs-prior/i1040gi--2025.pdf"
     status: final_form_published
     source_topic: standard_deduction
+    affects:
+      - tax.standard_deduction
+      - filing_thresholds
+      - Form 1040 line 12e
+    modeled: true
   - description: >-
       OBBBA new Schedule 1-A deductions for 2025-2028 — qualified tips (up to
       $25,000), qualified overtime ($12,500/$25,000 MFJ), car-loan interest
@@ -649,6 +662,11 @@ effective_law_changes:
       source: "2025 Schedule 1-A (Form 1040) and the Instructions for Schedule 1-A in the 2025 Instructions for Form 1040 (OBBBA, P.L. 119-21)"
       url: "https://www.irs.gov/pub/irs-prior/f1040s1a--2025.pdf"
     status: final_form_published
+    affects:
+      - tax.obbba_schedule_1a
+      - Schedule 1-A (Form 1040) Parts I-VI
+      - Form 1040 line 13b (Form 1040-NR line 13c) and line 14
+    modeled: true
   - description: >-
       OBBBA raised the Schedule A line 5e SALT cap to $40,000 ($20,000 MFS)
       for 2025, phased down by 30% of MAGI over $500,000 ($250,000 MFS) to a
@@ -657,6 +675,10 @@ effective_law_changes:
       source: "2025 Instructions for Schedule A (Form 1040), line 5e worksheet (OBBBA, P.L. 119-21)"
       url: "https://www.irs.gov/pub/irs-prior/i1040sca--2025.pdf"
     status: final_form_published
+    affects:
+      - tax.salt_cap
+      - Schedule A (Form 1040) line 5e State and Local Tax Deduction Worksheet
+    modeled: true
   - description: >-
       OBBBA raised the child tax credit to $2,200 per qualifying child for
       2025 and added the taxpayer valid-SSN requirement for CTC/ACTC. Encoded
@@ -665,6 +687,10 @@ effective_law_changes:
       source: "2025 Instructions for Schedule 8812, What's New (OBBBA, P.L. 119-21)"
       url: "https://www.irs.gov/pub/irs-prior/i1040s8--2025.pdf"
     status: final_form_published
+    affects:
+      - credits.child_tax_credit
+      - Schedule 8812 (Form 1040) line 5
+    modeled: true
 
 # ─────────────────────────────────────────────────────────────────────────────
 # M3 filing-logistics blocks for 2025, fetched from the cited irs.gov sources

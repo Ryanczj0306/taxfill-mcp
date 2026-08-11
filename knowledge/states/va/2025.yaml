@@ -354,3 +354,83 @@ tax:
     The 2025 changes are the standard deduction ($8,750/$17,500), the refundable EITC percentage (20%), a fixed IRC
     conformity date of December 31, 2025 (2026 General Assembly action, see Tax Bulletin 26-1), and re-indexed poverty
     guidelines. Return due May 1, 2026.'
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header
+# prose, tax.notes and credits prose (no new research; every citation below is copied from
+# a citation already in this pack). The re-indexed poverty guidelines are NOT here (an
+# inflation adjustment, not a law change). modeled: true only for the standard deduction,
+# which tax.standard_deduction already ships; the EITC percentage and the conformity date
+# are outside what calc.state_tax computes (it produces Form 760 Line 16 only).
+effective_law_changes:
+- description: >-
+    Standard deduction INCREASED for Taxable Years 2025 and 2026: "Legislation enacted
+    during the 2025 General Assembly session increased the standard deduction for Taxable
+    Years 2025 and 2026 from $8,500 to $8,750 for single filers and from $17,000 to $17,500
+    for married filers filing jointly. The increase in the standard deduction is scheduled
+    to sunset after Taxable Year 2026 and revert to the standard deduction amounts that
+    applied prior to Taxable Year 2019: $3,000 for single filers and $6,000 for married
+    couples filing jointly." This RESOLVES the 2024 pack's sunset flag — the sunset moved
+    out one year, so TY2025 is $8,750 / $17,500 and NOT $3,000 / $6,000.
+  status: final_form_published
+  affects:
+  - tax.standard_deduction
+  - Form 760 Line 11 (standard deduction chart, Filing Status 1 $8,750 / 2 $17,500 / 3 $8,750)
+  modeled: true
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — What's New (standard
+      deduction increased to $8,750/$17,500 for Taxable Years 2025 and 2026; refundable Virginia EITC raised to 20%;
+      fixed IRC conformity date of December 31, 2025), Line 1 Federal Adjusted Gross Income, Line 9 filing thresholds,
+      Line 11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options,
+      mailing addresses, May 1 2026 due date
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+- description: >-
+    Refundable Virginia Earned Income Tax Credit RAISED from 15% to 20% of the federal EITC:
+    "For taxable years Taxable Years 2025 and 2026, new legislation increased the refundable
+    portion of the Virginia Earned Income Tax Credit from 15% to 20%". Nonresidents and
+    part-year residents are INELIGIBLE for the refundable credit, and it stays mutually
+    exclusive with the Credit for Low-Income Individuals and the nonrefundable 20% option —
+    claim whichever of the three gives the greatest benefit.
+  status: final_form_published
+  affects:
+  - credits (Refundable Virginia Earned Income Tax Credit)
+  - Virginia Schedule ADJ Lines 14-17
+  - Form 760 refundable-credit line
+  modeled: false
+  lookup_path: >-
+    The credit is 20% of the federal EITC claimed on the filer's federal return; resolve the
+    federal EITC from the federal return and the Schedule ADJ earned income credit computation
+    in the cited 2025 Form 760 instructions. calc.state_tax computes Form 760 Line 16 only and
+    applies no credits (see tax.notes, "Credits are NOT modeled").
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — What's New (standard
+      deduction increased to $8,750/$17,500 for Taxable Years 2025 and 2026; refundable Virginia EITC raised to 20%;
+      fixed IRC conformity date of December 31, 2025), Line 1 Federal Adjusted Gross Income, Line 9 filing thresholds,
+      Line 11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options,
+      mailing addresses, May 1 2026 due date
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+- description: >-
+    IRC CONFORMITY CHANGED to a FIXED DATE of December 31, 2025, replacing suspended rolling
+    conformity (2026 General Assembly action — the 2026 Amendments to the 2025 Appropriation
+    Act — conforming to most of 2025 H.R.1 / P.L. 119-21), with Tax Bulletin 26-1 prescribing
+    the required return adjustments for filers with bonus depreciation, qualified production
+    property, domestic research and experimental expenditures, or business interest
+    adjustments. Relatedly, for 2025 Virginia DECONFORMS from the federal SALT cap and from
+    the new federal overall limitation on itemized deductions, while retaining its own overall
+    limitation (applying the federal SALT cap amount within that computation).
+  status: final_form_published
+  affects:
+  - starts_from (federal AGI)
+  - Virginia Schedule ADJ Line 2a conformity additions
+  - Virginia Schedule A (revised 2025 instructions; itemizers only)
+  modeled: false
+  lookup_path: >-
+    Tax Bulletin 26-1 (NOT fetched — see this pack's `unverified`) for the required conformity
+    adjustments, and the revised 2025 Virginia Schedule A instructions for the itemized-deduction
+    limitation. Any conformity add-back or subtraction must already be inside the Virginia
+    Adjusted Gross Income (Form 760 Line 9) supplied to calc.state_tax.
+  citation:
+    source: 2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — What's New (standard
+      deduction increased to $8,750/$17,500 for Taxable Years 2025 and 2026; refundable Virginia EITC raised to 20%;
+      fixed IRC conformity date of December 31, 2025), Line 1 Federal Adjusted Gross Income, Line 9 filing thresholds,
+      Line 11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options,
+      mailing addresses, May 1 2026 due date
+    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf

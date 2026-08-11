@@ -253,3 +253,27 @@ tax:
     computes the state 3.00% line only; most Indiana filers also owe a county add-on.
   - Schedule 3 exemption amounts are UNCHANGED from 2024 ($1,000 personal / $1,000 dependent / $1,500 additional dependent
     child / $1,000 age-65-or-blind / $500 low-income 65+ / $3,000 adopted); only the 3.05% -> 3.00% rate changed.
+# effective_law_changes — promoted on 2026-08-11 from this pack's own "CHANGED for 2025" header
+# note and tax-block prose (DEV_PLAN §7.2). One entry only: the rate step is the pack's single
+# law delta, and it is modeled: true because tax.flat_rate IS the changed law. The Indiana EIC
+# ceiling move ($66,819 -> $68,650) tracks the federal EIC's annual indexation, not a law change,
+# so it gets no entry.
+effective_law_changes:
+- description: >-
+    RATE CUT for tax year 2025 — the state adjusted gross income tax rate drops from 3.05% (2024) to
+    3.00% as Indiana's phased reduction continues: the 2025 Form IT-40 Line 8 prints "State adjusted
+    gross income tax: multiply line 7 by 3% (.03)", and the IN DOR Tax Chapter for the 2025 filing year
+    states "Individual Income tax rate is lowered to 3% for tax year 2025 and 2.95% for tax year 2026".
+    Indiana county income taxes (Schedule CT-40) are separate and unaffected.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - tax.tax_line
+  - Form IT-40 Line 8
+  modeled: true
+  citation:
+    source: >-
+      Indiana DOR - 2026 Tax Chapter for the 2025 Filing Year (revised October 2025) — "Individual Income
+      tax rate is lowered to 3% for tax year 2025 and 2.95% for tax year 2026" (independent live-host
+      confirmation of the 3% rate)
+    url: https://www.in.gov/dor/files/tax-chapter.pdf

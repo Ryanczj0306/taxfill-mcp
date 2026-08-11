@@ -329,3 +329,91 @@ tax:
   - 'Do not carry 2023-or-earlier figures forward: the seven-bracket 1%-6.75% schedule, the $2,960-per-person exemptions,
     and the 20%-of-AGI Montana standard deduction were repealed effective tax year 2024. This pack is for tax year
     2025 only — the breakpoints and the age-65 subtraction differ from 2024, and the rates differ from 2026.'
+# effective_law_changes promoted 2026-08-11 from this pack's OWN prose (the HEADLINE 2025
+# CHANGES header comment 'Legislative changes effective for 2025' and the What's New enumeration
+# in all_citations) per DEV_PLAN §7.2 — no new research. All three are modeled: false: each is a
+# Schedule I subtraction or transition adjustment inside the Form 2 line 7 base, which
+# calc.state_tax takes as given from the caller. The re-indexed $21,100/$42,200/$31,700
+# breakpoints and the $5,660/$11,320 age-65 subtraction are INFLATION adjustments, not law
+# changes; HB 337's top-rate cut and 20% EITC begin in TAX YEAR 2026 and are deliberately NOT
+# recorded here as 2025 changes.
+effective_law_changes:
+- description: >-
+    Effective for tax year 2025, HB 845 and SB 53 raised the Montana 529-plan subtraction maximum
+    to up to $4,500 ($9,000 joint). It is a Schedule I subtraction inside Form 2 line 5.
+  status: final_form_published
+  affects:
+  - Schedule I (Montana subtractions)
+  - Form 2 page 1 line 5
+  - calc.state_tax taxable_base (caller-supplied line 7 must already reflect it)
+  modeled: false
+  lookup_path: >-
+    The What's New section and the Schedule I subtraction instructions of the 2025 Montana Form 2
+    instructions (the citation URL); the engine subtracts nothing beyond what the supplied line 7
+    Montana taxable income already reflects.
+  citation:
+    source: >-
+      2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (HB 845
+      and SB 53 529-plan subtraction to $4,500/$9,000; SB 93 permanent military retirement
+      subtraction; SB 544 Montana NOL transition adjustment; Changes Beginning in Tax Year 2026 — HB
+      129 volunteer-responder subtraction, HB 337 lower top rate and wider brackets for 2026 with a
+      further cut in 2027, EITC to 20% in 2026; Form Changes — Mixed Residency and Nonresident
+      Military Spouse checkboxes, state income tax deduction moved from line 2 to Schedule I line 4
+      with Worksheet B, lines 1-2 updated for the One Big Beautiful Bill, Transition Schedule
+      discontinued), Filing Requirements, Residency Status, North Dakota Reciprocity, Montana
+      Individual Income Tax Calculation (p.10-12) with the worked Marla example, 2025 Montana Income
+      Tax Rates (p.12), Schedule I-V and Schedule 2EC instructions, Due Dates, mailing addresses,
+      payment instructions, and the 2026/2027 tax tables on p.42
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- description: >-
+    Effective for tax year 2025, SB 93 made the Montana MILITARY RETIREMENT SUBTRACTION PERMANENT.
+    It is a Schedule I subtraction inside Form 2 line 5.
+  status: final_form_published
+  affects:
+  - Schedule I (Montana subtractions)
+  - Form 2 page 1 line 5
+  - calc.state_tax taxable_base (caller-supplied line 7 must already reflect it)
+  modeled: false
+  lookup_path: >-
+    The What's New section and the Schedule I military-retirement subtraction instructions of the
+    2025 Montana Form 2 instructions (the citation URL).
+  citation:
+    source: >-
+      2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (2025
+      legislative changes HB 845 / SB 53 / SB 93 / SB 544, and the notice that HB 337's rate cut and
+      the 20% EITC begin in tax year 2026), 2025 Montana Income Tax Rates (p.12), Filing Requirements
+      incl. the thirty-day nonresident worker exclusion, Residency Status and the new Mixed Residency
+      checkbox, North Dakota Reciprocity, Due Dates (April 15, 2026), mailing addresses (PO Box 6577
+      refund / PO Box 6308 with payment), payment (check payable to the Montana Department of Revenue;
+      TransAction Portal https://tap.dor.mt.gov)
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+- description: >-
+    Effective for tax year 2025, SB 544 created a Montana NET-OPERATING-LOSS (NOL) TRANSITION
+    ADJUSTMENT. Related 2025 form movement: the state income tax deduction moved off Form 2 line 2
+    and is now added back on
+    Schedule I, Part I, line 4 via the new Worksheet B, and the tax-year-2024-only Transition
+    Schedule has been discontinued.
+  status: final_form_published
+  affects:
+  - Schedule I (Montana additions/subtractions)
+  - Form 2 page 1 lines 2, 4 and 5
+  - calc.state_tax taxable_base (caller-supplied line 7 must already reflect it)
+  modeled: false
+  lookup_path: >-
+    The What's New section, the Schedule I Part I line 4 instructions and Worksheet B in the 2025
+    Montana Form 2 instructions (the citation URL); Worksheet B was not transcribed line-by-line in
+    this pack (see unverified).
+  citation:
+    source: >-
+      2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (HB 845
+      and SB 53 529-plan subtraction to $4,500/$9,000; SB 93 permanent military retirement
+      subtraction; SB 544 Montana NOL transition adjustment; Changes Beginning in Tax Year 2026 — HB
+      129 volunteer-responder subtraction, HB 337 lower top rate and wider brackets for 2026 with a
+      further cut in 2027, EITC to 20% in 2026; Form Changes — Mixed Residency and Nonresident
+      Military Spouse checkboxes, state income tax deduction moved from line 2 to Schedule I line 4
+      with Worksheet B, lines 1-2 updated for the One Big Beautiful Bill, Transition Schedule
+      discontinued), Filing Requirements, Residency Status, North Dakota Reciprocity, Montana
+      Individual Income Tax Calculation (p.10-12) with the worked Marla example, 2025 Montana Income
+      Tax Rates (p.12), Schedule I-V and Schedule 2EC instructions, Due Dates, mailing addresses,
+      payment instructions, and the 2026/2027 tax tables on p.42
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf

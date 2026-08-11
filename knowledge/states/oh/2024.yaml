@@ -285,3 +285,84 @@ tax:
     the joint filing credit (5-20% of tax, max $650), retirement income credit (max $200), senior citizen credit ($50),
     and Ohio EIC (30% of federal EIC).'
   - 'Rounding: the booklet''s Common Filing Tips instruct ''Round all figures to the nearest dollar.'''
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the bracket
+# consolidation and the two credit/deduction items already recorded in this pack's header
+# comment, treaty_note and tax.notes (all sourced to the booklet's Highlights for Tax Year
+# 2024). modeled: true ONLY for the rate-structure change — tax.brackets already ships the
+# 2024 two-rate schedule; the Ohio Homebuyer Plus deduction/add-back and the new credits are
+# NOT computed by calc.state_tax (it reproduces IT 1040 line 8a from a caller-supplied line 7
+# and applies no Schedule of Adjustments and no Schedule of Credits), so those stay false.
+effective_law_changes:
+- description: >-
+    RATE-STRUCTURE CHANGE for 2024 — the nonbusiness-income brackets CONSOLIDATED again:
+    "Ohio has reduced the number of tax brackets used to calculate tax on nonbusiness income
+    and reduced one of the two tax rates" (Highlights for Tax Year 2024, p. 5). The 2023
+    3.688% ($100,000-$115,300) and 3.75% (over $115,300) top tiers are GONE; 2024 is 0% up to
+    $26,050, 2.75% to $100,000 and 3.50% over $100,000 (booklet p. 18 table, R.C.
+    5747.02(A)(3)). The 2024 booklet also stops printing an Income Tax Table altogether (the
+    2023 booklet had a mandatory table below $115,300), directing all filers to the brackets
+    or the Department's calculator. Do not use the 2023 schedule for 2024.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - IT 1040 line 8a (nonbusiness income tax liability on line 7a)
+  - 2024 Ohio Income Tax Brackets, booklet p. 18
+  modeled: true
+  citation:
+    source: >-
+      2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate
+      as of November 27, 2024) - Highlights for Tax Year 2024 (brackets reduced from three to two, one rate reduced;
+      new Ohio Homebuyer Plus deduction; new Commercial Vehicle Training and Film/Theater Capital Improvements credits),
+      Line 1 federal AGI, exemption table p. 17 ($2,400/$2,150/$1,900 by MAGI), 2024 Ohio Income Tax Brackets p. 18,
+      Schedule of Adjustments additions/deductions pp. 19-26, Who Must File p. 12, Ohio Residency pp. 13-14, mailing
+      addresses p. 3, due date April 15 2025, check payee Ohio Treasurer of State + OUPC
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2024/it1040-booklet.pdf
+- description: >-
+    NEW for 2024 (Highlights for Tax Year 2024): the Ohio Homebuyer Plus deduction, with a
+    matching new addition line — the 2024 Schedule of Adjustments additions list carries
+    "Ohio Homebuyer Plus non-eligible withdrawals (new for 2024)" alongside the pre-existing
+    add-back lines. It changes Ohio adjusted gross income (IT 1040 line 3 = line 1 federal AGI
+    + line 2a additions - line 2b deductions), not the rate schedule, and does not touch
+    treaty-exempt income (see treaty_note).
+  status: final_form_published
+  affects:
+  - starts_from
+  - Ohio Schedule of Adjustments (additions line 2a / deductions line 2b)
+  - calc.state_tax taxable_base (caller-supplied IT 1040 line 7 must already reflect it)
+  modeled: false
+  lookup_path: >-
+    2024 Ohio IT 1040 / SD 100 Instruction Booklet, Schedule of Adjustments additions and deductions
+    pp. 19-26 (the citation URL) for the deduction amount and the non-eligible-withdrawal add-back;
+    this pack ships no Schedule of Adjustments figures and calc.state_tax applies none.
+  citation:
+    source: >-
+      2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate
+      as of November 27, 2024) - Highlights for Tax Year 2024 (brackets reduced from three to two, one rate reduced;
+      new Ohio Homebuyer Plus deduction; new Commercial Vehicle Training and Film/Theater Capital Improvements credits),
+      Line 1 federal AGI, exemption table p. 17 ($2,400/$2,150/$1,900 by MAGI), 2024 Ohio Income Tax Brackets p. 18,
+      Schedule of Adjustments additions/deductions pp. 19-26, Who Must File p. 12, Ohio Residency pp. 13-14, mailing
+      addresses p. 3, due date April 15 2025, check payee Ohio Treasurer of State + OUPC
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2024/it1040-booklet.pdf
+- description: >-
+    NEW credits for 2024 (Highlights for Tax Year 2024): the Commercial Vehicle Training credit
+    and the Film/Theater Capital Improvements credits. Ohio credits are claimed through the Ohio
+    Schedule of Credits and subtracted from tax (IT 1040 line 9), never from income, so neither
+    changes the income base or the rate schedule; this pack's `credits` list does not carry them.
+  status: final_form_published
+  affects:
+  - Ohio Schedule of Credits
+  - IT 1040 line 9 (credits from the Schedule of Credits)
+  modeled: false
+  lookup_path: >-
+    2024 Ohio IT 1040 / SD 100 Instruction Booklet Highlights for Tax Year 2024 and the Ohio Schedule
+    of Credits instructions (the citation URL) for each credit's certificate requirements and amount;
+    calc.state_tax applies no Ohio credits.
+  citation:
+    source: >-
+      2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate
+      as of November 27, 2024) - Highlights for Tax Year 2024 (brackets reduced from three to two, one rate reduced;
+      new Ohio Homebuyer Plus deduction; new Commercial Vehicle Training and Film/Theater Capital Improvements credits),
+      Line 1 federal AGI, exemption table p. 17 ($2,400/$2,150/$1,900 by MAGI), 2024 Ohio Income Tax Brackets p. 18,
+      Schedule of Adjustments additions/deductions pp. 19-26, Who Must File p. 12, Ohio Residency pp. 13-14, mailing
+      addresses p. 3, due date April 15 2025, check payee Ohio Treasurer of State + OUPC
+    url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2024/it1040-booklet.pdf

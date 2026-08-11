@@ -247,3 +247,30 @@ tax:
     100 credits (Line 21). Total credits used (Line 22) cannot exceed Line 16 tax.'
   - 'Rounding: the Form 500 Line 16 instruction itself mandates ''Round to the nearest dollar''; this pack rounds
     half-up to whole dollars (irs_round), matching the form''s presentation.'
+# DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the
+# header's "HEADLINE 2025 CHANGE (HB 111, 2025 session)" block and the tax.notes "2025 STRUCTURAL
+# CHANGE" note); transcription only, no new research and no new sources. modeled: true because
+# tax.flat_rate already ships the accelerated 5.19% rate.
+effective_law_changes:
+- description: >-
+    HB 111 (2025 session) ACCELERATED THE FLAT RATE: for tax years beginning on or after January 1,
+    2025 the Georgia flat rate DROPS to 5.19%, down from 2024's 5.39% — 2025 IT-511 What's New:
+    "Effective January 1, 2025, the income tax rate is 5.19%", printed on Form 500 Line 16 as
+    "Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar)". This accelerates the HB
+    1015/HB 1437 phase-down schedule. Everything else is unchanged from 2024: the $12,000/$24,000
+    standard deductions and the $4,000 dependent exemption stand, and personal exemptions remain
+    repealed (only the dependent exemption survives).
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - Form 500 Line 16
+  modeled: true
+  citation:
+    source: >-
+      GA 2025 IT-511 Individual Income Tax Instruction Booklet - What's New ('Effective January 1,
+      2025, the income tax rate is 5.19%'; Form 500EZ discontinued for 2025); Standard Deductions
+      chart ($24,000 MFJ; $12,000 Single/MFS/Head of household/Qualifying surviving spouse); Line 14
+      dependent exemption (Line 7c x $4,000); Line 16 tax (Line 15c x 5.19%, round to nearest
+      dollar); Filing Requirements chart; 'file on or before April 15, 2026'; mailing addresses; Low
+      Income Credit Worksheet; IND-CR 201/202/204
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download

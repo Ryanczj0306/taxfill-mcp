@@ -416,3 +416,90 @@ convenience_rule:
   citation:
     source: Nebraska Department of Revenue, "2024 Nebraska Legislative Changes" — LB 1023 nonresident compensation sourcing, effective for taxable years beginning on or after 2025-01-01.
     url: https://revenue.nebraska.gov/about/2024-nebraska-legislative-changes
+
+# DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own header prose,
+# credits list, tax.notes, and the convenience_rule block above (nothing researched anew; the
+# convenience_rule block itself is untouched). modeled: true only for the LB 754 rate cut, which
+# tax.brackets already implements; the credit slate and the LB 1023 sourcing amendment are
+# modeled: false because calc.state_tax applies no Nebraska credits and does no wage sourcing.
+# The $171 exemption credit, the 2025 standard-deduction chart, and the re-indexed breakpoints are
+# annual adjustments, not law changes, so they get no entry.
+effective_law_changes:
+- description: >-
+    TOP RATE CUT AGAIN for tax year 2025 — the 2025 Nebraska Tax Calculation Schedule (8-460-2025)
+    prints a 5.20% top rate, down from 5.84% in 2024 and 6.64% in 2023, the LB 754 (2023) glide
+    path continuing toward 3.99% by tax year 2027. The three lower rates are unchanged at 2.46% /
+    3.51% / 5.01%, and all four schedules' breakpoints are re-indexed for 2025 (Single/MFS
+    $4,030/$24,120/$38,870; MFJ/QSS $8,040/$48,250/$77,730; HoH $7,510/$38,590/$57,630). Do NOT use
+    2024 tables or the 2026/2027 legislated rates.
+  status: final_form_published
+  affects:
+  - tax.brackets
+  - 2025 Nebraska Tax Calculation Schedule (8-460-2025)
+  - Form 1040N line 15
+  modeled: true
+  citation:
+    source: 2025 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2025) — all four filing-status
+      rate tables (2.46%/3.51%/5.01%/5.20%; Single/MFS breakpoints $4,030/$24,120/$38,870; MFJ/QSS $8,040/$48,250/$77,730;
+      HoH $7,510/$38,590/$57,630)
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Calculation_Schedule.pdf
+- description: >-
+    A SLATE OF NEW OR NEWLY EFFECTIVE CREDITS arrives with tax year 2025 (booklet What's New, LB
+    650 / LB 208 / LB 937 / LB 1023 / LB 644): the $500 REFUNDABLE Intellectual and Developmental
+    Disabilities Direct Support Professional credit created by LB 937 (2024) beginning with tax year
+    2025 (Form 1040N line 51, requiring DOR pre-approval on Forms 3157-A / 3157-E via eDASH), the
+    Nebraska Pregnancy Help Act credit, the Shortline Rail Modernization credit, the Relocation
+    Incentive Act refundable employer credit with its employee Nebraska wage exclusion, and the Food
+    Bank / Food Pantry / Food Rescue Donation credit (2025 only). Nebraska Schedule I Part A also
+    gains new add-back lines for 2025 — Relocation Incentive Act employee recapture, losses on the
+    sale or exchange of gold or silver bullion, and the add-back of food-donation amounts deducted
+    federally — and Form 1040N's credit lines are RENUMBERED (refundable child/dependent care 40 ->
+    42, Nebraska EITC 42 -> 44, community college property tax credit 43 -> 45).
+  status: final_form_published
+  affects:
+  - credits
+  - Form 1040N lines 46-51
+  - Nebraska Schedule I Part A
+  - calc.state_tax taxable_base (caller-supplied — Schedule I add-backs are not modeled)
+  modeled: false
+  lookup_path: >-
+    2025 Nebraska Individual Income Tax Booklet, What's New plus the Lines 46-51 instructions, and
+    the 2025 Nebraska Schedules I, II, III (Form 1040N) for the new Part A add-back lines (both at
+    the cited booklet URL). This pack's `unverified` list records that the Pregnancy Help Act,
+    Shortline Rail, Relocation Incentive Act and Food Bank credits were read only from What's New
+    and the line summaries, and that the statutory fiscal-year cap on the LB 937 credit was not
+    pulled — confirm amounts and application deadlines on their own forms before claiming.
+  citation:
+    source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — What's New (LB 650/LB 208/LB 937/LB
+      1023/LB 644 credit changes; CDAA replacing CHIEF from 2026; Food Bank/Food Pantry/Food Rescue Donation credit
+      for 2025 only; Individuals with Intellectual and Developmental Disabilities Support Act; Nebraska Pregnancy
+      Help Act; Shortline Rail Modernization Act; Relocation Incentive Act and the employee Nebraska wage exclusion),
+      federal AGI starting point (Line 5), Nebraska Standard Deduction Chart (Line 6), Lines 7-14 deduction/adjustment
+      mechanics, Line 15 Nebraska Income Tax, Line 16 other tax 29.6%, Line 18 personal exemption credit $171, Lines
+      23 / 42 / 44 / 45 / 46 / 51 credits, residency definitions, Who Must File, due date, check payee, 2025 Nebraska
+      Tax Table with the over-$77,760 worksheet
+    url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+- description: >-
+    LB 1023 AMENDED Nebraska's convenience-of-the-employer sourcing rule for taxable years
+    beginning on or after January 1, 2025 — the pre-2025 rule sourced convenience-based
+    out-of-state wages TO Nebraska, while under the amendment "Only the compensation paid for
+    services performed within Nebraska constitutes Nebraska sourced income of the nonresident under
+    this provision." The amendment also adds a conference/training safe harbor for TY2025+ (wages
+    are not Nebraska-sourced when paid while present in Nebraska for a conference or training, the
+    employee is present and earning wages in Nebraska for seven days or less during the taxable
+    year, earned not more than $5,000 during the taxable year, and earned wages for work performed
+    in more than one state during the taxable year). This is why the 2023/2024 NE packs carry no
+    convenience_rule block and this one does.
+  status: final_form_published
+  affects:
+  - convenience_rule
+  - residency
+  - Nebraska Schedule III (nonresident/partial-year apportionment)
+  modeled: false
+  lookup_path: >-
+    Nebraska Department of Revenue, "2024 Nebraska Legislative Changes" (the citation URL) for the
+    LB 1023 amendment text and its effective date; nonresident/partial-year wage sourcing is then
+    computed on Nebraska Schedule III, which calc.state_tax does not model.
+  citation:
+    source: Nebraska Department of Revenue, "2024 Nebraska Legislative Changes" — LB 1023 nonresident compensation sourcing, effective for taxable years beginning on or after 2025-01-01.
+    url: https://revenue.nebraska.gov/about/2024-nebraska-legislative-changes

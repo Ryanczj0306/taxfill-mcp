@@ -257,3 +257,32 @@ tax:
     widening applies beginning TY2025. The Act 45 (SLH 2024) standard-deduction increase DOES apply to 2024: $4,400
     Single/MFS, $6,424 HoH, $8,800 MFJ/QSS (What''s New verbatim).'
   - Hawaii is print-only for filing (render_mode hand_fill pack ships); this op powers the worksheet Line 27 value.
+# DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the header's
+# 2024-verification block and the tax.notes "TY2024 verification" note); transcription only, no new
+# research and no new sources. modeled: true because tax.standard_deduction already ships the Act 45
+# amounts ($4,400 / $8,800 / $6,424).
+effective_law_changes:
+- description: >-
+    STANDARD DEDUCTION INCREASED BY STATUTE (Act 45, SLH 2024), not by indexation: for 2024 the
+    Hawaii standard deduction is $4,400 (Single and Married filing separately), $6,424 (Head of
+    household) and $8,800 (Married filing jointly and Qualifying surviving spouse) — the 2024 N-11
+    "What's New" amounts, verbatim. Because Hawaii's gross-income filing thresholds are the standard
+    deduction plus the $1,144 personal exemption, they moved with it (under 65: Single/MFS $5,544,
+    HoH $7,568, QSS $9,944, MFJ $11,088). The rate schedules did NOT change for 2024 — the printed
+    2024 schedules are digit-identical to 2023, and Act 45's bracket widening begins TY2025.
+  status: final_form_published
+  affects:
+  - tax.standard_deduction
+  - filing_requirement (thresholds are standard deduction + personal exemption)
+  - Form N-11 line 23
+  modeled: true
+  citation:
+    source: >-
+      HI DOTAX — 2024 Form N-11 Instructions (files.hawaii.gov/tax/forms/2024/n11ins.pdf), Tax Rate
+      Schedules p.36: Schedule I (Single/MFS) 12 brackets 1.40%..11.00% at
+      2,400/4,800/9,600/14,400/19,200/24,000/36,000/48,000/150,000/175,000/200,000; Schedule II
+      (MFJ/QSS) exactly double; Schedule III (HoH) exactly 1.5x; printed base-tax constants are
+      whole-dollar roundings of exact sums (34 vs 33.60 etc.). SD increased by Act 45 SLH 2024 to
+      $4,400/$8,800/$6,424 (What's New). Personal exemption $1,144 per exemption ($2,288 age 65+,
+      disclosed).
+    url: https://files.hawaii.gov/tax/forms/2024/n11ins.pdf

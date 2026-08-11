@@ -276,3 +276,58 @@ tax:
     2 series 100 credits (Line 21). Total credits used (Line 22) cannot exceed Line 16 tax.'
   - 'Rounding: the Form 500 Line 16 instruction itself mandates ''Round to the nearest dollar''; this pack rounds
     half-up to whole dollars (irs_round), matching the form''s presentation.'
+# DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the
+# header's "HEADLINE 2024 CHANGE (What's New)" block and the tax.notes "2024 STRUCTURAL CHANGE"
+# note); transcription only, no new research and no new sources. modeled: true for the flat
+# conversion because tax.flat_rate, tax.standard_deduction and tax.exemptions.dependent already
+# implement it; modeled: false for the new Resident Itemizer Tax Credit, which is a credit against
+# Line 16 tax that calc.state_tax does not apply.
+effective_law_changes:
+- description: >-
+    GEORGIA WENT FLAT — the 2024 rate-structure conversion (What's New): "Effective January 1, 2024,
+    the income tax rate is 5.39%. Additionally, personal exemptions have been repealed except for
+    the $4,000 dependent exemption. Finally, Georgia standard deductions have increased to $24,000
+    for Married filing jointly returns and $12,000 for Single, Head of household, and Married filing
+    separately returns." Against 2023 this repeals the 1%-5.75% graduated schedules, repeals the
+    $2,700/$3,700 per-status personal exemptions, raises the dependent exemption from $3,000 to
+    $4,000, replaces the $5,400/$7,100/$3,550 standard deductions, and drops the $1,300-per-checkbox
+    age-65/blind additional deduction entirely. The 2023 pack's folding trick (shipping standard
+    deduction plus personal exemption as a combined $8,100/$14,500/$7,250) no longer applies.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - tax.standard_deduction
+  - tax.exemptions.dependent
+  - filing_requirement (the 2024 thresholds ARE the new standard deductions)
+  - Form 500 Lines 11, 14 and 16
+  modeled: true
+  citation:
+    source: >-
+      GA 2024 IT-511 Individual Income Tax Instruction Booklet - What's New (5.39% rate effective
+      January 1, 2024; personal exemptions repealed except the $4,000 dependent exemption; standard
+      deductions $24,000 MFJ / $12,000 Single-HoH-MFS; new Georgia Resident Itemizer Tax Credit up
+      to $300; retirement income exclusion earned-income change); Line 11 standard deduction chart
+      (incl. Qualifying surviving spouse $12,000); Line 14 dependent exemption (Line 7c x $4,000);
+      Line 16 tax (Line 15c x 5.39%, round to nearest dollar); Filing Requirements chart; Schedule 1
+      additions (no treaty add-back) and subtraction 'specifically exempted by Federal law or
+      treaty'; 'file on or before April 15, 2025'; check payable to the Georgia Department of
+      Revenue; mailing addresses; Low Income Credit Worksheet p.35; IND-CR 201/202/204
+    url: https://dor.georgia.gov/document/document/2024-it-511-individual-income-tax-booklet/download
+- description: >-
+    NEW CREDIT for 2024 — the Georgia Resident Itemizer Tax Credit: full-year residents (and
+    part-year residents living in Georgia at the end of the year) who itemized deductions may claim
+    up to $300 per taxpayer on Form 500 Line 19. The credit cannot exceed the Line 16 tax liability
+    and cannot be carried forward. It did not exist for 2023.
+  status: final_form_published
+  lookup_path: >-
+    2024 IT-511 booklet, What's New and the Form 500 Line 19 instructions at the citation URL (this
+    pack's `credits` block carries the transcribed $300 cap and eligibility).
+  affects:
+  - credits
+  - Form 500 Line 19
+  modeled: false
+  citation:
+    source: >-
+      Georgia DOR 2024 IT-511 booklet, What's New ('Georgia Resident Itemizer Tax Credit') and Line
+      19 instructions
+    url: https://dor.georgia.gov/document/document/2024-it-511-individual-income-tax-booklet/download

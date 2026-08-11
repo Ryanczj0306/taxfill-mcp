@@ -341,3 +341,74 @@ tax:
     Schedule U credits (including Schedule ELC, max $1,160 per child).'
   - 'ROUNDING: the D-40 instructs dollars-only entries (''Dollars only, do not enter cents''); the engine''s round-half-up
     to whole dollars matches for the Calculation I computation.'
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the three structural items on
+# the booklet's 'New for 2024' page that this pack already records — the new Schedule U Line 6 housing
+# provider credit, the repeal of the QHTC 3% capital-gain rate, and the DC EITC monthly-payout becoming
+# an election. All three modeled: false — this pack's tax block computes D-40 Line 20 (the ordinary rate
+# schedule) and applies no credits. NOT promoted: the standard-deduction rise to $14,600/$21,900/$29,200
+# and the childless-EITC / Schedule H / Schedule ELC / additional-standard-deduction bumps, which the
+# booklet itself attributes to federal-law inflation indexing rather than a DC structural change.
+effective_law_changes:
+- description: >-
+    NEW nonrefundable credit for 2024: a housing provider credit at Schedule U Line 6 (DHCD Rental
+    Accommodations Division), listed on the booklet's 'New for 2024' page and carried to Form D-40 Line 22
+    with the other Schedule U non-refundable credits.
+  status: final_form_published
+  affects:
+  - Schedule U Line 6 (housing provider credit)
+  - Form D-40 Line 22 (non-refundable credits from Schedule U)
+  modeled: false
+  lookup_path: >-
+    2024 D-40 booklet, 'New for 2024' and the Schedule U instructions (the citation URL); this pack ships
+    no figure for the credit and calc.state_tax applies no DC credits.
+  citation:
+    source: >-
+      DC OTR — 2024 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): New for 2024 (deadline
+      April 15, 2025; standard deductions $14,600/$21,900/$29,200 'increasing based on the federal law'; additional
+      standard deduction $1,550/$1,950; childless EITC max $632 and investment-income test $11,600; Schedule H max
+      $1,375 with AGI limits $63,900/$87,100; Schedule ELC max $1,160; new Schedule U Line 6 housing provider credit;
+      QHTC 3% capital-gain rate repealed), Reminders Income Tax Rate Table (in effect since TY2022), Who must file,
+      mailing addresses, DC Treasurer payee, Schedule I Calculations A/B
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+- description: >-
+    REPEALED for 2024: the Qualified High Technology Company (QHTC) preferential 3% rate on capital gains
+    is gone ('QHTC 3% capital-gain rate repealed', booklet 'New for 2024'). Affected capital gains now fall
+    under DC's ordinary seven-bracket rate table (unchanged since taxable years beginning January 1, 2022).
+  status: final_form_published
+  affects:
+  - tax.brackets (QHTC gains now priced by the ordinary schedule rather than a 3% special rate)
+  - Form D-40 Line 20 (Tax) / Calculation I
+  modeled: false
+  lookup_path: >-
+    2024 D-40 booklet, 'New for 2024' (the citation URL). The engine never modeled the QHTC 3% special
+    rate, so a filer who previously used it must now be run through the ordinary schedule this pack ships;
+    confirm the repeal's scope in the booklet before relying on it for a QHTC investor.
+  citation:
+    source: >-
+      DC OTR — 2024 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): New for 2024 (deadline
+      April 15, 2025; standard deductions $14,600/$21,900/$29,200 'increasing based on the federal law'; additional
+      standard deduction $1,550/$1,950; childless EITC max $632 and investment-income test $11,600; Schedule H max
+      $1,375 with AGI limits $63,900/$87,100; Schedule ELC max $1,160; new Schedule U Line 6 housing provider credit;
+      QHTC 3% capital-gain rate repealed), Reminders Income Tax Rate Table (in effect since TY2022), Who must file,
+      mailing addresses, DC Treasurer payee, Schedule I Calculations A/B
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf
+- description: >-
+    DC EITC PAYOUT BECAME AN ELECTION: for taxable years starting January 1, 2024, a filer whose allowed
+    DC EITC is at least $1,200 may CHOOSE (by filling the Form D-40 Line 27 oval) to receive it in 12 equal
+    monthly payments instead of one payment — it is no longer automatic as it was for TY2023. The credit
+    itself continues at 70% of the federal EIC.
+  status: final_form_published
+  affects:
+  - credits (DC Earned Income Tax Credit — filers with a qualifying child)
+  - Form D-40 Line 27 oval / Lines 27a-27d
+  modeled: false
+  lookup_path: >-
+    2024 D-40 booklet, DC Earned Income Tax Credit section p.10 (monthly-payment election for credits of
+    $1,200+) at the citation URL; the credit amount derives from the filer's federal EIC and calc.state_tax
+    applies no DC credits.
+  citation:
+    source: >-
+      DC OTR — 2024 D-40 booklet: DC Earned Income Tax Credit section p.10 ('The DC EITC is equal to 70%
+      of federal EIC'; monthly-payment election for credits of $1,200+), D-40 Line 27d ('x .70' printed on the
+      form), and the cover letter ('For the 2024 tax year, this credit continues to be 70%')
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf

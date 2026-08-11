@@ -317,3 +317,32 @@ tax:
     HOH; $25,900 -> $27,700 MFJ and qualifying widow(er)).'
   - The rate schedule has been in effect since taxable years beginning January 1, 2022 (no 2023 mid-year rate change);
     the booklet lists it under 'Reminders.'
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the DC EITC expansion this
+# pack records in its two EITC credit entries and the booklet's 'New for 2023' page. modeled: false —
+# the DC EITC is a credit against tax (Line 27), and this pack's tax block computes Line 20 only.
+# Not promoted: the rate schedule is unchanged since TY2022, and the standard deduction / Schedule H /
+# Schedule ELC movements for 2023 are federal-law-tracking inflation adjustments already in the pack.
+effective_law_changes:
+- description: >-
+    DC EITC EXPANDED for TY2023: the credit was extended to certain ITIN filers (no SSN required); the
+    maximum DC EITC for filers WITHOUT a qualifying child rose to $600 (up from $560) with DC's own
+    childless income test raised to $28,963 (higher than the federal childless ceiling, so some filers
+    over the federal limit still qualify) and an investment-income limit of $11,000. For filers WITH a
+    qualifying child the credit stays at 70% of the federal EIC, but for TY2023 a DC EITC of $1,200 or
+    more is paid in 12 equal monthly installments rather than a lump sum.
+  status: final_form_published
+  affects:
+  - credits (DC Earned Income Tax Credit, with and without a qualifying child)
+  - Form D-40 Line 27 (Lines 27c/27d, and Line 27e for filers without a qualifying child)
+  - EITC Worksheet For Filers Without A Qualifying Child (D-40 instructions)
+  modeled: false
+  lookup_path: >-
+    2023 D-40 Instruction Booklet, 'New for 2023' and the DC EITC Worksheet For Filers Without A
+    Qualifying Child (the citation URL); the credit derives from the filer's federal EIC. calc.state_tax
+    reproduces D-40 Line 20 tax only and applies no DC credits.
+  citation:
+    source: >-
+      DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax booklet: 'New for 2023' (childless
+      EITC max increased from $560 to $600; income test limit increased to $28,963; investment-income limit $11,000)
+      and the DC EITC Worksheet For Filers Without A Qualifying Child
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_012324.pdf

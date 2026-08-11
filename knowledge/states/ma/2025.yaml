@@ -330,3 +330,81 @@ tax:
     installment sales (line 26), the refundable 40%-of-federal Massachusetts EITC (line 43), the $440-per-qualifying-individual
     Child and Family Tax Credit (line 46), the Senior Circuit Breaker credit up to $2,820 (line 44), use tax, and
     the Schedule HC health-care penalty.'
+# DEV_PLAN §7.2 effective_law_changes — promoted on 2026-08-11 from this pack's OWN 'HEADLINE
+# 2025 CHANGES' header, residency/filing_requirement prose and tax.notes; no new research.
+# The indexed 4% surtax threshold ($1,083,150), the Circuit Breaker maximum ($2,820) and the
+# EITC's federal earned-income ceiling ($68,675) are annual INFLATION movements and are
+# deliberately NOT recorded here. All three entries are modeled: false — none of them is part
+# of the Form 1 line 22 computation calc.state_tax performs.
+effective_law_changes:
+- description: >-
+    NEW real-estate-closing withholding regime for NON-RESIDENT sellers (830 CMR 62B.2.4), applying to
+    closings on or after November 1, 2025 (Major 2025 Tax Changes). Massachusetts now takes withholding
+    at the closing of a Massachusetts real-property sale by a non-resident, which the seller then
+    reconciles on the Massachusetts return.
+  status: final_form_published
+  lookup_path: >-
+    830 CMR 62B.2.4 and the Major 2025 Tax Changes section of the 2025 Form 1 instructions at the
+    citation URL — this pack records the change but did NOT extract the regulation's rates or
+    exemptions (see unverified), so resolve both there before relying on a figure.
+  affects:
+  - Form 1-NR/PY (non-resident seller withholding credit)
+  - payment
+  modeled: false
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker
+      maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing
+      withholding under 830 CMR 62B.2.4; Climatetech Tax Incentive Program; TIR 24-16 / TIR 25-5 credit changes; $325
+      parking and transit exclusions), residency definitions (183-day statutory-resident test), $8,000 filing threshold,
+      MA gross income definition, Line 3 wages from W-2 state wages, Line 22 tax on 5.0% income, Schedule Y Line 4b
+      U.S. tax treaty deduction, Filing Due Dates (April 15, 2026), mailing PO Box 7000 / 7003, check payable to the
+      Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture
+      of the official mass.gov URL (mass.gov 403s non-browser fetchers).
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+- description: >-
+    NEW for 2025, an express exemption from the 2024 joint-filing mandate: where one spouse has no
+    Massachusetts filing requirement because their Massachusetts gross income does not exceed $8,000,
+    the couple may choose married-filing-separate status by filling in the Form 1 "if joint filing
+    exemption for spouses with Massachusetts gross income under $8,000" oval. A joint Form 1 otherwise
+    remains unavailable unless both spouses were MA residents for the same portion of 2025.
+  status: final_form_published
+  affects:
+  - residency
+  - filing_requirement
+  - Form 1 line 1 (joint filing exemption oval)
+  modeled: false
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker
+      maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing
+      withholding under 830 CMR 62B.2.4; Climatetech Tax Incentive Program; TIR 24-16 / TIR 25-5 credit changes; $325
+      parking and transit exclusions), residency definitions (183-day statutory-resident test), $8,000 filing threshold,
+      MA gross income definition, Line 3 wages from W-2 state wages, Line 22 tax on 5.0% income, Schedule Y Line 4b
+      U.S. tax treaty deduction, Filing Due Dates (April 15, 2026), mailing PO Box 7000 / 7003, check payable to the
+      Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture
+      of the official mass.gov URL (mass.gov 403s non-browser fetchers).
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download
+- description: >-
+    NEW Climatetech Tax Incentive Program (including the Climatetech Incentive Jobs Credit) plus other
+    new and revised credits for 2025 announced by TIR 24-16 and TIR 25-5 (Major 2025 Tax Changes).
+    Related 2025 withholding change: employers must withhold the 4% surtax on wages once an employee's
+    wages equal or exceed $1,000,000.
+  status: final_form_published
+  lookup_path: >-
+    TIR 24-16 and TIR 25-5 and the Major 2025 Tax Changes section of the 2025 Form 1 instructions at the
+    citation URL — this pack did NOT transcribe the new/revised credit components (see unverified), so
+    resolve eligibility and amounts there; the credits are claimed via Schedule CMS (Form 1 line 31).
+  affects:
+  - Schedule CMS
+  - Form 1 line 31
+  - credits
+  modeled: false
+  citation:
+    source: 2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker
+      maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing
+      withholding under 830 CMR 62B.2.4; Climatetech Tax Incentive Program; TIR 24-16 / TIR 25-5 credit changes; $325
+      parking and transit exclusions), residency definitions (183-day statutory-resident test), $8,000 filing threshold,
+      MA gross income definition, Line 3 wages from W-2 state wages, Line 22 tax on 5.0% income, Schedule Y Line 4b
+      U.S. tax treaty deduction, Filing Due Dates (April 15, 2026), mailing PO Box 7000 / 7003, check payable to the
+      Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture
+      of the official mass.gov URL (mass.gov 403s non-browser fetchers).
+    url: https://www.mass.gov/doc/2025-form-1-instructions/download

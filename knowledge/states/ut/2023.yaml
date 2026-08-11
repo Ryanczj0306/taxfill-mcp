@@ -216,3 +216,52 @@ tax:
     (Line 25) all come after Line 10 on the form.'
   - 'Rate provenance: 2023 HB 54 lowered the individual income tax rate from 4.85% to 4.65% (2023 TC-40 instructions,
     What''s New); the 4.65% rate appears on the printed Line 10 of the 2023 TC-40 itself.'
+# Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the two 2023 HB 54
+# changes already recorded in the tax block's comment/citation ("What's New: HB 54 lowered the
+# rate 4.85% -> 4.65%") and in the EITC credit's eligibility text. modeled: true for the rate,
+# which tax.flat_rate already ships; false for the EITC limitation, because calc.state_tax
+# returns TC-40 line 10 and applies no TC-40A Part 3 credits.
+effective_law_changes:
+- description: >-
+    RATE CUT for 2023 — "The 2023 Utah Legislature passed HB 54, lowering the individual income
+    tax rate from 4.85 percent to 4.65 percent" (2023 TC-40 instructions, What's New). The 4.65%
+    rate is printed on line 10 of the 2023 TC-40 itself ("Utah tax - multiply line 9 by 4.65%
+    (.0465) (not less than zero)"). Utah's flat rate must never be carried forward from a prior
+    year.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - TC-40 line 10
+  - Social Security Benefits Credit (computed at the same 4.65% rate)
+  modeled: true
+  citation:
+    source: >-
+      Utah State Tax Commission — 2023 Utah TC-40 form: Line 4 'Federal adjusted gross income from federal return';
+      Line 9 'Utah taxable income/loss - subtract the sum of lines 7 and 8 from line 6'; Line 10 'Utah tax - multiply
+      line 9 by 4.65% (.0465) (not less than zero)'; Lines 11-20 Taxpayer Tax Credit (Line 11 personal exemption $1,941
+      x line 2d; Line 16 initial credit 6% (.06); Line 17 phase-out base $16,742 single/MFS, $25,114 HoH, $33,484 MFJ/QSS;
+      Line 19 phase-out 1.3% (.013)). Second pass: 2023 TC-40 Instructions — What's New 'The 2023 Utah Legislature
+      passed HB 54, lowering the individual income tax rate from 4.85 percent to 4.65 percent'; Line 10 'Multiply
+      line 9 by 4.65 percent (.0465). If the result is zero or less, enter 0'; Line 11 'The Utah personal exemption
+      is $1,941 per dependent'; 'Rounding Off to Whole Dollars: Round down if under 50 cents; round up if 50 cents
+      and above' — both passes agree.
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf
+- description: >-
+    EITC NARROWED for 2023: "For 2023 the legislature (HB 54) limited the Utah credit to the
+    amount of Utah income earned (Utah W-2 wages)" — the Utah earned income tax credit is now the
+    LESSER of 20% of the federal EITC or total Utah wages shown in W-2 box 16, rather than 20% of
+    the federal credit outright. It remains nonrefundable, with no carryforward or carryback.
+  status: final_form_published
+  affects:
+  - credits (Utah Earned Income Tax Credit)
+  - TC-40A Part 3 code AM, carried to TC-40 line 24
+  modeled: false
+  lookup_path: >-
+    2023 Utah TC-40 Individual Income Tax Instructions, (AM) Earned Income Tax Credit (UC 59-10-1044), p.21
+    (the citation URL) for the credit worksheet and the Utah-wage limitation; calc.state_tax returns TC-40
+    line 10 and applies no TC-40A credits.
+  citation:
+    source: >-
+      2023 Utah TC-40 Individual Income Tax Instructions, (AM) Earned Income Tax Credit (UC 59-10-1044), p.21;
+      corroborated by incometax.utah.gov EITC page
+    url: https://files.tax.utah.gov/tax/forms/2023/tc-40inst.pdf

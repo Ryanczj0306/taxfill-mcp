@@ -188,3 +188,30 @@ tax:
     ... over $70,000) — the 2024 D-401 Child Deduction Table is unchanged from 2023; take it from the worksheet, not
     from a per-dependent exemption.'
   - North Carolina has no personal or dependent exemptions.
+# effective_law_changes promoted 2026-08-11 from this pack's OWN prose (the tax-block header
+# comment and the 'Rate change' note) per DEV_PLAN §7.2 — no new research. modeled: true because
+# the cut rate IS the shipped tax.flat_rate. The standard-deduction chart and the child-deduction
+# table are unchanged from 2023, so there is nothing else to record for 2024.
+effective_law_changes:
+- description: >-
+    North Carolina's flat individual income tax rate DROPPED to 4.5% for tax year 2024, from 4.75%
+    in 2023 — 2024 D-401 "What is the Tax Rate?": "For tax year 2024, the individual income tax
+    rate is 4.5%. To calculate your North Carolina tax liability, multiply your North Carolina
+    taxable income by 4.5% (0.0450)", second-passed against the 2024 Form D-400 itself, which
+    prints Line 15 "Multiply Line 14 by 4.5% (0.0450). If zero or less, enter a zero." The N.C.
+    Standard Deduction Chart ($12,750 / $25,500 / $12,750 / $19,125) and the Line 10 child
+    deduction table are UNCHANGED from 2023.
+  status: final_form_published
+  affects:
+  - tax.flat_rate
+  - Form D-400 Line 15
+  modeled: true
+  citation:
+    source: >-
+      2024 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General
+      Information (Who Must File, residency), When Must I File ("the 2024 return is due on or
+      before April 15th, 2025"), What is the Tax Rate? ("For tax year 2024, the individual income
+      tax rate is 4.5%... multiply your North Carolina taxable income by 4.5% (0.0450)"), Where Do
+      I File / How Can I Pay (mailing addresses, payee), Line 6 federal AGI starting point, Line 7
+      Additions / Schedule S Part A list, Filing Requirements Chart (p.6)
+    url: https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open
