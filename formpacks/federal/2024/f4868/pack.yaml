@@ -1,0 +1,84 @@
+# PORTED 2023 -> 2024 (2026-08-16): topology IDENTICAL — the 2024 blank's 17-name
+# AcroForm field set is byte-identical to the 2023 blank's (verified programmatically,
+# both directions; all 16 mapped names present, widget MaxLens and checkbox on-states
+# unchanged). Digest provenance: the blank was downloaded TWICE in independent requests
+# and both copies hashed to the pdf_sha256 below. Printed title ("Application for
+# Automatic Extension of Time To File U.S. Individual Income Tax Return"), revision
+# year "2024", and "For calendar year 2024" were confirmed from the PDF's own text.
+# Printed-line diff 2023 vs 2024: ZERO renumbering — the voucher's line tokens 1-9
+# are identical across all 4 pages (only prose changed: year references rolled to
+# 2024, the 1040-SS bullet on line 4 now cites Part I line 7, and the page-1 footer
+# now says "see page 4"; none of that is mapped). The filled render was vision-audited
+# page by page (audit_pack sentinel fill) before shipping.
+#
+# Form 4868 (2024 revision) -- Application for Automatic Extension of Time
+# To File U.S. Individual Income Tax Return.
+#
+# Field map: ported from the 2023 pack (root topmostSubform[0]); re-introspected
+# from this exact revision. Page 1 carries the ENTIRE filed form -- the detachable
+# voucher below the "DETACH HERE" rule; pages 2-4 are instructions. All 16 page-1
+# widgets are mapped below (3 header + 7 Part I + 4 Part II money + 2 Part II
+# checkboxes).
+#
+# The single widget on page 3 (topmostSubform[0].Page3[0].Col3[0].f3_1[0],
+# "Enter confirmation number here") is a personal-record convenience box inside
+# the *instructions* for noting an electronic-payment confirmation number -- it
+# is NOT part of the filed extension request, so it is intentionally not mapped
+# (mapping it would put an instructions-page note field on the form's line map).
+#
+# Paper Form 4868 carries NO signature block (the voucher is unsigned) and no
+# paid-preparer block -- nothing to map there.
+form: "4868"
+jurisdiction: federal
+tax_year: 2024
+source_url: https://www.irs.gov/pub/irs-prior/f4868--2024.pdf
+pdf_sha256: "8d1a031a5543b70e0f017ed7bfd17f6ea91ab4f36ef2276bcdd09965e4160d4a"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- header --------------------------------------------------------------
+  # "For calendar year 2024, or other tax year beginning ____, 2024, and
+  # ending ____, 20__" -- leave all three blank for a normal calendar-year
+  # filing (fiscal-year filers must paper-file, per the form's own note).
+  - { line: "fiscal_year.beginning", field: "Page1[0].VoucherHeader[0].f1_1[0]", type: text }
+  - { line: "fiscal_year.ending", field: "Page1[0].VoucherHeader[0].f1_2[0]", type: text }
+  - { line: "fiscal_year.ending_year", field: "Page1[0].VoucherHeader[0].f1_3[0]", type: text, maxlen: 2 }
+  # ---- Part I: Identification ----------------------------------------------
+  # Line 1 "Your name(s)" is ONE box -- on a joint return both spouses' names
+  # go here in the order they appear on the return (a single string, not split).
+  - { line: "name", field: "Page1[0].Part1_ReadOrder[0].f1_4[0]", type: text }
+  - { line: "mailing_address.street", field: "Page1[0].Part1_ReadOrder[0].f1_5[0]", type: text }   # "Address (see instructions)"
+  - { line: "mailing_address.city", field: "Page1[0].Part1_ReadOrder[0].f1_6[0]", type: text }     # "City, town, or post office"
+  - { line: "mailing_address.state", field: "Page1[0].Part1_ReadOrder[0].f1_7[0]", type: text, maxlen: 2 }
+  - { line: "mailing_address.zip", field: "Page1[0].Part1_ReadOrder[0].f1_8[0]", type: text, maxlen: 10 }
+  # Line 2 "Your social security number" -- plain text box (MaxLen 11 fits a
+  # dashed SSN/ITIN 000-00-0000); NOT a comb field on this form.
+  - { line: "identifying_number", field: "Page1[0].Part1_ReadOrder[0].f1_9[0]", type: text, maxlen: 11 }
+  # Line 3 "Spouse's social security number" (the SSN shown second on a joint return).
+  - { line: "spouse.identifying_number", field: "Page1[0].Part1_ReadOrder[0].f1_10[0]", type: text, maxlen: 11 }
+  # ---- Part II: Individual Income Tax --------------------------------------
+  - { line: "4", field: "Page1[0].f1_11[0]", type: money }   # Estimate of total tax liability for 2024
+  - { line: "5", field: "Page1[0].f1_12[0]", type: money }   # Total 2024 payments
+  - { line: "6", field: "Page1[0].f1_13[0]", type: money }   # Balance due (line 4 - line 5)
+  - { line: "7", field: "Page1[0].f1_14[0]", type: money }   # Amount you're paying
+  # Line 8: out of the country (U.S. citizen/resident) -- single checkbox.
+  - { line: "8", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1" }
+  # Line 9: files Form 1040-NR and didn't receive wages subject to U.S. withholding.
+  - { line: "9", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1" }
+relations:
+  # "Balance due. Subtract line 5 from line 4. If line 5 is more than line 4,
+  # enter -0-." (page 3, Line 6 instructions -- re-verified verbatim on the
+  # 2024 blank).
+  - "6 == max(0, 4 - 5)"
+# Lines 4 and 5 are the tax/payments the filer EXPECTS to report on the 2024
+# return (2024 instructions, page 3: 1040/1040-SR/1040-NR line 24 / line 33,
+# re-verified on this blank) -- but Form 4868 is filed BEFORE that return
+# exists, so they are estimates the filer enters, not hard copies of another
+# in-filing form. Hence no cross_form equality.
+cross_form: []
+identity_fields: [name, identifying_number]
+# Paper Form 4868 (the voucher) has no signature line.
+signature: null
+# "Where To File a Paper Form 4868" is a state-by-state table with two columns
+# (no payment / with payment). Like the f1040 pack, the knowledge layer owns
+# address resolution, so the form pack ships mailing: null.
+mailing: null

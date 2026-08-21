@@ -1,0 +1,173 @@
+# PORTED 2023 -> 2025 (2026-08-16): CHANGED topology — the booklet's field tree was
+# repaginated AND the voucher page was renumbered, so every voucher field on pdf
+# page 11 was RE-INTROSPECTED from this blank (pypdf widget dump: name + rect +
+# MaxLen) and re-bound by rect position, never by surviving name. The 2025 blank
+# was downloaded TWICE (independent requests); both copies digest to the
+# pdf_sha256 below. Printed identity confirmed from the PDF text itself: page 1
+# prints "2025 / Form 1040-ES / Estimated Tax for Individuals" (file header dated
+# 5-Feb-2025); the vouchers print "2025 Estimated Tax / Payment Voucher N";
+# page 10/11 footers print "Form 1040-ES (2025)". 117 widgets (2023/2024: 113).
+#
+# What changed vs the 2023 base map (all re-verified on the 2025 widgets):
+# - Voucher 4: moved off the Record-of-Payments page (2023 pdf page 9,
+#   Page9[0].f9_28/f9_30..f9_42) onto its own pdf page 10 in a Page10[0] subform
+#   (the 2024 move, kept in 2025): f10_1..f10_14, rect-for-rect identical to the
+#   2024 geometry (amount box [482,180,574,192]), MaxLens SSN 11 / state 2 / ZIP 10.
+# - Voucher page 11 RENUMBERED: 2023's f11 indices ran 1,3-16,18-31,33-45 (gaps
+#   at 2/17/32); 2025 removes the 17 and 32 gaps so the indices run 1,3-43.
+#   Voucher 3 (page 11 TOP, Due Sept. 15, 2025) keeps the 2023 names
+#   (f11_1, f11_3..f11_15): f11_3..f11_15 are rect-for-rect identical to 2023,
+#   and the amount box f11_1 is NOT — its top edge grew 0.32pt
+#   ([482.4,684.008,574,696.01] in 2023 -> [482.4,684.008,574,696.33] here),
+#   same x extents, same bottom edge, same printed line, so the hairline taller
+#   box changes nothing about the binding. (The identical 0.32pt top-edge growth
+#   also shows up on voucher 1's spouse-first-name box: 2025 f11_34 top 132.329
+#   vs 2023 f11_36 top 132.008.) Voucher 2 (MIDDLE, Due June 16,
+#   2025) shifts by one from the name row on: amount stays f11_16, then
+#   f11_17..f11_29 (2023: f11_18..f11_30). Voucher 1 (BOTTOM, Due April 15,
+#   2025) shifts wholesale to f11_30..f11_43 (2023: f11_31..f11_45; f11_44/45
+#   no longer exist). NOTE THE COLLISION: 2023's voucher_1.amount name f11_31
+#   is voucher 1's FIRST-NAME box in 2025 — filling with 2023 names would put
+#   values in wrong boxes, which is why every binding here is position-derived.
+# - NEW widgets, deliberately NOT mapped: four push-buttons
+#   Page10[0].LinkActivator[0] and Page11[0].LinkActivator1..3[0] (one per
+#   voucher, over the left-margin "Pay online at www.irs.gov/etpay" panel —
+#   link activators, not user data); and Page9's rebuilt record table
+#   (Table_RecordEstimated Line1..4 f9_1..f9_27 plus four 1-pt-wide Date1..4
+#   structural fields) — the private ledger this pack has never mapped.
+# Printed-line diff (all 12 pages, 2023 vs 2025): ZERO renumbering on the mapped
+# voucher pages — which are pdf pages 10 (voucher 4) and 11 (vouchers 1-3) only;
+# page 9 carries no mapped widget (it is the private ledger). Pages 10/11 carry
+# no numbered lines, and their label text is identical to 2023 except the rolled
+# year/dates, "Tear off here" -> "Separate here.", and the notice footer now
+# reading "For Disclosure, Privacy Act, and Paperwork Reduction Act Notice".
+# Per-page accounting of the REST of the diff, so no page is silently skipped:
+#   - pages 2-7 (instructions/tables): the usual year + figure churn.
+#   - page 8 (Estimated Tax Worksheet) carries TWO real non-year prose deltas:
+#     line 13's parenthetical "pensions, annuities, certain deferred income,
+#     etc.)" is now "pensions, annuities, certain deferred income, and Additional
+#     Medicare Tax withholding)", and line 12a's "66-2/3% for farmers and
+#     fishermen" is now "66-2/3% for farming and fishing". Its other page-8
+#     changes are year rolls, whitespace in the 14a/14b "Yes./No." answers, and
+#     the "}" bracket on line 2a's itemized/standard-deduction bullets no longer
+#     appearing in the extracted text.
+#   - page 9 (Record of Estimated Tax Payments) rolls its four due dates and the
+#     "(e) 2022" -> "(e) 2024" column head, retitles to "Record of Estimated Tax
+#     Payments (Farming, fishing, and fiscal ...)" (the same farmers/fishermen
+#     rewording as line 12a), moves its footer, loses voucher 4 to page 10, and
+#     changes one privacy-notice word ("possessions" -> "territories").
+#   - page 12 is zero-delta (it prints only "THIS PAGE INTENTIONALLY LEFT BLANK").
+# None of pages 2-9 is mapped, so none of that text can move a value this pack
+# writes.
+# Vision audit: sentinel-filled render read page by page (pdf pages 9, 10 and 11)
+# before shipping — every value on its printed line, combs unclipped, page 9
+# ledger untouched.
+#
+# Form 1040-ES (2025) -- Estimated Tax for Individuals.
+#
+# WHAT THIS PACK FILLS: the four detachable **payment vouchers** -- the only part
+# of Form 1040-ES that is actually filed (mailed with each quarterly check). Each
+# voucher carries the same 14 fields (amount + your name/SSN + spouse name/SSN +
+# address split). The 12-page PDF also contains the **2025 Estimated Tax Worksheet**
+# (page 8) and the **Record of Estimated Tax Payments** (page 9, marked "Keep for
+# Your Records") -- those are the taxpayer's PRIVATE computation/ledger, never
+# mailed, so their 57 widgets are intentionally NOT mapped (the engine's calc /
+# estimate_refund own that math). Exact accounting, counted off THIS blank rather
+# than estimated: 117 terminal widgets total = 56 MAPPED + 61 UNMAPPED.
+#   - MAPPED 56: 42 of Page11[0]'s 45 (vouchers 1-3) + 14 of Page10[0]'s 15
+#     (voucher 4).
+#   - UNMAPPED 61: 26 on the page-8 Estimated Tax Worksheet (f8_1..f8_22 plus the
+#     c8_1[0]/c8_1[1] and c8_2[0]/c8_2[1] Yes/No kid pairs on lines 14a/14b), 31
+#     on the page-9 Record of Estimated Tax Payments (f9_1..f9_24 row cells +
+#     f9_25..f9_27 totals + four 1-pt-wide Date1..4 structural fields), and the 4
+#     LinkActivator push-buttons listed above (1 on page 10, 3 on page 11).
+# The vouchers carry no signature block.
+#
+# Field map: introspected from this exact revision (root topmostSubform[0]).
+# Vouchers 1-3 are on page 11 (printed top-to-bottom as 3, 2, 1); voucher 4 is
+# on page 10 below the e-pay promo panel. State boxes are MaxLen-2, ZIP MaxLen-10,
+# SSN boxes MaxLen-11 (fit a dashed 000-00-0000).
+form: "1040-ES"
+jurisdiction: federal
+tax_year: 2025
+source_url: https://www.irs.gov/pub/irs-prior/f1040es--2025.pdf
+pdf_sha256: "a6e94741c8fc559a668e3d73c5b2680132ad1f54d233782e2af7f2325905cfb7"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ===== Voucher 1 (Due April 15, 2025) -- page 11, bottom =================
+  # (2025 renumbering: whole block shifted down one index vs 2023, f11_30..f11_43.)
+  - { line: "voucher_1.amount", field: "Page11[0].f11_30[0]", type: money }   # "Amount of estimated tax you are paying"
+  - { line: "voucher_1.name.first", field: "Page11[0].f11_31[0]", type: text }
+  - { line: "voucher_1.name.last", field: "Page11[0].f11_32[0]", type: text }
+  - { line: "voucher_1.identifying_number", field: "Page11[0].f11_33[0]", type: text, maxlen: 11 }
+  - { line: "voucher_1.spouse.first_name", field: "Page11[0].f11_34[0]", type: text }
+  - { line: "voucher_1.spouse.last_name", field: "Page11[0].f11_35[0]", type: text }
+  - { line: "voucher_1.spouse.identifying_number", field: "Page11[0].f11_36[0]", type: text, maxlen: 11 }
+  - { line: "voucher_1.mailing_address.street", field: "Page11[0].f11_37[0]", type: text }
+  - { line: "voucher_1.mailing_address.city", field: "Page11[0].f11_38[0]", type: text }
+  - { line: "voucher_1.mailing_address.state", field: "Page11[0].f11_39[0]", type: text, maxlen: 2 }
+  - { line: "voucher_1.mailing_address.zip", field: "Page11[0].f11_40[0]", type: text, maxlen: 10 }
+  - { line: "voucher_1.mailing_address.foreign_country", field: "Page11[0].f11_41[0]", type: text }
+  - { line: "voucher_1.mailing_address.foreign_province", field: "Page11[0].f11_42[0]", type: text }
+  - { line: "voucher_1.mailing_address.foreign_postal_code", field: "Page11[0].f11_43[0]", type: text }
+  # ===== Voucher 2 (Due June 16, 2025) -- page 11, middle ==================
+  # (2025 renumbering: amount keeps f11_16; the rest shifted down one, f11_17..f11_29.)
+  - { line: "voucher_2.amount", field: "Page11[0].f11_16[0]", type: money }
+  - { line: "voucher_2.name.first", field: "Page11[0].f11_17[0]", type: text }
+  - { line: "voucher_2.name.last", field: "Page11[0].f11_18[0]", type: text }
+  - { line: "voucher_2.identifying_number", field: "Page11[0].f11_19[0]", type: text, maxlen: 11 }
+  - { line: "voucher_2.spouse.first_name", field: "Page11[0].f11_20[0]", type: text }
+  - { line: "voucher_2.spouse.last_name", field: "Page11[0].f11_21[0]", type: text }
+  - { line: "voucher_2.spouse.identifying_number", field: "Page11[0].f11_22[0]", type: text, maxlen: 11 }
+  - { line: "voucher_2.mailing_address.street", field: "Page11[0].f11_23[0]", type: text }
+  - { line: "voucher_2.mailing_address.city", field: "Page11[0].f11_24[0]", type: text }
+  - { line: "voucher_2.mailing_address.state", field: "Page11[0].f11_25[0]", type: text, maxlen: 2 }
+  - { line: "voucher_2.mailing_address.zip", field: "Page11[0].f11_26[0]", type: text, maxlen: 10 }
+  - { line: "voucher_2.mailing_address.foreign_country", field: "Page11[0].f11_27[0]", type: text }
+  - { line: "voucher_2.mailing_address.foreign_province", field: "Page11[0].f11_28[0]", type: text }
+  - { line: "voucher_2.mailing_address.foreign_postal_code", field: "Page11[0].f11_29[0]", type: text }
+  # ===== Voucher 3 (Due Sept. 15, 2025) -- page 11, top =====================
+  # (Unchanged from 2023: f11_1, f11_3..f11_15, identical rects.)
+  - { line: "voucher_3.amount", field: "Page11[0].f11_1[0]", type: money }
+  - { line: "voucher_3.name.first", field: "Page11[0].f11_3[0]", type: text }
+  - { line: "voucher_3.name.last", field: "Page11[0].f11_4[0]", type: text }
+  - { line: "voucher_3.identifying_number", field: "Page11[0].f11_5[0]", type: text, maxlen: 11 }
+  - { line: "voucher_3.spouse.first_name", field: "Page11[0].f11_6[0]", type: text }
+  - { line: "voucher_3.spouse.last_name", field: "Page11[0].f11_7[0]", type: text }
+  - { line: "voucher_3.spouse.identifying_number", field: "Page11[0].f11_8[0]", type: text, maxlen: 11 }
+  - { line: "voucher_3.mailing_address.street", field: "Page11[0].f11_9[0]", type: text }
+  - { line: "voucher_3.mailing_address.city", field: "Page11[0].f11_10[0]", type: text }
+  - { line: "voucher_3.mailing_address.state", field: "Page11[0].f11_11[0]", type: text, maxlen: 2 }
+  - { line: "voucher_3.mailing_address.zip", field: "Page11[0].f11_12[0]", type: text, maxlen: 10 }
+  - { line: "voucher_3.mailing_address.foreign_country", field: "Page11[0].f11_13[0]", type: text }
+  - { line: "voucher_3.mailing_address.foreign_province", field: "Page11[0].f11_14[0]", type: text }
+  - { line: "voucher_3.mailing_address.foreign_postal_code", field: "Page11[0].f11_15[0]", type: text }
+  # ===== Voucher 4 (Due Jan. 15, 2026) -- page 10, below the e-pay promo =====
+  # (The 2024 relocation, kept in 2025: own Page10[0] subform, f10_1..f10_14.)
+  - { line: "voucher_4.amount", field: "Page10[0].f10_1[0]", type: money }
+  - { line: "voucher_4.name.first", field: "Page10[0].f10_2[0]", type: text }
+  - { line: "voucher_4.name.last", field: "Page10[0].f10_3[0]", type: text }
+  - { line: "voucher_4.identifying_number", field: "Page10[0].f10_4[0]", type: text, maxlen: 11 }
+  - { line: "voucher_4.spouse.first_name", field: "Page10[0].f10_5[0]", type: text }
+  - { line: "voucher_4.spouse.last_name", field: "Page10[0].f10_6[0]", type: text }
+  - { line: "voucher_4.spouse.identifying_number", field: "Page10[0].f10_7[0]", type: text, maxlen: 11 }
+  - { line: "voucher_4.mailing_address.street", field: "Page10[0].f10_8[0]", type: text }
+  - { line: "voucher_4.mailing_address.city", field: "Page10[0].f10_9[0]", type: text }
+  - { line: "voucher_4.mailing_address.state", field: "Page10[0].f10_10[0]", type: text, maxlen: 2 }
+  - { line: "voucher_4.mailing_address.zip", field: "Page10[0].f10_11[0]", type: text, maxlen: 10 }
+  - { line: "voucher_4.mailing_address.foreign_country", field: "Page10[0].f10_12[0]", type: text }
+  - { line: "voucher_4.mailing_address.foreign_province", field: "Page10[0].f10_13[0]", type: text }
+  - { line: "voucher_4.mailing_address.foreign_postal_code", field: "Page10[0].f10_14[0]", type: text }
+# No arithmetic is printed on the vouchers (each amount is the payment the filer
+# chooses to send); the Estimated Tax Worksheet math lives in the engine's calc.
+relations: []
+cross_form: []
+# The vouchers are namespaced per quarter (voucher_N.*), so there is no single
+# bare identity line to cross-check against another in-filing form; 1040-ES is
+# filed on its own quarterly schedule, not inside a return's envelope.
+identity_fields: []
+# Payment vouchers carry no signature block (you enclose a check; nothing to sign).
+signature: null
+# "Where To File" is a state-by-state table (and differs for payments vs the
+# return); like the f1040 pack, the knowledge layer owns address resolution.
+mailing: null

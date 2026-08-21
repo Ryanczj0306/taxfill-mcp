@@ -20,8 +20,8 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**3,011 tests, all green** — offline 2,899 + live-.gov 112, exit 0;
-re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
+Done and on `main` (**3,574 tests, all green** — offline 3,272 + live-.gov 302, exit 0;
+re-verified 2026-08-20 via `pytest -m "not network"`, exit 0):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (23 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -38,10 +38,11 @@ re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
-- **Federal form packs — priority set DONE.** **59 packs across 2019–2025**
-  (2019:1, 2020:1, 2021:1, 2022:5, 2023:28, 2024:10, 2025:13 — f1040nr +
-  Schedule OI joined 2024 on 2026-08-10: identical-topology ports off the 2023
-  packs, digests pinned to the 2024 blanks, vision-audited page by page). M2 base
+- **Federal form packs — priority set DONE.** **93 packs across 2019–2025**
+  (2019:1, 2020:1, 2021:1, 2022:5, 2023:28, 2024:28, 2025:29 — f1040nr +
+  Schedule OI joined 2024 on 2026-08-10, and the 2026-08 batch backfilled the
+  rest of the 2023 set into 2024/2025: identical-topology ports off the 2023
+  packs, digests pinned to the year's blanks, vision-audited page by page). M2 base
   set + Schedule SE/D/E + Form 8863 + Form 2555 all ship (2023), audited, golden;
   + **all four Phase-D new form types** — **Form 4868** (extension), **Form 1040-ES**
   (estimated-tax vouchers), **Form 1040-X** (amended return, Rev. 2-2024), and
@@ -60,15 +61,17 @@ re-verified 2026-08-07 via `pytest -m "not network"`, exit 0):
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (42 packs)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (42 TY2023 packs)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**105 form packs total** — 101 `pack.yaml` (59 federal + 42 state) + 4 `handfill.yaml`.
-> ⚠️ Every **state** form pack is **TY2023 only**. State *knowledge* now spans
+**144 form packs total** — 140 `pack.yaml` (93 federal + 47 state, the state count
+incl. the NY 2024/2025 + PA 2024 ports) + 4 `handfill.yaml`.
+> ⚠️ Every **state** form pack except the NY 2024/2025 + PA 2024 ports is
+> **TY2023 only**. State *knowledge* now spans
 > 2023–2025, so `calc.state_tax` computes years that no pack can fill — the single
 > largest coverage asymmetry in the repo (see D2).
 
@@ -292,12 +295,14 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
 
 ### D2 — Breadth follow-ons
 
-- [~] More tax years for the state packs — **KNOWLEDGE DONE (126/126), FORM PACKS NOT STARTED.**
+- [~] More tax years for the state packs — **KNOWLEDGE DONE (126/126), FORM PACKS 5/~92.**
       State *knowledge* now spans three COMPLETE years: **2023 42/42, 2024 42/42,
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
-      glob at `test_state_knowledge.py:26`. State *form* packs remain **TY2023 only**
-      — so a 2024/2025 state return computes but cannot be filled. Federal spans
+      glob at `test_state_knowledge.py:26`. State *form* packs are **TY2023 only
+      except the 5 ports** (NY IT-201/IT-203 2024 + 2025, PA-40 2024; 2026-08-10)
+      — so a 2024/2025 return for the other 40 jurisdictions computes but cannot
+      be filled. Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
       the provisional 2026 planning pack shipped 2026-08-04).
