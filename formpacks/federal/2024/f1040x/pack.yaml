@@ -1,26 +1,38 @@
-# Form 1040-X (Rev. February 2024) -- Amended U.S. Individual Income Tax Return.
+# PORTED 2023 -> 2024 (2026-08-19): zero-churn port. Form 1040-X is continuous-use
+# (one revision serves several years; the filer enters the amended year in the
+# header — there are no year checkboxes), and the **Rev. February 2024** revision
+# is also the right one for a TY2024 amendment: its line set exactly matches
+# TY2024 law — line 4a "Reserved for future use", line 4b "Qualified business
+# income deduction", line 5 "Taxable income. Subtract line 4b from line 3" — all
+# re-read from this blank's own printed text (QBI is TY2024's only line-4
+# deduction; the OBBBA Schedule 1-A deductions start in TY2025). This was THE
+# current revision throughout 2025, when TY2024 amendments began.
 #
-# REVISION CHOICE: Form 1040-X is NOT issued per tax year -- one revision serves
-# several years, and the filer enters the year being amended in the header. The
-# **Rev. February 2024** revision (Form 1040-X (Rev. 2-2024)) is the one used to
-# amend tax years 2021-2023: its line 4a is "Reserved", line 4b is the QBI
-# deduction, and line 5 = line 3 - line 4b. (The current irs-pdf/f1040x.pdf is the
-# Rev. December 2025 revision, which repurposes line 4b for the 2025 OBBBA
-# tips/overtime/car-loan deductions -- WRONG for a 2023 amendment.) So this 2023
-# pack pins the archived Feb-2024 revision via its irs-prior URL.
+# Digest provenance: blank downloaded TWICE (independent requests, 2026-08-19)
+# from the source_url below; both copies digest to the pdf_sha256 below, which is
+# BYTE-IDENTICAL to the 2023 pack's pinned blank (same sha256, same URL). Printed
+# title "Form 1040-X (Rev. February 2024) Amended U.S. Individual Income Tax
+# Return" and footer "Form 1040-X (Rev. 2-2024)" confirmed from the PDF text.
+# Topology verdict: IDENTICAL — every mapped field name verified present in the
+# blank's AcroForm; the printed-line diff vs the 2023 base is zero by
+# construction (same bytes). Counts, each labeled with what it actually counts:
+# WIDGET annotations, i.e. terminal fields, 145 (92 on page 1 + 53 on page 2,
+# counted directly off /Annots) = 127 mapped + 18 unmapped reserved (see
+# RESERVED LINES below). The blank's other 40 AcroForm nodes are non-terminal
+# container subforms, not widgets — 145 + 40 = 185 FIELD-TREE NODES, which is
+# exactly what pypdf.get_fields() returns. 185 is NOT a widget count; an earlier
+# revision of this banner said "185 total widgets", which was wrong.
+# The sentinel-filled render was vision-audited page by page before shipping
+# (audit harness, .cache/audit).
 #
-# Provenance: blank downloaded from the official source_url below; pages 1 and 2
-# were rendered and READ to confirm the printed title, "Rev. February 2024", and
-# the line structure before pinning pdf_sha256 (freshness protocol, dev plan
-# section 7). Field map introspected from this exact revision (root
-# topmostSubform[0]).
-#
-# Counts, each labeled with what it actually counts: WIDGET annotations, i.e.
-# terminal fields, 145 (92 on page 1 + 53 on page 2, counted directly off
-# /Annots) = 127 mapped + 18 unmapped reserved (see RESERVED LINES below). The
-# blank's other 40 AcroForm nodes are non-terminal container subforms, not
-# widgets — 145 + 40 = 185 FIELD-TREE NODES, which is exactly what
-# pypdf.get_fields() returns. 185 is NOT a widget count.
+# ALTERNATIVE REVISION: the successor Rev. December 2025 revision (the current
+# irs-pdf/f1040x.pdf) prints line 4a as "Qualified business income deduction"
+# and its footer as "Created 2/19/26" (both verified on that blank's own text) --
+# so the Feb-2024 revision was indeed the current one for all of 2025. Whether
+# the 12-2025 revision is ALSO acceptable for a TY2024 amendment is an
+# instructions-level question this pack does not decide; it pins the archived
+# Feb-2024 revision via its year-stable irs-prior URL, whose lines match TY2024
+# law exactly.
 #
 # COLUMN MODEL (the defining feature of 1040-X): lines 1-15 and 24-29 have three
 # columns -- A (original/as-previously-adjusted), B (net change), C (correct
@@ -54,7 +66,7 @@
 #       cross_form rule or extractor anywhere in this repo produces or consumes
 #       "4a"/"4a.original"/"4a.net_change" for Form 1040-X. (Oregon's knowledge
 #       files cite "Form 1040-X, line 1C" -- line 1 column C, key "1" -- only.)
-# This is a printed-text verdict, not a flag-only one, and the IRS's own later
+# This is a printed-text verdict, not a flag-only one, and the IRS's own next
 # revision proves the distinction: Rev. 12-2025 RELABELS 4a "Qualified business
 # income deduction", CLEARS the ReadOnly bit on those very same widgets
 # (f1_27/28/29 go 8388609 -> 8388608) and names 4a in its line-5 formula. So the
@@ -72,7 +84,7 @@
 # "unknown line key" ValueError for all three keys.
 form: "1040-X"
 jurisdiction: federal
-tax_year: 2023
+tax_year: 2024
 source_url: https://www.irs.gov/pub/irs-prior/f1040x--2024.pdf
 pdf_sha256: "a4bed38aa74f7f0f84b6541287d273fcfa6612a81f5134fc5bf411c0b4daa819"
 acroform_root: "topmostSubform[0]"

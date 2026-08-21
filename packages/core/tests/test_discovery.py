@@ -17,8 +17,10 @@ def test_list_all_packs():
     # + the TY2025 set (f1040, scheds 1/1a/2/3/A/B/C, 8843, f1040nr,
     # scheds OI/NEC/A-NR — the OBBBA year, incl. the new Schedule 1-A) = 57,
     # + f1040nr/sched_oi 2024 (the ported pair, 2026-08-10) = 59,
+    # + the 2024/2025 backfill of the 2023 set (2026-08 batch: 18 forms x 2024
+    # incl. sched_a_nr/sched_nec, 16 forms x 2025) = 93,
     # plus the growing state packs.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 59
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 93
     assert any(s.jurisdiction.startswith("states/") for s in allf)
 
 

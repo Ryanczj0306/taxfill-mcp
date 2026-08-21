@@ -130,3 +130,217 @@ pitfalls:
       taxation, Mexico Art. 23 is source-state-only in form, and Korea
       (1976) verifiably has NO other-income article — so US-arising other
       income gets NO treaty reduction under any shipped treaty.
+
+  - id: P-007
+    incident: >-
+      The Schedule D packs (2023, 2024 and 2025) mapped the two SHADED
+      no-adjustment cells — line 1a column (g) and line 8a column (g) — as
+      ordinary money lines, so the filler could print a number inside a box
+      the IRS greys out and locks. Reproduced, not theorised:
+      fill_form(pack, {"1a.g": 99999, "8a.g": 88888}) wrote both values with
+      no warning, they survived a re-read of /V, and a 300-dpi render of page
+      1 showed the digits sitting in the grey cells. The printed form leaves
+      no room for an entry: each row is defined as totals for 1099-B
+      (1099-DA from 2025) transactions "for which you have no adjustments",
+      while column (g) is headed "Adjustments to gain or loss from Form(s)
+      8949, Part I/II, line 2, column (g)" — an adjustment routes the
+      transaction to line 1b/8b + Form 8949 instead, so for rows 1a/8a
+      column (h) is simply (d) - (e). The blank agrees: those are the ONLY 2
+      of the 55 widgets with the AcroForm ReadOnly bit set (/Ff = 8388609 =
+      DoNotScroll|ReadOnly; every other text widget is 8388608 or 0), in all
+      three years — the 2025 revision dropped the "_RO" suffix from the
+      NAMES (f1_05_RO -> f1_5, f1_25_RO -> f1_25) while keeping the flag, so
+      a name-only port audit reads the change as cosmetic. Nothing
+      downstream would have caught the bad artifact either: verify.py's
+      clipping scan deliberately skips ReadOnly widgets on the stated
+      premise that "the filler never writes them", which the mapping made
+      false. Inherited from the 2023 base and carried into both ports.
+    countermeasure: >-
+      The two widgets are unmapped in all three sched_d packs, so
+      fill_form now raises its prescriptive unknown-line-key ValueError on
+      "1a.g"/"8a.g" instead of silently writing a shaded box, and each pack
+      records the printed-text + /Ff proof in its header plus an inline
+      comment where the binding used to be. Regression tests in
+      test_formpacks_federal.py: an always-run structural test pinning the
+      two exclusions and the surviving 1a.d/1a.e/1a.h and 8a.d/8a.e/8a.h
+      siblings across 2023/2024/2025 and asserting the filler rejects the
+      two keys, plus a network-marked test that reads the official blanks
+      and asserts the two widgets really are the only ReadOnly ones and
+      that no mapped sched_d field is ReadOnly.
+      THE DISCRIMINATOR is the durable rule and it is year-invariant, so it
+      lives here and not in a year pack: "greyed + ReadOnly" alone decides
+      NOTHING. Read the widget's own printed row off the blank and place it
+      in one of four classes. (1) The widget already HOLDS an IRS-printed
+      constant: sched_se lines 7 and 14 ship the wage base and the
+      optional-method cap inside the widget ($176,100 / $7,240 for 2025) and
+      f1040es's four voucher rows ship the printed instalment due dates —
+      never map one, or the filler overwrites the form's own figure.
+      (2) The printed text makes a correct entry IMPOSSIBLE: sched_d rows
+      1a/8a print "...leave this line blank and go to line 1b" right where
+      column (g) sits; sched_e's four "Totals" rows are read only by a
+      following line that names the OTHER columns ("30 Add columns (h) and
+      (k) of line 29a", "31 Add columns (g), (i), and (j) of line 29b");
+      sched_nec's loss cells print "Losses aren't allowed". Drop the line
+      key so fill_form raises instead of writing a locked box. (3) A
+      printed, numbered or lettered line that merely reads "Reserved for
+      future use": KEEPING it mapped with a leave-blank comment is what
+      makes the revision that un-reserves the line a widget swap instead of
+      an API change — f1040 line 30 went live in 2025 as "Refundable
+      adoption credit from Form 8839, line 13" and f1040-X line 4a became
+      the QBI deduction in Rev. 12-2025, and in BOTH cases the IRS cleared
+      the ReadOnly bit on the very same widget. Excluding it is defensible
+      too, when nothing on the printed face names the line. What is never
+      defensible is the flag-only rationale "the field is read-only, so the
+      printed line takes no entry" — that is the exact premise this pitfall
+      overturned, and several pack headers still state it. (4) A STATE DOR
+      field whose value the form's own JavaScript owns: a running total, a
+      carried subtotal, a page-2/3/4 name and SSN header mirror. taxfill
+      never executes that JavaScript, so an unmapped one ships BLANK on the
+      filed return — these MUST stay mapped. Class 4 is by far the largest
+      in the repo and a federal-only audit never sees it.
+      WHAT WAS ADJUDICATED (2026-08-20: four parallel printed-text reviews,
+      then one fresh sweep of all 140 packs — federal and state — against
+      their cached blanks). Excluded as class 2: sched_e 2023/2024/2025, the
+      nine shaded "Totals" cells per year (29a.g/29a.i/29a.j, 29b.h/29b.k,
+      34a.c/34a.e, 34b.d/34b.f — widgets Page2[0].f2_35/37/38/41/44/60/62/
+      65/67[0], /Ff 8388609, exactly 9 of the blank's 185, identical in all
+      three years); each pack went 185 -> 176 fields. On sched_e verify did
+      not merely fail to catch the bad artifact, it CERTIFIED it: with the
+      nine keys mapped, verify_form returned nine PASSing assertion checks
+      for digits sitting in locked grey boxes and an EMPTY clipping section.
+      Excluded as a reserved line nothing names: f1040x 2023/2024 line 4a
+      plus its .original/.net_change pair (their shared pinned Rev. 2-2024
+      blank prints "4a Reserved for future use", printed line 5 is "Subtract
+      line 4b from line 3", and no relation, calc op, cross_form rule or
+      extractor in the repo produces or consumes it — while the same packs
+      already excluded lines 9/24/26/28/29, which print the identical
+      sentence); 145 widgets = 127 mapped + 18 unmapped reserved. KEPT
+      MAPPED as class 3, with leave-blank comments plus printed-text and
+      /Ff proof written into the headers: f1040 2023/2024 line 30, f1040nr
+      2025 lines 1i/1j/6/27, sched_a 2025 line 8d. CORRECTION to this
+      entry's own earlier text: the 2025 f1040x does NOT exclude line 4a and
+      must not — Rev. 12-2025 relabelled that line "Qualified business
+      income deduction", cleared the ReadOnly bit on the same three widgets
+      and names 4a in the printed line-5 formula. That false parenthetical
+      propagated out of this registry into an agent's task briefing as a
+      "critical extra fact", which is why the cross-year story is now a
+      table row rather than prose.
+      STILL OPEN, and now pinned by tests so none of it can go quiet.
+      (a) The class-3 question is answered INCONSISTENTLY, and the split
+      runs along pack authorship rather than the printed face: 13 federal
+      bindings keep a reserved line mapped while about thirty exclude one —
+      f1040nr 2022/2023/2024 exclude 1i/1j/6/27 (and 30) that the 2025 pack
+      keeps, sched_a 2023/2024 exclude the identical 8d the 2025 pack keeps,
+      sched_2 2023 excludes reserved line 19 while sched_2 2025 keeps
+      reserved line 10, and sched_3 2023/2024/2025 exclude 6e on the
+      flag-only rationale. Settling it needs the 2022-2024 pack owners; the
+      2023/2024 f1040nr and sched_a headers additionally describe these
+      ReadOnly widgets as "fillable", as does sched_1 2023's note on line
+      22. (b) The verify blind spot is wider than this entry first said.
+      verify.py's clipping scan SKIPS ReadOnly text widgets on the premise
+      "the filler never writes them", which every class-3 and class-4
+      mapping falsifies — including Wisconsin's ReadOnly page-2/3/4 SSN
+      mirror cells (maxlen 3/2/4), so the P-001 clipping check is
+      structurally blind to the exact field shape P-001 exists for.
+      fill_form writes all of these with NO warning and audit_pack.py's
+      synthetic_values fills them, so the audit renders print sentinels
+      inside locked boxes. The engine-side fix — a `reserved:` marker on the
+      field, or driving fill_form and synthetic_values off the allowlist,
+      with a warning when a value is supplied for one — is roadmap work, not
+      a pack edit. (c) formpacks/CONVENTIONS.md has NO rule about ReadOnly
+      widgets or reserved lines (zero hits for readonly / read-only /
+      reserved), so this discriminator is discoverable only from here and
+      from individual pack headers — plausibly how the sched_a split arose.
+      THE GENERIC REGRESSION TEST lives in
+      packages/core/tests/test_readonly_widget_mapping.py and replaces the
+      per-pack audits that kept missing packs: it sweeps EVERY discovered
+      pack, federal AND state, and asserts a mapped field binds a ReadOnly
+      widget only where an explicit, per-entry-justified table allows.
+      RESERVED_LINE_KEEPS pins the 13 federal keep bindings as (pack, line,
+      widget, why) rows — the offline layer proves each row still describes
+      its pack, the network layer proves mapped-intersect-ReadOnly equals
+      the table EXACTLY in both directions (so a new binding and a stale row
+      both fail), and a second network test re-extracts the PRINTED ROW TEXT
+      on the widget's own baseline and requires it to still read "Reserved
+      for future use", so a line going live forces its row out instead of
+      being rubber-stamped. RESERVED_LINES_UNMAPPED pins the exclusions
+      (f1040x 4a and 9/24/26/28/29, sched_3 6e, sched_2 2023 line 19,
+      sched_c 2022 line 27b, and the contested f1040nr / sched_a years) with
+      fill_form-refuses-the-key assertions and surviving-sibling over-reach
+      guards; test_reserved_line_tables_agree_about_every_contested_line
+      then makes a cross-year claim impossible to assert in prose alone — it
+      is the check that would have caught the false 4a parenthetical.
+      STATE_COMPUTED_READONLY pins the 1,119 class-4 bindings per pack by
+      COUNT with a per-pack reason (al40 580, ga500 193, mo1040 262, wv
+      it140 51, de pit_res 16, wi form1 15, oh it1040 2), because a
+      per-widget list of 1,119 names would be a rubber stamp while the count
+      still fails the moment a port grows it. The flag reader itself is
+      proven offline against a synthetic PDF whose /Ff sits on the TERMINAL
+      FIELD dict (the real IRS shape): without that, an annotation-only
+      reader would report an empty ReadOnly set for every pack and every
+      network assertion would silently pass. Two class-4 curiosities worth
+      remembering: Ohio's CHK_AMD ("AMENDED RETURN - Check here") and
+      CHK_SP_NON_RES_STMT, and Georgia's CB_DEDUCTION_TYPE selector, carry a
+      bare /Ff = 1 on /Btn boxes the printed face requires the filer to
+      answer, each while its own sibling box carries no /Ff at all — an
+      asymmetry that reads as a DOR authoring slip, not an instruction.
+
+  - id: P-008
+    incident: >-
+      The Schedule E packs (2023, 2024 and 2025) gave their three Yes/No
+      questions — Part I question A ("Did you make any payments in <year>
+      that would require you to file Form(s) 1099?"), question B ("If
+      'Yes,' did you or will you file required Form(s) 1099?") and Part II
+      line 27 (the at-risk / prior-year-unallowed-loss question) — NO
+      `group` id, so nothing made the two boxes of one question mutually
+      exclusive. Reproduced end to end on the 2024 blank, not theorised:
+      fill_form(pack, {"a.yes": True, "a.no": True, "27.yes": True,
+      "27.no": True}) returned with zero warnings, a re-read of the PDF
+      showed all four widgets at their on-states (c1_1[0]=/1, c1_1[1]=/2,
+      c2_1[0]=/1, c2_1[1]=/2), a 400-dpi render of page 1 printed question
+      A with BOTH "Yes" and "No" ticked, and verify_form's checkbox_audit
+      returned an EMPTY check list — the return was internally
+      contradictory and every gate passed it. The cause is a topology gap,
+      not a typo. These are not radio groups: each Yes/No pair is TWO
+      independent terminal /Btn fields (c1_1[0] + c1_1[1]) with no shared
+      parent, no /Ff radio bit, its own /V, and one appearance state each
+      (/1 Yes, /2 No) — identical in all three years' blanks, and
+      byte-for-byte the same shape as sched_8812's line 12/19/20 pairs,
+      which DO carry group ids. The pre-existing gate
+      (test_pack_radio_options_share_one_group_and_distinct_states) only
+      fires when two checkbox lines SHARE one AcroForm field, so it never
+      saw these; and verify's checkbox_audit only audits an ungrouped box
+      when it is `required`, which none of them is. sched_e was the lone
+      federal outlier — every other pack with a Yes/No question already
+      grouped it (sched_c uses payments_1099_required / payments_1099_filed
+      for the very same 1099 question). Inherited by the 2024 and 2025
+      ports from the 2023 base, which had 0 group keys.
+    countermeasure: >-
+      All three sched_e packs now carry group ids on all three questions —
+      question_a, question_b (f8316's convention for a LETTERED question;
+      bare "a"/"b" would collide with this pack's .a/.b/.c property-column
+      suffixes) and line27 (sched_8812's "line<N>" form) — so fill_form's
+      group guard rejects a double answer before it opens the blank and
+      verify's at-most-one checkbox audit FAILs an already-both-checked
+      PDF. `required` is deliberately left off all six lines: A and B
+      belong to Part I and 27 to Part II, so a filer using only the other
+      Parts leaves them blank, and marking one would FAIL verification on
+      every legitimately blank Schedule E. The at-most-one check applies to
+      every group regardless of `required`, which is the whole point. The
+      DURABLE rule is pack- and year-invariant, so the regression test is
+      generic rather than sched_e-shaped: test_formpacks_federal.py's
+      test_every_yes_no_pair_shares_one_group_id keys off LINE SHAPE
+      ("<stem>.yes" + "<stem>.no") instead of shared field, and runs over
+      every discovered pack — the check that would have caught this. Two
+      sched_e-specific tests pin the group ids, the separate-widget
+      topology and the /1,/2 states against a future port, assert no member
+      became `required`, and prove the guard both rejects Yes+No and still
+      accepts a single answer. Open follow-up, deliberately NOT fixed here:
+      that generic sweep found the SAME defect in sched_d 2023/2024/2025 (4
+      questions each — qof, 17, 20, 22; all separate-widget pairs, zero
+      group keys). sched_d is under concurrent P-007 work and each question
+      needs its own printed-face read to settle the group id and the
+      `required` question, so the 12 pairs sit in
+      KNOWN_UNGROUPED_YESNO_PAIRS — an allowlist that fails the moment a
+      pair IS grouped, forcing the stale entry out, so the debt cannot go
+      quiet.

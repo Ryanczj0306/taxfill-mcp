@@ -7,11 +7,48 @@
 #   with the $500,000/$250,000 AGI look-through condition.
 # - The 6/8b/16 description write-ins each merged into ONE 2-row multiline
 #   widget (maxlen 79 per the sched_1/sched_2 2025 convention).
-# - Line 8d prints Reserved for future use but its widget exists (shaded) —
-#   kept mapped per the reserved-line precedent; the printed 8e sum spans
-#   8a-8c only and the relation follows the print.
+# - Line 8d prints "Reserved for future use"; its widget exists but is
+#   ReadOnly and shaded — kept mapped per the reserved-line precedent (full
+#   P-007 adjudication below); the printed 8e sum spans 8a-8c only and the
+#   relation follows the print.
 # - Line 17 total spans the far-right column (4+7+10+14+15+16), entered on
 #   Form 1040 line 12e (the 2025 deduction line).
+#
+# All 33 of the blank's 33 AcroForm widgets are mapped. 32 are fillable; ONE
+# — line 8d — is flagged ReadOnly. There is no paid-preparer or signature
+# block on Schedule A (attachment-only schedule; signed via the parent).
+#
+# P-007 adjudication — line 8d "Reserved for future use": KEPT MAPPED.
+# Widget Page1[0].f1_19[0] is the ONLY ReadOnly widget on this blank. It is
+# NOT fillable; the evidence, taken from this year's own cached blank
+# (sha256 c14acf34…):
+#   printed text, page 1, band y=264..276pt (the widget's own rect band):
+#     "d Reserved for future use . . . . . . . . . . . . . 8d"
+#   /Ff = 8388609 = DoNotScroll (1<<23) | ReadOnly (1<<0). It is the ONLY
+#     widget on this blank with the ReadOnly bit set — the other 32 carry
+#     /Ff 0, 8388608 or 8392704, none with bit 1.
+#   a 170-dpi render shows the entry box shaded grey.
+# Verdict by the P-007 discriminator: this is the "reserved printed LINE"
+# class, not the "necessarily blank cell" class (sched_d 1a.g/8a.g,
+# sched_nec's grid cells, sched_3 line 6e). 8d is a printed, LETTERED line of
+# the line-8 mortgage-interest ladder, so it stays mapped with a leave-blank
+# comment and the printed line stays addressable — the same shape as sched_1
+# line 22 (f2_14[0], also ReadOnly|DoNotScroll and mapped), sched_2 2025 line
+# 10 and sched_8812 2025 line 15. The line takes NO entry: the printed 8e
+# instruction is "Add lines 8a through 8c", so the "8e == 8a + 8b + 8c"
+# relation deliberately omits it, and no relation, cross_form rule, calc op
+# or extractor anywhere in this repo produces or consumes sched_a "8d"
+# (grepped repo-wide — the "8d" hits are sched_1's foreign-earned-income
+# exclusion line and sched_nec's row 8 column d, different forms). Agents
+# leave it blank; blank counts as zero if a future revision sums it.
+# KNOWN CROSS-YEAR INCONSISTENCY (not this pack's to fix): the 2023 and 2024
+# sched_a packs EXCLUDE this same line — they skip from 8c to 8e and their
+# headers justify it as "the PDF field is read-only ... and the printed line
+# takes no entry". Both years' blanks print the identical "d Reserved for
+# future use ... 8d" row on the identical widget name f1_21[0] with the
+# identical /Ff 8388609, so nothing about the form changed: by the
+# discriminator the 2023/2024 packs are the deviants and should map 8d with
+# a leave-blank comment.
 form: Schedule A (Form 1040)
 jurisdiction: federal
 tax_year: 2025
@@ -85,6 +122,10 @@ fields:
 - line: 8c
   field: Page1[0].f1_18[0]
   type: money
+# Line 8d prints "Reserved for future use" and its widget is ReadOnly
+# (/Ff 8388609) + shaded — MUST BE LEFT BLANK. Kept mapped on purpose so the
+# printed line letter stays addressable (P-007 reserved-line class; see the
+# adjudication in the header). Do not write a value here; 8e sums 8a-8c only.
 - line: 8d
   field: Page1[0].f1_19[0]
   type: money

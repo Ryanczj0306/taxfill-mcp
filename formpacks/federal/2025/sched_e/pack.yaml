@@ -1,7 +1,27 @@
-# Schedule E (Form 1040), 2023 — Supplemental Income and Loss.
+# PORTED 2023 -> 2025 (2026-08-16): the 2025 blank's AcroForm topology is IDENTICAL to
+# 2023 — all 185 terminal fields (164 text + 21 buttons) carry the same fully-qualified
+# names AND the same /Ff flags, verified programmatically against this pack's map: the
+# 176 bound widgets match one-for-one, and the 9 shaded cells the map deliberately
+# omits (P-007, enumerated below) carry the ReadOnly bit in this year's blank too —
+# nothing else missing, nothing added.
+# The digest below is the 2025 blank's, from two independent downloads of the
+# irs-prior URL that hashed identically. Printed identity confirmed on the PDF text
+# itself: header "SCHEDULE E (Form 1040) ... Supplemental Income and Loss ... 2025",
+# question A reads "Did you make any payments in 2025 ...", and both page footers
+# print "Schedule E (Form 1040) 2025". Printed line-number tokens text-diffed
+# against the 2023 blank page by page: IDENTICAL on both pages (44 + 26 tokens,
+# zero renumbering). Line 41's carry target ("Enter the result here and on
+# Schedule 1 (Form 1040), line 5") and all four relation lines (26 "Combine
+# lines 24 and 25"; 32 "Combine lines 30 and 31"; 37 "Combine lines 35 and 36";
+# 41 "Combine lines 26, 32, 37, 39, and 40") re-read from the 2025 blank's own
+# printed text — unchanged. This pack embeds no mailing addresses, due dates, or
+# dollar thresholds, so there was nothing else to re-verify. The filled render was
+# vision-audited page by page (scripts/audit_pack.py sentinel fill) before shipping.
+#
+# Schedule E (Form 1040), 2025 — Supplemental Income and Loss.
 # (Rental real estate, royalties, partnerships, S corporations, estates, trusts, REMICs.)
 #
-# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) →
+# Base map authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) →
 # vision-map workflow (every mapped widget located by reading its own field
 # name printed at its position on the rendered form) → this map.
 #
@@ -146,9 +166,9 @@
 # at-most-one check applies to every group regardless of `required`.
 form: Schedule E (Form 1040)
 jurisdiction: federal
-tax_year: 2023
-source_url: https://www.irs.gov/pub/irs-prior/f1040se--2023.pdf
-pdf_sha256: 5252b9584187a583827bc42fd7b6d51b9c071ef7d09687fd8b97b6bcc141543e
+tax_year: 2025
+source_url: https://www.irs.gov/pub/irs-prior/f1040se--2025.pdf
+pdf_sha256: "c5e2c8fa0ec5ee9153a0167734df634afe0ea8bb8483040766e5f4b1b12780f3"
 acroform_root: topmostSubform[0]
 fields:
   # ---- Page 1 header ----

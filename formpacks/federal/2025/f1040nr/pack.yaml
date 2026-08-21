@@ -2,7 +2,9 @@
 #
 # Mapped from the official 2025 revision (printed title "1040-NR U.S.
 # Nonresident Alien Income Tax Return 2025" verified by rendering page 1 of
-# the downloaded blank). 164 of 171 fillable widgets are mapped; the 7
+# the downloaded blank). The blank carries 171 AcroForm widgets — 167
+# fillable plus FOUR that are flagged ReadOnly (lines 1i, 1j, 6 and 27; see
+# the P-007 adjudication below) — and 164 of the 171 are mapped; the 7
 # unmapped widgets are the "Paid Preparer Use Only" block, which is
 # preparer-only and never filled by the taxpayer or the agent:
 #   Page2[0].f2_51[0]  preparer's name
@@ -31,12 +33,14 @@
 #   (No "(5)(b) and in the U.S." / student / disabled rows — 1040-only.)
 # - Line 1 wage rows now match the 1040's 1a-1z ladder with NR wrinkles:
 #   1h adds a type write-in; 1i and 1j are "Reserved for future use"
-#   (widgets exist, stay mapped, leave blank); 1k is the treaty-exempt
-#   total from Schedule OI item L line 1(e) (was also 1k in 2023).
+#   (ReadOnly widgets exist, stay mapped, leave blank — see the P-007
+#   adjudication below); 1k is the treaty-exempt total from Schedule OI
+#   item L line 1(e) (was also 1k in 2023).
 # - New 3c (child's dividends in 3a/3b), 4c (Rollover/QCD/other + write-in)
 #   and 5c (Rollover/PSO/other + write-in) checkbox rows.
 # - Line 6 is still "Reserved for future use" (no NR social security line;
-#   SSA benefits are NEC income) — widget exists, stays mapped, leave blank.
+#   SSA benefits are NEC income) — ReadOnly widget exists, stays mapped,
+#   leave blank (see the P-007 adjudication below).
 # - Line 7 -> 7a; new 7b "Check if: Schedule D not required / Includes
 #   child's capital gain or (loss)" + unlabeled amount write-in.
 # - Line 11 -> 11a (AGI closes page 1); new 11b "Amount from line 11a"
@@ -46,10 +50,53 @@
 #   that line is 13b; the NR keeps 13b for estate/trust exemptions).
 #   14 = 12 + 13a + 13b + 13c ("Add lines 12 through 13c").
 # - Line 27 ("Reserved for future use", was line 27 EIC-reserved in 2023
-#   too) keeps a widget — mapped, leave blank (sched_1 2025 line 22
-#   precedent). Line 28 ACTC adds a decline-ACTC checkbox.
+#   too) keeps a ReadOnly widget — mapped, leave blank (sched_1 2025 line 22
+#   precedent; see the P-007 adjudication below). Line 28 ACTC adds a
+#   decline-ACTC checkbox.
 # - Line 30 ("Reserved for future use" in 2023) is now "Refundable adoption
-#   credit from Form 8839, line 13"; 32 sums 28+29+30+31.
+#   credit from Form 8839, line 13"; 32 sums 28+29+30+31. Its widget
+#   (f2_32[0]) carries NO ReadOnly bit — /Ff 8388608 — which is exactly why
+#   line 30's key had to survive the reserved years.
+#
+# P-007 adjudication — the four "Reserved for future use" lines 1i, 1j, 6
+# and 27: ALL FOUR KEPT MAPPED. These are the ONLY four ReadOnly widgets on
+# this blank, so calling the map "164 of 171 fillable widgets" (the earlier
+# wording) was false. Evidence taken from this year's own cached blank
+# (sha256 aa1c0523…) — printed text extracted per-row from the widget's own
+# rect band, /Ff read off the same blank:
+#   1i  Page1[0].f1_51[0]  p1 rect y=288..300  /Ff 8388609
+#         "Reserved for future use . . . . . . . . . . . . . . . 1i"
+#   1j  Page1[0].f1_52[0]  p1 rect y=276..288  /Ff 8388609
+#         "Reserved for future use . . . . . . . . . . . . . . . . . . . . . . . 1j"
+#   6   Page1[0].f1_65[0]  p1 rect y=144..156  /Ff 8388609
+#         "Reserved for future use . . . . . . . . . . . . . . . . . . . . . . . 6"
+#   27  Page2[0].f2_29[0]  p2 rect y=378..390  /Ff 8388609
+#         "Reserved for future use . . . . . . . . . . . . . . . 27"
+# 8388609 = DoNotScroll (1<<23) | ReadOnly (1<<0). These four are the ONLY
+# widgets on this blank with the ReadOnly bit set — the other 167 carry /Ff
+# 0, 8388608, 8392704 or 25165824, none with bit 1. A 170-dpi render shows
+# all four entry boxes shaded grey.
+# Verdict by the P-007 discriminator: every one of the four is a printed,
+# NUMBERED line of the form's own line ladder whose text is "Reserved for
+# future use" — the reserved-LINE class, not the "necessarily blank cell"
+# class (sched_d 1a.g/8a.g, sched_nec's grid cells, sched_3 line 6e). They
+# stay mapped with leave-blank comments so the printed line numbers stay
+# addressable; precedents sched_1 line 22 (f2_14[0], also
+# ReadOnly|DoNotScroll and mapped), sched_2 2025 line 10, sched_8812 2025
+# line 15. None of the four is named by any relation or cross_form rule
+# here, and no calc op or extractor anywhere in this repo produces or
+# consumes f1040nr "1i"/"1j"/"6"/"27" (grepped repo-wide): 1z is "Add lines
+# 1a through 1h", 9 sums the named income lines, and 32 is 28+29+30+31.
+# Agents leave all four blank; blank counts as zero wherever a future
+# revision starts summing them.
+# KNOWN CROSS-YEAR INCONSISTENCY (not this pack's to fix): the 2023 and 2024
+# f1040nr packs EXCLUDE these same lines — their headers list f1_36[0] (1i),
+# f1_37[0] (1j), f1_48[0] (6), f2_22[0] (27) and f2_25[0] (line 30) under
+# "Excluded fillable widgets". Those blanks print the identical "Reserved for
+# future use" rows with the identical /Ff 8388609, so by the discriminator
+# the 2023/2024 packs are the deviants and should map all five with
+# leave-blank comments (and their "Excluded fillable widgets" heading is
+# doubly wrong: the widgets are ReadOnly, not fillable).
 #
 # Cross-form references NOT encoded (following the 2023 template's scoping):
 #   line 19 (CTC/ODC) and line 28 (ACTC) reference Schedule 8812;
@@ -169,11 +216,13 @@ fields:
   # amount:" — the type write-in is NEW 2025
   - { line: "1h.type", field: "Page1[0].f1_49[0]", type: text }
   - { line: "1h", field: "Page1[0].f1_50[0]", type: money }
-  # 1i and 1j print "Reserved for future use" (shaded) but keep fillable
-  # widgets — mapped per the reserved-line precedent (sched_1 2025 line 22),
-  # leave blank
-  - { line: "1i", field: "Page1[0].f1_51[0]", type: money }
-  - { line: "1j", field: "Page1[0].f1_52[0]", type: money }
+  # 1i and 1j print "Reserved for future use" and their widgets are ReadOnly
+  # (/Ff 8388609) + shaded — MUST BE LEFT BLANK. Kept mapped on purpose so
+  # the printed line numbers stay addressable (P-007 reserved-line class,
+  # sched_1 2025 line 22 precedent; adjudication in the header). Do not
+  # write values here.
+  - { line: "1i", field: "Page1[0].f1_51[0]", type: money } # RESERVED — leave blank
+  - { line: "1j", field: "Page1[0].f1_52[0]", type: money } # RESERVED — leave blank
   # 1k Total income exempt by a treaty (Schedule OI, item L, line 1(e))
   - { line: "1k", field: "Page1[0].Line1k_ReadOrder[0].f1_53[0]", type: money }
   - { line: "1z", field: "Page1[0].f1_54[0]", type: money } # Add lines 1a through 1h
@@ -201,8 +250,11 @@ fields:
   - { line: "5c.pso", field: "Page1[0].c1_22[0]", type: checkbox, on_state: "/1" }
   - { line: "5c.other", field: "Page1[0].c1_23[0]", type: checkbox, on_state: "/1" }
   - { line: "5c.other_text", field: "Page1[0].f1_64[0]", type: text, maxlen: 8 }
-  # line 6 "Reserved for future use" (shaded, widget exists — leave blank)
-  - { line: "6", field: "Page1[0].f1_65[0]", type: money }
+  # line 6 "Reserved for future use": ReadOnly (/Ff 8388609) + shaded — MUST
+  # BE LEFT BLANK. Kept mapped so the printed line number stays addressable
+  # (P-007 reserved-line class; adjudication in the header). No NR social
+  # security line — SSA benefits are Schedule NEC income.
+  - { line: "6", field: "Page1[0].f1_65[0]", type: money } # RESERVED — leave blank
   # 2023 line 7 is 2025 line 7a; the "Schedule D not required" box moved
   # into the new 7b pair
   - { line: "7a", field: "Page1[0].f1_66[0]", type: money } # Capital gain or (loss)
@@ -251,9 +303,11 @@ fields:
   - { line: "25f", field: "Page2[0].f2_26[0]", type: money } # Form(s) 8288-A
   - { line: "25g", field: "Page2[0].f2_27[0]", type: money } # Form(s) 1042-S
   - { line: "26", field: "Page2[0].f2_28[0]", type: money } # 2025 estimated tax payments and amount applied from 2024 return
-  # line 27 "Reserved for future use" (shaded, widget exists — leave blank;
-  # nonresidents cannot claim the EIC)
-  - { line: "27", field: "Page2[0].f2_29[0]", type: money }
+  # line 27 "Reserved for future use": ReadOnly (/Ff 8388609) + shaded — MUST
+  # BE LEFT BLANK (nonresidents cannot claim the EIC). Kept mapped so the
+  # printed line number stays addressable (P-007 reserved-line class;
+  # adjudication in the header). Line 32 is 28+29+30+31 — it never names 27.
+  - { line: "27", field: "Page2[0].f2_29[0]", type: money } # RESERVED — leave blank
   # Line 28 ACTC: NEW decline checkbox + amount
   - { line: "28.do_not_claim_actc", field: "Page2[0].Line28_ReadOrder[0].c2_4[0]", type: checkbox, on_state: "/1" }
   - { line: "28", field: "Page2[0].f2_30[0]", type: money } # Additional child tax credit (Schedule 8812)

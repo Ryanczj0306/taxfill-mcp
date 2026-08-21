@@ -1,4 +1,45 @@
-# Schedule D (Form 1040), 2023 — Capital Gains and Losses.
+# PORTED 2023 -> 2025 (2026-08-16): NEAR topology — the 2025 blank still carries exactly
+# 55 terminal widgets (no widget added or removed; verified programmatically from a full
+# pypdf field dump), but 14 of the 55 names changed by three purely mechanical rename
+# rules, each re-verified name-by-name against the 2025 dump:
+#   (1) zero-padding dropped on low-numbered text fields:
+#       Page1 f1_01->f1_1 (name), f1_02->f1_2 (identifying_number);
+#       Row1a f1_03->f1_3 (1a.d), f1_04->f1_4 (1a.e), f1_06->f1_6 (1a.h);
+#       Row1b f1_07->f1_7 (1b.d), f1_08->f1_8 (1b.e), f1_09->f1_9 (1b.g);
+#       Page2 f2_01->f2_1 (16), f2_02->f2_2 (18), f2_03->f2_3 (19);
+#   (2) the "_RO" read-only suffix dropped from the NAMES of the two shaded
+#       no-adjustment (g) boxes — Row1a f1_05_RO->f1_5, Row8a f1_25_RO->f1_25 —
+#       but ONLY from the names: both widgets still carry /Ff = 8388609
+#       (ReadOnly) in the 2025 blank, exactly as in 2023/2024, and both cells
+#       are still printed solid grey. Neither is mapped (see the exclusion
+#       note below); the dropped suffix is a naming change, not a change of
+#       character;
+#   (3) the Page2 TagCorrectingSubform[0] wrapper removed:
+#       Page2[0].TagCorrectingSubform[0].f2_04[0] -> Page2[0].f2_4[0] (line 21).
+# The other 41 fully-qualified names (f1_10..f1_24, f1_26..f1_43, c1_1, c2_1..c2_3) are
+# byte-identical to 2023, and all checkbox export states are unchanged (/1, /2).
+# The digest below is the 2025 blank's, taken from TWO independent downloads of the
+# irs-prior URL that hashed identically. Printed title/year confirmed on the PDF itself
+# ("SCHEDULE D (Form 1040) ... Capital Gains and Losses ... 2025"; page-2 footer
+# "Schedule D (Form 1040) 2025"). Printed-line diff vs the 2023 blank: ZERO renumbering —
+# the numbered-line token sequence (1a,1b,2..7,8a,8b,9..22) is identical across both
+# 2-page blanks. Printed references re-verified from the 2025 blank's own text:
+# line 16 -> "Form 1040, 1040-SR, or 1040-NR, line 7a" (the 2025 Form 1040 renumbered
+# line 7 to 7a — cross_form updated to f1040.7a to match the 2025 f1040 pack's key;
+# CAUGHT BY THE VISION AUDIT: a substring check for "line 7" had silently matched
+# "line 7a"); line 21 likewise routes to "line 7a"; loss cap "($3,000), or if married
+# filing separately, ($1,500)"; lines 6/14 cite Capital Loss Carryover Worksheet
+# lines 8/13; line 18 takes 28% Rate Gain Worksheet line 7; line 19 takes Unrecaptured
+# Section 1250 Gain Worksheet line 18; line 22 references Form 1040 line 3a. The filled
+# sentinel render was vision-audited page by page before shipping.
+#
+# 2025 printed-WORDING changes (no renumbering, no widget change — same lines, wider
+# scope, read off the rendered blank): lines 1a/8a now cover "Form 1099-B or Form
+# 1099-DA" totals (digital-asset broker reporting), and the Form 8949 box references
+# widened to letter pairs: 1b "Box A or Box G", 2 "Box B or Box H", 3 "Box C or Box I",
+# 8b "Box D or Box J", 9 "Box E or Box K", 10 "Box F or Box L".
+#
+# Schedule D (Form 1040), 2025 — Capital Gains and Losses.
 #
 # Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) →
 # vision-map workflow (every fillable widget filled with its own field name and
@@ -15,22 +56,23 @@
 # 53 of the 55 fillable widgets are mapped. Schedule D has NO pre-printed
 # statutory constants; the 2 EXCLUDED widgets are the shaded no-adjustment
 # (g) cells on the line 1a and line 8a rows:
-#   Page1[0].Table_PartI[0].Row1a[0].f1_05_RO[0]    (would have been "1a.g")
-#   Page1[0].Table_PartII[0].Row8a[0].f1_25_RO[0]   (would have been "8a.g")
+#   Page1[0].Table_PartI[0].Row1a[0].f1_5[0]     (would have been "1a.g")
+#   Page1[0].Table_PartII[0].Row8a[0].f1_25[0]   (would have been "8a.g")
 # Why — from the printed form plus the widget flags, not intuition:
 #   * Each row's OWN printed text defines it as "Totals for all short-term
-#     [long-term] transactions reported on Form 1099-B for which basis was
-#     reported to the IRS and FOR WHICH YOU HAVE NO ADJUSTMENTS (see
-#     instructions)", while column (g) is headed "Adjustments to gain or loss
-#     from Form(s) 8949, Part I [Part II], line 2, column (g)". A line 1a/8a
-#     transaction is by definition one with no adjustment AND one not listed on
-#     Form 8949, so no correct entry exists in those two cells — for these two
-#     rows column (h) is simply (d) − (e). The same printed text routes any
-#     transaction that DOES carry an adjustment to line 1b/8b + Form 8949.
+#     [long-term] transactions reported on Form 1099-B or Form 1099-DA for
+#     which basis was reported to the IRS and FOR WHICH YOU HAVE NO
+#     ADJUSTMENTS (see instructions)", while column (g) is headed "Adjustments
+#     to gain or loss from Form(s) 8949, Part I [Part II], line 2, column (g)".
+#     A line 1a/8a transaction is by definition one with no adjustment AND one
+#     not listed on Form 8949, so no correct entry exists in those two cells —
+#     for these two rows column (h) is simply (d) − (e). The same printed text
+#     routes any transaction that DOES carry an adjustment to 1b/8b + Form 8949.
 #   * The blank prints both cells SOLID GREY (read off a 300-dpi render of page
 #     1: the (d)/(e)/(h) cells of the very same rows, and the (g) cells of rows
 #     1b/2/3/8b/9/10, are all white) and sets the AcroForm ReadOnly bit on them
-#     — /Ff = 8388609 = DoNotScroll|ReadOnly. They are the ONLY 2 of the 55
+#     — /Ff = 8388609 = DoNotScroll|ReadOnly, unchanged from 2023/2024 despite
+#     the "_RO" name suffix being dropped. They are the ONLY 2 of the 55
 #     widgets with ReadOnly set (every other text widget is 8388608 or 0): the
 #     IRS locked exactly the two cells its own printed text makes impossible.
 #   * These two were mapped as ordinary money lines until 2026-08-20. The
@@ -57,17 +99,17 @@
 # left to recompute + review.
 form: "Schedule D (Form 1040)"
 jurisdiction: federal
-tax_year: 2023
-source_url: https://www.irs.gov/pub/irs-prior/f1040sd--2023.pdf
-pdf_sha256: 3421941cbc675e004d38ff3045e865f82bb97a5db080c9630a34057f4165ec07
-acroform_root: topmostSubform[0]
+tax_year: 2025
+source_url: https://www.irs.gov/pub/irs-prior/f1040sd--2025.pdf
+pdf_sha256: "90564c8b7e49280363612639b804d113ebedb516c2e87c70649f29c844da1d2e"
+acroform_root: "topmostSubform[0]"
 fields:
   # --- Header ---
   - line: name                       # Name(s) shown on return
-    field: Page1[0].f1_01[0]
+    field: Page1[0].f1_1[0]          # 2025 rename: was f1_01 in 2023
     type: text
   - line: identifying_number         # Your social security number
-    field: Page1[0].f1_02[0]
+    field: Page1[0].f1_2[0]          # 2025 rename: was f1_02 in 2023
     type: text
     maxlen: 11
   - line: qof.yes                    # "Did you dispose of any investment(s) in a QOF...?" — Yes
@@ -80,31 +122,32 @@ fields:
     on_state: "/2"
 
   # --- Part I: Short-Term Capital Gains and Losses (assets held 1 year or less) ---
-  - line: 1a.d                       # Line 1a — 1099-B basis reported to IRS, no adjustments; (d) Proceeds
-    field: Page1[0].Table_PartI[0].Row1a[0].f1_03[0]
+  - line: 1a.d                       # Line 1a — 1099-B/1099-DA basis reported to IRS, no adjustments; (d) Proceeds
+    field: Page1[0].Table_PartI[0].Row1a[0].f1_3[0]   # 2025 rename: was f1_03
     type: money
   - line: 1a.e                       # 1a (e) Cost or other basis
-    field: Page1[0].Table_PartI[0].Row1a[0].f1_04[0]
+    field: Page1[0].Table_PartI[0].Row1a[0].f1_4[0]   # 2025 rename: was f1_04
     type: money
   # 1a column (g) is NOT mapped: the row is the "no adjustments" row, so the
-  # cell is shaded solid grey and its widget (f1_05_RO) carries the ReadOnly
-  # bit — there is no correct entry. See the header note + pitfall P-007.
+  # cell is shaded solid grey and its widget (2025 name f1_5, was f1_05_RO)
+  # still carries the ReadOnly bit — there is no correct entry. See the header
+  # note + pitfall P-007.
   - line: 1a.h                       # 1a (h) Gain or (loss) — for row 1a this is just (d) − (e)
-    field: Page1[0].Table_PartI[0].Row1a[0].f1_06[0]
+    field: Page1[0].Table_PartI[0].Row1a[0].f1_6[0]   # 2025 rename: was f1_06
     type: money
-  - line: 1b.d                       # Line 1b — totals for Form 8949 Box A checked; (d) Proceeds
-    field: Page1[0].Table_PartI[0].Row1b[0].f1_07[0]
+  - line: 1b.d                       # Line 1b — totals for Form 8949 Box A or Box G checked; (d) Proceeds
+    field: Page1[0].Table_PartI[0].Row1b[0].f1_7[0]   # 2025 rename: was f1_07
     type: money
   - line: 1b.e                       # 1b (e) Cost or other basis
-    field: Page1[0].Table_PartI[0].Row1b[0].f1_08[0]
+    field: Page1[0].Table_PartI[0].Row1b[0].f1_8[0]   # 2025 rename: was f1_08
     type: money
   - line: 1b.g                       # 1b (g) Adjustments
-    field: Page1[0].Table_PartI[0].Row1b[0].f1_09[0]
+    field: Page1[0].Table_PartI[0].Row1b[0].f1_9[0]   # 2025 rename: was f1_09
     type: money
   - line: 1b.h                       # 1b (h) Gain or (loss)
     field: Page1[0].Table_PartI[0].Row1b[0].f1_10[0]
     type: money
-  - line: 2.d                        # Line 2 — totals for Form 8949 Box B checked; (d) Proceeds
+  - line: 2.d                        # Line 2 — totals for Form 8949 Box B or Box H checked; (d) Proceeds
     field: Page1[0].Table_PartI[0].Row2[0].f1_11[0]
     type: money
   - line: 2.e                        # 2 (e) Cost or other basis
@@ -116,7 +159,7 @@ fields:
   - line: 2.h                        # 2 (h) Gain or (loss)
     field: Page1[0].Table_PartI[0].Row2[0].f1_14[0]
     type: money
-  - line: 3.d                        # Line 3 — totals for Form 8949 Box C checked; (d) Proceeds
+  - line: 3.d                        # Line 3 — totals for Form 8949 Box C or Box I checked; (d) Proceeds
     field: Page1[0].Table_PartI[0].Row3[0].f1_15[0]
     type: money
   - line: 3.e                        # 3 (e) Cost or other basis
@@ -142,19 +185,20 @@ fields:
     type: money
 
   # --- Part II: Long-Term Capital Gains and Losses (assets held more than 1 year) ---
-  - line: 8a.d                       # Line 8a — 1099-B basis reported to IRS, no adjustments; (d) Proceeds
+  - line: 8a.d                       # Line 8a — 1099-B/1099-DA basis reported to IRS, no adjustments; (d) Proceeds
     field: Page1[0].Table_PartII[0].Row8a[0].f1_23[0]
     type: money
   - line: 8a.e                       # 8a (e) Cost or other basis
     field: Page1[0].Table_PartII[0].Row8a[0].f1_24[0]
     type: money
   # 8a column (g) is NOT mapped: the row is the "no adjustments" row, so the
-  # cell is shaded solid grey and its widget (f1_25_RO) carries the ReadOnly
-  # bit — there is no correct entry. See the header note + pitfall P-007.
+  # cell is shaded solid grey and its widget (2025 name f1_25, was f1_25_RO)
+  # still carries the ReadOnly bit — there is no correct entry. See the header
+  # note + pitfall P-007.
   - line: 8a.h                       # 8a (h) Gain or (loss) — for row 8a this is just (d) − (e)
     field: Page1[0].Table_PartII[0].Row8a[0].f1_26[0]
     type: money
-  - line: 8b.d                       # Line 8b — totals for Form 8949 Box D checked; (d) Proceeds
+  - line: 8b.d                       # Line 8b — totals for Form 8949 Box D or Box J checked; (d) Proceeds
     field: Page1[0].Table_PartII[0].Row8b[0].f1_27[0]
     type: money
   - line: 8b.e                       # 8b (e) Cost or other basis
@@ -166,7 +210,7 @@ fields:
   - line: 8b.h                       # 8b (h) Gain or (loss)
     field: Page1[0].Table_PartII[0].Row8b[0].f1_30[0]
     type: money
-  - line: 9.d                        # Line 9 — totals for Form 8949 Box E checked; (d) Proceeds
+  - line: 9.d                        # Line 9 — totals for Form 8949 Box E or Box K checked; (d) Proceeds
     field: Page1[0].Table_PartII[0].Row9[0].f1_31[0]
     type: money
   - line: 9.e                        # 9 (e) Cost or other basis
@@ -178,7 +222,7 @@ fields:
   - line: 9.h                        # 9 (h) Gain or (loss)
     field: Page1[0].Table_PartII[0].Row9[0].f1_34[0]
     type: money
-  - line: 10.d                       # Line 10 — totals for Form 8949 Box F checked; (d) Proceeds
+  - line: 10.d                       # Line 10 — totals for Form 8949 Box F or Box L checked; (d) Proceeds
     field: Page1[0].Table_PartII[0].Row10[0].f1_35[0]
     type: money
   - line: 10.e                       # 10 (e) Cost or other basis
@@ -207,8 +251,8 @@ fields:
     type: money
 
   # --- Part III: Summary (page 2) ---
-  - line: "16"                       # Combine lines 7 and 15 and enter the result → Form 1040, line 7
-    field: Page2[0].f2_01[0]
+  - line: "16"                       # Combine lines 7 and 15 and enter the result → Form 1040, line 7a
+    field: Page2[0].f2_1[0]          # 2025 rename: was f2_01
     type: money
   - line: 17.yes                     # Line 17 "Are lines 15 and 16 both gains?" — Yes
     field: Page2[0].c2_1[0]
@@ -219,10 +263,10 @@ fields:
     type: checkbox
     on_state: "/2"
   - line: "18"                       # 28% Rate Gain Worksheet amount
-    field: Page2[0].f2_02[0]
+    field: Page2[0].f2_2[0]          # 2025 rename: was f2_02
     type: money
   - line: "19"                       # Unrecaptured Section 1250 Gain Worksheet amount
-    field: Page2[0].f2_03[0]
+    field: Page2[0].f2_3[0]          # 2025 rename: was f2_03
     type: money
   - line: 20.yes                     # Line 20 "Are lines 18 and 19 both zero or blank...?" — Yes
     field: Page2[0].c2_2[0]
@@ -232,8 +276,8 @@ fields:
     field: Page2[0].c2_2[1]
     type: checkbox
     on_state: "/2"
-  - line: "21"                       # If line 16 is a loss, smaller of loss on 16 or ($3,000)/($1,500) → Form 1040 line 7
-    field: Page2[0].TagCorrectingSubform[0].f2_04[0]
+  - line: "21"                       # If line 16 is a loss, smaller of loss on 16 or ($3,000)/($1,500) → Form 1040 line 7a
+    field: Page2[0].f2_4[0]          # 2025 rename: was TagCorrectingSubform[0].f2_04[0]
     type: money
   - line: 22.yes                     # Line 22 "Do you have qualified dividends on Form 1040 line 3a?" — Yes
     field: Page2[0].c2_3[0]
@@ -246,7 +290,7 @@ fields:
 relations:
   - "16 == 7 + 15"                   # "Combine lines 7 and 15 and enter the result"
 cross_form:
-  - "16 == f1040.7"                  # Net capital gain/(loss) → Form 1040, line 7
+  - "16 == f1040.7a"                 # Net capital gain/(loss) → 2025 Form 1040, line 7a (2025 f1040 pack key "7a")
 identity_fields:
   - name
   - identifying_number

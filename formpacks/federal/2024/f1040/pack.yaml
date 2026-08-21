@@ -1,9 +1,11 @@
 # Form 1040 (2024) — U.S. Individual Income Tax Return
 #
 # Mapped from the official 2024 revision (printed year and title verified by
-# rendering page 1 of the downloaded blank). 134 of 141 fillable widgets are
-# mapped; the 7 unmapped widgets are the "Paid Preparer Use Only" block,
-# which is preparer-only and never filled by the taxpayer or the agent:
+# rendering page 1 of the downloaded blank). The blank carries 141 AcroForm
+# widgets — 140 fillable plus ONE that is flagged ReadOnly (line 30; see the
+# P-007 adjudication below) — and 134 of the 141 are mapped; the 7 unmapped
+# widgets are the "Paid Preparer Use Only" block, which is preparer-only and
+# never filled by the taxpayer or the agent:
 #   Page2[0].f2_39[0]  preparer's name
 #   Page2[0].f2_40[0]  preparer's PTIN
 #   Page2[0].c2_7[0]   "Check if self-employed" checkbox
@@ -25,8 +27,32 @@
 #   line 29 references Form 8863, line 8.
 # Line 12 prints "Standard deduction or itemized deductions (from Schedule
 # A)" — an either/or, not an unconditional equality, so no sched_a rule.
-# Line 30 is printed "Reserved for future use" but still carries a fillable
-# widget; it is mapped so the agent CAN address it, and should stay blank.
+#
+# P-007 adjudication — line 30 "Reserved for future use": KEPT MAPPED.
+# Widget Page2[0].f2_19[0] is the ONLY ReadOnly widget on this blank. It is
+# NOT "fillable" (the earlier wording of this note was wrong); the evidence,
+# taken from this year's own cached blank (sha256 0a7a5435…):
+#   printed text, page 2, band y=526..542pt:
+#     "30 Reserved for future use . . . . . . . . . . . . . . . 30"
+#   /Ff = 8388609 = DoNotScroll (1<<23) | ReadOnly (1<<0). It is the ONLY
+#     widget on this blank with the ReadOnly bit set — the other 140 carry
+#     /Ff 0, 8388608, 8392704, 16777216 or 25165824, none with bit 1.
+#   a 170-dpi render shows the entry box shaded grey.
+# Verdict by the P-007 discriminator: this is the "reserved printed LINE"
+# class, not the "necessarily blank cell" class. It is a NUMBERED line of the
+# page-2 payments ladder, so it stays mapped with a leave-blank comment and
+# the printed line stays addressable — the same shape as sched_1 line 22
+# (f2_14[0], also ReadOnly|DoNotScroll and mapped), sched_2 2025 line 10 and
+# sched_8812 2025 line 15. Keeping the key stable is what makes a later
+# revision a widget swap rather than a namespace change, and this line is the
+# proof: the 2025 Form 1040 turns line 30 LIVE ("Refundable adoption credit
+# from Form 8839, line 13", /Ff 8388608 — no ReadOnly bit) and 2025's
+# "32 == 27a + 28 + 29 + 30 + 31" then names it.
+# For 2024 the line takes NO entry: the printed line-32 instruction is "Add
+# lines 27, 28, 29, and 31" — it does not name 30 — and no relation,
+# cross_form rule, calc op or extractor anywhere in this repo produces or
+# consumes "30" for the 2024 Form 1040 (grepped repo-wide). Agents leave it
+# blank; blank counts as zero everywhere it could ever be summed.
 form: "1040"
 jurisdiction: federal
 tax_year: 2024
@@ -166,7 +192,11 @@ fields:
   - { line: "27", field: "Page2[0].f2_16[0]", type: money }
   - { line: "28", field: "Page2[0].f2_17[0]", type: money }
   - { line: "29", field: "Page2[0].f2_18[0]", type: money }
-  - { line: "30", field: "Page2[0].f2_19[0]", type: money } # printed "Reserved for future use" — leave blank
+  # Line 30 prints "Reserved for future use" and its widget is ReadOnly
+  # (/Ff 8388609) + shaded — MUST BE LEFT BLANK. Kept mapped on purpose so
+  # the printed line number stays addressable (P-007 reserved-line class; see
+  # the adjudication in the header). Do not write a value here.
+  - { line: "30", field: "Page2[0].f2_19[0]", type: money } # RESERVED — leave blank
   - { line: "31", field: "Page2[0].f2_20[0]", type: money }
   - { line: "32", field: "Page2[0].f2_21[0]", type: money }
   - { line: "33", field: "Page2[0].f2_22[0]", type: money }
