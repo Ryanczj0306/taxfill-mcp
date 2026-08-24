@@ -35,6 +35,26 @@
 # mapped exist in a clean two-column form-1040-sourced layout, so relations is
 # empty per conservative house style (the per-column federal/NY arithmetic is
 # conditional and pulls from many off-form federal lines).
+#
+# YEAR-BEARING LINE KEY (renamed 2026-08-24). Line 69 was originally keyed
+# `69_amount_applied_to_2024_estimate`. On THIS pack's face that year was
+# correct — the 2023 blank prints "69 Amount of line 67 that you want applied
+# to your 2024 estimated tax", i.e. 2024 = tax_year + 1 — but the year merely
+# DESCRIBES the carry-forward destination and does not pick a widget (one
+# money box, "69 dollars", whatever the year), so under
+# formpacks/CONVENTIONS.md's year-token rule (rule 2) it belongs in the inline
+# comment, not the key. The 2024 and 2025 ports carried this exact spelling
+# unchanged and it went one, then two years stale there — the cost of an
+# absolute year in a key. All three years now use the year-free ROLE form
+# `69_amount_applied_to_next_year_estimate` (same shape as nj1040 2024's
+# `line69_credit_to_next_year_tax_dNN` and tc40 2024's
+# `refund_applied_to_next_year`), so the key is one spelling across every
+# shipped IT-203 year and never needs rolling again. The widget, printed line
+# NUMBER and mapping are untouched. Blast radius, grepped repo-wide BEFORE
+# renaming: outside the three NY it203 packs the old spelling appeared only
+# in prose (docs/ROADMAP, the NJ/UT 2024 pack headers' precedent notes) and
+# in test_pack_invariants.py's stale-key defect rows — no calc op, extractor,
+# fixture, eval, skill, knowledge file or cross_form rule fills by the old key.
 form: Form IT-203
 jurisdiction: states/ny
 tax_year: 2023
@@ -891,7 +911,7 @@ fields:
     field: line 68
     type: checkbox
     on_state: /debit card
-  - line: 69_amount_applied_to_2024_estimate   # line 69 — Amount of line 67 you want applied to your 2024 estimated tax
+  - line: 69_amount_applied_to_next_year_estimate  # line 69 — Amount of line 67 that you want applied to your 2024 estimated tax (2024 = tax_year + 1; the printed year lives here, never in the key)
     field: 69 dollars
     type: money
     maxlen: 10

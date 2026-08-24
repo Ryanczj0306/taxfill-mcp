@@ -20,8 +20,10 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**3,574 tests, all green** — offline 3,272 + live-.gov 302, exit 0;
-re-verified 2026-08-20 via `pytest -m "not network"`, exit 0):
+Done and on `main` (**4,124 tests, all green** — offline 3,802 + live-.gov 322, exit 0;
+re-verified 2026-08-21 via `pytest -m "not network"` AND `pytest -m network`, exit 0
+both — the network layer skips 2 (states/ms/2023/f80105, whose blank is uncached and
+whose host fails certificate verification here)):
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (23 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -47,6 +49,18 @@ re-verified 2026-08-20 via `pytest -m "not network"`, exit 0):
   + **all four Phase-D new form types** — **Form 4868** (extension), **Form 1040-ES**
   (estimated-tax vouchers), **Form 1040-X** (amended return, Rev. 2-2024), and
   **Form W-7** (ITIN application, Rev. 12-2024) — all audited.
+- **Repo-wide pack gates — every rule now covers the packs it claims to.**
+  `test_pack_invariants.py` (2026-08-21) sweeps all **150** packs, federal and
+  state, for `cross_form` target resolution, the checkbox-`group` rules,
+  identity page mirrors and year tokens in line keys;
+  `test_readonly_widget_mapping.py` does the same for ReadOnly bindings (**1,140**
+  across 10 packs, pinned per pack by count). The first two of those had been
+  federal-only while CONVENTIONS.md called them binding — see Phase E for what
+  shipped through the gap, and for the two live defects the widening found.
+- **State form packs — 57 across three years** (TY2023 42 / TY2024 10 / TY2025 5).
+  The 2026-08-21 tranche added 10 (AR 2024 + 2025, NC/NJ/OH/RI/UT/VA 2024,
+  OR/PA 2025) and closed **every PORTABLE row** in D2's measured triage for both
+  TY2024 and TY2025; the near-ports, re-maps and URL-dead rows stay open.
 - **State credits — DONE for all 42 jurisdictions** (41 income-tax states + DC):
   every `knowledge/states/<st>/2023.yaml` carries a cited `credits` block (~174
   entries total); `state_scope` surfaces them as `benefits_candidates`.
@@ -61,19 +75,22 @@ re-verified 2026-08-20 via `pytest -m "not network"`, exit 0):
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (42 TY2023 packs)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (57 packs across TY2023–TY2025)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**144 form packs total** — 140 `pack.yaml` (93 federal + 47 state, the state count
-incl. the NY 2024/2025 + PA 2024 ports) + 4 `handfill.yaml`.
-> ⚠️ Every **state** form pack except the NY 2024/2025 + PA 2024 ports is
-> **TY2023 only**. State *knowledge* now spans
-> 2023–2025, so `calc.state_tax` computes years that no pack can fill — the single
-> largest coverage asymmetry in the repo (see D2).
+**154 form packs total** — 150 `pack.yaml` (93 federal + 57 state) + 4
+`handfill.yaml`. The state 57 breaks down **TY2023 42 / TY2024 10 / TY2025 5**.
+> ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
+> **10 of the 42 jurisdictions fill a post-2023 year** — AR (2024+2025),
+> NY (2024+2025), PA (2024+2025), OR (2025), and NC/NJ/OH/RI/UT/VA (2024) —
+> after the 2026-08-21 ten-pack tranche. For the remaining **32**, state
+> *knowledge* spans 2023–2025 while the only fillable pack is TY2023, so
+> `calc.state_tax` still computes years those packs cannot fill. That
+> asymmetry is now 32 jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
 > (Phase 0, 2026-06-28) and counted above.
@@ -295,35 +312,48 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
 
 ### D2 — Breadth follow-ons
 
-- [~] More tax years for the state packs — **KNOWLEDGE DONE (126/126), FORM PACKS 5/~92.**
+- [~] More tax years for the state packs — **KNOWLEDGE DONE (126/126), FORM PACKS 15/~92
+      — and every PORTABLE row is now closed; what remains is only the expensive work.**
       State *knowledge* now spans three COMPLETE years: **2023 42/42, 2024 42/42,
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
-      glob at `test_state_knowledge.py:26`. State *form* packs are **TY2023 only
-      except the 5 ports** (NY IT-201/IT-203 2024 + 2025, PA-40 2024; 2026-08-10)
-      — so a 2024/2025 return for the other 40 jurisdictions computes but cannot
-      be filled. Federal spans
+      glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
+      TY2023-only**: 57 packs across TY2023 (42) / TY2024 (10) / TY2025 (5), so
+      **10 of the 42 jurisdictions** can fill a post-2023 year — AR, NY and PA for
+      both 2024 and 2025; OR for 2025; NC, NJ, OH, RI, UT, VA for 2024. For the
+      other **32**, a 2024/2025 return still computes but cannot be filled.
+      Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
       the provisional 2026 planning pack shipped 2026-08-04).
-      **Remaining:** (a) a 2024→2025 **state form pack** tranche — 46
+      **Remaining:** (a) the rest of the 2024→2025 **state form pack** tranche — 46
       packs/year. The pipeline half is ready (2026-08-10):
       `scripts/scaffold_state_year.py` + `docs/CONTRIBUTING-PACKS.md`.
       ⚠️ **Correction (2026-08-11):** the "39 of 46 URLs derivable" figure was
       string derivation only and NEVER PROBED — it over-reported by ~2×. The
       script now has `--triage`, which downloads each candidate and diffs the
-      blank's AcroForm against the base pack's field map. Measured:
-      * **TY2024** (42 AcroForm packs): **10 PORTABLE** (identical topology —
-        AR, NC, NJ, NY IT-201, NY IT-203, OH, PA, RI, UT, VA) + **4 NEAR-PORT**
+      blank's AcroForm against the base pack's field map. Measured, and with the
+      shipped/open state of each class as of **2026-08-21**:
+      * **TY2024** (42 AcroForm packs): **10 PORTABLE — ALL 10 SHIPPED** (NY IT-201,
+        NY IT-203 and PA on 2026-08-10; AR, NC, NJ, OH, RI, UT, VA in the
+        2026-08-21 tranche). Still OPEN for TY2024: **4 NEAR-PORT**
         (IL/ND 2 fields moved, OR 3, MO 25) + 9 RE-MAP + 12 URL-DEAD +
         7 no-year-token.
-      * **TY2025**: **5 PORTABLE** (AR, NY IT-201, NY IT-203, OR, PA) +
+      * **TY2025**: **5 PORTABLE — ALL 5 SHIPPED** (NY IT-201, NY IT-203 on
+        2026-08-10; AR, OR, PA in the 2026-08-21 tranche). Still OPEN for TY2025:
         0 near-port + 11 RE-MAP + **19 URL-DEAD** + 7 no-year-token.
-      So the tranche's real shape is: ~15 cheap ports, ~20 vision re-maps
-      (every CA pack is a full re-map — CA renames its fields yearly), and
-      ~26 URL-discovery tasks before those can even be assessed. Identical
-      field NAMES still do not prove the state kept its line NUMBERING, so
-      every port keeps the per-page vision audit.
+      So the ~15 cheap ports are DONE — the tranche's remaining shape is the
+      expensive half: **4 near-ports**, **~20 vision re-maps** (every CA pack is a
+      full re-map — CA renames its fields yearly), and **~26 URL-discovery tasks**
+      before those can even be assessed. Note OR is the live proof that a class is
+      per-year, not per-state: OR-40 was NEAR-PORT for 2024 (3 fields moved) and
+      PORTABLE for 2025, so the 2025 pack shipped while OR 2024 stays open.
+      Identical field NAMES still do not prove the state kept its line NUMBERING,
+      so every port keeps the per-page vision audit — and this tranche is why that
+      rule stands: the OH 2024 port found Ohio had newly set the AcroForm ReadOnly
+      bit on both joint-filing-credit cells (`SchedC_L12`, `SchedC_L12_JFC`,
+      /Ff 0 → 1), which is pinned in `STATE_COMPUTED_READONLY` rather than
+      unmapped, because unmapping them would file a BLANK credit (P-007 class 4).
       Federal: **f1040nr + Schedule OI now ship for 2024** (identical-topology
       ports, vision-audited), closing the "f1040nr has no 2024 pack" gap.
       **Done 2026-08-10:** (b) `assemble_state_knowledge.py` now takes `--year` +
@@ -348,8 +378,9 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       port cost against the base pack's field map (PORTABLE / NEAR-PORT /
       RE-MAP / URL-DEAD / no-year-token), so the tranche starts from measured
       cost instead of an estimate (see D2 for the TY2024/TY2025 numbers). The
-      2024/2025 state tranche itself remains open (each pack still travels the
-      full quality gate).
+      2024/2025 state tranche is **partly delivered** — all 15 PORTABLE rows have
+      shipped (5 on 2026-08-10, 10 on 2026-08-21) and each travelled the full
+      quality gate; the near-port / re-map / URL-dead remainder is still open.
 
 **Acceptance:** each new form type audited + golden-tested; any computed line
 backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
@@ -420,8 +451,90 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       `pytest --collect-only` and either rewrites all four quoted sites
       (`--write`) or fails with an exact instruction (`--check`), and the
       **`test-count` CI job** runs `--check` on every push.
+- [x] **Widen the two federal-only pack gates to every pack — DONE (2026-08-21).**
+      `cross_form` target resolution and the checkbox-`group` invariant were both
+      parametrized over `formpacks/federal/*/*/pack.yaml` while
+      `formpacks/CONVENTIONS.md` called them binding on every pack, so **no state
+      pack had ever been checked by either one** — 57 packs, 43 of the repo's 190
+      `cross_form` rules, and 120 shared-field option sets, all unexamined. That
+      gap is how three dangling `f1040.11` refs (or/2025, ny/2025 ×2) and two
+      packs' worth of missing `group` ids (nc/*/d400, nj/2024) shipped. Both now
+      sweep all 150 packs from the new `packages/core/tests/test_pack_invariants.py`
+      (the federal-only copies are deleted, not duplicated), which also fixed a
+      second blind spot: the yes/no half only understood the DOTTED option
+      spelling, so it could not see `::` (22 state packs) or `_` (ny it203 ×3)
+      pairs even with the glob widened. Two more repo-wide invariants landed in the
+      same file because nothing anywhere asserted them — **identity page mirrors**
+      (a `page<N>_*` banner mirror must have a source line, bind a DIFFERENT
+      widget, and match its source's `type`/`comb`/`format`; ri1040 shipped 0 of
+      its 12 for months) and **year tokens in line keys** (`tax_year - year` pinned
+      per key family, which is what catches a stale port). Every table is
+      self-clearing and every exemption is backed by execution rather than prose:
+      the 21 shared-field debt rows are only safe because `fill_form` refuses a
+      double answer, and that is proved per pack for all 120 sets.
+- [x] **Two live defects the widened gates found — BOTH FIXED 2026-08-24** (they
+      had been recorded as self-clearing rows, which is why the fix could not go
+      quiet: each table emptied in the same change or the gate failed loudly):
+      * `federal/2024/sched_oi` keyed Schedule OI item H as `h.2021 / h.2022 /
+        h.2023` while the sha-pinned 2024 blank prints "**2022** …, **2023** …,
+        and **2024**" — a 2023 pack ported without rolling the year labels, and
+        the widgets did not move (`f1_23/f1_24/f1_25`). Silent in both
+        directions: every day-count landed in the box printed for a *different*
+        year, and a caller who correctly asked for `h.2024` got "unknown line
+        key". Days of presence drive the substantial-presence test, so a
+        one-year shift can flip resident/nonresident status. Same defect class
+        as the `f1040.11` refs this tranche fixed — a key remembered from a
+        prior year's face — but in the FEDERAL lane, which is why every
+        state-side sweep missed it. **Fixed:** renamed to `h.2022/h.2023/h.2024`
+        against the same widgets, re-verified on the filled render (each
+        sentinel sits in the box printed with its own year);
+        `KNOWN_STALE_PRINTED_YEAR_LABELS` is now empty.
+      * `states/wv/2023/it140` mapped Schedule HEPTC-1's "Are you required to
+        file a federal return?" as `heptc.required_federal_return.yes`/`.no` on
+        TWO independent `/Btn` fields (`homesteadY_checkbox`,
+        `homesteadN_checkbox`) with no `group` id, so nothing made them
+        exclusive: `fill_form` wrote **both** `/Yes` with zero warnings.
+        Reproduced against the pinned blank. The same pack got the neighbouring
+        line-8 question right (one `/Btn` + `group: heptc.8`), so it was an
+        internal inconsistency, not a house style — and the ONLY exploitable
+        instance repo-wide. **Fixed:** both lines now carry
+        `group: heptc.required_federal_return` (`required` deliberately left
+        off — HEPTC-1 is a schedule most IT-140 filers do not attach);
+        `KNOWN_UNGROUPED_YESNO_PAIRS` is now empty.
+- [x] **Pack-owner follow-ups the tranche surfaced — ALL TAKEN 2026-08-24**
+      (each was a pack edit, tracked as a self-clearing row so it could not go
+      quiet; every corresponding gate row is now retired and the gates are
+      green): `states/nj/2023/nj1040` got `group` ids on all 38 option lines of
+      its 13 shared radio fields (retiring its
+      `SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID` row) and the year-free line-69
+      rename; `states/ut/2023/tc40` took the same rename plus the six declarable
+      `max(…, 0)` floors its 2024 sibling carries (each re-adjudicated against
+      the 2023 blank's own printed text); `states/ny/{2023,2024,2025}/it203` all
+      renamed line 69 to `69_amount_applied_to_next_year_estimate` (the 2024/2025
+      headers had documented the stale year as intentional, which the year-token
+      convention rejects); `states/id/2023/form40` renamed `56.apply_to_2024` to
+      `56.apply_to_next_year` — with those renames no shipped pack carries a
+      "next-year" year token, so the four `(-1,)` `YEAR_BEARING_KEY_FAMILIES`
+      rows are retired too; `sched_d` 2023/2024/2025 declared `group` ids on all
+      four separate-widget Yes/No pairs (header QOF `required: true`; lines
+      17/20/22 not required — the printed page-2 flow legitimately skips them),
+      clearing its 12 `KNOWN_UNGROUPED_YESNO_PAIRS` rows; and the OH IT 1040
+      page-13 OUPC got its cell-by-cell printed-face adjudication — the SEVEN
+      visible filer-data cells (payer name/address block, first-3-of-last-name,
+      "Taxpayer's SSN") are now MAPPED as `upc_*` in both years (they are
+      genuine class-4 "ships blank": their `/AA /C` viewer scripts copy the
+      page-1 return fields, which taxfill never runs), while the 37
+      scan-line/check-digit cells, 12 hidden carriers and 4 DOR-owned cells stay
+      deliberately unmapped (a wrong check digit corrupts DOR intake scanning —
+      worse than an empty strip the DOR can key from the printed face); the
+      `STATE_COMPUTED_READONLY` pins moved 5→12 (2023) and 6→13 (2024) with the
+      per-cell record in the 2023 pack's OUPC PAGE-13 ADJUDICATION header.
 
-**Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test count.
+**Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test
+count (**met**); every binding rule in `formpacks/CONVENTIONS.md` enforced by a
+module whose discovery glob matches the rule's claimed scope (**met** — the table
+at the top of CONVENTIONS.md now states which module covers which packs, so the
+next reader can check the claim instead of trusting it).
 
 ---
 
@@ -828,8 +941,10 @@ line items sum to the headline delta.
 5. **Phase C** (months, parallelizable) — coverage breadth: C2 nonresident/
    part-year state forms, C3 hard states (MA fetch, IA/NM classification,
    CT/SC hand-fill, UT sourcing).
-6. **Phase D** — D1 DONE; D2 = more tax years for state packs + the community
-   pack-contribution pipeline.
+6. **Phase D** — D1 DONE; D2 = more tax years for state packs (all 15 PORTABLE
+   ports now shipped — 57 state packs over TY2023–TY2025; the near-ports, ~20
+   vision re-maps and ~26 URL-discovery rows remain) + the community
+   pack-contribution pipeline (DONE).
 
 Phases A, E, and the start of C are largely independent and can run in parallel.
 Phase H is independent of C/D (different files) and can run alongside them.

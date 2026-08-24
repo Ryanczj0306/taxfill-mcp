@@ -29,7 +29,10 @@ fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC) via
 `calc("state_tax", …)` covers every jurisdiction for 2023, 2024 AND 2025 —
 flat vs graduated is the pack's call and moves by year, so never
 assume and never compute a state tax line yourself. State KNOWLEDGE spans
-2023-2025; state FORM packs are **2023 only**.
+2023-2025; state FORM packs cover 2024/2025 for only **10 of the 42**
+jurisdictions (AR/NY/PA 2024+2025, OR 2025, NC/NJ/OH/RI/UT/VA 2024), so for the
+other 32 a 2024/2025 return computes but cannot be filled — check `list_forms`
+for the jurisdiction and year instead of assuming.
 
 **Tools:** intake_checklist, list_document_kinds, extract_document, residency,
 state_scope, estimate_refund, compare_scenarios, list_forms, get_form_map, fetch_blank, fill_form,

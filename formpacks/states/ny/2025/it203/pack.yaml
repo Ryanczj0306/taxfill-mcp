@@ -24,8 +24,9 @@
 #     SUB-LINE, not a renumbering: printed lines 61 and onward keep their 2023
 #     numbers (confirmed in the text diff and again in the page-4 render). This
 #     map therefore still lands every existing line correctly, but line 60b is
-#     UNMAPPED. Adding it is a separate reviewed change; this port changes only
-#     tax_year / source_url / pdf_sha256.
+#     UNMAPPED. Adding it is a separate reviewed change; this port changed only
+#     tax_year / source_url / pdf_sha256 (plus the one line-key rename recorded
+#     below, made in a later review pass).
 #   * Line 35 was "Dependent exemptions (enter the number of dependents listed
 #     in Item I)" with a pre-printed "000.00" tail; for 2025 it reads
 #     "Dependent exemption amount (multiply the number of dependents listed in
@@ -36,8 +37,31 @@
 #     separate reviewed change.
 #
 # Everything below this banner is the TY2023 map verbatim except tax_year,
-# source_url and pdf_sha256. Inline comments that name "2023" refer to the
-# printed captions of the source-year form and were intentionally not reflowed.
+# source_url, pdf_sha256 and the line-69 key. Inline comments that name "2023"
+# refer to the printed captions of the source-year form and were intentionally
+# not reflowed.
+#
+# YEAR-BEARING LINE KEY (renamed 2026-08-24). The ported line id
+# `69_amount_applied_to_2024_estimate` embedded a carry-forward year TWO years
+# stale for this pack: the 2025 face prints "69 Amount of line 67 that you
+# want applied to your 2026 estimated tax", so a key saying "2024" named a
+# year the money cannot reach — the same key ported twice without review. An
+# earlier revision of this banner covered it under the general "comments were
+# intentionally not reflowed" statement; a line KEY is not a comment, it is
+# the pack's API surface, and formpacks/CONVENTIONS.md's year-token rule
+# (rule 4) records "keep the stale year and document it" as a defect. The key
+# is now the year-free ROLE form `69_amount_applied_to_next_year_estimate`
+# (same shape as nj1040 2024's `line69_credit_to_next_year_tax_dNN` and tc40
+# 2024's `refund_applied_to_next_year`): the role lives in the key, the
+# printed absolute year lives in the inline comment, and no future port ever
+# needs to roll it. The widget ("69 dollars"), the printed line NUMBER and the
+# mapping are untouched. Blast radius, grepped repo-wide BEFORE renaming:
+# outside the three NY it203 packs the old spelling appeared only in prose
+# (docs/ROADMAP, the NJ/UT 2024 pack headers' precedent notes) and in
+# test_pack_invariants.py's KNOWN_STALE_PRINTED_YEAR_LABELS defect rows — no
+# calc op, extractor, fixture, eval, skill, knowledge file or cross_form rule
+# fills by the old key. The 2023 and 2024 packs took the identical rename in
+# the same pass, so the key is one spelling across every shipped IT-203 year.
 # ===========================================================================
 # Form IT-203 (2023) — New York State Nonresident and Part-Year Resident
 # Income Tax Return.
@@ -69,10 +93,23 @@
 # (#2/#3/#4 — same widget, mapped once as your_ssn) — there are NO greyed/
 # reserved cells on this form's fillable set and no pre-printed constants.
 #
-# cross_form. Printed line 19 is "Federal adjusted gross income"; its Federal-
-# amount column is the federal Form 1040 AGI. Per the prompt's instruction to
-# cross_form where the printed label says "federal amount", line19_fed ties to
-# form_1040 AGI. No on-form unconditional relations whose operands are ALL
+# cross_form. Printed line 19 is "Federal adjusted gross income (subtract line
+# 18 from line 17)", a TWO-column row; its Federal-amount column is the federal
+# Form 1040 AGI, so 19_federal_agi_fed == f1040.11a.
+#   ADJUDICATED FROM THIS FORM'S OWN PRINTED FACE (2026-08-21), because the rule
+#   shipped as "19_federal_agi_fed == f1040.11", a DANGLING reference for TY2025:
+#   formpacks/federal/2025/f1040/pack.yaml keys "11a" and "11b" and has NO "11"
+#   (TY2025 renumbered 11 -> 11a, "Subtract line 10 from line 9. This is your
+#   adjusted gross income"; new 11b, "Amount from line 11a", opens page 2). 11a
+#   is the AGI-defining line, so it is the target, not the 11b restatement.
+#   Note the IT-203 face — like the IT-201's and UNLIKE Oregon's OR-40 line 7,
+#   which prints "...from federal Form 1040, 1040-SR, or 1040-NR, line 11a" —
+#   cites NO federal line number: NY re-derives FAGI in its own Federal-amount
+#   column (lines 1-16 federal income items, 17 "Add lines 1 through 11 and 13
+#   through 16", 18 "Total federal adjustments to income"). The equality rests
+#   on the label semantics, so it must follow whichever federal line holds AGI
+#   in the year. Do not "restore" f1040.11: it does not exist for 2025.
+# Relations. No on-form unconditional relations whose operands are ALL
 # mapped exist in a clean two-column form-1040-sourced layout, so relations is
 # empty per conservative house style (the per-column federal/NY arithmetic is
 # conditional and pulls from many off-form federal lines).
@@ -936,7 +973,7 @@ fields:
     field: line 68
     type: checkbox
     on_state: /debit card
-  - line: 69_amount_applied_to_2024_estimate   # line 69 — Amount of line 67 you want applied to your 2024 estimated tax
+  - line: 69_amount_applied_to_next_year_estimate  # line 69 — Amount of line 67 that you want applied to your 2026 estimated tax (2026 = tax_year + 1; the printed year lives here, never in the key)
     field: 69 dollars
     type: money
     maxlen: 10
@@ -1087,10 +1124,12 @@ fields:
     type: text
     maxlen: 30
 relations: []
-# cross_form: line 19 Federal amount column is the federal Form 1040 adjusted
-# gross income (printed label: "Federal adjusted gross income"). Per the
-# prompt, cross_form to federal where the printed label says "federal amount".
+# cross_form: line 19's Federal amount column is the federal Form 1040 adjusted
+# gross income (printed label: "Federal adjusted gross income (subtract line 18
+# from line 17)"). For TY2025 that AGI is Form 1040 line 11a — line "11" no
+# longer exists and 11b is only the page-2 restatement of 11a. See the
+# cross_form banner note at the top of this file.
 cross_form:
-  - "19_federal_agi_fed == f1040.11"   # Federal AGI → Form 1040, line 11
+  - "19_federal_agi_fed == f1040.11a"
 identity_fields:
   - your_ssn

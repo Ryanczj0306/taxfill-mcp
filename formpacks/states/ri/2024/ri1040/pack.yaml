@@ -1,15 +1,228 @@
-# Form RI-1040, 2023 -- Rhode Island Resident Individual Income Tax Return.
+# ===========================================================================
+# TY2024 PORT (2026-08-21) of formpacks/states/ri/2023/ri1040/pack.yaml.
+#
+# TOPOLOGY VERDICT: **NEAR** — and the "near" is a RENUMBERING, not a rename.
+# The 2024 blank carries every one of the 239 AcroForm widgets the 2023 pack
+# mapped, under byte-identical fully-qualified names; nothing was dropped or
+# renamed. It ADDS exactly two widgets, both on page 3
+# (topmostSubform[0].Page3[0].BehavioralHealth[0] and its ".BehavioralHealth-00[0]"
+# cents companion), taking the named-field count 327 -> 329 and the annotation
+# count 321 -> 323. Because RI names its widgets SEMANTICALLY
+# (RICheckoffAmt[0], not f3_12[0]), the surviving names hid a real page-3
+# renumbering: four line KEYS moved even though no field name did. See
+# "PRINTED-LINE DIFF" below — this is the exact trap docs/CONTRIBUTING-PACKS.md
+# warns about ("identical field NAMES do not prove the state kept its line
+# NUMBERING").
+#
+# IDENTITY (checked BEFORE the digest was pinned; the files.tax.utah.gov trap
+# recorded in docs/ROADMAP.md is that a year in the URL proves nothing):
+# page-1 text of the downloaded PDF extracts "State of Rhode Island Division of
+# Taxation / 2024 Form RI-1040 / Resident Individual Income Tax Return"; the
+# page-2 footer reads "Revised 09/2024" (2023 blank: "Revised 11/2023"); and
+# every page carries its own 2024 scanline barcode — 24100199990101 (p1),
+# 24100199990102 (p2), 24100199990103 (p3), 24101099990101 (Schedule W p4),
+# 24105999990101 (Schedule E p5), all "24"-prefixed where the 2023 blank reads
+# "23". printed_year_verified = 2024.
+#
+# DIGEST PROVENANCE: pdf_sha256 below was computed from the blank downloaded
+# from source_url, and a SECOND, independent download of the same URL
+# reproduced the identical digest
+# (0e11ff46b02730b0122642bde9a466e4ba5114fae55f67b8b5df1c7203f09303,
+# 8,662,529 bytes, magic bytes "%PDF-1.6"). double_download_match = true, so
+# the pin is provably the official artifact and not a stale cache entry or an
+# HTML error page wearing a .pdf name.
+#
+# PRINTED-LINE DIFF (all five pages of the 2023 and 2024 blanks text-extracted
+# and diffed line by line). ZERO renumbering on pages 1, 2, 4 and 5 — every
+# printed line number there keeps its caption. Page 3 DID renumber:
+#   * NEW printed line 37 — "Behavioral health education, training, and
+#     coordination fund RIGL §44-30-2.12" — inserted into the RI Checkoff
+#     Contributions Schedule between line 36 (Military Family Relief) and the
+#     schedule total. Widget BehavioralHealth[0] sits at y=168.3 in the
+#     checkoff ladder, immediately below RIMilFamCont[0] (y=191.9) and above
+#     RICheckoffAmt[0] (y=144.3), so the geometry agrees with the caption.
+#     NEWLY MAPPED as line "37" (money): the meaning is unambiguous, and the
+#     total's own printed formula now ENUMERATES it.
+#   * TOTAL CONTRIBUTIONS 37 -> 38. Printed text changed from "Add lines 30
+#     through 36" to "Add lines 30 through 37". Same widget
+#     (RICheckoffAmt[0]); the line key moved 37 -> 38 and the relation was
+#     rewritten to sum 30..37.
+#   * RI Schedule EIC shifted by one: federal EIC 38 -> 39 (FedEarnedIncCrdts[0]),
+#     the pre-printed Rhode Island percentage 39 -> 40, RI EARNED INCOME
+#     CREDIT 40 -> 41 (RIEIC[0]).
+#   * Line 35's caption NARROWED: the 2023 form read "Childhood Disease
+#     Victim's Fund RIGL §44-30-2.3 and Substance Use and Mental Health
+#     Leadership Council of RI RIGL §44-30-2.11"; the 2024 form drops the
+#     §44-30-2.11 clause and reads "Childhood Disease Victim's Fund RIGL
+#     §44-30-2.3" only. Same widget, same line number, narrower meaning.
+# Every affected mapping was re-checked VISUALLY on the rendered page (below),
+# not just by name.
+# Cross-references on pages 1, 2 and 4 were retargeted by the state to match
+# the renumbering, and they corroborate it: page 1 line 11 now reads "from
+# page 3, RI Checkoff Schedule, line 38" (was "line 37"), page 2 line 14d
+# reads "from page 3, RI Schedule EIC, line 41" (was "line 40"), page 2 line
+# 14a "RI 2024 income tax withheld", line 14b "2024 estimated tax payments and
+# amount applied from 2023 return", line 18 "applied to 2025 estimated tax".
+#
+# READONLY ADJUDICATION (pitfall P-007, per widget, by reading the PRINTED ROW
+# — never the flag). The 2024 blank has 323 widget annotations of which
+# EXACTLY SIX carry AcroForm /Ff bit 1, resolved by walking the /Parent chain,
+# and the ReadOnly set is identical to the 2023 blank's:
+#   p2 Page2[0].PrimFirstName[0]     /Ff 8388609 (DoNotScroll|ReadOnly)
+#   p2 Page2[0].PrimLastName[0]      /Ff 8388609
+#   p2 Page2[0].PrimTaxpayerSSN[0]   /Ff 1
+#   p3 Page3[0].PrimFirstName[0]     /Ff 8388609
+#   p3 Page3[0].PrimLastName[0]      /Ff 8388609
+#   p3 Page3[0].PrimTaxpayerSSN[0]   /Ff 1
+# ALL SIX ARE MAPPED (mapped ∩ ReadOnly = 6, measured against the pinned
+# blank), so packages/core/tests/test_readonly_widget_mapping.py needs a
+# STATE_COMPUTED_READONLY row for this pack pinned at 6.
+# Per-widget verdict, and it is NOT the overturned flag-only rationale:
+#   * They are not class 1 — the widgets are EMPTY; they hold no DOR-printed
+#     constant, so nothing can be overwritten.
+#   * They are not class 2 — the printed row above them ("Name(s) shown on
+#     Form RI-1040 or RI-1040NR" | "Your social security number") demands an
+#     entry on a paper filing, so no printed text makes them necessarily blank.
+#   * They are not class 3 — nothing on the face says "reserved".
+#   * They ARE class 4 — the "page-2/3/4 name and SSN header mirror" the
+#     discriminator names verbatim — so all twelve page-2..5 identity mirrors
+#     are MAPPED. P-007 class 4: "taxfill never executes that JavaScript, so
+#     an unmapped one ships BLANK on the filed return — these MUST stay
+#     mapped."
+# THE PROPAGATION MECHANISM, re-established from this blank rather than
+# assumed (the earlier revision of this pack guessed "form JavaScript" and
+# then argued itself out of the class-4 action; both halves were wrong):
+#   * The blank is a LiveCycle XFA form. Its /AcroForm carries /XFA with the
+#     usual packet array (xdp:xdp, config, template 109,960 bytes, datasets,
+#     localeSet, PDFSecurity, xmpmeta, xfdf, form).
+#   * Parsing the template packet as XML: the page-1 originals AND all twelve
+#     page-2..5 mirrors — fifteen <field> elements named PrimFirstName /
+#     PrimLastName / PrimTaxpayerSSN across subforms Page1[0]..Page5[0] —
+#     each carry exactly one child <bind match="global"/>, and NOT ONE of the
+#     fifteen contains a <script> element. So the propagation is DECLARATIVE
+#     XFA global data binding, not literal JavaScript: match="global" resolves
+#     a field to a same-named data node anywhere in the data DOM, so all five
+#     PrimFirstName fields bind to ONE PrimFirstName node and the viewer
+#     paints the banner on every page from it.
+#   * The flag asymmetry has the same origin. The six template fields under
+#     Page2[0] and Page3[0] additionally carry access="protected"; the six
+#     under Page4[0]/Page5[0] carry no access attribute at all (XFA default
+#     "open"). LiveCycle emits access="protected" as the AcroForm ReadOnly
+#     bit — which is EXACTLY the observed split (/Ff 8388609 and 1 on pages
+#     2-3; /Ff 8388608 and 0 on pages 4-5). RI's inconsistency across its own
+#     five pages is therefore an authoring consequence of a per-page access
+#     attribute, and says nothing about whether the row is return data. All
+#     four pages print the identical caption pair, each above its own three
+#     widgets, and each page carries its own scanline barcode.
+#   * taxfill writes the AcroForm layer and never runs the XFA binding
+#     engine, so nothing propagates. PROVEN, not reasoned: an audit fill of
+#     this pack BEFORE the twelve were mapped — page-1 identity sentinels
+#     written and the whole form rendered at 170 dpi — showed the "Name(s)
+#     shown on Form RI-1040 or RI-1040NR" / "Your social security number"
+#     banner completely EMPTY on pages 2, 3, 4 and 5. That was a live defect
+#     on every filed return, which is why all twelve are now mapped in this
+#     pack and in the 2023 base.
+# `maxlen` follows the widget's own /MaxLen throughout, which for the mirrors
+# means page2/page3 identifying_number 9, page4/page5 identifying_number 9 and
+# page4/page5 name_last 26; the four page-2/3 name widgets and both page-4/5
+# name_first widgets have NO /MaxLen and so carry none here. Declaring it matters
+# most on the two ReadOnly SSN mirrors: verify.py's read_text_widgets DROPS
+# ReadOnly text widgets, so clipping_scan never sees them (the P-007 (b) blind
+# spot) — but that also keeps them out of clipping_scan's skip_names, so
+# _pack_maxlen_checks still covers them from the pack's own declared maxlen. That
+# restores P-001 coverage on exactly the SSN-shaped ReadOnly mirror P-007 (b)
+# calls structurally blind.
+# ONE THING THE MAP CANNOT EXPRESS: on a real filing all four mirror triples
+# must repeat the page-1 identity verbatim (the state's one data node). The
+# relation grammar is arithmetic over printed money lines, so there is no way
+# to assert page4_name_last == name.last here; a caller that fills the twelve
+# with anything other than the page-1 values produces an internally
+# inconsistent return and nothing in this pack will catch it. Flagged for the
+# gates agent as an invariant-test candidate.
+#
+# VISION AUDIT: scripts/audit_pack.py against the pinned blank — 248 of the 252
+# mapped lines filled with distinct sentinels (the 4 unfilled are the
+# non-selected options of the 5-box filing_status group), 248 fields written,
+# 5 pages rendered at 170 dpi, verify_form returned ZERO assertion / clipping /
+# checkbox FAILs, and all five pages were READ. (Counts BEFORE the P-007
+# class-4 fix: 236 of 240.)
+# What the read CONFIRMED: every sentinel sits on its own printed line number.
+# The twelve newly mapped identity mirrors were read page by page: pages 2, 3, 4
+# and 5 each print their own "Name(s) shown on Form RI-1040 or RI-1040NR" /
+# "Your social security number" banner with a first-name sentinel, a last-name
+# sentinel and a full NINE-DIGIT unclipped SSN inside the printed cells — where
+# the same render showed four EMPTY banners before the fix. That includes the six
+# ReadOnly widgets on pages 2 and 3, which fill_form writes without complaint.
+# The renumbered page-3 block was checked sentinel-by-sentinel — 30=585 ...
+# 36=651, 37=662 on the "Behavioral health education, training, and
+# coordination fund" row, 38=673 on "TOTAL CONTRIBUTIONS. Add lines 30 through
+# 37", 39=684 on the federal-EIC row, printed line 40 showing the DOR's own
+# "16%" with no sentinel (correctly unmapped), 41=695 on "RI EARNED INCOME
+# CREDIT". Every SSN comb (page 1 primary/spouse, all 13 Schedule E dependent
+# rows) shows all nine digits unclipped. In the 5-box filing-status group only
+# Single is marked; each independent flag box hits its own printed control.
+# WHAT THE AUDIT CAUGHT (both inherited from the 2023 base map, both cosmetic
+# rather than mis-mapped, neither flagged by verify's clipping scan):
+#   * Page 1 specific_party.name (SpecificParty[0], rect x 497.7-573.2, only
+#     75.5pt wide, maxlen 12): a full 12-character party name renders hard
+#     against the right edge of its own box and the last glyphs are visually
+#     cut. On-page (the page is 612pt wide), but a real party name will not fit.
+#   * Page 3 line 26 (OtherStatePctg[0], maxlen 6): a 6-character value renders
+#     right-aligned across the printed "_ . _ _ _ _" decimal guide and its last
+#     glyph sits against the box border. NOT a narrow box and NOT an overflow —
+#     the widget is 100.9pt wide while 6 characters of its own /DA font
+#     (/CourierNewPSMT 12 Tf, monospace at 0.6 em => 7.2pt per glyph) occupy
+#     43.2pt, i.e. the box is ~2.3x the text width. The edge-touching is purely
+#     the widget's right-alignment (/Q 2 — the house alignment on this form, on
+#     149 of its 307 text widgets, every money box included); everything to the
+#     LEFT of the value is slack. Cosmetic only, and identical in the 2023 blank
+#     (same 100.9pt, same maxlen 6, same /Q 2).
+# ALSO OBSERVED, and correctly unmapped because there is nothing to map: the
+# page-3 checkoff rows print $1.00 / $5.00 / $10.00 / Other preset boxes and an
+# Olympic-contribution "Yes" box, and NONE of them is an AcroForm widget in
+# either year's blank (the whole 2024 PDF has 16 /Btn widgets: 13 on page 1,
+# 1 on page 2, 2 on page 5). A filer selecting a preset checkoff amount cannot
+# express that through this pack; only the dollar box is fillable.
+#
+# Checkbox export values were re-dumped from the 2024 blank's own /AP /N
+# appearance dictionaries (never carried over on faith): all 16 /Btn widgets
+# have the same single on-state as in 2023 — "/X" for the thirteen page-1
+# boxes and the page-2 ContactPreparer box, "/1" for the two page-5
+# Schedule E boxes.
+#
+# LAW DELTAS visible on the 2024 face itself (all four figures are printed on
+# page 1 of this blank, so none is invented; each was checked against
+# knowledge/states/ri/2024.yaml, which already models all of them):
+#   * RI standard deduction chart: Single $10,000 -> $10,550; MFJ / Qualifying
+#     widow(er) $20,050 -> $21,150; MFS $10,025 -> $10,575; Head of household
+#     $15,050 -> $15,850.
+#   * Standard-deduction and exemption phase-out threshold $233,750 -> $246,450.
+#   * Line 6 exemption amount $4,700 -> $4,950.
+#   * RI Schedule EIC percentage 15% -> 16% (printed line 40 for 2024).
+# NOT modelled anywhere in knowledge/states/ri (any year): the RI Checkoff
+# Contributions Schedule, so the new §44-30-2.12 behavioral-health checkoff is
+# a gap rather than a contradiction. Flagged, not silently absorbed.
+#
+# Everything below this banner is the TY2023 map with the four page-3 line
+# keys renumbered, one new page-3 binding, one rewritten relation, and the
+# year-specific prose rolled forward. Mapped-field count 252 = the 239 the
+# TY2023 base originally shipped + 1 new page-3 checkoff line (240) + the 12
+# page-2..5 identity banner mirrors added by the P-007 class-4 fix below; the
+# 2023 base now ships 251 (239 + the same 12). No figure in this header is
+# asserted unless the 2024 blank's own printed text carries it.
+# ===========================================================================
+# Form RI-1040, 2024 -- Rhode Island Resident Individual Income Tax Return.
 #
 # Provenance: blank downloaded from the official source_url below
-# (tax.ri.gov 2023_1040WE_w.pdf). The MAIN (page 1) sentinel sweep was rendered
-# and READ to confirm the printed tax year: header reads "State of Rhode Island
-# Division of Taxation / 2023 Form RI-1040 / Resident Individual Income Tax
-# Return", footer "Revised 11/2023". printed_year_verified = 2023 BEFORE pinning
-# pdf_sha256 (freshness protocol; Utah wrong-year trap avoided).
+# (tax.ri.gov 2024_1040WE_w.pdf). Page 1 was text-extracted AND rendered and
+# READ to confirm the printed tax year: header reads "State of Rhode Island
+# Division of Taxation / 2024 Form RI-1040 / Resident Individual Income Tax
+# Return", page-2 footer "Revised 09/2024". printed_year_verified = 2024 BEFORE
+# pinning pdf_sha256 (freshness protocol; Utah wrong-year trap avoided).
 #
 # Layout. XFA-style nested AcroForm: acroform_root is "topmostSubform[0]" and
 # every field's fully-qualified name is "topmostSubform[0].PageN[0].<leafname>"
-# (verified via pypdf get_fields() -- 327 named fields; all carry a /Parent chain
+# (verified via pypdf get_fields() -- 329 named fields; all carry a /Parent chain
 # under the PageN[0] subform of the page they sit on). The introspect sweep PNGs
 # show only the LEAF /T (e.g. "TotalRITax[0]"); the page-subform prefix is the
 # real disambiguator. Three leaf names recur on two pages each and are GENUINELY
@@ -23,77 +236,12 @@
 # (NJ page2_ssn / VA page2_your_ssn / WI page2_your_last_name are the precedent,
 # and WI's is the mirror P-007 itself cites). Exactly three per page — a sweep of
 # every widget above y=640 on pages 2-5 finds PrimFirstName / PrimLastName /
-# PrimTaxpayerSSN and nothing else, so there is no spouse mirror and the mapped
-# banner is complete. See the READONLY ADJUDICATION section below.
-#
-# READONLY ADJUDICATION (pitfall P-007, per widget, by reading the PRINTED ROW —
-# never the flag). This blank has 321 widget annotations of which EXACTLY SIX
-# carry AcroForm /Ff bit 1, resolved by walking the /Parent chain, and the set is
-# identical to the 2024 blank's:
-#   p2 Page2[0].PrimFirstName[0]     /Ff 8388609 (DoNotScroll|ReadOnly)
-#   p2 Page2[0].PrimLastName[0]      /Ff 8388609
-#   p2 Page2[0].PrimTaxpayerSSN[0]   /Ff 1
-#   p3 Page3[0].PrimFirstName[0]     /Ff 8388609
-#   p3 Page3[0].PrimLastName[0]      /Ff 8388609
-#   p3 Page3[0].PrimTaxpayerSSN[0]   /Ff 1
-# ALL SIX ARE MAPPED (mapped ∩ ReadOnly = 6, measured against the pinned blank),
-# so packages/core/tests/test_readonly_widget_mapping.py needs a
-# STATE_COMPUTED_READONLY row for this pack pinned at 6.
-# Per-widget verdict, and it is NOT the overturned flag-only rationale:
-#   * Not class 1 — the widgets are EMPTY; they hold no DOR-printed constant, so
-#     nothing can be overwritten.
-#   * Not class 2 — the printed row above them ("Name(s) shown on Form RI-1040 or
-#     RI-1040NR" | "Your social security number") demands an entry on a paper
-#     filing, so no printed text makes them necessarily blank.
-#   * Not class 3 — nothing on the face says "reserved".
-#   * They ARE class 4 — the "page-2/3/4 name and SSN header mirror" the
-#     discriminator names verbatim: "taxfill never executes that JavaScript, so
-#     an unmapped one ships BLANK on the filed return — these MUST stay mapped."
-# THE PROPAGATION MECHANISM, established from this blank (an earlier revision of
-# this pack excluded all twelve as "carry-over duplicates, not return data" —
-# that was wrong, and the 2024 port inherited it):
-#   * The blank is a LiveCycle XFA form: /AcroForm carries /XFA with the usual
-#     packet array (xdp:xdp, config, template, datasets, localeSet, PDFSecurity,
-#     xmpmeta, xfdf, form).
-#   * Parsing the template packet as XML: the page-1 originals AND all twelve
-#     page-2..5 mirrors — fifteen <field> elements named PrimFirstName /
-#     PrimLastName / PrimTaxpayerSSN across subforms Page1[0]..Page5[0] — each
-#     carry exactly one child <bind match="global"/>, and NOT ONE contains a
-#     <script> element. The propagation is DECLARATIVE XFA global data binding,
-#     not literal JavaScript: match="global" resolves a field to a same-named
-#     data node anywhere in the data DOM, so all five PrimFirstName fields bind
-#     to ONE node and a viewer paints the banner on every page from it.
-#   * The flag asymmetry has the same origin. The six template fields under
-#     Page2[0] and Page3[0] additionally carry access="protected"; the six under
-#     Page4[0]/Page5[0] carry no access attribute at all (XFA default "open").
-#     LiveCycle emits access="protected" as the AcroForm ReadOnly bit — exactly
-#     the observed split (/Ff 8388609 and 1 on pages 2-3; /Ff 8388608 and 0 on
-#     pages 4-5). RI's inconsistency across its own five pages is an authoring
-#     consequence of a per-page access attribute and says nothing about whether
-#     the row is return data. All four pages print the identical caption pair,
-#     each above its own three widgets, and each page carries its own scanline.
-#   * taxfill writes the AcroForm layer and never runs the XFA binding engine
-#     (the renderer's own pdfium build reports "init_forms() called on XFA pdf,
-#     but this pdfium binary was compiled without XFA support"), so nothing
-#     propagates. PROVEN on the 2024 sibling before the fix: an audit fill with
-#     page-1 identity sentinels rendered pages 2, 3, 4 and 5 with the banner
-#     completely EMPTY. That was a live defect on every filed return.
-# `maxlen` follows the widget's own /MaxLen throughout, which for the mirrors
-# means page2/page3 identifying_number 9, page4/page5 identifying_number 9 and
-# page4/page5 name_last 26; the four page-2/3 name widgets and both page-4/5
-# name_first widgets have NO /MaxLen and so carry none here. Declaring it matters
-# most on the two ReadOnly SSN mirrors: verify.py's read_text_widgets DROPS
-# ReadOnly text widgets, so clipping_scan never sees them (the P-007 (b) blind
-# spot) — but that also keeps them out of clipping_scan's skip_names, so
-# _pack_maxlen_checks still covers them from the pack's own declared maxlen. That
-# restores P-001 coverage on exactly the SSN-shaped ReadOnly mirror P-007 (b)
-# calls structurally blind.
-# ONE THING THE MAP CANNOT EXPRESS: on a real filing all four mirror triples must
-# repeat the page-1 identity verbatim (the state's one data node). The relation
-# grammar is arithmetic over printed money lines, so page4_name_last ==
-# name.last is not assertable here; a caller that fills the twelve with anything
-# else produces an internally inconsistent return and nothing in this pack will
-# catch it. Flagged for the gates agent as an invariant-test candidate.
+# PrimTaxpayerSSN and nothing else, in both years, so there is no spouse mirror
+# and the mapped banner is complete. Six of the twelve (pages 2 and 3) carry the
+# AcroForm ReadOnly bit and six (pages 4 and 5) do not, on the identical printed
+# banner row; the READONLY ADJUDICATION in the port banner above proves that
+# split is a LiveCycle access="protected" artifact and maps all twelve uniformly
+# as P-007 class 4.
 #
 # This 5-page PDF is the FILED RETURN plus its directly-attached schedules:
 #   page 1 -- RI-1040 front: header (names, two SSNs, address, city of legal
@@ -106,13 +254,15 @@
 #             full-year-coverage certify box, total RI tax 13a).
 #   page 2 -- RI-1040 back: 13b carry, payments 14a-14f, total payments 14g,
 #             previously issued overpayments 14h, net payments 14i, amount due
-#             15a-15c, overpaid 16, refund 17, applied-to-2024 18, signature
+#             15a-15c, overpaid 16, refund 17, applied-to-2025 18, signature
 #             block (driver license numbers/states/dates/phones, paid preparer
 #             block, contact-preparer YES box).
 #   page 3 -- attached schedules: RI Schedule I (allowable federal credit, lines
 #             19-22), RI Schedule II (credit for tax paid to another state, lines
-#             23-29), RI Checkoff Contributions Schedule (lines 30-37), RI
-#             Schedule EIC (lines 38-40).
+#             23-29), RI Checkoff Contributions Schedule (lines 30-38, the 2024
+#             revision inserting line 37 "Behavioral health education, training,
+#             and coordination fund RIGL 44-30-2.12" and moving the total to 38),
+#             RI Schedule EIC (lines 39-41).
 #   page 4 -- RI Schedule W (withholding): 15 rows of Col A spouse flag / Col B
 #             letter code / Col C payer name / Col D fed ID / Col E RI withheld,
 #             line 16 total, line 17 count of W-2s/1099s.
@@ -124,7 +274,10 @@
 # cents box (the "-00" / "-00[0]" suffixed widget, rect x 533-554, maxlen 2). The
 # dollars field is mapped `money`; the cents companion widgets are EXCLUDED (they
 # are the printed ".00" cents portion, not an independent data line -- mapping
-# both would double-fill one printed amount). The same pattern holds for the
+# both would double-fill one printed amount). The 2024 revision's two NEW page-3
+# widgets follow the same pattern, so BehavioralHealth[0] is mapped `money` as
+# line 37 and BehavioralHealth-00[0] is EXCLUDED as its cents companion. The
+# same pattern holds for the
 # 9a/9b/9c sub-credit fields (dollars at x 331-410, cents "-00" at x 410-432).
 # Schedule W Col E withholding rows are likewise dollars + 2-digit cents pairs.
 # SSN fields are mapped `text` comb format ssn_digits_only (single 9-digit comb
@@ -149,30 +302,22 @@
 #   13a == 10a+10b+11+12a+12b ("Add lines 10a, 10b, 11, 12a and 12b")
 #   15c == 15a + 15b ("TOTAL AMOUNT DUE. Add lines 15a and 15b")
 #   22 == min(19, 21) ("Line 19 or 21, whichever is SMALLER")
-#   37 == 30+31+32+33+34+35+36 ("Add lines 30 through 36")
-#   40 == 38 * 39 -- OMITTED (39 is a printed constant 15%, not a mapped line).
+#   38 == 30+31+32+33+34+35+36+37 ("Add lines 30 through 37" -- RENUMBERED for
+#         2024 and one operand wider than the 2023 pack's "37 == 30..36",
+#         because the new line 37 behavioral-health checkoff is enumerated by
+#         the total's own printed formula)
+#   41 == 39 * 40 -- OMITTED (40 is a printed constant 16%, not a mapped line;
+#         it was the printed 15% on line 39 of the 2023 form).
 # Lines that floor at zero ("if zero or less, enter 0": 5, 7, 10a) or branch on a
 # larger-than comparison (15a, 16) are OMITTED per house style.
 #
 # Cross_form. Page 1 line 1 prints "Federal AGI from Federal Form 1040 or
 # 1040-SR, line 11" -- federal AGI = f1040.11.
-#
-# VISION AUDIT (re-run for the P-007 class-4 fix): scripts/audit_pack.py against
-# the pinned blank -- 247 of the 251 mapped lines filled with distinct sentinels
-# (the 4 unfilled are the non-selected options of the 5-box filing_status group),
-# 247 fields written, 5 pages rendered at 170 dpi, verify_form returned ZERO
-# assertion / clipping / checkbox FAILs. Counts before the fix: 235 of 239.
-# The twelve newly mapped identity mirrors were READ page by page: pages 2, 3, 4
-# and 5 each print their own "Name(s) shown on Form RI-1040 or RI-1040NR" /
-# "Your social security number" banner with a first-name sentinel, a last-name
-# sentinel and a full NINE-DIGIT unclipped SSN inside the printed cells, where
-# the pre-fix render showed four EMPTY banners. That includes the six ReadOnly
-# widgets on pages 2 and 3, which fill_form writes without complaint.
 form: "RI-1040"
 jurisdiction: states/ri
-tax_year: 2023
-source_url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023_1040WE_w.pdf
-pdf_sha256: "db8606dabba92f1576f9fdc3a98198533ac1f94d59f18936461eab6c760701a2"
+tax_year: 2024
+source_url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024_1040WE_w.pdf
+pdf_sha256: "0e11ff46b02730b0122642bde9a466e4ba5114fae55f67b8b5df1c7203f09303"
 acroform_root: "topmostSubform[0]"
 fields:
   # ============================================ page 1 -- header (name / address)
@@ -301,7 +446,7 @@ fields:
   - line: "3"                            # "Modified Federal AGI. Combine lines 1 and 2"
     field: Page1[0].ModifiedFedAGI[0]
     type: money
-  - line: "4"                            # "RI Standard Deduction"
+  - line: "4"                            # "RI Standard Deduction from left. If line 3 is over $ 246,450 see Standard Deduction Worksheet"
     field: Page1[0].RIStandardDeduction[0]
     type: money
   - line: "5"                            # "Subtract line 4 from line 3. If zero or less, enter 0"
@@ -311,7 +456,7 @@ fields:
     field: Page1[0].NumFedExemptions[0]
     type: text
     maxlen: 2
-  - line: "6"                            # "... multiply by $4,700 and enter result on line 6"
+  - line: "6"                            # "... multiply by $4,950 and enter result on line 6" (2023 form: $4,700)
     field: Page1[0].RIExemptionAmount[0]
     type: money
   - line: "7"                            # "RI TAXABLE INCOME. Subtract line 6 from line 5"
@@ -338,7 +483,7 @@ fields:
   - line: 10b                            # "Recapture of Prior Year Other Rhode Island Credits from RI Schedule CR, line 12"
     field: Page1[0].RecaptureofPriorYear[0]
     type: money
-  - line: "11"                           # "RI checkoff contributions from page 3, RI Checkoff Schedule, line 37"
+  - line: "11"                           # "RI checkoff contributions from page 3, RI Checkoff Schedule, line 38" (2023 form: line 37)
     field: Page1[0].RIContributions[0]
     type: money
   - line: 12a                            # "USE/SALES tax due from RI Schedule U, line 4 or line 8"
@@ -365,7 +510,7 @@ fields:
   # XFA <bind match="global"/> propagates these from the page-1 data node in a
   # viewer; taxfill writes the AcroForm layer only, so unmapped means BLANK on the
   # filed page. These three are the /Ff 8388609 / 1 ReadOnly ones (access=
-  # "protected" in the template) -- mapped deliberately; see the header.
+  # "protected" in the template) -- mapped deliberately; see the port banner.
   - line: page2_name_first
     field: Page2[0].PrimFirstName[0]
     type: text
@@ -382,16 +527,16 @@ fields:
   - line: 13b                            # "TOTAL RI TAX AND CHECKOFF CONTRIBUTIONS from line 13a"
     field: Page2[0].TotalRITax[0]
     type: money
-  - line: 14a                            # "RI 2023 income tax withheld from RI Schedule W, line 16"
+  - line: 14a                            # "RI 2024 income tax withheld from RI Schedule W, line 16"
     field: Page2[0].RIWithholding[0]
     type: money
-  - line: 14b                            # "2023 estimated tax payments and amount applied from 2022 return"
+  - line: 14b                            # "2024 estimated tax payments and amount applied from 2023 return"
     field: Page2[0].EstimatedTaxPayments[0]
     type: money
   - line: 14c                            # "Property tax relief credit from RI-1040H, line 13"
     field: Page2[0].PropertyTaxReliefCredit[0]
     type: money
-  - line: 14d                            # "RI earned income credit from page 3, RI Schedule EIC, line 40"
+  - line: 14d                            # "RI earned income credit from page 3, RI Schedule EIC, line 41" (2023 form: line 40)
     field: Page2[0].RIEarnedIncomeCredit[0]
     type: money
   - line: 14e                            # "RI Residential Lead Paint Credit from RI-6238, line 7"
@@ -424,7 +569,7 @@ fields:
   - line: "17"                           # "Amount of overpayment to be refunded"
     field: Page2[0].AmountToBeRefunded[0]
     type: money
-  - line: "18"                           # "Amount of overpayment to be applied to 2024 estimated tax"
+  - line: "18"                           # "Amount of overpayment to be applied to 2025 estimated tax"
     field: Page2[0].AmountToBeApplied[0]
     type: money
 
@@ -494,9 +639,9 @@ fields:
 
   # ============================================ page 3 -- RI Schedule I (lines 19-22)
   # ---- page 3 identity banner mirror (P-007 class 4; the other three ReadOnly
-  # widgets). Same printed caption pair, same access="protected" origin. Sits at
-  # y=671.9 here; the 2024 revision moved it to y=684.4 to make room for the new
-  # checkoff line 37 -- same widgets, same meaning.
+  # widgets). Same printed caption pair, same access="protected" origin. For 2024
+  # this banner sits at y=684.4 (2023: y=671.9) because the page-3 block moved down
+  # to make room for the new line 37 -- same widgets, same meaning.
   - line: page3_name_first
     field: Page3[0].PrimFirstName[0]
     type: text
@@ -551,7 +696,7 @@ fields:
     field: Page3[0].MaxCreditSchII[0]
     type: money
 
-  # ---- RI Checkoff Contributions Schedule (lines 30-37)
+  # ---- RI Checkoff Contributions Schedule (lines 30-38 for 2024; was 30-37)
   - line: "30"                           # "Drug program account RIGL 44-30-2.4"
     field: Page3[0].DrugPrgCont[0]
     type: money
@@ -567,30 +712,58 @@ fields:
   - line: "34"                           # "Nongame Wildlife Fund RIGL 44-30-2.2"
     field: Page3[0].RIWildlifeCont[0]
     type: money
-  - line: "35"                           # "Childhood Disease Victim's Fund RIGL 44-30-2.3 ..."
+  - line: "35"                           # "Childhood Disease Victim's Fund RIGL 44-30-2.3" -- the 2023 caption's
+                                         # "and Substance Use and Mental Health Leadership Council of RI RIGL
+                                         # 44-30-2.11" clause is GONE from the 2024 form; same widget, same line
+                                         # number, narrower meaning
     field: Page3[0].DiseaseVictimsCont[0]
     type: money
   - line: "36"                           # "RI Military Family Relief Fund RIGL 44-30-2.9"
     field: Page3[0].RIMilFamCont[0]
     type: money
-  - line: "37"                           # "TOTAL CONTRIBUTIONS. Add lines 30 through 36. ... page 1, line 11"
+  - line: "37"                           # NEW FOR 2024: "Behavioral health education, training, and coordination
+                                         # fund RIGL 44-30-2.12". One of the 2024 revision's two added widgets;
+                                         # sits in the checkoff ladder between line 36 and the total, and the
+                                         # total's printed "Add lines 30 through 37" enumerates it
+    field: Page3[0].BehavioralHealth[0]
+    type: money
+  - line: "38"                           # "TOTAL CONTRIBUTIONS. Add lines 30 through 37. ... page 1, line 11"
+                                         # RENUMBERED: this was printed line 37 on the 2023 form (same widget)
     field: Page3[0].RICheckoffAmt[0]
     type: money
 
-  # ---- RI Schedule EIC (lines 38-40)
-  - line: "38"                           # "Federal earned income credit from Federal Form 1040 or 1040-SR, line 27"
+  # ---- RI Schedule EIC (lines 39-41; the whole schedule shifted +1 for 2024)
+  - line: "39"                           # "Federal earned income credit from Federal Form 1040 or 1040-SR, line 27"
+                                         # RENUMBERED from printed line 38 on the 2023 form (same widget)
     field: Page3[0].FedEarnedIncCrdts[0]
     type: money
-  - line: "40"                           # "RI EARNED INCOME CREDIT. Multiply line 38 by line 39. ... page 2, line 14d"
+  # printed line 40 "Rhode Island percentage" is a DOR-PRINTED CONSTANT (16% for
+  # 2024; it was 15% on the 2023 form's line 39). It is not a widget in either
+  # year's blank, so it is not -- and must not be -- mapped.
+  - line: "41"                           # "RI EARNED INCOME CREDIT. Multiply line 39 by line 40. ... page 2, line 14d"
+                                         # RENUMBERED from printed line 40 on the 2023 form (same widget)
     field: Page3[0].RIEIC[0]
     type: money
 
   # ============================================ page 4 -- RI Schedule W (withholding)
+  # NO renumbering on this page for 2024 (rows 1-15, line 16 total, line 17 count).
+  # But the printed "Schedule W Reference Chart" that Col B's letter code points at
+  # DID change, and Col B is free 1-char text so nothing in this map moves: the 2023
+  # chart's "RI-1099E / E / box 11" row became "RI K-1 - PTE / E / Sect. VI, line 2",
+  # and "RI K-1 / P / Sect. IV, line 2" became "RI K-1 - PTW / P / Sect. IV, line 2".
+  # The letter-code SET is unchanged: THIRTEEN codes, W S B D G I K M N O R E P.
+  # W-2 is NOT one of them -- it is a form type whose Column B cell the chart
+  # prints EMPTY (the row reads "W-2" then a blank code cell then withholding box
+  # "17"), in the 2023 and 2024 charts alike. Only the form-type names behind E and
+  # P were reassigned. A calc/extract layer that maps source documents to Col B
+  # codes must use the 2024 chart, not the 2023 one -- the code "E" no longer means
+  # RI-1099E -- and must leave Col B blank for a plain W-2.
+  #
   # ---- page 4 identity banner mirror (P-007 class 4). Same printed caption pair
   # as pages 2-3 and the same <bind match="global"/> propagation, but these three
   # carry NO access attribute in the template, hence /Ff 8388608 / 0 / 0 and no
   # ReadOnly bit. Mapped for the same reason as the flagged six: unmapped ships a
-  # blank Schedule W banner. Note the wider Col-name box here -- PrimLastName
+  # blank Schedule W banner. Note the wider Col-name boxes here -- PrimLastName
   # carries /MaxLen 26 (pages 2-3 have none).
   - line: page4_name_first
     field: Page4[0].PrimFirstName[0]
@@ -606,14 +779,6 @@ fields:
     format: ssn_digits_only
     maxlen: 9
 
-  # The printed "Schedule W Reference Chart" that Col B's letter code points at
-  # lists THIRTEEN letter codes: W S B D G I K M N O R E P. W-2 is NOT one of them
-  # -- it is a form type whose Column B cell the chart prints EMPTY (the row reads
-  # "W-2" then a blank code cell then withholding box "17"). For 2023 the code "E"
-  # means RI-1099E (box 11) and "P" means RI K-1 (Sect. IV, line 2); the 2024
-  # revision reassigns both form-type names (RI K-1 - PTE / RI K-1 - PTW) while
-  # keeping the same thirteen codes, so an extract layer must pick the chart for
-  # the year it is filing.
   - line: schedule_w.1.spouse_flag       # row 1 Col A "S if Spouse's W-2"
     field: Page4[0].Spouse1[0]
     type: text
@@ -1151,7 +1316,8 @@ relations:
   - "14i == 14g - 14h"                   # "NET PAYMENTS. Subtract line 14h from line 14g"
   - "15c == 15a + 15b"                   # "TOTAL AMOUNT DUE. Add lines 15a and 15b"
   - "22 == min(19, 21)"                  # "MAXIMUM CREDIT. Line 19 or 21, whichever is SMALLER"
-  - "37 == 30 + 31 + 32 + 33 + 34 + 35 + 36"  # "TOTAL CONTRIBUTIONS. Add lines 30 through 36"
+  - "38 == 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37"  # "TOTAL CONTRIBUTIONS. Add lines 30 through 37"
+                                         # (2023: "37 == 30 + ... + 36"; renumbered and widened for 2024)
 cross_form:
   # Page 1 line 1 "Federal AGI from Federal Form 1040 or 1040-SR, line 11".
   - "1 == f1040.11"

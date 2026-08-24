@@ -118,18 +118,21 @@ lands on Schedule 3 line 2, and Form 2441 Part I requires each care provider's
 name/address/TIN — the credit can be denied without them). MFS is generally
 ineligible; 2021 used the ARPA $8,000/$16,000 caps and was refundable with a US abode.
 
-> ⚠️ **Federal year holes — check before promising a fill.** The federal pack
-> years are uneven: `f1040nr` (and its chain — `sched_oi`, `sched_nec`,
-> `sched_a_nr`) ships for **2022, 2023 and 2025 but NOT 2024** even though
-> `f8843` covers 2024 — so a TY2024 nonresident return cannot be filled today.
-> The common attachments (`sched_d`/`sched_e`/`sched_se`, `sched_8812`,
-> `f8962`, `f2441`, `f8863`, `f8959`, `f8960`) are **2023-only**; note
-> `sched_c` ships for 2024/2025 while `sched_se` does not, so a recent-year
-> self-employment filing computes SE tax via `calc` but has no SE form to
-> attach. `f843`/`f8316`/`fw7` are revision-dated (not annual) and parked
-> under 2023 — they remain valid for later years. When a needed pack is
-> missing, say so up front and fall back to `get_sources` + the official
-> blank; never silently truncate a filing.
+> ⚠️ **Federal year coverage — check before promising a fill, but the old holes
+> are CLOSED.** As of the 2026-08 backfill the federal set is **93 packs** and
+> TY2023, TY2024 and TY2025 each carry the full 28-form set (2025 adds
+> `sched_1a`). Specifically: `f1040nr` and its chain (`sched_oi`, `sched_nec`,
+> `sched_a_nr`) now ship for **2024** — a TY2024 nonresident return CAN be
+> filled — and the common attachments (`sched_d`/`sched_e`/`sched_se`,
+> `sched_8812`, `f8962`, `f2441`, `f8863`, `f8959`, `f8960`, plus `f843`,
+> `f8316`, `fw7`, `f1040x`, `f1040es`, `f4868`, `f2555`) ship for **2023, 2024
+> AND 2025**. `f8843` spans 2019–2025. The revision-dated forms are pinned per
+> year deliberately (`f1040x` takes Rev. 2-2024 for TY2024 and the OBBBA
+> revision for TY2025), so ask for the year you are filing rather than reusing a
+> pack across years. Still: never assume — `list_forms(jurisdiction, year)` is
+> the authority, and when a needed pack really is missing, say so up front and
+> fall back to `get_sources` + the official blank; never silently truncate a
+> filing.
 
 ### Recipe B — back-file a nonresident return (1040-NR + 8843, e.g. an F-1 student)
 
@@ -183,9 +186,14 @@ fillable AcroForms, and 4 as print-only hand-fill manifests (CT, HI, NM, SC) via
 
 > ⚠️ **Year mismatch — read this before quoting a state number.** State *knowledge*
 > packs (rates, brackets, credits, thresholds → `calc("state_tax", …)`) ship for
-> **2023, 2024 and 2025**. State *form* packs ship for **2023 ONLY**. So for a 2024
-> or 2025 state return you can compute the tax line but **cannot fill a PDF** —
-> say so plainly and fall back to `get_sources` + the state's own blank.
+> **2023, 2024 and 2025** — all 42 jurisdictions, every year. State *form* packs
+> are **thinner and uneven**: 57 packs, TY2023 for all 42 jurisdictions but
+> post-2023 for only **10** — **AR, NY, PA (2024 and 2025)**, **OR (2025)**, and
+> **NC, NJ, OH, RI, UT, VA (2024)**. For the other 32 jurisdictions a 2024 or
+> 2025 return computes but **cannot be filled**: say so plainly and fall back to
+> `get_sources` + the state's own blank. Do not memorize this list — it grows
+> tranche by tranche; call `list_forms("states/<xx>", year)` and believe the
+> result.
 
 1. `state_scope(profile, year)` → which states require a return, in what role (resident / part-year / nonresident), which forms, candidate credits, and treaty-conformity warnings.
 2. `list_forms("states/<xx>", year)` → the packed form keys (e.g. `form540`, `sched_ca_540`).

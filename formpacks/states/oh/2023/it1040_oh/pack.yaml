@@ -18,34 +18,205 @@
 # numbers ("1".."27") while each schedule's lines are prefixed (schedA_, schedITbus_,
 # schedC_, schedJ_, schedW_) to keep every key unique.
 #
-# Coverage. The skeleton lists 536 widget entries (519 distinct field names). Of
-# those, the genuinely TAXPAYER-FILLABLE widgets are mapped here. The following
-# are intentionally NOT mapped, each a non-data or auto-computed widget confirmed
-# read-only / pushbutton via the AcroForm field flags (/Ff):
-#   * Form-action PUSHBUTTONS (/Ff pushbutton bit): "Print Form", "Reset Form",
-#     "Print Blank Form", "RESET" — JavaScript buttons, not data.
-#   * The e-file "include schedule / include a copy" UPLOAD pushbuttons
-#     UF_L1A..UF_L4A, ..B, ..C, ..D, ..E, ..H (and the F/G variants the skeleton
-#     omits): read-only pushbuttons (/Ff = 65537), no on/off appearance states.
-#   * TP_SSN1 (and its page-repeat copies TP_SSN1#2..#11): a READ-ONLY mirror of
-#     the primary SSN auto-propagated to the "Primary taxpayer's SSN" header on
-#     schedule pages 3-12. The user enters the SSN once in TP_SSN (page 1, mapped
-#     as tp_ssn); this mirror is computed, not entered.
-#   * IT 1040 lines 17 and 19 widgets (L17, L19): the AcroForm marks BOTH
-#     read-only (/Ff bit 1). They are the "Amended return only" lines whose values
-#     the form locks/derives; not free-entry on this PDF, so omitted.
-#   * The ENTIRE Ohio Universal Payment Coupon (page 13) EXCEPT upc_payment: every
-#     other coupon widget — UPC_FName/LName/address1/CityStateZip/1st3LName/
-#     Identifier/SDN/SDHide/TaxYear/IDType/TaxType/Reason/Payable/MailTo1/MailTo2/
-#     ScanDate, 40P_MI, the *Display fields, VendorID, today, and the scan-line /
-#     check-digit cells (checkdigit1/2, checkdigitSD, Scan4, ScanSSN1..9,
-#     sdnum1..3, Scan_Reason1/2, sd1..4, fc1..3, ScanDate1..4, ScanPH1..5,
-#     ScanID1..3) — is a READ-ONLY mirror auto-populated by the coupon's JavaScript
-#     from the return above it. Only UPC_Payment (the amount-of-payment box) is a
-#     free-entry field and is mapped (upc_payment).
+# Coverage. The blank carries 519 distinct AcroForm field names. Every
+# taxpayer-fillable widget on pages 1-12 is mapped, and so is every ReadOnly
+# non-pushbutton field on pages 1-12 — there are exactly five and all five are
+# P-007 class 4 (see READONLY ADJUDICATION). What is intentionally left unmapped
+# is exactly two things:
+#   * The 28 form-action PUSHBUTTONS: "Print Form", "Reset Form", "Print Blank
+#     Form", "RESET" (these four carry NO ReadOnly bit), plus the 24 e-file
+#     "include schedule / include a copy" UPLOAD pushbuttons UF_L1A..UF_L4A,
+#     ..B, ..C, ..D, ..E, ..H (/Ff = 65537 = Pushbutton|ReadOnly, no on/off
+#     appearance states). JavaScript actions, not data.
+#   * On the page-13 Ohio Universal Payment Coupon: 53 of the coupon's 60
+#     ReadOnly non-pushbutton fields — the 37 scan-line/check-digit cells, the
+#     12 HIDDEN data carriers, and 4 visible DOR-owned cells (UPC_TaxYear,
+#     VendorID, today, UPC_SDHide). The coupon's OTHER SEVEN ReadOnly fields —
+#     the payer name/address block, the first-3-of-last-name box and the
+#     "Taxpayer's SSN" box — are MAPPED (upc_*) as of 2026-08-24, alongside the
+#     free-entry UPC_Payment (upc_payment). Every cell is adjudicated in OUPC
+#     PAGE-13 ADJUDICATION at the end of READONLY ADJUDICATION below.
 # There are NO pre-printed statutory dollar constants in the fillable set (IT BUS
 # line 12's $250,000/$125,000 prompt is a free-entry box the filer types, mapped
 # as schedITbus_12).
+#
+# READONLY ADJUDICATION (knowledge/pitfalls.yaml P-007), per widget.
+# ADDED 2026-08-21. This pack predates P-007 and its original coverage note used
+# the flag-only rationale P-007 overturned ("the AcroForm marks BOTH read-only
+# ... not free-entry on this PDF, so omitted") plus one claim that was factually
+# wrong about the file. Both were re-adjudicated from the blank's own
+# DOCUMENT-LEVEL JAVASCRIPT: the catalog /Names /JavaScript name tree was walked
+# (17 entries, 108,442 chars), then EVERY other JavaScript string in the file —
+# each field's and each widget's /AA, each page's /AA, each annotation's /A, and
+# the catalog /OpenAction (18,428 chars of Ultraforms barcode builder, which
+# mentions "readonly" zero times and none of the fields below) — for 1,196
+# scripts in all; /XFA is absent. The AcroForm /CO was listed, and each claim was
+# then grepped for by QUOTED field name across both 2023 and 2024.
+# The blank has 519 field names, of which 89 are ReadOnly (/Ff bit 1, resolved by
+# walking the /Parent chain). 24 of the 89 are the UF_L1A..UF_L4H uploader
+# PUSHBUTTONS, leaving 65 ReadOnly non-pushbutton fields. The mapped-intersect-
+# ReadOnly set is EXACTLY TWELVE: two originally (CHK_AMD, CHK_SP_NON_RES_STMT),
+# three NEWLY MAPPED 2026-08-21 (TP_SSN1, L17, L19 — fixing two class-4 defects
+# the TY2024 port inherited from this pack and fixed in the same change), and
+# seven OUPC coupon cells NEWLY MAPPED 2026-08-24 (see OUPC PAGE-13
+# ADJUDICATION at the end of this section). In the JS
+# transcriptions below, `..` and `...` mark an elided run of literal getField
+# lines; everything in quotes is verbatim.
+#   * CHK_AMD — /Btn, /Ff = 1, page 1, /AP /N states {/Off, /Yes}. Printed row:
+#     "AMENDED RETURN - Check here and include Ohio IT RE." The printed face
+#     TELLS the filer to check this box, and its sibling CHK_NOL ("NOL
+#     CARRYBACK - Check here") carries no /Ff at all. P-007 class 4 (a DOR
+#     authoring slip, not an instruction): MUST STAY MAPPED, or the box can
+#     never be checked. It is also the LOCK KEY for L17/L19 and L25/L26A-G.
+#   * CHK_SP_NON_RES_STMT — /Btn, /Ff = 1, page 1. The same asymmetry: its own
+#     sibling CHK_PRIM_NON_RES_STMT carries no /Ff. Class 4, stays mapped.
+#     (Ohio cleared this bit for 2024 — /Ff 1 -> 0 — which is why the 2024 pack
+#     counts a different set.)
+#   * TP_SSN1 — /Tx, /Ff = 1, /MaxLen 9, one field with 12 widget kids: 11 on
+#     document pages 2-12 and a 12th parented to a /Type /Template object
+#     outside the page tree. NEWLY MAPPED (line key `tp_ssn_page_header`).
+#     CORRECTION to this header's previous text, which said "TP_SSN1 (and its
+#     page-repeat copies TP_SSN1#2..#11) ... The user enters the SSN once in
+#     TP_SSN (page 1, mapped as tp_ssn); this mirror is computed, not entered":
+#     that was factually wrong about the file on three counts. TP_SSN1 is a
+#     SEPARATE AcroForm field, not a copy of TP_SSN (a distinct page-1-only
+#     field, /Ff = 12582914 = Required|DoNotSpellCheck|DoNotScroll, one widget),
+#     so writing tp_ssn cannot populate it; it repeats on pages 2-12, not 3-12;
+#     and "computed" is only true INSIDE A VIEWER. Its own /AA /C is
+#       var ssNumber = this.getField("TP_SSN").valueAsString;
+#       event.value = util.printx("XXX XX XXXX",ssNumber)
+#     — precisely the "page-2/3/4 name and SSN header mirror" P-007 names as
+#     class 4 and that STATE_COMPUTED_READONLY pins wi/form1 at 15 for, with the
+#     note "Unmapped they would file blank". taxfill never runs that JavaScript,
+#     so the box printed BLANK on all 11 pages that carry it (2-12 of 13), under
+#     each page's own SSN caption — page 2 prints "SSN:" and pages 3-12 print
+#     "Primary taxpayer's SSN". Read off the audit renders, not inferred.
+#     Mapping it is not
+#     a class-1 overwrite: its /V is only two spaces, and the /C output
+#     "XXX XX XXXX" is 11 characters into a /MaxLen 9 box, so the DOR's own
+#     script would over-run the cell that taxfill's 9 plain digits fit. Ohio
+#     prints an SSN box on every schedule page precisely so detached schedules
+#     stay identifiable.
+#   * L17 and L19 — /Tx, /Ff = 1, /MaxLen 9, page 2. NEWLY MAPPED (line keys
+#     "17" and "19"). The document-level JavaScript settles what the flag does
+#     not, and it says the ReadOnly bit is a UI DEFAULT rather than an
+#     instruction: the `case "CHK_AMD"` branch clears readonly on L17/L19 (and
+#     SETS it on L25/L26A-G) when the amended box is ticked, and swaps both back
+#     otherwise, resetForm()-ing the group each way. The printed face agrees
+#     exactly — 17/19 read "Amended return only", 25/26 read "Original return
+#     only" — so the JS branch and the captions describe one mutually exclusive
+#     pair of entry sets, and this pack maps the box that flips it
+#     (`amended_return` -> CHK_AMD). Their /AA is byte-identical to their
+#     UNFLAGGED neighbours L18/L20 and their /V is absent, so nothing computes
+#     them and nothing is overwritten. Unmapped, an amended Ohio return filed
+#     through taxfill printed blanks on two lines its own printed sums
+#     enumerate. Full detail at the L17/L19 entry in fields[].
+#   * SchedC_L12 and SchedC_L12_JFC are NOT in this year's ReadOnly set (/Ff
+#     absent on both) — worth recording because Ohio SET the bit on both for
+#     2024. On the 2023 blank they are unlocked by JavaScript instead: the
+#     `case "CHK_FILING_STATUS"` branch runs
+#     `getField("SchedC_L12").readonly = false` /
+#     `getField("SchedC_L12_JFC").readonly = false` on value "2" (married
+#     filing jointly), re-locks them on "1" (single) and "3" (married filing
+#     separately), and unlocks them again in the no-selection `else` branch.
+#     Six references in all, per name. They are mapped as ordinary narrow `text`
+#     boxes (schedC_12, schedC_12_jfc). For 2024 that branch was rewritten
+#     around new hideAndClear()/showEditable() helpers and every SchedC_L12 line
+#     was deleted from it — ZERO occurrences of either name in the whole 2024
+#     JavaScript, doc-level and /AA alike — while the static /Ff went 0 -> 1, so
+#     the 2024 cells can never be unlocked in a viewer at all. That is a DOR
+#     authoring regression, not a computation.
+#     NOTHING computes either cell in either year: SchedC_L12_JFC has no
+#     /C action and is absent from /CO, and SchedC_L12's /C is only `dsRound()`
+#     ("Rounds a value to nearest integer" on event.value) — the identical call
+#     the ordinary, NON-ReadOnly L18 carries. /CO membership proves nothing on
+#     this form: it holds 321 entries and includes L1, L18 and essentially every
+#     money line on all 13 pages.
+#   No mapped widget falls in P-007 class 1 (a widget already holding a
+#   DOR-printed constant) or class 2 (a cell the printed text makes necessarily
+#   blank): the bundle's DOR-printed constants — $250,000 / $125,000 (IT BUS
+#   line 12), 3% (IT BUS line 16), $650 (Credits line 12) — are printed in the
+#   CAPTION, not inside a widget.
+#   OUPC PAGE-13 ADJUDICATION (settled 2026-08-24, cell by cell). The page-13
+#   Ohio Universal Payment Coupon — the payment slip the printed face tells a
+#   filer to mail WITH the check ("Include the coupon below with your Ohio
+#   individual income tax payment") — carries 60 ReadOnly non-pushbutton
+#   fields. Each was read off the printed face (200-dpi render), its
+#   annotation /F flag, and the file's own JavaScript. They split four ways,
+#   and the split is identical in the 2024 blank:
+#   * MAPPED, P-007 class 4 — the SEVEN visible filer-data cells the DOR needs
+#     populated to credit the payment: UPC_FName (/MaxLen 15), 40P_MI (1),
+#     UPC_LName (14), UPC_address1 (34), UPC_CityStateZip (34) — the coupon's
+#     payer name/address block, whose /AA /C scripts copy TP_FN / TP_MI /
+#     TP_LN / ADDRESS1 / `CITY + ", " + STATE + " " + ZIP` in a viewer —
+#     plus UPC_1st3LName (3; printed caption "Using UPPERCASE letters, print
+#     the first three letters of the taxpayer's last name.", /C takes
+#     substr(0,3) of UPC_LName) and UPC_Identifier (9; printed caption
+#     "Taxpayer's SSN", /C is `event.value = this.getField("TP_SSN").
+#     valueAsString;`). taxfill never runs that JavaScript, so before this
+#     change a fully-filled return mailed a coupon whose name, address and SSN
+#     printed BLANK under their captions, and UPC_CityStateZip printed its
+#     junk factory /V ",  " — an orphan comma — all read off the audit render,
+#     not inferred. UPC_Identifier and UPC_1st3LName additionally feed the
+#     DS_Print GATHER_H Ultraforms barcode payload in a viewer, i.e. they are
+#     data the DOR consumes, not decoration. Precedent: federal f1040es maps
+#     every voucher's name/SSN/address block (voucher_N.name.*,
+#     .identifying_number, .mailing_address.*), and this pack already mapped
+#     the coupon's Amount-of-Payment box.
+#   * NOT MAPPED — the 37 visible SCAN-LINE / CHECK-DIGIT cells (the OCR strip
+#     across the coupon foot, /Rect y 43-55): sdnum1..3, Scan4, ScanID1..3,
+#     ScanPH1..5, ScanSSN1..9, ScanDate1..4, checkdigit1, Scan_Reason1/2,
+#     checkdigit2, sd1..4, checkdigitSD, fc1..3. Mechanism reproduced from the
+#     scripts, not inferred from /Ff: checkdigit1 is a Luhn mod-10 check digit
+#     — DS_Init and runcheckdigit() double each even-position digit of
+#     ScanPH1..5 + ScanSSN1..9 + ScanDate1..4, sum the digit parts, and write
+#     `modulus - remainder`; checkdigit2's /C runs the same arithmetic over
+#     UPC_Reason + SSN digits; every other cell's /C emits one constant or
+#     substr() digit of the line (sdnum1/2 "4", sdnum3 "0" and Scan4 "8" for
+#     tax type 440, ScanID1..3 "0"/"1"/"8", ScanPH1..5 "0", fc1..3 "2",
+#     ScanSSN* = digits of UPC_Identifier, ScanDate* = digits of
+#     UPC_ScanDate), each gated on UPC_Identifier being non-empty. sd1..4 and
+#     checkdigitSD ship /V "0" and PRINT ("0000 0" at the strip's right edge
+#     on the blank render) — the DOR's own no-school-district zeros; the rest
+#     print empty until a viewer runs the JS. taxfill implements neither the
+#     check-digit arithmetic nor the field-code table, and a WRONG digit
+#     corrupts DOR intake scanning — a mis-scanned payment is worse than an
+#     empty strip the DOR can still key from the printed face. fill_form now
+#     raises its unknown-line-key ValueError on every one of these names.
+#   * NOT MAPPED — the 12 HIDDEN data carriers (/F = 6 = Hidden|Print, no
+#     /AP): UPC_TaxType (/V "440"), UPC_IDType ("01"), UPC_Reason ("54"),
+#     UPC_ScanDate ("1223" = "12" + tax-year last two, per chkScanDate()),
+#     TaxTypeDisplay ("Individual Income Tax"), TaxTypeDisplay2 ("440"),
+#     IDDisplay ("01"), ReasonDisplay ("54"), UPC_Payable ("Ohio Treasurer of
+#     State"), UPC_MailTo1/UPC_MailTo2, UPC_SDN. A hidden annotation never
+#     prints: the visible "Individual Income Tax 440 / ID Type 01 / Coupon
+#     Type 54" row and the payable/mail-to text on the coupon face are STATIC
+#     page content (this corrects the earlier header text, which said the
+#     *Display cells "restate" the constants as if the widgets printed them).
+#     These fields exist to feed the viewer JS and the GATHER_H barcode.
+#     Proof nothing should write them: hidden UPC_MailTo2's /V is "P.O. Box
+#     2057, Columbus, OH 43270-2057" (the page-2 payment-enclosed RETURN
+#     address) while the coupon's printed static text says "P.O. Box 182131,
+#     Columbus, OH 43218-2131" — the DOR's own field value disagrees with its
+#     own printed face. UPC_SDN (school-district number, /MaxLen 4) is doubly
+#     dead: the face's own bullet says "Do not use this coupon to make a
+#     payment for a school district income tax return", and its /AA /Fo calls
+#     setSDNum(), a function DEFINED NOWHERE in the file (every JavaScript
+#     string grepped — the doc-level name tree, /OpenAction, and every field,
+#     widget, page and annotation action including /Next chains; UPC_TaxType's
+#     /V and /Bl call it too) — vestigial SD 100 machinery.
+#   * NOT MAPPED — 4 visible DOR-owned cells: UPC_TaxYear (/V "2023" prints
+#     under the DOR's "Tax Year" caption — P-007 class 1, the widget already
+#     holds the DOR-printed constant, and overwriting it would relabel the
+#     payment period); VendorID (/V "89" prints — the DOR's forms-vendor code,
+#     class 1; "89" is also the scanline suffix on every page's barcode);
+#     today (/V "03 07 24" prints, /MaxLen 8 comb — DS_Init writes
+#     util.printd("mm dd yy", new Date()) in a viewer, so the cell is the
+#     PRINT DATE, not return data; the return maps no wall-clock source and
+#     the shipped authoring-date value is cosmetic, while a caller-supplied
+#     date would assert a mailing date taxfill cannot know); UPC_SDHide (an
+#     empty white-mask widget over the school-district area — no /V, no /AA,
+#     no script in the file writes it, prints nothing).
 #
 # Money vs text. Dollar boxes are typed `money`; the narrow "-" sign boxes that
 # precede some negative-capable lines (L1_NEG, L3_NEG, L20_NEG and the IT BUS
@@ -67,13 +238,51 @@
 #   semantic (tiny fixed-credit boxes vs amount boxes), NOT a single "/MaxLen < N"
 #   threshold. Audited 2026-06-19: every taxpayer-fillable widget on all 13 pages
 #   is mapped to the correct line/column/type; 0 fillable widgets left unmapped.
+#   The "$50 senior-citizen credit" and "$200 retirement credit" figures above are
+#   NOT printed on this blank (printed line 4 reads only "Senior citizen credit
+#   (must be 65 or older to claim this credit)" and line 2 only "Retirement income
+#   credit (include 1099-R forms)"). They are carried in knowledge/states/oh/
+#   2023.yaml, not asserted by the PDF; the structural rationale is the /MaxLen.
+#
+# VISION AUDIT of the 2026-08-21 P-007 fix. scripts/audit_pack.py was re-run
+# against this pack before and after the three class-4 mappings and the renders
+# were compared page by page. BEFORE, with all 428 then-mapped lines filled:
+# pages 2-12 each printed their SSN caption over an EMPTY box (read on 2, 3, 7
+# and 12) and page 2 printed 14 = 288, 15 = 299, 16 = 310, 18 = 321, 20 = 332,
+# 21 = 343 with lines 17 and 19 EMPTY. AFTER, at 431 mapped lines: all eleven
+# page headers show their sentinel and 17 = 321 and 19 = 343 land on their own
+# printed rows, the whole ladder shifting cleanly by one sentinel step
+# (14 = 288 ... 21 = 365). Nothing else on any page moved and verify still
+# returns 0 assertion / 0 clipping / 0 checkbox FAILs. Separately, because
+# verify's P-001 clipping scan SKIPS ReadOnly widgets and so cannot see TP_SSN1,
+# a real 9-digit SSN was filled and pages 2 and 3 read directly: "123456789"
+# renders unclipped inside the /MaxLen 9 box on both.
+# RE-RUN 2026-08-24 after the seven OUPC class-4 mappings, before/after page-13
+# renders compared. BEFORE, at 431 mapped lines with every line filled: the
+# mailed coupon showed ONLY "Test 218" in Amount of Payment — the name/address
+# block was empty except UPC_CityStateZip's orphan comma, and the
+# first-3-letters and "Taxpayer's SSN" boxes were blank under their printed
+# captions. AFTER, at 438: each sentinel lands in its own cell (name row
+# "Test Taxpayer 2 / T / Test Taxpayer", "322 Synthetic Way", "Faketown 223"
+# replacing the comma, "Tes" under the first-3-letters arrow, "Test 225" under
+# "Taxpayer's SSN", "Test 218" unchanged), every DOR constant is intact
+# ("Tax Year 2023", 440, 01, 54, 89, "03 07 24", "0000 0"), and the scan-line
+# strip took no value. Nothing else on any page moved; verify returns
+# 0 assertion / 0 clipping / 0 checkbox FAILs. Because the clipping scan skips
+# ReadOnly widgets, a realistic fill was also read directly: JONATHAN / Q /
+# WOLFENSTEIN / 1234 EAST BROAD STREET APT 12 / COLUMBUS, OH 43215-1234 / WOL /
+# 123456789 all render unclipped in their /MaxLen 15/1/14/34/34/3/9 boxes.
 #
 # Relations / cross_form. IT 1040 line 1 is explicitly "Federal adjusted gross
 # income (federal 1040 or 1040-SR, line 11)", so cross_form 1 == f1040.11 is
 # declared. Only unconditional sums whose operands are ALL mapped money lines and
-# carry no sign-box ambiguity are declared (line 13 total tax liability; the
-# Schedule of Adjustments total-additions/total-deductions; the Schedule of
-# Credits subtotals). Sign-boxed lines (1, 3, 20, IT BUS 10) and "if negative,
+# carry no sign-box ambiguity are declared — exactly four, matching the
+# `relations` block below one for one: line 13 (total tax liability), line 18
+# (total tax payments, newly declarable now that 17 is mapped), schedA_11 (total
+# additions) and the two Schedule of Credits totals schedC_38 / schedC_44.
+# Schedule of Adjustments total DEDUCTIONS (schedA_44) is NOT declared — an
+# earlier version of this paragraph claimed it was; see the block for why.
+# Sign-boxed lines (1, 3, 20, IT BUS 10) and "if negative,
 # enter zero" / "if line X is more than..." conditional lines are OMITTED per the
 # conservative house style.
 form: Form IT 1040
@@ -279,7 +488,20 @@ fields:
     type: money
 
   # =========================================================== IT 1040 page 2
-  # (TP_SSN1 top-of-page header SSN widget is a read-only mirror — see header note.)
+  # TP_SSN1 is the per-page identity header. It is a SEPARATE AcroForm field
+  # from TP_SSN (page 1), not a widget copy of it: one field, 12 widget kids —
+  # 11 on document pages 2-12, the 12th parented to a /Type /Template object
+  # that is not in the page tree. Page 2 prints "SSN:" over it and pages 3-12
+  # print "Primary taxpayer's SSN". Its own /AA /C is
+  # `var ssNumber = this.getField("TP_SSN").valueAsString;
+  # event.value = util.printx("XXX XX XXXX",ssNumber)` — the exact page-header
+  # SSN mirror P-007 names as class 4. taxfill never executes that JavaScript,
+  # so writing tp_ssn CANNOT populate it and it must be written directly, with
+  # the SAME nine digits as tp_ssn (see the READONLY ADJUDICATION header note).
+  - line: tp_ssn_page_header     # pages 2-12 header SSN mirror — write the same 9 digits as tp_ssn
+    field: TP_SSN1
+    type: text
+    maxlen: 9
   - line: 7a                     # Amount from line 7 on page 1
     field: L7a
     type: money
@@ -316,10 +538,36 @@ fields:
   - line: "16"                   # Refundable credits — Ohio Schedule of Credits, line 44
     field: L16
     type: money
-  # lines 17 & 19 widgets (L17/L19, "Amended return only") are read-only on this
-  # PDF — see header note; omitted from the fillable map.
+  # Lines 17 and 19 are the two "Amended return only" cells. They carry
+  # /Ff = 1 (ReadOnly), but that bit is the form's UI DEFAULT for an ORIGINAL
+  # return, not an instruction: the document-level JS unlocks them the moment
+  # the amended box this pack maps is ticked —
+  #   case "CHK_AMD": if (event.source.value == "Yes") {
+  #       getField("L17").readonly = false; getField("L19").readonly = false;
+  #       getField("L25").readonly = true;  getField("L26A"..."L26G").readonly = true;
+  #       resetForm([...]) }
+  #   else { L17/L19 readonly = true; L25/L26A-G readonly = false; resetForm([...]) }
+  # — and the printed face agrees, because 17/19 read "Amended return only"
+  # while 25/26 read "Original return only". So they are FILER-ENTRY cells (a
+  # JS-gated lock, not a computed value), P-007 class 4 by the same route as
+  # CHK_AMD, and MAPPED. Unmapped they shipped BLANK on every amended return
+  # while the printed sums that enumerate them printed a number: line 18 is
+  # "Total Ohio tax payments (add lines 14, 15, 16 and 17)" and line 20 is
+  # "Line 18 minus line 19". Neither cell holds a DOR constant (/V absent on
+  # both) and both carry the ordinary money actions of their unflagged
+  # neighbours L18/L20 (/F+/K AFNumber_Format(0,1,0,0,"",true), /V
+  # AFRange_Validate(true, 0, true, 999999999), /C dsRound()).
+  # CALLER NOTE, the mirror of the same JS branch: 17/19 and 25/26a-g are
+  # mutually exclusive by construction. Fill 17/19 only with amended_return
+  # checked, and 25/26a-g only without it.
+  - line: "17"                   # Amended return only — amount previously paid with original and/or amended return
+    field: L17
+    type: money
   - line: "18"                   # Total Ohio tax payments (add lines 14, 15, 16 and 17)
     field: L18
+    type: money
+  - line: "19"                   # Amended return only — overpayment previously requested on original and/or amended return
+    field: L19
     type: money
   - line: 20_neg                 # line 20 "-" sign box (place a "-" if negative)
     field: L20_NEG
@@ -1673,10 +1921,45 @@ fields:
     type: money
 
   # =============================== Ohio Universal Payment Coupon (page 13)
-  # Only the amount-of-payment box is free-entry; all other coupon widgets are
-  # read-only auto-populated mirrors and are omitted (see header note).
+  # The filer-data cells of the detachable payment slip. UPC_Payment is the
+  # coupon's one free-entry widget; the six upc_* identity cells are ReadOnly
+  # P-007 class-4 mirrors adjudicated 2026-08-24 (OUPC PAGE-13 ADJUDICATION in
+  # the header): in a viewer each is fed by its own /AA /C from the page-1
+  # return fields, taxfill never runs that JavaScript, and unmapped they
+  # mailed a coupon whose name, address and SSN printed BLANK under their
+  # captions. The coupon's scan-line/check-digit cells, hidden data carriers
+  # and DOR-owned cells stay deliberately unmapped — every one is named, with
+  # its mechanism, in the header block.
   - line: upc_payment           # Amount of Payment
     field: UPC_Payment
+    type: text
+    maxlen: 9
+  - line: upc_first_name        # payer name block; /C copies TP_FN — supply tp_first_name's value
+    field: UPC_FName
+    type: text
+    maxlen: 15
+  - line: upc_mi                # /C copies TP_MI — supply tp_mi's value
+    field: 40P_MI
+    type: text
+    maxlen: 1
+  - line: upc_last_name         # /C copies TP_LN — supply tp_last_name's value
+    field: UPC_LName
+    type: text
+    maxlen: 14
+  - line: upc_address_line_1    # /C copies ADDRESS1 — supply address_line_1's value
+    field: UPC_address1
+    type: text
+    maxlen: 34
+  - line: upc_city_state_zip    # /C composes CITY + ", " + STATE + " " + ZIP — supply "City, ST 12345"; unmapped it printed its junk factory /V ",  " (an orphan comma)
+    field: UPC_CityStateZip
+    type: text
+    maxlen: 34
+  - line: upc_last_name_first3  # "Using UPPERCASE letters, print the first three letters of the taxpayer's last name."
+    field: UPC_1st3LName
+    type: text
+    maxlen: 3
+  - line: upc_ssn               # "Taxpayer's SSN" — /C copies TP_SSN; supply tp_ssn's value
+    field: UPC_Identifier
     type: text
     maxlen: 9
 relations:
@@ -1687,7 +1970,15 @@ relations:
   # (statutory-capped credit/educator boxes schedC_2/4/8/9, schedA_36) are typed
   # `text` (their PDF /MaxLen is too small to hold a money amount), so they are not
   # money operands.
+  # Line 20 ("Line 18 minus line 19") stays OMITTED even though 18 and 19 are
+  # both mapped money lines: L20_NEG carries its sign, so it is a sign-boxed line.
+  # NEW in this revision: line 18's sum became declarable when lines 17 and 19
+  # were mapped (see the L17/L19 note in fields[]). It is unconditional on the
+  # printed face and all four operands are `money`; on an original return, where
+  # the form locks 17, the missing operand counts as zero (IRS blank-means-zero),
+  # so the relation holds for original and amended returns alike.
   - "13 == 10 + 11 + 12"                                                               # IT 1040: "Total Ohio tax liability ... (add lines 10, 11 and 12)"
+  - "18 == 14 + 15 + 16 + 17"                                                          # IT 1040: "Total Ohio tax payments (add lines 14, 15, 16 and 17)"
   - "schedA_11 == schedA_1 + schedA_2 + schedA_3 + schedA_4 + schedA_5 + schedA_6 + schedA_7 + schedA_8 + schedA_9 + schedA_10"  # "Total additions (add lines 1 through 10 ONLY)"
   - "schedC_38 == schedC_10 + schedC_34 + schedC_36 + schedC_37"                        # "Total nonrefundable credits (add lines 10, 34, 36 and 37)"
   - "schedC_44 == schedC_39 + schedC_40 + schedC_41 + schedC_42 + schedC_43"            # "Total refundable credits (add lines 39 through 43)"

@@ -7,13 +7,20 @@ put it under test, no edits here. Two layers:
 - **offline structural checks** (always run): the pack parses via
   ``load_pack``; the sha256 is real (never the ``"..."`` placeholder); every
   line id matches the binding grammar in ``formpacks/CONVENTIONS.md``;
-  relations parse in verify's evaluator; cross_form targets use known form
-  keys; radio options sharing one field share one group.
+  relations parse in verify's evaluator.
 - **golden round-trip** (``@pytest.mark.network``): fetch the official
   blank (shared cache ``.cache/blanks/``), fill EVERY mapped line with
   distinct synthetic values, verify (assertion diff, clipping scan,
   checkbox audit), and render page 1. Skips gracefully when the cache is
   empty and the network is unreachable.
+
+Two invariants that USED to live here are repo-wide and now live in
+``test_pack_invariants.py`` instead: cross_form target resolution and the
+checkbox-``group`` rule. Both were parametrized over ``PACK_PATHS`` (federal
+only) while ``formpacks/CONVENTIONS.md`` called them binding on every pack,
+and three dangling ``f1040.11`` refs plus two packs' worth of missing group
+ids shipped past CI through that gap. ``KNOWN_FORM_KEYS`` and ``LINE_ID_RE``
+still live here and are imported from there.
 
 With zero packs the parametrized tests collect to zero cases and the
 harness still proves itself through the synthetic-value generator unit
@@ -224,114 +231,14 @@ def test_pack_relations_parse_in_verifys_evaluator(pack_path: Path):
     relations(pack, {})
 
 
-# (tax_year, form_key, target_line) triples a cross_form rule may legitimately
-# reference even though no in-scope pack provides them YET — kept explicit and
-# commented so the gap stays visible and a stale entry surfaces when the pack
-# does ship. (The 2022 1040-NR sched_2/sched_3 rules were REMOVED from the pack
-# rather than allowlisted, since sched_2/sched_3 are out of the 2022 scope.)
-CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
-    {
-        # 2024 Schedule 3 can attach to a 1040 OR a 1040-NR, so it carries both
-        # "8 == f1040.20"/"f1040nr.20" and "15 == f1040.31"/"f1040nr.31". The
-        # 2024 scope ships f1040 but no f1040nr pack, so the f1040nr legs cannot
-        # resolve yet (the f1040 legs do). Remove these once a 2024 f1040nr pack
-        # ships.
-        (2024, "f1040nr", "20"),
-        (2024, "f1040nr", "31"),
-        # (The 2025 Schedule 3 f1040nr legs and the 2025 f1040 Schedule
-        # 1/2/1-A legs were allowlisted here while those packs were pending;
-        # the 2025 f1040nr, sched_1, sched_2, and sched_1a packs have all
-        # shipped, so those targets now resolve directly.)
-        # The 2022 1040-NR keeps its Schedule 2/3 cross_form rules so the verifier
-        # can emit its runtime "attach Schedule 2/3 and re-verify" caution when a
-        # back-filer puts a nonzero amount on lines 17/20/23b/31, but the M2 2022
-        # scope (dev plan section 15) ships no 2022 sched_2/sched_3 pack, so those
-        # targets cannot resolve yet. Remove once 2022 sched_2/sched_3 ship.
-        (2022, "sched_2", "3"),
-        (2022, "sched_2", "21"),
-        (2022, "sched_3", "8"),
-        (2022, "sched_3", "15"),
-    }
-)
-
-
-def _lines_by_year_and_form() -> dict[tuple[int, str], set[str]]:
-    """Map (tax_year, form_key) -> set of line ids, over every discovered pack.
-
-    form_key is the pack DIRECTORY name (what cross_form refs and FilingItem
-    keys use), which the parses-and-matches test already pins to the pack's
-    own form; tax_year comes from the loaded pack.
-    """
-    by_key: dict[tuple[int, str], set[str]] = {}
-    for path in PACK_PATHS:
-        loaded = load_pack(path)
-        form_key = path.parent.name
-        by_key[(loaded.tax_year, form_key)] = {pf.line for pf in loaded.fields}
-    return by_key
-
-
-@pytest.mark.parametrize("pack_path", PACK_PATHS, ids=_pack_id)
-def test_pack_cross_form_targets_resolve_to_an_existing_pack_line(pack_path: Path):
-    pack = load_pack(pack_path)
-    lines_by_key = _lines_by_year_and_form()
-    local_lines = {pf.line for pf in pack.fields}
-    for rule in pack.cross_form:
-        sides = [side.strip() for side in rule.split("==")]
-        assert len(sides) == 2 and all(sides), (
-            f"cross_form rule {rule!r} must be '<ref> == <ref>' with exactly one '=='"
-        )
-        for side in sides:
-            if "." in side:
-                form_key, _, target = side.partition(".")
-                assert form_key in KNOWN_FORM_KEYS, (
-                    f"cross_form rule {rule!r}: '{form_key}' is not a known form key — "
-                    f"refs are '<form_key>.<line>' with form_key in {sorted(KNOWN_FORM_KEYS)}"
-                )
-                assert LINE_ID_RE.fullmatch(target), (
-                    f"cross_form rule {rule!r}: target line '{target}' violates the line-id grammar"
-                )
-                if (pack.tax_year, form_key, target) in CROSS_FORM_TARGET_ALLOWLIST:
-                    continue  # out-of-scope-for-now target, explicitly allowed
-                target_lines = lines_by_key.get((pack.tax_year, form_key))
-                assert target_lines is not None, (
-                    f"cross_form rule {rule!r}: no pack '{form_key}' exists for tax_year "
-                    f"{pack.tax_year} — add the target pack, remove the rule, or allowlist "
-                    f"({pack.tax_year}, {form_key!r}, {target!r}) in "
-                    f"CROSS_FORM_TARGET_ALLOWLIST with a reason"
-                )
-                assert target in target_lines, (
-                    f"cross_form rule {rule!r}: line '{target}' is not a line of pack "
-                    f"'{form_key}' ({pack.tax_year}) — fix the target line or add it to that "
-                    f"pack's fields[]"
-                )
-            else:
-                assert side in local_lines, (
-                    f"cross_form rule {rule!r}: local ref '{side}' is not a line of this "
-                    f"pack — fix the ref or add the line to fields[]"
-                )
-
-
-@pytest.mark.parametrize("pack_path", PACK_PATHS, ids=_pack_id)
-def test_pack_radio_options_share_one_group_and_distinct_states(pack_path: Path):
-    pack = load_pack(pack_path)
-    by_field: dict[str, list[PackField]] = {}
-    for pf in pack.fields:
-        if pf.type == "checkbox":
-            by_field.setdefault(pf.field, []).append(pf)
-    for field, members in by_field.items():
-        if len(members) < 2:
-            continue
-        groups = {pf.group for pf in members}
-        assert None not in groups and len(groups) == 1, (
-            f"checkbox lines {[pf.line for pf in members]} share AcroForm field "
-            f"'{field}' (a radio group) but not one 'group' id — give every option "
-            f"the same group (formpacks/CONVENTIONS.md)"
-        )
-        states = [pf.on_state for pf in members]
-        assert len(set(states)) == len(states), (
-            f"radio options on field '{field}' reuse an on_state ({states}) — each "
-            f"option needs its own state; dump the blank PDF's appearance states"
-        )
+# cross_form target resolution and the checkbox-`group` invariant used to live
+# here, parametrized over PACK_PATHS — i.e. federal packs only, while
+# formpacks/CONVENTIONS.md advertised both as binding on every pack. They now
+# sweep every discovered pack, federal AND state, from
+# packages/core/tests/test_pack_invariants.py, along with
+# CROSS_FORM_TARGET_ALLOWLIST and KNOWN_UNGROUPED_YESNO_PAIRS. Do not
+# reintroduce a federal-only copy: three dangling `f1040.11` refs and two
+# packs' worth of missing group ids shipped past CI in exactly that gap.
 
 
 # ---------------------------------------------------------------------------
@@ -484,69 +391,12 @@ def test_sched_d_shaded_g_cells_are_the_only_readonly_widgets_and_unmapped(pack_
 # Pitfall P-008 — separate-widget Yes/No pairs need a `group` id
 # ---------------------------------------------------------------------------
 
-# The pre-existing group gate (test_pack_radio_options_share_one_group_and_
-# distinct_states) only fires when two checkbox lines SHARE one AcroForm
-# field. Real IRS forms implement Yes/No the other way just as often: TWO
-# independent terminal /Btn fields (c1_1[0] and c1_1[1]), each with its own
-# /V and a single on-state. Nothing in the PDF makes those exclusive and the
-# shared-field gate never sees them, so an ungrouped pair sails through and
-# fill_form will happily set BOTH boxes on. This test covers that topology by
-# LINE SHAPE ("<stem>.yes" + "<stem>.no") instead of by shared field, which is
-# the check that would have caught the sched_e miss.
-
-# Yes/No line pairs that are knowingly still ungrouped. Each entry is a
-# visible, self-clearing debt: when the pack gets its group ids, this test
-# fails on the stale entry and the entry must be deleted.
-#   sched_d 2023/2024/2025 — the SAME defect on 4 questions per year (qof,
-#   17, 20, 22; all separate-widget pairs, zero group keys). Found by this
-#   test's own sweep while fixing sched_e and deliberately NOT fixed in the
-#   same change: sched_d is under concurrent P-007 work, and each question
-#   needs its own printed-face read to decide the group id and whether the
-#   question is `required`. Tracked in knowledge/pitfalls.yaml P-008.
-KNOWN_UNGROUPED_YESNO_PAIRS: frozenset[tuple[int, str, str]] = frozenset(
-    (year, "sched_d", stem)
-    for year in (2023, 2024, 2025)
-    for stem in ("qof", "17", "20", "22")
-)
-
-
-def _yesno_pairs(pack: FormPack) -> dict[str, list[PackField]]:
-    """Checkbox lines grouped by stem, for stems that have a .yes AND a .no."""
-    stems: dict[str, list[PackField]] = {}
-    for pack_field in pack.fields:
-        if pack_field.type != "checkbox" or "." not in pack_field.line:
-            continue
-        stem, last = pack_field.line.rsplit(".", 1)
-        if last in ("yes", "no"):
-            stems.setdefault(stem, []).append(pack_field)
-    return {stem: members for stem, members in stems.items() if len(members) > 1}
-
-
-@pytest.mark.parametrize("pack_path", PACK_PATHS, ids=_pack_id)
-def test_every_yes_no_pair_shares_one_group_id(pack_path: Path):
-    """P-008: exclusivity comes from the `group` id, not from the PDF."""
-    pack = load_pack(pack_path)
-    form_key = pack_path.parent.name
-    for stem, members in _yesno_pairs(pack).items():
-        groups = {member.group for member in members}
-        grouped = None not in groups and len(groups) == 1
-        known = (pack.tax_year, form_key, stem) in KNOWN_UNGROUPED_YESNO_PAIRS
-        if known:
-            assert not grouped, (
-                f"{form_key} {pack.tax_year}: '{stem}' now has its group id — delete "
-                f"({pack.tax_year}, {form_key!r}, {stem!r}) from "
-                f"KNOWN_UNGROUPED_YESNO_PAIRS so the rule applies to it again (P-008)"
-            )
-            continue
-        assert grouped, (
-            f"{form_key} {pack.tax_year}: lines {sorted(m.line for m in members)} are the "
-            f"Yes/No boxes of ONE question but do not share one 'group' id (groups="
-            f"{sorted(str(g) for g in groups)}). They map to SEPARATE AcroForm fields "
-            f"{sorted({m.field for m in members})}, so the PDF does not make them "
-            f"exclusive and fill_form would set both boxes on — a return showing Yes AND "
-            f"No. Give both lines the same group (formpacks/CONVENTIONS.md, pitfall P-008)"
-        )
-
+# The generic sweep (every pack, every option spelling) lives in
+# test_pack_invariants.py, together with KNOWN_UNGROUPED_YESNO_PAIRS. What
+# stays here is the form-specific pin on the pack that CARRIED the defect:
+# Schedule E's three Yes/No questions, whose widget names, on-states and
+# not-required verdicts are asserted individually so a port cannot re-derive
+# them wrongly.
 
 SCHED_E_PACK_PATHS = [path for path in PACK_PATHS if path.parent.name == "sched_e"]
 

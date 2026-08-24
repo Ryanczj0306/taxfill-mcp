@@ -3,9 +3,9 @@
 Pitfall P-007 started as one pack's bug (Schedule D mapped the two shaded
 no-adjustment (g) cells) and the fix shipped two sched_d-shaped tests. This
 file is the generic version: it sweeps **every** discovered pack — federal
-AND state, ~140 of them — reads each pack's own blank, and asserts that a
-mapped field binds a ReadOnly widget (/Ff bit 1) only where an explicit,
-per-entry-justified table says it may.
+AND state, 150 of them (93 federal + 57 state) — reads each pack's own blank,
+and asserts that a mapped field binds a ReadOnly widget (/Ff bit 1) only where
+an explicit, per-entry-justified table says it may.
 
 Why a flag scan is not enough, and why the tables carry prose. "ReadOnly"
 means four different things on real tax PDFs, and only the printed row text
@@ -38,10 +38,36 @@ tells them apart (P-007's DISCRIMINATOR):
    majority of this repo's ReadOnly bindings by far. taxfill never executes
    that JavaScript, so a running total, a page-2/3/4 name+SSN mirror or a
    carried subtotal that the pack does NOT map ships BLANK on the filed
-   return. Those bindings are correct and there are 1,119 of them across 7
+   return. Those bindings are correct and there are 1,140 of them across 10
    packs, so they are pinned per pack by COUNT (``STATE_COMPUTED_READONLY``)
-   rather than per widget — a per-widget list of 1,119 names would be a
+   rather than per widget — a per-widget list of 1,140 names would be a
    rubber stamp, while the count still fails the moment a port grows it.
+   Note that not every row is a *computed* field, and the mechanism is not
+   always JavaScript:
+
+   - the OH rows include ReadOnly bits Ohio set on boxes its own printed face
+     tells the filer to complete, plus a THIRD sub-shape worth naming — a
+     ReadOnly bit that is a JS-GATED UI DEFAULT rather than a computed value
+     or an authoring slip. IT 1040 lines 17/19 are filer-entry cells the
+     form's own script UNLOCKS on ``CHK_AMD == "Yes"`` while simultaneously
+     LOCKING lines 25/26a-g, matching the printed "Amended return only" vs
+     "Original return only" captions. The discriminator: look for
+     ``getField("<name>").readonly = false`` in the document JavaScript, and
+     compare the widget's ``/AA`` against an UNFLAGGED neighbour on an
+     adjacent printed line (L17/L19 are identical to L18/L20).
+   - the RI rows are not JavaScript at all. RI-1040 is an XFA form whose
+     identity mirrors propagate by declarative ``<bind match="global"/>`` with
+     ZERO ``<script>`` elements; the per-page ``access="protected"`` attribute
+     is what LiveCycle emits as the ReadOnly bit. The renderer's pdfium build
+     has no XFA support, so no XFA form's bindings will ever propagate in this
+     pipeline — a durable reason, not a per-form one.
+
+   What never settles the question is the flag, or a JavaScript *count*:
+   ``pdfinfo``'s "JavaScript: yes" is satisfied by ``AFNumber_Format`` /
+   ``AFSpecial_Keystroke`` FORMATTING scripts and says nothing about whether a
+   form computes. Only an ``/AA /C`` action or membership in a DISCRIMINATING
+   AcroForm ``/CO`` does — and see the OH 2024 row for why ``/CO`` membership
+   often discriminates nothing at all.
 
 Layers, following the house pattern (test_formpacks_federal.py):
 
@@ -323,20 +349,33 @@ class StateComputed(NamedTuple):
     why: str
 
 
-# State DOR PDFs set ReadOnly on fields their own embedded JavaScript owns:
-# running totals, carried subtotals, and header mirrors of the filer's name
-# and SSN repeated on later pages. taxfill NEVER runs that JavaScript — the
-# engine computes the numbers itself (calc.py) and writes them — so a pack
-# that omitted these would file a return with blank totals. Mapping them is
-# correct; what needs a gate is DRIFT, hence a pinned count per pack.
+# State DOR PDFs set ReadOnly on fields whose value the FORM owns rather than
+# the filer: running totals, carried subtotals, header mirrors of the filer's
+# name and SSN repeated on later pages, and cells the form only unlocks on some
+# other answer. taxfill NEVER runs that propagation — no embedded JavaScript,
+# and no XFA binding engine either — so the engine computes the numbers itself
+# (calc.py) and writes them, and a pack that omitted these would file a return
+# with blank totals or a blank page header. Mapping them is correct; what needs
+# a gate is DRIFT, hence a pinned count per pack.
 #
 # Counts are mapped pack FIELDS, measured 2026-08-20 against each pack's
-# sha-pinned cached blank. Two other ways of counting the same thing give
-# different numbers, so state the metric or the next audit will "fix" a
-# non-bug: distinct WIDGET names run lower where several option lines share
-# one /Btn (GA: 193 fields, 191 widgets), and raw ANNOTATION counts run
-# higher where a read-only header widget repeats across pages under one /T
-# (WV pages 2, 8, 17, 18).
+# sha-pinned cached blank, and re-measured 2026-08-21 for the ten-pack state
+# tranche (ar 2024/2025, nc/nj/oh/ri/ut/va 2024, or/pa 2025). Two of those ten
+# intersect — oh/2024 (6) and ri/2024 (6) — and the other eight measure an
+# EMPTY intersection against their own blanks and therefore take no row; nc,
+# nj, ut, va, or and pa were each confirmed at zero rather than assumed. The
+# same 2026-08-21 sweep also moved two existing rows: oh/2023 2 -> 5 and
+# oh/2024 3 -> 6, as the blocking P-007 class-4 fixes landed. Both readers
+# agree on every figure below: walking page /Annots and walking the AcroForm
+# /Fields tree to its terminals give identical mapped-∩-ReadOnly sets, in both
+# cases resolving /Ff up the /Parent chain.
+#
+# Two OTHER ways of counting the same thing give different numbers, so state the
+# metric or the next audit will "fix" a non-bug: distinct WIDGET names run lower
+# where several option lines share one /Btn (GA: 193 fields, 191 widgets), and
+# raw ANNOTATION counts run higher where a read-only header widget repeats
+# across pages under one /T (WV pages 2, 8, 17, 18; and OH's TP_SSN1, which is
+# ONE field with 12 widget kids).
 #
 # Every other state pack is absent from this table and therefore pinned at
 # ZERO. One pack could not be measured: states/ms/2023/f80105 — its blank is
@@ -375,12 +414,85 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
     ),
     StateComputed(
         "states/oh/2023/it1040_oh/pack.yaml",
-        2,
-        "NOT computed totals: CHK_AMD ('AMENDED RETURN - Check here') and "
-        "CHK_SP_NON_RES_STMT are /Btn boxes the printed face tells the filer to CHECK, "
-        "each carrying a bare /Ff = 1 while its own sibling (CHK_NOL, "
+        12,
+        "TWELVE widgets, none of them a computed total: the five below plus the SEVEN "
+        "page-13 Ohio Universal Payment Coupon filer-data cells mapped 2026-08-24 "
+        "(UPC_FName, 40P_MI, UPC_LName, UPC_address1, UPC_CityStateZip, UPC_1st3LName, "
+        "UPC_Identifier — the coupon's payer name/address block, first-3-of-last-name box "
+        "and 'Taxpayer's SSN' box, each fed in a viewer by an /AA /C copy from the page-1 "
+        "return fields that taxfill never runs, so unmapped they mailed a coupon whose "
+        "name, address and SSN printed BLANK under their captions and whose city line "
+        "printed the junk factory /V ',  '). The coupon's OTHER 53 ReadOnly cells — the "
+        "37 scan-line/check-digit cells, 12 hidden carriers and 4 DOR-owned cells — stay "
+        "deliberately UNMAPPED; the cell-by-cell mechanism record is the pack header's "
+        "OUPC PAGE-13 ADJUDICATION. The original five: (a) CHK_AMD ('AMENDED RETURN - Check "
+        "here') and CHK_SP_NON_RES_STMT are /Btn boxes the printed face tells the filer to "
+        "CHECK, each carrying a bare /Ff = 1 while its own sibling (CHK_NOL, "
         "CHK_PRIM_NON_RES_STMT) carries no /Ff at all — an asymmetry that reads as a DOR "
-        "authoring slip, not an instruction. Keep mapped; the boxes must be checkable",
+        "authoring slip, not an instruction. (b) L17 and L19 are the JS-GATED UI DEFAULT "
+        "shape: the document script unlocks both on CHK_AMD == 'Yes' and locks L25/L26A-G "
+        "in the same branch, which is exactly what the printed 'Amended return only' vs "
+        "'Original return only' captions say, so the bit is the default for an ORIGINAL "
+        "return and not an instruction. Their /AA is identical to unflagged L18/L20 "
+        "(/F + /K + /V + /C dsRound()), which is the check that tells the shapes apart. "
+        "(c) TP_SSN1 is the page-header SSN mirror, a SEPARATE AcroForm field from the "
+        "page-1 TP_SSN with 12 widget kids, 11 of them on document pages 2-12 (the 12th "
+        "is parented to a /Type /Template object outside the page tree). Every one of "
+        "pages 2-12 prints an SSN caption, so unmapped it ships a BLANK header on 11 "
+        "pages; its own /AA /C copies TP_SSN in a viewer, which taxfill never runs. All "
+        "three (b)/(c) bindings were added 2026-08-21",
+    ),
+    StateComputed(
+        "states/oh/2024/it1040_oh/pack.yaml",
+        13,
+        "the 2023 row's CHK_AMD, L17, L19 and TP_SSN1 carry over unchanged — and so do "
+        "its seven OUPC coupon filer-data cells (mapped 2026-08-24; the page-13 split of "
+        "60 ReadOnly non-pushbutton fields into 7 mapped / 53 unmapped is identical in "
+        "the 2024 blank, re-verified against it, with the cell-by-cell record in the 2023 "
+        "base pack's OUPC PAGE-13 ADJUDICATION) — plus the two "
+        "joint-filing-credit cells Ohio newly flagged for 2024 (/Ff 0 -> 1): SchedC_L12 "
+        "(/MaxLen 3) and SchedC_L12_JFC (/MaxLen 2). Printed line 12 of the Schedule of "
+        "Credits reads 'Joint filing credit (see instructions for table). ___% times line "
+        "11, up to $650' — a numbered line a joint filer claiming the credit must "
+        "complete, so unmapping either would file a BLANK joint-filing credit. "
+        "CHK_SP_NON_RES_STMT LEFT the ReadOnly set in 2024 (/Ff 1 -> 0), which is why the "
+        "count is 13 and not 14. CORRECTION, 2026-08-21: this row used to say 'SchedC_L12 is "
+        "class 4 exactly: it sits in the AcroForm /CO calculate order and carries an /AA /C "
+        "action, i.e. the form's own JavaScript computes it'. The blank does not support "
+        "that and the claim is the kind P-007's own history says propagates. Re-measured "
+        "against the sha-pinned blanks: /CO holds 325 entries in 2024 (321 in 2023) and "
+        "includes L18 and L20 — the UNFLAGGED neighbours — so /CO membership discriminates "
+        "nothing; SchedC_L12's /C is only dsRound(), byte-identical to unflagged L18's; and "
+        "SchedC_L12_JFC has NO /C at all (only /F + /K) and is absent from /CO in BOTH "
+        "years. The real mechanism is the JS-gated unlock that 2024 BROKE: the 2023 "
+        "'case \"CHK_FILING_STATUS\"' branch unlocks both cells on value '2' (MFJ) and "
+        "re-locks on '1'/'3' — 12 quoted references, 6 per name — while the static /Ff is "
+        "absent; for 2024 that branch was rewritten around new hideAndClear()/"
+        "showEditable() helpers and every SchedC_L12 line was DELETED (ZERO occurrences of "
+        "either name in the whole 2024 JavaScript) while /Ff went absent -> 1. So the 2024 "
+        "cells can never be unlocked in a viewer at all: a DOR authoring regression, not a "
+        "computation. Either way taxfill must write the rate and the credit itself",
+    ),
+    StateComputed(
+        "states/ri/2023/ri1040/pack.yaml",
+        6,
+        "the page-2 and page-3 halves of the twelve-widget identity banner mirror "
+        "(Page2[0]/Page3[0] PrimFirstName + PrimLastName at /Ff 8388609 = "
+        "DoNotScroll|ReadOnly, PrimTaxpayerSSN at /Ff 1). All four pages print "
+        "'Name(s) shown on Form RI-1040 or RI-1040NR' + 'Your social security number', so "
+        "unmapped they ship a BLANK banner. The mechanism is NOT JavaScript: the XFA "
+        "template gives all fifteen instances (page-1 originals + twelve mirrors) exactly "
+        "one <bind match=\"global\"/> and ZERO <script> elements, and gives only these six "
+        "access=\"protected\" — which is what LiveCycle emits as the ReadOnly bit and why "
+        "the Page4/Page5 six are NOT ReadOnly and must NOT appear in this count. taxfill "
+        "never runs the XFA binding engine (the renderer's pdfium build is compiled "
+        "without XFA support), so every mirror must be written explicitly. Added 2026-08-21",
+    ),
+    StateComputed(
+        "states/ri/2024/ri1040/pack.yaml",
+        6,
+        "the same six as the 2023 base — byte-identical widget names, /Ff values, XFA "
+        "bind/access attributes and printed captions on the 2024 blank",
     ),
     StateComputed(
         "states/wi/2023/wi_form1/pack.yaml",

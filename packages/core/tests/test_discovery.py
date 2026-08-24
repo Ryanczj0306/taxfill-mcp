@@ -19,9 +19,26 @@ def test_list_all_packs():
     # + f1040nr/sched_oi 2024 (the ported pair, 2026-08-10) = 59,
     # + the 2024/2025 backfill of the 2023 set (2026-08 batch: 18 forms x 2024
     # incl. sched_a_nr/sched_nec, 16 forms x 2025) = 93,
-    # plus the growing state packs.
+    # plus the state packs, pinned separately below.
     assert len([s for s in allf if s.jurisdiction == "federal"]) == 93
-    assert any(s.jurisdiction.startswith("states/") for s in allf)
+
+    # State packs. 42 for TY2023 (the C1 resident sweep: 38 states/DC with an
+    # AcroForm pack — CA ships 4 — while HI/CT/NM/SC are hand-fill worksheets
+    # and so carry no pack.yaml at all), + NY IT-201/IT-203 x 2024 and x 2025 and
+    # PA-40 2024 (the 2026-08-10 port) = 47, + the 2026-08-21 ten-pack tranche
+    # (AR1000F 2024 AND 2025, D-400 / NJ-1040 / IT 1040 / RI-1040 / TC-40 /
+    # Form 760 x 2024, OR-40 and PA-40 x 2025) = 57. So TY2023 42, TY2024 10,
+    # TY2025 5 — state coverage is no longer TY2023-only, and any claim that it
+    # is should be corrected wherever it survives.
+    states = [s for s in allf if s.jurisdiction.startswith("states/")]
+    assert len(states) == 57
+    assert len({s.tax_year for s in states}) == 3
+    assert len([s for s in states if s.tax_year == 2023]) == 42
+    assert len([s for s in states if s.tax_year == 2024]) == 10
+    assert len([s for s in states if s.tax_year == 2025]) == 5
+    # Every discovered pack is one or the other, so the total is the sum. This
+    # catches a pack landing under a third top-level jurisdiction unnoticed.
+    assert len(allf) == 93 + 57 == 150
 
 
 def test_list_filters_by_jurisdiction_and_year():

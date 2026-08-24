@@ -3,11 +3,24 @@
 # revision year/title were confirmed on the PDF itself, the digest below is the 2024
 # blank's, and the filled render was vision-audited page by page before shipping.
 # International mailing addresses re-verified against the where-to-file page (unchanged).
-# Schedule OI (Form 1040-NR) — Other Information, tax year 2023 revision.
+# Schedule OI (Form 1040-NR) — Other Information, tax year 2024 revision.
+#
+# STALE-YEAR DEFECT FIXED 2026-08-24: the 2026-08-10 port rolled the digest but
+# NOT the item H line keys — this pack shipped h.2021/h.2022/h.2023 (offsets
+# {1,2,3} from tax_year) while the sha-pinned 2024 blank prints item H as
+# "2022 ____ , 2023 ____ , and 2024 ____". Every substantial-presence day count
+# therefore landed in the box printed for the PREVIOUS year (silently — the keys
+# still bound real widgets), and a caller asking for h.2024 got "unknown line
+# key". Renamed to h.2022/h.2023/h.2024 against the SAME widgets
+# (f1_23/f1_24/f1_25 — the bindings do not move between years) and re-verified
+# by rendering the filled page: each sentinel sits in the box printed with its
+# own year. PORTER NOTE: item H keys MUST roll with tax_year on every port
+# (offsets {0,1,2}); see formpacks/CONVENTIONS.md "Year tokens in line keys"
+# and test_pack_invariants.py's year-offset gate, which pins the offsets.
 #
 # Blank verified by rendering page 1 and reading the printed title/year:
-# "SCHEDULE OI (Form 1040-NR) ... Other Information ... 2023" (OMB 1545-0074,
-# Attachment Sequence No. 7C). The official prior-year file is f1040nro--2023.pdf
+# "SCHEDULE OI (Form 1040-NR) ... Other Information ... 2024" (OMB 1545-0074,
+# Attachment Sequence No. 7C). The official prior-year file is f1040nro--2024.pdf
 # (f1040noi / f1040soi do not exist on irs.gov — both 404).
 #
 # Coverage: ALL 65 fillable widgets are mapped (39 text + 26 checkbox kids).
@@ -119,7 +132,7 @@ fields:
     field: "Page1[0].f1_6[0]"
     type: text
 
-  # --- item G: dates entered/departed the US during 2023 ------------------
+  # --- item G: dates entered/departed the US during 2024 ------------------
   # Canada/Mexico frequent-commuter boxes (conditional, then skip to item H)
   - line: g.canada
     field: "Page1[0].c1_5[0]"
@@ -198,13 +211,18 @@ fields:
     maxlen: 8                               # PDF /MaxLen is 8 — dates are mm/dd/yy
 
   # --- item H: days present in the United States per year -----------------
-  - line: h.2021
+  # The 2024 blank prints: "H Give number of days (including vacation,
+  # nonworkdays, and partial days) you were present in the United States
+  # during: 2022 ____ , 2023 ____ , and 2024 ____ ." The year picks WHICH BOX,
+  # so these keys roll with tax_year (offsets {0,1,2}) while the widget names
+  # stay put — re-derive both from the blank on every port.
+  - line: h.2022
     field: "Page1[0].f1_23[0]"
     type: text
-  - line: h.2022
+  - line: h.2023
     field: "Page1[0].f1_24[0]"
     type: text
-  - line: h.2023
+  - line: h.2024
     field: "Page1[0].f1_25[0]"
     type: text
 

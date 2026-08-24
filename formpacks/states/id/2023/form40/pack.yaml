@@ -65,6 +65,26 @@
 #
 # Cross_form. Line 7's printed label is "Enter your federal adjusted gross
 # income from federal Form 1040 or 1040-SR, line 11" -- federal AGI = f1040.11.
+#
+# YEAR-BEARING LINE KEY (renamed 2026-08-24). Printed line 56 splits into two
+# money boxes: "56. Refund ..... [RefundedL56]   Apply to 2024 ..... [AppliedL56]"
+# (page 2 of the sha-pinned blank; the instructions page reads "Line 56
+# Refund/Apply to 2024 ... Any difference will be applied to your 2024 tax and
+# won't be refunded"). The second box was keyed `56.apply_to_2024`. That 2024
+# was correct for THIS pack (2024 = tax_year + 1) but it merely DESCRIBES the
+# carry-forward destination and does not pick a widget — the box is AppliedL56
+# whatever the year — so under formpacks/CONVENTIONS.md's year-token rule
+# (rule 2) the year belongs in the inline comment, not the key. Renamed to the
+# year-free ROLE form `56.apply_to_next_year` (same shape as nj1040 2024's
+# `line69_credit_to_next_year_tax_dNN`, tc40 2024's
+# `refund_applied_to_next_year`, and ny it203's
+# `69_amount_applied_to_next_year_estimate`), so a future TY port never rolls
+# it and never ships it stale. The widget, printed line NUMBER and mapping are
+# untouched. Blast radius, grepped repo-wide BEFORE renaming: the old spelling
+# appeared only in this pack, docs/ROADMAP.md's to-do prose, and
+# test_pack_invariants.py's YEAR_BEARING_KEY_FAMILIES pin — no calc op,
+# extractor, fixture, eval, skill, knowledge file, relation or cross_form rule
+# fills by the old key.
 form: "40"
 jurisdiction: states/id
 tax_year: 2023
@@ -440,7 +460,7 @@ fields:
   - line: "56"                            # "56. Refund"
     field: RefundedL56
     type: money
-  - line: 56.apply_to_2024               # "56. Apply to 2024"
+  - line: 56.apply_to_next_year          # "56. ... Apply to 2024" (2024 = tax_year + 1; the printed year lives here, never in the key)
     field: AppliedL56
     type: money
 

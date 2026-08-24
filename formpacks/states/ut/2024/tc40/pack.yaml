@@ -1,0 +1,854 @@
+# ===========================================================================
+# TY2024 PORT of formpacks/states/ut/2023/tc40/pack.yaml (ported 2026-08-21).
+#
+# TOPOLOGY VERDICT: IDENTICAL. The field map below is the TY2023 map, field for
+# field, in the same order — nothing was re-mapped, added or dropped. Changed
+# from the 2023 pack: `tax_year`, `source_url`, `pdf_sha256`, ONE year-bearing
+# LINE KEY (see the rename note) and the year-specific PROSE; then, in a review
+# pass after this port first shipped, SIX relations were ADDED (the printed "not
+# less than zero" floors on lines 18/20/22/27/39/42 — see Relations) and that
+# renamed key was made year-FREE. Every figure named in this banner was read off
+# the 2024 blank's own printed face or measured from its AcroForm; nothing was
+# carried forward on faith, nothing was inferred, and where this banner once
+# asserted a mechanism from a summary flag it now states the census instead. SIX
+# claims in this banner were WRONG and are labelled where they are corrected:
+# the class-4 JavaScript mechanism (the substantive one), the checkbox count
+# ("six" -> seven) and the /Ff = 0 attribution, the Part 4 fund code ("a FIFTH"
+# -> the sixth), the bare "44-line diff" (no method stated), and the audit's
+# line count ("all 106" -> 104).
+#
+# URL derivation. scripts/scaffold_state_year.py's rule (substitute the proven
+# year token) turns the 2023 pack's
+#   https://files.tax.utah.gov/tax/forms/2023/tc-40.pdf
+# into
+#   https://files.tax.utah.gov/tax/forms/2024/tc-40.pdf
+# which serves HTTP 200, 163,815 bytes, magic bytes "%PDF-1.7" — a real PDF,
+# not an HTML error page wearing a .pdf name.
+#
+# PRINTED IDENTITY (docs/ROADMAP.md records that files.tax.utah.gov once served
+# the 2025 revision from a /2023/ path, so the URL year proves NOTHING — only
+# the PDF's own printed year does). Page 1 of the pinned bytes extracts:
+# "Utah State Tax Commission", "Utah Individual Income Tax Return", "2024" and
+# "TC-40" in the top-right block, USTC scanline form code 40401, and
+# "USTC ORIGINAL FORM". Pages 2 and 3 print "TC-40 / Pg. 2 / 2024" (code 40402)
+# and "TC-40 / Pg. 3 / 2024" (code 40403). The document /Title is
+# "2024 Utah TC-40 Individual Income Tax Return Form" and /ModDate is
+# 2025-01-14. printed_year_verified = 2024 — this is the 2024 revision, not a
+# re-served prior year.
+#
+# DIGEST PROVENANCE (double download). The URL was fetched TWICE, in two
+# independent requests, and both copies digest to
+# 7f74bc368df7133076e3f455a3a1c38e69bf5c2247ad2b6d2ceac73d8ec1adbf — so the pin
+# is the artifact the DOR is actually serving, not a stale or truncated cache
+# entry. (The digest scalar is quoted here, matching the repo-majority style;
+# the 2023 base pack leaves it bare. YAML-identical either way.)
+#
+# FILE SHAPE CHANGED, PACK SCOPE DID NOT. The 2023 file at this URL was the
+# 9-page TC-40 PACKET (core return + TC-40A/B/S/W schedule pages); the 2024
+# file is 3 pages — the CORE TC-40 only. The 2023 pack already scoped itself to
+# the three core pages, so the pack's coverage is unchanged; what changed is
+# that the out-of-scope schedule pages are no longer inside this file at all
+# (UT now publishes them as separate PDFs). Nothing was dropped from the map.
+#
+# AcroForm topology, measured. The 2024 blank carries 111 widgets = 107
+# distinct field names — EXACTLY the same 107 names as the 2023 blank's pages
+# 1-3, with the same set difference in both directions empty (0 added, 0
+# removed, 0 renamed). Per-field /MaxLen, /Ff and page assignment were compared
+# one by one for all 106 mapped fields: every one identical to 2023. "40 Your
+# SSN" and "40 Your last name" still repeat on all three pages under one /T
+# (111 widgets - 107 names = the 4 extra copies), so they stay mapped ONCE.
+# Every /Btn's /AP /N key set was DUMPED, not guessed: the SEVEN real checkboxes
+# ("40 Line 21 Check box", "40 Line 45 Checking", "40 Line 45 Savings",
+# "40 Line 45 Foreign", "40 pg3 part 1 TC-131", "40 Form 8886",
+# "40 pg3 part 7 exempt prop" — this header used to say "six", collapsing the
+# three-box direct-deposit Type question into one) each expose exactly {/Yes},
+# with no /Off state, so every on_state below is still correct. The eighth /Btn
+# is the "Clear form" pushbutton, which is not a checkbox and is not mapped.
+#
+# PRINTED-LINE DIFF — ZERO RENUMBERING. All three pages of both blanks were
+# text-extracted (pdftotext -layout) and diffed. Every printed line number
+# survives unmoved: 1, 2a-2d, 3, 4-22 on page 1; 23-44 on page 2; Parts 1-7
+# with their internal 1./2./3. rows on page 3. No line was inserted, split,
+# removed or renumbered, so the positional risk that makes a same-name port
+# unsafe does not arise here.
+# THE DIFF, WITH ITS METHOD STATED — because the size of a text diff is an
+# artifact of how it is taken, and this header used to print a bare "44-line
+# diff" that a reviewer could not reproduce. Method: `pdftotext -layout -f 1
+# -l 3` on the 2023 packet and `pdftotext -layout` on the whole 2024 file (210
+# extracted lines each), then difflib on the two full extractions. Result: 10
+# changed hunks, 22 lines on each side, i.e. 44 "+/-" lines. Run the SAME
+# comparison page by page instead and it reports 21 per side (42 lines: 16/4/22
+# by page) — two fewer, because the page-boundary blank lines align differently
+# when each page is diffed on its own. Same diff, two defensible counts; a bare
+# number here is not checkable, so both are given with the command that
+# produces them. Content of all 22: (a) the year and scanline-code strings
+# (40301/40302/40303 -> 40401/40402/40403, the three "2024" stamps, the 2c
+# "born in 2023/2024" caption, line 34's "2022 refund applied to 2023" ->
+# "2023 ... to 2024", Part 6 line 2's "2024 taxes" -> "2025 taxes"); (b) the
+# law figures listed below (4.65% -> 4.55%, $1,941 -> $2,046, the three line-17
+# bases); (c) ONE caption reworded — line 14 "State income tax included in
+# federal itemized deductions" -> "State income tax from federal form 1040,
+# Schedule A, line 5a" — plus one punctuation fix (a period added after "the
+# TC-40 instructions" in the Part 4 lead-in); and (d) the added contribution
+# FUND CODE 17 (below) inside a 9-line whitespace reflow of the Part 4 block
+# that moved NO widget: all 111 widgets were compared by name and not one
+# /Rect moved by even 0.01 pt, nor did any /MaxLen, /Ff, /FT, page assignment
+# or /AP /N state set change.
+#
+# LAW / FACE DELTAS vs 2023. Every figure on both sides of every arrow below was
+# transcribed from a printed face: the 2024 values from the pinned 2024 blank,
+# the 2023 values from the 2023 pack's own pinned blank. NOTE ON ATTRIBUTION:
+# the BILL NUMBERS below (SB 69, SB 223) are NOT printed on the form face —
+# they are carried from knowledge/states/ut/2024.yaml, which cites them to the
+# 2024 TC-40 Instructions "What's New". This port did not re-open that
+# instructions PDF, so the bill numbers travel on that pre-existing citation
+# and are listed in the port report's unverified column. The FIGURES do not
+# depend on them.
+#   * line 10 rate      4.65% (.0465)  ->  4.55% (.0455)          [SB 69 (2024)]
+#   * line 11 exemption $1,941         ->  $2,046  per line-2d dependent
+#   * line 17 bases     $16,742 / $25,114 / $33,484
+#                       ->  $17,652 (single or MFS) / $26,478 (HoH) /
+#                           $35,304 (MFJ or qualifying surviving spouse)
+#   * line 14 caption   "State income tax included in federal itemized
+#                        deductions" -> "State income tax from federal form
+#                        1040, Schedule A, line 5a" (same line number, same
+#                        widget, sharper sourcing)
+#   * line 34 caption   "...and 2022 refund applied to 2023" -> "...and 2023
+#                        refund applied to 2024"
+#   * line 2c caption   "Dependents born in 2023" -> "...in 2024"
+#   * Part 4 gains a SIXTH printed fund code, "17 Nonprofit Capacity Fund",
+#     alongside the five it already listed (02/03/05/15/16) — counted off the
+#     printed faces: 5 codes in 2023, 6 in 2024. (This header said "a FIFTH"
+#     while itself listing five others; corrected.) The four generic
+#     code/amount/sch-dist ROWS are unchanged (same 12 widgets, same /Rect,
+#     /MaxLen and page), so this is a code-list change only, not a widget
+#     change — a filer still writes the code they want in one of four rows.
+#   * Part 6 line 2     "applied to your 2024 taxes" -> "...your 2025 taxes"
+#   UNCHANGED on the face: line 16's 6% (.06) initial-credit rate, line 19's
+#   1.3% (.013) phase-out rate, and both mailing addresses.
+#   knowledge/states/ut/2024.yaml was checked against every one of these and
+#   already models them all (4.55%, $2,046, $17,652/$26,478/$35,304, 6%, 1.3%,
+#   the line-14 Schedule A line 5a caption, the SB 223 Nonprofit Capacity Fund
+#   contribution, and both ZIPs) — NO face-vs-knowledge mismatch found.
+#
+# ONE LINE KEY RENAMED: `refund_applied_to_2024` -> `refund_applied_to_next_year`,
+# because the key names the DESTINATION year and the 2024 form's Part 6 line 2
+# prints "applied to your 2025 taxes". The widget ("40 pg 3 pt 6 line 2") and
+# the printed row are unchanged; the Part 6 total relation was updated with it.
+# Grepped first: the old key was referenced NOWHERE outside the 2023 pack, so
+# this touches no calc, extractor, fixture or test.
+# WHY YEAR-FREE AND NOT `refund_applied_to_2025` — this is the settled repo rule
+# and it was DISPUTED: the first draft of this port rolled the year to 2025 while
+# states/nj/2024/nj1040, ported the same day, kept a stale 2024 in
+# `line69_credit_to_2024_tax_dNN` and cited a "port convention" for keeping it.
+# Two packs shipped the same day disagreeing on one shape is the defect; both are
+# now year-FREE. Keeping a stale year is the worse of the two originals — an
+# identifier that says "applied to 2024" for a box the state applies to 2025
+# inverts the direction of the money for any caller who maps by key name — but
+# rolling the year is honest for exactly one year and then must be renamed on
+# every single port, which manufactures the cross-year API churn that the "a line
+# key is an API surface" argument exists to prevent. A key that names the ROLE
+# relative to the pack's own tax_year is honest in EVERY year and never needs
+# renaming again: `refund_applied_to_next_year` + `tax_year: 2024` says 2025 with
+# no ambiguity, and the form's own page-2 attach note uses the same idiom ("want
+# to apply all/part of your refund to next year's taxes"). Precedent, grepped
+# rather than recalled: NY it203 2023/2024/2025 all carried
+# `69_amount_applied_to_2024_estimate` — correct in 2023, STALE in 2024 and 2025
+# — which is what "keep it" costs (all three took the year-free rename on
+# 2026-08-24); NY it201 has ZERO year-bearing keys in all
+# three years, so it is no precedent either way (the NJ header's claim that
+# it201 "shipped the identical documented caveat" was false and has been
+# corrected there). Contrast the year keys that must STAY: NJ's
+# `filing_status_qw_year_of_death::2022`/`::2023` name which physical OVAL takes
+# the X, so their years are a mapping fact and must be re-derived every port.
+# FOLLOW-UP for another owner — TAKEN 2026-08-24: states/ut/2023/tc40 renamed
+# `refund_applied_to_2024` to this same year-free key, so the family agrees
+# across both shipped years. The rule is formpacks/CONVENTIONS.md "Year tokens
+# in line keys" (landed 2026-08-21).
+#
+# READONLY ADJUDICATION (P-007) — the mandatory pass. Every widget's /Ff was
+# resolved by walking the /Parent chain, using the same reader the gate test
+# uses (test_formpacks_federal._read_only_widget_names), and cross-checked with
+# an independent walk. RESULT: the 2024 blank has ZERO ReadOnly widgets. The
+# observed /Ff population is 12582912 x98 (DoNotScroll|DoNotSpellCheck),
+# 12587008 x1 (the same two bits + Multiline — the preparer firm-name box),
+# 4194304 x4 (DoNotSpellCheck: phone + the three yy date cells), 65536 x1
+# (Pushbutton — "Clear form") and NO /Ff key at all on 7 (an absent /Ff is
+# flags = 0). Those 7 are exactly the seven /Btn checkboxes — "40 Line 21 Check
+# box", "40 Line 45 Checking", "40 Line 45 Savings", "40 Line 45 Foreign",
+# "40 pg3 part 1 TC-131", "40 Form 8886", "40 pg3 part 7 exempt prop" — and no
+# text widget: a CORRECTION to this header, which previously wrote "0 x7 (the
+# six checkboxes and one text cell)" and undercounted the checkboxes by one
+# (the direct-deposit Type question is THREE boxes, not one). 98+1+4+1+7 = 111.
+# Bit 1 is set on none of them, in either the 2023 packet or the 2024 file.
+# Per-widget verdict, by P-007 class:
+#   * NOTHING TO CLASSIFY, because the four P-007 classes discriminate among
+#     ReadOnly/greyed widgets and this blank has none. Every widget below is an
+#     ordinary writable one, so each must be mapped or its box files BLANK.
+#   * class 4 (a value the form's own JavaScript owns) is EMPTY — and this is a
+#     CORRECTION of the most substantive error this header carried. It used to
+#     assert that "the form does embed JavaScript (pdfinfo 'JavaScript: yes')
+#     and it computes the running totals ... and the page-2/3 SSN + last-name
+#     mirrors". It does not, and the flag was the only evidence for it. MEASURED
+#     instead: every object reachable from the catalog was swept, and the 2024
+#     file holds 119 /JS actions, ALL of them in Format (/F x62), Keystroke
+#     (/K x52) and Validate (/V x5) slots — ZERO /AA /C calculate actions, no
+#     AcroForm /CO calculate order, no catalog /Names JavaScript tree, no
+#     /OpenAction. pdfinfo's "JavaScript: yes" is satisfied by AFNumber_Format-
+#     style formatting scripts and does NOT mean the form computes anything;
+#     P-007 exists to forbid exactly that flag-only inference, so the slot
+#     census is what this header now records.
+#     The same sweep of the 2023 PACKET shows where the false premise came from
+#     and why it never applied to this pack: the 9-page packet does carry 12 /C
+#     calculate actions and an AcroForm /CO of 12 entries, but every one of them
+#     sits on a SCHEDULE page (4-9) and is out of this pack's scope, and none
+#     computes a total — all 12 are the same two-line copy, `var f =
+#     this.getField("40 Your SSN"); event.value = f.value;` (and the last-name
+#     twin), mirroring the core-page identity into the TC-40A/B/S/W headers
+#     (40A/40B/40S/40W SSN + last name). The 2024 file, being the core return
+#     only, has none of them. Core pages 1-3 have carried ZERO calculate
+#     scripts in BOTH years.
+#     Consequence for the two things the old claim named. (a) The running totals
+#     — 6, 13, 15, 18, 25, 27, 32, 38, 41, 42 and the Part 4/5/6 totals — are
+#     ordinary writable /Tx widgets that NOTHING computes: taxfill must fill
+#     them because no viewer will, and they are all mapped below. Same outcome
+#     as before, sound premise this time. (b) The page-2/3 SSN + last-name
+#     header mirrors are not JavaScript at all: "40 Your SSN" and "40 Your last
+#     name" are ONE AcroForm field each with three widgets, so writing the field
+#     once populates all three pages mechanically (the Layout note below says
+#     this correctly, and the audit render confirms it).
+#   * "necessarily blank" cells to EXCLUDE: none. No printed row on this form
+#     says "leave this line blank"; no cell is shaded closed.
+#   * widgets holding a DOR-printed constant: none, and swept rather than
+#     eyeballed — the whole field tree carries NOT ONE /V or /DV. The statutory
+#     figures ($2,046, $17,652/$26,478/$35,304, the 4.55%/6%/1.3% rates, the two
+#     mailing ZIPs) are printed as PAGE TEXT outside any widget, so the filler
+#     cannot overwrite them.
+# CONSEQUENCE FOR THE GATES: mapped-∩-ReadOnly is the EMPTY SET, so this pack
+# needs NO row in packages/core/tests/test_readonly_widget_mapping.py's
+# STATE_COMPUTED_READONLY table — absence from that table pins it at zero,
+# which is exactly the truth. (Same posture as states/ut/2023/tc40, which is
+# also absent from the table.) If a future UT revision sets the bit on the
+# computed totals, that row becomes mandatory and this note is the place to
+# start.
+#
+# VISION AUDIT PERFORMED. `uv run python scripts/audit_pack.py
+# formpacks/states/ut/2024/tc40/pack.yaml`: exit 0, "mapped_lines": 104,
+# "written_fields": 104, "verify_fails": [] (0 assertion / 0 clipping / 0
+# checkbox FAILs), 3 pages rendered at 170 dpi; every PNG was then READ page by
+# page. 104 AND NOT 106: the pack has 106 field ENTRIES, but the three
+# direct-deposit Type options (44_account_type.checking/.savings/.foreign) are
+# one question on one `group`, and the audit's synthetic_values answers each
+# group once — 106 - 2 = 104 lines filled. A CORRECTION to this header, which
+# previously claimed the audit "filled all 106 mapped lines"; a re-run must show
+# 104/104. (Relations are excluded from the audit's verify pass by design, so the
+# six max() floors added below do not change these numbers; they were confirmed
+# to parse and to leave the audit at exit 0 with 0 FAILs.)
+# What was checked and confirmed: each sentinel sits on its own printed
+# line number (page 1 lines 4-22, page 2 lines 23-44, page 3 Parts 1-7); the
+# 9-digit SSN and 9-digit routing combs show every digit unclipped; the
+# direct-deposit checkbox group marks the intended single box; the SSN and last
+# name propagate to the page-2 and page-3 headers from their single mapping;
+# nothing overflows its box or lands off-page. See the port report for what the
+# audit did and did not catch.
+# ===========================================================================
+# Form TC-40, 2024 — Utah Individual Income Tax Return (core return, 3 pages).
+#
+# Provenance / freshness. source_url is the canonical DIRECT link on the
+# official files.tax.utah.gov subdomain. Note: the human-facing link
+# https://tax.utah.gov/forms/2024/tc-40.pdf redirects and STRIPS the filename
+# (it lands on the forms index, not the PDF), so the files. URL below is the
+# one to pin — it serves the PDF directly (verified live twice; both live
+# downloads digest to the pinned value, so a cold-cache fetch digest-verifies).
+# STEP 0 year gate: page 1 of the blank was rendered and READ — it prints
+# "Utah State Tax Commission / Utah Individual Income Tax Return", "2024" and
+# "TC-40" in the top-right corner, USTC form code 40401 ("TC-4040401"
+# identity) — printed_year_verified = 2024.
+#
+# SCOPE. Unlike the 2023 file (a 9-page packet), the 2024 file at this URL is
+# the CORE TC-40 return only — 3 pages, all of them mapped here:
+#   PDF page 1 (code 40401, TC-40 Pg. 1)  header/identity, filing status,
+#              dependents, election campaign fund, lines 4-22;
+#   PDF page 2 (code 40402, TC-40 Pg. 2)  lines 23-44, direct deposit,
+#              SIGN HERE strip, third-party designee, paid preparer;
+#   PDF page 3 (code 40403, TC-40 Pg. 3)  Parts 1-7 (deceased, fiscal year,
+#              8886, voluntary contributions, withholding, voluntary
+#              subtractions, residential-exemption termination) + the printed
+#              mailing addresses ("Submit page ONLY if data entered").
+# DELIBERATELY OUT OF SCOPE — separate future form keys, not mapped here and
+# for 2024 not even in this file: TC-40A Income Tax Supplemental Schedule,
+# TC-40B Non and Part-year Resident Schedule, TC-40S Credit for Income Tax
+# Paid to Another State, TC-40W Withholding Tax Schedule.
+#
+# Ported from the TY2023 pack, which was authored via the taxfill pipeline:
+# scripts/introspect_pdf.py (sentinel sweep — every widget rendered with its
+# own field name) -> vision-map over the three core-page PNGs + pdftotext
+# -layout of the printed face -> this map -> scripts/audit_pack.py adversarial
+# sentinel audit. The port re-ran the introspect diff, the printed-line diff,
+# the ReadOnly sweep and the sentinel audit against the 2024 blank.
+#
+# Layout. Flat AcroForm (acroform_root empty) with raw human-readable field
+# names ("40 Line 4", "40 Your SSN", ...). The page-2/3 header SSN and Last
+# name repeaters SHARE the page-1 fields' /T ("40 Your SSN", "40 Your last
+# name") — mapped ONCE; filling them populates all three pages. Direct-deposit
+# field names say "Line 45" but the printed line is 44 — the map keys follow
+# the PRINTED label. The four Part 4 contribution rows are generic code/
+# amount/sch-dist rows (the taxpayer writes the fund code 02/03/05/15/16/17 —
+# 17 "Nonprofit Capacity Fund" is new for 2024); their raw names run
+# "28a".."28d" after page-2 line 28 which they feed. The ink-only blanks
+# (taxpayer/spouse/preparer signatures and dates) carry NO widgets — signing
+# happens after printing.
+#
+# Coverage. Pages 1-3 carry 111 widgets = 107 unique field names (SSN + last
+# name repeat on all three pages). 106 are mapped below. The only omission is
+# "Clear form" (page-1 push button, /Ff 65536, whose appearance-state list is
+# the bogus /BBox /Filter /FormType /Matrix /Resources /Subtype /Type — an
+# XObject dict's keys, i.e. a form ACTION, not a data field; same class as
+# IL-1040's Reset/Print buttons and the WV nav buttons).
+#
+# Money vs text. Every box printing a ".00" cents suffix is money (whole
+# dollars): lines 4-20, 22-43, the Part 4 amounts + total, Part 5 lines 1-3 +
+# total, Part 6 lines 1-2 + total. Codes and counts stay text: amended code,
+# filing-status code (1-5), dependent counts 2a-2d, campaign-fund party codes
+# (letter, or N), full-year-resident Y/N boxes, dates (mm/dd/yy boxes),
+# routing/account numbers, ids and phones. Line 21 ("qualified exempt
+# taxpayer, enter X") is a real checkbox widget, on_state /Yes.
+#
+# Relations. Only unconditional printed-face math is declared.
+# THE "NOT LESS THAN ZERO" SUBTRACTIONS ARE NOW DECLARED, six of the seven.
+# They were omitted by the 2023 base and by the first draft of this port, on
+# the ground that a floor is not a plain equality — but they ARE printed face
+# math, the grammar in verify.py supports max() (its own docstring uses
+# `37 == max(0, 24 - 33)`), and a floored subtraction with a single unconditional
+# printed formula is exactly as checkable as an unfloored one. Each was
+# re-read off THIS blank's printed text before being written:
+#   18 "Income subject to phase-out - subtract line 17 from line 9 (not less
+#      than zero)"                                     -> max(9 - 17, 0)
+#   20 "Taxpayer tax credit - subtract line 19 from line 16 (not less than
+#      zero)"                                          -> max(16 - 19, 0)
+#   22 "Utah income tax - subtract line 20 from line 10 (not less than zero)"
+#                                                      -> max(10 - 20, 0)
+#   27 "Subtract line 26 from line 25 (not less than zero)"
+#                                                      -> max(25 - 26, 0)
+#   39 "TAX DUE - subtract line 38 from line 32 (not less than zero)"
+#                                                      -> max(32 - 38, 0)
+#   42 "REFUND - subtract line 32 from line 38 (not less than zero)"
+#                                                      -> max(38 - 32, 0)
+# 39 and 42 are each unconditional on the face (a return with tax due has 42 = 0
+# and vice versa, which is what the floors say), so both are declared.
+# LINE 25 IS THE ONE EXCEPTION AND IS STILL OMITTED, because it is the only one
+# of the seven that is CONDITIONAL on the printed face: it prints two rows,
+# "Full-year resident, subtract line 24 from line 23 (not less than zero)" AND
+# "Non or Part-year resident, complete and enter the UTAH TAX from TC-40B, line
+# 41". A non-resident's line 25 is a TC-40B figure with no relation to 23 - 24,
+# so declaring max(23 - 24, 0) would FAIL every legitimate part-year return.
+# STILL OMITTED for their own reasons: 10 = 9 x 4.55%, 16 = 15 x 6% and
+# 19 = 18 x 1.3% (rate products, rounding — note 10 also prints "not less than
+# zero", so its floor waits on the rate question, not on this one);
+# 11 = 2d x $2,046 (2d is a text count box); 17 (fixed amount keyed to filing
+# status); 33 (branches: page 3 Part 5 total OR TC-40W Part 1 total directly);
+# 43 <= 42 (inequality, not an equality); contributions_total = sum of the four
+# Part 4 row amounts (dotted row ids — the relations evaluator accepts only
+# undotted line tokens, so that sum lives here as a comment only).
+# The same six floors are declarable on states/ut/2023/tc40, whose printed rows
+# are word-for-word identical, but that pack is not this file's to edit and the
+# change is reported for follow-up instead.
+#
+# Mailing. Printed on core page 3, and re-read there on the 2024 blank
+# verbatim: returns WITH PAYMENTS -> "Utah State Tax Commission, 210 N 1950 W,
+# Salt Lake City, UT 84134-0266"; ALL OTHER returns (refunds etc.) ->
+# "...84134-0260". Both strings are byte-identical to 2023 and both match
+# knowledge/states/ut/2024.yaml. verify_url is the official income-tax site
+# home page carrying both addresses (it serves a WAF 403 to plain fetchers,
+# like mass.gov; fine in a browser) — the pinned blank itself is the primary
+# citation here, so the port did not need to fetch that page.
+form: UT TC-40
+jurisdiction: states/ut
+tax_year: 2024
+source_url: https://files.tax.utah.gov/tax/forms/2024/tc-40.pdf
+pdf_sha256: "7f74bc368df7133076e3f455a3a1c38e69bf5c2247ad2b6d2ceac73d8ec1adbf"
+acroform_root: ''
+fields:
+  # ================================================= header (page 1; SSN/last-name widgets repeat on pages 2-3, same /T)
+  - line: amended_code                     # "Amended Return - enter code" (1-5, see instructions)
+    field: 40 Amended box
+    type: text
+    maxlen: 1
+  - line: tp_ssn
+    field: 40 Your SSN
+    type: text
+    maxlen: 9
+  - line: tp_first_name
+    field: 40 Your first name
+    type: text
+    maxlen: 27
+  - line: tp_last_name
+    field: 40 Your last name
+    type: text
+    maxlen: 35
+  - line: tp_full_year_resident            # "Full-yr Resident? Y/N" — taxpayer row
+    field: 40 Residency 1
+    type: text
+    maxlen: 1
+  - line: spouse_ssn
+    field: 40 Spouse SSN
+    type: text
+    maxlen: 9
+  - line: spouse_first_name
+    field: 40 Spouse first name
+    type: text
+    maxlen: 27
+  - line: spouse_last_name
+    field: 40 Spouse last name
+    type: text
+    maxlen: 35
+  - line: spouse_full_year_resident        # "Full-yr Resident? Y/N" — spouse row
+    field: 40 Residency 2
+    type: text
+    maxlen: 1
+  - line: mailing_address.street
+    field: 40 Address 1
+    type: text
+    maxlen: 35
+  - line: tp_phone
+    field: 40 Telephone number
+    type: text
+    maxlen: 14
+  - line: mailing_address.city
+    field: 40 City
+    type: text
+    maxlen: 22
+  - line: mailing_address.state
+    field: 40 State
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip              # ZIP+4
+    field: 40 Zip code
+    type: text
+    maxlen: 10
+  - line: foreign_country                  # "Foreign country (if not U.S.)"
+    field: 40 Foreign Country
+    type: text
+    maxlen: 22
+
+  # ---- 1 Filing Status - enter code (1=Single 2=MFJ 3=MFS 4=HoH 5=QSS)
+  - line: "1"
+    field: 40 Filing status
+    type: text
+    maxlen: 1
+  # ---- 2 Qualifying Dependents (counts)
+  - line: 2a                               # dependents age 16 and under
+    field: 40 Exemption a
+    type: text
+    maxlen: 1
+  - line: 2b                               # other dependents
+    field: 40 Exemption b
+    type: text
+    maxlen: 1
+  - line: 2c                               # dependents born in 2024
+    field: 40 Exemption total c
+    type: text
+    maxlen: 2
+  - line: 2d                               # Total (add lines a, b and c)
+    field: 40 Exemption total d
+    type: text
+    maxlen: 2
+  # ---- 3 Election Campaign Fund (party code letter, or N)
+  - line: campaign_fund_taxpayer
+    field: 40 election you
+    type: text
+    maxlen: 1
+  - line: campaign_fund_spouse
+    field: 40 election spouse
+    type: text
+    maxlen: 1
+
+  # ---- income and tax (page 1)
+  - line: "4"                              # federal adjusted gross income from federal return
+    field: 40 Line 4
+    type: money
+    maxlen: 15
+  - line: "5"                              # additions to income from TC-40A, Part 1
+    field: 40 Line 5
+    type: money
+    maxlen: 15
+  - line: "6"                              # total income - add line 4 and line 5
+    field: 40 Line 6
+    type: money
+    maxlen: 15
+  - line: "7"                              # state tax refund included on federal form 1040, Schedule 1, line 1
+    field: 40 Line 7
+    type: money
+    maxlen: 15
+  - line: "8"                              # subtractions from income from TC-40A, Part 2
+    field: 40 Line 8
+    type: money
+    maxlen: 15
+  - line: "9"                              # Utah taxable income/loss - line 6 minus (7 + 8)
+    field: 40 Line 9
+    type: money
+    maxlen: 15
+  - line: "10"                             # Utah tax - line 9 x 4.55% (not less than zero)
+    field: 40 Line 10
+    type: money
+    maxlen: 15
+  - line: "11"                             # Utah personal exemption - line 2d x $2,046
+    field: 40 Line 11
+    type: money
+    maxlen: 15
+  - line: "12"                             # federal standard or itemized deductions
+    field: 40 Line 12
+    type: money
+    maxlen: 15
+  - line: "13"                             # add line 11 and line 12
+    field: 40 Line 13
+    type: money
+    maxlen: 15
+  - line: "14"                             # state income tax from federal form 1040, Schedule A, line 5a
+    field: 40 Line 14
+    type: money
+    maxlen: 15
+  - line: "15"                             # subtract line 14 from line 13
+    field: 40 Line 15
+    type: money
+    maxlen: 15
+  - line: "16"                             # initial credit before phase-out - line 15 x 6%
+    field: 40 Line 16
+    type: money
+    maxlen: 15
+  - line: "17"                             # $17,652 / $26,478 / $35,304 by filing status
+    field: 40 Line 17
+    type: money
+    maxlen: 15
+  - line: "18"                             # income subject to phase-out - line 9 minus line 17 (not < 0)
+    field: 40 Line 18
+    type: money
+    maxlen: 15
+  - line: "19"                             # phase-out amount - line 18 x 1.3%
+    field: 40 Line 19
+    type: money
+    maxlen: 15
+  - line: "20"                             # taxpayer tax credit - line 16 minus line 19 (not < 0)
+    field: 40 Line 20
+    type: money
+    maxlen: 15
+  - line: "21"                             # qualified exempt taxpayer - enter "X" (worksheet in instr.)
+    field: 40 Line 21 Check box
+    type: checkbox
+    on_state: /Yes
+  - line: "22"                             # Utah income tax - line 10 minus line 20 (not < 0)
+    field: 40 Line 22
+    type: money
+    maxlen: 15
+
+  # ===================================================== page 2 (code 40402)
+  - line: "23"                             # enter tax from TC-40, page 1, line 22
+    field: 40 Line 23
+    type: money
+    maxlen: 15
+  - line: "24"                             # apportionable nonrefundable credits from TC-40A, Part 3
+    field: 40 Line 24
+    type: money
+    maxlen: 15
+  - line: "25"                             # full-year: 23 - 24 (not < 0); non/part-year: TC-40B line 41
+    field: 40 Line 25
+    type: money
+    maxlen: 15
+  - line: "26"                             # nonapportionable nonrefundable credits from TC-40A, Part 4
+    field: 40 Line 26
+    type: money
+    maxlen: 15
+  - line: "27"                             # subtract line 26 from line 25 (not < 0)
+    field: 40 Line 27
+    type: money
+    maxlen: 15
+  - line: "28"                             # voluntary contributions from TC-40, page 3, Part 4
+    field: 40 Line 28
+    type: money
+    maxlen: 15
+  - line: "29"                             # AMENDED RETURN ONLY - previous refund
+    field: 40 Line 29
+    type: money
+    maxlen: 15
+  - line: "30"                             # recapture of low-income housing credit
+    field: 40 Line 30
+    type: money
+    maxlen: 15
+  - line: "31"                             # Utah use tax
+    field: 40 Line 31
+    type: money
+    maxlen: 15
+  - line: "32"                             # total tax, use tax and additions to tax - add lines 27 through 31
+    field: 40 Line 32
+    type: money
+    maxlen: 15
+  - line: "33"                             # total withholding (page 3 Part 5 total, or TC-40W Part 1 total)
+    field: 40 Line 33
+    type: money
+    maxlen: 15
+  - line: "34"                             # Utah taxes prepaid (TC-546) and 2023 refund applied to 2024
+    field: 40 Line 34
+    type: money
+    maxlen: 15
+  - line: "35"                             # AMENDED RETURN ONLY - previous payments
+    field: 40 Line 35
+    type: money
+    maxlen: 15
+  - line: "36"                             # nonapportionable refundable credits from TC-40A, Part 5
+    field: 40 Line 36
+    type: money
+    maxlen: 15
+  - line: "37"                             # apportionable refundable credits from TC-40A, Part 6, line c
+    field: 40 Line 37
+    type: money
+    maxlen: 15
+  - line: "38"                             # total withholding and refundable credits - add lines 33 through 37
+    field: 40 Line 38
+    type: money
+    maxlen: 15
+  - line: "39"                             # TAX DUE - line 32 minus line 38 (not < 0)
+    field: 40 Line 39
+    type: money
+    maxlen: 15
+  - line: "40"                             # penalty and interest
+    field: 40 Line 40
+    type: money
+    maxlen: 15
+  - line: "41"                             # TOTAL DUE - PAY THIS AMOUNT - add line 39 and line 40
+    field: 40 Line 41
+    type: money
+    maxlen: 15
+  - line: "42"                             # REFUND - line 38 minus line 32 (not < 0)
+    field: 40 Line 42
+    type: money
+    maxlen: 15
+  - line: "43"                             # voluntary subtractions from refund (not greater than line 42)
+    field: 40 Line 43
+    type: money
+    maxlen: 15
+  # ---- 44 REMAINING REFUND DIRECT DEPOSIT (raw field names say "45"; printed line is 44)
+  - line: 44_routing_number
+    field: 40 Line 45 routing
+    type: text
+    maxlen: 9
+  - line: 44_account_number
+    field: 40 Line 45 Account number
+    type: text
+  - line: 44_account_type.checking         # Type: checking / savings / foreign — one question, three boxes
+    field: 40 Line 45 Checking
+    type: checkbox
+    on_state: /Yes
+    group: 44_account_type
+  - line: 44_account_type.savings
+    field: 40 Line 45 Savings
+    type: checkbox
+    on_state: /Yes
+    group: 44_account_type
+  - line: 44_account_type.foreign
+    field: 40 Line 45 Foreign
+    type: checkbox
+    on_state: /Yes
+    group: 44_account_type
+
+  # ---- third party designee + paid preparer (page 2; signature/date blanks are ink-only, no widgets)
+  - line: designee_name
+    field: 40 Designee name
+    type: text
+    maxlen: 57
+  - line: designee_phone
+    field: 40 Designee phone
+    type: text
+    maxlen: 12
+  - line: designee_pin
+    field: 40 Designee PIN
+    type: text
+    maxlen: 9
+  - line: preparer_phone
+    field: 40 Preparer phone
+    type: text
+    maxlen: 12
+  - line: preparer_ptin
+    field: 40 Preparer SSN PTIN
+    type: text
+    maxlen: 9
+  - line: preparer_firm_name_address       # multiline "Firm's name and address" box
+    field: 40 Firm name and address
+    type: text
+  - line: preparer_ein
+    field: 40 Preparer EIN
+    type: text
+    maxlen: 9
+
+  # ===================================================== page 3 (code 40403) — "Submit page ONLY if data entered"
+  # ---- Part 1 - Deceased Taxpayer Information (mm/dd/yy boxes)
+  - line: deceased_taxpayer.mm
+    field: 40 deceased TP mm
+    type: text
+    maxlen: 2
+  - line: deceased_taxpayer.dd
+    field: 40 deceased TP dd
+    type: text
+    maxlen: 2
+  - line: deceased_taxpayer.yy
+    field: 40 deceased TP yy
+    type: text
+    maxlen: 2
+  - line: deceased_spouse.mm
+    field: 40 deceased SP mm
+    type: text
+    maxlen: 2
+  - line: deceased_spouse.dd
+    field: 40 deceased SP dd
+    type: text
+    maxlen: 2
+  - line: deceased_spouse.yy
+    field: 40 deceased SP yy
+    type: text
+    maxlen: 2
+  - line: deceased_refund_tc131            # claiming refund, not surviving spouse — attach TC-131
+    field: 40 pg3 part 1 TC-131
+    type: checkbox
+    on_state: /Yes
+  # ---- Part 2 - Fiscal Year Filer (fiscal year end mm/yy)
+  - line: fiscal_year.mm
+    field: 40 Fiscal year mm
+    type: text
+    maxlen: 2
+  - line: fiscal_year.yy
+    field: 40 Fiscal year yy
+    type: text
+    maxlen: 2
+  # ---- Part 3 - Federal Form 8886 filed
+  - line: form_8886
+    field: 40 Form 8886
+    type: checkbox
+    on_state: /Yes
+  # ---- Part 4 - Voluntary Contributions: four generic rows (write the fund
+  # ---- code 02/03/05/15/16/17 + amount; Sch Dist code only with fund 05).
+  # ---- 2024 adds printed fund code 17 "Nonprofit Capacity Fund"; the four
+  # ---- ROWS and their 12 widgets are unchanged from 2023.
+  - line: contrib_a.code
+    field: 40 Line 28a Code
+    type: text
+    maxlen: 2
+  - line: contrib_a.amount
+    field: 40 Line 28a Amount
+    type: money
+    maxlen: 15
+  - line: contrib_a.sch_dist
+    field: 40 Line 28a ST code
+    type: text
+    maxlen: 2
+  - line: contrib_b.code
+    field: 40 Line 28b Code
+    type: text
+    maxlen: 2
+  - line: contrib_b.amount
+    field: 40 Line 28b Amount
+    type: money
+    maxlen: 15
+  - line: contrib_b.sch_dist
+    field: 40 Line 28b ST Code
+    type: text
+    maxlen: 2
+  - line: contrib_c.code
+    field: 40 Line 28c Code
+    type: text
+    maxlen: 2
+  - line: contrib_c.amount
+    field: 40 Line 28c Amount
+    type: money
+    maxlen: 15
+  - line: contrib_c.sch_dist
+    field: 40 Line 28c ST Code
+    type: text
+    maxlen: 2
+  - line: contrib_d.code
+    field: 40 Line 28d Code
+    type: text
+    maxlen: 2
+  - line: contrib_d.amount
+    field: 40 Line 28d Amount
+    type: money
+    maxlen: 15
+  - line: contrib_d.sch_dist
+    field: 40 Line 28d ST Code
+    type: text
+    maxlen: 2
+  - line: contributions_total              # = contrib_a..d amounts (dotted ids — sum lives here as a comment); -> page 2, line 28
+    field: 40 pg 3 part 4 total v contr
+    type: money
+    maxlen: 15
+  # ---- Part 5 - Withholding
+  - line: withholding_tc40w                # 1. Utah income tax withheld shown on TC-40W, Part 1
+    field: 40 pg 3 pt 5 line 1
+    type: money
+    maxlen: 15
+  - line: withholding_mineral              # 2. mineral production withholding tax (TC-40W, Part 2)
+    field: 40 pg 3 pt 5 line 2
+    type: money
+    maxlen: 15
+  - line: withholding_passthrough          # 3. pass-through entity withholding tax (TC-40W, Part 3)
+    field: 40 pg 3 pt 5 line 3
+    type: money
+    maxlen: 15
+  - line: withholding_total                # total withholding -> page 2, line 33
+    field: 40 pg 3 pt 5 line 4
+    type: money
+    maxlen: 15
+  # ---- Part 6 - Voluntary Subtractions from Refund
+  - line: my529_deposit                    # 1. refund deposited into my529 account(s)
+    field: 40 pg 3 pt 6 line 1
+    type: money
+    maxlen: 15
+  - line: refund_applied_to_next_year      # 2. refund applied to your 2025 taxes = tax_year + 1 (the 2023
+                                           #    pack's key was refund_applied_to_2024; keys carry no
+                                           #    absolute year — see the banner rule. Do not re-add one)
+    field: 40 pg 3 pt 6 line 2
+    type: money
+    maxlen: 15
+  - line: voluntary_subtractions_total     # total voluntary subtractions -> page 2, line 43
+    field: 40 pg 3 pt 6 line 3
+    type: money
+    maxlen: 15
+  # ---- Part 7 - Property Owner's Residential Exemption Termination Declaration
+  - line: residential_exemption_terminated
+    field: 40 pg3 part 7 exempt prop
+    type: checkbox
+    on_state: /Yes
+  - line: residential_exemption_county     # county code where the residence is located
+    field: 40 pg 3 part 7 Code
+    type: text
+    maxlen: 2
+relations:
+  - "6 == 4 + 5"                           # 6 "Total income - add line 4 and line 5"
+  - "9 == 6 - (7 + 8)"                     # 9 "subtract the sum of lines 7 and 8 from line 6" (may be a loss)
+  - "13 == 11 + 12"                        # 13 "Add line 11 and line 12"
+  - "15 == 13 - 14"                        # 15 "Subtract line 14 from line 13"
+  - "18 == max(9 - 17, 0)"                 # 18 "subtract line 17 from line 9 (not less than zero)"
+  - "20 == max(16 - 19, 0)"                # 20 "subtract line 19 from line 16 (not less than zero)"
+  - "22 == max(10 - 20, 0)"                # 22 "subtract line 20 from line 10 (not less than zero)"
+  - "23 == 22"                             # 23 "Enter tax from TC-40, page 1, line 22"
+  # 25 is NOT declared: printed face branches (full-year 23-24 vs non/part-year TC-40B line 41)
+  - "27 == max(25 - 26, 0)"                # 27 "Subtract line 26 from line 25 (not less than zero)"
+  - "32 == 27 + 28 + 29 + 30 + 31"         # 32 "add lines 27 through 31"
+  - "38 == 33 + 34 + 35 + 36 + 37"         # 38 "add lines 33 through 37"
+  - "39 == max(32 - 38, 0)"                # 39 "TAX DUE - subtract line 38 from line 32 (not less than zero)"
+  - "41 == 39 + 40"                        # 41 "TOTAL DUE - add line 39 and line 40"
+  - "42 == max(38 - 32, 0)"                # 42 "REFUND - subtract line 32 from line 38 (not less than zero)"
+  - "28 == contributions_total"            # Part 4 "enter the total here and on TC-40, page 2, line 28"
+  - "43 == voluntary_subtractions_total"   # Part 6 "enter the total here and on TC-40, page 2, line 43"
+  - "withholding_total == withholding_tc40w + withholding_mineral + withholding_passthrough"  # Part 5 total
+  - "voluntary_subtractions_total == my529_deposit + refund_applied_to_next_year"                  # Part 6 total
+cross_form:
+  - "4 == f1040.11"                        # 4 "Federal adjusted gross income from federal return" = 1040 line 11
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name
+signature:
+  page: 2                                  # SIGN HERE strip (ink-only — the PDF carries no signature widgets)
+mailing:
+  with_payment: "Utah State Tax Commission, 210 N 1950 W, Salt Lake City, UT 84134-0266"
+  no_payment: "Utah State Tax Commission, 210 N 1950 W, Salt Lake City, UT 84134-0260"
+  verify_url: https://incometax.utah.gov/  # official site lists both addresses (printed on form page 3 too)
