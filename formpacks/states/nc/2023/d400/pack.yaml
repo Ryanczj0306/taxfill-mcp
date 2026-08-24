@@ -41,17 +41,74 @@
 # spouse-died, and the line-26e underpayment-Exception letter box) which are
 # free-form choice fields written as text.
 #
-# Checkboxes / fill-in circles. NC uses single-widget /Btn yes/no circles
-# rather than shared radio fields, so each circle is its own field mapped one
-# line per option with on_state copied verbatim from the skeleton (/Yes for the
-# yes/no and fill-in circles). The Residency-Status, Veteran-Information and
-# Federal-Extension blocks each pair a "yes" field and a "no" field
-# (rs1/rs2 taxpayer/spouse residency, v1/sv1 taxpayer/spouse veteran,
-# fedex1 federal extension). The Filing-Status block is five separate
-# single-circle fields (fstat1..fstat5). Amended Return, Out of Country,
+# Checkboxes / fill-in circles. NC uses single-widget /Btn circles rather than
+# shared radio fields, so each of the 22 circles is its OWN AcroForm field,
+# mapped one line per option with on_state copied verbatim from the skeleton
+# (/Yes throughout — dumped, and the same in 2024). That topology is why
+# exclusivity has to come from `group`: no two of these lines share a field,
+# so every same-field guard in the engine and the gates is silent here. See
+# the CHECKBOX GROUPS block below for the seven groups and the per-group
+# `required` reasoning. The Residency-Status, Veteran-Information and
+# Federal-Extension blocks each pair a "yes" field and a "no" field (rs1/rs2
+# taxpayer/spouse residency, v1yes+v2no / sv1yes+sv1no taxpayer/spouse veteran
+# — the names are asymmetric, the geometry is not, fedex1 federal extension),
+# and line 11 pairs the NC Standard and NC Itemized deduction circles; all
+# seven of those sets are grouped. Amended Return, Out of Country,
 # Deceased-Taxpayer signed-by-representative, the line-18 "no Consumer Use Tax
-# is due" certification circle, line 11 NC Standard vs NC Itemized deduction,
-# and the preparer-discussion authorization are single /Btn /Yes circles.
+# is due" certification circle and the preparer-discussion authorization are
+# LONE circles with no printed partner, so they are ungrouped by adjudication.
+#
+# CHECKBOX GROUPS (added 2026-08-21; pitfalls P-003 + P-008). This pack is the
+# BASE that the TY2024 port inherited from, and it declared ZERO groups, so
+# verify's mutually-exclusive-group guard and fill_form's write-time refusal
+# were both INERT for this form. Proved, not theorised, on the 2023 blank:
+# fill_form(pack, {'filing_status::single': True, 'filing_status::hoh': True,
+# '11_nc_standard_deduction': True, '11_nc_itemized_deductions': True,
+# 'residency_taxpayer::yes': True, 'residency_taxpayer::no': True}) wrote all
+# 6 widgets with no warning and verify_form returned 6/6 assertions PASS with
+# ZERO checkbox checks and ZERO non-relation FAILs — while the contradiction
+# PRINTS on the filed return, against the form's own "Fill in one circle only"
+# on both the Filing Status block and line 11. Because NC's circles are 22
+# INDEPENDENT single-widget /Btn fields with no shared parent, the pre-existing
+# same-field guards (filler's shared-AcroForm-field check, the pack gate
+# test_pack_radio_options_share_one_group_and_distinct_states) can never fire
+# here: `group` is the ONLY mechanism that makes these sets exclusive.
+#   * A NOTE THE 2024 PORT GOT WRONG, corrected in both packs: the port banner
+#     explained the empty checkbox section as "a property of this form ... NC
+#     gives every circle its own single-widget /Btn field, so there is no
+#     shared radio field for the group check to examine". That is factually
+#     wrong. verify.checkbox_audit keys off `PackField.group` (and `required`)
+#     alone — it never asks whether the widgets share a /T. The sibling pack
+#     states/ri/2023/ri1040 proves it: RI's five filing-status circles are five
+#     SEPARATE AcroForm fields (Page1[0].StateFilingStatus_S/_J/_M/_H/_W[0],
+#     one widget each, exactly NC's shape) and they DO carry
+#     `group: filing_status`. The empty section was this pack's own omission.
+#   * SEVEN groups, 17 members, read off the 2023 printed face independently
+#     rather than assumed from the 2024 sets — and they match: the 2023 and
+#     2024 faces are textually identical apart from the year strings, the
+#     line-15 rate (4.75% vs 4.5%) and the revision stamp (8-23 vs 9-24), and
+#     the 22 /Btn widget /Rects are byte-identical between the two blanks.
+#     filing_status (5), line11 (2), residency_taxpayer (2),
+#     residency_spouse (2), veteran_taxpayer (2), veteran_spouse (2),
+#     federal_extension (2). Each member's group is justified at its binding.
+#   * `required: true` on filing_status ONLY. Reasoning is per group and is
+#     recorded at each binding; the rule applied is that a group a legitimate
+#     filer may leave ENTIRELY blank must not be required, or verification
+#     FAILs on honest returns (the P-008 lesson). Only the filing-status
+#     block fails that test — no D-400 exists without a filing status. The
+#     at-most-one check applies to every group regardless of `required`,
+#     which is what closes the reproduced hole.
+#   * FIVE checkboxes stay deliberately UNGROUPED, and that is an
+#     adjudication rather than an omission: amended_return, out_of_country,
+#     deceased_signed_by_representative, 18_no_consumer_use_tax_due and
+#     authorize_preparer_discussion are each a LONE "Fill in circle if ..." /
+#     "Check here if ..." circle on the printed face with no partner option
+#     and no printed exclusivity directive, so there is no set for a group to
+#     make exclusive. None is `required` either: each is an opt-in assertion
+#     (amended return, out of country, executor-signed, use-tax
+#     certification, preparer-discussion authorization) that the great
+#     majority of honest returns leave blank. 17 grouped + 5 singles = the 22
+#     mapped /Btn circles.
 #
 # Relations. Only unconditional add/subtract equalities with every operand
 # mapped are declared (8=6+7; 12a=9+10b+11; 12b=8-12a; 17=15-16; 19=17+18;
@@ -75,6 +132,9 @@ fields:
   # ============================================ Page 1 — header (calendar/fiscal year)
   # OMITTED: "PRINT" (read-only banner widget — not fillable);
   #          "z_d400wf_print", "z_d400wf_clear" (Page 1 PRINT/CLEAR push-buttons).
+  # UNGROUPED single: a lone "AMENDED RETURN / Fill in circle  (See
+  # instructions)" circle with no partner option. Not `required` — the
+  # overwhelming majority of returns are not amended.
   - line: amended_return
     field: y_d400wf_amendedreturn
     type: checkbox
@@ -156,12 +216,18 @@ fields:
     maxlen: 9
 
   # ---- Out of Country (fill in circle if you/spouse out of country on filing date)
+  # UNGROUPED single: "Fill in circle if you, or if married filing jointly,
+  # your spouse were out of the country on April 15, 2024, and a U.S.
+  # citizen or resident." One circle, no partner. Not `required`.
   - line: out_of_country
     field: y_d400wf_Out of Country
     type: checkbox
     on_state: /Yes
 
   # ---- Deceased Taxpayer Information
+  # UNGROUPED single: "Fill in circle if return is filed and signed by
+  # Executor, Administrator, or Court-Appointed Personal Representative."
+  # One circle, no partner. Not `required`.
   - line: deceased_signed_by_representative
     field: y_d400wf_Signed by Executor or Administrator
     type: checkbox
@@ -174,72 +240,124 @@ fields:
     type: text
 
   # ---- Residency Status (were YOU / your SPOUSE a resident the entire year?)
+  # Two SEPARATE printed questions, each with its own Yes/No circle pair, so
+  # each pair gets its own group (proved by widget geometry on the 2023 blank,
+  # not by name: the printed "Were you a resident of N.C. for the entire year?"
+  # sits at y=409.2 and its Yes/No circles are rs1yes x=362.7 / rs1no x=390.9
+  # at y=405.2; "Was your spouse a resident for the entire year?" at y=398.5
+  # over rs2yes/rs2no at y=393.6). NOT `required`: see the CHECKBOX GROUPS
+  # block — a Single/HOH/QW filer has no spouse, so the SPOUSE pair is
+  # legitimately blank on honest returns, and the taxpayer pair is an
+  # attachment trigger ("If No, complete and attach Form D-400 Schedule PN"),
+  # not a universally mandatory entry. The at-most-one guard applies anyway.
   - line: residency_taxpayer::yes
     field: y_d400wf_rs1yes
     type: checkbox
     on_state: /Yes
+    group: residency_taxpayer
   - line: residency_taxpayer::no
     field: y_d400wf_rs1no
     type: checkbox
     on_state: /Yes
+    group: residency_taxpayer
   - line: residency_spouse::yes
     field: y_d400wf_rs2yes
     type: checkbox
     on_state: /Yes
+    group: residency_spouse
   - line: residency_spouse::no
     field: y_d400wf_rs2no
     type: checkbox
     on_state: /Yes
+    group: residency_spouse
 
   # ---- Veteran Information (are YOU / is your SPOUSE a veteran?)
+  # The field NAMES are asymmetric (v1yes pairs with v2no, not v1no), so the
+  # pairing here is taken from widget geometry: "Are you a veteran?" (printed
+  # y=380.4) is served by v1yes x=239.6 and v2no x=268.1 on ONE row
+  # (y=377.3/377.6, 28.5pt apart — the same circle pitch as every other
+  # Yes/No pair on this face), and the spouse question by sv1yes x=449.3 /
+  # sv1no x=477.4 at y=376.7. NOT `required`: the veteran question is NCDOR
+  # demographic data — no printed line or schedule is conditioned on it — so a
+  # filer may decline both circles, and the spouse pair is inapplicable
+  # whenever there is no spouse on the return.
   - line: veteran_taxpayer::yes
     field: y_d400wf_v1yes
     type: checkbox
     on_state: /Yes
+    group: veteran_taxpayer
   - line: veteran_taxpayer::no
     field: y_d400wf_v2no
     type: checkbox
     on_state: /Yes
+    group: veteran_taxpayer
   - line: veteran_spouse::yes
     field: y_d400wf_sv1yes
     type: checkbox
     on_state: /Yes
+    group: veteran_spouse
   - line: veteran_spouse::no
     field: y_d400wf_sv1no
     type: checkbox
     on_state: /Yes
+    group: veteran_spouse
 
   # ---- Federal Extension (granted an automatic extension for 2023 federal return?)
+  # One printed question, one Yes/No pair (fedex1yes x=519.3 / fedex1no
+  # x=547.4 at y=359.6, under the printed question at y=363.2). NOT
+  # `required`: the question names a FEDERAL return ("to file your 2023
+  # federal income tax return, e.g., Form 1040?"), and a D-400 filer who owes
+  # no federal return — or who simply filed on time — has nothing to assert
+  # here, so both circles are legitimately blank on honest returns.
   - line: federal_extension::yes
     field: y_d400wf_fedex1yes
     type: checkbox
     on_state: /Yes
+    group: federal_extension
   - line: federal_extension::no
     field: y_d400wf_fedex1no
     type: checkbox
     on_state: /Yes
+    group: federal_extension
 
   # ---- Filing Status (fill in one circle only)
+  # The face prints the directive "(Fill in one circle only)" under the five
+  # numbered options (Single 1 .. Qualifying Widow(er) 5, printed y=344.6 down
+  # to 294.1 over fstat1..fstat5 at y=341.6 down to 289.9). This is the ONE
+  # group on this form that carries `required: true`: no D-400 can be filed
+  # or processed without a filing status, every one of the five options is a
+  # complete-return status, and there is no legitimate D-400 with all five
+  # circles empty. That matches the house treatment of the same block in
+  # states/ca/2023/form540, states/ca/2023/form540nr, states/ma/2023/form1 and
+  # federal/*/f1040. `required` goes on ONE member by convention —
+  # verify.checkbox_audit makes the whole group required when ANY member has
+  # it (formpacks/CONVENTIONS.md).
   - line: filing_status::single
     field: y_d400wf_fstat1
     type: checkbox
     on_state: /Yes
+    group: filing_status
+    required: true
   - line: filing_status::mfj
     field: y_d400wf_fstat2
     type: checkbox
     on_state: /Yes
+    group: filing_status
   - line: filing_status::mfs
     field: y_d400wf_fstat3
     type: checkbox
     on_state: /Yes
+    group: filing_status
   - line: filing_status::hoh
     field: y_d400wf_fstat4
     type: checkbox
     on_state: /Yes
+    group: filing_status
   - line: filing_status::qualifying_widow
     field: y_d400wf_fstat5
     type: checkbox
     on_state: /Yes
+    group: filing_status
   # MFS / Qualifying-widow auxiliary inputs
   - line: spouse_full_name
     field: y_d400wf_sname2
@@ -277,14 +395,27 @@ fields:
     field: y_d400wf_li10b_good
     type: money
     maxlen: 5
+  # Line 11 deduction METHOD. The face prints "11. N.C. Standard Deduction
+  # OR N.C. Itemized Deductions" with its own directive "(Fill in one circle
+  # only.  See Form D-400 Schedule A.)", and the two circles sit on ONE
+  # printed row (ncstandarddeduction x=74.6, ncitemizeddeduction x=208.4, both
+  # y=156.9). Group id follows sched_8812's numeric "line<N>" form. NOT
+  # `required`: line 11 is a dollar amount that can legitimately be zero with
+  # NEITHER circle filled — a filer barred from the N.C. standard deduction
+  # who also claims no N.C. itemized deductions enters 0 on line 11 and has no
+  # method circle to mark — so requiring it would FAIL verification on an
+  # honest return. The at-most-one guard applies regardless of `required`,
+  # which is the point: "Standard" and "Itemized" can never both be true.
   - line: 11_nc_standard_deduction
     field: y_d400wf_ncstandarddeduction
     type: checkbox
     on_state: /Yes
+    group: line11
   - line: 11_nc_itemized_deductions
     field: y_d400wf_ncitemizeddeduction
     type: checkbox
     on_state: /Yes
+    group: line11
   - line: "11"       # N.C. Standard Deduction OR N.C. Itemized Deductions amount
     field: y_d400wf_li11_page1_good
     type: money
@@ -328,6 +459,9 @@ fields:
     field: y_d400wf_li17_pg2_good
     type: money
     maxlen: 8
+  # UNGROUPED single: "If you certify that no Consumer Use Tax is due, fill
+  # in circle." One circle, no partner. Not `required` — a filer who DOES
+  # owe use tax leaves it blank and enters the amount on line 18.
   - line: 18_no_consumer_use_tax_due   # certify no Consumer Use Tax is due — fill in circle
     field: y_d400wf_Consumer Use Tax
     type: checkbox
@@ -446,13 +580,33 @@ fields:
   - line: contact_phone_number
     field: y_d400wf_dayphone
     type: text
+  # UNGROUPED single: "Check here if you authorize the North Carolina
+  # Department of Revenue to discuss this return and attachments with the
+  # paid preparer below." One circle, no partner. Not `required`.
   - line: authorize_preparer_discussion
     field: y_d400wf_check
     type: checkbox
     on_state: /Yes
+  # maxlen 8 is MECHANICAL, not cosmetic (was prose-only until 2026-08-21).
+  # y_d400wf_ppsigdate is 50.99pt wide with a FIXED "/Cour 9 Tf" — Courier is
+  # monospace at 0.6em, so 5.4pt per character: 8 chars = 43.2pt (fits), 10
+  # chars = 54.0pt (overflows by 3pt). PROVED by a 400-dpi render read at 3x:
+  # "12/31/2024" printed with its leading "1" shaved to a bare stem AND its
+  # trailing "4" cut mid-glyph (the widget is /Q 1 centered, so it clips at
+  # BOTH ends), while "12-31-24" printed fully with clear margins — MM-DD-YY
+  # being the date format this form prints beside every other date box.
+  # verify's width heuristic cannot catch it: the widget carries no /MaxLen,
+  # and the scan models Helvetica at 0.5em (10 x 0.5 x 9 = 45.0pt < 50.99pt
+  # -> PASS), which UNDERSTATES monospace Courier. So the cap has to come
+  # from the pack; with it, fill_form raises at write time instead.
+  # Deliberately NOT applied to the two sibling signature dates: the same
+  # render shows y_d400wf_sigdate2 (54.31pt) printing all 10 characters of
+  # "12/31/2024" cleanly, and y_d400wf_sigdate is wider still at 65.05pt, so
+  # capping either would reject values that demonstrably render correctly.
   - line: preparer_signature_date
     field: y_d400wf_ppsigdate
     type: text
+    maxlen: 8
   - line: preparer_fein_ssn_ptin
     field: y_d400wf_ppssn
     type: text

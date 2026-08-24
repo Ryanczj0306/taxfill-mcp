@@ -55,6 +55,34 @@
 # column keys, so those checks are left to the recompute engine + human review.
 # The conditional/worksheet-driven subtotals (lines 7, 15, 18–21) are likewise
 # left to recompute + review.
+#
+# Checkbox groups (P-008, fixed 2026-08-24): the four Yes/No questions — the
+# page-1 header QOF question and Part III lines 17, 20 and 22 — are each TWO
+# independent terminal /Btn fields (c1_1[0]+c1_1[1], c2_1[0]+c2_1[1],
+# c2_2[0]+c2_2[1], c2_3[0]+c2_3[1]: own /V each, no /Ff radio bit, parent is
+# only the /T-less page subform, ONE appearance state per widget — /1 Yes,
+# /2 No; dumped from this pack's sha-pinned blank, identical in 2023/2024/
+# 2025), so nothing in the PDF makes Yes and No exclusive — the sched_e
+# incident's exact shape. Each pair therefore carries a `group` id: `qof`
+# (group id = the line stem, f1040 digital_assets' word-stem convention) and
+# `line17`/`line20`/`line22` (sched_8812's — and sched_e line 27's — "line<N>"
+# form for a numeric printed label). fill_form's group guard now rejects a
+# Yes+No double answer before the blank opens, and verify's at-most-one
+# checkbox audit FAILs a PDF that already has both boxes checked.
+# `required` adjudication, from the printed face alone:
+#   * qof carries required: true (on .yes; any member marks the group,
+#     P-003): the question sits in the header above Part I, printed
+#     unconditionally for EVERY Schedule D filer, the same shape as Form
+#     1040's digital-assets question, which this repo also marks required.
+#     No filing path skips it.
+#   * 17, 20 and 22 are NOT required — each is conditional in the printed
+#     page-2 flow: line 16's bullets route a loss to "skip lines 17 through
+#     20 below" and a zero to "skip lines 17 through 21 below", so a
+#     net-loss/zero filer legitimately leaves 17 blank; 18–20 are reached
+#     only through 17-Yes; and BOTH of line 20's answer branches print
+#     "Don't complete lines 21 and 22 below", so a 17-Yes filer legitimately
+#     leaves 22 blank. `required` on any of these would false-FAIL every
+#     such legal short path.
 form: "Schedule D (Form 1040)"
 jurisdiction: federal
 tax_year: 2023
@@ -70,14 +98,20 @@ fields:
     field: Page1[0].f1_02[0]
     type: text
     maxlen: 11
+  # Separate-widget Yes/No pair: the `group` id is what makes it mutually
+  # exclusive, and required — the header question is printed for every filer
+  # (see the checkbox-groups note in the header; P-008/P-003).
   - line: qof.yes                    # "Did you dispose of any investment(s) in a QOF...?" — Yes
     field: Page1[0].c1_1[0]
     type: checkbox
     on_state: "/1"
+    group: qof
+    required: true
   - line: qof.no                     # ...QOF question — No
     field: Page1[0].c1_1[1]
     type: checkbox
     on_state: "/2"
+    group: qof
 
   # --- Part I: Short-Term Capital Gains and Losses (assets held 1 year or less) ---
   - line: 1a.d                       # Line 1a — 1099-B basis reported to IRS, no adjustments; (d) Proceeds
@@ -210,39 +244,51 @@ fields:
   - line: "16"                       # Combine lines 7 and 15 and enter the result → Form 1040, line 7
     field: Page2[0].f2_01[0]
     type: money
+  # Numeric printed label, so the group id takes sched_8812's "line<N>" form.
+  # NOT required: line 16's printed bullets skip line 17 on a loss/zero result
+  # (see the checkbox-groups note in the header).
   - line: 17.yes                     # Line 17 "Are lines 15 and 16 both gains?" — Yes
     field: Page2[0].c2_1[0]
     type: checkbox
     on_state: "/1"
+    group: line17
   - line: 17.no                      # Line 17 — No
     field: Page2[0].c2_1[1]
     type: checkbox
     on_state: "/2"
+    group: line17
   - line: "18"                       # 28% Rate Gain Worksheet amount
     field: Page2[0].f2_02[0]
     type: money
   - line: "19"                       # Unrecaptured Section 1250 Gain Worksheet amount
     field: Page2[0].f2_03[0]
     type: money
+  # NOT required: line 20 is reached only through a 17-Yes answer.
   - line: 20.yes                     # Line 20 "Are lines 18 and 19 both zero or blank...?" — Yes
     field: Page2[0].c2_2[0]
     type: checkbox
     on_state: "/1"
+    group: line20
   - line: 20.no                      # Line 20 — No
     field: Page2[0].c2_2[1]
     type: checkbox
     on_state: "/2"
+    group: line20
   - line: "21"                       # If line 16 is a loss, smaller of loss on 16 or ($3,000)/($1,500) → Form 1040 line 7
     field: Page2[0].TagCorrectingSubform[0].f2_04[0]
     type: money
+  # NOT required: both line-20 answer branches print "Don't complete lines 21
+  # and 22 below", so a 17-Yes filer legitimately leaves 22 blank.
   - line: 22.yes                     # Line 22 "Do you have qualified dividends on Form 1040 line 3a?" — Yes
     field: Page2[0].c2_3[0]
     type: checkbox
     on_state: "/1"
+    group: line22
   - line: 22.no                      # Line 22 — No
     field: Page2[0].c2_3[1]
     type: checkbox
     on_state: "/2"
+    group: line22
 relations:
   - "16 == 7 + 15"                   # "Combine lines 7 and 15 and enter the result"
 cross_form:

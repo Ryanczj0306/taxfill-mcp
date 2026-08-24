@@ -824,9 +824,24 @@ def test_confirmed_address_state_style_line_names_participate():
 def test_filer_address_line_selection_matches_reviewed_fixture():
     # The include/exclude patterns were validated by hand against every shipped pack
     # (preparer / school / physical / moving-expense / home-country addresses excluded;
-    # all 51 filer-address blocks included). Pin that review: if a new pack's address
-    # lines fall through the selector — or a pattern change alters a selection — this
-    # fails loudly instead of silently disabling the P-002 check for that pack.
+    # all 84 filer-address blocks included, over 150 pack rows — the other 66 packs are
+    # schedules with no address block, which is why an EMPTY list is a legitimate row and
+    # not a fall-through). Pin that review: if a new pack's address lines fall through the
+    # selector — or a pattern change alters a selection — this fails loudly instead of
+    # silently disabling the P-002 check for that pack.
+    #
+    # How to extend it for a new pack year, and what the 2026-08-21 state tranche did:
+    # regenerating is only safe when the new pack's selection equals the REVIEWED
+    # base-year selection for the same form. That was checked pack by pack for all ten
+    # (ar 2024/2025 vs ar 2023; nc/nj/oh/ri/ut/va 2024 and or/pa 2025 vs their own 2023
+    # rows) and every one matched its base year exactly — as did the complementary set,
+    # the address-shaped lines the selector REJECTS (AR's mailing_address.foreign_country
+    # + preparer.* + drivers_license.*_state, NC's county_first_five_letters, NJ's four
+    # county_municipality_code_d* digits, OH's ohio_county + residency_*_indicate_state +
+    # the two 1099-NEC box-7 state-income money lines, RI's city_town_legal_residence +
+    # signature.*.license_state + 28.state, UT's preparer_firm_name_address +
+    # residential_exemption_county, VA's address_change::yes, OR's preparer_* block).
+    # So the diff was purely 10 ADDED rows: zero removed, zero existing row changed.
     import json
     from pathlib import Path
 

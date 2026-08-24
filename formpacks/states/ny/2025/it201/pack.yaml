@@ -80,11 +80,29 @@
 # `text` fields with a maxlen (the schema's numeric type is `money`; these are
 # integer counts, not dollar amounts, so they stay `text maxlen:n`).
 #
-# Relations / cross_form. IT-201 line 19 ("Federal adjusted gross income") is
-# explicitly the FAGI carried from the federal return, so the single cross_form
-# equality 19 == f1040.11 is declared (Form 1040, 2023, line 11 = AGI). Intra-
-# form sums (22 = 20+21..., 32 = 25..31, 46 = 44+45, etc.) all have mapped
-# operands and are declared below. Conditional/threshold lines (e.g. line 35
+# Relations / cross_form. The single cross_form equality is 19 == f1040.11a.
+#   ADJUDICATED FROM THIS FORM'S OWN PRINTED FACE (2026-08-21), because the
+#   rule shipped as "19 == f1040.11", which is a DANGLING reference for TY2025:
+#   formpacks/federal/2025/f1040/pack.yaml keys "11a" and "11b" and has NO "11"
+#   (TY2025 renumbered line 11 -> 11a, "Subtract line 10 from line 9. This is
+#   your adjusted gross income", closing page 1; new 11b, "Amount from line 11a
+#   (adjusted gross income)", opens page 2). 11a is the AGI-DEFINING line, so it
+#   is the target rather than the 11b restatement.
+#   UNLIKE Oregon's OR-40 line 7 — which prints an explicit federal citation
+#   ("...from federal Form 1040, 1040-SR, or 1040-NR, line 11a") — the IT-201
+#   CITES NO FEDERAL LINE NUMBER AT ALL. Printed line 19 reads "Federal
+#   adjusted gross income (subtract line 18 from line 17)", i.e. NY re-derives
+#   FAGI on its own face: printed lines 1-16 replicate the federal income items,
+#   17 is "Add lines 1 through 11 and 13 through 16", and 18 is "Total federal
+#   adjustments to income". A page-wide grep of the 2025 blank finds federal
+#   FORM references only ("submit a copy of federal Schedule C, Form 1040",
+#   Schedule D/E/F, Form 4797) and no "line 11"/"line 11a" citation anywhere.
+#   The equality therefore rests on the LABEL SEMANTICS (line 19 IS the federal
+#   AGI under NY conformity), not on a printed cite — so it must track whichever
+#   federal line holds AGI in the tax year, which for TY2025 is 11a. Do not
+#   "restore" f1040.11: it does not exist for 2025.
+# Relations. Intra-form sums (22 = 20+21..., 32 = 25..31, 46 = 44+45, etc.) all
+# have mapped operands and are declared below. Conditional/threshold lines (e.g. line 35
 # "if line 34 > line 33 leave blank", line 44 "if more than line 39 leave
 # blank") are OMITTED per the conservative house style.
 form: Form IT-201
@@ -979,7 +997,11 @@ relations:
   # Line 76 ("add lines 63 through 75") spans lettered sub-lines 69a/70a (70a intentionally
   # blank on 2023); operand set left undeclared per conservative house style.
 cross_form:
-  - "19 == f1040.11"                 # "Federal adjusted gross income" = Form 1040 (2023) line 11 (AGI)
+  # Printed line 19 "Federal adjusted gross income (subtract line 18 from line
+  # 17)" = the federal AGI, which for TY2025 is Form 1040 line 11a (line "11"
+  # no longer exists; 11b is only the page-2 restatement of 11a). The IT-201
+  # face cites no federal line number itself — see the cross_form banner note.
+  - "19 == f1040.11a"
 identity_fields:
   - tp_ssn
   - tp_first_name

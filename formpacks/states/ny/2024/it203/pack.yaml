@@ -2,12 +2,15 @@
 # TY2024 PORT of formpacks/states/ny/2023/it203/pack.yaml (ported 2026-08-11).
 #
 # This pack was NOT re-authored from a fresh introspect sweep; it is the TY2023
-# map re-pinned to the TY2024 blank. Only three keys changed from the 2023
-# pack: `tax_year`, `source_url`, `pdf_sha256`. The field map, comments and
-# ordering below are byte-identical to the 2023 pack and still describe the
+# map re-pinned to the TY2024 blank. FOUR things changed from the 2023 pack:
+# `tax_year`, `source_url`, `pdf_sha256`, and — in a review pass after the port
+# first shipped — line 69's key is now YEAR-FREE
+# (`69_amount_applied_to_2024_estimate` -> `69_amount_applied_to_next_year_estimate`,
+# see YEAR-BEARING LINE KEY below). Everything else — every field name, comment
+# and the ordering — is byte-identical to the 2023 pack and still describes the
 # authoring that produced it (the commentary's "2023" references are the
-# original author's; they were deliberately left untouched so the port is a
-# reviewable three-line diff).
+# original author's; they were deliberately left untouched so the port stays a
+# reviewable diff).
 #
 # What was verified before shipping this port:
 #   * Revision identity — page 1 of the pinned PDF extracts the 2024 barcode
@@ -38,12 +41,29 @@
 #     radio group is the marked one; nothing overflows its box or lands
 #     off-page.
 #
-# Caveat for the next author: the line id
-# `69_amount_applied_to_2024_estimate` names the carry-forward year in the
-# identifier itself; on the 2024 form that printed line 69 applies the
-# overpayment to 2025. The line NUMBER is unchanged, so the map is correct —
-# only the identifier (a stable key other code may reference) is a year
-# behind. It was intentionally NOT renamed as part of this port.
+# YEAR-BEARING LINE KEY (renamed 2026-08-24). The ported line id
+# `69_amount_applied_to_2024_estimate` embedded the carry-forward year in the
+# identifier while this pack's own face prints "69 Amount of line 67 that you
+# want applied to your 2025 estimated tax" — the key named 2024 for a box the
+# state applies to 2025, which inverts the DIRECTION of the money for any
+# caller mapping by key name (a payment already made vs a carry-forward out).
+# An earlier revision of this banner documented the stale year as an
+# intentional port decision; under formpacks/CONVENTIONS.md's year-token rule
+# (rule 4: never "keep the stale year and document it") that was a defect, not
+# a caveat, and it is recorded as such in the convention. The key is now the
+# year-free ROLE form `69_amount_applied_to_next_year_estimate` — same shape
+# as nj1040 2024's `line69_credit_to_next_year_tax_dNN` and tc40 2024's
+# `refund_applied_to_next_year`: the role lives in the key, the printed
+# absolute year lives in the inline comment, and no future port ever needs to
+# roll it (`next_year` + `tax_year: 2024` says 2025 with no ambiguity). The
+# widget ("69 dollars"), the printed line NUMBER and the mapping are
+# untouched. Blast radius, grepped repo-wide BEFORE renaming: outside the
+# three NY it203 packs the old spelling appeared only in prose (docs/ROADMAP,
+# the NJ/UT 2024 pack headers' precedent notes) and in test_pack_invariants.py's
+# KNOWN_STALE_PRINTED_YEAR_LABELS defect rows — no calc op, extractor, fixture,
+# eval, skill, knowledge file or cross_form rule fills by the old key. The
+# 2023 and 2025 packs took the identical rename in the same pass, so the key
+# is one spelling across every shipped IT-203 year.
 # ===========================================================================
 # Form IT-203 (2023) — New York State Nonresident and Part-Year Resident
 # Income Tax Return.
@@ -945,7 +965,7 @@ fields:
     field: line 68
     type: checkbox
     on_state: /debit card
-  - line: 69_amount_applied_to_2024_estimate   # line 69 — Amount of line 67 you want applied to your 2024 estimated tax
+  - line: 69_amount_applied_to_next_year_estimate  # line 69 — Amount of line 67 that you want applied to your 2025 estimated tax (2025 = tax_year + 1; the printed year lives here, never in the key)
     field: 69 dollars
     type: money
     maxlen: 10

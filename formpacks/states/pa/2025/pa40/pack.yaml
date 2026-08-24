@@ -1,0 +1,651 @@
+# ===========================================================================
+# TY2025 PORT (2026-08-21) — ported from formpacks/states/pa/2023/pa40.
+#
+# This is a TWO-YEAR jump (TY2023 -> TY2025), so renumbering was the primary
+# risk. Changed from the 2023 pack: tax_year, source_url, pdf_sha256, and
+# year-bearing INLINE COMMENTS (rolled only where the 2025 blank's own printed
+# text was read to confirm the new wording — see below). The line -> field map
+# itself is carried over unchanged, field name for field name.
+#
+# DIGEST PROVENANCE. source_url is the repo's own derivation (scripts/
+# scaffold_state_year.py `_candidate_url`, 2023 -> 2025 in both path segments)
+# and it resolves: HTTP 200, Content-Type application/pdf, 590,674 bytes,
+# magic bytes "%PDF-1.7". DOWNLOADED TWICE, independently; both copies are
+# byte-identical and digest to the pinned pdf_sha256
+# (fcd7648601f3ce...d8b3). No Wayback, no mirror, no alternate transport.
+#
+# PRINTED IDENTITY (the trap a URL year cannot settle — a DOR has served a
+# newer revision from an older-year path before). Read off the PDF itself:
+#   * page 1 masthead: "PA-40 / Pennsylvania Income Tax Return" + "2025"
+#   * revision stamp:  "PA-40 (EX) MOD 04-25 (FI)"   (2023 blank: MOD 03-23)
+#   * side-2 stamp:    "PA-40  2025 04-25 (FI)"
+#   * scanline barcodes: 2500110057 (side 1), 2500210055 (side 2)
+#     (2023 blank: 2300110059 / 2300210057)
+#   * year-bearing prompts: part-year "___/___/2025 to ___/___/2025", both
+#     "Date of death ___/___/2025", "school district where you lived on
+#     12/31/2025", line 15/16 "2025", line 14 "your 2024 PA Income Tax
+#     return", line 31 "your 2026 estimated account".
+# This is the 2025 revision of PA-40. No ambiguity.
+#
+# TOPOLOGY: IDENTICAL. The 2025 blank carries EXACTLY the widget set of the
+# 2023 blank — 119 widgets / 105 distinct names across 2 pages, and per widget
+# the same page, the same /FT, the same /Ff, the same /MaxLen, and the same
+# /AP /N on-state key set. Set difference in both directions is empty; every
+# one of the 92 distinct AcroForm names this pack maps is present. Zero fields
+# added, dropped or renamed, so nothing needed re-mapping and nothing is left
+# unmapped-because-ambiguous (no NY IT-203 line-60b case here). The only
+# geometric change anywhere in the AcroForm is ONE widget nudged 1.96pt:
+# "11. Adjusted PA Taxable Income" moved [422.73,101.31,557.96,119.71] ->
+# [420.77,101.96,556.00,120.37]; every other widget's /Rect is identical to
+# the hundredth of a point. That nudge was confirmed harmless by render (line
+# 11's sentinel still sits beside printed "11.").
+#
+# PRINTED-LINE DIFF: ZERO RENUMBERING — stated explicitly, because identical
+# field names do NOT prove it and several of PA's names are line-positional
+# ("1a. Gross Compensation", "32. Refund donation line"). Both pages of both
+# blanks were text-extracted and diffed. The printed ladder token sets are
+# equal page for page: side 1 = 1a, 1b, 1c, 2-11; side 2 = 12-18, 19a, 19b,
+# 20-36. No line number moved, split, merged, or changed page. Both sides
+# extract to the same number of text lines (87 side 1, 74 side 2), and the 18
+# diff hunks / 26 changed printed lines (13 per side) are entirely:
+#   * revision stamps + scanlines + the year rolls listed under IDENTITY;
+#   * SERIAL-COMMA copy-edits, no semantic change: line 4 "Business,
+#     Profession , or Farm", line 5 "Sale, Exchange , or Disposition", line 6
+#     "Patents , or Copyrights", line 9 "4, 5, 6, 7, and 8 ... Lines 4, 5 ,
+#     or 6", line 18 "14, 15, 16, and 17", line 24 "13, 18, 21, 22, and 23",
+#     line 25 "internet, mail order, or out-of-state purchases", line 29
+#     "Line 12, Line 25, and Line 27";
+#   * one header caption shortened: "Your First Name" -> "First Name" (the
+#     AcroForm name behind it is unchanged);
+#   * one substantive face change, on NO mapped widget: the "Do Not Call"
+#     pushbutton's appearance stream now reads "PLEASE DO NOT CALL ABOUT YOUR
+#     REFUND UNTIL TWELVE WEEKS AFTER YOU FILE" (2023: "EIGHT WEEKS").
+# Because nothing renumbered, no mapping needed a visual re-check for
+# renumbering — but every page was vision-audited anyway (below).
+#
+# READONLY ADJUDICATION (knowledge/pitfalls.yaml P-007). Every /Ff bit 1 in
+# the 2025 blank was dumped with the flag resolved up the /Parent chain. There
+# are 12 ReadOnly widgets and ALL 12 carry /Ff = 65537 = Pushbutton|ReadOnly:
+#   page 1 — "Official Use Only", "start box", "arrow", "Disclaimer Notice"
+#   page 2 — "Official Use Only", "start box", "arrow" (x2), "Signature",
+#            "Example Date", "Spouse's Signature", "Do Not Call"
+# Per-widget verdict, read off the PRINTED ROW and the widget's own appearance
+# stream rather than the flag:
+#   * "Signature" / "Spouse's Signature" — appearance stream literally paints
+#     "Please sign after printing." in red 14pt bold (/TU = "Sign"). NOT a
+#     data box: NOT MAPPED, correctly.
+#   * "Example Date" — paints the hint "MM/DD/YY" next to the real Date box.
+#     A DOR-printed constant: NOT MAPPED (mapping it would let the filler
+#     overwrite the form's own hint). The live date box is the separate,
+#     writable /Tx field "Date", mapped as `signed_date`.
+#   * "Do Not Call" — paints the refund-inquiry notice. Instruction text:
+#     NOT MAPPED.
+#   * "Official Use Only" (x2), "start box" (x2), "arrow" (x3),
+#     "Disclaimer Notice" — JavaScript UI / decoration with no data state
+#     (their only /AP /N keys are form-XObject dictionary keys such as /BBox).
+#     NOT MAPPED.
+# There is NO class-4 case on this form: PA-40's totals (1c, 9, 11, 12, 18,
+# 24, 26, 28, 29) are ordinary WRITABLE /Tx widgets — /Ff 0, no ReadOnly bit —
+# so PA does not lock its JS-computed lines the way AL/GA/MO/WV do, and
+# nothing here files blank if taxfill writes it. Consequence for the gate:
+# mapped-fields INTERSECT ReadOnly-widgets is the EMPTY SET, exactly as for
+# the 2023 and 2024 PA packs, so this pack needs NO STATE_COMPUTED_READONLY
+# row in packages/core/tests/test_readonly_widget_mapping.py and must not
+# acquire one. Also checked: no widget in the blank ships a preset /V or /DV,
+# so there is no pre-printed constant anywhere for a mapping to overwrite.
+#
+# EMBEDDED FACTS RE-VERIFIED against the 2025 blank's own printed text:
+#   * Filing office printed on side 1: "PA Department of Revenue / Harrisburg,
+#     PA 17129" — unchanged from 2023. (The three payment/refund/no-payment
+#     Revenue Place addresses are booklet content, not on this face; they live
+#     in knowledge/states/pa/2025.yaml and were not re-derived here.)
+#   * Line 12 tax rate: "Multiply Line 11 by 3.07 percent (0.0307)" — the one
+#     statutory figure the face carries, and it is UNCHANGED from 2023. The
+#     relation below is therefore re-verified from the new blank, not inherited.
+#   * Checkbox export values: dumped from /AP /N, never guessed — Extension /1,
+#     Amended Return /2, Residency Status /1 /2 /3, Filing Status /1 /2 /3 /4,
+#     Deceased /5, Taxpayer /1, Spouse /1, Farmers /0, the three LOSS ovals
+#     /none, Form REV-459B /1, "27. REV-1630" /3, Tax Forgiveness /1 /2 /3,
+#     E-File Opt Out /1. All 15 button fields match the ported on_state values
+#     exactly; 0 mismatches.
+#   * Relation source text on the 2025 face: 1c "Subtract Line 1b from Line
+#     1a", 11 "Subtract Line 10 from Line 9", 18 "Add Lines 14, 15, 16, and
+#     17", 24 "Add Lines 13, 18, 21, 22, and 23". Line 9 is still conditional
+#     ("Add only the positive income amounts ... DO NOT ADD any losses") and
+#     stays omitted per house style.
+#   * The face carries NO due date and NO dollar threshold, so neither was
+#     re-derived from it; both are booklet facts already modelled in
+#     knowledge/states/pa/2025.yaml. The 2023 base header cites no dollar
+#     amount, so this port had no base-year figure to drop or re-verify.
+#
+# LAW DELTAS vs the 2023 base year (checked against knowledge/states/pa/):
+#   * Flat PIT rate: 0.0307 in both years — NO CHANGE. Face (line 12) and
+#     knowledge/states/pa/2025.yaml `flat_rate: 0.0307` agree.
+#   * Filing threshold ($33), no standard deduction / no personal exemption,
+#     eight separately-computed income classes, Tax Forgiveness base
+#     eligibility income $6,500 unmarried / $13,000 married + $9,500 per
+#     dependent child: all unchanged 2023 -> 2025 per the 2025 knowledge pack;
+#     none appear on the PA-40 face, so no face-vs-knowledge conflict exists.
+#   * Filing due date rolled 2024-04-15 -> 2026-04-15; already modelled.
+#   * NOT a tax figure but a real face change with no knowledge counterpart:
+#     the refund-inquiry wait went EIGHT -> TWELVE weeks. knowledge/states/pa/
+#     2025.yaml has zero mentions of a refund-processing wait, so nothing is
+#     wrong there — flagged for the knowledge owner as a possible addition.
+#     No pack edit; not touched here.
+#
+# AUDIT + VISION (scripts/audit_pack.py on this pack, against the sha-pinned
+# 2025 blank): exit 0, 92 fields written, verify_form 0 assertion / 0 clipping
+# / 0 checkbox FAILs. Then BOTH rendered pages (170dpi, 1445x1870 px, at
+# .cache/audit/2025_pa40/) were READ page by page.
+# WHAT THE AUDIT CAUGHT: nothing wrong. Stated explicitly, per
+# docs/CONTRIBUTING-PACKS.md ("an audit that caught nothing is suspicious —
+# say so"), rather than left implied by silence.
+# WHAT THE RENDER POSITIVELY CONFIRMED, value by value:
+#   * side 1 money ladder steps 101, 112, 123, 134, 145, 156, 167, 178, 189,
+#     200, 211, 222, 233 beside printed 1a, 1b, 1c, 2, 3, 4, 5, 6, 7, 8, 9,
+#     10, 11 — no gap, no one-line offset;
+#   * side 2 steps 244, 255, 266, 277, 288, 299, 310, 321, 332, 343, 354, 365,
+#     376, 387, 398, 409, 420, 431, 442, 453, 464, 475, 486, 497 beside
+#     printed 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+#     29, 30, 31, 32, 33, 34, 35, 36;
+#   * the 1.96pt widget nudge on line 11 is harmless — 233 still sits inside
+#     the line-11 box beside printed "11.";
+#   * checkbox GROUPS hit exactly one box each: R marked with N and P clear;
+#     S marked with J, M and F clear; "Unmarried or Separated" marked with
+#     Married and Deceased clear;
+#   * the independent ovals land in their own ovals: all three LOSS ovals
+#     (lines 4/5/6), line 15's REV-459B, line 27's REV-1630, Extension,
+#     Amended Return, D-Deceased, Taxpayer, Spouse, Farmers, E-File Opt Out;
+#   * single-character boxes are unclipped and beside the right line: "T" in
+#     the line-10 deduction Code, the line-27 Code, and each of the five
+#     line-32..36 organization Code boxes; MI and Suffix boxes likewise;
+#   * the shared SSN field propagates: "Test 0" appears in the side-1 "Your
+#     Social Security Number" box AND in the side-2 "Social Security Number
+#     (shown first)" box from the single mapped line;
+#   * the ReadOnly exclusions render as the DOR's own text and are NOT
+#     overwritten: both signature areas print "Please sign after printing."
+#     and the "Example Date" hint prints "MM/DD/YY" in red directly above the
+#     writable Date box, which correctly shows the filled 01/15/20;
+#   * year-bearing captions render as claimed above: line 14 "your 2024 PA
+#     Income Tax return", lines 15/16 "2025", line 31 "your 2026 estimated
+#     account", and the twice-printed TWELVE WEEKS refund notice.
+# AUDIT LIMITATION, recorded rather than glossed: PA-40's SSN boxes are plain
+# /Tx widgets with /MaxLen 9 (NOT per-character combs), and the shared
+# synthetic harness writes the non-numeric sentinels "Test 0" / "Test 1" into
+# them, so this render does NOT exercise a full nine-DIGIT fill of those
+# boxes. The P-001 clipping risk there is untested by this audit.
+#
+# INHERITED-COMMENT CORRECTIONS made while porting (comments only; no mapping,
+# key or type changed):
+#   * The base header's coverage arithmetic was self-inconsistent — it said
+#     "80 data fields are mapped (81 distinct AcroForm field names map all 100
+#     data widgets)" while the pack has always had 99 field entries over 92
+#     distinct names. Measured on the 2025 blank: 119 widgets - 19 pushbutton
+#     widgets = 100 data widgets; 105 - 13 = 92 distinct data names, all 92
+#     mapped; 92 + 7 extra radio-option entries (Residency 3, Filing 4,
+#     Forgiveness 3) = 99 entries. The paragraph below now states those.
+#   * The line-30 comment read "check / direct deposit". The printed line is
+#     "Refund – Amount of Line 29 you want as a check mailed to you" — in the
+#     2023 blank too, so the base comment was wrong about its own year. PA-40
+#     has no routing/account widgets at all. Corrected below.
+# Inline comments elsewhere have been rolled to the 2025 printed captions ONLY
+# where that caption was read out of the 2025 blank in this port.
+#
+# STYLE NOTE: pdf_sha256 is written as a QUOTED string here (the repo-majority
+# form, 107 of 148 packs) even though the PA 2023/2024 packs leave theirs bare.
+# Semantically identical after YAML load; quoted is the safer shape, since an
+# all-digit digest parses as an integer unquoted.
+# ===========================================================================
+# Form PA-40, 2025 — Pennsylvania Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) -> vision-map workflow (both
+# pages + zoomed crops read to place each field on its printed line / column,
+# plus a pypdf widget-type dump to separate genuine data widgets from the
+# form's JavaScript control buttons) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty). Field names are the raw opaque
+# leaf ids the form ships with — many carry a printed-line prefix
+# ("1a. Gross Compensation", "4. Loss", "32. Refund donation line") and some
+# carry leading whitespace baked into the AcroForm; kept verbatim. PA-40 is a
+# single-column return, so income/payment lines carry no A/B/C suffix — the
+# line key is just the printed line number.
+#
+# Coverage. The blank PDF has 119 fillable widgets across 2 pages (105 distinct
+# AcroForm names). 100 widgets under 92 distinct names are genuine data
+# widgets, and ALL 92 are mapped; the map has 99 entries because the three
+# radio groups contribute one entry per option:
+#   * "Enter SSN shown first without dashes or spaces" is ONE /Tx field with a
+#     widget at the top of BOTH pages; pypdf propagates a single value to every
+#     widget copy, so it is mapped ONCE (line "your_ssn"). Mapping it twice as
+#     text would trip the filler's one-field-one-value guard.
+#   * Radio / mutually-exclusive ovals (Residency Status /1 /2 /3,
+#     Filing Status /1 /2 /3 /4, Tax Forgiveness /1 /2 /3) are each ONE /Btn
+#     field; every option is mapped as its own checkbox line on that shared
+#     field with its own on_state, and the filler enforces single-selection.
+#   * Standalone yes/no ovals (Extension /1, Amended Return /2, Farmers /0,
+#     Deceased /5, Taxpayer /1, Spouse /1, the three "Loss" ovals /none on
+#     lines 4/5/6, Form REV-459B /1, line-27 REV-1630/REV-1630A /3,
+#     E-File Opt Out /1) are each their own one-state /Btn field.
+#
+# Intentionally NOT mapped — 19 widgets, all JavaScript PUSHBUTTONS (field flag
+# bit 17 set: Ff 65536/65537), i.e. UI controls with no fillable data state
+# (their only "on_state" is the appearance-stream dictionary key "/BBox"):
+#   page 1: "Official Use Only", "start box", "arrow", "Print Form",
+#           "GO TO NEXT PAGE", "TOP OF PAGE", "RESET FORM", "Disclaimer Notice"
+#   page 2: "Official Use Only", "start box", "arrow" (x2), "Signature",
+#           "Example Date", "Spouse's Signature", "Do Not Call", "Print Form",
+#           "RETURN TO PAGE 1", "RESET FORM"
+# (Signature / Example Date / Spouse's Signature print "Please sign after
+# printing." / "MM/DD/YY" — they are not data entry boxes; re-read out of the
+# 2025 blank's own appearance streams.) No statutory pre-printed constants
+# exist on this form: no widget ships a /V or /DV.
+#
+# Money vs text. Dollar boxes (lines 1a..31 and the line 32-36 donation
+# amounts) are mapped `money`. Genuine text widgets stay text: name/address/
+# occupation lines, SSN boxes (PA strips dashes; /MaxLen 9), dates, two-char
+# state/country codes, school code/name, the single-char deduction "Code"
+# (line 10) / line-27 "Code" / line 32-36 organization "R" code boxes, the
+# Dependents count (19b), Final Return reason, Part-Year-Resident from/to
+# month boxes, and the preparer block.
+#
+# Relations. Only unconditional equalities whose operands are all mapped money
+# lines are declared (1c, 11, 12, 18, 24). Line 9 ("add only the POSITIVE
+# amounts ... do not add losses") is conditional and OMITTED per house style.
+# No cross_form: PA-40 begins from PA-taxable compensation, not federal AGI, so
+# no printed label states a federal-source line.
+form: Form PA-40
+jurisdiction: states/pa
+tax_year: 2025
+source_url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40.pdf
+pdf_sha256: "fcd7648601f3ce5a7a258be49c54aa1c604e1c61c1fe9175351451ac6087d8b3"
+acroform_root: ''
+fields:
+  # ================================================= header / personal (page 1)
+  - line: your_ssn                       # "Your Social Security Number" (ONE field; repeats top of page 2)
+    field: Enter SSN shown first without dashes or spaces
+    type: text
+    maxlen: 9
+  - line: spouse_ssn                     # "Spouse's Social Security Number (even if filing separately)"
+    field: Enter SSN of spouse without dashes or spaces
+    type: text
+    maxlen: 9
+  - line: tp_last_name                   # "Last Name"
+    field: Use all caps to enter taxpayer's last name
+    type: text
+  - line: tp_suffix                      # "Suffix"
+    field: Use all caps to enter suffixes such as JR, SR, III
+    type: text
+    maxlen: 3
+  - line: tp_first_name                  # "First Name" (2023 face read "Your First Name")
+    field: Use all caps to enter taxpayer's first name
+    type: text
+  - line: tp_mi
+    field: Use Cap For Your Middle Initial
+    type: text
+    maxlen: 1
+  - line: spouse_first_name
+    field: Use all caps to enter spouse's first name
+    type: text
+  - line: spouse_mi
+    field: Use Cap For Your Spouse's Middle Initial
+    type: text
+    maxlen: 1
+  - line: spouse_last_name               # "Spouse's Last Name - Only if different from Last Name above"
+    field: Use all caps to enter spouse's last name if different from above
+    type: text
+  - line: spouse_suffix
+    field: Use all caps to enter spouse's suffixes such as JR, SR, III
+    type: text
+    maxlen: 3
+  - line: address_line1                  # "First Line of Address"
+    field: Use all caps to enter First Line of Address
+    type: text
+  - line: address_line2                  # "Second Line of Address"
+    field: Use all caps to enter Second Line of Address
+    type: text
+  - line: city                           # "City or Post Office"
+    field: Use all caps to enter City or Post Office
+    type: text
+  - line: state
+    field: Use all caps to enter two character State abbreviation
+    type: text
+    maxlen: 2
+  - line: zip
+    field: Enter five digit Zip Code
+    type: text
+    maxlen: 5
+  - line: country_code
+    field: Use all caps to enter two character Country Code
+    type: text
+    maxlen: 2
+  - line: daytime_phone
+    field: Enter Daytime Telephone Number without parenthesis, dashes or spaces
+    type: text
+    maxlen: 10
+  # "School Code" — the AcroForm NAME's "pags 42 & 43" booklet reference is the
+  # form's own (unchanged) text; the 2025 printed face carries only "School Code",
+  # so no page number is asserted here.
+  - line: school_code
+    field: Enter five digit School Code from list on pags 42 & 43
+    type: text
+    maxlen: 5
+
+  # ---- Extension / Amended (ovals, top-right)
+  - line: extension                      # "Extension. See the instructions."
+    field: Extension
+    type: checkbox
+    on_state: /1
+  - line: amended_return                 # "Amended Return. See the instructions."
+    field: Amended Return
+    type: checkbox
+    on_state: /2
+
+  # ---- Residency Status (one /Btn, fill only one oval): R / N / P
+  - line: residency_status::resident     # R — Pennsylvania Resident
+    field: Residency Status
+    type: checkbox
+    on_state: /1
+  - line: residency_status::nonresident  # N — Nonresident
+    field: Residency Status
+    type: checkbox
+    on_state: /2
+  - line: residency_status::part_year    # P — Part-Year Resident
+    field: Residency Status
+    type: checkbox
+    on_state: /3
+  - line: part_year_resident_from        # "Part-Year Resident from ___/___/2025" (month box)
+    field: Part Year Resident from
+    type: text
+    maxlen: 5
+  - line: part_year_resident_to          # "...to ___/___/2025" (month box)
+    field: Part year resident to
+    type: text
+    maxlen: 5
+
+  # ---- Filing Status (one /Btn): S / J / M / F
+  - line: filing_status::single          # S — Single
+    field: Filing Status
+    type: checkbox
+    on_state: /1
+  - line: filing_status::mfj             # J — Married, Filing Jointly
+    field: Filing Status
+    type: checkbox
+    on_state: /2
+  - line: filing_status::mfs             # M — Married, Filing Separately
+    field: Filing Status
+    type: checkbox
+    on_state: /3
+  - line: filing_status::final_return    # F — Final Return
+    field: Filing Status
+    type: checkbox
+    on_state: /4
+  - line: final_return_reason            # "F Final Return. Indicate reason:" (text)
+    field: Final Return
+    type: text
+    maxlen: 15
+
+  # ---- Deceased block: D oval, then Taxpayer / Spouse deceased ovals + DODs
+  - line: deceased                       # D — Deceased
+    field: Deceased
+    type: checkbox
+    on_state: /5
+  - line: deceased_taxpayer              # Taxpayer (deceased oval)
+    field: Taxpayer
+    type: checkbox
+    on_state: /1
+  - line: taxpayer_date_of_death         # "Date of death ___/___/2025"
+    field: Taxpayer Date of Death
+    type: text
+    maxlen: 5
+  - line: deceased_spouse                # Spouse (deceased oval)
+    field: Spouse
+    type: checkbox
+    on_state: /1
+  - line: spouse_date_of_death           # "Date of death ___/___/2025"
+    field: Spouse Date of Death
+    type: text
+    maxlen: 5
+
+  - line: farmers                        # "Farmers. Fill in this oval if at least two-thirds of your gross income is from farming."
+    field: Farmers
+    type: checkbox
+    on_state: /0
+  - line: school_district_name           # "Name of school district where you lived on 12/31/2025"
+    field: Name of School District
+    type: text
+    maxlen: 15
+  - line: tp_occupation                  # "Your occupation"
+    field: Your Occupation
+    type: text
+  - line: spouse_occupation              # "Spouse's occupation"
+    field: Spouse's occupation
+    type: text
+
+  # ================================================= income / deductions (page 1)
+  - line: 1a                             # Gross Compensation
+    field: 1a. Gross Compensation
+    type: money
+  - line: 1b                             # Unreimbursed Employee Business Expenses
+    field: 1b. Unreimbursed Employee Business Expenses
+    type: money
+  - line: 1c                             # Net Compensation (subtract 1b from 1a)
+    field: 1c. Net Compensation
+    type: money
+  - line: "2"                            # Interest Income. Complete PA Schedule A if required.
+    field: 2. Interest Income
+    type: money
+  - line: "3"                            # Dividend and Capital Gains Distributions Income
+    field: 3. Dividend  and Capital Gains Distributions Income
+    type: money
+  - line: 4_loss                         # line 4 LOSS oval
+    field: 4. Loss
+    type: checkbox
+    on_state: /none
+  - line: "4"                            # Net Income or Loss from the Operation of a Business, Profession, or Farm
+    field: 4. Net Income or Loss from the Operation of a Business, etc
+    type: money
+  - line: 5_loss                         # line 5 LOSS oval
+    field: 5. Loss
+    type: checkbox
+    on_state: /none
+  - line: "5"                            # Net Gain or Loss from the Sale, Exchange, or Disposition of Property
+    field: 5. Net Gain or Loss from Sale, etc. of Property
+    type: money
+  - line: 6_loss                         # line 6 LOSS oval
+    field: 6. Loss
+    type: checkbox
+    on_state: /none
+  - line: "6"                            # Net Income or Loss from Rents, Royalties, Patents, or Copyrights
+    field: 6. Net Income or Loss from Rents, etc
+    type: money
+  - line: "7"                            # Estate or Trust Income
+    field: 7. Estate or Trust income
+    type: money
+  - line: "8"                            # Gambling and Lottery Winnings
+    field: 8. Gambling and Lottery Winnings
+    type: money
+  - line: "9"                            # Total PA Taxable Income (positive amounts from 1c, 2, 3, 4, 5, 6, 7, and 8)
+    field: 9. Total PA Taxable Income
+    type: money
+  - line: 10_code                        # line 10 deduction code box
+    field: Code
+    type: text
+    maxlen: 1
+  - line: "10"                           # Other Deductions
+    field: 10.  Other Deductions
+    type: money
+  - line: "11"                           # Adjusted PA Taxable Income (subtract 10 from 9)
+    field: 11. Adjusted PA Taxable Income
+    type: money
+
+  # ================================================= page 2 header
+  # ("Enter SSN shown first" top-of-page widget is the same field mapped as 'your_ssn'.)
+  - line: name_on_page2                  # "Name(s)" header on page 2
+    field: Name(s)
+    type: text
+
+  # ---- tax, withholding, payments
+  - line: "12"                           # PA Tax Liability. Multiply Line 11 by 3.07 percent (0.0307)
+    field: 12. PA Tax Liability. Multiply Line 11 by 3.07%
+    type: money
+  - line: "13"                           # Total PA Tax Withheld
+    field: 13. Total PA Tax Withheld
+    type: money
+  - line: "14"                           # Credit from your 2024 PA Income Tax return
+    field: 14. Credit from your PA Income Tax Return
+    type: money
+  - line: 15_rev459b                     # line 15 "Fill in oval if including Form REV-459B"
+    field: Form REV-459B
+    type: checkbox
+    on_state: /1
+  - line: "15"                           # 2025 Estimated Installment Payments
+    field: 15. Estimated Installment Payments
+    type: money
+  - line: "16"                           # 2025 Extension Payment
+    field: 16. Extension Payment
+    type: money
+  - line: "17"                           # Nonresident Tax Withheld from your PA Schedule(s) NRK-1
+    field: 17. Nonredsident Tax Withheld
+    type: money
+  - line: "18"                           # Total Estimated Payments and Credits. Add Lines 14, 15, 16, and 17
+    field: 18.Total Estimated Payments and Credits
+    type: money
+
+  # ---- Tax Forgiveness Credit (line 19a, one /Btn): Unmarried-or-Separated / Married / Deceased
+  - line: tax_forgiveness::unmarried     # 19a — Unmarried or Separated
+    field: Tax Forgiveness
+    type: checkbox
+    on_state: /1
+  - line: tax_forgiveness::married       # 19a — Married
+    field: Tax Forgiveness
+    type: checkbox
+    on_state: /2
+  - line: tax_forgiveness::deceased      # 19a — Deceased
+    field: Tax Forgiveness
+    type: checkbox
+    on_state: /3
+  - line: 19b_dependents                 # 19b — Dependents, Section II, Line 2, PA Schedule SP (count)
+    field: Dependents
+    type: text
+    maxlen: 2
+  - line: "20"                           # Total Eligibility Income from Section III, Line 11, PA Schedule SP
+    field: 20. Total Eligibility Income
+    type: money
+  - line: "21"                           # Tax Forgiveness Credit from Section IV, Line 16, PA Schedule SP
+    field: 21. Tax Forgiveness Credit
+    type: money
+  - line: "22"                           # Resident Credit. Submit your PA Schedule(s) G-L and/or RK-1
+    field: 22. Resident Credit
+    type: money
+  - line: "23"                           # Total Other Credits. Submit your PA Schedule OC and/or PA Schedule DC
+    field: 23.Total Other Credits
+    type: money
+  - line: "24"                           # TOTAL PAYMENTS and CREDITS. Add Lines 13, 18, 21, 22, and 23
+    field: 24. Total Payments and Credits
+    type: money
+  - line: "25"                           # USE TAX. Due on internet, mail order, or out-of-state purchases
+    field: 25. USE TAX
+    type: money
+  - line: "26"                           # TAX DUE
+    field: 26. TAX DUE
+    type: money
+  - line: 27_code                        # line 27 code box
+    field: 27. Code
+    type: text
+    maxlen: 1
+  - line: 27_rev1630                     # line 27 "Fill in oval if including Form REV-1630/REV-1630A"
+    field: 27. REV-1630
+    type: checkbox
+    on_state: /3
+  - line: "27"                           # Penalties and Interest
+    field: 27.Penalties and Interest
+    type: money
+  - line: "28"                           # TOTAL PAYMENT DUE
+    field: 28. TOTAL PAYMENT
+    type: money
+  - line: "29"                           # OVERPAYMENT
+    field: 29. OVERPAYMENT
+    type: money
+  - line: "30"                           # Refund — amount of Line 29 you want as a check mailed to you
+    field: 30. Refund
+    type: money
+  - line: "31"                           # Credit — amount of Line 29 applied to your 2026 estimated account
+    field: 31. Credit
+    type: money
+
+  # ---- Donation lines 32-36: each has an organization "R" code box + a donation amount
+  - line: 32_code                        # line 32 organization code box
+    field: 32. Refund
+    type: text
+    maxlen: 1
+  - line: "32"                           # line 32 donation amount
+    field: 32. Refund donation line
+    type: money
+  - line: 33_code
+    field: 33. Refund
+    type: text
+    maxlen: 1
+  - line: "33"
+    field: 33. Refund donation line
+    type: money
+  - line: 34_code
+    field: 34. Refund
+    type: text
+    maxlen: 1
+  - line: "34"
+    field: 34. Refund donation line
+    type: money
+  - line: 35_code
+    field: 35. Refund
+    type: text
+    maxlen: 1
+  - line: "35"
+    field: 35. Refund donation line
+    type: money
+  - line: 36_code
+    field: 36. Refund
+    type: text
+    maxlen: 1
+  - line: "36"
+    field: 36. Refund donation line
+    type: money
+
+  # ---- signature / preparer block
+  # "Date" — the writable box. The adjacent "Example Date" ReadOnly pushbutton
+  # paints the DOR's own "MM/DD/YY" hint and is deliberately NOT mapped.
+  - line: signed_date
+    field: Date
+    type: text
+    maxlen: 8
+  - line: efile_opt_out                  # "E-File Opt Out. See the instructions."
+    field: E-File Opt Out
+    type: checkbox
+    on_state: /1
+  - line: preparer_ptin                  # "Preparer's PTIN" (printed label) / SSN box
+    field: Preparerês SSN / PTIN
+    type: text
+    maxlen: 9
+  - line: preparer_name                  # "Preparer's Name and Telephone Number" — name
+    field: Preparer's Name
+    type: text
+    maxlen: 30
+  - line: preparer_phone                 # "...and Telephone Number" — phone
+    field: Preparer's Telephone Number
+    type: text
+    maxlen: 30
+  - line: firm_fein                      # "Firm FEIN"
+    field: Firm FEIN
+    type: text
+    maxlen: 10
+relations:
+  - "1c == 1a - 1b"                      # "Net Compensation. Subtract Line 1b from Line 1a."
+  - "11 == 9 - 10"                       # "Adjusted PA Taxable Income. Subtract Line 10 from Line 9."
+  - "12 == 11 * 0.0307"                  # "PA Tax Liability. Multiply Line 11 by 3.07 percent (0.0307)."
+  - "18 == 14 + 15 + 16 + 17"            # "Total Estimated Payments and Credits. Add Lines 14, 15, 16, and 17."
+  - "24 == 13 + 18 + 21 + 22 + 23"       # "TOTAL PAYMENTS and CREDITS. Add Lines 13, 18, 21, 22, and 23."
+cross_form: []
+identity_fields:
+  - your_ssn
+  - tp_first_name
+  - tp_last_name

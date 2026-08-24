@@ -136,12 +136,20 @@
 # are each ONE /Btn -> groups sch_e.residency / sch_e.part_year. Schedule F
 # filing-as ("Group1", A/B/C) -> group sch_f.filing_as; its box-C Yes/No
 # questions are DISTINCT single-state /Btn fields (Check BoxA..H) each mapped as
-# its own line with a shared group per question. All other boxes are independent
-# single-state /Yes flags (deceased primary/spouse on /Primary; amended;
-# nonresident special; nonresident/PY; injured spouse; penalty-waiver-attached;
-# no-use-tax; NRSR; discuss Yes and No are two separate fields; preparer-not-
-# efile; HEPTC AMT flag on /FAMT; HEPTC required-to-file Yes and No are two
-# separate fields each on /Yes).
+# its own line with a shared group per question. Two more Yes/No questions have
+# that same separate-field topology and likewise carry a shared group: the
+# signature discuss-with-preparer pair (Check Box1 /Yes + Check Box2 /No ->
+# group signature.discuss_with_preparer) and the HEPTC-1 Part I
+# required-federal-return pair (homesteadY_checkbox + homesteadN_checkbox, BOTH
+# on /Yes -> group heptc.required_federal_return; nothing in the PDF makes
+# these exclusive, so the group id is the only guard against answering the
+# question both ways — it was missing until 2026-08-24). All other boxes are
+# independent single-state flags where the printed face shows no exclusivity
+# (deceased primary/spouse on /Primary; amended; nonresident special;
+# nonresident/PY; injured spouse — the page-1 row prints four freestanding
+# boxes with no "check one", and amended legitimately combines with the
+# others; penalty-waiver-attached; no-use-tax; NRSR; preparer-not-efile;
+# HEPTC AMT flag on /FAMT).
 #
 # Relations. Only single-box on-face arithmetic where every operand is mapped to
 # a bare digit line of THIS core return (IT-140 lines 1-26) is declared. The
@@ -879,14 +887,23 @@ fields:
     field: "FAMT_1"
     type: checkbox
     on_state: /FAMT
+  # Part I "Are you required to file a federal return?" — ONE question on TWO
+  # independent terminal /Btn fields, BOTH with on_state /Yes, so only the
+  # group id makes them exclusive (same shape as the sch_f.* pairs below;
+  # ungrouped until 2026-08-24 fill_form wrote Yes AND No with zero warnings).
+  # `required` is deliberately left off: HEPTC-1 is a schedule most IT-140
+  # filers do not attach, so a required group would FAIL verification on every
+  # legitimately HEPTC-less return (the P-008 sched_e reasoning).
   - line: heptc.required_federal_return.yes # "Are you required to file a federal return? YES"
     field: "homesteadY_checkbox"
     type: checkbox
     on_state: /Yes
+    group: heptc.required_federal_return
   - line: heptc.required_federal_return.no  # "... NO"
     field: "homesteadN_checkbox"
     type: checkbox
     on_state: /Yes
+    group: heptc.required_federal_return
   - line: heptc.1                           # 1 Total WV property tax paid on OWNER-OCCUPIED home in 2023
     field: "homestead01"
     type: money
