@@ -354,6 +354,12 @@
     "state",
     "zip_or_postal_code"
   ],
+  "states/il/2024/il1040/pack.yaml": [
+    "mailing_address",
+    "city",
+    "state",
+    "zip_or_postal_code"
+  ],
   "states/in/2023/it40/pack.yaml": [
     "present_address",
     "city",
@@ -416,6 +422,13 @@
     "d.zipcode",
     "d.zipext"
   ],
+  "states/mo/2024/mo1040/pack.yaml": [
+    "address",
+    "city",
+    "state",
+    "d.zipcode",
+    "d.zipext"
+  ],
   "states/ms/2023/f80105/pack.yaml": [
     "mailing_address.street",
     "mailing_address.city",
@@ -441,6 +454,13 @@
     "zip_code"
   ],
   "states/nd/2023/nd1/pack.yaml": [
+    "mailing_address.street",
+    "mailing_address.apt",
+    "mailing_address.city",
+    "mailing_address.state",
+    "mailing_address.zip"
+  ],
+  "states/nd/2024/nd1/pack.yaml": [
     "mailing_address.street",
     "mailing_address.apt",
     "mailing_address.city",
@@ -523,6 +543,14 @@
     "mailing_address.country"
   ],
   "states/or/2023/or40/pack.yaml": [
+    "mailing_address.street",
+    "mailing_address.city",
+    "mailing_address.state",
+    "mailing_address.zip",
+    "mailing_address.zip_plus4",
+    "mailing_address.country"
+  ],
+  "states/or/2024/or40/pack.yaml": [
     "mailing_address.street",
     "mailing_address.city",
     "mailing_address.state",

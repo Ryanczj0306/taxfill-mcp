@@ -413,6 +413,26 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "CRP2023 banner are correctly NOT mapped",
     ),
     StateComputed(
+        "states/mo/2024/mo1040/pack.yaml",
+        260,
+        "the 2023 row's JS-computed totals carried over, with the 2024 delta measured "
+        "field by field (262 -> 260): MINUS the 20 ReadOnly bindings the re-authored "
+        "MO-A Part 3/Part 5 ladder removed with its 25 dead field names; PLUS 2 "
+        "survivors newly flagged (/Ff 12582912 -> 12582913, the only /Ff changes on any "
+        "surviving field): line44, quoted by name in the 2024 document JS "
+        "(getField(\"line44\").value = getField(\"wftc_line10\").value — class 4), and "
+        "line20, printed as a reserved line and additionally /F Hidden (mapped but "
+        "leave-blank; anything written there is invisible on paper and line 25's "
+        "printed sum treats it as 0); PLUS 16 of the 36 new 2024 fields, all mapped: "
+        "the Section A/C ladder totals and wftc_line6..10 (each verified by quoted "
+        "getField name in the document JS — class 4, taxfill must write the values or "
+        "they print blank) and moa_pt5_1y/1s (JS-gated UI defaults unlocked by the "
+        "age-62/65 boxes — the OH IT-1040 L17/L19 shape, filer data that must stay "
+        "mapped). No surviving field LOST the bit; class 1 ruled out for all 16 new "
+        "cells (each /V holds the calculator's factory '0', not a printed constant). "
+        "The CRP banner (CRP2024 this year) stays correctly NOT mapped",
+    ),
+    StateComputed(
         "states/oh/2023/it1040_oh/pack.yaml",
         12,
         "TWELVE widgets, none of them a computed total: the five below plus the SEVEN "

@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**4,124 tests, all green** — offline 3,802 + live-.gov 322, exit 0;
+Done and on `main` (**4,166 tests, all green** — offline 3,836 + live-.gov 330, exit 0;
 re-verified 2026-08-21 via `pytest -m "not network"` AND `pytest -m network`, exit 0
 both — the network layer skips 2 (states/ms/2023/f80105, whose blank is uncached and
 whose host fails certificate verification here)):
@@ -57,10 +57,13 @@ whose host fails certificate verification here)):
   across 10 packs, pinned per pack by count). The first two of those had been
   federal-only while CONVENTIONS.md called them binding — see Phase E for what
   shipped through the gap, and for the two live defects the widening found.
-- **State form packs — 57 across three years** (TY2023 42 / TY2024 10 / TY2025 5).
+- **State form packs — 61 across three years** (TY2023 42 / TY2024 14 / TY2025 5).
   The 2026-08-21 tranche added 10 (AR 2024 + 2025, NC/NJ/OH/RI/UT/VA 2024,
   OR/PA 2025) and closed **every PORTABLE row** in D2's measured triage for both
-  TY2024 and TY2025; the near-ports, re-maps and URL-dead rows stay open.
+  TY2024 and TY2025; the 2026-08-25 tranche added 4 (IL-1040, ND-1, OR-40,
+  MO-1040 × 2024) and closed **every NEAR-PORT row** too — each with the moved
+  fields re-derived from the printed face and an adversarial second-agent
+  verify. Only the re-maps and URL-dead rows stay open.
 - **State credits — DONE for all 42 jurisdictions** (41 income-tax states + DC):
   every `knowledge/states/<st>/2023.yaml` carries a cited `credits` block (~174
   entries total); `state_scope` surfaces them as `benefits_candidates`.
@@ -75,22 +78,23 @@ whose host fails certificate verification here)):
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (57 packs across TY2023–TY2025)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (61 packs across TY2023–TY2025)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**154 form packs total** — 150 `pack.yaml` (93 federal + 57 state) + 4
-`handfill.yaml`. The state 57 breaks down **TY2023 42 / TY2024 10 / TY2025 5**.
+**158 form packs total** — 154 `pack.yaml` (93 federal + 61 state) + 4
+`handfill.yaml`. The state 61 breaks down **TY2023 42 / TY2024 14 / TY2025 5**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **10 of the 42 jurisdictions fill a post-2023 year** — AR (2024+2025),
-> NY (2024+2025), PA (2024+2025), OR (2025), and NC/NJ/OH/RI/UT/VA (2024) —
-> after the 2026-08-21 ten-pack tranche. For the remaining **32**, state
-> *knowledge* spans 2023–2025 while the only fillable pack is TY2023, so
-> `calc.state_tax` still computes years those packs cannot fill. That
-> asymmetry is now 32 jurisdictions wide rather than 40 (see D2).
+> **13 of the 42 jurisdictions fill a post-2023 year** — AR (2024+2025),
+> NY (2024+2025), PA (2024+2025), OR (2024+2025), and
+> IL/MO/NC/ND/NJ/OH/RI/UT/VA (2024) — after the 2026-08-21 ten-pack and
+> 2026-08-25 four-pack tranches. For the remaining **29**, state *knowledge*
+> spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
+> still computes years those packs cannot fill. That asymmetry is now 29
+> jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
 > (Phase 0, 2026-06-28) and counted above.
@@ -312,16 +316,17 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
 
 ### D2 — Breadth follow-ons
 
-- [~] More tax years for the state packs — **KNOWLEDGE DONE (126/126), FORM PACKS 15/~92
-      — and every PORTABLE row is now closed; what remains is only the expensive work.**
+- [~] More tax years for the state packs — **KNOWLEDGE DONE (126/126), FORM PACKS 19/~92
+      — every PORTABLE and NEAR-PORT row is now closed; what remains is re-maps
+      and URL-discovery.**
       State *knowledge* now spans three COMPLETE years: **2023 42/42, 2024 42/42,
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
-      TY2023-only**: 57 packs across TY2023 (42) / TY2024 (10) / TY2025 (5), so
-      **10 of the 42 jurisdictions** can fill a post-2023 year — AR, NY and PA for
-      both 2024 and 2025; OR for 2025; NC, NJ, OH, RI, UT, VA for 2024. For the
-      other **32**, a 2024/2025 return still computes but cannot be filled.
+      TY2023-only**: 61 packs across TY2023 (42) / TY2024 (14) / TY2025 (5), so
+      **13 of the 42 jurisdictions** can fill a post-2023 year — AR, NY, PA and OR
+      for both 2024 and 2025; IL, MO, NC, ND, NJ, OH, RI, UT, VA for 2024. For the
+      other **29**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
@@ -333,21 +338,29 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       string derivation only and NEVER PROBED — it over-reported by ~2×. The
       script now has `--triage`, which downloads each candidate and diffs the
       blank's AcroForm against the base pack's field map. Measured, and with the
-      shipped/open state of each class as of **2026-08-21**:
+      shipped/open state of each class as of **2026-08-25**:
       * **TY2024** (42 AcroForm packs): **10 PORTABLE — ALL 10 SHIPPED** (NY IT-201,
         NY IT-203 and PA on 2026-08-10; AR, NC, NJ, OH, RI, UT, VA in the
-        2026-08-21 tranche). Still OPEN for TY2024: **4 NEAR-PORT**
-        (IL/ND 2 fields moved, OR 3, MO 25) + 9 RE-MAP + 12 URL-DEAD +
-        7 no-year-token.
+        2026-08-21 tranche) and **4 NEAR-PORT — ALL 4 SHIPPED 2026-08-25**
+        (IL-1040 with the EIC/CTC lines re-bound to the renamed Sch. IL-E/EITC
+        fields, ND-1 with the header name boxes split four ways AND printed
+        lines 10/11 swapping meanings under unmoved widget names — the exact
+        trap the vision audit exists for, OR-40 with the three kicker widgets
+        deleted on a non-kicker year, MO-1040 with the MO-A Part 3/5 ladder
+        re-authored: 25 names dead, 36 new, ReadOnly re-measured 262 → 260 and
+        every delta field adjudicated per P-007). Each near-port also passed an
+        adversarial second-agent verify. Still OPEN for TY2024: 9 RE-MAP +
+        12 URL-DEAD + 7 no-year-token.
       * **TY2025**: **5 PORTABLE — ALL 5 SHIPPED** (NY IT-201, NY IT-203 on
         2026-08-10; AR, OR, PA in the 2026-08-21 tranche). Still OPEN for TY2025:
         0 near-port + 11 RE-MAP + **19 URL-DEAD** + 7 no-year-token.
-      So the ~15 cheap ports are DONE — the tranche's remaining shape is the
-      expensive half: **4 near-ports**, **~20 vision re-maps** (every CA pack is a
-      full re-map — CA renames its fields yearly), and **~26 URL-discovery tasks**
+      So the ~15 cheap ports AND the 4 near-ports are DONE — the tranche's
+      remaining shape is: **~20 vision re-maps** (every CA pack is a
+      full re-map — CA renames its fields yearly) and **~26 URL-discovery tasks**
       before those can even be assessed. Note OR is the live proof that a class is
-      per-year, not per-state: OR-40 was NEAR-PORT for 2024 (3 fields moved) and
-      PORTABLE for 2025, so the 2025 pack shipped while OR 2024 stays open.
+      per-year, not per-state: OR-40 was NEAR-PORT for 2024 (the DOR deleted the
+      three kicker widgets rather than renumbering) and PORTABLE for 2025 (which
+      re-inserted the kicker at line 32); both years now ship.
       Identical field NAMES still do not prove the state kept its line NUMBERING,
       so every port keeps the per-page vision audit — and this tranche is why that
       rule stands: the OH 2024 port found Ohio had newly set the AcroForm ReadOnly
@@ -378,9 +391,10 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       port cost against the base pack's field map (PORTABLE / NEAR-PORT /
       RE-MAP / URL-DEAD / no-year-token), so the tranche starts from measured
       cost instead of an estimate (see D2 for the TY2024/TY2025 numbers). The
-      2024/2025 state tranche is **partly delivered** — all 15 PORTABLE rows have
-      shipped (5 on 2026-08-10, 10 on 2026-08-21) and each travelled the full
-      quality gate; the near-port / re-map / URL-dead remainder is still open.
+      2024/2025 state tranche is **partly delivered** — all 15 PORTABLE rows
+      (5 on 2026-08-10, 10 on 2026-08-21) and all 4 NEAR-PORT rows (2026-08-25)
+      have shipped, each through the full quality gate; the re-map / URL-dead
+      remainder is still open.
 
 **Acceptance:** each new form type audited + golden-tested; any computed line
 backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
@@ -942,8 +956,8 @@ line items sum to the headline delta.
    part-year state forms, C3 hard states (MA fetch, IA/NM classification,
    CT/SC hand-fill, UT sourcing).
 6. **Phase D** — D1 DONE; D2 = more tax years for state packs (all 15 PORTABLE
-   ports now shipped — 57 state packs over TY2023–TY2025; the near-ports, ~20
-   vision re-maps and ~26 URL-discovery rows remain) + the community
+   and all 4 NEAR-PORT ports now shipped — 61 state packs over TY2023–TY2025;
+   ~20 vision re-maps and ~26 URL-discovery rows remain) + the community
    pack-contribution pipeline (DONE).
 
 Phases A, E, and the start of C are largely independent and can run in parallel.

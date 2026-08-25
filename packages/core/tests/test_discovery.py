@@ -27,18 +27,19 @@ def test_list_all_packs():
     # and so carry no pack.yaml at all), + NY IT-201/IT-203 x 2024 and x 2025 and
     # PA-40 2024 (the 2026-08-10 port) = 47, + the 2026-08-21 ten-pack tranche
     # (AR1000F 2024 AND 2025, D-400 / NJ-1040 / IT 1040 / RI-1040 / TC-40 /
-    # Form 760 x 2024, OR-40 and PA-40 x 2025) = 57. So TY2023 42, TY2024 10,
-    # TY2025 5 — state coverage is no longer TY2023-only, and any claim that it
-    # is should be corrected wherever it survives.
+    # Form 760 x 2024, OR-40 and PA-40 x 2025) = 57, + the 2026-08-25 near-port
+    # tranche (IL-1040 / ND-1 / OR-40 / MO-1040 x 2024) = 61. So TY2023 42,
+    # TY2024 14, TY2025 5 — state coverage is no longer TY2023-only, and any
+    # claim that it is should be corrected wherever it survives.
     states = [s for s in allf if s.jurisdiction.startswith("states/")]
-    assert len(states) == 57
+    assert len(states) == 61
     assert len({s.tax_year for s in states}) == 3
     assert len([s for s in states if s.tax_year == 2023]) == 42
-    assert len([s for s in states if s.tax_year == 2024]) == 10
+    assert len([s for s in states if s.tax_year == 2024]) == 14
     assert len([s for s in states if s.tax_year == 2025]) == 5
     # Every discovered pack is one or the other, so the total is the sum. This
     # catches a pack landing under a third top-level jurisdiction unnoticed.
-    assert len(allf) == 93 + 57 == 150
+    assert len(allf) == 93 + 61 == 154
 
 
 def test_list_filters_by_jurisdiction_and_year():
