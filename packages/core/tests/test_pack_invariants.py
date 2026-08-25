@@ -18,7 +18,7 @@ checked by either one**, and three real defects shipped past CI because of it:
    the three ``ny/*/it203`` packs spell them with ``_``. Even widening the
    glob alone would have left those pairs invisible.
 
-So this file sweeps **every** discovered pack, federal and state (150 today),
+So this file sweeps **every** discovered pack, federal and state (154 today),
 in the same way ``test_readonly_widget_mapping.py`` does. The helpers it needs
 stay in ``test_formpacks_federal.py``; the invariants themselves live here
 because they are repo-wide, and a federal-named module reporting a Wisconsin
@@ -342,6 +342,14 @@ SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID: tuple[SharedFieldDebt, ...] = (
         "line-38 refund-method election",
     ),
     SharedFieldDebt(
+        "states/il/2024/il1040/pack.yaml",
+        4,
+        "the 2023 IL-1040 set, ported unchanged — filing status (5 options on "
+        "'Filing status'), step-1 residency, and the refund-method election "
+        "(printed line 39 on the 2024 face, 38 on 2023); all four re-measured "
+        "as N-options-on-ONE-/Btn against the 2024 blank",
+    ),
+    SharedFieldDebt(
         "states/ky/2023/form740/pack.yaml",
         5,
         "filing status plus the taxpayer and spouse political-party-fund designations; "
@@ -356,6 +364,13 @@ SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID: tuple[SharedFieldDebt, ...] = (
         "states/mo/2023/mo1040/pack.yaml",
         1,
         "the two 'CalcOption' UI options, which share one /Btn field",
+    ),
+    SharedFieldDebt(
+        "states/mo/2024/mo1040/pack.yaml",
+        1,
+        "the 2023 row's two 'CalcOption' UI options sharing one /Btn field, "
+        "verified unchanged on the 2024 blank (one field, two page-1 widgets, "
+        "/AP states /X and /N)",
     ),
     # states/nj/2023/nj1040 row (13 sets) retired 2026-08-24: the 2023 base got
     # the same 38 group ids as its 2024 sibling and now has 0 ungrouped sets.

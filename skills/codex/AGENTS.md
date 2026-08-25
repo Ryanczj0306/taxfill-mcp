@@ -47,10 +47,10 @@ via `hand_fill_worksheet`; `state_scope` tells you which returns are required.
 flat or graduated is the PACK's call, and the split moves by
 year, so never assume and never do state tax arithmetic yourself. Note the year
 mismatch: state KNOWLEDGE spans 2023-2025, but state FORM packs cover 2024/2025
-for only **10 of the 42** jurisdictions — AR, NY and PA (2024 + 2025), OR (2025),
-and NC, NJ, OH, RI, UT, VA (2024). For the other 32 a 2024/2025 state return
-computes but cannot be filled. Never assume a year exists: call `list_forms`
-with the jurisdiction and year and read what comes back.
+for only **13 of the 42** jurisdictions — AR, NY, OR and PA (2024 + 2025), and
+IL, MO, NC, ND, NJ, OH, RI, UT, VA (2024). For the other 29 a 2024/2025 state
+return computes but cannot be filled. Never assume a year exists: call
+`list_forms` with the jurisdiction and year and read what comes back.
 
 ## Tools
 
