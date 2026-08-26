@@ -516,6 +516,106 @@ federal:
           vehicle energy costs cannot ride the de minimis exclusion.
         cadence: standing page (re-check each filing season)
 
+    # IRA basis / pro-rata and the two Roth-conversion paths (Phase I, I1). Added
+    # 2026-08-26 alongside calc ops ira_pro_rata and roth_conversion. The gap was
+    # the H8/H9 shape again — the packs shipped the IRA LIMIT and the Roth MAGI
+    # phase-out (contribution_limits) while nothing carried the CHARACTERIZATION
+    # rule that decides how much of a conversion is taxable, so IRC 408(d)(2) had
+    # no home in the repo at all. Reproduced before the topic was written:
+    # get_sources("Form 8606"), ("pro rata rule") and ("nondeductible IRA basis")
+    # were clean misses, and get_sources("nondeductible contributions") routed to
+    # Pub 526 + Form 8283 — CHARITABLE-contribution substantiation, a wrong-law
+    # pointer of exactly the Schedule NEC / "qualified parking" kind (P-005,
+    # P-006). The year-invariant rules live in knowledge/pitfalls.yaml (P-009);
+    # only the contribution limits and phase-out ranges are figures.
+    ira_basis_and_roth_conversions:
+      - url: https://www.irs.gov/pub/irs-prior/f8606--2025.pdf
+        answers: >-
+          Form 8606, Nondeductible IRAs — the form that computes IRA basis and
+          the taxable part of a conversion. Part I: line 1 this year's
+          nondeductible contributions, line 2 the prior-year basis carryforward,
+          line 4 the slice contributed between January 1 and April 15 of the
+          following year, line 5 = 3 - 4 the ratio's NUMERATOR, line 6 the
+          December 31 value of ALL traditional/SEP/SIMPLE IRAs plus outstanding
+          rollovers, line 7 distributions not converted, line 8 the net amount
+          converted, line 9 = 6 + 7 + 8 the DENOMINATOR (it adds the conversion
+          back), line 10 the ratio "rounded to at least 3 places ... If the
+          result is 1.000 or more, enter 1.000", lines 11-13 the nontaxable
+          portions, line 14 the basis carried forward. Part II lines 16-18 give
+          the conversion's taxable amount for Form 1040 line 4b; the line 15c
+          Note carries the under-59-1/2 10% additional tax warning. The form
+          header ("If married, file a separate form for each spouse") is the
+          authority that basis is PER PERSON.
+        cadence: annual (per tax year; prior revisions at irs.gov/pub/irs-prior/f8606--<year>.pdf)
+      - url: https://www.irs.gov/pub/irs-prior/i8606--2025.pdf
+        answers: >-
+          Instructions for Form 8606 — the Line 2 Total Basis Chart (which prior
+          year's line the basis comes from, and why pre-2001 forms renumber),
+          Line 4 ("Although the contributions ... you made from January 1 ...
+          through April 15 ... can be treated as nondeductible, they aren't
+          included in figuring the nontaxable part of any distributions you
+          received"), Line 6 (outstanding rollovers), Line 7 (what is NOT a
+          distribution: conversions, rollovers, QCDs, recharacterizations,
+          returned contributions), Line 14, and "Modified AGI for Roth IRA
+          purposes" (which SUBTRACTS Roth conversions on 1040 line 4b and
+          plan-to-Roth-IRA rollovers on line 5b, so a conversion cannot phase you
+          out of contributing). Its "Purpose of Form" list does NOT include a
+          rollover from a qualified retirement plan to a Roth IRA — those are
+          reported on Form 1040 line 5a/5b instead.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/publications/p590b
+        answers: >-
+          Pub 590-B, Distributions from IRAs — "Are Distributions Taxable?" and
+          "Distributions Fully or Partly Taxable": with no nondeductible
+          contributions there is no basis and every distribution is fully
+          taxable; with basis, "Until all of your basis has been distributed,
+          each distribution is partly nontaxable and partly taxable" (the plain
+          English of the pro-rata rule). Also the Withholding section (federal
+          tax is withheld from traditional-IRA distributions unless you elect
+          out; generally 10% on nonperiodic payments) and the early-distribution
+          10% additional tax.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/pub/irs-drop/n-08-30.pdf
+        answers: >-
+          Notice 2008-30 (PPA '06, P.L. 109-280, section 824) — the
+          DIRECT plan-to-Roth-IRA rollover rule. A-1: a section 401(a) plan
+          distribution may be rolled to a Roth IRA and "there is included in
+          gross income any amount that would be includible if the distribution
+          were not rolled over"; A-2 extends it to 403(a), 403(b) and
+          governmental 457(b) plans; A-3 section 72(t) does not apply to the
+          rollover, but a taxable amount so rolled in and distributed within 5
+          years is (section 408A(d)(3)(F)); A-6 a DIRECT rollover to a Roth IRA
+          escapes the section 3405(c) 20% mandatory withholding "even if the
+          distribution is includible in gross income", while a voluntary
+          withholding agreement is still permitted. This is the authority that
+          IRA pro-rata does NOT touch a plan-to-Roth-IRA rollover.
+        cadence: standing notice (check for superseding guidance)
+      - url: https://www.irs.gov/pub/irs-drop/n-14-54.pdf
+        answers: >-
+          Notice 2014-54, Allocation of After-Tax Amounts to Rollovers: section
+          72(e)(8) pro-rates after-tax and pretax amounts WITHIN a plan account,
+          section 402(c)(2) treats a rollover as consisting first of the
+          includible portion, and section III aggregates simultaneous
+          disbursements into one distribution and assigns the pretax amount to
+          the direct rollovers first (so pretax can go to a traditional IRA and
+          after-tax to a Roth IRA). Section IV: the allocation is what the plan
+          reports on Form 1099-R — the after-tax figure is the plan's
+          determination, never the filer's estimate.
+        cadence: standing notice (check for superseding guidance)
+      - url: https://www.irs.gov/publications/p590a
+        answers: >-
+          Pub 590-A ch. 1 Table 1-5 (Comparison of Payment to You Versus Direct
+          Rollover): a payment to you carries 20% mandatory withholding and, under
+          age 59-1/2, "a 10% additional tax may apply to the taxable part
+          (including an amount equal to the tax withheld) that isn't rolled
+          over", while a direct rollover has neither — plus "you can make up the
+          amount withheld with funds from other sources". Ch. 2 "Converting From
+          Any Traditional IRA Into a Roth IRA": the conversion is includible in
+          gross income, an amount you keep may face the 10% additional tax, an
+          RMD cannot be converted, and "No recharacterizations of conversions
+          made in 2018 or later" — conversions are irreversible.
+        cadence: annual (per tax year)
+
   change_channels:
     - url: https://www.irs.gov/newsroom
       answers: >-

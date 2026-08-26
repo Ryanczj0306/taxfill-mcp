@@ -1646,7 +1646,27 @@ def _identity_checks(
             if pack_field is None:
                 continue  # schedules legitimately omit some identity lines
             raw = _lookup_raw(item.pack, pack_field, fields_by_key[item.form_key]) or ""
-            values_by_form[item.form_key] = normalize_on_disk(pack_field, raw)
+            value = normalize_on_disk(pack_field, raw)
+            if not value and name not in item.pack.identity_fields:
+                # A pack that MAPS a line without DECLARING it in its own
+                # identity_fields is not promising to carry it, so a BLANK there is
+                # "not applicable on this form", not a mismatch. Form 8606 is the
+                # shipped case that forced this: its page-1 address block prints
+                # "Fill in Your Address Only if You Are Filing This Form by Itself
+                # and Not With Your Tax Return", so on the ordinary ATTACHED path
+                # every address box is correctly blank — and because this function
+                # takes the UNION of every pack's identity_fields and then evaluated
+                # each name against every pack that merely MAPPED it, f1040nr's
+                # declared mailing_address.street was compared against 8606's
+                # correct blank and FAILed every normal 8606 filing (found
+                # 2026-08-26 by the Phase-I1 adversarial pack review, reproduced end
+                # to end). Two things keep P-002's protection intact: a NON-blank
+                # value is still compared, so a typo'd address on a schedule is
+                # still caught; and a pack that DECLARES the name is never skipped,
+                # which is also why values_by_form can never come out empty here
+                # (identity_fields entries are schema-checked to be real lines).
+                continue
+            values_by_form[item.form_key] = value
         if not values_by_form:
             checks.append(
                 IdentityCheck(

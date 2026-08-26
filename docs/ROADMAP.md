@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**4,166 tests, all green** — offline 3,836 + live-.gov 330, exit 0;
+Done and on `main` (**4,245 tests, all green** — offline 3,909 + live-.gov 336, exit 0;
 re-verified 2026-08-21 via `pytest -m "not network"` AND `pytest -m network`, exit 0
 both — the network layer skips 2 (states/ms/2023/f80105, whose blank is uncached and
 whose host fails certificate verification here)):
@@ -40,8 +40,8 @@ whose host fails certificate verification here)):
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
-- **Federal form packs — priority set DONE.** **93 packs across 2019–2025**
-  (2019:1, 2020:1, 2021:1, 2022:5, 2023:28, 2024:28, 2025:29 — f1040nr +
+- **Federal form packs — priority set DONE.** **96 packs across 2019–2025**
+  (2019:1, 2020:1, 2021:1, 2022:5, 2023:29, 2024:29, 2025:30 — f1040nr +
   Schedule OI joined 2024 on 2026-08-10, and the 2026-08 batch backfilled the
   rest of the 2023 set into 2024/2025: identical-topology ports off the 2023
   packs, digests pinned to the year's blanks, vision-audited page by page). M2 base
@@ -85,7 +85,7 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**158 form packs total** — 154 `pack.yaml` (93 federal + 61 state) + 4
+**161 form packs total** — 157 `pack.yaml` (96 federal + 61 state) + 4
 `handfill.yaml`. The state 61 breaks down **TY2023 42 / TY2024 14 / TY2025 5**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
 > **13 of the 42 jurisdictions fill a post-2023 year** — AR (2024+2025),
@@ -911,8 +911,27 @@ line items sum to the headline delta.
 > That is the same failure signature `FIELD_NOTES.md` recorded for the Phase-H
 > session, one user profile over: the data is there, the *decision surface* is not.
 
-- [ ] **I1 — The IRA-basis / pro-rata chain. The highest-consequence gap in the
-      repo, and it is silent.** `pro_rata`, `form_8606` and `roth_conversion` return
+- [x] **I1 — The IRA-basis / pro-rata chain — DONE 2026-08-26.** Shipped:
+      `calc.ira_pro_rata` + `calc.roth_conversion` (both paths, bracket headroom,
+      the NIIT crossing), fillable `f8606` packs for 2023/2024/2025 (all
+      vision-audited), pitfall **P-009**, a `get_sources` topic
+      (`ira_basis_and_roth_conversions`), and 26 new calc tests. The work also
+      caught three defects nothing else would have: a **QSS NIIT threshold** of
+      $200,000 in `knowledge/federal/2026.yaml` where IRC 1411(b)(1) and the Form
+      8960 instructions both say $250,000 (fixed, and pinned for every shipped
+      year by a new sweep); a **`roth_conversion` bug** that took
+      `other_distributions` into the pro-rata denominator and then silently
+      dropped the resulting taxable line-15a income from every headline number
+      (now refused prescriptively, pointing the caller at `ira_pro_rata`); and an
+      **engine defect the 8606 pack exposed** — `verify._identity_checks` took the
+      UNION of every pack's `identity_fields` and compared names against packs
+      that merely MAPPED them, so Form 8606's printed-conditional address block
+      ("Fill in Your Address Only if You Are Filing This Form by Itself"),
+      correctly blank on the attached path, FAILed `verify_filing` on every normal
+      8606 filing. A pack that maps without declaring is no longer compared when
+      blank; a non-blank value still is. *(original scope below)*
+- [x] **I1 scope as planned — the IRA-basis / pro-rata chain. The
+      highest-consequence gap in the repo, and it is silent.** `pro_rata`, `form_8606` and `roth_conversion` return
       **zero source hits** today. Yet IRC 408(d)(2) — all traditional/SEP/SIMPLE IRA
       12/31 balances aggregate into one pool, so a conversion's taxable share is
       `pretax / (pretax + basis)` regardless of which dollars actually moved — is

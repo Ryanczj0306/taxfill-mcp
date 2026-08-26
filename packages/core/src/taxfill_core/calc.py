@@ -70,6 +70,21 @@ Contents:
   reduced-limit worksheet (the 6%/yr-excise guard and its year-end-status
   flip), the where-does-the-next-dollar-go ranking (payroll dollars beat
   401(k) dollars by the FICA saving), and the per-test MAGI table.
+* ``ira_pro_rata`` / ``roth_conversion`` (Phase I, I1) — the conversion pair.
+  Form 8606 Part I as IRC 408(d)(2) writes it: ALL traditional/SEP/SIMPLE IRAs
+  are 1 CONTRACT and a year's distributions 1 DISTRIBUTION, so the taxable
+  share of a conversion is the POOL's pretax/basis mix and the ratio's
+  denominator (line 9 = 6+7+8) ADDS THE CONVERSION BACK. ``roth_conversion``
+  then makes the caller name the path, because the two are taxed differently
+  and get conflated: a DIRECT plan-to-Roth-IRA rollover (Notice 2008-30) is
+  fully taxable on its pretax part but pro-rata NEVER reaches it — the only
+  clean way to empty an old 401(k) — while a traditional-IRA conversion
+  delegates to ``ira_pro_rata``. On top of the taxable amount it returns the
+  bracket headroom (which dollars spill into the next rate) and the IRC 1411
+  crossing (conversion income is never NII, but it raises the MAGI the
+  threshold is measured against), and the work carries the withholding trap:
+  withheld tax is not converted, so it is lost Roth space the 10% additional
+  tax can still reach.
 * ``state_tax`` (Phase G, G4) — the STATE income-tax line for every
   jurisdiction whose pack ships a cited ``tax`` block: all 42 income-tax
   jurisdictions (41 states + DC) for 2023 and 2024, and 41 of 42 for 2025
@@ -4161,6 +4176,843 @@ def magi_ladder(
                 "foreign_earned_income_exclusion": feie_i, "excluded_puerto_rico_income": pr_i},
         work="\n".join(work_lines),
         citation=(cl.citation if cl is not None else pack.tax.rate_schedules.citation),
+    )
+
+
+# ---------------------------------------------------------------------------
+# IRA pro-rata + Roth conversion (Phase I, I1): IRC 408(d)(2) / Form 8606
+# Part I, and the two conversion paths that get conflated
+# ---------------------------------------------------------------------------
+
+# Both rules below are YEAR-INVARIANT, so — following the P-005/P-006 discipline
+# that only FIGURES belong in a year pack — the authorities live here beside the
+# ops rather than as a figure-less typed block cloned into eight year files.
+#
+# The Form 8606 line numbering these ops reproduce was read off EVERY revision
+# the repo's shipped years cover (f8606--2019.pdf .. f8606--2025.pdf, all
+# fetched): Part I lines 1-14 and Part II lines 16-18 are IDENTICAL in all
+# seven. Only the wording moved — the 2025 revision hoisted "'traditional IRA'
+# includes traditional SEP IRAs and traditional SIMPLE IRAs" into a Note at the
+# top of the form instead of repeating it inside lines 6 and 8. Earlier
+# revisions renumber: the instructions' own Total Basis Chart routes a
+# pre-2001 Form 8606's basis to LINE 12, a 1989-1992 form's to line 14, 1988's to
+# lines 7+16 and 1987's to lines 4+13 — which is why 2019 is the floor these ops
+# accept.
+_F8606_VERIFIED_REVISIONS: tuple[int, ...] = tuple(range(2019, 2026))
+_F8606_NEWEST_VERIFIED = max(_F8606_VERIFIED_REVISIONS)
+
+_IRC_408D2_CITATION = Citation(
+    source=(
+        "IRC 408(d)(2) (26 U.S.C. 408(d)(2)), 'Special rules for applying section 72': "
+        "'(A) all individual retirement plans shall be treated as 1 contract, (B) all "
+        "distributions during any taxable year shall be treated as 1 distribution, and "
+        "(C) the value of the contract, income on the contract, and investment in the "
+        "contract shall be computed as of the close of the calendar year in which the "
+        "taxable year begins.' followed by 'For purposes of subparagraph (C), the value of "
+        "the contract shall be increased by the amount of any distributions during the "
+        "calendar year.' — the one-pool rule (A) AND the statutory basis for Form 8606 "
+        "line 9 adding the year's distributions and conversions back to the Dec-31 value"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section408&num=0&edition=prelim",
+)
+
+_F8606_INSTRUCTIONS_CITATION = Citation(
+    source=(
+        "Instructions for Form 8606 (2025), Dec 10 2025 revision: Line 4 ('Although the "
+        "contributions to traditional IRAs for 2025 that you made from January 1, 2026, "
+        "through April 15, [2026], can be treated as nondeductible, they aren't included in "
+        "figuring the nontaxable part of any distributions you received in 2025'), Line 6 "
+        "(Dec-31 value plus outstanding rollovers), Line 7 (what is NOT a distribution — "
+        "conversions, rollovers, QCDs, recharacterizations), Line 8 (the net amount "
+        "converted), Line 14 (line 3 reduced by line 13), and the Total Basis Chart for "
+        "line 2. 'Purpose of Form' lists what Form 8606 reports and does NOT list a "
+        "rollover from a qualified retirement plan to a Roth IRA; the Part III line 24 "
+        "instructions and footnote 3 of the Basis in Roth IRA Conversions chart place those "
+        "on Form 1040 line 5a/5b instead"
+    ),
+    url="https://www.irs.gov/pub/irs-prior/i8606--2025.pdf",
+)
+
+_PUB590B_BASIS_CITATION = Citation(
+    source=(
+        "Publication 590-B (2025), ch. 1, 'Distributions Fully or Partly Taxable': 'If only "
+        "deductible contributions were made to your traditional IRA (or IRAs, if you have "
+        "more than one), you have no basis in your IRA' ... 'Until all of your basis has "
+        "been distributed, each distribution is partly nontaxable and partly taxable.' Same "
+        "chapter, 'Withholding': 'Federal income tax is withheld from distributions from "
+        "traditional IRAs unless you choose not to have tax withheld' and 'Generally, tax "
+        "will be withheld at a 10% rate on nonperiodic payments.'"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/p590b.pdf",
+)
+
+_NOTICE_2008_30_CITATION = Citation(
+    source=(
+        "Notice 2008-30 (PPA '06 section 824), Q&A-1 through Q&A-6: A-1 a section 401(a) "
+        "plan distribution may go to a Roth IRA 'through a direct rollover from the plan to "
+        "the Roth IRA' and 'there is included in gross income any amount that would be "
+        "includible if the distribution were not rolled over'; A-2 extends this to 403(a), "
+        "403(b) and governmental 457(b) plans; A-3 'the additional tax under section 72(t) "
+        "does not apply to rollovers from an eligible retirement plan other than a Roth "
+        "IRA' but a taxable amount so rolled in and then distributed within 5 years is "
+        "hit by 72(t) 'as if it were includible in gross income' (section 408A(d)(3)(F)); "
+        "A-6 a DIRECT rollover to a Roth IRA is not subject to the section 3405(c) 20% "
+        "mandatory withholding 'even if the distribution is includible in gross income', "
+        "though a voluntary withholding agreement is permitted"
+    ),
+    url="https://www.irs.gov/pub/irs-drop/n-08-30.pdf",
+)
+
+_NOTICE_2014_54_CITATION = Citation(
+    source=(
+        "Notice 2014-54, sections II-III: under section 72(e)(8) each distribution from a "
+        "plan account holding both after-tax and pretax amounts 'will include a pro rata "
+        "share of both', while section 402(c)(2) provides 'the amount transferred shall be "
+        "treated as consisting first of the portion of such distribution that is includible "
+        "in gross income'; section III aggregates simultaneous disbursements into one "
+        "distribution and assigns the pretax amount to the direct rollovers first, so a "
+        "split rollover's pretax/after-tax allocation is the PLAN's determination (reported "
+        "per section IV on Form 1099-R), not the IRA pro-rata ratio"
+    ),
+    url="https://www.irs.gov/pub/irs-drop/n-14-54.pdf",
+)
+
+_PUB590A_CONVERSION_CITATION = Citation(
+    source=(
+        "Publication 590-A (2025): ch. 1, Table 1-5 'Comparison of Payment to You Versus "
+        "Direct Rollover' — payment to you: 'The payer must withhold 20% of the taxable "
+        "part' and 'If you are under age 59 1/2, a 10% additional tax may apply to the "
+        "taxable part (including an amount equal to the tax withheld) that isn't rolled "
+        "over'; direct rollover: 'There is no withholding' and 'There is no 10% additional "
+        "tax'. Same chapter: 'The amount withheld is part of the distribution ... you can "
+        "make up the amount withheld with funds from other sources.' ch. 2, 'Converting "
+        "From Any Traditional IRA Into a Roth IRA' — 'If properly (and timely) rolled over, "
+        "the 10% additional tax on early distributions won't apply', 'The amount you keep "
+        "will generally be taxable ... and may be subject to the 10% additional tax', "
+        "'You can't convert amounts that must be distributed ... under the required "
+        "distribution rules', and 'No recharacterizations of conversions made in 2018 or "
+        "later'"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/p590a.pdf",
+)
+
+_IRC_1411_C5_CITATION = Citation(
+    source=(
+        "IRC 1411(c)(5) (26 U.S.C. 1411(c)(5)), 'Exception for distributions from qualified "
+        "plans': 'The term \"net investment income\" shall not include any distribution "
+        "from a plan or arrangement described in section 401(a), 403(a), 403(b), 408, 408A, "
+        "or 457(b).' IRC 1411(d) defines the threshold's modified adjusted gross income as "
+        "AGI increased only by the section 911(a)(1) exclusion — so conversion income is "
+        "never itself net investment income, yet it sits in AGI and therefore RAISES the "
+        "MAGI the 1411 threshold is measured against"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1411&num=0&edition=prelim",
+)
+
+
+def _f8606_citation(year: int) -> Citation:
+    """Cite the year's own Form 8606 revision; a year whose form has not published
+    yet cites the newest revision actually READ and says so in the source text."""
+    if year in _F8606_VERIFIED_REVISIONS:
+        return Citation(
+            source=(
+                f"Form 8606 ({year}), Part I lines 1-14 (line 1 this year's nondeductible "
+                f"contributions, line 2 prior basis, line 4 the after-year-end slice, line 6 the "
+                f"Dec-31 value of all traditional/SEP/SIMPLE IRAs plus outstanding rollovers, line 7 "
+                f"other distributions, line 8 the net amount converted, line 9 = 6+7+8, line 10 the "
+                f"ratio 'rounded to at least 3 places ... If the result is 1.000 or more, enter "
+                f"\"1.000\"', lines 11-13 the nontaxable portions, line 14 the basis carryforward) "
+                f"and Part II lines 16-18 (the conversion's taxable amount -> Form 1040 line 4b) — "
+                f"line numbering read off this revision's own blank"
+            ),
+            url=f"https://www.irs.gov/pub/irs-prior/f8606--{year}.pdf",
+        )
+    return Citation(
+        source=(
+            f"Form 8606 ({_F8606_NEWEST_VERIFIED}) — quoted for {year} because the {year} revision "
+            f"had not published when this op was written. Part I lines 1-14 / Part II lines 16-18 are "
+            f"identical on every revision actually read ({_F8606_VERIFIED_REVISIONS[0]}-"
+            f"{_F8606_NEWEST_VERIFIED}), but RE-VERIFY the line numbering against the {year} form "
+            f"before anything is filed"
+        ),
+        url=f"https://www.irs.gov/pub/irs-prior/f8606--{_F8606_NEWEST_VERIFIED}.pdf",
+    )
+
+
+class IraProRataResult(BaseModel):
+    """Result of :func:`ira_pro_rata`: Form 8606 Part I lines 5-14 plus Part II line 18."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    taxable_conversion: int = Field(
+        description="Form 8606 line 18 (line 16 - line 17): the converted amount's TAXABLE part -> Form 1040 line 4b."
+    )
+    nontaxable_conversion: int = Field(description="Form 8606 line 11 (= line 8 x line 10): basis applied to the conversion.")
+    taxable_other_distributions: int = Field(
+        description="Form 8606 line 15a/15c (line 7 - line 12): the taxable part of distributions NOT converted."
+    )
+    nontaxable_other_distributions: int = Field(description="Form 8606 line 12 (= line 7 x line 10).")
+    taxable_total: int = Field(description="line 18 + line 15c: everything from this pool that lands on Form 1040 line 4b.")
+    basis_applied: int = Field(description="Form 8606 line 13 (= line 11 + line 12): basis consumed this year.")
+    basis_carryforward: int = Field(description="Form 8606 line 14 (= line 3 - line 13): next year's line 2.")
+    nontaxable_ratio: Decimal = Field(
+        description="Form 8606 line 10 computed EXACTLY as line 5 / line 9 (capped at 1), before the form's 3-place rounding."
+    )
+    ratio_as_filed: Decimal = Field(
+        description="line 10 as the form asks it to be entered: rounded to 3 places, 1.000 or more entered as 1.000."
+    )
+    numerator: int = Field(description="Form 8606 line 5 (= line 3 - line 4): the basis available to this year's ratio.")
+    denominator: int = Field(description="Form 8606 line 9 (= line 6 + line 7 + line 8) — it INCLUDES the amount converted.")
+    form_8606_lines: dict[str, str] = Field(
+        description="Every Part I / Part II line this op computes, keyed by the form's printed line label."
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+    citations: list[Citation] = Field(description="Every authority behind the number, primary first.")
+
+
+def ira_pro_rata(
+    dec31_total_value: int | float | Decimal | str,
+    amount_converted: int | float | Decimal | str = 0,
+    other_distributions: int | float | Decimal | str = 0,
+    nondeductible_basis_carryforward: int | float | Decimal | str = 0,
+    nondeductible_contributions_this_year: int | float | Decimal | str = 0,
+    contributions_made_after_year_end: int | float | Decimal | str = 0,
+    year: int = 2026,
+    knowledge_dir: str | Path | None = None,
+) -> IraProRataResult:
+    """The IRC 408(d)(2) pro-rata rule as Form 8606 Part I computes it: how much of a
+    conversion (or any traditional-IRA distribution) is taxable when the pool holds
+    both pretax money and nondeductible basis.
+
+    This op exists because nothing in the engine modeled 408(d)(2), so the one
+    question a backdoor-Roth filer actually has — "where can I put my old
+    401(k)?" — had no deterministic answer. The statute is the whole answer:
+    ALL individual retirement plans are treated as 1 CONTRACT and all of a
+    year's distributions as 1 DISTRIBUTION, so which dollars physically moved is
+    irrelevant. Rolling an old 401(k) into a TRADITIONAL IRA lands it on line 6
+    and makes every future backdoor conversion mostly taxable; rolling it
+    straight to a Roth IRA (calc op ``roth_conversion`` with
+    ``source='plan_to_roth_ira'``) or into a new employer's 401(k) keeps the pool
+    clean, because neither ever enters line 6.
+
+    Inputs map one-to-one onto the printed lines:
+
+    * ``dec31_total_value`` = line 6, the value of ALL your traditional, SEP and
+      SIMPLE IRAs on December 31 plus any outstanding rollovers. It is measured
+      AFTER the conversion left the account, and the timing is the trap: an
+      amount rolled INTO a traditional IRA in December still sits in line 6 for a
+      conversion done the previous January.
+    * ``amount_converted`` = line 8 (also line 16), the net amount converted to
+      Roth IRAs during the year.
+    * ``other_distributions`` = line 7, distributions you did NOT convert.
+      Rollovers, QCDs, recharacterizations and returned contributions are
+      excluded by the instructions — do not pass them.
+    * ``nondeductible_basis_carryforward`` = line 2, from the last Form 8606's
+      line 14.
+    * ``nondeductible_contributions_this_year`` = line 1.
+    * ``contributions_made_after_year_end`` = line 4, the part of line 1 made
+      between January 1 and April 15 of the FOLLOWING year. The instructions keep
+      it out of the ratio's numerator while line 14 still carries it forward, so a
+      January-for-last-year contribution is basis you cannot use yet.
+
+    THE DENOMINATOR INCLUDES THE CONVERSION. Line 9 = line 6 + line 7 + line 8,
+    which is 408(d)(2)(C)'s "the value of the contract shall be increased by the
+    amount of any distributions during the calendar year" — converting a bigger
+    slice does not shrink the denominator, it only moves dollars from line 6 to
+    line 8. Basis is per PERSON, never per couple: the form is filed separately
+    for each spouse, so a spouse's traditional IRA never enters your ratio.
+
+    ``year`` selects which Form 8606 revision the work string and citation quote.
+    Revisions 2019-2025 were read directly; the numbering is identical in all of
+    them, and pre-2019 revisions renumber (the instructions' Total Basis Chart
+    routes a pre-2001 form's basis to line 12), so earlier years are refused. A
+    year whose form has not published yet quotes the newest revision read and
+    says so in both the work and the citation.
+
+    ``knowledge_dir`` is accepted for signature parity with its neighbours (and
+    so :func:`roth_conversion` can forward it) but is deliberately unused: the
+    pro-rata rule carries NO per-year figures, so this op reads no knowledge
+    pack and its authorities are module constants, per the P-005/P-006
+    discipline that only figures belong in a year pack.
+    """
+    del knowledge_dir  # see the docstring: no per-year figures, so no pack read
+    if year < _F8606_VERIFIED_REVISIONS[0]:
+        raise ValueError(
+            f"ira_pro_rata does not support {year}: Form 8606 revisions before "
+            f"{_F8606_VERIFIED_REVISIONS[0]} renumber the lines this op reproduces (the Form 8606 "
+            f"instructions' Total Basis Chart takes basis from line 12 of a pre-2001 form, line 14 "
+            f"of a 1989-1992 form, lines 7+16 of the 1988 form and lines 4+13 of the 1987 form). Read that year's own blank and "
+            f"compute it by hand, or pass a year from {_F8606_VERIFIED_REVISIONS[0]} onward"
+        )
+    line6 = irs_round(_to_decimal(dec31_total_value, "dec31_total_value"))
+    line8 = irs_round(_to_decimal(amount_converted, "amount_converted"))
+    line7 = irs_round(_to_decimal(other_distributions, "other_distributions"))
+    line2 = irs_round(_to_decimal(nondeductible_basis_carryforward, "nondeductible_basis_carryforward"))
+    line1 = irs_round(_to_decimal(nondeductible_contributions_this_year, "nondeductible_contributions_this_year"))
+    line4 = irs_round(_to_decimal(contributions_made_after_year_end, "contributions_made_after_year_end"))
+    for name, value in (
+        ("dec31_total_value", line6), ("amount_converted", line8), ("other_distributions", line7),
+        ("nondeductible_basis_carryforward", line2),
+        ("nondeductible_contributions_this_year", line1), ("contributions_made_after_year_end", line4),
+    ):
+        if value < 0:
+            raise ValueError(
+                f"{name} must be >= 0, got {value} — Form 8606 takes no negative entries; a basis "
+                f"adjustment (divorce transfer, returned excess contribution) is folded into line 2 "
+                f"per the instructions' Line 2 bullets, not passed as a negative"
+            )
+    if line4 > line1:
+        raise ValueError(
+            f"contributions_made_after_year_end ({line4}) cannot exceed "
+            f"nondeductible_contributions_this_year ({line1}) — Form 8606 line 4 is 'those "
+            f"contributions INCLUDED ON LINE 1 that were made from January 1 through April 15' of the "
+            f"following year, a subset of line 1"
+        )
+    if line8 == 0 and line7 == 0:
+        raise ValueError(
+            f"nothing left the pool: with amount_converted and other_distributions both 0 there is no "
+            f"pro-rata computation to do. Form 8606 answers 'In {year}, did you take a distribution "
+            f"from a traditional IRA, or make a Roth IRA conversion?' with 'No -> Enter the amount "
+            f"from line 3 on line 14. Do not complete the rest of Part I', so the whole "
+            f"${line1 + line2:,} of basis simply carries forward. Pass amount_converted (line 8) "
+            f"and/or other_distributions (line 7)"
+        )
+
+    line3 = line1 + line2
+    line5 = line3 - line4
+    line9 = line6 + line7 + line8
+    # line9 >= line8 + line7 > 0 is guaranteed by the guard above.
+    exact = Decimal(line5) / Decimal(line9)
+    capped = min(exact, _ONE)  # the form: "If the result is 1.000 or more, enter '1.000'"
+    as_filed = min(exact.quantize(Decimal("0.001"), rounding=ROUND_HALF_UP), _ONE)
+    line11 = irs_round(Decimal(line8) * capped)
+    line12 = irs_round(Decimal(line7) * capped)
+    line13 = line11 + line12
+    line14 = line3 - line13
+    line18 = line8 - line11
+    line15 = line7 - line12
+    # Belt and braces: the form can never make a distribution more than fully
+    # nontaxable, and the ratio cap is what guarantees it.
+    line18, line15 = max(0, line18), max(0, line15)
+
+    lines = {
+        "1": _dollars(line1), "2": _dollars(line2), "3": _dollars(line3), "4": _dollars(line4),
+        "5": _dollars(line5), "6": _dollars(line6), "7": _dollars(line7), "8": _dollars(line8),
+        "9": _dollars(line9), "10": f"{as_filed:.3f}", "11": _dollars(line11), "12": _dollars(line12),
+        "13": _dollars(line13), "14": _dollars(line14), "15a": _dollars(line15),
+        # 15c == 15a ONLY because this op models neither line 15b nor the Line 15c
+        # Worksheet — see the LINE 15b / 15c SCOPE note in the work string below.
+        "15c": _dollars(line15), "16": _dollars(line8), "17": _dollars(line11), "18": _dollars(line18),
+    }
+    scope_15 = (
+        "LINE 15b / 15c SCOPE, disclosed because this op reports 15a and 15c as the SAME number: "
+        "line 15c's printed row is 'Subtract line 15b from line 15a' and, on the 2024 and later "
+        "revisions, 'Reduce that amount by certain <year> retirement plan distribution repayments "
+        "... treated as rollovers'. This op models NEITHER term — it assumes line 15b (Form 8915-F "
+        "qualified disaster distributions) is zero and that there are no repayments treated as "
+        "rollovers, so 15a == 15c and NO Line 15c Worksheet basis adjustment is carried into the "
+        "next year's line 14 / line 2. A filer with Form 8915-F amounts, or with a repaid qualified "
+        "birth-or-adoption / emergency-personal-expense / domestic-abuse / terminal-illness "
+        "distribution, must compute 15b and the worksheet by hand off the year's own instructions "
+        "and treat this op's 15c as line 15a only."
+    )
+    ratio_note = (
+        f"line 10 = line 5 / line 9 = {_dollars(line5)} / {_dollars(line9)} = {capped:.6f}"
+        + ("..." if capped != capped.quantize(Decimal('0.000001')) else "")
+        + f" (the form asks for 'a decimal rounded to at least 3 places' and caps it: 'If the result is "
+        f"1.000 or more, enter \"1.000\"' — as filed {as_filed:.3f}; this op divides EXACTLY, which "
+        f"'at least 3 places' permits)"
+    )
+    three_place_11 = irs_round(Decimal(line8) * as_filed)
+    if line8 and abs(three_place_11 - line11) >= 1:
+        ratio_note += (
+            f". Entering exactly 3 places instead would make line 11 {_dollars(three_place_11)} and "
+            f"line 18 {_dollars(line8 - three_place_11)} — a ${abs(three_place_11 - line11):,} "
+            f"difference; carry more places on the filed form to match this result"
+        )
+    work_lines = [
+        f"Form 8606 ({year}) Part I, IRC 408(d)(2) pro-rata:",
+        f"line 1 nondeductible contributions for {year} {_dollars(line1)} + line 2 prior-year basis "
+        f"{_dollars(line2)} = line 3 {_dollars(line3)}; line 4 (the part of line 1 made Jan 1-Apr 15 "
+        f"{year + 1}) {_dollars(line4)}; line 5 = 3 - 4 = {_dollars(line5)} = the NUMERATOR. The "
+        f"instructions keep line 4 out of the ratio — those contributions 'aren't included in "
+        f"figuring the nontaxable part of any distributions you received in {year}' — while line 14 "
+        f"still carries them forward.",
+        f"line 6 Dec 31 {year} value of ALL traditional/SEP/SIMPLE IRAs + outstanding rollovers "
+        f"{_dollars(line6)} + line 7 distributions not converted {_dollars(line7)} + line 8 net "
+        f"amount converted {_dollars(line8)} = line 9 {_dollars(line9)} = the DENOMINATOR. Line 9 "
+        f"ADDS THE CONVERSION BACK, which is 408(d)(2)(C)'s 'the value of the contract shall be "
+        f"increased by the amount of any distributions during the calendar year' — converting a "
+        f"bigger slice moves dollars from line 6 to line 8 and leaves line 9 unchanged.",
+        ratio_note + ".",
+        f"line 11 = line 8 x line 10 = {_dollars(line11)} nontaxable share of the conversion; "
+        f"line 12 = line 7 x line 10 = {_dollars(line12)} nontaxable share of the other "
+        f"distributions; line 13 = 11 + 12 = {_dollars(line13)} of basis applied; line 14 = line 3 - "
+        f"line 13 = {_dollars(line14)} carries to next year's line 2.",
+        f"Part II: line 16 = line 8 = {_dollars(line8)}; line 17 = line 11 = {_dollars(line11)}; "
+        f"line 18 = 16 - 17 = {_dollars(line18)} TAXABLE on Form 1040 line 4b."
+        + (
+            f" Lines 15a/15c: {_dollars(line7)} - {_dollars(line12)} = {_dollars(line15)} of the "
+            f"unconverted distribution is taxable too, and the form's own Note warns 'You may be "
+            f"subject to an additional 10% tax on the amount on line 15c if you were under age "
+            f"59 1/2 at the time of the distribution.'" if line7 else ""
+        ),
+        "WHY THE POOL AND NOT THE DOLLARS YOU MOVED: IRC 408(d)(2) treats ALL individual retirement "
+        "plans as 1 contract and all of a year's distributions as 1 distribution, so earmarking the "
+        "nondeductible dollars for the conversion is impossible — Pub 590-B: 'Until all of your basis "
+        "has been distributed, each distribution is partly nontaxable and partly taxable.'",
+        "ONE POOL, ONE PERSON: the pool is traditional + SEP + SIMPLE IRAs, and it is PER FILER — "
+        "Form 8606's own header is 'If married, file a separate form for each spouse required to "
+        "file', so a spouse's traditional IRA never enters your ratio. A Roth IRA, a 401(k)/403(b), "
+        "and an inherited IRA are all OUTSIDE the pool.",
+        "WHERE AN OLD 401(k) MAY GO: not into a traditional IRA in any year you intend a backdoor "
+        "Roth — it lands on line 6 whenever in the year it arrives and poisons the ratio. A DIRECT "
+        "rollover to a Roth IRA (calc op roth_conversion, source='plan_to_roth_ira') is fully taxable "
+        "now but never touches line 6; a rollover into a new employer's 401(k) is not taxable and "
+        "never touches line 6 either.",
+        scope_15,
+    ]
+    inputs: dict[str, Any] = {
+        "dec31_total_value": line6, "amount_converted": line8, "other_distributions": line7,
+        "nondeductible_basis_carryforward": line2, "nondeductible_contributions_this_year": line1,
+        "contributions_made_after_year_end": line4, "year": year,
+    }
+    if year not in _F8606_VERIFIED_REVISIONS:
+        work_lines.append(
+            f"YEAR NOTE: the {year} Form 8606 had not published when this op was written, so the line "
+            f"numbering above is the {_F8606_NEWEST_VERIFIED} revision's (identical on every revision "
+            f"read, {_F8606_VERIFIED_REVISIONS[0]}-{_F8606_NEWEST_VERIFIED}). Re-verify against the "
+            f"{year} form before anything is filed."
+        )
+    form_citation = _f8606_citation(year)
+    return IraProRataResult(
+        taxable_conversion=line18,
+        nontaxable_conversion=line11,
+        taxable_other_distributions=line15,
+        nontaxable_other_distributions=line12,
+        taxable_total=line18 + line15,
+        basis_applied=line13,
+        basis_carryforward=line14,
+        nontaxable_ratio=capped,
+        ratio_as_filed=as_filed,
+        numerator=line5,
+        denominator=line9,
+        form_8606_lines=lines,
+        inputs=inputs,
+        work="\n".join(w for w in work_lines if w),
+        citation=_IRC_408D2_CITATION,
+        citations=[_IRC_408D2_CITATION, form_citation, _F8606_INSTRUCTIONS_CITATION, _PUB590B_BASIS_CITATION],
+    )
+
+
+_ROTH_CONVERSION_SOURCES = ("plan_to_roth_ira", "traditional_ira_to_roth")
+
+
+class BracketSlice(BaseModel):
+    """One rate bracket's share of the conversion's taxable income."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    rate: Decimal = Field(description="The bracket's marginal rate.")
+    amount: int = Field(description="Dollars of the taxable conversion that land in this bracket.")
+    tax: Decimal = Field(description="rate x amount, in cents.")
+
+
+class RothConversionResult(BaseModel):
+    """Result of :func:`roth_conversion`: the taxable amount plus the three things a
+    filer cannot compute by hand — bracket headroom, the NIIT crossing, and the
+    withholding trap (in the work)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    source: Literal["plan_to_roth_ira", "traditional_ira_to_roth"] = Field(
+        description="Which path the money took — the two are taxed differently and the caller must choose."
+    )
+    amount_converted: int = Field(description="The gross amount converted or rolled over to the Roth IRA.")
+    taxable_amount: int = Field(description="The conversion income: Form 1040 line 5b (plan path) or line 4b (IRA path).")
+    nontaxable_amount: int = Field(description="The basis-recovery part: plan after-tax basis, or Form 8606 line 11.")
+    pro_rata: IraProRataResult | None = Field(
+        description="The delegated Form 8606 Part I computation — None on the plan path, where pro-rata never applies."
+    )
+    marginal_rate_before: Decimal = Field(description="The bracket rate the pre-conversion taxable income sits in.")
+    marginal_rate_after: Decimal = Field(description="The bracket rate the post-conversion taxable income sits in.")
+    bracket_top_before: int | None = Field(description="Top of the bracket the filer starts in (None in the top bracket).")
+    headroom_before: int | None = Field(description="Dollars of room below that top before the conversion (None if top).")
+    headroom_after: int | None = Field(description="Room left below the post-conversion bracket's top (None if top).")
+    spill_into_higher_brackets: int = Field(description="Taxable conversion dollars taxed above marginal_rate_before.")
+    bracket_slices: list[BracketSlice] = Field(description="The taxable conversion split bracket by bracket, lowest first.")
+    incremental_income_tax: int = Field(description="Rate-schedule tax on the conversion (tax after - tax before).")
+    magi_before: int = Field(description="Pre-conversion MAGI for IRC 1411 (AGI + the section 911 exclusion).")
+    magi_after: int = Field(description="magi_before + taxable_amount — only the TAXABLE part enters AGI.")
+    niit_threshold: int = Field(description="The filing-status IRC 1411 MAGI threshold (statutory, not indexed).")
+    niit_before: int = Field(description="Form 8960 line 17 at magi_before.")
+    niit_after: int = Field(description="Form 8960 line 17 at magi_after.")
+    niit_from_conversion: int = Field(description="niit_after - niit_before: the 3.8% the conversion itself causes.")
+    crosses_niit_threshold: bool = Field(description="True when the conversion carries MAGI from at-or-below to above.")
+    total_incremental_tax: int = Field(description="incremental_income_tax + niit_from_conversion (federal only).")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+    citations: list[Citation] = Field(description="Every authority behind the number, primary first.")
+
+
+def roth_conversion(
+    source: str,
+    amount: int | float | Decimal | str,
+    taxable_income_before: int | float | Decimal | str,
+    magi_before: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2026,
+    net_investment_income: int | float | Decimal | str = 0,
+    plan_after_tax_basis: int | float | Decimal | str = 0,
+    dec31_total_value: int | float | Decimal | str | None = None,
+    nondeductible_basis_carryforward: int | float | Decimal | str = 0,
+    nondeductible_contributions_this_year: int | float | Decimal | str = 0,
+    other_distributions: int | float | Decimal | str = 0,
+    contributions_made_after_year_end: int | float | Decimal | str = 0,
+    knowledge_dir: str | Path | None = None,
+) -> RothConversionResult:
+    """Price a Roth conversion on the ONE path the money actually takes — the two
+    paths behave differently and are routinely conflated.
+
+    ``source='plan_to_roth_ira'`` — a DIRECT rollover from a 401(k)/403(b)/
+    governmental 457(b) to a Roth IRA (Notice 2008-30 A-1/A-2). Taxable is the
+    pretax portion of the distribution: "there is included in gross income any
+    amount that would be includible if the distribution were not rolled over".
+    IRC 408(d)(2) PRO-RATA DOES NOT APPLY — no individual retirement plan is
+    involved, the Form 8606 pool is untouched, and the rollover is reported on
+    Form 1040 line 5a/5b, not on Form 8606 (its 'Purpose of Form' does not list
+    it; the Part III line 24 instructions point at line 5a). This is the path
+    that empties an old plan WITHOUT poisoning future backdoor Roths. Pass
+    ``plan_after_tax_basis`` = the 1099-R box 5 after-tax amount allocated to
+    this rollover; how a plan splits after-tax dollars across destinations is the
+    PLAN's determination under section 72(e)(8), 402(c)(2) and Notice 2014-54,
+    never this op's guess.
+
+    ``source='traditional_ira_to_roth'`` — pro-rata applies, and the computation
+    is delegated whole to :func:`ira_pro_rata`, which needs
+    ``dec31_total_value`` (Form 8606 line 6) at minimum.
+
+    Beyond the taxable amount the op surfaces three things a filer cannot do by
+    hand:
+
+    * BRACKET HEADROOM — the room left below the top of the current bracket, and
+      exactly how many conversion dollars spill into higher rates (from the
+      year's own ``rate_schedules``, bracket by bracket).
+    * THE NIIT CROSSING — IRC 1411(c)(5) says a distribution from a 401(a),
+      403(a), 403(b), 408, 408A or 457(b) plan is NEVER net investment income,
+      so the conversion pays no 3.8% itself; but 1411(d)'s MAGI is AGI (plus the
+      section 911 exclusion), so the conversion RAISES MAGI and can drag OTHER
+      investment income over the threshold. Both halves are computed by reusing
+      the ``niit`` op and its pack block.
+    * THE WITHHOLDING TRAP, in the work: tax withheld from the conversion is not
+      converted. It is lost Roth space, and Pub 590-A's Table 1-5 says the 10%
+      additional tax applies to the taxable part "including an amount equal to
+      the tax withheld" that isn't rolled over. Pay the tax from OUTSIDE funds.
+
+    Federal only, and the incremental tax is computed on the RATE SCHEDULE:
+    below $100,000 of taxable income the filed Form 1040 line 16 comes from the
+    published Tax Table instead, and preferential-rate income needs
+    :func:`tax_with_preferential_rates` — both disclosed in the work.
+    """
+    if source not in _ROTH_CONVERSION_SOURCES:
+        raise ValueError(
+            f"unknown source {source!r} — use 'plan_to_roth_ira' for a DIRECT rollover from a "
+            f"401(k)/403(b)/governmental 457(b) to a Roth IRA (Notice 2008-30; IRC 408(d)(2) pro-rata "
+            f"does NOT apply, so it never touches the traditional-IRA pool) or "
+            f"'traditional_ira_to_roth' for a conversion out of a traditional/SEP/SIMPLE IRA "
+            f"(pro-rata DOES apply, via Form 8606 Part I). The two are taxed differently and the "
+            f"choice is the whole point of this op"
+        )
+    if filing_status not in FILING_STATUSES and filing_status != _QSS:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+    gross = irs_round(_to_decimal(amount, "amount"))
+    if gross <= 0:
+        raise ValueError(f"amount must be > 0, got {gross} — pass the gross amount converted or rolled over")
+    taxable_before_d = _to_decimal(taxable_income_before, "taxable_income_before")
+    magi_before_i = irs_round(_to_decimal(magi_before, "magi_before"))
+    nii_i = irs_round(_to_decimal(net_investment_income, "net_investment_income"))
+    if taxable_before_d < 0 or magi_before_i < 0:
+        raise ValueError("taxable_income_before and magi_before must be >= 0 (pre-conversion figures)")
+    taxable_before_i = irs_round(taxable_before_d)
+
+    pack = _load_federal(year, knowledge_dir)
+    ira_args = {
+        "dec31_total_value": dec31_total_value,
+        "nondeductible_basis_carryforward": nondeductible_basis_carryforward,
+        "nondeductible_contributions_this_year": nondeductible_contributions_this_year,
+        "other_distributions": other_distributions,
+        "contributions_made_after_year_end": contributions_made_after_year_end,
+    }
+    pro_rata: IraProRataResult | None = None
+    if source == "plan_to_roth_ira":
+        supplied = sorted(
+            name for name, value in ira_args.items()
+            if value is not None and irs_round(_to_decimal(value, name)) != 0
+        )
+        if supplied:
+            raise ValueError(
+                f"plan_to_roth_ira was given traditional-IRA arguments {supplied}, and that is the "
+                f"exact conflation this op exists to prevent: a DIRECT rollover from a plan to a Roth "
+                f"IRA is not a Form 8606 Part I conversion — no individual retirement plan is "
+                f"involved, so IRC 408(d)(2) pro-rata never applies and the traditional-IRA pool is "
+                f"irrelevant to it (Notice 2008-30 A-1). Drop those arguments, or use "
+                f"source='traditional_ira_to_roth' if the money really is leaving a traditional IRA"
+            )
+        basis = irs_round(_to_decimal(plan_after_tax_basis, "plan_after_tax_basis"))
+        if basis < 0:
+            raise ValueError("plan_after_tax_basis must be >= 0 (Form 1099-R box 5)")
+        if basis > gross:
+            raise ValueError(
+                f"plan_after_tax_basis ({basis}) exceeds the amount rolled over ({gross}) — box 5 of "
+                f"the Form 1099-R for THIS rollover is the after-tax slice allocated to it under "
+                f"Notice 2014-54 section III, so it can never be larger than box 1"
+            )
+        taxable_i, nontaxable_i = gross - basis, basis
+    else:
+        if dec31_total_value is None:
+            raise ValueError(
+                "traditional_ira_to_roth needs dec31_total_value — Form 8606 line 6, the value of ALL "
+                "your traditional, SEP and SIMPLE IRAs on December 31 (measured AFTER the conversion "
+                "left them) plus any outstanding rollovers. Pass 0 only if every traditional IRA was "
+                "emptied, and note that 0 is what makes a backdoor Roth non-taxable. For a DIRECT "
+                "rollover out of a 401(k)/403(b) use source='plan_to_roth_ira' instead: no "
+                "traditional IRA is involved there and pro-rata never applies"
+            )
+        if irs_round(_to_decimal(plan_after_tax_basis, "plan_after_tax_basis")) != 0:
+            raise ValueError(
+                "plan_after_tax_basis applies only to source='plan_to_roth_ira' — a traditional-IRA "
+                "conversion recovers basis through Form 8606 lines 2 and 1 "
+                "(nondeductible_basis_carryforward / nondeductible_contributions_this_year), never "
+                "through a 1099-R box 5 plan figure"
+            )
+        if irs_round(_to_decimal(other_distributions, "other_distributions")) != 0:
+            # Found 2026-08-26 by the Phase-I1 adversarial review: this op accepted
+            # line 7 into the pro-rata denominator and then dropped the resulting
+            # taxable line-15a income from taxable_amount, magi_after,
+            # incremental_income_tax and the NIIT crossing — silently, in the
+            # direction that UNDERSTATES both the bracket and the threshold test.
+            # Refusing is the honest fix: the ratio needs line 7, but this op's
+            # outputs are all named for the CONVERSION, and the two amounts are not
+            # even taxed alike.
+            raise ValueError(
+                "other_distributions (Form 8606 line 7 — money that LEFT the pool without being "
+                "converted) belongs to ira_pro_rata, not here: it correctly enters the pro-rata "
+                "DENOMINATOR (line 9 = 6 + 7 + 8) but it also carries its own taxable line-15a "
+                "income, which every headline number of this op is named for the conversion and "
+                "does NOT price — so taxable_amount, magi_after, incremental_income_tax and the "
+                "NIIT crossing would all silently omit it. The two amounts are not taxed alike "
+                "either: a non-converted distribution can draw the section 72(t) 10% additional "
+                "tax, which a conversion to a Roth IRA does not. Call ira_pro_rata directly for "
+                "the full-year Form 8606 picture — it returns taxable_conversion and "
+                "taxable_other_distributions SEPARATELY — then price the bracket and NIIT effect "
+                "on their sum"
+            )
+        pro_rata = ira_pro_rata(
+            dec31_total_value=dec31_total_value,
+            amount_converted=gross,
+            other_distributions=other_distributions,
+            nondeductible_basis_carryforward=nondeductible_basis_carryforward,
+            nondeductible_contributions_this_year=nondeductible_contributions_this_year,
+            contributions_made_after_year_end=contributions_made_after_year_end,
+            year=year,
+            knowledge_dir=knowledge_dir,
+        )
+        taxable_i, nontaxable_i = pro_rata.taxable_conversion, pro_rata.nontaxable_conversion
+
+    # ── Bracket headroom, from the year's own rate schedule ────────────────────
+    status_key, alias_note = _resolve_filing_status(filing_status)
+    schedule = pack.tax.rate_schedules.schedules[status_key]
+    taxable_after_i = taxable_before_i + taxable_i
+
+    def _bracket_for(amount_i: int) -> RateBracket:
+        for bracket in schedule:
+            if bracket.but_not_over is None or amount_i <= bracket.but_not_over:
+                return bracket
+        raise AssertionError("rate schedule has no top bracket — knowledge validation should have rejected this pack")
+
+    b_before, b_after = _bracket_for(taxable_before_i), _bracket_for(taxable_after_i)
+    top_before = b_before.but_not_over
+    headroom_before = None if top_before is None else max(0, top_before - taxable_before_i)
+    headroom_after = None if b_after.but_not_over is None else max(0, b_after.but_not_over - taxable_after_i)
+    spill = 0 if top_before is None else max(0, taxable_after_i - top_before)
+
+    slices: list[BracketSlice] = []
+    for bracket in schedule:
+        lo = max(taxable_before_i, bracket.over)
+        hi = taxable_after_i if bracket.but_not_over is None else min(taxable_after_i, bracket.but_not_over)
+        if hi > lo:
+            slices.append(BracketSlice(rate=bracket.rate, amount=hi - lo, tax=_cents(bracket.rate * (hi - lo))))
+    tax_before, _, _ = _schedule_tax(Decimal(taxable_before_i), schedule)
+    tax_after, _, _ = _schedule_tax(Decimal(taxable_after_i), schedule)
+    incremental = irs_round(tax_after - tax_before)
+
+    # ── The NIIT crossing: reuse the niit op and its pack block, never re-derive ─
+    magi_after_i = magi_before_i + taxable_i
+    niit_before_r = niit(nii_i, magi_before_i, filing_status, year, knowledge_dir=knowledge_dir)
+    niit_after_r = niit(nii_i, magi_after_i, filing_status, year, knowledge_dir=knowledge_dir)
+    threshold = niit_after_r.threshold
+    crosses = magi_before_i <= threshold < magi_after_i
+
+    path_line = (
+        f"PATH: a DIRECT rollover from a 401(k)/403(b)/governmental 457(b) to a Roth IRA. Notice "
+        f"2008-30 A-1: 'there is included in gross income any amount that would be includible if the "
+        f"distribution were not rolled over' -> taxable {_dollars(taxable_i)} of the "
+        f"{_dollars(gross)} rolled over, with {_dollars(nontaxable_i)} of after-tax basis (1099-R box "
+        f"5) recovered tax-free. IRC 408(d)(2) PRO-RATA DOES NOT APPLY: no individual retirement plan "
+        f"is involved, so the traditional-IRA pool is irrelevant and Form 8606 Part I is not filed — "
+        f"the rollover is reported on Form 1040 line 5a/5b. That is what makes this the path that "
+        f"clears an old plan WITHOUT poisoning future backdoor Roth conversions. How a plan splits "
+        f"after-tax dollars across destinations is the plan's call under section 72(e)(8), 402(c)(2) "
+        f"and Notice 2014-54 section III (pretax assigned to the direct rollovers first) — take box 5 "
+        f"from the 1099-R, never estimate it."
+        if source == "plan_to_roth_ira" else
+        f"PATH: a conversion out of a traditional/SEP/SIMPLE IRA, so IRC 408(d)(2) pro-rata applies "
+        f"and Form 8606 Part I decides the split: {_dollars(taxable_i)} of the {_dollars(gross)} "
+        f"converted is taxable (line 18) and {_dollars(nontaxable_i)} is basis (line 11). The full "
+        f"line-by-line derivation is in this result's pro_rata.work."
+    )
+    bracket_line = (
+        f"BRACKET HEADROOM ({year}, {filing_status}): taxable income {_dollars(taxable_before_i)} sits "
+        f"in the {b_before.rate:.0%} bracket"
+        + (
+            f", whose top is {_dollars(top_before)} -> {_dollars(headroom_before)} of headroom before "
+            f"the conversion" if top_before is not None else " (the TOP bracket — no headroom to run out of)"
+        )
+        + f". Adding {_dollars(taxable_i)} of conversion income takes taxable income to "
+        f"{_dollars(taxable_after_i)}, in the {b_after.rate:.0%} bracket"
+        + (f" with {_dollars(headroom_after)} of headroom left" if headroom_after is not None else "")
+        + (
+            f"; {_dollars(spill)} SPILLS above {_dollars(top_before)} into the higher rate(s)"
+            if spill else "; nothing spills into a higher bracket"
+        )
+        + "."
+    )
+    if slices:
+        slice_line = (
+            "The conversion's taxable income bracket by bracket: "
+            + "; ".join(f"{s.rate:.0%} x {_dollars(s.amount)} = {_money(s.tax)}" for s in slices)
+            + f" -> {_dollars(incremental)} of federal income tax on the conversion."
+        )
+    else:
+        slice_line = "No taxable conversion income, so no incremental federal income tax."
+    niit_line = (
+        f"NIIT (Form 8960, {filing_status} threshold {_dollars(threshold)}): MAGI "
+        f"{_dollars(magi_before_i)} -> {_dollars(magi_after_i)} (only the TAXABLE part of the "
+        f"conversion enters AGI). "
+        + (
+            f"THIS CONVERSION CROSSES THE 1411 THRESHOLD: NIIT goes {_dollars(niit_before_r.niit)} -> "
+            f"{_dollars(niit_after_r.niit)}, i.e. {_dollars(niit_after_r.niit - niit_before_r.niit)} "
+            f"caused by the conversion. " if crosses else
+            f"NIIT {_dollars(niit_before_r.niit)} -> {_dollars(niit_after_r.niit)} "
+            f"({_dollars(niit_after_r.niit - niit_before_r.niit)} from the conversion). "
+        )
+        + "THE TRAP: IRC 1411(c)(5) excludes any distribution from a 401(a), 403(a), 403(b), 408, "
+        "408A or 457(b) plan from net investment income, so the conversion NEVER pays 3.8% itself — "
+        "but 1411(d)'s MAGI is AGI (plus the section 911 exclusion), so the conversion raises MAGI "
+        f"and drags the OTHER {_dollars(nii_i)} of net investment income over the line. The 3.8% is "
+        "charged on the LESSER of net investment income and the MAGI excess."
+    )
+    withholding_line = (
+        "WITHHOLDING — PAY FROM OUTSIDE FUNDS. Tax withheld from the conversion is NOT converted: it "
+        "is Roth space you never get back (this year's conversion cannot be redone, and no "
+        "contribution limit lets you replace it), and Pub 590-A's Table 1-5 says the 10% additional "
+        "tax applies to the taxable part 'including an amount equal to the tax withheld' that isn't "
+        "rolled over, for a filer under 59 1/2. "
+        + (
+            "On this path the good news is structural: Notice 2008-30 A-6 exempts a DIRECT rollover to "
+            "a Roth IRA from the section 3405(c) 20% mandatory withholding 'even if the distribution "
+            "is includible in gross income' — so decline the voluntary withholding agreement A-6 "
+            "permits, and never take the money as a 60-day (indirect) rollover, where the 20% IS "
+            "mandatory and only outside funds can make it whole within 60 days."
+            if source == "plan_to_roth_ira" else
+            "On this path an IRA distribution defaults to 10% federal withholding unless you elect out "
+            "(Pub 590-B, 'Withholding': 'Generally, tax will be withheld at a 10% rate on nonperiodic "
+            "payments'), and any withheld dollars land on Form 8606 LINE 7 (a distribution you did not "
+            "convert), not line 8 — so they are taxed pro-rata AND exposed to the line 15c Note's 10% "
+            "additional tax under 59 1/2. Elect 0% withholding and pay with estimated tax instead."
+        )
+        + " Cover the liability with an estimated payment or extra wage withholding — calc op "
+        "estimated_tax_safe_harbor sizes it (IRC 6654(d))."
+    )
+    judgment_line = (
+        "IRREVERSIBLE AND NOT MODELED HERE. Pub 590-A: 'No recharacterizations of conversions made in "
+        "2018 or later' — a conversion of a traditional IRA to a Roth IRA AND a rollover from any "
+        "other eligible retirement plan to a Roth IRA can no longer be undone, so the bracket call has "
+        "to be right the first time. Also from Pub 590-A ch. 2: an amount that must be distributed "
+        "under the required-distribution rules cannot be converted. Notice 2008-30 A-3: section 72(t) "
+        "does not apply to the rollover itself, but a taxable amount rolled into a Roth IRA and then "
+        "distributed within 5 years is hit by 72(t) 'as if it were includible in gross income' "
+        "(section 408A(d)(3)(F)) — each conversion starts its own 5-year clock. One thing the "
+        "conversion does NOT do: it cannot phase you out of CONTRIBUTING to a Roth IRA, because the "
+        "Form 8606 instructions' 'Modified AGI for Roth IRA purposes' SUBTRACTS Roth conversions "
+        "(1040 line 4b) and plan-to-Roth-IRA rollovers (1040 line 5b) back out."
+    )
+    disclosure_line = (
+        f"SCOPE: federal only, {_dollars(incremental)} income tax + {_dollars(niit_after_r.niit - niit_before_r.niit)} "
+        f"NIIT = {_dollars(incremental + niit_after_r.niit - niit_before_r.niit)} of incremental "
+        f"federal tax. Computed on the {year} RATE SCHEDULE: below $100,000 of taxable income the "
+        f"filed Form 1040 line 16 comes from the published Tax Table and can differ by a few dollars "
+        f"within a $50 band, and a return with qualified dividends or capital gains computes line 16 "
+        f"from the Qualified Dividends and Capital Gain Tax Worksheet — ordinary conversion income "
+        f"stacks UNDER that income and can push it into a higher preferential rate, which calc op "
+        f"tax_with_preferential_rates prices and this op does not. A state income tax stacks on top "
+        f"(calc op state_tax). Credit and premium phase-outs the packs do not carry — IRMAA two years "
+        f"later, ACA premium-credit repayment, education and family credits — are NOT modeled; run "
+        f"calc op magi_ladder on the post-conversion AGI to see which tests move."
+        + (f" ({alias_note}.)" if alias_note else "")
+    )
+
+    work_lines = [
+        f"Roth conversion ({year}, {filing_status}), {_dollars(gross)} via {source}:",
+        path_line, bracket_line, slice_line, niit_line, withholding_line, judgment_line, disclosure_line,
+    ]
+    inputs: dict[str, Any] = {
+        "source": source, "amount": gross, "year": year, "filing_status": filing_status,
+        "taxable_income_before": taxable_before_i, "magi_before": magi_before_i,
+        "net_investment_income": nii_i,
+    }
+    if source == "plan_to_roth_ira":
+        inputs["plan_after_tax_basis"] = nontaxable_i
+    else:
+        assert pro_rata is not None
+        inputs.update({k: v for k, v in pro_rata.inputs.items() if k != "year"})
+    citations = [_NOTICE_2008_30_CITATION, _NOTICE_2014_54_CITATION] if source == "plan_to_roth_ira" else [
+        _IRC_408D2_CITATION, _f8606_citation(year), _F8606_INSTRUCTIONS_CITATION, _PUB590B_BASIS_CITATION
+    ]
+    citations += [_IRC_1411_C5_CITATION, niit_after_r.citation, pack.tax.rate_schedules.citation,
+                  _PUB590A_CONVERSION_CITATION]
+    return RothConversionResult(
+        source=source,  # type: ignore[arg-type]
+        amount_converted=gross,
+        taxable_amount=taxable_i,
+        nontaxable_amount=nontaxable_i,
+        pro_rata=pro_rata,
+        marginal_rate_before=b_before.rate,
+        marginal_rate_after=b_after.rate,
+        bracket_top_before=top_before,
+        headroom_before=headroom_before,
+        headroom_after=headroom_after,
+        spill_into_higher_brackets=spill,
+        bracket_slices=slices,
+        incremental_income_tax=incremental,
+        magi_before=magi_before_i,
+        magi_after=magi_after_i,
+        niit_threshold=threshold,
+        niit_before=niit_before_r.niit,
+        niit_after=niit_after_r.niit,
+        niit_from_conversion=niit_after_r.niit - niit_before_r.niit,
+        crosses_niit_threshold=crosses,
+        total_incremental_tax=incremental + (niit_after_r.niit - niit_before_r.niit),
+        inputs=inputs,
+        work="\n".join(work_lines),
+        citation=citations[0],
+        citations=citations,
     )
 
 

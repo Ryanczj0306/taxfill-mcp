@@ -19,8 +19,10 @@ def test_list_all_packs():
     # + f1040nr/sched_oi 2024 (the ported pair, 2026-08-10) = 59,
     # + the 2024/2025 backfill of the 2023 set (2026-08 batch: 18 forms x 2024
     # incl. sched_a_nr/sched_nec, 16 forms x 2025) = 93,
+    # + f8606 x 2023/2024/2025 (Phase I1, 2026-08-26 — the form that carries IRA
+    # basis across years, landed with the ira_pro_rata/roth_conversion ops) = 96,
     # plus the state packs, pinned separately below.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 93
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 96
 
     # State packs. 42 for TY2023 (the C1 resident sweep: 38 states/DC with an
     # AcroForm pack — CA ships 4 — while HI/CT/NM/SC are hand-fill worksheets
@@ -39,7 +41,7 @@ def test_list_all_packs():
     assert len([s for s in states if s.tax_year == 2025]) == 5
     # Every discovered pack is one or the other, so the total is the sum. This
     # catches a pack landing under a third top-level jurisdiction unnoticed.
-    assert len(allf) == 93 + 61 == 154
+    assert len(allf) == 96 + 61 == 157
 
 
 def test_list_filters_by_jurisdiction_and_year():

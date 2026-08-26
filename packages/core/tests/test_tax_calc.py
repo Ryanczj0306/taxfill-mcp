@@ -19,6 +19,14 @@ Sources (verified against the official PDFs):
 * EITC parameters: Rev. Proc. 2022-38 Section 3.06 (2023) and the per-year
   Rev. Procs. cited in knowledge/federal/<year>.yaml (2021 as amended by
   ARPA: Rev. Proc. 2021-23 Section 4)
+* IRA pro-rata / Roth conversions (Phase I, I1 — pitfall P-009): Form 8606,
+  every revision 2019-2025 (https://www.irs.gov/pub/irs-prior/f8606--<year>.pdf)
+  and the 2025 instructions (i8606--2025.pdf); IRC 408(d)(2) and IRC 1411(c)(5)
+  from uscode.house.gov (title 26 sections 408 and 1411, prelim edition);
+  Notice 2008-30 (https://www.irs.gov/pub/irs-drop/n-08-30.pdf); Notice 2014-54
+  (n-14-54.pdf); Pub 590-A Table 1-5 + ch. 2 and Pub 590-B ch. 1
+  (p590a.pdf / p590b.pdf). The 2026 figures the conversion tests use come from
+  knowledge/federal/2026.yaml (Rev. Proc. 2025-32).
 
 Rule from docs/DEV_PLAN.md section 10: if the implementation disagrees with
 ANY published row below, the implementation is wrong — fix it, never the
@@ -38,12 +46,14 @@ from taxfill_core.calc import (
     education_credits,
     eitc,
     excess_ss,
+    ira_pro_rata,
     irs_round,
     niit,
     presence_days,
     presence_days_by_year,
     ptc_annual,
     ptc_monthly,
+    roth_conversion,
     se_tax,
     standard_deduction,
     state_tax,
@@ -672,6 +682,35 @@ def test_surtax_blocks_ship_for_every_supported_year(year):
     assert am.additional_medicare_tax == 450
     ni = niit(10_000, 210_000, "single", year, knowledge_dir=KNOWLEDGE_DIR)
     assert ni.niit == 380
+
+
+@pytest.mark.parametrize("year", [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
+def test_the_qss_surtax_asymmetry_holds_for_every_shipped_year(year):
+    """The check that would have caught a live defect (found 2026-08-26).
+
+    Forms 8959 and 8960 bucket a qualifying surviving spouse DIFFERENTLY — 8959
+    with single/HoH at $200,000, 8960 with MFJ at $250,000 — which is the entire
+    reason the schema makes all five statuses explicit instead of aliasing QSS to
+    the MFJ column. knowledge/federal/2026.yaml carried niit QSS = $200,000, the
+    only shipped year that did, evidently copied from the
+    additional_medicare_tax block sitting immediately above it. The pre-existing
+    QSS test ran on 2023 only and the year sweep above never touched QSS, so
+    nothing saw it: a 2026 QSS filer's NIIT was overstated by up to
+    3.8% x $50,000 = $1,900.
+
+    Two independent primary sources fix the value: IRC 1411(b)(1) ("in the case
+    of a taxpayer making a joint return under section 6013 or a surviving spouse
+    (as defined in section 2(a)), $250,000") and the Instructions for Form 8960
+    (2025), whose Line 14 threshold table prints "Qualifying surviving spouse
+    $250,000". Both directions are pinned below, so neither block can drift into
+    the other's bucket again.
+    """
+    ni = niit(60_000, 260_000, "qualifying_surviving_spouse", year, knowledge_dir=KNOWLEDGE_DIR)
+    assert ni.threshold == 250_000, f"federal {year} niit QSS threshold drifted"
+    assert ni.niit == 380                                   # 3.8% x (260,000 - 250,000)
+    am = additional_medicare_tax(260_000, "qualifying_surviving_spouse", year, knowledge_dir=KNOWLEDGE_DIR)
+    assert am.threshold == 200_000, f"federal {year} Form 8959 QSS threshold drifted"
+    assert am.additional_medicare_tax == 540                # 0.9% x (260,000 - 200,000)
 
 
 # ---------------------------------------------------------------------------
@@ -2664,3 +2703,398 @@ def test_state_tax_rate_progression_across_years():
     assert rate("ga", 2024) > rate("ga", 2025)                          # 5.39 -> 5.19 (HB 111)
     assert rate("ut", 2023) > rate("ut", 2024)                          # 4.65 -> 4.55 (SB 69)
     assert rate("pa", 2023) == rate("pa", 2024) == rate("pa", 2025)     # 3.07 unmoved since 2004
+
+
+# ---------------------------------------------------------------------------
+# IRA pro-rata + Roth conversion (Phase I, I1 — pitfall P-009)
+#
+# Every fixture below is either a printed Form 8606 line rule or a figure from
+# the live 2026-08-26 planning session that motivated the ops. The session
+# numbers are the acceptance criteria: if the engine disagrees with one, the
+# engine is wrong (dev plan section 10) — none of them was bent to fit.
+# ---------------------------------------------------------------------------
+
+
+def test_ira_pro_rata_reproduces_the_polluted_pool_backdoor():
+    # THE session case (P-009): a $30,000 all-pretax traditional IRA plus a
+    # $7,500 nondeductible contribution, converting $7,500. Form 8606 (2026
+    # numbering, identical to 2025's): line 3 = 7,500 + 0; line 5 = 7,500 (the
+    # NUMERATOR); line 6 = 30,000 (what is left in the pool at Dec 31, AFTER the
+    # conversion left it); line 8 = 7,500; line 9 = 6 + 7 + 8 = 37,500 (the
+    # DENOMINATOR — the conversion is added back); line 10 = 0.200; line 11 =
+    # 1,500 nontaxable; line 18 = 6,000 TAXABLE; line 14 = 6,000 basis carried.
+    r = ira_pro_rata(
+        dec31_total_value=30_000,
+        amount_converted=7_500,
+        nondeductible_contributions_this_year=7_500,
+        year=2026,
+    )
+    assert r.taxable_conversion == 6_000
+    assert r.nontaxable_conversion == 1_500
+    assert r.basis_carryforward == 6_000
+    assert r.basis_applied == 1_500
+    assert (r.numerator, r.denominator) == (7_500, 37_500)
+    assert r.nontaxable_ratio == Decimal("0.2")
+    assert r.ratio_as_filed == Decimal("0.200")
+    # At a 24% marginal rate that is $1,440 of tax — the session's own figure.
+    assert irs_round(Decimal(r.taxable_conversion) * Decimal("0.24")) == 1_440
+    assert r.form_8606_lines["9"] == "$37,500"
+    assert r.citation.source.startswith("IRC 408(d)(2)")
+
+
+def test_ira_pro_rata_denominator_adds_the_conversion_back():
+    # The single most-botched detail. Same $37,500 of total IRA money either way:
+    # converting more moves dollars from line 6 to line 8 and leaves line 9 — and
+    # therefore the ratio — completely unchanged.
+    small = ira_pro_rata(30_000, 7_500, nondeductible_contributions_this_year=7_500, year=2026)
+    large = ira_pro_rata(22_500, 15_000, nondeductible_contributions_this_year=7_500, year=2026)
+    assert small.denominator == large.denominator == 37_500
+    assert small.nontaxable_ratio == large.nontaxable_ratio == Decimal("0.2")
+    # The nontaxable DOLLARS scale with the conversion, but the ratio never moves,
+    # so a bigger conversion cannot dilute the pretax share.
+    assert (small.nontaxable_conversion, small.taxable_conversion) == (1_500, 6_000)
+    assert (large.nontaxable_conversion, large.taxable_conversion) == (3_000, 12_000)
+    assert "ADDS THE CONVERSION BACK" in small.work
+
+
+def test_ira_pro_rata_ten_year_backdoor_against_a_polluted_pool():
+    # The session's headline number: iterating the same $7,500 backdoor for ten
+    # years against a $30,000 pretax pool totals ~$6,427 of tax at 24% that a
+    # clean pool would never have owed. Each year's line 14 becomes the next
+    # year's line 2, which is exactly how the basis crawls up and the taxable
+    # share decays by 20% a year.
+    basis, taxable_total = 0, 0
+    for _ in range(10):
+        y = ira_pro_rata(
+            dec31_total_value=30_000,
+            amount_converted=7_500,
+            nondeductible_contributions_this_year=7_500,
+            nondeductible_basis_carryforward=basis,
+            year=2026,
+        )
+        taxable_total += y.taxable_conversion
+        basis = y.basis_carryforward
+    assert taxable_total == 26_779                       # whole-dollar line 18s summed
+    tax = Decimal(taxable_total) * Decimal("0.24")
+    assert irs_round(tax) == 6_427
+    # A clean pool over the same ten years owes nothing at all.
+    clean = sum(
+        ira_pro_rata(0, 7_500, nondeductible_contributions_this_year=7_500, year=2026).taxable_conversion
+        for _ in range(10)
+    )
+    assert clean == 0
+
+
+def test_ira_pro_rata_clean_pool_is_fully_nontaxable():
+    # The whole point of the plan_to_roth_ira path: with nothing left in any
+    # traditional IRA at Dec 31, line 9 == line 5 and the form's own cap ("If the
+    # result is 1.000 or more, enter '1.000'") makes the conversion tax free.
+    r = ira_pro_rata(0, 7_500, nondeductible_contributions_this_year=7_500, year=2026)
+    assert r.ratio_as_filed == Decimal("1.000")
+    assert r.taxable_conversion == 0
+    assert r.nontaxable_conversion == 7_500
+    assert r.basis_carryforward == 0
+
+
+def test_ira_pro_rata_ratio_is_capped_at_one_when_basis_exceeds_the_pool():
+    # Basis can exceed the pool after a market drop. The form caps line 10 at
+    # 1.000, so the distribution is fully nontaxable and the unused basis stays on
+    # line 14 — it never produces a negative taxable amount.
+    r = ira_pro_rata(1_000, 4_000, nondeductible_basis_carryforward=10_000, year=2025)
+    assert r.nontaxable_ratio == Decimal("1")
+    assert r.ratio_as_filed == Decimal("1.000")
+    assert (r.taxable_conversion, r.nontaxable_conversion) == (0, 4_000)
+    assert r.basis_carryforward == 6_000                  # 10,000 - 4,000 applied
+
+
+def test_ira_pro_rata_line_4_is_out_of_the_ratio_but_still_carries_forward():
+    # Instructions, Line 4: contributions made Jan 1-Apr 15 of the FOLLOWING year
+    # "aren't included in figuring the nontaxable part of any distributions you
+    # received" — line 5 drops them — while line 14 = line 3 - line 13 keeps them
+    # as basis for next year.
+    with_late = ira_pro_rata(
+        30_000, 7_500,
+        nondeductible_contributions_this_year=7_500,
+        contributions_made_after_year_end=7_500,
+        year=2025,
+    )
+    assert with_late.numerator == 0                       # line 5 = 3 - 4 = 0
+    assert with_late.taxable_conversion == 7_500          # nothing shelters it this year
+    assert with_late.basis_carryforward == 7_500          # but the basis survives
+    assert "aren't included in figuring the nontaxable part" in with_late.work
+
+
+def test_ira_pro_rata_other_distributions_get_their_own_lines():
+    # Line 7 money is pro-rated by the SAME ratio (line 12), lands on lines
+    # 15a/15c, and carries the form's printed under-59-1/2 warning.
+    r = ira_pro_rata(30_000, 7_500, other_distributions=2_500,
+                     nondeductible_contributions_this_year=7_500, year=2025)
+    assert r.denominator == 40_000                        # 30,000 + 2,500 + 7,500
+    assert r.nontaxable_ratio == Decimal("0.1875")
+    assert r.nontaxable_conversion == irs_round(Decimal("7500") * Decimal("0.1875"))   # 1,406
+    assert r.nontaxable_other_distributions == irs_round(Decimal("2500") * Decimal("0.1875"))  # 469
+    assert r.taxable_other_distributions == 2_500 - 469
+    assert r.taxable_total == r.taxable_conversion + r.taxable_other_distributions
+    assert "additional 10% tax on the amount on line 15c" in r.work
+
+
+def test_ira_pro_rata_discloses_when_a_three_place_ratio_would_differ():
+    # The form permits "a decimal rounded to at least 3 places"; this op divides
+    # exactly, so it must say when a filer entering exactly 3 places would land on
+    # a different line 11. 8,500/37,500 = 0.226666... vs 0.227 -> $3 apart.
+    r = ira_pro_rata(30_000, 7_500, nondeductible_contributions_this_year=7_500,
+                     nondeductible_basis_carryforward=1_000, year=2025)
+    assert r.ratio_as_filed == Decimal("0.227")
+    assert "Entering exactly 3 places instead" in r.work
+    assert "$3 difference" in r.work
+
+
+@pytest.mark.parametrize("year", [2019, 2020, 2021, 2022, 2023, 2024, 2025])
+def test_ira_pro_rata_line_numbering_is_identical_on_every_read_revision(year):
+    # Part I lines 1-14 and Part II lines 16-18 were read off each of these
+    # blanks (f8606--<year>.pdf); only the wording moved. Same inputs must give
+    # the same answer, and each year cites its OWN revision.
+    r = ira_pro_rata(30_000, 7_500, nondeductible_contributions_this_year=7_500, year=year)
+    assert (r.taxable_conversion, r.nontaxable_conversion, r.basis_carryforward) == (6_000, 1_500, 6_000)
+    urls = [c.url for c in r.citations]
+    assert f"https://www.irs.gov/pub/irs-prior/f8606--{year}.pdf" in urls
+    assert "YEAR NOTE" not in r.work
+
+
+def test_ira_pro_rata_unpublished_year_cites_the_newest_revision_it_read():
+    # 2026's Form 8606 does not exist yet (irs.gov/pub/irs-prior/f8606--2026.pdf
+    # is a 404), so the op must quote the 2025 revision AND say so rather than
+    # inventing a citation URL.
+    r = ira_pro_rata(30_000, 7_500, nondeductible_contributions_this_year=7_500, year=2026)
+    urls = [c.url for c in r.citations]
+    assert "https://www.irs.gov/pub/irs-prior/f8606--2025.pdf" in urls
+    assert not any("f8606--2026" in u for u in urls)
+    assert "YEAR NOTE" in r.work and "Re-verify" in r.work
+
+
+def test_ira_pro_rata_refuses_pre_2019_revisions():
+    # The instructions' Total Basis Chart proves the renumbering: a pre-2001 form
+    # carries basis on line 12, not line 14.
+    with pytest.raises(ValueError, match="renumber the lines"):
+        ira_pro_rata(30_000, 7_500, year=2015)
+
+
+def test_ira_pro_rata_refuses_a_year_with_no_distribution_and_no_conversion():
+    # The form's own routing: "No -> Enter the amount from line 3 on line 14. Do
+    # not complete the rest of Part I" — there is no ratio to compute.
+    with pytest.raises(ValueError, match="nothing left the pool"):
+        ira_pro_rata(30_000, nondeductible_contributions_this_year=7_500, year=2025)
+
+
+def test_ira_pro_rata_input_validation():
+    with pytest.raises(ValueError, match="must be >= 0"):
+        ira_pro_rata(-1, 7_500, year=2025)
+    with pytest.raises(ValueError, match="cannot exceed"):
+        ira_pro_rata(30_000, 7_500, nondeductible_contributions_this_year=1_000,
+                     contributions_made_after_year_end=2_000, year=2025)
+    # Money strings and floats normalize like every other op.
+    assert ira_pro_rata("30,000", "$7,500.00", nondeductible_contributions_this_year=7500.0,
+                        year=2025).taxable_conversion == 6_000
+
+
+def test_roth_conversion_plan_path_is_fully_taxable_and_skips_pro_rata():
+    # THE other session case (P-009): a $20,000 all-pretax old-plan balance rolled
+    # DIRECTLY to a Roth IRA. Notice 2008-30 A-1 makes the whole pretax amount
+    # includible; IRC 408(d)(2) pro-rata never reaches it. 2026 single figures:
+    # taxable income 171,400 sits in the 24% bracket whose top is 201,775 ->
+    # 30,375 of headroom before and 10,375 after, so nothing spills into 32%.
+    # MAGI 187,500 -> 207,500 crosses the $200,000 IRC 1411 threshold: with
+    # $3,500 of net investment income the NIIT is 3.8% x min(3,500, 7,500) = $133.
+    r = roth_conversion(
+        "plan_to_roth_ira", 20_000,
+        taxable_income_before=171_400, magi_before=187_500,
+        filing_status="single", year=2026, net_investment_income=3_500,
+        knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.taxable_amount == 20_000
+    assert r.nontaxable_amount == 0
+    assert r.pro_rata is None
+    assert r.marginal_rate_before == r.marginal_rate_after == Decimal("0.24")
+    assert r.bracket_top_before == 201_775
+    assert r.headroom_before == 30_375
+    assert r.headroom_after == 10_375
+    assert r.spill_into_higher_brackets == 0
+    assert [(s.rate, s.amount) for s in r.bracket_slices] == [(Decimal("0.24"), 20_000)]
+    assert r.incremental_income_tax == 4_800
+    assert (r.magi_before, r.magi_after) == (187_500, 207_500)
+    assert r.niit_threshold == 200_000
+    assert (r.niit_before, r.niit_after, r.niit_from_conversion) == (0, 133, 133)
+    assert r.crosses_niit_threshold is True
+    assert r.total_incremental_tax == 4_933
+    assert "PRO-RATA DOES NOT APPLY" in r.work
+    assert "https://www.irs.gov/pub/irs-drop/n-08-30.pdf" == r.citation.url
+
+
+def test_roth_conversion_plan_path_leaves_future_backdoors_untaxed():
+    # The whole reason the plan path exists. Rolling the old plan straight to a
+    # Roth IRA never touches Form 8606 line 6, so a later $7,500 backdoor against
+    # the resulting CLEAN pool is fully non-taxable — the same $7,500 against the
+    # polluted pool would have been $6,000 of income.
+    clean = roth_conversion(
+        "traditional_ira_to_roth", 7_500,
+        taxable_income_before=171_400, magi_before=187_500,
+        filing_status="single", year=2026,
+        dec31_total_value=0, nondeductible_contributions_this_year=7_500,
+        net_investment_income=3_500, knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert clean.taxable_amount == 0
+    assert clean.nontaxable_amount == 7_500
+    assert clean.pro_rata is not None and clean.pro_rata.ratio_as_filed == Decimal("1.000")
+    assert clean.incremental_income_tax == 0
+    assert clean.niit_from_conversion == 0                 # MAGI does not move at all
+    assert clean.magi_after == clean.magi_before == 187_500
+
+
+def test_roth_conversion_ira_path_delegates_to_ira_pro_rata():
+    # Same polluted pool, priced through the conversion op: taxable 6,000 and, in
+    # the 24% bracket with 30,375 of headroom, exactly $1,440 of federal tax.
+    r = roth_conversion(
+        "traditional_ira_to_roth", 7_500,
+        taxable_income_before=171_400, magi_before=187_500,
+        filing_status="single", year=2026,
+        dec31_total_value=30_000, nondeductible_contributions_this_year=7_500,
+        knowledge_dir=KNOWLEDGE_DIR,
+    )
+    assert r.taxable_amount == 6_000
+    assert r.nontaxable_amount == 1_500
+    assert r.pro_rata is not None
+    assert r.pro_rata.basis_carryforward == 6_000
+    assert r.pro_rata.denominator == 37_500
+    assert r.incremental_income_tax == 1_440
+    assert r.spill_into_higher_brackets == 0
+    assert r.citation.source.startswith("IRC 408(d)(2)")
+    assert "IRC 408(d)(2) pro-rata" in r.pro_rata.work
+
+
+def test_roth_conversion_refuses_to_conflate_the_two_paths():
+    # The op exists to stop this exact confusion, so it fails closed in BOTH
+    # directions rather than quietly ignoring the wrong-path arguments.
+    with pytest.raises(ValueError, match="unknown source"):
+        roth_conversion("rollover", 10_000, 100_000, 100_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="conflation this op exists to prevent"):
+        roth_conversion("plan_to_roth_ira", 10_000, 100_000, 100_000, year=2026,
+                        dec31_total_value=50_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="needs dec31_total_value"):
+        roth_conversion("traditional_ira_to_roth", 10_000, 100_000, 100_000, year=2026,
+                        knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="applies only to source='plan_to_roth_ira'"):
+        roth_conversion("traditional_ira_to_roth", 10_000, 100_000, 100_000, year=2026,
+                        dec31_total_value=0, plan_after_tax_basis=1_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="exceeds the amount rolled over"):
+        roth_conversion("plan_to_roth_ira", 10_000, 100_000, 100_000, year=2026,
+                        plan_after_tax_basis=11_000, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="amount must be > 0"):
+        roth_conversion("plan_to_roth_ira", 0, 100_000, 100_000, year=2026, knowledge_dir=KNOWLEDGE_DIR)
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        roth_conversion("plan_to_roth_ira", 1_000, 100_000, 100_000, filing_status="mfj",
+                        year=2026, knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_roth_conversion_plan_after_tax_basis_comes_off_the_top():
+    # A plan holding after-tax money: box 5 of the 1099-R is the after-tax slice
+    # the PLAN allocated to this rollover (Notice 2014-54 section III/IV), and only
+    # the rest is includible. This is NOT the IRA ratio — no pool is consulted.
+    r = roth_conversion("plan_to_roth_ira", 20_000, 171_400, 187_500,
+                        filing_status="single", year=2026, plan_after_tax_basis=5_000,
+                        knowledge_dir=KNOWLEDGE_DIR)
+    assert (r.taxable_amount, r.nontaxable_amount) == (15_000, 5_000)
+    assert r.pro_rata is None
+    assert r.magi_after == 187_500 + 15_000               # only the taxable part enters AGI
+    assert "1099-R" in r.work
+
+
+def test_roth_conversion_spill_is_split_bracket_by_bracket():
+    # A conversion big enough to cross two bracket walls: the slices must sum to
+    # the rate schedule's own delta, and the spill must be everything above the
+    # starting bracket's top.
+    r = roth_conversion("plan_to_roth_ira", 300_000, 171_400, 187_500,
+                        filing_status="single", year=2026, net_investment_income=50_000,
+                        knowledge_dir=KNOWLEDGE_DIR)
+    assert [(s.rate, s.amount) for s in r.bracket_slices] == [
+        (Decimal("0.24"), 30_375),      # to the top of the 24% bracket (201,775)
+        (Decimal("0.32"), 54_450),      # 201,775 -> 256,225
+        (Decimal("0.35"), 215_175),     # 256,225 -> 471,400
+    ]
+    assert sum(s.amount for s in r.bracket_slices) == 300_000
+    assert r.spill_into_higher_brackets == 300_000 - 30_375
+    assert r.marginal_rate_after == Decimal("0.35")
+    assert irs_round(sum(s.tax for s in r.bracket_slices)) == r.incremental_income_tax
+    # Independent check against the shipped rate schedule.
+    before = tax_from_taxable_income(171_400, "single", 2026, knowledge_dir=KNOWLEDGE_DIR)
+    after = tax_from_taxable_income(471_400, "single", 2026, knowledge_dir=KNOWLEDGE_DIR)
+    assert after.tax - before.tax == r.incremental_income_tax
+
+
+def test_roth_conversion_top_bracket_has_no_headroom_to_report():
+    r = roth_conversion("plan_to_roth_ira", 50_000, 700_000, 720_000,
+                        filing_status="single", year=2026, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.bracket_top_before is None
+    assert r.headroom_before is None and r.headroom_after is None
+    assert r.spill_into_higher_brackets == 0
+    assert "the TOP bracket" in r.work
+
+
+def test_roth_conversion_income_is_never_itself_net_investment_income():
+    # IRC 1411(c)(5): a distribution from a 401(a)/403(a)/403(b)/408/408A/457(b)
+    # plan is excluded from net investment income. So a filer with NO other
+    # investment income pays $0 of NIIT on any size conversion — the 3.8% only
+    # ever bites the OTHER income the higher MAGI drags over the threshold.
+    none = roth_conversion("plan_to_roth_ira", 500_000, 171_400, 187_500,
+                           filing_status="single", year=2026, net_investment_income=0,
+                           knowledge_dir=KNOWLEDGE_DIR)
+    assert none.magi_after == 687_500 and none.crosses_niit_threshold is True
+    assert (none.niit_before, none.niit_after, none.niit_from_conversion) == (0, 0, 0)
+    some = roth_conversion("plan_to_roth_ira", 500_000, 171_400, 187_500,
+                           filing_status="single", year=2026, net_investment_income=3_500,
+                           knowledge_dir=KNOWLEDGE_DIR)
+    assert some.niit_from_conversion == irs_round(Decimal("3500") * Decimal("0.038"))   # 133
+    assert "1411(c)(5)" in some.work
+    assert any("section1411" in c.url for c in some.citations)
+
+
+def test_roth_conversion_work_carries_the_withholding_and_irreversibility_warnings():
+    plan = roth_conversion("plan_to_roth_ira", 20_000, 171_400, 187_500,
+                           filing_status="single", year=2026, knowledge_dir=KNOWLEDGE_DIR)
+    ira = roth_conversion("traditional_ira_to_roth", 7_500, 171_400, 187_500,
+                          filing_status="single", year=2026, dec31_total_value=30_000,
+                          nondeductible_contributions_this_year=7_500, knowledge_dir=KNOWLEDGE_DIR)
+    for r in (plan, ira):
+        assert "WITHHOLDING — PAY FROM OUTSIDE FUNDS" in r.work
+        assert "including an amount equal to the tax withheld" in r.work
+        assert "No recharacterizations of conversions made in 2018 or later" in r.work
+        assert "5-year clock" in r.work
+        assert any("p590a" in c.url for c in r.citations)
+    # Each path names its OWN withholding regime, from its own authority.
+    assert "20% mandatory withholding" in plan.work and "60-day (indirect) rollover" in plan.work
+    assert "10% rate on nonperiodic payments" in ira.work and "LINE 7" in ira.work
+
+
+def test_roth_conversion_mfj_uses_the_joint_schedule_and_the_250k_niit_threshold():
+    r = roth_conversion("plan_to_roth_ira", 60_000, 171_400, 210_000,
+                        filing_status="married_filing_jointly", year=2026,
+                        net_investment_income=20_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.niit_threshold == 250_000                     # Form 8960 groups MFJ at 250,000
+    assert r.magi_after == 270_000
+    assert r.crosses_niit_threshold is True
+    assert r.niit_from_conversion == irs_round(Decimal("20000") * Decimal("0.038"))   # 760
+    # The joint bracket is wider than single's, so the same taxable income sits lower.
+    single = roth_conversion("plan_to_roth_ira", 60_000, 171_400, 210_000,
+                             filing_status="single", year=2026, net_investment_income=20_000,
+                             knowledge_dir=KNOWLEDGE_DIR)
+    assert r.marginal_rate_before < single.marginal_rate_before
+
+
+def test_roth_conversion_qss_alias_resolves_like_the_neighbouring_ops():
+    # Form 8960 buckets qualifying surviving spouse WITH MFJ at $250,000 while the
+    # rate schedules have no QSS column — _resolve_filing_status maps it to MFJ and
+    # the work says so, exactly as marginal_dollar_savings does.
+    r = roth_conversion("plan_to_roth_ira", 20_000, 171_400, 240_000,
+                        filing_status="qualifying_surviving_spouse", year=2026,
+                        net_investment_income=5_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.niit_threshold == 250_000
+    assert "married-filing-jointly column" in r.work

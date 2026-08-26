@@ -682,6 +682,79 @@ def test_identity_mismatch_across_two_forms_fails_with_both_addresses():
     assert p002.status == "FAIL"
 
 
+def test_a_pack_that_maps_an_identity_line_without_declaring_it_may_leave_it_blank():
+    """Regression, Phase I1 2026-08-26: verify_filing FAILed every correct Form 8606 filing.
+
+    ``_identity_checks`` takes the UNION of every pack's ``identity_fields`` and
+    then evaluated each name against every pack that merely MAPPED a line with
+    that key — even a pack that never declared it. Form 8606 maps its page-1
+    address block (it is filable by itself) but declares only
+    ``[name, identifying_number]``, because the printed side caption says "Fill
+    in Your Address Only if You Are Filing This Form by Itself and Not With Your
+    Tax Return". So on the ordinary ATTACHED path the address is CORRECTLY blank,
+    and comparing that blank against the parent return's real address produced
+    ``ok=False`` on a perfectly correct filing — a live false FAIL on the most
+    common path, found by the adversarial pack review.
+    """
+    address = "100 Current St, Testville, CA 00000"
+    parent = identity_pack("F-MAIN")  # declares name + identifying_number + mailing_address
+    # The 8606 shape: maps mailing_address, does NOT declare it.
+    attach = make_pack(
+        [
+            text_field("name"),
+            text_field("identifying_number", maxlen=9, comb=True, format="ssn_digits_only"),
+            text_field("mailing_address"),
+            money_field("1k"),
+        ],
+        form="F-ATTACH",
+        identity_fields=["name", "identifying_number"],
+    )
+    common = {"name": "Pat Q Sample", "identifying_number": "000000000"}
+    report = verify_filing(
+        [
+            filing_item("main", parent, {**common, "mailing_address": address}),
+            filing_item("attach", attach, {**common, "mailing_address": ""}),
+        ]
+    )
+    assert report.ok is True, [c.detail for c in report.identity if c.status == "FAIL"]
+    addr = next(check for check in report.identity if check.field == "mailing_address")
+    assert addr.status == "PASS"
+    # The skip is scoped: only the non-declaring pack drops out, and the parent's
+    # value is still the one reported.
+    assert addr.values == {"main": address}
+
+
+def test_a_non_blank_value_on_a_non_declaring_pack_is_still_compared():
+    """The other half of the same fix: skipping applies ONLY to a blank.
+
+    A pack that maps an identity line without declaring it still gets checked
+    when it actually carries a value — otherwise the fix would have opened a hole
+    exactly where P-002 exists (a typo'd address on a schedule).
+    """
+    parent = identity_pack("F-MAIN")
+    attach = make_pack(
+        [
+            text_field("name"),
+            text_field("identifying_number", maxlen=9, comb=True, format="ssn_digits_only"),
+            text_field("mailing_address"),
+            money_field("1k"),
+        ],
+        form="F-ATTACH",
+        identity_fields=["name", "identifying_number"],
+    )
+    common = {"name": "Pat Q Sample", "identifying_number": "000000000"}
+    report = verify_filing(
+        [
+            filing_item("main", parent, {**common, "mailing_address": "100 Current St, Testville, CA 00000"}),
+            filing_item("attach", attach, {**common, "mailing_address": "9 Old Apartment Rd, Pastburg, NY 00000"}),
+        ]
+    )
+    assert report.ok is False
+    addr = next(check for check in report.identity if check.field == "mailing_address")
+    assert addr.status == "FAIL"
+    assert "100 Current St" in addr.detail and "9 Old Apartment Rd" in addr.detail
+
+
 def test_identity_match_reports_the_address_used():
     address = "100 Current St, Testville, CA 00000"
     pack_a, pack_b = identity_pack("F-MAIN"), identity_pack("F-ATTACH")

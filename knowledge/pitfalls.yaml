@@ -344,3 +344,122 @@ pitfalls:
       KNOWN_UNGROUPED_YESNO_PAIRS — an allowlist that fails the moment a
       pair IS grouped, forcing the stale entry out, so the debt cannot go
       quiet.
+
+  - id: P-009
+    incident: >-
+      The knowledge-gap pattern for the fourth time, and this one was the most
+      expensive: the packs shipped the FIGURES for retirement accounts (the IRA
+      limit, the Roth and deductible-IRA MAGI phase-outs, the 6% excess excise)
+      and calc shipped ira_contribution_eligibility to police them — while
+      NOTHING in the repo modeled IRC 408(d)(2), the rule that decides how much
+      of a conversion is actually taxable. A live 2026-08-26 planning session
+      asked the one question a backdoor-Roth filer has, "where can I roll my old
+      401(k)?", and the engine had no deterministic answer at all: the agent had
+      to do Form 8606 Part I by hand. Two specific traps sat inside that gap.
+      (1) The DENOMINATOR of the nontaxable ratio: Form 8606 line 9 = line 6
+      (Dec-31 value of every traditional/SEP/SIMPLE IRA) + line 7 (distributions
+      not converted) + line 8 (the amount converted) — it ADDS THE CONVERSION
+      BACK, so converting a bigger slice never dilutes the pretax share.
+      Reasoning from "I converted the nondeductible dollars" instead gets the
+      answer wrong by the whole pretax fraction: on a $30,000 pretax pool plus a
+      $7,500 nondeductible contribution, converting $7,500 is $6,000 taxable
+      (ratio 7,500/37,500 = 0.200), not $0 — and iterating that same backdoor for
+      ten years against the polluted pool costs about $6,427 of tax at 24% that a
+      clean pool would never have owed. (2) The two Roth-conversion PATHS get
+      conflated: a DIRECT rollover from a 401(k)/403(b) to a Roth IRA is fully
+      taxable on its pretax part but pro-rata never reaches it (no individual
+      retirement plan is involved, and it is reported on Form 1040 line 5a/5b,
+      not Form 8606) — that is the only way to empty an old plan WITHOUT
+      poisoning every future backdoor conversion, and treating it as an IRA
+      conversion loses exactly that.
+      The sources registry had the same hole, reproduced before the fix:
+      get_sources("Form 8606"), ("pro rata rule") and ("nondeductible IRA
+      basis") were clean misses, and get_sources("nondeductible contributions")
+      routed to Pub 526 + Form 8283 — CHARITABLE-contribution substantiation, a
+      wrong-law pointer of exactly the P-005 "Schedule NEC" / P-006 "qualified
+      parking" kind.
+    countermeasure: >-
+      Calc ops ira_pro_rata and roth_conversion (Phase I, I1) with golden
+      regression tests in packages/core/tests/test_tax_calc.py that reproduce the
+      live session's numbers, including the ten-year iteration total and the
+      clean-pool case that proves a plan-to-Roth-IRA rollover leaves future
+      backdoor conversions fully non-taxable. roth_conversion REFUSES to guess
+      the path (`source` is required) and REFUSES traditional-IRA arguments on
+      the plan path, so the conflation cannot happen silently; it also returns
+      the bracket headroom (which conversion dollars spill into the next rate)
+      and the IRC 1411 crossing, because conversion income is never itself net
+      investment income (1411(c)(5) excludes distributions from 401(a), 403(a),
+      403(b), 408, 408A and 457(b) plans) yet it raises the MAGI the threshold is
+      measured against — the trap that makes a conversion cost 3.8% on OTHER
+      income. get_sources now routes the authority via topic
+      ira_basis_and_roth_conversions (Form 8606 + its instructions, Pub 590-A,
+      Pub 590-B, Notice 2008-30, Notice 2014-54) with routing regression tests in
+      test_sources.py, including the "nondeductible contributions" wrong-law case
+      and a neighbour-theft guard proving the new topic does not swallow
+      "foreign pension distributions" (it did, on the first draft, until the
+      answers text stopped saying "Pension Protection Act").
+      THE DURABLE RULES ARE YEAR-INVARIANT, so they live HERE and in the ops'
+      work strings, never in a year pack (only the contribution limits and
+      phase-out ranges are figures). (1) IRC 408(d)(2): "all individual
+      retirement plans shall be treated as 1 contract", "all distributions during
+      any taxable year shall be treated as 1 distribution", the value is measured
+      at the close of the calendar year, and "the value of the contract shall be
+      increased by the amount of any distributions during the calendar year" —
+      that last clause IS Form 8606 line 9. Which dollars physically moved is
+      irrelevant; a Roth IRA, a 401(k)/403(b) and an inherited IRA are all
+      OUTSIDE the pool. (2) The pool is PER PERSON: Form 8606's own header is "If
+      married, file a separate form for each spouse required to file", so a
+      spouse's traditional IRA never enters your ratio. (3) TIMING: line 6 is the
+      DECEMBER 31 value, so an amount rolled into a traditional IRA in December
+      pollutes the ratio for a conversion done the previous January; and line 4
+      keeps a contribution made between January 1 and April 15 of the following
+      year OUT of this year's numerator while line 14 still carries it forward.
+      (4) A conversion is IRREVERSIBLE — Pub 590-A: "No recharacterizations of
+      conversions made in 2018 or later" — and each one starts its own 5-year
+      section 72(t) clock (Notice 2008-30 A-3, section 408A(d)(3)(F)).
+      (5) WITHHOLDING: tax withheld from a conversion is not converted, so it is
+      Roth space that cannot be replaced, and Pub 590-A's Table 1-5 applies the
+      10% additional tax to the taxable part "including an amount equal to the
+      tax withheld" that isn't rolled over — pay from OUTSIDE funds. A direct
+      plan-to-Roth-IRA rollover escapes the 20% mandatory withholding of section
+      3405(c) (Notice 2008-30 A-6); a 60-day rollover does not, and an IRA
+      distribution defaults to 10% unless the filer elects out.
+      A SEPARATE DEFECT THIS WORK CAUGHT, fixed in the same pass:
+      knowledge/federal/2026.yaml carried tax.niit
+      qualifying_surviving_spouse = $200,000 — the only shipped year that did
+      (2019-2025 all carry $250,000), evidently copied from the
+      additional_medicare_tax block sitting immediately above it, where QSS
+      really is $200,000. That 8959-vs-8960 asymmetry is the whole reason the
+      schema makes all five statuses explicit instead of aliasing QSS to the MFJ
+      column, and the two authorities are unambiguous: IRC 1411(b)(1) ("in the
+      case of a taxpayer making a joint return under section 6013 or a surviving
+      spouse (as defined in section 2(a)), $250,000") and the Line 14 threshold
+      table in the Instructions for Form 8960 (2025) ("Qualifying surviving
+      spouse $250,000"). It overstated a 2026 QSS filer's NIIT by up to 3.8% x
+      $50,000 = $1,900 and nothing saw it: the pre-existing QSS test ran on 2023
+      only, and test_surtax_blocks_ship_for_every_supported_year swept
+      2019-2024 using the SINGLE column. The durable fix is the sweep that was
+      missing — test_the_qss_surtax_asymmetry_holds_for_every_shipped_year in
+      test_tax_calc.py pins BOTH forms' QSS bucket for every shipped year, so
+      neither block can drift into the other's value again.
+      BOTH HALVES SHIPPED TOGETHER (2026-08-26), which is what makes the chain
+      usable end to end: ira_pro_rata returns every computed Part I / Part II
+      value in `form_8606_lines` keyed by the form's printed line label, and
+      formpacks/federal/{2023,2024,2025}/f8606 turn those into a filled, verified
+      and rendered page (fill_form / verify_form / render_form), with the ops as
+      verify's independent-recompute source. Neither half is much use alone — a
+      pack without the ops has nothing to recompute against, and the ops without
+      a pack cannot produce a filed page — so check both
+      formpacks/federal/<year>/f8606 and KNOWN_FORM_KEYS in
+      test_formpacks_federal.py before promising a year.
+      One engine defect the pack half exposed, FIXED in the same change:
+      verify's _identity_checks took the UNION of every pack's identity_fields
+      and then evaluated each name against every pack that merely MAPPED it. Form
+      8606's page-1 address block prints "Fill in Your Address Only if You Are
+      Filing This Form by Itself and Not With Your Tax Return", so on the
+      ordinary ATTACHED path it is correctly blank — and that blank was compared
+      against the parent return's real address, so verify_filing([f1040nr,
+      f8606]) returned ok=False on a perfectly correct filing. A pack that maps a
+      line without DECLARING it in its own identity_fields is no longer compared
+      when its value is blank; a non-blank value still is, so P-002's protection
+      is unchanged.

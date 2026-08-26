@@ -18,7 +18,7 @@ checked by either one**, and three real defects shipped past CI because of it:
    the three ``ny/*/it203`` packs spell them with ``_``. Even widening the
    glob alone would have left those pairs invisible.
 
-So this file sweeps **every** discovered pack, federal and state (154 today),
+So this file sweeps **every** discovered pack, federal and state (157 today),
 in the same way ``test_readonly_widget_mapping.py`` does. The helpers it needs
 stay in ``test_formpacks_federal.py``; the invariants themselves live here
 because they are repo-wide, and a federal-named module reporting a Wisconsin
@@ -70,7 +70,7 @@ def _load(pack_path: Path) -> FormPack:
     """Memoized load_pack.
 
     Every parametrized case here needs the WHOLE repo's line index to resolve a
-    cross_form target, so an uncached helper re-parses 150 packs 150 times. The
+    cross_form target, so an uncached helper re-parses every pack once per rule. The
     tests are read-only, so one parse per pack per session is sound.
     """
     return load_pack(pack_path)
