@@ -896,6 +896,119 @@ line items sum to the headline delta.
 
 ---
 
+## Phase I — The high-income / equity-comp / visa-status profile (Effort: L)
+
+> Found by the **2026-08-26 LIVE-USE audit**: the repo was driven end to end to
+> compute a real TY2026 return for a single Texas filer (W-2 $206k = $125k base +
+> $81k bonus, 401(k) $17k→$24.5k, HSA $4.4k, mega backdoor, an excess direct-Roth-IRA
+> contribution needing recharacterization, a $20k old-plan balance being converted,
+> ESPP, the $5,000 US-China Article 20(c) exemption, F-1/OPT → H1B mid-year, $5k
+> investment income against a $1.5k capital loss). **Every figure the knowledge packs
+> carry was correct and citable** — `rate_schedules`, `standard_deduction`, `niit`,
+> `contribution_limits`, `capital_gains_brackets` all verified against Rev. Proc.
+> 2025-32 / Notice 2025-67 / Rev. Proc. 2025-19 and used directly. But **six of the
+> decisions the session actually turned on had to be computed OUTSIDE the engine.**
+> That is the same failure signature `FIELD_NOTES.md` recorded for the Phase-H
+> session, one user profile over: the data is there, the *decision surface* is not.
+
+- [ ] **I1 — The IRA-basis / pro-rata chain. The highest-consequence gap in the
+      repo, and it is silent.** `pro_rata`, `form_8606` and `roth_conversion` return
+      **zero source hits** today. Yet IRC 408(d)(2) — all traditional/SEP/SIMPLE IRA
+      12/31 balances aggregate into one pool, so a conversion's taxable share is
+      `pretax / (pretax + basis)` regardless of which dollars actually moved — is
+      what decides, for every backdoor-Roth user, **where an old 401(k) may be
+      rolled**. Measured in the live session: rolling a $30k pretax 401(k) into a
+      traditional IRA costs **$1,440 in year 1 and $6,427 over ten years** versus
+      rolling it into the new employer's 401(k), and the failure mode is invisible —
+      no error, no warning, just a larger tax bill and a Form 8606 basis the filer
+      must track for life. Build: **`calc.ira_pro_rata`** (per-account year-end
+      balances + cumulative nondeductible basis + conversion amount → taxable
+      amount, basis consumed, basis carried forward); **`calc.roth_conversion`**
+      covering BOTH paths, which behave differently and are routinely conflated —
+      (a) plan → Roth IRA *direct* rollover (Notice 2008-30: taxable = the pretax
+      portion, and **pro-rata does not apply** because no IRA is involved), and
+      (b) traditional IRA → Roth (pro-rata applies) — each surfacing bracket
+      headroom and the NIIT threshold crossing (the live session's $20k conversion
+      moved MAGI 187,500 → 207,500, crossing the $200,000 §1411 threshold and
+      creating $133 of NIIT the filer had no way to anticipate, plus it landed
+      $10,375 short of the 32% bracket — a margin no user can be expected to
+      compute by hand); a fillable **`f8606`** pack for 2023/2024/2025 (Parts I/II/III
+      — this is the form that carries basis across years, so without it the calc has
+      nowhere to land); and pitfall **`P-009`** stating the trap with the measured
+      numbers. **Acceptance:** 8606 vision-audited three years; the op reproduces the
+      live session's worked example to the dollar; P-009 cited; the i14 scenario
+      (I6) exercises the whole chain.
+- [ ] **I2 — HSA: the limit ships, the return does not.** `contribution_limits.hsa`
+      carries the cited 2026 amounts ($4,400 / $8,750 / $1,000 catch-up, Rev. Proc.
+      2025-19) but `hsa_deduction` has **zero source hits** and there is no
+      **`f8889`** pack, so an HSA contribution can be planned and not filed. Build:
+      f8889 (2023/2024/2025) + **`calc.hsa_deduction`** modelling the last-month rule
+      and its testing period, the payroll-vs-personal split, and the
+      general-purpose-health-FSA mutual exclusion (a live-session correction worth
+      encoding: the payroll FICA saving is **Medicare-only 2.35%, not 7.65%**, for any
+      filer already over the $184,500 SS wage base — i.e. exactly the population that
+      maxes an HSA, so the naive 7.65% overstates the benefit by 3×). DocSpecs
+      1099-SA + 5498-SA for the distribution side. **Acceptance:** 8889 audited; the
+      op refuses an FSA+HSA combination; the over-wage-base FICA nuance is asserted
+      by a test, not prose.
+- [ ] **I3 — Equity compensation, and the detail form Schedule D is missing.**
+      `espp` and `wash_sale` return **zero source hits**, and there is **no `f8949`
+      pack** — so although `sched_d` ships for three years, a filer with stock sales
+      cannot actually assemble a return. Build: **`f8949`** (2023/2024/2025) including
+      the basis-adjustment codes (Code B / Code O) that equity dispositions require;
+      DocSpecs **3922** (ESPP) and **3921** (ISO); **`calc.espp_disposition`** —
+      qualified vs disqualified holding periods, the lesser-of ordinary-income
+      component under the lookback discount, and the **basis correction brokers get
+      systematically wrong** (1099-B reports the discounted purchase price, not the
+      adjusted basis, so a filer who trusts the form is taxed twice on the discount —
+      a high-dollar, high-frequency error for exactly this user base); and
+      **`calc.capital_loss_limitation`** — the $3,000/$1,500 annual cap plus
+      indefinite carryforward with short/long character preserved per year
+      (`estimate.py` clamps at -3,000 with a disclosure today and tracks **no**
+      carryforward, so year 2 silently loses the excess). **Acceptance:** 8949 audited
+      three years; the ESPP op reproduces a worked disqualified disposition
+      *including* the 1099-B basis correction; a carryforward survives a multi-year
+      round trip.
+- [ ] **I4 — Visa-status filers: the largest penalty exposure in the repo.**
+      Three holes, in descending stakes. (a) **`f8833`** closes a standing
+      asymmetry: `calc.treaty_benefit` has shipped since G1 and computes the
+      exemption, but the disclosure form IRC 6114 / Treas. Reg. §301.6114-1 requires
+      **does not exist** — the engine tells a user to take a treaty position it
+      cannot help them disclose (hit directly in the live session, where the
+      Article 20(c) $5,000 was claimed). (b) **Form 8938** pack + an **FBAR
+      (FinCEN 114) worksheet** — 8938 is an IRS form and packs normally; FBAR is
+      FinCEN e-file-only, so it ships as a `hand_fill_worksheet` plus a `file_and_pay`
+      checklist entry. Non-willful FBAR penalties run **$10,000+ per account per
+      year**, the steepest exposure anywhere in this repo, and the F-1 → H1B
+      population routinely holds home-country accounts. Both thresholds must be
+      **elicited, not volunteered** — surfaced the way `state_scope` surfaces state
+      filing duties. (c) **`f1116`** (foreign tax credit): every holder of a
+      total-international index fund gets foreign tax in 1099-DIV box 7, and the
+      de-minimis election (≤$300/$600, no form) versus the form is a real branch that
+      nothing models. **Acceptance:** 8833 + 1116 audited; 8938/FBAR thresholds cited
+      per year; an intake question that cannot be skipped silently.
+- [ ] **I5 — Document extraction breadth.** 14 DocSpecs ship; the cheap, mechanical
+      gaps are **1099-K** (gig/resale, and its moving reporting threshold),
+      **1099-Q**, **W-2G**, **1095-B/C**, **5498**, and **K-1 for 1120S and 1041**
+      (only the 1065 layout ships, so an S-corp or trust K-1 has no structured path).
+      The 3921/3922 and 1099-SA/5498-SA specs belong to I3 and I2 respectively — do
+      them there, and batch the remainder. **Acceptance:** every box layout read off
+      the official form, round-trip tested.
+- [ ] **I6 — Eval scenario i14: the live-use session itself.** Encode the
+      2026-08-26 session as a scenario — it is what exposed I1–I5, and the repo's own
+      precedent (FIELD_NOTES → Phase H) is that a real session is the best gap-finder
+      it has. Locking it in means these gaps cannot silently reopen. **Acceptance:**
+      i14 runs green and fails loudly if any of I1–I4 regresses.
+
+**Sequencing within Phase I:** I1 → I2 (same filer, I1 has the higher consequence
+and no dependencies) → I3 (its `f8949` is a prerequisite for a *complete* Schedule D
+filing path, so it arguably outranks I2 — decide on whether the user base sells
+stock) → I5 leftovers → I4 (highest stakes but the most research) → I6 last, since it
+asserts everything above. **Deps:** none external. Phase A is orthogonal and should
+not wait for any of this.
+
+---
+
 ## Phased sequencing (recommended order)
 
 1. **Phase 0** — DONE. **Phase E** — DONE. **Phase F** — DONE (2026-07-06).
@@ -959,6 +1072,14 @@ line items sum to the headline delta.
    and all 4 NEAR-PORT ports now shipped — 61 state packs over TY2023–TY2025;
    ~20 vision re-maps and ~26 URL-discovery rows remain) + the community
    pack-contribution pipeline (DONE).
+7. **Phase I** (2026-08-26) — the high-income / equity-comp / visa-status
+   profile. Recommended AHEAD of the D2/C2 remainder: every Phase I item is a
+   short form pack or a single calc op, whereas the D2 remainder is ~20 full
+   vision re-maps and the C2 remainder is 40 jurisdictions. More importantly
+   Phase I closes *silent* defects on the profile the repo actually serves —
+   I1's pro-rata trap costs a real filer $6,427 over ten years with no error
+   message — while D2/C2 close *absences*, which announce themselves. Order:
+   I1 → I2/I3 → I5 → I4 → I6.
 
 Phases A, E, and the start of C are largely independent and can run in parallel.
 Phase H is independent of C/D (different files) and can run alongside them.
