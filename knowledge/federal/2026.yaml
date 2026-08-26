@@ -331,9 +331,21 @@ tax:
       single: 200000
       head_of_household: 200000
       qualifying_surviving_spouse: 200000
+  # CORRECTION 2026-08-26: qualifying_surviving_spouse was 200000 here — the ONLY
+  # shipped year that got it wrong (2019-2025 all carry 250000), and the value
+  # appears to have been copied from the additional_medicare_tax block directly
+  # above, where QSS really is 200000. That asymmetry is the whole reason the
+  # schema makes all five statuses explicit instead of aliasing QSS to MFJ.
+  # Two independent primary sources: IRC 1411(b)(1) — "in the case of a taxpayer
+  # making a joint return under section 6013 OR A SURVIVING SPOUSE (as defined in
+  # section 2(a)), $250,000" — and the Instructions for Form 8960 (2025), both the
+  # "Application to Individuals" bullets and the Line 14 threshold table, which
+  # print "Qualifying surviving spouse $250,000". Left uncorrected the threshold was
+  # too LOW, which enlarges the MAGI excess, so it OVERSTATED a 2026 QSS filer's
+  # NIIT by up to 3.8% x $50,000 = $1,900.
   niit:
     citation:
-      source: "IRS Topic No. 559, Net Investment Income Tax (Form 8960): 3.8% of the lesser of net investment income or MAGI above the filing-status threshold; thresholds statutory under IRC section 1411, not indexed"
+      source: "IRS Topic No. 559, Net Investment Income Tax (Form 8960): 3.8% of the lesser of net investment income or MAGI above the filing-status threshold; thresholds statutory under IRC section 1411, not indexed. QSS threshold re-verified against IRC 1411(b)(1) and the Line 14 threshold table in the Instructions for Form 8960 (2025)"
       url: "https://www.irs.gov/taxtopics/tc559"
     rate: 0.038
     thresholds:
@@ -341,7 +353,7 @@ tax:
       married_filing_separately: 125000
       single: 200000
       head_of_household: 200000
-      qualifying_surviving_spouse: 200000
+      qualifying_surviving_spouse: 250000
 
   # Rev. Proc. 2025-32, Section 4.03 (Maximum Capital Gains Rate, sections 1(h)
   # and 1(j)(5)). Published by "Filing Status" rows: MFJ/SS, MFS, HoH, All Other

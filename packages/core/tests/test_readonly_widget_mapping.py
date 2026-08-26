@@ -3,7 +3,7 @@
 Pitfall P-007 started as one pack's bug (Schedule D mapped the two shaded
 no-adjustment (g) cells) and the fix shipped two sched_d-shaped tests. This
 file is the generic version: it sweeps **every** discovered pack — federal
-AND state, 150 of them (93 federal + 57 state) — reads each pack's own blank,
+AND state, 157 of them (96 federal + 61 state) — reads each pack's own blank,
 and asserts that a mapped field binds a ReadOnly widget (/Ff bit 1) only where
 an explicit, per-entry-justified table says it may.
 

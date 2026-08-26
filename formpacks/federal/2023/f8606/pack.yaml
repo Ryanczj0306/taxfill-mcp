@@ -1,0 +1,507 @@
+# Form 8606 (2023 revision) — Nondeductible IRAs. Two pages; attaches to Form
+# 1040, 1040-SR or 1040-NR, and is FILED BY ITSELF (signed, page 2) by a filer
+# who is not required to file an income tax return but is required to file
+# Form 8606. This is the form that carries IRA basis across years — the
+# instructions' Total Basis Chart routes "the amount from line 14 of that Form
+# 8606" into the NEXT year's line 2 — so it is the landing surface for the
+# ROADMAP I1 calc ops (ira_pro_rata / roth_conversion).
+#
+# NEW PACK, authored from scratch 2026-08-26 (no prior-year f8606 pack existed;
+# this is the first 8606 in the repo, so nothing was ported and every binding
+# was derived from this blank).
+#
+# ---------------------------------------------------------------------------
+# PROVENANCE — revision identity read off the RENDER, not the URL
+# ---------------------------------------------------------------------------
+# Blank fetched with taxfill_core.fetch.fetch_blank(source_url) into the shared
+# cache (.cache/blanks/6ddd5a0acd76_f8606--2023.pdf, 91,673 bytes, 2 pages).
+# Page 1 was rendered at 200 dpi and READ (freshness protocol, dev plan §7).
+# Printed verbatim, top of page 1:
+#   "Form 8606"  /  "Nondeductible IRAs"
+#   "Attach to 2023 Form 1040, 1040-SR, or 1040-NR."
+#   "Go to www.irs.gov/Form8606 for instructions and the latest information."
+#   "OMB No. 1545-0074"   "2023"   "Attachment Sequence No. 48"
+# Footer, both pages: "Form 8606 (2023)"; page 1 also "Cat. No. 63966F".
+# Page 2 header: "Form 8606 (2023)" ... "Page 2".
+# => this IS the TY2023 revision. sha256 computed two ways and identical:
+# taxfill_core.fetch.compute_sha256() and `shasum -a 256`
+#   a77a2766af285e3d8e1197c347ff6c516f40d5267bbbfe15a63ebd8f2964c99b
+# pdfinfo reports Title "2023 Form 8606", Subject "Nondeductible IRAs",
+# Form: XFA, JavaScript: yes — and per formpacks/CONVENTIONS.md that JS flag
+# says NOTHING about whether the form computes (AFNumber_Format formatting
+# scripts satisfy it); no widget on this form is /Ff ReadOnly (see below).
+#
+# ---------------------------------------------------------------------------
+# COVERAGE — 45 of 45 fillable widgets are mapped; nothing is excluded
+# ---------------------------------------------------------------------------
+# The blank carries exactly 45 AcroForm widgets: 44 /Tx + 1 /Btn
+# (page 1: f1_1..f1_26 = 26 text; page 2: f2_1..f2_18 = 18 text + c2_1[0]).
+# Every one is mapped. Introspected with scripts/introspect_pdf.py, and every
+# binding was read off the SENTINEL-SWEEP render (each box printed with its own
+# field name) plus a second audit_pack.py sentinel render at 200 dpi — not off
+# /Rect y-coordinates (pitfall P-001: field dumps lie, pixels do not).
+# WHAT THE VISION AUDIT ACTUALLY CAUGHT (an audit that caught nothing is
+# suspicious — docs/CONTRIBUTING-PACKS.md step 6):
+#   1. Printed line 10 is TWO widgets, not one. The dump shows f1_18 (/MaxLen 1)
+#      and f1_19 at the same /Rect y (228) inside one printed row; only the
+#      render reveals that the form's own decimal point sits BETWEEN them, so
+#      the row needs two keys (10.whole, 10.dec) rather than one money line.
+#   2. The Paid Preparer widget numbering is NOT in reading order. f2_15 is
+#      "Firm's name", f2_16 is "Firm's address" (the row BELOW), and f2_17 is
+#      "Firm's EIN" (upper-right, ABOVE f2_16's row). Assigning f2_16/f2_17
+#      sequentially down the block — the obvious reading-order guess — puts the
+#      EIN in the address box and the address in the EIN box. Caught on the
+#      render; there is nothing in the field names to warn you.
+#   3. Four printed boxes in the page-2 signature/preparer rows ("Your
+#      signature", its "Date", "Preparer's signature", the preparer's "Date")
+#      have NO widget at all, so a positional mapper walking the printed grid
+#      would shift PTIN into a Date box.
+# The final 200-dpi render of the filled blank was then read page by page and
+# all 45 sentinels sit in the box their printed line labels; nothing was clipped
+# and verify_form reported no assertion/clipping/checkbox failures.
+#
+# What is NOT a widget, and therefore has no line key (documented so a porter
+# does not hunt for a phantom binding):
+#   * The Part I ROUTING QUESTION between printed lines 3 and 4 — "In 2023, did
+#     you take a distribution from traditional, traditional SEP, or traditional
+#     SIMPLE IRAs, or make a Roth, Roth SEP, or Roth SIMPLE IRA conversion?"
+#     with printed "No -> Enter the amount from line 3 on line 14. Do not
+#     complete the rest of Part I." and "Yes -> Go to line 4." branches. It has
+#     NO checkbox: the whole form holds ONE /Btn (c2_1[0], page 2, the preparer
+#     self-employed box), so there is nothing to tick and no Yes/No pair to
+#     group. It is a printed flow arrow, not an answerable question.
+#   * "Your signature" + "Date" in the page-2 "Sign Here Only if You Are Filing
+#     This Form by Itself and Not With Your Tax Return" block, and "Preparer's
+#     signature" + its "Date" in the Paid Preparer block: print-only rules, no
+#     widgets (confirmed on both the field dump and the sweep render).
+#   * Page 2 carries NO name/SSN header — only "Form 8606 (2023)" and "Page 2".
+#     So this pack has ZERO identity page mirrors (formpacks/CONVENTIONS.md
+#     "Identity page mirrors"); there is no page2_* key to add and none to miss.
+#
+# ---------------------------------------------------------------------------
+# READONLY ADJUDICATION (pitfall P-007) — measured, not assumed
+# ---------------------------------------------------------------------------
+# ZERO of the 45 widgets carry the AcroForm ReadOnly bit. The /Ff values were
+# read at FIELD level, walking /Parent (the shape P-007 requires; an
+# annotation-only reader reports phantom results):
+#   * the /Ff histogram over all 45 widgets is exactly {8388608: 40, absent: 5};
+#   * 8388608 = DoNotScroll only, on 40 of the 44 text widgets;
+#   * the other 5 carry NO /Ff at all: f1_2 (SSN), f1_18 (the line-10 integer
+#     cell), f2_14 (PTIN), f2_17 (firm's EIN), and the /Btn c2_1[0];
+#   * NOT ONE widget has bit 1 set. No widget sets the comb bit either.
+#     Run through the harness's OWN reader
+#     (test_formpacks_federal._read_only_widget_names, which walks /Parent):
+#     the ReadOnly set is EMPTY and mapped ∩ ReadOnly = 0 over 45 mapped fields.
+# So no P-007 class applies and the integrator needs NO pin row in
+# test_readonly_widget_mapping.py: absent from RESERVED_LINE_KEEPS,
+# RESERVED_LINES_UNMAPPED and STATE_COMPUTED_READONLY, this pack is pinned at
+# zero by default and the network layer asserts that equality in both
+# directions.
+# The other three P-007 classes were checked against the printed face too, so
+# the zero is an adjudication rather than a flag reading:
+#   * class 1 (widget already HOLDS an IRS-printed constant, sched_se's wage
+#     base): none. The only dollar figure printed on this form is line 20's
+#     "Do not enter more than $10,000 reduced by the total of all your prior
+#     qualified first-time homebuyer distributions" — printed in the ROW TEXT,
+#     outside the widget, which is the opposite of the sched_se shape.
+#   * class 2 (printed text makes a correct entry IMPOSSIBLE, sched_d's shaded
+#     (g) cells): none. Every money box on this form has a printed instruction
+#     that yields a value; the grey column on both pages is the form's
+#     decorative gutter left of the amount column, and it contains no widget.
+#   * class 3 ("Reserved for future use"): the string does not appear anywhere
+#     on either page. Lines 1-25c are a gap-free printed ladder.
+#   * class 4 (form-owned/JS-propagated value): not applicable — no mirrors, no
+#     running totals owned by the form, and the renderer runs no XFA anyway.
+#
+# ---------------------------------------------------------------------------
+# CHECKBOX / GROUP ADJUDICATION (pitfalls P-003, P-008)
+# ---------------------------------------------------------------------------
+# Exactly one /Btn in the whole document: Page2[0].c2_1[0], the Paid Preparer
+# block's "Check [ ] if self-employed" box. Its /AP /N dictionary holds a
+# SINGLE appearance state, "/1" (there is no /Off entry) — dumped from this
+# pack's sha-pinned blank, never guessed (formpacks/CONVENTIONS.md).
+#   * NO `group`: a group id makes the N options of ONE question mutually
+#     exclusive, and this is a lone independent flag with no sibling option —
+#     the same shape (and the same line key) as f843/f1040x
+#     `preparer.self_employed`, which also carry no group. P-008's generic gate
+#     keys off "<stem>.yes" + "<stem>.no"; this pack has no yes/no pair at all,
+#     because the form's only Yes/No question (the Part I routing box) has no
+#     widgets.
+#   * NOT `required`: the box is answered only when a PAID PREPARER completes
+#     the block, so `required: true` would FAIL verification on every
+#     self-prepared Form 8606 — i.e. on every return this project produces.
+#
+# The Paid Preparer block IS mapped (7 widgets), following f843 and f1040x —
+# the two other packs in the repo for forms that can be FILED BY THEMSELVES,
+# which use exactly these key spellings. (f1040/f1040nr leave the block
+# unmapped on the "self-prepared returns only" rationale; both treatments ship,
+# and Form 8606's own printed page-2 caption puts it on the standalone side.)
+#
+# ---------------------------------------------------------------------------
+# YEAR TOKENS IN LINE KEYS (formpacks/CONVENTIONS.md) — none, by rule 3
+# ---------------------------------------------------------------------------
+# NO line key in this pack embeds a year, so the year-offset gate has nothing
+# to pin and a port cannot go stale the sched_oi way. Every printed year on the
+# face DESCRIBES the meaning and selects no widget: "contributions to
+# traditional IRAs for 2023", the Part II heading "2023 Conversions From ...",
+# and the calendar window on lines 1 and 4 ("made for 2023 from January 1,
+# 2024, through April 15, 2024" — the contribution deadline, which moves with
+# tax_year). Rule 3 applies: key by the printed LINE NUMBER, keep the year in
+# the inline comment. Nothing here is the f8843-line-4a shape where a year
+# LABELS its own box.
+#
+# ---------------------------------------------------------------------------
+# RELATIONS — only unconditional arithmetic printed on the face
+# ---------------------------------------------------------------------------
+# Declared: 11 rules, each transcribed from the printed row, each with every
+# operand mapped to a bare printed-label money line of THIS form.
+# DELIBERATELY NOT DECLARED, with the printed reason:
+#   * "5 == 3 - 4" ("Subtract line 4 from line 3"). REPRODUCED false FAIL, not
+#     theorised: the Part I routing box prints "No -> Enter the amount from
+#     line 3 on line 14. Do not complete the rest of Part I.", so on that
+#     legitimate path lines 4 AND 5 are blank while line 3 is nonzero. verify's
+#     relations count a blank as zero, so the rule evaluates 0 == 3 - 0 and
+#     FAILs a correct return. Reproduced against this pack:
+#     relations(pack_with_that_rule, {"1": 5000, "2": 0, "3": 5000, "14": 5000})
+#     returns FAIL "left side = 0, right side = 5000 ... blank-as-zero: 5, 4",
+#     while all 11 declared rules PASS on the SAME No-branch data (and all 11
+#     also PASS on a full Yes-branch worked example).
+#     Same class as f8960's undeclared "18a == 12" copy rule.
+#     Note "14 == 3 - 13" is SAFE on that very path and is declared: the
+#     printed No branch routes line 3 to line 14, so 14 == 3 - 0 holds.
+#   * "10 == min(1.000, 5 / 9)". Line 10 is not a single mapped money line —
+#     the printed box is "x __ . ___", two widgets straddling a printed decimal
+#     point (see the 10.whole / 10.dec fields), typed text because the value is
+#     a rounded ratio. On top of that, line 9 is legitimately zero (division by
+#     zero) and "rounded to at least 3 places" is not exact arithmetic.
+#   * "11 == 8 * 10" and "12 == 7 * 10" ("Multiply line 8 [7] by line 10"):
+#     operand 10 is not a bare money line (above), and both products are
+#     rounded amounts.
+#   * Lines 16 and 17. Their printed text is a CONDITIONAL copy with an
+#     "Otherwise" leg — "If you completed Part I, enter the amount from line 8
+#     [line 11]. Otherwise, enter the net amount you converted ... [enter your
+#     basis in the amount on line 16]" — so no unconditional equality exists
+#     (the f8960 line-18a precedent). Line 8's own printed tail, "Also, enter
+#     this amount on line 16", is the same conditional in the other direction.
+#   * Lines 1, 2, 6, 7, 8, 19, 20, 22, 24: source lines, no on-face math. Line
+#     2 in particular is an instruction-WORKSHEET lookup, not form arithmetic:
+#     the Total Basis Chart (Instructions for Form 8606 (2023), p. 9) says "IF
+#     the last Form 8606 you filed was for a year after 2000 and before 2023 /
+#     THEN enter on line 2 the amount from line 14 of that Form 8606." That
+#     prior-year chain belongs to calc + the knowledge packs, never to
+#     relations (formpacks/CONVENTIONS.md "Relations").
+#
+# ---------------------------------------------------------------------------
+# CROSS-FORM — deliberately EMPTY, and this is the load-bearing part
+# ---------------------------------------------------------------------------
+# THREE separate lines — 15c, 18 and 25c — each print "Taxable amount. ... If
+# more than zero, also include this amount on 2023 Form 1040, 1040-SR, or
+# 1040-NR, line 4b." That is an ADDITIVE instruction, not an equality, and the
+# repo has no grammar for it:
+#   * f1040 2023 line 4b is "IRA distributions ... b Taxable amount" and
+#     aggregates all three of these lines plus any other taxable IRA
+#     distribution, so no single "== f1040.4b" rule can be true;
+#   * the instructions make the conditionality explicit — "Line 18: If your
+#     entry on line 18 is zero or less, don't include the result on 2023 Form
+#     1040, 1040-SR, or 1040-NR, line 4b" (Instructions for Form 8606 (2023)) —
+#     so even the sum is not unconditional.
+# A rule like "15c == f1040.4b" would therefore be a FALSE check, which is
+# worse than none. Lines 15b and 25b likewise print "Also, enter this amount on
+# 2023 Form(s) 8915-F, line 18 [line 19], as applicable" — no f8915f pack
+# exists, and adding a CROSS_FORM_TARGET_ALLOWLIST row for a rule that is
+# "as applicable" (i.e. conditional) would be the same false check.
+#
+# ---------------------------------------------------------------------------
+# CALC INTEGRATION (ROADMAP I1) — the seam, measured end to end
+# ---------------------------------------------------------------------------
+# calc.ira_pro_rata's IraProRataResult.form_8606_lines emits 19 keys. 18 of them
+# are EXACT line keys of this pack (1-9, 11, 12, 13, 14, 15a, 15c, 16, 17, 18).
+# The 19th is "10", and it structurally cannot have a pack key: the printed
+# ratio row is two widgets straddling the form's own decimal point (see
+# 10.whole / 10.dec below). Reproduced: fill_form(pack, result.form_8606_lines)
+# raises "unknown line key(s) ['10']"; splitting "0.189" into 10.whole="0" and
+# 10.dec="189" — and coercing the display strings ("$7,000") to numbers, since
+# form_8606_lines is documented as a transcription dict, not a fill payload —
+# fills 20 fields with zero warnings and verify_form returns ok=True with all
+# 11 declared relations PASSing on the op's own numbers. That render was read:
+# line 10 prints "x 0 . 189", exactly as a filer writes it.
+# Corroboration worth recording: the I1 calc track independently read
+# f8606--2019.pdf through f8606--2025.pdf and states that Part I lines 1-14 and
+# Part II lines 16-18 are IDENTICAL across all seven revisions (calc.py's
+# _F8606_VERIFIED_REVISIONS comment). That is a second reader agreeing with this
+# map's line numbering — but it is NOT a licence to port the field NAMES: the
+# sched_d lesson (P-007) is that the IRS renames widgets while keeping the
+# printed face, so 2024/2025 must be introspected and vision-audited afresh.
+#
+# ---------------------------------------------------------------------------
+# IDENTITY FIELDS — [name, identifying_number], and the per-spouse caveat
+# ---------------------------------------------------------------------------
+# House practice for a per-spouse attachment (sched_se, sched_c, f2555, f8960
+# all ship exactly [name, identifying_number]) is followed here. The printed
+# face and the instructions both make the per-spouse scope explicit, and it is
+# worth recording because it is the one way these two lines can legitimately
+# DIFFER from the parent 1040 on a joint return:
+#   * printed on the face: "Name. If married, file a separate form for each
+#     spouse required to file 2023 Form 8606. See instructions."
+#   * Instructions for Form 8606 (2023), Specific Instructions: "Name and
+#     social security number (SSN). If you file a joint return, enter only the
+#     name and SSN of the spouse whose information is being reported on Form
+#     8606." and "More than one Form 8606 required. If both you and your spouse
+#     are required to file Form 8606, file a separate Form 8606 for each of
+#     you."
+# The page-1 ADDRESS block is mapped but deliberately kept OUT of
+# identity_fields: the printed side caption is "Fill in Your Address Only if
+# You Are Filing This Form by Itself and Not With Your Tax Return", so on the
+# ordinary attached path every address box is CORRECTLY blank, and a blank
+# identity field FAILs verification. Instructions confirm the same split:
+# "If you aren't required to file an income tax return but are required to file
+# Form 8606, sign Form 8606 and send it to the IRS at the same time and place
+# you would otherwise file Form 1040, 1040-SR, or 1040-NR. Be sure to include
+# your address on page 1 of the form and your signature and the date on page 2
+# of the form." (Instructions for Form 8606 (2023), "When and Where To File").
+# ENGINE INTERACTION the integrator should see. REPRODUCED, not theorised:
+# verify's _identity_checks takes the UNION of every pack's identity_fields and
+# then evaluates each name against every pack that MAPS it, even a pack that
+# did not declare it. f1040nr (all shipped years) declares
+# mailing_address.street, so verify_filing([f1040nr, f8606]) with the 8606
+# ATTACHED — its address block correctly blank per the printed caption — returns
+# ok=False and "FAIL mailing_address.street: identity field
+# 'mailing_address.street' differs across the filing: f1040nr='100 Synthetic
+# Way', f8606=''". (mailing_address.city does NOT collide, because this form's
+# combined box is keyed .city_state_zip.)
+# An off-convention key spelling was CONSIDERED AND REJECTED as a fix: the only
+# other spelling for this box that still matches verify's _FILER_ADDR_INCLUDE —
+# so that the P-002 address check still participates on the STANDALONE path,
+# where this address is the only one the IRS has — is bare `home_address`, and
+# nj1040 2023/2024 already declare `home_address` in THEIR identity_fields. The
+# collision is therefore structural in _identity_checks (a printed-conditional
+# address block has no way to opt out of the union), not a naming problem, so
+# this pack keeps the house-standard keys and the gap is reported instead of
+# being dodged with a name that moves the same failure one pack over.
+#
+# ---------------------------------------------------------------------------
+# SIGNATURE / MAILING
+# ---------------------------------------------------------------------------
+# signature: page 2, standalone_only: true — the f8843 shape, and here the
+# printed caption states it verbatim: "Sign Here Only if You Are Filing This
+# Form by Itself and Not With Your Tax Return". Attached to a 1040/1040-SR/
+# 1040-NR the form is NOT separately signed.
+# mailing: null — the standalone address is "the same time and place you would
+# otherwise file Form 1040, 1040-SR, or 1040-NR" (Instructions, "When and Where
+# To File"), i.e. the STATE-dependent Form 1040 where-to-file table. Per
+# formpacks/CONVENTIONS.md that address belongs to the knowledge layer, which
+# is why the f1040 pack itself ships mailing: null; a fixed pair of addresses
+# here would be invented.
+form: "8606"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f8606--2023.pdf
+pdf_sha256: "a77a2766af285e3d8e1197c347ff6c516f40d5267bbbfe15a63ebd8f2964c99b"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header (page 1) ------------------------------------------------------
+  - line: "name"                            # "Name. If married, file a separate form for each spouse required to file 2023 Form 8606."
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "identifying_number"              # "Your social security number" — plain box, NOT a comb; widget /MaxLen 11 (fits a dashed SSN)
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only                 # digits only keeps cross-form identity values consistent (f8960/sched_oi house style)
+
+  # ---- address block: printed "Fill in Your Address Only if You Are Filing
+  # ---- This Form by Itself and Not With Your Tax Return" (blank when attached)
+  - line: "mailing_address.street"          # "Home address (number and street, or P.O. box if mail is not delivered to your home)"
+    field: "Page1[0].f1_3[0]"
+    type: text
+  - line: "mailing_address.apt"             # "Apt. no."
+    field: "Page1[0].f1_4[0]"
+    type: text
+  - line: "mailing_address.city_state_zip"  # ONE printed box: "City, town or post office, state, and ZIP code." (ky/2023/form740 precedent for a combined box)
+    field: "Page1[0].f1_5[0]"
+    type: text
+  - line: "mailing_address.foreign_country" # "Foreign country name"
+    field: "Page1[0].f1_6[0]"
+    type: text
+  - line: "mailing_address.foreign_province"        # "Foreign province/state/county"
+    field: "Page1[0].f1_7[0]"
+    type: text
+  - line: "mailing_address.foreign_postal_code"     # "Foreign postal code"
+    field: "Page1[0].f1_8[0]"
+    type: text
+
+  # ---- Part I: Nondeductible Contributions to Traditional IRAs and
+  # ---- Distributions From Traditional, Traditional SEP, and Traditional
+  # ---- SIMPLE IRAs (page 1, printed lines 1-15c)
+  - line: "1"                               # "Enter your nondeductible contributions to traditional IRAs for 2023, including those made for 2023 from January 1, 2024, through April 15, 2024."
+    field: "Page1[0].f1_9[0]"
+    type: money
+  - line: "2"                               # "Enter your total basis in traditional IRAs." (instructions' Total Basis Chart: prior Form 8606 line 14 — worksheet, no relation)
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "3"                               # "Add lines 1 and 2"
+    field: "Page1[0].f1_11[0]"
+    type: money
+  # Printed routing box sits here (between lines 3 and 4): "In 2023, did you
+  # take a distribution ... or make a Roth ... conversion?"  No -> line 3 goes
+  # on line 14 and the rest of Part I is left blank;  Yes -> go to line 4.
+  # It has NO AcroForm widget, so it has no line key (see the header).
+  - line: "4"                               # "Enter those contributions included on line 1 that were made from January 1, 2024, through April 15, 2024"
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "5"                               # "Subtract line 4 from line 3" — relation NOT declared: blank on the printed No branch (see header)
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "6"                               # "Enter the value of all your traditional, traditional SEP, and traditional SIMPLE IRAs as of December 31, 2023, plus any outstanding rollovers..."
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "7"                               # "Enter your distributions from traditional, traditional SEP, and traditional SIMPLE IRAs in 2023." (excludes rollovers, QCDs, HSA funding, conversions, recharacterizations)
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "8"                               # "Enter the net amount you converted from traditional, traditional SEP, and traditional SIMPLE IRAs to Roth, Roth SEP, or Roth SIMPLE IRAs in 2023. Also, enter this amount on line 16"
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "9"                               # "Add lines 6, 7, and 8" — inset column box
+    field: "Page1[0].f1_17[0]"
+    type: money
+  # Line 10 is a DECIMAL RATIO printed as "x __ . ___": two widgets straddling
+  # the form's own decimal point. f1_18 is the single cell BEFORE it (widget
+  # /MaxLen 1 — the "1" of the printed "If the result is 1.000 or more, enter
+  # '1.000'" cap) and f1_19 the places AFTER it. Typed text, not money, and no
+  # relation: same shape and the same key convention as f2555 35.whole/35.dec.
+  - line: "10.whole"                        # 10 "Divide line 5 by line 9. Enter the result as a decimal rounded to at least 3 places." — integer part
+    field: "Page1[0].f1_18[0]"
+    type: text
+    maxlen: 1                               # the widget's own /MaxLen
+  - line: "10.dec"                           # ... the decimal places after the printed "." (widget declares NO /MaxLen, so none is pinned here; "at least 3 places" is not a hard cap)
+    field: "Page1[0].f1_19[0]"
+    type: text
+  - line: "11"                              # "Multiply line 8 by line 10. This is the nontaxable portion of the amount you converted to Roth, Roth SEP, or Roth SIMPLE IRAs. Also, enter this amount on line 17" — inset column box
+    field: "Page1[0].f1_20[0]"
+    type: money
+  - line: "12"                              # "Multiply line 7 by line 10. This is the nontaxable portion of your distributions that you did not convert to a Roth, Roth SEP, or Roth SIMPLE IRA" — inset column box
+    field: "Page1[0].f1_21[0]"
+    type: money
+  - line: "13"                              # "Add lines 11 and 12. This is the nontaxable portion of all your distributions"
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: "14"                              # "Subtract line 13 from line 3. This is your total basis in traditional IRAs for 2023 and earlier years" — the line the NEXT year's line 2 comes from
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "15a"                             # "Subtract line 12 from line 7"
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: "15b"                             # "Enter the amount on line 15a attributable to qualified disaster distributions, if any, from 2023 Form(s) 8915-F ... Also, enter this amount on 2023 Form(s) 8915-F, line 18, as applicable"
+    field: "Page1[0].f1_25[0]"
+    type: money
+  - line: "15c"                             # "Taxable amount. Subtract line 15b from line 15a. If more than zero, also include this amount on 2023 Form 1040, 1040-SR, or 1040-NR, line 4b"
+    field: "Page1[0].f1_26[0]"
+    type: money
+
+  # ---- Part II: 2023 Conversions From Traditional, Traditional SEP, or
+  # ---- Traditional SIMPLE IRAs to Roth, Roth SEP, or Roth SIMPLE IRAs
+  # ---- (page 2, printed lines 16-18)
+  - line: "16"                              # "If you completed Part I, enter the amount from line 8. Otherwise, enter the net amount you converted ... in 2023" (conditional copy — no relation)
+    field: "Page2[0].f2_1[0]"
+    type: money
+  - line: "17"                              # "If you completed Part I, enter the amount from line 11. Otherwise, enter your basis in the amount on line 16" (conditional copy — no relation)
+    field: "Page2[0].f2_2[0]"
+    type: money
+  - line: "18"                              # "Taxable amount. Subtract line 17 from line 16. If more than zero, also include this amount on 2023 Form 1040, 1040-SR, or 1040-NR, line 4b"
+    field: "Page2[0].f2_3[0]"
+    type: money
+
+  # ---- Part III: Distributions From Roth, Roth SEP, or Roth SIMPLE IRAs
+  # ---- (page 2, printed lines 19-25c)
+  - line: "19"                              # "Enter your total nonqualified distributions from Roth, Roth SEP, and Roth SIMPLE IRAs in 2023, including any qualified first-time homebuyer distributions, and any qualified disaster distributions from 2023 Form(s) 8915-F"
+    field: "Page2[0].f2_4[0]"
+    type: money
+  - line: "20"                              # "Qualified first-time homebuyer expenses (see instructions). Do not enter more than $10,000 reduced by the total of all your prior qualified first-time homebuyer distributions" (the $10,000 is printed in the ROW TEXT, not inside the widget)
+    field: "Page2[0].f2_5[0]"
+    type: money
+  - line: "21"                              # "Subtract line 20 from line 19. If zero or less, enter -0-"
+    field: "Page2[0].f2_6[0]"
+    type: money
+  - line: "22"                              # "Enter your basis in Roth, Roth SEP, and Roth SIMPLE IRA contributions (see instructions). If line 21 is zero, stop here" (instructions worksheet — no relation)
+    field: "Page2[0].f2_7[0]"
+    type: money
+  - line: "23"                              # "Subtract line 22 from line 21. If zero or less, enter -0- and skip lines 24 and 25. If more than zero, you may be subject to an additional tax"
+    field: "Page2[0].f2_8[0]"
+    type: money
+  - line: "24"                              # "Enter your basis in conversions from traditional, traditional SEP, and traditional SIMPLE IRAs and rollovers from qualified retirement plans to a Roth, Roth SEP, or Roth SIMPLE IRA" (instructions worksheet — no relation)
+    field: "Page2[0].f2_9[0]"
+    type: money
+  - line: "25a"                             # "Subtract line 24 from line 23. If zero or less, enter -0- and skip lines 25b and 25c"
+    field: "Page2[0].f2_10[0]"
+    type: money
+  - line: "25b"                             # "Enter the amount on line 25a attributable to qualified disaster distributions, if any, from 2023 Form(s) 8915-F ... Also, enter this amount on 2023 Form(s) 8915-F, line 19, as applicable"
+    field: "Page2[0].f2_11[0]"
+    type: money
+  - line: "25c"                             # "Taxable amount. Subtract line 25b from line 25a. If more than zero, also include this amount on 2023 Form 1040, 1040-SR, or 1040-NR, line 4b"
+    field: "Page2[0].f2_12[0]"
+    type: money
+
+  # ---- Paid Preparer Use Only (page 2) --------------------------------------
+  # Same block, same key spellings, as f843 and f1040x. "Your signature",
+  # its "Date", "Preparer's signature" and the preparer's "Date" are printed
+  # rules with no widgets, so they have no keys.
+  - line: "preparer.name"                   # "Print/Type preparer's name"
+    field: "Page2[0].f2_13[0]"
+    type: text
+  - line: "preparer.self_employed"          # "Check [ ] if self-employed" — the form's ONLY /Btn; /AP /N holds one state, "/1"
+    field: "Page2[0].c2_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "preparer.ptin"                   # "PTIN"
+    field: "Page2[0].f2_14[0]"
+    type: text
+    maxlen: 11                              # the widget's own /MaxLen
+  - line: "preparer.firm_name"              # "Firm's name"
+    field: "Page2[0].f2_15[0]"
+    type: text
+  - line: "preparer.firm_ein"               # "Firm's EIN"
+    field: "Page2[0].f2_17[0]"
+    type: text
+    maxlen: 10                              # the widget's own /MaxLen (XX-XXXXXXX)
+  - line: "preparer.firm_address"           # "Firm's address"
+    field: "Page2[0].f2_16[0]"
+    type: text
+  - line: "preparer.firm_phone"             # "Phone no."
+    field: "Page2[0].f2_18[0]"
+    type: text
+
+relations:
+  # Part I
+  - "3 == 1 + 2"                    # "3 Add lines 1 and 2"
+  - "9 == 6 + 7 + 8"                # "9 Add lines 6, 7, and 8"
+  - "13 == 11 + 12"                 # "13 Add lines 11 and 12. This is the nontaxable portion of all your distributions"
+  - "14 == 3 - 13"                  # "14 Subtract line 13 from line 3." Also holds on the printed No branch, which routes line 3 to line 14 (13 blank = 0)
+  - "15a == 7 - 12"                 # "15a Subtract line 12 from line 7"
+  - "15c == 15a - 15b"              # "c Taxable amount. Subtract line 15b from line 15a." No floor is printed
+  # Part II
+  - "18 == 16 - 17"                 # "18 Taxable amount. Subtract line 17 from line 16." No floor is printed
+  # Part III
+  - "21 == max(0, 19 - 20)"         # "21 Subtract line 20 from line 19. If zero or less, enter -0-"
+  - "23 == max(0, 21 - 22)"         # "23 Subtract line 22 from line 21. If zero or less, enter -0- and skip lines 24 and 25"
+  - "25a == max(0, 23 - 24)"        # "25a Subtract line 24 from line 23. If zero or less, enter -0- and skip lines 25b and 25c"
+  - "25c == 25a - 25b"              # "c Taxable amount. Subtract line 25b from line 25a." No floor is printed
+
+# Deliberately empty — 15c/18/25c each "also include this amount on 2023 Form
+# 1040, 1040-SR, or 1040-NR, line 4b", which is additive and conditional, not
+# an equality (see the header).
+cross_form: []
+
+identity_fields: [name, identifying_number]
+
+# "Sign Here Only if You Are Filing This Form by Itself and Not With Your Tax
+# Return" (printed, page 2) — the f8843 standalone_only shape.
+signature:
+  page: 2
+  standalone_only: true
+
+# Filed by itself, it goes to "the same time and place you would otherwise file
+# Form 1040, 1040-SR, or 1040-NR" (Instructions, "When and Where To File") —
+# the state-dependent 1040 table, which the knowledge layer owns (the f1040
+# pack ships mailing: null for the same reason).
+mailing: null

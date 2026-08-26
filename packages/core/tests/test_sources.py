@@ -355,3 +355,62 @@ def test_commuter_topic_does_not_steal_its_neighbours_queries():
         assert r.matched and {s.topic for s in r.sources} == {expected}, (
             f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
         )
+
+
+def test_ira_basis_queries_route_to_their_own_topic():
+    """Pitfall P-009: the routing half of the IRA pro-rata gap.
+
+    Before this topic existed, "Form 8606", "pro rata rule" and "nondeductible
+    IRA basis" were clean misses, and "nondeductible contributions" routed to
+    Pub 526 + Form 8283 — CHARITABLE-contribution substantiation, a wrong-law
+    pointer of exactly the P-005 "Schedule NEC" / P-006 "qualified parking" kind.
+    """
+    for query in (
+        "Form 8606",                    # was a clean miss
+        "pro rata rule",                # was a clean miss
+        "nondeductible IRA basis",      # was a clean miss
+        "nondeductible contributions",  # was -> itemized_charitable (WRONG LAW)
+        "backdoor Roth",
+        "Roth conversion",
+        "rollover 401k to Roth IRA",
+        "IRA aggregation",
+    ):
+        r = get_sources(query, 2026)
+        assert r.matched, query
+        topics = {s.topic for s in r.sources}
+        assert topics == {"ira_basis_and_roth_conversions"}, f"{query!r} routed to {topics}"
+
+
+def test_the_ira_basis_topic_carries_both_conversion_paths():
+    """The characterization half: an agent must reach the DENOMINATOR rule and the
+    plan-to-Roth-IRA path, not only the year's contribution limits."""
+    r = get_sources("backdoor Roth", 2026)
+    blob = " ".join(s.answers for s in r.sources)
+    assert "line 9 = 6 + 7 + 8" in blob                 # the denominator adds the conversion back
+    assert "each distribution is partly nontaxable and partly taxable" in blob
+    assert "included in gross income any amount that would be includible" in blob
+    assert "No recharacterizations of conversions made in 2018 or later" in blob
+    urls = {s.url for s in r.sources}
+    assert any("f8606" in u for u in urls) and any("n-08-30" in u for u in urls)
+    assert any("n-14-54" in u for u in urls) and any("p590b" in u for u in urls)
+
+
+def test_ira_basis_topic_does_not_steal_its_neighbours_queries():
+    # "foreign pension distributions" is the live regression: the first draft of
+    # this topic swallowed it (its answers text said "Pension Protection Act"),
+    # turning a deliberate clean miss into a wrong matched=True citation.
+    miss = get_sources("foreign pension distributions", 2026)
+    assert miss.matched is False and miss.sources == []
+    for query, expected in (
+        ("contribution limits", "contribution_limits"),
+        ("IRA deduction phase out", "contribution_limits"),
+        ("qualified parking", "commuter_and_fringe_benefits"),
+        ("credit card rewards taxable", "other_income_and_rewards"),
+        ("Schedule NEC", "nonresident_fdap"),
+        ("no tax on tips", "obbba_schedule_1a_deductions"),
+        ("retirement", "retirement"),
+    ):
+        r = get_sources(query, 2026)
+        assert r.matched and {s.topic for s in r.sources} == {expected}, (
+            f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+        )

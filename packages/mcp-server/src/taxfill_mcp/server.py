@@ -44,6 +44,8 @@ from taxfill_core import (
     annualize_ytd as _annualize_ytd,
     contribution_limits as _contribution_limits,
     ira_contribution_eligibility as _ira_contribution_eligibility,
+    ira_pro_rata as _ira_pro_rata,
+    roth_conversion as _roth_conversion,
     magi_ladder as _magi_ladder,
     marginal_dollar_savings as _marginal_dollar_savings,
     employee_fica as _employee_fica,
@@ -294,7 +296,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
     contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
-    state_tax}; every result shows its work and cites the data pack.
+    ira_pro_rata, roth_conversion, state_tax}; every result shows its work and cites the data pack.
 
     A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
     authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
@@ -408,6 +410,40 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       is not one number: NIIT adds back the FEIE, Additional Medicare is a WAGE test that AGI cannot
       move, Schedule 1-A / Roth-IRA / deductible-IRA each define their own. Show it when the user asks
       why their MAGI differs from their salary; every planning lever moves a number on this ladder)
+    - ira_pro_rata: args {dec31_total_value, amount_converted?, other_distributions?,
+      nondeductible_basis_carryforward?, nondeductible_contributions_this_year?,
+      contributions_made_after_year_end?, year?} (Form 8606 Part I / IRC 408(d)(2): ALL traditional +
+      SEP + SIMPLE IRAs are ONE contract and a year's distributions ONE distribution, so a
+      conversion's taxable share is set by the POOL's pretax/basis mix, never by which dollars moved.
+      THE TRAP: the DENOMINATOR is line 9 = line 6 (Dec-31 value of every such IRA, measured AFTER the
+      conversion left) + line 7 (distributions not converted) + line 8 (the amount converted) — it
+      ADDS THE CONVERSION BACK, so converting more never shrinks it. dec31_total_value is the whole
+      answer to "where can my old 401(k) go?": rolled into a traditional IRA it lands on line 6
+      whenever in the year it arrives and makes every future backdoor Roth mostly taxable. Basis is
+      per PERSON (the form is filed separately per spouse), and line 4 — a contribution made Jan
+      1-Apr 15 of the NEXT year — is basis that carries forward but cannot be used in this year's
+      ratio. Returns the taxable/nontaxable split, the basis applied and carried, the ratio, and every
+      8606 line)
+    - roth_conversion: args {source: plan_to_roth_ira|traditional_ira_to_roth, amount,
+      taxable_income_before, magi_before, filing_status?, year?, net_investment_income?,
+      plan_after_tax_basis?, dec31_total_value?, nondeductible_basis_carryforward?,
+      nondeductible_contributions_this_year?, other_distributions?,
+      contributions_made_after_year_end?} (price a conversion on the ONE path the money takes — the
+      two paths are taxed differently and get conflated. plan_to_roth_ira = a DIRECT rollover from a
+      401(k)/403(b)/governmental 457(b) to a Roth IRA (Notice 2008-30): taxable is the pretax portion,
+      pro-rata NEVER applies because no traditional IRA is involved, it is reported on 1040 line 5a/5b
+      not Form 8606 — this is the path that clears an old plan WITHOUT poisoning future backdoor
+      Roths; pass plan_after_tax_basis from 1099-R box 5 (the plan's own allocation under Notice
+      2014-54, never your estimate). traditional_ira_to_roth = pro-rata applies and the split is
+      delegated to ira_pro_rata, which needs dec31_total_value. Supplying IRA args on the plan path is
+      REFUSED — that conflation is the whole reason the op makes you choose. Beyond the taxable
+      amount it returns BRACKET HEADROOM (room below the current bracket's top, and exactly which
+      dollars spill into higher rates, from the year's rate_schedules) and the NIIT CROSSING (IRC
+      1411(c)(5): the conversion is NEVER net investment income, but it raises MAGI and can drag
+      OTHER investment income over the 1411 threshold — computed by reusing the niit op). The work
+      carries the WITHHOLDING warning: tax withheld is not converted, it is lost Roth space and the
+      10% additional tax can reach it under 59 1/2 — pay from OUTSIDE funds; plus the
+      no-recharacterization-after-2017 irreversibility and the per-conversion 5-year clock)
     - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
       (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
       2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
@@ -476,6 +512,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_marginal_dollar_savings(**args)), args)
     if op == "magi_ladder":
         return _stamp_provisional(_dump(_magi_ladder(**args)), args)
+    if op == "ira_pro_rata":
+        return _stamp_provisional(_dump(_ira_pro_rata(**args)), args)
+    if op == "roth_conversion":
+        return _stamp_provisional(_dump(_roth_conversion(**args)), args)
     if op == "state_tax":
         return _stamp_provisional(_dump(_state_tax(**args)), args)
     raise ValueError(
@@ -484,7 +524,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
         f"employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, "
-        f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax"
+        f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, "
+        f"roth_conversion, state_tax"
     )
 
 

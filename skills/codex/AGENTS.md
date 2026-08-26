@@ -39,6 +39,17 @@ state_scope → positions (workspace_record_position) → fill_form →
 verify_form/verify_filing (↺) → render_form → filing_summary (approve) →
 file_and_pay.
 
+Retirement-account planning has two ops whose whole job is a trap: `calc("ira_pro_rata", …)`
+reproduces Form 8606 Part I / IRC 408(d)(2) — all traditional + SEP + SIMPLE IRAs are ONE
+contract, and the ratio's DENOMINATOR (line 9) adds the converted amount back, so a
+traditional IRA holding pretax money makes every backdoor Roth mostly taxable. And
+`calc("roth_conversion", …)` makes you name the path: a DIRECT 401(k)/403(b) → Roth IRA
+rollover (Notice 2008-30) is fully taxable but pro-rata NEVER applies to it, which is the only
+way to clear an old plan without poisoning future backdoor conversions; a traditional-IRA
+conversion goes through pro-rata. It also returns bracket headroom and the §1411 NIIT crossing
+(conversion income is never net investment income, but it raises the MAGI the threshold is
+measured against). Never hand-compute either.
+
 State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
 All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
 38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)
