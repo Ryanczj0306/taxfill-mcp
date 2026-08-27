@@ -1,0 +1,555 @@
+# Form 1116 (2023 revision) — Foreign Tax Credit (Individual, Estate, or Trust).
+# TWO pages; ATTACHMENT-ONLY: the masthead prints "Attach to Form 1040, 1040-SR,
+# 1040-NR, 1041, or 990-T." Line 35 is the credit itself and its printed text
+# routes it: "Enter here and on Schedule 3 (Form 1040), line 1".
+#
+# WHY THIS PACK EXISTS. Every holder of a total-international index fund has
+# foreign tax withheld at source — it arrives in Form 1099-DIV box 7 — and until
+# this pack landed nothing in the repo modeled it: sched_3's line 1 ("Foreign tax
+# credit (Form 1116)") had shipped for 2023/2024/2025 with no form behind it, so
+# a filer with $412 of withheld foreign tax could not assemble a complete return
+# from this repo at all.
+#
+# NEW PACK, authored from scratch 2026-08-27 (no prior-year f1116 pack existed;
+# nothing was ported and every binding was derived from THIS blank). House-style
+# precedent followed throughout: the Phase I1/I2/I3 packs
+# formpacks/federal/2023/f8606/pack.yaml (4d51a07),
+# formpacks/federal/2023/f8889/pack.yaml (ad2d32f) and
+# formpacks/federal/2023/f8949/pack.yaml (a2c3bf9) — the last one for its
+# repeating-cell key convention, which this form needs for a different axis.
+#
+# ---------------------------------------------------------------------------
+# PROVENANCE — revision identity read off the RENDER, not the URL
+# ---------------------------------------------------------------------------
+# Blank fetched with taxfill_core.fetch.fetch_blank(source_url) into the shared
+# cache (.cache/blanks/81b5fa7ae6e4_f1116--2023.pdf, 127,990 bytes, 2 pages).
+# BOTH pages were rendered at 200 dpi and READ (freshness protocol, dev plan §7).
+# Printed verbatim, top of page 1:
+#   "Form 1116"  /  "Foreign Tax Credit"  /  "(Individual, Estate, or Trust)"
+#   "Attach to Form 1040, 1040-SR, 1040-NR, 1041, or 990-T."
+#   "Go to www.irs.gov/Form1116 for instructions and the latest information."
+#   "OMB No. 1545-0121"   "2023"   "Attachment Sequence No. 19"
+# Page 1 footer: "For Paperwork Reduction Act Notice, see instructions."
+# "Cat. No. 11440U"  "Form 1116 (2023)".
+# Page 2 header: "Form 1116 (2023)" ... "Page 2"; page 2 footer "Form 1116 (2023)".
+# => this IS the TY2023 revision. sha256 computed two ways and identical
+# (taxfill_core.fetch.compute_sha256() and `shasum -a 256`):
+#   980ff23906dbdc835ada4ed833c376d41015bff021e542a5f862194156c25151
+# pdfinfo reports Title "2023 Form 1116", Subject "Foreign Tax Credit
+# (Individual, Estate, or Trust)", Form: XFA, JavaScript: yes — and per
+# formpacks/CONVENTIONS.md that JS flag says NOTHING about whether the form
+# computes. Checked rather than assumed: the document's /Names /JavaScript tree
+# holds exactly THREE entries and all three are Adobe viewer-version boilerplate
+# (!ADBE::0100_VersChkStrings, !ADBE::0100_VersChkVars,
+# !ADBE::0200_VersChkCode_XFACheck); NO widget carries an /AA action; and the
+# AcroForm dictionary has no /CO at all (its keys are /DA /DR /Fields /SigFlags
+# /XFA). So nothing on this form computes anything — which also means no P-007
+# class-4 ("the FORM owns the value") binding can exist here. Page 2 carries no
+# name/SSN header either (its header is just "Form 1116 (2023) ... Page 2"), so
+# there are no identity page mirrors to map.
+#
+# INTROSPECTION TOTALS (every widget, /FT and /Ff resolved through /Parent,
+# /MaxLen, /Rect, page, checkbox /AP /N states):
+#   120 widgets = 109 /Tx + 11 /Btn + 0 /Ch, across 2 pages
+#   120 distinct fully-qualified names — every widget is its own terminal field
+#   ReadOnly (/Ff bit 1): ZERO. 108 of the 109 text widgets carry
+#     /Ff = 8388608 (DoNotScroll only); the ONE exception is
+#     Page1[0].f1_2[0] (identifying number), which carries no /Ff at all and is
+#     the only widget on the form with a /MaxLen (11).
+#   Every /Btn has exactly ONE /AP /N on-state besides /Off; all eleven were
+#   READ OFF THE BLANK, never guessed (see the on_state notes below).
+#   120 mapped lines = 120 widgets, 1:1, nothing unmapped and nothing bound twice.
+#
+# ---------------------------------------------------------------------------
+# THE KEY CONVENTION — and why the obvious spelling is a trap on THIS form
+# ---------------------------------------------------------------------------
+# Form 1116 is filed PER INCOME CATEGORY ("Use a separate Form 1116 for each
+# category of income listed below ... Check only one box on each Form 1116"), and
+# Part I is a THREE-COUNTRY COLUMN GRID (A / B / C) plus a Total column, while
+# Part II is the same three countries turned sideways into three LINES (A / B /
+# C) crossed with lettered columns (j)..(u). Three axes, all lettered.
+#
+# The house column spelling is line-first-column-second: sched_d keys `1a.d`,
+# sched_e keys `3.a`. Applied literally here it would give `1a.a` / `1a.b` /
+# `1a.c` — and that is REJECTED, deliberately, because on this form the column
+# letters COLLIDE BY EYE with the printed sub-line letters. The form prints
+# lines 1a AND 1b; 3a..3g; 4a AND 4b. So `1a.b` (line 1a, country column B)
+# reads exactly like printed line `1b`; `4a.b` reads like `4b`; `3a.c` reads
+# like `3c`. Three lookalike pairs, and the failure they produce is not a crash
+# but a silently wrong return — a wrong-column entry keeps every field name
+# intact. `col_a`/`col_b`/`col_c` cannot be misread by eye or by a fuzzy caller.
+# (LINE_ID_RE was checked first: a segment is either a printed label
+# `[0-9]+[a-z]?` or a word `[a-z][a-z0-9_]*`, so `col_a`, `total`, `line_a` and
+# a bare `l` are all legal segments and `1a.col_a` is a legal id. Confirmed by
+# executing the real regex from test_formpacks_federal.py over every key below.)
+#
+#   Part I   <printed line>.col_a | .col_b | .col_c | .total     e.g. 3g.col_b
+#   Part II  line_a | line_b | line_c  .  <printed column letter> e.g. line_a.q
+#   Part III/IV  <printed line>                                   e.g. 24
+#   category checkboxes   category.<category name>
+#
+# * `.total` is the Part I column printed "Total (Add cols. A, B, and C.)".
+#   Only THREE rows have a widget in it — 1a (box labelled "1a"), 6 (box
+#   labelled "6") and 7. Every other Total cell is solid grey with no widget at
+#   all, which is why there is no `2.total`, no `3a.total` and so on. Nothing
+#   was dropped: those widgets do not exist (120 widgets, 120 keys).
+#
+# * Part II rows are keyed `line_a`/`line_b`/`line_c` because THE FORM CALLS
+#   THEM LINES: printed line 8 reads "Add lines A through C, column (u)". A bare
+#   `a.q` was rejected for the same lookalike reason as above (`a` is also a
+#   printed CATEGORY box letter) and because `line_a` matches sched_8812's
+#   `line<N>` group spelling already in the repo.
+#
+# * THE CROSS-PART IDENTITY, which no schema field can express and which a
+#   caller must not get wrong: Part I column A and Part II line A are THE SAME
+#   COUNTRY. Printed Note, between the category boxes and Part I: "If you paid
+#   taxes to only one foreign country or U.S. possession, use column A in Part I
+#   and line A in Part II. If you paid taxes to more than one foreign country or
+#   U.S. possession, use a separate column and line for each country or
+#   possession." So `i.col_a` names the country whose taxes go on `line_a.*`.
+#   `relations` is arithmetic over money lines and `identity_fields` drives a
+#   cross-FORM check, so "col_a and line_a describe one country" has no home in
+#   the schema and no gate will catch a caller that crosses them.
+#
+# * Category option names are DESCRIPTIVE, not the printed letters a..g, for
+#   f8949's reason: a one-character difference buried in a key is a silent wrong
+#   return, and here the wrong category box means the whole form computes a
+#   limitation against the wrong basket and Part IV routes the credit to the
+#   wrong summary line. The printed letter is kept in each row's comment, and the
+#   Part IV mapping is 1:1 in printed order:
+#     a Section 951A category income          -> category.section_951a        -> line 25
+#     b Foreign branch category income        -> category.foreign_branch      -> line 26
+#     c Passive category income               -> category.passive             -> line 27
+#     d General category income               -> category.general             -> line 28
+#     e Section 901(j) income                 -> category.section_901j        -> line 29
+#     f Certain income re-sourced by treaty   -> category.resourced_by_treaty -> line 30
+#     g Lump-sum distributions                -> category.lump_sum            -> line 31
+#   `c` (passive) is the box the 1099-DIV box 7 filer checks.
+#
+# ---------------------------------------------------------------------------
+# THE TWO ONE-OF-N CHECKBOX SETS — P-008's DANGEROUS topology, reproduced
+# ---------------------------------------------------------------------------
+# Both option sets on this form are the shape formpacks/CONVENTIONS.md calls the
+# one that "gets no exemption": options on SEPARATE single-widget /Btn fields.
+# Dumped, not inferred — each of the seven category boxes is its own terminal
+# field with its own /T, its own /V and exactly ONE /AP /N state:
+#   c1_1[0] /1  c1_1[1] /2  c1_1[2] /3  c1_1[3] /4
+#   c1_1[4] /5  c1_1[5] /6  c1_1[6] /7
+# and the Part II pair is c1_3[0] /Paid, c1_3[1] /Accrued. There is no shared
+# parent, no /Ff radio bit and no single /V, so NOTHING in the PDF makes them
+# exclusive. Reproduced on this blank before the `group` ids were written: a
+# sentinel sweep that turned on every /Btn produced, at 200 dpi, a page 1 with
+# ALL SEVEN category boxes ticked under "Check only one box on each Form 1116"
+# AND both "(j) Paid" and "(k) Accrued" ticked under "(you must check one)".
+# With `group: category` / `group: credit_claimed` in place, fill_form's group
+# guard rejects a second option before it opens the blank and verify's
+# at-most-one checkbox audit FAILs an already-both-ticked PDF.
+# `required: true` sits on the FIRST member of each group (f1040's
+# filing_status/digital_assets spelling; a required flag on any member makes the
+# whole group required). Both are genuinely unconditional here, which is why
+# they get the flag sched_e's questions deliberately did not: the printed face
+# says "Check only one box on each Form 1116" of the category set and "(you must
+# check one)" of the Paid/Accrued set, and there is no Part of this form a filer
+# can use while leaving either blank — Part IV is completed on a Form 1116 that
+# has its own Part I and Part II.
+# The other two /Btn widgets are INDEPENDENT single boxes, not options, so they
+# carry no group: line 1b (the $250,000 alternative-basis attestation) and the
+# line 10 "don't need to attach Schedule B" box.
+#
+# ---------------------------------------------------------------------------
+# PRINTED-TEXT / P-007 ADJUDICATION
+# ---------------------------------------------------------------------------
+# The blank has ZERO ReadOnly widgets, so no P-007 class-1/3/4 question arises
+# and no row belongs in RESERVED_LINE_KEEPS. Class 2 ("the printed text makes a
+# correct entry impossible") was still worked, because on this form the grey
+# cells are numerous — and the answer is that the IRS shipped NO WIDGET in any
+# of them. Enumerated from the render + the /Rect dump: the Total column is grey
+# for line i, line 1b and lines 2 through 5; the A/B/C cells are grey for the
+# whole upper part of the tall line-1a row, for all of line 1b, and for the
+# "Deductions and losses", "3" and "4" caption rows; and page 2's outer column
+# is grey beside lines 9-13 and 25-31 while its inner column is grey beside
+# lines 14 and 19-24 and 32-35. Not one of those regions holds a widget, so
+# there is nothing to unmap and fill_form already raises its unknown-line-key
+# ValueError for e.g. "2.total" or "1b.col_a".
+# Two widget-level judgments worth recording because a port could get them wrong:
+#   * line 1a's f1_7/f1_8/f1_9 sit in the LABEL column on the three printed
+#     dashed rules, not in any country column. They are the description of the
+#     income type ("enter 'Dividends' on the dotted line" — Instructions,
+#     Categories of Income example), which is why they are keyed
+#     1a.income_type_1..3 and typed text.
+#   * line 12's widget f2_4[0] is 92.8 pt wide where every sibling money box on
+#     page 2 is 100.1 pt, because the form prints "(" and ")" around it. That
+#     geometry is the sign convention (see relations).
+#
+# ---------------------------------------------------------------------------
+# TYPES — the two places this form is NOT dollars
+# ---------------------------------------------------------------------------
+# The masthead prints "Report all amounts in U.S. dollars except where specified
+# in Part II below", and both exceptions are honoured with `type: text` rather
+# than money, so verify's dollar-denominated relation math and recompute pass
+# never see a non-dollar figure (f8962's precedent: its tax-family-size count
+# and its 0.0850 applicable figure are text for the same reason).
+#   * Part II columns (m)(n)(o)(p) are headed "In foreign currency". Column (l)
+#     is headed "Date paid or accrued" but is not a date field either — the
+#     instructions put words in it: "Enter '909 taxes' in column (l) instead of
+#     the date paid or accrued", and, for the case this pack exists for, "If
+#     foreign tax paid on passive income is reported to you in U.S. dollars on a
+#     Form 1099-DIV, 1099-INT, or similar statement, you don't have to convert
+#     the amount shown into foreign currency ... Enter '1099 taxes' in Part II,
+#     column (l), and complete columns (q) through (u) for each foreign country
+#     indicated in Part I" (Instructions for Form 1116 (2023), Part II, p.19).
+#     Columns (q)..(u) ARE dollars and are typed money.
+#   * Lines 3f and 19 are RATIOS. "Divide line 3d by line 3e and round off the
+#     result to at least four decimal places (for example, if your result is
+#     0.8756782, round off to 0.8757, not to 0.876 or 0.88). Enter the result,
+#     but don't enter more than '1.'" (Instructions, Line 3f, p.17.) Line 19 is
+#     printed "Divide line 17 by line 18. If line 17 is more than line 18, enter
+#     '1'". verify compares relation sides in WHOLE DOLLARS after IRS rounding,
+#     so a 0.8757 line would round to 0 and any relation touching it would be
+#     nonsense — which is also why lines 3g, 19 and 21 get no relation.
+#
+# ---------------------------------------------------------------------------
+# VISION AUDIT (200 dpi, both pages, own eyes) — what it checked and caught
+# ---------------------------------------------------------------------------
+# A sentinel sweep wrote each widget's own short name into it and both pages were
+# rendered at 200 dpi and READ. With a three-column grid a column shift leaves
+# every field name intact, so the FIRST and LAST column of several rows were
+# checked explicitly rather than spot-checked:
+#   Part I, first column (A) vs last column (C): line i f1_4 / f1_6; line 1a
+#   f1_10 / f1_12; line 3a f1_17 / f1_19; line 3g f1_35 / f1_37; line 5 f1_44 /
+#   f1_46; line 6 f1_47 / f1_49 — every one inside its own printed column rule,
+#   with f1_13 / f1_50 / f1_51 alone in the Total column beside the printed
+#   "1a" / "6" / "7" tabs.
+#   Part II, first column (l) vs last column (u), all three rows: f1_52 / f1_61,
+#   f1_62 / f1_71, f1_72 / f1_81 — and the eight middle columns confirmed cell by
+#   cell against the printed heads, including the (p)|(q) boundary where the
+#   "In foreign currency" half hands over to "In U.S. dollars".
+# CAUGHT — three things a name-only dump would have got wrong, all of them
+# changing what the pack says:
+#   1. The tall line-1a row's country cells are the BOTTOM strip (f1_10..f1_12),
+#      not the grey upper block, and f1_7..f1_9 are in the LABEL column on the
+#      dashed description rules. Reading the /Rect y-coordinates alone would
+#      plausibly have keyed f1_7 as a country cell.
+#   2. Line 1b is ONE checkbox in the label column (c1_2[0], /Yes) — not three,
+#      one per country, which is what the row's three grey A/B/C cells invite.
+#   3. Line 10's checkbox c2_1[0] has on-state "/Accrued" — a leftover name from
+#      the Part II pair that has nothing to do with what the box means ("you
+#      don't need to attach Schedule B, check here"). Guessing "/1" or "/Yes"
+#      here would have written nothing and warned about nothing.
+# Nothing was clipped, nothing landed off-page, and the category grid's printed
+# a/b/c/d/e/f/g order was confirmed against the on-states: a and c and e and g
+# on the upper row (y 656.5), b and d and f on the lower (y 644.5), left to
+# right — so /1..../7 really is a..g.
+#
+# ---------------------------------------------------------------------------
+# THE §904(j) ELECTION — this form is often NOT the answer
+# ---------------------------------------------------------------------------
+# IRC 904(j) lets an individual take the credit with NO Form 1116 at all, and for
+# the 1099-DIV box 7 population that is usually the right branch. The engine
+# answers it deterministically: calc op `foreign_tax_credit_election`
+# (packages/core/src/taxfill_core/calc.py). Run it BEFORE authoring this form.
+# Conditions, all required — 904(j)(2): every dollar of foreign-source gross
+# income is qualified passive income shown on a payee statement; creditable
+# foreign taxes not over $300 ($600 on a joint return); the individual elects it;
+# and 904(j)(3)(D): "This subsection shall not apply to any estate or trust."
+# What it COSTS, so it is never presented as free — 904(j)(1)(B) and (C): no tax
+# paid or accrued in an election year may be carried to any other year, and no
+# tax from any other year may be carried into it. Form 1116's own line 10 and
+# the 1-back/10-forward carryover it feeds are exactly what the election gives
+# up.
+#
+# ---------------------------------------------------------------------------
+# WHAT THIS PACK DELIBERATELY DOES NOT DO
+# ---------------------------------------------------------------------------
+# * Schedule B (Form 1116) (the carryover reconciliation feeding line 10) and
+#   Schedule C (Form 1116) (foreign tax redeterminations) are SEPARATE forms with
+#   their own OMB numbers; neither is mapped here.
+# * Line 20's printed formula spans two other forms ("the total of Form 1040,
+#   1040-SR, or 1040-NR, line 16, and Schedule 2 (Form 1040), Part I, line 2")
+#   and the instructions subtract "any tax included on line 16 from Form 4972".
+#   cross_form has no arithmetic — each side resolves as ONE ref — so a rule like
+#   "20 == f1040.16 + sched_2.2" would be SILENTLY skipped, not failed. Omitted.
+# * The Worksheet for Line 18, the Worksheets A/B for foreign qualified dividends
+#   and capital gains, the Worksheet for Lump-Sum Distributions and the Worksheet
+#   for Home Mortgage Interest are instruction-only math and belong to calc, not
+#   to `relations` (formpacks/CONVENTIONS.md).
+#
+# 2024 and 2025 revisions exist at the same irs-prior URL pattern and both
+# return HTTP 200. Do NOT port this map by name alone: re-introspect and
+# re-vision-audit, because a renumbered Part or a moved column keeps every
+# f1_NN name intact (the PORTABLE-is-not-done rule, docs/CONTRIBUTING-PACKS.md).
+
+form: "1116"
+jurisdiction: federal
+tax_year: 2023
+source_url: "https://www.irs.gov/pub/irs-prior/f1116--2023.pdf"
+pdf_sha256: "980ff23906dbdc835ada4ed833c376d41015bff021e542a5f862194156c25151"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header ---------------------------------------------------------------
+  - { line: "name", field: "Page1[0].f1_1[0]", type: text }                       # "Name"
+  # "Identifying number as shown on page 1 of your tax return" — plain box, NOT a
+  # comb; the ONLY widget on the form with a /MaxLen (11, which fits a dashed
+  # SSN "000-00-0000"). No ssn_digits_only: the form is "(Individual, Estate, or
+  # Trust)", so this box legitimately carries an estate/trust EIN too.
+  - { line: "identifying_number", field: "Page1[0].f1_2[0]", type: text, maxlen: 11 }
+
+  # ---- category of income (one-of-7; see the banner) -------------------------
+  # "Use a separate Form 1116 for each category of income listed below. See
+  # Categories of Income in the instructions. Check only one box on each Form
+  # 1116." Printed letter in each comment; on_states read off /AP /N.
+  - { line: "category.section_951a", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1", group: category, required: true }  # a Section 951A category income
+  - { line: "category.foreign_branch", field: "Page1[0].c1_1[1]", type: checkbox, on_state: "/2", group: category }                # b Foreign branch category income
+  - { line: "category.passive", field: "Page1[0].c1_1[2]", type: checkbox, on_state: "/3", group: category }                       # c Passive category income  <- the 1099-DIV box 7 box
+  - { line: "category.general", field: "Page1[0].c1_1[3]", type: checkbox, on_state: "/4", group: category }                       # d General category income
+  - { line: "category.section_901j", field: "Page1[0].c1_1[4]", type: checkbox, on_state: "/5", group: category }                  # e Section 901(j) income
+  - { line: "category.resourced_by_treaty", field: "Page1[0].c1_1[5]", type: checkbox, on_state: "/6", group: category }           # f Certain income re-sourced by treaty
+  - { line: "category.lump_sum", field: "Page1[0].c1_1[6]", type: checkbox, on_state: "/7", group: category }                      # g Lump-sum distributions
+  - { line: "h", field: "Page1[0].f1_3[0]", type: text }                          # "h Resident of (name of country)"
+
+  # ---- Part I — Taxable Income or Loss From Sources Outside the United States -
+  # Three country columns A/B/C (col_a/col_b/col_c) plus the printed
+  # "Total (Add cols. A, B, and C.)" column (total), which has a widget on only
+  # three rows: 1a, 6 and 7.
+  # "i Enter the name of the foreign country or U.S. possession" — no Total cell.
+  - { line: "i.col_a", field: "Page1[0].Part1Table[0].LineI[0].f1_4[0]", type: text }
+  - { line: "i.col_b", field: "Page1[0].Part1Table[0].LineI[0].f1_5[0]", type: text }
+  - { line: "i.col_c", field: "Page1[0].Part1Table[0].LineI[0].f1_6[0]", type: text }
+  # "1a Gross income from sources within country shown above and of the type
+  # checked above (see instructions):" — three dashed rules in the LABEL column
+  # carry the description of the income type ("enter 'Dividends' on the dotted
+  # line", Instructions, Categories of Income example).
+  - { line: "1a.income_type_1", field: "Page1[0].Part1Table[0].Line1a[0].Line1a[0].f1_7[0]", type: text }
+  - { line: "1a.income_type_2", field: "Page1[0].Part1Table[0].Line1a[0].Line1a[0].f1_8[0]", type: text }
+  - { line: "1a.income_type_3", field: "Page1[0].Part1Table[0].Line1a[0].Line1a[0].f1_9[0]", type: text }
+  - { line: "1a.col_a", field: "Page1[0].Part1Table[0].Line1a[0].Line1aColA[0].f1_10[0]", type: money }
+  - { line: "1a.col_b", field: "Page1[0].Part1Table[0].Line1a[0].Line1aColB[0].f1_11[0]", type: money }
+  - { line: "1a.col_c", field: "Page1[0].Part1Table[0].Line1a[0].Line1aColC[0].f1_12[0]", type: money }
+  - { line: "1a.total", field: "Page1[0].Part1Table[0].Line1a[0].Ln1aTotal[0].f1_13[0]", type: money }   # the box printed "1a"
+  # "b Check if line 1a is compensation for personal services as an employee,
+  # your total compensation from all sources is $250,000 or more, and you used an
+  # alternative basis to determine its source. See instructions" — ONE box, in
+  # the label column, /AP /N state "/Yes". All three conditions must hold and a
+  # statement must be attached (Instructions, Line 1b, p.17).
+  - { line: "1b", field: "Page1[0].Part1Table[0].Line1b[0].Line1BText[0].c1_2[0]", type: checkbox, on_state: "/Yes" }
+  # "Deductions and losses (Caution: See instructions.):"
+  - { line: "2.col_a", field: "Page1[0].Part1Table[0].Line2[0].f1_14[0]", type: money }   # 2 Expenses definitely related to the income on line 1a (attach statement)
+  - { line: "2.col_b", field: "Page1[0].Part1Table[0].Line2[0].f1_15[0]", type: money }
+  - { line: "2.col_c", field: "Page1[0].Part1Table[0].Line2[0].f1_16[0]", type: money }
+  # "3 Pro rata share of other deductions not definitely related:"
+  - { line: "3a.col_a", field: "Page1[0].Part1Table[0].Line3a[0].f1_17[0]", type: money }  # a Certain itemized deductions or standard deduction
+  - { line: "3a.col_b", field: "Page1[0].Part1Table[0].Line3a[0].f1_18[0]", type: money }
+  - { line: "3a.col_c", field: "Page1[0].Part1Table[0].Line3a[0].f1_19[0]", type: money }
+  - { line: "3b.col_a", field: "Page1[0].Part1Table[0].Line3b[0].f1_20[0]", type: money }  # b Other deductions (attach statement)
+  - { line: "3b.col_b", field: "Page1[0].Part1Table[0].Line3b[0].f1_21[0]", type: money }
+  - { line: "3b.col_c", field: "Page1[0].Part1Table[0].Line3b[0].f1_22[0]", type: money }
+  - { line: "3c.col_a", field: "Page1[0].Part1Table[0].Line3c[0].f1_23[0]", type: money }  # c Add lines 3a and 3b
+  - { line: "3c.col_b", field: "Page1[0].Part1Table[0].Line3c[0].f1_24[0]", type: money }
+  - { line: "3c.col_c", field: "Page1[0].Part1Table[0].Line3c[0].f1_25[0]", type: money }
+  - { line: "3d.col_a", field: "Page1[0].Part1Table[0].Line3d[0].f1_26[0]", type: money }  # d Gross foreign source income
+  - { line: "3d.col_b", field: "Page1[0].Part1Table[0].Line3d[0].f1_27[0]", type: money }
+  - { line: "3d.col_c", field: "Page1[0].Part1Table[0].Line3d[0].f1_28[0]", type: money }
+  - { line: "3e.col_a", field: "Page1[0].Part1Table[0].Line3e[0].f1_29[0]", type: money }  # e Gross income from all sources (a CONSTANT across every column and every Form 1116)
+  - { line: "3e.col_b", field: "Page1[0].Part1Table[0].Line3e[0].f1_30[0]", type: money }
+  - { line: "3e.col_c", field: "Page1[0].Part1Table[0].Line3e[0].f1_31[0]", type: money }
+  # f "Divide line 3d by line 3e" — a DECIMAL to at least four places, max "1";
+  # text, not money (see the banner's TYPES section).
+  - { line: "3f.col_a", field: "Page1[0].Part1Table[0].Line3f[0].f1_32[0]", type: text }
+  - { line: "3f.col_b", field: "Page1[0].Part1Table[0].Line3f[0].f1_33[0]", type: text }
+  - { line: "3f.col_c", field: "Page1[0].Part1Table[0].Line3f[0].f1_34[0]", type: text }
+  - { line: "3g.col_a", field: "Page1[0].Part1Table[0].Line3g[0].f1_35[0]", type: money }  # g Multiply line 3c by line 3f
+  - { line: "3g.col_b", field: "Page1[0].Part1Table[0].Line3g[0].f1_36[0]", type: money }
+  - { line: "3g.col_c", field: "Page1[0].Part1Table[0].Line3g[0].f1_37[0]", type: money }
+  # "4 Pro rata share of interest expense (see instructions):"
+  - { line: "4a.col_a", field: "Page1[0].Part1Table[0].Line4a[0].f1_38[0]", type: money }  # a Home mortgage interest (Worksheet for Home Mortgage Interest)
+  - { line: "4a.col_b", field: "Page1[0].Part1Table[0].Line4a[0].f1_39[0]", type: money }
+  - { line: "4a.col_c", field: "Page1[0].Part1Table[0].Line4a[0].f1_40[0]", type: money }
+  - { line: "4b.col_a", field: "Page1[0].Part1Table[0].Line4b[0].f1_41[0]", type: money }  # b Other interest expense
+  - { line: "4b.col_b", field: "Page1[0].Part1Table[0].Line4b[0].f1_42[0]", type: money }
+  - { line: "4b.col_c", field: "Page1[0].Part1Table[0].Line4b[0].f1_43[0]", type: money }
+  - { line: "5.col_a", field: "Page1[0].Part1Table[0].Line5[0].f1_44[0]", type: money }    # 5 Losses from foreign sources
+  - { line: "5.col_b", field: "Page1[0].Part1Table[0].Line5[0].f1_45[0]", type: money }
+  - { line: "5.col_c", field: "Page1[0].Part1Table[0].Line5[0].f1_46[0]", type: money }
+  - { line: "6.col_a", field: "Page1[0].Part1Table[0].Line6[0].f1_47[0]", type: money }    # 6 Add lines 2, 3g, 4a, 4b, and 5
+  - { line: "6.col_b", field: "Page1[0].Part1Table[0].Line6[0].f1_48[0]", type: money }
+  - { line: "6.col_c", field: "Page1[0].Part1Table[0].Line6[0].f1_49[0]", type: money }
+  - { line: "6.total", field: "Page1[0].Part1Table[0].Line6[0].f1_50[0]", type: money }    # the box printed "6"
+  - { line: "7", field: "Page1[0].f1_51[0]", type: money }                                 # 7 Subtract line 6 from line 1a. Enter the result here and on line 15, page 2
+
+  # ---- Part II — Foreign Taxes Paid or Accrued ------------------------------
+  # "Credit is claimed for taxes (you must check one)": (j) Paid / (k) Accrued.
+  # The accounting-method election for the whole form — "If you report on the
+  # cash basis, you can choose to take the credit for accrued taxes by checking
+  # the 'Accrued' box in Part II on a timely filed original return. You can't
+  # make this choice on an amended return. Once you choose to do this, you must
+  # credit foreign taxes in the year they accrue on all future returns."
+  # (Instructions, Part II, p.18.) Two SEPARATE /Btn fields — see the banner.
+  - { line: "credit_claimed.paid", field: "Page1[0].Part2TableHeader[0].ColumnJ[0].CreditClaimedCheckboxes[0].c1_3[0]", type: checkbox, on_state: "/Paid", group: credit_claimed, required: true }
+  - { line: "credit_claimed.accrued", field: "Page1[0].Part2TableHeader[0].ColumnJ[0].CreditClaimedCheckboxes[0].c1_3[1]", type: checkbox, on_state: "/Accrued", group: credit_claimed }
+  # Rows A/B/C = the same three countries as Part I columns A/B/C (printed Note).
+  # (l) Date paid or accrued — TEXT: takes a date, or "1099 taxes", or "909 taxes".
+  # (m)(n)(o)(p) "In foreign currency" — TEXT, not dollars.
+  # (q)(r)(s)(t) "In U.S. dollars"; (u) Total = add cols. (q) through (t).
+  - { line: "line_a.l", field: "Page1[0].Part2TableBody[0].RowA[0].f1_52[0]", type: text }
+  - { line: "line_a.m", field: "Page1[0].Part2TableBody[0].RowA[0].f1_53[0]", type: text }
+  - { line: "line_a.n", field: "Page1[0].Part2TableBody[0].RowA[0].f1_54[0]", type: text }
+  - { line: "line_a.o", field: "Page1[0].Part2TableBody[0].RowA[0].f1_55[0]", type: text }
+  - { line: "line_a.p", field: "Page1[0].Part2TableBody[0].RowA[0].f1_56[0]", type: text }
+  - { line: "line_a.q", field: "Page1[0].Part2TableBody[0].RowA[0].f1_57[0]", type: money }
+  - { line: "line_a.r", field: "Page1[0].Part2TableBody[0].RowA[0].f1_58[0]", type: money }
+  - { line: "line_a.s", field: "Page1[0].Part2TableBody[0].RowA[0].f1_59[0]", type: money }
+  - { line: "line_a.t", field: "Page1[0].Part2TableBody[0].RowA[0].f1_60[0]", type: money }
+  - { line: "line_a.u", field: "Page1[0].Part2TableBody[0].RowA[0].f1_61[0]", type: money }
+  - { line: "line_b.l", field: "Page1[0].Part2TableBody[0].RowB[0].f1_62[0]", type: text }
+  - { line: "line_b.m", field: "Page1[0].Part2TableBody[0].RowB[0].f1_63[0]", type: text }
+  - { line: "line_b.n", field: "Page1[0].Part2TableBody[0].RowB[0].f1_64[0]", type: text }
+  - { line: "line_b.o", field: "Page1[0].Part2TableBody[0].RowB[0].f1_65[0]", type: text }
+  - { line: "line_b.p", field: "Page1[0].Part2TableBody[0].RowB[0].f1_66[0]", type: text }
+  - { line: "line_b.q", field: "Page1[0].Part2TableBody[0].RowB[0].f1_67[0]", type: money }
+  - { line: "line_b.r", field: "Page1[0].Part2TableBody[0].RowB[0].f1_68[0]", type: money }
+  - { line: "line_b.s", field: "Page1[0].Part2TableBody[0].RowB[0].f1_69[0]", type: money }
+  - { line: "line_b.t", field: "Page1[0].Part2TableBody[0].RowB[0].f1_70[0]", type: money }
+  - { line: "line_b.u", field: "Page1[0].Part2TableBody[0].RowB[0].f1_71[0]", type: money }
+  - { line: "line_c.l", field: "Page1[0].Part2TableBody[0].RowC[0].f1_72[0]", type: text }
+  - { line: "line_c.m", field: "Page1[0].Part2TableBody[0].RowC[0].f1_73[0]", type: text }
+  - { line: "line_c.n", field: "Page1[0].Part2TableBody[0].RowC[0].f1_74[0]", type: text }
+  - { line: "line_c.o", field: "Page1[0].Part2TableBody[0].RowC[0].f1_75[0]", type: text }
+  - { line: "line_c.p", field: "Page1[0].Part2TableBody[0].RowC[0].f1_76[0]", type: text }
+  - { line: "line_c.q", field: "Page1[0].Part2TableBody[0].RowC[0].f1_77[0]", type: money }
+  - { line: "line_c.r", field: "Page1[0].Part2TableBody[0].RowC[0].f1_78[0]", type: money }
+  - { line: "line_c.s", field: "Page1[0].Part2TableBody[0].RowC[0].f1_79[0]", type: money }
+  - { line: "line_c.t", field: "Page1[0].Part2TableBody[0].RowC[0].f1_80[0]", type: money }
+  - { line: "line_c.u", field: "Page1[0].Part2TableBody[0].RowC[0].f1_81[0]", type: money }
+  - { line: "8", field: "Page1[0].f1_82[0]", type: money }        # 8 Add lines A through C, column (u). Enter the total here and on line 9, page 2
+
+  # ---- Part III — Figuring the Credit (page 2) ------------------------------
+  - { line: "9", field: "Page2[0].f2_1[0]", type: money }         # 9 Enter the amount from line 8. Total foreign taxes paid or accrued for the category checked above Part I
+  - { line: "10", field: "Page2[0].f2_2[0]", type: money }        # 10 Carryover of foreign taxes (Schedule B, line 3, col. (xiv)) plus carrybacks. Leave blank for section 951A category income
+  # "If you enter an amount on line 10 and you don't need to attach Schedule B,
+  # check here" — on-state read off /AP /N is "/Accrued", a leftover name from
+  # the Part II pair; it has nothing to do with what the box means. Do not guess.
+  - { line: "10.no_schedule_b", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/Accrued" }
+  - { line: "11", field: "Page2[0].f2_3[0]", type: money }        # 11 Add lines 9 and 10
+  # 12 "Reduction in foreign taxes" — the box is printed INSIDE parentheses
+  # "( ... )" and is 92.8 pt wide against its siblings' 100.1. Enter the POSITIVE
+  # reduction; the parentheses make it subtract on line 14 (f2441 line 14's house
+  # precedent). Instructions, Line 12, pp.19-20 lists the reductions.
+  - { line: "12", field: "Page2[0].f2_4[0]", type: money }
+  # 13 "Taxes reclassified under high tax kickout" — SIGNED, no printed parens:
+  # "On your Form 1116 for passive category income, enter as a negative number
+  # (in parentheses) ... On your Form 1116 for the other category income, enter
+  # as a positive number" (Instructions, Line 13, p.20).
+  - { line: "13", field: "Page2[0].f2_5[0]", type: money }
+  - { line: "14", field: "Page2[0].f2_6[0]", type: money }        # 14 Combine lines 11, 12, and 13. Total foreign taxes available for credit
+  - { line: "15", field: "Page2[0].f2_7[0]", type: money }        # 15 Enter the amount from line 7
+  - { line: "16", field: "Page2[0].f2_8[0]", type: money }        # 16 Adjustments to line 15 — signed; "Reduce line 15 by including (in parentheses) on line 16 ..."
+  - { line: "17", field: "Page2[0].f2_9[0]", type: money }        # 17 Combine the amounts on lines 15 and 16. Net foreign source taxable income
+  - { line: "18", field: "Page2[0].f2_10[0]", type: money }       # 18 Individuals: amount from Form 1040/1040-SR/1040-NR line 15 — but see the Worksheet for Line 18 (no cross_form; see the banner)
+  # 19 "Divide line 17 by line 18. If line 17 is more than line 18, enter '1'" —
+  # a RATIO, so text (see the banner's TYPES section).
+  - { line: "19", field: "Page2[0].f2_11[0]", type: text }
+  - { line: "20", field: "Page2[0].f2_12[0]", type: money }       # 20 Total of Form 1040 line 16 + Schedule 2 line 2 (less any Form 4972 tax) — the "regular tax" the 904(j) election is also capped by
+  - { line: "21", field: "Page2[0].f2_13[0]", type: money }       # 21 Multiply line 20 by line 19 (maximum amount of credit)
+  - { line: "22", field: "Page2[0].f2_14[0]", type: money }       # 22 Increase in limitation (section 960(c))
+  - { line: "23", field: "Page2[0].f2_15[0]", type: money }       # 23 Add lines 21 and 22
+  - { line: "24", field: "Page2[0].f2_16[0]", type: money }       # 24 Enter the smaller of line 14 or line 23
+
+  # ---- Part IV — Summary of Credits From Separate Parts III -----------------
+  # "Complete lines 25 through 31 in Part IV only if you must complete more than
+  # one Form 1116 ... Complete Part IV on only one Form 1116 (the one with the
+  # largest amount entered on line 24)" (Instructions, Part IV, p.25). One row
+  # per category, in the same printed order as the boxes a..g above Part I.
+  - { line: "25", field: "Page2[0].f2_17[0]", type: money }       # 25 Credit for taxes on section 951A category income        (box a)
+  - { line: "26", field: "Page2[0].f2_18[0]", type: money }       # 26 Credit for taxes on foreign branch category income      (box b)
+  - { line: "27", field: "Page2[0].f2_19[0]", type: money }       # 27 Credit for taxes on passive category income            (box c)
+  - { line: "28", field: "Page2[0].f2_20[0]", type: money }       # 28 Credit for taxes on general category income            (box d)
+  - { line: "29", field: "Page2[0].f2_21[0]", type: money }       # 29 Credit for taxes on section 901(j) income              (box e)
+  - { line: "30", field: "Page2[0].f2_22[0]", type: money }       # 30 Credit for taxes on certain income re-sourced by treaty (box f)
+  - { line: "31", field: "Page2[0].f2_23[0]", type: money }       # 31 Credit for taxes on lump-sum distributions             (box g)
+  - { line: "32", field: "Page2[0].f2_24[0]", type: money }       # 32 Add lines 25 through 31
+  - { line: "33", field: "Page2[0].f2_25[0]", type: money }       # 33 Enter the smaller of line 20 or line 32
+  - { line: "34", field: "Page2[0].f2_26[0]", type: money }       # 34 Reduction of credit for international boycott operations (Form 5713 / Schedule A)
+  - { line: "35", field: "Page2[0].f2_27[0]", type: money }       # 35 Subtract line 34 from line 33. This is your foreign tax credit -> Schedule 3 (Form 1040), line 1
+
+# Only math PRINTED ON THE FORM FACE, and only where every operand is a mapped
+# BARE line of THIS form (formpacks/CONVENTIONS.md).
+#
+# WHY THERE IS NO PER-COLUMN MATH HERE, and it is not an oversight. verify's
+# relation tokenizer accepts exactly two operand shapes — a printed line label
+# `\d+[a-z]?` and a bare identifier `[A-Za-z_][A-Za-z0-9_]*` — and NEITHER
+# admits a dot, so a DOTTED line key cannot be a relation operand at all.
+# Reproduced against the shipped engine before these were dropped:
+#   relations(pack, {}) with "3c.col_a == 3a.col_a + 3b.col_a" raises
+#   ValueError: could not parse relation '3c.col_a == 3a.col_a + 3b.col_a':
+#   unexpected character '.' at position 2
+# That is a pack-authoring error (it raises, it does not FAIL a check), so the
+# rule cannot ship silently switched off. The choice of `col_a` over sched_d's
+# `.a` spelling costs nothing here: `1a.a` does not parse either, and neither
+# does `line_a.u`. This is the same wall sched_d, sched_e and f8949 hit — all
+# three have printed column grids and all three ship only whole-line relations
+# (sched_e's header says so explicitly: "All four whole-line combine equalities
+# whose operands are plain mapped lines"). f8962 escapes it only because its
+# grid is numbered rows x lettered columns, so `11d` IS a bare printed label.
+# So the following printed formulas are, for now, UNCHECKED by verify, and each
+# is named here so the gap is visible rather than absent:
+#   "c Add lines 3a and 3b"                      3c.col_* == 3a.col_* + 3b.col_*
+#   "6 Add lines 2, 3g, 4a, 4b, and 5"           6.col_*  == 2 + 3g + 4a + 4b + 5
+#   "Total (Add cols. A, B, and C.)"             1a.total, 6.total
+#   "7 Subtract line 6 from line 1a"             7 == 1a.total - 6.total
+#   "(u) ... (add cols. (q) through (t))"        line_*.u == q + r + s + t
+#   "8 Add lines A through C, column (u)"        8 == line_a.u + line_b.u + line_c.u
+# Widening the tokenizer's lineid/name patterns to allow dotted segments is an
+# engine change to a parser every pack shares, so it is reported as an open
+# issue rather than smuggled in with a new pack.
+relations:
+  - "9 == 8"                    # "9 Enter the amount from line 8." (line 8 also prints "Enter the total here and on line 9, page 2")
+  - "11 == 9 + 10"              # "11 Add lines 9 and 10"
+  - "14 == 11 - 12 + 13"        # "14 Combine lines 11, 12, and 13" — line 12's box is printed inside "( )" and takes the POSITIVE reduction, so it subtracts (f2441 line 14 precedent)
+  - "15 == 7"                   # "15 Enter the amount from line 7" (line 7: "Enter the result here and on line 15, page 2")
+  - "17 == 15 + 16"             # "17 Combine the amounts on lines 15 and 16" — line 16 is signed
+  - "23 == 21 + 22"             # "23 Add lines 21 and 22"
+  - "24 == min(14, 23)"         # "24 Enter the smaller of line 14 or line 23"
+  - "32 == 25 + 26 + 27 + 28 + 29 + 30 + 31"   # "32 Add lines 25 through 31" — every unused category row is blank, so an unused Part IV reduces to 0 == 0
+  - "35 == 33 - 34"             # "35 Subtract line 34 from line 33. This is your foreign tax credit"
+  # Bare-line printed formulas deliberately NOT relations, each for a stated
+  # comparator or printed-text reason rather than an oversight:
+  #   19 / 21 — line 19 is a DECIMAL RATIO ("Divide line 17 by line 18. If line
+  #     17 is more than line 18, enter '1'"), and verify compares relation sides
+  #     in WHOLE DOLLARS after IRS rounding, so 0.8757 becomes 0 and
+  #     "21 == 20 * 19" would multiply by a rounded-away operand. (Line 3f is a
+  #     ratio for the same reason, which also drops "3g == 3c * 3f".)
+  #   33 — printed "Enter the smaller of line 20 or line 32", but line 24 prints
+  #     the OTHER route onto the same box: "If this is the only Form 1116 you are
+  #     filing, skip lines 25 through 32 and enter this amount on line 33." On a
+  #     single-Form-1116 return (the common case) line 32 is blank, blank means
+  #     zero, and min(20, 0) would FAIL against a correct line 33.
+  #   18 / 20 — both are amounts from OTHER forms; see cross_form and the banner.
+
+# Printed carry-overs to other forms in the filing. A cross_form side resolves
+# as ONE ref (no arithmetic), and a rule is SKIPPED — not failed — when the other
+# form is absent from the filing.
+cross_form:
+  # "35 ... This is your foreign tax credit. Enter here and on Schedule 3 (Form
+  # 1040), line 1" — and Schedule 3 (2023) line 1 prints "Foreign tax credit
+  # (Form 1116)", so the two lines are each other's definition.
+  # CAVEAT, recorded rather than dodged: when a filer files MORE THAN ONE Form
+  # 1116, only the summarizing one (the one carrying Part IV) has a line 35, and
+  # verify_filing keys items by form_key, so a multi-category filing cannot
+  # currently present its second and third Form 1116 to the verifier at all.
+  # Reported as an open issue; for the single-category filing this pack is aimed
+  # at, the rule is exact.
+  - "35 == sched_3.1"
+
+# "Name" and "Identifying number as shown on page 1 of your tax return" — the
+# parent return's, by construction, so no identity_per_person relaxation is
+# needed here (unlike f8606/f8889, whose boxes are per-SPOUSE by their own
+# printed headers). A separate Form 1116 per CATEGORY still belongs to the same
+# filer, so every copy carries the same two values.
+identity_fields: [name, identifying_number]
+
+# Attachment-only: the form has no signature block of its own ("Attach to Form
+# 1040, 1040-SR, 1040-NR, 1041, or 990-T") and is mailed inside the parent
+# return's envelope — the schedules row of formpacks/CONVENTIONS.md.
+signature: null
+mailing: null

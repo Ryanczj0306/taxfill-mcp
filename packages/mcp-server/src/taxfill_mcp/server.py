@@ -47,6 +47,8 @@ from taxfill_core import (
     hsa_deduction as _hsa_deduction,
     espp_disposition as _espp_disposition,
     capital_loss_limitation as _capital_loss_limitation,
+    foreign_tax_credit_election as _foreign_tax_credit_election,
+    foreign_asset_reporting as _foreign_asset_reporting,
     ira_pro_rata as _ira_pro_rata,
     roth_conversion as _roth_conversion,
     magi_ladder as _magi_ladder,
@@ -300,7 +302,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
     contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
     ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
-    state_tax}; every result shows its work and cites the data pack.
+    foreign_tax_credit_election, foreign_asset_reporting, state_tax}; every result shows its
+    work and cites the data pack.
 
     A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
     authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
@@ -530,6 +533,80 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       year?}) and THREADS THE CARRYOVERS ITSELF — re-entering them by hand is how the character split
       gets lost, so unknown keys are refused. NOT modelled: wash sales, section 1256 and its 1212(c)
       carryback, section 1244 ordinary loss, collectibles/unrecaptured 1250, and state rules)
+    - foreign_tax_credit_election: args {creditable_foreign_taxes, all_foreign_income_passive,
+      all_reported_on_payee_statement, year?, filing_status?, elect?, entity?, regular_tax?,
+      reduction_in_foreign_taxes?, excess_credit_if_form_1116?} (IRC 904(j) — THE BRANCH THAT DECIDES
+      WHETHER FORM 1116 IS NEEDED AT ALL, and for a holder of a total-international index fund the
+      answer is usually no. Foreign tax withheld on fund dividends arrives in FORM 1099-DIV BOX 7
+      (interest: 1099-INT box 6), and while creditable foreign taxes stay at or under $300 ($600 in
+      the case of a JOINT RETURN — 904(j)(2)(B), statutory and never indexed) 904(j) lets the whole
+      credit be claimed as ONE NUMBER on Schedule 3 (Form 1040), Part I, line 1, with no Form 1116,
+      no three-country column grid and no 904(a) limitation fraction. Run this BEFORE authoring
+      formpacks/federal/<year>/f1116. THREE THINGS IT REFUSES TO GUESS, because each one silently
+      decides the election: all_foreign_income_passive (904(j)(2)(A) needs the ENTIRE foreign-source
+      gross income to be qualified passive income — one dollar of foreign wages, foreign
+      self-employment income, foreign rent or a 951A inclusion ends it for the WHOLE YEAR no matter
+      how small the tax); all_reported_on_payee_statement (904(j)(3)(A)/(B) need the income AND the
+      tax shown on a payee statement — 1099-DIV, 1099-INT, Schedule K-1 (1041), Schedule K-3 (1065),
+      Schedule K-3 (1120-S) or a substitute; foreign tax on a foreign bank account with no US
+      information return fails it); and `elect` (904(j)(2)(C) is the taxpayer's own act, so
+      election_available and election_made are reported SEPARATELY — a filer who qualifies may still
+      prefer Form 1116). ESTATES AND TRUSTS ARE EXCLUDED OUTRIGHT (904(j)(3)(D)). QUOTE THE COST, it
+      is never free: 904(j)(1)(B)/(C) forfeit the 904(c) 1-year-back / 10-year-forward carryover in
+      BOTH directions for the election year, so pass regular_tax (Form 1116 line 20 = Form 1040 line
+      16 + Schedule 2 line 2, less any Form 4972 tax) to get both the amount claimed — "the smaller
+      of (a) your total foreign tax, or (b) your regular tax" — and credit_lost_to_regular_tax_cap,
+      foreign tax that exceeds regular tax and is therefore lost PERMANENTLY. The election does NOT
+      waive creditability (IRC 901/903, including 901(k)'s minimum holding period on dividend
+      withholding) nor the Form 1116 line 12 reduction, which reduction_in_foreign_taxes subtracts
+      BEFORE the $300/$600 test. ONE TRAP THE FILING-STATUS COLUMN HIDES: only married filing jointly
+      is "a joint return", so a QUALIFYING SURVIVING SPOUSE gets $300, not $600 — it borrows the
+      joint RATE schedule under IRC 1(a)(2)/2(a) but does not file a joint return; MFS is $300 too)
+    - foreign_asset_reporting: args {year?, filing_status?, us_person?, lives_abroad?,
+      specified_asset_value_year_end?, specified_asset_value_max?,
+      foreign_account_value_max_aggregate?, has_foreign_account_signature_authority?, filer_type?}
+      (DOES THIS FILER HAVE TO REPORT A FOREIGN ACCOUNT? — IRC 6038D's Form 8938 and 31 U.S.C.
+      5314's FBAR, answered TOGETHER because answering one and stopping is the standard error: "The
+      Form 8938 filing requirement does not replace or otherwise affect a taxpayer's obligation to
+      file FinCEN Form 114" (IRS, Comparison of Form 8938 and FBAR requirements). NOT a tax
+      calculation — both duties exist even when the account produced no income and no tax is owed
+      (Treas. Reg. 1.6038D-2(a)(8)), which is exactly why a refund-shaped interview never surfaces
+      them: ASK, do not wait to be told. THE TWO THRESHOLDS ARE NOTHING ALIKE. **Form 8938** (Treas.
+      Reg. 1.6038D-2(a)(1)-(4), measured over the TAXABLE year): more than $50,000 on the LAST DAY or
+      more than $75,000 AT ANY TIME for a filer in the US who is not filing jointly, $100,000 /
+      $150,000 married filing JOINTLY, and 4x those figures ($200,000/$300,000 and $400,000/$600,000)
+      only for an IRC 911(d)(1) QUALIFIED INDIVIDUAL — a bona fide foreign resident for a full tax
+      year, or 330 full days abroad in 12 consecutive months, with a foreign tax home; living
+      overseas without meeting that test keeps the in-US figures. EITHER test alone triggers the
+      filing, so emptying the account before December 31 does not help. **A QUALIFYING SURVIVING
+      SPOUSE TAKES $50,000/$75,000, NOT the joint figures** — (a)(2)/(a)(4) are keyed to filers who
+      "file a joint annual return" and a QSS does not, even though it borrows the joint rate
+      schedule. **FBAR** (31 CFR 1010.306(c), measured over the CALENDAR year): a flat $10,000 that
+      FILING STATUS DOES NOT MOVE, and it is an AGGREGATE across every foreign financial account and
+      a MAXIMUM-VALUE test — two accounts whose combined balance touched $10,001 for one day are BOTH
+      reportable even if each stayed under $10,000 and both were empty at year end. THE OP REFUSES TO
+      GUESS: any fact it needs and does not have comes back as required=None plus a `must_ask`
+      question naming the authority, because a silent "no" here is the most expensive wrong answer in
+      the repo. Read `must_ask` and `any_duty_undecided` before quoting a verdict. WHERE THEY GO:
+      Form 8938 attaches to the return (formpacks/federal/<year>/f8938); the FBAR is filed with
+      FinCEN, e-file ONLY through the BSA E-Filing System, and irs.gov states "IRS will not accept
+      paper filings on TD F 90-22.1 (obsolete) or a printed FinCEN Form 114 (for e-filing only)" —
+      so there is no fillable pack, only hand_fill_worksheet('fincen114', <year>, 'federal'), and it
+      is due April 15 with an AUTOMATIC extension to October 15 that needs no request (P.L. 114-41
+      sec. 2006(b)(11); 31 CFR 1010.306(c)'s printed "June 30" was never conformed to the statute and
+      is WRONG). SCOPES DIFFER IN BOTH DIRECTIONS: signature authority over someone else's account
+      and an account at a foreign BRANCH of a US bank are FBAR-only; foreign stock held outside an
+      account, a foreign partnership interest and a foreign hedge fund are Form 8938-only. PENALTY
+      EXPOSURE, quoted in the result: IRC 6038D(d) $10,000 plus $10,000 per 30 days after IRS notice
+      to a $60,000 year maximum, and IRC 6662(j)(3) raises the accuracy-related rate to 40% on an
+      underpayment tied to an undisclosed foreign asset; 31 U.S.C. 5321(a)(5) non-willful up to
+      $10,000 — inflation-adjusted to $16,536 for penalties assessed on or after 2025-01-17 (31 CFR
+      1010.821) and accruing PER REPORT, not per account (Bittner v. United States, 598 U.S. 85
+      (2023)) — with willful exposure the greater of $100,000 (adjusted $165,353) or 50% of the
+      account balance, which IS per account. NOT modelled and named in the work: the Part IV
+      excepted-asset rules, joint-ownership valuation, the FBAR's account exceptions, and PART-YEAR
+      specified-individual status (Treas. Reg. 1.6038D-2(a)(9)) — segment an F-1-to-H-1B year's
+      values yourself before passing them)
     - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
       (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
       2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
@@ -608,6 +685,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_espp_disposition(**args)), args)
     if op == "capital_loss_limitation":
         return _stamp_provisional(_dump(_capital_loss_limitation(**args)), args)
+    if op == "foreign_tax_credit_election":
+        return _stamp_provisional(_dump(_foreign_tax_credit_election(**args)), args)
+    if op == "foreign_asset_reporting":
+        return _stamp_provisional(_dump(_foreign_asset_reporting(**args)), args)
     if op == "state_tax":
         return _stamp_provisional(_dump(_state_tax(**args)), args)
     raise ValueError(
@@ -617,7 +698,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
         f"employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, "
         f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, "
-        f"roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, state_tax"
+        f"roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, "
+        f"foreign_tax_credit_election, foreign_asset_reporting, state_tax"
     )
 
 

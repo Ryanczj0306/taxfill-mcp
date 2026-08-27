@@ -443,6 +443,10 @@ def test_interview_terminates_for_single_paper_check_filer():
     profile.income_documents = [
         IncomeDocument(kind="W-2", status="have", provenance=US),
         IncomeDocument(kind="1095-A", status="not_applicable", provenance=US),  # 'no marketplace coverage'
+        # 'no foreign accounts' — the I4 elicitation (income_documents.foreign_accounts)
+        # repeats until the inventory records an answer in SOME status, exactly as the
+        # 1095-A question above does, so a terminating interview has to carry both NOs.
+        IncomeDocument(kind="foreign account statement", status="not_applicable", provenance=US),
     ]
     profile.prior_filings = PriorFilings(filed_years=_ans([2022]))
     cl = intake_checklist(profile, tax_year=2023)
@@ -468,6 +472,7 @@ def test_banking_question_only_accompanies_other_pending_questions():
     complete.income_documents = [
         IncomeDocument(kind="W-2", status="have", provenance=US),
         IncomeDocument(kind="1095-A", status="not_applicable", provenance=US),
+        IncomeDocument(kind="foreign account statement", status="not_applicable", provenance=US),
     ]
     complete.prior_filings = PriorFilings(filed_years=_ans([2022]))
     assert "banking.account" not in _ids(intake_checklist(complete, tax_year=2023))

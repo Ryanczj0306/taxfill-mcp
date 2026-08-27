@@ -159,6 +159,7 @@ from taxfill_core.knowledge import (
     Citation,
     DependentCareParams,
     FilingStatus,
+    ForeignAccountReportingParams,
     KnowledgePack,
     MagiPhaseoutRange,
     ContributionLimitsParams,
@@ -7799,6 +7800,653 @@ def capital_loss_limitation(
 
 
 # ---------------------------------------------------------------------------
+# Foreign tax credit — the IRC 904(j) de-minimis election (Phase I, item I4)
+# ---------------------------------------------------------------------------
+
+_IRC_904J_CITATION = Citation(
+    source=(
+        "IRC 904(j) 'Certain individuals exempt' (26 U.S.C. 904(j)), added by P.L. 105-34 "
+        "(Taxpayer Relief Act of 1997, enacted 1997-08-05). 904(j)(1): for an individual to "
+        "whom the subsection applies, '(A) the limitation of subsection (a) shall not apply, "
+        "(B) no taxes paid or accrued by the individual during such taxable year may be deemed "
+        "paid or accrued under subsection (c) in any other taxable year, and (C) no taxes paid "
+        "or accrued by the individual during any other taxable year may be deemed paid or "
+        "accrued under subsection (c) in such taxable year.' 904(j)(2): it applies if '(A) the "
+        "entire amount of such individual's gross income for the taxable year from sources "
+        "without the United States consists of qualified passive income, (B) the amount of the "
+        "creditable foreign taxes paid or accrued by the individual during the taxable year "
+        "does not exceed $300 ($600 in the case of a joint return), and (C) such individual "
+        "elects to have this subsection apply for the taxable year.' 904(j)(3)(A) defines "
+        "qualified passive income as passive income under 904(d)(2)(B) (without clause (iii)) "
+        "that 'is shown on a payee statement furnished to the individual'; 904(j)(3)(B) defines "
+        "creditable foreign taxes as taxes creditable under section 901 and likewise shown on a "
+        "payee statement; 904(j)(3)(C) takes 'payee statement' from section 6724(d)(2); and "
+        "904(j)(3)(D): 'This subsection shall not apply to any estate or trust.'"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim",
+)
+
+_IRC_901_CITATION = Citation(
+    source=(
+        "IRC 901(a) (26 U.S.C. 901(a)): 'If the taxpayer chooses to have the benefits of this "
+        "subpart, the tax imposed by this chapter shall, subject to the limitation of section "
+        "904, be credited with the amounts provided in the applicable paragraph of subsection "
+        "(b)...'; 901(b)(1) covers 'a citizen of the United States and ... a domestic "
+        "corporation' for 'any income, war profits, and excess profits taxes paid or accrued "
+        "during the taxable year to any foreign country or to any possession of the United "
+        "States'. 901(k) imposes a minimum holding period for withholding tax on dividends. "
+        "IRC 903 extends the creditable class to 'a tax paid in lieu of a tax on income, war "
+        "profits, or excess profits otherwise generally imposed by any foreign country or by "
+        "any possession of the United States'."
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section901&num=0&edition=prelim",
+)
+
+_IRC_904A_CITATION = Citation(
+    source=(
+        "IRC 904(a) 'Limitation' (26 U.S.C. 904(a)): 'The total amount of the credit taken "
+        "under section 901(a) shall not exceed the same proportion of the tax against which "
+        "such credit is taken which the taxpayer's taxable income from sources without the "
+        "United States (but not in excess of the taxpayer's entire taxable income) bears to his "
+        "entire taxable income for the same taxable year.' 904(c) 'Carryback and carryover of "
+        "excess tax paid' is the 1-year-back / 10-year-forward relief the 904(j) election gives "
+        "up."
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim",
+)
+
+# The entity kinds 904(j) speaks to. 904(j)(3)(D) excludes estates and trusts
+# outright, so the op refuses to pretend the election exists for them.
+FTC_ELECTION_ENTITIES: tuple[str, ...] = ("individual", "estate", "trust")
+
+# Only a JOINT RETURN takes the $600 amount. This is deliberately NOT routed
+# through _resolve_filing_status, which maps qualifying_surviving_spouse onto the
+# married_filing_jointly RATE column: 904(j)(2)(B) says "in the case of a joint
+# return", and a surviving spouse files as an unmarried individual that merely
+# borrows the joint rate schedule (IRC 1(a)(2) via 2(a)) — it is not a joint
+# return, so the limit is $300. Married filing separately is not one either.
+_JOINT_RETURN_STATUSES: frozenset[str] = frozenset({"married_filing_jointly"})
+
+
+class ForeignTaxCreditConditionCheck(BaseModel):
+    """One IRC 904(j) condition, with the statutory pinpoint and how it was decided."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    condition: str = Field(description="What the statute requires, in the statute's own terms.")
+    statute: str = Field(description="Pinpoint cite, e.g. 'IRC 904(j)(2)(B)'.")
+    met: bool
+    detail: str = Field(description="The input that decided it, and the figure where there is one.")
+
+
+class ForeignTaxCreditElectionResult(BaseModel):
+    """Result of :func:`foreign_tax_credit_election`: Form 1116, or one line on Schedule 3."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    form_1116_required: bool = Field(
+        description="The headline answer. False only when every 904(j)(2) condition is met AND the caller elects."
+    )
+    election_available: bool = Field(
+        description="True when every 904(j)(2)(A)/(B) condition and the 904(j)(3)(D) entity test are satisfied — before the caller's own election."
+    )
+    election_made: bool = Field(description="Whether the caller elected (904(j)(2)(C) is the taxpayer's own act, never inferred).")
+    route: Literal["schedule_3_election", "form_1116"] = Field(
+        description="Where the credit is claimed: one line on Schedule 3 under the election, or the full four-part Form 1116."
+    )
+    de_minimis_limit: int = Field(description="The 904(j)(2)(B) ceiling that applies to THIS return: $600 on a joint return, otherwise $300.")
+    limit_basis: str = Field(description="Why that ceiling — the filing status, spelled out.")
+    creditable_foreign_taxes: int = Field(description="The tested amount (whole dollars), after any 904(j)/line-12 reduction the caller passed.")
+    headroom: int = Field(description="de_minimis_limit - creditable_foreign_taxes: how much more withholding the election survives (negative when already over).")
+    conditions: list[ForeignTaxCreditConditionCheck] = Field(description="Every 904(j) condition, met or not, in statutory order.")
+    failed_conditions: list[str] = Field(description="Pinpoint cites of the conditions that failed — empty when the election is available.")
+    credit_on_schedule_3: int | None = Field(
+        default=None,
+        description=(
+            "The election's own amount: 'the smaller of (a) your total foreign tax, or (b) your "
+            "regular tax' (Instructions for Form 1116). None when not electing, or when "
+            "regular_tax was not supplied."
+        ),
+    )
+    schedule_3_line: str = Field(description="The printed line the credit lands on for this year's Schedule 3.")
+    credit_lost_to_regular_tax_cap: int | None = Field(
+        default=None,
+        description=(
+            "Foreign tax the election cannot use because regular tax is smaller — and under "
+            "904(j)(1)(B) it can never be carried to another year, so it is lost permanently. "
+            "None when regular_tax was not supplied."
+        ),
+    )
+    election_costs: list[str] = Field(
+        description=(
+            "What the election gives up, ALWAYS populated (even on the electing path) so the "
+            "answer is never presented as free: the 904(j)(1)(B)/(C) two-way carryover "
+            "forfeiture, and the reductions the election does not waive."
+        ),
+    )
+    form_1116_category_box: str | None = Field(
+        default=None,
+        description="On the Form 1116 route, which category box the passive-income facts point at — None when the facts do not settle it.",
+    )
+    form_1116_pack_key: str | None = Field(
+        default=None,
+        description=(
+            "The form pack that files the credit the long way, for the year asked about — or None "
+            "when that year ships no f1116 pack (2023-2025 only today), because naming a path that "
+            "does not exist sends the caller into a FileNotFoundError."
+        ),
+    )
+    not_modeled: list[str] = Field(description="What this op deliberately does not decide, so a caller cannot mistake silence for a clean bill.")
+    input_assumptions: list[str] = Field(
+        default_factory=list,
+        description="Assumptions made about the INPUTS, promoted out of `work` so a caller reading only form_1116_required cannot miss them.",
+    )
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+    citations: list[Citation] = Field(description="Every authority behind the answer, statute first.")
+
+
+def _require_ftc_de_minimis(pack: KnowledgePack, year: int) -> dict:
+    """The year pack's credits.foreign_tax_credit.de_minimis_election block, or a fix-it error."""
+    credits = pack.credits
+    block = (getattr(credits, "foreign_tax_credit", None) or {}) if credits is not None else {}
+    election = block.get("de_minimis_election") if isinstance(block, dict) else None
+    limits = (election or {}).get("creditable_foreign_taxes_limit")
+    if not isinstance(limits, dict) or "joint_return" not in limits or "other" not in limits:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no credits.foreign_tax_credit.de_minimis_election "
+            f"block — add it with its citation before computing the IRC 904(j) election. The two "
+            f"amounts are statutory and NOT inflation-indexed: 904(j)(2)(B) reads 'does not exceed "
+            f"$300 ($600 in the case of a joint return)', unchanged since P.L. 105-34 added the "
+            f"subsection in 1997, and the {year} Instructions for Form 1116 restate it under "
+            f"'Election To Claim the Foreign Tax Credit Without Filing Form 1116'. Copy the block "
+            f"from knowledge/federal/2023.yaml and re-point its citation url at "
+            f"https://www.irs.gov/pub/irs-prior/i1116--{year}.pdf. The figure is never hardcoded in "
+            f"calc.py — the citation has to travel with the number (dev plan section 7)."
+        )
+    return election
+
+
+def foreign_tax_credit_election(
+    creditable_foreign_taxes: int | float | Decimal | str,
+    all_foreign_income_passive: bool | None = None,
+    all_reported_on_payee_statement: bool | None = None,
+    year: int = 2025,  # newest year whose pack ships the 904(j) block; 2026 is planning_only
+
+    filing_status: FilingStatusInput | str = "single",
+    elect: bool = True,
+    entity: str = "individual",
+    regular_tax: int | float | Decimal | str | None = None,
+    reduction_in_foreign_taxes: int | float | Decimal | str = 0,
+    excess_credit_if_form_1116: int | float | Decimal | str | None = None,
+    knowledge_dir: str | Path | None = None,
+) -> ForeignTaxCreditElectionResult:
+    """Do I need Form 1116, or can I take the credit on Schedule 3 under IRC 904(j)?
+
+    This is the branch that decides whether the four-part Form 1116 gets filled
+    out at all, and for the population this repo serves it is usually answered
+    "no": a holder of a total-international index fund has foreign tax withheld
+    at source, it arrives on **Form 1099-DIV box 7**, and while it stays at or
+    under **$300 ($600 on a joint return)** IRC 904(j) lets the whole thing be
+    claimed as one number on Schedule 3 with no Form 1116, no three-country
+    column grid, and no 904(a) limitation fraction.
+
+    Three things this op refuses to guess, because guessing any of them silently
+    decides the election:
+
+    1. ``all_foreign_income_passive`` — 904(j)(2)(A) requires that "the ENTIRE
+       amount of such individual's gross income for the taxable year from sources
+       without the United States consists of qualified passive income". One dollar
+       of foreign wages, foreign self-employment income or a foreign-branch item
+       destroys the election for the whole year, no matter how small the withheld
+       tax is. Passive here is 904(d)(2)(B) passive without clause (iii), and for
+       this purpose the Instructions add that it "also includes (a) income subject
+       to the special rule for high-taxed income ... and (b) certain export
+       financing interest".
+    2. ``all_reported_on_payee_statement`` — 904(j)(3)(A) and (B) both require the
+       income AND the tax to be "shown on a payee statement furnished to the
+       individual" (a term 904(j)(3)(C) takes from section 6724(d)(2)). The
+       Instructions name the qualifying statements: "Form 1099-DIV, Form 1099-INT,
+       Schedule K-1 (Form 1041), Schedule K-3 (Form 1065), Schedule K-3 (Form
+       1120-S), or similar substitute statements". Foreign tax on a foreign bank
+       account with no US information return is exactly what this condition
+       excludes.
+    3. ``elect`` — 904(j)(2)(C) makes the election the taxpayer's own act
+       ("such individual ELECTS to have this subsection apply"). Availability and
+       election are reported separately so a caller can see that a filer who
+       QUALIFIES may still choose Form 1116 — which is the right choice whenever
+       there is an excess credit worth carrying.
+
+    THE ELECTION IS NOT FREE, and this op always says so. 904(j)(1)(B) and (C)
+    forbid carrying foreign tax **out of** an election year and **into** one, so
+    the 904(c) 1-year-back / 10-year-forward carryover is forfeited in both
+    directions for that year. Two concrete consequences the op quantifies when it
+    can: pass ``regular_tax`` (Form 1116 line 20 for individuals — Form 1040 line
+    16 plus Schedule 2 line 2, less any tax from Form 4972) and it returns both
+    the amount actually claimed, "the smaller of (a) your total foreign tax, or
+    (b) your regular tax", and ``credit_lost_to_regular_tax_cap``, the difference
+    — which under the election can never be recovered in another year. Pass
+    ``excess_credit_if_form_1116`` (what Form 1116 line 14 would exceed line 23
+    by) and the work names the carryover being given up.
+
+    What the election does NOT waive: "You are still required to take into
+    account the general rules for determining whether a tax is creditable" (IRC
+    901/903 — and 901(k)'s minimum holding period on dividend withholding), and
+    "You are still required to reduce the taxes available for credit by any amount
+    you would have entered on line 12 of Form 1116." Pass
+    ``reduction_in_foreign_taxes`` for that line-12 amount and it is subtracted
+    BEFORE the $300/$600 test. **That ORDER is this op's reasoned reading, NOT
+    something the Instructions state** — the sentence above appears under "If you
+    make this election, the following rules apply", i.e. among the consequences of
+    electing rather than as a step in the eligibility test (corrected 2026-08-27
+    after an adversarial review found the claim overstated). The reading rests on
+    the statute instead: 904(j)(2) tests "creditable foreign taxes", and a tax
+    that line 12 removes was never creditable in the first place. It is
+    nonetheless TAXPAYER-FAVOURABLE — it lets a filer whose gross taxes exceed the
+    limit qualify — so both figures are returned and the assumption is promoted
+    into ``input_assumptions``, with the gross-basis verdict stated whenever the
+    two differ. A filer near the limit should have a preparer confirm the order.
+
+    Args:
+        creditable_foreign_taxes: foreign tax creditable under section 901/903 —
+            for the common case, the total of Form 1099-DIV box 7 and Form
+            1099-INT box 6 across every payer. Before any line-12 reduction.
+        all_foreign_income_passive: caller's judgment on 904(j)(2)(A). Required.
+        all_reported_on_payee_statement: caller's judgment on 904(j)(3)(A)/(B).
+            Required.
+        year: tax year; the $300/$600 amounts and the Schedule 3 line come from
+            that year's knowledge pack.
+        filing_status: only ``married_filing_jointly`` is "a joint return".
+        elect: 904(j)(2)(C). Default True — the caller asking this question is
+            normally asking whether they may take the shortcut.
+        entity: ``individual`` | ``estate`` | ``trust``. 904(j)(3)(D) excludes the
+            last two.
+        regular_tax: Form 1116 line 20. Optional; unlocks the claimed amount and
+            the permanently-lost excess.
+        reduction_in_foreign_taxes: the Form 1116 line 12 reduction, which the
+            election does not waive.
+        excess_credit_if_form_1116: what would be carried under 904(c) if Form
+            1116 were filed instead. Optional; makes the forfeiture concrete.
+        knowledge_dir: override the knowledge base directory.
+
+    Returns:
+        :class:`ForeignTaxCreditElectionResult`.
+
+    Raises:
+        ValueError: a required judgment was not supplied, an unknown
+            ``filing_status``/``entity``, a negative amount, or a year whose pack
+            has no de-minimis block — every message says what to do next.
+    """
+    if all_foreign_income_passive is None:
+        raise ValueError(
+            "all_foreign_income_passive is required — IRC 904(j)(2)(A) needs 'the ENTIRE amount "
+            "of such individual's gross income for the taxable year from sources without the "
+            "United States' to consist of qualified passive income, and no engine can infer that "
+            "from a tax figure. Pass True only after checking EVERY foreign-source item: interest "
+            "and dividends normally qualify (904(d)(2)(B) passive income, plus high-taxed income "
+            "and certain export financing interest per the Instructions for Form 1116), while any "
+            "foreign wages, foreign self-employment income, foreign rental income, a foreign "
+            "branch item or a section 951A inclusion makes it False for the WHOLE YEAR regardless "
+            "of how small the withheld tax is. False means Form 1116 is required — run "
+            "get_sources('foreign tax credit') and fill formpacks/federal/<year>/f1116."
+        )
+    if all_reported_on_payee_statement is None:
+        raise ValueError(
+            "all_reported_on_payee_statement is required — IRC 904(j)(3)(A) and (B) both require "
+            "the income AND the foreign tax to be 'shown on a payee statement furnished to the "
+            "individual' (section 6724(d)(2)). The Instructions for Form 1116 name the qualifying "
+            "statements: Form 1099-DIV, Form 1099-INT, Schedule K-1 (Form 1041), Schedule K-3 "
+            "(Form 1065), Schedule K-3 (Form 1120-S), or similar substitute statements. Foreign "
+            "tax withheld on a foreign brokerage or bank account that sends no US information "
+            "return is exactly what this condition excludes, so pass False for it — the "
+            "$300/$600 test is then irrelevant and Form 1116 is required."
+        )
+    if entity not in FTC_ELECTION_ENTITIES:
+        raise ValueError(
+            f"unknown entity {entity!r} — use one of: {', '.join(FTC_ELECTION_ENTITIES)}. "
+            f"IRC 904(j)(3)(D) is explicit: 'This subsection shall not apply to any estate or "
+            f"trust', so the election exists for individuals only."
+        )
+    status = str(filing_status)
+    if status not in set(FILING_STATUSES) | {_QSS}:
+        raise ValueError(
+            f"unknown filing_status {status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+
+    gross_taxes = _to_decimal(creditable_foreign_taxes, "creditable_foreign_taxes")
+    reduction = _to_decimal(reduction_in_foreign_taxes, "reduction_in_foreign_taxes")
+    if gross_taxes < 0:
+        raise ValueError(
+            f"creditable_foreign_taxes must be zero or more, got {_money(gross_taxes)} — pass the "
+            f"foreign tax actually withheld or accrued (Form 1099-DIV box 7 + Form 1099-INT box 6); "
+            f"a refund of foreign tax is a foreign tax redetermination, which is Schedule C "
+            f"(Form 1116) work, not a negative credit"
+        )
+    if reduction < 0:
+        raise ValueError(
+            f"reduction_in_foreign_taxes must be zero or more, got {_money(reduction)} — Form 1116 "
+            f"line 12's box is printed inside parentheses and takes the POSITIVE reduction"
+        )
+    tested_exact = max(Decimal(0), gross_taxes - reduction)
+    tested = irs_round(tested_exact)
+
+    pack = _load_federal(year, knowledge_dir)
+    election_block = _require_ftc_de_minimis(pack, year)
+    limits = election_block["creditable_foreign_taxes_limit"]
+    joint = status in _JOINT_RETURN_STATUSES
+    limit = int(limits["joint_return"] if joint else limits["other"])
+    if joint:
+        limit_basis = (
+            "married filing jointly — IRC 904(j)(2)(B)'s '$600 in the case of a joint return'"
+        )
+    elif status == _QSS:
+        limit_basis = (
+            "qualifying surviving spouse — $300, NOT $600: a surviving spouse borrows the joint "
+            "RATE schedule (IRC 1(a)(2) via 2(a)) but does not file a joint return, and "
+            "904(j)(2)(B) conditions the $600 on 'the case of a joint return'"
+        )
+    elif status == "married_filing_separately":
+        limit_basis = (
+            "married filing separately — $300: a separate return is not 'a joint return' under "
+            "IRC 904(j)(2)(B), so each spouse tests their own taxes against $300"
+        )
+    else:
+        limit_basis = f"{status.replace('_', ' ')} — $300 under IRC 904(j)(2)(B) (not a joint return)"
+
+    is_individual = entity == "individual"
+    within_limit = tested <= limit
+    conditions = [
+        ForeignTaxCreditConditionCheck(
+            condition=(
+                "the entire amount of gross income from sources without the United States "
+                "consists of qualified passive income"
+            ),
+            statute="IRC 904(j)(2)(A) with 904(j)(3)(A)",
+            met=bool(all_foreign_income_passive),
+            detail=(
+                "caller confirmed every foreign-source item is passive category income"
+                if all_foreign_income_passive
+                else "caller reported foreign-source income that is NOT all passive — one "
+                "non-passive dollar ends the election for the whole year"
+            ),
+        ),
+        ForeignTaxCreditConditionCheck(
+            condition="the income and the foreign taxes on it are shown on a payee statement",
+            statute="IRC 904(j)(3)(A) and (B), payee statement per 904(j)(3)(C)/6724(d)(2)",
+            met=bool(all_reported_on_payee_statement),
+            detail=(
+                "caller confirmed a qualified payee statement (1099-DIV / 1099-INT / K-1 (1041) / "
+                "K-3 (1065) / K-3 (1120-S) or substitute) covers all of it"
+                if all_reported_on_payee_statement
+                else "caller reported foreign income or tax NOT shown on a payee statement — "
+                "904(j)(3)(A)/(B) exclude it from qualified passive income and creditable taxes"
+            ),
+        ),
+        ForeignTaxCreditConditionCheck(
+            condition="creditable foreign taxes do not exceed $300 ($600 in the case of a joint return)",
+            statute="IRC 904(j)(2)(B)",
+            met=within_limit,
+            detail=(
+                f"{_dollars(tested)} tested against the {_dollars(limit)} ceiling "
+                f"({limit_basis}); "
+                + (f"{_dollars(limit - tested)} of headroom" if within_limit else f"over by {_dollars(tested - limit)}")
+            ),
+        ),
+        ForeignTaxCreditConditionCheck(
+            condition="the filer is not an estate or trust",
+            statute="IRC 904(j)(3)(D)",
+            met=is_individual,
+            detail=(
+                "individual"
+                if is_individual
+                else f"entity is a {entity} — 'This subsection shall not apply to any estate or trust'"
+            ),
+        ),
+    ]
+    failed = [c.statute for c in conditions if not c.met]
+    available = not failed
+    election_made = bool(available and elect)
+    conditions.append(
+        ForeignTaxCreditConditionCheck(
+            condition="the individual elects to have IRC 904(j) apply for the taxable year",
+            statute="IRC 904(j)(2)(C)",
+            met=election_made,
+            detail=(
+                "caller elected; the election is made by entering the credit directly on the "
+                "return's foreign tax credit line, with no Form 1116 attached"
+                if election_made
+                else (
+                    "caller chose Form 1116 even though the election was available — the right "
+                    "call whenever there is an excess credit worth carrying under 904(c)"
+                    if available
+                    else "not reached: an earlier condition failed"
+                )
+            ),
+        )
+    )
+
+    schedule_3_line = "Schedule 3 (Form 1040), Part I, line 1"
+    claimed: int | None = None
+    lost: int | None = None
+    if regular_tax is not None:
+        reg = _to_decimal(regular_tax, "regular_tax")
+        if reg < 0:
+            raise ValueError(
+                f"regular_tax must be zero or more, got {_money(reg)} — it is Form 1116 line 20 "
+                f"(individuals: Form 1040 line 16 plus Schedule 2 line 2, less any tax on line 16 "
+                f"from Form 4972); if the amount is zero or less the Instructions say enter -0-"
+            )
+        reg_dollars = irs_round(reg)
+        if election_made:
+            claimed = min(tested, reg_dollars)
+            lost = max(0, tested - reg_dollars)
+
+    costs = [
+        "IRC 904(j)(1)(B): no foreign tax paid or accrued in an election year may be carried to "
+        "ANY other year — the 904(c) 1-year carryback and 10-year carryforward is forfeited for "
+        "that year's taxes.",
+        "IRC 904(j)(1)(C): and no foreign tax from any other year may be carried INTO an election "
+        "year, so an existing carryforward cannot be used up in it (carryovers to and from other "
+        "years are themselves unaffected).",
+        "The election does NOT waive creditability: IRC 901/903 still decide whether a tax "
+        "qualifies at all, including 901(k)'s minimum holding period for withholding tax on "
+        "dividends — the trap for a fund position held briefly around a distribution.",
+        "The election does NOT waive the Form 1116 line 12 reduction: 'You are still required to "
+        "reduce the taxes available for credit by any amount you would have entered on line 12 of "
+        "Form 1116.'",
+        "IRC 904(j)(1)(A) turns the 904(a) limitation off, which is a simplification, not extra "
+        "credit: the amount claimed is still capped at regular tax, and any excess above it is "
+        "lost outright because (B) blocks the carryover.",
+    ]
+    if excess_credit_if_form_1116 is not None:
+        excess = irs_round(_to_decimal(excess_credit_if_form_1116, "excess_credit_if_form_1116"))
+        if excess > 0:
+            costs.insert(
+                0,
+                f"CONCRETE COST HERE: {_dollars(excess)} of excess credit would be carried under "
+                f"904(c) if Form 1116 were filed; electing 904(j) forfeits all of it.",
+            )
+    if lost:
+        costs.insert(
+            0,
+            f"CONCRETE COST HERE: regular tax is smaller than the foreign tax, so {_dollars(lost)} "
+            f"is not claimable this year and 904(j)(1)(B) makes it unrecoverable in any other year.",
+        )
+
+    category_box: str | None = None
+    if all_foreign_income_passive:
+        category_box = (
+            "box c, Passive category income — the basket 1099-DIV box 7 / 1099-INT box 6 "
+            "withholding belongs to (Form 1116 Part IV summarises it on line 27)"
+        )
+
+    assumptions = [
+        f"creditable_foreign_taxes is taken as already limited to taxes creditable under IRC "
+        f"901/903; this op tests the {_dollars(limit)} ceiling and does not re-decide "
+        f"creditability.",
+    ]
+    if reduction > 0:
+        gross_verdict = "PASSES" if gross_taxes <= limit else "FAILS"
+        net_verdict = "PASSES" if tested_exact <= limit else "FAILS"
+        assumptions.append(
+            f"ORDERING — THIS OP'S READING, NOT A QUOTED RULE: the Form 1116 line 12 reduction of "
+            f"{_money(reduction)} was subtracted BEFORE the {_dollars(limit)} test, so the tested "
+            f"figure is {_money(tested_exact)} rather than the gross {_money(gross_taxes)}. The "
+            f"Instructions sentence 'You are still required to reduce the taxes available for credit "
+            f"by any amount you would have entered on line 12' sits under 'If you make this "
+            f"election, the following rules apply' — among the CONSEQUENCES of electing, not as a "
+            f"step in the eligibility test — so it does not set this order. The statutory basis is "
+            f"904(j)(2)'s word 'creditable': a tax line 12 removes was never creditable. But the "
+            f"reading is TAXPAYER-FAVOURABLE, and on these numbers it changes the answer: on the "
+            f"NET basis the test {net_verdict}, on the GROSS basis it {gross_verdict}"
+            + (
+                ". THE TWO DISAGREE — have a preparer confirm the order before electing."
+                if net_verdict != gross_verdict else
+                ", so the order does not change the outcome here."
+            )
+        )
+    if regular_tax is None and election_made:
+        assumptions.append(
+            "regular_tax was not supplied, so credit_on_schedule_3 is None: the election's amount "
+            "is 'the smaller of (a) your total foreign tax, or (b) your regular tax' (Form 1116 "
+            "line 20 = Form 1040 line 16 + Schedule 2 line 2, less Form 4972 tax). Pass it to get "
+            "the number that goes on the return."
+        )
+
+    not_modeled = [
+        "the 904(a) limitation fraction itself (Form 1116 lines 15-24) — that is the form's own "
+        "math, and this op only decides whether the form is needed",
+        "Schedule B (Form 1116) carryover reconciliation and Schedule C (Form 1116) foreign tax "
+        "redeterminations",
+        "the credit-versus-DEDUCTION choice (a foreign income tax may instead be an itemized "
+        "deduction, all-or-nothing for the year — Pub 514)",
+        "whether each foreign levy is a creditable income tax or an in-lieu-of tax (IRC 901/903, "
+        "the 901(k) holding period, and Treas. Reg. 1.901-2)",
+        "US Virgin Islands tax, which uses Form 8689 rather than Form 1116",
+        "the nonresident-alien restriction of IRC 906 (a nonresident generally cannot take the "
+        "credit at all)",
+    ]
+
+    lines = [
+        f"IRC 904(j) de-minimis foreign tax credit election — tax year {year}, {status.replace('_', ' ')}, {entity}.",
+        f"  Creditable foreign taxes as passed .......... {_money(gross_taxes)}",
+    ]
+    if reduction > 0:
+        lines.append(f"  Less Form 1116 line 12 reduction ............ {_money(reduction)}")
+        lines.append(f"  Tested amount ............................... {_money(tested_exact)} -> {_dollars(tested)} (IRS rounding)")
+    else:
+        lines.append(f"  Tested amount ............................... {_dollars(tested)} (IRS rounding)")
+    lines.append(f"  IRC 904(j)(2)(B) ceiling .................... {_dollars(limit)}  [{limit_basis}]")
+    lines.append("  Conditions (IRC 904(j)):")
+    for check in conditions:
+        lines.append(f"    [{'x' if check.met else ' '}] {check.statute}: {check.condition}")
+        lines.append(f"        {check.detail}")
+    if election_made:
+        lines.append(
+            "  => NO FORM 1116. Make the election by entering the credit directly on "
+            f"{schedule_3_line}: 'To make the election, just enter on the foreign tax credit line "
+            "of your tax return (for example, Schedule 3 (Form 1040), Part I, line 1) the smaller "
+            "of (a) your total foreign tax, or (b) your regular tax.'"
+        )
+        if claimed is not None:
+            lines.append(
+                f"     smaller of foreign tax {_dollars(tested)} and regular tax "
+                f"{_dollars(irs_round(_to_decimal(regular_tax, 'regular_tax')))} = {_dollars(claimed)}"
+            )
+            if lost:
+                lines.append(
+                    f"     {_dollars(lost)} of foreign tax exceeds regular tax and is LOST — "
+                    f"904(j)(1)(B) blocks carrying it to any other year."
+                )
+    elif available:
+        lines.append(
+            "  => The election was AVAILABLE and you declined it, so Form 1116 is required. That "
+            "is the right choice whenever the excess credit is worth carrying under 904(c)."
+        )
+    else:
+        lines.append(
+            "  => FORM 1116 IS REQUIRED. Failed: " + ", ".join(failed) + ". File Form 1116 for "
+            "each category of income, checking exactly one box above Part I."
+        )
+        if category_box:
+            lines.append(f"     For the passive basket that is {category_box}.")
+    lines.append("  What the election costs:")
+    lines.extend(f"    - {cost}" for cost in costs)
+
+    return ForeignTaxCreditElectionResult(
+        form_1116_required=not election_made,
+        election_available=available,
+        election_made=election_made,
+        route="schedule_3_election" if election_made else "form_1116",
+        de_minimis_limit=limit,
+        limit_basis=limit_basis,
+        creditable_foreign_taxes=tested,
+        headroom=limit - tested,
+        conditions=conditions,
+        failed_conditions=failed,
+        credit_on_schedule_3=claimed,
+        schedule_3_line=schedule_3_line,
+        credit_lost_to_regular_tax_cap=lost,
+        election_costs=costs,
+        form_1116_category_box=None if election_made else category_box,
+        # None rather than a path that does not exist: f1116 ships for 2023-2025
+        # only, and a caller following an invented key hits FileNotFoundError
+        # (found 2026-08-27 by the adversarial review, which walked 2019-2022).
+        form_1116_pack_key=(
+            f"formpacks/federal/{year}/f1116"
+            if (Path(__file__).resolve().parents[4] / "formpacks" / "federal" / str(year) / "f1116").is_dir()
+            else None
+        ),
+        not_modeled=not_modeled,
+        input_assumptions=assumptions,
+        inputs={
+            "creditable_foreign_taxes": str(gross_taxes),
+            "reduction_in_foreign_taxes": str(reduction),
+            "all_foreign_income_passive": bool(all_foreign_income_passive),
+            "all_reported_on_payee_statement": bool(all_reported_on_payee_statement),
+            "year": year,
+            "filing_status": status,
+            "elect": bool(elect),
+            "entity": entity,
+            "regular_tax": None if regular_tax is None else str(_to_decimal(regular_tax, "regular_tax")),
+            "excess_credit_if_form_1116": (
+                None if excess_credit_if_form_1116 is None
+                else str(_to_decimal(excess_credit_if_form_1116, "excess_credit_if_form_1116"))
+            ),
+        },
+        work="\n".join(lines),
+        citation=_IRC_904J_CITATION,
+        citations=[
+            _IRC_904J_CITATION,
+            _IRC_901_CITATION,
+            _IRC_904A_CITATION,
+            Citation(
+                source=(
+                    f"Instructions for Form 1116 ({year}), General Instructions, 'Election To Claim "
+                    f"the Foreign Tax Credit Without Filing Form 1116' (every condition, the "
+                    f"carryover forfeiture, the estates-and-trusts exclusion, the qualified payee "
+                    f"statements, and how to make the election) and the Line 20 instructions (how "
+                    f"to figure the 'regular tax' the election is capped at)."
+                ),
+                url=f"https://www.irs.gov/pub/irs-prior/i1116--{year}.pdf",
+            ),
+            Citation(
+                source=(
+                    f"Form 1116 ({year}), the form the election avoids: category boxes a-g above "
+                    f"Part I ('Check only one box on each Form 1116'), Part I's three-country "
+                    f"column grid, Part II's Paid/Accrued method election, Part III lines 15-23 "
+                    f"(the 904(a) limitation the election turns off) and line 35 ('Enter here and "
+                    f"on Schedule 3 (Form 1040), line 1')."
+                ),
+                url=f"https://www.irs.gov/pub/irs-prior/f1116--{year}.pdf",
+            ),
+        ],
+    )
+
+
+# ---------------------------------------------------------------------------
 # Treaty benefit (Schedule OI item L / Form 1040-NR line 1k) — Phase G item G1
 # ---------------------------------------------------------------------------
 
@@ -7818,6 +8466,80 @@ _TREATY_JUDGMENT_NOTE = (
     "country before US entry, and the saving-clause analysis) stays the AGENT'S judgment with the "
     "user; record the decided position with this citation."
 )
+
+# ── the DISCLOSURE half of a treaty position (Phase I4: the f8833 packs) ──────
+#
+# Every source below was opened, not recalled:
+#   IRC 6114(a)/(b)          — uscode.house.gov, title 26 section 6114
+#   IRC 6712(a)/(b)/(c)      — uscode.house.gov, title 26 section 6712
+#   Treas. Reg. 301.6114-1   — ecfr.gov, 26 CFR 301.6114-1 (the (b) list, the
+#                              (c) waivers, and (d)(1)'s "fully completed
+#                              Form 8833")
+#   Treas. Reg. 301.7701(b)-7(a)(1), (b), (c)(1)(i)  — ecfr.gov
+#   Form 8833 (Rev. 12-2022) face + instructions pp. 3-4 — irs.gov/pub/irs-pdf/f8833.pdf
+#
+# Why this is on EVERY work string, and why it leads with the WAIVER: the form
+# is not always required, and the failure mode in both directions is expensive.
+# Telling a China Art. 20(c) student they must file Form 8833 is wrong law
+# (301.6114-1(c)(1)(iv) and (c)(2) both waive it); saying nothing at all leaves
+# a residency / dual-resident filer exposed to the 6712 penalty on a disclosure
+# that has NO waiver. So the note states the requirement, the penalty, the
+# waivers that cover this op's usual population, and the two positions that are
+# genuinely reportable.
+_TREATY_DISCLOSURE_NOTE = (
+    " DISCLOSURE — the form, and whether you actually need it: a treaty-based return position is "
+    "disclosed on Form 8833, 'Treaty-Based Return Position Disclosure Under Section 6114 or "
+    "7701(b)' (current revision Rev. 12-2022; packs at formpacks/federal/{2023,2024,2025}/f8833), "
+    "attached to the return — IRC 6114(a) requires the disclosure and Treas. Reg. 301.6114-1(d)(1) "
+    "makes THIS form the vehicle ('a fully completed Form 8833'), one form per position (printed on "
+    "the form's own face). An undisclosed position that needed disclosing costs $1,000 ($10,000 for "
+    "a C corporation) per failure under IRC 6712(a), waivable only on reasonable cause AND good "
+    "faith (6712(b)) and additive to any other penalty (6712(c)). BUT CHECK THE WAIVER FIRST — most "
+    "of what this op computes is WAIVED and needs no Form 8833: Treas. Reg. 301.6114-1(c)(1)(iv) "
+    "waives a position that a treaty reduces or modifies the taxation of income from dependent "
+    "personal services or of 'income derived by artistes, athletes, students, trainees or "
+    "teachers', which covers every student_wages / scholarship / payments_from_abroad / "
+    "teacher_wages claim here (the Form 8833 instructions, Rev. 12-2022 p. 3, 'Exceptions from "
+    "reporting', print the same waiver as a bullet, spelling it 'artists' — the quotation above "
+    "is the REGULATION's wording), and 301.6114-1(c)(2) independently waives an "
+    "individual whose otherwise-reportable items total $10,000 or less for the taxable year. A "
+    "China Art. 20(c) $5,000 student-wage exemption is therefore waived twice over. WHAT IS NOT "
+    "WAIVED, and is the real 8833 case in this lane: that your RESIDENCY is determined under the "
+    "treaty and apart from the Code (301.6114-1(b)(8) — specifically required, and its (c)(2) "
+    "threshold is $100,000, not $10,000), and the DUAL-RESIDENT TAXPAYER statement, which Treas. "
+    "Reg. 301.7701(b)-7(b) and (c)(1)(i) require as 'a fully completed Form 8833' attached to Form "
+    "1040-NR with no 301.6114-1(c) waiver reaching it at all. Filing the form when it is waived is "
+    "permitted and harmless; skipping it when it is not is the penalty."
+)
+
+# other_income never grants relief in any shipped treaty (all five packs' Other
+# Income articles leave US-arising items US-taxable), so nothing on that branch
+# reduces US tax, no treaty-based return position is taken, and section 6114 is
+# not triggered by it. Said before the general note, or the note reads as a duty
+# that does not exist here.
+_TREATY_DISCLOSURE_NO_POSITION = (
+    " DISCLOSURE: because no article reduces the US tax on this item, NO treaty-based return "
+    "position is taken on it and IRC 6114 is not triggered by this branch — there is nothing to "
+    "disclose for it. If you take some OTHER treaty position on the same return, that one is "
+    "disclosed as follows."
+)
+
+
+def _treaty_disclosure_note(income_class: str) -> str:
+    """The Form 8833 pointer appended to every ``treaty_benefit`` work string.
+
+    Changes no number: this is the disclosure half of the same position the op
+    just priced.
+
+    Only ``other_income`` gets the extra "no position taken" sentence. The
+    tempting shortcut — key it on ``exempt_amount == 0`` — is WRONG, and India is
+    the counterexample: ``india``/``student_wages`` exempts $0 and still rests on
+    a treaty position, because Art. 21(2)'s deduction parity is a treaty
+    provision overriding the Code's no-standard-deduction rule for a
+    nonresident. A $0 exemption therefore does not mean no position was taken.
+    """
+    head = _TREATY_DISCLOSURE_NO_POSITION if income_class == "other_income" else ""
+    return head + _TREATY_DISCLOSURE_NOTE
 
 
 class TreatyBenefitResult(BaseModel):
@@ -7943,7 +8665,12 @@ def treaty_benefit(
             article=article,
             limits_applied=limits,
             inputs=inputs,
-            work=work + period_note + _TREATY_JUDGMENT_NOTE,
+            work=(
+                work
+                + period_note
+                + _TREATY_JUDGMENT_NOTE
+                + _treaty_disclosure_note(income_class)
+            ),
             citation=citation,
         )
 
@@ -8487,5 +9214,503 @@ def state_tax(
         base_kind=params.base,
         inputs=inputs,
         work=work,
+        citation=params.citation,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Foreign-asset / foreign-account REPORTING — Form 8938 and the FBAR (I4)
+#
+# The op answers the one question a filer never volunteers: "I have an account
+# back home — do I have to tell anyone?" It is deliberately NOT a tax
+# calculation. Both duties exist even when the account produced no income and
+# no tax is owed (Treas. Reg. 1.6038D-2(a)(8): the form "must be furnished ...
+# EVEN IF none of the specified foreign financial assets that must be reported
+# affect the specified person's tax liability"), which is exactly why nothing in
+# a refund-shaped interview surfaces them.
+#
+# THE OP MAY NOT GUESS. Every path that cannot be decided from the inputs
+# returns `required = None` with a `must_ask` entry naming the missing fact and
+# the authority that makes it decisive — a silent "no" here is the most
+# expensive wrong answer in this repo.
+# ---------------------------------------------------------------------------
+
+
+def _require_foreign_account_reporting(pack: KnowledgePack, year: int) -> ForeignAccountReportingParams:
+    params = pack.foreign_account_reporting
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no foreign_account_reporting block — add it with "
+            f"citations to Treas. Reg. 1.6038D-2 (the Form 8938 thresholds), 31 CFR 1010.306(c) / "
+            f"FinCEN's FBAR instructions (the $10,000 aggregate maximum-value test) and 31 U.S.C. "
+            f"5321(a)(5) (the FBAR penalties); see knowledge/federal/2025.yaml"
+        )
+    return params
+
+
+class ForeignReportingDuty(BaseModel):
+    """One of the two duties, decided (or explicitly undecided) for this filer."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    form: str
+    required: bool | None = Field(
+        description="True/False when the inputs decide it; None when a needed fact is missing (see must_ask)."
+    )
+    threshold_year_end: int | None = Field(
+        default=None, description="Form 8938 only: the last-day-of-year figure the filer must exceed."
+    )
+    threshold_any_time: int | None = Field(
+        default=None,
+        description="The maximum-value-during-the-period figure the filer must exceed (the FBAR's single $10,000 lands here).",
+    )
+    tripped_by: list[str] = Field(
+        default_factory=list, description="Which test(s) the supplied values exceeded, e.g. ['any_time']."
+    )
+    filed_with: str
+    due: str
+    must_ask: list[str] = Field(
+        default_factory=list, description="Facts that must be elicited before this duty can be decided."
+    )
+    penalty_exposure: str
+    citation: Citation
+
+
+class ForeignAssetReportingResult(BaseModel):
+    """Result of :func:`foreign_asset_reporting`: both duties, never just one."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    form_8938: ForeignReportingDuty
+    fbar: ForeignReportingDuty
+    any_duty_undecided: bool = Field(
+        description="True when either duty came back None — the caller must elicit the must_ask facts."
+    )
+    must_ask: list[str] = Field(description="Union of both duties' must_ask, in the order they should be asked.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+_ABROAD_ASK = (
+    "Do you meet the IRC 911(d)(1) qualified-individual test for this year — either a bona fide "
+    "resident of a foreign country for an uninterrupted period including an entire tax year, or "
+    "present in a foreign country at least 330 full days in 12 consecutive months ending in this "
+    "year — with a tax home in a foreign country? Treas. Reg. 1.6038D-2(a)(3) keys the 4x-higher "
+    "Form 8938 thresholds to that test, not to where you feel you live, so living overseas without "
+    "meeting it leaves you on the in-US thresholds."
+)
+
+
+def foreign_asset_reporting(
+    year: int = 2025,
+    filing_status: FilingStatusInput = "single",
+    *,
+    us_person: bool | None = None,
+    lives_abroad: bool | None = None,
+    specified_asset_value_year_end: float | int | Decimal | str | None = None,
+    specified_asset_value_max: float | int | Decimal | str | None = None,
+    foreign_account_value_max_aggregate: float | int | Decimal | str | None = None,
+    has_foreign_account_signature_authority: bool = False,
+    filer_type: str = "specified_individual",
+    knowledge_dir: str | Path | None = None,
+) -> ForeignAssetReportingResult:
+    """Must this filer file Form 8938, the FBAR, both, or neither? (IRC 6038D / 31 U.S.C. 5314)
+
+    BOTH duties are always answered, because the single most common error is
+    answering one and calling it done: "The Form 8938 filing requirement does not
+    replace or otherwise affect a taxpayer's obligation to file FinCEN Form 114"
+    (IRS, Comparison of Form 8938 and FBAR requirements), and the two reach
+    DIFFERENT assets in both directions — an account you only have signature
+    authority over is FBAR-reportable and generally not 8938-reportable, while
+    foreign stock held outside an account, a foreign partnership interest and a
+    foreign hedge fund are 8938-reportable and not FBAR-reportable.
+
+    Args:
+        year: tax year; the thresholds come from that year's knowledge pack.
+        filing_status: one of the five inputs. **Not** routed through
+            ``_resolve_filing_status``, and that is the point: that helper maps
+            ``qualifying_surviving_spouse`` onto the married-filing-jointly
+            column because a QSS uses the joint RATE schedule, and applying it
+            here would DOUBLE a QSS filer's Form 8938 threshold. Treas. Reg.
+            1.6038D-2(a)(2)/(a)(4) are keyed to filers who "file a joint annual
+            return"; a QSS does not, so it takes the (a)(1)/(a)(3) general-rule
+            amounts. The pack stores all five statuses explicitly for exactly
+            this reason.
+        us_person: True for a US citizen or a resident alien; False for a
+            nonresident alien. Required — passing ``None`` returns both duties
+            undecided rather than assuming. See the notes below on why the two
+            filings define the term differently.
+        lives_abroad: True only for an IRC 911(d)(1) qualified individual. When
+            ``None`` the op evaluates BOTH threshold ladders and still answers
+            definitively if they agree; when they disagree it returns
+            ``required=None`` with the 911(d)(1) question in ``must_ask``.
+        specified_asset_value_year_end: aggregate value of all specified foreign
+            financial assets on the LAST DAY of the taxable year.
+        specified_asset_value_max: MAXIMUM aggregate value at ANY TIME during the
+            taxable year. Either test alone triggers Form 8938 (the regulation
+            joins them with "or"), so a filer who empties an account before
+            December 31 still files.
+        foreign_account_value_max_aggregate: the FBAR measure — the sum of the
+            MAXIMUM values of every foreign financial account during the CALENDAR
+            year. Not the year-end balance, and not per account.
+        has_foreign_account_signature_authority: True when the filer has
+            signature or other authority over a foreign account they have no
+            financial interest in. That alone can require an FBAR (31 CFR
+            1010.350(a)) even when the answer for Form 8938 is no.
+        filer_type: ``specified_individual`` (default) or
+            ``specified_domestic_entity``.
+
+    What the op will NOT do, in each case with the authority:
+
+    * **Guess "no" from silence.** Omitting a value leaves that duty ``None``,
+      never False. ``any_duty_undecided`` and ``must_ask`` carry it out.
+    * **Treat the FBAR threshold as year-end or per-account.** It is an
+      AGGREGATE across every foreign financial account and a MAXIMUM-value test
+      (31 CFR 1010.306(c); FinCEN's FBAR instructions: "If the maximum account
+      value of a single account or aggregate of the maximum account values of
+      multiple accounts exceeds $10,000, an FBAR must be filed"), and filing
+      status does not move it.
+    * **Assume "US person" means the same thing on both filings.** For Form 8938
+      a specified individual includes a resident alien "for any part of the tax
+      year" and a nonresident alien who elects joint-return resident treatment or
+      is a bona fide resident of American Samoa or Puerto Rico (Instructions for
+      Form 8938, "Specified Individual"). For the FBAR it is a citizen, a
+      resident alien under 26 U.S.C. 7701(b) measured against 31 CFR
+      1010.100(hhh)'s definition of "United States", or a US entity (31 CFR
+      1010.350(b)) — which is why residents of US TERRITORIES file FBARs while
+      the territories are NOT "the United States" for the Form 8938 threshold.
+      The op takes one ``us_person`` flag and states the divergence rather than
+      pretending to resolve it.
+    * **Prorate a part-year specified individual.** Treas. Reg.
+      1.6038D-2(a)(9) makes the reporting period the portion of the year the
+      filer WAS a specified individual — the F-1-to-H-1B year in this repo's own
+      user base. The op reports the values it is given; segmenting them is the
+      caller's job, and the work string says so.
+    """
+    pack = _load_federal(year, knowledge_dir)
+    params = _require_foreign_account_reporting(pack, year)
+    f8938, fbar = params.form_8938, params.fbar
+
+    if filing_status not in FilingStatusInput.__args__:  # type: ignore[attr-defined]
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+    if filer_type not in ("specified_individual", "specified_domestic_entity"):
+        raise ValueError(
+            f"unknown filer_type {filer_type!r} — use 'specified_individual' (an individual: US "
+            f"citizen, resident alien, or one of the two nonresident-alien cases in the Form 8938 "
+            f"instructions) or 'specified_domestic_entity' (a closely held domestic corporation, "
+            f"partnership or trust under Treas. Reg. 1.6038D-6)"
+        )
+
+    def _amt(value, name):
+        return None if value is None else _to_decimal(value, name)
+
+    ye = _amt(specified_asset_value_year_end, "specified_asset_value_year_end")
+    mx = _amt(specified_asset_value_max, "specified_asset_value_max")
+    acct = _amt(foreign_account_value_max_aggregate, "foreign_account_value_max_aggregate")
+    for name, v in (("specified_asset_value_year_end", ye), ("specified_asset_value_max", mx),
+                    ("foreign_account_value_max_aggregate", acct)):
+        if v is not None and v < 0:
+            raise ValueError(
+                f"{name} is {v} — a reported VALUE cannot be negative. An asset with no positive "
+                f"value is still reportable and its maximum value is determined under Treas. Reg. "
+                f"1.6038D-5(b)(3); pass 0, not a negative number"
+            )
+    if mx is not None and ye is not None and mx < ye:
+        raise ValueError(
+            f"specified_asset_value_max ({mx}) is below specified_asset_value_year_end ({ye}) — the "
+            f"maximum value AT ANY TIME during the year cannot be less than the value on the last "
+            f"day of it; one of the two figures is measuring the wrong thing"
+        )
+
+    # ── Form 8938 ──────────────────────────────────────────────────────────
+    ask_8938: list[str] = []
+    tripped_8938: list[str] = []
+    t_us = t_abroad = None
+    if filer_type == "specified_domestic_entity":
+        t_us = t_abroad = f8938.thresholds.specified_domestic_entity
+    else:
+        t_us = f8938.thresholds.in_us[filing_status]
+        t_abroad = f8938.thresholds.abroad[filing_status]
+
+    def _verdict(threshold) -> bool | None:
+        """True/False/None against ONE bucket. None = the values cannot decide it."""
+        hits = []
+        if ye is not None and ye > threshold.year_end:
+            hits.append("year_end")
+        if mx is not None and mx > threshold.any_time:
+            hits.append("any_time")
+        if hits:
+            return True
+        # Neither supplied test tripped. That is only a NO if BOTH were supplied
+        # — either one alone triggers the filing, so a missing figure leaves the
+        # question open.
+        if ye is not None and mx is not None:
+            return False
+        return None
+
+    if us_person is False:
+        req_8938: bool | None = False
+        note_8938 = (
+            "a nonresident alien is not a specified individual, so Form 8938 is not required — BUT "
+            "the Form 8938 instructions make TWO nonresident aliens specified individuals anyway: "
+            "one who elects to be treated as a resident alien in order to file a JOINT return "
+            "(IRC 6013(g)/(h)), and one who is a bona fide resident of American Samoa or Puerto "
+            "Rico. Confirm neither applies before relying on this."
+        )
+    elif us_person is None:
+        req_8938 = None
+        note_8938 = "us_person was not supplied"
+        ask_8938.append(
+            "Are you a US citizen, or a resident alien for any part of this tax year under the green "
+            "card test or the substantial presence test? A resident alien for ANY PART of the year is "
+            "a specified individual (Instructions for Form 8938, 'Specified Individual'), and a "
+            "nonresident alien is one only if electing resident treatment on a joint return or a bona "
+            "fide resident of American Samoa or Puerto Rico."
+        )
+    else:
+        if filer_type == "specified_domestic_entity" or lives_abroad is not None:
+            bucket = t_abroad if (filer_type != "specified_domestic_entity" and lives_abroad) else t_us
+            req_8938 = _verdict(bucket)
+            applied = bucket
+            note_8938 = (
+                f"{'specified domestic entity' if filer_type == 'specified_domestic_entity' else ('abroad (IRC 911(d)(1) qualified individual)' if lives_abroad else 'in the United States')} "
+                f"thresholds applied"
+            )
+        else:
+            v_us, v_abroad = _verdict(t_us), _verdict(t_abroad)
+            if v_us is None and v_abroad is None:
+                # NEITHER ladder can be decided, so lives_abroad is not the
+                # missing fact and asking about it would MISDIRECT the interview:
+                # a VALUE is missing, and no residence answer changes that. (The
+                # first draft asked the 911(d)(1) question here; caught by
+                # running it, not by reading it.) The value question is appended
+                # by the `req_8938 is None and not ask_8938` block below.
+                req_8938 = None
+                applied = t_us
+                note_8938 = (
+                    "neither the in-US nor the abroad ladder can be decided from the values given, so "
+                    "lives_abroad is not what is missing — a specified-asset value is"
+                )
+            elif v_us == v_abroad and v_us is not None:
+                req_8938 = v_us
+                applied = t_us if not v_us else t_abroad
+                note_8938 = (
+                    "lives_abroad was not supplied, but the in-US and abroad thresholds give the SAME "
+                    "answer here, so it did not have to be asked"
+                )
+            else:
+                req_8938 = None
+                applied = t_us
+                note_8938 = (
+                    f"lives_abroad DECIDES this one and was not supplied: on the in-US ladder "
+                    f"(more than ${t_us.year_end:,} / ${t_us.any_time:,}) the answer is "
+                    f"{'REQUIRED' if v_us else ('not required' if v_us is False else 'still undecided')}, "
+                    f"while as an IRC 911(d)(1) qualified individual (more than "
+                    f"${t_abroad.year_end:,} / ${t_abroad.any_time:,}) it is "
+                    f"{'REQUIRED' if v_abroad else ('not required' if v_abroad is False else 'still undecided')}"
+                )
+                # tripped_by is left EMPTY on purpose: naming a test as "tripped"
+                # while the applicable ladder is still unknown reads as a verdict.
+                ask_8938.append(
+                    _ABROAD_ASK
+                    + f" Concretely, for the values given: in-US -> "
+                    f"{'REQUIRED' if v_us else ('not required' if v_us is False else 'undecided')}, "
+                    f"911(d)(1) qualified individual -> "
+                    f"{'REQUIRED' if v_abroad else ('not required' if v_abroad is False else 'undecided')}."
+                )
+        if req_8938 is None and not ask_8938:
+            missing = [n for n, v in (("specified_asset_value_year_end", ye),
+                                      ("specified_asset_value_max", mx)) if v is None]
+            ask_8938.append(
+                "What was the total value of ALL your specified foreign financial assets "
+                + ("on the last day of the tax year" if "specified_asset_value_year_end" in missing else "")
+                + (" and " if len(missing) == 2 else "")
+                + ("at its highest point at any time during the tax year" if "specified_asset_value_max" in missing else "")
+                + "? Treas. Reg. 1.6038D-2(a) joins the two tests with 'or', so EITHER one alone "
+                  "triggers the filing and a missing figure cannot be read as a zero."
+            )
+        if req_8938 is not None:
+            for label, value, limit in (("year_end", ye, applied.year_end), ("any_time", mx, applied.any_time)):
+                if value is not None and value > limit:
+                    tripped_8938.append(label)
+
+    if us_person is not True:
+        applied = t_us
+
+    # ── FBAR ───────────────────────────────────────────────────────────────
+    ask_fbar: list[str] = []
+    tripped_fbar: list[str] = []
+    if us_person is False:
+        req_fbar: bool | None = False
+        note_fbar = (
+            "a nonresident alien is not a United States person under 31 CFR 1010.350(b), so no FBAR "
+            "— note the definition uses 31 CFR 1010.100(hhh)'s 'United States', which INCLUDES the "
+            "territories, so a resident of Puerto Rico, Guam, the USVI, American Samoa or the CNMI "
+            "IS a US person for FBAR purposes even though the territories are not 'the United "
+            "States' for the Form 8938 threshold ladder"
+        )
+    elif us_person is None:
+        req_fbar = None
+        note_fbar = "us_person was not supplied"
+        ask_fbar.append(
+            "Are you a United States person for FBAR purposes — a US citizen, a resident alien under "
+            "26 U.S.C. 7701(b) (using 31 CFR 1010.100(hhh)'s definition of 'United States', which "
+            "includes the US territories), or a US entity? 31 CFR 1010.350(b)."
+        )
+    elif acct is None:
+        req_fbar = None
+        note_fbar = "the aggregate maximum account value was not supplied"
+        ask_fbar.append(
+            f"Adding up the HIGHEST balance each foreign financial account reached at any point in "
+            f"the calendar year, what is the total? The FBAR test is an AGGREGATE across every "
+            f"account and a MAXIMUM-value test, not a year-end test and not per account: two "
+            f"accounts whose combined balance touched ${fbar.aggregate_threshold + 1:,} for one day "
+            f"are BOTH reportable even if each stayed under ${fbar.aggregate_threshold:,} alone and "
+            f"both were empty on December 31 (31 CFR 1010.306(c); FinCEN's FBAR instructions)."
+            + (" You have also indicated signature authority over an account you have no financial "
+               "interest in, which is reportable in its own right (31 CFR 1010.350(a))."
+               if has_foreign_account_signature_authority else "")
+        )
+    else:
+        req_fbar = acct > fbar.aggregate_threshold
+        if req_fbar:
+            tripped_fbar.append("any_time_aggregate")
+        note_fbar = (
+            f"aggregate maximum account value {_money(acct)} vs the ${fbar.aggregate_threshold:,} "
+            f"threshold, which filing status does not move"
+        )
+        if not req_fbar and has_foreign_account_signature_authority:
+            req_fbar = None
+            note_fbar += (
+                "; the value test is not met, but you have signature or other authority over an "
+                "account you have no financial interest in"
+            )
+            ask_fbar.append(
+                "Is the aggregate maximum value figure you gave INCLUSIVE of every account you have "
+                "signature or other authority over, not just the ones you own? 31 CFR 1010.350(a) "
+                "requires the report from a US person with 'a financial interest in, or signature or "
+                "other authority over' a foreign account, and the IRS comparison table confirms a "
+                "signature-authority account is FBAR-reportable (subject to exceptions) while it is "
+                "generally NOT a Form 8938 asset — so this is the case where the two answers differ."
+            )
+
+    p8 = f8938.penalties
+    pf = fbar.penalties
+    duty_8938 = ForeignReportingDuty(
+        form=f8938.form,
+        required=req_8938,
+        threshold_year_end=applied.year_end,
+        threshold_any_time=applied.any_time,
+        tripped_by=tripped_8938,
+        filed_with=f8938.filed_with,
+        due="with the income tax return for the taxable year, including extensions",
+        must_ask=ask_8938,
+        penalty_exposure=(
+            f"IRC 6038D(d): ${p8.failure_to_file:,} for failing to file a complete and correct Form "
+            f"8938 by the due date including extensions, plus ${p8.continuing_failure_per_30_days:,} "
+            f"for each 30-day period (or fraction) the failure continues more than "
+            f"{p8.continuing_failure_grace_days_after_notice} days after IRS notice, that additional "
+            f"penalty capped at ${p8.continuing_failure_additional_cap:,} — "
+            f"${p8.maximum_per_year:,} maximum for the year. IRC 6662(j)(3) raises the "
+            f"accuracy-related rate to {int(p8.accuracy_related_rate_undisclosed_foreign_asset * 100)}% "
+            f"on any underpayment attributable to an undisclosed foreign financial asset, and "
+            f"{int(p8.fraud_rate * 100)}% applies to an underpayment due to fraud. Reasonable cause "
+            f"is a defence; a foreign jurisdiction's own disclosure penalty is NOT reasonable cause "
+            f"(IRC 6038D(g)). {p8.statute_of_limitations_note}"
+        ),
+        citation=f8938.citation,
+    )
+    duty_fbar = ForeignReportingDuty(
+        form=fbar.form,
+        required=req_fbar,
+        threshold_year_end=None,
+        threshold_any_time=fbar.aggregate_threshold,
+        tripped_by=tripped_fbar,
+        filed_with=fbar.filed_with,
+        due=fbar.due_date_rule,
+        must_ask=ask_fbar,
+        penalty_exposure=(
+            f"31 U.S.C. 5321(a)(5): a NON-WILLFUL violation draws up to "
+            f"${pf.non_willful_statutory_maximum:,} by statute, inflation-adjusted to "
+            f"${pf.non_willful_adjusted_maximum:,} for {pf.adjusted_amounts_effective} (31 CFR "
+            f"1010.821, Table 1) — and it accrues PER REPORT, not per account: Bittner v. United "
+            f"States, 598 U.S. 85 (2023). A WILLFUL violation draws the GREATER of "
+            f"${pf.willful_statutory_minimum_maximum:,} "
+            f"(adjusted ${pf.willful_adjusted_minimum_maximum:,}) or "
+            f"{int(pf.willful_alternative_share_of_balance * 100)}% of the account balance at the "
+            f"time of the violation, which IS per account, and the reasonable-cause exception does "
+            f"not apply to it. The adjusted maxima track the date the penalty is ASSESSED, not the "
+            f"tax year. Criminal penalties may also apply."
+        ),
+        citation=fbar.citation,
+    )
+
+    must_ask = list(dict.fromkeys(ask_8938 + ask_fbar))
+    def _say(v: bool | None) -> str:
+        return "REQUIRED" if v is True else ("not required" if v is False else "UNDECIDED")
+
+    work_lines = [
+        f"Foreign-asset reporting for {year} ({filing_status}, {filer_type}) — two SEPARATE filings, "
+        f"and neither substitutes for the other:",
+        f"* Form 8938 (IRC 6038D): {_say(req_8938)}. Thresholds applied: more than "
+        f"${applied.year_end:,} on the last day of the taxable year OR more than "
+        f"${applied.any_time:,} at any time during it — {note_8938}."
+        + (f" Tripped by: {', '.join(tripped_8938)}." if tripped_8938 else ""),
+        f"* FBAR (FinCEN Form 114, 31 U.S.C. 5314): {_say(req_fbar)}. Threshold: aggregate maximum "
+        f"value of ALL foreign financial accounts exceeding ${fbar.aggregate_threshold:,} at any "
+        f"time in the CALENDAR year — {note_fbar}.",
+        "The FBAR is filed with FinCEN, electronically through the BSA E-Filing System, and is NOT "
+        "part of the tax return; a PRINTED FinCEN Form 114 is not accepted. Form 8938 attaches to "
+        "the return. Filing one does not satisfy the other, and their asset scopes differ in BOTH "
+        "directions (signature-authority accounts and a foreign BRANCH of a US bank: FBAR only; "
+        "foreign stock outside an account, a foreign partnership interest, a foreign hedge fund: "
+        "Form 8938 only).",
+        "The two duties exist even if the accounts produced no income and no tax is owed (Treas. "
+        "Reg. 1.6038D-2(a)(8)).",
+        "ONE PRECONDITION THE OP DOES NOT TEST, and it can flip the Form 8938 answer to NO on any "
+        "value: Treas. Reg. 1.6038D-2(a)(7)(i) — a specified person, INCLUDING a specified "
+        "individual who is a bona fide resident of a US possession, \"is not required to file Form "
+        "8938 with respect to a taxable year if the specified person is not required to file an "
+        "annual return with the Internal Revenue Service with respect to such taxable year.\" So a "
+        "filer below the IRC 6012 filing threshold files no Form 8938 however large the assets, "
+        "while the FBAR is unaffected — it is not part of the income tax return and has its own "
+        "duty. Confirm a return is required before acting on a REQUIRED verdict here.",
+        "NOT MODELLED, and each would change the answer: the value-EXCEPTION rules (assets already "
+        "reported on Forms 3520 / 3520-A / 5471 / 8621 / 8865 are excepted from Form 8938 DETAIL but "
+        "still COUNT toward the threshold under Treas. Reg. 1.6038D-2(a)(6)(i)); the joint-ownership "
+        "valuation rules; the FBAR's account exceptions (IRA-held, retirement-plan-held, US military "
+        "banking facility, correspondent/nostro, governmental) and its 25-or-more-accounts short "
+        "form; and PART-YEAR status — Treas. Reg. 1.6038D-2(a)(9) makes the Form 8938 reporting "
+        "period only the portion of the year the filer was a specified individual, while the FBAR's "
+        "period is always the calendar year, so an F-1-to-H-1B or dual-status year needs the values "
+        "segmented by the caller before they are passed here.",
+    ]
+    if must_ask:
+        work_lines.append(
+            "UNDECIDED — ask, do not assume. A silent 'no' is the most expensive wrong answer here: "
+            + " ".join(f"({i}) {q}" for i, q in enumerate(must_ask, start=1))
+        )
+
+    return ForeignAssetReportingResult(
+        form_8938=duty_8938,
+        fbar=duty_fbar,
+        any_duty_undecided=(req_8938 is None or req_fbar is None),
+        must_ask=must_ask,
+        inputs={
+            "year": year,
+            "filing_status": filing_status,
+            "filer_type": filer_type,
+            "us_person": us_person,
+            "lives_abroad": lives_abroad,
+            "specified_asset_value_year_end": None if ye is None else int(ye),
+            "specified_asset_value_max": None if mx is None else int(mx),
+            "foreign_account_value_max_aggregate": None if acct is None else int(acct),
+            "has_foreign_account_signature_authority": has_foreign_account_signature_authority,
+        },
+        work="\n".join(work_lines),
         citation=params.citation,
     )

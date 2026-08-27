@@ -43,6 +43,46 @@ def test_treaties_topic_returns_pub519_and_treasury():
     assert "p519" in urls and "treasury.gov" in urls
 
 
+def test_treaties_topic_also_carries_the_disclosure_half(  # Phase I4
+):
+    """A treaty position has a DISCLOSURE duty; the topic must name where it lives.
+
+    calc.treaty_benefit priced the exemption from G1 onward while nothing in the
+    registry said where the IRC 6114 duty, the Form 8833 that discharges it, or
+    the Treas. Reg. 301.6114-1(c) WAIVERS are written — so an agent could tell a
+    filer to attach a form the regulation waives, or omit one the regulation
+    requires.
+    """
+    res = get_sources("nonresident_and_treaties", 2025)
+    urls = " ".join(s.url for s in res.sources)
+    answers = " ".join(s.answers for s in res.sources)
+    assert "f8833.pdf" in urls                    # the form + its instructions
+    assert "301.6114-1" in urls                   # the (b) list and the (c) waivers
+    assert "Exceptions from reporting" in answers  # the waiver bullets by name
+    assert "6712" in answers                      # the penalty for not disclosing
+
+
+def test_the_disclosure_sources_do_not_steal_the_neighbouring_queries():
+    """The words these two entries add must not pull neighbours into this topic.
+
+    They contribute "disclosure", "residency", "nonresident", "waiver",
+    "penalty", "trainee", "teacher", "attachment" — every one of which also
+    appears in a neighbouring international topic, which is exactly how the H6
+    and H9 mis-routings happened.
+    """
+    for query, expected in (
+        ("dual status year filing", "dual_status"),
+        ("foreign earned income exclusion", "foreign_earned_income"),
+        ("nonresident FDAP income", "nonresident_fdap"),
+        ("Schedule NEC", "nonresident_fdap"),
+        ("nonresident spouse election", "nonresident_spouse_election"),
+    ):
+        r = get_sources(query, 2025)
+        assert r.matched, query
+        topics = {src.topic for src in r.sources}
+        assert topics == {expected}, f"{query!r} routed to {topics}"
+
+
 def test_change_channels_always_returned():
     res = get_sources("education", 2024)
     assert res.matched is True
@@ -409,6 +449,101 @@ def test_ira_basis_topic_does_not_steal_its_neighbours_queries():
         ("Schedule NEC", "nonresident_fdap"),
         ("no tax on tips", "obbba_schedule_1a_deductions"),
         ("retirement", "retirement"),
+    ):
+        r = get_sources(query, 2026)
+        assert r.matched and {s.topic for s in r.sources} == {expected}, (
+            f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+        )
+
+
+# ── Foreign tax credit / IRC 904(j) routing (P-011) ──────────────────────────
+# The widest wrong-law hole found so far, on the single most common
+# international fact in a resident return: foreign tax withheld on a
+# total-international index fund (Form 1099-DIV box 7). Five of the eight
+# natural queries below routed to the WRONG LAW and three were clean misses —
+# see knowledge/pitfalls.yaml P-011 for the reproduction.
+
+
+def test_foreign_tax_credit_queries_route_to_their_own_topic():
+    """Pitfall P-011: the routing half of the foreign-tax-credit gap.
+
+    Before this topic existed (probed against the 2023 registry):
+      "foreign tax credit"     -> foreign_earned_income (Form 2555, the
+                                  EXCLUSION — the ALTERNATIVE treatment, so the
+                                  pointer sends an agent to exclude income it
+                                  should be crediting tax on);
+      "foreign taxes withheld" -> nonresident_fdap (the 30% the US withholds
+                                  FROM a nonresident — the mirror image);
+      "1099-DIV box 7"         -> ira_basis_and_roth_conversions (P-009's own
+                                  new topic swallowing it);
+      "904(j)"                 -> tax_rates_and_tables (the section 1 rate
+                                  schedules);
+      "de minimis election"    -> commuter_and_fringe_benefits (the de minimis
+                                  FRINGE);
+      "Form 1116", "passive category income" and "foreign tax credit without
+      filing Form 1116" -> clean misses.
+    """
+    for query in (
+        "foreign tax credit",                           # was -> foreign_earned_income (WRONG LAW)
+        "foreign taxes withheld",                       # was -> nonresident_fdap (WRONG LAW)
+        "1099-DIV box 7",                               # was -> ira_basis_and_roth_conversions (WRONG LAW)
+        "904(j)",                                       # was -> tax_rates_and_tables (WRONG LAW)
+        "de minimis election",                          # was -> commuter_and_fringe_benefits (WRONG LAW)
+        "Form 1116",                                    # was a clean miss
+        "passive category income",                      # was a clean miss
+        "foreign tax credit without filing Form 1116",  # was a clean miss
+        "credit for taxes paid to a foreign country",
+        "carryover of foreign taxes",
+    ):
+        for year in (2023, 2026):
+            r = get_sources(query, year)
+            assert r.matched, f"{query!r} ({year}) is a miss"
+            topics = {s.topic for s in r.sources}
+            assert topics == {"foreign_tax_credit"}, f"{query!r} ({year}) routed to {topics}"
+
+
+def test_the_foreign_tax_credit_topic_carries_the_election_and_its_cost():
+    """The characterization half: an agent must reach the ELECTION, its dollar
+    test, its two-way carryover forfeiture and the estates/trusts exclusion —
+    not just the form's line map."""
+    r = get_sources("foreign tax credit", 2023)
+    blob = " ".join(s.answers for s in r.sources)
+    # the statutory dollar test, verbatim from 904(j)(2)(B)
+    assert "does not exceed $300 ($600 in the case of a joint return)" in blob
+    # what the election COSTS — never presented as free
+    assert "forbids carrying tax to or from any other year" in blob
+    assert "You can't carry over to or from any other year" in blob
+    # the entity exclusion and the payee-statement definition
+    assert "excludes estates and trusts" in blob
+    assert "section 6724(d)(2)" in blob
+    # the 1099 shortcut that makes Part II fillable for the target user
+    assert "Enter '1099 taxes' in Part II, column (l)" in blob
+    # creditability is not waived: 901/903 and the 901(k) holding period
+    assert "901(k)" in blob and "tax paid in lieu of a tax on income" in blob
+    urls = {s.url for s in r.sources}
+    assert any("section904" in u for u in urls) and any("section901" in u for u in urls)
+    assert any("f1116" in u for u in urls) and any("i1116" in u for u in urls)
+    assert any("p514" in u for u in urls)
+
+
+def test_foreign_tax_credit_topic_does_not_steal_its_neighbours_queries():
+    """The credit and the EXCLUSION are alternative treatments of foreign income,
+    so the new topic sits right next to foreign_earned_income and the two must
+    stay apart — plus every other neighbour pinned by P-005/P-006/P-009."""
+    # "foreign pension distributions" is P-009's deliberate clean miss; a topic
+    # this full of the word "foreign" must not turn it into a wrong match.
+    miss = get_sources("foreign pension distributions", 2026)
+    assert miss.matched is False and miss.sources == []
+    for query, expected in (
+        ("foreign earned income exclusion", "foreign_earned_income"),
+        ("Form 2555", "foreign_earned_income"),
+        ("physical presence test", "foreign_earned_income"),
+        ("Schedule NEC", "nonresident_fdap"),
+        ("qualified parking", "commuter_and_fringe_benefits"),
+        ("nondeductible contributions", "ira_basis_and_roth_conversions"),
+        ("Form 8606", "ira_basis_and_roth_conversions"),
+        ("credit card rewards taxable", "other_income_and_rewards"),
+        ("no tax on tips", "obbba_schedule_1a_deductions"),
     ):
         r = get_sources(query, 2026)
         assert r.matched and {s.topic for s in r.sources} == {expected}, (

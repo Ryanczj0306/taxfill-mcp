@@ -60,3 +60,14 @@ class HandFillPack(BaseModel):
     signature_note: str | None = Field(
         default=None, description="Reminder that the printed form must be signed/dated in ink before mailing."
     )
+    instructions: str | None = Field(
+        default=None,
+        description=(
+            "Overrides the worksheet's default 'print the blank and hand-write the values' text. "
+            "Needed for a pack whose form CANNOT be printed and filed: FinCEN Form 114 (the FBAR) is "
+            "e-file only through the BSA E-Filing System, and irs.gov states that 'IRS will not "
+            "accept paper filings on TD F 90-22.1 (obsolete) or a printed FinCEN Form 114 (for "
+            "e-filing only)' — so the default instruction would tell a filer to do something that "
+            "gets rejected. Leave unset for a print-only STATE form, where the default is correct."
+        ),
+    )

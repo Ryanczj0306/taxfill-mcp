@@ -51,10 +51,26 @@ short/long character. Taxable income limits how much of the loss the year consum
 deduction, so a low-income year carries MORE forward. `following_years` rolls the chain and threads
 the carryovers for you.
 
+**Foreign tax credit:** `calc("foreign_tax_credit_election", …)` decides whether Form 1116 is needed
+at all. Foreign tax withheld on an international fund's dividends (Form 1099-DIV box 7) can be claimed
+as ONE line on Schedule 3, Part I, line 1 under IRC 904(j) — no Form 1116 — when creditable foreign
+taxes are at or under $300 ($600 on a JOINT return; statutory, never indexed), ALL foreign-source
+gross income is qualified passive income, and all of it is on a payee statement. The op refuses to
+guess those judgments or the election itself; estates and trusts cannot elect. Quote the cost: the
+904(c) carryback/carryforward is forfeited in both directions for the election year, and foreign tax
+above `regular_tax` is lost for good. A qualifying surviving spouse gets $300, not $600 — only MFJ is
+"a joint return". Otherwise file `formpacks/federal/<year>/f1116`, one form per category of income.
+
 **State returns** use the same pipeline with `jurisdiction="states/<xx>"`. All 42
 income-tax jurisdictions (41 states + DC) ship a resident return pack — 38 as
 fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC) via
 `hand_fill_worksheet`; `state_scope` says which returns are required.
+`hand_fill_worksheet` also covers one FEDERAL filing, `fincen114` (the FBAR /
+FinCEN Form 114): e-file only via FinCEN's BSA E-Filing System, no fillable PDF,
+a printed Form 114 is not accepted, and it is filed with FinCEN — never in the
+tax-return envelope. Ask about foreign accounts, then run
+`calc('foreign_asset_reporting', …)`, which answers Form 8938 and the FBAR
+together and says `must_ask` instead of guessing.
 `calc("state_tax", …)` covers every jurisdiction for 2023, 2024 AND 2025 —
 flat vs graduated is the pack's call and moves by year, so never
 assume and never compute a state tax line yourself. State KNOWLEDGE spans

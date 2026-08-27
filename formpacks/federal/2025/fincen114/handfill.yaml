@@ -1,0 +1,664 @@
+# FinCEN Form 114 — Report of Foreign Bank and Financial Accounts (the FBAR).
+# A VALUE-GATHERING WORKSHEET, not a fillable pack and not a print-and-mail
+# pack. Read the next two blocks before touching this file.
+#
+# ===========================================================================
+# WHY THIS IS A WORKSHEET AND NOT A PACK — three independent reasons, each
+# from a primary source, and the third one also rules out the ordinary
+# hand-fill treatment
+# ===========================================================================
+# 1. THE FORM IS E-FILE ONLY. "You must file the FBAR electronically through
+#    FinCEN's BSA E-Filing System." (irs.gov, Report of Foreign Bank and
+#    Financial Accounts (FBAR)). 31 CFR 1010.306(e) points filers at the BSA
+#    E-Filing System for the form itself.
+# 2. THERE IS NO FILLABLE IRS PDF. Form 114 is not an IRS form at all: it is
+#    prescribed by FinCEN under 31 U.S.C. 5314 and 31 CFR 1010.350, so it has
+#    no irs.gov/pub/irs-pdf artifact, no AcroForm to introspect, and nothing
+#    for fill_form to write into. The FBAR is opened inside the BSA E-Filing
+#    System, which renders its own header/cover page ("Once a new FBAR is
+#    opened via the BSA E-Filing System a header/cover page will display the
+#    FBAR version number, OMB control number, and several other items of
+#    information" — FinCEN's own instructions).
+# 3. A PRINTED FORM 114 IS AFFIRMATIVELY REFUSED, which is what separates this
+#    from the four print-only STATE packs (ct1040 / n11 / pit1 / sc1040).
+#    Those say "print the blank and hand-write the values, then mail it" and
+#    that is correct for them. Here irs.gov says the opposite, verbatim: "IRS
+#    will not accept paper filings on TD F 90-22.1 (obsolete) or a printed
+#    FinCEN Form 114 (for e-filing only)." A paper FBAR exists ONLY if
+#    FinCEN's Resource Center grants an exemption from e-filing and then SENDS
+#    the filer the paper form. So this pack sets the schema's optional
+#    `instructions` override (added with it) rather than inheriting the
+#    default "print the blank at print_url and hand-write each value onto its
+#    line" text — shipping that default would have told a filer to do the one
+#    thing the IRS says it will reject.
+#
+# WHAT THE WORKSHEET IS FOR: collecting, in one place and BEFORE anyone opens
+# the BSA E-Filing System, every value the filer will be asked for — plus the
+# threshold arithmetic that decides whether they must file at all, which is
+# the part that gets skipped. The `aggregate_maximum_value` line COMPUTES the
+# 31 CFR 1010.306(c) test from the per-account maxima, and
+# calc.foreign_asset_reporting answers the same question with citations.
+#
+# source_url therefore points at FinCEN's OWN line-item instructions, the
+# document both fincen.gov's "Report Foreign Bank and Financial Accounts"
+# page and irs.gov's FBAR page link to as the FBAR instructions. It is what
+# the filer should have open beside them while keying the values in — NOT a
+# blank to print.
+#
+# ===========================================================================
+# THE FBAR IS NOT PART OF THE TAX RETURN ENVELOPE
+# ===========================================================================
+# It is filed with FinCEN, a bureau of the Treasury, and never with the IRS:
+# "Unlike Form 8938, the FBAR (FinCEN Form 114) is not filed with the IRS. It
+# must be filed directly with the office of Financial Crimes Enforcement
+# Network (FinCEN), a bureau of the Department of the Treasury, separate from
+# the IRS." (IRS, Comparison of Form 8938 and FBAR requirements). And, from
+# the IRS FBAR page: "You don't file the FBAR with your federal tax return."
+# Consequences that follow, and that a filer will otherwise get wrong:
+#   * `mailing: null` — there is NO address, because nothing is mailed. This
+#     is not the schedules' "mailed inside the parent return's envelope"; it
+#     is a different envelope that does not exist.
+#   * FILING FORM 8938 DOES NOT SATISFY THIS, AND FILING THIS DOES NOT SATISFY
+#     FORM 8938: "The Form 8938 filing requirement does not replace or
+#     otherwise affect a taxpayer's obligation to file FinCEN Form 114." The
+#     scopes differ in BOTH directions — an account the filer only has
+#     SIGNATURE AUTHORITY over is FBAR-reportable and generally not an 8938
+#     asset, while foreign stock held outside an account, a foreign
+#     partnership interest and a foreign hedge fund are 8938 assets and not
+#     FBAR accounts.
+#   * The FBAR's period is the CALENDAR year even for a fiscal-year filer, and
+#     its currency conversion uses the END-OF-CALENDAR-YEAR rate while Form
+#     8938 uses the end of the TAXABLE year.
+#
+# THE THRESHOLD, and the three things about it that get misread
+# (31 CFR 1010.306(c); FinCEN's instructions, "Who Must File an FBAR"):
+# more than $10,000 —
+#   * AGGREGATE across every foreign financial account, not per account: "If
+#     the maximum account value of a single account OR AGGREGATE of the
+#     maximum account values of multiple accounts exceeds $10,000, an FBAR
+#     must be filed";
+#   * a MAXIMUM-VALUE test at ANY TIME during the calendar year, never a
+#     year-end test — two accounts that together touched $10,001 for one day
+#     are both reportable even if both were empty on December 31;
+#   * FILING-STATUS BLIND, and the proof is an ABSENCE rather than a sentence:
+#     31 CFR 1010.306(c) gives one flat figure and neither 31 CFR 1010.350 nor
+#     FinCEN's line-item instructions carry a joint, separate or
+#     head-of-household amount anywhere, so there is no ladder to read. There is
+#     no doubling for a joint return, which is the single biggest difference from
+#     the Form 8938 ladder. DO NOT cite irs.gov's "Income tax filing status,
+#     such as married-filing-jointly and married-filing-separately, has no
+#     effect" for this: read in place that sentence governs qualification for
+#     the JOINTLY-OWNED-ACCOUNTS spousal exception, not the threshold — it
+#     follows "...your spouse reports the jointly owned accounts on a
+#     timely-filed signed FBAR" — and quoting it as a threshold rule is a
+#     pinpoint that does not support the proposition.
+# The figure is fixed by regulation and is NOT inflation-indexed, so all three
+# shipped years carry it identically. It lives as cited data in
+# knowledge/federal/<year>.yaml under foreign_account_reporting.fbar.
+#
+# THE DEADLINE, and why the regulation is the WRONG place to read it:
+# April 15 of the year following the calendar year reported, with an AUTOMATIC
+# extension to October 15 that requires NO request — "FinCEN will grant filers
+# failing to meet the FBAR annual due date of April 15th an automatic
+# extension to October 15th each year. Accordingly, specific requests for this
+# extension are not required." Both dates come from the Surface Transportation
+# and Veterans Health Care Choice Improvement Act of 2015, P.L. 114-41,
+# section 2006(b)(11). 31 CFR 1010.306(c) STILL READS "on or before June 30 of
+# each calendar year" — the regulation was never conformed to the statute, so
+# citing it alone yields a deadline 2.5 months WRONG. FinCEN also states the
+# deadline "will follow the Federal income tax due date guidance", so it
+# shifts off a Saturday, Sunday or legal holiday the way a return does.
+#
+# PENALTY EXPOSURE (why this worksheet exists at all): 31 U.S.C. 5321(a)(5) —
+# non-willful, up to $10,000 by statute, inflation-adjusted to $16,536 for
+# penalties assessed on or after January 17, 2025 (31 CFR 1010.821, Table 1),
+# and accruing PER REPORT, not per account: Bittner v. United States, 598 U.S.
+# 85 (2023) ("The BSA's $10,000 maximum penalty for the nonwillful failure to
+# file a compliant report accrues on a per-report, not a per-account, basis").
+# A WILLFUL violation is the greater of $100,000 (adjusted $165,353) or 50% of
+# the account balance at the time of the violation, which IS per account, and
+# the reasonable-cause defence does not reach it. Note that IRS Publication
+# 5569 (3-2022), the FBAR Reference Guide, says only "$10,000 per violation"
+# and PREDATES Bittner — do not read it as settling the unit.
+#
+# ===========================================================================
+# PROVENANCE (read off the PDF, not the URL)
+# ===========================================================================
+# Page 1 rendered at 200 dpi and READ before pinning pdf_sha256: "Financial
+# Crimes Enforcement Network / BSA Electronic Filing Requirements For Report
+# of Foreign Bank and Financial Accounts (FinCEN Form 114) / Release Date
+# January 2017 (v1.4) / Effective January 2017 for the 2017 or earlier filing
+# requirement." 22 pages, 710,084 bytes, sha256
+# 8a92baf0824e117225239aa33cc56b9608f22017fb357c0a8910daea89acb7d4 — measured
+# on TWO independent downloads issued as separate requests on 2026-08-27; both
+# digests identical.
+#
+# TRAP IN THIS FILE'S OWN METADATA, recorded because it would mislead the next
+# author: the PDF's /Title still reads "...(Form TD F 90-22.1)" — the
+# OBSOLETE form number — and its /Subject reads "Release Date December 2012
+# (DRAFT v1.0)". Both contradict the printed cover page, which says FinCEN
+# Form 114, January 2017, v1.4, and whose body cites P.L. 114-41 (a 2015
+# statute) and the April 15 due date. The PRINTED PAGE is the identity; the
+# metadata is stale, the same class of trap as ct1040's invisible "DRAFT
+# 12-12-2023" text layer. Do not "correct" the banner from pdfinfo.
+#
+# FRESHNESS: FinCEN publishes this document BY RELEASE VERSION, not per tax
+# year, and its own cover says "Effective January 2017 for the 2017 or earlier
+# filing requirement" — so v1.4 is the current linked version but its own
+# effectivity line does not extend forward. RE-CHECK the version linked from
+# fincen.gov's "Report Foreign Bank and Financial Accounts" page each season.
+# Note also that the drift job (scripts/check_drift.py) rglobs `pack.yaml`
+# ONLY, so no handfill.yaml source_url is watched — this one included, and the
+# four state ones too. That gap is pre-existing and is reported, not hidden.
+#
+# ===========================================================================
+# THE LINE-KEY CONVENTION (this worksheet's, and why it is not the dotted one)
+# ===========================================================================
+# Keys are the FORM'S OWN ITEM NUMBERS, which is the repo rule, with a PART
+# namespace prefixed where the form reuses a number. FinCEN Form 114 reuses
+# items 15-23 in FOUR places — Part II (accounts owned separately), Part III
+# (owned jointly), Part IV (signature authority, no financial interest) and
+# Part V (consolidated) — so a bare `15` would collide four ways.
+#
+# The namespace is joined with an UNDERSCORE, not the dotted separator
+# formpacks/CONVENTIONS.md prefers, and the reason is mechanical rather than
+# stylistic: the compute grammar's tokenizer (verify._TOKEN_RE) admits no dot
+# inside an identifier, so a dotted key can never appear in a `compute`
+# expression. PROVEN, not assumed —
+# evaluate_expression("part2.15 + part3.15", ...) raises "unexpected
+# character '.' at position 5", while the underscore spelling evaluates. The
+# whole point of this worksheet is the `aggregate_maximum_value` compute, so
+# the keys have to be reachable from it.
+#
+#   account1_* .. account3_*  Part II, accounts owned SEPARATELY. THREE slots,
+#                             and the count is this worksheet's, not the
+#                             form's: the e-filed FBAR is dynamic ("click the
+#                             '+' sign on the electronic report to add
+#                             additional Part III's"), so there is no printed
+#                             row count to mirror. Three covers the modal
+#                             home-country case (savings + checking +
+#                             brokerage); a filer with more repeats the block,
+#                             and a filer with 25 OR MORE answers item 14a
+#                             instead and skips Parts II and III entirely.
+#   joint_*                   Part III, accounts owned JOINTLY (items 15-24
+#                             plus the principal joint owner, 25-33).
+#   sigauth_*                 Part IV, accounts the filer has SIGNATURE
+#                             AUTHORITY over but no financial interest in
+#                             (items 15-23 plus the account owner, 34-43).
+#   bare numbers              Part I (items 1-14b) and the Signature section
+#                             (44-46), which appear once and need no prefix.
+#
+# SCOPE, stated rather than implied. PART V (consolidated report, an entity
+# filing for entities it owns more than 50% of) is DELIBERATELY ABSENT: it
+# applies only to a corporate parent, never to the individual filer this repo
+# serves, and its items 34-42 duplicate Part IV's shape. The third-party
+# preparer section (items 47-55) is also absent — a filer using a preparer
+# does not fill it themselves, and FinCEN Form 114a (the signature
+# authorization the filer KEEPS and does not send) is named in
+# signature_note instead. Item 14a/14b's 25-or-more short path is captured as
+# a note on those items rather than as a fourth account shape.
+
+form: "FinCEN Form 114"
+jurisdiction: federal
+tax_year: 2025
+render_mode: hand_fill
+source_url: https://www.fincen.gov/sites/default/files/shared/FBAR%20Line%20Item%20Filing%20Instructions.pdf
+pdf_sha256: "8a92baf0824e117225239aa33cc56b9608f22017fb357c0a8910daea89acb7d4"
+instructions: >-
+  DO NOT PRINT AND MAIL THIS FORM. FinCEN Form 114 (the FBAR) is E-FILE ONLY through FinCEN's
+  BSA E-Filing System at https://bsaefiling.fincen.treas.gov/main.html, and irs.gov states:
+  "IRS will not accept paper filings on TD F 90-22.1 (obsolete) or a printed FinCEN Form 114
+  (for e-filing only)." It is filed with FinCEN, NOT the IRS, and it is NOT part of your tax
+  return — "You don't file the FBAR with your federal tax return." This worksheet is a
+  VALUE-GATHERING sheet: collect every value below first, then open the BSA E-Filing System
+  and key them in, with FinCEN's own line-item instructions at print_url open beside you.
+  Check aggregate_maximum_value against the $10,000 threshold BEFORE anything else: it is an
+  AGGREGATE across all foreign accounts and a MAXIMUM-value test at any time in the CALENDAR
+  year, and your income tax filing status does not change it. Due April 15 of the following
+  year, with an AUTOMATIC extension to October 15 that needs no request. 'computed' values
+  were derived from your confirmed inputs; verify every one before you submit.
+signature_note: >-
+  There is no ink signature. Item 44: "A discrete or batch-filed FBAR is considered signed by
+  the filer when electronically signed in the BSA E-Filing System" — you sign by PIN inside
+  the system, and item 46 (date) auto-populates when you do. If a spouse or a third-party
+  preparer will sign for you, complete FinCEN Form 114a (BSA E-Filing Signature Authorization
+  Record) FIRST and KEEP it: "Do not file or send the completed Form 114a to FinCEN. Form 114a
+  must be maintained by the filer or owner and made available to FinCEN or IRS on request."
+  Spouses filing a JOINT FBAR use Form 114a to designate which spouse signs the single report
+  instead of filing two FBARs. Keep records of every reported account (name on the account,
+  number, institution name and address, account type, maximum value) for FIVE YEARS from April
+  15 of the year following the calendar year reported.
+mailing: null   # nothing is mailed anywhere — the FBAR is e-filed with FinCEN
+lines:
+  # ---- BSA E-Filing header / cover page (before page one of the report) --
+  - line: filing_name
+    label: Filing Name — a name YOU choose to track this report in the BSA E-Filing System,
+      e.g. "Jane's 2025 FBAR"
+    type: text
+  - line: submission_type
+    label: 'Submission type: New report, or Amendment'
+    type: text
+  - line: prior_report_bsa_identifier
+    label: 'If amending: your Prior Report BSA Identifier'
+    type: text
+    note: Required only on an amendment. It was sent to you by email or via the BSA E-Filing
+      System's secure messaging. If it is not known, enter 00000000000000.
+  - line: third_party_filing
+    label: Is an authorized third party filing this report?
+    type: checkbox
+    note: If yes, complete the third-party preparer section on the first page of the report
+      (items 47-55, not carried in this worksheet) and keep FinCEN Form 114a.
+  - line: late_filing_reason
+    label: 'If filing LATE (after October 15 of the year following the reporting year): the
+      reason, from the drop-down'
+    type: text
+    note: Choose from the provided list, or select "other" and type an explanation. If you are
+      late because an earlier FinCEN filing waiver applied, check box "z" other and identify
+      the waiver by number (e.g. FinCEN Notice 2011-1).
+  # ---- Item 1 and Part I — Filer information -----------------------------
+  - line: '1'
+    label: Calendar year being reported (4 digits, YYYY)
+    type: text
+    note: The report is for the calendar year ended 12/31 — the CALENDAR year, even if your
+      income tax year is a fiscal year.
+  - line: '2'
+    label: 'Type of filer: a Individual / b Partnership / c Corporation / d Consolidation /
+      e Fiduciary or other (specify)'
+    type: text
+    note: An individual, INCLUDING one reporting only signature authority, checks box a. Trusts,
+      estates, LLCs and tax-exempt entities check e; a disregarded entity checks e and enters
+      the entity type followed by "(D.E.)".
+  - line: '3'
+    label: Your U.S. Taxpayer Identification Number (SSN, ITIN or EIN) — digits only, no dashes
+    type: text
+    note: 'Complete item 4 INSTEAD if you have no U.S. TIN. Enter identifying numbers as a single
+      string with no hyphens or periods: 123-45-6789 is entered as 123456789.'
+  - line: 3a
+    label: TIN type (SSN/ITIN, EIN, or foreign)
+    type: text
+  - line: 4a
+    label: 'If NO U.S. TIN: type of foreign identification — Passport, Foreign TIN, or Other
+      (describe)'
+    type: text
+  - line: 4b
+    label: 'If NO U.S. TIN: the document number'
+    type: text
+  - line: 4c
+    label: 'If NO U.S. TIN: country of issue (two-letter ISO 3166-1 code)'
+    type: text
+  - line: '5'
+    label: Your date of birth (MM/DD/YYYY)
+    type: text
+    note: 'Zero-pad single digits: June 1, 1948 is 06/01/1948.'
+  - line: '6'
+    label: Last name, or organization name
+    type: text
+    note: Multiple surnames ALL go in the last-name field. "Juan Vega Santiago" is last name
+      "VEGA SANTIAGO", first name "JUAN"; "Kim, Chun Nam" is last name "KIM", first name "CHUN
+      NAM", no middle name. See FinCEN's Name Editing Instructions.
+  - line: '7'
+    label: First name
+    type: text
+  - line: '8'
+    label: Middle initial (leave blank if none)
+    type: text
+  - line: 8a
+    label: Name suffix (leave blank if none)
+    type: text
+  - line: '9'
+    label: Your mailing address — number, street, and apartment or suite number
+    type: text
+    note: An individual residing IN the United States must enter the street address of their
+      U.S. residence, NOT a post office box. An individual residing outside the U.S. enters
+      their U.S. mailing address, or a foreign residence address if they have none.
+  - line: '10'
+    label: City
+    type: text
+    note: Spell city names out completely — no abbreviations.
+  - line: '11'
+    label: State (U.S./Canada/Mexico only; leave blank for other foreign addresses)
+    type: text
+  - line: '12'
+    label: ZIP or foreign postal code — no spaces or hyphens
+    type: text
+    note: ZIP codes are 5 or 9 digits and a 9-digit ZIP cannot end in four zeroes or four nines.
+      12354-6120 is entered 123546120; the foreign postal code HKW 702 is entered HKW702.
+  - line: '13'
+    label: Country (two-letter ISO 3166-1 code)
+    type: text
+    note: Do NOT use the ISO entries for U.S. territories in a country field — those belong
+      in the state field as USPS abbreviations.
+  - line: 14a
+    label: Do you have a FINANCIAL INTEREST in 25 or more financial accounts? (Yes/No)
+    type: text
+    note: If yes, enter the total number of accounts and leave Parts II and III BLANK — but
+      keep records of everything, and supply it if FinCEN or the IRS asks.
+  - line: count_14a
+    label: 'If item 14a is Yes: total number of accounts'
+    type: text
+  - line: 14b
+    label: Do you have SIGNATURE AUTHORITY over, but no financial interest in, 25 or more financial
+      accounts? (Yes/No)
+    type: text
+    note: If yes, enter the total number and complete only items 34-43 of Part IV for each person
+      on whose behalf you have signature authority.
+  - line: count_14b
+    label: 'If item 14b is Yes: total number of accounts'
+    type: text
+  # ---- Part II — account 1 of 3, owned SEPARATELY (items 15-23) ----------
+  - line: account1_15
+    label: 'Account 1: Maximum value of the account during the calendar year (U.S. dollars)'
+    type: money
+    note: 'Round UP to the next whole dollar: $15,265.25 is recorded as $15,266. Value each
+      account SEPARATELY. Take the greatest value of currency or non-monetary assets in the
+      account during the calendar year — periodic account statements may be relied on if they
+      fairly reflect it. Convert non-U.S. currency at the Treasury rate for the LAST DAY OF
+      THE CALENDAR YEAR (or another verifiable rate, stating its source). If the result is negative,
+      enter 0.'
+  - line: account1_15a
+    label: 'Account 1: Amount unknown — check only if the value cannot be determined'
+    type: checkbox
+    note: 'For a filer with FEWER than 25 accounts who cannot determine whether the aggregate
+      maximum exceeded $10,000: complete this account''s block and check this box.'
+  - line: account1_16
+    label: 'Account 1: Type of account: Bank, Securities, or Other (specify)'
+    type: text
+  - line: account1_17
+    label: 'Account 1: Full name of the financial institution holding the account'
+    type: text
+  - line: account1_18
+    label: 'Account 1: Account number, or other designation the institution uses'
+    type: text
+  - line: account1_19
+    label: 'Account 1: Institution mailing address — number, street, suite number'
+    type: text
+  - line: account1_20
+    label: 'Account 1: Institution city'
+    type: text
+  - line: account1_21
+    label: 'Account 1: Institution state, if known'
+    type: text
+  - line: account1_22
+    label: 'Account 1: Institution foreign postal code, if known'
+    type: text
+  - line: account1_23
+    label: 'Account 1: Institution country (two-letter ISO 3166-1 code)'
+    type: text
+  # ---- Part II — account 2 of 3, owned SEPARATELY (items 15-23) ----------
+  - line: account2_15
+    label: 'Account 2: Maximum value of the account during the calendar year (U.S. dollars)'
+    type: money
+    note: 'Round UP to the next whole dollar: $15,265.25 is recorded as $15,266. Value each
+      account SEPARATELY. Take the greatest value of currency or non-monetary assets in the
+      account during the calendar year — periodic account statements may be relied on if they
+      fairly reflect it. Convert non-U.S. currency at the Treasury rate for the LAST DAY OF
+      THE CALENDAR YEAR (or another verifiable rate, stating its source). If the result is negative,
+      enter 0.'
+  - line: account2_15a
+    label: 'Account 2: Amount unknown — check only if the value cannot be determined'
+    type: checkbox
+    note: 'For a filer with FEWER than 25 accounts who cannot determine whether the aggregate
+      maximum exceeded $10,000: complete this account''s block and check this box.'
+  - line: account2_16
+    label: 'Account 2: Type of account: Bank, Securities, or Other (specify)'
+    type: text
+  - line: account2_17
+    label: 'Account 2: Full name of the financial institution holding the account'
+    type: text
+  - line: account2_18
+    label: 'Account 2: Account number, or other designation the institution uses'
+    type: text
+  - line: account2_19
+    label: 'Account 2: Institution mailing address — number, street, suite number'
+    type: text
+  - line: account2_20
+    label: 'Account 2: Institution city'
+    type: text
+  - line: account2_21
+    label: 'Account 2: Institution state, if known'
+    type: text
+  - line: account2_22
+    label: 'Account 2: Institution foreign postal code, if known'
+    type: text
+  - line: account2_23
+    label: 'Account 2: Institution country (two-letter ISO 3166-1 code)'
+    type: text
+  # ---- Part II — account 3 of 3, owned SEPARATELY (items 15-23) — repeat this block for a fourth and later account 
+  - line: account3_15
+    label: 'Account 3: Maximum value of the account during the calendar year (U.S. dollars)'
+    type: money
+    note: 'Round UP to the next whole dollar: $15,265.25 is recorded as $15,266. Value each
+      account SEPARATELY. Take the greatest value of currency or non-monetary assets in the
+      account during the calendar year — periodic account statements may be relied on if they
+      fairly reflect it. Convert non-U.S. currency at the Treasury rate for the LAST DAY OF
+      THE CALENDAR YEAR (or another verifiable rate, stating its source). If the result is negative,
+      enter 0.'
+  - line: account3_15a
+    label: 'Account 3: Amount unknown — check only if the value cannot be determined'
+    type: checkbox
+    note: 'For a filer with FEWER than 25 accounts who cannot determine whether the aggregate
+      maximum exceeded $10,000: complete this account''s block and check this box.'
+  - line: account3_16
+    label: 'Account 3: Type of account: Bank, Securities, or Other (specify)'
+    type: text
+  - line: account3_17
+    label: 'Account 3: Full name of the financial institution holding the account'
+    type: text
+  - line: account3_18
+    label: 'Account 3: Account number, or other designation the institution uses'
+    type: text
+  - line: account3_19
+    label: 'Account 3: Institution mailing address — number, street, suite number'
+    type: text
+  - line: account3_20
+    label: 'Account 3: Institution city'
+    type: text
+  - line: account3_21
+    label: 'Account 3: Institution state, if known'
+    type: text
+  - line: account3_22
+    label: 'Account 3: Institution foreign postal code, if known'
+    type: text
+  - line: account3_23
+    label: 'Account 3: Institution country (two-letter ISO 3166-1 code)'
+    type: text
+  # ---- Part III — one account owned JOINTLY (items 15-24, plus the principal joint owner 25-33) 
+  - line: joint_15
+    label: 'Joint account: Maximum value of the account during the calendar year (U.S. dollars)'
+    type: money
+    note: 'Round UP to the next whole dollar: $15,265.25 is recorded as $15,266. Value each
+      account SEPARATELY. Take the greatest value of currency or non-monetary assets in the
+      account during the calendar year — periodic account statements may be relied on if they
+      fairly reflect it. Convert non-U.S. currency at the Treasury rate for the LAST DAY OF
+      THE CALENDAR YEAR (or another verifiable rate, stating its source). If the result is negative,
+      enter 0.'
+  - line: joint_15a
+    label: 'Joint account: Amount unknown — check only if the value cannot be determined'
+    type: checkbox
+    note: 'For a filer with FEWER than 25 accounts who cannot determine whether the aggregate
+      maximum exceeded $10,000: complete this account''s block and check this box.'
+  - line: joint_16
+    label: 'Joint account: Type of account: Bank, Securities, or Other (specify)'
+    type: text
+  - line: joint_17
+    label: 'Joint account: Full name of the financial institution holding the account'
+    type: text
+  - line: joint_18
+    label: 'Joint account: Account number, or other designation the institution uses'
+    type: text
+  - line: joint_19
+    label: 'Joint account: Institution mailing address — number, street, suite number'
+    type: text
+  - line: joint_20
+    label: 'Joint account: Institution city'
+    type: text
+  - line: joint_21
+    label: 'Joint account: Institution state, if known'
+    type: text
+  - line: joint_22
+    label: 'Joint account: Institution foreign postal code, if known'
+    type: text
+  - line: joint_23
+    label: 'Joint account: Institution country (two-letter ISO 3166-1 code)'
+    type: text
+  - line: joint_24
+    label: Number of joint owners for this account (excluding you; estimate if unknown)
+    type: text
+  - line: joint_25
+    label: Principal joint owner's TIN, if known — digits only
+    type: text
+    note: EACH joint owner reports the ENTIRE value of the account at item 15, not a share of
+      it. If your spouse has an interest in a jointly owned account, your spouse IS the principal
+      joint owner. See FinCEN's "Certain Accounts Jointly Owned by Spouses" exception before
+      assuming your spouse must file separately — with Form 114a signed by both, one spouse
+      can sign a single report covering both.
+  - line: joint_25a
+    label: Principal joint owner's TIN type
+    type: text
+  - line: joint_26
+    label: Principal joint owner's last name, or organization name
+    type: text
+  - line: joint_27
+    label: Principal joint owner's first name, if known
+    type: text
+  - line: joint_28
+    label: Principal joint owner's middle initial, if known
+    type: text
+  - line: joint_28a
+    label: Principal joint owner's name suffix, if known
+    type: text
+  - line: joint_29
+    label: Principal joint owner's mailing address — number, street, suite number
+    type: text
+  - line: joint_30
+    label: Principal joint owner's city, if known
+    type: text
+  - line: joint_31
+    label: Principal joint owner's state, if known
+    type: text
+  - line: joint_32
+    label: Principal joint owner's ZIP or postal code, if known
+    type: text
+  - line: joint_33
+    label: Principal joint owner's country (two-letter ISO 3166-1 code)
+    type: text
+  # ---- Part IV — one account where you have SIGNATURE AUTHORITY but no financial interest (items 15-23, plus the account owner 34-43) 
+  - line: sigauth_15
+    label: 'Signature-authority account: Maximum value of the account during the calendar year
+      (U.S. dollars)'
+    type: money
+    note: 'Round UP to the next whole dollar: $15,265.25 is recorded as $15,266. Value each
+      account SEPARATELY. Take the greatest value of currency or non-monetary assets in the
+      account during the calendar year — periodic account statements may be relied on if they
+      fairly reflect it. Convert non-U.S. currency at the Treasury rate for the LAST DAY OF
+      THE CALENDAR YEAR (or another verifiable rate, stating its source). If the result is negative,
+      enter 0.'
+  - line: sigauth_15a
+    label: 'Signature-authority account: Amount unknown — check only if the value cannot be
+      determined'
+    type: checkbox
+    note: 'For a filer with FEWER than 25 accounts who cannot determine whether the aggregate
+      maximum exceeded $10,000: complete this account''s block and check this box.'
+  - line: sigauth_16
+    label: 'Signature-authority account: Type of account: Bank, Securities, or Other (specify)'
+    type: text
+  - line: sigauth_17
+    label: 'Signature-authority account: Full name of the financial institution holding the
+      account'
+    type: text
+  - line: sigauth_18
+    label: 'Signature-authority account: Account number, or other designation the institution
+      uses'
+    type: text
+  - line: sigauth_19
+    label: 'Signature-authority account: Institution mailing address — number, street, suite
+      number'
+    type: text
+  - line: sigauth_20
+    label: 'Signature-authority account: Institution city'
+    type: text
+  - line: sigauth_21
+    label: 'Signature-authority account: Institution state, if known'
+    type: text
+  - line: sigauth_22
+    label: 'Signature-authority account: Institution foreign postal code, if known'
+    type: text
+  - line: sigauth_23
+    label: 'Signature-authority account: Institution country (two-letter ISO 3166-1 code)'
+    type: text
+  - line: sigauth_34
+    label: Account owner's last name, or organization name
+    type: text
+    note: 'This whole Part is why the FBAR can be required when Form 8938 is not: 31 CFR 1010.350(a)
+      reaches a U.S. person with "a financial interest in, OR SIGNATURE OR OTHER AUTHORITY over"
+      a foreign account, while a signature-authority account is generally NOT a Form 8938 specified
+      foreign financial asset. Exceptions to signature-authority reporting exist — see FinCEN''s
+      instructions and the current notice for certain financial professionals.'
+  - line: sigauth_35
+    label: Account owner's TIN — digits only
+    type: text
+  - line: sigauth_35a
+    label: Account owner's TIN type
+    type: text
+  - line: sigauth_36
+    label: Account owner's first name
+    type: text
+  - line: sigauth_37
+    label: Account owner's middle initial
+    type: text
+  - line: sigauth_37a
+    label: Account owner's name suffix
+    type: text
+  - line: sigauth_38
+    label: Account owner's mailing address — number, street, apartment or suite number
+    type: text
+  - line: sigauth_39
+    label: Account owner's city
+    type: text
+  - line: sigauth_40
+    label: Account owner's state
+    type: text
+  - line: sigauth_41
+    label: Account owner's ZIP or postal code
+    type: text
+  - line: sigauth_42
+    label: Account owner's country (two-letter ISO 3166-1 code)
+    type: text
+  - line: sigauth_43
+    label: Your title with this owner — the position that gives you signature authority
+    type: text
+  # ---- Signature section (items 44-46) — electronic, inside the BSA E-Filing System 
+  - line: '44'
+    label: Filer signature — signed by PIN in the BSA E-Filing System
+    type: checkbox
+    note: '"A discrete or batch-filed FBAR is considered signed by the filer when electronically
+      signed in the BSA E-Filing System." There is nothing to sign in ink.'
+  - line: 44a
+    label: Check if this report is completed by a third party preparer
+    type: checkbox
+  - line: '45'
+    label: Filer title — only if you are NOT reporting a personal account
+    type: text
+    note: A parent or guardian filing for a child enters "Parent/Guardian filing for child".
+  - line: '46'
+    label: Date (MM/DD/YYYY)
+    type: text
+    note: Auto-populates with the current date when a discrete FBAR is signed on the header/cover
+      page.
+  # ---- THE THRESHOLD TEST — total this once every account maximum above is filled in 
+  - line: aggregate_maximum_value
+    label: Aggregate maximum value of ALL foreign financial accounts during the calendar year
+      (sum of every account's own highest value, from every Part above)
+    type: money
+    compute: account1_15 + account2_15 + account3_15 + joint_15 + sigauth_15
+    note: 'Computed from the item-15 maxima above. AN FBAR IS REQUIRED WHEN THIS EXCEEDS $10,000
+      — more than, not at least (31 CFR 1010.306(c)). Three things about the test: it is an
+      AGGREGATE across every foreign financial account, not per account; it is a MAXIMUM-value
+      test at any time in the CALENDAR year, never a year-end balance; and your income tax filing
+      status does not move it, so there is no doubling for a joint return. The aggregate spans
+      accounts you have a FINANCIAL INTEREST in AND accounts you only have SIGNATURE OR OTHER
+      AUTHORITY over — 31 CFR 1010.350(a) covers both, which is why joint_15 and sigauth_15
+      are in this sum. If you have more than three separately-owned accounts, or more than one
+      joint or signature-authority account, add their maxima in by hand: this compute reaches
+      only the slots this worksheet carries. Run calc op foreign_asset_reporting for the cited
+      verdict — it also answers the SEPARATE Form 8938 question, which this worksheet does not.'

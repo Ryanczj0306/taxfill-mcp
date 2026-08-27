@@ -58,8 +58,11 @@ KNOWN_FORM_KEYS = frozenset(
         "f1040x",
         "fw7",
         "f8606",
+        "f8833",
         "f8889",
         "f8949",
+        "f8938",
+        "f1116",
         "f8959",
         "f8960",
         "f8962",
@@ -503,6 +506,647 @@ def test_sched_e_declares_all_four_whole_line_combine_relations(pack_path: Path)
     broken = {**signed, "41": 615}
     statuses = {c.relation: c.status for c in relations(pack, broken)}
     assert statuses["41 == 26 + 32 + 37 + 39 + 40"] == "FAIL", statuses
+
+
+# ---------------------------------------------------------------------------
+# Form 1116 — the two one-of-N option sets, and the three-column grid (P-008,
+# P-007, pitfall P-011)
+# ---------------------------------------------------------------------------
+
+# Form 1116 has TWO printed one-of-N option sets and BOTH are the dangerous
+# topology formpacks/CONVENTIONS.md says "gets no exemption": every option is
+# its own single-widget /Btn field, so nothing in the PDF makes them exclusive
+# and the `group` id is the only thing preventing a return that answers one
+# question twice. Reproduced on the 2023 blank before the groups were written,
+# and again on the 2024 and 2025 blanks during their ports: a sweep that turned
+# on every /Btn produced a page 1 with ALL SEVEN category boxes ticked under
+# "Check only one box on each Form 1116" and both "(j) Paid" and "(k) Accrued"
+# ticked under "(you must check one)". The six new *_ReadOrder /
+# ActiveHeaderElements wrappers do NOT change that: dumped on the 2024 blank,
+# every one carries no /FT, no /V and no /Ff, so they are name-tree grouping
+# nodes and each option is still its own terminal field.
+#
+# The category on-states are also the a..g ORDER, which is what a column shift
+# would silently break: /1..../7 map to boxes a..g reading left to right along
+# the upper printed row (a, c, e, g) then the lower one (b, d, f).
+#
+# WHY THESE TABLES ARE KEYED BY YEAR, and it is not tidiness. The re-authoring
+# landed in the 2024 REVISION and persists in 2025. Against the 2023 blank, the
+# 2024 blank keeps all 120 widgets and every printed line label but loses 99 of
+# the 120 fully-qualified names, adds 99, and changes THREE of the eleven /Btn
+# on-states (line 1b "/Yes" -> "/1"; (j) Paid "/Paid" -> "/1"; (k) Accrued
+# "/Accrued" -> "/2"). 2025 goes further: 99 of the 2023 names gone, 97 new.
+# And — the case that made a per-year table mandatory — the ONE category name
+# that survived verbatim now binds a DIFFERENT PRINTED BOX.
+# topmostSubform[0].Page1[0].c1_1[0] sat at /Rect x 43.2 with on-state "/1" in
+# 2023 (box a, section 951A category income) and sits at x 475.2 with on-state
+# "/7" in BOTH 2024 and 2025 (box g, lump-sum distributions), because a..f were
+# re-parented into new LineA-B_/LineC-D_/LineE-F_ReadOrder subforms and only g
+# was left on Page1[0]. A single shared table would have forced the 2024 and
+# 2025 packs to bind `category.section_951a` to the lump-sum box to stay green —
+# the wrong basket, the wrong limitation and the wrong Part IV row, with the
+# field name and the pack diff both looking clean. Every row below was read off
+# its OWN year's blank (/AP /N states dumped, printed letters read off a
+# 200/300-dpi crop; 2024 used two complementary discriminating renders, since a
+# sweep that ticks all seven cannot tell them apart).
+# A year with no row FAILS rather than being skipped, so a new port has to
+# introspect before it can pass.
+F1116_CATEGORY_BOXES_BY_YEAR: dict[int, tuple[tuple[str, str, str], ...]] = {
+    2023: (
+        ("category.section_951a", "Page1[0].c1_1[0]", "/1"),        # a Section 951A category income
+        ("category.foreign_branch", "Page1[0].c1_1[1]", "/2"),      # b Foreign branch category income
+        ("category.passive", "Page1[0].c1_1[2]", "/3"),             # c Passive category income
+        ("category.general", "Page1[0].c1_1[3]", "/4"),             # d General category income
+        ("category.section_901j", "Page1[0].c1_1[4]", "/5"),        # e Section 901(j) income
+        ("category.resourced_by_treaty", "Page1[0].c1_1[5]", "/6"), # f Certain income re-sourced by treaty
+        ("category.lump_sum", "Page1[0].c1_1[6]", "/7"),            # g Lump-sum distributions
+    ),
+    # The re-authoring landed in 2024, not 2025: the 2024 blank already carries
+    # the LineA-B_/LineC-D_/LineE-F_ReadOrder wrappers and already leaves box g
+    # on the bare 2023 name Page1[0].c1_1[0] (/Rect moved 432.0 pt right,
+    # 43.20 -> 475.20; on-state /1 -> /7). Read off the 2024 blank and proved by
+    # two complementary discriminating 200-dpi renders (a/d/e ticked, then
+    # b/c/f/g), never by the name.
+    2024: (
+        ("category.section_951a", "Page1[0].LineA-B_ReadOrder[0].c1_1[0]", "/1"),        # a Section 951A category income
+        ("category.foreign_branch", "Page1[0].LineA-B_ReadOrder[0].c1_1[1]", "/2"),      # b Foreign branch category income
+        ("category.passive", "Page1[0].LineC-D_ReadOrder[0].c1_1[0]", "/3"),             # c Passive category income
+        ("category.general", "Page1[0].LineC-D_ReadOrder[0].c1_1[1]", "/4"),             # d General category income
+        ("category.section_901j", "Page1[0].LineE-F_ReadOrder[0].c1_1[0]", "/5"),        # e Section 901(j) income
+        ("category.resourced_by_treaty", "Page1[0].LineE-F_ReadOrder[0].c1_1[1]", "/6"), # f Certain income re-sourced by treaty
+        ("category.lump_sum", "Page1[0].c1_1[0]", "/7"),                                 # g Lump-sum distributions <- 2023's box a
+    ),
+    2025: (
+        ("category.section_951a", "Page1[0].LineA-B_ReadOrder[0].c1_1[0]", "/1"),        # a Section 951A category income
+        ("category.foreign_branch", "Page1[0].LineA-B_ReadOrder[0].c1_1[1]", "/2"),      # b Foreign branch category income
+        ("category.passive", "Page1[0].LineC-D_ReadOrder[0].c1_1[0]", "/3"),             # c Passive category income
+        ("category.general", "Page1[0].LineC-D_ReadOrder[0].c1_1[1]", "/4"),             # d General category income
+        ("category.section_901j", "Page1[0].LineE-F_ReadOrder[0].c1_1[0]", "/5"),        # e Section 901(j) income
+        ("category.resourced_by_treaty", "Page1[0].LineE-F_ReadOrder[0].c1_1[1]", "/6"), # f Certain income re-sourced by treaty
+        ("category.lump_sum", "Page1[0].c1_1[0]", "/7"),                                 # g Lump-sum distributions <- 2023's box a
+    ),
+}
+
+_F1116_CREDIT_CLAIMED_BY_YEAR: dict[int, tuple[tuple[str, str, str], ...]] = {
+    2023: (
+        ("credit_claimed.paid",
+         "Page1[0].Part2TableHeader[0].ColumnJ[0].CreditClaimedCheckboxes[0].c1_3[0]", "/Paid"),
+        ("credit_claimed.accrued",
+         "Page1[0].Part2TableHeader[0].ColumnJ[0].CreditClaimedCheckboxes[0].c1_3[1]", "/Accrued"),
+    ),
+    # 2024 dropped the CreditClaimedCheckboxes/ColumnJ nesting for a bare
+    # Page1[0].ActiveHeaderElements[0]; 2025 then re-nested the SAME wrapper
+    # under a new Part2[0]. So the three years have three different paths for
+    # one printed pair, and only 2024 and 2025 share the "/1"/"/2" states.
+    2024: (
+        ("credit_claimed.paid", "Page1[0].ActiveHeaderElements[0].c1_3[0]", "/1"),
+        ("credit_claimed.accrued", "Page1[0].ActiveHeaderElements[0].c1_3[1]", "/2"),
+    ),
+    2025: (
+        ("credit_claimed.paid", "Page1[0].Part2[0].ActiveHeaderElements[0].c1_3[0]", "/1"),
+        ("credit_claimed.accrued", "Page1[0].Part2[0].ActiveHeaderElements[0].c1_3[1]", "/2"),
+    ),
+}
+
+# The two INDEPENDENT /Btn boxes (no group), pinned per year because one of the
+# two states changed and the other, absurdly, did not. Line 1b's attestation box
+# exported "/Yes" in 2023 and exports "/1" from 2024 on; the line-10 "you don't
+# need to attach Schedule B" box exports "/Accrued" in ALL THREE years — a DOR
+# authoring leftover from the Part II pair that has nothing to do with what the
+# box means, and the one /Btn state on this form that has never moved. Guessing
+# either one writes nothing and warns about nothing. Both bindings were also
+# re-parented into "_ReadOrder" wrappers in 2024 and kept there in 2025.
+_F1116_STANDALONE_BOXES_BY_YEAR: dict[int, tuple[tuple[str, str, str], ...]] = {
+    2023: (
+        ("1b", "Page1[0].Part1Table[0].Line1b[0].Line1BText[0].c1_2[0]", "/Yes"),
+        ("10.no_schedule_b", "Page2[0].c2_1[0]", "/Accrued"),
+    ),
+    2024: (
+        ("1b", "Page1[0].Line1b_ReadOrder[0].c1_2[0]", "/1"),
+        ("10.no_schedule_b", "Page2[0].Line10_ReadOrder[0].c2_1[0]", "/Accrued"),
+    ),
+    2025: (
+        ("1b", "Page1[0].Line1b_ReadOrder[0].c1_2[0]", "/1"),
+        ("10.no_schedule_b", "Page2[0].Line10_ReadOrder[0].c2_1[0]", "/Accrued"),
+    ),
+}
+
+# Line 1a's printed LABEL column carries three dashed rules for the description
+# of the income type ("enter 'Dividends' on the dotted line"). How many WIDGETS
+# sit on them is a per-year fact the name diff cannot see: 2023 shipped three
+# (f1_7/f1_8/f1_9, one per rule) and 2025 shipped ONE 36-pt Multiline box
+# (f1_07, /Ff 8392704) spanning all three. The keys therefore differ by year, and
+# the sibling keys must NOT exist in the year that has one box — otherwise
+# fill_form silently accepts a line that reaches no widget.
+_F1116_INCOME_TYPE_KEYS_BY_YEAR: dict[int, tuple[str, ...]] = {
+    2023: ("1a.income_type_1", "1a.income_type_2", "1a.income_type_3"),
+    # 2024 still ships THREE 12-pt boxes, one per printed dashed rule
+    # (f1_07 [115.2,504,259.2,516], f1_08 [64.8,492,259.2,504],
+    # f1_09 [64.8,480,259.2,492]), all /Ff 8388608 with the Multiline bit CLEAR
+    # — so the single-box collapse is a 2025 change, not a 2024 one, and this
+    # year keeps the base's three keys. Measured on the 2024 blank.
+    2024: ("1a.income_type_1", "1a.income_type_2", "1a.income_type_3"),
+    2025: ("1a.income_type",),
+}
+
+F1116_PACK_PATHS = [path for path in PACK_PATHS if path.parent.name == "f1116"]
+
+
+def _f1116_year_table(table: dict, pack, what: str):
+    """Per-year pin lookup: an unported year FAILS instead of silently passing."""
+    assert pack.tax_year in table, (
+        f"f1116 {pack.tax_year} has no {what} row. The 2024 revision re-authored every "
+        f"AcroForm name and moved three /Btn on-states while KEEPING one name bound to a "
+        f"different printed box, so this table is per-year by necessity: dump THIS year's "
+        f"blank (/AP /N states, /Rect, /Ff through /Parent), read the printed face at "
+        f"200 dpi, and add the row"
+    )
+    return table[pack.tax_year]
+
+
+@pytest.mark.parametrize("pack_path", F1116_PACK_PATHS, ids=_pack_id)
+def test_f1116_one_of_n_sets_are_grouped_and_exclusive(pack_path: Path, tmp_path: Path):
+    """P-008 shape on separate-widget /Btn fields: the group id is the only guard."""
+    pack = load_pack(pack_path)
+    by_line = {pf.line: pf for pf in pack.fields}
+    categories = _f1116_year_table(F1116_CATEGORY_BOXES_BY_YEAR, pack, "category-box")
+    credit_claimed = _f1116_year_table(_F1116_CREDIT_CLAIMED_BY_YEAR, pack, "Paid/Accrued")
+    standalone = _f1116_year_table(_F1116_STANDALONE_BOXES_BY_YEAR, pack, "standalone-box")
+
+    for line, field, on_state in categories:
+        pf = by_line.get(line)
+        assert pf is not None, f"{pack.tax_year} f1116 lost category line '{line}'"
+        assert pf.field == field, f"{line} binds {pf.field}, expected {field}"
+        assert pf.on_state == on_state, (
+            f"{line} on_state is {pf.on_state}, expected {on_state} — the a..g order IS the "
+            f"on-state order; dump the blank's /AP /N states rather than porting this by name"
+        )
+        assert pf.group == "category", f"{line} must share group 'category' (P-008)"
+    for line, field, on_state in credit_claimed:
+        pf = by_line.get(line)
+        assert pf is not None and pf.field == field and pf.on_state == on_state, (
+            f"{pack.tax_year} f1116 Part II '{line}' mis-mapped: {pf}"
+        )
+        assert pf.group == "credit_claimed", f"{line} must share group 'credit_claimed' (P-008)"
+
+    # Both sets are printed imperatives, so exactly one member of each carries
+    # `required` (f1040's filing_status spelling: the flag on any member makes the
+    # whole group required, and the audit then FAILs an unanswered question).
+    for group, members in (("category", categories), ("credit_claimed", credit_claimed)):
+        required = [line for line, _, _ in members if by_line[line].required]
+        assert required == [members[0][0]], (
+            f"{pack.tax_year} f1116 group '{group}' should mark exactly its FIRST member required, "
+            f"got {required}"
+        )
+
+    # The other two /Btn widgets are INDEPENDENT boxes, not options: no group.
+    # Their bindings AND their on-states are pinned per year, because 1b's state
+    # went "/Yes" -> "/1" in 2024 (and stayed there in 2025) while line 10's
+    # stayed the leftover "/Accrued" in all three years even though its FIELD
+    # moved into Page2[0].Line10_ReadOrder[0] in 2024.
+    for line, field, on_state in standalone:
+        pf = by_line.get(line)
+        assert pf is not None and pf.type == "checkbox", f"{line} missing"
+        assert pf.group is None, (
+            f"{line} is a standalone attestation box, not one option of a question — a group id "
+            f"here would make it mutually exclusive with something"
+        )
+        assert pf.field == field and pf.on_state == on_state, (
+            f"{pack.tax_year} f1116 '{line}' binds {pf.field} at {pf.on_state}, expected "
+            f"{field} at {on_state} — read the state off /AP /N on THIS year's blank; a state "
+            f"the widget does not define writes nothing and warns about nothing"
+        )
+
+    # The guard is real, not decorative. fill_form checks the blank EXISTS before
+    # it validates the group but raises before parsing it, so a stub file is
+    # enough (sched_e's P-008 test does the same).
+    stub = tmp_path / "unparsed-blank.pdf"
+    stub.write_bytes(b"not a pdf")
+    for group, a, b in (
+        ("category", "category.passive", "category.general"),
+        ("credit_claimed", "credit_claimed.paid", "credit_claimed.accrued"),
+    ):
+        with pytest.raises(ValueError, match=rf"checkbox group '{group}'"):
+            fill_form(pack, {a: True, b: True}, stub, tmp_path / "out.pdf")
+    # ...and exactly one answer is still accepted (the guard is not over-broad):
+    # it gets past the group check and dies on the unparseable stub instead.
+    for line in ("category.passive", "category.lump_sum", "credit_claimed.accrued"):
+        with pytest.raises(ValueError, match="could not be parsed as a PDF"):
+            fill_form(pack, {line: True}, stub, tmp_path / "out.pdf")
+
+
+@pytest.mark.parametrize("pack_path", F1116_PACK_PATHS, ids=_pack_id)
+def test_f1116_column_grid_keys_are_unambiguous_and_complete(pack_path: Path):
+    """The column-key convention, and the reason it is not sched_d's `.a`.
+
+    Form 1116 prints sub-line letters (1a/1b, 3a-3g, 4a/4b) AND lettered country
+    columns (A/B/C), so the literal house spelling `1a.b` reads exactly like
+    printed line `1b`, `4a.b` like `4b` and `3a.c` like `3c`. The pack uses
+    `col_a`/`col_b`/`col_c`/`total` instead. This test pins that no bare
+    `<line>.<single letter>` column key ever creeps back into Part I, and that
+    every column of every gridded row is present — a missing column is how a
+    three-column form ships two-thirds filled.
+    """
+    pack = load_pack(pack_path)
+    lines = {pf.line for pf in pack.fields}
+    gridded_money = ("1a", "2", "3a", "3b", "3c", "3d", "3e", "3g", "4a", "4b", "5", "6")
+    for row in gridded_money + ("i", "3f"):
+        for col in ("col_a", "col_b", "col_c"):
+            assert f"{row}.{col}" in lines, f"{pack.tax_year} f1116 is missing '{row}.{col}'"
+        # The lookalike spelling must not exist.
+        for bad in ("a", "b", "c"):
+            assert f"{row}.{bad}" not in lines, (
+                f"{pack.tax_year} f1116 maps '{row}.{bad}' — a bare column letter collides by eye "
+                f"with a printed sub-line letter on this form; use col_a/col_b/col_c"
+            )
+    # Only three rows have a widget in the printed Total column; the rest of that
+    # column is solid grey with NO widget, so those keys must not exist.
+    assert {"1a.total", "6.total"} <= lines
+    for row in ("i", "2", "3a", "3b", "3c", "3d", "3e", "3f", "3g", "4a", "4b", "5"):
+        assert f"{row}.total" not in lines, (
+            f"{pack.tax_year} f1116 maps '{row}.total' — that Total cell is shaded and holds no "
+            f"widget at all"
+        )
+    # Part II: three lines x ten printed columns (l)..(u), and (m)-(p) are
+    # "In foreign currency" so they are TEXT, not dollars.
+    by_line = {pf.line: pf for pf in pack.fields}
+    for row in ("line_a", "line_b", "line_c"):
+        for col in "lmnopqrstu":
+            key = f"{row}.{col}"
+            assert key in lines, f"{pack.tax_year} f1116 is missing '{key}'"
+            expected = "text" if col in "lmnop" else "money"
+            assert by_line[key].type == expected, (
+                f"{key} is {by_line[key].type}, expected {expected} — the masthead prints 'Report "
+                f"all amounts in U.S. dollars EXCEPT where specified in Part II below', and "
+                f"columns (m)-(p) are headed 'In foreign currency' while (l) takes '1099 taxes' "
+                f"or '909 taxes' as often as a date"
+            )
+    # The two ratio lines are text for the same kind of reason (verify compares
+    # relation sides in whole dollars, so a 0.8757 would round to 0).
+    for key in ("3f.col_a", "3f.col_b", "3f.col_c", "19"):
+        assert by_line[key].type == "text", f"{key} is a DECIMAL RATIO, not money"
+    # Line 1a's dashed description rules: how many WIDGETS the IRS put on them is
+    # a per-year fact (three in 2023 AND 2024, one Multiline box in 2025), and the keys the
+    # other year uses must NOT exist here or fill_form accepts a line that
+    # reaches no widget.
+    expected_income_type = set(
+        _f1116_year_table(_F1116_INCOME_TYPE_KEYS_BY_YEAR, pack, "line-1a description")
+    )
+    every_income_type = {k for keys in _F1116_INCOME_TYPE_KEYS_BY_YEAR.values() for k in keys}
+    assert {k for k in lines if k.startswith("1a.income_type")} == expected_income_type, (
+        f"{pack.tax_year} f1116 line-1a description keys are "
+        f"{sorted(k for k in lines if k.startswith('1a.income_type'))}, expected "
+        f"{sorted(expected_income_type)} — count the widgets on the printed dashed rules"
+    )
+    for stale in sorted(every_income_type - expected_income_type):
+        assert stale not in lines, f"{pack.tax_year} f1116 kept another year's key '{stale}'"
+
+
+@pytest.mark.parametrize("pack_path", F1116_PACK_PATHS, ids=_pack_id)
+def test_f1116_credit_lands_on_schedule_3_line_1(pack_path: Path):
+    """Printed line 35: "Enter here and on Schedule 3 (Form 1040), line 1"."""
+    pack = load_pack(pack_path)
+    assert "35 == sched_3.1" in pack.cross_form
+    assert pack.signature is None and pack.mailing is None, (
+        "Form 1116 is attachment-only ('Attach to Form 1040, 1040-SR, 1040-NR, 1041, or 990-T'): "
+        "no signature block of its own, mailed inside the parent return's envelope"
+    )
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("pack_path", F1116_PACK_PATHS, ids=_pack_id)
+def test_f1116_blank_has_no_readonly_widgets_and_the_states_are_real(pack_path: Path):
+    """P-007 and P-008 against the official blank: prove the flags and the states.
+
+    Form 1116 is one of the few packs whose blank carries ZERO ReadOnly widgets,
+    so the P-007 adjudication has nothing to allowlist — and that is a fact about
+    the blank, not an assumption, so it is asserted here rather than asserted in
+    prose. The category and Paid/Accrued sets are also proved to be SEPARATE
+    terminal fields (the dangerous topology), since a future revision could
+    re-author them as radio kids and silently change what the group id is for.
+    """
+    from pypdf import PdfReader
+
+    pack = load_pack(pack_path)
+    try:
+        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+    except OfflineFetchError as exc:
+        pytest.skip(f"cache empty and network unreachable: {exc}")
+
+    prefix = f"{pack.acroform_root}." if pack.acroform_root else ""
+    assert _read_only_widget_names(Path(blank)) == set(), (
+        f"f1116 {pack.tax_year}: the blank grew a ReadOnly widget. Render the page, read the "
+        f"printed row text and place it in one of P-007's four classes before mapping or "
+        f"unmapping it"
+    )
+
+    reader = PdfReader(str(blank))
+    states: dict[str, set[str]] = {}
+    owners: dict[str, str] = {}
+    for page in reader.pages:
+        for annot_ref in page.get("/Annots") or []:
+            annot = annot_ref.get_object()
+            parts, node, hops = [], annot, 0
+            while node is not None and hops < 32:
+                title = node.get("/T")
+                if title:
+                    parts.append(str(title))
+                parent = node.get("/Parent")
+                node = parent.get_object() if parent is not None else None
+                hops += 1
+            name = ".".join(reversed(parts))
+            appearance = annot.get("/AP")
+            if appearance is not None and appearance.get_object().get("/N") is not None:
+                normal = appearance.get_object()["/N"].get_object()
+                try:
+                    states[name] = {str(k) for k in normal.keys()} - {"/Off"}
+                except AttributeError:
+                    continue
+            owners[name] = "terminal" if annot.get("/T") is not None else "kid"
+
+    pinned = (
+        _f1116_year_table(F1116_CATEGORY_BOXES_BY_YEAR, pack, "category-box")
+        + _f1116_year_table(_F1116_CREDIT_CLAIMED_BY_YEAR, pack, "Paid/Accrued")
+        + _f1116_year_table(_F1116_STANDALONE_BOXES_BY_YEAR, pack, "standalone-box")
+    )
+    for line, field, on_state in pinned:
+        full = prefix + field
+        assert states.get(full) == {on_state}, (
+            f"f1116 {pack.tax_year} line '{line}': widget {full} exports {states.get(full)}, "
+            f"the pack claims {on_state}"
+        )
+        assert owners.get(full) == "terminal", (
+            f"f1116 {pack.tax_year} line '{line}': {full} is no longer its own terminal field — "
+            f"if the IRS re-authored the set as radio kids of one field, the group id now means "
+            f"something different and CONVENTIONS.md's two topologies must be re-read"
+        )
+    # Every mapped widget must still exist on the blank, all 1:1.
+    mapped = {prefix + pf.field for pf in pack.fields}
+    assert len(mapped) == len(pack.fields), "two lines bind one widget"
+    assert mapped <= set(owners), (
+        f"f1116 {pack.tax_year} binds widget(s) the blank does not have: "
+        f"{sorted(mapped - set(owners))}"
+    )
+    assert len(owners) == len(mapped), (
+        f"f1116 {pack.tax_year}: the blank has {len(owners)} widgets and the pack maps "
+        f"{len(mapped)} — a new revision added or dropped a box; re-introspect and re-audit"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Form 8833 — the two decisions this pack's adversarial audit turned on
+# ---------------------------------------------------------------------------
+#
+# Form 8833 (Rev. 12-2022) prints FIVE checkboxes, and they fall into the two
+# topologies CONVENTIONS.md says are "not equally dangerous" — in OPPOSITE
+# directions, which is why both halves are pinned here rather than argued in the
+# pack banner:
+#
+#   * line 5 Yes/No — `c1_4[0]` and `c1_4[1]` are two DIFFERENT terminal fields
+#     (the `[0]`/`[1]` index is part of /T, not a kid index), so nothing in the
+#     PDF makes them exclusive and the `group` id is the ONLY thing standing
+#     between a caller and a return that answers one question both Yes and No.
+#     That is the P-008 / WV it140 shape verbatim, and it gets no exemption.
+#   * the two bullet boxes — `c1_1[0]` (section 6114) and `c1_2[0]`
+#     (301.7701(b)-7 dual resident) must NOT share a group, because the printed
+#     face says "Check one or both of the following boxes as applicable" and
+#     verify.checkbox_audit FAILs any group, required or not, with MORE than one
+#     member checked. Grouping them would reject the legitimate filing of a
+#     dual-resident taxpayer who is also disclosing under section 6114 — the
+#     exact both-boxes case the form invites. A later "tidy-up" that adds the
+#     group would look like an improvement and break a real return, so the
+#     absence of the group is asserted, not merely commented.
+#
+# Sources for every printed quotation below: Form 8833 (Rev. 12-2022) page 1,
+# rendered at 200 dpi and read (https://www.irs.gov/pub/irs-pdf/f8833.pdf).
+
+F8833_PACK_PATHS = [path for path in PACK_PATHS if path.parent.name == "f8833"]
+
+# line -> (field, on_state, group, required). Dumped from the blank's /AP /N
+# appearance states and tied to the printed label by /Rect, never guessed.
+F8833_CHECKBOXES: dict[str, tuple[str, str, str | None, bool]] = {
+    "disclosure.section_6114": ("Page1[0].BulletedList1[0].Bullet1[0].c1_1[0]", "/1", None, False),
+    "disclosure.dual_resident": ("Page1[0].BulletedList1[0].Bullet2[0].c1_2[0]", "/1", None, False),
+    "us_person": ("Page1[0].c1_3[0]", "/1", None, False),
+    "5.yes": ("Page1[0].c1_4[0]", "/1", "line5", True),
+    "5.no": ("Page1[0].c1_4[1]", "/2", "line5", False),
+}
+
+# The line-6 explanation area, which a field-name dump ("f1_12 ... f1_36") makes
+# look like one big multiline box and is not: `6` is the SHORT tail of the third
+# printed instruction row and `6.cont01`..`6.cont24` are the 24 full-width dashed
+# rules under it. line -> (field, widget width in PDF points).
+F8833_LINE6_GEOMETRY: tuple[tuple[str, str, float], ...] = (
+    ("6", "Page1[0].f1_12[0]", 252.0),
+) + tuple(
+    (f"6.cont{n:02d}", f"Page1[0].f1_{12 + n}[0]", 511.2) for n in range(1, 25)
+)
+
+
+@pytest.mark.parametrize("pack_path", F8833_PACK_PATHS, ids=_pack_id)
+def test_f8833_line5_is_grouped_while_the_two_bullets_are_deliberately_not(
+    pack_path: Path, tmp_path: Path
+):
+    """P-003 and P-008 on Form 8833: one exclusive question, three independent boxes."""
+    pack = load_pack(pack_path)
+    by_line = {pf.line: pf for pf in pack.fields}
+
+    # fill_form checks the blank exists before it validates the group, and raises
+    # before parsing, so an unparseable stub is enough to reach both verdicts
+    # offline (same trick as the Schedule E group test).
+    stub = tmp_path / "unparsed-blank.pdf"
+    stub.write_bytes(b"not a pdf")
+
+    for line, (field, on_state, group, required) in F8833_CHECKBOXES.items():
+        pf = by_line.get(line)
+        assert pf is not None, f"f8833 {pack.tax_year} lost checkbox line '{line}'"
+        assert pf.type == "checkbox", f"f8833 {pack.tax_year} '{line}' is {pf.type}, not a checkbox"
+        assert pf.field == field, (
+            f"f8833 {pack.tax_year} '{line}' binds {pf.field}, expected {field} — re-dump the "
+            f"blank's /AP /N states and /Rect positions before trusting this map"
+        )
+        assert pf.on_state == on_state, (
+            f"f8833 {pack.tax_year} '{line}' on_state is {pf.on_state!r}, expected {on_state!r}"
+        )
+        assert pf.group == group, (
+            f"f8833 {pack.tax_year} '{line}' group is {pf.group!r}, expected {group!r}. The two "
+            f"bullets and the U.S.-person box are INDEPENDENT questions: page 1 prints 'Check one "
+            f"or both of the following boxes as applicable', and verify.checkbox_audit FAILs any "
+            f"group with more than one member checked — grouping them would reject a "
+            f"dual-resident taxpayer who is also disclosing under section 6114"
+        )
+        assert bool(pf.required) == required, (
+            f"f8833 {pack.tax_year} '{line}' required is {pf.required!r}, expected {required}. "
+            f"Only line 5 is asked of every filer (the face prints a dot leader to it); a "
+            f"required flag on either bullet would false-FAIL whichever population the other "
+            f"bullet covers"
+        )
+
+    # The two Yes/No widgets are SEPARATE fields — the topology that makes the
+    # group id load-bearing rather than decorative.
+    assert by_line["5.yes"].field != by_line["5.no"].field, (
+        f"f8833 {pack.tax_year}: line 5 Yes/No now shares one AcroForm field. A shared field "
+        f"holds a single /V and cannot store a double answer, so the exclusivity story changes "
+        f"— re-read CONVENTIONS.md's two topologies before relying on the group id"
+    )
+
+    # The guard, proved by execution: Yes AND No is a hard error...
+    with pytest.raises(ValueError, match="checkbox group 'line5'"):
+        fill_form(pack, {"5.yes": True, "5.no": True}, stub, tmp_path / "out.pdf")
+    # ...while either answer alone is accepted (it reaches the PDF parse and
+    # fails there, which is as far as an unparseable stub can go).
+    for line in ("5.yes", "5.no"):
+        with pytest.raises(ValueError, match="could not be parsed as a PDF"):
+            fill_form(pack, {line: True}, stub, tmp_path / "out.pdf")
+    # ...and BOTH bullets together is NOT an error: that is the printed
+    # "one or both" case, and the whole reason they carry no group.
+    with pytest.raises(ValueError, match="could not be parsed as a PDF"):
+        fill_form(
+            pack,
+            {"disclosure.section_6114": True, "disclosure.dual_resident": True},
+            stub,
+            tmp_path / "out.pdf",
+        )
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("pack_path", F8833_PACK_PATHS, ids=_pack_id)
+def test_f8833_blank_is_the_rev_12_2022_layout_it_was_mapped_against(pack_path: Path):
+    """Against the official blank: no ReadOnly widgets, and line 6 is 25 boxes not one.
+
+    Form 8833 is revision-dated, so all three filing-year packs pin the SAME
+    Rev. 12-2022 file and a silent IRS revision would move every one of them at
+    once. These are the facts the map rests on, asserted rather than remembered:
+
+    * ZERO ReadOnly widgets, so P-007's four classes are all vacuous here and
+      test_readonly_widget_mapping.py needs no allowlist row for this pack. If
+      the blank grows one, read the printed row text and place it in a class
+      before mapping or unmapping the widget.
+    * 41 terminal widgets, all on page 1, mapped 1:1 by 41 lines. Pages 3-5 are
+      the instructions and page 2 prints "[This page left blank intentionally]";
+      none of the four carries a widget.
+    * /MaxLen on exactly ONE widget (the TIN box, 11 — wide enough for a dashed
+      SSN or ITIN, and NOT a comb: bit 25 is clear, so no ssn_digits_only).
+    * The line-6 block is 25 single-line DoNotScroll boxes whose WIDTHS are what
+      the pack's "split the explanation, ~110 characters per row" advice rests
+      on. An over-long row is CLIPPED, not wrapped, and no /MaxLen catches it.
+    """
+    from pypdf import PdfReader
+
+    pack = load_pack(pack_path)
+    try:
+        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+    except OfflineFetchError as exc:
+        pytest.skip(f"cache empty and network unreachable: {exc}")
+
+    prefix = f"{pack.acroform_root}." if pack.acroform_root else ""
+    assert _read_only_widget_names(Path(blank)) == set(), (
+        f"f8833 {pack.tax_year}: the blank grew a ReadOnly widget. Render page 1, read the "
+        f"printed row text and place it in one of P-007's four classes before mapping or "
+        f"unmapping it — 'ReadOnly means unfillable' is the premise P-007 overturned"
+    )
+
+    def inherited(node, key):
+        hops = 0
+        while node is not None and hops < 64:
+            if key in node:
+                return node[key]
+            parent = node.get("/Parent")
+            node = parent.get_object() if parent is not None else None
+            hops += 1
+        return None
+
+    reader = PdfReader(str(blank))
+    widgets: dict[str, dict] = {}
+    for page_number, page in enumerate(reader.pages, start=1):
+        for annot_ref in page.get("/Annots") or []:
+            annot = annot_ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            parts, node, hops = [], annot, 0
+            while node is not None and hops < 64:
+                title = node.get("/T")
+                if title:
+                    parts.append(str(title))
+                parent = node.get("/Parent")
+                node = parent.get_object() if parent is not None else None
+                hops += 1
+            rect = [float(v) for v in annot["/Rect"]]
+            appearance = annot.get("/AP")
+            states: set[str] = set()
+            if appearance is not None and appearance.get_object().get("/N") is not None:
+                normal = appearance.get_object()["/N"].get_object()
+                try:
+                    states = {str(key) for key in normal.keys()} - {"/Off"}
+                except AttributeError:
+                    states = set()
+            widgets[".".join(reversed(parts))] = {
+                "page": page_number,
+                "width": round(rect[2] - rect[0], 1),
+                "maxlen": inherited(annot, "/MaxLen"),
+                "flags": int(inherited(annot, "/Ff") or 0),
+                "states": states,
+                "terminal": annot.get("/T") is not None,
+            }
+
+    mapped = {prefix + pf.field for pf in pack.fields}
+    assert len(mapped) == len(pack.fields), f"f8833 {pack.tax_year}: two lines bind one widget"
+    assert mapped == set(widgets), (
+        f"f8833 {pack.tax_year}: the pack and the blank disagree on the widget set. Only in the "
+        f"pack: {sorted(mapped - set(widgets))}; only on the blank: "
+        f"{sorted(set(widgets) - mapped)} — re-introspect and re-audit"
+    )
+    assert len(widgets) == 41, (
+        f"f8833 {pack.tax_year}: the blank now has {len(widgets)} widgets, not the 41 this map "
+        f"was audited against — the IRS revised the form; re-read page 1 at 200 dpi"
+    )
+    assert {info["page"] for info in widgets.values()} == {1}, (
+        f"f8833 {pack.tax_year}: a widget left page 1. Pages 3-5 are the instructions and page 2 "
+        f"prints '[This page left blank intentionally]' — a widget elsewhere means a new layout"
+    )
+
+    # /MaxLen: exactly one widget carries it, and it is the TIN box.
+    with_maxlen = {name: info["maxlen"] for name, info in widgets.items() if info["maxlen"]}
+    assert with_maxlen == {prefix + "Page1[0].f1_2[0]": 11}, (
+        f"f8833 {pack.tax_year}: /MaxLen widgets are {with_maxlen}, expected only the "
+        f"'U.S. taxpayer identifying number' box at 11"
+    )
+    assert not int(widgets[prefix + "Page1[0].f1_2[0]"]["flags"]) & (1 << 24), (
+        f"f8833 {pack.tax_year}: the TIN box became a comb field — it now needs "
+        f"comb/format: ssn_digits_only (P-001), which the pack deliberately omits today"
+    )
+
+    for line, (field, on_state, _group, _required) in F8833_CHECKBOXES.items():
+        info = widgets[prefix + field]
+        assert info["states"] == {on_state}, (
+            f"f8833 {pack.tax_year} '{line}': widget {field} exports {sorted(info['states'])}, "
+            f"the pack claims {on_state}"
+        )
+        assert info["terminal"], (
+            f"f8833 {pack.tax_year} '{line}': {field} is no longer its own terminal field. If "
+            f"the IRS re-authored these as radio kids of one field, the group id means something "
+            f"different and CONVENTIONS.md's two topologies must be re-read"
+        )
+
+    # Line 6's geometry — the fact a field-name dump hides.
+    for line, field, width in F8833_LINE6_GEOMETRY:
+        info = widgets[prefix + field]
+        assert info["width"] == width, (
+            f"f8833 {pack.tax_year} '{line}': widget {field} is {info['width']}pt wide, not "
+            f"{width}pt. The pack's per-row character advice is derived from this width; "
+            f"re-measure before changing it"
+        )
+        assert int(info["flags"]) & (1 << 23) and not int(info["flags"]) & (1 << 12), (
+            f"f8833 {pack.tax_year} '{line}': {field} is no longer a single-line DoNotScroll box "
+            f"(/Ff {info['flags']}). If it became multiline the explanation no longer needs "
+            f"splitting across 25 rows"
+        )
+    # ...and the three boxes that ARE multiline stayed that way.
+    for field in ("Page1[0].f1_4[0]", "Page1[0].f1_5[0]", "Page1[0].f1_9[0]"):
+        assert int(widgets[prefix + field]["flags"]) & (1 << 12), (
+            f"f8833 {pack.tax_year}: {field} lost its Multiline bit — a viewer will no longer "
+            f"wrap the address/payor block, so the value must now be split or shortened"
+        )
 
 
 # ---------------------------------------------------------------------------

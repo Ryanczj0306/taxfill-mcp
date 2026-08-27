@@ -52,7 +52,7 @@ def _runtime_calc_ops() -> set[str]:
     """The ops `calc` actually dispatches, read from the dispatch chain itself."""
     src = (REPO / "packages" / "mcp-server" / "src" / "taxfill_mcp" / "server.py").read_text()
     ops = set(re.findall(r'if op == "([a-z0-9_]+)"', src))
-    assert len(ops) == 30, f"calc op count changed ({len(ops)}) — update the skills, then this number"
+    assert len(ops) == 32, f"calc op count changed ({len(ops)}) — update the skills, then this number"
     return ops
 
 

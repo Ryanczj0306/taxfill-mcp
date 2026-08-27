@@ -510,3 +510,191 @@ pitfalls:
       general-purpose refusal (including that the message names the SPOUSE's
       employer), the limited-purpose and post-deductible acceptances, and the
       gate being stated even on a no-FSA call.
+
+  - id: P-011
+    incident: >-
+      The knowledge-gap pattern a fifth time, and this one sat on the single most
+      common international fact in an otherwise-domestic return. Every holder of a
+      total-international index fund has foreign tax withheld at source — it
+      arrives in Form 1099-DIV box 7 — and NOTHING in the repo modeled it:
+      sched_3 had shipped line 1 ("Foreign tax credit (Form 1116)") for 2023,
+      2024 and 2025 with no Form 1116 pack behind it, so a filer with $412 of
+      withheld foreign tax could not assemble a complete return at all, and no
+      calc op could say whether the form was even needed. The decisive rule is
+      IRC 904(j): a filer may ELECT to claim the credit directly on Schedule 3
+      with NO Form 1116 when creditable foreign taxes are $300 or less ($600 in
+      the case of a joint return) and every dollar of foreign-source gross income
+      is qualified passive income shown on a payee statement. That is the
+      difference between a one-line entry and a four-part, three-country-column
+      form, and it was unmodeled in both directions.
+      The sources registry had the same hole, and it was the widest wrong-law
+      routing found so far. Reproduced against the 2023 registry before the fix:
+      get_sources("foreign tax credit") routed to foreign_earned_income — Form
+      2555, the EXCLUSION, which is the ALTERNATIVE treatment of foreign income,
+      so the pointer sends an agent to exclude income it should be crediting tax
+      on; ("foreign taxes withheld") routed to nonresident_fdap, the 30% the US
+      withholds FROM a nonresident, the exact mirror image of tax a foreign
+      country withheld from a US person; ("1099-DIV box 7") routed to
+      ira_basis_and_roth_conversions, P-009's own new topic swallowing it;
+      ("904(j)") routed to tax_rates_and_tables, the section 1 rate schedules;
+      ("de minimis election") routed to commuter_and_fringe_benefits, the de
+      minimis FRINGE; and ("Form 1116"), ("passive category income") and
+      ("foreign tax credit without filing Form 1116") were clean misses. Five
+      wrong-law pointers and three misses, all of the P-005 "Schedule NEC" /
+      P-006 "qualified parking" kind.
+      Three traps sat inside the gap. (1) THE ELECTION IS NOT FREE, and every
+      plain-language summary of it says only "no Form 1116 needed":
+      904(j)(1)(B) and (C) forbid carrying foreign tax OUT OF an election year
+      and INTO one, so the 904(c) 1-year-back / 10-year-forward carryover is
+      forfeited in both directions — and because 904(j)(1)(A) turns the 904(a)
+      limitation off while the Instructions still cap the entry at "the smaller
+      of (a) your total foreign tax, or (b) your regular tax", foreign tax above
+      regular tax is not deferred, it is lost outright. (2) ONE NON-PASSIVE
+      DOLLAR ENDS IT for the whole year regardless of how small the tax is:
+      904(j)(2)(A) requires "the ENTIRE amount of such individual's gross income
+      for the taxable year from sources without the United States" to be
+      qualified passive income, so $12 of withheld tax alongside any foreign
+      wages, foreign self-employment income, foreign rent or a section 951A
+      inclusion still forces Form 1116. (3) THE $600 IS CONDITIONED ON "A JOINT
+      RETURN", not on the joint RATE column, and calc's own
+      _resolve_filing_status maps qualifying_surviving_spouse onto the
+      married_filing_jointly column — correct for rates and wrong here, because a
+      surviving spouse borrows the joint rate schedule (IRC 1(a)(2) via 2(a))
+      without filing a joint return. Routing QSS through that helper would have
+      doubled the ceiling for a filer entitled to $300.
+    countermeasure: >-
+      Calc op foreign_tax_credit_election (Phase I, I4) plus form pack
+      formpacks/federal/2023/f1116, with golden regression tests in
+      packages/core/tests/test_tax_calc.py covering BOTH sides of the branch —
+      the same $412 of 1099-DIV box 7 tax electing on a joint return and needing
+      Form 1116 on a single one, the "does not exceed" boundary at exactly $300
+      and $600, the per-status ceiling table that pins QSS and MFS at $300, the
+      year-invariance of the figures across all seven shipped year packs, and
+      every condition failing on its own. The op REFUSES to guess the two
+      judgment facts (all_foreign_income_passive, all_reported_on_payee_statement
+      have no default and their error messages name the statute and the way out)
+      and reports election_available and election_made SEPARATELY, because
+      904(j)(2)(C) is the taxpayer's own act and a filer who qualifies may still
+      prefer Form 1116 when there is an excess credit worth carrying. Its
+      election_costs field is populated on the ELECTING path too, so the answer
+      can never be presented as free, and it quantifies the two concrete losses
+      when the caller supplies the inputs: credit_lost_to_regular_tax_cap, and
+      the carryover forfeited if excess_credit_if_form_1116 is passed.
+      THE DURABLE RULES are year-invariant and live HERE, not in a year pack.
+      (a) The election's conditions are all-or-nothing and are about
+      CHARACTERIZATION, not size: every foreign-source dollar passive
+      (904(j)(2)(A) with 904(d)(2)(B), plus high-taxed income and certain export
+      financing interest per the Instructions), every item AND its tax shown on a
+      payee statement (904(j)(3)(A)/(B), the term taken from section 6724(d)(2) —
+      Form 1099-DIV, Form 1099-INT, Schedule K-1 (Form 1041), Schedule K-3 (Form
+      1065), Schedule K-3 (Form 1120-S) or a substitute), and no estates or
+      trusts (904(j)(3)(D): "This subsection shall not apply to any estate or
+      trust"). (b) The election waives NEITHER creditability (IRC 901/903 still
+      decide, including 901(k)'s minimum holding period on dividend withholding)
+      NOR the Form 1116 line 12 reduction, which is subtracted BEFORE the
+      $300/$600 test. (c) Only the $300/$600 amounts are figures, and they are
+      statutory and NOT indexed — 904(j) was added by P.L. 105-34 (1997) with no
+      inflation-adjustment provision, and each year's own Instructions for Form
+      1116 from 2019 through 2025 were independently confirmed to restate the
+      same two numbers — so they ship in each year pack's
+      credits.foreign_tax_credit block with a per-year citation rather than
+      hardcoded in calc.py.
+      get_sources now routes the authority via topic foreign_tax_credit (IRC 904
+      and IRC 901 on uscode.house.gov, Form 1116, its instructions, Pub 514, and
+      the IRS Foreign Tax Credit page) with routing regression tests in
+      test_sources.py covering all five wrong-law cases and all three misses, and
+      a neighbour-theft guard proving the new topic does not swallow
+      foreign_earned_income's queries ("Form 2555", "foreign earned income
+      exclusion", "physical presence test") — the nearest neighbour, since the
+      credit and the exclusion are alternative treatments of the same income —
+      nor P-009's deliberate "foreign pension distributions" clean miss.
+      One thing the f1116 pack could NOT check and which is reported rather than
+      hidden: verify's relation tokenizer accepts only `\d+[a-z]?` and a bare
+      identifier as operands, so a DOTTED line key cannot appear in a relation at
+      all. Form 1116's printed per-column math ("c Add lines 3a and 3b", "Total
+      (Add cols. A, B, and C.)", "(u) ... add cols. (q) through (t)", "8 Add
+      lines A through C, column (u)") is therefore unchecked, exactly as it is on
+      sched_d, sched_e and f8949; the pack names every unchecked formula in its
+      relations block so the gap is visible.
+
+  - id: P-012
+    incident: >-
+      Two defects in the Phase I4 foreign-asset half, both found by RUNNING the
+      code rather than reading it, and both in the direction that loses money.
+      (1) THE ELICITATION SILENCED ITSELF ON A DOMESTIC ACCOUNT NUMBER. The new
+      intake question income_documents.foreign_accounts repeats until the
+      document inventory records an answer, and the matcher that decides
+      "recorded" accepted the bare three digits "114" (FinCEN Form 114's number)
+      anywhere in the entry's free-text `kind`. Because an agent routinely writes
+      an account number into `kind`, "Chase checking acct 1145 statement" and
+      "1099-INT acct 1140023" both read as a recorded foreign-account answer:
+      reproduced, the question — the steepest-penalty question in the whole
+      interview, guarding a non-willful FBAR penalty that starts at $10,000 and
+      is inflation-adjusted to $16,536 for penalties assessed on or after
+      2025-01-17 (31 CFR 1010.821, Table 1) — was SUPPRESSED for a filer with a
+      purely domestic bank statement, and the companion note fired at the same
+      time telling that filer to e-file an FBAR for a US account. One loose token
+      thus produced a false negative and a false positive simultaneously.
+      (2) A REGULATORY PRECONDITION WAS MISSING FROM EVERY LAYER. Treas. Reg.
+      1.6038D-2(a)(7)(i), read on the eCFR text: a specified person, "including a
+      specified individual who is a bona fide resident of a U.S. possession, is
+      not required to file Form 8938 with respect to a taxable year if the
+      specified person is not required to file an annual return with the Internal
+      Revenue Service with respect to such taxable year." Nothing in the repo
+      carried it — zero hits across knowledge/, calc.py and the f8938 pack
+      headers — so calc.foreign_asset_reporting answered REQUIRED for a filer
+      below the IRC 6012 filing threshold however large the assets. Over-
+      reporting is the safer error, but it is still a wrong verdict from a form
+      the op quotes a $60,000 penalty ladder for, and the FBAR is NOT subject to
+      the same precondition (it is not part of the income tax return), so the two
+      answers legitimately diverge exactly where the op said they agreed.
+      (3) A TRUE CLAIM WAS HUNG ON A PINPOINT THAT DOES NOT SUPPORT IT, found by
+      opening the cited page rather than re-reading the YAML. Both the
+      foreign_account_reporting.fbar.threshold_note (all eight federal knowledge
+      years) and the fincen114 worksheet banner (all three years) proved "the
+      $10,000 does not vary by filing status" by quoting the irs.gov FBAR page:
+      "Income tax filing status, such as married-filing-jointly and
+      married-filing-separately, has no effect." Fetched and read IN PLACE, that
+      sentence sits inside the JOINTLY-OWNED-ACCOUNTS spousal exception — it
+      directly follows "...your spouse reports the jointly owned accounts on a
+      timely-filed signed FBAR" — and governs qualification for THAT exception,
+      not the threshold. The claim is right (31 CFR 1010.306(c) states one flat
+      figure and no status variant exists anywhere in 1010.350 or FinCEN's
+      instructions), which is what made the bad citation survive review: nothing
+      about the sentence looks wrong until you read what precedes it.
+    countermeasure: >-
+      (1) _mentions_foreign_account now matches the form number ONLY in the
+      spellings that name the FORM ("FORM114", plus the already-distinctive
+      "FINCEN", "FBAR" and the 4-digit "8938" — the _mentions_dependent_care
+      "2441" precedent), never as loose digits, with the reasoning written at the
+      function so the next author does not re-loosen it. THE DURABLE RULE is
+      year-invariant and lives here: a document-inventory matcher keys off
+      FREE TEXT an agent writes, so every token must be long enough that a
+      customer's account number, a routing number or a neighbouring form number
+      cannot collide with it — a 3-digit form number never qualifies, and the
+      failure is SILENT because a suppressed question leaves no trace in the
+      checklist. (2) calc.foreign_asset_reporting's work string now states the
+      1.6038D-2(a)(7)(i) precondition verbatim with the cite, says that a
+      REQUIRED verdict is conditional on a return being required at all, and says
+      that the FBAR is unaffected by it. (3) The threshold_note now argues from
+      the ABSENCE of any status variant in 31 CFR 1010.306(c) / 1010.350 and
+      FinCEN's instructions, states outright that the irs.gov sentence is NOT a
+      threshold statement, and keeps the quote only for what it does say — that
+      filing status does not decide whether one spouse may file a single FBAR
+      covering both. THE DURABLE RULE, year-invariant and therefore here: a
+      quotation is verified by reading the sentences AROUND it, not by matching
+      its text on the page. A search that finds the words confirms only that the
+      words exist; scope lives in the neighbours, and a truncated quote whose
+      proposition happens to be true is the hardest citation defect to see.
+      Regression tests in packages/core/tests/test_foreign_assets.py, all
+      P-012-tagged and always run: three domestic `kind` spellings that must NOT
+      record the answer (asserting BOTH that the question survives and that the
+      note stays silent), four form spellings that must still record it (so the
+      tightening cannot go too far and leave the question unstoppable), a
+      per-year assertion that the op's work string carries the (a)(7)(i) text
+      alongside a REQUIRED verdict for all three shipped pack years, and — over
+      ALL EIGHT shipped federal years plus all three worksheet years — that the
+      filing-status claim is grounded in the regulation's silence and flags the
+      irs.gov sentence as out of scope, with the claim itself
+      (threshold_varies_by_filing_status false, aggregate_threshold 10000) still
+      asserted so the correction cannot quietly weaken it.

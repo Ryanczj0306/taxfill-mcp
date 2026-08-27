@@ -146,7 +146,12 @@ def test_shipped_handfill_packs_validate_and_build(path):
         pytest.skip("no shipped hand-fill packs")
     pack = load_hand_fill_pack(path)
     assert pack.render_mode == "hand_fill"
-    assert pack.jurisdiction.startswith("states/")
+    # Hand-fill packs began as the C3 fallback for print-only STATE forms, but the
+    # class is broader than that: FinCEN Form 114 (the FBAR) is a FEDERAL filing
+    # with no fillable PDF at all — it is e-file only through the BSA E-Filing
+    # System and irs.gov states a printed Form 114 is not accepted — so it ships
+    # as formpacks/federal/<year>/fincen114/handfill.yaml.
+    assert pack.jurisdiction == "federal" or pack.jurisdiction.startswith("states/")
     assert pack.pdf_sha256 != "..." and len(pack.pdf_sha256) == 64
     bad = [ln.line for ln in pack.lines if not _LINE_ID_RE.fullmatch(ln.line)]
     assert not bad, f"line ids violate the grammar: {bad}"

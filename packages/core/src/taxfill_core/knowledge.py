@@ -1405,6 +1405,274 @@ class Commuter132f(BaseModel):
     payroll_fica_exempt: bool = True
 
 
+# ── Foreign-account / foreign-asset reporting (Phase I4) ──────────────────────
+# The two duties are SEPARATE filings with different thresholds, different
+# filing addresses, different measuring periods and different asset scopes, and
+# neither substitutes for the other. Modelled as one block because the question
+# a filer actually asks ("I have an account back home — do I have to tell
+# anyone?") spans both, and answering only half of it is how the penalty lands.
+
+
+class ForeignAssetThreshold(BaseModel):
+    """One Form 8938 bucket: the year-end test and the any-time-during-the-year test.
+
+    Treas. Reg. 1.6038D-2(a) joins them with "or", so EITHER one triggers the
+    filing. The any-time figure is always the larger; a filer who empties the
+    account before the last day of the year still files.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    year_end: int = Field(gt=0, description="Aggregate value on the LAST DAY of the taxable year that the filer must exceed.")
+    any_time: int = Field(gt=0, description="Maximum aggregate value AT ANY TIME during the taxable year that the filer must exceed.")
+
+    @model_validator(mode="after")
+    def _any_time_is_not_lower(self) -> "ForeignAssetThreshold":
+        if self.any_time < self.year_end:
+            raise ValueError(
+                f"any_time ({self.any_time}) must be at least year_end ({self.year_end}) — every "
+                f"Treas. Reg. 1.6038D-2(a) bucket sets the any-time-during-the-year figure at 1.5x "
+                f"the last-day figure, and inverting them would make the year-end test unreachable"
+            )
+        return self
+
+
+class Form8938Thresholds(BaseModel):
+    """Form 8938 reporting thresholds by residence and filing status.
+
+    Only married-filing-jointly is a distinct bucket in the regulation
+    (paragraphs (a)(2) and (a)(4) are the only joint-return paragraphs); every
+    other status falls in the (a)(1)/(a)(3) general rule and is spelled out
+    explicitly in the pack so no caller has to derive it.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    in_us: dict[str, ForeignAssetThreshold]
+    abroad: dict[str, ForeignAssetThreshold]
+    specified_domestic_entity: ForeignAssetThreshold
+
+    @model_validator(mode="after")
+    def _cover_every_status(self) -> "Form8938Thresholds":
+        needed = set(FILING_STATUSES) | {"qualifying_surviving_spouse"}
+        for where in ("in_us", "abroad"):
+            have = set(getattr(self, where))
+            missing = sorted(needed - have)
+            if missing:
+                raise ValueError(
+                    f"foreign_account_reporting.form_8938.thresholds.{where} must cover every filing "
+                    f"status — missing {missing}. Single/MFS/HoH/QSS all take the Treas. Reg. "
+                    f"1.6038D-2(a)(1) (or (a)(3) abroad) general-rule amounts; only MFJ differs"
+                )
+            extra = sorted(have - needed)
+            if extra:
+                raise ValueError(
+                    f"foreign_account_reporting.form_8938.thresholds.{where} has unknown status "
+                    f"key(s) {extra} — use the four federal statuses plus qualifying_surviving_spouse"
+                )
+        return self
+
+
+class Form8938Penalties(BaseModel):
+    """IRC 6038D(d)/(g) and 6662(j) exposure for a missing or wrong Form 8938."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    failure_to_file: int = Field(gt=0)
+    continuing_failure_per_30_days: int = Field(gt=0)
+    continuing_failure_grace_days_after_notice: int = Field(gt=0)
+    continuing_failure_additional_cap: int = Field(gt=0)
+    maximum_per_year: int = Field(gt=0)
+    accuracy_related_rate_undisclosed_foreign_asset: Decimal = Field(gt=0, le=1)
+    fraud_rate: Decimal = Field(gt=0, le=1)
+    reasonable_cause_exception: bool
+    statute_of_limitations_note: str
+
+    @model_validator(mode="after")
+    def _maximum_reconciles(self) -> "Form8938Penalties":
+        expected = self.failure_to_file + self.continuing_failure_additional_cap
+        if self.maximum_per_year != expected:
+            raise ValueError(
+                f"maximum_per_year ({self.maximum_per_year}) must equal failure_to_file + "
+                f"continuing_failure_additional_cap ({expected}) — IRC 6038D(d)(2) caps the "
+                f"CONTINUING penalty at $50,000 'in addition to the penalties under paragraph (1)'"
+            )
+        return self
+
+
+class FbarPenalties(BaseModel):
+    """31 U.S.C. 5321(a)(5) exposure, with the 31 CFR 1010.821 inflation adjustment.
+
+    Two things here are easy to get wrong and are therefore typed:
+    the adjusted maxima track the ASSESSMENT date, not the tax year; and the
+    non-willful penalty accrues PER REPORT, not per account
+    (Bittner v. United States, 598 U.S. 85 (2023)).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    inflation_adjustment_url: str
+    non_willful_statutory_maximum: int = Field(gt=0)
+    non_willful_adjusted_maximum: int = Field(gt=0)
+    willful_statutory_minimum_maximum: int = Field(gt=0)
+    willful_adjusted_minimum_maximum: int = Field(gt=0)
+    willful_alternative_share_of_balance: Decimal = Field(gt=0, le=1)
+    adjusted_amounts_effective: str
+    adjusted_by_assessment_date_not_tax_year: bool
+    reasonable_cause_exception_non_willful_only: bool
+    non_willful_unit: Literal["per_report", "per_account"]
+    willful_unit: Literal["per_report", "per_account"]
+    bittner_citation: Citation
+
+    @field_validator("inflation_adjustment_url")
+    @classmethod
+    def _url_is_gov(cls, value: str) -> str:
+        return validate_gov_url(value)
+
+    @model_validator(mode="after")
+    def _adjusted_is_not_below_statutory(self) -> "FbarPenalties":
+        # The FCPIA Act only ever raises a statutory maximum, so an adjusted
+        # amount BELOW the statute is a transcription error, not a real figure.
+        for adj, stat, label in (
+            (self.non_willful_adjusted_maximum, self.non_willful_statutory_maximum, "non_willful"),
+            (self.willful_adjusted_minimum_maximum, self.willful_statutory_minimum_maximum, "willful"),
+        ):
+            if adj < stat:
+                raise ValueError(
+                    f"{label} adjusted maximum ({adj}) is below the statutory amount ({stat}) — the "
+                    f"31 CFR 1010.821 inflation adjustment only raises a maximum; re-read Table 1"
+                )
+        if self.non_willful_unit != "per_report":
+            raise ValueError(
+                "non_willful_unit must be 'per_report': Bittner v. United States, 598 U.S. 85 (2023) "
+                "held that the BSA's maximum penalty for a nonwillful failure to file a compliant "
+                "report accrues on a per-report, not a per-account, basis"
+            )
+        return self
+
+
+class Form8938Reporting(BaseModel):
+    """The IRC 6038D duty: Form 8938, attached to the income tax return."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    form: str
+    form_key: str
+    statute: str
+    statute_url: str
+    instructions_url: str
+    filed_with: str
+    measured_over: Literal["taxable_year"]
+    comparison: Literal["exceeds"]
+    inflation_indexed: bool
+    thresholds: Form8938Thresholds
+    abroad_test: str
+    us_territories_count_as_us: bool
+    aggregate_includes_assets_excepted_on_other_forms: bool
+    penalties: Form8938Penalties
+
+    @field_validator("statute_url", "instructions_url")
+    @classmethod
+    def _urls_are_gov(cls, value: str) -> str:
+        return validate_gov_url(value)
+
+
+class FbarReporting(BaseModel):
+    """The 31 U.S.C. 5314 duty: FinCEN Form 114, filed with FinCEN and e-file only."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    form: str
+    form_key: str
+    statute: str
+    statute_url: str
+    regulation: str
+    regulation_url: str
+    filed_with: str
+    efile_only: bool
+    printed_form_not_accepted: bool
+    efile_url: str
+    measured_over: Literal["calendar_year"]
+    comparison: Literal["exceeds"]
+    aggregate_threshold: int = Field(gt=0)
+    threshold_is_aggregate: bool
+    threshold_is_maximum_value: bool
+    threshold_varies_by_filing_status: bool
+    inflation_indexed: bool
+    us_territories_count_as_us: bool
+    covers_signature_authority_only: bool
+    threshold_note: str
+    due_date_rule: str
+    due_date_month_day: str
+    automatic_extension_month_day: str
+    extension_request_required: bool
+    regulation_due_date_is_stale: bool
+    recordkeeping_years: int = Field(gt=0)
+    penalties: FbarPenalties
+
+    @field_validator("statute_url", "regulation_url", "efile_url")
+    @classmethod
+    def _urls_are_gov(cls, value: str) -> str:
+        return validate_gov_url(value)
+
+    @model_validator(mode="after")
+    def _threshold_shape(self) -> "FbarReporting":
+        # The three facts about the $10,000 that callers get wrong, pinned so a
+        # pack cannot ship a year-end or per-account reading of it.
+        if not (self.threshold_is_aggregate and self.threshold_is_maximum_value):
+            raise ValueError(
+                "the FBAR threshold is an AGGREGATE across all foreign financial accounts AND a "
+                "MAXIMUM-value test (31 CFR 1010.306(c); FinCEN FBAR instructions, 'Who Must File "
+                "an FBAR') — both flags must be true"
+            )
+        if self.threshold_varies_by_filing_status:
+            raise ValueError(
+                "the FBAR threshold does not vary by filing status: 31 CFR 1010.306(c) states one "
+                "flat figure ('exceeding $10,000') and neither 31 CFR 1010.350 nor FinCEN's "
+                "line-item instructions carry a joint, separate or head-of-household amount "
+                "anywhere — the authority is the regulation's SILENCE, not a sentence asserting it. "
+                "Do NOT cite irs.gov's 'Income tax filing status, such as married-filing-jointly "
+                "and married-filing-separately, has no effect on your qualification for this "
+                "exception' here: read in place it governs the jointly-owned-accounts SPOUSAL "
+                "EXCEPTION, not the threshold (pitfall P-012)"
+            )
+        if not self.efile_only:
+            raise ValueError(
+                "FinCEN Form 114 is e-file only through the BSA E-Filing System — irs.gov: 'IRS will "
+                "not accept paper filings on TD F 90-22.1 (obsolete) or a printed FinCEN Form 114 "
+                "(for e-filing only)'; a pack claiming otherwise would license a paper filing that "
+                "will be rejected"
+            )
+        return self
+
+
+class ForeignReportingScope(BaseModel):
+    """Which of the two filings reaches which asset — neither is a superset."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    fbar_only: list[str] = Field(min_length=1)
+    form_8938_only: list[str] = Field(min_length=1)
+    neither: list[str] = Field(min_length=1)
+    both: list[str] = Field(min_length=1)
+    exchange_rate_note: str
+
+
+class ForeignAccountReportingParams(BaseModel):
+    """The top-level ``foreign_account_reporting`` block: two duties, cited per year."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    form_8938: Form8938Reporting
+    fbar: FbarReporting
+    scope_differences: ForeignReportingScope
+
+
 class ContributionLimitsParams(BaseModel):
     """The top-level ``contribution_limits`` block: every bucket with its SCOPING."""
 
@@ -1730,6 +1998,10 @@ class KnowledgePack(BaseModel):
     # Phase H item H8: tax-advantaged account limits with machine-readable
     # SCOPING. Top-level on purpose — see the block comment on the models.
     contribution_limits: ContributionLimitsParams | None = None
+    # Phase I item I4: the FBAR / Form 8938 REPORTING duties. Top-level for the
+    # same reason (a nested block evades the sources-coverage meta-test) and
+    # because neither is tax math — both exist even when no tax is owed.
+    foreign_account_reporting: ForeignAccountReportingParams | None = None
     effective_law_changes: list[EffectiveLawChange] = Field(default_factory=list)
 
     @field_validator("jurisdiction")
