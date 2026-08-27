@@ -168,6 +168,18 @@ class FormPack(BaseModel):
         default_factory=list,
         description="Lines that must match across every form in the filing (name, identifying number, address).",
     )
+    identity_per_person: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Subset of identity_fields whose value belongs to ONE PERSON rather than to the "
+            "filing, so a difference across forms is legitimate rather than an error. Form 8889's "
+            "box is printed 'Social security number of HSA beneficiary' and Form 8606's header is "
+            "'If married, file a separate form for each spouse required to file' — on a joint "
+            "return either can carry the SPOUSE's SSN while the 1040 carries the primary filer's. "
+            "verify reports a difference on these as SKIPPED (visible, does not flip ok) with both "
+            "values printed, instead of the FAIL that rejected every correct spouse-owned filing."
+        ),
+    )
     signature: Signature | None = Field(
         default=None,
         description="Omitted for attachment-only schedules that carry no signature block of their own.",
@@ -246,6 +258,15 @@ class FormPack(BaseModel):
                 f"identity_fields entries must be logical line keys (the 'line:' values), "
                 f"not AcroForm 'field:' names — {unknown} match no line in this pack. "
                 f"Use line keys, e.g. [name, identifying_number, mailing_address.street]"
+            )
+        # A per-person entry only means anything for a field the filing actually
+        # compares, so it must be declared as an identity field first.
+        not_identity = [k for k in self.identity_per_person if k not in set(self.identity_fields)]
+        if not_identity:
+            raise ValueError(
+                f"identity_per_person entries must also appear in identity_fields — {not_identity} "
+                f"do not. The flag RELAXES the cross-form comparison for a field, so a field that is "
+                f"not compared in the first place has nothing to relax"
             )
         return self
 

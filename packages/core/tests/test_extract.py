@@ -153,3 +153,64 @@ def test_k1_status_note_carries_the_se_and_k3_pointers():
 
     note = DOC_SPECS["K-1"].status_note
     assert "minus sign" in note and "se_tax" in note and "K-3" in note
+
+
+# ---------------------------------------------------------------------------
+# 1099-SA / 5498-SA (Phase I, I2) — the two HSA documents. Box layouts read off
+# the real forms 2026-08-26: f1099sa.pdf (Rev. April 2025) and f5498sa.pdf
+# (Rev. December 2026), plus their Instructions for Recipient / Participant.
+# ---------------------------------------------------------------------------
+
+
+def test_hsa_documents_are_supported_and_cited():
+    kinds = {k["kind"]: k for k in list_document_kinds()}
+    assert {"1099-SA", "5498-SA"} <= set(kinds)
+    assert kinds["1099-SA"]["source_url"] == "https://www.irs.gov/forms-pubs/about-form-1099-sa"
+    assert kinds["5498-SA"]["source_url"] == "https://www.irs.gov/forms-pubs/about-form-5498-sa"
+
+
+def test_1099_sa_box_layout_matches_the_printed_form():
+    r = extract_document("documents/1099sa.pdf", "1099-SA", {
+        "recipient_tin": "123-45-6789", "1": "$5,000.00", "2": "45", "3": "1", "5_hsa": "X",
+    }, page=1)
+    by = {f.key: f for f in r.fields}
+    # Box 1 gross distribution, box 2 earnings on excess, box 3 the code, box 4
+    # FMV on the date of death, box 5 the three account-type checkboxes.
+    assert by["1"].value == "5000.00" and by["1"].status == "ok"
+    assert by["2"].value == "45" and by["3"].value == "1"
+    assert by["4"].value is None and by["4"].status == "missing"
+    assert by["5_hsa"].value is True
+    assert by["5_archer_msa"].status == "missing" and by["5_ma_msa"].status == "missing"
+    assert r.gaps == []      # box 1, box 3 and the recipient TIN are the required three
+    missing_code = extract_document("documents/1099sa.pdf", "1099-SA",
+                                    {"recipient_tin": "123-45-6789", "1": "5000"})
+    assert missing_code.gaps == ["3"]     # the code changes the reading, so it is required
+
+
+def test_1099_sa_status_note_routes_box_1_to_form_8889_not_to_income():
+    note = DOC_SPECS["1099-SA"].status_note
+    assert "LINE 14a" in note and "hsa_deduction" in note
+    assert "20% additional tax" in note
+    assert "1 normal, 2 excess contributions" in note        # the box 3 code list
+    assert "NONSPOUSE" in note                               # the box 4 trap
+
+
+def test_5498_sa_box_numbers_are_not_what_they_look_like():
+    r = extract_document("documents/5498sa.pdf", "5498-SA", {
+        "participant_tin": "123456789", "1": "0", "2": "$7,300.00", "3": "1,000",
+        "4": "0", "5": "$41,220.55", "6_hsa": "X",
+    })
+    by = {f.key: f for f in r.fields}
+    assert by["2"].value == "7300.00" and r.gaps == []       # box 2 is the HSA total, and required
+    assert by["1"].label.startswith("Box 1 — Employee's or self-employed person's Archer MSA")
+    assert "subsequent year for the calendar year" in by["3"].label
+    assert by["5"].value == "41220.55"
+    assert by["6_hsa"].value is True
+    note = DOC_SPECS["5498-SA"].status_note
+    # Box 1 is Archer-only; the HSA figure is box 2 and it is NOT Form 8889 line 2.
+    assert "Box 1 is ARCHER" in note and "the HSA figure is BOX 2" in note
+    assert "MINUS the W-2 box 12 code W amount" in note
+    # Box 3 runs forward (Jan 1 - Apr 15 of the NEXT year), not back.
+    assert "Box 3 runs FORWARD" in note
+    # Box 5 is what the IRC 4973(a) cap is measured against.
+    assert "4973(a) cap" in note

@@ -276,6 +276,73 @@ _SPECS: list[DocSpec] = [
         ],
     ),
     DocSpec(
+        # Phase I2. The two documents an HSA filing cannot be built without —
+        # box layout transcribed from the real forms, read 2026-08-26:
+        # f1099sa.pdf (Rev. April 2025) and f5498sa.pdf (Rev. December 2026).
+        kind="1099-SA",
+        title="Distributions From an HSA, Archer MSA, or Medicare Advantage MSA",
+        source_url="https://www.irs.gov/forms-pubs/about-form-1099-sa",
+        status_note=(
+            "Box 1 is the Form 8889 LINE 14a figure, not taxable income: the trustee does not compute "
+            "the taxable amount ('The payer isn't required to compute the taxable amount of any "
+            "distribution'), so a distribution spent on qualified medical expenses is fully excluded "
+            "while the same box 1 spent otherwise is income PLUS a 20% additional tax (IRC 223(f)(4)). "
+            "Run calc op hsa_deduction with distributions_total / distributions_rolled_over / "
+            "qualified_medical_expenses to split it. Receiving ANY distribution forces Form 8889 to be "
+            "filed even when nothing is taxable. Box 3's code changes the reading: 1 normal, 2 excess "
+            "contributions, 3 disability, 4 death (other than code 6), 5 prohibited transaction, 6 "
+            "death distribution after the year of death to a nonspouse beneficiary. Box 2 earnings on "
+            "a withdrawn excess are INCLUDED in box 1 and are 'Other income' in the year received even "
+            "if spent on qualified care. Box 4 (FMV on the date of death) belongs to an inherited "
+            "account: a NONSPOUSE beneficiary reports that FMV as income for the year the owner died."
+        ),
+        boxes=[
+            _b("payer_tin", "PAYER'S TIN", "tin"),
+            _b("recipient_tin", "RECIPIENT'S TIN", "tin", required=True),
+            _b("payer_name", "TRUSTEE'S/PAYER'S name and address", "text"),
+            _b("1", "Box 1 — Gross distribution", "money", required=True),
+            _b("2", "Box 2 — Earnings on excess cont.", "money"),
+            _b("3", "Box 3 — Distribution code", "code", required=True),
+            _b("4", "Box 4 — FMV on date of death", "money"),
+            _b("5_hsa", "Box 5 — HSA (account type checkbox)", "checkbox"),
+            _b("5_archer_msa", "Box 5 — Archer MSA (account type checkbox)", "checkbox"),
+            _b("5_ma_msa", "Box 5 — MA MSA (account type checkbox)", "checkbox"),
+        ],
+    ),
+    DocSpec(
+        kind="5498-SA",
+        title="HSA, Archer MSA, or Medicare Advantage MSA Information",
+        source_url="https://www.irs.gov/forms-pubs/about-form-5498-sa",
+        status_note=(
+            "BOX NUMBERS HERE ARE NOT WHAT THEY LOOK LIKE — read them off the paper. Box 1 is ARCHER "
+            "MSA contributions only (Form 8853, not Form 8889); the HSA figure is BOX 2, 'Total "
+            "contributions made in the calendar year', and box 2 sweeps in EVERYTHING: your own direct "
+            "contributions, your employer's, your cafeteria-plan payroll deferrals, and qualified HSA "
+            "funding distributions from an IRA. Form 8889 line 2 is box 2 MINUS the W-2 box 12 code W "
+            "amount MINUS any funding distribution — putting box 2 straight on line 2 double-counts the "
+            "payroll money and overstates the deduction. Box 3 runs FORWARD, not back: it is "
+            "contributions made in the SUBSEQUENT year FOR this form's calendar year (the Jan 1-Apr 15 "
+            "catch-up window), so this year's form cannot show a prior year's late contribution. Box 4 "
+            "rollovers are NOT in boxes 1, 2 or 3 and are neither income nor deductible. Box 5 is the "
+            "year-end fair market value — the figure the IRC 4973(a) cap on the 6% excess-contribution "
+            "excise is measured against. The form is informational: 'Don't attach Form 5498-SA to your "
+            "income tax return.'"
+        ),
+        boxes=[
+            _b("trustee_tin", "TRUSTEE'S TIN", "tin"),
+            _b("participant_tin", "PARTICIPANT'S TIN", "tin", required=True),
+            _b("trustee_name", "TRUSTEE'S name and address", "text"),
+            _b("1", "Box 1 — Employee's or self-employed person's Archer MSA contributions made in the calendar year and the subsequent year for the calendar year", "money"),
+            _b("2", "Box 2 — Total contributions made in the calendar year", "money", required=True),
+            _b("3", "Box 3 — Total HSA or Archer MSA contributions made in the subsequent year for the calendar year", "money"),
+            _b("4", "Box 4 — Rollover contributions", "money"),
+            _b("5", "Box 5 — Fair market value of HSA, Archer MSA, or MA MSA", "money"),
+            _b("6_hsa", "Box 6 — HSA (account type checkbox)", "checkbox"),
+            _b("6_archer_msa", "Box 6 — Archer MSA (account type checkbox)", "checkbox"),
+            _b("6_ma_msa", "Box 6 — MA MSA (account type checkbox)", "checkbox"),
+        ],
+    ),
+    DocSpec(
         kind="1095-A",
         title="Health Insurance Marketplace Statement",
         source_url="https://www.irs.gov/forms-pubs/about-form-1095-a",

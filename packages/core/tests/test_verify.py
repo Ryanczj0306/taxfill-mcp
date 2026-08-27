@@ -724,6 +724,72 @@ def test_a_pack_that_maps_an_identity_line_without_declaring_it_may_leave_it_bla
     assert addr.values == {"main": address}
 
 
+def test_a_per_person_identity_field_that_differs_is_skipped_not_failed():
+    """Regression, Phase I2 2026-08-26: verify_filing FAILed a correct spouse-owned filing.
+
+    Form 8889's box is printed "Social security number of HSA beneficiary" and Form
+    8606's header is "If married, file a separate form for each spouse required to
+    file". On a joint return either legitimately carries the SPOUSE's SSN while the
+    1040 carries the primary filer's — and the identity check rejected exactly that.
+    A pack can now declare the field ``identity_per_person``, which downgrades a
+    difference to SKIPPED: still printed, still in front of the operator at review,
+    but no longer a FAIL on a correct return.
+    """
+    parent = identity_pack("F-MAIN")
+    attach = make_pack(
+        [
+            text_field("name"),
+            text_field("identifying_number", maxlen=9, comb=True, format="ssn_digits_only"),
+            text_field("mailing_address"),
+            money_field("1k"),
+        ],
+        form="F-ATTACH",
+        identity_fields=["name", "identifying_number", "mailing_address"],
+        identity_per_person=["identifying_number"],
+    )
+    address = "100 Current St, Testville, CA 00000"
+    report = verify_filing(
+        [
+            filing_item("main", parent, {"name": "Pat Q Sample", "identifying_number": "000000000", "mailing_address": address}),
+            # the spouse's HSA: same household, same address, DIFFERENT SSN
+            filing_item("attach", attach, {"name": "Pat Q Sample", "identifying_number": "111111111", "mailing_address": address}),
+        ]
+    )
+    ssn = next(check for check in report.identity if check.field == "identifying_number")
+    assert ssn.status == "SKIPPED"
+    assert ssn.values == {"main": "000000000", "attach": "111111111"}
+    assert "PER PERSON" in ssn.detail and "CONFIRM at review" in ssn.detail
+    assert report.ok is True, [c.detail for c in report.identity if c.status == "FAIL"]
+
+
+def test_a_field_NOT_declared_per_person_still_fails_when_it_differs():
+    """The relaxation is opt-in per field, so the ordinary SSN guarantee is intact."""
+    parent, attach = identity_pack("F-MAIN"), identity_pack("F-ATTACH")  # neither declares per-person
+    address = "100 Current St, Testville, CA 00000"
+    report = verify_filing(
+        [
+            filing_item("main", parent, {"name": "Pat Q Sample", "identifying_number": "000000000", "mailing_address": address}),
+            filing_item("attach", attach, {"name": "Pat Q Sample", "identifying_number": "111111111", "mailing_address": address}),
+        ]
+    )
+    ssn = next(check for check in report.identity if check.field == "identifying_number")
+    assert ssn.status == "FAIL"
+    assert report.ok is False
+
+
+def test_identity_per_person_must_also_be_an_identity_field():
+    """A flag that relaxes a comparison is meaningless on a field nothing compares."""
+    import pytest as _pytest
+
+    with _pytest.raises(ValueError, match="must also appear in identity_fields"):
+        make_pack(
+            [text_field("name"), text_field("identifying_number"), money_field("1k")],
+            form="F-BAD",
+            identity_fields=["name"],
+            identity_per_person=["identifying_number"],
+        )
+
+
 def test_a_non_blank_value_on_a_non_declaring_pack_is_still_compared():
     """The other half of the same fix: skipping applies ONLY to a blank.
 

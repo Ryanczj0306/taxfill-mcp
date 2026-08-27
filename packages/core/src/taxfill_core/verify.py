@@ -1694,6 +1694,39 @@ def _identity_checks(
                     ),
                 )
             )
+        elif len(distinct) > 1 and any(
+            name in item.pack.identity_per_person
+            for item in items
+            if item.form_key in values_by_form
+        ):
+            # PER-PERSON identity field: the difference is legitimate, so FAIL would
+            # reject a correct return (Form 8889's box is printed "Social security
+            # number of HSA beneficiary"; Form 8606's header is "If married, file a
+            # separate form for each spouse required to file" — on a joint return
+            # either legitimately carries the SPOUSE's SSN while the 1040 carries the
+            # primary filer's). SKIPPED is the status this repo already defines for
+            # exactly this shape: "silence would hide them, FAIL would reject
+            # legitimate filings". Both values stay printed, so a genuine typo is
+            # still in front of the operator at the mandatory review step.
+            owners = sorted(
+                item.form_key for item in items
+                if item.form_key in values_by_form and name in item.pack.identity_per_person
+            )
+            checks.append(
+                IdentityCheck(
+                    field=name,
+                    status=SKIPPED,
+                    values=values_by_form,
+                    detail=(
+                        f"identity field '{name}' differs across the filing: {listing} — NOT checked, "
+                        f"because {', '.join(owners)} declare(s) it PER PERSON: that form is filed per "
+                        f"spouse, so its value belongs to the person the form is about and may "
+                        f"legitimately differ from the return's primary filer. CONFIRM at review that "
+                        f"each value belongs to the right person; if they should match, this is a typo "
+                        f"the gate cannot catch for you"
+                    ),
+                )
+            )
         elif len(distinct) > 1:
             checks.append(
                 IdentityCheck(

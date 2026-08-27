@@ -493,6 +493,12 @@ relations:
 cross_form: []
 
 identity_fields: [name, identifying_number]
+# identifying_number is PER PERSON on this form, not per filing: Form 8606's header is "If married, file a separate form for each spouse required to file",
+# so on a joint return it legitimately carries the SPOUSE's SSN while the 1040
+# carries the primary filer's. Declared 2026-08-26 after verify_filing was
+# reproduced FAILing that correct arrangement; verify now reports a difference
+# as SKIPPED with both values printed instead of rejecting the return.
+identity_per_person: [identifying_number]
 
 # "Sign Here Only if You Are Filing This Form by Itself and Not With Your Tax
 # Return" (printed, page 2) — the f8843 standalone_only shape.
