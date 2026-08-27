@@ -1,0 +1,532 @@
+# Form 8889 (2023 revision) — Health Savings Accounts (HSAs). ONE page;
+# ATTACHMENT-ONLY ("Attach to Form 1040, 1040-SR, or 1040-NR." printed under the
+# title) — there is no standalone path, and the instructions make that explicit:
+# "If you (or your spouse, if filing jointly) received HSA distributions in
+# 2023, you must file Form 8889 with Form 1040, Form 1040-SR, or Form 1040-NR,
+# even if you have no taxable income or any other reason for filing Form 1040,
+# Form 1040-SR, or Form 1040-NR." (Instructions for Form 8889 (2023), "Who Must
+# File"). The form does three jobs, one per printed Part: figure the HSA
+# DEDUCTION (Part I, lines 1-13 -> Schedule 1 line 13), the TAXABLE part of
+# distributions plus the additional 20% tax (Part II, 14a-17b), and the
+# testing-period RECAPTURE with its 10% additional tax when the last-month rule
+# or a qualified HSA funding distribution is blown (Part III, 18-21).
+#
+# NEW PACK, authored from scratch 2026-08-26 (no prior-year f8889 pack existed;
+# this is the first 8889 in the repo, so nothing was ported and every binding
+# was derived from this blank). House-style precedent followed throughout: the
+# Phase I1 pack formpacks/federal/2023/f8606/pack.yaml (commit 4d51a07).
+#
+# ---------------------------------------------------------------------------
+# PROVENANCE — revision identity read off the RENDER, not the URL
+# ---------------------------------------------------------------------------
+# Blank fetched with taxfill_core.fetch.fetch_blank(source_url) into the shared
+# cache (.cache/blanks/52f894ef2996_f8889--2023.pdf, 60,599 bytes, 1 page).
+# Page 1 was rendered at 200 dpi and READ (freshness protocol, dev plan §7).
+# Printed verbatim, top of page 1:
+#   "Form 8889"  /  "Health Savings Accounts (HSAs)"
+#   "Attach to Form 1040, 1040-SR, or 1040-NR."
+#   "Go to www.irs.gov/Form8889 for instructions and the latest information."
+#   "OMB No. 1545-0074"   "2023"   "Attachment Sequence No. 52"
+# Footer: "For Paperwork Reduction Act Notice, see your tax return
+# instructions."  "Cat. No. 37621P"  "Form 8889 (2023)".
+# => this IS the TY2023 revision. sha256 computed two ways and identical:
+# taxfill_core.fetch.compute_sha256() and `shasum -a 256`
+#   1185040e24ac4044baa1638f0978e8402ae56f77ec33301300a8722796ab6808
+# pdfinfo reports Title "2023 Form 8889", Subject "Health Savings Accounts
+# (HSAs)", Form: XFA, JavaScript: yes — and per formpacks/CONVENTIONS.md that
+# JS flag says NOTHING about whether the form computes. Checked rather than
+# assumed here: the document's /Names /JavaScript tree holds exactly THREE
+# entries and all three are Adobe viewer-version boilerplate
+# (!ADBE::0100_VersChkStrings, !ADBE::0100_VersChkVars,
+# !ADBE::0200_VersChkCode_XFACheck); no widget carries an /AA action, and the
+# AcroForm dictionary has no /CO at all (its keys are /DA /DR /Fields /XFA).
+# So nothing on this form computes anything — which also means no P-007 class-4
+# ("the FORM owns the value") binding can exist here.
+#
+# ---------------------------------------------------------------------------
+# COVERAGE — 27 of 27 fillable widgets are mapped; nothing is excluded
+# ---------------------------------------------------------------------------
+# The blank carries exactly 27 AcroForm widgets, all on page 1: 24 /Tx
+# (f1_1..f1_24) + 3 /Btn (c1_1[0], c1_1[1], c1_2[0]). Every one is mapped:
+# 2 header text + 22 money lines + 3 checkboxes. The 22 money widgets are
+# exactly the form's 22 printed amount rows (Part I: 2-13 = 12; Part II: 14a,
+# 14b, 14c, 15, 16, 17b = 6; Part III: 18-21 = 4).
+# Introspected with scripts/introspect_pdf.py, and every binding was read off
+# the SENTINEL-SWEEP render (each box printed with its own field name) plus a
+# second audit_pack.py sentinel render at 200 dpi — not off /Rect
+# y-coordinates (pitfall P-001: field dumps lie, pixels do not).
+# WHAT THE VISION AUDIT ACTUALLY CAUGHT (an audit that caught nothing is
+# suspicious — docs/CONTRIBUTING-PACKS.md step 6):
+#   1. Lines 9 and 10 do NOT live in the amount column. Their widgets f1_10 and
+#      f1_11 sit at x 410-482, in an INSET box left of the main column (which
+#      starts at x 504), because the printed row puts the "9"/"10" line-number
+#      cell mid-row and greys out the far-right cell beside it. Every other
+#      money widget on the form is x 504-576. A mapper that trusted the column
+#      would have mis-assigned them; the render shows the sentinels landing in
+#      the inset boxes exactly where the printed "9" and "10" tabs are.
+#   2. The line-1 coverage pair renders as TWO INDEPENDENT ticks. The
+#      introspect sweep (which turns on every /Btn) printed BOTH "Self-only"
+#      and "Family" checked on one form — a visibly contradictory return, and
+#      the reproduction that settles the P-008 topology question below.
+#   3. Three printed rows carry NO widget and so no line key: the "Caution: If
+#      line 2 is more than line 13 ..." row under line 13, and the far-right
+#      shaded cells beside lines 9, 10 and 17a. The 17a one matters most —
+#      printed line 17a is the CHECKBOX itself (c1_2[0], mid-row at x 467), not
+#      an amount, so a positional mapper walking the amount column top-to-bottom
+#      would slide 17b's value into the 17a row and everything below by one.
+# The final 200-dpi render of the filled blank was then read and all 27
+# sentinels sit in the box their printed line labels; nothing was clipped and
+# verify_form reported no assertion/clipping/checkbox failures.
+#
+# What is NOT on this form, and therefore has no line key (documented so a
+# porter does not hunt for a phantom binding):
+#   * The LINE 3 LIMITATION CHART AND WORKSHEET. Printed line 3 says
+#     "...enter $3,850 ($7,750 for family coverage). All others, see the
+#     instructions for the amount to enter", and that month-by-month worksheet
+#     (12 monthly rows + "Total for all months" + "Limitation. Divide the total
+#     by 12. Enter here and on line 3") lives ON PAGE 6 OF THE INSTRUCTIONS,
+#     not on the form face. It has no widgets, no line keys and no relation:
+#     instruction worksheets belong to calc + the knowledge packs
+#     (formpacks/CONVENTIONS.md "Relations"). Same for the Additional
+#     Contribution Amount Worksheet (line 7) and the Employer Contribution
+#     Worksheet (line 9), both instructions-only.
+#   * Any signature or preparer block. The form has neither — it is filed
+#     inside the parent return (see SIGNATURE / MAILING below), so unlike
+#     f8606/f843/f1040x there is no preparer.* group to map.
+#   * Any page-2 identity mirror: the form is ONE page, so this pack has ZERO
+#     identity page mirrors (formpacks/CONVENTIONS.md "Identity page mirrors").
+#     There is no page2_* key to add and none to miss.
+#
+# ---------------------------------------------------------------------------
+# READONLY ADJUDICATION (pitfall P-007) — measured, not assumed
+# ---------------------------------------------------------------------------
+# ZERO of the 27 widgets carry the AcroForm ReadOnly bit, so
+# mapped ∩ ReadOnly = 0 over 27 mapped fields. The /Ff values were read at
+# FIELD level, walking /Parent (the shape P-007 requires; an annotation-only
+# reader reports phantom results):
+#   * the /Ff histogram over all 27 widgets is exactly {8388608: 23, absent: 4};
+#   * 8388608 = DoNotScroll only, on 23 of the 24 text widgets;
+#   * the other 4 carry NO /Ff at all: f1_2 (the SSN box) and the three /Btn
+#     widgets c1_1[0], c1_1[1], c1_2[0];
+#   * NOT ONE widget has bit 1 set. No widget sets the comb bit either.
+#     Run through the harness's OWN reader
+#     (test_formpacks_federal._read_only_widget_names, which walks /Parent):
+#     the ReadOnly set is EMPTY.
+# So no P-007 class applies and the integrator needs NO pin row in
+# test_readonly_widget_mapping.py: absent from RESERVED_LINE_KEEPS,
+# RESERVED_LINES_UNMAPPED and STATE_COMPUTED_READONLY, this pack is pinned at
+# zero by default and the network layer asserts that equality in both
+# directions.
+# The four P-007 classes were each checked against the printed face, so the
+# zero is an adjudication rather than a flag reading:
+#   * class 1 (the widget already HOLDS an IRS-printed constant, sched_se's
+#     wage base): none. This form's printed constants are line 3's
+#     "$3,850 ($7,750 for family coverage)" plus the percentage tokens — "20%"
+#     x4 in the lines 16/17a/17b row text and "10%" in line 21's — and
+#     every one of them sits in the printed ROW TEXT, outside any widget, which
+#     is the opposite of the sched_se shape. Line 3's own widget (f1_4) is
+#     EMPTY in the blank and takes the filer's own computed limitation.
+#   * class 2 (printed text makes a correct entry IMPOSSIBLE, sched_d's shaded
+#     (g) cells): none, and this was the one worth checking with pixels. The
+#     form DOES print shaded cells — the far-right column beside lines 9, 10
+#     and 17a, and both columns of the "Caution" row under line 13 — but
+#     unlike sched_d NONE of them contains a widget, so there is nothing to
+#     unmap and no key for fill_form to have to refuse.
+#   * class 3 ("Reserved for future use"): the string does not appear anywhere
+#     on the page. Printed lines 1-21 (with 14a/b/c and 17a/b) are a gap-free
+#     ladder.
+#   * class 4 (form-owned / JS-propagated value): structurally impossible here
+#     — no mirrors (one page), no running totals owned by the form, and the
+#     document JavaScript is three Adobe version-check scripts (see PROVENANCE).
+#
+# ---------------------------------------------------------------------------
+# CHECKBOX / GROUP ADJUDICATION (pitfalls P-003, P-008)
+# ---------------------------------------------------------------------------
+# Three /Btn widgets, and they are TWO different shapes.
+#
+# (a) PRINTED LINE 1 — "Check the box to indicate your coverage under a
+#     high-deductible health plan (HDHP) during 2023. See instructions ...
+#     [ ] Self-only  [ ] Family". This is ONE question with TWO mutually
+#     exclusive options: the instructions say "If you were covered, or
+#     considered covered, by a self-only HDHP and a family HDHP at different
+#     times during the year, check the box for the plan that was in effect for
+#     a longer period" (Instructions for Form 8889 (2023), Line 1) — singular
+#     "the box".
+#     TOPOLOGY, dumped not guessed: these are the P-008 SEPARATE-WIDGET shape,
+#     the one that gets no exemption. c1_1[0] and c1_1[1] each carry their OWN
+#     /T and their own single /AP /N state — and NO /V at all in this revision
+#     (measured on the pinned 2023 blank; the 2024 and 2025 blanks add an
+#     explicit /V /Off) — ("/1" Self-only, "/2"
+#     Family); their only common ancestor is the page subform Page1[0], which
+#     has no /FT, so they are two independent fields and NOT the kids of one
+#     radio field. Nothing in the PDF makes them exclusive — proved on the
+#     render: the introspect sweep turned both on and printed a form with
+#     "Self-only" AND "Family" ticked. Each option's own binding was then
+#     confirmed on its own 200-dpi render: pass A (1.self_only) shows the LEFT
+#     box ticked with Family empty, pass B (1.family) the RIGHT box ticked with
+#     Self-only empty — so the two states are not transposed, and the filler's
+#     "siblings /Off" write renders as a genuinely empty box even though /AP /N
+#     carries no /Off entry.
+#     So both lines carry `group: line1`. That is the only thing preventing a
+#     return that answers one question two ways, and the guard was REPRODUCED:
+#     fill_form(pack, {"1.self_only": True, "1.family": True}) raises ValueError
+#     "lines '1.family' and '1.self_only' all turn on members of checkbox group
+#     'line1' — these are the mutually exclusive options of ONE question and
+#     exactly one may be selected", while a single answer still writes its one
+#     field. verify's at-most-one checkbox audit FAILs an already-both-checked
+#     PDF. NOTE for the integrator: neither
+#     generic gate would have forced this. P-008's
+#     test_every_yes_no_pair_shares_one_group_id keys off "<stem>.yes" +
+#     "<stem>.no" and these options are not yes/no; and
+#     test_pack_radio_options_share_one_group_and_distinct_states only fires
+#     when two checkbox lines SHARE one AcroForm field. The group id here is
+#     house discipline, not a gate result (reported as an open issue).
+#     GROUP SPELLING: `line1`, the sched_8812 / sched_d "line<N>" form named in
+#     P-008's countermeasure (sched_d's qof/line17/line20/line22 landed
+#     2026-08-24). A meaning-named id (`hdhp_coverage`, the f8962 `fpl_table` /
+#     sched_c `accounting_method` style) was considered and rejected only
+#     because the printed LINE NUMBER is what this form has been stable about,
+#     while a caption can be re-worded. OPTION KEY SPELLING: `1.self_only` /
+#     `1.family` — printed label + dotted option, exactly f1040's
+#     `35c.checking` / `35c.savings`.
+#     NOT `required`: a filer who files Form 8889 only because they received
+#     distributions ("You received HSA distributions in 2023", Who Must File)
+#     completes Part II and leaves Part I — line 1 included — blank, so
+#     `required: true` would FAIL verification on a correct return. Same
+#     reasoning as sched_e's three questions under P-008.
+#
+# (b) PRINTED LINE 17a — "If any of the distributions included on line 16 meet
+#     any of the Exceptions to the Additional 20% Tax (see instructions), check
+#     here". c1_2[0], /AP /N single state "/1". A LONE independent flag with no
+#     sibling option, so NO `group` (a group id is what makes the N options of
+#     one question exclusive, and there is no second option) — the f843 /
+#     f1040x `preparer.self_employed` shape. NOT `required`: the box is ticked
+#     only when an exception applies, which is the exception, not the rule.
+#
+# All three on-states were dumped from this pack's sha-pinned blank, never
+# guessed (formpacks/CONVENTIONS.md). Worth recording: /AP /N holds ONLY the
+# on-state for each box (no "/Off" key); "/Off" lives in /AP /D. Same shape as
+# f8606's c2_1[0], and the filler's "siblings /Off" write renders as an empty
+# box, confirmed on the audit render.
+#
+# ---------------------------------------------------------------------------
+# YEAR TOKENS IN LINE KEYS (formpacks/CONVENTIONS.md) — none, by rule 3
+# ---------------------------------------------------------------------------
+# NO line key in this pack embeds a year, so the year-offset gate has nothing
+# to pin and a port cannot go stale the sched_oi way. "2023" appears 14 times on
+# the page: the masthead year box, the footer "Form 8889 (2023)", and 12 inside
+# printed LINE text — where every one DESCRIBES the meaning and selects no
+# widget:
+#   line 1  "coverage under a high-deductible health plan (HDHP) during 2023"
+#   line 2  "contributions you made for 2023" + "that were for 2023"
+#   line 3  "under age 55 at the end of 2023" + "every month during 2023"
+#   line 4  "to your Archer MSAs for 2023" + "at any time during 2023"
+#   line 6  "at any time during 2023"
+#   line 7  "age 55 or older at the end of 2023" + "at any time during 2023"
+#   line 9  "made to your HSAs for 2023"
+#   line 14a "received in 2023 from all HSAs"
+# Rule 3 applies throughout: key by the printed LINE NUMBER and keep the year
+# in the inline comment. Nothing here is the f8843-line-4a shape where a year
+# LABELS its own box.
+#
+# ---------------------------------------------------------------------------
+# RELATIONS — only unconditional arithmetic printed on the face
+# ---------------------------------------------------------------------------
+# Declared: 9 rules, each transcribed from the printed row, each with every
+# operand mapped to a bare printed-label money line of THIS form. All 9 were
+# evaluated against THREE worked examples and PASS on every one, so none of
+# them is the f8606 line-5 blank-as-zero trap:
+#   (A) a full Part I/II/III filer — self-only, age 60, testing period blown:
+#       2=4850, 3=4850 (3,850 + the $1,000 additional contribution amount, which
+#       rides on line 3 and not line 7 for an UNMARRIED filer per the
+#       instructions' Line 3 rule (6) and the Line 7 Note), 4=0, 5=4850, 6=4850,
+#       7=0, 8=4850, 9=1000, 10=0, 11=1000, 12=3850, 13=3850, 14a=2000, 14b=500,
+#       14c=1500, 15=900, 16=600, 17b=80 (20% of only $400 — the rest met an
+#       exception, so 17a is checked), 18=1200, 19=300, 20=1500, 21=150.
+#   (B) a DISTRIBUTIONS-ONLY filer whose Part I and Part III are legitimately
+#       blank: 14a=2000, 14b=0, 14c=2000, 15=2000, 16=0. Every Part I/III rule
+#       reads blank-as-zero on BOTH sides and still PASSes.
+#   (C) the instructions' spousal-allocation leg of line 6: 3=7750, 5=7750,
+#       6=3875 (half share), 8=3875, 12=3875, 13=3875, 2=3875.
+# DELIBERATELY NOT DECLARED — and each rejection was REPRODUCED against this
+# pack, by loading it with the candidate rule added and evaluating that rule on
+# the data above, never argued from the caption alone:
+#   * "6 == 5" ("Enter the amount from line 5"). FAILs example (C) — "left side
+#     = 3875, right side = 7750 (difference -3875)". The printed row does NOT stop
+#     there: "But if you and your spouse each have separate HSAs and had family
+#     coverage under an HDHP at any time during 2023, see the instructions for
+#     the amount to enter." That is a conditional copy with an "Otherwise" leg
+#     — the f8960 line-18a / f8606 line-16-17 precedent — and the instructions
+#     spell out the other leg as a spousal ALLOCATION ("divide the amount on
+#     line 5 equally between you and your spouse, unless you both agree on a
+#     different allocation", plus a 4-step refiguring for partial-year family
+#     coverage, Instructions for Form 8889 (2023), Line 6). No unconditional
+#     equality exists.
+#   * "17b == 16 * 0.20". FAILs example (A) — "left side = 80, right side = 120
+#     (difference -40)". Refused on the primary source, and this is the one a
+#     naive read of the printed "Enter 20% (0.20) of the distributions included
+#     on line 16" would get wrong. The row's own tail scopes it — "of the
+#     distributions included on line 16 THAT ARE SUBJECT TO the additional 20%
+#     tax" — and the instructions make the subset explicit: "Enter on line 17b
+#     only 20% (0.20) of any amount included on line 16 that does not meet any
+#     of the exceptions", with a worked Example 2 (age 65 mid-year) where 17b
+#     is 20% of PART of line 16. Line 17a's checkbox is the flag for exactly
+#     that case. So 17b is a fraction of an unmapped subset of line 16, not of
+#     line 16.
+#   * "19 == 10". FAILs example (A) — "left side = 300, right side = 0
+#     (difference +300)". Both rows are captioned "Qualified HSA funding
+#     distribution(s)" and the line-19 instruction is a bare "Enter the total
+#     of any qualified HSA funding distribution (see line 10)" — which reads
+#     like a copy and is NOT one, because the two lines belong to different TAX
+#     YEARS. The testing period for a funding distribution "begins with the
+#     month in which the traditional IRA or Roth IRA distribution is
+#     contributed to the HSA and ends on the last day of the 12th month
+#     following that month. For example, if the distribution is contributed on
+#     June 17, 2023, the testing period ends on June 30, 2024. If you fail to
+#     remain an eligible individual during this period ... you will have to
+#     include the qualified HSA funding distribution in income IN THE YEAR IN
+#     WHICH YOU FAIL to be an eligible individual" (Instructions for Form 8889
+#     (2023), Line 10 / Part III). So a 2023 line 19 routinely reports a 2022
+#     distribution while this year's line 10 is blank, and the equality would
+#     FAIL a correct return.
+#   * Line 18 ("Last-month rule"). Worksheet-driven, not on-face math: "You can
+#     use the Line 3 Limitation Chart and Worksheet ... for the year the
+#     contribution was made to determine the contribution you could have made
+#     if the last-month rule did not apply. Enter on line 18 the excess of the
+#     amount contributed over the redetermined amount." (Instructions, Line 18.)
+#     Prior-year worksheet arithmetic over unmapped quantities.
+#   * Lines 2, 3, 4, 7, 9, 10, 14a, 14b, 15: source lines, no on-face math.
+#     Line 3 is an instruction-WORKSHEET lookup for everyone except the
+#     full-year same-coverage filer; line 7 has its own Additional Contribution
+#     Amount Worksheet; line 9 has the Employer Contribution Worksheet.
+#
+# ---------------------------------------------------------------------------
+# CROSS-FORM — deliberately EMPTY, and this is the load-bearing part
+# ---------------------------------------------------------------------------
+# FIVE printed lines cite a parent-return line, and not one of them is an
+# EQUALITY, so all five are omitted rather than shipped as false checks.
+#   * 13 -> "Schedule 1 (Form 1040), Part II, line 13". Killed VERBATIM by the
+#     instructions: "Complete a separate Form 8889 for each spouse. COMBINE THE
+#     AMOUNTS ON LINE 13 OF BOTH FORMS 8889 and enter this amount on Schedule 1
+#     (Form 1040), line 13. Be sure to attach both Forms 8889 to your paper tax
+#     return." (Instructions for Form 8889 (2023), "How To Complete Part I".)
+#     "13 == sched_1.13" would FAIL every correct joint return on which both
+#     spouses have an HSA.
+#   * 16 -> "Schedule 1 (Form 1040), Part I, line 8f" AND 20 -> the same
+#     "Schedule 1 (Form 1040), Part I, line 8f". TWO lines of this one form
+#     land on one Schedule 1 line, so 8f is 16 + 20 even for a single filer
+#     with a single HSA and neither line alone can equal it. Both printed rows
+#     say "include this amount in the total on" / "Include this amount on" —
+#     additive language, and the repo has no grammar for an additive carry.
+#   * 17b -> "Schedule 2 (Form 1040), Part II, line 17c" and 21 -> "Schedule 2
+#     (Form 1040), Part II, line 17d". One-to-one for a single-HSA filer, but
+#     the FORM ITSELF prints the per-spouse rule on both Parts — "If you are
+#     filing jointly and both you and your spouse each have separate HSAs,
+#     complete a separate Part II [Part III] for each spouse" — so two Forms
+#     8889 feed one Schedule 2 and the equality breaks on exactly the returns
+#     the caption contemplates.
+# The targets all EXIST (sched_1 2023 maps "13" and "8f"; sched_2 2023 maps
+# "17c" and "17d"), so this is a deliberate omission, not a missing pack, and
+# it needs no CROSS_FORM_TARGET_ALLOWLIST row.
+# COUNTER-PRECEDENT considered and distinguished: f8960 declares
+# "17 == sched_2.12", f8959 "18 == sched_2.11" and f2441 "11 == sched_3.2".
+# Those forms are filed ONE PER RETURN, so their carries really are
+# one-to-one. Form 8889 is per-SPOUSE by printed caption and by instruction,
+# which is the whole difference. A rule that is true for most filings and false
+# for the joint-HSA case is a false check, and a false check is worse than none
+# (the f8606 header's rule, and the sched_e P-007 lesson that verify will
+# happily CERTIFY a wrong artifact).
+#
+# ---------------------------------------------------------------------------
+# IDENTITY FIELDS — [name, identifying_number], and the per-spouse caveat
+# ---------------------------------------------------------------------------
+# House practice for a per-spouse attachment (sched_se, sched_c, f2555, f8960,
+# f8606 all ship exactly [name, identifying_number]) is followed here.
+#   * `name` is printed "Name(s) shown on Form 1040, 1040-SR, or 1040-NR" — by
+#     construction the parent return's names, so it agrees with every other
+#     schedule that maps `name`.
+#   * `identifying_number` is printed "Social security number of HSA
+#     beneficiary. If both spouses have HSAs, see instructions.", and the
+#     instructions confirm the scope: "Enter your name(s) as shown on your tax
+#     return and the SSN of the HSA account beneficiary. If married filing
+#     jointly and both you and your spouse have HSAs, complete a separate Form
+#     8889 for each of you." (Specific Instructions.)
+# CAVEAT the integrator should see, recorded because it is the one way this
+# line can legitimately DIFFER from the parent 1040 on a joint return: when the
+# HSA belongs to the SPOUSE, this box holds the spouse's SSN while f1040's
+# `identifying_number` holds the primary filer's, and verify's _identity_checks
+# compares every DECLARED identity name across the filing — so
+# verify_filing([f1040, f8889-for-the-spouse]) would report an
+# `identifying_number` mismatch on a correct return. This is the same
+# structural gap f8606 recorded hours earlier (its box is per-spouse too, and
+# sched_se's "Social security number of person with self-employment income" has
+# it as well): _identity_checks has no way to express "per-spouse attachment,
+# compare against EITHER filer". Reported as an open issue rather than dodged
+# by dropping the declaration, which would also switch off the check for the
+# single-filer case it protects correctly.
+# `maxlen: 11` tracks the widget's OWN /MaxLen (formpacks/CONVENTIONS.md,
+# "Identity page mirrors": maxlen tracks each widget's own /MaxLen), matching
+# sched_b / sched_c / sched_8812 / f2555; f8606 and f8960 pin 9 on the
+# identical 11-wide widget, an inconsistency reported rather than copied.
+# `format: ssn_digits_only` keeps cross-form identity values consistent and can
+# never overflow (P-001).
+#
+# ---------------------------------------------------------------------------
+# SIGNATURE / MAILING
+# ---------------------------------------------------------------------------
+# signature: null, mailing: null — the attachment-only shape (f8960, f8959,
+# f2441, sched_8812). The form carries NO signature block and NO preparer block
+# of its own (confirmed on both the field dump and the sweep render: 27 widgets,
+# none of them in a signature area), it is never filed by itself, and it is
+# mailed inside the parent return's envelope, so there is no separate
+# where-to-file (formpacks/CONVENTIONS.md).
+form: "8889"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-prior/f8889--2023.pdf
+pdf_sha256: "1185040e24ac4044baa1638f0978e8402ae56f77ec33301300a8722796ab6808"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header ---------------------------------------------------------------
+  - line: "name"                    # "Name(s) shown on Form 1040, 1040-SR, or 1040-NR"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "identifying_number"      # "Social security number of HSA beneficiary. If both spouses have HSAs, see instructions." — plain box, NOT a comb
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 11                      # the widget's own /MaxLen (fits a dashed SSN)
+    format: ssn_digits_only         # digits only keeps cross-form identity values consistent and can never overflow (P-001)
+
+  # ---- Part I: HSA Contributions and Deduction (printed lines 1-13) ---------
+  # "See the instructions before completing this part. If you are filing jointly
+  #  and both you and your spouse each have separate HSAs, complete a separate
+  #  Part I for each spouse."
+  #
+  # Line 1: "Check the box to indicate your coverage under a high-deductible
+  # health plan (HDHP) during 2023. See instructions." — ONE question, TWO
+  # mutually exclusive options on SEPARATE /Btn fields (P-008): the shared
+  # `group: line1` is the only thing that stops a Self-only + Family return.
+  - line: "1.self_only"             # printed "Self-only" box (left)
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line1
+  - line: "1.family"                # printed "Family" box (right)
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line1
+  - line: "2"                       # "HSA contributions you made for 2023 (or those made on your behalf), including those made by the unextended due date of your tax return that were for 2023. Do not include employer contributions, contributions through a cafeteria plan, or rollovers."
+    field: "Page1[0].f1_3[0]"
+    type: money
+  - line: "3"                       # "If you were under age 55 at the end of 2023 and, on the first day of every month during 2023, you were, or were considered, an eligible individual with the same coverage, enter $3,850 ($7,750 for family coverage). All others, see the instructions for the amount to enter" — 2023 figures per Rev. Proc. 2022-24 §2.01(1) (§223(b)(2)(A)/(B)); the instructions' Line 3 Limitation Chart and Worksheet covers "all others"; the two figures are printed in the ROW TEXT, not in the widget
+    field: "Page1[0].f1_4[0]"
+    type: money
+  - line: "4"                       # "Enter the amount you and your employer contributed to your Archer MSAs for 2023 from Form 8853, lines 1 and 2. If you or your spouse had family coverage under an HDHP at any time during 2023, also include any amount contributed to your spouse's Archer MSAs"
+    field: "Page1[0].f1_5[0]"
+    type: money
+  - line: "5"                       # "Subtract line 4 from line 3. If zero or less, enter -0-"
+    field: "Page1[0].f1_6[0]"
+    type: money
+  - line: "6"                       # "Enter the amount from line 5. But if you and your spouse each have separate HSAs and had family coverage under an HDHP at any time during 2023, see the instructions for the amount to enter" — conditional copy with a spousal-allocation leg, so no relation
+    field: "Page1[0].f1_7[0]"
+    type: money
+  - line: "7"                       # "If you were age 55 or older at the end of 2023, married, and you or your spouse had family coverage under an HDHP at any time during 2023, enter your additional contribution amount." (instructions' Additional Contribution Amount Worksheet — no relation)
+    field: "Page1[0].f1_8[0]"
+    type: money
+  - line: "8"                       # "Add lines 6 and 7"
+    field: "Page1[0].f1_9[0]"
+    type: money
+  - line: "9"                       # "Employer contributions made to your HSAs for 2023" — INSET box (x 410-482), not the main amount column; the far-right cell on this row is shaded and holds no widget. (Instructions' Employer Contribution Worksheet — no relation.)
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "10"                      # "Qualified HSA funding distributions" — INSET box, same as line 9. A trustee-to-trustee IRA-to-HSA transfer; NOT the same year's line 19 (see the header)
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: "11"                      # "Add lines 9 and 10"
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "12"                      # "Subtract line 11 from line 8. If zero or less, enter -0-"
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "13"                      # "HSA deduction. Enter the smaller of line 2 or line 12 here and on Schedule 1 (Form 1040), Part II, line 13" — the Schedule 1 leg is ADDITIVE across spouses' Forms 8889, so no cross_form rule (see the header). The following "Caution: If line 2 is more than line 13 ..." row has no widget.
+    field: "Page1[0].f1_14[0]"
+    type: money
+
+  # ---- Part II: HSA Distributions (printed lines 14a-17b) ------------------
+  # "If you are filing jointly and both you and your spouse each have separate
+  #  HSAs, complete a separate Part II for each spouse."
+  - line: "14a"                     # "Total distributions you received in 2023 from all HSAs (see instructions)" — Form 1099-SA box 1
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "14b"                     # "b Distributions included on line 14a that you rolled over to another HSA. Also include any excess contributions (and the earnings on those excess contributions) included on line 14a that were withdrawn by the due date of your return."
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "14c"                     # "c Subtract line 14b from line 14a"
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "15"                      # "Qualified medical expenses paid using HSA distributions (see instructions)"
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: "16"                      # "Taxable HSA distributions. Subtract line 15 from line 14c. If zero or less, enter -0-. Also, include this amount in the total on Schedule 1 (Form 1040), Part I, line 8f"
+    field: "Page1[0].f1_19[0]"
+    type: money
+  - line: "17a"                     # "If any of the distributions included on line 16 meet any of the Exceptions to the Additional 20% Tax (see instructions), check here" — printed line 17a IS the checkbox; the cell to its right is shaded and holds no widget. Lone flag, so no `group`.
+    field: "Page1[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "17b"                     # "b Additional 20% tax (see instructions). Enter 20% (0.20) of the distributions included on line 16 that are subject to the additional 20% tax. Also, include this amount in the total on Schedule 2 (Form 1040), Part II, line 17c" — the base is a SUBSET of line 16, so no relation (see the header)
+    field: "Page1[0].f1_20[0]"
+    type: money
+
+  # ---- Part III: Income and Additional Tax for Failure To Maintain HDHP
+  # ---- Coverage (printed lines 18-21) — the testing-period recapture
+  # "If you are filing jointly and both you and your spouse each have separate
+  #  HSAs, complete a separate Part III for each spouse."
+  - line: "18"                      # "Last-month rule" — the contributions allowed only BY the last-month rule, recaptured because the testing period was blown (prior-year worksheet, no relation)
+    field: "Page1[0].f1_21[0]"
+    type: money
+  - line: "19"                      # "Qualified HSA funding distribution" — the recaptured line-10 distribution, reported in the year eligibility FAILED, which is often a LATER year than the distribution: not equal to this year's line 10 (see the header)
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: "20"                      # "Total income. Add lines 18 and 19. Include this amount on Schedule 1 (Form 1040), Part I, line 8f" — line 16 lands on 8f too, so the Schedule 1 leg is additive: no cross_form rule
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "21"                      # "Additional tax. Multiply line 20 by 10% (0.10). Include this amount in the total on Schedule 2 (Form 1040), Part II, line 17d"
+    field: "Page1[0].f1_24[0]"
+    type: money
+
+relations:
+  # Part I
+  - "5 == max(0, 3 - 4)"      # "5 Subtract line 4 from line 3. If zero or less, enter -0-"
+  - "8 == 6 + 7"              # "8 Add lines 6 and 7"
+  - "11 == 9 + 10"            # "11 Add lines 9 and 10"
+  - "12 == max(0, 8 - 11)"    # "12 Subtract line 11 from line 8. If zero or less, enter -0-"
+  - "13 == min(2, 12)"        # "13 HSA deduction. Enter the smaller of line 2 or line 12"
+  # Part II
+  - "14c == 14a - 14b"        # "c Subtract line 14b from line 14a." No floor is printed
+  - "16 == max(0, 14c - 15)"  # "16 Taxable HSA distributions. Subtract line 15 from line 14c. If zero or less, enter -0-"
+  # Part III
+  - "20 == 18 + 19"           # "20 Total income. Add lines 18 and 19"
+  - "21 == 20 * 0.10"         # "21 Additional tax. Multiply line 20 by 10% (0.10)"
+
+# Deliberately empty. All five printed parent-return citations (13 -> Schedule 1
+# line 13; 16 and 20 -> Schedule 1 line 8f; 17b -> Schedule 2 line 17c; 21 ->
+# Schedule 2 line 17d) are ADDITIVE, not equalities — two lines of this form
+# share Schedule 1 line 8f, and the instructions say verbatim to "Combine the
+# amounts on line 13 of both Forms 8889" on a joint return. See the header.
+cross_form: []
+
+identity_fields: [name, identifying_number]
+# identifying_number is PER PERSON on this form, not per filing: Form 8889's box is printed "Social security number of HSA beneficiary",
+# so on a joint return it legitimately carries the SPOUSE's SSN while the 1040
+# carries the primary filer's. Declared 2026-08-26 after verify_filing was
+# reproduced FAILing that correct arrangement; verify now reports a difference
+# as SKIPPED with both values printed instead of rejecting the return.
+identity_per_person: [identifying_number]
+
+# Attachment-only form (Attachment Sequence No. 52): no signature block of its
+# own; mailed inside the parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

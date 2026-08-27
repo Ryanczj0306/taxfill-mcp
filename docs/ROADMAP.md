@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**4,245 tests, all green** — offline 3,909 + live-.gov 336, exit 0;
+Done and on `main` (**4,326 tests, all green** — offline 3,984 + live-.gov 342, exit 0;
 re-verified 2026-08-21 via `pytest -m "not network"` AND `pytest -m network`, exit 0
 both — the network layer skips 2 (states/ms/2023/f80105, whose blank is uncached and
 whose host fails certificate verification here)):
@@ -40,8 +40,8 @@ whose host fails certificate verification here)):
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
-- **Federal form packs — priority set DONE.** **96 packs across 2019–2025**
-  (2019:1, 2020:1, 2021:1, 2022:5, 2023:29, 2024:29, 2025:30 — f1040nr +
+- **Federal form packs — priority set DONE.** **99 packs across 2019–2025**
+  (2019:1, 2020:1, 2021:1, 2022:5, 2023:30, 2024:30, 2025:31 — f1040nr +
   Schedule OI joined 2024 on 2026-08-10, and the 2026-08 batch backfilled the
   rest of the 2023 set into 2024/2025: identical-topology ports off the 2023
   packs, digests pinned to the year's blanks, vision-audited page by page). M2 base
@@ -85,7 +85,7 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**161 form packs total** — 157 `pack.yaml` (96 federal + 61 state) + 4
+**164 form packs total** — 160 `pack.yaml` (99 federal + 61 state) + 4
 `handfill.yaml`. The state 61 breaks down **TY2023 42 / TY2024 14 / TY2025 5**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
 > **13 of the 42 jurisdictions fill a post-2023 year** — AR (2024+2025),
@@ -544,6 +544,32 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       `STATE_COMPUTED_READONLY` pins moved 5→12 (2023) and 6→13 (2024) with the
       per-cell record in the 2023 pack's OUPC PAGE-13 ADJUDICATION header.
 
+- [ ] **A THIRD checkbox-topology blind spot, MEASURED 2026-08-26 (Phase I2).**
+      The two P-008 gates between them still cannot see one shape.
+      `test_every_yes_no_pair_shares_one_group_id` keys off the LINE SHAPE
+      `<stem>.yes` + `<stem>.no`, and `test_pack_radio_options_share_one_group_and_distinct_states`
+      only fires when two checkbox lines SHARE one AcroForm field. A set of
+      options on SEPARATE single-widget `/Btn` fields whose tokens are *not*
+      yes/no — Form 8889 line 1's `1.self_only` / `1.family`, for instance — is
+      invisible to both, so its `group` id is house discipline rather than a gate
+      result, and nothing would catch a pack that omitted it. Swept over all 160
+      packs: **285 such option sets across 81 packs, of which 193 carry no shared
+      `group` id.** That is why this is its own tranche and not a one-line widening
+      — most of the 193 are legitimately NON-exclusive and must stay ungrouped
+      (`age_blindness` you/spouse, `presidential_campaign` you/spouse,
+      `sched_e` 28.a/28.b column sets, f1040's `standard_deduction` flags), so the
+      rule needs the same per-entry printed-face adjudication table the P-007
+      ReadOnly sweep needed. **Acceptance:** a repo-wide gate plus an adjudication
+      table in which every ungrouped set is justified from its own printed row.
+- [ ] **`maxlen` on the 11-wide plain SSN widget is pinned two different ways
+      (found 2026-08-26).** `sched_b` / `sched_c` / `sched_8812` / `f2555` / `f8889`
+      pin `maxlen: 11` (the widget's own `/MaxLen`); `f8606` / `f8960` pin `9`.
+      `formpacks/CONVENTIONS.md` is explicit that maxlen tracks each widget's OWN
+      `/MaxLen`, which makes 11 correct and 9 a harmless but untrue narrowing —
+      harmless only because a 9-digit SSN never reaches the limit. Settle it one
+      way repo-wide and say so in CONVENTIONS, so the next author does not have to
+      pick.
+
 **Acceptance:** all 13 eval scenarios run green (**met**); one authoritative test
 count (**met**); every binding rule in `formpacks/CONVENTIONS.md` enforced by a
 module whose discovery glob matches the rule's claimed scope (**met** — the table
@@ -957,7 +983,25 @@ line items sum to the headline delta.
       numbers. **Acceptance:** 8606 vision-audited three years; the op reproduces the
       live session's worked example to the dollar; P-009 cited; the i14 scenario
       (I6) exercises the whole chain.
-- [ ] **I2 — HSA: the limit ships, the return does not.** `contribution_limits.hsa`
+- [x] **I2 — HSA — DONE 2026-08-26.** Shipped: `calc.hsa_deduction` (Form 8889
+      Parts I/II/III as IRC 223 writes them — the Line 3 Limitation Chart month by
+      month, the last-month rule as 223(b)(8)'s greater-of WITH its 13-month testing
+      period and recapture promoted to a result field, the 223(b)(7) Medicare zeroing,
+      the 223(b)(5) family split between two spouses' HSAs, the age-55 catch-up's
+      line 3 vs line 7 routing, the employer/cafeteria-plan offset, and IRC 4973
+      excise), `f8889` packs for 2023/2024/2025 (vision-audited), 1099-SA and 5498-SA
+      DocSpecs, and 42 tests including all three Publication 969 worked examples
+      reproduced to the cent. Three defects the adversarial review caught and this
+      change fixes: Form 8889 line 1's December override is **one-directional**
+      (i8889 gives an override only for a family December, so a self-only December no
+      longer flips a majority-family year to "Self-only"); the Additional Medicare
+      tier began AT $200,000 instead of above it (Pub 15 withholds on wages "in excess
+      of" the threshold); and `_F8889_VERIFIED_REVISIONS` claimed 2019-2025 while the
+      citation body quotes 2021+ Schedule 1 / Schedule 2 destinations, so it is
+      narrowed to 2021-2025. The repo's flat "payroll HSA dollars also avoid FICA"
+      blurbs are corrected to the real tier ladder in the same pass. *(original scope
+      below)*
+- [x] **I2 scope as planned — HSA: the limit ships, the return does not.** `contribution_limits.hsa`
       carries the cited 2026 amounts ($4,400 / $8,750 / $1,000 catch-up, Rev. Proc.
       2025-19) but `hsa_deduction` has **zero source hits** and there is no
       **`f8889`** pack, so an HSA contribution can be planned and not filed. Build:

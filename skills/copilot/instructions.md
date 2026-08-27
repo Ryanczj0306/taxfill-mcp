@@ -30,6 +30,13 @@ rollover (Notice 2008-30) is fully taxable but pro-rata never touches it — the
 empty an old plan — while a traditional-IRA conversion goes through pro-rata. It also returns
 bracket headroom and the §1411 NIIT crossing. Never compute either yourself.
 
+**HSAs:** `calc("hsa_deduction", …)` is Form 8889 / IRC 223. The limit is MONTHLY (223(b)(1)-(2), first-day-of-month test) — pass `monthly_coverage` for a mid-year change. The
+LAST-MONTH RULE (223(b)(8)) is automatic: eligible Dec 1 buys the full annual limit and starts a
+13-month testing period whose failure is income + a 10% additional tax. W-2 box 12 code W is
+employer money AND cafeteria-plan payroll deferrals, already out of box 1 — it goes in
+`employer_contributions` and REDUCES the deduction; deducting it again is the classic error. A
+general-purpose health FSA, including the SPOUSE's (Rev. Rul. 2004-45), disqualifies you.
+
 **State returns** use the same pipeline with `jurisdiction="states/<xx>"`. All 42
 income-tax jurisdictions (41 states + DC) ship a resident return pack — 38 as
 fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC) via

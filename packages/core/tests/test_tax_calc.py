@@ -27,6 +27,16 @@ Sources (verified against the official PDFs):
   (n-14-54.pdf); Pub 590-A Table 1-5 + ch. 2 and Pub 590-B ch. 1
   (p590a.pdf / p590b.pdf). The 2026 figures the conversion tests use come from
   knowledge/federal/2026.yaml (Rev. Proc. 2025-32).
+* HSAs (Phase I, I2): Form 8889, every revision 2019-2025
+  (https://www.irs.gov/pub/irs-prior/f8889--<year>.pdf) and the 2025
+  instructions (i8889--2025.pdf); Publication 969 (2025)
+  (https://www.irs.gov/pub/irs-pdf/p969.pdf), whose three worked examples
+  (the two last-month-rule examples and the Medicare proration) are reproduced
+  to the cent below; IRC 223 and IRC 4973 from uscode.house.gov (title 26,
+  prelim edition); Rev. Rul. 2004-45
+  (https://www.irs.gov/pub/irs-drop/rr-04-45.pdf) for the health-FSA/HRA
+  mutual exclusion, including a spouse's; Rev. Proc. 2025-19
+  (https://www.irs.gov/pub/irs-drop/rp-25-19.pdf) for the 2026 amounts.
 
 Rule from docs/DEV_PLAN.md section 10: if the implementation disagrees with
 ANY published row below, the implementation is wrong — fix it, never the
@@ -46,6 +56,7 @@ from taxfill_core.calc import (
     education_credits,
     eitc,
     excess_ss,
+    hsa_deduction,
     ira_pro_rata,
     irs_round,
     niit,
@@ -3098,3 +3109,464 @@ def test_roth_conversion_qss_alias_resolves_like_the_neighbouring_ops():
                         net_investment_income=5_000, knowledge_dir=KNOWLEDGE_DIR)
     assert r.niit_threshold == 250_000
     assert "married-filing-jointly column" in r.work
+
+
+# ---------------------------------------------------------------------------
+# hsa_deduction (Phase I, I2) — Form 8889 / IRC 223
+#
+# The three numeric fixtures below are the IRS's OWN worked examples from
+# Publication 969 (2025), reproduced to the cent. Rule from DEV_PLAN section 10:
+# if the implementation disagrees with a published row, the implementation is
+# wrong.
+# ---------------------------------------------------------------------------
+
+
+def test_hsa_deduction_reproduces_pub969_last_month_rule_example_1():
+    # Pub 969 (2025), Example 1: "You, age 53, become an eligible individual on
+    # December 1, 2025. You have family HDHP coverage on that date. Under the
+    # last-month rule, you contribute $8,550 to your HSA." The published
+    # worksheet: -0- for January-November, $8,550.00 for December, total
+    # $8,550.00, "Limitation. Divide the total by 12  $712.50".
+    r = hsa_deduction(monthly_coverage=["none"] * 11 + ["family"], year=2025,
+                      personal_contributions=8_550, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.prorated_limit == Decimal("712.50")
+    assert r.annual_limit_exact == Decimal("8550")      # the greater of the two, per Pub 969
+    assert r.limit_basis == "last_month_rule" and r.last_month_rule_applied is True
+    assert r.months_eligible == 1
+    assert r.deduction == 8_550 and r.excess_personal_contributions == 0
+    # "You would include $7,837.50 ($8,550.00 - $712.50) in your gross income on
+    # your 2026 tax return. Also, a 10% additional tax applies to this amount."
+    assert r.at_risk_if_testing_period_fails == irs_round(Decimal("7837.50"))
+    failed = hsa_deduction(monthly_coverage=["none"] * 11 + ["family"], year=2025,
+                           personal_contributions=8_550, testing_period_failed=True,
+                           knowledge_dir=KNOWLEDGE_DIR)
+    assert failed.form_8889_lines["18"] == "$7,837.50"
+    assert failed.form_8889_lines["20"] == "$7,837.50"
+    assert failed.form_8889_lines["21"] == "$783.75"     # 10% of the inclusion
+    assert failed.recapture_additional_tax == irs_round(Decimal("783.75"))
+
+
+def test_hsa_deduction_reproduces_pub969_last_month_rule_example_2():
+    # Pub 969 (2025), Example 2: self-only from January 1, family from
+    # November 1, $8,550 contributed. Published worksheet: $4,300.00 for
+    # January-October, $8,550.00 for November and December, "Total for all
+    # months $60,100.00", "Limitation. Divide the total by 12  $5,008.33",
+    # and the inclusion "$3,541.67".
+    r = hsa_deduction(monthly_coverage=["self_only"] * 10 + ["family"] * 2, year=2025,
+                      personal_contributions=8_550, testing_period_failed=True,
+                      knowledge_dir=KNOWLEDGE_DIR)
+    assert r.monthly_limits[:10] == ["$4,300.00"] * 10
+    assert r.monthly_limits[10:] == ["$8,550.00"] * 2
+    assert r.prorated_limit == Decimal("5008.33")
+    assert "$60,100.00" in r.work                       # the published "Total for all months"
+    assert r.annual_limit_exact == Decimal("8550")
+    assert r.form_8889_lines["18"] == "$3,541.67"
+    # Eligible all 12 months, so the DEDUCTION is unaffected — only the extra
+    # room the last-month rule bought is at risk.
+    assert r.months_eligible == 12 and r.deduction == 8_550
+
+
+def test_hsa_deduction_reproduces_pub969_medicare_proration_example():
+    # Pub 969 (2025): "You turned age 65 in July 2025 and enrolled in Medicare.
+    # You had an HDHP with self-only coverage and are eligible for an additional
+    # contribution of $1,000. Your contribution limit is $2,650 ($5,300 x 6 / 12)."
+    r = hsa_deduction(monthly_coverage=["self_only"] * 12, year=2025, age_55_plus=True,
+                      medicare_start_month=7, personal_contributions=2_650,
+                      knowledge_dir=KNOWLEDGE_DIR)
+    assert r.monthly_limits[:6] == ["$5,300.00"] * 6    # $4,300 tier + the $1,000 catch-up
+    assert r.monthly_limits[6:] == ["$0.00"] * 6        # IRC 223(b)(7)
+    assert r.prorated_limit == Decimal("2650.00") and r.annual_limit == 2_650
+    assert r.months_eligible == 6 and r.deduction == 2_650
+    assert r.catch_up_on_line == "3" and r.catch_up_amount == 500
+    # Medicare kills December, so there is no last-month rule and no testing period.
+    assert r.last_month_rule_applied is False and r.testing_period is None
+    assert "223(b)(7)" in r.work and "RETROACTIVE" in r.work
+
+
+def test_hsa_deduction_prorates_month_by_month_and_december_decides():
+    # IRC 223(b)(1)-(2): the limit is the SUM OF MONTHLY LIMITATIONS, each 1/12
+    # of the tier amount for the coverage held on the FIRST DAY of the month.
+    # Six months of 2026 self-only coverage is $4,400 x 6/12 = $2,200 — but only
+    # while December is NOT one of them. The same six months moved to the end of
+    # the year hand the filer the whole $4,400 under 223(b)(8)(A).
+    first_half = hsa_deduction(monthly_coverage=["self_only"] * 6 + ["none"] * 6, year=2026,
+                               personal_contributions=4_400, knowledge_dir=KNOWLEDGE_DIR)
+    assert first_half.prorated_limit == Decimal("2200.00")
+    assert first_half.annual_limit == 2_200 and first_half.limit_basis == "monthly_proration"
+    assert first_half.last_month_rule_applied is False and first_half.testing_period is None
+    assert first_half.deduction == 2_200
+    assert first_half.excess_personal_contributions == 2_200      # the other half is excess
+    assert first_half.excise_per_year == irs_round(Decimal("2200") * Decimal("0.06"))   # 132
+
+    second_half = hsa_deduction("self_only", months_eligible=6, year=2026,
+                                personal_contributions=4_400, knowledge_dir=KNOWLEDGE_DIR)
+    assert second_half.prorated_limit == Decimal("2200.00")       # the same six months
+    assert second_half.annual_limit == 4_400                      # but December is covered
+    assert second_half.limit_basis == "last_month_rule"
+    assert second_half.deduction == 4_400 and second_half.excess_personal_contributions == 0
+
+
+def test_hsa_deduction_last_month_rule_makes_the_testing_period_visible():
+    r = hsa_deduction("family", months_eligible=1, year=2026,
+                      personal_contributions=8_750, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.testing_period == {
+        "begins": "December 1, 2026",
+        "ends": "December 31, 2027",
+        "length_months": "13",
+        "authority": "IRC 223(b)(8)(B)(iii)",
+        "failure_cost": r.testing_period["failure_cost"],
+    }
+    assert "13 months" in r.work and "December 1, 2026 through December 31, 2027" in r.work
+    assert "10 percent of the amount of such increase" in r.work
+    # The safe alternative is stated, not implied.
+    assert "Contributing no more than $729.17" in r.work
+    assert r.at_risk_if_testing_period_fails == irs_round(Decimal("8750") - Decimal("729.17"))
+    assert any("section223" in c.url for c in r.citations)
+
+
+def test_hsa_deduction_employer_money_reduces_the_deduction_it_is_not_a_second_one():
+    # The most common HSA filing error: W-2 box 12 code W deducted AGAIN on
+    # Schedule 1. i8889 line 9 is "Employer contributions (including employee
+    # payroll contributions through a cafeteria plan)"; line 2 excludes them.
+    same_dollars_all_payroll = hsa_deduction("self_only", year=2026, employer_contributions=4_400,
+                                             knowledge_dir=KNOWLEDGE_DIR)
+    same_dollars_all_direct = hsa_deduction("self_only", year=2026, personal_contributions=4_400,
+                                            knowledge_dir=KNOWLEDGE_DIR)
+    assert same_dollars_all_payroll.deduction == 0        # already out of box 1 — nothing left to deduct
+    assert same_dollars_all_direct.deduction == 4_400
+    assert same_dollars_all_payroll.employer_contributions_excluded == 4_400
+    # Neither is an excess: the limit is the same $4,400 either way.
+    assert same_dollars_all_payroll.excess_employer_contributions == 0
+    assert same_dollars_all_direct.excess_personal_contributions == 0
+
+    mixed = hsa_deduction("self_only", year=2026, personal_contributions=2_000,
+                          employer_contributions=3_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert mixed.form_8889_lines["12"] == "$1,400.00"     # 4,400 - 3,000
+    assert mixed.deduction == 1_400                       # min(line 2 2,000, line 12 1,400)
+    assert mixed.excess_personal_contributions == 600     # line 2 - line 13
+    for r in (same_dollars_all_payroll, mixed):
+        assert "THE DOUBLE-COUNT TRAP" in r.work
+        assert "box 12 code W" in r.work
+        assert "not included on line 2" in r.work
+
+
+def test_hsa_deduction_refuses_a_general_purpose_fsa_and_names_the_spouses():
+    """P-010: the FSA that silently disqualifies an HSA, including a SPOUSE's.
+
+    Nothing on Form 8889's printed face asks about an FSA — line 1 asks only for
+    the HDHP coverage tier — so a filer with a disqualifying general-purpose FSA
+    fills the form out "correctly" and still owes the IRC 4973 6%-per-year excise
+    on every dollar contributed for a disqualified month. The op refuses rather
+    than returning a confidently wrong limit, because only the caller knows which
+    months overlapped.
+    """
+    with pytest.raises(ValueError) as e:
+        hsa_deduction("family", year=2026, health_fsa="general_purpose", knowledge_dir=KNOWLEDGE_DIR)
+    msg = str(e.value)
+    assert "Rev. Rul. 2004-45" in msg
+    assert "sponsored by the employer of the individual's SPOUSE" in msg
+    assert "monthly_coverage" in msg and "months_eligible" in msg      # the fix, not just the law
+    assert "223(c)(1)(B)(iii)" in msg                                   # the grace-period carve-out
+    # The two arrangements that do NOT disqualify are accepted and said so.
+    for kind, situation in (("limited_purpose", "Situation 2"), ("post_deductible", "Situation 4")):
+        ok = hsa_deduction("family", year=2026, health_fsa=kind, knowledge_dir=KNOWLEDGE_DIR)
+        assert ok.annual_limit == 8_750
+        assert f"Rev. Rul. 2004-45 {situation} holds does NOT disqualify" in ok.work
+    # Even with no FSA at all the gate is stated — it is the silent disqualifier.
+    plain = hsa_deduction("family", year=2026, knowledge_dir=KNOWLEDGE_DIR)
+    assert "OTHER-COVERAGE GATE" in plain.work and "SPOUSE" in plain.work
+    assert any("rr-04-45" in c.url for c in plain.citations)
+
+
+def test_hsa_deduction_catch_up_is_per_person_and_picks_its_own_line():
+    # i8889 Line 3 note: a married filer with family coverage AT ANY TIME in the
+    # year figures the additional contribution amount on LINE 7, never line 3 —
+    # because 223(b)(5)(B) divides the family limit "without regard to any
+    # additional contribution amount under paragraph (3)".
+    single = hsa_deduction("self_only", year=2026, age_55_plus=True,
+                           personal_contributions=5_400, knowledge_dir=KNOWLEDGE_DIR)
+    assert single.catch_up_on_line == "3" and single.catch_up_amount == 1_000
+    assert single.annual_limit == 5_400 and single.deduction == 5_400
+    assert single.form_8889_lines["7"] == "$0.00"
+
+    married = hsa_deduction("family", year=2026, age_55_plus=True, married=True,
+                            personal_contributions=9_750, knowledge_dir=KNOWLEDGE_DIR)
+    assert married.catch_up_on_line == "7" and married.catch_up_amount == 1_000
+    assert married.form_8889_lines["3"] == "$8,750.00" and married.form_8889_lines["7"] == "$1,000.00"
+    assert married.form_8889_lines["8"] == "$9,750.00" and married.deduction == 9_750
+    # $1,000 is statutory (IRC 223(b)(3)(B) "2009 and thereafter"), per PERSON,
+    # and a couple needs two accounts to take it twice.
+    assert "223(b)(3)(B)" in married.work and "TWO HSAs" in married.work
+    assert "$10,750" in married.work and "You can't have a joint HSA" in married.work
+
+
+def test_hsa_deduction_splits_one_family_limit_between_two_hsas():
+    # IRC 223(b)(5)(B)(ii): the family limit "shall be divided equally between
+    # them unless they agree on a different division".
+    equal = hsa_deduction("family", year=2026, age_55_plus=True, married=True,
+                          spouse_has_separate_hsa=True, personal_contributions=5_375,
+                          knowledge_dir=KNOWLEDGE_DIR)
+    assert equal.form_8889_lines["5"] == "$8,750.00" and equal.form_8889_lines["6"] == "$4,375.00"
+    assert equal.form_8889_lines["7"] == "$1,000.00"      # NOT halved — 223(b)(5)(B) excludes it
+    assert equal.form_8889_lines["8"] == "$5,375.00" and equal.deduction == 5_375
+
+    agreed = hsa_deduction("family", year=2026, age_55_plus=True, married=True,
+                           spouse_has_separate_hsa=True, your_share_of_family_limit=8_750,
+                           personal_contributions=9_750, knowledge_dir=KNOWLEDGE_DIR)
+    assert agreed.form_8889_lines["6"] == "$8,750.00" and agreed.deduction == 9_750
+    assert "split by agreement" in agreed.work
+
+    # A spouse with no HSA of their own takes no share.
+    sole = hsa_deduction("family", year=2026, married=True, personal_contributions=8_750,
+                         knowledge_dir=KNOWLEDGE_DIR)
+    assert sole.deduction == 8_750 and "the spouse has no separate HSA" in sole.work
+
+
+def test_hsa_deduction_recapture_is_measured_against_the_redetermined_limit():
+    # i8889 line 18 is "the excess of the amount contributed over the
+    # REDETERMINED amount" — and the redetermination has to run the whole
+    # chain, not just line 3: the spouse split and the line 7 catch-up (whose
+    # month count drops back to the real family months) both move with it.
+    r = hsa_deduction(monthly_coverage=["none"] * 6 + ["self_only"] * 3 + ["family"] * 3,
+                      year=2026, age_55_plus=True, married=True, spouse_has_separate_hsa=True,
+                      personal_contributions=3_000, employer_contributions=2_000,
+                      testing_period_failed=True, knowledge_dir=KNOWLEDGE_DIR)
+    # Chart: 6 x $0 + 3 x $4,400 + 3 x $8,750 = $39,450 / 12 = $3,287.50.
+    assert r.prorated_limit == Decimal("3287.50")
+    # Filed chain: line 3 $8,750 -> line 6 $4,375 + line 7 $1,000 (12/12 under
+    # 223(b)(8)(A)(ii), December being family) = line 8 $5,375.
+    assert r.form_8889_lines["8"] == "$5,375.00"
+    # Redetermined chain: $3,287.50 / 2 = $1,643.75 + $1,000 x 3/12 = $1,893.75.
+    # Contributed $3,000 + $2,000 = $5,000 -> $3,106.25 recaptured.
+    assert r.form_8889_lines["18"] == "$3,106.25"
+    assert r.recapture_income == irs_round(Decimal("3106.25"))
+    assert r.recapture_additional_tax == irs_round(Decimal("310.625"))
+    # A flag with nothing at risk recaptures nothing, and says so.
+    none_at_risk = hsa_deduction("family", year=2026, personal_contributions=8_750,
+                                 testing_period_failed=True, knowledge_dir=KNOWLEDGE_DIR)
+    assert none_at_risk.recapture_income == 0
+    assert "TESTING-PERIOD FLAG WITH NOTHING AT RISK" in none_at_risk.work
+
+
+def test_hsa_deduction_excess_contributions_carry_the_6_percent_excise():
+    # IRC 4973(a): 6% "for each taxable year", on BOTH kinds of excess.
+    mine = hsa_deduction("self_only", year=2026, personal_contributions=6_000,
+                         knowledge_dir=KNOWLEDGE_DIR)
+    assert mine.deduction == 4_400 and mine.excess_personal_contributions == 1_600
+    assert mine.excise_per_year == 96                      # 6% of 1,600
+
+    theirs = hsa_deduction("self_only", year=2026, employer_contributions=6_000,
+                           knowledge_dir=KNOWLEDGE_DIR)
+    assert theirs.deduction == 0 and theirs.excess_employer_contributions == 1_600
+    assert theirs.excise_per_year == 96
+    assert 'report it as "Other income"' in theirs.work
+
+    # The line 10 funding distribution comes off the line 8 limitation FIRST
+    # when the employer excess is measured (i8889, Excess Employer Contributions).
+    both = hsa_deduction("self_only", year=2026, employer_contributions=4_000,
+                         qualified_hsa_funding_distribution=1_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert both.excess_employer_contributions == 600       # 4,000 over (4,400 - 1,000)
+
+    for r in (mine, theirs, both):
+        if r.excise_per_year:
+            assert "IRC 4973(a) charges 6%" in r.work
+            assert "due date INCLUDING extensions" in r.work
+            assert "301.9100-2" in r.work
+            assert "Form 5329 Part VII" in r.work
+
+
+def test_hsa_deduction_fica_saving_is_never_765_percent_above_the_wage_base():
+    # The repo's own correction, applied here at the use site: a cafeteria-plan
+    # dollar avoids the FULL 7.65% only BELOW the social security wage base.
+    # 2026 pack: wage base $184,500, Additional Medicare withholding at $200,000.
+    low = hsa_deduction("self_only", year=2026, personal_contributions=4_400,
+                        wages=90_000, knowledge_dir=KNOWLEDGE_DIR)
+    mid = hsa_deduction("self_only", year=2026, personal_contributions=4_400,
+                        wages=190_000, knowledge_dir=KNOWLEDGE_DIR)
+    high = hsa_deduction("self_only", year=2026, personal_contributions=4_400,
+                         wages=300_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert low.fica_saving_forgone == Decimal("4400") * Decimal("0.0765")
+    assert mid.fica_saving_forgone == Decimal("4400") * Decimal("0.0145")
+    assert high.fica_saving_forgone == Decimal("4400") * Decimal("0.0235")
+    assert "7.65%" in low.fica_tier
+    assert "NOT 7.65%" in mid.fica_tier and "NOT 7.65%" in high.fica_tier
+    assert "1.45% + Additional Medicare 0.9% = 2.35%" in high.fica_tier
+    # The joint-return caveat: the 0.9% is WITHHELD at $200,000 with no
+    # filing-status test, but the Form 8959 tax is measured at $250,000 MFJ.
+    assert "Form 8959" in high.work and "$250,000" in high.work
+    # No wages passed = no payroll comparison invented.
+    silent = hsa_deduction("self_only", year=2026, personal_contributions=4_400,
+                           knowledge_dir=KNOWLEDGE_DIR)
+    assert silent.fica_saving_forgone is None and silent.fica_tier is None
+    assert "PAYROLL vs DIRECT" not in silent.work
+
+
+def test_hsa_deduction_part_ii_distributions_and_the_20_percent_tax():
+    r = hsa_deduction("self_only", year=2026, distributions_total=5_000,
+                      distributions_rolled_over=500, qualified_medical_expenses=3_000,
+                      knowledge_dir=KNOWLEDGE_DIR)
+    assert r.form_8889_lines["14c"] == "$4,500.00"
+    assert r.taxable_distributions == 1_500                        # line 16
+    assert r.distributions_additional_tax == 300                   # 20% of 1,500
+    assert "Schedule 1 Part I line 8f" in r.work and "Schedule 2 Part II line 17c" in r.work
+    assert "223(f)(4)(A)" in r.work and "P.L. 111-148" in r.work
+    # The exceptions (death, disability, 65) carve out of the 20%, not the income.
+    excepted = hsa_deduction("self_only", year=2026, distributions_total=5_000,
+                             distributions_rolled_over=500, qualified_medical_expenses=3_000,
+                             distributions_excepted_from_20_percent=1_500,
+                             knowledge_dir=KNOWLEDGE_DIR)
+    assert excepted.taxable_distributions == 1_500 and excepted.distributions_additional_tax == 0
+    # A filer who passes nothing is told the filing obligation anyway.
+    none = hsa_deduction("self_only", year=2026, knowledge_dir=KNOWLEDGE_DIR)
+    assert none.taxable_distributions == 0
+    assert "you must file Form 8889" in none.work
+
+
+def test_hsa_deduction_denies_the_deduction_to_a_dependent():
+    # IRC 223(b)(6) / Pub 969: "If another taxpayer is entitled to claim you as a
+    # dependent, you can't claim a deduction for an HSA contribution."
+    r = hsa_deduction("self_only", year=2026, personal_contributions=4_400,
+                      claimed_as_dependent_by_another=True, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.deduction == 0
+    assert r.excess_personal_contributions == 4_400 and r.excise_per_year == 264
+    assert "223(b)(6)" in r.work and "exemption amount is zero" in r.work
+
+
+def test_hsa_deduction_cites_the_years_own_form_and_flags_an_unpublished_one():
+    published = hsa_deduction("self_only", year=2025, knowledge_dir=KNOWLEDGE_DIR)
+    form = next(c for c in published.citations if "f8889" in c.url)
+    assert form.url == "https://www.irs.gov/pub/irs-prior/f8889--2025.pdf"
+    assert "Form 8889 (2025)" in form.source
+    assert "YEAR NOTE" not in published.work
+    # 2026's revision had not published: quote the newest one actually read, and say so.
+    projected = hsa_deduction("self_only", year=2026, knowledge_dir=KNOWLEDGE_DIR)
+    form26 = next(c for c in projected.citations if "f8889" in c.url)
+    assert form26.url == "https://www.irs.gov/pub/irs-prior/f8889--2025.pdf"
+    assert "RE-VERIFY against the 2026 form" in form26.source
+    assert "YEAR NOTE" in projected.work
+    # The dollar limits are the PACK's, and the citation is the pack's own.
+    assert projected.citation.url == "https://www.irs.gov/pub/irs-drop/rp-25-19.pdf"
+    assert projected.annual_limit == 4_400                      # Rev. Proc. 2025-19 section 2.01(1)
+    assert hsa_deduction("family", year=2026, knowledge_dir=KNOWLEDGE_DIR).annual_limit == 8_750
+
+
+def test_hsa_deduction_refuses_a_year_with_no_hsa_figures():
+    with pytest.raises(ValueError) as e:
+        hsa_deduction("self_only", year=2024, knowledge_dir=KNOWLEDGE_DIR)
+    assert "contribution_limits" in str(e.value) and "HSA revenue procedure" in str(e.value)
+
+
+def test_hsa_deduction_scope_disclosure_names_what_it_does_not_model():
+    r = hsa_deduction("self_only", year=2026, knowledge_dir=KNOWLEDGE_DIR)
+    for left_out in ("whether the plan IS an HDHP", "Form 8853", "Form 5329 Part VII",
+                     "deemed distributions", "death-of-account-beneficiary",
+                     "qualified medical expense", "once per lifetime"):
+        assert left_out in r.work, left_out
+
+
+@pytest.mark.parametrize(
+    "kwargs, fragment",
+    [
+        ({}, "pass EITHER coverage"),
+        ({"coverage": "self_only", "monthly_coverage": ["none"] * 12}, "pass EITHER coverage"),
+        ({"coverage": "none"}, "coverage must be 'self_only' or 'family'"),
+        ({"monthly_coverage": ["none"] * 11}, "EXACTLY 12 entries"),
+        ({"monthly_coverage": ["none"] * 11 + ["hdhp"]}, "December"),
+        ({"monthly_coverage": ["none"] * 12, "months_eligible": 3}, "two spellings of the same input"),
+        ({"coverage": "self_only", "months_eligible": 13}, "int from 0 to 12"),
+        ({"coverage": "self_only", "medicare_start_month": 0}, "month number 1-12"),
+        ({"coverage": "self_only", "health_fsa": "dental"}, "health_fsa must be one of"),
+        ({"coverage": "self_only", "personal_contributions": -1}, "must be >= 0"),
+        ({"coverage": "self_only", "your_share_of_family_limit": 1_000}, "only has meaning when married=True"),
+        ({"coverage": "family", "married": True, "spouse_has_separate_hsa": True,
+          "your_share_of_family_limit": 99_999}, "must be between 0 and the line 5 limit"),
+        ({"coverage": "self_only", "distributions_total": 100, "distributions_rolled_over": 200},
+         "cannot exceed distributions_total"),
+        ({"coverage": "self_only", "distributions_total": 100,
+          "distributions_excepted_from_20_percent": 200}, "exceeds line 16"),
+        ({"coverage": "self_only", "funding_distribution_testing_period_failed": True},
+         "nothing to recapture"),
+    ],
+)
+def test_hsa_deduction_input_validation(kwargs, fragment):
+    with pytest.raises(ValueError) as e:
+        hsa_deduction(year=2026, knowledge_dir=KNOWLEDGE_DIR, **kwargs)
+    assert fragment in str(e.value)
+
+
+def test_hsa_deduction_discloses_the_married_mixed_coverage_catch_up_corner():
+    # A corner the instructions create and never work an example for: the Line 3
+    # note sends a married filer's whole catch-up to line 7, and line 7's own
+    # worksheet counts only FAMILY months — so this filer's six SELF-ONLY
+    # eligible months earn no catch-up at all, where an unmarried filer's would.
+    # Modelled as written and flagged, not smoothed over.
+    r = hsa_deduction(monthly_coverage=["self_only"] * 6 + ["family"] * 3 + ["none"] * 3,
+                      year=2026, age_55_plus=True, married=True, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.months_eligible == 9 and r.catch_up_on_line == "7"
+    assert r.form_8889_lines["7"] == "$250.00"           # $1,000 x 3 family months / 12
+    assert "6 SELF-ONLY eligible month(s) here contribute nothing" in r.work
+    assert "worth a second look" in r.work
+    # The same year, unmarried: the catch-up rides line 3 and every eligible
+    # month earns 1/12 of it.
+    unmarried = hsa_deduction(monthly_coverage=["self_only"] * 6 + ["family"] * 3 + ["none"] * 3,
+                              year=2026, age_55_plus=True, knowledge_dir=KNOWLEDGE_DIR)
+    assert unmarried.catch_up_on_line == "3" and unmarried.catch_up_amount == 750
+
+
+def test_hsa_deduction_with_no_eligible_month_gives_no_room_at_all():
+    r = hsa_deduction(monthly_coverage=["none"] * 12, year=2026,
+                      personal_contributions=1_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.months_eligible == 0 and r.annual_limit == 0 and r.deduction == 0
+    assert r.excess_personal_contributions == 1_000 and r.excise_per_year == 60
+    assert r.last_month_rule_applied is False and r.testing_period is None
+
+def test_form_8889_line_1_december_override_runs_one_way_only():
+    """Regression, Phase I2 2026-08-26: a self-only December must not override a family year.
+
+    i8889 Line 1 says "check the box for the plan that was in effect for a longer
+    period", then adds ONE override: "If, on the first day of the last month of
+    your tax year ... you had family coverage, check the 'family' box." There is
+    no matching sentence for a self-only December, but the code applied December
+    in BOTH directions, so ten family months plus two self-only printed
+    "Self-only".
+    """
+    ten_family = hsa_deduction(monthly_coverage=["family"] * 10 + ["self_only"] * 2, year=2025)
+    assert ten_family.form_8889_lines["1"] == "Family"
+    # The override itself still works: a family December beats a self-only majority.
+    family_december = hsa_deduction(monthly_coverage=["self_only"] * 11 + ["family"], year=2025)
+    assert family_december.form_8889_lines["1"] == "Family"
+    # And with no family month anywhere, the longer period decides.
+    all_self_only = hsa_deduction(monthly_coverage=["self_only"] * 12, year=2025)
+    assert all_self_only.form_8889_lines["1"] == "Self-only"
+
+
+def test_additional_medicare_tier_starts_above_the_threshold_not_at_it():
+    """Regression, Phase I2: Pub 15 withholds on wages "in excess of" the threshold.
+
+    Wages of exactly $200,000 are still Medicare-only (1.45%); the 2.35% tier
+    begins at the first dollar above. The code used a strict `<`, which put the
+    boundary dollar one tier too high.
+    """
+    at_threshold = hsa_deduction(coverage="self_only", year=2025, personal_contributions=4000, wages=200_000)
+    assert "Additional Medicare" not in at_threshold.fica_tier
+    assert "only Medicare" in at_threshold.fica_tier
+    above = hsa_deduction(coverage="self_only", year=2025, personal_contributions=4000, wages=200_001)
+    assert "Additional Medicare" in above.fica_tier
+
+
+def test_months_eligible_shorthand_promotes_its_year_end_assumption():
+    """Regression, Phase I2: the shorthand's placement is not neutral.
+
+    `months_eligible=N` puts the months at the END of the year, which is what
+    triggers the last-month rule and can DOUBLE the deduction relative to the same
+    count of months earlier in the year. A caller reading only `deduction` has to
+    be able to see that, so it is promoted out of `work`.
+    """
+    shorthand = hsa_deduction(coverage="self_only", months_eligible=6, year=2026, personal_contributions=4400)
+    explicit_first_half = hsa_deduction(
+        monthly_coverage=["self_only"] * 6 + ["none"] * 6, year=2026, personal_contributions=4400
+    )
+    assert shorthand.deduction == 4400 and shorthand.limit_basis == "last_month_rule"
+    assert explicit_first_half.deduction == 2200
+    assert shorthand.input_assumptions and "LAST 6 month" in shorthand.input_assumptions[0]
+

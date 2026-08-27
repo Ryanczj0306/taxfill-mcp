@@ -85,6 +85,22 @@ Contents:
   threshold is measured against), and the work carries the withholding trap:
   withheld tax is not converted, so it is lost Roth space the 10% additional
   tax can still reach.
+* ``hsa_deduction`` (Phase I, I2) — Form 8889 / IRC 223, the op that turns the
+  HSA amounts ``contribution_limits`` already shipped into a filed line. Four
+  traps it is built around: the limit is MONTHLY (223(b)(1)-(2), the Line 3
+  Limitation Chart month by month, not the annual figure); the LAST-MONTH RULE
+  (223(b)(8)) hands a December-1 holder the whole annual limit and starts a
+  13-MONTH testing period whose failure pulls the extra back into income plus a
+  10% additional tax; W-2 box 12 code W is employer money AND cafeteria-plan
+  payroll deferrals, already out of box 1, so it REDUCES the deduction instead
+  of adding to it (the double-count that overstates every payroll filer's
+  Schedule 1 line 13); and a general-purpose health FSA — INCLUDING a spouse's
+  (Rev. Rul. 2004-45) — is disqualifying coverage, while limited-purpose and
+  post-deductible ones are not. Also models the 223(b)(7) Medicare zeroing, the
+  223(b)(5) family-limit split, the age-55 catch-up's line 3 / line 7 routing,
+  the IRC 4973 6% excise, Part II distributions with the 223(f)(4) 20% tax and
+  Part III recapture — and, with ``wages``, the FICA half the direct-vs-payroll
+  choice turns on.
 * ``state_tax`` (Phase G, G4) — the STATE income-tax line for every
   jurisdiction whose pack ships a cited ``tax`` block: all 42 income-tax
   jurisdictions (41 states + DC) for 2023 and 2024, and 41 of 42 for 2025
@@ -3604,8 +3620,14 @@ def contribution_limits(
     * 125(i) health FSA — per employee per employer;
     * 132(f) commuter — per month, transit and parking separately.
 
-    Payroll HSA/FSA/commuter dollars also avoid FICA; 401(k) dollars do not —
-    :func:`marginal_dollar_savings` turns that into a ranking.
+    Payroll HSA/FSA/commuter dollars also avoid FICA where 401(k) dollars do not,
+    but "FICA" is not one rate: the full 7.65% applies only BELOW the social
+    security wage base, and above it the saving is Medicare alone (1.45%, or
+    2.35% once the 0.9% Additional Medicare withholding threshold is passed) —
+    exactly the population that maxes these buckets.
+    :func:`marginal_dollar_savings` picks the tier and turns it into a ranking,
+    and :func:`hsa_deduction` turns the HSA ceiling above into the Form 8889
+    line that is actually deductible.
     """
     pack = _load_federal(year, knowledge_dir)
     params = _require_contribution_limits(pack, year)
@@ -3634,12 +3656,28 @@ def contribution_limits(
             f"follows the HDHP COVERAGE TIER, not the household: two unmarried people with self-only "
             f"coverage get ${2 * params.hsa.self_only:,} together, "
             f"{'MORE than' if 2 * params.hsa.self_only > params.hsa.family else 'vs'} the family "
-            f"${params.hsa.family:,}. Payroll HSA dollars also avoid FICA."
+            f"${params.hsa.family:,}"
+            + (f" (+${params.hsa.catch_up_55:,} per PERSON at 55+, so a couple needs TWO HSAs to take it "
+               f"twice)" if params.hsa.catch_up_55 else "")
+            + ". This annual figure is a CEILING, not the amount: IRC 223(b)(1)-(2) tests eligibility "
+            "on the FIRST DAY of each month and allows 1/12 per eligible month, and a general-purpose "
+            "health FSA — including a SPOUSE's (Rev. Rul. 2004-45) — makes those months ineligible "
+            "outright. Run hsa_deduction before recording any HSA contribution: it prorates, applies "
+            "the 223(b)(8) last-month rule with its 13-month testing period, and keeps W-2 box 12 code "
+            "W out of the deduction (that money is already excluded from box 1, so deducting it again "
+            "is the classic HSA error). Payroll HSA dollars also avoid FICA — but only the FULL 7.65% "
+            "BELOW the social security wage base; above it the saving is Medicare 1.45%, or 2.35% once "
+            "the 0.9% Additional Medicare withholding threshold is passed, and that is exactly the "
+            "population that maxes an HSA. marginal_dollar_savings picks the tier."
         ),
         "health_fsa_125i": (
             f"${params.health_fsa_125i.limit:,} per EMPLOYEE per EMPLOYER for {year}"
             + (f" (carryover up to ${params.health_fsa_125i.carryover:,})" if params.health_fsa_125i.carryover else "")
-            + "; payroll FSA dollars also avoid FICA."
+            + "; payroll FSA dollars also avoid FICA — the full 7.65% only BELOW the social security "
+              "wage base, 1.45% above it and 2.35% past the 0.9% Additional Medicare threshold. A "
+              "GENERAL-PURPOSE health FSA also destroys HSA eligibility for every month it covers you, "
+              "a spouse's included (Rev. Rul. 2004-45); a limited-purpose (dental/vision) or "
+              "post-deductible one does not."
         ),
         # The caps are only half the answer: pitfall P-006 is a real session that
         # had the limits and still had to research WHAT QUALIFIES. The eligibility
@@ -3648,7 +3686,9 @@ def contribution_limits(
         "commuter_132f": (
             f"${params.commuter_132f.transit_monthly:,}/month transit and "
             f"${params.commuter_132f.parking_monthly:,}/month parking for {year}, separately; "
-            f"payroll commuter dollars also avoid FICA. ELIGIBILITY (P-006, year-invariant): "
+            f"payroll commuter dollars also avoid FICA — the full 7.65% only BELOW the social "
+            f"security wage base, 1.45% above it and 2.35% past the 0.9% Additional Medicare "
+            f"threshold. ELIGIBILITY (P-006, year-invariant): "
             f"qualified transportation benefits are an EXHAUSTIVE list of three — a ride in a "
             f"commuter highway vehicle (6+ adults excluding the driver, 80% of mileage "
             f"commuting), a transit pass, and qualified parking. Vehicle ENERGY is never among "
@@ -3924,25 +3964,48 @@ def marginal_dollar_savings(
         if taxable_d > bracket.over:
             marginal = bracket.rate
 
-    threshold = Decimal(ess.additional_medicare_withholding_threshold)
+    # The 0.9% tier keys on the Form 8959 TAX threshold, which is FILING-STATUS
+    # specific ($250,000 MFJ / $125,000 MFS / $200,000 otherwise, IRC 3101(b)(2)),
+    # NOT on the employer's status-blind $200,000 WITHHOLDING threshold. The
+    # difference is a real wrong answer, found 2026-08-26: an MFJ filer with
+    # $210,000 of wages has 0.9% WITHHELD, but owes none of it — combined wages are
+    # under $250,000, so it comes back as a credit on the return and the marginal
+    # payroll dollar saves Medicare only. Withholding is trued up; the tax is what
+    # a planning answer must price.
+    amt = pack.tax.additional_medicare_tax
+    if amt is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no tax.additional_medicare_tax block — add it "
+            f"(rate 0.009 + the five statutory thresholds) with a citation, or this op cannot say "
+            f"whether the 0.9% tier applies"
+        )
+    threshold = Decimal(_surtax_threshold(amt.thresholds, filing_status, "additional_medicare_tax"))
+    withholding_threshold = Decimal(ess.additional_medicare_withholding_threshold)
     if wages_d < ess.ss_wage_base:
         fica = ess.rate + ess.medicare_rate
         tier = (
             f"wages ${irs_round(wages_d):,} are BELOW the ${ess.ss_wage_base:,} wage base -> a payroll "
             f"dollar avoids the full {fica:%} (SS {ess.rate:%} + Medicare {ess.medicare_rate:%})"
         )
-    elif wages_d < threshold:
+    elif wages_d <= threshold:
         fica = ess.medicare_rate
+        withheld_note = (
+            f" (your employer still WITHHOLDS the extra {amt.rate:%} above "
+            f"${irs_round(withholding_threshold):,} — that is status-blind — but Form 8959 measures the "
+            f"TAX against your {filing_status} threshold of ${irs_round(threshold):,}, so the "
+            f"over-withholding comes back as a credit and the marginal dollar does not save it)"
+            if wages_d > withholding_threshold else ""
+        )
         tier = (
             f"wages ${irs_round(wages_d):,} are ABOVE the ${ess.ss_wage_base:,} wage base -> SS is "
-            f"already capped; a payroll dollar avoids only Medicare {fica:%}, never 7.65%"
+            f"already capped; a payroll dollar avoids only Medicare {fica:%}, never 7.65%{withheld_note}"
         )
     else:
-        fica = ess.medicare_rate + ess.additional_medicare_withholding_rate
+        fica = ess.medicare_rate + amt.rate
         tier = (
-            f"wages ${irs_round(wages_d):,} exceed ${irs_round(threshold):,} -> a payroll dollar avoids "
-            f"Medicare {ess.medicare_rate:%} + Additional Medicare {ess.additional_medicare_withholding_rate:%} "
-            f"= {fica:%} (SS already capped)"
+            f"wages ${irs_round(wages_d):,} exceed the {filing_status} Form 8959 threshold of "
+            f"${irs_round(threshold):,} -> a payroll dollar avoids Medicare {ess.medicare_rate:%} + "
+            f"Additional Medicare {amt.rate:%} = {fica:%} (SS already capped)"
         )
 
     zero = Decimal("0")
@@ -5012,6 +5075,1092 @@ def roth_conversion(
         inputs=inputs,
         work="\n".join(work_lines),
         citation=citations[0],
+        citations=citations,
+    )
+
+
+# ---------------------------------------------------------------------------
+# HSA deduction (Phase I, I2): Form 8889 / IRC 223 — the monthly limitation,
+# the last-month rule and its 13-month testing period, and the employer-money
+# offset that double-counts when it is got backwards
+# ---------------------------------------------------------------------------
+
+# Everything in this section is YEAR-INVARIANT law, so — following the
+# P-005/P-006 discipline that only FIGURES belong in a year pack — the
+# authorities live here beside the op. The year's dollar limits come from
+# ``contribution_limits.hsa`` in knowledge/federal/<year>.yaml, which is why
+# this op reads a pack at all.
+#
+# Form 8889's line numbering was read off EVERY revision the repo's shipped
+# years could reach (f8889--2019.pdf .. f8889--2025.pdf, all fetched): Part I
+# lines 1-13, Part II lines 14a-17b and Part III lines 18-21 are IDENTICAL in
+# all seven. One thing DID move, and it is a wording change, not a renumber:
+# through the 2023 revision line 13 printed its own destination ("HSA
+# deduction. Enter the smaller of line 2 or line 12 here and on Schedule 1
+# (Form 1040), Part II, line 13"); the 2024 and 2025 revisions print "HSA
+# deduction (see instructions)" and the destination moved into the
+# instructions' Line 13 paragraph, which names the same Schedule 1 Part II
+# line 13.
+# NARROWED to 2021-2025 on 2026-08-26: the citation body quotes the Schedule 1 /
+# Schedule 2 DESTINATIONS ('Schedule 1 (Form 1040), Part I, line 8f' etc.), and the
+# 2019 and 2020 revisions print materially different ones ('Schedule 1 (Form 1040 or
+# 1040-SR), line 8, or Form 1040-NR, line 21'). Claiming those were read off the
+# revision's own blank would be false. The 2019/2020 blanks WERE downloaded and their
+# Part I/II/III line NUMBERING confirmed identical; it is only the destinations that
+# moved, so widening this range again means making the destination clause year-aware.
+_F8889_VERIFIED_REVISIONS: tuple[int, ...] = tuple(range(2021, 2026))
+_F8889_NEWEST_VERIFIED = max(_F8889_VERIFIED_REVISIONS)
+
+_HSA_TIERS = ("self_only", "family", "none")
+_HSA_FSA_KINDS = ("none", "limited_purpose", "post_deductible", "general_purpose")
+
+# IRC 4973(a): 6%, statutory and not indexed. Held here rather than in a year
+# pack because it is not a year-varying figure (the IRA block carries its own
+# copy for the same rate because that block predates this discipline).
+_HSA_EXCISE_RATE = Decimal("0.06")
+# IRC 223(b)(8)(B)(i)(II) / Form 8889 line 21.
+_HSA_TESTING_PERIOD_TAX_RATE = Decimal("0.10")
+# IRC 223(f)(4)(A) / Form 8889 line 17b.
+_HSA_NONQUALIFIED_DISTRIBUTION_RATE = Decimal("0.20")
+
+_IRC_223_LIMIT_CITATION = Citation(
+    source=(
+        "IRC 223 (26 U.S.C. 223): (a) the deduction is 'the aggregate amount paid in cash "
+        "during such taxable year by or on behalf of such individual to a health savings "
+        "account'; (b)(1) it 'shall not exceed the sum of the monthly limitations for months "
+        "during such taxable year that the individual is an eligible individual'; (b)(2) 'The "
+        "monthly limitation for any month is 1/12 of' the self-only or family amount, keyed to "
+        "the coverage the individual has 'as of the first day of such month' — the statutory "
+        "basis for month-by-month proration; (b)(3) the age-55 additional contribution amount "
+        "is '$1,000' for '2009 and thereafter' for an individual 'who has attained age 55 "
+        "before the close of the taxable year'; (b)(4) the limit is reduced by Archer MSA "
+        "contributions, by amounts 'excludable from the taxpayer's gross income for such "
+        "taxable year under section 106(d)' (employer/cafeteria-plan money, '(and such amount "
+        "shall not be allowed as a deduction under subsection (a))') and by section 408(d)(9) "
+        "qualified HSA funding distributions; (b)(5) if either spouse has family coverage "
+        "'both spouses shall be treated as having only such family coverage' and the limit, "
+        "'without regard to any additional contribution amount under paragraph (3)', 'shall be "
+        "divided equally between them unless they agree on a different division'; (b)(6) no "
+        "deduction to an individual another taxpayer may claim as a dependent; (b)(7) 'The "
+        "limitation under this subsection for any month ... shall be zero for the first month "
+        "such individual is entitled to benefits under title XVIII of the Social Security Act "
+        "and for each month thereafter'"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section223&num=0&edition=prelim",
+)
+
+_IRC_223_B8_CITATION = Citation(
+    source=(
+        "IRC 223(b)(8) (26 U.S.C. 223(b)(8)), 'Increase in limit for individuals becoming "
+        "eligible individuals after the beginning of the year': (A) 'an individual who is an "
+        "eligible individual during the last month of such taxable year shall be treated (i) "
+        "as having been an eligible individual during each of the months in such taxable year, "
+        "and (ii) as having been enrolled, during each of the months such individual is "
+        "treated as an eligible individual solely by reason of clause (i), in the same high "
+        "deductible health plan in which the individual was enrolled for the last month'; "
+        "(B)(i) 'If, at any time during the testing period, the individual is not an eligible "
+        "individual', gross income for the year of the first failing month 'is increased by "
+        "the aggregate amount of all contributions to the health savings account of the "
+        "individual which could not have been made but for subparagraph (A)' AND 'the tax "
+        "imposed by this chapter ... shall be increased by 10 percent of the amount of such "
+        "increase'; (B)(ii) the exception for death or becoming disabled 'within the meaning "
+        "of section 72(m)(7)'; (B)(iii) 'The term \"testing period\" means the period "
+        "beginning with the last month of the taxable year referred to in subparagraph (A) and "
+        "ending on the last day of the 12th month following such month' — 13 months"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section223&num=0&edition=prelim",
+)
+
+_IRC_223_C1_CITATION = Citation(
+    source=(
+        "IRC 223(c)(1) (26 U.S.C. 223(c)(1)), 'Eligible individual': '(A) ... with respect to "
+        "any month, any individual if (i) such individual is covered under a high deductible "
+        "health plan as of the 1st day of such month, and (ii) such individual is not, while "
+        "covered under a high deductible health plan, covered under any health plan (I) which "
+        "is not a high deductible health plan, and (II) which provides coverage for any "
+        "benefit which is covered under the high deductible health plan.' (B) disregards "
+        "permitted insurance, 'coverage (whether through insurance or otherwise) for "
+        "accidents, disability, dental care, vision care, long-term care, or telehealth and "
+        "other remote care', and (B)(iii) health-FSA coverage during a plan year's grace "
+        "period only if 'the balance in such arrangement at the end of such plan year is "
+        "zero' or the individual makes a section 106(e) qualified HSA distribution of it. "
+        "(C)/(D) preserve eligibility for service-connected VA care and surprise-billing "
+        "benefits; (E) excludes a qualifying direct primary care service arrangement from "
+        "being a health plan at all"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section223&num=0&edition=prelim",
+)
+
+_IRC_223_F4_CITATION = Citation(
+    source=(
+        "IRC 223(f)(4)(A) (26 U.S.C. 223(f)(4)): a distribution includible in gross income "
+        "under 223(f)(2) increases the tax 'by 20 percent of the amount which is so "
+        "includible' — raised from 10 percent by P.L. 111-148 section 9004(a). 223(f)(4)(B) "
+        "excepts distributions made after the account beneficiary's death, disability, or "
+        "attaining the age for Medicare eligibility"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section223&num=0&edition=prelim",
+)
+
+_IRC_4973_HSA_CITATION = Citation(
+    source=(
+        "IRC 4973 (26 U.S.C. 4973): subsection (a) imposes, for a health savings account "
+        "'(within the meaning of section 223(d))', 'for each taxable year a tax in an amount "
+        "equal to 6 percent of the amount of the excess contributions to such individual's "
+        "accounts ... (determined as of the close of the taxable year)', and 'The amount of "
+        "such tax for any taxable year shall not exceed 6 percent of the value of the account "
+        "... determined as of the close of the taxable year'. Subsection (g) defines the HSA "
+        "excess as the amount contributed 'which is neither excludable from gross income "
+        "under section 106(d) nor allowable as a deduction under section 223 for such year', "
+        "plus the prior year's excess reduced by taxable distributions and by any unused "
+        "limit; a contribution 'distributed out of the health savings account in a "
+        "distribution to which section 223(f)(3) applies shall be treated as an amount not "
+        "contributed'"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section4973&num=0&edition=prelim",
+)
+
+_REV_RUL_2004_45_CITATION = Citation(
+    source=(
+        "Rev. Rul. 2004-45 (section 223 — interaction with other health arrangements): 'A "
+        "health FSA and an HRA are health plans and constitute other coverage under section "
+        "223(c)(1)(A)(ii). Consequently, an individual who is covered by an HDHP and a health "
+        "FSA or HRA that pays or reimburses section 213(d) medical expenses is generally not "
+        "an eligible individual for the purpose of making contributions to an HSA.' Holding, "
+        "Situation 1: 'This result is the same if the individual is covered by a health FSA or "
+        "HRA sponsored by the employer of the individual's SPOUSE.' Situations 2-5 are the "
+        "arrangements that do NOT disqualify: a LIMITED-PURPOSE health FSA/HRA paying only "
+        "permitted coverage (dental, vision) and preventive care; a POST-DEDUCTIBLE health "
+        "FSA/HRA that 'does not pay or reimburse any medical expense incurred before the "
+        "minimum annual deductible under section 223(c)(2)(A)(i) is satisfied' (and 'Where the "
+        "HDHP and the other coverage do not have identical deductibles, contributions to the "
+        "HSA are limited to the lower of the deductibles'); a SUSPENDED HRA elected before the "
+        "coverage period begins; and a RETIREMENT HRA, which disqualifies only after "
+        "retirement"
+    ),
+    url="https://www.irs.gov/pub/irs-drop/rr-04-45.pdf",
+)
+
+_I8889_CITATION = Citation(
+    source=(
+        "Instructions for Form 8889 (2025), Nov 25 2025 revision. Last-month rule: 'You may "
+        "consider yourself an \"eligible individual\" for the entire year if you are an "
+        "eligible individual on the 1st day of the last month of the tax year (December 1, for "
+        "most individuals). You are then subject to a \"testing period\".' Testing period: "
+        "'begins with the last month of your tax year and ends on the last day of the 12th "
+        "month following that month (for example, December 1, 2025 - December 31, 2026)'. "
+        "Line 2: 'Do not include employer contributions (see line 9) ... Payroll contributions "
+        "through a salary reduction agreement elected by an employee (a cafeteria plan) are "
+        "treated as employer contributions and are not included on line 2.' Line 3 rules "
+        "1-6 and the LINE 3 LIMITATION CHART AND WORKSHEET (per month: -0- for a Medicare "
+        "month or a month not eligible on the first day, otherwise the self-only or family "
+        "amount, with the age-55 amount folded in; 'Total for all months' divided by 12), plus "
+        "the greater-of test against 'The maximum amount that can be contributed based on the "
+        "type of HDHP coverage you had on the first day of the last month of your tax year'. "
+        "Line 6 spouse allocation and the Line 7 ADDITIONAL CONTRIBUTION AMOUNT WORKSHEET "
+        "('$1,000 x number of months eligible', divided by 12) with the Line 3 note that a "
+        "married filer who 'had family coverage at any time during the year' figures the "
+        "additional amount on line 7 and NOT on line 3. Line 9: 'Employer contributions "
+        "(including employee payroll contributions through a cafeteria plan) ... should be "
+        "shown on Form W-2, box 12, code W.' Line 13: 'Generally, enter the smaller of line 2 "
+        "or line 12 on line 13 and on Schedule 1 (Form 1040), Part II, line 13.' Excess "
+        "Contributions You Make / Excess Employer Contributions (the excess is over the line 8 "
+        "limitation, reduced first by any line 10 funding distribution) and the withdrawal "
+        "cure by the due date INCLUDING extensions, with the further 'no later than 6 months "
+        "after the due date' amended-return path 'Filed pursuant to section 301.9100-2'. "
+        "Part III Line 18: 'Enter on line 18 the excess of the amount contributed over the "
+        "redetermined amount'"
+    ),
+    url="https://www.irs.gov/pub/irs-prior/i8889--2025.pdf",
+)
+
+_PUB969_CITATION = Citation(
+    source=(
+        "Publication 969 (2025), 'Health Savings Accounts (HSAs)'. Limit on Contributions: "
+        "'if you weren't an eligible individual for the entire year or changed your coverage "
+        "during the year, your contribution limit is the greater of: 1. The limitation shown "
+        "on the Line 3 Limitation Chart and Worksheet in the Instructions for Form 8889 ...; "
+        "or 2. The maximum annual HSA contribution based on your HDHP coverage (self-only or "
+        "family) on the first day of the last month of your tax year.' Worked last-month-rule "
+        "examples: Example 1 (family coverage from December 1, 2025, $8,550 contributed, "
+        "eligibility lost June 2026) -> worksheet limitation $712.50 and 'You would include "
+        "$7,837.50 ($8,550.00 - $712.50) in your gross income on your 2026 tax return. Also, a "
+        "10% additional tax applies'; Example 2 (self-only from January 1, family from "
+        "November 1, $8,550 contributed, eligibility lost March 2026) -> total for all months "
+        "$60,100.00, limitation $5,008.33, include $3,541.67. Medicare example: 'You turned "
+        "age 65 in July 2025 and enrolled in Medicare ... Your contribution limit is $2,650 "
+        "($5,300 x 6 / 12).' Other employee health plans: 'An employee covered by an HDHP and "
+        "a health FSA or an HRA that pays or reimburses qualified medical expenses can't "
+        "generally make contributions to an HSA.' Other health coverage: 'you can still be an "
+        "eligible individual even if your spouse has non-HDHP coverage, provided you aren't "
+        "covered by that plan.' Employer contributions: 'You must reduce the amount you or any "
+        "other person can contribute to your HSA by the amount of any contributions made by "
+        "your employer that are excludable from your income. This includes amounts contributed "
+        "to your account by your employer through a cafeteria plan.' Rules for married people: "
+        "'If both spouses meet the age requirement, the total contributions under family "
+        "coverage can't be more than $10,550. Each spouse must make the additional "
+        "contribution to their own HSA.' And 'Each spouse who is an eligible individual who "
+        "wants an HSA must open a separate HSA. You can't have a joint HSA.'"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/p969.pdf",
+)
+
+
+def _f8889_citation(year: int) -> Citation:
+    """Cite the year's own Form 8889 revision; a year whose form has not published
+    yet cites the newest revision actually READ and says so in the source text."""
+    body = (
+        "Part I lines 1-13 (line 1 the self-only/family coverage box, line 2 'HSA "
+        "contributions you made ... Do not include employer contributions, contributions "
+        "through a cafeteria plan, or rollovers', line 3 the limitation, line 4 Archer MSA "
+        "contributions from Form 8853, line 5 = 3 - 4, line 6 line 5 or the spouse's share, "
+        "line 7 the age-55 additional contribution amount, line 8 = 6 + 7, line 9 employer "
+        "contributions, line 10 qualified HSA funding distributions, line 11 = 9 + 10, "
+        "line 12 = 8 - 11 floored at zero, line 13 the HSA deduction), Part II lines 14a-17b "
+        "(14c = 14a - 14b, line 16 = 14c - 15 floored at zero -> 'Schedule 1 (Form 1040), "
+        "Part I, line 8f', 17a the exceptions checkbox, 17b '20% (0.20) of the distributions "
+        "included on line 16 that are subject to the additional 20% tax' -> 'Schedule 2 (Form "
+        "1040), Part II, line 17c') and Part III lines 18-21 ('Income and Additional Tax for "
+        "Failure To Maintain HDHP Coverage': line 18 last-month rule, line 19 qualified HSA "
+        "funding distribution, line 20 = 18 + 19 -> Schedule 1 Part I line 8f, line 21 = 10% "
+        "of line 20 -> Schedule 2 Part II line 17d) — line numbering read off this revision's "
+        "own blank"
+    )
+    if year in _F8889_VERIFIED_REVISIONS:
+        return Citation(source=f"Form 8889 ({year}), {body}", url=f"https://www.irs.gov/pub/irs-prior/f8889--{year}.pdf")
+    return Citation(
+        source=(
+            f"Form 8889 ({_F8889_NEWEST_VERIFIED}) — quoted for {year} because the {year} revision had "
+            f"not published when this op was written. {body}. Part I/II/III numbering is identical on "
+            f"every revision actually read ({_F8889_VERIFIED_REVISIONS[0]}-{_F8889_NEWEST_VERIFIED}), "
+            f"but RE-VERIFY against the {year} form before anything is filed"
+        ),
+        url=f"https://www.irs.gov/pub/irs-prior/f8889--{_F8889_NEWEST_VERIFIED}.pdf",
+    )
+
+
+class HsaDeductionResult(BaseModel):
+    """Result of :func:`hsa_deduction`: Form 8889 Parts I-III, line by line."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    deduction: int = Field(
+        description="Form 8889 line 13 = min(line 2, line 12) -> Schedule 1 (Form 1040), Part II, line 13."
+    )
+    deduction_exact: Decimal = Field(description="Line 13 before whole-dollar rounding (the limit carries cents).")
+    annual_limit: int = Field(description="Form 8889 line 3 as filed: the greater of the monthly chart and the last-month-rule amount.")
+    annual_limit_exact: Decimal = Field(description="Line 3 before rounding — the chart divides by 12, so cents are normal here.")
+    prorated_limit: Decimal = Field(description="The Line 3 Limitation Chart total / 12: what IRC 223(b)(1)-(2) allows month by month.")
+    limit_basis: Literal["full_year", "monthly_proration", "last_month_rule"]
+    monthly_limits: list[str] = Field(description="The Line 3 Limitation Chart, January first — one entry per month.")
+    months_eligible: int = Field(description="Months with a non-zero chart amount (first-day-of-month test, Medicare months excluded).")
+    last_month_rule_applied: bool = Field(
+        description="True when IRC 223(b)(8)(A) bought room the monthly proration would not allow — this is what starts the testing period."
+    )
+    testing_period: dict[str, str] | None = Field(
+        default=None, description="The IRC 223(b)(8)(B)(iii) 13-month window, spelled out, when the last-month rule applies."
+    )
+    at_risk_if_testing_period_fails: int = Field(
+        description="Form 8889 line 18 if eligibility lapses in the testing period: the contributions that could not have been made but for 223(b)(8)(A)."
+    )
+    input_assumptions: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Assumptions this op made about the INPUTS, promoted out of `work` so a caller "
+            "reading only `deduction` cannot miss them. Today the only entry is the "
+            "months_eligible expansion: the shorthand places the eligible months at the END of "
+            "the year, which is not neutral — it is what triggers the last-month rule and can "
+            "double the deduction relative to the same count of months earlier in the year."
+        ),
+    )
+    catch_up_amount: int = Field(description="The age-55 additional contribution actually allowed (line 3 or line 7 — never both).")
+    catch_up_on_line: Literal["3", "7", "none"] = Field(
+        description="Where the $1,000 rides: line 7 for a married filer with ANY family coverage in the year, otherwise inside line 3."
+    )
+    employer_contributions_excluded: int = Field(
+        description="Form 8889 line 9 — W-2 box 12 code W, employer money AND cafeteria-plan payroll deferrals. Already out of box 1: NOT deductible again."
+    )
+    excess_personal_contributions: int = Field(description="Line 2 - line 13: your own excess (Form 5329 Part VII).")
+    excess_employer_contributions: int = Field(description="Line 9 over the line 8 limitation (reduced first by line 10).")
+    excise_per_year: int = Field(description="IRC 4973(a): 6% of the total excess, charged EVERY year it stays in the account.")
+    taxable_distributions: int = Field(description="Form 8889 line 16 -> Schedule 1 Part I line 8f.")
+    distributions_additional_tax: int = Field(description="Form 8889 line 17b: 20% of the non-excepted part of line 16 -> Schedule 2 Part II line 17c.")
+    recapture_income: int = Field(description="Form 8889 line 20 (= 18 + 19) -> Schedule 1 Part I line 8f.")
+    recapture_additional_tax: int = Field(description="Form 8889 line 21 = 10% of line 20 -> Schedule 2 Part II line 17d.")
+    fica_saving_forgone: Decimal | None = Field(
+        default=None,
+        description="Payroll FICA the DIRECT (line 2) contributions did not avoid, at this wage level's real tier — None unless wages were passed.",
+    )
+    fica_tier: str | None = Field(default=None, description="Which FICA tier the next wage dollar sits in, and why.")
+    form_8889_lines: dict[str, str] = Field(description="Every Part I/II/III line this op computes, keyed by the form's printed line label.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+    citations: list[Citation] = Field(description="Every authority behind the number, statute first.")
+
+
+def hsa_deduction(
+    coverage: str | None = None,
+    year: int = 2026,
+    months_eligible: int | None = None,
+    monthly_coverage: Sequence[str] | None = None,
+    age_55_plus: bool = False,
+    married: bool = False,
+    spouse_has_separate_hsa: bool = False,
+    your_share_of_family_limit: int | float | Decimal | str | None = None,
+    personal_contributions: int | float | Decimal | str = 0,
+    employer_contributions: int | float | Decimal | str = 0,
+    qualified_hsa_funding_distribution: int | float | Decimal | str = 0,
+    archer_msa_contributions: int | float | Decimal | str = 0,
+    medicare_start_month: int | None = None,
+    health_fsa: str = "none",
+    claimed_as_dependent_by_another: bool = False,
+    testing_period_failed: bool = False,
+    funding_distribution_testing_period_failed: bool = False,
+    distributions_total: int | float | Decimal | str = 0,
+    distributions_rolled_over: int | float | Decimal | str = 0,
+    qualified_medical_expenses: int | float | Decimal | str = 0,
+    distributions_excepted_from_20_percent: int | float | Decimal | str = 0,
+    wages: int | float | Decimal | str | None = None,
+    knowledge_dir: str | Path | None = None,
+) -> HsaDeductionResult:
+    """Form 8889 as IRC 223 writes it: how much of an HSA contribution is actually
+    DEDUCTIBLE, what the last-month rule buys and what it puts at risk.
+
+    This op exists because ``contribution_limits`` already shipped the year's HSA
+    amounts while nothing could turn them into a return line — an HSA
+    contribution could be planned and never filed. Five traps it is built
+    around, each one a real filing error:
+
+    1. **The limit is MONTHLY, not annual.** IRC 223(b)(1)-(2): the deduction is
+       "the sum of the monthly limitations for months ... that the individual is
+       an eligible individual", and each monthly limitation is 1/12 of the tier
+       amount for the coverage held "as of the first day of such month". A
+       July-start HDHP holder gets 6/12 of the limit, not the whole thing. Pass
+       ``months_eligible`` (the shorthand) or ``monthly_coverage`` (the Line 3
+       Limitation Chart itself, 12 entries, January first).
+    2. **The last-month rule and its 13-month testing period.** IRC 223(b)(8)(A)
+       treats someone eligible on December 1 as eligible all year, so line 3
+       becomes the GREATER of the monthly chart and the full annual limit for
+       December's coverage tier. It is not an election and it is not free:
+       223(b)(8)(B) runs a testing period from December 1 through December 31 of
+       the FOLLOWING year, and losing eligibility inside it pulls the extra
+       contributions back into income PLUS a 10% additional tax. This op always
+       reports ``at_risk_if_testing_period_fails``, whether or not it failed.
+    3. **Employer money reduces the DEDUCTION, it is not a second deduction.**
+       W-2 box 12 code W is employer contributions AND the employee's own
+       cafeteria-plan payroll deferrals (i8889, line 9), and every dollar of it
+       is already out of box 1 under section 106(d). It belongs on line 9, where
+       it SUBTRACTS from the room on line 12 — only DIRECT contributions (line 2)
+       reach Schedule 1. Deducting box 12 code W again is the most common HSA
+       filing error, and it is why ``personal_contributions`` and
+       ``employer_contributions`` are separate arguments.
+    4. **A general-purpose health FSA — including a SPOUSE's — is
+       disqualifying coverage.** Rev. Rul. 2004-45 holds a health FSA or HRA that
+       reimburses section 213(d) expenses is "other coverage" under
+       223(c)(1)(A)(ii), and says in terms that "This result is the same if the
+       individual is covered by a health FSA or HRA sponsored by the employer of
+       the individual's spouse." ``health_fsa='general_purpose'`` is REFUSED with
+       the fix. Limited-purpose (dental/vision) and post-deductible arrangements
+       are fine and are accepted.
+    5. **Excess contributions.** IRC 4973(a) charges 6% of the excess EVERY year
+       it stays in the account. The cure is a withdrawal of the excess plus its
+       earnings by the return's due date INCLUDING extensions, with a further
+       six-month amended-return window under section 301.9100-2.
+
+    ``wages`` is optional and adds the payroll half: cafeteria-plan HSA dollars
+    avoid income tax AND FICA, so a DIRECT contribution of the same size saves
+    the same income tax and loses the FICA. Above the social security wage base
+    that FICA saving is Medicare only — 1.45%, or 2.35% once the 0.9% Additional
+    Medicare withholding threshold is passed — never 7.65%, and the filers who
+    max an HSA are exactly the ones above the base.
+
+    ``year`` selects the pack the dollar limits come from, and the Form 8889
+    revision the work string quotes. A year with no ``contribution_limits.hsa``
+    block is refused rather than estimated.
+    """
+    # ── argument validation, before any arithmetic ────────────────────────────
+    if health_fsa not in _HSA_FSA_KINDS:
+        raise ValueError(
+            f"health_fsa must be one of {list(_HSA_FSA_KINDS)}, got {health_fsa!r} — the distinction is "
+            f"the whole point: Rev. Rul. 2004-45 disqualifies a GENERAL-PURPOSE health FSA or HRA and "
+            f"expressly allows a LIMITED-PURPOSE (dental/vision/preventive) or POST-DEDUCTIBLE one"
+        )
+    if health_fsa == "general_purpose":
+        raise ValueError(
+            "health_fsa='general_purpose' means there is no HSA contribution room for those months: "
+            "Rev. Rul. 2004-45 holds that 'an individual who is covered by an HDHP and a health FSA or "
+            "HRA that pays or reimburses section 213(d) medical expenses is generally not an eligible "
+            "individual', and its Situation 1 holding adds 'This result is the same if the individual is "
+            "covered by a health FSA or HRA sponsored by the employer of the individual's SPOUSE' — so a "
+            "spouse's general-purpose FSA disqualifies you even though you never enrolled in it. FIX: "
+            "drop the FSA-covered months out of monthly_coverage (or reduce months_eligible) and call "
+            "again with health_fsa='none'; a mid-year switch to a LIMITED-PURPOSE or POST-DEDUCTIBLE FSA "
+            "restores eligibility from the first day of the first month it applies, and a general-purpose "
+            "FSA's GRACE PERIOD is disregarded under IRC 223(c)(1)(B)(iii) only if its year-end balance "
+            "was zero (or the balance was moved by a section 106(e) qualified HSA distribution)"
+        )
+    if (coverage is None) == (monthly_coverage is None):
+        raise ValueError(
+            "pass EITHER coverage ('self_only' or 'family', optionally with months_eligible) OR "
+            "monthly_coverage (12 entries, January first, each 'self_only'/'family'/'none') — never both "
+            "and never neither. monthly_coverage IS the Line 3 Limitation Chart and is the only way to "
+            "describe a year whose coverage tier changed mid-year"
+        )
+    if monthly_coverage is not None:
+        if months_eligible is not None:
+            raise ValueError(
+                "months_eligible and monthly_coverage are two spellings of the same input — pass "
+                "monthly_coverage alone (it already says which months, and which tier each one had)"
+            )
+        rows = list(monthly_coverage)
+        if len(rows) != 12:
+            raise ValueError(
+                f"monthly_coverage needs EXACTLY 12 entries (January first), got {len(rows)} — the Line 3 "
+                f"Limitation Chart has a row for every month of the year and an ineligible month is the "
+                f"string 'none', never an omitted entry"
+            )
+        for i, tier in enumerate(rows):
+            if tier not in _HSA_TIERS:
+                raise ValueError(
+                    f"monthly_coverage[{i}] ({_MONTHS[i]}) is {tier!r} — each entry must be one of "
+                    f"{list(_HSA_TIERS)}: the coverage held on the FIRST DAY of that month, or 'none'"
+                )
+        declared = rows
+        months_note = (
+            "monthly_coverage was supplied, so the chart is exactly the caller's month-by-month reading."
+        )
+    else:
+        if coverage not in ("self_only", "family"):
+            raise ValueError(
+                f"coverage must be 'self_only' or 'family', got {coverage!r} — a filer with no HDHP "
+                f"coverage in ANY month has no contribution room at all; use monthly_coverage to describe "
+                f"a year that mixes covered and uncovered months"
+            )
+        m = 12 if months_eligible is None else months_eligible
+        if not isinstance(m, int) or isinstance(m, bool) or not 0 <= m <= 12:
+            raise ValueError(f"months_eligible must be an int from 0 to 12, got {months_eligible!r}")
+        declared = ["none"] * (12 - m) + [coverage] * m
+        months_note = (
+            f"months_eligible={m} was expanded to the LAST {m} month(s) of {year} "
+            f"({'none' if m == 0 else _MONTHS[12 - m] + '-December'}), a DISCLOSED assumption and not a "
+            f"rule — the sum on the chart does not care which months they are, but the last-month rule "
+            f"and the line 7 month count both key on DECEMBER, so pass monthly_coverage whenever the "
+            f"eligible months are not the closing ones"
+        )
+    if medicare_start_month is not None:
+        if isinstance(medicare_start_month, bool) or not isinstance(medicare_start_month, int) or not 1 <= medicare_start_month <= 12:
+            raise ValueError(
+                f"medicare_start_month must be a month number 1-12 (the FIRST month entitled to Medicare "
+                f"benefits) or None, got {medicare_start_month!r}"
+            )
+    money = {
+        "personal_contributions": personal_contributions,
+        "employer_contributions": employer_contributions,
+        "qualified_hsa_funding_distribution": qualified_hsa_funding_distribution,
+        "archer_msa_contributions": archer_msa_contributions,
+        "distributions_total": distributions_total,
+        "distributions_rolled_over": distributions_rolled_over,
+        "qualified_medical_expenses": qualified_medical_expenses,
+        "distributions_excepted_from_20_percent": distributions_excepted_from_20_percent,
+    }
+    amounts: dict[str, Decimal] = {}
+    for name, raw in money.items():
+        value = _cents(_to_decimal(raw, name))
+        if value < 0:
+            raise ValueError(
+                f"{name} must be >= 0, got {value} — Form 8889 takes no negative entries; a returned or "
+                f"withdrawn contribution is handled by the excess rules (line 14b / Form 5329), not by a "
+                f"negative contribution"
+            )
+        amounts[name] = value
+
+    pack = _load_federal(year, knowledge_dir)
+    params = _require_contribution_limits(pack, year)
+    hsa = params.hsa
+    tier_amounts = {"self_only": Decimal(hsa.self_only), "family": Decimal(hsa.family), "none": Decimal(0)}
+    catch_up_full = Decimal(hsa.catch_up_55 or 0) if age_55_plus else Decimal(0)
+
+    # ── the Line 3 Limitation Chart, month by month ───────────────────────────
+    # IRC 223(b)(7): from the FIRST month entitled to Medicare the monthly
+    # limitation is zero "and for each month thereafter" — so Medicare wipes the
+    # tail of the year regardless of what plan is still in force.
+    effective = [
+        "none" if (medicare_start_month is not None and i + 1 >= medicare_start_month) else tier
+        for i, tier in enumerate(declared)
+    ]
+    had_family_any = any(tier == "family" for tier in declared)
+    # i8889 Line 3 note: a MARRIED filer with family coverage at any time in the
+    # year figures the additional contribution amount on line 7 and NOT on
+    # line 3 — because 223(b)(5)(B) splits the family limit between the spouses
+    # "without regard to any additional contribution amount under paragraph (3)".
+    catch_up_on_line_7 = bool(catch_up_full) and married and had_family_any
+    catch_up_on_line_3 = bool(catch_up_full) and not catch_up_on_line_7
+    per_month = [
+        tier_amounts[tier] + (catch_up_full if (catch_up_on_line_3 and tier != "none") else Decimal(0))
+        for tier in effective
+    ]
+    chart_total = sum(per_month, Decimal(0))
+    chart_limit = _cents(chart_total / 12)
+    eligible_months = sum(1 for tier in effective if tier != "none")
+
+    # ── the last-month rule: IRC 223(b)(8)(A) ─────────────────────────────────
+    december_tier = effective[11]
+    if december_tier == "none":
+        lmr_limit = Decimal(0)
+    else:
+        lmr_limit = tier_amounts[december_tier] + (catch_up_full if catch_up_on_line_3 else Decimal(0))
+    line3 = max(chart_limit, lmr_limit)
+    last_month_rule_applied = lmr_limit > chart_limit
+    if eligible_months == 12 and len(set(effective)) == 1:
+        limit_basis: Literal["full_year", "monthly_proration", "last_month_rule"] = "full_year"
+    elif last_month_rule_applied:
+        limit_basis = "last_month_rule"
+    else:
+        limit_basis = "monthly_proration"
+
+    # ── line 7: the age-55 additional contribution amount ─────────────────────
+    # i8889 Line 7: count the months in which you (or your spouse) had FAMILY
+    # coverage under an HDHP, were (or were considered) an eligible individual on
+    # the first day of the month, and were NOT enrolled in Medicare.
+    eligible_family_months = sum(1 for tier in effective if tier == "family")
+    line7_months = eligible_family_months
+    if last_month_rule_applied and december_tier == "family":
+        # 223(b)(8)(A)(ii): the imputed months are treated as enrolled in
+        # DECEMBER's plan, which here is the family plan — so all 12 count.
+        line7_months = 12
+
+    # The catch-up actually allowed: the full $1,000 when the last-month rule
+    # imputes all 12 months, otherwise 1/12 per eligible month exactly as the
+    # chart (line 3) or the Additional Contribution Amount Worksheet (line 7)
+    # computes it.
+    if catch_up_on_line_7:
+        catch_up_allowed = _cents(catch_up_full * Decimal(line7_months) / 12)
+    elif catch_up_on_line_3:
+        catch_up_allowed = catch_up_full if last_month_rule_applied else _cents(
+            catch_up_full * Decimal(eligible_months) / 12
+        )
+    else:
+        catch_up_allowed = Decimal(0)
+
+    # ── lines 4-8 ─────────────────────────────────────────────────────────────
+    line4 = amounts["archer_msa_contributions"]
+    two_hsa_family_split = bool(married and had_family_any and spouse_has_separate_hsa)
+    share: Decimal | None = None
+    if your_share_of_family_limit is not None:
+        if not two_hsa_family_split:
+            raise ValueError(
+                "your_share_of_family_limit only has meaning when married=True, the year has family "
+                "coverage, and spouse_has_separate_hsa=True — IRC 223(b)(5) divides ONE family limit "
+                "between two spouses' HSAs. With no second HSA the whole family limit may go into yours"
+            )
+        share = _cents(_to_decimal(your_share_of_family_limit, "your_share_of_family_limit"))
+        ceiling = max(Decimal(0), line3 - line4)
+        if share < 0 or share > ceiling:
+            raise ValueError(
+                f"your_share_of_family_limit must be between 0 and the line 5 limit {_money(ceiling)}, "
+                f"got {_money(share)} — the two spouses' shares divide that one limit "
+                f"(223(b)(5)(B)(ii): 'divided equally between them unless they agree on a different division')"
+            )
+
+    def _limit_chain(line3_value: Decimal, family_months_for_line_7: int) -> tuple[Decimal, Decimal, Decimal, Decimal]:
+        """Form 8889 lines 5-8 from a given line 3 — run twice, once on the filed
+        line 3 and once on the chart-only line 3, because Part III's "redetermined
+        amount" is the limit you could have contributed WITHOUT 223(b)(8)(A), and
+        the Archer offset, the spouse split and the line 7 catch-up all sit
+        between line 3 and that limit."""
+        l5 = max(Decimal(0), line3_value - line4)
+        if share is not None:
+            l6 = min(share, l5)
+        elif two_hsa_family_split:
+            l6 = _cents(l5 / 2)
+        else:
+            l6 = l5
+        l7 = _cents(catch_up_full * Decimal(family_months_for_line_7) / 12) if catch_up_on_line_7 else Decimal(0)
+        return l5, l6, l7, l6 + l7
+
+    line5, line6, line7, line8 = _limit_chain(line3, line7_months)
+    split_note = ""
+    if share is not None:
+        split_note = (
+            f"line 6: the {_money(line5)} family limit is split by agreement, {_money(line6)} to you "
+            f"(223(b)(5)(B)(ii) allows any division, including allocating nothing to one spouse)."
+        )
+    elif two_hsa_family_split:
+        split_note = (
+            f"line 6: two spouses, one family limit — 223(b)(5)(B)(ii) divides it EQUALLY by default, so "
+            f"{_money(line5)} / 2 = {_money(line6)} is yours. Pass your_share_of_family_limit to record a "
+            f"different agreed division (the instructions' example is 'allocating nothing to one spouse')."
+        )
+    elif married and had_family_any:
+        split_note = (
+            "line 6 = line 5: the spouse has no separate HSA (spouse_has_separate_hsa=False), so the "
+            "whole family limit can be contributed to yours — the 223(b)(5)(B)(ii) division allows "
+            "allocating nothing to one spouse, and Pub 969 is explicit that 'Each spouse who is an "
+            "eligible individual who wants an HSA must open a separate HSA. You can't have a joint HSA.'"
+        )
+
+    # ── lines 9-13: the employer offset, and what is left to deduct ───────────
+    line2 = amounts["personal_contributions"]
+    line9 = amounts["employer_contributions"]
+    line10 = amounts["qualified_hsa_funding_distribution"]
+    line11 = line9 + line10
+    line12 = max(Decimal(0), line8 - line11)
+    line13 = min(line2, line12)
+    dependent_note = ""
+    if claimed_as_dependent_by_another:
+        line13 = Decimal(0)
+        dependent_note = (
+            f"DEPENDENT: IRC 223(b)(6) denies the deduction outright to an individual another taxpayer "
+            f"may claim as a dependent, so line 13 is $0 even though line 12 leaves {_money(line12)} of "
+            f"room. Pub 969: 'This is true even if the other person doesn't receive an exemption "
+            f"deduction for you because the exemption amount is zero.' The whole {_money(line2)} is an "
+            f"EXCESS contribution under IRC 4973(g)(1) — neither excludable nor deductible."
+        )
+
+    # ── excess contributions: IRC 4973 ────────────────────────────────────────
+    excess_personal = max(Decimal(0), line2 - line13)
+    # i8889, Excess Employer Contributions: the excess over the LINE 8 limitation,
+    # and line 8 is reduced by any line 10 funding distribution FIRST.
+    employer_room = max(Decimal(0), line8 - line10)
+    excess_employer = max(Decimal(0), line9 - employer_room)
+    excess_total = excess_personal + excess_employer
+    excise = _cents(_HSA_EXCISE_RATE * excess_total)
+
+    # ── Part II: distributions ────────────────────────────────────────────────
+    line14a = amounts["distributions_total"]
+    line14b = amounts["distributions_rolled_over"]
+    if line14b > line14a:
+        raise ValueError(
+            f"distributions_rolled_over ({_money(line14b)}) cannot exceed distributions_total "
+            f"({_money(line14a)}) — Form 8889 line 14b is 'Distributions included on line 14a that you "
+            f"rolled over', a subset of line 14a (1099-SA box 1 is the line 14a figure)"
+        )
+    line14c = line14a - line14b
+    line15 = amounts["qualified_medical_expenses"]
+    line16 = max(Decimal(0), line14c - line15)
+    excepted = amounts["distributions_excepted_from_20_percent"]
+    if excepted > line16:
+        raise ValueError(
+            f"distributions_excepted_from_20_percent ({_money(excepted)}) exceeds line 16 "
+            f"({_money(line16)}) — line 17b is '20% (0.20) of the distributions INCLUDED ON LINE 16 that "
+            f"are subject to the additional 20% tax', so the excepted amount is a slice of line 16, "
+            f"never more. The exceptions (IRC 223(f)(4)(B)) are death, disability and turning 65"
+        )
+    line17b = _cents(_HSA_NONQUALIFIED_DISTRIBUTION_RATE * (line16 - excepted))
+
+    # ── Part III: the testing-period recapture ────────────────────────────────
+    # 223(b)(8)(B)(i)(I) recaptures "all contributions ... which could not have
+    # been made but for subparagraph (A)" — i8889 line 18: "the excess of the
+    # amount contributed over the redetermined amount", the redetermined amount
+    # being the Line 3 chart limit without the last-month rule.
+    # The redetermined limit is the WHOLE chain re-run on the chart-only line 3:
+    # the Archer offset, any spouse split and the line 7 catch-up (whose month
+    # count drops back to the real family months) all move with it.
+    _, _, _, redetermined_line8 = _limit_chain(chart_limit, eligible_family_months)
+    redetermined_room = max(Decimal(0), redetermined_line8 - line10)
+    lmr_benefit = max(Decimal(0), line8 - redetermined_line8)
+    contributed_for_recapture = line2 + line9
+    at_risk = min(max(Decimal(0), contributed_for_recapture - redetermined_room), lmr_benefit)
+    line18 = at_risk if testing_period_failed else Decimal(0)
+    if funding_distribution_testing_period_failed and not line10:
+        raise ValueError(
+            "funding_distribution_testing_period_failed=True with qualified_hsa_funding_distribution=0 "
+            "has nothing to recapture — Form 8889 line 19 is 'the total of any qualified HSA funding "
+            "distribution' (line 10). The last-month rule's own testing period is the "
+            "testing_period_failed flag, and the two run on different clocks"
+        )
+    line19 = line10 if funding_distribution_testing_period_failed else Decimal(0)
+    line20 = line18 + line19
+    line21 = _cents(_HSA_TESTING_PERIOD_TAX_RATE * line20)
+    testing_period = None
+    if last_month_rule_applied:
+        testing_period = {
+            "begins": f"December 1, {year}",
+            "ends": f"December 31, {year + 1}",
+            "length_months": "13",
+            "authority": "IRC 223(b)(8)(B)(iii)",
+            "failure_cost": (
+                f"{_money(at_risk)} back into {year + 1} income (Form 8889 line 18 -> line 20 -> "
+                f"Schedule 1 Part I line 8f) plus a 10% additional tax of "
+                f"{_money(_cents(_HSA_TESTING_PERIOD_TAX_RATE * at_risk))} (line 21 -> Schedule 2 Part II "
+                f"line 17d), unless the lapse was death or disability under 223(b)(8)(B)(ii)"
+            ),
+        }
+
+    # ── the FICA half, optional ───────────────────────────────────────────────
+    fica_saving: Decimal | None = None
+    fica_tier: str | None = None
+    if wages is not None:
+        wages_d = _to_decimal(wages, "wages")
+        if wages_d < 0:
+            raise ValueError("wages must be >= 0")
+        ess = pack.tax.employee_social_security
+        if ess is None or ess.medicare_rate is None:
+            raise ValueError(
+                f"knowledge pack for federal {year} has no employee-side FICA parameters — add the "
+                f"medicare fields to employee_social_security (see knowledge/federal/2025.yaml), or call "
+                f"hsa_deduction without wages to skip the payroll comparison"
+            )
+        threshold = Decimal(ess.additional_medicare_withholding_threshold)
+        if wages_d < ess.ss_wage_base:
+            rate = ess.rate + ess.medicare_rate
+            fica_tier = (
+                f"wages {_money(wages_d)} are BELOW the ${ess.ss_wage_base:,} social security wage base, "
+                f"so a cafeteria-plan dollar avoids the full {rate:%} (SS {ess.rate:%} + Medicare "
+                f"{ess.medicare_rate:%})"
+            )
+        elif wages_d <= threshold:
+            # `<=`, not `<`: Pub 15 withholds Additional Medicare on wages "in excess
+            # of" the threshold, so wages of exactly $200,000 are still in the
+            # Medicare-only tier (off-by-one found 2026-08-26 by the adversarial review).
+            rate = ess.medicare_rate
+            fica_tier = (
+                f"wages {_money(wages_d)} are ABOVE the ${ess.ss_wage_base:,} social security wage base, "
+                f"so SS is already capped and a cafeteria-plan dollar avoids only Medicare {rate:%} — "
+                f"NOT 7.65%"
+            )
+        else:
+            rate = ess.medicare_rate + ess.additional_medicare_withholding_rate
+            fica_tier = (
+                f"wages {_money(wages_d)} exceed both the ${ess.ss_wage_base:,} social security wage base "
+                f"and the ${irs_round(threshold):,} Additional Medicare withholding threshold, so a "
+                f"cafeteria-plan dollar avoids Medicare {ess.medicare_rate:%} + Additional Medicare "
+                f"{ess.additional_medicare_withholding_rate:%} = {rate:%} — NOT 7.65%. This is the tier "
+                f"the filers who max an HSA are actually in. TWO CAVEATS, both of which make this an "
+                f"UPPER BOUND. (1) ${irs_round(threshold):,} is the employer's status-blind WITHHOLDING "
+                f"threshold; the Form 8959 TAX is measured against a FILING-STATUS threshold "
+                f"($250,000 MFJ / $125,000 MFS / $200,000 otherwise, IRC 3101(b)(2)), so an MFJ filer "
+                f"between the two gets the withheld 0.9% back as a credit and does NOT save it — call "
+                f"marginal_dollar_savings with your filing_status for that answer. (2) This is the "
+                f"MARGINAL rate at the top of these wages applied to the whole line-13 amount; a "
+                f"contribution straddling the threshold saves {ess.medicare_rate:%} on the part below it"
+            )
+        fica_saving = _cents(rate * line13)
+
+    # ── the printed lines ─────────────────────────────────────────────────────
+    # i8889 Line 1: "check the box for the plan that was in effect for a longer
+    # period", overridden by "If, on the first day of the last month of your tax
+    # year ... you had family coverage, check the 'family' box"; simultaneous
+    # self-only and family coverage "you are treated as having family coverage".
+    self_only_months = sum(1 for tier in declared if tier == "self_only")
+    declared_family_months = sum(1 for tier in declared if tier == "family")
+    if december_tier == "family":
+        # The printed override runs ONE WAY only. i8889 Line 1: "check the box for
+        # the plan that was in effect for a longer period", then "If, on the first
+        # day of the last month of your tax year ... you had family coverage, check
+        # the 'family' box." There is no matching sentence for a self-only December,
+        # so a December self-only month does NOT override a majority-family year
+        # (found 2026-08-26 by the Phase-I2 adversarial review, which reproduced
+        # 10 family months + 2 self-only printing "Self-only").
+        coverage_box = "Family"
+    elif declared_family_months == 0 and self_only_months == 0:
+        coverage_box = "(neither — no HDHP coverage on the first day of any month)"
+    else:
+        coverage_box = "Family" if declared_family_months >= self_only_months else "Self-only"
+    lines = {
+        "1": coverage_box,
+        "2": _money(line2), "3": _money(line3), "4": _money(line4), "5": _money(line5),
+        "6": _money(line6), "7": _money(line7), "8": _money(line8), "9": _money(line9),
+        "10": _money(line10), "11": _money(line11), "12": _money(line12), "13": _money(line13),
+        "14a": _money(line14a), "14b": _money(line14b), "14c": _money(line14c), "15": _money(line15),
+        "16": _money(line16), "17b": _money(line17b),
+        "18": _money(line18), "19": _money(line19), "20": _money(line20), "21": _money(line21),
+    }
+
+    chart_rows = ", ".join(f"{_MONTHS[i][:3]} {_money(per_month[i])}" for i in range(12))
+    work_lines = [
+        f"Form 8889 ({year}) Part I, IRC 223 — HSA contributions and deduction:",
+        f"line 1 coverage box: {lines['1']}. Eligibility is tested on the FIRST DAY OF EACH MONTH "
+        f"(223(c)(1)(A)(i)), and the deduction is 'the sum of the monthly limitations for months during "
+        f"such taxable year that the individual is an eligible individual' (223(b)(1)), each 1/12 of the "
+        f"tier amount (223(b)(2)) — {eligible_months} of 12 months qualify here. {months_note}",
+        f"LINE 3 LIMITATION CHART ({year} amounts from the pack: self-only ${hsa.self_only:,}, family "
+        f"${hsa.family:,}"
+        + (f", age-55 additional ${hsa.catch_up_55:,}" if hsa.catch_up_55 else "")
+        + f"): {chart_rows}. Total for all months {_money(chart_total)} / 12 = {_money(chart_limit)}.",
+    ]
+    if last_month_rule_applied:
+        work_lines.append(
+            f"LAST-MONTH RULE APPLIES. Eligible on December 1 with {december_tier.replace('_', '-')} "
+            f"coverage, so 223(b)(8)(A) treats you as 'having been an eligible individual during each of "
+            f"the months in such taxable year' and 'as having been enrolled ... in the same high "
+            f"deductible health plan in which the individual was enrolled for the last month'. Line 3 is "
+            f"the GREATER of the chart {_money(chart_limit)} and the full-year December-tier amount "
+            f"{_money(lmr_limit)} -> {_money(line3)}, which is {_money(lmr_benefit)} more room than the "
+            f"months alone allow."
+        )
+        work_lines.append(
+            f"TESTING PERIOD: December 1, {year} through December 31, {year + 1} — 13 months "
+            f"(223(b)(8)(B)(iii): 'beginning with the last month of the taxable year ... and ending on "
+            f"the last day of the 12th month following such month'). If you are not an eligible "
+            f"individual at ANY time in that window, {_money(at_risk)} goes into {year + 1} gross income "
+            f"(the contributions 'which could not have been made but for subparagraph (A)') AND the tax "
+            f"is 'increased by 10 percent of the amount of such increase' = "
+            f"{_money(_cents(_HSA_TESTING_PERIOD_TAX_RATE * at_risk))}. Only death or disability under "
+            f"223(b)(8)(B)(ii) excuses it — changing jobs, taking a spouse's non-HDHP plan, or enrolling "
+            f"in Medicare does not. Contributing no more than {_money(redetermined_room)} keeps the full "
+            f"deduction the months themselves earn, with ZERO testing-period exposure."
+        )
+    elif limit_basis == "monthly_proration":
+        december = "you were not an eligible individual on December 1" if december_tier == "none" else (
+            "December's own tier already gives the larger figure"
+        )
+        work_lines.append(
+            f"No last-month-rule benefit: {december}, so line 3 is the chart's {_money(line3)} and there "
+            f"is NO 223(b)(8) testing period to fail. (Pub 969 states the test as the greater of the "
+            f"chart and 'The maximum annual HSA contribution based on your HDHP coverage (self-only or "
+            f"family) on the first day of the last month of your tax year'.)"
+        )
+    else:
+        work_lines.append(
+            f"Eligible all 12 months with unchanged coverage, so the chart equals the annual limit and "
+            f"line 3 = {_money(line3)}; 223(b)(8)(A) confers nothing extra and no testing period runs."
+        )
+    if medicare_start_month is not None:
+        work_lines.append(
+            f"MEDICARE: entitlement begins {_MONTHS[medicare_start_month - 1]} {year}, and 223(b)(7) sets "
+            f"the monthly limitation to zero 'for the first month such individual is entitled to benefits "
+            f"under title XVIII of the Social Security Act and for each month thereafter' — "
+            f"{13 - medicare_start_month} month(s) zeroed, whatever plan is still in force. Pub 969 warns "
+            f"'This rule applies to periods of RETROACTIVE Medicare coverage', so a backdated enrollment "
+            f"turns already-made contributions into excess."
+        )
+    work_lines.append(
+        f"line 4 Archer MSA contributions {_money(line4)} (223(b)(4)(A), from Form 8853 lines 1-2); "
+        f"line 5 = 3 - 4 = {_money(line5)}."
+    )
+    if split_note:
+        work_lines.append(split_note)
+    if catch_up_on_line_7:
+        work_lines.append(
+            f"line 7 = ${hsa.catch_up_55:,} x {line7_months}/12 = {_money(line7)}. You are 55 or older "
+            f"AND married with family coverage in the year, so the additional contribution amount rides "
+            f"LINE 7, not line 3 (i8889 Line 3 note) — because 223(b)(5)(B) splits the family limit "
+            f"'without regard to any additional contribution amount under paragraph (3)'."
+            + (
+                f" NOTE the consequence, read straight off the instructions and worth a second look "
+                f"before filing: line 7's worksheet counts only the months you (or your spouse) had "
+                f"FAMILY coverage and were an eligible individual, so the "
+                f"{eligible_months - line7_months} SELF-ONLY eligible month(s) here contribute nothing "
+                f"to the catch-up even though the line 3 chart would have carried "
+                f"${hsa.catch_up_55:,}/12 for each of them had you been unmarried."
+                if line7_months < eligible_months else ""
+            )
+        )
+    elif catch_up_on_line_3:
+        work_lines.append(
+            f"line 7 = $0: the ${hsa.catch_up_55:,} age-55 additional contribution amount is already "
+            f"inside each eligible month's line 3 chart entry (i8889: 'the additional contribution amount "
+            f"is included for each month you are an eligible individual')."
+        )
+    work_lines.append(f"line 8 = 6 + 7 = {_money(line8)} — the full contribution limit from every source.")
+    work_lines.append(
+        f"line 9 EMPLOYER CONTRIBUTIONS {_money(line9)} + line 10 qualified HSA funding distributions "
+        f"{_money(line10)} = line 11 {_money(line11)}; line 12 = 8 - 11 = {_money(line12)}; line 13 = "
+        f"min(line 2 {_money(line2)}, line 12) = {_money(line13)} -> Schedule 1 (Form 1040), Part II, "
+        f"line 13."
+    )
+    work_lines.append(
+        "THE DOUBLE-COUNT TRAP: W-2 box 12 code W is NOT a deduction. i8889 line 9 defines employer "
+        "contributions as 'including employee payroll contributions through a cafeteria plan', and line 2 "
+        "says 'Payroll contributions through a salary reduction agreement elected by an employee (a "
+        "cafeteria plan) are treated as employer contributions and are not included on line 2'. That "
+        "whole amount is already excluded from box 1 wages under section 106(d) — 223(b)(4)(B) reduces "
+        "the limit by it '(and such amount shall not be allowed as a deduction under subsection (a))'. "
+        "So box 12 code W belongs on line 9, where it SUBTRACTS room; only DIRECT contributions (line 2, "
+        "from 5498-SA box 2 less the code-W amount) reach Schedule 1. Deducting code W as well is the "
+        "most common HSA filing error and it overstates the deduction by the whole payroll amount."
+    )
+    if dependent_note:
+        work_lines.append(dependent_note)
+    if excess_total:
+        parts = []
+        if excess_personal:
+            parts.append(f"your own {_money(excess_personal)} (line 2 - line 13)")
+        if excess_employer:
+            parts.append(
+                f"employer {_money(excess_employer)} (line 9 over the line 8 limitation reduced first by "
+                f"the line 10 funding distribution, i.e. over {_money(employer_room)}) — 'If the excess "
+                f"was not included in income on Form W-2, you must report it as \"Other income\"'"
+            )
+        work_lines.append(
+            f"EXCESS CONTRIBUTIONS {_money(excess_total)}: " + "; ".join(parts) + f". IRC 4973(a) charges "
+            f"{_HSA_EXCISE_RATE:%} of the excess ({_money(excise)}) for EACH taxable year it is still in "
+            f"the account at year end, capped at 6% of the account's year-end value (5498-SA box 5 — this "
+            f"op does not apply that cap, it has no account value). CURE: withdraw the excess plus the "
+            f"income earned on it by the due date INCLUDING extensions, do not claim the deduction/"
+            f"exclusion for it, and report the earnings as 'Other income'; miss that and there is still a "
+            f"window 'no later than 6 months after the due date of your tax return, excluding "
+            f"extensions' via an amended return marked 'Filed pursuant to section 301.9100-2'. Figure "
+            f"the tax itself on Form 5329 Part VII."
+        )
+    fsa_line = (
+        "OTHER-COVERAGE GATE (the silent disqualifier): 223(c)(1)(A)(ii) makes you ineligible for any "
+        "month you are 'covered under any health plan (I) which is not a high deductible health plan, and "
+        "(II) which provides coverage for any benefit which is covered under the high deductible health "
+        "plan'. Rev. Rul. 2004-45: a general-purpose health FSA or HRA IS such a plan, and its Situation 1 "
+        "holding adds 'This result is the same if the individual is covered by a health FSA or HRA "
+        "sponsored by the employer of the individual's SPOUSE' — the trap, because nobody thinks of a "
+        "spouse's FSA as their own coverage. Safe: LIMITED-PURPOSE (dental/vision/preventive only), "
+        "POST-DEDUCTIBLE (nothing paid before the HDHP minimum annual deductible is met; where the two "
+        "deductibles differ, 'contributions to the HSA are limited to the lower of the deductibles'), a "
+        "SUSPENDED HRA elected before the coverage period, and a RETIREMENT HRA until you retire. Also "
+        "disregarded by 223(c)(1)(B): permitted insurance, and coverage for accidents, disability, dental "
+        "care, vision care, long-term care, or telehealth and other remote care. A general-purpose FSA's "
+        "GRACE PERIOD counts against you unless its year-end balance was zero (223(c)(1)(B)(iii))."
+    )
+    if health_fsa in ("limited_purpose", "post_deductible"):
+        fsa_line += (
+            f" Caller declared health_fsa='{health_fsa}', which Rev. Rul. 2004-45 "
+            f"{'Situation 2' if health_fsa == 'limited_purpose' else 'Situation 4'} holds does NOT "
+            f"disqualify — the months above stand."
+        )
+    work_lines.append(fsa_line)
+    work_lines.append(
+        f"AGE-55 CATCH-UP: ${hsa.catch_up_55 or 0:,} is statutory under 223(b)(3)(B) ('2009 and "
+        f"thereafter'), never inflation-adjusted, and is allowed to anyone who 'has attained age 55 "
+        f"before the close of the taxable year'. It is PER PERSON, not per return, and it is not "
+        f"allocable: Pub 969 — 'If both spouses meet the age requirement, the total contributions under "
+        f"family coverage can't be more than ${hsa.family + 2 * (hsa.catch_up_55 or 0):,}. Each spouse "
+        f"must make the additional contribution to their OWN HSA.' So a couple who both turn 55 needs TWO "
+        f"HSAs to take two catch-ups; one joint account cannot exist at all ('You can't have a joint HSA')."
+    )
+    if fica_tier:
+        work_lines.append(
+            f"PAYROLL vs DIRECT: {fica_tier}. The {_money(line13)} on line 13 is a DIRECT contribution — "
+            f"it saves income tax on Schedule 1 but it already paid FICA, so routing the same dollars "
+            f"through the employer's cafeteria plan instead would have saved a further "
+            f"{_money(fica_saving or Decimal(0))} of FICA (the income-tax saving is identical either way; "
+            f"only the FICA differs, and payroll dollars land on line 9 rather than line 2). Employee "
+            f"share only, federal only. On a JOINT return the 0.9% half of a 2.35% tier is provisional: "
+            f"employers withhold it on wages over $200,000 with no filing-status test, while the Form "
+            f"8959 TAX is measured on the couple's combined wages against $250,000 ($125,000 MFS), so "
+            f"withholding above $200,000 that the joint threshold does not reach comes back as a credit "
+            f"— for that filer the real saving is Medicare alone."
+        )
+    if line14a:
+        work_lines.append(
+            f"Part II DISTRIBUTIONS: line 14a {_money(line14a)} (1099-SA box 1, ALL HSAs) - line 14b "
+            f"{_money(line14b)} rolled over or excess-plus-earnings withdrawn by the due date = line 14c "
+            f"{_money(line14c)}; line 15 qualified medical expenses {_money(line15)}; line 16 = 14c - 15 "
+            f"= {_money(line16)} TAXABLE -> Schedule 1 Part I line 8f. line 17b = "
+            f"{_HSA_NONQUALIFIED_DISTRIBUTION_RATE:%} x {_money(line16 - excepted)} = {_money(line17b)} "
+            f"-> Schedule 2 Part II line 17c (223(f)(4)(A) — 20%, raised from 10% by P.L. 111-148 "
+            f"section 9004(a)). The only exceptions are distributions made after the account beneficiary "
+            f"dies, becomes disabled, or turns 65; expenses incurred BEFORE the HSA was established are "
+            f"never qualified, and an amount reimbursed by insurance or claimed on Schedule A cannot also "
+            f"be line 15."
+        )
+    else:
+        work_lines.append(
+            "Part II DISTRIBUTIONS: nothing passed, so lines 14a-17b are zero. If any HSA paid out this "
+            "year you MUST file Form 8889 — i8889: 'If you (or your spouse, if filing jointly) received "
+            "HSA distributions ... you must file Form 8889 ... even if you have no taxable income or any "
+            "other reason for filing' — so pass distributions_total (1099-SA box 1), "
+            "distributions_rolled_over and qualified_medical_expenses even when the whole distribution "
+            "was spent on qualified care."
+        )
+    if testing_period_failed and not last_month_rule_applied:
+        work_lines.append(
+            "TESTING-PERIOD FLAG WITH NOTHING AT RISK: testing_period_failed=True, but the last-month "
+            "rule bought no extra room this year (line 3 is the monthly chart), so 223(b)(8)(B)(i) "
+            "recaptures nothing — 'the aggregate amount of all contributions ... which could not have "
+            "been made but for subparagraph (A)' is $0. Line 18 stays $0."
+        )
+    if line20:
+        work_lines.append(
+            f"Part III RECAPTURE: line 18 {_money(line18)} (last-month rule) + line 19 {_money(line19)} "
+            f"(qualified HSA funding distribution) = line 20 {_money(line20)} into gross income on "
+            f"Schedule 1 Part I line 8f, plus line 21 = 10% = {_money(line21)} on Schedule 2 Part II "
+            f"line 17d. Include it in the year the failure happens, not the year of the contribution."
+        )
+    work_lines.append(
+        "SCOPE — modelled here: Part I lines 1-13, Part II lines 14a-17b, Part III lines 18-21, the "
+        "IRC 4973 excise on both kinds of excess, and the 223(b)(7) Medicare zeroing. NOT modelled, and "
+        "not assumed away silently: (a) whether the plan IS an HDHP — the year's minimum annual "
+        "deductible and maximum out-of-pocket limits are not in this op, so confirm the plan against that "
+        "year's HSA revenue procedure; (b) Form 8853 itself, so line 4 is taken as given; (c) the "
+        "instructions' Line 6 Step 1-4 REFIGURING for two spouses with separate HSAs whose family "
+        "coverage did not run the whole year — with a mid-year tier change and spouse_has_separate_hsa "
+        "this op splits line 5 rather than re-running the worksheet on the family months alone, so "
+        "compute line 6 by hand there; (d) Form 5329 Part VII, including the absorption of a PRIOR year's "
+        "excess into this year's unused limit and the 4973(a) cap at 6% of the account's year-end value; "
+        "(e) deemed distributions (a section 4975 prohibited transaction, or pledging the account as "
+        "security for a loan), which are taxable in full and generally carry the 20% tax; (f) the "
+        "death-of-account-beneficiary path and the 'statement' + controlling Form 8889 aggregation when "
+        "one person holds or inherits more than one HSA; (g) whether a given expense is a qualified "
+        "medical expense; and (h) the second testing period a qualified HSA funding distribution starts "
+        "(it runs from the MONTH of the transfer through the last day of the 12th month following, e.g. "
+        "June 17 -> June 30 of the next year, and it is once per lifetime), so line 19 is driven by the "
+        "caller's own flag."
+    )
+    if year not in _F8889_VERIFIED_REVISIONS:
+        work_lines.append(
+            f"YEAR NOTE: the {year} Form 8889 had not published when this op was written, so the line "
+            f"numbering above is the {_F8889_NEWEST_VERIFIED} revision's (identical on every revision "
+            f"read, {_F8889_VERIFIED_REVISIONS[0]}-{_F8889_NEWEST_VERIFIED}). Re-verify against the "
+            f"{year} form before anything is filed."
+        )
+
+    inputs: dict[str, Any] = {
+        "coverage": coverage,
+        "year": year,
+        "months_eligible": None if monthly_coverage is not None else (12 if months_eligible is None else months_eligible),
+        "monthly_coverage": list(declared),
+        "age_55_plus": age_55_plus,
+        "married": married,
+        "spouse_has_separate_hsa": spouse_has_separate_hsa,
+        "personal_contributions": _money(line2),
+        "employer_contributions": _money(line9),
+        "qualified_hsa_funding_distribution": _money(line10),
+        "archer_msa_contributions": _money(line4),
+        "medicare_start_month": medicare_start_month,
+        "health_fsa": health_fsa,
+        "claimed_as_dependent_by_another": claimed_as_dependent_by_another,
+        "testing_period_failed": testing_period_failed,
+        "funding_distribution_testing_period_failed": funding_distribution_testing_period_failed,
+        "distributions_total": _money(line14a),
+        "distributions_rolled_over": _money(line14b),
+        "qualified_medical_expenses": _money(line15),
+        "distributions_excepted_from_20_percent": _money(excepted),
+        "wages": None if wages is None else _money(_to_decimal(wages, "wages")),
+    }
+    citations = [
+        _IRC_223_LIMIT_CITATION, _IRC_223_B8_CITATION, _IRC_223_C1_CITATION, _IRC_223_F4_CITATION,
+        _IRC_4973_HSA_CITATION, _REV_RUL_2004_45_CITATION, _f8889_citation(year), _I8889_CITATION,
+        _PUB969_CITATION, hsa.citation,
+    ]
+    input_assumptions = [months_note] if months_note else []
+    return HsaDeductionResult(
+        input_assumptions=input_assumptions,
+        deduction=irs_round(line13),
+        deduction_exact=line13,
+        annual_limit=irs_round(line3),
+        annual_limit_exact=line3,
+        prorated_limit=chart_limit,
+        limit_basis=limit_basis,
+        monthly_limits=[_money(v) for v in per_month],
+        months_eligible=eligible_months,
+        last_month_rule_applied=last_month_rule_applied,
+        testing_period=testing_period,
+        at_risk_if_testing_period_fails=irs_round(at_risk),
+        catch_up_amount=irs_round(catch_up_allowed),
+        catch_up_on_line="7" if catch_up_on_line_7 else ("3" if catch_up_on_line_3 else "none"),
+        employer_contributions_excluded=irs_round(line9),
+        excess_personal_contributions=irs_round(excess_personal),
+        excess_employer_contributions=irs_round(excess_employer),
+        excise_per_year=irs_round(excise),
+        taxable_distributions=irs_round(line16),
+        distributions_additional_tax=irs_round(line17b),
+        recapture_income=irs_round(line20),
+        recapture_additional_tax=irs_round(line21),
+        fica_saving_forgone=fica_saving,
+        fica_tier=fica_tier,
+        form_8889_lines=lines,
+        inputs=inputs,
+        work="\n".join(work_lines),
+        citation=hsa.citation,
         citations=citations,
     )
 

@@ -463,3 +463,50 @@ pitfalls:
       line without DECLARING it in its own identity_fields is no longer compared
       when its value is blank; a non-blank value still is, so P-002's protection
       is unchanged.
+
+  - id: P-010
+    incident: >-
+      An HSA contribution can be silently disallowed in full by a health FSA
+      the filer never thinks of as coverage — including a SPOUSE's. IRC
+      223(c)(1)(A)(ii) makes a person eligible only if they have no health
+      coverage other than an HDHP, and a general-purpose health FSA is such
+      coverage: Publication 969 states that a spouse's general-purpose FSA
+      "would generally disqualify you from having an HSA" because it can
+      reimburse YOUR expenses, even if you are not enrolled in it and never
+      use it. The trap is that eligibility is tested MONTH BY MONTH on the
+      first day of each month, so a plan year that overlaps by even one month
+      zeroes that month's chart amount — and the grace period of a
+      general-purpose FSA extends the disqualification past the plan year's
+      end (223(c)(1)(B) carve-outs cover only a LIMITED-PURPOSE or
+      post-deductible arrangement). Every dollar contributed for a
+      disqualified month is an excess contribution carrying the IRC 4973 6%
+      per-year excise until it is withdrawn, and nothing on Form 8889's
+      printed face asks about an FSA — line 1 asks only for the HDHP coverage
+      tier, so a filer with a disqualifying FSA fills the form out
+      "correctly" and still owes the excise. This is the same shape as P-005
+      and P-006: a year-invariant CHARACTERIZATION rule that decides whether
+      a figure applies at all, with the figures themselves shipping fine.
+    countermeasure: >-
+      calc.hsa_deduction takes `health_fsa` ('none' | 'general_purpose' |
+      'limited_purpose' | 'post_deductible') and refuses prescriptively rather
+      than returning a confidently wrong limit: a general-purpose FSA (the
+      filer's OR the spouse's) makes the op REFUSE rather than compute, and the
+      error names both the law (Rev. Rul. 2004-45, and 223(c)(1)(B)(iii) for
+      the grace period) and the fix — drop the FSA-covered months out of
+      monthly_coverage, or reduce months_eligible — because only the caller
+      knows WHICH months overlapped. A limited-purpose or post-deductible
+      arrangement is accepted under 223(c)(1)(B) with the Rev. Rul. situation
+      quoted in the work, and the other-coverage gate is stated in the work
+      even when no FSA is passed at all, since it is the silent disqualifier. The op's monthly
+      chart makes the partial-year case visible instead of collapsing it into
+      an annual figure, and its `input_assumptions` field surfaces the
+      months_eligible shorthand's year-end placement, which is what silently
+      turns a mid-year FSA overlap into a last-month-rule answer. The
+      contribution_limits blurb, which previously said only "Payroll HSA
+      dollars also avoid FICA", now names the FSA disqualification and the
+      monthly proration alongside the corrected FICA tier ladder, so an agent
+      reading the limit alone is told the two facts that make the annual
+      number wrong on its own. Regression tests in test_tax_calc.py cover the
+      general-purpose refusal (including that the message names the SPOUSE's
+      employer), the limited-purpose and post-deductible acceptances, and the
+      gate being stated even on a no-FSA call.

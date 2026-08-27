@@ -50,6 +50,18 @@ conversion goes through pro-rata. It also returns bracket headroom and the §141
 (conversion income is never net investment income, but it raises the MAGI the threshold is
 measured against). Never hand-compute either.
 
+HSAs get filed, not just planned: `calc("hsa_deduction", …)` is Form 8889 / IRC 223 and it
+enforces four traps. The limit is MONTHLY (223(b)(1)-(2), tested on the FIRST DAY of each
+month), so a mid-year HDHP start takes the Line 3 Limitation Chart — pass `monthly_coverage`
+when the tier changed. The LAST-MONTH RULE (223(b)(8)) is automatic: eligible on Dec 1 buys the
+whole annual limit and starts a 13-MONTH testing period (Dec 1 → Dec 31 of the NEXT year) whose
+failure recaptures the extra into income plus a 10% additional tax — quote
+`at_risk_if_testing_period_fails` first. W-2 box 12 code W is employer money AND cafeteria-plan
+payroll deferrals, already out of box 1: it goes in `employer_contributions`, where it REDUCES
+the deduction; deducting it again is the most common HSA error. And a general-purpose health
+FSA — INCLUDING the spouse's (Rev. Rul. 2004-45) — is disqualifying coverage, while
+limited-purpose and post-deductible ones are not. Never hand-compute Form 8889.
+
 State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
 All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
 38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)

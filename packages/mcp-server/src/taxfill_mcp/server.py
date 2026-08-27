@@ -44,6 +44,7 @@ from taxfill_core import (
     annualize_ytd as _annualize_ytd,
     contribution_limits as _contribution_limits,
     ira_contribution_eligibility as _ira_contribution_eligibility,
+    hsa_deduction as _hsa_deduction,
     ira_pro_rata as _ira_pro_rata,
     roth_conversion as _roth_conversion,
     magi_ladder as _magi_ladder,
@@ -296,7 +297,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
     contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
-    ira_pro_rata, roth_conversion, state_tax}; every result shows its work and cites the data pack.
+    ira_pro_rata, roth_conversion, hsa_deduction, state_tax}; every result shows its work and cites the data pack.
 
     A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
     authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
@@ -444,6 +445,39 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       carries the WITHHOLDING warning: tax withheld is not converted, it is lost Roth space and the
       10% additional tax can reach it under 59 1/2 — pay from OUTSIDE funds; plus the
       no-recharacterization-after-2017 irreversibility and the per-conversion 5-year clock)
+    - hsa_deduction: args {coverage: self_only|family (or monthly_coverage: 12 entries, January
+      first, each self_only|family|none), year?, months_eligible?, age_55_plus?, married?,
+      spouse_has_separate_hsa?, your_share_of_family_limit?, personal_contributions?,
+      employer_contributions?, qualified_hsa_funding_distribution?, archer_msa_contributions?,
+      medicare_start_month?, health_fsa?, claimed_as_dependent_by_another?, testing_period_failed?,
+      funding_distribution_testing_period_failed?, distributions_total?, distributions_rolled_over?,
+      qualified_medical_expenses?, distributions_excepted_from_20_percent?, wages?} (Form 8889 /
+      IRC 223 — the op that makes an HSA contribution FILEABLE, not just plannable. FOUR TRAPS it
+      enforces. (1) The limit is MONTHLY: 223(b)(1)-(2) tests eligibility on the FIRST DAY of each
+      month and allows 1/12 of the tier amount per eligible month, so a mid-year HDHP start gets the
+      Line 3 Limitation Chart, never the annual figure — pass monthly_coverage whenever the tier
+      changed or the eligible months are not the closing ones. (2) THE LAST-MONTH RULE (223(b)(8)) is
+      automatic, not an election: eligible on December 1 makes line 3 the GREATER of the chart and
+      December's full annual tier amount, and it starts a 13-MONTH TESTING PERIOD (Dec 1 through Dec
+      31 of the FOLLOWING year). Losing eligibility inside it — new job, spouse's non-HDHP plan,
+      Medicare; only death or disability is excused — pulls the extra contributions into income PLUS
+      a 10% additional tax. The result always reports at_risk_if_testing_period_fails, so quote it
+      before anyone contributes the bigger number. (3) EMPLOYER MONEY IS NOT A SECOND DEDUCTION: W-2
+      box 12 code W is the employer's contributions AND the employee's own cafeteria-plan payroll
+      deferrals, all already excluded from box 1 — it goes in employer_contributions (line 9), where
+      it SUBTRACTS room; only DIRECT contributions (line 2 = 5498-SA box 2 minus code W minus any
+      funding distribution) reach Schedule 1 Part II line 13. Deducting code W as well is the most
+      common HSA filing error. (4) A GENERAL-PURPOSE HEALTH FSA — INCLUDING ONE FROM THE SPOUSE'S
+      EMPLOYER (Rev. Rul. 2004-45) — is disqualifying coverage; health_fsa='general_purpose' is
+      REFUSED with the fix, while 'limited_purpose' (dental/vision) and 'post_deductible' are fine.
+      Also: 223(b)(7) zeroes every month from the first month of Medicare entitlement onward
+      (retroactive enrollment included); the $1,000 age-55 catch-up is statutory, PER PERSON and not
+      allocable, so a couple needs TWO HSAs for two catch-ups and it rides line 7 (not line 3) once a
+      married filer has ANY family coverage in the year; excess contributions carry the IRC 4973 6%
+      excise EVERY year until withdrawn (plus earnings) by the due date INCLUDING extensions. Part II
+      distributions (1099-SA box 1) and their 20% additional tax and Part III recapture are modelled;
+      pass wages to get the payroll-vs-direct FICA half, where above the SS wage base the saving is
+      1.45%, or 2.35% over $200k — never 7.65%)
     - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
       (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
       2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
@@ -516,6 +550,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_ira_pro_rata(**args)), args)
     if op == "roth_conversion":
         return _stamp_provisional(_dump(_roth_conversion(**args)), args)
+    if op == "hsa_deduction":
+        return _stamp_provisional(_dump(_hsa_deduction(**args)), args)
     if op == "state_tax":
         return _stamp_provisional(_dump(_state_tax(**args)), args)
     raise ValueError(
@@ -525,7 +561,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
         f"employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, "
         f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, "
-        f"roth_conversion, state_tax"
+        f"roth_conversion, hsa_deduction, state_tax"
     )
 
 

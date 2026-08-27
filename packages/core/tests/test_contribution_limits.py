@@ -203,3 +203,26 @@ def test_commuter_scoping_carries_the_eligibility_rules_not_just_the_caps():
     assert "INCUR AND SUBSTANTIATE" in scoping and "BEFORE" in scoping
     assert "WAGES" in scoping                                       # the failure consequence
     assert "get_sources('commuter benefits')" in scoping            # the authority pointer
+
+
+def test_hsa_scoping_no_longer_overstates_the_fica_saving_or_the_ceiling():
+    """Phase I2 correction. The hsa blurb said flatly "Payroll HSA dollars also
+    avoid FICA", which is only true BELOW the social security wage base — and the
+    filers who max an HSA are the ones above it, where the saving is 1.45% (or
+    2.35% past the 0.9% Additional Medicare withholding threshold), never 7.65%.
+    The same string is also where an agent meets the annual figure, so it now
+    carries the two things that make that figure wrong on its own: the monthly
+    proration and the FSA disqualification."""
+    for year in (2025, 2026):
+        scoping = contribution_limits(year).scoping["hsa"]
+        assert "only the FULL 7.65% BELOW the social security wage base" in scoping
+        assert "1.45%" in scoping and "2.35%" in scoping
+        assert "CEILING, not the amount" in scoping                 # the monthly-proration warning
+        assert "FIRST DAY of each month" in scoping and "1/12" in scoping
+        assert "Rev. Rul. 2004-45" in scoping and "SPOUSE" in scoping
+        assert "hsa_deduction" in scoping                            # the op that computes it
+        assert "box 12 code W" in scoping                            # the double-count trap
+    # The neighbouring payroll buckets carried the same overstatement.
+    for bucket in ("health_fsa_125i", "commuter_132f"):
+        scoping = contribution_limits(2026).scoping[bucket]
+        assert "full 7.65% only BELOW the social security wage base" in scoping
