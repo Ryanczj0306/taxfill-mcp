@@ -71,7 +71,7 @@ def test_list_forms_and_get_form_map():
     # M2 (10) + SE + D/E + 8863/2555 + 4868 + 1040-ES + 1040-X + W-7 + 8959/8960/8962
     # + Tier 2: sched_8812 (CTC/ACTC), sched_a_nr, sched_nec
     # + Phase G: f2441, f843, f8316 — the pack set has settled, exact count restored.
-    assert len(data) == 30
+    assert len(data) == 31
     assert any(f["form_key"] == "sched_8812" for f in data)  # the CTC is FILEABLE (persona-review fix)
     fm = _data(_run(_call("get_form_map", {"form": "f1040", "year": 2023})))
     assert fm["form"] == "1040"

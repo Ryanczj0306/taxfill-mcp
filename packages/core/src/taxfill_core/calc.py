@@ -101,6 +101,30 @@ Contents:
   the IRC 4973 6% excise, Part II distributions with the 223(f)(4) 20% tax and
   Part III recapture — and, with ``wages``, the FICA half the direct-vs-payroll
   choice turns on.
+* ``espp_disposition`` / ``capital_loss_limitation`` (Phase I, I3) — the
+  equity-comp pair, for the population this repo actually serves. The first is
+  IRC 421/423 on ONE lot of section 423 ESPP stock, and it exists because the
+  two dispositions are taxed COMPLETELY differently and get conflated: a
+  QUALIFYING one (more than 2 years past grant AND more than 1 year past
+  purchase) recognises the LESSER of the GRANT-date discount and the actual
+  gain — so a sale at a loss recognises NOTHING as ordinary income — while a
+  DISQUALIFYING one recognises the FULL purchase-date spread REGARDLESS of the
+  sale price, so selling below the purchase-date FMV still produces that income
+  and a capital loss on top. Its highest-dollar output is the BASIS CORRECTION:
+  the 1099-B reports the discounted purchase price only (Instructions for Form
+  8949, compensatory options granted after 2013), the correct basis is that
+  plus the ordinary income (IRC 423(c)'s last sentence), and a filer who trusts
+  the broker pays tax on the discount TWICE — so the op returns the corrected
+  basis, the adjustment and the Form 8949 code-B row that files it. Under a
+  LOOKBACK the qualifying income is measured on Form 3922 BOX 8, not box 5, and
+  a price that only a lookback could produce is refused without it. The second
+  is IRC 1211(b)/1212(b) and Schedule D's Capital Loss Carryover Worksheet: net
+  short and long SEPARATELY, deduct at most $3,000/$1,500, carry the rest
+  forward INDEFINITELY WITH ITS CHARACTER PRESERVED, and — the part the printed
+  cap hides — let TAXABLE INCOME limit how much of the loss the year actually
+  consumes (worksheet line 4 = 1212(b)(2)(A)'s lesser-of), which makes a
+  low-income year's carryover LARGER, not smaller. ``following_years`` rolls a
+  multi-year chain and threads the carryovers itself.
 * ``state_tax`` (Phase G, G4) — the STATE income-tax line for every
   jurisdiction whose pack ships a cited ``tax`` block: all 42 income-tax
   jurisdictions (41 states + DC) for 2023 and 2024, and 41 of 42 for 2025
@@ -6267,6 +6291,1511 @@ def presence_days_by_year(periods: list[tuple[_DateLike, _DateLike]]) -> dict[in
             year_end = min(end_ord, date(year, 12, 31).toordinal())
             days[year] = days.get(year, 0) + (year_end - year_start + 1)
     return days
+
+
+# ---------------------------------------------------------------------------
+# Equity compensation and the capital-loss limitation (Phase I, I3): IRC 421 /
+# 422 / 423 (the ESPP disposition, and the 1099-B basis correction brokers get
+# systematically wrong) and IRC 1211(b) / 1212(b) (the $3,000 cap and the
+# CHARACTER-PRESERVING carryover Schedule D's own worksheet computes)
+# ---------------------------------------------------------------------------
+
+# Everything in this section is YEAR-INVARIANT law, so — following the
+# P-005/P-006 discipline that only FIGURES belong in a year pack — the
+# authorities live here beside the ops. Neither op reads a knowledge pack: the
+# $3,000/$1,500 limitation is statutory and NOT indexed (IRC 1211(b), unchanged
+# since P.L. 99-514 rewrote the subsection for tax years beginning after
+# December 31, 1986), and IRC 423(c) carries no dollar figures at all.
+#
+# The Capital Loss Carryover Worksheet's line numbering (lines 1-13, "Capital
+# Loss Carryover Worksheet-Lines 6 and 14") was read off four consecutive
+# Schedule D instruction revisions: i1040sd--2022.pdf, i1040sd--2023.pdf,
+# i1040sd--2024.pdf and i1040sd--2025.pdf, all fetched 2026-08-26. Lines 1-13 are
+# IDENTICAL in all four. Pre-2022 revisions were NOT read, so 2022 is the floor.
+#
+# MIND THE DIRECTION: the worksheet printed in year Y's instructions carries
+# year Y-1's loss INTO year Y. This op runs the worksheet for the year the loss
+# arose, so a call for year Y reproduces the worksheet printed in the Y+1
+# instructions — read for Y = 2021..2024. For Y = 2025 the 2026 instructions had
+# not published when this was written; the four revisions read agree line for
+# line, so the structure is quoted from them, and `_schedule_d_citation` says so.
+#
+# ONE thing DID move inside that window and it is not the worksheet: Schedule D
+# line 21's destination. The 2022, 2023 and 2024 faces all print "enter here and
+# on Form 1040, 1040-SR, or 1040-NR, line 7"; the 2025 face prints "line 7a",
+# because TY2025 split Form 1040 line 7 into 7a/7b. All four faces were read
+# (f1040sd--2022/2023/2024/2025.pdf). Form 1040 line 15 is still "Subtract line
+# 14 from line 11b. If zero or less, enter -0-. This is your taxable income" on
+# the 2025 face, so the worksheet's line 1 reference is unchanged.
+_CAPITAL_LOSS_VERIFIED_REVISIONS: tuple[int, ...] = tuple(range(2022, 2026))
+_CAPITAL_LOSS_NEWEST_VERIFIED = max(_CAPITAL_LOSS_VERIFIED_REVISIONS)
+
+# IRC 1211(b)(1): "$3,000 ($1,500 in the case of a married individual filing a
+# separate return)". Statutory, not indexed — hence a module constant, not a
+# year-pack figure.
+_CAPITAL_LOSS_CAP = 3_000
+_CAPITAL_LOSS_CAP_MFS = 1_500
+
+# IRC 423(b)(6): the plan's option price may be no less than the LESSER of 85%
+# of the grant-date FMV and 85% of the exercise-date FMV.
+_ESPP_STATUTORY_MIN_PRICE_RATE = Decimal("0.85")
+# Plans price to the cent, and 85% of an odd share price rarely lands on one, so
+# both 423(b)(6) tests allow a one-cent rounding slack before they refuse.
+_ESPP_PRICE_TOLERANCE = Decimal("0.01")
+
+_IRC_423_CITATION = Citation(
+    source=(
+        "IRC 423 (26 U.S.C. 423), 'Employee stock purchase plans': (a) section 421(a) applies to a "
+        "share transferred under an ESPP if '(1) no disposition of such share is made by him within 2 "
+        "years after the date of the granting of the option nor within 1 year after the transfer of "
+        "such share to him; and (2) at all times during the period beginning with the date of the "
+        "granting of the option and ending on the day 3 months before the date of such exercise, he is "
+        "an employee of the corporation granting such option' or a parent/subsidiary. (b)(6) the plan's "
+        "option price must be 'not less than the lesser of- (A) an amount equal to 85 percent of the "
+        "fair market value of the stock at the time such option is granted, or (B) an amount which "
+        "under the terms of the option may not be less than 85 percent of the fair market value of the "
+        "stock at the time such option is exercised'. (c) 'Special rule where option price is between "
+        "85 percent and 100 percent of value of stock': on a disposition 'which meets the holding "
+        "period requirements of subsection (a)', there is included as COMPENSATION 'and not as gain "
+        "upon the sale or exchange of a capital asset' an amount equal to the LESSER of '(1) the "
+        "excess of the fair market value of the share at the time of such disposition or death over "
+        "the amount paid for the share under the option, or (2) the excess of the fair market value of "
+        "the share at the time the option was granted over the option price.' Then, in the same "
+        "subsection: 'If the option price is not fixed or determinable at the time the option is "
+        "granted, then for purposes of this subsection, the option price shall be determined as if the "
+        "option were exercised at such time' (the LOOKBACK rule, which is what Form 3922 box 8 "
+        "reports); 'the basis of the share in his hands at the time of such disposition shall be "
+        "increased by an amount equal to the amount so includible in his gross income'; and 'No amount "
+        "shall be required to be deducted and withheld under chapter 24 with respect to any amount "
+        "treated as compensation under this subsection.'"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section423&num=0&edition=prelim",
+)
+
+_IRC_421_CITATION = Citation(
+    source=(
+        "IRC 421 (26 U.S.C. 421), 'General rules': (a) where the requirements of section 422(a) or "
+        "423(a) are met, '(1) no income shall result at the time of the transfer of such share to the "
+        "individual upon his exercise of the option'. (b) 'Effect of disqualifying disposition': where "
+        "the transfer 'would otherwise meet the requirements of section 422(a) or 423(a) except that "
+        "there is a failure to meet any of the holding period requirements of section 422(a)(1) or "
+        "423(a)(1), then any increase in the income of such individual ... for the taxable year in "
+        "which such exercise occurred attributable to such disposition, shall be treated as an "
+        "increase in income ... in the taxable year of such individual ... in which such disposition "
+        "occurred. No amount shall be required to be deducted and withheld under chapter 24 with "
+        "respect to any increase in income attributable to a disposition described in the preceding "
+        "sentence.' (d) a disposition made pursuant to a certificate of divestiture under section "
+        "1043(b)(2) 'shall be treated as meeting the requirements of section 422(a)(1) or 423(a)(1)'"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section421&num=0&edition=prelim",
+)
+
+_IRC_422_CITATION = Citation(
+    source=(
+        "IRC 422 (26 U.S.C. 422), 'Incentive stock options': (a)(1) the same two-part holding period "
+        "as an ESPP — 'no disposition of such share is made by him within 2 years from the date of the "
+        "granting of the option nor within 1 year after the transfer of such share to him'; (b)(4) 'the "
+        "option price is not less than the fair market value of the stock at the time such option is "
+        "granted' (so an ISO has NO built-in discount, which is why the ISO and ESPP dispositions do "
+        "not share a formula); (c)(2) on a disqualifying disposition that is a sale or exchange 'with "
+        "respect to which a loss (if sustained) would be recognized', the compensation income 'shall "
+        "not exceed the excess (if any) of the amount realized on such sale or exchange over the "
+        "adjusted basis of such share' — the ISO-only cap that has NO section 423 counterpart"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section422&num=0&edition=prelim",
+)
+
+_IRC_83_E1_CITATION = Citation(
+    source=(
+        "IRC 83(e) (26 U.S.C. 83), 'Applicability of section': 'This section shall not apply to- (1) a "
+        "transaction to which section 421 applies'. Section 421(a) is what applies to a share "
+        "transferred under a qualifying section 423 exercise, so section 83 — and with it the section "
+        "83(b) election — never reaches an ESPP purchase"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section83&num=0&edition=prelim",
+)
+
+_IRC_3121_A22_CITATION = Citation(
+    source=(
+        "IRC 3121(a)(22) (26 U.S.C. 3121(a)): the term 'wages' for FICA does not include "
+        "'remuneration on account of- (A) a transfer of a share of stock to any individual pursuant to "
+        "an exercise of an incentive stock option (as defined in section 422(b)) or under an employee "
+        "stock purchase plan (as defined in section 423(b)), or (B) any disposition by the individual "
+        "of such stock'"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section3121&num=0&edition=prelim",
+)
+
+_PUB525_ESPP_CITATION = Citation(
+    source=(
+        "Publication 525 (2025), 'Statutory Stock Options' -> 'Employee stock purchase plan'. Holding "
+        "period requirement: 'You satisfy the holding period requirement if you don't sell the stock "
+        "until the end of the later of the 1-year period after the stock was transferred to you or the "
+        "2-year period after the option was granted', and 'Your holding period for the property you "
+        "acquire when you exercise an option begins on the day after you exercise the option.' "
+        "SATISFIED, 'Option granted at a discount': 'If, at the time the option was granted, the "
+        "option price per share was less than 100% (but not less than 85%) of the FMV of the share, "
+        "and you dispose of the share after meeting the holding period requirement ... you must "
+        "include in your income as compensation the lesser of: The excess of the FMV of the share at "
+        "the time the option was granted over the option price, or The excess of the FMV of the share "
+        "at the time of the disposition or death over the amount paid for the share under the option.' "
+        "'For this purpose, if the option price wasn't fixed or determinable at the time the option was "
+        "granted, the option price is figured as if the option had been exercised at the time it was "
+        "granted.' 'Any excess gain is capital gain. If you have a loss from the sale, it's a capital "
+        "loss, and you don't have any ordinary income.' NOT SATISFIED: 'your ordinary income is the "
+        "amount by which the stock's FMV when you exercised the option exceeded the option price. This "
+        "ordinary income isn't limited to your gain from the sale of the stock. Increase your basis in "
+        "the stock by the amount of this ordinary income. The difference between your increased basis "
+        "and the selling price of the stock is a capital gain or loss.' Worked examples reproduced by "
+        "this op to the dollar: Example 10 (grant $20 option price when the stock was worth $22, "
+        "exercised 18 months later at $23, sold 14 months after that at $30, 100 shares -> $200 wages "
+        "and $800 capital gain) and Example 11 (identical facts but sold 6 months after exercise -> "
+        "$300 wages and $700 capital gain). Also, Example 9: 'Adrian's holding period for all 12 shares "
+        "begins the day after the option is exercised, even though the money used to purchase the "
+        "shares was deducted from Adrian's pay on 48 separate days' and 'The timing and amount of pay "
+        "period deductions don't affect your basis.' Reporting: 'Your employer or former employer "
+        "should report the ordinary income to you as wages in box 1 of Form W-2 ... If your employer or "
+        "former employer doesn't provide you with a Form W-2, or if the Form W-2 doesn't include the "
+        "ordinary income in box 1, you must report the ordinary income as wages on Schedule 1 (Form "
+        "1040), line 8k, for the year of the sale or other disposition of the stock.' And the caution "
+        "this op exists to act on: 'It's your responsibility to make any appropriate adjustments to the "
+        "basis information reported on Form 1099-B by completing Form 8949.'"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/p525.pdf",
+)
+
+_I8949_BASIS_CITATION = Citation(
+    source=(
+        "Instructions for Form 8949 (2025). 'Column (e)-Cost or Other Basis': 'For compensatory "
+        "options granted after 2013, the basis information reported to you on Form 1099-B or Form "
+        "1099-DA (or substitute statement) won't reflect any amount you included in income upon grant "
+        "or exercise of the option. Increase your basis by any amount you included in income upon "
+        "grant or exercise of the option. For compensatory options granted before 2014, any basis "
+        "information reported to you ... may or may not reflect any amount you included in income'. "
+        "'How To Complete Form 8949, Columns (f) and (g)' table, code B row: IF 'You received a Form "
+        "1099-B or Form 1099-DA (or substitute statement) and the basis shown in box 1e on Form 1099-B "
+        "or box 1g on Form 1099-DA is incorrect' THEN enter code 'B' in column (f), AND '- If this "
+        "transaction is reported on Part I with box B or box H checked at the top or if this "
+        "transaction is reported on Part II with box E or box K checked at the top, enter the correct "
+        "basis in column (e), and enter -0- in column (g). - If this transaction is reported on Part I "
+        "with box A or box G checked at the top or if this transaction is reported on Part II with box "
+        "D or box J checked at the top, enter the basis shown on Form 1099-B or Form 1099-DA (or "
+        "substitute statement) in column (e), even though that basis is incorrect. Correct the error by "
+        "entering an adjustment in column (g).' Code O row: 'You have an adjustment not explained "
+        "earlier in this column' -> 'Enter the appropriate adjustment amount in column (g).' "
+        "'Worksheet for Basis Adjustments in Column (g)': line 1 the basis shown on the 1099-B, line 2 "
+        "'the correct cost or other basis', line 3 'If line 2 is larger than line 1, subtract line 1 "
+        "from line 2. Enter the result here and in column (g) as a negative number (in parentheses)', "
+        "line 4 the mirror positive. 'Column (h)-Gain (or Loss)': 'First, subtract the cost or other "
+        "basis in column (e) from the proceeds (sales price) in column (d). Then take into account any "
+        "adjustments in column (g).'"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/i8949.pdf",
+)
+
+_F8949_CITATION = Citation(
+    source=(
+        "Form 8949 (2025), 'Sales and Other Dispositions of Capital Assets'. Part I box legend: '(A) "
+        "Short-term transactions reported on Form(s) 1099-B showing basis was reported to the IRS'; "
+        "'(B) Short-term transactions reported on Form(s) 1099-B showing basis was not reported to the "
+        "IRS'; '(C) Short-term transactions, other than digital asset transactions, not reported to "
+        "you on Form 1099-B or Form 1099-DA'. Part II: the same three as '(D)', '(E)', '(F)' for "
+        "long-term. Columns: (a) Description of property '(Example: 100 sh. XYZ Co.)', (b) Date "
+        "acquired, (c) Date sold or disposed of, (d) Proceeds (sales price), (e) Cost or other basis, "
+        "(f) Code(s) from instructions, (g) Amount of adjustment, (h) 'Subtract column (e) from column "
+        "(d) and combine the result with column (g)'. The face's own Note under Part I: 'If you checked "
+        "Box A or Box G above but the basis reported to the IRS was incorrect, enter in column (e) the "
+        "basis as reported to the IRS, and [enter the correction in column (g)]'. Line 2 totals flow to "
+        "'Schedule D, line 1b (if Box A or Box G above is checked), line 2 (if Box B or Box H above is "
+        "checked), or line 3 (if Box C or Box I above is checked)'"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/f8949.pdf",
+)
+
+_F3922_CITATION = Citation(
+    source=(
+        "Form 3922 (Rev. April 2025), 'Transfer of Stock Acquired Through an Employee Stock Purchase "
+        "Plan Under Section 423(c)'. Boxes: 1 Date option granted; 2 Date option exercised; 3 Fair "
+        "market value per share on grant date; 4 Fair market value per share on exercise date; 5 "
+        "Exercise price paid per share; 6 No. of shares transferred; 7 Date legal title transferred; 8 "
+        "'Exercise price per share determined as if the option was exercised on the date shown in box "
+        "1'. Instructions for Employee: 'You have received this form because (1) your employer (or its "
+        "transfer agent) has recorded a first transfer of legal title of stock you acquired pursuant to "
+        "your exercise of an option granted under an employee stock purchase plan, and (2) the exercise "
+        "price was less than 100% of the value of the stock on the date shown in box 1 or was not fixed "
+        "or determinable on that date.' 'No income is recognized when you exercise an option under an "
+        "employee stock purchase plan.' Box 8: 'If the exercise price per share was not fixed or "
+        "determinable on the date entered in box 1, box 8 shows the exercise price per share determined "
+        "as if the option was exercised on the date in box 1. If the exercise price per share was fixed "
+        "or determinable on the date shown in box 1, then box 8 will be blank.'"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/f3922.pdf",
+)
+
+_F3921_CITATION = Citation(
+    source=(
+        "Form 3921 (Rev. April 2025), 'Exercise of an Incentive Stock Option Under Section 422(b)'. "
+        "Boxes: 1 Date option granted; 2 Date option exercised; 3 Exercise price per share; 4 Fair "
+        "market value per share on exercise date; 5 No. of shares transferred; 6 'If other than "
+        "TRANSFEROR, name, address, and TIN of corporation whose stock is being transferred'. "
+        "Instructions for Employee: 'When you exercise an ISO, you may have to include in alternative "
+        "minimum taxable income a portion of the fair market value of the stock acquired through the "
+        "exercise of the option. For more information, see Form 6251'"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/f3921.pdf",
+)
+
+_IRC_1211_B_CITATION = Citation(
+    source=(
+        "IRC 1211(b) (26 U.S.C. 1211), 'Limitation on capital losses' - 'Other taxpayers': 'In the "
+        "case of a taxpayer other than a corporation, losses from sales or exchanges of capital assets "
+        "shall be allowed only to the extent of the gains from such sales or exchanges, plus (if such "
+        "losses exceed such gains) the lower of- (1) $3,000 ($1,500 in the case of a married individual "
+        "filing a separate return), or (2) the excess of such losses over such gains.' The present text "
+        "was substituted by P.L. 99-514 title III section 301(b)(10), applicable to taxable years "
+        "beginning after December 31, 1986; the figures are STATUTORY and carry no inflation "
+        "adjustment, which is why they are not in a year pack"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1211&num=0&edition=prelim",
+)
+
+_IRC_1212_B_CITATION = Citation(
+    source=(
+        "IRC 1212(b) (26 U.S.C. 1212), 'Capital loss carrybacks and carryovers' - 'Other taxpayers': "
+        "(1) 'If a taxpayer other than a corporation has a net capital loss for any taxable year- (A) "
+        "the excess of the net short-term capital loss over the net long-term capital gain for such "
+        "year shall be a short-term capital loss in the succeeding taxable year, and (B) the excess of "
+        "the net long-term capital loss over the net short-term capital gain for such year shall be a "
+        "long-term capital loss in the succeeding taxable year' — the statute that PRESERVES CHARACTER. "
+        "(2)(A) 'For purposes of determining the excess referred to in subparagraph (A) or (B) of "
+        "paragraph (1), there shall be treated as a short-term capital gain in the taxable year an "
+        "amount equal to the lesser of- (i) the amount allowed for the taxable year under paragraph (1) "
+        "or (2) of section 1211(b), or (ii) the adjusted taxable income for such taxable year.' (2)(B) "
+        "'the term \"adjusted taxable income\" means taxable income increased by the sum of- (i) the "
+        "amount allowed for the taxable year under paragraph (1) or (2) of section 1211(b), and (ii) "
+        "the deduction allowed for such year under section 151 or any deduction in lieu thereof. For "
+        "purposes of the preceding sentence, any excess of the deductions allowed for the taxable year "
+        "over the gross income for such year shall be taken into account as negative taxable income.' "
+        "This (2)(A) lesser-of is what the Capital Loss Carryover Worksheet's lines 1-4 compute, and it "
+        "is why a low-taxable-income year consumes LESS of the loss than it deducts"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1212&num=0&edition=prelim",
+)
+
+_IRC_1222_CITATION = Citation(
+    source=(
+        "IRC 1222 (26 U.S.C. 1222), 'Other terms relating to capital gains and losses': (6) 'net "
+        "short-term capital loss' is 'the excess of short-term capital losses for the taxable year over "
+        "the short-term capital gains for such year'; (8) 'net long-term capital loss' the long-term "
+        "mirror; (10) 'net capital loss' is 'the excess of the losses from sales or exchanges of "
+        "capital assets over the sum allowed under section 1211'; (11) 'net capital gain' is 'the "
+        "excess of the net long-term capital gain for the taxable year over the net short-term capital "
+        "loss for such year'. Short and long are netted SEPARATELY first (Schedule D lines 7 and 15) "
+        "and only then against each other (line 16)"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1222&num=0&edition=prelim",
+)
+
+_IRC_151_D5_CITATION = Citation(
+    source=(
+        "IRC 151(d)(5) (26 U.S.C. 151), 'Special rules for taxable years beginning after 2017': 'In the "
+        "case of a taxable year beginning after December 31, 2017- (A) Exemption amount. The term "
+        "\"exemption amount\" means zero.' This is why the Capital Loss Carryover Worksheet's line 1 "
+        "takes Form 1040 line 15 (taxable income) with NO add-back for the section 151 deduction that "
+        "IRC 1212(b)(2)(B)(ii) names. (C), added by P.L. 119-21, allows 'a deduction in an amount equal "
+        "to $6,000 for each qualified individual' for taxable years beginning before January 1, 2029 — "
+        "a deduction allowed UNDER SECTION 151 that the printed worksheet does not add back"
+    ),
+    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section151&num=0&edition=prelim",
+)
+
+_PUB550_CARRYOVER_CITATION = Citation(
+    source=(
+        "Publication 550 (2025), chapter 4, 'Capital Losses'. Limit on deduction: 'Your allowable "
+        "capital loss deduction, figured on Schedule D (Form 1040), is the lesser of: $3,000 ($1,500 if "
+        "you are married and file a separate return), or Your total net loss as shown on line 16 of "
+        "Schedule D (Form 1040).' Capital loss carryover: 'you can carry over the unused part to the "
+        "next year and treat it as if you had incurred it in that next year. If part of the loss is "
+        "still unused, you can carry it over to later years until it is completely used up.' 'When you "
+        "figure the amount of any capital loss carryover to the next year, you must take the current "
+        "year's allowable deduction into account, WHETHER OR NOT you claimed it and whether or not you "
+        "filed a return for the current year.' 'When you carry over a loss, it remains long-term or "
+        "short-term. A long-term capital loss you carry over to the next tax year will reduce that "
+        "year's long-term capital gains before it reduces that year's short-term capital gains.' "
+        "Figuring your carryover: 'The amount of your capital loss carryover is the amount of your "
+        "total net loss that is more than the lesser of: 1. Your allowable capital loss deduction for "
+        "the year, or 2. Your taxable income increased by your allowable capital loss deduction for the "
+        "year.' 'If your deductions are more than your gross income for the tax year, use your negative "
+        "taxable income in figuring the amount in (2) above.' 'Use short-term losses first. When you "
+        "figure your capital loss carryover, use your short-term capital losses first, even if you "
+        "incurred them after a long-term capital loss.' Joint and separate returns: 'if you and your "
+        "spouse once filed a joint return and are now filing separate returns, any capital loss "
+        "carryover from the joint return can be deducted only on the return of the spouse who actually "
+        "had the loss.' Decedent's capital loss: it 'can be deducted only on the final income tax "
+        "return filed for the decedent. ... The decedent's estate cannot deduct any of the loss or "
+        "carry it over to following years.' Worksheet 4-1 is the same Capital Loss Carryover Worksheet "
+        "printed in the Schedule D instructions"
+    ),
+    url="https://www.irs.gov/pub/irs-pdf/p550.pdf",
+)
+
+
+def _capital_loss_1040_line(year: int) -> str:
+    """Which Form 1040 line Schedule D line 21 lands on for ``year``.
+
+    Read off the faces, not remembered: f1040sd--2023.pdf and f1040sd--2024.pdf
+    both print "enter here and on Form 1040, 1040-SR, or 1040-NR, line 7"; the
+    2025 face prints "line 7a", because TY2025 split line 7 into 7a/7b.
+    """
+    return "7a" if year >= 2025 else "7"
+
+
+def _schedule_d_citation(year: int) -> Citation:
+    """Cite the year's own Schedule D + the FOLLOWING year's Capital Loss Carryover
+    Worksheet (the worksheet that carries year Y's loss into Y+1 is printed in the
+    Y+1 instructions). A year whose forms have not published yet cites the newest
+    revision actually READ and says so."""
+    body = (
+        f"Schedule D (Form 1040) line 7 'Net short-term capital gain or (loss). Combine lines 1a "
+        f"through 6 in column (h)', line 15 'Net long-term capital gain or (loss). Combine lines 8a "
+        f"through 14', line 16 'Combine lines 7 and 15', line 21 'If line 16 is a loss, enter here and "
+        f"on Form 1040, 1040-SR, or 1040-NR, line {_capital_loss_1040_line(year)}, the smaller of: The "
+        f"loss on line 16; or ($3,000), or if married filing separately, ($1,500)' with the printed "
+        f"Note 'When figuring which amount is smaller, treat both amounts as positive numbers'; line 6 "
+        f"'Short-term capital loss carryover. Enter the amount, if any, from line 8 of your Capital "
+        f"Loss Carryover Worksheet in the instructions' and line 14 the long-term mirror from "
+        f"worksheet line 13. Instructions for Schedule D (Form 1040), 'Capital Loss Carryover "
+        f"Worksheet-Lines 6 and 14': line 1 the prior year's Form 1040 line 15 ('If the amount would "
+        f"have been a loss if you could enter a negative number on that line, enclose the amount in "
+        f"parentheses'), line 2 the prior Schedule D line 21 loss as a positive amount, line 3 "
+        f"'Combine lines 1 and 2. If zero or less, enter -0-', line 4 'Enter the smaller of line 2 or "
+        f"line 3', line 5 the prior Schedule D line 7 loss as a positive amount, line 6 'Enter any gain "
+        f"from your ... Schedule D, line 15. If a loss, enter -0-', line 7 'Add lines 4 and 6', line 8 "
+        f"the SHORT-TERM carryover 'Subtract line 7 from line 5. If zero or less, enter -0-', line 9 "
+        f"the prior Schedule D line 15 loss as a positive amount, line 10 'Enter any gain from your ... "
+        f"Schedule D, line 7. If a loss, enter -0-', line 11 'Subtract line 5 from line 4. If zero or "
+        f"less, enter -0-', line 12 'Add lines 10 and 11', line 13 the LONG-TERM carryover 'Subtract "
+        f"line 12 from line 9. If zero or less, enter -0-'"
+    )
+    if year in _CAPITAL_LOSS_VERIFIED_REVISIONS:
+        worksheet_note = (
+            f"The face above was read off the {year} blank. The worksheet that carries a {year} loss "
+            f"forward is the one printed in the {year + 1} instructions"
+            + (
+                f", read directly (i1040sd--{year + 1}.pdf)."
+                if year + 1 in _CAPITAL_LOSS_VERIFIED_REVISIONS else
+                f", which had not published when this op was written — its lines 1-13 are quoted from the "
+                f"four consecutive revisions that were read (i1040sd--"
+                f"{_CAPITAL_LOSS_VERIFIED_REVISIONS[0]}.pdf .. i1040sd--{_CAPITAL_LOSS_NEWEST_VERIFIED}.pdf), "
+                f"which agree line for line. RE-VERIFY against the {year + 1} instructions before filing."
+            )
+        )
+        return Citation(source=f"Schedule D (Form 1040) ({year}): {body}. {worksheet_note}",
+                        url=f"https://www.irs.gov/pub/irs-prior/f1040sd--{year}.pdf")
+    return Citation(
+        source=(
+            f"Schedule D (Form 1040) ({_CAPITAL_LOSS_NEWEST_VERIFIED}) — quoted for {year} because the "
+            f"{year} revision had not published when this op was written. {body}. Worksheet lines 1-13 "
+            f"are identical on every revision actually read ({_CAPITAL_LOSS_VERIFIED_REVISIONS[0]}-"
+            f"{_CAPITAL_LOSS_NEWEST_VERIFIED}), but line 21's DESTINATION did move inside that window "
+            f"(line 7 through 2024, line 7a from 2025) — RE-VERIFY against the {year} form before "
+            f"anything is filed"
+        ),
+        url="https://www.irs.gov/pub/irs-pdf/f1040sd.pdf",
+    )
+
+
+def _add_years(start: date, years: int) -> date:
+    """The same calendar day ``years`` later; a February 29 start lands on
+    February 28 when the target year is not a leap year."""
+    try:
+        return start.replace(year=start.year + years)
+    except ValueError:
+        return date(start.year + years, 2, 28)
+
+
+class EsppDispositionResult(BaseModel):
+    """Result of :func:`espp_disposition`: the IRC 423 split between compensation
+    and capital gain, plus the Form 8949 row that actually files it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    disposition_type: Literal["qualifying", "disqualifying"] = Field(
+        description="IRC 423(a)(1): 'qualifying' only when the sale is MORE than 2 years after grant AND more than 1 year after purchase."
+    )
+    ordinary_income: int = Field(
+        description="Compensation income -> W-2 box 1 (Form 1040 line 1a); Schedule 1 line 8k 'Stock options' if the employer left it off."
+    )
+    ordinary_income_per_share: Decimal = Field(description="The per-share compensation before rounding — this is where the cents live.")
+    capital_gain_or_loss: int = Field(description="Form 8949 column (h) = column (d) - column (e) + column (g).")
+    capital_gain_character: Literal["short_term", "long_term"] = Field(
+        description="Measured from the PURCHASE date (Pub 525: the holding period 'begins on the day after you exercise the option')."
+    )
+    proceeds: int = Field(description="Form 8949 column (d): shares x sale price, less selling expenses when they were passed.")
+    amount_paid: int = Field(description="What actually left your pocket: shares x Form 3922 box 5.")
+    corrected_basis: int = Field(description="IRC 423(c) last sentence / Pub 525: amount paid PLUS the ordinary income recognised.")
+    corrected_basis_per_share: Decimal = Field(description="The per-share adjusted basis, cents intact.")
+    broker_reported_basis: int = Field(description="Form 1099-B box 1e as the broker reported it (defaulted to the amount paid when not supplied).")
+    basis_adjustment: int = Field(
+        description="corrected_basis - broker_reported_basis. POSITIVE means the broker UNDERSTATED your basis and you are about to be taxed twice."
+    )
+    double_taxed_if_uncorrected: int = Field(
+        description="The dollars that would be taxed as compensation AND again as capital gain if the 1099-B is filed unadjusted — the whole point of the op."
+    )
+    form_8949: dict[str, str] = Field(description="The Form 8949 row: part, box, and columns (a)-(h) as they should be typed.")
+    holding_periods: dict[str, str] = Field(description="Both IRC 423(a)(1) tests and the capital-gain holding period, each with its date and verdict.")
+    discount_percentage: Decimal = Field(description="1 - (price paid / the lower of the two FMVs): the discount the plan actually delivered.")
+    lookback_applied: bool = Field(description="True when Form 3922 box 8 was supplied, i.e. the option price was not fixed or determinable at grant.")
+    grant_date_option_price: Decimal = Field(
+        description="The IRC 423(c)(2) option price: Form 3922 box 8 under a lookback, box 5 when the price was fixed at grant."
+    )
+    input_assumptions: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Assumptions this op made about the INPUTS, promoted out of `work` so a caller reading "
+            "only `ordinary_income` cannot miss them — chiefly a defaulted 1099-B basis and a missing "
+            "Form 3922 box 8, either of which moves the dollars."
+        ),
+    )
+    not_modeled: list[str] = Field(description="What this op deliberately does NOT compute, named so nothing is silently assumed away.")
+    form_3922_boxes: dict[str, str] = Field(description="The Form 3922 boxes this computation used, echoed back for confirmation against the paper form.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+    citations: list[Citation] = Field(description="Every authority behind the number, statute first.")
+
+
+def espp_disposition(
+    shares: int | float | Decimal | str,
+    grant_date: "_DateLike",
+    purchase_date: "_DateLike",
+    sale_date: "_DateLike",
+    grant_date_fmv_per_share: int | float | Decimal | str,
+    purchase_date_fmv_per_share: int | float | Decimal | str,
+    purchase_price_per_share: int | float | Decimal | str,
+    sale_price_per_share: int | float | Decimal | str,
+    grant_date_exercise_price_per_share: int | float | Decimal | str | None = None,
+    broker_reported_basis: int | float | Decimal | str | None = None,
+    broker_reported_basis_to_irs: bool = True,
+    selling_expenses: int | float | Decimal | str = 0,
+    employed_through_exercise: bool = True,
+    knowledge_dir: str | Path | None = None,
+) -> EsppDispositionResult:
+    """One lot of section 423 ESPP stock, sold: how much is compensation, how much
+    is capital gain, and what the Form 8949 row has to say so the discount is not
+    taxed twice.
+
+    THE TWO DISPOSITIONS ARE NOT VARIANTS OF ONE FORMULA. Conflating them is
+    the error this op exists to prevent, so it names the branch it took:
+
+    * **Qualifying** — sold MORE than 2 years after the GRANT date and MORE than
+      1 year after the PURCHASE date (IRC 423(a)(1)). Ordinary income is the
+      **LESSER** of (a) the discount measured on the GRANT-date price
+      (423(c)(2): grant-date FMV minus the option price) and (b) the actual gain
+      (423(c)(1): disposition FMV minus what you paid). A sale at a LOSS
+      therefore recognises **ZERO** ordinary income — Pub 525: "If you have a
+      loss from the sale, it's a capital loss, and you don't have any ordinary
+      income." The remainder is long-term capital gain, necessarily, because
+      the qualifying test already requires more than a year past purchase.
+    * **Disqualifying** — anything else, including a same-day sale. Ordinary
+      income is the full spread at PURCHASE (purchase-date FMV minus the price
+      paid) **regardless of the sale price**: Pub 525, "This ordinary income
+      isn't limited to your gain from the sale of the stock." So a filer who
+      sold below the purchase-date FMV still recognises that compensation AND
+      takes a capital loss. The remainder is capital gain or loss, short- or
+      long-term measured from the PURCHASE date.
+
+    **THE BASIS CORRECTION IS THE HIGHEST-DOLLAR PART.** The broker's Form
+    1099-B reports box 1e as the DISCOUNTED PURCHASE PRICE only — Instructions
+    for Form 8949: "For compensatory options granted after 2013, the basis
+    information reported to you on Form 1099-B ... won't reflect any amount you
+    included in income upon grant or exercise of the option." The correct basis
+    is the price paid PLUS the ordinary income recognised (IRC 423(c)'s last
+    sentence for a qualifying disposition; Pub 525's "Increase your basis in the
+    stock by the amount of this ordinary income" for a disqualifying one). A
+    filer who trusts the 1099-B pays tax on the discount TWICE. This op returns
+    the corrected basis, the adjustment, and the exact Form 8949 treatment:
+    **code B** in column (f) whenever the broker reported an incorrect basis,
+    with the reported basis left in column (e) and the correction in column (g)
+    as a negative number when the basis WAS reported to the IRS (box A/D), or
+    the correct basis in column (e) and -0- in column (g) when it was not (box
+    B/E).
+
+    **THE LOOKBACK.** Under a lookback the price you pay is the discount applied
+    to the LOWER of the grant-date and purchase-date FMVs, but the QUALIFYING
+    ordinary income is computed on the GRANT-date price — IRC 423(c): "If the
+    option price is not fixed or determinable at the time the option is granted,
+    then for purposes of this subsection, the option price shall be determined
+    as if the option were exercised at such time." That price is **Form 3922 box
+    8**, and it is a different number from box 5 whenever the stock fell between
+    grant and purchase. Pass ``grant_date_exercise_price_per_share`` (box 8)
+    whenever your form shows one; the Form 3922 Instructions for Employee say
+    box 8 is blank ONLY when the price "was fixed or determinable on the date
+    shown in box 1".
+
+    Inputs map one-to-one onto Form 3922 and the 1099-B:
+
+    * ``shares`` = box 6, ``grant_date`` = box 1, ``purchase_date`` = box 2,
+      ``grant_date_fmv_per_share`` = box 3, ``purchase_date_fmv_per_share`` =
+      box 4, ``purchase_price_per_share`` = box 5,
+      ``grant_date_exercise_price_per_share`` = box 8 (omit when blank).
+    * ``sale_date`` and ``sale_price_per_share`` come from the 1099-B
+      (box 1c / box 1d divided by the shares), not from Form 3922 box 7, which
+      records the first transfer of legal title rather than the sale.
+    * ``broker_reported_basis`` is 1099-B **box 1e for this lot, as a TOTAL**.
+      Left out, it defaults to shares x box 5 — the systematic broker behaviour
+      — and that default is promoted into ``input_assumptions``.
+    * ``broker_reported_basis_to_irs`` mirrors 1099-B box 12 and decides which
+      Form 8949 box you check and therefore which half of the code-B rule
+      applies. Stock acquired after 2011 is a covered security, so True is the
+      normal case.
+
+    Refused, prescriptively, rather than answered wrongly:
+    ``employed_through_exercise=False`` (IRC 423(a)(2) fails, so section 421(a)
+    never applied and the option was a NONSTATUTORY one taxed at exercise under
+    section 83, not here), and a price below the section 423(b)(6) floor, or one
+    below 85% of the grant-date FMV with no box 8 — which can only mean a
+    lookback whose box 8 was not supplied.
+
+    ``knowledge_dir`` is accepted for signature parity with its neighbours but
+    is deliberately unused: IRC 423 carries no per-year figures, so this op
+    reads no knowledge pack, per the P-005/P-006 discipline that only figures
+    belong in a year pack.
+    """
+    del knowledge_dir  # see the docstring: no per-year figures, so no pack read
+    if not employed_through_exercise:
+        raise ValueError(
+            "employed_through_exercise=False takes this out of section 423 entirely: 423(a)(2) requires "
+            "employment 'at all times during the period beginning with the date of the granting of the "
+            "option and ending on the day 3 months before the date of such exercise', and Pub 525 says "
+            "'If you don't meet the employment requirements ... your option is a nonstatutory stock "
+            "option.' A nonstatutory option is taxed at EXERCISE under section 83 (the spread is wages "
+            "in the exercise year, withheld on, and the basis is the price paid plus that spread), not "
+            "on disposition — so neither branch of this op applies. Compute the exercise-year wages "
+            "from the Form W-2 and report the later sale as an ordinary capital transaction"
+        )
+    n = _to_decimal(shares, "shares")
+    if n <= 0:
+        raise ValueError(
+            f"shares must be > 0, got {n} — pass Form 3922 box 6 ('No. of shares transferred'). "
+            f"Fractional shares are fine: an ESPP buys them from whole payroll dollars"
+        )
+    grant = _as_date(grant_date, "grant_date")
+    purchase = _as_date(purchase_date, "purchase_date")
+    sale = _as_date(sale_date, "sale_date")
+    if not (grant <= purchase <= sale):
+        raise ValueError(
+            f"dates must run grant_date <= purchase_date <= sale_date, got grant {grant.isoformat()}, "
+            f"purchase {purchase.isoformat()}, sale {sale.isoformat()} — grant_date is Form 3922 box 1, "
+            f"purchase_date is box 2 (the exercise date), and sale_date is the 1099-B box 1c date sold, "
+            f"NOT Form 3922 box 7 (the first transfer of legal title)"
+        )
+    grant_fmv = _to_decimal(grant_date_fmv_per_share, "grant_date_fmv_per_share")
+    purchase_fmv = _to_decimal(purchase_date_fmv_per_share, "purchase_date_fmv_per_share")
+    paid = _to_decimal(purchase_price_per_share, "purchase_price_per_share")
+    sale_price = _to_decimal(sale_price_per_share, "sale_price_per_share")
+    expenses = _to_decimal(selling_expenses, "selling_expenses")
+    for name, value in (
+        ("grant_date_fmv_per_share", grant_fmv), ("purchase_date_fmv_per_share", purchase_fmv),
+        ("purchase_price_per_share", paid),
+    ):
+        if value <= 0:
+            raise ValueError(
+                f"{name} must be > 0, got {value} — Form 3922 boxes 3, 4 and 5 are per-SHARE dollar "
+                f"amounts, never totals and never zero"
+            )
+    if sale_price < 0:
+        raise ValueError(f"sale_price_per_share must be >= 0, got {sale_price} (0 is a worthless disposition)")
+    if expenses < 0:
+        raise ValueError(f"selling_expenses must be >= 0, got {expenses} — pass the commission as a positive amount")
+
+    lower_fmv = min(grant_fmv, purchase_fmv)
+    statutory_floor = _cents(_ESPP_STATUTORY_MIN_PRICE_RATE * lower_fmv)
+    if paid < statutory_floor - _ESPP_PRICE_TOLERANCE:
+        raise ValueError(
+            f"purchase_price_per_share {_money(paid)} is below the IRC 423(b)(6) floor {_money(statutory_floor)} "
+            f"(85% of {_money(lower_fmv)}, the lower of the grant-date FMV {_money(grant_fmv)} and the "
+            f"exercise-date FMV {_money(purchase_fmv)}). 423(b)(6) requires the plan's option price to be "
+            f"'not less than the lesser of ... 85 percent of the fair market value of the stock at the time "
+            f"such option is granted, or ... 85 percent of the fair market value of the stock at the time "
+            f"such option is exercised', so a plan pricing below that is NOT a section 423 plan and none of "
+            f"423(c)'s treatment applies — the spread would be ordinary compensation at purchase under "
+            f"section 83. Re-read Form 3922 boxes 3, 4 and 5"
+        )
+    grant_floor = _cents(_ESPP_STATUTORY_MIN_PRICE_RATE * grant_fmv)
+    box8_supplied = grant_date_exercise_price_per_share is not None
+    if box8_supplied:
+        box8 = _to_decimal(grant_date_exercise_price_per_share, "grant_date_exercise_price_per_share")
+        if box8 <= 0:
+            raise ValueError(
+                f"grant_date_exercise_price_per_share must be > 0, got {box8} — Form 3922 box 8 is a "
+                f"per-share price. Omit the argument entirely when box 8 is BLANK on your form (which the "
+                f"Instructions for Employee say happens only when 'the exercise price per share was fixed "
+                f"or determinable on the date shown in box 1')"
+            )
+    elif paid < grant_floor - _ESPP_PRICE_TOLERANCE:
+        raise ValueError(
+            f"purchase_price_per_share {_money(paid)} is below 85% of the GRANT-date FMV "
+            f"({_money(grant_floor)}), which under IRC 423(b)(6) can only happen when the price was set "
+            f"off the LOWER exercise-date FMV — i.e. this plan has a LOOKBACK, so the option price was "
+            f"NOT fixed or determinable at grant. IRC 423(c)'s last sentence then requires the "
+            f"qualifying-disposition ordinary income to be measured against the price 'determined as if "
+            f"the option were exercised at such time', which is exactly what Form 3922 box 8 reports. "
+            f"Pass grant_date_exercise_price_per_share (box 8). Using box 5 here instead would put the "
+            f"423(c)(2) discount at {_money(grant_fmv - paid)} per share when the statute wants "
+            f"{_money(grant_fmv)} minus box 8"
+        )
+    else:
+        box8 = paid
+    grant_option_price = box8
+
+    two_year_mark = _add_years(grant, 2)
+    one_year_mark = _add_years(purchase, 1)
+    two_year_met = sale > two_year_mark
+    one_year_met = sale > one_year_mark
+    qualifying = two_year_met and one_year_met
+    long_term = one_year_met  # Pub 525: the holding period begins the day AFTER the purchase
+
+    # THE OTHER HALF OF THE BOX-8 GAP (found 2026-08-26 by the Phase-I3 adversarial
+    # review), DISCLOSED rather than refused. The guard above catches a price BELOW
+    # the grant floor — a lookback on a stock that FELL. The mirror case cannot be
+    # caught: a plan priced at 85% of the EXERCISE-date FMV on a stock that ROSE pays
+    # MORE than 85% of the grant FMV, so box 8 would be 85% x grant FMV rather than
+    # box 5, and the 423(c)(2) discount is larger than this op computes.
+    #
+    # A REFUSAL WAS TRIED AND REVERTED: the condition that catches it
+    # (purchase_fmv > grant_fmv and paid > grant_floor) also describes Publication
+    # 525's own Example 10 — grant FMV $22, purchase FMV $23, paid $20 — which the
+    # IRS resolves as a fixed-at-grant price with ordinary income ($22 - $20) x 100.
+    # Nothing in boxes 3/4/5 separates that from an exercise-date-priced plan; Form
+    # 3922 box 8 is the ONLY discriminator, which is why the form has the box. So the
+    # honest behaviour is the IRS's own default plus a promoted, unmissable note.
+    _box8_rise_note: str | None = None
+    if not box8_supplied and purchase_fmv > grant_fmv and paid > grant_floor + _ESPP_PRICE_TOLERANCE:
+        _box8_rise_note = (
+            f"Form 3922 box 8 was not supplied, so the IRC 423(c)(2) option price is taken as box 5 "
+            f"({_money(paid)}) — the Instructions for Employee say box 8 is blank ONLY when 'the "
+            f"exercise price per share was fixed or determinable on the date shown in box 1', and that "
+            f"is Publication 525 Example 10's own reading. BUT this share's numbers cannot confirm it: "
+            f"the price paid is ABOVE 85% of the grant-date FMV ({_money(grant_floor)}) and the stock "
+            f"ROSE between grant and purchase, which is exactly the shape a plan priced at 85% of the "
+            f"EXERCISE-date FMV also produces. If that is your plan, box 8 is NOT blank — it reads "
+            f"{_money(grant_floor)}, the 423(c)(2) discount is {_money(grant_fmv - grant_floor)} per "
+            f"share instead of {_money(max(Decimal(0), grant_fmv - paid))}, and the ordinary income on "
+            f"a qualifying disposition is larger. READ BOX 8 on your Form 3922 before filing."
+        )
+
+    zero = Decimal(0)
+    if qualifying:
+        stat_1 = max(zero, sale_price - paid)          # IRC 423(c)(1)
+        stat_2 = max(zero, grant_fmv - grant_option_price)  # IRC 423(c)(2)
+        ord_ps = min(stat_1, stat_2)
+    else:
+        stat_1 = stat_2 = zero
+        ord_ps = max(zero, purchase_fmv - paid)        # IRC 421(b) / Pub 525
+
+    amount_paid = irs_round(n * paid)
+    ordinary_income = irs_round(n * ord_ps)
+    # The form-level identity a filer types: basis = what you paid + what you were
+    # taxed on as compensation. Both halves are whole dollars, so build the basis
+    # from them rather than re-rounding the exact product.
+    corrected_basis = amount_paid + ordinary_income
+    proceeds = irs_round(n * sale_price - expenses)
+    reported_basis = amount_paid if broker_reported_basis is None else irs_round(
+        _to_decimal(broker_reported_basis, "broker_reported_basis")
+    )
+    if reported_basis < 0:
+        raise ValueError(
+            f"broker_reported_basis must be >= 0, got {reported_basis} — Form 1099-B box 1e is a cost, "
+            f"never negative"
+        )
+    basis_adjustment = corrected_basis - reported_basis
+    basis_is_wrong = basis_adjustment != 0
+
+    part = "II" if long_term else "I"
+    box = ("D" if long_term else "A") if broker_reported_basis_to_irs else ("E" if long_term else "B")
+    if basis_is_wrong and broker_reported_basis_to_irs:
+        col_e, col_g, col_f = reported_basis, -basis_adjustment, "B"
+    elif basis_is_wrong:
+        col_e, col_g, col_f = corrected_basis, 0, "B"
+    else:
+        col_e, col_g, col_f = corrected_basis, 0, ""
+    capital = proceeds - col_e + col_g
+    form_8949 = {
+        "part": f"{part} — {'Long-term' if long_term else 'Short-term'}",
+        "box": (
+            f"{box} — {'Long' if long_term else 'Short'}-term transactions reported on Form(s) 1099-B "
+            f"showing basis was {'' if broker_reported_basis_to_irs else 'not '}reported to the IRS"
+        ),
+        "(a) description of property": f"{n.normalize():f} sh. ESPP",
+        "(b) date acquired": purchase.isoformat(),
+        "(c) date sold": sale.isoformat(),
+        "(d) proceeds": _dollars(proceeds),
+        "(e) cost or other basis": _dollars(col_e),
+        "(f) code": col_f or "(leave blank — no adjustment)",
+        "(g) adjustment": (f"({_dollars(-col_g)})" if col_g < 0 else _dollars(col_g)),
+        "(h) gain or (loss)": _dollars(capital),
+    }
+    holding_periods = {
+        "2 years after grant (IRC 423(a)(1))": (
+            f"grant {grant.isoformat()} + 2 years = {two_year_mark.isoformat()}; sold {sale.isoformat()} "
+            f"— {'MET' if two_year_met else 'NOT met'}"
+        ),
+        "1 year after purchase (IRC 423(a)(1))": (
+            f"purchase {purchase.isoformat()} + 1 year = {one_year_mark.isoformat()}; sold "
+            f"{sale.isoformat()} — {'MET' if one_year_met else 'NOT met'}"
+        ),
+        "capital-gain holding period": (
+            f"runs from the day after the purchase date (Pub 525), so the same {one_year_mark.isoformat()} "
+            f"line decides it: {'LONG' if long_term else 'SHORT'}-term"
+        ),
+    }
+    discount_pct = (_ONE - (paid / lower_fmv)) if lower_fmv else zero
+
+    assumptions: list[str] = []
+    if _box8_rise_note:
+        assumptions.append(_box8_rise_note)
+    if broker_reported_basis is None:
+        assumptions.append(
+            f"1099-B BOX 1e WAS NOT SUPPLIED, so it was DEFAULTED to the amount paid "
+            f"({_dollars(amount_paid)} = {n.normalize():f} sh x {_money(paid)}) — the systematic broker "
+            f"behaviour the Instructions for Form 8949 describe for compensatory options granted after "
+            f"2013. The whole ${abs(basis_adjustment):,} adjustment below rests on that default: read box "
+            f"1e off your actual 1099-B and re-run if it differs, because the adjustment is the "
+            f"difference between the two numbers, not a fixed quantity."
+        )
+    if qualifying and not box8_supplied and purchase_fmv != grant_fmv:
+        assumptions.append(
+            f"FORM 3922 BOX 8 WAS NOT SUPPLIED and the two FMVs differ (grant {_money(grant_fmv)} vs "
+            f"exercise {_money(purchase_fmv)}), so IRC 423(c)(2) was computed against the price actually "
+            f"paid, box 5 {_money(paid)}. Box 8 is blank ONLY when 'the exercise price per share was fixed "
+            f"or determinable on the date shown in box 1' (Form 3922 Instructions for Employee). If your "
+            f"plan has a LOOKBACK, box 8 is filled in, it is a DIFFERENT number from box 5, and it — not "
+            f"box 5 — is what 423(c)'s last sentence requires. Check the paper form before filing: on a "
+            f"qualifying disposition this choice moves the ordinary income dollar for dollar."
+        )
+    if broker_reported_basis_to_irs and broker_reported_basis is None:
+        assumptions.append(
+            "broker_reported_basis_to_irs defaulted to True (Form 8949 box A/D, 1099-B box 12 checked), "
+            "which is right for any share acquired after 2011 — a covered security. It decides WHICH HALF "
+            "of the code-B rule you follow: basis reported to the IRS keeps the wrong basis in column (e) "
+            "and puts the correction in column (g); basis NOT reported puts the correct basis straight "
+            "into column (e) with -0- in column (g). The gain in column (h) is the same either way."
+        )
+    assumptions.append(
+        f"IRC 423(c)(1) measures 'the fair market value of the share at the time of such disposition', "
+        f"and this op used the SALE PRICE {_money(sale_price)} for it — correct for an arm's-length market "
+        f"sale, which is the only disposition modelled here. A gift, a transfer to a trust, or any other "
+        f"non-sale disposition is still a disposition under 423(a)(1): use that date's FMV instead, and "
+        f"note there are then no proceeds to fund the tax."
+    )
+
+    not_modeled = [
+        "ISO exercises and the AMT they create — IRC 422 has no built-in discount (422(b)(4): 'the option "
+        "price is not less than the fair market value of the stock at the time such option is granted'), "
+        "the exercise spread is an AMT preference on Form 6251 line 2i, and IRC 422(c)(2) caps a "
+        "disqualifying disposition's compensation at the realised gain, which section 423 does NOT. Form "
+        "3921 reports the ISO exercise; this op is section 423 only.",
+        "Section 83(b) elections and restricted stock — section 83 does not reach this transaction at "
+        "all: IRC 83(e)(1) says 'This section shall not apply to- (1) a transaction to which section "
+        "421 applies', and 421(a)(1) is what applies here ('no income shall result at the time of the "
+        "transfer of such share to the individual upon his exercise of the option'). There is "
+        "therefore no 83(b) election to make on an ESPP purchase.",
+        "RSU vesting — an RSU is not an option at all; it is section 83 wages at vest, with basis equal "
+        "to the vest-date FMV already in W-2 box 1, and its 1099-B basis error has a different shape.",
+        "Wash sales (IRC 1091) — selling ESPP stock at a loss while another purchase settles inside the "
+        "61-day window disallows the loss, and an automatic ESPP or DRIP purchase is exactly the kind of "
+        "acquisition that triggers it. Form 8949 code W, not modelled here.",
+        "The IRC 423(b)(8) $25,000-per-calendar-year accrual limit, plan eligibility, the 3-month "
+        "employment window's own edge cases, and section 421(c) death/estate treatment.",
+        "State income tax, and the timing mismatch a mid-year move creates between the purchase-date and "
+        "sale-date states.",
+        "Multiple purchase lots — this is ONE lot (one Form 3922). Each lot has its own grant date, "
+        "purchase date and price, so each gets its own call and its own Form 8949 row.",
+    ]
+
+    grant_year_note = (
+        f"Your option was granted in {grant.year}, after 2013, so the Instructions for Form 8949 are "
+        f"unconditional: the 1099-B basis 'won't reflect any amount you included in income upon grant or "
+        f"exercise of the option'."
+        if grant.year > 2013 else
+        f"Your option was granted in {grant.year}, BEFORE 2014, so the Instructions for Form 8949 say the "
+        f"reported basis 'may or may not reflect any amount you included in income' — check box 1e against "
+        f"the corrected basis below rather than assuming either way."
+    )
+    if qualifying:
+        income_para = (
+            f"QUALIFYING disposition -> IRC 423(c), ordinary income is the LESSER of two per-share amounts: "
+            f"(1) FMV at disposition {_money(sale_price)} - amount paid {_money(paid)} = {_money(stat_1)}; "
+            f"(2) FMV at GRANT {_money(grant_fmv)} - the option price {_money(grant_option_price)}"
+            + (" (Form 3922 box 8, the lookback price)" if box8_supplied else " (Form 3922 box 5 — box 8 blank, so the price was fixed at grant)")
+            + f" = {_money(stat_2)}. Lesser = {_money(ord_ps)} per share x {n.normalize():f} sh = "
+            f"{_dollars(ordinary_income)}."
+            + (
+                " The sale was at or below what you paid, so branch (1) is zero and there is NO ordinary "
+                "income at all — Pub 525: 'If you have a loss from the sale, it's a capital loss, and you "
+                "don't have any ordinary income.'" if stat_1 <= 0 else ""
+            )
+            + (
+                f" There was no grant-date discount either ({_money(grant_option_price)} is not less than "
+                f"the {_money(grant_fmv)} grant-date FMV), so branch (2) is zero as well. IRC 423(c) only "
+                f"reaches an option priced at 'less than 100 percent of the fair market value of such share "
+                f"at the time such option was granted', and Form 3922 is issued only when that or the "
+                f"not-determinable condition holds — re-read boxes 3, 5 and 8 if you have one."
+                if stat_2 <= 0 else ""
+            )
+        )
+    else:
+        failed = []
+        if not two_year_met:
+            failed.append(f"the 2-year-after-grant test (needed a sale after {two_year_mark.isoformat()})")
+        if not one_year_met:
+            failed.append(f"the 1-year-after-purchase test (needed a sale after {one_year_mark.isoformat()})")
+        income_para = (
+            f"DISQUALIFYING disposition — it fails {' and '.join(failed)}. IRC 421(b) switches off 421(a) "
+            f"and moves the exercise-year income into the year of DISPOSITION, so ordinary income is the "
+            f"full spread AT PURCHASE: exercise-date FMV {_money(purchase_fmv)} - price paid {_money(paid)} "
+            f"= {_money(ord_ps)} per share x {n.normalize():f} sh = {_dollars(ordinary_income)}. The SALE "
+            f"PRICE does not enter it — Pub 525: 'This ordinary income isn't limited to your gain from the "
+            f"sale of the stock.' Sold below {_money(purchase_fmv)} you would still recognise every dollar "
+            f"of it and take a capital LOSS on top."
+            + (
+                f" Here the spread is ZERO: the stock was worth {_money(purchase_fmv)} at exercise, no more "
+                f"than the {_money(paid)} you paid, and Pub 525 measures only 'the amount by which the "
+                f"stock's FMV when you exercised the option EXCEEDED the option price'. A fixed-price plan "
+                f"on a stock that fell more than the discount does exactly this."
+                if ord_ps <= 0 else ""
+            )
+        )
+
+    if basis_is_wrong and broker_reported_basis_to_irs:
+        f8949_para = (
+            f"FORM 8949, Part {part}, box {box} (basis WAS reported to the IRS): the face's own Note and the "
+            f"code-B rule both say to leave the WRONG basis in column (e) and correct it in column (g). "
+            f"(d) proceeds {_dollars(proceeds)}; (e) {_dollars(reported_basis)} as reported; (f) code B; "
+            f"(g) {form_8949['(g) adjustment']} (the Worksheet for Basis Adjustments in Column (g): line 1 "
+            f"{_dollars(reported_basis)} reported, line 2 {_dollars(corrected_basis)} correct, line 2 larger "
+            f"so line 3 enters {_dollars(abs(basis_adjustment))} in column (g) as a negative number); "
+            f"(h) = (d) - (e) + (g) = {_dollars(capital)}."
+        )
+    elif basis_is_wrong:
+        f8949_para = (
+            f"FORM 8949, Part {part}, box {box} (basis was NOT reported to the IRS): the code-B rule's other "
+            f"half — put the CORRECT basis straight into column (e) and enter -0- in column (g). "
+            f"(d) proceeds {_dollars(proceeds)}; (e) {_dollars(corrected_basis)}; (f) code B; (g) $0; "
+            f"(h) {_dollars(capital)}. No adjustment worksheet is needed on this path."
+        )
+    else:
+        f8949_para = (
+            f"FORM 8949, Part {part}, box {box}: the reported basis {_dollars(reported_basis)} already equals "
+            f"the corrected basis, so columns (f) and (g) stay BLANK — the instructions' last table row, "
+            f"'None of the other statements in this column apply because you have no adjustments'. "
+            f"(d) {_dollars(proceeds)}; (e) {_dollars(col_e)}; (h) {_dollars(capital)}."
+        )
+
+    schedule_d_row = (
+        f"Schedule D line {'8b' if long_term else '1b'}"
+        if broker_reported_basis_to_irs else f"Schedule D line {'9' if long_term else '2'}"
+    )
+    if capital < 0:
+        capital_para = (
+            f"CAPITAL RESULT: {_dollars(-capital)} LOSS, {'LONG' if long_term else 'SHORT'}-term, carried "
+            f"to {schedule_d_row} (Form 8949 box {box}). A net capital loss is deductible against ordinary "
+            f"income only up to $3,000 a year ($1,500 MFS) under IRC 1211(b) — run calc op "
+            f"capital_loss_limitation for the deductible part and the carryover, which keeps its "
+            f"{'long' if long_term else 'short'}-term character under IRC 1212(b)(1)."
+        )
+    else:
+        capital_para = (
+            f"CAPITAL RESULT: {_dollars(capital)} gain, {'LONG' if long_term else 'SHORT'}-term, to "
+            f"{schedule_d_row} (Form 8949 box {box}). A long-term gain reaches the preferential rates "
+            f"(calc op tax_with_preferential_rates); a short-term gain is taxed at ordinary rates."
+        )
+    work_lines = [
+        f"Section 423 ESPP disposition, {n.normalize():f} share(s): granted {grant.isoformat()}, purchased "
+        f"{purchase.isoformat()} at {_money(paid)}/sh (a "
+        f"{(discount_pct * 100).quantize(Decimal('0.01'))}% discount off {_money(lower_fmv)}, the lower of the "
+        f"grant-date {_money(grant_fmv)} and exercise-date {_money(purchase_fmv)} FMVs), sold "
+        f"{sale.isoformat()} at {_money(sale_price)}/sh.",
+        f"HOLDING PERIODS (IRC 423(a)(1), both required): more than 2 years after grant -> after "
+        f"{two_year_mark.isoformat()}, {'MET' if two_year_met else 'NOT MET'}; more than 1 year after the "
+        f"transfer -> after {one_year_mark.isoformat()}, {'MET' if one_year_met else 'NOT MET'}.",
+        income_para,
+        "WHERE THE ORDINARY INCOME GOES: the employer should have it in Form W-2 box 1 (Form 1040 line 1a). "
+        "Pub 525: if it is not there, 'you must report the ordinary income as wages on Schedule 1 (Form "
+        "1040), line 8k, for the year of the sale' — line 8k is printed 'Stock options'. NOTHING IS "
+        "WITHHELD ON IT: IRC 423(c)'s last sentence and IRC 421(b)'s both say 'No amount shall be required "
+        "to be deducted and withheld under chapter 24', and IRC 3121(a)(22) keeps it out of FICA wages "
+        "entirely. Plan the cash — this income arrives with zero tax prepaid.",
+        f"BASIS (the part brokers get wrong): amount paid {_dollars(amount_paid)} + ordinary income "
+        f"{_dollars(ordinary_income)} = corrected basis {_dollars(corrected_basis)}. IRC 423(c): 'the basis "
+        f"of the share in his hands at the time of such disposition shall be increased by an amount equal "
+        f"to the amount so includible in his gross income'; Pub 525 says the same for the disqualifying "
+        f"branch. The 1099-B reports {_dollars(reported_basis)}. {grant_year_note}"
+        + (
+            f" Filing the 1099-B unadjusted would tax ${abs(basis_adjustment):,} TWICE — once as "
+            f"compensation and again as capital gain."
+            if basis_adjustment > 0 else
+            (f" The broker OVERSTATED your basis by ${abs(basis_adjustment):,}; the same code-B row corrects "
+             f"it in the other direction, as a POSITIVE column (g)." if basis_adjustment < 0 else
+             " The two agree, so no adjustment is needed.")
+        ),
+        f8949_para,
+        capital_para,
+    ]
+    inputs: dict[str, Any] = {
+        "shares": str(n),
+        "grant_date": grant.isoformat(),
+        "purchase_date": purchase.isoformat(),
+        "sale_date": sale.isoformat(),
+        "grant_date_fmv_per_share": str(grant_fmv),
+        "purchase_date_fmv_per_share": str(purchase_fmv),
+        "purchase_price_per_share": str(paid),
+        "sale_price_per_share": str(sale_price),
+        "grant_date_exercise_price_per_share": str(box8) if box8_supplied else None,
+        "broker_reported_basis": None if broker_reported_basis is None else reported_basis,
+        "broker_reported_basis_to_irs": broker_reported_basis_to_irs,
+        "selling_expenses": str(expenses),
+        "employed_through_exercise": employed_through_exercise,
+    }
+    form_3922 = {
+        "1 date option granted": grant.isoformat(),
+        "2 date option exercised": purchase.isoformat(),
+        "3 FMV per share on grant date": _money(grant_fmv),
+        "4 FMV per share on exercise date": _money(purchase_fmv),
+        "5 exercise price paid per share": _money(paid),
+        "6 no. of shares transferred": f"{n.normalize():f}",
+        "8 exercise price per share determined as if exercised on the box 1 date": (
+            _money(box8) if box8_supplied else "(blank — the price was fixed or determinable at grant)"
+        ),
+    }
+    return EsppDispositionResult(
+        disposition_type="qualifying" if qualifying else "disqualifying",
+        ordinary_income=ordinary_income,
+        ordinary_income_per_share=_cents(ord_ps),
+        capital_gain_or_loss=capital,
+        capital_gain_character="long_term" if long_term else "short_term",
+        proceeds=proceeds,
+        amount_paid=amount_paid,
+        corrected_basis=corrected_basis,
+        corrected_basis_per_share=_cents(paid + ord_ps),
+        broker_reported_basis=reported_basis,
+        basis_adjustment=basis_adjustment,
+        double_taxed_if_uncorrected=max(0, basis_adjustment),
+        form_8949=form_8949,
+        holding_periods=holding_periods,
+        discount_percentage=discount_pct.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP),
+        lookback_applied=box8_supplied,
+        grant_date_option_price=_cents(grant_option_price),
+        input_assumptions=assumptions,
+        not_modeled=not_modeled,
+        form_3922_boxes=form_3922,
+        inputs=inputs,
+        work="\n".join(work_lines),
+        citation=_IRC_423_CITATION,
+        citations=[
+            _IRC_423_CITATION, _IRC_421_CITATION, _PUB525_ESPP_CITATION, _F3922_CITATION,
+            _I8949_BASIS_CITATION, _F8949_CITATION, _IRC_3121_A22_CITATION, _IRC_422_CITATION,
+            _IRC_83_E1_CITATION,
+        ],
+    )
+
+
+_CAPITAL_LOSS_YEAR_KEYS = (
+    "short_term", "long_term", "taxable_income_before_capital_loss", "filing_status", "year",
+)
+
+
+class CapitalLossYear(BaseModel):
+    """One tax year of the IRC 1211(b)/1212(b) chain: Schedule D Part III plus the
+    Capital Loss Carryover Worksheet that feeds the next year's lines 6 and 14."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    year: int
+    filing_status: str
+    short_term_carryover_in: int = Field(description="Schedule D line 6, entered on the form as a positive number in parentheses.")
+    long_term_carryover_in: int = Field(description="Schedule D line 14, likewise.")
+    net_short_term: int = Field(description="Schedule D line 7: this year's short-term transactions minus the line 6 carryover.")
+    net_long_term: int = Field(description="Schedule D line 15: this year's long-term transactions minus the line 14 carryover.")
+    net_capital: int = Field(description="Schedule D line 16 = line 7 + line 15.")
+    deduction: int = Field(description="Schedule D line 21 as a POSITIVE amount — what actually reduces income this year.")
+    deduction_cap: int = Field(description="$3,000, or $1,500 for married filing separately (IRC 1211(b)(1)).")
+    taxable_income_before_capital_loss: int = Field(description="The caller's taxable income with the line 21 deduction NOT yet subtracted.")
+    taxable_income_after_deduction: int = Field(description="Worksheet line 1 = Form 1040 line 15 as filed; may be negative, and the worksheet wants it that way.")
+    loss_absorbed: int = Field(
+        description="Worksheet line 4 = min(line 2, line 3): how much of the LOSS POOL this year actually consumed. Below `deduction` whenever taxable income ran out."
+    )
+    deduction_not_absorbed: int = Field(
+        description="deduction - loss_absorbed: dollars deducted on Schedule D that bought nothing, because taxable income was already gone. They stay in the carryover."
+    )
+    short_term_carryover_out: int = Field(description="Worksheet line 8 -> next year's Schedule D line 6.")
+    long_term_carryover_out: int = Field(description="Worksheet line 13 -> next year's Schedule D line 14.")
+    worksheet_lines: dict[str, str] = Field(description="The Capital Loss Carryover Worksheet, lines 1-13, keyed by printed line number.")
+    schedule_d_lines: dict[str, str] = Field(description="Schedule D lines 6, 7, 14, 15, 16 and 21 as they should be entered.")
+
+
+class CapitalLossLimitationResult(BaseModel):
+    """Result of :func:`capital_loss_limitation`: year one in the headline fields,
+    the whole rolled-forward chain in ``years``."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    deduction: int = Field(description="Year one's Schedule D line 21, as a positive amount.")
+    deduction_cap: int
+    net_short_term: int
+    net_long_term: int
+    net_capital: int = Field(description="Year one's Schedule D line 16.")
+    short_term_carryover: int = Field(description="Year one's worksheet line 8 — short-term stays SHORT-term (IRC 1212(b)(1)(A)).")
+    long_term_carryover: int = Field(description="Year one's worksheet line 13 — long-term stays LONG-term (IRC 1212(b)(1)(B)).")
+    total_carryover: int
+    loss_absorbed: int = Field(description="Year one's worksheet line 4: the IRC 1212(b)(2)(A) lesser-of, which is what the pool actually loses.")
+    deduction_not_absorbed: int
+    years: list[CapitalLossYear] = Field(description="One row per modelled year, in order, each carrying its own worksheet.")
+    final_short_term_carryover: int = Field(description="What is still short-term after the LAST modelled year.")
+    final_long_term_carryover: int = Field(description="What is still long-term after the last modelled year.")
+    years_modeled: int
+    years_to_exhaust: int | None = Field(
+        default=None,
+        description="How many modelled years it took to use the loss up entirely; None when the chain ends with a carryover still alive.",
+    )
+    input_assumptions: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Assumptions about the INPUTS, promoted out of `work`: how worksheet line 1 was derived "
+            "from taxable_income_before_capital_loss, what a chain year inherited, and where the "
+            "printed worksheet and IRC 1212(b)(2)(B) diverge."
+        ),
+    )
+    worksheet_lines: dict[str, str] = Field(description="Year one's Capital Loss Carryover Worksheet.")
+    schedule_d_lines: dict[str, str] = Field(description="Year one's Schedule D lines.")
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+    citations: list[Citation] = Field(description="Every authority behind the number, statute first.")
+
+
+def _capital_loss_one_year(
+    year: int,
+    filing_status: str,
+    short_term: int,
+    long_term: int,
+    taxable_income_before: int,
+    st_carryover_in: int,
+    lt_carryover_in: int,
+) -> CapitalLossYear:
+    """Schedule D Part III + the Capital Loss Carryover Worksheet for ONE year."""
+    resolved, _ = _resolve_filing_status(filing_status)
+    cap = _CAPITAL_LOSS_CAP_MFS if resolved == "married_filing_separately" else _CAPITAL_LOSS_CAP
+    line6, line14 = st_carryover_in, lt_carryover_in
+    line7 = short_term - line6      # Schedule D line 7 (IRC 1222(5)/(6), after the carryover)
+    line15 = long_term - line14     # Schedule D line 15 (IRC 1222(7)/(8))
+    line16 = line7 + line15
+    line21 = min(-line16, cap) if line16 < 0 else 0
+
+    # Capital Loss Carryover Worksheet, lines 1-13.
+    w1 = taxable_income_before - line21   # Form 1040 line 15 as filed; may be negative
+    w2 = line21
+    w3 = max(0, w1 + w2)
+    w4 = min(w2, w3)
+    w5 = -line7 if line7 < 0 else 0
+    w6 = max(0, line15) if line7 < 0 else 0
+    w7 = (w4 + w6) if line7 < 0 else 0
+    w8 = max(0, w5 - w7) if line7 < 0 else 0
+    if line15 < 0:
+        w9 = -line15
+        w10 = max(0, line7)
+        w11 = max(0, w4 - w5)
+        w12 = w10 + w11
+        w13 = max(0, w9 - w12)
+    else:
+        w9 = w10 = w11 = w12 = w13 = 0
+
+    skip_note = "" if line7 < 0 else " (line 7 is not a loss: the worksheet enters -0- on line 5 and goes to line 9)"
+    worksheet = {
+        "1": f"{_dollars(w1)} (Form 1040 line 15 as filed{', a negative taxable income, which the worksheet keeps' if w1 < 0 else ''})",
+        "2": _dollars(w2),
+        "3": _dollars(w3),
+        "4": _dollars(w4),
+        "5": _dollars(w5) + skip_note,
+        "6": _dollars(w6),
+        "7": _dollars(w7),
+        "8": f"{_dollars(w8)} SHORT-term carryover -> next year's Schedule D line 6",
+        "9": _dollars(w9) + ("" if line15 < 0 else " (line 15 is not a loss: the worksheet skips lines 9 through 13)"),
+        "10": _dollars(w10),
+        "11": _dollars(w11),
+        "12": _dollars(w12),
+        "13": f"{_dollars(w13)} LONG-term carryover -> next year's Schedule D line 14",
+    }
+    schedule_d = {
+        "6": f"({_dollars(line6)})" if line6 else "$0",
+        "7": _dollars(line7),
+        "14": f"({_dollars(line14)})" if line14 else "$0",
+        "15": _dollars(line15),
+        "16": _dollars(line16),
+        "21": (f"({_dollars(line21)}) -> Form 1040 line {_capital_loss_1040_line(year)}" if line21 else "$0 (line 16 is not a loss)"),
+    }
+    return CapitalLossYear(
+        year=year,
+        filing_status=filing_status,
+        short_term_carryover_in=line6,
+        long_term_carryover_in=line14,
+        net_short_term=line7,
+        net_long_term=line15,
+        net_capital=line16,
+        deduction=line21,
+        deduction_cap=cap,
+        taxable_income_before_capital_loss=taxable_income_before,
+        taxable_income_after_deduction=w1,
+        loss_absorbed=w4,
+        deduction_not_absorbed=w2 - w4,
+        short_term_carryover_out=w8,
+        long_term_carryover_out=w13,
+        worksheet_lines=worksheet,
+        schedule_d_lines=schedule_d,
+    )
+
+
+def capital_loss_limitation(
+    short_term: int | float | Decimal | str,
+    long_term: int | float | Decimal | str,
+    taxable_income_before_capital_loss: int | float | Decimal | str,
+    filing_status: str = "single",
+    year: int = 2025,
+    short_term_carryover_in: int | float | Decimal | str = 0,
+    long_term_carryover_in: int | float | Decimal | str = 0,
+    following_years: Sequence[Mapping[str, Any]] | None = None,
+    knowledge_dir: str | Path | None = None,
+) -> CapitalLossLimitationResult:
+    """IRC 1211(b) and 1212(b): how much of a net capital loss is deductible this
+    year, and what carries forward — with its CHARACTER preserved.
+
+    Schedule D nets short and long SEPARATELY first (line 7 and line 15, the IRC
+    1222(5)-(8) definitions) and only then against each other (line 16). If line
+    16 is a loss, line 21 deducts the smaller of that loss and **$3,000 ($1,500
+    married filing separately)** — IRC 1211(b)(1), statutory and never indexed.
+    Everything left carries forward indefinitely and **keeps its character**:
+    IRC 1212(b)(1)(A) makes the excess short-term loss "a short-term capital
+    loss in the succeeding taxable year", (B) does the same for long-term. That
+    matters, because next year a long-term carryover hits long-term gains first
+    (Pub 550) and short-term losses are the ones that shelter ordinary-rate
+    short-term gains.
+
+    **THE SUBTLETY MOST CALLERS MISS — and it is not the one they expect.**
+    The Schedule D line 21 deduction is *not* reduced by taxable income; it
+    stays at $3,000 even when it drives taxable income below zero. What taxable
+    income limits is how much of the loss POOL the year consumes. The Capital
+    Loss Carryover Worksheet computes, at line 4, the lesser of (line 2) the
+    deduction and (line 3) taxable income plus that deduction — which is IRC
+    1212(b)(2)(A)'s "lesser of ... the amount allowed for the taxable year under
+    paragraph (1) or (2) of section 1211(b), or ... the adjusted taxable income
+    for such taxable year". A filer whose taxable income was $1,000 deducts
+    $3,000 and still only burns $1,000 of loss, so the carryover is $2,000
+    LARGER than the naive "loss minus $3,000". This op reports both numbers:
+    ``deduction`` and ``loss_absorbed``, with the gap named
+    ``deduction_not_absorbed``.
+
+    Inputs:
+
+    * ``short_term`` / ``long_term`` are this year's OWN net short- and
+      long-term results BEFORE any carryover — Schedule D lines 1a-5 and 8a-13
+      respectively, each as one signed number (a loss is negative). Any prior
+      carryover goes in ``short_term_carryover_in`` /
+      ``long_term_carryover_in`` as POSITIVE amounts, because that is how
+      Schedule D lines 6 and 14 are printed.
+    * ``taxable_income_before_capital_loss`` is taxable income with the
+      Schedule D line 21 deduction NOT yet subtracted. The worksheet's line 1 is
+      the filed Form 1040 line 15, so this op derives it as this figure minus
+      the deduction and prints it — taking it this way round keeps the
+      computation non-circular for a projection. Pass it NEGATIVE if deductions
+      already exceeded income: the worksheet explicitly wants that ("If the
+      amount would have been a loss if you could enter a negative number on
+      that line, enclose the amount in parentheses"), and Pub 550 agrees ("If
+      your deductions are more than your gross income for the tax year, use
+      your negative taxable income").
+    * ``following_years`` rolls the chain forward. Each entry is a mapping with
+      ``short_term``, ``long_term`` and ``taxable_income_before_capital_loss``,
+      optionally ``filing_status`` and ``year``; the carryovers are threaded in
+      automatically, so a caller never re-enters them and cannot lose the
+      character split. Years default to consecutive and must strictly increase.
+
+    ``year`` selects which Schedule D revision the work and citation quote and
+    therefore which Form 1040 line the deduction lands on (line 7 through 2024,
+    line 7a from 2025). Revisions 2022-2025 were read directly; the worksheet's
+    lines 1-13 are identical in all of them, so earlier years — whose numbering
+    was not verified — are refused.
+
+    ``knowledge_dir`` is accepted for signature parity with its neighbours but
+    is deliberately unused: the $3,000/$1,500 limitation is statutory and not
+    indexed, so this op reads no knowledge pack, per the P-005/P-006 discipline
+    that only figures belong in a year pack.
+    """
+    del knowledge_dir  # see the docstring: statutory figures, so no pack read
+    if year < _CAPITAL_LOSS_VERIFIED_REVISIONS[0]:
+        raise ValueError(
+            f"capital_loss_limitation does not support {year}: the Capital Loss Carryover Worksheet's "
+            f"line numbering was verified only against the {_CAPITAL_LOSS_VERIFIED_REVISIONS[0]}-"
+            f"{_CAPITAL_LOSS_NEWEST_VERIFIED} Schedule D instructions, and Schedule D line 21's "
+            f"destination on Form 1040 has already moved once inside that window. IRC 1211(b)'s "
+            f"$3,000/$1,500 has been the law for tax years beginning after December 31, 1986 (P.L. "
+            f"99-514 section 301(b)(10)), so an earlier year is computable by hand off that year's own "
+            f"instructions — pass a year from {_CAPITAL_LOSS_VERIFIED_REVISIONS[0]} onward"
+        )
+    st = irs_round(_to_decimal(short_term, "short_term"))
+    lt = irs_round(_to_decimal(long_term, "long_term"))
+    ti = irs_round(_to_decimal(taxable_income_before_capital_loss, "taxable_income_before_capital_loss"))
+    st_in = irs_round(_to_decimal(short_term_carryover_in, "short_term_carryover_in"))
+    lt_in = irs_round(_to_decimal(long_term_carryover_in, "long_term_carryover_in"))
+    for name, value in (("short_term_carryover_in", st_in), ("long_term_carryover_in", lt_in)):
+        if value < 0:
+            raise ValueError(
+                f"{name} must be >= 0, got {value} — Schedule D lines 6 and 14 print the carryover as a "
+                f"POSITIVE number inside parentheses and the form subtracts it. A prior-year capital GAIN "
+                f"does not carry forward at all; only losses do"
+            )
+    _resolve_filing_status(filing_status)  # validate early with the module's own message
+
+    rows: list[CapitalLossYear] = []
+    first = _capital_loss_one_year(year, filing_status, st, lt, ti, st_in, lt_in)
+    rows.append(first)
+
+    assumptions: list[str] = [
+        f"WORKSHEET LINE 1 WAS DERIVED, NOT GIVEN: taxable_income_before_capital_loss "
+        f"{_dollars(ti)} minus the Schedule D line 21 deduction {_dollars(first.deduction)} = "
+        f"{_dollars(first.taxable_income_after_deduction)}, which is what your filed Form 1040 line 15 "
+        f"should read. Tie the two together before relying on the carryover — if line 15 differs, the "
+        f"taxable income passed here was the wrong one and every carryover below moves."
+    ]
+
+    chain = list(following_years or [])
+    prev_year, prev_status = year, filing_status
+    st_next, lt_next = first.short_term_carryover_out, first.long_term_carryover_out
+    for i, entry in enumerate(chain):
+        if not isinstance(entry, Mapping):
+            raise ValueError(
+                f"following_years[{i}] must be a mapping, got {type(entry).__name__} — each entry is one "
+                f"later tax year: {{'short_term': ..., 'long_term': ..., "
+                f"'taxable_income_before_capital_loss': ..., 'filing_status'?: ..., 'year'?: ...}}"
+            )
+        unknown = sorted(set(entry) - set(_CAPITAL_LOSS_YEAR_KEYS))
+        if unknown:
+            raise ValueError(
+                f"following_years[{i}] has unknown key(s) {unknown} — allowed keys are "
+                f"{list(_CAPITAL_LOSS_YEAR_KEYS)}. The carryovers are threaded in automatically and must "
+                f"NOT be re-entered: passing them by hand is how the short/long character split gets lost"
+            )
+        missing = [k for k in ("short_term", "long_term", "taxable_income_before_capital_loss") if k not in entry]
+        if missing:
+            raise ValueError(
+                f"following_years[{i}] is missing {missing} — a chain year needs its own capital results "
+                f"and its own taxable income, or the worksheet's line 3 limit cannot be applied to it"
+            )
+        entry_year = entry.get("year", prev_year + 1)
+        if not isinstance(entry_year, int) or isinstance(entry_year, bool):
+            raise ValueError(f"following_years[{i}]['year'] must be an int, got {entry_year!r}")
+        if entry_year <= prev_year:
+            raise ValueError(
+                f"following_years[{i}]['year'] = {entry_year} must be LATER than the previous year "
+                f"{prev_year} — IRC 1212(b)(1) carries a loss to 'the succeeding taxable year', so the "
+                f"chain only runs forward"
+            )
+        entry_status = entry.get("filing_status", prev_status)
+        row = _capital_loss_one_year(
+            entry_year,
+            str(entry_status),
+            irs_round(_to_decimal(entry["short_term"], f"following_years[{i}]['short_term']")),
+            irs_round(_to_decimal(entry["long_term"], f"following_years[{i}]['long_term']")),
+            irs_round(_to_decimal(
+                entry["taxable_income_before_capital_loss"],
+                f"following_years[{i}]['taxable_income_before_capital_loss']",
+            )),
+            st_next,
+            lt_next,
+        )
+        rows.append(row)
+        if entry_year != prev_year + 1:
+            assumptions.append(
+                f"The chain SKIPS from {prev_year} to {entry_year}. IRC 1212(b)(1) carries a loss to 'the "
+                f"succeeding taxable year' and Pub 550 says the current year's allowable deduction counts "
+                f"'WHETHER OR NOT you claimed it and whether or not you filed a return for the current "
+                f"year' — so the skipped year(s) still consumed their share. Model every year, or treat "
+                f"this carryover as an upper bound."
+            )
+        if str(entry_status) != str(prev_status):
+            assumptions.append(
+                f"Filing status changes from {prev_status} to {entry_status} at {entry_year}, which "
+                f"changes the cap to {_dollars(row.deduction_cap)}. Pub 550: 'if you and your spouse once "
+                f"filed a joint return and are now filing separate returns, any capital loss carryover "
+                f"from the joint return can be deducted only on the return of the spouse who actually had "
+                f"the loss.' This op cannot tell whose loss it was — SPLIT the carryover yourself before "
+                f"a joint-to-separate year."
+            )
+        prev_year, prev_status = entry_year, str(entry_status)
+        st_next, lt_next = row.short_term_carryover_out, row.long_term_carryover_out
+
+    exhausted: int | None = None
+    for i, row in enumerate(rows, start=1):
+        if row.short_term_carryover_out == 0 and row.long_term_carryover_out == 0:
+            exhausted = i
+            break
+
+    if first.deduction_not_absorbed:
+        assumptions.append(
+            f"TAXABLE INCOME CAPPED WHAT THE LOSS BOUGHT: {_dollars(first.deduction)} was deducted on "
+            f"Schedule D line 21, but worksheet line 4 consumed only {_dollars(first.loss_absorbed)} of "
+            f"the pool, so {_dollars(first.deduction_not_absorbed)} of that deduction bought nothing and "
+            f"stays in the carryover. That is IRC 1212(b)(2)(A) working as written, not an error — but it "
+            f"means the filed Form 1040 shows a $3,000-scale deduction while the loss barely shrank."
+        )
+    if exhausted is None and (rows[-1].short_term_carryover_out or rows[-1].long_term_carryover_out):
+        assumptions.append(
+            f"The chain ENDS with {_dollars(rows[-1].short_term_carryover_out)} short-term and "
+            f"{_dollars(rows[-1].long_term_carryover_out)} long-term still unused after {rows[-1].year}. "
+            f"The carryover is indefinite (Pub 550: 'you can carry it over to later years until it is "
+            f"completely used up'), but it dies with the taxpayer — a decedent's loss 'can be deducted "
+            f"only on the final income tax return filed for the decedent' and the estate cannot carry it "
+            f"over."
+        )
+    assumptions.append(
+        "SECTION 151 ADD-BACK, disclosed because the printed worksheet and the statute do not say the "
+        "same thing. IRC 1212(b)(2)(B) defines adjusted taxable income as taxable income increased by "
+        "BOTH the 1211(b) amount AND 'the deduction allowed for such year under section 151 or any "
+        "deduction in lieu thereof'; the worksheet's line 3 adds back only the first, because IRC "
+        "151(d)(5)(A) makes the exemption amount zero for tax years beginning after 2017. This op "
+        "reproduces the WORKSHEET. One live divergence: P.L. 119-21 added IRC 151(d)(5)(C)'s $6,000 "
+        "senior deduction for tax years beginning before 2029 — a deduction allowed under section 151 "
+        "that the printed worksheet does NOT add back. It can only matter to a filer whose taxable "
+        "income is near zero, and following the worksheet there gives the LARGER carryover."
+    )
+
+    net = first.net_capital
+    if net >= 0:
+        headline = (
+            f"Schedule D line 16 is {_dollars(net)}, NOT a loss, so IRC 1211(b) never bites: there is no "
+            f"line 21 deduction and nothing carries forward. "
+            + (
+                f"Line 7 {_dollars(first.net_short_term)} and line 15 {_dollars(first.net_long_term)} "
+                f"still had to be netted separately first (IRC 1222) — that is what decides how much of "
+                f"the gain reaches the preferential rates: net capital gain is the excess of the net "
+                f"LONG-term gain over the net SHORT-term loss (IRC 1222(11))."
+            )
+        )
+    else:
+        headline = (
+            f"Schedule D line 16 = line 7 {_dollars(first.net_short_term)} + line 15 "
+            f"{_dollars(first.net_long_term)} = {_dollars(net)}, a net loss. IRC 1211(b) allows losses "
+            f"'only to the extent of the gains ... plus (if such losses exceed such gains) the lower of- "
+            f"(1) $3,000 ($1,500 in the case of a married individual filing a separate return), or (2) "
+            f"the excess of such losses over such gains', so line 21 = the smaller of {_dollars(-net)} "
+            f"and {_dollars(first.deduction_cap)} = {_dollars(first.deduction)}, entered in parentheses "
+            f"and carried to Form 1040 line {_capital_loss_1040_line(year)}."
+        )
+
+    work_lines = [
+        f"IRC 1211(b) / 1212(b), tax year {year} ({filing_status}):",
+        f"NET SEPARATELY, THEN AGAINST EACH OTHER. Short-term: {_dollars(st)} this year - line 6 "
+        f"carryover {_dollars(st_in)} = line 7 {_dollars(first.net_short_term)}. Long-term: "
+        f"{_dollars(lt)} - line 14 carryover {_dollars(lt_in)} = line 15 "
+        f"{_dollars(first.net_long_term)}.",
+        headline,
+    ]
+    if net < 0:
+        work_lines.append(
+            f"CAPITAL LOSS CARRYOVER WORKSHEET (Schedule D instructions, 'Lines 6 and 14'): line 1 Form "
+            f"1040 line 15 {_dollars(first.taxable_income_after_deduction)}; line 2 the line 21 loss as a "
+            f"positive {_dollars(first.deduction)}; line 3 = 1 + 2 floored at zero = "
+            f"{_dollars(max(0, ti))}; line 4 = smaller of 2 and 3 = {_dollars(first.loss_absorbed)}. Line "
+            f"4 is IRC 1212(b)(2)(A)'s 'lesser of ... the amount allowed ... under section 1211(b), or "
+            f"... the adjusted taxable income', and it is the ONLY place taxable income enters: it does "
+            f"not shrink the deduction, it shrinks how much of the loss the deduction actually uses up."
+            + (
+                f" Here it bit: {_dollars(first.deduction)} was deducted but only "
+                f"{_dollars(first.loss_absorbed)} of the pool was consumed."
+                if first.deduction_not_absorbed else
+                " Here taxable income was ample, so line 4 equals line 2 and the full deduction consumed "
+                "an equal amount of loss."
+            )
+        )
+        work_lines.append(
+            f"SHORT-TERM FIRST, THEN LONG (Pub 550: 'Use short-term losses first ... even if you incurred "
+            f"them after a long-term capital loss'): line 5 short-term loss "
+            f"{_dollars(-first.net_short_term if first.net_short_term < 0 else 0)}"
+            f", line 6 any long-term GAIN, line 7 = 4 + 6, line 8 SHORT-term carryover = "
+            f"{_dollars(first.short_term_carryover_out)}. Then line 9 long-term loss, line 10 any "
+            f"short-term gain, line 11 = 4 - 5 floored at zero (only the part of the deemed short-term "
+            f"gain the short-term loss did not use), line 12 = 10 + 11, line 13 LONG-term carryover = "
+            f"{_dollars(first.long_term_carryover_out)}."
+        )
+        work_lines.append(
+            f"CHARACTER SURVIVES: IRC 1212(b)(1) makes the excess short-term loss 'a short-term capital "
+            f"loss in the succeeding taxable year' and the excess long-term loss a long-term one, so "
+            f"{_dollars(first.short_term_carryover_out)} goes on next year's Schedule D line 6 and "
+            f"{_dollars(first.long_term_carryover_out)} on line 14 — never merged. Pub 550: 'A long-term "
+            f"capital loss you carry over to the next tax year will reduce that year's long-term capital "
+            f"gains before it reduces that year's short-term capital gains.'"
+        )
+    if len(rows) > 1:
+        chain_bits = "; ".join(
+            f"{r.year}: line 16 {_dollars(r.net_capital)}, deducted {_dollars(r.deduction)}, out "
+            f"{_dollars(r.short_term_carryover_out)} ST / {_dollars(r.long_term_carryover_out)} LT"
+            for r in rows
+        )
+        work_lines.append(f"CHAIN ({len(rows)} years): {chain_bits}.")
+        work_lines.append(
+            f"After {rows[-1].year}: {_dollars(rows[-1].short_term_carryover_out)} short-term and "
+            f"{_dollars(rows[-1].long_term_carryover_out)} long-term remain."
+            + (f" The loss was fully used up in modelled year {exhausted} ({rows[exhausted - 1].year})."
+               if exhausted is not None else
+               " Nothing in IRC 1212(b) expires it — it keeps rolling until it is used.")
+        )
+    work_lines.append(
+        "NOT MODELED: section 1256 contracts and their 1212(c) three-year CARRYBACK (the one capital-loss "
+        "carryback an individual can have); wash sales (IRC 1091), which can turn a realised loss into "
+        "nothing at all before this computation ever starts; section 1244 small-business stock, which is "
+        "ORDINARY loss up to its own limit and never reaches line 16; collectibles and unrecaptured "
+        "section 1250 gain, which need the Schedule D Tax Worksheet rather than the Qualified Dividends "
+        "and Capital Gain Tax Worksheet; and state capital-loss rules, several of which cap or disallow "
+        "the federal carryover."
+    )
+
+    inputs: dict[str, Any] = {
+        "short_term": st,
+        "long_term": lt,
+        "taxable_income_before_capital_loss": ti,
+        "filing_status": filing_status,
+        "year": year,
+        "short_term_carryover_in": st_in,
+        "long_term_carryover_in": lt_in,
+        "following_years_count": len(chain),
+    }
+    form_citation = _schedule_d_citation(year)
+    return CapitalLossLimitationResult(
+        deduction=first.deduction,
+        deduction_cap=first.deduction_cap,
+        net_short_term=first.net_short_term,
+        net_long_term=first.net_long_term,
+        net_capital=first.net_capital,
+        short_term_carryover=first.short_term_carryover_out,
+        long_term_carryover=first.long_term_carryover_out,
+        total_carryover=first.short_term_carryover_out + first.long_term_carryover_out,
+        loss_absorbed=first.loss_absorbed,
+        deduction_not_absorbed=first.deduction_not_absorbed,
+        years=rows,
+        final_short_term_carryover=rows[-1].short_term_carryover_out,
+        final_long_term_carryover=rows[-1].long_term_carryover_out,
+        years_modeled=len(rows),
+        years_to_exhaust=exhausted,
+        input_assumptions=assumptions,
+        worksheet_lines=first.worksheet_lines,
+        schedule_d_lines=first.schedule_d_lines,
+        inputs=inputs,
+        work="\n".join(work_lines),
+        citation=_IRC_1211_B_CITATION,
+        citations=[
+            _IRC_1211_B_CITATION, _IRC_1212_B_CITATION, _IRC_1222_CITATION, form_citation,
+            _PUB550_CARRYOVER_CITATION, _IRC_151_D5_CITATION,
+        ],
+    )
 
 
 # ---------------------------------------------------------------------------

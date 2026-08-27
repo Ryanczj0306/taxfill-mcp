@@ -23,8 +23,10 @@ def test_list_all_packs():
     # basis across years, landed with the ira_pro_rata/roth_conversion ops) = 96,
     # + f8889 x 2023/2024/2025 (Phase I2, 2026-08-26 — HSAs, landed with the
     # hsa_deduction op and the 1099-SA/5498-SA DocSpecs) = 99,
+    # + f8949 x 2023/2024/2025 (Phase I3, 2026-08-26 — Schedule D's DETAIL form,
+    # without which a filer with stock sales could not assemble a return) = 102,
     # plus the state packs, pinned separately below.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 99
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 102
 
     # State packs. 42 for TY2023 (the C1 resident sweep: 38 states/DC with an
     # AcroForm pack — CA ships 4 — while HI/CT/NM/SC are hand-fill worksheets
@@ -43,7 +45,7 @@ def test_list_all_packs():
     assert len([s for s in states if s.tax_year == 2025]) == 5
     # Every discovered pack is one or the other, so the total is the sum. This
     # catches a pack landing under a third top-level jurisdiction unnoticed.
-    assert len(allf) == 99 + 61 == 160
+    assert len(allf) == 102 + 61 == 163
 
 
 def test_list_filters_by_jurisdiction_and_year():

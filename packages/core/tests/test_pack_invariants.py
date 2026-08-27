@@ -18,7 +18,7 @@ checked by either one**, and three real defects shipped past CI because of it:
    the three ``ny/*/it203`` packs spell them with ``_``. Even widening the
    glob alone would have left those pairs invisible.
 
-So this file sweeps **every** discovered pack, federal and state (160 today),
+So this file sweeps **every** discovered pack, federal and state (163 today),
 in the same way ``test_readonly_widget_mapping.py`` does. The helpers it needs
 stay in ``test_formpacks_federal.py``; the invariants themselves live here
 because they are repo-wide, and a federal-named module reporting a Wisconsin
@@ -888,6 +888,17 @@ def _discovered_mirrors(pack: FormPack) -> tuple[list[tuple[str, str]], list[str
 # that DROPPING a mirror fails — which is the direction the defect actually took:
 # ri/2023 and ri/2024 each shipped 0 of their 12 for months.
 IDENTITY_MIRROR_COUNTS: dict[str, int] = {
+    # Form 8949's page-2 header prints "Name(s) shown on return. Name and SSN or
+    # taxpayer identification no. not required if shown on other side" over its
+    # OWN AcroForm fields (Page2[0].f2_1[0]/f2_2[0]). The escape clause is "if
+    # shown on other side", and the instructions make a Part-II-only filing
+    # correct ("complete and file either Part I or II"), so that filing has no
+    # other side and the page-2 header is the only place the identity appears.
+    "federal/2023/f8949/pack.yaml": 2,
+    "federal/2024/f8949/pack.yaml": 2,
+    # 2025 binds the renamed page-2 widgets (Page2[0].f2_01[0]/f2_02[0]); the
+    # header text, the escape clause and the count are all unchanged.
+    "federal/2025/f8949/pack.yaml": 2,
     "federal/2023/sched_e/pack.yaml": 2,
     "federal/2024/sched_e/pack.yaml": 2,
     "federal/2025/sched_e/pack.yaml": 2,

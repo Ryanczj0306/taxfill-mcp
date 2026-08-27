@@ -45,6 +45,8 @@ from taxfill_core import (
     contribution_limits as _contribution_limits,
     ira_contribution_eligibility as _ira_contribution_eligibility,
     hsa_deduction as _hsa_deduction,
+    espp_disposition as _espp_disposition,
+    capital_loss_limitation as _capital_loss_limitation,
     ira_pro_rata as _ira_pro_rata,
     roth_conversion as _roth_conversion,
     magi_ladder as _magi_ladder,
@@ -297,7 +299,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
     contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
-    ira_pro_rata, roth_conversion, hsa_deduction, state_tax}; every result shows its work and cites the data pack.
+    ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
+    state_tax}; every result shows its work and cites the data pack.
 
     A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
     authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
@@ -478,6 +481,55 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       distributions (1099-SA box 1) and their 20% additional tax and Part III recapture are modelled;
       pass wages to get the payroll-vs-direct FICA half, where above the SS wage base the saving is
       1.45%, or 2.35% over $200k — never 7.65%)
+    - espp_disposition: args {shares, grant_date, purchase_date, sale_date, grant_date_fmv_per_share,
+      purchase_date_fmv_per_share, purchase_price_per_share, sale_price_per_share,
+      grant_date_exercise_price_per_share?, broker_reported_basis?, broker_reported_basis_to_irs?,
+      selling_expenses?, employed_through_exercise?} (ONE lot of section 423 ESPP stock, sold —
+      Form 3922 boxes 1-8 in, the Form 8949 row out. THE TWO DISPOSITIONS ARE TAXED COMPLETELY
+      DIFFERENTLY and conflating them is the point of the op. QUALIFYING (sold MORE than 2 years
+      after grant AND more than 1 year after purchase, IRC 423(a)(1)): ordinary income is the LESSER
+      of the discount measured on the GRANT-date price (423(c)(2)) and the actual gain (423(c)(1)) —
+      so a sale at a LOSS recognises ZERO ordinary income. DISQUALIFYING (anything else, same-day
+      sale included): ordinary income is the FULL spread at purchase, exercise-date FMV minus the
+      price paid, REGARDLESS of the sale price — Pub 525, 'This ordinary income isn't limited to your
+      gain from the sale of the stock' — so a filer who sold below the purchase-date FMV still
+      recognises it and takes a capital LOSS on top. THE BASIS CORRECTION IS THE HIGHEST-DOLLAR PART:
+      the 1099-B reports box 1e as the DISCOUNTED PURCHASE PRICE ONLY (Instructions for Form 8949,
+      'For compensatory options granted after 2013, the basis information reported to you ... won't
+      reflect any amount you included in income'), so a filer who trusts it pays tax on the discount
+      TWICE. The op returns the corrected basis (price paid + ordinary income), the adjustment, and
+      the exact Form 8949 row: CODE B in column (f), with the wrong basis left in column (e) and the
+      correction in column (g) as a negative when the basis WAS reported to the IRS (box A/D), or the
+      correct basis straight into column (e) with -0- in (g) when it was not (box B/E). THE LOOKBACK:
+      under a lookback the price paid is the discount off the LOWER of the two FMVs, but 423(c)(2) is
+      computed on the GRANT-date price — Form 3922 BOX 8, a different number whenever the stock fell.
+      Pass grant_date_exercise_price_per_share whenever box 8 is filled in; a price below 85% of the
+      grant-date FMV with no box 8 is REFUSED, because only a lookback can produce it. Nothing is
+      withheld on any of this income (IRC 423(c) and 421(b) both say so, and IRC 3121(a)(22) keeps it
+      out of FICA) — plan the cash. NOT modelled and named in `not_modeled`: ISO/AMT (Form 3921,
+      Form 6251 line 2i, and 422(c)(2)'s realised-gain cap that section 423 has no counterpart for),
+      section 83(b), RSU vesting, wash sales, state tax, multiple lots)
+    - capital_loss_limitation: args {short_term, long_term, taxable_income_before_capital_loss,
+      filing_status?, year?, short_term_carryover_in?, long_term_carryover_in?, following_years?}
+      (IRC 1211(b)/1212(b) and the Schedule D Capital Loss Carryover Worksheet. Short and long are
+      netted SEPARATELY first (lines 7 and 15, IRC 1222) and only then against each other (line 16);
+      a net loss is deductible against ordinary income only up to $3,000 ($1,500 MFS), statutory and
+      NOT indexed; everything left carries forward INDEFINITELY and KEEPS ITS CHARACTER — a
+      short-term carryover stays short-term (1212(b)(1)(A)) and lands on next year's Schedule D line
+      6, a long-term one on line 14. THE SUBTLETY THAT IS NOT THE ONE CALLERS EXPECT: taxable income
+      does NOT shrink the $3,000 deduction, it shrinks how much of the LOSS POOL the year consumes.
+      Worksheet line 4 = min(the deduction, taxable income + the deduction) is IRC 1212(b)(2)(A)'s
+      lesser-of, so a filer with $1,000 of taxable income deducts $3,000 and still burns only $1,000
+      — the carryover is $2,000 LARGER than 'loss minus $3,000'. Read `loss_absorbed` and
+      `deduction_not_absorbed`, not just `deduction`. Pass taxable_income_before_capital_loss WITHOUT
+      the line 21 deduction subtracted (negative is fine and the worksheet wants it that way); the op
+      derives worksheet line 1 and prints it so you can tie it to the filed Form 1040 line 15. Prior
+      carryovers go in short_term_carryover_in / long_term_carryover_in as POSITIVE amounts, the way
+      Schedule D lines 6 and 14 are printed. `following_years` rolls the chain forward one mapping
+      per later year ({short_term, long_term, taxable_income_before_capital_loss, filing_status?,
+      year?}) and THREADS THE CARRYOVERS ITSELF — re-entering them by hand is how the character split
+      gets lost, so unknown keys are refused. NOT modelled: wash sales, section 1256 and its 1212(c)
+      carryback, section 1244 ordinary loss, collectibles/unrecaptured 1250, and state rules)
     - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
       (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
       2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
@@ -552,6 +604,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_roth_conversion(**args)), args)
     if op == "hsa_deduction":
         return _stamp_provisional(_dump(_hsa_deduction(**args)), args)
+    if op == "espp_disposition":
+        return _stamp_provisional(_dump(_espp_disposition(**args)), args)
+    if op == "capital_loss_limitation":
+        return _stamp_provisional(_dump(_capital_loss_limitation(**args)), args)
     if op == "state_tax":
         return _stamp_provisional(_dump(_state_tax(**args)), args)
     raise ValueError(
@@ -561,7 +617,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
         f"employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, "
         f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, "
-        f"roth_conversion, hsa_deduction, state_tax"
+        f"roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, state_tax"
     )
 
 

@@ -37,6 +37,20 @@ employer money AND cafeteria-plan payroll deferrals, already out of box 1 — it
 `employer_contributions` and REDUCES the deduction; deducting it again is the classic error. A
 general-purpose health FSA, including the SPOUSE's (Rev. Rul. 2004-45), disqualifies you.
 
+**Equity comp:** `calc("espp_disposition", …)` turns Form 3922 boxes 1-8 into the Form 8949 row. A
+QUALIFYING disposition (more than 2 years after grant AND more than 1 year after purchase) recognises
+the LESSER of the GRANT-date discount and the actual gain — zero ordinary income on a sale at a loss;
+a DISQUALIFYING one recognises the FULL purchase-date spread regardless of the sale price. The
+1099-B reports only the discounted purchase price, so the correct basis is that plus the ordinary
+income and the op returns the code-B adjustment that stops the discount being taxed twice. Under a
+lookback the qualifying income uses Form 3922 BOX 8, not box 5. Nothing is withheld on it.
+
+**Capital losses:** `calc("capital_loss_limitation", …)` is IRC 1211(b)/1212(b) and Schedule D's
+Capital Loss Carryover Worksheet — the $3,000/$1,500 cap plus an indefinite carryover that KEEPS its
+short/long character. Taxable income limits how much of the loss the year consumes, not the
+deduction, so a low-income year carries MORE forward. `following_years` rolls the chain and threads
+the carryovers for you.
+
 **State returns** use the same pipeline with `jurisdiction="states/<xx>"`. All 42
 income-tax jurisdictions (41 states + DC) ship a resident return pack — 38 as
 fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC) via

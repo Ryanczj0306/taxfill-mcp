@@ -1,0 +1,1455 @@
+# Form 8949 (2025 revision) — Sales and Other Dispositions of Capital Assets.
+# TWO pages; ATTACHMENT-ONLY: the masthead prints "File with your Schedule D to
+# list your transactions for lines 1b, 2, 3, 8b, 9, and 10 of Schedule D."
+# Schedule D is the SUMMARY; this is the DETAIL form that carries every
+# transaction, and without it sched_d's 1b/2/3 and 8b/9/10 rows have nothing to
+# be totals OF.
+#
+# PORTED 2026-08-26 from formpacks/federal/2023/f8949/pack.yaml (that pack's own
+# banner says it was authored from scratch against f8949--2023.pdf). House-style
+# precedent for the port discipline: formpacks/federal/2025/f8606/pack.yaml
+# (Phase I1, 4d51a07) and formpacks/federal/2025/f8889/pack.yaml (Phase I2,
+# ad2d32f); for the form's own conventions, this pack's parent
+# formpacks/federal/2025/sched_d/pack.yaml.
+#
+# ###########################################################################
+# THE PORT IS A FULL RE-MAP, NOT A URL SWAP — AND THE FORM ITSELF CHANGED.
+# Read this block before you touch a binding.
+# ###########################################################################
+# THREE independent changes, each of which alone would break a name-preserving
+# port, and all three landing in the 2025 revision at once:
+#   1. SIX BOXES PER PART, not three. The 1099-DA digital-asset boxes arrived:
+#      Part I now prints (A) (B) (C) (G) (H) (I) and Part II (D) (E) (F) (J)
+#      (K) (L). Twelve /Btn widgets, not six; on-states run /1../6 per part.
+#   2. ELEVEN TRANSACTION ROWS PER PART, not fourteen. The table gave up three
+#      24pt bands to the text that grew around it: three extra printed box
+#      rows (+36pt), the Part Note gaining a line, and the printed line-2
+#      Totals text gaining a line. Measured on page 1: 14 bands spanning PDF y
+#      444-108 became 11 spanning y 396-132. `<part>.1.row12/13/14.<col>` DO
+#      NOT EXIST in this pack — 42 widgets fewer than 2023 (244 -> 202).
+#   3. EVERY TRANSACTION CELL WAS RENAMED. The table subform split by part
+#      (`Table_Line1[0]` -> `Table_Line1_Part1[0]` on page 1 and
+#      `Table_Line1_Part2[0]` on page 2) and every single-digit leaf was
+#      zero-padded (f1_1 -> f1_01, f1_3 -> f1_03, ... f2_9 -> f2_09).
+# Consequence, stated because it is the failure a porter would actually ship:
+# of the 244 fully-qualified 2023 names, SIX survive into 2025 (the six
+# original checkboxes) and 238 do not. Every binding below was re-derived by
+# READING THE PRINTED FACE off a sentinel render (see the VISION AUDIT block).
+#
+# ---------------------------------------------------------------------------
+# PROVENANCE — revision identity read off the RENDER, not the URL
+# ---------------------------------------------------------------------------
+# Blank fetched with taxfill_core.fetch.fetch_blank(source_url) into the shared
+# cache (.cache/blanks/6cf78bdd7659_f8949--2025.pdf, 128,770 bytes, 2 pages).
+# BOTH pages were rendered at 200 dpi and READ (freshness protocol, dev plan §7).
+# Printed verbatim, top of page 1:
+#   "Form 8949"  /  "Sales and Other Dispositions of Capital Assets"
+#   "File with your Schedule D to list your transactions for lines 1b, 2, 3, 8b,
+#    9, and 10 of Schedule D."
+#   "Go to www.irs.gov/Form8949 for instructions and the latest information."
+#   "OMB No. 1545-0074"   "2025"   "Attachment Sequence No. 12A"
+# Page 1 footer: "For Paperwork Reduction Act Notice, see your tax return
+# instructions."  "Cat. No. 37768Z"  "Form 8949 (2025) Created 5/5/25" (the
+# 2023 revision's footer carries no "Created" stamp; the Cat. No. is unchanged).
+# Page 2 header: "Form 8949 (2025)  Attachment Sequence No. 12A  Page 2";
+# page 2 footer: "Form 8949 (2025)".
+# => this IS the TY2025 revision. sha256 computed two ways and identical
+# (taxfill_core.fetch.compute_sha256() and `shasum -a 256`):
+#   274513891e4e281d11e14286f14b9df724c24b6030fca0f0681da64fb2e7f525
+# pdfinfo reports Title "2025 Form 8949", Subject "Sales and Other Dispositions
+# of Capital Assets", Form: XFA, JavaScript: yes — and per
+# formpacks/CONVENTIONS.md that JS flag says NOTHING about whether the form
+# computes. Measured rather than assumed, and byte-for-byte the same answer as
+# 2023: the document's /Names /JavaScript tree holds exactly THREE entries and
+# all three are Adobe viewer-version boilerplate (!ADBE::0100_VersChkStrings,
+# !ADBE::0100_VersChkVars, !ADBE::0200_VersChkCode_XFACheck); NO widget carries
+# an /AA action; the AcroForm dictionary's keys are exactly /DA /DR /Fields
+# /SigFlags /XFA — no /CO, no /NeedAppearances. So nothing on this form computes
+# anything, which also means no P-007 class-4 ("the FORM owns the value")
+# binding can exist here, and the two page-2 identity mirrors below really do
+# ship blank unless a caller writes them.
+#
+# ---------------------------------------------------------------------------
+# MECHANICAL TOPOLOGY DIFF vs f8949--2023.pdf (FIELD level, walking /Parent)
+# ---------------------------------------------------------------------------
+# 244 widgets in 2023 (122 + 122), 202 in 2025 (101 + 101). Per 2025 page:
+#     2 header text (name, SSN)         2023: 2
+#     6 /Btn boxes                      2023: 3
+#    88 transaction cells (11 x 8)      2023: 112 (14 x 8)
+#     5 Totals-row cells (d)(e)(f)(g)(h) 2023: 5
+#   ---
+#   101                                 2023: 122
+# By type: 190 /Tx + 12 /Btn (2023: 238 /Tx + 6 /Btn).
+#
+# THE INTERVENING REVISION WAS DIFFED TOO, so "2025 change" is a measurement and
+# not an assumption: f8949--2024.pdf (sha256
+# dcd2d7ff6833485038aa34946d9a91b7d5adf639677116b57f143677a85a3b51) carries the
+# 2023 shape EXACTLY — 244 widgets, 122 per page, ZERO names added and ZERO
+# removed against 2023, the identical /Ff histogram {8388608: 206, 8392704: 28,
+# absent: 8, 8388609: 2}, the same two ReadOnly widgets (f1_117[0], f2_117[0]),
+# the same three-box-per-part /Btn set with on-states /1 /2 /3, and no /MaxLen
+# change anywhere. Its only geometry difference from 2023 is a 0.3pt nudge on
+# the six checkbox /Rects, and its only printed difference is the year strings
+# plus two leader-dot runs. So all three changes above are 2025's, not carried
+# 2024 debt.
+#
+# NAMES REMOVED (238 of 244 — every text widget):
+#   * the 224 transaction cells, because the table subform was renamed:
+#       Page1[0].Table_Line1[0].RowN[0].f1_*   (N = 1..14)
+#       Page2[0].Table_Line1[0].RowN[0].f2_*   (N = 1..14)
+#   * the 4 header text boxes  Page1[0].f1_1[0] f1_2[0], Page2[0].f2_1[0] f2_2[0]
+#   * the 10 Totals cells      Page1[0].f1_115[0]..f1_119[0], Page2[0].f2_115..119
+# NAMES ADDED (196):
+#   * 176 transaction cells    Page{1,2}[0].Table_Line1_Part{1,2}[0].RowN[0].f*
+#                              (N = 1..11, leaves f*_03..f*_90)
+#   * 4 header text boxes      Page1[0].f1_01[0] f1_02[0], Page2[0].f2_01[0] f2_02[0]
+#   * 10 Totals cells          Page1[0].f1_91[0]..f1_95[0], Page2[0].f2_91..95
+#   * 6 NEW /Btn               Page1[0].c1_1[3] [4] [5], Page2[0].c2_1[3] [4] [5]
+#
+# SURVIVING NAMES (6) — Page1[0].c1_1[0] [1] [2] and Page2[0].c2_1[0] [1] [2].
+# Their BINDING did NOT move: /1 is still printed box (A) on page 1 and (D) on
+# page 2, /2 is (B)/(E), /3 is (C)/(F). That was not inferred from the index —
+# each of the twelve on-states was rendered ALONE at 200 dpi and read (see the
+# VISION AUDIT). All six carry no /Ff in either year, no /MaxLen in either
+# year, and the same /AP /N single-state + /AP /D {state, /Off} shape. All six
+# /Rects drifted DOWN by 12.2-12.3pt (e.g. c1_1[0] y 542.5-550.5 ->
+# 530.2-538.2), and that number decomposes exactly: the 2024 revision had
+# already nudged each box 0.2-0.3pt, and 2024 -> 2025 is a clean 12.0pt on all
+# six — one printed text line, which is the Part-heading Note growing from
+# THREE printed lines to FOUR when "and Form(s) 1099-DA" was inserted into it
+# (same on both pages). So rect drift on the survivors tells you nothing about
+# meaning, and the render is what settles it.
+#
+# THE ROW-INDEX SHIFT, checked ROW BY ROW because that is this form's specific
+# trap (a repeating table can move every row while every name stays put):
+#   * 2023 page-1 column-(a) bands, top to bottom (PDF y): 444-420, 420-396,
+#     396-372, 372-348, 348-324, 324-300, 300-276, 276-252, 252-228, 228-204,
+#     204-180, 180-156, 156-132, 132-108  — FOURTEEN 24pt bands.
+#   * 2025 page-1 bands: 396-372, 372-348, 348-324, 324-300, 300-276, 276-252,
+#     252-228, 228-204, 204-180, 180-156, 156-132 — ELEVEN 24pt bands.
+#   * So 2025 Row1 occupies the band that was 2023's Row3, 2025 Row2 was Row4,
+#     ... 2025 Row11 was Row13. A GEOMETRIC port (match widgets by /Rect) would
+#     have shifted every row index by exactly TWO on both pages — page 2 shows
+#     the identical two-row shift (2025 Row1 432-408 = 2023 Row3 432-408).
+#     Nothing in the flag or MaxLen diff shows that; only the row-band table
+#     does. The pack binds by NAME, and the names moved too, so neither shortcut
+#     survives — which is why every row was re-read on the render.
+#   * The Totals row moved with them: page-1 Totals y 60-72 (2023) -> 72-84
+#     (2025); page-2 Totals y 96-108 -> 108-120.
+#
+# SURVIVING LEAF NUMBERS WHOSE MEANING MOVED — the trap a "the leaves are still
+# f1_51..f1_58, just re-parent them" port would ship. Comparing by LEAF number
+# (page, f<p>_<n>) rather than by qualified name, 190 of the 2025 text widgets
+# have a 2023 counterpart; 180 keep their (row, column) role and TEN do not:
+#   f1_91[0]  row 12 col (a)  ->  Totals col (d)   [/Ff 8392704 -> 8388608]
+#   f1_92[0]  row 12 col (b)  ->  Totals col (e)
+#   f1_93[0]  row 12 col (c)  ->  Totals col (f)   [/Ff 8388608 -> 8388609,
+#                                                   i.e. ReadOnly ACQUIRED]
+#   f1_94[0]  row 12 col (d)  ->  Totals col (g)
+#   f1_95[0]  row 12 col (e)  ->  Totals col (h)
+#   (those five are Part I; f2_91[0]..f2_95[0] make the identical five moves on
+#   Part II, /Ff changes included)
+# A leaf-preserving port would therefore have written a transaction's
+# DESCRIPTION and DATES into the Totals row's proceeds and basis cells. Only
+# ONE of the ten (f*_93, which acquires the ReadOnly bit) would have tripped a
+# gate; the other eight would have shipped silently. All 180 unchanged-role
+# leaves ALSO rect-drifted (180 of 180 — not one /Rect is byte-identical across
+# the two years), so /Rect equality could not have been used as a tie-break
+# either.
+# LEAF NUMBERS GONE (48, 24 per page): f*_96 .. f*_119 — rows 12/13/14 and the
+# old Totals block. LEAF NUMBERS NEW: none; 2025's highest leaf is f*_95.
+#
+# FLAG / MaxLen / checkbox-state DIFFS at field level:
+#   * /Ff histogram 2023 {8388608: 206, 8392704: 28, absent: 8, 8388609: 2}
+#     ->  2025 {8388608: 164, 8392704: 22, absent: 14, 8388609: 2}.
+#     Every movement is accounted for by the shape change: 22 = 11 multiline
+#     column-(a) cells per page (was 28 = 14); absent 14 = 2 SSN boxes + 12 /Btn
+#     (was 8 = 2 + 6); 8388609 (DoNotScroll|ReadOnly) is still exactly TWO.
+#   * /MaxLen: exactly two widgets carry one in each year, and it is 11 in both
+#     — the two SSN boxes (f1_2/f2_2 in 2023, f1_02/f2_02 in 2025). No comb bit
+#     is set anywhere in either year.
+#   * checkbox /AP: every one of the twelve 2025 /Btn widgets has a single /AP
+#     /N state and an /AP /D holding {that state, /Off} — the f8606/f8889 shape,
+#     unchanged from 2023. The six new boxes use /4 /5 /6.
+#
+# ---------------------------------------------------------------------------
+# PRINTED FACE CHANGES that are NOT field topology (each re-read line by line)
+# ---------------------------------------------------------------------------
+# 1. THE SIX NEW BOXES, and they are not cosmetic — they REDEFINE two old ones.
+#    Instructions for Form 8949 (2025), What's New, p. 1: "New boxes G, H, and
+#    I for short-term digital asset transactions. Use box G, H, or I to report
+#    short-term digital asset transactions. Do not use box C to report
+#    short-term digital asset transactions. Boxes G, H, and I will apply to
+#    Part I of Form 8949." and, for Part II, "New boxes J, K, and L for
+#    long-term digital asset transactions ... Do not use box F to report
+#    long-term digital asset transactions."  So a digital-asset sale that was
+#    correctly a BOX C transaction on the 2023 form is a BOX I transaction on
+#    the 2025 form. The printed face says the same: 2023's "(C) Short-term
+#    transactions not reported to you on Form 1099-B" now reads "(C) Short-term
+#    transactions, OTHER THAN DIGITAL ASSET TRANSACTIONS, not reported to you on
+#    Form 1099-B or Form 1099-DA" (and (F) likewise). This is the one change on
+#    this form that can put a correct 2023 answer on the wrong 2025 line.
+# 2. The Totals row's Schedule D routing text widened to letter PAIRS:
+#    "line 1b (if Box A or Box G above is checked), line 2 (if Box B or Box H
+#    above is checked), or line 3 (if Box C or Box I above is checked)" on page
+#    1, and 8b/9/10 with D-or-J / E-or-K / F-or-L on page 2. formpacks/federal/
+#    2025/sched_d/pack.yaml records the mirror image of this from Schedule D's
+#    own face, so the two packs agree.
+# 3. The page-1 Note under the table now reads "If you checked Box A OR BOX G
+#    above but the basis reported to the IRS was incorrect ..." (page 2: "Box D
+#    or Box J"), which is what routes an incorrect-basis correction into column
+#    (g) rather than column (e) — see the worked example below.
+# 4. The aggregation Note in each Part widened to "reported on Form(s) 1099-B
+#    AND FORM(S) 1099-DA showing basis was reported to the IRS", and the
+#    pre-Part paragraph to "Before you check Box A, B, C, G, H, or I below, see
+#    whether you received any Form(s) 1099-B, Form(s) 1099-DA, or substitute
+#    statement(s) from your broker."
+# 5. Pure wording: "(B) ... showing basis WASN'T reported" -> "WAS NOT
+#    reported" (and (E) likewise). No line was renumbered, added or dropped:
+#    printed lines are still just 1 and 2 on each page, and the eight printed
+#    column captions (a)..(h) are word-for-word the 2023 captions.
+# 6. NOT a change, checked because a porter would assume it: the column-(a)
+#    box still ends at x 172.1 on all page-1 rows and x 172.8 on all page-2
+#    rows — the same 0.7pt page-to-page authoring artifact the 2023 pack
+#    measured, still with no effect on any binding.
+#
+# ---------------------------------------------------------------------------
+# THE ROW-KEY CONVENTION — what makes this pack different, and how to address it
+# ---------------------------------------------------------------------------
+# Form 8949 is a REPEATING-ROW form. Each Part is one printed line 1 holding
+# ELEVEN transaction rows of eight columns, plus a printed line 2 "Totals" row.
+# The AcroForm agrees exactly: Page<P>[0].Table_Line1_Part<P>[0].Row1[0] ..
+# Row11[0], eight widgets each, then five page-level totals widgets.
+#
+#   <part>.<printed line>.<row>.<column>      e.g.  short_term.1.row01.d
+#   <part>.<printed line>.<column>            e.g.  short_term.2.d   (Totals)
+#   <part>.box.<printed box letter>           e.g.  short_term.box.a
+#
+# Each segment, and why it is spelled that way:
+#
+# * <part> = `short_term` | `long_term`. A part namespace is FORCED, not
+#   stylistic: page 1 and page 2 print the SAME two line numbers (a "1" at the
+#   top-left of the table and a "2" on the Totals row), so `1.row01.d` alone
+#   collides across the two Parts and could not be a unique key. The printed
+#   face offers two spellings for the disambiguator — the numeral ("Part I" /
+#   "Part II") and the caption ("Short-Term." / "Long-Term.", printed in bold
+#   immediately after it) — and the CAPTION was chosen deliberately. `parti`
+#   vs `partii` (or `part1` vs `part2`) differ by ONE character buried in a
+#   long key, and the failure that typo produces is not a crash but a silent
+#   wrong return: the two Parts route to DIFFERENT Schedule D lines by the
+#   printed text of their own Totals rows (Part I -> line 1b/2/3, Part II ->
+#   line 8b/9/10), and those feed Schedule D's separately-netted line 7 (net
+#   SHORT-term) and line 15 (net LONG-term), which the printed page-2 flow
+#   then treats differently. `short_term` vs `long_term` cannot be confused by
+#   eye or by a fuzzy caller. Both spellings are recorded here so
+#   a reader of Schedule D — whose column (g) heading cites "Form(s) 8949,
+#   Part I, line 2, column (g)" — can map the vocabularies: Part I =
+#   short_term (page 1, boxes A/B/C/G/H/I), Part II = long_term (page 2,
+#   D/E/F/J/K/L).
+#
+# * <printed line> = `1` for the transaction table, `2` for the Totals row.
+#   These are the form's OWN printed line labels (formpacks/CONVENTIONS.md:
+#   "Best of all, key by the printed line NUMBER when the form gives one"), and
+#   they are what Schedule D cites ("from Form(s) 8949, Part I, line 2,
+#   column (g)").
+#
+# * <row> = `row01` .. `row11`, this pack's index of the row WITHIN printed
+#   line 1. The form prints no per-row label, so this segment is ours, the way
+#   sched_b's `interest_1..interest_14` / `dividend_1..` blocks are. It is
+#   ZERO-PADDED, which is a deliberate divergence from sched_b and the reason
+#   is mechanical rather than aesthetic: with 11 rows, sorted() over sched_b's
+#   spelling yields interest_1, interest_10, interest_11, interest_2, so
+#   any caller, report or diff that lists keys in lexical order shows the rows
+#   out of printed order. `row01..row11` sorts into printed order. The `row`
+#   prefix (rather than a bare `01`) is required by the line-id grammar: a
+#   segment is either a printed label `[0-9]+[a-z]?` or a word
+#   `[a-z][a-z0-9_]*`, so a bare `01` would read as a printed line label the
+#   form does not have. ELEVEN, NOT FOURTEEN: the padding width is unchanged
+#   (two digits) so `row01`..`row11` are spelled exactly as their 2023
+#   namesakes, but `row12`, `row13` and `row14` are GONE — the widgets do not
+#   exist and fill_form raises "unknown line key(s)" on them (reproduced; see
+#   the report). A caller that overflows eleven rows files a second Form 8949
+#   with the same box checked, which is what the printed face already tells it
+#   to do ("If you have more short-term transactions than will fit on this page
+#   for one or more of the boxes, complete as many forms with the same box
+#   checked as you need").
+#
+# * <column> = the PRINTED column letter, `a`..`h`, exactly as sched_d keys
+#   `1b.d`/`2.g` and sched_e keys `3.a`. COLUMN LEGEND, transcribed from the
+#   printed table head (identical on both pages, and word-for-word the 2023
+#   captions):
+#     (a) Description of property (Example: 100 sh. XYZ Co.)        text
+#     (b) Date acquired (Mo., day, yr.)                             text
+#     (c) Date sold or disposed of (Mo., day, yr.)                  text
+#     (d) Proceeds (sales price) (see instructions)                 money
+#     (e) Cost or other basis. See the Note below and see Column
+#         (e) in the separate instructions.                         money
+#     (f) Code(s) from instructions   [under the spanning head
+#         "Adjustment, if any, to gain or loss / If you enter an
+#         amount in column (g), enter a code in column (f). See the
+#         separate instructions."]                                  text
+#     (g) Amount of adjustment                                      money
+#     (h) Gain or (loss). Subtract column (e) from column (d) and
+#         combine the result with column (g).                       money
+#   Column (f) is TEXT, not money, and that is a primary-source call, not a
+#   guess: "In order to explain any adjustment to gain (or loss) in column (g),
+#   enter the appropriate code(s) in column (f) ... If more than one code
+#   applies, enter all the codes that apply in alphabetical order (for example,
+#   "BOQ"). Don't separate the codes by a space or comma." (Instructions for
+#   Form 8949 (2025), Column (f)—Code, pp. 7-8.) Columns (b) and (c) are TEXT
+#   for the same kind of reason — the instructions put non-dates in them: "Enter
+#   "INHERITED" in column (b)" for inherited property, and "If you sold a block
+#   of stock OR DIGITAL ASSETS (or similar property) that you acquired through
+#   several different purchases, you may report the sale on one row and enter
+#   "VARIOUS" in column (b)" (Instructions, Column (b)—Date Acquired, p. 6 —
+#   note the 2025 wording adds digital assets to that rule).
+#
+# * <box letter>. The extra `box` segment was belt-and-braces in 2023 and is
+#   LOAD-BEARING in 2025: the new Part I letters are (G) and (H) and (I), and
+#   `g` and `h` are also printed COLUMN letters on the same form. Without the
+#   segment, `short_term.g` (box G) and `short_term.2.g` (Totals adjustment)
+#   would sit one segment apart and mean entirely different things. With it,
+#   `short_term.box.g` cannot be mistaken for a column key by eye or by a fuzzy
+#   caller. The 2023 pack chose this spelling before the collision existed;
+#   the port keeps it because the collision now does.
+#
+# Whole-form worked example, so a caller can see the shape end to end. An ESPP
+# sale whose broker-reported basis omits the discount already taxed as wages —
+# the exact case that needed this pack — lands as:
+#   short_term.box.a       = true            (1099-B, basis reported to the IRS)
+#   short_term.1.row01.a   = "100 sh. XYZ Co."
+#   short_term.1.row01.b   = "03/15/2025"
+#   short_term.1.row01.c   = "09/20/2025"
+#   short_term.1.row01.d   = 5000            proceeds
+#   short_term.1.row01.e   = 4000            the basis AS REPORTED on the 1099-B
+#   short_term.1.row01.f   = "B"             the code that says that basis is wrong
+#   short_term.1.row01.g   = -800            the correction (negative = reduces gain)
+#   short_term.1.row01.h   = 200             5000 - 4000 + (-800)
+# The -800 SIGN is the worksheet's, not an inference: "1. Enter the cost or
+# other basis shown on Form 1099-B or Form 1099-DA (or substitute statement)"
+# (4,000) "2. Enter the correct cost or other basis" (4,800 — the 4,000 paid
+# plus the 800 discount already taxed as wages) "3. If line 1 is larger than
+# line 2, leave this line blank and go to line 4. If line 2 is larger than
+# line 1, subtract line 1 from line 2. Enter the result here and in column (g)
+# AS A NEGATIVE NUMBER (in parentheses)" (Instructions for Form 8949 (2025),
+# Worksheet for Basis Adjustments in Column (g), p. 11). The instructions' own
+# Example 4 runs the OTHER branch — reported basis 900 against a correct 100,
+# so line 4 applies and column (g) is +800 (Instructions, Column (h), p. 11) —
+# which is why the sign has to be taken from the worksheet rather than from the
+# nearest worked example. The printed page-1 Note forces the SHAPE: "If you
+# checked Box A or Box G above but the basis reported to the IRS was incorrect,
+# enter in column (e) the basis as reported to the IRS, and enter an adjustment
+# in column (g) to correct the basis." The instructions' code table says the
+# same in the other direction, and the two-branch rule is worth quoting because
+# it decides which column the correction goes in: "You received a Form 1099-B or
+# Form 1099-DA (or substitute statement) and the basis shown in box 1e on Form
+# 1099-B or box 1g on Form 1099-DA is incorrect -> THEN enter this code in
+# column (f): B ... * If this transaction is reported on Part I with box B or
+# box H checked at the top or if this transaction is reported on Part II with
+# box E or box K checked at the top, enter the CORRECT basis in column (e), and
+# enter -0- in column (g). * If this transaction is reported on Part I with box
+# A or box G checked at the top or if this transaction is reported on Part II
+# with box D or box J checked at the top, enter the basis shown on Form 1099-B
+# or Form 1099-DA (or substitute statement) in column (e), EVEN THOUGH THAT
+# BASIS IS INCORRECT. Correct the error by entering an adjustment in column
+# (g)." (Instructions for Form 8949 (2025), How To Complete Form 8949, Columns
+# (f) and (g), p. 8.) So which box is checked changes which cell the ESPP
+# correction occupies — and both cells are addressable here. Note the 2025
+# widening: each branch now names the 1099-DA sibling box (H with B, K with E,
+# G with A, J with D), so a digital-asset sale routes identically.
+#
+# ---------------------------------------------------------------------------
+# COVERAGE — 200 of 202 fillable widgets are mapped; 2 deliberately excluded
+# ---------------------------------------------------------------------------
+# The blank carries exactly 202 AcroForm widgets, 101 per page, and the two
+# pages are structurally identical (f1_* on page 1, f2_* on page 2, same
+# subform shape modulo the Part1/Part2 suffix, same /Ff flags, same /Rect
+# x-ranges — with the ONE 0.7pt column-(a) exception measured above). Per page:
+#     2 header text (name, SSN)
+#     6 /Btn boxes (A/B/C/G/H/I on page 1, D/E/F/J/K/L on page 2)
+#    88 transaction cells (11 rows x 8 columns)
+#     5 Totals-row cells, columns (d) (e) (f) (g) (h)
+#   ---
+#   101
+# By type: 190 /Tx + 12 /Btn. Mapped: 100 per page = 200. Excluded: the ONE
+# Totals-row column-(f) cell on each page (Page1[0].f1_93[0],
+# Page2[0].f2_93[0]) — see the ReadOnly adjudication below.
+#
+# Introspected with scripts/introspect_pdf.py, and every binding was read off
+# the SENTINEL-SWEEP render (each box printed with its own field name) plus a
+# second, purpose-built row/column sentinel render at 200 dpi — not off /Rect
+# y-coordinates (pitfall P-001: field dumps lie, pixels do not).
+#
+# ---------------------------------------------------------------------------
+# WHAT THE VISION AUDIT ACTUALLY CAUGHT
+# ---------------------------------------------------------------------------
+# (docs/CONTRIBUTING-PACKS.md step 6: "an audit that caught nothing is
+# suspicious — say so explicitly if it truly caught nothing". On this port it
+# caught the two changes that decide the whole map, and corrected no binding
+# afterwards; all of that is stated.)
+#   1. THE SIX-BOX SET, AND WHICH LETTER EACH ON-STATE TICKS. The name diff
+#      says only "three /Btn appeared per page". It cannot say whether the IRS
+#      APPENDED G/H/I after C or INTERLEAVED the 1099-DA boxes (A, G, B, H, C,
+#      I would have been just as plausible a layout, and would have made
+#      c1_1[1] print box (G) while keeping its name and its /2 state). So all
+#      twelve on-states were rendered ONE AT A TIME at 200 dpi and read, with
+#      the five siblings confirmed empty in every pass:
+#        c1_1[0] /1 -> (A)   c1_1[1] /2 -> (B)   c1_1[2] /3 -> (C)
+#        c1_1[3] /4 -> (G)   c1_1[4] /5 -> (H)   c1_1[5] /6 -> (I)
+#        c2_1[0] /1 -> (D)   c2_1[1] /2 -> (E)   c2_1[2] /3 -> (F)
+#        c2_1[3] /4 -> (J)   c2_1[4] /5 -> (K)   c2_1[5] /6 -> (L)
+#      The letters are APPENDED, not interleaved. (/AP /N carries no "/Off"
+#      entry on any of the twelve — it lives in /AP /D, the f8606/f8889 shape.)
+#   2. THE ROW COUNT. 14 -> 11 is invisible in a "did every mapped name
+#      survive?" check that only looks at names it already knows; it shows up
+#      as three rows of the 2023 map having no 2025 target. Counted on the
+#      render rather than divided out of 202: eleven printed bands between the
+#      table head and the Totals row on each page, sentinels P1R01a..P1R11a and
+#      P2R01a..P2R11a, nothing below row 11 but the Totals row.
+#   3. THE ROW-INDEX TRAP, hunted deliberately because this is a repeating-row
+#      form. The audit fill was purpose-built for it: every money cell was
+#      written with the 4-digit sentinel <part><row2><colindex> (part 1 row 07
+#      column (d) = 1074, part 2 row 11 column (h) = 2118, Totals rows 1994 and
+#      2994) and every text cell with "P<part>R<row2><col>" ("P1R01a",
+#      "P2R11f"), so a shifted row is unmissable in the render rather than
+#      plausible. Both pages were read at 200 dpi, FIRST / MIDDLE / LAST row of
+#      BOTH Parts one by one:
+#        page 1 row 1  -> P1R01a P1R01b P1R01c 1014 1015 P1R01f 1017 1018
+#        page 1 row 6  -> P1R06a P1R06b P1R06c 1064 1065 P1R06f 1067 1068
+#        page 1 row 11 -> P1R11a P1R11b P1R11c 1114 1115 P1R11f 1117 1118
+#                         (in the last band, directly above the Totals row)
+#        page 2 row 1  -> P2R01a ... 2014 2015 P2R01f 2017 2018
+#        page 2 row 6  -> P2R06a ... 2064 2065 P2R06f 2067 2068
+#        page 2 row 11 -> P2R11a ... 2114 2115 P2R11f 2117 2118
+#      No shift anywhere, on either page.
+#   4. THE READING TRAP THE 2023 PACK RECORDED IS STILL HERE, and it still is
+#      NOT a shift: the column-(a) sentinel of row N renders one text line
+#      ABOVE the (b)-(h) sentinels of the same row, so a careless reader sees
+#      "P1R01a" apparently sitting in its own row. The cause is the multiline
+#      widget's geometry — row N's (a) /Rect is the FULL 24pt band while its
+#      (b)-(h) rects are the lower 12pt of that same band (2025 page-1 row 1:
+#      (a) y 372-396, (b)-(h) y 372-384). Measured rather than eyeballed: the
+#      full-width printed rules of the page-1 table were detected off the
+#      200-dpi render at PDF y = 396.1, 372.2, 348.3, 324.1, 300.2, 276.1,
+#      252.1, 228.2, 204.1, 180.1, 156.2, 132.1 — exactly the 11 widget bands —
+#      and on page 2 at 432.1 ... 168.1, so (a) and (b)-(h) of any row lie
+#      between the same pair of rules.
+#   5. CONFIRMED WRITABLE, WHICH IS WHY IT IS UNMAPPED: the introspect sweep
+#      printed "f1_93[0]" and "f2_93[0]" INSIDE the grey Totals column-(f)
+#      cells — the sched_d P-007 artifact, reproducible on this form had the
+#      cell been mapped. The pack's own audit render leaves both grey cells
+#      empty, and fill_form now refuses the key outright.
+#   6. NOTHING CLIPPED: verify's clipping scan ran 188 checks — exactly the 188
+#      text + money lines (200 mapped minus the 12 checkboxes), none skipped —
+#      with zero FAIL; verify_form returned ok=True with empty
+#      assertions/relations/recompute, P-001 and P-003 both PASS, and fill_form
+#      returned no warnings on the full-form sentinel fill (190 widgets written:
+#      the 188 cells plus the one box ticked in each Part).
+# What the audit did NOT change: not one binding, AFTER the two structural
+# findings above were folded in. The 202-widget topology is perfectly regular
+# (row N = f<page>_(8N-5)..f<page>_(8N+2), zero-padded below 10), and the
+# render confirmed that arithmetic rather than correcting it.
+#
+# ---------------------------------------------------------------------------
+# READONLY ADJUDICATION (pitfall P-007) — RE-MEASURED on THIS blank
+# ---------------------------------------------------------------------------
+# EXACTLY 2 of the 202 widgets carry the AcroForm ReadOnly bit, and neither is
+# mapped, so mapped n ReadOnly = 0 over 200 mapped fields. Flags were read at
+# FIELD level, walking /Parent (the shape P-007 requires):
+#   * the /Ff histogram over all 202 widgets is exactly
+#     {8388608: 164, 8392704: 22, absent: 14, 8388609: 2};
+#   * 8388608 = DoNotScroll, the plain text-cell value;
+#   * 8392704 = DoNotScroll|Multiline (bit 13), on exactly the 22 column-(a)
+#     description cells (11 per page) — the form gives the description box two
+#     printed text lines' worth of height (/Rect 24pt tall vs 12pt for every
+#     other cell in the same row);
+#   * absent (no /Ff at all) on 14 widgets: the two SSN boxes f1_02/f2_02 and
+#     the twelve /Btn boxes;
+#   * 8388609 = DoNotScroll|ReadOnly on exactly TWO: Page1[0].f1_93[0] and
+#     Page2[0].f2_93[0]. Run through the harness's OWN reader
+#     (test_formpacks_federal._read_only_widget_names, which walks /Parent),
+#     the ReadOnly set is exactly those two names.
+# THE PAIR MOVED NAME, NOT ROLE: 2023 locked f1_117[0]/f2_117[0], 2025 locks
+# f1_93[0]/f2_93[0], and both pairs are the Totals-row column-(f) cell. The
+# renumbering is the trap — f1_93 in 2023 was Part I row 12 column (c), an
+# ORDINARY writable text cell, so a leaf-name port would have carried
+# `short_term.1.row12.c` straight onto a ReadOnly widget.
+# Both 2025 widgets are P-007 CLASS 2 — the printed text makes a correct entry
+# IMPOSSIBLE, so the line key must not exist and fill_form has to raise:
+#   * printed line 2's own text enumerates the columns it totals and column
+#     (f) is NOT among them: "2 Totals. Add the amounts in columns (d), (e),
+#     (g), and (h) (subtract negative amounts)." Column (f) holds letter CODES
+#     ("BOQ"), which cannot be added, so there is no correct entry to make.
+#   * the blank agrees in pixels: at 200 dpi both cells render SOLID GREY while
+#     the (d)/(e)/(g)/(h) cells of the very same Totals row, and the (f) cells
+#     of all 22 transaction rows, are white.
+#   * This is the sched_d 1a.g / 8a.g shape exactly: the IRS locked precisely
+#     the cells its own printed text makes impossible, and it is the only place
+#     it set the flag on this form. `short_term.2.f` and `long_term.2.f`
+#     therefore DO NOT EXIST as keys; fill_form({"short_term.2.f": "B"})
+#     raises "unknown line key(s)" (reproduced, see the report).
+# The other three classes were each checked against the 2025 printed face, so
+# the zero is an adjudication and not a flag reading:
+#   * class 1 (the widget already HOLDS an IRS-printed constant, sched_se's
+#     wage base): none. The form prints no dollar figures, rates or dates at
+#     all — `pdftotext -layout` over the pinned blank finds not one "$" on
+#     either page. Its only pre-printed tokens are the column captions and the
+#     "(Example: 100 sh. XYZ Co.)" hint, and every one sits in printed TABLE
+#     TEXT, outside any widget.
+#   * class 3 ("Reserved for future use"): the string does not appear anywhere
+#     on either page (checked against `pdftotext -layout` of the pinned blank,
+#     not from memory). Printed lines are still just 1 and 2 on each page — a
+#     gap-free two-line ladder.
+#   * class 4 (form-owned / JS-propagated value): structurally impossible here
+#     — the document JavaScript is three Adobe version-check scripts, no widget
+#     has an /AA, and the AcroForm has no /CO (see PROVENANCE). That verdict
+#     cuts BOTH ways on this form: it is also why the page-2 identity mirrors
+#     below must be mapped, because nothing propagates them.
+# No pin row is needed in test_readonly_widget_mapping.py: absent from
+# RESERVED_LINE_KEEPS, RESERVED_LINES_UNMAPPED and STATE_COMPUTED_READONLY,
+# this pack is pinned at zero mapped-ReadOnly by default.
+#
+# ---------------------------------------------------------------------------
+# CHECKBOX / GROUP ADJUDICATION (pitfalls P-003, P-008)
+# ---------------------------------------------------------------------------
+# TWELVE /Btn widgets, two sets of SIX, one set per Part (2023 had two sets of
+# three):
+#   Page1[0].c1_1[0..5] -> printed boxes (A) (B) (C) (G) (H) (I), states /1../6
+#   Page2[0].c2_1[0..5] -> printed boxes (D) (E) (F) (J) (K) (L), states /1../6
+# Each set is ONE question printed "You must check Box A, B, C, G, H, or I
+# below. Check only one box." (and D, E, F, J, K, or L on page 2).
+#
+# TOPOLOGY, dumped not guessed: this is the P-008 SEPARATE-WIDGET shape, the
+# one that gets no exemption. Each of the twelve widgets is its own TERMINAL
+# field — it carries its own /T ("c1_1[0]" .. "c1_1[5]"), has NO /Kids, has no
+# /Ff at all (so no radio bit), and its only ancestor with a /T is the page
+# subform Page1[0]/Page2[0], which has NO /FT. So the six boxes of a set are
+# six independent fields and NOT the kids of one radio field, and nothing in
+# the PDF makes them exclusive. Proved on the render, not argued: the
+# introspect sentinel sweep turned every /Btn on and printed a page 1 with (A),
+# (B), (C), (G), (H) AND (I) all ticked, and a page 2 with (D) through (L) all
+# ticked — six mutually exclusive answers on one form, which is what ships if
+# the `group` id is missing.
+# So all six members of each set carry a `group`: `short_term.box` and
+# `long_term.box`. GROUP SPELLING: the group id is the LINE STEM, sched_d's
+# convention (`qof`, `line17`) applied to a lettered rather than numbered
+# question; a numeric `line<N>` id is unavailable here because the question has
+# no printed line number of its own, and `short_term.box` cannot collide with
+# `long_term.box` the way a shared `box` would. OPTION KEY SPELLING: see the
+# ROW-KEY CONVENTION above — in 2025 the `box` segment is what keeps box (G)
+# and box (H) from reading like columns (g) and (h).
+# BOTH halves of the guard were REPRODUCED against this pack and its pinned
+# blank, not asserted:
+#   * fill_form(pack, {"short_term.box.a": True, "short_term.box.g": True})
+#     raises ValueError "lines 'short_term.box.a' and 'short_term.box.g' all
+#     turn on members of checkbox group 'short_term.box' — these are the
+#     mutually exclusive options of ONE question and exactly one may be
+#     selected", and the same for {"long_term.box.d", "long_term.box.l"};
+#     a single answer still writes its one field;
+#   * a PDF whose c1_1[0] and c1_1[3] widgets were patched on DIRECTLY (the
+#     P-008 reproduction shape, bypassing the filler) makes verify's
+#     at-most-one checkbox audit report FAIL: "checkbox group 'short_term.box'
+#     has 2 boxes checked (short_term.box.a, short_term.box.g) — exactly one is
+#     allowed", and verify_form(...).ok is False. That check fires for every
+#     group whether or not it is `required`, which is what keeps the read side
+#     covered despite the `required: false` adjudication below.
+#
+# NEITHER `group` IS `required: true`, and this one is settled by the
+# instructions rather than by the emphatic printed "You must": a correct Form
+# 8949 may consist of ONE Part. "You don't need to complete and file an entire
+# copy of Form 8949 (Parts I and II) if you can check a single box to describe
+# all your transactions. In that case, complete and file either Part I or II
+# and check the box that describes the transactions." (Instructions for Form
+# 8949 (2025), p. 4.) A long-term-only filer therefore files page 2 with a
+# blank page 1 — `required: true` on `short_term.box` would FAIL verification
+# on that correct return, and vice versa. What the printed "must" really states
+# is a CONDITIONAL requirement — required if that Part carries any transaction
+# — and the pack schema has no way to express a conditional `required`, so the
+# honest choice is the sched_d line-17/20/22 one: leave it off rather than ship
+# a check that false-FAILs a legal filing (reported as an open issue, since the
+# unconditional half is genuinely worth catching).
+#
+# THE GATE BLIND SPOT, RE-MEASURED ON THIS PACK — neither shipped P-008 gate
+# can see these two sets, so their `group` ids are house discipline rather than
+# a gate result. Verified by execution rather than claimed: with the group ids
+# deleted from this pack, `_yesno_pairs`, `_shared_field_option_sets` and
+# `_ungrouped_shared_field_sets` (test_pack_invariants.py) all return EMPTY, so
+# `test_every_yes_no_pair_shares_one_group_id` and
+# `test_pack_radio_options_share_one_group_and_distinct_states` both still
+# pass. The first keys off the LINE SHAPE `<stem>.yes` + `<stem>.no` and these
+# options are lettered; the second only fires when two checkbox lines SHARE one
+# AcroForm field, and these twelve lines bind twelve different fields. That is
+# the THIRD topology blind spot recorded in docs/ROADMAP.md Phase E; this pack
+# doubles its own contribution to that population (two sets of six rather than
+# two sets of three), and like the 2023 pair these are genuinely EXCLUSIVE
+# ("Check only one box"), so they belong on the grouped side of the
+# adjudication table that item calls for.
+#
+# ---------------------------------------------------------------------------
+# IDENTITY PAGE MIRRORS — 2, and they are load-bearing
+# ---------------------------------------------------------------------------
+# Page 2 prints its own header pair, "Name(s) shown on return. Name and SSN or
+# taxpayer identification no. not required if shown on other side" and "Social
+# security number or taxpayer identification number", bound to DIFFERENT
+# AcroForm fields from page 1 (Page2[0].f2_01[0] / f2_02[0] vs
+# Page1[0].f1_01[0] / f1_02[0]). They are mapped as `page2_name` and
+# `page2_identifying_number`, the house `page<N>_<what>` shape
+# (formpacks/CONVENTIONS.md, "Identity page mirrors"; sched_e uses the other
+# house shape, `identifying_number_page2`).
+# Why they are mapped even though the caption says "not required": the escape
+# clause is "IF SHOWN ON OTHER SIDE", and the instructions quoted above make a
+# Part-II-only filing correct — that filing has no other side, so its page-2
+# header is the only place the filer's name and SSN appear. Nothing propagates
+# the value either (no JS, no /AA, no /CO), so an unmapped mirror ships a blank
+# header on a filed return, which is the ri1040/it1040_oh defect exactly. The
+# one thing the schema cannot express is that the mirror's VALUE equals its
+# source's: a caller that fills `page2_name` differently from `name` files an
+# internally inconsistent return and no gate catches it (CONVENTIONS says so;
+# repeated here because this is where a reader of THIS pack looks).
+#
+# ---------------------------------------------------------------------------
+# YEAR TOKENS IN LINE KEYS (formpacks/CONVENTIONS.md) — none, by rule 3
+# ---------------------------------------------------------------------------
+# NO line key in this pack embeds a year, so the year-offset gate has nothing
+# to pin and this port cannot go stale the sched_oi way. "2025" appears on the
+# face only in the masthead year box, the "Created 5/5/25" stamp and the two
+# "Form 8949 (2025)" footers — never inside printed LINE text, and never as a
+# box LABEL, so nothing here is the f8843-line-4a shape where a year picks
+# WHICH BOX. The `row01`..`row11` tokens are row indices, not years, and do not
+# match the gate's `(?:19|20)\d{2}` year pattern.
+#
+# ---------------------------------------------------------------------------
+# RELATIONS — deliberately EMPTY, and the reason is the relation GRAMMAR
+# ---------------------------------------------------------------------------
+# Form 8949 prints exactly two pieces of on-face arithmetic, and NEITHER can be
+# expressed in this repo's relation grammar, because every money line on this
+# form is a DOTTED column key:
+#   * the per-row column identity, printed in the column (h) head: "Gain or
+#     (loss). Subtract column (e) from column (d) and combine the result with
+#     column (g)." The instructions restate it with worked examples ("Column
+#     (d) is $6,000, column (e) is $2,000, and column (g) is ($1,000). Enter
+#     $3,000 in column (h)." — Instructions for Form 8949 (2025), Column (h),
+#     p. 11). As a rule that is `short_term.1.row01.h ==
+#     short_term.1.row01.d - short_term.1.row01.e + short_term.1.row01.g`,
+#     x22 rows (11 per Part; it was x28 in 2023).
+#   * the Totals row: "2 Totals. Add the amounts in columns (d), (e), (g), and
+#     (h) (subtract negative amounts)", i.e. `short_term.2.d == ` the sum of
+#     the 11 `short_term.1.rowNN.d` cells, x8 (4 columns x 2 Parts).
+# verify's tokenizer (_TOKEN_RE in packages/core/src/taxfill_core/verify.py)
+# admits whitespace, floats, `\d+[a-z]?` line ids, `[A-Za-z_][A-Za-z0-9_]*`
+# names, and the operators `== .. + - * / ( ) ,` — a single `.` is not an
+# operator and not part of any token, so a dotted key cannot appear in a
+# relation at all. This is the same wall sched_d's banner records ("the verify
+# relation grammar resolves a line id as a single token and cannot reference
+# dotted column keys"), and the same disposition: these checks are left to the
+# recompute engine plus human review. Nothing is being hidden — the arithmetic
+# is printed in the COLUMN LEGEND above — and a false or unparseable relation
+# would be worse than none (the f8606 header's rule). Reported as an open
+# issue: 30 unexpressible on-face equalities on this pack (22 row identities +
+# 8 column totals).
+#
+# ---------------------------------------------------------------------------
+# CROSS-FORM — deliberately EMPTY, on two independent grounds
+# ---------------------------------------------------------------------------
+# The Totals row cites Schedule D by name on both pages: "Enter each total here
+# and include on your Schedule D, line 1b (if Box A or Box G above is checked),
+# line 2 (if Box B or Box H above is checked), or line 3 (if Box C or Box I
+# above is checked)" (page 1) and "... line 8b (if Box D or Box J ...), line 9
+# (if Box E or Box K ...), or line 10 (if Box F or Box L ...)" (page 2). Not
+# one of the six is an unconditional equality:
+#   1. Each is CONDITIONAL on which box is checked — one Totals row lands on
+#      one of three different Schedule D lines depending on an answer elsewhere
+#      on the form, and in 2025 each of those three conditions is itself a
+#      DISJUNCTION of two boxes. The grammar has no conditional.
+#   2. Each is ADDITIVE across FORMS, not one-to-one. The printed face says so
+#      itself: "If you have more short-term transactions than will fit on this
+#      page for one or more of the boxes, complete as many forms with the same
+#      box checked as you need", and the instructions repeat it — "Complete as
+#      many copies of Part II as you need to report all transactions of each
+#      type (D, E, F, J, K, or L)" and "Include on your Schedule D the totals
+#      from ALL your Parts I and II" (Instructions for Form 8949 (2025), p. 4).
+#      A filer with 20 box-A short-term sales files two Forms 8949 whose line 2
+#      column (d) totals SUM to Schedule D line 1b column (d); neither alone
+#      equals it. This is the f8889 per-spouse shape, one step worse — and the
+#      eleven-row page makes it MORE common than in 2023, not less.
+# There is also a hard mechanical bar: a `cross_form` ref is split at the FIRST
+# dot, so `short_term.2.d == sched_d.1b.d` would be read as form_key
+# "short_term" (not a pack) referring to line "2.d". Only undotted lines of
+# THIS pack can appear on the left, and this pack has none. So even a
+# conditional-free, one-to-one carry could not be written; both facts are
+# recorded so a porter does not try. formpacks/federal/2025/sched_d/pack.yaml
+# DOES map `1b.d`, `2.d`, `3.d`, `8b.d`, `9.d`, `10.d`, so the targets exist
+# for this pack's own year and this is a deliberate omission, not a missing
+# pack — no CROSS_FORM_TARGET_ALLOWLIST row is needed.
+#
+# ---------------------------------------------------------------------------
+# IDENTITY FIELDS / SIGNATURE / MAILING
+# ---------------------------------------------------------------------------
+# identity_fields: [name, identifying_number] — the house shape for an
+# attachment (sched_d, sched_b, sched_c, f8606, f8889 all ship exactly this).
+# `name` is printed "Name(s) shown on return", i.e. the parent return's names
+# by construction. NO `identity_per_person` entry — the two packs that ship one
+# were checked before deciding, so this is a considered call rather than an
+# omission. Both of them are per-PERSON on their own printed face: Form 8889's
+# box is captioned "Social security number of HSA beneficiary. If both spouses
+# have HSAs, see instructions", and Form 8606's header prints "If married, file
+# a separate form for each spouse required to file" — so on a joint return
+# either can legitimately carry the SPOUSE's SSN while the 1040 carries the
+# primary filer's, which is why they declare `identity_per_person:
+# [identifying_number]`. Form 8949 prints neither qualification: its box is the
+# unqualified "Social security number or taxpayer identification number", it is
+# filed per RETURN (it feeds one Schedule D, which carries the return's own
+# SSN), and nothing in its instructions contemplates a per-spouse copy — the
+# 2025 instructions say the opposite for a joint return: "You and your spouse
+# may list your transactions on separate forms or you may combine them.
+# However, you must include on your Schedule D the totals from all Forms 8949
+# for both you and your spouse." (p. 1), i.e. the SSN on every copy is still
+# the return's. So a difference from the 1040 here is an error, and verify
+# should keep FAILing it.
+# `maxlen: 11` tracks the widget's OWN /MaxLen (dumped: /MaxLen 11 on f1_02 and
+# f2_02, absent on every other widget — unchanged from 2023's f1_2/f2_2), which
+# is what formpacks/CONVENTIONS.md requires and what sched_b / sched_c /
+# sched_8812 / f2555 / f8889 do; f8606 and f8960 pin 9 on the identical 11-wide
+# widget, an inconsistency this pack reports rather than copies (ROADMAP Phase
+# E has the open item). Neither box is a comb (no comb bit on either), so
+# `format: ssn_digits_only` is here for cross-form identity consistency and
+# overflow-proofing, not because dashes would clip (P-001).
+# signature: null, mailing: null — the attachment-only shape (sched_d, f8889,
+# f8960). Confirmed on the dump AND the render: 202 widgets, none in a
+# signature area, and no signature or preparer block is printed on either page.
+# The form is filed inside the parent return's envelope, so it has no
+# where-to-file of its own.
+form: "8949"
+jurisdiction: federal
+tax_year: 2025
+source_url: https://www.irs.gov/pub/irs-prior/f8949--2025.pdf
+pdf_sha256: "274513891e4e281d11e14286f14b9df724c24b6030fca0f0681da64fb2e7f525"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- page 1 header --------------------------------------------------------
+  - line: "name"                            # "Name(s) shown on return"
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: "identifying_number"              # "Social security number or taxpayer identification number" — plain box, NOT a comb
+    field: "Page1[0].f1_02[0]"
+    type: text
+    maxlen: 11                              # the widget's own /MaxLen (fits a dashed SSN/ITIN)
+    format: ssn_digits_only                 # digits only keeps cross-form identity values consistent and can never overflow (P-001)
+
+  # ---- Part I box set: "You must check Box A, B, C, G, H, or I below.
+  # ---- Check only one box." SIX separate terminal /Btn fields in this revision
+  # ---- (three in 2023 — G/H/I and J/K/L are new), so the shared `group` is the
+  # ---- only thing making them exclusive (P-008). Not `required`: a
+  # ---- long-term-only filer files page 2 alone (see the header).
+  - line: "short_term.box.a"              # (A) Short-term transactions reported on Form(s) 1099-B showing basis was reported to the IRS (see Note above)
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: short_term.box
+  - line: "short_term.box.b"              # (B) Short-term transactions reported on Form(s) 1099-B showing basis was not reported to the IRS
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: short_term.box
+  - line: "short_term.box.c"              # (C) Short-term transactions, other than digital asset transactions, not reported to you on Form 1099-B or Form 1099-DA
+    field: "Page1[0].c1_1[2]"
+    type: checkbox
+    on_state: "/3"
+    group: short_term.box
+  - line: "short_term.box.g"              # (G) Short-term transactions reported on Form(s) 1099-DA showing basis was reported to the IRS (see Note above)
+    field: "Page1[0].c1_1[3]"
+    type: checkbox
+    on_state: "/4"
+    group: short_term.box
+  - line: "short_term.box.h"              # (H) Short-term transactions reported on Form(s) 1099-DA showing basis was not reported to the IRS
+    field: "Page1[0].c1_1[4]"
+    type: checkbox
+    on_state: "/5"
+    group: short_term.box
+  - line: "short_term.box.i"              # (I) Short-term digital asset transactions not reported to you on Form 1099-DA or Form 1099-B
+    field: "Page1[0].c1_1[5]"
+    type: checkbox
+    on_state: "/6"
+    group: short_term.box
+
+  # ---- Part I — Short-Term: printed line 1, the ELEVEN transaction rows ----
+  # Columns, in printed order (full captions in the COLUMN LEGEND in the header):
+  #   .a description (MULTILINE widget)   .b date acquired   .c date sold
+  #   .d proceeds   .e cost/basis   .f code(s)   .g adjustment   .h gain/(loss)
+  # Widget arithmetic, so the map can be checked without the field dump: row N
+  # binds f1_(8N-5) .. f1_(8N+2) inside Page1[0].Table_Line1_Part1[0].RowN[0], with
+  # single-digit leaf numbers ZERO-PADDED in this revision (f1_03, not f1_3) —
+  # row 1 -> f1_03..f1_10, row 6 -> f1_43..f1_50, row 11 -> f1_83..f1_90.
+  # row 1 of 11
+  - line: "short_term.1.row01.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_03[0]"
+    type: text
+  - line: "short_term.1.row01.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_04[0]"
+    type: text
+  - line: "short_term.1.row01.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_05[0]"
+    type: text
+  - line: "short_term.1.row01.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_06[0]"
+    type: money
+  - line: "short_term.1.row01.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_07[0]"
+    type: money
+  - line: "short_term.1.row01.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_08[0]"
+    type: text
+  - line: "short_term.1.row01.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_09[0]"
+    type: money
+  - line: "short_term.1.row01.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_10[0]"
+    type: money
+  # row 2 of 11
+  - line: "short_term.1.row02.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_11[0]"
+    type: text
+  - line: "short_term.1.row02.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_12[0]"
+    type: text
+  - line: "short_term.1.row02.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_13[0]"
+    type: text
+  - line: "short_term.1.row02.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_14[0]"
+    type: money
+  - line: "short_term.1.row02.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_15[0]"
+    type: money
+  - line: "short_term.1.row02.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_16[0]"
+    type: text
+  - line: "short_term.1.row02.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_17[0]"
+    type: money
+  - line: "short_term.1.row02.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_18[0]"
+    type: money
+  # row 3 of 11
+  - line: "short_term.1.row03.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_19[0]"
+    type: text
+  - line: "short_term.1.row03.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_20[0]"
+    type: text
+  - line: "short_term.1.row03.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_21[0]"
+    type: text
+  - line: "short_term.1.row03.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_22[0]"
+    type: money
+  - line: "short_term.1.row03.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_23[0]"
+    type: money
+  - line: "short_term.1.row03.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_24[0]"
+    type: text
+  - line: "short_term.1.row03.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_25[0]"
+    type: money
+  - line: "short_term.1.row03.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_26[0]"
+    type: money
+  # row 4 of 11
+  - line: "short_term.1.row04.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_27[0]"
+    type: text
+  - line: "short_term.1.row04.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_28[0]"
+    type: text
+  - line: "short_term.1.row04.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_29[0]"
+    type: text
+  - line: "short_term.1.row04.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_30[0]"
+    type: money
+  - line: "short_term.1.row04.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_31[0]"
+    type: money
+  - line: "short_term.1.row04.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_32[0]"
+    type: text
+  - line: "short_term.1.row04.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_33[0]"
+    type: money
+  - line: "short_term.1.row04.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_34[0]"
+    type: money
+  # row 5 of 11
+  - line: "short_term.1.row05.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_35[0]"
+    type: text
+  - line: "short_term.1.row05.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_36[0]"
+    type: text
+  - line: "short_term.1.row05.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_37[0]"
+    type: text
+  - line: "short_term.1.row05.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_38[0]"
+    type: money
+  - line: "short_term.1.row05.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_39[0]"
+    type: money
+  - line: "short_term.1.row05.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_40[0]"
+    type: text
+  - line: "short_term.1.row05.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_41[0]"
+    type: money
+  - line: "short_term.1.row05.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_42[0]"
+    type: money
+  # row 6 of 11
+  - line: "short_term.1.row06.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_43[0]"
+    type: text
+  - line: "short_term.1.row06.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_44[0]"
+    type: text
+  - line: "short_term.1.row06.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_45[0]"
+    type: text
+  - line: "short_term.1.row06.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_46[0]"
+    type: money
+  - line: "short_term.1.row06.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_47[0]"
+    type: money
+  - line: "short_term.1.row06.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_48[0]"
+    type: text
+  - line: "short_term.1.row06.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_49[0]"
+    type: money
+  - line: "short_term.1.row06.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_50[0]"
+    type: money
+  # row 7 of 11
+  - line: "short_term.1.row07.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_51[0]"
+    type: text
+  - line: "short_term.1.row07.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_52[0]"
+    type: text
+  - line: "short_term.1.row07.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_53[0]"
+    type: text
+  - line: "short_term.1.row07.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_54[0]"
+    type: money
+  - line: "short_term.1.row07.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_55[0]"
+    type: money
+  - line: "short_term.1.row07.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_56[0]"
+    type: text
+  - line: "short_term.1.row07.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_57[0]"
+    type: money
+  - line: "short_term.1.row07.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_58[0]"
+    type: money
+  # row 8 of 11
+  - line: "short_term.1.row08.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_59[0]"
+    type: text
+  - line: "short_term.1.row08.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_60[0]"
+    type: text
+  - line: "short_term.1.row08.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_61[0]"
+    type: text
+  - line: "short_term.1.row08.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_62[0]"
+    type: money
+  - line: "short_term.1.row08.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_63[0]"
+    type: money
+  - line: "short_term.1.row08.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_64[0]"
+    type: text
+  - line: "short_term.1.row08.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_65[0]"
+    type: money
+  - line: "short_term.1.row08.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_66[0]"
+    type: money
+  # row 9 of 11
+  - line: "short_term.1.row09.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_67[0]"
+    type: text
+  - line: "short_term.1.row09.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_68[0]"
+    type: text
+  - line: "short_term.1.row09.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_69[0]"
+    type: text
+  - line: "short_term.1.row09.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_70[0]"
+    type: money
+  - line: "short_term.1.row09.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_71[0]"
+    type: money
+  - line: "short_term.1.row09.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_72[0]"
+    type: text
+  - line: "short_term.1.row09.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_73[0]"
+    type: money
+  - line: "short_term.1.row09.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_74[0]"
+    type: money
+  # row 10 of 11
+  - line: "short_term.1.row10.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_75[0]"
+    type: text
+  - line: "short_term.1.row10.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_76[0]"
+    type: text
+  - line: "short_term.1.row10.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_77[0]"
+    type: text
+  - line: "short_term.1.row10.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_78[0]"
+    type: money
+  - line: "short_term.1.row10.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_79[0]"
+    type: money
+  - line: "short_term.1.row10.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_80[0]"
+    type: text
+  - line: "short_term.1.row10.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_81[0]"
+    type: money
+  - line: "short_term.1.row10.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_82[0]"
+    type: money
+  # row 11 of 11
+  - line: "short_term.1.row11.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_83[0]"
+    type: text
+  - line: "short_term.1.row11.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_84[0]"
+    type: text
+  - line: "short_term.1.row11.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_85[0]"
+    type: text
+  - line: "short_term.1.row11.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_86[0]"
+    type: money
+  - line: "short_term.1.row11.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_87[0]"
+    type: money
+  - line: "short_term.1.row11.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_88[0]"
+    type: text
+  - line: "short_term.1.row11.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_89[0]"
+    type: money
+  - line: "short_term.1.row11.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_90[0]"
+    type: money
+
+  # ---- Part I printed line 2 — "Totals. Add the amounts in columns (d), (e),
+  # ---- (g), and (h) (subtract negative amounts). Enter each total here and
+  # ---- include on your Schedule D, line 1b (if Box A or Box G above is
+  # ---- checked), line 2 (if Box B or Box H above is checked), or line 3 (if
+  # ---- Box C or Box I above is checked)."
+  # The carry is CONDITIONAL on the box AND additive across forms, so no
+  # cross_form rule (see the header). Column (f) has NO key: its Totals cell is
+  # shaded grey and ReadOnly (f1_93[0]) because the printed row totals only
+  # (d), (e), (g) and (h) — P-007 class 2.
+  - line: "short_term.2.d"                        # Totals, column (d) Proceeds
+    field: "Page1[0].f1_91[0]"
+    type: money
+  - line: "short_term.2.e"                        # Totals, column (e) Cost or other basis
+    field: "Page1[0].f1_92[0]"
+    type: money
+  - line: "short_term.2.g"                        # Totals, column (g) Amount of adjustment
+    field: "Page1[0].f1_94[0]"
+    type: money
+  - line: "short_term.2.h"                        # Totals, column (h) Gain or (loss)
+    field: "Page1[0].f1_95[0]"
+    type: money
+
+  # ---- page 2 header — identity MIRRORS, mapped because nothing propagates
+  # ---- them and a Part-II-only filing has no "other side" (see the header)
+  - line: "page2_name"                      # "Name(s) shown on return. Name and SSN or taxpayer identification no. not required if shown on other side"
+    field: "Page2[0].f2_01[0]"
+    type: text
+  - line: "page2_identifying_number"        # "Social security number or taxpayer identification number" (page-2 header box)
+    field: "Page2[0].f2_02[0]"
+    type: text
+    maxlen: 11                              # this widget's own /MaxLen — same 11 as the page-1 source here
+    format: ssn_digits_only                 # must match the source's format, or the same SSN reaches the two boxes spelled differently
+
+  # ---- Part II box set: "You must check Box D, E, F, J, K, or L below.
+  # ---- Check only one box." SIX separate terminal /Btn fields in this revision
+  # ---- (three in 2023 — G/H/I and J/K/L are new), so the shared `group` is the
+  # ---- only thing making them exclusive (P-008). Not `required`: a
+  # ---- short-term-only filer files page 1 alone (see the header).
+  - line: "long_term.box.d"               # (D) Long-term transactions reported on Form(s) 1099-B showing basis was reported to the IRS (see Note above)
+    field: "Page2[0].c2_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: long_term.box
+  - line: "long_term.box.e"               # (E) Long-term transactions reported on Form(s) 1099-B showing basis was not reported to the IRS
+    field: "Page2[0].c2_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: long_term.box
+  - line: "long_term.box.f"               # (F) Long-term transactions, other than digital asset transactions, not reported to you on Form 1099-B or Form 1099-DA
+    field: "Page2[0].c2_1[2]"
+    type: checkbox
+    on_state: "/3"
+    group: long_term.box
+  - line: "long_term.box.j"               # (J) Long-term transactions reported on Form(s) 1099-DA showing basis was reported to the IRS (see Note above)
+    field: "Page2[0].c2_1[3]"
+    type: checkbox
+    on_state: "/4"
+    group: long_term.box
+  - line: "long_term.box.k"               # (K) Long-term transactions reported on Form(s) 1099-DA showing basis was not reported to the IRS
+    field: "Page2[0].c2_1[4]"
+    type: checkbox
+    on_state: "/5"
+    group: long_term.box
+  - line: "long_term.box.l"               # (L) Long-term digital asset transactions not reported to you on Form 1099-DA or Form 1099-B
+    field: "Page2[0].c2_1[5]"
+    type: checkbox
+    on_state: "/6"
+    group: long_term.box
+
+  # ---- Part II — Long-Term: printed line 1, the ELEVEN transaction rows ----
+  # Columns, in printed order (full captions in the COLUMN LEGEND in the header):
+  #   .a description (MULTILINE widget)   .b date acquired   .c date sold
+  #   .d proceeds   .e cost/basis   .f code(s)   .g adjustment   .h gain/(loss)
+  # Widget arithmetic, so the map can be checked without the field dump: row N
+  # binds f2_(8N-5) .. f2_(8N+2) inside Page2[0].Table_Line1_Part2[0].RowN[0], with
+  # single-digit leaf numbers ZERO-PADDED in this revision (f2_03, not f2_3) —
+  # row 1 -> f2_03..f2_10, row 6 -> f2_43..f2_50, row 11 -> f2_83..f2_90.
+  # row 1 of 11
+  - line: "long_term.1.row01.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_03[0]"
+    type: text
+  - line: "long_term.1.row01.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_04[0]"
+    type: text
+  - line: "long_term.1.row01.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_05[0]"
+    type: text
+  - line: "long_term.1.row01.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_06[0]"
+    type: money
+  - line: "long_term.1.row01.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_07[0]"
+    type: money
+  - line: "long_term.1.row01.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_08[0]"
+    type: text
+  - line: "long_term.1.row01.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_09[0]"
+    type: money
+  - line: "long_term.1.row01.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_10[0]"
+    type: money
+  # row 2 of 11
+  - line: "long_term.1.row02.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_11[0]"
+    type: text
+  - line: "long_term.1.row02.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_12[0]"
+    type: text
+  - line: "long_term.1.row02.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_13[0]"
+    type: text
+  - line: "long_term.1.row02.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_14[0]"
+    type: money
+  - line: "long_term.1.row02.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_15[0]"
+    type: money
+  - line: "long_term.1.row02.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_16[0]"
+    type: text
+  - line: "long_term.1.row02.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_17[0]"
+    type: money
+  - line: "long_term.1.row02.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_18[0]"
+    type: money
+  # row 3 of 11
+  - line: "long_term.1.row03.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_19[0]"
+    type: text
+  - line: "long_term.1.row03.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_20[0]"
+    type: text
+  - line: "long_term.1.row03.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_21[0]"
+    type: text
+  - line: "long_term.1.row03.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_22[0]"
+    type: money
+  - line: "long_term.1.row03.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_23[0]"
+    type: money
+  - line: "long_term.1.row03.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_24[0]"
+    type: text
+  - line: "long_term.1.row03.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_25[0]"
+    type: money
+  - line: "long_term.1.row03.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_26[0]"
+    type: money
+  # row 4 of 11
+  - line: "long_term.1.row04.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_27[0]"
+    type: text
+  - line: "long_term.1.row04.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_28[0]"
+    type: text
+  - line: "long_term.1.row04.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_29[0]"
+    type: text
+  - line: "long_term.1.row04.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_30[0]"
+    type: money
+  - line: "long_term.1.row04.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_31[0]"
+    type: money
+  - line: "long_term.1.row04.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_32[0]"
+    type: text
+  - line: "long_term.1.row04.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_33[0]"
+    type: money
+  - line: "long_term.1.row04.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_34[0]"
+    type: money
+  # row 5 of 11
+  - line: "long_term.1.row05.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_35[0]"
+    type: text
+  - line: "long_term.1.row05.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_36[0]"
+    type: text
+  - line: "long_term.1.row05.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_37[0]"
+    type: text
+  - line: "long_term.1.row05.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_38[0]"
+    type: money
+  - line: "long_term.1.row05.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_39[0]"
+    type: money
+  - line: "long_term.1.row05.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_40[0]"
+    type: text
+  - line: "long_term.1.row05.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_41[0]"
+    type: money
+  - line: "long_term.1.row05.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_42[0]"
+    type: money
+  # row 6 of 11
+  - line: "long_term.1.row06.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_43[0]"
+    type: text
+  - line: "long_term.1.row06.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_44[0]"
+    type: text
+  - line: "long_term.1.row06.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_45[0]"
+    type: text
+  - line: "long_term.1.row06.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_46[0]"
+    type: money
+  - line: "long_term.1.row06.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_47[0]"
+    type: money
+  - line: "long_term.1.row06.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_48[0]"
+    type: text
+  - line: "long_term.1.row06.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_49[0]"
+    type: money
+  - line: "long_term.1.row06.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_50[0]"
+    type: money
+  # row 7 of 11
+  - line: "long_term.1.row07.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_51[0]"
+    type: text
+  - line: "long_term.1.row07.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_52[0]"
+    type: text
+  - line: "long_term.1.row07.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_53[0]"
+    type: text
+  - line: "long_term.1.row07.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_54[0]"
+    type: money
+  - line: "long_term.1.row07.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_55[0]"
+    type: money
+  - line: "long_term.1.row07.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_56[0]"
+    type: text
+  - line: "long_term.1.row07.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_57[0]"
+    type: money
+  - line: "long_term.1.row07.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_58[0]"
+    type: money
+  # row 8 of 11
+  - line: "long_term.1.row08.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_59[0]"
+    type: text
+  - line: "long_term.1.row08.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_60[0]"
+    type: text
+  - line: "long_term.1.row08.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_61[0]"
+    type: text
+  - line: "long_term.1.row08.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_62[0]"
+    type: money
+  - line: "long_term.1.row08.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_63[0]"
+    type: money
+  - line: "long_term.1.row08.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_64[0]"
+    type: text
+  - line: "long_term.1.row08.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_65[0]"
+    type: money
+  - line: "long_term.1.row08.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_66[0]"
+    type: money
+  # row 9 of 11
+  - line: "long_term.1.row09.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_67[0]"
+    type: text
+  - line: "long_term.1.row09.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_68[0]"
+    type: text
+  - line: "long_term.1.row09.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_69[0]"
+    type: text
+  - line: "long_term.1.row09.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_70[0]"
+    type: money
+  - line: "long_term.1.row09.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_71[0]"
+    type: money
+  - line: "long_term.1.row09.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_72[0]"
+    type: text
+  - line: "long_term.1.row09.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_73[0]"
+    type: money
+  - line: "long_term.1.row09.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_74[0]"
+    type: money
+  # row 10 of 11
+  - line: "long_term.1.row10.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_75[0]"
+    type: text
+  - line: "long_term.1.row10.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_76[0]"
+    type: text
+  - line: "long_term.1.row10.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_77[0]"
+    type: text
+  - line: "long_term.1.row10.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_78[0]"
+    type: money
+  - line: "long_term.1.row10.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_79[0]"
+    type: money
+  - line: "long_term.1.row10.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_80[0]"
+    type: text
+  - line: "long_term.1.row10.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_81[0]"
+    type: money
+  - line: "long_term.1.row10.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_82[0]"
+    type: money
+  # row 11 of 11
+  - line: "long_term.1.row11.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_83[0]"
+    type: text
+  - line: "long_term.1.row11.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_84[0]"
+    type: text
+  - line: "long_term.1.row11.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_85[0]"
+    type: text
+  - line: "long_term.1.row11.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_86[0]"
+    type: money
+  - line: "long_term.1.row11.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_87[0]"
+    type: money
+  - line: "long_term.1.row11.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_88[0]"
+    type: text
+  - line: "long_term.1.row11.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_89[0]"
+    type: money
+  - line: "long_term.1.row11.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_90[0]"
+    type: money
+
+  # ---- Part II printed line 2 — "Totals. Add the amounts in columns (d), (e),
+  # ---- (g), and (h) (subtract negative amounts). Enter each total here and
+  # ---- include on your Schedule D, line 8b (if Box D or Box J above is
+  # ---- checked), line 9 (if Box E or Box K above is checked), or line 10 (if
+  # ---- Box F or Box L above is checked)."
+  # The carry is CONDITIONAL on the box AND additive across forms, so no
+  # cross_form rule (see the header). Column (f) has NO key: its Totals cell is
+  # shaded grey and ReadOnly (f2_93[0]) because the printed row totals only
+  # (d), (e), (g) and (h) — P-007 class 2.
+  - line: "long_term.2.d"                         # Totals, column (d) Proceeds
+    field: "Page2[0].f2_91[0]"
+    type: money
+  - line: "long_term.2.e"                         # Totals, column (e) Cost or other basis
+    field: "Page2[0].f2_92[0]"
+    type: money
+  - line: "long_term.2.g"                         # Totals, column (g) Amount of adjustment
+    field: "Page2[0].f2_94[0]"
+    type: money
+  - line: "long_term.2.h"                         # Totals, column (h) Gain or (loss)
+    field: "Page2[0].f2_95[0]"
+    type: money
+
+# Deliberately empty. Both pieces of on-face arithmetic — the per-row
+# (h) = (d) - (e) + (g) identity and the line-2 column totals — are equalities
+# over DOTTED column keys, and verify's relation tokenizer has no '.' token, so
+# neither can be expressed. Left to the recompute engine + human review,
+# exactly as sched_d leaves its own dotted per-row column equality. See the
+# header.
+relations: []
+
+# Deliberately empty. The six printed Schedule D carries are CONDITIONAL on
+# which box is checked (and in 2025 each condition is a two-box disjunction)
+# and ADDITIVE across as many Forms 8949 as the filer needs, and a dotted local
+# ref cannot appear in a cross_form rule anyway (refs split at the first dot).
+# See the header.
+cross_form: []
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only (Attachment Sequence No. 12A): no signature block of its own,
+# mailed inside the parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null
