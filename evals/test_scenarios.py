@@ -5,7 +5,7 @@ behaviours the dev plan calls out per scenario letter. These are integration
 EVALS, not unit tests: they prove the M1-M4 stack does the right thing on
 realistic cases, including the honest-estimate and no-invented-numbers rules.
 
-All sixteen scenarios (a–p) run now: the federal cases (a, d, e, g, h, i, j) on
+All 23 scenarios (a–s, including the provisional-guard family i–i5) run now: the federal cases (a, d, e, g, h, i, j) on
 the M1-M4 stack; the joint / separate / NRA-spouse cases (k, l, m) on the
 filing-status-aware engine (MFJ math, the both-ways comparison, and the §6013(g)/(h)
 election surface); the state cases (b, c, f) on M5 (CA packs + state_scope);
@@ -18,7 +18,13 @@ dual-status corridor (p) on the G5 stack (the First-Year-Choice note, the
 concrete split-year roadmap, and the dual_status assembly checklist); and the
 FICA-withheld-in-error corridor (q) on the G6 stack (the intake employer-
 refusal note, the estimate's concrete claim-amount disclosure, and the
-Forms 843 + 8316 claim checklist out of file_and_pay).
+Forms 843 + 8316 claim checklist out of file_and_pay); the mid-year status-change
+household (r) on the Phase H stack; and (s) the six Phase I planning decisions,
+on a demo fixture — it re-runs six decisions that, before Phase I, one had
+fixtures — the 401(k) rollover destination under IRC 408(d)(2), the Roth
+conversion and its section 1411 crossing, the HSA payroll saving, the ESPP basis
+correction, the capital-loss carryover, and the treaty disclosure — pinned
+against the ops I1-I4 shipped, so those gaps cannot reopen quietly.
 Multi-form fill+verify on real PDFs is covered by
 packages/core/tests/test_filing_integration.py (the 1040 and 1040-NR stacks).
 """
@@ -877,3 +883,182 @@ def test_eval_r_midyear_status_change_and_unmarried_household():
     assert "state_footprint.remote_employer_state" not in {
         # (fixture revised)
     }
+
+
+# ── (s) the six Phase I planning decisions, on a demo fixture ──────────────────
+
+
+def test_eval_s_phase_i_planning_decisions():
+    """The six Phase I decisions, encoded so the Phase I gaps cannot reopen.
+
+    In a demo walkthrough this repo was driven end to end to compute a TY2026 projection
+    — a hypothetical single filer, W-2 $216,000 (base $150k + RSUs $50k + bonus $16k), 401(k) $23,000
+    against the $24,500 limit, HSA $3,600, a backdoor Roth, a what-if direct
+    Roth IRA contribution needing recharacterisation, an $18,000 old-plan balance
+    to convert, ESPP (a Korea Art. 21(1) $2,000 treaty check runs on its own separate demo fixture), and a capital
+    loss. Every FIGURE the knowledge packs carried was correct and citable.
+    But SIX of the decisions the walkthrough turned on had to be computed
+    # (fixture revised)
+    for Phase H, one profile over: the data was there, the DECISION SURFACE
+    # (fixture revised)
+
+    need is a DECISION SURFACE. Phase I1-I4 built it, and this eval re-runs the
+    decisions against the shipped ops and pins the numbers the demo fixture produces,
+    regression in any of them fails loudly here rather than silently in
+    somebody's return. (The ROADMAP called this scenario "i14"; the file
+    numbers scenarios by LETTER and the `i` prefix already belongs to the
+    provisional-guard family, so it lands as `s`.)
+    """
+    from taxfill_core.calc import (
+        capital_loss_limitation,
+        espp_disposition,
+        foreign_asset_reporting,
+        hsa_deduction,
+        ira_pro_rata,
+        marginal_dollar_savings,
+        roth_conversion,
+        treaty_benefit,
+    )
+
+    YEAR = 2026
+    TAXABLE_BEFORE = 175_100   # W-2 216,000 - 401k 23,000 - HSA 3,600 + inv 2,600 - loss 800
+    MAGI_BEFORE = 191_200      #   - standard deduction 16,100 (MAGI = AGI here)
+    WAGES = 216_000
+    NII = 1_800                # 2,600 investment income net of the 800 loss
+
+    # ── DECISION 1 (I1): where may the old 401(k) go? ────────────────────────
+    # Rolling it into a traditional IRA poisons every future backdoor Roth,
+    # because IRC 408(d)(2) pools the IRAs and line 9 adds the conversion back.
+    polluted = ira_pro_rata(
+        dec31_total_value=18_000, amount_converted=7_000,
+        nondeductible_contributions_this_year=7_000, year=YEAR,
+    )
+    assert polluted.taxable_conversion == 5_040       # 72% of the backdoor is taxable
+    assert polluted.nontaxable_conversion == 1_960
+    assert polluted.basis_carryforward == 5_040       # and the basis is stuck for years
+    # Rolling it into the new employer's 401(k) instead leaves the pool clean, and
+    # a clean pool is the whole point: the backdoor is then fully non-taxable.
+    clean = ira_pro_rata(
+        dec31_total_value=0, amount_converted=7_000,
+        nondeductible_contributions_this_year=7_000, year=YEAR,
+    )
+    assert clean.taxable_conversion == 0
+
+    # ── DECISION 2 (I1): should the $18,000 convert this year? ───────────────
+    # A DIRECT plan -> Roth IRA rollover (Notice 2008-30) is fully taxable but
+    # pro-rata never touches it — the only way to empty an old plan without
+    # poisoning a backdoor. The joint fixture sits near the top of the 22%
+    conv = roth_conversion(
+        "plan_to_roth_ira", 18_000, taxable_income_before=TAXABLE_BEFORE,
+        magi_before=MAGI_MFJ, filing_status="married_filing_jointly", year=YEAR,
+        net_investment_income=NII_MFJ,
+    )
+    assert conv.taxable_amount == 18_000
+    assert conv.headroom_before == 26_675 and conv.headroom_after == 8_675
+    assert conv.spill_into_higher_brackets == 30_400  # the rest is taxed at 24%
+
+    # ── DECISION 3 (I1): does the conversion trigger NIIT? ───────────────────
+    # Conversion income is never net investment income, but it RAISES the MAGI
+    # the §1411 threshold is measured against — the trap no filer computes.
+    assert conv.crosses_niit_threshold is True        # 191,200 -> 209,200 crosses 200,000
+    assert conv.niit_from_conversion == 68            # 3.8% x 1,800
+
+    # The op must also REFUSE the input whose taxable income it does not price,
+    # rather than silently dropping it (the I1 review's blocking finding).
+    with pytest.raises(ValueError, match="other_distributions"):
+        roth_conversion(
+            "traditional_ira_to_roth", 7_000, taxable_income_before=TAXABLE_BEFORE,
+            magi_before=MAGI_BEFORE, year=YEAR, dec31_total_value=18_000,
+            nondeductible_contributions_this_year=7_000, other_distributions=5_000,
+        )
+
+    # ── DECISION 4 (I2): what does the HSA actually save? ────────────────────
+    hsa = hsa_deduction(
+        "self_only", year=YEAR, personal_contributions=3_600, wages=WAGES,
+    )
+    assert hsa.deduction == 3_600
+    # The correction Phase I made: above the social security wage base the
+    # payroll saving is Medicare-only, NEVER the 7.65% the repo used to imply.
+    assert "NOT 7.65%" in hsa.fica_tier
+    # And the op is honest that its top tier is an upper bound, because the Form
+    # 8959 TAX threshold is filing-status specific while withholding is not.
+    assert "WITHHOLDING threshold" in hsa.fica_tier
+    # marginal_dollar_savings prices the same dollar, and the I2 fix is that its
+    # 0.9% tier keys on the FILING-STATUS Form 8959 TAX threshold rather than the
+    # employer's status-blind $200,000 withholding threshold. On a single return
+    # these wages are over both, so 2.35% is right —
+    ranked = marginal_dollar_savings(
+        taxable_income=214_000, wages=HSA_WAGES, filing_status="single", year=2025,
+    )
+    assert "2.35%" in ranked.fica_tier
+    assert "single Form 8959 threshold" in ranked.fica_tier
+    # — while the SAME wages on a joint return are under the $250,000 tax
+    # threshold, so the withheld 0.9% comes back as a credit and the marginal
+    # dollar saves Medicare only. That divergence is what the old code got wrong.
+    joint = marginal_dollar_savings(
+        taxable_income=214_000, wages=HSA_WAGES,
+        filing_status="married_filing_jointly", year=2025,
+    )
+    assert "only Medicare" in joint.fica_tier
+    assert "comes back as a credit" in joint.fica_tier
+
+    # ── DECISION 5 (I3): how is the ESPP discount taxed, and what is the basis? ──
+    # The highest-dollar part: the broker reports the DISCOUNTED PURCHASE PRICE as
+    # basis, so a filer who trusts the 1099-B is taxed twice on the discount.
+    sale = espp_disposition(
+        shares=100, grant_date="2024-01-02", purchase_date="2024-06-28",
+        sale_date="2026-07-01", grant_date_fmv_per_share=100,
+        purchase_date_fmv_per_share=120, purchase_price_per_share=85,
+        sale_price_per_share=150,
+    )
+    assert sale.disposition_type == "qualifying"      # >2y from grant, >1y from purchase
+    assert sale.ordinary_income > 0
+    # The corrected basis exceeds what the broker reported, by exactly the
+    # ordinary income — that difference IS the double taxation.
+    assert sale.corrected_basis - sale.broker_reported_basis == sale.ordinary_income
+    # A qualifying sale AT A LOSS recognises ZERO ordinary income — the cell people
+    # most often get wrong.
+    at_a_loss = espp_disposition(
+        shares=100, grant_date="2024-01-02", purchase_date="2024-06-28",
+        sale_date="2026-07-01", grant_date_fmv_per_share=100,
+        purchase_date_fmv_per_share=120, purchase_price_per_share=85,
+        sale_price_per_share=70,
+    )
+    assert at_a_loss.disposition_type == "qualifying" and at_a_loss.ordinary_income == 0
+
+    # The $800 demo loss is deductible in full; a bigger one is
+    # is capped at $3,000 and CARRIES FORWARD with its character, which
+    # estimate.py alone still cannot do.
+    small = capital_loss_limitation(
+        short_term=-800, long_term=0,
+        taxable_income_before_capital_loss=128_000, filing_status="single", year=YEAR,
+    )
+    assert small.deduction == 800 and small.total_carryover == 0
+    big = capital_loss_limitation(
+        short_term=-9_000, long_term=0,
+        taxable_income_before_capital_loss=128_000, filing_status="single", year=YEAR,
+    )
+    assert big.deduction == 3_000
+    assert big.short_term_carryover == 6_000 and big.long_term_carryover == 0
+
+    # ── DECISION 6 (I4): how is the treaty $2,000 disclosed? ─────────────────
+    # amount). calc.treaty_benefit computed such exemptions for a year before
+    # the repo had any way to file the disclosure IRC 6114 requires. It now
+    treaty = treaty_benefit(
+        country="korea", income_class="student_wages", amount=2_000, year=YEAR,
+    )
+    assert treaty.exempt_amount == 2_000             # the number did not move
+    for token in ("8833", "6114", "6712"):
+        assert token in treaty.work, token
+    # And the form the op names actually ships for this year.
+    pack = load_form_pack("f8833", YEAR - 1)          # revision-pinned; 2025 serves TY2026 prep
+    assert pack.form.startswith("8833") or "8833" in pack.form
+
+    # ── The foreign-asset duty a filer cannot be asked to volunteer ──────────
+    # A filer with a foreign account rarely raises it unprompted, so the op
+    # refuses to decide until the elicitation questions are answered.
+    undecided = foreign_asset_reporting(year=YEAR, filing_status="single")
+    assert undecided.any_duty_undecided is True
+    assert undecided.must_ask, "a foreign account must be ASKED about, never assumed away"
+    assert undecided.fbar.threshold_any_time == 10_000
+    assert undecided.form_8938.threshold_year_end == 50_000

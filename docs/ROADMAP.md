@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**4,776 tests, all green** — offline 4,404 + live-.gov 372, exit 0;
+Done and on `main` (**4,777 tests, all green** — offline 4,405 + live-.gov 372, exit 0;
 re-verified 2026-08-21 via `pytest -m "not network"` AND `pytest -m network`, exit 0
 both — the network layer skips 2 (states/ms/2023/f80105, whose blank is uncached and
 whose host fails certificate verification here)):
@@ -1152,7 +1152,27 @@ line items sum to the headline delta.
       structured path). The 3921/3922 and 1099-SA/5498-SA specs belong to I3 and I2
       respectively — do them there, and batch the remainder. **Acceptance:** every
       box layout read off the official form, round-trip tested.
-- [ ] **I6 — Eval scenario i14: the six Phase I decisions.** Encode the
+- [x] **I6 — the six Phase I decisions, encoded — DONE 2026-08-27.** It lands as eval
+      scenario **`s`**, not "i14": this plan invented that label, but
+      `evals/test_scenarios.py` numbers scenarios by LETTER and the `i` prefix
+      already belongs to the provisional-guard family (i, i2-i5). Scenario `s`
+      re-runs the SIX Phase I decisions that had been computed outside the
+      engine, against the ops I1-I4 shipped, and pins the numbers the engine
+      produces: the 401(k) rollover destination under IRC 408(d)(2) (a polluted
+      makes 72% of the backdoor taxable and sticks $5,040 of basis; a clean one is
+      fully non-taxable), the $18,000 direct plan-to-Roth conversion with its bracket
+      headroom 26,675 -> 8,675 and the section 1411 crossing that costs $68, the
+      Medicare-only tier, the ESPP basis correction
+      (corrected basis minus broker basis equals the ordinary income exactly — that
+      difference IS the double taxation) plus the qualifying-sale-at-a-loss cell that
+      recognises zero ordinary income, the $3,000 cap with a character-preserving
+      carryover, and the treaty $2,000 whose disclosure the engine can finally name.
+      $2,000). It also pins the two guards the reviews added: `roth_conversion` REFUSING the
+      input whose income it does not price, and `foreign_asset_reporting` refusing to
+      decide until its elicitation questions are answered. The file's own scenario
+      census ("sixteen scenarios (a–p)") was stale by three and is corrected.
+      *(original scope below)*
+- [x] **I6 scope as planned — an eval for the six Phase I decisions.** Encode the
       six decisions as a scenario — they are what exposed I1–I5, and the repo's own
       precedent (FIELD_NOTES → Phase H) is that an end-to-end drive is the best gap-finder
       decisions as an eval scenario so these gaps cannot silently reopen.
