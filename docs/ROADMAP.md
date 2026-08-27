@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**4,776 tests, all green** — offline 4,404 + live-.gov 372, exit 0;
+Done and on `main` (**4,777 tests, all green** — offline 4,405 + live-.gov 372, exit 0;
 re-verified 2026-08-21 via `pytest -m "not network"` AND `pytest -m network`, exit 0
 both — the network layer skips 2 (states/ms/2023/f80105, whose blank is uncached and
 whose host fails certificate verification here)):
@@ -1152,7 +1152,27 @@ line items sum to the headline delta.
       structured path). The 3921/3922 and 1099-SA/5498-SA specs belong to I3 and I2
       respectively — do them there, and batch the remainder. **Acceptance:** every
       box layout read off the official form, round-trip tested.
-- [ ] **I6 — Eval scenario i14: the live-use session itself.** Encode the
+- [x] **I6 — the live-use session, encoded — DONE 2026-08-27.** It lands as eval
+      scenario **`s`**, not "i14": this plan invented that label, but
+      `evals/test_scenarios.py` numbers scenarios by LETTER and the `i` prefix
+      already belongs to the provisional-guard family (i, i2-i5). Scenario `s`
+      re-runs the SIX decisions the 2026-08-26 session had to compute outside the
+      engine, against the ops I1-I4 shipped, and pins the numbers that session
+      produced: the 401(k) rollover destination under IRC 408(d)(2) (a polluted pool
+      makes 80% of the backdoor taxable and sticks $6,000 of basis; a clean one is
+      fully non-taxable), the $20,000 direct plan-to-Roth conversion with its bracket
+      headroom 30,375 -> 10,375 and the section 1411 crossing that costs $133, the
+      HSA payroll saving and its Medicare-only tier, the ESPP basis correction
+      (corrected basis minus broker basis equals the ordinary income exactly — that
+      difference IS the double taxation) plus the qualifying-sale-at-a-loss cell that
+      recognises zero ordinary income, the $3,000 cap with a character-preserving
+      carryover, and the treaty $5,000 whose disclosure the engine can finally name.
+      It also pins the two guards the reviews added: `roth_conversion` REFUSING the
+      input whose income it does not price, and `foreign_asset_reporting` refusing to
+      decide until its elicitation questions are answered. The file's own scenario
+      census ("sixteen scenarios (a–p)") was stale by three and is corrected.
+      *(original scope below)*
+- [x] **I6 scope as planned — eval scenario for the live-use session itself.** Encode the
       2026-08-26 session as a scenario — it is what exposed I1–I5, and the repo's own
       precedent (FIELD_NOTES → Phase H) is that a real session is the best gap-finder
       it has. Locking it in means these gaps cannot silently reopen. **Acceptance:**
