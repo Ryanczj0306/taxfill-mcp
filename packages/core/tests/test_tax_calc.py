@@ -37,6 +37,18 @@ Sources (verified against the official PDFs):
   (https://www.irs.gov/pub/irs-drop/rr-04-45.pdf) for the health-FSA/HRA
   mutual exclusion, including a spouse's; Rev. Proc. 2025-19
   (https://www.irs.gov/pub/irs-drop/rp-25-19.pdf) for the 2026 amounts.
+* Equity comp + capital losses (Phase I, I3): IRC 421, 422, 423, 1211, 1212,
+  1222, 151 and 3121 from uscode.house.gov (title 26, prelim edition);
+  Publication 525 (2025) (https://www.irs.gov/pub/irs-pdf/p525.pdf), whose
+  Examples 10 and 11 — the same ESPP facts with a qualifying and a disqualifying
+  sale — are reproduced to the dollar below; Publication 550 (2025)
+  (https://www.irs.gov/pub/irs-pdf/p550.pdf) chapter 4, whose Bob-and-Shelly
+  carryover example is likewise reproduced; Form 3922 and Form 3921 (both Rev.
+  April 2025) for the box layouts; Form 8949 (2025) and its instructions
+  (f8949.pdf / i8949.pdf) for the box legend, the code-B rule and the Worksheet
+  for Basis Adjustments in Column (g); Schedule D (Form 1040) for 2023, 2024 and
+  2025 plus the Capital Loss Carryover Worksheet in the 2022-2025 instructions
+  (f1040sd--<year>.pdf / i1040sd--<year>.pdf), all fetched 2026-08-26.
 
 Rule from docs/DEV_PLAN.md section 10: if the implementation disagrees with
 ANY published row below, the implementation is wrong — fix it, never the
@@ -51,10 +63,12 @@ import pytest
 
 from taxfill_core.calc import (
     additional_medicare_tax,
+    capital_loss_limitation,
     child_tax_credit,
     dependent_care_credit,
     education_credits,
     eitc,
+    espp_disposition,
     excess_ss,
     hsa_deduction,
     ira_pro_rata,
@@ -3569,4 +3583,588 @@ def test_months_eligible_shorthand_promotes_its_year_end_assumption():
     assert shorthand.deduction == 4400 and shorthand.limit_basis == "last_month_rule"
     assert explicit_first_half.deduction == 2200
     assert shorthand.input_assumptions and "LAST 6 month" in shorthand.input_assumptions[0]
+
+
+
+# ---------------------------------------------------------------------------
+# ESPP dispositions (Phase I, I3) — IRC 421 / 423, Form 3922, Form 8949.
+#
+# The two Publication 525 (2025) worked examples are the same facts sold at two
+# different times, which is exactly the pair the op exists to keep apart:
+#   Example 10 (QUALIFYING)   -> $200 wages, $800 capital gain
+#   Example 11 (DISQUALIFYING) -> $300 wages, $700 capital gain
+# Dates below are chosen to reproduce each example's stated intervals: granted,
+# exercised 18 months later, then sold 14 months after that (Example 10) or 6
+# months after that (Example 11).
+# ---------------------------------------------------------------------------
+
+_PUB525_EXAMPLE_10 = dict(
+    shares=100,
+    grant_date="2022-03-01",
+    purchase_date="2023-09-01",   # 18 months after grant
+    sale_date="2024-11-01",       # 14 months after exercise
+    grant_date_fmv_per_share=22,  # "at a time when the stock had a value of $22 a share"
+    purchase_date_fmv_per_share=23,
+    purchase_price_per_share=20,  # "to buy 100 shares ... for $20 a share"
+    sale_price_per_share=30,
+)
+
+
+def test_pub525_example_10_qualifying_disposition_to_the_dollar():
+    """Pub 525 Example 10: wages $200 (the GRANT-date discount), capital gain $800.
+
+    The published table is: selling price $3,000, purchase price $2,000, gain
+    $1,000, "Amount reported as wages [($22 x 100 shares) - $2,000]" = $200,
+    capital gain $800. Note WHICH price the wages come off: $22 is the
+    grant-date FMV, not the $23 exercise-date FMV.
+    """
+    r = espp_disposition(**_PUB525_EXAMPLE_10)
+    assert r.disposition_type == "qualifying"
+    assert r.ordinary_income == 200
+    assert r.capital_gain_or_loss == 800
+    assert r.capital_gain_character == "long_term"
+    assert r.proceeds == 3_000 and r.amount_paid == 2_000
+    assert r.corrected_basis == 2_200
+
+
+def test_pub525_example_11_disqualifying_disposition_to_the_dollar():
+    """Pub 525 Example 11: the SAME facts sold 6 months after exercise.
+
+    "you must report $300 as wages and $700 as capital gain": wages are
+    [($23 x 100 shares) - $2,000], the EXERCISE-date spread, and the capital
+    gain is $3,000 - ($2,000 + $300).
+    """
+    facts = dict(_PUB525_EXAMPLE_10, sale_date="2024-03-01")  # 6 months after exercise
+    r = espp_disposition(**facts)
+    assert r.disposition_type == "disqualifying"
+    assert r.ordinary_income == 300
+    assert r.capital_gain_or_loss == 700
+    assert r.capital_gain_character == "short_term"
+    assert r.corrected_basis == 2_300
+
+
+def test_the_two_dispositions_use_different_prices_on_identical_facts():
+    """The whole point of the op: same lot, same sale price, two different
+    ordinary-income figures because one reads the GRANT-date FMV and the other
+    the EXERCISE-date FMV."""
+    qualifying = espp_disposition(**_PUB525_EXAMPLE_10)
+    disqualifying = espp_disposition(**dict(_PUB525_EXAMPLE_10, sale_date="2024-03-01"))
+    assert qualifying.ordinary_income != disqualifying.ordinary_income
+    # And the total is invariant: what is not ordinary is capital, both ways.
+    assert qualifying.ordinary_income + qualifying.capital_gain_or_loss == 1_000
+    assert disqualifying.ordinary_income + disqualifying.capital_gain_or_loss == 1_000
+
+
+def test_holding_period_boundary_is_STRICTLY_more_than_two_years():
+    """IRC 423(a)(1): 'no disposition ... within 2 years after the date of the
+    granting of the option nor within 1 year after the transfer'. Pub 525 puts
+    it as "don't sell the stock until the END of the later of" the two periods,
+    so a sale ON the anniversary is still disqualifying."""
+    on_the_day = espp_disposition(**dict(_PUB525_EXAMPLE_10, sale_date="2024-09-01"))
+    assert on_the_day.disposition_type == "disqualifying"   # exactly 1 year after purchase
+    one_day_later = espp_disposition(**dict(_PUB525_EXAMPLE_10, sale_date="2024-09-02"))
+    assert one_day_later.disposition_type == "qualifying"
+    # ... and the same date decides the capital-gain holding period, because
+    # Pub 525's holding period "begins on the day after you exercise the option".
+    assert on_the_day.capital_gain_character == "short_term"
+    assert one_day_later.capital_gain_character == "long_term"
+
+
+def test_a_qualifying_sale_at_a_loss_recognises_zero_ordinary_income():
+    """Pub 525: "If you have a loss from the sale, it's a capital loss, and you
+    don't have any ordinary income." IRC 423(c)(1) is the binding branch — the
+    lesser-of collapses to zero when the sale price is at or below what you
+    paid. This is the case people most often botch."""
+    r = espp_disposition(**dict(_PUB525_EXAMPLE_10, sale_price_per_share=18))
+    assert r.disposition_type == "qualifying"
+    assert r.ordinary_income == 0
+    assert r.capital_gain_or_loss == -200          # $1,800 proceeds - $2,000 paid
+    assert r.corrected_basis == 2_000              # no ordinary income to add
+    assert r.basis_adjustment == 0                 # so the 1099-B is already right
+    assert r.form_8949["(f) code"].startswith("(leave blank")
+
+
+def test_a_disqualifying_sale_below_the_purchase_fmv_still_recognises_the_full_spread():
+    """Pub 525: "This ordinary income isn't limited to your gain from the sale of
+    the stock." Sold at $21 — below the $23 exercise-date FMV — the filer still
+    reports the whole $300 as wages and takes a capital LOSS."""
+    r = espp_disposition(**dict(_PUB525_EXAMPLE_10, sale_date="2024-03-01", sale_price_per_share=21))
+    assert r.disposition_type == "disqualifying"
+    assert r.ordinary_income == 300                # ($23 - $20) x 100, sale price irrelevant
+    assert r.corrected_basis == 2_300
+    assert r.capital_gain_or_loss == -200          # $2,100 proceeds - $2,300 basis
+    assert "isn't limited to your gain" in r.work
+
+
+def test_the_basis_correction_is_the_1099b_double_taxation_fix():
+    """Instructions for Form 8949: for compensatory options granted after 2013
+    the reported basis "won't reflect any amount you included in income".
+    Filing it unadjusted taxes the discount twice; the op names the dollars."""
+    r = espp_disposition(**_PUB525_EXAMPLE_10)
+    assert r.broker_reported_basis == 2_000        # defaulted to the discounted price paid
+    assert r.corrected_basis == 2_200
+    assert r.basis_adjustment == 200
+    assert r.double_taxed_if_uncorrected == 200
+    # Uncorrected, the filer would report $1,000 of capital gain on top of $200
+    # of wages: $200 more income than the transaction produced.
+    assert (r.proceeds - r.broker_reported_basis) - r.capital_gain_or_loss == 200
+    assert any("BOX 1e WAS NOT SUPPLIED" in a for a in r.input_assumptions)
+
+
+def test_code_b_takes_the_reported_basis_branch_when_basis_went_to_the_irs():
+    """Form 8949's own Note: 'If you checked Box A or Box G above but the basis
+    reported to the IRS was incorrect, enter in column (e) the basis as reported
+    to the IRS' — and correct it in column (g), per the Worksheet for Basis
+    Adjustments (line 2 larger than line 1 -> a NEGATIVE column (g))."""
+    r = espp_disposition(**_PUB525_EXAMPLE_10)
+    assert r.form_8949["box"].startswith("D — Long-term")
+    assert r.form_8949["(e) cost or other basis"] == "$2,000"     # the WRONG basis, left in place
+    assert r.form_8949["(f) code"] == "B"
+    assert r.form_8949["(g) adjustment"] == "($200)"              # parenthesised negative
+    assert r.form_8949["(h) gain or (loss)"] == "$800"
+
+
+def test_code_b_takes_the_correct_basis_branch_when_basis_was_not_reported():
+    """The other half of the same table row: box B/E means the correct basis goes
+    straight into column (e) and column (g) is -0-. Column (h) is identical."""
+    r = espp_disposition(**_PUB525_EXAMPLE_10, broker_reported_basis_to_irs=False)
+    assert r.form_8949["box"].startswith("E — Long-term")
+    assert r.form_8949["(e) cost or other basis"] == "$2,200"     # the CORRECT basis
+    assert r.form_8949["(f) code"] == "B"
+    assert r.form_8949["(g) adjustment"] == "$0"
+    assert r.form_8949["(h) gain or (loss)"] == "$800"
+
+
+def test_an_overstated_broker_basis_flips_the_adjustment_positive():
+    """The Worksheet for Basis Adjustments runs both ways: 'If line 1 is larger
+    than line 2, subtract line 2 from line 1 ... in column (g) as a positive
+    number.'"""
+    r = espp_disposition(**_PUB525_EXAMPLE_10, broker_reported_basis=2_500)
+    assert r.basis_adjustment == -300
+    assert r.double_taxed_if_uncorrected == 0
+    assert r.form_8949["(g) adjustment"] == "$300"
+    assert r.form_8949["(h) gain or (loss)"] == "$800"            # unchanged: (d) - (e) + (g)
+
+
+def test_the_lookback_uses_form_3922_box_8_not_the_price_paid():
+    """IRC 423(c): 'If the option price is not fixed or determinable at the time
+    the option is granted ... the option price shall be determined as if the
+    option were exercised at such time' — which is what box 8 reports.
+
+    Grant-date FMV $100, exercise-date FMV $60, 15% off the LOWER, so the price
+    paid is $51 and box 8 is $85. The qualifying discount is $100 - $85 = $15,
+    NOT $100 - $51 = $49. Getting that wrong overstates the wages 3.3x.
+    """
+    facts = dict(
+        shares=100, grant_date="2022-01-03", purchase_date="2022-06-30", sale_date="2024-06-01",
+        grant_date_fmv_per_share=100, purchase_date_fmv_per_share=60,
+        purchase_price_per_share=51, sale_price_per_share=120,
+    )
+    r = espp_disposition(**facts, grant_date_exercise_price_per_share=85)
+    assert r.lookback_applied is True
+    assert r.disposition_type == "qualifying"
+    assert r.grant_date_option_price == Decimal("85.00")
+    assert r.ordinary_income == 1_500              # 100 sh x ($100 - $85)
+    assert r.corrected_basis == 6_600              # $5,100 paid + $1,500
+    assert r.capital_gain_or_loss == 5_400
+    assert r.discount_percentage == Decimal("0.1500")
+
+
+def test_a_lookback_price_with_no_box_8_is_refused_not_guessed():
+    """A price below 85% of the GRANT-date FMV cannot come from a fixed grant-date
+    price under IRC 423(b)(6) — only a lookback produces it. Silently using box 5
+    would treble the ordinary income, so the op refuses and says which box to
+    fetch."""
+    facts = dict(
+        shares=100, grant_date="2022-01-03", purchase_date="2022-06-30", sale_date="2024-06-01",
+        grant_date_fmv_per_share=100, purchase_date_fmv_per_share=60,
+        purchase_price_per_share=51, sale_price_per_share=120,
+    )
+    with pytest.raises(ValueError, match="box 8"):
+        espp_disposition(**facts)
+
+
+def test_a_price_below_the_423b6_floor_is_not_a_section_423_plan():
+    """IRC 423(b)(6): the option price may be no less than the LESSER of 85% of
+    the grant-date FMV and 85% of the exercise-date FMV. Below that, 423(c) does
+    not apply at all."""
+    with pytest.raises(ValueError, match="423\\(b\\)\\(6\\)"):
+        espp_disposition(
+            shares=100, grant_date="2022-01-03", purchase_date="2022-06-30", sale_date="2024-06-01",
+            grant_date_fmv_per_share=100, purchase_date_fmv_per_share=100,
+            purchase_price_per_share=80, sale_price_per_share=120,
+        )
+
+
+def test_a_missing_box_8_is_promoted_into_input_assumptions_when_it_could_matter():
+    """Detection cannot be complete — a 10%-discount lookback on a stock that
+    barely moved still clears the 85%-of-grant-FMV test — so the residual risk is
+    PROMOTED out of `work` whenever the disposition is qualifying and the two
+    FMVs differ."""
+    r = espp_disposition(**_PUB525_EXAMPLE_10)     # grant FMV $22, exercise FMV $23
+    assert any("BOX 8 WAS NOT SUPPLIED" in a for a in r.input_assumptions)
+    # Not raised when box 8 cannot change the answer: a disqualifying disposition
+    # never reads it.
+    disq = espp_disposition(**dict(_PUB525_EXAMPLE_10, sale_date="2024-03-01"))
+    assert not any("BOX 8 WAS NOT SUPPLIED" in a for a in disq.input_assumptions)
+
+
+def test_no_withholding_and_no_fica_on_espp_compensation_is_stated():
+    """IRC 423(c) and 421(b) both end 'No amount shall be required to be deducted
+    and withheld under chapter 24', and IRC 3121(a)(22) keeps the same
+    remuneration out of FICA wages. The income arrives with zero tax prepaid."""
+    r = espp_disposition(**_PUB525_EXAMPLE_10)
+    assert "NOTHING IS WITHHELD ON IT" in r.work
+    assert "3121(a)(22)" in r.work
+    assert "Schedule 1 (Form 1040), line 8k" in r.work
+    urls = {c.url for c in r.citations}
+    assert any("section3121" in u for u in urls)
+
+
+def test_a_nonstatutory_option_is_refused_rather_than_run_through_423():
+    """IRC 423(a)(2) / Pub 525: fail the employment window and 'your option is a
+    nonstatutory stock option', taxed at EXERCISE under section 83 — neither
+    branch of this op applies."""
+    with pytest.raises(ValueError, match="nonstatutory"):
+        espp_disposition(**_PUB525_EXAMPLE_10, employed_through_exercise=False)
+
+
+def test_espp_op_does_not_pretend_to_model_isos_or_wash_sales():
+    r = espp_disposition(**_PUB525_EXAMPLE_10)
+    joined = " ".join(r.not_modeled)
+    assert "AMT" in joined and "6251" in joined and "422(c)(2)" in joined
+    assert "83(b)" in joined and "RSU" in joined and "1091" in joined
+
+
+def test_fractional_espp_shares_are_accepted():
+    """Pub 525 Example 9: an ESPP buys shares out of whole payroll dollars
+    ($240 / $20 = 12 shares), so a fractional count is normal, not a misread."""
+    r = espp_disposition(
+        shares="12.3456", grant_date="2022-03-01", purchase_date="2023-09-01",
+        sale_date="2024-03-01", grant_date_fmv_per_share=22,
+        purchase_date_fmv_per_share=23, purchase_price_per_share=20, sale_price_per_share=30,
+    )
+    assert r.ordinary_income == 37          # 12.3456 sh x $3.00 = $37.04 -> $37
+    assert r.amount_paid == 247             # 12.3456 sh x $20 = $246.912 -> $247
+    assert r.corrected_basis == 284
+
+
+def test_espp_dates_must_run_grant_then_purchase_then_sale():
+    with pytest.raises(ValueError, match="grant_date <= purchase_date <= sale_date"):
+        espp_disposition(**dict(_PUB525_EXAMPLE_10, sale_date="2022-01-01"))
+
+
+# ---------------------------------------------------------------------------
+# Capital-loss limitation and carryover (Phase I, I3) — IRC 1211(b) / 1212(b)
+# and the Schedule D Capital Loss Carryover Worksheet.
+# ---------------------------------------------------------------------------
+
+
+def test_pub550_bob_and_shelly_carryover_example():
+    """Pub 550 (2025), chapter 4: "Bob and Shelly sold securities in 2025. The
+    sales resulted in a capital loss of $7,000 ... Their taxable income was
+    $26,000. On their joint 2025 return, they can deduct $3,000. The unused part
+    of the loss, $4,000 ($7,000 - $3,000), can be carried over to 2026."
+
+    $26,000 is the FILED taxable income, i.e. worksheet line 1 — already net of
+    the $3,000 — so the op's pre-deduction input is $29,000.
+    """
+    r = capital_loss_limitation(
+        short_term=0, long_term=-7_000, taxable_income_before_capital_loss=29_000,
+        filing_status="married_filing_jointly", year=2025,
+    )
+    assert r.deduction == 3_000
+    assert r.years[0].taxable_income_after_deduction == 26_000     # ties to Pub 550's $26,000
+    assert r.long_term_carryover == 4_000
+    assert r.short_term_carryover == 0
+    assert r.total_carryover == 4_000
+
+
+def test_pub550_second_case_a_small_loss_leaves_no_carryover():
+    """"If their capital loss had been $2,000, their capital loss deduction would
+    have been $2,000. They would have no carryover.\""""
+    r = capital_loss_limitation(
+        short_term=0, long_term=-2_000, taxable_income_before_capital_loss=28_000,
+        filing_status="married_filing_jointly", year=2025,
+    )
+    assert r.deduction == 2_000 and r.total_carryover == 0
+    assert r.years_to_exhaust == 1
+
+
+def test_mfs_takes_the_1500_cap():
+    """IRC 1211(b)(1): '$3,000 ($1,500 in the case of a married individual filing
+    a separate return)'."""
+    joint = capital_loss_limitation(short_term=-10_000, long_term=0,
+                                    taxable_income_before_capital_loss=90_000,
+                                    filing_status="married_filing_jointly", year=2025)
+    separate = capital_loss_limitation(short_term=-10_000, long_term=0,
+                                       taxable_income_before_capital_loss=90_000,
+                                       filing_status="married_filing_separately", year=2025)
+    assert joint.deduction_cap == 3_000 and joint.deduction == 3_000
+    assert separate.deduction_cap == 1_500 and separate.deduction == 1_500
+    assert separate.short_term_carryover == 8_500
+
+
+def test_taxable_income_shrinks_what_the_loss_BUYS_not_the_deduction():
+    """The worksheet subtlety, and it runs the opposite way to intuition.
+
+    IRC 1212(b)(2)(A) treats as a short-term capital gain 'the lesser of- (i) the
+    amount allowed for the taxable year under ... section 1211(b), or (ii) the
+    adjusted taxable income'. Schedule D line 21 still says $3,000; worksheet
+    line 4 says $1,000; so the carryover is $9,000, not $7,000. A low-income year
+    keeps MORE carryover, not less.
+    """
+    r = capital_loss_limitation(short_term=-10_000, long_term=0,
+                                taxable_income_before_capital_loss=1_000, year=2025)
+    assert r.deduction == 3_000                    # the form entry is unreduced
+    assert r.loss_absorbed == 1_000                # worksheet line 4
+    assert r.deduction_not_absorbed == 2_000
+    assert r.short_term_carryover == 9_000         # NOT $7,000
+    assert r.worksheet_lines["4"] == "$1,000"
+    assert any("TAXABLE INCOME CAPPED WHAT THE LOSS BOUGHT" in a for a in r.input_assumptions)
+
+
+def test_negative_taxable_income_is_kept_negative_by_the_worksheet():
+    """Worksheet line 1: 'If the amount would have been a loss if you could enter a
+    negative number on that line, enclose the amount in parentheses'; Pub 550:
+    'If your deductions are more than your gross income for the tax year, use
+    your negative taxable income'. Line 3 then floors at zero, so NOTHING of the
+    loss is consumed."""
+    r = capital_loss_limitation(short_term=-10_000, long_term=0,
+                                taxable_income_before_capital_loss=-5_000, year=2025)
+    assert r.deduction == 3_000
+    assert r.years[0].taxable_income_after_deduction == -8_000
+    assert r.worksheet_lines["3"] == "$0"
+    assert r.loss_absorbed == 0
+    assert r.short_term_carryover == 10_000        # the whole loss survives
+
+
+def test_character_is_preserved_and_short_term_is_used_first():
+    """IRC 1212(b)(1)(A)/(B) keep each half its own character, and Pub 550: 'Use
+    short-term losses first ... even if you incurred them after a long-term
+    capital loss.' Worksheet line 11 ('Subtract line 5 from line 4') is what
+    makes only the LEFTOVER deemed gain reach the long-term loss."""
+    r = capital_loss_limitation(short_term=-1_000, long_term=-9_000,
+                                taxable_income_before_capital_loss=100_000, year=2025)
+    assert r.deduction == 3_000
+    # $1,000 of the deemed short-term gain kills the short-term loss; the other
+    # $2,000 reaches the long-term one.
+    assert r.short_term_carryover == 0
+    assert r.long_term_carryover == 7_000
+    assert r.worksheet_lines["11"] == "$2,000"
+    assert "Use short-term losses first" in r.work
+
+
+def test_short_and_long_net_separately_before_they_net_against_each_other():
+    """IRC 1222 and Schedule D's shape: line 7 and line 15 are computed on their
+    own, and only line 16 combines them. A short-term GAIN inside a long-term
+    loss year changes the character of what carries forward."""
+    r = capital_loss_limitation(short_term=4_000, long_term=-12_000,
+                                taxable_income_before_capital_loss=100_000, year=2025)
+    assert r.net_short_term == 4_000 and r.net_long_term == -12_000
+    assert r.net_capital == -8_000 and r.deduction == 3_000
+    assert r.short_term_carryover == 0
+    # Worksheet line 10 puts the short-term GAIN against the long-term loss, on
+    # top of line 11's leftover deemed gain: $4,000 + $3,000 = $7,000 absorbed.
+    assert r.worksheet_lines["10"] == "$4,000"
+    assert r.long_term_carryover == 5_000
+
+
+def test_a_net_gain_produces_no_deduction_and_no_carryover():
+    r = capital_loss_limitation(short_term=-2_000, long_term=9_000,
+                                taxable_income_before_capital_loss=100_000, year=2025)
+    assert r.net_capital == 7_000 and r.deduction == 0 and r.total_carryover == 0
+    assert "NOT a loss" in r.work
+
+
+def test_a_carryover_survives_a_multi_year_round_trip():
+    """The acceptance criterion for I3: a carryover has to survive being rolled
+    forward, with its character intact at every step, and the chain has to thread
+    it itself."""
+    r = capital_loss_limitation(
+        short_term=-12_000, long_term=-4_000, taxable_income_before_capital_loss=150_000, year=2023,
+        following_years=[
+            {"short_term": 0, "long_term": 0, "taxable_income_before_capital_loss": 150_000},
+            {"short_term": 5_000, "long_term": 0, "taxable_income_before_capital_loss": 150_000},
+            {"short_term": 0, "long_term": 0, "taxable_income_before_capital_loss": 150_000},
+        ],
+    )
+    assert [y.year for y in r.years] == [2023, 2024, 2025, 2026]
+    # Year 1: $3,000 deducted, $9,000 ST + $4,000 LT out.
+    assert (r.years[0].short_term_carryover_out, r.years[0].long_term_carryover_out) == (9_000, 4_000)
+    # Year 2: the carryover IS the loss; short-term still goes first.
+    assert (r.years[1].net_short_term, r.years[1].net_long_term) == (-9_000, -4_000)
+    assert (r.years[1].short_term_carryover_out, r.years[1].long_term_carryover_out) == (6_000, 4_000)
+    # Year 3: a $5,000 short-term gain lands on Schedule D line 1a and is netted
+    # against the line 6 carryover first (IRC 1222), leaving $1,000 short-term.
+    assert r.years[2].net_short_term == -1_000
+    assert (r.years[2].short_term_carryover_out, r.years[2].long_term_carryover_out) == (0, 2_000)
+    # Year 4 finishes it: only $2,000 of long-term loss is left, so the deduction
+    # is $2,000, not $3,000.
+    assert r.years[3].deduction == 2_000
+    assert r.final_short_term_carryover == 0 and r.final_long_term_carryover == 0
+    assert r.years_to_exhaust == 4
+    # Every dollar is accounted for: $16,000 of loss, deducted across four years.
+    assert sum(y.deduction for y in r.years) == 16_000 - 5_000
+
+
+def test_the_chain_refuses_hand_entered_carryovers_and_backwards_years():
+    """Re-entering the carryovers by hand is how the short/long split gets lost,
+    and IRC 1212(b)(1) only ever carries to 'the succeeding taxable year'."""
+    with pytest.raises(ValueError, match="unknown key"):
+        capital_loss_limitation(
+            short_term=-9_000, long_term=0, taxable_income_before_capital_loss=100_000, year=2024,
+            following_years=[{"short_term": 0, "long_term": 0,
+                              "taxable_income_before_capital_loss": 100_000,
+                              "short_term_carryover_in": 6_000}],
+        )
+    with pytest.raises(ValueError, match="must be LATER"):
+        capital_loss_limitation(
+            short_term=-9_000, long_term=0, taxable_income_before_capital_loss=100_000, year=2024,
+            following_years=[{"short_term": 0, "long_term": 0,
+                              "taxable_income_before_capital_loss": 100_000, "year": 2023}],
+        )
+
+
+def test_a_filing_status_change_in_the_chain_is_disclosed():
+    """Pub 550: 'if you and your spouse once filed a joint return and are now
+    filing separate returns, any capital loss carryover from the joint return can
+    be deducted only on the return of the spouse who actually had the loss.'"""
+    r = capital_loss_limitation(
+        short_term=-20_000, long_term=0, taxable_income_before_capital_loss=150_000,
+        filing_status="married_filing_jointly", year=2024,
+        following_years=[{"short_term": 0, "long_term": 0,
+                          "taxable_income_before_capital_loss": 90_000,
+                          "filing_status": "married_filing_separately"}],
+    )
+    assert r.years[1].deduction_cap == 1_500 and r.years[1].deduction == 1_500
+    assert any("the spouse who actually had the loss" in a for a in r.input_assumptions)
+
+
+def test_schedule_d_line_21_destination_moves_with_the_year():
+    """Read off the faces: f1040sd--2023/2024 print 'Form 1040, 1040-SR, or
+    1040-NR, line 7'; the 2025 face prints 'line 7a' after TY2025 split line 7."""
+    older = capital_loss_limitation(short_term=-5_000, long_term=0,
+                                    taxable_income_before_capital_loss=90_000, year=2024)
+    newer = capital_loss_limitation(short_term=-5_000, long_term=0,
+                                    taxable_income_before_capital_loss=90_000, year=2025)
+    assert older.schedule_d_lines["21"].endswith("Form 1040 line 7")
+    assert newer.schedule_d_lines["21"].endswith("Form 1040 line 7a")
+
+
+def test_years_before_the_verified_worksheet_revisions_are_refused():
+    with pytest.raises(ValueError, match="does not support 2021"):
+        capital_loss_limitation(short_term=-5_000, long_term=0,
+                                taxable_income_before_capital_loss=90_000, year=2021)
+
+
+def test_a_future_year_says_it_is_quoting_the_newest_revision_read():
+    r = capital_loss_limitation(short_term=-5_000, long_term=0,
+                                taxable_income_before_capital_loss=90_000, year=2027)
+    form = [c for c in r.citations if "f1040sd" in c.url][0]
+    assert "had not published" in form.source and "RE-VERIFY" in form.source
+
+
+def test_the_section_151_addback_divergence_is_disclosed_not_silently_resolved():
+    """IRC 1212(b)(2)(B)(ii) names 'the deduction allowed for such year under
+    section 151'; the printed worksheet adds back only the 1211(b) amount,
+    because 151(d)(5)(A) makes the exemption zero after 2017. P.L. 119-21's
+    151(d)(5)(C) senior deduction reopens the gap, so it is stated."""
+    r = capital_loss_limitation(short_term=-5_000, long_term=0,
+                                taxable_income_before_capital_loss=90_000, year=2025)
+    note = [a for a in r.input_assumptions if "SECTION 151 ADD-BACK" in a]
+    assert note and "151(d)(5)(C)" in note[0] and "$6,000" in note[0]
+    assert any("section151" in c.url for c in r.citations)
+
+
+def test_espp_capital_loss_hands_off_to_the_limitation_op():
+    """The two I3 ops are one workflow: a disqualifying ESPP sale at a loss
+    produces ordinary income AND a capital loss, and the loss then goes through
+    IRC 1211(b) rather than offsetting the wages."""
+    sale = espp_disposition(
+        shares=1_000, grant_date="2023-01-03", purchase_date="2023-06-30", sale_date="2023-08-01",
+        grant_date_fmv_per_share=50, purchase_date_fmv_per_share=40,
+        purchase_price_per_share=34, sale_price_per_share=25,
+        grant_date_exercise_price_per_share="42.50",   # 85% of the $50 grant-date FMV
+    )
+    assert sale.disposition_type == "disqualifying"
+    assert sale.ordinary_income == 6_000            # 1,000 sh x ($40 - $34)
+    assert sale.capital_gain_or_loss == -15_000     # $25,000 - $40,000 basis
+    assert sale.capital_gain_character == "short_term"
+    assert "capital_loss_limitation" in sale.work
+    limited = capital_loss_limitation(
+        short_term=sale.capital_gain_or_loss, long_term=0,
+        taxable_income_before_capital_loss=200_000, year=2023,
+    )
+    # $6,000 of phantom wages, and only $3,000 a year of the loss comes back.
+    assert limited.deduction == 3_000 and limited.short_term_carryover == 12_000
+
+
+def test_zero_discount_and_zero_spread_edges_are_named_not_just_zeroed():
+    """Two ways the ordinary income legitimately comes out at zero, each with the
+    text that says why — a bare 0 is not an answer a filer can act on.
+
+    (a) No grant-date discount: IRC 423(c) only reaches an option priced at
+    'less than 100 percent of the fair market value ... at the time such option
+    was granted', so a qualifying disposition of an at-the-money purchase is all
+    capital gain. (b) A fixed-price plan on a stock that fell more than the
+    discount: Pub 525 measures only 'the amount by which the stock's FMV when
+    you exercised the option exceeded the option price'.
+    """
+    at_the_money = espp_disposition(
+        shares=10, grant_date="2021-01-04", purchase_date="2021-06-30", sale_date="2024-01-04",
+        grant_date_fmv_per_share=50, purchase_date_fmv_per_share=80,
+        purchase_price_per_share=50, sale_price_per_share=90,
+    )
+    assert at_the_money.disposition_type == "qualifying"
+    assert at_the_money.ordinary_income == 0 and at_the_money.capital_gain_or_loss == 400
+    assert "no grant-date discount" in at_the_money.work
+
+    stock_fell = espp_disposition(
+        shares=10, grant_date="2023-01-04", purchase_date="2023-06-30", sale_date="2023-08-01",
+        grant_date_fmv_per_share=50, purchase_date_fmv_per_share=40,
+        purchase_price_per_share="42.50", sale_price_per_share=38,   # 85% of the $50 grant FMV
+    )
+    assert stock_fell.disposition_type == "disqualifying"
+    assert stock_fell.ordinary_income == 0            # $40 exercise FMV did not exceed $42.50 paid
+    assert stock_fell.capital_gain_or_loss == -45     # $380 proceeds - $425 basis
+    assert "spread is ZERO" in stock_fell.work
+
+def test_the_box_8_mirror_gap_is_disclosed_and_does_not_break_pub525_example_10():
+    """Phase I3 adversarial review, 2026-08-26 — and the fix that was REVERTED.
+
+    The 85%-of-grant guard catches a lookback on a stock that FELL. The mirror case
+    cannot be caught: a plan priced at 85% of the EXERCISE-date FMV on a stock that
+    ROSE pays more than 85% of the grant FMV, so box 8 would be 85% x grant FMV
+    rather than box 5 and the 423(c)(2) discount is larger.
+
+    A REFUSAL on that shape was implemented and then reverted, because the condition
+    that catches it (purchase FMV above grant FMV, price above the grant floor) also
+    describes Publication 525's OWN Example 10 — which the IRS resolves as a
+    fixed-at-grant price. Form 3922 box 8 is the only discriminator, so the honest
+    behaviour is the IRS default plus a promoted note. This test pins both halves.
+    """
+    # The IRS's own worked example must keep its answer.
+    ex10 = espp_disposition(**_PUB525_EXAMPLE_10)
+    assert ex10.ordinary_income == 200
+    assert any("READ BOX 8" in a for a in ex10.input_assumptions)
+
+    # The ambiguous shape: same default, same promoted warning naming BOTH readings.
+    ambiguous = espp_disposition(
+        shares=100, grant_date="2022-03-01", purchase_date="2023-09-01", sale_date="2024-11-01",
+        grant_date_fmv_per_share=20, purchase_date_fmv_per_share=30,
+        purchase_price_per_share="25.50", sale_price_per_share=40,
+    )
+    note = next(a for a in ambiguous.input_assumptions if "READ BOX 8" in a)
+    assert "$17.00" in note and "$3.00" in note      # the exercise-date-priced reading
+
+    # Supplying box 8 settles it, and the note goes away.
+    settled = espp_disposition(
+        shares=100, grant_date="2022-03-01", purchase_date="2023-09-01", sale_date="2024-11-01",
+        grant_date_fmv_per_share=20, purchase_date_fmv_per_share=30,
+        purchase_price_per_share="25.50", sale_price_per_share=40,
+        grant_date_exercise_price_per_share=17,
+    )
+    assert settled.ordinary_income == 300           # (20 - 17) x 100
+    assert not any("READ BOX 8" in a for a in settled.input_assumptions)
 

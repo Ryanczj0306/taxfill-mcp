@@ -62,6 +62,26 @@ the deduction; deducting it again is the most common HSA error. And a general-pu
 FSA — INCLUDING the spouse's (Rev. Rul. 2004-45) — is disqualifying coverage, while
 limited-purpose and post-deductible ones are not. Never hand-compute Form 8889.
 
+Equity comp is where this repo's users lose the most money, and both halves are ops.
+`calc("espp_disposition", …)` takes Form 3922 boxes 1-8 and returns the Form 8949 row. The two
+dispositions are taxed COMPLETELY differently: QUALIFYING (sold more than 2 years after grant AND
+more than 1 year after purchase, IRC 423(a)(1)) recognises the LESSER of the GRANT-date discount
+(423(c)(2)) and the actual gain — so a sale at a loss recognises ZERO ordinary income;
+DISQUALIFYING recognises the FULL spread at purchase regardless of the sale price, so selling below
+the purchase-date FMV still produces that income plus a capital loss. THE BASIS CORRECTION is the
+highest-dollar part: the 1099-B reports the discounted purchase price only, the correct basis is
+that plus the ordinary income, and filing it unadjusted taxes the discount TWICE — the op gives you
+the Form 8949 code B treatment that fixes it. Under a LOOKBACK the qualifying income is measured on
+Form 3922 BOX 8, not box 5. Nothing is withheld on any of it (IRC 423(c), 421(b), 3121(a)(22)).
+
+`calc("capital_loss_limitation", …)` is IRC 1211(b)/1212(b) plus Schedule D's Capital Loss Carryover
+Worksheet, and it is the only thing in the repo that tracks a carryover. Short and long net
+SEPARATELY first, the deduction caps at $3,000 ($1,500 MFS), and the rest carries forward
+INDEFINITELY WITH ITS CHARACTER PRESERVED. Taxable income does not shrink the deduction — it shrinks
+how much of the loss the year consumes (worksheet line 4), so a low-income year keeps a LARGER
+carryover than "loss minus $3,000". Pass `following_years` to roll a multi-year chain; it threads the
+carryovers itself.
+
 State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
 All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
 38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)

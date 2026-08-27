@@ -214,3 +214,94 @@ def test_5498_sa_box_numbers_are_not_what_they_look_like():
     assert "Box 3 runs FORWARD" in note
     # Box 5 is what the IRC 4973(a) cap is measured against.
     assert "4973(a) cap" in note
+
+
+# ---------------------------------------------------------------------------
+# 3922 / 3921 (Phase I, I3) — the two equity-compensation documents. Box layouts
+# read off the real forms 2026-08-26: f3922.pdf and f3921.pdf, both Rev. April
+# 2025, plus their Instructions for Employee.
+# ---------------------------------------------------------------------------
+
+
+def test_equity_compensation_documents_are_supported_and_cited():
+    kinds = {k["kind"]: k for k in list_document_kinds()}
+    assert {"3922", "3921"} <= set(kinds)
+    assert kinds["3922"]["source_url"] == "https://www.irs.gov/forms-pubs/about-form-3922"
+    assert kinds["3921"]["source_url"] == "https://www.irs.gov/forms-pubs/about-form-3921"
+    assert kinds["3922"]["title"].endswith("Under Section 423(c)")
+    assert kinds["3921"]["title"] == "Exercise of an Incentive Stock Option Under Section 422(b)"
+
+
+def test_3922_box_layout_matches_the_printed_form():
+    """Boxes 1-8 exactly as printed, including box 8 — the lookback price that
+    calc.espp_disposition needs and that is blank on a fixed-price plan."""
+    r = extract_document("documents/3922.pdf", "3922", {
+        "employee_tin": "999-88-7777", "1": "2022-03-01", "2": "2023-09-01",
+        "3": "$22.00", "4": "$23.00", "5": "$20.00", "6": "100", "7": "2023-09-05",
+    }, page=1)
+    by = {f.key: f for f in r.fields}
+    assert by["1"].label == "Box 1 — Date option granted"
+    assert by["2"].label == "Box 2 — Date option exercised"
+    assert by["3"].label == "Box 3 — Fair market value per share on grant date"
+    assert by["4"].label == "Box 4 — Fair market value per share on exercise date"
+    assert by["5"].label == "Box 5 — Exercise price paid per share"
+    assert by["6"].label == "Box 6 — No. of shares transferred"
+    assert by["7"].label == "Box 7 — Date legal title transferred"
+    assert by["8"].label.startswith("Box 8 — Exercise price per share determined as if")
+    assert by["3"].value == "22.00" and by["5"].value == "20.00"
+    # A blank box 8 is the FIXED-price case, so it is reported as a gap-free
+    # missing box, not a required one.
+    assert by["8"].value is None and by["8"].status == "missing"
+    assert r.gaps == []
+    # Fractional shares are normal (Pub 525 Example 9 divides payroll dollars by
+    # a share price), so box 6 must not be an int box.
+    frac = extract_document("documents/3922.pdf", "3922", {
+        "employee_tin": "999887777", "1": "2022-03-01", "2": "2023-09-01",
+        "3": "22", "4": "23", "5": "20", "6": "12.3456",
+    })
+    assert {f.key: f for f in frac.fields}["6"].value == "12.3456"
+
+
+def test_3922_status_note_routes_box_8_and_warns_about_the_broker_basis():
+    note = DOC_SPECS["3922"].status_note
+    assert "No income is recognized" in note
+    assert "espp_disposition" in note
+    assert "BOX 8 IS THE ONE PEOPLE MISS" in note and "LOOKBACK" in note
+    assert "423(c)(2)" in note and "box 3 minus box 8" in note
+    # Box 7 is the transfer of legal title, NOT the sale date.
+    assert "BOX 7 IS NOT THE SALE DATE" in note
+    # And the double-taxation warning the whole phase exists for.
+    assert "taxes the discount twice" in note
+
+
+def test_3921_box_layout_matches_the_printed_form():
+    """Form 3921 has SIX boxes and they are not Form 3922's: box 3 is the
+    exercise price, box 4 the exercise-date FMV, box 5 the share count."""
+    r = extract_document("documents/3921.pdf", "3921", {
+        "employee_tin": "999-88-7777", "1": "2023-03-12", "2": "2024-01-07",
+        "3": "$10.00", "4": "$12.00", "5": "100",
+    })
+    by = {f.key: f for f in r.fields}
+    assert by["3"].label == "Box 3 — Exercise price per share"
+    assert by["4"].label == "Box 4 — Fair market value per share on exercise date"
+    assert by["5"].label == "Box 5 — No. of shares transferred"
+    assert by["6"].label.startswith("Box 6 — If other than TRANSFEROR")
+    assert by["5"].value == 100 and r.gaps == []
+    assert "7" not in by and "8" not in by      # Form 3922's boxes, not this form's
+    # An ISO is exercised for whole shares, so a fractional box 5 is a misread.
+    frac = extract_document("documents/3921.pdf", "3921", {
+        "employee_tin": "999887777", "1": "2023-03-12", "2": "2024-01-07",
+        "3": "10", "4": "12", "5": "100.5",
+    })
+    assert {f.key: f for f in frac.fields}["5"].status == "invalid"
+
+
+def test_3921_status_note_keeps_the_iso_rules_apart_from_the_espp_ones():
+    note = DOC_SPECS["3921"].status_note
+    assert "AN ISO IS NOT AN ESPP" in note
+    assert "422(b)(4)" in note and "no built-in discount" in note
+    # The AMT consequence, which nothing on the face states in dollars.
+    assert "alternative minimum taxable income" in note and "6251 line 2i" in note
+    # And the 422(c)(2) cap that section 423 has no counterpart for — the reason
+    # calc.espp_disposition refuses ISOs rather than reusing its formula.
+    assert "422(c)(2)" in note and "espp_disposition refuses to model ISOs" in note

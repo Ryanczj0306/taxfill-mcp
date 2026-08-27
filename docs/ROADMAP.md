@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**4,326 tests, all green** — offline 3,984 + live-.gov 342, exit 0;
+Done and on `main` (**4,404 tests, all green** — offline 4,056 + live-.gov 348, exit 0;
 re-verified 2026-08-21 via `pytest -m "not network"` AND `pytest -m network`, exit 0
 both — the network layer skips 2 (states/ms/2023/f80105, whose blank is uncached and
 whose host fails certificate verification here)):
@@ -40,8 +40,8 @@ whose host fails certificate verification here)):
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
-- **Federal form packs — priority set DONE.** **99 packs across 2019–2025**
-  (2019:1, 2020:1, 2021:1, 2022:5, 2023:30, 2024:30, 2025:31 — f1040nr +
+- **Federal form packs — priority set DONE.** **102 packs across 2019–2025**
+  (2019:1, 2020:1, 2021:1, 2022:5, 2023:31, 2024:31, 2025:32 — f1040nr +
   Schedule OI joined 2024 on 2026-08-10, and the 2026-08 batch backfilled the
   rest of the 2023 set into 2024/2025: identical-topology ports off the 2023
   packs, digests pinned to the year's blanks, vision-audited page by page). M2 base
@@ -85,7 +85,7 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**164 form packs total** — 160 `pack.yaml` (99 federal + 61 state) + 4
+**167 form packs total** — 163 `pack.yaml` (102 federal + 61 state) + 4
 `handfill.yaml`. The state 61 breaks down **TY2023 42 / TY2024 14 / TY2025 5**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
 > **13 of the 42 jurisdictions fill a post-2023 year** — AR (2024+2025),
@@ -1014,7 +1014,27 @@ line items sum to the headline delta.
       1099-SA + 5498-SA for the distribution side. **Acceptance:** 8889 audited; the
       op refuses an FSA+HSA combination; the over-wage-base FICA nuance is asserted
       by a test, not prose.
-- [ ] **I3 — Equity compensation, and the detail form Schedule D is missing.**
+- [x] **I3 — Equity compensation — DONE 2026-08-26.** Shipped: `calc.espp_disposition`
+      (IRC 423 — the qualifying/disqualifying split, the lesser-of on the GRANT-date
+      price, the full purchase-date spread on a disqualifying sale even below that
+      price, the Form 3922 box-8 lookback, and the BASIS CORRECTION brokers get
+      systematically wrong, emitted as the Form 8949 Code-B row that files it);
+      `calc.capital_loss_limitation` (IRC 1211(b)/1212(b) — the $3,000/$1,500 cap,
+      Schedule D's Capital Loss Carryover Worksheet including its taxable-income
+      limitation, and a multi-year chain that preserves short/long character);
+      `f8949` packs for 2023/2024/2025, so a filer with stock sales can finally
+      assemble a complete return; 3921 and 3922 DocSpecs; 41 tests transcribed from
+      Pub 525's and Pub 550's own worked examples. `estimate.py`'s -3,000 clamp now
+      cites the statute and names the op that tracks the carryover it does not.
+      One review finding is worth recording for its SHAPE: an adversarial verifier
+      found a real box-8 blind spot (a plan priced at 85% of the EXERCISE-date FMV on
+      a risen stock understates the 423(c)(2) discount), a refusal was implemented
+      for it — and then REVERTED, because the condition that catches it also
+      describes Publication 525's own Example 10, which the IRS resolves the other
+      way. Form 3922 box 8 is the only discriminator, so the shipped behaviour is the
+      IRS default plus a promoted `input_assumptions` note naming BOTH readings and
+      their dollar difference. *(original scope below)*
+- [x] **I3 scope as planned — equity compensation, and the detail form Schedule D is missing.**
       `espp` and `wash_sale` return **zero source hits**, and there is **no `f8949`
       pack** — so although `sched_d` ships for three years, a filer with stock sales
       cannot actually assemble a return. Build: **`f8949`** (2023/2024/2025) including

@@ -343,6 +343,84 @@ _SPECS: list[DocSpec] = [
         ],
     ),
     DocSpec(
+        # Phase I3. The two equity-compensation documents, box layout transcribed
+        # from the real forms read 2026-08-26: f3922.pdf (Rev. April 2025) and
+        # f3921.pdf (Rev. April 2025), plus their Instructions for Employee.
+        kind="3922",
+        title="Transfer of Stock Acquired Through an Employee Stock Purchase Plan Under Section 423(c)",
+        source_url="https://www.irs.gov/forms-pubs/about-form-3922",
+        status_note=(
+            "NOTHING ON THIS FORM IS INCOME, AND NONE OF IT IS ON YOUR W-2 YET. 'No income is recognized "
+            "when you exercise an option under an employee stock purchase plan' — the form exists so you "
+            "can compute the SALE. Run calc op espp_disposition with box 1 (grant date), box 2 (exercise "
+            "date), box 3 (grant-date FMV), box 4 (exercise-date FMV), box 5 (price paid), box 6 (shares) "
+            "and box 8, plus the 1099-B sale date, price and box 1e. BOX 8 IS THE ONE PEOPLE MISS: it is "
+            "the 'exercise price per share determined as if the option was exercised on the date shown in "
+            "box 1', and it is filled in ONLY when the price was not fixed or determinable at grant, i.e. "
+            "when the plan has a LOOKBACK. On a QUALIFYING disposition IRC 423(c)(2) measures the ordinary "
+            "income against box 3 minus box 8, not box 3 minus box 5 — a different and usually larger "
+            "number whenever the stock fell between grant and purchase. BOX 7 IS NOT THE SALE DATE: it is "
+            "the date legal title was first transferred, which is what triggered this form; take the sale "
+            "date from Form 1099-B box 1c. And the form's own reason for existing is a warning — the "
+            "employer reports the discount here because the BROKER will not: the 1099-B basis is box 5 "
+            "only, so filing it unadjusted taxes the discount twice."
+        ),
+        boxes=[
+            _b("corporation_ein", "CORPORATION'S federal identification number", "ein"),
+            _b("employee_tin", "EMPLOYEE'S identification number", "tin", required=True),
+            _b("corporation_name", "CORPORATION'S name and address", "text"),
+            _b("employee_name", "EMPLOYEE'S name", "text"),
+            _b("account_number", "Account number (see instructions)", "text"),
+            _b("1", "Box 1 — Date option granted", "text", required=True),
+            _b("2", "Box 2 — Date option exercised", "text", required=True),
+            _b("3", "Box 3 — Fair market value per share on grant date", "money", required=True),
+            _b("4", "Box 4 — Fair market value per share on exercise date", "money", required=True),
+            _b("5", "Box 5 — Exercise price paid per share", "money", required=True),
+            # "money" rather than "int": an ESPP buys shares out of whole payroll
+            # dollars, so box 6 is routinely fractional (Pub 525 Example 9 divides
+            # $240 of deductions by a $20 price). "int" would reject that as a misread.
+            _b("6", "Box 6 — No. of shares transferred", "money", required=True),
+            _b("7", "Box 7 — Date legal title transferred", "text"),
+            _b("8", "Box 8 — Exercise price per share determined as if the option was exercised on the date shown in box 1", "money"),
+        ],
+    ),
+    DocSpec(
+        kind="3921",
+        title="Exercise of an Incentive Stock Option Under Section 422(b)",
+        source_url="https://www.irs.gov/forms-pubs/about-form-3921",
+        status_note=(
+            "AN ISO IS NOT AN ESPP AND THE FORMULAS DO NOT TRANSFER. There is no built-in discount here — "
+            "IRC 422(b)(4) requires the option price to be 'not less than the fair market value of the "
+            "stock at the time such option is granted' — so box 3 vs box 4 is pure appreciation, not a "
+            "bargain element. Two consequences the box values cannot carry. (1) AMT: 'When you exercise an "
+            "ISO, you may have to include in alternative minimum taxable income a portion of the fair "
+            "market value of the stock acquired through the exercise of the option' — (box 4 - box 3) x "
+            "box 5 is a Form 6251 line 2i adjustment in the EXERCISE year even though nothing is on your "
+            "W-2 and nothing was withheld, and your AMT basis then differs from your regular-tax basis "
+            "forever after. No adjustment is required if you dispose of the stock in the same year you "
+            "exercise (Pub 525). (2) On a disqualifying disposition the ordinary income is box 4 minus box "
+            "3, but IRC 422(c)(2) CAPS it at the gain actually realised on a sale — a cap section 423 has "
+            "no counterpart for, which is why calc op espp_disposition refuses to model ISOs. The regular "
+            "tax basis is box 3 x box 5 plus any ordinary income recognised, and the 1099-B will report "
+            "box 3 x box 5 alone."
+        ),
+        boxes=[
+            _b("transferor_tin", "TRANSFEROR'S TIN", "tin"),
+            _b("employee_tin", "EMPLOYEE'S TIN", "tin", required=True),
+            _b("transferor_name", "TRANSFEROR'S name and address", "text"),
+            _b("employee_name", "EMPLOYEE'S name", "text"),
+            _b("account_number", "Account number (see instructions)", "text"),
+            _b("1", "Box 1 — Date option granted", "text", required=True),
+            _b("2", "Box 2 — Date option exercised", "text", required=True),
+            _b("3", "Box 3 — Exercise price per share", "money", required=True),
+            _b("4", "Box 4 — Fair market value per share on exercise date", "money", required=True),
+            # "int" here, unlike Form 3922 box 6: an ISO is exercised for whole
+            # shares, so a fractional reading is a misread worth surfacing.
+            _b("5", "Box 5 — No. of shares transferred", "int", required=True),
+            _b("6", "Box 6 — If other than TRANSFEROR, name, address, and TIN of corporation whose stock is being transferred", "text"),
+        ],
+    ),
+    DocSpec(
         kind="1095-A",
         title="Health Insurance Marketplace Statement",
         source_url="https://www.irs.gov/forms-pubs/about-form-1095-a",

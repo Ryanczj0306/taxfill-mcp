@@ -1039,6 +1039,9 @@ def _bottom_line(
 
     # Capital gains/losses: short + long combined; a net LOSS is deductible only up
     # to $3,000 per year ($1,500 MFS) — the disallowed remainder carries forward.
+    # This snapshot has no year-to-year state, so it clamps and DISCLOSES rather than
+    # carrying: calc.capital_loss_limitation owns the IRC 1212(b) carryover chain, with
+    # the short/long character preserved. Keep the two in step if either changes.
     st, lt = income.capital_gain_short, income.capital_gain_long
     combined_gain = st + lt
     capital = combined_gain
@@ -1689,8 +1692,14 @@ def estimate_refund(
     if "Capital loss (limited" in labels:
         assumptions.append(
             "Net capital losses are deductible only up to $3,000 per year ($1,500 married filing "
-            "separately); the disallowed remainder carries FORWARD to future years. Carryovers are "
-            "not modeled here — a prior-year carryover coming in would also change this estimate."
+            "separately) under IRC 1211(b); the disallowed remainder carries FORWARD indefinitely and "
+            "KEEPS its short- or long-term character (IRC 1212(b)(1)). This snapshot clamps the "
+            "deduction and tracks NO carryover, in either direction: a prior-year carryover coming in "
+            "is not applied, and this year's excess is not carried out. Run calc op "
+            "capital_loss_limitation for the real numbers — it reproduces Schedule D's Capital Loss "
+            "Carryover Worksheet, splits the carryover short/long, and shows the trap this snapshot "
+            "cannot see, that a LOW taxable income consumes less of the loss than it deducts and so "
+            "leaves a LARGER carryover than 'loss minus $3,000'."
         )
     ss_benefits_present = income.social_security_benefits > 0 or (
         income.spouse is not None and income.spouse.social_security_benefits > 0
