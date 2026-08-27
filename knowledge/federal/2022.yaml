@@ -360,6 +360,54 @@ credits:
       head_of_household: 200000
       qualifying_surviving_spouse: 200000
     phaseout_step: "reduced $50 for each $1,000 (or fraction) of MAGI above the threshold"
+  # ── Foreign tax credit (Form 1116) ──
+  # Only the §904(j) DE-MINIMIS ELECTION figures live here, because they are the
+  # only per-return dollar amounts in the foreign-tax-credit rules that a calc op
+  # needs. Everything else about the credit (the §904(a) limitation, the
+  # per-category baskets, the 1-back/10-forward carryover) is FORM math and lives
+  # in formpacks/federal/<year>/f1116 plus calc.foreign_tax_credit_election.
+  #
+  # These two figures are STATUTORY and NOT INDEXED. IRC 904(j) was added by
+  # P.L. 105-34 (Taxpayer Relief Act of 1997, enacted 1997-08-05) and carries no
+  # inflation-adjustment provision, so $300/$600 has been the test since 1998 and
+  # is the same in every year pack. They are carried here rather than hardcoded in
+  # calc.py so the citation travels with the number (dev plan section 7), and the
+  # per-year duplication is deliberate: a future Congress indexing or changing the
+  # amount would change it for ONE year forward, not retroactively.
+  foreign_tax_credit:
+    citation:
+      source: >-
+        IRC 904(j)(2)(B) verbatim: "the amount of the creditable foreign taxes
+        paid or accrued by the individual during the taxable year does not exceed
+        $300 ($600 in the case of a joint return)". Restated in the 2022
+        Instructions for Form 1116, General Instructions, "Election To Claim the
+        Foreign Tax Credit Without Filing Form 1116": "Your total creditable
+        foreign taxes aren't more than $300 ($600 if married filing a joint
+        return)." Estates and trusts are excluded by IRC 904(j)(3)(D) ("This
+        subsection shall not apply to any estate or trust") and by the same
+        instructions ("This election isn't available to estates or trusts.").
+      url: "https://www.irs.gov/pub/irs-prior/i1116--2022.pdf"
+    de_minimis_election:
+      # "in the case of a joint return" is LITERAL: only married filing jointly
+      # takes $600. A qualifying surviving spouse files as an unmarried
+      # individual (it borrows the joint RATE schedule under IRC 1(a)(2)/2(a),
+      # it is not a joint return) and married filing separately is not one
+      # either, so both take $300.
+      creditable_foreign_taxes_limit:
+        joint_return: 600
+        other: 300
+      statute: "IRC 904(j)"
+      statute_url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim"
+      added_by: "P.L. 105-34 (Taxpayer Relief Act of 1997), enacted 1997-08-05"
+      inflation_indexed: false
+      excluded_entities: [estate, trust]
+      # What the election COSTS — IRC 904(j)(1)(B) and (C), verbatim in substance:
+      # no tax paid or accrued in an election year may be deemed paid or accrued
+      # under 904(c) in any OTHER year, and no tax from any other year may be
+      # deemed paid or accrued in an election year. So the 1-back / 10-forward
+      # carryover is forfeited for the election year in BOTH directions.
+      forfeits_carryback_and_carryforward: true
+      claimed_on: "Schedule 3 (Form 1040), Part I, line 1"
   earned_income_tax_credit:
     citation:
       source: "Rev. Proc. 2021-45, Section 3.06 (2022 Earned Income Credit)"
@@ -519,3 +567,338 @@ deadlines:
       was filed or 2 years from the time the tax was paid; a return filed before the due date is treated
       as filed on the due date. The refund amount is further limited by the corresponding lookback period.
   nonwage_1040nr_due_date: '2023-06-15'
+
+
+# ── Foreign-account and foreign-asset REPORTING duties (Phase I4) ─────────────
+# TOP-LEVEL on purpose, for two reasons. (1) Nesting a block under `tax` or
+# `credits` evades the DEV_PLAN section-7 sources-coverage meta-test
+# (test_knowledge_m3.py walks TOP-LEVEL keys only) — the same reason
+# contribution_limits is top-level. (2) Neither of these is tax math: they are
+# INFORMATION-RETURN duties that exist whether or not a dollar of tax is owed.
+# Treas. Reg. 1.6038D-2(a)(8): the Form 8938 "must be furnished by a specified
+# person EVEN IF none of the specified foreign financial assets that must be
+# reported affect the specified person's tax liability"; and irs.gov's FBAR page
+# says the same for the FBAR ("Whether the account produced taxable income has
+# no effect on whether the account is a foreign financial account for FBAR
+# purposes").
+#
+# EVERY FIGURE IN THIS BLOCK IS STATUTORY OR REGULATORY AND NOT INFLATION-
+# INDEXED, which is why it is identical in every shipped year pack:
+#   * the Form 8938 thresholds are set in Treas. Reg. 1.6038D-2(a)(1)-(4) as
+#     fixed dollar amounts, with no adjustment provision anywhere in section
+#     6038D or the regulation;
+#   * the FBAR $10,000 is set in 31 CFR 1010.306(c) as a fixed amount.
+# The per-year duplication is deliberate (the contribution_limits precedent): a
+# future amendment would move the figure for ONE year forward, not
+# retroactively, and the citation has to travel with the number.
+#
+# ONE FIGURE IN HERE IS *NOT* YEAR-KEYED AND SAYS SO: the FBAR civil-penalty
+# maxima are adjusted for inflation by ASSESSMENT DATE, not by tax year
+# (31 CFR 1010.821(a)-(b), under the FCPIA Act as amended by the 2015
+# Improvements Act), so the same tax year draws a different maximum depending on
+# when the penalty is assessed. The amounts below are the ones in Table 1 to
+# 1010.821 for penalties "assessed on or after January 17, 2025" (90 FR 5630) —
+# stated with that qualifier rather than silently attached to a tax year.
+foreign_account_reporting:
+  citation:
+    source: >-
+      IRS, "Comparison of Form 8938 and FBAR requirements" — the side-by-side
+      that establishes the two filings are SEPARATE and NEITHER substitutes for
+      the other ("The Form 8938 filing requirement does not replace or otherwise
+      affect a taxpayer's obligation to file FinCEN Form 114 ... Unlike Form
+      8938, the FBAR (FinCEN Form 114) is not filed with the IRS"). Each
+      sub-block below carries its own primary citation (the regulation or the
+      form's own instructions); this is the umbrella.
+    url: "https://www.irs.gov/businesses/comparison-of-form-8938-and-fbar-requirements"
+  # ── Form 8938 — IRC 6038D, filed WITH the income tax return ────────────────
+  form_8938:
+    citation:
+      source: >-
+        Treas. Reg. 1.6038D-2(a)(1)-(4), read verbatim: the aggregate value of
+        all specified foreign financial assets must EXCEED "$50,000 on the last
+        day of the taxable year; or $75,000 at any time during the taxable year"
+        (a)(1), "$100,000 ... or $150,000" for "married specified individuals who
+        file a joint annual return" (a)(2), "$200,000 ... or $300,000" for "a
+        specified individual who is a qualified individual under section
+        911(d)(1)" (a)(3), and "$400,000 ... or $600,000" for a qualified
+        individual and spouse filing jointly (a)(4). Cross-read against the
+        Instructions for Form 8938 (Rev. November 2021), "Types of Reporting
+        Thresholds", which spells the same four buckets out plus the
+        married-filing-separately and specified-domestic-entity cases.
+      url: "https://www.ecfr.gov/current/title-26/section-1.6038D-2"
+    form: "8938"
+    form_key: f8938
+    statute: "IRC 6038D"
+    statute_url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6038D&num=0&edition=prelim"
+    instructions_url: "https://www.irs.gov/pub/irs-prior/i8938--2021.pdf"
+    filed_with: >-
+      the IRS, ATTACHED to the annual income tax return (the printed form says
+      "Attach to your tax return."; Attachment Sequence No. 938). Due with that
+      return, including extensions.
+    measured_over: taxable_year
+    comparison: exceeds
+    inflation_indexed: false
+    # Two tests per bucket, and EITHER one triggers the filing (the regulation
+    # joins them with "or"): the LAST-DAY-of-the-taxable-year value, and the
+    # MAXIMUM value at ANY TIME during the taxable year. The any-time figure is
+    # always 1.5x the year-end figure. A filer who empties the account before
+    # December 31 still files.
+    thresholds:
+      # Only MARRIED FILING JOINTLY is a distinct bucket in the regulation:
+      # (a)(2) and (a)(4) are the only paragraphs keyed to a joint return, so
+      # single, married filing separately, head of household and qualifying
+      # surviving spouse ALL fall in the (a)(1) / (a)(3) general rule. The
+      # instructions confirm the two the regulation leaves implicit — MFS takes
+      # the unmarried amounts ("Married taxpayers filing separate income tax
+      # returns ... more than $50,000 ... or more than $75,000"), and so does a
+      # filer who is not married. Head of household and qualifying surviving
+      # spouse are spelled out here rather than left to the reader: a HoH filer
+      # is unmarried or files separately from a spouse either way, and a QSS
+      # borrows the joint RATE schedule (IRC 1(a)(2)/2(a)) but does NOT file a
+      # joint return, so neither reaches (a)(2)/(a)(4).
+      in_us:
+        single: { year_end: 50000, any_time: 75000 }
+        married_filing_jointly: { year_end: 100000, any_time: 150000 }
+        married_filing_separately: { year_end: 50000, any_time: 75000 }
+        head_of_household: { year_end: 50000, any_time: 75000 }
+        qualifying_surviving_spouse: { year_end: 50000, any_time: 75000 }
+      abroad:
+        single: { year_end: 200000, any_time: 300000 }
+        married_filing_jointly: { year_end: 400000, any_time: 600000 }
+        married_filing_separately: { year_end: 200000, any_time: 300000 }
+        head_of_household: { year_end: 200000, any_time: 300000 }
+        qualifying_surviving_spouse: { year_end: 200000, any_time: 300000 }
+      specified_domestic_entity: { year_end: 50000, any_time: 75000 }
+    # "Living abroad" is a STATUTORY TEST, not a self-description, and getting it
+    # wrong moves the threshold by 4x. Treas. Reg. 1.6038D-2(a)(3) keys the
+    # higher amounts to being "a qualified individual under section 911(d)(1)".
+    abroad_test: >-
+      A specified individual reaches the higher thresholds only as a QUALIFIED
+      INDIVIDUAL under IRC 911(d)(1) — a US citizen who was a bona fide resident
+      of a foreign country for an uninterrupted period including an entire
+      taxable year, or a US citizen or resident present in a foreign country or
+      countries at least 330 full days in any 12 consecutive months ending in
+      the tax year, in either case with a tax home in a foreign country
+      (Treas. Reg. 1.6038D-2(a)(3); Instructions for Form 8938, "Taxpayers
+      living outside the United States" and "Presence abroad"). Living or
+      working overseas without meeting one of those two tests leaves the filer
+      on the IN-US thresholds.
+    # IRS comparison table, "Does the United States include U.S. territories?"
+    # -> No for Form 8938, Yes for the FBAR. TRANSCRIBED, and it does NOT mean a
+    # bona fide resident of a US possession takes the ABROAD thresholds: those
+    # require being a QUALIFIED INDIVIDUAL under IRC 911(d)(1), which is about a
+    # FOREIGN country, and a US possession is not one. What the "No" governs is
+    # the definition of "United States" in the specified-individual and
+    # asset-exception rules — see the Instructions for Form 8938, "Specified
+    # Individual" (a nonresident alien who is a bona fide resident of American
+    # Samoa or Puerto Rico IS a specified individual) and Treas. Reg.
+    # 1.6038D-7(c) (certain assets owned by a bona fide resident of a US
+    # possession are excluded from reporting). Do not derive a threshold from
+    # this flag.
+    us_territories_count_as_us: false
+    aggregate_includes_assets_excepted_on_other_forms: true
+    # Treas. Reg. 1.6038D-2(a)(6)(i): a specified INDIVIDUAL counts the value of
+    # an asset excluded from Form 8938 under 1.6038D-7(a) (reported on Form 3520,
+    # 3520-A, 5471, 8621 or 8865 — Part IV of the form) when testing the
+    # threshold, even though the asset itself is then not detailed. So Part IV
+    # reduces the DETAIL, never the threshold arithmetic.
+    penalties:
+      citation:
+        source: >-
+          IRC 6038D(d)(1)-(2) ("shall pay a penalty of $10,000"; a further
+          "$10,000 for each 30-day period (or fraction thereof)" once the failure
+          continues more than 90 days after the Secretary mails notice, the
+          additional penalty capped so it "shall not exceed $50,000"), 6038D(g)
+          (reasonable cause; a foreign jurisdiction's own disclosure penalty "is
+          not reasonable cause") and 6662(j)(3) (substitute "40 percent" for
+          "20 percent" on an underpayment attributable to an undisclosed foreign
+          financial asset understatement). Restated in the Instructions for Form
+          8938 (Rev. 11-2021), "Penalties".
+        url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6038D&num=0&edition=prelim"
+      failure_to_file: 10000
+      continuing_failure_per_30_days: 10000
+      continuing_failure_grace_days_after_notice: 90
+      continuing_failure_additional_cap: 50000
+      maximum_per_year: 60000
+      accuracy_related_rate_undisclosed_foreign_asset: 0.40
+      fraud_rate: 0.75
+      reasonable_cause_exception: true
+      statute_of_limitations_note: >-
+        Failing to file Form 8938, or omitting a reportable asset, holds the time
+        for assessment open: IRC 6501(c)(8)(A) provides that for information
+        required under section 6038D the assessment period "shall not expire
+        before the date which is 3 years after the date on which the Secretary is
+        furnished the information" — i.e. the clock on the WHOLE return restarts
+        from the date the Form 8938 is finally filed, which the Instructions for
+        Form 8938 ("Statute of Limitations") restate as "3 years after the date on
+        which you file Form 8938". Narrower where the failure was innocent: IRC
+        6501(c)(8)(B) limits the extension to "the item or items related to such
+        failure" when it "is due to reasonable cause and not willful neglect".
+        SEPARATELY, IRC 6501(e)(1)(A)(ii) gives the Secretary SIX years whenever
+        an omission from gross income is both attributable to assets reportable
+        under section 6038D — measured "without regard to the dollar threshold"
+        and without its exceptions, so it reaches assets BELOW the filing
+        threshold — and in excess of $5,000.
+  # ── FBAR — FinCEN Form 114, filed with FinCEN, NOT with the IRS ────────────
+  fbar:
+    citation:
+      source: >-
+        31 CFR 1010.306(c): reports required by 1010.350 "shall be filed with
+        FinCEN ... with respect to foreign financial accounts exceeding $10,000
+        maintained during the previous calendar year". FinCEN, "BSA Electronic
+        Filing Requirements For Report of Foreign Bank and Financial Accounts
+        (FinCEN Form 114)", Release January 2017 (v1.4), General Instructions,
+        "Who Must File an FBAR": a United States person with a financial interest
+        in or signature authority over foreign financial accounts "must file an
+        FBAR if the AGGREGATE value of the foreign financial accounts exceeds
+        $10,000 at any time during the calendar year"; and, on the maximum-value
+        point, "If the maximum account value of a single account or aggregate of
+        the maximum account values of multiple accounts exceeds $10,000, an FBAR
+        must be filed."
+      url: "https://www.fincen.gov/sites/default/files/shared/FBAR%20Line%20Item%20Filing%20Instructions.pdf"
+    form: "FinCEN Form 114"
+    form_key: fincen114
+    statute: "31 U.S.C. 5314"
+    statute_url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title31-section5314&num=0&edition=prelim"
+    regulation: "31 CFR 1010.350; 31 CFR 1010.306(c)-(e)"
+    regulation_url: "https://www.ecfr.gov/current/title-31/section-1010.350"
+    filed_with: >-
+      FinCEN (a bureau of the Treasury), NOT the IRS, and NOT part of the income
+      tax return: "You must file the FBAR electronically through FinCEN's BSA
+      E-Filing System. You don't file the FBAR with your federal tax return."
+      (irs.gov, Report of Foreign Bank and Financial Accounts (FBAR)).
+    efile_only: true
+    # irs.gov, same page, verbatim: "IRS will not accept paper filings on
+    # TD F 90-22.1 (obsolete) or a printed FinCEN Form 114 (for e-filing only)."
+    # A paper FBAR exists only if FinCEN's Resource Center approves an exemption
+    # from e-filing and then SENDS the filer the paper form. This is why the repo
+    # ships formpacks/federal/<year>/fincen114/handfill.yaml — a value-gathering
+    # worksheet — and no fillable pack: there is no blank to fill.
+    printed_form_not_accepted: true
+    efile_url: "https://bsaefiling.fincen.treas.gov/main.html"
+    measured_over: calendar_year
+    comparison: exceeds
+    aggregate_threshold: 10000
+    threshold_is_aggregate: true          # summed ACROSS every foreign account
+    threshold_is_maximum_value: true      # highest value AT ANY TIME, not the year-end balance
+    threshold_varies_by_filing_status: false
+    inflation_indexed: false
+    us_territories_count_as_us: true      # IRS comparison table -> Yes
+    covers_signature_authority_only: true # 8938 generally does not; the FBAR does
+    threshold_note: >-
+      The $10,000 is an AGGREGATE across every foreign financial account and a
+      MAXIMUM-VALUE test, never a year-end test and never per account: two
+      accounts whose combined balance touched $10,001 for one day are BOTH
+      reportable, and both are reportable even if each was under $10,000 on its
+      own and both were empty on December 31. Income tax filing status does not
+      move the figure, and the authority for that is the ABSENCE of any
+      status variant rather than a sentence asserting it: 31 CFR 1010.306(c)
+      states one flat figure ("exceeding $10,000") and neither 31 CFR 1010.350
+      nor FinCEN's line-item instructions provide a joint, separate or
+      head-of-household amount anywhere — there is no ladder to read. The
+      irs.gov FBAR page's "Income tax filing status, such as
+      married-filing-jointly and married-filing-separately, has no effect" is
+      NOT a threshold statement and must not be quoted as one: read in place, it
+      governs qualification for the JOINTLY-OWNED-ACCOUNTS spousal exception
+      (the sentence follows "...your spouse reports the jointly owned accounts
+      on a timely-filed signed FBAR"). It is cited here for what it does say —
+      that a couple's income tax filing status does not decide whether one
+      spouse may file a single FBAR covering both — which is the adjacent thing
+      filers get wrong.
+    due_date_rule: >-
+      April 15 of the year FOLLOWING the calendar year reported, with an
+      AUTOMATIC extension to October 15 that requires no request. The April 15
+      date and the "maximum six-month extension" are statutory — the Surface
+      Transportation and Veterans Health Care Choice Improvement Act of 2015,
+      P.L. 114-41, section 2006(b)(11) — and FinCEN grants the extension
+      automatically ("FinCEN will grant filers failing to meet the FBAR annual
+      due date of April 15th an automatic extension to October 15th each year.
+      Accordingly, specific requests for this extension are not required.").
+      FinCEN also states the deadline "will follow the Federal income tax due
+      date guidance", so it shifts off a Saturday, Sunday or legal holiday the
+      same way a return does.
+    due_date_month_day: "04-15"
+    automatic_extension_month_day: "10-15"
+    extension_request_required: false
+    # 31 CFR 1010.306(c) STILL READS "on or before June 30 of each calendar
+    # year" — the regulation was never conformed to the 2015 statute. Citing the
+    # regulation alone would produce a WRONG deadline by 2.5 months, which is why
+    # the due date above is cited to P.L. 114-41 and FinCEN's own instructions.
+    regulation_due_date_is_stale: true
+    recordkeeping_years: 5
+    penalties:
+      citation:
+        source: >-
+          31 U.S.C. 5321(a)(5): non-willful civil penalty "shall not exceed
+          $10,000" (B)(i), with a reasonable-cause exception that also requires
+          the account balance to have been "properly reported" (B)(ii); a WILLFUL
+          violation raises the maximum to "the greater of ... $100,000, or ... 50
+          percent of" the account balance at the time of the violation
+          ((C)(i)/(D)(ii)) and the reasonable-cause exception does not apply.
+          Both maxima are inflation-adjusted by ASSESSMENT DATE under 31 CFR
+          1010.821, Table 1 — for penalties assessed on or after January 17, 2025
+          (90 FR 5630) the non-willful maximum is $16,536 and the willful
+          statutory floor is $165,353.
+        url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title31-section5321&num=0&edition=prelim"
+      inflation_adjustment_url: "https://www.ecfr.gov/current/title-31/section-1010.821"
+      non_willful_statutory_maximum: 10000
+      non_willful_adjusted_maximum: 16536
+      willful_statutory_minimum_maximum: 100000
+      willful_adjusted_minimum_maximum: 165353
+      willful_alternative_share_of_balance: 0.50
+      adjusted_amounts_effective: "penalties assessed on or after 2025-01-17"
+      adjusted_by_assessment_date_not_tax_year: true
+      reasonable_cause_exception_non_willful_only: true
+      # THE UNIT OF THE NON-WILLFUL PENALTY IS THE REPORT, NOT THE ACCOUNT, and
+      # the difference is enormous: the government assessed $2.72 million on 272
+      # accounts across five late reports and lost. Bittner v. United States,
+      # 598 U.S. 85 (2023) (No. 21-1195, decided 2023-02-28), Held: "The BSA's
+      # $10,000 maximum penalty for the nonwillful failure to file a compliant
+      # report accrues on a per-report, not a per-account, basis." WILLFUL
+      # penalties DO tailor to accounts — 31 U.S.C. 5321(a)(5)(D)(ii) measures
+      # the 50% alternative against "the balance in the account at the time of
+      # the violation" — so per-account exposure is a WILLFULNESS question.
+      # Note that IRS Publication 5569 (3-2022), the FBAR Reference Guide, says
+      # only "$10,000 per violation" and PREDATES Bittner; do not read it as
+      # resolving the unit.
+      non_willful_unit: per_report
+      willful_unit: per_account
+      bittner_citation:
+        source: >-
+          Bittner v. United States, 598 U.S. 85 (2023), No. 21-1195, decided
+          February 28, 2023, Syllabus, Held (preliminary print, 598 U.S. Part 1,
+          pages 85-114)
+        url: "https://www.supremecourt.gov/opinions/22pdf/598us1r6_0813.pdf"
+  # ── What each filing REACHES — the scope differs in BOTH directions ────────
+  # Transcribed from the IRS comparison table's "Types of foreign assets" grid
+  # (the block citation's URL). Neither filing is a superset of the other, which
+  # is why "I already filed the FBAR" never answers the Form 8938 question and
+  # vice versa. Only the rows that decide real cases are carried; the table is
+  # the authority for the rest.
+  scope_differences:
+    fbar_only:
+      - "a financial account held at a FOREIGN BRANCH of a U.S. financial institution"
+      - "a foreign financial account the filer has SIGNATURE AUTHORITY over but no interest in (subject to exceptions)"
+      - "an indirect interest in foreign financial assets through an entity, where ownership or beneficial interest exceeds 50 percent"
+    form_8938_only:
+      - "foreign stock or securities NOT held in a financial account"
+      - "a foreign partnership interest"
+      - "a foreign hedge fund or foreign private equity fund"
+      - "foreign real estate held THROUGH a foreign entity (the entity interest is the reportable asset, and its maximum value includes the real estate)"
+    neither:
+      - "foreign real estate held DIRECTLY"
+      - "foreign currency held directly"
+      - "precious metals held directly"
+      - "personal property held directly (art, antiques, jewelry, cars, collectibles)"
+      - "a domestic mutual fund that invests in foreign stocks and securities"
+      - "foreign-government 'social security'-type program benefits"
+    both:
+      - "deposit and custodial accounts at foreign financial institutions"
+      - "foreign mutual funds"
+      - "a foreign-issued life insurance or annuity contract with a cash value"
+    exchange_rate_note: >-
+      The two filings convert at DIFFERENT dates: Form 8938 uses the end of the
+      TAXABLE year, the FBAR the end of the CALENDAR year (IRS comparison table,
+      "How are maximum account or asset values determined and reported?"). For a
+      calendar-year filer they coincide; for a fiscal-year filer they do not, and
+      the FBAR's reporting period stays the calendar year regardless.

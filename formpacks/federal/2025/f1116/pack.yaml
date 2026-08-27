@@ -1,0 +1,870 @@
+# Form 1116 (2025 revision) — Foreign Tax Credit (Individual, Estate, or Trust).
+# TWO pages; ATTACHMENT-ONLY: the masthead prints "Attach to Form 1040, 1040-SR,
+# 1040-NR, 1041, or 990-T." Line 35 is the credit itself and its printed text
+# routes it: "Enter here and on Schedule 3 (Form 1040), line 1".
+#
+# PORTED from formpacks/federal/2023/f1116/pack.yaml (authored 2026-08-27) on
+# 2026-08-27 — and the port turned out to be a full RE-MAP, not a URL+digest
+# swap. The 2023 header itself said not to trust the names ("Do NOT port this
+# map by name alone"), and it was right: 118 of the 2025 blank's widgets carry a
+# DIFFERENT fully-qualified AcroForm name from the 2023 one, TWO widgets are
+# gone, THREE checkbox on-states changed, and the one name that survives
+# unchanged now binds a DIFFERENT PRINTED BOX. Every binding below was derived
+# from THIS blank's render, not inherited. Details under TOPOLOGY DIFF.
+#
+# ---------------------------------------------------------------------------
+# PROVENANCE — revision identity read off the RENDER, not the URL
+# ---------------------------------------------------------------------------
+# Blank fetched with taxfill_core.fetch.fetch_blank(source_url) into the shared
+# cache (.cache/blanks/c5b79dce401b_f1116--2025.pdf, 120,869 bytes, 2 pages).
+# BOTH pages were rendered at 200 dpi and READ (freshness protocol, dev plan §7).
+# Printed verbatim, top of page 1:
+#   "Form 1116"  /  "Foreign Tax Credit"  /  "(Individual, Estate, or Trust)"
+#   "Attach to Form 1040, 1040-SR, 1040-NR, 1041, or 990-T."
+#   "Go to www.irs.gov/Form1116 for instructions and the latest information."
+#   "OMB No. 1545-0074"   "2025"   "Attachment Sequence No. 19"
+# Page 1 footer: "For Paperwork Reduction Act Notice, see instructions."
+# "Cat. No. 11440U"  "Form 1116 (2025) Created 9/16/25".
+# Page 2 header: "Form 1116 (2025) ... Page 2"; page 2 footer "Form 1116 (2025)".
+# => this IS the TY2025 revision. sha256 computed two ways and identical
+# (taxfill_core.fetch.compute_sha256() and `shasum -a 256`):
+#   2575162f86c37297265c28d3d23ff1d99e06b2b1aeeadf396f5d6e798a8cffc5
+#
+# THE OMB NUMBER CHANGED and it is printed, not inferred: the 2023 masthead
+# reads "OMB No. 1545-0121", the 2025 masthead reads "OMB No. 1545-0074" (read
+# off a 300-dpi crop of the masthead, not off the metadata). The instructions
+# confirm the reason in their own Paperwork Reduction Act Notice: "The estimated
+# burden for individual filers is approved under OMB control number 1545-0074,
+# for tax-exempt filers under OMB control number 1545-0047, and for trust filers
+# under OMB control number 1545-0092" (Instructions for Form 1116 (2025), p.25).
+# Nothing in this pack keys off the OMB number; it is recorded because a port
+# that copies the prior banner ships a false printed-face claim.
+#
+# pdfinfo reports Title "2025 Form 1116", Subject "Foreign Tax Credit
+# (Individual, Estate, or Trust)", Form: XFA, JavaScript: yes — and per
+# formpacks/CONVENTIONS.md that JS flag says NOTHING about whether the form
+# computes. Re-checked on THIS blank rather than inherited: the document's
+# /Names /JavaScript tree holds exactly THREE entries and all three are Adobe
+# viewer-version boilerplate (!ADBE::0100_VersChkStrings,
+# !ADBE::0100_VersChkVars, !ADBE::0200_VersChkCode_XFACheck); NO widget carries
+# an /AA action anywhere up its /Parent chain (0 of 118); and the AcroForm
+# dictionary has no /CO at all (its keys are exactly /DA /DR /Fields /SigFlags
+# /XFA). So nothing on this form computes anything, which also means no P-007
+# class-4 ("the FORM owns the value") binding can exist here. Page 2 carries no name/SSN header either
+# (its header is just "Form 1116 (2025) ... Page 2"), so there are no identity
+# page mirrors to map.
+#
+# INTROSPECTION TOTALS (every widget, /FT and /Ff resolved through /Parent at
+# FIELD level per CONVENTIONS.md, /MaxLen, /Rect, page, checkbox /AP /N states):
+#   118 widgets = 107 /Tx + 11 /Btn + 0 /Ch, across 2 pages   (2023: 120 = 109+11)
+#   118 distinct FULLY-QUALIFIED names — every widget is its own terminal field.
+#     Short names are NOT unique on this revision: "c1_1[0]" names FOUR
+#     different widgets and "c1_1[1]" names three, because the seven category
+#     boxes were re-parented into three new subforms. Any mapping keyed on the
+#     short name alone is ambiguous on this blank.
+#   ReadOnly (/Ff bit 1): ZERO — re-measured on this blank, not inherited.
+#     102 of the 107 text widgets carry /Ff = 8388608 (DoNotScroll only);
+#     FOUR carry /Ff = 8392704 = DoNotScroll|Multiline (bit 13, value 4096) —
+#     the three line-i country cells and the line-1a description box, all of
+#     which grew to multi-row height this year (see TOPOLOGY DIFF); and the ONE
+#     remaining exception is Page1[0].f1_02[0] (identifying number), which
+#     carries no /Ff at all and is the only widget on the form with a /MaxLen
+#     (11). The eleven /Btn widgets carry no /Ff either.
+#   Every /Btn has exactly ONE /AP /N on-state besides /Off; all eleven were
+#   READ OFF THIS BLANK, never carried over (three of them changed — below).
+#   118 mapped lines = 118 widgets, 1:1, nothing unmapped and nothing bound twice
+#   (asserted by the generator that emitted the fields block, and again by
+#   test_f1116_blank_has_no_readonly_widgets_and_the_states_are_real).
+#
+# ---------------------------------------------------------------------------
+# TOPOLOGY DIFF vs the 2023 blank — MECHANICAL, every field, column by column
+# ---------------------------------------------------------------------------
+# Both blanks were dumped to JSON (fully-qualified name, page, /Rect, /FT, /Ff,
+# /MaxLen, /AP /N states) and diffed field by field. Result: the AcroForm
+# hierarchy was re-authored wholesale between 2023 and 2025.
+#
+# WHICH YEAR DID WHAT — measured against the 2024 blank as well, because a
+# concurrently-authored formpacks/federal/2024/f1116 landed while this port was
+# in progress and it changes the attribution. The 2024 blank was fetched
+# (.cache/blanks/8fe226f589b7_f1116--2024.pdf, 121,290 bytes, 120 widgets =
+# 109 /Tx + 11 /Btn, ReadOnly 0, /Ff 108 x 8388608 + 12 absent — NO Multiline
+# bit anywhere) and diffed both ways. So:
+#   * 2023 -> 2024 carried almost the whole re-authoring: the new intermediate
+#     subforms, the zero-padded leaf names, the five "_ReadOrder" wrappers, the
+#     move of box g onto the bare name Page1[0].c1_1[0], and the 1b "/Yes"->"/1"
+#     and Paid/Accrued "/Paid"/"/Accrued"->"/1"/"/2" state changes.
+#   * 2024 -> 2025 is small but not empty, and every item is listed here because
+#     it is the diff a 2024-based port would have to make: 4 names removed, 2
+#     added, 44 surviving names whose binding moved, and 0 on-state changes.
+#     Removed: Page1[0].ActiveHeaderElements[0].c1_3[0]/[1] (re-nested — see
+#     below) and the line-1a boxes f1_08/f1_09 (collapsed — see (5)).
+#     Added: Page1[0].Part2[0].ActiveHeaderElements[0].c1_3[0]/[1], i.e. the
+#     Paid/Accrued pair gained a new Part2[0] wrapper AND moved 7.2 pt left
+#     (x 81.2 -> 74.0). Moved bindings: f1_07 and f1_04/f1_05/f1_06 (the four
+#     new Multiline boxes), the Part II column re-widthing, and page 2's
+#     f2_09..f2_27 shifting up 6-18 pt.
+#     A 2024->2025 name port would therefore have hit ONE loud failure — the
+#     Paid/Accrued rename, which the filler rejects because the field name is
+#     gone — and ONE SILENT one: the Part II column re-widthing, which moves the
+#     printed rules under unmoved field names and can only be caught by looking
+#     at pixels. (The two dropped line-1a keys are loud too: fill_form raises
+#     "unknown line key" for 1a.income_type_2/_3 once the pack stops declaring
+#     them, and would raise on the missing widget if it kept them. Reproduced.)
+#
+# (1) NAMES REMOVED: 99 of the 2023 blank's 120 fully-qualified names.
+#     NAMES ADDED: 97. Only 21 names survive verbatim.
+#     The renaming has three independent parts, and each one alone would break a
+#     name port:
+#       * new intermediate subforms — Part1Table -> Table_Part1_LinesI-1a +
+#         Table_Part1_Lines2-6; Part2TableBody -> Table_Part2;
+#         Part2TableHeader[0].ColumnJ[0].CreditClaimedCheckboxes ->
+#         Part2[0].ActiveHeaderElements; and five brand-new "_ReadOrder"
+#         wrappers (LineA-B_, LineC-D_, LineE-F_, Line1b_, Line10_, Line9_,
+#         Line15_). NOTE the HYPHENS in LineA-B_ReadOrder[0],
+#         Table_Part1_LinesI-1a[0] and Table_Part1_Lines2-6[0] — the schema puts
+#         no character class on `field`, and the golden round-trip proves the
+#         filler resolves them.
+#       * ZERO-PADDED leaf names for the single digits: f1_1 -> f1_01,
+#         f1_2 -> f1_02, f1_3 -> f1_03, f1_4 -> f1_04, f1_5 -> f1_05,
+#         f1_6 -> f1_06, f1_7 -> f1_07, and f2_1..f2_9 -> f2_01..f2_09.
+#         f1_10..f1_82 and f2_10..f2_27 kept their spelling.
+#       * REPARENTING of leaves that gained/lost a wrapper (f1_13 and f1_50 came
+#         OUT of the Part I table and now sit directly on Page1[0]).
+#
+# (2) THE ONE SURVIVING NAME WHOSE BINDING MOVED — the catastrophic case, and it
+#     is exactly the one a name-only port would have shipped wrong:
+#       topmostSubform[0].Page1[0].c1_1[0]
+#         2023: /Rect [43.2, 648.5, 51.2, 656.5]   /AP /N on-state "/1"
+#         2025: /Rect [475.2, 651.0, 483.2, 659.0] /AP /N on-state "/7"
+#       x moved +432.0 pt — from the FIRST category box (a, Section 951A
+#       category income) to the LAST one (g, Lump-sum distributions), because
+#       boxes a..f were re-parented into LineA-B_/LineC-D_/LineE-F_ReadOrder and
+#       only g was left on Page1[0].
+#     REPRODUCED on this blank rather than theorised, in two steps, because only
+#     the second one is silent:
+#       * carrying the 2023 row verbatim (`category.section_951a ->
+#         Page1[0].c1_1[0]`, on_state "/1") RAISES in the filler — "on_state
+#         '/1' is not a state of checkbox field
+#         'topmostSubform[0].Page1[0].c1_1[0]' — the PDF offers ['/7']". Good;
+#         that is the on_state guard doing its job.
+#       * making the obvious follow-up fix — keep the name, change the state to
+#         the "/7" the widget offers — writes with ZERO warnings, and a 300-dpi
+#         render of the category block shows the tick at box g, "Lump-sum
+#         distributions", while the pack still calls the key
+#         `category.section_951a`. A wrong basket, a wrong limitation and a wrong
+#         Part IV row, with the field name and the pack diff both looking clean.
+#     The shipped map was checked from the other end too: filling only
+#     `category.section_951a` ticks box a and filling only `category.lump_sum`
+#     ticks box g, both read off 300-dpi renders.
+#     The other 20 surviving names moved only by re-typesetting (f1_51 and f1_82
+#     down 6.0 pt; every page-2 leaf right 14.4/28.8 pt and up 54-138 pt as page
+#     2 was compressed). None of them changed which printed row it sits on; that
+#     was confirmed cell by cell on the sentinel render, not from the rects.
+#
+# (3) COLUMN-BY-COLUMN, because on a three-column grid a column shift leaves
+#     every field name intact. Part I's A/B/C column rules are unmoved
+#     (x 266.4/338.4/410.4, widths 71.25) and the Total column is unmoved
+#     (x 504.0-576.0), so no Part I column shifted. Part II is where the
+#     boundaries DID move: the (l)|(m) rule went 136.8 -> 122.4 and the ten
+#     printed columns were re-widthed ((m)(n)(o) 42.45/49.65/42.45 -> a uniform
+#     49.65; (r)(s)(t) 42.45/42.45/49.65 -> 49.65/42.45/42.45). The ten cells
+#     per row are still assigned left to right in leaf order, but that is a
+#     CONCLUSION from the render, not an assumption: every one of the thirty
+#     Part II cells was matched against its printed head on the sentinel sweep,
+#     including the (p)|(q) rule where "In foreign currency" hands over to
+#     "In U.S. dollars" (see VISION AUDIT).
+#
+# (4) /Ff DIFFERENCES — all adjudicated under P-007, and none is a ReadOnly bit.
+#     ReadOnly was ZERO in 2023 and is ZERO in 2025 (measured on both blanks),
+#     so P-007 classes 1/3/4 raise no question on this form and nothing belongs
+#     in RESERVED_LINE_KEEPS. The only /Ff change is that four text widgets
+#     gained bit 13 (Multiline, +4096): the three line-i country cells
+#     (f1_04/f1_05/f1_06, /Rect height 12 -> 24) and the line-1a description box
+#     (f1_07, height 12 -> 36). Both are geometry, not permission: the printed
+#     line-i caption now wraps to two lines ("Enter the name of the foreign
+#     country or U.S. territory") and its country cells are two printed rows
+#     tall, and line 1a's ONE box now spans all three printed dashed rules.
+#     Multiline has no representation in the pack schema and needs none — the
+#     filler writes a string either way; it is recorded so a future port does
+#     not read the flag change as a lock.
+#     No /MaxLen changed (11 on the identifying-number box, absent everywhere
+#     else, both years). No /AA appeared (0 both years).
+#
+# (5) THE TWO WIDGETS THAT DISAPPEARED, and the one KEY RENAME they force.
+#     2023 mapped line 1a's three printed dashed description rules to THREE
+#     widgets (f1_7 [115.2,504,259.2,516], f1_8 [64.8,492,...], f1_9
+#     [64.8,480,...]) as 1a.income_type_1/_2/_3. The 2025 revision replaced them
+#     with ONE Multiline box, f1_07 [64.8, 480.0, 259.2, 516.0], 36 pt tall,
+#     covering all three rules — read off the sentinel render, where the single
+#     sentinel "f1_07" prints at the top of the dashed block and no widget sits
+#     on rules 2 or 3. So this pack maps `1a.income_type` (singular), and
+#     `1a.income_type_2`/`_3` do not exist: fill_form raises its unknown-line-key
+#     ValueError for them. Grepped before renaming per CONVENTIONS.md's rule 6:
+#     `1a.income_type_1` occurs ONLY inside formpacks/federal/2023/f1116 — no
+#     calc op, extractor, fixture, test or cross_form rule refers to it — so the
+#     2023 keys stay exactly as they are and this is a per-year spelling, not a
+#     repo-wide rename. 118 = 120 - 2 accounts for the whole widget-count drop.
+#
+# ---------------------------------------------------------------------------
+# ON-STATES: THREE OF THE ELEVEN CHANGED vs 2023 (none vs 2024). Never port a
+# /Btn by name.
+# ---------------------------------------------------------------------------
+# Read off THIS blank's /AP /N. The 2023 column is where a base-year port would
+# start; the 2024 column shows that all three changes had already landed by then,
+# so a 2024-based port inherits the states and a 2023-based one must not.
+#   line 1b attestation      c1_2[0]  2023 "/Yes"     2024 "/1"       2025 "/1"
+#   Part II (j) Paid         c1_3[0]  2023 "/Paid"    2024 "/1"       2025 "/1"
+#   Part II (k) Accrued      c1_3[1]  2023 "/Accrued" 2024 "/2"       2025 "/2"
+#   category a..g            c1_1[*]  "/1".."/7" in all three years   (unchanged)
+#   line 10 no-Schedule-B    c2_1[0]  "/Accrued" in all three years   (unchanged)
+# Carrying "/Yes" or "/Paid" forward would have written NOTHING and warned about
+# NOTHING — the filler sets a state the widget does not define. The last row is
+# the funny one and it survived: the line-10 "you don't need to attach Schedule
+# B" box really does still export "/Accrued", a DOR authoring leftover from the
+# Part II pair that has nothing to do with what the box means. Guessing "/1" or
+# "/Yes" there is silently wrong in both years.
+# The a..g order was re-derived, not assumed: the seven boxes sit at x
+# 43.2 / 194.4 / 324.0 / 475.2 with the upper row (y 651.0) carrying a, c, e, g
+# and the lower row (y 639.0) carrying b, d, f, and the 300-dpi crop of the
+# category block reads "a Section 951A category income / b Foreign branch
+# category income | c Passive category income / d General category income |
+# e Section 901(j) income / f Certain income re-sourced by treaty | g Lump-sum
+# distributions" in exactly that arrangement. So /1../7 really is a..g, and
+# /7 really is the box that moved to Page1[0].c1_1[0].
+#
+# ---------------------------------------------------------------------------
+# PRINTED-TEXT DIFF vs 2023 — what the pages actually SAY, read side by side
+# ---------------------------------------------------------------------------
+# Both years' pages were rendered at 200 dpi and read against each other. Eight
+# printed changes, four of which change what a line MEANS:
+#
+# a. "U.S. POSSESSION" -> "U.S. TERRITORY", everywhere: line i ("Enter the name
+#    of the foreign country or U.S. territory"), the Part I column head
+#    ("Foreign Country or U.S. Territory"), and the Note above Part I. A
+#    terminology change only — the same box takes the same kind of value — but
+#    every comment below is written from the 2025 face rather than copied.
+#    ALREADY TRUE ON THE 2024 FACE (read off its own render/text extract), so
+#    this is a 2024 change that 2025 inherited, not a 2025 one.
+#
+# b. LINE 18 WAS REWRITTEN, and this is the change most likely to be shipped
+#    wrong by a port. 2023 printed "Individuals: Enter the amount from line 15
+#    of your Form 1040, 1040-SR, or 1040-NR." 2025 prints "Individuals: Enter
+#    the sum of (i) Form 1040, 1040-SR, or 1040-NR, line 11b, minus Form 1040,
+#    1040-SR, or 1040-NR, line 14, and (ii) Schedule 1-A (Form 1040), line 37.
+#    Estates and trusts: Enter your taxable income without the deduction for
+#    your exemption". Confirmed verbatim in the instructions (Line 18, p.23).
+#    The reason is on page 1 of the instructions ("What's New — New legislation.
+#    Recent legislation (P.L. 119-21), adds new section 151(d)(5)(C), which
+#    generally provides a $6,000 deduction for the taxpayer and (in the case of
+#    a joint return) the taxpayer's spouse, if they have reached age 65 before
+#    the close of the tax year. This deduction is reported on Schedule 1-A
+#    (Form 1040), line 37, and needs to be removed from taxable income for
+#    purposes of computing the foreign tax credit ... in effect for tax years
+#    2025 through 2028"). Cross-checked against the sibling 2025 packs rather
+#    than assumed: formpacks/federal/2025/f1040 maps line 11b and line 14, and
+#    formpacks/federal/2025/sched_1a line 37 is "ENHANCED DEDUCTION FOR SENIORS:
+#    add lines 36a and 36b". Carrying the 2023 comment ("amount from line 15")
+#    would have described a formula that no longer exists on the face.
+#
+# c. LINE 20's CITED LINE MOVED: 2023 "Schedule 2 (Form 1040), line 2" -> 2025
+#    "Schedule 2 (Form 1040), line 1z" (instructions p.25 spell it "Schedule 2
+#    (Form 1040), Part I, line 1z, less any tax included on line 16 from Form
+#    4972"). Confirmed against formpacks/federal/2025/sched_2, which maps 1z and
+#    relates it "1z == sum(1a..1y)". The face also DROPPED the estate/trust
+#    detail it used to print, to a bare "Estates and trusts: See instructions".
+#    ALREADY TRUE ON THE 2024 FACE (both halves), so this is a 2024 change that
+#    2025 inherited. Items b, d, e, f and the OMB number are the genuinely
+#    2025-new ones — the 2024 masthead still prints OMB No. 1545-0121, the 2024
+#    line 18 still prints "Enter the amount from line 15 of your Form 1040", the
+#    2024 line 24 still prints the "skip lines 25 through 32" bypass, the 2024
+#    line 17 still prints the long parenthetical, and the 2024 Part IV heading is
+#    still "Summary of Credits From Separate Parts III (see instructions)".
+#
+# d. LINE 24's TEXT CHANGED, and it is the reason this pack has one relation the
+#    2023 pack deliberately does not. 2023: "Enter the smaller of line 14 or
+#    line 23. If this is the only Form 1116 you are filing, skip lines 25
+#    through 32 and enter this amount on line 33. Otherwise, complete the
+#    appropriate line in Part IV. See instructions." 2025: "Enter the smaller of
+#    line 14 or line 23. Enter here and on the appropriate line of Part IV. See
+#    instructions." The instructions say why, in What's New on p.1: "Form 1116,
+#    Part IV. Lines 25 through 32 in Part IV must now be completed even when
+#    filing only one Form 1116. We revised the text on Form 1116, line 24, to
+#    reflect this change." See the relations block for what that buys.
+#
+# e. PART IV's HEADING CHANGED: 2023 "Summary of Credits From Separate Parts III
+#    (see instructions)" -> 2025 "Summary of Separate Credits From Parts III
+#    (Enter amounts from Part III, line 24, for each applicable category of
+#    income. Don't include taxes paid to sanctioned countries.) See
+#    instructions." The per-category rows 25-31 are unchanged in wording and in
+#    printed order, so the a..g -> 25..31 mapping below is the same as 2023's.
+#
+# f. LINE 17's parenthetical was shortened: 2023 "(If the result is zero or
+#    less, you have no foreign tax credit for the category of income you checked
+#    above Part I. Skip lines 18 through 24. However, if you are filing more
+#    than one Form 1116, you must complete line 20.)" -> 2025 "(If the result is
+#    zero or less, skip line 18 and enter -0- on line 19.)". No mapping effect.
+#
+# g. LINE 10's block was re-typeset (the "(If your income was section 951A
+#    category income (box a above Part I), leave line 10 blank.)" row is a
+#    separate printed row in both years, with a grey cell and no widget).
+#
+# h. Everything else is word-for-word identical: lines 1a/1b, 2, 3a-3g, 4a/4b,
+#    5, 6, 7, the whole Part II header including (p)/(t) "Other foreign taxes
+#    paid or accrued" and (u) "Total foreign taxes paid or accrued (add cols.
+#    (q) through (t))", 8, 9, 11, 12 (still printed inside "( )"), 13, 14, 15,
+#    16, 19, 21, 22, 23, 25-31, 32, 33, 34 and 35.
+#
+# THE SCHEDULE 3 DESTINATION LINE, checked because it MOVES between years and
+# the TY2025 Form 1040 renumbering is live elsewhere in this repo: printed line
+# 35 reads "Subtract line 34 from line 33. This is your foreign tax credit.
+# Enter here and on Schedule 3 (Form 1040), line 1; Form 1041, Schedule G, line
+# 2a; or Form 990-T, Part III, line 1a" — line 1, unchanged from 2023. Verified
+# from the other end too: formpacks/federal/2025/sched_3 line 1 is "Foreign tax
+# credit (Form 1116)". So "35 == sched_3.1" is right for 2025 on both faces.
+#
+# ---------------------------------------------------------------------------
+# THE KEY CONVENTION (carried from 2023 on purpose — re-justified, not assumed)
+# ---------------------------------------------------------------------------
+# Form 1116 is filed PER INCOME CATEGORY and Part I is a THREE-COUNTRY COLUMN
+# GRID (A/B/C) plus a Total column, while Part II is the same three countries
+# turned sideways into three LINES (A/B/C) crossed with lettered columns
+# (j)..(u). The house column spelling is line-first-column-second (sched_d
+# `1a.d`, sched_e `3.a`), and applied literally here it gives `1a.b` / `4a.b` /
+# `3a.c` — which read exactly like the printed lines `1b`, `4b`, `3c`. All three
+# lookalike pairs still print on the 2025 face, so `col_a`/`col_b`/`col_c` still
+# wins, and test_f1116_column_grid_keys_are_unambiguous_and_complete pins it.
+#
+#   Part I   <printed line>.col_a | .col_b | .col_c | .total     e.g. 3g.col_b
+#   Part II  line_a | line_b | line_c  .  <printed column letter> e.g. line_a.q
+#   Part III/IV  <printed line>                                   e.g. 24
+#   category checkboxes   category.<category name>
+#
+# * `.total` is the printed "Total (Add cols. A, B, and C.)" column. Only THREE
+#   rows have a widget in it — 1a (box labelled "1a"), 6 (box labelled "6") and
+#   7 — re-confirmed on the 2025 sentinel render, where the Total column is
+#   solid grey with no sentinel beside lines i, 1b, 2, 3a-3g, 4a, 4b and 5.
+#   Nothing was dropped: those widgets do not exist.
+#
+# * Part II rows are keyed `line_a`/`line_b`/`line_c` because THE FORM CALLS
+#   THEM LINES ("8 Add lines A through C, column (u)").
+#
+# * THE CROSS-PART IDENTITY, which no schema field can express: Part I column A
+#   and Part II line A are THE SAME COUNTRY. Printed Note (2025 wording): "If
+#   you paid taxes to only one foreign country or U.S. territory, use column A
+#   in Part I and line A in Part II. If you paid taxes to more than one foreign
+#   country or U.S. territory, use a separate column and line for each country
+#   or territory." So `i.col_a` names the country whose taxes go on `line_a.*`.
+#   `relations` is arithmetic over money lines and `identity_fields` drives a
+#   cross-FORM check, so this has no home in the schema and no gate will catch a
+#   caller that crosses them.
+#
+# * Category option names are DESCRIPTIVE, not the printed letters a..g
+#   (f8949's reason: a one-character difference buried in a key is a silent
+#   wrong return, and here the wrong box computes the limitation against the
+#   wrong basket). Printed letter in each row's comment; Part IV is 1:1 in
+#   printed order:
+#     a Section 951A category income          -> category.section_951a        -> 25
+#     b Foreign branch category income        -> category.foreign_branch      -> 26
+#     c Passive category income               -> category.passive             -> 27
+#     d General category income               -> category.general             -> 28
+#     e Section 901(j) income                 -> category.section_901j        -> 29
+#     f Certain income re-sourced by treaty   -> category.resourced_by_treaty -> 30
+#     g Lump-sum distributions                -> category.lump_sum            -> 31
+#   `c` (passive) is the box the 1099-DIV box 7 filer checks.
+#
+# ---------------------------------------------------------------------------
+# THE TWO ONE-OF-N CHECKBOX SETS — P-008's DANGEROUS topology, still
+# ---------------------------------------------------------------------------
+# Both option sets are the shape formpacks/CONVENTIONS.md says "gets no
+# exemption": options on SEPARATE single-widget /Btn fields. Dumped on THIS
+# blank, not inherited — each of the seven category boxes is its own terminal
+# field with its own /T, its own /V and exactly ONE /AP /N state, and so is each
+# of the Paid/Accrued pair; there is no shared parent, no /Ff radio bit and no
+# single /V. Reproduced on this blank: the sentinel sweep that turned on every
+# /Btn produced, at 200-300 dpi, a page 1 with ALL SEVEN category boxes ticked
+# under "Check only one box on each Form 1116" AND both "(j) Paid" and
+# "(k) Accrued" ticked under "(you must check one)". With `group: category` /
+# `group: credit_claimed` in place, fill_form's group guard rejects a second
+# option before it opens the blank and verify's at-most-one checkbox audit FAILs
+# an already-both-ticked PDF. `required: true` sits on the FIRST member of each
+# group (f1040's filing_status/digital_assets spelling; a required flag on any
+# member makes the whole group required). Both are unconditional on the printed
+# face ("Check only one box on each Form 1116"; "(you must check one)").
+# The other two /Btn widgets are INDEPENDENT single boxes, not options, so they
+# carry no group: line 1b (the $250,000 alternative-basis attestation) and the
+# line 10 "don't need to attach Schedule B" box.
+#
+# ---------------------------------------------------------------------------
+# P-007 ADJUDICATION — re-measured, and every difference accounted for
+# ---------------------------------------------------------------------------
+# ReadOnly widgets on the 2025 blank: ZERO (as on the 2023 blank). So no P-007
+# class-1 ("the widget already holds a printed constant"), class-3 ("Reserved
+# for future use") or class-4 ("the FORM owns the value") question arises, and
+# no row belongs in RESERVED_LINE_KEEPS or RESERVED_LINES_UNMAPPED. The /Ff
+# differences that DO exist are the four Multiline bits above, adjudicated as
+# geometry: bit 13 is Multiline, not ReadOnly, the flag reader walks /Parent so
+# the reading is at FIELD level, and the affected boxes take an ordinary typed
+# value (proved by the golden round-trip, which writes all four and re-reads
+# them).
+# Class 2 ("the printed text makes a correct entry impossible") was worked again
+# on this face, and the answer is again that the IRS shipped NO WIDGET in any
+# grey cell. Enumerated from the 2025 sentinel render + the /Rect dump: the
+# Total column is grey for line i, line 1b and lines 2 through 5; the A/B/C
+# cells are grey for the whole upper part of the tall line-1a row, for all of
+# line 1b, and for the "Deductions and losses", "3" and "4" caption rows; and
+# page 2's outer column is grey beside lines 9-13 and 25-31 while its inner
+# column is grey beside lines 14, 19-24 and 32-35, plus the line-10 951A
+# parenthetical row and both Caution rows. Not one of those regions holds a
+# widget, so there is nothing to unmap and fill_form already raises its
+# unknown-line-key ValueError for e.g. "2.total" or "1b.col_a".
+# Two widget-level judgments a port could get wrong, both re-derived here:
+#   * line 1a's f1_07 sits in the LABEL column on the printed dashed rules, not
+#     in any country column — it is the description of the income type ("enter
+#     'Dividends' on the dotted line"), which is why it is keyed
+#     1a.income_type and typed text. Reading the /Rect alone would plausibly
+#     have keyed it as a country cell, and this year its box is TALLER than the
+#     country cells, which makes that misreading more inviting than in 2023.
+#   * line 12's widget f2_04[0] is 78.4 pt wide where every sibling money box on
+#     page 2's inner column is 85.65 pt, because the form prints "(" and ")"
+#     around it. That geometry is the sign convention (see relations). The 2023
+#     numbers were 92.8 vs 100.05 — the whole page-2 column narrowed, the
+#     RELATIONSHIP did not change.
+#
+# ---------------------------------------------------------------------------
+# TYPES — the two places this form is NOT dollars
+# ---------------------------------------------------------------------------
+# The masthead prints "Report all amounts in U.S. dollars except where specified
+# in Part II below", and both exceptions are honoured with `type: text` rather
+# than money, so verify's dollar-denominated relation math and recompute pass
+# never see a non-dollar figure (f8962's precedent).
+#   * Part II columns (m)(n)(o)(p) are headed "In foreign currency". Column (l)
+#     is headed "Date paid or accrued" but is not a date field either — the
+#     instructions put words in it: "Enter '909 taxes' in column (l) instead of
+#     the date paid or accrued" (Instructions for Form 1116 (2025), p.18) and,
+#     for the case this pack exists for, "Enter '1099 taxes' in column (l) of
+#     Part II, and complete columns (q) through (u) for each foreign country
+#     indicated in Part I" (same, p.19). Columns (q)..(u) ARE dollars and are
+#     typed money.
+#   * Lines 3f and 19 are RATIOS. "Divide line 3d by line 3e and round off the
+#     result to at least four decimal places (for example, if your result is
+#     0.8756782, round off to 0.8757, not to 0.876 or 0.88). Enter the result,
+#     but don't enter more than '1.'" (Instructions, Line 3f, p.18 — verbatim
+#     the same sentence as 2023.) Line 19 is printed "Divide line 17 by line 18.
+#     If line 17 is more than line 18, enter '1'". verify compares relation
+#     sides in WHOLE DOLLARS after IRS rounding, so a 0.8757 line would round to
+#     0 and any relation touching it would be nonsense — which is also why lines
+#     3g, 19 and 21 get no relation.
+#
+# ---------------------------------------------------------------------------
+# VISION AUDIT (200/300 dpi, both pages, own eyes) — what it checked and caught
+# ---------------------------------------------------------------------------
+# A sentinel sweep wrote each widget's own short name into it and ticked every
+# /Btn; both pages were rendered and READ, plus 300-dpi crops of the masthead,
+# the category block, the Part II header and the page-1 footer. With a
+# three-column grid a column shift leaves every field name intact, so the FIRST
+# and LAST column of several rows were checked explicitly:
+#   Part I, first column (A) vs last column (C): line i f1_04 / f1_06; line 1a
+#   f1_10 / f1_12; line 3a f1_17 / f1_19; line 3g f1_35 / f1_37; line 5 f1_44 /
+#   f1_46; line 6 f1_47 / f1_49 — every one inside its own printed column rule,
+#   with f1_13 / f1_50 / f1_51 alone in the Total column beside the printed
+#   "1a" / "6" / "7" tabs.
+#   Part II, first column (l) vs last column (u), all three rows: f1_52 / f1_61,
+#   f1_62 / f1_71, f1_72 / f1_81 — and the eight middle columns confirmed cell
+#   by cell against the printed heads, including the (p)|(q) boundary where the
+#   "In foreign currency" half hands over to "In U.S. dollars" (f1_56 is the
+#   last cell under "In foreign currency", f1_57 the first under "In U.S.
+#   dollars"). Each printed column rule was also computed back from the /Rect
+#   dump and matched to the pixel where the render draws it, so the re-widthed
+#   Part II columns are checked twice.
+#   Page 2, every row: each sentinel prints immediately right of its own printed
+#   line-number tab, 9 -> f2_01 through 35 -> f2_27, with f2_04 inside the
+#   printed "( )" on line 12.
+# CAUGHT — five things a name-only dump would have got wrong, all of them
+# changing what the pack says:
+#   1. Page1[0].c1_1[0] is now box g (Lump-sum distributions), not box a. The
+#      name is unchanged; the /Rect and the /AP state are not. This is the whole
+#      reason the port is a re-map (see TOPOLOGY DIFF (2)).
+#   2. Line 1a's three description widgets became ONE Multiline box, so
+#      1a.income_type_2 and _3 must not exist. The render shows a single
+#      sentinel at the top of the three dashed rules and nothing on rules 2/3.
+#   3. Line 1b's checkbox exports "/1" now, not "/Yes"; the Paid/Accrued pair
+#      exports "/1"/"/2", not "/Paid"/"/Accrued". Carrying the 2023 states
+#      forward writes nothing and warns about nothing.
+#   4. Line 18 and line 20 now cite DIFFERENT lines of other forms (1040 line
+#      11b minus line 14 plus Schedule 1-A line 37; Schedule 2 line 1z) — read
+#      off the printed face, not from the field names, which did not move.
+#   5. Line 24 lost the "skip lines 25 through 32" bypass, which is what makes
+#      "33 == min(20, 32)" honest math this year and dishonest math in 2023.
+# Nothing was clipped, nothing landed off-page.
+#
+# ---------------------------------------------------------------------------
+# THE §904(j) ELECTION — this form is often NOT the answer
+# ---------------------------------------------------------------------------
+# IRC 904(j) lets an individual take the credit with NO Form 1116 at all, and
+# for the 1099-DIV box 7 population that is usually the right branch. The engine
+# answers it deterministically: calc op `foreign_tax_credit_election`
+# (packages/core/src/taxfill_core/calc.py). Run it BEFORE authoring this form.
+# Re-read on the 2025 instructions (p.1, "Election To Claim the Foreign Tax
+# Credit Without Filing Form 1116") rather than carried over: all of the
+# conditions still hold — every dollar of foreign source gross income is passive
+# category income; all the income and any foreign taxes paid on it were reported
+# on a qualified payee statement; total creditable foreign taxes not more than
+# $300 ($600 if married filing a joint return); "This election isn't available
+# to estates or trusts" (904(j)(3)(D)) — and so does what it COSTS: "You can't
+# carry over unused foreign taxes paid or accrued in a year to which the
+# election doesn't apply to or from any year for which you made the election",
+# and the entry is still capped at "the smaller of (a) your total foreign tax,
+# or (b) your regular tax". Form 1116's own line 10 and the 1-back/10-forward
+# carryover it feeds are exactly what the election gives up.
+#
+# ---------------------------------------------------------------------------
+# WHAT THIS PACK DELIBERATELY DOES NOT DO
+# ---------------------------------------------------------------------------
+# * Schedule B (Form 1116) (the carryover reconciliation feeding line 10) and
+#   Schedule C (Form 1116) (foreign tax redeterminations) are SEPARATE forms with
+#   their own OMB numbers; neither is mapped here.
+# * Lines 18 and 20's printed formulas each span two other forms and subtract an
+#   instruction-only item ("less any tax included on line 16 from Form 4972").
+#   cross_form has no arithmetic — each side resolves as ONE ref — so a rule like
+#   "20 == f1040.16 + sched_2.1z" would be SILENTLY skipped, not failed. Omitted.
+# * The Worksheet for Line 18, the Worksheets A/B for foreign qualified dividends
+#   and capital gains, the Worksheet for Lump-Sum Distributions and the Worksheet
+#   for Home Mortgage Interest are instruction-only math and belong to calc, not
+#   to `relations` (formpacks/CONVENTIONS.md).
+# * P.L. 119-21's new section 960(d)(4) (10% credit disallowance on section
+#   951A-related foreign taxes, for taxes paid or accrued after June 28, 2025 —
+#   Instructions p.1) reaches this form only through the line 12 reduction, which
+#   is an instruction-only computation. Recorded, not encoded.
+#
+# The 2024 revision SHIPPED CONCURRENTLY as formpacks/federal/2024/f1116 (a
+# sibling agent, same day). The two packs were cross-read after the fact and
+# agree where they must: both measure ZERO ReadOnly widgets, both keep the
+# col_a/col_b/col_c convention, both bind box g to the bare Page1[0].c1_1[0] at
+# "/7", both omit "33 == min(20, 32)" or include it exactly as their own printed
+# line 24 allows (2024's face still carries the bypass sentence, so 2024 omits
+# it; 2025's does not, so 2025 has it), and both keep the number of line-1a
+# description keys their own blank actually has (three for 2024, one for 2025).
+# The per-year pin tables in packages/core/tests/test_formpacks_federal.py hold
+# all three years' rows, so no year can pass on another year's measurements.
+
+form: "1116"
+jurisdiction: federal
+tax_year: 2025
+source_url: "https://www.irs.gov/pub/irs-prior/f1116--2025.pdf"
+pdf_sha256: "2575162f86c37297265c28d3d23ff1d99e06b2b1aeeadf396f5d6e798a8cffc5"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header ---------------------------------------------------------------
+  - { line: "name", field: "Page1[0].f1_01[0]", type: text }                      # "Name"  (f1_1 in 2023 -> f1_01)
+  # "Identifying number as shown on page 1 of your tax return" — plain box, NOT a
+  # comb; the ONLY widget on the form with a /MaxLen (11, which fits a dashed
+  # SSN "000-00-0000") and the only text widget with no /Ff at all. No
+  # ssn_digits_only: the form is "(Individual, Estate, or Trust)", so this box
+  # legitimately carries an estate/trust EIN too.
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 11 }
+
+  # ---- category of income (one-of-7; see the banner) -------------------------
+  # "Use a separate Form 1116 for each category of income listed below. See
+  # Categories of Income in the instructions. Check only one box on each Form
+  # 1116." Printed letter in each comment; on_states READ off /AP /N on the 2025
+  # blank and the a..g order re-derived from a 300-dpi crop of the printed block.
+  # THE PARENT SUBFORMS ARE NEW THIS YEAR and only box g stayed on Page1[0] —
+  # porting these by name checks the wrong basket (banner, TOPOLOGY DIFF (2)).
+  - { line: "category.section_951a", field: "Page1[0].LineA-B_ReadOrder[0].c1_1[0]", type: checkbox, on_state: "/1", group: category, required: true }  # a Section 951A category income
+  - { line: "category.foreign_branch", field: "Page1[0].LineA-B_ReadOrder[0].c1_1[1]", type: checkbox, on_state: "/2", group: category }                # b Foreign branch category income
+  - { line: "category.passive", field: "Page1[0].LineC-D_ReadOrder[0].c1_1[0]", type: checkbox, on_state: "/3", group: category }                       # c Passive category income  <- the 1099-DIV box 7 box
+  - { line: "category.general", field: "Page1[0].LineC-D_ReadOrder[0].c1_1[1]", type: checkbox, on_state: "/4", group: category }                       # d General category income
+  - { line: "category.section_901j", field: "Page1[0].LineE-F_ReadOrder[0].c1_1[0]", type: checkbox, on_state: "/5", group: category }                  # e Section 901(j) income
+  - { line: "category.resourced_by_treaty", field: "Page1[0].LineE-F_ReadOrder[0].c1_1[1]", type: checkbox, on_state: "/6", group: category }           # f Certain income re-sourced by treaty
+  - { line: "category.lump_sum", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/7", group: category }                                           # g Lump-sum distributions  <- the name 2023 gave to box a
+  - { line: "h", field: "Page1[0].f1_03[0]", type: text }                         # "h Resident of (name of country)"
+
+  # ---- Part I — Taxable Income or Loss From Sources Outside the United States -
+  # Three country columns A/B/C (col_a/col_b/col_c) plus the printed
+  # "Total (Add cols. A, B, and C.)" column (total), which has a widget on only
+  # three rows: 1a, 6 and 7. Column head reads "Foreign Country or U.S.
+  # Territory" this year ("Possession" in 2023).
+  # "i Enter the name of the foreign country or U.S. territory" — no Total cell;
+  # the three cells are Multiline (/Ff 8392704) and two printed rows tall.
+  - { line: "i.col_a", field: "Page1[0].Table_Part1_LinesI-1a[0].Rowi[0].f1_04[0]", type: text }
+  - { line: "i.col_b", field: "Page1[0].Table_Part1_LinesI-1a[0].Rowi[0].f1_05[0]", type: text }
+  - { line: "i.col_c", field: "Page1[0].Table_Part1_LinesI-1a[0].Rowi[0].f1_06[0]", type: text }
+  # "1a Gross income from sources within country shown above and of the type
+  # checked above (see instructions):" — the LABEL column prints three dashed
+  # rules and, from 2025, ONE Multiline widget spans all three (2023 had three
+  # separate widgets keyed 1a.income_type_1/_2/_3). It carries the description of
+  # the income type ("enter 'Dividends' on the dotted line"). SINGULAR key.
+  - { line: "1a.income_type", field: "Page1[0].Table_Part1_LinesI-1a[0].Line1a[0].Line1a_Text[0].f1_07[0]", type: text }
+  - { line: "1a.col_a", field: "Page1[0].Table_Part1_LinesI-1a[0].Line1a[0].ColA[0].f1_10[0]", type: money }
+  - { line: "1a.col_b", field: "Page1[0].Table_Part1_LinesI-1a[0].Line1a[0].ColB[0].f1_11[0]", type: money }
+  - { line: "1a.col_c", field: "Page1[0].Table_Part1_LinesI-1a[0].Line1a[0].ColC[0].f1_12[0]", type: money }
+  - { line: "1a.total", field: "Page1[0].f1_13[0]", type: money }                 # the box printed "1a" (left Part1Table this year)
+  # "b Check if line 1a is compensation for personal services as an employee,
+  # your total compensation from all sources is $250,000 or more, and you used an
+  # alternative basis to determine its source. See instructions" — ONE box, in
+  # the label column. /AP /N state is "/1" this year ("/Yes" in 2023). All three
+  # conditions must hold and a statement must be attached (Instructions for Form
+  # 1116 (2025), Line 1b, p.17).
+  - { line: "1b", field: "Page1[0].Line1b_ReadOrder[0].c1_2[0]", type: checkbox, on_state: "/1" }
+  # "Deductions and losses (Caution: See instructions.):"
+  - { line: "2.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_14[0]", type: money }   # 2 Expenses definitely related to the income on line 1a (attach statement)
+  - { line: "2.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_15[0]", type: money }
+  - { line: "2.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_16[0]", type: money }
+  # "3 Pro rata share of other deductions not definitely related:"
+  - { line: "3a.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3a[0].f1_17[0]", type: money }  # a Certain itemized deductions or standard deduction
+  - { line: "3a.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3a[0].f1_18[0]", type: money }
+  - { line: "3a.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3a[0].f1_19[0]", type: money }
+  - { line: "3b.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3b[0].f1_20[0]", type: money }  # b Other deductions (attach statement)
+  - { line: "3b.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3b[0].f1_21[0]", type: money }
+  - { line: "3b.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3b[0].f1_22[0]", type: money }
+  - { line: "3c.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3c[0].f1_23[0]", type: money }  # c Add lines 3a and 3b
+  - { line: "3c.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3c[0].f1_24[0]", type: money }
+  - { line: "3c.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3c[0].f1_25[0]", type: money }
+  - { line: "3d.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3d[0].f1_26[0]", type: money }  # d Gross foreign source income
+  - { line: "3d.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3d[0].f1_27[0]", type: money }
+  - { line: "3d.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3d[0].f1_28[0]", type: money }
+  - { line: "3e.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3e[0].f1_29[0]", type: money }  # e Gross income from all sources (a CONSTANT across every column and every Form 1116)
+  - { line: "3e.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3e[0].f1_30[0]", type: money }
+  - { line: "3e.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3e[0].f1_31[0]", type: money }
+  # f "Divide line 3d by line 3e" — a DECIMAL to at least four places, max "1";
+  # text, not money (see the banner's TYPES section).
+  - { line: "3f.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3f[0].f1_32[0]", type: text }
+  - { line: "3f.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3f[0].f1_33[0]", type: text }
+  - { line: "3f.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3f[0].f1_34[0]", type: text }
+  - { line: "3g.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3g[0].f1_35[0]", type: money }  # g Multiply line 3c by line 3f
+  - { line: "3g.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3g[0].f1_36[0]", type: money }
+  - { line: "3g.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3g[0].f1_37[0]", type: money }
+  # "4 Pro rata share of interest expense (see instructions):"
+  - { line: "4a.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_38[0]", type: money }  # a Home mortgage interest (use the Worksheet for Home Mortgage Interest in the instructions)
+  - { line: "4a.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_39[0]", type: money }
+  - { line: "4a.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_40[0]", type: money }
+  - { line: "4b.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line4b[0].f1_41[0]", type: money }  # b Other interest expense
+  - { line: "4b.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line4b[0].f1_42[0]", type: money }
+  - { line: "4b.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line4b[0].f1_43[0]", type: money }
+  - { line: "5.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line5[0].f1_44[0]", type: money }    # 5 Losses from foreign sources
+  - { line: "5.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line5[0].f1_45[0]", type: money }
+  - { line: "5.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line5[0].f1_46[0]", type: money }
+  - { line: "6.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line6[0].f1_47[0]", type: money }    # 6 Add lines 2, 3g, 4a, 4b, and 5
+  - { line: "6.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line6[0].f1_48[0]", type: money }
+  - { line: "6.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line6[0].f1_49[0]", type: money }
+  - { line: "6.total", field: "Page1[0].f1_50[0]", type: money }                  # the box printed "6" (left Part1Table this year)
+  - { line: "7", field: "Page1[0].f1_51[0]", type: money }                        # 7 Subtract line 6 from line 1a. Enter the result here and on line 15, page 2
+
+  # ---- Part II — Foreign Taxes Paid or Accrued ------------------------------
+  # "Credit is claimed for taxes (you must check one)": (j) Paid / (k) Accrued.
+  # The accounting-method election for the whole form — "If you report on the
+  # cash basis, you can choose to take the credit for accrued taxes by checking
+  # the 'Accrued' box in Part II on a timely filed original return. You can't
+  # make this choice on an amended return. Once you choose to do this, you must
+  # credit foreign taxes in the year they accrue on all future returns."
+  # (Instructions for Form 1116 (2025), Part II, p.18.) Two SEPARATE /Btn fields
+  # — and NOTE the states: "/1"/"/2" this year, "/Paid"/"/Accrued" in 2023.
+  - { line: "credit_claimed.paid", field: "Page1[0].Part2[0].ActiveHeaderElements[0].c1_3[0]", type: checkbox, on_state: "/1", group: credit_claimed, required: true }
+  - { line: "credit_claimed.accrued", field: "Page1[0].Part2[0].ActiveHeaderElements[0].c1_3[1]", type: checkbox, on_state: "/2", group: credit_claimed }
+  # Rows A/B/C = the same three countries as Part I columns A/B/C (printed Note).
+  # (l) Date paid or accrued — TEXT: takes a date, or "1099 taxes", or "909 taxes".
+  # (m)(n)(o)(p) "In foreign currency" — TEXT, not dollars.
+  # (q)(r)(s)(t) "In U.S. dollars"; (u) Total = add cols. (q) through (t).
+  # The printed column RULES moved this year (the (l)|(m) rule went 136.8 ->
+  # 122.4 and (m)-(t) were re-widthed); every cell below was matched to its
+  # printed head on the sentinel render, not carried over by ordinal.
+  - { line: "line_a.l", field: "Page1[0].Table_Part2[0].RowA[0].f1_52[0]", type: text }
+  - { line: "line_a.m", field: "Page1[0].Table_Part2[0].RowA[0].f1_53[0]", type: text }
+  - { line: "line_a.n", field: "Page1[0].Table_Part2[0].RowA[0].f1_54[0]", type: text }
+  - { line: "line_a.o", field: "Page1[0].Table_Part2[0].RowA[0].f1_55[0]", type: text }
+  - { line: "line_a.p", field: "Page1[0].Table_Part2[0].RowA[0].f1_56[0]", type: text }
+  - { line: "line_a.q", field: "Page1[0].Table_Part2[0].RowA[0].f1_57[0]", type: money }
+  - { line: "line_a.r", field: "Page1[0].Table_Part2[0].RowA[0].f1_58[0]", type: money }
+  - { line: "line_a.s", field: "Page1[0].Table_Part2[0].RowA[0].f1_59[0]", type: money }
+  - { line: "line_a.t", field: "Page1[0].Table_Part2[0].RowA[0].f1_60[0]", type: money }
+  - { line: "line_a.u", field: "Page1[0].Table_Part2[0].RowA[0].f1_61[0]", type: money }
+  - { line: "line_b.l", field: "Page1[0].Table_Part2[0].RowB[0].f1_62[0]", type: text }
+  - { line: "line_b.m", field: "Page1[0].Table_Part2[0].RowB[0].f1_63[0]", type: text }
+  - { line: "line_b.n", field: "Page1[0].Table_Part2[0].RowB[0].f1_64[0]", type: text }
+  - { line: "line_b.o", field: "Page1[0].Table_Part2[0].RowB[0].f1_65[0]", type: text }
+  - { line: "line_b.p", field: "Page1[0].Table_Part2[0].RowB[0].f1_66[0]", type: text }
+  - { line: "line_b.q", field: "Page1[0].Table_Part2[0].RowB[0].f1_67[0]", type: money }
+  - { line: "line_b.r", field: "Page1[0].Table_Part2[0].RowB[0].f1_68[0]", type: money }
+  - { line: "line_b.s", field: "Page1[0].Table_Part2[0].RowB[0].f1_69[0]", type: money }
+  - { line: "line_b.t", field: "Page1[0].Table_Part2[0].RowB[0].f1_70[0]", type: money }
+  - { line: "line_b.u", field: "Page1[0].Table_Part2[0].RowB[0].f1_71[0]", type: money }
+  - { line: "line_c.l", field: "Page1[0].Table_Part2[0].RowC[0].f1_72[0]", type: text }
+  - { line: "line_c.m", field: "Page1[0].Table_Part2[0].RowC[0].f1_73[0]", type: text }
+  - { line: "line_c.n", field: "Page1[0].Table_Part2[0].RowC[0].f1_74[0]", type: text }
+  - { line: "line_c.o", field: "Page1[0].Table_Part2[0].RowC[0].f1_75[0]", type: text }
+  - { line: "line_c.p", field: "Page1[0].Table_Part2[0].RowC[0].f1_76[0]", type: text }
+  - { line: "line_c.q", field: "Page1[0].Table_Part2[0].RowC[0].f1_77[0]", type: money }
+  - { line: "line_c.r", field: "Page1[0].Table_Part2[0].RowC[0].f1_78[0]", type: money }
+  - { line: "line_c.s", field: "Page1[0].Table_Part2[0].RowC[0].f1_79[0]", type: money }
+  - { line: "line_c.t", field: "Page1[0].Table_Part2[0].RowC[0].f1_80[0]", type: money }
+  - { line: "line_c.u", field: "Page1[0].Table_Part2[0].RowC[0].f1_81[0]", type: money }
+  - { line: "8", field: "Page1[0].f1_82[0]", type: money }        # 8 Add lines A through C, column (u). Enter the total here and on line 9, page 2
+
+  # ---- Part III — Figuring the Credit (page 2) ------------------------------
+  - { line: "9", field: "Page2[0].Line9_ReadOrder[0].f2_01[0]", type: money }     # 9 Enter the amount from line 8. These are your total foreign taxes paid or accrued for the category of income checked above Part I
+  - { line: "10", field: "Page2[0].f2_02[0]", type: money }       # 10 Enter the sum of any carryover of foreign taxes (from Schedule B, line 3, column (xiv)) plus any carrybacks to the current tax year
+  # "If you enter an amount on line 10 and you don't need to attach Schedule B,
+  # check here" — on-state read off /AP /N is "/Accrued", a leftover name from
+  # the Part II pair; it has nothing to do with what the box means, and it is the
+  # ONE /Btn state that did NOT change this year. Do not guess.
+  - { line: "10.no_schedule_b", field: "Page2[0].Line10_ReadOrder[0].c2_1[0]", type: checkbox, on_state: "/Accrued" }
+  - { line: "11", field: "Page2[0].f2_03[0]", type: money }       # 11 Add lines 9 and 10
+  # 12 "Reduction in foreign taxes" — the box is printed INSIDE parentheses
+  # "( ... )" and is 78.4 pt wide against its siblings' 85.65. Enter the POSITIVE
+  # reduction; the parentheses make it subtract on line 14 (f2441 line 14's house
+  # precedent). Instructions for Form 1116 (2025), Line 12, p.19 lists the
+  # reductions (Form 2555-excluded income, the Form 5471/8865 10% reductions,
+  # boycott provisions, and so on).
+  - { line: "12", field: "Page2[0].f2_04[0]", type: money }
+  # 13 "Taxes reclassified under high tax kickout" — SIGNED, no printed parens:
+  # "On your Form 1116 for passive category income, enter as a negative number
+  # (in parentheses) the amount of your foreign taxes that relate to that income.
+  # On your Form 1116 for the other category income, enter as a positive number"
+  # (Instructions, Line 13, p.20).
+  - { line: "13", field: "Page2[0].f2_05[0]", type: money }
+  - { line: "14", field: "Page2[0].f2_06[0]", type: money }       # 14 Combine lines 11, 12, and 13. This is the total amount of foreign taxes available for credit
+  - { line: "15", field: "Page2[0].Line15_ReadOrder[0].f2_07[0]", type: money }   # 15 Enter the amount from line 7
+  - { line: "16", field: "Page2[0].f2_08[0]", type: money }       # 16 Adjustments to line 15 — signed; the adjustments are listed in order at Instructions p.20
+  - { line: "17", field: "Page2[0].f2_09[0]", type: money }       # 17 Combine the amounts on lines 15 and 16. Net foreign source taxable income
+  # 18 REWRITTEN for 2025 (see the banner's PRINTED-TEXT DIFF item b): printed
+  # "Individuals: Enter the sum of (i) Form 1040, 1040-SR, or 1040-NR, line 11b,
+  # minus Form 1040, 1040-SR, or 1040-NR, line 14, and (ii) Schedule 1-A
+  # (Form 1040), line 37. Estates and trusts: Enter your taxable income without
+  # the deduction for your exemption" — the Schedule 1-A leg is P.L. 119-21's
+  # $6,000 senior deduction being added back (Instructions, Line 18, p.23; the
+  # reason at What's New, p.1). Two other forms and a subtraction, so no
+  # cross_form rule; see the banner.
+  - { line: "18", field: "Page2[0].f2_10[0]", type: money }
+  # 19 "Divide line 17 by line 18. If line 17 is more than line 18, enter '1'" —
+  # a RATIO, so text (see the banner's TYPES section).
+  - { line: "19", field: "Page2[0].f2_11[0]", type: text }
+  # 20 CITED LINE MOVED for 2025: printed "Individuals: Enter the total of Form
+  # 1040, 1040-SR, or 1040-NR, line 16, and Schedule 2 (Form 1040), line 1z.
+  # Estates and trusts: See instructions" — line 1z, not the 2023 face's line 2
+  # (Instructions p.25: "Schedule 2 (Form 1040), Part I, line 1z, less any tax
+  # included on line 16 from Form 4972"). This is also the "regular tax" the
+  # §904(j) election is capped by.
+  - { line: "20", field: "Page2[0].f2_12[0]", type: money }
+  - { line: "21", field: "Page2[0].f2_13[0]", type: money }       # 21 Multiply line 20 by line 19 (maximum amount of credit)
+  - { line: "22", field: "Page2[0].f2_14[0]", type: money }       # 22 Increase in limitation (section 960(c))
+  - { line: "23", field: "Page2[0].f2_15[0]", type: money }       # 23 Add lines 21 and 22
+  - { line: "24", field: "Page2[0].f2_16[0]", type: money }       # 24 Enter the smaller of line 14 or line 23. Enter here and on the appropriate line of Part IV (2023 also printed a skip-to-33 bypass; 2025 does not)
+
+  # ---- Part IV — Summary of Separate Credits From Parts III -----------------
+  # "(Enter amounts from Part III, line 24, for each applicable category of
+  # income. Don't include taxes paid to sanctioned countries.) See instructions."
+  # UNLIKE 2023, Part IV is no longer conditional: "Lines 25 through 32 in Part
+  # IV must now be completed even when filing only one Form 1116" (Instructions
+  # for Form 1116 (2025), What's New, p.1). When more than one Form 1116 is
+  # filed, Part IV is still completed on only one of them — the one with the
+  # largest line 24, with a category-g/e exception (Instructions, Part IV, p.25).
+  # One row per category, in the same printed order as the boxes a..g above Part I.
+  - { line: "25", field: "Page2[0].f2_17[0]", type: money }       # 25 Credit for taxes on section 951A category income        (box a)
+  - { line: "26", field: "Page2[0].f2_18[0]", type: money }       # 26 Credit for taxes on foreign branch category income      (box b)
+  - { line: "27", field: "Page2[0].f2_19[0]", type: money }       # 27 Credit for taxes on passive category income            (box c)
+  - { line: "28", field: "Page2[0].f2_20[0]", type: money }       # 28 Credit for taxes on general category income            (box d)
+  - { line: "29", field: "Page2[0].f2_21[0]", type: money }       # 29 Credit for taxes on section 901(j) income              (box e)
+  - { line: "30", field: "Page2[0].f2_22[0]", type: money }       # 30 Credit for taxes on certain income re-sourced by treaty (box f)
+  - { line: "31", field: "Page2[0].f2_23[0]", type: money }       # 31 Credit for taxes on lump-sum distributions             (box g)
+  - { line: "32", field: "Page2[0].f2_24[0]", type: money }       # 32 Add lines 25 through 31
+  - { line: "33", field: "Page2[0].f2_25[0]", type: money }       # 33 Enter the smaller of line 20 or line 32
+  - { line: "34", field: "Page2[0].f2_26[0]", type: money }       # 34 Reduction of credit for international boycott operations (see instructions for line 12)
+  - { line: "35", field: "Page2[0].f2_27[0]", type: money }       # 35 Subtract line 34 from line 33. This is your foreign tax credit -> Schedule 3 (Form 1040), line 1
+
+# Only math PRINTED ON THE FORM FACE, and only where every operand is a mapped
+# BARE line of THIS form (formpacks/CONVENTIONS.md).
+#
+# WHY THERE IS NO PER-COLUMN MATH HERE, and it is not an oversight. verify's
+# relation tokenizer accepts exactly two operand shapes — a printed line label
+# `\d+[a-z]?` and a bare identifier `[A-Za-z_][A-Za-z0-9_]*` — and NEITHER
+# admits a dot, so a DOTTED line key cannot be a relation operand at all.
+# Re-reproduced against the shipped engine on THIS pack before these were
+# dropped:
+#   relations(pack, {}) with "3c.col_a == 3a.col_a + 3b.col_a" raises
+#   ValueError: could not parse relation '3c.col_a == 3a.col_a + 3b.col_a':
+#   unexpected character '.' at position 2
+# That is a pack-authoring error (it raises, it does not FAIL a check), so the
+# rule cannot ship silently switched off. The choice of `col_a` over sched_d's
+# `.a` spelling costs nothing here: `1a.a` does not parse either, and neither
+# does `line_a.u`. This is the same wall sched_d, sched_e and f8949 hit. So the
+# following printed formulas are, for now, UNCHECKED by verify, and each is
+# named here so the gap is visible rather than absent:
+#   "c Add lines 3a and 3b"                      3c.col_* == 3a.col_* + 3b.col_*
+#   "6 Add lines 2, 3g, 4a, 4b, and 5"           6.col_*  == 2 + 3g + 4a + 4b + 5
+#   "Total (Add cols. A, B, and C.)"             1a.total, 6.total
+#   "7 Subtract line 6 from line 1a"             7 == 1a.total - 6.total
+#   "(u) ... (add cols. (q) through (t))"        line_*.u == q + r + s + t
+#   "8 Add lines A through C, column (u)"        8 == line_a.u + line_b.u + line_c.u
+# Widening the tokenizer's lineid/name patterns to allow dotted segments is an
+# engine change to a parser every pack shares, so it stays an open issue rather
+# than being smuggled in with a year port.
+relations:
+  - "9 == 8"                    # "9 Enter the amount from line 8." (line 8 also prints "Enter the total here and on line 9, page 2")
+  - "11 == 9 + 10"              # "11 Add lines 9 and 10"
+  - "14 == 11 - 12 + 13"        # "14 Combine lines 11, 12, and 13" — line 12's box is printed inside "( )" and takes the POSITIVE reduction, so it subtracts (f2441 line 14 precedent)
+  - "15 == 7"                   # "15 Enter the amount from line 7" (line 7: "Enter the result here and on line 15, page 2")
+  - "17 == 15 + 16"             # "17 Combine the amounts on lines 15 and 16" — line 16 is signed
+  - "23 == 21 + 22"             # "23 Add lines 21 and 22"
+  - "24 == min(14, 23)"         # "24 Enter the smaller of line 14 or line 23"
+  - "32 == 25 + 26 + 27 + 28 + 29 + 30 + 31"   # "32 Add lines 25 through 31"
+  # NEW IN THE 2025 PACK, and the reason is a PRINTED-TEXT change, not a change
+  # of mind. Printed line 33 reads "Enter the smaller of line 20 or line 32" in
+  # both years, and the 2023 pack deliberately omitted this rule because its own
+  # printed line 24 carried the other route onto the same box ("If this is the
+  # only Form 1116 you are filing, skip lines 25 through 32 and enter this
+  # amount on line 33") — on a single-Form-1116 2023 return line 32 is blank,
+  # blank means zero, and min(20, 0) would FAIL against a correct line 33.
+  # The 2025 face DELETED that sentence, and the instructions say so in terms:
+  # "Form 1116, Part IV. Lines 25 through 32 in Part IV must now be completed
+  # even when filing only one Form 1116. We revised the text on Form 1116,
+  # line 24, to reflect this change." (Instructions for Form 1116 (2025),
+  # What's New, p.1.) So line 32 is never the blank-bypass branch on a 2025
+  # form, and the printed equality is exact. Checked against the two printed
+  # branches that leave an operand blank, both of which still satisfy it:
+  # a category-e form (Instructions p.25: "Don't complete line 20 for separate
+  # category e") has 20 and 33 both blank, so 0 == min(0, 32) only if 32 is also
+  # blank — and on such a form Part IV is not the summary; a NON-summary form in
+  # a multi-form filing has line 20 filled and Part IV blank, so min(20, 0) = 0
+  # equals its blank line 33.
+  - "33 == min(20, 32)"         # "33 Enter the smaller of line 20 or line 32"
+  - "35 == 33 - 34"             # "35 Subtract line 34 from line 33. This is your foreign tax credit"
+  # Bare-line printed formulas deliberately NOT relations, each for a stated
+  # comparator or printed-text reason rather than an oversight:
+  #   19 / 21 — line 19 is a DECIMAL RATIO ("Divide line 17 by line 18. If line
+  #     17 is more than line 18, enter '1'"), and verify compares relation sides
+  #     in WHOLE DOLLARS after IRS rounding, so 0.8757 becomes 0 and
+  #     "21 == 20 * 19" would multiply by a rounded-away operand. (Line 3f is a
+  #     ratio for the same reason, which also drops "3g == 3c * 3f".)
+  #   18 / 20 — both are sums across OTHER forms; see cross_form and the banner.
+
+# Printed carry-overs to other forms in the filing. A cross_form side resolves
+# as ONE ref (no arithmetic), and a rule is SKIPPED — not failed — when the other
+# form is absent from the filing.
+cross_form:
+  # "35 ... This is your foreign tax credit. Enter here and on Schedule 3 (Form
+  # 1040), line 1; Form 1041, Schedule G, line 2a; or Form 990-T, Part III,
+  # line 1a" — and Schedule 3 (2025) line 1 prints "Foreign tax credit
+  # (Form 1116)", so the two lines are each other's definition. RE-DERIVED for
+  # 2025 from both faces, because the Schedule 3 destination line is exactly the
+  # kind of thing that moves in a renumbering year.
+  # CAVEAT, recorded rather than dodged: when a filer files MORE THAN ONE Form
+  # 1116, only the summarizing one has the Part IV that produces line 35, and
+  # verify_filing keys items by form_key, so a multi-category filing cannot
+  # currently present its second and third Form 1116 to the verifier at all.
+  # Reported as an open issue; for the single-category filing this pack is aimed
+  # at, the rule is exact.
+  - "35 == sched_3.1"
+
+# "Name" and "Identifying number as shown on page 1 of your tax return" — the
+# parent return's, by construction, so no identity_per_person relaxation is
+# needed here (unlike f8606/f8889, whose boxes are per-SPOUSE by their own
+# printed headers). A separate Form 1116 per CATEGORY still belongs to the same
+# filer, so every copy carries the same two values.
+identity_fields: [name, identifying_number]
+
+# Attachment-only: the form has no signature block of its own ("Attach to Form
+# 1040, 1040-SR, 1040-NR, 1041, or 990-T") and is mailed inside the parent
+# return's envelope — the schedules row of formpacks/CONVENTIONS.md.
+signature: null
+mailing: null

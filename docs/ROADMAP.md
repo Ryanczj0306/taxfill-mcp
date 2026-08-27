@@ -20,7 +20,7 @@ plan for what is **not yet done**, as of **2026-07-09**.
 
 ## Where we are (verified)
 
-Done and on `main` (**4,404 tests, all green** — offline 4,056 + live-.gov 348, exit 0;
+Done and on `main` (**4,776 tests, all green** — offline 4,404 + live-.gov 372, exit 0;
 re-verified 2026-08-21 via `pytest -m "not network"` AND `pytest -m network`, exit 0
 both — the network layer skips 2 (states/ms/2023/f80105, whose blank is uncached and
 whose host fails certificate verification here)):
@@ -40,8 +40,8 @@ whose host fails certificate verification here)):
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
-- **Federal form packs — priority set DONE.** **102 packs across 2019–2025**
-  (2019:1, 2020:1, 2021:1, 2022:5, 2023:31, 2024:31, 2025:32 — f1040nr +
+- **Federal form packs — priority set DONE.** **111 packs across 2019–2025**
+  (2019:1, 2020:1, 2021:1, 2022:5, 2023:34, 2024:34, 2025:35 — f1040nr +
   Schedule OI joined 2024 on 2026-08-10, and the 2026-08 batch backfilled the
   rest of the 2023 set into 2024/2025: identical-topology ports off the 2023
   packs, digests pinned to the year's blanks, vision-audited page by page). M2 base
@@ -85,7 +85,7 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**167 form packs total** — 163 `pack.yaml` (102 federal + 61 state) + 4
+**179 form packs total** — 172 `pack.yaml` (111 federal + 61 state) + 7
 `handfill.yaml`. The state 61 breaks down **TY2023 42 / TY2024 14 / TY2025 5**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
 > **13 of the 42 jurisdictions fill a post-2023 year** — AR (2024+2025),
@@ -1052,7 +1052,31 @@ line items sum to the headline delta.
       three years; the ESPP op reproduces a worked disqualified disposition
       *including* the 1099-B basis correction; a carryforward survives a multi-year
       round trip.
-- [ ] **I4 — Visa-status filers: the largest penalty exposure in the repo.**
+- [x] **I4 — Visa-status filers — DONE 2026-08-27.** Shipped: **`f8833`** x3, which
+      closes the standing asymmetry — `calc.treaty_benefit` has computed treaty
+      exemptions since Phase G1 while the IRC 6114 / Reg 301.6114-1 disclosure the
+      position REQUIRES did not exist, so the engine advised a position it could not
+      help a filer disclose (and §6712 penalises the omission); the op's work string
+      now names the form, the requirement, the waivers and the penalty on every
+      branch, with no computed number touched. **`f1116`** x3 plus
+      `calc.foreign_tax_credit_election` for the §904(j) branch that decides whether
+      the form is needed at all. **`f8938`** x3 plus `calc.foreign_asset_reporting`
+      and **FinCEN Form 114 as a hand-fill worksheet** (the FBAR is e-filed to FinCEN,
+      not attached to the return — so a fillable pack would be the wrong shape), with
+      every threshold read off Treas. Reg. §1.6038D-2 and 31 CFR 1010.350 and
+      independently re-verified at integration: all four §1.6038D-2 buckets, MFS and
+      HoH taking the unmarried thresholds, and the FBAR boundary EXCEEDING $10,000
+      rather than reaching it. The op refuses to decide until its elicitation
+      questions are answered (`any_duty_undecided` + `must_ask`), because a filer
+      never raises a foreign account unprompted. Pitfalls P-011 and P-012.
+      One correction worth its shape: the §904(j) op subtracted the Form 1116 line-12
+      reduction before the $300/$600 test and called that "the order the Instructions
+      set" — the quoted sentence sits under "If you make this election, the following
+      rules apply", among the CONSEQUENCES of electing, and sets no order. The
+      behaviour stands on 904(j)(2)'s word "creditable", but it is taxpayer-favourable,
+      so the claim is withdrawn and the op now reports BOTH bases and says when they
+      disagree. *(original scope below)*
+- [x] **I4 scope as planned — visa-status filers: the largest penalty exposure in the repo.**
       Three holes, in descending stakes. (a) **`f8833`** closes a standing
       asymmetry: `calc.treaty_benefit` has shipped since G1 and computes the
       exemption, but the disclosure form IRC 6114 / Treas. Reg. §301.6114-1 requires
@@ -1070,13 +1094,64 @@ line items sum to the headline delta.
       de-minimis election (≤$300/$600, no form) versus the form is a real branch that
       nothing models. **Acceptance:** 8833 + 1116 audited; 8938/FBAR thresholds cited
       per year; an intake question that cannot be skipped silently.
-- [ ] **I5 — Document extraction breadth.** 14 DocSpecs ship; the cheap, mechanical
-      gaps are **1099-K** (gig/resale, and its moving reporting threshold),
-      **1099-Q**, **W-2G**, **1095-B/C**, **5498**, and **K-1 for 1120S and 1041**
-      (only the 1065 layout ships, so an S-corp or trust K-1 has no structured path).
-      The 3921/3922 and 1099-SA/5498-SA specs belong to I3 and I2 respectively — do
-      them there, and batch the remainder. **Acceptance:** every box layout read off
-      the official form, round-trip tested.
+- [x] **I5 — Document extraction breadth — DONE 2026-08-27.** Shipped all eight
+      remaining DocSpecs — **1099-K**, **1099-Q**, **W-2G**, **1095-B**, **1095-C**,
+      **5498**, **K-1 (1120-S)** and **K-1 (1041)** — taking `extract_document` from
+      **18 kinds to 26** (the "14" below was written before I2/I3 added 1099-SA,
+      5498-SA, 3921 and 3922). Every box layout was transcribed from the official PDF
+      on irs.gov with the form's own recipient/filer instructions open beside it, and
+      an audit re-derives every word of every label from the form text (0 unsourced
+      words across ~780 boxes). Nothing reached the MCP surface by hand: DocSpecs
+      travel through the generic `list_document_kinds` / `extract_document`, verified
+      by round-tripping a W-2G through the real server, so **no `server.py` or skills
+      edit was needed** and no count gate moved.
+      **What the forms turned out to disagree about — the reason this was not
+      mechanical.** *1099-K:* boxes **6 and 8 SWAPPED** between Rev. 3-2024 (which
+      every TY2023-25 filer holds) and Rev. 12-2026; the spec carries the current
+      numbering and the box TYPES (`money` on 6, `state` on 8) make a wrong-revision
+      reading fail loudly instead of silently filing withholding as a state code.
+      Boxes **1c/1d are new for CY2026** (P.L. 119-21 §70201, cash tips + Treasury
+      Tipped Occupation Code), and TTOC **000 disqualifies** box 1c from the Schedule
+      1-A tips deduction — so box 1d is a `code`, because `int` would turn 000 into 0
+      and read the disqualifier as an empty box. The threshold is quoted from the
+      instructions' own revision ($20,000 **and** 200 transactions, TPSOs only) and
+      framed as a REPORTING rule: under it no form arrives, IRC 6050W still displaces
+      §§6041/6041A, and the income is reportable anyway. *W-2G:* the loss deduction
+      is now **90%**, not 100% — IRC 165(d)(1) as rewritten by **P.L. 119-21 §70114(a)**,
+      effective "taxable years beginning after December 31, 2025" (§70114(b)), read in
+      the Code itself — so the percentage is keyed to the TAX YEAR, not to the form;
+      and the reporting threshold became **inflation-indexed** ($2,000 for CY2026).
+      *1099-Q:* box 7 is dual-use (year-end FMV **or** an abbreviated distribution
+      code), so it is `text`; and a Coverdell's boxes 2/3 are **correctly blank**
+      ("Do not enter zero"), so neither may be `required`. *5498:* box 1/box 10 run
+      FOR-the-year through April 15 while boxes 8/9 run by DEPOSIT date — opposite
+      conventions on one form; box 5 is the `ira_pro_rata` denominator but is the
+      date-of-death value on a decedent's form. *1095-C:* Part II's code series are
+      the payload (only **2C** on line 16 touches the filer's PTC), line 15 is the
+      lowest-cost self-only figure whose **0.00 is a real value**, and the
+      affordability percentage is indexed (8.39% for 2024, 9.02% for 2025) so it is
+      never hardcoded.
+      **Naming decision (K-1 family), and its blast radius.** The bare kind **`K-1`
+      stays the Form 1065 layout, untouched** — its only callers pass that exact
+      string — and the siblings are keyed **`K-1 (1120-S)`** and **`K-1 (1041)`**.
+      Renaming for symmetry was rejected because it would break those callers; the
+      asymmetry is deliberate and pinned by a test. This is not cosmetic: the SAME
+      BOX NUMBER means different things across the three forms — box 14 is
+      self-employment earnings (1065), the Schedule K-3 flag (1120-S) and "Other
+      information" (1041); box 16 is the K-3 flag (1065) but shareholder-basis items
+      (1120-S). An S-corp K-1 read against the 1065 layout converts a K-3 checkbox
+      into SE earnings, which is why the 1120-S note says outright not to run
+      `se_tax` on box 1 ("Your share of S corporation income isn't self-employment
+      income"). Blast radius of the addition: **zero deletions** in either file —
+      purely additive, 3 pre-existing `K-1` tests untouched and still green.
+      *(original scope below)*
+- [x] **I5 scope as planned — document extraction breadth.** 14 DocSpecs ship; the
+      cheap, mechanical gaps are **1099-K** (gig/resale, and its moving reporting
+      threshold), **1099-Q**, **W-2G**, **1095-B/C**, **5498**, and **K-1 for 1120S
+      and 1041** (only the 1065 layout ships, so an S-corp or trust K-1 has no
+      structured path). The 3921/3922 and 1099-SA/5498-SA specs belong to I3 and I2
+      respectively — do them there, and batch the remainder. **Acceptance:** every
+      box layout read off the official form, round-trip tested.
 - [ ] **I6 — Eval scenario i14: the live-use session itself.** Encode the
       2026-08-26 session as a scenario — it is what exposed I1–I5, and the repo's own
       precedent (FIELD_NOTES → Phase H) is that a real session is the best gap-finder

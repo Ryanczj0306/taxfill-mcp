@@ -488,3 +488,127 @@ def test_other_income_is_a_rate_question_never_a_dollar_split():
     r = treaty_benefit("china", "other_income", 50_000)
     assert r.exempt_amount == 0  # never a split, whatever the amount
     assert any("ARTICLE question" in lim for lim in r.limits_applied)
+
+
+# ── the DISCLOSURE half: treaty_benefit must point at Form 8833 (Phase I4) ────
+#
+# The asymmetry this closes: the op priced a treaty position since G1 while the
+# repo had no pack for the form IRC 6114 / Treas. Reg. 301.6114-1 requires, and
+# the work string said nothing about disclosure at all. These tests pin the
+# pointer AND its most important nuance — that the reg WAIVES the disclosure for
+# exactly this op's usual population, so the note must not read as an
+# unconditional duty. Sources: IRC 6114 and 6712 (uscode.house.gov), 26 CFR
+# 301.6114-1 and 301.7701(b)-7 (ecfr.gov), Form 8833 (Rev. 12-2022) and its
+# instructions pp. 3-4 (irs.gov/pub/irs-pdf/f8833.pdf).
+
+
+@pytest.mark.parametrize(
+    ("country", "income_class", "kwargs"),
+    [
+        ("china", "student_wages", {}),
+        ("china", "scholarship", {}),
+        ("china", "payments_from_abroad", {}),
+        ("china", "teacher_wages", {"years_in_status": 1}),
+        ("china", "other_income", {}),
+        ("india", "student_wages", {}),
+        ("india", "teacher_wages", {"years_in_status": 5}),
+        ("korea", "student_wages", {}),
+        ("canada", "student_wages", {}),
+        ("canada", "teacher_wages", {"years_in_status": 1}),
+        ("mexico", "student_wages", {}),
+        ("mexico", "other_income", {}),
+    ],
+)
+def test_every_treaty_benefit_branch_names_form_8833_and_the_law(country, income_class, kwargs):
+    """EVERY branch — not just the ones that exempt money — carries the pointer."""
+    from taxfill_core.calc import treaty_benefit
+
+    work = treaty_benefit(country, income_class, 7_000, knowledge_dir=KNOWLEDGE_DIR, **kwargs).work
+    assert "Form 8833" in work
+    assert "IRC 6114(a)" in work  # the requirement
+    assert "IRC 6712(a)" in work and "$1,000" in work and "$10,000" in work  # the penalty
+    assert "301.6114-1(d)(1)" in work  # what makes 8833 the vehicle
+    assert "formpacks/federal/{2023,2024,2025}/f8833" in work  # the packs that now exist
+
+
+def test_disclosure_note_leads_with_the_waiver_that_covers_students_and_teachers():
+    # 301.6114-1(c)(1)(iv) waives reporting for a position that a treaty reduces
+    # or modifies the taxation of income from dependent personal services or of
+    # "income derived by artistes, athletes, students, trainees or teachers" —
+    # printed as a bullet in the Form 8833 instructions (Rev. 12-2022) p. 3 under
+    # "Exceptions from reporting". Telling a student they MUST file Form 8833 for
+    # an Art. 20(c) claim is wrong law, so the waiver has to travel with the
+    # requirement.
+    from taxfill_core.calc import treaty_benefit
+
+    work = treaty_benefit("china", "student_wages", 5_000, knowledge_dir=KNOWLEDGE_DIR).work
+    assert "301.6114-1(c)(1)(iv)" in work
+    assert "students, trainees or teachers" in work
+    # (c)(2): waived for an individual at or under $10,000 of reportable items.
+    assert "301.6114-1(c)(2)" in work and "$10,000 or less" in work
+    assert "waived twice over" in work
+
+
+def test_disclosure_note_names_the_two_positions_that_are_NOT_waived():
+    # 301.6114-1(b)(8) (residency determined under the treaty) is specifically
+    # required, with a $100,000 rather than $10,000 (c)(2) threshold; and
+    # 301.7701(b)-7(b)/(c)(1)(i) require a "fully completed Form 8833" from a
+    # dual-resident taxpayer with NO 301.6114-1(c) waiver reaching it.
+    from taxfill_core.calc import treaty_benefit
+
+    work = treaty_benefit("china", "teacher_wages", 40_000, years_in_status=1, knowledge_dir=KNOWLEDGE_DIR).work
+    assert "301.6114-1(b)(8)" in work and "$100,000" in work
+    assert "301.7701(b)-7(b) and (c)(1)(i)" in work
+    assert "DUAL-RESIDENT TAXPAYER" in work
+
+
+def test_other_income_says_there_is_no_position_to_disclose_before_the_duty():
+    # No shipped treaty shelters US-arising other income, so that branch takes no
+    # treaty-based return position at all and section 6114 is not triggered by it.
+    from taxfill_core.calc import treaty_benefit
+
+    work = treaty_benefit("china", "other_income", 695, knowledge_dir=KNOWLEDGE_DIR).work
+    assert "NO treaty-based return position is taken on it" in work
+    assert work.index("NO treaty-based return position is taken on it") < work.index("Form 8833")
+
+
+def test_zero_exempt_is_not_treated_as_no_position_india_is_the_counterexample():
+    # india/student_wages exempts $0 and STILL rests on a treaty position: Art.
+    # 21(2)'s deduction parity overrides the Code's no-standard-deduction rule for
+    # a nonresident. Keying the "nothing to disclose" sentence on exempt == 0
+    # would therefore have told an India filer the opposite of the truth.
+    from taxfill_core.calc import treaty_benefit
+
+    r = treaty_benefit("india", "student_wages", 12_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.exempt_amount == 0
+    assert "NO treaty-based return position is taken on it" not in r.work
+    assert "Form 8833" in r.work
+
+
+def test_the_disclosure_pointer_changed_no_computed_number():
+    """Every treaty golden in this module still holds; the note is prose only."""
+    from taxfill_core.calc import treaty_benefit
+
+    cases = [
+        # (country, income_class, amount, kwargs, exempt)
+        ("china", "student_wages", 7_250, {}, 5_000),
+        ("china", "student_wages", 4_000, {}, 4_000),
+        ("china", "scholarship", 18_000, {}, 18_000),
+        ("china", "payments_from_abroad", 9_000, {}, 9_000),
+        ("china", "teacher_wages", 60_000, {"years_in_status": 3}, 60_000),
+        ("china", "teacher_wages", 60_000, {"years_in_status": 4}, 0),
+        ("china", "other_income", 695, {}, 0),
+        ("india", "student_wages", 30_000, {}, 0),
+        ("india", "teacher_wages", 50_000, {"years_in_status": 2}, 50_000),
+        ("india", "teacher_wages", 50_000, {"years_in_status": 3}, 0),
+        ("korea", "student_wages", 3_000, {}, 2_000),
+        ("korea", "scholarship", 5_500, {}, 5_500),
+        ("canada", "student_wages", 10_000, {}, 10_000),
+        ("canada", "student_wages", 10_001, {}, 0),
+        ("mexico", "student_wages", 8_000, {}, 0),
+        ("mexico", "payments_from_abroad", 8_000, {}, 8_000),
+    ]
+    for country, income_class, amount, kwargs, exempt in cases:
+        r = treaty_benefit(country, income_class, amount, knowledge_dir=KNOWLEDGE_DIR, **kwargs)
+        assert r.exempt_amount == exempt, (country, income_class, amount, r.exempt_amount)
+        assert r.taxable_remainder == amount - exempt, (country, income_class, amount)

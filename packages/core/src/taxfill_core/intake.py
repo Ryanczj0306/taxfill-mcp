@@ -842,6 +842,43 @@ def _mentions_dependent_care(kind: str) -> bool:
     return "2441" in k or "DEPENDENTCARE" in k or "CHILDCARE" in k or "DAYCARE" in k
 
 
+def _mentions_foreign_account(kind: str) -> bool:
+    """True for any inventory entry recording the FOREIGN-ACCOUNT fact.
+
+    Matches however the agent chose to spell it — "foreign bank statement",
+    "FBAR", "FinCEN 114", "Form 8938", "overseas account", "HDFC savings
+    (foreign)" — because the ANSWER is what matters, not the wording. Accepts a
+    'not_applicable' entry as a recorded NO, the same convention
+    :func:`_mentions_1095a` uses, so answering once stops the question.
+
+    EVERY TOKEN HERE IS DISTINCTIVE ON PURPOSE, and a bare "114" is NOT: because
+    ``kind`` is free text an agent writes, it routinely carries an ACCOUNT NUMBER
+    ("Chase checking acct 1145 statement", "1099-INT acct 1140023"), and matching
+    the three digits alone made both of those read as a recorded foreign-account
+    answer. Reproduced before the fix, on a DOMESTIC document: the question
+    ``income_documents.foreign_accounts`` was suppressed — the steepest-penalty
+    question in the interview, silenced by a US bank's account number — while
+    :func:`_foreign_account_note` simultaneously fired and told the filer to
+    e-file an FBAR for that US account. So the form number is matched only in the
+    spellings that name the FORM ("FinCEN 114", "Form 114"), never as loose
+    digits. The other tokens are already long enough to be safe ("FBAR",
+    "FINCEN", "8938" — a 4-digit IRS form number, the ``_mentions_dependent_care``
+    precedent).
+    """
+    k = re.sub(r"[^0-9A-Z]", "", kind.upper())
+    return (
+        "FBAR" in k
+        or "FINCEN" in k
+        or "FORM114" in k
+        or "8938" in k
+        or "FOREIGNACCOUNT" in k
+        or "FOREIGNBANK" in k
+        or "FOREIGNFINANCIAL" in k
+        or "OVERSEASACCOUNT" in k
+        or "OVERSEASBANK" in k
+    )
+
+
 def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
     if not profile.income_documents:
         out.append(_q("income_documents.inventory", "income_documents",
@@ -865,6 +902,48 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                       disambiguation="If yes, add a 1095-A entry to the document inventory (status 'have', or "
                                      "'missing' until you find it). If no, add a 1095-A entry with status "
                                      "'not_applicable' so the interview records the answer and stops asking."))
+
+    # THE FOREIGN ACCOUNT — elicited, never waited for (Phase I4). A filer with a
+    # home-country account does not bring it up: it produced no US tax document,
+    # often no taxable income at all, and it does not feel like part of "my
+    # taxes". But the duty exists REGARDLESS of tax result (Treas. Reg.
+    # 1.6038D-2(a)(8); irs.gov's FBAR page says the same for the FBAR), and the
+    # non-willful FBAR penalty alone starts at five figures — 31 U.S.C.
+    # 5321(a)(5)(B)(i)'s $10,000, inflation-adjusted to $16,536 for penalties
+    # assessed on or after 2025-01-17 (31 CFR 1010.821). This repo's own user
+    # base (F-1 -> OPT -> H-1B) routinely keeps one. So the question is asked
+    # EXPLICITLY, until the inventory records an answer in ANY status —
+    # 'not_applicable' is how a NO is recorded, exactly as for the 1095-A. The
+    # THRESHOLDS are deliberately in the question text, because "it is only a
+    # few thousand dollars" is the wrong reason to say no: the FBAR test is
+    # $10,000 AGGREGATE at the highest point, not per account and not at year
+    # end.
+    if not any(_mentions_foreign_account(d.kind) for d in profile.income_documents):
+        yr = str(tax_year) if tax_year is not None else "the tax year"
+        out.append(_q("income_documents.foreign_accounts", "income_documents",
+                      f"At any point during {yr}, did you have any bank, brokerage, retirement or "
+                      f"other financial account OUTSIDE the United States — including one you only "
+                      f"have signing authority over, and including an account back home you barely "
+                      f"use? What was the HIGHEST balance each one reached, in its own currency?",
+                      "Two separate reports can be required even when the account earned nothing and "
+                      "no tax is owed: FinCEN Form 114 (the FBAR) once ALL foreign accounts together "
+                      "top $10,000 at any moment in the year, and Form 8938 at higher thresholds. "
+                      "Non-willful FBAR penalties start at $10,000 (inflation-adjusted to $16,536 "
+                      "for penalties assessed on or after 2025-01-17) — the steepest exposure "
+                      "anywhere in this return.",
+                      "income_documents",
+                      disambiguation="Answer with the account's HIGHEST balance during the year, not "
+                                     "its year-end balance, and count every account: the FBAR test is "
+                                     "$10,000 AGGREGATE across all of them at any one time, so two "
+                                     "accounts of $6,000 each are reportable and both can be empty on "
+                                     "December 31. It does not matter whether the account produced "
+                                     "income, and married-filing-jointly does NOT double the $10,000. "
+                                     "If yes, add a 'foreign account statement' entry to the document "
+                                     "inventory (status 'have', or 'missing' until you gather the "
+                                     "statements) and run calc op foreign_asset_reporting for the "
+                                     "cited verdict on BOTH forms. If no, add a 'foreign account "
+                                     "statement' entry with status 'not_applicable' so the interview "
+                                     "records the answer and stops asking."))
 
 
 def _banking_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
@@ -915,6 +994,46 @@ def _fica_exemption_note(profile: Profile, notes: list[str], tax_year: int | Non
         "W-2 box 4 + box 6 (Social Security plus Medicare tax) from each affected W-2, Form 8316 serves as "
         "the employer-refusal statement, and file_and_pay (manifest form '843' with attached_forms "
         "['8316']) produces the claim's own mailing checklist."
+    )
+
+
+def _foreign_account_note(profile: Profile, notes: list[str], tax_year: int | None) -> None:
+    """Once a foreign account IS declared, say what has to happen about it.
+
+    The intake question above only makes the fact impossible to skip; this turns
+    a YES into the two filings, their thresholds, their deadlines and the one
+    thing filers get wrong about each. Fires only when an inventory entry records
+    a foreign account in a status other than 'not_applicable' — a recorded NO
+    stays silent.
+    """
+    declared = [d for d in profile.income_documents
+                if _mentions_foreign_account(d.kind) and d.status != "not_applicable"]
+    if not declared:
+        return
+    yr = str(tax_year) if tax_year is not None else "the tax year"
+    nxt = str(tax_year + 1) if tax_year is not None else "the following year"
+    notes.append(
+        f"A foreign financial account is recorded for {yr} ({', '.join(sorted({d.kind for d in declared}))}). "
+        f"TWO SEPARATE REPORTS may be required and NEITHER substitutes for the other — 'The Form 8938 "
+        f"filing requirement does not replace or otherwise affect a taxpayer's obligation to file "
+        f"FinCEN Form 114' (IRS, Comparison of Form 8938 and FBAR requirements). Run calc op "
+        f"foreign_asset_reporting (year, filing_status, us_person, lives_abroad, the year-end and "
+        f"maximum specified-asset values, and the aggregate maximum ACCOUNT value) for the cited "
+        f"verdict on both; it returns required=None plus a must_ask question rather than guessing. "
+        f"(1) FBAR / FinCEN Form 114: required once the AGGREGATE maximum value of ALL foreign "
+        f"financial accounts exceeds $10,000 at ANY TIME in the CALENDAR year — not per account, not "
+        f"at year end, and filing status does not change it. It is filed with FinCEN, E-FILE ONLY "
+        f"through the BSA E-Filing System, and is NOT part of the tax return envelope ('You don't "
+        f"file the FBAR with your federal tax return'); a PRINTED Form 114 is not accepted, so use "
+        f"hand_fill_worksheet('fincen114', {tax_year if tax_year is not None else '<year>'}, "
+        f"'federal') to gather the values and then key them in. Due April 15 {nxt} with an AUTOMATIC "
+        f"extension to October 15 that needs no request (P.L. 114-41 sec. 2006(b)(11)). "
+        f"(2) Form 8938: attaches to the return (formpacks/federal/<year>/f8938) when specified "
+        f"foreign financial assets exceed $50,000 on the last day OR $75,000 at any time — $100,000 "
+        f"/ $150,000 married filing JOINTLY, 4x those figures only for an IRC 911(d)(1) qualified "
+        f"individual abroad. A QUALIFYING SURVIVING SPOUSE takes the $50,000/$75,000 amounts, not the "
+        f"joint ones. Both duties exist even if the account earned nothing and no tax is owed "
+        f"(Treas. Reg. 1.6038D-2(a)(8)). Authority: get_sources('FBAR')."
     )
 
 
@@ -1067,6 +1186,7 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     # alone and stall the interview) — the sort below restores the display order.
     _banking_questions(profile, out)
     _fica_exemption_note(profile, notes, tax_year)
+    _foreign_account_note(profile, notes, tax_year)
 
     out.sort(key=lambda q: SECTIONS.index(q.section))
 

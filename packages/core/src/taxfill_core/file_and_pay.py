@@ -20,6 +20,7 @@ service center per the current Pub 519 ch. 8, never attached to the 1040-NR.
 """
 from __future__ import annotations
 
+import re
 from datetime import date
 from pathlib import Path
 
@@ -75,6 +76,11 @@ def _is_standalone_8843(item: "FilingManifestItem") -> bool:
     """A Form 8843 filed by ITSELF (information only — no return, no tax bottom line)."""
     f = item.form.upper().replace(" ", "").replace("-", "")
     return f in ("8843", "F8843", "FORM8843") and not item.bottom_line
+
+
+def _is_8938(name: str) -> bool:
+    """True for a Form 8938 attachment, however the caller spelled it."""
+    return "8938" in re.sub(r"[^0-9A-Za-z]", "", name)
 
 
 def _is_843(form: str) -> bool:
@@ -306,6 +312,32 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
             f"No federal knowledge pack for {item.tax_year} yet — the exact mailing address, payment wording, and "
             f"deadlines below could not be auto-resolved; confirm them on irs.gov (prior-year instructions at "
             f"https://www.irs.gov/pub/irs-prior/) before mailing."
+        )
+    if any(_is_8938(a) for a in item.attached_forms):
+        # THE ENVELOPE TRAP. A filer who has just attached Form 8938 believes the
+        # foreign-account job is finished, and it may not be: the FBAR is a
+        # different filing, to a different agency, on a different threshold, and
+        # it does NOT travel in this envelope. "The Form 8938 filing requirement
+        # does not replace or otherwise affect a taxpayer's obligation to file
+        # FinCEN Form 114 ... Unlike Form 8938, the FBAR (FinCEN Form 114) is not
+        # filed with the IRS" (IRS, Comparison of Form 8938 and FBAR
+        # requirements), and irs.gov's FBAR page: "You don't file the FBAR with
+        # your federal tax return."
+        notes.append(
+            f"Form 8938 is attached to this return — but the FBAR is NOT, and CANNOT BE, in this "
+            f"envelope. FinCEN Form 114 is a SEPARATE filing to FinCEN (not the IRS), e-file ONLY "
+            f"through the BSA E-Filing System at https://bsaefiling.fincen.treas.gov/main.html; a "
+            f"printed Form 114 is not accepted. Filing Form 8938 does not satisfy it: the FBAR is "
+            f"required once the AGGREGATE maximum value of ALL foreign financial accounts exceeds "
+            f"$10,000 at ANY TIME in the CALENDAR year — a much lower bar than Form 8938's, and one "
+            f"that filing status does not move — and it reaches accounts you only have SIGNATURE "
+            f"AUTHORITY over, which Form 8938 generally does not. It is due April "
+            f"15, {item.tax_year + 1} with an AUTOMATIC extension to October 15, {item.tax_year + 1} "
+            f"that needs no request (P.L. 114-41 sec. 2006(b)(11)). Check the duty with calc op "
+            f"foreign_asset_reporting and gather the values with hand_fill_worksheet('fincen114', "
+            f"{item.tax_year}, 'federal'). Non-willful FBAR penalties run to $10,000 per report "
+            f"(inflation-adjusted to $16,536 for penalties assessed on or after 2025-01-17; 31 CFR "
+            f"1010.821), so do not mail this return believing the foreign-account job is done."
         )
     if _is_standalone_8843(item):
         return _standalone_8843_return(item, pack, notes)

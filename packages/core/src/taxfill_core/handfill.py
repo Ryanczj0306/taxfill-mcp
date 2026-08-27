@@ -78,8 +78,11 @@ def load_hand_fill_pack_for(
     path = hand_fill_pack_path(form, year, jurisdiction, base_dir)
     if not path.is_file():
         raise FileNotFoundError(
-            f"no hand-fill (print-only) pack for form '{form}', {jurisdiction} {year} — looked for {path}. "
-            f"Hand-fill packs exist only for print-only state forms (no fillable AcroForm)."
+            f"no hand-fill pack for form '{form}', {jurisdiction} {year} — looked for {path}. "
+            f"Hand-fill packs exist only where there is no fillable AcroForm to write into: the "
+            f"print-only state returns (ct1040, n11, pit1, sc1040) and FinCEN Form 114, the FBAR "
+            f"('fincen114', jurisdiction 'federal'), which is e-file only and has no PDF blank at "
+            f"all."
         )
     return load_hand_fill_pack(path)
 
@@ -137,7 +140,13 @@ def hand_fill_worksheet(
                 out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
                                          value="", source="blank", note=ln.note))
 
+    kwargs: dict[str, object] = {}
+    if pack.instructions is not None:
+        # A pack whose form cannot be printed and filed (the FBAR) supplies its own
+        # instruction text; the class default is correct for the print-only state forms.
+        kwargs["instructions"] = pack.instructions
     return Worksheet(
         form=pack.form, jurisdiction=pack.jurisdiction, tax_year=pack.tax_year,
         print_url=pack.source_url, lines=out, signature_note=pack.signature_note,
+        **kwargs,
     )

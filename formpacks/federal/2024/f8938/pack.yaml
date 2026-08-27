@@ -1,0 +1,1066 @@
+# Form 8938 — Statement of Specified Foreign Financial Assets. The IRC 6038D
+# disclosure a specified person attaches to the annual return when the aggregate
+# value of specified foreign financial assets crosses the reporting threshold.
+#
+# WHY THIS PACK EXISTS. Nothing in this repo could file a foreign-asset
+# disclosure before it, and the population the repo serves (F-1 -> OPT -> H-1B)
+# routinely keeps home-country accounts. The exposure is the steepest in the
+# repo: IRC 6038D(d) is a flat $10,000 failure-to-file penalty with a further
+# $10,000 per 30-day period after 90 days from IRS notice, capped at $50,000
+# additional ($60,000 total per year); IRC 6662(j)(3) substitutes "40 percent"
+# for "20 percent" on any underpayment attributable to an undisclosed foreign
+# financial asset; and IRC 6501(c)(8) can hold the whole year's statute of
+# limitations open. The pack ships with the CITED THRESHOLDS in
+# knowledge/federal/<year>.yaml (top-level block `foreign_account_reporting`)
+# and the calc op `foreign_asset_reporting`, which answers "must I file?" from
+# the reg rather than from memory. Form 8938 is NOT the FBAR: see the FBAR
+# section near the end of this banner.
+#
+# ---------------------------------------------------------------------------
+# REVISION IDENTITY (read off the PDF, not the URL)
+# ---------------------------------------------------------------------------
+# BOTH pages of the downloaded blank were rendered at 200 dpi and READ before
+# pinning pdf_sha256 (freshness protocol, dev plan section 7). Printed on
+# page 1, verbatim:
+#   header      "Form 8938"  /  "(Rev. November 2021)"
+#               "Department of the Treasury / Internal Revenue Service"
+#   title       "Statement of Specified Foreign Financial Assets"
+#               "Go to www.irs.gov/Form8938 for instructions and the latest
+#                information."   "Attach to your tax return."
+#   period line "For calendar year 20__ or tax year beginning ____ , 20__ ,
+#                and ending ____ , 20__"
+#   OMB         "OMB No. 1545-2195"   "Attachment Sequence No. 938"
+#   footer      "For Paperwork Reduction Act Notice, see the separate
+#                instructions."  "Cat. No. 37753A"
+#               "Form 8938 (Rev. 11-2021)"
+#   page 2      header "Form 8938 (Rev. 11-2021)" / "Page 2", same footer.
+# The same "Form 8938 (Rev. November 2021)" appears in the PDF's own /Title
+# metadata, with /Subject "Statement Of Specified Foreign Financial Assets".
+# Rev. 11-2021 is therefore the CURRENT revision. 136,008 bytes, 2 pages,
+# sha256 841fe09a3999c44080ef33f0e476aed45acc8c9e60f034ffdb7f27cf969601ef.
+#
+# source_url is the YEAR-STAMPED ARCHIVE copy, and that is a measured choice,
+# not a habit. Probed 2026-08-27: irs-pdf/f8938.pdf returns 200 and
+# irs-prior/f8938--2021.pdf returns 200 with BYTE-IDENTICAL content (same
+# 136,008 bytes, same sha256, digested separately), while --2022, --2023,
+# --2024 and --2025 all return HTTP 404. So unlike f8833 — whose only
+# year-stamped copy (--2013) is a SUPERSEDED revision and which therefore has
+# to pin the live irs-pdf URL — Form 8938 has a real archive copy of the
+# CURRENT revision, and pinning it means a future silent IRS revision of
+# irs-pdf/f8938.pdf cannot shift this pin. Same repoint f843's 2024 pack took
+# for the same reason. Consequence to know: because the archive URL is stable
+# by construction, the weekly drift job will no longer notice a NEW revision
+# appearing at irs-pdf/f8938.pdf — re-probe irs-pdf and irs-prior/--<year> at
+# the next tranche.
+#
+# ---------------------------------------------------------------------------
+# WHY THIS DIRECTORY (revision-pinned, not year-pinned)
+# ---------------------------------------------------------------------------
+# Form 8938 carries NO printed tax year: the filer WRITES the year into the
+# "For calendar year 20__" header, which is why that box is a mapped line
+# (`calendar_year`) rather than a printed constant. It is revision-dated like
+# Form 843 (Rev. 12-2024), Form 8316 (Rev. 1-2006), Form W-7 (Rev. 12-2024)
+# and Form 8833 (Rev. 12-2022 — landing alongside this pack in the same Phase
+# I4 tranche) — the repo's other revision-pinned federal packs, which all ship
+# one pack per FILING YEAR under
+# formpacks/federal/<year>/ with a single shared revision pin. This pack
+# follows them exactly: `tax_year` is the year this pack SERVES, not a year
+# printed on the form face, and all three shipped years pin the same
+# Rev. 11-2021 artifact. One pack per year is what makes the
+# (tax_year, form_key) key resolve for a TY2024 or TY2025 filing; a single
+# 2023-only pack would leave a TY2025 filer with no Form 8938 at all.
+#
+# ---------------------------------------------------------------------------
+# WHAT THE PARTS ACTUALLY ARE — read off the printed face, because the
+# intuitive reading is backwards
+# ---------------------------------------------------------------------------
+# The natural assumption is "Parts I/II are the asset detail and III-VI are
+# summaries". The printed Part headings say the OPPOSITE, verbatim:
+#   Part I    "Foreign Deposit and Custodial Accounts Summary"        (5-9)
+#   Part II   "Other Foreign Assets Summary"                          (10-12)
+#   Part III  "Summary of Tax Items Attributable to Specified Foreign
+#              Financial Assets"                                      (13-14)
+#   Part IV   "Excepted Specified Foreign Financial Assets"            (15-19)
+#   Part V    "Detailed Information for Each Foreign Deposit and Custodial
+#              Account Included in the Part I Summary"                (20-28)
+#   Part VI   "Detailed Information for Each 'Other Foreign Asset' Included
+#              in the Part II Summary"                                (29-36)
+# So Parts I-IV are ALL summaries (counts, maxima, a tax-item grid and a
+# count of excepted-asset forms), and the DETAIL lives in Parts V and VI —
+# and each of those describes exactly ONE account / ONE asset. Both print
+# their own overflow rule: "If you have more than one account to report in
+# Part V, attach a separate statement for each additional account" (and the
+# same sentence for Part VI), which the header checkbox
+# `additional_statements.attached` plus `additional_statements.count` is how
+# the form records. Getting this backwards would have produced 14 phantom
+# repeating detail rows and left the real Part III grid unmapped.
+#
+# ---------------------------------------------------------------------------
+# THE ROW-KEY CONVENTION (Part III's 14 x 3 grid, and the option blocks)
+# ---------------------------------------------------------------------------
+# Checked against LINE_ID_RE in test_formpacks_federal.py first
+# (^(?:[0-9]+[a-z]?|[a-z][a-z0-9_]*)(?:\.(?:[0-9]+[a-z]?|[a-z][a-z0-9_]*))*$):
+# every key below is a printed label segment or a lowercase word, dotted.
+#
+# 1. PART III GRID -> `<printed row>.<printed column letter>`, e.g. `13a.c`,
+#    `14g.e`. This is NOT a new convention: sched_d already keys `1b.d`/`2.g`
+#    and sched_e keys `3.a` the same way, and it beats f8949's
+#    `<part>.<line>.<row>.<column>` here because Form 8938 PRINTS a distinct
+#    label on every row — 13a..13g under "Foreign deposit and custodial
+#    accounts" and 14a..14g under "Other foreign assets" — so no invented
+#    `rowNN` segment and no part namespace are needed to make the key unique.
+#    Column legend, transcribed from the printed table head:
+#      (a) Asset category   -- PRINTED TEXT, no widget (see below)
+#      (b) Tax item         -- PRINTED TEXT, no widget (see below)
+#      (c) Amount reported on form or schedule      money  (printed "$")
+#      (d) Form and line     ] under the spanning head "Where reported"  text
+#      (e) Schedule and line ]                                          text
+#    COLUMNS (a) AND (b) HAVE NO LINE KEYS ON PURPOSE, and this is a P-007
+#    class-2 call, not an omission: the form PRINTS the category ("Foreign
+#    deposit and custodial accounts" / "Other foreign assets") and the tax
+#    item ("Interest", "Dividends", "Royalties", "Other income",
+#    "Gains (losses)", "Deductions", "Credits") as fixed labels. There is no
+#    widget behind either, so no value could be written there at all. The row
+#    key carries that information instead: `13*` = the deposit/custodial
+#    category, `14*` = other foreign assets, and the letter selects the tax
+#    item, spelled out in each line's inline comment.
+# 2. PRINTED SUB-COLUMNS THAT ARE PARENTHESISED, NOT LETTERED ROWS ->
+#    `<line>.<letter>` with a DOT, e.g. `25.a`, `25.b`, `25.c` and `34.a`,
+#    `34.b`, `34.c`. Lines 25 and 34 print "(a)/(b)/(c)" as COLUMN heads of a
+#    three-cell table under one numbered line, exactly like Part III's
+#    columns — so they take the dotted spelling. Contrast lines 3, 20, 22, 26,
+#    31, 32, 35 and 36, whose a/b/c/d are printed as LETTERED SUB-LINES
+#    ("a Specified individual", "26a Name of financial institution") and
+#    therefore key as ONE printed segment: `3a`, `20b`, `22d`, `26a`, `31c`,
+#    `32e`, `35d`, `36e`. The discriminator is the printed face, not taste:
+#    a lettered sub-line prints its letter flush with the line number in the
+#    stub column; a column letter prints in parentheses inside a table head.
+# 3. NAMED OPTIONS INSIDE A LETTERED SUB-LINE -> `<line letter>.<word>`, e.g.
+#    `35c.partnership`, `36b.individual`, `36c.us_person`. The printed face
+#    numbers these "(1) Partnership (2) Corporation (3) Trust (4) Estate", and
+#    a numeric key (`35c.1`) would read as a printed LINE label the form does
+#    not have, so the option's own printed WORD is the segment. The PDF's
+#    on_state still carries the printed number (/1../5) and is dumped from the
+#    blank, never guessed.
+# 4. YES/NO -> `<line>.yes` / `<line>.no` (lines 9, 12, 24, 33), the
+#    documented federal spelling (formpacks/CONVENTIONS.md).
+# 5. THE HEADER PERIOD BOXES are not numbered lines, so they take word keys:
+#    `calendar_year` (the "For calendar year 20__" 2-digit suffix),
+#    `tax_year_begin.month_day` / `tax_year_begin.year` and
+#    `tax_year_end.month_day` / `tax_year_end.year`. The two-digit suffix
+#    boxes carry /MaxLen 2 and the form prints the "20" — so the value to
+#    write is "25", not "2025". EXECUTED, not assumed: fill_form("2025")
+#    RAISES ("value '2025' is 4 characters but the field allows at most 2 —
+#    shorten it to 2 characters or fewer") because filler._enforce_length
+#    guards /MaxLen before writing, so this one fails LOUDLY rather than
+#    silently truncating. The banner said otherwise in draft; the render
+#    corrected it.
+# 6. THE GIIN IS FOUR BOXES, keyed POSITIONALLY: `26b.part1..part4` and
+#    `35b.part1..part4`, /MaxLen 6 / 5 / 2 / 3, printed as four boxes
+#    separated by three dots. Neither the printed face nor the Instructions
+#    for Form 8938 (Rev. 11-2021) lines 26b/35b names what the four segments
+#    MEAN — the instructions only say where to look one up (the FATCA FFI
+#    List Search and Download tool) and that "You will not be subject to
+#    penalties if you enter the wrong GIIN or leave this field blank". So the
+#    keys are positional by design rather than semantic; naming them after a
+#    remembered GIIN grammar would be exactly the invention this repo
+#    forbids.
+# 7. `36a` KEYS THE PRINTED NAME LINE and its un-lettered checkbox row keys
+#    `36a.information_for.issuer` / `.counterparty`. Printed 36a is "Name of
+#    issuer or counterparty" followed by an unnumbered "Check if information
+#    is for [ ] Issuer [ ] Counterparty" — one printed sub-line with no label
+#    of its own, so it namespaces under the line it belongs to.
+#
+# ---------------------------------------------------------------------------
+# FIELD MAP (introspected from this exact revision; ALL widgets mapped)
+# ---------------------------------------------------------------------------
+# The blank is XFA-derived (AcroForm /XFA present, root topmostSubform[0],
+# Creator "Adobe LiveCycle Designer ES 9.0"). pypdf get_fields() reports 151
+# nodes = 131 TERMINAL WIDGETS + 20 non-terminal containers
+# (topmostSubform[0], Page1[0], Pg1Header[0], Table_Part3[0], its 14
+# BodyRow13a..14g[0] row containers, Page2[0], Line20_ReadOrder[0]).
+# ALL 131 widgets are mapped below as 131 lines: 93 /Tx (74 text + 19 money)
+# and 38 /Btn. Page 1 carries 72 (63 /Tx + 9 /Btn), page 2 carries 59
+# (30 /Tx + 29 /Btn). Verified programmatically against a fresh field dump of
+# the blank: 0 missing widgets, 0 type mismatches, all 38 checkbox on-states
+# present in the blank's own appearance states, every declared maxlen equal to
+# the widget's /MaxLen, and 0 unmapped widgets.
+#
+# Field flags (/Ff read at FIELD level, walking /Parent — the CONVENTIONS
+# trap). Only TWO distinct values exist on this blank, and the split is exactly
+# along the /MaxLen line (counted, not estimated — an earlier draft of this
+# banner said 87/6 and the histogram says otherwise):
+#   8388608 = bit 24 DoNotScroll ......... 80 /Tx widgets — every text box with
+#                                          NO /MaxLen
+#   0       = no flags ................... 13 /Tx widgets — every text box that
+#                                          HAS a /MaxLen — plus all 38 /Btn
+# The 13 /MaxLen boxes, by length: 2 x5 (calendar_year, tax_year_begin.year,
+# tax_year_end.year, 26b.part3, 35b.part3), 3 x2 (26b.part4, 35b.part4),
+# 5 x2 (26b.part2, 35b.part2), 6 x2 (26b.part1, 35b.part1), 11 x2
+# (identifying_number, 4b). Nothing else on the form declares one.
+# So: NO comb fields (bit 25 clear everywhere), NO multiline boxes (bit 13
+# clear everywhere — unlike f8833, whose three address boxes wrap), and
+# ZERO ReadOnly widgets (bit 1 clear on all 131). P-007 therefore has nothing
+# to adjudicate on this form: the pack binds no ReadOnly widget, so it needs
+# no row in either allowlist in test_readonly_widget_mapping.py. That was
+# MEASURED, not assumed — the distinct-/Ff scan above is the evidence.
+# The blank also carries ZERO /AA action dictionaries on any widget, so
+# nothing on this form computes and nothing propagates: `pdfinfo` reports
+# "JavaScript: yes" (the CONVENTIONS trap — that is satisfied by
+# AFNumber_Format-style FORMATTING scripts), and there is no /AA /C anywhere
+# to make it a computing form.
+#
+# NO IDENTITY MIRROR ON PAGE 2, checked rather than assumed. Many two-page IRS
+# forms repeat "Name(s) shown on return" and the SSN at the top of page 2
+# (f8949 does, on 2 widgets per year). Form 8938's page-2 header prints only
+# "Form 8938 (Rev. 11-2021)" and "Page 2" — no name, no TIN, and the widget
+# dump confirms page 2's first widget is line 20's Deposit checkbox at
+# y=706. So there is no `page2_name`/`page2_ssn` to map and none is missing.
+#
+# CLIPPING CAPACITIES under verify.clipping_scan's own heuristic
+# (rect_width / (0.5 x 8 pt /DA font)) — ESTIMATES, not bounds, and the render
+# is the authority:
+#   27 / 28 / 35d / 35e / 36d / 36e (511.2 pt) .... 127 chars
+#   36a (384.2) .... 96      name (337.6) .... 84
+#   4a (308.4) ..... 77      26a / 29 / 35a (265.6) .... 66
+#   21 / 30 (244.8) 61       25.c / 34.c (207.8) .... 51
+#   identifying_number (201.6) .. 50 (but /MaxLen 11 binds first)
+#   25.a / 25.b / 34.a / 34.b (150-151) .... 37
+#   13*.d / 14*.d (106.5) .. 26   13*.e / 14*.e (100.1) .. 25
+#   31a / 31b (99.2) ....... 24   13*.c / 14*.c (92.1) ... 23
+#   5 / 7 / 10 (86.4) ...... 21   6 / 8 / 11 / 23 / 32e (76.4) .. 19
+#   additional_statements.count (72.0) .. 18   16 / 19 (47.6) .. 11
+#   15 / 17 / 18 (40.4) .... 10   tax_year_*.month_day (43) .. 10
+# Lines 27/28 and 35d/35e and 36d/36e are the full-width address rows and are
+# the only boxes with real headroom; the Part III grid cells are the tightest
+# text boxes on the form (23-26 chars), and a citation like
+# "Schedule B, Part I, line 1" is 26 characters — right at the edge. Because
+# every text widget here is single-line DoNotScroll with no /MaxLen, an
+# over-long string is CLIPPED, not wrapped: a P-001-class hazard with no
+# MaxLen to catch it, and the clipping scan is the only guard.
+#
+# ---------------------------------------------------------------------------
+# CHECKBOX TOPOLOGY — the DANGEROUS one, so every option set carries a group
+# ---------------------------------------------------------------------------
+# Dumped from the AcroForm tree, not inferred from the key spelling
+# (formpacks/CONVENTIONS.md, "The two topologies are not equally dangerous").
+# Every one of the 38 checkboxes is its OWN TERMINAL /Btn FIELD with its own
+# /T, its own /V (all "/Off" in the blank) and no /Kids — i.e. the SEPARATE
+# SINGLE-WIDGET topology, the one where nothing in the PDF and nothing in the
+# engine can make an option set exclusive. LiveCycle still numbers the
+# appearance states as if they were a radio group (c1_2[0..3] carry /1../4),
+# but the four are four independent fields: `fill_form` can and will write
+# BOTH "Yes" and "No" on line 9 unless a `group` says otherwise. So this pack
+# takes NO exemption. Groups, and the printed text that decides each:
+#   REQUIRED, EXACTLY ONE (group required per P-003):
+#     group `line3`  = 3a/3b/3c/3d  -- printed "Type of filer"; line 4's own text
+#                  ("If you checked box 3a, skip this line 4. If you checked
+#                  box 3b or 3c ... If you checked box 3d ...") only makes
+#                  sense for a single answer, and every filer is one of the
+#                  four.
+#     group `line20` = 20a/20b      -- printed "Type of account" with a Deposit
+#                  and b Custodial; Part I counts the two separately
+#                  (lines 5/6 deposit, 7/8 custodial), so one account is one
+#                  or the other.
+#   GROUPED, NOT REQUIRED (the question may not apply to this filer's asset):
+#     groups `line9`, `line12`, `line24`, `line33` -- the four printed Yes/No
+#                  pairs.
+#     group `line32` = 32a/32b/32c/32d -- printed "Maximum value of asset during
+#                  tax year (check box that applies)": four disjoint bands,
+#                  and 32e ("If more than $200,000, list value") is the
+#                  fifth, MUTUALLY EXCLUSIVE branch that is a MONEY line
+#                  rather than a checkbox — so the group is exactly the four
+#                  boxes and is deliberately NOT required (an asset over
+#                  $200,000 answers on 32e and checks none of them).
+#     group `35c` = the four "Type of foreign entity" options.
+#     group `36b` = the five "Type of issuer or counterparty" options.
+#     group `36c` = U.S. person / Foreign person.
+#     group `36a.information_for` = Issuer / Counterparty.
+#     group `additional_statements` = the single header checkbox. A one-member
+#                  group looks odd and is deliberate: the P-008 gate builds
+#                  its groups from `group`/`required`, and a lone ungrouped
+#                  checkbox is invisible to it.
+#   NO GROUP, ON PURPOSE (multiple boxes are LEGAL, so an at-most-one audit
+#   would false-FAIL a correct return — the f843 line-4/5 pattern):
+#     22a/22b/22c/22d -- printed "Check all that apply". An account can be
+#                  opened AND closed AND jointly owned inside one tax year.
+#     31c/31d      -- printed "Check if asset jointly owned with spouse" and
+#                  "Check if no tax item reported in Part III with respect to
+#                  this asset": two unrelated booleans that print on one row,
+#                  not two options of one question.
+#
+# relations: [] -- the form face carries NO arithmetic. Lines 5/7/10 are
+# counts the filer takes from Parts V/VI, 6/8/11 are maxima, Part III has no
+# total row and Part IV lines 15-19 are five independent counts. There is no
+# printed "add lines" anywhere on either page, so nothing belongs in
+# relations (instruction-only or worksheet math never does).
+#
+# cross_form: [] -- Part III columns (d) "Form and line" and (e) "Schedule
+# and line" look like cross-form references and are NOT: they are free TEXT
+# in which the filer NAMES where the item was already reported ("Schedule B,
+# Part I, line 1"), not an equality the verifier could recompute. The
+# cross_form grammar is `<ref> == <ref>` over money lines; there is no
+# arithmetic identity between any Form 8938 line and any other form's line.
+#
+# identity_fields: [name, identifying_number] -- the f8949/f8960 shape.
+# Line 1 is printed "Name(s) shown on return" and line 2 "Taxpayer
+# identification number (TIN)", both unqualified, so they are the RETURN's
+# name and TIN and must match every other form in the filing.
+# identity_per_person is NOT declared, and that is a decision: Form 8938
+# prints no per-spouse qualifier anywhere (contrast Form 8889's "Social
+# security number of HSA beneficiary" and Form 8606's "If married, file a
+# separate form for each spouse required to file"), and Treas. Reg.
+# 1.6038D-2(a)(2) says married specified individuals filing jointly "must
+# attach a SINGLE Form 8938 to their joint annual return" — one form for the
+# couple, carrying the return's own identity. Lines 4a/4b are a DIFFERENT
+# person's name and TIN (the specified individual behind a partnership,
+# corporation or trust filer) and are correctly NOT identity fields.
+#
+# signature: null / mailing: null -- "Attach to your tax return."
+# (Attachment Sequence No. 938). No signature block of its own and no
+# where-to-file of its own; it travels inside the parent return's envelope,
+# the same as every sched_* pack and f8949/f8960.
+#
+# ---------------------------------------------------------------------------
+# THE THRESHOLD IS NOT ON THE FORM — and it is not the FBAR's
+# ---------------------------------------------------------------------------
+# Nothing on either printed page states who has to file. The thresholds live
+# in Treas. Reg. 1.6038D-2(a)(1)-(4) and the Instructions for Form 8938
+# (Rev. 11-2021), "Types of Reporting Thresholds", and BOTH were read for
+# this pack. Two independent sources, agreeing:
+#   in the US   unmarried or MFS   > $50,000 last day  or > $75,000 any time
+#               MFJ                > $100,000 last day or > $150,000 any time
+#   abroad      unmarried or MFS   > $200,000 last day or > $300,000 any time
+#               MFJ                > $400,000 last day or > $600,000 any time
+#   specified domestic entity      > $50,000 last day  or > $75,000 any time
+# "abroad" is not a feeling: the reg keys paragraphs (a)(3)/(a)(4) to being a
+# "qualified individual under section 911(d)(1)" — the bona fide residence
+# test or 330 full days in 12 consecutive months — and the instructions
+# restate it as a foreign tax home PLUS the presence-abroad test. The
+# thresholds are STATUTORY and NOT inflation-indexed, which is why all three
+# shipped years carry the same figures; they live as cited data in
+# knowledge/federal/<year>.yaml under `foreign_account_reporting`, and the
+# calc op `foreign_asset_reporting` applies them (and refuses to guess when
+# an input is missing).
+#
+# THE FBAR IS A DIFFERENT FILING AND THIS PACK IS NOT IT. FinCEN Form 114 is
+# filed with FinCEN, not the IRS, is not part of the tax return, uses a flat
+# $10,000 AGGREGATE MAXIMUM-VALUE threshold that filing status does not move,
+# and is E-FILE ONLY through the BSA E-Filing System — irs.gov states outright
+# that "IRS will not accept paper filings on TD F 90-22.1 (obsolete) or a
+# printed FinCEN Form 114 (for e-filing only)". It therefore cannot be a
+# fillable pack at all and ships as
+# formpacks/federal/<year>/fincen114/handfill.yaml instead. Filing one does
+# not satisfy the other: "The Form 8938 filing requirement does not replace
+# or otherwise affect a taxpayer's obligation to file FinCEN Form 114"
+# (IRS, Comparison of Form 8938 and FBAR requirements). The scope differs in
+# both directions — an account you only have SIGNATURE AUTHORITY over is
+# FBAR-reportable and generally not 8938-reportable; foreign stock held
+# outside an account, a foreign partnership interest and a foreign hedge fund
+# are 8938-reportable and not FBAR-reportable.
+#
+# ---------------------------------------------------------------------------
+# VISION AUDIT — what it caught, and what it could not have caught
+# ---------------------------------------------------------------------------
+# SENTINEL SWEEP: every one of the 131 mapped lines filled with a distinctive
+# per-line sentinel (the widget's own leaf name for text lines, a distinct
+# 7-digit amount for money lines) and rendered at 200 dpi; both pages read
+# whole, then the Part III grid and both GIIN rows re-cropped and re-read at
+# 300 dpi. Checkbox coverage needed more than one pass because 11 of the 12
+# groups are mutually exclusive (the twelfth, `additional_statements`, is a lone
+# header checkbox), so FIVE filled renders were built, rotating
+# each group through its options (the widest group, 36b, has five) — every one
+# of the 38 checkboxes is checked in at least one render and was READ on the
+# page. All five renders: verify ok=True, zero FAIL/WARN, zero fill warnings.
+# audit_pack.py on the 2025 pack: 111 mapped lines written (131 minus the 20
+# unchecked group siblings its one-option-per-group generator leaves off),
+# verify_fails [].
+#
+# THE MAP AUDIT CAUGHT NO DEFECTS, which docs/CONTRIBUTING-PACKS.md rightly
+# calls suspicious, so here is exactly what the renders established that a
+# field dump could NOT have:
+#   * the GIIN segment ORDER. f2_07..f2_10 and f2_22..f2_25 render
+#     left-to-right into the four printed boxes with the printed dots between
+#     them, so `26b.part1` really is the leftmost 6-char box. A dump gives
+#     names and MaxLens, not printed order.
+#   * that lines 22a-22d and 31c/31d really do render CHECKED SIMULTANEOUSLY.
+#     That is the whole basis for leaving them ungrouped, and it is now
+#     observed rather than argued.
+#   * that `36a`'s widget sits INLINE on the printed "Name of issuer or
+#     counterparty" row (starting at x=191.8, immediately after the label)
+#     rather than on a continuation rule below it — so `36a` is the name box
+#     and the un-lettered Issuer/Counterparty pair below it needed its own
+#     namespace.
+#   * that the Part III column-(c) money cells right-align FLUSH to the
+#     column-(d) border and still show all 7 digits at 8 pt.
+#
+# TWO REAL CLIPPING FINDINGS, both from a second pass filled with REALISTIC
+# values instead of sentinels:
+#   1. `tax_year_end.month_day` (43.0 pt) CANNOT HOLD "December 31". The
+#      clipping scan FAILs it (11 x 0.5 x 8 = 44.0 pt > 43.0 pt) and the
+#      300 dpi render agrees: the leading "D" renders as a half-glyph and the
+#      trailing "1" is gone — "and ending )ecember 3". So the guard works
+#      here, but every fiscal-year filer hits it; "Dec. 31" or "12/31" is
+#      what fits. Same box on the "beginning" side (43.4 pt) has the same
+#      budget.
+#   2. `name` CLIPS SILENTLY ON ALL-CAPS TEXT, and this one the scan does NOT
+#      catch. Filled with "PRIYA RAMASWAMY-VENKATARAGHAVAN AND ARJUN
+#      RAMASWAMY-VENKATARAGHAVAN" (67 chars — an ordinary joint-return name
+#      pair for this repo's user base), verify came back CLEAN while the
+#      render lost the last four characters. Measured with a rendered
+#      character ruler at 60/62/64/66/70/84 uppercase characters: the 337.6 pt
+#      widget holds 62 characters of ALL-CAPS Helvetica at 8 pt, the 63rd
+#      renders as a half-glyph, and 64 or more silently drops everything past
+#      it. verify.clipping_scan predicts 84 (337.6 / (0.5 x 8)), because
+#      _AVG_CHAR_WIDTH_RATIO = 0.5 is calibrated for MIXED-CASE Helvetica
+#      while the measured all-caps ratio on this render is 337.6/62 = 5.45 pt
+#      per character = 0.68 em. So there is a 63-to-84-character SILENT
+#      WINDOW on this widget, and the same arithmetic applies to every
+#      wide text box in every pack in the repo.
+#      This is a PRE-EXISTING ENGINE limitation, not a defect in this map, and
+#      it is a false NEGATIVE — worse than f8833's multiline false POSITIVES,
+#      because a truncated name ships on a filed return with a green verify.
+#      Deliberately NOT worked around here: raising the ratio moves the
+#      clipping verdict of every one of the repo's packs, so it belongs in its
+#      own reviewed change to clipping_scan (ideally real Helvetica AFM
+#      widths, or a case-aware ratio), not in a pack banner. Recorded in the
+#      tranche report's open issues. What a CALLER should do today: pass
+#      mixed-case names, and treat any value over ~60 characters on a wide box
+#      as needing its own render.
+
+form: "8938"
+jurisdiction: federal
+tax_year: 2024
+source_url: https://www.irs.gov/pub/irs-prior/f8938--2021.pdf
+pdf_sha256: "841fe09a3999c44080ef33f0e476aed45acc8c9e60f034ffdb7f27cf969601ef"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- page 1 header — the period boxes and the additional-statements pair -
+  - line: "calendar_year"
+    field: Page1[0].Pg1Header[0].f1_01[0]
+    type: text
+    maxlen: 2
+    # header "For calendar year 20__" — the 2-digit year suffix (/MaxLen 2)
+  - line: "tax_year_begin.month_day"
+    field: Page1[0].Pg1Header[0].f1_02[0]
+    type: text
+    # header "or tax year beginning ____" — the month/day
+  - line: "tax_year_begin.year"
+    field: Page1[0].Pg1Header[0].f1_03[0]
+    type: text
+    maxlen: 2
+    # header ", 20__" after "beginning" — the 2-digit year suffix (/MaxLen 2)
+  - line: "tax_year_end.month_day"
+    field: Page1[0].Pg1Header[0].f1_04[0]
+    type: text
+    # header ", and ending ____" — the month/day
+  - line: "tax_year_end.year"
+    field: Page1[0].Pg1Header[0].f1_05[0]
+    type: text
+    maxlen: 2
+    # header ", 20__" after "ending" — the 2-digit year suffix (/MaxLen 2)
+  - line: "additional_statements.attached"
+    field: Page1[0].c1_1[0]
+    type: checkbox
+    on_state: "/1"
+    group: additional_statements
+    # "If you have attached additional statements, check here"
+  - line: "additional_statements.count"
+    field: Page1[0].f1_06[0]
+    type: text
+    # "Number of additional statements" — a COUNT, not money (f2555 line 31 precedent)
+  # ---- lines 1-4 — identity and type of filer ------------------------------
+  - line: "name"
+    field: Page1[0].f1_07[0]
+    type: text
+    # 1 "Name(s) shown on return"
+  - line: "identifying_number"
+    field: Page1[0].f1_08[0]
+    type: text
+    maxlen: 11
+    # 2 "Taxpayer identification number (TIN)" — plain box, /MaxLen 11 (dashed SSN/ITIN fits); NOT a comb (Ff bit 25 clear), so no comb/format declared
+  - line: "3a"
+    field: Page1[0].c1_2[0]
+    type: checkbox
+    on_state: "/1"
+    group: line3
+    required: true
+    # 3 "Type of filer" — a Specified individual
+  - line: "3b"
+    field: Page1[0].c1_2[1]
+    type: checkbox
+    on_state: "/2"
+    group: line3
+    required: true
+    # 3 "Type of filer" — b Partnership
+  - line: "3c"
+    field: Page1[0].c1_2[2]
+    type: checkbox
+    on_state: "/3"
+    group: line3
+    required: true
+    # 3 "Type of filer" — c Corporation
+  - line: "3d"
+    field: Page1[0].c1_2[3]
+    type: checkbox
+    on_state: "/4"
+    group: line3
+    required: true
+    # 3 "Type of filer" — d Trust
+  - line: "4a"
+    field: Page1[0].f1_09[0]
+    type: text
+    # 4a "Name" (skip if box 3a checked)
+  - line: "4b"
+    field: Page1[0].f1_10[0]
+    type: text
+    maxlen: 11
+    # 4b "TIN" (skip if box 3a checked) — /MaxLen 11
+  # ---- Part I — Foreign Deposit and Custodial Accounts Summary (lines 5-9) -
+  - line: "5"
+    field: Page1[0].f1_11[0]
+    type: text
+    # 5 "Number of deposit accounts (reported in Part V)" — a COUNT
+  - line: "6"
+    field: Page1[0].f1_12[0]
+    type: money
+    # 6 "Maximum value of all deposit accounts" (printed "$")
+  - line: "7"
+    field: Page1[0].f1_13[0]
+    type: text
+    # 7 "Number of custodial accounts (reported in Part V)" — a COUNT
+  - line: "8"
+    field: Page1[0].f1_14[0]
+    type: money
+    # 8 "Maximum value of all custodial accounts" (printed "$")
+  - line: "9.yes"
+    field: Page1[0].c1_3[0]
+    type: checkbox
+    on_state: "/1"
+    group: line9
+    # 9 "Were any foreign deposit or custodial accounts closed during the tax year?" — Yes
+  - line: "9.no"
+    field: Page1[0].c1_3[1]
+    type: checkbox
+    on_state: "/2"
+    group: line9
+    # 9 — No
+  # ---- Part II — Other Foreign Assets Summary (lines 10-12) ----------------
+  - line: "10"
+    field: Page1[0].f1_15[0]
+    type: text
+    # 10 "Number of foreign assets (reported in Part Vl)" — a COUNT
+  - line: "11"
+    field: Page1[0].f1_16[0]
+    type: money
+    # 11 "Maximum value of all assets (reported in Part Vl)" (printed "$")
+  - line: "12.yes"
+    field: Page1[0].c1_4[0]
+    type: checkbox
+    on_state: "/1"
+    group: line12
+    # 12 "Were any foreign assets acquired or sold during the tax year?" — Yes
+  - line: "12.no"
+    field: Page1[0].c1_4[1]
+    type: checkbox
+    on_state: "/2"
+    group: line12
+    # 12 — No
+  # ---- Part III — Summary of Tax Items (14 printed rows x columns (c)(d)(e)) 
+  - line: "13a.c"
+    field: Page1[0].Table_Part3[0].BodyRow13a[0].f1_17[0]
+    type: money
+    # 13a Foreign deposit and custodial accounts / Interest — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "13a.d"
+    field: Page1[0].Table_Part3[0].BodyRow13a[0].f1_18[0]
+    type: text
+    # 13a — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "13a.e"
+    field: Page1[0].Table_Part3[0].BodyRow13a[0].f1_19[0]
+    type: text
+    # 13a — column (e) "Schedule and line" (under "Where reported")
+  - line: "13b.c"
+    field: Page1[0].Table_Part3[0].BodyRow13b[0].f1_20[0]
+    type: money
+    # 13b Foreign deposit and custodial accounts / Dividends — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "13b.d"
+    field: Page1[0].Table_Part3[0].BodyRow13b[0].f1_21[0]
+    type: text
+    # 13b — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "13b.e"
+    field: Page1[0].Table_Part3[0].BodyRow13b[0].f1_22[0]
+    type: text
+    # 13b — column (e) "Schedule and line" (under "Where reported")
+  - line: "13c.c"
+    field: Page1[0].Table_Part3[0].BodyRow13c[0].f1_23[0]
+    type: money
+    # 13c Foreign deposit and custodial accounts / Royalties — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "13c.d"
+    field: Page1[0].Table_Part3[0].BodyRow13c[0].f1_24[0]
+    type: text
+    # 13c — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "13c.e"
+    field: Page1[0].Table_Part3[0].BodyRow13c[0].f1_25[0]
+    type: text
+    # 13c — column (e) "Schedule and line" (under "Where reported")
+  - line: "13d.c"
+    field: Page1[0].Table_Part3[0].BodyRow13d[0].f1_26[0]
+    type: money
+    # 13d Foreign deposit and custodial accounts / Other income — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "13d.d"
+    field: Page1[0].Table_Part3[0].BodyRow13d[0].f1_27[0]
+    type: text
+    # 13d — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "13d.e"
+    field: Page1[0].Table_Part3[0].BodyRow13d[0].f1_28[0]
+    type: text
+    # 13d — column (e) "Schedule and line" (under "Where reported")
+  - line: "13e.c"
+    field: Page1[0].Table_Part3[0].BodyRow13e[0].f1_29[0]
+    type: money
+    # 13e Foreign deposit and custodial accounts / Gains (losses) — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "13e.d"
+    field: Page1[0].Table_Part3[0].BodyRow13e[0].f1_30[0]
+    type: text
+    # 13e — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "13e.e"
+    field: Page1[0].Table_Part3[0].BodyRow13e[0].f1_31[0]
+    type: text
+    # 13e — column (e) "Schedule and line" (under "Where reported")
+  - line: "13f.c"
+    field: Page1[0].Table_Part3[0].BodyRow13f[0].f1_32[0]
+    type: money
+    # 13f Foreign deposit and custodial accounts / Deductions — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "13f.d"
+    field: Page1[0].Table_Part3[0].BodyRow13f[0].f1_33[0]
+    type: text
+    # 13f — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "13f.e"
+    field: Page1[0].Table_Part3[0].BodyRow13f[0].f1_34[0]
+    type: text
+    # 13f — column (e) "Schedule and line" (under "Where reported")
+  - line: "13g.c"
+    field: Page1[0].Table_Part3[0].BodyRow13g[0].f1_35[0]
+    type: money
+    # 13g Foreign deposit and custodial accounts / Credits — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "13g.d"
+    field: Page1[0].Table_Part3[0].BodyRow13g[0].f1_36[0]
+    type: text
+    # 13g — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "13g.e"
+    field: Page1[0].Table_Part3[0].BodyRow13g[0].f1_37[0]
+    type: text
+    # 13g — column (e) "Schedule and line" (under "Where reported")
+  - line: "14a.c"
+    field: Page1[0].Table_Part3[0].BodyRow14a[0].f1_38[0]
+    type: money
+    # 14a Other foreign assets / Interest — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "14a.d"
+    field: Page1[0].Table_Part3[0].BodyRow14a[0].f1_39[0]
+    type: text
+    # 14a — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "14a.e"
+    field: Page1[0].Table_Part3[0].BodyRow14a[0].f1_40[0]
+    type: text
+    # 14a — column (e) "Schedule and line" (under "Where reported")
+  - line: "14b.c"
+    field: Page1[0].Table_Part3[0].BodyRow14b[0].f1_41[0]
+    type: money
+    # 14b Other foreign assets / Dividends — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "14b.d"
+    field: Page1[0].Table_Part3[0].BodyRow14b[0].f1_42[0]
+    type: text
+    # 14b — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "14b.e"
+    field: Page1[0].Table_Part3[0].BodyRow14b[0].f1_43[0]
+    type: text
+    # 14b — column (e) "Schedule and line" (under "Where reported")
+  - line: "14c.c"
+    field: Page1[0].Table_Part3[0].BodyRow14c[0].f1_44[0]
+    type: money
+    # 14c Other foreign assets / Royalties — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "14c.d"
+    field: Page1[0].Table_Part3[0].BodyRow14c[0].f1_45[0]
+    type: text
+    # 14c — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "14c.e"
+    field: Page1[0].Table_Part3[0].BodyRow14c[0].f1_46[0]
+    type: text
+    # 14c — column (e) "Schedule and line" (under "Where reported")
+  - line: "14d.c"
+    field: Page1[0].Table_Part3[0].BodyRow14d[0].f1_47[0]
+    type: money
+    # 14d Other foreign assets / Other income — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "14d.d"
+    field: Page1[0].Table_Part3[0].BodyRow14d[0].f1_48[0]
+    type: text
+    # 14d — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "14d.e"
+    field: Page1[0].Table_Part3[0].BodyRow14d[0].f1_49[0]
+    type: text
+    # 14d — column (e) "Schedule and line" (under "Where reported")
+  - line: "14e.c"
+    field: Page1[0].Table_Part3[0].BodyRow14e[0].f1_50[0]
+    type: money
+    # 14e Other foreign assets / Gains (losses) — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "14e.d"
+    field: Page1[0].Table_Part3[0].BodyRow14e[0].f1_51[0]
+    type: text
+    # 14e — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "14e.e"
+    field: Page1[0].Table_Part3[0].BodyRow14e[0].f1_52[0]
+    type: text
+    # 14e — column (e) "Schedule and line" (under "Where reported")
+  - line: "14f.c"
+    field: Page1[0].Table_Part3[0].BodyRow14f[0].f1_53[0]
+    type: money
+    # 14f Other foreign assets / Deductions — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "14f.d"
+    field: Page1[0].Table_Part3[0].BodyRow14f[0].f1_54[0]
+    type: text
+    # 14f — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "14f.e"
+    field: Page1[0].Table_Part3[0].BodyRow14f[0].f1_55[0]
+    type: text
+    # 14f — column (e) "Schedule and line" (under "Where reported")
+  - line: "14g.c"
+    field: Page1[0].Table_Part3[0].BodyRow14g[0].f1_56[0]
+    type: money
+    # 14g Other foreign assets / Credits — column (c) "Amount reported on form or schedule" (printed "$")
+  - line: "14g.d"
+    field: Page1[0].Table_Part3[0].BodyRow14g[0].f1_57[0]
+    type: text
+    # 14g — column (d) "Form and line" (under the spanning head "Where reported")
+  - line: "14g.e"
+    field: Page1[0].Table_Part3[0].BodyRow14g[0].f1_58[0]
+    type: text
+    # 14g — column (e) "Schedule and line" (under "Where reported")
+  # ---- Part IV — Excepted Specified Foreign Financial Assets (lines 15-19) -
+  - line: "15"
+    field: Page1[0].f1_59[0]
+    type: text
+    # 15 "Number of Forms 3520" — a COUNT (Part IV, excepted assets)
+  - line: "16"
+    field: Page1[0].f1_60[0]
+    type: text
+    # 16 "Number of Forms 3520-A" — a COUNT (Part IV, excepted assets)
+  - line: "17"
+    field: Page1[0].f1_61[0]
+    type: text
+    # 17 "Number of Forms 5471" — a COUNT (Part IV, excepted assets)
+  - line: "18"
+    field: Page1[0].f1_62[0]
+    type: text
+    # 18 "Number of Forms 8621" — a COUNT (Part IV, excepted assets)
+  - line: "19"
+    field: Page1[0].f1_63[0]
+    type: text
+    # 19 "Number of Forms 8865" — a COUNT (Part IV, excepted assets)
+  # ---- Part V — detail for ONE deposit/custodial account (lines 20-28) -----
+  - line: "20a"
+    field: Page2[0].Line20_ReadOrder[0].c2_1[0]
+    type: checkbox
+    on_state: "/1"
+    group: line20
+    required: true
+    # 20 "Type of account" — a Deposit
+  - line: "20b"
+    field: Page2[0].Line20_ReadOrder[0].c2_1[1]
+    type: checkbox
+    on_state: "/2"
+    group: line20
+    required: true
+    # 20 "Type of account" — b Custodial
+  - line: "21"
+    field: Page2[0].f2_01[0]
+    type: text
+    # 21 "Account number or other designation"
+  - line: "22a"
+    field: Page2[0].c2_2[0]
+    type: checkbox
+    on_state: "/1"
+    # 22 "Check all that apply" — a Account opened during tax year
+  - line: "22b"
+    field: Page2[0].c2_3[0]
+    type: checkbox
+    on_state: "/1"
+    # 22 — b Account closed during tax year
+  - line: "22c"
+    field: Page2[0].c2_4[0]
+    type: checkbox
+    on_state: "/1"
+    # 22 — c Account jointly owned with spouse
+  - line: "22d"
+    field: Page2[0].c2_5[0]
+    type: checkbox
+    on_state: "/1"
+    # 22 — d No tax item reported in Part III with respect to this asset
+  - line: "23"
+    field: Page2[0].f2_02[0]
+    type: money
+    # 23 "Maximum value of account during tax year" (printed "$")
+  - line: "24.yes"
+    field: Page2[0].c2_6[0]
+    type: checkbox
+    on_state: "/1"
+    group: line24
+    # 24 "Did you use a foreign currency exchange rate to convert the value of the account into U.S. dollars?" — Yes
+  - line: "24.no"
+    field: Page2[0].c2_6[1]
+    type: checkbox
+    on_state: "/2"
+    group: line24
+    # 24 — No
+  - line: "25.a"
+    field: Page2[0].f2_03[0]
+    type: text
+    # 25 (a) "Foreign currency in which account is maintained"
+  - line: "25.b"
+    field: Page2[0].f2_04[0]
+    type: text
+    # 25 (b) "Foreign currency exchange rate used to convert to U.S. dollars"
+  - line: "25.c"
+    field: Page2[0].f2_05[0]
+    type: text
+    # 25 (c) "Source of exchange rate used if not from U.S. Treasury Department's Bureau of the Fiscal Service"
+  - line: "26a"
+    field: Page2[0].f2_06[0]
+    type: text
+    # 26a "Name of financial institution in which account is maintained"
+  - line: "26b.part1"
+    field: Page2[0].f2_07[0]
+    type: text
+    maxlen: 6
+    # 26b GIIN (Optional) — segment 1 of 4, printed as four boxes separated by three dots (/MaxLen 6); segment MEANINGS are documented nowhere on the form or in i8938, so the keys are positional by design
+  - line: "26b.part2"
+    field: Page2[0].f2_08[0]
+    type: text
+    maxlen: 5
+    # 26b GIIN (Optional) — segment 2 of 4, printed as four boxes separated by three dots (/MaxLen 5); segment MEANINGS are documented nowhere on the form or in i8938, so the keys are positional by design
+  - line: "26b.part3"
+    field: Page2[0].f2_09[0]
+    type: text
+    maxlen: 2
+    # 26b GIIN (Optional) — segment 3 of 4, printed as four boxes separated by three dots (/MaxLen 2); segment MEANINGS are documented nowhere on the form or in i8938, so the keys are positional by design
+  - line: "26b.part4"
+    field: Page2[0].f2_10[0]
+    type: text
+    maxlen: 3
+    # 26b GIIN (Optional) — segment 4 of 4, printed as four boxes separated by three dots (/MaxLen 3); segment MEANINGS are documented nowhere on the form or in i8938, so the keys are positional by design
+  - line: "27"
+    field: Page2[0].f2_11[0]
+    type: text
+    # 27 "Mailing address of financial institution in which account is maintained. Number, street, and room or suite no."
+  - line: "28"
+    field: Page2[0].f2_12[0]
+    type: text
+    # 28 "City or town, state or province, country, and ZIP or foreign postal code"
+  # ---- Part VI — detail for ONE other foreign asset (lines 29-36) ----------
+  - line: "29"
+    field: Page2[0].f2_13[0]
+    type: text
+    # 29 "Description of asset"
+  - line: "30"
+    field: Page2[0].f2_14[0]
+    type: text
+    # 30 "Identifying number or other designation"
+  - line: "31a"
+    field: Page2[0].f2_15[0]
+    type: text
+    # 31a "Date asset acquired during tax year, if applicable"
+  - line: "31b"
+    field: Page2[0].f2_16[0]
+    type: text
+    # 31b "Date asset disposed of during tax year, if applicable"
+  - line: "31c"
+    field: Page2[0].c2_7[0]
+    type: checkbox
+    on_state: "/1"
+    # 31c "Check if asset jointly owned with spouse"
+  - line: "31d"
+    field: Page2[0].c2_8[0]
+    type: checkbox
+    on_state: "/1"
+    # 31d "Check if no tax item reported in Part III with respect to this asset"
+  - line: "32a"
+    field: Page2[0].c2_9[0]
+    type: checkbox
+    on_state: "/1"
+    group: line32
+    # 32 "Maximum value of asset during tax year (check box that applies)" — a $0-$50,000
+  - line: "32b"
+    field: Page2[0].c2_9[1]
+    type: checkbox
+    on_state: "/2"
+    group: line32
+    # 32 "Maximum value of asset during tax year (check box that applies)" — b $50,001-$100,000
+  - line: "32c"
+    field: Page2[0].c2_9[2]
+    type: checkbox
+    on_state: "/3"
+    group: line32
+    # 32 "Maximum value of asset during tax year (check box that applies)" — c $100,001-$150,000
+  - line: "32d"
+    field: Page2[0].c2_9[3]
+    type: checkbox
+    on_state: "/4"
+    group: line32
+    # 32 "Maximum value of asset during tax year (check box that applies)" — d $150,001-$200,000
+  - line: "32e"
+    field: Page2[0].f2_17[0]
+    type: money
+    # 32e "If more than $200,000, list value" (printed "$")
+  - line: "33.yes"
+    field: Page2[0].c2_10[0]
+    type: checkbox
+    on_state: "/1"
+    group: line33
+    # 33 "Did you use a foreign currency exchange rate to convert the value of the asset into U.S. dollars?" — Yes
+  - line: "33.no"
+    field: Page2[0].c2_10[1]
+    type: checkbox
+    on_state: "/2"
+    group: line33
+    # 33 — No
+  - line: "34.a"
+    field: Page2[0].f2_18[0]
+    type: text
+    # 34 (a) "Foreign currency in which asset is denominated"
+  - line: "34.b"
+    field: Page2[0].f2_19[0]
+    type: text
+    # 34 (b) "Foreign currency exchange rate used to convert to U.S. dollars"
+  - line: "34.c"
+    field: Page2[0].f2_20[0]
+    type: text
+    # 34 (c) "Source of exchange rate used if not from U.S. Treasury Department's Bureau of the Fiscal Service"
+  - line: "35a"
+    field: Page2[0].f2_21[0]
+    type: text
+    # 35a "Name of foreign entity"
+  - line: "35b.part1"
+    field: Page2[0].f2_22[0]
+    type: text
+    maxlen: 6
+    # 35b GIIN (Optional) — segment 1 of 4 (/MaxLen 6); positional, as for 26b
+  - line: "35b.part2"
+    field: Page2[0].f2_23[0]
+    type: text
+    maxlen: 5
+    # 35b GIIN (Optional) — segment 2 of 4 (/MaxLen 5); positional, as for 26b
+  - line: "35b.part3"
+    field: Page2[0].f2_24[0]
+    type: text
+    maxlen: 2
+    # 35b GIIN (Optional) — segment 3 of 4 (/MaxLen 2); positional, as for 26b
+  - line: "35b.part4"
+    field: Page2[0].f2_25[0]
+    type: text
+    maxlen: 3
+    # 35b GIIN (Optional) — segment 4 of 4 (/MaxLen 3); positional, as for 26b
+  - line: "35c.partnership"
+    field: Page2[0].c2_11[0]
+    type: checkbox
+    on_state: "/1"
+    group: 35c
+    # 35c "Type of foreign entity" — (1) Partnership
+  - line: "35c.corporation"
+    field: Page2[0].c2_11[1]
+    type: checkbox
+    on_state: "/2"
+    group: 35c
+    # 35c "Type of foreign entity" — (2) Corporation
+  - line: "35c.trust"
+    field: Page2[0].c2_11[2]
+    type: checkbox
+    on_state: "/3"
+    group: 35c
+    # 35c "Type of foreign entity" — (3) Trust
+  - line: "35c.estate"
+    field: Page2[0].c2_11[3]
+    type: checkbox
+    on_state: "/4"
+    group: 35c
+    # 35c "Type of foreign entity" — (4) Estate
+  - line: "35d"
+    field: Page2[0].f2_26[0]
+    type: text
+    # 35d "Mailing address of foreign entity. Number, street, and room or suite no."
+  - line: "35e"
+    field: Page2[0].f2_27[0]
+    type: text
+    # 35e "City or town, state or province, country, and ZIP or foreign postal code"
+  - line: "36a"
+    field: Page2[0].f2_28[0]
+    type: text
+    # 36a "Name of issuer or counterparty"
+  - line: "36a.information_for.issuer"
+    field: Page2[0].c2_12[0]
+    type: checkbox
+    on_state: "/1"
+    group: 36a.information_for
+    # 36a "Check if information is for" — Issuer
+  - line: "36a.information_for.counterparty"
+    field: Page2[0].c2_12[1]
+    type: checkbox
+    on_state: "/2"
+    group: 36a.information_for
+    # 36a "Check if information is for" — Counterparty
+  - line: "36b.individual"
+    field: Page2[0].c2_13[0]
+    type: checkbox
+    on_state: "/1"
+    group: 36b
+    # 36b "Type of issuer or counterparty" — (1) Individual
+  - line: "36b.partnership"
+    field: Page2[0].c2_13[1]
+    type: checkbox
+    on_state: "/2"
+    group: 36b
+    # 36b "Type of issuer or counterparty" — (2) Partnership
+  - line: "36b.corporation"
+    field: Page2[0].c2_13[2]
+    type: checkbox
+    on_state: "/3"
+    group: 36b
+    # 36b "Type of issuer or counterparty" — (3) Corporation
+  - line: "36b.trust"
+    field: Page2[0].c2_13[3]
+    type: checkbox
+    on_state: "/4"
+    group: 36b
+    # 36b "Type of issuer or counterparty" — (4) Trust
+  - line: "36b.estate"
+    field: Page2[0].c2_13[4]
+    type: checkbox
+    on_state: "/5"
+    group: 36b
+    # 36b "Type of issuer or counterparty" — (5) Estate
+  - line: "36c.us_person"
+    field: Page2[0].c2_14[0]
+    type: checkbox
+    on_state: "/1"
+    group: 36c
+    # 36c "Check if issuer or counterparty is a" — U.S. person
+  - line: "36c.foreign_person"
+    field: Page2[0].c2_14[1]
+    type: checkbox
+    on_state: "/2"
+    group: 36c
+    # 36c — Foreign person
+  - line: "36d"
+    field: Page2[0].f2_29[0]
+    type: text
+    # 36d "Mailing address of issuer or counterparty. Number, street, and room or suite no."
+  - line: "36e"
+    field: Page2[0].f2_30[0]
+    type: text
+    # 36e "City or town, state or province, country, and ZIP or foreign postal code"
+
+relations: []
+cross_form: []
+identity_fields: [name, identifying_number]
+
+signature: null
+mailing: null

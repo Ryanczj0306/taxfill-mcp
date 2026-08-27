@@ -49,6 +49,21 @@ Sources (verified against the official PDFs):
   for Basis Adjustments in Column (g); Schedule D (Form 1040) for 2023, 2024 and
   2025 plus the Capital Loss Carryover Worksheet in the 2022-2025 instructions
   (f1040sd--<year>.pdf / i1040sd--<year>.pdf), all fetched 2026-08-26.
+* Foreign tax credit + the IRC 904(j) de-minimis election (Phase I, I4 —
+  pitfall P-011): IRC 901, 903 and 904 from uscode.house.gov (title 26, prelim
+  edition), read verbatim for 904(a), 904(c), 904(j)(1), 904(j)(2) and
+  904(j)(3)(A)-(D); Form 1116 (2023)
+  (https://www.irs.gov/pub/irs-prior/f1116--2023.pdf, sha256
+  980ff23906dbdc835ada4ed833c376d41015bff021e542a5f862194156c25151) and its
+  instructions (i1116--2023.pdf), whose "Election To Claim the Foreign Tax
+  Credit Without Filing Form 1116" section is the source for every condition,
+  the two-way carryover forfeiture and the how-to-elect sentence; the same
+  instructions for tax years 2019-2025 (i1116--<year>.pdf, all HTTP 200), each
+  independently confirmed to carry the identical "$300 ($600 if married filing a
+  joint return)" test, the estates-and-trusts exclusion and the carryover
+  forfeiture — the two-pass verification behind the year-invariant figures in
+  knowledge/federal/<year>.yaml credits.foreign_tax_credit. All fetched
+  2026-08-27.
 
 Rule from docs/DEV_PLAN.md section 10: if the implementation disagrees with
 ANY published row below, the implementation is wrong — fix it, never the
@@ -70,6 +85,7 @@ from taxfill_core.calc import (
     eitc,
     espp_disposition,
     excess_ss,
+    foreign_tax_credit_election,
     hsa_deduction,
     ira_pro_rata,
     irs_round,
@@ -4167,4 +4183,317 @@ def test_the_box_8_mirror_gap_is_disclosed_and_does_not_break_pub525_example_10(
     )
     assert settled.ordinary_income == 300           # (20 - 17) x 100
     assert not any("READ BOX 8" in a for a in settled.input_assumptions)
+
+
+
+# ---------------------------------------------------------------------------
+# Foreign tax credit — the IRC 904(j) de-minimis election (Phase I, I4; P-011)
+#
+# Both sides of the branch: the election path (no Form 1116, one line on
+# Schedule 3) and the Form 1116 path, plus every condition that flips between
+# them. The dollar test is statutory, so the figures below are the STATUTE's,
+# not the engine's: 904(j)(2)(B) reads "does not exceed $300 ($600 in the case
+# of a joint return)".
+# ---------------------------------------------------------------------------
+
+# The case this whole tranche exists for: one total-international index fund,
+# foreign tax withheld at source and reported in Form 1099-DIV box 7.
+_INDEX_FUND = {
+    "all_foreign_income_passive": True,
+    "all_reported_on_payee_statement": True,
+    "year": 2023,
+}
+
+
+def test_the_index_fund_filer_needs_no_form_1116():
+    """P-011, the election side: $412 of 1099-DIV box 7 tax on a joint return."""
+    r = foreign_tax_credit_election(412, filing_status="married_filing_jointly",
+                                    regular_tax=18400, **_INDEX_FUND)
+    assert r.form_1116_required is False
+    assert r.election_available is True and r.election_made is True
+    assert r.route == "schedule_3_election"
+    assert r.de_minimis_limit == 600          # IRC 904(j)(2)(B), joint return
+    assert r.creditable_foreign_taxes == 412
+    assert r.headroom == 188
+    assert r.failed_conditions == []
+    # "the smaller of (a) your total foreign tax, or (b) your regular tax"
+    assert r.credit_on_schedule_3 == 412
+    assert r.credit_lost_to_regular_tax_cap == 0
+    assert r.schedule_3_line == "Schedule 3 (Form 1040), Part I, line 1"
+    # No Form 1116 route, so no category box is proposed.
+    assert r.form_1116_category_box is None
+
+
+def test_the_same_taxes_on_a_single_return_do_need_form_1116():
+    """The $300/$600 split IS the branch: identical facts, different status."""
+    r = foreign_tax_credit_election(412, filing_status="single",
+                                    regular_tax=18400, **_INDEX_FUND)
+    assert r.form_1116_required is True
+    assert r.election_available is False
+    assert r.route == "form_1116"
+    assert r.de_minimis_limit == 300
+    assert r.headroom == -112                 # over by $112
+    assert r.failed_conditions == ["IRC 904(j)(2)(B)"]
+    # No election, so nothing lands on Schedule 3 from this op.
+    assert r.credit_on_schedule_3 is None
+    assert r.credit_lost_to_regular_tax_cap is None
+    # On the Form 1116 route the passive facts do settle the category box.
+    assert "box c" in (r.form_1116_category_box or "")
+    assert r.form_1116_pack_key == "formpacks/federal/2023/f1116"
+
+
+def test_exactly_at_the_limit_is_inside_it():
+    """904(j)(2)(B) says 'does not exceed', so $300.00 and $600.00 still elect."""
+    at_300 = foreign_tax_credit_election(300, filing_status="single", **_INDEX_FUND)
+    assert at_300.election_available is True and at_300.headroom == 0
+    at_600 = foreign_tax_credit_election(600, filing_status="married_filing_jointly", **_INDEX_FUND)
+    assert at_600.election_available is True and at_600.headroom == 0
+    over = foreign_tax_credit_election(301, filing_status="single", **_INDEX_FUND)
+    assert over.election_available is False and over.failed_conditions == ["IRC 904(j)(2)(B)"]
+
+
+def test_only_a_joint_return_gets_600_and_a_surviving_spouse_does_not():
+    """The trap the filing-status COLUMN hides.
+
+    calc's _resolve_filing_status maps qualifying_surviving_spouse onto the
+    married_filing_jointly RATE column, which is right for rates and WRONG here:
+    904(j)(2)(B) conditions the $600 on "the case of a joint return", and a
+    surviving spouse merely borrows the joint rate schedule (IRC 1(a)(2) via
+    2(a)) without filing a joint return. Married filing separately is not a
+    joint return either.
+    """
+    limits = {
+        "married_filing_jointly": 600,
+        "qualifying_surviving_spouse": 300,
+        "married_filing_separately": 300,
+        "head_of_household": 300,
+        "single": 300,
+    }
+    for status, expected in limits.items():
+        r = foreign_tax_credit_election(250, filing_status=status, **_INDEX_FUND)
+        assert r.de_minimis_limit == expected, f"{status} -> {r.de_minimis_limit}"
+    qss = foreign_tax_credit_election(450, filing_status="qualifying_surviving_spouse", **_INDEX_FUND)
+    assert qss.form_1116_required is True
+    assert "does not file a joint return" in qss.limit_basis
+
+
+def test_the_limits_are_year_invariant_across_every_shipped_pack():
+    """904(j) carries no inflation-adjustment provision (P.L. 105-34, 1997), and
+    each year's own Instructions for Form 1116 restate the same two figures — so
+    every year pack that ships the block ships $300/$600."""
+    for year in (2019, 2020, 2021, 2022, 2023, 2024, 2025):
+        single = foreign_tax_credit_election(1, filing_status="single",
+                                             all_foreign_income_passive=True,
+                                             all_reported_on_payee_statement=True, year=year)
+        joint = foreign_tax_credit_election(1, filing_status="married_filing_jointly",
+                                            all_foreign_income_passive=True,
+                                            all_reported_on_payee_statement=True, year=year)
+        assert (single.de_minimis_limit, joint.de_minimis_limit) == (300, 600), year
+        assert f"i1116--{year}.pdf" in " ".join(c.url for c in single.citations)
+
+
+def test_one_non_passive_dollar_kills_the_election_however_small_the_tax():
+    """904(j)(2)(A): 'the ENTIRE amount of such individual's gross income ...
+    from sources without the United States consists of qualified passive
+    income'. $12 of tax does not save a return with foreign wages in it."""
+    r = foreign_tax_credit_election(12, all_foreign_income_passive=False,
+                                    all_reported_on_payee_statement=True, year=2023)
+    assert r.form_1116_required is True
+    assert r.failed_conditions == ["IRC 904(j)(2)(A) with 904(j)(3)(A)"]
+    assert r.headroom == 288          # comfortably under the ceiling, and irrelevant
+
+
+def test_tax_with_no_payee_statement_fails_even_when_passive_and_tiny():
+    """904(j)(3)(A) and (B) both require the item to be 'shown on a payee
+    statement furnished to the individual' — the foreign-bank-account case."""
+    r = foreign_tax_credit_election(40, all_foreign_income_passive=True,
+                                    all_reported_on_payee_statement=False, year=2023)
+    assert r.form_1116_required is True
+    assert r.failed_conditions == ["IRC 904(j)(3)(A) and (B), payee statement per 904(j)(3)(C)/6724(d)(2)"]
+
+
+def test_estates_and_trusts_cannot_elect_at_all():
+    """904(j)(3)(D): 'This subsection shall not apply to any estate or trust.'"""
+    for entity in ("estate", "trust"):
+        r = foreign_tax_credit_election(50, entity=entity, **_INDEX_FUND)
+        assert r.form_1116_required is True
+        assert r.failed_conditions == ["IRC 904(j)(3)(D)"]
+        assert entity in r.conditions[3].detail
+    with pytest.raises(ValueError, match="unknown entity"):
+        foreign_tax_credit_election(50, entity="partnership", **_INDEX_FUND)
+
+
+def test_availability_and_election_are_reported_separately():
+    """904(j)(2)(C) is the taxpayer's own act, so a filer who QUALIFIES may still
+    choose Form 1116 — the right call when there is an excess credit to carry."""
+    r = foreign_tax_credit_election(250, elect=False, filing_status="single",
+                                    excess_credit_if_form_1116=80, **_INDEX_FUND)
+    assert r.election_available is True
+    assert r.election_made is False
+    assert r.form_1116_required is True and r.route == "form_1116"
+    # failed_conditions covers the ELIGIBILITY conditions only, so it stays empty:
+    # nothing about this return failed, the filer simply declined. The 904(j)(2)(C)
+    # row records the choice, and the work string spells out why it is defensible.
+    assert r.failed_conditions == []
+    assert r.conditions[-1].statute == "IRC 904(j)(2)(C)" and r.conditions[-1].met is False
+    assert "excess credit worth carrying" in r.conditions[-1].detail
+    assert "The election was AVAILABLE and you declined it" in r.work
+    # The forfeiture is still sized, because that is what the choice turns on.
+    assert r.election_costs[0].startswith("CONCRETE COST HERE: $80 of excess credit")
+
+
+def test_the_election_is_never_presented_as_free():
+    """904(j)(1)(B) and (C) forfeit the 904(c) carryover in BOTH directions, and
+    election_costs is populated on the ELECTING path too."""
+    r = foreign_tax_credit_election(120, filing_status="single", **_INDEX_FUND)
+    assert r.route == "schedule_3_election"
+    costs = " ".join(r.election_costs)
+    assert "904(j)(1)(B)" in costs and "904(j)(1)(C)" in costs
+    assert "1-year carryback and 10-year carryforward is forfeited" in costs
+    assert "901(k)" in costs                      # creditability is not waived
+    assert "line 12 of Form 1116" in costs        # nor is the line-12 reduction
+    # and a concrete forfeiture is promoted to the front when the caller can size it
+    sized = foreign_tax_credit_election(120, filing_status="single",
+                                        excess_credit_if_form_1116=95, **_INDEX_FUND)
+    assert sized.election_costs[0].startswith("CONCRETE COST HERE: $95 of excess credit")
+
+
+def test_foreign_tax_above_regular_tax_is_lost_permanently_under_the_election():
+    """The election's own cap is 'the smaller of (a) your total foreign tax, or
+    (b) your regular tax', and 904(j)(1)(B) then blocks carrying the remainder —
+    so the excess is not deferred, it is gone."""
+    r = foreign_tax_credit_election(280, filing_status="single", regular_tax=200, **_INDEX_FUND)
+    assert r.route == "schedule_3_election"
+    assert r.credit_on_schedule_3 == 200
+    assert r.credit_lost_to_regular_tax_cap == 80
+    assert r.election_costs[0].startswith("CONCRETE COST HERE: regular tax is smaller")
+    assert "$80" in r.election_costs[0] and "unrecoverable in any other year" in r.election_costs[0]
+    assert "is LOST" in r.work
+
+
+def test_the_line_12_reduction_applies_before_the_dollar_test():
+    """The reduction can pull a return back UNDER the ceiling — and the ORDER that
+    makes that true is this op's reasoned reading, not a quoted rule.
+
+    Reworded 2026-08-27: the assertion used to look for a string that called the
+    order "the order the Instructions set". It is not — the Instructions sentence
+    ("You are still required to reduce the taxes available for credit by any amount
+    you would have entered on line 12 of Form 1116") sits under "If you make this
+    election, the following rules apply", among the CONSEQUENCES of electing. The
+    behaviour is unchanged and rests on 904(j)(2)'s word "creditable"; what changed
+    is that the op no longer claims a source said so, and now reports BOTH bases
+    whenever they disagree. See
+    test_the_904j_ordering_is_labelled_an_interpretation_and_shows_both_verdicts.
+    """
+    over = foreign_tax_credit_election(340, filing_status="single", **_INDEX_FUND)
+    assert over.election_available is False
+    under = foreign_tax_credit_election(340, reduction_in_foreign_taxes=60,
+                                        filing_status="single", **_INDEX_FUND)
+    assert under.creditable_foreign_taxes == 280 and under.election_available is True
+    note = next(a for a in under.input_assumptions if "ORDERING" in a)
+    assert "NOT A QUOTED RULE" in note
+    assert "THE TWO DISAGREE" in note        # gross 340 fails, net 280 passes
+    # Form 1116 line 12's box is printed inside parentheses and takes the POSITIVE amount.
+    with pytest.raises(ValueError, match="printed inside parentheses"):
+        foreign_tax_credit_election(340, reduction_in_foreign_taxes=-60, **_INDEX_FUND)
+
+
+def test_the_two_judgment_facts_are_refused_rather_than_guessed():
+    """Defaulting either condition silently decides the election, so neither has
+    a default — the roth_conversion `source` lesson."""
+    with pytest.raises(ValueError, match=r"all_foreign_income_passive is required"):
+        foreign_tax_credit_election(100, year=2023)
+    with pytest.raises(ValueError, match=r"all_reported_on_payee_statement is required"):
+        foreign_tax_credit_election(100, all_foreign_income_passive=True, year=2023)
+    # Both messages have to name the law AND the way out.
+    try:
+        foreign_tax_credit_election(100, year=2023)
+    except ValueError as exc:
+        assert "904(j)(2)(A)" in str(exc) and "foreign wages" in str(exc)
+    try:
+        foreign_tax_credit_election(100, all_foreign_income_passive=True, year=2023)
+    except ValueError as exc:
+        assert "6724(d)(2)" in str(exc) and "1099-DIV" in str(exc)
+
+
+def test_bad_amounts_and_statuses_are_refused_prescriptively():
+    with pytest.raises(ValueError, match="creditable_foreign_taxes must be zero or more"):
+        foreign_tax_credit_election(-5, **_INDEX_FUND)
+    with pytest.raises(ValueError, match="unknown filing_status"):
+        foreign_tax_credit_election(100, filing_status="mfj", **_INDEX_FUND)
+    with pytest.raises(ValueError, match="regular_tax must be zero or more"):
+        foreign_tax_credit_election(100, regular_tax=-1, **_INDEX_FUND)
+    # A year with no credits.foreign_tax_credit block must say what to add.
+    with pytest.raises(ValueError, match=r"credits\.foreign_tax_credit\.de_minimis_election"):
+        foreign_tax_credit_election(100, all_foreign_income_passive=True,
+                                    all_reported_on_payee_statement=True, year=2026)
+
+
+def test_the_work_string_carries_every_condition_and_the_statute():
+    r = foreign_tax_credit_election(412, filing_status="married_filing_jointly",
+                                    regular_tax=18400, **_INDEX_FUND)
+    for statute in ("904(j)(2)(A)", "904(j)(3)(A)", "904(j)(2)(B)", "904(j)(3)(D)", "904(j)(2)(C)"):
+        assert statute in r.work, statute
+    assert "NO FORM 1116" in r.work
+    assert "Schedule 3 (Form 1040), Part I, line 1" in r.work
+    assert r.citation.url.startswith("https://uscode.house.gov/")
+    assert "does not exceed $300 ($600 in the case of a joint return)" in r.citation.source
+    urls = [c.url for c in r.citations]
+    assert any("section904" in u for u in urls) and any("section901" in u for u in urls)
+    assert any("f1116--2023.pdf" in u for u in urls) and any("i1116--2023.pdf" in u for u in urls)
+    # What the op does NOT decide is stated, so silence is never a clean bill.
+    blob = " ".join(r.not_modeled)
+    assert "904(a) limitation fraction" in blob and "Form 8689" in blob and "906" in blob
+
+def test_the_904j_ordering_is_labelled_an_interpretation_and_shows_both_verdicts():
+    """Phase I4 adversarial review, 2026-08-27: the op claimed an order its source does not set.
+
+    ``reduction_in_foreign_taxes`` (Form 1116 line 12) is subtracted BEFORE the
+    $300/$600 test, and the op used to call that "the order the Instructions set".
+    It is not: the quoted sentence sits under "If you make this election, the
+    following rules apply", i.e. among the CONSEQUENCES of electing. The reading
+    still has a statutory basis — 904(j)(2) tests "creditable" taxes and a tax line
+    12 removes was never creditable — but it is TAXPAYER-FAVOURABLE, so when the two
+    bases disagree the op must say so instead of asserting a rule.
+    """
+    # Gross $320 fails the $300 test; net of a $40 line-12 reduction it passes.
+    disagreeing = foreign_tax_credit_election(
+        creditable_foreign_taxes=320, reduction_in_foreign_taxes=40,
+        all_foreign_income_passive=True, all_reported_on_payee_statement=True, year=2025,
+    )
+    note = next(a for a in disagreeing.input_assumptions if "ORDERING" in a)
+    assert "NOT A QUOTED RULE" in note
+    assert "$280.00" in note and "$320.00" in note          # both bases are shown
+    assert "THE TWO DISAGREE" in note                        # and the conflict is called out
+    assert "904(j)(2)" in note                               # with the statutory basis for the choice
+
+    # When the order cannot change the outcome, the note says that instead of alarming.
+    agreeing = foreign_tax_credit_election(
+        creditable_foreign_taxes=200, reduction_in_foreign_taxes=40,
+        all_foreign_income_passive=True, all_reported_on_payee_statement=True, year=2025,
+    )
+    calm = next(a for a in agreeing.input_assumptions if "ORDERING" in a)
+    assert "does not change the outcome here" in calm
+
+
+def test_the_election_op_defaults_to_a_year_it_can_actually_answer():
+    """Phase I4 review: the default year was 2026, the one year with no 904(j) block.
+
+    knowledge/federal/2026.yaml is `provisional: planning_only` and ships no
+    credits.foreign_tax_credit block, so calling the op with its own documented
+    defaults ALWAYS raised. And form_1116_pack_key was unconditional interpolation,
+    so 2019-2022 named a pack that does not exist.
+    """
+    ok = foreign_tax_credit_election(
+        creditable_foreign_taxes=250, all_foreign_income_passive=True,
+        all_reported_on_payee_statement=True,
+    )
+    assert ok.election_available is True
+    assert ok.form_1116_pack_key == "formpacks/federal/2025/f1116"
+    for year in (2019, 2020, 2021, 2022):
+        early = foreign_tax_credit_election(
+            creditable_foreign_taxes=250, all_foreign_income_passive=True,
+            all_reported_on_payee_statement=True, year=year,
+        )
+        assert early.form_1116_pack_key is None, year
 

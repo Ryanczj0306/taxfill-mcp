@@ -43,6 +43,13 @@ BLOCK_TO_REQUIRED_TOPICS = {
     # Phase H item H8: the tax-advantaged account limits (top-level on purpose —
     # nesting under `tax` would evade this very rule).
     "contribution_limits": ("contribution_limits",),
+    # Phase I item I4: the FBAR / Form 8938 reporting duties. Top-level for the
+    # same reason. The BLOCK name and the sources TOPIC name deliberately
+    # differ: the block is named for the duty it describes, while the topic key
+    # avoids the token "account" because get_sources scores on key tokens and a
+    # key containing "account" stole "bank account bonus income" from
+    # other_income_and_rewards (P-005's own pinned query) on the first attempt.
+    "foreign_account_reporting": ("foreign_asset_and_fbar_reporting",),
 }
 
 

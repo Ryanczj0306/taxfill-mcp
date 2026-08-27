@@ -82,10 +82,33 @@ how much of the loss the year consumes (worksheet line 4), so a low-income year 
 carryover than "loss minus $3,000". Pass `following_years` to roll a multi-year chain; it threads the
 carryovers itself.
 
+`calc("foreign_tax_credit_election", …)` answers the question that comes BEFORE Form 1116: is the
+form needed at all? Anyone holding a total-international index fund has foreign tax withheld — it
+arrives in Form 1099-DIV box 7 (interest: 1099-INT box 6) — and IRC 904(j) lets the credit be claimed
+as ONE line on Schedule 3 (Form 1040), Part I, line 1, with no Form 1116, whenever creditable foreign
+taxes stay at or under $300 ($600 in the case of a JOINT RETURN; statutory, never indexed), every
+dollar of foreign-source gross income is qualified passive income, and all of it is shown on a payee
+statement (1099-DIV, 1099-INT, K-1 (1041), K-3 (1065), K-3 (1120-S) or a substitute). The op REFUSES
+to guess the two judgment facts and refuses to infer the election itself, because each one silently
+decides the answer, and estates and trusts are excluded outright by 904(j)(3)(D). ALWAYS say what the
+election costs: 904(j)(1)(B) and (C) forfeit the 904(c) one-year-back / ten-year-forward carryover in
+BOTH directions for that year, so pass `regular_tax` (Form 1116 line 20) and read
+`credit_lost_to_regular_tax_cap` — foreign tax above regular tax is lost permanently. Only married
+filing jointly is "a joint return": a qualifying surviving spouse gets $300, not $600. When the
+election is unavailable, file `formpacks/federal/<year>/f1116` — one form PER CATEGORY OF INCOME, with
+exactly one of boxes a-g ticked above Part I (box c, passive, is the 1099-DIV box 7 basket).
+
 State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
 All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
 38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)
 via `hand_fill_worksheet`; `state_scope` tells you which returns are required.
+`hand_fill_worksheet` also serves one FEDERAL filing — `fincen114`, the FBAR
+(FinCEN Form 114): e-file only through FinCEN's BSA E-Filing System, no fillable
+PDF exists, a printed Form 114 is NOT accepted, and it is filed with FinCEN
+rather than the IRS so it never travels in the return envelope. Ask about
+foreign accounts (intake `income_documents.foreign_accounts`) and run
+`calc('foreign_asset_reporting', …)` — it answers Form 8938 AND the FBAR, and
+returns `required: null` plus `must_ask` rather than guessing.
 `calc("state_tax", …)` covers **every** jurisdiction for 2023, 2024 AND 2025 —
 flat or graduated is the PACK's call, and the split moves by
 year, so never assume and never do state tax arithmetic yourself. Note the year

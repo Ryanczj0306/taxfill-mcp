@@ -1,0 +1,469 @@
+# Form 8833 — Treaty-Based Return Position Disclosure Under Section 6114 or
+# 7701(b). The disclosure statement a treaty-based return position requires.
+#
+# WHY THIS PACK EXISTS. calc.treaty_benefit has shipped since Phase G1 and
+# computes treaty exemptions for china/india/korea/canada/mexico, but until now
+# no pack existed for the form that DISCLOSES a treaty position, so the engine
+# could compute a position it could not help a filer report. The two halves now
+# point at each other: treaty_benefit's work string names this form, the section
+# 6114 requirement, the section 6712 penalty AND the Treas. Reg. 301.6114-1(c)
+# waivers that decide whether the form is needed at all (see the LAW block near
+# the bottom of this banner).
+#
+# ---------------------------------------------------------------------------
+# REVISION IDENTITY (read off the PDF, not the URL)
+# ---------------------------------------------------------------------------
+# All five pages of the downloaded blank were rendered at 200 dpi and READ
+# before pinning pdf_sha256 (freshness protocol, dev plan section 7). Printed
+# on page 1, verbatim:
+#   header      "Form 8833"  /  "(Rev. December 2022)"
+#               "Department of the Treasury / Internal Revenue Service"
+#   title       "Treaty-Based Return Position Disclosure
+#                Under Section 6114 or 7701(b)"
+#               "Attach to your tax return."
+#               "Go to www.irs.gov/Form8833 for the latest information."
+#   OMB         "OMB No. 1545-1354"
+#   footer      "For Paperwork Reduction Act Notice, see the instructions."
+#               "Cat. No. 14895L"   "Form 8833 (Rev. 12-2022)"
+#   page 3/4/5 headers repeat "Form 8833 (Rev. 12-2022)".
+# The same "(Rev. December 2022)" also appears in the PDF's own /Title metadata,
+# and Rev. 12-2022 is therefore the CURRENT revision.
+# sha256 e678fe7cb1042cc6c388a2c1b44ff5cc9e262c939465f9c2fffdbb33c653f5ff,
+# 94,455 bytes — measured on THREE independent copies (the warm shared-cache
+# blank plus two fresh downloads from source_url issued as separate requests on
+# 2026-08-27); all three digests identical.
+#
+# ---------------------------------------------------------------------------
+# WHY THIS DIRECTORY (revision-pinned, not year-pinned)
+# ---------------------------------------------------------------------------
+# Form 8833 carries NO printed tax year: it is revision-dated, like Form 843
+# (Rev. 12-2024), Form 8316 (Rev. 1-2006) and Form W-7 (Rev. 12-2024), the
+# repo's three existing revision-pinned federal packs. Those ship one pack per
+# FILING YEAR under formpacks/federal/<year>/ with a single shared revision pin,
+# and this pack follows them exactly: tax_year 2023 is the filing year this pack
+# SERVES, not a year printed on the form face. One pack per year is also what
+# the form itself asks for — page 3, "Purpose of Form": "A separate form is
+# required annually for each treaty-based return position taken by the
+# taxpayer" — and it is what makes the (tax_year, form_key) key resolve for a
+# TY2023 filing: a single 2023-only pack would leave a TY2024 or TY2025 treaty
+# filer with no Form 8833 at all, which is the gap this item exists to close.
+#
+# source_url is the live irs-pdf URL because NO year-stamped archive copy of
+# this revision exists. Probed 2026-08-27: irs-prior/f8833--2022.pdf,
+# --2023.pdf, --2024.pdf and --2025.pdf all return HTTP 404, while
+# irs-prior/f8833--2013.pdf returns 200 and is the SUPERSEDED Rev. December 2013
+# (its own /Title and printed face say so; sha256 8d5fdf5f...) — an older
+# layout, not an archive of the current one, so it is not the pin. Same
+# situation as f8316, which also pins irs-pdf. Consequence to know: a future
+# silent IRS revision moves this URL's bytes, so the weekly drift job's digest
+# mismatch is the only warning. RE-PROBE for a year-stamped copy at the next
+# tranche.
+#
+# ---------------------------------------------------------------------------
+# FIELD MAP (introspected from this exact revision; ALL widgets mapped)
+# ---------------------------------------------------------------------------
+# The blank is XFA-derived (AcroForm /XFA present, root topmostSubform[0]);
+# pypdf get_fields() reports 47 nodes = 41 TERMINAL WIDGETS + 6 non-terminal
+# containers (topmostSubform[0], Page1[0], BulletedList1[0], Bullet1[0],
+# Bullet2[0], Lines1-2_ReadOrder[0]). All 41 widgets — 36 /Tx + 5 /Btn — are
+# mapped below as 41 lines, and every one of them is on PAGE 1. The other four
+# pages carry ZERO widgets: page 2 prints only "[This page left blank
+# intentionally]" and pages 3-5 are the instructions (all four rendered and
+# read).
+#
+# Field flags (/Ff read at FIELD level, walking /Parent — the CONVENTIONS trap):
+#   8388608  = bit 24 DoNotScroll  ................. 32 single-line text boxes
+#   8392704  = bit 24 + bit 13 Multiline  .......... f1_4, f1_5, f1_9
+#   0        = no flags  ........................... f1_2 (the TIN box) and all
+#                                                    5 checkboxes
+# /MaxLen exists on exactly ONE widget: f1_2[0] (the "U.S. taxpayer identifying
+# number" box) = 11, wide enough for a dashed SSN/ITIN. It is NOT a comb (bit 25
+# clear), so no `comb`/`format: ssn_digits_only` is declared — same treatment as
+# f8843's identifying_number, whose widget is also a plain MaxLen-11 box. Every
+# other text widget has NO /MaxLen, so those lines declare none either and the
+# geometric half of the clipping scan is what guards them.
+#
+# THREE MULTILINE BOXES, and what the engine does NOT do about them. f1_4
+# ("Address in country of residence", 265.6 x 38.0 pt), f1_5 ("Address in the
+# United States", 272.6 x 38.0) and f1_9 (line 3's payor block, 272.6 x 37.0)
+# carry /Ff bit 13, so a viewer WRAPS text inside them. The repo has no
+# `multiline` schema key and needs none — every existing multiline box ships as
+# a plain `type: text` line with the fact recorded in a comment (sched_1 8z.type,
+# sched_a_nr 7.type, f843 line 8, f8949 column (a)), and this pack does the
+# same. What the author must know: verify.clipping_scan is NOT multiline-aware —
+# it compares len x 0.5 x font_size against the rect WIDTH only — and that was
+# PROVEN on this form, not assumed. Filling f1_4 / f1_5 / f1_9 with realistic
+# values (69 / 91 / 107 characters) produced THREE clipping FAILs from
+# verify_form, while the 300 dpi render of the same PDF shows all three wrapping
+# correctly onto a second line with their end markers fully legible and nothing
+# lost. So a caller who fills the addresses honestly gets three FALSE clipping
+# FAILs. Pre-existing engine limitation, shared with every multiline pack above;
+# recorded here rather than worked around, because the fix belongs in
+# clipping_scan.
+#
+# LINE 6 IS 25 SEPARATE ONE-LINE WIDGETS, NOT ONE BIG BOX. The explanation area
+# is the largest thing on the form and the easiest to get wrong. The printed
+# face shows the line-6 instruction wrapping over three rows and then 24 ruled
+# dashed rows. The widgets follow the RULES, not the paragraph: f1_12[0] fills
+# the tail of the third instruction row (252.0 pt wide) and f1_13[0]..f1_36[0]
+# are 24 full-width rows (511.2 x 12.0 pt each). Confirmed on the sentinel
+# sweep: each field name printed on its own dashed rule, 24 names against 24
+# rules, no doubling and no off-by-one. Because every row is single-line
+# DoNotScroll with no /MaxLen, an over-long string is CLIPPED, not wrapped —
+# a P-001-class hazard with no MaxLen to catch it. Capacities under
+# clipping_scan's own heuristic (rect_width / (0.5 x 8 pt /DA font)):
+#   6        (f1_12)  63 chars     4       (f1_10)  109 chars
+#   6.cont01-24       127 chars    5.subsections     16 chars
+#   1a / 1b            43 chars    2       (f1_8)     59 chars
+#   name               66 chars    reference_id       39 chars
+# Those are ESTIMATES, not bounds, and the render disagrees with them in BOTH
+# directions — measured on rendered fills (200 dpi and 300 dpi), not reasoned
+# about. This form's /DA is HelveticaLTStd-BOLD 8 pt, whose lowercase 'x'
+# advances 0.556 em (4.45 pt), not the heuristic's 0.5 em:
+#   - 127 characters of ordinary prose in a 6.cont row FIT, with roughly 15 pt to
+#     spare (300 dpi render; tail markers |110# .. |127# all legible inside the
+#     rule);
+#   - but 127 characters of bold lowercase 'x' PASSED clipping_scan (128 is where
+#     it FAILs: 128 x 0.5 x 8 = 512.0 pt > 511.2 pt) and was VISUALLY CLIPPED in
+#     the 200 dpi render — the ">END" tail gone, the row ending mid-glyph at the
+#     box edge, because 127 x 4.45 = 565 pt of bold 'x' cannot fit 511.2 pt.
+# So a caller writing the line-6 explanation must SPLIT it across `6` and
+# `6.cont01`..`6.cont24`; treat ~110 characters as the safe working width per row
+# and RENDER before filing, because the scan will not catch a wide-glyph
+# overflow. There is no field on this form that accepts a paragraph.
+#
+# CHECKBOXES: on-states were dumped from the blank's /AP /N appearance states,
+# never guessed, and each was tied to its printed label by /Rect position on the
+# rendered sweep (x,y = the widget's /Rect LOWER-LEFT corner, in PDF points):
+#   c1_1[0]  /1   x=563.6 y=590.5   section 6114 bullet
+#   c1_2[0]  /1   x=563.6 y=567.0   dual-resident 301.7701(b)-7 bullet
+#   c1_3[0]  /1   x=563.6 y=518.0   "U.S. citizen or resident or incorporated"
+#   c1_4[0]  /1   x=513.2 y=398.0   line 5 YES
+#   c1_4[1]  /2   x=549.2 y=398.0   line 5 NO
+# Five widgets on FIVE separate AcroForm fields — there is no shared-field
+# (radio) set anywhere on this form, so no SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID
+# row is needed. Note c1_4[0] and c1_4[1] are distinct field NAMES (the [0]/[1]
+# index is part of /T), not kids of one field: nothing in the PDF makes line 5's
+# Yes and No exclusive, which is precisely the topology CONVENTIONS says "gets
+# no exemption" — hence `group: line5` on both, with `required: true` (P-003:
+# line 5 is asked of every filer and the form prints a dot leader to it).
+#
+# GROUPING DECISION THAT THE ADVERSARIAL AUDIT CHANGED. The two bullets
+# (c1_1/c1_2) look like a two-option question and were nearly grouped. They must
+# NOT be: the face prints "Check one or both of the following boxes as
+# applicable", and verify.checkbox_audit FAILs any group — required or not —
+# with MORE than one member checked. A shared group would therefore reject the
+# legitimate filing of a dual-resident taxpayer who is also disclosing under
+# section 6114, i.e. exactly the both-boxes case the form invites. So c1_1, c1_2
+# and c1_3 are three INDEPENDENT ungrouped checkboxes, and none carries
+# `required` (which of the two bullets applies depends on the position taken, so
+# a required flag on either would false-FAIL the other population). Same
+# reasoning shape as f843's lines 4a-4g / 5a-5n.
+#
+# ReadOnly (/Ff bit 1): ZERO widgets on this blank carry it — measured with
+# test_formpacks_federal._read_only_widget_names, which returned an empty set.
+# All four P-007 classes are vacuous here: nothing holds a printed constant,
+# nothing is impossible to answer, no line reads "Reserved for future use", and
+# no widget's value is owned by the form. No allowlist row is needed in
+# test_readonly_widget_mapping.py. The CONVENTIONS trap was checked rather than
+# assumed: pdfinfo reports "JavaScript: yes", but the document JavaScript is
+# three Adobe version-check entries (!ADBE::0100_VersChkStrings,
+# !ADBE::0100_VersChkVars, !ADBE::0200_VersChkCode_XFACheck) that only alert on
+# an old viewer; no widget carries an /AA action, and the AcroForm dictionary has
+# NO /CO calculation order (keys: /DA /DR /Fields /XFA /SigFlags). Nothing on
+# this form computes anything.
+#
+# ---------------------------------------------------------------------------
+# THE LAW THIS FORM IS (primary sources, each opened)
+# ---------------------------------------------------------------------------
+# IRC 6114(a): a taxpayer who "takes the position that a treaty of the United
+# States overrules (or otherwise modifies) an internal revenue law" shall
+# disclose that position on the return of tax (or a statement attached to it),
+# or, "if no return of tax is required to be filed, in such form as the
+# Secretary may prescribe". 6114(b) gives the Secretary waiver authority.
+# Treas. Reg. 301.6114-1(d)(1) is what makes THIS form the vehicle: the taxpayer
+# "must furnish ... as an attachment to the return, a fully completed Form 8833".
+# 301.6114-1(a)(1)(ii): if no return would otherwise be due, one must be filed
+# anyway for the disclosure, and it "need include only the taxpayer's name,
+# address, taxpayer identifying number, and be signed under penalties of
+# perjury (as well as the subject disclosure)".
+# IRC 6712(a): failure to meet 6114 is a $1,000 penalty ($10,000 for a C
+# corporation) "on each such failure" — the figure printed on this form's own
+# face. 6712(b) allows waiver only on reasonable cause AND good faith;
+# 6712(c) makes it additive to any other penalty.
+#
+# WHO ACTUALLY NEEDS THE FORM — the (b) list and the (c) waivers. This is the
+# half a filer gets wrong, so it is here rather than in a comment on one line.
+# 301.6114-1(b) lists eight positions for which reporting is SPECIFICALLY
+# required (nondiscrimination overriding a Code provision; USRPI gain/loss;
+# branch profits / excess interest; certain 861(a)(2)(B) / 884(f)(1)(A) and FDAP
+# positions; no-permanent-establishment; treaty-altered SOURCE; a treaty credit
+# the Code would not allow; and (b)(8) "that residency of an individual is
+# determined under a treaty and apart from the Internal Revenue Code"), and it
+# says outright that the list is not exhaustive.
+# 301.6114-1(c) then WAIVES reporting, and two waivers decide almost every case
+# in this repo's lane:
+#   (c)(1)(iv) — waived for a position "that a treaty reduces or modifies the
+#     taxation of income derived from dependent personal services, pensions,
+#     annuities, social security and other public pensions, or income derived by
+#     artistes, athletes, students, trainees or teachers". That is EVERY class
+#     calc.treaty_benefit computes for a student or teacher: student_wages,
+#     scholarship, payments_from_abroad, teacher_wages. The same bullet is
+#     printed in this revision's own instructions, page 3, under "Exceptions
+#     from reporting".
+#   (c)(2) — waived for an individual whose otherwise-reportable payments or
+#     income items do not exceed $10,000 in the aggregate for the taxable year
+#     ($100,000 where the item is reportable only by reason of (b)(8)).
+# So the live-session case that motivated this pack — a US-China Article 20(c)
+# $5,000 student-wage exemption — is waived TWICE OVER: by (c)(1)(iv) as income
+# derived by a student, and independently by (c)(2) at $5,000 < $10,000. Filing
+# Form 8833 for it is permitted and often asked for by a payroll department, but
+# it is NOT what section 6114 requires, and telling a filer otherwise is wrong
+# law. Other waivers worth knowing: (c)(3) closing-agreement items, (c)(4) a
+# position already disclosed by a partnership/trust/estate on its own return,
+# (c)(5) withholding agents, and (c)(6)-(c)(8) the Form 1042-S waivers — each of
+# which is expressly turned OFF for amounts the Form 8833 instructions
+# specifically require (see (c)(6)(ii), (c)(7)(iv), (c)(8)(ii), and the
+# instructions' "Reporting specifically required by Form 8833 instructions",
+# page 4).
+#
+# THE 7701(b) HALF HAS NO WAIVER. IRC 7701(b)(1)(A) makes an alien a US resident
+# by green card, substantial presence, or first-year election. Treas. Reg.
+# 301.7701(b)-7(a)(1) defines a "dual resident taxpayer" (resident of the US
+# under US law and of a treaty country under its law), (b) requires that filer
+# to "make a return on Form 1040NR" with a statement attached, and (c)(1)(i)
+# says that statement "must be in the form of a fully completed Form 8833". No
+# 301.6114-1(c) waiver reaches it. Together with (b)(8) — a residency position
+# determined under the treaty — these are the cases in this repo's population
+# that genuinely require the form. Note the "Note:" printed on page 1 and the
+# instructions' "Termination of U.S. Residency" (page 4): a dual-resident who is
+# also a long-term resident and elects foreign residence is deemed to have
+# expatriated under section 877A and must file Form 8854. residency.py already
+# surfaces that tie-breaker path; this pack is the form it points at.
+#
+# ---------------------------------------------------------------------------
+# relations / cross_form / signature / mailing
+# ---------------------------------------------------------------------------
+# relations: [] — the form face carries NO arithmetic. There is nothing to
+# invent: every entry is a fact or free prose (a country, an article, Code
+# sections, a payor block, an LOB provision, one Yes/No, and the explanation),
+# there is not a single "add", "subtract" or "enter the amount from" anywhere on
+# page 1, and the only dollar figure printed on the form is the $1,000 /
+# $10,000 section 6712 penalty, which is not a filer entry at all. This is a
+# legitimate empty, stated rather than fabricated.
+# cross_form: [] — the form prints "Attach to your tax return" and the
+# instructions name the parent (page 4: "Attach Form 8833 to your tax return
+# (Form 1040-NR, Form 1120-F, etc.)"), but attachment is not a printed EQUALITY
+# between two lines, and no line of this form restates a numbered line of the
+# 1040/1040-NR. In particular the treaty-exempt amount that lands on Form
+# 1040-NR line 1k / Schedule OI item L is not printed anywhere on Form 8833 as
+# its own line — line 6 asks for it inside free prose ("the nature and amount
+# (or a reasonable estimate) ... for which the treaty benefit is claimed"), and
+# a relation over prose is not checkable.
+# signature: null — page 1 has no signature block: no "Sign Here" area, no
+# signature or date rule, and (confirmed on the render) no widget anywhere near
+# the footer. The form is a statement attached to a return that carries the
+# signature. When no return would otherwise be due, 301.6114-1(a)(1)(ii) makes
+# the RETURN the thing signed under penalties of perjury, not this form.
+# mailing: null — there is no fixed 8833 address. The instructions (page 4,
+# "When and Where To File") route it to the parent return, and for a filer with
+# no other return "at the IRS Service Center where you would normally file a
+# return", which is state- and form-dependent. Deliberately NOT taken from
+# Treas. Reg. 301.7701(b)-7(b), which still prints "Internal Revenue Service
+# Center, Philadelphia, PA 19255" — stale regulation text that the form's own
+# current instructions supersede; pinning it here would be a P-002-shaped
+# wrong-address hazard.
+#
+# identity_fields: name, identifying_number, mailing_address. The header prints
+# "Name" as ONE box (not first/last, unlike Form 8843), "U.S. taxpayer
+# identifying number", and "Address in the United States" — the filer's US
+# mailing address, so it carries the mailing_address id and participates in the
+# P-002 confirmed-address check, exactly as f8843's does. "Address in country of
+# residence" is home_country_address, which verify's _FILER_ADDR_EXCLUDE
+# correctly keeps OUT of that check. "Reference ID number" is not identity: the
+# instructions (page 4) say it is a number a US person assigned to a FOREIGN
+# CORPORATION for Form 5471/5472 reporting, so it is blank on every individual
+# filing and must never be compared across forms.
+#
+# VISION AUDIT. All five pages of the blank were rendered at 200 dpi and read;
+# then the full sentinel sweep (every text widget filled with its own field
+# name, every checkbox checked) was rendered at 200 dpi and read page by page.
+# What it caught, and what it confirmed:
+#   - CAUGHT: line 6 is 25 widgets, not the one multiline box a field-name dump
+#     ("f1_12 ... f1_36") makes it look like, and f1_12 is a SHORT 252 pt tail
+#     of an instruction row rather than a full-width row like the other 24. A
+#     map that treated the block as one field, or that gave f1_12 a full-width
+#     capacity, would have clipped a real explanation.
+#   - CAUGHT: f1_8 (line 2) and f1_9 (line 3) sit at the SAME vertical band in
+#     two different columns; ordering by field number alone would have swapped
+#     them. The render puts f1_8's sentinel under the left-column line-2 prose
+#     and f1_9's at the top of the right-column line-3 box.
+#   - CAUGHT (grouping): the both-boxes case above.
+#   - CAUGHT (engine, not pack): clipping_scan is wrong in BOTH directions on
+#     this form — it false-FAILs the three multiline boxes on realistic address
+#     values that the render shows wrapping cleanly, and it PASSED a
+#     127-character wide-glyph line-6 row that the render shows clipped. Both
+#     measured (see the two paragraphs above); both left as engine issues rather
+#     than papered over in this pack.
+#   - CONFIRMED: with BOTH bullet boxes checked at once — the dual-resident filer
+#     who is also disclosing under section 6114 — verify_form reports zero FAILs,
+#     which is the no-group decision proved by execution rather than argued.
+#   - CONFIRMED: line 5 answered NO alone satisfies the required `line5` group
+#     while the Yes box stays empty, and the two boxes render in printed order
+#     (Yes at x=513.2, No at x=549.2).
+#   - CONFIRMED: all five checkbox sentinels landed inside their printed boxes,
+#     1a/1b did not swap, and the three multiline boxes render top-aligned inside
+#     their rules.
+#
+# SECOND, INDEPENDENT AUDIT (2026-08-27, different reader, fresh download). The
+# map above was re-derived from scratch rather than re-read: source_url was
+# fetched again (94,455 bytes, sha256 e678fe7c... — identical to the pin and to
+# the warm-cache copy), all five pages were re-rendered at 200 dpi and read, and
+# every widget was re-introspected (47 get_fields nodes = 41 terminals + 6
+# containers; 36 /Tx + 5 /Btn; all page 1; /Ff 8388608 x32, 8392704 x3, absent on
+# f1_2 and the five checkboxes; /MaxLen only f1_2 = 11; zero ReadOnly; no /AA; no
+# AcroForm /CO). A fresh sentinel sweep was rendered and read: every claim above
+# reproduced, including the f1_8 / f1_9 column order and the 24-rules-24-names
+# line-6 count. Two of its numbers are now MEASURED rather than estimated, by
+# counting ink in the 300 dpi render:
+#   - a 127-character row of bold lowercase 'x' renders as 115 glyph clusters
+#     ending flush at the 576.0 pt box edge — i.e. ~12 characters are silently
+#     LOST while clipping_scan PASSES the row (127 x 0.5 x 8 = 508 <= 511.2). The
+#     pack's "~110 characters is the safe working width" advice is the right
+#     conservative reading of that; ~115 is the measured wide-glyph ceiling.
+#   - an ordinary-prose row of 116 characters ends at 517.7 pt, 58 pt clear of
+#     the edge, which is what makes ~127 characters of prose fit with ~15 pt to
+#     spare.
+# The multiline false-FAIL reproduced too: a 78-character "Address in the United
+# States" FAILs clipping_scan while the render shows it wrapped, ink ending at
+# 520.4 pt inside a 576.0 pt box. Both remain ENGINE issues (clipping_scan is not
+# multiline-aware and uses a 0.5 em advance for a 0.556 em font), not pack issues.
+#
+# WHAT NOW PINS THE TWO DECISIONS THIS AUDIT TURNED ON. The grouping calls above
+# were prose-only until 2026-08-27 and are now enforced, because a later
+# "tidy-up" that grouped the two bullets would look like an improvement and would
+# reject a legitimate dual-resident-plus-6114 filing. See
+# test_f8833_line5_is_grouped_while_the_two_bullets_are_deliberately_not and
+# test_f8833_blank_is_the_rev_12_2022_layout_it_was_mapped_against in
+# packages/core/tests/test_formpacks_federal.py: the first pins every checkbox's
+# field/on_state/group/required, the separate-field topology, and by execution
+# that Yes+No raises while both bullets together do not; the second pins, against
+# the official blank, the zero-ReadOnly fact, the 41-widget 1:1 map, the sole
+# /MaxLen, the five real on-states, and line 6's 252.0 / 24 x 511.2 pt geometry
+# with its DoNotScroll and Multiline bits. Both were proved to bite by reverting
+# each decision in turn and watching them fail.
+form: "8833"
+jurisdiction: federal
+tax_year: 2023
+source_url: https://www.irs.gov/pub/irs-pdf/f8833.pdf
+pdf_sha256: "e678fe7cb1042cc6c388a2c1b44ff5cc9e262c939465f9c2fffdbb33c653f5ff"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- Header block (printed above line 1; no printed line numbers) ----------
+  # "Name" — ONE box on this form.
+  - { line: "name", field: "Page1[0].f1_1[0]", type: text }
+  # "U.S. taxpayer identifying number" — widget /MaxLen 11 (fits a dashed
+  # SSN/ITIN), Q=1 centred, NOT a comb. Instructions p. 4: an individual's is
+  # the SSN or ITIN; everyone else's is the EIN.
+  - { line: "identifying_number", field: "Page1[0].f1_2[0]", type: text, maxlen: 11 }
+  # "Reference ID number, if any (see instructions)" — foreign corporations
+  # only (a number a U.S. person assigned for Form 5471/5472 reporting).
+  - { line: "reference_id_number", field: "Page1[0].f1_3[0]", type: text }
+  # "Address in country of residence" — MULTILINE widget. Instructions p. 4:
+  # enter city, province or state, and country, in that order, and do NOT
+  # abbreviate the country name.
+  - { line: "home_country_address", field: "Page1[0].f1_4[0]", type: text }
+  # "Address in the United States" — MULTILINE widget; the filer's U.S.
+  # mailing address (P-002), hence the mailing_address identity id.
+  - { line: "mailing_address", field: "Page1[0].f1_5[0]", type: text }
+  # ---- "Check one or both of the following boxes as applicable." -------------
+  # THREE independent checkboxes: deliberately NO shared group and NO required
+  # flag on the first two (see the grouping-decision paragraph in the banner —
+  # a group would FAIL the legitimate both-boxes dual-resident filing).
+  - { line: "disclosure.section_6114", field: "Page1[0].BulletedList1[0].Bullet1[0].c1_1[0]", type: checkbox, on_state: "/1" }   # disclosing as required by section 6114
+  - { line: "disclosure.dual_resident", field: "Page1[0].BulletedList1[0].Bullet2[0].c1_2[0]", type: checkbox, on_state: "/1" }  # dual-resident taxpayer, Regs. section 301.7701(b)-7
+  # "Check this box if the taxpayer is a U.S. citizen or resident or is
+  # incorporated in the United States" — its own printed row, its own question.
+  - { line: "us_person", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1" }
+  # ---- 1 Enter the specific treaty position relied on ------------------------
+  - { line: "1a", field: "Page1[0].Lines1-2_ReadOrder[0].f1_6[0]", type: text }   # a Treaty country
+  - { line: "1b", field: "Page1[0].Lines1-2_ReadOrder[0].f1_7[0]", type: text }   # b Article(s)
+  # ---- 2 List the Internal Revenue Code provision(s) overruled or modified ---
+  #      by the treaty-based return position  (left column)
+  - { line: "2", field: "Page1[0].f1_8[0]", type: text }
+  # ---- 3 Name, identifying number (if available to the taxpayer), and address
+  #      in the United States of the payor of the income (if fixed or
+  #      determinable annual or periodical). See instructions.  (right column,
+  #      MULTILINE.) Instructions p. 4 define FDAP: interest (other than OID),
+  #      dividends, rents, premiums, annuities, salaries, wages and other
+  #      compensation.
+  - { line: "3", field: "Page1[0].f1_9[0]", type: text }
+  # ---- 4 List the provision(s) of the limitation on benefits article (if any)
+  #      in the treaty that the taxpayer relies on to qualify for benefits
+  #      under the treaty. Instructions p. 4: NAME THE SPECIFIC TEST in the LOB
+  #      article (see Table 4, Limitation on Benefits, in the IRS tax treaty
+  #      tables); a pending competent-authority discretionary determination
+  #      does not let you claim benefits.
+  - { line: "4", field: "Page1[0].f1_10[0]", type: text }
+  # ---- 5 Is the taxpayer disclosing a treaty-based return position for which
+  #      reporting is specifically required pursuant to Regulations section
+  #      301.6114-1(b)?   Yes / No
+  #      Separate AcroForm fields, so `group` is the ONLY thing making them
+  #      exclusive (CONVENTIONS, P-008); asked of every filer, so required.
+  - { line: "5.yes", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1", group: line5, required: true }
+  - { line: "5.no", field: "Page1[0].c1_4[1]", type: checkbox, on_state: "/2", group: line5 }
+  # 'If "Yes," enter the specific subsection(s) of Regulations section
+  # 301.6114-1(b) requiring reporting' — a narrow 64.8 pt box (~16 chars): write
+  # the subsection only, e.g. "(b)(8)". Also include the information on line 6.
+  - { line: "5.subsections", field: "Page1[0].f1_11[0]", type: text }
+  # ---- 6 Explain the treaty-based return position taken. Include a brief
+  #      summary of the facts on which it is based. Also, list the nature and
+  #      amount (or a reasonable estimate) of gross receipts, each separate
+  #      gross payment, each separate gross income item, or other item (as
+  #      applicable) for which the treaty benefit is claimed.
+  #      Instructions p. 4: EVERY taxpayer taking a treaty-based return position
+  #      must complete line 6, whether or not reporting is specifically required
+  #      under 301.6114-1(b), unless it is waived under 301.6114-1(c).
+  #      25 single-line widgets, NOT one box. `6` is the short (252 pt, ~63
+  #      chars) tail of the printed instruction row; `6.cont01`..`6.cont24` are
+  #      the 24 full-width dashed rules (511.2 pt each; ~127 chars of prose fits,
+  #      ~110 is the safe working width — see the banner). Split the explanation
+  #      across them in order: an over-long value is CLIPPED, not wrapped, and no
+  #      /MaxLen on any of them will catch it.
+  - { line: "6", field: "Page1[0].f1_12[0]", type: text }
+  - { line: "6.cont01", field: "Page1[0].f1_13[0]", type: text }
+  - { line: "6.cont02", field: "Page1[0].f1_14[0]", type: text }
+  - { line: "6.cont03", field: "Page1[0].f1_15[0]", type: text }
+  - { line: "6.cont04", field: "Page1[0].f1_16[0]", type: text }
+  - { line: "6.cont05", field: "Page1[0].f1_17[0]", type: text }
+  - { line: "6.cont06", field: "Page1[0].f1_18[0]", type: text }
+  - { line: "6.cont07", field: "Page1[0].f1_19[0]", type: text }
+  - { line: "6.cont08", field: "Page1[0].f1_20[0]", type: text }
+  - { line: "6.cont09", field: "Page1[0].f1_21[0]", type: text }
+  - { line: "6.cont10", field: "Page1[0].f1_22[0]", type: text }
+  - { line: "6.cont11", field: "Page1[0].f1_23[0]", type: text }
+  - { line: "6.cont12", field: "Page1[0].f1_24[0]", type: text }
+  - { line: "6.cont13", field: "Page1[0].f1_25[0]", type: text }
+  - { line: "6.cont14", field: "Page1[0].f1_26[0]", type: text }
+  - { line: "6.cont15", field: "Page1[0].f1_27[0]", type: text }
+  - { line: "6.cont16", field: "Page1[0].f1_28[0]", type: text }
+  - { line: "6.cont17", field: "Page1[0].f1_29[0]", type: text }
+  - { line: "6.cont18", field: "Page1[0].f1_30[0]", type: text }
+  - { line: "6.cont19", field: "Page1[0].f1_31[0]", type: text }
+  - { line: "6.cont20", field: "Page1[0].f1_32[0]", type: text }
+  - { line: "6.cont21", field: "Page1[0].f1_33[0]", type: text }
+  - { line: "6.cont22", field: "Page1[0].f1_34[0]", type: text }
+  - { line: "6.cont23", field: "Page1[0].f1_35[0]", type: text }
+  - { line: "6.cont24", field: "Page1[0].f1_36[0]", type: text }
+
+# No arithmetic is printed on the form face, and no printed equality links a
+# line of this form to a line of another form in the filing (see the banner).
+relations: []
+cross_form: []
+
+identity_fields: [name, identifying_number, mailing_address]
+
+# No signature block on the form; the parent return carries the signature.
+signature: null
+# No fixed where-to-file: the form rides the parent return's envelope.
+mailing: null

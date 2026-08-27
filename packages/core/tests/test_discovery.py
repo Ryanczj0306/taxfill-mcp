@@ -25,8 +25,14 @@ def test_list_all_packs():
     # hsa_deduction op and the 1099-SA/5498-SA DocSpecs) = 99,
     # + f8949 x 2023/2024/2025 (Phase I3, 2026-08-26 — Schedule D's DETAIL form,
     # without which a filer with stock sales could not assemble a return) = 102,
+    # + the Phase I4 visa-status set x 2023/2024/2025 (2026-08-27): f8833 (the
+    # section 6114 treaty disclosure calc.treaty_benefit could not help a filer
+    # file), f1116 (foreign tax credit) and f8938 (specified foreign financial
+    # assets) = 111. FinCEN 114 ships alongside as a hand_fill worksheet, so it
+    # adds 3 handfill.yaml and ZERO pack.yaml — that asymmetry is the point of the
+    # worksheet form (FBAR is e-filed to FinCEN, not attached to the return),
     # plus the state packs, pinned separately below.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 102
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 111
 
     # State packs. 42 for TY2023 (the C1 resident sweep: 38 states/DC with an
     # AcroForm pack — CA ships 4 — while HI/CT/NM/SC are hand-fill worksheets
@@ -45,7 +51,7 @@ def test_list_all_packs():
     assert len([s for s in states if s.tax_year == 2025]) == 5
     # Every discovered pack is one or the other, so the total is the sum. This
     # catches a pack landing under a third top-level jurisdiction unnoticed.
-    assert len(allf) == 102 + 61 == 163
+    assert len(allf) == 111 + 61 == 172
 
 
 def test_list_filters_by_jurisdiction_and_year():

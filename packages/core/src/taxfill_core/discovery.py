@@ -47,8 +47,29 @@ def load_form_pack(
         raise FileNotFoundError(
             f"no form pack for form '{form}', {jurisdiction} {year} — looked for {path}. "
             f"Available form keys for {jurisdiction} {year}: {available or 'none'}. Use list_forms()."
+            + _handfill_hint(path, form, year, jurisdiction)
         )
     return load_pack(path)
+
+
+def _handfill_hint(path: Path, form: str, year: int, jurisdiction: str) -> str:
+    """Extra sentence when the missing pack.yaml has a handfill.yaml beside it.
+
+    Hand-fill packs are invisible to ``list_forms`` (it globs ``pack.yaml``), so
+    without this the error tells an agent the form does not exist when in fact it
+    ships — it just cannot be filled. That was survivable while every hand-fill
+    pack was a print-only STATE return; it stopped being survivable when
+    ``formpacks/federal/<year>/fincen114`` landed, because the FBAR has no
+    fillable PDF anywhere and there is nothing else for the agent to find.
+    """
+    if not (path.parent / "handfill.yaml").is_file():
+        return ""
+    return (
+        f" NOTE: '{form}' DOES ship for {jurisdiction} {year} — as a HAND-FILL pack "
+        f"({path.parent / 'handfill.yaml'}), which has no AcroForm to map, so it is absent from "
+        f"list_forms by design. Call hand_fill_worksheet('{form}', {year}, '{jurisdiction}') "
+        f"instead of fill_form."
+    )
 
 
 class FormSummary(BaseModel):
@@ -169,6 +190,7 @@ def get_form_map(
             f"no form pack for form '{form}', {jurisdiction} {year} — looked for {path}. "
             f"Available form keys for {jurisdiction} {year}: {available or 'none'}. "
             f"Use list_forms() to discover packs."
+            + _handfill_hint(path, form, year, jurisdiction)
         )
     pack = load_pack(path)
     return FormMap(

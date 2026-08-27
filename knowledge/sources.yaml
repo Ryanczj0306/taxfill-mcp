@@ -282,6 +282,33 @@ federal:
           article language (e.g. student articles) behind any treaty
           position; per-country eligibility details.
         cadence: as treaties are signed or amended (rare; check per use)
+      # The DISCLOSURE half of a treaty position. calc.treaty_benefit prices the
+      # exemption and the f8833 packs fill the form; these two URLs are where the
+      # duty and its waivers are written, so an agent can check whether the form
+      # is needed at all before telling a filer to attach one.
+      - url: https://www.irs.gov/pub/irs-pdf/f8833.pdf
+        answers: >-
+          Form 8833, Treaty-Based Return Position Disclosure Under Section 6114
+          or 7701(b), and its instructions (pages 3-5 of the same PDF): who must
+          disclose a treaty-based return position, the positions for which
+          reporting is specifically required, the "Exceptions from reporting"
+          waiver bullets (including the one covering students, trainees and
+          teachers), what each of lines 1-6 must say, the dual-resident-taxpayer
+          rules, and where to file. Revision-dated, not annual — read the printed
+          "(Rev. <month-year>)" marker on page 1.
+        cadence: on revision only (currently Rev. 12-2022; no year-stamped archive copy exists)
+      - url: https://www.ecfr.gov/current/title-26/chapter-I/subchapter-F/part-301/section-301.6114-1
+        answers: >-
+          Treas. Reg. 301.6114-1, the regulation under IRC 6114: paragraph (b)
+          lists the positions for which reporting on Form 8833 is specifically
+          REQUIRED, paragraph (c) lists the WAIVERS that decide whether a filer
+          needs the form at all — (c)(1)(iv) waives dependent-personal-services,
+          pension and student/trainee/teacher positions, (c)(2) waives an
+          individual at or under $10,000 of reportable items ($100,000 for a
+          (b)(8) residency position) — and (d)(1) is what makes a "fully
+          completed Form 8833" the required attachment. IRC 6712 sets the $1,000
+          ($10,000 for a C corporation) penalty for failing to disclose.
+        cadence: amended rarely (check the eCFR "as of" date shown on the page)
 
     # ── Dual-status year (split residency: 1040 return + 1040-NR statement) ──
     dual_status:
@@ -615,6 +642,278 @@ federal:
           RMD cannot be converted, and "No recharacterizations of conversions
           made in 2018 or later" — conversions are irreversible.
         cadence: annual (per tax year)
+
+    # Foreign tax credit + the IRC 904(j) de-minimis election (Phase I, I4).
+    # Added 2026-08-27 alongside formpacks/federal/2023/f1116 and calc op
+    # foreign_tax_credit_election. The gap was the widest wrong-law hole found
+    # so far, and it sat on the single most common international fact in a
+    # resident return — foreign tax withheld on a total-international index
+    # fund, Form 1099-DIV box 7. Reproduced before this topic was written
+    # (get_sources(..., 2023)):
+    #   "foreign tax credit"     -> foreign_earned_income (Form 2555, the
+    #                               EXCLUSION) — the credit and the exclusion are
+    #                               ALTERNATIVE treatments of foreign income, so
+    #                               that pointer sends an agent to exclude income
+    #                               it should be crediting tax on;
+    #   "foreign taxes withheld" -> nonresident_fdap (the 30% the US withholds
+    #                               FROM a nonresident) — the mirror image of tax
+    #                               a foreign country withheld from a US person;
+    #   "1099-DIV box 7"         -> ira_basis_and_roth_conversions (P-009's own
+    #                               new topic, swallowing it);
+    #   "904(j)"                 -> tax_rates_and_tables (the section 1 rate
+    #                               schedules);
+    #   "de minimis election"    -> commuter_and_fringe_benefits (the de minimis
+    #                               FRINGE);
+    #   "Form 1116", "passive category income" and "foreign tax credit without
+    #   filing Form 1116" -> clean misses.
+    # Five wrong-law pointers and three misses, all of the P-005 "Schedule NEC" /
+    # P-006 "qualified parking" kind. The year-invariant rules live in
+    # knowledge/pitfalls.yaml (P-011); the only figures are the statutory
+    # $300/$600 de-minimis amounts, which sit in each year pack's
+    # credits.foreign_tax_credit block.
+    foreign_tax_credit:
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim
+        answers: >-
+          IRC 904 — the foreign tax credit LIMITATION and the de-minimis
+          election. 904(a) caps the credit at the same proportion of US tax that
+          foreign-source taxable income bears to entire taxable income. 904(c) is
+          the carryback/carryover of excess tax paid (1 year back, 10 forward).
+          904(d) defines the separate categories (baskets), including passive
+          category income at 904(d)(2)(B). 904(j) "Certain individuals exempt" is
+          the ELECTION TO CLAIM THE FOREIGN TAX CREDIT WITHOUT FILING FORM 1116:
+          904(j)(1) turns off the 904(a) limitation AND forbids carrying tax to or
+          from any other year; 904(j)(2) sets the three conditions (all
+          foreign-source gross income is qualified passive income; creditable
+          foreign taxes "does not exceed $300 ($600 in the case of a joint
+          return)"; the individual elects it); 904(j)(3) defines qualified passive
+          income (passive under 904(d)(2)(B) without clause (iii), shown on a
+          payee statement), creditable foreign taxes (allowable under section 901
+          and shown on a payee statement), payee statement (section 6724(d)(2)),
+          and excludes estates and trusts. Added by P.L. 105-34 (1997); not
+          inflation-indexed.
+        cadence: standing statute (check for amendment)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section901&num=0&edition=prelim
+        answers: >-
+          IRC 901 — which foreign taxes are creditable at all. 901(a) allows the
+          credit only if the taxpayer "chooses to have the benefits of this
+          subpart" and only "subject to the limitation of section 904";
+          901(b)(1) covers a citizen of the United States for "any income, war
+          profits, and excess profits taxes paid or accrued during the taxable
+          year to any foreign country or to any possession of the United States".
+          901(k) is the MINIMUM HOLDING PERIOD for withholding tax on dividends —
+          the trap for a fund or share held briefly around a dividend. Read with
+          IRC 903, which extends the term to "a tax paid in lieu of a tax on
+          income, war profits, or excess profits otherwise generally imposed by
+          any foreign country or by any possession of the United States", so an
+          in-lieu-of tax is creditable too.
+        cadence: standing statute (check for amendment)
+      - url: https://www.irs.gov/pub/irs-prior/f1116--2023.pdf
+        answers: >-
+          Form 1116, Foreign Tax Credit (Individual, Estate, or Trust) — the form
+          itself, filed PER CATEGORY OF INCOME (one of boxes a-g above Part I;
+          box c is passive category income, the 1099-DIV box 7 basket). Part I
+          Taxable Income or Loss From Sources Outside the United States, three
+          country columns A/B/C plus a Total column; Part II Foreign Taxes Paid or
+          Accrued with the (j) Paid / (k) Accrued method election and the foreign
+          currency vs US dollar column halves; Part III Figuring the Credit
+          (line 14 taxes available, line 19 the foreign/total taxable-income
+          ratio, line 21 the maximum credit, line 24 the smaller of the two);
+          Part IV Summary of Credits From Separate Parts III, one line per
+          category. Line 35 is the credit and goes to Schedule 3 (Form 1040),
+          line 1. Prior revisions at irs.gov/pub/irs-prior/f1116--<year>.pdf.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/pub/irs-prior/i1116--2023.pdf
+        answers: >-
+          Instructions for Form 1116 — the authority for the ELECTION and for the
+          lines the form cannot explain itself. "Election To Claim the Foreign Tax
+          Credit Without Filing Form 1116" lists every condition and, critically,
+          what the election COSTS ("You can't carry over to or from any other year
+          any foreign taxes paid or accrued in a tax year to which the election
+          applies"), that it "isn't available to estates or trusts", that the
+          line-12 reduction still applies, and how to make it ("just enter on the
+          foreign tax credit line of your tax return (for example, Schedule 3
+          (Form 1040), Part I, line 1) the smaller of (a) your total foreign tax,
+          or (b) your regular tax"). Names the qualified payee statements: Form
+          1099-DIV, Form 1099-INT, Schedule K-1 (Form 1041), Schedule K-3 (Form
+          1065), Schedule K-3 (Form 1120-S) or similar substitute statements.
+          Part II carries the rule that makes a 1099 filer's life easy: foreign
+          tax reported in US dollars on a 1099-DIV/1099-INT need not be converted
+          into foreign currency — "Enter '1099 taxes' in Part II, column (l), and
+          complete columns (q) through (u)". Line 3f is a decimal to four places;
+          line 20 is the "regular tax"; the Worksheet for Line 18 is required when
+          the filer used the lower qualified-dividend/capital-gain rates.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/publications/p514
+        answers: >-
+          Pub 514, Foreign Tax Credit for Individuals — the narrative behind the
+          form: which foreign taxes qualify (income tax and taxes in lieu of
+          income tax, the 901(k) holding period, taxes on excluded income), the
+          credit-versus-DEDUCTION choice and that it is all-or-nothing for the
+          year, the separate categories, the carryback/carryforward mechanics with
+          worked examples, and the allocation of foreign losses and deductions
+          (the Form 1116 line 2 / 3 / 4 apportionment).
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/individuals/international-taxpayers/foreign-tax-credit
+        answers: >-
+          IRS "Foreign Tax Credit" page — the four tests a foreign tax must pass
+          to be creditable (the tax must be imposed on you, you must have paid or
+          accrued it, it must be a legal and actual foreign tax liability, and it
+          must be an income tax or a tax in lieu of an income tax), plus the
+          choice between the credit and the itemized deduction and pointers to
+          Form 1116 and Pub 514.
+        cadence: standing page (re-check each filing season)
+
+    # Foreign-ACCOUNT / foreign-ASSET REPORTING — the FBAR and Form 8938 duties
+    # (Phase I, I4). Added 2026-08-27 alongside formpacks/federal/<year>/f8938,
+    # formpacks/federal/<year>/fincen114/handfill.yaml, the top-level
+    # `foreign_account_reporting` knowledge block and calc op
+    # foreign_asset_reporting. This is a REPORTING topic, deliberately separate
+    # from foreign_tax_credit (which is about tax the filer PAID abroad) and from
+    # investment_income (which is about basis and income): the duty here exists
+    # even when no tax is owed on the account at all.
+    #
+    # The routing gap this closes was reproduced before the entry was written
+    # (get_sources(..., 2025) against the registry as it stood):
+    #   "FBAR"                                -> clean MISS
+    #   "Form 8938"                            -> clean MISS
+    #   "FinCEN Form 114"                      -> clean MISS
+    #   "report foreign accounts"              -> clean MISS
+    #   "6038D"                                -> clean MISS
+    #   "foreign asset disclosure"             -> clean MISS
+    #   "foreign bank account"                 -> other_income_and_rewards
+    #   "specified foreign financial assets"   -> investment_income
+    #   "foreign financial account"            -> investment_income
+    #   "foreign account reporting"            -> investment_income
+    # Six misses and four WRONG-LAW pointers of the P-005 "Schedule NEC" /
+    # P-006 "qualified parking" kind: "foreign bank account" landed on Pub 525's
+    # bank-BONUS doctrine, and the three "foreign financial asset" phrasings
+    # landed on Pub 550's basis-and-interest guidance. Neither says a word about
+    # a filing duty whose non-willful penalty starts at five figures.
+    foreign_asset_and_fbar_reporting:
+      - url: https://www.irs.gov/businesses/comparison-of-form-8938-and-fbar-requirements
+        answers: >-
+          IRS, "Comparison of Form 8938 and FBAR requirements" — the single page
+          that settles the question agents get wrong: the two filings are
+          SEPARATE and neither substitutes for the other ("The Form 8938 filing
+          requirement does not replace or otherwise affect a taxpayer's
+          obligation to file FinCEN Form 114"). Carries both reporting-threshold
+          ladders side by side, who must file each, the measuring period and
+          exchange-rate date for each (Form 8938 the end of the TAXABLE year, the
+          FBAR the end of the CALENDAR year), where each is filed, the penalties,
+          and the asset-by-asset "Types of foreign assets" grid showing that
+          neither is a superset of the other — signature authority and a foreign
+          BRANCH of a US bank are FBAR-only; foreign stock outside an account, a
+          foreign partnership interest and a foreign hedge fund are 8938-only;
+          directly-held foreign real estate, currency and precious metals are
+          neither. It also states the penalty exposure on each side, so "what is
+          the penalty for not reporting a foreign account?" is answerable without
+          leaving the registry: up to $10,000 plus $10,000 per 30 days after IRS
+          notice (a $60,000 maximum) on the Form 8938 side, and inflation-
+          adjusted Title 31 civil penalties on the FBAR side.
+        cadence: standing page (re-check each filing season)
+      - url: https://www.irs.gov/businesses/small-businesses-self-employed/report-of-foreign-bank-and-financial-accounts-fbar
+        answers: >-
+          IRS, "Report of Foreign Bank and Financial Accounts (FBAR)" — who must
+          file (a US person with a financial interest in or signature authority
+          over foreign accounts whose AGGREGATE value "exceeded $10,000 at any
+          time during the calendar year reported"), the accounts that need NOT be
+          reported (correspondent/nostro, governmental, IRA-held,
+          retirement-plan-held, US military banking facility, certain
+          trust-beneficiary), the spouse exception via FinCEN Form 114a, the
+          April 15 due date with the automatic October 15 extension, the
+          five-year recordkeeping list, the delinquent-FBAR path, and the two
+          sentences that decide the repo's whole approach: "You must file the
+          FBAR electronically through FinCEN's BSA E-Filing System. You don't
+          file the FBAR with your federal tax return." and "IRS will not accept
+          paper filings on TD F 90-22.1 (obsolete) or a printed FinCEN Form 114
+          (for e-filing only)." Also states that income tax filing status has NO
+          effect on the FBAR.
+        cadence: standing page (re-check each filing season)
+      - url: https://www.fincen.gov/sites/default/files/shared/FBAR%20Line%20Item%20Filing%20Instructions.pdf
+        answers: >-
+          FinCEN, "BSA Electronic Filing Requirements For Report of Foreign Bank
+          and Financial Accounts (FinCEN Form 114)" — FinCEN's OWN line-by-line
+          instructions, the document both irs.gov and fincen.gov link to as the
+          FBAR instructions. Gives the "Who Must File an FBAR" $10,000 aggregate
+          test, the maximum-account-value rule ("If the maximum account value of
+          a single account or aggregate of the maximum account values of multiple
+          accounts exceeds $10,000, an FBAR must be filed"), the P.L. 114-41
+          April 15 due date with the automatic six-month extension, the
+          weekend/holiday shift, item-by-item completion instructions for Parts
+          I-V (including the 25-or-more-accounts short form and the late-filing
+          reason codes), and the recordkeeping requirements. Release January 2017
+          (v1.4) — FinCEN publishes it by release version, not per tax year, and
+          its own cover line reads "Effective January 2017 for the 2017 or
+          earlier filing requirement", so RE-CHECK the linked version each season
+          rather than assuming the copy on disk is current.
+        cadence: on FinCEN release only (currently v1.4, January 2017)
+      - url: https://www.ecfr.gov/current/title-31/section-1010.350
+        answers: >-
+          31 CFR 1010.350, "Reports of foreign financial accounts" — the FBAR
+          regulation itself: who is a "United States person" for FBAR purposes
+          (paragraph (b), which pulls the 26 U.S.C. 7701(b) resident-alien test
+          but with 31 CFR 1010.100(hhh)'s definition of "United States"), what
+          counts as a bank / securities / other financial account (paragraph
+          (c)), the account EXCEPTIONS, what a "financial interest" is including
+          the greater-than-50-percent entity attribution (paragraph (e)), and
+          signature-or-other-authority. Read together with 31 CFR 1010.306(c)-(e)
+          for the $10,000 amount and the file-with-FinCEN rule. WARNING, and the
+          reason this row names two sections: 1010.306(c) still reads "on or
+          before June 30 of each calendar year" — the regulation was never
+          conformed to P.L. 114-41's April 15 date, so citing it alone yields a
+          deadline 2.5 months WRONG. Take the due date from the statute and
+          FinCEN's instructions, never from 1010.306(c).
+        cadence: amended rarely (check the eCFR "as of" date shown on the page)
+      - url: https://www.ecfr.gov/current/title-26/section-1.6038D-2
+        answers: >-
+          Treas. Reg. 1.6038D-2, "Requirement to report specified foreign
+          financial assets" — the FORM 8938 THRESHOLDS in their authoritative
+          form: paragraph (a)(1) $50,000 last day / $75,000 any time (the general
+          rule, which is where single, married-filing-separately, head of
+          household and qualifying surviving spouse all land), (a)(2)
+          $100,000/$150,000 for married specified individuals filing a JOINT
+          annual return, (a)(3) $200,000/$300,000 for a specified individual who
+          is "a qualified individual under section 911(d)(1)", (a)(4)
+          $400,000/$600,000 for such an individual and spouse filing jointly.
+          Also (a)(5) assets with no positive value are still reportable, (a)(6)
+          how assets excepted under 1.6038D-7(a) still COUNT toward the
+          threshold, (a)(8) reporting is required regardless of tax result, and
+          (b) what having an "interest" in an asset means. Sections 1.6038D-1
+          through -8 in the same part carry the definitions, valuation rules and
+          exceptions.
+        cadence: amended rarely (check the eCFR "as of" date shown on the page)
+      - url: https://www.irs.gov/pub/irs-prior/i8938--2021.pdf
+        answers: >-
+          Instructions for Form 8938 (Rev. November 2021) — the practitioner-side
+          restatement of the same thresholds ("Types of Reporting Thresholds",
+          which spells out the married-filing-separately and
+          specified-domestic-entity buckets the regulation leaves implicit), the
+          presence-abroad test, who is a specified individual or specified
+          domestic entity, what IS and IS NOT a specified foreign financial asset,
+          valuation and joint-interest rules, the Part IV excepted-asset forms
+          (3520, 3520-A, 5471, 8621, 8865), line-by-line guidance for lines 1-36,
+          and the "Penalties" section with the $10,000 / $10,000-per-30-days /
+          $50,000-cap ladder, the 40% IRC 6662(j) understatement rate for an
+          undisclosed foreign financial asset, the 75% fraud rate, the
+          reasonable-cause exception and the extended statute of limitations. Revision-dated, not annual — read the printed
+          "(Rev. <month-year>)" marker on page 1.
+        cadence: on revision only (currently Rev. 11-2021; irs-prior/i8938--2021.pdf is the archive copy)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title31-section5321&num=0&edition=prelim
+        answers: >-
+          31 U.S.C. 5321(a)(5) — the FBAR civil penalty: (B)(i) the non-willful
+          maximum "shall not exceed $10,000", (B)(ii) the reasonable-cause
+          exception (which ALSO requires the balance to have been "properly
+          reported"), (C) the willful maximum, raised to the greater of $100,000
+          or 50 percent of the amount under (D), and (D)(ii) that the 50 percent
+          is measured against "the balance in the account at the time of the
+          violation". Two things a reader must pair with it: 31 CFR 1010.821
+          Table 1 inflation-adjusts both maxima by ASSESSMENT DATE (for penalties
+          assessed on or after January 17, 2025: $16,536 non-willful, $165,353
+          willful), and Bittner v. United States, 598 U.S. 85 (2023) held the
+          NON-WILLFUL penalty accrues per REPORT, not per account — IRS
+          Publication 5569 (3-2022) predates Bittner and does not resolve the
+          unit.
+        cadence: on amendment (statute); the 1010.821 penalty table is re-adjusted every January
 
   change_channels:
     - url: https://www.irs.gov/newsroom
