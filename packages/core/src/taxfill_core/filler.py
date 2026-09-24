@@ -40,6 +40,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation, localcontext
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
@@ -48,6 +49,10 @@ from pypdf.generic import NameObject
 from taxfill_core.knowledge import assert_filing_grade
 from taxfill_core.redact import redact
 from taxfill_core.schemas.formpack import FormPack, PackField
+from taxfill_core.schemas.handfill import HandFillPack
+
+if TYPE_CHECKING:  # pragma: no cover - typing only; the runtime import is local (see fill_form)
+    from taxfill_core.overlay import OverlayResult
 
 # The one input-normalization format the filler understands today.
 # Add new formats here AND in the docstring of PackField.format.
@@ -322,15 +327,22 @@ def _set_checkboxes(writer: PdfWriter, updates: dict[str, tuple[str, str]]) -> N
 
 
 def fill_form(
-    pack: FormPack,
+    pack: FormPack | HandFillPack,
     values: Mapping[str, object],
     blank_pdf: str | Path,
     out_path: str | Path,
-) -> FillResult:
+) -> FillResult | OverlayResult:
     """Fill ``blank_pdf`` with ``values`` per the pack's field map; write ``out_path``.
 
+    DISPATCH: a print-only :class:`HandFillPack` (``render_mode: hand_fill``) has no
+    AcroForm to write into, so it is routed to :func:`taxfill_core.overlay.stamp_overlay`,
+    which stamps the worksheet values at the pack's ``overlay`` coordinates and returns an
+    :class:`~taxfill_core.overlay.OverlayResult` instead of a :class:`FillResult`. A
+    hand-fill pack with NO coordinates raises there, pointing at ``hand_fill_worksheet``.
+    Everything below this paragraph is the AcroForm path and is untouched by the dispatch.
+
     Args:
-        pack: the validated form pack (line -> AcroForm field map).
+        pack: the validated form pack (line -> AcroForm field map), or a hand-fill pack.
         values: logical line id -> value. Text lines take strings, money
             lines take int/float/Decimal (IRS whole-dollar rounding is
             applied; rendered as a plain integer string), checkbox lines
@@ -357,6 +369,13 @@ def fill_form(
             numbers. Checked FIRST, before any other validation, so the caller
             learns the year is unfilable before spending effort on values.
     """
+    if isinstance(pack, HandFillPack):
+        # Local import: the overlay module pulls in the worksheet engine and pypdfium2,
+        # which the AcroForm path never needs.
+        from taxfill_core.overlay import stamp_overlay
+
+        return stamp_overlay(blank_pdf, pack, values, out_path)
+
     assert_filing_grade(pack.jurisdiction, pack.tax_year, action="fill a form")
 
     blank_pdf = Path(blank_pdf)

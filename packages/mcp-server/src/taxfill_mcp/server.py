@@ -68,8 +68,15 @@ from taxfill_core import (
 from taxfill_core.discovery import get_form_map as _get_form_map, list_forms as _list_forms, load_form_pack
 from taxfill_core.extract import extract_document as _extract_document, list_document_kinds as _list_document_kinds
 from taxfill_core.fetch import fetch_blank as _fetch_blank
-from taxfill_core.handfill import hand_fill_worksheet as _hand_fill_worksheet, load_hand_fill_pack_for
+from taxfill_core.handfill import (
+    hand_fill_pack_path,
+    hand_fill_worksheet as _hand_fill_worksheet,
+    load_hand_fill_pack,
+    load_hand_fill_pack_for,
+)
 from taxfill_core.knowledge import provisional_marker
+from taxfill_core.overlay import OverlayResult, OverlayVerifyReport, verify_overlay as _verify_overlay
+from taxfill_core.schemas.handfill import HandFillPack
 from taxfill_core.estimate import IncomeSnapshot
 from taxfill_core.file_and_pay import FilingManifestItem
 from taxfill_core.residency import classify as _classify
@@ -136,6 +143,54 @@ def _report_summary(report: VerifyReport, *, recompute_ran: bool = True) -> dict
     }
 
 
+def _overlay_report_summary(report: OverlayVerifyReport, *, recompute_ran: bool = True) -> dict:
+    """The OVERLAY verdict in the same top-level shape as ``_report_summary``.
+
+    A stamped print-only form has no AcroForm fields to diff, so the sections differ:
+    ``overlay`` is the text-layer lookup of every stamped value inside its declared box,
+    ``recompute`` is the same independent recompute the AcroForm path runs (over the
+    worksheet's money lines). ``limits`` spells out what the verdict cannot see, so
+    ``ok: true`` is never read as "the page looks right" — render_form + vision remain the gate.
+    """
+    fails = [c.detail for c in report.checks if c.status == "FAIL"]
+    rc_fails = [c.detail for c in report.recompute if c.status == "FAIL"]
+    sections: dict[str, Any] = {
+        "overlay": {"checked": len(report.checks), "failed": len(fails), "failures": fails},
+        "recompute": {"checked": len(report.recompute), "failed": len(rc_fails), "failures": rc_fails},
+    }
+    if not recompute_ran:
+        sections["recompute"]["note"] = (
+            "not run — pass `independent` ({line: calc result}) to compare the worksheet's computed "
+            "money lines against the calc engine; without it this verdict proves only that the stamps "
+            "landed where the pack says"
+        )
+    return {
+        "ok": report.ok,
+        "verdict": report.verdict,
+        "form_keys": report.form_keys,
+        "page_count": report.page_count,
+        "sections": sections,
+        "hand_written_lines": [_dump(ln) for ln in report.hand_written_lines],
+        "limits": report.limits,
+    }
+
+
+def _load_any_pack(form: str, year: int, jurisdiction: str):
+    """An AcroForm pack, or — when only a ``handfill.yaml`` ships for the key — the hand-fill pack.
+
+    The four print-only states (CT ct1040, HI n11, NM pit1, SC sc1040) and the FBAR carry no
+    ``pack.yaml``; routing them here lets fetch_blank / fill_form / verify_form serve a
+    hand-fill pack that carries overlay coordinates without a 24th tool.
+    """
+    try:
+        return load_form_pack(form, year, jurisdiction)
+    except FileNotFoundError:
+        path = hand_fill_pack_path(form, year, jurisdiction)
+        if not path.is_file():
+            raise
+        return load_hand_fill_pack(path)
+
+
 def _validation_problems(exc: ValidationError) -> str:
     """PII-safe one-liner for a pydantic ValidationError: field paths + messages only.
 
@@ -172,8 +227,12 @@ def get_form_map(form: str, year: int, jurisdiction: str = "federal") -> dict:
 
 @mcp.tool()
 def fetch_blank(form: str, year: int, jurisdiction: str = "federal") -> dict:
-    """Download the official blank PDF (checksum-verified) and return its local path."""
-    pack = load_form_pack(form, year, jurisdiction)
+    """Download the official blank PDF (checksum-verified) and return its local path.
+
+    Also serves the print-only hand-fill packs (CT/HI/NM/SC): their blank is what
+    `taxfill locate <blank.pdf> --page N <label>...` reads overlay anchors from.
+    """
+    pack = _load_any_pack(form, year, jurisdiction)
     path = _fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
     return {"path": str(path), "source_url": pack.source_url, "sha256": pack.pdf_sha256}
 
@@ -184,10 +243,30 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
 
     Downloads/uses the official blank, writes the filled PDF to out_path, and returns the
     written lines + any warnings. Rejects unknown lines and comb/length violations.
+
+    PRINT-ONLY (hand-fill) packs — CT ct1040, HI n11, NM pit1, SC sc1040: when the pack carries
+    overlay coordinates the worksheet values are STAMPED onto the blank and the result is
+    `render_mode: "hand_fill_overlay"` with stamped_lines, hand_written_lines (values that still
+    must be hand-written), warnings and the full worksheet; verify_form then needs `expected` =
+    this same `values`. A hand-fill pack with no coordinates is refused with a pointer to
+    hand_fill_worksheet.
     """
-    pack = load_form_pack(form, year, jurisdiction)
+    pack = _load_any_pack(form, year, jurisdiction)
+    if isinstance(pack, HandFillPack) and not pack.has_overlay_coordinates:
+        raise ValueError(
+            f"'{form}' ({jurisdiction} {year}) is a print-only HAND-FILL pack with no overlay coordinates, so "
+            f"fill_form has nothing to stamp — call hand_fill_worksheet('{form}', {year}, '{jurisdiction}', "
+            f"values) for the line->value worksheet and hand-write it onto the printed blank "
+            f"({pack.source_url})"
+        )
     blank = _fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
     result = _fill_form(pack, values, blank, Path(out_path))
+    if isinstance(result, OverlayResult):
+        return {
+            "render_mode": "hand_fill_overlay",
+            **_dump(result),
+            "worksheet": _dump(_hand_fill_worksheet(pack, values)),
+        }
     return {"out_path": out_path, "written": result.written, "warnings": result.warnings}
 
 
@@ -210,8 +289,23 @@ def verify_form(
     This is the no-LLM-arithmetic backstop for the table-lookup lines no relation covers
     (1040 lines 12/16/19/27, 1040-NR 16). When omitted, the recompute does NOT run and the
     report's recompute section says so — relation math alone only proves internal consistency.
+
+    OVERLAY-STAMPED print-only forms (a fill_form result with render_mode "hand_fill_overlay") have
+    no AcroForm fields to diff, so the report is the OVERLAY verdict: the worksheet is recomputed
+    from `expected` (REQUIRED here — pass the same `values` you gave fill_form) and every stamped
+    value is looked up in the PDF's text layer inside its declared box; `independent` runs the same
+    recompute over the worksheet's money lines. Read `limits` — it cannot see printed art.
     """
-    pack = load_form_pack(form, year, jurisdiction)
+    pack = _load_any_pack(form, year, jurisdiction)
+    if isinstance(pack, HandFillPack):
+        if expected is None:
+            raise ValueError(
+                f"verify_form on the print-only '{form}' ({jurisdiction} {year}) needs `expected` — the same "
+                f"values dict you passed to fill_form; the worksheet is recomputed from it and each stamped "
+                f"value is checked in the PDF's text layer (there are no AcroForm fields to read back)"
+            )
+        overlay_report = _verify_overlay(pack, pdf_path, expected, independent=independent)
+        return _overlay_report_summary(overlay_report, recompute_ran=independent is not None)
     report = _verify_form(pack, pdf_path, expected=expected, independent=independent)
     return _report_summary(report, recompute_ran=independent is not None)
 

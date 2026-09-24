@@ -8,6 +8,10 @@ entered or left blank, and the filer transcribes the values onto the printed bla
 
 This is deliberately a SEPARATE path from the AcroForm filler — it produces a worksheet,
 never a filled PDF — so it adds no risk to the fillable-form pipeline and no new deps.
+Since 2026-09 a manifest line may also carry ``overlay`` coordinates; then
+:mod:`taxfill_core.overlay` stamps THIS worksheet's values onto the blank (it reuses
+:func:`hand_fill_worksheet` rather than forking the evaluator), and the lines without
+coordinates remain hand-written rows.
 """
 from __future__ import annotations
 
@@ -123,6 +127,15 @@ def _checkbox_checked(ln: HandFillLine, provided: object) -> bool:
         f"line {ln.line} ({ln.label!r}) is a checkbox — answer yes|no (or true|false); got "
         f"{redact(repr(provided))}. Omit the line to leave the box blank."
     )
+
+
+def worksheet_money_values(ws: Worksheet) -> dict[str, Decimal]:
+    """The worksheet's non-blank money lines as Decimals (for the independent recompute)."""
+    out: dict[str, Decimal] = {}
+    for ln in ws.lines:
+        if ln.type == "money" and ln.value != "":
+            out[ln.line] = Decimal(ln.value.replace(",", ""))
+    return out
 
 
 def hand_fill_worksheet(
