@@ -25,7 +25,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,218 tests** — offline 4,846 + live-.gov 372; derived
+Done and on `main` (**5,349 tests** — offline 4,969 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1243,7 +1243,7 @@ not wait for any of this.
      - as a pitfall with a regression test citing its id (`test_pitfall_coverage`);
      - at its use sites (op work string, DocSpec note, intake text), not only in a registry. This is the knowledge-gap pattern.
    - **Line numbers:** from JF6a on, no new code may type a form line number; every destination renders through `form_line(pack, key)`.
-   - **Pitfall ids** are assigned at commit time in tranche order. P-013 is N-8, and P-013 also takes LD-15's 871(k) corner. Tentative new ids: P-014 form-line-drift (JF6a), P-015 treaty-destination (JF1a), P-016 flat-rate-precondition (JF1a), P-017 residency-facts (JF5a/b), P-018 box1-standin (JF3), P-019 withholding-vs-liability (JP1a), P-020 recharacterization (JR2b), P-021 charitable-characterization (JF9), P-022 public-benefit-qualified-alien (JT1c), P-023 education-ssn-deadline (JT1e), P-024 claim-of-right (JP4).
+   - **Pitfall ids** are assigned at commit time in tranche order. P-013 is N-8, and P-013 also takes LD-15's 871(k) corner. P-014 is the handfill "no" checkbox (J0 commit C) and P-015 is form-line-drift (JF6a). Tentative new ids: P-016 treaty-destination (JF1a), P-017 flat-rate-precondition (JF1a), P-018 residency-facts (JF5a/b), P-019 box1-standin (JF3), P-020 withholding-vs-liability (JP1a), P-021 recharacterization (JR2b), P-022 charitable-characterization (JF9), P-023 public-benefit-qualified-alien (JT1c), P-024 education-ssn-deadline (JT1e), P-025 claim-of-right (JP4).
 
 **Old → new map.**
 
@@ -1354,7 +1354,7 @@ not wait for any of this.
 
 ### Block 1 — Federal filing-wrong and silent defects
 
-- [ ] **JF6a — Form-line registry, helper and guard** (S–M; deps J0) — pitfall *form-line-drift*
+- [x] **JF6a — Form-line registry, helper and guard — DONE 2026-09-24** (S–M; deps J0) — pitfall *form-line-drift* (P-015)
   - **Why.** Form line numbers are typed as literals: about 100 in calc.py alone, plus the estimate / intake / server / profile / workspace sites. They are already wrong for TY2025, for 2019/2020, and for 2026 per the posted drafts. The next tranches would add more (Schedule 1 line 8z, 1040 line 25c, 8959 Part V, Schedule SE line 8a), so the registry comes first. This is the knowledge-gap pattern: the figure ships, the year's form metadata does not. [DEF-05 + LD-17 + TY26-19]
   - **Build.**
     - A TOP-LEVEL `form_lines` block in knowledge/federal/{2019..2026}.yaml, registered in the sources-coverage mapping and typed in knowledge.py. Each entry carries `line_source: final | draft Created <date>` and the face URL.
@@ -1798,6 +1798,9 @@ not wait for any of this.
     - test_tax_calc.py:3442 asserts the wrong 2026 text; flip it.
   - **Form 1040 references.** Stale for TY2025: AGI "line 11" (now 11a), standard deduction "line 12" (12e), EIC "line 27" (27a) — calc.py:2325/2520/2530/2555/2677/2776/2810/3419-3421/3448/3501. Read the 2019 and 2021 EIC lines off their faces (the review did not).
   - **Form 8959 Part V.** The withholding reconciliation is cited as "Part IV" (calc.py:764-766, :816); it is Part V on the 2023, 2025 and 2026 faces. Read 2019–2022 before encoding.
+  - **Capital-loss destination.** `calc._capital_loss_1040_line` is a Python year table ('7a' if year >= 2025 else '7'), which is exactly what the registry replaces. The guard's field rule carries its three uses (in `_schedule_d_citation`, `_capital_loss_one_year` and `capital_loss_limitation`) as debt rows. The 2019 face sends Schedule D line 21 to Form 1040 line 6 (f1040sd--2019.pdf, read 2026-09-24); nothing prints it wrong today because capital_loss_limitation refuses years before 2022. Replace the helper with a `form_line` key read off each year's face.
+  - **Name clash.** calc.py's Schedule 1-A line model has a `form_line` field, and its line helper has a `form_line: str` parameter (calc.py:2937, :3088). Rename the parameter when calc.py imports `knowledge.form_line`. The guard's `test_form_line_in_the_guarded_modules_is_the_registry_helper` allows the class field and carries the parameter as its one `REBINDING_DEBT` row (self-clearing); it refuses every other def / assignment / import / parameter / except-as / match binding of `form_line` or `knowledge`.
+  - **Not forced by the guard.** About 50 literals sit outside the ROADMAP regex's prefixes: Schedule D lines 6/7/14/15/16/21 (incl. "Schedule D line 8b/1b/9/2" in `capital_loss_limitation`), Form 8606, Form 1116, Form 8960 line 17, "Schedule SE line 6" (calc), "Schedule C line 31" (estimate) and "Schedule 8812 line 3". JF3's Schedule SE label (`sched_se.ss_wages`) is therefore NOT guard-enforced until the prefixes widen. Other known gaps: a named %-format, a literal split across a `join`, a letter appended after a trusted field, a capitalised "Line" or a newline before "line". JF6c: widen the prefix alternation (at least Schedule SE / D / C / 8812, Forms 8606 / 1116 / 8960) once JF6b/JF6c have shrunk the debt, and pin each gap it closes with a probe.
   - **Acceptance.**
     - Parametrized over 2019–2026: the additional_medicare_tax / niit / hsa_deduction work strings equal their `form_line` values. For 2026 that is 17b + 11, 6, and 13c/13d; for 2019/2020, 8a/8b.
     - `eitc(…, 2025).work` contains "27a"; "Part V" appears wherever the face says so.

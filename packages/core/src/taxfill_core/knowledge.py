@@ -20,8 +20,11 @@ every failure tells the pack author exactly what to fix.
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from decimal import Decimal
+from functools import lru_cache
 from pathlib import Path
+from types import MappingProxyType
 from typing import Literal
 from urllib.parse import urlparse
 
@@ -1687,6 +1690,114 @@ class ContributionLimitsParams(BaseModel):
     commuter_132f: Commuter132f
 
 
+# ── Form line numbers (Phase J JF6a, pitfall P-015) ──────────────────────────
+# A printed line number is a per-year published fact, exactly like a dollar
+# figure: the IRS renumbers and re-letters lines between revisions. Schedule 1's
+# other-income line prints "8" on the 2019/2020 faces and "8z" from 2021; the
+# Form 1040-NR treaty-exempt line prints 22 (2019), 1c (2020-2021), then 1k. So
+# the numbers live in the pack, one entry per (year, key), each read off that
+# year's printed face and cited to it, and engine text renders them through
+# form_line() — never as a literal, where one string silently serves every
+# year. Top-level for the same reason as contribution_limits (a nested block
+# evades the sources-coverage meta-test), and data rather than a Python table
+# because the entries need the draft / second-pass discipline: a 2026 entry read
+# off an IRS draft says so, and JT6 re-reads every draft entry at final.
+
+_FORM_LINE_KEY_RE = re.compile(r"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$")
+# The bare designator as printed: '8', '8z', '25c', '1k', or a Part numeral
+# ('V'). No spaces, so "line 8" or "Part V" can never be stored as the value.
+_FORM_LINE_VALUE_RE = re.compile(r"^[0-9A-Za-z]{1,6}$")
+_LINE_SOURCE_RE = re.compile(r"^(final|draft Created \d{1,2}/\d{1,2}/\d{2})$")
+_ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+class FormLineEntry(BaseModel):
+    """One printed line (or Part) designator, read off one year's form face.
+
+    Exactly one of ``line`` / ``absent`` is set: a form or line that does not
+    exist in a year is recorded as such, with the reason, rather than left out.
+    Frozen, because form_line() serves entries from a cache shared by callers.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    line: str | None = Field(
+        description="The designator exactly as printed ('8', '8z', '25c'); a *_part key carries the Part "
+        "numeral ('V'). None only together with `absent`."
+    )
+    line_source: str = Field(
+        description="'final', or 'draft Created <M/D/YY>' copied from the draft's own footer stamp."
+    )
+    url: str = Field(
+        description="The face that was read: irs-prior/<form>--<year>.pdf for a final (never the moving "
+        "irs-pdf/<form>.pdf), irs-dft/<form>--dft.pdf for a draft."
+    )
+    read: str = Field(description="ISO date the face was read.")
+    printed: str | None = Field(
+        default=None,
+        description="The face's own text at the line, quoted — required with `line`, and it must show the designator.",
+    )
+    absent: str | None = Field(
+        default=None,
+        description="Why the form or line does not exist in this year (required when `line` is None).",
+    )
+    note: str = ""
+
+    @field_validator("url")
+    @classmethod
+    def _url_is_gov(cls, value: str) -> str:
+        return validate_gov_url(value)
+
+    @field_validator("line_source")
+    @classmethod
+    def _check_line_source(cls, value: str) -> str:
+        if not _LINE_SOURCE_RE.fullmatch(value):
+            raise ValueError(
+                f"line_source must be 'final' or 'draft Created <M/D/YY>' (the stamp printed in the draft's "
+                f"footer, e.g. 'draft Created 4/24/26'), got {value!r}"
+            )
+        return value
+
+    @field_validator("read")
+    @classmethod
+    def _check_read(cls, value: str) -> str:
+        if not _ISO_DATE_RE.fullmatch(value):
+            raise ValueError(f"read must be the ISO date the face was read (YYYY-MM-DD), got {value!r}")
+        return value
+
+    @model_validator(mode="after")
+    def _check_shape(self) -> "FormLineEntry":
+        if (self.line is None) == (self.absent is None):
+            raise ValueError(
+                "a form_lines entry sets exactly one of `line` (the printed designator) and `absent` (why the "
+                "form or line does not exist this year) — never both, never neither"
+            )
+        if self.line is not None:
+            if not _FORM_LINE_VALUE_RE.fullmatch(self.line):
+                raise ValueError(
+                    f"line must be the bare printed designator ('8z', '25c', 'V'), got {self.line!r} — the "
+                    f"words 'line' / 'Part' belong to the rendering text, not the value"
+                )
+            if not self.printed or not re.search(
+                rf"(?<![0-9A-Za-z]){re.escape(self.line)}(?![0-9A-Za-z])", self.printed
+            ):
+                raise ValueError(
+                    f"printed must quote the face's text at line {self.line!r} and show that designator — "
+                    f"got {self.printed!r}"
+                )
+        draft_url = "/pub/irs-dft/" in self.url
+        if self.is_draft != draft_url:
+            raise ValueError(
+                f"line_source {self.line_source!r} disagrees with url {self.url}: a draft entry cites the "
+                f"irs-dft face it was read from, and a final entry never does"
+            )
+        return self
+
+    @property
+    def is_draft(self) -> bool:
+        return self.line_source.startswith("draft")
+
+
 class TaxKnowledge(BaseModel):
     """The ``tax`` block of a knowledge pack: everything calc.py needs for one year.
 
@@ -2002,6 +2113,9 @@ class KnowledgePack(BaseModel):
     # same reason (a nested block evades the sources-coverage meta-test) and
     # because neither is tax math — both exist even when no tax is owed.
     foreign_account_reporting: ForeignAccountReportingParams | None = None
+    # Phase J item JF6a: printed line numbers, per key, read off this year's
+    # faces. Engine text reaches them only through form_line() (P-015).
+    form_lines: dict[str, FormLineEntry] | None = None
     effective_law_changes: list[EffectiveLawChange] = Field(default_factory=list)
 
     @field_validator("jurisdiction")
@@ -2013,6 +2127,32 @@ class KnowledgePack(BaseModel):
                 f"(e.g. 'states/ca'), got {value!r}"
             )
         return value
+
+    @model_validator(mode="after")
+    def _check_form_lines(self) -> "KnowledgePack":
+        # irs-prior only: irs-pdf/<form>.pdf serves whatever revision is current,
+        # so a citation to it names no year and silently becomes the next year's
+        # face. irs-prior carries the current revision too (fw4--2026.pdf).
+        final_url = re.compile(rf"^https://www\.irs\.gov/pub/irs-prior/[a-z0-9]+--{self.tax_year}\.pdf$")
+        for key, entry in (self.form_lines or {}).items():
+            if not _FORM_LINE_KEY_RE.fullmatch(key):
+                raise ValueError(
+                    f"form_lines key {key!r} must be '<form>.<role>' in lowercase snake case "
+                    f"(e.g. 'sched1.other_income', 'f8959.withholding_part')"
+                )
+            if entry.is_draft and self.provisional is None:
+                raise ValueError(
+                    f"form_lines.{key} was read off a DRAFT ({entry.line_source}) but the {self.tax_year} pack "
+                    f"is filing-grade — re-read the final face and set line_source: final before the pack "
+                    f"loses its provisional marker"
+                )
+            if not entry.is_draft and not final_url.fullmatch(entry.url):
+                raise ValueError(
+                    f"form_lines.{key} is marked final but cites {entry.url} — a final entry cites the "
+                    f"{self.tax_year} face itself: https://www.irs.gov/pub/irs-prior/<form>--{self.tax_year}.pdf "
+                    f"(not irs-pdf/<form>.pdf, which moves to the next revision when it posts)"
+                )
+        return self
 
 
 def load_knowledge(
@@ -2124,6 +2264,105 @@ def assert_filing_grade(
         f"filing-grade. Blocks deliberately absent from this pack (calc fails closed on each "
         f"rather than inventing a figure): {', '.join(marker.blocks_deliberately_absent) or 'none'}."
     )
+
+
+# ── Form-line lookup (Phase J JF6a, pitfall P-015) ───────────────────────────
+
+
+class FormLineError(LookupError):
+    """A form line the engine asked for is not recorded, or does not exist, for that year.
+
+    A LookupError rather than a ValueError on purpose: estimate.py catches
+    ValueError around whole computations, and a missing line number must stay
+    loud rather than degrade into a silent fallback.
+    """
+
+
+@lru_cache(maxsize=32)
+def _federal_form_lines(
+    base: str, year: int, mtime_ns: int, size: int
+) -> MappingProxyType[str, FormLineEntry] | None:
+    # Keyed on the file's mtime and size as well as its path, so an edited or
+    # replaced pack is re-read; the full pack is validated on every miss.
+    lines = load_knowledge("federal", year, base_dir=base).form_lines
+    return None if lines is None else MappingProxyType(dict(lines))
+
+
+def _form_lines_of(
+    pack_or_year: KnowledgePack | int, base_dir: str | Path | None
+) -> tuple[int, str, Mapping[str, FormLineEntry] | None]:
+    if isinstance(pack_or_year, KnowledgePack):
+        return pack_or_year.tax_year, pack_or_year.jurisdiction, pack_or_year.form_lines
+    if isinstance(pack_or_year, bool) or not isinstance(pack_or_year, int):
+        raise TypeError(
+            f"form_line takes a KnowledgePack or a tax year (int), got {type(pack_or_year).__name__}"
+        )
+    year = pack_or_year
+    base = Path(base_dir) if base_dir is not None else _repo_knowledge_dir()
+    try:
+        stat = (base / "federal" / f"{year}.yaml").stat()
+    except FileNotFoundError:
+        try:
+            pack = load_knowledge("federal", year, base_dir=base)  # raises its own prescriptive not-found error
+        except FileNotFoundError as exc:
+            raise FormLineError(f"no form lines for federal tax year {year}: {exc}") from exc
+        return year, "federal", pack.form_lines
+    return year, "federal", _federal_form_lines(str(base.resolve()), year, stat.st_mtime_ns, stat.st_size)
+
+
+def form_line_entry(
+    pack_or_year: KnowledgePack | int, key: str, *, base_dir: str | Path | None = None
+) -> FormLineEntry:
+    """The recorded ``form_lines`` entry for ``key`` in that year, absent-by-face entries included.
+
+    Use this to branch on whether a line exists in a year (``entry.line is None``)
+    or to key data by the bare designator (``entry.line``). For text a filer or
+    agent reads, use :func:`form_line`, which carries the draft marker.
+
+    Raises:
+        FormLineError: no pack for the year, a pack without a ``form_lines``
+            block, or no entry for ``key``.
+    """
+    year, jurisdiction, lines = _form_lines_of(pack_or_year, base_dir)
+    where = f"knowledge/{jurisdiction}/{year}.yaml"
+    if lines is None:
+        raise FormLineError(
+            f"{where} has no form_lines block, so no {key!r} line for {year} — add the block, reading each "
+            f"line off the {year} face (never type a line number into engine text; P-015)"
+        )
+    entry = lines.get(key)
+    if entry is None:
+        raise FormLineError(
+            f"{where} form_lines has no {key!r} — read the {year} face "
+            f"(https://www.irs.gov/pub/irs-prior/<form>--{year}.pdf, or irs-dft/<form>--dft.pdf for a draft), "
+            f"then add the entry with line, line_source, url, read and printed (P-015). "
+            f"Keys recorded for {year}: {', '.join(sorted(lines)) or 'none'}"
+        )
+    return entry
+
+
+def form_line(pack_or_year: KnowledgePack | int, key: str, *, base_dir: str | Path | None = None) -> str:
+    """The printed line (or Part) designator for ``key`` in that year's form, ready to embed in text.
+
+    ``pack_or_year`` is a loaded federal :class:`KnowledgePack` (what calc ops
+    already hold) or a tax year (the pack is loaded and its block cached).
+    ``form_line(2020, 'sched1.other_income')`` is ``'8'``; for 2021 it is
+    ``'8z'``. An entry read off a draft renders with the year's draft marker,
+    e.g. ``'25c (2026 DRAFT form — re-verify at final)'``; the bare designator
+    is ``form_line_entry(...).line``.
+
+    Raises:
+        FormLineError: the key is not recorded for that year (see
+            :func:`form_line_entry`), or the year's face does not have the line
+            (the entry's ``absent`` reason is quoted).
+    """
+    entry = form_line_entry(pack_or_year, key, base_dir=base_dir)
+    year = pack_or_year.tax_year if isinstance(pack_or_year, KnowledgePack) else pack_or_year
+    if entry.line is None:
+        raise FormLineError(f"{key!r} does not exist on the {year} form: {entry.absent} (face read: {entry.url})")
+    if entry.is_draft:
+        return f"{entry.line} ({year} DRAFT form — re-verify at final)"
+    return entry.line
 
 
 # ── State knowledge (dev plan section 6) ─────────────────────────────────────

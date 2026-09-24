@@ -958,6 +958,39 @@ federal:
           unit.
         cadence: on amendment (statute); the 1010.821 penalty table is re-adjusted every January
 
+    # Phase J item JF6a: the registry behind the top-level `form_lines` pack
+    # block. Before it existed, get_sources("form line numbers"), ("which line")
+    # and ("line number") all routed to ira_basis_and_roth_conversions, whose
+    # answers text walks Form 8606 line by line — one form's lines offered for a
+    # question about every form's. The durable rule (a line number is read off
+    # the year's own printed face and rendered through form_line, never typed)
+    # lives in knowledge/pitfalls.yaml (P-015). The answers text avoids the tokens
+    # "pdf" and "revision" on purpose: said twice here they out-scored the
+    # one-mention ties that "f8833.pdf", "p519.pdf" and "protocol revision"
+    # resolve to (nonresident_and_treaties among them), so those moved here.
+    form_line_numbers:
+      - url: https://www.irs.gov/prior-year-forms-and-instructions
+        answers: >-
+          IRS forms and instructions archive: the final version of each form
+          for each tax year, which is the only authority for which form line
+          number an amount goes on. Line numbers are renumbered and re-lettered
+          from one year's form to the next (one line splits into lettered
+          sub-lines, a Part moves, a whole form is redesigned), so a line number
+          is a fact of one tax year, read off that year's printed face (archived
+          finals sit under irs.gov/pub/irs-prior/, one file per form per year).
+          Each knowledge pack's form_lines block records every line it uses
+          with the face it was read from.
+        cadence: as form revisions are published (each year's finals land December to February)
+      - url: https://www.irs.gov/draft-tax-forms
+        answers: >-
+          IRS draft tax forms (under irs.gov/pub/irs-dft/): early-release
+          DRAFTS of the coming year's forms, each stamped "Created <date>" in its
+          footer and prefaced by a coversheet reading "Caution: DRAFT—NOT FOR
+          FILING". A line number read off a draft is projection-grade until the
+          final form posts, and is re-read on the final face before it backs a
+          return.
+        cadence: drafts post from spring through autumn; a later draft replaces an earlier one
+
   change_channels:
     - url: https://www.irs.gov/newsroom
       answers: >-

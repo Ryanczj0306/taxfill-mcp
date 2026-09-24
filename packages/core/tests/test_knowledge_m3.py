@@ -50,6 +50,12 @@ BLOCK_TO_REQUIRED_TOPICS = {
     # key containing "account" stole "bank account bonus income" from
     # other_income_and_rewards (P-005's own pinned query) on the first attempt.
     "foreign_account_reporting": ("foreign_asset_and_fbar_reporting",),
+    # Phase J item JF6a: the printed line numbers engine text renders through
+    # form_line() (P-015). The topic key names the question ("which line
+    # number?"), and its answers text deliberately avoids the contiguous phrase
+    # "prior year": the first draft had it, and every "prior year ..." query
+    # (the safe-harbor ones included) moved onto this topic.
+    "form_lines": ("form_line_numbers",),
 }
 
 

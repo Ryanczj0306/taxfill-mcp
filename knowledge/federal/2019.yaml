@@ -915,3 +915,68 @@ foreign_account_reporting:
       "How are maximum account or asset values determined and reported?"). For a
       calendar-year filer they coincide; for a fiscal-year filer they do not, and
       the FBAR's reporting period stays the calendar year regardless.
+
+# ── Form line numbers (Phase J JF6a, pitfall P-015) ─────────────────────────
+# Every form line number engine text prints for 2019 comes from HERE, through
+# knowledge.form_line(pack_or_year, key) — never typed into calc.py /
+# estimate.py / intake.py / server.py, where one literal silently serves every
+# year (packages/core/tests/test_form_lines.py fails on a new one). Each value
+# was read off the 2019 face at its `url` and quoted in `printed`;
+# `line_source` says whether that face is a final or an IRS draft (with the
+# draft's own "Created" stamp), and form_line() renders a draft entry with a
+# "(<year> DRAFT form — re-verify at final)" marker. A key whose form or line
+# does not exist in the year carries `line: null` plus an `absent` reason
+# instead of being left out.
+# JF6a records only the keys JF1a / JF3 / JF4 consume; JF6b / JF6c add the rest,
+# each reading the faces for the keys it adds.
+form_lines:
+  sched1.other_income:
+    line: "8"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040s1--2019.pdf"
+    read: "2026-09-24"
+    printed: "8 Other income. List type and amount"
+    note: >-
+      One undivided line on this face — the next line reads "9 Combine lines 1
+      through 8". The lettered 8a-8z breakdown first prints on the 2021 revision.
+  f1040nr.treaty_exempt:
+    line: "22"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040nr--2019.pdf"
+    read: "2026-09-24"
+    printed: "22 Total income exempt by a treaty from page 5, Schedule OI, item L (1(e))"
+    note: >-
+      The pre-2020 long Form 1040-NR, whose Schedule OI is page 5 of the form.
+      Reported, not added: "23 Combine the amounts in the far right column for
+      lines 8 through 21".
+  f8959.withholding_part:
+    line: "V"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f8959--2019.pdf"
+    read: "2026-09-24"
+    printed: "Part V Withholding Reconciliation"
+    note: >-
+      Part V line 24: "Total Additional Medicare Tax withholding. Add lines 22 and
+      23. Also include this amount with federal income tax withholding on Form
+      1040 or 1040-SR, line 17".
+  f1040.additional_medicare_withholding:
+    line: "17"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040--2019.pdf"
+    read: "2026-09-24"
+    printed: "17 Federal income tax withheld from Forms W-2 and 1099"
+    note: >-
+      Form 8959 (2019) Part V line 24 sends its total "with federal income tax
+      withholding on Form 1040 or 1040-SR, line 17". This face has one withholding
+      line; the 25a/25b/25c split starts in 2020.
+  sched_se.ss_wages:
+    line: "8a"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040sse--2019.pdf"
+    read: "2026-09-24"
+    printed: "8a Total social security wages and tips (total of boxes 3 and 7 on Form(s) W-2) and railroad retirement (tier 1) compensation. If $132,900 or more, skip lines 8b through 10, and go to line 11"
+    note: >-
+      Printed in Section B—Long Schedule SE, Part I; Section A—Short Schedule SE
+      has no wage line. W-2 boxes 3 and 7, not box 1. Through line 8d it comes off
+      the line 7 maximum ("9 Subtract line 8d from line 7"), which is what leaves
+      less of the wage base for self-employment earnings.

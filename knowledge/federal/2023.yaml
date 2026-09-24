@@ -936,3 +936,65 @@ foreign_account_reporting:
       "How are maximum account or asset values determined and reported?"). For a
       calendar-year filer they coincide; for a fiscal-year filer they do not, and
       the FBAR's reporting period stays the calendar year regardless.
+
+# ── Form line numbers (Phase J JF6a, pitfall P-015) ─────────────────────────
+# Every form line number engine text prints for 2023 comes from HERE, through
+# knowledge.form_line(pack_or_year, key) — never typed into calc.py /
+# estimate.py / intake.py / server.py, where one literal silently serves every
+# year (packages/core/tests/test_form_lines.py fails on a new one). Each value
+# was read off the 2023 face at its `url` and quoted in `printed`;
+# `line_source` says whether that face is a final or an IRS draft (with the
+# draft's own "Created" stamp), and form_line() renders a draft entry with a
+# "(<year> DRAFT form — re-verify at final)" marker. A key whose form or line
+# does not exist in the year carries `line: null` plus an `absent` reason
+# instead of being left out.
+# JF6a records only the keys JF1a / JF3 / JF4 consume; JF6b / JF6c add the rest,
+# each reading the faces for the keys it adds.
+form_lines:
+  sched1.other_income:
+    line: "8z"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040s1--2023.pdf"
+    read: "2026-09-24"
+    printed: "8z Other income. List type and amount: … 9 Total other income. Add lines 8a through 8z"
+    note: >-
+      The catch-all "z" item under "8 Other income:"; the lettered lines above it
+      name specific kinds of other income, and line 9 totals 8a through 8z.
+  f1040nr.treaty_exempt:
+    line: "1k"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040nr--2023.pdf"
+    read: "2026-09-24"
+    printed: "1k Total income exempt by a treaty from Schedule OI (Form 1040-NR), item L, line 1(e)"
+    note: >-
+      Reported, not added: "z Add lines 1a through 1h" (line 1z), and line 9 adds
+      1z.
+  f8959.withholding_part:
+    line: "V"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f8959--2023.pdf"
+    read: "2026-09-24"
+    printed: "Part V Withholding Reconciliation"
+    note: >-
+      Part V line 24: "Total Additional Medicare Tax withholding. Add lines 22 and
+      23. Also include this amount with federal income tax withholding on Form
+      1040, 1040-SR, or 1040-NR, line 25c".
+  f1040.additional_medicare_withholding:
+    line: "25c"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040--2023.pdf"
+    read: "2026-09-24"
+    printed: "25 Federal income tax withheld from: … c Other forms (see instructions) 25c"
+    note: >-
+      Form 8959 (2023) Part V line 24 sends its total "with federal income tax
+      withholding on Form 1040, 1040-SR, or 1040-NR, line 25c".
+  sched_se.ss_wages:
+    line: "8a"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040sse--2023.pdf"
+    read: "2026-09-24"
+    printed: "8a Total social security wages and tips (total of boxes 3 and 7 on Form(s) W-2) and railroad retirement (tier 1) compensation. If $160,200 or more, skip lines 8b through 10, and go to line 11"
+    note: >-
+      W-2 boxes 3 and 7, not box 1. Through line 8d it comes off the line 7
+      maximum ("9 Subtract line 8d from line 7"), which is what leaves less of the
+      wage base for self-employment earnings.

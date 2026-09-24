@@ -932,3 +932,100 @@ pitfalls:
       handfill.yaml (all boxes answered no/False/"0"/"off" come back empty,
       all answered yes come back "X"); and
       test_money_zero_never_renders_as_negative_zero.
+  - id: P-015
+    incident: >-
+      Form line numbers were typed into engine text as string literals, so one
+      string served every tax year while the IRS renumbers lines between
+      revisions. The knowledge packs carried each year's dollar figures but not
+      the year's line numbers, the repo's knowledge-gap pattern again. At the
+      JF6a baseline (2026-09-24) the guard found 135 occurrences in 114
+      (module, scope, literal) rows: calc.py 118 in 97 rows, server.py 8,
+      estimate.py 5 and intake.py 4. Two shapes hid from the first cuts of the
+      guard. One was a year branch typed inside an f-string replacement field,
+      calc.excess_ss's "(Schedule 3{', line 10 in 2020' if year == 2020 else
+      ' line 11'})", which read as "{}". The other was a line number moved out
+      of the string into a Python year table, calc._capital_loss_1040_line
+      ('7a' if year >= 2025 else '7'), rendered at three sites (two as "Form
+      1040 line {...}", one as "Form 1040, 1040-SR, or 1040-NR, line {...}"). It is wrong for 2019, whose Schedule D line 21 goes to Form
+      1040 line 6, and the ROADMAP regex cannot see it. Reading the
+      faces for just five keys showed two literals the engine prints today to
+      be wrong, and a third line with no literal that is right for every
+      year. The treaty text (the estimate_refund treaty_exempt_income description and its
+      assumption, the calc and server treaty_benefit docs) says "Form 1040-NR
+      line 1k" for every year, but the 2019 Form 1040-NR prints the line as 22
+      and the 2020 and 2021 faces print it as 1c. calc.additional_medicare_tax
+      says employer box-6 excess withholding "credits against this via Part
+      IV", but Form 8959's Withholding Reconciliation is Part V on every face
+      from 2019 to the 2026 draft, and the 2026 draft also moves self-employment
+      from Part II to Part IV. And the resident-alien treaty destination that
+      JF1a must print, Schedule 1's other-income line, is "8" on the 2019 and
+      2020 faces and "8z" from 2021, so no single literal is right for every
+      shipped year. The same five keys show the drift in both directions: the
+      Form 1040 line that takes Form 8959's withholding total is 17 in 2019 and
+      25c from 2020.
+    countermeasure: >-
+      Every federal pack (2019-2026) carries a TOP-LEVEL form_lines block keyed
+      '<form>.<role>' (sched1.other_income, f1040nr.treaty_exempt,
+      f8959.withholding_part, f1040.additional_medicare_withholding,
+      sched_se.ss_wages for JF6a; JF6b and JF6c add the rest). Each entry is a
+      typed knowledge.FormLineEntry holding the bare printed designator, a
+      line_source of 'final' or 'draft Created <M/D/YY>' copied from the
+      draft's footer, the face url, the read date and a printed quote that must
+      show the designator. A form or line that does not exist in a year is
+      recorded with line null and an absent reason rather than left out. The
+      schema refuses a draft entry that does not cite an irs-dft face, a final
+      entry that does not cite that year's own irs-prior/<form>--<year>.pdf
+      face (never irs-pdf/<form>.pdf, which names no year and serves whatever
+      revision is current), and any draft entry in a filing-grade pack. Engine
+      text renders a line
+      through knowledge.form_line(pack_or_year, key), which raises FormLineError
+      (a LookupError, so estimate.py's except-ValueError blocks cannot swallow
+      it) for an unknown year, a missing block, a missing key or an absent-by-
+      face line, and appends "(<year> DRAFT form — re-verify at final)" to a
+      draft entry; form_line_entry returns the bare entry for keying data. The
+      block is registered with the sources-coverage meta-test through the new
+      form_line_numbers topic, which also ends the routing of
+      get_sources("form line numbers"), ("which line") and ("line number") to
+      the Form 8606 topic. THE DURABLE RULE: a line number is read off the
+      year's own printed face, never typed into engine text and never carried
+      from a neighbouring year; a draft's number is projection-grade until JT6
+      re-reads it on the final. Regression tests, P-015-tagged, in
+      packages/core/tests/test_form_lines.py: the per-year values for all five
+      keys against their faces (2020 is '8', 2021 is '8z', the 1040-NR line is
+      22 / 1c / 1k), the draft suffix, the unknown-year and unknown-key errors,
+      the absent-entry and cache paths, the schema refusals, and the GUARD. The
+      guard parses calc.py, estimate.py, intake.py and server.py and runs the
+      ROADMAP regex over every text each string expression can render: a
+      plain string, a docstring, and an f-string (its format specs too),
+      ternary, `or` or `+` built from literals, with each arm of a branch
+      rendered in turn. A second rule, LINE_FIELD_RE, flags the same prefixes
+      before a line number that is not typed at all: an f-string field other
+      than a form_line(...) call, a .format() template field or a positional
+      %-format. That catches a literal hoisted into a constant, a dict or a
+      helper. A companion test refuses any def, assignment, import, parameter,
+      except-as or match-pattern binding of the names form_line and knowledge
+      in the guarded modules (one frozen exception: calc.py's Schedule 1-A line
+      helper parameter, which JF6b renames), so a local name cannot launder a
+      table value through a trusted field. Known gaps, not enforced: a named
+      %-format, a literal split across a join, a letter appended after a
+      trusted field, a capitalised "Line" or a newline before "line", and
+      every prefix outside the ROADMAP regex (Schedule D / SE / C / 8812,
+      Forms 8606 / 1116 / 8960 — about 50 literals today); JF6c widens the
+      prefixes once the rewiring has shrunk the debt. No function body and no call's
+      arguments are skipped, since a form_lines key has no space and cannot
+      match. The guard compares the hits with FORM_LINE_DEBT, the frozen
+      baseline of 114 (module, scope, literal) rows covering 135 occurrences.
+      Probes pin each shape in every guarded module. A new literal fails
+      test_no_new_form_line_literal_in_engine_text, and a row whose literal is
+      gone fails test_form_line_debt_rows_still_match_the_source, so the list
+      only shrinks (JF6b empties the calc.py rows, JF6c the rest). The face
+      re-read, face_quote_problems, checks the NUMBER as well as the words,
+      because a renumbered line keeps its words. The designator must be the
+      first token after the labelling quote on the face, where pypdf puts the
+      right-margin entry box, or inside the quote for a Part. Every other
+      printed piece must be on the face, and a draft's Created stamp must
+      still be in its footer. Offline tests on verbatim face excerpts prove it
+      fails on the 2019 Schedule 1 line recorded as 8z, the 2020 Form 1040-NR
+      line recorded as 1k and the 2020 Form 1040 line recorded as 25b, with
+      the words unchanged. A network-marked test runs it on every entry's
+      face.
