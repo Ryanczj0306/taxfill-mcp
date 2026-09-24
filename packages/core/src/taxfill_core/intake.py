@@ -879,6 +879,26 @@ def _mentions_foreign_account(kind: str) -> bool:
     )
 
 
+def _mentions_1099int(kind: str) -> bool:
+    """True for an inventory entry that names Form 1099-INT ("1099-INT", "1099INT",
+    "Form 1099-INT (Chase)"). Seven characters that name the FORM — the P-012 rule,
+    never loose digits."""
+    return "1099INT" in re.sub(r"[^0-9A-Z]", "", kind.upper())
+
+
+def _records_interest_character(kind: str) -> bool:
+    """True when a 1099-INT entry records WHETHER its interest is deposit interest.
+
+    Both answers spell the word: "1099-INT (bank deposit)" and "1099-INT (not a
+    deposit — brokerage/bond interest)" each carry DEPOSIT, so one recorded answer,
+    either way, stops :func:`_income_document_questions` asking. The token is a
+    WORD, not digits, so an account number can never collide with it (P-012); a
+    payer whose name contains "deposit" is a bank, and the question it would
+    suppress is then answered by the name itself.
+    """
+    return "DEPOSIT" in re.sub(r"[^0-9A-Z]", "", kind.upper())
+
+
 def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
     if not profile.income_documents:
         out.append(_q("income_documents.inventory", "income_documents",
@@ -944,6 +964,52 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                                      "cited verdict on BOTH forms. If no, add a 'foreign account "
                                      "statement' entry with status 'not_applicable' so the interview "
                                      "records the answer and stops asking."))
+
+    # THE NONRESIDENT'S 1099-INT (N-8, P-013). The bank sends the form regardless
+    # of the payee's status, and a nonresident's interest on a US bank deposit is
+    # NOT income — IRC 871(i)(2)(A) ("interest on deposits, if such interest is not
+    # effectively connected with the conduct of a trade or business within the
+    # United States"; 871(i)(3) defines deposits), Pub 519 ch. 3 (Exclusions From
+    # Gross Income — Interest Income), Instructions for Form 1040-NR line 2b,
+    # Exception 3 — while bond/brokerage interest on the same form is taxed. The
+    # estimator models the exclusion only for interest CHARACTERIZED as deposit
+    # interest (IncomeSnapshot.bank_deposit_interest), so the character is asked
+    # here, once, for a CONFIRMED nonresident with an uncharacterized 1099-INT in
+    # the inventory (a resident's interest is all taxable — nothing to ask). The
+    # answer is recorded in the entry's kind, the same free-text convention the
+    # 1095-A and foreign-account questions use, and either answer stops the
+    # question.
+    if _residency_classification(profile, tax_year) == "nonresident":
+        uncharacterized = [
+            d for d in profile.income_documents
+            if _mentions_1099int(d.kind) and d.status != "not_applicable"
+            and not _records_interest_character(d.kind)
+        ]
+        if uncharacterized:
+            out.append(_q("income_documents.interest_character", "income_documents",
+                          "Your residency result is NONRESIDENT alien and your document inventory has a "
+                          "1099-INT. Is that interest from a DEPOSIT account — checking, savings, money market "
+                          "or CD — with a US bank, credit union or savings institution (or an amount an "
+                          "insurance company holds for you under an agreement to pay interest), and unrelated "
+                          "to any US trade or business you run? Or is it something else (bond, brokerage or "
+                          "Treasury interest)?",
+                          "For a nonresident alien, interest on US bank deposits that is not effectively "
+                          "connected with a US trade or business is NOT income: IRC 871(i)(2)(A) exempts it "
+                          "from the 30% tax and Pub 519 ch. 3 (Exclusions From Gross Income — Interest Income) "
+                          "excludes it from gross income, so it does not go on Form 1040-NR line 2b "
+                          "(Instructions for Form 1040-NR, line 2b, Exception 3). Interest that is NOT deposit "
+                          "interest gets no such exclusion — it is taxed on Schedule NEC line 2 at 30%/treaty "
+                          "rate, or as effectively connected income, unless a separate exemption such as "
+                          "portfolio interest (IRC 871(h)) applies. A §6013(g)/(h) election to file jointly "
+                          "ENDS the exclusion; the marriage itself does not.",
+                          "income_documents",
+                          disambiguation="Record the character in the 1099-INT entry's kind — e.g. "
+                                         "'1099-INT (bank deposit)' or '1099-INT (not a deposit — brokerage/bond "
+                                         "interest)' — so the interview stops asking. When running "
+                                         "estimate_refund, put the deposit portion of box 1 in BOTH `interest` "
+                                         "and `bank_deposit_interest` (the second is a subset of the first); "
+                                         "Treasury and savings-bond interest (box 3) is not a deposit and stays "
+                                         "out of bank_deposit_interest."))
 
 
 def _banking_questions(profile: Profile, out: list[IntakeQuestion]) -> None:

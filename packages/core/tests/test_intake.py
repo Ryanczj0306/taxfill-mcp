@@ -1023,3 +1023,81 @@ def test_nra_spouse_note_distinguishes_the_election_from_the_marriage():
     notes = intake_checklist(profile).notes
     assert any("ELECTION, not the marriage" in n and "871(i)" in n for n in notes)
     assert any("FICA" in n and "STATUS-based" in n for n in notes)
+
+
+# ── N-8 / pitfall P-013: the nonresident's 1099-INT — deposit or not? ──────────
+# The estimator excludes a nonresident's US bank-deposit interest (IRC
+# 871(i)(2)(A)) only when it is CHARACTERIZED, so intake asks the character once,
+# for a CONFIRMED nonresident whose inventory holds an uncharacterized 1099-INT.
+
+_INTEREST_Q = "income_documents.interest_character"
+
+
+def _confirmed_nra(*docs: IncomeDocument) -> Profile:
+    # Sample F-1: 2019-2023 are all exempt years, so the SPT fails -> nonresident.
+    return Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2019, 8, 24), provenance=US)]),
+        residency_facts=ResidencyFacts(
+            days_in_us={y: _ans(d) for y, d in {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330}.items()}
+        ),
+        income_documents=list(docs),
+    )
+
+
+def _doc(kind: str, status: str = "have") -> IncomeDocument:
+    return IncomeDocument(kind=kind, status=status, provenance=US)
+
+
+def test_p013_confirmed_nonresident_with_a_1099_int_is_asked_its_character():
+    # P-013: every spelling that names the FORM triggers the question.
+    for kind in ("1099-INT", "1099INT", "Form 1099-INT (Chase)"):
+        cl = intake_checklist(_confirmed_nra(_doc("W-2"), _doc(kind)), tax_year=2023)
+        q = next((q for q in cl.next_questions if q.id == _INTEREST_Q), None)
+        assert q is not None, kind
+        assert q.section == "income_documents"
+        assert "NONRESIDENT" in q.prompt and "DEPOSIT" in q.prompt
+        assert "871(i)(2)(A)" in q.why and "Pub 519 ch. 3" in q.why and "Exception 3" in q.why
+        assert "ENDS the exclusion; the marriage itself does not" in q.why   # N-14 / rule (c)
+        assert "871(h)" in q.why   # non-deposit interest is not ALWAYS taxed — portfolio interest
+        # The disambiguation records the answer (either way) and maps it onto the estimator.
+        assert "'1099-INT (bank deposit)'" in q.disambiguation
+        assert "'1099-INT (not a deposit" in q.disambiguation
+        assert "bank_deposit_interest" in q.disambiguation and "BOTH `interest`" in q.disambiguation
+    # A still-MISSING 1099-INT is asked too; a not_applicable one, and a
+    # different form, are not.
+    assert _INTEREST_Q in _ids(intake_checklist(_confirmed_nra(_doc("1099-INT", "missing")), tax_year=2023))
+    assert _INTEREST_Q not in _ids(intake_checklist(_confirmed_nra(_doc("1099-INT", "not_applicable")), tax_year=2023))
+    assert _INTEREST_Q not in _ids(intake_checklist(_confirmed_nra(_doc("1099-DIV")), tax_year=2023))
+
+
+def test_p013_interest_character_is_silent_for_a_resident():
+    # P-013: a resident's interest is all taxable — there is nothing to ask.
+    citizen = Profile(identity=Identity(us_person=_ans(True)), income_documents=[_doc("1099-INT")])
+    assert _INTEREST_Q not in _ids(intake_checklist(citizen, tax_year=2023))
+    # A computed RESIDENT alien (an F-1 past the exempt window) is silent too.
+    resident_f1 = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2017, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(330) for y in range(2017, 2024)}),
+        income_documents=[_doc("1099-INT")],
+    )
+    assert _INTEREST_Q not in _ids(intake_checklist(resident_f1, tax_year=2023))
+
+
+def test_p013_interest_character_stops_once_the_kind_records_it():
+    # P-013: either recorded answer spells DEPOSIT, so either one stops the question.
+    for kind in ("1099-INT (bank deposit)", "1099-INT (not a deposit — brokerage/bond interest)",
+                 "1099-INT Chase savings DEPOSIT account"):
+        assert _INTEREST_Q not in _ids(intake_checklist(_confirmed_nra(_doc(kind)), tax_year=2023)), kind
+    # ...but only per entry: a second, uncharacterized 1099-INT still asks.
+    both = _confirmed_nra(_doc("1099-INT (bank deposit)"), _doc("1099-INT (Acme Brokerage)"))
+    assert _INTEREST_Q in _ids(intake_checklist(both, tax_year=2023))
+
+
+def test_p013_an_account_number_in_the_kind_never_records_the_character():
+    # P-013, with P-012's rule applied to this matcher: the "recorded" token is a WORD, so an
+    # account or routing number an agent writes into `kind` — even one full of the
+    # form's own digits — can never silence the question.
+    for kind in ("1099-INT acct 10990023", "1099-INT acct 1099 INT 4410", "1099-INT routing 021000021"):
+        assert _INTEREST_Q in _ids(intake_checklist(_confirmed_nra(_doc(kind)), tax_year=2023)), kind

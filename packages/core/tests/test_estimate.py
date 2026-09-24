@@ -1056,7 +1056,9 @@ def test_fix1_nonresident_without_itemized_gets_zero_deduction():
 def test_fix2_nonresident_investment_income_uses_ordinary_rates_and_discloses_fdap():
     # FIX-2 repro: NRA + qualified dividends. The resident QDCGT worksheet must NOT
     # run (FDAP income is flat 30%/treaty-rate law, not preferential rates), and the
-    # ECI/FDAP + 871(i) deposit-interest caveats must be disclosed.
+    # ECI/FDAP + 871(i)(2)(A) deposit-interest disclosures must appear. The interest
+    # here is entered WITHOUT deposit character, so it is taxed and the disclosure
+    # names the amount — the old amount-less "may OVERTAX" hedge is gone (P-013 (d)).
     income = IncomeSnapshot(
         wages=18_000, federal_withholding=1_400,
         dividends=2_000, qualified_dividends=2_000, interest=2_000,
@@ -1068,7 +1070,11 @@ def test_fix2_nonresident_investment_income_uses_ordinary_rates_and_discloses_fd
     taxable = 18_000 + 2_000 + 2_000  # deduction $0 (no itemized, 1040-NR)
     assert labels["Income tax"] == tax_from_taxable_income(taxable, "single", 2023).tax
     assert any("FDAP" in a and "Schedule NEC" in a for a in est.assumptions)
-    assert any("871(i)" in a and "OVERTAX" in a for a in est.assumptions)
+    assert any(
+        "871(i)(2)(A)" in a and "$2,000 of interest was entered WITHOUT deposit character" in a
+        for a in est.assumptions
+    )
+    assert not any("OVERTAX" in a for a in est.assumptions)
     assert not any("Qualified Dividends and Capital Gain Tax Worksheet" in a for a in est.assumptions)
     # Control: the same income for a resident single filer DOES use the worksheet.
     est_res = estimate_refund(_single(), 2023, income)
@@ -1658,3 +1664,329 @@ def test_dependent_care_zero_earned_spouse_is_disclosed():
                        spouse=IncomeSnapshot()),
     )
     assert any("NO earned income" in a and "deemed" in a for a in est.assumptions)
+
+
+# ── N-8 / pitfall P-013: the §871(i)(2)(A) bank-deposit-interest exclusion ──────
+# The estimator used to tax a nonresident's whole 1099-INT and append an amount-
+# less "may OVERTAX" hedge. It now MODELS the exclusion for the characterized
+# subset (IncomeSnapshot.bank_deposit_interest) and names the amount in every
+# disclosure. Law read on the .gov texts: IRC 871(i)(1)-(3) (uscode.house.gov),
+# Pub 519 ch. 3 "Interest Income" and ch. 1 "Nonresident Spouse Treated as a
+# Resident", Instructions for Form 1040-NR (2025) line 2b Exceptions 1 and 3.
+
+_DEPOSIT_LABEL = "Less: US bank-deposit interest excluded (IRC 871(i)(2)(A) — not income to a nonresident)"
+
+
+def _deposit_line(est: RefundEstimate):
+    return next((ln for ln in est.composition if ln.slot == "deposit_interest_exclusion"), None)
+
+
+def test_p013_characterized_deposit_interest_is_excluded_for_a_nonresident():
+    # P-013: characterized deposit interest comes off a nonresident's income.
+    income = IncomeSnapshot(wages=18_000, federal_withholding=1_400, interest=900, bank_deposit_interest=900)
+    est = estimate_refund(_nra_profile(), 2023, income)
+    # The registered explanatory ledger slot carries the exclusion (effect 0 — it
+    # moves the bottom line only through Total income, like the treaty exclusion).
+    line = _deposit_line(est)
+    assert line is not None and line.label == _DEPOSIT_LABEL
+    assert line.amount == -900 and line.role == "explanatory" and line.effect == 0
+    labels = _labels(est)
+    assert labels["Total income"] == 18_000          # off BEFORE total income (1040-NR line 2b, Exception 3)
+    assert labels["Taxable income"] == 18_000        # 1040-NR: $0 itemized, never the standard deduction
+    tax = tax_from_taxable_income(18_000, "single", 2023).tax
+    assert labels["Income tax"] == tax and est.point == 1_400 - tax
+    assert sum(ln.effect for ln in est.composition) == est.point
+    # The same snapshot WITHOUT the character taxes the $900 — the exclusion is
+    # worth exactly the tax on it.
+    taxed = estimate_refund(_nra_profile(), 2023, income.model_copy(update={"bank_deposit_interest": 0}))
+    assert _labels(taxed)["Total income"] == 18_900
+    assert est.point - taxed.point == tax_from_taxable_income(18_900, "single", 2023).tax - tax > 0
+    # The disclosure names the amount and every pinpoint the exclusion rests on.
+    note = next(a for a in est.assumptions if "was EXCLUDED from income" in a)
+    assert "$900" in note
+    assert "871(i)(1)" in note and "871(i)(2)(A)" in note and "871(i)(3)" in note
+    assert "interest on deposits, if such interest is not effectively connected" in note
+    assert "Pub 519 ch. 3" in note and "line 2b, Exception 3" in note
+    assert "§6013(g)/(h) election" in note and "the election, not the marriage" in note   # rule (c) rides along
+    # Only deposit interest was entered, so neither the uncharacterized-interest note
+    # nor the FDAP "NOT modeled" note fires, and the old hedge is gone for good.
+    assert not any("WITHOUT deposit character" in a for a in est.assumptions)
+    assert not any(a.startswith("Nonresident investment income is NOT modeled") for a in est.assumptions)
+    assert not any("OVERTAX" in a for a in est.assumptions)
+
+
+def test_p013_partial_characterization_excludes_only_the_deposit_part():
+    # P-013: $900 characterized, $300 not (say, brokerage sweep interest): only the
+    # $900 comes off, and the $300 is taxed AND said to be — rule (b), never a guess.
+    est = estimate_refund(
+        _nra_profile(), 2023,
+        IncomeSnapshot(wages=18_000, federal_withholding=1_400, interest=1_200, bank_deposit_interest=900),
+    )
+    assert _deposit_line(est).amount == -900
+    labels = _labels(est)
+    assert labels["Total income"] == 18_300
+    assert est.point == 1_400 - tax_from_taxable_income(18_300, "single", 2023).tax
+    assert any("$900 was EXCLUDED from income" in a for a in est.assumptions)
+    rest = next(a for a in est.assumptions if "WITHOUT deposit character" in a)
+    assert rest.startswith("$300 of interest")
+    assert "taxed as effectively connected ordinary income" in rest
+    assert "rerun with that portion in bank_deposit_interest" in rest
+    assert "871(h)" in rest and "Schedule NEC" in rest   # the non-deposit path is named, not modeled
+    # The uncharacterized remainder is investment income the estimate does not model.
+    assert any(a.startswith("Nonresident investment income is NOT modeled") for a in est.assumptions)
+
+
+def test_p013_resident_control_taxes_all_interest_whatever_its_character():
+    # P-013 control: a resident's interest is all taxable, so the field changes
+    # NOTHING — no ledger line, no disclosure, the same bottom line as without it.
+    income = IncomeSnapshot(wages=18_000, federal_withholding=1_400, interest=900, bank_deposit_interest=900)
+    est = estimate_refund(_single(), 2023, income)
+    plain = estimate_refund(_single(), 2023, income.model_copy(update={"bank_deposit_interest": 0}))
+    assert _deposit_line(est) is None
+    assert _labels(est)["Total income"] == 18_900
+    assert est.point == plain.point == _independent_refund(18_900, 1_400, "single")
+    assert [ln.model_dump() for ln in est.composition] == [ln.model_dump() for ln in plain.composition]
+    assert not any("871(i)" in a or "bank_deposit_interest" in a for a in est.assumptions)
+
+
+def test_p013_uncharacterized_interest_is_taxed_with_the_note():
+    # P-013 rule (b): no character entered, so nothing is excluded on the guess that a
+    # student's interest is probably from a bank — it is taxed, and the note says how to move it.
+    est = estimate_refund(_nra_profile(), 2023, IncomeSnapshot(wages=18_000, federal_withholding=1_400, interest=900))
+    assert _deposit_line(est) is None
+    assert _labels(est)["Total income"] == 18_900
+    assert est.point == 1_400 - tax_from_taxable_income(18_900, "single", 2023).tax
+    note = next(a for a in est.assumptions if "WITHOUT deposit character" in a)
+    assert note.startswith("$900 of interest")
+    assert "IRC 871(i)(2)(A) excludes it" in note and "rerun with that portion in bank_deposit_interest" in note
+    assert not any("was EXCLUDED from income" in a for a in est.assumptions)
+    assert not any("OVERTAX" in a for a in est.assumptions)
+
+
+def test_p013_confirmed_mfj_election_taxes_deposit_interest_and_says_why():
+    # P-013 rule (c): a nonresident reaches MFJ only through the §6013(g)/(h) election, which treats
+    # both spouses as residents for the whole year (Pub 519 ch. 1): the exclusion is
+    # OFF and the disclosure says the ELECTION — not the marriage — ended it.
+    income = IncomeSnapshot(wages=18_000, federal_withholding=1_400, interest=1_200, bank_deposit_interest=900)
+    mfj = estimate_refund(
+        _nra_profile(marital="married", filing_status=_ans("married_filing_jointly")), 2023, income
+    )
+    assert _deposit_line(mfj) is None
+    assert _labels(mfj)["Total income"] == 19_200
+    election = next(a for a in mfj.assumptions if "was NOT excluded" in a)
+    assert "$900 of bank_deposit_interest" in election
+    assert "treated for income tax purposes as residents for your entire tax year" in election
+    assert "Pub 519 ch. 1" in election and "ELECTION, not the marriage" in election
+    assert not any("was EXCLUDED from income" in a for a in mfj.assumptions)
+    # The uncharacterized $300 gets the ELECTION variant of its note: under the
+    # election character no longer matters, so "871(i)(2)(A) excludes it — rerun"
+    # would contradict the disclosure above (the defect this test caught).
+    rest = next(a for a in mfj.assumptions if a.startswith("$300 of interest"))
+    assert "joint-return figure" in rest and "whatever its character" in rest
+    assert "rerun with that portion" not in rest
+    assert not any("rerun with that portion in bank_deposit_interest" in a for a in mfj.assumptions)
+    # Control — the MARRIAGE alone ends nothing: the same couple, confirmed MFS on
+    # Form 1040-NR, keeps the exclusion.
+    mfs = estimate_refund(
+        _nra_profile(marital="married", filing_status=_ans("married_filing_separately")), 2023, income
+    )
+    assert _deposit_line(mfs).amount == -900
+    assert _labels(mfs)["Total income"] == 18_300
+    assert any("$900 was EXCLUDED from income" in a for a in mfs.assumptions)
+    assert not any("was NOT excluded" in a for a in mfs.assumptions)
+
+
+def test_p013_the_scenario_election_path_taxes_deposit_interest_too():
+    # compare_scenarios models the election by flipping identity.us_person, but the
+    # estimator classifies residency from the timeline, so `nonresident` stays True
+    # there — the MFJ gate is what keeps the exclusion honest on that path (P-013).
+    from taxfill_core.scenarios import compare_scenarios
+
+    profile = _nra_profile(marital="married")
+    specs = [
+        {"name": "MFS on 1040-NR", "filing_status": "married_filing_separately"},
+        {"name": "MFJ + election", "filing_status": "married_filing_jointly", "us_resident_election": True},
+    ]
+    deposit = IncomeSnapshot(wages=18_000, federal_withholding=1_400, interest=900, bank_deposit_interest=900)
+    plain = deposit.model_copy(update={"bank_deposit_interest": 0})
+    with_char = {o.name: o.bottom_line for o in compare_scenarios(profile, 2023, deposit, specs).outcomes}
+    without = {o.name: o.bottom_line for o in compare_scenarios(profile, 2023, plain, specs).outcomes}
+    assert with_char["MFS on 1040-NR"] > without["MFS on 1040-NR"]   # excluded on the 1040-NR
+    assert with_char["MFJ + election"] == without["MFJ + election"]  # character irrelevant under the election
+
+
+def test_p013_bank_deposit_interest_cannot_exceed_interest():
+    # P-013: a SUBSET of `interest`, like qualified_dividends of dividends — enter the
+    # deposit portion in BOTH fields; more than the total is a contradiction.
+    with pytest.raises(ValueError, match=r"bank_deposit_interest \(501\) cannot exceed interest \(500\)"):
+        IncomeSnapshot(interest=500, bank_deposit_interest=501)
+    with pytest.raises(ValueError, match="bank_deposit_interest"):
+        IncomeSnapshot(interest=500, bank_deposit_interest=-1)
+    assert IncomeSnapshot(interest=500, bank_deposit_interest=500).bank_deposit_interest == 500
+    assert IncomeSnapshot(interest=500).bank_deposit_interest == 0   # optional: default 0
+    # The field description carries the three pinpoints an agent needs to fill it.
+    desc = IncomeSnapshot.model_fields["bank_deposit_interest"].description
+    assert "871(i)(3)" in desc and "871(i)(1)-(2)(A)" in desc
+    assert "Pub 519 ch. 3" in desc and "Exception 3" in desc and "§6013(g)/(h)" in desc
+
+
+def test_p013_combined_with_spouse_sums_deposit_interest():
+    # P-013: the spouse combine must carry the new field (it is summed by hand).
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400, interest=1_000, bank_deposit_interest=800,
+        spouse=IncomeSnapshot(wages=9_000, federal_withholding=600, interest=700, bank_deposit_interest=700),
+    )
+    combined = income.combined_with_spouse()
+    assert combined.interest == 1_700 and combined.bank_deposit_interest == 1_500
+    # The true two-return MFS path excludes the NONRESIDENT primary's deposit interest.
+    # This spouse has no facts on file, so their own residency is unknown: the spouse's
+    # $700 is taxed on their separate return and the disclosure says why (the exclusion
+    # belongs to the payee and is never borrowed from the taxpayer).
+    est = estimate_refund(_nra_profile(marital="married"), 2023, income)
+    assert _deposit_line(est).amount == -800                      # the primary's own return
+    assert _labels(est)["Total income"] == 18_200
+    assert any("$800 was EXCLUDED from income" in a for a in est.assumptions)
+    assert any("spouse's $700 of bank_deposit_interest was NOT excluded" in a for a in est.assumptions)
+    assert any(a.startswith("$200 of interest was entered WITHOUT deposit character") for a in est.assumptions)
+    # The joint (election) return sums both and taxes all of it.
+    mfj = estimate_refund(_nra_profile(marital="married", filing_status=_ans("married_filing_jointly")), 2023, income)
+    assert _deposit_line(mfj) is None
+    assert _labels(mfj)["Total income"] == 18_000 + 9_000 + 1_700
+    assert any("$1,500 of bank_deposit_interest was NOT excluded" in a for a in mfj.assumptions)
+
+
+def _nra_spouse():
+    return Spouse(us_person=_ans(False), immigration=_nra_immigration(), residency_facts=_nra_residency())
+
+
+def test_p013_a_nonresident_spouse_keeps_their_own_exclusion():
+    # P-013: when the spouse's OWN facts classify nonresident, the spouse's separate
+    # return excludes their characterized deposit interest too, and every disclosure
+    # names the household amounts — including the spouse's uncharacterized $200.
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400, interest=1_000, bank_deposit_interest=800,
+        spouse=IncomeSnapshot(wages=9_000, federal_withholding=600, interest=900, bank_deposit_interest=700),
+    )
+    est = estimate_refund(_nra_profile(marital="married", spouse=_nra_spouse()), 2023, income)
+    assert _deposit_line(est).amount == -800
+    assert any("$1,500 was EXCLUDED from income" in a for a in est.assumptions)
+    assert any(a.startswith("$400 of interest was entered WITHOUT deposit character") for a in est.assumptions)
+    assert not any("spouse's $700 of bank_deposit_interest was NOT excluded" in a for a in est.assumptions)
+    # The spouse's exclusion is worth exactly the tax on it on the spouse's own return.
+    plain = income.model_copy(update={"spouse": income.spouse.model_copy(update={"bank_deposit_interest": 0})})
+    taxed = estimate_refund(_nra_profile(marital="married", spouse=_nra_spouse()), 2023, plain)
+    assert est.point > taxed.point
+
+
+def test_p013_a_us_citizen_spouse_is_taxed_on_their_deposit_interest():
+    # P-013 (the J0.4 verifier's blocking repro): the spouse's MFS return used to BORROW
+    # the nonresident taxpayer's classification, so a US-citizen spouse's characterized
+    # deposit interest was excluded — a $440 understatement on a Form 1040 where it is
+    # taxable. The character must not matter for a citizen payee.
+    profile = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400,
+        spouse=IncomeSnapshot(wages=60_000, federal_withholding=6_000, interest=2_000, bank_deposit_interest=2_000),
+    )
+    est = estimate_refund(profile, 2023, income)
+    uncharacterized = estimate_refund(
+        profile, 2023, income.model_copy(update={"spouse": income.spouse.model_copy(update={"bank_deposit_interest": 0})})
+    )
+    assert est.point == uncharacterized.point                 # the citizen's interest is taxed either way
+    assert not any("was EXCLUDED from income" in a for a in est.assumptions)
+    assert any("spouse's $2,000 of bank_deposit_interest was NOT excluded" in a for a in est.assumptions)
+
+
+def test_p013_an_unconfirmed_marriage_never_inflates_the_disclosed_amount():
+    # P-013 rule (d): the disclosed amount is the one actually excluded. An unconfirmed
+    # marriage ignores the spouse snapshot, so only the primary's $800 is named.
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400, interest=1_000, bank_deposit_interest=800,
+        spouse=IncomeSnapshot(wages=9_000, interest=700, bank_deposit_interest=700),
+    )
+    est = estimate_refund(_nra_profile(), 2023, income)
+    assert _deposit_line(est).amount == -800
+    assert any("$800 was EXCLUDED from income" in a for a in est.assumptions)
+    assert not any("$1,500" in a for a in est.assumptions)
+    assert any(a.startswith("$200 of interest was entered WITHOUT deposit character") for a in est.assumptions)
+
+
+def test_p013_the_fdap_note_still_covers_a_citizen_spouse_return():
+    # P-013 regression guard (J0 re-verify): narrowing the deposit disclosures to the
+    # exclusion's payees must not narrow the FDAP note — the spouse's MFS return is still
+    # COMPUTED under the taxpayer's nonresident rules (ordinary rates on qualified
+    # dividends), so the note that says so must still appear.
+    profile = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400,
+        spouse=IncomeSnapshot(wages=60_000, federal_withholding=6_000, dividends=5_000, qualified_dividends=5_000),
+    )
+    est = estimate_refund(profile, 2023, income)
+    assert any(a.startswith("Nonresident investment income is NOT modeled") for a in est.assumptions)
+
+
+def test_p013_a_spouse_of_unknown_residency_is_taxed_with_the_note():
+    # P-013 rule (e): a spouse who declares they are not a US person but has no facts
+    # that classify them ('conditional') is NOT assumed nonresident.
+    profile = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(False)))
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400,
+        spouse=IncomeSnapshot(wages=9_000, federal_withholding=600, interest=700, bank_deposit_interest=700),
+    )
+    est = estimate_refund(profile, 2023, income)
+    plain = estimate_refund(
+        profile, 2023, income.model_copy(update={"spouse": income.spouse.model_copy(update={"bank_deposit_interest": 0})})
+    )
+    assert est.point == plain.point
+    assert any("spouse's $700 of bank_deposit_interest was NOT excluded" in a for a in est.assumptions)
+
+
+def test_p013_the_election_figure_carries_no_mfs_spouse_note():
+    # P-013: the spouse-taxed note is about the spouse's SEPARATE return; a confirmed-MFJ
+    # (election) estimate has no such return, so the note must not appear there.
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400, interest=1_000, bank_deposit_interest=800,
+        spouse=IncomeSnapshot(wages=9_000, federal_withholding=600, interest=700, bank_deposit_interest=700),
+    )
+    mfj = estimate_refund(_nra_profile(marital="married", filing_status=_ans("married_filing_jointly")), 2023, income)
+    assert not any("spouse's $" in a and "bank_deposit_interest was NOT excluded" in a for a in mfj.assumptions)
+
+
+def test_p013_an_unconfirmed_marriage_ignores_even_a_nonresident_spouse():
+    # P-013 rule (d): the marriage gate, not the spouse's facts, decides whether the
+    # spouse snapshot counts — an unconfirmed marriage never names the spouse's amount.
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400, interest=1_000, bank_deposit_interest=800,
+        spouse=IncomeSnapshot(wages=9_000, interest=700, bank_deposit_interest=700),
+    )
+    est = estimate_refund(_nra_profile(spouse=_nra_spouse()), 2023, income)
+    assert any("$800 was EXCLUDED from income" in a for a in est.assumptions)
+    assert not any("$1,500" in a for a in est.assumptions)
+
+
+def test_p013_a_declared_non_us_person_without_facts_is_taxed_with_the_note():
+    # P-013 rule (b) for the primary: not a US person, but no facts classify them, so the
+    # characterized amount is taxed — and SAID to be, never silently inert.
+    profile = Profile(
+        household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")),
+        identity=Identity(us_person=_ans(False)),
+    )
+    income = IncomeSnapshot(wages=18_000, federal_withholding=1_400, interest=900, bank_deposit_interest=900)
+    est = estimate_refund(profile, 2023, income)
+    assert _deposit_line(est) is None
+    assert any(
+        a.startswith("$900 of bank_deposit_interest was taxed as ordinary interest") for a in est.assumptions
+    )
+
+
+def test_p013_the_1099_int_docspec_note_names_the_characterizing_field():
+    # P-013 / N-8's extraction half: the 1099-INT note must hand the agent the FIELD that
+    # carries the deposit character, and that field must exist on the snapshot —
+    # otherwise the agent gets a figure the engine taxes and a warning it may be wrong.
+    from taxfill_core.extract import DOC_SPECS
+
+    note = DOC_SPECS["1099-INT"].status_note
+    assert "IncomeSnapshot.bank_deposit_interest" in note and "IncomeSnapshot.interest" in note
+    assert "bank_deposit_interest" in IncomeSnapshot.model_fields
+    assert "871(i)(2)(A)" in note and "the election, not the marriage" in note
+    assert "Box 3" in note   # Treasury / savings-bond interest is never a deposit

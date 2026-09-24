@@ -825,7 +825,9 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
 
     `income` fields (whole dollars; every field optional, defaults 0; unknown fields rejected):
     - income: wages (W-2 box 1), federal_withholding (withheld + estimated payments), interest,
-      dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
+      bank_deposit_interest (the DEPOSIT subset of interest — US bank / savings institution /
+      insurance-company deposit, not effectively connected; excluded for a nonresident under
+      IRC 871(i)(2)(A), taxed on a §6013(g)/(h) joint return), dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
       capital_gain_short (signed), self_employment_net (signed), retirement_income_taxable
       (1099-R 2a), social_security_benefits (SSA-1099 box 5), other_income
     - adjustments: student_loan_interest_paid (1098-E), pre_agi_adjustments (confirmed-eligible

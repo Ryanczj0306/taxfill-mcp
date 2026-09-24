@@ -130,13 +130,21 @@ _SPECS: list[DocSpec] = [
         title="Interest Income",
         source_url="https://www.irs.gov/forms-pubs/about-form-1099-int",
         # N-8: the bank sends this form regardless of the payee's status, but
-        # whether box 1 is INCOME AT ALL depends on that status.
+        # whether box 1 is INCOME AT ALL depends on that status. The estimator
+        # models the exclusion only for the CHARACTERIZED subset, so the note
+        # names the field that carries the character (P-013).
         status_note=(
             "STATUS decides whether box 1 is income: US bank-deposit interest paid to a NONRESIDENT "
             "alien is generally NOT taxable (the deposit-interest exclusion, IRC 871(i)(2)(A)) and does "
             "not go on Form 1040-NR — and it BECOMES taxable the moment a §6013(g)/(h) election makes "
             "the payee a resident (the election, not the marriage, ends the exclusion). Confirm the "
-            "payee's residency result before carrying box 1 to any return."
+            "payee's residency result before carrying box 1 to any return. For estimate_refund, box 1 "
+            "goes in IncomeSnapshot.interest and its DEPOSIT portion (a bank, credit union, savings "
+            "institution or insurance-company deposit, not part of a US trade or business) ALSO in "
+            "IncomeSnapshot.bank_deposit_interest, a subset of interest: only that characterized "
+            "amount is excluded for a nonresident, and box 1 left without it is taxed and disclosed. "
+            "Box 3 (US Savings Bond / Treasury interest, which the payer keeps OUT of box 1) is "
+            "interest too but never a deposit — it can go in interest, never in bank_deposit_interest."
         ),
         boxes=[
             _b("payer_name", "Payer's name", "text"),

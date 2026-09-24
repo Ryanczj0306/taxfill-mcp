@@ -732,3 +732,154 @@ pitfalls:
       irs.gov sentence as out of scope, with the claim itself
       (threshold_varies_by_filing_status false, aggregate_threshold 10000) still
       asserted so the correction cannot quietly weaken it.
+
+  - id: P-013
+    incident: >-
+      THE ESTIMATOR WARNED ABOUT A RULE INSTEAD OF APPLYING IT, AND THE WARNING
+      WAS THE ONLY PLACE THE RULE LIVED. For every nonresident filer with any
+      interest entered, estimate_refund taxed the whole amount as effectively
+      connected ordinary income and appended one sentence — "US bank deposit
+      interest is typically NOT taxable to a nonresident ... this estimate may
+      OVERTAX it" — with no amount, no way to enter the character that decides
+      the question, and a pinpoint ("IRC 871(i)") loose enough that get_sources
+      could not route it: "871(i)" resolved to foreign_tax_credit and "bank
+      deposit interest nonresident" to other_income_and_rewards (the BANK-BONUS
+      topic), both wrong-law pointers of the P-005/P-006 kind. Meanwhile the
+      1099-INT DocSpec note (N-8's extraction half) told the agent the box-1
+      figure was probably not income, so the agent was handed a number the
+      engine would then tax and a warning that it might be wrong — the exact
+      shape the knowledge-gap pattern describes: the figure ships, the
+      year-invariant characterization rule does not. On the repo's own user
+      base (F-1 / J-1 students with a US checking account) the interest is
+      almost always deposit interest, so the "may OVERTAX" hedge was in
+      practice a systematic overstatement of tax owed. The rule, read on the
+      .gov texts (2026-09-11): IRC 871(i)(1) "No tax shall be imposed under
+      paragraph (1)(A) or (1)(C) of subsection (a) on any amount described in
+      paragraph (2)"; 871(i)(2)(A) "Interest on deposits, if such interest is
+      not effectively connected with the conduct of a trade or business within
+      the United States"; 871(i)(3) "deposits" means deposits with persons
+      carrying on the banking business, deposits or withdrawable accounts with
+      savings institutions chartered and supervised as savings and loan or
+      similar associations (to the extent deductible under section 591), and
+      amounts held by an insurance company under an agreement to pay interest
+      (uscode.house.gov). Pub 519 ch. 3, Exclusions From Gross Income —
+      Interest Income: "Interest income that is not connected with a U.S. trade
+      or business is excluded from income if it is from" the same three
+      classes (irs.gov/publications/p519). Instructions for Form 1040-NR
+      (2025), line 2b Exception 1: "Report on line 2b only your taxable
+      interest income from assets effectively connected with a U.S. trade or
+      business"; Exception 3: "Don't include on line 2b interest from a U.S.
+      bank, savings and loan association, credit union, or similar institution
+      (or from certain deposits with U.S. insurance companies) that is exempt
+      from tax under a tax treaty or under section 871(i) because the interest
+      isn't effectively connected with a U.S. trade or business"; Schedule NEC
+      lines 2a-2c list the same interest among items "generally exempt from the
+      30% tax" (irs.gov/instructions/i1040nr). And the companion trap
+      (N-14): the exclusion ends with the §6013(g)/(h)
+      ELECTION, not the marriage — Pub 519 ch. 1, Nonresident Spouse Treated as
+      a Resident: "If you make this choice, you and your spouse are treated for
+      income tax purposes as residents for your entire tax year."
+    countermeasure: >-
+      IncomeSnapshot.bank_deposit_interest (packages/core/src/taxfill_core/
+      estimate.py): an OPTIONAL subset of `interest` (default 0, validator
+      bank_deposit_interest <= interest, summed in combined_with_spouse), whose
+      field description carries the three pinpoints. _bottom_line excludes it
+      from income BEFORE "Total income" for a nonresident — a registered
+      explanatory ledger slot, deposit_interest_exclusion, so status/scenario
+      diffs stay total — and switches the exclusion OFF when the candidate
+      status is married_filing_jointly, because a nonresident is on a joint
+      return only through the §6013(g)/(h) election that makes both spouses
+      residents; that path records a note the caller turns into a disclosure.
+      estimate_refund replaced the "may OVERTAX" sentence with four
+      disclosures that each name an amount (the fourth, the spouse-taxed note,
+      is rule (e)'s): the dollars EXCLUDED with the
+      871(i)(1)/(2)(A)/(3), Pub 519 ch. 3 and 1040-NR line 2b Exception 3
+      pinpoints; the dollars entered WITHOUT deposit character and taxed as
+      effectively connected income, with the way to move them (except on the
+      election posture, a confirmed married_filing_jointly status: there that
+      note says instead that the character no longer matters, because telling
+      the filer "871(i)(2)(A) excludes it — rerun" would contradict rule (c).
+      The J0.4 regression test found this, 2026-09-23); and, on the election
+      posture, the dollars taxed again with the Pub 519 ch. 1 sentence. The
+      1099-INT DocSpec status_note (extract.py) now names
+      IncomeSnapshot.interest and IncomeSnapshot.bank_deposit_interest, so the
+      extraction half gives the agent the field that carries the character,
+      not only a warning. intake_checklist asks income_documents.interest_character
+      once, for a CONFIRMED nonresident whose inventory holds a 1099-INT not
+      yet carrying the word DEPOSIT in its kind (the answer is recorded in the
+      entry's kind, either way — the 1095-A / foreign-account convention; the
+      form matcher is "1099INT", seven characters naming the FORM, per P-012).
+      get_sources routes the authority through nonresident_fdap, which now
+      carries the IRC 871 statute on uscode.house.gov and the Pub 519 ch. 3 /
+      ch. 1 sentences, with routing regression tests in
+      packages/core/tests/test_sources.py for "bank deposit interest
+      nonresident", "871(i)" and "871(i) deposit interest", and two
+      neighbour-theft guards. The bank-bonus queries ("bank account bonus
+      income") still reach other_income_and_rewards. The spouse-election
+      queries ("spouse treated as resident", "nonresident spouse treated as a
+      resident", "6013(g)", "6013(h)", "married to a nonresident alien",
+      "married nonresident alien", "spouse election", and "married to
+      nonresident" at least sharing) still reach nonresident_spouse_election.
+      The second guard is there because the first J0.4 draft of the fdap text
+      quoted the Pub 519 ch. 1 heading, "§6013(g)/(h)" and "nonresident
+      alien", and those tokens stole every one of those queries from the page
+      that says HOW to elect. So the fdap text states rule (c) without them
+      (J0.4 verifier, 2026-09-23). THE DURABLE RULES are year-invariant and live
+      HERE, not in a year pack: (a) the exclusion is about CHARACTER, not
+      amount or payer name — deposit + not effectively connected; interest that
+      IS effectively connected stays taxed under 871(b), and bond, brokerage
+      and Treasury interest (1099-INT box 3) are not deposits and fall under
+      the separate 871(h) portfolio-interest rules, which are NOT modeled. So
+      no surface may tell a nonresident that non-deposit interest simply IS
+      taxed; the intake question's `why` did until J0.4 added the 871(h)
+      caveat; (b)
+      only a characterized amount is excluded — an uncharacterized figure is
+      taxed and SAID to be, never silently excluded on the guess that a
+      student's interest is probably from a bank; (c) the exclusion turns on
+      residency status, so the §6013(g)/(h) election — never the marriage —
+      ends it, and an MFJ figure for a nonresident must tax the interest; (d) a
+      disclosure that says "may OVERTAX" without an amount is a defect, not a
+      caveat: when the engine knows the rule and the input that decides it, it
+      models the rule and discloses the amount; (e) the exclusion belongs to
+      the PAYEE, so on the two-return MFS path the spouse's own return gets it
+      only when the spouse's OWN facts classify nonresident — the J0.4
+      verifier caught the spouse borrowing the taxpayer's classification, which
+      excluded a US-citizen spouse's deposit interest on a Form 1040 where it is
+      taxable ($440 understated in its repro); a spouse whose residency is
+      unknown is taxed on it with a disclosure, the rule (b) no-guessing shape.
+      What is NOT modeled and is
+      reported rather than hidden: the reverse direction (a resident
+      taxpayer's nonresident spouse) gets neither the exclusion nor a
+      disclosure, and intake asks interest_character on the taxpayer's status
+      only (JF5a/JF5b); the spouse's MFS return still borrows the taxpayer's
+      nonresident flag for every OTHER rule (no standard deduction, ordinary
+      rates, no NIIT) — so the FDAP note covers every return computed under
+      those rules, not only the exclusion's payees (JF5a); a compare_scenarios
+      us_resident_election on an MFS status still applies the exclusion (only
+      the MFJ gate is modeled); and compare_scenarios' one-override-at-a-time
+      walk rejects an intermediate step where interest drops below
+      bank_deposit_interest (list the subset field first — the same pre-existing
+      shape as qualified_dividends / dividends); estimate_refund classifies residency from
+      the visa timeline and day counts alone, so an election scenario built by
+      compare_scenarios (which flips identity.us_person) leaves `nonresident`
+      True on a profile that carries a timeline — the MFJ gate here is what
+      keeps the exclusion honest on that path, while the other NRA rules
+      (itemized-only deduction, no NIIT) still run under the election there.
+      Regression tests, P-013-tagged: packages/core/tests/test_estimate.py
+      (excluded when characterized, the ledger line and the disclosure amount;
+      partial characterization taxes only the remainder and says so; resident
+      control unchanged; uncharacterized interest taxed with the note; the
+      confirmed-MFJ election posture taxes it and says why, with the MFS
+      control keeping it and the election variant of the uncharacterized
+      note; the compare_scenarios election path; the validator; the spouse
+      combine; the payee rule — a nonresident spouse keeps their own
+      exclusion, a US-citizen spouse is taxed, an unconfirmed marriage never
+      inflates the disclosed amount; the 1099-INT DocSpec note naming the
+      field; and test_fix2's
+      check that no "OVERTAX" text remains), packages/core/tests/test_intake.py
+      (asked for a confirmed nonresident with a 1099-INT, silent for a
+      resident and for a characterized entry, and — the P-012 rule — a
+      1099-INT carrying an account number still asks), and
+      packages/core/tests/test_sources.py (routing, the topic's
+      characterization text, and neighbour theft on both the bank-bonus and
+      the spouse-election side).

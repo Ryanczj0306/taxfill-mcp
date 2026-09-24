@@ -549,3 +549,104 @@ def test_foreign_tax_credit_topic_does_not_steal_its_neighbours_queries():
         assert r.matched and {s.topic for s in r.sources} == {expected}, (
             f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
         )
+
+
+# ── N-8 / pitfall P-013: the nonresident bank-deposit-interest exclusion ───────
+# Before N-8, nothing in any topic named the §871(i)(2)(A) exclusion, so the
+# queries an agent asks about a nonresident's 1099-INT reached the WRONG LAW:
+# "bank deposit interest nonresident" -> other_income_and_rewards (the BANK-BONUS
+# topic), "871(i)" -> foreign_tax_credit, "871(i) deposit interest" ->
+# foreign_asset_and_fbar_reporting. nonresident_fdap now carries the IRC 871
+# statute and the Pub 519 ch. 3 / ch. 1 sentences that route them home.
+
+
+def test_p013_deposit_interest_queries_route_to_nonresident_fdap():
+    # P-013: the routing half — each query used to reach the wrong law.
+    for query in (
+        "bank deposit interest nonresident",  # was -> other_income_and_rewards (WRONG LAW)
+        "871(i)",                             # was -> foreign_tax_credit (WRONG LAW)
+        "871(i) deposit interest",            # was -> foreign_asset_and_fbar_reporting (WRONG LAW)
+    ):
+        for year in (2023, 2025, 2026):
+            r = get_sources(query, year)
+            assert r.matched, f"{query!r} ({year}) is a miss"
+            topics = {s.topic for s in r.sources}
+            assert topics == {"nonresident_fdap"}, f"{query!r} ({year}) routed to {topics}"
+            urls = {s.url for s in r.sources}
+            assert any("section871" in u and u.startswith("https://uscode.house.gov/") for u in urls)
+            assert "https://www.irs.gov/publications/p519" in urls
+
+
+def test_p013_the_fdap_topic_carries_the_exclusion_and_what_ends_it():
+    """P-013, the characterization half: the statute's own words, the deposit definition,
+    and the ELECTION (not the marriage) that ends the exclusion."""
+    r = get_sources("871(i) deposit interest", 2025)
+    blob = " ".join(s.answers for s in r.sources)
+    # 871(i)(2)(A) verbatim (uscode.house.gov)
+    assert "interest on deposits, if such interest is not effectively connected with the conduct of a trade or business within the United States" in blob
+    assert "871(i)(3)" in blob and "insurance company under an agreement to pay interest" in blob
+    # Pub 519 ch. 3 — the exclusion from gross income
+    assert "Exclusions From Gross Income" in blob and "EXCLUDED from income" in blob
+    # Pub 519 ch. 1 — the election, verbatim, and rule (c)
+    assert "treated for income tax purposes as residents for your entire tax year" in blob
+    assert "the election, not the marriage" in blob
+    # rule (a): character, not payer — ECI deposit interest and bond interest stay taxed
+    assert "871(b)" in blob and "bond or brokerage interest is not a deposit" in blob
+
+
+def test_p013_the_deposit_interest_entries_do_not_steal_the_neighbours_queries():
+    """P-013 neighbour theft (the knowledge-gap companion bug): the words N-8 added —
+    bank, deposit, interest, insurance, election — sit in several neighbouring
+    topics, the bank-BONUS topic above all. Each canonical query must still
+    resolve to its own topic."""
+    for query, expected in (
+        ("bank account bonus income", "other_income_and_rewards"),
+        ("bank bonus taxable", "other_income_and_rewards"),
+        ("credit card rewards taxable", "other_income_and_rewards"),
+        ("foreign tax credit", "foreign_tax_credit"),
+        ("FBAR", "foreign_asset_and_fbar_reporting"),
+        ("Form 8938", "foreign_asset_and_fbar_reporting"),
+        ("nonresident spouse election", "nonresident_spouse_election"),
+        ("dual status", "dual_status"),
+        ("mortgage interest", "itemized_mortgage_interest"),
+    ):
+        for year in (2023, 2026):
+            r = get_sources(query, year)
+            assert r.matched and {s.topic for s in r.sources} == {expected}, (
+                f"{query!r} ({year}) -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+            )
+
+
+def test_p013_the_election_sentence_does_not_steal_the_spouse_election_queries():
+    """P-013 neighbour theft, the ELECTION side. nonresident_fdap has to say what ends
+    the exclusion (Pub 519 ch. 1's joint-return choice), and the first J0.4 draft said
+    it with the tokens the nonresident_spouse_election topic wins on: the ch. 1
+    heading "Nonresident Spouse Treated as a Resident", "§6013(g)/(h)", "nonresident
+    alien" and extra "nonresident"s. That draft routed each query below to
+    nonresident_fdap, which dropped the IRS page that says HOW to make the choice (the
+    statement both spouses sign, the ITIN). A later pointer, "(topic
+    nonresident_spouse_election)", stole "spouse election" in the same way."""
+    for query in (
+        "spouse treated as resident",
+        "nonresident spouse treated as a resident",  # the Pub 519 ch. 1 heading itself
+        "6013(g)",
+        "6013(h)",
+        "married to a nonresident alien",
+        "married nonresident alien",
+        "spouse election",
+    ):
+        for year in (2023, 2026):
+            r = get_sources(query, year)
+            assert r.matched and {s.topic for s in r.sources} == {"nonresident_spouse_election"}, (
+                f"{query!r} ({year}) -> {sorted(s.topic for s in r.sources)}"
+            )
+    # Before N-8, "married to nonresident" tied the two topics. More "nonresident"
+    # tokens in the fdap text break that tie against the spouse topic, and nothing
+    # warns when they do. So the query must still reach the election page.
+    r = get_sources("married to nonresident", 2025)
+    assert "nonresident_spouse_election" in {s.topic for s in r.sources}
+    # The fdap topic still says what ends the exclusion. It says it in words the
+    # election topic does not score on.
+    blob = " ".join(s.answers for s in get_sources("871(i) deposit interest", 2025).sources)
+    assert "the election, not the marriage" in blob
+    assert "Nonresident Spouse Treated as a Resident" not in blob and "6013" not in blob

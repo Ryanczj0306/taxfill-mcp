@@ -444,6 +444,18 @@ federal:
           which is exactly the boundary a cash bank bonus sits on.
         cadence: standing announcement (future guidance applies prospectively)
 
+    # 2026-09-11 (N-8, P-013): "bank deposit interest nonresident" routed to
+    # other_income_and_rewards (the BANK-BONUS topic — wrong law) and "871(i)"
+    # to foreign_tax_credit, because nothing in this topic named the
+    # bank-deposit-interest exclusion. The statute entry and the ch. 3 sentence
+    # below are what route those queries here; the year-invariant rule itself
+    # lives in knowledge/pitfalls.yaml (P-013) and in estimate.py.
+    # The added text avoids the tokens nonresident_spouse_election wins on:
+    # "alien", "6013", the Pub 519 ch. 1 heading, and any extra "nonresident"
+    # (the key already carries it). The first draft carried them, and it stole
+    # "spouse treated as resident", "6013(h)", "married to a nonresident alien"
+    # and "married to nonresident" from that topic. test_sources pins each one
+    # (test_p013_the_election_sentence_does_not_steal_the_spouse_election_queries).
     nonresident_fdap:
       - url: https://www.irs.gov/publications/p519
         answers: >-
@@ -451,7 +463,38 @@ federal:
           income of a nonresident is taxed at the flat 30% rate as not
           effectively connected with a US trade or business, versus
           effectively connected income taxed at the regular graduated rates.
+          Ch. 3, Exclusions From Gross Income — Interest Income: for nonresidents,
+          interest on deposits (including certificates of deposit) with
+          persons in the banking business, on deposits or withdrawable accounts
+          with savings institutions (mutual savings banks, cooperative banks,
+          credit unions, building and loan associations), and on amounts held by
+          an insurance company under an agreement to pay interest is EXCLUDED
+          from income when it is not connected with a US trade or business —
+          the bank deposit interest exclusion.
+          What ends that exclusion is the election, not the marriage — ch. 1:
+          "If you make this choice, you and your spouse are treated for income
+          tax purposes as residents for your entire tax year."
         cadence: annual (per tax year)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section871&num=0&edition=prelim
+        answers: >-
+          IRC 871, the charging section for nonresidents. 871(a)(1) is the flat
+          30% tax on US-source income not effectively connected with a US trade
+          or business (the FDAP tax); 871(b) taxes effectively connected income
+          at the section 1 graduated rates; 871(h) is the portfolio interest
+          exemption. 871(i) "Tax not to apply to certain interest and dividends":
+          871(i)(1) imposes no tax under (a)(1)(A) or (a)(1)(C) on 871(i)(2)(A)
+          "interest on deposits, if such interest is not effectively connected
+          with the conduct of a trade or business within the United States" —
+          the bank deposit interest exclusion — and 871(i)(3)
+          defines deposits as deposits with persons carrying on the banking
+          business, deposits or withdrawable accounts with savings institutions
+          chartered as savings and loan or similar associations (to the extent
+          deductible under section 591), and amounts held by an insurance
+          company under an agreement to pay interest. The exclusion is
+          conditioned on CHARACTER (a deposit, not effectively connected), so
+          deposit interest that IS effectively connected stays taxed under
+          871(b), and bond or brokerage interest is not a deposit at all.
+        cadence: standing statute (check for amendment)
       - url: https://www.irs.gov/individuals/international-taxpayers/fixed-determinable-annual-periodical-fdap-income
         answers: >-
           FDAP income of nonresident aliens: US-source fixed, determinable,

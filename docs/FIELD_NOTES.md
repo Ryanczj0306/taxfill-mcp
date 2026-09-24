@@ -163,10 +163,21 @@ computed OUTSIDE the engine without them — each can change the answer by
   trap: the F/J student FICA exemption is **status-based, not marital**, so a §6013(g)
   election does not start FICA on the wages of a spouse who is still an exempt F/J
   that, and on a spouse's full-time wages it can be a four-figure annual question.
-- **N-8 — the NRA bank-deposit-interest exclusion (§871(i)(2)(A)) is not modeled.** The
-  bank sends a 1099-INT; on a 1040-NR that interest is exempt, and it becomes taxable the
-  moment a §6013(g) election makes the payee a resident. `extract_document` happily structures
-  the 1099-INT with no note that the payee's status decides whether it is income at all.
+- **N-8 — the NRA bank-deposit-interest exclusion (§871(i)(2)(A)) was not modeled. DONE
+  (Phase J0.4; see `knowledge/pitfalls.yaml` P-013).** The bank sends a 1099-INT; on a
+  1040-NR that interest is exempt, and it becomes taxable the moment a §6013(g) election
+  makes the payee a resident. `extract_document` structured the 1099-INT with no note that
+  the payee's status decides whether it is income at all, and `estimate_refund` taxed it
+  with an amount-less "may OVERTAX" hedge. Now: `IncomeSnapshot.bank_deposit_interest`
+  (the deposit subset of `interest`) is excluded for a nonresident before Total income
+  (ledger slot `deposit_interest_exclusion`) with the amount and the 871(i)(1)-(3) / Pub 519
+  ch. 3 / 1040-NR line 2b Exception 3 pinpoints disclosed; interest entered without that
+  character is taxed and said to be; an MFJ (election) figure taxes it and says the
+  election, not the marriage, ended the exclusion. `intake_checklist` asks
+  `income_documents.interest_character` for a confirmed nonresident with a 1099-INT, the
+  1099-INT DocSpec note names the field, and `get_sources` routes "871(i)" to
+  `nonresident_fdap`. Still open: the dual-status year (nonresident-period deposit
+  interest) — Phase J JF5b.3.
 - **N-9 — there is no "compare filing scenarios" surface.** A filing-posture what-if is a
   comparison (unmarried / married-MFS / married-with-§6013(g)-election). The engine has every primitive and no way to say "run
   comparison (unmarried / married-MFS / married-with-§6013(g)-election). The engine has every primitive and no way to say "run

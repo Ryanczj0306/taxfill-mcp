@@ -17,7 +17,14 @@ Honesty rules baked in (UX principle 1; eval scenario (j)):
 - qualified dividends / net capital gain use the preferential-rate worksheet
   (``calc.tax_with_preferential_rates``) whenever such income is present — for
   RESIDENTS only: a nonresident's investment income follows ECI/FDAP rules the
-  estimate does not model, so it is taxed at ordinary rates and disclosed.
+  estimate does not model, so it is taxed at ordinary rates and disclosed;
+- a nonresident's US bank-deposit interest is EXCLUDED when the snapshot
+  characterizes it (``bank_deposit_interest``, IRC 871(i)(2)(A) — N-8, P-013):
+  the amount excluded and the statute are disclosed, interest entered without
+  that character is taxed as effectively connected income and SAID to be, and
+  on a joint return (which a nonresident reaches only through the §6013(g)/(h)
+  election) the exclusion is switched OFF, because the election — not the
+  marriage — makes the payee a resident.
 
 The profile supplies the qualitative picture (filing status, dependents, which
 documents are still missing); ``income`` supplies the confirmed dollar amounts
@@ -93,6 +100,26 @@ class IncomeSnapshot(BaseModel):
     wages: int = Field(default=0, ge=0, description="W-2 box 1 wages (all W-2s).")
     federal_withholding: int = Field(default=0, ge=0, description="Federal income tax withheld + estimated payments.")
     interest: int = Field(default=0, ge=0, description="Taxable interest (1099-INT).")
+    bank_deposit_interest: int = Field(
+        default=0, ge=0,
+        description=(
+            "The part of `interest` that is interest on DEPOSITS — with a US bank (a person carrying on "
+            "the banking business), a savings institution (S&L / credit union / building and loan), or an "
+            "insurance company holding amounts under an agreement to pay interest (IRC 871(i)(3)) — and "
+            "that is NOT effectively connected with a US trade or business. A SUBSET of `interest`, like "
+            "qualified_dividends of dividends (enter the deposit portion of 1099-INT box 1 in BOTH). For a "
+            "NONRESIDENT alien this amount is excluded from income: IRC 871(i)(1)-(2)(A) impose no tax on "
+            "'interest on deposits, if such interest is not effectively connected with the conduct of a "
+            "trade or business within the United States'; Pub 519 ch. 3 (Exclusions From Gross Income — "
+            "Interest Income) excludes it from gross income; the Instructions for Form 1040-NR (line 2b, "
+            "Exception 3) say not to report it on line 2b. For a RESIDENT it changes nothing (all interest "
+            "is taxable). On a JOINT return — which a nonresident reaches only through the §6013(g)/(h) "
+            "election that treats both spouses as residents for the whole year (Pub 519 ch. 1) — it is "
+            "taxed again: the election, not the marriage, ends the exclusion. Interest left in `interest` "
+            "without this character is taxed here as effectively connected ordinary income. Treasury / "
+            "savings-bond interest (1099-INT box 3) and bond interest are NOT deposits — leave them out."
+        ),
+    )
     dividends: int = Field(default=0, ge=0, description="Ordinary dividends, 1099-DIV box 1a (includes qualified).")
     qualified_dividends: int = Field(
         default=0, ge=0,
@@ -177,6 +204,12 @@ class IncomeSnapshot(BaseModel):
                 f"qualified_dividends ({self.qualified_dividends}) cannot exceed dividends "
                 f"({self.dividends}) — box 1b is a subset of box 1a"
             )
+        if self.bank_deposit_interest > self.interest:
+            raise ValueError(
+                f"bank_deposit_interest ({self.bank_deposit_interest}) cannot exceed interest "
+                f"({self.interest}) — it is the deposit-character SUBSET of the 1099-INT box 1 total, so "
+                f"enter the deposit portion in both fields"
+            )
         if self.dependent_care_expenses > 0 and self.dependent_care_persons < 1:
             raise ValueError(
                 f"dependent_care_expenses ({self.dependent_care_expenses}) requires "
@@ -207,7 +240,8 @@ class IncomeSnapshot(BaseModel):
             **{
                 f: getattr(self, f) + getattr(s, f)
                 for f in (
-                    "wages", "federal_withholding", "interest", "dividends", "qualified_dividends",
+                    "wages", "federal_withholding", "interest", "bank_deposit_interest", "dividends",
+                    "qualified_dividends",
                     "capital_gain_long", "capital_gain_short", "self_employment_net",
                     "retirement_income_taxable", "social_security_benefits", "other_income",
                     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
@@ -276,6 +310,7 @@ _LEDGER_SLOTS: dict[str, str] = {
     "capital_loss": _EXPLANATORY,
     "taxable_social_security": _EXPLANATORY,
     "treaty_exempt_exclusion": _EXPLANATORY,
+    "deposit_interest_exclusion": _EXPLANATORY,
     "half_se_adjustment": _EXPLANATORY,
     "student_loan_interest_deduction": _EXPLANATORY,
     "other_adjustments": _EXPLANATORY,
@@ -582,6 +617,9 @@ _MFJ = "married_filing_jointly"
 _MFS = "married_filing_separately"
 
 _BOTTOM_LINE_LABEL = "Estimated refund (+) or amount owed (-)"
+_DEPOSIT_EXCLUSION_LABEL = (
+    "Less: US bank-deposit interest excluded (IRC 871(i)(2)(A) — not income to a nonresident)"
+)
 
 _JOINT_LIABILITY_CAVEAT = (
     "Filing jointly (MFJ) makes both spouses jointly and severally liable for the whole tax; "
@@ -973,6 +1011,7 @@ def _bottom_line(
     knowledge_dir,
     *,
     nonresident: bool = False,
+    deposit_exclusion: bool | None = None,
     deps: list[_DepInfo] | tuple[_DepInfo, ...] = (),
     ss_withheld_groups: list[list[int]] | None = None,
     se_persons: list[tuple[int, int]] | None = None,
@@ -994,9 +1033,17 @@ def _bottom_line(
     line 12 is itemized-only — the supplied itemized_deductions or $0 is used,
     never max()ed against the standard deduction) and NO preferential-rate
     worksheet (NRA investment income follows ECI/FDAP rules the estimate does
-    not model — taxed at ordinary rates and disclosed upstream). ``deps`` is
-    the dependents' (age at year end, has_ssn) list — the profile itself is
-    never needed here.
+    not model — taxed at ordinary rates and disclosed upstream). The one NRA
+    exclusion that IS modeled is US bank-deposit interest (IRC 871(i)(2)(A)):
+    ``income.bank_deposit_interest`` comes off income BEFORE the total, except on
+    a joint return, which a nonresident reaches only through the §6013(g)/(h)
+    election that treats both spouses as residents for the whole year (Pub 519
+    ch. 1) — there the interest stays taxable and ``notes`` records why.
+    ``deposit_exclusion`` overrides whether that exclusion applies to THIS snapshot
+    (None = follow ``nonresident``): the exclusion belongs to the PAYEE, so the
+    spouse's separate MFS return passes the spouse's own classification rather
+    than borrowing the taxpayer's. ``deps`` is the dependents' (age at year end,
+    has_ssn) list — the profile itself is never needed here.
 
     Per-person taxes/credits on a COMBINED (joint) snapshot: both the excess-SS
     credit and Schedule SE are per person, so the MFJ spouse-split path passes
@@ -1019,6 +1066,41 @@ def _bottom_line(
 
     # ── Income ──────────────────────────────────────────────────────────────
     base = income.total_income()
+
+    # The §871(i)(2)(A) bank-deposit-interest exclusion (N-8, P-013). Statute read
+    # on uscode.house.gov: 871(i)(1) "No tax shall be imposed under paragraph (1)(A)
+    # or (1)(C) of subsection (a) on any amount described in paragraph (2)";
+    # 871(i)(2)(A) "Interest on deposits, if such interest is not effectively
+    # connected with the conduct of a trade or business within the United States";
+    # 871(i)(3) defines "deposits" (banking business / savings institutions /
+    # insurance-company amounts held under an agreement to pay interest). Pub 519
+    # ch. 3 (Exclusions From Gross Income — Interest Income) excludes it from income,
+    # and the Instructions for Form 1040-NR (line 2b, Exception 3) keep it off line
+    # 2b — so it comes off BEFORE "Total income", which then matches the return.
+    # Only the CHARACTERIZED subset is excluded: the 871(i)(2)(A) condition is about
+    # character, so interest left in `interest` stays taxed as ECI (871(b)) and is
+    # disclosed upstream. On a JOINT return the exclusion is switched OFF: a
+    # nonresident is on a joint return only through the §6013(g)/(h) election, and
+    # under it "you and your spouse are treated for income tax purposes as
+    # residents for your entire tax year" (Pub 519 ch. 1, Nonresident Spouse
+    # Treated as a Resident) — the election, not the marriage, ends the exclusion
+    # (the N-14 trap, encoded here instead of in prose).
+    deposit_excluded = 0
+    exclusion_applies = nonresident if deposit_exclusion is None else deposit_exclusion
+    if exclusion_applies and income.bank_deposit_interest > 0:
+        if status == _MFJ:
+            if notes is not None:
+                notes.add("deposit_interest_taxed_under_election")
+        else:
+            deposit_excluded = income.bank_deposit_interest
+            base -= deposit_excluded
+            comp.append(
+                _line(
+                    "deposit_interest_exclusion",
+                    label=_DEPOSIT_EXCLUSION_LABEL,
+                    amount=-deposit_excluded,
+                )
+            )
 
     half_se = 0
     se_amount = 0
@@ -1537,6 +1619,16 @@ def estimate_refund(
     deps = _dependent_infos(profile, year)
     married = _is_married(profile)
     spouse_split = income.spouse is not None and married
+    # N-8 / P-013: the §871(i)(2)(A) exclusion belongs to the PAYEE. On the true
+    # two-return MFS path the spouse's own return gets it only when the spouse's OWN
+    # facts classify nonresident — never borrowed from the taxpayer's residency (a US
+    # citizen or resident spouse's deposit interest is taxable on their 1040, and a
+    # spouse whose residency is unknown is taxed on it with a disclosure, the same
+    # no-guessing rule as uncharacterized interest). The reverse direction (a resident
+    # taxpayer's nonresident spouse) is not modeled — P-013 says so.
+    spouse_deposit_exclusion = (
+        nonresident and spouse_split and _spouse_nra_direction(profile, year) == "nonresident"
+    )
     notes: set[str] = set()  # disclosure keys accumulated across every candidate status
 
     def _outcome(status: str) -> BottomLineResult:
@@ -1550,7 +1642,8 @@ def estimate_refund(
                     self_income, status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=notes
                 )
                 res_spouse = _bottom_line(
-                    income.spouse, status, year, knowledge_dir, nonresident=nonresident, deps=[], notes=notes
+                    income.spouse, status, year, knowledge_dir, nonresident=nonresident,
+                    deposit_exclusion=spouse_deposit_exclusion, deps=[], notes=notes,
                 )
                 total = res_self.bottom + res_spouse.bottom
                 comp = [
@@ -1630,28 +1723,127 @@ def estimate_refund(
             "under US-India treaty Art. 21(2) — confirm nationality and treaty eligibility, and if "
             "it applies, rerun with itemized_deductions set to the standard-deduction amount."
         )
-    nra_investment_income = nonresident and any(
-        snap is not None
-        and (snap.interest or snap.dividends or snap.capital_gain_long or snap.capital_gain_short)
-        for snap in (income, income.spouse)
+    # The nonresident-income disclosures name only amounts that sit on a NONRESIDENT's
+    # return: the primary's, plus the spouse's when the spouse's own facts classify
+    # nonresident (spouse_deposit_exclusion — which also requires a confirmed
+    # marriage, so an ignored spouse snapshot never inflates a disclosed amount).
+    nra_snapshots = ([income] + ([income.spouse] if spouse_deposit_exclusion else [])) if nonresident else []
+    # The FDAP note covers every snapshot whose return was COMPUTED under the nonresident
+    # rules — the primary, plus the spouse whenever the marriage is confirmed (the spouse's
+    # MFS return and the joint figure both still run with the taxpayer's `nonresident`
+    # flag; see P-013's not-modeled list) — not only the deposit-exclusion payees.
+    computed_nra_snapshots = ([income] + ([income.spouse] if spouse_split else [])) if nonresident else []
+    nra_investment_income = any(
+        (snap.interest - snap.bank_deposit_interest) or snap.dividends
+        or snap.capital_gain_long or snap.capital_gain_short
+        for snap in computed_nra_snapshots
     )
     if nra_investment_income:
         assumptions.append(
             "Nonresident investment income is NOT modeled: US-source FDAP income (dividends, "
             "non-portfolio interest, certain gains) is taxed at a flat 30% or treaty rate on "
             "Schedule NEC — never at the resident preferential rates — while only effectively "
-            "connected income uses graduated rates. This estimate taxed every amount entered as "
-            "ECI ordinary income; confirm the ECI-vs-FDAP treatment (Pub 519 ch. 4) before "
+            "connected income uses graduated rates. This estimate taxed every such amount entered as "
+            "ECI ordinary income (characterized bank_deposit_interest is the one exclusion it does "
+            "model — see its own line); confirm the ECI-vs-FDAP treatment (Pub 519 ch. 4) before "
             "relying on it."
         )
-    if nonresident and (
-        income.interest or (income.spouse is not None and income.spouse.interest)
-    ):
-        assumptions.append(
-            "US bank deposit interest is typically NOT taxable to a nonresident (the "
-            "portfolio/deposit-interest exemption, IRC 871(i)) — the interest entered was taxed "
-            "as ordinary income here, so this estimate may OVERTAX it."
+    # N-8 / P-013: the §871(i)(2)(A) exclusion is MODELED, and each disclosure names
+    # the amount it applies to — never a generic "may OVERTAX".
+    if nonresident:
+        deposit_total = sum(snap.bank_deposit_interest for snap in nra_snapshots)
+        uncharacterized_interest = sum(snap.interest - snap.bank_deposit_interest for snap in nra_snapshots)
+        # The JOINT (election) return taxes BOTH spouses' interest whatever either one's
+        # residency, so its disclosures name the combined amounts of a confirmed marriage.
+        joint_snapshots = [income] + ([income.spouse] if spouse_split else [])
+        joint_deposit = sum(snap.bank_deposit_interest for snap in joint_snapshots)
+        joint_uncharacterized = sum(snap.interest - snap.bank_deposit_interest for snap in joint_snapshots)
+        if deposit_total > 0 and "deposit_interest_taxed_under_election" not in notes:
+            assumptions.append(
+                f"US bank-deposit interest of ${deposit_total:,} was EXCLUDED from income: IRC 871(i)(1) "
+                f"imposes no 30% tax on 871(i)(2)(A) 'interest on deposits, if such interest is not "
+                f"effectively connected with the conduct of a trade or business within the United States' "
+                f"('deposits' per 871(i)(3): deposits with persons carrying on the banking business, "
+                f"deposits or withdrawable accounts with savings institutions, and amounts held by an "
+                f"insurance company under an agreement to pay interest); Pub 519 ch. 3 (Exclusions From "
+                f"Gross Income — Interest Income) excludes it from gross income, and the Instructions for "
+                f"Form 1040-NR (line 2b, Exception 3) say not to report it on line 2b. The exclusion is "
+                f"conditioned on the CHARACTER you entered — confirm the payer is a bank, savings "
+                f"institution or insurance company and the account is not part of a US trade or business. "
+                f"It ENDS if a §6013(g)/(h) election treats you as a resident (the election, not the "
+                f"marriage, makes the interest taxable)."
+            )
+        spouse_deposit_taxed = (
+            income.spouse.bank_deposit_interest
+            if spouse_split and not spouse_deposit_exclusion and _MFS in statuses
+            else 0
         )
+        if spouse_deposit_taxed > 0:
+            assumptions.append(
+                f"On the spouse's separate return the spouse's ${spouse_deposit_taxed:,} of "
+                f"bank_deposit_interest was NOT excluded: the IRC 871(i)(2)(A) exclusion belongs to a "
+                f"NONRESIDENT payee, and the spouse's own facts do not classify them as a nonresident "
+                f"alien (a US citizen or resident spouse is taxed on it on their Form 1040). If the "
+                f"spouse is a nonresident, record the spouse's visa timeline and days in the US and "
+                f"rerun."
+            )
+        if "deposit_interest_taxed_under_election" in notes:
+            assumptions.append(
+                f"On the joint-return figure the ${joint_deposit:,} of bank_deposit_interest was NOT "
+                f"excluded: a nonresident alien is on a joint return only through the §6013(g)/(h) "
+                f"election, under which 'you and your spouse are treated for income tax purposes as "
+                f"residents for your entire tax year' (Pub 519 ch. 1, Nonresident Spouse Treated as a "
+                f"Resident) — so the IRC 871(i)(2)(A) exclusion does not apply and the interest is taxed. "
+                f"It is the ELECTION, not the marriage, that ends the exclusion: married filing "
+                f"separately on Form 1040-NR keeps it."
+            )
+        # A nonresident's candidate set holds MFJ only when that status is CONFIRMED
+        # (_candidate_statuses drops it otherwise) — i.e. the §6013(g)/(h) election
+        # posture, where the character of the interest no longer matters: telling the
+        # filer 871(i)(2)(A) "excludes it — rerun" there would contradict the election
+        # disclosure above (P-013 rule (c)).
+        if joint_uncharacterized > 0 and _MFJ in statuses:
+            assumptions.append(
+                f"${joint_uncharacterized:,} of interest was entered without deposit character and was "
+                f"taxed on the joint-return figure. Under the §6013(g)/(h) election both spouses are treated "
+                f"as residents for the entire tax year (Pub 519 ch. 1), so that interest is taxable whatever "
+                f"its character — the IRC 871(i)(2)(A) deposit-interest exclusion and the Form 1040-NR "
+                f"Schedule NEC treatment do not apply to a joint return."
+            )
+        elif uncharacterized_interest > 0:
+            assumptions.append(
+                f"${uncharacterized_interest:,} of interest was entered WITHOUT deposit character "
+                f"(interest minus bank_deposit_interest) and was taxed as effectively connected ordinary "
+                f"income. If it is interest on a deposit with a US bank, savings institution or insurance "
+                f"company that is not effectively connected with a US trade or business, IRC 871(i)(2)(A) "
+                f"excludes it — rerun with that portion in bank_deposit_interest. If it is other "
+                f"US-source interest not effectively connected with a US trade or business (bond or "
+                f"brokerage interest; Treasury interest in 1099-INT box 3), it belongs on Schedule NEC "
+                f"line 2 at 30%/treaty rate unless the 871(h) portfolio-interest exemption applies — "
+                f"neither is modeled here."
+            )
+    ident = profile.identity
+    declared_non_us_person = (
+        ident is not None and ident.us_person is not None and ident.us_person.value is False
+    )
+    if not nonresident and declared_non_us_person and classification != "resident":
+        # P-013 rule (b)'s "taxed and SAID to be" shape for the primary: a filer who
+        # DECLARES they are not a US person but whose residency is not established as
+        # nonresident (no visa timeline/day counts that classify it, or a dual-status
+        # year, whose nonresident period is not modeled — JF5b.3) is taxed on a
+        # characterized amount, and the note says why instead of leaving the field
+        # silently inert. A resident (or a profile with no identity facts) keeps the
+        # resident control: the field changes nothing and says nothing.
+        entered_deposit = income.bank_deposit_interest + (
+            income.spouse.bank_deposit_interest if spouse_split else 0
+        )
+        if entered_deposit > 0:
+            assumptions.append(
+                f"${entered_deposit:,} of bank_deposit_interest was taxed as ordinary interest: the IRC "
+                f"871(i)(2)(A) deposit-interest exclusion applies only to a confirmed NONRESIDENT alien, and "
+                f"this profile's residency is not established (record the visa timeline and days in the US "
+                f"to classify it; a dual-status year's nonresident period is not modeled)."
+            )
     treaty_amount = income.treaty_exempt_income + (
         income.spouse.treaty_exempt_income if income.spouse is not None else 0
     )
