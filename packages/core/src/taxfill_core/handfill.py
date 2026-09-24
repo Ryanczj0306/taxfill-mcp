@@ -18,8 +18,20 @@ from typing import Literal, Mapping
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
-from taxfill_core.schemas.handfill import HandFillPack
+from taxfill_core.redact import redact
+from taxfill_core.schemas.handfill import HandFillLine, HandFillPack
 from taxfill_core.verify import evaluate_expression
+
+# The SAME yes/no vocabulary the AcroForm filler accepts (taxfill_core.filler's
+# _checkbox_state), so a checkbox answer means one thing whichever pipeline the form goes
+# through. A copy, not an import — this path never touches the filler (module docstring)
+# — and test_handfill pins the two sets and their bool/0/1 handling equal so they cannot
+# drift. Anything else is refused rather than guessed at: until 2026-09 any non-empty
+# answer — "no", False, "0" — came back as a ticked "X", so a filer who answered no was
+# told to tick the box on the printed state return, or on the FBAR keyed into the BSA
+# E-Filing System.
+_CHECKBOX_ON_WORDS = frozenset({"yes", "y", "true", "on", "x", "1", "checked"})
+_CHECKBOX_OFF_WORDS = frozenset({"no", "n", "false", "off", "0", "unchecked", ""})
 
 WorksheetSource = Literal["entered", "computed", "blank"]
 
@@ -90,7 +102,27 @@ def load_hand_fill_pack_for(
 def _fmt_money(value: Decimal) -> str:
     """Whole-dollar, comma-grouped (IRS lines round to whole dollars)."""
     whole = value.quantize(Decimal(1), rounding=ROUND_HALF_UP)
+    if whole == 0:
+        whole = abs(whole)  # Decimal('-0') would print as '-0'
     return f"{whole:,}"
+
+
+def _checkbox_checked(ln: HandFillLine, provided: object) -> bool:
+    """Interpret a checkbox answer; True = tick ('X'), False = leave the box empty."""
+    if isinstance(provided, bool):
+        return provided
+    if isinstance(provided, int) and provided in (0, 1):
+        return bool(provided)
+    if isinstance(provided, str):
+        word = provided.strip().lower()
+        if word in _CHECKBOX_ON_WORDS:
+            return True
+        if word in _CHECKBOX_OFF_WORDS:
+            return False
+    raise ValueError(
+        f"line {ln.line} ({ln.label!r}) is a checkbox — answer yes|no (or true|false); got "
+        f"{redact(repr(provided))}. Omit the line to leave the box blank."
+    )
 
 
 def hand_fill_worksheet(
@@ -99,9 +131,12 @@ def hand_fill_worksheet(
     """Build the line->value worksheet from a print-only pack + the filer's inputs.
 
     ``values`` maps line ids to entered values (money as number-like, text as str,
-    checkbox as truthy). Money lines with a ``compute`` expression and no entered value
-    are derived from earlier lines (blank refs count as 0, IRS-style). Lines are emitted
-    in the pack's printed order; a ``compute`` may reference any earlier resolved line.
+    checkbox as yes/no — a bool, 0/1, or one of the filler's yes/no words; 'no' leaves
+    the box empty and anything unrecognised raises, never truthiness). A line that is
+    omitted or None is left blank. Money lines with a ``compute`` expression and no
+    entered value are derived from earlier lines (blank refs count as 0, IRS-style).
+    Lines are emitted in the pack's printed order; a ``compute`` may reference any
+    earlier resolved line.
     """
     values = values or {}
     line_names = frozenset(ln.line for ln in pack.lines)
@@ -117,7 +152,7 @@ def hand_fill_worksheet(
                     num = Decimal(raw)
                 except InvalidOperation:
                     raise ValueError(
-                        f"line {ln.line} ({ln.label!r}) expects a money amount, got {raw!r} — "
+                        f"line {ln.line} ({ln.label!r}) expects a money amount, got {redact(repr(raw))} — "
                         f"enter a number (or omit it to leave the line blank)"
                     )
                 resolved[ln.line] = num
@@ -131,11 +166,17 @@ def hand_fill_worksheet(
             else:
                 out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
                                          value="", source="blank", note=ln.note))
-        else:  # text / checkbox — never computed, just echoed
-            if provided is not None and str(provided).strip() != "":
-                shown = "X" if ln.type == "checkbox" else str(provided)
+        elif ln.type == "checkbox":  # never computed: yes -> 'X', no/omitted -> empty box
+            if provided is not None and _checkbox_checked(ln, provided):
                 out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
-                                         value=shown, source="entered", note=ln.note))
+                                         value="X", source="entered", note=ln.note))
+            else:
+                out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
+                                         value="", source="blank", note=ln.note))
+        else:  # text — never computed, just echoed
+            if provided is not None and str(provided).strip() != "":
+                out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
+                                         value=str(provided), source="entered", note=ln.note))
             else:
                 out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
                                          value="", source="blank", note=ln.note))

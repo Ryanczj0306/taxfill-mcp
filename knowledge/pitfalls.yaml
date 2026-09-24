@@ -883,3 +883,52 @@ pitfalls:
       packages/core/tests/test_sources.py (routing, the topic's
       characterization text, and neighbour theft on both the bank-bonus and
       the spouse-election side).
+  - id: P-014
+    incident: >-
+      hand_fill_worksheet ticked the box for a "no". Its checkbox branch shared
+      the text branch's test (`str(provided).strip() != ""`, then
+      `shown = "X" if ln.type == "checkbox"`), so every non-empty answer
+      rendered a ticked "X" with source 'entered' — including "no", False
+      (whose str is "False") and "0". Reproduced on the clean HEAD a233031 by
+      the Phase J review (PJ-05): hand_fill_worksheet(ct1040 2023,
+      {"filing_status.single": "no", "filing_status.mfj": False,
+      "filing_status.hoh": "yes"}) returned 'X' on all three, and on the
+      FEDERAL FBAR pack (fincen114 2025, {"third_party_filing": "no",
+      "account1_15a": False, "44a": "0"}) it returned 'X' on all three. Scope:
+      the 8 checkbox lines in each of the fincen114 2023/2024/2025 packs (the
+      third-party-filer question, the five per-account "amount unknown" boxes,
+      and the item 44 / 44a signature boxes), plus ct1040 (14), nm pit1 (18),
+      hi n11 (5) and sc1040 (19). A filer who answered no was told to tick the
+      box, on the FBAR keyed into the BSA E-Filing System or on the printed
+      state return. The AcroForm filler had the right rule all along
+      (filler._checkbox_state reads a bool, an int 0/1 or a fixed yes/no word
+      list, and refuses anything else); the second rendering path never used
+      it. The same code had a second defect of the same kind: a money line
+      whose value rounds to Decimal('-0') (a computed 0.2 - 0.6, or 0 times a
+      negative) printed as "-0".
+    countermeasure: >-
+      handfill._checkbox_checked reads a checkbox answer with
+      _CHECKBOX_ON_WORDS / _CHECKBOX_OFF_WORDS — a COPY of the filler's sets,
+      because the hand-fill path deliberately never imports the filler — and
+      takes bool and int 0/1 exactly as the filler does. Anything else raises a
+      ValueError that names the line and its label and passes the answer
+      through redact() (a short word such as 'maybe' is echoed as typed, an
+      SSN-shaped id or a run of 6+ digits is masked). A "no" renders an empty
+      box (value '', source 'blank'), and an omitted or None line is left blank,
+      as for money and text lines. _fmt_money turns a rounded zero into an
+      unsigned 0. THE DURABLE RULE covers every path that turns a checkbox
+      answer into a mark — AcroForm /V + /AS, the hand-fill worksheet, and any
+      future overlay or stamp renderer: each reads the answer with the ONE
+      yes/no vocabulary and refuses what it does not recognise, and none ever
+      tests truthiness or non-emptiness, because either test makes "no" a
+      tick. Regression tests, P-014-tagged, in
+      packages/core/tests/test_handfill.py: the yes, no and refused answers
+      (each parametrized) and the redaction of a refused answer;
+      test_checkbox_vocabulary_matches_the_acroform_filler, which pins the copy
+      to the filler's sets and to _checkbox_state's outcome on every
+      vocabulary word and on bool/int/float inputs so the two cannot drift;
+      test_fbar_no_answer_leaves_every_box_empty once per FBAR year;
+      test_every_shipped_checkbox_line_honours_no, a sweep over every shipped
+      handfill.yaml (all boxes answered no/False/"0"/"off" come back empty,
+      all answered yes come back "X"); and
+      test_money_zero_never_renders_as_negative_zero.
