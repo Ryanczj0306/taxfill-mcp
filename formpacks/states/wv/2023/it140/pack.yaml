@@ -320,6 +320,11 @@ fields:
   - line: exemptions.e                    # "(e) Total Exemptions (add boxes a,b,c,d)"
     field: "it140_totex5"
     type: text
+    maxlen: 2                             # the blank caps the SAME total at /MaxLen 2 where line 6 restates
+                                          # it (it140_ex6; totex5's own /TU: "enters onto line 6 below");
+                                          # totex5 has no /MaxLen and its 27.2pt rect at CourierNew-Bold
+                                          # 10pt holds 4 glyphs, so an unhinted value clipped (verify P-001,
+                                          # visible since the ReadOnly scan widened 2026-09-11)
   - line: exemptions.d.decedent_ssn       # "(d) (See page 21) Decedents SSN"
     field: "it140_exemptionsDecedentSSN"
     type: text

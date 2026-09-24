@@ -18,6 +18,7 @@ from taxfill_core.verify import (
     FilingItem,
     TextWidget,
     assertion_diff,
+    bound_widget_names,
     checkbox_audit,
     clipping_scan,
     digits_only,
@@ -1205,6 +1206,23 @@ def test_verify_form_catches_maxlen_overflow_from_dump_alone():
     assert "line 'identifying_number'" in report.clipping[0].detail  # detail names the line too
 
 
+def test_whitespace_only_values_are_not_clipping_candidates():
+    # Regression (P-001, found 2026-09-23 by test_verify_readonly_sweep.py): WV
+    # IT-140 2023 maps its seven state-picker /Ch combos as maxlen-2 text lines,
+    # and an untouched combo holds FIVE SPACES on the blank. The dump-based
+    # pack-maxlen fallback counted them — 5 > 2 — so every real one-line WV fill
+    # FAILed P-001 on text nobody wrote. Spaces cannot visibly clip; a real
+    # overlong value on the same line still FAILs.
+    pack = make_pack([text_field("recap.1.state_1", maxlen=2)])
+    report = verify_form(pack, disk_fields(pack, {"recap.1.state_1": "     "}))
+    assert report.clipping == [] and report.ok is True
+    overlong = verify_form(pack, disk_fields(pack, {"recap.1.state_1": "OHIO"}))
+    assert [check.status for check in overlong.clipping] == ["FAIL"]
+    # The widget scan applies the same rule: a blank-looking widget is not scanned.
+    spaces = TextWidget(name=f"{ROOT}.Page1[0].f_x[0]", value="     ", max_len=2, da="/Helv 10 Tf 0 g", rect_width=5.0)
+    assert clipping_scan([spaces]) == []
+
+
 def test_verify_form_widgets_take_precedence_over_pack_maxlen():
     pack = make_pack([text_field("identifying_number", maxlen=9, comb=True)])
     fields = disk_fields(pack, {"identifying_number": "000000000"})
@@ -1480,42 +1498,60 @@ def test_read_text_widgets_geometry_round_trip(filled_pdf):
     assert name.da  # reportlab writes a /DA; the heuristic has a font size
 
 
-def test_read_text_widgets_skips_read_only_fields(tmp_path):
-    # Regression: read-only text widgets (/Ff bit 1, ReadOnly) carry baked-in
-    # banner/tooltip defaults the filler never writes (NC D-400's fixed "PRINT"
-    # banner, IL-1040's "Help" tooltip). The clipping scan must skip them or it
-    # false-positives on a value the user can neither change nor see clipped.
+def test_read_text_widgets_skips_read_only_fields_the_pack_does_not_bind(tmp_path):
+    # ReadOnly text widgets (/Ff bit 1) are skipped ONLY when the pack does not
+    # bind them: an unmapped one carries a value baked into the blank (NC
+    # D-400's fixed-18pt "PRINT" banner, IL-1040's "Help" tooltip) that the
+    # user can neither change nor see clipped, so scanning it false-positives.
+    # A ReadOnly widget the pack DOES map (a DOR-computed total or a page-2/3/4
+    # SSN mirror cell the filler had to write — P-007 class 4) is scanned; the
+    # full end-to-end coverage of that side lives in test_verify_readonly_scan.py.
+    # Until 2026-09-11 the collector skipped every ReadOnly widget on the false
+    # premise "the filler never writes them".
     from pdf_fixtures import make_acroform_pdf
     from pypdf import PdfWriter
     from pypdf.generic import NameObject, NumberObject
 
     editable = f"{ROOT}.Page1[0].f_editable[0]"
     banner = f"{ROOT}.Page1[0].f_banner[0]"
+    mirror = f"{ROOT}.Page2[0].f_ssn_mirror[0]"
     blank = make_acroform_pdf(
         tmp_path / "ro.pdf",
         [
             {"name": editable, "kind": "text", "width": 200},
             {"name": banner, "kind": "text", "width": 200},
+            {"name": mirror, "kind": "text", "width": 60, "maxlen": 3, "comb": True},
         ],
     )
-    # Flip the ReadOnly flag on the banner field's widget (the fixture has no
-    # input key for /Ff on a flat text field, so set it directly via pypdf).
+    # Flip the ReadOnly flag on the banner and mirror widgets (the fixture has
+    # no input key for /Ff on a flat text field, so set it directly via pypdf).
     writer = PdfWriter(clone_from=str(blank))
-    flipped = False
+    flipped: set[str] = set()
     for page in writer.pages:
         for ref in page.get("/Annots", []):
             annot = ref.get_object()
-            if annot.get("/T") == banner:
-                annot[NameObject("/Ff")] = NumberObject(1)  # bit 1 = ReadOnly
-                flipped = True
-    assert flipped, "fixture did not expose the banner widget to flag"
+            if annot.get("/T") in (banner, mirror):
+                annot[NameObject("/Ff")] = NumberObject(int(annot.get("/Ff", 0)) | 1)  # bit 1 = ReadOnly
+                flipped.add(str(annot.get("/T")))
+    assert flipped == {banner, mirror}, "fixture did not expose the widgets to flag"
     out = tmp_path / "ro_flagged.pdf"
     with out.open("wb") as fh:
         writer.write(fh)
 
+    # No pack in scope: the reader cannot tell a mirror from a banner -> every
+    # ReadOnly widget is skipped (a bare clipping_scan(path) stays quiet).
     names = {w.name for w in read_text_widgets(out)}
-    assert editable in names  # an editable text widget is still scanned
-    assert banner not in names  # the read-only banner is skipped
+    assert editable in names  # an editable text widget is always scanned
+    assert banner not in names and mirror not in names
+
+    # The pack binds the mirror (not the banner): the mirror is scanned, the
+    # banner is still skipped.
+    pack = make_pack([{"line": "identifying_number", "field": "Page2[0].f_ssn_mirror[0]", "type": "text",
+                       "maxlen": 3, "comb": True, "format": "ssn_digits_only"}])
+    widgets = {w.name: w for w in read_text_widgets(out, bound_names=bound_widget_names(pack))}
+    assert editable in widgets and mirror in widgets
+    assert banner not in widgets
+    assert widgets[mirror].read_only is True and widgets[editable].read_only is False
 
 
 def test_read_layer_reconstructs_hierarchical_qualified_names(tmp_path):

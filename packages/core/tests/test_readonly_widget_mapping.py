@@ -38,10 +38,13 @@ tells them apart (P-007's DISCRIMINATOR):
    majority of this repo's ReadOnly bindings by far. taxfill never executes
    that JavaScript, so a running total, a page-2/3/4 name+SSN mirror or a
    carried subtotal that the pack does NOT map ships BLANK on the filed
-   return. Those bindings are correct and there are 1,140 of them across 10
-   packs, so they are pinned per pack by COUNT (``STATE_COMPUTED_READONLY``)
-   rather than per widget — a per-widget list of 1,140 names would be a
-   rubber stamp, while the count still fails the moment a port grows it.
+   return. Those bindings are correct and there are 1,390 of them across 11
+   packs (re-summed 2026-09-23; 68 of the 1,390 are DOR captions the AL-40
+   and MO-1040 rows still count as named debt), so they are pinned by COUNT
+   per pack (``STATE_COMPUTED_READONLY``) rather than per widget — a list
+   of 1,390 names would be a rubber stamp, while the count still fails the
+   moment a port grows it. What class 4 never covers is a DOR banner or
+   caption whose text the blank already holds: that is class 1, never mapped.
    Note that not every row is a *computed* field, and the mechanism is not
    always JavaScript:
 
@@ -365,7 +368,10 @@ class StateComputed(NamedTuple):
 # EMPTY intersection against their own blanks and therefore take no row; nc,
 # nj, ut, va, or and pa were each confirmed at zero rather than assumed. The
 # same 2026-08-21 sweep also moved two existing rows: oh/2023 2 -> 5 and
-# oh/2024 3 -> 6, as the blocking P-007 class-4 fixes landed. Both readers
+# oh/2024 3 -> 6, as the blocking P-007 class-4 fixes landed. The 2026-09-23
+# re-measure moved three rows DOWN — al40 580 -> 568, mo1040 2023 262 -> 256,
+# 2024 260 -> 254 — when the DOR banners, captions and one checkbox frame those
+# counts had silently absorbed were unmapped (each row says which). Both readers
 # agree on every figure below: walking page /Annots and walking the AcroForm
 # /Fields tree to its terminals give identical mapped-∩-ReadOnly sets, in both
 # cases resolving /Ff up the /Parent chain.
@@ -378,18 +384,25 @@ class StateComputed(NamedTuple):
 # ONE field with 12 widget kids).
 #
 # Every other state pack is absent from this table and therefore pinned at
-# ZERO. One pack could not be measured: states/ms/2023/f80105 — its blank is
-# not in .cache/blanks and dor.ms.gov fails certificate verification here, so
-# both this test and test_formpacks_states' round-trip SKIP it. It is pinned
-# at 0 like the rest; the assertion fires the first time someone caches that
-# blank, which is the right moment to adjudicate it.
+# ZERO. One pack went unmeasured for a while: states/ms/2023/f80105, whose
+# blank was not in .cache/blanks (dor.ms.gov fails certificate verification
+# here). Its sha-pinned blank has been cached since 2026-09-11, and the
+# 2026-09-23 run measured it at zero like the rest.
 STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
     StateComputed(
         "states/al/2023/al40/pack.yaml",
-        580,
+        568,
         "the pack's own header states it: 'AL marks many running totals ReadOnly, but they "
         "remain mapped so a filer can carry the computed value'. The dominant flag value is "
-        "/Ff 12582913 (DoNotScroll|DoNotSpellCheck|ReadOnly)",
+        "/Ff 12582913 (DoNotScroll|DoNotSpellCheck|ReadOnly). 580 -> 568 on 2026-09-23: the "
+        "old count silently included TWELVE ReadOnly DOR banners that are not lines at all — "
+        "the multiline instruction panels Instructions, Instructions1-5 and Instructions7-11 "
+        "(no /TU; 652-753 characters opening '-This form has been enhanced to complete all "
+        "calculations...' baked into the blank; the blank has no Instructions6) and the "
+        "white NonDriver checkbox caption. Mapped, the baked-in text FAILed verify's P-001 "
+        "scan on every real one-line fill; they are unmapped now (class 1: the widget already "
+        "holds the form's own text). Still counted: the two same-shape white captions "
+        "txtMultiScheduleD/E, which fit their boxes — debt for the CONVENTIONS banner rule",
     ),
     StateComputed(
         "states/de/2023/pit_res/pack.yaml",
@@ -408,15 +421,28 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
     ),
     StateComputed(
         "states/mo/2023/mo1040/pack.yaml",
-        262,
+        256,
         "MO-1040's JS-computed totals; the ReadOnly 'do calculations' UI toggles and the "
-        "CRP2023 banner are correctly NOT mapped",
+        "CRP2023 banner are correctly NOT mapped. 262 -> 256 on 2026-09-23: five ReadOnly "
+        "checkbox/worksheet CAPTIONS, not lines, were unmapped — Texto7 'Carry amount to "
+        "1040 Line 14', Texto8 'Carry amounts to MO-1040, Line 1Y and 1S.', Texto9 'Check if "
+        "you owned and occupied your home for the entire year', MOAText 'Use data from "
+        "worksheet' and lblNRI 'Use worksheet values in NRI, Part C, Line 1' (no /TU; the "
+        "text is baked into the blank), whose text FAILed verify's P-001 scan on every real "
+        "fill (class 1) — and so was Text1, an empty ReadOnly 21x22pt /Tx that only draws "
+        "the black border (/MK /BC) of the c.ownfullyear checkbox sitting inside it (no "
+        "value can be right; the round trip's sentinel in it FAILed the widened scan). NOT "
+        "all 256 are computed totals: the count still carries the pack's "
+        "33 other mapped ReadOnly helper/label strings (the 28 printlid.* lids, ProtectBarcode, "
+        "amendedTXT, 1040_30Text, line51txt, vendorid), which fit their boxes or auto-size "
+        "— debt for the CONVENTIONS banner rule",
     ),
     StateComputed(
         "states/mo/2024/mo1040/pack.yaml",
-        260,
+        254,
         "the 2023 row's JS-computed totals carried over, with the 2024 delta measured "
-        "field by field (262 -> 260): MINUS the 20 ReadOnly bindings the re-authored "
+        "field by field (then 262 -> 260; 256 -> 254 since the 2026-09-23 unmap below): "
+        "MINUS the 20 ReadOnly bindings the re-authored "
         "MO-A Part 3/Part 5 ladder removed with its 25 dead field names; PLUS 2 "
         "survivors newly flagged (/Ff 12582912 -> 12582913, the only /Ff changes on any "
         "surviving field): line44, quoted by name in the 2024 document JS "
@@ -430,7 +456,11 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "age-62/65 boxes — the OH IT-1040 L17/L19 shape, filer data that must stay "
         "mapped). No surviving field LOST the bit; class 1 ruled out for all 16 new "
         "cells (each /V holds the calculator's factory '0', not a printed constant). "
-        "The CRP banner (CRP2024 this year) stays correctly NOT mapped",
+        "The CRP banner (CRP2024 this year) stays correctly NOT mapped. 260 -> 254 on "
+        "2026-09-23: the 2023 row's five ReadOnly captions (Texto7, Texto8, Texto9, MOAText, "
+        "lblNRI) and the Text1 checkbox frame — same names, values and pages on the 2024 "
+        "blank — were unmapped here too, and the same 33 helper/label strings stay counted "
+        "as debt",
     ),
     StateComputed(
         "states/oh/2023/it1040_oh/pack.yaml",
@@ -519,9 +549,10 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         15,
         "the page-2/3/4 name + SSN header MIRRORS (fnamepg2..4, lnamepg2..4, "
         "ss3/ss2/ss4 per page) that WI's JS propagates from page 1. Unmapped they would "
-        "file blank — and note verify's clipping scan SKIPS ReadOnly widgets, so these "
-        "maxlen 3/2/4 SSN cells are invisible to the P-001 check that exists for exactly "
-        "this field shape",
+        "file blank. These maxlen 3/2/4 SSN cells are the shape the P-001 check exists for, "
+        "and verify's clipping scan skipped every ReadOnly widget until 2026-09-11; it now "
+        "scans a mapped ReadOnly widget whenever the fill changed its value "
+        "(test_verify_readonly_scan.py)",
     ),
     StateComputed(
         "states/wv/2023/it140/pack.yaml",
@@ -770,8 +801,8 @@ def test_federal_pack_maps_no_readonly_widget_outside_the_allowlist(pack_path: P
         "revision that un-reserves it (f1040 line 30 went live in 2025) — then add a row "
         "to RESERVED_LINE_KEEPS quoting the printed text.\n"
         "Also note what will NOT catch a mistake here: fill_form writes ReadOnly widgets "
-        "with no warning, and verify's clipping scan SKIPS them on the premise that the "
-        "filler never writes them."
+        "with no warning, and verify's clipping scan checks only that a value FITS the "
+        "widget, never that the line should have been mapped."
     )
     stale = sorted(f"line {expected[name]!r} -> {name}" for name in set(expected) - set(actual))
     assert not stale, (
@@ -868,9 +899,11 @@ def test_state_pack_readonly_mapped_count_matches_the_pinned_audit(pack_path: Pa
         "plausible but never silent: re-run the sweep, confirm each NEW binding is a "
         "computed/mirrored field on a white printed box (not a shaded 'no entry' cell, and "
         "not a widget that already holds a DOR-printed constant), then update the count and "
-        "its justification in STATE_COMPUTED_READONLY. Remember verify's clipping scan "
-        "SKIPS ReadOnly widgets, so nothing downstream will catch a bad value here "
-        "(P-007, and P-001 for the SSN-shaped mirrors)."
+        "its justification in STATE_COMPUTED_READONLY. A DOR banner or caption whose text "
+        "is baked into the blank is NOT a computed field — never map one (the AL-40 / "
+        "MO-1040 banners unmapped 2026-09-23 FAILed P-001 on every real fill). verify's "
+        "clipping scan covers a mapped ReadOnly widget only once a fill changes its value, "
+        "so it checks that values fit, never that a binding is right (P-007, P-001)."
     )
 
 

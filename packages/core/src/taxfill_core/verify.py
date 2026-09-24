@@ -65,19 +65,66 @@ widget's ``/DA`` default-appearance string (``<size> Tf``); ``0 Tf`` means
 auto-size and is safe. Otherwise the estimated text width is
 ``len(value) * 0.5 * font_size`` — 0.5 is the documented average Helvetica
 glyph-width ratio — compared against the widget rectangle width. A missing
-``/DA`` conservatively assumes 10 pt.
+``/DA`` conservatively assumes 10 pt. An empty or whitespace-only value is
+never a clipping candidate, in the widget scan or the pack-maxlen fallback:
+nothing visible prints (WV IT-140's untouched state-picker combos hold five
+spaces under a maxlen-2 hint).
+
+ReadOnly text widgets (``/Ff`` bit 1) and the clipping scan: the flag does
+NOT mean "the filler never writes it". Packs deliberately keep over a
+thousand ReadOnly widgets MAPPED — a state DOR sets the bit on cells its own
+JavaScript owns (running totals, the page-2/3/4 name + SSN mirror cells) and
+taxfill never runs that JavaScript, so the filler must write them or they
+file BLANK (pitfall P-007 class 4; the per-pack allowlist lives in
+``tests/test_readonly_widget_mapping.py``). A ReadOnly widget is therefore
+scanned exactly when the pack's field map BINDS its qualified name — the
+filler could have written it — and skipped otherwise: an unmapped ReadOnly
+widget holds a value baked into the blank (NC D-400's fixed-18pt "PRINT"
+margin banner, IL-1040's "Help" tooltip) that the user can neither change
+nor see clipped, and those false positives are why the skip exists at all.
+Callers with a pack in scope (:func:`verify_form`, :func:`verify_filing`)
+thread :func:`bound_widget_names` into the reader; a bare
+:func:`clipping_scan` / :func:`read_text_widgets` call on a path with no
+``bound_names`` keeps every ReadOnly widget out of the scan, because without
+the field map it cannot tell a mirror cell from a banner. Until 2026-09-11
+the collector skipped every ReadOnly widget unconditionally, so a mapped
+ReadOnly widget was reachable only through a pack ``maxlen`` hint — no check
+of the widget's own /MaxLen or width, and nothing at all for a hint-less
+binding — on exactly the field shape P-001 exists for (WI Form 1's ReadOnly
+maxlen-3/2/4 SSN mirror cells).
+
+Binding is necessary but not sufficient: "the pack maps it" says the filler
+COULD have written a widget, not that THIS fill did. A pack can map a
+ReadOnly widget whose value the DOR baked into the blank (AL-40 2023 once
+mapped its twelve instruction panels, MO-1040 its five checkbox captions),
+and a fill that never supplies that line leaves the blank's text in place —
+so the widened scan FAILed P-001 on every real AL/MO fill over text the filer
+never wrote. :func:`verify_form` and :func:`verify_filing` therefore also
+compare each mapped ReadOnly widget against the pack's sha-pinned blank and
+skip it while its /V is still byte-identical to the blank's (the filler never
+rewrites a line it was not given, so an untouched widget keeps the blank's
+exact value). The blank is looked up in the local fetch cache only — verify
+never downloads — and when it is not there every mapped ReadOnly widget is
+scanned and each such FAIL says the blank could not be consulted — fail
+loud, not blind. ``test_verify_readonly_sweep.py`` holds every repo pack to
+zero clipping FAILs on a one-line fill, and to mapping no ReadOnly widget
+whose blank text already clips — so for a shipped pack even the no-blank
+fallback cannot FAIL on text the fill did not write.
 """
 
 from __future__ import annotations
 
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP, localcontext
 from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+# _cache_path is fetch's private URL -> cache-file mapping; verify reuses it
+# (rather than restating the naming rule) to FIND a pinned blank, never to fetch.
+from taxfill_core.fetch import _cache_path, compute_sha256, default_cache_dir
 from taxfill_core.knowledge import assert_filing_grade
 from taxfill_core.schemas.formpack import FormPack, PackField
 
@@ -95,6 +142,7 @@ __all__ = [
     "TextWidget",
     "VerifyReport",
     "assertion_diff",
+    "bound_widget_names",
     "checkbox_audit",
     "clipping_scan",
     "digits_only",
@@ -327,6 +375,26 @@ def _lookup_raw(pack: FormPack, pack_field: PackField, fields: Mapping[str, str]
     return None
 
 
+def bound_widget_names(pack: FormPack) -> frozenset[str]:
+    """Every AcroForm name the filler could write for ``pack`` — its bound widgets.
+
+    Both spellings :func:`_lookup_raw` tolerates are included for every
+    field: ``<acroform_root>.<field>`` and the bare ``field`` (flat state
+    AcroForms have an empty root; a few packs carry the root inside
+    ``field``). This is the set :func:`read_text_widgets` consults to decide
+    whether a ReadOnly text widget could have been written by the filler
+    (collect it) or can only hold a value baked into the blank (skip it). It
+    is the first of two filters: :func:`verify_form` / :func:`verify_filing`
+    also drop a bound ReadOnly widget still holding the pinned blank's own
+    value — see the module docstring.
+    """
+    names: set[str] = set()
+    for pack_field in pack.fields:
+        names.add(qualified_field_name(pack, pack_field))
+        names.add(pack_field.field)
+    return frozenset(names)
+
+
 # ---------------------------------------------------------------------------
 # Result models
 # ---------------------------------------------------------------------------
@@ -456,6 +524,14 @@ class TextWidget(BaseModel):
         description="PDF /DA default-appearance string, e.g. '/Helv 9 Tf 0 g'; '0 Tf' means auto-size.",
     )
     rect_width: float = Field(default=0.0, ge=0.0, description="Widget rectangle width in points; 0 when unknown.")
+    read_only: bool = Field(
+        default=False,
+        description=(
+            "PDF /Ff bit 1 (ReadOnly) is set. Only widgets the pack's field map binds are "
+            "collected with this flag — a form-computed or mirrored cell the filler has to "
+            "write itself (P-007 class 4); unmapped ReadOnly widgets are never collected."
+        ),
+    )
 
 
 class VerifyReport(BaseModel):
@@ -560,8 +636,30 @@ def _widget_qualified_name(obj: Mapping) -> str:
     return ".".join(reversed(parts))
 
 
-def read_text_widgets(pdf_path: str | Path) -> list[TextWidget]:
-    """Collect every text widget's value, /MaxLen, /DA and rect width via pypdf."""
+def read_text_widgets(
+    pdf_path: str | Path,
+    *,
+    bound_names: Collection[str] | None = None,
+) -> list[TextWidget]:
+    """Collect every text widget's value, /MaxLen, /DA and rect width via pypdf.
+
+    ``bound_names`` is the set of qualified AcroForm names the filler could
+    have written — :func:`bound_widget_names` of the pack being verified. A
+    ReadOnly text widget (``/Ff`` bit 1) is collected only when its qualified
+    name is in that set (its value came from the filler: a DOR-computed total
+    or a page-2/3/4 name/SSN mirror the pack keeps mapped because taxfill
+    never runs the form's JavaScript — P-007 class 4); every other ReadOnly
+    widget is skipped, because its value is baked into the blank (NC D-400's
+    "PRINT" banner, IL-1040's "Help" tooltip) and flagging it is a false
+    positive. With ``bound_names=None`` (no pack in scope) ALL ReadOnly
+    widgets are skipped — the reader cannot tell a mirror from a banner.
+
+    The reader reads ONE PDF, so it cannot see the second filter the pack-
+    aware callers apply: :func:`verify_form` / :func:`verify_filing` also skip
+    a bound ReadOnly widget whose value is still the pinned blank's own (a
+    mapped banner the fill never touched). A direct call with ``bound_names``
+    therefore reports such a widget as-is.
+    """
     from pypdf import PdfReader  # local import keeps the pypdf layer isolated
 
     path = Path(pdf_path)
@@ -582,14 +680,21 @@ def read_text_widgets(pdf_path: str | Path) -> list[TextWidget]:
                 continue
             if _inherited(annot, "/FT") != "/Tx":
                 continue
-            # Skip read-only text widgets (Ff bit 1, ReadOnly). They cannot
-            # receive taxpayer input, so the filler never writes them; any
-            # value present is a decorative/banner default baked into the blank
-            # (e.g. NC D-400's fixed-18pt "PRINT" banner, IL-1040's "Help"
-            # tooltip). Scanning them for clipping yields false positives on a
-            # value the user can neither change nor see clipped.
+            # ReadOnly text widgets (Ff bit 1). The flag does NOT mean "the
+            # filler never writes it": packs keep over a thousand ReadOnly
+            # widgets MAPPED on purpose (state-DOR running totals and page-2/3/4
+            # name + SSN mirror cells whose JavaScript taxfill never runs —
+            # unmapped they would file BLANK; P-007 class 4). So: scan a
+            # ReadOnly widget exactly when the pack BINDS its name (the filler
+            # could have written it), and skip it otherwise — an unmapped
+            # ReadOnly widget holds a value baked into the blank (NC D-400's
+            # fixed-18pt "PRINT" banner, IL-1040's "Help" tooltip) that the
+            # user can neither change nor see clipped, which is the false
+            # positive the skip exists for.
             flags = _inherited(annot, "/Ff")
-            if flags is not None and int(flags) & 1:
+            read_only = flags is not None and bool(int(flags) & 1)
+            name = _widget_qualified_name(annot)
+            if read_only and (bound_names is None or name not in bound_names):
                 continue
             rect = annot.get("/Rect")
             rect_width = abs(float(rect[2]) - float(rect[0])) if rect else 0.0
@@ -598,11 +703,12 @@ def read_text_widgets(pdf_path: str | Path) -> list[TextWidget]:
             da = _inherited(annot, "/DA") or default_da
             widgets.append(
                 TextWidget(
-                    name=_widget_qualified_name(annot),
+                    name=name,
                     value="" if value is None else _pdf_text(value),
                     max_len=int(max_len) if max_len is not None and int(max_len) >= 1 else None,
                     da=_pdf_text(da) if da is not None else None,
                     rect_width=rect_width,
+                    read_only=read_only,
                 )
             )
     return widgets
@@ -1226,7 +1332,18 @@ def _coerce_widgets(source: Sequence[TextWidget | Mapping]) -> list[TextWidget]:
     return [w if isinstance(w, TextWidget) else TextWidget.model_validate(w) for w in source]
 
 
-def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[ClippingCheck]:
+_READ_ONLY_NOTE = (
+    " [this is a ReadOnly widget the pack maps — a form-computed or mirrored cell the filler "
+    "had to write because taxfill never runs the form's JavaScript (P-007 class 4); the fix is "
+    "the value or the pack's maxlen hint, never the widget]"
+)
+
+
+def clipping_scan(
+    source: str | Path | Sequence[TextWidget | Mapping],
+    *,
+    bound_names: Collection[str] | None = None,
+) -> list[ClippingCheck]:
     """Flag filled text widgets whose value would clip (pitfall P-001).
 
     Accepts a filled PDF path or pre-parsed :class:`TextWidget` records
@@ -1236,13 +1353,23 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
        overflow (invisible in field dumps; this is the P-001 SSN incident);
     2. width heuristic — ``len(value) * 0.5 * font_size`` vs the widget rect
        width; ``0 Tf`` auto-size is safe; a missing /DA assumes 10 pt.
+
+    ``bound_names`` (a path source only) is forwarded to
+    :func:`read_text_widgets`: pass :func:`bound_widget_names` of the pack so
+    the ReadOnly widgets the pack maps — the filler wrote them — are scanned
+    too. Without it every ReadOnly widget stays out of the scan.
     """
-    widgets = read_text_widgets(source) if isinstance(source, (str, Path)) else _coerce_widgets(source)
+    widgets = (
+        read_text_widgets(source, bound_names=bound_names)
+        if isinstance(source, (str, Path))
+        else _coerce_widgets(source)
+    )
     checks: list[ClippingCheck] = []
     for widget in widgets:
-        if not widget.value:
-            continue  # nothing written, nothing to clip
+        if not widget.value.strip():
+            continue  # nothing visible written, nothing to clip (see _pack_maxlen_checks)
         length = len(widget.value)
+        note = _READ_ONLY_NOTE if widget.read_only else ""
         if widget.max_len is not None and length > widget.max_len:
             overflow = length - widget.max_len
             checks.append(
@@ -1253,7 +1380,7 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
                         f"field '{widget.name}': value is {length} characters but MaxLen is "
                         f"{widget.max_len} — the last {overflow} character(s) would be silently "
                         f"clipped (pitfall P-001); shorten the value and refill (SSN/EIN comb "
-                        f"fields take digits only: use format 'ssn_digits_only')"
+                        f"fields take digits only: use format 'ssn_digits_only')" + note
                     ),
                 )
             )
@@ -1295,7 +1422,7 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
                         f"{length} x 0.5 x {font_size:g}pt Helvetica heuristic{assumed}) exceeds "
                         f"the widget width {widget.rect_width:.1f}pt — text may be visually "
                         f"clipped (pitfall P-001); shorten this field's value or switch the "
-                        f"field to auto-size, then re-render to confirm"
+                        f"field to auto-size, then re-render to confirm" + note
                     ),
                 )
             )
@@ -1311,6 +1438,87 @@ def clipping_scan(source: str | Path | Sequence[TextWidget | Mapping]) -> list[C
                 )
             )
     return checks
+
+
+_NO_BLANK_NOTE = (
+    " [the pack's sha-pinned blank is not in the local blank cache (or does not match the pack's "
+    "pdf_sha256), so verify could not tell a "
+    "value this fill wrote from one the DOR baked into the blank: run fetch_blank for this form "
+    "and re-verify — a mapped ReadOnly widget still holding the blank's own text is then skipped; "
+    "a FAIL on a widget the blank leaves empty stays a real FAIL]"
+)
+
+
+def _pinned_blank(pack: FormPack) -> Path | None:
+    """The pack's sha-pinned blank if it is ALREADY in the local blank cache, else None.
+
+    Looks exactly where :func:`taxfill_core.fetch.fetch_blank` caches
+    ``pack.source_url`` — the blank every fill path fills from, so after a fill
+    it is normally there — and accepts the file only when its sha256 equals
+    ``pack.pdf_sha256``. It never downloads: verification is an offline pass
+    over what is on disk, and a stale or foreign file under the cache name is
+    treated as absent, not trusted.
+    """
+    try:
+        path = _cache_path(default_cache_dir(), pack.source_url)
+        if path.is_file() and compute_sha256(path) == pack.pdf_sha256.strip().lower():
+            return path
+    except OSError:
+        pass
+    return None
+
+
+def _drop_blank_owned(pack: FormPack, widgets: Sequence[TextWidget]) -> tuple[list[TextWidget], bool]:
+    """Drop the mapped ReadOnly widgets this fill did not write; report whether the blank was read.
+
+    A bound ReadOnly widget whose value is byte-identical to the SAME widget's
+    value on the pack's pinned blank still holds the DOR's baked-in text (a
+    mapped banner or caption the fill never supplied — the filler leaves an
+    unsupplied line untouched), so its clipping is the blank's, not this
+    fill's. Everything else passes through, including a ReadOnly widget whose
+    value DIFFERS from the blank's (the filler wrote it — scan it) and every
+    editable widget. Returns ``(widgets to scan, blank_consulted)``;
+    ``blank_consulted`` is False only when a valued ReadOnly widget needed the
+    comparison and :func:`_pinned_blank` found no blank, in which case nothing
+    is dropped.
+    """
+    if not any(widget.read_only and widget.value.strip() for widget in widgets):
+        return list(widgets), True  # nothing a scan would judge: no blank read at all
+    blank = _pinned_blank(pack)
+    if blank is None:
+        return list(widgets), False
+    baked = {
+        widget.name: widget.value
+        for widget in read_text_widgets(blank, bound_names=bound_widget_names(pack))
+        if widget.read_only and widget.value
+    }
+    kept = [
+        widget
+        for widget in widgets
+        if not (widget.read_only and widget.value and baked.get(widget.name) == widget.value)
+    ]
+    return kept, True
+
+
+def _widget_clipping_checks(pack: FormPack, widgets: Sequence[TextWidget]) -> list[ClippingCheck]:
+    """:func:`clipping_scan` over a filled PDF's widgets, minus what the blank still owns.
+
+    The pack-aware entry point :func:`verify_form` and :func:`verify_filing`
+    share: blank-owned ReadOnly widgets are dropped (:func:`_drop_blank_owned`),
+    and when the pinned blank could not be consulted every FAIL on a ReadOnly
+    widget says so, with the command that fixes it.
+    """
+    scanned, blank_consulted = _drop_blank_owned(pack, widgets)
+    checks = clipping_scan(scanned)
+    if blank_consulted:
+        return checks
+    read_only_names = {widget.name for widget in scanned if widget.read_only}
+    return [
+        check.model_copy(update={"detail": check.detail + _NO_BLANK_NOTE})
+        if check.status == FAIL and check.name in read_only_names
+        else check
+        for check in checks
+    ]
 
 
 def _pack_maxlen_checks(
@@ -1338,7 +1546,12 @@ def _pack_maxlen_checks(
         ):
             continue
         raw = _lookup_raw(pack, pack_field, fields)
-        if not raw:
+        if raw is None or not raw.strip():
+            # Nothing visible to clip. Whitespace-only is how an untouched /Ch
+            # combo can ship: WV IT-140 2023's seven blank state pickers hold
+            # five spaces under a maxlen-2 hint, so every real fill that left
+            # them alone FAILed P-001 on text nobody wrote — and a viewer that
+            # drops trailing spaces prints nothing either way.
             continue
         length = len(raw)
         if length > pack_field.maxlen:
@@ -2096,7 +2309,10 @@ def verify_form(
     (the address the user receives mail at TODAY, from intake) adds the
     P-002 address comparison. Clipping and the checkbox audit always run;
     ``pitfall_checks`` always reports P-001 and P-003, plus P-002 when
-    ``confirmed_current_address`` is given.
+    ``confirmed_current_address`` is given. When the widgets are read from the
+    PDF, the clipping scan covers the ReadOnly widgets the pack maps and reads
+    the pack's pinned blank from the local cache (never the network) to skip
+    any whose value is still the blank's own — see the module docstring.
 
     Raises:
         ProvisionalPackError: the year's knowledge pack is planning-only. Verify
@@ -2107,11 +2323,16 @@ def verify_form(
     """
     assert_filing_grade(pack.jurisdiction, pack.tax_year, action="verify a form")
 
+    widgets_from_disk = False
     if isinstance(fields, (str, Path)):
         pdf_path = Path(fields)
         fields = read_pdf_fields(pdf_path)
         if widgets is None:
-            widgets = read_text_widgets(pdf_path)
+            # The pack's bound names let the reader scan the ReadOnly widgets
+            # the filler wrote (mapped mirrors/totals) while still skipping
+            # unmapped ReadOnly banners — see read_text_widgets.
+            widgets = read_text_widgets(pdf_path, bound_names=bound_widget_names(pack))
+            widgets_from_disk = True
     widget_models = _coerce_widgets(widgets or [])
 
     merged_values, value_checks = _merge_disk_and_supplied(pack, fields, values)
@@ -2122,9 +2343,14 @@ def verify_form(
     recompute_checks = (
         independent_recompute(merged_values, independent) if independent is not None else []
     )
-    clipping_checks = clipping_scan(widget_models) + _pack_maxlen_checks(
-        pack, fields, skip_names=frozenset(w.name for w in widget_models)
-    )
+    # Widgets read off the filled PDF drop the mapped ReadOnly ones still
+    # holding the blank's own text (see _drop_blank_owned); caller-supplied
+    # widget records are scanned as given. The pack-maxlen fallback skips
+    # EVERY widget read, dropped or not, so a dropped banner cannot come back
+    # through the dump.
+    clipping_checks = (
+        _widget_clipping_checks(pack, widget_models) if widgets_from_disk else clipping_scan(widget_models)
+    ) + _pack_maxlen_checks(pack, fields, skip_names=frozenset(w.name for w in widget_models))
     checkbox_checks = checkbox_audit(pack, fields)
     identity_checks = (
         _confirmed_address_checks([(pack.form, pack, fields)], confirmed_current_address)
@@ -2245,10 +2471,14 @@ def verify_filing(
                     values_by_key[item.form_key], independent[item.form_key]
                 )
             )
-        item_widgets = read_text_widgets(item.pdf_path) if item.fields is None and item.pdf_path else []
+        item_widgets = (
+            read_text_widgets(item.pdf_path, bound_names=bound_widget_names(item.pack))
+            if item.fields is None and item.pdf_path
+            else []
+        )
         clipping_checks.extend(
             check.model_copy(update={"name": f"{item.form_key}: {check.name}"})
-            for check in clipping_scan(item_widgets)
+            for check in _widget_clipping_checks(item.pack, item_widgets)
             + _pack_maxlen_checks(item.pack, item_fields, skip_names=frozenset(w.name for w in item_widgets))
         )
         checkbox_checks.extend(

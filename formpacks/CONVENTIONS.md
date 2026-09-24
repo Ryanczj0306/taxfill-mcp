@@ -227,8 +227,10 @@ happened to ri1040 on 12 widgets and to it1040_oh on 11 pages).
   fills both widgets (PA-40's `your_ssn` is one field whose widget repeats).
 - `maxlen` tracks each widget's OWN `/MaxLen` and may legitimately differ
   between mirror and source (a DOR often prints a narrower continuation box).
-  That is also what keeps ReadOnly mirrors inside `_pack_maxlen_checks`' reach,
-  since the geometry half of the clipping scan skips ReadOnly widgets.
+  The filler enforces the pack `maxlen`. Since Phase J J0 (P-007(b)), verify's
+  clipping scan also widget-scans a MAPPED ReadOnly mirror (its own `/MaxLen` and
+  width) whenever its value differs from the pinned blank's; an unmapped ReadOnly
+  widget (a DOR banner or caption) is still skipped — so never map one as a line.
 - **One thing the schema cannot express:** that the mirror's VALUE equals its
   source's. `relations` is arithmetic over money lines and `identity_fields`
   drives a cross-FORM check, so `page4_name_last == name.last` has no home. A

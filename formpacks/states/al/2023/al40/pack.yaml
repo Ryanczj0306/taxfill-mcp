@@ -23,10 +23,27 @@
 # "btn*"/"BTN BC*"/"printlid.*"/"UF_*"/"VERCTRL" navigation, reset, print and
 # units-of-five UI control) - those carry no taxpayer data and are intentionally
 # OMITTED (each such name appears only as an appearance-stream /BBox, never a
-# real /AP /N on-state). The remaining 2274 data widgets (2084 text, 190
-# checkboxes) are ALL mapped. No readonly/computed text widget is omitted: AL
-# marks many running totals ReadOnly, but they remain mapped so a filer can
-# carry the computed value.
+# real /AP /N on-state). Of the remaining 2274 data widgets (2084 text, 190
+# checkboxes), 2262 are mapped. AL marks many running totals ReadOnly, but they
+# remain mapped so a filer can carry the computed value (P-007 class 4).
+#
+# The 12 deliberately UNMAPPED text widgets (2026-09-23) are ReadOnly DOR
+# banners whose value is baked into the blank, not taxpayer lines: the
+# per-schedule instruction panels Instructions, Instructions1-5 and
+# Instructions7-11 (multiline, no /TU, 652-753 characters each, every one
+# opening "-This form has been enhanced to complete all calculations and to
+# compute the amount of tax due."; the blank has no Instructions6), and the
+# NonDriver caption "If no driver's license, check the box. ... Spouse's"
+# (white 7pt text beside the NDL boxes). Mapped, they let the filler overwrite
+# DOR text, and once verify's clipping scan widened to mapped ReadOnly widgets
+# (2026-09-11) they FAILed P-001 on every real fill (the 693-character panel
+# measures 3465pt in its 302pt box) although the filer wrote nothing there.
+# Pinned by STATE_COMPUTED_READONLY (580 -> 568) in
+# test_readonly_widget_mapping.py and the repo-wide sweep in
+# test_verify_readonly_sweep.py. The two white captions txtMultiScheduleD/E
+# ("Check here if you have more than one Schedule D/E") are the same shape and
+# are still mapped: they fit their boxes, so they never FAIL, and unmapping
+# them waits for the CONVENTIONS banner rule (roadmap JEa).
 #
 # Checkboxes. Every real checkbox/radio in this form uses exactly one of two
 # export values, read verbatim from the blank's /AP /N dictionary: /X (184 of
@@ -58,9 +75,8 @@ source_url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23f40.pdf
 pdf_sha256: 023470e8b831a77a04773aba4b5165f0c72188f70ea7b12206269f549707b27f
 acroform_root: ''
 fields:
-  - line: Instructions
-    field: Instructions
-    type: text
+  # Instructions is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: UF_InfoA
     field: UF_InfoA
     type: text
@@ -576,9 +592,9 @@ fields:
     field: CHKAUTH
     type: checkbox
     on_state: /X
-  - line: NonDriver
-    field: NonDriver
-    type: text
+  # NonDriver is NOT mapped (2026-09-23): a ReadOnly caption, not a line — its
+  # baked-in /V reads "If no driver's license, check the box. ... Spouse's"
+  # (white 7pt, no /TU) beside the NDL boxes. See the header's Coverage note.
   - line: NDL
     field: NDL
     type: checkbox
@@ -2161,9 +2177,8 @@ fields:
     field: SCHCRWKSHTPTLN25A
     type: text
     maxlen: 2
-  - line: Instructions10
-    field: Instructions10
-    type: text
+  # Instructions10 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: UF_InfoJ
     field: UF_InfoJ
     type: text
@@ -2302,9 +2317,8 @@ fields:
   - line: UF_InfoB
     field: UF_InfoB
     type: text
-  - line: Instructions1
-    field: Instructions1
-    type: text
+  # Instructions1 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: SCHOCLINE1PE
     field: SCHOCLINE1PE
     type: text
@@ -2784,9 +2798,8 @@ fields:
     field: SCHOCLINE5PR
     type: text
     maxlen: 11
-  - line: Instructions2
-    field: Instructions2
-    type: text
+  # Instructions2 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: UF_InfoC
     field: UF_InfoC
     type: text
@@ -3892,9 +3905,8 @@ fields:
     field: SCHAATCSPSSN
     type: text
     maxlen: 9
-  - line: Instructions4
-    field: Instructions4
-    type: text
+  # Instructions4 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: SCHAATCLN1
     field: SCHAATCLN1
     type: text
@@ -4030,9 +4042,8 @@ fields:
     field: SCHAACSPSSN
     type: text
     maxlen: 9
-  - line: Instructions3
-    field: Instructions3
-    type: text
+  # Instructions3 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: SCHAACPRTILN1
     field: SCHAACPRTILN1
     type: text
@@ -4464,9 +4475,8 @@ fields:
   - line: UF_InfoG
     field: UF_InfoG
     type: text
-  - line: Instructions5
-    field: Instructions5
-    type: text
+  # Instructions5 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: SCHKRCCIBDATE-2
     field: SCHKRCCIBDATE-2
     type: text
@@ -4768,9 +4778,8 @@ fields:
   - line: UF_InfoH
     field: UF_InfoH
     type: text
-  - line: Instructions7
-    field: Instructions7
-    type: text
+  # Instructions7 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: SchNOL85PTIILN1
     field: SchNOL85PTIILN1
     type: text
@@ -4884,9 +4893,8 @@ fields:
   - line: UF_InfoI
     field: UF_InfoI
     type: text
-  - line: Instructions8
-    field: Instructions8
-    type: text
+  # Instructions8 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: SchNOL85ALN8
     field: SchNOL85ALN8
     type: text
@@ -5519,9 +5527,8 @@ fields:
     field: SchNOL85ALN19-4
     type: text
     maxlen: 8
-  - line: Instructions9
-    field: Instructions9
-    type: text
+  # Instructions9 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: UF_InfoF
     field: UF_InfoF
     type: text
@@ -6699,9 +6706,8 @@ fields:
     field: SCHRSPTIILN11
     type: text
     maxlen: 9
-  - line: Instructions11
-    field: Instructions11
-    type: text
+  # Instructions11 is NOT mapped (2026-09-23): a ReadOnly DOR instruction
+  # banner, not a line — see the header's Coverage note.
   - line: UF_InfoK
     field: UF_InfoK
     type: text

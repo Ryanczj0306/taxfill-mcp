@@ -25,13 +25,37 @@
 #
 # Coverage. The blank PDF has 878 distinct fillable AcroForm field objects
 # (1,017 terminal /Tx and /Btn fields; 1,172 sentinel widgets counting every
-# repeated occurrence). 879 pack lines map every fillable widget - all 878
-# distinct fields, plus the single shared CalcOption radio mapped once per
-# option (/X "DO Automatic Calculations" and /N "DON'T DO Automatic
-# Calculations"). A field that prints on several pages (e.g. SSN-1, firstname-1,
-# address, nri_city, mocr_name-1, printlid.12) is ONE AcroForm object and is
-# mapped on ONE line - the duplicate sentinel occurrences (SSN-1#2, #3, ...)
-# are the same field and are not re-mapped (a field holds one value).
+# repeated occurrence). 873 pack lines map every fillable widget but the five
+# label banners and one frame below - 872 of the 878 distinct fields, plus
+# the single shared CalcOption radio mapped once per option (/X "DO Automatic
+# Calculations" and /N "DON'T DO Automatic Calculations"). A field that
+# prints on several pages (e.g. SSN-1, firstname-1, address, nri_city,
+# mocr_name-1, printlid.12) is ONE AcroForm object and is mapped on ONE line -
+# the duplicate sentinel occurrences (SSN-1#2, #3, ...) are the same field and
+# are not re-mapped (a field holds one value).
+#
+# UNMAPPED LABEL BANNERS AND FRAME (2026-09-23). Five ReadOnly text widgets
+# are NOT mapped although the coverage policy above maps every other field:
+# each is a DOR caption whose value is baked into the blank (none carries a
+# /TU), not a line - Texto7 "Carry amount to 1040 Line 14" (page 8), MOAText
+# "Use data from worksheet" (page 8), lblNRI "Use worksheet values in NRI,
+# Part C, Line 1" (page 17), Texto8 "Carry amounts to MO-1040, Line 1Y and
+# 1S." (page 21) and Texto9 "Check if you owned and occupied your home for
+# the entire year" (page 23), each labelling the checkbox or worksheet
+# control beside it. Mapped, they let the filler overwrite DOR text, and once
+# verify's clipping scan widened to mapped ReadOnly widgets (2026-09-11) each
+# one FAILed P-001 on every real fill although the filer wrote nothing there.
+# A sixth, Text1 (page 23), is not text at all: an empty ReadOnly 21x22pt /Tx
+# (/Ff 1, /MK /BC black, no /TU, not named by the document JavaScript) that
+# draws the border of the c.ownfullyear checkbox sitting 1pt inside it, next
+# to Texto9's caption. No value can be right there, and the round trip's
+# sentinel in it FAILed the widened scan (8 characters at 12pt in 21pt).
+# STATE_COMPUTED_READONLY 262 -> 256 (test_readonly_widget_mapping.py);
+# the repo-wide sweep is test_verify_readonly_sweep.py. The other helper /
+# label strings listed under "Money vs text" (printlid.*, ProtectBarcode,
+# amendedTXT, 1040_30Text, ...) are the same shape and stay mapped for now:
+# they fit their boxes (or auto-size), so they never FAIL, and unmapping them
+# waits for the CONVENTIONS banner rule (roadmap JEa).
 #
 # Intentionally OMITTED - 140 distinct widgets, none accept taxpayer data,
 # every one a JavaScript pushbutton (/Btn with Ff bit-17 Pushbutton set;
@@ -59,9 +83,10 @@
 # 4-digit fiscal-year and birth-date comb cells, bank routing (9) / account
 # (17), preparer ids, the "Other (description)" and explanation text boxes,
 # the 2-digit trust-fund codes (line51m_tfcd / line51n_tfcd), and the
-# auto-populated helper / label strings (Texto7-9, Text1, txt01/02,
-# 1040_30Text, 1040_32Text2/3, lblNRI, MOAText, amendedTXT, vendorid,
-# printlid.*, fdata, ProtectBarcode).
+# auto-populated helper / label strings (txt01/02, 1040_30Text,
+# 1040_32Text2/3, amendedTXT, vendorid, printlid.*, fdata, ProtectBarcode;
+# Texto7-9, lblNRI, MOAText and Text1 are unmapped - see UNMAPPED LABEL
+# BANNERS AND FRAME).
 #
 # Checkboxes. Every real checkbox is its own /Btn with export state /X
 # (verified against the blank). The one multi-option /Btn is CalcOption (a
@@ -1045,9 +1070,8 @@ fields:
     field: "P1040_L14"
     type: checkbox
     on_state: "/X"
-  - line: "Texto7"
-    field: "Texto7"
-    type: text
+  # Texto7 is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
   - line: "moa_wks1"
     field: "moa_wks1"
     type: money
@@ -1069,9 +1093,8 @@ fields:
   - line: "moa_wks7"
     field: "moa_wks7"
     type: money
-  - line: "MOAText"
-    field: "MOAText"
-    type: text
+  # MOAText is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
   - line: "UseWS3"
     field: "UseWS3"
     type: checkbox
@@ -1647,9 +1670,8 @@ fields:
   - line: "U-S"
     field: "U-S"
     type: money
-  - line: "lblNRI"
-    field: "lblNRI"
-    type: text
+  # lblNRI is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
   - line: "UseWS1"
     field: "UseWS1"
     type: checkbox
@@ -2002,9 +2024,8 @@ fields:
   - line: "18-S"
     field: "18-S"
     type: money
-  - line: "Texto8"
-    field: "Texto8"
-    type: text
+  # Texto8 is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
   - line: "UseWS2"
     field: "UseWS2"
     type: checkbox
@@ -2094,16 +2115,15 @@ fields:
   - line: "n.pts_9"
     field: "n.pts_9"
     type: money
-  - line: "Text1"
-    field: "Text1"
-    type: text
+  # Text1 is NOT mapped (2026-09-23): an empty ReadOnly /Tx whose only job is
+  # the black border (/MK /BC) framing the c.ownfullyear checkbox 1pt inside
+  # it - see the header's UNMAPPED LABEL BANNERS AND FRAME note.
   - line: "c.ownfullyear"
     field: "c.ownfullyear"
     type: checkbox
     on_state: "/X"
-  - line: "Texto9"
-    field: "Texto9"
-    type: text
+  # Texto9 is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
   - line: "n.pts_10"
     field: "n.pts_10"
     type: money

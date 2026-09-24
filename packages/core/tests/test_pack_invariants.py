@@ -952,9 +952,9 @@ def test_identity_page_mirrors_agree_with_the_line_they_mirror(pack_path: Path):
             f"{key}: '{mirror}' has comb={mirror_field.comb!r} format="
             f"{mirror_field.format!r} while '{source}' has comb={source_field.comb!r} "
             f"format={source_field.format!r}. Those drive normalisation, so a mismatch "
-            f"means the same SSN reaches the two boxes spelled differently — and verify's "
-            f"clipping scan SKIPS ReadOnly widgets, which these mirrors usually are, so "
-            f"nothing downstream would catch it (P-001)"
+            f"means the same SSN reaches the two boxes spelled differently — verify's clipping "
+            f"scan checks a mapped ReadOnly mirror's width and /MaxLen, not whether its "
+            f"spelling matches its source's, so nothing downstream would catch it (P-001)"
         )
 
     exempt = {

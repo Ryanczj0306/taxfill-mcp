@@ -236,18 +236,51 @@ pitfalls:
       flag-only rationale. Settling it needs the 2022-2024 pack owners; the
       2023/2024 f1040nr and sched_a headers additionally describe these
       ReadOnly widgets as "fillable", as does sched_1 2023's note on line
-      22. (b) The verify blind spot is wider than this entry first said.
-      verify.py's clipping scan SKIPS ReadOnly text widgets on the premise
-      "the filler never writes them", which every class-3 and class-4
-      mapping falsifies — including Wisconsin's ReadOnly page-2/3/4 SSN
-      mirror cells (maxlen 3/2/4), so the P-001 clipping check is
-      structurally blind to the exact field shape P-001 exists for.
-      fill_form writes all of these with NO warning and audit_pack.py's
-      synthetic_values fills them, so the audit renders print sentinels
-      inside locked boxes. The engine-side fix — a `reserved:` marker on the
-      field, or driving fill_form and synthetic_values off the allowlist,
-      with a warning when a value is supplied for one — is roadmap work, not
-      a pack edit. (c) formpacks/CONVENTIONS.md has NO rule about ReadOnly
+      22. (b) The verify blind spot — CLOSED 2026-09-23 for the clipping
+      scan. verify.py's clipping scan used to SKIP every ReadOnly text
+      widget on the premise "the filler never writes them", which every
+      class-3 and class-4 mapping falsifies — including Wisconsin's
+      ReadOnly page-2/3/4 SSN mirror cells (maxlen 3/2/4) — so the P-001
+      check was structurally blind to the exact field shape P-001 exists
+      for. It now scans a ReadOnly widget when the pack BINDS its name
+      (bound_widget_names, exported from taxfill_core) and, inside
+      verify_form / verify_filing, only while its value DIFFERS from the
+      same widget's value on the pack's sha-pinned blank (read from the
+      local blank cache, never downloaded; with no cached blank every mapped
+      ReadOnly widget is scanned and each FAIL says to run fetch_blank).
+      That blank comparison is load-bearing: the first cut (2026-09-11)
+      scanned every bound widget and FAILed P-001 on every real one-line
+      AL-40 2023 / MO-1040 2023 / 2024 fill (12 / 5 / 5 FAILs where the old
+      verifier said ok=True), because those packs mapped DOR instruction
+      panels and checkbox captions as lines — a class-1 error (the widget
+      already holds the form's own text) that the golden round trips cannot
+      see, since their sentinels overwrite every mapped widget. Those 22
+      banners, and MO-1040's empty Text1 checkbox frame, are unmapped
+      (STATE_COMPUTED_READONLY al40 580 -> 568, mo1040 262 -> 256 and
+      260 -> 254). Regression tests:
+      packages/core/tests/test_verify_readonly_scan.py (bound vs unbound;
+      the blank-owned skip in both verify paths; a rewritten banner is
+      scanned again; the no-blank fallback and its note; no download; no
+      resurrection through the pack-maxlen fallback) and
+      packages/core/tests/test_verify_readonly_sweep.py (for every pack with
+      a cached blank, a one-line fill verifies with zero clipping FAILs and
+      no mapped ReadOnly widget's blank text already clips; the AL/MO
+      reproduction in both verify paths; the banners re-mapped to prove the
+      verifier half alone, with its empty-cache control; the unmapped keys
+      refused by fill_form). The sweep's first run caught one more
+      pre-existing false FAIL of the same kind — WV IT-140 2023's seven
+      untouched state-picker combos hold five spaces under a maxlen-2 hint —
+      so a whitespace-only value is no longer a clipping candidate
+      (test_verify.py). STILL OPEN from (b): fill_form writes ReadOnly
+      widgets with NO warning and audit_pack.py's synthetic_values fills
+      them, so the audit renders print sentinels inside locked boxes. The
+      engine-side fix — a `reserved:` marker on the field, or driving
+      fill_form and synthetic_values off the allowlist, with a warning when
+      a value is supplied for one — is roadmap work (JEa), not a pack edit,
+      as is unmapping the same-shape captions the AL-40 and MO-1040 counts
+      still carry (txtMultiScheduleD/E; the 28 printlid.* lids,
+      ProtectBarcode, amendedTXT, 1040_30Text, line51txt, vendorid), which
+      fit their boxes and so never FAIL. (c) formpacks/CONVENTIONS.md has NO rule about ReadOnly
       widgets or reserved lines (zero hits for readonly / read-only /
       reserved), so this discriminator is discoverable only from here and
       from individual pack headers — plausibly how the sched_a split arose.
@@ -270,10 +303,11 @@ pitfalls:
       guards; test_reserved_line_tables_agree_about_every_contested_line
       then makes a cross-year claim impossible to assert in prose alone — it
       is the check that would have caught the false 4a parenthetical.
-      STATE_COMPUTED_READONLY pins the 1,119 class-4 bindings per pack by
-      COUNT with a per-pack reason (al40 580, ga500 193, mo1040 262, wv
-      it140 51, de pit_res 16, wi form1 15, oh it1040 2), because a
-      per-widget list of 1,119 names would be a rubber stamp while the count
+      STATE_COMPUTED_READONLY pins the class-4 bindings per pack by COUNT
+      with a per-pack reason (1,390 across 11 packs as of 2026-09-23: al40
+      568, ga500 193, mo1040 256 / 254, wv it140 51, de pit_res 16, wi form1
+      15, oh it1040 12 / 13, ri1040 6 / 6), because a per-widget list of
+      that many names would be a rubber stamp while the count
       still fails the moment a port grows it. The flag reader itself is
       proven offline against a synthetic PDF whose /Ff sits on the TERMINAL
       FIELD dict (the real IRS shape): without that, an annotation-only

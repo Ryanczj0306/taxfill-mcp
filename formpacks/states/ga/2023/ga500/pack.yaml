@@ -925,6 +925,10 @@ fields:
   - line: voucher.state
     field: STATE1
     type: text
+    maxlen: 2                     # the page-1 STATE widget carries /MaxLen 2 on the blank and this
+                                  # voucher mirror (/TU "STATE") restates it; its 18.8pt rect at Courier
+                                  # 8.5pt holds 3 glyphs, so an unhinted value clipped (verify P-001,
+                                  # visible since the ReadOnly scan widened 2026-09-11)
   - line: voucher.zip
     field: ZIP1
     type: text
