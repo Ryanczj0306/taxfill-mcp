@@ -77,9 +77,11 @@ def _edits(total: int, offline: int, network: int) -> list[tuple[Path, str, str]
          f"![Tests: {t} passing](https://img.shields.io/badge/tests-{t_url}%20passing-brightgreen)"),
         # README status paragraph
         (README, r"covered by [\d,]+ tests", f"covered by {t} tests"),
-        # ROADMAP "Where we are"
-        (ROADMAP, r"\*\*[\d,]+ tests, all green\*\* — offline [\d,]+ \+ live-\.gov \d+",
-         f"**{t} tests, all green** — offline {o} + live-.gov {network}"),
+        # ROADMAP "Where we are" — the count only; whether each layer is green is
+        # stated in prose next to it (the weekly network layer can be red while
+        # the offline layer is green, so "all green" must never be baked in here).
+        (ROADMAP, r"\*\*[\d,]+ tests\*\* — offline [\d,]+ \+ live-\.gov \d+",
+         f"**{t} tests** — offline {o} + live-.gov {network}"),
     ]
 
 
