@@ -11,9 +11,8 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 > — the 2026-09-11 "finish everything" order, re-planned 2026-09-23 into resumable,
 > about-a-day tranches (J0 … JS7). The re-plan followed two things: the 2026-09-11
 > session died at the monthly spend limit leaving 15 uncommitted, unverified files on
-> main (snapshot: branch `wip/phase-j-partial`); and six read-only reviews of the
-> engine, the decision surface and TY2026 readiness found the federal
-> defects Phase J now orders first. Phase J also adds a recharacterization tool, 1099-R
+> main (snapshot: branch `wip/phase-j-partial`); and six read-only reviews found the
+> federal defects Phase J now orders first. Phase J also adds a recharacterization
 > tool, 1099-R code interpretation and the explanation statement. The federal TY2026
 > set is authored drafts-first from the posted IRS 2026 drafts (JT0–JT5), ahead of the
 > finals flip (JT6).
@@ -662,9 +661,9 @@ scenario exercises the persona that motivated it.
 
 ## Phase H — Planning mode, household granularity, no-experience onboarding (Effort: L)
 
-> From the planning-surface gap catalogue (N-1 to N-15), logged in
-> [`FIELD_NOTES.md`](FIELD_NOTES.md): multi-period visa timelines (hypothetical
-> illustrations), multi-taxpayer households and **planning-year budgets**. Unlike Phase G,
+> From the planning-surface gap catalogue (N-1 to N-15) logged in [`FIELD_NOTES.md`](FIELD_NOTES.md)
+> (separate hypothetical illustrations; demo facts): multi-period visa timelines, multi-taxpayer
+> households and **planning-year budgets**. Unlike Phase G,
 > these are not disclosed limitations — they are places where the product either
 > asks the wrong-shaped question or fails closed. The data model is mostly right;
 > the elicitation and the forward-looking direction are missing.
@@ -715,7 +714,8 @@ scenario exercises the persona that motivated it.
       6%-excise pointer note on a recorded Roth IRA amount) and the N-14
       push-backs (the §6013 ELECTION-not-the-marriage note; Schedule 1-A Part
       III's premium-half / below-AGI-line work line). Eval r covers both shapes
-      shape on hypothetical fixtures (a mid-year status change; an unmarried household).
+      on separate hypothetical fixtures (a mid-year status change; an unmarried
+      household with a nonresident partner).
 - [x] **H4 — Planning / projection mode — DONE 2026-08-09** (N-4, N-7b, N-8,
       N-12; ops 19-21). Shipped:
       * **The PROJECTION output contract**: `RefundEstimate.label` is now
@@ -819,18 +819,19 @@ scenario exercises the persona that motivated it.
         both EXACT and runtime-checked**: the per-slot ledger diff (the Stage-2
         spine invariant) and a **sequential input walk** whose steps telescope
         to the headline delta — every intermediate is a real computed bottom
-        line, so a demo "marry + election: +$1,963" decomposes into "MFJ brackets
-        +$5,309; spouse income −$3,192; spouse's interest −$154" the way the
-        hand analysis would build the table. Order-dependence of the
+        line, so a "marry + election" scenario decomposes into one exact line
+        per input change (the filing status first, then each income override
+        in the order given), the table a hand analysis would otherwise have
         to build. Order-dependence of the walk is inherent and disclosed,
-      * The election scenario auto-discloses the two traps a hand analysis has to
+        never hidden.
+      * The election scenario auto-discloses the two traps a hand analysis has
         to derive: worldwide income becomes taxable (the scenario is only as
         complete as the income given), and the election does NOT start FICA
         (N-7b, stated unprompted).
       * **Persisted and re-runnable** (N-15's actual interaction): scenario
         sets store INPUTS-only in the year's workspace (`scenarios.json` —
         results recompute on every load, so pack corrections are picked up
-        silently); `load="name"` + `income_updates` makes "a corrected W-2 arrived,
+        silently); `load="name"` + `income_updates` makes "a corrected W-2
         arrived, re-diff everything" ONE call. Covered by `taxfill purge`
         automatically (rglob-based wipe).
       * Cross-year what-ifs are labeled **PROJECTION** when any scenario runs
@@ -862,8 +863,10 @@ scenario exercises the persona that motivated it.
         traditional-DEDUCTION phase-out families (incl. the spousal-coverage
         range and the no-coverage-anywhere = no-phase-out rule), the
         MFS-lived-apart exception, and the 6%/yr excise on any excess — a
-        what-if excess (demo MAGI $191,200, $7,000 contributed) is now a machine verdict (allowed $0, excise
-        $420/yr) with the year-end MFJ flip shown mechanically.
+        direct Roth contribution above the phase-out (demo numbers: married
+        filing separately, spouses living together, MAGI $150,000, $6,000
+        contributed) is now a machine verdict (allowed $0, excise $360/yr),
+        with the joint-return range at the same MAGI shown mechanically.
       * **`marginal_dollar_savings` (op 24)**: payroll HSA/FSA/commuter
         dollars avoid income tax AND FICA; 401(k)/deductible-IRA dollars
         income tax only; the FICA tier is computed (7.65% below the wage
@@ -881,14 +884,13 @@ scenario exercises the persona that motivated it.
       profile is intake/schema work and lands with that tranche.)*
 
 - [x] **H9 — reward / other-income characterization + the NRA FDAP corner
-      (Pub 525 rebate-vs-income) — DONE 2026-08-10.** Gap: nothing answered whether
-      an account bonus or a card/bank reward (for example an
-      annual-fee reimbursement) is taxable. The engine could price
+      — DONE 2026-08-10.** Gap: the rebate-vs-income characterization of
+      account bonuses and card/bank rewards (Pub 525) and the NRA FDAP split
+      had no routed authority. The engine could price the tax once the
       characterization was known and could resolve the residency branch, but
-      residency branch — but the characterization itself had to come from the
+      the characterization itself had to be supplied by the agent, which is
       the failure the freshness protocol exists to prevent. Shipped (every
       cited page fetched and content-verified before authoring):
-      (text revised)
       * **`sources.yaml` topic `other_income_and_rewards`** — Pub 525's Other
         Income chapter with the rebate-vs-income line (rewards earned by
         SPENDING are a purchase-price rebate, the Rev. Rul. 76-96 lineage; a
@@ -928,11 +930,11 @@ scenario exercises the persona that motivated it.
         block in `test_sources.py` + the other_income tests in
         `test_treaties.py`.
       **Acceptance — met:** every query above resolves to its own topic, no
-      neighbouring topic is stolen, and an agent asked "is an account-opening bonus taxable"
+      neighbouring topic is stolen, and a query such as "is an account-opening
       bonus taxable" reaches Pub 525 + Pub 519 ch. 4 through `get_sources`.
 
 **Acceptance:** H1/H2 ship schema + intake changes with regression tests and an
-eval scenario for a hypothetical *mid-year status change and unmarried household*
+eval scenario on hypothetical fixtures (*a mid-year status change; an unmarried
 household with a nonresident partner*); H3 ships the segment loop + the worksheet surface with a no-experience
 walkthrough in the skill; H4 ships golden-tested ops and a PROJECTION output
 contract that can never be mistaken for a filed number; H5 follows the two-pass
@@ -944,18 +946,14 @@ line items sum to the headline delta.
 
 ## Phase I — Retirement-account, HSA, equity-comp and treaty-disclosure decision surfaces (Effort: L)
 
-> Found by the **Phase I planning audit**: the repo was driven end to end to
-> compute a TY2026 projection for a hypothetical demo filer (W-2 $216k = $150k base +
-> $50k RSUs + $16k bonus, 401(k) $23k, HSA $3.6k, a backdoor Roth, a what-if direct-Roth-IRA
-> contribution needing recharacterization, an $18k old-plan balance being converted,
-> ESPP, a $2,000 treaty student-wage exemption (a separate demo fixture), $2.6k
-> investment income against an $800 capital loss). **Every figure the knowledge packs
+> **Scope: six decision surfaces the engine did not model** — IRA pro-rata, the Roth
+> conversion and its NIIT crossing, the HSA payroll tier, ESPP basis, the capital-loss
+> carryover, and treaty disclosure. Every figure they need already shipped verified in the
 > knowledge packs (`rate_schedules`, `standard_deduction`, `niit`, `contribution_limits`,
-(text revised)
 > `capital_gains_brackets`; Rev. Proc. 2025-32 / Notice 2025-67 / Rev. Proc. 2025-19); what
-> decisions the walkthrough turned on had to be computed OUTSIDE the engine.**
 > was missing is the *decision surface*, the same failure signature `FIELD_NOTES.md`
-> gap catalogue, one profile over: the data is there, the *decision surface* is not.
+> records for Phase H. Eval `s` pins each decision on its own synthetic fixture (demo
+> numbers).
 
 - [x] **I1 — The IRA-basis / pro-rata chain — DONE 2026-08-26.** Shipped:
       `calc.ira_pro_rata` + `calc.roth_conversion` (both paths, bracket headroom,
@@ -982,8 +980,9 @@ line items sum to the headline delta.
       12/31 balances aggregate into one pool, so a conversion's taxable share is
       `pretax / (pretax + basis)` regardless of which dollars actually moved — is
       what decides, for every backdoor-Roth user, **where an old 401(k) may be
-      rolled**. Illustrative (demo numbers): rolling an $18,000 pretax 401(k) into a
-      traditional IRA costs **$1,210 in year 1 and $4,158 over ten years** versus
+      rolled**. Illustrative (demo numbers): rolling a $42,000 pretax
+      401(k) into a traditional IRA makes a $6,000 backdoor 87.5% taxable, which costs
+      **$1,680 in year 1 and $9,904 over ten years** at 32% versus rolling it into
       the new employer's 401(k), and the failure mode is invisible —
       no error, no warning, just a larger tax bill and a Form 8606 basis the filer
       must track for life. Build: **`calc.ira_pro_rata`** (per-account year-end
@@ -993,10 +992,10 @@ line items sum to the headline delta.
       (a) plan → Roth IRA *direct* rollover (Notice 2008-30: taxable = the pretax
       portion, and **pro-rata does not apply** because no IRA is involved), and
       (b) traditional IRA → Roth (pro-rata applies) — each surfacing bracket
-      headroom and the NIIT threshold crossing (a demo $18,000 direct conversion
-      moves MAGI 191,200 → 209,200, crossing the $200,000 §1411 threshold and
-      creating $68 of NIIT the filer has no way to anticipate, plus it lands
-      $8,675 short of the 32% bracket — a margin no user can be expected to
+      headroom and the NIIT threshold crossing (demo numbers: a joint return
+      converting a $38,000 old plan directly moves MAGI 236,000 → 274,000, crossing
+      the $250,000 §1411 threshold and creating $160 of NIIT on other investment
+      income the filers had no way to anticipate, while spilling $30,400 out of the
       22% bracket into 24% — a split no user can be expected to compute by hand); a fillable **`f8606`** pack for 2023/2024/2025 (Parts I/II/III
       — this is the form that carries basis across years, so without it the calc has
       nowhere to land); and pitfall **`P-009`** stating the trap with the measured
@@ -1101,8 +1100,7 @@ line items sum to the headline delta.
       asymmetry: `calc.treaty_benefit` has shipped since G1 and computes the
       exemption, but the disclosure form IRC 6114 / Treas. Reg. §301.6114-1 requires
       **does not exist** — the engine tells a user to take a treaty position it
-      cannot help them disclose (for example, when a treaty student
-      exemption is claimed). (b) **Form 8938** pack + an **FBAR
+      cannot help them disclose. (b) **Form 8938** pack + an **FBAR
       (FinCEN 114) worksheet** — 8938 is an IRS form and packs normally; FBAR is
       FinCEN e-file-only, so it ships as a `hand_fill_worksheet` plus a `file_and_pay`
       checklist entry. Non-willful FBAR penalties run **$10,000+ per account per
@@ -1176,25 +1174,25 @@ line items sum to the headline delta.
       scenario **`s`**, not "i14": this plan invented that label, but
       `evals/test_scenarios.py` numbers scenarios by LETTER and the `i` prefix
       already belongs to the provisional-guard family (i, i2-i5). Scenario `s`
-      re-runs the SIX Phase I decisions that had been computed outside the
-      engine, against the ops I1-I4 shipped, and pins the numbers the engine
+      re-runs the SIX Phase I decisions on independent synthetic fixtures (demo
+      numbers) against the ops I1-I4 shipped, and pins the numbers the engine
       produces: the 401(k) rollover destination under IRC 408(d)(2) (a polluted
-      makes 72% of the backdoor taxable and sticks $5,040 of basis; a clean one is
-      fully non-taxable), the $18,000 direct plan-to-Roth conversion with its bracket
-      headroom 26,675 -> 8,675 and the section 1411 crossing that costs $68, the
+      $42,000 pool makes 87.5% of a $6,000 backdoor taxable and sticks $5,250 of
+      basis; a clean one is fully non-taxable), a joint $38,000 direct plan-to-Roth
+      conversion with its 7,600 of 22%-bracket headroom, the $30,400 spill into 24%
+      and the section 1411 crossing that costs $160, the HSA payroll saving and its
       Medicare-only tier, the ESPP basis correction
       (corrected basis minus broker basis equals the ordinary income exactly — that
       difference IS the double taxation) plus the qualifying-sale-at-a-loss cell that
       recognises zero ordinary income, the $3,000 cap with a character-preserving
-      carryover, and the treaty $2,000 whose disclosure the engine can finally name.
+      carryover, and a treaty exemption whose disclosure the engine can finally name
+      (a treaty-disclosure check on its own hypothetical fixture, Korea Art. 21(1),
       $2,000). It also pins the two guards the reviews added: `roth_conversion` REFUSING the
       input whose income it does not price, and `foreign_asset_reporting` refusing to
       decide until its elicitation questions are answered. The file's own scenario
       census ("sixteen scenarios (a–p)") was stale by three and is corrected.
       *(original scope below)*
-- [x] **I6 scope as planned — an eval for the six Phase I decisions.** Encode the
-      six decisions as a scenario — they are what exposed I1–I5, and the repo's own
-      precedent (FIELD_NOTES → Phase H) is that an end-to-end drive is the best gap-finder
+- [x] **I6 scope as planned — an eval for the six decisions.** Encode the six
       decisions as an eval scenario so these gaps cannot silently reopen.
       **Acceptance:** i14 runs green and fails loudly if any of I1–I4 regresses.
 
@@ -1213,7 +1211,7 @@ not wait for any of this.
 >
 > **Privacy.** Each tranche below states only the mechanism it fixes; worked figures are hypothetical-persona demo numbers (the FIELD_NOTES privacy rule). Besides every bug found, the plan adds **a recharacterization tool, Form 1099-R code interpretation and the explanation statement**.
 >
-> Six read-only reviews re-checked every claim on a clean checkout of `a233031` and against primary .gov text. The lenses were engine defects, the recharacterization design, the decision surface, the Phase J salvage, TY2026 readiness, and docs/release/process. A critic pass then re-verified the plan itself. Bracketed ids such as `[DEF-01]` are the 2026-09-23 review's gap ids, and each item carries its evidence pointer inline. Figures in acceptance tests are *illustrative* (demo numbers).
+> On 2026-09-23 six read-only reviews re-checked every claim on a clean checkout of `a233031` and against primary .gov text. The lenses were engine defects, the recharacterization design, the decision surface, the Phase J salvage, TY2026 readiness, and docs/release/process. A critic pass then re-verified the plan itself. Bracketed ids such as `[DEF-01]` are the 2026-09-23 review's gap ids, and each item carries its evidence pointer inline. Figures in acceptance tests are *illustrative* (demo numbers).
 
 **Ordering rules (in force until this phase closes):**
 1. **J0 first.** The dirty tree blocks every commit.
@@ -1457,11 +1455,15 @@ not wait for any of this.
   4. **Excess-contribution excise** [RC-11]. The excise ignores the IRC 4973(a) cap: it "shall not exceed 6 percent of the value of the account … (determined as of the close of the taxable year)" (Form 5329 line 25; calc.py:3855, :3884). The remedy text (calc.py:3901-3905) names no date. Add `roth_ira_dec31_value`, and name the deadlines: April 15 of year+1, or Oct 15 with an extension or via §301.9100-2 for a timely-filed return. JR2c adds the op pointer.
   5. **Spouse-field coverage** [LD-10]. combined_with_spouse lists its 18 summed fields by hand (estimate.py:239-247) with no structural test, and N-8 already had to add one by hand. Add a test over `IncomeSnapshot.model_fields`, with the household-level exclusions explicit, that fails naming any missing field.
   6. **Scenario walk vs subset validators** (J0 re-verify). compare_scenarios' one-override-at-a-time input walk raises a ValidationError at an intermediate step when a parent drops below its subset (`interest` before `bank_deposit_interest`, `dividends` before `qualified_dividends`). Apply subset/parent pairs together in the walk, and test both orders.
+  7. **Residency: no recount warning on a capped count** (found 2026-09-24 by a verifier pass). When the non-exempt span caps the weighted SPT total below 183 (a cap-exempt H-1B from July 15 after an F-1: at most 170 countable days), `residency.classify` calls the nonresident answer "definitive" AND warns that the total "is close to the 183-day threshold — recount days present". No recount can raise a capped count; skip the warning when the count equals the non-exempt span and the answer is definitive.
+  8. **Intake §6013 wording** (same pass). The unmarried-partner note in intake.py says a nonresident spouse joins a joint return "only via the §6013(g)/(h) election" without the election's precondition: one spouse must be a U.S. citizen or resident at year end (g), or become resident during the year (h); two NRAs who both stay nonresident cannot elect. Add the condition.
   - **Acceptance.**
     - `magi_ladder(240000, QSS, 2025, wages=240000)` → the 8959 row shows $200,000, 'above'.
     - An unmarried single visa holder → no "6013" in assumptions or `what_would_change_it`; married with no residency facts → still present.
     - A resident F-1 profile → no "nonresident return" text.
     - A Dec-31 value below the excess → excise = 6% × value.
+    - F-1 2022-08-18 → 2025-07-14 then H-1B 2025-07-15, TY2025 → 'nonresident', definitive, and no "recount" reason.
+    - The intake unmarried-partner note names the §6013(g)/(h) precondition.
     - The spouse-field test fails when a field is dropped from the list.
 
 - [ ] **JF2 — Wrong-law routing and document notes** (M; deps J0)
@@ -1705,7 +1707,7 @@ not wait for any of this.
   - **Rule reach.**
     - Pointers at the use sites: JF1b.4's EXCESS line, the intake Roth IRA note (intake.py:1142-1150), the roth_conversion docstring, and the 5498 and 1099-R notes.
     - Skills docs and op list updated.
-    - A separate synthetic what-if eval covers "recharacterize before converting".
+    - A separate synthetic what-if eval on a hypothetical head-of-household filer covers "recharacterize before converting". JT4c's t4 rehearsal reuses that fixture.
   - **Acceptance.**
     - A confirmation round trip, and an FMV statement feeding `dec31_total_value` with provenance.
     - The manifest lists "recharacterization statement".
@@ -1956,14 +1958,20 @@ not wait for any of this.
   - Add 1f, 2-ordinary, 3, 6, 7 and 12 (extract.py:268-285). Box 12 (basis reported to IRS) decides Form 8949 box A or B, or direct entry on Schedule D.
   - **Acceptance:** a box-12 reading carries the routing note.
 - [ ] **JT4c — Dress-rehearsal evals, scenarios t–t4** (M; deps JT3a–d, JT4a, JT4b, JF1a, JF8, JF9, JR2c, JR3c, JT2b) [TY26-29]
-  - A SYNTHETIC TY2026 dress rehearsal with demo amounts, built only from its own stated facts. It covers the mechanics:
-    - two W-2s from concurrent employers, code D at each plus DD;
-    - a 1099-INT and an index-fund 1099-DIV (qualified and non-qualified);
-    - a covered 1099-B sale with box 12;
-    - a code-N and a code-2 1099-R on a separate what-if fixture;
-    - a 5498-SA on a family-coverage fixture;
-    - a 170(p) gift on a separate what-if fixture;
-    - a treaty teacher/researcher exemption surviving the saving clause on the Schedule 1 other-income line.
+  - SYNTHETIC TY2026 dress rehearsals with demo amounts. Each fixture is built only from its own stated facts, and together they cover the Wave A form scope (JT3a–d):
+    - **t = a hypothetical U.S. citizen with two CONCURRENT employers all year** (a full-time job plus a part-time one):
+      - two W-2s, code D at each plus DD, so the per-person cross-employer items run end to end: the deferrals summed against the one §402(g) limit (JT4a), the per-person excess-SS credit and the per-employer box-6 list (JF3 / JP1a);
+      - a 1098-VLI (Schedule 1-A Part IV) and a 1099-INT.
+    - **t2 = a hypothetical J-1 researcher who is a resident alien for TY2026:**
+      - one W-2 (code DD);
+      - a treaty teacher/researcher exemption surviving the saving clause on the Schedule 1 other-income line.
+    - **t3 = a hypothetical married couple filing jointly** (no visa history):
+      - one W-2 per spouse: one with box 12 code TT (Schedule 1-A Part III, which a married filer can claim only on a joint return), one with code W plus a 5498-SA (family HSA coverage, Form 8889);
+      - an index-fund 1099-DIV (qualified and non-qualified) and a covered 1099-B loss with box 12.
+    - **t4 = a hypothetical head-of-household filer with a qualifying child** (the JR2c what-if fixture):
+      - one W-2;
+      - a code-N and a code-2 1099-R (recharacterize, then convert; Form 8606);
+      - a 170(p) gift.
   - Path, for each: extract → calc → fill (rehearsal) → verify_filing → filing_summary → file_and_pay (2027-04-15 plus the with-payment address). All four flip to final mode at JT6.
   - **Acceptance:** green in rehearsal mode.
 - [ ] **JT5a–g — Wave B: the rest of the federal set for 2026** (JT5a **latest start 2026-11-16**; deps JT3a; each sub-tranche commits per pack) [TY26-21]
@@ -2067,7 +2075,7 @@ not wait for any of this.
      - test_skills_sync.py:3 still says "22-tool" and :97 "30 ops";
      - test_readonly_widget_mapping.py:41-43 still says "1,140 / 10", and :381-385 carries the resolved MS note.
   8. **D2 triage table** [G05]. Re-measure it, and record UT 2025 as PORTABLE and unshipped (JS3b).
-  9. **Privacy** [G29]. Docs, tests and evals use hypothetical fixtures with demo numbers, per FIELD_NOTES' own rule.
+  9. **Privacy** [G29] — DONE: docs, tests and evals use hypothetical fixtures with demo numbers.
   - **Acceptance:** every count equals the runtime; the README tool-name test and the CONVENTIONS/KNOWN_FORM_KEYS test pass; the new FIELD_NOTES entries use hypothetical personas and demo numbers only.
 - [ ] **JA1 — Phase A, the agent half** (M; deps J0; takes the next slot the day the user says they are ready to publish; supersedes A1–A6's open boxes)
   1. **Immutable descriptions** [G16]. The PyPI-immutable descriptions say "21 calculation ops" (taxfill-core), "22 tools" (taxfill-mcp) and "21 deterministic ops" (packages/mcp-server README), and nothing tests them. The runtime has 32 ops and 23 tools. Use count-free wording, and add test_release_surfaces.py.
@@ -2132,7 +2140,7 @@ not wait for any of this.
     - Author filing_thresholds and the no-payment addresses from i1040gi / Pub 501 (2026).
   - **Flip.** Remove the provisional marker; JT0a's invariant enforces that no draft pack remains. A Wave B pack without a final moves to a draft branch instead of holding the flip.
   - **Next year.** Author knowledge/federal/2027.yaml, provisional, from the 2027 inflation Rev. Proc. (not on irs-drop as of 2026-09-23). Scenarios t–t4 flip to final mode.
-  - **Target.** The TY2026 dress-rehearsal scenario (t) fills and verifies on the finals **within 5 business days of the last required final**.
+  - **Target.** The TY2026 dress-rehearsal scenarios (t–t4) fill and verify on the finals **within 5 business days of the last required final**.
     - By the 2025 precedent the form finals and Pub 1040 arrive by mid-January 2027 (f1040 created 2026-01-02; p1040 modified 2026-01-15), and i1040gi arrives last, around late February (2025 edition created 2026-02-25). This is an inference, not a guarantee.
     - An earlier flip, with filing_thresholds and the no-payment addresses left as disclosed absences (file_and_pay pointing at the irs.gov where-to-file page), is a plan choice for the user; it needs a small post-provisional `filing_grade_absent_blocks` list.
   - **External:** the IRS finals and the 2027 Rev. Proc.
@@ -2218,7 +2226,7 @@ not wait for any of this.
 - Every 2026-09-23 review defect is fixed with a regression test, pitfall-cited wherever the rule is durable.
 - No form line number is typed outside `form_lines` (the JF6a guard).
 - The recharacterization flow runs end to end: from a 1099-R, 5498 or custodian statement to the Form 8606 inputs, the 1040 lines and the attached statement.
-- The TY2026 dress-rehearsal scenario (t) fills and verifies on the finals within 5 business days of the last required final.
+- The TY2026 dress-rehearsal scenarios (t–t4) fill and verify on the finals within 5 business days of the last required final.
 - Every open box elsewhere in this ROADMAP is closed or named in a tranche: A1–A6 → JA1/JA2; C2 → JS6; D2 → JS3a/b, JS5, JS7; Phase E ×2 → JEa/JEb; H5's Tax Table → JT2a/JT6.
 
 ## Phased sequencing (recommended order)

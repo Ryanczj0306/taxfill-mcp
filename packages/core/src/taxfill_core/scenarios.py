@@ -3,8 +3,7 @@
 Planning questions arrive as "compare A vs B vs C" (unmarried / married-MFS /
 married + §6013(g) election), and until this module the engine had every
 primitive and no way to run and diff a set — without it a caller rebuilds the
-comparison table by hand in a scratch script, and re-derives it
-from scratch every time an input fact changes.
+comparison table by hand and re-derives it every time an input fact changes.
 
 Design commitments:
 

@@ -2,7 +2,7 @@
 
 > **What this is.** A fill-in-the-blank worksheet a tax-inexperienced user can complete
 > *before* (or during) the agent interview, so the agent gets date-ranged facts instead of
-> one-word answers. Designed from the recorded intake gaps (see
+> one-word answers. Designed from the intake gaps N-1/N-2/N-3 recorded in
 > [`FIELD_NOTES.md`](FIELD_NOTES.md). Localizations:
 > [`INTAKE_WORKSHEET.zh-CN.md`](INTAKE_WORKSHEET.zh-CN.md). Both are emitted at runtime by
 > `intake_checklist` via `taxfill_core.worksheet` (this file is sync-tested against that

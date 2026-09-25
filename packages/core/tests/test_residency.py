@@ -149,17 +149,17 @@ def test_target_year_must_be_int():
 
 
 def test_sample_f1_exempt_for_five_calendar_years():
-    # The sample case shape: F-1 arrives year N -> exempt N..N+4, SPT from N+5.
-    periods = [period("F-1", date(2019, 8, 24))]
-    result = exempt_individual_years(periods, 2025)
-    assert result.fully_exempt_years == [2019, 2020, 2021, 2022, 2023]
+    # The standard case shape: F-1 arrives year N -> exempt N..N+4, SPT from N+5.
+    periods = [period("F-1", date(2018, 8, 24))]
+    result = exempt_individual_years(periods, 2024)
+    assert result.fully_exempt_years == [2018, 2019, 2020, 2021, 2022]
     assert result.partially_exempt_years == []
     by_year = {r.year: r for r in result.records}
     assert by_year[2018].exempt is True
     assert "#1" in by_year[2018].reason
+    assert by_year[2023].exempt is False
+    assert "5 calendar years" in by_year[2023].reason
     assert by_year[2024].exempt is False
-    # (fixture revised)
-    assert by_year[2025].exempt is False
     assert any("irs.gov" in c.url for c in result.citations)
 
 
@@ -299,7 +299,7 @@ def test_category_year_missing_from_days_is_rejected_prescriptively():
     # supply that year's count, and that 0 is a valid answer.
     with pytest.raises(ValueError, match=r"no entry for 2018.*0 is a valid answer"):
         exempt_individual_years(
-            [period("F-1", date(2019, 8, 24))], 2021, days_by_year={2020: 100, 2021: 100}
+            [period("F-1", date(2018, 8, 24))], 2020, days_by_year={2019: 100, 2020: 100}
         )
 
 
@@ -314,20 +314,20 @@ def test_exempt_years_without_days_assumes_presence():
 # classify
 # ---------------------------------------------------------------------------
 
-SAMPLE_F1 = [period("F-1", date(2019, 8, 24))]
+SAMPLE_F1 = [period("F-1", date(2018, 8, 24))]
 
 
 def test_sample_f1_exempt_years_classify_nonresident():
     # Years N..N+4 all exempt -> every counted day excluded -> nonresident.
     result = classify(
         SAMPLE_F1,
-        {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330},
-        2023,
+        {2018: 130, 2019: 330, 2020: 330, 2021: 330, 2022: 330},
+        2022,
     )
     assert result.classification == "nonresident"
     assert result.spt.weighted_days == 0.0
     assert "excluded from the SPT" in result.work
-    assert "SPT 2023" in result.work
+    assert "SPT 2022" in result.work
 
 
 def test_sample_f1_sixth_year_is_resident():
@@ -335,8 +335,8 @@ def test_sample_f1_sixth_year_is_resident():
     # status unchanged all year -> plain resident (no dual-status flag).
     result = classify(
         SAMPLE_F1,
-        {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330, 2024: 330},
-        2024,
+        {2018: 130, 2019: 330, 2020: 330, 2021: 330, 2022: 330, 2023: 330},
+        2023,
     )
     assert result.classification == "resident"
     assert result.spt.meets_spt is True
@@ -351,10 +351,10 @@ def test_f1_to_h1b_after_exemption_exhausted_is_full_year_resident():
     # Pub 519 makes a continuously present person a full-year resident — the
     # status change alone cannot split the year.
     periods = [
-        period("F-1", date(2019, 8, 24), date(2024, 9, 30)),
-        period("H-1B", date(2024, 10, 1)),
+        period("F-1", date(2018, 8, 24), date(2023, 9, 30)),
+        period("H-1B", date(2023, 10, 1)),
     ]
-    days = {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330, 2024: 330}
+    days = {2018: 130, 2019: 330, 2020: 330, 2021: 330, 2022: 330, 2023: 330}
     result = classify(periods, days, 2023)
     assert result.classification == "resident"
     note = next(r for r in result.reasons if "does not split the year" in r)
@@ -402,10 +402,10 @@ def test_partial_year_ceiling_below_183_is_definitively_nonresident():
 
 def test_status_change_exactly_on_jan_1_is_not_dual_status():
     periods = [
-        period("F-1", date(2019, 8, 24), date(2023, 12, 31)),
+        period("F-1", date(2018, 8, 24), date(2022, 12, 31)),
         period("H-1B", date(2023, 1, 1)),
     ]
-    result = classify(periods, {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330, 2024: 330}, 2024)
+    result = classify(periods, {2018: 130, 2019: 330, 2020: 330, 2021: 330, 2022: 330, 2023: 330}, 2023)
     assert result.classification == "resident"
 
 
@@ -584,15 +584,15 @@ def test_green_card_holder_is_not_blocked_on_incomplete_day_history():
     # The strict category-year day-count requirement must not fire for a
     # lawful permanent resident: the green card test classifies them resident
     # regardless of the SPT, and they have no I-94 homework to do first.
-    periods = [period("F-1", date(2019, 8, 24), date(2024, 9, 30))]
+    periods = [period("F-1", date(2018, 8, 24), date(2023, 9, 30))]
     result = classify(periods, {2023: 200}, 2023, is_lawful_permanent_resident=True)
     assert result.classification == "resident"
 
 
 def test_green_card_overrides_dual_status_flag():
     periods = [
-        period("F-1", date(2019, 8, 24), date(2024, 9, 30)),
-        period("H-1B", date(2024, 10, 1)),
+        period("F-1", date(2018, 8, 24), date(2023, 9, 30)),
+        period("H-1B", date(2023, 10, 1)),
     ]
     result = classify(
         periods, {2021: 330, 2022: 330, 2023: 330}, 2023, is_lawful_permanent_resident=True
@@ -644,9 +644,9 @@ def test_end_before_start_rejected():
 
 def test_iso_date_strings_accepted():
     result = classify(
-        [{"status": "F-1", "start": "2019-08-24", "end": None}],
-        {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330},
-        2023,
+        [{"status": "F-1", "start": "2018-08-24", "end": None}],
+        {2018: 130, 2019: 330, 2020: 330, 2021: 330, 2022: 330},
+        2022,
     )
     assert result.classification == "nonresident"
 
@@ -658,12 +658,12 @@ def test_profile_visa_period_objects_accepted():
 
     visa_period = VisaPeriod(
         status="F-1",
-        start=date(2019, 8, 24),
+        start=date(2018, 8, 24),
         end=None,
         provenance=Provenance.user_stated(),
     )
     result = classify(
-        [visa_period], {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330}, 2023
+        [visa_period], {2018: 130, 2019: 330, 2020: 330, 2021: 330, 2022: 330}, 2022
     )
     assert result.classification == "nonresident"
     assert result.exempt_years.fully_exempt_years == [2018, 2019, 2020, 2021, 2022]
@@ -675,7 +675,7 @@ def test_classify_rejects_unknown_presence_for_category_years():
     # instructions (0 is a valid answer), because assuming presence can burn
     # exempt years the taxpayer never used and flip the classification.
     with pytest.raises(ValueError, match=r"no entry for 2018.*0 is a valid answer"):
-        classify(SAMPLE_F1, {2023: 200}, 2023)
+        classify(SAMPLE_F1, {2022: 200}, 2022)
 
 
 def test_classify_zero_presence_years_keep_late_exempt_years_alive():
@@ -695,8 +695,8 @@ def test_classify_zero_presence_years_keep_late_exempt_years_alive():
 
 
 def test_result_carries_work_inputs_and_citations():
-    days = {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330, 2024: 330}
-    result = classify(SAMPLE_F1, days, 2024)
+    days = {2018: 130, 2019: 330, 2020: 330, 2021: 330, 2022: 330, 2023: 330}
+    result = classify(SAMPLE_F1, days, 2023)
     assert "Exempt-individual analysis" in result.work
     assert "SPT 2023" in result.work
     assert result.citations
@@ -708,7 +708,7 @@ def test_result_carries_work_inputs_and_citations():
     assert result.inputs["target_year"] == 2023
     assert result.inputs["is_lawful_permanent_resident"] is False
     assert result.inputs["visa_periods"] == [
-        {"status": "F-1", "start": "2019-08-24", "end": None}
+        {"status": "F-1", "start": "2018-08-24", "end": None}
     ]
     # Result models serialize cleanly for the MCP layer.
     dumped = result.model_dump()

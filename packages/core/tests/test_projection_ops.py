@@ -4,7 +4,7 @@ annualize_ytd — plus the PROJECTION output contract and the PriorFilings field
 Every FICA/safe-harbor vector is hand-computed from the Pub 15 / Form 1040-ES
 figures the packs transcribe (verbatim-quote verified against the 2025 and 2026
 editions before the blocks were authored). The traps pinned here are the ones
-a planning what-if would otherwise derive by hand:
+a mid-year planning question hits:
 
   * N-7b — the F/J student FICA exemption is STATUS-based, not marital: a
     §6013(g) election does not start FICA on an exempt F/J spouse's wages;
@@ -31,17 +31,19 @@ US = Provenance.user_stated()
 
 
 def test_fica_switches_on_at_the_status_boundary():
-    # Demo numbers (a mechanical fixture): an F-1 OPT (exempt individual) segment, then H-1B.
+    # Demo numbers (a mechanical fixture): F-1 OPT (exempt individual)
+    # Jan 1-Jul 14, a cap-exempt H-1B Jul 15-Dec 31, at $8,000/month with July
+    # split by days (14 OPT / 17 H-1B of 31): OPT 6 x 8,000 + 3,613 = 51,613,
     # H-1B 5 x 8,000 + 4,387 = 44,387. FICA applies ONLY to the H-1B segment —
     # that boundary is the single biggest cash-flow fact of the transition year.
     r = employee_fica([
-        {"label": "OPT (F-1, exempt individual)", "wages": 72_000, "fica_exempt": True},
-        {"label": "H-1B (cap-exempt) segment", "wages": 24_000, "fica_exempt": False},
-    ], year=2026)
-    assert r.social_security == Decimal("1488.00")  # 6.2% x 24,000
-    assert r.medicare == Decimal("348.00")          # 1.45% x 24,000
+        {"label": "OPT (F-1, exempt individual)", "wages": 51_613, "fica_exempt": True},
+        {"label": "H-1B (cap-exempt) from Jul 15", "wages": 44_387, "fica_exempt": False},
+    ], year=2025)
+    assert r.social_security == Decimal("2751.99")  # 6.2% x 44,387 = 2,751.994
+    assert r.medicare == Decimal("643.61")          # 1.45% x 44,387 = 643.6115
     assert r.additional_medicare == Decimal("0.00")
-    assert r.total_fica == Decimal("1836.00")
+    assert r.total_fica == Decimal("3395.60")
     exempt = r.segments[0]
     assert exempt.total == Decimal("0.00") and exempt.exempt_reason is not None
 
@@ -83,11 +85,11 @@ def test_fica_prescriptive_errors():
 
 
 def test_the_110_percent_tier_and_the_shortfall():
-    # Prior AGI $176,000 > $150,000 -> 110% x $36,000 = $39,600; that beats the
-    # 90% prong ($54,000), so the required payment is $39,600 — withholding
-    # $38,000 leaves a $1,600 shortfall, $400/quarter.
+    # A joint return: prior AGI $226,000 > $150,000 -> 110% x $36,000 = $39,600;
+    # that beats the 90% prong ($54,000), so the required payment is $39,600 —
+    # withholding $38,000 leaves a $1,600 shortfall, $400/quarter.
     r = estimated_tax_safe_harbor(
-        60_000, 38_000, "single", 2026, prior_year_agi=176_000, prior_year_total_tax=36_000
+        60_000, 38_000, "married_filing_jointly", 2026, prior_year_agi=226_000, prior_year_total_tax=36_000
     )
     assert r.current_year_prong == 54_000
     assert r.prior_year_prong == 39_600 and r.prior_pct_applied == Decimal("1.10")
@@ -171,10 +173,10 @@ def test_prior_filings_gains_the_safe_harbor_fields_and_stays_backward_compatibl
     assert old_shape.prior_year_agi is None and old_shape.prior_year_total_tax is None
     full = PriorFilings(
         filed_years=Answer(value=[2025], provenance=US),
-        prior_year_agi=Answer(value=176_000, provenance=US),
+        prior_year_agi=Answer(value=226_000, provenance=US),
         prior_year_total_tax=Answer(value=36_000, provenance=US),
     )
-    assert full.prior_year_agi.value == 176_000
+    assert full.prior_year_agi.value == 226_000
 
 
 def test_intake_asks_for_the_safe_harbor_figures_once_a_filed_year_exists():

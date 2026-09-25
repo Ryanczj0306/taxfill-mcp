@@ -235,12 +235,16 @@ If the client can't run MCP but can run Python, use `taxfill_core` directly
 
 ## Worked example (hypothetical persona, demo numbers)
 
-A hypothetical F-1 student (demo scenario) needs back federal returns. Per year: `residency`
-confirms nonresident; fill `f1040nr` + `f8843` (+ `sched_oi` for a treaty
-article on student-period wages, + `sched_c`/`sched_1` for any 1099-NEC income);
-`verify_filing` checks that the treaty amount flows `sched_oi.1e → f1040nr.1k` and
-the SSN matches across forms; `render_form` catches a comb-field issue before
-printing; `filing_summary` gives each year's bottom line for approval; and
-`file_and_pay` produces the certified-mail checklist (Austin vs Charlotte by
+For a hypothetical F-1 graduate student from Korea (demo numbers) who needs
+federal returns for one back year and the most recent year, the recipe per year
+is: `residency` → nonresident; fill `f1040nr` + `f8843` (+ `sched_oi` for the
+Korea Art. 21(1) student-wage article — `calc("treaty_benefit", {country:
+"korea", income_class: "student_wages", amount: 2000})` → $2,000 exempt);
+`verify_filing` checks that the treaty amount flows `sched_oi.1e → f1040nr.1k`
+and that the SSN matches across forms; `render_form` is the pass that catches a
+clipped comb field (P-001) before printing; `filing_summary` gives each year's
+bottom line for approval ("Federal 2025: refund $1,250" / "Federal 2024: you
+owe $380", plus late-filing and late-payment penalties the IRS bills
+separately); and `file_and_pay` produces the certified-mail checklist (Austin
 vs Charlotte by payment) with the 3-year refund statute-of-limitations status
-invented numbers; the filer reviews, signs and mails.
+per year. Zero invented numbers; the filer reviews, signs and mails.

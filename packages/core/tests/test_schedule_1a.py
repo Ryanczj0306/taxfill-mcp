@@ -213,7 +213,7 @@ def test_each_part_names_its_form_line_for_the_verify_flow():
 
 
 def test_overtime_work_pushes_back_on_the_marketing_name():
-    # N-14: "no tax on overtime" invites a wrong conclusion ("overtime is
+    # N-14: the name "no tax on overtime" invites the wrong conclusion ("overtime
     # is untaxed"). The work must state the two distinctions unprompted: only the
     # FLSA premium half qualifies, and the deduction sits BELOW the AGI line, so
     # the overtime still raises every MAGI test.

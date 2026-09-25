@@ -299,7 +299,7 @@ def _money(amount: int) -> str:
 
 def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions:
     # Degrade gracefully for years whose knowledge pack isn't shipped (e.g. a
-    # a back-filed year older than the oldest shipped pack): the generic sign/assemble/
+    # back-filed year older than the oldest shipped pack): the generic sign/assemble/
     # mail/records steps still apply; only address/payment/deadlines need the pack.
     try:
         pack = load_knowledge("federal", item.tax_year, knowledge_dir)

@@ -406,6 +406,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       worksheet: round UP to $10, $200 floor while partially phased. Run it BEFORE any IRA
       contribution is recorded — it catches the 6%/yr-excise error (IRC 4973) and shows the
       year-end-status rule: the same MAGI can be excess under one status and compliant under
+      another (e.g. MFS vs MFJ), because eligibility follows the Dec 31 filing status. The
       deduction path needs the employer-plan coverage facts; no coverage anywhere = no phase-out)
     - marginal_dollar_savings: args {taxable_income, wages, filing_status?, year?} ("where does one
       more pre-tax dollar save the most": payroll HSA/FSA/commuter dollars avoid income tax AND FICA;
@@ -880,8 +881,10 @@ def compare_scenarios(
 ) -> dict:
     """Run 2+ what-if scenarios and diff each against the FIRST (the baseline), with TWO exact
     attributions per diff: the per-slot ledger view, and a sequential input walk whose steps
-    telescope to the headline delta (this is how "marry + \u00a76013(g) election: +$1,963" decomposes
-    into "MFJ brackets +$5,309; spouse income -$3,192; spouse's interest -$154").
+    telescope to the headline delta (this is how the delta of a "marry + \u00a76013(g) election"
+    scenario decomposes into one line per input change: the election step and then the filing
+    status first (and the year, for a cross-year scenario), then each income override in the
+    order given).
 
     Each scenario: {name, filing_status (REQUIRED - deterministic, never candidate-selected),
     year? (cross-year what-ifs - the result is labeled PROJECTION when any year's pack is

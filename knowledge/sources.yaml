@@ -408,9 +408,8 @@ federal:
 
     # Reward/other-income characterization + the NRA FDAP corner (H9, pitfall
     # P-005). Added 2026-08-10: whether a bank account bonus is taxable had
-    # no routed authority (a fee-reimbursement-shaped bonus included).
-    # The engine could price the tax and resolve the residency branch, but the
-    # characterization had to come from the agent's head — "credit card
+    # no routed authority. The engine could price the tax and resolve the
+    # residency branch, but the characterization had to be supplied by the
     # agent — "credit card rewards taxable", "bank account bonus income" and "other income
     # 1099-MISC" were clean get_sources misses, "FDAP" and "effectively
     # connected income" missed too, and (worse) the H6 OBBBA topic made

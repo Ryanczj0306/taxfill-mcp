@@ -267,10 +267,13 @@ def _immigration_questions(profile: Profile, out: list[IntakeQuestion], notes: l
                       "what you were doing in it (sub_status), and exact start/end dates.",
                       "Treaty benefits, residency AND the FICA switch-on are decided per visa period, not per year.",
                       "immigration.visa_timeline",
-                      disambiguation="Worked example — F-1 student Aug 2022 → F-1 OPT Jun 2024 (sub_status: opt; "
-                                     "still F-1: residency rules unchanged, but now WORKING) → H-1B Oct 2025 "
+                      disambiguation="Worked example — F-1 student 2022-08-24 → 2024-05-17; F-1 OPT 2024-06-10 → "
+                                     "2025-06-09 (sub_status: opt; still F-1: residency rules unchanged, but now "
                                      "WORKING); H-1B 2025-10-01 → present (sub_status: employment). sub_status "
                                      "vocabulary: student / opt / stem_opt / cap_gap / employment / dependent / other. "
+                                     "Consecutive periods should be CONTIGUOUS (each start = the prior end + 1 day), "
+                                     "so the example's two breaks (2024-05-18 → 2024-06-09, and 2025-06-10 → "
+                                     "2025-09-30, e.g. cap_gap) each need a period of their own or a corrected "
                                      "date; an H-1B period starts on the "
                                      "I-797 APPROVAL start date — never the offer or onboarding date. Mid-year "
                                      "changes matter: an F-1→H-1B year can still claim a student-period treaty "
@@ -729,8 +732,8 @@ def _spouse_residency_questions(
         + "a joint return is only available by electing under §6013(g)/(h) to treat them as a U.S. resident "
           "(their worldwide income becomes taxable); without the election a married couple with a "
           "nonresident-alien spouse files married-filing-separately. "
-          # N-14: the label misleads — push back unprompted; the word invites
-          # the conclusion "married ⇒ the exclusion is gone".
+          # N-14: the label misleads — push back unprompted; "married ⇒ the
+          # exclusion is gone" is the conclusion the word invites.
           "It is the ELECTION, not the marriage, that changes the spouse's tax attributes: the §871(i) "
           "exclusion of US bank-deposit interest survives the marriage and ends only if the election is "
           "made — while the F/J FICA exemption is STATUS-based and survives even the election."
@@ -1143,6 +1146,7 @@ def _retirement_questions(profile: Profile, out: list[IntakeQuestion], notes: li
             f"calc op ira_contribution_eligibility (MAGI phase-out, tested at YEAR-END filing status) — an "
             f"ineligible contribution accrues a 6%-per-year excise tax until corrected, and the same MAGI can "
             f"be excess under one filing status and compliant under another (the joint phase-out range is far "
+            f"higher than the single or married-filing-separately one)."
         )
 
 

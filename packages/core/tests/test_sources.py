@@ -231,8 +231,7 @@ def test_obbba_topic_does_not_steal_the_neighbouring_topics_queries():
 
 
 # ── Reward / other-income + NRA FDAP routing (H9, pitfall P-005) ───────────────
-# P-005: the characterization of a bank account-opening bonus
-# (fixture revised)
+# P-005: characterizing a bank account bonus had no routed authority — every
 # query below was a clean miss or, worse, a WRONG-LAW pointer: the H6 OBBBA
 # topic made "Schedule NEC" (the 1040-NR FDAP schedule) route to the Schedule
 # 1-A deduction page. These tests are the P-005 regression suite.
@@ -344,7 +343,7 @@ def test_generated_state_registry_is_current():
 
 
 # ── Commuter / transportation fringe routing (P-006) ──────────────────────────
-# P-006: the packs shipped the §132(f) monthly CAPS but no
+# P-006: the packs shipped the §132(f) monthly CAPS but no eligibility
 # authority, and "qualified parking" mis-routed to
 # obbba_schedule_1a_deductions — the token "qualified" pulling toward the OBBBA
 # topic, the same wrong-law failure Schedule NEC had. These are the P-006

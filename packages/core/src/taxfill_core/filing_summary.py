@@ -219,7 +219,7 @@ def _household_rollup(manifest: list[FilingManifestItem]) -> list[str]:
 
     The modal international-student household is an unmarried couple: TWO
     taxpayers, two returns, one budget. The roll-up is the household budget
-    caller would otherwise compose by hand — with the framing that stops the wrong
+    view, with the framing that stops the wrong conclusions: each person signs
     and files only their own return, and one person's refund never nets against
     the other's balance due at the IRS."""
     labeled = [m for m in manifest if m.taxpayer]

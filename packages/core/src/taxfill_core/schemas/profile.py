@@ -285,7 +285,7 @@ class OtherTaxpayer(BaseModel):
 
     The modal international-student household is an unmarried couple: two
     returns, one rent, one budget. Modeling the second person is what lets the
-    product SAY the three things agents otherwise end up carrying in
+    product SAY three things agents otherwise carry in their heads: you file
     separately; an NRA partner cannot be claimed as a dependent (§152(b)(3));
     and marrying mid-plan opens the §6013(g)/(h) election — which
     compare_scenarios can price as a what-if TODAY.

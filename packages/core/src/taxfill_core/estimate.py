@@ -428,7 +428,7 @@ class DeltaLine(BaseModel):
     ``delta`` is the row's contribution to the headline difference (best minus
     worst, in bottom-line effect terms). The rows sum EXACTLY to
     ``StatusComparison.delta`` — enforced at construction — which is the table a
-    a caller would otherwise rebuild by hand in a scratch script.
+    caller would otherwise rebuild by hand.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -820,7 +820,7 @@ def _delta_lines(best: "BottomLineResult", worst: "BottomLineResult") -> list[De
     """Itemize best-minus-worst per ledger slot; the rows sum EXACTLY to the headline delta.
 
     This is the attribution the _build_comparison of old threw away (it kept only
-    the two bottom lines), forcing a caller to rebuild the
+    the two bottom lines), forcing callers to rebuild the "where does the
     difference come from" table by hand.
     Because both sides reconcile (sum(effect) == bottom, enforced per computation),
     the per-slot differences sum to best.bottom - worst.bottom by construction —

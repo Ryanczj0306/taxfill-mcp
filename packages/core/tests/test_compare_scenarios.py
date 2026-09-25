@@ -1,8 +1,7 @@
 """compare_scenarios golden tests — Phase H item H7 (field notes N-9, N-15).
 
 The canonical use case is a three-way what-if (single / MFS / MFJ via the
-§6013(g) election) that must be re-run each
-time an input fact changes. These tests pin the two properties that make the
+§6013(g) election) that must be re-run each time an input fact changes. These
 tests pin the two properties that make the surface trustworthy:
 
   * BOTH attributions are exact — the ledger diff sums to the headline delta
@@ -12,7 +11,8 @@ tests pin the two properties that make the surface trustworthy:
     labeled PROJECTION and its missing blocks are named, because a silent
     cross-year diff was exactly the $2,126 credit-drop trap.
 
-All data synthetic. Offline.
+All data synthetic (mechanical demo numbers, not tied to any persona).
+Offline.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ THREE_WAY = [
         "us_resident_election": True,
         "income_overrides": {
             "spouse": {"wages": 52_000, "federal_withholding": 5_000},
-            "interest": 700,
+            "federal_withholding": 11_500,  # a post-marriage W-4 lowers withholding
         },
     },
 ]
@@ -149,7 +149,7 @@ def test_scenario_sets_round_trip_through_the_workspace(tmp_path):
 
 
 def test_the_revise_one_fact_loop_via_the_mcp_tool(tmp_path, monkeypatch):
-    # A what-if gets revised mid-flight; each revision of a base fact must be
+    # A revision of any base fact must be ONE call over the saved set, not a
     # rebuild.
     from taxfill_mcp.server import compare_scenarios as tool
 
@@ -160,7 +160,7 @@ def test_the_revise_one_fact_loop_via_the_mcp_tool(tmp_path, monkeypatch):
     assert first["saved_as"] == "demo-what-if"
     baseline_first = next(o for o in first["outcomes"] if o["name"] == "stay single")
 
-    # A base fact changes (e.g. a raise): update ONE base fact and re-run.
+    # A base fact changes (e.g. a raise): update ONE fact and re-run.
     second = tool(2025, load="demo-what-if", income_updates={"wages": 104_000}, root=root)
     baseline_second = next(o for o in second["outcomes"] if o["name"] == "stay single")
     assert baseline_second["bottom_line"] != baseline_first["bottom_line"]

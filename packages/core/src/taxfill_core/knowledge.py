@@ -1250,7 +1250,7 @@ class SupplementalWithholdingParams(BaseModel):
 
 # ── Tax-advantaged account contribution limits (Phase H, H8) ─────────────────
 # The insight the block exists to carry is the SCOPING, not the amounts: the
-# typical planning question is "is the 401(k) limit one per
+# typical planning question is "is the 401(k) limit one per person?", and
 # the interesting answer is that the four big limits are scoped
 # four different ways. Scope is a closed Literal per bucket — machine-readable,
 # never prose. The block is TOP-LEVEL (not under `tax`) deliberately: nested
@@ -1360,7 +1360,7 @@ class IraLimits(BaseModel):
     deduction_magi_phaseout_active: DeductibleIraPhaseouts
     worksheet: IraWorksheetRules
     excess_excise_rate: Decimal = Field(
-        description="IRC 4973: 6% of the excess PER YEAR until withdrawn/absorbed — the excess-contribution tax."
+        description="IRC 4973: 6% of the excess, charged again EVERY year until withdrawn/absorbed."
     )
     eligibility_tested_at: str = Field(
         description="When eligibility is measured — year-end status/MAGI, contributions allowed to the filing deadline."

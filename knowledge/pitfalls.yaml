@@ -46,7 +46,7 @@ pitfalls:
 
   - id: P-004
     incident: >-
-      Risk: a treaty benefit mis-scoped on a status-change year (F-1 to H1B
+      Risk: a treaty benefit mis-scoped on a status-change year (an F-1 to
       H-1B filer can still claim for student-period income).
     countermeasure: >-
       Treaty eligibility is evaluated per visa PERIOD, never per year:
@@ -61,17 +61,14 @@ pitfalls:
 
   - id: P-006
     incident: >-
-      Asked what a commuter benefit covers, the engine could
+      Asked what a commuter benefit covers, the engine could quote the
       MONTHLY CAPS (contribution_limits' commuter_132f block) but
       shipped nothing about what QUALIFIES, so eligibility had to be
       researched from scratch — and get_sources("qualified parking")
       mis-routed to obbba_schedule_1a_deductions (the token "qualified"
       pulling toward the OBBBA topic), a wrong-law pointer of the Schedule
-      NEC kind. Two common misconceptions sit beside the same question: an
-      employer that direct-deposits the monthly caps to an employee's
       NEC kind. Nothing stated the substantiation or eligible-expense
-      (text revised)
-      (text revised)
+      rules.
     countermeasure: >-
       The eligibility RULES are year-invariant and live here; only the
       monthly caps are figures (they stay in the year packs). (1) Qualified
@@ -100,9 +97,10 @@ pitfalls:
 
   - id: P-005
     incident: >-
-      A bank account bonus (even one styled as a fee reimbursement)
-      is easy to mis-characterize from its label alone: reward-shaped payments
+      A bank account bonus — even one styled as a fee reimbursement or
+      "reward" — is easy to mis-characterize from its label alone:
       reward-shaped payments pattern-match to "credit card rewards are not
+      taxable" (the
       purchase-price-rebate doctrine, Rev. Rul. 76-96 lineage), but a bonus
       for OPENING or MAINTAINING an account is taxable other income the
       bank reports (1099-MISC box 3 / 1099-INT) even when styled as a
@@ -386,7 +384,7 @@ pitfalls:
       limit, the Roth and deductible-IRA MAGI phase-outs, the 6% excess excise)
       and calc shipped ira_contribution_eligibility to police them — while
       NOTHING in the repo modeled IRC 408(d)(2), the rule that decides how much
-      of a conversion is actually taxable. A demo planning scenario
+      of a conversion is actually taxable. The one question a backdoor-Roth
       filer has, "where can I roll my old 401(k)?", had no deterministic answer
       at all: the agent had to do Form 8606 Part I by hand. Two specific traps
       sat inside that gap.
@@ -395,10 +393,11 @@ pitfalls:
       not converted) + line 8 (the amount converted) — it ADDS THE CONVERSION
       BACK, so converting a bigger slice never dilutes the pretax share.
       Reasoning from "I converted the nondeductible dollars" instead gets the
-      answer wrong by the whole pretax fraction: on an $18,000 pretax pool plus a
-      $7,000 nondeductible contribution, converting $7,000 is $5,040 taxable
-      (ratio 7,000/25,000 = 0.280), not $0 — and iterating that same backdoor for
-      ten years against the polluted pool costs about $4,158 of tax at 24% that a
+      answer wrong by the whole pretax fraction: e.g. (demo numbers) on a
+      $42,000 pretax pool plus a $6,000 nondeductible contribution, converting
+      $6,000 is $5,250 taxable (ratio 6,000/48,000 = 0.125), not $0 — and
+      iterating that same backdoor for ten years against the polluted pool
+      costs about $9,904 of tax at 32% that a clean pool would never have
       owed. (2) The two Roth-conversion PATHS get
       conflated: a DIRECT rollover from a 401(k)/403(b) to a Roth IRA is fully
       taxable on its pretax part but pro-rata never reaches it (no individual
@@ -415,7 +414,7 @@ pitfalls:
     countermeasure: >-
       Calc ops ira_pro_rata and roth_conversion (Phase I, I1) with golden
       regression tests in packages/core/tests/test_tax_calc.py that pin the
-      demo worked example's numbers, including the ten-year iteration total and the
+      demo worked example, including the ten-year iteration total and the
       clean-pool case that proves a plan-to-Roth-IRA rollover leaves future
       backdoor conversions fully non-taxable. roth_conversion REFUSES to guess
       the path (`source` is required) and REFUSES traditional-IRA arguments on

@@ -3132,8 +3132,8 @@ def schedule_1a_deductions(
         _step_part("III", "21", "No Tax on Overtime", overtime_d,
                    params.overtime.deduction_cap.for_status(filing_status), params.overtime.phaseout,
                    forfeit_on_mfs=not params.overtime.mfs_allowed, lines_note="lines 14-21")
-        # N-14 push-back: the marketing name invites a wrong conclusion in a typical
-        # question ("no tax on overtime ⇒ overtime is untaxed") — state the
+        # N-14 push-back: the marketing name invites a wrong conclusion ("no tax
+        # on overtime ⇒ overtime is untaxed") — state the distinction unprompted,
         # in the work the user actually reads.
         work_lines.append(
             "Push-back on the name 'No Tax on Overtime': (1) only the FLSA-required PREMIUM HALF of "
@@ -3631,7 +3631,7 @@ def contribution_limits(
     """The year's tax-advantaged account limits WITH their scoping — because the
     real question is never just the amount.
 
-    The typical question is "is the 401(k) limit one per person?",
+    The typical question is "is the 401(k) limit one per person?", and the
     useful answer is that the big limits are scoped four different ways:
 
     * 402(g) elective deferral — per PERSON across every employer, and
@@ -3704,9 +3704,8 @@ def contribution_limits(
               "a spouse's included (Rev. Rul. 2004-45); a limited-purpose (dental/vision) or "
               "post-deductible one does not."
         ),
-        # The caps are only half the answer: pitfall P-006 is a planning case that
+        # The caps are only half the answer (pitfall P-006): knowing the limits
         # does not say WHAT QUALIFIES. The eligibility rules are year-invariant,
-        # so they ride the scoping string rather than the per-year pack.
         # so they ride the scoping string rather than the per-year pack.
         "commuter_132f": (
             f"${params.commuter_132f.transit_monthly:,}/month transit and "
@@ -3766,8 +3765,8 @@ def ira_contribution_eligibility(
     traditional-IRA DEDUCTION) the MAGI actually allows — and the 6%-per-year
     excise on any excess already contributed.
 
-    This op exists because a common, silent error has
-    exactly this shape: a filer contributing to a Roth IRA with MAGI
+    This op exists because the error is common and silent: a filer
+    contributing to a Roth IRA with MAGI above the phase-out — a 6%-per-year
     excise (IRC 4973) that nobody notices until it has compounded. Two facts
     the work always states:
 
@@ -3992,7 +3991,7 @@ def marginal_dollar_savings(
     # The 0.9% tier keys on the Form 8959 TAX threshold, which is FILING-STATUS
     # specific ($250,000 MFJ / $125,000 MFS / $200,000 otherwise, IRC 3101(b)(2)),
     # NOT on the employer's status-blind $200,000 WITHHOLDING threshold. The
-    # difference is a concrete wrong answer, found by the adversarial review: an MFJ filer with
+    # difference is a concrete wrong answer, found 2026-08-26 by the Phase-I2
     # adversarial review: an MFJ filer with $210,000 of wages has 0.9% WITHHELD,
     # but owes none of it — combined wages are under $250,000, so it comes back
     # as a credit on the return and the marginal payroll dollar saves Medicare
@@ -4118,8 +4117,8 @@ def magi_ladder(
     """Every MAGI test the year's packs carry, in ONE table — because "MAGI" is
     not one number.
 
-    A single planning question can touch at least six different MAGI tests with
-    six different thresholds, and the predictable question — "why is my MAGI
+    A single planning question can touch six different MAGI tests with six
+    different thresholds, and the predictable question — "why is my MAGI
     lower than my salary?" — is the UX signal: the answer is a
     LADDER. Gross pay is not box 1 (pre-tax 401(k)/HSA/FSA/commuter come out
     first); box 1 is not AGI (above-the-line adjustments); and AGI is not any

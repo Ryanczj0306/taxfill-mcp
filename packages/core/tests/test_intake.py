@@ -123,12 +123,12 @@ def test_residency_days_followup_covers_exempt_category_years():
     profile = Profile(
         identity=Identity(us_person=_ans(False)),
         immigration=Immigration(visa_timeline=[
-            VisaPeriod(status="F-1", start=date(2019, 8, 24), end=date(2023, 9, 30), provenance=US),
+            VisaPeriod(status="F-1", start=date(2018, 8, 24), end=date(2022, 9, 30), provenance=US),
             VisaPeriod(status="H-1B", start=date(2022, 10, 1), provenance=US),
         ]),
         residency_facts=ResidencyFacts(days_in_us={2022: _ans(365)}),
     )
-    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == "residency.days_in_us")
+    q = next(q for q in intake_checklist(profile, tax_year=2022).next_questions if q.id == "residency.days_in_us")
     assert "2018, 2019, 2020, 2021" in q.prompt
 
 
@@ -848,7 +848,7 @@ def test_visa_timeline_gap_between_periods_gets_a_contiguity_note():
         identity=Identity(us_person=_ans(False)),
         immigration=Immigration(visa_timeline=[
             VisaPeriod(status="F-1", sub_status="student", start=date(2022, 8, 24), end=date(2024, 5, 17), provenance=US),
-            VisaPeriod(status="H-1B", sub_status="employment", start=date(2025, 10, 1), provenance=US),
+            VisaPeriod(status="H-1B", sub_status="employment", start=date(2024, 10, 1), provenance=US),
         ]),
     )
     notes = intake_checklist(profile).notes
@@ -1012,7 +1012,7 @@ def test_recorded_roth_ira_amount_gets_the_excise_pointer_note():
 
 
 def test_nra_spouse_note_distinguishes_the_election_from_the_marriage():
-    # A common misreading concludes "married ⇒ the §871(i) exclusion is gone" straight
+    # The label invites the wrong conclusion "married ⇒ the §871(i) exclusion is
     # gone"; the note must state the distinction unprompted.
     profile = Profile(
         household=Household(
@@ -1034,12 +1034,12 @@ _INTEREST_Q = "income_documents.interest_character"
 
 
 def _confirmed_nra(*docs: IncomeDocument) -> Profile:
-    # Sample F-1: 2019-2023 are all exempt years, so the SPT fails -> nonresident.
+    # Sample F-1 arriving in 2020: 2023 is an exempt year, so the SPT fails -> nonresident.
     return Profile(
         identity=Identity(us_person=_ans(False)),
-        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2019, 8, 24), provenance=US)]),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2020, 8, 24), provenance=US)]),
         residency_facts=ResidencyFacts(
-            days_in_us={y: _ans(d) for y, d in {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330}.items()}
+            days_in_us={y: _ans(d) for y, d in {2020: 130, 2021: 330, 2022: 330, 2023: 330}.items()}
         ),
         income_documents=list(docs),
     )

@@ -207,16 +207,16 @@ def test_estimate_raises_for_year_with_no_knowledge_pack():
         estimate_refund(_single(), 1999, IncomeSnapshot(wages=50000, federal_withholding=6000))
 
 
-# A confirmed-nonresident visa timeline (sample F-1: years N..N+4 are exempt, so
+# A confirmed-nonresident visa timeline (a sample F-1 arriving in 2020: years 2020-2024
 # are exempt, so every day counted for the 2023 target year is excluded and the SPT fails
-# SAMPLE_F1 / test_sample_f1_exempt_years_classify_nonresident for the 2023 target year.
+# -> nonresident). Same shape as test_residency's test_sample_f1_exempt_years_classify_nonresident.
 def _nra_immigration():
-    return Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2019, 8, 24), end=None, provenance=US)])
+    return Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2020, 8, 24), end=None, provenance=US)])
 
 
 def _nra_residency():
     return ResidencyFacts(
-        days_in_us={y: _ans(d) for y, d in {2019: 130, 2020: 330, 2021: 330, 2022: 330, 2023: 330}.items()}
+        days_in_us={y: _ans(d) for y, d in {2020: 130, 2021: 330, 2022: 330, 2023: 330}.items()}
     )
 
 

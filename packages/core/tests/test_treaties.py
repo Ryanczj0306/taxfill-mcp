@@ -432,7 +432,7 @@ def test_negative_amount_rejected():
 
 
 def test_split_invariant_and_inputs_echo():
-    periods = [{"status": "F-1", "start": "2019-08-24"}]
+    periods = [{"status": "F-1", "start": "2018-08-24"}]
     r = treaty_benefit(
         "china", "student_wages", 7250.49, visa_periods=periods, year=2022, knowledge_dir=KNOWLEDGE_DIR
     )

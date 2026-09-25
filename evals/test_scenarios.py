@@ -18,9 +18,9 @@ dual-status corridor (p) on the G5 stack (the First-Year-Choice note, the
 concrete split-year roadmap, and the dual_status assembly checklist); and the
 FICA-withheld-in-error corridor (q) on the G6 stack (the intake employer-
 refusal note, the estimate's concrete claim-amount disclosure, and the
-Forms 843 + 8316 claim checklist out of file_and_pay); the mid-year status-change
-household (r) on the Phase H stack; and (s) the six Phase I planning decisions,
-on a demo fixture — it re-runs six decisions that, before Phase I, one had
+Forms 843 + 8316 claim checklist out of file_and_pay); the Phase H stack (r) on
+two separate fixtures (a mid-year visa-status change; an unmarried household with
+a nonresident partner); and (s) six Phase I planning decisions on independent demo
 fixtures — the 401(k) rollover destination under IRC 408(d)(2), the Roth
 conversion and its section 1411 crossing, the HSA payroll saving, the ESPP basis
 correction, the capital-loss carryover, and the treaty disclosure — pinned
@@ -135,16 +135,19 @@ def test_eval_g_f1_to_h1b_midyear():
     result = classify(
         [
             {"status": "F-1", "start": "2020-08-17", "end": "2024-09-30"},
-            {"status": "H-1B", "start": "2023-10-01", "end": None},
+            {"status": "H-1B", "start": "2024-10-01", "end": None},
         ],
         {2020: 137, 2021: 300, 2022: 300, 2023: 300, 2024: 330},
-        2023,
+        2024,
     )
     blob = (result.work + " " + " ".join(result.reasons)).lower()
     assert result.classification == "nonresident"  # F-1 still exempt; H-1B days alone don't meet SPT
     # The engine reasons about the mid-year split: F-1 exempt period excluded, the
     # non-exempt (post-F-1) part counted day-by-day.
     assert "f-1" in blob and "exempt" in blob and "non-exempt" in blob
+    # The target year is the LAST of the five exempt calendar years, so an
+    # off-by-one that ends the student exemption a year early flips this.
+    assert "#5 of the lifetime 5" in result.work
     assert result.citations, "residency determination must cite authority"
     # Intake captures visa facts as date-range PERIODS, so per-period (student) treaty
     # eligibility survives the status change — the P-004 countermeasure surface.
@@ -804,106 +807,139 @@ def test_eval_q_exempt_f1_fica_withheld_in_error_end_to_end():
     assert f8316.signature is not None and f8316.signature.page == 1
 
 
-# ── (r) the Phase H stack: a mid-year status change and an unmarried household ──
+# ── (r) the Phase H stack: a mid-year status change, and a multi-taxpayer household ──
 
 
 def test_eval_r_midyear_status_change_and_unmarried_household():
-    """A hypothetical Phase H fixture end-to-end: F-1 OPT → a cap-exempt H-1B mid-year,
-    an unmarried nonresident partner in the same household, TY2026 budget.
+    """Separate hypothetical fixtures (demo facts), one per Phase H surface.
 
+    Fixture 1, the visa timeline: F-1 student → F-1 OPT → a CAP-EXEMPT H-1B (a
+    nonprofit research employer, whose H-1B can start on any date) from
+    2025-07-15, living in New Jersey and working remotely for a New York
+    employer; no one else in the household. H1: the timeline is SEGMENTS with
     sub_status, and the FICA hint flips at the employment boundary. H3: the
-    household, on a closed year. H2: the household knows the partner files
-    not a dependent (§152(b)(3)), and the §6013(g) what-if is priced, not guessed.
     remote segment chases the employer's state, and state_scope raises the
+    convenience warning.
+
+    Fixture 2, the household: a U.S.-citizen filer with no visa history and an
+    unmarried nonresident partner (a J-1 research scholar) in the same
+    household, on a closed year. H2: the household knows the partner files
+    separately, is not a dependent (§152(b)(3)), and that the §6013(g) what-if
+    is priced, not guessed.
+
     Fixture 3, a bare planning-year profile. N-11: a planning year asks for the
+    Roth-vs-pre-tax deferral split.
     """
     from taxfill_core.calc import employee_fica
     from taxfill_core.schemas.profile import OtherTaxpayer
 
+    # ── Fixture 1: the mid-year status change (TY2025) ───────────────────────
     # Arrived Aug 2022: exempt years 2022-2026, so TY2025 counts only the H-1B
-    # days (Jul 15-Dec 31 = 170 < 183) — a confirmed NONRESIDENT despite full presence.
+    # days (Jul 15-Dec 31 = 170 < 183; classify's SPT work reports 170 weighted
+    # days) — a confirmed NONRESIDENT despite full presence. The mid-year
+    # status boundary, not any particular start date, is the mechanism under test.
     timeline = [
-        VisaPeriod(status="F-1", sub_status="student", start=date(2023, 8, 24), end=date(2025, 6, 15), provenance=US),
-        VisaPeriod(status="F-1", sub_status="opt", start=date(2025, 6, 16), end=date(2026, 7, 14), provenance=US),
-        VisaPeriod(status="H-1B", sub_status="employment", start=date(2026, 7, 15), provenance=US),
+        VisaPeriod(status="F-1", sub_status="student", start=date(2022, 8, 18), end=date(2024, 6, 14), provenance=US),
+        VisaPeriod(status="F-1", sub_status="opt", start=date(2024, 6, 15), end=date(2025, 7, 14), provenance=US),
+        VisaPeriod(status="H-1B", sub_status="employment", start=date(2025, 7, 15), provenance=US),
     ]
+    days = {2022: 136, 2023: 350, 2024: 355, 2025: 365}
     result = classify(
         [{"status": p.status, "start": p.start.isoformat(), "end": p.end.isoformat() if p.end else None}
          for p in timeline],
         days,
-        2026,
+        2025,
     )
     assert result.classification == "nonresident"
 
     # H1 — the segments carry their own FICA answer: OPT exempt, H-1B not.
     assert timeline[1].fica_exempt_hint()[0] is True
     assert timeline[2].fica_exempt_hint()[0] is False
+    # $7,000/month; July is split by days (14 OPT, 17 H-1B of 31):
+    # 7,000 x 14/31 = 3,161.29 -> 3,161 and 7,000 x 17/31 = 3,838.71 -> 3,839,
+    # so OPT = 6 x 7,000 + 3,161 = 45,161 and H-1B = 5 x 7,000 + 3,839 = 38,839.
     fica = employee_fica(
-        [{"wages": 56_000, "fica_exempt": True, "label": "OPT Jan-Jul"},
-         {"wages": 40_000, "fica_exempt": False, "label": "H-1B Jul-Dec"}],
-        year=2026,
+        [{"wages": 45_161, "fica_exempt": True, "label": "OPT Jan 1-Jul 14"},
+         {"wages": 38_839, "fica_exempt": False, "label": "H-1B Jul 15-Dec 31"}],
+        year=2025,
     )
     assert fica.total_fica > 0  # FICA starts at the boundary, not zero and not full-year
 
-    profile = Profile(
+    visa_profile = Profile(
         identity=Identity(us_person=_ans(False)),
         immigration=Immigration(visa_timeline=timeline),
         residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in days.items()}),
-                                                   # (fixture revised)
         household=Household(
             marital_status=_ans("unmarried"),
             hoh_qualifying_person=_ans(False),
             no_other_taxpayers=_ans(True),
-                                           us_person=False, note="NRA (J-1 scholar)", provenance=US)],
         ),
         state_footprint={2025: StateFootprintYear(
             lived=[ResidencePeriod(state="NJ", start=date(2025, 1, 1), provenance=US)],
             worked=[WorkPeriod(state="NJ", start=date(2025, 1, 1), remote=True, provenance=US)],
         )},
     )
-    cl = intake_checklist(profile, tax_year=2026)
+
+    # H3 — the remote segment chases the employer's state until answered ...
+    ids = {q.id for q in intake_checklist(visa_profile, tax_year=2025).next_questions}
+    assert "state_footprint.remote_employer_state" in ids
+
+    # ... and once answered (NY employer), state_scope raises the convenience
+    # warning without asserting an NY filing.
+    visa_profile.state_footprint[2025].worked[0].employer_state = "NY"
+    scope = state_scope(visa_profile, 2025)
+    assert all(s.state != "NY" for s in scope.states)
+    assert any("convenience-of-the-employer" in n and "NY" in n for n in scope.notes)
+    assert "state_footprint.remote_employer_state" not in {
+        q.id for q in intake_checklist(visa_profile, tax_year=2025).next_questions
+    }
+
+    # ── Fixture 2: the unmarried household (TY2025) ─────────────────────────
+    household_profile = Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(
+            marital_status=_ans("unmarried"),
+            hoh_qualifying_person=_ans(False),
+            other_taxpayers=[OtherTaxpayer(name="Demo Partner", relationship="unmarried_partner",
+                                           us_person=False,
+                                           note="hypothetical NRA partner (J-1 research scholar)",
+                                           provenance=US)],
+        ),
+    )
+    cl = intake_checklist(household_profile, tax_year=2025)
 
     # H2 — the three push-backs arrive as NOTES, unprompted.
     assert any("file SEPARATELY" in n for n in cl.notes)
     assert any("§152(b)(3)" in n for n in cl.notes)
     assert any("compare_scenarios" in n and "6013" in n for n in cl.notes)
 
-    # H3 — the remote segment chases the employer's state until answered ...
-    ids = {q.id for q in cl.next_questions}
-    assert "state_footprint.remote_employer_state" in ids
+    # ── Fixture 3: a bare planning-year profile (TY2026) ─────────────────────
     # N-11 — the planning year asks for the Roth-vs-pre-tax split.
+    planning = intake_checklist(Profile(), tax_year=2026)
     assert "retirement.deferral_split" in {q.id for q in planning.next_questions}
 
-    # ... and once answered (NY employer), state_scope raises the convenience
-    # warning without asserting an NY filing.
-    # (fixture revised)
-    planning = intake_checklist(Profile(), tax_year=2026)
-    assert all(s.state != "NY" for s in scope.states)
-    assert any("convenience-of-the-employer" in n and "NY" in n for n in scope.notes)
-    assert "state_footprint.remote_employer_state" not in {
-        # (fixture revised)
-    }
 
-
-# ── (s) the six Phase I planning decisions, on a demo fixture ──────────────────
+# ── (s) the six Phase I planning decisions, on independent demo fixtures ─────
 
 
 def test_eval_s_phase_i_planning_decisions():
     """The six Phase I decisions, encoded so the Phase I gaps cannot reopen.
 
-    In a demo walkthrough this repo was driven end to end to compute a TY2026 projection
-    — a hypothetical single filer, W-2 $216,000 (base $150k + RSUs $50k + bonus $16k), 401(k) $23,000
-    against the $24,500 limit, HSA $3,600, a backdoor Roth, a what-if direct
-    Roth IRA contribution needing recharacterisation, an $18,000 old-plan balance
-    to convert, ESPP (a Korea Art. 21(1) $2,000 treaty check runs on its own separate demo fixture), and a capital
-    loss. Every FIGURE the knowledge packs carried was correct and citable.
-    But SIX of the decisions the walkthrough turned on had to be computed
-    # (fixture revised)
-    for Phase H, one profile over: the data was there, the DECISION SURFACE
-    # (fixture revised)
+    Every input below is a HYPOTHETICAL demo number, and each decision runs on
+    its OWN mechanical fixture rather than on one household's year:
 
+      * the pro-rata pool: a backdoor-Roth contribution ($6,000 nondeductible)
+        against a $42,000 pretax old-plan balance;
+      * the plan-to-Roth conversion: a married couple filing jointly (taxable
+        income $203,800, MAGI $236,000, $4,200 of net investment income)
+        converting a $38,000 old plan;
+      * the HSA: family HDHP coverage, $6,000 of direct contributions, $238,000
+        of wages;
+      * the ESPP lot, the capital-loss cap, and a treaty check, each on its own.
+
+    Every FIGURE the knowledge packs carry is citable; what these decisions
     need is a DECISION SURFACE. Phase I1-I4 built it, and this eval re-runs the
-    decisions against the shipped ops and pins the numbers the demo fixture produces,
+    six decisions against the shipped ops and pins the demo numbers, so a
     regression in any of them fails loudly here rather than silently in
     somebody's return. (The ROADMAP called this scenario "i14"; the file
     numbers scenarios by LETTER and the `i` prefix already belongs to the
@@ -921,63 +957,64 @@ def test_eval_s_phase_i_planning_decisions():
     )
 
     YEAR = 2026
-    TAXABLE_BEFORE = 175_100   # W-2 216,000 - 401k 23,000 - HSA 3,600 + inv 2,600 - loss 800
-    MAGI_BEFORE = 191_200      #   - standard deduction 16,100 (MAGI = AGI here)
-    WAGES = 216_000
-    NII = 1_800                # 2,600 investment income net of the 800 loss
 
     # ── DECISION 1 (I1): where may the old 401(k) go? ────────────────────────
     # Rolling it into a traditional IRA poisons every future backdoor Roth,
     # because IRC 408(d)(2) pools the IRAs and line 9 adds the conversion back.
     polluted = ira_pro_rata(
-        dec31_total_value=18_000, amount_converted=7_000,
-        nondeductible_contributions_this_year=7_000, year=YEAR,
+        dec31_total_value=42_000, amount_converted=6_000,
+        nondeductible_contributions_this_year=6_000, year=YEAR,
     )
-    assert polluted.taxable_conversion == 5_040       # 72% of the backdoor is taxable
-    assert polluted.nontaxable_conversion == 1_960
-    assert polluted.basis_carryforward == 5_040       # and the basis is stuck for years
+    assert polluted.taxable_conversion == 5_250       # 87.5% of the backdoor is taxable
+    assert polluted.nontaxable_conversion == 750
+    assert polluted.basis_carryforward == 5_250       # and the basis is stuck for years
     # Rolling it into the new employer's 401(k) instead leaves the pool clean, and
     # a clean pool is the whole point: the backdoor is then fully non-taxable.
     clean = ira_pro_rata(
-        dec31_total_value=0, amount_converted=7_000,
-        nondeductible_contributions_this_year=7_000, year=YEAR,
+        dec31_total_value=0, amount_converted=6_000,
+        nondeductible_contributions_this_year=6_000, year=YEAR,
     )
     assert clean.taxable_conversion == 0
 
-    # ── DECISION 2 (I1): should the $18,000 convert this year? ───────────────
+    # ── DECISION 2 (I1): should an old plan convert this year? ───────────────
     # A DIRECT plan -> Roth IRA rollover (Notice 2008-30) is fully taxable but
     # pro-rata never touches it — the only way to empty an old plan without
     # poisoning a backdoor. The joint fixture sits near the top of the 22%
+    # bracket, so the conversion spills into 24%.
+    TAXABLE_MFJ = 203_800      # demo: MAGI 236,000 - the 32,200 joint standard deduction
+    MAGI_MFJ = 236_000
+    NII_MFJ = 4_200
     conv = roth_conversion(
-        "plan_to_roth_ira", 18_000, taxable_income_before=TAXABLE_BEFORE,
+        "plan_to_roth_ira", 38_000, taxable_income_before=TAXABLE_MFJ,
         magi_before=MAGI_MFJ, filing_status="married_filing_jointly", year=YEAR,
         net_investment_income=NII_MFJ,
     )
-    assert conv.taxable_amount == 18_000
-    assert conv.headroom_before == 26_675 and conv.headroom_after == 8_675
+    assert conv.taxable_amount == 38_000
+    assert conv.headroom_before == 7_600 and conv.headroom_after == 161_750  # 22% top 211,400; after: 403,550 - 241,800
     assert conv.spill_into_higher_brackets == 30_400  # the rest is taxed at 24%
 
     # ── DECISION 3 (I1): does the conversion trigger NIIT? ───────────────────
     # Conversion income is never net investment income, but it RAISES the MAGI
     # the §1411 threshold is measured against — the trap no filer computes.
-    assert conv.crosses_niit_threshold is True        # 191,200 -> 209,200 crosses 200,000
-    assert conv.niit_from_conversion == 68            # 3.8% x 1,800
+    assert conv.crosses_niit_threshold is True        # 236,000 -> 274,000 crosses 250,000
+    assert conv.niit_from_conversion == 160           # 3.8% x 4,200
 
     # The op must also REFUSE the input whose taxable income it does not price,
     # rather than silently dropping it (the I1 review's blocking finding).
     with pytest.raises(ValueError, match="other_distributions"):
         roth_conversion(
-            "traditional_ira_to_roth", 7_000, taxable_income_before=TAXABLE_BEFORE,
-            magi_before=MAGI_BEFORE, year=YEAR, dec31_total_value=18_000,
-            nondeductible_contributions_this_year=7_000, other_distributions=5_000,
+            "traditional_ira_to_roth", 6_000, taxable_income_before=245_900,
+            magi_before=262_000, year=YEAR, dec31_total_value=42_000,
+            nondeductible_contributions_this_year=6_000, other_distributions=4_000,
         )
 
     # ── DECISION 4 (I2): what does the HSA actually save? ────────────────────
+    HSA_WAGES = 238_000
     hsa = hsa_deduction(
-        "self_only", year=YEAR, personal_contributions=3_600, wages=WAGES,
+        "family", year=YEAR, personal_contributions=6_000, wages=HSA_WAGES,
     )
-    assert hsa.deduction == 3_600
-    # The correction Phase I made: above the social security wage base the
+    assert hsa.deduction == 6_000
+    # The correction Phase I2 encodes: above the social security wage base the
     # payroll saving is Medicare-only, NEVER the 7.65% the repo used to imply.
     assert "NOT 7.65%" in hsa.fica_tier
     # And the op is honest that its top tier is an upper bound, because the Form
@@ -1026,14 +1063,14 @@ def test_eval_s_phase_i_planning_decisions():
     )
     assert at_a_loss.disposition_type == "qualifying" and at_a_loss.ordinary_income == 0
 
-    # The $800 demo loss is deductible in full; a bigger one is
+    # A $2,200 short-term loss (demo fixture) is deductible in full; a bigger one
     # is capped at $3,000 and CARRIES FORWARD with its character, which
     # estimate.py alone still cannot do.
     small = capital_loss_limitation(
-        short_term=-800, long_term=0,
+        short_term=-2_200, long_term=0,
         taxable_income_before_capital_loss=128_000, filing_status="single", year=YEAR,
     )
-    assert small.deduction == 800 and small.total_carryover == 0
+    assert small.deduction == 2_200 and small.total_carryover == 0
     big = capital_loss_limitation(
         short_term=-9_000, long_term=0,
         taxable_income_before_capital_loss=128_000, filing_status="single", year=YEAR,
@@ -1041,9 +1078,11 @@ def test_eval_s_phase_i_planning_decisions():
     assert big.deduction == 3_000
     assert big.short_term_carryover == 6_000 and big.long_term_carryover == 0
 
-    # ── DECISION 6 (I4): how is the treaty $2,000 disclosed? ─────────────────
+    # ── DECISION 6 (I4): how is a treaty exemption disclosed? ────────────────
+    # Its own fixture: a hypothetical F-1 student (Korea Art. 21(1), demo
     # amount). calc.treaty_benefit computed such exemptions for a year before
     # the repo had any way to file the disclosure IRC 6114 requires. It now
+    # points at the form.
     treaty = treaty_benefit(
         country="korea", income_class="student_wages", amount=2_000, year=YEAR,
     )
@@ -1054,7 +1093,7 @@ def test_eval_s_phase_i_planning_decisions():
     pack = load_form_pack("f8833", YEAR - 1)          # revision-pinned; 2025 serves TY2026 prep
     assert pack.form.startswith("8833") or "8833" in pack.form
 
-    # ── The foreign-asset duty a filer cannot be asked to volunteer ──────────
+    # ── The foreign-asset duty a filer is never asked to volunteer ───────────
     # A filer with a foreign account rarely raises it unprompted, so the op
     # refuses to decide until the elicitation questions are answered.
     undecided = foreign_asset_reporting(year=YEAR, filing_status="single")

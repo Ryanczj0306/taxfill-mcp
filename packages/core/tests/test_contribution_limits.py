@@ -5,15 +5,15 @@ Every figure was transcribed with verbatim quotes from Notice 2024-80 /
 Notice 2025-67 (as published in IRB 2025-49 — the irs-drop copy of that notice
 is DEFECTIVE and repeats 2025 figures), Rev. Procs. 2024-25/2025-19 (HSA),
 2024-40/2025-32 (FSA/commuter), and Pub 590-A (the worksheet mechanics) before
-the packs were authored. The vectors pin the four findings of a demo
-planning scenario:
+the packs were authored. The vectors pin four planning traps:
 
   * N-10 — the SCOPING is the answer ("is the 401(k) limit one per person?"),
     and two self-only HSAs beat one family plan;
-  * N-11 — an ineligible-Roth-contribution what-if (single, MAGI $191,200)
-    # (fixture revised)
-  * N-13 — the MAGI ladder ("why is MAGI under $200,000 when wages are
-    $216,000?" — because Additional Medicare is a WAGE test and NIIT is not);
+  * N-11 — an over-the-phase-out Roth contribution (demo numbers: a married
+    filer filing separately, whose range is $0-$10,000, contributing directly)
+    and the joint-return range at the same MAGI;
+  * N-13 — the MAGI ladder (wages over the Form 8959 threshold yet MAGI under
+    the NIIT one, because Additional Medicare is a WAGE test and NIIT is not);
   * the marginal-dollar fact that above the wage base a payroll dollar saves
     2.35% of FICA, never 7.65%.
 
@@ -73,18 +73,21 @@ def test_limits_fail_closed_for_years_without_the_block():
 # ── ira_contribution_eligibility: the excess and the flip ──────────────────────
 
 
-def test_the_excess_what_if_single_191200_roth():
-    # A what-if (demo numbers): a single filer contributing $7,000
+def test_an_mfs_roth_is_excess():
+    # A married filer filing separately who lived with the spouse (demo
     # numbers): MAGI $150,000, far above the $0-$10,000 MFS range, so a DIRECT
-    r = ira_contribution_eligibility(191_200, "single", 2026, ira_type="roth", contributed=7_000)
+    # $6,000 Roth IRA contribution is excess in full.
+    r = ira_contribution_eligibility(
+        150_000, "married_filing_separately", 2026, ira_type="roth", contributed=6_000
+    )
     assert r.magi_position == "above" and r.allowed == 0
-    assert r.excess == 7_000
-    assert r.excise_per_year == 420  # 6% x 7,000, EVERY year until fixed
+    assert r.excess == 6_000
+    assert r.excise_per_year == 360  # 6% x 6,000, EVERY year until fixed
     assert "EVERY year" in r.work and "INCLUDING extensions" in r.work
 
 
 def test_the_same_magi_is_inside_the_joint_range():
-    r = ira_contribution_eligibility(191_200, "married_filing_jointly", 2026, ira_type="roth", contributed=7_000)
+    r = ira_contribution_eligibility(150_000, "married_filing_jointly", 2026, ira_type="roth", contributed=6_000)
     assert r.allowed == 7_500 and r.excess == 0  # the statutory full limit
     assert r.phaseout == {"start": 242_000, "end": 252_000}
 
@@ -133,7 +136,7 @@ def test_age_50_catch_up_raises_the_limit():
 
 
 def test_above_the_wage_base_a_payroll_dollar_saves_235_percent_never_765():
-    r = marginal_dollar_savings(150_000, 216_000, "single", 2026)
+    r = marginal_dollar_savings(150_000, 238_000, "single", 2026)
     assert r.marginal_rate == Decimal("0.24")
     payroll = next(x for x in r.rows if x.bucket == "hsa_payroll")
     assert payroll.fica_saving == Decimal("0.0145") + Decimal("0.009")  # 2.35%, wages > $200k
@@ -161,16 +164,17 @@ def test_between_the_base_and_200k_only_medicare_is_saved():
 # ── magi_ladder: six tests, six thresholds, one table ──────────────────────────
 
 
-def test_the_high_wages_but_magi_under_200k_ladder():
-    # Demo numbers: AGI $191,200 with $216,000 wages: NIIT (an
+def test_wages_over_the_8959_threshold_but_magi_under_the_niit_one():
+    # Demo numbers: a joint return with AGI $226,000 and $262,000 of combined
     # wages. NIIT (an AGI-side test) still has headroom under $250,000;
-    # (fixture revised)
-    r = magi_ladder(191_200, "single", 2026, wages=216_000)
+    # Additional Medicare (a WAGE test) is already over it; the joint Roth
+    # phase-out ($242,000-$252,000) has not started.
+    r = magi_ladder(226_000, "married_filing_jointly", 2026, wages=262_000)
     by_test = {row.test: row for row in r.rows}
     niit = by_test["Net investment income tax (Form 8960, 3.8%)"]
-    assert niit.position == "below" and niit.headroom == 8_800
+    assert niit.position == "below" and niit.headroom == 24_000
     addl = by_test["Additional Medicare Tax (Form 8959, 0.9%)"]
-    assert addl.position == "above" and addl.magi_used == 216_000
+    assert addl.position == "above" and addl.magi_used == 262_000
     assert "WAGE test" in addl.definition
     roth = by_test["Roth IRA contribution phase-out"]
     assert roth.position == "below"
@@ -193,7 +197,7 @@ def test_ladder_mfs_shows_the_sli_hard_bar():
 
 
 def test_commuter_scoping_carries_the_eligibility_rules_not_just_the_caps():
-    """P-006: an agent can have the monthly caps and still have to research what
+    """P-006: the monthly caps alone do not say what qualifies. The scoping
     string is where an agent meets the limit, so the year-invariant eligibility
     rules ride along with it."""
     scoping = contribution_limits(year=2026).scoping["commuter_132f"]
