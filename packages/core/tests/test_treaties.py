@@ -33,6 +33,7 @@ any published value below, the implementation is wrong — fix it, never the
 fixture.
 """
 
+import re
 from pathlib import Path
 
 import pytest
@@ -612,3 +613,146 @@ def test_the_disclosure_pointer_changed_no_computed_number():
         r = treaty_benefit(country, income_class, amount, knowledge_dir=KNOWLEDGE_DIR, **kwargs)
         assert r.exempt_amount == exempt, (country, income_class, amount, r.exempt_amount)
         assert r.taxable_remainder == amount - exempt, (country, income_class, amount)
+
+
+# ---------------------------------------------------------------------------
+# P-016 (Phase J JF1a): treaty_benefit's resident_alien decides WHERE a nonzero
+# exempt amount is reported, never how much. A nonresident: Schedule OI item L and
+# the Form 1040-NR treaty-exempt line. A resident alien (a saving-clause
+# exception): in parentheses on Schedule 1's other-income line (Pub 519 ch. 9).
+# Unknown: both, conditionally. Every line comes from the year's form_lines block.
+# ---------------------------------------------------------------------------
+
+
+def _reporting(work: str) -> str:
+    start = work.index(" REPORTING (")
+    return work[start:work.index("This op VALIDATES", start)]
+
+
+@pytest.mark.parametrize(
+    "year, sched1, nr",
+    [(2020, "line 8 (", "line 1c"), (2025, "line 8z (", "line 1k"), (2019, "line 8 (", "line 22")],
+)
+def test_p016_the_reporting_line_follows_residency_and_the_years_face(year, sched1, nr):
+    resident = _reporting(
+        treaty_benefit("china", "scholarship", 6_000, year=year, resident_alien=True, knowledge_dir=KNOWLEDGE_DIR).work
+    )
+    assert f"Schedule 1 {sched1}Schedule 1 (Form 1040), other income)" in resident and "IN PARENTHESES" in resident
+    assert "Exempt income" in resident and "Pub 519 ch. 9" in resident
+    assert "1040-NR line" not in resident and "item L" not in resident
+    nonresident = _reporting(
+        treaty_benefit("china", "scholarship", 6_000, year=year, resident_alien=False, knowledge_dir=KNOWLEDGE_DIR).work
+    )
+    assert f"Form 1040-NR {nr}" in nonresident and "Schedule OI (Form 1040-NR) item L" in nonresident
+    assert "Schedule 1 (Form 1040)" not in nonresident
+    unknown = _reporting(treaty_benefit("china", "scholarship", 6_000, year=year, knowledge_dir=KNOWLEDGE_DIR).work)
+    assert "pass resident_alien" in unknown
+    assert f"Form 1040-NR {nr}" in unknown and f"Schedule 1 {sched1}" in unknown
+
+
+def test_p016_a_2026_resident_line_carries_the_draft_suffix():
+    work = treaty_benefit(
+        "korea", "student_wages", 2_000, year=2026, resident_alien=True, knowledge_dir=KNOWLEDGE_DIR
+    ).work
+    assert "line 8z (2026 DRAFT form — re-verify at final)" in work
+
+
+def test_p016_nothing_exempt_means_nothing_to_report_and_no_number_moves():
+    for kwargs in ({"resident_alien": True}, {"resident_alien": False}, {}):
+        zero = treaty_benefit("india", "student_wages", 5_000, knowledge_dir=KNOWLEDGE_DIR, **kwargs)
+        assert zero.exempt_amount == 0 and "REPORTING" not in zero.work
+        other = treaty_benefit("china", "other_income", 695, knowledge_dir=KNOWLEDGE_DIR, **kwargs)
+        assert other.exempt_amount == 0 and "REPORTING" not in other.work
+        split = treaty_benefit("china", "student_wages", 8_000, knowledge_dir=KNOWLEDGE_DIR, **kwargs)
+        assert (split.exempt_amount, split.taxable_remainder) == (5_000, 3_000)
+    r = treaty_benefit("china", "student_wages", 8_000, resident_alien=True, knowledge_dir=KNOWLEDGE_DIR)
+    assert r.inputs["resident_alien"] is True
+
+
+def test_p016_resident_alien_must_be_a_bool():
+    with pytest.raises(ValueError, match="resident_alien must be true, false or omitted"):
+        treaty_benefit("china", "student_wages", 8_000, resident_alien="yes", knowledge_dir=KNOWLEDGE_DIR)
+
+
+def test_p016_every_treaty_use_site_says_the_destination_turns_on_residency():
+    from taxfill_core import calc as calc_module
+    from taxfill_core.estimate import IncomeSnapshot
+    from taxfill_mcp.server import calc as calc_tool
+    from taxfill_mcp.server import estimate_refund as estimate_tool
+
+    skill = (REPO_ROOT / "skills" / "claude" / "SKILL.md").read_text()
+    for raw in (
+        calc_module.__doc__, treaty_benefit.__doc__, calc_tool.__doc__, estimate_tool.__doc__, skill,
+        IncomeSnapshot.model_fields["treaty_exempt_income"].description,
+    ):
+        text = " ".join(raw.split())  # docstrings wrap mid-phrase
+        assert "Schedule 1's other-income line" in text, raw[:80]
+        assert "Schedule OI" in text
+        assert "Form 1040-NR line 1k" not in text  # no typed, year-blind destination (P-015)
+    for text in (treaty_benefit.__doc__, calc_tool.__doc__, skill):
+        assert "resident_alien" in text
+
+
+def test_p016_a_resident_is_told_when_the_applied_block_has_no_saving_clause_exception():
+    # Canada Art. XV's $10,000 de-minimis block records NO saving-clause exception
+    # (the irs.gov text's Art. XXIX(3) lists Art. XX, not Art. XV), so the resident
+    # sentence must not point at an exception "quoted above" that the work never
+    # quotes: it says a resident generally cannot claim it (Pub 519 ch. 9) and gives
+    # the Form 1040 line only as conditional. The number itself does not move.
+    r = treaty_benefit("canada", "student_wages", 5_000, year=2025, resident_alien=True, knowledge_dir=KNOWLEDGE_DIR)
+    assert (r.exempt_amount, r.taxable_remainder) == (5_000, 0)
+    reporting = _reporting(r.work)
+    assert "(quoted above)" not in reporting and "Saving-clause exception applies" not in r.work
+    assert "records NO saving-clause exception for Art. XV" in reporting
+    assert "generally cannot claim this benefit" in reporting and "generally do not qualify" in reporting
+    assert "only if a saving-clause exception you have confirmed" in reporting
+    unknown = _reporting(
+        treaty_benefit("canada", "student_wages", 5_000, year=2025, knowledge_dir=KNOWLEDGE_DIR).work
+    )
+    assert "records NO saving-clause exception for Art. XV" in unknown and "claiming a saving-clause" not in unknown
+    # A block that does record an exception keeps the pointer, and its text IS above it.
+    china = treaty_benefit("china", "scholarship", 6_000, year=2025, resident_alien=True, knowledge_dir=KNOWLEDGE_DIR)
+    assert "Saving-clause exception applies" in china.work
+    assert "the pack's saving-clause entry above" in _reporting(china.work)
+
+
+def test_p016_a_dual_status_year_is_one_return_plus_a_statement():
+    # Pub 519 (2025) ch. 6: resident at year end -> Form 1040 marked "Dual Status
+    # Return" with "a statement to your return to show the income for the part of
+    # the year you are a nonresident"; nonresident at year end -> Form 1040-NR. Not
+    # one return per period.
+    unknown = _reporting(treaty_benefit("china", "scholarship", 6_000, year=2025, knowledge_dir=KNOWLEDGE_DIR).work)
+    assert "ONE return plus a statement (Pub 519 ch. 6)" in unknown
+    assert "Dual Status Return" in unknown and "each period on its own return" not in unknown
+
+
+def test_p016_the_parenthetical_entry_is_paired_with_the_information_return_inclusion():
+    # Pub 519 ch. 9: "if the income has been reported as taxable income on a Form W-2,
+    # Form 1042-S, Form 1099, or other information return, you should report it on the
+    # appropriate line" and then enter the amount claimed in parentheses — the two
+    # entries go together, so income never included is not subtracted as well.
+    reporting = _reporting(
+        treaty_benefit("china", "scholarship", 6_000, year=2025, resident_alien=True, knowledge_dir=KNOWLEDGE_DIR).work
+    )
+    assert "when a W-2, 1042-S, 1099 or other information return reported the income as taxable" in reporting
+    assert "reported on its usual line AND the $6,000 claimed is entered IN PARENTHESES" in reporting
+    assert "In certain cases, you don't need to report the income" in reporting
+    assert "not also entered in parentheses, which would exclude it twice" in reporting
+
+
+@pytest.mark.parametrize("year", [2018, 2027])
+def test_p016_a_year_without_form_lines_keeps_the_split_and_names_the_line_in_words(year):
+    # Treaty limits are treaty-fixed, so the op answers for any year; only the line
+    # number is unknown there, and the work says so instead of raising or guessing.
+    for kwargs in ({"resident_alien": True}, {"resident_alien": False}, {}):
+        r = treaty_benefit("china", "scholarship", 6_000, year=year, knowledge_dir=KNOWLEDGE_DIR, **kwargs)
+        assert r.exempt_amount == 6_000
+        reporting = _reporting(r.work)
+        assert f"no form_lines are recorded for {year}" in reporting
+        assert not re.search(r"line \d", reporting)
+    assert "Schedule 1's other-income line" in _reporting(
+        treaty_benefit("china", "scholarship", 6_000, year=year, resident_alien=True, knowledge_dir=KNOWLEDGE_DIR).work
+    )
+    assert "the Form 1040-NR treaty-exempt line" in _reporting(
+        treaty_benefit("china", "scholarship", 6_000, year=year, resident_alien=False, knowledge_dir=KNOWLEDGE_DIR).work
+    )

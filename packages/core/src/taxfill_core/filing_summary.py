@@ -87,7 +87,13 @@ def _federal_item(item: FilingManifestItem, today: date, knowledge_dir) -> Filin
     owed = -item.bottom_line if item.bottom_line < 0 else 0
 
     if refund:
-        how = " (direct deposit)" if item.direct_deposit else " (paper check)"
+        # No paper-check promise: the IRS is phasing paper refund checks out
+        # (irs.gov/ModernPayments; file_and_pay carries the full note and citation).
+        how = (
+            " (direct deposit)"
+            if item.direct_deposit
+            else " (no direct deposit requested — paper refund checks are being phased out; see file_and_pay)"
+        )
         headline = f"Federal {item.tax_year}: refund {_money(refund)}{how}"
         plain = "You get money back because more tax was withheld/paid during the year than you actually owe."
     elif owed:

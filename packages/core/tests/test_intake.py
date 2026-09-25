@@ -451,7 +451,7 @@ def test_interview_terminates_for_single_paper_check_filer():
     profile.prior_filings = PriorFilings(filed_years=_ans([2022]))
     cl = intake_checklist(profile, tax_year=2023)
     assert cl.ready_to_fill is True
-    assert cl.next_questions == []  # banking stays None ('paper check') and nothing repeats
+    assert cl.next_questions == []  # banking stays None (no direct deposit) and nothing repeats
 
 
 def test_dependents_question_stops_once_filing_status_is_confirmed():
@@ -476,6 +476,14 @@ def test_banking_question_only_accompanies_other_pending_questions():
     ]
     complete.prior_filings = PriorFilings(filed_years=_ans([2022]))
     assert "banking.account" not in _ids(intake_checklist(complete, tax_year=2023))
+
+
+def test_banking_question_does_not_offer_a_paper_refund_check():
+    # TY26-15: irs.gov/ModernPayments announces the phase-out of paper refund checks,
+    # so the optional banking question must not suggest a mailed check as the fallback.
+    q = next(q for q in intake_checklist().next_questions if q.id == "banking.account")
+    assert "you can also get a paper check" not in q.disambiguation
+    assert "phase out of paper tax refund checks beginning Sept. 30, 2025" in q.disambiguation
 
 
 # ── FIX-4: Phase F facts the estimator depends on (Tier-1 subset) ──────────────

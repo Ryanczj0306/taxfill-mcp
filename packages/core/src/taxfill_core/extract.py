@@ -252,6 +252,24 @@ _SPECS: list[DocSpec] = [
         kind="1099-R",
         title="Distributions From Pensions, Annuities, Retirement or Profit-Sharing Plans, IRAs, etc.",
         source_url="https://www.irs.gov/forms-pubs/about-form-1099-r",
+        # Read 2026-09-25 in the Instructions for Forms 1099-R and 5498 (2026):
+        # "Traditional IRA", "Roth IRA conversions", "Reporting a direct rollover",
+        # the qualified-rollover-contribution rule, "Designated Roth accounts" (code H
+        # -0-; the in-plan Roth rollover and designated Roth employer contributions carry
+        # the taxable amount in box 2a with code G) and "IRA recharacterizations".
+        status_note=(
+            "Box 2a is not always the taxable amount. For a traditional-IRA distribution the payer is "
+            "told to \"report the total amount distributed from a traditional IRA in box 2a. This will "
+            "be the same amount reported in box 1. Check the 'Taxable amount not determined' box in box "
+            "2b\", and a Roth conversion's box 2a is likewise \"the total amount converted\" — so with "
+            "nondeductible basis the taxable share comes from Form 8606 (calc op ira_pro_rata), and "
+            "estimate_refund's retirement_income_taxable takes THAT figure, not box 2a. Box 7 code N or R "
+            "(a recharacterized IRA contribution) and code H (a designated Roth account rolled directly "
+            "to a Roth IRA) carry -0- in box 2a; code G (a direct rollover) is -0- too, except where the "
+            "payer enters the taxable amount in box 2a: a direct rollover from a pre-tax plan to a Roth IRA "
+            "(calc op roth_conversion, source plan_to_roth_ira) or to a designated Roth account in the same "
+            "plan (an in-plan Roth rollover), and designated Roth matching/nonelective contributions."
+        ),
         boxes=[
             _b("payer_tin", "Payer's TIN", "tin"),
             _b("recipient_tin", "Recipient's TIN", "tin", required=True),

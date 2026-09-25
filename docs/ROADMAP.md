@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,349 tests** — offline 4,969 + live-.gov 380; derived
+Done and on `main` (**5,397 tests** — offline 5,017 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1371,7 +1371,7 @@ not wait for any of this.
     - A new literal added anywhere fails the guard.
     - The pitfall has a citing test.
 
-- [ ] **JF1a — Wrong words on the resident, retirement and payroll paths** (S–M; deps JF6a) — pitfalls *treaty-destination*, *flat-rate-precondition*
+- [x] **JF1a — Wrong words on the resident, retirement and payroll paths — DONE 2026-09-25** (S–M; deps JF6a) — pitfalls *treaty-destination* (P-016), *flat-rate-precondition* (P-017). As built, the paper-refund note (item 5) covers every tax year, not only TY2025+: FS-2026-02 Topic A Q1 keys the phase-out on when the refund is ISSUED (after Sept. 30, 2025), and a 1040-NR refund also quotes Topic D Q1 for filers abroad.
   1. **Treaty reporting line** [DEF-04].
      - The treaty text always sends the filer to Schedule OI item L / Form 1040-NR line 1k (estimate.py:1856, :151-153; calc.py:47, :8449; server.py:355, :834).
      - Pub 519 (2025) ch. 9 says a resident alien enters it "in parentheses, on Schedule 1 (Form 1040), line 8z", with "Exempt income", the country and the article. Pub 519 (2020) says "in parentheses on line 8, Schedule 1 (Form 1040)" (read 2026-09-23). Form 8833 exception 2 covers students and trainees.

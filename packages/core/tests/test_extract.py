@@ -187,6 +187,19 @@ def test_1099_sa_box_layout_matches_the_printed_form():
     assert missing_code.gaps == ["3"]     # the code changes the reading, so it is required
 
 
+def test_1099r_status_note_says_box_2a_is_gross_for_a_traditional_ira():
+    # JF1a item 2 (i1099r 2026): a traditional-IRA distribution or conversion shows the
+    # GROSS amount in box 2a with 2b checked, so basis comes from Form 8606.
+    note = DOC_SPECS["1099-R"].status_note
+    assert "This will be the same amount reported in box 1" in note
+    assert "ira_pro_rata" in note and "retirement_income_taxable" in note
+    assert "code N or R" in note and "code H" in note and "code G" in note
+    assert "roth_conversion" in note  # the taxable code-G direct rollover to a Roth IRA
+    assert "in-plan Roth rollover" in note and "designated Roth matching/nonelective" in note
+    r = extract_document("documents/1099r.pdf", "1099-R", {"recipient_tin": "123456789", "1": "6000", "7": "7"})
+    assert "ira_pro_rata" in r.caveat
+
+
 def test_1099_sa_status_note_routes_box_1_to_form_8889_not_to_income():
     note = DOC_SPECS["1099-SA"].status_note
     assert "LINE 14a" in note and "hsa_deduction" in note

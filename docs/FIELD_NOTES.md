@@ -201,9 +201,12 @@ year pack, budgeting needs ops that do not exist:
   comparison (unmarried / married-MFS / married-with-§6013(g)-election). The engine has every primitive and no way to say "run
   these three and diff them"; the estimator answers one scenario at a time. This is the
   shape a *planning* question always takes.
-- **N-12 — supplemental-wage withholding.** A bonus is withheld at the flat 22%
-  (Pub 15 (2026)) while a filer in the 32% bracket owes more than that on it — a predictable
+- **N-12 — supplemental-wage withholding.** When the employer uses the optional flat 22%
+  (Pub 15 (2026)), a filer in the 32% bracket owes more than that on the bonus — a predictable
   April shortfall that no current surface would forecast. Belongs with H4's withholding work.
+  The flat rate has preconditions (Treas. Reg. 31.3402(g)-1(a)(7)(i): the bonus separately
+  stated or not paid with regular wages, and income tax withheld from regular wages this year
+  or last); otherwise the aggregate procedure applies (P-017, JF1a).
 
 ### Knowledge the engine did not ship
 

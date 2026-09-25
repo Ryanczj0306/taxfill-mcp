@@ -482,7 +482,6 @@ FORM_LINE_DEBT: dict[tuple[str, str, str], int] = {
     ('calc.py', '<module>', 'Form 1040 line 19'): 1,
     ('calc.py', '<module>', 'Form 1040 line 5a'): 1,
     ('calc.py', '<module>', 'Form 1040), Part II, line 13'): 1,
-    ('calc.py', '<module>', 'Form 1040-NR line 1k'): 1,
     ('calc.py', '<module>', 'Schedule 1 (Form 1040), line 8k'): 1,
     ('calc.py', '<module>', 'Schedule 1 line 13'): 1,
     ('calc.py', '<module>', 'Schedule 3 line 2'): 1,
@@ -578,10 +577,8 @@ FORM_LINE_DEBT: dict[tuple[str, str, str], int] = {
     ('calc.py', 'taxable_social_security', 'Form 1040 line 6b; line 5b'): 1,
     # ── estimate.py ──
     ('estimate.py', 'IncomeSnapshot', 'Form 1040-NR (line 2b'): 1,
-    ('estimate.py', 'IncomeSnapshot', 'Form 1040-NR line 1k'): 1,
     ('estimate.py', 'estimate_refund', 'Form 1040-NR (line 2b'): 1,
     ('estimate.py', 'estimate_refund', 'Form 1040-NR line 12'): 1,
-    ('estimate.py', 'estimate_refund', 'Form 1040-NR line 1k'): 1,
     # ── intake.py ──
     ('intake.py', '_income_document_questions', 'Form 1040-NR line 2b'): 1,
     ('intake.py', '_income_document_questions', 'Form 1040-NR, line 2b'): 1,
@@ -592,7 +589,6 @@ FORM_LINE_DEBT: dict[tuple[str, str, str], int] = {
     ('server.py', 'calc', 'Form 1040 line 15'): 1,
     ('server.py', 'calc', 'Form 1040 line 6b'): 1,
     ('server.py', 'calc', 'Form 1040), Part I, line 1'): 1,
-    ('server.py', 'calc', 'Form 1040-NR line 1k'): 1,
     ('server.py', 'calc', 'Schedule 1 Part II line 13'): 1,
     ('server.py', 'calc', 'Schedule 2 line 2'): 1,
     ('server.py', 'calc', 'Schedule 3 line 2'): 1,

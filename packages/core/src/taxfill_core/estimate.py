@@ -56,7 +56,7 @@ from taxfill_core.calc import (
     taxable_social_security,
     treaty_benefit,
 )
-from taxfill_core.knowledge import Citation, load_knowledge, load_treaty, provisional_marker
+from taxfill_core.knowledge import Citation, form_line, load_knowledge, load_treaty, provisional_marker
 from taxfill_core.schemas.profile import Profile
 
 __all__ = [
@@ -138,7 +138,22 @@ class IncomeSnapshot(BaseModel):
         description="Net profit (+) or loss (-) from self-employment (Schedule C line 31). Signed.",
     )
     retirement_income_taxable: int = Field(
-        default=0, ge=0, description="Taxable pension/IRA distributions (1099-R box 2a), taxed as ordinary income."
+        default=0, ge=0,
+        description=(
+            "The TAXABLE amount of IRA distributions and pensions/annuities — what Form 1040's two "
+            "'taxable amount' lines for them take — taxed as ordinary income. It is NOT simply 1099-R box "
+            "2a: for a traditional-IRA distribution or a Roth conversion the payer reports the GROSS "
+            "amount in box 2a with box 2b 'Taxable amount not determined' checked (Instructions for "
+            "Forms 1099-R and 5498 (2026): 'report the total amount distributed from a traditional IRA "
+            "in box 2a. This will be the same amount reported in box 1'), so a filer with nondeductible "
+            "basis would overstate AGI by that basis — run calc op ira_pro_rata (Form 8606) and enter "
+            "its taxable figure. Box 7 codes N and R (a recharacterized IRA contribution) and H (a "
+            "designated Roth account rolled directly to a Roth IRA) are $0 taxable; code G (a direct "
+            "rollover) is $0 too when box 2a is -0-, EXCEPT where the payer puts the taxable amount in box "
+            "2a: a direct rollover from a pre-tax plan to a Roth IRA (calc op roth_conversion, source "
+            "plan_to_roth_ira) or to a designated Roth account in the same plan (an in-plan Roth rollover), "
+            "and designated Roth matching/nonelective contributions."
+        ),
     )
     social_security_benefits: int = Field(
         default=0, ge=0,
@@ -149,10 +164,14 @@ class IncomeSnapshot(BaseModel):
         default=0, ge=0,
         description=(
             "Income exempt under a tax treaty (1042-S box 2, or the treaty-exempt part of W-2 wages when the "
-            "employer did not honor the treaty) — excluded from income before tax; on the return it goes on "
-            "Schedule OI item L / Form 1040-NR line 1k. The treaty country, article, dollar cap, and "
-            "saving-clause analysis are the AGENT'S confirmed judgment (trust-the-agent semantics, like "
-            "itemized_deductions) — the engine does not validate treaty eligibility."
+            "employer did not honor the treaty) — excluded from income before tax. WHERE it is reported "
+            "turns on residency (P-016): a nonresident uses Schedule OI item L and the Form 1040-NR "
+            "treaty-exempt line; a RESIDENT alien claiming a saving-clause exception enters it in "
+            "parentheses on Schedule 1's other-income line with 'Exempt income', the country and the "
+            "article (Pub 519 ch. 9). The estimate's assumption names the year's line for the profile's "
+            "classification. The treaty country, article, dollar cap, and saving-clause analysis are the "
+            "AGENT'S confirmed judgment (trust-the-agent semantics, like itemized_deductions) — the engine "
+            "does not validate treaty eligibility."
         ),
     )
     student_loan_interest_paid: int = Field(
@@ -780,6 +799,74 @@ def _treaty_cross_check(
     return (
         f"Treaty cross-check ({check.country}): the ${treaty_amount:,} entered as treaty-exempt is NOT "
         f"supported as student WAGES by the {check.country} treaty pack. {check.work}"
+    )
+
+
+def _treaty_reporting_text(
+    year: int, classification: str | None, declared_us_person: bool, knowledge_dir
+) -> str:
+    """Where treaty-exempt income is reported, branched on residency (P-016).
+
+    A nonresident reports it on Schedule OI item L and the Form 1040-NR
+    treaty-exempt line. A resident alien files Form 1040, which has no
+    Schedule OI: Pub 519 ch. 9 ('Resident Aliens') pairs the income on its
+    usual line, when an information return (W-2, 1042-S, 1099) reported it as
+    taxable, with the amount claimed "in parentheses" on Schedule 1's
+    other-income line, "Exempt income", the treaty country and the article —
+    the parenthetical offsets that inclusion, which is how this estimate
+    models it (the income in full, the exempt amount subtracted).
+    Resident means a computed 'resident' classification. A profile with no
+    computed classification that declares a US person files Form 1040 too,
+    but it may be a US CITIZEN, whom the saving clause keeps taxable, so its
+    text says "Form 1040" (not "a resident alien's") and carries that caveat.
+    A dual-status candidate or an unknown residency gets both, conditionally.
+    Each line is read off the year's face through ``form_line``.
+    """
+    nonresident = (
+        f"on Form 1040-NR, Schedule OI item L and Form 1040-NR line "
+        f"{form_line(year, 'f1040nr.treaty_exempt', base_dir=knowledge_dir)} (attach the 1042-S when one "
+        f"was issued)"
+    )
+    entry = (
+        f"when a W-2, 1042-S, 1099 or other information return reported the income as taxable, the income "
+        f"stays on its usual line AND the amount claimed is entered IN PARENTHESES on Schedule 1 line "
+        f"{form_line(year, 'sched1.other_income', base_dir=knowledge_dir)} (Schedule 1 (Form 1040), other "
+        f"income), with \"Exempt income,\" the treaty country and the article — the parenthetical offsets "
+        f"that inclusion, as this estimate models it (Pub 519 ch. 9, 'Resident Aliens'); income no "
+        f"information return reported may instead be left off the return, and is then not also entered in "
+        f"parentheses"
+    )
+    exception = (
+        "generally keeps a treaty benefit only through a saving-clause exception, and no Form 8833 is needed "
+        "for a student, trainee or teacher article (Pub 519 ch. 9, Form 8833 exception 2)"
+    )
+    resident = f"on a resident alien's Form 1040: {entry}; a resident {exception}"
+    if classification == "resident":
+        return (
+            f"On the return it is reported {resident} — Schedule OI and the Form 1040-NR treaty line belong "
+            f"to a NONRESIDENT's return, not this one."
+        )
+    if classification is None and declared_us_person:
+        return (
+            f"This profile declares a US person with no residency computed, so the return is Form 1040: {entry}. "
+            f"If the filer is a US CITIZEN, the treaty exemption generally does not apply at all — the saving "
+            f"clause \"preserves or 'saves' the right of the United States to tax its citizens and residents "
+            f"as if the tax treaty had not come into effect\" (Pub 519 ch. 9), and every shipped treaty "
+            f"pack's student and teacher exception excludes US citizens (the calc op treaty_benefit quotes "
+            f"each exception); a resident alien {exception}. Schedule OI and the Form "
+            f"1040-NR treaty line belong to a NONRESIDENT's return, not this one."
+        )
+    if classification == "nonresident":
+        return f"On the return it is reported {nonresident}."
+    why = (
+        "this is a dual-status candidate year: one return plus a statement for the other part of the "
+        "year (Pub 519 ch. 6), each part under its own rules"
+        if classification == "dual_status_candidate"
+        else "this profile's residency is not established"
+    )
+    return (
+        f"Where it is reported depends on residency ({why}): as a NONRESIDENT, {nonresident}; as a "
+        f"RESIDENT alien, {resident}."
     )
 
 
@@ -1848,14 +1935,17 @@ def estimate_refund(
         income.spouse.treaty_exempt_income if income.spouse is not None else 0
     )
     if treaty_amount > 0:
+        declared_us_person = (
+            ident is not None and ident.us_person is not None and ident.us_person.value is True
+        )
         assumptions.append(
             f"Treaty-exempt income (${treaty_amount:,}) was excluded exactly as supplied: this engine does NOT "
             f"validate treaty eligibility — the treaty country, article, dollar cap, saving-clause analysis, and "
             f"time limits are the agent's confirmed judgment (trust-the-agent semantics, like "
             f"itemized_deductions); confirm the article against the treaty text via get_sources before filing. "
-            f"On the return it is reported on Schedule OI item L / Form 1040-NR line 1k (attach the 1042-S when "
-            f"one was issued). STATE conformity varies — some states re-tax federally treaty-exempt income; "
-            f"state_scope shows your state's treatment."
+            + _treaty_reporting_text(year, classification, declared_us_person, knowledge_dir)
+            + " STATE conformity varies — some states re-tax federally treaty-exempt income; "
+            "state_scope shows your state's treatment."
         )
         # Phase G cross-check: when the profile carries a citizenship country with a
         # shipped treaty pack, sanity-check the entered amount against that country's

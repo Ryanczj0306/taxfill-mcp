@@ -1227,13 +1227,50 @@ class EstimatedTaxSafeHarborParams(BaseModel):
         return self
 
 
-class SupplementalWithholdingParams(BaseModel):
-    """Pub 15 section 7: the flat withholding rate on supplemental wages (bonuses).
+class FlatRateCondition(BaseModel):
+    """One Treas. Reg. 31.3402(g)-1(a)(7)(i) precondition for OPTIONAL flat-rate withholding, verbatim."""
 
-    The N-12 trap: a bonus is withheld at the FLAT rate no matter the filer's
-    marginal rate, so anyone in a higher bracket predictably under-withholds on
-    every bonus — the gap surfaces as an April balance due. The op quotes this
-    in its work; the rates here make the arithmetic citable.
+    model_config = ConfigDict(extra="forbid")
+
+    paragraph: str = Field(description="The pinpoint, e.g. '31.3402(g)-1(a)(7)(i)(B)'.")
+    quote: str = Field(description="The regulation's own words for the condition, transcribed verbatim.")
+
+    @field_validator("paragraph")
+    @classmethod
+    def _is_a_7_i_paragraph(cls, value: str) -> str:
+        if not value.startswith("31.3402(g)-1(a)(7)(i)("):
+            raise ValueError(
+                f"flat_rate_conditions paragraph {value!r} must pinpoint a Treas. Reg. "
+                f"31.3402(g)-1(a)(7)(i) condition, e.g. '31.3402(g)-1(a)(7)(i)(B)' — the flat rate's "
+                f"preconditions live there and nowhere else"
+            )
+        return value
+
+    @field_validator("quote")
+    @classmethod
+    def _quote_nonempty(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("flat_rate_conditions quote must not be empty — transcribe the regulation's words")
+        return value
+
+
+class SupplementalWithholdingParams(BaseModel):
+    """Pub 15 section 7 / Treas. Reg. 31.3402(g)-1: withholding on supplemental wages (bonuses).
+
+    The N-12 trap has TWO halves (P-017). The flat rate is OPTIONAL and
+    CONDITIONAL: an employer "may" use it only when every Treas. Reg.
+    31.3402(g)-1(a)(7)(i) condition holds — the bonus is not paid concurrently
+    with regular wages or is separately stated on the payroll records, and
+    income tax was withheld from the employee's regular wages in the calendar
+    year of the payment or the one before. Otherwise (a)(6)(i) REQUIRES the
+    aggregate procedure (Pub 15 section 7: "use method 1b"), which withholds on
+    bonus + regular wages as one payment under the employee's Form W-4. Only
+    the excess of a year's supplemental wages over $1,000,000 is withheld at
+    the mandatory rate, whatever the W-4 says ((a)(2)). When the flat rate IS
+    used, a filer whose marginal rate is above it under-withholds on every
+    bonus and the gap surfaces as an April balance due. The conditions are
+    REQUIRED fields: a pack cannot ship the flat rate without them, so no use
+    site can quote the rate without its preconditions.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -1244,8 +1281,43 @@ class SupplementalWithholdingParams(BaseModel):
         description="The MANDATORY rate on supplemental wages over the threshold (37%), applied without regard to Form W-4."
     )
     high_threshold: int = Field(gt=0, description="Supplemental wages to one employee in the year ($1,000,000).")
+    flat_rate_optional: Literal[True] = Field(
+        description="The flat rate is the employer's OPTION (31.3402(g)-1(a)(7)(i): 'The employer may'), never a rule."
+    )
+    flat_rate_conditions: list[FlatRateCondition] = Field(
+        min_length=1,
+        description="The (a)(7)(i) preconditions the use sites quote, verbatim; the flat rate is unavailable unless all hold.",
+    )
+    conditions_citation: Citation = Field(
+        description="Where the conditions, the aggregate fallback and the mandatory rate are written (eCFR 31.3402(g)-1)."
+    )
+    method_if_conditions_fail: Literal["aggregate"] = Field(
+        description="(a)(6)(i): the aggregate procedure is REQUIRED when (a)(7) may not be used."
+    )
+    aggregate_rule: str = Field(
+        description="The (a)(6)(i) sentence that makes the aggregate procedure mandatory, verbatim."
+    )
+    employer_fallback: str = Field(
+        description="Pub 15 section 7's own statement of the fallback to the employer ('use method 1b'), verbatim."
+    )
+    mandatory_rate_rule: str = Field(
+        description="The (a)(2) mandatory-flat-rate sentence for the excess over $1,000,000, verbatim."
+    )
 
     _coerce_decimals = field_validator("flat_rate", "high_rate", mode="before")(_as_exact_decimal)
+
+    @model_validator(mode="after")
+    def _conditions_cover_b_and_c(self) -> "SupplementalWithholdingParams":
+        paragraphs = {c.paragraph for c in self.flat_rate_conditions}
+        required = {"31.3402(g)-1(a)(7)(i)(B)", "31.3402(g)-1(a)(7)(i)(C)"}
+        missing = sorted(required - paragraphs)
+        if missing:
+            raise ValueError(
+                f"supplemental_withholding.flat_rate_conditions is missing {missing} — both the "
+                f"separately-stated condition (B) and the regular-wage-withholding condition (C) must be "
+                f"quoted, or a use site will state the flat rate without its precondition (P-017)"
+            )
+        return self
 
 
 # ── Tax-advantaged account contribution limits (Phase H, H8) ─────────────────

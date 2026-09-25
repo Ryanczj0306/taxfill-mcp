@@ -351,8 +351,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       35%->20% (2021: 50%->20%->0%, zero over $438,000); MFS gets $0 by rule; refundable for 2021
       only if the US-abode test is met — that test and the deemed $250/$500 student/disabled-spouse
       income are YOUR judgment, per the work string)
-    - treaty_benefit: args {country, income_class, amount, visa_periods?, year?, years_in_status?}
-      (validate a tax-treaty exemption for Schedule OI / Form 1040-NR line 1k from the per-country
+    - treaty_benefit: args {country, income_class, amount, visa_periods?, year?, years_in_status?,
+      resident_alien?} (validate a tax-treaty exemption from the per-country
       treaty packs — china, india, korea, canada, mexico; income_class in student_wages | scholarship |
       payments_from_abroad | teacher_wages | other_income. Student wage limits are treaty-fixed (China
       $5,000/yr, Korea $2,000/yr; India gets Art. 21(2) standard-deduction parity instead — no exclusion;
@@ -363,7 +363,15 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       other income stays US-taxable — Schedule NEC at the statutory 30%, no treaty reduction (Korea
       verifiably has NO other-income article; Art. 4's source rule applies). Returns the exempt/taxable
       split + article + citation; final eligibility (visa period, purpose, saving clause) stays YOUR
-      judgment — record the position with the returned citation)
+      judgment — record the position with the returned citation. WHERE the exempt amount is reported
+      turns on residency (P-016), so pass resident_alien: false -> Schedule OI item L and the Form
+      1040-NR treaty-exempt line; true -> a resident alien's saving-clause claim, entered in
+      parentheses on Schedule 1's other-income line with 'Exempt income', the country and the article
+      (Pub 519 ch. 9), paired with the income on its usual line when an information return reported it
+      as taxable; omitted -> both, conditionally. When the applied article has NO saving-clause
+      exception in the pack (Canada Art. XV's de-minimis), the work says a resident generally cannot
+      claim it. The work names the year's line numbers; year only picks them — a year with no form_lines
+      keeps the split and names the line in words)
     - schedule_1a_deductions: args {magi, filing_status?, year?, qualified_tips?, qualified_overtime?,
       car_loan_interest?, seniors_qualifying?} (the four OBBBA Schedule 1-A deductions, TY2025-2028 —
       line 38 -> Form 1040 line 13b / 1040-NR line 13c, reduces taxable income whether itemizing or not.
@@ -376,21 +384,34 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       premium HALF only, never the whole overtime wage. Eligibility stays YOUR judgment, quoted in the
       work: tipped-occupation list, new-vehicle/US-assembly/VIN rules, valid SSNs, seniors born before
       1961-01-02)
-    - employee_fica: args {wage_segments: [{wages, fica_exempt, label?}...], year?} (employee-side
-      payroll FICA across STATUS periods — the projection op for a year where FICA switches on
-      mid-year, e.g. F-1 OPT (exempt individual, NO FICA) -> H-1B (FICA from the I-797 start date).
-      fica_exempt is YOUR status judgment per segment; the trap the work quotes: the F/J exemption is
-      STATUS-based, not marital — a §6013(g) election does NOT start FICA on an exempt F/J spouse's wages.
-      Enforces the SS wage base across segments in order, Medicare with no base, and the 0.9%
-      Additional Medicare withholding over $200,000; per-employer nuances disclosed)
+    - employee_fica: args {wage_segments: [{wages, fica_exempt, label?, visa_status?, exempt_basis?}...],
+      year?, residency_classification?} (employee-side payroll FICA across STATUS periods — the
+      projection op for a year where FICA switches on mid-year, e.g. F-1 OPT (a NONRESIDENT exempt
+      individual, NO FICA) -> H-1B (FICA from the I-797 start date). fica_exempt is YOUR status judgment
+      per segment; the traps the work quotes: the F/J exemption is STATUS-based, not marital — a
+      §6013(g) election does NOT start FICA on an exempt F/J spouse's wages — and it is a NONRESIDENT
+      exemption: Pub 519 ch. 8, FICA is withheld "if you are considered a resident alien ... even though
+      your nonimmigrant classification ("F," "J," "M," or "Q") remains the same". Pass
+      residency_classification (resident | nonresident | dual_status_candidate, from the residency
+      tool): for 'resident', a fica_exempt F/J/M/Q segment (visa_status, or a label naming it as F-1/J-1/OPT)
+      is REFUSED unless exempt_basis names a different exemption (student_employed_by_school —
+      Pub 519's tip for a student enrolled and regularly attending classes at the school it works for —
+      or totalization_agreement). Enforces the SS wage base across segments in order, Medicare with no
+      base, and the 0.9% Additional Medicare withholding over $200,000; per-employer nuances disclosed)
     - estimated_tax_safe_harbor: args {projected_tax, expected_withholding, filing_status?, year?,
       prior_year_agi?, prior_year_total_tax?} (IRC 6654(d): required annual payment = min(90% of the
       current year's tax, 100% of the prior year's — 110% when PRIOR-year AGI > $150,000/$75,000-MFS,
       the status test keyed on the CURRENT year). Supply prior_year_agi AND prior_year_total_tax
       together (prior return lines 11/24 — intake stores them on prior_filings) or omit both; the
       prior prong needs a 12-month prior return (your judgment). Reports the $1,000 de-minimis, the
-      shortfall and the quarterly installment; the work quotes the flat-22% supplemental-wage trap —
-      every bonus under-withholds for a higher-bracket filer)
+      shortfall and the quarterly installment; the work quotes the supplemental-wage (bonus) trap WITH
+      its precondition (P-017): the flat 22% is the employer's OPTION only when Treas. Reg.
+      31.3402(g)-1(a)(7)(i) holds — the bonus is not paid concurrently with regular wages or is separately
+      stated on the payroll records, AND income tax was withheld from regular wages this calendar year
+      or last; otherwise the aggregate procedure is required (Pub 15: "use method 1b" — bonus + regular
+      wages withheld as one payment under the W-4); 37% is mandatory only on supplemental wages over
+      $1,000,000. Hire status is not the test; project the bonus withholding by the method the employer
+      actually uses — at the flat rate a higher-bracket filer under-withholds on every bonus)
     - annualize_ytd: args {ytd_amount, through, year} (project a YTD paystub figure to full-year by
       calendar-day proration — the deterministic home for the one arithmetic step every projection
       needs. ASSUMES LEVEL PAY: annualize each status segment separately, never annualize one-time
@@ -829,11 +850,17 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       bank_deposit_interest (the DEPOSIT subset of interest — US bank / savings institution /
       insurance-company deposit, not effectively connected; excluded for a nonresident under
       IRC 871(i)(2)(A), taxed on a §6013(g)/(h) joint return), dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
-      capital_gain_short (signed), self_employment_net (signed), retirement_income_taxable
-      (1099-R 2a), social_security_benefits (SSA-1099 box 5), other_income
+      capital_gain_short (signed), self_employment_net (signed), retirement_income_taxable (the
+      TAXABLE amount, not simply 1099-R box 2a: a traditional-IRA distribution or Roth conversion shows
+      the GROSS amount in 2a with 2b checked, so a filer with basis runs calc op ira_pro_rata and
+      enters its taxable figure; box 7 codes N/R and H are $0, code G is $0 except a Roth-bound
+      direct rollover from a pre-tax plan (to a Roth IRA, or an in-plan Roth rollover) and designated
+      Roth employer contributions, where box 2a is the taxable amount), social_security_benefits (SSA-1099 box 5), other_income
     - adjustments: student_loan_interest_paid (1098-E), pre_agi_adjustments (confirmed-eligible
-      above-the-line), treaty_exempt_income (1042-S box 2 / Schedule OI — agent-confirmed treaty
-      amount), itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only)
+      above-the-line), treaty_exempt_income (1042-S box 2 — agent-confirmed treaty amount; the
+      assumption names where it is reported for the profile's residency: Schedule OI for a
+      nonresident, in parentheses on Schedule 1's other-income line for a resident alien),
+      itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only)
     - credit inputs: ss_withheld_by_employer [W-2 box 4 per employer], aotc_qualified_expenses
       [per eligible student], dependent_care_expenses + dependent_care_persons (Form 2441 —
       qualified care expenses paid so you/both spouses could work, and how many qualifying persons)

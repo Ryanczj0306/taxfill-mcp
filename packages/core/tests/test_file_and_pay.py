@@ -529,3 +529,54 @@ def test_843_without_8316_gets_prescriptive_address_guidance_not_a_guess():
 def test_f843_form_key_spelling_also_routes_the_claim_path():
     r = _fica_claim(form="f843")
     assert r.mailing_address and "Ogden, UT 84201-0038" in r.mailing_address
+
+
+# ── TY26-15 (Phase J JF1a item 5): no paper-check promise on a refund ─────────
+
+
+_MODERN_PAYMENTS_QUOTE = "phase out of paper tax refund checks beginning Sept. 30, 2025, to the extent permitted by law"
+
+
+def test_ty2025_refund_without_direct_deposit_carries_the_modern_payments_note():
+    r = _only([FilingManifestItem(form="1040", tax_year=2025, bottom_line=1250, state="California")])
+    assert "paper check." not in r.bottom_line and "phasing out paper refund checks" in r.bottom_line
+    note = next(n for n in r.notes if "ModernPayments" in n)
+    assert _MODERN_PAYMENTS_QUOTE in note and "Executive Order 14247" in note
+    assert "routing and account numbers" in note and "Treasury-sponsored alternatives" in note
+    assert any(c.url == "https://www.irs.gov/ModernPayments" for c in r.citations)
+    # What happens instead (FS-2026-02 Topic A Q5): a delay and a CP53E notice, not a lost refund.
+    assert "their refunds could take longer to process" in note and "CP53E notice" in note
+    assert "within 30 days" in note and "released as a paper check after six weeks" in note
+    assert "CP53E" in r.bottom_line
+    assert any(c.url == "https://www.irs.gov/pub/taxpros/fs-2026-02.pdf" for c in r.citations)
+
+
+def test_a_back_filed_refund_is_paid_after_the_phase_out_too():
+    # FS-2026-02 Q1 keys the phase-out on when a refund is ISSUED — "the IRS generally
+    # stopped issuing paper refund checks for individual taxpayers after Sept. 30,
+    # 2025" — so a back-filed earlier year gets the same note.
+    r = _only([FilingManifestItem(form="1040-NR", tax_year=2023, bottom_line=640)])
+    note = next(n for n in r.notes if "ModernPayments" in n)
+    assert "generally stopped issuing paper refund checks for individual taxpayers after Sept. 30, 2025" in note
+    assert "covers this 2023 return whatever its tax year" in note
+    # A 1040-NR filer may be abroad with no U.S. account: FS-2026-02 Topic D Q1.
+    assert "International taxpayers should continue to use existing options" in note
+    assert "partnerships with international payment providers" in note
+
+
+def test_a_form_1040_refund_note_has_no_international_sentence():
+    r = _only([FilingManifestItem(form="1040", tax_year=2025, bottom_line=1250, state="California")])
+    note = next(n for n in r.notes if "ModernPayments" in n)
+    assert "International taxpayers" not in note
+
+
+def test_direct_deposit_or_a_balance_due_gets_no_paper_check_note():
+    for item in (
+        FilingManifestItem(form="1040", tax_year=2025, bottom_line=1250, state="California", direct_deposit=True),
+        FilingManifestItem(form="1040", tax_year=2025, bottom_line=-300, state="California"),
+        FilingManifestItem(form="1040", tax_year=2025, bottom_line=0, state="California"),
+    ):
+        r = _only([item])
+        assert not any("ModernPayments" in n for n in r.notes)
+        assert all(c.url != "https://www.irs.gov/ModernPayments" for c in r.citations)
+        assert all(c.url != "https://www.irs.gov/pub/taxpros/fs-2026-02.pdf" for c in r.citations)

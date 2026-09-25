@@ -26,6 +26,13 @@ def test_refund_headline_and_open_sol_window():
     assert it.citations and all(".gov" in c.url for c in it.citations)
 
 
+def test_refund_without_direct_deposit_promises_no_paper_check():
+    # TY26-15: the IRS is phasing out paper refund checks (irs.gov/ModernPayments).
+    it = _one(FilingManifestItem(form="1040", tax_year=2025, bottom_line=900))
+    assert "paper check)" not in it.headline
+    assert "paper refund checks are being phased out" in it.headline
+
+
 def test_owed_headline_and_past_due_penalty_note():
     it = _one(FilingManifestItem(form="1040", tax_year=2023, bottom_line=-380))
     assert "you owe $380" in it.headline.lower()

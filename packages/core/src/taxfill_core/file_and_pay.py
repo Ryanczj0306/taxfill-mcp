@@ -190,6 +190,75 @@ _DUAL_STATUS_CITATION = Citation(
 )
 
 
+# The paper-refund-check phase-out (TY26-15). Read live 2026-09-25 at
+# https://www.irs.gov/ModernPayments (it resolves to the newsroom page "Modernizing
+# payments to and from America's bank account"): "In accordance with Executive Order
+# 14247 ... This policy shift includes phase out of paper tax refund checks beginning
+# Sept. 30, 2025, to the extent permitted by law." The FAQ that page links, FS-2026-02
+# (Jan. 2026), Topic A: Q1 — "the IRS generally stopped issuing paper refund checks for
+# individual taxpayers after Sept. 30, 2025" — keys the phase-out on when a refund is
+# ISSUED, not on the tax year, so a back-filed earlier year gets the note too; Q5 says
+# what happens instead (a CP53E notice, a slower refund, a paper check after six weeks
+# with no response). A checklist that promises a paper check is wrong words for every
+# return it is written for today.
+_MODERN_PAYMENTS_URL = "https://www.irs.gov/ModernPayments"
+_MODERN_PAYMENTS_CITATION = Citation(
+    source=(
+        "IRS — Modernizing payments to and from America's bank account (irs.gov/ModernPayments): under "
+        "Executive Order 14247, the \"phase out of paper tax refund checks beginning Sept. 30, 2025, to "
+        "the extent permitted by law\" (read 2026-09-25)"
+    ),
+    url=_MODERN_PAYMENTS_URL,
+)
+_FS_2026_02_URL = "https://www.irs.gov/pub/taxpros/fs-2026-02.pdf"
+_FS_2026_02_CITATION = Citation(
+    source=(
+        "IRS FS-2026-02 (Jan. 2026), Questions and answers about Executive Order 14247, Topic A Q1 and Q5: "
+        "paper refund checks generally stopped after Sept. 30, 2025; a refund filed without banking "
+        "information gets a CP53E notice and \"could take longer to process\" (read 2026-09-25)"
+    ),
+    url=_FS_2026_02_URL,
+)
+
+
+def _paper_refund_note(item: "FilingManifestItem") -> str:
+    """The refund-without-direct-deposit note: no paper-check promise, and what happens instead (TY26-15)."""
+    return (
+        f"No direct deposit is requested for this {_money(item.bottom_line)} refund. The IRS announces "
+        f"(irs.gov/ModernPayments, under Executive Order 14247) the \"phase out of paper tax refund checks "
+        f"beginning Sept. 30, 2025, to the extent permitted by law\", and its FAQ says the IRS \"generally "
+        f"stopped issuing paper refund checks for individual taxpayers after Sept. 30, 2025\" (FS-2026-02, "
+        f"Topic A Q1) — that turns on when the refund is issued, so it covers this {item.tax_year} return "
+        f"whatever its tax year. What happens instead (FS-2026-02, Q5): \"If taxpayers do not provide this "
+        f"information and no exception applies, their refunds could take longer to process\"; the filer "
+        f"gets \"a CP53E notice in the mail requesting a response within 30 days, either to provide banking "
+        f"information or to explain why such information cannot be provided\", and \"If there is no "
+        f"response to the notice and there are no other issues with the tax return, the refund will be "
+        f"released as a paper check after six weeks.\" To avoid that delay, before mailing enter the routing "
+        f"and account numbers in the return's refund (direct deposit) section — a bank or credit-union "
+        f"account, or a mobile app or prepaid debit card that has a routing and account number — and set "
+        f"direct_deposit true in the file_and_pay manifest. ModernPayments: \"Taxpayers who file returns "
+        f"with valid bank account information will continue to receive direct deposits as the fastest and "
+        f"most secure refund method.\" With no account: \"Taxpayers without access to digital payment "
+        f"options may be eligible for Treasury-sponsored alternatives that ensure reliable electronic "
+        f"delivery. Additional details on these alternatives will be provided as implementation "
+        f"progresses.\" (same page).{_international_refund_note(item)} Sources: {_MODERN_PAYMENTS_URL}; "
+        f"{_FS_2026_02_URL}"
+    )
+
+
+def _international_refund_note(item: "FilingManifestItem") -> str:
+    """A Form 1040-NR filer may have no U.S. account: FS-2026-02 Topic D Q1 is the answer for them."""
+    if not item.form.upper().startswith("1040-NR"):
+        return ""
+    return (
+        " For a filer abroad without a U.S. bank account, FS-2026-02 Topic D Q1: \"International taxpayers "
+        "should continue to use existing options to file returns, make payments and receive refunds. The IRS "
+        "is developing secure alternatives, such as partnerships with international payment providers, to "
+        "ensure timely access to refunds abroad.\""
+    )
+
+
 def _dedupe_citations(citations: list[Citation]) -> list[Citation]:
     seen, uniq = set(), []
     for c in citations:
@@ -348,9 +417,19 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
     refund = item.bottom_line > 0
     enclosing_check = owes and not item.paid_online
 
-    # Bottom line (plain language).
+    # Bottom line (plain language). A refund with no direct deposit never promises a
+    # paper check: the IRS is phasing them out (irs.gov/ModernPayments; TY26-15).
     if refund:
-        bottom = f"Refund of {_money(item.bottom_line)}" + (" by direct deposit." if item.direct_deposit else " by paper check.")
+        if item.direct_deposit:
+            bottom = f"Refund of {_money(item.bottom_line)} by direct deposit."
+        else:
+            bottom = (
+                f"Refund of {_money(item.bottom_line)} — no direct deposit requested, and the IRS is phasing out "
+                f"paper refund checks: expect a CP53E notice asking for an account, and a slower refund (see "
+                f"the note)."
+            )
+            notes.append(_paper_refund_note(item))
+            citations.extend((_MODERN_PAYMENTS_CITATION, _FS_2026_02_CITATION))
     elif owes:
         bottom = f"You owe {_money(item.bottom_line)}." + (" Already paid online." if item.paid_online else "")
     else:

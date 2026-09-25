@@ -1027,8 +1027,12 @@ def _banking_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
                   "For a refund by direct deposit (or to pay electronically), what are your bank routing and account numbers?",
                   "Direct deposit is the fastest refund; we checksum-validate the routing number.",
                   "banking",
-                  disambiguation="Optional — you can also get a paper check or pay by check; if you decline, just "
-                                 "skip this (the interview will not insist). Read the routing number from the "
+                  disambiguation="Optional, but strongly advised for a refund: the IRS is phasing out paper refund checks "
+                                 "(irs.gov/ModernPayments: the \"phase out of paper tax refund checks beginning "
+                                 "Sept. 30, 2025, to the extent permitted by law\"); without an account the "
+                                 "refund \"could take longer to process\" and a CP53E notice asks for one "
+                                 "(IRS FS-2026-02, Q5). Paying by check still works. If you decline, just skip "
+                                 "this (the interview will not insist). Read the routing number from the "
                                  "bottom-left of a check, not the deposit slip."))
 
 

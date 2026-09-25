@@ -43,13 +43,17 @@ Contents:
   applicable-percentage slide (35%->20%; 2021 ARPA: 50%->20%->0% with the
   $438,000 zero point), the MFS generally-ineligible gate, and the 2021
   refundable-if-US-abode flag.
-* ``treaty_benefit`` (Phase G) — validates/computes a treaty exemption
-  (Schedule OI / Form 1040-NR line 1k) from the per-country
-  ``knowledge/treaties/<country>.yaml`` packs (China, India, Korea, Canada,
-  Mexico): student compensation limits, scholarship/abroad-payment
-  exemptions, teacher-article year windows (with India's retroactive-loss
-  clawback), and the Canada/Mexico employment de-minimis shapes. Final
-  eligibility judgment stays with the agent.
+* ``treaty_benefit`` (Phase G) — validates/computes a treaty exemption from
+  the per-country ``knowledge/treaties/<country>.yaml`` packs (China, India,
+  Korea, Canada, Mexico): student compensation limits, scholarship/abroad-
+  payment exemptions, teacher-article year windows (with India's
+  retroactive-loss clawback), and the Canada/Mexico employment de-minimis
+  shapes. The work names where the exempt amount is reported, which turns on
+  residency (P-016): a nonresident uses Schedule OI item L and the Form
+  1040-NR treaty-exempt line, a resident alien (a saving-clause exception)
+  enters it in parentheses on Schedule 1's other-income line (Pub 519 ch. 9),
+  each rendered for the year through ``form_line``. Final eligibility
+  judgment stays with the agent.
 * ``schedule_1a_deductions`` (Phase H, H6) — the four OBBBA Schedule 1-A
   deductions (tips / overtime / car-loan interest / senior; P.L. 119-21,
   TY2025-2028): per-status caps, the asymmetric per-$1,000 phase-out rounding
@@ -60,10 +64,14 @@ Contents:
 * ``employee_fica`` / ``estimated_tax_safe_harbor`` / ``annualize_ytd``
   (Phase H, H4) — the projection trio: employee-side FICA across visa-status
   segments (the F/J exemption is STATUS-based, not marital — §6013(g) does not
-  start FICA), the IRC 6654(d) required annual payment (90% current vs
-  100/110% prior, the $1,000 de minimis, the flat-22% supplemental-wage trap
-  quoted), and YTD->full-year calendar-day proration (disclosed arithmetic,
-  no citation — it is an assumption, and the work says when it breaks).
+  start FICA — and it is a NONRESIDENT exemption: a resident alien owes FICA
+  though the F/J/M/Q classification stays the same, Pub 519 ch. 8), the
+  IRC 6654(d) required annual payment (90% current vs 100/110% prior, the
+  $1,000 de minimis, and the supplemental-wage trap quoted with its
+  precondition: the flat rate is the employer's option only under Treas. Reg.
+  31.3402(g)-1(a)(7)(i), else the aggregate procedure), and YTD->full-year
+  calendar-day proration (disclosed arithmetic, no citation — it is an
+  assumption, and the work says when it breaks).
 * ``contribution_limits`` / ``ira_contribution_eligibility`` /
   ``marginal_dollar_savings`` / ``magi_ladder`` (Phase H, H8) — the
   account-limit quartet: limits WITH machine-readable scoping, the Pub 590-A
@@ -145,6 +153,7 @@ validated (routing/account numbers are sensitive).
 
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
@@ -159,6 +168,7 @@ from taxfill_core.knowledge import (
     Citation,
     DependentCareParams,
     FilingStatus,
+    FormLineError,
     ForeignAccountReportingParams,
     KnowledgePack,
     MagiPhaseoutRange,
@@ -167,11 +177,14 @@ from taxfill_core.knowledge import (
     ObbbaSchedule1aParams,
     RateBracket,
     StateRateBracket,
+    SupplementalWithholdingParams,
     TaxTable,
+    form_line,
     load_knowledge,
     load_state_knowledge,
     load_treaty,
 )
+from taxfill_core.residency import is_exempt_category_status
 
 # ABA position weights for the 9-digit routing transit number checksum.
 _ABA_WEIGHTS = (3, 7, 1, 3, 7, 1, 3, 7, 1)
@@ -3244,22 +3257,130 @@ class EmployeeFicaResult(BaseModel):
     citation: Citation
 
 
+# Pub 519 (2025) ch. 8, "Students and Exchange Visitors", read 2026-09-25 — the
+# converse of the F/J/M/Q exemption, quoted wherever the exemption is. The
+# residency tool decides the classification; this op takes it as given.
+_FICA_RESIDENT_CONVERSE = (
+    "Pub 519 ch. 8: \"Social security and Medicare taxes will be withheld from your pay for these services "
+    "if you are considered a resident alien, as discussed in chapter 1, even though your nonimmigrant "
+    "classification (“F,” “J,” “M,” or “Q”) remains the same.\""
+)
+_FICA_RESIDENCY_CLASSES: tuple[str, ...] = ("resident", "nonresident", "dual_status_candidate")
+# The exemptions a RESIDENT alien can still have on F/J/M/Q wages, each quoted from
+# Pub 519 (2025) ch. 8 as read 2026-09-25. "fjmq_nonresident" names the exemption a
+# resident does NOT have — passing it for a resident is refused like an unnamed one.
+_FICA_EXEMPT_BASES: dict[str, str] = {
+    "fjmq_nonresident": (
+        "the F/J/M/Q nonresident-alien exemption (IRC 3121(b)(19); Pub 519 ch. 8, 'Students and "
+        "Exchange Visitors')"
+    ),
+    "student_employed_by_school": (
+        "the student-employed-by-the-school exemption — Pub 519 ch. 8 tip: \"Any student who is enrolled "
+        "and regularly attending classes at a school may be exempt from social security and Medicare "
+        "taxes on pay for services performed for that school.\""
+    ),
+    "totalization_agreement": (
+        "an international social security (totalization) agreement — Pub 519 ch. 8: \"Under these "
+        "agreements, dual coverage and dual contributions (taxes) for the same work are eliminated\" "
+        "(keep the certificate of coverage)"
+    ),
+}
+
+
+# A free-text LABEL is read as F/J/M/Q only when it names the status in its visa
+# shape — hyphenated F-1 / J-1 / M-1 / Q-1 (or -2 / -3), or an F-1/M-1 work
+# authorization (OPT, CPT, cap-gap, practical training). The looser visa_status test
+# (residency.is_exempt_category_status) would read labels such as "Q1 wages" or
+# "M&T Bank" as a status and refuse them with a wrong name.
+_FJMQ_LABEL_RE = re.compile(
+    r"(?<![0-9a-z])[fjmq]-[1-3](?![0-9a-z])|\b(?:opt|cpt|cap[- ]gap|practical training)\b"
+)
+
+
+def _fica_exempt_reason(
+    i: int,
+    raw: Mapping[str, Any],
+    label: str,
+    basis: str | None,
+    residency_classification: str | None,
+    exempt_note: str,
+) -> str:
+    """Why an exempt segment owes no FICA — and the refusal when a RESIDENT claims the F/J/M/Q exemption.
+
+    The segment is F/J/M/Q when its ``visa_status`` names one of those classes
+    or an F-1/M-1 work authorization (OPT, CPT, cap-gap), by the same test the
+    residency tool uses; with no ``visa_status``, when its ``label`` names the
+    status in its visa shape (``F-1``, ``J-1``, ``OPT`` …), so a label such as
+    "Q1 wages" is not mistaken for a Q-1 visa.
+    """
+    status = raw.get("visa_status")
+    if status:
+        named = repr(str(status))
+        fjmq = is_exempt_category_status(str(status))
+    else:
+        named = f"label {label!r}, read as an F/J/M/Q status — pass visa_status to say otherwise"
+        fjmq = bool(_FJMQ_LABEL_RE.search(" ".join(label.lower().split())))
+    if basis is not None and basis != "fjmq_nonresident":
+        return f"exempt on the basis you stated: {_FICA_EXEMPT_BASES[basis]}"
+    if residency_classification == "resident" and (fjmq or basis == "fjmq_nonresident"):
+        if not fjmq:
+            named = f"label {label!r}, exempt_basis 'fjmq_nonresident'"
+        raise ValueError(
+            f"wage_segments[{i}] ({named}) is marked fica_exempt, but residency_classification is "
+            f"'resident' — the F/J/M/Q exemption belongs to a NONRESIDENT alien. {_FICA_RESIDENT_CONVERSE} "
+            f"Set fica_exempt false for this segment, or, if it is exempt on a DIFFERENT basis, pass "
+            f"exempt_basis 'student_employed_by_school' (Pub 519 ch. 8 tip: a student enrolled and "
+            f"regularly attending classes at the school it works for) or 'totalization_agreement'. If "
+            f"the classification is wrong, re-run the residency tool — the exempt-individual years and "
+            f"the substantial presence test decide it, not the visa class."
+        )
+    if residency_classification == "resident":
+        # Not the nonresident exempt_note: for a resident it would contradict itself.
+        return (
+            f"fica_exempt per your judgment. CHECK: residency_classification is 'resident', so this segment "
+            f"cannot rest on the F/J/M/Q exemption — {_FICA_RESIDENT_CONVERSE} Confirm the exemption it "
+            f"does rest on and pass exempt_basis ('student_employed_by_school' or 'totalization_agreement'), "
+            f"or set fica_exempt false."
+        )
+    return exempt_note
+
+
 def employee_fica(
     wage_segments: Sequence[Mapping[str, Any]],
     year: int = 2025,
+    residency_classification: str | None = None,
     knowledge_dir: str | Path | None = None,
 ) -> EmployeeFicaResult:
     """Employee-side FICA (social security + Medicare withholding) across wage
     segments — the projection op for a year whose FICA status CHANGES mid-year.
 
-    Each segment is ``{wages, fica_exempt, label?}``, in chronological order.
-    Whether a segment is exempt is CALLER judgment (quoted in the work), and the
-    biggest trap is N-7b: **the F/J student FICA exemption is STATUS-based, not
-    marital** — an exempt-individual nonresident on F-1/OPT/STEM OPT pays no
-    FICA (IRC 3121(b)(19), Pub 519), and a §6013(g) election that makes the
-    couple file jointly does NOT start FICA on an exempt F/J spouse's wages. FICA
-    switches on at the STATUS boundary (e.g. the H-1B start date), which is why
-    the op takes segments rather than one annual wage figure.
+    Each segment is ``{wages, fica_exempt, label?, visa_status?, exempt_basis?}``,
+    in chronological order. Whether a segment is exempt is CALLER judgment
+    (quoted in the work), and the biggest trap is N-7b: **the F/J student FICA
+    exemption is STATUS-based, not marital** — an exempt-individual nonresident
+    on F-1/OPT/STEM OPT pays no FICA (IRC 3121(b)(19), Pub 519), and a §6013(g)
+    election that makes the couple file jointly does NOT start FICA on an
+    exempt F/J spouse's wages. FICA switches on at the STATUS boundary (e.g. the
+    H-1B start date), which is why the op takes segments rather than one annual
+    wage figure.
+
+    The converse is the other half of the same rule: the exemption belongs to
+    a NONRESIDENT alien. Pub 519 ch. 8: "Social security and Medicare taxes
+    will be withheld from your pay for these services if you are considered a
+    resident alien, as discussed in chapter 1, even though your nonimmigrant
+    classification ("F," "J," "M," or "Q") remains the same." So an F-1
+    student past the exempt-individual years who meets the substantial
+    presence test owes FICA while still on F-1. ``residency_classification``
+    (``resident`` / ``nonresident`` / ``dual_status_candidate`` — the residency
+    tool's answer) enforces it: for ``resident``, a ``fica_exempt`` segment
+    that is F/J/M/Q (its ``visa_status`` names the status, else its ``label``
+    names it in visa shape — ``F-1``, ``J-1``, ``OPT``) is REFUSED, quoting
+    Pub 519, unless its ``exempt_basis`` names a
+    different exemption — ``student_employed_by_school`` (Pub 519's tip: "Any
+    student who is enrolled and regularly attending classes at a school may be
+    exempt from social security and Medicare taxes on pay for services
+    performed for that school") or ``totalization_agreement``. Any other
+    exempt segment of a resident is flagged in the work, not refused.
 
     Mechanics enforced here, per Pub 15 section 9:
 
@@ -3299,11 +3420,23 @@ def employee_fica(
         f"with no wage base; Additional Medicare Tax withholding "
         f"{params.additional_medicare_withholding_rate:%} on wages over ${params.additional_medicare_withholding_threshold:,}.",
     ]
+    if residency_classification is not None and residency_classification not in _FICA_RESIDENCY_CLASSES:
+        raise ValueError(
+            f"residency_classification must be one of {', '.join(_FICA_RESIDENCY_CLASSES)} (the residency "
+            f"tool's classification) or omitted, got {residency_classification!r}"
+        )
     exempt_note = (
         "fica_exempt per your confirmed status: an exempt-individual nonresident on F-1 (incl. OPT / "
         "STEM OPT / cap-gap) owes no FICA (IRC 3121(b)(19); Pub 519). The exemption is STATUS-based, "
-        "not marital — a §6013(g)/(h) election does NOT start FICA on the exempt spouse's wages."
+        "not marital — a §6013(g)/(h) election does NOT start FICA on the exempt spouse's wages. And it "
+        f"is a NONRESIDENT exemption — {_FICA_RESIDENT_CONVERSE}"
     )
+    if residency_classification == "dual_status_candidate":
+        work_lines.append(
+            "Dual-status year: an F/J/M/Q exemption covers only the segments earned while a NONRESIDENT; "
+            "from the residency starting date FICA applies even though the visa class is unchanged "
+            f"({_FICA_RESIDENT_CONVERSE}) — split the segments at that date."
+        )
 
     for i, raw in enumerate(wage_segments):
         if not isinstance(raw, Mapping):
@@ -3318,14 +3451,21 @@ def employee_fica(
         if wages < 0:
             raise ValueError(f"wage_segments[{i}].wages must be >= 0, got {wages}")
         label = str(raw.get("label") or f"segment {i + 1}")
+        basis = raw.get("exempt_basis")
+        if basis is not None and (not isinstance(basis, str) or basis not in _FICA_EXEMPT_BASES):
+            raise ValueError(
+                f"wage_segments[{i}].exempt_basis must be one of {', '.join(_FICA_EXEMPT_BASES)} or omitted, "
+                f"got {basis!r}"
+            )
         if exempt:
+            reason = _fica_exempt_reason(i, raw, label, basis, residency_classification, exempt_note)
             segments.append(FicaSegment(
                 label=label, wages=wages, fica_exempt=True,
                 social_security=Decimal("0.00"), medicare=Decimal("0.00"),
                 additional_medicare=Decimal("0.00"), total=Decimal("0.00"),
-                exempt_reason=exempt_note,
+                exempt_reason=reason,
             ))
-            work_lines.append(f"{label}: ${wages:,} wages, FICA-EXEMPT -> $0.00 ({exempt_note})")
+            work_lines.append(f"{label}: ${wages:,} wages, FICA-EXEMPT -> $0.00 ({reason})")
             continue
         wages_d = Decimal(wages)
         ss_taxable = min(wages_d, remaining_base)
@@ -3370,7 +3510,11 @@ def employee_fica(
         medicare=med_total,
         additional_medicare=addl_total,
         segments=segments,
-        inputs={"wage_segments": [dict(s) for s in wage_segments], "year": year},
+        inputs={
+            "wage_segments": [dict(s) for s in wage_segments],
+            "year": year,
+            **({"residency_classification": residency_classification} if residency_classification else {}),
+        },
         work="\n".join(work_lines),
         citation=params.citation,
     )
@@ -3402,6 +3546,38 @@ class SafeHarborResult(BaseModel):
     citation: Citation
 
 
+def _supplemental_withholding_note(sw: SupplementalWithholdingParams) -> str:
+    """The N-12 withholding-realism paragraph WITH its precondition (P-017), read from the pack.
+
+    The flat rate is quoted only next to the Treas. Reg. 31.3402(g)-1(a)(7)(i)
+    conditions that make it available, the (a)(6)(i) aggregate fallback and the
+    (a)(2) mandatory rate: the pack schema refuses a supplemental_withholding
+    block without them, so no year can print the rate unconditionally again.
+    """
+    conditions = " AND ".join(
+        f"({c.paragraph.rsplit('(', 1)[-1]} \"{' '.join(c.quote.split())}\"" for c in sw.flat_rate_conditions
+    )
+    return (
+        f"Withholding realism (Pub 15 section 7; Treas. Reg. 31.3402(g)-1): the flat {sw.flat_rate:%} on "
+        f"supplemental wages (bonuses) is the employer's OPTION, not a rule — under Treas. Reg. "
+        f"31.3402(g)-1(a)(7)(i) the employer may use it only when {conditions} (the third condition, (A), "
+        f"is that the mandatory rate below does not apply). If either fails, (a)(6)(i) requires the "
+        f"{sw.method_if_conditions_fail.upper()} procedure: \"{' '.join(sw.aggregate_rule.split())}\" "
+        f"{' '.join(sw.employer_fallback.split())} Under the aggregate procedure the bonus is added to the "
+        f"regular wages and "
+        f"withheld as ONE payment under the employee's Form W-4 (a bonus paid with regular wages without "
+        f"the amount of each specified is withheld the same way). Mandatory rate ((a)(2)): only the part "
+        f"of one employer's supplemental wages for the year over ${sw.high_threshold:,} is withheld at "
+        f"{sw.high_rate:%}, whatever the Form W-4 says. Hire status is not the test — (C) asks whether "
+        f"income tax was withheld from regular wages this calendar year or last — and the two methods "
+        f"can differ by thousands of dollars on a large bonus, so project expected_withholding by the "
+        f"method the employer actually uses (the pay stub shows it): at the flat {sw.flat_rate:%}, a filer "
+        f"whose marginal rate is higher under-withholds on every bonus and the gap lands in this "
+        f"shortfall; the aggregate figure depends on the W-4 and the pay period, and no op computes it "
+        f"yet — take it from the pay stub. Sources: {sw.citation.url}; {sw.conditions_citation.url}."
+    )
+
+
 def estimated_tax_safe_harbor(
     projected_tax: int | float | Decimal | str,
     expected_withholding: int | float | Decimal | str,
@@ -3429,10 +3605,21 @@ def estimated_tax_safe_harbor(
     balance after withholding is under the $1,000 de minimis. Farmers/fishermen
     substitution (66 2/3%) is quoted, never computed.
 
-    The work also quotes the N-12 withholding-realism trap: supplemental wages
-    (bonuses) are withheld at the FLAT 22% no matter your marginal rate, so a
-    higher-bracket filer under-withholds on every bonus — project
-    ``expected_withholding`` accordingly (bonus withholding = 22% x bonus).
+    The work also quotes the N-12 withholding-realism trap WITH its
+    precondition (P-017): the flat rate on supplemental wages (bonuses) is the
+    employer's OPTION, available only when both Treas. Reg.
+    31.3402(g)-1(a)(7)(i) conditions hold — (B) the bonus is not paid
+    concurrently with regular wages or is separately stated on the payroll
+    records, and (C) income tax was withheld from the employee's regular wages
+    in the calendar year of the payment or the one before (Pub 15 section 7
+    reads it as the employer's own withholding). Otherwise (a)(6)(i) REQUIRES
+    the aggregate procedure (Pub 15: "use method 1b"): the bonus is added to
+    regular wages and withheld as one payment under the employee's Form W-4.
+    Only the excess of the year's supplemental wages over $1,000,000 is
+    mandatorily withheld at the top rate ((a)(2)). Hire status is not the test,
+    and the two methods can differ by thousands of dollars on a large bonus, so
+    ``expected_withholding`` must follow the method the employer actually uses
+    (the pay stub shows it) — no op computes the aggregate figure yet.
     """
     if filing_status not in FILING_STATUSES and filing_status != _QSS:
         raise ValueError(
@@ -3509,13 +3696,7 @@ def estimated_tax_safe_harbor(
     work_lines.append(params.farmers_fishermen_note)
     sw = pack.tax.supplemental_withholding
     if sw is not None:
-        work_lines.append(
-            f"Withholding realism (Pub 15 section 7): supplemental wages (bonuses) are withheld at the "
-            f"FLAT {sw.flat_rate:%} regardless of your marginal rate ({sw.high_rate:%} only on the "
-            f"excess over ${sw.high_threshold:,}) — a filer in a higher bracket under-withholds on "
-            f"every bonus, and the gap lands in this shortfall. Project expected_withholding as "
-            f"{sw.flat_rate:%} x bonus for supplemental pay."
-        )
+        work_lines.append(_supplemental_withholding_note(sw))
 
     return SafeHarborResult(
         required_annual_payment=required,
@@ -8446,7 +8627,8 @@ def foreign_tax_credit_election(
 
 
 # ---------------------------------------------------------------------------
-# Treaty benefit (Schedule OI item L / Form 1040-NR line 1k) — Phase G item G1
+# Treaty benefit — Phase G item G1 (reported on Schedule OI item L by a nonresident, on
+# Schedule 1's other-income line by a resident alien: P-016)
 # ---------------------------------------------------------------------------
 
 TREATY_INCOME_CLASSES: tuple[str, ...] = (
@@ -8559,6 +8741,127 @@ class TreatyBenefitResult(BaseModel):
     citation: Citation
 
 
+def _sched1_treaty_line(year: int, knowledge_dir: str | Path | None) -> str:
+    """Schedule 1's other-income line for ``year``, named in words when the year has no form_lines."""
+    try:
+        return (
+            f"Schedule 1 line {form_line(year, 'sched1.other_income', base_dir=knowledge_dir)} "
+            f"(Schedule 1 (Form 1040), other income)"
+        )
+    except FormLineError:
+        # Treaty limits are treaty-fixed, so the split stays good for any year; only
+        # the line number is unknown, and the text says so rather than guessing one.
+        return (
+            f"Schedule 1's other-income line (Schedule 1 (Form 1040); no form_lines are recorded for {year} "
+            f"— read that year's own face)"
+        )
+
+
+def _f1040nr_treaty_line(year: int, knowledge_dir: str | Path | None) -> str:
+    """The Form 1040-NR treaty-exempt line for ``year``, named in words when the year has no form_lines."""
+    try:
+        return f"Form 1040-NR line {form_line(year, 'f1040nr.treaty_exempt', base_dir=knowledge_dir)}"
+    except FormLineError:
+        return (
+            f"the Form 1040-NR treaty-exempt line (no form_lines are recorded for {year} — read that "
+            f"year's own face)"
+        )
+
+
+def _treaty_reporting_note(
+    year: int,
+    resident_alien: bool | None,
+    exempt: int,
+    knowledge_dir: str | Path | None = None,
+    *,
+    article: str | None = None,
+    saving_clause_exception: bool = False,
+) -> str:
+    """Where the exempt amount goes on the return — it turns on residency (P-016).
+
+    A nonresident reports it on Schedule OI (Form 1040-NR) item L, which the
+    Form 1040-NR treaty-exempt line totals. A RESIDENT alien files Form 1040,
+    which has no Schedule OI. Pub 519 ch. 9 ('Resident Aliens') pairs two
+    entries there: income an information return (W-2, 1042-S, 1099) reported
+    as taxable goes on its usual line, and "the amount for which treaty
+    benefits are claimed" is entered in parentheses on Schedule 1's
+    other-income line with "Exempt income", the treaty country and the
+    article. The parenthetical offsets that inclusion, so income never
+    included is not subtracted as well. Both lines are read off the year's
+    own face through ``form_line`` (Schedule 1 prints '8' for 2019/2020 and
+    '8z' from 2021); a year without a ``form_lines`` block names the line in
+    words instead. Nothing is appended when nothing is exempt.
+
+    A resident generally keeps a treaty benefit only through a saving-clause
+    exception (Pub 519 ch. 9: resident aliens "generally do not qualify").
+    ``saving_clause_exception`` says whether the applied block records one
+    (its text is then quoted earlier in the work). When it does not (the
+    Canada Art. XV de-minimis block records none), the resident sentence says
+    so and gives the Form 1040 destination only as conditional on an exception
+    the caller has confirmed.
+    """
+    if exempt <= 0:
+        return ""
+    amount = _dollars(exempt)
+    resident = (
+        f"on Form 1040, when a W-2, 1042-S, 1099 or other information return reported the income as taxable, "
+        f"the income is reported on its usual line AND the {amount} claimed is entered IN PARENTHESES on "
+        f"{_sched1_treaty_line(year, knowledge_dir)}, with \"Exempt income,\" the treaty country and the "
+        f"article — the parenthetical offsets that inclusion (Pub 519 ch. 9, 'Resident Aliens'). Income no "
+        f"information return reported as taxable may be left off the return (Pub 519: \"In certain cases, "
+        f"you don't need to report the income\"); left off, it is not also entered in parentheses, which "
+        f"would exclude it twice. Schedule OI belongs to Form 1040-NR, not to a resident's Form 1040"
+    )
+    nonresident = (
+        f"on Form 1040-NR the {amount} goes on Schedule OI (Form 1040-NR) item L, which totals to "
+        f"{_f1040nr_treaty_line(year, knowledge_dir)} (reported there, not added to income); "
+        f"attach the Form 1042-S when one was issued"
+    )
+    general_rule = (
+        "Pub 519 ch. 9: resident aliens \"generally do not qualify\" for treaty benefits because of the "
+        "saving clause"
+    )
+    what = article or "this article"
+    if resident_alien is True:
+        if saving_clause_exception:
+            return (
+                f" REPORTING ({year}, RESIDENT alien): {resident}. A resident generally keeps a treaty benefit "
+                f"only through a saving-clause exception ({general_rule}), and only on that exception's own "
+                f"terms (the pack's saving-clause entry above; where it only points at another article, read "
+                f"that article's text — e.g. who it excludes)."
+            )
+        return (
+            f" REPORTING ({year}, RESIDENT alien): the treaty pack records NO saving-clause exception for "
+            f"{what}, so a resident alien generally cannot claim this benefit ({general_rule}); the {amount} "
+            f"above is what the article gives a NONRESIDENT. Claim it on a resident's return only if a "
+            f"saving-clause exception you have confirmed in the treaty text preserves it — and then {resident}."
+        )
+    if resident_alien is False:
+        return f" REPORTING ({year}, nonresident alien): {nonresident}."
+    as_resident = (
+        f"as a RESIDENT alien claiming a saving-clause exception, {resident}"
+        if saving_clause_exception
+        else (
+            f"as a RESIDENT alien — who generally cannot claim it, because the treaty pack records NO "
+            f"saving-clause exception for {what} ({general_rule}) — only if an exception you have confirmed "
+            f"in the treaty text preserves it, {resident}"
+        )
+    )
+    return (
+        f" REPORTING ({year}) depends on residency, which was not supplied (pass resident_alien): as a "
+        f"NONRESIDENT, {nonresident}; {as_resident}. " + _DUAL_STATUS_RETURNS
+    )
+
+
+# Pub 519 (2025) ch. 6, "Forms To File": a dual-status year is one return plus a statement.
+_DUAL_STATUS_RETURNS = (
+    "A dual-status year is ONE return plus a statement (Pub 519 ch. 6): resident on the last day of the "
+    "year, file Form 1040 marked \"Dual Status Return\" and \"Attach a statement to your return to show "
+    "the income for the part of the year you are a nonresident\" (Form 1040-NR can serve as that "
+    "statement); nonresident at year end, file Form 1040-NR."
+)
+
+
 def _treaty_saving_clause_text(saving_clause_exception: bool, text: str | None) -> str:
     if saving_clause_exception:
         detail = f" ({text})" if text else ""
@@ -8573,6 +8876,7 @@ def treaty_benefit(
     visa_periods: list[dict[str, Any]] | None = None,
     year: int = 2023,
     years_in_status: int | None = None,
+    resident_alien: bool | None = None,
     knowledge_dir: str | Path | None = None,
 ) -> TreatyBenefitResult:
     """Validate/compute a treaty exemption from the per-country treaty knowledge pack.
@@ -8624,8 +8928,29 @@ def treaty_benefit(
     ``visa_periods`` (optional, ``[{status, start, end?}, ...]``) is echoed
     into the inputs and the work so the per-period eligibility analysis
     (pitfall P-004) is attached to the number — it is NOT evaluated here.
-    ``year`` is contextual only: treaty dollar limits are treaty-fixed.
+    Treaty dollar limits are treaty-fixed, so ``year`` changes no number; it
+    picks the year's form lines for the reporting sentence.
+
+    ``resident_alien`` (P-016) decides WHERE a nonzero exempt amount is
+    reported, never how much: ``False`` — a nonresident — Schedule OI item L
+    and the Form 1040-NR treaty-exempt line; ``True`` — a resident alien
+    claiming a saving-clause exception — in parentheses on Schedule 1's
+    other-income line with "Exempt income", the country and the article
+    (Pub 519 ch. 9), paired with the income on its usual line when an
+    information return reported it as taxable; ``None`` (unknown) — both,
+    framed conditionally. When the applied block records NO saving-clause
+    exception (the Canada Art. XV de-minimis), the resident sentence says a
+    resident generally cannot claim it (Pub 519: resident aliens "generally
+    do not qualify") and gives the Form 1040 line only as conditional on an
+    exception the caller confirms. Each line is rendered for ``year`` through
+    ``form_line``; a year with no ``form_lines`` block (no federal pack) keeps
+    the split and names the line in words, never a guessed number.
     """
+    if resident_alien is not None and not isinstance(resident_alien, bool):
+        raise ValueError(
+            f"resident_alien must be true, false or omitted, got {resident_alien!r} — True for a resident "
+            f"alien (Form 1040), False for a nonresident (Form 1040-NR); omit it when residency is unknown"
+        )
     amt = _to_decimal(amount, "amount")
     if amt < 0:
         raise ValueError(f"amount must be >= 0, got {amt} — pass the income amount being tested")
@@ -8647,6 +8972,8 @@ def treaty_benefit(
         inputs["years_in_status"] = years_in_status
     if visa_periods:
         inputs["visa_periods"] = visa_periods
+    if resident_alien is not None:
+        inputs["resident_alien"] = resident_alien
     limits: list[str] = []
     period_note = (
         " Visa periods were supplied for YOUR per-period eligibility analysis (P-004) — they were "
@@ -8655,7 +8982,9 @@ def treaty_benefit(
         else ""
     )
 
-    def _result(exempt: int, article: str | None, work: str, citation: Citation) -> TreatyBenefitResult:
+    def _result(
+        exempt: int, article: str | None, work: str, citation: Citation, saving_clause_exception: bool = False
+    ) -> TreatyBenefitResult:
         return TreatyBenefitResult(
             exempt_amount=exempt,
             taxable_remainder=amount_whole - exempt,
@@ -8666,6 +8995,10 @@ def treaty_benefit(
             inputs=inputs,
             work=(
                 work
+                + _treaty_reporting_note(
+                    year, resident_alien, exempt, knowledge_dir,
+                    article=article, saving_clause_exception=saving_clause_exception,
+                )
                 + period_note
                 + _TREATY_JUDGMENT_NOTE
                 + _treaty_disclosure_note(income_class)
@@ -8731,7 +9064,7 @@ def treaty_benefit(
                 f"'payments_from_abroad'). Time limit: {student.time_limit_text}."
                 + _treaty_saving_clause_text(student.saving_clause_exception, student.saving_clause_exception_text)
             )
-            return _result(exempt, student.article, work, student.citation)
+            return _result(exempt, student.article, work, student.citation, student.saving_clause_exception)
         if student.special_rule is not None:  # India Art. 21(2): parity, not an exclusion
             limits.append(f"no dollar exclusion for US-source wages under {student.article}")
             work = (
@@ -8760,6 +9093,7 @@ def treaty_benefit(
                     f"TOTAL US employment remuneration for the calendar year (the threshold is "
                     f"all-or-nothing, never a per-dollar cap)."
                 )
+                # The de-minimis block records no saving-clause exception: a resident is told so (P-016).
                 return _result(amount_whole, dm.article, work, dm.citation)
             limits.append(
                 f"{dm.article}: {_dollars(dm.amount)} de-minimis is ALL-OR-NOTHING and "
@@ -8801,7 +9135,9 @@ def treaty_benefit(
                 f"Confirm the payor is a qualifying organization. Time limit: {student.time_limit_text}."
                 + _treaty_saving_clause_text(student.saving_clause_exception, student.saving_clause_exception_text)
             )
-            return _result(amount_whole, student.article, work, student.citation)
+            return _result(
+                amount_whole, student.article, work, student.citation, student.saving_clause_exception
+            )
         limits.append(f"no scholarship exclusion as such under {student.article}")
         alternative = (
             f" Instead: {student.special_rule}"
@@ -8828,7 +9164,9 @@ def treaty_benefit(
                 f"must actually arise/be remitted from outside the US). Time limit: {student.time_limit_text}."
                 + _treaty_saving_clause_text(student.saving_clause_exception, student.saving_clause_exception_text)
             )
-            return _result(amount_whole, student.article, work, student.citation)
+            return _result(
+                amount_whole, student.article, work, student.citation, student.saving_clause_exception
+            )
         limits.append(f"no payments-from-abroad exemption under {student.article}")
         work = (
             f"{label} payments from abroad ({year}): {student.article} does not exempt them — exempt $0 of "
@@ -8878,7 +9216,7 @@ def treaty_benefit(
             f"exempt {_dollars(amount_whole)} of {_dollars(amount_whole)}.{conditions_note}{warning}"
             + _treaty_saving_clause_text(teacher.saving_clause_exception, teacher.saving_clause_exception_text)
         )
-        return _result(amount_whole, teacher.article, work, teacher.citation)
+        return _result(amount_whole, teacher.article, work, teacher.citation, teacher.saving_clause_exception)
     # Beyond the window.
     if teacher.retroactive_loss:
         limits.append(

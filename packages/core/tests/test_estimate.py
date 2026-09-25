@@ -1389,6 +1389,131 @@ def test_treaty_exempt_income_combines_with_spouse():
 
 
 # ---------------------------------------------------------------------------
+# P-016 (Phase J JF1a): WHERE the treaty-exempt amount is reported turns on the
+# residency classification. A nonresident uses Schedule OI item L and the Form
+# 1040-NR treaty-exempt line; a resident alien keeping a treaty benefit through a
+# saving-clause exception files Form 1040, and Pub 519 ch. 9 has the amount entered
+# in parentheses on Schedule 1's other-income line — "8" on the 2019/2020 faces,
+# "8z" from 2021. Hypothetical demo fixture: an F-1 student whose exempt-individual
+# years ran out, present all year since.
+# ---------------------------------------------------------------------------
+
+
+def _resident_f1_profile(target_year: int) -> Profile:
+    first = target_year - 7
+    days = {y: 130 if y == first else 365 for y in range(first, target_year + 1)}
+    return Profile(
+        household=Household(marital_status=_ans("unmarried")),
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(
+            visa_timeline=[VisaPeriod(status="F-1", start=date(first, 8, 20), end=None, provenance=US)]
+        ),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in days.items()}),
+    )
+
+
+def _treaty_note(est: RefundEstimate) -> str:
+    notes = [a for a in est.assumptions if "does NOT validate treaty eligibility" in a]
+    assert len(notes) == 1
+    return notes[0]
+
+
+_TREATY_INCOME = IncomeSnapshot(wages=40_000, federal_withholding=4_000, treaty_exempt_income=5_000)
+
+
+def test_p016_resident_alien_2025_reports_on_schedule_1_line_8z_not_the_1040nr():
+    from taxfill_core.residency import classify  # the fixture really is resident-classified
+
+    profile = _resident_f1_profile(2025)
+    days = {y: a.value for y, a in profile.residency_facts.days_in_us.items()}
+    assert classify(profile.immigration.visa_timeline, days, 2025).classification == "resident"
+    note = _treaty_note(estimate_refund(profile, 2025, _TREATY_INCOME))
+    assert "Schedule 1 line 8z (Schedule 1 (Form 1040)" in note and "IN PARENTHESES" in note
+    assert "Schedule 1" in note and "8z" in note  # the acceptance words
+    assert "Exempt income" in note and "Pub 519 ch. 9" in note and "saving-clause" in note
+    assert "1040-NR line 1k" not in note
+    assert "Schedule OI item L" not in note  # named only as NOT this return's schedule
+
+
+def test_p016_resident_alien_2020_gets_the_undivided_line_8_not_8z():
+    note = _treaty_note(estimate_refund(_resident_f1_profile(2020), 2020, _TREATY_INCOME))
+    assert "Schedule 1 line 8 (" in note  # the 2020 face prints the undivided line 8
+    assert "8z" not in note
+    assert "1040-NR line 1c" not in note
+
+
+def test_p016_a_declared_us_person_without_a_timeline_is_routed_like_a_resident():
+    profile = Profile(
+        household=Household(marital_status=_ans("unmarried")), identity=Identity(us_person=_ans(True))
+    )
+    note = _treaty_note(estimate_refund(profile, 2023, _TREATY_INCOME))
+    assert "Schedule 1 line 8z (" in note
+    assert "1040-NR line 1k" not in note
+    # A declared US person may be a CITIZEN, whom the saving clause keeps taxable: the
+    # return is "Form 1040", not "a resident alien's", and the caveat is quoted.
+    assert "the return is Form 1040" in note and "resident alien's Form 1040" not in note
+    assert "If the filer is a US CITIZEN" in note
+    assert "right of the United States to tax its citizens and residents" in note
+
+
+def test_p016_the_parenthetical_is_paired_with_the_information_return_inclusion():
+    # Pub 519 ch. 9 ties the two entries together: income an information return
+    # reported as taxable stays on its usual line, and the amount claimed is entered in
+    # parentheses — the offset this estimate models (income in full, exemption subtracted).
+    note = _treaty_note(estimate_refund(_resident_f1_profile(2025), 2025, _TREATY_INCOME))
+    assert "when a W-2, 1042-S, 1099 or other information return reported the income as taxable" in note
+    assert "the parenthetical offsets that inclusion, as this estimate models it" in note
+    assert "not also entered in parentheses" in note
+
+
+def test_p016_unknown_residency_and_dual_status_get_both_destinations_conditionally():
+    unclassified = Profile(
+        household=Household(marital_status=_ans("unmarried")), identity=Identity(us_person=_ans(False))
+    )
+    for profile, why in (
+        (unclassified, "residency is not established"),
+        (_dual_status_profile(marital="unmarried"), "dual-status candidate year"),
+    ):
+        note = _treaty_note(estimate_refund(profile, 2023, _TREATY_INCOME))
+        assert why in note
+        assert "as a NONRESIDENT" in note and "Form 1040-NR line 1k" in note and "Schedule OI item L" in note
+        assert "as a RESIDENT alien" in note and "Schedule 1 line 8z (" in note
+
+
+def test_p016_nonresident_keeps_schedule_oi_and_the_1040nr_line_for_the_year():
+    # The 2023 assertion above stays; 2020's face prints the 1040-NR line as 1c.
+    for year, line in ((2023, "1k"), (2020, "1c")):
+        note = _treaty_note(
+            estimate_refund(
+                _nra_profile(), year,
+                IncomeSnapshot(wages=18_000, federal_withholding=1_400, treaty_exempt_income=5_000),
+            )
+        )
+        assert "Schedule OI item L" in note and f"Form 1040-NR line {line}" in note
+        assert "Schedule 1 (Form 1040)" not in note
+
+
+def test_p016_the_field_descriptions_carry_the_rule_without_a_typed_line():
+    treaty = IncomeSnapshot.model_fields["treaty_exempt_income"].description
+    assert "Schedule OI" in treaty and "Schedule 1's other-income line" in treaty and "P-016" in treaty
+    assert "line 1k" not in treaty and "8z" not in treaty
+
+
+def test_retirement_income_taxable_is_the_taxable_amount_not_box_2a():
+    # JF1a item 2: for a traditional-IRA distribution or conversion box 2a is the GROSS
+    # amount with 2b checked (i1099r 2026), so a filer with basis must not enter it.
+    desc = IncomeSnapshot.model_fields["retirement_income_taxable"].description
+    assert "TAXABLE" in desc and "ira_pro_rata" in desc
+    assert "GROSS" in desc and "2b" in desc
+    for code in ("codes N and R", "H (a", "code G"):
+        assert code in desc
+    # The code-G exceptions, where box 2a IS the taxable amount (i1099r 2026): a direct
+    # rollover to a Roth IRA, an in-plan Roth rollover, designated Roth employer contributions.
+    assert "roth_conversion" in desc and "in-plan Roth rollover" in desc
+    assert "designated Roth matching/nonelective contributions" in desc
+
+
+# ---------------------------------------------------------------------------
 # Phase G (item G1): the estimate cross-checks treaty_exempt_income against the
 # per-country treaty knowledge (calc.treaty_benefit) when the profile carries a
 # citizenship country with a shipped pack. Advisory only — never a hard block.

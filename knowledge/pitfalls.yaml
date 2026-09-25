@@ -1028,3 +1028,132 @@ pitfalls:
       line recorded as 1k and the 2020 Form 1040 line recorded as 25b, with
       the words unchanged. A network-marked test runs it on every entry's
       face.
+  - id: P-016
+    incident: >-
+      Every treaty text in the engine sent the filer to Schedule OI item L and
+      the Form 1040-NR treaty-exempt line: the estimate_refund
+      treaty_exempt_income description and its assumption, the calc module
+      docstring for treaty_benefit and the server tool doc. That is a
+      nonresident's destination. A resident alien who keeps a treaty benefit
+      through a saving-clause exception (typically a student, trainee or
+      researcher article whose exception survives after the exempt-individual
+      years end and the substantial presence test is met) files Form 1040,
+      which has no Schedule OI. Pub 519 (2025) ch. 9,
+      "Resident Aliens", says to "Enter the amount for which treaty benefits
+      are claimed, in parentheses, on Schedule 1 (Form 1040)", on its
+      other-income line, with "Exempt income," the name of the treaty country,
+      and the treaty article. That line is "8" on the 2019 and 2020 faces (Pub
+      519 (2020): "in parentheses on line 8, Schedule 1 (Form 1040)") and "8z"
+      from 2021, so a single literal could not have been right for every year
+      either. A resident-classified profile was told to use a schedule its
+      return does not have.
+    countermeasure: >-
+      The destination is branched on the residency classification and every
+      line is rendered through knowledge.form_line from the year's own
+      form_lines block (P-015). estimate.estimate_refund's treaty assumption
+      (_treaty_reporting_text) reads: resident (a computed 'resident'
+      classification, or none computed while the profile declares a US
+      person, the profile the roadmap already routes to Form 1040) — in
+      parentheses on Schedule 1 line form_line(year, 'sched1.other_income')
+      (Schedule 1 (Form 1040), other income), with "Exempt income", the
+      country and the article, a saving-clause exception being the way a
+      resident generally keeps the benefit (Pub 519: resident aliens
+      "generally do not qualify") and no Form 8833 being needed for a
+      student, trainee or teacher article (Pub 519 ch. 9, exception 2);
+      nonresident — Schedule OI
+      item L and Form 1040-NR line form_line(year, 'f1040nr.treaty_exempt');
+      a dual-status candidate or an unknown residency — both, framed
+      conditionally. Pub 519 ties the resident's two entries together: "if
+      the income has been reported as taxable income on a Form W-2, Form
+      1042-S, Form 1099, or other information return, you should report it on
+      the appropriate line" and then enter the amount claimed in parentheses,
+      so the resident text pairs them (the parenthetical offsets that
+      inclusion) and says income left off the return ("In certain cases, you
+      don't need to report the income") is not also subtracted. A profile
+      reaching the resident branch only by declaring a US person is told "Form
+      1040", not "a resident alien's", with the caveat that a US citizen is
+      generally outside the treaty: the saving clause "preserves or "saves"
+      the right of the United States to tax its citizens and residents", and
+      every shipped pack's student and teacher exception excludes citizens.
+      calc.treaty_benefit gains resident_alien (True / False / None), which
+      changes no number and appends the same three-way REPORTING sentence to
+      the work whenever something is exempt. That sentence points at the
+      saving-clause exception "quoted above" only when the applied block
+      records one; the Canada Art. XV de-minimis block records none (the
+      irs.gov text's Art. XXIX(3) lists Art. XX, not Art. XV), so a resident is
+      told the pack records NO exception, that a resident generally cannot
+      claim it, and gets the Form 1040 line only as conditional on an
+      exception the caller confirms. Treaty limits are treaty-fixed, so a year
+      with no form_lines block (no federal pack) keeps the split and names the
+      line in words instead of raising FormLineError or guessing a number. The
+      treaty_exempt_income description, the calc module docstring, the
+      server's treaty_benefit and estimate_refund docs and SKILL.md say that
+      the destination turns on residency without typing a line number, and
+      the four FORM_LINE_DEBT rows for the typed "Form 1040-NR line 1k" are
+      deleted. THE DURABLE RULE: a treaty exemption is reported where the
+      filer's own return reports it — Schedule OI for a Form 1040-NR, Schedule
+      1's other-income line in parentheses for a Form 1040 — and the line is
+      read off that year's face. Regression tests, P-016-tagged, in
+      packages/core/tests/test_estimate.py (a resident-classified 2025 profile
+      gets "Schedule 1" and "8z" and no "1040-NR line 1k", a 2020 one gets
+      "Schedule 1 line 8" and no "8z", a declared US person is
+      routed to Form 1040 with the citizen caveat, the resident note pairs the
+      parenthetical with the information-return inclusion, an unclassified visa holder and a dual-status
+      year get both, and the nonresident assertion is unchanged) and in
+      packages/core/tests/test_treaties.py (resident_alien True / False / None
+      on 2020 and 2025, a draft suffix on 2026, nothing appended when nothing
+      is exempt, a non-bool refused, the Canada Art. XV resident path naming
+      the missing exception with no "(quoted above)", the information-return
+      pairing, and 2018 / 2027 answered with the line named in words).
+  - id: P-017
+    incident: >-
+      Four use sites told the agent that bonuses are withheld at the FLAT 22%
+      and to "project 22% x bonus": the estimated_tax_safe_harbor work and
+      docstring, the SupplementalWithholdingParams docstring, the server's
+      estimated_tax_safe_harbor doc and SKILL.md. The flat rate is the
+      employer's option and it has preconditions. Treas. Reg.
+      31.3402(g)-1(a)(7)(i): "The employer may determine withholding upon
+      supplemental wages under this paragraph (a)(7) if three conditions are
+      met", (B) "The supplemental wages are either not paid concurrently with
+      regular wages or are separately stated on the payroll records of the
+      employer" and (C) "Income tax has been withheld from regular wages of
+      the employee during the calendar year of the payment or the preceding
+      calendar year" (Pub 15 (2026) section 7 reads (C) as the employer's own
+      withholding: "If you withheld income tax from an employee's regular
+      wages"). Otherwise (a)(6)(i) requires the aggregate procedure (Pub 15:
+      "use method 1b"): the bonus is added to the regular wages and withheld as
+      one payment under the employee's Form W-4. Only the excess of one
+      employer's supplemental wages for the year over $1,000,000 is
+      mandatorily withheld at the top rate ((a)(2)). Hire status is not the
+      test, and on a large bonus the two methods can differ by thousands of
+      dollars, so a projection built on "22% x bonus" can be wrong in either
+      direction.
+    countermeasure: >-
+      The 2025 and 2026 supplemental_withholding blocks (Pub 15 (2025) and Pub
+      15 (2026) section 7 re-read 2026-09-25, their items 1-2 identical; eCFR
+      31.3402(g)-1, last amended 2020-10-06) carry flat_rate_optional: true,
+      flat_rate_conditions (the (B) and (C) quotes, verbatim, each with its
+      pinpoint), conditions_citation (the eCFR section), method_if_conditions_fail:
+      aggregate, the (a)(6)(i) aggregate_rule sentence, Pub 15's
+      employer_fallback ("use method 1b") and the (a)(2) mandatory_rate_rule.
+      All are REQUIRED fields of knowledge.SupplementalWithholdingParams, and
+      its validator refuses a block whose conditions omit (B) or (C), so no
+      year can ship the rate without its preconditions. The safe-harbor work
+      renders its withholding-realism paragraph from those fields
+      (calc._supplemental_withholding_note): the flat rate as an OPTION under
+      31.3402(g)-1(a)(7)(i) with both conditions quoted, the aggregate
+      fallback, the $1,000,000 mandatory rate, "hire status is not the test",
+      and the instruction to project bonus withholding by the method the
+      employer actually uses (the pay stub). No op computes the aggregate
+      figure until JP1c ships one, and the work says so. The same rule reaches
+      the op docstring, the calc module docstring, the params docstring, the
+      server doc and SKILL.md; the unconditional "withheld at the FLAT 22%
+      regardless of your marginal rate" sentence and "Project
+      expected_withholding as 22% x bonus" are gone. THE DURABLE RULE: never
+      state the flat supplemental rate without its two conditions and the
+      aggregate fallback. Regression tests, P-017-tagged, in
+      packages/core/tests/test_projection_ops.py: the 2025 and 2026 works
+      carry "31.3402(g)-1(a)(7)(i)", "separately stated" and "aggregate" and
+      not the old sentence, the pack fields load with both quotes, and the
+      schema refuses a block missing (C), a non-(a)(7)(i) pinpoint or an
+      optional flag other than true.

@@ -302,6 +302,10 @@ tax:
       fishing, 66 2/3% substitutes for the 90% current-year prong — and the 110% higher-income rule
       does NOT apply (Form 1040-ES (2026), page 1, Special Rules). Not computed by the op; quoted.
 
+  # Pub 15 (2026) Section 7 — the flat rate is the employer's OPTION and only when
+  # both Treas. Reg. 31.3402(g)-1(a)(7)(i)(B) and (C) hold; otherwise the aggregate
+  # procedure is required (P-017). Re-read against Pub 15 (2025) on 2026-09-25: the
+  # section 7 wording of items 1-2 and the $1 million rule is identical.
   supplemental_withholding:
     citation:
       source: >-
@@ -316,6 +320,43 @@ tax:
     flat_rate: 0.22
     high_rate: 0.37
     high_threshold: 1000000
+    flat_rate_optional: true
+    flat_rate_conditions:
+      - paragraph: "31.3402(g)-1(a)(7)(i)(B)"
+        quote: >-
+          The supplemental wages are either not paid concurrently with regular wages or are
+          separately stated on the payroll records of the employer
+      - paragraph: "31.3402(g)-1(a)(7)(i)(C)"
+        quote: >-
+          Income tax has been withheld from regular wages of the employee during the calendar year
+          of the payment or the preceding calendar year
+    conditions_citation:
+      source: >-
+        Treas. Reg. 31.3402(g)-1 (eCFR, current text, read 2026-09-25; last amended 2020-10-06 per
+        the eCFR version history, so the same text governs every payment in 2026): (a)(7)(i) "The
+        employer may determine withholding upon supplemental wages under this paragraph (a)(7) if
+        three conditions are met", (A) being that the (a)(2) mandatory rate does not apply and
+        (B)/(C) quoted in flat_rate_conditions; (a)(6)(i) the aggregate procedure is required
+        otherwise; (a)(2) the mandatory flat rate on the excess over $1,000,000.
+      url: "https://www.ecfr.gov/current/title-26/section-31.3402(g)-1"
+    method_if_conditions_fail: aggregate
+    aggregate_rule: >-
+      The employer is required to determine withholding upon supplemental wages under this paragraph
+      (a)(6) if paragraph (a)(2) of this section does not apply to the payment or portion of the
+      payment and if paragraph (a)(7) of this section may not be used with respect to the payment.
+    employer_fallback: >-
+      Pub 15 (2026) section 7, Supplemental wages identified separately from regular wages, item 2: "If
+      you didn't withhold income tax from the employee's regular wages in the current or immediately
+      preceding calendar year, use method 1b." Item 1 reads condition (C) as the employer's own
+      withholding: "If you withheld income tax from an employee's regular wages in the current or
+      immediately preceding calendar year, you can use one of the following methods".
+    mandatory_rate_rule: >-
+      If a supplemental wage payment, when added to all supplemental wage payments previously made by
+      one employer (as defined in paragraph (a)(3) of this section) to an employee during the calendar
+      year, exceeds $1,000,000, the rate used in determining the amount of withholding on the excess
+      (including any excess which is a portion of a supplemental wage payment) shall be equal to the
+      highest rate of tax applicable under section 1 for such taxable years beginning in such
+      calendar year.
 
   # Both surtaxes are STATUTORY and not inflation-indexed (unchanged since 2013;
   # OBBBA did not touch them), so the 2026 values are identical to every shipped
