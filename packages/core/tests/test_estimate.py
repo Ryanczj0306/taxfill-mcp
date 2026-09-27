@@ -2188,6 +2188,10 @@ def test_p018_niit_is_evaluated_under_the_election_and_skipped_without_it():
     note = next(a for a in elected.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
     assert "1.1411-2(a)(2)(iii)(B)" in note and "$250,000" in note and "$125,000" in note
     assert "Form 8960, Part I" in note
+    # JF5b part 3a: with no spouse snapshot the income cannot be split into each spouse's own
+    # figures, so the elected figure stays and the note names what would price the default
+    # (the spouse-snapshot case: test_p018_niit_default_the_nonresident_taxpayer_with_a_spouse_snapshot).
+    assert "is not priced here" in note and "enter the spouse's own amounts in income.spouse" in note
     # Control: the same filer on Form 1040-NR (no election) owes no NIIT.
     nr = estimate_refund(_elected(profile, _MFS_NR), 2023, income)
     assert not any(ln.slot == "niit" for ln in nr.composition)
@@ -2290,7 +2294,9 @@ def test_p018_a_resident_taxpayers_nonresident_spouse_files_a_1040nr_with_the_ex
     assert any(a.startswith("Nonresident investment income is NOT modeled") for a in est.assumptions)
     # The joint candidate is the election posture, so its NIIT evaluation names the
     # chapter 2A second election (Treas. Reg. 1.1411-2(a)(2)(iii)(B)).
-    assert any(a.startswith("NIIT under the §6013(g)/(h) election: the joint-return figure") for a in est.assumptions)
+    # With a spouse snapshot and NIIT $0 on every reading, the note says so (JF5b part 3a).
+    assert any(a.startswith("NIIT under the §6013(g)/(h) election:") and "NIIT is $0 on every reading" in a
+               for a in est.assumptions)
 
 
 def test_p018_the_election_needs_a_citizen_or_resident_spouse_and_a_marriage():
@@ -2414,6 +2420,15 @@ def test_p018_a_dual_status_year_with_a_citizen_spouse_is_the_6013h_choice():
     niit_note = next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
     assert "1.1411-2(a)(2)(iv)(B)" in niit_note and "only with respect to income received for the portion" in niit_note
     assert "the nonresident alien spouse will not be subject" not in niit_note     # (iii)(A) is 6013(g)'s
+    # JF5b part 3a: the Form 8960 instructions' first-year sentence is 6013(g)'s ((iii)(B)(2)) —
+    # (iv)(B)(2) has no such condition — and the (iv)(A) default is priced: your own $760
+    # (only your resident-period income counts, which is not recorded: from $0) and the
+    # citizen spouse's $0, against the combined $760.
+    assert "The election must be made for the first tax year" not in niit_note
+    assert "Priced here for IRC 6013(h)" in niit_note and "a default between $0 and $760" in niit_note
+    assert niit(20_000, 210_000, "married_filing_separately", 2025).niit == 760
+    assert niit(20_000, 300_000, "married_filing_jointly", 2025).niit == 760
+    assert (est.low, est.high) == (est.point, est.point + 760)
     assert residency_module.section_6013_kind("dual_status_candidate", "us") == "h"
     # A full-year nonresident with the same citizen spouse is the 6013(g) choice.
     g = estimate_refund(_nra_profile(marital="married", filing_status=_ans("married_filing_jointly"),
@@ -2601,17 +2616,31 @@ def test_p018_form_8843_stays_on_the_roadmap_under_the_election():
 
 
 def test_p018_the_niit_note_covers_the_joint_and_the_separate_figure():
-    # A recorded election with no confirmed status prices MFJ AND MFS under it; the MFS
-    # candidate evaluates NIIT on the formerly-nonresident spouse too and says so.
+    # A recorded election with no confirmed status prices MFJ AND MFS under it. JF5b part 3a:
+    # with each spouse's own amounts on file, the joint figure's NIIT is the (iii)(A) default
+    # (your own $760 against $125,000; the combined $245,000 is under $250,000), and the
+    # separate returns price the spouse who is a nonresident without the election at $0.
     profile = _us_filer_married(_nra_spouse())
     profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
     income = IncomeSnapshot(wages=200_000, federal_withholding=40_000, interest=20_000,
                             spouse=IncomeSnapshot(wages=10_000, dividends=15_000))
     est = estimate_refund(profile, 2023, income)
     note = next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
-    assert "the joint-return figure evaluates" in note
-    assert "separate return here evaluates" in note and "may be overstated" in note
+    default = niit(20_000, 220_000, "married_filing_separately", 2023).niit
+    assert default == 760 and niit(35_000, 245_000, "married_filing_jointly", 2023).niit == 0
+    assert next(ln.amount for ln in est.composition if ln.slot == "niit") == default
+    assert "the joint-return figure's NIIT is the DEFAULT" in note and "a default of $760" in note
+    assert "And on each separate return here, your spouse — the spouse who is a nonresident without the " \
+        "election — owes NIIT $0" in note
+    assert "Your separate return owes NIIT $760 on either reading" in note
     assert "1.1411-2(a)(2)(iii)(B)" in note and "and Without" not in note
+    # One combined snapshot cannot be split: the unpriced note names income.spouse.
+    combined = estimate_refund(profile, 2023, IncomeSnapshot(wages=210_000, federal_withholding=40_000,
+                                                             interest=20_000, dividends=15_000))
+    unpriced = next(a for a in combined.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
+    assert "the joint-return figure evaluates" in unpriced and "is not priced here" in unpriced
+    assert "separate return here evaluates" in unpriced and "may be overstated" in unpriced
+    assert unpriced.count("income.spouse") == 2
 
 
 def test_p018_declining_leaves_head_of_household_open():
@@ -2812,6 +2841,7 @@ def test_p018_the_niit_note_says_what_the_joint_figure_assumes():
     note = next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
     assert "ASSUMES the optional SECOND election" in note and "HIGHER or LOWER" in note
     assert "without regard to the effect of the section 6013(g) election" in note
+    assert "income.spouse" in note   # JF5b part 3a: what would let the default be priced
 
 
 # ---------------------------------------------------------------------------
@@ -3542,7 +3572,7 @@ def test_p018_dual_status_acceptance_h1b_arrival_2026_prices_the_range():
     assert "(i) you were a U.S. resident during 2025" in caveat and "record the return you filed for 2025" in caveat
     assert "(iii) the dates on the visa timeline are wrong" in caveat and "(ii)" not in caveat   # unmarried
     assert not any(a.startswith("Standard deduction assumed") for a in est.assumptions)
-    assert any("the residency reading named in these notes keeps a range of its own" in a for a in est.assumptions)
+    assert any("the residency reading named in these notes may keep a range of its own" in a for a in est.assumptions)
 
 
 def test_p018_dual_status_caveat_names_the_restrictions_and_the_approximation():
@@ -3876,3 +3906,264 @@ def test_p018_the_dual_status_resident_end_says_head_of_household_is_not_priced(
     est = estimate_refund(_dual_2025(dependents=[_kid_with_ssn()]), 2025, _WAGES)
     assert "head of household, which a full-year resident with a qualifying person may use, is not priced" in (
         est.residency_caveat)
+
+
+# ---------------------------------------------------------------------------
+# P-018, JF5b part 3a (2026-09-27): the NIIT DEFAULT under the §6013(g)/(h) election.
+# Treas. Reg. 1.1411-2(a)(2)(iii)(A) (6013(g)): "the spouses will be treated as married
+# filing separately for purposes of section 1411" and "the nonresident alien spouse will
+# not be subject to tax under section 1411"; (iii)(B)(2): the second (chapter 2A) election
+# must be made "for the first taxable year beginning after December 31, 2013, in which the
+# United States taxpayer is subject to tax under section 1411", judged "without regard to
+# the effect of the section 6013(g) election". (iv)(A) (6013(h)): "each spouse will be
+# treated as married filing separately for the entire year", the arriving spouse "only with
+# respect to income received for the portion of the year for which he or she is treated as
+# a United States resident"; (iv)(B)(2) sets no first-year condition. The brief's
+# hypothetical Examples A-D; every NIIT amount is re-derived through calc.niit.
+# ---------------------------------------------------------------------------
+
+_MFJ_ = "married_filing_jointly"
+_MFS_ = "married_filing_separately"
+
+
+def _elected_couple(confirmed: str | None = _MFJ_) -> Profile:
+    """A U.S.-citizen taxpayer, a nonresident spouse (F-1 from 2020: nonresident in 2023), the election recorded."""
+    profile = _us_filer_married(_nra_spouse())
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    if confirmed is not None:
+        profile.household.filing_status = _ans(confirmed)
+    return profile
+
+
+def _niit_note(est: RefundEstimate) -> str:
+    return next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
+
+
+def _niit_line(est: RefundEstimate) -> int:
+    return next((ln.amount for ln in est.composition if ln.slot == "niit"), 0)
+
+
+def test_p018_niit_default_example_a_the_default_is_the_point_and_the_elected_figure_bounds_it():
+    # Example A (6013(g)): Alex, the U.S. citizen, owes NIIT on his own figures; the couple's
+    # combined figure against $250,000 owes none. The default is always open, so it is the
+    # point; the second election's $0 is reachable only in the first year Alex is subject.
+    income = IncomeSnapshot(wages=110_000, federal_withholding=20_000, interest=5_000, dividends=15_000,
+                            spouse=IncomeSnapshot(other_income=60_000, dividends=40_000))
+    est = estimate_refund(_elected_couple(), 2023, income)
+    default = niit(20_000, 130_000, _MFS_, 2023).niit
+    elected = niit(60_000, 230_000, _MFJ_, 2023).niit
+    assert (default, elected) == (190, 0)
+    assert _labels(est)["Adjusted gross income (AGI)"] == 230_000
+    assert _niit_line(est) == default
+    mfj_sd = standard_deduction(_MFJ_, 2023).amount
+    assert est.point == 20_000 - tax_from_taxable_income(230_000 - mfj_sd, _MFJ_, 2023).tax - default
+    assert (est.low, est.high) == (est.point, est.point + default - elected)
+    note = _niit_note(est)
+    assert "You — the U.S. citizen or resident spouse — owe $190" in note and "a default of $190" in note
+    assert "The joint figure uses the default ($190)" in note
+    assert "The range also prices the combined-income figure the second election gives ($0" in note
+    assert "for the first taxable year beginning after December 31, 2013, in which the United States taxpayer" in note
+    assert "a fact this profile does not record" in note
+    assert "is not priced here" not in note
+
+
+def test_p018_niit_default_example_b_the_second_election_is_not_available():
+    # Example B (6013(g)): Alex's own MAGI is under $125,000, so he is not subject on his own
+    # figures and this is not "the first taxable year ... in which the United States taxpayer
+    # is subject to tax under section 1411" — the joint NIIT is $0, never the combined $1,596.
+    income = IncomeSnapshot(wages=90_000, federal_withholding=12_000, interest=2_000,
+                            spouse=IncomeSnapshot(dividends=200_000))
+    est = estimate_refund(_elected_couple(), 2023, income)
+    assert niit(2_000, 92_000, _MFS_, 2023).niit == 0
+    elected = niit(202_000, 292_000, _MFJ_, 2023).niit
+    assert elected == 1_596
+    assert _niit_line(est) == 0 and not any(ln.slot == "niit" for ln in est.composition)
+    mfj_sd = standard_deduction(_MFJ_, 2023).amount
+    assert est.point == 12_000 - tax_from_taxable_income(292_000 - mfj_sd, _MFJ_, 2023).tax
+    assert est.low == est.high == est.point            # no bracket: the $1,596 cannot be reached
+    note = _niit_note(est)
+    assert "the second election is NOT available this year" in note
+    assert "without regard to the effect of the section 6013(g) election" in note
+    assert "such original election will have no effect for that year and all future years" in note
+    assert "($1,596: the couple's combined net investment income" in note and "is not in the range" in note
+
+
+def test_p018_niit_default_example_c_6013h_takes_the_lower_and_names_the_resident_period_gap():
+    # Example C (6013(h)): Dana arrives in 2025 (the taxpayer; a confirmed MFJ is the election),
+    # Casey is a U.S. citizen. The combined figure is $1,292; the default is Casey's own $380 and
+    # $0 for Dana (her full-year own MAGI is under $125,000 too). No first-year condition, so the
+    # couple takes the lower: $380.
+    profile = _h1b_arrival_2025(filing_status=_ans(_MFJ_), spouse=Spouse(us_person=_ans(True)))
+    income = IncomeSnapshot(wages=70_000, federal_withholding=15_000, interest=4_000, capital_gain_long=20_000,
+                            dividends=30_000,
+                            spouse=IncomeSnapshot(wages=150_000, federal_withholding=25_000, interest=10_000))
+    est = estimate_refund(profile, 2025, income)
+    elected = niit(64_000, 284_000, _MFJ_, 2025).niit
+    casey = niit(10_000, 160_000, _MFS_, 2025).niit
+    dana_full_year = niit(54_000, 124_000, _MFS_, 2025).niit
+    assert (elected, casey, dana_full_year) == (1_292, 380, 0)
+    assert _labels(est)["Adjusted gross income (AGI)"] == 284_000
+    assert _niit_line(est) == min(elected, casey + dana_full_year) == 380
+    assert est.low == est.high == est.point
+    note = _niit_note(est)
+    assert "Priced here for IRC 6013(h)" in note and "a split this estimate does not record" in note
+    assert "the joint figure uses $380, the lower of the combined-income figure the second election gives ($1,292" in note
+    assert "may elect to have their section 6013(h) election apply for purposes of chapter 2A" in note
+    # The Form 8960 instructions' first-year sentence is 6013(g)'s ((iii)(B)(2)); (iv)(B)(2) has none.
+    assert "The election must be made for the first tax year" not in note
+    assert "the nonresident alien spouse will not be subject" not in note
+
+
+def test_p018_niit_default_example_c_bounds_when_the_arriving_spouse_owes_on_the_full_year():
+    # The same couple with Dana's wages $90,000: her full-year own figure owes NIIT, but only her
+    # resident-period income counts and the snapshot has no period split — so the default runs
+    # from Casey's $380 (Dana $0) to both full-year figures, and the point is the lower of that
+    # high end and the combined figure; the range prices the low end too.
+    profile = _h1b_arrival_2025(filing_status=_ans(_MFJ_), spouse=Spouse(us_person=_ans(True)))
+    income = IncomeSnapshot(wages=90_000, federal_withholding=15_000, interest=4_000, capital_gain_long=20_000,
+                            dividends=30_000,
+                            spouse=IncomeSnapshot(wages=150_000, federal_withholding=25_000, interest=10_000))
+    est = estimate_refund(profile, 2025, income)
+    elected = niit(64_000, 304_000, _MFJ_, 2025).niit
+    casey = niit(10_000, 160_000, _MFS_, 2025).niit
+    dana_full_year = niit(54_000, 144_000, _MFS_, 2025).niit
+    assert (elected, casey, dana_full_year) == (2_052, 380, 722)
+    point_niit = min(elected, casey + dana_full_year)
+    assert _niit_line(est) == point_niit == 1_102
+    assert (est.low, est.high) == (est.point, est.point + point_niit - min(elected, casey))
+    note = _niit_note(est)
+    assert "between $0 and your full-year $722: a default between $380 and $1,102" in note
+    assert "the range also prices $380 (with the default's low end)" in note
+
+
+def test_p018_niit_default_example_d_the_nonresident_spouse_separate_return_owes_none():
+    # Example D: a later year of a continuing 6013(g) election, filed separately. Blair (the
+    # spouse, a nonresident without the election) is priced at NIIT $0 — (iii)(A) — and the
+    # range prices the resident-rules $570 (the unsettled continuing-election reading).
+    profile = _elected_couple(_MFS_)
+    income = IncomeSnapshot(wages=80_000, federal_withholding=10_000, spouse=IncomeSnapshot(interest=140_000))
+    est = estimate_refund(profile, 2023, income)
+    resident_rules = niit(140_000, 140_000, _MFS_, 2023).niit
+    assert resident_rules == 570
+    mfs_sd = standard_deduction(_MFS_, 2023).amount
+    yours = _independent_refund(80_000, 10_000, _MFS_)
+    blairs = -tax_from_taxable_income(140_000 - mfs_sd, _MFS_, 2023).tax
+    assert est.point == yours + blairs                     # Blair's NIIT: $0
+    assert (est.low, est.high) == (est.point - resident_rules, est.point)
+    note = _niit_note(est)
+    assert "your spouse — the spouse who is a nonresident without the election — owes NIIT $0" in note
+    assert "the nonresident alien spouse will not be subject to tax under section 1411" in note
+    assert "(NIIT $570 on their own figures against $125,000)" in note
+    assert "do not settle what a continuing election does in a year the couple files separately" in note
+
+
+def test_p018_niit_default_the_nonresident_taxpayer_with_a_spouse_snapshot():
+    # The roles swapped (the taxpayer is the nonresident without the election): with the
+    # spouse's own amounts on file (none), the U.S. spouse owes no NIIT on their own figures,
+    # so the joint NIIT is $0 — not the combined figure the second election would give.
+    profile = _nra_profile(marital="married")
+    income = IncomeSnapshot(wages=240_000, federal_withholding=40_000, interest=30_000, spouse=IncomeSnapshot())
+    est = estimate_refund(_elected(profile, _ELECT_MFJ), 2023, income)
+    elected = niit(30_000, 270_000, _MFJ_, 2023).niit
+    assert elected > 0 and niit(0, 0, _MFS_, 2023).niit == 0
+    assert _niit_line(est) == 0
+    assert est.low == est.high == est.point
+    note = _niit_note(est)
+    assert "Your spouse — the U.S. citizen or resident spouse — owes $0" in note and "and you $0" in note
+    assert "the second election is NOT available this year" in note
+
+
+def test_p018_niit_default_either_keeps_the_elected_point_and_covers_both_readings():
+    # A recorded election in a dual-status year is 'either' (an earlier 6013(g) election may
+    # still be in effect): the point keeps the combined figure, the range covers the (iii)
+    # and the (iv) readings, and the note names the fact that settles it.
+    profile = _h1b_arrival_2025(spouse=Spouse(us_person=_ans(True)), filing_status=_ans(_MFJ_))
+    profile.residency_facts.section_6013_election = _ans(True)
+    income = IncomeSnapshot(wages=90_000, federal_withholding=15_000, interest=4_000, capital_gain_long=20_000,
+                            dividends=30_000,
+                            spouse=IncomeSnapshot(wages=150_000, federal_withholding=25_000, interest=10_000))
+    est = estimate_refund(profile, 2025, income)
+    elected = niit(64_000, 304_000, _MFJ_, 2025).niit
+    spouse_own = niit(10_000, 160_000, _MFS_, 2025).niit
+    assert _niit_line(est) == elected == 2_052
+    # (iii) reading: the citizen spouse's own $380 and $0 for you; (iv): $380 up to $1,102.
+    assert (est.low, est.high) == (est.point, est.point + elected - min(spouse_own, 380))
+    note = _niit_note(est)
+    assert "Which paragraph governs is not settled on these facts" in note
+    assert "The joint figure keeps the combined-income figure the second election gives ($2,052" in note
+    assert "prior_filings.return_forms" in note
+    assert "NIIT from $380 to $2,052" in note
+
+
+def test_p018_niit_default_prices_the_joint_candidate_of_a_nonresident_spouse_too():
+    # No recorded election: the joint candidate of a citizen with a nonresident spouse exists
+    # only under IRC 6013(g), so its NIIT is the default too — the spouse's own facts classify
+    # nonresident, so their separate return stays a 1040-NR's (no NIIT) either way.
+    income = IncomeSnapshot(wages=200_000, federal_withholding=40_000, interest=20_000,
+                            spouse=IncomeSnapshot(wages=40_000, dividends=15_000))
+    est = estimate_refund(_us_filer_married(_nra_spouse()), 2023, income)
+    default = niit(20_000, 220_000, _MFS_, 2023).niit
+    elected = niit(35_000, 275_000, _MFJ_, 2023).niit
+    assert (default, elected) == (760, 950)
+    mfj = next(c for c in est.comparison.candidates if c.status == _MFJ_)
+    assert est.filing_status_used == _MFJ_ and mfj.bottom_line == est.point
+    assert _niit_line(est) == default
+    assert est.low <= est.point + default - elected <= est.high     # the second election's figure bounds it
+    assert "the U.S. citizen or resident spouse — owe $760" in _niit_note(est)
+
+
+def test_p018_niit_default_a_dual_status_us_spouse_under_6013g_is_bounded():
+    # Pub 519's Bob-and-Sharon shape: you arrive in 2025 (dual-status) and your spouse stays a
+    # nonresident all year — IRC 6013(g). Only your resident-period income counts ((a)(2)(ii),
+    # a reading), which is not recorded, so your default runs from $0 to your full-year figure.
+    nra_spouse_2025 = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2024, 8, 20), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(0), 2024: _ans(130), 2025: _ans(330)}),
+    )
+    profile = _h1b_arrival_2025(filing_status=_ans(_MFJ_), spouse=nra_spouse_2025)
+    income = IncomeSnapshot(wages=150_000, federal_withholding=30_000, interest=10_000,
+                            spouse=IncomeSnapshot(dividends=40_000))
+    est = estimate_refund(profile, 2025, income)
+    yours = niit(10_000, 160_000, _MFS_, 2025).niit
+    elected = niit(50_000, 200_000, _MFJ_, 2025).niit
+    assert (yours, elected) == (380, 0)
+    assert _niit_line(est) == yours
+    assert (est.low, est.high) == (est.point, est.point + yours)
+    note = _niit_note(est)
+    assert "You are in a dual-status year" in note and "may be as low as $0" in note
+
+
+# JF5b part 3a, the adversarial verify's fixes (2026-09-27). Hypothetical data.
+
+def test_p018_no_niit_default_for_a_couple_with_no_nonresident_in_it():
+    # A continuing election recorded after both spouses became U.S. persons: Treas. Reg.
+    # 1.1411-2(a)(2)(iii)(A)/(iv)(A) reach only a couple with a nonresident (or arriving) spouse.
+    profile = _us_filer_married(Spouse(us_person=_ans(True)))
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    profile.household.filing_status = _ans("married_filing_jointly")
+    income = IncomeSnapshot(wages=200_000, federal_withholding=40_000, interest=20_000,
+                            spouse=IncomeSnapshot(wages=120_000, federal_withholding=20_000, interest=10_000))
+    est = estimate_refund(profile, 2023, income)
+    niit_line = next(ln.amount for ln in est.composition if ln.slot == "niit")
+    assert niit_line == niit(30_000, 350_000, "married_filing_jointly", 2023).niit   # the ordinary joint figure
+    assert est.low == est.high == est.point
+    note = next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
+    assert "neither default paragraph applies" in note and "$0" not in note
+
+
+def test_p018_the_niit_default_gate_reads_the_priced_amounts_not_raw_income():
+    # Each snapshot's interest is offset by its own capital loss (raw sum 0), but the loss is
+    # capped on the returns — the joint figure owes NIIT, so the default must be priced.
+    profile = _us_filer_married(_nra_spouse())
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    profile.household.filing_status = _ans("married_filing_jointly")
+    income = IncomeSnapshot(wages=300_000, federal_withholding=60_000, interest=2_000, capital_gain_short=-2_000,
+                            spouse=IncomeSnapshot(wages=10_000, federal_withholding=1_000, interest=2_000,
+                                                  capital_gain_short=-2_000))
+    est = estimate_refund(profile, 2023, income)
+    own = niit(2_000 - 1_500, 300_000 + 500, "married_filing_separately", 2023).niit     # the U.S. spouse alone
+    combined = niit(4_000 - 3_000, 310_000 + 1_000, "married_filing_jointly", 2023).niit
+    niit_line = next(ln.amount for ln in est.composition if ln.slot == "niit")
+    assert niit_line == own and own != combined
+    assert any(a.startswith("NIIT under the §6013(g)/(h) election") for a in est.assumptions)

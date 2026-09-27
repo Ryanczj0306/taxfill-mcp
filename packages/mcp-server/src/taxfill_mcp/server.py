@@ -923,6 +923,20 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     follows that spouse's OWN classification (a US-citizen spouse's Form 1040 keeps the standard
     deduction unless the couple itemizes: IRC 63(c)(6)(A) — both methods are priced and the better
     total is kept); a spouse whose residency is unknown is priced both ways in the range.
+    NIIT under the election (JF5b part 3a): the chapter-1 election does not reach NIIT (chapter 2A),
+    so with a spouse snapshot every election figure prices the Treas. Reg. 1.1411-2(a)(2)(iii)(A) /
+    (iv)(A) DEFAULT - each spouse's own snapshot under the MFS rules against $125,000, and under
+    IRC 6013(g) $0 for the spouse who is a nonresident without the election - against the second
+    (chapter 2A) election's combined-income figure ($250,000): under 6013(g) the joint point is the
+    default and the range adds the combined figure only when the U.S. spouse owes NIIT on their own
+    figures (otherwise the second election is not available that year, (iii)(B)(2)); under 6013(h)
+    the point is the lower of the two (no first-year condition; the arriving spouse's resident-period
+    income is not recorded, so the default is bounded); a kind the facts leave open keeps the
+    combined figure with both readings in the range; a separate return prices the nonresident spouse
+    at $0 with the resident-rules figure in the range for a definite IRC 6013(g) (an open kind keeps
+    resident rules at the point, $0 in the range); a couple with no nonresident or arriving spouse on
+    their own facts has no default at all. One combined snapshot cannot be split: the
+    combined figure stays and the NIIT note names income.spouse.
     The taxpayer's return for the prior year (profile prior_filings.return_forms[year - 1]: '1040',
     '1040-NR', 'dual_status', '1040_with_6013_election', 'not_filed') is the prior-year residency
     fact (JF5b): a prior-year resident who meets the SPT is priced as a resident from January 1
@@ -995,7 +1009,7 @@ def compare_scenarios(
     us_resident_election? (models \u00a76013(g)/(h) as the residency fact
     residency_facts.section_6013_election. OMITTED = follow the profile's recorded fact (a
     continuing election stays in effect); true = elect: both spouses are residents for the whole
-    year, so the figure takes RESIDENT rules - standard deduction, NIIT, no 871(i)(2)(A) deposit
+    year, so the figure takes RESIDENT rules - standard deduction, NIIT (the Treas. Reg. 1.1411-2(a)(2)(iii)/(iv) default unless the second election applies), no 871(i)(2)(A) deposit
     exclusion - on MFJ and on MFS alike, whatever the visa timeline says; false = NOT electing
     (declined, or revoking a continuing election) for that scenario - it pairs with MFS: false on
     MFJ for a couple with a nonresident in it is NOT a filing option (Pub 519 FAQ), priced as the

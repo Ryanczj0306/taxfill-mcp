@@ -1367,9 +1367,10 @@ pitfalls:
       a joint AND a separate status; the caveat carries the effect, statement,
       precondition, FICA text and W-7 last mile, the later-year reading of an
       MFS figure (with the continuing-(g) exception for (h)), and a NIIT note
-      saying the joint figure ASSUMES the second (chapter 2A) election, that the
-      unpriced default may be higher or lower, and when the second election is
-      available ((iii)(B)(2); pricing the default is JF5b.4). Each spouse's
+      that names the priced default and the second (chapter 2A) election's
+      combined-income figure (JF5b part 3a, below; with one combined snapshot
+      the joint figure still assumes the second election and the note names
+      income.spouse as what would price the default). Each spouse's
       separate MFS return runs on that spouse's OWN classification
       (estimate._spouse_own_classification); the pair prices both deduction
       methods under IRC 63(c)(6)(A) and keeps the better total; a spouse of
@@ -1486,4 +1487,52 @@ pitfalls:
       the full-year-resident figure would claim; the roadmap names the credit
       bars; intake's prior-year question says what the answer does to a
       dual-status estimate. Tests: test_p018_dual_status_* in test_estimate.py
-      and test_intake.py.
+      and test_intake.py. THE NIIT DEFAULT (JF5b part 3a, 2026-09-27): the
+      election figures priced NIIT on the couple's combined income against
+      $250,000 — the second, chapter-2A election's figure — and never the
+      default (a U.S.-citizen taxpayer with $92,000 of own MAGI and a
+      nonresident spouse with $200,000 of dividends: NIIT $1,596 on the joint
+      figure, where the default is $0 and the second election cannot be made
+      that year). The law, read 2026-09-27: Treas. Reg. 1.1411-2(a)(2)(iii)(A):
+      "the spouses will be treated as married filing separately for purposes
+      of section 1411" and "the nonresident alien spouse will not be subject to
+      tax under section 1411"; (iii)(B)(2): the second election must be made
+      "for the first taxable year beginning after December 31, 2013, in which
+      the United States taxpayer is subject to tax under section 1411", and
+      "The determination of whether the United States taxpayer is subject to
+      tax under section 1411 is made without regard to the effect of the
+      section 6013(g) election"; (iii)(B)(3): "such original election will have
+      no effect for that year and all future years"; (iv)(A): "each spouse will
+      be treated as married filing separately for the entire year for purposes
+      of section 1411", the arriving spouse "only with respect to income
+      received for the portion of the year for which he or she is treated as a
+      United States resident"; (iv)(B)(2): taxpayers "may elect to have their
+      section 6013(h) election apply for purposes of chapter 2A" — no
+      first-year condition, so the Form 8960 instructions' "The election must
+      be made for the first tax year in which the U.S. taxpayer is subject to
+      NIIT." rides the 6013(g) text only. With a spouse snapshot
+      (estimate._price_niit) each spouse's own NIIT is their own snapshot under
+      the married-filing-separately rules against $125,000; for 6013(g) the
+      joint POINT uses the default (the U.S. spouse's own NIIT, $0 for the
+      spouse who is a nonresident without the election; a U.S. spouse in a
+      dual-status year bounded from $0, (a)(2)(ii)), and the range adds the
+      combined figure only when that default is above $0 (the first-year fact
+      is not recorded — the note says so), otherwise the note says the second
+      election cannot be MADE this year and why (only a chapter-2A election
+      made earlier that continues would reach the combined figure — not
+      recorded); a couple with no nonresident or arriving spouse on their own
+      facts has no default at all (a U.S. person or a full-year resident never
+      takes the (iii)/(iv) role), and the gate reads the priced NIIT amounts; for 6013(h) the point is
+      min(combined, both full-year own figures) and the range adds
+      min(combined, the other spouse's own figure) — the arriving spouse's
+      resident-period income is not recorded; 'either' (and a 6013(g) couple
+      the facts do not tell apart) keeps the combined figure with every reading
+      in the range and names the fact that settles it; a separate return under
+      the election prices the spouse who is a nonresident without the election
+      at NIIT $0 ((iii)(A); the chapter-2A election is open only on "a joint
+      Federal income tax return"), the resident-rules figure in the range, for
+      a definite IRC 6013(g) (an open kind keeps resident rules at the point,
+      $0 in the range; the continuing-election case is unsettled). No spouse
+      snapshot: the combined
+      figure stays. Tests: test_p018_niit_default_* and the updated
+      test_p018_*niit* tests in test_estimate.py.

@@ -1571,7 +1571,8 @@ def _section_6013_caveat_in_effect(
             )
     text = (
         f"{lead} {effect} So every figure here uses RESIDENT rules for both spouses: the standard deduction, "
-        "the regular and preferential rates, NIIT evaluated, and no IRC 871(i)(2)(A) deposit-interest "
+        "the regular and preferential rates, NIIT evaluated (see the NIIT note for the Treas. Reg. "
+        "1.1411-2(a)(2)(iii)/(iv) default where a spouse is a nonresident or arriving), and no IRC 871(i)(2)(A) deposit-interest "
         "exclusion. Every figure is only valid when BOTH spouses' WORLDWIDE (foreign) income is in the inputs "
         "(other_income on each snapshot) — otherwise it overstates the election's advantage. "
         f"{residency.SECTION_6013_FICA} {statement} (file_and_pay's manifest flag section_6013_election adds "
@@ -1685,9 +1686,27 @@ _SECTION_6013_NIIT_I8960 = (
     "The Instructions for Form 8960: \"To make either election under section 6013(g) or section 6013(h), for "
     "NIIT purposes, use your combined items of income, gain, loss, and deduction from your joint return to "
     "figure your NII and MAGI; use the married filing jointly return applicable threshold amount ($250,000); "
-    "and check the appropriate checkbox near the top of Form 8960, Part I\", and \"The election must be made "
-    "for the first tax year in which the U.S. taxpayer is subject to NIIT.\""
+    "and check the appropriate checkbox near the top of Form 8960, Part I\""
 )
+# The same instructions put "The election must be made for the first tax year in which the U.S.
+# taxpayer is subject to NIIT." in a paragraph that covers BOTH elections, but the regulation
+# attaches the first-year rule to 6013(g) only ((iii)(B)(2)); (iv)(B)(2) sets none for 6013(h).
+# So the sentence rides the 6013(g) text and never a 6013(h) one (JF5b part 3a).
+_SECTION_6013_NIIT_I8960_FIRST_YEAR = (
+    "\"The election must be made for the first tax year in which the U.S. taxpayer is subject to NIIT.\""
+)
+
+
+def _section_6013_niit_i8960(kind: str) -> str:
+    """The Form 8960 instructions' how-to, with the first-year sentence only where it governs."""
+    if kind == "h":
+        return _SECTION_6013_NIIT_I8960 + "."
+    if kind == "g":
+        return f"{_SECTION_6013_NIIT_I8960}, and {_SECTION_6013_NIIT_I8960_FIRST_YEAR}"
+    return (
+        f"{_SECTION_6013_NIIT_I8960}, and, for IRC 6013(g), {_SECTION_6013_NIIT_I8960_FIRST_YEAR} (the "
+        "regulation sets no first-year condition for IRC 6013(h): (iv)(B)(2))."
+    )
 
 
 _SECTION_6013G_NIIT_TIMING = (
@@ -1702,14 +1721,296 @@ _SECTION_6013H_NIIT_TIMING = (
     "their section 6013(h) election apply for purposes of chapter 2A\", on \"an original or amended return for "
     "the taxable year for which the election is made\"."
 )
+# Treas. Reg. 1.1411-2(a)(2)(iii)(B)(2) and (B)(3), (a)(2)(ii) — eCFR, read 2026-09-27.
+_SECTION_6013G_FIRST_YEAR = (
+    "\"for the first taxable year beginning after December 31, 2013, in which the United States taxpayer is "
+    "subject to tax under section 1411\""
+)
+_SECTION_6013G_WITHOUT_REGARD = (
+    "\"The determination of whether the United States taxpayer is subject to tax under section 1411 is made "
+    "without regard to the effect of the section 6013(g) election\""
+)
+_SECTION_6013G_CONTINUES = (
+    "\"once made, the duration and termination of the section 6013(g) election for chapter 2A is governed by "
+    "the rules of section 6013(g)(2) through (g)(6)\""
+)
+_SECTION_6013G_NO_EFFECT = "\"such original election will have no effect for that year and all future years\""
+_SECTION_6013G_NRA_NOT_SUBJECT = "\"the nonresident alien spouse will not be subject to tax under section 1411\""
+_SECTION_6013G_JOINT_ONLY = (
+    "\"Married taxpayers who file a joint Federal income tax return pursuant to a section 6013(g) election\""
+)
+_SECTION_6013H_PORTION = (
+    "\"only with respect to income received for the portion of the year for which he or she is treated as a "
+    "United States resident\""
+)
+_DUAL_STATUS_NIIT_PORTION = (
+    "Treas. Reg. 1.1411-2(a)(2)(ii): \"The only income the individual must take into account for purposes of "
+    "section 1411 is the income he or she receives during the portion of the year for which he or she is "
+    "treated as a resident of the United States\""
+)
+
+# The composition label of a joint figure whose NIIT is the default (JF5b part 3a).
+_NIIT_DEFAULT_LABEL = (
+    "Plus: Net investment income tax (Form 8960 — the §6013 default: married filing separately for NIIT, each "
+    "spouse subject on their own figures against the $125,000 threshold, a nonresident spouse not subject)"
+)
 
 
-def _section_6013_niit_note(*, joint: bool, separate: bool, kind: str = "either") -> str:
-    """How NIIT was evaluated under the §6013(g)/(h) election, and what the default is.
+class _NiitOverride(NamedTuple):
+    """A figure's NIIT priced by the caller, not from its own snapshot (JF5b part 3a, P-018)."""
+
+    amount: int
+    label: str = _NIIT_DEFAULT_LABEL
+    citations: tuple[Citation, ...] = ()
+
+
+_NIIT_ZERO = _NiitOverride(0)
+
+# How "U.S." each spouse's no-election residency is (residency.section_6013_kind's inputs), to
+# tell the U.S. citizen or resident spouse from the nonresident one, and the arriving spouse.
+_US_RANK = {"us": 4, "resident": 3, None: 2, "dual_status_candidate": 1, "nonresident": 0}
+
+
+class _NiitReading(NamedTuple):
+    """One reading of the NIIT default under the election: Treas. Reg. 1.1411-2(a)(2)(iii)
+    ('g', IRC 6013(g)) or (iv) ('h', IRC 6013(h)). Sides: 0 you, 1 your spouse."""
+
+    paragraph: str             # 'g' or 'h'
+    us: int | None             # 'g': the U.S. citizen or resident spouse
+    arriving: tuple[int, ...]  # 'h': the spouse(s) who become residents during the year
+    low: int                   # the default's low end (a resident-period split not recorded)
+    high: int                  # the default's high end (each spouse's own full-year figure)
+    available: bool            # the second (chapter-2A) election can be reached this year
+    point: int                 # the NIIT this reading's joint figure uses
+    reach: tuple[int, ...]     # every NIIT amount this reading's joint figure can take
+
+
+def _niit_readings(
+    kind: str, classes: tuple[str | None, str | None], own: tuple[int, int], elected: int,
+) -> tuple[_NiitReading, ...]:
+    """The NIIT default's readings under the §6013(g)/(h) election (JF5b part 3a, P-018).
+
+    ``classes``: each spouse's residency WITHOUT the election ('us' for a declared U.S.
+    person — residency.section_6013_kind's inputs). ``own``: each spouse's own NIIT, their
+    own snapshot run under the married-filing-separately rules against the $125,000
+    threshold. ``elected``: the joint figure's combined-income NIIT (the second election's).
+
+    'g' — (iii)(A): the U.S. citizen or resident spouse's own NIIT, and $0 for the spouse
+    who is a nonresident without the election ("the nonresident alien spouse will not be
+    subject to tax under section 1411"); a U.S. spouse in a dual-status year counts only
+    resident-period income ((a)(2)(ii), a reading — (iii)(A) does not mention it), which is
+    not recorded, so their default runs from $0 to their full-year figure. The second
+    election is reachable only when the U.S. spouse is subject on their own figures
+    ((iii)(B)(2)); the reading's joint figure is the default. When the facts do not tell
+    which spouse is the U.S. one (the same rank), both assignments are readings.
+    'h' — (iv)(A): each spouse against $125,000, the arriving spouse "only with respect to
+    income received for the portion of the year for which he or she is treated as a United
+    States resident" — no period split is recorded, so the default runs from the other
+    spouse's own NIIT (arriving: $0) to both full-year figures. (iv)(B)(2) sets no first-year
+    condition, so the couple takes the lower: the joint figure is min(elected, high) —
+    ``high`` not under the true default on income that is all positive — and min(elected, low)
+    is reachable too. A side that is a U.S. person or a full-year resident on its own facts never
+    takes the nonresident or the arriving role; when no reading remains, there is no default.
+    'either' gives both paragraphs.
+    """
+    ranks = [_US_RANK.get(c, 2) for c in classes]
+    readings: list[_NiitReading] = []
+    # (iii)(A) reaches only "a United States citizen or resident who is married to a nonresident
+    # alien individual", and (iv)(A) only a spouse "who is a nonresident alien individual at the
+    # beginning of any taxable year" — so a side that is a U.S. person or a full-year resident on
+    # its own facts never takes the nonresident or the arriving role. No reading, no default.
+    both_nra = classes[0] == classes[1] == "nonresident"
+
+    def _can_be_nra(side: int) -> bool:
+        return classes[side] in ("nonresident", None) or (classes[side] == "dual_status_candidate" and kind == "either")
+
+    for paragraph in (["g"] if kind == "g" else ["h"] if kind == "h" else ["g", "h"]):
+        if paragraph == "g":
+            us_sides = [0, 1] if ranks[0] == ranks[1] else [0 if ranks[0] > ranks[1] else 1]
+            us_sides = [u for u in us_sides if _can_be_nra(1 - u) and (classes[u] != "nonresident" or both_nra)]
+            for u in us_sides:
+                high = own[u]
+                low = 0 if classes[u] == "dual_status_candidate" else high
+                available = high > 0
+                reach = {high, low} | ({elected} if available else set())
+                readings.append(_NiitReading("g", u, (), low, high, available, high, tuple(sorted(reach))))
+        else:
+            arriving = tuple(i for i in (0, 1) if classes[i] == "dual_status_candidate")
+            if not arriving:
+                arriving = tuple(i for i in (0, 1) if classes[i] is None)
+            if not arriving:
+                continue
+            high = own[0] + own[1]
+            low = sum(own[i] for i in (0, 1) if i not in arriving)
+            point = min(elected, high)
+            readings.append(_NiitReading(
+                "h", None, arriving, low, high, True, point, tuple(sorted({point, min(elected, low)})),
+            ))
+    return tuple(readings)
+
+
+class _NiitPriced(NamedTuple):
+    """The NIIT default as priced on the election figures (JF5b part 3a)."""
+
+    classes: tuple[str | None, str | None]
+    own: tuple[int, int]
+    elected: int | None                # the joint figure's combined-income NIIT (None: no joint figure)
+    readings: tuple[_NiitReading, ...]
+    point: int | None                  # the NIIT the joint POINT uses
+    reach: tuple[int, ...]             # every NIIT amount the joint RANGE prices (point included)
+    separate_zero: tuple[int, ...]     # sides whose separate-return NIIT the POINT prices at $0
+    separate_bracket: tuple[int, ...]  # sides whose $0 separate-return NIIT only the RANGE prices
+
+
+def _price_niit(
+    kind: str, classes: tuple[str | None, str | None], own: tuple[int, int], elected: int | None,
+    *, separate: bool,
+) -> _NiitPriced:
+    """Which NIIT each election figure's point and range use (JF5b part 3a, P-018).
+
+    One reading (a definite 'g' or 'h'): the joint point is that reading's figure. Several
+    ('either', or a 'g' whose U.S. spouse the facts do not name): the point keeps the
+    combined-income figure and the range covers every reading. ``separate``: the election
+    leaves separate returns open — the spouse who is a nonresident without the election
+    owes $0 there ((iii)(A); the chapter-2A election is open only on a joint return), at the
+    point for a definite 'g' and in the range otherwise.
+    """
+    readings = _niit_readings(kind, classes, own, elected or 0)
+    settled = len(readings) == 1
+    point = reach = None
+    if elected is not None:
+        point = readings[0].point if settled else elected
+        reach = tuple(sorted({point, *(x for r in readings for x in r.reach)}))
+    nonresident_sides = tuple(sorted({1 - r.us for r in readings if r.paragraph == "g"}))
+    separate_zero = nonresident_sides if separate and settled and readings[0].paragraph == "g" else ()
+    separate_bracket = nonresident_sides if separate and not settled else ()
+    return _NiitPriced(classes, own, elected, readings, point, reach or (), separate_zero, separate_bracket)
+
+
+def _who(side: int) -> str:
+    return ("you", "your spouse")[side]
+
+
+def _owe(side: int) -> str:
+    return ("owe", "owes")[side]
+
+
+def _their(side: int) -> str:
+    return ("your", "their")[side]
+
+
+def _poss(side: int) -> str:
+    return ("your", "your spouse's")[side]
+
+
+def _cap(text: str) -> str:
+    return text[:1].upper() + text[1:]
+
+
+def _niit_g_reading_text(r: _NiitReading, priced: _NiitPriced, *, full: bool) -> str:
+    """One IRC 6013(g) reading of the default, in words."""
+    u, n = r.us, 1 - r.us
+    own = priced.own
+    if full:
+        text = (
+            f"{_cap(_who(u))} — the U.S. citizen or resident spouse — {_owe(u)} ${own[u]:,} on {_their(u)} own net "
+            "investment income and modified AGI, figured under the married-filing-separately rules against the "
+            f"$125,000 threshold, and {_who(n)} $0 ({_SECTION_6013G_NRA_NOT_SUBJECT}): a default of ${r.high:,}"
+        )
+        if r.low != r.high:
+            text += (
+                f". {_cap(_who(u))} {'are' if u == 0 else 'is'} in a dual-status year, and only resident-period income "
+                f"counts ({_DUAL_STATUS_NIIT_PORTION} — a reading here, since (iii)(A) does not mention it) — a split "
+                f"this estimate does not record — so the default may be as low as ${r.low:,}; the point uses the "
+                f"full-year ${r.high:,} and the range ${r.low:,} too"
+            )
+        return text
+    text = (
+        f"with {_who(u)} as the U.S. citizen or resident spouse, {_their(u)} own ${own[u]:,} against $125,000 and "
+        f"$0 for {_who(n)}"
+        + (f" (as low as ${r.low:,} on resident-period income only, not recorded)" if r.low != r.high else "")
+    )
+    if priced.elected is not None:
+        text += (
+            f", the second election's ${priced.elected:,} reachable only if this is the first year the U.S. spouse "
+            "is subject to NIIT ((iii)(B)(2)) — or if one was made in that earlier first year and continues "
+            f"({_SECTION_6013G_CONTINUES})" if r.available
+            else ", the second election cannot be MADE this year (on their own figures the U.S. spouse owes no NIIT, "
+            "(iii)(B)(2)) unless one made in an earlier year continues (not recorded)"
+        )
+    return text
+
+
+def _niit_default_span(r: _NiitReading) -> str:
+    return f"a default of ${r.high:,}" if r.low == r.high else f"a default between ${r.low:,} and ${r.high:,}"
+
+
+def _niit_h_reading_text(r: _NiitReading, priced: _NiitPriced, *, full: bool) -> str:
+    """The IRC 6013(h) reading of the default, in words."""
+    own = priced.own
+    others = [i for i in (0, 1) if i not in r.arriving]
+    if not full:
+        who = "each of you" if len(r.arriving) == 2 else _who(r.arriving[0])
+        text = (
+            f"each spouse against $125,000 on their own figures, {who} on resident-period income only (not recorded "
+            f"separately): {_niit_default_span(r)}"
+        )
+        if priced.elected is not None:
+            text += (
+                f", or the second election's ${priced.elected:,}, which has no first-year condition for 6013(h) "
+                "((iv)(B)(2))"
+            )
+        return text
+    parts = [
+        f"{_who(i)} {_owe(i)} ${own[i]:,} on {_their(i)} own figures under the married-filing-separately rules"
+        for i in others
+    ]
+    if len(r.arriving) == 2:
+        parts.append(
+            "each of you becomes a U.S. resident during the year and is subject " + _SECTION_6013H_PORTION
+            + " — applied to each of you, a reading, since (iv)(A) speaks of one arriving spouse — a split this "
+            f"estimate does not record (one snapshot for the year), so between $0 and your full-year ${own[0]:,} and "
+            f"between $0 and your spouse's ${own[1]:,}"
+        )
+    else:
+        a = r.arriving[0]
+        parts.append(
+            f"{_who(a)}, the spouse who becomes a U.S. resident during the year, {'are' if a == 0 else 'is'} subject "
+            + _SECTION_6013H_PORTION + " — a split this estimate does not record (one snapshot for the year), so "
+            + (f"between $0 and {_their(a)} full-year ${own[a]:,}" if own[a] else
+               f"$0 (on {_their(a)} full-year figures too)")
+        )
+    return "; ".join(parts) + f": {_niit_default_span(r)}"
+
+
+def _niit_settle_advice(kind: str, classes: tuple[str | None, str | None]) -> str:
+    """What to record so a single reading of the NIIT default is left: for 'either', the
+    prior-year return (an earlier 6013(g) election still in effect decides the paragraph)
+    and any residency not on file; for a 6013(g) couple both classified nonresident, which
+    spouse is the U.S. citizen or resident."""
+    wanted = []
+    if None in classes or classes == ("nonresident", "nonresident"):
+        wanted.append("the visa timeline and days in the US (or the U.S.-person answer) of each spouse")
+    if kind != "g":
+        wanted.append(
+            "the prior-year return (prior_filings.return_forms — a '1040_with_6013_election' entry shows a 6013(g) "
+            "election made in an earlier year)"
+        )
+    return "Record " + " and ".join(wanted) + " to settle it."
+
+
+def _section_6013_niit_note(
+    *, joint: bool, separate: bool, kind: str = "either", priced: _NiitPriced | None = None,
+    no_default: bool = False, spouse_split: bool = False,
+) -> str:
+    """How NIIT was priced under the §6013(g)/(h) election, and what the default is (P-018).
 
     ``joint`` / ``separate``: which candidate figures carry the election (both when a
     recorded election leaves MFJ and MFS open). ``kind`` picks the 1.1411-2(a)(2)
     paragraph — (iii) for IRC 6013(g), (iv) for IRC 6013(h), both for 'either'.
+    ``priced`` (JF5b part 3a): the default as priced from each spouse's own snapshot
+    (:func:`_price_niit`); None when the income is one combined snapshot, so the default
+    cannot be split — the note then names ``income.spouse`` as what would price it.
     """
     regs = (
         _SECTION_6013G_NIIT if kind == "g"
@@ -1717,7 +2018,22 @@ def _section_6013_niit_note(*, joint: bool, separate: bool, kind: str = "either"
         else f"{_SECTION_6013G_NIIT} {_SECTION_6013H_NIIT}"
     )
     parts = ["NIIT under the §6013(g)/(h) election:"]
-    if joint:
+    if no_default:
+        return (
+            "NIIT under the §6013(g)/(h) election: on their own facts both spouses are U.S. citizens or residents "
+            "for this year, so neither default paragraph applies — Treas. Reg. 1.1411-2(a)(2)(iii)(A) reaches only "
+            "\"a United States citizen or resident who is married to a nonresident alien individual\" and (iv)(A) "
+            "only a spouse \"who is a nonresident alien individual at the beginning of any taxable year\" — so NIIT "
+            "follows the ordinary joint or separate rules on these figures."
+        )
+    if joint and priced is None and spouse_split:
+        parts.append(
+            "each spouse's own figures and the couple's combined figure were priced from the spouse snapshot, and "
+            "NIIT is $0 on every reading — the Treas. Reg. 1.1411-2(a)(2)(iii)/(iv) default and the second election "
+            "alike — so the election's NIIT treatment does not change this estimate."
+        )
+        return " ".join(parts)
+    if joint and priced is None:
         timing = {
             "g": _SECTION_6013G_NIIT_TIMING,
             "h": _SECTION_6013H_NIIT_TIMING,
@@ -1728,20 +2044,138 @@ def _section_6013_niit_note(*, joint: bool, separate: bool, kind: str = "either"
             "(chapter 2A) too. Without it the DEFAULT applies — the spouses are treated as married filing "
             "separately for NIIT, each against the separate threshold, and under IRC 6013(g) the nonresident "
             "spouse is not subject at all — which may be HIGHER or LOWER than the joint figure and is not priced "
-            f"here. When the second election is available: {timing} " + _SECTION_6013_NIIT_I8960
+            "here: the income is one combined snapshot, so each spouse's own net investment income and modified "
+            "AGI are unknown — enter the spouse's own amounts in income.spouse to price it. When the second "
+            f"election is available: {timing} " + _section_6013_niit_i8960(kind)
         )
-    if separate:
+    elif joint and priced is not None and priced.elected is not None:
+        parts.append(_niit_joint_priced_text(kind, priced))
+    if separate and (priced is None or not (priced.separate_zero or priced.separate_bracket)):
         parts.append(
             ("And each" if joint else "Each")
             + " separate return here evaluates the net investment income tax on that spouse's own income "
             "against the married-filing-separately threshold, as a resident's would — so if the spouse who is a "
             "nonresident without the election has investment income, their NIIT on a separate figure may be "
-            "overstated (the defaults below)."
+            "overstated (the defaults below)"
+            + ("; enter the spouse's own amounts in income.spouse to price it." if priced is None else ".")
         )
+    elif separate:
+        parts.append(_niit_separate_priced_text(priced, joint=joint))
     parts.append(
         "The chapter-1 election does not by itself reach NIIT (chapter 2A). " + regs
     )
     return " ".join(parts)
+
+
+def _niit_joint_priced_text(kind: str, priced: _NiitPriced) -> str:
+    """The joint figure's priced NIIT default, in words (JF5b part 3a)."""
+    elected = priced.elected
+    combined = (
+        f"the combined-income figure the second election gives (${elected:,}: the couple's combined net investment "
+        "income and modified AGI against the $250,000 joint threshold)"
+    )
+    lead = (
+        "the joint-return figure's NIIT is the DEFAULT unless the couple also makes the optional SECOND "
+        "(chapter 2A) election. "
+    )
+    readings = priced.readings
+    if len(readings) == 1 and readings[0].paragraph == "g":
+        r = readings[0]
+        u = r.us
+        text = (
+            lead + "Priced here for IRC 6013(g) (Treas. Reg. 1.1411-2(a)(2)(iii)(A): \"the spouses will be treated "
+            "as married filing separately for purposes of section 1411\"): " + _niit_g_reading_text(r, priced, full=True)
+            + ". "
+        )
+        if not r.available:
+            text += (
+                f"The joint figure uses it — NIIT $0 — and the second election is NOT available this year: "
+                f"(iii)(B)(2) requires it {_SECTION_6013G_FIRST_YEAR}, and {_SECTION_6013G_WITHOUT_REGARD} — "
+                f"reading \"subject to tax under section 1411\" as owing NIIT on {_their(u)} own figures, {_who(u)} "
+                f"{_owe(u)} none, so this is not that year, and an election made anyway fails ((iii)(B)(3): "
+                f"{_SECTION_6013G_NO_EFFECT}). So the second election cannot be MADE this year; {combined} applies "
+                f"only if a chapter-2A election made in an earlier year continues ({_SECTION_6013G_CONTINUES}) — a "
+                "fact this profile does not record, so it is not in the range. "
+            )
+        else:
+            text += (
+                f"The joint figure uses the default (${r.high:,}), which applies unless a chapter-2A election is made "
+                "this year or one made in an earlier year continues. The range also "
+                f"prices {combined}, reachable only if this is the first taxable year the U.S. spouse is subject to "
+                f"NIIT — (iii)(B)(2): {_SECTION_6013G_FIRST_YEAR}, and {_SECTION_6013G_WITHOUT_REGARD} — or if "
+                f"the second election was made in that year and continues ({_SECTION_6013G_CONTINUES}); which "
+                "earlier year was the first is a fact this profile does not record. "
+            )
+        return text + _section_6013_niit_i8960("g")
+    if len(readings) == 1:
+        r = readings[0]
+        return (
+            lead + "Priced here for IRC 6013(h) (Treas. Reg. 1.1411-2(a)(2)(iv)(A): \"each spouse will be treated "
+            "as married filing separately for the entire year for purposes of section 1411\", each against the "
+            "$125,000 threshold): " + _niit_h_reading_text(r, priced, full=True) + ". The second election has no "
+            "first-year condition for 6013(h) — (iv)(B)(2): taxpayers making the chapter-1 election \"may elect "
+            "to have their section 6013(h) election apply for purposes of chapter 2A\" — so the couple can take "
+            f"the lower: the joint figure uses ${r.point:,}, the lower of {combined} and the default's high end "
+            f"(${r.high:,}, on income that is all positive not below the true default), and the range also prices "
+            f"${min(elected, r.low):,} (with "
+            "the default's low end). " + _section_6013_niit_i8960("h")
+        )
+    lows, highs = min(priced.reach), max(priced.reach)
+    g_texts = [_niit_g_reading_text(r, priced, full=False) for r in readings if r.paragraph == "g"]
+    h_texts = [_niit_h_reading_text(r, priced, full=False) for r in readings if r.paragraph == "h"]
+    if kind == "g":
+        why = (
+            "On the facts on file both of you classify as nonresident without the election, so which of you is the "
+            "U.S. citizen or resident spouse (IRC 6013(g) needs one) is not settled, and it decides the figure. "
+            "Under IRC 6013(g) ((iii)(A)): " + "; or, ".join(g_texts) + ". "
+        )
+    else:
+        why = (
+            "Which paragraph governs is not settled on these facts — IRC 6013(g) when a spouse is a nonresident "
+            "alien at year end (or a 6013(g) election made in an earlier year is still in effect), IRC 6013(h) when "
+            "a spouse becomes a resident during the year — and the kind decides which figure is lawful. Under IRC "
+            "6013(g) ((iii)(A)): " + "; or, ".join(g_texts) + ". Under IRC 6013(h) ((iv)(A)): "
+            + "; ".join(h_texts) + ". "
+        )
+    return (
+        lead + why + f"The joint figure keeps {combined}; the range covers every reading (NIIT from ${lows:,} to "
+        f"${highs:,}). " + _niit_settle_advice(kind, priced.classes) + " " + _section_6013_niit_i8960(kind)
+    )
+
+
+def _niit_separate_priced_text(priced: _NiitPriced, *, joint: bool) -> str:
+    """The separate returns' NIIT under the election, in words (JF5b part 3a)."""
+    lead = "And on" if joint else "On"
+    own = priced.own
+    if priced.separate_zero:
+        n = priced.separate_zero[0]
+        u = 1 - n
+        text = (
+            f"{lead} each separate return here, {_who(n)} — the spouse who is a nonresident without the election — "
+            f"{_owe(n)} NIIT $0: (iii)(A) {_SECTION_6013G_NRA_NOT_SUBJECT}, and the chapter-2A election is open only "
+            f"to {_SECTION_6013G_JOINT_ONLY}."
+        )
+        if own[n] > 0:
+            text += (
+                f" The range also prices that return under resident rules (NIIT ${own[n]:,} on {_their(n)} own "
+                "figures against $125,000) — the reading in which a chapter-2A election made in an earlier joint "
+                "year carries over; the texts read do not settle what a continuing election does in a year the "
+                "couple files separately."
+            )
+        text += (
+            f" {_cap(_poss(u))} separate return owes NIIT ${own[u]:,} on either "
+            "reading."
+        )
+        return text
+    sides = priced.separate_bracket
+    return (
+        f"{lead} each separate return here the net investment income tax is evaluated on each spouse's own income "
+        "against the $125,000 threshold under resident rules; the range also prices "
+        + (_poss(sides[0]) if len(sides) == 1 else "each spouse's")
+        + " separate-return NIIT at $0 — the (iii)(A) default for the spouse who is a nonresident without the "
+        f"election ({_SECTION_6013G_NRA_NOT_SUBJECT}). Which spouse that is, and what a continuing chapter-2A "
+        "election does in a year the couple files separately, are not settled on these facts and the texts read."
+    )
 
 
 def _hoh_pair_note(
@@ -2004,6 +2438,8 @@ class _ElectionState(NamedTuple):
     nonresident_in_couple: bool  # the no-election facts put a (possible) nonresident in the couple
     no_joint: bool          # no joint return on these facts: a recorded decline, or precondition_unmet
     joint_blocked: bool     # a confirmed MFJ status that no_joint rules out — priced MFS, named first
+    taxpayer_6013: str | None = None  # section_6013_kind's inputs: 'us' for a declared U.S. person,
+    spouse_6013: str | None = None    # else the no-election classification (JF5b part 3a's NIIT default)
 
 
 def _election_state(profile: Profile, year: int) -> _ElectionState:
@@ -2073,6 +2509,8 @@ def _election_state(profile: Profile, year: int) -> _ElectionState:
         nonresident_in_couple=nonresident_in_couple,
         no_joint=no_joint,
         joint_blocked=no_joint and confirmed == _MFJ,
+        taxpayer_6013=taxpayer,
+        spouse_6013=spouse,
     )
 
 
@@ -2332,6 +2770,7 @@ def _bottom_line(
     married_for_eitc: bool = False,
     dual_status: bool = False,
     nonresident_period_deposit: bool = False,
+    niit_override: _NiitOverride | None = None,
 ):
     """Compute the signed bottom line for one filing status. Returns (value, composition, citations).
 
@@ -2396,6 +2835,14 @@ def _bottom_line(
     NIIT's investment income: it is not income at all, and Treas. Reg. 1.1411-2(a)(2)(ii)
     counts only "the income he or she receives during the portion of the year for which he
     or she is treated as a resident of the United States".
+
+    ``niit_override`` (JF5b part 3a, P-018): THIS figure's NIIT is not the one its own
+    snapshot gives — under the §6013(g)/(h) election the joint figure's NIIT is the
+    Treas. Reg. 1.1411-2(a)(2)(iii)(A)/(iv)(A) default (each spouse's own figures under
+    the married-filing-separately rules) unless the second, chapter-2A election is made,
+    and a separate return of the spouse who is a nonresident without the election owes
+    none under (iii)(A). The caller prices that amount from independent runs; NIIT adds to
+    the total tax and nothing after it, so the rest of the return is unchanged.
     """
     citations: list[Citation] = []
     comp: list[CompositionLine] = []
@@ -2827,7 +3274,12 @@ def _bottom_line(
     # (it is nonzero here only on a dual-status payee's return: a nonresident has no NIIT).
     investment_income = income.interest - deposit_excluded + income.dividends + capital
     # NRAs are generally not subject to NIIT (Form 8960 instructions).
-    if investment_income > 0 and not nonresident and pack_tax.niit is not None:
+    if niit_override is not None:
+        niit_amount = niit_override.amount
+        if niit_amount:
+            citations.extend(niit_override.citations)
+            comp.append(_line("niit", label=niit_override.label, amount=niit_amount))
+    elif investment_income > 0 and not nonresident and pack_tax.niit is not None:
         niit_res = niit(investment_income, agi, status, year, knowledge_dir=knowledge_dir)
         if niit_res.niit:
             niit_amount = niit_res.niit
@@ -3082,7 +3534,7 @@ def estimate_refund(
 
     def _mfs_pair(
         spouse_nra: bool, self_status: str = _MFS, *, lived_apart_hoh: bool = False, married_for_eitc: bool = False,
-        self_nra: bool | None = None, self_dual: bool | None = None,
+        self_nra: bool | None = None, self_dual: bool | None = None, niit_zero: tuple[int, ...] = (),
     ) -> tuple[BottomLineResult, str | None, set[str]]:
         """F10: a TRUE two-return MFS comparison — one MFS return per spouse, bottom lines
         summed. All dependents go to the primary taxpayer (disclosed as an assumption;
@@ -3108,6 +3560,9 @@ def estimate_refund(
         ``self_dual``: your return runs under the dual-status restrictions (None = your
         classification) — False prices the full-year-resident reading of a dual-status year.
         The spouse's return keeps its own deposit rule (``spouse_period_rule``) on every reading.
+        ``niit_zero`` (JF5b part 3a): the returns (0 yours, 1 the spouse's) priced with NIIT $0 —
+        the spouse who is a nonresident without the §6013 election, Treas. Reg.
+        1.1411-2(a)(2)(iii)(A).
         """
         self_income = income.model_copy(update={"spouse": None})
         self_nra = nonresident if self_nra is None else self_nra
@@ -3118,10 +3573,12 @@ def estimate_refund(
             rs = _bottom_line(
                 self_income, self_status, year, knowledge_dir, nonresident=self_nra, deps=deps, notes=local,
                 deduction_mode=self_mode, married_for_eitc=married_for_eitc, dual_status=self_dual,
+                niit_override=_NIIT_ZERO if 0 in niit_zero else None,
             )
             rp = _bottom_line(
                 income.spouse, _MFS, year, knowledge_dir, nonresident=spouse_nra, deps=[], notes=local,
                 deduction_mode=spouse_mode, nonresident_period_deposit=spouse_period_rule,
+                niit_override=_NIIT_ZERO if 1 in niit_zero else None,
             )
             return rs, rp, local
 
@@ -3160,16 +3617,21 @@ def estimate_refund(
 
     def _outcome(
         status: str, *, self_nra: bool | None = None, self_dual: bool | None = None, record: bool = True,
+        niit_override: _NiitOverride | None = None, niit_zero: tuple[int, ...] = (),
     ) -> BottomLineResult:
         """One candidate's figure. ``self_nra`` / ``self_dual`` override the rules YOUR return
         runs under (None = your classification); ``record`` False prices a bracketing reading
-        with no side effects on the disclosure keys or the deduction method shown (JF5b)."""
+        with no side effects on the disclosure keys or the deduction method shown (JF5b).
+        ``niit_override`` prices a JOINT figure's NIIT as given, ``niit_zero`` the named returns
+        of a two-return MFS pair at NIIT $0 (JF5b part 3a: the §6013 NIIT default)."""
         self_nra = nonresident if self_nra is None else self_nra
         self_dual = dual if self_dual is None else self_dual
         sink = notes if record else None
         if spouse_split:
             if status == _MFS:
-                result, method, local = _mfs_pair(spouse_nonresident, self_nra=self_nra, self_dual=self_dual)
+                result, method, local = _mfs_pair(
+                    spouse_nonresident, self_nra=self_nra, self_dual=self_dual, niit_zero=niit_zero,
+                )
                 if record:
                     notes.update(local)
                     mfs_method["method"] = method
@@ -3192,7 +3654,7 @@ def estimate_refund(
             # year has no joint return without the election, so self_dual is False here.)
             return _bottom_line(
                 income.combined_with_spouse(), status, year, knowledge_dir, nonresident=self_nra, deps=deps,
-                dual_status=self_dual,
+                dual_status=self_dual, niit_override=niit_override,
                 ss_withheld_groups=[
                     list(income.ss_withheld_by_employer),
                     list(income.spouse.ss_withheld_by_employer),
@@ -3210,7 +3672,58 @@ def estimate_refund(
             married_for_eitc=married_hoh and (hoh_spouse_nra or lived_apart_no_eitc), dual_status=self_dual,
         )
 
-    outcomes = {s: _outcome(s) for s in statuses}
+    # The ELECTION posture: every figure under the election, or the joint candidate of a
+    # couple whose spouse's own facts classify nonresident (that joint return, too,
+    # exists only under the election).
+    election_figures = election or (_MFJ in statuses and spouse_nonresident)
+    # JF5b part 3a (P-018): the chapter-1 election does not reach NIIT (chapter 2A), so an
+    # election figure's NIIT is the Treas. Reg. 1.1411-2(a)(2)(iii)(A) / (iv)(A) DEFAULT —
+    # each spouse's own snapshot under the married-filing-separately rules against $125,000,
+    # the spouse who is a nonresident without the election at $0 under (iii) — unless the
+    # couple makes the second election (combined income against $250,000), which (iii)(B)(2)
+    # opens only in the first year the U.S. spouse is subject on their own figures. Priced
+    # only with a spouse snapshot: one combined snapshot cannot be split (the note names
+    # income.spouse). _price_niit decides the point and the range per reading.
+    niit_priced: _NiitPriced | None = None
+    niit_citations: tuple[Citation, ...] = ()
+    # A default exists only for a couple that can hold a nonresident or an arriving spouse (no
+    # U.S.-person / full-year-resident pair), and the gate reads the PRICED amounts — a raw
+    # income sum misses a capital loss capped on the return.
+    possible_nra = any(c in ("nonresident", "dual_status_candidate", None)
+                       for c in (state.taxpayer_6013, state.spouse_6013))
+    if election_figures and spouse_split and possible_nra:
+        own_niit = tuple(
+            next((ln.amount for ln in _bottom_line(snap, _MFS, year, knowledge_dir).lines if ln.slot == "niit"), 0)
+            for snap in (income.model_copy(update={"spouse": None}), income.spouse)
+        )
+        elected_niit = (
+            next((ln.amount for ln in _outcome(_MFJ, record=False).lines if ln.slot == "niit"), 0)
+            if _MFJ in statuses else None
+        )
+        if any(own_niit) or elected_niit:
+            niit_priced = _price_niit(
+                state.kind, (state.taxpayer_6013, state.spouse_6013), own_niit, elected_niit,
+                separate=election and _MFS in statuses,
+            )
+            if not niit_priced.readings:
+                niit_priced = None
+        niit_params = load_knowledge("federal", year, base_dir=knowledge_dir).tax.niit
+        niit_citations = (niit_params.citation,) if niit_params is not None else ()
+
+    def _joint_niit(amount: int) -> _NiitOverride | None:
+        """The joint figure priced with ``amount`` of NIIT (None: its own combined-income NIIT)."""
+        if niit_priced is None or amount == niit_priced.elected:
+            return None
+        return _NiitOverride(amount, citations=niit_citations)
+
+    outcomes = {
+        s: _outcome(
+            s,
+            niit_override=_joint_niit(niit_priced.point) if s == _MFJ and niit_priced is not None else None,
+            niit_zero=niit_priced.separate_zero if s == _MFS and niit_priced is not None else (),
+        )
+        for s in statuses
+    }
     primary = statuses[0]
     point, composition, citations = outcomes[primary].bottom, outcomes[primary].lines, outcomes[primary].citations
     # A DEFINITE 6013(h) choice (read from a joint status, never a recorded answer that an
@@ -3222,6 +3735,25 @@ def estimate_refund(
         if not (election and state.kind == "h" and s == _MFS and s != primary)
     }
     values = [r.bottom for r in priced.values()]
+    # JF5b part 3a: every other NIIT amount a reading of the §6013 default can reach bounds the
+    # range — on the joint figure (the second election's combined-income figure, the default's
+    # ends) and on the separate returns (the spouse who is a nonresident without the election at
+    # $0, or at the resident-rules figure a continuing chapter-2A election might carry).
+    niit_alternatives: list[tuple[str, int]] = []  # (status, bottom line)
+    if niit_priced is not None:
+        if _MFJ in priced:
+            niit_alternatives.extend(
+                (_MFJ, _outcome(_MFJ, niit_override=_joint_niit(x), record=False).bottom)
+                for x in niit_priced.reach if x != niit_priced.point
+            )
+        if _MFS in priced and niit_priced.separate_zero:
+            niit_alternatives.append((_MFS, _outcome(_MFS, record=False).bottom))
+        if _MFS in priced:
+            niit_alternatives.extend(
+                (_MFS, _outcome(_MFS, niit_zero=(side,), record=False).bottom)
+                for side in niit_priced.separate_bracket
+            )
+        values.extend(v for _, v in niit_alternatives)
     # A spouse whose residency is not settled (a declared non-US person with no facts
     # that classify them, or a dual-status year) has the separate return computed under
     # RESIDENT rules — never the taxpayer's borrowed flag — and the range brackets the
@@ -3312,11 +3844,18 @@ def estimate_refund(
     # own, so confirming the status alone does not collapse it.
     residency_bracketed = any(v is not None for v in (
         resident_reading, spouse_flip_alternative, spouse_nra_alternative, hoh_alternative, dual_resident_reading))
+    # JF5b part 3a: so does a reading of the §6013 NIIT default (its own note names it).
+    niit_bracketed = any(v != outcomes[s].bottom for s, v in niit_alternatives)
     if status_assumed:
+        kept = (
+            "the residency reading named in these notes"
+            + (" and the NIIT default under the §6013 election (its note)" if niit_bracketed else "")
+            if residency_bracketed else "the NIIT default under the §6013 election (its note)"
+        )
         assumptions.append(
             f"Filing status not confirmed — showing the range across {', '.join(statuses)}. "
-            + ("Confirming your status narrows it; the residency reading named in these notes keeps a range of its own."
-               if residency_bracketed else "Confirm your status to get a single number.")
+            + (f"Confirming your status narrows it; {kept} may keep a range of its own."
+               if residency_bracketed or niit_bracketed else "Confirm your status to get a single number.")
         )
     elif state.joint_blocked:
         assumptions.append(
@@ -3442,11 +3981,8 @@ def estimate_refund(
     joint_snapshots = [income] + ([income.spouse] if spouse_split else [])
     joint_deposit = sum(snap.bank_deposit_interest for snap in joint_snapshots)
     joint_uncharacterized = sum(snap.interest - snap.bank_deposit_interest for snap in joint_snapshots)
-    # The ELECTION posture: every figure under the election, or the joint candidate of a
-    # couple whose spouse's own facts classify nonresident (that joint return, too,
-    # exists only under the election). Its figures tax the interest whatever its character.
-    election_figures = election or (_MFJ in statuses and spouse_nonresident)
-    # ... and every joint figure of a nonresident: the MFJ gate taxes the interest there
+    # (election_figures, above: the ELECTION posture.) Its figures tax the interest whatever
+    # its character — and so does every joint figure of a nonresident: the MFJ gate taxes the interest there
     # too, even on a contradictory profile the election was not read into.
     joint_posture = election_figures or (nonresident and _MFJ in statuses)
     recorded_election = election and not election_implied
@@ -4015,17 +4551,19 @@ def estimate_refund(
             + (f" {residency.SECTION_6013_FICA}" if election else "")
         )
         assumptions.append(nra_fica_msg)
-    if election_figures and any(
+    niit_on_a_figure = any(ln.slot == "niit" and ln.amount for r in outcomes.values() for ln in r.lines)
+    if election_figures and (niit_priced is not None or niit_on_a_figure or any(
         snap.interest + snap.dividends + snap.capital_gain_long + snap.capital_gain_short > 0
         for snap in joint_snapshots
-    ):
+    )):
         # P-018: the joint NIIT figure is a SECOND election's result (Treas. Reg.
         # 1.1411-2(a)(2)(iii)(B) for 6013(g), (iv)(B) for 6013(h)); the default is
         # married-filing-separately for NIIT. Every election figure carries it — the
         # recorded election's (joint AND separate), and the joint candidate of a couple
         # whose spouse's own facts classify nonresident.
         assumptions.append(_section_6013_niit_note(
-            joint=_MFJ in statuses, separate=election and _MFS in statuses, kind=state.kind,
+            joint=_MFJ in statuses, separate=election and _MFS in statuses, kind=state.kind, priced=niit_priced,
+            no_default=not possible_nra, spouse_split=spouse_split,
         ))
     assumptions.append(
         "Not modeled in this estimate: AMT, LLC (available via the calc tool), itemized-deduction "
