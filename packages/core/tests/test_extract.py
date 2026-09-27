@@ -1090,8 +1090,8 @@ def test_i5_kinds_are_all_registered_and_cited():
               "1098-E", "1042-S", "SSA-1099", "1099-R", "1099-B", "1099-SA", "5498-SA",
               "3922", "3921", "1095-A", "K-1"}
     assert len(pre_i5) == 18 and pre_i5 <= set(kinds)
-    assert set(kinds) == pre_i5 | set(I5_KINDS)
-    assert len(kinds) == 26
+    assert set(kinds) == pre_i5 | set(I5_KINDS) | {"IRA custodian statement"}   # + JR2c
+    assert len(kinds) == 27
 
 
 @pytest.mark.parametrize("kind", sorted(I5_KINDS))

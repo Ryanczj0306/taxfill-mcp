@@ -292,6 +292,15 @@ class FilingManifestItem(BaseModel):
     filing_jointly: bool = Field(default=False, description="MFJ — both spouses must sign.")
     direct_deposit: bool = Field(default=False, description="Refund requested by direct deposit.")
     attached_forms: list[str] = Field(default_factory=list, description="Forms attached to this return (e.g. ['8843', 'W-7']; ['8316'] on a Form 843 FICA claim). Most attachments are not separately signed; Form W-7 IS — the applicant signs its own Sign Here block — and so is Form 8316 (its own page-1 signature area).")
+    attached_statements: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Explanatory statements the instructions require with this return (JR2c), e.g. 'recharacterization "
+            "statement' (calc op ira_recharacterization's `statement`), 'returned contribution statement', "
+            "'line 4b statement' (taxfill_core.statements). The checklist names each one to attach; none is signed "
+            "separately."
+        ),
+    )
     section_6013_election: bool = Field(
         default=False,
         description=(
@@ -528,6 +537,8 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
             )
         else:
             sign.append(f"Form {attached} is attached to this return — do NOT sign it separately.")
+    for statement in item.attached_statements:
+        sign.append(f"The {statement} is attached to this return — do NOT sign it separately.")
 
     # Assemble.
     attach_docs = (
@@ -544,6 +555,11 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
     ]
     if enclosing_check:
         assemble.append("Put Form 1040-V and the check on top — do not attach the payment to the return.")
+    for statement in item.attached_statements:
+        assemble.append(
+            f"ATTACH THE {statement.upper()} after the forms — the instructions require the explanation with the "
+            f"return (for a recharacterization: \"attach a statement to your return explaining the "
+            f"recharacterization\", Instructions for Form 8606).")
 
     # §6013(g)/(h) election statement — the compliance item that makes the joint
     # election valid at all: a joint return with a nonresident-alien spouse mailed

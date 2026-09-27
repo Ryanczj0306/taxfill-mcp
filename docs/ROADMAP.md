@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,821 tests** — offline 5,441 + live-.gov 380; derived
+Done and on `main` (**5,827 tests** — offline 5,447 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -45,7 +45,7 @@ OTR re-issued it). Since Phase J JT0c (2026-09-27) both sit behind an expiring a
   states). The `calc` tool carries **35** deterministic ops (`packages/mcp-server/tests/test_skills_sync.py` pins the count; Phase J adds 8 → 40 without adding an MCP tool): the 25 of Phase H (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax) plus Phase I's ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election and foreign_asset_reporting.
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, and — since
-  2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance — and, since Phases I2/I3/I5, 1099-SA, 5498-SA, 3921, 3922, 1099-K, 1099-Q, W-2G, 1095-B, 1095-C, 5498, K-1 (1120-S) and K-1 (1041): **26 kinds** per `list_document_kinds()`) and the resumable
+  2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance — and, since Phases I2/I3/I5, 1099-SA, 5498-SA, 3921, 3922, 1099-K, 1099-Q, W-2G, 1095-B, 1095-C, 5498, K-1 (1120-S) and K-1 (1041), and since JR2c the IRA custodian statement: **27 kinds** per `list_document_kinds()`) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
 - **Federal form packs — priority set DONE.** **111 packs across 2019–2025**
@@ -1734,7 +1734,22 @@ not wait for any of this.
     - The return_408d4 alternative shows additional tax 0, citing 72(t)(2)(A)(ix).
     - then_convert embeds roth_conversion with the line-1 basis.
     - Op count +1; the pitfall has citing tests.
-- [ ] **JR2c — Custodian statements, the filing manifest, rule reach** (M; deps JR2b) [RC-09 manifest half + RC-16 + TY26-27]
+- [x] **JR2c — Custodian statements, the filing manifest, rule reach — DONE 2026-09-27** (M; deps JR2b) [RC-09 manifest half + RC-16 + TY26-27]
+  - *As built:*
+    - **DocSpec `IRA custodian statement`** (27 kinds). Its boxes are statement_type (trade_confirmation | transfer_confirmation | year_end_fmv), custodian, account_type, account_number, transaction date/type, amount, from/to accounts, contribution_year, fmv_date and fmv.
+      - The status note quotes the i1099r 2026 timing: the 5498 "with the IRS by May 31, 2027", the statement to each participant "by February 1, 2027".
+      - Validators: V16 an unknown type, V17 a year-end value not as of Dec 31, V18 a confirmation without an amount or ISO date.
+    - **`extract.dec31_total_value_from_statements(documents, tax_year)`** returns `Dec31Value`. It sums the traditional/SEP/SIMPLE Dec-31 values with each statement's provenance and lists the excluded ones (a Roth IRA, the wrong date, a confirmation, another kind) with the reason.
+    - **The confirmation round trip:** ira_recharacterization reconciles a `{form: 'confirmation', box: 'amount'}` reading against the amount transferred.
+    - **Manifest:** `FilingManifestItem.attached_statements`. file_and_pay's assemble list says ATTACH THE <STATEMENT>, and the sign list says it is not signed separately. ira_recharacterization's work names the entry.
+    - **Rule reach:**
+      - ira_contribution_eligibility's EXCESS line;
+      - the intake Roth IRA note;
+      - roth_conversion's docstring (a conversion is final, so recharacterize first);
+      - the 1099-R note (N vs R) and the 5498 box 4 finding;
+      - the codex and copilot skill files.
+    - **Eval (u):** the `HOH_RECHARACTERIZE_BEFORE_CONVERTING` fixture (a hypothetical head-of-household filer; reusable by JT4c). The excess is found, a conversion is refused, the move is recharacterized, then converted with only the $210 of earnings taxable, and the manifest names the statement.
+    - **Tests:** test_ira_custodian_statement.py (5).
   - **Custodian-statement DocSpec.** Form 5498 is due to the IRS "by May 31, 2027", after April 15. The Dec-31 FMV statement goes to participants "by February 1, 2027" (i1099r 2026). So a new `IRA custodian statement` DocSpec covers:
     - trade / transfer confirmations (date, amount, type, from/to account);
     - the year-end FMV statement, which feeds `dec31_total_value` for ira_pro_rata / roth_conversion with document provenance.

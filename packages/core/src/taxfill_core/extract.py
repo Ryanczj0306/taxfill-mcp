@@ -298,7 +298,8 @@ _SPECS: list[DocSpec] = [
             "2b\", and a Roth conversion's box 2a is likewise \"the total amount converted\" — so with "
             "nondeductible basis the taxable share comes from Form 8606 (calc op ira_pro_rata), and "
             "estimate_refund's retirement_income_taxable takes THAT figure, not box 2a. Box 7 code N or R "
-            "(a recharacterized IRA contribution) and code H (a designated Roth account rolled directly "
+            "(a recharacterized IRA contribution — calc op ira_recharacterization: N when the transfer is in the "
+            "contribution year, R when it is later) and code H (a designated Roth account rolled directly "
             "to a Roth IRA) carry -0- in box 2a; code G (a direct rollover) is -0- too, except where the "
             "payer enters the taxable amount in box 2a: a direct rollover from a pre-tax plan to a Roth IRA "
             "(calc op roth_conversion, source plan_to_roth_ira) or to a designated Roth account in the same "
@@ -1083,6 +1084,43 @@ _SPECS: list[DocSpec] = [
             _b("15b", "Box 15b — Code(s)", "code"),
         ],
     ),
+    # JR2c: the custodian's OWN statements — not an IRS form, so the layout cites the
+    # Instructions for Forms 1099-R and 5498 (2026), Specific Instructions for Form 5498 and
+    # "Statements to participants" (read 2026-09-27), which set when each arrives.
+    DocSpec(
+        kind="IRA custodian statement",
+        title="IRA custodian statement (a trade or transfer confirmation, or the year-end value statement)",
+        source_url="https://www.irs.gov/instructions/i1099r",
+        status_note=(
+            "Not an IRS form: the custodian's own confirmation or year-end statement. FORM 5498 COMES AFTER THE DUE "
+            "DATE: the custodian files it \"with the IRS by May 31, 2027\" (for 2026) and \"Contribution information "
+            "for all other types of IRAs must be provided by May 31, 2027\", while \"you must provide a statement to "
+            "each participant by February 1, 2027. The statement must show the value of the participant's account as "
+            "of December 31, 2026\" (Instructions for Forms 1099-R and 5498 (2026)). So the YEAR-END statement "
+            "(statement_type year_end_fmv) is the December 31 value Form 8606 line 6 needs before the 5498 exists: "
+            "pass every traditional/SEP/SIMPLE IRA's statement to taxfill_core.extract."
+            "dec31_total_value_from_statements, which sums them into dec31_total_value for calc ops ira_pro_rata and "
+            "roth_conversion and keeps each statement's provenance. A CONFIRMATION (trade_confirmation or "
+            "transfer_confirmation) dates a move: a recharacterization's transfer_date, and its amount as the "
+            "'confirmation' reading calc op ira_recharacterization reconciles, before the 1099-R arrives."
+        ),
+        boxes=[
+            _b("statement_type", "Statement type: trade_confirmation | transfer_confirmation | year_end_fmv", "code",
+               required=True),
+            _b("custodian", "Custodian (trustee) name", "text"),
+            _b("account_type", "Account type: traditional | roth | sep | simple", "code", required=True),
+            _b("account_number", "Account number (last digits)", "text"),
+            _b("transaction_date", "Trade or transfer date (YYYY-MM-DD)", "text"),
+            _b("transaction_type",
+               "Transaction: contribution | recharacterization | conversion | distribution | rollover | transfer", "code"),
+            _b("amount", "Amount of the transaction", "money"),
+            _b("from_account", "From account", "text"),
+            _b("to_account", "To account", "text"),
+            _b("contribution_year", "Tax year the contribution is for", "int"),
+            _b("fmv_date", "Value as of (YYYY-MM-DD)", "text"),
+            _b("fmv", "Account value (fair market value)", "money"),
+        ],
+    ),
     # ── The other two Schedule K-1s (ROADMAP I5: "only the 1065 layout ships, so
     # an S-corp or trust K-1 has no structured path").
     #
@@ -1476,7 +1514,8 @@ def _validate_5498(fields: dict[str, ExtractedField], tax_year: int | None):
             f"box 4 shows {box4} of RECHARACTERIZED contributions — \"Enter any amounts recharacterized plus earnings from "
             "one type of IRA to another.\" The first IRA's trustee reported the original contribution (box 1 or box "
             "10) and this trustee reports it again here, so count the contribution ONCE, as the type it was "
-            "recharacterized to — never the two figures added together."
+            "recharacterized to — never the two figures added together. calc op ira_recharacterization lists the "
+            "box 4 figure it expects and reconciles it to the dollar."
         ),
     )], None
 
@@ -1486,7 +1525,105 @@ def _box7_rules() -> dict:
     return _rules(None)
 
 
-_VALIDATORS = {"1099-R": _validate_1099r, "5498": _validate_5498}
+_CUSTODIAN_TYPES = ("trade_confirmation", "transfer_confirmation", "year_end_fmv")
+_CUSTODIAN_ACCOUNTS = ("traditional", "roth", "sep", "simple")
+
+
+def _code_of(fields: dict[str, ExtractedField], key: str) -> str:
+    f = fields.get(key)
+    return str(f.value).strip().lower() if f is not None and f.status == "ok" and f.value is not None else ""
+
+
+def _iso_or_none(fields: dict[str, ExtractedField], key: str):
+    from datetime import date  # noqa: PLC0415
+
+    f = fields.get(key)
+    if f is None or f.status != "ok" or f.value is None:
+        return None
+    try:
+        return date.fromisoformat(str(f.value).strip())
+    except ValueError:
+        return "invalid"
+
+
+def _validate_custodian_statement(fields: dict[str, ExtractedField], tax_year: int | None):
+    """IRA custodian statements (JR2c): the statement type decides which fields must be read."""
+    found: list[Finding] = []
+    cite = "Instructions for Forms 1099-R and 5498 (2026), Statements to participants"
+
+    def add(severity, rule_id, boxes, message):
+        found.append(Finding(severity=severity, rule_id=rule_id, boxes=boxes, message=message, citation=cite))
+
+    kind = _code_of(fields, "statement_type")
+    acct = _code_of(fields, "account_type")
+    if kind and kind not in _CUSTODIAN_TYPES:
+        add("error", "V16", ["statement_type"], f"statement_type {kind!r} is not one of {list(_CUSTODIAN_TYPES)}.")
+    if acct and acct not in _CUSTODIAN_ACCOUNTS:
+        add("error", "V16", ["account_type"], f"account_type {acct!r} is not one of {list(_CUSTODIAN_ACCOUNTS)}.")
+    if kind == "year_end_fmv":
+        as_of = _iso_or_none(fields, "fmv_date")
+        if _money_of(fields, "fmv") is None or as_of is None:
+            add("error", "V17", ["fmv", "fmv_date"], "a year-end statement needs the account value and its as-of date.")
+        elif as_of == "invalid" or (as_of.month, as_of.day) != (12, 31):
+            add("warning", "V17", ["fmv_date"], f"the value is as of {fields['fmv_date'].value}, not December 31: Form "
+                "8606 line 6 is the value \"as of December 31\" — ask the custodian for the year-end figure.")
+    elif kind in ("trade_confirmation", "transfer_confirmation"):
+        when = _iso_or_none(fields, "transaction_date")
+        if _money_of(fields, "amount") is None or when in (None, "invalid"):
+            add("error", "V18", ["amount", "transaction_date"],
+                "a confirmation needs the amount and an ISO transaction date (YYYY-MM-DD).")
+    return found, None
+
+
+_VALIDATORS = {"1099-R": _validate_1099r, "5498": _validate_5498,
+               "IRA custodian statement": _validate_custodian_statement}
+
+
+class Dec31Value(BaseModel):
+    """``dec31_total_value`` for ira_pro_rata / roth_conversion, summed from the year-end statements (JR2c)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    tax_year: int
+    dec31_total_value: Decimal = Field(description="Form 8606 line 6 before outstanding rollovers and recharacterizations.")
+    accounts: list[dict[str, Any]] = Field(description="Each counted statement: account type, value and provenance.")
+    excluded: list[dict[str, Any]] = Field(description="Each statement left out, with the reason.")
+    note: str
+
+
+def dec31_total_value_from_statements(documents: list[ExtractedDocument], tax_year: int) -> Dec31Value:
+    """Sum the December 31 values of every traditional, SEP and SIMPLE IRA from the custodians' year-end
+    statements, keeping each one's document provenance (JR2c). A Roth IRA, a value not as of December 31 of
+    ``tax_year``, a confirmation and any other document kind are excluded, each with its reason."""
+    from datetime import date  # noqa: PLC0415
+
+    total = Decimal(0)
+    accounts: list[dict[str, Any]] = []
+    excluded: list[dict[str, Any]] = []
+    for doc in documents:
+        f = {x.key: x for x in doc.fields}
+        where = {"file": doc.file, "page": doc.page}
+        if doc.kind != "IRA custodian statement":
+            excluded.append({**where, "reason": f"a {doc.kind}, not an IRA custodian statement"})
+            continue
+        if _code_of(f, "statement_type") != "year_end_fmv":
+            excluded.append({**where, "reason": "a confirmation, not a year-end value"})
+            continue
+        acct, fmv, as_of = _code_of(f, "account_type"), _money_of(f, "fmv"), _iso_or_none(f, "fmv_date")
+        if acct not in ("traditional", "sep", "simple"):
+            excluded.append({**where, "reason": f"a {acct} IRA: IRC 408(d)(2) pools traditional, SEP and SIMPLE IRAs only"})
+            continue
+        if fmv is None or as_of != date(tax_year, 12, 31):
+            excluded.append({**where, "reason": f"no value as of December 31, {tax_year}"})
+            continue
+        total += fmv
+        accounts.append({**where, "account_type": acct, "custodian": f["custodian"].value, "fmv": fmv,
+                         "provenance": f["fmv"].provenance.model_dump()})
+    note = (f"Form 8606 line 6 for {tax_year}: the December 31 value of every traditional, SEP and SIMPLE IRA "
+            f"({len(accounts)} counted). Add any outstanding rollover, and adjust for a recharacterization made after "
+            f"December 31 (calc op ira_recharacterization, line_6_adjustment). The custodian's Form 5498 box 5 (filed "
+            f"by May 31) should show the same values.")
+    return Dec31Value(tax_year=tax_year, dec31_total_value=total, accounts=accounts, excluded=excluded, note=note)
 
 
 def extract_document(

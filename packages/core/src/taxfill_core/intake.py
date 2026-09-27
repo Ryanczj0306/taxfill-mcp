@@ -1682,7 +1682,9 @@ def _retirement_questions(profile: Profile, out: list[IntakeQuestion], notes: li
             f"calc op ira_contribution_eligibility (MAGI phase-out, tested at YEAR-END filing status) — an "
             f"ineligible contribution accrues a 6%-per-year excise tax until corrected, and the same MAGI can "
             f"be excess under one filing status and compliant under another (the joint phase-out range is far "
-            f"higher than the single or married-filing-separately one)."
+            f"higher than the single or married-filing-separately one). The fix, by the return's due date "
+            f"including extensions, is a withdrawal with its net income (IRC 408(d)(4)) or a recharacterization to a "
+            f"traditional IRA (calc op ira_recharacterization)."
         )
 
 

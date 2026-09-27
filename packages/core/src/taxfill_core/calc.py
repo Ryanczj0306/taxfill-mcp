@@ -4591,7 +4591,8 @@ _RECHAR_DIRECTIONS = {"roth_to_traditional": ("Roth", "traditional"), "tradition
 _RECHAR_SOURCES = ("regular", "conversion", "rollover", "sep", "simple")
 _RECHAR_STATUS_WORDS = {"timely": "timely", "late_301_9100_2": "late, inside the section 301.9100-2 window",
                         "too_late": "too late"}
-_RECHAR_READING_BOXES = {("1099-R", "1"), ("1099-R", "2a"), ("5498", "1"), ("5498", "4"), ("5498", "10")}
+_RECHAR_READING_BOXES = {("1099-R", "1"), ("1099-R", "2a"), ("5498", "1"), ("5498", "4"), ("5498", "10"),
+                         ("CONFIRMATION", "amount")}
 
 
 class IraRecharacterizationResult(BaseModel):
@@ -4930,6 +4931,8 @@ def ira_recharacterization(
          "why": "a recharacterization is not a taxable distribution"},
         {"form": "5498", "box": "4", "year": t_year, "from": "the SECOND IRA's trustee", "amount": to_move,
          "why": "recharacterized contributions received, plus earnings"},
+        {"form": "CONFIRMATION", "box": "amount", "year": t_year, "from": "the custodian's transfer confirmation",
+         "amount": to_move, "why": "the IRA custodian statement (JR2c) that dates the transfer"},
     ]
     reconciliation = []
     for r in readings or ():
@@ -4954,6 +4957,9 @@ def ira_recharacterization(
         f"{_RECHAR_A6A[2]}: {_money(amt)} plus its net income ({_money(to_move)} in all, per the trustee's computation).",
         f"{_RECHAR_A6A[3]}: [FIRST IRA TRUSTEE], [SECOND IRA TRUSTEE].",
     ]
+    if statement is not None:
+        work.append("Filing: add 'recharacterization statement' to the return's attached_statements (file_and_pay) so "
+                    "the checklist names it.")
 
     # Alternatives.
     returned = ira_net_income_attributable(
@@ -5310,7 +5316,9 @@ def ira_contribution_eligibility(
             f"EXCESS: contributed ${contributed_i:,} -> ${excess:,} over the allowed amount. {charge} Fixable "
             f"WITHOUT the excise by withdrawing the contribution plus its net income by the due date of your "
             f"{year} return INCLUDING extensions — {_excess_correction_deadline(pack, year)}. {_IRC_408D4A}; "
-            f"{_IRC_4973_NOT_CONTRIBUTED[ira_type]}. And {_I5329_SECTION_9100}. Or recharacterize it."
+            f"{_IRC_4973_NOT_CONTRIBUTED[ira_type]}. And {_I5329_SECTION_9100}. Or recharacterize it by the same "
+            f"deadline: calc op ira_recharacterization (the contribution and its net income moved trustee to "
+            f"trustee to the other IRA type)."
         )
     work_lines.append(
         f"Eligibility is tested at YEAR END: {ira.eligibility_tested_at} A contribution that is excess "
@@ -6242,6 +6250,10 @@ def roth_conversion(
       converted. It is lost Roth space, and Pub 590-A's Table 1-5 says the 10%
       additional tax applies to the taxable part "including an amount equal to
       the tax withheld" that isn't rolled over. Pay the tax from OUTSIDE funds.
+
+    A conversion is FINAL: IRC 408A(d)(6)(B)(iii) bars recharacterizing it (calc op ira_recharacterization
+    refuses one). A Roth CONTRIBUTION over the MAGI limit is therefore recharacterized to a traditional IRA
+    first, and only then converted (ira_recharacterization's ``then_convert``).
 
     Federal only, and the incremental tax is computed on the RATE SCHEDULE:
     below $100,000 of taxable income the filed Form 1040 line 16 comes from the

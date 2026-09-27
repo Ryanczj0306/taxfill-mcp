@@ -5,7 +5,7 @@ behaviours the dev plan calls out per scenario letter. These are integration
 EVALS, not unit tests: they prove the M1-M4 stack does the right thing on
 realistic cases, including the honest-estimate and no-invented-numbers rules.
 
-All 23 scenarios (a–s, including the provisional-guard family i–i5) run now: the federal cases (a, d, e, g, h, i, j) on
+All 24 scenarios (a–s and u, including the provisional-guard family i–i5) run now: the federal cases (a, d, e, g, h, i, j) on
 the M1-M4 stack; the joint / separate / NRA-spouse cases (k, l, m) on the
 filing-status-aware engine (MFJ math, the both-ways comparison, and the §6013(g)/(h)
 election surface); the state cases (b, c, f) on M5 (CA packs + state_scope);
@@ -24,7 +24,8 @@ a nonresident partner); and (s) six Phase I planning decisions on independent de
 fixtures — the 401(k) rollover destination under IRC 408(d)(2), the Roth
 conversion and its section 1411 crossing, the HSA payroll saving, the ESPP basis
 correction, the capital-loss carryover, and the treaty disclosure — pinned
-against the ops I1-I4 shipped, so those gaps cannot reopen quietly.
+against the ops I1-I4 shipped, so those gaps cannot reopen quietly; and (u) a what-if on a
+hypothetical head-of-household filer: recharacterize an excess Roth contribution BEFORE converting (JR2c).
 Multi-form fill+verify on real PDFs is covered by
 packages/core/tests/test_filing_integration.py (the 1040 and 1040-NR stacks).
 """
@@ -1116,3 +1117,51 @@ def test_eval_s_phase_i_planning_decisions():
     assert undecided.must_ask, "a foreign account must be ASKED about, never assumed away"
     assert undecided.fbar.threshold_any_time == 10_000
     assert undecided.form_8938.threshold_year_end == 50_000
+
+
+# ── (u) what-if: recharacterize BEFORE converting (JR2c, P-021) ────────────────
+# A reusable fixture (JT4c's t4 rehearsal takes it): a hypothetical head-of-household
+# filer whose 2025 MAGI is above the Roth range put $7,000 into a Roth IRA in March.
+# The order is the whole lesson — a conversion can never be recharacterized (IRC
+# 408A(d)(6)(B)(iii)), so the Roth contribution is moved to a traditional IRA first,
+# and only that traditional contribution is then converted.
+HOH_RECHARACTERIZE_BEFORE_CONVERTING = {
+    "year": 2025, "filing_status": "head_of_household", "magi": 182_000, "covered_by_employer_plan": True,
+    "roth_contribution": 7_000, "contribution_date": "2025-03-10",
+    "transfer_date": "2025-11-03", "value_at_transfer": 7_210,
+    "conversion_date": "2025-11-12", "taxable_income_before": 150_000, "other_traditional_ira_dec31": 0,
+}
+
+
+def test_eval_u_recharacterize_before_converting():
+    from taxfill_core.calc import ira_contribution_eligibility, ira_recharacterization
+
+    f = HOH_RECHARACTERIZE_BEFORE_CONVERTING
+    # 1. The contribution is an excess: above the $150,000-$165,000 head-of-household range.
+    elig = ira_contribution_eligibility(magi=f["magi"], filing_status=f["filing_status"], year=f["year"],
+                                        ira_type="roth", contributed=f["roth_contribution"])
+    assert elig.excess == 7_000 and elig.excise_per_year == 420 and "ira_recharacterization" in elig.work
+    # 2. Converting first is not a fix: a conversion is refused outright.
+    common = dict(direction="roth_to_traditional", amount=f["roth_contribution"], contribution_year=f["year"],
+                  contribution_date=f["contribution_date"], transfer_date=f["transfer_date"],
+                  contributions_during=f["roth_contribution"], closing_fmv=f["value_at_transfer"], whole_account=True,
+                  magi=f["magi"], filing_status=f["filing_status"],
+                  covered_by_employer_plan=f["covered_by_employer_plan"])
+    with pytest.raises(ValueError, match="408A\\(d\\)\\(6\\)\\(B\\)\\(iii\\)"):
+        ira_recharacterization(**{**common, "source_kind": "conversion"})
+    # 3. Recharacterize, then convert: the move is code N on the 2025 return, the whole $7,000 is
+    #    nondeductible basis (covered, and far above the deduction range), and the conversion is taxed only
+    #    on the $210 of earnings.
+    r = ira_recharacterization(**common, then_convert={
+        "date": f["conversion_date"], "amount": f["value_at_transfer"],
+        "taxable_income_before": f["taxable_income_before"], "magi_before": f["magi"],
+        "dec31_total_value": f["other_traditional_ira_dec31"]})
+    assert r.deadline_status == "timely" and (r.form_1099r_code, r.line_4a_reporting) == ("N", "line_4a")
+    assert r.deduction["deductible"] == 0 and r.form_8606["line_1_add"] == Decimal("7000.00")
+    assert r.alternatives["leave_in_place"]["excise_per_year"] == 420
+    assert r.then_convert.taxable_amount == 210 and r.then_convert.nontaxable_amount == 7_000
+    # 4. The return says what to attach.
+    ret = file_and_pay([FilingManifestItem(form="1040", tax_year=f["year"], bottom_line=0,
+                                           attached_statements=["recharacterization statement"])]).returns[0]
+    assert any("RECHARACTERIZATION STATEMENT" in a for a in ret.assemble)
+    assert r.statement and "to a traditional IRA in a trustee-to-trustee transfer" in r.statement

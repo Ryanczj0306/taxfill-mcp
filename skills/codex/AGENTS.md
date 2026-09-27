@@ -43,6 +43,8 @@ Retirement-account planning has two ops whose whole job is a trap: `calc("ira_pr
 reproduces Form 8606 Part I / IRC 408(d)(2) — all traditional + SEP + SIMPLE IRAs are ONE
 contract, and the ratio's DENOMINATOR (line 9) adds the converted amount back, so a
 traditional IRA holding pretax money makes every backdoor Roth mostly taxable. And
+`calc("ira_recharacterization", …)` fixes a Roth contribution over the MAGI limit (move it with its net
+income to a traditional IRA by the due date including extensions; conversions cannot be recharacterized).
 `calc("roth_conversion", …)` makes you name the path: a DIRECT 401(k)/403(b) → Roth IRA
 rollover (Notice 2008-30) is fully taxable but pro-rata NEVER applies to it, which is the only
 way to clear an old plan without poisoning future backdoor conversions; a traditional-IRA
