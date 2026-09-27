@@ -2,25 +2,59 @@
 #
 # ⚠️ PROVISIONAL — PLANNING / PROJECTION ONLY. NOT FOR FILING A RETURN. ⚠️
 #
-# Authored 2026-08-04, mid-year, to make in-year budgeting possible (ROADMAP
-# Phase H5). At that date the IRS has published the 2026 *inflation-adjusted
-# amounts* (Rev. Proc. 2025-32, released 2025) and the 2026 employer figures
-# (Pub 15, Circular E), but NOT the 2026 Form 1040 / instructions / Tax Table
-# booklet — those publish near the end of the year. So:
+# Authored 2026-08-04 (ROADMAP Phase H5) for in-year budgeting. This header was
+# rewritten 2026-09-27 (Phase J JT0c) after re-reading every source it names.
+# Every number below is cited to an irs.gov primary source that exists today. A
+# block whose authority does not exist yet is ABSENT, not guessed: calc raises its
+# prescriptive "no block for this year" error rather than return a fabricated figure.
 #
-#   * Every number below is cited to an irs.gov primary source that EXISTS today.
-#   * The blocks whose authority does not exist yet are simply ABSENT, not
-#     guessed — calc raises its prescriptive "no block for this year" error
-#     instead of returning a fabricated figure. Absent so far: ptc,
-#     taxable_social_security, student_loan_interest, education_credits,
-#     dependent_care, and every M3 logistics block (filing_thresholds, credits,
-#     payment_options, mailing_addresses, deadlines).
-#   * The one carried-forward STRUCTURE (not number) is tax_table.row_bands —
-#     see the citation note on that block.
+# WHAT THE PACK RESTS ON (as of 2026-09-27)
+#   Final and in force:
+#     * Rev. Proc. 2025-32, the 2026 inflation adjustments (rate_schedules,
+#       standard_deduction, tax_computation_worksheet, capital_gains_brackets).
+#     * Notice 2025-67 (IRB 2025-49), the 2026 retirement-plan and IRA limits
+#       (contribution_limits).
+#     * Pub 15 (2026), Circular E (the wage base, supplemental withholding).
+#     * Form 1040-ES (2026), Cat. No. 11340T, Created 2/12/26
+#       (irs.gov/pub/irs-prior/f1040es--2026.pdf). It is the pass-2 source below.
+#       Its own final revision makes its form pack filing-grade
+#       (filing_grade_basis: own_final_revision); the Q4 voucher is due Jan. 15, 2027.
+#     * Form W-2 (2026), Created 1/7/26, and the 2026 General Instructions for
+#       Forms W-2 and W-3 (irs-prior/fw2--2026.pdf, irs-prior/iw2w3--2026.pdf).
+#   Drafts only (irs.gov/pub/irs-dft/, projection-grade until each final posts;
+#   footer "Created" dates):
+#     * Form 1040 (8/19/26); Schedules 1 (4/24/26), 1-A (6/16/26), 2 (4/27/26),
+#       3 (4/27/26), 3-A (6/24/26), A (5/12/26), B (4/7/26), D (4/1/26),
+#       SE (4/27/26); Forms 8949 (4/1/26), 8959 (5/27/26), 8889 (4/30/26),
+#       8606 (4/21/26).
+#     * Pub 1040 (2026), Tax and Earned Income Credit Tables, draft dated Aug 28,
+#       2026 (posted 09/16/2026).
+#   Not posted in any form (irs-prior/<form>--2026.pdf answers 404 and the drafts
+#   page carries no 2026 edition):
+#     * the 2026 Instructions for Form 1040 (i1040gi; the draft on the page is the
+#       2025 edition) and Pub 501 (2026) (likewise the 2025 edition);
+#     * the Schedule 1-A and Schedule 3-A instructions.
+#   scripts/check_finals.py watches irs-prior for the finals (.github/workflows/finals.yml)
+#   and opens the `ty2026-finals: re-pin now` issue when one posts.
 #
-# TWO-PASS VERIFICATION (DEV_PLAN section 7) — pass 2 DONE 2026-08-04 against an
-# independent, already-published 2026 IRS form: Form 1040-ES (2026) (Cat. No.
-# 11340T, dated Feb 12, 2026), https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf
+# WHAT IS OUTSTANDING before this pack can back a filed return
+#   1. The absent blocks (provisional.blocks_deliberately_absent): obbba_schedule_1a,
+#      ptc, taxable_social_security, student_loan_interest, education_credits,
+#      dependent_care, filing_thresholds, credits, payment_options, mailing_addresses
+#      and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
+#   2. tax_table.row_bands still rests on a carried-forward STRUCTURE
+#      (provisional.still_assumed). The draft Pub 1040 (2026) now prints the 2026 Tax
+#      Table, so its rows are a projection-grade check; the final booklet decides.
+#   3. Every form line a 2026 return uses is read off the FINAL 2026 face (form_lines
+#      below). The drafts renumber: the draft Form 1040 puts Schedule 1-A line 44 on
+#      13a and QBI on 13b, and adds 12f, 24a-24c and 32a-32c.
+#   4. The finals of Form 1040 and its schedules, i1040gi, Pub 501 and Pub 1040. By
+#      the 2025 precedent the form finals and Pub 1040 post by mid-January 2027 and
+#      i1040gi around late February (an inference, not a guarantee).
+#   Phase J JT6 then re-pins the draft packs to the finals and lifts the marker.
+#
+# TWO-PASS VERIFICATION (DEV_PLAN section 7) — pass 2 DONE 2026-08-04 against Form
+# 1040-ES (2026), an independent, already-published 2026 IRS form:
 #   * "2026 Tax Rate Schedules" (Schedules X / Y-1 / Y-2 / Z) — ALL FOUR match the
 #     Rev. Proc. 2025-32 transcription line for line, including the HoH-vs-unmarried
 #     $201,750/$201,775 and $256,200/$256,225 offsets and the MFS $384,350 top.
@@ -30,23 +64,6 @@
 #   * 2026 Self-Employment Tax and Deduction Worksheet line 5 "Social security tax
 #     maximum income $184,500" — matches Pub 15 (2026).
 # So rate_schedules, standard_deduction, and the wage base are two-source verified.
-#
-# WHAT IS STILL OUTSTANDING — exactly ONE item is a blocker:
-#
-#   BLOCKER (1 of 1):
-#     * 2026 Tax Table (Publication 1040) — `tax_table.row_bands` is the ONLY block
-#       in this pack still resting on a carried-forward STRUCTURE. When the booklet
-#       publishes, confirm the row bands and spot-check published rows against the
-#       engine's midpoint computation. Until this lands, the pack must not back a
-#       filed return.
-#
-#   FORMALITY (already two-source corroborated above; re-confirm on publication,
-#   but neither one is holding anything up):
-#     * 2026 Instructions for Form 1040 — standard-deduction charts. Guard against a
-#       mid-year supersession like the one where OBBBA superseded the 2025 amounts in
-#       Rev. Proc. 2024-40 section 2.15(1). Form 1040-ES (2026) already corroborates.
-#     * Schedule SE (Form 1040) 2026 — line 7 wage base = $184,500. Form 1040-ES
-#       (2026)'s SE worksheet line 5 already corroborates.
 #
 # NOTE on `provisional.second_pass.verified_blocks` below: entries are paths
 # relative to the `tax:` mapping. A bare name (`rate_schedules`) is a whole block;
@@ -66,10 +83,11 @@ provisional:
     url: "https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf"
     verified_blocks: [rate_schedules, standard_deduction, se_tax.ss_wage_base, employee_social_security.ss_wage_base]
     result: "all figures matched the Rev. Proc. 2025-32 / Pub 15 (2026) transcription exactly; zero discrepancies"
-  still_assumed: "tax_table.row_bands (2026 Publication 1040 not yet published)"
+  still_assumed: "tax_table.row_bands (the final 2026 Publication 1040 is not posted; a draft, dated Aug 28, 2026, is)"
   reason: >-
-    The 2026 forms, instructions, and Tax Table booklet are not published yet;
-    only the inflation-adjustment revenue procedure and Circular E are. The
+    The 2026 return forms and the Tax Table booklet exist only as drafts, and the
+    Form 1040 instructions are not posted at all; the inflation-adjustment
+    revenue procedure, Circular E and Form 1040-ES are final. The
     numbers that ARE here are citable and projection-grade (what will I owe /
     what should I set aside / married-vs-separate comparisons), but the absent
     blocks mean a bottom line built on this pack can OMIT real items — e.g. a

@@ -125,7 +125,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 # _cache_path is fetch's private URL -> cache-file mapping; verify reuses it
 # (rather than restating the naming rule) to FIND a pinned blank, never to fetch.
 from taxfill_core.fetch import _cache_path, compute_sha256, default_cache_dir
-from taxfill_core.knowledge import assert_filing_grade
+from taxfill_core.knowledge import assert_pack_filing_grade
 from taxfill_core.schemas.formpack import FormPack, PackField
 
 __all__ = [
@@ -2331,7 +2331,7 @@ def verify_form(
 
         _require_rehearsable(pack)
     else:
-        assert_filing_grade(pack.jurisdiction, pack.tax_year, action="verify a form")
+        assert_pack_filing_grade(pack, action="verify a form")
 
     widgets_from_disk = False
     if isinstance(fields, (str, Path)):
@@ -2434,7 +2434,7 @@ def verify_filing(
             "[{form_key, pack, fields|pdf_path, values}] for every form in the filing"
         )
     for item in filing_items:
-        assert_filing_grade(item.pack.jurisdiction, item.pack.tax_year, action="verify a filing")
+        assert_pack_filing_grade(item.pack, action="verify a filing")
     items_by_key: dict[str, FilingItem] = {}
     for item in filing_items:
         if item.form_key in items_by_key:

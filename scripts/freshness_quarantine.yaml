@@ -1,0 +1,37 @@
+# Freshness quarantine (Phase J JT0c) — the KNOWN reds of the weekly freshness job
+# (.github/workflows/freshness.yml), each behind an expiry date and the tranche that fixes it.
+#
+# The job was red 6 of 6 weeks from 2026-08-17 (last: run 35621846216, 2026-09-21) on these
+# three items alone, so a NEW red would have been lost in the old one. With them quarantined, the
+# job is green unless something else breaks, and any red opens a `freshness red` issue.
+#
+# Rules (scripts/freshness_quarantine.py; tests in packages/core/tests/test_freshness_quarantine.py):
+#   * kind network_test: `id` is a pytest node id. The quarantine masks only a failure to FETCH the
+#     blank (taxfill_core.fetch.FetchError); any other failure of the test still fails the job.
+#   * kind drift: `url` is a URL scripts/check_drift.py reports as drift; that one item is reported
+#     as quarantined instead of failing the job.
+#   * `expires` is at most 200 days after `added`. An expired entry FAILS the drift job; renew it
+#     only with a reason, or fix the source (the `fixed_by` tranche) and delete the row.
+entries:
+  - kind: network_test
+    id: "packages/core/tests/test_formpacks_states.py::test_state_pack_golden_roundtrip[ma_2023_form1]"
+    added: "2026-09-27"
+    expires: "2027-03-31"
+    fixed_by: JS1b
+    why: >-
+      www.mass.gov answers HTTP 403 to the CI runner for the 2023 Form 1 blank (every weekly run
+      since 2026-08-17); JS1b adds a digest-verified mirror and a seed command.
+  - kind: network_test
+    id: "packages/core/tests/test_readonly_widget_mapping.py::test_state_pack_readonly_mapped_count_matches_the_pinned_audit[states-ma-2023-form1]"
+    added: "2026-09-27"
+    expires: "2027-03-31"
+    fixed_by: JS1b
+    why: The same MA 2023 Form 1 blank, fetched by the read-only widget audit.
+  - kind: drift
+    url: "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf"
+    added: "2026-09-27"
+    expires: "2027-03-31"
+    fixed_by: JS1a
+    why: >-
+      The DC 2025 D-40 booklet has returned 404 since 2026-08-24; DC OTR re-issued it as
+      2025_D40_Book_082026_v1.pdf. JS1a re-verifies every DC 2025 quote against the re-issue.

@@ -765,3 +765,93 @@ def test_jf2_the_spouse_election_topic_says_where_each_statement_goes():
     assert "to your joint return for the year of the choice" in text
     assert "a later year of a continuing 6013(g) election attaches none" in text
     assert "https://www.irs.gov/publications/p519" in {s.url for s in r.sources}
+
+
+# ── Phase J JT0c: the TY2026 topics and the draft_forms change channel ─────
+
+_JT0C_ROUTES = (
+    ("federal public benefit", "federal_public_benefit"),
+    ("qualified alien", "federal_public_benefit"),                      # was foreign_asset_and_fbar_reporting
+    ("itemized limitation", "itemized_limitation_2026"),                # was the four itemized_* topics
+    ("Pease limitation", "itemized_limitation_2026"),                   # was foreign_tax_credit
+    ("Form 1098-VLI", "form_1098vli"),                                  # was education
+    ("vehicle loan interest statement", "form_1098vli"),                # was obbba_schedule_1a_deductions
+    ("box 12 code TP", "w2_2026_codes_tp_tt"),                          # was form_1099r_distribution_codes
+    ("Treasury Tipped Occupation Code", "w2_2026_codes_tp_tt"),         # was a clean miss
+    ("Trump account", "trump_accounts"),                                # was foreign_asset_and_fbar_reporting
+    ("Form 4547", "trump_accounts"),                                    # was a clean miss
+    ("EIC table", "tax_tables"),
+    ("tax table", "tax_tables"),
+)
+
+
+def test_jt0c_the_2026_topics_route_to_themselves():
+    for query, expected in _JT0C_ROUTES:
+        r = get_sources(query, 2026)
+        assert r.matched and {s.topic for s in r.sources} == {expected}, (
+            f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+        )
+
+
+def test_jt0c_the_2026_topics_carry_their_law_verbatim():
+    def blob(query):
+        r = get_sources(query, 2026)
+        return " ".join(s.answers for s in r.sources), {s.url for s in r.sources}
+
+    text, urls = blob("federal public benefit")
+    assert "Are you or your spouse a U.S. citizen, U.S. national, or qualified alien? See instructions." in text
+    assert "lawfully admitted for permanent residence" in text and "is not eligible for any Federal public benefit" in text
+    assert "https://www.irs.gov/pub/irs-dft/f1040s3a--dft.pdf" in urls
+    text, _ = blob("itemized limitation")
+    assert "shall be reduced by 2/37 of the lesser of" in text and "more than $384,350?" in text
+    text, _ = blob("Form 1098-VLI")
+    assert "aggregating $600 or more for any calendar year on a specified" in text
+    assert "on the return of tax for the taxable year" in text                 # IRC 163(h)(4)(B)(iii), the VIN rule
+    text, urls = blob("box 12 code TP")
+    assert "New box 12, code TT, will be used to report the total amount of qualified overtime compensation." in text
+    assert "https://www.irs.gov/pub/irs-prior/iw2w3--2026.pdf" in urls           # the 2026 instructions are FINAL
+    text, _ = blob("Trump account")
+    assert "shall not exceed $5,000" in text and "Is born after December 31, 2024, and before January 1, 2029" in text
+    text, urls = blob("tax table")
+    assert "First, they find the $25,300–25,350 taxable income line." in text
+    assert "https://www.irs.gov/pub/irs-dft/p1040--dft.pdf" in urls
+
+
+def test_jt0c_the_2026_topics_do_not_steal_their_neighbours_queries():
+    """The planned keys w2_2026_tips_overtime and vehicle_loan_interest_statement took these (their key
+    tokens outweigh any answers text), so they ship as w2_2026_codes_tp_tt and form_1098vli."""
+    for query, expected in (
+        ("tips", "obbba_schedule_1a_deductions"),
+        ("tips deduction", "obbba_schedule_1a_deductions"),
+        ("tax on tips", "obbba_schedule_1a_deductions"),
+        ("overtime", "obbba_schedule_1a_deductions"),
+        ("car loan interest", "obbba_schedule_1a_deductions"),
+        ("student loan interest", "education"),
+        ("interest income", "investment_income"),
+        ("mortgage interest", "itemized_mortgage_interest"),
+        ("Form 1098", "itemized_mortgage_interest"),                    # was education; the Pub 936 sentence
+        ("earned income credit", "credits_eitc"),
+        ("Form W-2", "wage_reporting_w2"),
+        ("Form 1040-X", "filing_basics"),
+    ):
+        r = get_sources(query, 2026)
+        assert r.matched and {s.topic for s in r.sources} == {expected}, (
+            f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+        )
+    broad = {s.topic for s in get_sources("itemized deductions", 2026).sources}
+    assert {"itemized_charitable", "itemized_medical", "itemized_mortgage_interest", "itemized_salt"} <= broad
+
+
+def test_jt0c_a_year_is_never_a_routing_signal():
+    """The year is get_sources' argument. Before JT0c "2026 tax brackets" routed to the charitable
+    non-itemizer entry (which quotes a 2026 date) and a year-named key took every "2026 ..." query."""
+    assert {s.topic for s in get_sources("2026 tax brackets", 2026).sources} == {"tax_rates_and_tables"}
+    assert {s.topic for s in get_sources("2026 standard deduction", 2026).sources} == {"standard_deduction"}
+    assert {s.topic for s in get_sources("W-2 2026", 2026).sources} == {"wage_reporting_w2"}
+    assert not get_sources("2026", 2026).matched
+
+
+def test_jt0c_the_draft_forms_change_channel():
+    channels = get_sources("filing_basics", 2026).change_channels
+    draft = [c for c in channels if c.url == "https://www.irs.gov/draft-tax-forms"]
+    assert draft and "there are never any changes to the last posted draft of the form" in draft[0].answers

@@ -42,6 +42,11 @@ _GENERIC_TOKENS = frozenset({"credit", "credits", "deduction", "deductions", "in
 # only "earned" with the EITC/dependent-care entries (1 of 3 distinctive
 # tokens), so those are a clean miss and the cite-or-refuse fallback fires.
 _MATCH_THRESHOLD = 2
+# A tax year is the ``year`` argument, not a subject: a year token in a query or a topic key
+# (itemized_limitation_2026) is never a routing signal (Phase J JT0c). Without this every
+# "2026 ..." query went to whichever topic names or quotes 2026 most ("2026 tax brackets" routed to
+# the charitable non-itemizer entry, whose answers quote the 2026 effective date).
+_YEAR_TOKEN = re.compile(r"(19|20)\d\d")
 
 
 def _repo_knowledge_dir() -> Path:
@@ -154,7 +159,7 @@ def _score_topic(key: str, entries: list, query: str, query_tokens: set[str]) ->
     key_norm = key.lower()
     if key_norm == query:
         return 1000
-    distinctive = {t for t in query_tokens if t not in _GENERIC_TOKENS}
+    distinctive = {t for t in query_tokens if t not in _GENERIC_TOKENS and not _YEAR_TOKEN.fullmatch(t)}
     # A purely generic query ("deduction", "credit") carries no specific signal:
     # it must be a clean miss, never a substring/answers match on a family word.
     if not distinctive:

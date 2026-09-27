@@ -15,6 +15,10 @@
 #     ROADMAP claimed a scheduled cron existed. This file makes the claim true
 #     again.
 #
+# Known reds sit behind scripts/freshness_quarantine.yaml (Phase J JT0c): each row has an expiry
+# and the tranche that fixes it, so the job is green unless something NEW breaks (or a row
+# expires), and the `report` job opens or updates a `freshness red` issue on any red.
+#
 # Monday 09:13 UTC: weekly is enough for drift (forms revise on a monthly-ish
 # cadence outside January), and the odd minute avoids the top-of-hour
 # scheduled-job stampede that gets cron runs delayed or dropped.
@@ -55,3 +59,28 @@ jobs:
         run: uv sync
       - name: Run network golden round-trips
         run: uv run pytest -m network
+
+  report:
+    # JT0c: any red (a NEW failure, or an expired quarantine row) opens a `freshness red` issue, or
+    # comments on the open one, so a red is a tracked item and not only a failure email.
+    needs: [drift, network-tests]
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the freshness-red issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create "freshness red" --color B60205 --force \
+            --description "The weekly freshness job failed outside its quarantine"
+          num=$(gh issue list --label "freshness red" --state open --json number --jq '.[0].number')
+          if [ -n "$num" ]; then
+            gh issue comment "$num" --body "Still red: $RUN_URL"
+          else
+            gh issue create --label "freshness red" --title "freshness red: a new failure outside the quarantine" \
+              --body "The freshness job failed: $RUN_URL. Known reds live in scripts/freshness_quarantine.yaml; this one is not there (or a row expired). Fix the source, or quarantine it with an expiry and the tranche that fixes it."
+          fi

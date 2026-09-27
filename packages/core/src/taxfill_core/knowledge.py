@@ -2335,6 +2335,15 @@ def provisional_marker(
         return None
 
 
+def assert_pack_filing_grade(pack, action: str = "file") -> None:
+    """:func:`assert_filing_grade` for a form pack: a pack whose ``filing_grade_basis`` is
+    ``own_final_revision`` (JT0c; allowlisted and validated at load) rests on its own final form, not on
+    the year's knowledge pack."""
+    if getattr(pack, "filing_grade_basis", "year_knowledge") == "own_final_revision":
+        return
+    assert_filing_grade(pack.jurisdiction, pack.tax_year, action=action)
+
+
 def assert_filing_grade(
     jurisdiction: str,
     year: int,

@@ -130,6 +130,17 @@ revision of the form". A pack may therefore be authored against the draft (Phase
 Drafts of instructions and publications DO change, so a figure read from a draft instruction stays
 projection-grade until the final posts.
 
+The finals are watched by `scripts/check_finals.py` (its own workflow, `.github/workflows/finals.yml`,
+Phase J JT0c): it HEADs `irs.gov/pub/irs-prior/<form>--<year>.pdf` for every draft pack plus Pub 1040,
+the Form 1040 instructions and Pub 501, and opens or updates one `ty<year>-finals: re-pin now` issue.
+
+**A form whose own final revision is the authority** (Phase J JT0c). The estimated-tax voucher for the
+year in progress is final in that year's January (the 2026 Form 1040-ES, `irs-prior/f1040es--2026.pdf`)
+and its vouchers fall due before the year's return forms are final. Its pack sets
+`filing_grade_basis: own_final_revision` and fills and verifies without rehearsal in a provisional year.
+The basis is allowlisted (`OWN_FINAL_REVISION_FORMS`, federal 1040-ES only) and needs a FINAL pack on an
+`irs-prior` URL; every other pack keeps the default `year_knowledge`.
+
 ## What reviewers will do
 
 Re-render your filled golden PDF and look at it; spot-check two or three cited

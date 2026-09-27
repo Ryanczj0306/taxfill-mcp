@@ -49,7 +49,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
 from pypdf.generic import NameObject
 
-from taxfill_core.knowledge import assert_filing_grade
+from taxfill_core.knowledge import assert_pack_filing_grade
 from taxfill_core.redact import redact
 from taxfill_core.schemas.formpack import FormPack, PackField
 
@@ -451,7 +451,7 @@ def fill_form(
     if rehearsal:
         _require_rehearsable(pack)
     else:
-        assert_filing_grade(pack.jurisdiction, pack.tax_year, action="fill a form")
+        assert_pack_filing_grade(pack, action="fill a form")
 
     blank_pdf = Path(blank_pdf)
     out_path = Path(out_path)

@@ -1,12 +1,31 @@
 """Shared pytest fixtures (Phase J JT0b): planning-year tests test BEHAVIOUR, not today's contents of the
-provisional pack — a 2026 block added at the finals must not turn the suite red."""
+provisional pack — a 2026 block added at the finals must not turn the suite red.
+
+Also the freshness quarantine hook (Phase J JT0c): a network test named in scripts/freshness_quarantine.yaml
+is xfail on a FETCH failure only, until its row expires."""
 from __future__ import annotations
 
+import datetime as dt
+import importlib.util
 import shutil
+import sys
 from pathlib import Path
 
 import pytest
 import yaml
+
+
+def pytest_collection_modifyitems(config, items):
+    if not any(item.get_closest_marker("network") for item in items):
+        return
+    from taxfill_core.fetch import FetchError  # noqa: PLC0415
+
+    spec = importlib.util.spec_from_file_location(
+        "freshness_quarantine", Path(__file__).resolve().parent / "scripts" / "freshness_quarantine.py")
+    quarantine = sys.modules.setdefault(spec.name, importlib.util.module_from_spec(spec))
+    spec.loader.exec_module(quarantine)
+    quarantine.quarantine_items(items, quarantine.load(), dt.date.today(), FetchError)
+
 
 def _knowledge() -> Path:
     """The knowledge tree the engine reads — $TAXFILL_DATA_DIR honoured, so a scratch copy is tested as-is."""

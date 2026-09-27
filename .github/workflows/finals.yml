@@ -1,0 +1,48 @@
+# TY finals watch — Phase J JT0c (scripts/check_finals.py).
+#
+# HEADs irs.gov/pub/irs-prior/<form>--<year>.pdf for every draft pack of the newest provisional
+# federal year plus Pub 1040, the Form 1040 instructions and Pub 501, and opens or updates ONE
+# issue labeled `ty<year>-finals: re-pin now` when any final has posted. That issue is JT6's only
+# trigger, so the watch has its OWN workflow: freshness.yml's failures carry other reds, and a
+# signal routed there would be lost among them.
+#
+# Cadence: weekly in October–November (drafts still move; finals rarely post), then daily from
+# December 15 to February 15, when the 2025 finals landed (f1040 created 2026-01-02, Pub 1040
+# modified 2026-01-15, i1040gi created 2026-02-25). The odd minute avoids the top-of-hour
+# scheduled-job stampede.
+
+name: finals-watch
+
+on:
+  schedule:
+    - cron: "41 10 * 10,11 1"   # Mondays, October and November
+    - cron: "41 10 15-31 12 *"  # daily, December 15-31
+    - cron: "41 10 * 1 *"       # daily, January
+    - cron: "41 10 1-15 2 *"    # daily, February 1-15
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print the re-pin list and the issue without filing it"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - name: Sync workspace
+        run: uv sync
+      - name: Watch for the finals
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: uv run python scripts/check_finals.py $DRY_RUN

@@ -97,8 +97,8 @@ federal:
       - url: https://www.irs.gov/irb
         answers: >-
           Internal Revenue Bulletin: the annual section 1(j)(2) rate-schedule
-          Revenue Procedure (e.g. Rev. Proc. 2022-38) — the bracket boundaries
-          and marginal rates for the year.
+          Revenue Procedure (e.g. Rev. Proc. 2022-38) — the tax brackets for
+          the year: each tax bracket's boundaries and marginal rate.
         cadence: annual (the inflation Rev. Proc. issues each autumn)
       - url: https://www.irs.gov/instructions/i1040gi
         answers: >-
@@ -205,7 +205,11 @@ federal:
       - url: https://www.irs.gov/publications/p936
         answers: >-
           Pub 936, Home Mortgage Interest Deduction: acquisition-debt
-          limits, points, grandfathered debt, worksheet rules.
+          limits, points, grandfathered debt, worksheet rules. Form 1098,
+          Mortgage Interest Statement: "If you paid $600 or more of mortgage
+          interest (including certain points) during the year on any one
+          mortgage, you will generally receive a Form 1098 or a similar
+          statement from the mortgage holder."
         cadence: annual (per tax year)
 
     itemized_charitable:
@@ -1326,6 +1330,133 @@ federal:
           return.
         cadence: drafts post from spring through autumn; a later draft replaces an earlier one
 
+    # ── TY2026 law and forms (Phase J JT0c, read 2026-09-27) ──
+    # Registry backing for the 2026 changes the JT1/JT2 blocks build on. A DRAFT
+    # (irs.gov/pub/irs-dft/) is projection-grade until its final posts; each draft
+    # is named with its footer "Created" stamp.
+    federal_public_benefit:
+      - url: https://www.irs.gov/pub/irs-dft/f1040s3a--dft.pdf
+        answers: >-
+          DRAFT Schedule 3-A (Form 1040) 2026, Federal Public Benefit
+          (Created 6/24/26), filed with four refundable credits (the EIC, the
+          ACTC and two others the schedule names). Line 6, the refunded portion
+          of those credits: "This is your federal public benefit". Line 8: "Are you or your spouse a U.S. citizen, U.S.
+          national, or qualified alien? See instructions." On No: "Enter the
+          amount from line 6 here and on Form 1040, 1040-SR, or 1040-NR, line
+          32b." Whether the Schedule 3-A instructions adopt the 8 U.S.C. 1641
+          list is unverified (not posted).
+        cadence: draft; the final schedule and its instructions post with the 2026 return forms
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title8-section1641&num=0&edition=prelim
+        answers: >-
+          8 U.S.C. 1641(b), the qualified alien list: "an alien who, at the
+          time the alien applies for, receives, or attempts to receive a Federal
+          public benefit, is-" (1) "lawfully admitted for permanent residence",
+          (2) "granted asylum", (3) "a refugee who is admitted to the United
+          States", (4) "paroled into the United States" for "a period of at
+          least 1 year", (5) a deportation withheld, (6) "conditional entry",
+          (7) "a Cuban and Haitian entrant", (8) a Compact of Free Association
+          resident; 1641(c) adds certain battered aliens. No nonimmigrant visa
+          category is on the list.
+        cadence: statute (changes only by act of Congress)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title8-section1611&num=0&edition=prelim
+        answers: >-
+          8 U.S.C. 1611(a): an alien who is not a qualified alien under 1641
+          "is not eligible for any Federal public benefit".
+        cadence: statute (changes only by act of Congress)
+    itemized_limitation_2026:
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section68&num=0&edition=prelim
+        answers: >-
+          IRC 68 as rewritten by P.L. 119-21 section 70111, which applies "to
+          taxable years beginning after December 31, 2025": the deductions
+          otherwise allowable "shall be reduced by 2/37 of the lesser of" those
+          deductions or so much of the taxable income (figured without the
+          reduction and increased by those deductions) "as exceeds the dollar
+          amount at which the 37 percent rate bracket under section 1 begins".
+          It "shall be applied after the application of any other limitation".
+        cadence: statute (changes only by act of Congress)
+      - url: https://www.irs.gov/pub/irs-dft/f1040sa--dft.pdf
+        answers: >-
+          DRAFT Schedule A (Form 1040) 2026 (Created 5/12/26), line 18: "Is the
+          amount on Form 1040 or 1040-SR, line 11b, minus the amounts on lines
+          13a and 13b of that form, more than $384,350?" Yes: "Your deductions
+          may be limited." $384,350 is where the 37% rate starts in 2026 for
+          married filing separately, the lowest of the statuses.
+        cadence: draft; the final schedule posts with the 2026 return forms
+    # Planned as vehicle_loan_interest_statement: those key tokens (loan, interest) took
+    # "car loan interest", "student loan interest" and "interest income" from their topics.
+    form_1098vli:
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6050AA&num=0&edition=prelim
+        answers: >-
+          IRC 6050AA: a lender who "receives from any individual interest
+          aggregating $600 or more for any calendar year on a specified
+          passenger vehicle loan, shall make the return", showing the "year,
+          make, model, and vehicle identification number" (VIN), and furnishes
+          the borrower a written statement.
+        cadence: statute (changes only by act of Congress)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section163&num=0&edition=prelim
+        answers: >-
+          IRC 163(h)(4)(B)(iii): the interest counts only if the taxpayer
+          includes the VIN "on the return of tax for the taxable year".
+        cadence: statute (changes only by act of Congress)
+      - url: https://www.irs.gov/pub/irs-dft/i1098vli--dft.pdf
+        answers: >-
+          DRAFT Form 1098-VLI (December 2026), Vehicle Loan Interest Statement
+          (Created 8/20/26), and its instructions: the lender reports interest
+          of $600 or more received on each specified passenger loan (SPVL):
+          "The $600 threshold applies separately to each SPVL." The draft
+          Schedule 1-A 2026 Part IV takes the interest from box 1 of that
+          statement.
+        cadence: draft; the final statement posts for calendar year 2026 reporting
+    # Planned as w2_2026_tips_overtime: those key tokens took "tips", "overtime" and
+    # "tips deduction" from obbba_schedule_1a_deductions, where the deduction law is.
+    w2_2026_codes_tp_tt:
+      - url: https://www.irs.gov/pub/irs-prior/iw2w3--2026.pdf
+        answers: >-
+          General Instructions for Forms W-2 and W-3 (2026), FINAL: "New box
+          12, code TP, will be used to report the total amount of cash tips
+          reported to the employer." "New box 12, code TT, will be used to
+          report the total amount of qualified overtime compensation." "Box 14b
+          was created to report the Treasury Tipped Occupation Code(s)."
+        cadence: annual (the next year's W-2 and instructions post each winter)
+      - url: https://www.irs.gov/pub/irs-prior/fw2--2026.pdf
+        answers: >-
+          The final 2026 wage statement (Created 1/7/26) prints "14b Treasury
+          Tipped Occupation Code(s)".
+        cadence: annual (the next year's W-2 and instructions post each winter)
+    trump_accounts:
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section530A&num=0&edition=prelim
+        answers: >-
+          IRC 530A (P.L. 119-21): "a Trump account shall be treated for
+          purposes of this title in the same manner as an individual retirement
+          account under section 408(a)"; "No deduction shall be allowed under
+          section 219 for any contribution which is made before the first day
+          of the calendar year in which the account beneficiary attains age
+          18"; the aggregate contributions for a year "shall not exceed
+          $5,000", not counting the exempt contributions (among them "any
+          contribution provided under section 6434", the pilot program).
+        cadence: statute (changes only by act of Congress)
+      - url: https://www.irs.gov/pub/irs-pdf/i4547.pdf
+        answers: >-
+          Instructions for Form 4547 (Rev. December 2025), Trump Account
+          Election(s): "Use Form 4547 to make the election to establish an
+          initial Trump account for the exclusive benefit of a child who is
+          eligible for a Trump account", and for "a $1,000 pilot program
+          contribution" for a child who "Is born after December 31, 2024, and
+          before January 1, 2029" and "Is a U.S. citizen". "Form 4547 can be
+          filed at any time, including at the same time as the income tax
+          return is filed."
+        cadence: as revised (the form carries a Rev. date, not a tax year)
+    tax_tables:
+      - url: https://www.irs.gov/pub/irs-dft/p1040--dft.pdf
+        answers: >-
+          DRAFT Publication 1040 (2026)
+          (posted 09/16/2026), the Tax Table and EIC Table booklet drawn from
+          the Instructions for Form 1040 (and 1040-SR). Its worked example: "Their taxable income on Form 1040, line 15, is
+          $25,300. First, they find the $25,300–25,350 taxable income line." The
+          married-filing-jointly amount there is $2,543. The final 2025 edition
+          is irs.gov/pub/irs-prior/p1040--2025.pdf.
+        cadence: annual (the draft posts in autumn, the final in January)
+
   change_channels:
     - url: https://www.irs.gov/newsroom
       answers: >-
@@ -1358,6 +1489,18 @@ federal:
         regulations implementing enacted law — the signal that figures for a
         new provision are moving from irs_guidance_pending toward final form.
       cadence: as rules are published (multiple per week during active rulemaking)
+    # draft_forms (Phase J JT0c): the early-release drafts, the first sign a
+    # provisional pack's forms moved. scripts/check_finals.py watches for the finals.
+    - url: https://www.irs.gov/draft-tax-forms
+      answers: >-
+        IRS draft tax forms: the early-release drafts of the coming year's
+        forms, instructions and publications. The coversheet: "Early release
+        drafts are posted at IRS.gov/DraftForms and remain there after the
+        final release is posted at IRS.gov/LatestForms", and "there are never
+        any changes to the last posted draft of the form and the final
+        revision of the form". A new draft of a form a provisional pack uses
+        is a signal to re-read it; its final is what a filed return rests on.
+      cadence: drafts post from spring through autumn; finals December to February
 
 # One block per supported state (DOR/FTB forms pages, residency rules,
 # state credits, treaty-conformity statements, payment portal, where-to-file).

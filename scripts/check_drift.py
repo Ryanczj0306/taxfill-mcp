@@ -23,12 +23,15 @@ caught by CI rather than by a user mid-filing:
     only (page content moves legitimately); a dead URL is drift.
 
 Exit code is nonzero if anything DRIFTED (revised blank, a dead source URL, or a
-dead where-to-file page), zero otherwise. Network access required — this is a
+dead where-to-file page), zero otherwise. A known red behind an unexpired row of
+``scripts/freshness_quarantine.yaml`` (JT0c) is reported but does not fail; an
+expired row fails. Network access required — this is a
 scheduled job, not part of the offline unit suite. Run:
 ``python scripts/check_drift.py``.
 """
 from __future__ import annotations
 
+import datetime as dt
 import ssl
 import sys
 import urllib.error
@@ -42,6 +45,9 @@ sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
 
 from taxfill_core.fetch import _USER_AGENT, _download, compute_sha256  # noqa: E402
 from taxfill_core.schemas.formpack import load_pack  # noqa: E402
+
+sys.path.insert(0, str(REPO / "scripts"))
+import freshness_quarantine  # noqa: E402
 
 SHA_PLACEHOLDER = "." * 3
 TIMEOUT = 30.0
@@ -200,9 +206,16 @@ def check_mailing_addresses() -> list[str]:
     return _probe_urls(sorted(set(urls)), "Mailing addresses / where-to-file")
 
 
-def main() -> int:
+def main(today: dt.date | None = None) -> int:
     drift = check_form_blanks() + check_source_urls() + check_mailing_addresses()
+    # JT0c: a known red behind an unexpired scripts/freshness_quarantine.yaml row is reported, not
+    # failed; an expired row fails the job itself.
+    drift, quarantined = freshness_quarantine.split_drift(drift, freshness_quarantine.load(), today or dt.date.today())
     print("\n" + "=" * 60)
+    if quarantined:
+        print(f"QUARANTINED — {len(quarantined)} known red(s), each behind an expiring allowlist row:")
+        for q in quarantined:
+            print(f"  • {q}")
     if drift:
         print(f"DRIFT DETECTED — {len(drift)} item(s) need attention:")
         for d in drift:

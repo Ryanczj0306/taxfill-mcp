@@ -140,6 +140,12 @@ class Mailing(BaseModel):
         return _require_http_url(value, "mailing.verify_url")
 
 
+# JT0c: the forms whose own final revision makes a fill filing-grade in a provisional year, keyed
+# (jurisdiction, form). The Form 1040-ES for a year posts final in its January (the 2026 revision is
+# irs.gov/pub/irs-prior/f1040es--2026.pdf, Created 2/12/26) and its vouchers fall due during that year.
+OWN_FINAL_REVISION_FORMS = frozenset({("federal", "1040-ES")})
+
+
 class FormPack(BaseModel):
     """A complete ``pack.yaml`` for one form, one jurisdiction, one tax year."""
 
@@ -165,6 +171,16 @@ class FormPack(BaseModel):
     )
     draft_created: str | None = Field(
         default=None, description="The draft's footer stamp, e.g. '8/19/26' (\"Created 8/19/26\"); drafts only."
+    )
+    filing_grade_basis: Literal["year_knowledge", "own_final_revision"] = Field(
+        default="year_knowledge",
+        description=(
+            "JT0c: what makes a fill of this pack filing-grade. 'year_knowledge' (every pack by default): the "
+            "year's knowledge pack must not be provisional. 'own_final_revision': the form's own FINAL revision "
+            "is the authority, so it fills in a provisional year. Allowlisted to the estimated-tax voucher "
+            "(OWN_FINAL_REVISION_FORMS): the Form 1040-ES for the year in progress is final and due in that year "
+            "(the 2026 Q4 voucher on 2027-01-15), long before the year's return forms are."
+        ),
     )
     fields: list[PackField] = Field(min_length=1)
     relations: list[str] = Field(
@@ -257,6 +273,21 @@ class FormPack(BaseModel):
                 "a final pack cannot use an irs.gov/pub/irs-dft/ source_url or carry draft_created — set "
                 "source_status: draft (drafts-first authoring, docs/CONTRIBUTING-PACKS.md) or point at the final form"
             )
+        return self
+
+    @model_validator(mode="after")
+    def _check_filing_grade_basis(self) -> "FormPack":
+        if self.filing_grade_basis == "own_final_revision":
+            if (self.jurisdiction, self.form) not in OWN_FINAL_REVISION_FORMS:
+                raise ValueError(
+                    f"filing_grade_basis: own_final_revision is allowlisted to {sorted(OWN_FINAL_REVISION_FORMS)}; "
+                    f"{self.jurisdiction} {self.form} fills against its year's knowledge pack (year_knowledge)"
+                )
+            if self.source_status != "final" or "/pub/irs-prior/" not in self.source_url:
+                raise ValueError(
+                    "filing_grade_basis: own_final_revision rests on the form's FINAL revision — source_status final "
+                    "and a source_url under irs.gov/pub/irs-prior/"
+                )
         return self
 
     @model_validator(mode="after")

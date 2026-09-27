@@ -24,13 +24,14 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,788 tests** — offline 5,408 + live-.gov 380; derived
+Done and on `main` (**5,808 tests** — offline 5,428 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
 two sources: the MA Form 1 blank returns 403 and the DC 2025 booklet returns 404 (DC
-OTR re-issued it). Phase J JT0c quarantines both behind an expiring allowlist so new
-reds surface; JS1a/JS1b fix them:
+OTR re-issued it). Since Phase J JT0c (2026-09-27) both sit behind an expiring allowlist
+(`scripts/freshness_quarantine.yaml`, rows expire 2027-03-31), so a NEW red opens a
+`freshness red` issue; JS1a/JS1b fix them:
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (23 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -1782,7 +1783,35 @@ not wait for any of this.
   - A `synthetic_provisional_pack` fixture makes a tmp copy with named blocks stripped.
   - Rewrite the absent-block assertions to test behaviour, not today's contents of 2026.yaml: evals/test_scenarios.py:237, :261, :273-281, :307, :340-360; test_estimate_ledger.py:176-189; test_schedule_1a.py:174-176; test_compare_scenarios.py:84-89; test_projection_ops.py:197.
   - **Acceptance:** the suite is green, and it stays green when a 2026 block is added to a scratch copy.
-- [ ] **JT0c — Finals watch, red-quarantine, the 1040-ES voucher, the 2026 header** (M; deps JT0a) [TY26-04 + G22(3) + TY26-22 + TY26-30]
+- [x] **JT0c — Finals watch, red-quarantine, the 1040-ES voucher, the 2026 header — DONE 2026-09-27** (M; deps JT0a) [TY26-04 + G22(3) + TY26-22 + TY26-30]
+  - *As built:*
+    - **Finals watch:** `scripts/check_finals.py` plus its own workflow `.github/workflows/finals.yml`. It covers the draft packs of the newest provisional federal year (by IRS file stem) plus p1040, i1040gi and p501; all three answered 404 on 2026-09-27.
+      - The cron is Mondays in Oct–Nov, then daily Dec 15–31, all of January and Feb 1–15.
+      - The issue body re-lists the posted and missing finals. The script comments only when that list changes, and a non-404 HEAD fails the run as a "watch blind".
+      - `--dry-run` prints the re-pin list and the gh commands. `--assume-posted` rehearses the issue while nothing is posted.
+    - **Quarantine:** `scripts/freshness_quarantine.yaml` plus a loader. Every row carries `added`, `expires` (at most 200 days later), `fixed_by` and `why`; the two MA rows and the DC row expire 2027-03-31 and point at JS1b/JS1a.
+      - A root-conftest hook marks a quarantined network test `xfail(raises=FetchError)`, so the quarantine never masks an assertion failure.
+      - `check_drift.main` reports quarantined drift and fails on an expired row.
+      - A freshness.yml `report` job opens or comments on a `freshness red` issue on any failure.
+    - **1040-ES:** `FormPack.filing_grade_basis` (`year_knowledge` | `own_final_revision`) and `knowledge.assert_pack_filing_grade`. The basis is allowlisted to `OWN_FINAL_REVISION_FORMS = {("federal", "1040-ES")}` and needs a final pack on an irs-prior URL. fill_form, verify_form and verify_filing route through it.
+    - **Sources:** a `draft_forms` change channel (irs.gov/draft-tax-forms) and six topics, every quote verified against its own URL on 2026-09-27:
+      - federal_public_benefit: the draft Schedule 3-A (Created 6/24/26), 8 U.S.C. 1641(b)–(c) and 1611(a);
+      - itemized_limitation_2026: IRC 68 as rewritten by P.L. 119-21 §70111, and the draft Schedule A line 18 ($384,350);
+      - **form_1098vli**, planned as vehicle_loan_interest_statement: IRC 6050AA, the draft 1098-VLI (Created 8/20/26) and 163(h)(4)(B)(iii);
+      - **w2_2026_codes_tp_tt**, planned as w2_2026_tips_overtime: the FINAL 2026 W-2 (Created 1/7/26) and iw2w3 2026, with codes TP/TT and box 14b;
+      - trump_accounts: IRC 530A and i4547 (Rev. December 2025);
+      - tax_tables: the draft Pub 1040 (2026), dated Aug 28, 2026.
+    - **Renames:** the two planned keys were renamed because their key tokens outweighed any answers text. They took "tips", "overtime", "tips deduction", "car loan interest", "student loan interest" and "interest income" from their own topics.
+    - **Routing fix:** `get_sources` now ignores a year token (`_YEAR_TOKEN`) in the query and in the key. Before, "2026 tax brackets" routed to the charitable non-itemizer entry.
+      - Two companion text fixes: tax_rates_and_tables now says "tax brackets", and Pub 936 now carries its Form 1098 sentence, so "Form 1098" leaves `education` for `itemized_mortgage_interest`.
+      - A HEAD-vs-tree sweep over 240 queries plus 49 probes changes only one route: "box 12 code D" moves from foreign_tax_credit to the W-2 box 12 topic, whose iw2w3 source defines code D.
+    - **2026 header:** knowledge/federal/2026.yaml:1-67 now lists:
+      - what is final (Rev. Proc. 2025-32, Notice 2025-67, Pub 15, 1040-ES, W-2/iw2w3);
+      - the drafts with their Created dates (1040 8/19/26; Schedules 1, 1-A, 2, 3, 3-A, A, B, D and SE; Forms 8949, 8959, 8889 and 8606; Pub 1040);
+      - what is not posted at all (i1040gi 2026, Pub 501 2026, the Schedule 1-A and 3-A instructions);
+      - the four outstanding items;
+      - `still_assumed`, which now names the draft Pub 1040.
+    - **Tests:** test_freshness_quarantine.py (13 tests, including a subprocess pytest run), test_formpacks_federal `test_jt0c_*` (2) and test_sources `test_jt0c_*` (5).
   - **Why.** The finals watch is JT6's only trigger. freshness.yml has been red 6 of 6 weeks since 2026-08-17 (last: run 35621846216), so a signal routed there would be lost.
   - **Finals watch.** `scripts/check_finals.py` runs in its OWN workflow and opens or updates an issue labeled `ty2026-finals: re-pin now`.
     - It HEADs irs-prior/<form>--2026.pdf for every draft pack, plus p1040, i1040gi and p501; all returned 404 on 2026-09-23.

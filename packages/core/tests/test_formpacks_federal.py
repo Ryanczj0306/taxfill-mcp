@@ -1396,6 +1396,47 @@ def test_jt0a_the_schema_keeps_draft_and_final_apart():
         FormPack.model_validate({**data, "source_url": "https://www.irs.gov/pub/irs-dft/f.pdf"})
 
 
+def _voucher_pack(**changes) -> FormPack:
+    """The harness pack as a 2026 Form 1040-ES on its final revision, with ``changes`` applied."""
+    data = _harness_pack().model_dump()
+    data.update(form="1040-ES", tax_year=2026, source_url="https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf",
+                filing_grade_basis="own_final_revision")
+    data.update(changes)
+    return FormPack.model_validate(data)
+
+
+def test_jt0c_the_1040es_fills_and_verifies_on_its_own_final_revision_in_a_provisional_year(tmp_path: Path):
+    # The 2026 Form 1040-ES is FINAL (irs-prior/f1040es--2026.pdf, Created 2/12/26) and its Q4 voucher is
+    # due 2027-01-15, while the TY2026 knowledge pack stays planning-only until the return forms post.
+    from taxfill_core.knowledge import ProvisionalPackError  # noqa: PLC0415
+    blank = _harness_blank(tmp_path)
+    values = synthetic_values(_harness_pack())
+    pack = _voucher_pack()
+    result = fill_form(pack, values, blank, tmp_path / "voucher.pdf")
+    assert not result.rehearsal
+    _assert_section_clean(verify_form(pack, tmp_path / "voucher.pdf", expected=values).assertions, "assertion diff")
+    # The same form on the year's knowledge (the default basis) is refused like any 2026 pack.
+    with pytest.raises(ProvisionalPackError):
+        fill_form(_voucher_pack(filing_grade_basis="year_knowledge"), values, blank, tmp_path / "refused.pdf")
+
+
+def test_jt0c_own_final_revision_is_allowlisted_to_the_1040es_final():
+    from taxfill_core.schemas.formpack import OWN_FINAL_REVISION_FORMS  # noqa: PLC0415
+    assert OWN_FINAL_REVISION_FORMS == {("federal", "1040-ES")}
+    with pytest.raises(ValueError, match="allowlisted"):
+        _voucher_pack(form="1040")
+    with pytest.raises(ValueError, match="allowlisted"):
+        _voucher_pack(jurisdiction="states/ca")
+    with pytest.raises(ValueError, match="FINAL revision"):
+        _voucher_pack(source_url="https://www.irs.gov/pub/irs-pdf/f1040es.pdf")
+    with pytest.raises(ValueError, match="FINAL revision"):
+        _voucher_pack(source_status="draft", draft_created="2/12/26",
+                      source_url="https://www.irs.gov/pub/irs-dft/f1040es--dft.pdf")
+    # Every shipped pack that claims the basis is on the allowlist (the validator ran at load).
+    assert all((p.jurisdiction, p.form) in OWN_FINAL_REVISION_FORMS
+               for p in map(load_pack, PACK_PATHS) if p.filing_grade_basis == "own_final_revision")
+
+
 def test_jt0a_second_passes_record_each_pass_and_what_keeps_the_marker_on():
     from taxfill_core.knowledge import Provisional, load_knowledge  # noqa: PLC0415
     marker = load_knowledge("federal", 2026).provisional
