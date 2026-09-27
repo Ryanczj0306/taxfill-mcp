@@ -108,6 +108,20 @@ _PROJECTION_LABEL = "PROJECTION"
 _DepInfo = tuple[int | None, bool | None]
 
 
+# The IncomeSnapshot fields its validator checks against each other (JF1b.6): a subset and
+# its parent (qualified_dividends of dividends; bank_deposit_interest of interest, and
+# bank_deposit_interest_nonresident_period of bank_deposit_interest), and the dependent-care
+# expenses that need a qualifying person. A change to one member alone can leave an
+# intermediate snapshot invalid, so compare_scenarios' input walk applies the overridden
+# members of a group together, as ONE step. Keep this beside _check_internal_consistency:
+# test_compare_scenarios fails for a validator whose fields are not grouped here.
+INCOME_LINKED_FIELDS: tuple[frozenset[str], ...] = (
+    frozenset({"interest", "bank_deposit_interest", "bank_deposit_interest_nonresident_period"}),
+    frozenset({"dividends", "qualified_dividends"}),
+    frozenset({"dependent_care_expenses", "dependent_care_persons"}),
+)
+
+
 class IncomeSnapshot(BaseModel):
     """Confirmed dollar amounts so far (whole dollars).
 
@@ -862,6 +876,18 @@ _SECTION_6013_CONDITIONAL_CAVEAT = (
     "other_income) — without it the MFJ-vs-MFS delta overstates the MFJ advantage."
 )
 
+# JF1b.2: the same conditional frame for a filer with no spouse on the facts (unmarried, or
+# the marital status unanswered and no married status confirmed) — the election needs a
+# spouse at year end, so it is not named; the 1040-NR restrictions are. Pub 519 (2025) ch. 5,
+# read 2026-09-27: "Nonresident aliens cannot claim the standard deduction." and "You cannot
+# file as head of household if you are a nonresident alien at any time during the tax year."
+_NONRESIDENT_CONDITIONAL_CAVEAT = (
+    "If your residency result is nonresident alien, you file Form 1040-NR and this figure — priced on resident "
+    "rules until your residency is known — changes: Pub 519 ch. 5, \"Nonresident aliens cannot claim the standard "
+    "deduction\", and \"You cannot file as head of household if you are a nonresident alien at any time during "
+    "the tax year.\" Record your visa timeline and days in the U.S. (the residency tool) to tighten this."
+)
+
 # The OTHER direction of the same election (H1 follow-up): the PRIMARY filer is a US
 # person / resident alien, and it is the SPOUSE who is (or may be) the nonresident.
 # §6013(a)(1) bars a joint return when EITHER spouse is a nonresident alien absent the
@@ -890,7 +916,7 @@ def _spouse_6013_caveat(direction: str, spouse_has_tin: bool, *, mfj_shown: bool
             "Form W-7 is filed WITH the return, and the whole package mails to the IRS ITIN "
             "Operation in Austin, TX; on a married-filing-separately return, if your spouse doesn't have "
             "and isn't required to have an SSN or ITIN, enter 'NRA' in the entry space below the filing "
-            "status checkboxes instead (Pub 501)."
+            "status checkboxes instead (Pub 501) — never in the spouse-SSN box (P-026)."
         )
     return text
 
@@ -1319,7 +1345,10 @@ def _treaty_reporting_text(
 
 
 def _spouse_has_tin(profile: Profile) -> bool:
-    """True when a real spouse SSN/ITIN is on file ('NRA' is the no-TIN box literal)."""
+    """True when a real spouse SSN/ITIN is on file.
+
+    The answer 'NRA' is the no-TIN marker the profile may hold as a fact; on the form it
+    goes in the MFS entry space, never the spouse-SSN box (P-026)."""
     hh = profile.household
     sp = hh.spouse if hh is not None else None
     if sp is None or sp.tax_id is None or not sp.tax_id.value:
@@ -1448,10 +1477,14 @@ def _dual_status_caveat(
         )
     else:
         rates = f"the {primary} rates as priced (ch. 6 names the rate column only for a married filer)"
+    # JF1b.2: the election is a married couple's choice, so an unmarried filer's caveat never
+    # names it (no spouse at year end on these facts, and no recorded decline).
+    unmarried = routes.married is None and not routes.declined and not married
     text = (
         "Your residency result flags a DUAL-STATUS year — a nonresident alien before the residency starting date "
         "and a resident after it (Pub 519 ch. 1: \"You are a nonresident alien for the part of the year before that "
-        "date.\") — and no §6013(g)/(h) election is recorded. The point applies Pub 519 ch. 6, Restrictions for "
+        "date.\")" + ("" if unmarried else " — and no §6013(g)/(h) election is recorded") + ". The point applies "
+        "Pub 519 ch. 6, Restrictions for "
         f"Dual-Status Taxpayers: NO standard deduction ({_DUAL_STATUS_STANDARD_DEDUCTION} — ${itemized_used:,} of "
         f"itemized deductions used); no joint return and no head of household; {rates}; and no earned income credit, "
         f"education credit or credit for the elderly or the disabled — {_DUAL_STATUS_CREDITS}; the elderly credit is "
@@ -1540,6 +1573,9 @@ def _dual_status_caveat(
         why = (
             "the §6013(g)/(h) election is recorded as DECLINED"
             if routes.declined
+            else "you are not married at the end of the year on these facts, so no joint-return choice opens resident "
+            "rules (Pub 519 ch. 1: \"If you are single at the end of the year, you cannot make this choice.\")"
+            if unmarried
             else "the §6013(g)/(h) election needs a spouse at the end of the year and none is on these facts (Pub 519 "
             "ch. 1: \"If you are single at the end of the year, you cannot make this choice.\")"
         )
@@ -4927,8 +4963,15 @@ def estimate_refund(
             else _SECTION_6013_CAVEAT
         )
     elif classification is None and us_person_false:
-        # Visa holder whose residency is not yet determined — frame it conditionally.
-        residency_caveat = _SECTION_6013_CONDITIONAL_CAVEAT
+        # Visa holder whose residency is not yet determined — frame it conditionally. The
+        # §6013(g)/(h) election is a married couple's choice (JF1b.2): only a household married
+        # for the year, or one with a confirmed married status, reads about it; an unmarried
+        # (or unanswered) filer gets the 1040-NR restrictions alone.
+        residency_caveat = (
+            _SECTION_6013_CONDITIONAL_CAVEAT
+            if _married_for_year(profile, year) or _confirmed_status(profile) in _MARRIED_STATUSES
+            else _NONRESIDENT_CONDITIONAL_CAVEAT
+        )
     elif spouse_direction is not None:
         # The common direction the primary-filer branches miss: a US-person or
         # resident-alien filer whose SPOUSE is (or may be) the nonresident. MFJ

@@ -127,6 +127,93 @@ def test_deduction_path_requires_the_coverage_facts():
     assert r.phaseout == {"start": 242_000, "end": 252_000} and r.magi_position == "within"
 
 
+# ── JF1b.4: the IRC 4973(a) cap and the correction deadline ────────────────────
+
+
+def test_jf1b4_a_dec31_value_below_the_excess_caps_the_excise():
+    # IRC 4973(a): "shall not exceed 6 percent of the value of the account or annuity
+    # (determined as of the close of the taxable year)". Demo numbers: $7,000 excess, the
+    # Roth IRAs worth $5,000 on Dec 31 -> 6% x 5,000.
+    r = ira_contribution_eligibility(
+        150_000, "married_filing_separately", 2025, ira_type="roth", contributed=7_000,
+        roth_ira_dec31_value=5_000,
+    )
+    assert r.excess == 7_000
+    assert r.excise_per_year == 300  # 6% x min(7,000, 5,000)
+    assert r.inputs["roth_ira_dec31_value"] == 5_000
+    assert "SMALLER of the excess ($7,000) and the Roth IRAs' Dec 31 value ($5,000)" in r.work
+    assert "shall not exceed 6 percent of the value of the account" in r.work
+
+
+def test_jf1b4_a_dec31_value_above_the_excess_leaves_the_excise_on_the_excess():
+    r = ira_contribution_eligibility(
+        150_000, "married_filing_separately", 2025, ira_type="roth", contributed=7_000,
+        roth_ira_dec31_value=9_000,
+    )
+    assert r.excise_per_year == 420  # 6% x 7,000
+    zero = ira_contribution_eligibility(
+        150_000, "married_filing_separately", 2025, ira_type="roth", contributed=7_000,
+        roth_ira_dec31_value=0,
+    )
+    assert zero.excise_per_year == 0
+
+
+def test_jf1b4_without_the_value_the_work_names_the_cap_and_the_input():
+    r = ira_contribution_eligibility(150_000, "married_filing_separately", 2025, ira_type="roth", contributed=7_000)
+    assert r.excise_per_year == 420
+    assert "roth_ira_dec31_value" in r.work and "4973(a)" in r.work
+    assert "roth_ira_dec31_value" not in r.inputs
+
+
+def test_jf1b4_the_value_is_refused_off_the_roth_path_and_when_negative():
+    with pytest.raises(ValueError, match="omit it for ira_type='traditional_deduction'"):
+        ira_contribution_eligibility(
+            100_000, "single", 2025, ira_type="traditional_deduction", covered_by_employer_plan=True,
+            contributed=7_000, roth_ira_dec31_value=5_000,
+        )
+    with pytest.raises(ValueError, match="roth_ira_dec31_value must be >= 0"):
+        ira_contribution_eligibility(100_000, "single", 2025, contributed=7_000, roth_ira_dec31_value=-1)
+
+
+def test_jf1b4_the_remedy_names_the_correction_deadlines():
+    r = ira_contribution_eligibility(150_000, "married_filing_separately", 2025, ira_type="roth", contributed=7_000)
+    # The year's due date from the pack, the extended date, and the 301.9100-2 window.
+    assert "April 15, 2026 (the 2025 pack's due date), or October 15, 2026 if you extend" in r.work
+    assert "automatic 6-month extension" in r.work and "Form 4868" in r.work
+    assert "(including extensions of time)" in r.work  # IRC 408(d)(4)(A)
+    assert "net income attributable to such contribution" in r.work  # IRC 408(d)(4)(C)
+    assert "shall be treated as an amount not contributed" in r.work  # IRC 4973(f)
+    assert "no later than 6 months after the due date of your tax return, excluding extensions" in r.work
+    assert "Filed pursuant to section 301.9100-2" in r.work
+    assert "provided the taxpayer timely filed its return" in r.work  # Treas. Reg. 301.9100-2(b)
+    # A pack with no deadlines block says so instead of asserting a date.
+    r26 = ira_contribution_eligibility(150_000, "married_filing_separately", 2026, ira_type="roth", contributed=7_500)
+    assert "April 15, 2027 (the 2026 pack records no due date — confirm it)" in r26.work
+
+
+def test_jf1b4_the_traditional_path_quotes_its_own_subsection_and_no_roth_input():
+    r = ira_contribution_eligibility(
+        200_000, "single", 2025, ira_type="traditional_deduction", covered_by_employer_plan=True, contributed=7_000,
+    )
+    assert "roth_ira_dec31_value" not in r.work and "4973(f)" not in r.work
+    assert "IRC 4973(b)" in r.work and "individual retirement account or the individual retirement annuity" in r.work
+    assert "April 15, 2026 (the 2025 pack's due date), or October 15, 2026 if you extend" in r.work
+
+
+def test_jf1b4_an_october_15_on_a_weekend_names_irc_7503():
+    from types import SimpleNamespace
+
+    from taxfill_core.calc import _excess_correction_deadline
+
+    # October 15, 2028 is a Sunday (a TY2027 deadline).
+    stub = SimpleNamespace(deadlines=SimpleNamespace(filing_due_date="2028-04-17"))
+    text = _excess_correction_deadline(stub, 2027)
+    assert text.startswith("April 17, 2028 (the 2027 pack's due date), or October 15, 2028 — a Sunday: IRC 7503")
+    assert "next succeeding day which is not a Saturday, Sunday, or a legal holiday" in text
+    weekday = _excess_correction_deadline(stub, 2026)  # October 15, 2027 is a Friday
+    assert "IRC 7503" not in weekday
+
+
 def test_age_50_catch_up_raises_the_limit():
     r = ira_contribution_eligibility(100_000, "single", 2026, ira_type="roth", age_50_plus=True)
     assert r.full_limit == 7_500 + 1_100
@@ -179,6 +266,43 @@ def test_wages_over_the_8959_threshold_but_magi_under_the_niit_one():
     roth = by_test["Roth IRA contribution phase-out"]
     assert roth.position == "below"
     assert "gross pay -> W-2 box 1" in r.work  # the ladder story itself
+
+
+def test_jf1b1_qss_takes_form_8959s_200000_and_niits_joint_250000():
+    """JF1b.1 acceptance: Form 8959: "Single, Head of household, or Qualifying surviving
+    spouse . . . $200,000"; IRC 1411(b)(1): "a surviving spouse (as defined in section
+    2(a)), $250,000". The QSS row never borrows the MFJ-aliased column."""
+    r = magi_ladder(240_000, "qualifying_surviving_spouse", 2025, wages=240_000)
+    by_test = {row.test: row for row in r.rows}
+    addl = by_test["Additional Medicare Tax (Form 8959, 0.9%)"]
+    assert addl.threshold == "$200,000" and addl.position == "above" and addl.headroom == 0
+    assert "Qualifying surviving spouse . . . $200,000" in addl.definition
+    niit = by_test["Net investment income tax (Form 8960, 3.8%)"]
+    assert niit.threshold == "$250,000" and niit.position == "below" and niit.headroom == 10_000
+    assert "surviving spouse (as defined in section 2(a)), $250,000" in niit.definition
+
+
+@pytest.mark.parametrize("status", [
+    "single", "married_filing_jointly", "married_filing_separately", "head_of_household",
+    "qualifying_surviving_spouse",
+])
+@pytest.mark.parametrize("year", [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
+def test_jf1b1_every_surtax_row_reads_the_raw_status_from_the_pack(year: int, status: str):
+    from taxfill_core.knowledge import load_knowledge
+
+    tax = load_knowledge("federal", year).tax
+    by_test = {row.test: row for row in magi_ladder(100_000, status, year, wages=100_000).rows}
+    if tax.additional_medicare_tax is not None:
+        expected = tax.additional_medicare_tax.thresholds[status]
+        assert by_test["Additional Medicare Tax (Form 8959, 0.9%)"].threshold == f"${expected:,}"
+    if tax.niit is not None:
+        expected = tax.niit.thresholds[status]
+        assert by_test["Net investment income tax (Form 8960, 3.8%)"].threshold == f"${expected:,}"
+
+
+def test_jf1b1_the_non_qss_rows_carry_no_qss_sentence():
+    r = magi_ladder(240_000, "married_filing_jointly", 2025, wages=240_000)
+    assert not any("surviving spouse" in row.definition for row in r.rows if "89" in row.test)
 
 
 def test_ladder_rows_come_only_from_shipped_blocks():

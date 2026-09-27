@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,593 tests** — offline 5,213 + live-.gov 380; derived
+Done and on `main` (**5,685 tests** — offline 5,305 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1241,7 +1241,7 @@ not wait for any of this.
      - as a pitfall with a regression test citing its id (`test_pitfall_coverage`);
      - at its use sites (op work string, DocSpec note, intake text), not only in a registry. This is the knowledge-gap pattern.
    - **Line numbers:** from JF6a on, no new code may type a form line number; every destination renders through `form_line(pack, key)`.
-   - **Pitfall ids** are assigned at commit time in tranche order. P-013 is N-8, and P-013 also takes LD-15's 871(k) corner. P-014 is the handfill "no" checkbox (J0 commit C) and P-015 is form-line-drift (JF6a). Tentative new ids: P-016 treaty-destination (JF1a), P-017 flat-rate-precondition (JF1a), P-018 residency-facts (JF5a/b), P-019 box1-standin (JF3), P-020 withholding-vs-liability (JP1a), P-021 recharacterization (JR2b), P-022 charitable-characterization (JF9), P-023 public-benefit-qualified-alien (JT1c), P-024 education-ssn-deadline (JT1e), P-025 claim-of-right (JP4).
+   - **Pitfall ids** are assigned at commit time in tranche order. P-013 is N-8, and P-013 also takes LD-15's 871(k) corner. P-014 is the handfill "no" checkbox (J0 commit C) and P-015 is form-line-drift (JF6a). Tentative new ids: P-016 treaty-destination (JF1a), P-017 flat-rate-precondition (JF1a), P-018 residency-facts (JF5a/b), P-019 box1-standin (JF3), P-020 withholding-vs-liability (JP1a), P-021 recharacterization (JR2b), P-022 charitable-characterization (JF9), P-023 public-benefit-qualified-alien (JT1c), P-024 education-ssn-deadline (JT1e), P-025 claim-of-right (JP4). Assigned outside that list (the next free id, since P-019..P-025 stay reserved): P-026 nra-entry-space (JF1b.13).
 
 **Old → new map.**
 
@@ -1458,6 +1458,7 @@ not wait for any of this.
     - Citing tests for the residency-facts pitfall.
 
 - [ ] **JF1b — Small logic fixes** (S–M; deps J0)
+  - *Part A as built (2026-09-27; items 13 and 1-8 — items 9-12 are part B):* 13 the filler refuses 'NRA' on every SSN/comb line and names the pack's MFS entry-space line (pitfall P-026; verify keeps the literal on every SSN/comb line); 1 magi_ladder's 8959/NIIT rows read the raw status via `_surtax_threshold` (QSS $200,000 / $250,000); 2 the §6013 conditional caveat needs a married household (an unmarried visa filer gets a no-§6013 1040-NR caveat; the dual-status caveat names the election only on a marriage); 3 the passport's why follows the classification, tax_year threaded; 4 `ira_contribution_eligibility(roth_ira_dec31_value=)` applies the IRC 4973(a) cap and the work names the 408(d)(4) / Form 4868 / 301.9100-2 deadlines; 5 a structural IncomeSnapshot joint-view test; 6 `estimate.INCOME_LINKED_FIELDS` groups the walk's subset/parent (and dependent-care) overrides into one step; 7 no recount warning (and 'definitive' only) when the SPT's maximum countable total is under 183 or the current-year span under 31; 8 the partner note quotes the §6013 precondition. Open from part A: the traditional_deduction path still books a contribution over the phased-out DEDUCTION as a 4973 excess (IRC 4973(b) computes it "without regard to section 219(g)").
   1. **QSS threshold** [DEF-11]. magi_ladder applies the MFJ-aliased $250,000 Form 8959 threshold to QSS (calc.py:4175-4182 via `_resolve_filing_status`); Form 8959 line 5 and knowledge/federal/2025.yaml:168 say $200,000. Use `_surtax_threshold` with the raw status, and move the NIIT row onto the same helper.
   2. **§6013 caveat gate** [DEF-16]. The §6013(g)/(h) caveat fires for unmarried single visa holders (estimate.py:2288-2302). Gate it on `_is_married`, and suppress it once JF5b's prior-year fact plus the SPT settle residency.
   3. **Document checklist wording** [DEF-19]. `_required_documents` frames every us_person=False filer as "a nonresident return", computed residents included (intake.py:1187-1204). Gate it on the residency classification and thread `tax_year` through.

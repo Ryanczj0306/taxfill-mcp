@@ -1578,3 +1578,53 @@ pitfalls:
       test_p018_a_dual_status_spouse_inside_a_head_of_household_figure_keeps_chapter_6_rules,
       test_p018_a_prior_year_election_return_* (test_estimate.py, test_intake.py)
       and test_p018_section_6013_kind_reads_a_prior_year_election_return.
+  - id: P-026
+    incident: >-
+      The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer
+      whose nonresident-alien spouse has no SSN or ITIN (and needs none) was
+      told to put 'NRA' on spouse.identifying_number: filler._accepts_nra
+      admitted it on any ssn_digits_only line whose key contained "spouse" (on
+      the 2025 Form 1040 pack that also took 26.former_spouse_ssn, and it took
+      the Form 1040-X, Form 843 and state spouse-SSN lines), its comment and
+      refusal text cited the instructions for that box, and test_filler.py
+      encoded it. The instructions put the literal elsewhere. Instructions for
+      Form 1040 (2023) and (2024), Married Filing Separately: "Be sure to enter
+      your spouse's SSN or ITIN in the space for spouse's SSN on Form 1040 or
+      1040-SR. If your spouse doesn't have and isn't required to have an SSN or
+      ITIN, enter 'NRA' in the entry space below the filing status
+      checkboxes." (2023 spells out "Individual Taxpayer Identification Number
+      (ITIN)"; 2025: "enter 'NRA' in the entry space.") Pub 501 (2025) says the
+      same, and the Instructions for Form 1040-X (Rev. December 2025): "enter
+      'NRA' next to their name in the entry space below the filing status
+      checkboxes." A paper return filled by the tool carried letters in the
+      SSN box and nothing in the entry space. Found by JF5a's fifth
+      adversarial verify (2026-09-27); pre-existing.
+    countermeasure: >-
+      No identifying-number or comb line accepts 'NRA' (JF1b.13). The filler
+      refuses it on every ssn_digits_only line and every comb line, the
+      spouse's and the taxpayer's included, with filler._nra_refusal: it quotes
+      the pack year's Instructions for Form 1040 text (or the 1040-X text on a
+      1040-X pack), and names the entry-space line read from the pack itself —
+      filing_status.spouse_or_qualifying_person_name on the 2023/2024 Form 1040
+      packs and every 1040-X pack, filing_status.mfs_spouse_name on the 2025
+      Form 1040 pack — telling the caller to write 'NRA' there and leave the
+      spouse-SSN box blank; a pack that is neither form names no line of its
+      own and says to follow that form's instructions. The entry space is an
+      ordinary text line and takes the literal (with or without the spouse's
+      name). verify.expected_rendering and normalize_on_disk keep 'NRA' on
+      every comb/SSN line (not only "spouse" keys) so a box holding it can
+      never digit-strip to blank: an old PDF with 'NRA' in an SSN box fails an
+      assertion of the real number or of a blank. The profile fact is
+      unchanged — household.spouse.tax_id may hold the answer 'NRA' (the
+      estimator's _spouse_has_tin reads it as no TIN); the intake question,
+      the estimator's W-7 note, the Spouse.tax_id description, the fill_form
+      MCP docstring and SKILL.md's prescriptive-errors bullet all say the
+      literal goes in the entry space, never the SSN box. Tests, P-026-tagged,
+      in packages/core/tests/test_filler.py:
+      test_p026_nra_fills_the_mfs_entry_space_as_text and
+      test_p026_spouse_ssn_comb_refuses_nra_naming_the_entry_space (each per
+      pack year 2023/2024/2025), test_p026_taxpayer_ssn_refuses_nra_naming_the_entry_space,
+      test_p026_former_spouse_ssn_refuses_nra,
+      test_p026_1040x_spouse_ssn_refuses_nra_naming_its_entry_space and
+      test_p026_every_ssn_and_comb_line_of_every_pack_refuses_nra; in
+      test_verify.py, test_p026_an_nra_literal_in_an_ssn_box_never_passes_as_blank.

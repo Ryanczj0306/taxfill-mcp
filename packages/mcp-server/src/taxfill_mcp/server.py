@@ -183,7 +183,12 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
     """Deterministically fill a form. `values` maps line ids (per get_form_map) to values.
 
     Downloads/uses the official blank, writes the filled PDF to out_path, and returns the
-    written lines + any warnings. Rejects unknown lines and comb/length violations.
+    written lines + any warnings. Rejects unknown lines and comb/length violations. No
+    identifying-number or comb line takes the literal 'NRA' (P-026): an MFS filer whose
+    nonresident-alien spouse has no SSN/ITIN (and needs none) writes 'NRA' in the MFS ENTRY
+    SPACE (the Instructions for Form 1040: "enter 'NRA' in the entry space") —
+    `filing_status.spouse_or_qualifying_person_name` on the 2023/2024 1040 packs,
+    `filing_status.mfs_spouse_name` on 2025 — and leaves `spouse.identifying_number` blank.
     """
     pack = load_form_pack(form, year, jurisdiction)
     blank = _fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
@@ -424,12 +429,20 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       125(i) FSA per employee per employer; 132(f) commuter monthly. Quote the scoping strings)
     - ira_contribution_eligibility: args {magi, filing_status?, year?, ira_type?: roth|
       traditional_deduction, contributed?, age_50_plus?, covered_by_employer_plan?,
-      spouse_covered_by_employer_plan?, mfs_lived_apart_all_year?} (the Pub 590-A reduced-limit
-      worksheet: round UP to $10, $200 floor while partially phased. Run it BEFORE any IRA
-      contribution is recorded — it catches the 6%/yr-excise error (IRC 4973) and shows the
-      year-end-status rule: the same MAGI can be excess under one status and compliant under
-      another (e.g. MFS vs MFJ), because eligibility follows the Dec 31 filing status. The
-      deduction path needs the employer-plan coverage facts; no coverage anywhere = no phase-out)
+      spouse_covered_by_employer_plan?, mfs_lived_apart_all_year?, roth_ira_dec31_value?} (the Pub
+      590-A reduced-limit worksheet: round UP to $10, $200 floor while partially phased. Run it
+      BEFORE any IRA contribution is recorded — it catches the 6%/yr-excise error (IRC 4973) and
+      shows the year-end-status rule: the same MAGI can be excess under one status and compliant
+      under another (e.g. MFS vs MFJ), because eligibility follows the Dec 31 filing status. The
+      deduction path needs the employer-plan coverage facts; no coverage anywhere = no phase-out.
+      roth_ira_dec31_value (Roth only: all Roth IRAs' Dec 31 value, that year's contributions made
+      the next year included) applies IRC 4973(a)'s cap — the excise "shall not exceed 6 percent of
+      the value of the account" — so excise = 6% x min(excess, value). The work names the fix's
+      deadline: withdraw the excess plus its net income by the return's due date INCLUDING
+      extensions (IRC 408(d)(4)) — the year's April due date, or October 15 with a Form 4868
+      extension — and, for a return filed on time without it, the Form 5329 instructions' 6 months
+      after the due date excluding extensions, on an amended return "Filed pursuant to section
+      301.9100-2")
     - marginal_dollar_savings: args {taxable_income, wages, filing_status?, year?} ("where does one
       more pre-tax dollar save the most": payroll HSA/FSA/commuter dollars avoid income tax AND FICA;
       401(k)/deductible-IRA dollars avoid income tax only; ABOVE the SS wage base the FICA saving is
@@ -439,7 +452,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       excluded_puerto_rico_income?} (every MAGI test the year's packs carry, one table — because MAGI
       is not one number: NIIT adds back the FEIE, Additional Medicare is a WAGE test that AGI cannot
       move, Schedule 1-A / Roth-IRA / deductible-IRA each define their own. Show it when the user asks
-      why their MAGI differs from their salary; every planning lever moves a number on this ladder)
+      why their MAGI differs from their salary; every planning lever moves a number on this ladder.
+      A qualifying surviving spouse buckets differently on the two surtaxes: Form 8959's $200,000
+      ("Single, Head of household, or Qualifying surviving spouse"), NIIT's joint $250,000 (IRC
+      1411(b)(1): "a surviving spouse (as defined in section 2(a))"))
     - ira_pro_rata: args {dec31_total_value, amount_converted?, other_distributions?,
       nondeductible_basis_carryforward?, nondeductible_contributions_this_year?,
       contributions_made_after_year_end?, year?} (Form 8606 Part I / IRC 408(d)(2): ALL traditional +
@@ -1041,7 +1057,10 @@ def compare_scenarios(
     separate one, priced without it, stays an option), MFJ with the election declined, MFS under a
     definite 6013(h) choice, or head of household for a nonresident-alien taxpayer (Pub 519 ch. 5)),
     income_overrides? ({IncomeSnapshot field: value};
-    'spouse' replaces the whole spouse snapshot; attribution applies them in this order), note?}.
+    'spouse' replaces the whole spouse snapshot; attribution applies them in this order — a subset
+    and its parent (interest / bank_deposit_interest / bank_deposit_interest_nonresident_period,
+    dividends / qualified_dividends) and dependent_care_expenses / dependent_care_persons move as
+    ONE step, in either key order, so no intermediate snapshot is invalid), note?}.
 
     PERSISTENCE (the "change one fact and re-diff" loop): pass save_as="name" to store the set
     (INPUTS only - results recompute on every load) in the year's workspace; later call with

@@ -34,7 +34,8 @@ Design commitments:
 * **Two attributions, both EXACT.** The ledger diff itemizes per-slot effect
   differences and must sum to the headline delta (the Stage-2 spine
   invariant). The sequential attribution walks from the baseline to the
-  scenario ONE INPUT CHANGE at a time, computing a real bottom line after
+  scenario ONE INPUT CHANGE at a time (a subset and its parent move together,
+  so no intermediate snapshot is invalid), computing a real bottom line after
   each step — the steps telescope, so they too sum exactly, and they answer
   the question the ledger cannot: an above-the-line change (a deduction, a
   new income item) shows up in the ledger only inside the income-tax slot,
@@ -58,6 +59,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from taxfill_core.estimate import (
+    INCOME_LINKED_FIELDS,
     DeltaLine,
     IncomeSnapshot,
     MissingBlock,
@@ -197,7 +199,9 @@ class ScenarioDelta(BaseModel):
         description=(
             "The walk from baseline to scenario one input at a time; steps telescope to exactly "
             "`delta`. Order follows the spec (status first, then each override) and the attribution "
-            "is order-DEPENDENT by nature — a different order splits the same total differently."
+            "is order-DEPENDENT by nature — a different order splits the same total differently. "
+            "Overridden fields the snapshot checks against each other (a subset and its parent, "
+            "dependent-care expenses and persons: estimate.INCOME_LINKED_FIELDS) are one step."
         ),
     )
 
@@ -287,6 +291,25 @@ def _apply_overrides(base_income: IncomeSnapshot, overrides: dict[str, Any]) -> 
     # without coercion, so a {'spouse': {...}} override would smuggle a bare dict
     # where the engine expects an IncomeSnapshot.
     return IncomeSnapshot.model_validate({**base_income.model_dump(), **overrides})
+
+
+def _override_steps(overrides: dict[str, Any]) -> list[list[str]]:
+    """The walk's override steps, in the scenario's key order: a key alone, or — for the
+    fields the snapshot validator checks against each other (estimate.INCOME_LINKED_FIELDS:
+    a subset and its parent, dependent-care expenses and persons) — every overridden member of
+    its group together, at the first member's position (JF1b.6). One member alone could leave
+    the intermediate snapshot invalid (interest cut below the base's bank_deposit_interest),
+    so the pair moves as one step whichever order the keys were given in."""
+    steps: list[list[str]] = []
+    placed: set[str] = set()
+    for key in overrides:
+        if key in placed:
+            continue
+        group = next((g for g in INCOME_LINKED_FIELDS if key in g), frozenset({key}))
+        members = [k for k in overrides if k in group]
+        steps.append(members)
+        placed.update(members)
+    return steps
 
 
 def _run(
@@ -469,11 +492,18 @@ def compare_scenarios(
                 _step(f"us_resident_election flag: {_flag(prev_flag)} -> {_flag(s.us_resident_election)} "
                       f"(as specified){_with_reading(reading, after)}", est)
             reading = after
-        for i, key in enumerate(s.income_overrides, start=1):
-            walk = walk.model_copy(update={"income_overrides": dict(list(s.income_overrides.items())[:i])})
-            base_val = getattr(income, key, None)
-            _step(f"income.{key}: {base_val!r} -> {s.income_overrides[key]!r}",
-                  _run(profile, income, walk, year, knowledge_dir))
+        applied: list[str] = []
+        for members in _override_steps(s.income_overrides):
+            # A linked group (a subset and its parent, ...) is ONE step, so no intermediate
+            # snapshot fails the validator (JF1b.6); the label names every member.
+            applied.extend(members)
+            walk = walk.model_copy(update={"income_overrides": {k: s.income_overrides[k] for k in applied}})
+            label = "; ".join(
+                f"income.{key}: {getattr(income, key, None)!r} -> {s.income_overrides[key]!r}" for key in members
+            )
+            if len(members) > 1:
+                label += " (applied together: the snapshot checks these fields against each other)"
+            _step(label, _run(profile, income, walk, year, knowledge_dir))
 
         if current != res.point:
             raise RuntimeError(

@@ -3584,7 +3584,8 @@ def test_p018_dual_status_acceptance_h1b_arrival_2026_prices_the_range():
 def test_p018_dual_status_caveat_names_the_restrictions_and_the_approximation():
     est = estimate_refund(_dual_2025(), 2025, IncomeSnapshot(wages=60_000, federal_withholding=8_000))
     caveat = est.residency_caveat
-    assert "DUAL-STATUS" in caveat and "no §6013(g)/(h) election is recorded" in caveat
+    # JF1b.2: an unmarried filer's caveat never names the election (it needs a spouse).
+    assert "DUAL-STATUS" in caveat and "6013" not in caveat
     assert "NO standard deduction" in caveat and "However, you can itemize any allowable deductions." in caveat
     assert "no joint return and no head of household" in caveat
     assert "single rates — an inference: ch. 6 names the rate column only for a married filer" in caveat
@@ -3601,6 +3602,7 @@ def test_p018_dual_status_caveat_names_the_restrictions_and_the_approximation():
     assert married.filing_status_used == "married_filing_separately"
     assert "\"must use the Tax Table column or Tax Computation Worksheet for married filing separately\"" in (
         married.residency_caveat)
+    assert "no §6013(g)/(h) election is recorded" in married.residency_caveat
 
 
 def test_p018_dual_status_unmarried_with_a_prior_1040nr_has_no_route_to_the_standard_deduction():
@@ -3867,6 +3869,91 @@ def test_p013_combined_with_spouse_sums_every_amount_field():
     missing = [f for f in ints if f not in household_level and getattr(combined, f) != 3]
     assert missing == [], f"combined_with_spouse does not sum {missing}"
     assert combined.dependent_care_persons == 2
+
+
+# JF1b.5 (LD-10): EVERY IncomeSnapshot field is classified here by how the joint view
+# (combined_with_spouse) treats it, and each class is checked by behavior. A new field
+# fails until it is classified; a classified field the joint view drops fails by name.
+_SPOUSE_SUMMED = frozenset({
+    "wages", "federal_withholding", "interest", "bank_deposit_interest",
+    "bank_deposit_interest_nonresident_period", "dividends", "qualified_dividends",
+    "capital_gain_long", "capital_gain_short", "self_employment_net",
+    "retirement_income_taxable", "social_security_benefits", "other_income",
+    "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
+    "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
+})
+_SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses"})  # per-person lists
+_SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions"})  # None unless either spouse itemizes
+_HOUSEHOLD_LEVEL = frozenset({"dependent_care_persons"})  # the same persons: the MAX, never doubled
+_SPOUSE_FIELD = frozenset({"spouse"})  # the nesting itself: the joint view has none
+
+
+def _spouse_pair() -> tuple[IncomeSnapshot, IncomeSnapshot]:
+    """Two snapshots with a DISTINCT value in every field (so a swapped or dropped field shows),
+    inside the subset validators (interest >= deposit >= nonresident-period deposit; dividends >=
+    qualified; dependent-care expenses need a person)."""
+    ints = sorted(_SPOUSE_SUMMED | _HOUSEHOLD_LEVEL)
+    one = {f: 1_000 + i for i, f in enumerate(ints)}
+    two = {f: 5_000 + 3 * i for i, f in enumerate(ints)}
+    for vals, base in ((one, 90_000), (two, 190_000)):
+        vals.update(interest=base, bank_deposit_interest=base - 1_000,
+                    bank_deposit_interest_nonresident_period=base - 2_000,
+                    dividends=base - 3_000, qualified_dividends=base - 4_000)
+    one["dependent_care_persons"], two["dependent_care_persons"] = 1, 2
+    primary = IncomeSnapshot(**one, ss_withheld_by_employer=[11, 12], aotc_qualified_expenses=[31],
+                             itemized_deductions=700)
+    spouse = IncomeSnapshot(**two, ss_withheld_by_employer=[21], aotc_qualified_expenses=[41, 42],
+                            itemized_deductions=None)
+    return primary, spouse
+
+
+def _spouse_coverage_gaps(combine) -> list[str]:
+    """The fields ``combine`` (a joint-view function) mishandles, by class."""
+    primary, spouse = _spouse_pair()
+    joint = combine(primary.model_copy(update={"spouse": spouse}))
+    gaps = [f for f in sorted(_SPOUSE_SUMMED) if getattr(joint, f) != getattr(primary, f) + getattr(spouse, f)]
+    gaps += [f for f in sorted(_SPOUSE_CONCATENATED) if getattr(joint, f) != [*getattr(primary, f), *getattr(spouse, f)]]
+    if joint.dependent_care_persons != max(primary.dependent_care_persons, spouse.dependent_care_persons):
+        gaps.append("dependent_care_persons")
+    if joint.spouse is not None:
+        gaps.append("spouse")
+    # itemized_deductions: summed when either spouse itemizes, None when neither does.
+    both = combine(primary.model_copy(update={"spouse": spouse.model_copy(update={"itemized_deductions": 50})}))
+    neither = combine(primary.model_copy(update={
+        "itemized_deductions": None, "spouse": spouse.model_copy(update={"itemized_deductions": None})}))
+    if joint.itemized_deductions != 700 or both.itemized_deductions != 750 or neither.itemized_deductions is not None:
+        gaps.append("itemized_deductions")
+    return gaps
+
+
+def test_jf1b5_every_income_snapshot_field_is_classified_for_the_joint_view():
+    classes = (_SPOUSE_SUMMED, _SPOUSE_CONCATENATED, _SPOUSE_OPTIONAL_SUMMED, _HOUSEHOLD_LEVEL, _SPOUSE_FIELD)
+    classified = frozenset().union(*classes)
+    assert sum(len(c) for c in classes) == len(classified), "a field is in two classes"
+    fields = set(IncomeSnapshot.model_fields)
+    unclassified = sorted(fields - classified)
+    assert unclassified == [], (
+        f"IncomeSnapshot field(s) {unclassified} are not classified for the joint view: add each to "
+        f"combined_with_spouse (summed, concatenated, or the household MAX) and to the matching class here"
+    )
+    stale = sorted(classified - fields)
+    assert stale == [], f"classified field(s) {stale} are no longer on IncomeSnapshot — remove them here"
+
+
+def test_jf1b5_combined_with_spouse_handles_every_classified_field():
+    gaps = _spouse_coverage_gaps(IncomeSnapshot.combined_with_spouse)
+    assert gaps == [], f"combined_with_spouse mishandles {gaps} (see the classes above)"
+
+
+def test_jf1b5_the_coverage_check_names_a_dropped_field():
+    # The acceptance: a field dropped from the joint view fails by name — here the joint view
+    # with aca_aptc (a summed field) and the second list (a concatenated one) left as the primary's.
+    def dropping(snapshot: IncomeSnapshot) -> IncomeSnapshot:
+        joint = snapshot.combined_with_spouse()
+        return joint.model_copy(update={
+            "aca_aptc": snapshot.aca_aptc, "aotc_qualified_expenses": snapshot.aotc_qualified_expenses})
+
+    assert _spouse_coverage_gaps(dropping) == ["aca_aptc", "aotc_qualified_expenses"]
 
 
 # JF5b part 2, the adversarial verify's fixes (2026-09-27). Hypothetical data.
@@ -4434,3 +4521,64 @@ def test_p018_a_confirmed_joint_status_niit_note_is_not_called_a_candidate():
         spouse=IncomeSnapshot(wages=9_000, federal_withholding=600, interest=1_000)))
     note = next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
     assert "CANDIDATE" not in note
+
+
+# ── JF1b.2: the §6013 caveat needs a married household. Hypothetical profiles. ──
+
+
+def _six013_texts(est: RefundEstimate) -> list[str]:
+    return [t for t in [*est.assumptions, *est.what_would_change_it] if "6013" in t]
+
+
+def test_jf1b2_an_unmarried_visa_holder_with_no_residency_facts_reads_no_6013():
+    for household in (Household(marital_status=_ans("unmarried")),
+                      Household(marital_status=_ans("unmarried"), filing_status=_ans("single")),
+                      Household(filing_status=_ans("single")),
+                      None):
+        profile = Profile(identity=Identity(us_person=_ans(False)), household=household)
+        est = estimate_refund(profile, 2025, _WAGES)
+        assert _six013_texts(est) == [], household
+        # The residency warning stays — without the election the filer cannot make.
+        caveat = next(a for a in est.assumptions if a.startswith("If your residency result is nonresident alien"))
+        assert "Nonresident aliens cannot claim the standard deduction" in caveat
+        assert "You cannot file as head of household if you are a nonresident alien" in caveat
+
+
+def test_jf1b2_a_married_visa_holder_with_no_residency_facts_still_reads_the_election():
+    for household in (Household(marital_status=_ans("married")),
+                      Household(filing_status=_ans("married_filing_separately"))):
+        est = estimate_refund(Profile(identity=Identity(us_person=_ans(False)), household=household), 2025, _WAGES)
+        texts = _six013_texts(est)
+        assert texts and any("electing under §6013(g)/(h)" in t for t in texts), household
+
+
+def test_jf1b2_an_unmarried_nonresident_or_dual_status_filer_reads_no_6013():
+    nonresident = _visa_profile([("F-1", date(2023, 8, 20), None)], {2025: 365, 2024: 366, 2023: 130})
+    assert _six013_texts(estimate_refund(nonresident, 2025, _WAGES)) == []
+    dual = _visa_profile(_SWITCH_APRIL, _DAYS_2021)
+    est = estimate_refund(dual, 2025, _WAGES)
+    assert est.residency_caveat is not None and "DUAL-STATUS" in est.residency_caveat
+    assert _six013_texts(est) == []
+    # A prior-year Form 1040-NR closes route (i): the no-route reason names the missing marriage,
+    # not the election.
+    closed = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, prior={2024: "1040-NR"}), 2025, _WAGES)
+    assert _six013_texts(closed) == []
+    assert "you are not married at the end of the year on these facts, so no joint-return choice" in (
+        closed.residency_caveat or "")
+    # A married filer's dual-status caveat still names the election.
+    married = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, marital="married"), 2025, _WAGES)
+    assert "no §6013(g)/(h) election is recorded" in (married.residency_caveat or "")
+
+
+def test_jf1b2_a_prior_year_resident_meeting_the_spt_gets_no_taxpayer_direction_caveat():
+    # JF5b's prior-year fact + the SPT settle the TAXPAYER as a resident: no "if your residency
+    # result is nonresident" caveat for the taxpayer; a nonresident SPOUSE still gets the
+    # spouse-direction caveat.
+    h1b = [("H-1B", date(2024, 6, 1), None)]
+    alone = _visa_profile(h1b, {2025: 365, 2024: 214}, prior={2024: "1040"}, marital="married")
+    est = estimate_refund(alone, 2025, _WAGES)
+    assert _six013_texts(est) == []
+    with_spouse = _visa_profile(h1b, {2025: 365, 2024: 214}, prior={2024: "1040"}, marital="married",
+                                spouse=Spouse(us_person=_ans(False)))
+    texts = _six013_texts(estimate_refund(with_spouse, 2025, _WAGES))
+    assert texts and all(t.startswith("Your spouse may be a nonresident alien") for t in texts)

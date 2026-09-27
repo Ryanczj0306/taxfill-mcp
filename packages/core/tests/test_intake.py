@@ -1714,3 +1714,63 @@ def test_p018_intake_reads_a_confirmed_joint_status_as_the_continuing_election_l
     est = " ".join(estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=5_000)).assumptions)
     for text in (notes, est):
         assert "read as that election continuing" in text and "NOT applied here" not in text
+
+
+# ── JF1b.3 / JF1b.8 / JF1b.2 (intake). Hypothetical profiles. ──────────────────
+
+
+def _passport_why(profile: Profile, tax_year: int | None = 2025) -> str:
+    docs = intake_checklist(profile, tax_year=tax_year).required_documents
+    return next(d.why for d in docs if d.kind == "passport_id_page")
+
+
+def test_jf1b3_a_resident_f1_filer_gets_no_nonresident_return_framing():
+    # F-1 from 2019: the five exempt calendar years are 2019-2023, so 2025 counts in full.
+    resident = _visa([("F-1", date(2019, 8, 20), None)],
+                     {2025: 365, 2024: 366, 2023: 365, 2022: 365, 2021: 365, 2020: 366, 2019: 130})
+    docs = intake_checklist(resident, tax_year=2025).required_documents
+    assert not any("nonresident return" in d.why for d in docs)
+    assert "resident-alien answer" in _passport_why(resident)
+    # The visa and I-94 still document the answer.
+    assert {"visa", "I-94", "I-20"} <= {d.kind for d in docs}
+
+
+def test_jf1b3_the_passport_framing_follows_the_classification():
+    nonresident = _visa([("F-1", date(2023, 8, 20), None)], {2025: 365, 2024: 366, 2023: 130})
+    assert _passport_why(nonresident) == "Identity for a nonresident return."
+    dual = _visa([("H-1B", date(2025, 3, 1), None)], {2025: 306, 2024: 0, 2023: 0})
+    assert "dual-status (split-year) return" in _passport_why(dual)
+    assert "nonresident return" not in _passport_why(dual)
+    unknown = Profile(identity=Identity(us_person=_ans(False)))
+    assert "decide whether you file as a resident or a nonresident" in _passport_why(unknown)
+    # tax_year threads through: with no year the residency is not computed.
+    assert "decide whether" in _passport_why(nonresident, tax_year=None)
+
+
+def test_jf1b8_the_partner_note_names_the_6013_precondition():
+    from taxfill_core.schemas.profile import OtherTaxpayer
+
+    profile = _single_filer_core(other_taxpayers=[
+        OtherTaxpayer(name="Partner P", relationship="unmarried_partner", us_person=False, provenance=US),
+    ])
+    note = next(n for n in intake_checklist(profile).notes if "If you marry mid-plan" in n)
+    assert "needs one of you to be a U.S. citizen or resident" in note
+    assert "at the end of the year (IRC 6013(g))" in note
+    assert "by becoming a resident during it (IRC 6013(h)" in note
+    assert "Two nonresident aliens who both stay nonresident all year cannot elect" in note
+    # Pub 519 ch. 1, quoted (residency.SECTION_6013_PRECONDITION).
+    assert ("If, at the end of your tax year, you are married and one spouse is a U.S. citizen or a resident "
+            "alien and the other spouse is a nonresident alien") in note
+    assert "You were a nonresident alien at the beginning of the year." in note
+
+
+def test_jf1b2_an_unmarried_dual_status_filer_reads_no_6013_in_intake():
+    unmarried = _visa([("H-1B", date(2025, 3, 1), None)], {2025: 306, 2024: 0, 2023: 0})
+    unmarried = unmarried.model_copy(update={"household": Household(marital_status=_ans("unmarried"))})
+    q = next(q for q in intake_checklist(unmarried, tax_year=2025).next_questions
+             if q.id == "prior_filings.return_form")
+    assert "DUAL-STATUS" in q.why and "6013" not in q.why
+    married = unmarried.model_copy(update={"household": Household(marital_status=_ans("married"))})
+    qm = next(q for q in intake_checklist(married, tax_year=2025).next_questions
+              if q.id == "prior_filings.return_form")
+    assert "a married filer keeps the §6013(g)/(h) election's" in qm.why

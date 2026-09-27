@@ -327,10 +327,12 @@ def expected_rendering(pack_field: PackField, value: object) -> str:
         return render_money(parsed)
     text = str(value)
     if pack_field.comb or pack_field.format == "ssn_digits_only":
-        # The sanctioned literal 'NRA' on a spouse SSN line (Form 1040 instructions:
-        # MFS with an NRA spouse who has no TIN) must survive normalization — otherwise
-        # both sides digit-strip to "" and the assertion would also pass on a BLANK box.
-        if text.strip().upper() == "NRA" and "spouse" in pack_field.line:
+        # P-026: the literal 'NRA' belongs in the MFS entry space, never in an SSN or
+        # comb box, and the filler refuses it there. It still survives normalization on
+        # EVERY such line so it can never digit-strip to "": an assertion of 'NRA' fails
+        # against a blank box, and a box that holds 'NRA' (a PDF filled before the fix)
+        # fails an assertion of the real number or of a blank.
+        if text.strip().upper() == "NRA":
             return "NRA"
         return digits_only(text)
     return normalize_text(text)
@@ -346,7 +348,7 @@ def normalize_on_disk(pack_field: PackField, raw: str) -> str:
         parsed = parse_money(raw)
         return render_money(parsed) if parsed is not None else normalize_text(raw)
     if pack_field.comb or pack_field.format == "ssn_digits_only":
-        if raw.strip().upper() == "NRA" and "spouse" in pack_field.line:
+        if raw.strip().upper() == "NRA":  # P-026: see expected_rendering
             return "NRA"
         return digits_only(raw)
     return normalize_text(raw)

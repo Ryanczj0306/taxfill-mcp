@@ -1435,6 +1435,21 @@ def classify(
     spt = substantial_presence_test(adjusted, year)
     work_lines.append(spt.work)
 
+    # JF1b.7: the most the SPT could count on this timeline — a fully exempt year 0, a partially
+    # exempt year its non-exempt calendar span, any other lookback year every day of it. Below 183
+    # weighted (or under the 31-day current-year prong) no recount of days can meet the test, so
+    # the nonresident answer is definitive and no "recount" warning is given.
+    def _max_countable(y: int) -> int:
+        if y in exempt.fully_exempt_years:
+            return 0
+        if y in exempt.partially_exempt_years:
+            return _days_in_year(y) - exempt.exempt_period_days.get(y, 0)
+        return _days_in_year(y)
+
+    max_weighted = _max_countable(year) + Fraction(_max_countable(year - 1), 3) + Fraction(_max_countable(year - 2), 6)
+    recount_cannot_meet = _max_countable(year) < 31 or max_weighted < 183
+    open_years = [y for y in (year - 1, year - 2) if _max_countable(y) > 0 and y not in partial_capped]
+
     if partial_capped and not is_lawful_permanent_resident:
         if spt.meets_spt:
             reasons.append(
@@ -1452,7 +1467,7 @@ def classify(
                 f"{year - 1}, Pub 519's First-Year Choice is closed (IRC 7701(b)(4)(A)(ii)); under reading (2) — a "
                 f"prior-year Form 1040 filed in error — it may still be open: review with your agent."
             )
-        else:
+        elif recount_cannot_meet:
             reasons.append(
                 f"This nonresident answer is definitive despite the partial-year exemption: the counted "
                 f"day(s) for {_year_list(partial_capped)} already assume presence on every possible "
@@ -1460,6 +1475,17 @@ def classify(
                 f"election still can: Pub 519's First-Year Choice can make someone arriving late in the "
                 f"year a resident from their first day of presence when the following year's SPT is met — "
                 f"review with your agent; not computed in v1.)"
+            )
+        else:
+            # JF1b.7: the capped years are at their maximum, but a non-exempt lookback year is not —
+            # more days there could still meet the SPT, so the answer is not called definitive.
+            reasons.append(
+                f"The counted day(s) for {_year_list(partial_capped)} already assume presence on every possible "
+                f"non-exempt day, but {_year_list(open_years) if open_years else 'another lookback year'} "
+                f"{'is' if len(open_years) == 1 else 'are'} not exempt: with presence on every day there the "
+                f"weighted total could reach {_fmt_fraction(max_weighted)} — recount days present in "
+                f"{_year_list(open_years) if open_years else 'those years'} from I-94 history before relying on "
+                f"nonresident status."
             )
 
     if is_lawful_permanent_resident:
@@ -1601,7 +1627,9 @@ def classify(
                 f"computed in v1."
             )
             citations.append(CITATION_CLOSER_CONNECTION)
-        elif spt.weighted_days >= _NEAR_183_WEIGHTED:
+        elif spt.weighted_days >= _NEAR_183_WEIGHTED and not recount_cannot_meet:
+            # JF1b.7: never "recount" a total no recount can raise to 183 (a count capped by the
+            # non-exempt span) — the definitive reason above says so instead.
             reasons.append(
                 f"Your weighted total ({spt.weighted_days_exact}) is close to the 183-day threshold — "
                 f"recount days present from I-94 history before relying on nonresident status. If a recount "

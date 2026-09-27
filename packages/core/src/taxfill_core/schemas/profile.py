@@ -300,7 +300,15 @@ class Spouse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     name: Answer[str] | None = None
-    tax_id: Answer[str] | None = Field(default=None, description="Spouse's SSN or ITIN.")
+    tax_id: Answer[str] | None = Field(
+        default=None,
+        description=(
+            "Spouse's SSN or ITIN. The answer 'NRA' records a spouse who has no SSN or ITIN and "
+            "needs none (a married-filing-separately return); on the FORM that literal goes in "
+            "the MFS entry space below the filing status checkboxes, never in the spouse-SSN box "
+            "(P-026: the filler refuses it on every identifying-number line)."
+        ),
+    )
     dob: Answer[date] | None = None
     us_person: Answer[bool] | None = Field(
         default=None,

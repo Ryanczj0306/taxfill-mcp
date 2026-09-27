@@ -651,11 +651,16 @@ def test_one_member_per_group_on_separate_fields_is_allowed(tmp_path: Path):
     assert result.written[f"{ROOT}.Page1[0].c1_9[0]"] == "/1"
 
 
-# --- the spouse-SSN 'NRA' literal (MFS with a no-SSN nonresident-alien spouse) --
-# Form 1040 instructions (Filing Status): an MFS filer whose NRA spouse has no
-# SSN/ITIN (and needs none) enters 'NRA' in the spouse identifying-number box.
-# Only SPOUSE lines accept the literal; the taxpayer's own SSN stays strict.
+# --- the MFS no-TIN 'NRA' literal goes in the ENTRY SPACE, never an SSN box (P-026) --
+# Instructions for Form 1040, Married Filing Separately (2023 and 2024): "Be sure
+# to enter your spouse's SSN or ITIN in the space for spouse's SSN on Form 1040 or
+# 1040-SR. If your spouse doesn't have and isn't required to have an SSN or ITIN,
+# enter 'NRA' in the entry space below the filing status checkboxes." (2025: "...
+# enter 'NRA' in the entry space.") So the entry space is an ordinary text line that
+# takes the literal as text, and EVERY identifying-number / comb line refuses it —
+# the spouse's included — naming the pack's own entry-space line.
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
 
 NRA_PACK = mini_pack(
     [
@@ -691,34 +696,139 @@ def nra_blank_pdf(tmp_path: Path) -> Path:
     )
 
 
-def test_spouse_ssn_accepts_nra_literal(nra_blank_pdf: Path, tmp_path: Path):
+def _real_pack(year: int, form: str = "f1040") -> FormPack:
+    from taxfill_core.schemas.formpack import load_pack
+
+    return load_pack(REPO_ROOT / "formpacks" / "federal" / str(year) / form / "pack.yaml")
+
+
+def _blank_for(pack: FormPack, lines: list[str], tmp_path: Path) -> Path:
+    """A synthetic blank carrying just the real pack's fields for ``lines``."""
+    by_line = {pf.line: pf for pf in pack.fields}
+    specs = []
+    for line in lines:
+        pf = by_line[line]
+        spec: dict = {"name": f"{pack.acroform_root}.{pf.field}"}
+        if pf.type == "checkbox":
+            spec.update(kind="checkbox", on_value=pf.on_state)
+        if pf.maxlen is not None:
+            spec["maxlen"] = pf.maxlen
+        if pf.comb:
+            spec["comb"] = True
+        specs.append(spec)
+    return make_acroform_pdf(tmp_path / f"blank_{pack.form}_{pack.tax_year}.pdf", specs)
+
+
+# The entry space by pack year: read off each pack (the key moved in 2025).
+ENTRY_SPACE = {
+    2023: "filing_status.spouse_or_qualifying_person_name",
+    2024: "filing_status.spouse_or_qualifying_person_name",
+    2025: "filing_status.mfs_spouse_name",
+}
+
+
+@pytest.mark.parametrize("year", sorted(ENTRY_SPACE))
+def test_p026_nra_fills_the_mfs_entry_space_as_text(year: int, tmp_path: Path):
+    """P-026: the literal lands in the year's entry space; the spouse-SSN comb stays blank."""
+    pack = _real_pack(year)
+    entry = ENTRY_SPACE[year]
+    assert entry in {pf.line for pf in pack.fields}
+    blank = _blank_for(pack, [entry, "spouse.identifying_number", "filing_status.mfs"], tmp_path)
+    by_line = {pf.line: pf for pf in pack.fields}
     out = tmp_path / "filled.pdf"
-    result = fill_form(NRA_PACK, {"spouse.identifying_number": "NRA"}, nra_blank_pdf, out)
-    qualified = f"{ROOT}.Page1[0].f1_9[0]"
-    assert result.written == {qualified: "NRA"}
-    assert PdfReader(out).get_fields()[qualified].value == "NRA"
+    result = fill_form(pack, {entry: "NRA", "filing_status.mfs": True}, blank, out)
+    entry_field = f"{pack.acroform_root}.{by_line[entry].field}"
+    ssn_field = f"{pack.acroform_root}.{by_line['spouse.identifying_number'].field}"
+    assert result.written[entry_field] == "NRA"
+    fields = PdfReader(out).get_fields()
+    assert fields[entry_field].value == "NRA"
+    assert fields[ssn_field].value in (None, "")  # never touched
+    # The spouse's name with the literal is ordinary text too.
+    result = fill_form(pack, {entry: "Min-jun Park NRA"}, blank, tmp_path / "named.pdf")
+    assert result.written[entry_field] == "Min-jun Park NRA"
 
 
-def test_spouse_ssn_nra_is_case_insensitive_and_writes_uppercase(nra_blank_pdf: Path, tmp_path: Path):
-    for raw in ("nra", "Nra", " NRA "):
-        out = tmp_path / "filled_ci.pdf"
-        result = fill_form(NRA_PACK, {"spouse.identifying_number": raw}, nra_blank_pdf, out)
-        assert result.written[f"{ROOT}.Page1[0].f1_9[0]"] == "NRA", raw
+@pytest.mark.parametrize("year", sorted(ENTRY_SPACE))
+def test_p026_spouse_ssn_comb_refuses_nra_naming_the_entry_space(year: int, tmp_path: Path):
+    pack = _real_pack(year)
+    blank = _blank_for(pack, ["spouse.identifying_number"], tmp_path)
+    for raw in ("NRA", "nra", " Nra "):
+        with pytest.raises(ValueError) as exc:
+            fill_form(pack, {"spouse.identifying_number": raw}, blank, tmp_path / "out.pdf")
+        message = str(exc.value)
+        assert f"line '{ENTRY_SPACE[year]}'" in message, message
+        assert "in the space for spouse's SSN" in message  # the instruction for the SSN box
+        assert f"Instructions for Form 1040 ({year})" in message
+        assert "leave the spouse-SSN box blank" in message
+    if year == 2025:
+        assert "enter 'NRA' in the entry space.\"" in message
+    else:
+        assert "enter 'NRA' in the entry space below the filing status checkboxes" in message
 
 
-def test_taxpayer_ssn_rejects_nra_prescriptively(nra_blank_pdf: Path, tmp_path: Path):
-    # The taxpayer's own identifying number is never 'NRA' — and the error must
-    # be followable (say WHERE 'NRA' belongs), not "strip the letters".
+@pytest.mark.parametrize("year", sorted(ENTRY_SPACE))
+def test_p026_taxpayer_ssn_refuses_nra_naming_the_entry_space(year: int, tmp_path: Path):
+    pack = _real_pack(year)
+    blank = _blank_for(pack, ["identifying_number"], tmp_path)
     with pytest.raises(ValueError) as exc:
-        fill_form(NRA_PACK, {"identifying_number": "NRA"}, nra_blank_pdf, tmp_path / "out.pdf")
+        fill_form(pack, {"identifying_number": "NRA"}, blank, tmp_path / "out.pdf")
+    assert f"line '{ENTRY_SPACE[year]}'" in str(exc.value)
+    assert "real 9-digit SSN or ITIN" in str(exc.value)
+
+
+def test_p026_former_spouse_ssn_refuses_nra(tmp_path: Path):
+    # The old name match ("spouse" in the line key) admitted this 2025 line too.
+    pack = _real_pack(2025)
+    blank = _blank_for(pack, ["26.former_spouse_ssn"], tmp_path)
+    with pytest.raises(ValueError) as exc:
+        fill_form(pack, {"26.former_spouse_ssn": "NRA"}, blank, tmp_path / "out.pdf")
     message = str(exc.value)
-    assert "SPOUSE" in message
-    assert "taxpayer's own 9-digit SSN or ITIN" in message
-    assert "Filing Status" in message  # cites the 1040-instructions mechanic
+    assert "line '26.former_spouse_ssn'" in message
+    assert "line 'filing_status.mfs_spouse_name'" in message
+
+
+@pytest.mark.parametrize("year", sorted(ENTRY_SPACE))
+def test_p026_1040x_spouse_ssn_refuses_nra_naming_its_entry_space(year: int, tmp_path: Path):
+    pack = _real_pack(year, "f1040x")
+    blank = _blank_for(pack, ["spouse.identifying_number"], tmp_path)
+    with pytest.raises(ValueError) as exc:
+        fill_form(pack, {"spouse.identifying_number": "NRA"}, blank, tmp_path / "out.pdf")
+    message = str(exc.value)
+    assert "line 'filing_status.spouse_or_qualifying_person_name'" in message
+    assert "Instructions for Form 1040-X (Rev. December 2025)" in message
+    assert "next to their name in the entry space" in message
+
+
+def test_p026_every_ssn_and_comb_line_of_every_pack_refuses_nra(tmp_path: Path):
+    """No identifying-number or comb line in any shipped pack takes the literal."""
+    from taxfill_core.filler import _enforce_length, _render_text
+    from taxfill_core.schemas.formpack import load_pack
+
+    checked = 0
+    for path in sorted((REPO_ROOT / "formpacks").rglob("pack.yaml")):
+        pack = load_pack(path)
+        if pack.tax_year < 2019:
+            continue
+        for pf in pack.fields:
+            if pf.type != "text" or not (pf.comb or pf.format == "ssn_digits_only"):
+                continue
+            with pytest.raises(ValueError, match="'NRA' never goes in an identifying-number or comb box"):
+                _enforce_length(pf, _render_text(pf, "NRA", pack), pack)
+            checked += 1
+    assert checked > 50
+
+
+def test_mini_pack_spouse_ssn_refuses_nra_with_the_generic_pointer(nra_blank_pdf: Path, tmp_path: Path):
+    # A pack that is not Form 1040 / 1040-X names no line of its own, but still says
+    # where the literal goes on Form 1040 and to leave the box blank.
+    with pytest.raises(ValueError) as exc:
+        fill_form(NRA_PACK, {"spouse.identifying_number": "NRA"}, nra_blank_pdf, tmp_path / "out.pdf")
+    message = str(exc.value)
+    assert "not Form 1040 or 1040-X" in message and "leave this box blank" in message
+    assert "'filing_status.mfs_spouse_name' on the 2025 pack" in message
 
 
 def test_spouse_ssn_stays_strict_for_non_nra_letters(nra_blank_pdf: Path, tmp_path: Path):
-    # The NRA carve-out must not weaken normal SSN validation on the spouse line.
     for bad in ("12A456789", "NRAX", "N-R-A-1"):
         with pytest.raises(ValueError, match=r"digits only"):
             fill_form(NRA_PACK, {"spouse.identifying_number": bad}, nra_blank_pdf, tmp_path / "out.pdf")
@@ -728,21 +838,21 @@ def test_spouse_ssn_stays_strict_for_non_nra_letters(nra_blank_pdf: Path, tmp_pa
     assert result.written[f"{ROOT}.Page1[0].f1_9[0]"] == "000000000"
 
 
-def test_nra_on_plain_comb_line_without_ssn_format_still_rejected(blank_pdf: Path, tmp_path: Path):
-    # The carve-out is scoped to ssn_digits_only lines: a plain comb field
-    # (zip) gets the ordinary digits-only error even for the value 'NRA'.
-    with pytest.raises(ValueError, match=r"digits only"):
+def test_nra_on_plain_comb_line_is_refused_too(blank_pdf: Path, tmp_path: Path):
+    # A comb field without the SSN format (zip) refuses the literal with the same
+    # pointer, and still says the line takes digits only.
+    with pytest.raises(ValueError) as exc:
         fill_form(PACK, {"zip": "NRA"}, blank_pdf, tmp_path / "out.pdf")
+    assert "digits only (one digit per cell)" in str(exc.value)
+    assert "'NRA' never goes in an identifying-number or comb box" in str(exc.value)
 
 
 @pytest.mark.network
-def test_real_f1040_2023_spouse_nra_roundtrip(tmp_path: Path):
-    """The finding's repro on the REAL f1040 pack + cached official blank."""
+def test_real_f1040_2023_nra_entry_space_roundtrip(tmp_path: Path):
+    """P-026 on the REAL f1040 pack + cached official blank."""
     from taxfill_core.fetch import OfflineFetchError, fetch_blank
-    from taxfill_core.schemas.formpack import load_pack
 
-    repo_root = Path(__file__).resolve().parents[3]
-    pack = load_pack(repo_root / "formpacks" / "federal" / "2023" / "f1040" / "pack.yaml")
+    pack = _real_pack(2023)
     try:
         blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
     except OfflineFetchError as exc:
@@ -753,21 +863,20 @@ def test_real_f1040_2023_spouse_nra_roundtrip(tmp_path: Path):
         pack,
         {
             "identifying_number": "000-00-0000",
-            "spouse.identifying_number": "NRA",
+            "filing_status.spouse_or_qualifying_person_name": "NRA",
             "filing_status.mfs": True,
         },
         blank,
         out,
     )
     fields = PdfReader(out).get_fields()
-    spouse_field = f"{pack.acroform_root}.Page1[0].f1_09[0]"
-    assert result.written[spouse_field] == "NRA"
-    assert fields[spouse_field].value == "NRA"
+    entry_field = f"{pack.acroform_root}.Page1[0].f1_18[0]"
+    assert result.written[entry_field] == "NRA"
+    assert fields[entry_field].value == "NRA"
+    assert fields[f"{pack.acroform_root}.Page1[0].f1_09[0]"].value in (None, "")
     assert fields[f"{pack.acroform_root}.Page1[0].f1_06[0]"].value == "000000000"
-
-    # The taxpayer's own SSN line on the real pack still rejects 'NRA'.
-    with pytest.raises(ValueError, match=r"SPOUSE"):
-        fill_form(pack, {"identifying_number": "NRA"}, blank, tmp_path / "reject.pdf")
+    with pytest.raises(ValueError, match=r"filing_status\.spouse_or_qualifying_person_name"):
+        fill_form(pack, {"spouse.identifying_number": "NRA"}, blank, tmp_path / "reject.pdf")
 
 
 # --- misc behavior ------------------------------------------------------------

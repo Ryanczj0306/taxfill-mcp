@@ -29,10 +29,14 @@ pypdf specifics encoded here (dev plan section 10):
 - comb fields take digits only, and ``format: ssn_digits_only`` strips
   dashes/spaces *before* the MaxLen check — a dashed SSN written into a
   9-cell comb field silently clips its last digits (pitfall P-001);
-- one sanctioned non-digit exception: a SPOUSE identifying-number line
-  accepts the literal ``'NRA'`` (an MFS filer whose nonresident-alien
-  spouse has no SSN/ITIN and needs none writes 'NRA' there — Form 1040
-  instructions, Filing Status). The taxpayer's own SSN line never does.
+- no identifying-number box ever takes the literal ``'NRA'`` (pitfall
+  P-026). An MFS filer whose nonresident-alien spouse has no SSN/ITIN and
+  needs none writes 'NRA' in the MFS ENTRY SPACE below the filing status
+  checkboxes (Instructions for Form 1040, Married Filing Separately) — an
+  ordinary text line (``filing_status.spouse_or_qualifying_person_name`` on
+  the 2023/2024 packs, ``filing_status.mfs_spouse_name`` on 2025) — and
+  leaves the spouse-SSN comb blank. Every ``ssn_digits_only`` or comb line
+  refuses 'NRA' with an error naming the pack's entry-space line.
 """
 
 from __future__ import annotations
@@ -54,16 +58,92 @@ from taxfill_core.schemas.formpack import FormPack, PackField
 _SSN_DIGITS_ONLY = "ssn_digits_only"
 _KNOWN_FORMATS = frozenset({_SSN_DIGITS_ONLY})
 
-# An MFS filer whose nonresident-alien spouse has (and needs) no SSN/ITIN
-# writes the literal 'NRA' in the spouse identifying-number box (Form 1040
-# instructions, Filing Status). Only SPOUSE lines accept it — the taxpayer's
-# own identifying number is always a real 9-digit SSN/ITIN.
+# P-026. An MFS filer whose nonresident-alien spouse has (and needs) no
+# SSN/ITIN writes the literal 'NRA' in the MFS ENTRY SPACE, never in the
+# spouse-SSN box: the Instructions for Form 1040, Married Filing Separately,
+# say "Be sure to enter your spouse's SSN or ITIN in the space for spouse's
+# SSN" and, for a spouse with none, "enter 'NRA' in the entry space" (the
+# 2023/2024 text adds "below the filing status checkboxes"). So NO
+# identifying-number or comb line accepts it; the entry space is an ordinary
+# text line and takes it as text.
 _NRA_LITERAL = "NRA"
 
+# The MFS entry space by pack key, with the instruction text for the revision
+# that uses it. The key is read from the pack itself (never assumed from the
+# year): the 2023/2024 Form 1040 packs and every Form 1040-X pack carry
+# 'filing_status.spouse_or_qualifying_person_name'; the 2025 Form 1040 pack
+# carries 'filing_status.mfs_spouse_name'.
+_MFS_ENTRY_SPACE_LINES: tuple[str, ...] = (
+    "filing_status.mfs_spouse_name",
+    "filing_status.spouse_or_qualifying_person_name",
+)
+_NRA_INSTRUCTION_1040: dict[int, str] = {
+    2023: (
+        "Instructions for Form 1040 (2023), Married Filing Separately: \"Be sure to enter your "
+        "spouse's SSN or Individual Taxpayer Identification Number (ITIN) in the space for "
+        "spouse's SSN on Form 1040 or 1040-SR. If your spouse doesn't have and isn't required "
+        "to have an SSN or ITIN, enter 'NRA' in the entry space below the filing status "
+        "checkboxes.\""
+    ),
+    2024: (
+        "Instructions for Form 1040 (2024), Married Filing Separately: \"Be sure to enter your "
+        "spouse's SSN or ITIN in the space for spouse's SSN on Form 1040 or 1040-SR. If your "
+        "spouse doesn't have and isn't required to have an SSN or ITIN, enter 'NRA' in the "
+        "entry space below the filing status checkboxes.\""
+    ),
+    2025: (
+        "Instructions for Form 1040 (2025), Married Filing Separately: \"Be sure to enter "
+        "your spouse's SSN or ITIN in the space for spouse's SSN on Form 1040 or 1040-SR. If "
+        "your spouse doesn't have and isn't required to have an SSN or ITIN, enter 'NRA' in "
+        "the entry space.\""
+    ),
+}
+_NRA_INSTRUCTION_1040X = (
+    "Instructions for Form 1040-X (Rev. December 2025), Changing to married filing "
+    "separately: \"If your spouse doesn't have and isn't required to have an SSN or ITIN, "
+    "enter 'NRA' next to their name in the entry space below the filing status checkboxes.\""
+)
 
-def _accepts_nra(pf: PackField) -> bool:
-    """True for spouse identifying-number lines (the only lines where 'NRA' is legal)."""
-    return pf.format == _SSN_DIGITS_ONLY and "spouse" in pf.line.lower()
+
+def _nra_refusal(pack: FormPack | None, pf: PackField) -> str:
+    """The prescriptive refusal for 'NRA' on an identifying-number / comb line (P-026)."""
+    lines = {f.line for f in pack.fields} if pack is not None else set()
+    entry = next((key for key in _MFS_ENTRY_SPACE_LINES if key in lines), None)
+    form = pack.form if pack is not None else None
+    if form == "1040-X":
+        quote = _NRA_INSTRUCTION_1040X
+    else:
+        # The pack's own year when read; otherwise the nearest read revision.
+        year = pack.tax_year if pack is not None else max(_NRA_INSTRUCTION_1040)
+        read = [y for y in _NRA_INSTRUCTION_1040 if y <= year] or [min(_NRA_INSTRUCTION_1040)]
+        quote = _NRA_INSTRUCTION_1040[max(read)]
+    takes = (
+        "a real 9-digit SSN or ITIN (digits only) or stays blank"
+        if pf.format == _SSN_DIGITS_ONLY
+        else "digits only (one digit per cell)"
+    )
+    head = (
+        f"line '{pf.line}': 'NRA' never goes in an identifying-number or comb box — this line "
+        f"takes {takes}. {quote} "
+    )
+    if entry is not None and pack is not None and form in ("1040", "1040-X"):
+        name_rule = (
+            " (the same space takes the spouse's name: \"Enter your spouse's name in the entry space\")"
+            if form == "1040"
+            else ""
+        )
+        return head + (
+            f"On this pack ({form} {pack.tax_year}) the entry space is line '{entry}': write "
+            f"'NRA' there{name_rule} and leave the spouse-SSN box blank"
+        )
+    return head + (
+        f"This is Form {form or '(unknown)'}, not Form 1040 or 1040-X: leave this box blank "
+        f"rather than writing letters in it and follow this form's own instructions for a "
+        f"spouse with no SSN or ITIN. On Form 1040 the literal goes in the MFS entry space "
+        f"('filing_status.mfs_spouse_name' on the 2025 pack, "
+        f"'filing_status.spouse_or_qualifying_person_name' on 2023/2024)"
+    )
+
 
 # Checkbox answer words (case-insensitive). Anything else string-ish is
 # rejected with a prescriptive "supply yes|no" error rather than guessed at.
@@ -90,8 +170,11 @@ class FillResult(BaseModel):
     )
 
 
-def _render_text(pf: PackField, value: object) -> str:
-    """Normalize and validate a text value; returns the string to write."""
+def _render_text(pf: PackField, value: object, pack: FormPack | None = None) -> str:
+    """Normalize and validate a text value; returns the string to write.
+
+    ``pack`` lets a refusal name the pack's own lines (the P-026 'NRA' refusal
+    names the MFS entry-space line of that pack's revision)."""
     if isinstance(value, bool) or not isinstance(value, (str, int)):
         raise ValueError(
             f"line '{pf.line}' is a text field — pass a string "
@@ -106,20 +189,10 @@ def _render_text(pf: PackField, value: object) -> str:
                 f"{sorted(_KNOWN_FORMATS)}; fix the pack or drop the format key"
             )
         if pf.format == _SSN_DIGITS_ONLY:
+            # P-026: the MFS no-TIN literal belongs in the entry space, never in
+            # an SSN box (the spouse's included) — refuse it with the pack's line.
             if text.strip().upper() == _NRA_LITERAL:
-                if _accepts_nra(pf):
-                    # MFS with a nonresident-alien spouse who has no SSN/ITIN
-                    # (and none is required): the Form 1040 instructions say to
-                    # enter 'NRA' in the spouse SSN box — write the literal,
-                    # skipping digit normalization (3 chars in a 9-cell comb is fine).
-                    return _NRA_LITERAL
-                raise ValueError(
-                    f"line '{pf.line}': 'NRA' is only accepted on the SPOUSE "
-                    f"identifying-number line — an MFS filer whose nonresident-alien "
-                    f"spouse has no SSN/ITIN (and needs none) writes 'NRA' there "
-                    f"(Form 1040 instructions, Filing Status); this line needs the "
-                    f"taxpayer's own 9-digit SSN or ITIN"
-                )
+                raise ValueError(_nra_refusal(pack, pf))
             # P-001: strip BEFORE the MaxLen check — dashes overflow comb cells.
             text = text.replace("-", "").replace(" ", "")
     return text
@@ -162,8 +235,10 @@ def _render_money(pf: PackField, value: object) -> tuple[str, str | None]:
     return str(rounded), warning
 
 
-def _enforce_length(pf: PackField, rendered: str) -> None:
+def _enforce_length(pf: PackField, rendered: str, pack: FormPack | None = None) -> None:
     """MaxLen and comb digits-only checks (P-001 clipping class)."""
+    if pf.comb and rendered.strip().upper() == _NRA_LITERAL:
+        raise ValueError(_nra_refusal(pack, pf))  # P-026: no comb box takes 'NRA'
     if pf.maxlen is not None and len(rendered) > pf.maxlen:
         if pf.comb:
             # Comb fields ARE the SSN/EIN fields, so this error echoes the single
@@ -178,8 +253,6 @@ def _enforce_length(pf: PackField, rendered: str) -> None:
             f"field allows at most {pf.maxlen} — shorten it to {pf.maxlen} characters or fewer"
         )
     if pf.comb and rendered and not rendered.isdigit():
-        if rendered == _NRA_LITERAL and _accepts_nra(pf):
-            return  # sanctioned literal: 'NRA' in the spouse SSN comb, one letter per cell
         raise ValueError(
             f"line '{pf.line}': comb fields take digits only (one digit per cell) — "
             f"value '{redact(rendered)}' contains non-digits; strip dashes, spaces and letters "
@@ -409,8 +482,8 @@ def fill_form(
                 if warning:
                     warnings.append(warning)
             else:
-                rendered = _render_text(pf, value)
-            _enforce_length(pf, rendered)
+                rendered = _render_text(pf, value, pack)
+            _enforce_length(pf, rendered, pack)
             text_updates[qualified] = rendered
             written[qualified] = rendered
 

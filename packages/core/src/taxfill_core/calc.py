@@ -3937,10 +3937,78 @@ class IraEligibilityResult(BaseModel):
     phaseout: dict[str, int] = Field(description="{start, end} of the range applied.")
     magi_position: Literal["below", "within", "above"]
     excess: int = Field(description="max(0, contributed - allowed) — the amount the 6% excise bites.")
-    excise_per_year: int = Field(description="IRC 4973: 6% of the excess, charged EVERY year until fixed.")
+    excise_per_year: int = Field(
+        description=(
+            "IRC 4973(a): 6% of the excess — capped at 6% of the Roth IRAs' year-end value when "
+            "roth_ira_dec31_value is given — charged EVERY year until fixed."
+        )
+    )
     inputs: dict[str, Any]
     work: str
     citation: Citation
+
+
+# IRC 4973(a) (26 U.S.C. 4973, read 2026-09-27 at uscode.house.gov): the second sentence
+# caps the excise at the account's year-end value — the cap the op applies when
+# roth_ira_dec31_value is given (JF1b.4).
+_IRC_4973A_CAP = (
+    "IRC 4973(a): \"The amount of such tax for any taxable year shall not exceed 6 percent of the value of the "
+    "account or annuity (determined as of the close of the taxable year).\""
+)
+# The correction window (JF1b.4), each quoted from its primary text, read 2026-09-27:
+# IRC 408(d)(4)(A) and 4973(f) (uscode.house.gov); the Instructions for Form 5329 (2025),
+# Excess Contributions to Roth IRAs; the Instructions for Form 1040 (2025), What if You Can't
+# File on Time?; Treas. Reg. 301.9100-2(b) (eCFR); IRC 7503 (uscode.house.gov).
+_IRC_408D4A = (
+    "IRC 408(d)(4)(A): the distribution must be \"received on or before the day prescribed by law (including "
+    "extensions of time) for filing such individual's return for such taxable year\", and (C) \"accompanied by "
+    "the amount of net income attributable to such contribution\""
+)
+_IRC_4973_NOT_CONTRIBUTED = {
+    "roth": (
+        "IRC 4973(f): \"any contribution which is distributed from a Roth IRA in a distribution described in "
+        "section 408(d)(4) shall be treated as an amount not contributed\""
+    ),
+    "traditional_deduction": (
+        "IRC 4973(b): \"any contribution which is distributed from the individual retirement account or the "
+        "individual retirement annuity in a distribution to which section 408(d)(4) applies shall be treated as "
+        "an amount not contributed\""
+    ),
+}
+_I1040_EXTENSION = (
+    "\"You can get an automatic 6-month extension if, no later than the date your return is due, you file Form "
+    "4868\" (Instructions for Form 1040)"
+)
+_I5329_SECTION_9100 = (
+    "a return filed ON TIME without the withdrawal still has the Instructions for Form 5329's window: \"If you "
+    "timely filed your return without withdrawing the excess contributions, you can still make the withdrawal no "
+    "later than 6 months after the due date of your tax return, excluding extensions. If you do, file an amended "
+    "return with 'Filed pursuant to section 301.9100-2' entered at the top.\" — Treas. Reg. 301.9100-2(b): \"An "
+    "automatic extension of 6 months from the due date of a return excluding extensions is granted ... provided "
+    "the taxpayer timely filed its return for the year the election should have been made\""
+)
+
+
+def _excess_correction_deadline(pack: KnowledgePack, year: int) -> str:
+    """The date text for the excess-contribution fix (JF1b.4): the year's due date from the
+    pack's deadlines block, and October 15 of the next year with the automatic extension
+    (IRC 7503 names the next business day when that falls on a weekend)."""
+    deadlines = getattr(pack, "deadlines", None)
+    due_iso = getattr(deadlines, "filing_due_date", None) if deadlines is not None else None
+    if due_iso:
+        due = date.fromisoformat(str(due_iso))
+        due_text = f"{due:%B} {due.day}, {due.year} (the {year} pack's due date)"
+    else:
+        due_text = f"April 15, {year + 1} (the {year} pack records no due date — confirm it)"
+    october = date(year + 1, 10, 15)
+    weekend = october.weekday() >= 5
+    oct_text = f"October 15, {year + 1}" + (
+        f" — a {october:%A}: IRC 7503, \"When the last day prescribed under authority of the internal revenue laws "
+        "for performing any act falls on Saturday, Sunday, or a legal holiday, the performance of such act shall be "
+        "considered timely if it is performed on the next succeeding day which is not a Saturday, Sunday, or a legal "
+        "holiday\" — confirm the date with the IRA custodian" if weekend else ""
+    )
+    return f"{due_text}, or {oct_text} if you extend ({_I1040_EXTENSION})"
 
 
 def ira_contribution_eligibility(
@@ -3953,6 +4021,7 @@ def ira_contribution_eligibility(
     covered_by_employer_plan: bool | None = None,
     spouse_covered_by_employer_plan: bool | None = None,
     mfs_lived_apart_all_year: bool = False,
+    roth_ira_dec31_value: int | float | Decimal | str | None = None,
     knowledge_dir: str | Path | None = None,
 ) -> IraEligibilityResult:
     """The Pub 590-A reduced-limit worksheet: how much Roth IRA contribution (or
@@ -3981,6 +4050,12 @@ def ira_contribution_eligibility(
 
     Worksheet mechanics from the pack (Pub 590-A): the reduced limit rounds UP
     to the nearest $10, and a partial phase-out never drops below $200.
+
+    ``roth_ira_dec31_value`` (ira_type 'roth' only, JF1b.4): the value of ALL your
+    Roth IRAs at the close of the year — Form 5329 Part IV counts that year's
+    contributions made in the following year too. IRC 4973(a) caps the excise at 6%
+    of it, so ``excise_per_year`` = 6% x min(excess, value) when it is given; without
+    it the uncapped 6% of the excess is shown and the work names the cap.
     """
     if filing_status not in FILING_STATUSES and filing_status != _QSS:
         raise ValueError(
@@ -3996,6 +4071,19 @@ def ira_contribution_eligibility(
     contributed_i = irs_round(_to_decimal(contributed, "contributed"))
     if contributed_i < 0:
         raise ValueError("contributed must be >= 0")
+    dec31_value: int | None = None
+    if roth_ira_dec31_value is not None:
+        if ira_type != "roth":
+            raise ValueError(
+                "roth_ira_dec31_value caps the excise on a ROTH IRA excess (IRC 4973(a), Form 5329 Part IV) — "
+                "omit it for ira_type='traditional_deduction'"
+            )
+        dec31_value = irs_round(_to_decimal(roth_ira_dec31_value, "roth_ira_dec31_value"))
+        if dec31_value < 0:
+            raise ValueError(
+                "roth_ira_dec31_value must be >= 0 — pass the Dec 31 value of all your Roth IRAs (Form 5329 "
+                "Part IV counts that year's contributions made in the following year too)"
+            )
     pack = _load_federal(year, knowledge_dir)
     params = _require_contribution_limits(pack, year)
     ira = params.ira
@@ -4075,7 +4163,9 @@ def ira_contribution_eligibility(
             allowed = ira.worksheet.minimum_if_partial
 
     excess = max(0, contributed_i - allowed)
-    excise = irs_round(ira.excess_excise_rate * excess)
+    # IRC 4973(a)'s cap (JF1b.4): the excise never exceeds 6% of the year-end value.
+    excise_base = excess if dec31_value is None else min(excess, dec31_value)
+    excise = irs_round(ira.excess_excise_rate * excise_base)
     kind = "Roth IRA contribution" if ira_type == "roth" else "traditional-IRA deduction"
     work_lines = [
         f"{kind} eligibility ({year}, {filing_status}): MAGI ${irs_round(magi_d):,} vs the "
@@ -4091,11 +4181,29 @@ def ira_contribution_eligibility(
     ]
     work_lines.extend(notes)
     if excess:
+        if dec31_value is None:
+            charge = (
+                f"IRC 4973 charges {ira.excess_excise_rate:%} of the excess (${excise:,}) EVERY year until it is "
+                f"withdrawn or absorbed. {_IRC_4973A_CAP}"
+                + (
+                    " If the account is worth less than the excess at year end, pass roth_ira_dec31_value (the "
+                    "Dec 31 value of all your Roth IRAs, including that year's contributions made in the following "
+                    "year — Form 5329 Part IV) for the capped figure."
+                    if ira_type == "roth" else ""
+                )
+            )
+        else:
+            charge = (
+                f"IRC 4973 charges {ira.excess_excise_rate:%} of the SMALLER of the excess (${excess:,}) and the "
+                f"Roth IRAs' Dec 31 value (${dec31_value:,}): {ira.excess_excise_rate:%} x "
+                f"${excise_base:,} = ${excise:,}, EVERY year until it is withdrawn or absorbed — {_IRC_4973A_CAP} "
+                f"(Form 5329 Part IV)."
+            )
         work_lines.append(
-            f"EXCESS: contributed ${contributed_i:,} -> ${excess:,} over the allowed amount. IRC 4973 "
-            f"charges {ira.excess_excise_rate:%} of the excess (${excise:,}) EVERY year until it is "
-            f"withdrawn or absorbed — fixable WITHOUT the excise by withdrawing the contribution plus "
-            f"earnings before the filing deadline, or recharacterizing."
+            f"EXCESS: contributed ${contributed_i:,} -> ${excess:,} over the allowed amount. {charge} Fixable "
+            f"WITHOUT the excise by withdrawing the contribution plus its net income by the due date of your "
+            f"{year} return INCLUDING extensions — {_excess_correction_deadline(pack, year)}. {_IRC_408D4A}; "
+            f"{_IRC_4973_NOT_CONTRIBUTED[ira_type]}. And {_I5329_SECTION_9100}. Or recharacterize it."
         )
     work_lines.append(
         f"Eligibility is tested at YEAR END: {ira.eligibility_tested_at} A contribution that is excess "
@@ -4107,7 +4215,8 @@ def ira_contribution_eligibility(
         phaseout={"start": rng.start, "end": rng.end}, magi_position=position,
         excess=excess, excise_per_year=excise,
         inputs={"magi": irs_round(magi_d), "filing_status": filing_status, "year": year,
-                "ira_type": ira_type, "contributed": contributed_i, "age_50_plus": age_50_plus},
+                "ira_type": ira_type, "contributed": contributed_i, "age_50_plus": age_50_plus,
+                **({"roth_ira_dec31_value": dec31_value} if dec31_value is not None else {})},
         work="\n".join(work_lines), citation=ira.citation,
     )
 
@@ -4359,21 +4468,35 @@ def magi_ladder(
             position=position, headroom=headroom, definition=definition,
         ))
 
+    # The two surtax rows read the RAW status through _surtax_threshold, never the
+    # MFJ-aliased column: the pack carries all five statuses because a qualifying
+    # surviving spouse buckets differently on the two forms (JF1b.1). NIIT's QSS
+    # threshold is the joint $250,000 (IRC 1411(b)(1): "a joint return under section
+    # 6013 or a surviving spouse (as defined in section 2(a)), $250,000"); Additional
+    # Medicare's is the "any other case" $200,000 (IRC 3101(b)(2)(C); Form 8959:
+    # "Single, Head of household, or Qualifying surviving spouse . . . $200,000").
     if pack.tax.niit is not None:
         _threshold_row(
             "Net investment income tax (Form 8960, 3.8%)",
             agi_i + feie_i,
-            int(pack.tax.niit.thresholds[status_key]),
+            int(_surtax_threshold(pack.tax.niit.thresholds, filing_status, "niit")),
             "MAGI = AGI + the foreign earned income exclusion (IRC 1411(d)); investment income above "
-            "the threshold pays 3.8%.",
+            "the threshold pays 3.8%."
+            + (" A qualifying surviving spouse uses the joint threshold (IRC 1411(b)(1): 'a surviving "
+               "spouse (as defined in section 2(a)), $250,000')." if filing_status == _QSS else ""),
         )
     if pack.tax.additional_medicare_tax is not None:
         _threshold_row(
             "Additional Medicare Tax (Form 8959, 0.9%)",
             wages_i,
-            int(pack.tax.additional_medicare_tax.thresholds[status_key]),
+            int(_surtax_threshold(
+                pack.tax.additional_medicare_tax.thresholds, filing_status, "additional_medicare_tax"
+            )),
             "A WAGE test, not an AGI test: Medicare wages (plus SE income) over the threshold — moving "
-            "AGI does not move this one.",
+            "AGI does not move this one."
+            + (" A qualifying surviving spouse uses the single threshold, not the joint one (Form "
+               "8959: 'Single, Head of household, or Qualifying surviving spouse . . . $200,000'; "
+               "IRC 3101(b)(2)(C) 'in any other case, $200,000')." if filing_status == _QSS else ""),
         )
     sli = pack.tax.student_loan_interest
     if sli is not None:

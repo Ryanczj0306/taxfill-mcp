@@ -526,3 +526,82 @@ def test_p018_a_nonresident_taxpayers_head_of_household_scenario_is_not_a_filing
     assert "You cannot file as head of household if you are a nonresident alien" in note
     assert "ending" not in note and r.recommended != "HOH"
     assert "NOT a filing option: a nonresident alien cannot file as head of household" in r.work
+
+
+# ── JF1b.6: a subset and its parent move through the walk as ONE step ──────────
+# Hypothetical figures. The snapshot validator checks qualified_dividends <= dividends,
+# bank_deposit_interest <= interest, bank_deposit_interest_nonresident_period <=
+# bank_deposit_interest, and dependent-care expenses need a person; a one-key-at-a-time walk
+# built an invalid intermediate snapshot whenever a parent dropped below its base subset (or a
+# subset rose above its base parent) first.
+
+_LINKED_BASE = IncomeSnapshot(
+    wages=70_000, federal_withholding=9_000, interest=5_000, bank_deposit_interest=4_000,
+    bank_deposit_interest_nonresident_period=500, dividends=6_000, qualified_dividends=5_000,
+)
+_LINKED_CASES = {
+    # cut the parent below the base subset, with the subset
+    "interest down": {"interest": 1_000, "bank_deposit_interest": 800},
+    # raise the subset above the base parent, with the parent
+    "interest up": {"bank_deposit_interest": 7_000, "interest": 8_000},
+    "deposit chain": {"bank_deposit_interest_nonresident_period": 4_500, "bank_deposit_interest": 4_800},
+    "whole chain": {"interest": 2_000, "bank_deposit_interest": 1_800, "bank_deposit_interest_nonresident_period": 1_000},
+    "dividends down": {"dividends": 1_000, "qualified_dividends": 900},
+    "dividends up": {"qualified_dividends": 9_000, "dividends": 9_500},
+    "dependent care": {"dependent_care_expenses": 3_000, "dependent_care_persons": 1},
+}
+
+
+@pytest.mark.parametrize("name", sorted(_LINKED_CASES))
+@pytest.mark.parametrize("reverse", [False, True], ids=["given-order", "reversed-order"])
+def test_jf1b6_a_linked_pair_is_one_walk_step_in_either_key_order(name: str, reverse: bool):
+    overrides = dict(_LINKED_CASES[name])
+    if reverse:
+        overrides = dict(reversed(list(overrides.items())))
+    overrides["federal_withholding"] = 9_500  # an unlinked key after the group stays its own step
+    r = compare_scenarios(Profile(), 2025, _LINKED_BASE, [
+        {"name": "base", "filing_status": "single"},
+        {"name": "what-if", "filing_status": "single", "income_overrides": overrides},
+    ])
+    (delta,) = r.deltas
+    assert sum(s.delta for s in delta.input_attribution) == delta.delta
+    changed = [s.changed for s in delta.input_attribution]
+    group = [k for k in overrides if k != "federal_withholding"]
+    assert len(changed) == 2, changed
+    assert all(f"income.{k}:" in changed[0] for k in group), changed[0]
+    assert "applied together" in changed[0]
+    assert changed[1].startswith("income.federal_withholding")
+
+
+def test_jf1b6_every_cross_field_validator_is_a_linked_group():
+    """A field that cannot move alone from an all-zero snapshot is checked against another
+    field, so it must sit in estimate.INCOME_LINKED_FIELDS (the walk's groups) — a new
+    subset validator fails here until its fields are grouped."""
+    from pydantic import ValidationError
+
+    from taxfill_core.estimate import INCOME_LINKED_FIELDS
+
+    grouped = set().union(*INCOME_LINKED_FIELDS)
+    lonely = []
+    for field, info in IncomeSnapshot.model_fields.items():
+        if info.annotation is not int:
+            continue
+        try:
+            IncomeSnapshot(**{field: 1})
+        except ValidationError:
+            if field not in grouped:
+                lonely.append(field)
+    assert lonely == [], f"{lonely} fail validation alone but are in no INCOME_LINKED_FIELDS group"
+    # And every group member is a real field.
+    assert grouped <= set(IncomeSnapshot.model_fields)
+
+
+def test_jf1b6_override_steps_group_by_first_position():
+    from taxfill_core.scenarios import _override_steps
+
+    assert _override_steps({"wages": 1, "qualified_dividends": 1, "interest": 1, "dividends": 2}) == [
+        ["wages"], ["qualified_dividends", "dividends"], ["interest"],
+    ]
+    assert _override_steps({"bank_deposit_interest": 1, "wages": 2, "interest": 3}) == [
+        ["bank_deposit_interest", "interest"], ["wages"],
+    ]

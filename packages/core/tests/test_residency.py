@@ -402,6 +402,52 @@ def test_partial_year_ceiling_below_183_is_definitively_nonresident():
     assert any("First-Year Choice" in r for r in result.reasons)  # the main way out, mentioned
 
 
+def test_jf1b7_a_capped_count_near_183_is_definitive_with_no_recount_warning():
+    """JF1b.7 acceptance: F-1 2022-08-18 -> 2025-07-14 then H-1B 2025-07-15, TY2025. The
+    non-exempt span Jul 15..Dec 31 is 170 days and 2023/2024 are fully exempt, so the weighted
+    total can never pass 170: nonresident, definitive — and no "recount" reason (the count is
+    already at its maximum), though 170 is within the near-183 band."""
+    periods = [
+        period("F-1", date(2022, 8, 18), date(2025, 7, 14)),
+        period("H-1B", date(2025, 7, 15)),
+    ]
+    result = classify(periods, {2022: 136, 2023: 365, 2024: 366, 2025: 365}, 2025)
+    assert result.classification == "nonresident"
+    assert result.spt.days_current_year == 170
+    assert any("definitive" in r and "no recount can change it" in r for r in result.reasons)
+    assert not any("close to the 183-day threshold" in r for r in result.reasons)
+    assert not any("recount days present" in r for r in result.reasons)
+
+
+def test_jf1b7_a_capped_year_with_an_open_lookback_year_is_not_definitive():
+    # Hypothetical: H-1B until 2025-03-31, then F-1. 2025's non-exempt span (Jan-Mar, 90 days)
+    # is at its maximum, but 2024 and 2023 are NOT exempt years: more days there could still
+    # meet the SPT (at most 90 + 366/3 + 365/6), so no "definitive" — the recount is named.
+    periods = [
+        period("H-1B", date(2022, 1, 1), date(2025, 3, 31)),
+        period("F-1", date(2025, 4, 1)),
+    ]
+    result = classify(periods, {2023: 150, 2024: 150, 2025: 365}, 2025)
+    assert result.classification == "nonresident"
+    assert not any("definitive" in r for r in result.reasons)
+    open_reason = next(r for r in result.reasons if "could reach" in r)
+    assert "272 5/6" in open_reason and "recount days present in 2024" in open_reason
+    # 90 + 50 + 25 = 165: inside the near-183 band, and a recount CAN raise it — warned.
+    assert any("close to the 183-day threshold" in r for r in result.reasons)
+
+
+def test_jf1b7_a_current_year_span_under_31_days_is_definitive():
+    # The 31-day prong: 2025's non-exempt span is Jan 1-14, so the SPT cannot be met whatever
+    # the lookback years hold.
+    periods = [
+        period("H-1B", date(2022, 1, 1), date(2025, 1, 14)),
+        period("F-1", date(2025, 1, 15)),
+    ]
+    result = classify(periods, {2023: 365, 2024: 366, 2025: 365}, 2025)
+    assert result.classification == "nonresident"
+    assert any("no recount can change it" in r for r in result.reasons)
+
+
 def test_status_change_exactly_on_jan_1_is_not_dual_status():
     periods = [
         period("F-1", date(2018, 8, 24), date(2022, 12, 31)),

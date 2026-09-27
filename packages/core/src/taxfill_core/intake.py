@@ -690,7 +690,8 @@ def _household_questions(
                                   "On a married-filing-separately return, if your spouse doesn't have and isn't "
                                   "required to have an SSN or ITIN, enter 'NRA' in the entry space below the filing "
                                   "status checkboxes (Pub 501, Married Filing Separately) — answer 'NRA' here to "
-                                  "record that."
+                                  "record that. On the form it goes in that entry space, never in the spouse-SSN "
+                                  "box (P-026)."
                                   if no_joint else
                                   "If your spouse has NEITHER an SSN nor an ITIN: filing jointly (the "
                                   "§6013(g)/(h) election) requires applying for an ITIN — Form W-7 is "
@@ -700,7 +701,8 @@ def _household_questions(
                                   "filing-separately return, if your spouse doesn't have and isn't required to "
                                   "have an SSN or ITIN, enter 'NRA' in the entry space below the filing status "
                                   "checkboxes instead (Pub 501, Married Filing Separately) — answer 'NRA' here "
-                                  "to record that.")))
+                                  "to record that. On the form it goes in that entry space, never in the "
+                                  "spouse-SSN box (P-026).")))
             else:
                 out.append(_q("household.spouse.tax_id", "household", "What is your spouse's SSN or ITIN?",
                               "Both taxpayers are identified on the return.", "household.spouse.tax_id"))
@@ -921,11 +923,18 @@ def _household_questions(
                     "partner fails that gate no matter how much support you paid, which is exactly the "
                     "mistake the 'qualifying relative' label invites."
                 )
+            # JF1b.8: the election's precondition rides the note — one spouse a U.S. citizen or
+            # resident at year end (6013(g)), or becoming a resident during the year (6013(h));
+            # two nonresident aliens who both stay nonresident cannot elect (Pub 519 ch. 1).
             notes.append(
                 "If you marry mid-plan: marriage opens MFJ — and with a nonresident spouse, only via the "
                 "§6013(g)/(h) election (worldwide income becomes taxable; FICA does NOT start on an "
-                "exempt spouse's wages). Price the branch TODAY with compare_scenarios "
-                "(us_resident_election: true) instead of guessing."
+                "exempt spouse's wages), which needs one of you to be a U.S. citizen or resident: at the end "
+                "of the year (IRC 6013(g)), or by becoming a resident during it (IRC 6013(h), a dual-status "
+                "year). Two nonresident aliens who both stay nonresident all year cannot elect. "
+                + residency.SECTION_6013_PRECONDITION
+                + " Price the branch TODAY with compare_scenarios (us_resident_election: true) instead of "
+                "guessing."
             )
 
 
@@ -1724,7 +1733,12 @@ def _prior_return_form_question(profile: Profile, out: list[IntakeQuestion], tax
                      f"6: \"You cannot use the standard deduction allowed on Form 1040 or 1040-SR.\") and no earned "
                      f"income or education credit; the estimate prices that and brackets the full-year-resident "
                      f"figure, which a resident {prior} would make the answer — a {prior} Form 1040-NR rules that "
-                     f"route out (a married filer keeps the §6013(g)/(h) election's)." if dual else ""),
+                     f"route out"
+                     # JF1b.2: the election is a married couple's choice — named only on a marriage.
+                     + (" (a married filer keeps the §6013(g)/(h) election's)"
+                        if _married_for_year(profile, tax_year) or _confirmed_status(profile) in _MARRIED_STATUSES
+                        or _marital(profile) is None else "")
+                     + "." if dual else ""),
                   f"prior_filings.return_forms.{prior}",
                   disambiguation=f"Pick one for {prior}: '1040' — a regular Form 1040 (or 1040-SR) as a resident "
                                  f"for the whole year; '1040-NR' — Form 1040-NR, as a nonresident; 'dual_status' — "
@@ -1784,12 +1798,27 @@ def _prior_year_residency_note(profile: Profile, notes: list[str], tax_year: int
 # ── required-document derivation ──────────────────────────────────────────────
 
 
-def _required_documents(profile: Profile) -> list[RequiredDocument]:
+# JF1b.3: the passport's "why" follows the residency CLASSIFICATION, never us_person alone —
+# a visa holder who meets the substantial presence test files as a resident.
+_PASSPORT_WHY: dict[str | None, str] = {
+    "nonresident": "Identity for a nonresident return.",
+    "dual_status_candidate": (
+        "Identity for a dual-status (split-year) return — a nonresident for part of the year and a resident for "
+        "the rest."
+    ),
+    "resident": "Identity; the visa history and travel days document your resident-alien answer.",
+    None: "Identity; your visa history and travel days decide whether you file as a resident or a nonresident.",
+}
+
+
+def _required_documents(profile: Profile, tax_year: int | None = None) -> list[RequiredDocument]:
     docs: list[RequiredDocument] = []
     ident = profile.identity
-    nonresident = ident is not None and _has(ident.us_person) and ident.us_person.value is False
-    if nonresident:
-        docs.append(RequiredDocument(kind="passport_id_page", why="Identity for a nonresident return."))
+    visa_filer = ident is not None and _has(ident.us_person) and ident.us_person.value is False
+    if visa_filer:
+        classification = _residency_classification(profile, tax_year)
+        docs.append(RequiredDocument(
+            kind="passport_id_page", why=_PASSPORT_WHY.get(classification, _PASSPORT_WHY[None])))
         docs.append(RequiredDocument(kind="visa", why="Confirms immigration status and dates."))
         docs.append(RequiredDocument(kind="I-94", why="Travel history; the Substantial Presence Test counts these days."))
         statuses = " ".join(p.status.upper() for p in (profile.immigration.visa_timeline if profile.immigration else []))
@@ -1802,7 +1831,7 @@ def _required_documents(profile: Profile) -> list[RequiredDocument]:
     # declared any income documents gets the two income docs the spec's NRA-student
     # example names seeded as honest gaps (status='missing' is a gap marker, NOT
     # invented data — it says "we still need this", never asserts a value).
-    if nonresident and _has_f1_period(profile) and not profile.income_documents:
+    if visa_filer and _has_f1_period(profile) and not profile.income_documents:
         docs.append(RequiredDocument(kind="W-2", why="Reports wages from on-campus / OPT work that must appear on the return.", status="missing"))
         docs.append(RequiredDocument(kind="1098-T", why="Tuition statement; supports education-related entries for a student.", status="missing"))
 
@@ -1865,7 +1894,7 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     started = _sections_started(profile)
     return IntakeChecklist(
         next_questions=out,
-        required_documents=_required_documents(profile),
+        required_documents=_required_documents(profile, tax_year),
         ready_to_fill=_ready_to_fill(profile),
         progress=f"{started} of {len(SECTIONS)} sections started",
         notes=notes,

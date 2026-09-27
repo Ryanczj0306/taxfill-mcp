@@ -327,6 +327,27 @@ def test_assertion_comb_ssn_normalizes_to_digits():
     assert check.expected == "000000000"  # the documented digits-only rendering
 
 
+def test_p026_an_nra_literal_in_an_ssn_box_never_passes_as_blank():
+    """P-026: 'NRA' belongs in the MFS entry space. A box holding it (a PDF filled
+    before the fix) never digit-strips to "" — on ANY SSN/comb line, not only the
+    spouse's — so it fails an assertion of the real number or of a blank, and an
+    assertion of 'NRA' fails against a blank box."""
+    pack = make_pack([
+        text_field("identifying_number", maxlen=9, comb=True, format="ssn_digits_only"),
+        text_field("spouse.identifying_number", maxlen=9, comb=True, format="ssn_digits_only"),
+        text_field("filing_status.spouse_or_qualifying_person_name"),
+    ])
+    for line in ("identifying_number", "spouse.identifying_number"):
+        holding = disk_fields(pack, {line: "NRA"})
+        assert assertion_diff(pack, holding, {line: ""})[0].status == "FAIL", line
+        assert assertion_diff(pack, holding, {line: "000-00-0000"})[0].status == "FAIL", line
+        blank = disk_fields(pack, {line: ""})
+        assert assertion_diff(pack, blank, {line: "NRA"})[0].status == "FAIL", line
+    entry = disk_fields(pack, {"filing_status.spouse_or_qualifying_person_name": "NRA"})
+    check = assertion_diff(pack, entry, {"filing_status.spouse_or_qualifying_person_name": "NRA"})[0]
+    assert check.status == "PASS"
+
+
 def test_assertion_checkbox_states():
     pack = make_pack([checkbox_field("filing_status.single")])
     on = disk_fields(pack, {"filing_status.single": "/1"})
