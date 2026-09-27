@@ -32,10 +32,26 @@
 
 federal:
   by_topic:
+    # JF2.4 (2026-09-27): the statement differs by choice — IRC 6013(g) attaches it to
+    # the joint return "for the first tax year for which the choice applies" (a later
+    # year of a continuing election attaches none), IRC 6013(h) to the joint return
+    # "for the year of the choice" (Pub 519 ch. 1, read 2026-09-27).
     nonresident_spouse_election:
       - url: https://www.irs.gov/individuals/international-taxpayers/nonresident-spouse
-        answers: "IRS 'Nonresident spouse' page: the section 6013(g)/(h) election to treat a nonresident-alien spouse as a resident — how to elect (signed statement by BOTH spouses attached to the first joint return), worldwide-income consequence, suspension/ending, and the ITIN/W-7 requirement."
+        answers: "IRS 'Nonresident spouse' page: the section 6013(g)/(h) election to treat a nonresident-alien spouse as a resident — the worldwide-income consequence (\"S and T must report their worldwide income for the year they make the choice and for all later years unless the choice is ended or suspended\"), suspension/ending, and the ITIN/W-7 requirement for a nonresident spouse."
         cadence: standing page (re-check each filing season)
+      - url: https://www.irs.gov/publications/p519
+        answers: >-
+          Pub 519 ch. 1, how each spouse election is made. Nonresident Spouse
+          Treated as a Resident (IRC 6013(g)): "attach a statement, signed by
+          both spouses, to your joint return for the first tax year for which
+          the choice applies" — a later year of a continuing 6013(g) election
+          attaches none. The choice for a couple who "were nonresident aliens
+          at the beginning of the tax year" and residents at its end (IRC
+          6013(h)): "attach a statement signed by both spouses to your joint
+          return for the year of the choice"; "Neither you nor your spouse can
+          make this choice for any later tax year".
+        cadence: annual (per tax year)
     # ── Filing baseline & logistics (back the pack's filing/payment/where-to-file blocks) ──
     filing_basics:
       - url: https://www.irs.gov/publications/p17
@@ -44,6 +60,16 @@ federal:
           status, dependents, income types, standard deduction — the
           general-individual baseline.
         cadence: annual (per tax year)
+      # JF2 (2026-09-27): "amended return" was a five-way tie on the lone token
+      # "return" and, once the IRA topic landed, a wrong pointer to it.
+      - url: https://www.irs.gov/forms-pubs/about-form-1040x
+        answers: >-
+          About Form 1040-X, Amended U.S. Individual Income Tax Return — the
+          amended return, filed to correct an individual income tax return
+          already filed (or to make certain elections after the deadline); it
+          can be filed electronically "for the current or two prior tax
+          periods".
+        cadence: standing page (re-check each filing season)
 
     filing_thresholds:
       - url: https://www.irs.gov/publications/p501
@@ -129,12 +155,16 @@ federal:
         answers: >-
           Instructions for Forms 1040 and 1040-SR: the filing due date for the
           year (and the abroad automatic 2-month extension), plus Form 4868
-          extension mechanics.
+          extension mechanics — the automatic
+          6-month extension "doesn't extend the time to pay your tax. If you
+          don't pay your tax by the original due date of your return, you will
+          owe interest on the unpaid tax and may owe penalties."
         cadence: annual (per tax year; shifts for weekends/holidays)
       - url: https://www.irs.gov/instructions/i1040nr
         answers: >-
           Instructions for Form 1040-NR, "When To File" / "Where To File": the
-          1040-NR due dates (incl. the no-US-wage-withholding later date).
+          1040-NR due date, and the later due date for a filer with no US wages
+          subject to withholding.
         cadence: annual (per tax year)
 
     # ── Credits ──
@@ -183,6 +213,10 @@ federal:
         answers: >-
           Pub 526, Charitable Contributions: which organizations qualify, the
           AGI percentage limits by gift type, and substantiation rules.
+          Membership fees or dues: "you can deduct only the amount that is more
+          than the value of the benefits you receive" — "Certain membership
+          benefits can be disregarded" for an annual payment of $75 or less —
+          and token items.
         cadence: annual (per tax year)
       - url: https://www.irs.gov/forms-pubs/about-form-8283
         answers: >-
@@ -219,6 +253,23 @@ federal:
         answers: >-
           Pub 550, Investment Income and Expenses: taxation of interest,
           dividends, capital gains/losses, and related investment expenses.
+          Interest income (Form 1099-INT), Taxable Interest—General: "Taxable
+          interest includes interest you receive from bank accounts, loans you
+          make to others, and other sources" — savings account and certificate
+          of deposit (CD) interest, U.S. savings bond interest, and deposit
+          interest a resident reports in full.
+          Certificates of deposit and other deferred interest accounts: "You
+          generally must include this interest in your income when you actually
+          receive it or are entitled to receive it without paying a substantial
+          penalty." Money market funds: "Generally, amounts you receive from
+          money market funds should be reported as dividends, not as interest."
+          Interest subject to penalty for early withdrawal: "You must report the
+          total amount of interest paid or credited to your account during the
+          year without subtracting the penalty." Interest income on frozen
+          deposits: "Exclude from your gross income interest on frozen deposits.
+          A deposit is frozen if, at the end of the year, you cannot withdraw
+          any part of the deposit because" the institution is, or may become,
+          bankrupt or insolvent.
         cadence: annual (per tax year)
       - url: https://www.irs.gov/publications/p551
         answers: >-
@@ -247,7 +298,8 @@ federal:
       - url: https://www.irs.gov/publications/p590b
         answers: >-
           Pub 590-B, Distributions from IRAs: taxation of distributions,
-          required minimum distributions, and early-distribution penalties.
+          required minimum distributions, and the early distribution penalty
+          (its Additional 10% Tax on early distributions).
         cadence: annual (per tax year)
 
     # ── AMT ──
@@ -265,7 +317,10 @@ federal:
         answers: >-
           Pub 505, Tax Withholding and Estimated Tax: who must pay estimated
           tax, the safe-harbor percentages, and Form 2210 underpayment-penalty
-          mechanics.
+          mechanics. "Estimated tax is the method used to pay tax on income
+          that isn't subject to withholding"; the publication "also explains
+          how to take credit on your return for the tax that was withheld and
+          for your estimated tax payments."
         cadence: annual (per tax year)
 
     # ── Nonresident & treaties ──
@@ -368,7 +423,8 @@ federal:
       - url: https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-contributions
         answers: >-
           The retirement-plan contribution limits landing page: elective
-          deferrals (402(g)), annual additions (415(c)), IRA limits and
+          deferrals (402(g) — the 401k and 403(b) deferral limit), annual
+          additions (415(c)), IRA limits and
           catch-ups, with links to the year's COLA notice — the change channel
           for every per-year figure in the contribution_limits block.
         cadence: annual (COLA notice each November)
@@ -462,14 +518,16 @@ federal:
           income of a nonresident is taxed at the flat 30% rate as not
           effectively connected with a US trade or business, versus
           effectively connected income taxed at the regular graduated rates.
-          Ch. 3, Exclusions From Gross Income — Interest Income: for nonresidents,
+          Ch. 3, Exclusions From Gross Income, on interest: for nonresidents,
           interest on deposits (including certificates of deposit) with
           persons in the banking business, on deposits or withdrawable accounts
           with savings institutions (mutual savings banks, cooperative banks,
           credit unions, building and loan associations), and on amounts held by
           an insurance company under an agreement to pay interest is EXCLUDED
           from income when it is not connected with a US trade or business —
-          the bank deposit interest exclusion.
+          the bank deposit interest exclusion. Bank interest keeps that
+          character whichever form reports it (a Form 1099-INT sent to a
+          nonresident, or a Form 1042-S).
           What ends that exclusion is the election, not the marriage — ch. 1:
           "If you make this choice, you and your spouse are treated for income
           tax purposes as residents for your entire tax year."
@@ -484,15 +542,18 @@ federal:
           871(i)(1) imposes no tax under (a)(1)(A) or (a)(1)(C) on 871(i)(2)(A)
           "interest on deposits, if such interest is not effectively connected
           with the conduct of a trade or business within the United States" —
-          the bank deposit interest exclusion — and 871(i)(3)
+          the 871(i) deposit interest exclusion for bank deposits — and 871(i)(3)
           defines deposits as deposits with persons carrying on the banking
           business, deposits or withdrawable accounts with savings institutions
           chartered as savings and loan or similar associations (to the extent
           deductible under section 591), and amounts held by an insurance
           company under an agreement to pay interest. The exclusion is
-          conditioned on CHARACTER (a deposit, not effectively connected), so
-          deposit interest that IS effectively connected stays taxed under
-          871(b), and bond or brokerage interest is not a deposit at all.
+          conditioned on CHARACTER (deposits, not effectively connected), so
+          interest on deposits that IS effectively connected stays taxed under
+          871(b), and bond or brokerage interest is not a deposit at all. A
+          fund is not a deposit either: 871(k)(1)(A) is its own exemption, for
+          a regulated investment company's payout the company reports "in
+          written statements furnished to its shareholders" (871(k)(1)(C)(i)).
         cadence: standing statute (check for amendment)
       - url: https://www.irs.gov/individuals/international-taxpayers/fixed-determinable-annual-periodical-fdap-income
         answers: >-
@@ -521,7 +582,8 @@ federal:
         answers: >-
           Form 1042-S, Foreign Person's U.S. Source Income Subject to
           Withholding: the information return that reports the US-source
-          income paid to a foreign person and the amounts withheld — the
+          income paid to a foreign person (NRA interest, dividends and other
+          FDAP income) and the amounts withheld — the
           document that substantiates a Schedule NEC line and any
           withholding credit claimed against it.
         cadence: annual (per tax year)
@@ -956,6 +1018,280 @@ federal:
           Publication 5569 (3-2022) predates Bittner and does not resolve the
           unit.
         cadence: on amendment (statute); the 1010.821 penalty table is re-adjusted every January
+
+    # Phase J item JF2.1 (2026-09-27): eight topics that close wrong-law pointers
+    # and clean misses reproduced 2026-09-23 ("net income attributable" ->
+    # self_employment, "Treas. Reg. 1.408A-5" and "Publication 15-T" -> FBAR,
+    # "supplemental wage withholding bonus" -> deadlines, "paystub W-2 box 1 box 3
+    # box 5" -> ira_basis_and_roth_conversions, "claim of right" ->
+    # foreign_tax_credit; "recharacterization", "Form 5329" and the non-itemizer
+    # charitable deduction were clean misses). Every URL was fetched 2026-09-27
+    # (the eCFR sections through its renderer API — the human pages refuse
+    # scripted clients); quoted text is verbatim. Each answers text keeps to its
+    # own vocabulary: no "conversion", "basis" or "8606" here (those win
+    # ira_basis_and_roth_conversions its queries), and no "estimated tax"
+    # payment-schedule words in underpayment_penalty (estimated_tax keeps those).
+    ira_recharacterization_and_excess_contributions:
+      - url: https://www.ecfr.gov/current/title-26/section-1.408A-5
+        answers: >-
+          Treas. Reg. 1.408A-5, Recharacterized contributions, Q-1: "Can an IRA
+          owner recharacterize certain contributions (i.e., treat a contribution
+          made to one type of IRA as made to a different type of IRA) for a
+          taxable year?" — yes, by a trustee-to-trustee transfer of the
+          contribution with its net income.
+        cadence: standing regulation (check for amendment)
+      - url: https://www.ecfr.gov/current/title-26/section-1.408-11
+        answers: >-
+          Treas. Reg. 1.408-11, Net income calculation for returned or
+          recharacterized IRA contributions: the net income attributable to a
+          contribution is found "by allocating to the contribution a pro rata
+          portion of the earnings on the assets in the IRA during the period the
+          IRA held the contribution" — the contribution times (adjusted closing
+          balance minus adjusted opening balance) over the adjusted opening
+          balance, which is negative after a loss.
+        cadence: standing regulation (check for amendment)
+      - url: https://www.ecfr.gov/current/title-26/section-301.9100-2
+        answers: >-
+          Treas. Reg. 301.9100-2(b), the automatic 6-month extension: "An
+          automatic extension of 6 months from the due date of a return
+          excluding extensions is granted to make regulatory or statutory
+          elections ... provided the taxpayer timely filed its return" — the
+          window to remove or recharacterize a contribution to an IRA after a
+          timely return.
+        cadence: standing regulation (check for amendment)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section408A&num=0&edition=prelim
+        answers: >-
+          IRC 408A(d)(6)-(7), Taxpayer may make adjustments before due date: a
+          contribution moved "in a trustee-to-trustee transfer" in time "shall
+          be treated as having been made to the transferee plan
+          (and not the transferor plan)", but only if "accompanied by any net
+          income allocable to such contribution"; (d)(6)(B)(iii) excludes a
+          qualified rollover contribution.
+        cadence: standing statute (check for amendment)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section408&num=0&edition=prelim
+        answers: >-
+          IRC 408(d)(4), Contributions returned before due date of return: an
+          excess contribution to an IRA withdrawn "on or before the day prescribed by
+          law (including extensions of time) for filing such individual's
+          return", with no deduction allowed for it and "accompanied by the
+          amount of net income attributable to such contribution", is not a
+          distribution; that net income "shall be deemed to have been earned
+          and receivable in the taxable year in which such contribution is
+          made".
+        cadence: standing statute (check for amendment)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section4973&num=0&edition=prelim
+        answers: >-
+          IRC 4973, the excess-contribution excise: "a tax in an amount equal
+          to 6 percent of the amount of the excess contributions to such
+          individual's accounts or annuities (determined as of the close of the
+          taxable year)", which "shall not exceed 6 percent of the value of the
+          account or annuity"; 4973(f) defines excess contributions to a Roth
+          IRA. Reported on Form 5329.
+        cadence: standing statute (check for amendment)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section72&num=0&edition=prelim
+        answers: >-
+          IRC 72(t)(2)(A)(ix) (SECURE 2.0 section 333): no 10% additional tax on
+          a distribution "attributable to withdrawal of net income attributable
+          to a contribution which is distributed pursuant to section 408(d)(4)".
+        cadence: standing statute (check for amendment)
+      - url: https://www.irs.gov/publications/p590a
+        answers: >-
+          Pub 590-A, Recharacterizations: "If the transfer is made by the due
+          date (including extensions) for your tax return for the tax year for
+          which the contribution was made, you can elect to treat the
+          contribution as having been originally made to the second IRA
+          instead of to the first IRA." An excess contribution can still be
+          returned within 6 months after a timely return — the section
+          301.9100-2 relief.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/instructions/i5329
+        answers: >-
+          Instructions for Form 5329: Part III, Additional Tax on Excess
+          Contributions to Traditional IRAs, and Part IV, Additional Tax on
+          Excess Contributions to Roth IRAs — "If you contributed more for 2025
+          than is allowable ... you may owe this tax", and how a timely
+          withdrawal avoids it.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/instructions/i1099r
+        answers: >-
+          Instructions for Forms 1099-R and 5498, Form 5498 box 4,
+          Recharacterized Contributions: "Enter any amounts recharacterized plus
+          earnings from one type of IRA to another."
+        cadence: annual (per tax year)
+
+    form_1099r_distribution_codes:
+      - url: https://www.irs.gov/instructions/i1099r
+        answers: >-
+          Instructions for Form 1099-R, Box 7a, Distribution Code(s) and Table 1,
+          Guide to Distribution Codes: "Read the codes carefully and enter them
+          accurately because the IRS uses the codes to help determine whether
+          the recipient has properly reported the distribution." Form 1099-R box
+          7 code N, a contribution recharacterized in the year it was made for;
+          code 8,
+          excess contributions plus earnings taxable in the year; codes 1 and 2,
+          early distribution with or without a known exception.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/pub/irs-pdf/f1099r.pdf
+        answers: >-
+          Form 1099-R recipient instructions: "Box 7a. The following codes
+          identify the distribution you received"; box 2b: "If the first box is
+          checked, the payer was unable to determine the taxable amount and box
+          2a should be blank, except for a traditional IRA or traditional SIMPLE
+          IRA. It's your responsibility to determine the taxable amount."
+        cadence: annual (per tax year)
+
+    payroll_withholding:
+      - url: https://www.irs.gov/publications/p15
+        answers: >-
+          Pub 15 (Circular E), Employer's Tax Guide, section 7, Supplemental
+          Wages — supplemental wage withholding on a bonus: "Supplemental wages
+          are wage payments to an employee that aren't regular wages. They
+          include, but aren't limited to, bonuses, commissions, overtime pay";
+          "The withholding rate on supplemental wages remains 22% (37% if
+          supplemental wages paid to an employee during the calendar year
+          exceed $1 million)".
+        cadence: annual (per calendar year)
+      - url: https://www.irs.gov/publications/p15t
+        answers: >-
+          Publication 15-T, Federal Income Tax Withholding Methods: paycheck
+          withholding from a Form W-4 — the W-4 percentage method tables for
+          automated payroll systems and the wage bracket method.
+        cadence: annual (per calendar year)
+      - url: https://www.irs.gov/pub/irs-pdf/fw4.pdf
+        answers: >-
+          Form W-4, Employee's Withholding Certificate: Step 4(a) other
+          income, Step 4(b) deductions ("Use the Deductions Worksheet on page 4
+          to determine the amount of deductions you may claim, which will
+          reduce your withholding"), Step 4(c) extra withholding.
+        cadence: annual (per calendar year)
+      - url: https://www.ecfr.gov/current/title-26/section-31.3402(g)-1
+        answers: >-
+          Treas. Reg. 31.3402(g)-1, Supplemental wage payments: the optional
+          flat rate and the mandatory flat rate withholding on supplemental
+          wages over $1,000,000, "without regard to any entries on Form W-4".
+        cadence: standing regulation (check for amendment)
+
+    wage_reporting_w2:
+      - url: https://www.irs.gov/instructions/iw2w3
+        answers: >-
+          General Instructions for Forms W-2 and W-3 — reconciling a paystub to
+          W-2 box 1, box 3, box 5. Box 1 (taxable wages): "do not include
+          elective deferrals (such as employee contributions to a section 401(k)
+          or 403(b) plan)"; "Box 3—Social security wages. Show the total wages
+          paid (before payroll deductions) subject to employee social security
+          tax"; box 5 (Medicare wages): "the same as those subject to social
+          security tax (boxes 3 and 7) except that there is no wage base limit
+          for Medicare tax."
+        cadence: annual (per calendar year)
+
+    excess_deferrals_402g:
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section402&num=0&edition=prelim
+        answers: >-
+          IRC 402(g), Limitation on exclusion for elective deferrals: "the
+          elective deferrals of any individual for any taxable year shall be
+          included in such individual's gross income to the extent the amount
+          of such deferrals for the taxable year exceeds the applicable dollar
+          amount" — one limit across every 401(k)/403(b) plan and employer;
+          402(g)(2), Distribution of excess deferrals.
+        cadence: standing statute (the dollar amount is indexed; check the COLA notice)
+      - url: https://www.ecfr.gov/current/title-26/section-1.402(g)-1
+        answers: >-
+          Treas. Reg. 1.402(g)-1(e), correcting excess deferrals: "Not later
+          than the first April 15 (or such earlier date specified in the plan)
+          following the close of the individual's taxable year, the individual
+          may notify each plan under which elective deferrals were made of the
+          amount of the excess deferrals".
+        cadence: standing regulation (check for amendment)
+      - url: https://www.irs.gov/publications/p525
+        answers: >-
+          Pub 525, Excess deferrals: "The plan must then pay you the amount of
+          the excess, along with any income earned on that amount, by April 15
+          of the following year. You must include the excess deferral in your
+          income for the year of the deferral." Excess not distributed: "you're
+          taxed twice on the excess deferral left in the plan".
+        cadence: annual (per tax year)
+
+    charitable_nonitemizer:
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section170&num=0&edition=prelim
+        answers: >-
+          IRC 170(p), the non-itemizer charitable deduction, "Special rule for
+          taxpayers who do not elect to itemize deductions": cash gifts to a
+          170(b)(1)(A) organization, capped at $1,000 ($2,000 on a joint
+          return), and not to a 509(a)(3) supporting organization or a donor
+          advised fund; 170(b)(1)(I), the 0.5-percent floor: a gift is "allowed
+          only to the extent that the aggregate of such contributions exceeds
+          0.5 percent of the taxpayer's contribution base" (Pub. L. 119-21).
+        cadence: standing statute (check for amendment)
+      - url: https://www.irs.gov/pub/irs-pdf/fw4.pdf
+        answers: >-
+          Form W-4 (2026), Step 4(b) Deductions Worksheet: "Cash gifts to
+          charities. If you take the standard deduction, enter cash
+          contributions up to $1,000 ($2,000 if married filing jointly)"; gifts
+          to charities for an itemizer: "Enter contributions in excess of 0.5%
+          (0.005) of your total income".
+        cadence: annual (per calendar year)
+      - url: https://www.irs.gov/charities-non-profits/tax-exempt-organization-search-deductibility-status-codes
+        answers: >-
+          Tax Exempt Organization Search (TEOS) deductibility status codes: PC,
+          a public charity; POF, a private operating foundation; PF, a private
+          foundation — whether an organization can receive a deductible gift,
+          and which AGI percentage that gift falls under.
+        cadence: standing page (re-check each filing season)
+
+    wage_repayment_claim_of_right:
+      - url: https://www.irs.gov/publications/p525
+        answers: >-
+          Pub 525, Repayments: "If you had to repay an amount that you included
+          in your income in an earlier year, you may be able to deduct the
+          amount repaid from your income for the year in which you repaid it.
+          Or, if the amount you repaid is more than $3,000, you may be able to
+          take a credit against your tax"; over $3,000 under a claim of right,
+          "Figure your tax under both methods and compare the results."
+        cadence: annual (per tax year)
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1341&num=0&edition=prelim
+        answers: >-
+          IRC 1341, Computation of tax where taxpayer restores substantial
+          amount held under claim of right: an item included in a prior year
+          "because it appeared that the taxpayer had an unrestricted right to
+          such item", a deduction for the repayment exceeding $3,000.
+        cadence: standing statute (check for amendment)
+      - url: https://www.irs.gov/publications/p15
+        answers: >-
+          Pub 15 section 13, Wage Repayments: "If an employee repays you for
+          wages received in error, don't offset the repayments against current
+          year wages unless the repayments are for amounts received in error in
+          the current year"; for a prior-year wage repayment the employer
+          recovers social security and Medicare taxes only — "You can't make an
+          adjustment for income tax withholding because the wages were income
+          to the employee for the prior year."
+        cadence: annual (per calendar year)
+
+    underpayment_penalty:
+      - url: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6654&num=0&edition=prelim
+        answers: >-
+          IRC 6654, Failure by individual to pay estimated income tax — the
+          underpayment penalty: the preceding-year test's 100 percent becomes
+          110 percent when that year's adjusted gross income "exceeds
+          $150,000"; 6654(e)(1): "No addition to tax shall be imposed
+          under subsection (a) for any taxable year if the tax shown on the
+          return for such taxable year ... reduced by the credit allowable
+          under section 31, is less than $1,000."
+        cadence: standing statute (check for amendment)
+      - url: https://www.irs.gov/instructions/i2210
+        answers: >-
+          Instructions for Form 2210, Who Must Pay the Underpayment Penalty:
+          "In general, you may owe the penalty for 2025 if the total of your
+          withholding and timely estimated tax payments didn't equal at least
+          the smaller of: 90% of your 2025 tax, or 100% of your 2024 tax." Form
+          2210's purpose: "The IRS will generally figure your penalty for you
+          and you should not file Form 2210."
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/pub/irs-pdf/f2210.pdf
+        answers: >-
+          Form 2210, Underpayment of Estimated Tax by Individuals, Estates, and
+          Trusts: the penalty computation, the short and regular methods, and
+          the annualized income installment method (Schedule AI).
+        cadence: annual (per tax year)
 
     # Phase J item JF6a: the registry behind the top-level `form_lines` pack
     # block. Before it existed, get_sources("form line numbers"), ("which line")

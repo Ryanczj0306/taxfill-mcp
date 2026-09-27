@@ -649,3 +649,119 @@ def test_p013_the_election_sentence_does_not_steal_the_spouse_election_queries()
     blob = " ".join(s.answers for s in get_sources("871(i) deposit interest", 2025).sources)
     assert "the election, not the marriage" in blob
     assert "Nonresident Spouse Treated as a Resident" not in blob and "6013" not in blob
+
+
+# ── Phase J JF2.1 / JF2.4: wrong-law routing (the P-005/P-006 class) ─────────
+# Reproduced 2026-09-23 against the registry: each query below reached the WRONG
+# LAW or was a clean miss. The eight topics added for them, and the J0 re-verify
+# follow-up on interest queries, are pinned here both ways.
+
+_JF2_ROUTES = (
+    ("net income attributable", "ira_recharacterization_and_excess_contributions"),  # was self_employment
+    ("Treas. Reg. 1.408A-5", "ira_recharacterization_and_excess_contributions"),     # was FBAR
+    ("Form 5498 box 4", "ira_recharacterization_and_excess_contributions"),          # was foreign_tax_credit
+    ("recharacterization", "ira_recharacterization_and_excess_contributions"),       # was a clean miss
+    ("Form 5329", "ira_recharacterization_and_excess_contributions"),                # was a clean miss
+    ("1099-R box 7 code N", "form_1099r_distribution_codes"),                        # was foreign_tax_credit
+    ("supplemental wage withholding bonus", "payroll_withholding"),                  # was deadlines
+    ("paycheck withholding W-4 percentage method", "payroll_withholding"),           # was foreign_tax_credit
+    ("Publication 15-T", "payroll_withholding"),                                     # was FBAR
+    ("paystub W-2 box 1 box 3 box 5", "wage_reporting_w2"),                          # was ira_basis_and_roth_conversions
+    ("excess deferrals", "excess_deferrals_402g"),
+    ("non-itemizer charitable deduction", "charitable_nonitemizer"),                 # was a clean miss
+    ("charitable membership benefits", "itemized_charitable"),                       # was a clean miss
+    ("wage repayment", "wage_repayment_claim_of_right"),
+    ("claim of right", "wage_repayment_claim_of_right"),                             # was foreign_tax_credit
+    ("underpayment penalty", "underpayment_penalty"),
+    ("Form 2210", "underpayment_penalty"),
+)
+
+
+def test_jf2_wrong_law_queries_route_to_their_own_topic():
+    for query, expected in _JF2_ROUTES:
+        for year in (2025, 2026):
+            r = get_sources(query, year)
+            assert r.matched and {s.topic for s in r.sources} == {expected}, (
+                f"{query!r} ({year}) -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+            )
+
+
+def test_jf2_interest_queries_route_both_ways():
+    """The J0 re-verify follow-up: the N-8 deposit-interest text pulled the resident-generic interest
+    queries onto nonresident_fdap, while the nonresident ones reached other topics."""
+    for query in ("interest income", "savings bond interest", "certificate of deposit", "deposit interest"):
+        r = get_sources(query, 2025)
+        assert {s.topic for s in r.sources} == {"investment_income"}, query
+    for query in ("1099-INT nonresident", "nonresident alien bank interest", "NRA interest",
+                  "bank deposit interest nonresident", "871(i)", "871(i) deposit interest"):
+        r = get_sources(query, 2025)
+        assert {s.topic for s in r.sources} == {"nonresident_fdap"}, query
+    blob = " ".join(s.answers for s in get_sources("interest income", 2025).sources)
+    assert "Taxable interest includes interest you receive from bank accounts" in blob   # Pub 550, verbatim
+    assert "should be reported as dividends, not as interest" in blob
+
+
+def test_jf2_new_topics_carry_their_law():
+    def blob(query):
+        r = get_sources(query, 2025)
+        return " ".join(s.answers for s in r.sources), {s.url for s in r.sources}
+
+    text, urls = blob("recharacterization")
+    assert "https://www.ecfr.gov/current/title-26/section-1.408-11" in urls
+    assert "attributable to withdrawal of net income attributable to a contribution" in text    # IRC 72(t)(2)(A)(ix)
+    assert "shall not exceed 6 percent of the value of the account or annuity" in text          # IRC 4973(a)
+    assert "the section 301.9100-2 relief" in text
+    text, _ = blob("claim of right")
+    assert "it appeared that the taxpayer had an unrestricted right to such item" in text       # IRC 1341
+    assert "You can't make an adjustment for income tax withholding" in text                  # Pub 15 section 13
+    text, _ = blob("non-itemizer charitable deduction")
+    assert "enter cash contributions up to $1,000" in text and "0.5 percent of the taxpayer's contribution base" in text
+    text, _ = blob("underpayment penalty")
+    assert "is less than $1,000" in text and "The IRS will generally figure your penalty for you" in text
+    text, _ = blob("excess deferrals")
+    assert "by April 15 of the following year" in text and "Not later than the first April 15" in text
+    text, _ = blob("supplemental wage withholding bonus")
+    assert "The withholding rate on supplemental wages remains 22%" in text
+
+
+def test_jf2_new_topics_do_not_steal_their_neighbours_queries():
+    """Neighbour theft (the knowledge-gap companion bug), including the regressions the first draft of
+    these topics caused and a HEAD-vs-tree sweep over 226 queries found (2026-09-27)."""
+    for query, expected in (
+        ("self-employment tax", "self_employment"),
+        ("foreign tax credit", "foreign_tax_credit"),
+        ("1099-DIV box 7", "foreign_tax_credit"),
+        ("FBAR", "foreign_asset_and_fbar_reporting"),
+        ("Form 8606", "ira_basis_and_roth_conversions"),
+        ("Roth conversion", "ira_basis_and_roth_conversions"),
+        ("backdoor Roth", "ira_basis_and_roth_conversions"),
+        ("estimated tax", "estimated_tax"),
+        ("estimated tax payments", "estimated_tax"),          # the Form 2210 quote took it
+        ("contribution limits", "contribution_limits"),
+        ("401k contribution limit", "contribution_limits"),   # the TEOS text took it
+        ("IRA contribution limit", "retirement"),             # the 1099-R code N quote took it
+        ("HSA", "contribution_limits"),
+        ("net investment income tax", "investment_income"),
+        ("early distribution penalty", "retirement"),
+        ("tips deduction", "obbba_schedule_1a_deductions"),   # the W-2 box 1 quote tied it
+        ("charitable contributions", "itemized_charitable"),  # the TEOS text took it
+        ("amended return", "filing_basics"),                  # the Pub 590-A quote took it
+        ("where to file", "mailing_addresses"),
+        ("extension", "deadlines"),
+    ):
+        r = get_sources(query, 2025)
+        assert r.matched and {s.topic for s in r.sources} == {expected}, (
+            f"{query!r} -> {sorted(s.topic for s in r.sources)}, expected {expected}"
+        )
+
+
+def test_jf2_the_spouse_election_topic_says_where_each_statement_goes():
+    """JF2.4: the 6013(g) statement goes on the first joint return, the 6013(h) statement on the joint
+    return for the year of the choice, and a later year of a continuing 6013(g) election attaches none."""
+    r = get_sources("spouse election", 2025)
+    assert {s.topic for s in r.sources} == {"nonresident_spouse_election"}
+    text = " ".join(s.answers for s in r.sources)
+    assert "to your joint return for the first tax year for which the choice applies" in text
+    assert "to your joint return for the year of the choice" in text
+    assert "a later year of a continuing 6013(g) election attaches none" in text
+    assert "https://www.irs.gov/publications/p519" in {s.url for s in r.sources}

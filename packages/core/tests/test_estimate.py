@@ -4753,9 +4753,11 @@ def test_jf1b10_the_nonresident_spouse_route_takes_no_student_loan_interest_dedu
 def test_jf1b10_the_nonresident_spouse_route_caps_a_capital_loss_at_1500():
     # IRC 1211(b)(1): "$3,000 ($1,500 in the case of a married individual filing a separate return)".
     nra, apart = _hoh_routes(IncomeSnapshot(wages=60_000, federal_withholding=6_000, capital_gain_short=-2_500))
-    assert _slot(apart, "capital_loss") == -2_500
     assert _slot(nra, "capital_loss") == -1_500
     assert "IRC 1211(b)(1)" in _m7703_note(nra) and "1.1211-1(b)(7)(i)" in _m7703_note(nra)
+    # JF2.5: the lived-apart route is capped too — 1211 does not refer to section 7703.
+    assert _slot(apart, "capital_loss") == -1_500
+    assert not any(a.startswith(_M7703) for a in apart.assumptions)
     # A loss within $1,500 is the same on both routes, and no note claims the cap bound.
     small, _ = _hoh_routes(IncomeSnapshot(wages=60_000, federal_withholding=6_000, capital_gain_short=-1_000))
     assert _slot(small, "capital_loss") == -1_000
@@ -4824,3 +4826,72 @@ def test_jf1b12_intake_quotes_the_dual_status_head_of_household_bar():
     profile.household.hoh_qualifying_person = _ans(True)
     q = next(q for q in intake_checklist(profile, tax_year=2025).next_questions if q.id == "household.filing_status")
     assert "in a dual-status year you file as single" in q.prompt
+
+
+
+# ---------------------------------------------------------------------------
+# JF2.5 (JF1b part B deferrals): a married head of household's other
+# married-separately rules. Hypothetical demo fixtures only.
+# ---------------------------------------------------------------------------
+
+_APART_1211 = "The head-of-household figure (through living apart) limits the net capital loss"
+
+
+def test_jf2_5_the_lived_apart_head_of_household_is_still_married_for_the_capital_loss_limit():
+    # IRC 1211(b)(1) has no section 7703 reference, so 7703(b) does not unmarry the filer for it —
+    # Pub 501: "You may be considered unmarried for the purpose of using head of household status but
+    # not for other purposes".
+    _, apart = _hoh_routes(IncomeSnapshot(wages=60_000, federal_withholding=6_000, capital_gain_short=-2_500))
+    assert _slot(apart, "capital_loss") == -1_500
+    note = next(a for a in apart.assumptions if a.startswith(_APART_1211))
+    assert "does not refer to section 7703" in note and "but not for other purposes" in note
+    assert "($1,500 if married filing separately)" in note
+    # An unmarried head of household keeps the $3,000.
+    single_hoh = estimate_refund(_hoh_parent(_kid_with_ssn()), 2023,
+                                 IncomeSnapshot(wages=60_000, federal_withholding=6_000, capital_gain_short=-2_500))
+    assert _slot(single_hoh, "capital_loss") == -2_500
+    assert not any(a.startswith(_APART_1211) for a in single_hoh.assumptions)
+
+
+def test_jf2_5_the_lived_apart_all_year_fact_sets_the_social_security_base_amount():
+    # IRC 86(c)(1)(C): a $0 base amount for a married taxpayer not filing jointly who "does not live apart
+    # from his spouse at all times during the taxable year"; living apart all year, the $25,000 of (A).
+    income = IncomeSnapshot(wages=10_000, federal_withholding=500, social_security_benefits=20_000)
+    together = estimate_refund(_parent_married_to(_nra_spouse(), confirmed_hoh=True), 2023, income)
+    assert _slot(together, "taxable_social_security") == 17_000
+    assert "household.spouses_lived_apart_all_year" in _m7703_note(together)
+    profile = _parent_married_to(_nra_spouse(), confirmed_hoh=True)
+    profile.household.spouses_lived_apart_all_year = _ans(True)
+    apart = estimate_refund(profile, 2023, income)
+    assert _slot(apart, "taxable_social_security") is None                 # $20,000 provisional < $25,000
+    assert not any(a.startswith(_M7703) and "86(c)(1)(C)" in a for a in apart.assumptions)
+    # The married-filing-separately pair: the same fact reaches both returns, and the note follows it.
+    mfs = _us_filer_married(Spouse(us_person=_ans(True)))
+    mfs.household.filing_status = _ans("married_filing_separately")
+    pair = IncomeSnapshot(wages=10_000, federal_withholding=500, social_security_benefits=20_000,
+                          spouse=IncomeSnapshot(wages=10_000, federal_withholding=500, social_security_benefits=20_000))
+    lived_together = estimate_refund(mfs, 2023, pair)
+    assert any("assumes the spouses did NOT live apart at all times" in a for a in lived_together.assumptions)
+    mfs.household.spouses_lived_apart_all_year = _ans(True)
+    lived_apart = estimate_refund(mfs, 2023, pair)
+    assert any("uses the $25,000 base amount (IRC 86(c)(1)(A))" in a for a in lived_apart.assumptions)
+    assert _slot(lived_apart, "taxable_social_security") is None
+    assert lived_apart.point > lived_together.point
+
+
+def test_jf2_5_intake_asks_the_lived_apart_fact_of_a_separate_filer_with_social_security():
+    from taxfill_core.intake import intake_checklist  # noqa: PLC0415
+    profile = _us_filer_married(Spouse(us_person=_ans(True)))
+    profile.income_documents = [IncomeDocument(kind="SSA-1099", status="have", provenance=US)]
+    ids = {q.id for q in intake_checklist(profile, tax_year=2023).next_questions}
+    assert "household.spouses_lived_apart_all_year" in ids
+    profile.household.filing_status = _ans("married_filing_jointly")     # a joint return never uses it
+    assert "household.spouses_lived_apart_all_year" not in {
+        q.id for q in intake_checklist(profile, tax_year=2023).next_questions}
+    profile.household.filing_status = _ans("married_filing_separately")
+    profile.household.spouses_lived_apart_all_year = _ans(False)
+    assert "household.spouses_lived_apart_all_year" not in {
+        q.id for q in intake_checklist(profile, tax_year=2023).next_questions}
+    no_benefits = _us_filer_married(Spouse(us_person=_ans(True)))
+    assert "household.spouses_lived_apart_all_year" not in {
+        q.id for q in intake_checklist(no_benefits, tax_year=2023).next_questions}

@@ -813,7 +813,7 @@ def test_line_number_queries_route_to_the_new_topic(query: str):
         ("Schedule SE line 8a", "self_employment"),
         ("Form 8606", "ira_basis_and_roth_conversions"),
         ("safe harbor", "estimated_tax"),
-        ("underpayment penalty", "estimated_tax"),
+        ("underpayment penalty", "underpayment_penalty"),  # its own topic since JF2.1 (IRC 6654, Form 2210)
         ("treaty", "nonresident_and_treaties"),
         ("other income", "other_income_and_rewards"),
         ("self employment tax", "self_employment"),

@@ -49,6 +49,13 @@ class BoxSpec(BaseModel):
     label: str = Field(description="Human label as printed on the form.")
     type: FieldType = "text"
     required: bool = Field(default=False, description="True for the boxes a return almost always needs from this doc.")
+    aliases: list[str] = Field(
+        default_factory=list,
+        description=(
+            "The same box's label on another year's layout (the 2026 Form 1099-R prints box 7 as '7a'): "
+            "a reading passed under an alias fills this box and is not 'unexpected'."
+        ),
+    )
 
 
 class DocSpec(BaseModel):
@@ -69,8 +76,10 @@ class DocSpec(BaseModel):
     )
 
 
-def _b(key: str, label: str, type_: FieldType = "text", required: bool = False) -> BoxSpec:
-    return BoxSpec(key=key, label=label, type=type_, required=required)
+def _b(
+    key: str, label: str, type_: FieldType = "text", required: bool = False, aliases: tuple[str, ...] = (),
+) -> BoxSpec:
+    return BoxSpec(key=key, label=label, type=type_, required=required, aliases=list(aliases))
 
 
 # ── Supported documents (box layout cited to the official irs.gov form page) ──
@@ -164,6 +173,23 @@ _SPECS: list[DocSpec] = [
         kind="1099-DIV",
         title="Dividends and Distributions",
         source_url="https://www.irs.gov/forms-pubs/about-form-1099-div",
+        # JF2.3 (LD-15; Pub 550 (2025), the Instructions for Form 1099-DIV, the 1099-DIV
+        # recipient text and IRC 871(k), read 2026-09-27).
+        status_note=(
+            "A money market fund pays DIVIDENDS, not interest — Pub 550: \"Generally, amounts you receive "
+            "from money market funds should be reported as dividends, not as interest\", and the payer's "
+            "instructions put \"dividends from money market funds\" in box 1a. So box 1a goes in "
+            "estimate_refund's `dividends` (box 1b in `qualified_dividends`), never in `interest` or "
+            "`bank_deposit_interest`: the IRC 871(i)(2)(A) exclusion is \"interest on deposits\" only. For a "
+            "NONRESIDENT alien a regulated investment company's interest-related dividend is exempt from "
+            "the 30% tax instead — IRC 871(k)(1)(A): \"no tax shall be imposed under paragraph (1)(A) of "
+            "subsection (a) on any interest-related dividend received from a regulated investment company\" "
+            "— and it is \"any dividend, or part thereof, which is reported by the company as an interest "
+            "related dividend in written statements furnished to its shareholders\" (871(k)(1)(C)(i)): "
+            "whether a fund reports one is the fund's own statement, a caller fact no box here carries. "
+            "Box 5 (section 199A dividends) is part of box 1a; box 12 \"Shows exempt-interest dividends from "
+            "a mutual fund or other RIC\" — tax-exempt interest, not in box 1a."
+        ),
         boxes=[
             _b("payer_name", "Payer's name", "text"),
             _b("recipient_tin", "Recipient's TIN", "tin"),
@@ -172,7 +198,9 @@ _SPECS: list[DocSpec] = [
             _b("2a", "Box 2a — Total capital gain distr.", "money"),
             _b("3", "Box 3 — Nondividend distributions", "money"),
             _b("4", "Box 4 — Federal income tax withheld", "money"),
+            _b("5", "Box 5 — Section 199A dividends", "money"),
             _b("7", "Box 7 — Foreign tax paid", "money"),
+            _b("12", "Box 12 — Exempt-interest dividends", "money"),
         ],
     ),
     DocSpec(
@@ -272,18 +300,47 @@ _SPECS: list[DocSpec] = [
             "to a Roth IRA) carry -0- in box 2a; code G (a direct rollover) is -0- too, except where the "
             "payer enters the taxable amount in box 2a: a direct rollover from a pre-tax plan to a Roth IRA "
             "(calc op roth_conversion, source plan_to_roth_ira) or to a designated Roth account in the same "
-            "plan (an in-plan Roth rollover), and designated Roth matching/nonelective contributions."
+            "plan (an in-plan Roth rollover), and designated Roth matching/nonelective contributions. "
+            # JF2.2 (the 2026 face and its Instructions for Recipient, read 2026-09-27).
+            "The 2026 form relabels box 7 as 7a (Dist. code(s)) and its checkbox as 7b (IRA/SEP/SIMPLE), "
+            "adds 7c (Trump account) and 7d (Earnings on excess contrib.), and splits box 8 into 8a (Other) "
+            "and 8b (Percentage of annuity contract): a reading under 7a, 7b or 8a fills box 7, "
+            "7_ira_sep_simple or 8. Box 2b, first box (Form 1099-R, Instructions for Recipient): \"If the "
+            "first box is checked, the payer was unable to determine the taxable amount and box 2a should "
+            "be blank, except for a traditional IRA or traditional SIMPLE IRA. It's your responsibility to "
+            "determine the taxable amount.\""
         ),
         boxes=[
+            _b("payer_name", "Payer's name", "text"),
             _b("payer_tin", "Payer's TIN", "tin"),
             _b("recipient_tin", "Recipient's TIN", "tin", required=True),
+            _b("account_number", "Account number", "text"),
             _b("1", "Box 1 — Gross distribution", "money", required=True),
             _b("2a", "Box 2a — Taxable amount", "money"),
             _b("2b_not_determined", "Box 2b — Taxable amount not determined", "checkbox"),
             _b("2b_total_distribution", "Box 2b — Total distribution", "checkbox"),
+            _b("3", "Box 3 — Capital gain (included in box 2a)", "money"),
             _b("4", "Box 4 — Federal income tax withheld", "money"),
-            _b("7", "Box 7 — Distribution code(s)", "code", required=True),
-            _b("7_ira_sep_simple", "Box 7 — IRA/SEP/SIMPLE", "checkbox"),
+            _b("5", "Box 5 — Employee contrib./desig. Roth contrib. or insurance premiums", "money"),
+            _b("6", "Box 6 — NUA in employer's securities", "money"),
+            _b("7", "Box 7 (2026: 7a) — Distribution code(s)", "code", required=True, aliases=("7a",)),
+            _b("7_ira_sep_simple", "Box 7 (2026: 7b) — IRA/SEP/SIMPLE", "checkbox", aliases=("7b",)),
+            _b("7c", "Box 7c (2026) — Trump account", "checkbox"),
+            _b("7d", "Box 7d (2026) — Earnings on excess contrib.", "money"),
+            _b("8", "Box 8 (2026: 8a) — Other", "money", aliases=("8a",)),
+            _b("8b", "Box 8b (2026) — Percentage of annuity contract", "text"),
+            _b("9a", "Box 9a — Percentage of total distribution", "text"),
+            _b("9b", "Box 9b — Total employee contributions", "money"),
+            _b("10", "Box 10 — Amount allocable to IRR within 5 years", "money"),
+            _b("11", "Box 11 — 1st year of desig. Roth contrib.", "int"),
+            _b("12", "Box 12 — FATCA filing requirement", "checkbox"),
+            _b("13", "Box 13 — Date of payment", "text"),
+            _b("14", "Box 14 — State tax withheld", "money"),
+            _b("15", "Box 15 — State/Payer's state no.", "text"),
+            _b("16", "Box 16 — State distribution", "money"),
+            _b("17", "Box 17 — Local tax withheld", "money"),
+            _b("18", "Box 18 — Name of locality", "text"),
+            _b("19", "Box 19 — Local distribution", "money"),
         ],
     ),
     DocSpec(
@@ -1308,7 +1365,11 @@ def list_document_kinds() -> list[dict[str, Any]]:
             "kind": s.kind,
             "title": s.title,
             "source_url": s.source_url,
-            "boxes": [{"key": b.key, "label": b.label, "type": b.type, "required": b.required} for b in s.boxes],
+            "boxes": [
+                {"key": b.key, "label": b.label, "type": b.type, "required": b.required,
+                 **({"aliases": list(b.aliases)} if b.aliases else {})}
+                for b in s.boxes
+            ],
         }
         for s in _SPECS
     ]
@@ -1348,15 +1409,21 @@ def extract_document(
     prov = Provenance.document(file=path, page=page)
     out_fields: list[ExtractedField] = []
     gaps: list[str] = []
-    known_keys = {b.key for b in spec.boxes}
+    known_keys = {k for b in spec.boxes for k in (b.key, *b.aliases)}
+
+    def _blank(value: Any) -> bool:
+        return value is None or (isinstance(value, str) and value.strip() == "")
 
     for box in spec.boxes:
-        raw = fields.get(box.key)
-        coerced, ok = _coerce(raw, box.type)
-        if coerced is None and (raw is None or (isinstance(raw, str) and raw.strip() == "")):
+        # A box read under its own key or under another year's label (BoxSpec.aliases, JF2.2).
+        read = {k: fields[k] for k in (box.key, *box.aliases) if k in fields and not _blank(fields[k])}
+        conflict = len({str(v).strip() for v in read.values()}) > 1
+        raw = read if conflict else next(iter(read.values()), fields.get(box.key))
+        coerced, ok = (raw, False) if conflict else _coerce(raw, box.type)
+        if coerced is None and _blank(raw):
             status = "missing"
         elif not ok:
-            status = "invalid"
+            status = "invalid"  # includes two different readings of one box under two labels
         else:
             status = "ok"
         out_fields.append(

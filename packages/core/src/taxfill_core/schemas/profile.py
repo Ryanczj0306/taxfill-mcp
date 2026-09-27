@@ -398,6 +398,15 @@ class Household(BaseModel):
             "spouse_death_year) for the qualifying_surviving_spouse status; None means not asked."
         ),
     )
+    spouses_lived_apart_all_year: Answer[bool] | None = Field(
+        default=None,
+        description=(
+            "Separate-return FACT (IRC 86(c)(1)(C)(ii), JF2.5): True when you and your spouse lived apart "
+            "at ALL times during the tax year. A married individual who does not file a joint return and "
+            "did NOT live apart at all times has a $0 base amount for taxable Social Security; one who did "
+            "uses the $25,000 of IRC 86(c)(1)(A). Unanswered, a separate figure assumes you did not."
+        ),
+    )
     other_taxpayers: list[OtherTaxpayer] = Field(
         default_factory=list,
         description="Other people in the household who file their OWN returns (unmarried partner, roommate).",

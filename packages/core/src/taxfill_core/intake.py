@@ -701,6 +701,22 @@ def _household_questions(
                               "Both taxpayers are identified on the return.", "household.spouse.tax_id"))
         _section_6013_fact_question(profile, out, tax_year)
         _spouse_residency_questions(profile, out, notes, tax_year)
+        # JF2.5 (IRC 86(c)(1)(C)): a married separate return with Social Security benefits turns on
+        # whether the spouses lived apart ALL year — asked unless the couple files jointly.
+        if (
+            not _has(hh.spouses_lived_apart_all_year)
+            and _confirmed_status(profile) in (None, "married_filing_separately", "head_of_household")
+            and any(_mentions_ssa1099(d.kind) and d.status != "not_applicable" for d in profile.income_documents)
+        ):
+            out.append(_q("household.spouses_lived_apart_all_year", "household",
+                          "Did you and your spouse live apart at ALL times during the year?",
+                          "On a separate return it sets how much of your Social Security benefits is taxable.",
+                          "household.spouses_lived_apart_all_year",
+                          disambiguation="IRC 86(c)(1)(C): a married individual who does not file a joint return "
+                                         "and did not live apart from the spouse at all times has a $0 base "
+                                         "amount (up to 85% of the benefits taxable from the first dollar); "
+                                         "living apart all year gives the $25,000 base amount. A joint return "
+                                         "does not use this answer."))
     elif widowed:
         # The year of the spouse's death is a joint-return year (Pub 501: "considered married
         # for the whole year for filing status purposes"), so a joint status there with a
@@ -1240,6 +1256,11 @@ def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_
 
 def _mentions_1095a(kind: str) -> bool:
     return "1095A" in re.sub(r"[^0-9A-Z]", "", kind.upper())
+
+
+def _mentions_ssa1099(kind: str) -> bool:
+    """True for an inventory entry that is a Social Security benefit statement (SSA-1099)."""
+    return "SSA1099" in re.sub(r"[^0-9A-Z]", "", kind.upper())
 
 
 def _mentions_dependent_care(kind: str) -> bool:

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,701 tests** — offline 5,321 + live-.gov 380; derived
+Done and on `main` (**5,714 tests** — offline 5,334 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1482,7 +1482,8 @@ not wait for any of this.
     - The intake unmarried-partner note names the §6013(g)/(h) precondition.
     - The spouse-field test fails when a field is dropped from the list.
 
-- [ ] **JF2 — Wrong-law routing and document notes** (M; deps J0)
+- [x] **JF2 — Wrong-law routing and document notes — DONE 2026-09-27** (M; deps J0)
+  - *As built (2026-09-27):* 1 eight topics in knowledge/sources.yaml — `ira_recharacterization_and_excess_contributions` (Treas. Reg. 1.408A-5, 1.408-11, 301.9100-2; IRC 408A(d)(6)-(7), 408(d)(4), 4973, 72(t)(2)(A)(ix); Pub 590-A; i5329; Form 5498 box 4), `form_1099r_distribution_codes`, `payroll_withholding` (Pub 15 section 7, Pub 15-T, Form W-4, Treas. Reg. 31.3402(g)-1), `wage_reporting_w2`, `excess_deferrals_402g` (IRC 402(g), Treas. Reg. 1.402(g)-1(e), Pub 525), `charitable_nonitemizer` (IRC 170(p), 170(b)(1)(I), the W-4 (2026) Deductions Worksheet, the TEOS deductibility-codes page — TEOS itself refuses scripted clients), `wage_repayment_claim_of_right` (Pub 525 Repayments, IRC 1341, Pub 15 section 13), `underpayment_penalty` (IRC 6654, i2210, Form 2210) — every URL fetched and every quote checked verbatim by script (the eCFR sections through its renderer API); Pub 526's membership-benefit rules on itemized_charitable; the J0 follow-up both ways (Pub 550 interest sentences on investment_income; the fdap text drops the "interest income" heading and names the 1099-INT/1042-S, "NRA interest" and "bank interest"); a HEAD-vs-tree sweep over 240 queries found and removed eight new wrong pointers the first drafts made ("401k contribution limit", "IRA contribution limit", "amended return" — now Form 1040-X on filing_basics — "estimated tax payments", "where to file", "early distribution penalty", "tips deduction", "charitable contributions"); 2 the 1099-R DocSpec reads the 2026 face (`BoxSpec.aliases`: 7a→7, 7b→7_ira_sep_simple, 8a→8, resolved before the unexpected check; two different readings of one box are invalid) with boxes 3, 5, 6, 7c, 7d, 8b, 9a, 9b, 10-19, payer name and account number, and a status note on the relabel and the recipient box-2b sentence; 3 the 1099-DIV DocSpec has boxes 5 and 12 and a status note (Pub 550 money market funds, IRC 871(k)(1)(A)/(C)(i) — a caller fact), the `interest`/`dividends` field notes, 871(k) in nonresident_fdap, pitfall P-013 rule (g); 4 nonresident_spouse_election says where each statement goes (6013(g): the first joint return, none in a later year; 6013(h): the year of the choice); 5 (a) the lived-apart head of household is capped at $1,500 too (IRC 1211(b)(1) does not refer to section 7703; Pub 501: "not for other purposes"), (b) `household.spouses_lived_apart_all_year` (IRC 86(c)(1)(C)(ii)) prices the $25,000 base amount on every separate return and intake asks it of a married separate filer with an SSA-1099. Deferred: (c) the separated-spouse EITC rule → Not scheduled (below).
   1. **Wrong-law pointers** [RC-10 + LD-03]. get_sources hands out confident wrong-law pointers (the P-005/P-006 class). Reproduced 2026-09-23:
 
      | Query | Routes to |
@@ -2237,6 +2238,7 @@ not wait for any of this.
 - AMT / Form 6251.
 - ISO, §83(b) and RSU vesting. JP1c's supplemental path covers RSU-vest withholding for TY2027 planning.
 - Wash sales.
+- The separated-spouse EITC rule (IRC 32(d)(2)(B)) on the nonresident-spouse head-of-household route (JF2.5(c)): it needs a last-6-months principal-abode fact — the one the lived-apart route also rests on — that the profile does not record. Disclosed in the head-of-household route note.
 - DEV_PLAN's I-94 / I-20 / IRS-transcript DocSpecs and perceptual-hash snapshots; JD1 records them as deviations.
 
 **Acceptance (phase):**

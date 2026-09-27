@@ -137,7 +137,14 @@ class IncomeSnapshot(BaseModel):
 
     wages: int = Field(default=0, ge=0, description="W-2 box 1 wages (all W-2s).")
     federal_withholding: int = Field(default=0, ge=0, description="Federal income tax withheld + estimated payments.")
-    interest: int = Field(default=0, ge=0, description="Taxable interest (1099-INT).")
+    interest: int = Field(
+        default=0, ge=0,
+        description=(
+            "Taxable interest (1099-INT). A money market fund's payout is a DIVIDEND, not interest (Pub 550: "
+            "\"amounts you receive from money market funds should be reported as dividends, not as "
+            "interest\") — enter it in `dividends` (JF2.3, P-013 rule (g))."
+        ),
+    )
     bank_deposit_interest: int = Field(
         default=0, ge=0,
         description=(
@@ -182,7 +189,14 @@ class IncomeSnapshot(BaseModel):
             "bank_deposit_interest is excluded)."
         ),
     )
-    dividends: int = Field(default=0, ge=0, description="Ordinary dividends, 1099-DIV box 1a (includes qualified).")
+    dividends: int = Field(
+        default=0, ge=0,
+        description=(
+            "Ordinary dividends, 1099-DIV box 1a (includes qualified) — money market fund payouts included "
+            "(Pub 550). For a NONRESIDENT alien, a fund's interest-related dividend (IRC 871(k)(1)(A)) is "
+            "exempt from the 30% tax — never `bank_deposit_interest`, and not modeled here (P-013 rule (g))."
+        ),
+    )
     qualified_dividends: int = Field(
         default=0, ge=0,
         description="1099-DIV box 1b — the subset of `dividends` taxed at preferential rates.",
@@ -2476,7 +2490,8 @@ _MARRIED_7703_RULES = {
         "apart at all times during the year, as the married-filing-separately candidate does — IRC 86(c)(1)(C): "
         "\"zero in the case of a taxpayer who— (i) is married as of the close of the taxable year (within the "
         "meaning of section 7703) but does not file a joint return for such year, and (ii) does not live apart from "
-        "his spouse at all times during the taxable year\" (lived apart all year: the $25,000 of (A))"
+        "his spouse at all times during the taxable year\" (lived apart all year: the $25,000 of (A) — record "
+        "household.spouses_lived_apart_all_year)"
     ),
 }
 
@@ -3107,6 +3122,8 @@ def _bottom_line(
     nonresident_period_deposit: bool = False,
     niit_override: _NiitOverride | None = None,
     married_7703: bool = False,
+    married_separate: bool = False,
+    spouses_apart_all_year: bool = False,
 ):
     """Compute the signed bottom line for one filing status. Returns (value, composition, citations).
 
@@ -3195,6 +3212,15 @@ def _bottom_line(
     married-filing-separately candidate's lived-together assumption). Each gate that changes
     the figure adds an ``m7703_*`` key to ``notes``. The lived-apart route never passes it: IRC
     7703(b) makes that filer unmarried for each provision that refers to section 7703.
+
+    ``married_separate`` (JF2.5): THIS return is a married individual's separate return for IRC
+    1211(b)(1) — "$1,500 in the case of a married individual filing a separate return" — which does
+    not refer to section 7703, so a head of household through living apart is still married for it
+    (Pub 501: "You may be considered unmarried for the purpose of using head of household status but
+    not for other purposes"); ``married_7703`` and married filing separately imply it.
+    ``spouses_apart_all_year`` (JF2.5): the spouses lived apart at ALL times during the year
+    (household.spouses_lived_apart_all_year), so a separate return's taxable-Social-Security base
+    amount is the $25,000 of IRC 86(c)(1)(A), not the $0 of 86(c)(1)(C).
     """
     citations: list[Citation] = []
     comp: list[CompositionLine] = []
@@ -3275,10 +3301,12 @@ def _bottom_line(
     if combined_gain > 0:
         comp.append(_line("capital_gain", label="Capital gain (net short-term + long-term)", amount=capital))
     elif combined_gain < 0:
-        loss_cap = 1500 if separate else 3000
+        loss_cap = 1500 if (separate or married_separate) else 3000
         capital = max(combined_gain, -loss_cap)
         if married_7703 and combined_gain < -loss_cap and notes is not None:
             notes.add("m7703_capital_loss")
+        elif married_separate and not separate and combined_gain < -loss_cap and notes is not None:
+            notes.add("hoh_capital_loss_1211")  # the lived-apart head of household (JF2.5)
         if capital != combined_gain:
             comp.append(
                 _line("capital_loss", 
@@ -3302,10 +3330,11 @@ def _bottom_line(
             0,  # tax-exempt interest not tracked — disclosed as an assumption
             filing_status=sep_status,
             year=year,
-            mfs_lived_with_spouse=separate,  # MFS candidate assumes living with the spouse (common case)
+            # A separate return assumes the spouses did not live apart all year unless recorded (JF2.5).
+            mfs_lived_with_spouse=separate and not spouses_apart_all_year,
             knowledge_dir=knowledge_dir,
         )
-        if married_7703 and notes is not None:
+        if married_7703 and not spouses_apart_all_year and notes is not None:
             notes.add("m7703_social_security")
         taxable_ss = ss_res.taxable_benefits
         citations.append(ss_res.citation)
@@ -3929,6 +3958,9 @@ def estimate_refund(
     # The separated-spouse rule (IRC 32(d)(2)) starts in TY2021; before it a lived-apart HOH was
     # unmarried for the EITC under IRC 7703(b), so the qualifying-child gate is year-bound.
     lived_apart_no_eitc = year >= 2021 and not eitc_qualifying_child
+    # JF2.5: the spouses lived apart at ALL times (IRC 86(c)(1)(C)(ii)) — recorded, never assumed.
+    apart_all_year = married and profile.household is not None and _confirmed_true(
+        profile.household.spouses_lived_apart_all_year)
     notes: set[str] = set()  # disclosure keys accumulated across every candidate status
     mfs_method: dict[str, str | None] = {}  # the couple's deduction method on the two-return MFS pair
 
@@ -3984,11 +4016,12 @@ def estimate_refund(
                 self_income, self_status, year, knowledge_dir, nonresident=self_nra, deps=deps, notes=local,
                 deduction_mode=self_mode, married_for_eitc=married_for_eitc, dual_status=self_dual,
                 niit_override=_NIIT_ZERO if 0 in niit_zero else None, married_7703=married_7703,
+                married_separate=True, spouses_apart_all_year=apart_all_year,
             )
             rp = _bottom_line(
                 income.spouse, _MFS, year, knowledge_dir, nonresident=spouse_nra, deps=[], notes=local,
                 deduction_mode=spouse_mode, nonresident_period_deposit=spouse_period, dual_status=spouse_dual,
-                niit_override=_NIIT_ZERO if 1 in niit_zero else None,
+                niit_override=_NIIT_ZERO if 1 in niit_zero else None, spouses_apart_all_year=apart_all_year,
             )
             return rs, rp, local
 
@@ -4085,7 +4118,8 @@ def estimate_refund(
         return _bottom_line(
             income, status, year, knowledge_dir, nonresident=self_nra, deps=deps, notes=sink,
             married_for_eitc=married_hoh and (hoh_spouse_nra or lived_apart_no_eitc), dual_status=self_dual,
-            married_7703=married_hoh and hoh_spouse_nra,
+            married_7703=married_hoh and hoh_spouse_nra, married_separate=married_hoh,
+            spouses_apart_all_year=married and apart_all_year,
         )
 
     # The ELECTION posture: every figure under the election, or the joint candidate of a
@@ -4204,7 +4238,8 @@ def estimate_refund(
         else:
             hoh_alternative = _bottom_line(
                 income, "head_of_household", year, knowledge_dir, nonresident=nonresident, deps=deps,
-                married_for_eitc=alt_nra or lived_apart_no_eitc, married_7703=alt_nra,
+                married_for_eitc=alt_nra or lived_apart_no_eitc, married_7703=alt_nra, married_separate=True,
+                spouses_apart_all_year=apart_all_year,
             ).bottom
         values.append(hoh_alternative)
     # JF5b (items 1 and 6): a nonresident answer that is not settled — one that rests on a
@@ -4620,9 +4655,13 @@ def estimate_refund(
         assumptions.append(
             "Taxable Social Security is computed with the benefits worksheet using this snapshot's "
             "other income (tax-exempt interest is not tracked — assumed $0; the student-loan-interest "
-            "deduction is excluded from the worksheet's modified AGI per Pub 915). A "
-            "married-filing-separately candidate assumes the spouses lived together during the year "
-            "(both thresholds $0)."
+            "deduction is excluded from the worksheet's modified AGI per Pub 915). "
+            + ("The spouses lived apart at all times during the year (household.spouses_lived_apart_all_year), "
+               "so a married-filing-separately figure uses the $25,000 base amount (IRC 86(c)(1)(A))."
+               if apart_all_year else
+               "A married-filing-separately candidate assumes the spouses did NOT live apart at all times "
+               "during the year (IRC 86(c)(1)(C): both thresholds $0) — record "
+               "household.spouses_lived_apart_all_year if you lived apart all year.")
         )
     # Disclose a surtax whenever ANY candidate status includes it (the MFS low end can
     # trigger Form 8959 while the MFJ headline does not).
@@ -4985,6 +5024,18 @@ def estimate_refund(
     married_7703_keys = {k for k in notes if k.startswith("m7703_")}
     if married_7703_keys:
         assumptions.append(_married_7703_note(married_7703_keys))
+    if "hoh_capital_loss_1211" in notes:
+        # JF2.5: the lived-apart head of household is still married for IRC 1211(b)(1).
+        assumptions.append(
+            "The head-of-household figure (through living apart) limits the net capital loss deducted to "
+            "$1,500: IRC 1211(b)(1) reads \"$3,000 ($1,500 in the case of a married individual filing a "
+            "separate return)\" and does not refer to section 7703, so the living-apart rule that makes you "
+            "unmarried for head of household does not reach it — Pub 501: \"You may be considered unmarried "
+            "for the purpose of using head of household status but not for other purposes\"; Treas. Reg. "
+            "1.1211-1(b)(7)(i): \"In the case of a husband or a wife who files a separate return\". The "
+            "Schedule D instructions word the limit \"($1,500 if married filing separately)\"; the $3,000 "
+            "that reading would allow is not priced."
+        )
     # FICA withheld in error on an exempt nonresident is recovered OFF-return.
     # The election does not reach FICA (IRC 6013(g)(1): chapters 1 and 24 only), so this
     # note follows the day-count answer, not the elected one (P-018).

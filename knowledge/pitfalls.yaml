@@ -920,7 +920,24 @@ pitfalls:
       owner. The compare_scenarios walk shape (JF1b.6) covers the new pair
       too: list the subset field first. Tests, P-013-tagged:
       test_p013_dual_status_* in packages/core/tests/test_estimate.py and
-      test_intake.py.
+      test_intake.py. RULE (g), FUND PAYOUTS ARE DIVIDENDS (JF2.3,
+      2026-09-27): a money market fund pays dividends, never deposit
+      interest — Pub 550 (2025): "Generally, amounts you receive from money
+      market funds should be reported as dividends, not as interest", and the
+      Instructions for Form 1099-DIV put "dividends from money market funds"
+      in box 1a — so no fund payout ever reaches bank_deposit_interest, whose
+      871(i)(2)(A) exclusion is "interest on deposits" only. The nonresident
+      exemption for a fund is a different one: IRC 871(k)(1)(A), "no tax shall
+      be imposed under paragraph (1)(A) of subsection (a) on any
+      interest-related dividend received from a regulated investment
+      company", an interest-related dividend being "any dividend, or part
+      thereof, which is reported by the company as an interest related
+      dividend in written statements furnished to its shareholders"
+      (871(k)(1)(C)(i)) — the fund's statement, a caller fact no 1099-DIV box
+      carries. Countermeasure: the 1099-DIV DocSpec status_note (and boxes 5
+      and 12), the `interest` / `dividends` field descriptions, and the 871(k)
+      text in nonresident_fdap. Tests: test_jf2_* in test_extract.py and
+      test_sources.py.
   - id: P-014
     incident: >-
       hand_fill_worksheet ticked the box for a "no". Its checkbox branch shared

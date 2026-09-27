@@ -1125,3 +1125,51 @@ def test_i5_specs_round_trip_every_box(kind):
     # An unknown key is reported, never absorbed.
     stray = extract_document("documents/x.pdf", kind, {"not_a_box": "1"})
     assert stray.unexpected == ["not_a_box"]
+
+
+# ── JF2.2: the 2026 Form 1099-R layout; JF2.3: fund payouts are dividends ────
+
+
+def test_jf2_a_2026_1099r_read_with_its_own_labels_resolves_with_no_gap():
+    # Before JF2.2 this reading gave gaps ['7'] and unexpected ['5', '7a', '7b'].
+    r = extract_document("documents/1099r.pdf", "1099-R", {
+        "recipient_tin": "123456789", "1": "6000", "2a": "6000", "5": "250", "7a": "7", "7b": "X", "8a": "100",
+    })
+    assert r.gaps == [] and r.unexpected == []
+    by = {f.key: f for f in r.fields}
+    assert by["7"].value == "7" and by["7_ira_sep_simple"].value is True
+    assert by["8"].value == "100" and by["5"].value == "250"
+    boxes = {b["key"]: b for b in {k["kind"]: k for k in list_document_kinds()}["1099-R"]["boxes"]}
+    assert boxes["7"]["aliases"] == ["7a"] and boxes["7_ira_sep_simple"]["aliases"] == ["7b"]
+    assert boxes["8"]["aliases"] == ["8a"] and "aliases" not in boxes["1"]
+    assert {"3", "5", "6", "7c", "7d", "8b", "9a", "9b", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+            "19", "payer_name", "account_number"} <= set(boxes)
+
+
+def test_jf2_one_1099r_box_read_under_two_labels():
+    same = extract_document("documents/1099r.pdf", "1099-R",
+                            {"recipient_tin": "123456789", "1": "6000", "7": "7", "7a": "7"})
+    assert same.gaps == [] and same.unexpected == [] and {f.key: f for f in same.fields}["7"].status == "ok"
+    clash = extract_document("documents/1099r.pdf", "1099-R",
+                             {"recipient_tin": "123456789", "1": "6000", "7": "7", "7a": "G"})
+    box7 = {f.key: f for f in clash.fields}["7"]
+    assert box7.status == "invalid" and box7.raw == {"7": "7", "7a": "G"} and clash.gaps == ["7"]
+
+
+def test_jf2_the_1099r_status_note_names_the_2026_relabel_and_box_2b():
+    note = DOC_SPECS["1099-R"].status_note
+    assert "relabels box 7 as 7a" in note and "7d (Earnings on excess contrib.)" in note
+    assert "It's your responsibility to determine the taxable amount." in note
+
+
+def test_jf2_a_money_market_payout_is_a_dividend_and_871k_is_its_own_exemption():
+    note = DOC_SPECS["1099-DIV"].status_note
+    assert "should be reported as dividends, not as interest" in note           # Pub 550, verbatim
+    assert "interest-related dividend received from a regulated investment company" in note   # IRC 871(k)(1)(A)
+    assert "a caller fact" in note and "bank_deposit_interest" in note
+    assert {"5", "12"} <= {b.key for b in DOC_SPECS["1099-DIV"].boxes}
+    r = extract_document("documents/1099div.pdf", "1099-DIV", {"1a": "900", "5": "30", "12": "40"})
+    assert r.gaps == [] and r.unexpected == [] and "871(k)" in r.caveat
+    from taxfill_core.estimate import IncomeSnapshot  # noqa: PLC0415
+    assert "money market" in IncomeSnapshot.model_fields["interest"].description
+    assert "871(k)(1)(A)" in IncomeSnapshot.model_fields["dividends"].description

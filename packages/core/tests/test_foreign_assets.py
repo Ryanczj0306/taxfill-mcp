@@ -422,7 +422,10 @@ def test_foreign_reporting_queries_route_to_the_new_topic(query: str):
     ("foreign earned income exclusion", "foreign_earned_income"),
     ("Schedule NEC", "nonresident_fdap"),
     ("qualified parking", "commuter_and_fringe_benefits"),
-    ("underpayment penalty", "estimated_tax"),
+    # JF2.1 (2026-09-27): the underpayment penalty has its own topic now (IRC 6654, Form 2210);
+    # estimated_tax keeps its own query.
+    ("underpayment penalty", "underpayment_penalty"),
+    ("estimated tax", "estimated_tax"),
 ])
 def test_new_topic_does_not_steal_its_neighbours(query: str, expected: str):
     r = get_sources(query, 2025, base_dir=KNOWLEDGE_DIR)
