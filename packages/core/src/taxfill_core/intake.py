@@ -118,7 +118,19 @@ def _marital(profile: Profile) -> str | None:
     return str(hh.marital_status.value)
 
 
-def _classification_from_facts(imm, rf, tax_year: int | None) -> str | None:
+def _prior_year_resident(profile: Profile, tax_year: int | None) -> bool | None:
+    """The TAXPAYER's prior-year residency fact — PriorFilings.return_forms[tax_year - 1] only
+    (JF5b; residency.prior_year_resident_from_return_forms, the estimator's rule). The spouse
+    has no prior-filings fact, so spouse classifications never take one."""
+    pf = profile.prior_filings
+    if tax_year is None or pf is None:
+        return None
+    return residency.prior_year_resident_from_return_forms(pf.return_forms, tax_year)
+
+
+def _classification_from_facts(
+    imm, rf, tax_year: int | None, *, prior_year_resident: bool | None = None,
+) -> str | None:
     """Best-effort federal residency classification from explicit facts, or None.
 
     Works on any person's immigration + residency facts (the taxpayer's, or the
@@ -131,6 +143,11 @@ def _classification_from_facts(imm, rf, tax_year: int | None) -> str | None:
     0 days (the visa timeline covers tax_year-1/tax_year-2 but days_in_us lacks them)
     is NOT asserted — real counts for those years could flip it to resident, so this
     returns None and intake keeps the conditional framing plus the follow-up question.
+
+    ``prior_year_resident`` (the TAXPAYER's prior-year return, JF5b) goes to the
+    classifier: a prior-year resident who meets the substantial presence test is a
+    resident from January 1, and a 'nonresident' answer that contradicts the recorded
+    prior year is not asserted either (None — a note carries the CONTRADICTION reason).
     """
     if tax_year is None:
         return None
@@ -140,12 +157,15 @@ def _classification_from_facts(imm, rf, tax_year: int | None) -> str | None:
     if not days_by_year:
         return None
     try:
-        classification = residency.classify(imm.visa_timeline, days_by_year, tax_year).classification
+        classification = residency.classify(
+            imm.visa_timeline, days_by_year, tax_year, prior_year_resident=prior_year_resident,
+        ).classification
     except (ValueError, AssertionError):
         # Incomplete or contradictory inputs — cannot classify yet; gate conditionally.
         return None
-    if classification == "nonresident" and residency.nonresident_rests_on_missing_lookback(
-        imm.visa_timeline, days_by_year, tax_year
+    if classification == "nonresident" and (
+        prior_year_resident is True
+        or residency.nonresident_rests_on_missing_lookback(imm.visa_timeline, days_by_year, tax_year)
     ):
         return None
     return classification
@@ -193,20 +213,24 @@ def _election_unavailable(profile: Profile, tax_year: int | None) -> bool:
     sp = hh.spouse if hh is not None else None
     if sp is None or (_has(sp.us_person) and sp.us_person.value is True):
         return False
-    return _certain_nonresident(profile.immigration, profile.residency_facts, tax_year) and _certain_nonresident(
-        sp.immigration, sp.residency_facts, tax_year
-    )
+    return _certain_nonresident(
+        profile.immigration, profile.residency_facts, tax_year,
+        prior_year_resident=_prior_year_resident(profile, tax_year),
+    ) and _certain_nonresident(sp.immigration, sp.residency_facts, tax_year)
 
 
-def _certain_nonresident(imm, rf, tax_year: int | None) -> bool:
+def _certain_nonresident(imm, rf, tax_year: int | None, *, prior_year_resident: bool | None = None) -> bool:
     """'nonresident' on these facts, and no missing lookback year could flip it — the IRC
     6013(g)(3) gate's rule, shared with the estimator (residency.certain_nonresident).
     Narrower than :func:`_classification_from_facts`' interview rule, because at the gate
-    an unknown answer APPLIES the election."""
+    an unknown answer APPLIES the election. A prior-year resident (the taxpayer's
+    ``prior_year_resident`` True) is never certain (JF5b); the spouse has no such fact."""
     if tax_year is None or imm is None or not imm.visa_timeline or rf is None or not rf.days_in_us:
         return False
     days = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
-    return bool(days) and residency.certain_nonresident(imm.visa_timeline, days, tax_year)
+    return bool(days) and residency.certain_nonresident(
+        imm.visa_timeline, days, tax_year, prior_year_resident=prior_year_resident,
+    )
 
 
 def _election_in_effect(profile: Profile, tax_year: int | None = None) -> bool:
@@ -247,8 +271,12 @@ def _classification_without_election(profile: Profile, tax_year: int | None) -> 
 
     The answer FICA follows even under the §6013(g)/(h) election: IRC 6013(g)(1)
     treats the electing spouse as a resident only "for purposes of chapter 1" and
-    "for purposes of chapter 24 (relating to wage withholding)"."""
-    return _classification_from_facts(profile.immigration, profile.residency_facts, tax_year)
+    "for purposes of chapter 24 (relating to wage withholding)". It takes the taxpayer's
+    prior-year residency fact (PriorFilings.return_forms, JF5b)."""
+    return _classification_from_facts(
+        profile.immigration, profile.residency_facts, tax_year,
+        prior_year_resident=_prior_year_resident(profile, tax_year),
+    )
 
 
 def _residency_classification(profile: Profile, tax_year: int | None) -> str | None:
@@ -270,7 +298,8 @@ def _spouse_classification(profile: Profile, tax_year: int | None, *, honor_elec
     Spouse.residency_facts) — whether the couple even needs the §6013(g)/(h)
     election is decided by the spouse's classification, never the taxpayer's.
     Under the election in effect the spouse is a resident too (P-018), unless
-    ``honor_election`` is False (the no-election answer).
+    ``honor_election`` is False (the no-election answer). No prior-year residency fact:
+    PriorFilings is the taxpayer's, and the Spouse model has no prior filings (JF5b).
     """
     hh = profile.household
     sp = hh.spouse if hh is not None else None
@@ -285,7 +314,9 @@ def _section_6013_kind(profile: Profile, tax_year: int | None) -> str:
     """Which choice the couple is making — IRC 6013(g), 6013(h) or 'either' (residency.section_6013_kind),
     from each spouse's residency WITHOUT the election. Intake only ever meets the election as a
     recorded answer or a question that also covers one made earlier, so facts pointing to 6013(h)
-    give 'either': an earlier 6013(g) election may still be in effect (the prior-year fact is JF5b's)."""
+    give 'either': an earlier 6013(g) election may still be in effect (PriorFilings.return_forms
+    records the earlier returns — a '1040_with_6013_election' entry — but the kind is read from the
+    residency answers only)."""
     ident = profile.identity
     taxpayer = _classification_without_election(profile, tax_year)
     if taxpayer is None and ident is not None and _has(ident.us_person) and ident.us_person.value is True:
@@ -1357,6 +1388,21 @@ def _banking_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
                                  "bottom-left of a check, not the deposit slip."))
 
 
+def _prior_year_check_holds(profile: Profile, tax_year: int | None) -> bool:
+    """True when the TAXPAYER's classification carries the CHECK THE PRIOR-YEAR RETURN judgment (JF5b)."""
+    imm, rf = profile.immigration, profile.residency_facts
+    if tax_year is None or imm is None or not imm.visa_timeline or rf is None:
+        return False
+    days = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+    if not days:
+        return False
+    try:
+        result = residency.classify(imm.visa_timeline, days, tax_year, prior_year_resident=_prior_year_resident(profile, tax_year))
+    except (ValueError, AssertionError):
+        return False
+    return residency.prior_year_check(result) is not None
+
+
 def _fica_exemption_note(profile: Profile, notes: list[str], tax_year: int | None) -> None:
     """FICA-withheld-in-error note for F/J visa holders (IRC §3121(b)(19)).
 
@@ -1374,9 +1420,14 @@ def _fica_exemption_note(profile: Profile, notes: list[str], tax_year: int | Non
         return
     # The election does not reach FICA (P-018): the exemption follows the day-count answer.
     classification = _classification_without_election(profile, tax_year)
-    if classification == "resident":
+    checked = classification == "resident" and _prior_year_check_holds(profile, tax_year)
+    if classification == "resident" and not checked:
         return
-    lead = ("Because your residency result is nonresident alien, your wages as an F/J exempt individual are "
+    lead = ("If the CHECK THE PRIOR-YEAR RETURN note's reading (b) holds (the prior-year return was on the wrong "
+            "form), the F/J part of the year is a nonresident period, and your wages there as an F/J exempt "
+            "individual are "
+            if checked else
+            "Because your residency result is nonresident alien, your wages as an F/J exempt individual are "
             if classification == "nonresident" else
             "If your residency result is nonresident alien, your wages as an F/J exempt individual are ")
     notes.append(
@@ -1479,7 +1530,8 @@ def _retirement_questions(profile: Profile, out: list[IntakeQuestion], notes: li
 
 
 def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None = None) -> None:
-    if profile.prior_filings is None:
+    # A PriorFilings holding only the prior-year return form (JF5b) has not answered the history.
+    if profile.prior_filings is None or profile.prior_filings.filed_years is None:
         out.append(_q("prior_filings.history", "prior_filings",
                       "Which prior years have you filed, and are any years late or unfiled?",
                       "Late filings affect penalties and the 3-year refund statute of limitations.",
@@ -1507,6 +1559,80 @@ def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion], tax_ye
                                      "gross income) and line 24 (total tax). The 110% tier applies when "
                                      "that AGI was over $150,000 ($75,000 if filing separately this "
                                      "year). Skip if the prior year is still unfiled."))
+
+
+def _visa_filer(profile: Profile) -> bool:
+    """identity.us_person answered False, or unanswered with a visa timeline on file."""
+    ident = profile.identity
+    if ident is not None and _has(ident.us_person):
+        return ident.us_person.value is False
+    imm = profile.immigration
+    return imm is not None and bool(imm.visa_timeline)
+
+
+def _prior_return_form_question(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
+    """Which return the TAXPAYER filed for tax_year - 1 — the prior-year residency fact (JF5b).
+
+    Asked of a visa filer (us_person False, or unanswered with a visa timeline) for the
+    ONE year the residency rules read: Treas. Reg. 301.7701(b)-4(e)(1) makes someone
+    "who was a United States resident during any part of the preceding calendar year"
+    and is a resident in the current year a resident "at the beginning of the current
+    year", and IRC 7701(b)(2)(A)(i)'s partial-year rule reaches only an alien who "was
+    not a resident of the United States at any time during the preceding calendar year".
+    Stops once answered.
+    """
+    if tax_year is None or not _visa_filer(profile):
+        return
+    prior = tax_year - 1
+    pf = profile.prior_filings
+    if pf is not None and residency.prior_year_return_form(pf.return_forms, tax_year) is not None:
+        return
+    out.append(_q("prior_filings.return_form", "prior_filings",
+                  f"Which federal return did you file for {prior}?",
+                  f"If you were a U.S. resident during any part of {prior} and are a resident for any part of "
+                  f"{tax_year}, your {tax_year} residency runs from January 1 — no arrival split (Treas. "
+                  f"Reg. 301.7701(b)-4(e)(1)). If the {tax_year} answer comes out nonresident, it is checked against "
+                  f"{prior} instead of trusted, since the facts may be incomplete. Only {prior}'s return matters for "
+                  f"this.",
+                  f"prior_filings.return_forms.{prior}",
+                  disambiguation=f"Pick one for {prior}: '1040' — a regular Form 1040 (or 1040-SR) as a resident "
+                                 f"for the whole year; '1040-NR' — Form 1040-NR, as a nonresident; 'dual_status' — "
+                                 f"a split-year (dual-status) return: a Form 1040 with a Form 1040-NR attached as a "
+                                 f"statement, or the reverse, for a year you were a resident for only part of it; "
+                                 f"'1040_with_6013_election' — a JOINT Form 1040 with your spouse under the election "
+                                 f"to treat a nonresident spouse as a U.S. resident (the signed election statement is "
+                                 f"attached only to the FIRST year's return; a later year of an election still in "
+                                 f"effect counts here too); 'not_filed' — no federal return for {prior}. The form is "
+                                 f"evidence, not the test: if it may have been the wrong one, tell your agent — the "
+                                 f"visa timeline and day counts decide."))
+
+
+def _prior_year_residency_note(profile: Profile, notes: list[str], tax_year: int | None) -> None:
+    """Say when the TAXPAYER's recorded prior-year return does not settle residency (JF5b):
+    a CONTRADICTION (a prior-year resident whose facts fail the substantial presence test),
+    or a prior-year joint Form 1040 under the §6013(g)/(h) election (not read as residency)."""
+    if tax_year is None:
+        return
+    pf = profile.prior_filings
+    form = residency.prior_year_return_form(pf.return_forms if pf is not None else None, tax_year)
+    if form == "1040_with_6013_election":
+        notes.append(residency.prior_year_election_reason(tax_year))
+        return
+    if form is None or residency.PRIOR_RETURN_RESIDENT.get(form) is not True:
+        return
+    imm, rf = profile.immigration, profile.residency_facts
+    if imm is None or not imm.visa_timeline or rf is None:
+        return
+    days = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+    if not days:
+        return
+    try:
+        result = residency.classify(imm.visa_timeline, days, tax_year, prior_year_resident=True)
+    except (ValueError, AssertionError):
+        return
+    reason = residency.prior_year_contradiction(result) or residency.prior_year_check(result)
+    if reason is not None:
+        notes.append(reason)
 
 
 # ── required-document derivation ──────────────────────────────────────────────
@@ -1579,11 +1705,13 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     _income_document_questions(profile, out, tax_year)
     _retirement_questions(profile, out, notes, tax_year)
     _prior_filings_questions(profile, out, tax_year)
+    _prior_return_form_question(profile, out, tax_year)
     # Banking last: the optional direct-deposit question only accompanies other
     # pending questions (declining it is unrepresentable, so it must never repeat
     # alone and stall the interview) — the sort below restores the display order.
     _banking_questions(profile, out)
     _fica_exemption_note(profile, notes, tax_year)
+    _prior_year_residency_note(profile, notes, tax_year)
     _foreign_account_note(profile, notes, tax_year)
 
     out.sort(key=lambda q: SECTIONS.index(q.section))

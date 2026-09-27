@@ -1439,3 +1439,104 @@ def test_p018_the_year_of_death_with_a_confirmed_status_gets_the_6013g3_reason()
     profile.household.filing_status = _ans("married_filing_separately")
     note = next(n for n in intake_checklist(profile, tax_year=2023).notes if "NOT applied" in n)
     assert "shall not apply for any taxable year" in note and "confirm married_filing_jointly" not in note
+
+
+# ── P-018 / JF5b part 1: the prior-year return is the prior-year residency fact ─────
+# Treas. Reg. 301.7701(b)-4(e)(1): a resident "during any part of the preceding calendar
+# year" who "is a United States resident for any part of the current year will be
+# considered to be taxable as a resident at the beginning of the current year".
+# Hypothetical timelines only.
+
+_TRUNCATED_F1 = [("F-1", date(2021, 8, 20), date(2025, 9, 30)), ("H-1B", date(2025, 10, 1), None)]
+_SWITCH_APRIL = [("F-1", date(2021, 8, 20), date(2025, 3, 31)), ("H-1B", date(2025, 4, 1), None)]
+_DAYS = {2025: 365, 2024: 366, 2023: 365, 2022: 365, 2021: 130}
+
+
+def _visa(periods, days=_DAYS, *, prior=None, us_person=False) -> Profile:
+    return Profile(
+        identity=Identity(us_person=_ans(us_person)) if us_person is not None else None,
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status=s, start=start, end=end, provenance=US) for s, start, end in periods
+        ]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in days.items()}),
+        prior_filings=PriorFilings(return_forms={y: _ans(f) for y, f in prior.items()}) if prior is not None else None,
+    )
+
+
+def test_p018_intake_asks_a_visa_filer_which_return_was_filed_for_the_prior_year():
+    cl = intake_checklist(_visa(_SWITCH_APRIL), tax_year=2025)
+    q = next(q for q in cl.next_questions if q.id == "prior_filings.return_form")
+    assert q.section == "prior_filings" and q.prompt == "Which federal return did you file for 2024?"
+    assert q.answers_into == "prior_filings.return_forms.2024"
+    for value in ("'1040'", "'1040-NR'", "'dual_status'", "'1040_with_6013_election'", "'not_filed'"):
+        assert value in q.disambiguation
+    assert "301.7701(b)-4(e)(1)" in q.why
+    # Unanswered us_person with a visa timeline is asked too; a U.S. person, no timeline, or no year is not.
+    assert "prior_filings.return_form" in _ids(intake_checklist(_visa(_SWITCH_APRIL, us_person=None), tax_year=2025))
+    assert "prior_filings.return_form" not in _ids(intake_checklist(_visa(_SWITCH_APRIL, us_person=True), tax_year=2025))
+    assert "prior_filings.return_form" not in _ids(intake_checklist(Profile(), tax_year=2025))
+    assert "prior_filings.return_form" not in _ids(intake_checklist(_visa(_SWITCH_APRIL)))
+    # It stops once answered — any of the five values, for THAT year only.
+    for form in ("1040", "1040-NR", "dual_status", "1040_with_6013_election", "not_filed"):
+        answered = _visa(_SWITCH_APRIL, prior={2024: form})
+        assert "prior_filings.return_form" not in _ids(intake_checklist(answered, tax_year=2025)), form
+    other_year = _visa(_SWITCH_APRIL, prior={2023: "1040"})
+    assert "prior_filings.return_form" in _ids(intake_checklist(other_year, tax_year=2025))
+
+
+def test_p018_intake_reads_a_prior_1040_as_residency_from_january_1():
+    from taxfill_core.intake import _residency_classification
+
+    assert _residency_classification(_visa(_SWITCH_APRIL), 2025) == "dual_status_candidate"
+    carried = _visa(_SWITCH_APRIL, prior={2024: "1040"})
+    assert _residency_classification(carried, 2025) == "resident"
+    # _fica_exemption_note is suppressed for the resident (hedged without the fact).
+    assert any("FICA" in n for n in intake_checklist(_visa(_SWITCH_APRIL), tax_year=2025).notes)
+    # 2024 is an exempt F-1 year on this timeline, so the note survives only behind the CHECK's reading (b).
+    fica = [n for n in intake_checklist(carried, tax_year=2025).notes if "FICA" in n]
+    assert fica and all(n.startswith("If the CHECK THE PRIOR-YEAR RETURN note's reading (b) holds") for n in fica)
+
+
+def test_p018_intake_never_asserts_a_nonresident_answer_the_prior_year_contradicts():
+    from taxfill_core.intake import _certain_nonresident, _residency_classification
+
+    assert _residency_classification(_visa(_TRUNCATED_F1), 2025) == "nonresident"
+    contradicted = _visa(_TRUNCATED_F1, prior={2024: "1040"})
+    assert _residency_classification(contradicted, 2025) is None           # unknown, never asserted
+    note = next(n for n in intake_checklist(contradicted, tax_year=2025).notes if n.startswith("CONTRADICTION"))
+    assert "NOT definitive" in note and "prior_filings.return_forms" in note
+    imm, rf = contradicted.immigration, contradicted.residency_facts
+    assert _certain_nonresident(imm, rf, 2025) is True
+    assert _certain_nonresident(imm, rf, 2025, prior_year_resident=True) is False
+    # The FICA note stays conditional: the answer is not settled.
+    fica = next(n for n in intake_checklist(contradicted, tax_year=2025).notes if "FICA" in n)
+    assert fica.startswith("If your residency result is nonresident")
+
+
+def test_p018_intake_notes_a_prior_year_election_return_as_a_judgment():
+    profile = _visa(_TRUNCATED_F1, prior={2024: "1040_with_6013_election"})
+    note = next(n for n in intake_checklist(profile, tax_year=2025).notes if n.startswith("Your 2024 return"))
+    assert "NOT read here as residency in 2024 — a judgment" in note
+
+
+def test_p018_the_taxpayers_prior_year_return_never_reaches_the_spouse():
+    from taxfill_core.intake import _spouse_classification
+
+    spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status=s, start=start, end=end, provenance=US) for s, start, end in _SWITCH_APRIL
+        ]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in _DAYS.items()}),
+    )
+    profile = _visa(_SWITCH_APRIL, prior={2024: "1040"})
+    profile.household = Household(marital_status=_ans("married"), spouse=spouse)
+    assert _spouse_classification(profile, 2025, honor_election=False) == "dual_status_candidate"
+
+
+def test_p018_answering_the_prior_year_return_still_leaves_the_filing_history_question():
+    from taxfill_core.schemas.profile import PriorFilings  # noqa: PLC0415
+    profile = _confirmed_nra()
+    profile.prior_filings = PriorFilings(return_forms={2022: _ans("1040-NR")})
+    ids = _ids(intake_checklist(profile, tax_year=2023))
+    assert "prior_filings.history" in ids and "prior_filings.return_form" not in ids

@@ -1234,7 +1234,24 @@ pitfalls:
       (iv) (6013(h)): NIIT follows the joint figure only under a second,
       chapter-2A election; by default the spouses are "treated as married filing
       separately for purposes of section 1411", and under (iii) "the nonresident
-      alien spouse will not be subject to tax under section 1411".
+      alien spouse will not be subject to tax under section 1411". JF5b (part
+      1, 2026-09-27) found the prior-year half of the same shape: there was no
+      prior-year residency fact, so a filer who had filed the prior year's
+      Form 1040 was told "This nonresident answer is definitive" on a
+      truncated F-1 timeline and lost the standard deduction, and a
+      nonresident answer resting on a missing lookback year (classify's "may
+      be WRONG") was priced on Form 1040-NR rules with no word of the warning.
+      The law, read 2026-09-27: Treas. Reg. 301.7701(b)-4(e)(1): "An alien
+      individual who was a United States resident during any part of the
+      preceding calendar year and who is a United States resident for any part
+      of the current year will be considered to be taxable as a resident at the
+      beginning of the current year."; IRC 7701(b)(2)(A)(i) starts residency
+      partway through a year only for an alien who "was not a resident of the
+      United States at any time during the preceding calendar year"; IRC
+      7701(b)(1)(A): a resident "if (and only if)" a residency test is met; IRC
+      7701(b)(4)(A)(ii): the First-Year Choice needs someone who "was not a
+      resident of the United States under paragraph (1)(A) with respect to the
+      calendar year immediately preceding the election year".
     countermeasure: >-
       The election is a residency FACT with one home:
       ResidencyFacts.section_6013_election on the TAXPAYER (schemas/profile.py;
@@ -1261,7 +1278,8 @@ pitfalls:
       read as the election unless a DECLINE is recorded (the user's explicit
       fact wins); and neither applies when the recorded facts show both spouses
       nonresident and neither a declared U.S. person (IRC 6013(g)(3), worded on
-      the recorded facts because the prior-year residency fact is JF5b's; a
+      the recorded facts — a green card held for part of the year, or presence
+      the timeline leaves out, can hide part-year residency; a
       spouse of unknown residency cannot be judged, so it applies — and a
       nonresident answer counts only when CERTAIN: residency.certain_nonresident,
       shared by estimate._election_state and intake._election_unavailable, is
@@ -1336,4 +1354,44 @@ pitfalls:
       test_residency.py, test_profile.py, test_intake.py,
       test_projection_ops.py, test_file_and_pay.py, test_workspace.py, eval (o)
       in evals/test_scenarios.py, and the residency MCP tool in
-      packages/mcp-server/tests/test_server_e2e.py.
+      packages/mcp-server/tests/test_server_e2e.py. THE PRIOR-YEAR FACT (JF5b
+      part 1): PriorFilings.return_forms records the return filed for each
+      earlier year ('1040', '1040-NR', 'dual_status', '1040_with_6013_election',
+      'not_filed'), and only the entry for target_year - 1 is read
+      (residency.prior_year_resident_from_return_forms: '1040' and
+      'dual_status' True, '1040-NR' False, the rest unknown — a joint election
+      return is a labeled judgment, residency.prior_year_election_reason — and
+      never inferred from filed_years). residency.classify(...,
+      prior_year_resident=True) with the SPT met is 'resident' from January 1:
+      the arrival-type dual-status triggers and the First-Year Choice pointers
+      are suppressed, the departure note is kept; with the SPT NOT met it stays
+      'nonresident' behind a FIRST-position CONTRADICTION reason — a judgment
+      about completeness naming three readings (a truncated timeline, the prior
+      return on the wrong form, a genuine departure or return to exempt status)
+      and what to record, never "definitive" — and that answer is never a
+      certain nonresident (residency.certain_nonresident, the 6013(g)(3) gate)
+      nor asserted by intake. The spouse has no prior-filings fact (None). The
+      estimate (estimate._classify_residency / _election_state) prices a
+      prior-year resident who meets the SPT as a resident from January 1
+      (standard deduction, no dual-status caveat, no FICA-exemption note —
+      only the START of the year is settled: a departure can still end
+      residency early under IRC 7701(b)(2)(B), which the note names), flags
+      FIRST a recorded prior-year resident's return the recorded timeline
+      cannot support (CHECK THE PRIOR-YEAR RETURN: the form is evidence, never
+      the test; only where the fact removed an arrival split and the timeline
+      makes the prior year FULLY exempt — never a First-Year Choice year —
+      with the F/J FICA note kept behind its reading (b)), and puts a CONTRADICTION or classify's "may be WRONG" reason
+      FIRST in the assumptions and what_would_change_it, pricing the same
+      inputs under resident rules for the whole year in the range (for a
+      CONTRADICTION, the incomplete-timeline reading only; for a flip, the
+      favorable bound, whose start date is the first day of presence — or
+      January 1 if real presence also made the prior year a resident year);
+      the FICA withheld-in-error note is conditional there; a spouse's own
+      answer that may flip (estimate._spouse_own_result) brackets the
+      spouse-resident reading of the two-return MFS pair, never on top of the
+      unknown-spouse bracket. Intake asks a visa filer which return was filed
+      for tax_year - 1 (prior_filings.return_form) and notes a contradiction;
+      the onboarding worksheet's options map onto the five values; the
+      residency MCP tool takes prior_year_resident. Tests: test_p018_* in
+      test_residency.py, test_estimate.py, test_intake.py, test_profile.py,
+      test_worksheet.py and test_server_e2e.py.

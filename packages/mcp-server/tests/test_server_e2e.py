@@ -296,6 +296,23 @@ def test_residency_tool_applies_the_6013_election():
     assert "entire tax year" in data["reasons"][0] and "chapter 24" in data["reasons"][0]
 
 
+def test_p018_residency_tool_takes_the_prior_year_fact():
+    # JF5b part 1: Treas. Reg. 301.7701(b)-4(e)(1) — a prior-year resident who meets the SPT
+    # is a resident from January 1; one who fails it gets a FIRST CONTRADICTION reason.
+    switch = [{"status": "F-1", "start": "2021-08-20", "end": "2025-03-31"},
+              {"status": "H-1B", "start": "2025-04-01", "end": None}]
+    days = {"2021": 130, "2022": 365, "2023": 365, "2024": 366, "2025": 365}
+    base = {"visa_periods": switch, "days_by_year": days, "target_year": 2025}
+    assert _data(_run(_call("residency", base)))["classification"] == "dual_status_candidate"
+    carried = _data(_run(_call("residency", {**base, "prior_year_resident": True})))
+    assert carried["classification"] == "resident" and carried["prior_year_resident"] is True
+    assert carried["inputs"]["prior_year_resident"] is True
+    truncated = [{"status": "F-1", "start": "2021-08-20", "end": "2025-09-30"},
+                 {"status": "H-1B", "start": "2025-10-01", "end": None}]
+    contra = _data(_run(_call("residency", {**base, "visa_periods": truncated, "prior_year_resident": True})))
+    assert contra["classification"] == "nonresident" and contra["reasons"][0].startswith("CONTRADICTION")
+
+
 def test_filing_summary_and_file_and_pay():
     manifest = [{"form": "1040", "tax_year": 2023, "bottom_line": -380, "state": "California"}]
     summ = _data(_run(_call("filing_summary", {"manifest": manifest})))

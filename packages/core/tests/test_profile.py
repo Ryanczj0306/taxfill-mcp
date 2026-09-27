@@ -366,3 +366,18 @@ def test_old_profiles_without_new_h_fields_still_load():
     p = Profile.model_validate({"income_documents": []})
     assert p.retirement_contributions == {}
     assert Profile.model_validate(p.model_dump(mode="json")) == p
+
+
+# P-018 / JF5b part 1: PriorFilings.return_forms — the return filed for each earlier year,
+# the prior-year residency fact (only tax_year - 1 is read).
+def test_p018_return_forms_holds_the_five_prior_return_values():
+    assert PriorFilings().return_forms == {}                    # default empty: old profiles still load
+    forms = ("1040", "1040-NR", "dual_status", "1040_with_6013_election", "not_filed")
+    pf = PriorFilings.model_validate({
+        "return_forms": {str(2020 + i): {"value": f, "provenance": {"kind": "user_stated"}} for i, f in enumerate(forms)}
+    })
+    assert [pf.return_forms[2020 + i].value for i in range(5)] == list(forms)   # JSON string keys -> int years
+    with pytest.raises(ValidationError):
+        PriorFilings.model_validate({"return_forms": {"2024": {"value": "1040-SR", "provenance": {"kind": "user_stated"}}}})
+    with pytest.raises(ValidationError):
+        PriorFilings.model_validate({"return_forms": {"2024": "1040"}})          # every leaf carries provenance

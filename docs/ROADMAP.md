@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,504 tests** — offline 5,124 + live-.gov 380; derived
+Done and on `main` (**5,540 tests** — offline 5,160 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1423,6 +1423,7 @@ not wait for any of this.
     - The pitfall has a citing test.
 
 - [ ] **JF5b — Prior-year residency fact; price the dual-status risk** (M; deps JF5a)
+  - *Part 1 as built (2026-09-27; items 1 and 6 — items 2-5 remain):* `PriorFilings.return_forms` (only `year-1` is read: `1040`/`dual_status` True, `1040-NR` False, `not_filed`/`1040_with_6013_election` unknown, the latter a labeled judgment); `classify(..., prior_year_resident)` — True + SPT met is resident from Jan 1 (arrival triggers and First-Year Choice pointers suppressed, departure note kept), True + SPT not met stays nonresident behind a first CONTRADICTION reason, never "definitive", and is never a certain nonresident; threaded through estimate/intake (taxpayer only; the spouse has no prior-filings fact) and the residency tool; intake asks `prior_filings.return_form`, the worksheet maps onto the five values; the estimate puts a CONTRADICTION or "may be WRONG" reason first and brackets the full-year resident reading (the spouse's may-flip brackets the spouse-resident MFS pair); a recorded prior 1040 the timeline makes impossible (a fully exempt prior year) gets a first CHECK THE PRIOR-YEAR RETURN judgment; only the start of the year is settled (a departure caveat names IRC 7701(b)(2)(B)). Deferred from its verify: a prior `dual_status` DEPARTURE return followed by residency again (Treas. Reg. 301.7701(b)-4(e)(2): a possible prior-year amendment), the departure note's 10-day de minimis and foreign-tax-home wording, `section_6013_kind` reading `return_forms` (a prior election return separates a continuing 6013(g) from a new 6013(h)) — all to part 2/3.
   1. **Prior-year residency fact** [DEF-14 + LD-11].
      - There is no structured prior-year-residency fact:
        - PriorFilings (schemas/profile.py:469-495) stores only filed_years;

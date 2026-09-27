@@ -172,7 +172,9 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 - Federal withheld (so far / projected full-year): __________
 - State withheld: __________
 - Quarterly estimated payments you made (Form 1040-ES): __________ (dates + amounts)
-- Last year (____) you filed:　□ 1040　□ 1040-NR　□ didn't file
+- Last year (____) you filed:　□ 1040 (as a resident, whole year)　□ 1040-NR (as a nonresident)　□ dual-status (a 1040 with a 1040-NR statement, or the reverse)　□ joint 1040 with the §6013(g)/(h) election for a nonresident spouse　□ didn't file
+  > Which return you filed last year also feeds the residency check: if you were a U.S. resident for
+  > any part of last year and are one again this year, this year counts from January 1.
 - Last year's AGI: __________　Last year's total tax: __________
   > These two numbers drive the §6654 safe harbor (generally: prepay 100% of last year's
   > tax, or 90% of this year's, and there is no underpayment penalty). For budgeting this
@@ -340,7 +342,9 @@ H-1B 生效，都要单独一行。**
 - 联邦已扣缴（到目前为止 / 预计全年）：__________
 - 州已扣缴：__________
 - 自己交过的季度预缴（Form 1040-ES）：__________ （日期 + 金额）
-- 上一年（____ 年）报的是 □ 1040　□ 1040-NR　□ 没报
+- 上一年（____ 年）报的是 □ 1040（全年按居民报）　□ 1040-NR（按非居民报）　□ 双重身份申报（1040 附 1040-NR 声明，或反过来）　□ 与配偶按 §6013(g)/(h) 选择合报的 1040　□ 没报
+  > 上一年报的是哪种表，也会影响今年的居民身份判定：上一年任何时候是美国税务居民、今年又是居民的话，
+  > 今年从 1 月 1 日起就算居民。
 - 上一年的 AGI：__________　上一年的 total tax：__________
   > 这两个数用来算 §6654 安全港（一般：预缴达到上年税额的 100%，或本年应缴的 90%，就不罚
   > 少缴罚金）。做预算时这是"要不要现在补交"的判断依据。

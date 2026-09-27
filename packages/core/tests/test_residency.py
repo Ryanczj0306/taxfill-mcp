@@ -832,7 +832,7 @@ def test_p018_the_quoted_texts_carry_the_conditions_the_law_attaches():
     # subparagraph (F), (J), (M), or (Q)"; Pub 519's Note on the 6013(h) choice: "If you
     # previously made that choice and it is still in effect, you do not need to make the
     # choice explained here"; IRC 6013(g)(3) and Pub 519 Suspending the Choice, worded on
-    # the recorded facts (the prior-year residency fact is JF5b's).
+    # the recorded facts (the prior-year return is prior_filings.return_forms, JF5b).
     from taxfill_core import residency as r
 
     assert "which is performed to carry out the purpose specified in subparagraph (F), (J), (M), or (Q)" in (
@@ -844,5 +844,201 @@ def test_p018_the_quoted_texts_carry_the_conditions_the_law_attaches():
     assert section_6013_kind("nonresident", "us", recorded=True) == "g"
     assert ("any such election shall not apply for any taxable year if neither spouse is a citizen or resident of "
             "the United States at any time during such year") in r.SECTION_6013_SUSPENDED
-    assert "residency carried over from the prior year" in r.SECTION_6013_SUSPENDED
+    # JF5b: worded on the facts recorded, and it names where the prior-year return is recorded.
+    assert "on facts not recorded here" in r.SECTION_6013_SUSPENDED
+    assert "prior_filings.return_forms" in r.SECTION_6013_SUSPENDED
     assert "Generally, you cannot file as married filing jointly if either spouse" in r.SECTION_6013_NO_JOINT
+
+
+# ---------------------------------------------------------------------------
+# P-018 / JF5b part 1: the prior-year residency fact. Treas. Reg. 301.7701(b)-4(e)(1):
+# "An alien individual who was a United States resident during any part of the preceding
+# calendar year and who is a United States resident for any part of the current year will
+# be considered to be taxable as a resident at the beginning of the current year." IRC
+# 7701(b)(2)(A)(i) splits a year only for an alien who "was not a resident of the United
+# States at any time during the preceding calendar year"; IRC 7701(b)(1)(A): a resident
+# "if (and only if)" a test is met. Hypothetical timelines only.
+# ---------------------------------------------------------------------------
+
+# A TRUNCATED F-1 history: declared from 2021 (the real start could be earlier), H-1B from
+# Oct 1 2025 — the timeline makes 2021-2024 exempt years and 2025 partly exempt.
+_TRUNCATED_F1 = [period("F-1", "2021-08-20", "2025-09-30"), period("H-1B", "2025-10-01")]
+_TRUNCATED_DAYS = {2025: 365, 2024: 365, 2023: 365, 2022: 365, 2021: 130}
+# The same filer switching on Apr 1: the SPT is met on the non-exempt part of 2025.
+_SWITCH_APRIL = [period("F-1", "2021-08-20", "2025-03-31"), period("H-1B", "2025-04-01")]
+
+
+def test_p018_truncated_f1_with_a_prior_1040_is_a_contradiction_never_definitive():
+    from taxfill_core.residency import CONTRADICTION_PREFIX, prior_year_contradiction
+
+    today = classify(_TRUNCATED_F1, _TRUNCATED_DAYS, 2025)
+    assert today.classification == "nonresident"
+    assert any("This nonresident answer is definitive" in r for r in today.reasons)   # the defect's shape
+    result = classify(_TRUNCATED_F1, _TRUNCATED_DAYS, 2025, prior_year_resident=True)
+    assert result.classification == "nonresident"          # IRC 7701(b)(1)(A): "if (and only if)"
+    first = result.reasons[0]
+    assert first.startswith(CONTRADICTION_PREFIX) and prior_year_contradiction(result) == first
+    assert "a judgment about whether the recorded facts are complete" in first and "NOT definitive" in first
+    # The three readings and what to record.
+    assert "(1) the visa timeline or day counts are incomplete" in first
+    assert "For any calendar year after the 5th calendar year for which an individual was an exempt individual" in first
+    assert "(2) the 2024 return was filed on the wrong form" in first
+    assert "(3) you genuinely left the United States or became an exempt individual again" in first
+    assert "the full visa timeline from your FIRST U.S. entry" in first and "prior_filings.return_forms" in first
+    # The cross-check names the exact conflict: the timeline makes 2024 a fully exempt year.
+    assert "makes 2024 itself a FULLY exempt-individual year" in first
+    # No reason calls it definitive, and the First-Year Choice pointer is gone (7701(b)(4)(A)(ii)).
+    assert not any("is definitive" in r for r in result.reasons)
+    assert not any("An election still can" in r or "may still allow" in r for r in result.reasons)
+    assert any("First-Year Choice is closed (IRC 7701(b)(4)(A)(ii)); under reading (2)" in r for r in result.reasons)
+    assert result.prior_year_resident is True and result.inputs["prior_year_resident"] is True
+
+
+def test_p018_a_prior_year_resident_meeting_the_spt_is_resident_from_january_1():
+    split = classify(_SWITCH_APRIL, _TRUNCATED_DAYS, 2025)
+    assert split.classification == "dual_status_candidate"
+    result = classify(_SWITCH_APRIL, _TRUNCATED_DAYS, 2025, prior_year_resident=True)
+    assert result.classification == "resident"
+    carried = next(r for r in result.reasons if r.startswith("Resident from January 1 of 2025"))
+    assert ("An alien individual who was a United States resident during any part of the preceding calendar year "
+            "and who is a United States resident for any part of the current year will be considered to be taxable "
+            "as a resident at the beginning of the current year.") in carried
+    assert "you will be considered a U.S. resident at the beginning of the current year" in carried   # Pub 519
+    assert "no arrival split in 2025" in carried and "no nonresident part" not in carried
+    # The arrival triggers and the First-Year Choice pointer are suppressed.
+    assert not any("is a nonresident period" in r for r in result.reasons)
+    assert not any("may still allow electing residency" in r for r in result.reasons)
+    assert "First-Year Choice is not open to a prior-year resident" in carried
+    assert not any("split year" in r.lower() and "flag, not a determination" in r for r in result.reasons)
+
+
+def test_p018_a_prior_year_resident_arriving_mid_year_is_not_dual_status():
+    arrival = [period("H-1B", date(2024, 3, 15))]
+    assert classify(arrival, {2024: 250}, 2024).classification == "dual_status_candidate"
+    assert classify(arrival, {2024: 250}, 2024, prior_year_resident=True).classification == "resident"
+
+
+def test_p018_false_and_unknown_keep_todays_answers():
+    for periods, expected in ((_TRUNCATED_F1, "nonresident"), (_SWITCH_APRIL, "dual_status_candidate")):
+        base = classify(periods, _TRUNCATED_DAYS, 2025)
+        for fact in (None, False):
+            result = classify(periods, _TRUNCATED_DAYS, 2025, prior_year_resident=fact)
+            assert result.classification == base.classification == expected
+            assert result.spt == base.spt and result.nonresident_may_flip == base.nonresident_may_flip
+            assert not any(r.startswith("CONTRADICTION") for r in result.reasons)
+    unknown = classify(_SWITCH_APRIL, _TRUNCATED_DAYS, 2025)
+    assert unknown.reasons == classify(_SWITCH_APRIL, _TRUNCATED_DAYS, 2025, prior_year_resident=None).reasons
+    assert unknown.prior_year_resident is None and unknown.inputs["prior_year_resident"] is None
+    denied = classify(_SWITCH_APRIL, _TRUNCATED_DAYS, 2025, prior_year_resident=False)
+    assert any("partial-year rule of IRC 7701(b)(2)(A)(i) applies" in r for r in denied.reasons)
+
+
+def test_p018_a_prior_year_resident_keeps_the_departure_note():
+    leaving = [period("H-1B", date(2022, 1, 1), date(2025, 8, 31))]
+    result = classify(leaving, {2025: 243, 2024: 366, 2023: 365}, 2025, prior_year_resident=True)
+    assert result.classification == "resident"
+    assert any("Your last declared status period ends 2025-08-31" in r for r in result.reasons)
+
+
+def test_p018_the_contradiction_goes_ahead_of_may_be_wrong():
+    from taxfill_core.residency import MAY_FLIP_PREFIX, may_flip_reason
+
+    periods = [period("H-1B", date(2023, 1, 1))]
+    result = classify(periods, {2025: 120}, 2025, prior_year_resident=True)
+    assert result.classification == "nonresident" and result.nonresident_may_flip is True
+    assert result.reasons[0].startswith("CONTRADICTION") and result.reasons[1].startswith(MAY_FLIP_PREFIX)
+    assert may_flip_reason(result) == result.reasons[1]
+    assert may_flip_reason(classify(periods, {2025: 120, 2024: 0, 2023: 0}, 2025)) is None
+
+
+def test_p018_the_contradiction_names_a_prior_year_the_facts_classify_nonresident():
+    periods = [period("H-1B", date(2023, 6, 1))]
+    result = classify(periods, {2025: 100, 2024: 20, 2023: 20}, 2025, prior_year_resident=True)
+    assert "classify 2024 itself as a NONRESIDENT year" in result.reasons[0]
+
+
+def test_p018_a_prior_year_resident_is_never_a_certain_nonresident():
+    from taxfill_core.residency import certain_nonresident
+
+    assert certain_nonresident(_TRUNCATED_F1, _TRUNCATED_DAYS, 2025) is True
+    assert certain_nonresident(_TRUNCATED_F1, _TRUNCATED_DAYS, 2025, prior_year_resident=False) is True
+    assert certain_nonresident(_TRUNCATED_F1, _TRUNCATED_DAYS, 2025, prior_year_resident=True) is False
+
+
+def test_p018_the_return_forms_map_only_the_preceding_year():
+    from taxfill_core.residency import PRIOR_RETURN_RESIDENT, prior_year_resident_from_return_forms as read
+    from taxfill_core.schemas.profile import Answer, Provenance
+
+    assert PRIOR_RETURN_RESIDENT == {
+        "1040": True, "dual_status": True, "1040-NR": False, "not_filed": None, "1040_with_6013_election": None,
+    }
+    for form, expected in PRIOR_RETURN_RESIDENT.items():
+        assert read({2024: form}, 2025) is expected
+        assert read({2024: Answer(value=form, provenance=Provenance.user_stated())}, 2025) is expected
+        assert read({"2024": form}, 2025) is expected                       # JSON string keys
+    assert read({2023: "1040"}, 2025) is None                               # only target_year - 1
+    assert read({2025: "1040"}, 2025) is None
+    assert read({}, 2025) is None and read(None, 2025) is None
+
+
+def test_p018_the_prior_year_fact_rejects_a_non_boolean():
+    with pytest.raises(ValueError, match="prior_year_resident must be true, false or null"):
+        classify(_TRUNCATED_F1, _TRUNCATED_DAYS, 2025, prior_year_resident="yes")
+
+
+def test_p018_a_green_card_holder_who_was_a_prior_year_resident_has_no_dual_status_first_year():
+    result = classify([], {2025: 200}, 2025, is_lawful_permanent_resident=True, prior_year_resident=True)
+    assert result.classification == "resident"
+    assert any("resident year from January 1 — no dual-status first year" in r for r in result.reasons)
+
+
+def test_p018_the_election_keeps_the_prior_year_answer_as_its_day_count_answer():
+    result = classify(_SWITCH_APRIL, _TRUNCATED_DAYS, 2025, section_6013_election=True, prior_year_resident=True)
+    assert result.classification == "resident" and result.classification_without_election == "resident"
+    contra = classify(_TRUNCATED_F1, _TRUNCATED_DAYS, 2025, section_6013_election=True, prior_year_resident=True)
+    assert contra.classification_without_election == "nonresident"
+    assert any(r.startswith("CONTRADICTION") for r in contra.reasons)
+
+
+def test_p018_the_election_year_reason_is_a_labeled_judgment():
+    from taxfill_core.residency import prior_year_election_reason
+
+    text = prior_year_election_reason(2025)
+    assert "It is NOT read here as residency in 2024 — a judgment" in text
+    assert "for purposes of chapter 1 for all of such taxable year" in text
+    assert "if (and only if)" in text
+    assert "record the days in the U.S. for 2024, 2023 and 2022" in text
+
+
+def test_p018_the_prior_year_check_fires_only_when_the_timeline_cannot_support_the_prior_1040():
+    from taxfill_core.residency import prior_year_check  # noqa: PLC0415
+    flagged = classify(_SWITCH_APRIL, _TRUNCATED_DAYS, 2025, prior_year_resident=True)
+    assert flagged.classification == "resident"
+    assert flagged.reasons[0].startswith("CHECK THE PRIOR-YEAR RETURN") and prior_year_check(flagged) == flagged.reasons[0]
+    full = [period("F-1", "2019-08-20", "2025-03-31"), period("H-1B", "2025-04-01")]
+    days = {**_TRUNCATED_DAYS, 2021: 365, 2020: 366, 2019: 130}
+    assert prior_year_check(classify(full, days, 2025, prior_year_resident=True)) is None
+
+
+def test_p018_a_recorded_1040nr_is_worded_as_the_recorded_fact():
+    result = classify(_SWITCH_APRIL, _TRUNCATED_DAYS, 2025, prior_year_resident=False)
+    text = " ".join(result.reasons)
+    assert "Your 2024 return is recorded as Form 1040-NR" in text and "if 2024 was in fact not a resident year" in text
+
+
+def test_p018_a_first_year_choice_prior_year_is_never_checked_as_a_conflict():
+    # IRC 7701(b)(4): an F-1 student who became H-1B on 2024-10-01 could make the First-Year Choice
+    # for 2024, so a dual-status 2024 return is lawful — no CHECK, and no false "NONRESIDENT year".
+    from taxfill_core.residency import prior_year_check, prior_year_contradiction  # noqa: PLC0415
+    periods = [period("F-1", "2021-08-20", "2024-09-30"), period("H-1B", "2024-10-01")]
+    days = {2025: 365, 2024: 366, 2023: 365, 2022: 365, 2021: 130}
+    result = classify(periods, days, 2025, prior_year_resident=True)
+    assert result.classification == "resident"
+    assert prior_year_check(result) is None and prior_year_contradiction(result) is None
+    # No arrival split in the target year: the prior-year fact changes nothing, so no CHECK either.
+    h1b = [period("H-1B", "2022-01-01")]
+    plain = classify(h1b, {2025: 365}, 2025, prior_year_resident=True)
+    assert prior_year_check(plain) is None
+    # A missing year-1 count never produces a claimed "NONRESIDENT year" conflict.
+    thin = classify(h1b, {2025: 100}, 2025, prior_year_resident=True)
+    assert not any("classify 2024 itself as a NONRESIDENT year" in r for r in thin.reasons)

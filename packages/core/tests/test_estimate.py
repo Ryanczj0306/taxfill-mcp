@@ -2718,7 +2718,7 @@ def test_p018_an_election_neither_spouse_can_use_is_not_applied():
     assert caveat.startswith("A §6013(g)/(h) election is recorded") and "NOT applied" in caveat
     assert ("shall not apply for any taxable year if neither spouse is a citizen or resident of the United States "
             "at any time during such year") in caveat and "Suspending the Choice" in caveat
-    assert "which the recorded facts cannot show yet" in caveat              # worded on the facts recorded (JF5b)
+    assert "on facts not recorded here" in caveat and "prior_filings.return_forms" in caveat  # JF5b wording
     # The joint status of the same couple is not a filing option: priced MFS, named first.
     implied = _nra_profile(marital="married", spouse=_nra_spouse(), filing_status=_ans("married_filing_jointly"))
     blocked = estimate_refund(implied, 2023, income)
@@ -3268,3 +3268,211 @@ def test_p018_the_year_of_death_reason_is_the_6013g3_one_when_unavailable():
     est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
     note = next(a for a in est.assumptions if "it was NOT applied" in a)
     assert "shall not apply for any taxable year" in note and "confirm married_filing_jointly" not in note
+
+
+# ---------------------------------------------------------------------------
+# P-018 / JF5b part 1: the prior-year residency fact (PriorFilings.return_forms) and a
+# nonresident answer that may flip, on the pricing path. Treas. Reg. 301.7701(b)-4(e)(1):
+# a resident "during any part of the preceding calendar year" who "is a United States
+# resident for any part of the current year will be considered to be taxable as a resident
+# at the beginning of the current year". Hypothetical timelines and amounts only.
+# ---------------------------------------------------------------------------
+
+from taxfill_core.schemas.profile import PriorFilings  # noqa: E402
+
+
+def _prior(forms: dict[int, str]) -> PriorFilings:
+    return PriorFilings(return_forms={y: _ans(f) for y, f in forms.items()})
+
+
+def _visa_profile(periods, days, *, prior=None, marital="unmarried", **household_kwargs) -> Profile:
+    return Profile(
+        identity=Identity(us_person=_ans(False)),
+        household=Household(marital_status=_ans(marital), **household_kwargs),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status=s, start=start, end=end, provenance=US) for s, start, end in periods
+        ]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in days.items()}),
+        prior_filings=_prior(prior) if prior is not None else None,
+    )
+
+
+_TRUNCATED_F1 = [("F-1", date(2021, 8, 20), date(2025, 9, 30)), ("H-1B", date(2025, 10, 1), None)]
+_FULL_F1 = [("F-1", date(2019, 8, 20), date(2025, 9, 30)), ("H-1B", date(2025, 10, 1), None)]
+_SWITCH_APRIL = [("F-1", date(2021, 8, 20), date(2025, 3, 31)), ("H-1B", date(2025, 4, 1), None)]
+_DAYS_2021 = {2025: 365, 2024: 366, 2023: 365, 2022: 365, 2021: 130}
+_DAYS_2019 = {**_DAYS_2021, 2021: 365, 2020: 366, 2019: 130}
+_WAGES = IncomeSnapshot(wages=60_000, federal_withholding=8_000, ss_withheld_by_employer=[3_720])
+
+
+def _resident_single(wages: int, withheld: int, year: int = 2025) -> int:
+    return withheld - tax_from_taxable_income(wages - standard_deduction("single", year).amount, "single", year).tax
+
+
+def _nonresident_single(wages: int, withheld: int, year: int = 2025) -> int:
+    return withheld - tax_from_taxable_income(wages, "single", year).tax
+
+
+def test_p018_truncated_f1_with_a_prior_1040_puts_the_contradiction_first():
+    today = estimate_refund(_visa_profile(_TRUNCATED_F1, _DAYS_2021), 2025, _WAGES)
+    est = estimate_refund(_visa_profile(_TRUNCATED_F1, _DAYS_2021, prior={2024: "1040"}), 2025, _WAGES)
+    assert est.point == today.point == _nonresident_single(60_000, 8_000)       # still priced as the 1040-NR
+    first = est.assumptions[0]
+    assert first.startswith("CONTRADICTION — a judgment about whether the recorded facts are complete")
+    assert est.what_would_change_it[0] == first
+    assert "NOT definitive" in first and not any("is definitive" in a for a in est.assumptions)
+    assert "makes 2024 itself a FULLY exempt-individual year" in first
+    # The resident reading of the same inputs is bracketed: from January 1, as a prior-year resident.
+    resident = _resident_single(60_000, 8_000)
+    assert est.high == resident and est.low == est.point
+    assert f"single: +${resident:,}" in first and "you would then be a resident from January 1" in first
+    # Without the fact nothing changes (the defect's shape: no contradiction, no range).
+    assert today.low == today.high == today.point
+    assert not any(a.startswith("CONTRADICTION") for a in today.assumptions)
+
+
+def test_p018_full_history_with_a_prior_1040_is_a_full_year_resident():
+    est = estimate_refund(_visa_profile(_FULL_F1, _DAYS_2019, prior={2024: "1040"}), 2025, _WAGES)
+    assert est.point == est.low == est.high == _resident_single(60_000, 8_000)
+    assert "Less: standard deduction" in _labels(est)                        # the standard deduction applied
+    assert est.residency_caveat is None or "DUAL-STATUS" not in est.residency_caveat
+    assert not any("DUAL-STATUS" in a for a in est.assumptions)
+    assert not any("FICA-EXEMPT" in a for a in est.assumptions)             # no withheld-in-error note
+    assert est.roadmap.returns_and_forms == ["Form 1040"]
+    assert any(a.startswith("Residency: a resident from January 1 of 2025") for a in est.assumptions)
+
+
+def test_p018_a_prior_1040_removes_the_dual_status_flag_and_prices_a_full_year_resident():
+    flagged = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021), 2025, _WAGES)
+    assert "DUAL-STATUS" in flagged.residency_caveat
+    est = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, prior={2024: "1040"}), 2025, _WAGES)
+    assert est.residency_caveat is None
+    assert not any("DUAL-STATUS" in a for a in est.assumptions)
+    assert "Less: standard deduction" in _labels(est) and est.point == _resident_single(60_000, 8_000)
+    assert est.roadmap.returns_and_forms == ["Form 1040"]
+    # 2024 is an exempt F-1 year on this timeline, so the FICA note appears only conditionally (the CHECK).
+    fica = [a for a in est.assumptions if "FICA-EXEMPT" in a]
+    assert fica and all(a.startswith("If the CHECK THE PRIOR-YEAR RETURN note's reading (b) holds") for a in fica)
+    note = next(a for a in est.assumptions if a.startswith("Residency: a resident from January 1 of 2025"))
+    assert "'1040' (prior_filings.return_forms)" in note and "Treas. Reg. 301.7701(b)-4(e)(1)" in note
+    # This timeline makes 2024 an exempt F-1 year, so the recorded 1040 is flagged first (a judgment).
+    assert est.assumptions[0].startswith("CHECK THE PRIOR-YEAR RETURN")
+    # A dual_status prior return reads the same way ("during any part of the preceding calendar year").
+    dual = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, prior={2024: "dual_status"}), 2025, _WAGES)
+    assert dual.residency_caveat is None and dual.point == est.point
+
+
+def test_p018_the_prior_year_fact_reads_only_the_preceding_year():
+    base = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021), 2025, _WAGES).model_dump()
+    for prior in ({2023: "1040"}, {2024: "1040-NR"}, {2024: "not_filed"}, {}):
+        other = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, prior=prior), 2025, _WAGES).model_dump()
+        assert other == base, prior
+
+
+def test_p018_a_prior_year_election_return_is_not_read_as_residency():
+    base = estimate_refund(_visa_profile(_TRUNCATED_F1, _DAYS_2021), 2025, _WAGES)
+    est = estimate_refund(
+        _visa_profile(_TRUNCATED_F1, _DAYS_2021, prior={2024: "1040_with_6013_election"}), 2025, _WAGES)
+    assert (est.low, est.high, est.point) == (base.low, base.high, base.point)
+    assert not any(a.startswith("CONTRADICTION") for a in est.assumptions)
+    note = next(a for a in est.assumptions if a.startswith("Your 2024 return is recorded as a joint Form 1040"))
+    assert "a judgment" in note and "record the days in the U.S. for 2024, 2023 and 2022" in note
+
+
+def test_p018_a_nonresident_answer_that_may_flip_brackets_the_resident_reading():
+    periods = [("H-1B", date(2023, 1, 1), None)]
+    income = IncomeSnapshot(wages=60_000, federal_withholding=8_000)
+    est = estimate_refund(_visa_profile(periods, {2025: 120}), 2025, income)
+    nra, resident = _nonresident_single(60_000, 8_000), _resident_single(60_000, 8_000)
+    assert est.point == nra and (est.low, est.high) == (min(nra, resident), max(nra, resident))
+    first = est.assumptions[0]
+    assert first.startswith("IMPORTANT — this nonresident result may be WRONG") and est.what_would_change_it[0] == first
+    assert "provide day counts for 2023, 2024" in first                     # the missing years and what to record
+    assert "if real presence in 2023 and 2024 meets the substantial presence test" in first
+    assert "so this full-year figure is the favorable bound" in first and f"single: +${resident:,}" in first
+    assert "prior_filings.return_forms" in first                            # the unknown prior year, named
+    # Supplying the years settles it: no warning, no bracket.
+    settled = estimate_refund(_visa_profile(periods, {2025: 120, 2024: 0, 2023: 0}), 2025, income)
+    assert settled.low == settled.high == settled.point == nra
+    assert not any("may be WRONG" in a for a in settled.assumptions)
+
+
+def _citizen_married_to(spouse_periods, spouse_days) -> Profile:
+    spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status=s, start=start, end=end, provenance=US) for s, start, end in spouse_periods
+        ]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in spouse_days.items()}),
+    )
+    return _us_filer_married(spouse)
+
+
+def test_p018_a_spouse_answer_that_may_flip_brackets_the_spouse_resident_reading():
+    income = IncomeSnapshot(wages=90_000, federal_withholding=12_000,
+                            spouse=IncomeSnapshot(wages=30_000, federal_withholding=3_000))
+    periods = [("H-1B", date(2023, 1, 1), None)]
+    est = estimate_refund(_citizen_married_to(periods, {2025: 120}), 2025, income)
+    std = standard_deduction(_MFS, 2025).amount
+    self_mfs = 12_000 - tax_from_taxable_income(90_000 - std, _MFS, 2025).tax
+    spouse_nr = 3_000 - tax_from_taxable_income(30_000, _MFS, 2025).tax
+    spouse_res = 3_000 - tax_from_taxable_income(30_000 - std, _MFS, 2025).tax
+    mfs = next(c for c in est.comparison.candidates if c.status == _MFS)
+    assert mfs.bottom_line == self_mfs + spouse_nr                           # the point: the spouse's 1040-NR
+    assert est.low <= self_mfs + spouse_res <= est.high                      # the spouse-resident reading
+    note = next(a for a in est.assumptions if a.startswith("The SPOUSE's own nonresident classification may be WRONG"))
+    assert "2023 and 2024" in note and "favorable bound" in note
+    assert f"{'+' if self_mfs + spouse_res >= 0 else '-'}${abs(self_mfs + spouse_res):,}" in note
+    assert note in est.what_would_change_it
+    # Not double-bracketed: the unknown-spouse bracket does not fire on a classified spouse.
+    assert not any("The spouse's own residency is not settled" in a for a in est.assumptions)
+    settled = estimate_refund(_citizen_married_to(periods, {2025: 120, 2024: 0, 2023: 0}), 2025, income)
+    assert not any("SPOUSE's own nonresident classification may be WRONG" in a for a in settled.assumptions)
+
+
+def test_p018_a_prior_year_resident_is_never_a_certain_nonresident_at_the_election_gate():
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000, spouse=IncomeSnapshot(wages=20_000))
+    blocked = _nra_profile(marital="married", spouse=_nra_spouse())
+    blocked.residency_facts.section_6013_election = _ans(True)
+    assert "NOT applied" in estimate_refund(blocked, 2023, income).residency_caveat   # both certain nonresidents
+    carried = _nra_profile(marital="married", spouse=_nra_spouse())
+    carried.residency_facts.section_6013_election = _ans(True)
+    carried.prior_filings = _prior({2022: "1040"})
+    est = estimate_refund(carried, 2023, income)
+    assert "NOT applied" not in est.residency_caveat and est.roadmap.returns_and_forms[0] == "Form 1040"
+    assert est.assumptions[0].startswith("CONTRADICTION")                   # the taxpayer's answer, named first
+
+
+# JF5b part 1, the adversarial verify's fixes (2026-09-27). Hypothetical timelines only.
+
+def test_p018_a_prior_1040_the_timeline_cannot_support_is_checked_first():
+    # An F-1 student in an exempt 2024 who filed a Form 1040 by mistake: resident from January 1
+    # stays the classification (the recorded fact), but the flag names why the facts disagree.
+    est = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, prior={2024: "1040"}), 2025, _WAGES)
+    first = est.assumptions[0]
+    assert first.startswith("CHECK THE PRIOR-YEAR RETURN — a judgment about the recorded facts")
+    assert "makes 2024 itself a FULLY exempt-individual year" in first
+    assert "which splits 2025 (a dual-status year) unless that is January 1" in first
+    # A consistent full history carries no such flag.
+    full = estimate_refund(_visa_profile(_FULL_F1, _DAYS_2019, prior={2024: "1040"}), 2025, _WAGES)
+    assert not any(a.startswith("CHECK THE PRIOR-YEAR RETURN") for a in full.assumptions)
+
+
+def test_p018_a_prior_year_resident_departing_mid_year_is_told_the_ending_date_rule():
+    # IRC 7701(b)(2)(B): only the START of the year is settled by the prior-year residency.
+    periods = [("F-1", date(2019, 8, 20), date(2023, 12, 31)), ("H-1B", date(2024, 1, 1), date(2025, 9, 30))]
+    est = estimate_refund(_visa_profile(periods, _DAYS_2019, prior={2024: "1040"}), 2025, _WAGES)
+    note = next(a for a in est.assumptions if a.startswith("Residency: a resident from January 1 of 2025"))
+    assert "no arrival split" in note and "no nonresident part" not in note
+    assert "only if IRC 7701(b)(2)(B) and Treas. Reg. 301.7701(b)-4(b)(2) are met" in note
+    assert "the last day of physical presence in 2025" in note
+
+
+def test_p018_the_contradiction_bracket_is_the_incomplete_timeline_reading_only():
+    est = estimate_refund(_visa_profile(_TRUNCATED_F1, _DAYS_2021, prior={2024: "1040"}), 2025, _WAGES)
+    first = est.assumptions[0]
+    assert "the timeline is incomplete (reading (1) above)" in first
+    assert "readings (1) and (2)" not in first and "under readings (2) and (3) the Form 1040-NR point stands" in first
+    # The FICA withheld-in-error note is conditional on the nonresident answer standing.
+    fica = next(a for a in est.assumptions if "FICA-EXEMPT" in a)
+    assert fica.startswith("If the nonresident answer stands (see the first note): ")

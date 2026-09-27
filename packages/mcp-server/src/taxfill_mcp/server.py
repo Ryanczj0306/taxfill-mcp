@@ -733,6 +733,7 @@ def residency(
     target_year: int,
     is_lawful_permanent_resident: bool = False,
     section_6013_election: bool = False,
+    prior_year_resident: bool | None = None,
 ) -> dict:
     """Federal residency (NRA/RA/dual-status) via the Substantial Presence Test + exempt years.
 
@@ -747,12 +748,27 @@ def residency(
     IRC 6013(g) - at year end one spouse a nonresident alien, the other a U.S. citizen or resident;
     it continues into later years - and IRC 6013(h) - the dual-status year, both U.S. citizens or
     residents at year end, one a nonresident at the start; one year only, a different statement.
+
+    prior_year_resident (JF5b, P-018): the return filed for target_year - 1 — true for a Form 1040
+    or a dual-status return, false for a Form 1040-NR, omitted/null when not filed, unknown, or a
+    joint 1040 under the election (not read as residency: unsettled). On a profile it is
+    prior_filings.return_forms. Treas. Reg. 301.7701(b)-4(e)(1): a resident "during any part of the
+    preceding calendar year" who "is a United States resident for any part of the current year will be
+    considered to be taxable as a resident at the beginning of the current year" - so true with the
+    SPT met is 'resident' from January 1 (no arrival split, no First-Year Choice; a first-position
+    CHECK THE PRIOR-YEAR RETURN judgment when the recorded timeline cannot support a resident year
+    for target_year - 1); true with the SPT NOT met stays 'nonresident' (IRC 7701(b)(1)(A): a resident
+    "if (and only if)" a test is met) with a FIRST CONTRADICTION reason - a judgment naming three
+    readings (an incomplete timeline, e.g. exempt years past the student limit; a prior return on the
+    wrong form; a genuine departure or return to exempt status, then a full-year nonresident year),
+    never definitive. result.prior_year_resident echoes it.
     """
     days = {int(k): v for k, v in days_by_year.items()}
     return _dump(_classify(
         visa_periods, days, target_year,
         is_lawful_permanent_resident=is_lawful_permanent_resident,
         section_6013_election=section_6013_election,
+        prior_year_resident=prior_year_resident,
     ))
 
 
@@ -903,6 +919,17 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     follows that spouse's OWN classification (a US-citizen spouse's Form 1040 keeps the standard
     deduction unless the couple itemizes: IRC 63(c)(6)(A) — both methods are priced and the better
     total is kept); a spouse whose residency is unknown is priced both ways in the range.
+    The taxpayer's return for the prior year (profile prior_filings.return_forms[year - 1]: '1040',
+    '1040-NR', 'dual_status', '1040_with_6013_election', 'not_filed') is the prior-year residency
+    fact (JF5b): a prior-year resident who meets the SPT is priced as a resident from January 1
+    (standard deduction, no arrival split; only the start of the year is settled - a departure caveat
+    names the IRC 7701(b)(2)(B) ending-date rule when the last status period ends before Dec 31), with
+    a FIRST CHECK THE PRIOR-YEAR RETURN judgment when the recorded timeline makes that prior year a
+    fully exempt year; one who fails the SPT gets the classifier's CONTRADICTION reason as the FIRST
+    assumption. A nonresident answer that may flip (a lookback year missing from the day
+    counts - classify's "may be WRONG") or that contradicts the prior year is priced on Form 1040-NR
+    rules with the RESIDENT reading bracketed in the range and the reason first; a spouse's own
+    answer that may flip brackets the spouse-resident reading of the two-return MFS pair.
 
     The result's `composition` is a reconciling LEDGER: each line carries a stable `slot`, a
     `role`, and an `effect` (its signed contribution to the bottom line; the effects sum EXACTLY

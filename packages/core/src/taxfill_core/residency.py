@@ -50,6 +50,17 @@ for Aliens) and the IRS international-taxpayer pages on 2026-06-11:
   candidates with a plain-language explanation; the agent + user decide.
   https://www.irs.gov/individuals/international-taxpayers/residency-starting-and-ending-dates
 
+* **Residency in the preceding year** (JF5b, P-018; IRC 7701(b), Treas. Reg.
+  301.7701(b)-4 and Pub 519 (2025) ch. 1 read 2026-09-27) — "An alien
+  individual who was a United States resident during any part of the preceding
+  calendar year and who is a United States resident for any part of the current
+  year will be considered to be taxable as a resident at the beginning of the
+  current year" (Treas. Reg. 301.7701(b)-4(e)(1)), so ``prior_year_resident=True``
+  with the SPT met is a full-year resident (no arrival split). The fact is the
+  return filed for the prior year (PriorFilings.return_forms on a profile —
+  :func:`prior_year_resident_from_return_forms`); the form is evidence, not the
+  test, so True with the SPT NOT met is a flagged CONTRADICTION, never definitive.
+
 * **Green card test** — a lawful permanent resident at any time during the
   calendar year is a resident for tax purposes regardless of the SPT.
   https://www.irs.gov/individuals/international-taxpayers/alien-residency-green-card-test
@@ -272,8 +283,10 @@ SECTION_6013_NO_JOINT = (
 
 # The election has no effect in a year NEITHER spouse is a U.S. citizen or resident at any
 # time (IRC 6013(g)(3) on uscode.house.gov and Pub 519 (2025) ch. 1, Suspending the
-# Choice, read 2026-09-26). Worded on the facts RECORDED: the classifier has no
-# prior-year residency input yet (JF5b), so a departure year can hide part-year residency.
+# Choice, read 2026-09-26). Worded on the facts RECORDED: a green card held for part of the
+# year, or presence the timeline leaves out, can hide part-year residency. A taxpayer whose
+# prior-year return (PriorFilings.return_forms) reads as a resident is never a CERTAIN
+# nonresident (certain_nonresident), so this text never answers one (JF5b).
 SECTION_6013_SUSPENDED = (
     "On the facts recorded here NEITHER spouse is a U.S. citizen or resident at any time in the year (each "
     "classifies nonresident on their own visa timeline and day counts), and then the election is NOT "
@@ -287,9 +300,11 @@ SECTION_6013_SUSPENDED = (
     "meets the filing requirements for nonresident aliens discussed in chapter 7\". So it is NOT applied: "
     "married filing separately, each spouse who meets the nonresident filing requirements on Form 1040-NR. "
     "If either of you was a U.S. "
-    "resident for part of the year — a year you left the United States, or residency carried over from the "
-    "prior year, which the recorded facts cannot show yet — the election may still apply: record the full "
-    "visa timeline and days in the US and rerun."
+    "resident for part of the year on facts not recorded here — a green card held for part of it, or U.S. "
+    "presence the visa timeline or day counts leave out — the election may still apply: record the full "
+    "visa timeline and days in the US, and the return you (the taxpayer) filed for the prior year "
+    "(prior_filings.return_forms: a prior-year resident is never treated as a certain nonresident here — the "
+    "spouse's prior-year return is not yet a recorded fact), and rerun."
 )
 
 # Which choice a couple is making, from each spouse's residency WITHOUT the election:
@@ -312,8 +327,10 @@ def section_6013_kind(taxpayer: str | None, spouse: str | None, *, recorded: boo
     election remains in effect). Facts that point to 6013(h) then give 'either': a
     6013(g) election made in an earlier year continues (IRC 6013(g)(3)) and Pub 519's
     Note says "If you previously made that choice and it is still in effect, you do
-    not need to make the choice explained here" — the prior-year fact that tells the
-    two apart is JF5b's.
+    not need to make the choice explained here". The prior-year return is recorded in
+    PriorFilings.return_forms (a '1040_with_6013_election' entry shows an election made
+    earlier), but this function takes residency answers only and does not read it, so a
+    recorded election on (h) facts stays 'either' and the texts give both readings.
     """
     if taxpayer == "nonresident" or spouse == "nonresident":
         return "g"
@@ -358,6 +375,95 @@ def section_6013_effect_quote(kind: Section6013Kind) -> str:
 
 # Back-compatible names: the 'either' texts, for surfaces that know neither spouse's facts.
 SECTION_6013_EFFECT, SECTION_6013_PRECONDITION, SECTION_6013_STATEMENT = section_6013_texts("either")
+
+# Residency in the PRECEDING year (JF5b, P-018). Read 2026-09-27: IRC 7701(b) on
+# uscode.house.gov ("in effect on September 26, 2026"), Treas. Reg. 301.7701(b)-4 on
+# ecfr.gov, and Pub 519 (2025) ch. 1. The partial-year (dual-status arrival) rule reaches
+# only an alien who was NOT a resident at any time in the preceding year; anyone else who
+# is a resident for any part of the current year is a resident from January 1.
+PRIOR_YEAR_RESIDENCY_LAW = (
+    "Treas. Reg. 301.7701(b)-4(e)(1), Residency in prior year: \"An alien individual who was a United States "
+    "resident during any part of the preceding calendar year and who is a United States resident for any part "
+    "of the current year will be considered to be taxable as a resident at the beginning of the current year. "
+    "For purposes of this paragraph (e)(1), it is immaterial whether an individual is considered to be a "
+    "resident under the substantial presence test or the green card test.\" Pub 519 ch. 1, Residency during "
+    "the preceding year: \"If you were a U.S. resident during any part of the preceding calendar year and you "
+    "are a U.S. resident for any part of the current year, you will be considered a U.S. resident at the "
+    "beginning of the current year.\" The partial-year rule of IRC 7701(b)(2)(A)(i) applies only to an alien "
+    "who \"was not a resident of the United States at any time during the preceding calendar year\"."
+)
+# IRC 7701(b)(4)(A)(ii): the First-Year Choice needs an individual who "was not a resident of
+# the United States under paragraph (1)(A) with respect to the calendar year immediately
+# preceding the election year".
+FIRST_YEAR_CHOICE_BARRED = (
+    "Pub 519's First-Year Choice is not open to a prior-year resident: IRC 7701(b)(4)(A)(ii) requires that the "
+    "individual \"was not a resident of the United States under paragraph (1)(A) with respect to the calendar "
+    "year immediately preceding the election year\"."
+)
+# IRC 7701(b)(1)(A)/(B): residency comes from the tests alone ("if (and only if)"), so the
+# form a prior-year return was filed on is evidence, never the test.
+_RESIDENT_IF_AND_ONLY_IF = (
+    "IRC 7701(b)(1)(A): an alien \"shall be treated as a resident of the United States with respect to any "
+    "calendar year if (and only if)\" the green card test, the substantial presence test or the first-year "
+    "election is met"
+)
+
+# The prior year's return (PriorFilings.return_forms[target_year - 1]) as the prior-year
+# residency fact classify() takes. '1040' is a resident's return for the year and
+# 'dual_status' a split year (a resident "during any part of the preceding calendar year"
+# is enough); '1040-NR' is a nonresident's; 'not_filed' says nothing; and a joint Form 1040
+# under the §6013(g)/(h) election is NOT read as residency — the election treats the
+# spouse as a resident "for purposes of chapter 1" (IRC 6013(g)(1)), while IRC 7701(b)(1)
+# defines residency by the three tests, and no text read says which one the carryover
+# follows (a labeled judgment: prior_year_election_reason).
+PRIOR_RETURN_RESIDENT: dict[str, bool | None] = {
+    "1040": True,
+    "dual_status": True,
+    "1040-NR": False,
+    "not_filed": None,
+    "1040_with_6013_election": None,
+}
+
+
+def prior_year_return_form(return_forms: Mapping[Any, Any] | None, target_year: int) -> str | None:
+    """The return recorded for ``target_year - 1`` (a plain value or an Answer's ``.value``), or None."""
+    if not return_forms:
+        return None
+    entry = None
+    for key, value in return_forms.items():
+        try:
+            if int(key) == target_year - 1:
+                entry = value
+                break
+        except (TypeError, ValueError):
+            continue
+    value = getattr(entry, "value", entry)
+    return str(value) if value is not None else None
+
+
+def prior_year_resident_from_return_forms(return_forms: Mapping[Any, Any] | None, target_year: int) -> bool | None:
+    """The prior-year residency fact from PriorFilings.return_forms — the entry for
+    ``target_year - 1`` ONLY (IRC 7701(b)(2)(A)(i) and Treas. Reg. 301.7701(b)-4(e)(1) look
+    at "the preceding calendar year"); a missing entry, 'not_filed' and
+    '1040_with_6013_election' are None (unknown). Never inferred from filed_years."""
+    form = prior_year_return_form(return_forms, target_year)
+    return PRIOR_RETURN_RESIDENT.get(form) if form is not None else None
+
+
+def prior_year_election_reason(target_year: int) -> str:
+    """Why a prior-year joint Form 1040 under the §6013(g)/(h) election is not read as
+    prior-year residency — a labeled judgment, with what to record instead."""
+    prior = target_year - 1
+    return (
+        f"Your {prior} return is recorded as a joint Form 1040 under the §6013(g)/(h) election "
+        f"(prior_filings.return_forms). It is NOT read here as residency in {prior} — a judgment, because the law "
+        f"read does not settle it: the election treats the spouse as a resident \"for purposes of chapter 1 for "
+        f"all of such taxable year\" (IRC 6013(g)(1)), while IRC 7701(b)(1) defines residency by the tests alone "
+        f"({_RESIDENT_IF_AND_ONLY_IF}), and the rule that makes a prior-year resident a resident from January 1 "
+        f"(Treas. Reg. 301.7701(b)-4(e)(1)) does not say which one it follows. Whether {prior} was a resident "
+        f"year WITHOUT the election decides it: record the days in the U.S. for {prior}, {prior - 1} and "
+        f"{prior - 2} and the visa timeline covering them, so {prior} can be classified on its own facts."
+    )
 
 # When the weighted total falls short of 183 but lands at or above this
 # value, the nonresident result reminds the user to recount days and that
@@ -513,6 +619,17 @@ class ClassificationResult(BaseModel):
             "chapter 1 and chapter 24 only (IRC 6013(g)(1)), so THIS is the classification calc op "
             "employee_fica takes, and it decides the election's precondition (a U.S. citizen or resident "
             "spouse at year end)."
+        ),
+    )
+    prior_year_resident: bool | None = Field(
+        default=None,
+        description=(
+            "The prior-year residency fact this classification used (JF5b, P-018): True = a U.S. resident "
+            "during any part of target_year - 1, False = not, None = unknown. On a profile it comes from "
+            "PriorFilings.return_forms[target_year - 1] ('1040' / 'dual_status' True, '1040-NR' False, "
+            "otherwise None). True with the substantial presence test met = resident from January 1, no "
+            "dual-status arrival split (Treas. Reg. 301.7701(b)-4(e)(1)); True with it NOT met = 'nonresident' "
+            "with a first-position CONTRADICTION reason, never called definitive."
         ),
     )
 
@@ -1087,6 +1204,7 @@ def classify(
     *,
     is_lawful_permanent_resident: bool = False,
     section_6013_election: bool = False,
+    prior_year_resident: bool | None = None,
 ) -> ClassificationResult:
     """Classify federal residency for ``target_year``: nonresident, resident, or dual-status candidate.
 
@@ -1130,7 +1248,32 @@ def classify(
     chapter 1 and chapter 24 only (IRC 6013(g)(1)), so that answer is the one
     FICA follows, and it decides the election's precondition — a U.S.
     citizen or resident spouse at year end.
+
+    ``prior_year_resident`` (JF5b, P-018) is the prior-year residency fact —
+    True when the individual was a U.S. resident during any part of
+    ``target_year - 1`` (a Form 1040 or a dual-status return for that year),
+    False when not, None when unknown (today's reading; False reads the same).
+    Treas. Reg. 301.7701(b)-4(e)(1): such an individual "who is a United
+    States resident for any part of the current year will be considered to be
+    taxable as a resident at the beginning of the current year", and the
+    partial-year rule of IRC 7701(b)(2)(A)(i) reaches only an alien who "was
+    not a resident of the United States at any time during the preceding
+    calendar year". So True with the SPT met is ``resident`` from January 1:
+    the arrival-type dual-status triggers and the First-Year Choice pointers
+    (IRC 7701(b)(4)(A)(ii)) do not apply, and the departure note is kept.
+    True with the SPT NOT met stays ``nonresident`` — residency comes from the
+    tests "if (and only if)" (IRC 7701(b)(1)(A)) — but the FIRST reason is a
+    CONTRADICTION, labeled a judgment about whether the facts are complete,
+    naming the three readings (an incomplete timeline, a prior return on the
+    wrong form, a genuine departure or return to exempt status) and what to
+    record; nothing calls that answer definitive.
     """
+    if prior_year_resident is not None and not isinstance(prior_year_resident, bool):
+        raise ValueError(
+            f"prior_year_resident must be true, false or null (unknown), not {prior_year_resident!r} — true when "
+            f"you were a U.S. resident during any part of the preceding year (a Form 1040 or a dual-status return "
+            f"for it), false when not (a Form 1040-NR)"
+        )
     year = _validate_target_year(target_year)
     days = _normalize_days(days_by_year)
     periods = _normalize_periods(visa_periods)
@@ -1227,6 +1370,17 @@ def classify(
                 f"To tighten the answer, recount days present during the non-exempt part of "
                 f"{_year_list(partial_capped)} from I-94 history and resubmit those counts."
             )
+        elif prior_year_resident is True:
+            # JF5b: a prior-year resident who fails the SPT is a contradiction to flag, never
+            # a definitive answer — and the First-Year Choice is closed (IRC 7701(b)(4)(A)(ii)).
+            reasons.append(
+                f"The counted day(s) for {_year_list(partial_capped)} already assume presence on every possible "
+                f"non-exempt day of the visa timeline AS RECORDED, and even then the SPT is not met — so no recount "
+                f"of those days changes it on this timeline. The timeline itself is what the prior-year residency "
+                f"calls into question (see the CONTRADICTION reason). If you were in fact a U.S. resident during "
+                f"{year - 1}, Pub 519's First-Year Choice is closed (IRC 7701(b)(4)(A)(ii)); under reading (2) — a "
+                f"prior-year Form 1040 filed in error — it may still be open: review with your agent."
+            )
         else:
             reasons.append(
                 f"This nonresident answer is definitive despite the partial-year exemption: the counted "
@@ -1248,6 +1402,12 @@ def classify(
             f"agent; not computed in v1.",
         )
         citations.append(CITATION_GREEN_CARD)
+        if prior_year_resident is True:
+            reasons.append(
+                f"You were also a U.S. resident during {year - 1} (the prior-year residency fact), so {year} is a "
+                f"resident year from January 1 — no dual-status first year. {PRIOR_YEAR_RESIDENCY_LAW}"
+            )
+            citations.append(CITATION_RESIDENCY_DATES)
         if days.get(year, 0) < 31:
             # A green-card holder living abroad often assumes absence ends US tax
             # residency — it does not. Flag abandonment and the treaty tie-breaker.
@@ -1264,15 +1424,21 @@ def classify(
             )
     elif spt.meets_spt:
         triggers = _dual_status_triggers(periods, year, exempt)
-        if triggers:
+        if triggers and prior_year_resident is not True:
             classification = "dual_status_candidate"
+            prior_note = (
+                f"Your {year - 1} return is recorded as Form 1040-NR (the prior-year residency fact); if "
+                f"{year - 1} was in fact not a resident year, the partial-year rule of IRC 7701(b)(2)(A)(i) applies."
+                if prior_year_resident is False
+                else f"Note: if you were also a US resident during any part of {year - 1}, you are a resident "
+                f"from January 1 of {year} instead."
+            )
             reasons.append(
                 f"The substantial presence test is met for {year}, but {year} looks like a SPLIT year: you "
                 f"were likely a nonresident for the early part of {year} and a resident from your residency "
                 f"starting date (generally the first day you were present in the US not as an exempt "
                 f"individual — IRS Pub. 519, 'Residency starting and ending dates'). This is a flag, not a "
-                f"determination — you and your agent decide. Note: if you were also a US resident during "
-                f"any part of {year - 1}, you are a resident from January 1 of {year} instead."
+                f"determination — you and your agent decide. {prior_note}"
             )
             reasons.extend(triggers)
             citations.append(CITATION_RESIDENCY_DATES)
@@ -1282,10 +1448,39 @@ def classify(
                 f"Substantial presence test met for {year}: at least 31 days present in {year} and the "
                 f"weighted 3-year total ({spt.weighted_days_exact}) is at least 183 (IRS Pub. 519)."
             )
+            if prior_year_resident is True:
+                # JF5b: no residency starting date falls inside the year — the arrival
+                # triggers and the First-Year Choice pointers do not apply.
+                carried = (
+                    f"Resident from January 1 of {year}: you were a U.S. resident during {year - 1} (the "
+                    f"prior-year residency fact — a resident's or a dual-status return for {year - 1}) and you are "
+                    f"a resident for {year} under the substantial presence test, so no residency starting date "
+                    f"falls inside {year}. {PRIOR_YEAR_RESIDENCY_LAW}"
+                )
+                if triggers:
+                    carried += (
+                        f" The visa timeline alone would flag {year} as a split (dual-status) year — an "
+                        f"exempt-individual period, a first arrival or a status change partway through {year} — "
+                        f"but that partial-year rule does not reach a prior-year resident, so there is no arrival "
+                        f"split in {year}. {FIRST_YEAR_CHOICE_BARRED}"
+                    )
+                reasons.append(carried)
+                citations.append(CITATION_RESIDENCY_DATES)
+                # Only where the prior-year fact changed the answer (it removed an arrival split)
+                # and the recorded timeline makes year-1 a FULLY exempt year — which neither the
+                # SPT nor the First-Year Choice (IRC 7701(b)(4): exempt days are not days of
+                # presence) can make a resident year.
+                conflict = _prior_year_conflict(periods, days, year, exempt, exempt_only=True) if triggers else ""
+                if conflict:
+                    # The form is evidence, never the test (IRC 7701(b)(1)(A)): a recorded prior-year
+                    # return the recorded timeline cannot support is flagged FIRST, as a judgment.
+                    reasons.insert(0, _prior_year_check_reason(year, conflict))
             # A mid-year category change in a NON-exempt target year does not
             # split the year (the earlier status' days already counted), so it
             # was not flagged as a dual-status trigger — explain why instead.
-            for previous, current in _mid_year_category_changes(periods, year):
+            # (With triggers suppressed for a prior-year resident the year WAS
+            # exempt, so that explanation would be wrong — the carryover covers it.)
+            for previous, current in [] if triggers else _mid_year_category_changes(periods, year):
                 reasons.append(
                     f"Your status changed from {previous.status} to {current.status} on "
                     f"{current.start.isoformat()}, but your {previous.status} days in {year} already "
@@ -1368,7 +1563,7 @@ def classify(
                 may_flip = True
                 reasons.insert(
                     0,
-                    f"IMPORTANT — this nonresident result may be WRONG: {base}. You were present "
+                    f"{MAY_FLIP_PREFIX}: {base}. You were present "
                     f"{adjusted[year]} day(s) in {year} (at least 31), so if you were in the US during {yl} "
                     f"the weighted 3-year total could reach 183 and the classification would FLIP to "
                     f"resident (worldwide income on Form 1040, not Form 1040-NR) — {provide} and "
@@ -1382,9 +1577,14 @@ def classify(
                     f"(IRS Pub. 519)."
                 )
             else:
+                stands = (
+                    f"so {those} cannot change this answer on {'its' if len(missing_prior) == 1 else 'their'} own "
+                    f"(see the CONTRADICTION reason)"
+                    if prior_year_resident is True else "so this nonresident result stands"
+                )
                 reasons.append(
                     f"Note: {base}. Even the maximum possible presence in {yl} could not bring the "
-                    f"weighted total to 183, so this nonresident result stands — still, {provide} for a "
+                    f"weighted total to 183, {stands} — still, {provide} for a "
                     f"complete record (IRS Pub. 519)."
                 )
         else:
@@ -1393,6 +1593,12 @@ def classify(
                 f"(more presence days only push toward residency), but {provide} for a complete record "
                 f"(IRS Pub. 519)."
             )
+
+    if prior_year_resident is True and classification == "nonresident" and not is_lawful_permanent_resident:
+        # JF5b: made the FIRST reason (ahead of any "may be WRONG" caveat) — a labeled
+        # judgment about whether the facts are complete, never a definitive answer.
+        reasons.insert(0, _prior_year_contradiction_reason(periods, days, year, exempt))
+        citations.append(CITATION_RESIDENCY_DATES)
 
     without_election: Classification | None = None
     if section_6013_election:
@@ -1436,6 +1642,7 @@ def classify(
             "target_year": year,
             "is_lawful_permanent_resident": is_lawful_permanent_resident,
             "section_6013_election": section_6013_election,
+            "prior_year_resident": prior_year_resident,
         },
         work="\n".join(work_lines),
         citations=_dedup_citations(citations),
@@ -1445,7 +1652,117 @@ def classify(
         section_6013_election=section_6013_election,
         classification_without_election=without_election,
         nonresident_may_flip=may_flip,
+        prior_year_resident=prior_year_resident,
     )
+
+
+CONTRADICTION_PREFIX = "CONTRADICTION"
+
+
+def _prior_year_conflict(periods: list[_Period], days: dict[int, int], year: int, exempt, *, exempt_only: bool = False) -> str:
+    """The clause naming why the recorded facts cannot support a resident's return for year-1, or ''.
+
+    ``exempt_only``: only the fully-exempt-year conflict. The nonresident-year conflict is
+    judged only when year-1's days are recorded, and it is worded as the substantial
+    presence test's answer — the First-Year Choice (IRC 7701(b)(4)) can still make such a
+    year a resident year for its last part."""
+    prior = year - 1
+    if prior in exempt.fully_exempt_years:
+        return (
+            f" — and the recorded visa timeline makes {prior} itself a FULLY exempt-individual year (its days do "
+            f"not count as U.S. presence), so on these facts {prior} could not have been a substantial-presence "
+            f"year, which conflicts with a resident's return for {prior}"
+        )
+    if exempt_only or prior not in days:
+        return ""
+    try:
+        own = classify(periods, days, prior) if periods else None
+    except (ValueError, AssertionError):
+        own = None
+    if own is not None and own.classification == "nonresident" and not own.nonresident_may_flip:
+        return (
+            f" — and the same visa timeline and day counts classify {prior} itself as a NONRESIDENT year on the "
+            f"substantial presence test, which conflicts with a resident's return for {prior} unless the First-Year "
+            f"Choice (IRC 7701(b)(4)) was made for it"
+        )
+    return ""
+
+
+PRIOR_YEAR_CHECK_PREFIX = "CHECK THE PRIOR-YEAR RETURN"
+
+
+def _prior_year_check_reason(year: int, conflict: str) -> str:
+    """The first-position judgment when the SPT is met but the recorded facts cannot support the
+    recorded prior-year resident's return (JF5b): the classification stands, the flag names why."""
+    prior = year - 1
+    return (
+        f"{PRIOR_YEAR_CHECK_PREFIX} — a judgment about the recorded facts, not a determination: your {prior} return "
+        f"is recorded as a resident's (or dual-status) return, so {year} is treated as a resident year from January "
+        f"1{conflict}. The form is evidence, never the test — {_RESIDENT_IF_AND_ONLY_IF}. Two readings: (a) the "
+        f"visa timeline starts too late or is incomplete (e.g. exempt years really past the student limit), and "
+        f"resident from January 1 stands; (b) the {prior} return was filed on the wrong form (a Form 1040 filed by "
+        f"an exempt F/J student does not make anyone a resident), so {prior} was not a resident year, and {year}'s "
+        f"residency starts on the residency starting date — the first day of presence that is not an "
+        f"exempt-individual day (IRC 7701(b)(2)(A)(i), (iii)) — which splits {year} (a dual-status year) unless that "
+        f"is January 1. Record the full visa timeline from your FIRST U.S. entry and the days for every year it "
+        f"covers, then rerun."
+    )
+
+
+def _prior_year_contradiction_reason(periods: list[_Period], days: dict[int, int], year: int, exempt) -> str:
+    """The first-position reason for a prior-year resident whose recorded facts fail the SPT (JF5b)."""
+    prior = year - 1
+    conflict = _prior_year_conflict(periods, days, year, exempt)
+    return (
+        f"{CONTRADICTION_PREFIX} — a judgment about whether the recorded facts are complete, not a determination: "
+        f"you were a U.S. resident during {prior} (the prior-year residency fact: a resident's or a dual-status "
+        f"return for {prior}), but on the visa timeline and day counts recorded here the substantial presence "
+        f"test is NOT met for {year}{conflict}. On complete facts that answer would stand — "
+        f"{_RESIDENT_IF_AND_ONLY_IF}, and prior-year residency carries to January 1 only for someone who \"is a "
+        f"United States resident for any part of the current year\" (Treas. Reg. 301.7701(b)-4(e)(1)) — so the "
+        f"classification stays 'nonresident', but it is NOT definitive. Three readings: (1) the visa timeline or "
+        f"day counts are incomplete — e.g. a timeline that starts too late marks years as exempt-individual years "
+        f"that were really past the student limit (IRC 7701(b)(5)(E)(ii): no student exemption \"For any calendar "
+        f"year after the 5th calendar year for which an individual was an exempt individual\", unless the "
+        f"individual establishes what it requires), and those days would then count; (2) the {prior} return was "
+        f"filed on the wrong form (a Form 1040 filed by an exempt F/J student does not make anyone a resident); "
+        f"(3) you genuinely left the United States or became an exempt individual again, so {year} is a full "
+        f"nonresident year and {prior}'s residency ended on its residency termination date. Record what settles "
+        f"it: the full visa timeline from your FIRST U.S. entry (every F/J/M/Q period), the days in the U.S. for "
+        f"every year it covers, and the return you actually filed for {prior} (prior_filings.return_forms) — then "
+        f"rerun."
+    )
+
+
+MAY_FLIP_PREFIX = "IMPORTANT — this nonresident result may be WRONG"
+
+
+def may_flip_reason(result: ClassificationResult) -> str | None:
+    """classify's "may be WRONG" reason when ``nonresident_may_flip`` is set, else None (JF5b.6)."""
+    if not result.nonresident_may_flip:
+        return None
+    return next((r for r in result.reasons if r.startswith(MAY_FLIP_PREFIX)), None)
+
+
+def missing_lookback_years(visa_periods: Iterable[Any], days_by_year: Mapping[Any, int], target_year: int) -> list[int]:
+    """The preceding lookback years (target-1 / target-2) a declared period covers but
+    ``days_by_year`` lacks — the years classify counts as 0 with a warning."""
+    periods = _normalize_periods(visa_periods)
+    days = _normalize_days(days_by_year)
+    return sorted(
+        y for y in (target_year - 1, target_year - 2)
+        if y not in days and any(_ordinals_in_year(p, y) for p in periods)
+    )
+
+
+def prior_year_contradiction(result: ClassificationResult) -> str | None:
+    """The CONTRADICTION reason of a prior-year resident who fails the SPT, or None (JF5b)."""
+    return next((r for r in result.reasons if r.startswith(CONTRADICTION_PREFIX)), None)
+
+
+def prior_year_check(result: ClassificationResult) -> str | None:
+    """The CHECK THE PRIOR-YEAR RETURN judgment (SPT met, the recorded prior-year return unsupported), or None."""
+    return next((r for r in result.reasons if r.startswith(PRIOR_YEAR_CHECK_PREFIX)), None)
 
 
 def nonresident_rests_on_missing_lookback(visa_periods: Iterable[Any], days_by_year: Mapping[Any, int], target_year: int) -> bool:
@@ -1467,7 +1784,10 @@ def nonresident_rests_on_missing_lookback(visa_periods: Iterable[Any], days_by_y
     return any(y not in days and y in covered for y in (target_year - 1, target_year - 2))
 
 
-def certain_nonresident(visa_periods: Iterable[Any], days_by_year: Mapping[Any, int], target_year: int) -> bool:
+def certain_nonresident(
+    visa_periods: Iterable[Any], days_by_year: Mapping[Any, int], target_year: int,
+    *, prior_year_resident: bool | None = None,
+) -> bool:
     """True when the facts classify 'nonresident' and no missing lookback year could flip it.
 
     The IRC 6013(g)(3) gate on the §6013(g)/(h) election (P-018): the election
@@ -1476,8 +1796,12 @@ def certain_nonresident(visa_periods: Iterable[Any], days_by_year: Mapping[Any, 
     A nonresident answer that real presence in a missing lookback year could turn
     resident (``nonresident_may_flip``) is not certain; one that cannot turn on the
     missing years is. The estimator and intake both call this, so they never
-    disagree on whether the election is available.
+    disagree on whether the election is available. A prior-year resident
+    (``prior_year_resident`` True — PriorFilings.return_forms) is never a certain
+    nonresident: failing the SPT then contradicts the recorded prior year (JF5b).
     """
+    if prior_year_resident is True:
+        return False
     try:
         # A missing CURRENT-year count is counted as 0 by classify with no flip test, so it is
         # never certain (the 31-day prong would "fail" on a count nobody recorded).

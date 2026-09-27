@@ -153,7 +153,9 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 - Federal withheld (so far / projected full-year): __________
 - State withheld: __________
 - Quarterly estimated payments you made (Form 1040-ES): __________ (dates + amounts)
-- Last year (____) you filed:　□ 1040　□ 1040-NR　□ didn't file
+- Last year (____) you filed:　□ 1040 (as a resident, whole year)　□ 1040-NR (as a nonresident)　□ dual-status (a 1040 with a 1040-NR statement, or the reverse)　□ joint 1040 with the §6013(g)/(h) election for a nonresident spouse　□ didn't file
+  > Which return you filed last year also feeds the residency check: if you were a U.S. resident for
+  > any part of last year and are one again this year, this year counts from January 1.
 - Last year's AGI: __________　Last year's total tax: __________
   > These two numbers drive the §6654 safe harbor (generally: prepay 100% of last year's
   > tax, or 90% of this year's, and there is no underpayment penalty). For budgeting this

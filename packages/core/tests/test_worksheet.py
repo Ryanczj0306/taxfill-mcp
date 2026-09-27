@@ -61,3 +61,19 @@ def test_intake_checklist_hands_over_the_worksheet_exactly_once() -> None:
     assert intake_checklist().worksheet == intake_worksheet()
     started = Profile(identity=Identity())
     assert intake_checklist(started).worksheet is None
+
+
+def test_p018_the_prior_year_question_maps_onto_the_five_return_forms() -> None:
+    # JF5b part 1: each worksheet box answers into one PriorFilings.return_forms value
+    # ('1040', '1040-NR', 'dual_status', '1040_with_6013_election', 'not_filed').
+    en = next(line for line in intake_worksheet().splitlines() if line.startswith("- Last year (____) you filed:"))
+    assert en.count("□") == 5
+    for box in ("□ 1040 (as a resident", "□ 1040-NR (as a nonresident)", "□ dual-status",
+                "□ joint 1040 with the §6013(g)/(h) election", "□ didn't file"):
+        assert box in en
+    zh = next(line for line in intake_worksheet("zh-CN").splitlines() if line.startswith("- 上一年（____ 年）报的是"))
+    assert zh.count("□") == 5
+    for box in ("□ 1040（全年按居民报）", "□ 1040-NR（按非居民报）", "□ 双重身份申报", "□ 与配偶按 §6013(g)/(h) 选择合报的 1040", "□ 没报"):
+        assert box in zh
+    assert "this year counts from January 1" in intake_worksheet()
+    assert "今年从 1 月 1 日起就算居民" in intake_worksheet("zh-CN")

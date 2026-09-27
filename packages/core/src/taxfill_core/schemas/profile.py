@@ -514,6 +514,10 @@ class Banking(BaseModel):
         return self
 
 
+# The return filed for an earlier year (PriorFilings.return_forms; JF5b, P-018).
+PriorReturnForm = Literal["1040", "1040-NR", "dual_status", "1040_with_6013_election", "not_filed"]
+
+
 class PriorFilings(BaseModel):
     """Which years were filed before, plus late-filing context.
 
@@ -538,6 +542,26 @@ class PriorFilings(BaseModel):
     prior_year_total_tax: Answer[int] | None = Field(
         default=None,
         description="The PRIOR year's total tax (that return's Form 1040 line 24) — the base the safe-harbor percentage applies to.",
+    )
+    return_forms: dict[int, Answer[PriorReturnForm]] = Field(
+        default_factory=dict,
+        description=(
+            "Which federal return was filed for each earlier year, keyed by that year (JF5b, P-018): '1040' "
+            "(a resident's return for the whole year), '1040-NR' (a nonresident's), 'dual_status' (a split year: "
+            "a Form 1040 with a Form 1040-NR statement, or the reverse), '1040_with_6013_election' (a joint "
+            "Form 1040 made under the §6013(g)/(h) election to treat a nonresident spouse as a resident), or "
+            "'not_filed'. The residency classifier reads ONLY the entry for the year before the tax year — "
+            "IRC 7701(b)(2)(A)(i) starts residency partway through a year only for an alien who 'was not a "
+            "resident of the United States at any time during the preceding calendar year', and Treas. Reg. "
+            "301.7701(b)-4(e)(1): 'An alien individual who was a United States resident during any part of "
+            "the preceding calendar year and who is a United States resident for any part of the current year "
+            "will be considered to be taxable as a resident at the beginning of the current year.' So '1040' "
+            "and 'dual_status' read as a prior-year resident, '1040-NR' as not, and 'not_filed' and "
+            "'1040_with_6013_election' as unknown (not filing says nothing about residency, and whether an "
+            "election year counts for that rule is not settled). The form is evidence, not the test "
+            "(IRC 7701(b)(1)(A): a resident 'if (and only if)' a residency test is met). Never inferred from "
+            "filed_years."
+        ),
     )
 
 

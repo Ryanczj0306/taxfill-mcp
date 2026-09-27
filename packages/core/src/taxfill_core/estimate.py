@@ -856,6 +856,20 @@ def _spouse_own_classification(profile: Profile, year: int) -> str | None:
     facts that classify — never borrowed from the taxpayer, and never guessed. It
     ignores the §6013(g)/(h) election: callers that honor the election ask for it
     separately (it makes both spouses residents; this is the answer without it).
+    :func:`_spouse_own_result` is the full result (its ``nonresident_may_flip``).
+    """
+    result = _spouse_own_result(profile, year)
+    return result.classification if result is not None else None
+
+
+def _spouse_own_result(profile: Profile, year: int):
+    """The SPOUSE's own :class:`residency.ClassificationResult` (see
+    :func:`_spouse_own_classification`), or None — so a caller can read
+    ``nonresident_may_flip`` (JF5b.6), not only the string.
+
+    The spouse has no prior-filings fact (PriorFilings is the taxpayer's; the Spouse
+    model has no prior_filings), so the prior-year residency fact is None here — the
+    classifier's reading without it.
     """
     hh = profile.household
     sp = hh.spouse if hh is not None else None
@@ -868,7 +882,7 @@ def _spouse_own_classification(profile: Profile, year: int) -> str | None:
     if not days_by_year:
         return None
     try:
-        return residency.classify(imm.visa_timeline, days_by_year, year).classification
+        return residency.classify(imm.visa_timeline, days_by_year, year)
     except (ValueError, AssertionError):
         return None
 
@@ -1555,6 +1569,19 @@ def _section_6013_recorded(profile: Profile) -> bool:
     return rf is not None and _confirmed_true(rf.section_6013_election)
 
 
+def _prior_year_form(profile: Profile, year: int) -> str | None:
+    """The TAXPAYER's return for ``year - 1`` (PriorFilings.return_forms), or None (JF5b)."""
+    pf = profile.prior_filings
+    return residency.prior_year_return_form(pf.return_forms if pf is not None else None, year)
+
+
+def _prior_year_resident(profile: Profile, year: int) -> bool | None:
+    """The TAXPAYER's prior-year residency fact, from PriorFilings.return_forms[year - 1] only
+    (residency.prior_year_resident_from_return_forms) — never from filed_years (JF5b)."""
+    pf = profile.prior_filings
+    return residency.prior_year_resident_from_return_forms(pf.return_forms if pf is not None else None, year)
+
+
 def _classify_residency(profile: Profile, year: int, *, section_6013_election: bool | None = None):
     """Best-effort residency classification from the profile, or None when not computable.
 
@@ -1566,6 +1593,13 @@ def _classify_residency(profile: Profile, year: int, *, section_6013_election: b
     profile: the recorded fact, applied only on the marriage the choice needs
     (:func:`_election_marriage_ok` — married for the year, the year of a spouse's
     death included, or an unanswered marital status with a confirmed joint status).
+
+    The TAXPAYER's prior-year residency fact (:func:`_prior_year_resident`, JF5b) is
+    passed to the classifier: a prior-year resident who meets the substantial presence
+    test is a resident from January 1 (Treas. Reg. 301.7701(b)-4(e)(1)), and one who
+    fails it gets a first-position CONTRADICTION reason. A prior-year joint Form 1040
+    under the election is not read as residency; the result's reasons say so
+    (residency.prior_year_election_reason).
     """
     elected = (
         _section_6013_recorded(profile) and _election_marriage_ok(profile, year)
@@ -1582,12 +1616,18 @@ def _classify_residency(profile: Profile, year: int, *, section_6013_election: b
     if not days_by_year or imm is None or not imm.visa_timeline:
         return residency.classify([], {}, year, section_6013_election=True) if elected else None
     try:
-        return residency.classify(imm.visa_timeline, days_by_year, year, section_6013_election=elected)
+        result = residency.classify(
+            imm.visa_timeline, days_by_year, year, section_6013_election=elected,
+            prior_year_resident=_prior_year_resident(profile, year),
+        )
     except (ValueError, AssertionError):
         # An incomplete/contradictory timeline cannot be classified yet — fall back
         # to the us_person best-effort rather than guessing (the election still
         # decides residency when it is in effect; its no-election answer is unknown).
         return residency.classify([], {}, year, section_6013_election=True) if elected else None
+    if _prior_year_form(profile, year) == "1040_with_6013_election":
+        result = result.model_copy(update={"reasons": [*result.reasons, residency.prior_year_election_reason(year)]})
+    return result
 
 
 def _spouse_6013_status(profile: Profile, year: int) -> str | None:
@@ -1602,14 +1642,19 @@ def _spouse_6013_status(profile: Profile, year: int) -> str | None:
     return _spouse_own_classification(profile, year)
 
 
-def _gate_classification(classification: str | None, imm, rf, year: int) -> str | None:
+def _gate_classification(
+    classification: str | None, imm, rf, year: int, *, prior_year_resident: bool | None = None,
+) -> str | None:
     """``classification`` for the IRC 6013(g)(3) gate: 'nonresident' only when it is CERTAIN —
     a nonresident answer that real presence in a missing lookback year could flip is
-    unknown (None). The rule intake's gate shares (residency.certain_nonresident)."""
+    unknown (None), and so is one that contradicts a recorded prior-year residency
+    (``prior_year_resident`` True — the taxpayer's PriorFilings.return_forms; the spouse
+    has no such fact). The rule intake's gate shares (residency.certain_nonresident)."""
     if classification != "nonresident" or imm is None or not imm.visa_timeline or rf is None:
         return classification
     days = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
-    return classification if residency.certain_nonresident(imm.visa_timeline, days, year) else None
+    certain = residency.certain_nonresident(imm.visa_timeline, days, year, prior_year_resident=prior_year_resident)
+    return classification if certain else None
 
 
 class _ElectionState(NamedTuple):
@@ -1669,7 +1714,10 @@ def _election_state(profile: Profile, year: int) -> _ElectionState:
     hh = profile.household
     sp = hh.spouse if hh is not None else None
     unavailable = (
-        _gate_classification(taxpayer, profile.immigration, profile.residency_facts, year) == "nonresident"
+        _gate_classification(
+            taxpayer, profile.immigration, profile.residency_facts, year,
+            prior_year_resident=_prior_year_resident(profile, year),
+        ) == "nonresident"
         and sp is not None
         and _gate_classification(spouse, sp.immigration, sp.residency_facts, year) == "nonresident"
     )
@@ -1709,6 +1757,98 @@ _FORM_8843_UNDER_ELECTION = (
     "it alone when no return is due — it does not address a joint Form 1040, so confirm how to file it with "
     "the election return."
 )
+
+
+def _signed_dollars(value: int) -> str:
+    return f"{'+' if value >= 0 else '-'}${abs(value):,}"
+
+
+def _missing_lookback_text(imm, rf, year: int) -> str:
+    """The lookback years a person's timeline covers but their day counts lack, as text."""
+    if imm is None or not imm.visa_timeline or rf is None:
+        return f"{year - 1} or {year - 2}"
+    days = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+    years = residency.missing_lookback_years(imm.visa_timeline, days, year)
+    return " and ".join(str(y) for y in years) if years else f"{year - 1} or {year - 2}"
+
+
+def _unsettled_residency_notes(
+    profile: Profile, year: int, *, primary: str, contradiction: str | None, flip_reason: str | None,
+    resident_reading: int | None, election: bool, spouse_result, spouse_flip_reason: str | None,
+    spouse_flip_alternative: int | None,
+) -> list[str]:
+    """The notes an unsettled nonresident answer puts FIRST in the estimate (JF5b, P-018).
+
+    The taxpayer's CONTRADICTION with a recorded prior-year residency (residency's
+    first-position reason, a labeled judgment) and classify's "may be WRONG" reason, each
+    quoted as the classifier gives it, with the resident reading the range prices; then the
+    spouse's own answer that may flip, with the spouse-resident reading of the two-return
+    MFS pair.
+    """
+    notes: list[str] = []
+
+    def bracket(reading: str) -> str:
+        return (
+            f" The point prices Form 1040-NR rules; the range ALSO prices the same inputs under RESIDENT rules for "
+            f"the whole year ({primary}: {_signed_dollars(resident_reading)}, + refund / - owed) — {reading}."
+        )
+
+    under_election = (
+        " The figures here run under the §6013(g)/(h) election and are a resident's either way; this answer still "
+        "decides FICA (the withheld-in-error note) and the election's precondition."
+    )
+    if contradiction is not None:
+        text = contradiction
+        if resident_reading is not None:
+            text += bracket(
+                f"the reading in which the timeline is incomplete (reading (1) above) and {year} meets the "
+                f"substantial presence test after all: as a prior-year resident you would then be a resident from "
+                f"January 1 (Treas. Reg. 301.7701(b)-4(e)(1)), so this full-year figure is that reading; under "
+                f"readings (2) and (3) the Form 1040-NR point stands"
+            )
+        elif election:
+            text += under_election
+        notes.append(text)
+    if flip_reason is not None:
+        text = flip_reason
+        if resident_reading is not None and contradiction is None:
+            years = _missing_lookback_text(profile.immigration, profile.residency_facts, year)
+            start = (
+                f"the first day of presence in {year}"
+                if _prior_year_resident(profile, year) is False
+                else f"the first day of presence in {year} (January 1 if you were also a U.S. resident during "
+                f"{year - 1} — record the return you filed for {year - 1} in prior_filings.return_forms)"
+            )
+            text += bracket(
+                f"if real presence in {years} meets the substantial presence test — residency would then start on "
+                f"{start}, so this full-year figure is the favorable bound"
+            )
+        elif election and contradiction is None:
+            text += under_election
+        notes.append(text)
+    if spouse_flip_reason is not None and spouse_result is not None:
+        sp = profile.household.spouse if profile.household is not None else None
+        years = _missing_lookback_text(sp.immigration if sp else None, sp.residency_facts if sp else None, year)
+        text = (
+            f"The SPOUSE's own nonresident classification may be WRONG: the spouse's days in the U.S. have no entry "
+            f"for {years} although the spouse's visa timeline covers {'them' if ' and ' in years else 'it'} "
+            f"(counted as 0 days), and with "
+            f"{spouse_result.spt.days_current_year} day(s) present in {year} (at least 31) real presence in {years} "
+            f"could bring the weighted 3-year total to 183 and FLIP the spouse to resident (IRS Pub. 519, "
+            f"substantial presence test)."
+        )
+        if spouse_flip_alternative is not None:
+            text += (
+                f" The spouse's separate return was priced on Form 1040-NR rules for the point; the range ALSO prices "
+                f"it under RESIDENT rules for the whole year — married filing separately would then total "
+                f"{_signed_dollars(spouse_flip_alternative)} (+ refund / - owed) — if real presence in {years} meets "
+                f"the substantial presence test, the spouse's residency would then start on the first day of "
+                f"presence in {year} (January 1 if the spouse was also a U.S. resident during {year - 1}, which real "
+                f"presence in {year - 1} can itself establish), so this full-year figure is the favorable bound."
+            )
+        text += f" Record the spouse's days in the U.S. for {years} (0 is a valid answer) and rerun."
+        notes.append(text)
+    return notes
 
 
 def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "either") -> Roadmap:
@@ -2544,6 +2684,7 @@ def estimate_refund(
 
     def _mfs_pair(
         spouse_nra: bool, self_status: str = _MFS, *, lived_apart_hoh: bool = False, married_for_eitc: bool = False,
+        self_nra: bool | None = None,
     ) -> tuple[BottomLineResult, str | None, set[str]]:
         """F10: a TRUE two-return MFS comparison — one MFS return per spouse, bottom lines
         summed. All dependents go to the primary taxpayer (disclosed as an assumption;
@@ -2564,13 +2705,16 @@ def estimate_refund(
         return itemizes whenever the head of household does (IRC 63(c)(6)(A)).
         ``married_for_eitc``: the head of household is still married for the EITC (the
         nonresident-spouse route, Pub 519 ch. 5), so no EITC on that return.
+        ``self_nra``: the rules YOUR return runs under (None = your classification) —
+        False prices the resident reading of a nonresident answer that may flip (JF5b).
         """
         self_income = income.model_copy(update={"spouse": None})
+        self_nra = nonresident if self_nra is None else self_nra
 
         def _run(self_mode: str | None, spouse_mode: str | None):
             local: set[str] = set()
             rs = _bottom_line(
-                self_income, self_status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=local,
+                self_income, self_status, year, knowledge_dir, nonresident=self_nra, deps=deps, notes=local,
                 deduction_mode=self_mode, married_for_eitc=married_for_eitc,
             )
             rp = _bottom_line(
@@ -2581,7 +2725,7 @@ def estimate_refund(
 
         # Two nonresident returns have no standard deduction to lose (IRC 63(c)(6)(B)), so
         # the method is weighed only when at least one return is a resident's.
-        if (not nonresident or not spouse_nra) and any(
+        if (not self_nra or not spouse_nra) and any(
             (snap.itemized_deductions or 0) > 0 for snap in (self_income, income.spouse)
         ):
             combos = {"standard": ("standard", "standard"), "itemize": ("itemize", "itemize")}
@@ -2611,12 +2755,18 @@ def estimate_refund(
         result = BottomLineResult(bottom=total, lines=comp, citations=[*res_self.citations, *res_spouse.citations])
         return result, method, local
 
-    def _outcome(status: str) -> BottomLineResult:
+    def _outcome(status: str, *, self_nra: bool | None = None, record: bool = True) -> BottomLineResult:
+        """One candidate's figure. ``self_nra`` overrides the rules YOUR return runs under
+        (None = your classification); ``record`` False prices a bracketing reading with no
+        side effects on the disclosure keys or the deduction method shown (JF5b)."""
+        self_nra = nonresident if self_nra is None else self_nra
+        sink = notes if record else None
         if spouse_split:
             if status == _MFS:
-                result, method, local = _mfs_pair(spouse_nonresident)
-                notes.update(local)
-                mfs_method["method"] = method
+                result, method, local = _mfs_pair(spouse_nonresident, self_nra=self_nra)
+                if record:
+                    notes.update(local)
+                    mfs_method["method"] = method
                 return result
             if status == "head_of_household":
                 # Every married head-of-household figure with a spouse snapshot (a married
@@ -2625,15 +2775,16 @@ def estimate_refund(
                 # spouse's separate one, on the route hoh_spouse_nra names (above).
                 result, method, local = _mfs_pair(
                     hoh_spouse_nra, "head_of_household", lived_apart_hoh=not hoh_spouse_nra,
-                    married_for_eitc=hoh_spouse_nra or lived_apart_no_eitc,
+                    married_for_eitc=hoh_spouse_nra or lived_apart_no_eitc, self_nra=self_nra,
                 )
-                notes.update(local)
-                mfs_method["hoh_method"] = method
+                if record:
+                    notes.update(local)
+                    mfs_method["hoh_method"] = method
                 return result
             # Combined (joint) return: income is summed, but the per-PERSON pieces —
             # the excess-SS credit and Schedule SE — are computed per spouse.
             return _bottom_line(
-                income.combined_with_spouse(), status, year, knowledge_dir, nonresident=nonresident, deps=deps,
+                income.combined_with_spouse(), status, year, knowledge_dir, nonresident=self_nra, deps=deps,
                 ss_withheld_groups=[
                     list(income.ss_withheld_by_employer),
                     list(income.spouse.ss_withheld_by_employer),
@@ -2642,12 +2793,12 @@ def estimate_refund(
                     (income.self_employment_net, income.wages),
                     (income.spouse.self_employment_net, income.spouse.wages),
                 ],
-                notes=notes,
+                notes=sink,
             )
         # A married head of household with no spouse snapshot: the same EITC rule (above).
         married_hoh = status == "head_of_household" and married and not election
         return _bottom_line(
-            income, status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=notes,
+            income, status, year, knowledge_dir, nonresident=self_nra, deps=deps, notes=sink,
             married_for_eitc=married_hoh and (hoh_spouse_nra or lived_apart_no_eitc),
         )
 
@@ -2692,6 +2843,30 @@ def estimate_refund(
                 married_for_eitc=alt_nra or lived_apart_no_eitc,
             ).bottom
         values.append(hoh_alternative)
+    # JF5b (items 1 and 6): a nonresident answer that is not settled — one that rests on a
+    # missing lookback year real presence could flip (classify's nonresident_may_flip, its
+    # "may be WRONG" reason), or one that contradicts a recorded prior-year residency (the
+    # CONTRADICTION reason) — is priced on Form 1040-NR rules for the point, and the range
+    # ALSO prices the same inputs under RESIDENT rules for the whole year: the reading in
+    # which it flips. The law does not say which way that moves the bottom line (worldwide
+    # income, NIIT and the lost deposit exclusion against the standard deduction), so it is
+    # a bracket, never assumed to be the high end.
+    tp_contradiction = residency.prior_year_contradiction(residency_result) if residency_result is not None else None
+    tp_flip_reason = residency.may_flip_reason(residency_result) if residency_result is not None else None
+    resident_reading: int | None = None
+    if nonresident and (tp_contradiction is not None or tp_flip_reason is not None):
+        resident_reading = _outcome(primary, self_nra=False, record=False).bottom
+        values.append(resident_reading)
+    # The same for the SPOUSE's own nonresident answer that may flip (the spouse has no
+    # prior-year fact): the two-return MFS pair also prices the spouse's separate return
+    # under resident rules. A spouse whose residency is not settled at all is bracketed
+    # above (spouse_nra_alternative, the 'conditional' direction) — never both.
+    spouse_result = _spouse_own_result(profile, year) if spouse_direction is not None else None
+    spouse_flip_reason = residency.may_flip_reason(spouse_result) if spouse_result is not None else None
+    spouse_flip_alternative: int | None = None
+    if spouse_flip_reason is not None and spouse_mfs_return and spouse_nonresident:
+        spouse_flip_alternative = _mfs_pair(False)[0].bottom
+        values.append(spouse_flip_alternative)
     low, high = min(values), max(values)
 
     comparison = _build_comparison(priced)
@@ -2711,10 +2886,15 @@ def estimate_refund(
 
     assumptions: list[str] = []
     missing_blocks: list[MissingBlock] = []
+    # JF5b: a residency reading (a flip, a CONTRADICTION, an unsettled spouse) keeps a range of its
+    # own, so confirming the status alone does not collapse it.
+    residency_bracketed = any(v is not None for v in (
+        resident_reading, spouse_flip_alternative, spouse_nra_alternative, hoh_alternative))
     if status_assumed:
         assumptions.append(
             f"Filing status not confirmed — showing the range across {', '.join(statuses)}. "
-            f"Confirm your status to get a single number."
+            + ("Confirming your status narrows it; the residency reading named in these notes keeps a range of its own."
+               if residency_bracketed else "Confirm your status to get a single number.")
         )
     elif state.joint_blocked:
         assumptions.append(
@@ -3361,7 +3541,9 @@ def estimate_refund(
     if fica_nonresident and sum(income.ss_withheld_by_employer) > 0:
         ss_total = sum(income.ss_withheld_by_employer)
         nra_fica_msg = (
-            f"${ss_total:,} of Social Security tax (W-2 box 4) was "
+            ("If the nonresident answer stands (see the first note): "
+             if tp_contradiction is not None or tp_flip_reason is not None else "")
+            + f"${ss_total:,} of Social Security tax (W-2 box 4) was "
             f"withheld, but exempt F/J students and scholars are generally FICA-EXEMPT (IRC "
             f"3121(b)(19)): Social Security/Medicare withheld in error is recovered from the "
             f"EMPLOYER first, otherwise with Form 843 + Form 8316 — a separate claim, NOT on the "
@@ -3468,8 +3650,53 @@ def estimate_refund(
             assumptions.insert(0, residency_caveat)
         else:
             assumptions.append(residency_caveat)
+    # JF5b: what the recorded prior-year return did to the residency answer.
+    prior_year_check_note: str | None = None
+    prior_form = _prior_year_form(profile, year)
+    if own_classification == "resident" and _prior_year_resident(profile, year) is True:
+        base_result = residency_result
+        departing = base_result is not None and any(
+            r.startswith("Your last declared status period ends") for r in base_result.reasons)
+        assumptions.append(
+            f"Residency: a resident from January 1 of {year} — your {year - 1} return is recorded as "
+            f"'{prior_form}' (prior_filings.return_forms), so you were a U.S. resident during {year - 1}, and the "
+            f"substantial presence test is met for {year}; no residency starting date falls inside {year}, so no "
+            f"arrival split. {residency.PRIOR_YEAR_RESIDENCY_LAW}"
+            + (
+                f" Your last declared status period ends before December 31 of {year}: the residency ending date is "
+                f"still December 31, and it is the last day of physical presence in {year} only if IRC 7701(b)(2)(B) "
+                f"and Treas. Reg. 301.7701(b)-4(b)(2) are met — for the rest of the year a tax home in a foreign "
+                f"country and a closer connection to it, and no U.S. residency during any part of {year + 1} — and the "
+                f"statement Pub 519 requires is filed (Pub 519, Residency Starting and Ending Dates)."
+                if departing else ""
+            )
+        )
+        check = residency.prior_year_check(base_result) if base_result is not None else None
+        if check is not None:
+            assumptions.insert(0, check)
+            prior_year_check_note = check
+            fj = profile.immigration is not None and any(
+                p.status.strip().upper().startswith(("F", "J")) for p in profile.immigration.visa_timeline)
+            if sum(income.ss_withheld_by_employer) > 0 and fj:
+                assumptions.append(
+                    "If the CHECK THE PRIOR-YEAR RETURN note's reading (b) holds (the prior-year return was on the "
+                    f"wrong form), the F/J part of {year} is a nonresident period, and wages there as an F/J exempt "
+                    "individual are generally FICA-EXEMPT (IRC 3121(b)(19)): Social Security/Medicare withheld in "
+                    "error is recovered from the EMPLOYER first, otherwise with Form 843 + Form 8316 — a separate "
+                    "claim, not on the return."
+                )
+    elif prior_form == "1040_with_6013_election" and own_classification is not None:
+        assumptions.append(residency.prior_year_election_reason(year))
+    # JF5b: an unsettled nonresident answer (a CONTRADICTION with the recorded prior year, or
+    # classify's "may be WRONG") is read before anything else, the taxpayer's first.
+    residency_front = _unsettled_residency_notes(
+        profile, year, primary=primary, contradiction=tp_contradiction, flip_reason=tp_flip_reason,
+        resident_reading=resident_reading, election=election, spouse_result=spouse_result,
+        spouse_flip_reason=spouse_flip_reason, spouse_flip_alternative=spouse_flip_alternative,
+    )
+    assumptions[0:0] = residency_front
 
-    changes: list[str] = []
+    changes: list[str] = [*residency_front, *([prior_year_check_note] if prior_year_check_note else [])]
     if residency_caveat is not None:
         changes.append(residency_caveat)
     if ssn_demotion_msg is not None:
@@ -3495,7 +3722,10 @@ def estimate_refund(
     if income.self_employment_net >= 400:
         changes.append("Self-employment tax is included; quarterly estimated payments you already made would reduce what you owe.")
     if status_assumed:
-        changes.append("Confirming your filing status collapses the range to one number.")
+        changes.append(
+            "Confirming your filing status narrows the range (the residency reading keeps a range of its own)."
+            if residency_bracketed else "Confirming your filing status collapses the range to one number."
+        )
 
     def _phrase(v: int) -> str:
         return f"a refund of about ${v:,}" if v > 0 else (f"owing about ${-v:,}" if v < 0 else "breaking even")
