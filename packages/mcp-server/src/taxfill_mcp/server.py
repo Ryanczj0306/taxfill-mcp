@@ -977,6 +977,11 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       assumption names where it is reported for the profile's residency: Schedule OI for a
       nonresident, in parentheses on Schedule 1's other-income line for a resident alien),
       itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only)
+    - Schedule 1-A (JF7, P.L. 119-21, TY2025-2028 — BELOW AGI, after the deduction; never pre_agi_adjustments
+      or itemized_deductions): qualified_tips, qualified_overtime_premium (the FLSA premium half only),
+      car_loan_interest; the senior deduction is derived from the profile's date of birth and SSN
+      (senior_taxpayer / senior_spouse override it). MFS forfeits tips, overtime and the senior deduction,
+      not car-loan interest; a year whose pack lacks the block reports it in missing_blocks
     - W-2 boxes beyond box 1 (JF3): medicare_wages (box 5 total — what Form 8959 prices; box 1 stands in
       when omitted), ss_wages (boxes 3 + 7 total — what Schedule SE subtracts from the wage base),
       medicare_tax_withheld [box 6 per employer — the excess over 1.45% of box 5 is credited; needs

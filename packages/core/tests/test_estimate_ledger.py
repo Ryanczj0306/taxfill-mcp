@@ -71,6 +71,11 @@ def _random_snapshot(rng: random.Random, *, with_spouse: bool) -> IncomeSnapshot
         dependent_care_persons=1,
         itemized_deductions=rng.choice([None, None, 21000]),
         ss_withheld_by_employer=rng.choice([[], [], [9000, 4500]]),
+        # JF7: the Schedule 1-A amounts (their slot, the MFS forfeiture, the missing 2026 block).
+        qualified_tips=rng.choice([0, 0, 0, 6000]),
+        qualified_overtime_premium=rng.choice([0, 0, 4000]),
+        car_loan_interest=rng.choice([0, 0, 2500]),
+        senior_taxpayer=rng.choice([None, None, True]),
     )
     if with_spouse:
         fields["spouse"] = IncomeSnapshot(

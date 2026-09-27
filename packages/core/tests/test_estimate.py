@@ -3890,7 +3890,11 @@ _SPOUSE_SUMMED = frozenset({
     "retirement_income_taxable", "social_security_benefits", "other_income",
     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
     "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
+    "qualified_tips", "qualified_overtime_premium", "car_loan_interest",   # JF7
 })
+# JF7: each person's Schedule 1-A senior flag — the joint view takes the taxpayer's as its own and the
+# spouse snapshot's own flag as senior_spouse (never summed).
+_SPOUSE_PERSON_FLAGS = frozenset({"senior_taxpayer", "senior_spouse"})
 _SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses", "medicare_tax_withheld"})
 _SPOUSE_BOX_SUMMED = frozenset({"medicare_wages", "ss_wages"})  # summed, box 1 standing in for a missing one (JF3)
 _SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions"})  # None unless either spouse itemizes
@@ -3929,6 +3933,13 @@ def _spouse_coverage_gaps(combine) -> list[str]:
         gaps.append("dependent_care_persons")
     if joint.spouse is not None:
         gaps.append("spouse")
+    flagged = combine(primary.model_copy(update={"senior_taxpayer": True,
+                                                 "spouse": spouse.model_copy(update={"senior_taxpayer": False})}))
+    flagged2 = combine(primary.model_copy(update={"senior_taxpayer": False,
+                                                  "spouse": spouse.model_copy(update={"senior_taxpayer": True})}))
+    if (flagged.senior_taxpayer, flagged.senior_spouse, flagged2.senior_taxpayer, flagged2.senior_spouse) != (
+            True, False, False, True):
+        gaps += sorted(_SPOUSE_PERSON_FLAGS)
     # The W-2 boxes (JF3): summed, a spouse's missing box standing in as their box 1; None when neither.
     if joint.medicare_wages != primary.medicare_wages + spouse.medicare_wages:
         gaps.append("medicare_wages")
@@ -3949,7 +3960,7 @@ def _spouse_coverage_gaps(combine) -> list[str]:
 
 def test_jf1b5_every_income_snapshot_field_is_classified_for_the_joint_view():
     classes = (_SPOUSE_SUMMED, _SPOUSE_CONCATENATED, _SPOUSE_OPTIONAL_SUMMED, _HOUSEHOLD_LEVEL, _SPOUSE_FIELD,
-               _SPOUSE_BOX_SUMMED)
+               _SPOUSE_BOX_SUMMED, _SPOUSE_PERSON_FLAGS)
     classified = frozenset().union(*classes)
     assert sum(len(c) for c in classes) == len(classified), "a field is in two classes"
     fields = set(IncomeSnapshot.model_fields)
@@ -5010,3 +5021,71 @@ def test_p019_a_scenario_that_moves_wages_but_not_the_boxes_is_named():
     ])
     named = [a for a in out.assumptions if "changes wages (W-2 box 1) but not medicare_wages" in a]
     assert len(named) == 1 and "'raise'" in named[0]
+
+
+# ── JF7 (LD-09): Schedule 1-A reaches the estimator ─────────────────────────
+
+
+def _s1a(**kw) -> IncomeSnapshot:
+    return IncomeSnapshot(wages=60_000, federal_withholding=6_000, **kw)
+
+
+def _slot(est_or_result, slot: str) -> int | None:
+    lines = est_or_result.composition if hasattr(est_or_result, "composition") else est_or_result.lines
+    return next((ln.amount for ln in lines if ln.slot == slot), None)
+
+
+def test_jf7_schedule_1a_lowers_taxable_income_by_exactly_the_ops_total():
+    from taxfill_core.calc import schedule_1a_deductions
+    with_s1a = estimate_refund(Profile(), 2025, _s1a(qualified_tips=5_000, qualified_overtime_premium=3_000,
+                                                      car_loan_interest=2_000))
+    without = estimate_refund(Profile(), 2025, _s1a())
+    op = schedule_1a_deductions(magi=60_000, filing_status="single", year=2025, qualified_tips=5_000,
+                                qualified_overtime=3_000, car_loan_interest=2_000)
+    assert _slot(without, "taxable_income") - _slot(with_s1a, "taxable_income") == op.total_deduction == 10_000
+    line = next(ln for ln in with_s1a.composition if ln.slot == "schedule_1a_deductions")
+    assert line.amount == -10_000 and "Form 1040 line 13b" in line.label      # read off the 2025 face
+    assert with_s1a.point > without.point                                       # AGI and its MAGI tests unmoved
+    assert _slot(with_s1a, "agi") == _slot(without, "agi")
+    assert any("schedule_1a_deductions" in a and "MAGI is taken as AGI" in a for a in with_s1a.assumptions)
+
+
+def test_jf7_the_mfs_candidate_forfeits_tips_overtime_and_senior_but_not_car_loan_interest():
+    from taxfill_core.estimate import _bottom_line
+    income = _s1a(qualified_tips=5_000, qualified_overtime_premium=3_000, car_loan_interest=2_000,
+                  senior_taxpayer=True)
+    mfs = _bottom_line(income, "married_filing_separately", 2025, None)
+    mfj = _bottom_line(income, "married_filing_jointly", 2025, None)
+    assert _slot(mfs, "schedule_1a_deductions") == -2_000        # car-loan interest only
+    assert _slot(mfj, "schedule_1a_deductions") == -16_000       # tips + overtime + car loan + senior $6,000
+    married = Profile(household=Household(marital_status=_ans("married")))
+    est = estimate_refund(married, 2025, income)
+    assert est.comparison is not None
+    assert any("FORFEITED" in a and "car-loan interest is not" in a for a in est.assumptions)
+
+
+def test_jf7_a_planning_year_without_the_block_names_it_missing(planning_year):
+    est = estimate_refund(Profile(), planning_year, _s1a(qualified_tips=5_000))
+    assert [(m.block, m.direction) for m in est.missing_blocks if m.block == "tax.obbba_schedule_1a"] == [
+        ("tax.obbba_schedule_1a", "understates_refund")]
+    assert any("NOT ESTIMATED" in a and "Schedule 1-A" in a for a in est.assumptions)
+    assert _slot(est, "schedule_1a_deductions") is None
+
+
+def test_jf7_a_year_before_the_law_takes_none_and_says_why():
+    est = estimate_refund(Profile(), 2024, _s1a(qualified_tips=5_000))
+    assert _slot(est, "schedule_1a_deductions") is None
+    assert not [m for m in est.missing_blocks if m.block == "tax.obbba_schedule_1a"]
+    assert any("2025-2028 only" in a for a in est.assumptions)
+
+
+def test_jf7_the_senior_deduction_comes_from_the_profiles_birth_date_and_ssn():
+    def who(dob, tax_id):
+        return Profile(identity=Identity(dob=_ans(dob), tax_id=_ans(tax_id) if tax_id else None))
+    senior = estimate_refund(who(date(1958, 3, 1), "123-45-6789"), 2025, _s1a())
+    assert _slot(senior, "schedule_1a_deductions") == -6_000                     # Part V, MAGI under $75,000
+    for profile in (who(date(1958, 3, 1), "912-34-5678"),                        # an ITIN: no SSN
+                    who(date(1961, 1, 2), "123-45-6789"),                        # not 65 by the end of 2025
+                    who(date(1958, 3, 1), None)):                                # no tax ID recorded
+        assert _slot(estimate_refund(profile, 2025, _s1a()), "schedule_1a_deductions") is None
+    assert _slot(estimate_refund(who(date(1961, 1, 1), "123-45-6789"), 2025, _s1a()), "schedule_1a_deductions") == -6_000

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,198 tests** — offline 5,818 + live-.gov 380; derived
+Done and on `main` (**6,204 tests** — offline 5,824 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1940,7 +1940,19 @@ not wait for any of this.
     - The 2026 planning-year intake question contains "11a".
     - 2025 Schedule 1-A form_line keys stay ['13','21','30','37']; 2026 data has `sched1a.car_loan == '36'` and `f1040.sched_1a == '13a'`.
     - The frozen debt list is empty; `test_form_lines_resolve` passes for every year that has packs.
-- [ ] **JF7 — Schedule 1-A reaches the estimator** (M; deps JF6c, JF1b) [LD-09]
+- [x] **JF7 — Schedule 1-A reaches the estimator — DONE 2026-09-27** (M; deps JF6c, JF1b) [LD-09]
+  - *As built:*
+    - **Inputs:** IncomeSnapshot gains `qualified_tips`, `qualified_overtime_premium` and `car_loan_interest` (summed on the joint view), plus `senior_taxpayer` / `senior_spouse`.
+      - estimate_refund derives the senior flags from the profile: 65 by year end — born before January 2 of year - 64 — and a 9-digit SSN, never an ITIN. The caller can override them.
+      - The spouse snapshot's own flag becomes the joint view's `senior_spouse`, counted on MFJ only.
+    - **_bottom_line:** calls schedule_1a_deductions with MAGI = AGI (the Part I add-backs are not modeled, and the assumption says so). Its new EXPLANATORY slot `schedule_1a_deductions` sits between `deduction` and `taxable_income`, labeled "Form 1040 line <form_line f1040.sched_1a>" (or 1040-NR). Taxable income = AGI - deduction - Schedule 1-A.
+    - **MFS:** the forfeiture flows through every candidate status via the op, and the assumption names it.
+    - **Years without the block:** 2025-2028 without it → `MissingBlock('tax.obbba_schedule_1a', understates_refund)` plus NOT ESTIMATED. Before 2025 → "2025-2028 only", no block.
+    - **Docs:** server.py's estimate_refund documents the fields.
+    - **Tests:**
+      - test_estimate `test_jf7_*` (5): the op-total equality, MFS forfeiture, the planning-year MissingBlock, pre-2025, and senior from DOB/SSN/ITIN;
+      - the ledger property suite draws the new fields;
+      - a compare_scenarios tips what-if attributes its delta.
   - **Why.** estimate_refund has no below-AGI input: nothing in estimate.py or scenarios.py references schedule_1a/obbba (IncomeSnapshot, estimate.py:100-198). Both workarounds are wrong:
     - `pre_agi_adjustments` lowers AGI, which moves every MAGI test;
     - `itemized_deductions` is max()'d against the standard deduction, wrong for a non-itemizer.

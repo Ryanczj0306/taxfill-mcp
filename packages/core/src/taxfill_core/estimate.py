@@ -57,6 +57,7 @@ not amounts).
 """
 from __future__ import annotations
 
+from datetime import date
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Literal, NamedTuple
@@ -72,6 +73,7 @@ from taxfill_core.calc import (
     irs_round,
     niit,
     ptc_annual,
+    schedule_1a_deductions,
     se_tax,
     standard_deduction,
     student_loan_interest_deduction,
@@ -264,6 +266,32 @@ class IncomeSnapshot(BaseModel):
             "eligibility and limits are the agent's judgment, like itemized_deductions."
         ),
     )
+    # JF7 (LD-09): the OBBBA Schedule 1-A deductions (P.L. 119-21, taxable years 2025-2028) are taken
+    # BELOW AGI, after the standard or itemized deduction: pre_agi_adjustments would move every MAGI test,
+    # and itemized_deductions is max()'d away against the standard deduction. calc op
+    # schedule_1a_deductions prices them; eligibility stays the caller's judgment, quoted in its work.
+    qualified_tips: int = Field(
+        default=0, ge=0,
+        description="Qualified tips (Schedule 1-A Part II): voluntary cash tips in an occupation on the IRS tipped list.",
+    )
+    qualified_overtime_premium: int = Field(
+        default=0, ge=0,
+        description="Qualified overtime compensation (Schedule 1-A Part III): the FLSA-required PREMIUM half only.",
+    )
+    car_loan_interest: int = Field(
+        default=0, ge=0,
+        description="Qualified passenger vehicle loan interest (Schedule 1-A Part IV): a new, US-assembled vehicle for "
+                    "personal use, the loan made after 2024 and secured by it, the VIN on the return.",
+    )
+    senior_taxpayer: bool | None = Field(
+        default=None,
+        description="Schedule 1-A Part V: this snapshot's filer is 65 or older at year end with a valid SSN. None = "
+                    "derived by estimate_refund from the profile's date of birth and tax ID.",
+    )
+    senior_spouse: bool | None = Field(
+        default=None,
+        description="The same for the spouse, counted on a joint return only. None = derived from the profile.",
+    )
     ss_withheld_by_employer: list[int] = Field(
         default_factory=list,
         description="W-2 box 4 Social Security tax withheld, ONE ENTRY PER EMPLOYER (excess-SS credit needs 2+).",
@@ -385,8 +413,11 @@ class IncomeSnapshot(BaseModel):
                     "retirement_income_taxable", "social_security_benefits", "other_income",
                     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
                     "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
+                    "qualified_tips", "qualified_overtime_premium", "car_loan_interest",
                 )
             },
+            senior_taxpayer=self.senior_taxpayer,
+            senior_spouse=s.senior_taxpayer,
             ss_withheld_by_employer=[*self.ss_withheld_by_employer, *s.ss_withheld_by_employer],
             aotc_qualified_expenses=[*self.aotc_qualified_expenses, *s.aotc_qualified_expenses],
             medicare_tax_withheld=[*self.medicare_tax_withheld, *s.medicare_tax_withheld],
@@ -468,6 +499,7 @@ _LEDGER_SLOTS: dict[str, str] = {
     "student_loan_interest_deduction": _EXPLANATORY,
     "other_adjustments": _EXPLANATORY,
     "deduction": _EXPLANATORY,
+    "schedule_1a_deductions": _EXPLANATORY,
     "total_income": _SUBTOTAL,
     "agi": _SUBTOTAL,
     "taxable_income": _SUBTOTAL,
@@ -3233,6 +3265,38 @@ def _eitc_amount(cfg: dict, status: str, agi: int, earned: Decimal, n_qc: int) -
     return irs_round(max(Decimal(0), credit))
 
 
+def _schedule_1a_engaged(income: IncomeSnapshot, seniors: int) -> bool:
+    return bool(income.qualified_tips or income.qualified_overtime_premium or income.car_loan_interest or seniors)
+
+
+def _senior(dob_answer, tax_id_answer, year: int) -> bool | None:
+    """Schedule 1-A Part V for one person: 65 or older at the end of ``year`` (born before January 2 of year - 64,
+    the 2025 form's "born before January 2, 1961") with a valid SSN. None when the date of birth is unknown."""
+    dob = getattr(dob_answer, "value", None)
+    if dob is None:
+        return None
+    if dob >= date(year - 64, 1, 2):
+        return False
+    tax_id = str(getattr(tax_id_answer, "value", "") or "").replace("-", "").strip()
+    return bool(tax_id) and len(tax_id) == 9 and tax_id.isdigit() and not tax_id.startswith("9")   # an ITIN starts with 9
+
+
+def _with_senior_flags(profile: Profile, year: int, income: IncomeSnapshot) -> IncomeSnapshot:
+    """JF7: fill each snapshot's Schedule 1-A senior flags from the profile when the caller left them None."""
+    ident = profile.identity
+    spouse = profile.household.spouse if profile.household is not None else None
+    tp = _senior(getattr(ident, "dob", None), getattr(ident, "tax_id", None), year) if ident is not None else None
+    sp = _senior(getattr(spouse, "dob", None), getattr(spouse, "tax_id", None), year) if spouse is not None else None
+    update: dict[str, Any] = {}
+    if income.senior_taxpayer is None:
+        update["senior_taxpayer"] = bool(tp)
+    if income.senior_spouse is None:
+        update["senior_spouse"] = bool(sp)
+    if income.spouse is not None and income.spouse.senior_taxpayer is None:
+        update["spouse"] = income.spouse.model_copy(update={"senior_taxpayer": bool(sp), "senior_spouse": bool(tp)})
+    return income.model_copy(update=update) if update else income
+
+
 def _bottom_line(
     income: IncomeSnapshot,
     status: str,
@@ -3587,7 +3651,29 @@ def _bottom_line(
             deduction, label = sd.amount, "Less: standard deduction"
     comp.append(_line("deduction", label=label, amount=-deduction))
 
-    taxable = max(0, agi - deduction)
+    # JF7: the Schedule 1-A deductions, below AGI and after the deduction (P.L. 119-21). MAGI is AGI: the
+    # estimator models none of Schedule 1-A Part I's add-backs (Puerto Rico, Form 2555, Form 4563).
+    sched1a_total = 0
+    seniors = int(bool(income.senior_taxpayer)) + int(bool(income.senior_spouse) and status == "married_filing_jointly")
+    if _schedule_1a_engaged(income, seniors) and pack_tax.obbba_schedule_1a is not None:
+        s1a = schedule_1a_deductions(
+            magi=agi, filing_status=status, year=year, qualified_tips=income.qualified_tips,
+            qualified_overtime=income.qualified_overtime_premium, car_loan_interest=income.car_loan_interest,
+            seniors_qualifying=seniors, knowledge_dir=knowledge_dir,
+        )
+        sched1a_total = s1a.total_deduction
+        citations.append(s1a.citation)
+        if notes is not None:
+            notes.add("schedule_1a")
+            if any(p.forfeited_reason for p in s1a.parts):
+                notes.add("schedule_1a_forfeit")
+        if sched1a_total:
+            where = (f"Form 1040-NR line {form_line(year, 'f1040nr.sched_1a', base_dir=knowledge_dir)}" if nonresident
+                     else f"Form 1040 line {form_line(year, 'f1040.sched_1a', base_dir=knowledge_dir)}")
+            comp.append(_line("schedule_1a_deductions", label=f"Less: Schedule 1-A deductions ({where})",
+                              amount=-sched1a_total))
+
+    taxable = max(0, agi - deduction - sched1a_total)
     comp.append(_line("taxable_income", label="Taxable income", amount=taxable))
 
     # ── Income tax (preferential rates when QD / net capital gain present) ──
@@ -4074,6 +4160,7 @@ def estimate_refund(
         # the facts refuse — it is priced married-filing-separately, named FIRST below.
         statuses = [_MFS]
     deps = _dependent_infos(profile, year)
+    income = _with_senior_flags(profile, year, income)   # JF7: Schedule 1-A Part V, from DOB and tax ID
     spouse_split = income.spouse is not None and married
     # P-018 (the J0 re-verify follow-up) and P-013 rule (e): each spouse's SEPARATE
     # return follows that spouse's OWN classification — never the taxpayer's. A US
@@ -5027,6 +5114,34 @@ def estimate_refund(
             "disabled, the deemed $250/$500-per-month income rule can restore the credit (agent "
             "judgment; recompute with calc op dependent_care_credit using the deemed amount)."
         )
+    s1a_view = income.combined_with_spouse()
+    if _schedule_1a_engaged(s1a_view, int(bool(s1a_view.senior_taxpayer)) + int(bool(s1a_view.senior_spouse))):
+        s1a_pack = load_knowledge("federal", year, base_dir=knowledge_dir)
+        if s1a_pack.tax.obbba_schedule_1a is not None:
+            assumptions.append(
+                "Schedule 1-A deductions (P.L. 119-21) were priced below AGI, after the deduction, with calc op "
+                "schedule_1a_deductions: MAGI is taken as AGI (the Puerto Rico / Form 2555 / Form 4563 add-backs "
+                "are not modeled), and each part's eligibility — a tipped occupation, the FLSA overtime premium, a "
+                "new US-assembled vehicle with its VIN, 65 by year end with a valid SSN — is the caller's judgment."
+                + (" On married filing separately tips, overtime and the senior deduction are FORFEITED; car-loan "
+                   "interest is not." if "schedule_1a_forfeit" in notes else "")
+            )
+        elif 2025 <= year <= 2028:
+            missing_blocks.append(MissingBlock(
+                block="tax.obbba_schedule_1a",
+                item="Schedule 1-A deductions (tips, overtime, car-loan interest, senior)",
+                direction="understates_refund",
+            ))
+            assumptions.append(
+                f"Schedule 1-A amounts were provided but the deductions are NOT ESTIMATED for {year}: the {year} "
+                f"knowledge pack has no obbba_schedule_1a block yet — this estimate OVERSTATES the tax by up to "
+                f"their value."
+            )
+        else:
+            assumptions.append(
+                f"The Schedule 1-A deductions (tips, overtime, car-loan interest, senior) exist for taxable years "
+                f"2025-2028 only (P.L. 119-21), so none is taken for {year}."
+            )
     if "dependent_care_zero" in notes:
         assumptions.append(
             "The dependent-care expenses you supplied produced a $0 Form 2441 credit under the "

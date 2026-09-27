@@ -605,3 +605,15 @@ def test_jf1b6_override_steps_group_by_first_position():
     assert _override_steps({"bank_deposit_interest": 1, "wages": 2, "interest": 3}) == [
         ["bank_deposit_interest", "interest"], ["wages"],
     ]
+
+
+def test_jf7_a_tips_scenario_attributes_its_delta_to_the_tips():
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000)
+    r = compare_scenarios(Profile(), 2025, income, [
+        {"name": "no tips", "filing_status": "single"},
+        {"name": "with tips", "filing_status": "single", "income_overrides": {"qualified_tips": 8_000}},
+    ])
+    d = next(d for d in r.deltas if d.name == "with tips")
+    assert d.delta > 0
+    assert sum(s.delta for s in d.input_attribution) == d.delta
+    assert any(s.changed.startswith("income.qualified_tips") for s in d.input_attribution)
