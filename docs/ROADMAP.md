@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,748 tests** — offline 5,368 + live-.gov 380; derived
+Done and on `main` (**5,752 tests** — offline 5,372 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -41,7 +41,7 @@ reds surface; JS1a/JS1b fix them:
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
   compare_scenarios,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
-  states). The `calc` tool carries **32** deterministic ops (`packages/mcp-server/tests/test_skills_sync.py` pins the count; Phase J adds 8 → 40 without adding an MCP tool): the 25 of Phase H (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax) plus Phase I's ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election and foreign_asset_reporting.
+  states). The `calc` tool carries **33** deterministic ops (`packages/mcp-server/tests/test_skills_sync.py` pins the count; Phase J adds 8 → 40 without adding an MCP tool): the 25 of Phase H (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax) plus Phase I's ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election and foreign_asset_reporting.
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, and — since
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance — and, since Phases I2/I3/I5, 1099-SA, 5498-SA, 3921, 3922, 1099-K, 1099-Q, W-2G, 1095-B, 1095-C, 5498, K-1 (1120-S) and K-1 (1041): **26 kinds** per `list_document_kinds()`) and the resumable
@@ -1597,7 +1597,8 @@ not wait for any of this.
     - `test_wage_base_is_one_annual_pool_across_segments` still passes (segments without `employer` are one employer).
     - A shortfall of 2,400 over 6 remaining checks → 4(c) of 400 per check, citing 6654(g)(1).
     - The pitfall has a citing test.
-- [ ] **JP2 — Multi-employer 402(g) room** (M; deps J0; **latest start 2026-10-19**) [LD-05]
+- [x] **JP2 — Multi-employer 402(g) room — DONE 2026-09-27** (M; deps J0; **latest start 2026-10-19**) [LD-05]
+  - *As built:* calc op `elective_deferral_room` (op count 32 → 33; MCP tools stay 23): the 402(g) room across every employer with the 414(v) catch-up by year-end age (50+, the higher amount at 60-63 — 414(v)(5)(A), (2)(B)(i)); per-check dollars and percent rounded DOWN (to the plan increment) so the last check never overshoots; an excess with its April 15 deadline (irs.gov: "not postponed by extending the filing"), the Pub 525 double tax and the individual's choice of plan (Treas. Reg. 1.402(g)-1(e)(2)(i)); the SECURE 2.0 Roth catch-up test (414(v)(7)(A); new pack field `roth_catch_up_wage_threshold`, 2026: $150,000 per Notice 2025-67); each plan's 415(c) room (catch-ups outside it, 414(v)(3)(A)(i)). contribution_limits' 402(g) string points at it; RetirementContributionsYear gains `deferrals_by_employer`; SKILL.md and the calc docstring list it (and now carry the JF4/JP1a arguments).
   - **Why.** contribution_limits takes only `year` (calc.py:3627-3630). Nothing computes the room left across employers, so a job-changer's new plan cannot see the old plan's deferrals.
   - **Build** `calc.elective_deferral_room`:
     - remaining §402(g) room, with the age catch-ups;

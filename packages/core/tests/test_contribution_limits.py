@@ -354,3 +354,48 @@ def test_hsa_scoping_no_longer_overstates_the_fica_saving_or_the_ceiling():
     for bucket in ("health_fsa_125i", "commuter_132f"):
         scoping = contribution_limits(2026).scoping[bucket]
         assert "full 7.65% only BELOW the social security wage base" in scoping
+
+
+# ── JP2: the 402(g) room across every employer ──────────────────────────────
+
+
+def test_jp2_the_room_left_after_a_job_change_counts_the_old_plan():
+    from taxfill_core.calc import elective_deferral_room  # noqa: PLC0415
+    old = [{"employer": "old job", "elective_deferrals": 11_000}, {"employer": "new job", "elective_deferrals": 0}]
+    assert elective_deferral_room(old, year=2026, age=40).room == Decimal("13500.00")
+    assert elective_deferral_room(old, year=2026, age=55).room == Decimal("21500.00")
+    sixty = elective_deferral_room(old, year=2026, age=61)
+    assert sixty.catch_up == 11_250 and sixty.room == Decimal("24750.00")   # 11,250, not 8,000
+    assert elective_deferral_room(old, year=2026, age=64).catch_up == 8_000
+
+
+def test_jp2_the_per_check_amount_and_percent_never_overshoot():
+    from taxfill_core.calc import elective_deferral_room  # noqa: PLC0415
+    r = elective_deferral_room([{"employer": "A", "elective_deferrals": 11_000}, {"employer": "B", "elective_deferrals": 0}],
+                               year=2026, age=40, remaining_pay_dates=7, per_check_compensation=6_250,
+                               plan_increment_percent=1)
+    assert r.per_check_amount == Decimal("1928")                    # 13,500 / 7 = 1,928.57, rounded down
+    assert r.per_check_percent == Decimal("30")                     # 1,928.57 / 6,250 = 30.86%, down to 30%
+    assert r.per_check_percent / 100 * 6_250 * 7 <= r.room
+    assert r.per_check_amount * 7 <= r.room
+
+
+def test_jp2_an_excess_names_the_april_15_deadline_and_the_double_tax():
+    from taxfill_core.calc import elective_deferral_room  # noqa: PLC0415
+    r = elective_deferral_room([{"employer": "A", "elective_deferrals": 15_000}, {"employer": "B", "elective_deferrals": 12_000}],
+                               year=2026, age=40)
+    assert r.excess == Decimal("2500.00") and r.room == Decimal("0.00")
+    assert r.excess_correction_deadline == "April 15, 2027"
+    assert "not postponed by extending the filing" in r.work and "taxed twice" in r.work
+
+
+def test_jp2_the_roth_catch_up_wage_test_and_the_415c_room_per_plan():
+    from taxfill_core.calc import elective_deferral_room  # noqa: PLC0415
+    rows = [{"employer": "A", "elective_deferrals": 20_000, "employer_contributions": 10_000, "after_tax_contributions": 30_000}]
+    high = elective_deferral_room(rows, year=2026, age=52, prior_year_fica_wages=160_000)
+    assert high.roth_catch_up_required is True and "designated Roth" in high.work
+    low = elective_deferral_room(rows, year=2026, age=52, prior_year_fica_wages=140_000)
+    assert low.roth_catch_up_required is False
+    assert elective_deferral_room(rows, year=2026, age=40, prior_year_fica_wages=160_000).roth_catch_up_required is None   # no catch-up
+    assert high.employers[0].annual_additions_room == Decimal("12000.00")    # 72,000 - 60,000
+    assert "414(v)(3)(A)(i)" in high.work

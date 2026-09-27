@@ -440,11 +440,15 @@ contribution_limits:
         Notice 2025-67 (IRB 2025-49): 402(g)(1) elective deferral limit $24,500 for 2026; age-50
         catch-up under 414(v)(2)(B)(i) $8,000; the age-60-63 catch-up under 414(v)(2)(E)(i) remains
         $11,250 (non-SIMPLE amounts). Note SECURE 2.0's Roth-catch-up wage rule: 2025 FICA wages above
-        $150,000 force 2026 catch-ups to be Roth.
+        $150,000 force 2026 catch-ups to be Roth — "The Roth catch-up wage threshold for 2025, which under
+        section 414(v)(7)(A) is used to determine whether an individual's catch-up contributions to an
+        applicable employer plan (other than a plan described in section 408(k) or (p)) for 2026 must be
+        designated as Roth contributions, is increased from $145,000 to $150,000."
       url: "https://www.irs.gov/pub/irs-irbs/irb25-49.pdf"
     limit: 24500
     catch_up_50: 8000
     catch_up_60_63: 11250
+    roth_catch_up_wage_threshold: 150000
   annual_additions_415c:
     citation:
       source: >-

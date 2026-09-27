@@ -155,7 +155,7 @@ from __future__ import annotations
 
 import re
 from datetime import date, datetime
-from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal, InvalidOperation
+from decimal import ROUND_CEILING, ROUND_FLOOR, ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
 from collections.abc import Mapping, Sequence
 from typing import Any, Literal
@@ -4085,7 +4085,8 @@ def contribution_limits(
             f"share this one limit"
             + (f"; age-50 catch-up ${d.catch_up_50:,}" if d.catch_up_50 else "")
             + (f"; age-60-63 higher catch-up ${d.catch_up_60_63:,}" if d.catch_up_60_63 else "")
-            + ". A 401(k) dollar still pays FICA."
+            + ". A 401(k) dollar still pays FICA. Across a job change, calc op elective_deferral_room "
+            "computes the room left, the per-check amount and any excess."
         ),
         "annual_additions_415c": (
             f"${params.annual_additions_415c.limit:,} per EMPLOYER PLAN (employee + employer + "
@@ -4152,6 +4153,182 @@ def contribution_limits(
     work = f"Contribution limits and SCOPING for {year}:\n" + "\n".join(f"* {k}: {v}" for k, v in scoping.items())
     return ContributionLimitsResult(
         limits=params, scoping=scoping, inputs={"year": year}, work=work, citation=params.citation
+    )
+
+
+class DeferralEmployerRow(BaseModel):
+    """One employer plan's deferrals and its IRC 415(c) annual-additions room (JP2)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    employer: str
+    elective_deferrals: Decimal
+    employer_contributions: Decimal
+    after_tax_contributions: Decimal
+    annual_additions: Decimal = Field(description="Deferrals + employer + after-tax, counted against 415(c).")
+    annual_additions_room: Decimal = Field(description="The plan's 415(c) limit less its annual additions (may be < 0).")
+
+
+class ElectiveDeferralRoomResult(BaseModel):
+    """Result of :func:`elective_deferral_room`: the IRC 402(g) room left across every employer (JP2)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    limit: int = Field(description="The year's 402(g)(1) limit.")
+    catch_up: int = Field(description="The 414(v) catch-up this age allows (0 under 50 or age not given).")
+    total_limit: int
+    deferred: Decimal = Field(description="Elective deferrals (pre-tax + Roth) already made, every employer.")
+    room: Decimal = Field(description="total_limit - deferred, floored at 0.")
+    excess: Decimal = Field(description="deferred - total_limit, floored at 0 — an excess deferral.")
+    excess_correction_deadline: str | None = Field(description="April 15 of the next year, when there is an excess.")
+    per_check_amount: Decimal | None = Field(description="Whole dollars per remaining check, rounded DOWN.")
+    per_check_percent: Decimal | None = Field(description="Percent of pay per remaining check, rounded DOWN to the increment.")
+    roth_catch_up_required: bool | None = Field(
+        description="IRC 414(v)(7)(A): the catch-up must be Roth (prior-year FICA wages from the plan's employer over "
+        "the threshold); None when not tested."
+    )
+    employers: list[DeferralEmployerRow]
+    inputs: dict[str, Any]
+    work: str
+    citation: Citation
+
+
+def elective_deferral_room(
+    deferrals: Sequence[Mapping[str, Any]],
+    year: int = 2026,
+    age: int | None = None,
+    remaining_pay_dates: int | None = None,
+    per_check_compensation: int | float | Decimal | str | None = None,
+    plan_increment_percent: int | float | Decimal | str = 1,
+    prior_year_fica_wages: int | float | Decimal | str | None = None,
+    current_employer: str | None = None,
+    knowledge_dir: str | Path | None = None,
+) -> ElectiveDeferralRoomResult:
+    """The IRC 402(g) elective-deferral room left for the year ACROSS EVERY EMPLOYER (JP2) — what a
+    job-changer's new plan cannot see: the old plan's deferrals already count.
+
+    ``deferrals`` is one entry per employer plan, ``{employer, elective_deferrals, employer_contributions?,
+    after_tax_contributions?}`` (pre-tax + Roth deferrals together — they share the one limit); the
+    ``current_employer`` (default: the last entry) is where ``remaining_pay_dates`` still defer. ``age``
+    is the age at year end: IRC 414(v)(5)(A) makes an "eligible participant" one "who would attain age 50
+    by the end of the taxable year", and 414(v)(2)(B)(i) gives the higher amount to one "who would attain
+    age 60 but would not attain age 64 before the close of the taxable year".
+
+    The per-check amount (whole dollars) and percent (rounded DOWN to ``plan_increment_percent``) never
+    overshoot the room by the last check. An excess must be distributed with its earnings by April 15 of
+    the next year — "This April 15th deadline is not postponed by extending the filing of the employee's
+    federal income tax return" (irs.gov, Consequences to a participant who makes excess deferrals to a
+    401(k) plan) — or it is taxed twice: "you're taxed twice on the excess deferral left in the plan"
+    (Pub 525). The individual chooses which plan(s) distribute it (Treas. Reg. 1.402(g)-1(e)(2)(i)).
+
+    ``prior_year_fica_wages`` (from the current employer) runs the SECURE 2.0 Roth catch-up test, IRC
+    414(v)(7)(A): an eligible participant "whose wages (as defined in section 3121(a)) for the preceding
+    calendar year from the employer sponsoring the plan exceed $145,000" makes catch-ups only as Roth —
+    the indexed threshold from the pack (Notice 2025-67: $150,000 of 2025 wages for 2026 catch-ups).
+    Each plan's IRC 415(c) annual-additions room is shown too; catch-ups are outside it (414(v)(3)(A)(i)),
+    so the room shown is conservative by up to the catch-up.
+    """
+    if not deferrals:
+        raise ValueError("deferrals must list at least one employer plan: {employer, elective_deferrals, ...}")
+    pack = _load_federal(year, knowledge_dir)
+    params = _require_contribution_limits(pack, year)
+    d = params.elective_deferral_402g
+    catch_up = 0
+    if age is not None:
+        if not isinstance(age, int) or age < 0:
+            raise ValueError("age must be a whole number of years (the age at the end of the year)")
+        if 60 <= age <= 63 and d.catch_up_60_63:
+            catch_up = d.catch_up_60_63
+        elif age >= 50 and d.catch_up_50:
+            catch_up = d.catch_up_50
+    total_limit = d.limit + catch_up
+
+    rows: list[DeferralEmployerRow] = []
+    for i, raw in enumerate(deferrals):
+        if not isinstance(raw, Mapping) or "employer" not in raw:
+            raise ValueError(f"deferrals[{i}] must be a mapping with an 'employer' name")
+        amounts = {
+            k: _to_decimal(raw.get(k, 0), f"deferrals[{i}].{k}")
+            for k in ("elective_deferrals", "employer_contributions", "after_tax_contributions")
+        }
+        if any(v < 0 for v in amounts.values()):
+            raise ValueError(f"deferrals[{i}] amounts must be >= 0")
+        additions = sum(amounts.values(), Decimal(0))
+        rows.append(DeferralEmployerRow(
+            employer=str(raw["employer"]), **{k: _cents(v) for k, v in amounts.items()},
+            annual_additions=_cents(additions),
+            annual_additions_room=_cents(Decimal(params.annual_additions_415c.limit) - additions),
+        ))
+    names = [r.employer for r in rows]
+    current = current_employer if current_employer is not None else names[-1]
+    if current not in names:
+        raise ValueError(f"current_employer {current!r} is not one of the deferrals' employers {names}")
+    deferred = sum((r.elective_deferrals for r in rows), Decimal("0.00"))
+    room = max(Decimal("0.00"), Decimal(total_limit) - deferred)
+    excess = max(Decimal("0.00"), deferred - Decimal(total_limit))
+
+    per_check_amount: Decimal | None = None
+    per_check_percent: Decimal | None = None
+    if remaining_pay_dates is not None:
+        if not isinstance(remaining_pay_dates, int) or remaining_pay_dates < 1:
+            raise ValueError("remaining_pay_dates must be a whole number of paychecks, at least 1")
+        per_check_amount = (room / remaining_pay_dates).to_integral_value(rounding=ROUND_FLOOR)
+        if per_check_compensation is not None:
+            comp = _to_decimal(per_check_compensation, "per_check_compensation")
+            inc = _to_decimal(plan_increment_percent, "plan_increment_percent")
+            if comp <= 0 or inc <= 0:
+                raise ValueError("per_check_compensation and plan_increment_percent must be > 0")
+            steps = (room / remaining_pay_dates / comp * 100 / inc).to_integral_value(rounding=ROUND_FLOOR)
+            per_check_percent = steps * inc
+
+    roth_required: bool | None = None
+    threshold = d.roth_catch_up_wage_threshold
+    if prior_year_fica_wages is not None and catch_up and threshold is not None:
+        roth_required = _to_decimal(prior_year_fica_wages, "prior_year_fica_wages") > threshold
+
+    work = [
+        f"IRC 402(g) room ({year}): limit ${d.limit:,}"
+        + (f" + ${catch_up:,} catch-up (age {age} at year end)" if catch_up else
+           (" (age not given: no catch-up counted)" if age is None else f" (age {age}: no catch-up)"))
+        + f" = ${total_limit:,} per PERSON across every employer; deferred so far ${deferred:,} ("
+        + ", ".join(f"{r.employer} ${r.elective_deferrals:,}" for r in rows) + ")."
+    ]
+    if excess:
+        work.append(
+            f"EXCESS DEFERRAL ${excess:,}: have it distributed with its earnings by April 15, {year + 1} — \"This April "
+            "15th deadline is not postponed by extending the filing of the employee's federal income tax return\" — "
+            "choosing which plan(s) return it (Treas. Reg. 1.402(g)-1(e)(2)(i)); otherwise \"you're taxed twice on "
+            "the excess deferral left in the plan\" (Pub 525)."
+        )
+    else:
+        work.append(f"Room left: ${room:,}.")
+    if per_check_amount is not None:
+        work.append(
+            f"Over the {remaining_pay_dates} remaining checks at {current}: ${per_check_amount:,} per check (rounded "
+            "down)" + (f", or {per_check_percent}% of ${_to_decimal(per_check_compensation, 'per_check_compensation'):,} "
+                       f"pay (rounded down to the plan's {plan_increment_percent}% increment)" if per_check_percent is not None
+                       else "") + " — never past the limit by the last check."
+        )
+    if catch_up and prior_year_fica_wages is not None:
+        work.append(
+            "Roth catch-up (IRC 414(v)(7)(A), wages \"for the preceding calendar year from the employer sponsoring the "
+            "plan\"): " + (f"prior-year FICA wages over ${threshold:,}, so the catch-up must be designated Roth."
+                            if roth_required else f"prior-year FICA wages at or under ${threshold:,}: pre-tax or Roth."
+                            if roth_required is False else f"the {year} pack carries no Roth catch-up wage threshold.")
+        )
+    work.append(
+        f"IRC 415(c): ${params.annual_additions_415c.limit:,} per EMPLOYER PLAN (employee + employer + after-tax); "
+        + "; ".join(f"{r.employer} room ${r.annual_additions_room:,}" for r in rows)
+        + " — catch-ups are outside it (414(v)(3)(A)(i)), so each room is conservative by up to the catch-up."
+    )
+    return ElectiveDeferralRoomResult(
+        limit=d.limit, catch_up=catch_up, total_limit=total_limit, deferred=deferred, room=room, excess=excess,
+        excess_correction_deadline=f"April 15, {year + 1}" if excess else None,
+        per_check_amount=per_check_amount, per_check_percent=per_check_percent,
+        roth_catch_up_required=roth_required, employers=rows,
+        inputs={"deferrals": [dict(r) for r in deferrals], "year": year, "age": age,
+                "remaining_pay_dates": remaining_pay_dates, "current_employer": current},
+        work="\n".join(work), citation=d.citation,
     )
 
 

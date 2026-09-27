@@ -1400,6 +1400,11 @@ class ElectiveDeferral402g(BaseModel):
     limit: int = Field(gt=0)
     catch_up_50: int | None = Field(default=None, description="Age-50 catch-up, where published.")
     catch_up_60_63: int | None = Field(default=None, description="SECURE 2.0 age-60-63 higher catch-up, where published.")
+    roth_catch_up_wage_threshold: int | None = Field(
+        default=None,
+        description="IRC 414(v)(7)(A) as indexed: prior-year FICA wages from the plan's employer above this make "
+        "the year's catch-ups Roth-only (JP2); None where the pack does not carry it.",
+    )
     scope: Literal["per_person_all_employers"] = "per_person_all_employers"
     shared_by_roth: bool = Field(
         default=True, description="Traditional AND Roth deferrals share this one limit — a split changes AGI, never the cap."

@@ -582,6 +582,18 @@ class PriorFilings(BaseModel):
     )
 
 
+class EmployerDeferral(BaseModel):
+    """One employer plan's elective deferrals for the year (JP2): 402(g) is ONE limit across every
+    employer, so a job change needs the old plan's figure too (calc op elective_deferral_room)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    employer: str = Field(description="The employer sponsoring the plan.")
+    pretax: int = Field(default=0, ge=0, description="Pre-tax elective deferrals to this plan (W-2 box 12 code D).")
+    roth: int = Field(default=0, ge=0, description="Roth elective deferrals to this plan (W-2 box 12 code AA).")
+    provenance: Provenance
+
+
 class RetirementContributionsYear(BaseModel):
     """Elective deferrals / contributions for one year, split by TAX CHARACTER (N-11, N-15).
 
@@ -613,6 +625,13 @@ class RetirementContributionsYear(BaseModel):
     )
     hsa: Answer[int] | None = Field(
         default=None, description="HSA contribution for the year (limit depends on the COVERAGE TIER — see contribution_limits).")
+    deferrals_by_employer: list[EmployerDeferral] = Field(
+        default_factory=list,
+        description=(
+            "The year's elective deferrals split by EMPLOYER (JP2) — after a job change the new plan cannot see "
+            "the old plan's deferrals, but 402(g) counts both; the input calc op elective_deferral_room takes."
+        ),
+    )
 
 
 class Profile(BaseModel):

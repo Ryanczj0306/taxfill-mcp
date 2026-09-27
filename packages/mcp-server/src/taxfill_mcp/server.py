@@ -43,6 +43,7 @@ from taxfill_core import (
     state_scope as _state_scope,
     annualize_ytd as _annualize_ytd,
     contribution_limits as _contribution_limits,
+    elective_deferral_room as _elective_deferral_room,
     ira_contribution_eligibility as _ira_contribution_eligibility,
     hsa_deduction as _hsa_deduction,
     espp_disposition as _espp_disposition,
@@ -305,7 +306,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
-    contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
+    contribution_limits, elective_deferral_room, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
     ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
     foreign_tax_credit_election, foreign_asset_reporting, state_tax}; every result shows its
     work and cites the data pack.
@@ -436,6 +437,14 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       calendar-day proration — the deterministic home for the one arithmetic step every projection
       needs. ASSUMES LEVEL PAY: annualize each status segment separately, never annualize one-time
       amounts like bonuses/RSU vests)
+    - elective_deferral_room: args {deferrals: [{employer, elective_deferrals, employer_contributions?,
+      after_tax_contributions?}...], year?, age? (at year end), remaining_pay_dates?, per_check_compensation?,
+      plan_increment_percent?, prior_year_fica_wages?, current_employer?} (JP2: the IRC 402(g) room left
+      ACROSS EVERY EMPLOYER — a job-changer's new plan cannot see the old plan's deferrals — with the
+      414(v) catch-up by age (50+; the higher 60-63 amount), the per-check dollars and percent rounded DOWN
+      so the last check never overshoots, any excess with its April 15 correction deadline ("not postponed
+      by extending the filing") and the double tax if it stays, the SECURE 2.0 Roth catch-up wage test
+      (414(v)(7)(A)), and each plan's 415(c) annual-additions room)
     - contribution_limits: args {year?} (every tax-advantaged bucket WITH ITS SCOPING — the real
       answer to "is the 401(k) limit one per person?": 402(g) per PERSON across all employers with
       traditional+Roth sharing it; 415(c) per EMPLOYER PLAN (the mega-backdoor door); IRA per person
@@ -726,6 +735,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _dump(_annualize_ytd(**args))
     if op == "contribution_limits":
         return _stamp_provisional(_dump(_contribution_limits(**args)), args)
+    if op == "elective_deferral_room":
+        return _stamp_provisional(_dump(_elective_deferral_room(**args)), args)
     if op == "ira_contribution_eligibility":
         return _stamp_provisional(_dump(_ira_contribution_eligibility(**args)), args)
     if op == "marginal_dollar_savings":
