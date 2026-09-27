@@ -92,15 +92,15 @@ def test_both_attributions_are_exact_for_every_delta():
     assert any(c.startswith("income.federal_withholding") for c in changed)
 
 
-def test_cross_year_comparison_is_labeled_projection_and_names_the_skew():
+def test_cross_year_comparison_is_labeled_projection_and_names_the_skew(planning_year):
     income = IncomeSnapshot(wages=60_000, federal_withholding=4_000)
     r = compare_scenarios(_nra_profile(), 2025, income, [
         {"name": "TY2025", "filing_status": "single"},
-        {"name": "TY2026 (planning)", "filing_status": "single", "year": 2026},
+        {"name": "planning year", "filing_status": "single", "year": planning_year},
     ])
     assert r.label == "PROJECTION"
     assert any("multiple years" in a for a in r.assumptions)
-    ty26 = next(o for o in r.outcomes if o.year == 2026)
+    ty26 = next(o for o in r.outcomes if o.year == planning_year)
     assert ty26.label == "PROJECTION"
 
 

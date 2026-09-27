@@ -169,13 +169,14 @@ def test_parts_without_inputs_are_omitted():
     assert [p.part for p in r.parts] == ["II"]
 
 
-def test_years_without_the_block_fail_closed_prescriptively():
+def test_years_without_the_block_fail_closed_prescriptively(planning_year, synthetic_provisional_pack):
     # Pre-OBBBA year: nothing to compute, and the error says so.
     with pytest.raises(ValueError, match="2025-2028"):
         schedule_1a_deductions(100_000, "single", 2023, qualified_tips=1_000)
-    # 2026 planning pack: declared deliberately absent until the 2026 form publishes.
+    # A planning pack that declares the block deliberately absent (JT0b: a scratch copy, whatever ships).
     with pytest.raises(ValueError, match="deliberately absent"):
-        schedule_1a_deductions(100_000, "single", 2026, qualified_tips=1_000)
+        schedule_1a_deductions(100_000, "single", planning_year, qualified_tips=1_000,
+                               knowledge_dir=synthetic_provisional_pack(["obbba_schedule_1a"]))
 
 
 def test_negative_and_bogus_inputs_are_rejected():

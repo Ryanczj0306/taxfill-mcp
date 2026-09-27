@@ -227,31 +227,30 @@ def test_eval_i_post_2025_refuses_to_invent():
     assert "irs.gov" in src.retrieval_hint and "2027" in src.retrieval_hint
 
 
-def test_eval_i2_current_year_pack_is_marked_planning_only():
+def test_eval_i2_current_year_pack_is_marked_planning_only(planning_year):
     # The in-year planning pack (2026, authored before the year's forms
     # published) must (1) carry the machine-readable provisional marker so no
     # caller can mistake it for a filing-grade pack, (2) declare which blocks are
     # deliberately absent rather than guessed, and (3) actually be missing those
     # blocks — the "fail closed, never fabricate" rule at pack granularity.
-    pack = load_knowledge("federal", 2026)
+    # JT0b: behaviour over the newest provisional year, never today's contents of one pack.
+    pack = load_knowledge("federal", planning_year)
     marker = pack.provisional  # typed as of 2026-08-07; was an untyped model_extra key
     assert marker and marker.status == "planning_only"
-    absent = marker.blocks_deliberately_absent
-    assert "ptc" in absent and "deadlines" in absent
-    for block in absent:
+    for block in marker.blocks_deliberately_absent:
         assert getattr(pack, block, None) is None and getattr(pack.tax, block, None) is None, (
-            f"2026.yaml declares '{block}' deliberately absent but ships it"
+            f"{planning_year}.yaml declares '{block}' deliberately absent but ships it"
         )
-    # The cited blocks that DO ship are the ones a projection needs.
-    assert pack.tax.standard_deduction.amounts["married_filing_jointly"] == 32200
-    assert pack.tax.employee_social_security.ss_wage_base == 184500
+    # The cited blocks a projection needs DO ship.
+    assert pack.tax.standard_deduction.amounts["married_filing_jointly"] > 0
+    assert pack.tax.employee_social_security.ss_wage_base > 0
 
     # (4) The two-pass verification (DEV_PLAN section 7) must be RECORDED, not just
     # claimed in a YAML comment: an independent 2026-dated irs.gov artifact, which
     # blocks it corroborated, and what is still carried forward. Until 2026-08-07
     # nothing asserted on these keys, so they could have been silently dropped.
-    sp = marker.second_pass
-    assert sp is not None, "a provisional pack must record its independent second source"
+    assert marker.second_passes, "a provisional pack must record its independent second source"
+    sp = marker.second_passes[0]
     assert urlparse(sp.url).hostname.endswith("irs.gov"), sp.url
     assert sp.verified_blocks, "second_pass must name the blocks it corroborated"
     for entry in sp.verified_blocks:
@@ -261,27 +260,28 @@ def test_eval_i2_current_year_pack_is_marked_planning_only():
         assert block is not None, f"second_pass claims '{entry}' but pack.tax has no '{target}'"
         if field:
             assert getattr(block, field, None) is not None, f"second_pass claims '{entry}' but it is unset"
-    assert "tax_table" in marker.still_assumed, (
-        "the one carried-forward structure must stay named in still_assumed until Publication 1040 lands"
-    )
+    # What keeps the marker on is always nameable (JT0a): the absent blocks and any draft-only block.
+    assert marker.removal_blockers() or marker.still_assumed
 
 
-def test_eval_i3_a_planning_pack_can_never_back_a_filed_return():
+def test_eval_i3_a_planning_pack_can_never_back_a_filed_return(planning_year):
     # The other half of i2. A marker nothing reads is a comment: before
     # 2026-08-07 `grep planning_only packages/` returned nothing, so the engine
     # would happily fill and verify a 2026 return off a pack whose own YAML said
     # it was projection-only. Now both gates refuse, and the refusal explains the
     # two honest ways forward instead of just failing.
     pack = load_form_pack("f1040", 2025)  # any filing-grade pack; we retarget its year
-    planning_pack = pack.model_copy(update={"tax_year": 2026})
+    planning_pack = pack.model_copy(update={"tax_year": planning_year})
+    marker = load_knowledge("federal", planning_year).provisional
 
     with pytest.raises(ProvisionalPackError) as exc:
         fill_form(planning_pack, {}, "/nonexistent.pdf", "/tmp/never-written.pdf")
     msg = str(exc.value)
     assert "planning_only" in msg and "must not back a filed return" in msg
     assert "PROJECTIONS only" in msg  # the supported use is named, not just refused
-    assert "tax_table" in msg  # what is still assumed
-    assert "ptc" in msg  # which blocks fail closed
+    if marker.still_assumed:
+        assert marker.still_assumed in msg  # what is still assumed
+    assert all(b in msg for b in marker.blocks_deliberately_absent)  # which blocks fail closed
 
     # Verify is the mandatory gate before printing and signing, so it refuses too —
     # a green verify over projection-grade numbers is the false assurance to avoid.
@@ -294,7 +294,7 @@ def test_eval_i3_a_planning_pack_can_never_back_a_filed_return():
         fill_form(pack, {}, "/nonexistent.pdf", "/tmp/never-written.pdf")
 
 
-def test_eval_i4_the_provisional_guard_covers_every_surface_not_just_the_obvious_ones():
+def test_eval_i4_the_provisional_guard_covers_every_surface_not_just_the_obvious_ones(planning_year):
     # Regression for two holes found the same day the guard shipped, both by the
     # same mistake: guarding the surface you thought of instead of enumerating them.
     #
@@ -307,7 +307,7 @@ def test_eval_i4_the_provisional_guard_covers_every_surface_not_just_the_obvious
     #      point value, and not one word in `assumptions` about the pack being
     #      planning-only. It is the surface an agent leads with.
     pack = load_form_pack("f1040", 2025)
-    planning_pack = pack.model_copy(update={"tax_year": 2026})
+    planning_pack = pack.model_copy(update={"tax_year": planning_year})
 
     # (1) BOTH verify gates must refuse, not just the single-form one.
     with pytest.raises(ProvisionalPackError):
@@ -320,7 +320,7 @@ def test_eval_i4_the_provisional_guard_covers_every_surface_not_just_the_obvious
     profile = Profile(household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")))
     income = IncomeSnapshot(wages=150_000, federal_withholding=25_000)
 
-    projection = estimate_refund(profile, 2026, income)
+    projection = estimate_refund(profile, planning_year, income)
     assert projection.provisional, "a planning-year estimate must carry the provisional marker"
     assert projection.provisional["status"] == "planning_only"
     assert projection.headline.startswith("PROJECTION"), projection.headline
@@ -338,7 +338,7 @@ def test_eval_i4_the_provisional_guard_covers_every_surface_not_just_the_obvious
     assert projection.label == "PROJECTION"
 
 
-def test_eval_i5_a_planning_year_names_every_credit_it_could_not_price():
+def test_eval_i5_a_planning_year_names_every_credit_it_could_not_price(planning_year, synthetic_provisional_pack):
     # Regression for a silent $2,126 swing. Same household — head of household,
     # one SSN-holding child, $60k wages — estimated on 2025 (filing-grade) and
     # 2026 (planning-only): the 2025 composition carried a -$2,200 child tax
@@ -355,7 +355,8 @@ def test_eval_i5_a_planning_year_names_every_credit_it_could_not_price():
     )
     income = IncomeSnapshot(wages=60000, federal_withholding=4000)
 
-    projection = estimate_refund(profile, 2026, income)
+    # JT0b: a planning pack WITHOUT the credits block (stripped from a scratch copy, whatever ships today).
+    projection = estimate_refund(profile, planning_year, income, knowledge_dir=synthetic_provisional_pack(["credits"]))
     dropped = [a for a in projection.assumptions if a.startswith("NOT ESTIMATED")]
     assert dropped, "a dependent whose credits priced at $0 must be named, never silent"
     assert any("child tax credit" in a for a in dropped)

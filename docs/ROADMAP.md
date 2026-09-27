@@ -1776,7 +1776,8 @@ not wait for any of this.
   - **Acceptance.**
     - A dummy draft pack passes the golden test in rehearsal mode; MCP fill_form still refuses 2026.
     - The invariant fails on a draft pack in a non-provisional year.
-- [ ] **JT0b — Planning-year fixtures** (M; deps JT0a) [TY26-02]
+- [x] **JT0b — Planning-year fixtures — DONE 2026-09-27** (M; deps JT0a) [TY26-02]
+  - *As built:* a root `conftest.py` with `planning_year` (the newest provisional federal year; skips when none) and `synthetic_provisional_pack` (`make(strip)` → a tmp knowledge copy whose planning pack has the named blocks removed and declared absent). Rewritten to behaviour: evals i2 (every declared-absent block is absent; the blocks a projection needs ship; second_passes resolve; removal_blockers names what keeps the marker on), i3 (the refusal names every absent block and what is still assumed), i4, i5 (a stripped `credits` block names the CTC NOT ESTIMATED); test_estimate_ledger's missing-blocks twin; test_schedule_1a's deliberately-absent refusal (a stripped `obbba_schedule_1a`); test_compare_scenarios' cross-year label. test_projection_ops' 2023 FICA refusal is a past-year pin (the 2023 pack predates the Medicare fields), not a planning-year one, and stays.
   - A `planning_year` conftest fixture returns the newest provisional federal year and skips when there is none.
   - A `synthetic_provisional_pack` fixture makes a tmp copy with named blocks stripped.
   - Rewrite the absent-block assertions to test behaviour, not today's contents of 2026.yaml: evals/test_scenarios.py:237, :261, :273-281, :307, :340-360; test_estimate_ledger.py:176-189; test_schedule_1a.py:174-176; test_compare_scenarios.py:84-89; test_projection_ops.py:197.

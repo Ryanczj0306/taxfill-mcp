@@ -172,14 +172,15 @@ def test_the_true_two_return_mfs_ledger_reconciles():
     assert sum(dl.delta for dl in est.comparison.delta_lines) == est.comparison.delta
 
 
-def test_missing_blocks_is_the_structured_twin_of_the_prose():
+def test_missing_blocks_is_the_structured_twin_of_the_prose(planning_year, synthetic_provisional_pack):
     # The 2026 family case from Stage 0: the dropped CTC must appear BOTH as the
     # NOT ESTIMATED assumption (for the human) and as a MissingBlock (for H4/H7).
     kid = Dependent(name="Kid", dob=date(2019, 5, 1), has_ssn=True, relationship="child", provenance=US)
     est = estimate_refund(
         _profile("head_of_household", "unmarried", [kid]),
-        2026,
+        planning_year,
         IncomeSnapshot(wages=60000, federal_withholding=4000),
+        knowledge_dir=synthetic_provisional_pack(["credits"]),   # JT0b: the block absent, whatever ships
     )
     blocks = {mb.block: mb for mb in est.missing_blocks}
     assert "credits.child_tax_credit" in blocks
