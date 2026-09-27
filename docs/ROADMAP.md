@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,808 tests** — offline 5,428 + live-.gov 380; derived
+Done and on `main` (**5,821 tests** — offline 5,441 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -42,7 +42,7 @@ OTR re-issued it). Since Phase J JT0c (2026-09-27) both sit behind an expiring a
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
   compare_scenarios,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
-  states). The `calc` tool carries **34** deterministic ops (`packages/mcp-server/tests/test_skills_sync.py` pins the count; Phase J adds 8 → 40 without adding an MCP tool): the 25 of Phase H (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax) plus Phase I's ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election and foreign_asset_reporting.
+  states). The `calc` tool carries **35** deterministic ops (`packages/mcp-server/tests/test_skills_sync.py` pins the count; Phase J adds 8 → 40 without adding an MCP tool): the 25 of Phase H (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax) plus Phase I's ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election and foreign_asset_reporting.
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, and — since
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance — and, since Phases I2/I3/I5, 1099-SA, 5498-SA, 3921, 3922, 1099-K, 1099-Q, W-2G, 1095-B, 1095-C, 5498, K-1 (1120-S) and K-1 (1041): **26 kinds** per `list_document_kinds()`) and the resumable
@@ -1688,7 +1688,18 @@ not wait for any of this.
     - The late path carries the §301.9100-2 header.
     - Due dates: TY2025 from the pack (2026-04-15 / 2026-10-15); TY2026 computed (2027-04-15, a Thursday) and labeled.
     - Op count +1.
-- [ ] **JR2b — The recharacterization op** (M–L; deps JR2a) [RC-02 + TY26-27 + LD-18 + RC-12] — pitfall *recharacterization*
+- [x] **JR2b — The recharacterization op — DONE 2026-09-27** (M–L; deps JR2a) [RC-02 + TY26-27 + LD-18 + RC-12] — pitfall *recharacterization*
+  - *As built:* `calc.ira_recharacterization` (op 35; P-021), with a signature designed from this spec (the review's §B was not kept): `direction, amount, contribution_year, contribution_date, contributed_total?, transfer_date?, source_kind?, deducted?`, the NIA inputs, `extension_filed?, return_filed_date?, due_date_override?`, the eligibility facts, `other_*_contributions?, elect_nondeductible?, roth_ira_dec31_value?, readings?, then_convert?`.
+    - **Refusals:** a conversion, a rollover (A-4, with its SIMPLE exception quoted), SEP/SIMPLE employer money (A-5), an overlap with the deducted part ((B)(ii)), an amount above the contribution, a contribution date outside Jan 1 – the unextended due date (Pub 590-A), and a transfer dated before the contribution.
+    - **Deadline status** comes from `_return_due_date`: `open` (no transfer date), `timely` (by the due date, or by the extended date with `extension_filed`), `late_301_9100_2` (no extension, a return filed by the due date: an amended return with the header) or `too_late`. With neither fact known, a transfer after the due date is refused with the question.
+    - **Code N vs R** follows the transfer year (i1099r 2026 wording, box 7a from 2026), and with it Form 1040 line 4a vs the statement only.
+    - **Target side:** Roth → traditional checks IRC 4973(b) (the combined per-person limit, without 219(g)); traditional → Roth checks Roth eligibility.
+    - **Deduction** via ira_contribution_eligibility; `elect_nondeductible` quotes 408(o)(2)(B)(ii).
+    - **Form 8606:** `line_1_add` counts contribution dollars only (A-3); `line_4_add` applies when the original contribution was dated Jan 1 – Apr 15 of year+1; `line_6_adjustment` is ±(amount + NIA) after year end, labeled a CHOICE (i8606 Line 6).
+    - **Documents and notice:** the i8606 statement (via statements.py); four expected documents (the first trustee's 5498 box 1/10, the transfer-year 1099-R boxes 1 and 2a, and the second trustee's 5498 box 4) with the ±$1 reconciliation; the A-6(a) notice, filled.
+    - **Alternatives:** `return_408d4` (additional tax 0, quoting 72(t)(2)(A)(ix), i5329 exception 21 AND the i8606 sentence it overrules) and `leave_in_place` (the capped 4973 excise).
+    - **then_convert** runs roth_conversion with line_1_add as this-year basis (or as carryforward when the conversion is in a later year, labeled).
+    - **Tests:** test_ira_recharacterization.py (13, including both i8606 worked examples reproduced to the dollar).
   - **Why.** `ira_contribution_eligibility` (FIELD_NOTES N-11) detects an over-the-phase-out Roth contribution, but nothing fixes it. Recharacterization is the fix, and no op models it.
   - **Build** `calc.ira_recharacterization`; the full signature is in the review (§B).
     - **Refusals:**

@@ -4487,6 +4487,553 @@ def _pack_exists(year: int, knowledge_dir: str | Path | None) -> bool:
     return True
 
 
+# ── the recharacterization op (JR2b) ────────────────────────────────────────
+# Every quote read 2026-09-27: IRC 408A(d)(6)-(7), 408(o)(2)(B)(ii), 72(t)(2)(A)(ix) and 4973(b)
+# (uscode.house.gov); Treas. Reg. 1.408A-5 Q&A-1, -3 to -6 (eCFR); the Instructions for Form 8606 (2025),
+# Recharacterizations, Return of IRA Contributions and Line 6; the Instructions for Forms 1099-R and 5498
+# (2026), IRA recharacterizations and the Form 5498 Recharacterizations paragraph; the Instructions for
+# Form 5329 (2025), exception 21; Pub 590-A, Contributions must be made by due date.
+_RECHAR_REFUSALS = {
+    "conversion": (
+        "IRC 408A(d)(6)(B)(iii): \"Subparagraph (A) shall not apply in the case of a qualified rollover "
+        "contribution to which subsection (d)(3) applies (including by reason of subparagraph (C) thereof).\" The "
+        "Instructions for Form 8606: \"A conversion of a traditional IRA to a Roth IRA, and a rollover from any "
+        "other eligible retirement plan to a Roth IRA, made in tax years beginning after December 31, 2017, cannot "
+        "be recharacterized as having been made to a traditional IRA.\" A conversion is final: price it BEFORE "
+        "converting (calc op roth_conversion)"
+    ),
+    "rollover": (
+        "Treas. Reg. 1.408A-5 A-4: \"If an amount is contributed to the FIRST IRA in a tax-free transfer, the "
+        "amount cannot be recharacterized as a contribution to the SECOND IRA\" (its one exception: \"if an amount "
+        "is erroneously rolled over or transferred from a traditional IRA to a SIMPLE IRA, the contribution can "
+        "subsequently be recharacterized as a contribution to another traditional IRA\")"
+    ),
+    "employer": (
+        "Treas. Reg. 1.408A-5 A-5: \"Employer contributions (including elective deferrals) under a SIMPLE IRA Plan "
+        "or a SEP cannot be recharacterized as contributions to another IRA\""
+    ),
+}
+_RECHAR_DEDUCTED = (
+    "IRC 408A(d)(6)(B)(ii): \"Subparagraph (A) shall apply to the transfer of any contribution only to the extent "
+    "no deduction was allowed with respect to the contribution to the transferor plan.\""
+)
+_RECHAR_A3 = (
+    "Treas. Reg. 1.408A-5 A-3: the contribution \"is treated as having been originally contributed to the SECOND "
+    "IRA on the same date and (in the case of a regular contribution) for the same taxable year\", and \"any net "
+    "income transferred with the recharacterized contribution is treated as earned in the SECOND IRA, and not the "
+    "FIRST IRA\""
+)
+_RECHAR_DEADLINE = (
+    "Treas. Reg. 1.408A-5 A-6(b): \"The election and the trustee-to-trustee transfer must occur on or before the "
+    "due date (including extensions) for filing the individual's Federal income tax return for the taxable year "
+    "for which the recharacterized contribution was made to the FIRST IRA, and the election cannot be revoked "
+    "after the transfer.\" The Instructions for Form 8606: \"if you timely filed your return without making the "
+    "transfer, you can make the transfer within 6 months of the due date of your return, excluding extensions. If "
+    "necessary, file an amended return reflecting the transfer\" and \"Enter 'Filed pursuant to section "
+    "301.9100-2' on the amended return.\""
+)
+_RECHAR_REPORTING = (
+    "The Instructions for Form 8606 (2025): \"If the recharacterization occurred in 2025, include the amount "
+    "transferred from the traditional IRA on 2025 Form 1040, 1040-SR, or 1040-NR, line 4a. If the "
+    "recharacterization occurred in 2026, report the amount transferred only in the attached statement, and not on "
+    "your 2025 or 2026 tax return.\" (the same rule for a Roth IRA transfer) — the year of the TRANSFER decides"
+)
+_RECHAR_1099R = (
+    "The Instructions for Forms 1099-R and 5498 (2026): the first IRA's trustee \"must report the "
+    "recharacterization as a distribution on Form 1099-R\": \"Enter the fair market value (FMV) of the amount "
+    "recharacterized in box 1, -0- (zero) in box 2a, and code R in box 7a if reporting a recharacterization of a "
+    "prior-year (2025) contribution or code N if reporting a recharacterization of a contribution in the same year "
+    "(2026).\" For Form 5498: \"The trustee of the second IRA must report the amount received (FMV) in box 4\"; "
+    "\"All recharacterized contributions received by an IRA in the same year must be totaled and reported on one "
+    "Form 5498 in box 4.\""
+)
+_RECHAR_A6A = (
+    "the type and amount of the contribution to the FIRST IRA that is to be recharacterized",
+    "the date on which the contribution was made to the FIRST IRA and the year for which it was made",
+    "a direction to the trustee of the FIRST IRA to transfer, in a trustee-to-trustee transfer, the amount of the "
+    "contribution and net income allocable to the contribution to the trustee of the SECOND IRA",
+    "the name of the trustee of the FIRST IRA and the trustee of the SECOND IRA and any additional information "
+    "needed to make the transfer",
+)
+_RECHAR_408D4_NO_10PCT = (
+    "IRC 72(t)(2)(A)(ix): the 10% additional tax does not apply to a distribution \"attributable to withdrawal of "
+    "net income attributable to a contribution which is distributed pursuant to section 408(d)(4)\"; the "
+    "Instructions for Form 5329, exception 21: \"The 10% additional tax on early distributions does not apply to an "
+    "IRA distribution made pursuant to the rules of section 408(d)(4), which consists of a contribution for that "
+    "year and any earnings allocable to the contribution, as long as the distribution is made on or before the due "
+    "date (including extensions) of the income tax return.\" The Instructions for Form 8606 (2025) still say \"if "
+    "you were under age 59½ at the time of a distribution with related earnings, you are generally subject to the "
+    "additional 10% tax on early distributions\" — the statute controls (P-021)"
+)
+_RECHAR_ELECT_NONDEDUCTIBLE = (
+    "IRC 408(o)(2)(B)(ii): \"If a taxpayer elects not to deduct an amount which (without regard to this clause) is "
+    "allowable as a deduction under section 219 for any taxable year, the nondeductible limit for such taxable year "
+    "shall be increased by such amount.\""
+)
+_RECHAR_LINE6 = (
+    "the Instructions for Form 8606 (2025), Line 6: \"if you recharacterized any amounts originally contributed, "
+    "enter on line 6 the total value, taking into account all recharacterizations of those amounts, including "
+    "recharacterizations made after December 31, 2025\""
+)
+_RECHAR_TIMING = (
+    "Pub 590-A: \"Contributions can be made to your traditional IRA for a year at any time during the year or by "
+    "the due date for filing your return for that year, not including extensions.\""
+)
+_RECHAR_CITATIONS = (
+    ("IRC 408A(d)(6)-(7)", "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section408A&num=0&edition=prelim"),
+    ("Treas. Reg. 1.408A-5, Q&A-1 to -6", "https://www.ecfr.gov/current/title-26/section-1.408A-5"),
+    ("Instructions for Form 8606 (2025), Recharacterizations", "https://www.irs.gov/instructions/i8606"),
+    ("Instructions for Forms 1099-R and 5498 (2026), IRA recharacterizations", "https://www.irs.gov/instructions/i1099r"),
+    ("IRC 72(t)(2)(A)(ix)", "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section72&num=0&edition=prelim"),
+    ("Instructions for Form 5329 (2025), exception 21", "https://www.irs.gov/instructions/i5329"),
+)
+_RECHAR_DIRECTIONS = {"roth_to_traditional": ("Roth", "traditional"), "traditional_to_roth": ("traditional", "Roth")}
+_RECHAR_SOURCES = ("regular", "conversion", "rollover", "sep", "simple")
+_RECHAR_STATUS_WORDS = {"timely": "timely", "late_301_9100_2": "late, inside the section 301.9100-2 window",
+                        "too_late": "too late"}
+_RECHAR_READING_BOXES = {("1099-R", "1"), ("1099-R", "2a"), ("5498", "1"), ("5498", "4"), ("5498", "10")}
+
+
+class IraRecharacterizationResult(BaseModel):
+    """Result of :func:`ira_recharacterization` (JR2b)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    direction: Literal["roth_to_traditional", "traditional_to_roth"]
+    contribution_year: int
+    amount: Decimal = Field(description="The contribution dollars recharacterized (the net income is separate).")
+    net_income: IraNetIncomeResult = Field(description="Treas. Reg. 1.408A-5 A-2(c), delegated to ira_net_income_attributable.")
+    total_to_transfer: Decimal = Field(description="amount + net income: what the first trustee moves.")
+    due_date: date
+    extended_due_date: date
+    due_date_source: str
+    deadline_status: Literal["open", "timely", "late_301_9100_2", "too_late"] = Field(
+        description="open: no transfer date yet; late_301_9100_2: an amended return headed 'Filed pursuant to "
+                    "section 301.9100-2'; too_late: the recharacterization is no longer available."
+    )
+    amended_return_required: bool
+    form_1099r_code: Literal["N", "R"] | None = Field(description="Box 7 (7a from 2026) of the transfer-year 1099-R.")
+    line_4a_reporting: Literal["line_4a", "statement_only"] | None
+    target_check: dict[str, Any] = Field(description="The second IRA's side: 4973(b) excess or Roth eligibility.")
+    deduction: dict[str, Any] | None = Field(description="Roth -> traditional: the deduction of the moved contribution.")
+    form_8606: dict[str, Any] = Field(description="line_1_add, line_4_add, line_6_adjustment (a CHOICE) and notes.")
+    statement: str | None = Field(description="The i8606 statement (None until the transfer date is known).")
+    expected_documents: list[dict[str, Any]]
+    reconciliation: list[dict[str, Any]] = Field(description="Each reading passed in vs the expected box, +/- $1.")
+    trustee_notification: list[str] = Field(description="Treas. Reg. 1.408A-5 A-6(a), filled with this case's facts.")
+    alternatives: dict[str, Any] = Field(description="return_408d4 and leave_in_place, priced where the inputs allow.")
+    then_convert: RothConversionResult | None
+    choices: list[str] = Field(description="Interpretive choices for the user to confirm.")
+    inputs: dict[str, Any]
+    work: str
+    citations: list[Citation]
+
+
+def _rechar_date(value: date | str | None, name: str) -> date | None:
+    if value is None or isinstance(value, date):
+        return value
+    try:
+        return date.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be an ISO date (YYYY-MM-DD), got {value!r}") from exc
+
+
+def ira_recharacterization(
+    direction: str,
+    amount: int | float | Decimal | str,
+    contribution_year: int,
+    contribution_date: date | str,
+    contributed_total: int | float | Decimal | str | None = None,
+    transfer_date: date | str | None = None,
+    source_kind: str = "regular",
+    deducted: int | float | Decimal | str = 0,
+    opening_fmv: int | float | Decimal | str = 0,
+    contributions_during: int | float | Decimal | str | None = None,
+    closing_fmv: int | float | Decimal | str | None = None,
+    distributions_during: int | float | Decimal | str = 0,
+    whole_account: bool = False,
+    extension_filed: bool | None = None,
+    return_filed_date: date | str | None = None,
+    due_date_override: date | str | None = None,
+    magi: int | float | Decimal | str | None = None,
+    filing_status: str = "single",
+    age_50_plus: bool = False,
+    covered_by_employer_plan: bool | None = None,
+    spouse_covered_by_employer_plan: bool | None = None,
+    mfs_lived_apart_all_year: bool = False,
+    compensation: int | float | Decimal | str | None = None,
+    other_traditional_contributions: int | float | Decimal | str = 0,
+    other_roth_contributions: int | float | Decimal | str = 0,
+    elect_nondeductible: bool = False,
+    roth_ira_dec31_value: int | float | Decimal | str | None = None,
+    readings: Sequence[Mapping[str, Any]] | None = None,
+    then_convert: Mapping[str, Any] | None = None,
+    knowledge_dir: str | Path | None = None,
+) -> IraRecharacterizationResult:
+    """Recharacterize a regular IRA contribution — move it, with its net income, trustee to trustee to the
+    other type of IRA and treat it as made there from the start (IRC 408A(d)(6); Treas. Reg. 1.408A-5) — JR2b.
+
+    The fix for the error ``ira_contribution_eligibility`` detects: a Roth contribution over the MAGI
+    phase-out moved to a traditional IRA (or a traditional one moved to a Roth IRA). ``direction`` is
+    'roth_to_traditional' or 'traditional_to_roth'; ``amount`` is the contribution dollars moved (at most
+    ``contributed_total``, the whole contribution to the first IRA for ``contribution_year``), made on
+    ``contribution_date``. It refuses what cannot be recharacterized: a conversion or plan rollover to a Roth
+    IRA (408A(d)(6)(B)(iii)), a tax-free transfer or rollover (A-4), SEP/SIMPLE employer money (A-5) and a
+    deducted amount (408A(d)(6)(B)(ii)).
+
+    It returns the net income (the NIA inputs, via ira_net_income_attributable), the deadline status for
+    ``transfer_date`` against the contribution year's due date, the 1099-R code (N when the transfer is in the
+    contribution year, R when it is later) and with it the Form 1040 IRA-distribution line vs statement-only, the
+    second IRA's limit check, the deduction of a Roth -> traditional contribution (``elect_nondeductible``:
+    408(o)(2)(B)(ii)), the Form 8606 inputs, the i8606 statement, the expected documents with a +/- $1
+    reconciliation of ``readings`` ([{form: '1099-R'|'5498', box, amount}]), the A-6(a) trustee notice, the two
+    alternatives (a 408(d)(4) return — no 10% additional tax on its earnings — and leaving it in place) and,
+    with ``then_convert`` ({date, amount, taxable_income_before, magi_before, dec31_total_value, ...}), the
+    later conversion priced by roth_conversion with the new basis.
+    """
+    if direction not in _RECHAR_DIRECTIONS:
+        raise ValueError("direction must be 'roth_to_traditional' or 'traditional_to_roth'")
+    if source_kind not in _RECHAR_SOURCES:
+        raise ValueError(f"source_kind must be one of {list(_RECHAR_SOURCES)} — 'regular' for an annual contribution")
+    if source_kind == "conversion":
+        raise ValueError(f"a conversion cannot be recharacterized — {_RECHAR_REFUSALS['conversion']}")
+    if source_kind == "rollover":
+        raise ValueError(f"a rollover or tax-free transfer cannot be recharacterized — {_RECHAR_REFUSALS['rollover']}")
+    if source_kind in ("sep", "simple"):
+        raise ValueError(f"{source_kind.upper()} employer money cannot be recharacterized — {_RECHAR_REFUSALS['employer']}")
+    first, second = _RECHAR_DIRECTIONS[direction]
+    amt = _cents(_to_decimal(amount, "amount"))
+    if amt <= 0:
+        raise ValueError("amount must be > 0: the contribution dollars being recharacterized")
+    total_contrib = _cents(_to_decimal(contributed_total, "contributed_total")) if contributed_total is not None else amt
+    if amt > total_contrib:
+        raise ValueError(
+            f"amount {_money(amt)} is more than the {_money(total_contrib)} contributed to the {first} IRA — only "
+            f"a contribution (or part of one) can be recharacterized (Treas. Reg. 1.408A-5 A-1(a))")
+    ded = _cents(_to_decimal(deducted, "deducted"))
+    if ded < 0 or ded > total_contrib:
+        raise ValueError("deducted must be between 0 and contributed_total")
+    if direction == "roth_to_traditional" and ded:
+        raise ValueError("a Roth IRA contribution is never deducted — deducted applies to a traditional contribution")
+    if amt > total_contrib - ded:
+        raise ValueError(
+            f"{_money(amt)} would move {_money(amt - (total_contrib - ded))} of the {_money(ded)} already deducted — "
+            f"{_RECHAR_DEDUCTED} Recharacterize at most the {_money(total_contrib - ded)} not deducted")
+    c_date = _rechar_date(contribution_date, "contribution_date")
+    if c_date is None:
+        raise ValueError("contribution_date is needed: the day the contribution reached the first IRA")
+    t_date = _rechar_date(transfer_date, "transfer_date")
+    filed = _rechar_date(return_filed_date, "return_filed_date")
+    due, extended, due_source, due_assumed = _return_due_date(contribution_year, knowledge_dir, due_date_override)
+    unextended = due if due_date_override is None else _roll_7503(date(contribution_year + 1, 4, 15))
+    if not date(contribution_year, 1, 1) <= c_date <= max(due, unextended):
+        raise ValueError(
+            f"a contribution for {contribution_year} is made between January 1, {contribution_year} and the due date "
+            f"{_rechar_day(due)} — {_RECHAR_TIMING} {c_date.isoformat()} is outside that window")
+    if t_date is not None and t_date < c_date:
+        raise ValueError("transfer_date is before contribution_date — the trustee can move only a contribution already made")
+
+    # The net income (A-2(c)), via JR2a.
+    nia = ira_net_income_attributable(
+        amount=amt, purpose="recharacterization", opening_fmv=opening_fmv, contributions_during=contributions_during,
+        closing_fmv=closing_fmv, distributions_during=distributions_during, whole_account=whole_account)
+    to_move = nia.total_to_move
+    choices = [
+        "the net income is the exact division of Treas. Reg. 1.408A-5 A-2(c), rounded to cents; Pub 590-A's "
+        f"worksheet ratio rounded to three places gives {_money(nia.net_income_three_place)} "
+        f"({_money(nia.three_place_difference)} different) — the trustee's own computation is what moves",
+    ]
+
+    # The deadline (A-6(b)) — read "including extensions" as an extension actually filed; without one the
+    # October date is the 301.9100-2 window, which needs a timely return and an amended one.
+    work = [
+        f"Recharacterize {_money(amt)} of a {_money(total_contrib)} {first} IRA contribution for {contribution_year} "
+        f"(made {c_date.isoformat()}) to a {second} IRA. {_RECHAR_A3}.",
+        nia.work,
+    ]
+    status: str
+    amended = False
+    if t_date is None:
+        status = "open"
+        work.append(f"Deadline: {_rechar_day(due)} ({due_source}); {_rechar_day(extended)} with a Form 4868 extension, "
+                    f"or within 6 months of {_rechar_day(due)} under 301.9100-2 after a timely return. {_RECHAR_DEADLINE}")
+    elif t_date <= due:
+        status = "timely"
+        amended = filed is not None and filed < t_date
+    elif t_date <= extended:
+        if extension_filed is None and filed is None:
+            raise ValueError(
+                f"the transfer ({t_date.isoformat()}) is after the {_rechar_day(due)} due date: pass extension_filed "
+                f"(a Form 4868 extension was filed) or return_filed_date (a return filed by the due date still has "
+                f"the 301.9100-2 window) — {_RECHAR_DEADLINE}")
+        if extension_filed:
+            status = "timely"
+            amended = filed is not None and filed < t_date
+        elif filed is not None and filed <= due:
+            status, amended = "late_301_9100_2", True
+        else:
+            status = "too_late"
+        choices.append(
+            "\"due date (including extensions)\" is read as the extended date only when a Form 4868 extension was "
+            f"actually filed; without one, the {_rechar_day(extended)} date is reached only through 301.9100-2 — a "
+            "timely return and an amended one")
+    else:
+        status = "too_late"
+    if status == "too_late":
+        work.append("TOO LATE: the recharacterization — and a 408(d)(4) return — needed the transfer by the due date "
+                    "(including an extension actually filed) or, after a timely return, within 6 months of it. What is "
+                    "left: correct an excess by a later withdrawal, paying IRC 4973's 6% for each year it stayed in.")
+    if status != "open":
+        work.append(f"Deadline: {_rechar_day(due)} ({due_source}), {_rechar_day(extended)} extended; the transfer on "
+                    f"{t_date.isoformat()} is {_RECHAR_STATUS_WORDS[status]}"
+                    + (" — amend the return, headed \"Filed pursuant to section 301.9100-2\"" if status == "late_301_9100_2"
+                       else " — file an amended return reflecting it" if amended else "") + f". {_RECHAR_DEADLINE}")
+    if due_assumed:
+        work.append(f"The due date is ASSUMED ({due_source}).")
+
+    # Code N vs R, by the year of the TRANSFER; that also decides line 4a vs statement-only.
+    code = line4a = None
+    if t_date is not None and status != "too_late":
+        same_year = t_date.year == contribution_year
+        code, line4a = ("N", "line_4a") if same_year else ("R", "statement_only")
+        box7 = "7a" if t_date.year >= 2026 else "7"
+        work.append(
+            f"Reporting: the transfer is in {t_date.year}, so the first trustee's {t_date.year} Form 1099-R shows "
+            f"{_money(to_move)} in box 1, -0- in box 2a and code {code} in box {box7}; "
+            + (f"include {_money(to_move)} on the {contribution_year} Form 1040 line "
+               f"{form_line(contribution_year, 'f1040.ira_distributions', base_dir=knowledge_dir)} and attach the "
+               "statement."
+               if same_year else f"report it ONLY in the statement attached to the {contribution_year} return — not on "
+               f"the {contribution_year} or {t_date.year} Form 1040.")
+            + f" {_RECHAR_REPORTING}. {_RECHAR_1099R}")
+    elif t_date is None:
+        work.append(f"Reporting: transferred by December 31, {contribution_year}, it is code N and Form 1040 line "
+                    f"{form_line(contribution_year, 'f1040.ira_distributions', base_dir=knowledge_dir)} "
+                    f"of the {contribution_year} return; later, code R and the attached statement only. {_RECHAR_REPORTING}.")
+
+    # The second IRA's side.
+    other_trad = _cents(_to_decimal(other_traditional_contributions, "other_traditional_contributions"))
+    other_roth = _cents(_to_decimal(other_roth_contributions, "other_roth_contributions"))
+    magi_d = _to_decimal(magi, "magi") if magi is not None else None
+    elig_args = dict(filing_status=filing_status, year=contribution_year, age_50_plus=age_50_plus,
+                     mfs_lived_apart_all_year=mfs_lived_apart_all_year, knowledge_dir=knowledge_dir)
+    params = _require_contribution_limits(_load_federal(contribution_year, knowledge_dir), contribution_year)
+    full_limit = params.ira.limit + (params.ira.catch_up_50 or 0 if age_50_plus else 0)
+    comp = _to_decimal(compensation, "compensation") if compensation is not None else None
+    cap = Decimal(full_limit) if comp is None else min(Decimal(full_limit), comp)
+    total_ira = total_contrib + other_trad + other_roth
+    target: dict[str, Any] = {"limit": cap, "total_ira_contributions": total_ira,
+                              "combined_excess_after": max(Decimal(0), total_ira - cap)}
+    deduction = None
+    remaining_first = total_contrib - amt
+    if direction == "roth_to_traditional":
+        target["test"] = ("IRC 4973(b): the traditional contributions over the section 219 amount, figured without "
+                          "219(g), plus the Roth contributions, against the one per-person IRA limit")
+        if target["combined_excess_after"]:
+            work.append(f"Target check: {_money(total_ira)} of IRA contributions for {contribution_year} is still "
+                        f"{_money(target['combined_excess_after'])} over the {_money(cap)} limit after the move — an "
+                        f"excess recharacterization cannot cure (the 6% excise of IRC 4973 reaches it).")
+        if remaining_first > 0 and magi_d is not None:
+            left = ira_contribution_eligibility(magi=magi_d, ira_type="roth", contributed=remaining_first + other_roth,
+                                                roth_ira_dec31_value=roth_ira_dec31_value, **elig_args)
+            target["remaining_roth"] = {"allowed": left.allowed, "excess": left.excess}
+        # The deduction of the contribution now treated as traditional.
+        if elect_nondeductible:
+            allowed = 0
+            ded_note = f"elected nondeductible — {_RECHAR_ELECT_NONDEDUCTIBLE}"
+        else:
+            if magi_d is None or covered_by_employer_plan is None:
+                raise ValueError(
+                    "roth_to_traditional needs the deduction facts — magi and covered_by_employer_plan (on a joint "
+                    "return spouse_covered_by_employer_plan too) — or elect_nondeductible=True to treat the moved "
+                    f"contribution as nondeductible basis ({_RECHAR_ELECT_NONDEDUCTIBLE})")
+            d_elig = ira_contribution_eligibility(
+                magi=magi_d, ira_type="traditional_deduction", contributed=amt + other_trad,
+                covered_by_employer_plan=covered_by_employer_plan,
+                spouse_covered_by_employer_plan=spouse_covered_by_employer_plan, **elig_args)
+            allowed = d_elig.allowed
+            ded_note = d_elig.work
+        room = max(Decimal(0), Decimal(allowed) - other_trad)
+        deductible_here = min(amt, room)
+        deduction = {"deductible": deductible_here, "nondeductible": amt - deductible_here,
+                     "elected_nondeductible": elect_nondeductible, "work": ded_note}
+        if other_trad and not elect_nondeductible:
+            choices.append(
+                f"the {_money(other_trad)} of other traditional contributions is taken as deducted first, so the moved "
+                "contribution gets the deduction room left — the Instructions for Form 8606 let contributions be "
+                "ordered either way (Line 4)")
+        line_1 = amt - deductible_here
+        work.append(f"Deduction: {_money(deductible_here)} of the moved {_money(amt)} is deductible; {_money(line_1)} is "
+                    f"nondeductible basis (Form 8606 line 1). The net income {_money(nia.net_income)} is never basis.")
+    else:
+        if magi_d is None:
+            raise ValueError("traditional_to_roth needs magi: the Roth IRA's MAGI limit decides whether the moved "
+                             "contribution is allowed there")
+        r_elig = ira_contribution_eligibility(magi=magi_d, ira_type="roth", contributed=amt + other_roth,
+                                              roth_ira_dec31_value=roth_ira_dec31_value, **elig_args)
+        target.update(test="Roth IRA eligibility (ira_contribution_eligibility) for the moved contribution",
+                      roth_allowed=r_elig.allowed, roth_excess=r_elig.excess, excise_per_year=r_elig.excise_per_year)
+        if r_elig.excess:
+            work.append(f"Target check: the Roth IRA allows {_money(Decimal(r_elig.allowed))}; {_money(Decimal(r_elig.excess))} "
+                        f"of the move would be an EXCESS Roth contribution (6% a year). {r_elig.work}")
+        line_1 = Decimal(0)
+
+    # Form 8606 inputs.
+    jan_apr = date(contribution_year + 1, 1, 1) <= c_date
+    line_4 = line_1 if (direction == "roth_to_traditional" and jan_apr) else Decimal(0)
+    after_year_end = t_date is not None and t_date.year > contribution_year
+    line_6 = Decimal(0)
+    if after_year_end:
+        line_6 = to_move if direction == "roth_to_traditional" else -to_move
+        choices.append(
+            f"Form 8606 line 6 for {contribution_year} moves by {_money(line_6)} — the amount transferred, as the value "
+            f"of the recharacterized dollars; {_RECHAR_LINE6}. The December 31 value of those same dollars is the other "
+            "reading, and they differ by the earnings between December 31 and the transfer")
+    notes = [
+        f"line_1_add counts contribution dollars only: {_RECHAR_A3}.",
+        (f"line_4_add: the {first} contribution was made {c_date.isoformat()}, from January 1 through April 15 of "
+         f"{contribution_year + 1}, and A-3 dates the {second} contribution the same day — it is basis for "
+         f"{contribution_year} that does not enter that year's line 9 ratio." if line_4 else
+         "line_4_add is 0: the contribution was made in the year itself (or moved to a Roth IRA)."),
+    ]
+    if direction == "traditional_to_roth":
+        notes.append("i8606: \"If you recharacterized the entire contribution, don't report the contribution on Form "
+                     "8606\"; a part left behind reports its nondeductible portion in Part I (ira_contribution_eligibility, "
+                     "traditional_deduction).")
+    form_8606 = {"line_1_add": line_1, "line_4_add": line_4, "line_6_adjustment": line_6,
+                 "line_6_adjustment_is_a_choice": bool(line_6), "notes": notes}
+
+    # The statement (i8606's element order), once the transfer is dated.
+    from taxfill_core.statements import recharacterization_statement  # noqa: PLC0415
+
+    statement = None
+    if t_date is not None and status != "too_late":
+        kept = None
+        if direction == "roth_to_traditional" and deduction and deduction["deductible"]:
+            kept = deduction["deductible"]
+        elif direction == "traditional_to_roth" and ded:
+            kept = ded
+        statement = recharacterization_statement(
+            tax_year=contribution_year, contributed=total_contrib, first_ira=first, contribution_date=c_date,
+            recharacterized=amt, second_ira=second, recharacterization_date=t_date,
+            earnings=None if whole_account else nia.net_income, transferred_balance=to_move if whole_account else None,
+            deducted=kept, late=status == "late_301_9100_2")
+
+    # Expected documents and the +/- $1 reconciliation.
+    t_year = t_date.year if t_date is not None else None
+    expected = [
+        {"form": "5498", "box": "10" if first == "Roth" else "1", "year": contribution_year, "from": "the FIRST IRA's trustee",
+         "amount": total_contrib, "why": "the contribution as made, before the recharacterization"},
+        {"form": "1099-R", "box": "1", "year": t_year, "from": "the FIRST IRA's trustee", "amount": to_move,
+         "why": "the FMV transferred (box 2a -0-; code N or R)"},
+        {"form": "1099-R", "box": "2a", "year": t_year, "from": "the FIRST IRA's trustee", "amount": Decimal(0),
+         "why": "a recharacterization is not a taxable distribution"},
+        {"form": "5498", "box": "4", "year": t_year, "from": "the SECOND IRA's trustee", "amount": to_move,
+         "why": "recharacterized contributions received, plus earnings"},
+    ]
+    reconciliation = []
+    for r in readings or ():
+        key = (str(r.get("form", "")).upper().replace("FORM ", ""), str(r.get("box", "")).lower())
+        if key not in _RECHAR_READING_BOXES:
+            raise ValueError(f"reading {dict(r)} is not an expected box — one of {sorted(_RECHAR_READING_BOXES)}")
+        exp = next(e for e in expected if (e["form"], e["box"]) == key)
+        got = _cents(_to_decimal(r.get("amount"), "reading amount"))
+        diff = got - exp["amount"]
+        reconciliation.append({"form": key[0], "box": key[1], "reported": got, "expected": exp["amount"],
+                               "difference": diff, "ok": abs(diff) <= 1})
+    if any(not r["ok"] for r in reconciliation):
+        work.append("RECONCILIATION: " + "; ".join(
+            f"Form {r['form']} box {r['box']} shows {_money(r['reported'])}, expected {_money(r['expected'])}"
+            for r in reconciliation if not r["ok"]) + " — ask the trustee before filing: the trustee's figures are what "
+            "the IRS matches.")
+
+    notification = [
+        "Notify BOTH trustees on or before the transfer date (A-6(a)); the election \"cannot be revoked after the transfer\".",
+        f"{_RECHAR_A6A[0]}: a {first} IRA contribution; {_money(amt)} of it.",
+        f"{_RECHAR_A6A[1]}: {c_date.isoformat()}, for {contribution_year}.",
+        f"{_RECHAR_A6A[2]}: {_money(amt)} plus its net income ({_money(to_move)} in all, per the trustee's computation).",
+        f"{_RECHAR_A6A[3]}: [FIRST IRA TRUSTEE], [SECOND IRA TRUSTEE].",
+    ]
+
+    # Alternatives.
+    returned = ira_net_income_attributable(
+        amount=amt, purpose="returned_contribution", opening_fmv=opening_fmv, contributions_during=contributions_during,
+        closing_fmv=closing_fmv, distributions_during=distributions_during, whole_account=whole_account)
+    alternatives: dict[str, Any] = {
+        "return_408d4": {
+            "available": status != "too_late",
+            "withdraw": returned.total_to_move, "earnings_taxable": returned.net_income,
+            "earnings_line": f"{contribution_year} Form 1040 line "
+                             f"{form_line(contribution_year, 'f1040.ira_taxable', base_dir=knowledge_dir)}",
+            "additional_tax": Decimal(0), "why_no_additional_tax": _RECHAR_408D4_NO_10PCT,
+            "deadline": _IRC_408D4A,
+        },
+    }
+    if direction == "roth_to_traditional" and magi_d is not None:
+        orig = ira_contribution_eligibility(magi=magi_d, ira_type="roth", contributed=total_contrib + other_roth,
+                                            roth_ira_dec31_value=roth_ira_dec31_value, **elig_args)
+        alternatives["leave_in_place"] = {
+            "roth_excess": orig.excess, "excise_per_year": orig.excise_per_year,
+            "note": ("no excess: the Roth contribution is allowed as made" if not orig.excess else
+                     f"6% of the excess every year until corrected — {_IRC_4973A_CAP}"),
+        }
+    else:
+        alternatives["leave_in_place"] = {
+            "note": ("a traditional contribution within the limit is never an excess — without the deduction it is "
+                     "nondeductible basis (Form 8606 line 1)" if direction == "traditional_to_roth" else
+                     "pass magi to price the Roth excess of leaving it in place"),
+        }
+
+    # A later conversion, priced with the new basis.
+    conv = None
+    if then_convert is not None:
+        if direction != "roth_to_traditional":
+            raise ValueError("then_convert prices converting the recharacterized TRADITIONAL contribution — it needs "
+                             "direction='roth_to_traditional'")
+        spec = dict(then_convert)
+        c_on = _rechar_date(spec.pop("date", None), "then_convert.date")
+        if c_on is None or t_date is None or c_on < t_date:
+            raise ValueError("then_convert needs a date on or after transfer_date: the traditional contribution exists "
+                             "only once the recharacterization transfer is made")
+        spec.pop("source", None)
+        spec.pop("year", None)
+        if c_on.year == contribution_year:
+            spec["nondeductible_contributions_this_year"] = (
+                _to_decimal(spec.get("nondeductible_contributions_this_year", 0), "nondeductible_contributions_this_year")
+                + line_1)
+            spec["contributions_made_after_year_end"] = (
+                _to_decimal(spec.get("contributions_made_after_year_end", 0), "contributions_made_after_year_end")
+                + line_4)
+        else:
+            spec["nondeductible_basis_carryforward"] = (
+                _to_decimal(spec.get("nondeductible_basis_carryforward", 0), "nondeductible_basis_carryforward") + line_1)
+            choices.append(
+                f"the {_money(line_1)} of {contribution_year} basis reaches the {c_on.year} Form 8606 line 2 whole — "
+                f"true when no {contribution_year} distribution or conversion used part of it")
+        spec.setdefault("filing_status", filing_status)
+        conv = roth_conversion(source="traditional_ira_to_roth", year=c_on.year, knowledge_dir=knowledge_dir, **spec)
+        work.append(f"then_convert ({c_on.isoformat()}): {conv.work}")
+
+    return IraRecharacterizationResult(
+        direction=direction, contribution_year=contribution_year, amount=amt, net_income=nia, total_to_transfer=to_move,
+        due_date=due, extended_due_date=extended, due_date_source=due_source, deadline_status=status,
+        amended_return_required=amended, form_1099r_code=code, line_4a_reporting=line4a, target_check=target,
+        deduction=deduction, form_8606=form_8606, statement=statement, expected_documents=expected,
+        reconciliation=reconciliation, trustee_notification=notification, alternatives=alternatives, then_convert=conv,
+        choices=choices,
+        inputs={"direction": direction, "amount": str(amt), "contribution_year": contribution_year,
+                "contribution_date": c_date.isoformat(), "contributed_total": str(total_contrib),
+                "transfer_date": t_date.isoformat() if t_date else None, "source_kind": source_kind,
+                "extension_filed": extension_filed, "return_filed_date": filed.isoformat() if filed else None},
+        work="\n".join(work),
+        citations=[Citation(source=s, url=u) for s, u in _RECHAR_CITATIONS],
+    )
+
+
+def _rechar_day(d: date) -> str:
+    return f"{d:%B} {d.day}, {d.year}"
+
+
 class IraEligibilityResult(BaseModel):
     """Result of :func:`ira_contribution_eligibility`: the reduced limit + any excess."""
 

@@ -1689,6 +1689,41 @@ pitfalls:
       paycheck (`remaining_pay_dates` -> `step_4c_per_check`), because IRC
       6654(g)(1) deems withholding paid ratably. Tests: test_p020_* in
       packages/core/tests/test_projection_ops.py and test_tax_calc.py.
+  - id: P-021
+    incident: >-
+      AN EXCESS WAS DETECTED AND NEVER FIXED (recharacterization).
+      ira_contribution_eligibility finds a Roth contribution over the MAGI
+      phase-out and prices its 6%-a-year excise, but no op modelled the fix:
+      recharacterizing it — a trustee-to-trustee transfer, with its net income,
+      to a traditional IRA, treated as made there from the start (IRC
+      408A(d)(6); Treas. Reg. 1.408A-5 A-1). Done by hand it goes wrong in
+      known ways: a conversion "recharacterized" after 2017 (408A(d)(6)(B)(iii)
+      forbids it), the net income counted as Form 8606 basis (A-3 treats it as
+      earned in the SECOND IRA), the transfer reported on Form 1040 line 4a in
+      the wrong year (the year of the transfer decides: code N and line 4a
+      within the contribution year, code R and the statement only after it),
+      or the 408(d)(4) alternative priced with a 10% additional tax because the
+      Instructions for Form 8606 (2025) still say a distribution with related
+      earnings is "generally subject to the additional 10% tax on early
+      distributions". IRC 72(t)(2)(A)(ix) exempts a distribution "attributable
+      to withdrawal of net income attributable to a contribution which is
+      distributed pursuant to section 408(d)(4)", and the Instructions for Form
+      5329 (exception 21) agree. Found by the 2026-09-23 review (RC-02, LD-18,
+      RC-12).
+    countermeasure: >-
+      calc op ira_recharacterization (JR2b): it refuses a conversion, a
+      rollover (A-4), SEP/SIMPLE employer money (A-5), a deducted amount and an
+      amount above the contribution; it delegates the net income to
+      ira_net_income_attributable; the deadline status reads "including
+      extensions" as an extension actually filed, otherwise the 301.9100-2
+      window after a timely return with an amended return (a labeled choice);
+      code N vs R and line 4a vs statement-only follow the transfer year;
+      line_1_add counts contribution dollars only and line_4_add applies when
+      the original contribution was made January 1-April 15 of the next year;
+      the return_408d4 alternative shows additional tax 0 and quotes BOTH the
+      statute and the conflicting i8606 sentence, so a re-read of i8606 cannot
+      undo it. Tests: test_p021_* in
+      packages/core/tests/test_ira_recharacterization.py.
   - id: P-026
     incident: >-
       The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer

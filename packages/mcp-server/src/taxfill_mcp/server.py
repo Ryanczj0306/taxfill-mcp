@@ -45,6 +45,7 @@ from taxfill_core import (
     contribution_limits as _contribution_limits,
     elective_deferral_room as _elective_deferral_room,
     ira_net_income_attributable as _ira_net_income_attributable,
+    ira_recharacterization as _ira_recharacterization,
     ira_contribution_eligibility as _ira_contribution_eligibility,
     hsa_deduction as _hsa_deduction,
     espp_disposition as _espp_disposition,
@@ -307,7 +308,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
-    contribution_limits, elective_deferral_room, ira_net_income_attributable, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
+    contribution_limits, elective_deferral_room, ira_net_income_attributable, ira_recharacterization,
+    ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
     ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
     foreign_tax_credit_election, foreign_asset_reporting, state_tax}; every result shows its
     work and cites the data pack.
@@ -443,6 +445,18 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       included), closing_fmv, distributions_during?, whole_account?} (JR2a: Treas. Reg. 1.408A-5 A-2(c) /
       1.408-11 — net income = amount x (adjusted closing - adjusted opening) / adjusted opening, divided
       EXACTLY and also with Pub 590-A's three-place ratio; negative after a loss; the whole-account rule)
+    - ira_recharacterization: args {direction (roth_to_traditional | traditional_to_roth), amount,
+      contribution_year, contribution_date, contributed_total?, transfer_date?, source_kind?, deducted?, the NIA
+      inputs (opening_fmv, contributions_during, closing_fmv, distributions_during?, whole_account?),
+      extension_filed?, return_filed_date?, magi?, filing_status?, covered_by_employer_plan?,
+      elect_nondeductible?, readings?, then_convert?} (JR2b, P-021: the fix for an ineligible contribution.
+      REFUSES a conversion (408A(d)(6)(B)(iii)), a rollover (A-4), SEP/SIMPLE employer money (A-5) and a
+      deducted amount; returns the net income, the deadline status (timely / late under 301.9100-2 with an
+      amended return / too late), 1099-R code N (moved in the contribution year: the Form 1040 IRA-distribution line) or R (later:
+      the statement only), the second IRA's limit check, the Form 8606 line 1/4/6 inputs (net income is never
+      basis), the i8606 statement, the expected 1099-R/5498 boxes with a +/- $1 reconciliation, the A-6(a)
+      trustee notice, the 408(d)(4) alternative (no 10% additional tax on its earnings: 72(t)(2)(A)(ix)) and
+      then_convert priced by roth_conversion with the new basis)
     - elective_deferral_room: args {deferrals: [{employer, elective_deferrals, employer_contributions?,
       after_tax_contributions?}...], year?, age? (at year end), remaining_pay_dates?, per_check_compensation?,
       plan_increment_percent?, prior_year_fica_wages?, current_employer?} (JP2: the IRC 402(g) room left
@@ -743,6 +757,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_contribution_limits(**args)), args)
     if op == "ira_net_income_attributable":
         return _dump(_ira_net_income_attributable(**args))
+    if op == "ira_recharacterization":
+        return _stamp_provisional(_dump(_ira_recharacterization(**args)), {**args, "year": args.get("contribution_year")})
     if op == "elective_deferral_room":
         return _stamp_provisional(_dump(_elective_deferral_room(**args)), args)
     if op == "ira_contribution_eligibility":
