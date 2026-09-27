@@ -154,7 +154,7 @@ validated (routing/account numbers are sensitive).
 from __future__ import annotations
 
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import ROUND_CEILING, ROUND_FLOOR, ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
 from collections.abc import Mapping, Sequence
@@ -4330,6 +4330,161 @@ def elective_deferral_room(
                 "remaining_pay_dates": remaining_pay_dates, "current_employer": current},
         work="\n".join(work), citation=d.citation,
     )
+
+
+class IraNetIncomeResult(BaseModel):
+    """Result of :func:`ira_net_income_attributable` (JR2a)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    purpose: Literal["recharacterization", "returned_contribution"]
+    amount: Decimal = Field(description="The contribution (or part) being recharacterized or returned.")
+    adjusted_opening_balance: Decimal
+    adjusted_closing_balance: Decimal
+    net_income: Decimal = Field(description="Divided EXACTLY, then rounded to cents; may be negative (a loss).")
+    net_income_three_place: Decimal = Field(
+        description="The same with the ratio rounded to three decimal places (Pub 590-A's worksheet floor)."
+    )
+    three_place_difference: Decimal = Field(description="net_income_three_place - net_income.")
+    total_to_move: Decimal = Field(description="amount + net_income: what the trustee transfers or returns.")
+    whole_account: bool = Field(description="The whole-account rule applied (the entire balance moves).")
+    inputs: dict[str, Any]
+    work: str
+
+
+def ira_net_income_attributable(
+    amount: int | float | Decimal | str,
+    purpose: str = "recharacterization",
+    opening_fmv: int | float | Decimal | str = 0,
+    contributions_during: int | float | Decimal | str | None = None,
+    closing_fmv: int | float | Decimal | str | None = None,
+    distributions_during: int | float | Decimal | str = 0,
+    whole_account: bool = False,
+) -> IraNetIncomeResult:
+    """The net income attributable to an IRA contribution that is recharacterized (IRC 408A(d)(6), Treas.
+    Reg. 1.408A-5 A-2(c)) or returned before the due date (IRC 408(d)(4), Treas. Reg. 1.408-11) — JR2a.
+
+    Both regulations allocate "a pro rata portion of the earnings on the assets in the IRA during the period
+    the IRA held the contribution": net income = amount x (adjusted closing balance - adjusted opening
+    balance) / adjusted opening balance, where the ADJUSTED OPENING balance is ``opening_fmv`` (the IRA's FMV
+    immediately before the contribution was made) plus ``contributions_during`` — every contribution or
+    transfer INTO the IRA during the period, "including the contribution that is" being moved — and the
+    ADJUSTED CLOSING balance is ``closing_fmv`` (immediately before the removal) plus ``distributions_during``
+    (every distribution or transfer OUT, recharacterizations and returned contributions included). A loss
+    makes it negative (Pub 590-A: "If there was a loss, the net income you must transfer may be a negative
+    amount"). ``whole_account``: an IRA that held only this contribution may move its entire balance
+    (1.408-11(a)(2); 1.408A-5 A-2(b)), and the net income is then closing_fmv - amount.
+
+    The division is EXACT, rounded to cents; the three-decimal-ratio figure is reported alongside with its
+    difference — a labeled choice, because Pub 590-A's worksheet rounds to "at least three places" and that
+    rounding misses the regulations' own examples (1.408-11 Ex. 2 prints $187 for an exact $186.89).
+    No per-year figures, so no pack is read.
+    """
+    if purpose not in ("recharacterization", "returned_contribution"):
+        raise ValueError("purpose must be 'recharacterization' or 'returned_contribution'")
+    amt = _to_decimal(amount, "amount")
+    if amt <= 0:
+        raise ValueError("amount must be > 0")
+    closing = _to_decimal(closing_fmv, "closing_fmv") if closing_fmv is not None else None
+    if closing is None:
+        raise ValueError("closing_fmv is needed: the IRA's FMV immediately before the removal")
+    out_d = _to_decimal(distributions_during, "distributions_during")
+    open_fmv = _to_decimal(opening_fmv, "opening_fmv")
+    into = _to_decimal(contributions_during, "contributions_during") if contributions_during is not None else amt
+    if min(open_fmv, into, out_d, closing) < 0:
+        raise ValueError("balances, contributions and distributions must be >= 0")
+    if into < amt:
+        raise ValueError("contributions_during includes the contribution being moved, so it is at least amount")
+    opening = open_fmv + into
+    adj_closing = closing + out_d
+    reg = ("Treas. Reg. 1.408A-5 A-2(c) (IRC 408A(d)(6))" if purpose == "recharacterization"
+           else "Treas. Reg. 1.408-11(a) (IRC 408(d)(4))")
+    if whole_account:
+        if open_fmv or into != amt or out_d:
+            raise ValueError("whole_account applies only to an IRA that held this contribution alone, with nothing "
+                             "else in or out")
+        nia = _cents(closing - amt)
+        three = nia
+        work = (f"Whole-account rule ({'1.408A-5 A-2(b)' if purpose == 'recharacterization' else '1.408-11(a)(2)'}): the "
+                f"IRA held only this contribution, so moving its entire balance {_money(closing)} satisfies the rule; "
+                f"net income = {_money(closing)} - {_money(amt)} = {_money(nia)}.")
+    else:
+        if opening <= 0:
+            raise ValueError("the adjusted opening balance must be > 0")
+        ratio = (adj_closing - opening) / opening
+        nia = _cents(amt * ratio)
+        three = _cents(amt * ratio.quantize(Decimal("0.001"), rounding=ROUND_HALF_UP))
+        work = (
+            f"{reg}: adjusted opening balance {_money(open_fmv)} + {_money(into)} in = {_money(opening)}; adjusted closing "
+            f"balance {_money(closing)} + {_money(out_d)} out = {_money(adj_closing)}; net income = {_money(amt)} x "
+            f"({_money(adj_closing)} - {_money(opening)}) / {_money(opening)} = {_money(nia)} (exact division, rounded "
+            f"to cents). With the ratio rounded to three places ({ratio.quantize(Decimal('0.001'), rounding=ROUND_HALF_UP)}): "
+            f"{_money(three)}, a {_money(three - nia)} difference — the exact figure is the regulation's formula."
+            + (" A negative net income is a LOSS: move less than the contribution (Pub 590-A)." if nia < 0 else "")
+        )
+    return IraNetIncomeResult(
+        purpose=purpose, amount=_cents(amt), adjusted_opening_balance=_cents(opening),
+        adjusted_closing_balance=_cents(adj_closing), net_income=nia, net_income_three_place=three,
+        three_place_difference=three - nia, total_to_move=_cents(amt + nia), whole_account=whole_account,
+        inputs={"amount": str(amt), "purpose": purpose, "opening_fmv": str(open_fmv), "contributions_during": str(into),
+                "closing_fmv": str(closing), "distributions_during": str(out_d), "whole_account": whole_account},
+        work=work,
+    )
+
+
+# ── the return due date, with a labeled fallback (JR2a) ─────────────────────
+
+
+def _dc_emancipation_day(year: int) -> date:
+    """DC Emancipation Day (April 16), observed Friday when it falls on Saturday and Monday on Sunday."""
+    d = date(year, 4, 16)
+    if d.weekday() == 5:
+        return d - timedelta(days=1)
+    if d.weekday() == 6:
+        return d + timedelta(days=1)
+    return d
+
+
+def _roll_7503(d: date) -> date:
+    """IRC 7503: an act due on a Saturday, Sunday or DC legal holiday is timely on the next day that is none."""
+    while d.weekday() >= 5 or d == _dc_emancipation_day(d.year):
+        d += timedelta(days=1)
+    return d
+
+
+def _return_due_date(year: int, knowledge_dir: str | Path | None = None, override: date | str | None = None):
+    """(due date, extended due date, source, assumed) for a calendar-year individual's return (JR2a).
+
+    The pack's deadlines block when it has one; otherwise April 15 of year + 1 — IRC 6072(a): "returns made on
+    the basis of the calendar year shall be filed on or before the 15th day of April following the close of the
+    calendar year" — rolled by IRC 7503 (Saturday, Sunday or a DC legal holiday: Emancipation Day), and
+    labeled ASSUMED. The extended date is 6 months after the date prescribed (Treas. Reg. 1.6081-4(a):
+    "an automatic 6-month extension of time to file the return after the date prescribed for filing the
+    return"), rolled the same way. ``override`` replaces the due date (a postponement, a disaster relief notice).
+    """
+    if override is not None:
+        due = date.fromisoformat(override) if isinstance(override, str) else override
+        source, assumed = "the caller's override", False
+    else:
+        pack = _load_federal(year, knowledge_dir) if _pack_exists(year, knowledge_dir) else None
+        deadlines = pack.deadlines if pack is not None else None
+        if deadlines is not None:
+            due, source, assumed = date.fromisoformat(deadlines.filing_due_date), deadlines.citation.source, False
+        else:
+            due = _roll_7503(date(year + 1, 4, 15))
+            source = ("ASSUMED: the " + str(year) + " pack has no deadlines block, so the date is IRC 6072(a)'s April 15 "
+                      "rolled by IRC 7503 — confirm against the year's Form 1040 instructions")
+            assumed = True
+    extended = _roll_7503(date(year + 1, 10, 15)) if due.month == 4 else _roll_7503(due + timedelta(days=183))
+    return due, extended, source, assumed
+
+
+def _pack_exists(year: int, knowledge_dir: str | Path | None) -> bool:
+    try:
+        _load_federal(year, knowledge_dir)
+    except (FileNotFoundError, ValueError):
+        return False
+    return True
 
 
 class IraEligibilityResult(BaseModel):

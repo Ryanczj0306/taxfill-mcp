@@ -1014,3 +1014,19 @@ form_lines:
     printed: "24 Add lines 22 and 23. This is your total tax"
     note: >-
       The prior-year total tax the IRC 6654(d)(1)(B)(ii) prong reads (estimated_tax_safe_harbor, JF4).
+  f1040.ira_distributions:
+    line: "4a"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040--2023.pdf"
+    read: "2026-09-27"
+    printed: "4a IRA distributions"
+    note: >-
+      The gross IRA distribution line a recharacterization's statement names (statements.py, JR2a).
+  f1040.ira_taxable:
+    line: "4b"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040--2023.pdf"
+    read: "2026-09-27"
+    printed: "4a IRA distributions … b Taxable amount 4b"
+    note: >-
+      The taxable IRA distribution line; the 2025 line 4c instructions' multi-exception statement names it.

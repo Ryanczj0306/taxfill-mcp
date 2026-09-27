@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,762 tests** — offline 5,382 + live-.gov 380; derived
+Done and on `main` (**5,782 tests** — offline 5,402 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -41,7 +41,7 @@ reds surface; JS1a/JS1b fix them:
   workspace_record_position, workspace_reconcile, state_scope, estimate_refund,
   compare_scenarios,
   get_sources, filing_summary, file_and_pay, hand_fill_worksheet (print-only
-  states). The `calc` tool carries **33** deterministic ops (`packages/mcp-server/tests/test_skills_sync.py` pins the count; Phase J adds 8 → 40 without adding an MCP tool): the 25 of Phase H (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax) plus Phase I's ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election and foreign_asset_reporting.
+  states). The `calc` tool carries **34** deterministic ops (`packages/mcp-server/tests/test_skills_sync.py` pins the count; Phase J adds 8 → 40 without adding an MCP tool): the 25 of Phase H (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax) plus Phase I's ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election and foreign_asset_reporting.
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, and — since
   2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance — and, since Phases I2/I3/I5, 1099-SA, 5498-SA, 3921, 3922, 1099-K, 1099-Q, W-2G, 1095-B, 1095-C, 5498, K-1 (1120-S) and K-1 (1041): **26 kinds** per `list_document_kinds()`) and the resumable
@@ -1656,7 +1656,8 @@ not wait for any of this.
     - N/R strings resolve against tax_year.
     - An N code with 2a ≠ 0 → an error finding, and the caveat reads "N findings (E errors)".
     - 5498 box 4 > 0 → an info finding; MCP e2e tool count is 23.
-- [ ] **JR2a — Net income attributable, the statements module, the deadline fallback** (M; deps JR1, JF6a)
+- [x] **JR2a — Net income attributable, the statements module, the deadline fallback — DONE 2026-09-27** (M; deps JR1, JF6a)
+  - *As built:* calc op `ira_net_income_attributable` (op count 33 → 34): amount x (adjusted closing − adjusted opening) / adjusted opening, the opening balance counting every contribution in (the one being moved included) and the closing balance adding back every distribution out; exact division to cents with the three-place figure and its difference beside it; negative after a loss; the whole-account rule; reproduces 1.408-11 Ex. 1 ($75) and Ex. 2 ($186.89 exact vs the printed $187) and 1.408A-5 Ex. 1 (−$10,000) and Ex. 2 ($5,000 / $4,000). `taxfill_core/statements.py`: `recharacterization_statement` (both i8606 examples verbatim in the first person; [NAME]/[SSN] placeholders; "Filed pursuant to section 301.9100-2" heads a late one; the optional conversion sentence labeled optional), `returned_contribution_statement`, and `ira_line_4b_statement` (the 2025 line 4c instructions' "Line 4b – $1,000 Rollover and $500 HFD.", the line through form_line). New registry keys `f1040.ira_distributions` (4a) and `f1040.ira_taxable` (4b), 2019-2026, read off each face. `calc._return_due_date`: the pack's date when it has one, else IRC 6072(a)'s April 15 rolled by IRC 7503 (weekends, DC Emancipation Day) and labeled ASSUMED; the extended date is Treas. Reg. 1.6081-4(a)'s 6 months, rolled the same way; an override wins.
   1. **NIA op** [RC-01]. A grep for 1.408-11, 1.408A-5, "net income attributable", 408(d)(4) and 408A(d)(6) across packages/ and knowledge/ returns 0 hits.
      - New `calc.ira_net_income_attributable(purpose='recharacterization'|'returned_contribution', …)`.
      - Formula (Treas. Reg. 1.408A-5 A-2(c)(1); 1.408-11(a)(1)): "Contribution × (Adjusted Closing Balance − Adjusted Opening Balance) / Adjusted Opening Balance".

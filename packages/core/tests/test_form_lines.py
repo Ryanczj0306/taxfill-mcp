@@ -64,8 +64,11 @@ EXPECTED: dict[str, dict[int, str]] = {
     # JF4 (read 2026-09-27): the prior-year figures the safe harbor asks for — AGI moved to 11a in 2025.
     "f1040.agi": {2019: "8b", **{y: "11" for y in range(2020, 2025)}, 2025: "11a", 2026: "11a"},
     "f1040.total_tax": {2019: "16", **{y: "24" for y in range(2020, 2026)}, 2026: "24a"},
+    # JR2a (read 2026-09-27): the IRA distribution lines the statements name.
+    "f1040.ira_distributions": {y: "4a" for y in range(2019, 2027)},
+    "f1040.ira_taxable": {y: "4b" for y in range(2019, 2027)},
 }
-READ = {"f1040.agi": "2026-09-27", "f1040.total_tax": "2026-09-27"}  # every other key: 2026-09-24
+READ = {k: "2026-09-27" for k in ("f1040.agi", "f1040.total_tax", "f1040.ira_distributions", "f1040.ira_taxable")}
 DRAFT_CREATED = {
     "sched1.other_income": "4/24/26",
     "f1040nr.treaty_exempt": "8/19/26",
@@ -74,6 +77,8 @@ DRAFT_CREATED = {
     "sched_se.ss_wages": "4/27/26",
     "f1040.agi": "8/19/26",
     "f1040.total_tax": "8/19/26",
+    "f1040.ira_distributions": "8/19/26",
+    "f1040.ira_taxable": "8/19/26",
 }
 
 

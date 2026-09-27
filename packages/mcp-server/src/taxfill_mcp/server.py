@@ -44,6 +44,7 @@ from taxfill_core import (
     annualize_ytd as _annualize_ytd,
     contribution_limits as _contribution_limits,
     elective_deferral_room as _elective_deferral_room,
+    ira_net_income_attributable as _ira_net_income_attributable,
     ira_contribution_eligibility as _ira_contribution_eligibility,
     hsa_deduction as _hsa_deduction,
     espp_disposition as _espp_disposition,
@@ -306,7 +307,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
-    contribution_limits, elective_deferral_room, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
+    contribution_limits, elective_deferral_room, ira_net_income_attributable, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
     ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
     foreign_tax_credit_election, foreign_asset_reporting, state_tax}; every result shows its
     work and cites the data pack.
@@ -437,6 +438,11 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       calendar-day proration — the deterministic home for the one arithmetic step every projection
       needs. ASSUMES LEVEL PAY: annualize each status segment separately, never annualize one-time
       amounts like bonuses/RSU vests)
+    - ira_net_income_attributable: args {amount, purpose (recharacterization | returned_contribution),
+      opening_fmv, contributions_during (every contribution INTO the IRA in the period, the one being moved
+      included), closing_fmv, distributions_during?, whole_account?} (JR2a: Treas. Reg. 1.408A-5 A-2(c) /
+      1.408-11 — net income = amount x (adjusted closing - adjusted opening) / adjusted opening, divided
+      EXACTLY and also with Pub 590-A's three-place ratio; negative after a loss; the whole-account rule)
     - elective_deferral_room: args {deferrals: [{employer, elective_deferrals, employer_contributions?,
       after_tax_contributions?}...], year?, age? (at year end), remaining_pay_dates?, per_check_compensation?,
       plan_increment_percent?, prior_year_fica_wages?, current_employer?} (JP2: the IRC 402(g) room left
@@ -735,6 +741,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _dump(_annualize_ytd(**args))
     if op == "contribution_limits":
         return _stamp_provisional(_dump(_contribution_limits(**args)), args)
+    if op == "ira_net_income_attributable":
+        return _dump(_ira_net_income_attributable(**args))
     if op == "elective_deferral_room":
         return _stamp_provisional(_dump(_elective_deferral_room(**args)), args)
     if op == "ira_contribution_eligibility":
