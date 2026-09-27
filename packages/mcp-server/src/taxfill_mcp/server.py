@@ -916,6 +916,10 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       assumption names where it is reported for the profile's residency: Schedule OI for a
       nonresident, in parentheses on Schedule 1's other-income line for a resident alien),
       itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only)
+    - W-2 boxes beyond box 1 (JF3): medicare_wages (box 5 total — what Form 8959 prices; box 1 stands in
+      when omitted), ss_wages (boxes 3 + 7 total — what Schedule SE subtracts from the wage base),
+      medicare_tax_withheld [box 6 per employer — the excess over 1.45% of box 5 is credited; needs
+      medicare_wages; never also in federal_withholding]
     - credit inputs: ss_withheld_by_employer [W-2 box 4 per employer], aotc_qualified_expenses
       [per eligible student], dependent_care_expenses + dependent_care_persons (Form 2441 —
       qualified care expenses paid so you/both spouses could work, and how many qualifying persons)

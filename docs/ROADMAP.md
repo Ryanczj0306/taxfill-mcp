@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,714 tests** — offline 5,334 + live-.gov 380; derived
+Done and on `main` (**5,720 tests** — offline 5,340 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1526,7 +1526,8 @@ not wait for any of this.
     - A 2026 1099-R read with 7a/7b resolves with no gap; box 5 is a known box.
     - A 1099-DIV extraction carries the new note.
 
-- [ ] **JF3 — W-2 boxes 3/5/6 reach the estimator** (M; deps JF6a, JF1b) — pitfall *box1-standin*
+- [x] **JF3 — W-2 boxes 3/5/6 reach the estimator — DONE 2026-09-27** (M; deps JF6a, JF1b) — pitfall *box1-standin* (P-019)
+  - *As built:* `IncomeSnapshot.medicare_wages` (box 5), `ss_wages` (boxes 3 + 7) and `medicare_tax_withheld` (box 6 per employer; needs box 5 — validator, and INCOME_LINKED_FIELDS moves the pair as one compare-walk step); None/empty means box 1 stands in, disclosed. Form 8959 prices box 5 (an exempt F/J student's $0 included); each person's Schedule SE subtracts its own boxes 3 + 7 (`_bottom_line(se_ss_wages=)`); the withholding reconciliation credits box 6 less the pack's employee Medicare rate x box 5 over the people who gave box 6 (a spouse with none never shrinks it) on the operand slot `additional_medicare_withholding`, labeled through form_line (`f8959.withholding_part`, `f1040.additional_medicare_withholding`); `_addmed_box_note` fires with the tax, with box 6, or when box 1 stood in and box 1 plus the year's 402(g) limit reaches the lowest threshold priced; the Schedule SE note only when box 1 stood in; the joint view sums each box with box 1 standing in for a spouse who gave none; compare_scenarios names a scenario that moves wages but not boxes 3/5; the estimate_refund docstring lists the fields. Deferred → Not scheduled: the 2019-2024 packs carry no employee Medicare rate and no 402(g) limit, so there the box-6 credit says NOT ESTIMATED and the stand-in note keys only on a priced Form 8959.
   1. **Box 5 for Form 8959** [DEF-01].
      - Form 8959 is priced on Box 1 (estimate.py:1430-1432), and IncomeSnapshot has no Box 5 field (extra='forbid').
      - The Box-1-for-Box-5 caveat (estimate.py:1909-1915) appears only when 8959 already computes a non-zero amount. So a 401(k) deferrer with Box 1 under the threshold and Box 5 over it loses the 0.9% silently. In the other direction, exempt F-1 wages are overstated.
@@ -2239,6 +2240,7 @@ not wait for any of this.
 - ISO, §83(b) and RSU vesting. JP1c's supplemental path covers RSU-vest withholding for TY2027 planning.
 - Wash sales.
 - The separated-spouse EITC rule (IRC 32(d)(2)(B)) on the nonresident-spouse head-of-household route (JF2.5(c)): it needs a last-6-months principal-abode fact — the one the lived-apart route also rests on — that the profile does not record. Disclosed in the head-of-household route note.
+- Past-year (2019-2024) employee Medicare rate and 402(g) limit (JF3): the packs carry neither, so the Form 8959 box-6 credit is NOT ESTIMATED there and the box-1-for-box-5 note keys only on a priced Form 8959; add them with each year's Pub 15 / COLA-notice citation when a past-year return needs them.
 - DEV_PLAN's I-94 / I-20 / IRS-transcript DocSpecs and perceptual-hash snapshots; JD1 records them as deviations.
 
 **Acceptance (phase):**

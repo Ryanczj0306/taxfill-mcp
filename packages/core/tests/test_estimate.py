@@ -443,7 +443,10 @@ def test_estimate_se_tax_nets_w2_wages_against_the_ss_base():
     assert with_wages.se_tax < without.se_tax  # the base is consumed -> smaller SE tax
     labels = {c.label: c.amount for c in est.composition}
     assert labels["Plus: self-employment tax"] == with_wages.se_tax
-    assert any("8a-9" in a for a in est.assumptions)
+    # JF3 (P-019): box 1 stood in for boxes 3 + 7, and the note says so, naming the line via form_line.
+    from taxfill_core.knowledge import form_line  # noqa: PLC0415
+    note = next(a for a in est.assumptions if "ss_wages was not given" in a)
+    assert f"Schedule SE line {form_line(2023, 'sched_se.ss_wages')}" in note
 
 
 def test_estimate_mfs_worst_case_disclosed_and_withholding_line_negative():
@@ -3888,7 +3891,8 @@ _SPOUSE_SUMMED = frozenset({
     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
     "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
 })
-_SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses"})  # per-person lists
+_SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses", "medicare_tax_withheld"})
+_SPOUSE_BOX_SUMMED = frozenset({"medicare_wages", "ss_wages"})  # summed, box 1 standing in for a missing one (JF3)
 _SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions"})  # None unless either spouse itemizes
 _HOUSEHOLD_LEVEL = frozenset({"dependent_care_persons"})  # the same persons: the MAX, never doubled
 _SPOUSE_FIELD = frozenset({"spouse"})  # the nesting itself: the joint view has none
@@ -3907,9 +3911,11 @@ def _spouse_pair() -> tuple[IncomeSnapshot, IncomeSnapshot]:
                     dividends=base - 3_000, qualified_dividends=base - 4_000)
     one["dependent_care_persons"], two["dependent_care_persons"] = 1, 2
     primary = IncomeSnapshot(**one, ss_withheld_by_employer=[11, 12], aotc_qualified_expenses=[31],
-                             itemized_deductions=700)
+                             itemized_deductions=700, medicare_wages=95_000, ss_wages=94_000,
+                             medicare_tax_withheld=[1_400, 60])
     spouse = IncomeSnapshot(**two, ss_withheld_by_employer=[21], aotc_qualified_expenses=[41, 42],
-                            itemized_deductions=None)
+                            itemized_deductions=None, medicare_wages=195_000, ss_wages=None,
+                            medicare_tax_withheld=[2_900])
     return primary, spouse
 
 
@@ -3923,6 +3929,15 @@ def _spouse_coverage_gaps(combine) -> list[str]:
         gaps.append("dependent_care_persons")
     if joint.spouse is not None:
         gaps.append("spouse")
+    # The W-2 boxes (JF3): summed, a spouse's missing box standing in as their box 1; None when neither.
+    if joint.medicare_wages != primary.medicare_wages + spouse.medicare_wages:
+        gaps.append("medicare_wages")
+    if joint.ss_wages != primary.ss_wages + spouse.wages:
+        gaps.append("ss_wages")
+    none_either = combine(primary.model_copy(update={
+        "ss_wages": None, "spouse": spouse.model_copy(update={"ss_wages": None})}))
+    if none_either.ss_wages is not None:
+        gaps.append("ss_wages")
     # itemized_deductions: summed when either spouse itemizes, None when neither does.
     both = combine(primary.model_copy(update={"spouse": spouse.model_copy(update={"itemized_deductions": 50})}))
     neither = combine(primary.model_copy(update={
@@ -3933,7 +3948,8 @@ def _spouse_coverage_gaps(combine) -> list[str]:
 
 
 def test_jf1b5_every_income_snapshot_field_is_classified_for_the_joint_view():
-    classes = (_SPOUSE_SUMMED, _SPOUSE_CONCATENATED, _SPOUSE_OPTIONAL_SUMMED, _HOUSEHOLD_LEVEL, _SPOUSE_FIELD)
+    classes = (_SPOUSE_SUMMED, _SPOUSE_CONCATENATED, _SPOUSE_OPTIONAL_SUMMED, _HOUSEHOLD_LEVEL, _SPOUSE_FIELD,
+               _SPOUSE_BOX_SUMMED)
     classified = frozenset().union(*classes)
     assert sum(len(c) for c in classes) == len(classified), "a field is in two classes"
     fields = set(IncomeSnapshot.model_fields)
@@ -4895,3 +4911,102 @@ def test_jf2_5_intake_asks_the_lived_apart_fact_of_a_separate_filer_with_social_
     no_benefits = _us_filer_married(Spouse(us_person=_ans(True)))
     assert "household.spouses_lived_apart_all_year" not in {
         q.id for q in intake_checklist(no_benefits, tax_year=2023).next_questions}
+
+
+# ---------------------------------------------------------------------------
+# JF3 (pitfall P-019, box1-standin): W-2 boxes 3, 5 and 6 reach the estimator.
+# Hypothetical demo fixtures only.
+# ---------------------------------------------------------------------------
+
+_BOX5 = "Box 1 wages stood in for box 5"
+
+
+def _joint_couple() -> Profile:
+    return Profile(household=Household(marital_status=_ans("married"),
+                                       filing_status=_ans("married_filing_jointly")))
+
+
+def _single_filer() -> Profile:
+    return Profile(household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")))
+
+
+def test_p019_form_8959_prices_box_5_not_box_1():
+    # A 401(k) deferrer: box 1 under the $250,000 joint threshold, box 5 over it.
+    base = IncomeSnapshot(wages=240_000, federal_withholding=40_000)
+    no_box5 = estimate_refund(_joint_couple(), 2026, base)
+    with_box5 = estimate_refund(_joint_couple(), 2026, base.model_copy(update={"medicare_wages": 262_000}))
+    assert _slot(no_box5, "additional_medicare_tax") is None
+    assert _slot(with_box5, "additional_medicare_tax") == round(0.009 * (262_000 - 250_000)) == 108
+    assert no_box5.point - with_box5.point == 108
+    # Without box 5, the stand-in is disclosed even though no Form 8959 line prints: box 1 plus the
+    # year's 402(g) limit reaches the threshold.
+    note = next(a for a in no_box5.assumptions if a.startswith("Additional Medicare Tax (Form 8959)"))
+    assert _BOX5 in note and "402(g) deferral limit reaches it" in note and "is $0 on these amounts" in note
+    assert not any(_BOX5 in a for a in with_box5.assumptions)
+
+
+def test_p019_an_exempt_student_with_box_5_of_zero_owes_no_additional_medicare_tax():
+    est = estimate_refund(_single_filer(), 2025,
+                          IncomeSnapshot(wages=250_000, federal_withholding=50_000, medicare_wages=0))
+    assert _slot(est, "additional_medicare_tax") is None
+    box1 = estimate_refund(_single_filer(), 2025, IncomeSnapshot(wages=250_000, federal_withholding=50_000))
+    assert _slot(box1, "additional_medicare_tax") == round(0.009 * 50_000)
+
+
+def test_p019_schedule_se_subtracts_boxes_3_and_7():
+    # 2026: the $184,500 wage base is used up by social security wages, so no SE social security tax.
+    income = IncomeSnapshot(wages=170_000, federal_withholding=30_000, self_employment_net=50_000,
+                            ss_wages=184_500)
+    est = estimate_refund(_single_filer(), 2026, income)
+    se_net_earnings = 50_000 * 0.9235
+    assert _slot(est, "se_tax") == round(se_net_earnings * 0.029)          # the Medicare portion alone
+    assert not any("ss_wages was not given" in a for a in est.assumptions)
+    standin = estimate_refund(_single_filer(), 2026, income.model_copy(update={"ss_wages": None}))
+    assert _slot(standin, "se_tax") > _slot(est, "se_tax")
+    assert any("box 1 wages stood in for them because ss_wages was not given" in a for a in standin.assumptions)
+
+
+def test_p019_box_6_above_the_regular_rate_is_credited():
+    income = IncomeSnapshot(wages=260_000, federal_withholding=60_000, medicare_wages=260_000,
+                            medicare_tax_withheld=[4_310])
+    est = estimate_refund(_single_filer(), 2025, income)
+    # 4,310 - 1.45% x 260,000 (3,770) = 540, the same 540 Form 8959 charges on the $60,000 over $200,000.
+    assert _slot(est, "additional_medicare_withholding") == -540
+    assert _slot(est, "additional_medicare_tax") == 540
+    line = next(ln for ln in est.composition if ln.slot == "additional_medicare_withholding")
+    from taxfill_core.knowledge import form_line  # noqa: PLC0415
+    assert f"Form 8959 Part {form_line(2025, 'f8959.withholding_part')}" in line.label
+    assert f"Form 1040 line {form_line(2025, 'f1040.additional_medicare_withholding')}" in line.label
+    assert est.point == estimate_refund(_single_filer(), 2025, income.model_copy(
+        update={"medicare_tax_withheld": []})).point + 540
+    # A year whose pack has no employee Medicare rate says so, never a silent $0.
+    old = estimate_refund(_single_filer(), 2023, income)
+    assert _slot(old, "additional_medicare_withholding") is None
+    assert any(a.startswith("NOT ESTIMATED — Additional Medicare Tax withholding") for a in old.assumptions)
+    with pytest.raises(ValueError, match="requires medicare_wages"):
+        IncomeSnapshot(wages=10_000, medicare_tax_withheld=[200])
+
+
+def test_p019_the_joint_view_credits_box_6_only_for_the_spouse_who_gave_it():
+    income = IncomeSnapshot(wages=260_000, federal_withholding=60_000, medicare_wages=260_000,
+                            medicare_tax_withheld=[4_310],
+                            spouse=IncomeSnapshot(wages=90_000, federal_withholding=12_000))
+    est = estimate_refund(_joint_couple(), 2025, income)
+    assert _slot(est, "additional_medicare_withholding") == -540      # the spouse's box 5 never enters it
+    joint = income.combined_with_spouse()
+    assert joint.medicare_wages == 260_000 + 90_000 and joint.medicare_tax_withheld == [4_310]
+    note = next(a for a in est.assumptions if a.startswith("Additional Medicare Tax (Form 8959)"))
+    assert "Box 1 wages stood in for box 5 for your spouse" in note
+
+
+def test_p019_a_scenario_that_moves_wages_but_not_the_boxes_is_named():
+    from taxfill_core.scenarios import compare_scenarios  # noqa: PLC0415
+    income = IncomeSnapshot(wages=150_000, federal_withholding=25_000, medicare_wages=170_000)
+    out = compare_scenarios(_single_filer(), 2025, income, [
+        {"name": "base", "filing_status": "single"},
+        {"name": "raise", "filing_status": "single", "income_overrides": {"wages": 160_000}},
+        {"name": "both", "filing_status": "single",
+         "income_overrides": {"wages": 160_000, "medicare_wages": 180_000}},
+    ])
+    named = [a for a in out.assumptions if "changes wages (W-2 box 1) but not medicare_wages" in a]
+    assert len(named) == 1 and "'raise'" in named[0]

@@ -1622,6 +1622,44 @@ pitfalls:
       The lived-apart route never carries the flag (IRC 7703(b) unmarries that
       filer for each provision that refers to section 7703). Tests:
       test_jf1b10_* (test_estimate.py).
+  - id: P-019
+    incident: >-
+      W-2 BOX 1 STOOD IN FOR BOXES 3, 5 AND 6 (box1-standin). estimate_refund
+      priced Form 8959 on box 1 wages, and IncomeSnapshot had no box 5 field
+      (extra='forbid'), so a 401(k) deferrer whose box 1 sat under the
+      threshold and whose box 5 (which keeps the deferral) sat over it owed
+      0.9% that the estimate never showed — and the "box 1 stands in for box
+      5" caveat appeared only when Form 8959 already computed a non-zero
+      amount, so the miss was silent. The other way, an exempt F/J student
+      has box 5 of $0, and box 1 overstated the tax. Schedule SE subtracted
+      box 1 from the social security wage base where the form reads "total
+      of boxes 3 and 7 on Form(s) W-2", and with no box 6 input the
+      Additional Medicare Tax an employer withheld never credited. Form 8959
+      (2025): "Medicare wages and tips from Form W-2, box 5. If you have more
+      than one Form W-2, enter the total of the amounts from box 5"; its
+      withholding reconciliation subtracts "your regular Medicare tax
+      withholding on Medicare wages" (1.45% of box 5) from box 6 — "If zero
+      or less, enter -0-. This is your Additional Medicare Tax withholding on
+      Medicare wages" — and sends it with federal income tax withholding to
+      the 1040. Found by the 2026-09-23 review (DEF-01/02/03, LD-16).
+    countermeasure: >-
+      IncomeSnapshot carries the boxes (JF3): medicare_wages (box 5 total),
+      ss_wages (boxes 3 + 7 total), medicare_tax_withheld (box 6, one entry
+      per employer; requires medicare_wages; never also in
+      federal_withholding). _bottom_line prices Form 8959 on box 5 (box 1
+      only when it is None), gives each person's Schedule SE its own boxes 3
+      + 7 (se_ss_wages), and credits box 6 less the pack's 1.45% of box 5 on
+      the operand slot additional_medicare_withholding, labeled through
+      form_line (f8959.withholding_part, f1040.additional_medicare_withholding)
+      — over the people who gave box 6 only, so a spouse with no box 6 never
+      shrinks it; a pack with no employee Medicare rate says NOT ESTIMATED.
+      The Form 8959 note fires when a figure carries the tax, when box 6 was
+      given, or when box 1 stood in and box 1 plus the year's 402(g) limit
+      reaches the lowest threshold priced; the Schedule SE note fires only
+      when box 1 stood in. The joint view sums each box with box 1 standing
+      in for a spouse who did not give it; compare_scenarios warns when a
+      scenario moves wages but not boxes 3/5. Tests: test_p019_* in
+      packages/core/tests/test_estimate.py.
   - id: P-026
     incident: >-
       The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer

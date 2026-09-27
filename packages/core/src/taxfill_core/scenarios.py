@@ -557,6 +557,17 @@ def compare_scenarios(
         "Input attribution is order-dependent by nature: the steps telescope exactly, and a different "
         "step order would split the same total differently.",
     ]
+    # JF3 (pitfall P-019): a wage change that leaves the W-2 boxes behind — Form 8959 prices box 5 and
+    # Schedule SE boxes 3 + 7, which then keep the base amounts.
+    for s in specs:
+        stale = [f for f in ("medicare_wages", "ss_wages")
+                 if "wages" in s.income_overrides and f not in s.income_overrides and getattr(income, f) is not None]
+        if stale:
+            assumptions.append(
+                f"Scenario {s.name!r} changes wages (W-2 box 1) but not {' or '.join(stale)}, which keep the base "
+                "amounts: a raise or bonus moves boxes 1, 3 and 5 together, while a pre-tax 401(k) deferral moves "
+                "box 1 only — set them in income_overrides too."
+            )
     recorded = _recorded_election(profile)
     for s in specs:
         if s.name in blocked:

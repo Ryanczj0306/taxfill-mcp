@@ -119,6 +119,7 @@ INCOME_LINKED_FIELDS: tuple[frozenset[str], ...] = (
     frozenset({"interest", "bank_deposit_interest", "bank_deposit_interest_nonresident_period"}),
     frozenset({"dividends", "qualified_dividends"}),
     frozenset({"dependent_care_expenses", "dependent_care_persons"}),
+    frozenset({"medicare_wages", "medicare_tax_withheld"}),  # box 6 needs box 5 (JF3)
 )
 
 
@@ -265,6 +266,33 @@ class IncomeSnapshot(BaseModel):
         default_factory=list,
         description="W-2 box 4 Social Security tax withheld, ONE ENTRY PER EMPLOYER (excess-SS credit needs 2+).",
     )
+    # JF3 (pitfall P-019, box1-standin): box 1 leaves out the 401(k)/403(b) deferrals that boxes 3
+    # and 5 keep, and an exempt F/J student's boxes 3 and 5 are $0 — so neither Form 8959 nor
+    # Schedule SE may be priced on box 1 when the box itself is known.
+    medicare_wages: int | None = Field(
+        default=None, ge=0,
+        description=(
+            "W-2 box 5 Medicare wages and tips, the total of all W-2s — what Form 8959 prices (\"Medicare "
+            "wages and tips from Form W-2, box 5. If you have more than one Form W-2, enter the total of the "
+            "amounts from box 5\"). None: box 1 `wages` stands in, disclosed."
+        ),
+    )
+    ss_wages: int | None = Field(
+        default=None, ge=0,
+        description=(
+            "W-2 boxes 3 + 7 (social security wages and tips), the total of all W-2s — what Schedule SE "
+            "subtracts from the social security wage base (\"total of boxes 3 and 7 on Form(s) W-2\"). "
+            "None: box 1 `wages` stands in, disclosed."
+        ),
+    )
+    medicare_tax_withheld: list[int] = Field(
+        default_factory=list,
+        description=(
+            "W-2 box 6 Medicare tax withheld, ONE ENTRY PER EMPLOYER. What exceeds 1.45% of box 5 is Additional "
+            "Medicare Tax withholding (Form 8959's withholding reconciliation), credited with federal income "
+            "tax withholding — do NOT also add it to federal_withholding. Requires medicare_wages."
+        ),
+    )
     aotc_qualified_expenses: list[int] = Field(
         default_factory=list,
         description="AOTC-qualified education expenses, one entry per eligible student (1098-T-informed).",
@@ -312,6 +340,13 @@ class IncomeSnapshot(BaseModel):
                 f"deposit interest received before the residency starting date, so the same dollars are also in "
                 f"bank_deposit_interest (and in interest)"
             )
+        if self.medicare_tax_withheld and self.medicare_wages is None:
+            raise ValueError(
+                "medicare_tax_withheld (W-2 box 6) requires medicare_wages (W-2 box 5) — the Additional Medicare "
+                "Tax withholding is box 6 less 1.45% of box 5, so it cannot be credited without box 5"
+            )
+        if any(v < 0 for v in self.medicare_tax_withheld):
+            raise ValueError("medicare_tax_withheld entries are W-2 box 6 amounts and cannot be negative")
         if self.dependent_care_expenses > 0 and self.dependent_care_persons < 1:
             raise ValueError(
                 f"dependent_care_expenses ({self.dependent_care_expenses}) requires "
@@ -352,6 +387,11 @@ class IncomeSnapshot(BaseModel):
             },
             ss_withheld_by_employer=[*self.ss_withheld_by_employer, *s.ss_withheld_by_employer],
             aotc_qualified_expenses=[*self.aotc_qualified_expenses, *s.aotc_qualified_expenses],
+            medicare_tax_withheld=[*self.medicare_tax_withheld, *s.medicare_tax_withheld],
+            # JF3: a W-2 box summed across the couple; a spouse who did not give it contributes box 1 (the
+            # stand-in, disclosed by the caller), and neither giving it keeps it None.
+            medicare_wages=_box_or_wages_sum(self, s, "medicare_wages"),
+            ss_wages=_box_or_wages_sum(self, s, "ss_wages"),
             dependent_care_persons=max(self.dependent_care_persons, s.dependent_care_persons),
             itemized_deductions=(
                 None
@@ -359,6 +399,15 @@ class IncomeSnapshot(BaseModel):
                 else (self.itemized_deductions or 0) + (s.itemized_deductions or 0)
             ),
         )
+
+
+def _box_or_wages_sum(a: "IncomeSnapshot", b: "IncomeSnapshot", field: str) -> int | None:
+    """A W-2 box (medicare_wages / ss_wages) summed over two snapshots, box 1 standing in where one is
+    missing; None when neither snapshot carries it (JF3)."""
+    va, vb = getattr(a, field), getattr(b, field)
+    if va is None and vb is None:
+        return None
+    return (a.wages if va is None else va) + (b.wages if vb is None else vb)
 
 
 class CompositionLine(BaseModel):
@@ -433,6 +482,7 @@ _LEDGER_SLOTS: dict[str, str] = {
     "niit": _OPERAND,
     "aptc_repayment": _OPERAND,
     "withholding": _OPERAND,
+    "additional_medicare_withholding": _OPERAND,
     "excess_ss_credit": _OPERAND,
     "actc_refundable": _OPERAND,
     "ctc_refundable_2021": _OPERAND,
@@ -2496,6 +2546,56 @@ _MARRIED_7703_RULES = {
 }
 
 
+def _addmed_box_note(
+    income: IncomeSnapshot, year: int, knowledge_dir, statuses: list[str], *, form_8959: bool, withheld: bool,
+) -> str | None:
+    """The Form 8959 disclosure (JF3, pitfall P-019): what was priced, whether box 1 stood in for box 5,
+    and the box-6 credit. It fires when a figure carries Form 8959, when box 6 was given, or when box 1
+    stood in and box 1 plus the year's 402(g) deferral limit reaches the lowest threshold priced — a
+    deferrer's box 5 can cross it while box 1 does not, and the loss would otherwise be silent."""
+    people = [income, *([income.spouse] if income.spouse is not None else [])]
+    standin = [p for p in people if p.medicare_wages is None and p.wages > 0]
+    box6_given = any(p.medicare_tax_withheld for p in people)
+    pack = load_knowledge("federal", year, base_dir=knowledge_dir)
+    params = pack.tax.additional_medicare_tax
+    if params is None:
+        return None
+    threshold = min(params.thresholds[s] for s in statuses if s in params.thresholds)
+    limits = pack.contribution_limits
+    limit = limits.elective_deferral_402g.limit if limits is not None else None
+    box5 = sum(p.wages if p.medicare_wages is None else p.medicare_wages for p in people)
+    reach = bool(standin) and limit is not None and box5 < threshold <= box5 + limit * len(standin)
+    if not (form_8959 or box6_given or reach):
+        return None
+    text = (
+        "Additional Medicare Tax (Form 8959): 0.9% of Medicare wages (W-2 box 5) and self-employment earnings "
+        "over the status threshold" + (" is in this figure." if form_8959 else " is $0 on these amounts.")
+    )
+    if standin:
+        who = "" if len(people) == 1 else (" for both spouses" if len(standin) == 2 else (
+            " for you" if standin[0] is income else " for your spouse"))
+        text += (
+            f" Box 1 wages stood in for box 5{who}: box 5 keeps the 401(k)/403(b) deferrals box 1 leaves out, and "
+            "an exempt F/J student's box 5 is $0, so enter medicare_wages (W-2 box 5)."
+        )
+        if reach:
+            text += (
+                f" Box 1 is under the ${threshold:,} threshold, but box 1 plus the year's ${limit:,} 402(g) "
+                "deferral limit reaches it, so box 5 may cross it."
+            )
+    if withheld:
+        text += (
+            " The Additional Medicare Tax your employers withheld — W-2 box 6 above \"your regular Medicare tax "
+            "withholding on Medicare wages\" (1.45% of box 5) — is credited with your federal withholding."
+        )
+    elif not box6_given and form_8959:
+        text += (
+            " If an employer withheld extra Medicare tax (W-2 box 6 above 1.45% of box 5), enter each employer's "
+            "box 6 in medicare_tax_withheld — not in federal_withholding."
+        )
+    return text
+
+
 def _married_7703_note(keys: set[str]) -> str:
     """The married-filing-separately rules a nonresident-spouse-route head-of-household figure met (JF1b.10)."""
     rules = [text for key, text in _MARRIED_7703_RULES.items() if key in keys]
@@ -3124,6 +3224,8 @@ def _bottom_line(
     married_7703: bool = False,
     married_separate: bool = False,
     spouses_apart_all_year: bool = False,
+    se_ss_wages: list[int | None] | None = None,
+    medicare_withheld_groups: list[tuple[list[int], int]] | None = None,
 ):
     """Compute the signed bottom line for one filing status. Returns (value, composition, citations).
 
@@ -3221,6 +3323,13 @@ def _bottom_line(
     ``spouses_apart_all_year`` (JF2.5): the spouses lived apart at ALL times during the year
     (household.spouses_lived_apart_all_year), so a separate return's taxable-Social-Security base
     amount is the $25,000 of IRC 86(c)(1)(A), not the $0 of 86(c)(1)(C).
+
+    JF3 (pitfall P-019): Form 8959 prices ``income.medicare_wages`` (W-2 box 5; box 1 stands in when
+    None); Schedule SE subtracts each person's ``ss_wages`` (boxes 3 + 7) from the wage base —
+    ``se_ss_wages`` aligns with ``se_persons`` (None entries fall back to that person's box 1); and
+    ``medicare_withheld_groups`` — one (box 6 list, box 5) per person who gave box 6, default this
+    snapshot's own — prices the Additional Medicare Tax withholding credit (box 6 less 1.45% of box 5,
+    the rate from the pack's employee_social_security block).
     """
     citations: list[Citation] = []
     comp: list[CompositionLine] = []
@@ -3279,11 +3388,15 @@ def _bottom_line(
     # (se_net, own_wages) so one spouse's W-2 wages never absorb the other spouse's
     # SE wage base; without a split the snapshot is one person's amounts.
     se_citation = None
-    for se_net, own_wages in (se_persons if se_persons is not None else [(income.self_employment_net, income.wages)]):
+    persons = se_persons if se_persons is not None else [(income.self_employment_net, income.wages)]
+    ss_boxes = se_ss_wages if se_ss_wages is not None else [income.ss_wages]
+    for (se_net, own_wages), own_ss in zip(persons, [*ss_boxes, *[None] * (len(persons) - len(ss_boxes))]):
         if se_net >= 400:
-            # Schedule SE lines 8a-9: W-2 wages consume the social-security wage base first
-            # (box-1 wages stand in for box-3 SS wages — disclosed as an assumption).
-            se = se_tax(se_net, year, knowledge_dir, w2_ss_wages=own_wages)
+            # Schedule SE: the W-2 social security wages (boxes 3 + 7) consume the wage base first;
+            # box 1 stands in only when the box is not given — disclosed (JF3, P-019).
+            if own_ss is None and own_wages and notes is not None:
+                notes.add("se_box1_standin")
+            se = se_tax(se_net, year, knowledge_dir, w2_ss_wages=own_wages if own_ss is None else own_ss)
             se_amount += se.se_tax
             half_se += se.deduction_half
             se_citation = se.citation
@@ -3646,9 +3759,12 @@ def _bottom_line(
         comp.append(_line("se_tax", label="Plus: self-employment tax", amount=se_amount))
 
     addmed_amount = 0
-    if (income.wages or income.self_employment_net) and pack_tax.additional_medicare_tax is not None:
+    # JF3 (P-019): Form 8959 prices W-2 box 5, never box 1 when box 5 is known — an exempt F/J
+    # student's box 5 is $0, and a 401(k) deferrer's box 5 is above box 1.
+    medicare_wages = income.wages if income.medicare_wages is None else income.medicare_wages
+    if (medicare_wages or income.self_employment_net) and pack_tax.additional_medicare_tax is not None:
         addmed = additional_medicare_tax(
-            income.wages, sep_status, year, se_net_profit=income.self_employment_net, knowledge_dir=knowledge_dir
+            medicare_wages, sep_status, year, se_net_profit=income.self_employment_net, knowledge_dir=knowledge_dir
         )
         if addmed.additional_medicare_tax:
             if married_7703 and notes is not None:
@@ -3728,6 +3844,35 @@ def _bottom_line(
     # Negative, like every other "Less:" composition line (they reduce what you owe).
     comp.append(_line("withholding", label="Less: federal tax withheld / payments", amount=-income.federal_withholding))
     payments = income.federal_withholding
+
+    # JF3: Additional Medicare Tax withholding — box 6 less "your regular Medicare tax withholding on
+    # Medicare wages" (1.45% of box 5); "If zero or less, enter -0-" (Form 8959, 2025). It goes with
+    # federal income tax withholding on the 1040. Only the people who gave box 6 are in it.
+    groups = medicare_withheld_groups if medicare_withheld_groups is not None else (
+        [(list(income.medicare_tax_withheld), income.medicare_wages)]
+        if income.medicare_tax_withheld and income.medicare_wages is not None else []
+    )
+    if groups:
+        ess = pack_tax.employee_social_security
+        rate = ess.medicare_rate if ess is not None else None
+        if rate is None:
+            if notes is not None:
+                notes.add("addmed_withholding_not_priced")
+        else:
+            box6 = sum(sum(g[0]) for g in groups)
+            box5 = sum(g[1] for g in groups)
+            addmed_withheld = irs_round(max(Decimal(0), Decimal(box6) - Decimal(box5) * rate))
+            if addmed_withheld:
+                payments += addmed_withheld
+                comp.append(_line(
+                    "additional_medicare_withholding",
+                    label=(
+                        f"Less: Additional Medicare Tax withheld (Form 8959 Part "
+                        f"{form_line(pack, 'f8959.withholding_part')}, with Form 1040 line "
+                        f"{form_line(pack, 'f1040.additional_medicare_withholding')})"
+                    ),
+                    amount=-addmed_withheld,
+                ))
 
     # The excess-SS cap is PER PERSON (Schedule 3 / Topic 608): on a spouse-split
     # joint return each spouse's box-4 list is computed independently — each with
@@ -4110,6 +4255,11 @@ def estimate_refund(
                 se_persons=[
                     (income.self_employment_net, income.wages),
                     (income.spouse.self_employment_net, income.spouse.wages),
+                ],
+                se_ss_wages=[income.ss_wages, income.spouse.ss_wages],
+                medicare_withheld_groups=[
+                    (list(p.medicare_tax_withheld), p.medicare_wages)
+                    for p in (income, income.spouse) if p.medicare_tax_withheld and p.medicare_wages is not None
                 ],
                 notes=sink,
             )
@@ -4665,12 +4815,17 @@ def estimate_refund(
         )
     # Disclose a surtax whenever ANY candidate status includes it (the MFS low end can
     # trigger Form 8959 while the MFJ headline does not).
-    if "Form 8959" in labels:
+    addmed_note = _addmed_box_note(income if spouse_split else income.model_copy(update={"spouse": None}),
+                                   year, knowledge_dir, statuses, form_8959="Form 8959" in labels,
+                                   withheld="additional_medicare_withholding" in {
+                                       ln.slot for r in outcomes.values() for ln in r.lines})
+    if addmed_note is not None:
+        assumptions.append(addmed_note)
+    if "addmed_withholding_not_priced" in notes:
         assumptions.append(
-            "Additional Medicare Tax (Form 8959) included: 0.9% of wages/SE earnings over the status "
-            "threshold. Box 1 wages stand in for box 5 Medicare wages; if your employer already withheld "
-            "extra Medicare tax (W-2 box 6 above 1.45% of box 5), include that excess in the withholding "
-            "input — it credits against this."
+            f"NOT ESTIMATED — Additional Medicare Tax withholding: W-2 box 6 was supplied, but the {year} pack "
+            "carries no employee Medicare rate (employee_social_security.medicare_rate), so the credit for box 6 "
+            "above the regular 1.45% of box 5 is not in this figure. This bottom line likely UNDERSTATES your refund."
         )
     if "Form 8960" in labels:
         assumptions.append(
@@ -4678,10 +4833,12 @@ def estimate_refund(
             "gain over the MAGI threshold, with MAGI approximated by AGI. Rents, royalties, and passive "
             "K-1 income are not captured by this snapshot and would increase it."
         )
-    if income.wages and income.self_employment_net >= 400:
+    if "se_box1_standin" in notes:
         assumptions.append(
-            "Self-employment tax applies Schedule SE lines 8a-9 (W-2 wages consume the Social Security "
-            "wage base first), using box-1 wages as the box-3 proxy — box 3 can differ (e.g. 401(k) deferrals)."
+            "Self-employment tax: the W-2 social security wages (boxes 3 + 7) consume the Social Security wage "
+            f"base before self-employment earnings do (Schedule SE line {form_line(year, 'sched_se.ss_wages', base_dir=knowledge_dir)}); "
+            "box 1 wages stood in for them because ss_wages was not given — boxes 3 and 7 keep the 401(k) "
+            "deferrals box 1 leaves out, so enter ss_wages (W-2 boxes 3 + 7)."
         )
 
     # Married-status candidates: worst-case bound vs true two-return split.
