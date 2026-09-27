@@ -736,6 +736,35 @@ def _surtax_threshold(thresholds: dict[str, int], filing_status: str, where: str
     return thresholds[filing_status]
 
 
+def _payroll_boxes(
+    wages: int | float | Decimal | str | None,
+    ss_wages: int | float | Decimal | str | None,
+    medicare_wages: int | float | Decimal | str | None,
+) -> tuple[Decimal, Decimal, str | None]:
+    """The person-level W-2 totals a payroll-FICA tier reads (JF4, pitfall P-019): social security
+    wages (boxes 3 + 7) against the wage base, Medicare wages (box 5) against the 0.9% threshold.
+    ``wages`` is the deprecated one-figure input, taken as BOTH boxes — the third item says so, since
+    box 1 leaves out the 401(k)/403(b) deferrals the two boxes keep. Raises when neither is given."""
+    if ss_wages is None and medicare_wages is None and wages is None:
+        raise ValueError("pass ss_wages and medicare_wages (W-2 boxes 3 + 7 and box 5), or wages")
+    one = _to_decimal(wages, "wages") if wages is not None else None
+    ss = _to_decimal(ss_wages, "ss_wages") if ss_wages is not None else one
+    med = _to_decimal(medicare_wages, "medicare_wages") if medicare_wages is not None else one
+    if ss is None or med is None:
+        missing = "ss_wages" if ss is None else "medicare_wages"
+        raise ValueError(f"{missing} is needed too (or pass wages to stand in for both boxes)")
+    if ss < 0 or med < 0:
+        raise ValueError("wages, ss_wages and medicare_wages must be >= 0")
+    standin = None
+    if ss_wages is None or medicare_wages is None:
+        standin = (
+            f"wages ${irs_round(one):,} stood in for "
+            + " and ".join(b for b, given in (("W-2 boxes 3 + 7", ss_wages), ("box 5", medicare_wages)) if given is None)
+            + " — box 1 leaves out the 401(k)/403(b) deferrals those boxes keep, so pass ss_wages / medicare_wages"
+        )
+    return ss, med, standin
+
+
 class AdditionalMedicareTaxResult(BaseModel):
     """Result of :func:`additional_medicare_tax`: Form 8959 Parts I-II."""
 
@@ -3599,6 +3628,11 @@ def estimated_tax_safe_harbor(
     prior_year_agi: int | None = None,
     prior_year_total_tax: int | None = None,
     knowledge_dir: str | Path | None = None,
+    *,
+    excess_ss_credit: int | float | Decimal | str = 0,
+    additional_medicare_withheld: int | float | Decimal | str = 0,
+    refundable_credits: int | float | Decimal | str = 0,
+    prior_year_refundable_credits: int | float | Decimal | str = 0,
 ) -> SafeHarborResult:
     """The IRC 6654(d) estimated-tax safe harbor (Form 1040-ES, 'General Rule'):
     will the year's withholding be enough to avoid an underpayment penalty?
@@ -3633,6 +3667,20 @@ def estimated_tax_safe_harbor(
     and the two methods can differ by thousands of dollars on a large bonus, so
     ``expected_withholding`` must follow the method the employer actually uses
     (the pay stub shows it) — no op computes the aggregate figure yet.
+
+    JF4 — the statute's own inputs (26 U.S.C. 31 and 6654, read 2026-09-27):
+    ``excess_ss_credit`` is withholding — IRC 31(b)(1): such a credit "shall, for purposes of
+    this subtitle, be considered an amount withheld at source"; ``refundable_credits`` (the
+    non-section-31 refundable credits: EITC, the additional child tax credit, the refundable
+    AOTC, the net PTC) come off the tax — IRC 6654(f)(4) subtracts "the credits against tax
+    provided by part IV of subchapter A of chapter 1, other than the credit against tax provided
+    by section 31"; ``additional_medicare_withheld`` (Form 8959's withholding reconciliation)
+    comes off the tax too — IRC 6654(m): the Additional Medicare Tax counts "(to the extent not
+    withheld)" — so pass ``expected_withholding`` WITHOUT it. The prior-year prong measures that
+    year's tax the same way: ``prior_year_refundable_credits`` comes off ``prior_year_total_tax`` (the
+    2025 Instructions for Form 2210: "To figure your 2024 tax, first add the amounts listed in (1)
+    below, then subtract from that total amount the refundable credits listed in (2)"). The work names
+    IRC 6654(g)(1)'s ratable deeming of withholding, and the prior-year lines through ``form_line``.
     """
     if filing_status not in FILING_STATUSES and filing_status != _QSS:
         raise ValueError(
@@ -3641,15 +3689,27 @@ def estimated_tax_safe_harbor(
         )
     tax_d = _to_decimal(projected_tax, "projected_tax")
     wh_d = _to_decimal(expected_withholding, "expected_withholding")
-    if tax_d < 0 or wh_d < 0:
-        raise ValueError("projected_tax and expected_withholding must be >= 0")
+    xss_d = _to_decimal(excess_ss_credit, "excess_ss_credit")
+    amw_d = _to_decimal(additional_medicare_withheld, "additional_medicare_withheld")
+    ref_d = _to_decimal(refundable_credits, "refundable_credits")
+    prior_ref_d = _to_decimal(prior_year_refundable_credits, "prior_year_refundable_credits")
+    if min(tax_d, wh_d, xss_d, amw_d, ref_d, prior_ref_d) < 0:
+        raise ValueError(
+            "projected_tax, expected_withholding, excess_ss_credit, additional_medicare_withheld, "
+            "refundable_credits and prior_year_refundable_credits must be >= 0"
+        )
+    # IRC 6654(f)(4) and (m): the tax the safe harbor measures; IRC 31(b)(1): the withholding.
+    line_tax_d = tax_d
+    tax_d = max(Decimal(0), tax_d - ref_d - amw_d)
+    wh_d = wh_d + xss_d
+    pack = _load_federal(year, knowledge_dir)
+    prior_lines = _prior_return_lines(year, knowledge_dir)
     if (prior_year_agi is None) != (prior_year_total_tax is None):
         raise ValueError(
-            "supply BOTH prior_year_agi and prior_year_total_tax (prior return lines 11 and 24) or "
+            f"supply BOTH prior_year_agi and prior_year_total_tax ({prior_lines}) or "
             "NEITHER — the 110%-vs-100% tier needs the AGI, and the prong needs the tax; one without "
             "the other cannot be evaluated"
         )
-    pack = _load_federal(year, knowledge_dir)
     params = pack.tax.estimated_tax_safe_harbor
     if params is None:
         raise ValueError(
@@ -3672,25 +3732,46 @@ def estimated_tax_safe_harbor(
         prior_pct = (
             params.high_income_prior_year_pct if prior_year_agi > threshold else params.prior_year_pct
         )
-        prior_prong = irs_round(prior_pct * Decimal(prior_year_total_tax))
+        prior_tax_d = max(Decimal(0), Decimal(prior_year_total_tax) - prior_ref_d)
+        prior_prong = irs_round(prior_pct * prior_tax_d)
     required = current_prong if prior_prong is None else min(current_prong, prior_prong)
     balance = irs_round(tax_d - wh_d)
     payments_required = balance >= params.underpayment_de_minimis and irs_round(wh_d) < required
     shortfall = max(0, required - irs_round(wh_d)) if payments_required else 0
     quarterly = irs_round(Decimal(shortfall) / 4) if shortfall else 0
 
-    work_lines = [
-        f"IRC 6654(d) safe harbor ({year}), filing status {filing_status}:",
-        f"Current-year prong: {params.current_year_pct:%} x ${irs_round(tax_d):,} projected tax = ${current_prong:,}.",
-    ]
+    work_lines = [f"IRC 6654(d) safe harbor ({year}), filing status {filing_status}:"]
+    if ref_d or amw_d:
+        work_lines.append(
+            f"Tax for IRC 6654: ${irs_round(line_tax_d):,} projected"
+            + (f" - ${irs_round(ref_d):,} refundable credits (6654(f)(4): the part IV credits other than "
+               "section 31's)" if ref_d else "")
+            + (f" - ${irs_round(amw_d):,} Additional Medicare Tax withheld (6654(m): counted \"to the extent "
+               "not withheld\")" if amw_d else "")
+            + f" = ${irs_round(tax_d):,}."
+        )
+    if xss_d:
+        work_lines.append(
+            f"Withholding includes the ${irs_round(xss_d):,} excess social security credit — IRC 31(b)(1): "
+            "\"considered an amount withheld at source\"."
+        )
+    work_lines.append(
+        f"Current-year prong: {params.current_year_pct:%} x ${irs_round(tax_d):,} projected tax = ${current_prong:,}."
+    )
     if prior_prong is not None:
         tier = (
             f"prior-year AGI ${prior_year_agi:,} > ${threshold:,} -> {params.high_income_prior_year_pct:%}"
             if prior_pct == params.high_income_prior_year_pct
             else f"prior-year AGI ${prior_year_agi:,} <= ${threshold:,} -> {params.prior_year_pct:%}"
         )
+        if prior_ref_d:
+            work_lines.append(
+                f"Prior-year tax for IRC 6654: ${prior_year_total_tax:,} - ${irs_round(prior_ref_d):,} that year's "
+                f"refundable credits = ${irs_round(prior_tax_d):,} (the Form 2210 instructions: \"subtract from that "
+                "total amount the refundable credits\")."
+            )
         work_lines.append(
-            f"Prior-year prong: {tier} x ${prior_year_total_tax:,} prior tax = ${prior_prong:,} "
+            f"Prior-year prong: {tier} x ${irs_round(prior_tax_d):,} prior tax = ${prior_prong:,} "
             f"(valid only if the prior return covered all 12 months — your judgment; the MFS "
             f"${params.high_income_agi_threshold_mfs:,} threshold keys on the CURRENT year's status)."
         )
@@ -3698,13 +3779,19 @@ def estimated_tax_safe_harbor(
         work_lines.append(
             "Prior-year prong NOT evaluated (prior_year_agi / prior_year_total_tax not supplied) — the "
             "required payment shown uses the 90% prong alone; the prior-year prong is often SMALLER, so "
-            "supplying the prior return's lines 11 and 24 can only help."
+            f"supplying the prior return's figures ({prior_lines}) can only help."
         )
     work_lines.append(
         f"Required annual payment = ${required:,}; expected withholding ${irs_round(wh_d):,}; expected "
         f"balance ${balance:,} vs the ${params.underpayment_de_minimis:,} de minimis -> estimated "
         f"payments {'REQUIRED' if payments_required else 'not required'}"
         + (f"; shortfall ${shortfall:,} (${quarterly:,}/quarter over four installments)." if shortfall else ".")
+    )
+    work_lines.append(
+        "Withholding counts by IRC 6654(g)(1): the section 31 credit \"shall be deemed a payment of estimated "
+        "tax, and an equal part of such amount shall be deemed paid on each due date for such taxable year\" "
+        "unless you establish the actual withholding dates — so a late-year Form W-4 increase covers the "
+        "earlier installments too, while a late Form 1040-ES payment counts only from the day it is paid."
     )
     work_lines.append(params.farmers_fishermen_note)
     sw = pack.tax.supplemental_withholding
@@ -3726,10 +3813,26 @@ def estimated_tax_safe_harbor(
             "year": year,
             "prior_year_agi": prior_year_agi,
             "prior_year_total_tax": prior_year_total_tax,
+            "excess_ss_credit": irs_round(xss_d),
+            "additional_medicare_withheld": irs_round(amw_d),
+            "refundable_credits": irs_round(ref_d),
+            "prior_year_refundable_credits": irs_round(prior_ref_d),
         },
         work="\n".join(work_lines),
         citation=params.citation,
     )
+
+
+def _prior_return_lines(year: int, knowledge_dir: str | Path | None) -> str:
+    """Where the prior-year figures sit on that year's Form 1040 (JF4): read through form_line, so a
+    2025 return's AGI is its line 11a, not the 11 of 2020-2024."""
+    try:
+        return (
+            f"the {year - 1} Form 1040 line {form_line(year - 1, 'f1040.agi', base_dir=knowledge_dir)} AGI and "
+            f"line {form_line(year - 1, 'f1040.total_tax', base_dir=knowledge_dir)} total tax"
+        )
+    except FormLineError:
+        return f"the AGI and total tax off the {year - 1} Form 1040"
 
 
 class AnnualizeResult(BaseModel):
@@ -4248,10 +4351,13 @@ class MarginalDollarResult(BaseModel):
 
 def marginal_dollar_savings(
     taxable_income: int | float | Decimal | str,
-    wages: int | float | Decimal | str,
+    wages: int | float | Decimal | str | None = None,
     filing_status: str = "single",
     year: int = 2025,
     knowledge_dir: str | Path | None = None,
+    *,
+    ss_wages: int | float | Decimal | str | None = None,
+    medicare_wages: int | float | Decimal | str | None = None,
 ) -> MarginalDollarResult:
     """"Where does one more pre-tax dollar save the most?" — the ranking a
     planner otherwise builds by hand.
@@ -4266,6 +4372,10 @@ def marginal_dollar_savings(
     Federal income tax only (state marginal rates stack on top — disclosed);
     Roth dollars save $0 today by design, so they are not rows here — the
     now-vs-retirement trade is judgment, not arithmetic.
+
+    The tier reads the W-2 boxes (JF4): ``ss_wages`` (boxes 3 + 7) against the wage base and
+    ``medicare_wages`` (box 5) against the filing-status Form 8959 threshold; ``wages`` is the
+    deprecated one-figure input, taken as both boxes and disclosed.
     """
     if filing_status not in FILING_STATUSES and filing_status != _QSS:
         raise ValueError(
@@ -4273,9 +4383,9 @@ def marginal_dollar_savings(
             f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
         )
     taxable_d = _to_decimal(taxable_income, "taxable_income")
-    wages_d = _to_decimal(wages, "wages")
-    if taxable_d < 0 or wages_d < 0:
-        raise ValueError("taxable_income and wages must be >= 0")
+    if taxable_d < 0:
+        raise ValueError("taxable_income must be >= 0")
+    ss_d, med_d, standin = _payroll_boxes(wages, ss_wages, medicare_wages)
     pack = _load_federal(year, knowledge_dir)
     _require_contribution_limits(pack, year)  # the buckets must exist for the year
     ess = pack.tax.employee_social_security
@@ -4308,32 +4418,39 @@ def marginal_dollar_savings(
         )
     threshold = Decimal(_surtax_threshold(amt.thresholds, filing_status, "additional_medicare_tax"))
     withholding_threshold = Decimal(ess.additional_medicare_withholding_threshold)
-    if wages_d < ess.ss_wage_base:
-        fica = ess.rate + ess.medicare_rate
+    # JF4: social security keys on boxes 3 + 7 against the wage base, the 0.9% on box 5 against the
+    # filing-status threshold — two different W-2 figures, never one.
+    over = med_d > threshold
+    if ss_d < ess.ss_wage_base:
+        fica = ess.rate + ess.medicare_rate + (amt.rate if over else 0)
         tier = (
-            f"wages ${irs_round(wages_d):,} are BELOW the ${ess.ss_wage_base:,} wage base -> a payroll "
-            f"dollar avoids the full {fica:%} (SS {ess.rate:%} + Medicare {ess.medicare_rate:%})"
+            f"social security wages ${irs_round(ss_d):,} are BELOW the ${ess.ss_wage_base:,} wage base -> a "
+            f"payroll dollar avoids the full {fica:%} (SS {ess.rate:%} + Medicare {ess.medicare_rate:%}"
+            + (f" + Additional Medicare {amt.rate:%}: Medicare wages ${irs_round(med_d):,} exceed the "
+               f"{filing_status} Form 8959 threshold of ${irs_round(threshold):,}" if over else "") + ")"
         )
-    elif wages_d <= threshold:
+    elif not over:
         fica = ess.medicare_rate
         withheld_note = (
             f" (your employer still WITHHOLDS the extra {amt.rate:%} above "
             f"${irs_round(withholding_threshold):,} — that is status-blind — but Form 8959 measures the "
             f"TAX against your {filing_status} threshold of ${irs_round(threshold):,}, so the "
             f"over-withholding comes back as a credit and the marginal dollar does not save it)"
-            if wages_d > withholding_threshold else ""
+            if med_d > withholding_threshold else ""
         )
         tier = (
-            f"wages ${irs_round(wages_d):,} are ABOVE the ${ess.ss_wage_base:,} wage base -> SS is "
-            f"already capped; a payroll dollar avoids only Medicare {fica:%}, never 7.65%{withheld_note}"
+            f"social security wages ${irs_round(ss_d):,} are ABOVE the ${ess.ss_wage_base:,} wage base -> SS "
+            f"is already capped; a payroll dollar avoids only Medicare {fica:%}, never 7.65%{withheld_note}"
         )
     else:
         fica = ess.medicare_rate + amt.rate
         tier = (
-            f"wages ${irs_round(wages_d):,} exceed the {filing_status} Form 8959 threshold of "
+            f"Medicare wages ${irs_round(med_d):,} exceed the {filing_status} Form 8959 threshold of "
             f"${irs_round(threshold):,} -> a payroll dollar avoids Medicare {ess.medicare_rate:%} + "
             f"Additional Medicare {amt.rate:%} = {fica:%} (SS already capped)"
         )
+    if standin:
+        tier += f" [{standin}]"
 
     zero = Decimal("0")
     rows = [
@@ -4377,8 +4494,8 @@ def marginal_dollar_savings(
     ]
     return MarginalDollarResult(
         marginal_rate=marginal, fica_tier=tier, rows=rows,
-        inputs={"taxable_income": irs_round(taxable_d), "wages": irs_round(wages_d),
-                "filing_status": filing_status, "year": year},
+        inputs={"taxable_income": irs_round(taxable_d), "ss_wages": irs_round(ss_d),
+                "medicare_wages": irs_round(med_d), "filing_status": filing_status, "year": year},
         work="\n".join(work_lines), citation=pack.tax.rate_schedules.citation,
     )
 
@@ -4416,6 +4533,8 @@ def magi_ladder(
     foreign_earned_income_exclusion: int | float | Decimal | str = 0,
     excluded_puerto_rico_income: int | float | Decimal | str = 0,
     knowledge_dir: str | Path | None = None,
+    *,
+    medicare_wages: int | float | Decimal | str | None = None,
 ) -> MagiLadderResult:
     """Every MAGI test the year's packs carry, in ONE table — because "MAGI" is
     not one number.
@@ -4440,7 +4559,9 @@ def magi_ladder(
             f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
         )
     agi_i = irs_round(_to_decimal(agi, "agi"))
-    wages_i = irs_round(_to_decimal(wages, "wages"))
+    # JF4: the Form 8959 row measures W-2 box 5; `wages` (deprecated) stands in for it, disclosed.
+    wages_i = irs_round(_to_decimal(wages if medicare_wages is None else medicare_wages, "medicare_wages"))
+    box5_standin = medicare_wages is None and wages_i > 0
     feie_i = irs_round(_to_decimal(foreign_earned_income_exclusion, "foreign_earned_income_exclusion"))
     pr_i = irs_round(_to_decimal(excluded_puerto_rico_income, "excluded_puerto_rico_income"))
     pack = _load_federal(year, knowledge_dir)
@@ -4494,6 +4615,8 @@ def magi_ladder(
             )),
             "A WAGE test, not an AGI test: Medicare wages (plus SE income) over the threshold — moving "
             "AGI does not move this one."
+            + (" The figure is `wages`, standing in for W-2 box 5 — box 5 keeps the 401(k)/403(b) deferrals "
+               "box 1 leaves out; pass medicare_wages." if box5_standin else "")
             + (" A qualifying surviving spouse uses the single threshold, not the joint one (Form "
                "8959: 'Single, Head of household, or Qualifying surviving spouse . . . $200,000'; "
                "IRC 3101(b)(2)(C) 'in any other case, $200,000')." if filing_status == _QSS else ""),
@@ -5764,6 +5887,10 @@ def hsa_deduction(
     distributions_excepted_from_20_percent: int | float | Decimal | str = 0,
     wages: int | float | Decimal | str | None = None,
     knowledge_dir: str | Path | None = None,
+    *,
+    ss_wages: int | float | Decimal | str | None = None,
+    medicare_wages: int | float | Decimal | str | None = None,
+    filing_status: str | None = None,
 ) -> HsaDeductionResult:
     """Form 8889 as IRC 223 writes it: how much of an HSA contribution is actually
     DEDUCTIBLE, what the last-month rule buys and what it puts at risk.
@@ -5809,7 +5936,10 @@ def hsa_deduction(
        earnings by the return's due date INCLUDING extensions, with a further
        six-month amended-return window under section 301.9100-2.
 
-    ``wages`` is optional and adds the payroll half: cafeteria-plan HSA dollars
+    ``ss_wages`` (W-2 boxes 3 + 7) and ``medicare_wages`` (box 5) — or the deprecated one-figure
+    ``wages``, taken as both and disclosed — add the payroll half (JF4), and ``filing_status`` keys
+    the 0.9% tier on the Form 8959 TAX threshold; without it the tier falls back to the employer's
+    status-blind withholding threshold, an upper bound it names. Cafeteria-plan HSA dollars
     avoid income tax AND FICA, so a DIRECT contribution of the same size saves
     the same income tax and loses the FICA. Above the social security wage base
     that FICA saving is Medicare only — 1.45%, or 2.35% once the 0.9% Additional
@@ -6132,10 +6262,8 @@ def hsa_deduction(
     # ── the FICA half, optional ───────────────────────────────────────────────
     fica_saving: Decimal | None = None
     fica_tier: str | None = None
-    if wages is not None:
-        wages_d = _to_decimal(wages, "wages")
-        if wages_d < 0:
-            raise ValueError("wages must be >= 0")
+    if wages is not None or ss_wages is not None or medicare_wages is not None:
+        ss_d, med_d, standin = _payroll_boxes(wages, ss_wages, medicare_wages)
         ess = pack.tax.employee_social_security
         if ess is None or ess.medicare_rate is None:
             raise ValueError(
@@ -6143,28 +6271,44 @@ def hsa_deduction(
                 f"medicare fields to employee_social_security (see knowledge/federal/2025.yaml), or call "
                 f"hsa_deduction without wages to skip the payroll comparison"
             )
-        threshold = Decimal(ess.additional_medicare_withholding_threshold)
-        if wages_d < ess.ss_wage_base:
+        amt = pack.tax.additional_medicare_tax
+        if filing_status is not None and amt is not None:
+            # JF4: the TAX threshold for the filing status (IRC 3101(b)(2)), not the withholding one.
+            threshold = Decimal(_surtax_threshold(amt.thresholds, filing_status, "additional_medicare_tax"))
+        else:
+            threshold = Decimal(ess.additional_medicare_withholding_threshold)
+        if ss_d < ess.ss_wage_base:
             rate = ess.rate + ess.medicare_rate
             fica_tier = (
-                f"wages {_money(wages_d)} are BELOW the ${ess.ss_wage_base:,} social security wage base, "
-                f"so a cafeteria-plan dollar avoids the full {rate:%} (SS {ess.rate:%} + Medicare "
+                f"social security wages {_money(ss_d)} are BELOW the ${ess.ss_wage_base:,} social security wage "
+                f"base, so a cafeteria-plan dollar avoids the full {rate:%} (SS {ess.rate:%} + Medicare "
                 f"{ess.medicare_rate:%})"
             )
-        elif wages_d <= threshold:
+        elif med_d <= threshold:
             # `<=`, not `<`: Pub 15 withholds Additional Medicare on wages "in excess
             # of" the threshold, so wages of exactly $200,000 are still in the
             # Medicare-only tier (off-by-one found 2026-08-26 by the adversarial review).
             rate = ess.medicare_rate
             fica_tier = (
-                f"wages {_money(wages_d)} are ABOVE the ${ess.ss_wage_base:,} social security wage base, "
-                f"so SS is already capped and a cafeteria-plan dollar avoids only Medicare {rate:%} — "
+                f"social security wages {_money(ss_d)} are ABOVE the ${ess.ss_wage_base:,} social security wage "
+                f"base, so SS is already capped and a cafeteria-plan dollar avoids only Medicare {rate:%} — "
                 f"NOT 7.65%"
+                + (f" (Medicare wages {_money(med_d)} do not exceed the {filing_status} Form 8959 threshold of "
+                   f"${irs_round(threshold):,})" if filing_status is not None and amt is not None else "")
+            )
+        elif filing_status is not None and amt is not None:
+            rate = ess.medicare_rate + amt.rate
+            fica_tier = (
+                f"Medicare wages {_money(med_d)} exceed the {filing_status} Form 8959 threshold of "
+                f"${irs_round(threshold):,} and SS is capped, so a cafeteria-plan dollar avoids Medicare "
+                f"{ess.medicare_rate:%} + Additional Medicare {amt.rate:%} = {rate:%} — NOT 7.65% (the MARGINAL "
+                f"rate at the top of these wages; a contribution straddling the threshold saves "
+                f"{ess.medicare_rate:%} on the part below it)"
             )
         else:
             rate = ess.medicare_rate + ess.additional_medicare_withholding_rate
             fica_tier = (
-                f"wages {_money(wages_d)} exceed both the ${ess.ss_wage_base:,} social security wage base "
+                f"wages {_money(med_d)} exceed both the ${ess.ss_wage_base:,} social security wage base "
                 f"and the ${irs_round(threshold):,} Additional Medicare withholding threshold, so a "
                 f"cafeteria-plan dollar avoids Medicare {ess.medicare_rate:%} + Additional Medicare "
                 f"{ess.additional_medicare_withholding_rate:%} = {rate:%} — NOT 7.65%. This is the tier "
@@ -6177,6 +6321,8 @@ def hsa_deduction(
                 f"MARGINAL rate at the top of these wages applied to the whole line-13 amount; a "
                 f"contribution straddling the threshold saves {ess.medicare_rate:%} on the part below it"
             )
+        if standin:
+            fica_tier += f" [{standin}]"
         fica_saving = _cents(rate * line13)
 
     # ── the printed lines ─────────────────────────────────────────────────────

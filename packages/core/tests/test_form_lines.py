@@ -61,13 +61,19 @@ EXPECTED: dict[str, dict[int, str]] = {
     "f8959.withholding_part": {y: "V" for y in range(2019, 2027)},
     "f1040.additional_medicare_withholding": {2019: "17", **{y: "25c" for y in range(2020, 2027)}},
     "sched_se.ss_wages": {y: "8a" for y in range(2019, 2027)},
+    # JF4 (read 2026-09-27): the prior-year figures the safe harbor asks for — AGI moved to 11a in 2025.
+    "f1040.agi": {2019: "8b", **{y: "11" for y in range(2020, 2025)}, 2025: "11a", 2026: "11a"},
+    "f1040.total_tax": {2019: "16", **{y: "24" for y in range(2020, 2026)}, 2026: "24a"},
 }
+READ = {"f1040.agi": "2026-09-27", "f1040.total_tax": "2026-09-27"}  # every other key: 2026-09-24
 DRAFT_CREATED = {
     "sched1.other_income": "4/24/26",
     "f1040nr.treaty_exempt": "8/19/26",
     "f8959.withholding_part": "5/27/26",
     "f1040.additional_medicare_withholding": "8/19/26",
     "sched_se.ss_wages": "4/27/26",
+    "f1040.agi": "8/19/26",
+    "f1040.total_tax": "8/19/26",
 }
 
 
@@ -108,7 +114,7 @@ def test_every_year_records_every_jf6a_key_with_its_face(key: str, year: int):
     assert year in EXPECTED[key], f"{year} is not pinned: read its {key} face and extend EXPECTED"
     entry = form_line_entry(year, key)
     assert entry.line == EXPECTED[key][year], f"{key} {year}"
-    assert entry.read == "2026-09-24"
+    assert entry.read == READ.get(key, "2026-09-24")
     if year == 2026:
         assert entry.line_source == f"draft Created {DRAFT_CREATED[key]}"
         assert entry.url.startswith("https://www.irs.gov/pub/irs-dft/") and entry.url.endswith("--dft.pdf")

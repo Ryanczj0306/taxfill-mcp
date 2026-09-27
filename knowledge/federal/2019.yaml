@@ -980,3 +980,19 @@ form_lines:
       has no wage line. W-2 boxes 3 and 7, not box 1. Through line 8d it comes off
       the line 7 maximum ("9 Subtract line 8d from line 7"), which is what leaves
       less of the wage base for self-employment earnings.
+  f1040.agi:
+    line: "8b"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040--2019.pdf"
+    read: "2026-09-27"
+    printed: "b Subtract line 8a from line 7b. This is your adjusted gross income 8b"
+    note: >-
+      The prior-year AGI the IRC 6654(d)(1)(C) 110% test reads (estimated_tax_safe_harbor, JF4).
+  f1040.total_tax:
+    line: "16"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040--2019.pdf"
+    read: "2026-09-27"
+    printed: "16 Add lines 14 and 15. This is your total tax"
+    note: >-
+      The prior-year total tax the IRC 6654(d)(1)(B)(ii) prong reads (estimated_tax_safe_harbor, JF4).

@@ -405,10 +405,17 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       or totalization_agreement). Enforces the SS wage base across segments in order, Medicare with no
       base, and the 0.9% Additional Medicare withholding over $200,000; per-employer nuances disclosed)
     - estimated_tax_safe_harbor: args {projected_tax, expected_withholding, filing_status?, year?,
-      prior_year_agi?, prior_year_total_tax?} (IRC 6654(d): required annual payment = min(90% of the
+      prior_year_agi?, prior_year_total_tax?, excess_ss_credit?, additional_medicare_withheld?,
+      refundable_credits?, prior_year_refundable_credits?} (JF4: the excess-SS credit counts as
+      withholding, IRC 31(b)(1); refundable credits (the prior year's too, off prior_year_total_tax, per
+      the Form 2210 instructions) and the Additional Medicare Tax withheld come off the tax, IRC
+      6654(f)(4) and (m) — so
+      pass expected_withholding WITHOUT that box-6 excess; the work quotes 6654(g)(1)'s ratable
+      deeming of withholding. IRC 6654(d): required annual payment = min(90% of the
       current year's tax, 100% of the prior year's — 110% when PRIOR-year AGI > $150,000/$75,000-MFS,
       the status test keyed on the CURRENT year). Supply prior_year_agi AND prior_year_total_tax
-      together (prior return lines 11/24 — intake stores them on prior_filings) or omit both; the
+      together (the prior return's AGI and total-tax lines, named in the work — intake stores them on
+      prior_filings) or omit both; the
       prior prong needs a 12-month prior return (your judgment). Reports the $1,000 de-minimis, the
       shortfall and the quarterly installment; the work quotes the supplemental-wage (bonus) trap WITH
       its precondition (P-017): the flat 22% is the employer's OPTION only when Treas. Reg.
@@ -443,12 +450,14 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       extension — and, for a return filed on time without it, the Form 5329 instructions' 6 months
       after the due date excluding extensions, on an amended return "Filed pursuant to section
       301.9100-2")
-    - marginal_dollar_savings: args {taxable_income, wages, filing_status?, year?} ("where does one
+    - marginal_dollar_savings: args {taxable_income, ss_wages + medicare_wages (W-2 boxes 3 + 7 and
+      box 5; the older one-figure `wages` stands in for both, disclosed), filing_status?, year?} ("where does one
       more pre-tax dollar save the most": payroll HSA/FSA/commuter dollars avoid income tax AND FICA;
       401(k)/deductible-IRA dollars avoid income tax only; ABOVE the SS wage base the FICA saving is
       1.45%+0.9% over $200k, never 7.65%. Federal only — state rates stack; Roth saves $0 today by
       design)
-    - magi_ladder: args {agi, filing_status?, year?, wages?, foreign_earned_income_exclusion?,
+    - magi_ladder: args {agi, filing_status?, year?, medicare_wages? (W-2 box 5, the 8959 row; the older
+      wages? stands in, disclosed), foreign_earned_income_exclusion?,
       excluded_puerto_rico_income?} (every MAGI test the year's packs carry, one table — because MAGI
       is not one number: NIIT adds back the FEIE, Additional Medicare is a WAGE test that AGI cannot
       move, Schedule 1-A / Roth-IRA / deductible-IRA each define their own. Show it when the user asks
@@ -496,7 +505,9 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       employer_contributions?, qualified_hsa_funding_distribution?, archer_msa_contributions?,
       medicare_start_month?, health_fsa?, claimed_as_dependent_by_another?, testing_period_failed?,
       funding_distribution_testing_period_failed?, distributions_total?, distributions_rolled_over?,
-      qualified_medical_expenses?, distributions_excepted_from_20_percent?, wages?} (Form 8889 /
+      qualified_medical_expenses?, distributions_excepted_from_20_percent?, ss_wages?, medicare_wages?,
+      filing_status? (the payroll half: W-2 boxes 3 + 7 and 5, the 0.9% tier on the filing status's Form
+      8959 threshold; the older wages? stands in for both boxes), wages?} (Form 8889 /
       IRC 223 — the op that makes an HSA contribution FILEABLE, not just plannable. FOUR TRAPS it
       enforces. (1) The limit is MONTHLY: 223(b)(1)-(2) tests eligibility on the FIRST DAY of each
       month and allows 1/12 of the tier amount per eligible month, so a mid-year HDHP start gets the

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,720 tests** — offline 5,340 + live-.gov 380; derived
+Done and on `main` (**5,744 tests** — offline 5,364 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1551,7 +1551,8 @@ not wait for any of this.
     - One employer: box 5 260,000, box 6 4,310 → withholding slot −540.
     - The 240-profile ledger property suite and the spouse-field test stay green; the pitfall has a citing test.
 
-- [ ] **JF4 — FICA tiers and the safe harbor read the right box** (M; deps JF3)
+- [x] **JF4 — FICA tiers and the safe harbor read the right box — DONE 2026-09-27** (M; deps JF3)
+  - *As built:* 1 `calc._payroll_boxes` gives marginal_dollar_savings, hsa_deduction and magi_ladder person-level `ss_wages` (boxes 3 + 7, against the wage base) and `medicare_wages` (box 5, against the 0.9% threshold); the one-figure `wages` stays as a deprecated alias that stands in for both and says so; marginal_dollar_savings keys the 0.9% on the filing-status Form 8959 threshold (it already did) and now on box 5; hsa_deduction gains `filing_status` — with it the tier is the Form 8959 TAX threshold, without it the old status-blind withholding threshold, still named an upper bound; magi_ladder's 8959 row measures `medicare_wages`. 2 estimated_tax_safe_harbor takes `excess_ss_credit` (withholding, IRC 31(b)(1)), `refundable_credits` (off the tax, 6654(f)(4)) and `additional_medicare_withheld` (off the tax, 6654(m) "to the extent not withheld"), and `prior_year_refundable_credits` (off the prior-year tax — the 2025 Instructions for Form 2210: "subtract from that total amount the refundable credits"), quotes 6654(g)(1)'s ratable deeming (a late W-4 bump covers earlier installments, a late 1040-ES payment does not), and names the prior-year lines through form_line — the new registry keys `f1040.agi` (8b in 2019, 11 in 2020-2024, 11a from 2025) and `f1040.total_tax` (16, then 24, 24a on the 2026 draft), each read off its face 2026-09-27; the old text told a 2026 filer to read line 11 of a 2025 return whose AGI is line 11a. `estimate.safe_harbor_inputs_from_estimate` reads the inputs off an estimate's ledger. The intake / profile / server prior-year line literals stay for JF6c.
   1. **Shared tier helper** [DEF-10]. marginal_dollar_savings, hsa_deduction and magi_ladder take an unspecified `wages` (calc.py:3948, :4008-4033, :5448, :5815-5863, :4112, :4175-4182). Box 1 picks the wrong tier by up to 6.2% / 0.9% per dollar, and hsa_deduction prices the liability on the status-blind withholding threshold (:5830).
      - Add `_payroll_fica_tier(ss_wages, medicare_wages, filing_status, year)` with person-level totals, and new kwargs.
      - Keep `wages` as a deprecated alias, with a disclosure of which box it assumed.

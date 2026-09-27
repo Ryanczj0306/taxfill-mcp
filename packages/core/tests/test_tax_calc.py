@@ -4502,3 +4502,98 @@ def test_the_election_op_defaults_to_a_year_it_can_actually_answer():
         )
         assert early.form_1116_pack_key is None, year
 
+
+
+# ── JF4: the FICA tiers read W-2 boxes 3 + 7 and 5; the safe harbor reads the statute's inputs ──
+from taxfill_core.calc import estimated_tax_safe_harbor, magi_ladder, marginal_dollar_savings  # noqa: E402,I001
+from taxfill_core.knowledge import form_line  # noqa: E402
+
+
+def test_jf4_the_marginal_tier_reads_box_3_against_the_base_and_box_5_against_the_threshold():
+    # Head of household 2026: boxes 3 + 7 at or above the $184,500 base, so SS is capped either way;
+    # the 0.9% turns on box 5 against the $200,000 Form 8959 threshold.
+    over = marginal_dollar_savings(150_000, filing_status="head_of_household", year=2026,
+                                   ss_wages=185_000, medicare_wages=215_000)
+    under = marginal_dollar_savings(150_000, filing_status="head_of_household", year=2026,
+                                    ss_wages=185_000, medicare_wages=190_000)
+    hsa = {r.bucket: r for r in over.rows}["hsa_payroll"]
+    assert hsa.fica_saving == Decimal("0.0235")
+    assert {r.bucket: r for r in under.rows}["hsa_payroll"].fica_saving == Decimal("0.0145")
+    assert "stood in" not in over.fica_tier
+    # The one-figure input still works, and says which boxes it stood in for.
+    legacy = marginal_dollar_savings(150_000, 190_000, "head_of_household", 2026)
+    assert "stood in for W-2 boxes 3 + 7 and box 5" in legacy.fica_tier
+    with pytest.raises(ValueError, match="ss_wages and medicare_wages"):
+        marginal_dollar_savings(150_000, filing_status="single", year=2026)
+
+
+def test_jf4_hsa_payroll_half_keys_the_tier_on_the_filing_status_threshold():
+    # MFJ: $230,000 of box 5 is over the status-blind $200,000 WITHHOLDING threshold but under the
+    # $250,000 joint TAX threshold — the dollar saves Medicare 1.45% only.
+    joint = hsa_deduction("family", year=2026, personal_contributions=8_000, ss_wages=230_000,
+                          medicare_wages=230_000, filing_status="married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
+    assert joint.fica_saving_forgone == Decimal("8000") * Decimal("0.0145")
+    assert "married_filing_jointly Form 8959 threshold of $250,000" in joint.fica_tier
+    # No filing status: the old withholding-threshold tier, which names itself an upper bound.
+    blind = hsa_deduction("family", year=2026, personal_contributions=8_000, ss_wages=230_000,
+                          medicare_wages=230_000, knowledge_dir=KNOWLEDGE_DIR)
+    assert blind.fica_saving_forgone == Decimal("8000") * Decimal("0.0235") and "UPPER BOUND" in blind.fica_tier
+
+
+def test_jf4_magi_ladder_measures_the_8959_row_on_box_5():
+    r = magi_ladder(180_000, "single", 2025, medicare_wages=205_000)
+    row = next(x for x in r.rows if x.test.startswith("Additional Medicare Tax"))
+    assert row.magi_used == 205_000 and row.position == "above" and "standing in" not in row.definition
+    legacy = magi_ladder(180_000, "single", 2025, wages=195_000)
+    row = next(x for x in legacy.rows if x.test.startswith("Additional Medicare Tax"))
+    assert row.magi_used == 195_000 and "standing in for W-2 box 5" in row.definition
+
+
+def test_jf4_the_safe_harbor_counts_the_excess_ss_credit_as_withholding():
+    # IRC 31(b)(1): the credit is "considered an amount withheld at source".
+    r = estimated_tax_safe_harbor(32_000, 26_000, "single", 2026, excess_ss_credit=900)
+    assert r.inputs["excess_ss_credit"] == 900
+    assert "expected withholding $26,900" in r.work and "31(b)(1)" in r.work
+
+
+def test_jf4_refundable_credits_and_withheld_additional_medicare_come_off_the_tax():
+    # IRC 6654(f)(4): the tax is net of the part IV credits other than section 31's.
+    r = estimated_tax_safe_harbor(32_000, 20_000, "single", 2026, refundable_credits=2_500)
+    assert r.current_year_prong == round(0.90 * 29_500)
+    # IRC 6654(m): the Additional Medicare Tax counts "(to the extent not withheld)".
+    m = estimated_tax_safe_harbor(32_000, 20_000, "single", 2026, additional_medicare_withheld=540)
+    assert m.current_year_prong == round(0.90 * (32_000 - 540)) and "6654(m)" in m.work
+
+
+def test_jf4_the_work_cites_ratable_deeming_and_reads_the_prior_lines_off_that_years_face():
+    r = estimated_tax_safe_harbor(32_000, 26_000, "single", 2026)
+    assert "6654(g)(1)" in r.work and "an equal part of such amount shall be deemed paid on each due date" in r.work
+    # 2026's prior year is 2025, whose Form 1040 moved AGI to line 11a.
+    assert f"line {form_line(2025, 'f1040.agi')} AGI" in r.work and form_line(2025, "f1040.agi") == "11a"
+    assert form_line(2024, "f1040.agi") == "11" and form_line(2019, "f1040.total_tax") == "16"
+
+
+def test_jf4_safe_harbor_inputs_come_off_the_estimate_ledger():
+    from taxfill_core.estimate import IncomeSnapshot, estimate_refund, safe_harbor_inputs_from_estimate  # noqa: PLC0415
+    from taxfill_core.schemas.profile import Answer, Household, Profile, Provenance  # noqa: PLC0415
+    us = Provenance.user_stated()
+    profile = Profile(household=Household(filing_status=Answer(value="single", provenance=us),
+                                          marital_status=Answer(value="unmarried", provenance=us)))
+    income = IncomeSnapshot(wages=260_000, federal_withholding=55_000, medicare_wages=260_000,
+                            medicare_tax_withheld=[4_310], ss_withheld_by_employer=[7_000, 6_000])
+    est = estimate_refund(profile, 2025, income)
+    inputs = safe_harbor_inputs_from_estimate(est)
+    total = next(ln.amount for ln in est.composition if ln.slot == "total_tax")
+    assert inputs["projected_tax"] == total and inputs["expected_withholding"] == 55_000
+    assert inputs["additional_medicare_withheld"] == 540 and inputs["excess_ss_credit"] > 0
+    assert inputs["refundable_credits"] == 0
+    r = estimated_tax_safe_harbor(**inputs, filing_status="single", year=2025)
+    assert r.inputs["additional_medicare_withheld"] == 540
+
+
+def test_jf4_the_prior_year_prong_is_net_of_that_years_refundable_credits():
+    # The 2025 Instructions for Form 2210: "To figure your 2024 tax, first add the amounts listed in (1)
+    # below, then subtract from that total amount the refundable credits listed in (2)".
+    r = estimated_tax_safe_harbor(40_000, 20_000, "single", 2025, prior_year_agi=120_000,
+                                  prior_year_total_tax=25_000, prior_year_refundable_credits=3_000)
+    assert r.prior_year_prong == 22_000 and "subtract from that total amount the refundable credits" in r.work

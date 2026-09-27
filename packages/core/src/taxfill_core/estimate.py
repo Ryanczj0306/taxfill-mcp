@@ -93,6 +93,7 @@ __all__ = [
     "Roadmap",
     "RefundEstimate",
     "estimate_refund",
+    "safe_harbor_inputs_from_estimate",
 ]
 
 _LABEL = "ESTIMATE"
@@ -2544,6 +2545,32 @@ _MARRIED_7703_RULES = {
         "household.spouses_lived_apart_all_year)"
     ),
 }
+
+
+# The refundable credits IRC 6654(f)(4) takes off the tax: the part IV credits other than section 31's
+# (the excess social security credit is section 31(b), withholding — its own input).
+_REFUNDABLE_CREDIT_SLOTS = (
+    "actc_refundable", "ctc_refundable_2021", "dependent_care_credit_refundable_2021", "eitc", "aotc_refundable",
+    "net_ptc",
+)
+
+
+def safe_harbor_inputs_from_estimate(estimate: "RefundEstimate") -> dict[str, int]:
+    """The calc op estimated_tax_safe_harbor inputs one estimate's ledger already carries (JF4), read off
+    the primary figure's slots: ``projected_tax`` (total tax), ``expected_withholding`` (the withholding
+    row — the Additional Medicare Tax withholding is its own input), ``excess_ss_credit``,
+    ``additional_medicare_withheld`` and ``refundable_credits``. The filing status, year and prior-year
+    figures are the caller's."""
+    by: dict[str, int] = {}
+    for line in estimate.composition:
+        by[line.slot] = by.get(line.slot, 0) + line.amount
+    return {
+        "projected_tax": by.get("total_tax", 0),
+        "expected_withholding": -by.get("withholding", 0),
+        "excess_ss_credit": -by.get("excess_ss_credit", 0),
+        "additional_medicare_withheld": -by.get("additional_medicare_withholding", 0),
+        "refundable_credits": -sum(by.get(s, 0) for s in _REFUNDABLE_CREDIT_SLOTS),
+    }
 
 
 def _addmed_box_note(
