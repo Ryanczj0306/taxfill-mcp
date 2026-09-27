@@ -1032,3 +1032,290 @@ form_lines:
     printed: "4a IRA distributions … b Taxable amount 4b"
     note: >-
       The taxable IRA distribution line; the 2025 line 4c instructions' multi-exception statement names it.
+  # JF6b (read 2026-09-27): every line calc.py names, read off this year's face.
+  f1040.wages:
+    line: 1a
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: Total amount from Form(s) W-2, box 1 (see instructions) 1a
+  f1040.qualified_dividends:
+    line: 3a
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: Qualified dividends 3a
+  f1040.pensions:
+    line: 5a
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: Pensions and annuities 5a
+  f1040.pensions_taxable:
+    line: 5b
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: Pensions and annuities 5a b Taxable amount 5b
+    note: The pensions-and-annuities 'Taxable amount', printed beside the gross line.
+  f1040.ss_benefits:
+    line: 6a
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: Social security benefits 6a
+  f1040.ss_taxable:
+    line: 6b
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: Social security benefits 6a b Taxable amount 6b
+    note: The social security benefits' 'Taxable amount', printed beside the benefits line.
+  f1040.capital_gain:
+    line: '7'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: 7 Capital gain or (loss). Attach Schedule D if required. If not required, check here
+  f1040.deduction:
+    line: '12'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: 12 Standard deduction or itemized deductions (from Schedule A)
+  f1040.taxable_income:
+    line: '15'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: 15 This is your taxable income
+  f1040.tax:
+    line: '16'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: '16 Tax (see instructions). Check if any from Form(s): 1 8814 2 4972 3'
+  f1040.ctc:
+    line: '19'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: 19 hild tax credit or credit for other dependents from Schedule 8812
+  f1040.eic:
+    line: '27'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: 27 Earned income credit (EIC)
+  f1040.actc:
+    line: '28'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    printed: 28 dditional child tax credit from Schedule 8812
+  f1040.sched_1a:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    absent: Schedule 1-A (P.L. 119-21's tips, overtime, car-loan interest and senior deductions) first appears on
+      the 2025 Form 1040; the face's deduction lines end with the QBI deduction
+    printed: Qualified business income deduction from Form 8995 or Form 8995-A
+  f1040nr.sched_1a:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040nr--2024.pdf
+    read: '2026-09-27'
+    absent: Schedule 1-A first appears on the 2025 Form 1040-NR; the face's deduction lines end with the QBI deduction
+    printed: Qualified business income deduction from Form 8995 or Form 8995-A .
+  sched1.hsa_deduction:
+    line: '13'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s1--2024.pdf
+    read: '2026-09-27'
+    printed: 13 Health savings account deduction. Attach Form 8889
+  sched1.se_deduction:
+    line: '15'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s1--2024.pdf
+    read: '2026-09-27'
+    printed: 15 Deductible part of self-employment tax. Attach Schedule SE
+  sched1.student_loan_interest:
+    line: '21'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s1--2024.pdf
+    read: '2026-09-27'
+    printed: 21 Student loan interest deduction
+  sched1.stock_options:
+    line: 8k
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s1--2024.pdf
+    read: '2026-09-27'
+    printed: Stock options 8k
+    note: 'Before 2021 there are no lettered other-income lines: ''8 Other income. List type and amount''.'
+  sched1.hsa_distributions:
+    line: 8f
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s1--2024.pdf
+    read: '2026-09-27'
+    printed: Income from Form 8889 8f
+    note: Form 8889 line 16 (taxable HSA distributions) sends its amount here; before 2021 it is the unlettered '8
+      Other income'.
+  sched1.hsa_testing_income:
+    line: 8f
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s1--2024.pdf
+    read: '2026-09-27'
+    printed: Income from Form 8889 8f
+    note: 'Form 8889 line 20 (the testing-period income): the 2021 Form 8889 says ''Schedule 1 (Form 1040), Part I,
+      line 8z, and enter "HSA" and the amount on the dotted line''; from 2022 it shares 8f with line 16.'
+  sched2.ftc_regular_tax_addition:
+    line: 1z
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2024.pdf
+    read: '2026-09-27'
+    printed: Add lines 1a through 1y 1z
+    note: 'The Schedule 2 amount Form 1116 line 20 adds to the Form 1040 tax for an individual''s regular tax: Instructions
+      for Form 1116, Line 20, ''Enter the total of Form 1040, 1040-SR, or 1040-NR, line 16, and Schedule 2 (Form 1040),
+      Part I, line 2'' through 2023 (''line 12a'' in 2019), ''line 1z'' from 2024 (read 2026-09-27, i1116--2019..2025).'
+  sched2.se_tax:
+    line: '4'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2024.pdf
+    read: '2026-09-27'
+    printed: 4 Self-employment tax. Attach Schedule SE
+  sched2.additional_medicare:
+    line: '11'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2024.pdf
+    read: '2026-09-27'
+    printed: 11 Additional Medicare Tax. Attach Form 8959
+    note: '2019/2020: ''8 Taxes from: a Form 8959 b Form 8960'' (check box a). 2026 (draft): Additional Medicare Tax
+      on wages and RRTA compensation moves to 17b and the self-employment part stays on 11.'
+  sched2.additional_medicare_se:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2024.pdf
+    read: '2026-09-27'
+    absent: one Schedule 2 line carries all Additional Medicare Tax (wages and self-employment)
+    printed: Additional Medicare Tax. Attach Form 8959 11 12 Net investment income tax.
+  sched2.niit:
+    line: '12'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2024.pdf
+    read: '2026-09-27'
+    printed: 12 Net investment income tax. Attach Form 8960
+    note: '2019/2020: ''8 Taxes from: a Form 8959 b Form 8960'' (check box b).'
+  sched2.hsa_distribution_tax:
+    line: 17c
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2024.pdf
+    read: '2026-09-27'
+    printed: Additional tax on HSA distributions. Attach Form 8889 17c
+  sched2.hsa_eligibility_tax:
+    line: 17d
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2024.pdf
+    read: '2026-09-27'
+    printed: eligible individual. Attach Form 8889 17d
+  sched3.foreign_tax_credit:
+    line: '1'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s3--2024.pdf
+    read: '2026-09-27'
+    printed: 1 Foreign tax credit. Attach Form 1116 if required
+  sched3.dependent_care:
+    line: '2'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s3--2024.pdf
+    read: '2026-09-27'
+    printed: 2 Credit for child and dependent care expenses from Form 2441, line 11. Attach Form 2441
+  sched3.excess_ss:
+    line: '11'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s3--2024.pdf
+    read: '2026-09-27'
+    printed: 11 Excess social security and tier 1 RRTA tax withheld
+  sched1a.total:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2024.pdf
+    read: '2026-09-27'
+    absent: Schedule 1-A first appears for 2025 (P.L. 119-21); this year's Form 1040 has no Schedule 1-A line
+    printed: Qualified business income deduction from Form 8995 or Form 8995-A
+  f8959.total_tax:
+    line: '18'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8959--2024.pdf
+    read: '2026-09-27'
+    printed: 18 amount on Schedule 2 (Form 1040), line 11 (Form 1040-SS filers, see instructions), and go to Part
+      V
+  f8889.contributions:
+    line: '2'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 2 that were for 2024. Do not include employer contributions, contributions through a cafeteria plan,
+      or rollovers. See instructions
+  f8889.limitation:
+    line: '3'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 3 same coverage, enter $4,150 ($8,300 for family coverage). All others, see the instructions for the
+      amount to enter
+  f8889.employer_contributions:
+    line: '9'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 9 9 Employer contributions made to your HSAs for 2024
+  f8889.deduction:
+    line: '13'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 13 13 HSA deduction (see instructions)
+  f8889.rolled_over:
+    line: 14b
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: excess contributions) included on line 14a that were withdrawn by the due date of your return. See instructions
+      14b
+  f8889.taxable_distributions:
+    line: '16'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 16 enter -0-. Also, include this amount in the total on Schedule 1 (Form 1040), Part I, line 8f
+  f8889.distribution_tax:
+    line: 17b
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 20% tax. Also, include this amount in the total on Schedule 2 (Form 1040), Part II, line 17c 17b
+  f8889.last_month_income:
+    line: '18'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 18 18 Last-month rule
+  f8889.funding_distribution:
+    line: '19'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 19 19 Qualified HSA funding distribution
+  f8889.testing_income:
+    line: '20'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 20 Add lines 18 and 19. Include this amount on Schedule 1 (Form 1040), Part I, line 8f .
+  f8889.testing_tax:
+    line: '21'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8889--2024.pdf
+    read: '2026-09-27'
+    printed: 21 by 10% (0.10). Include this amount in the total on Schedule 2 (Form 1040), Part II, line 17d

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,827 tests** — offline 5,447 + live-.gov 380; derived
+Done and on `main` (**6,193 tests** — offline 5,813 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1874,7 +1874,33 @@ not wait for any of this.
     - Golden round trip in rehearsal mode; cross_form targets resolve; `test_form_lines_resolve` passes for 2026.
     - test_discovery counts updated.
     - f1040es 2026 fills and verifies WITHOUT rehearsal.
-- [ ] **JF6b — Rewire calc.py's line literals** (M; deps JF6a) [DEF-05 + DEF-06 calc part + DEF-08]
+- [x] **JF6b — Rewire calc.py's line literals — DONE 2026-09-27** (M; deps JF6a) [DEF-05 + DEF-06 calc part + DEF-08]
+  - *As built:*
+    - **44 new form_lines keys in every federal pack 2019-2026** (352 entries), read 2026-09-27 off each year's face — the 2026 values off the drafts. An absent line is recorded with its reason and a quote of what the face prints instead.
+      - The keys:
+        - f1040: wages / qualified dividends / pensions ± taxable / social security ± taxable / capital gain / deduction / taxable income / tax / ctc / eic / actc / sched_1a;
+        - f1040nr.sched_1a;
+        - Schedule 1: hsa_deduction / se_deduction / student_loan_interest / stock_options / hsa_distributions / hsa_testing_income;
+        - Schedule 2: se_tax / additional_medicare (+ _se) / niit / hsa_distribution_tax / hsa_eligibility_tax / ftc_regular_tax_addition;
+        - Schedule 3: foreign_tax_credit / dependent_care / excess_ss;
+        - sched1a.total; f8959.total_tax; eleven f8889 lines.
+      - Each `printed` quote is rebuilt from the face's pypdf text, which is what test_every_entry_quotes_its_face reads. That checker now sets a trailing label aside only when it IS the entry's designator, so "... line 13a 44" checks.
+    - **Every calc.py literal renders through form_line.** The FORM_LINE_DEBT calc.py rows are gone, and so is the REBINDING_DEBT row: `_step_part`'s parameter is now `part_line`.
+      - Static descriptions name the registry key.
+      - `_capital_loss_1040_line` (a Python year table) is gone. A new `calc._face_line(year, key, form)` names a year past the shipped packs without guessing a number.
+      - ira_pro_rata, capital_loss_limitation and espp_disposition now use knowledge_dir for form_lines; each had called `del knowledge_dir`.
+    - **Real errors fixed:**
+      - The 2021 Schedule 1 sends Form 8889 line 16 to 8e and line 20 to 8z; the op printed 8f.
+      - From 2024 Form 1116 line 20 adds Schedule 2 line 1z, not line 2 (i1116 2019-2025 read).
+      - ESPP income for a 2021 sale goes on 8j; for 2019/2020 on the unlettered other-income line.
+      - The HSA and Additional Medicare 2026 text now says 13c/13d, 17b + 11 and NIIT 6.
+      - Form 8959's withholding reconciliation is "Part V", not "Part IV".
+      - The EIC line is 18a / 27 / 27a by year, and AGI is 11a for 2025.
+    - **Tests** (test_form_lines `test_jf6b_*`):
+      - JF6B_EXPECTED over 8 years;
+      - the surtax, HSA, EIC, FTC and capital-loss work strings;
+      - no calc.py debt left.
+      - test_tax_calc's 2026 HSA assertion was flipped to 13c.
   - **Schedule 2 destinations.** calc.py:711/732/815 ("line 11"), :830/840/894 ("line 12") and :5349-5350/5411/5413/6071-6073/6099 ("Part II line 17c/17d").
     - The draft 2026 Schedule 2 (Created 4/27/26) prints NIIT on 6, Additional Medicare on SE income on 11, the HSA taxes on 13c/13d, and Additional Medicare on wages on 17b. Line 12 is now the §965 liability.
     - The draft 2026 Form 8959 sends line 12 → 17b and line 18 → 11.

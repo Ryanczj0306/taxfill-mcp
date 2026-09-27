@@ -146,9 +146,9 @@ def test_an_unknown_year_raises(year: int):
 
 def test_an_unknown_key_raises_naming_the_key_and_the_face_to_read():
     with pytest.raises(FormLineError) as excinfo:
-        form_line(2025, "sched2.additional_medicare")
+        form_line(2025, "sched2.not_a_recorded_role")
     msg = str(excinfo.value)
-    assert "'sched2.additional_medicare'" in msg and "knowledge/federal/2025.yaml" in msg
+    assert "'sched2.not_a_recorded_role'" in msg and "knowledge/federal/2025.yaml" in msg
     assert "irs-prior/<form>--2025.pdf" in msg and "P-015" in msg
     assert "sched1.other_income" in msg  # lists what IS recorded
 
@@ -486,106 +486,6 @@ def _stale_rows(actual: Counter, debt: dict) -> dict:
 # form_line(pack, key) instead, adding the key to each year's form_lines block
 # after reading that year's face.
 FORM_LINE_DEBT: dict[tuple[str, str, str], int] = {
-    # ── calc.py ──
-    ('calc.py', '<module>', 'Form 1040 line 13b'): 1,
-    ('calc.py', '<module>', 'Form 1040 line 15'): 1,
-    ('calc.py', '<module>', 'Form 1040 line 16'): 1,
-    ('calc.py', '<module>', 'Form 1040 line 19'): 1,
-    ('calc.py', '<module>', 'Form 1040 line 5a'): 1,
-    ('calc.py', '<module>', 'Form 1040), Part II, line 13'): 1,
-    ('calc.py', '<module>', 'Schedule 1 (Form 1040), line 8k'): 1,
-    ('calc.py', '<module>', 'Schedule 1 line 13'): 1,
-    ('calc.py', '<module>', 'Schedule 3 line 2'): 1,
-    ('calc.py', 'AdditionalMedicareTaxResult', '8959 line 18'): 1,
-    ('calc.py', 'AdditionalMedicareTaxResult', 'Schedule 2 line 11'): 1,
-    ('calc.py', 'CapitalLossYear', 'Form 1040 line 15'): 1,
-    ('calc.py', 'CtcResult', 'Form 1040 line 19'): 1,
-    ('calc.py', 'CtcResult', 'Form 1040 line 28'): 1,
-    ('calc.py', 'EitcResult', 'Form 1040 line 27'): 1,
-    ('calc.py', 'EsppDispositionResult', 'Form 1040 line 1a'): 1,
-    ('calc.py', 'EsppDispositionResult', 'Schedule 1 line 8k'): 1,
-    ('calc.py', 'ExcessSsResult', 'Schedule 3 line 11; line 10'): 1,
-    ('calc.py', 'HsaDeductionResult', '8889 line 13 = min(line 2'): 1,
-    ('calc.py', 'HsaDeductionResult', '8889 line 16'): 1,
-    ('calc.py', 'HsaDeductionResult', '8889 line 17b'): 1,
-    ('calc.py', 'HsaDeductionResult', '8889 line 18'): 1,
-    ('calc.py', 'HsaDeductionResult', '8889 line 20'): 1,
-    ('calc.py', 'HsaDeductionResult', '8889 line 21'): 1,
-    ('calc.py', 'HsaDeductionResult', '8889 line 3'): 1,
-    ('calc.py', 'HsaDeductionResult', '8889 line 9'): 1,
-    ('calc.py', 'HsaDeductionResult', 'Form 1040), Part II, line 13'): 1,
-    ('calc.py', 'HsaDeductionResult', 'Schedule 1 Part I line 8f'): 2,
-    ('calc.py', 'HsaDeductionResult', 'Schedule 2 Part II line 17c'): 1,
-    ('calc.py', 'HsaDeductionResult', 'Schedule 2 Part II line 17d'): 1,
-    ('calc.py', 'IraProRataResult', 'Form 1040 line 4b'): 2,
-    ('calc.py', 'NiitResult', 'Schedule 2 line 12'): 1,
-    ('calc.py', 'PreferentialRatesTaxResult', 'Form 1040 line 12a'): 1,
-    ('calc.py', 'PreferentialRatesTaxResult', 'Form 1040 line 16'): 1,
-    ('calc.py', 'RothConversionResult', 'Form 1040 line 5b'): 1,
-    ('calc.py', 'Schedule1AResult', 'Form 1040-NR line 13c'): 1,
-    ('calc.py', 'Schedule1AResult', 'Form 1040/1040-SR line 13b'): 1,
-    ('calc.py', 'Schedule1AResult', 'Schedule 1-A line 38'): 1,
-    ('calc.py', 'SeTaxResult', 'Schedule 1 line 15'): 1,
-    ('calc.py', 'SeTaxResult', 'Schedule 2 line 4'): 1,
-    ('calc.py', 'StudentLoanInterestResult', 'Schedule 1 line 21'): 1,
-    ('calc.py', 'TaxResult', 'Form 1040 line 16'): 1,
-    ('calc.py', 'TaxableSocialSecurityResult', 'Form 1040 line 6b'): 1,
-    ('calc.py', 'TaxableSocialSecurityResult', 'Form 1040 line 6b; line 5b'): 1,
-    ('calc.py', '_capital_loss_one_year', 'Form 1040 line 15'): 1,
-    # the three f"... line {_capital_loss_1040_line(year)}" fields (LINE_FIELD_RE):
-    # a Python year table ("7a" if year >= 2025 else "7"), wrong for 2019's "line 6"
-    ('calc.py', '_capital_loss_one_year', 'Form 1040 line {}'): 1,
-    ('calc.py', '_f8606_citation', 'Form 1040 line 4b'): 1,
-    ('calc.py', '_f8889_citation', 'Form 1040), Part I, line 8f'): 1,
-    ('calc.py', '_f8889_citation', 'Form 1040), Part II, line 17c'): 1,
-    ('calc.py', '_f8889_citation', 'Schedule 1 Part I line 8f'): 1,
-    ('calc.py', '_f8889_citation', 'Schedule 2 Part II line 17d'): 1,
-    ('calc.py', '_schedule_d_citation', 'Form 1040 line 15'): 1,
-    ('calc.py', '_schedule_d_citation', 'Form 1040) line 7'): 1,
-    ('calc.py', '_schedule_d_citation', 'Form 1040, 1040-SR, or 1040-NR, line {}'): 1,
-    ('calc.py', 'additional_medicare_tax', 'Schedule 2 line 11'): 1,
-    ('calc.py', 'capital_loss_limitation', 'Form 1040 line 15'): 2,
-    ('calc.py', 'capital_loss_limitation', 'Form 1040 line 15 {}; line 2'): 1,
-    ('calc.py', 'capital_loss_limitation', 'Form 1040 line {}'): 1,
-    ('calc.py', 'child_tax_credit', 'Form 1040 line 11'): 1,
-    ('calc.py', 'child_tax_credit', 'Form 1040 line 19'): 3,
-    ('calc.py', 'child_tax_credit', 'Form 1040 line 28'): 3,
-    ('calc.py', 'dependent_care_credit', 'Form 1040 line 11'): 1,
-    ('calc.py', 'dependent_care_credit', 'Form 1040/1040-NR line 11'): 1,
-    ('calc.py', 'dependent_care_credit', 'Schedule 3 line 2'): 2,
-    ('calc.py', 'eitc', 'Form 1040 line 27'): 2,
-    ('calc.py', 'espp_disposition', 'Form 1040 line 1a'): 1,
-    ('calc.py', 'espp_disposition', 'Schedule 1 (Form 1040), line 8k'): 1,
-    # the two arms of f"(Schedule 3{', line 10 in 2020' if year == 2020 else ' line 11'})"
-    ('calc.py', 'excess_ss', 'Schedule 3 line 11'): 1,
-    ('calc.py', 'excess_ss', 'Schedule 3, line 10'): 1,
-    ('calc.py', 'foreign_tax_credit_election', 'Form 1040 line 16'): 2,
-    ('calc.py', 'foreign_tax_credit_election', 'Form 1040), Part I, line 1'): 2,
-    ('calc.py', 'foreign_tax_credit_election', 'Schedule 2 line 2'): 3,
-    ('calc.py', 'foreign_tax_credit_election', 'Schedule 3 (Form 1040), line 1'): 1,
-    ('calc.py', 'hsa_deduction', '8889 line 14b'): 1,
-    ('calc.py', 'hsa_deduction', '8889 line 18 -> line 20'): 1,
-    ('calc.py', 'hsa_deduction', '8889 line 19'): 1,
-    ('calc.py', 'hsa_deduction', '8889 line 9'): 1,
-    ('calc.py', 'hsa_deduction', '8889, line 9'): 1,
-    ('calc.py', 'hsa_deduction', 'Form 1040), Part II, line 13'): 1,
-    ('calc.py', 'hsa_deduction', 'Schedule 1 Part I line 8f'): 3,
-    ('calc.py', 'hsa_deduction', 'Schedule 2 Part II line 17c'): 1,
-    ('calc.py', 'hsa_deduction', 'Schedule 2 Part II line 17d'): 2,
-    ('calc.py', 'ira_pro_rata', 'Form 1040 line 4b'): 1,
-    ('calc.py', 'niit', 'Schedule 2 line 12'): 1,
-    ('calc.py', 'roth_conversion', 'Form 1040 line 16'): 2,
-    ('calc.py', 'roth_conversion', 'Form 1040 line 5a'): 2,
-    ('calc.py', 'schedule_1a_deductions', 'Form 1040-NR line 13c'): 1,
-    ('calc.py', 'schedule_1a_deductions', 'Form 1040/1040-SR line 13b'): 1,
-    ('calc.py', 'standard_deduction', 'Form 1040 instructions line 12'): 1,
-    ('calc.py', 'tax_from_taxable_income', 'Form 1040 line 15'): 1,
-    ('calc.py', 'tax_from_taxable_income', 'Form 1040 line 16'): 1,
-    ('calc.py', 'tax_with_preferential_rates', 'Form 1040 line 15'): 1,
-    ('calc.py', 'tax_with_preferential_rates', 'Form 1040 line 16'): 2,
-    ('calc.py', 'tax_with_preferential_rates', 'Form 1040 line 3a'): 1,
-    ('calc.py', 'taxable_social_security', 'Form 1040 line 6b'): 3,
-    ('calc.py', 'taxable_social_security', 'Form 1040 line 6b; line 5b'): 1,
     # ── estimate.py ──
     ('estimate.py', 'IncomeSnapshot', 'Form 1040-NR (line 2b'): 1,
     ('estimate.py', 'estimate_refund', 'Form 1040-NR (line 2b'): 1,
@@ -761,9 +661,7 @@ def _form_line_rebindings(source: str) -> list[str]:
 # line helper takes a `form_line: str` parameter (the Part/line it prints), which
 # JF6b renames when calc.py imports knowledge.form_line. A row that no longer
 # matches fails, so the list only shrinks.
-REBINDING_DEBT: dict[str, list[str]] = {
-    "calc.py": ["takes a parameter form_line"],
-}
+REBINDING_DEBT: dict[str, list[str]] = {}   # JF6b renamed calc.py's _step_part parameter
 
 
 def test_form_line_in_the_guarded_modules_is_the_registry_helper():
@@ -878,8 +776,14 @@ _TRAILING_LABEL_RE = re.compile(r"\s(\d{1,2}[a-z])$")
 _NEXT_TOKEN_RE = re.compile(r"[^0-9A-Za-z]{0,4}([0-9A-Za-z]+)(?: ([a-z])(?![0-9A-Za-z]))?")
 
 
-def _words(piece: str) -> str:
-    return _norm(_TRAILING_LABEL_RE.sub("", _LEADING_LABEL_RE.sub("", piece)))
+def _words(piece: str, line: str | None = None) -> str:
+    """A piece's words without its line labels. With ``line``, a trailing label is set aside only when it IS
+    that designator (JF6b): "... on Form 1040, 1040-SR, or 1040-NR, line 13a" keeps its "13a", a reference
+    the line's own label ends with, and the entry-box "44" after it is what the face check then finds."""
+    trailing = _TRAILING_LABEL_RE.search(piece)
+    if trailing and (line is None or trailing.group(1) == line):
+        piece = piece[:trailing.start()]
+    return _norm(_LEADING_LABEL_RE.sub("", piece))
 
 
 def _labels_the_line(piece: str, line: str) -> bool:
@@ -919,17 +823,17 @@ def face_quote_problems(entry: FormLineEntry, face_text: str) -> list[str]:
         problems.append(f"{entry.line_source.removeprefix('draft ')!r} is not on the face — a newer draft? re-read it")
     pieces = [p.strip() for p in (entry.printed or "").split("…")]
     for piece in pieces:
-        if not _words(piece):
+        if not _words(piece, entry.line):
             problems.append(f"printed piece {piece!r} quotes no words to find")
-        elif _words(piece) not in face:
-            problems.append(f"{_words(piece)!r} is not on the face")
+        elif _words(piece, entry.line) not in face:
+            problems.append(f"{_words(piece, entry.line)!r} is not on the face")
     if entry.line is None:
         return problems
     label = next((p for p in pieces if _labels_the_line(p, entry.line)), None)
     if label is None:
         problems.append(f"no printed piece starts or ends with {entry.line!r} or names 'Part {entry.line}'")
-    elif not label.startswith(f"Part {entry.line} ") and _words(label):
-        words = _words(label)
+    elif not label.startswith(f"Part {entry.line} ") and _words(label, entry.line):
+        words = _words(label, entry.line)
         ends = [m.end() for m in re.finditer(re.escape(words), face)]
         if ends and not any(_designator_follows(face, end, entry.line) for end in ends):
             found = sorted({_token_after(face, end) for end in ends})
@@ -1022,3 +926,132 @@ def test_every_entry_quotes_its_face(year: int):
             pytest.skip(f"cache empty and network unreachable: {exc}")
         face = "\n".join(page.extract_text() or "" for page in PdfReader(blank).pages)
         assert face_quote_problems(entry, face) == [], f"{year} {key} on {entry.url}"
+
+
+# ══ JF6b: every line calc.py names comes from the registry ═══════════════════
+# Read off every year's face on 2026-09-27 (the 2026 values off the drafts); None = the form has no such line
+# that year (recorded as `absent` with the reason). Two finds: the 2021 Schedule 1 sends Form 8889 line 16 to
+# 8e and line 20 to 8z (both were printed as 8f), and from 2024 Form 1116 line 20 adds Schedule 2 line 1z, not
+# line 2.
+JF6B_EXPECTED: dict[str, dict[int, str | None]] = {
+    "f1040.wages": {**{y: '1' for y in range(2019, 2022)}, **{y: '1a' for y in range(2022, 2027)}},
+    "f1040.qualified_dividends": {y: '3a' for y in range(2019, 2027)},
+    "f1040.pensions": {2019: '4c', **{y: '5a' for y in range(2020, 2027)}},
+    "f1040.pensions_taxable": {2019: '4d', **{y: '5b' for y in range(2020, 2027)}},
+    "f1040.ss_benefits": {2019: '5a', **{y: '6a' for y in range(2020, 2027)}},
+    "f1040.ss_taxable": {2019: '5b', **{y: '6b' for y in range(2020, 2027)}},
+    "f1040.capital_gain": {2019: '6', **{y: '7' for y in range(2020, 2025)}, **{y: '7a' for y in range(2025, 2027)}},
+    "f1040.deduction": {2019: '9', 2020: '12', 2021: '12a', **{y: '12' for y in range(2022, 2025)}, **{y: '12e' for y in range(2025, 2027)}},
+    "f1040.taxable_income": {2019: '11b', **{y: '15' for y in range(2020, 2027)}},
+    "f1040.tax": {2019: '12a', **{y: '16' for y in range(2020, 2027)}},
+    "f1040.ctc": {2019: '13a', **{y: '19' for y in range(2020, 2027)}},
+    "f1040.eic": {2019: '18a', 2020: '27', 2021: '27a', **{y: '27' for y in range(2022, 2025)}, **{y: '27a' for y in range(2025, 2027)}},
+    "f1040.actc": {2019: '18b', **{y: '28' for y in range(2020, 2027)}},
+    "f1040.sched_1a": {**{y: None for y in range(2019, 2025)}, 2025: '13b', 2026: '13a'},
+    "f1040nr.sched_1a": {**{y: None for y in range(2019, 2025)}, 2025: '13c', 2026: '13a'},
+    "sched1.hsa_deduction": {**{y: '12' for y in range(2019, 2021)}, **{y: '13' for y in range(2021, 2027)}},
+    "sched1.se_deduction": {**{y: '14' for y in range(2019, 2021)}, **{y: '15' for y in range(2021, 2027)}},
+    "sched1.student_loan_interest": {**{y: '20' for y in range(2019, 2021)}, **{y: '21' for y in range(2021, 2027)}},
+    "sched1.stock_options": {**{y: '8' for y in range(2019, 2021)}, 2021: '8j', **{y: '8k' for y in range(2022, 2027)}},
+    "sched1.hsa_distributions": {**{y: '8' for y in range(2019, 2021)}, 2021: '8e', **{y: '8f' for y in range(2022, 2027)}},
+    "sched1.hsa_testing_income": {**{y: '8' for y in range(2019, 2021)}, 2021: '8z', **{y: '8f' for y in range(2022, 2027)}},
+    "sched2.ftc_regular_tax_addition": {**{y: '2' for y in range(2019, 2024)}, **{y: '1z' for y in range(2024, 2027)}},
+    "sched2.se_tax": {y: '4' for y in range(2019, 2027)},
+    "sched2.additional_medicare": {**{y: '8' for y in range(2019, 2021)}, **{y: '11' for y in range(2021, 2026)}, 2026: '17b'},
+    "sched2.additional_medicare_se": {**{y: None for y in range(2019, 2026)}, 2026: '11'},
+    "sched2.niit": {**{y: '8' for y in range(2019, 2021)}, **{y: '12' for y in range(2021, 2026)}, 2026: '6'},
+    "sched2.hsa_distribution_tax": {**{y: None for y in range(2019, 2021)}, **{y: '17c' for y in range(2021, 2026)}, 2026: '13c'},
+    "sched2.hsa_eligibility_tax": {**{y: None for y in range(2019, 2021)}, **{y: '17d' for y in range(2021, 2026)}, 2026: '13d'},
+    "sched3.foreign_tax_credit": {y: '1' for y in range(2019, 2027)},
+    "sched3.dependent_care": {y: '2' for y in range(2019, 2027)},
+    "sched3.excess_ss": {2019: '11', 2020: '10', **{y: '11' for y in range(2021, 2027)}},
+    "sched1a.total": {**{y: None for y in range(2019, 2025)}, 2025: '38', 2026: '44'},
+    "f8959.total_tax": {**{y: '18' for y in range(2019, 2026)}, 2026: None},
+    "f8889.contributions": {y: '2' for y in range(2019, 2027)},
+    "f8889.limitation": {y: '3' for y in range(2019, 2027)},
+    "f8889.employer_contributions": {y: '9' for y in range(2019, 2027)},
+    "f8889.deduction": {y: '13' for y in range(2019, 2027)},
+    "f8889.rolled_over": {y: '14b' for y in range(2019, 2027)},
+    "f8889.taxable_distributions": {y: '16' for y in range(2019, 2027)},
+    "f8889.distribution_tax": {y: '17b' for y in range(2019, 2027)},
+    "f8889.last_month_income": {y: '18' for y in range(2019, 2027)},
+    "f8889.funding_distribution": {y: '19' for y in range(2019, 2027)},
+    "f8889.testing_income": {y: '20' for y in range(2019, 2027)},
+    "f8889.testing_tax": {y: '21' for y in range(2019, 2027)},
+}
+
+
+@pytest.mark.parametrize("year", FEDERAL_YEARS)
+@pytest.mark.parametrize("key", sorted(JF6B_EXPECTED))
+def test_jf6b_every_year_records_every_key_with_its_face(key: str, year: int):
+    entry = form_line_entry(year, key)
+    assert entry.line == JF6B_EXPECTED[key][year], (key, year, entry.line)
+    assert entry.read == "2026-09-27"
+    stem = entry.url.rsplit("/", 1)[-1].split("--")[0]
+    face = f"irs-dft/{stem}--dft.pdf" if year == 2026 else f"irs-prior/{stem}--{year}.pdf"
+    assert entry.url.endswith(face)
+
+
+def _addmed_parts(year: int) -> list[str]:
+    parts = [form_line(year, "sched2.additional_medicare")]
+    if form_line_entry(year, "sched2.additional_medicare_se").line is not None:
+        parts.append(form_line(year, "sched2.additional_medicare_se"))
+    return parts
+
+
+@pytest.mark.parametrize("year", FEDERAL_YEARS)
+def test_jf6b_surtax_work_names_the_years_own_schedule_2_lines(year: int):
+    from taxfill_core.calc import additional_medicare_tax, niit  # noqa: PLC0415
+    addmed = additional_medicare_tax(medicare_wages=260_000, se_net_profit=50_000, filing_status="single",
+                                     year=year).work
+    for part in _addmed_parts(year):
+        assert f"line {part}" in addmed, (year, part)
+    assert f"Part {form_line(year, 'f8959.withholding_part')}" in addmed and "Part IV" not in addmed
+    tax = niit(magi=300_000, net_investment_income=20_000, filing_status="single", year=year).work
+    assert f"Schedule 2 line {form_line(year, 'sched2.niit')}" in tax
+    if year in (2019, 2020):
+        assert "(check box a)" in addmed and "check box b" in tax        # '8 Taxes from: a Form 8959 b Form 8960'
+    if year == 2026:
+        assert "line 17b" in addmed and "line 11" in addmed and "line 6" in tax
+
+
+@pytest.mark.parametrize("year", [y for y in FEDERAL_YEARS if y >= 2025])
+def test_jf6b_hsa_work_names_the_years_own_destinations(year: int):
+    from taxfill_core.calc import hsa_deduction  # noqa: PLC0415
+    r = hsa_deduction("self_only", year=year, distributions_total=5_000, qualified_medical_expenses=3_000)
+    assert f"Schedule 1 Part I line {form_line(year, 'sched1.hsa_distributions')}" in r.work
+    assert f"Schedule 2 Part II line {form_line(year, 'sched2.hsa_distribution_tax')}" in r.work
+    assert f"Part II, line {form_line(year, 'sched1.hsa_deduction')}" in r.work
+    if year == 2026:
+        assert "13c" in r.work
+
+
+def test_jf6b_the_eic_line_is_read_off_each_face():
+    from taxfill_core.calc import eitc  # noqa: PLC0415
+    for year, line in ((2019, "18a"), (2021, "27a"), (2024, "27"), (2025, "27a")):
+        work = eitc(earned_income=20_000, agi=20_000, qualifying_children=1, filing_status="single", year=year).work
+        assert f"(Form 1040 line {line})" in work, year
+
+
+def test_jf6b_the_foreign_tax_credit_regular_tax_follows_the_1116_instructions():
+    from taxfill_core.calc import foreign_tax_credit_election  # noqa: PLC0415
+    for year, line in ((2023, "2"), (2024, "1z"), (2025, "1z")):
+        r = foreign_tax_credit_election(creditable_foreign_taxes=250, all_foreign_income_passive=True,
+                                        all_reported_on_payee_statement=True, year=year)
+        assert f"plus Schedule 2 line {line}, less Form 4972 tax" in str(r.model_dump()), year
+
+
+def test_jf6b_the_capital_loss_destination_is_the_registry_not_a_year_table():
+    import taxfill_core.calc as calc  # noqa: PLC0415
+    assert not hasattr(calc, "_capital_loss_1040_line")
+    r = calc.capital_loss_limitation(short_term=-9_000, long_term=0, taxable_income_before_capital_loss=50_000,
+                                     year=2024, following_years=[{"short_term": 0, "long_term": 0,
+                                                                  "taxable_income_before_capital_loss": 50_000,
+                                                                  "year": 2028}])
+    assert "carried to Form 1040 line 7." in r.work
+    assert r.schedule_d_lines["21"].endswith("Form 1040 line 7")
+    assert "no 2028 knowledge pack yet" in str(r.years[-1].model_dump())     # a year past the packs: no guess
+
+
+def test_jf6b_no_calc_py_debt_is_left():
+    assert not [k for k in FORM_LINE_DEBT if k[0] == "calc.py"]

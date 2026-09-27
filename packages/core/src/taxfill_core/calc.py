@@ -11,7 +11,7 @@ Contents:
 
 * ABA routing-number checksum (M0) — validates banking details at intake.
 * ``irs_round`` — IRS whole-dollar rounding (50 cents rounds up).
-* ``tax_from_taxable_income`` — Form 1040 line 16, ORDINARY computation
+* ``tax_from_taxable_income`` — the Form 1040 tax line (form_lines ``f1040.tax``), ORDINARY computation
   only: the published Tax Table below $100,000 (reproduced via the
   row-midpoint rule), the Tax Computation Worksheet / rate schedules at or
   above it. Returns with preferential-rate income (qualified dividends /
@@ -32,12 +32,12 @@ Contents:
   ``ptc_annual`` / ``ptc_monthly`` (Form 8962 Premium Tax Credit — the
   annual method and the lines 12-23 monthly grid for part-year coverage).
 * Family credit ops: ``child_tax_credit`` (Schedule 8812 — nonrefundable
-  CTC/ODC for Form 1040 line 19 plus the refundable ACTC for line 28,
+  CTC/ODC for the Form 1040 child-tax-credit line plus the refundable ACTC for its line,
   including the 2021 ARPA expanded fully-refundable rules) and ``eitc``
   (the earned income credit by the Rev. Proc. formula, with the
   investment-income and married-filing-separately gates).
 * ``dependent_care_credit`` (Phase G) — the Form 2441 child & dependent
-  care credit line flow (Schedule 3 line 2): expense caps by qualifying-
+  care credit line flow (to Schedule 3's dependent-care line): expense caps by qualifying-
   person count, the employer-benefit (W-2 box 10) cap offset, the earned-
   income smallest-of limitation (spouse required for MFJ), the AGI-driven
   applicable-percentage slide (35%->20%; 2021 ARPA: 50%->20%->0% with the
@@ -58,8 +58,8 @@ Contents:
   deductions (tips / overtime / car-loan interest / senior; P.L. 119-21,
   TY2025-2028): per-status caps, the asymmetric per-$1,000 phase-out rounding
   (down for tips/overtime, UP for car loan), the 6%-per-person senior
-  phase-out, and the MFS forfeiture on tips/overtime/senior. Line 38 flows to
-  Form 1040 line 13b / 1040-NR line 13c. Eligibility requirements stay caller
+  phase-out, and the MFS forfeiture on tips/overtime/senior. The total flows to
+  the Form 1040 / 1040-NR Schedule 1-A line (each named in the work from the year's form_lines). Eligibility requirements stay caller
   judgment, quoted in the work.
 * ``employee_fica`` / ``estimated_tax_safe_harbor`` / ``annualize_ytd``
   (Phase H, H4) — the projection trio: employee-side FICA across visa-status
@@ -102,7 +102,7 @@ Contents:
   10% additional tax; W-2 box 12 code W is employer money AND cafeteria-plan
   payroll deferrals, already out of box 1, so it REDUCES the deduction instead
   of adding to it (the double-count that overstates every payroll filer's
-  Schedule 1 line 13); and a general-purpose health FSA — INCLUDING a spouse's
+  Schedule 1 HSA-deduction line); and a general-purpose health FSA — INCLUDING a spouse's
   (Rev. Rul. 2004-45) — is disqualifying coverage, while limited-purpose and
   post-deductible ones are not. Also models the 223(b)(7) Medicare zeroing, the
   223(b)(5) family-limit split, the age-55 catch-up's line 3 / line 7 routing,
@@ -180,6 +180,7 @@ from taxfill_core.knowledge import (
     SupplementalWithholdingParams,
     TaxTable,
     form_line,
+    form_line_entry,
     load_knowledge,
     load_state_knowledge,
     load_treaty,
@@ -349,7 +350,7 @@ class TaxResult(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    tax: int = Field(description="Whole-dollar tax for Form 1040 line 16.")
+    tax: int = Field(description="Whole-dollar tax for the Form 1040 tax line (form_lines f1040.tax).")
     method: Literal["tax_table", "schedule"] = Field(
         description="'tax_table' below the cutoff (published table via the midpoint rule); 'schedule' at/above it."
     )
@@ -399,7 +400,7 @@ def tax_from_taxable_income(
     year: int = 2023,
     knowledge_dir: str | Path | None = None,
 ) -> TaxResult:
-    """Compute Form 1040 line 16 tax from line 15 taxable income — ORDINARY computation only.
+    """Compute the Form 1040 tax line from taxable income — ORDINARY computation only.
 
     Scope caution (mirroring the booklet's own line 16 note, "See the
     instructions for line 16 to see if you must use the Tax Table below to
@@ -434,7 +435,8 @@ def tax_from_taxable_income(
     income = _to_decimal(taxable_income, "taxable_income")
     if income < 0:
         raise ValueError(
-            f"taxable_income cannot be negative (got {income}) — Form 1040 line 15 cannot go below zero; "
+            f"taxable_income cannot be negative (got {income}) — Form 1040 line "
+            f"{form_line(year, 'f1040.taxable_income', base_dir=knowledge_dir)} cannot go below zero; "
             f"pass 0 for a zero-or-negative taxable income"
         )
     status, alias_note = _resolve_filing_status(str(filing_status))
@@ -518,8 +520,8 @@ def standard_deduction(
     qualifying_surviving_spouse (a surviving spouse files without a spouse,
     so only the taxpayer's own boxes exist — the published chart caps QSS
     at 2 boxes total), at most 2 each for married_filing_jointly and
-    married_filing_separately (the 2023 Form 1040 instructions line 12
-    chart footnote: MFS spouse boxes apply only when the spouse had no
+    married_filing_separately (the Standard Deduction Chart footnote in the 2023
+    Form 1040 instructions: MFS spouse boxes apply only when the spouse had no
     income, isn't filing, and isn't claimable as a dependent — that
     eligibility judgment is the agent's, the cap is enforced here). One
     additional amount applies per condition per person; the additional
@@ -593,8 +595,10 @@ class SeTaxResult(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    se_tax: int = Field(description="Line 12, rounded to whole dollars (goes on Schedule 2 line 4).")
-    deduction_half: int = Field(description="Line 13, rounded to whole dollars (goes on Schedule 1 line 15).")
+    se_tax: int = Field(description="Line 12, rounded to whole dollars (goes on Schedule 2's self-employment tax "
+                        "line, form_lines sched2.se_tax).")
+    deduction_half: int = Field(description="Line 13, rounded to whole dollars (goes on Schedule 1's deductible part "
+                                "of self-employment tax, form_lines sched1.se_deduction).")
     net_earnings: Decimal = Field(description="Line 4a/4c net earnings from self-employment, in cents.")
     ss_portion: Decimal = Field(description="Line 10 social security portion, in cents (capped at the wage base).")
     medicare_portion: Decimal = Field(description="Line 11 Medicare portion, in cents (uncapped).")
@@ -771,7 +775,8 @@ class AdditionalMedicareTaxResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     additional_medicare_tax: int = Field(
-        description="Form 8959 line 18, rounded to whole dollars (goes on Schedule 2 line 11)."
+        description="Form 8959's total, rounded to whole dollars (to Schedule 2 — the lines are named in the work "
+                    "from form_lines; the 2026 drafts split wages and self-employment)."
     )
     wage_portion: Decimal = Field(description="Part I tax on Medicare wages above the threshold, in cents.")
     se_portion: Decimal = Field(description="Part II tax on SE earnings above the wage-reduced threshold, in cents.")
@@ -779,6 +784,19 @@ class AdditionalMedicareTaxResult(BaseModel):
     inputs: dict[str, Any]
     work: str
     citation: Citation
+
+
+def _addmed_destination(pack: KnowledgePack, has_se: bool) -> str:
+    """Where Form 8959's tax lands on Schedule 2, read off the year's face (JF6b): one line through 2025
+    (line 8 box a in 2019/2020), and in the 2026 drafts wages/RRTA and self-employment on two lines."""
+    wages = form_line_entry(pack, "sched2.additional_medicare")
+    se = form_line_entry(pack, "sched2.additional_medicare_se")
+    box = " (check box a)" if wages.line == "8" else ""
+    if se.line is None:
+        return f"(Form 8959 line {form_line(pack, 'f8959.total_tax')} -> Schedule 2 line {form_line(pack, 'sched2.additional_medicare')}{box})"
+    return (f"(the wage/RRTA part -> Schedule 2 line {form_line(pack, 'sched2.additional_medicare')}"
+            + (f"; the self-employment part -> line {form_line(pack, 'sched2.additional_medicare_se')}" if has_se else "")
+            + ")")
 
 
 def additional_medicare_tax(
@@ -804,7 +822,8 @@ def additional_medicare_tax(
     * RRTA compensation (Part III, railroad) is out of scope.
 
     Any Additional Medicare Tax an employer already withheld (W-2 box 6 above
-    1.45% of box 5) is credited as federal income tax withholding via Part IV —
+    1.45% of box 5) is credited as federal income tax withholding via the Form 8959
+    withholding reconciliation Part (named in the work) —
     it offsets this liability on the return but is not modeled here.
     """
     wages = _to_decimal(medicare_wages, "medicare_wages")
@@ -854,8 +873,9 @@ def additional_medicare_tax(
             if net_earnings >= se_params.minimum_net_earnings
             else "; Part II: no SE component (below the $400 Schedule SE minimum)"
         )
-        + f"; total Additional Medicare Tax = {_dollars(total)} (Schedule 2 line 11). "
-        f"Employer box-6 excess withholding credits against this via Part IV."
+        + f"; total Additional Medicare Tax = {_dollars(total)} " + _addmed_destination(pack, net_earnings >= se_params.minimum_net_earnings and se_portion > 0) + ". "
+        f"Employer box-6 excess withholding credits against this via Form 8959 Part "
+        f"{form_line(pack, 'f8959.withholding_part')}."
     )
     return AdditionalMedicareTaxResult(
         additional_medicare_tax=total,
@@ -879,7 +899,8 @@ class NiitResult(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    niit: int = Field(description="Form 8960 line 17, rounded to whole dollars (goes on Schedule 2 line 12).")
+    niit: int = Field(description="Form 8960 line 17, rounded to whole dollars (goes on Schedule 2's NIIT line, "
+                      "form_lines sched2.niit).")
     base: Decimal = Field(description="The lesser of net investment income or the MAGI excess, in cents.")
     magi_excess: Decimal = Field(description="max(0, MAGI - threshold), in cents.")
     threshold: int = Field(description="The filing-status MAGI threshold applied (statutory, not indexed).")
@@ -933,7 +954,9 @@ def niit(
         f"Form 8960 ({year}), {filing_status} MAGI threshold {_dollars(threshold)}: "
         f"MAGI {_money(magi_d)} - threshold = {_money(magi_excess)} excess; "
         f"net investment income {_money(_cents(nii))}; base = lesser = {_money(base)}; "
-        f"x {params.rate * 100:.1f}% = NIIT {_dollars(amount)} (Schedule 2 line 12)."
+        f"x {params.rate * 100:.1f}% = NIIT {_dollars(amount)} (Schedule 2 line "
+        f"{form_line(pack, 'sched2.niit')}"
+        + (", check box b)." if form_line_entry(pack, "sched2.niit").line == "8" else ").")
     )
     return NiitResult(
         niit=amount,
@@ -955,12 +978,13 @@ def niit(
 class PreferentialRatesTaxResult(BaseModel):
     """Result of :func:`tax_with_preferential_rates`: the Qualified Dividends and
     Capital Gain Tax Worksheet (2023 line numbering; the 2019 edition computed
-    Form 1040 line 12a — same arithmetic)."""
+    the same arithmetic for that year's tax line)."""
 
     model_config = ConfigDict(extra="forbid")
 
     tax: int = Field(
-        description="Worksheet line 25 — the SMALLER of the worksheet tax and the all-ordinary tax — for Form 1040 line 16."
+        description="Worksheet line 25 — the SMALLER of the worksheet tax and the all-ordinary tax — for the Form 1040 "
+                    "tax line (form_lines f1040.tax)."
     )
     preferential_income: Decimal = Field(
         description="Line 4 clamped to taxable income (line 10): qualified dividends + net capital gain, in cents."
@@ -991,7 +1015,7 @@ def tax_with_preferential_rates(
     year: int = 2023,
     knowledge_dir: str | Path | None = None,
 ) -> PreferentialRatesTaxResult:
-    """Form 1040 line 16 tax WITH qualified dividends / net capital gain — the
+    """The Form 1040 tax line WITH qualified dividends / net capital gain — the
     Qualified Dividends and Capital Gain Tax Worksheet.
 
     This is the worksheet :func:`tax_from_taxable_income` explicitly scopes
@@ -1036,12 +1060,14 @@ def tax_with_preferential_rates(
     st = _to_decimal(net_short_term_gain, "net_short_term_gain")
     if income < 0:
         raise ValueError(
-            f"taxable_income cannot be negative (got {income}) — Form 1040 line 15 cannot go below zero; "
+            f"taxable_income cannot be negative (got {income}) — Form 1040 line "
+            f"{form_line(year, 'f1040.taxable_income', base_dir=knowledge_dir)} cannot go below zero; "
             f"pass 0 for a zero-or-negative taxable income"
         )
     if qd < 0:
         raise ValueError(
-            f"qualified_dividends must be >= 0 (got {qd}) — Form 1040 line 3a is never negative; "
+            f"qualified_dividends must be >= 0 (got {qd}) — Form 1040 line "
+            f"{form_line(year, 'f1040.qualified_dividends', base_dir=knowledge_dir)} is never negative; "
             f"capital LOSSES belong in net_long_term_gain/net_short_term_gain"
         )
     pack = _load_federal(year, knowledge_dir)
@@ -1098,7 +1124,7 @@ def tax_with_preferential_rates(
         f"20% above: {_money(line20)} x 20% = {_dollars(line21)}; "
         f"line 22 ordinary tax on {_money(line5)} = {_dollars(line22)}; "
         f"line 23 worksheet tax = {_dollars(line23)}; line 24 all-ordinary tax on {_money(income)} = "
-        f"{_dollars(line24)}; line 25 tax = smaller = {_dollars(tax)} (Form 1040 line 16). "
+        f"{_dollars(line24)}; line 25 tax = smaller = {_dollars(tax)} (Form 1040 line {form_line(pack, 'f1040.tax')}). "
         f"Each tax component rounded to whole dollars where the worksheet computes it."
     )
     return PreferentialRatesTaxResult(
@@ -1123,12 +1149,12 @@ def tax_with_preferential_rates(
 
 class TaxableSocialSecurityResult(BaseModel):
     """Result of :func:`taxable_social_security`: the Social Security Benefits
-    Worksheet (Form 1040 line 6b; line 5b in 2019)."""
+    Worksheet (to the Form 1040 taxable-benefits line, form_lines f1040.ss_taxable)."""
 
     model_config = ConfigDict(extra="forbid")
 
     taxable_benefits: int = Field(
-        description="Worksheet line 18, rounded to whole dollars (goes on Form 1040 line 6b)."
+        description="Worksheet line 18, rounded to whole dollars (goes on the Form 1040 taxable-benefits line)."
     )
     provisional_income: Decimal = Field(
         description="Worksheet line 7: other income + tax-exempt interest + 50% of benefits, in cents."
@@ -1152,7 +1178,7 @@ def taxable_social_security(
     knowledge_dir: str | Path | None = None,
 ) -> TaxableSocialSecurityResult:
     """Taxable Social Security benefits — the Social Security Benefits Worksheet
-    (Form 1040 line 6b; line 5b in 2019). Thresholds are statutory (IRC 86(c),
+    (to the Form 1040 taxable-benefits line). Thresholds are statutory (IRC 86(c),
     never indexed), identical in every supported year.
 
     ``other_income`` is total income WITHOUT Social Security (the worksheet's
@@ -1227,7 +1253,7 @@ def taxable_social_security(
             f"skipped. Provisional income = other income {_money(other)} + tax-exempt interest "
             f"{_money(tei)} + 50% x benefits {_money(b)} = {_money(provisional)}; taxable = "
             f"min(85% x provisional = {_money(line16)}, 85% x benefits = {_money(line17)}) "
-            f"= {_dollars(taxable)} (Form 1040 line 6b)."
+            f"= {_dollars(taxable)} (Form 1040 line {form_line(pack, 'f1040.ss_taxable')})."
         )
         return TaxableSocialSecurityResult(
             taxable_benefits=taxable,
@@ -1258,7 +1284,7 @@ def taxable_social_security(
     if provisional <= base:
         work = (
             f"{prefix}; at or below the {_dollars(base)} base amount (line 8), so NO benefits are "
-            f"taxable — Form 1040 line 6b is 0."
+            f"taxable — Form 1040 line {form_line(pack, 'f1040.ss_taxable')} is 0."
         )
         return TaxableSocialSecurityResult(
             taxable_benefits=0,
@@ -1285,7 +1311,7 @@ def taxable_social_security(
         f"min(half of min(excess, {_dollars(line10)} gap) = {_money(line13)}, half of benefits "
         f"{_money(line2)}) = {_money(line14)}; 85% tier = 85% x {_money(line11)} excess over the "
         f"{_dollars(adjusted)} adjusted base = {_money(line15)}; sum {_money(line16)} capped at "
-        f"85% x benefits = {_money(line17)}; taxable = {_dollars(taxable)} (Form 1040 line 6b). "
+        f"85% x benefits = {_money(line17)}; taxable = {_dollars(taxable)} (Form 1040 line {form_line(pack, 'f1040.ss_taxable')}). "
         f"Cents kept through intermediate lines; only the final entry rounded."
     )
     return TaxableSocialSecurityResult(
@@ -1311,7 +1337,8 @@ class ExcessSsResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     credit: int = Field(
-        description="The claimable credit, rounded to whole dollars (Schedule 3 line 11; line 10 on the 2020 schedule)."
+        description="The claimable credit, rounded to whole dollars (Schedule 3's excess social security line, "
+                    "form_lines sched3.excess_ss)."
     )
     max_withholding: Decimal = Field(description="The year's per-person maximum withholding (rate x wage base).")
     counted_total: Decimal = Field(
@@ -1418,7 +1445,7 @@ def excess_ss(
         f"{_money(max_wh)} (6.2% x {_dollars(params.ss_wage_base)} wage base); counted withholding = "
         f"{' + '.join(_money(c) for c in capped)} = {_money(counted_total)}; credit = "
         f"{_money(counted_total)} - {_money(max_wh)} = {_money(credit_exact)}, rounded = {_dollars(credit)} "
-        f"(Schedule 3{', line 10 in 2020' if year == 2020 else ' line 11'}). Computed per person — "
+        f"(Schedule 3 line {form_line(pack, 'sched3.excess_ss')}). Computed per person — "
         f"never combine spouses' withholding.{clip_text}"
     )
     return ExcessSsResult(
@@ -1437,7 +1464,8 @@ def excess_ss(
 
 
 class StudentLoanInterestResult(BaseModel):
-    """Result of :func:`student_loan_interest_deduction` (Schedule 1 line 21 in 2023)."""
+    """Result of :func:`student_loan_interest_deduction` (Schedule 1's student loan interest line, form_lines
+    sched1.student_loan_interest)."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -2324,10 +2352,10 @@ class CtcResult(BaseModel):
     )
     nonrefundable_used: int = Field(
         description="Line 14: the nonrefundable CTC/ODC usable against income_tax_before_credits "
-        "(goes on Form 1040 line 19). 2021: only the ODC part is nonrefundable."
+        "(goes on the Form 1040 child-tax-credit line, form_lines f1040.ctc). 2021: only the ODC part is nonrefundable."
     )
     actc_refundable: int = Field(
-        description="Line 27 additional child tax credit (goes on Form 1040 line 28). "
+        description="Line 27 additional child tax credit (goes on the Form 1040 ACTC line, form_lines f1040.actc). "
         "2021: the fully refundable ARPA child tax credit remainder."
     )
     actc_cap_per_child: int = Field(
@@ -2364,7 +2392,7 @@ def child_tax_credit(
       work-eligible SSN. A child with an ITIN/ATIN belongs in ``other_dependents``.
     * ``other_dependents``: every other claimed dependent ($500 ODC each; an SSN
       is not required, but the dependent needs an ITIN/ATIN/SSN by the due date).
-    * ``magi``: Schedule 8812 line 3 (Form 1040 line 11 AGI plus the Puerto Rico /
+    * ``magi``: Schedule 8812 line 3 (the Form 1040 AGI plus the Puerto Rico /
       Form 2555 / Form 4563 exclusions — line 1 = line 3 for most filers).
     * ``income_tax_before_credits``: the Credit Limit Worksheet amount — Form 1040
       line 18 tax MINUS the credits taken before this one (Schedule 3 lines 1-4,
@@ -2384,11 +2412,11 @@ def child_tax_credit(
       line 8 minus the reduction (if not above zero, the form says stop — no CTC,
       ODC, or ACTC).
     * lines 13-14: the nonrefundable credit = min(line 12, the credit limit)
-      (Form 1040 line 19).
+      (to the Form 1040 child-tax-credit line).
     * Part II-A (ACTC): line 16a leftover = line 12 - line 14; line 16b = the
       year's refundable cap x qualifying children ($1,600 for 2023); line 20 = 15%
       of earned income over $2,500; line 27 ACTC = the smallest of the three
-      (Form 1040 line 28). No qualifying children -> no ACTC (the ODC never
+      (to the Form 1040 ACTC line). No qualifying children -> no ACTC (the ODC never
       refunds). Part II-B (3+ children: the larger-of social-security-taxes
       alternative) is NOT modeled — when it could apply, ``work`` says so (it can
       only increase the ACTC).
@@ -2483,9 +2511,10 @@ def child_tax_credit(
             f"line 7 ODC = {n_odc} x {_dollars(odc_amount)} = {_dollars(odc_total)}; line 8 = {_dollars(line8)}. "
             f"Second-tier phase-out over the {_dollars(tier2_threshold)} threshold = {_dollars(tier2_raw)} "
             f"-> line 12 = {_dollars(line12)}. The ODC part {_dollars(odc_part)} stays nonrefundable: "
-            f"{_dollars(used)} usable against the {_dollars(limit_whole)} credit limit (Form 1040 line 19); "
+            f"{_dollars(used)} usable against the {_dollars(limit_whole)} credit limit (Form 1040 line "
+            f"{form_line(pack, 'f1040.ctc')}); "
             f"the remaining {_dollars(rctc)} child tax credit is FULLY REFUNDABLE for 2021 (Form 1040 "
-            f"line 28) — this assumes a principal place of abode in the US for more than half of 2021 "
+            f"line {form_line(pack, 'f1040.actc')}) — this assumes a principal place of abode in the US for more than half of 2021 "
             f"(Schedule 8812 box 13A, caller judgment); without it the pre-ARPA $1,400-cap ACTC rules "
             f"apply instead."
         )
@@ -2526,7 +2555,8 @@ def child_tax_credit(
             f"Part II-A: line 16a leftover = {_dollars(leftover)}; line 16b = {n_qc} x "
             f"{_dollars(cap_per_child)} = {_dollars(line16b)}; line 18a earned income {_money(earned)} -> "
             f"line 20 = 15% x max(0, earned - {_dollars(_ACTC_EARNED_INCOME_FLOOR)}) = {_dollars(line20)}; "
-            f"line 27 additional child tax credit = smallest = {_dollars(actc)} (Form 1040 line 28)"
+            f"line 27 additional child tax credit = smallest = {_dollars(actc)} (Form 1040 line "
+            f"{form_line(pack, 'f1040.actc')})"
         )
         if n_qc >= 3 and line20 < min(leftover, line16b):
             actc_text += (
@@ -2542,7 +2572,7 @@ def child_tax_credit(
         f"{_dollars(line11)} ($50 per $1,000 or fraction over, excess rounded UP to the next $1,000) -> "
         f"line 12 = {_dollars(line12)}. Line 13 credit limit (income tax minus earlier credits) = "
         f"{_dollars(limit_whole)} -> line 14 nonrefundable child tax credit / credit for other dependents = "
-        f"{_dollars(line14)} (Form 1040 line 19). {actc_text}."
+        f"{_dollars(line14)} (Form 1040 line {form_line(pack, 'f1040.ctc')}). {actc_text}."
     )
     return CtcResult(
         ctc_odc_total=line8,
@@ -2569,7 +2599,8 @@ class EitcResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     eitc: int = Field(
-        description="The earned income credit, whole dollars (Form 1040 line 27); 0 when disqualified."
+        description="The earned income credit, whole dollars (the Form 1040 EIC line, form_lines f1040.eic); 0 when "
+                    "disqualified."
     )
     phase: Literal["in", "plateau", "out"] | None = Field(
         description="Which region bound the credit: 'in' (phase-in rate x earned income), 'plateau' "
@@ -2594,7 +2625,7 @@ def eitc(
     investment_income: int | float | Decimal | str = 0,
     knowledge_dir: str | Path | None = None,
 ) -> EitcResult:
-    """Earned income tax credit (Form 1040 line 27) by the Rev. Proc. formula.
+    """Earned income tax credit (the Form 1040 EIC line) by the Rev. Proc. formula.
 
     ``qualifying_children`` counts the EITC qualifying children (relationship /
     age / residency / joint-return tests met, each with a valid SSN) — those
@@ -2716,7 +2747,8 @@ def eitc(
         f"EITC ({year}, {status}, {key} qualifying children): investment income {_money(inv)} is within the "
         f"{_dollars(inv_limit)} limit. Phase-in = min(max credit {_dollars(max_credit)}, "
         f"{_dollars(max_credit)}/{_dollars(ei_amount)} x earned income {_money(earned)}) = "
-        f"{_money(phase_in_amount)}; {phase_text}; credit = {_dollars(credit)} (Form 1040 line 27), "
+        f"{_money(phase_in_amount)}; {phase_text}; credit = {_dollars(credit)} (Form 1040 line "
+        f"{form_line(pack, 'f1040.eic')}), "
         f"'{phase}' region. The official EIC table uses $50 income bands, so a printed-table lookup can "
         f"differ from this exact formula by roughly +/-$27 — re-derive from the table at filing time. "
         f"Qualifying-child and taxpayer-level eligibility tests are caller judgment."
@@ -2792,7 +2824,7 @@ def dependent_care_credit(
     employer_benefits: int | float | Decimal | str = 0,
     knowledge_dir: str | Path | None = None,
 ) -> DependentCareResult:
-    """Child and dependent care credit (Form 2441 -> Schedule 3 line 2), from the
+    """Child and dependent care credit (Form 2441 -> Schedule 3's dependent-care line), from the
     pack's cited ``tax.dependent_care`` parameters.
 
     Inputs (who counts as a qualifying person — under 13, or a spouse/dependent
@@ -2815,7 +2847,7 @@ def dependent_care_credit(
       (line 30 excludes them); formally the offset is the amount actually
       deducted + excluded (lines 24+25) — box 10 stands in for it when the
       benefits were all excluded, which the work discloses.
-    * ``agi``: Form 1040/1040-NR line 11 — drives the line 8 percentage slide
+    * ``agi``: the Form 1040/1040-NR AGI — drives the line 8 percentage slide
       (35% down to 20% above $15,000; 2021: 50% -> 20% above $125,000, then
       20% -> 0% above $400,000, zero for AGI over $438,000).
 
@@ -2849,7 +2881,8 @@ def dependent_care_credit(
         )
     agi_d = _to_decimal(agi, "agi")
     if agi_d < 0:
-        raise ValueError(f"agi must be >= 0, got {agi_d} — pass the Form 1040 line 11 amount")
+        raise ValueError(f"agi must be >= 0, got {agi_d} — pass the Form 1040 line "
+                         f"{form_line(year, 'f1040.agi', base_dir=knowledge_dir)} amount")
     benefits = _to_decimal(employer_benefits, "employer_benefits")
     if benefits < 0:
         raise ValueError(f"employer_benefits must be >= 0, got {benefits} — pass the W-2 box 10 total")
@@ -2950,7 +2983,8 @@ def dependent_care_credit(
         f"line 6 = smallest = {_dollars(allowed)}. Line 8 applicable percentage for AGI {_money(agi_d)} "
         f"= {pct} (1 point per $2,000 OR FRACTION of AGI over the slide start — AGI exactly at a "
         f"boundary keeps the higher rate); line 9a credit = {pct} x {_dollars(allowed)} = "
-        f"{_dollars(credit)} (Schedule 3 line 2).{benefit_text}{limit_text} Deemed-income rule (agent "
+        f"{_dollars(credit)} (Schedule 3 line {form_line(pack, 'sched3.dependent_care')})."
+        f"{benefit_text}{limit_text} Deemed-income rule (agent "
         f"judgment, include it in the earned income you pass): {params.student_spouse_rule} Form 2441 "
         f"Part I requires each provider's name, address, and TIN — the credit can be denied without them."
     )
@@ -2997,12 +3031,13 @@ class Schedule1APart(BaseModel):
 
 
 class Schedule1AResult(BaseModel):
-    """Result of :func:`schedule_1a_deductions`: Schedule 1-A Parts II-V and the line 38 total."""
+    """Result of :func:`schedule_1a_deductions`: Schedule 1-A Parts II-V and the total (form_lines sched1a.total)."""
 
     model_config = ConfigDict(extra="forbid")
 
     total_deduction: int = Field(
-        description="Schedule 1-A line 38 -> Form 1040/1040-SR line 13b (Form 1040-NR line 13c). Reduces "
+        description="The Schedule 1-A total -> the Form 1040/1040-SR (and 1040-NR) Schedule 1-A line, named in the "
+        "work from form_lines. Reduces "
         "taxable income whether the filer itemizes or takes the standard deduction."
     )
     parts: list[Schedule1APart] = Field(
@@ -3127,7 +3162,7 @@ def schedule_1a_deductions(
 
     def _step_part(
         part_id: str,
-        form_line: str,
+        part_line: str,
         name: str,
         amount: Decimal,
         cap: int,
@@ -3141,7 +3176,7 @@ def schedule_1a_deductions(
         threshold = phaseout.magi_threshold.for_status(filing_status)
         if forfeit_on_mfs and mfs:
             parts.append(Schedule1APart(
-                part=part_id, form_line=form_line, name=name, input_amount=input_whole, cap_applied=cap,
+                part=part_id, form_line=part_line, name=name, input_amount=input_whole, cap_applied=cap,
                 tentative=0, magi_threshold=threshold, magi_excess=0, reduction=0, deduction=0,
                 forfeited_reason=_MFS_FORFEIT,
             ))
@@ -3153,7 +3188,7 @@ def schedule_1a_deductions(
         reduction = min(units * phaseout.reduction_per_1000_of_excess, tentative)
         deduction = tentative - reduction
         parts.append(Schedule1APart(
-            part=part_id, form_line=form_line, name=name, input_amount=input_whole, cap_applied=cap,
+            part=part_id, form_line=part_line, name=name, input_amount=input_whole, cap_applied=cap,
             tentative=tentative, magi_threshold=threshold, magi_excess=irs_round(excess),
             reduction=reduction, deduction=deduction,
         ))
@@ -3219,7 +3254,9 @@ def schedule_1a_deductions(
 
     total = sum(p.deduction for p in parts)
     work_lines.append(
-        f"Line 38 total = ${total:,} -> Form 1040/1040-SR line 13b (Form 1040-NR line 13c); reduces "
+        f"Line {form_line(pack, 'sched1a.total')} total = ${total:,} -> Form 1040/1040-SR line "
+        f"{form_line(pack, 'f1040.sched_1a')} (Form 1040-NR line "
+        f"{form_line(pack, 'f1040nr.sched_1a')}); reduces "
         f"taxable income whether itemizing or taking the standard deduction."
     )
     work_lines.append(
@@ -5767,7 +5804,7 @@ _F8606_INSTRUCTIONS_CITATION = Citation(
         "line 2. 'Purpose of Form' lists what Form 8606 reports and does NOT list a "
         "rollover from a qualified retirement plan to a Roth IRA; the Part III line 24 "
         "instructions and footnote 3 of the Basis in Roth IRA Conversions chart place those "
-        "on Form 1040 line 5a/5b instead"
+        "on the Form 1040 pensions-and-annuities lines instead"
     ),
     url="https://www.irs.gov/pub/irs-prior/i8606--2025.pdf",
 )
@@ -5861,7 +5898,8 @@ def _f8606_citation(year: int) -> Citation:
                 f"other distributions, line 8 the net amount converted, line 9 = 6+7+8, line 10 the "
                 f"ratio 'rounded to at least 3 places ... If the result is 1.000 or more, enter "
                 f"\"1.000\"', lines 11-13 the nontaxable portions, line 14 the basis carryforward) "
-                f"and Part II lines 16-18 (the conversion's taxable amount -> Form 1040 line 4b) — "
+                f"and Part II lines 16-18 (the conversion's taxable amount -> Form 1040 line "
+                f"{form_line(year, 'f1040.ira_taxable')}) — "
                 f"line numbering read off this revision's own blank"
             ),
             url=f"https://www.irs.gov/pub/irs-prior/f8606--{year}.pdf",
@@ -5884,14 +5922,16 @@ class IraProRataResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     taxable_conversion: int = Field(
-        description="Form 8606 line 18 (line 16 - line 17): the converted amount's TAXABLE part -> Form 1040 line 4b."
+        description="Form 8606 line 18 (line 16 - line 17): the converted amount's TAXABLE part -> the Form 1040 "
+                    "taxable-IRA line (form_lines f1040.ira_taxable)."
     )
     nontaxable_conversion: int = Field(description="Form 8606 line 11 (= line 8 x line 10): basis applied to the conversion.")
     taxable_other_distributions: int = Field(
         description="Form 8606 line 15a/15c (line 7 - line 12): the taxable part of distributions NOT converted."
     )
     nontaxable_other_distributions: int = Field(description="Form 8606 line 12 (= line 7 x line 10).")
-    taxable_total: int = Field(description="line 18 + line 15c: everything from this pool that lands on Form 1040 line 4b.")
+    taxable_total: int = Field(description="line 18 + line 15c: everything from this pool that lands on the Form 1040 "
+                               "taxable-IRA line.")
     basis_applied: int = Field(description="Form 8606 line 13 (= line 11 + line 12): basis consumed this year.")
     basis_carryforward: int = Field(description="Form 8606 line 14 (= line 3 - line 13): next year's line 2.")
     nontaxable_ratio: Decimal = Field(
@@ -5970,13 +6010,11 @@ def ira_pro_rata(
     year whose form has not published yet quotes the newest revision read and
     says so in both the work and the citation.
 
-    ``knowledge_dir`` is accepted for signature parity with its neighbours (and
-    so :func:`roth_conversion` can forward it) but is deliberately unused: the
-    pro-rata rule carries NO per-year figures, so this op reads no knowledge
-    pack and its authorities are module constants, per the P-005/P-006
-    discipline that only figures belong in a year pack.
+    ``knowledge_dir`` locates the year pack's ``form_lines`` block, which names the Form 1040 line the
+    taxable part lands on (JF6b). The pro-rata rule itself carries NO per-year figures, so no other part
+    of the pack is read and its authorities are module constants, per the P-005/P-006 discipline that
+    only figures belong in a year pack.
     """
-    del knowledge_dir  # see the docstring: no per-year figures, so no pack read
     if year < _F8606_VERIFIED_REVISIONS[0]:
         raise ValueError(
             f"ira_pro_rata does not support {year}: Form 8606 revisions before "
@@ -6091,7 +6129,8 @@ def ira_pro_rata(
         f"distributions; line 13 = 11 + 12 = {_dollars(line13)} of basis applied; line 14 = line 3 - "
         f"line 13 = {_dollars(line14)} carries to next year's line 2.",
         f"Part II: line 16 = line 8 = {_dollars(line8)}; line 17 = line 11 = {_dollars(line11)}; "
-        f"line 18 = 16 - 17 = {_dollars(line18)} TAXABLE on Form 1040 line 4b."
+        f"line 18 = 16 - 17 = {_dollars(line18)} TAXABLE on Form 1040 line "
+        f"{form_line(year, 'f1040.ira_taxable', base_dir=knowledge_dir)}."
         + (
             f" Lines 15a/15c: {_dollars(line7)} - {_dollars(line12)} = {_dollars(line15)} of the "
             f"unconverted distribution is taxable too, and the form's own Note warns 'You may be "
@@ -6170,7 +6209,8 @@ class RothConversionResult(BaseModel):
         description="Which path the money took — the two are taxed differently and the caller must choose."
     )
     amount_converted: int = Field(description="The gross amount converted or rolled over to the Roth IRA.")
-    taxable_amount: int = Field(description="The conversion income: Form 1040 line 5b (plan path) or line 4b (IRA path).")
+    taxable_amount: int = Field(description="The conversion income: the Form 1040 taxable pensions line (plan path) "
+                                "or taxable-IRA line (IRA path), each named in the work.")
     nontaxable_amount: int = Field(description="The basis-recovery part: plan after-tax basis, or Form 8606 line 11.")
     pro_rata: IraProRataResult | None = Field(
         description="The delegated Form 8606 Part I computation — None on the plan path, where pro-rata never applies."
@@ -6222,8 +6262,8 @@ def roth_conversion(
     amount that would be includible if the distribution were not rolled over".
     IRC 408(d)(2) PRO-RATA DOES NOT APPLY — no individual retirement plan is
     involved, the Form 8606 pool is untouched, and the rollover is reported on
-    Form 1040 line 5a/5b, not on Form 8606 (its 'Purpose of Form' does not list
-    it; the Part III line 24 instructions point at line 5a). This is the path
+    the Form 1040 pensions-and-annuities lines, not on Form 8606 (its 'Purpose of Form'
+    does not list it; the Part III line 24 instructions point there). This is the path
     that empties an old plan WITHOUT poisoning future backdoor Roths. Pass
     ``plan_after_tax_basis`` = the 1099-R box 5 after-tax amount allocated to
     this rollover; how a plan splits after-tax dollars across destinations is the
@@ -6256,7 +6296,7 @@ def roth_conversion(
     first, and only then converted (ira_recharacterization's ``then_convert``).
 
     Federal only, and the incremental tax is computed on the RATE SCHEDULE:
-    below $100,000 of taxable income the filed Form 1040 line 16 comes from the
+    below $100,000 of taxable income the filed Form 1040 tax line comes from the
     published Tax Table instead, and preferential-rate income needs
     :func:`tax_with_preferential_rates` — both disclosed in the work.
     """
@@ -6409,7 +6449,8 @@ def roth_conversion(
         f"{_dollars(gross)} rolled over, with {_dollars(nontaxable_i)} of after-tax basis (1099-R box "
         f"5) recovered tax-free. IRC 408(d)(2) PRO-RATA DOES NOT APPLY: no individual retirement plan "
         f"is involved, so the traditional-IRA pool is irrelevant and Form 8606 Part I is not filed — "
-        f"the rollover is reported on Form 1040 line 5a/5b. That is what makes this the path that "
+        f"the rollover is reported on Form 1040 lines {form_line(pack, 'f1040.pensions')}/"
+        f"{form_line(pack, 'f1040.pensions_taxable')}. That is what makes this the path that "
         f"clears an old plan WITHOUT poisoning future backdoor Roth conversions. How a plan splits "
         f"after-tax dollars across destinations is the plan's call under section 72(e)(8), 402(c)(2) "
         f"and Notice 2014-54 section III (pretax assigned to the direct rollovers first) — take box 5 "
@@ -6500,8 +6541,9 @@ def roth_conversion(
         f"SCOPE: federal only, {_dollars(incremental)} income tax + {_dollars(niit_after_r.niit - niit_before_r.niit)} "
         f"NIIT = {_dollars(incremental + niit_after_r.niit - niit_before_r.niit)} of incremental "
         f"federal tax. Computed on the {year} RATE SCHEDULE: below $100,000 of taxable income the "
-        f"filed Form 1040 line 16 comes from the published Tax Table and can differ by a few dollars "
-        f"within a $50 band, and a return with qualified dividends or capital gains computes line 16 "
+        f"filed Form 1040 line {form_line(pack, 'f1040.tax')} comes from the published Tax Table and can "
+        f"differ by a few dollars within a $50 band, and a return with qualified dividends or capital gains "
+        f"computes it "
         f"from the Qualified Dividends and Capital Gain Tax Worksheet — ordinary conversion income "
         f"stacks UNDER that income and can push it into a higher preferential rate, which calc op "
         f"tax_with_preferential_rates prices and this op does not. A state income tax stacks on top "
@@ -6743,7 +6785,7 @@ _I8889_CITATION = Citation(
         "additional amount on line 7 and NOT on line 3. Line 9: 'Employer contributions "
         "(including employee payroll contributions through a cafeteria plan) ... should be "
         "shown on Form W-2, box 12, code W.' Line 13: 'Generally, enter the smaller of line 2 "
-        "or line 12 on line 13 and on Schedule 1 (Form 1040), Part II, line 13.' Excess "
+        "or line 12 on line 13 and on Schedule 1' (its HSA-deduction line). Excess "
         "Contributions You Make / Excess Employer Contributions (the excess is over the line 8 "
         "limitation, reduced first by any line 10 funding distribution) and the withdrawal "
         "cure by the due date INCLUDING extensions, with the further 'no later than 6 months "
@@ -6797,14 +6839,15 @@ def _f8889_citation(year: int) -> Citation:
         "line 7 the age-55 additional contribution amount, line 8 = 6 + 7, line 9 employer "
         "contributions, line 10 qualified HSA funding distributions, line 11 = 9 + 10, "
         "line 12 = 8 - 11 floored at zero, line 13 the HSA deduction), Part II lines 14a-17b "
-        "(14c = 14a - 14b, line 16 = 14c - 15 floored at zero -> 'Schedule 1 (Form 1040), "
-        "Part I, line 8f', 17a the exceptions checkbox, 17b '20% (0.20) of the distributions "
-        "included on line 16 that are subject to the additional 20% tax' -> 'Schedule 2 (Form "
-        "1040), Part II, line 17c') and Part III lines 18-21 ('Income and Additional Tax for "
-        "Failure To Maintain HDHP Coverage': line 18 last-month rule, line 19 qualified HSA "
-        "funding distribution, line 20 = 18 + 19 -> Schedule 1 Part I line 8f, line 21 = 10% "
-        "of line 20 -> Schedule 2 Part II line 17d) — line numbering read off this revision's "
-        "own blank"
+        f"(14c = 14a - 14b, line 16 = 14c - 15 floored at zero -> Schedule 1 (Form 1040), "
+        f"Part I, line {form_line(year, 'sched1.hsa_distributions')}, 17a the exceptions checkbox, 17b '20% (0.20) "
+        f"of the distributions included on line 16 that are subject to the additional 20% tax' -> "
+        f"Schedule 2 (Form 1040), Part II, line {form_line(year, 'sched2.hsa_distribution_tax')}) and Part III "
+        f"lines 18-21 ('Income and Additional Tax for Failure To Maintain HDHP Coverage': line 18 "
+        f"last-month rule, line 19 qualified HSA funding distribution, line 20 = 18 + 19 -> Schedule 1 "
+        f"Part I line {form_line(year, 'sched1.hsa_testing_income')}, line 21 = 10% of line 20 -> Schedule 2 "
+        f"Part II line {form_line(year, 'sched2.hsa_eligibility_tax')}) — the Form 8889 numbering read off this "
+        f"revision's own blank, the Schedule 1 and 2 destinations off the year's (form_lines)"
     )
     if year in _F8889_VERIFIED_REVISIONS:
         return Citation(source=f"Form 8889 ({year}), {body}", url=f"https://www.irs.gov/pub/irs-prior/f8889--{year}.pdf")
@@ -6825,10 +6868,12 @@ class HsaDeductionResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     deduction: int = Field(
-        description="Form 8889 line 13 = min(line 2, line 12) -> Schedule 1 (Form 1040), Part II, line 13."
+        description="Form 8889's HSA deduction (f8889.deduction) = min(contributions, remaining room) -> "
+                    "Schedule 1's HSA-deduction line (sched1.hsa_deduction)."
     )
     deduction_exact: Decimal = Field(description="Line 13 before whole-dollar rounding (the limit carries cents).")
-    annual_limit: int = Field(description="Form 8889 line 3 as filed: the greater of the monthly chart and the last-month-rule amount.")
+    annual_limit: int = Field(description="Form 8889's limitation (f8889.limitation) as filed: the greater of the "
+                              "monthly chart and the last-month-rule amount.")
     annual_limit_exact: Decimal = Field(description="Line 3 before rounding — the chart divides by 12, so cents are normal here.")
     prorated_limit: Decimal = Field(description="The Line 3 Limitation Chart total / 12: what IRC 223(b)(1)-(2) allows month by month.")
     limit_basis: Literal["full_year", "monthly_proration", "last_month_rule"]
@@ -6841,7 +6886,8 @@ class HsaDeductionResult(BaseModel):
         default=None, description="The IRC 223(b)(8)(B)(iii) 13-month window, spelled out, when the last-month rule applies."
     )
     at_risk_if_testing_period_fails: int = Field(
-        description="Form 8889 line 18 if eligibility lapses in the testing period: the contributions that could not have been made but for 223(b)(8)(A)."
+        description="Form 8889's last-month-rule income (f8889.last_month_income) if eligibility lapses in the "
+                    "testing period: the contributions that could not have been made but for 223(b)(8)(A)."
     )
     input_assumptions: list[str] = Field(
         default_factory=list,
@@ -6858,15 +6904,21 @@ class HsaDeductionResult(BaseModel):
         description="Where the $1,000 rides: line 7 for a married filer with ANY family coverage in the year, otherwise inside line 3."
     )
     employer_contributions_excluded: int = Field(
-        description="Form 8889 line 9 — W-2 box 12 code W, employer money AND cafeteria-plan payroll deferrals. Already out of box 1: NOT deductible again."
+        description="Form 8889's employer contributions (f8889.employer_contributions) — W-2 box 12 code W, "
+                    "employer money AND cafeteria-plan payroll deferrals. Already out of box 1: NOT deductible again."
     )
     excess_personal_contributions: int = Field(description="Line 2 - line 13: your own excess (Form 5329 Part VII).")
     excess_employer_contributions: int = Field(description="Line 9 over the line 8 limitation (reduced first by line 10).")
     excise_per_year: int = Field(description="IRC 4973(a): 6% of the total excess, charged EVERY year it stays in the account.")
-    taxable_distributions: int = Field(description="Form 8889 line 16 -> Schedule 1 Part I line 8f.")
-    distributions_additional_tax: int = Field(description="Form 8889 line 17b: 20% of the non-excepted part of line 16 -> Schedule 2 Part II line 17c.")
-    recapture_income: int = Field(description="Form 8889 line 20 (= 18 + 19) -> Schedule 1 Part I line 8f.")
-    recapture_additional_tax: int = Field(description="Form 8889 line 21 = 10% of line 20 -> Schedule 2 Part II line 17d.")
+    taxable_distributions: int = Field(description="Form 8889's taxable distributions (f8889.taxable_distributions) "
+                                       "-> Schedule 1 (sched1.hsa_distributions).")
+    distributions_additional_tax: int = Field(description="Form 8889's 20% additional tax (f8889.distribution_tax) "
+                                              "on the non-excepted taxable distributions -> Schedule 2 "
+                                              "(sched2.hsa_distribution_tax).")
+    recapture_income: int = Field(description="Form 8889's testing-period income (f8889.testing_income) -> "
+                                  "Schedule 1 (sched1.hsa_testing_income).")
+    recapture_additional_tax: int = Field(description="Form 8889's 10% testing-period tax (f8889.testing_tax) -> "
+                                          "Schedule 2 (sched2.hsa_eligibility_tax).")
     fica_saving_forgone: Decimal | None = Field(
         default=None,
         description="Payroll FICA the DIRECT (line 2) contributions did not avoid, at this wage level's real tier — None unless wages were passed.",
@@ -6933,7 +6985,7 @@ def hsa_deduction(
        reports ``at_risk_if_testing_period_fails``, whether or not it failed.
     3. **Employer money reduces the DEDUCTION, it is not a second deduction.**
        W-2 box 12 code W is employer contributions AND the employee's own
-       cafeteria-plan payroll deferrals (i8889, line 9), and every dollar of it
+       cafeteria-plan payroll deferrals (the i8889 employer-contributions line), and every dollar of it
        is already out of box 1 under section 106(d). It belongs on line 9, where
        it SUBTRACTS from the room on line 12 — only DIRECT contributions (line 2)
        reach Schedule 1. Deducting box 12 code W again is the most common HSA
@@ -7151,7 +7203,7 @@ def hsa_deduction(
             )
 
     def _limit_chain(line3_value: Decimal, family_months_for_line_7: int) -> tuple[Decimal, Decimal, Decimal, Decimal]:
-        """Form 8889 lines 5-8 from a given line 3 — run twice, once on the filed
+        """Form 8889's limit chain (lines 5-8) from a given limitation — run twice, once on the filed
         line 3 and once on the chart-only line 3, because Part III's "redetermined
         amount" is the limit you could have contributed WITHOUT 223(b)(8)(A), and
         the Archer offset, the spouse split and the line 7 catch-up all sit
@@ -7220,7 +7272,8 @@ def hsa_deduction(
     if line14b > line14a:
         raise ValueError(
             f"distributions_rolled_over ({_money(line14b)}) cannot exceed distributions_total "
-            f"({_money(line14a)}) — Form 8889 line 14b is 'Distributions included on line 14a that you "
+            f"({_money(line14a)}) — Form 8889 line {form_line(pack, 'f8889.rolled_over')} is 'Distributions "
+            f"included on line 14a that you "
             f"rolled over', a subset of line 14a (1099-SA box 1 is the line 14a figure)"
         )
     line14c = line14a - line14b
@@ -7253,7 +7306,8 @@ def hsa_deduction(
     if funding_distribution_testing_period_failed and not line10:
         raise ValueError(
             "funding_distribution_testing_period_failed=True with qualified_hsa_funding_distribution=0 "
-            "has nothing to recapture — Form 8889 line 19 is 'the total of any qualified HSA funding "
+            f"has nothing to recapture — Form 8889 line {form_line(pack, 'f8889.funding_distribution')} is 'the "
+            "total of any qualified HSA funding "
             "distribution' (line 10). The last-month rule's own testing period is the "
             "testing_period_failed flag, and the two run on different clocks"
         )
@@ -7268,10 +7322,11 @@ def hsa_deduction(
             "length_months": "13",
             "authority": "IRC 223(b)(8)(B)(iii)",
             "failure_cost": (
-                f"{_money(at_risk)} back into {year + 1} income (Form 8889 line 18 -> line 20 -> "
-                f"Schedule 1 Part I line 8f) plus a 10% additional tax of "
-                f"{_money(_cents(_HSA_TESTING_PERIOD_TAX_RATE * at_risk))} (line 21 -> Schedule 2 Part II "
-                f"line 17d), unless the lapse was death or disability under 223(b)(8)(B)(ii)"
+                f"{_money(at_risk)} back into {year + 1} income (Form 8889 line "
+                f"{form_line(pack, 'f8889.last_month_income')} -> line {form_line(pack, 'f8889.testing_income')} -> "
+                f"Schedule 1 Part I line {form_line(pack, 'sched1.hsa_testing_income')}) plus a 10% additional tax of "
+                f"{_money(_cents(_HSA_TESTING_PERIOD_TAX_RATE * at_risk))} (line {form_line(pack, 'f8889.testing_tax')} "
+                f"-> Schedule 2 Part II line {form_line(pack, 'sched2.hsa_eligibility_tax')}), unless the lapse was death or disability under 223(b)(8)(B)(ii)"
             ),
         }
 
@@ -7462,10 +7517,10 @@ def hsa_deduction(
         f"line 9 EMPLOYER CONTRIBUTIONS {_money(line9)} + line 10 qualified HSA funding distributions "
         f"{_money(line10)} = line 11 {_money(line11)}; line 12 = 8 - 11 = {_money(line12)}; line 13 = "
         f"min(line 2 {_money(line2)}, line 12) = {_money(line13)} -> Schedule 1 (Form 1040), Part II, "
-        f"line 13."
+        f"line {form_line(pack, 'sched1.hsa_deduction')}."
     )
     work_lines.append(
-        "THE DOUBLE-COUNT TRAP: W-2 box 12 code W is NOT a deduction. i8889 line 9 defines employer "
+        "THE DOUBLE-COUNT TRAP: W-2 box 12 code W is NOT a deduction. The i8889 employer-contributions line defines employer "
         "contributions as 'including employee payroll contributions through a cafeteria plan', and line 2 "
         "says 'Payroll contributions through a salary reduction agreement elected by an employee (a "
         "cafeteria plan) are treated as employer contributions and are not included on line 2'. That "
@@ -7547,9 +7602,10 @@ def hsa_deduction(
             f"Part II DISTRIBUTIONS: line 14a {_money(line14a)} (1099-SA box 1, ALL HSAs) - line 14b "
             f"{_money(line14b)} rolled over or excess-plus-earnings withdrawn by the due date = line 14c "
             f"{_money(line14c)}; line 15 qualified medical expenses {_money(line15)}; line 16 = 14c - 15 "
-            f"= {_money(line16)} TAXABLE -> Schedule 1 Part I line 8f. line 17b = "
+            f"= {_money(line16)} TAXABLE -> Schedule 1 Part I line {form_line(pack, 'sched1.hsa_distributions')}. line 17b = "
             f"{_HSA_NONQUALIFIED_DISTRIBUTION_RATE:%} x {_money(line16 - excepted)} = {_money(line17b)} "
-            f"-> Schedule 2 Part II line 17c (223(f)(4)(A) — 20%, raised from 10% by P.L. 111-148 "
+            f"-> Schedule 2 Part II line {form_line(pack, 'sched2.hsa_distribution_tax')} (223(f)(4)(A) — 20%, raised "
+            f"from 10% by P.L. 111-148 "
             f"section 9004(a)). The only exceptions are distributions made after the account beneficiary "
             f"dies, becomes disabled, or turns 65; expenses incurred BEFORE the HSA was established are "
             f"never qualified, and an amount reimbursed by insurance or claimed on Schedule A cannot also "
@@ -7575,8 +7631,8 @@ def hsa_deduction(
         work_lines.append(
             f"Part III RECAPTURE: line 18 {_money(line18)} (last-month rule) + line 19 {_money(line19)} "
             f"(qualified HSA funding distribution) = line 20 {_money(line20)} into gross income on "
-            f"Schedule 1 Part I line 8f, plus line 21 = 10% = {_money(line21)} on Schedule 2 Part II "
-            f"line 17d. Include it in the year the failure happens, not the year of the contribution."
+            f"Schedule 1 Part I line {form_line(pack, 'sched1.hsa_testing_income')}, plus line 21 = 10% = "
+            f"{_money(line21)} on Schedule 2 Part II line {form_line(pack, 'sched2.hsa_eligibility_tax')}. Include it in the year the failure happens, not the year of the contribution."
         )
     work_lines.append(
         "SCOPE — modelled here: Part I lines 1-13, Part II lines 14a-17b, Part III lines 18-21, the "
@@ -7936,7 +7992,8 @@ _PUB525_ESPP_CITATION = Citation(
         "should report the ordinary income to you as wages in box 1 of Form W-2 ... If your employer or "
         "former employer doesn't provide you with a Form W-2, or if the Form W-2 doesn't include the "
         "ordinary income in box 1, you must report the ordinary income as wages on Schedule 1 (Form "
-        "1040), line 8k, for the year of the sale or other disposition of the stock.' And the caution "
+        "1040)' (its 'Stock options' line) 'for the year of the sale or other disposition of the stock.' And "
+        "the caution "
         "this op exists to act on: 'It's your responsibility to make any appropriate adjustments to the "
         "basis information reported on Form 1099-B by completing Form 8949.'"
     ),
@@ -8080,7 +8137,7 @@ _IRC_151_D5_CITATION = Citation(
         "IRC 151(d)(5) (26 U.S.C. 151), 'Special rules for taxable years beginning after 2017': 'In the "
         "case of a taxable year beginning after December 31, 2017- (A) Exemption amount. The term "
         "\"exemption amount\" means zero.' This is why the Capital Loss Carryover Worksheet's line 1 "
-        "takes Form 1040 line 15 (taxable income) with NO add-back for the section 151 deduction that "
+        "takes the Form 1040 taxable-income line with NO add-back for the section 151 deduction that "
         "IRC 1212(b)(2)(B)(ii) names. (C), added by P.L. 119-21, allows 'a deduction in an amount equal "
         "to $6,000 for each qualified individual' for taxable years beginning before January 1, 2029 — "
         "a deduction allowed UNDER SECTION 151 that the printed worksheet does not add back"
@@ -8119,14 +8176,14 @@ _PUB550_CARRYOVER_CITATION = Citation(
 )
 
 
-def _capital_loss_1040_line(year: int) -> str:
-    """Which Form 1040 line Schedule D line 21 lands on for ``year``.
-
-    Read off the faces, not remembered: f1040sd--2023.pdf and f1040sd--2024.pdf
-    both print "enter here and on Form 1040, 1040-SR, or 1040-NR, line 7"; the
-    2025 face prints "line 7a", because TY2025 split line 7 into 7a/7b.
-    """
-    return "7a" if year >= 2025 else "7"
+def _face_line(year: int, key: str, form: str, knowledge_dir: str | Path | None = None) -> str:
+    """'<form> line <designator>' read off ``year``'s face (form_lines), for text that can name a year past the
+    shipped packs (a capital-loss chain, a sale date): such a year gets the line's name and a pointer to its
+    face, never a guessed number (JF6b)."""
+    try:
+        return f"{form} line {form_line(year, key, base_dir=knowledge_dir)}"
+    except FormLineError:
+        return f"the {year} {form} line for this amount (no {year} knowledge pack yet: read it off the {year} face)"
 
 
 def _schedule_d_citation(year: int) -> Citation:
@@ -8135,16 +8192,18 @@ def _schedule_d_citation(year: int) -> Citation:
     Y+1 instructions). A year whose forms have not published yet cites the newest
     revision actually READ and says so."""
     body = (
-        f"Schedule D (Form 1040) line 7 'Net short-term capital gain or (loss). Combine lines 1a "
+        f"Schedule D's line 7 'Net short-term capital gain or (loss). Combine lines 1a "
         f"through 6 in column (h)', line 15 'Net long-term capital gain or (loss). Combine lines 8a "
         f"through 14', line 16 'Combine lines 7 and 15', line 21 'If line 16 is a loss, enter here and "
-        f"on Form 1040, 1040-SR, or 1040-NR, line {_capital_loss_1040_line(year)}, the smaller of: The "
+        f"on Form 1040, 1040-SR, or 1040-NR' ({_face_line(year, 'f1040.capital_gain', 'Form 1040')}), 'the smaller "
+        f"of: The "
         f"loss on line 16; or ($3,000), or if married filing separately, ($1,500)' with the printed "
         f"Note 'When figuring which amount is smaller, treat both amounts as positive numbers'; line 6 "
         f"'Short-term capital loss carryover. Enter the amount, if any, from line 8 of your Capital "
         f"Loss Carryover Worksheet in the instructions' and line 14 the long-term mirror from "
         f"worksheet line 13. Instructions for Schedule D (Form 1040), 'Capital Loss Carryover "
-        f"Worksheet-Lines 6 and 14': line 1 the prior year's Form 1040 line 15 ('If the amount would "
+        f"Worksheet-Lines 6 and 14': line 1 the prior year's {_face_line(year, 'f1040.taxable_income', 'Form 1040')} "
+        f"('If the amount would "
         f"have been a loss if you could enter a negative number on that line, enclose the amount in "
         f"parentheses'), line 2 the prior Schedule D line 21 loss as a positive amount, line 3 "
         f"'Combine lines 1 and 2. If zero or less, enter -0-', line 4 'Enter the smaller of line 2 or "
@@ -8203,7 +8262,8 @@ class EsppDispositionResult(BaseModel):
         description="IRC 423(a)(1): 'qualifying' only when the sale is MORE than 2 years after grant AND more than 1 year after purchase."
     )
     ordinary_income: int = Field(
-        description="Compensation income -> W-2 box 1 (Form 1040 line 1a); Schedule 1 line 8k 'Stock options' if the employer left it off."
+        description="Compensation income -> W-2 box 1 (the Form 1040 wages line, f1040.wages); Schedule 1's 'Stock "
+                    "options' line (sched1.stock_options) if the employer left it off."
     )
     ordinary_income_per_share: Decimal = Field(description="The per-share compensation before rounding — this is where the cents live.")
     capital_gain_or_loss: int = Field(description="Form 8949 column (h) = column (d) - column (e) + column (g).")
@@ -8336,12 +8396,10 @@ def espp_disposition(
     below 85% of the grant-date FMV with no box 8 — which can only mean a
     lookback whose box 8 was not supplied.
 
-    ``knowledge_dir`` is accepted for signature parity with its neighbours but
-    is deliberately unused: IRC 423 carries no per-year figures, so this op
-    reads no knowledge pack, per the P-005/P-006 discipline that only figures
-    belong in a year pack.
+    ``knowledge_dir`` locates the sale year's ``form_lines`` (the Form 1040 and Schedule 1 lines the
+    ordinary income lands on, JF6b); IRC 423 carries no per-year figures, so nothing else is read, per the
+    P-005/P-006 discipline that only figures belong in a year pack.
     """
-    del knowledge_dir  # see the docstring: no per-year figures, so no pack read
     if not employed_through_exercise:
         raise ValueError(
             "employed_through_exercise=False takes this out of section 423 entirely: 423(a)(2) requires "
@@ -8700,9 +8758,11 @@ def espp_disposition(
         f"{two_year_mark.isoformat()}, {'MET' if two_year_met else 'NOT MET'}; more than 1 year after the "
         f"transfer -> after {one_year_mark.isoformat()}, {'MET' if one_year_met else 'NOT MET'}.",
         income_para,
-        "WHERE THE ORDINARY INCOME GOES: the employer should have it in Form W-2 box 1 (Form 1040 line 1a). "
-        "Pub 525: if it is not there, 'you must report the ordinary income as wages on Schedule 1 (Form "
-        "1040), line 8k, for the year of the sale' — line 8k is printed 'Stock options'. NOTHING IS "
+        f"WHERE THE ORDINARY INCOME GOES: the employer should have it in Form W-2 box 1 "
+        f"({_face_line(sale.year, 'f1040.wages', 'Form 1040', knowledge_dir)}). Pub 525: if it is not there, 'you "
+        f"must report the ordinary income as wages on Schedule 1 (Form 1040)' 'for the year of the sale' — for a "
+        f"{sale.year} sale {_face_line(sale.year, 'sched1.stock_options', 'Schedule 1', knowledge_dir)} (printed "
+        f"'Stock options' from 2021; before 2021 the unlettered other-income line). NOTHING IS "
         "WITHHELD ON IT: IRC 423(c)'s last sentence and IRC 421(b)'s both say 'No amount shall be required "
         "to be deducted and withheld under chapter 24', and IRC 3121(a)(22) keeps it out of FICA wages "
         "entirely. Plan the cash — this income arrives with zero tax prepaid.",
@@ -8801,7 +8861,8 @@ class CapitalLossYear(BaseModel):
     deduction: int = Field(description="Schedule D line 21 as a POSITIVE amount — what actually reduces income this year.")
     deduction_cap: int = Field(description="$3,000, or $1,500 for married filing separately (IRC 1211(b)(1)).")
     taxable_income_before_capital_loss: int = Field(description="The caller's taxable income with the line 21 deduction NOT yet subtracted.")
-    taxable_income_after_deduction: int = Field(description="Worksheet line 1 = Form 1040 line 15 as filed; may be negative, and the worksheet wants it that way.")
+    taxable_income_after_deduction: int = Field(description="Worksheet line 1 = the Form 1040 taxable income as filed "
+                                                "(f1040.taxable_income); may be negative, and the worksheet wants it that way.")
     loss_absorbed: int = Field(
         description="Worksheet line 4 = min(line 2, line 3): how much of the LOSS POOL this year actually consumed. Below `deduction` whenever taxable income ran out."
     )
@@ -8862,6 +8923,7 @@ def _capital_loss_one_year(
     taxable_income_before: int,
     st_carryover_in: int,
     lt_carryover_in: int,
+    knowledge_dir: str | Path | None = None,
 ) -> CapitalLossYear:
     """Schedule D Part III + the Capital Loss Carryover Worksheet for ONE year."""
     resolved, _ = _resolve_filing_status(filing_status)
@@ -8892,7 +8954,8 @@ def _capital_loss_one_year(
 
     skip_note = "" if line7 < 0 else " (line 7 is not a loss: the worksheet enters -0- on line 5 and goes to line 9)"
     worksheet = {
-        "1": f"{_dollars(w1)} (Form 1040 line 15 as filed{', a negative taxable income, which the worksheet keeps' if w1 < 0 else ''})",
+        "1": f"{_dollars(w1)} ({_face_line(year, 'f1040.taxable_income', 'Form 1040', knowledge_dir)} as filed"
+             f"{', a negative taxable income, which the worksheet keeps' if w1 < 0 else ''})",
         "2": _dollars(w2),
         "3": _dollars(w3),
         "4": _dollars(w4),
@@ -8912,7 +8975,8 @@ def _capital_loss_one_year(
         "14": f"({_dollars(line14)})" if line14 else "$0",
         "15": _dollars(line15),
         "16": _dollars(line16),
-        "21": (f"({_dollars(line21)}) -> Form 1040 line {_capital_loss_1040_line(year)}" if line21 else "$0 (line 16 is not a loss)"),
+        "21": (f"({_dollars(line21)}) -> {_face_line(year, 'f1040.capital_gain', 'Form 1040', knowledge_dir)}"
+               if line21 else "$0 (line 16 is not a loss)"),
     }
     return CapitalLossYear(
         year=year,
@@ -8984,7 +9048,7 @@ def capital_loss_limitation(
       Schedule D lines 6 and 14 are printed.
     * ``taxable_income_before_capital_loss`` is taxable income with the
       Schedule D line 21 deduction NOT yet subtracted. The worksheet's line 1 is
-      the filed Form 1040 line 15, so this op derives it as this figure minus
+      the filed Form 1040 taxable income, so this op derives it as this figure minus
       the deduction and prints it — taking it this way round keeps the
       computation non-circular for a projection. Pass it NEGATIVE if deductions
       already exceeded income: the worksheet explicitly wants that ("If the
@@ -8999,17 +9063,15 @@ def capital_loss_limitation(
       character split. Years default to consecutive and must strictly increase.
 
     ``year`` selects which Schedule D revision the work and citation quote and
-    therefore which Form 1040 line the deduction lands on (line 7 through 2024,
-    line 7a from 2025). Revisions 2022-2025 were read directly; the worksheet's
+    therefore which Form 1040 line the deduction lands on (form_lines f1040.capital_gain,
+    read off each year's face). Revisions 2022-2025 were read directly; the worksheet's
     lines 1-13 are identical in all of them, so earlier years — whose numbering
     was not verified — are refused.
 
-    ``knowledge_dir`` is accepted for signature parity with its neighbours but
-    is deliberately unused: the $3,000/$1,500 limitation is statutory and not
-    indexed, so this op reads no knowledge pack, per the P-005/P-006 discipline
-    that only figures belong in a year pack.
+    ``knowledge_dir`` locates each year's ``form_lines`` (the Form 1040 lines the work names, JF6b); the
+    $3,000/$1,500 limitation is statutory and not indexed, so nothing else is read, per the P-005/P-006
+    discipline that only figures belong in a year pack.
     """
-    del knowledge_dir  # see the docstring: statutory figures, so no pack read
     if year < _CAPITAL_LOSS_VERIFIED_REVISIONS[0]:
         raise ValueError(
             f"capital_loss_limitation does not support {year}: the Capital Loss Carryover Worksheet's "
@@ -9035,14 +9097,15 @@ def capital_loss_limitation(
     _resolve_filing_status(filing_status)  # validate early with the module's own message
 
     rows: list[CapitalLossYear] = []
-    first = _capital_loss_one_year(year, filing_status, st, lt, ti, st_in, lt_in)
+    first = _capital_loss_one_year(year, filing_status, st, lt, ti, st_in, lt_in, knowledge_dir)
     rows.append(first)
 
     assumptions: list[str] = [
         f"WORKSHEET LINE 1 WAS DERIVED, NOT GIVEN: taxable_income_before_capital_loss "
         f"{_dollars(ti)} minus the Schedule D line 21 deduction {_dollars(first.deduction)} = "
-        f"{_dollars(first.taxable_income_after_deduction)}, which is what your filed Form 1040 line 15 "
-        f"should read. Tie the two together before relying on the carryover — if line 15 differs, the "
+        f"{_dollars(first.taxable_income_after_deduction)}, which is what your filed "
+        f"{_face_line(year, 'f1040.taxable_income', 'Form 1040', knowledge_dir)} should read. Tie the two together "
+        f"before relying on the carryover — if it differs, the "
         f"taxable income passed here was the wrong one and every carryover below moves."
     ]
 
@@ -9090,6 +9153,7 @@ def capital_loss_limitation(
             )),
             st_next,
             lt_next,
+            knowledge_dir,
         )
         rows.append(row)
         if entry_year != prev_year + 1:
@@ -9167,7 +9231,7 @@ def capital_loss_limitation(
             f"(1) $3,000 ($1,500 in the case of a married individual filing a separate return), or (2) "
             f"the excess of such losses over such gains', so line 21 = the smaller of {_dollars(-net)} "
             f"and {_dollars(first.deduction_cap)} = {_dollars(first.deduction)}, entered in parentheses "
-            f"and carried to Form 1040 line {_capital_loss_1040_line(year)}."
+            f"and carried to {_face_line(year, 'f1040.capital_gain', 'Form 1040', knowledge_dir)}."
         )
 
     work_lines = [
@@ -9180,8 +9244,9 @@ def capital_loss_limitation(
     ]
     if net < 0:
         work_lines.append(
-            f"CAPITAL LOSS CARRYOVER WORKSHEET (Schedule D instructions, 'Lines 6 and 14'): line 1 Form "
-            f"1040 line 15 {_dollars(first.taxable_income_after_deduction)}; line 2 the line 21 loss as a "
+            f"CAPITAL LOSS CARRYOVER WORKSHEET (Schedule D instructions, 'Lines 6 and 14'): line 1 "
+            f"{_face_line(year, 'f1040.taxable_income', 'Form 1040', knowledge_dir)} "
+            f"{_dollars(first.taxable_income_after_deduction)}; line 2 the line 21 loss as a "
             f"positive {_dollars(first.deduction)}; line 3 = 1 + 2 floored at zero = "
             f"{_dollars(max(0, ti))}; line 4 = smaller of 2 and 3 = {_dollars(first.loss_absorbed)}. Line "
             f"4 is IRC 1212(b)(2)(A)'s 'lesser of ... the amount allowed ... under section 1211(b), or "
@@ -9500,8 +9565,9 @@ def foreign_tax_credit_election(
     forbid carrying foreign tax **out of** an election year and **into** one, so
     the 904(c) 1-year-back / 10-year-forward carryover is forfeited in both
     directions for that year. Two concrete consequences the op quantifies when it
-    can: pass ``regular_tax`` (Form 1116 line 20 for individuals — Form 1040 line
-    16 plus Schedule 2 line 2, less any tax from Form 4972) and it returns both
+    can: pass ``regular_tax`` (Form 1116 line 20 for individuals — the Form 1040 tax
+    plus the Schedule 2 amount its instructions name, less any tax from Form 4972; both
+    lines come from the year's form_lines) and it returns both
     the amount actually claimed, "the smaller of (a) your total foreign tax, or
     (b) your regular tax", and ``credit_lost_to_regular_tax_cap``, the difference
     — which under the election can never be recovered in another year. Pass
@@ -9705,7 +9771,9 @@ def foreign_tax_credit_election(
         )
     )
 
-    schedule_3_line = "Schedule 3 (Form 1040), Part I, line 1"
+    schedule_3_line = f"Schedule 3 (Form 1040), Part I, line {form_line(pack, 'sched3.foreign_tax_credit')}"
+    regular_tax_lines = (f"Form 1040 line {form_line(pack, 'f1040.tax')} plus Schedule 2 line "
+                         f"{form_line(pack, 'sched2.ftc_regular_tax_addition')}")
     claimed: int | None = None
     lost: int | None = None
     if regular_tax is not None:
@@ -9713,7 +9781,7 @@ def foreign_tax_credit_election(
         if reg < 0:
             raise ValueError(
                 f"regular_tax must be zero or more, got {_money(reg)} — it is Form 1116 line 20 "
-                f"(individuals: Form 1040 line 16 plus Schedule 2 line 2, less any tax on line 16 "
+                f"(individuals: {regular_tax_lines}, less any tax on that Form 1040 line "
                 f"from Form 4972); if the amount is zero or less the Instructions say enter -0-"
             )
         reg_dollars = irs_round(reg)
@@ -9789,7 +9857,7 @@ def foreign_tax_credit_election(
         assumptions.append(
             "regular_tax was not supplied, so credit_on_schedule_3 is None: the election's amount "
             "is 'the smaller of (a) your total foreign tax, or (b) your regular tax' (Form 1116 "
-            "line 20 = Form 1040 line 16 + Schedule 2 line 2, less Form 4972 tax). Pass it to get "
+            f"line 20 = {regular_tax_lines}, less Form 4972 tax). Pass it to get "
             "the number that goes on the return."
         )
 
@@ -9825,7 +9893,7 @@ def foreign_tax_credit_election(
         lines.append(
             "  => NO FORM 1116. Make the election by entering the credit directly on "
             f"{schedule_3_line}: 'To make the election, just enter on the foreign tax credit line "
-            "of your tax return (for example, Schedule 3 (Form 1040), Part I, line 1) the smaller "
+            "of your tax return (for example, Schedule 3 (Form 1040), Part I, ...) the smaller "
             "of (a) your total foreign tax, or (b) your regular tax.'"
         )
         if claimed is not None:
@@ -9916,7 +9984,7 @@ def foreign_tax_credit_election(
                     f"Part I ('Check only one box on each Form 1116'), Part I's three-country "
                     f"column grid, Part II's Paid/Accrued method election, Part III lines 15-23 "
                     f"(the 904(a) limitation the election turns off) and line 35 ('Enter here and "
-                    f"on Schedule 3 (Form 1040), line 1')."
+                    f"on Schedule 3 (Form 1040)', line {form_line(pack, 'sched3.foreign_tax_credit')})."
                 ),
                 url=f"https://www.irs.gov/pub/irs-prior/f1116--{year}.pdf",
             ),

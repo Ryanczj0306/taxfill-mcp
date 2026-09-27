@@ -3443,7 +3443,10 @@ def test_hsa_deduction_part_ii_distributions_and_the_20_percent_tax():
     assert r.form_8889_lines["14c"] == "$4,500.00"
     assert r.taxable_distributions == 1_500                        # line 16
     assert r.distributions_additional_tax == 300                   # 20% of 1,500
-    assert "Schedule 1 Part I line 8f" in r.work and "Schedule 2 Part II line 17c" in r.work
+    # JF6b: the 2026 draft Schedule 2 prints the HSA tax on 13c (it was 17c through 2025).
+    assert f"Schedule 1 Part I line {form_line(2026, 'sched1.hsa_distributions')}" in r.work
+    assert f"Schedule 2 Part II line {form_line(2026, 'sched2.hsa_distribution_tax')}" in r.work
+    assert form_line_entry(2026, "sched2.hsa_distribution_tax").line == "13c"
     assert "223(f)(4)(A)" in r.work and "P.L. 111-148" in r.work
     # The exceptions (death, disability, 65) carve out of the 20%, not the income.
     excepted = hsa_deduction("self_only", year=2026, distributions_total=5_000,
@@ -3837,7 +3840,8 @@ def test_no_withholding_and_no_fica_on_espp_compensation_is_stated():
     r = espp_disposition(**_PUB525_EXAMPLE_10)
     assert "NOTHING IS WITHHELD ON IT" in r.work
     assert "3121(a)(22)" in r.work
-    assert "Schedule 1 (Form 1040), line 8k" in r.work
+    sale_year = date.fromisoformat(_PUB525_EXAMPLE_10["sale_date"]).year
+    assert f"Schedule 1 line {form_line(sale_year, 'sched1.stock_options')}" in r.work   # JF6b
     urls = {c.url for c in r.citations}
     assert any("section3121" in u for u in urls)
 
@@ -4506,7 +4510,7 @@ def test_the_election_op_defaults_to_a_year_it_can_actually_answer():
 
 # ── JF4: the FICA tiers read W-2 boxes 3 + 7 and 5; the safe harbor reads the statute's inputs ──
 from taxfill_core.calc import estimated_tax_safe_harbor, magi_ladder, marginal_dollar_savings  # noqa: E402,I001
-from taxfill_core.knowledge import form_line  # noqa: E402
+from taxfill_core.knowledge import form_line, form_line_entry  # noqa: E402
 
 
 def test_jf4_the_marginal_tier_reads_box_3_against_the_base_and_box_5_against_the_threshold():
