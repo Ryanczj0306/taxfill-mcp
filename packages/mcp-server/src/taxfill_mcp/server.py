@@ -844,16 +844,22 @@ def list_document_kinds() -> list[dict]:
 
 
 @mcp.tool()
-def extract_document(path: str, kind: str, fields: dict[str, Any], page: int | None = None) -> dict:
+def extract_document(
+    path: str, kind: str, fields: dict[str, Any], page: int | None = None, tax_year: int | None = None,
+) -> dict:
     """Structure + validate YOUR reading of one tax document into provenance-tagged fields.
 
     This does NOT do OCR — you read the document (image/PDF) with your own vision and pass the
     box->value map in `fields` (keys from list_document_kinds). The tool type-checks each value,
     tags it with document provenance (file + page), flags required boxes you didn't read as `gaps`,
     surfaces unreadable values as `invalid`, and returns a confirm-table. Never invent a box: any
-    box you omit stays null. `kind` is e.g. "W-2", "1099-INT", "1042-S".
+    box you omit stays null. `kind` is e.g. "W-2", "1099-INT", "1042-S". Pass `tax_year` (the year the form
+    reports): a Form 1099-R's box 7 codes are then read against THAT year's distribution-code table (Y is new
+    in 2025, S pairs with J from 2025, N/R/P name years relative to the form's own), and `findings` lists the
+    semantic checks — an error keeps the box 'ok' (a payer error is a real reading) and says to request a
+    CORRECTED form; `interpretation` says what each code means.
     """
-    return _dump(_extract_document(path, kind, fields, page=page))
+    return _dump(_extract_document(path, kind, fields, page=page, tax_year=tax_year))
 
 
 @mcp.tool()

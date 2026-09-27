@@ -1,0 +1,176 @@
+# Form 1099-R box 7 (2026: box 7a) distribution codes — Table 1, Guide to Distribution Codes, of the
+# Instructions for Forms 1099-R and 5498, transcribed 2026-09-27 from the 2019, 2023, 2024, 2025 and
+# 2026 revisions (irs.gov/pub/irs-prior/i1099r--YYYY.pdf; 2026: irs.gov/pub/irs-pdf/i1099r.pdf) by
+# word coordinates and read row by row against the page (Phase J JR1). YEAR-INVARIANT with revision
+# markers: `since` is the first revision carrying a code, `used_with` the codes it may pair with in
+# every revision, `used_with_from` a later revision's additions, `title_until` an older wording kept
+# through the named year. Titles are templates: {year} is the form's tax year, {prior_year} the one
+# before. The pairing relation is symmetric in every revision (the loader asserts it). A year between
+# two transcribed revisions whose tables agree (2020-2022, between 2019 and 2023) takes their table.
+revisions: [2019, 2023, 2024, 2025, 2026]
+rules:
+  max_codes: 2
+  numeric_pairs: [["1", "8"], ["2", "8"], ["4", "8"]]
+  standalone: ["Q", "T"]
+  quotes:
+    max_codes: "Enter a maximum of two alphanumeric codes in box 7a. See Table 1 for allowable combinations."
+    numeric_pairs: "Only three numeric combinations are permitted on one Form 1099-R: Codes 8 and 1, 8 and 2, or 8 and 4."
+    standalone: "Do not combine code Q or T with any other codes."
+    ira_box: "Do not check the box for a distribution from a Trump account, from a Roth IRA that is not a Roth SIMPLE IRA, or for an IRA recharacterization."
+    ira_box_until_2024: "Do not check the box for a distribution from a Roth IRA or for an IRA recharacterization."
+    recharacterization: "Enter the fair market value (FMV) of the amount recharacterized in box 1, -0- (zero) in box 2a, and code R in box 7a if reporting a recharacterization of a prior-year (2025) contribution or code N if reporting a recharacterization of a contribution in the same year (2026)."
+    direct_rollover: "Report a direct rollover in box 1 and a -0- (zero) in box 2a, unless the rollover is a direct rollover of a qualified rollover contribution other than from a designated Roth account."
+    code_y: "When using code Y, you must use either code 4, 7, or K."
+    box_2b: "If the first box is checked, the payer was unable to determine the taxable amount and box 2a should be blank, except for a traditional IRA or traditional SIMPLE IRA."
+    box_7d: "Enter the total amount of earnings on the amount of excess contributions distributed from a Trump account that is entered in box 1."
+  citation:
+    source: "Instructions for Forms 1099-R and 5498 (2026), Box 7a. Distribution Code(s), Box 7b, Box 7d, IRA recharacterizations, Reporting a direct rollover, and Table 1"
+    url: "https://www.irs.gov/instructions/i1099r"
+codes:
+  "1":
+    title: "Early distribution, no known exception."
+    used_with: ["8", "B", "D", "K", "L", "M", "P"]
+    account: any
+    return_effect: "Early distribution: the 10% additional tax (IRC 72(t)) applies unless the recipient shows an exception on Form 5329."
+  "2":
+    title: "Early distribution, exception applies."
+    used_with: ["8", "B", "D", "K", "L", "M", "P"]
+    account: any
+  "3":
+    title: "Disability."
+    used_with: ["D"]
+    account: any
+  "4":
+    title: "Death."
+    used_with: ["8", "A", "B", "D", "G", "H", "K", "L", "M", "P"]
+    used_with_from:
+      2025: ["Y"]
+    account: any
+  "5":
+    title: "Prohibited transaction."
+    used_with: []
+    account: ira
+  "6":
+    title: "Section 1035 exchange."
+    used_with: ["W"]
+    account: insurance
+  "7":
+    title: "Normal distribution."
+    used_with: ["A", "B", "D", "K", "L", "M"]
+    used_with_from:
+      2025: ["Y"]
+    account: any
+  "8":
+    title: "Excess contributions plus earnings/excess deferrals (and/or earnings) taxable in {year}."
+    used_with: ["1", "2", "4", "B", "J", "K"]
+    account: any
+  "9":
+    title: "Cost of current life insurance protection."
+    used_with: []
+    account: plan
+  "A":
+    title: "May be eligible for 10-year tax option."
+    used_with: ["4", "7"]
+    account: plan
+  "B":
+    title: "Designated Roth account distribution."
+    used_with: ["1", "2", "4", "7", "8", "G", "L", "M", "P", "U"]
+    account: designated_roth
+  "C":
+    title: "Reportable death benefits under section 6050Y."
+    used_with: ["D"]
+    account: insurance
+  "D":
+    title: "Annuity payments from nonqualified annuities and distributions from life insurance contracts that may be subject to tax under section 1411."
+    used_with: ["1", "2", "3", "4", "7", "C"]
+    account: nonqualified
+  "E":
+    title: "Distributions under Employee Plans Compliance Resolution System (EPCRS)."
+    used_with: []
+    account: plan
+  "F":
+    title: "Charitable gift annuity."
+    used_with: []
+    account: charitable_gift_annuity
+  "G":
+    title: "Direct rollover and direct payment."
+    used_with: ["4", "B", "K"]
+    account: plan
+    return_effect: "A direct rollover: box 2a is -0- unless it is a qualified rollover contribution to a Roth IRA (other than from a designated Roth account)."
+  "H":
+    title: "Direct rollover of a designated Roth account distribution to a Roth IRA."
+    used_with: ["4"]
+    account: designated_roth
+    return_effect: "A direct rollover of a designated Roth account to a Roth IRA: box 2a is -0-."
+  "J":
+    title: "Early distribution from a Roth IRA, no known exception."
+    title_until:
+      2024: "Early distribution from a Roth IRA."
+    used_with: ["8", "P"]
+    used_with_from:
+      2025: ["S"]
+    account: roth_ira
+    return_effect: "Early Roth IRA distribution: earnings may be taxable and subject to the 10% additional tax (Form 8606 Part III, Form 5329)."
+  "K":
+    title: "Distribution of traditional IRA assets not having a readily available FMV."
+    used_with: ["1", "2", "4", "7", "8", "G"]
+    used_with_from:
+      2025: ["Y"]
+    account: ira
+  "L":
+    title: "Loans treated as deemed distributions under section 72(p)."
+    used_with: ["1", "2", "4", "7", "B"]
+    account: plan
+  "M":
+    title: "Qualified plan loan offset."
+    used_with: ["1", "2", "4", "7", "B"]
+    account: plan
+  "N":
+    title: "Recharacterized IRA contribution made for {year}."
+    used_with: []
+    account: ira
+    return_effect: "A recharacterization, not a taxable distribution — box 2a is -0-."
+  "P":
+    title: "Excess contributions plus earnings/excess deferrals taxable in {prior_year} or a previous year."
+    title_until:
+      2024: "Excess contributions plus earnings/excess deferrals taxable in {prior_year}."
+    used_with: ["1", "2", "4", "B", "J"]
+    account: any
+    return_effect: "Taxable in the PRIOR year (or earlier) — the recipient may need to amend that year's return."
+  "Q":
+    title: "Qualified distribution from a Roth IRA."
+    used_with: []
+    account: roth_ira
+    return_effect: "A qualified Roth IRA distribution: not taxable."
+  "R":
+    title: "Recharacterized IRA contribution made for {prior_year} or a previous year."
+    title_until:
+      2024: "Recharacterized IRA contribution made for {prior_year}."
+    used_with: []
+    account: ira
+    return_effect: "A recharacterization of a prior-year contribution, not a taxable distribution — box 2a is -0-."
+  "S":
+    title: "Early distribution from a SIMPLE IRA in the first 2 years, no known exception."
+    used_with: []
+    used_with_from:
+      2025: ["J"]
+    account: simple_ira
+    return_effect: "Early SIMPLE IRA distribution in the first 2 years: the additional tax is 25%, not 10% (IRC 72(t)(6)), unless an exception applies (Form 5329)."
+  "T":
+    title: "Roth IRA distribution, exception applies."
+    used_with: []
+    account: roth_ira
+  "U":
+    title: "Dividends distributed from an ESOP under section 404(k)."
+    used_with: ["B"]
+    account: plan
+  "W":
+    title: "Charges or payments for purchasing qualified long-term care insurance contracts under combined arrangements."
+    used_with: ["6"]
+    account: insurance
+  "Y":
+    title: "Qualified charitable distribution (QCD) claimed under section 408(d)(8)."
+    since: 2025
+    used_with: ["4", "7", "K"]
+    account: ira
+    return_effect: "The payer's QCD flag; the recipient still decides and reports the QCD on the return."

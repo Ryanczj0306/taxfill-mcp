@@ -24,6 +24,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from taxfill_core.distribution_codes import Box7Interpretation, Finding, interpret, parse_box7, validate
+
 from taxfill_core.schemas.profile import Provenance
 
 __all__ = [
@@ -1300,6 +1302,14 @@ class ExtractedDocument(BaseModel):
     fields: list[ExtractedField]
     gaps: list[str] = Field(default_factory=list, description="Required boxes not read (or read as invalid).")
     unexpected: list[str] = Field(default_factory=list, description="Keys the agent passed that aren't on this form.")
+    findings: list[Finding] = Field(
+        default_factory=list,
+        description="Semantic checks on the reading (JR1) — a flagged box keeps its 'ok' status: a payer error is a "
+        "real reading, and the message says to request a CORRECTED form.",
+    )
+    interpretation: Box7Interpretation | None = Field(
+        default=None, description="Form 1099-R: what the box 7 codes mean for tax_year (JR1)."
+    )
     caveat: str
 
 
@@ -1375,11 +1385,116 @@ def list_document_kinds() -> list[dict[str, Any]]:
     ]
 
 
+def _money_of(fields: dict[str, ExtractedField], key: str) -> Decimal | None:
+    f = fields.get(key)
+    return Decimal(f.value) if f is not None and f.status == "ok" and f.value is not None else None
+
+
+def _validate_1099r(fields: dict[str, ExtractedField], tax_year: int | None):
+    """Form 1099-R semantic checks V1-V14 (JR1): box 7's code combinations for the tax year's revision
+    of Table 1, and the box 1 / 2a / 2b / 7b / 7c / 7d rules of the Instructions for Forms 1099-R."""
+    code_field = fields.get("7")
+    raw = code_field.value if code_field is not None and code_field.status == "ok" else None
+    codes = parse_box7(raw)
+    if not codes:
+        return [], None
+    findings = validate(codes, tax_year)
+    interp = interpret(raw, tax_year)
+    rules = _box7_rules()
+    q = rules["quotes"]
+    rev = interp.revision
+    cite = f"Instructions for Forms 1099-R and 5498 ({rev})"
+    box1, box2a = _money_of(fields, "1"), _money_of(fields, "2a")
+    ira = bool(fields.get("7_ira_sep_simple") and fields["7_ira_sep_simple"].value is True)
+    not_determined = bool(fields.get("2b_not_determined") and fields["2b_not_determined"].value is True)
+    have = set(codes)
+    corrected = "misread OR payer error: request a CORRECTED Form 1099-R from the payer"
+
+    def add(severity, rule_id, boxes, message):
+        findings.append(Finding(severity=severity, rule_id=rule_id, boxes=boxes, message=message, citation=cite))
+
+    if have & {"N", "R"} and box2a not in (None, Decimal(0)):
+        add("error", "V6", ["7", "2a"], f"a recharacterization (code N or R) reports -0- in box 2a: \"{q['recharacterization']}\" "
+            f"— {corrected}.")
+    if ira and have & {"N", "R"}:
+        add("error", "V7", ["7", "7_ira_sep_simple"], f"the IRA/SEP/SIMPLE box is checked on a recharacterization: "
+            f"\"{q['ira_box'] if rev >= 2025 else q['ira_box_until_2024']}\" — {corrected}.")
+    elif ira and have & {"J", "Q", "T"}:
+        if rev >= 2025:
+            add("warning", "V7", ["7", "7_ira_sep_simple"], f"the IRA/SEP/SIMPLE box is checked on a Roth IRA code — "
+                f"right only for a Roth SIMPLE IRA: \"{q['ira_box']}\" Otherwise, {corrected}.")
+        else:
+            add("error", "V7", ["7", "7_ira_sep_simple"], f"the IRA/SEP/SIMPLE box is checked on a Roth IRA code: "
+                f"\"{q['ira_box_until_2024']}\" — {corrected}.")
+    if not_determined and box2a not in (None, Decimal(0)) and not ira:
+        add("warning", "V8", ["2a", "2b_not_determined"], f"box 2b 'taxable amount not determined' is checked with an "
+            f"amount in box 2a on a non-IRA distribution: \"{q['box_2b']}\" — confirm the reading.")
+    if ira and not_determined and have & {"1", "2", "7"}:
+        add("info", "V9", ["2a", "2b_not_determined"], "a traditional-IRA distribution with the taxable amount not "
+            "determined: the taxable share comes from Form 8606 when there is basis — run calc op ira_pro_rata, and "
+            "enter ITS figure (never box 2a) in estimate_refund's retirement_income_taxable.")
+    if "H" in have and box2a not in (None, Decimal(0)):
+        add("error", "V10", ["7", "2a"], f"code H (a designated Roth account rolled directly to a Roth IRA) with a box 2a "
+            f"amount: \"{q['direct_rollover']}\" — {corrected}.")
+    elif "G" in have and box2a not in (None, Decimal(0)):
+        add("warning", "V10", ["7", "2a"], f"code G (a direct rollover) with a box 2a amount: \"{q['direct_rollover']}\" "
+            "The amount is right only for a direct rollover to a Roth IRA (a qualified rollover contribution) or an "
+            "in-plan Roth rollover — confirm which.")
+    if "P" in have:
+        add("info", "V11", ["7"], f"code P: {interp_title(interp, 'P')} — the recipient may need to AMEND that earlier "
+            "year's return rather than report it this year.")
+    for c in sorted(have & {"1", "J", "S"}):
+        add("info", "V12", ["7"], f"code {c}: {interp_effect(interp, c)}")
+    if box1 is not None and box2a is not None and box2a > box1:
+        add("error", "V13", ["1", "2a"], f"box 2a (taxable amount {box2a}) exceeds box 1 (gross distribution {box1}) — "
+            f"{corrected}.")
+    box7d = _money_of(fields, "7d")
+    trump = bool(fields.get("7c") and fields["7c"].value is True)
+    if box7d not in (None, Decimal(0)) and not trump:
+        add("error", "V14", ["7c", "7d"], f"box 7d without the Trump account box 7c: \"{q['box_7d']}\" — {corrected}.")
+    return findings, interp
+
+
+def interp_title(interp: Box7Interpretation, code: str) -> str:
+    return next((m.title for m in interp.meanings if m.code == code), code)
+
+
+def interp_effect(interp: Box7Interpretation, code: str) -> str:
+    m = next((m for m in interp.meanings if m.code == code), None)
+    return (m.return_effect or m.title) if m is not None else code
+
+
+def _validate_5498(fields: dict[str, ExtractedField], tax_year: int | None):
+    """Form 5498 box 4 (JR1, RC-13): a recharacterized contribution is the SAME dollars another box (or the
+    first trustee's form) already reports, so it is counted once."""
+    box4 = _money_of(fields, "4")
+    if box4 in (None, Decimal(0)):
+        return [], None
+    return [Finding(
+        severity="info", rule_id="V15", boxes=["4"], citation="Instructions for Forms 1099-R and 5498, Box 4",
+        message=(
+            f"box 4 shows {box4} of RECHARACTERIZED contributions — \"Enter any amounts recharacterized plus earnings from "
+            "one type of IRA to another.\" The first IRA's trustee reported the original contribution (box 1 or box "
+            "10) and this trustee reports it again here, so count the contribution ONCE, as the type it was "
+            "recharacterized to — never the two figures added together."
+        ),
+    )], None
+
+
+def _box7_rules() -> dict:
+    from taxfill_core.distribution_codes import _rules  # noqa: PLC0415
+    return _rules(None)
+
+
+_VALIDATORS = {"1099-R": _validate_1099r, "5498": _validate_5498}
+
+
 def extract_document(
     path: str,
     kind: str,
     fields: dict[str, Any],
     page: int | None = None,
+    tax_year: int | None = None,
 ) -> ExtractedDocument:
     """Structure + validate an agent's reading of one tax document.
 
@@ -1393,6 +1508,9 @@ def extract_document(
         An :class:`ExtractedDocument`: every documented box, typed and tagged with
         ``document`` provenance, plus the gaps (required boxes not read) and any
         unexpected keys. Nothing is inferred — unread boxes are ``None``.
+
+    ``tax_year`` (JR1) is the year the form reports: Form 1099-R box 7 codes are read against that
+    year's revision of the distribution-code table, and the semantic checks become ``findings``.
 
     Raises:
         ValueError: if ``kind`` is not a supported document type.
@@ -1441,6 +1559,14 @@ def extract_document(
     )
     if spec.status_note:
         caveat = f"{caveat} {spec.status_note}"
+    findings: list[Finding] = []
+    interpretation = None
+    validator = _VALIDATORS.get(spec.kind)
+    if validator is not None:
+        findings, interpretation = validator({f.key: f for f in out_fields}, tax_year)
+        if findings:
+            errors = sum(1 for x in findings if x.severity == "error")
+            caveat = f"{caveat} {len(findings)} findings ({errors} errors): see findings."
     return ExtractedDocument(
         kind=spec.kind,
         file=path,
@@ -1450,5 +1576,7 @@ def extract_document(
         fields=out_fields,
         gaps=gaps,
         unexpected=unexpected,
+        findings=findings,
+        interpretation=interpretation,
         caveat=caveat,
     )

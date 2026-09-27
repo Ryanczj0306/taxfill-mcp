@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,752 tests** — offline 5,372 + live-.gov 380; derived
+Done and on `main` (**5,762 tests** — offline 5,382 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1615,7 +1615,8 @@ not wait for any of this.
 
 ### Block 3 — The retirement block
 
-- [ ] **JR1 — Form 1099-R box 7 interpretation** (M; deps JF2)
+- [x] **JR1 — Form 1099-R box 7 interpretation — DONE 2026-09-27** (M; deps JF2)
+  - *As built:* `knowledge/forms/1099r_distribution_codes.yaml` — Table 1 of the 2019, 2023, 2024, 2025 and 2026 i1099r revisions, transcribed by word coordinates and read row by row against each page (29 codes, 30 with Y from 2025; `since`, `used_with`, `used_with_from` — Y pairs with 4/7/K, S with J, J with S, from 2025 — `title_until` for J/P/R's older wordings, {year}/{prior_year} title templates, account, return_effect; the loader asserts symmetry per revision; 2020-2022 take the 2019 = 2023 table) and the rule quotes (two codes; 8 with 1, 2 or 4; Q/T alone; the box 7b, recharacterization, direct-rollover, code Y, box 2b and box 7d sentences). `taxfill_core/distribution_codes.py`: `parse_box7`, `validate` (V0 unknown for the revision, V1-V5), `interpret`. extract_document (core and MCP, tool count 23) takes `tax_year`; `_VALIDATORS` add `findings` (severity / rule_id / boxes / message / citation — a flagged box stays 'ok', the message says "misread OR payer error: request a CORRECTED Form 1099-R") and `interpretation`; the caveat counts them. V6-V14 as listed (V7 is an error through 2024 and a warning from 2025, when a Roth SIMPLE IRA may check box 7b; V10 is an error for H and a warning for G); Form 5498 box 4 > 0 is info finding V15 (count the contribution once).
   1. **Code knowledge and interpreter** [RC-03].
      - Codes are stored as raw text (extract.py:263; `_coerce` 'code' is plain `str()`), so an impossible "NQ7" comes back 'ok' with no warning.
      - i1099r (2026) box 7a:
