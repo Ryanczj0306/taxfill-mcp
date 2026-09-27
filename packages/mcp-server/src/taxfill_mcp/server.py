@@ -919,7 +919,22 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     a confirmed MFJ those facts rule out is priced MFS with the contradiction as the FIRST
     assumption. result.residency_caveat carries the election's text — IRC 6013(g) or 6013(h),
     whichever the facts point to (a recorded election in a dual-status year gives both: it may be
-    an earlier 6013(g) election still in effect). Each spouse's separate MFS return
+    an earlier 6013(g) election still in effect - unless the taxpayer's prior-year return is recorded
+    as '1040_with_6013_election', which makes it IRC 6013(g): IRC 6013(g)(3), the election applies "to
+    all subsequent taxable years until terminated", and 6013(h)(2) bars a second 6013(h); with that
+    prior-year return and NO answer recorded for the year the election is NOT applied from that return
+    alone (a confirmed joint status of a nonresident or dual-status taxpayer is still read as the
+    election, JF5a) - an assumption
+    and intake's household.section_6013_election ask whether it is still in effect). With no answer
+    recorded and no status confirmed, a married taxpayer whose own residency is nonresident or a
+    dual-status year keeps married_filing_jointly as a CANDIDATE (JF5b part 3b), as the reverse couple
+    does: the figure IF the couple makes the election, priced on resident rules for both spouses
+    (IRC 6013(h) for an arrival year with a U.S. spouse), behind the no-election MFS primary - with
+    the worldwide-income, statement, FICA and NIIT notes worded as a candidate, and, when the
+    spouse's residency is not on file, the precondition named as not judged (record
+    household.spouse.us_person or the spouse's visa timeline and days). Never after a recorded
+    decline, a confirmed status, or on facts ruling the election out (IRC 6013(g)(3)). A dual-status
+    year's route (ii) names that joint candidate. Each spouse's separate MFS return
     follows that spouse's OWN classification (a US-citizen spouse's Form 1040 keeps the standard
     deduction unless the couple itemizes: IRC 63(c)(6)(A) — both methods are priced and the better
     total is kept); a spouse whose residency is unknown is priced both ways in the range.
@@ -952,12 +967,16 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     point - no standard deduction (itemized or $0), no EITC, no education credits, no joint return
     or HOH, MFS rates if married and single rates otherwise (an inference - ch. 6 names the rate column only for a married filer) - as one whole-year snapshot (NIIT on
     the whole year's investment income may be overstated: Treas. Reg. 1.1411-2(a)(2)(ii) counts
-    resident-period income only); the range's other end is the full-year-resident figure when a
-    route could make it lawful (a prior-year residency not ruled out, or the election open to a
-    married filer), and collapses to the point for an unmarried filer whose prior year is a
-    recorded 1040-NR. Only bank_deposit_interest_nonresident_period is excluded on a dual-status
+    resident-period income only); the range's other end is the same-status full-year-resident
+    figure when a prior-year residency is not ruled out (route (i)), while for a married filer the
+    election's route (ii) is its own married-filing-jointly CANDIDATE, priced under the election
+    (or the same-status resident figure when no joint candidate is priced); it collapses to the
+    point for an unmarried filer whose prior year is a recorded 1040-NR. Only bank_deposit_interest_nonresident_period is excluded on a dual-status
     payee's return (the spouse's separate return by the spouse's own year), with a disclosure
-    naming the amount - or, without the split, the amount taxed in full and what to record.
+    naming the amount - or, without the split, the amount taxed in full and what to record. A
+    dual-status SPOUSE's own separate return (no election) is priced the same way at the point (Pub
+    519 ch. 6: no standard deduction, no EITC or education credit, MFS rates), and the range prices
+    that return for the whole year under resident rules and under Form 1040-NR rules.
 
     The result's `composition` is a reconciling LEDGER: each line carries a stable `slot`, a
     `role`, and an `effect` (its signed contribution to the bottom line; the effects sum EXACTLY

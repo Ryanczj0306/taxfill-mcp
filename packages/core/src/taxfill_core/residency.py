@@ -315,7 +315,9 @@ SECTION_6013_SUSPENDED = (
 Section6013Kind = Literal["g", "h", "either"]
 
 
-def section_6013_kind(taxpayer: str | None, spouse: str | None, *, recorded: bool = False) -> Section6013Kind:
+def section_6013_kind(
+    taxpayer: str | None, spouse: str | None, *, recorded: bool = False, prior_year_election: bool = False,
+) -> Section6013Kind:
     """'g', 'h', or 'either' (not decidable from the facts on file) — P-018.
 
     IRC 6013(g) when either spouse is a nonresident alien for the whole year (so at
@@ -327,11 +329,22 @@ def section_6013_kind(taxpayer: str | None, spouse: str | None, *, recorded: boo
     election remains in effect). Facts that point to 6013(h) then give 'either': a
     6013(g) election made in an earlier year continues (IRC 6013(g)(3)) and Pub 519's
     Note says "If you previously made that choice and it is still in effect, you do
-    not need to make the choice explained here". The prior-year return is recorded in
-    PriorFilings.return_forms (a '1040_with_6013_election' entry shows an election made
-    earlier), but this function takes residency answers only and does not read it, so a
-    recorded election on (h) facts stays 'either' and the texts give both readings.
+    not need to make the choice explained here".
+
+    ``prior_year_election`` (JF5b part 3b): the TAXPAYER's return for the preceding
+    year is recorded as a joint Form 1040 under the election (PriorFilings.return_forms
+    '1040_with_6013_election'). Then the kind is 'g' — never 'h' or 'either': an IRC
+    6013(g) election made earlier "shall apply to the taxable year for which made and
+    to all subsequent taxable years until terminated" (IRC 6013(g)(3); Pub 501: "This
+    choice remains in effect in subsequent years until terminated"), and a 6013(h)
+    choice for that year does not continue (Pub 501: "You can only make this choice for
+    1 year, and it doesn't apply to any future years") and cannot be made again — IRC
+    6013(h)(2): "such 2 individuals shall be ineligible to make an election under this
+    subsection for any subsequent taxable year". A joint return this year therefore rests
+    on a 6013(g) election, the one continuing (or, after a 6013(h) year, a new one).
     """
+    if prior_year_election:
+        return "g"
     if taxpayer == "nonresident" or spouse == "nonresident":
         return "g"
     at_year_end_us = ("us", "resident", "dual_status_candidate")
@@ -464,6 +477,64 @@ def prior_year_election_reason(target_year: int) -> str:
         f"year WITHOUT the election decides it: record the days in the U.S. for {prior}, {prior - 1} and "
         f"{prior - 2} and the visa timeline covering them, so {prior} can be classified on its own facts."
     )
+
+
+# JF5b part 3b (P-018): the election a prior-year joint return rests on CONTINUES. IRC 6013(g)
+# on uscode.house.gov ("in effect on September 24, 2026") and Pub 519 (2025) ch. 1, Suspending
+# the Choice and Ending the Choice, and Pub 501 (2025), read 2026-09-27.
+SECTION_6013G_DURATION = (
+    "IRC 6013(g)(3): \"An election under this subsection shall apply to the taxable year for which made and to all "
+    "subsequent taxable years until terminated under paragraph (4) or (5); except that any such election shall not "
+    "apply for any taxable year if neither spouse is a citizen or resident of the United States at any time during "
+    "such year.\""
+)
+SECTION_6013_ENDING = (
+    "Pub 519 ch. 1, Ending the Choice: \"Once made, the choice to be treated as a resident applies to all later "
+    "years unless suspended (as explained earlier under Suspending the Choice) or ended in one of the following "
+    "ways.\" — revocation (\"Either spouse can revoke the choice for any tax year, provided they make the "
+    "revocation by the due date for filing the tax return for that tax year.\"), the death of either spouse, a "
+    "legal separation under a decree of divorce or separate maintenance, or the IRS ending it for inadequate "
+    "records; and \"If the choice is ended in one of the following ways, neither spouse can make this choice in "
+    "any later tax year.\""
+)
+
+
+def prior_year_election_continues(target_year: int) -> str:
+    """The prior-year joint return under the §6013(g)/(h) election, with no election recorded for
+    ``target_year``: the election it rests on may continue, so the fact must be recorded — never
+    applied from the prior-year return alone (JF5b part 3b, P-018)."""
+    prior = target_year - 1
+    return (
+        f"Your {prior} return is recorded as a joint Form 1040 under the §6013(g)/(h) election "
+        f"(prior_filings.return_forms), and no election is recorded for {target_year} — so this is NOT applied here: "
+        f"an IRC 6013(g) election made for {prior} (or earlier) continues until it is ended. {SECTION_6013G_DURATION} "
+        f"Pub 501: \"This choice remains in effect in subsequent years until terminated.\" {SECTION_6013_ENDING} "
+        f"(A {prior} IRC 6013(h) choice covered that year only — Pub 501: \"You can only make this choice for 1 year, "
+        f"and it doesn't apply to any future years.\") Record residency_facts.section_6013_election for "
+        f"{target_year}: true if the election is still in effect (a later year of it: joint or separate returns, "
+        f"and no new statement), false if it was ended — and rerun."
+    )
+
+def prior_year_election_read_as_continuing(target_year: int, *, confirmed_joint_candidate: bool = False) -> str:
+    """The prior-year joint return under the election when this year's figures already run under it — a
+    confirmed joint status read as the election (JF5a) — or, with ``confirmed_joint_candidate``, when the
+    confirmed joint figure is valid only by electing (a citizen with a nonresident spouse). One text for
+    the estimate and intake (JF5b part 3b, P-018)."""
+    prior = target_year - 1
+    if confirmed_joint_candidate:
+        return (
+            f"Your {prior} return is recorded as a joint Form 1040 under the §6013(g)/(h) election, and the confirmed "
+            f"joint figure for {target_year} is valid only if that election is still in effect (IRC 6013(g)(3): it "
+            f"\"shall apply to the taxable year for which made and to all subsequent taxable years until "
+            f"terminated\") — record residency_facts.section_6013_election (true while it remains in effect)."
+        )
+    return (
+        f"Your {prior} return is recorded as a joint Form 1040 under the §6013(g)/(h) election, and the confirmed "
+        f"joint status is read as that election continuing (IRC 6013(g)(3): it \"shall apply to the taxable year for "
+        f"which made and to all subsequent taxable years until terminated\") — record "
+        f"residency_facts.section_6013_election (true while it remains in effect) to make it a recorded fact."
+    )
+
 
 # When the weighted total falls short of 183 but lands at or above this
 # value, the nonresident result reminds the user to recount days and that

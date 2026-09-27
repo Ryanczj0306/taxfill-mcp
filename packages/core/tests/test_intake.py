@@ -1644,3 +1644,73 @@ def test_p018_dual_status_prior_year_question_says_what_the_answer_decides():
     nra = next(q for q in intake_checklist(_confirmed_nra(), tax_year=2023).next_questions
                if q.id == "prior_filings.return_form")
     assert "DUAL-STATUS" not in nra.why
+
+
+# ── P-018 / JF5b part 3b: a prior-year election return — the election CONTINUES ─────
+# IRC 6013(g)(3): "An election under this subsection shall apply to the taxable year for which
+# made and to all subsequent taxable years until terminated under paragraph (4) or (5)"; IRC
+# 6013(h)(2): "such 2 individuals shall be ineligible to make an election under this subsection
+# for any subsequent taxable year". Hypothetical timelines only.
+
+def _married_visa(prior=None, spouse=None, **household_kwargs) -> Profile:
+    profile = _visa(_SWITCH_APRIL, prior=prior)
+    profile.household = Household(marital_status=_ans("married"), spouse=spouse or Spouse(us_person=_ans(True)),
+                                  **household_kwargs)
+    return profile
+
+
+def test_p018_a_prior_year_election_return_asks_whether_the_election_continues():
+    profile = _married_visa(prior={2024: "1040_with_6013_election"})
+    cl = intake_checklist(profile, tax_year=2025)
+    q = next(q for q in cl.next_questions if q.id == _FACT_Q)
+    assert q.prompt.startswith("Your 2024 return is recorded as a joint Form 1040 under the §6013(g)/(h) election. "
+                               "Is that election still in effect for 2025?")
+    assert q.answers_into == "residency_facts.section_6013_election"
+    assert "it never applies the election from the prior-year return alone" in q.why
+    assert "shall apply to the taxable year for which made and to all subsequent taxable years until terminated" in (
+        q.disambiguation)
+    assert "Once made, the choice to be treated as a resident applies to all later years" in q.disambiguation
+    # Asked whatever the status (a confirmed MFS too), once — never the spouse battery's copy as well.
+    assert [q.id for q in cl.next_questions].count(_FACT_Q) == 1
+    mfs = _married_visa(prior={2024: "1040_with_6013_election"}, filing_status=_ans("married_filing_separately"))
+    assert _FACT_Q in _ids(intake_checklist(mfs, tax_year=2025))
+    nra_spouse = _married_visa(prior={2024: "1040_with_6013_election"}, spouse=_nra_spouse_facts())
+    ids = [q.id for q in intake_checklist(nra_spouse, tax_year=2025).next_questions]
+    assert ids.count(_FACT_Q) == 1 and "household.spouse.section_6013_election" not in ids
+    note = next(n for n in cl.notes if "no election is recorded for 2025" in n)
+    assert "IRC 6013(g)(3)" in note and "This choice remains in effect in subsequent years until terminated." in note
+    assert "true if the election is still in effect" in note and "false if it was ended" in note
+    # Either answer stops the question and the note; without the prior-year return nothing is asked.
+    for value in (True, False):
+        answered = _married_visa(prior={2024: "1040_with_6013_election"})
+        answered.residency_facts.section_6013_election = _ans(value)
+        cl2 = intake_checklist(answered, tax_year=2025)
+        assert _FACT_Q not in _ids(cl2) and not any("no election is recorded for 2025" in n for n in cl2.notes)
+    assert _FACT_Q not in _ids(intake_checklist(_married_visa(prior={2024: "1040"}), tax_year=2025))
+
+
+def test_p018_a_prior_year_election_return_makes_the_kind_a_continuing_6013g():
+    from taxfill_core.intake import _section_6013_kind
+
+    # A dual-status arrival year with a U.S.-citizen spouse: a recorded election is 'either' (an
+    # earlier 6013(g) election may continue) until the prior-year return shows one — then 'g'.
+    assert _section_6013_kind(_married_visa(), 2025) == "either"
+    assert _section_6013_kind(_married_visa(prior={2024: "1040_with_6013_election"}), 2025) == "g"
+    assert _section_6013_kind(_married_visa(prior={2023: "1040_with_6013_election"}), 2025) == "either"   # year-1 only
+    elected = _married_visa(prior={2024: "1040_with_6013_election"})
+    elected.residency_facts.section_6013_election = _ans(True)
+    note = next(n for n in intake_checklist(elected, tax_year=2025).notes if n.startswith("The §6013(g)/(h) election "
+                                                                                              "is recorded"))
+    assert "IRC 6013(g) — Pub 519 ch. 1, Nonresident Spouse Treated as a Resident" in note
+    assert "IRC 6013(h), the year a nonresident alien becomes a resident" not in note
+
+
+def test_p018_intake_reads_a_confirmed_joint_status_as_the_continuing_election_like_the_estimate():
+    from taxfill_core.estimate import IncomeSnapshot, estimate_refund  # noqa: PLC0415
+    from taxfill_core.schemas.profile import PriorFilings  # noqa: PLC0415
+    profile = _married_confirmed_nra(filing_status=_ans("married_filing_jointly"), spouse=Spouse(us_person=_ans(True)))
+    profile.prior_filings = PriorFilings(return_forms={2022: _ans("1040_with_6013_election")})
+    notes = " ".join(intake_checklist(profile, tax_year=2023).notes)
+    est = " ".join(estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=5_000)).assumptions)
+    for text in (notes, est):
+        assert "read as that election continuing" in text and "NOT applied here" not in text

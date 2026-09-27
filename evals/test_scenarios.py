@@ -719,10 +719,12 @@ def test_eval_p_april_transition_dual_status_corridor_end_to_end():
         residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in days.items()}),
     )
 
-    # 1) ESTIMATE — statuses restricted (MFS only, no MFJ recommendation), loud caveat.
+    # 1) ESTIMATE — statuses restricted (the no-election MFS primary; the joint return only as the
+    # §6013(g)/(h) election's CANDIDATE on resident rules — JF5b part 3b, P-018), loud caveat.
     est = estimate_refund(profile, 2023, IncomeSnapshot(wages=95_000, federal_withholding=14_000))
     assert est.filing_status_used == "married_filing_separately"
-    assert est.comparison is None
+    assert [c.status for c in est.comparison.candidates] == ["married_filing_separately", "married_filing_jointly"]
+    assert "Married-filing-jointly is shown as a CANDIDATE" in est.residency_caveat
     assert any("DUAL-STATUS" in a and "FULL-YEAR approximation" in a for a in est.assumptions)
 
     # 2) ROADMAP — the concrete prepared path, cited to Pub 519.

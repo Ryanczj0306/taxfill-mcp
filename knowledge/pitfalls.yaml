@@ -1536,3 +1536,45 @@ pitfalls:
       snapshot: the combined
       figure stays. Tests: test_p018_niit_default_* and the updated
       test_p018_*niit* tests in test_estimate.py.
+      JF5b part 3b (2026-09-27) — the election is the COUPLE's, so both
+      directions see it: a married taxpayer whose own no-election residency is
+      nonresident or dual-status, with no status confirmed, no answer recorded
+      and the election not ruled out (IRC 6013(g)(3)), keeps
+      married-filing-jointly as a CANDIDATE (Pub 519 ch. 1: "If, at the end of
+      your tax year, you are married and one spouse is a U.S. citizen or a
+      resident alien and the other spouse is a nonresident alien, you can
+      choose to treat the nonresident spouse as a U.S. resident.") — an
+      election figure priced on resident rules for both spouses with the NIIT
+      default, the kind by the no-election facts (a dual-status arrival year
+      with a U.S. spouse is the NEW IRC 6013(h) choice), behind the
+      no-election MFS primary; its caveat, FICA and NIIT notes say "if you
+      make the election", and a spouse whose residency is not on file makes
+      the precondition "NOT settled" with household.spouse.us_person or the
+      spouse's visa timeline and days named. The dual-status caveat's route
+      (ii) names that joint candidate; the same status under resident rules
+      stays in the range only through route (i). A dual-status SPOUSE's own
+      separate return is priced under Pub 519 ch. 6 at the point (no standard
+      deduction, MFS rates, no EITC or education credit, the nonresident-period
+      deposit split), with the full-year resident reading (all deposit interest
+      taxed) and the Form 1040-NR reading in the range. A prior-year return
+      recorded as '1040_with_6013_election' makes the kind IRC 6013(g) —
+      IRC 6013(g)(3): "shall apply to the taxable year for which made and to
+      all subsequent taxable years until terminated"; IRC 6013(h)(2): "such 2
+      individuals shall be ineligible to make an election under this
+      subsection for any subsequent taxable year" — so a recorded election on
+      arrival-year facts keeps separate returns open, and the arriving
+      nonresident spouse of that continuing election owes NIIT on
+      resident-period income only (Treas. Reg. 1.1411-2(a)(2)(iv)(A)'s facts,
+      a reading), bounded from $0; with that prior-year return and NO answer
+      for the year the election is NOT applied from that return alone (a
+      confirmed joint status of a nonresident or dual-status taxpayer is still
+      read as the election, JF5a) — an assumption quotes IRC
+      6013(g)(3) and Pub 519's Ending the Choice, and intake asks
+      household.section_6013_election. Tests:
+      test_p018_the_election_is_a_candidate_for_a_nonresident_taxpayer_symmetric_with_the_reverse_couple,
+      test_p018_the_candidate_names_what_to_record_when_the_spouse_residency_is_not_on_file,
+      test_p018_a_dual_status_taxpayers_candidate_is_the_6013h_choice_and_route_ii_points_at_it,
+      test_p018_a_dual_status_spouse_return_is_priced_under_chapter_6_at_the_point,
+      test_p018_a_dual_status_spouse_inside_a_head_of_household_figure_keeps_chapter_6_rules,
+      test_p018_a_prior_year_election_return_* (test_estimate.py, test_intake.py)
+      and test_p018_section_6013_kind_reads_a_prior_year_election_return.

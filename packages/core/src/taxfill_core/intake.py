@@ -314,9 +314,10 @@ def _section_6013_kind(profile: Profile, tax_year: int | None) -> str:
     """Which choice the couple is making — IRC 6013(g), 6013(h) or 'either' (residency.section_6013_kind),
     from each spouse's residency WITHOUT the election. Intake only ever meets the election as a
     recorded answer or a question that also covers one made earlier, so facts pointing to 6013(h)
-    give 'either': an earlier 6013(g) election may still be in effect (PriorFilings.return_forms
-    records the earlier returns — a '1040_with_6013_election' entry — but the kind is read from the
-    residency answers only)."""
+    give 'either': an earlier 6013(g) election may still be in effect — unless the TAXPAYER's
+    prior-year return is recorded as a joint Form 1040 under the election
+    (PriorFilings.return_forms '1040_with_6013_election'), which makes it 6013(g): a continuing
+    election (IRC 6013(g)(3)), never a new 6013(h) (JF5b part 3b, the estimator's rule)."""
     ident = profile.identity
     taxpayer = _classification_without_election(profile, tax_year)
     if taxpayer is None and ident is not None and _has(ident.us_person) and ident.us_person.value is True:
@@ -329,7 +330,25 @@ def _section_6013_kind(profile: Profile, tax_year: int | None) -> str:
             "us" if _has(sp.us_person) and sp.us_person.value is True
             else _spouse_classification(profile, tax_year, honor_election=False)
         )
-    return residency.section_6013_kind(taxpayer, spouse, recorded=True)
+    return residency.section_6013_kind(
+        taxpayer, spouse, recorded=True, prior_year_election=_prior_year_election_return(profile, tax_year),
+    )
+
+
+def _prior_year_election_return(profile: Profile, tax_year: int | None) -> bool:
+    """The TAXPAYER's return for tax_year - 1 is recorded as a joint Form 1040 under the §6013(g)/(h)
+    election (PriorFilings.return_forms '1040_with_6013_election') — JF5b part 3b."""
+    pf = profile.prior_filings
+    if tax_year is None or pf is None:
+        return False
+    return residency.prior_year_return_form(pf.return_forms, tax_year) == "1040_with_6013_election"
+
+
+def _continuing_election_open(profile: Profile, tax_year: int | None) -> bool:
+    """A prior-year joint return under the election with NO election answer recorded for this year:
+    the election it rests on may continue (IRC 6013(g)(3)), so intake asks the fact (JF5b part 3b)."""
+    rf = profile.residency_facts
+    return _prior_year_election_return(profile, tax_year) and not (rf is not None and _has(rf.section_6013_election))
 
 
 def _election_in_effect_note(profile: Profile, tax_year: int | None) -> str:
@@ -796,9 +815,16 @@ def _household_questions(
     # Residency-gated status restriction note (conditional when not yet computable).
     if not _has(hh.filing_status):
         if is_nonresident:
-            notes.append("Nonresident-alien filers (Form 1040-NR) cannot use married-filing-jointly or head of "
-                         "household; the available statuses are single, married-filing-separately, or qualifying "
-                         "surviving spouse.")
+            note = ("Nonresident-alien filers (Form 1040-NR) cannot use married-filing-jointly or head of "
+                    "household; the available statuses are single, married-filing-separately, or qualifying "
+                    "surviving spouse.")
+            if _married_for_year(profile, tax_year) and not _election_unavailable(profile, tax_year):
+                # JF5b part 3b: either spouse may be the nonresident (Pub 519 ch. 1).
+                note += (" A joint Form 1040 is still open under the §6013(g)/(h) election if your spouse is a U.S. "
+                         "citizen or resident at the end of the year (Pub 519 ch. 1: \"one spouse is a U.S. citizen "
+                         "or a resident alien and the other spouse is a nonresident alien\") — record "
+                         "residency_facts.section_6013_election.")
+            notes.append(note)
         elif is_resident and not spouse_nra_path and not election:
             notes.append("Your residency result is resident alien, so all filing statuses are available — "
                          "married-filing-jointly and head of household included.")
@@ -913,12 +939,36 @@ def _section_6013_fact_question(profile: Profile, out: list[IntakeQuestion], tax
     need — never left implied by the status. Asked when MFJ is chosen, either
     spouse is (or may be) a nonresident alien on the no-election facts, and the
     fact is still unanswered; either answer stops it.
+
+    JF5b part 3b: the same question is asked, whatever the status, when the TAXPAYER's
+    prior-year return is recorded as a joint Form 1040 under the election and no answer
+    is recorded for this year — IRC 6013(g)(3): the election applies "to all subsequent
+    taxable years until terminated", so it may still be in effect (the estimate never
+    applies it from the prior-year return alone).
     """
     hh = profile.household
     rf = profile.residency_facts
-    if hh is None or not _has(hh.filing_status) or hh.filing_status.value != "married_filing_jointly":
-        return
     if rf is not None and _has(rf.section_6013_election):
+        return
+    if _continuing_election_open(profile, tax_year) and not _election_unavailable(profile, tax_year):
+        prior = tax_year - 1
+        out.append(_q("household.section_6013_election", "household",
+                      f"Your {prior} return is recorded as a joint Form 1040 under the §6013(g)/(h) election. Is that "
+                      f"election still in effect for {tax_year}? (An IRC 6013(g) election continues until it is ended "
+                      "— revoked, a spouse's death, a legal separation, or ended by the IRS. Recorded on YOUR "
+                      "residency_facts.section_6013_election — the taxpayer's, never the spouse's: the choice is "
+                      "joint.)",
+                      "While it is in effect both spouses are \"treated for income tax purposes as residents for your "
+                      "entire tax year\" (Pub 519 ch. 1) — Form 1040, the standard deduction, NIIT, worldwide income "
+                      "and no deposit-interest exclusion, on a joint or a separate return — so the estimate needs the "
+                      "answer: it never applies the election from the prior-year return alone.",
+                      "residency_facts.section_6013_election",
+                      disambiguation="Answer true if the election is still in effect (a later year of it: on a joint "
+                                     "return check the box and enter the spouse's name — no new statement), or false "
+                                     "if it was ended. " + residency.SECTION_6013G_DURATION + " "
+                                     + residency.SECTION_6013_ENDING))
+        return
+    if hh is None or not _has(hh.filing_status) or hh.filing_status.value != "married_filing_jointly":
         return
     ident = profile.identity
     visa_holder = ident is not None and _has(ident.us_person) and ident.us_person.value is False
@@ -1037,6 +1087,8 @@ def _spouse_residency_questions(
         return  # the election decision is recorded (the fact, or the chosen status) — stop asking.
     if _election_unavailable(profile, tax_year):
         return  # both nonresident on the recorded facts: not available (the household note says so).
+    if _continuing_election_open(profile, tax_year):
+        return  # household.section_6013_election asks whether the prior-year election continues (JF5b).
     confirmed = classification == "nonresident"
     lead = ("Your spouse's residency result is NONRESIDENT alien."
             if confirmed else
@@ -1696,6 +1748,21 @@ def _prior_year_residency_note(profile: Profile, notes: list[str], tax_year: int
     form = residency.prior_year_return_form(pf.return_forms if pf is not None else None, tax_year)
     if form == "1040_with_6013_election":
         notes.append(residency.prior_year_election_reason(tax_year))
+        # JF5b part 3b: the election that return rests on may continue — ask, never apply it
+        # from the prior-year return alone (the estimator's assumption, word for word).
+        if _continuing_election_open(profile, tax_year) and (
+            _married_for_year(profile, tax_year) or _marital(profile) is None
+        ) and not _election_unavailable(profile, tax_year):   # suspended this year: the SUSPENDED note says so
+            # The estimator's wording: a confirmed joint status of a nonresident or dual-status taxpayer is
+            # read as the election continuing (JF5a); a citizen's confirmed joint figure is valid only by it.
+            own = _classification_without_election(profile, tax_year)
+            if _confirmed_status(profile) == "married_filing_jointly" and own in ("nonresident", "dual_status_candidate"):
+                notes.append(residency.prior_year_election_read_as_continuing(tax_year))
+            elif _confirmed_status(profile) == "married_filing_jointly" and _spouse_classification(
+                    profile, tax_year, honor_election=False) == "nonresident":
+                notes.append(residency.prior_year_election_read_as_continuing(tax_year, confirmed_joint_candidate=True))
+            else:
+                notes.append(residency.prior_year_election_continues(tax_year))
         return
     if form is None or residency.PRIOR_RETURN_RESIDENT.get(form) is not True:
         return

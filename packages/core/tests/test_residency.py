@@ -1042,3 +1042,23 @@ def test_p018_a_first_year_choice_prior_year_is_never_checked_as_a_conflict():
     # A missing year-1 count never produces a claimed "NONRESIDENT year" conflict.
     thin = classify(h1b, {2025: 100}, 2025, prior_year_resident=True)
     assert not any("classify 2024 itself as a NONRESIDENT year" in r for r in thin.reasons)
+
+
+def test_p018_section_6013_kind_reads_a_prior_year_election_return():
+    # JF5b part 3b: a prior-year joint Form 1040 under the election makes the choice IRC 6013(g) —
+    # IRC 6013(g)(3): it applies "to all subsequent taxable years until terminated"; IRC 6013(h)(2):
+    # "such 2 individuals shall be ineligible to make an election under this subsection for any
+    # subsequent taxable year" — never a new 6013(h) and never 'either'.
+    from taxfill_core.residency import prior_year_election_continues  # noqa: PLC0415
+
+    assert section_6013_kind("dual_status_candidate", "us") == "h"
+    assert section_6013_kind("dual_status_candidate", "us", recorded=True) == "either"
+    for recorded in (True, False):
+        assert section_6013_kind("dual_status_candidate", "us", recorded=recorded, prior_year_election=True) == "g"
+        assert section_6013_kind("resident", "us", recorded=recorded, prior_year_election=True) == "g"
+    assert section_6013_kind("nonresident", "us", prior_year_election=True) == "g"
+    text = prior_year_election_continues(2025)
+    assert text.startswith("Your 2024 return is recorded as a joint Form 1040 under the §6013(g)/(h) election")
+    assert "no election is recorded for 2025 — so this is NOT applied here" in text
+    assert "shall apply to the taxable year for which made and to all subsequent taxable years until terminated" in text
+    assert "You can only make this choice for 1 year, and it doesn't apply to any future years." in text
