@@ -1922,9 +1922,10 @@ def test_p013_confirmed_mfj_election_taxes_deposit_interest_and_says_why():
 
 
 def test_p013_the_scenario_election_path_taxes_deposit_interest_too():
-    # compare_scenarios models the election by flipping identity.us_person, but the
-    # estimator classifies residency from the timeline, so `nonresident` stays True
-    # there — the MFJ gate is what keeps the exclusion honest on that path (P-013).
+    # compare_scenarios sets the election as the residency fact
+    # residency_facts.section_6013_election (P-018), so the elected figure runs under
+    # RESIDENT rules and the deposit interest is taxed whatever its character; the MFJ
+    # gate in _bottom_line stays as the last line of defense (P-013).
     from taxfill_core.scenarios import compare_scenarios
 
     profile = _nra_profile(marital="married")
@@ -2036,18 +2037,22 @@ def test_p013_an_unconfirmed_marriage_never_inflates_the_disclosed_amount():
     assert any(a.startswith("$200 of interest was entered WITHOUT deposit character") for a in est.assumptions)
 
 
-def test_p013_the_fdap_note_still_covers_a_citizen_spouse_return():
-    # P-013 regression guard (J0 re-verify): narrowing the deposit disclosures to the
-    # exclusion's payees must not narrow the FDAP note — the spouse's MFS return is still
-    # COMPUTED under the taxpayer's nonresident rules (ordinary rates on qualified
-    # dividends), so the note that says so must still appear.
+def test_p013_p018_the_fdap_note_follows_the_returns_computed_under_nonresident_rules():
+    # P-013's J0 guard said the FDAP note must cover every return COMPUTED under the
+    # nonresident rules. P-018 (the J0 re-verify follow-up) stopped the US-citizen
+    # spouse's separate return from borrowing the taxpayer's nonresident flag, so that
+    # return is a Form 1040 — its qualified dividends take the preferential rates, and
+    # the FDAP note (which describes a 1040-NR) no longer speaks for it.
     profile = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
     income = IncomeSnapshot(
         wages=18_000, federal_withholding=1_400,
         spouse=IncomeSnapshot(wages=60_000, federal_withholding=6_000, dividends=5_000, qualified_dividends=5_000),
     )
     est = estimate_refund(profile, 2023, income)
-    assert any(a.startswith("Nonresident investment income is NOT modeled") for a in est.assumptions)
+    assert not any(a.startswith("Nonresident investment income is NOT modeled") for a in est.assumptions)
+    # ... while a nonresident spouse's own 1040-NR still carries it.
+    nra_spouse = estimate_refund(_nra_profile(marital="married", spouse=_nra_spouse()), 2023, income)
+    assert any(a.startswith("Nonresident investment income is NOT modeled") for a in nra_spouse.assumptions)
 
 
 def test_p013_a_spouse_of_unknown_residency_is_taxed_with_the_note():
@@ -2115,3 +2120,1151 @@ def test_p013_the_1099_int_docspec_note_names_the_characterizing_field():
     assert "bank_deposit_interest" in IncomeSnapshot.model_fields
     assert "871(i)(2)(A)" in note and "the election, not the marriage" in note
     assert "Box 3" in note   # Treasury / savings-bond interest is never a deposit
+
+
+# ---------------------------------------------------------------------------
+# P-018 (Phase J JF5a): the §6013(g)/(h) election is a RESIDENCY fact. Pub 519 ch. 1:
+# "If you make this choice, you and your spouse are treated for income tax purposes
+# as residents for your entire tax year" — so the elected figure takes resident rules
+# (the standard deduction, NIIT, no 871(i)(2)(A) exclusion) on a joint AND a separate
+# status, whatever the visa timeline says, while FICA keeps following the day counts
+# (IRC 6013(g)(1): chapters 1 and 24 only). And each spouse's separate return follows
+# that spouse's OWN classification. Hypothetical demo fixtures: the F-1-from-2020
+# timeline above (nonresident for 2023 by the substantial presence test).
+# ---------------------------------------------------------------------------
+
+from taxfill_core.calc import niit  # noqa: E402
+from taxfill_core.scenarios import ScenarioSpec, _scenario_profile, compare_scenarios  # noqa: E402
+
+_ELECT_MFJ = {"name": "MFJ + election", "filing_status": "married_filing_jointly", "us_resident_election": True}
+_MFS_NR = {"name": "MFS on 1040-NR", "filing_status": "married_filing_separately"}
+_ELECT_MFS = {"name": "MFS + election", "filing_status": "married_filing_separately", "us_resident_election": True}
+
+
+def _elected(profile: Profile, spec: dict) -> Profile:
+    """The hypothetical profile a scenario runs on (never persisted)."""
+    return _scenario_profile(profile, ScenarioSpec.model_validate(spec))
+
+
+def test_p018_the_roadmap_repro_election_takes_resident_rules_on_a_timeline_fixture():
+    # The ROADMAP's JF5a repro, reproduced at 17e7d5c: on this timeline fixture the
+    # "election" scenario was -763 (a joint return under 1040-NR rules, deduction $0)
+    # against MFS -2,513. The election makes the couple residents, so the joint figure
+    # takes the pack's MFJ standard deduction.
+    profile = _nra_profile(marital="married")
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000)
+    r = compare_scenarios(profile, 2023, income, [_MFS_NR, _ELECT_MFJ])
+    outcomes = {o.name: o.bottom_line for o in r.outcomes}
+    assert outcomes["MFS on 1040-NR"] == -2_513       # unchanged: the nonresident's own 1040-NR
+    mfj_sd = standard_deduction("married_filing_jointly", 2023).amount
+    expected = 6_000 - tax_from_taxable_income(60_000 - mfj_sd, "married_filing_jointly", 2023).tax
+    assert outcomes["MFJ + election"] == expected != -763
+    est = estimate_refund(_elected(profile, _ELECT_MFJ), 2023, income)
+    assert est.point == expected
+    assert _labels(est)["Less: standard deduction"] == -mfj_sd   # the pack's MFJ figure (27,700)
+    assert not any("1040-NR" in ln.label for ln in est.composition)
+    assert est.roadmap.returns_and_forms[0] == "Form 1040"
+    assert not any("1040-NR" in f for f in est.roadmap.returns_and_forms)
+    assert any("How To Make the Choice" in f or "signed by both" in f for f in est.roadmap.returns_and_forms)
+    # The caveat says the figure ran UNDER the election, and the worldwide-income and
+    # FICA caveats stay.
+    caveat = next(a for a in est.assumptions if a.startswith("A §6013(g)/(h) election is recorded"))
+    assert "treated for income tax purposes as residents for your entire tax year" in caveat
+    assert "WORLDWIDE" in caveat and "chapter 24" in caveat and "3121(b)(19)" in caveat
+    assert caveat in est.what_would_change_it
+    # The scenario sets the residency fact; it never rewrites the citizenship fact.
+    elected = _elected(profile, _ELECT_MFJ)
+    assert elected.residency_facts.section_6013_election.value is True
+    assert elected.identity.us_person.value is False
+
+
+def test_p018_niit_is_evaluated_under_the_election_and_skipped_without_it():
+    profile = _nra_profile(marital="married")
+    income = IncomeSnapshot(wages=240_000, federal_withholding=40_000, interest=30_000)
+    elected = estimate_refund(_elected(profile, _ELECT_MFJ), 2023, income)
+    niit_line = next(ln for ln in elected.composition if ln.slot == "niit")
+    agi = _labels(elected)["Adjusted gross income (AGI)"]
+    assert niit_line.amount == niit(30_000, agi, "married_filing_jointly", 2023).niit > 0
+    note = next(a for a in elected.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
+    assert "1.1411-2(a)(2)(iii)(B)" in note and "$250,000" in note and "$125,000" in note
+    assert "Form 8960, Part I" in note
+    # Control: the same filer on Form 1040-NR (no election) owes no NIIT.
+    nr = estimate_refund(_elected(profile, _MFS_NR), 2023, income)
+    assert not any(ln.slot == "niit" for ln in nr.composition)
+    assert not any(a.startswith("NIIT under") for a in nr.assumptions)
+
+
+def test_p018_the_election_on_a_separate_status_ends_the_deposit_exclusion_too():
+    # J0 re-verify follow-up: after the election year "you and your spouse can file joint
+    # or separate returns in later years" (Pub 519 ch. 1) — both still residents, so an
+    # MFS figure under the election taxes deposit interest and takes the MFS standard
+    # deduction. Only the MFJ gate was modeled before.
+    profile = _nra_profile(marital="married")
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000, interest=900, bank_deposit_interest=900)
+    nr = estimate_refund(_elected(profile, _MFS_NR), 2023, income)
+    assert _deposit_line(nr).amount == -900                 # control: 1040-NR MFS keeps it
+    el = estimate_refund(_elected(profile, _ELECT_MFS), 2023, income)
+    assert _deposit_line(el) is None
+    mfs_sd = standard_deduction("married_filing_separately", 2023).amount
+    assert _labels(el)["Less: standard deduction"] == -mfs_sd
+    assert el.point == 3_000 - tax_from_taxable_income(40_900 - mfs_sd, "married_filing_separately", 2023).tax
+    note = next(a for a in el.assumptions if "was NOT excluded" in a)
+    assert note.startswith("Under the §6013(g)/(h) election recorded on this profile the $900")
+    assert "joint or separate alike" in note and "ELECTION, not the marriage" in note
+    assert not any("was EXCLUDED from income" in a for a in el.assumptions)
+    caveat = next(a for a in el.assumptions if a.startswith("A §6013(g)/(h) election is recorded"))
+    assert "LATER year of a continuing election" in caveat
+    r = compare_scenarios(profile, 2023, income, [_MFS_NR, _ELECT_MFS])
+    assert {o.name: o.bottom_line for o in r.outcomes}["MFS + election"] == el.point
+
+
+def test_p018_a_confirmed_joint_status_of_a_nonresident_is_read_as_the_election():
+    # A joint return with a nonresident alien exists only under the election (Pub 519,
+    # FAQ), so a confirmed MFJ status is never priced under 1040-NR rules — and the
+    # estimate asks for the fact to be recorded.
+    profile = _nra_profile(marital="married", filing_status=_ans("married_filing_jointly"))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    mfj_sd = standard_deduction("married_filing_jointly", 2023).amount
+    assert _labels(est)["Less: standard deduction"] == -mfj_sd
+    assert not any("1040-NR" in ln.label for ln in est.composition)
+    caveat = next(a for a in est.assumptions if a.startswith("Your filing status is married-filing-jointly"))
+    assert "record it as residency_facts.section_6013_election: true" in caveat
+    assert "Generally, you cannot file as married filing jointly" in caveat
+    # The old "Showing married-filing-separately instead" caveat contradicted a confirmed MFJ.
+    assert not any("Showing married-filing-separately instead" in a for a in est.assumptions)
+
+
+def test_p018_fica_keeps_following_the_day_counts_under_the_election():
+    # IRC 6013(g)(1) reaches chapter 1 and chapter 24 only; FICA is chapter 21, so the
+    # exempt F-1's withheld-in-error note survives the election.
+    profile = _nra_profile(marital="married")
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000, ss_withheld_by_employer=[2_480])
+    est = estimate_refund(_elected(profile, _ELECT_MFJ), 2023, income)
+    fica = next(a for a in est.assumptions if "Form 843" in a)
+    assert "$2,480" in fica and "NOT on the Form 1040" in fica
+    assert "chapter 24 (relating to wage withholding)" in fica and "chapter 21" in fica
+    assert any("Form 843" in c for c in est.what_would_change_it)
+
+
+def test_p018_a_us_citizen_spouse_separate_return_takes_the_standard_deduction():
+    # J0 re-verify follow-up: the spouse's two-return MFS _bottom_line borrowed the
+    # taxpayer's nonresident flag — a US-citizen spouse's Form 1040 got no standard
+    # deduction ($3,047 overstated here: $13,850 x 22%). It follows the spouse's own
+    # classification now.
+    profile = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
+    income = IncomeSnapshot(
+        wages=18_000, federal_withholding=1_400,
+        spouse=IncomeSnapshot(wages=60_000, federal_withholding=6_000),
+    )
+    est = estimate_refund(profile, 2023, income)
+    spouse_line = next(ln for ln in est.composition if ln.slot == "spouse_mfs_return")
+    assert spouse_line.amount == _independent_refund(60_000, 6_000, "married_filing_separately")
+    own = 1_400 - tax_from_taxable_income(18_000, "married_filing_separately", 2023).tax   # 1040-NR, $0 deduction
+    assert est.point == own + spouse_line.amount
+    note = next(a for a in est.assumptions if a.startswith("The spouse's separate return was computed under RESIDENT"))
+    assert "declared U.S. citizen" in note
+
+
+def test_p018_a_resident_taxpayers_nonresident_spouse_files_a_1040nr_with_the_exclusion():
+    # The reverse direction P-013 listed as not modeled: the spouse's OWN facts classify
+    # nonresident, so the spouse's separate return is a 1040-NR ($0 deduction, the
+    # deposit exclusion) while the joint candidate taxes everything under the election.
+    income = IncomeSnapshot(
+        wages=90_000, federal_withholding=9_000,
+        spouse=IncomeSnapshot(wages=9_000, federal_withholding=600, interest=1_000, bank_deposit_interest=700),
+    )
+    est = estimate_refund(_us_filer_married(_nra_spouse()), 2023, income)
+    assert {c.status for c in est.comparison.candidates} == {"married_filing_jointly", "married_filing_separately"}
+    mfs = next(c for c in est.comparison.candidates if c.status == "married_filing_separately")
+    spouse_1040nr = 600 - tax_from_taxable_income(9_300, "married_filing_separately", 2023).tax
+    own_1040 = _independent_refund(90_000, 9_000, "married_filing_separately")
+    assert mfs.bottom_line == own_1040 + spouse_1040nr
+    excluded = next(a for a in est.assumptions if "was EXCLUDED from income" in a)
+    assert excluded.startswith("US bank-deposit interest of $700 was EXCLUDED from income on the spouse's separate")
+    assert any(a.startswith("On the spouse's separate (married-filing-separately) return, $300 of interest")
+               for a in est.assumptions)
+    assert any(a.startswith("On the joint-return figure the $700 of bank_deposit_interest was NOT excluded")
+               for a in est.assumptions)
+    assert any(a.startswith("The spouse's separate return was computed under NONRESIDENT rules")
+               for a in est.assumptions)
+    assert any(a.startswith("Nonresident investment income is NOT modeled") for a in est.assumptions)
+    # The joint candidate is the election posture, so its NIIT evaluation names the
+    # chapter 2A second election (Treas. Reg. 1.1411-2(a)(2)(iii)(B)).
+    assert any(a.startswith("NIIT under the §6013(g)/(h) election: the joint-return figure") for a in est.assumptions)
+
+
+def test_p018_the_election_needs_a_citizen_or_resident_spouse_and_a_marriage():
+    # Two nonresidents on the recorded facts: the election is not available, and the
+    # caveat says so (Pub 519 ch. 1's precondition, quoted).
+    profile = _nra_profile(marital="married", spouse=_nra_spouse())
+    profile.residency_facts.section_6013_election = _ans(True)
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    caveat = next(a for a in est.assumptions if a.startswith("A §6013(g)/(h) election is recorded"))
+    assert "one spouse is a U.S. citizen or a resident alien" in caveat
+    assert "NEITHER spouse is a U.S. citizen or resident" in caveat and "NOT available" in caveat
+    assert "is suspended for any tax year (after the tax year you made the choice)" in caveat
+    # A recorded flag without a confirmed marriage is not applied, and the estimate says so.
+    single = _nra_profile()
+    single.residency_facts.section_6013_election = _ans(True)
+    est_single = estimate_refund(single, 2023, IncomeSnapshot(wages=18_000, federal_withholding=1_400))
+    assert est_single.point == 1_400 - tax_from_taxable_income(18_000, "single", 2023).tax   # 1040-NR rules
+    assert any("NOT applied" in a and "section_6013_election" in a for a in est_single.assumptions)
+
+
+def test_p018_the_confirmed_joint_reading_names_a_declined_election_and_a_dual_status_year():
+    # A confirmed MFJ status of a nonresident is priced under the election even when the
+    # marital status is unanswered (MFJ is itself a statement of marriage) ...
+    no_marital = Profile(
+        household=Household(filing_status=_ans("married_filing_jointly")),
+        identity=Identity(us_person=_ans(False)),
+        immigration=_nra_immigration(),
+        residency_facts=_nra_residency(),
+    )
+    est = estimate_refund(no_marital, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    mfj_sd = standard_deduction("married_filing_jointly", 2023).amount
+    assert _labels(est)["Less: standard deduction"] == -mfj_sd
+    assert not any("1040-NR" in ln.label for ln in est.composition)
+    # ... but a recorded DECLINE is the user's explicit fact and beats that reading: the
+    # joint status is priced married-filing-separately WITHOUT the election (never a joint
+    # figure under nonresident rules), with the contradiction named FIRST.
+    declined = _nra_profile(marital="married", filing_status=_ans("married_filing_jointly"))
+    declined.residency_facts.section_6013_election = _ans(False)
+    est_declined = estimate_refund(declined, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    assert est_declined.filing_status_used == "married_filing_separately"
+    assert est_declined.point == 6_000 - tax_from_taxable_income(60_000, "married_filing_separately", 2023).tax
+    first = est_declined.assumptions[0]
+    assert first.startswith("CONTRADICTION") and "recorded as FALSE (declined)" in first
+    assert "Generally, you cannot file as married filing jointly if either spouse was a nonresident alien" in first
+    assert "record it as residency_facts.section_6013_election: true" not in first
+    # A dual-status year is named as one (the reading covers it too; Pub 519 ch. 1: under
+    # the election the chapter 6 dual-status restrictions do not apply).
+    dual = _dual_status_profile(filing_status=_ans("married_filing_jointly"))
+    est_dual = estimate_refund(dual, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    caveat = next(a for a in est_dual.assumptions if a.startswith("Your filing status is married-filing-jointly"))
+    assert "a dual-status year" in caveat
+    assert _labels(est_dual)["Less: standard deduction"] == -mfj_sd
+
+
+def test_p018_a_recorded_election_for_a_citizen_and_nonresident_spouse_prices_both_as_residents():
+    # The election recorded by a US-citizen taxpayer married to a nonresident spouse: the
+    # spouse's separate return (a later year of a continuing election) is a resident's
+    # Form 1040 too — standard deduction, deposit interest taxed.
+    profile = _us_filer_married(_nra_spouse())
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    income = IncomeSnapshot(
+        wages=90_000, federal_withholding=9_000,
+        spouse=IncomeSnapshot(wages=30_000, federal_withholding=2_500, interest=700, bank_deposit_interest=700),
+    )
+    est = estimate_refund(profile, 2023, income)
+    mfs = next(c for c in est.comparison.candidates if c.status == "married_filing_separately")
+    spouse_1040 = 2_500 - tax_from_taxable_income(
+        30_700 - standard_deduction("married_filing_separately", 2023).amount, "married_filing_separately", 2023
+    ).tax
+    assert mfs.bottom_line == _independent_refund(90_000, 9_000, "married_filing_separately") + spouse_1040
+    # Without the election the same spouse files a 1040-NR ($0 deduction, $700 excluded).
+    without = estimate_refund(_us_filer_married(_nra_spouse()), 2023, income)
+    mfs_without = next(c for c in without.comparison.candidates if c.status == "married_filing_separately")
+    spouse_1040nr = 2_500 - tax_from_taxable_income(30_000, "married_filing_separately", 2023).tax
+    assert mfs_without.bottom_line == _independent_refund(90_000, 9_000, "married_filing_separately") + spouse_1040nr
+    assert not any("was EXCLUDED from income" in a for a in est.assumptions)
+    assert not any(a.startswith("The spouse's separate return was computed under NONRESIDENT") for a in est.assumptions)
+    caveat = next(a for a in est.assumptions if a.startswith("A §6013(g)/(h) election is recorded"))
+    assert "NOT available" not in caveat          # the citizen taxpayer satisfies the precondition
+
+
+# ---------------------------------------------------------------------------
+# P-018, the adversarial-verify round (2026-09-25): IRC 6013(h) is its own choice,
+# IRC 63(c)(6)(A) binds the two separate returns, the year of a spouse's death keeps
+# the election, and every disclosure matches what the figure did. Hypothetical demo
+# fixtures only.
+# ---------------------------------------------------------------------------
+
+from taxfill_core import residency as residency_module  # noqa: E402
+
+
+def _h1b_arrival_2025(**household_kwargs) -> Profile:
+    # A hypothetical H-1B arriving 2025-06-02 (213 days): the SPT is met with a
+    # nonresident part before the residency starting date -> a dual-status ARRIVAL year.
+    return Profile(
+        household=Household(marital_status=_ans("married"), **household_kwargs),
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-1B", start=date(2025, 6, 2), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(0), 2024: _ans(0), 2025: _ans(213)}),
+    )
+
+
+def test_p018_a_dual_status_year_with_a_citizen_spouse_is_the_6013h_choice():
+    # Both spouses are U.S. residents or citizens on Dec 31 and the taxpayer was a
+    # nonresident on Jan 1: Pub 519 ch. 1, Choosing Resident Alien Status (IRC 6013(h)) —
+    # a different statement, one year only, and 1.1411-2(a)(2)(iv) for NIIT.
+    profile = _h1b_arrival_2025(filing_status=_ans("married_filing_jointly"), spouse=Spouse(us_person=_ans(True)))
+    income = IncomeSnapshot(wages=190_000, federal_withholding=30_000, interest=20_000,
+                            spouse=IncomeSnapshot(wages=90_000, federal_withholding=15_000))
+    est = estimate_refund(profile, 2025, income)
+    caveat = est.residency_caveat
+    assert caveat is not None and caveat in est.assumptions
+    blob = caveat + " " + " ".join(est.roadmap.returns_and_forms)
+    assert "you both qualify to make the choice" in blob                  # the (h) declaration
+    assert "enter the name of the\ndual-status spouse(s)" not in blob     # (sanity: quotes are single-line)
+    assert "dual-status spouse(s) in the entry space" in blob
+    assert "on the last day of your tax year, and that you choose" not in blob   # never the (g) one
+    assert "can file joint or separate returns in later years" not in blob
+    assert "Neither you nor your spouse can make this choice for any later tax year" in caveat
+    assert "only make this choice for 1 year" in caveat
+    niit_note = next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
+    assert "1.1411-2(a)(2)(iv)(B)" in niit_note and "only with respect to income received for the portion" in niit_note
+    assert "the nonresident alien spouse will not be subject" not in niit_note     # (iii)(A) is 6013(g)'s
+    assert residency_module.section_6013_kind("dual_status_candidate", "us") == "h"
+    # A full-year nonresident with the same citizen spouse is the 6013(g) choice.
+    g = estimate_refund(_nra_profile(marital="married", filing_status=_ans("married_filing_jointly"),
+                                     spouse=Spouse(us_person=_ans(True))), 2023,
+                        IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    assert "on the last day of your tax year, and that you choose" in g.residency_caveat
+    assert "you both qualify to make the choice" not in g.residency_caveat
+    assert "IRC 6013(g)(3)" in g.residency_caveat        # a continuing election's own test
+
+
+def test_p018_irc_63c6a_the_two_separate_returns_share_one_deduction_method():
+    # IRC 63(c)(6): "(A) a married individual filing a separate return where either spouse
+    # itemizes deductions, ... the standard deduction shall be zero"; Pub 501: "You both
+    # must use the same method of claiming deductions" / "the method that gives you the
+    # lower total tax". The citizen spouse's standard deduction is not free when the
+    # nonresident spouse itemizes on Form 1040-NR.
+    profile = _nra_profile(marital="married", filing_status=_ans("married_filing_separately"),
+                           spouse=Spouse(us_person=_ans(True)))
+    mfs = "married_filing_separately"
+    sd = standard_deduction(mfs, 2023).amount
+
+    def _pair(wages: int, nra_itemized: int, spouse_wages: int) -> tuple[int, int, int]:
+        income = IncomeSnapshot(wages=wages, federal_withholding=4_000, itemized_deductions=nra_itemized,
+                                spouse=IncomeSnapshot(wages=spouse_wages, federal_withholding=6_000))
+        est = estimate_refund(profile, 2023, income)
+        both_itemize = (4_000 - tax_from_taxable_income(wages - nra_itemized, mfs, 2023).tax) + (
+            6_000 - tax_from_taxable_income(spouse_wages, mfs, 2023).tax)
+        neither = (4_000 - tax_from_taxable_income(wages, mfs, 2023).tax) + (
+            6_000 - tax_from_taxable_income(spouse_wages - sd, mfs, 2023).tax)
+        return est, both_itemize, neither
+
+    est, both_itemize, neither = _pair(40_000, 3_000, 60_000)
+    assert neither > both_itemize and est.point == neither            # forgo $3,000 to keep $13,850
+    note = next(a for a in est.assumptions if a.startswith("Married filing separately (two returns)"))
+    assert "NEITHER ITEMIZES" in note and "63(c)(6)" in note and "You both must use the same method" in note
+    # Itemizing is an election (IRC 63(e)(1)), which is what lets the 1040-NR claim none.
+    assert "IRC 63(e)(1)" in note and "no itemized deduction shall be allowed for the taxable year" in note
+    assert "claims none of them" in next(a for a in est.assumptions if a.startswith("Nonresident aliens cannot"))
+    # A 24%-bracket nonresident with $20,000 itemized against a 12%-bracket spouse: itemizing wins.
+    est, both_itemize, neither = _pair(120_000, 20_000, 30_000)   # under the $125,000 MFS 8959 line
+    assert both_itemize > neither and est.point == both_itemize       # itemizing wins -> the SD is zero
+    note = next(a for a in est.assumptions if a.startswith("Married filing separately (two returns)"))
+    assert "BOTH ITEMIZE" in note
+    spouse_note = next(a for a in est.assumptions if a.startswith("The spouse's separate return was computed under RESIDENT"))
+    assert "the couple itemizes, so the standard deduction is zero" in spouse_note
+    # Two resident returns: one spouse's itemizing no longer leaves the other the SD too.
+    residents = _us_filer_married(Spouse(us_person=_ans(True)))
+    residents.household.filing_status = _ans(mfs)
+    r = estimate_refund(residents, 2023, IncomeSnapshot(
+        wages=90_000, federal_withholding=9_000, itemized_deductions=20_000,
+        spouse=IncomeSnapshot(wages=30_000, federal_withholding=2_500)))
+    both_sd = _independent_refund(90_000, 9_000, mfs) + _independent_refund(30_000, 2_500, mfs)
+    itemize = (9_000 - tax_from_taxable_income(70_000, mfs, 2023).tax) + (
+        2_500 - tax_from_taxable_income(30_000, mfs, 2023).tax)
+    assert r.point == max(both_sd, itemize)
+    illegal = (9_000 - tax_from_taxable_income(70_000, mfs, 2023).tax) + _independent_refund(30_000, 2_500, mfs)
+    assert r.point < illegal                                          # the old per-person max()
+    # Two nonresident returns have no standard deduction to lose (IRC 63(c)(6)(B)): nothing
+    # is weighed, and each Form 1040-NR keeps its own itemized deductions.
+    both = _nra_profile(marital="married", filing_status=_ans(mfs), spouse=_nra_spouse())
+    b = estimate_refund(both, 2023, IncomeSnapshot(
+        wages=40_000, federal_withholding=4_000, itemized_deductions=3_000,
+        spouse=IncomeSnapshot(wages=20_000, federal_withholding=2_000, itemized_deductions=1_000)))
+    assert not any(a.startswith("Married filing separately (two returns)") for a in b.assumptions)
+    assert b.point == (4_000 - tax_from_taxable_income(37_000, mfs, 2023).tax) + (
+        2_000 - tax_from_taxable_income(19_000, mfs, 2023).tax)
+
+
+def test_p018_a_spouse_of_unknown_residency_is_priced_both_ways():
+    # The spouse's separate return never borrows the taxpayer's nonresident flag; with
+    # the spouse's own residency unknown the point is a resident's Form 1040 and the
+    # range's low end is the Form 1040-NR reading.
+    profile = _nra_profile(marital="married", filing_status=_ans("married_filing_separately"),
+                           spouse=Spouse(us_person=_ans(False)))
+    income = IncomeSnapshot(wages=18_000, federal_withholding=1_400,
+                            spouse=IncomeSnapshot(wages=30_000, federal_withholding=2_500))
+    est = estimate_refund(profile, 2023, income)
+    mfs = "married_filing_separately"
+    own = 1_400 - tax_from_taxable_income(18_000, mfs, 2023).tax
+    resident_spouse = _independent_refund(30_000, 2_500, mfs)
+    nra_spouse = 2_500 - tax_from_taxable_income(30_000, mfs, 2023).tax
+    assert est.point == own + resident_spouse
+    assert est.low == own + nra_spouse < est.point
+    note = next(a for a in est.assumptions if a.startswith("The spouse's own residency is not settled"))
+    assert "never by borrowing your classification" in note and f"${-(own + nra_spouse):,}" in note
+
+
+def test_p018_p013_a_contradictory_joint_status_never_says_excluded():
+    # An explicit 'unmarried' with a confirmed MFJ status is not read as the election,
+    # and the MFJ gate taxes the deposit interest — so the text must say NOT excluded
+    # (P-013 rule (c): the disclosure matches the number).
+    profile = _nra_profile(marital="unmarried", filing_status=_ans("married_filing_jointly"))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000, interest=1_200,
+                                                        bank_deposit_interest=800))
+    assert _deposit_line(est) is None and _labels(est)["Total income"] == 41_200
+    assert not any("was EXCLUDED from income" in a for a in est.assumptions)
+    assert any(a.startswith("On the joint-return figure the $800 of bank_deposit_interest was NOT excluded")
+               for a in est.assumptions)
+    assert not any("rerun with that portion in bank_deposit_interest" in a for a in est.assumptions)
+    assert any(a.startswith("$400 of interest was entered without deposit character and was taxed on the joint")
+               for a in est.assumptions)
+
+
+def test_p018_the_w7_last_mile_rides_the_election():
+    # Eval (o): the W-7 note must ride the §6013 caveat — recording the election (SKILL.md
+    # Recipe B2) must not silence it. Pub 519 FAQ: "your nonresident spouse needs an SSN or ITIN".
+    profile = _us_filer_married(Spouse(us_person=_ans(False)))
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=90_000, federal_withholding=9_000))
+    assert "Form W-7 is filed WITH the return" in est.residency_caveat
+    assert "your nonresident spouse needs an SSN or ITIN" in est.residency_caveat
+    assert est.residency_caveat in est.what_would_change_it
+    with_tin = _us_filer_married(Spouse(us_person=_ans(False), tax_id=_ans("900-70-0000")))
+    with_tin.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    assert "W-7" not in estimate_refund(with_tin, 2023, IncomeSnapshot(wages=90_000)).residency_caveat
+    # A US-citizen spouse is never sent to W-7.
+    citizen = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
+    citizen.residency_facts.section_6013_election = _ans(True)
+    assert "W-7" not in estimate_refund(citizen, 2023, IncomeSnapshot(wages=60_000)).residency_caveat
+
+
+def test_p018_the_year_of_a_spouses_death_keeps_the_election():
+    # Pub 501: "If your spouse died during the year, you are considered married for the
+    # whole year for filing status purposes"; Pub 519, Ending the Choice: death ends it
+    # "beginning with the first tax year following the year the spouse died".
+    def _widowed(death_year: int) -> Profile:
+        profile = _nra_profile(marital="widowed", spouse_death_year=_ans(death_year),
+                               filing_status=_ans("married_filing_jointly"), spouse=Spouse(us_person=_ans(True)))
+        profile.residency_facts.section_6013_election = _ans(True)
+        return profile
+
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000, interest=900, bank_deposit_interest=900)
+    est = estimate_refund(_widowed(2023), 2023, income)
+    mfj_sd = standard_deduction("married_filing_jointly", 2023).amount
+    assert _labels(est)["Less: standard deduction"] == -mfj_sd
+    assert est.point == 3_000 - tax_from_taxable_income(40_900 - mfj_sd, "married_filing_jointly", 2023).tax
+    assert not any("NOT applied" in a for a in est.assumptions)
+    assert not any("was EXCLUDED from income" in a for a in est.assumptions)
+    assert est.residency_caveat.startswith("A §6013(g)/(h) election is recorded")
+    # Two years later the choice has ended: the recorded fact is not applied, and says so.
+    later = estimate_refund(_widowed(2021), 2023, income)
+    assert any("NOT applied" in a and "widowed during the year" in a for a in later.assumptions)
+
+
+def test_p018_two_nonresidents_on_a_joint_status_are_told_no_joint_return():
+    # The implied reading cannot ask to record an election the facts rule out.
+    profile = _nra_profile(marital="married", filing_status=_ans("married_filing_jointly"), spouse=_nra_spouse())
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    caveat = est.residency_caveat
+    assert "record it as residency_facts.section_6013_election: true" not in caveat
+    assert ("change the filing status to married-filing-separately — each of you who meets the nonresident "
+            "filing requirements files Form 1040-NR") in caveat
+    assert "NOT available" in caveat and "rerun without it" not in caveat
+
+
+def test_p018_a_recorded_election_on_an_unanswered_marital_status_is_one_story():
+    # Recorded True, marital status unanswered, MFJ confirmed: the election IS applied
+    # (MFJ states the marriage), so no "NOT applied" note and no "record it" request.
+    profile = Profile(household=Household(filing_status=_ans("married_filing_jointly")),
+                      identity=Identity(us_person=_ans(False)), immigration=_nra_immigration(),
+                      residency_facts=_nra_residency())
+    profile.residency_facts.section_6013_election = _ans(True)
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    assert _labels(est)["Less: standard deduction"] == -standard_deduction("married_filing_jointly", 2023).amount
+    assert not any("NOT applied" in a for a in est.assumptions)
+    assert "record it as residency_facts" not in est.residency_caveat
+    assert "confirm the marital status" in est.residency_caveat
+
+
+def test_p018_form_8843_stays_on_the_roadmap_under_the_election():
+    # Form 8843 (2025), Who Must File: an alien individual "must file Form 8843 to explain
+    # the basis of your claim that you can exclude days of presence ... because you: •
+    # Were an exempt individual" — the election does not change the day count.
+    profile = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
+    profile.residency_facts.section_6013_election = _ans(True)
+    forms = estimate_refund(profile, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000)).roadmap
+    assert forms.returns_and_forms[0] == "Form 1040"
+    assert any(f.startswith("Form 8843") and "Were an exempt individual" in f for f in forms.returns_and_forms)
+    assert not any("1040-NR" in f for f in forms.returns_and_forms)
+    # An H-1B arrival (no exempt days) has nothing for Form 8843 to explain.
+    h1b = _h1b_arrival_2025(spouse=Spouse(us_person=_ans(True)))
+    h1b.residency_facts.section_6013_election = _ans(True)
+    assert not any(f.startswith("Form 8843") for f in estimate_refund(
+        h1b, 2025, IncomeSnapshot(wages=60_000)).roadmap.returns_and_forms)
+
+
+def test_p018_the_niit_note_covers_the_joint_and_the_separate_figure():
+    # A recorded election with no confirmed status prices MFJ AND MFS under it; the MFS
+    # candidate evaluates NIIT on the formerly-nonresident spouse too and says so.
+    profile = _us_filer_married(_nra_spouse())
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    income = IncomeSnapshot(wages=200_000, federal_withholding=40_000, interest=20_000,
+                            spouse=IncomeSnapshot(wages=10_000, dividends=15_000))
+    est = estimate_refund(profile, 2023, income)
+    note = next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
+    assert "the joint-return figure evaluates" in note
+    assert "separate return here evaluates" in note and "may be overstated" in note
+    assert "1.1411-2(a)(2)(iii)(B)" in note and "and Without" not in note
+
+
+def test_p018_declining_leaves_head_of_household_open():
+    # Pub 501, Considered Unmarried: "You are considered unmarried for head of household
+    # purposes if your spouse was a nonresident alien at any time during the year and you
+    # don't choose to treat your nonresident spouse as a resident alien."
+    declined = _nra_profile(marital="married", filing_status=_ans("married_filing_jointly"))
+    declined.residency_facts.section_6013_election = _ans(False)
+    caveat = estimate_refund(declined, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000)).residency_caveat
+    assert "means no joint return" in caveat and "head of household with another qualifying person" in caveat
+    assert "declining means married-filing-separately" not in caveat
+
+
+def test_p018_the_nonresident_spouse_note_quotes_pub_519_verbatim():
+    income = IncomeSnapshot(wages=90_000, federal_withholding=9_000,
+                            spouse=IncomeSnapshot(wages=9_000, federal_withholding=600))
+    est = estimate_refund(_us_filer_married(_nra_spouse()), 2023, income)
+    note = next(a for a in est.assumptions if a.startswith("The spouse's separate return was computed under NONRESIDENT"))
+    assert '"Your spouse must file Form 1040-NR"' in note
+
+
+# ---------------------------------------------------------------------------
+# P-018, the second verify round (2026-09-26): a recorded DECLINE is the user's
+# explicit fact; an election whose precondition the recorded facts fail is not
+# applied (IRC 6013(g)(3)); a recorded election in a dual-status year may be a
+# continuing 6013(g) one; the marriage gate never lands the election on a figure
+# with no spouse. Hypothetical demo fixtures only.
+# ---------------------------------------------------------------------------
+
+_MFS = "married_filing_separately"
+_FAQ = "Generally, you cannot file as married filing jointly if either spouse was a nonresident alien"
+
+
+def _declined(profile: Profile) -> Profile:
+    profile.residency_facts = (profile.residency_facts or ResidencyFacts()).model_copy(
+        update={"section_6013_election": _ans(False)})
+    return profile
+
+
+def test_p018_a_recorded_decline_drops_the_joint_candidate():
+    # Pub 519 FAQ: "If your spouse does not make this choice, you must file a separate
+    # return on Form 1040 or 1040-SR. Your spouse must file Form 1040-NR."
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=1_000))
+    control = estimate_refund(_us_filer_married(_nra_spouse()), 2023, income)
+    assert control.filing_status_used == "married_filing_jointly"      # without the fact, MFJ is a candidate
+    est = estimate_refund(_declined(_us_filer_married(_nra_spouse())), 2023, income)
+    assert est.filing_status_used == _MFS
+    assert est.comparison is None or "married_filing_jointly" not in {c.status for c in est.comparison.candidates}
+    assert est.low == est.high == est.point
+    assert est.point == next(c.bottom_line for c in control.comparison.candidates if c.status == _MFS)
+    caveat = est.residency_caveat
+    assert "recorded as FALSE (declined)" in caveat and "not a candidate here" in caveat and _FAQ in caveat
+    assert not any("shown as a candidate" in a or "If you weigh that election" in a for a in est.assumptions)
+    # Pub 501, Considered Unmarried: head of household stays open to the citizen spouse.
+    kid = Dependent(name="Demo Kid", relationship="child", provenance=US)
+    with_kid = _declined(_us_filer_married(_nra_spouse()))
+    with_kid.household.dependents = [kid]
+    hoh = estimate_refund(with_kid, 2023, income)
+    assert hoh.filing_status_used == _MFS
+    assert {c.status for c in hoh.comparison.candidates} == {_MFS, "head_of_household"}
+    assert any(a.startswith("The head-of-household figure is your own head-of-household return PLUS")
+               for a in hoh.assumptions)
+
+
+def test_p018_a_recorded_decline_with_a_spouse_of_unknown_residency_says_how_mfj_reopens():
+    est = estimate_refund(_declined(_us_filer_married(Spouse(us_person=_ans(False)))), 2023,
+                          IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    assert est.filing_status_used == _MFS
+    assert "is (or may be) a nonresident alien" in est.residency_caveat
+    assert "no election is needed and a joint return is open" in est.residency_caveat
+
+
+def test_p018_a_decline_beats_a_confirmed_joint_status_in_either_direction():
+    # The citizen taxpayer's side: a confirmed MFJ with a declined election and a
+    # nonresident spouse is priced as the two separate returns, contradiction first.
+    profile = _declined(_us_filer_married(_nra_spouse()))
+    profile.household.filing_status = _ans("married_filing_jointly")
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=1_000))
+    est = estimate_refund(profile, 2023, income)
+    spouse_1040nr = 1_000 - tax_from_taxable_income(20_000, _MFS, 2023).tax
+    assert est.filing_status_used == _MFS
+    assert est.point == _independent_refund(60_000, 6_000, _MFS) + spouse_1040nr
+    assert est.assumptions[0].startswith("CONTRADICTION") and _FAQ in est.assumptions[0]
+    assert "Correct one of the two facts" in est.assumptions[0]
+    assert est.what_would_change_it[0] == est.assumptions[0]
+
+
+def test_p018_an_election_neither_spouse_can_use_is_not_applied():
+    # IRC 6013(g)(3): "any such election shall not apply for any taxable year if neither
+    # spouse is a citizen or resident of the United States at any time during such year".
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000, interest=900, bank_deposit_interest=900,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=2_000))
+    both_nr = (3_000 - tax_from_taxable_income(40_000, _MFS, 2023).tax) + (
+        2_000 - tax_from_taxable_income(20_000, _MFS, 2023).tax)
+    recorded = _nra_profile(marital="married", spouse=_nra_spouse())
+    recorded.residency_facts.section_6013_election = _ans(True)
+    est = estimate_refund(recorded, 2023, income)
+    assert est.filing_status_used == _MFS and est.point == both_nr        # two Form 1040-NRs
+    assert est.roadmap.returns_and_forms[0] == "Form 1040-NR"
+    assert any("$900 was EXCLUDED from income" in a for a in est.assumptions)
+    caveat = est.residency_caveat
+    assert caveat.startswith("A §6013(g)/(h) election is recorded") and "NOT applied" in caveat
+    assert ("shall not apply for any taxable year if neither spouse is a citizen or resident of the United States "
+            "at any time during such year") in caveat and "Suspending the Choice" in caveat
+    assert "which the recorded facts cannot show yet" in caveat              # worded on the facts recorded (JF5b)
+    # The joint status of the same couple is not a filing option: priced MFS, named first.
+    implied = _nra_profile(marital="married", spouse=_nra_spouse(), filing_status=_ans("married_filing_jointly"))
+    blocked = estimate_refund(implied, 2023, income)
+    assert blocked.filing_status_used == _MFS and blocked.point == both_nr
+    assert blocked.assumptions[0].startswith("CONTRADICTION — the confirmed status married-filing-jointly is not a")
+    # A spouse of unknown residency cannot be judged: the election applies as recorded.
+    unknown = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(False)))
+    unknown.residency_facts.section_6013_election = _ans(True)
+    applied = estimate_refund(unknown, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    assert applied.roadmap.returns_and_forms[0] == "Form 1040"
+    assert "one spouse is a U.S. citizen or a resident alien" in applied.residency_caveat
+
+
+def test_p018_a_recorded_election_in_a_dual_status_year_may_be_a_continuing_6013g():
+    # A recorded True cannot tell a new 6013(h) choice from an earlier 6013(g) election
+    # still in effect (IRC 6013(g)(3); Pub 519's Note: "If you previously made that choice
+    # and it is still in effect, you do not need to make the choice explained here").
+    assert residency_module.section_6013_kind("dual_status_candidate", "us", recorded=True) == "either"
+    assert residency_module.section_6013_kind("dual_status_candidate", "us") == "h"
+    profile = _h1b_arrival_2025(spouse=Spouse(us_person=_ans(True)))
+    profile.residency_facts.section_6013_election = _ans(True)
+    income = IncomeSnapshot(wages=90_000, federal_withholding=12_000,
+                            spouse=IncomeSnapshot(wages=40_000, federal_withholding=4_000))
+    est = estimate_refund(profile, 2025, income)
+    caveat = est.residency_caveat
+    assert "If you previously made that choice and it is still in effect" in caveat
+    assert "UNLESS an IRC 6013(g) election made in an earlier year remains in effect" in caveat
+    assert "under IRC 6013(h) there is none" not in caveat
+    mfs = next(c.bottom_line for c in est.comparison.candidates if c.status == _MFS)
+    assert est.low <= mfs <= est.high                                  # 'either' keeps the MFS figure
+    assert "No new statement when an earlier IRC 6013(g) election remains" in residency_module.SECTION_6013H_STATEMENT
+
+
+def test_p018_a_confirmed_mfs_status_is_a_marriage_and_unanswered_is_not_unmarried():
+    # Pub 501: "You can choose married filing separately as your filing status if you are married."
+    profile = Profile(household=Household(filing_status=_ans(_MFS), spouse=Spouse(us_person=_ans(True))),
+                      identity=Identity(us_person=_ans(False)), immigration=_nra_immigration(),
+                      residency_facts=_nra_residency())
+    profile.residency_facts.section_6013_election = _ans(True)
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    assert _labels(est)["Less: standard deduction"] == -standard_deduction(_MFS, 2023).amount
+    assert "confirm the marital status" in est.residency_caveat
+    bare = Profile(identity=Identity(us_person=_ans(False)), immigration=_nra_immigration(),
+                   residency_facts=_nra_residency())
+    bare.residency_facts.section_6013_election = _ans(True)
+    note = next(a for a in estimate_refund(bare, 2023, IncomeSnapshot(wages=18_000)).assumptions if "NOT applied" in a)
+    assert "marital_status is not answered" in note and "not married for the year" not in note
+
+
+def test_p018_the_election_never_lands_on_a_figure_with_no_spouse():
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000)
+    nr_single = 3_000 - tax_from_taxable_income(40_000, "single", 2023).tax
+    # The year of a spouse's death with no confirmed status: the candidates are 'single'
+    # only (JF1b.9), so the election is refused and the estimate says why.
+    widowed = _nra_profile(marital="widowed", spouse_death_year=_ans(2023), spouse=Spouse(us_person=_ans(True)))
+    widowed.residency_facts.section_6013_election = _ans(True)
+    est = estimate_refund(widowed, 2023, income)
+    assert est.filing_status_used == "single" and est.point == nr_single
+    assert est.residency_caveat is None or "RESIDENT rules for both spouses" not in est.residency_caveat
+    note = next(a for a in est.assumptions if "NOT applied" in a)
+    assert "year of your spouse's death" in note and "considered married for the whole year" in note
+    # A confirmed head of household exists only without the election (Pub 501).
+    hoh = _nra_profile(marital="married", filing_status=_ans("head_of_household"), spouse=Spouse(us_person=_ans(True)))
+    hoh.residency_facts.section_6013_election = _ans(True)
+    note = next(a for a in estimate_refund(hoh, 2023, income).assumptions if "NOT applied" in a)
+    assert "exists only WITHOUT the election" in note
+    assert "neither spouse can make this choice in any later tax year" in note
+
+
+def test_p018_the_deposit_note_quotes_the_choice_that_applies():
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000, interest=900, bank_deposit_interest=900)
+    h = estimate_refund(_h1b_arrival_2025(filing_status=_ans("married_filing_jointly"),
+                                          spouse=Spouse(us_person=_ans(True))), 2025, income)
+    h_note = next(a for a in h.assumptions if "$900 of bank_deposit_interest was NOT excluded" in a)
+    assert "You and your spouse are treated as U.S. residents for the entire year for income tax purposes" in h_note
+    assert "for your entire tax year" not in h_note
+    g = estimate_refund(_nra_profile(marital="married", filing_status=_ans("married_filing_jointly"),
+                                     spouse=Spouse(us_person=_ans(True))), 2023, income)
+    g_note = next(a for a in g.assumptions if "$900 of bank_deposit_interest was NOT excluded" in a)
+    assert "treated for income tax purposes as residents for your entire tax year" in g_note
+
+
+def test_p018_the_niit_note_says_what_the_joint_figure_assumes():
+    # Treas. Reg. 1.1411-2(a)(2)(iii)(B)(2): the second election is made for the first year
+    # the U.S. spouse is subject to NIIT, "without regard to the effect of the section
+    # 6013(g) election". The default is not priced, so the note must say so plainly.
+    profile = _us_filer_married(_nra_spouse())
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    profile.household.filing_status = _ans("married_filing_jointly")
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=200_000, federal_withholding=40_000, interest=20_000))
+    note = next(a for a in est.assumptions if a.startswith("NIIT under the §6013(g)/(h) election"))
+    assert "ASSUMES the optional SECOND election" in note and "HIGHER or LOWER" in note
+    assert "without regard to the effect of the section 6013(g) election" in note
+
+
+# ---------------------------------------------------------------------------
+# P-018, the third verify round (2026-09-26): the IRC 6013(g)(3) gate shares intake's
+# trust rule; a decline by two nonresidents is never told to "record the election as
+# true"; the Suspending-the-Choice quote keeps its condition; compare_scenarios' walk
+# always ends on the scenario's own configuration; a married head-of-household
+# scenario prices both returns. Hypothetical demo fixtures only.
+# ---------------------------------------------------------------------------
+
+
+def _two_nonresidents(**household_kwargs) -> Profile:
+    profile = _nra_profile(marital="married", spouse=_nra_spouse(), **household_kwargs)
+    return profile
+
+
+def test_p018_a_decline_by_two_nonresidents_is_never_told_to_elect():
+    # IRC 6013(g)(3): the election "shall not apply for any taxable year if neither spouse is
+    # a citizen or resident of the United States at any time during such year".
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=2_000))
+    for status in (None, _ans("married_filing_jointly")):
+        profile = _declined(_two_nonresidents(filing_status=status))
+        caveat = estimate_refund(profile, 2023, income).residency_caveat
+        assert "not available in any case" in caveat and "shall not apply for any taxable year" in caveat
+        assert "record the election as true" not in caveat
+        assert "U.S. citizen or resident spouse files" not in caveat        # SECTION_6013_DECLINE's citizen side
+    r = compare_scenarios(_declined(_two_nonresidents()), 2023, income, [
+        {"name": "MFS", "filing_status": _MFS},
+        {"name": "MFJ-no", "filing_status": "married_filing_jointly", "us_resident_election": False},
+    ])
+    blocked = next(a for a in r.assumptions if a.startswith("Scenario 'MFJ-no' is married-filing-jointly"))
+    assert "run it with us_resident_election true" not in blocked and "not available either" in blocked
+
+
+def test_p018_the_gate_never_asserts_a_nonresident_resting_on_missing_day_counts():
+    # The spouse's nonresident answer counts 2021 and 2022 (covered by the H-4 timeline) as 0
+    # days: residency.classify itself warns it "may be WRONG", and intake treats it as unknown.
+    # So the IRC 6013(g)(3) gate cannot judge it, and the recorded election applies (B3).
+    from taxfill_core.intake import _election_in_effect  # noqa: PLC0415
+    spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-4", start=date(2021, 1, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(150)}),
+    )
+    profile = _nra_profile(marital="married", spouse=spouse)
+    profile.residency_facts.section_6013_election = _ans(True)
+    assert residency_module.nonresident_rests_on_missing_lookback(
+        spouse.immigration.visa_timeline, {2023: 150}, 2023)
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    assert est.residency_caveat.startswith("A §6013(g)/(h) election is recorded")
+    assert "On the facts recorded here NEITHER spouse" not in est.residency_caveat    # not asserted unmet
+    assert "NOT applied" not in est.residency_caveat
+    assert _election_in_effect(profile, 2023) is True                    # intake agrees
+
+
+def test_p018_the_suspending_quote_keeps_its_condition():
+    text = residency_module.SECTION_6013_SUSPENDED
+    assert ("This means each spouse must file a separate return as a nonresident alien for that year if either "
+            "meets the filing requirements for nonresident aliens discussed in chapter 7") in text
+    assert "each spouse on Form 1040-NR" not in text
+
+
+def _citizen_with_f1_spouse(recorded: bool | None = None) -> Profile:
+    profile = _us_filer_married(_nra_spouse())
+    if recorded is not None:
+        profile.residency_facts = ResidencyFacts(section_6013_election=_ans(recorded))
+    return profile
+
+
+_POSTURES = [
+    {"name": "MFJ-omit", "filing_status": "married_filing_jointly"},
+    {"name": "MFJ-true", "filing_status": "married_filing_jointly", "us_resident_election": True},
+    {"name": "MFJ-false", "filing_status": "married_filing_jointly", "us_resident_election": False},
+    {"name": "MFS-omit", "filing_status": _MFS},
+    {"name": "MFS-true", "filing_status": _MFS, "us_resident_election": True},
+]
+
+
+@pytest.mark.parametrize("recorded", [None, True, False])
+@pytest.mark.parametrize("profile_of", [_citizen_with_f1_spouse, None], ids=["citizen+F-1", "F-1+citizen"])
+def test_p018_the_walk_telescopes_between_every_election_posture(recorded, profile_of):
+    # The round-3 crash: [MFS omitted, MFJ false] and [MFJ omitted, MFS true] raised
+    # "the attribution walk ended at X but the scenario computes Y". Every posture as the
+    # baseline, against every other one, in both directions of the couple.
+    def _profile():
+        if profile_of is not None:
+            return profile_of(recorded)
+        p = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
+        if recorded is not None:
+            p.residency_facts.section_6013_election = _ans(recorded)
+        return p
+
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000, interest=1_000, bank_deposit_interest=1_000,
+                            spouse=IncomeSnapshot(wages=30_000, federal_withholding=2_500))
+    for base in _POSTURES:
+        specs = [base] + [p for p in _POSTURES if p is not base]
+        r = compare_scenarios(_profile(), 2023, income, specs)
+        for d in r.deltas:
+            assert sum(s.delta for s in d.input_attribution) == d.delta
+        assert r.recommended not in ("MFJ-false",)
+
+
+def test_p018_a_married_head_of_household_scenario_prices_both_returns():
+    # Pub 501, Considered Unmarried: the citizen spouse of a nonresident may file head of
+    # household, and the spouse still files their own return — the scenario must price the
+    # same two returns estimate_refund does, never the taxpayer's return alone.
+    profile = _declined(_us_filer_married(_nra_spouse()))
+    profile.household.dependents = [Dependent(name="Demo Kid", relationship="child", provenance=US)]
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=5_000))
+    est = estimate_refund(profile, 2023, income)
+    hoh_candidate = next(c.bottom_line for c in est.comparison.candidates if c.status == "head_of_household")
+    r = compare_scenarios(profile, 2023, income, [
+        {"name": "MFS", "filing_status": _MFS},
+        {"name": "HOH", "filing_status": "head_of_household"},
+    ])
+    outs = {o.name: o.bottom_line for o in r.outcomes}
+    assert outs["HOH"] == hoh_candidate
+    assert r.recommended == ("HOH" if outs["HOH"] > outs["MFS"] else "MFS")
+
+
+def test_p018_a_no_joint_head_of_household_pair_prices_an_unknown_spouse_as_nonresident():
+    # On the no-joint path head of household exists only BECAUSE the spouse is a nonresident
+    # alien (Pub 501), so a spouse of unknown residency is priced on Form 1040-NR rules there.
+    profile = _declined(_us_filer_married(Spouse(us_person=_ans(False))))
+    profile.household.dependents = [Dependent(name="Demo Kid", relationship="child", provenance=US)]
+    profile.household.filing_status = _ans("head_of_household")
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=1_000))
+    est = estimate_refund(profile, 2023, income)
+    spouse_line = next(ln for ln in est.composition if ln.slot == "spouse_mfs_return")
+    nra_spouse_return = 1_000 - tax_from_taxable_income(20_000, _MFS, 2023).tax     # no standard deduction
+    assert spouse_line.amount == nra_spouse_return
+
+
+# ---------------------------------------------------------------------------
+# P-018, the fourth verify round (2026-09-27). Hypothetical demo fixtures only.
+# ---------------------------------------------------------------------------
+
+
+def _h4_spouse(days_2023: int) -> Spouse:
+    return Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-4", start=date(2021, 1, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(days_2023)}),
+    )
+
+
+def test_p018_a_missing_lookback_year_that_cannot_flip_the_answer_leaves_it_certain():
+    # 20 days in 2023 fail the 31-day prong, so no presence in the missing 2021/2022 could make
+    # the spouse resident: residency.classify says the answer "does not turn on those years", and
+    # the IRC 6013(g)(3) gate treats the couple as two nonresidents (not applied, anywhere).
+    from taxfill_core.intake import _election_in_effect, _election_unavailable  # noqa: PLC0415
+    profile = _nra_profile(marital="married", spouse=_h4_spouse(20))
+    profile.residency_facts.section_6013_election = _ans(True)
+    assert residency_module.certain_nonresident(profile.household.spouse.immigration.visa_timeline, {2023: 20}, 2023)
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    assert "NOT applied" in est.residency_caveat and "shall not apply for any taxable year" in est.residency_caveat
+    assert _election_unavailable(profile, 2023) is True and _election_in_effect(profile, 2023) is False
+    # 150 days could flip it (the round-3 fixture): not certain, so applied as recorded.
+    flip = _nra_profile(marital="married", spouse=_h4_spouse(150))
+    assert not residency_module.certain_nonresident(flip.household.spouse.immigration.visa_timeline, {2023: 150}, 2023)
+    assert residency_module.classify(flip.household.spouse.immigration.visa_timeline, {2023: 150},
+                                     2023).nonresident_may_flip is True
+
+
+def test_p018_a_lived_apart_head_of_household_takes_the_standard_deduction_while_the_spouse_itemizes():
+    # Pub 501: "The head of household filing status allows you to choose the standard deduction
+    # even if your spouse chooses to itemize deductions."
+    profile = _us_filer_married(Spouse(us_person=_ans(True)))
+    profile.household.filing_status = _ans("head_of_household")
+    profile.household.dependents = [Dependent(name="Demo Kid", relationship="child", provenance=US)]
+    income = IncomeSnapshot(wages=90_000, federal_withholding=10_000, itemized_deductions=10_000,
+                            spouse=IncomeSnapshot(wages=35_000, federal_withholding=3_000, itemized_deductions=20_000))
+    est = estimate_refund(profile, 2023, income)
+    own_std = standard_deduction("head_of_household", 2023).amount
+    own_line = next(ln for ln in est.composition if ln.slot == "deduction")
+    assert own_line.amount == -own_std                                  # the HOH filer's standard deduction
+    spouse_line = next(ln for ln in est.composition if ln.slot == "spouse_mfs_return")
+    assert spouse_line.amount == 3_000 - tax_from_taxable_income(35_000 - 20_000, _MFS, 2023).tax  # itemizes
+    note = next(a for a in est.assumptions if a.startswith("The head-of-household figure is your own"))
+    assert "allows you to choose the standard deduction even if your spouse chooses to itemize" in note
+
+
+def test_p018_the_nonresident_spouse_route_to_head_of_household_computes_no_eitc():
+    # Pub 519 ch. 5: "Even if you are considered unmarried for head of household purposes because
+    # you are married to a nonresident alien, you may still be considered married for purposes of
+    # the earned income credit (EIC)."
+    profile = _declined(_us_filer_married(_nra_spouse()))
+    profile.household.dependents = [
+        Dependent(name="Demo Kid", relationship="child", dob=date(2016, 5, 1), has_ssn=True, provenance=US)
+    ]
+    income = IncomeSnapshot(wages=22_000, federal_withholding=800,
+                            spouse=IncomeSnapshot(wages=9_000, federal_withholding=300))
+    profile.household.filing_status = _ans("head_of_household")
+    est = estimate_refund(profile, 2023, income)
+    assert not any(ln.slot == "eitc" for ln in est.composition)
+    # The control: the same citizen's HOH through living apart (a U.S.-person spouse) keeps it.
+    control = _us_filer_married(Spouse(us_person=_ans(True)))
+    control.household.dependents = profile.household.dependents
+    control.household.filing_status = _ans("head_of_household")
+    assert any(ln.slot == "eitc" for ln in estimate_refund(control, 2023, income).composition)
+    note = next(a for a in est.assumptions if a.startswith("The head-of-household figure is your own"))
+    assert "you may still be considered married for purposes of the earned income credit (EIC)" in note
+
+
+def test_p018_a_head_of_household_spouse_of_unknown_residency_is_bracketed_both_ways():
+    profile = _declined(_us_filer_married(Spouse(us_person=_ans(False))))
+    profile.household.dependents = [Dependent(name="Demo Kid", relationship="child", provenance=US)]
+    profile.household.filing_status = _ans("head_of_household")
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=1_000))
+    est = estimate_refund(profile, 2023, income)
+    note = next(a for a in est.assumptions if a.startswith("The head-of-household figure is your own"))
+    assert "on Form 1040-NR rules" in note and "the range also prices the spouse's return on resident rules" in note
+    assert est.low < est.high
+
+
+def test_p018_the_walk_reads_the_election_after_a_year_step():
+    # A cross-year walk: the F-1 taxpayer is a nonresident in 2024 (a joint status reads the
+    # election) and a resident by the SPT in 2025 (no election needed) — the YEAR step carries
+    # that change and says so, instead of a later step claiming it.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2020, 8, 20), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in {
+            2020: 130, 2021: 330, 2022: 330, 2023: 330, 2024: 330, 2025: 330}.items()}),
+        household=Household(marital_status=_ans("married"), spouse=Spouse(us_person=_ans(True))),
+    )
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=30_000, federal_withholding=2_500))
+    r = compare_scenarios(profile, 2024, income, [
+        {"name": "MFJ-24", "filing_status": "married_filing_jointly", "year": 2024},
+        {"name": "MFJ-25", "filing_status": "married_filing_jointly", "year": 2025},
+    ])
+    steps = r.deltas[0].input_attribution
+    assert [s.changed for s in steps] == ["year: 2024 -> 2025 (with it, the us_resident_election reading: True -> False)"]
+    # An explicit true on a head-of-household baseline never leaks an election into the walk.
+    r = compare_scenarios(profile, 2024, income, [
+        {"name": "HOH-true", "filing_status": "head_of_household", "us_resident_election": True},
+        {"name": "MFS", "filing_status": _MFS},
+    ])
+    assert not any("reading" in s.changed for s in r.deltas[0].input_attribution)
+    assert r.recommended == "MFS"          # a nonresident alien cannot file as head of household
+
+
+def test_p018_the_decline_text_keeps_the_filing_requirement_condition():
+    assert ("the nonresident spouse, if required to file (Pub 519 ch. 7: \"Nonresident aliens who are required to "
+            "file an income tax return should use Form 1040-NR\")") in residency_module.SECTION_6013_DECLINE
+
+
+def test_p018_confirmed_head_of_household_caveats_fit_the_status():
+    # A citizen's confirmed HOH with a nonresident spouse: no 'MFJ is shown as a candidate'.
+    citizen = _us_filer_married(_nra_spouse())
+    citizen.household.filing_status = _ans("head_of_household")
+    caveat = estimate_refund(citizen, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000)).residency_caveat
+    assert "shown as a candidate" not in caveat and "only valid by electing" in caveat
+    # A nonresident taxpayer's confirmed HOH: Pub 519 ch. 5 says the status is not open.
+    nra = _nra_profile(marital="married", filing_status=_ans("head_of_household"))
+    caveat = estimate_refund(nra, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000)).residency_caveat
+    assert "You cannot file as head of household if you are a nonresident alien" in caveat
+
+
+def test_p018_intake_and_the_estimate_agree_in_the_year_of_a_spouses_death():
+    from taxfill_core.intake import _election_in_effect, intake_checklist  # noqa: PLC0415
+    profile = _nra_profile(marital="widowed", spouse=Spouse(us_person=_ans(True)), spouse_death_year=_ans(2023))
+    profile.residency_facts.section_6013_election = _ans(True)
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    assert est.filing_status_used == "single" and _election_in_effect(profile, 2023) is False
+    note = next(n for n in intake_checklist(profile, tax_year=2023).notes if "NOT applied" in n)
+    assert "year of your spouse's death" in note and "not married for the year" not in note
+
+
+# ---------------------------------------------------------------------------
+# P-018, the fifth verify round (2026-09-27). Hypothetical demo fixtures only.
+# ---------------------------------------------------------------------------
+
+
+def _kid_with_ssn():
+    return Dependent(name="Demo Kid", relationship="child", dob=date(2016, 5, 1), has_ssn=True, provenance=US)
+
+
+def test_p018_no_eitc_on_the_nonresident_spouse_route_without_a_spouse_snapshot():
+    # A nonresident spouse with no U.S. income usually has no snapshot at all: the Pub 519 ch. 5
+    # EIC rule must not turn on whether a $0 snapshot was supplied.
+    profile = _declined(_us_filer_married(_nra_spouse()))
+    profile.household.dependents = [_kid_with_ssn()]
+    income = IncomeSnapshot(wages=22_000, federal_withholding=800)
+    candidate = estimate_refund(profile, 2023, income)
+    assert "head_of_household" in {c.status for c in candidate.comparison.candidates}
+    profile.household.filing_status = _ans("head_of_household")
+    est = estimate_refund(profile, 2023, income)
+    assert not any(ln.slot == "eitc" for ln in est.composition)
+    note = next(a for a in est.assumptions if a.startswith("The head-of-household figure is your own"))
+    assert "no spouse income snapshot was given" in note and "may still be considered married" in note
+    base = _declined(_us_filer_married(_nra_spouse()))
+    base.household.dependents = [_kid_with_ssn()]
+    r = compare_scenarios(base, 2023, income, [
+        {"name": "MFS", "filing_status": _MFS}, {"name": "HOH", "filing_status": "head_of_household"}])
+    assert next(o.bottom_line for o in r.outcomes if o.name == "HOH") == est.point
+
+
+def test_p018_the_no_joint_candidates_price_an_unknown_spouse_on_one_reading():
+    # A recorded decline rests on a nonresident in the couple; the citizen taxpayer is not it, so
+    # the spouse of unknown residency is the nonresident for MFS and HOH alike, and the range
+    # prices the resident reading.
+    profile = _declined(_us_filer_married(Spouse(us_person=_ans(False))))
+    profile.household.dependents = [_kid_with_ssn()]
+    income = IncomeSnapshot(wages=22_000, federal_withholding=800,
+                            spouse=IncomeSnapshot(wages=9_000, federal_withholding=300))
+    est = estimate_refund(profile, 2023, income)
+    cands = {c.status: c.bottom_line for c in est.comparison.candidates}
+    assert est.comparison.recommended_status == max(cands, key=cands.get) == "head_of_household"
+    assert est.filing_status_used == _MFS                                 # the headline is the first candidate
+    spouse_nr = 300 - tax_from_taxable_income(9_000, _MFS, 2023).tax     # Form 1040-NR: no standard deduction
+    assert next(ln for ln in est.composition if ln.slot == "spouse_mfs_return").amount == spouse_nr
+    note = next(a for a in est.assumptions if a.startswith("The spouse's own residency is not settled"))
+    assert "NONRESIDENT rules (Form 1040-NR) for the point estimate — the reading the recorded decline rests on" in note
+
+
+def test_p018_a_lived_apart_head_of_household_with_no_qualifying_child_computes_no_eitc():
+    # Pub 501: "You may be considered unmarried for the purpose of using head of household status
+    # but not for other purposes, such as claiming the EIC"; the separated-spouse rule needs a child.
+    profile = _us_filer_married(Spouse(us_person=_ans(True)))
+    profile.household.hoh_qualifying_person = _ans(True)
+    profile.household.filing_status = _ans("head_of_household")
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=11_000, federal_withholding=300,
+                                                        spouse=IncomeSnapshot(wages=30_000, federal_withholding=2_500)))
+    assert not any(ln.slot == "eitc" for ln in est.composition)
+    assert any("not for other purposes, such as claiming the EIC" in a for a in est.assumptions)
+
+
+def test_p018_a_baseline_false_flag_never_walks_through_an_election_neither_end_has():
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=30_000, federal_withholding=2_500))
+    profile = _nra_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
+    r = compare_scenarios(profile, 2023, income, [
+        {"name": "MFJ-false", "filing_status": "married_filing_jointly", "us_resident_election": False},
+        {"name": "MFS", "filing_status": _MFS},
+    ])
+    steps = r.deltas[0].input_attribution
+    assert not any(s.changed.startswith("us_resident_election:") for s in steps)
+    assert sum(s.delta for s in steps) == r.deltas[0].delta
+
+
+def test_p018_a_missing_current_year_count_is_never_certain():
+    periods = [{"status": "F-1", "start": date(2020, 8, 24)}]
+    assert not residency_module.certain_nonresident(periods, {2020: 130, 2021: 330, 2022: 330}, 2023)
+    assert residency_module.certain_nonresident(periods, {2020: 130, 2021: 330, 2022: 330, 2023: 330}, 2023)
+
+
+def test_p018_the_head_of_household_bar_keeps_the_married_nonresident_caveat():
+    # Prepended, never replacing: a nonresident married to a citizen still reads the §6013 text,
+    # and two nonresidents still read the IRC 6013(g)(3) text.
+    to_citizen = _nra_profile(marital="married", filing_status=_ans("head_of_household"),
+                              spouse=Spouse(us_person=_ans(True)))
+    caveat = estimate_refund(to_citizen, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000)).residency_caveat
+    assert caveat.startswith("A nonresident alien cannot file as head of household") and "§6013(g)/(h)" in caveat
+    both = _two_nonresidents(filing_status=_ans("head_of_household"))
+    caveat = estimate_refund(both, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000)).residency_caveat
+    assert "shall not apply for any taxable year" in caveat
+    note = next(a for a in estimate_refund(both, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+                .assumptions if a.startswith("The head-of-household figure"))
+    assert "prices the confirmed status as given" in note and "living apart" not in note
+
+
+def test_p018_compare_keys_the_head_of_household_bar_on_the_priced_classification():
+    # A declared U.S. person whose visa facts classify nonresident is priced as a nonresident, so
+    # the HOH scenario is not recommended — the comparison never contradicts its own caveat.
+    profile = _nra_profile(marital="unmarried")
+    profile.identity = Identity(us_person=_ans(True))
+    profile.household.dependents = [_kid_with_ssn()]
+    r = compare_scenarios(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000), [
+        {"name": "single", "filing_status": "single"}, {"name": "HOH", "filing_status": "head_of_household"}])
+    hoh = next(o for o in r.outcomes if o.name == "HOH")
+    assert "cannot file as head of household" in hoh.residency_caveat
+    assert hoh.bottom_line > next(o.bottom_line for o in r.outcomes if o.name == "single")
+    assert r.recommended == "single"
+
+
+# ---------------------------------------------------------------------------
+# P-018, the sixth verify round (2026-09-27). Hypothetical demo fixtures only.
+# ---------------------------------------------------------------------------
+
+
+def test_p018_skill_md_names_the_nra_entry_space_key_each_pack_maps():
+    # Instructions for Form 1040 (Filing Status): "enter 'NRA' in the entry space below the filing
+    # status checkboxes" — the key SKILL.md names must exist in that year's pack.
+    from pathlib import Path  # noqa: PLC0415
+    root = Path(__file__).resolve().parents[3]
+    skill = (root / "skills/claude/SKILL.md").read_text()
+    for year, key in ((2023, "filing_status.spouse_or_qualifying_person_name"),
+                      (2024, "filing_status.spouse_or_qualifying_person_name"),
+                      (2025, "filing_status.mfs_spouse_name")):
+        assert f'line: "{key}"' in (root / f"formpacks/federal/{year}/f1040/pack.yaml").read_text()
+        assert key in skill
+    assert "map no MFS entry space" not in skill
+
+
+def test_p018_no_assumed_nonresident_spouse_when_the_taxpayers_own_residency_is_unknown():
+    # us_person False with no facts: nothing shows the taxpayer is not the nonresident the decline
+    # rests on, so the spouse of unknown residency keeps the resident reading (no guess).
+    profile = _declined(Profile(identity=Identity(us_person=_ans(False)),
+                                household=Household(marital_status=_ans("married"), spouse=Spouse(us_person=_ans(False)))))
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000,
+                            spouse=IncomeSnapshot(wages=9_000, federal_withholding=300))
+    est = estimate_refund(profile, 2023, income)
+    assert not any("the recorded decline rests on a nonresident alien in the couple and you are" in a
+                   for a in est.assumptions)
+
+
+def test_p018_a_dual_status_spouse_is_named_as_such_on_the_assumed_reading():
+    spouse = Spouse(us_person=_ans(False), immigration=Immigration(
+        visa_timeline=[VisaPeriod(status="H-1B", start=date(2023, 3, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2021: _ans(0), 2022: _ans(0), 2023: _ans(300)}))
+    profile = _declined(_us_filer_married(spouse))
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=40_000, federal_withholding=4_000, interest=900,
+                                                  bank_deposit_interest=900))
+    text = " ".join(estimate_refund(profile, 2023, income).assumptions)
+    assert "the spouse's own facts show a dual-status year" in text
+    assert "the spouse of unknown residency" not in text and "residency is not on file" not in text
+
+
+def test_p018_the_head_of_household_pair_discloses_the_spouses_deposit_exclusion():
+    # P-013 rule (c): the text matches the number — the spouse's 1040-NR return inside the HOH
+    # figure excludes the deposit interest, so the disclosure names it.
+    profile = _declined(_us_filer_married(_nra_spouse()))
+    profile.household.dependents = [_kid_with_ssn()]
+    profile.household.filing_status = _ans("head_of_household")
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=9_000, federal_withholding=300, interest=700,
+                                                  bank_deposit_interest=700))
+    est = estimate_refund(profile, 2023, income)
+    assert any(a.startswith("US bank-deposit interest of $700 was EXCLUDED") for a in est.assumptions)
+
+
+def test_p018_the_lived_apart_eitc_child_gate_starts_in_2021():
+    # Before the IRC 32(d)(2) separated-spouse rule (TY2021), a lived-apart head of household was
+    # unmarried for the EITC under IRC 7703(b), so the qualifying-child gate does not apply.
+    profile = _us_filer_married(Spouse(us_person=_ans(True)))
+    profile.household.hoh_qualifying_person = _ans(True)
+    profile.household.filing_status = _ans("head_of_household")
+    income = IncomeSnapshot(wages=11_000, federal_withholding=300,
+                            spouse=IncomeSnapshot(wages=30_000, federal_withholding=2_500))
+    assert any(ln.slot == "eitc" for ln in estimate_refund(profile, 2020, income).composition)
+    assert not any(ln.slot == "eitc" for ln in estimate_refund(profile, 2023, income).composition)
+
+
+def test_p018_the_year_of_death_reason_is_the_6013g3_one_when_unavailable():
+    profile = _nra_profile(marital="widowed", spouse=_nra_spouse(), spouse_death_year=_ans(2023))
+    profile.residency_facts.section_6013_election = _ans(True)
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    note = next(a for a in est.assumptions if "it was NOT applied" in a)
+    assert "shall not apply for any taxable year" in note and "confirm married_filing_jointly" not in note

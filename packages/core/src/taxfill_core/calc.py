@@ -3265,6 +3265,15 @@ _FICA_RESIDENT_CONVERSE = (
     "if you are considered a resident alien, as discussed in chapter 1, even though your nonimmigrant "
     "classification (“F,” “J,” “M,” or “Q”) remains the same.\""
 )
+# P-018: under a §6013(g)/(h) election the residency tool's headline answer is
+# 'resident' for INCOME tax only — IRC 6013(g)(1) (and 6013(h)(1)) reach chapter 1 and
+# chapter 24, never FICA (chapter 21) — so this op takes the no-election answer.
+_FICA_ELECTION_NOTE = (
+    "If this 'resident' comes from a §6013(g)/(h) election, pass the residency tool's "
+    "classification_without_election instead: IRC 6013(g)(1) treats the electing spouse as a resident "
+    "\"for purposes of chapter 1\" and \"for purposes of chapter 24 (relating to wage withholding)\" only, "
+    "so the election never reaches FICA (chapter 21) and an F/J/M/Q exempt individual keeps IRC 3121(b)(19)."
+)
 _FICA_RESIDENCY_CLASSES: tuple[str, ...] = ("resident", "nonresident", "dual_status_candidate")
 # The exemptions a RESIDENT alien can still have on F/J/M/Q wages, each quoted from
 # Pub 519 (2025) ch. 8 as read 2026-09-25. "fjmq_nonresident" names the exemption a
@@ -3332,7 +3341,7 @@ def _fica_exempt_reason(
             f"exempt_basis 'student_employed_by_school' (Pub 519 ch. 8 tip: a student enrolled and "
             f"regularly attending classes at the school it works for) or 'totalization_agreement'. If "
             f"the classification is wrong, re-run the residency tool — the exempt-individual years and "
-            f"the substantial presence test decide it, not the visa class."
+            f"the substantial presence test decide it, not the visa class. {_FICA_ELECTION_NOTE}"
         )
     if residency_classification == "resident":
         # Not the nonresident exempt_note: for a resident it would contradict itself.
@@ -3340,7 +3349,7 @@ def _fica_exempt_reason(
             f"fica_exempt per your judgment. CHECK: residency_classification is 'resident', so this segment "
             f"cannot rest on the F/J/M/Q exemption — {_FICA_RESIDENT_CONVERSE} Confirm the exemption it "
             f"does rest on and pass exempt_basis ('student_employed_by_school' or 'totalization_agreement'), "
-            f"or set fica_exempt false."
+            f"or set fica_exempt false. {_FICA_ELECTION_NOTE}"
         )
     return exempt_note
 
@@ -3372,7 +3381,11 @@ def employee_fica(
     student past the exempt-individual years who meets the substantial
     presence test owes FICA while still on F-1. ``residency_classification``
     (``resident`` / ``nonresident`` / ``dual_status_candidate`` — the residency
-    tool's answer) enforces it: for ``resident``, a ``fica_exempt`` segment
+    tool's answer; under a §6013(g)/(h) election its
+    ``classification_without_election``, because IRC 6013(g)(1) treats the
+    electing spouse as a resident only "for purposes of chapter 1" and "for
+    purposes of chapter 24 (relating to wage withholding)", never for FICA —
+    P-018) enforces it: for ``resident``, a ``fica_exempt`` segment
     that is F/J/M/Q (its ``visa_status`` names the status, else its ``label``
     names it in visa shape — ``F-1``, ``J-1``, ``OPT``) is REFUSED, quoting
     Pub 519, unless its ``exempt_basis`` names a

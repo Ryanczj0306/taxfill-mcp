@@ -297,6 +297,32 @@ def test_spouse_rejects_unknown_field():
         Spouse.model_validate({"middle_name": "x"})
 
 
+def test_p018_the_6013_election_is_one_residency_fact_on_the_taxpayer():
+    # P-018: the §6013(g)/(h) election is a residency FACT with one home — the
+    # taxpayer's ResidencyFacts. It survives a JSON roundtrip in all three states
+    # (True = elect / in effect, False = declined, None = not asked).
+    for value in (True, False):
+        profile = Profile(
+            residency_facts=ResidencyFacts(
+                section_6013_election=Answer[bool](value=value, provenance=Provenance.user_stated()),
+            ),
+        )
+        restored = Profile.model_validate_json(profile.model_dump_json())
+        assert restored.residency_facts.section_6013_election.value is value
+    assert ResidencyFacts().section_6013_election is None
+    assert "entire tax year" in ResidencyFacts.model_fields["section_6013_election"].description
+    # The choice is joint and makes BOTH spouses residents, so a second copy on the
+    # spouse is refused with the fix, never kept as a competing source of truth.
+    with pytest.raises(ValidationError, match="record it once as residency_facts.section_6013_election"):
+        Spouse(
+            residency_facts=ResidencyFacts(
+                section_6013_election=Answer[bool](value=True, provenance=Provenance.user_stated()),
+            ),
+        )
+    # The spouse's OWN day counts are still welcome (they decide the precondition).
+    Spouse(residency_facts=ResidencyFacts(days_in_us={2023: Answer[int](value=120, provenance=Provenance.user_stated())}))
+
+
 # ── H1: VisaPeriod.sub_status + the derived FICA hint ──────────────────────────
 
 

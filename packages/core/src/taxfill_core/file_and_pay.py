@@ -556,7 +556,15 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
             "one spouse was a nonresident alien and the other a U.S. citizen or resident, and that both "
             "choose to be treated as U.S. residents for the entire tax year, with each spouse's full name, "
             f"address, and SSN/ITIN ({_SECTION_6013_URL}). A joint return with a nonresident-alien spouse "
-            "is NOT a valid joint return without this statement."
+            "is NOT a valid joint return without this statement. That is the IRC 6013(g) declaration; for "
+            "the IRC 6013(h) choice (both spouses U.S. citizens or residents on the last day of the year, one "
+            "a nonresident alien on the first — a dual-status year) the statement instead declares \"that you "
+            "both qualify to make the choice and that you choose to be treated as U.S. residents for the "
+            "entire tax year\", and the Filing Status entry names the dual-status spouse(s) (Pub 519 ch. 1, "
+            "Choosing Resident Alien Status). In a LATER year of an IRC 6013(g) election still in effect no new "
+            "statement is attached: \"check the box and enter their name if you and your nonresident spouse made "
+            "the choice to be treated as residents in a prior year and the choice remains in effect\" (Pub 519 "
+            "ch. 1)."
         ))
         sign.append(
             "The §6013(g)/(h) election statement is signed by BOTH spouses too — sign it in ink along with "

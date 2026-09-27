@@ -622,7 +622,10 @@ def test_nra_spouse_battery_asks_visa_days_and_election():
     assert days_q.answers_into == "household.spouse.residency_facts.days_in_us"
     assert "2021, 2022, 2023" in days_q.prompt              # the SPT lookback set, spouse's own facts
     el = next(q for q in cl.next_questions if q.id == "household.spouse.section_6013_election")
-    assert el.answers_into == "household.filing_status"     # deciding the election IS the status choice
+    # P-018: the election is a residency FACT, recorded where the estimator and the
+    # residency tool read it — no longer only implied by the chosen status.
+    assert el.answers_into == "residency_facts.section_6013_election"
+    assert "compare_scenarios" in (el.disambiguation or "")
     assert "may be a nonresident alien" in el.prompt        # conditional — residency not computable yet
     d = el.disambiguation or ""
     assert "WORLDWIDE" in d and "'NRA'" in d and "signed by BOTH spouses" in d
@@ -1109,3 +1112,330 @@ def test_p013_an_account_number_in_the_kind_never_records_the_character():
     # form's own digits — can never silence the question.
     for kind in ("1099-INT acct 10990023", "1099-INT acct 1099 INT 4410", "1099-INT routing 021000021"):
         assert _INTEREST_Q in _ids(intake_checklist(_confirmed_nra(_doc(kind)), tax_year=2023)), kind
+
+
+# ── P-018 (Phase J JF5a): the §6013(g)/(h) election is a residency FACT ────────
+# Pub 519 (2025) ch. 1: "If you make this choice, you and your spouse are treated
+# for income tax purposes as residents for your entire tax year." Intake records it
+# once, as residency_facts.section_6013_election on the taxpayer, and — once it is
+# recorded on a confirmed marriage — treats both spouses as residents, while the
+# F/J FICA note keeps following the day counts (IRC 6013(g)(1): chapters 1 and 24).
+
+_FACT_Q = "household.section_6013_election"
+
+
+def _married_confirmed_nra(**household_kwargs) -> Profile:
+    profile = _confirmed_nra()
+    profile.household = Household(marital_status=_ans("married"), **household_kwargs)
+    return profile
+
+
+def _with_election(profile: Profile, value: bool) -> Profile:
+    profile.residency_facts.section_6013_election = _ans(value)
+    return profile
+
+
+def test_p018_choosing_mfj_with_a_nonresident_asks_for_the_election_fact():
+    # A joint return with a nonresident alien exists only under the election, so a
+    # chosen MFJ status is not left to imply it: intake asks for the FACT.
+    profile = _married_confirmed_nra(filing_status=_ans("married_filing_jointly"))
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == _FACT_Q)
+    assert q.answers_into == "residency_facts.section_6013_election"
+    assert "exists only under the §6013(g)/(h) election" in q.prompt
+    assert "treated for income tax purposes as residents for your entire tax year" in q.why
+    d = q.disambiguation or ""
+    assert "signed by both spouses" in d and "compare_scenarios" in d
+    assert "one spouse is a U.S. citizen or a resident alien" in d            # the precondition
+    # Either answer stops it — a recorded fact is never re-asked.
+    for value in (True, False):
+        answered = _with_election(_married_confirmed_nra(filing_status=_ans("married_filing_jointly")), value)
+        assert _FACT_Q not in _ids(intake_checklist(answered, tax_year=2023)), value
+    # Not asked where no nonresident is involved, nor before MFJ is chosen.
+    citizens = Profile(identity=Identity(us_person=_ans(True)),
+                       household=Household(marital_status=_ans("married"),
+                                           filing_status=_ans("married_filing_jointly"),
+                                           spouse=Spouse(us_person=_ans(True))))
+    assert _FACT_Q not in _ids(intake_checklist(citizens, tax_year=2023))
+    assert _FACT_Q not in _ids(intake_checklist(_married_confirmed_nra(), tax_year=2023))
+    # The citizen taxpayer's NRA-spouse direction asks it too.
+    spouse_direction = _citizen_married(Spouse(us_person=_ans(False)))
+    spouse_direction.household.filing_status = _ans("married_filing_jointly")
+    assert _FACT_Q in _ids(intake_checklist(spouse_direction, tax_year=2023))
+
+
+def test_p018_a_recorded_election_makes_both_spouses_residents_in_intake():
+    profile = _with_election(_married_confirmed_nra(), True)
+    profile.income_documents = [_doc("1099-INT")]
+    cl = intake_checklist(profile, tax_year=2023)
+    note = next(n for n in cl.notes if n.startswith("The §6013(g)/(h) election is recorded"))
+    assert "RESIDENTS for the whole year" in note and "standard deduction" in note
+    assert "treated for income tax purposes as residents for your entire tax year" in note
+    assert "one spouse is a U.S. citizen or a resident alien" in note
+    # The 1040-NR status restriction no longer applies, and the filing-status question
+    # carries the first-year-joint rule instead of the nonresident rider.
+    assert not any("Nonresident-alien filers (Form 1040-NR) cannot use" in n for n in cl.notes)
+    fs = next(q for q in cl.next_questions if q.id == "household.filing_status")
+    assert "You must file a joint income tax return for the year you make the choice" in (fs.disambiguation or "")
+    # The 871(i)(2)(A) character question is moot under the election (the interest is taxed).
+    assert _INTEREST_Q not in _ids(cl)
+    assert _INTEREST_Q in _ids(intake_checklist(_confirmed_nra(_doc("1099-INT")), tax_year=2023))   # control
+    # FICA is NOT reached by the election: the F-1's exemption note stays, and says why.
+    fica = next(n for n in cl.notes if "FICA" in n and "Form 843" in n)
+    assert "does not change this" in fica and "chapter 24 (relating to wage withholding)" in fica
+
+
+def test_p018_intake_and_the_estimate_agree_on_a_recorded_election_with_an_unanswered_marital_status():
+    # The estimator applies a recorded election when marital_status is unanswered and
+    # married-filing-jointly is confirmed (MFJ is itself a statement of marriage).
+    # Intake must read the same fact the same way: before this fix it still classified
+    # the filer nonresident there and asked the 871(i)(2)(A) interest-character question,
+    # which is moot under the election (the interest is taxed whatever its character).
+    from taxfill_core.estimate import IncomeSnapshot, estimate_refund
+
+    profile = _with_election(_confirmed_nra(_doc("1099-INT")), True)
+    profile.household = Household(filing_status=_ans("married_filing_jointly"))
+    assert _INTEREST_Q not in _ids(intake_checklist(profile, tax_year=2023))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    assert est.residency_caveat is not None and est.residency_caveat.startswith("A §6013(g)/(h) election is recorded")
+    # Without the confirmed joint status there is no marriage on file: neither applies it.
+    bare = _with_election(_confirmed_nra(_doc("1099-INT")), True)
+    assert _INTEREST_Q in _ids(intake_checklist(bare, tax_year=2023))
+
+
+def test_p018_a_recorded_election_without_a_marriage_is_not_applied():
+    profile = _with_election(_confirmed_nra(), True)
+    profile.household = Household(marital_status=_ans("unmarried"))
+    cl = intake_checklist(profile, tax_year=2023)
+    assert any("NOT applied" in n and "section_6013_election" in n for n in cl.notes)
+    assert not any(n.startswith("The §6013(g)/(h) election is recorded") for n in cl.notes)
+    assert any("cannot use married-filing-jointly or head of household" in n for n in cl.notes)
+
+
+def test_p018_the_spouse_election_question_stops_on_the_recorded_fact():
+    for value in (True, False):
+        profile = _citizen_married(Spouse(us_person=_ans(False)))
+        profile.residency_facts = ResidencyFacts(section_6013_election=_ans(value))
+        ids = _ids(intake_checklist(profile, tax_year=2023))
+        assert "household.spouse.section_6013_election" not in ids, value
+        assert _FACT_Q not in ids, value
+    # The question itself is a decision, answered into the fact.
+    q = next(q for q in intake_checklist(_citizen_married(Spouse(us_person=_ans(False))), tax_year=2023)
+             .next_questions if q.id == "household.spouse.section_6013_election")
+    assert "Are you making the §6013(g)/(h) election" in q.prompt and "or declining it" in q.prompt
+
+
+def test_p018_the_interest_character_question_follows_the_payee():
+    # The 871(i)(2)(A) exclusion belongs to the PAYEE (P-013 rule (e), P-018): a
+    # spouse-owned 1099-INT is asked about on the SPOUSE's own classification.
+    nra_spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="F-2", start=date(2022, 8, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2021: _ans(0), 2022: _ans(140), 2023: _ans(330)}),
+    )
+    spouse_doc = IncomeDocument(kind="1099-INT", status="have", owner="spouse", provenance=US)
+    profile = _citizen_married(nra_spouse)
+    profile.income_documents = [spouse_doc]
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == _INTEREST_Q)
+    assert q.prompt.startswith("Your spouse's residency result is NONRESIDENT alien")
+    # The citizen's OWN 1099-INT is never asked about.
+    own = _citizen_married(nra_spouse)
+    own.income_documents = [_doc("1099-INT")]
+    assert _INTEREST_Q not in _ids(intake_checklist(own, tax_year=2023))
+    # Under the election the spouse is a resident too — nothing to ask.
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    assert _INTEREST_Q not in _ids(intake_checklist(profile, tax_year=2023))
+    # A nonresident taxpayer's US-citizen spouse's 1099-INT is not asked about either.
+    nra_taxpayer = _married_confirmed_nra(spouse=Spouse(us_person=_ans(True)))
+    nra_taxpayer.income_documents = [spouse_doc]
+    assert _INTEREST_Q not in _ids(intake_checklist(nra_taxpayer, tax_year=2023))
+
+
+def test_p018_the_spouse_tin_question_keeps_the_w7_note_under_the_election():
+    # Recording the election makes the spouse a resident for income tax, but the spouse
+    # still needs a TIN on the joint return — Pub 519 FAQ: "your nonresident spouse needs
+    # an SSN or ITIN". The W-7 last mile follows the NO-election residency.
+    profile = _citizen_married(Spouse(us_person=_ans(False)))
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == "household.spouse.tax_id")
+    assert "Form W-7" in (q.disambiguation or "") and "ITIN Operation in Austin" in (q.disambiguation or "")
+
+
+def test_p018_the_year_of_a_spouses_death_keeps_the_election_and_asks_for_it():
+    # Pub 501: "If your spouse died during the year, you are considered married for the
+    # whole year for filing status purposes"; Pub 519, Ending the Choice: death ends the
+    # choice "beginning with the first tax year following the year the spouse died".
+    profile = _confirmed_nra()
+    profile.household = Household(marital_status=_ans("widowed"), spouse_death_year=_ans(2023),
+                                  filing_status=_ans("married_filing_jointly"),
+                                  maintained_home_for_dependent_child=_ans(False))
+    assert _FACT_Q in _ids(intake_checklist(profile, tax_year=2023))
+    profile.residency_facts.section_6013_election = _ans(True)
+    cl = intake_checklist(profile, tax_year=2023)
+    assert _FACT_Q not in _ids(cl)
+    assert any(n.startswith("The §6013(g)/(h) election is recorded") for n in cl.notes)
+    assert not any("NOT applied" in n for n in cl.notes)
+    # Two years later the choice has ended, and the note says it was not applied.
+    profile.household.spouse_death_year = _ans(2021)
+    assert any("NOT applied" in n and "widowed during the year" in n
+               for n in intake_checklist(profile, tax_year=2023).notes)
+
+
+def test_p018_declining_is_worded_as_pub_501_has_it():
+    # Declining leaves no joint return, but head of household stays open to the citizen
+    # or resident spouse with another qualifying person (Pub 501, Considered Unmarried).
+    profile = _married_confirmed_nra(filing_status=_ans("married_filing_jointly"))
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == _FACT_Q)
+    d = q.disambiguation or ""
+    assert "Declining the election means no joint return" in d
+    assert "head of household with another qualifying person" in d
+    battery = next(q for q in intake_checklist(_citizen_married(Spouse(us_person=_ans(False))), tax_year=2023)
+                   .next_questions if q.id == "household.spouse.section_6013_election")
+    assert "Declining the election means no joint return" in (battery.disambiguation or "")
+
+
+def test_p018_a_dual_status_arrival_with_a_citizen_spouse_may_be_a_continuing_6013g():
+    # Both U.S. residents or citizens at year end, the taxpayer a nonresident on Jan 1: a
+    # NEW choice is IRC 6013(h) ("Neither you nor your spouse can make this choice for any
+    # later tax year"), but a RECORDED true cannot tell it from an IRC 6013(g) election made
+    # earlier that remains in effect (IRC 6013(g)(3); Pub 519's Note: "If you previously
+    # made that choice and it is still in effect, you do not need to make the choice
+    # explained here") — so intake gives both readings, never a bare "(h) only".
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-1B", start=date(2025, 6, 2), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(0), 2024: _ans(0), 2025: _ans(213)},
+                                       section_6013_election=_ans(True)),
+        household=Household(marital_status=_ans("married"), spouse=Spouse(us_person=_ans(True))),
+    )
+    cl = intake_checklist(profile, tax_year=2025)
+    note = next(n for n in cl.notes if n.startswith("The §6013(g)/(h) election is recorded"))
+    assert "IRC 6013(h)" in note and "you both qualify to make the choice" in note
+    assert "If you previously made that choice and it is still in effect" in note
+    fs = next(q for q in cl.next_questions if q.id == "household.filing_status")
+    d = fs.disambiguation or ""
+    assert "must file a joint return for the year of the choice" in d
+    assert "unless an IRC 6013(g) election made in an earlier year remains in effect" in d
+
+
+# P-018, the second verify round (2026-09-26): after a recorded DECLINE the status
+# question offers no joint return; an election neither spouse can use is not offered
+# (IRC 6013(g)(3)); a confirmed MFS status is a marriage; a true answer covers a
+# continuing election. Hypothetical demo fixtures only.
+
+_FAQ = "Generally, you cannot file as married filing jointly if either spouse was a nonresident alien"
+
+
+def _nra_spouse_facts() -> Spouse:
+    return Spouse(us_person=_ans(False), immigration=Immigration(
+        visa_timeline=[VisaPeriod(status="F-2", start=date(2020, 8, 24), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in
+                                                   {2020: 130, 2021: 330, 2022: 330, 2023: 330}.items()}))
+
+
+def test_p018_after_a_recorded_decline_the_status_question_offers_no_joint_return():
+    citizen = _citizen_married(_nra_spouse_facts())
+    citizen.residency_facts = ResidencyFacts(section_6013_election=_ans(False))
+    fs = next(q for q in intake_checklist(citizen, tax_year=2023).next_questions if q.id == "household.filing_status")
+    assert fs.prompt.startswith("Without the §6013(g)/(h) election there is no joint return (it is recorded as declined)")
+    assert "head of household" in fs.prompt and "jointly with your spouse" not in fs.prompt
+    d = fs.disambiguation or ""
+    assert "Declining the election means no joint return" in d and _FAQ in d
+    # A nonresident taxpayer (Form 1040-NR) is not offered head of household.
+    nra = _with_election(_married_confirmed_nra(), False)
+    fs = next(q for q in intake_checklist(nra, tax_year=2023).next_questions if q.id == "household.filing_status")
+    assert "no joint return" in fs.prompt and "head of household" not in fs.prompt
+
+
+def test_p018_intake_does_not_offer_an_election_neither_spouse_can_use():
+    both = _married_confirmed_nra(spouse=_nra_spouse_facts())
+    cl = intake_checklist(both, tax_year=2023)
+    assert "household.spouse.section_6013_election" not in _ids(cl)
+    note = next(n for n in cl.notes if n.startswith("The §6013(g)/(h) election is not asked about."))
+    assert "shall not apply for any taxable year if neither spouse is a citizen or resident" in note
+    both.household.filing_status = _ans("married_filing_jointly")
+    assert _FACT_Q not in _ids(intake_checklist(both, tax_year=2023))
+    # Recorded anyway: NOT applied, and the interest-character question is live again.
+    recorded = _with_election(_married_confirmed_nra(spouse=_nra_spouse_facts()), True)
+    recorded.income_documents = [_doc("1099-INT")]
+    cl = intake_checklist(recorded, tax_year=2023)
+    assert any(n.startswith("residency_facts.section_6013_election is recorded, but it is NOT applied") and
+               "Suspending the Choice" in n for n in cl.notes)
+    assert not any(n.startswith("The §6013(g)/(h) election is recorded") for n in cl.notes)
+    assert _INTEREST_Q in _ids(cl)
+
+
+def test_p018_intake_counts_a_confirmed_mfs_status_as_the_marriage():
+    # Pub 501: "You can choose married filing separately as your filing status if you are
+    # married." Intake and the estimate read the same fact the same way.
+    from taxfill_core.estimate import IncomeSnapshot, estimate_refund
+
+    profile = _with_election(_confirmed_nra(_doc("1099-INT")), True)
+    profile.household = Household(filing_status=_ans("married_filing_separately"), spouse=Spouse(us_person=_ans(True)))
+    assert _INTEREST_Q not in _ids(intake_checklist(profile, tax_year=2023))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=60_000, federal_withholding=6_000))
+    assert est.residency_caveat.startswith("A §6013(g)/(h) election is recorded")
+    # A head-of-household status exists only without the election (Pub 501, Considered Unmarried).
+    hoh = _with_election(_married_confirmed_nra(filing_status=_ans("head_of_household"),
+                                                spouse=Spouse(us_person=_ans(True))), True)
+    note = next(n for n in intake_checklist(hoh, tax_year=2023).notes if "NOT applied" in n)
+    assert "exists only WITHOUT the election" in note and "not married for the year" not in note
+
+
+def test_p018_a_true_answer_covers_a_continuing_election_and_names_the_taxpayer_path():
+    q = next(q for q in intake_checklist(_married_confirmed_nra(filing_status=_ans("married_filing_jointly")),
+                                         tax_year=2023).next_questions if q.id == _FACT_Q)
+    assert "the taxpayer's, never the spouse's" in q.prompt
+    d = q.disambiguation or ""
+    assert "FIRST joint return" in d and "OR if an election made in an earlier year remains in effect" in d
+    assert "no new statement" in d
+    battery = next(q for q in intake_checklist(_citizen_married(Spouse(us_person=_ans(False))), tax_year=2023)
+                   .next_questions if q.id == "household.spouse.section_6013_election")
+    assert battery.answers_into == "residency_facts.section_6013_election"
+    assert "not household.spouse's" in battery.prompt
+
+
+# P-018, the third verify round (2026-09-26). Hypothetical demo fixtures only.
+
+def test_p018_two_nonresidents_get_the_suspended_text_never_the_decline_text():
+    # Neither spouse a citizen or resident: nothing to decline and no citizen side, and a
+    # recorded decline is never answered with "To reopen a joint return ... as true".
+    for value in (None, False, True):
+        profile = _married_confirmed_nra(spouse=_nra_spouse_facts())
+        if value is not None:
+            profile = _with_election(profile, value)
+        cl = intake_checklist(profile, tax_year=2023)
+        fs = next(q for q in cl.next_questions if q.id == "household.filing_status")
+        d = fs.disambiguation or ""
+        assert "Declining the election means" not in d and "U.S. citizen or resident spouse" not in d
+        assert "To reopen a joint return" not in d
+        assert "if either meets the filing requirements for nonresident aliens" in d
+
+
+def test_p018_intake_names_a_confirmed_joint_status_that_a_decline_rules_out():
+    citizen = _citizen_married(_nra_spouse_facts())
+    citizen.residency_facts = ResidencyFacts(section_6013_election=_ans(False))
+    citizen.household.filing_status = _ans("married_filing_jointly")
+    cl = intake_checklist(citizen, tax_year=2023)
+    note = next(n for n in cl.notes if n.startswith("CONTRADICTION"))
+    assert _FAQ in note and "recorded as FALSE (declined)" in note
+
+
+def test_p018_after_a_decline_the_spouse_tin_question_leads_with_the_separate_return():
+    citizen = _citizen_married(_nra_spouse_facts())
+    citizen.residency_facts = ResidencyFacts(section_6013_election=_ans(False))
+    q = next(q for q in intake_checklist(citizen, tax_year=2023).next_questions if q.id == "household.spouse.tax_id")
+    assert (q.disambiguation or "").startswith(
+        "On a married-filing-separately return, if your spouse doesn't have and isn't required to have an SSN or "
+        "ITIN, enter 'NRA' in the entry space below the filing status checkboxes (Pub 501")
+    assert "Form W-7" not in (q.disambiguation or "")
+
+
+def test_p018_the_year_of_death_with_a_confirmed_status_gets_the_6013g3_reason():
+    # Widowed in the tax year, a confirmed MFS, two certain nonresidents, a recorded election:
+    # the reason is IRC 6013(g)(3), never "confirm married_filing_jointly to price the election".
+    profile = _with_election(_married_confirmed_nra(spouse=_nra_spouse_facts()), True)
+    profile.household.marital_status = _ans("widowed")
+    profile.household.spouse_death_year = _ans(2023)
+    profile.household.filing_status = _ans("married_filing_separately")
+    note = next(n for n in intake_checklist(profile, tax_year=2023).notes if "NOT applied" in n)
+    assert "shall not apply for any taxable year" in note and "confirm married_filing_jointly" not in note

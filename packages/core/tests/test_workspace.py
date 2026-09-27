@@ -176,3 +176,24 @@ def test_server_and_cli_resolve_the_same_root():
     from taxfill_mcp.server import WORKSPACE_ROOT
 
     assert WORKSPACE_ROOT == DEFAULT_ROOT
+
+
+def test_p018_checklist_from_the_recorded_election_fact(tmp_path):
+    # P-018: residency_facts.section_6013_election is the election's one home, so the
+    # recorded fact alone (no "6013" position) adds the signed-statement item — naming
+    # both declarations, IRC 6013(g)'s and 6013(h)'s (Pub 519 ch. 1).
+    ws = Workspace.open(tmp_path, 2023)
+    ws.save_profile({"household": {"marital_status": {"value": "married", "provenance": {"source": "user_stated"}}},
+                     "residency_facts": {"section_6013_election": {"value": True,
+                                                                   "provenance": {"source": "user_stated"}}}})
+    md = ws.write_checklist().read_text()
+    assert "§6013(g)/(h) election — required attachment" in md and "SIGNED BY BOTH" in md
+    assert "IRC 6013(h)" in md and "you both qualify to make the choice" in md
+    # Declined, or recorded on an unmarried household: no item.
+    for household, value in (("married", False), ("unmarried", True)):
+        ws2 = Workspace.open(tmp_path / f"{household}-{value}", 2023)
+        ws2.save_profile({"household": {"marital_status": {"value": household,
+                                                           "provenance": {"source": "user_stated"}}},
+                          "residency_facts": {"section_6013_election": {"value": value,
+                                                                        "provenance": {"source": "user_stated"}}}})
+        assert "6013" not in ws2.write_checklist().read_text(), (household, value)

@@ -600,7 +600,7 @@ def test_eval_o_us_citizen_nra_spouse_couple():
     election_q = next(q for q in cl.next_questions if q.id == "household.spouse.section_6013_election")
     assert "§6013(g)/(h)" in election_q.prompt
     assert "WORLDWIDE" in election_q.disambiguation           # the trade-off is surfaced
-    assert "'NRA'" in election_q.disambiguation                # the MFS no-TIN box literal
+    assert "'NRA'" in election_q.disambiguation                # the MFS no-TIN entry literal
     tin_q = next(q for q in cl.next_questions if q.id == "household.spouse.tax_id")
     assert "Form W-7" in tin_q.disambiguation and "WITH the return" in tin_q.disambiguation
     assert "Austin" in tin_q.disambiguation                    # the ITIN Operation route
@@ -626,6 +626,18 @@ def test_eval_o_us_citizen_nra_spouse_couple():
     assert "nonresident-spouse" in statement                   # cited inline (irs.gov)
     assert any("nonresident-spouse" in c.url for c in r.citations)
     assert any("BOTH spouses" in s for s in r.sign)            # joint return signatures
+
+    # 4) RECORDED — once the couple records the election as the residency fact (SKILL.md
+    # Recipe B2 step 2; P-018), the W-7/ITIN last mile must still ride intake AND the
+    # estimate: the spouse is a resident for income tax now, but still needs a TIN.
+    couple.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    cl = intake_checklist(couple, tax_year=2023)
+    tin_q = next(q for q in cl.next_questions if q.id == "household.spouse.tax_id")
+    assert "Form W-7" in tin_q.disambiguation and "Austin" in tin_q.disambiguation
+    est = estimate_refund(couple, 2023, IncomeSnapshot(wages=90_000, federal_withholding=11_000))
+    assert est.residency_caveat is not None and est.residency_caveat.startswith("A §6013(g)/(h) election is recorded")
+    assert "W-7" in est.residency_caveat and "worldwide" in est.residency_caveat.lower()
+    assert est.residency_caveat in est.what_would_change_it
 
 
 # ── (o addendum, part D) treaty-exempt income: the China Art. 20(c) student ────

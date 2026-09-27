@@ -277,6 +277,23 @@ def test_residency_substantial_presence():
     })))
     # F-1 student is an exempt individual (5 calendar years), so still nonresident in 2023.
     assert data["classification"] == "nonresident"
+    assert data["classification_without_election"] is None
+
+
+def test_residency_tool_applies_the_6013_election():
+    # P-018: the §6013(g)/(h) election makes the couple residents for the ENTIRE year
+    # (Pub 519 ch. 1), whatever the SPT says; the day-count answer comes back as
+    # classification_without_election — the one calc op employee_fica takes.
+    data = _data(_run(_call("residency", {
+        "visa_periods": [{"status": "F-1", "start": "2021-08-01", "end": None}],
+        "days_by_year": {"2021": 150, "2022": 300, "2023": 300},
+        "target_year": 2023,
+        "section_6013_election": True,
+    })))
+    assert data["classification"] == "resident"
+    assert data["section_6013_election"] is True
+    assert data["classification_without_election"] == "nonresident"
+    assert "entire tax year" in data["reasons"][0] and "chapter 24" in data["reasons"][0]
 
 
 def test_filing_summary_and_file_and_pay():

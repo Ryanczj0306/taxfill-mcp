@@ -413,3 +413,21 @@ def test_p017_and_the_fica_converse_reach_every_use_site():
     assert "NOT withheld in error ON THE F/J/M/Q GROUND" in b4
     assert "enrolled and regularly attending classes at a school" in b4 and "totalization agreement" in b4
     assert "residency_classification" in calc_tool.__doc__ and "residency_classification" in skill
+
+
+def test_p018_the_resident_refusal_names_the_election_answer():
+    # P-018: under a §6013(g)/(h) election the residency tool's headline answer is
+    # 'resident' for INCOME tax only — IRC 6013(g)(1) reaches "chapter 1" and "chapter
+    # 24 (relating to wage withholding)", never FICA (chapter 21) — so the refusal and
+    # the resident CHECK both point at classification_without_election.
+    with pytest.raises(ValueError) as exc:
+        employee_fica([{"label": "OPT", "visa_status": "F-1", "wages": 30_000, "fica_exempt": True}],
+                      year=2025, residency_classification="resident")
+    assert "classification_without_election" in str(exc.value) and "chapter 24" in str(exc.value)
+    r = employee_fica([{"label": "segment A", "wages": 5_000, "fica_exempt": True}], year=2025,
+                      residency_classification="resident")
+    assert "classification_without_election" in r.segments[0].exempt_reason
+    # The no-election answer keeps the F-1 exemption.
+    ok = employee_fica([{"label": "OPT", "visa_status": "F-1", "wages": 30_000, "fica_exempt": True}],
+                       year=2025, residency_classification="nonresident")
+    assert ok.total_fica == Decimal("0.00")

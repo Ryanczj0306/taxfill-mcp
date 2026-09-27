@@ -393,7 +393,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       exemption: Pub 519 ch. 8, FICA is withheld "if you are considered a resident alien ... even though
       your nonimmigrant classification ("F," "J," "M," or "Q") remains the same". Pass
       residency_classification (resident | nonresident | dual_status_candidate, from the residency
-      tool): for 'resident', a fica_exempt F/J/M/Q segment (visa_status, or a label naming it as F-1/J-1/OPT)
+      tool — under a §6013(g)/(h) election pass its classification_without_election, since the
+      election reaches chapter 1 and chapter 24 only, IRC 6013(g)(1)): for 'resident', a fica_exempt F/J/M/Q segment (visa_status, or a label naming it as F-1/J-1/OPT)
       is REFUSED unless exempt_basis names a different exemption (student_employed_by_school —
       Pub 519's tip for a student enrolled and regularly attending classes at the school it works for —
       or totalization_agreement). Enforces the SS wage base across segments in order, Medicare with no
@@ -727,14 +728,32 @@ def calc(op: str, args: dict[str, Any]) -> dict:
 
 @mcp.tool()
 def residency(
-    visa_periods: list[dict], days_by_year: dict[str, int], target_year: int, is_lawful_permanent_resident: bool = False
+    visa_periods: list[dict],
+    days_by_year: dict[str, int],
+    target_year: int,
+    is_lawful_permanent_resident: bool = False,
+    section_6013_election: bool = False,
 ) -> dict:
     """Federal residency (NRA/RA/dual-status) via the Substantial Presence Test + exempt years.
 
     visa_periods: [{status, start, end?}]; days_by_year: {year: days_present}. Shows the day-count work.
+
+    section_6013_election: true when the couple makes (or has in effect) the §6013(g)/(h) election
+    (P-018). Pub 519 ch. 1: "you and your spouse are treated for income tax purposes as residents
+    for your entire tax year", so the classification is 'resident' with no dual-status split,
+    whatever the SPT says; the day-count answer comes back as classification_without_election.
+    The election reaches chapter 1 and chapter 24 only (IRC 6013(g)(1)), so pass THAT answer to
+    calc op employee_fica (FICA is chapter 21), and use it to check the precondition. Two choices:
+    IRC 6013(g) - at year end one spouse a nonresident alien, the other a U.S. citizen or resident;
+    it continues into later years - and IRC 6013(h) - the dual-status year, both U.S. citizens or
+    residents at year end, one a nonresident at the start; one year only, a different statement.
     """
     days = {int(k): v for k, v in days_by_year.items()}
-    return _dump(_classify(visa_periods, days, target_year, is_lawful_permanent_resident=is_lawful_permanent_resident))
+    return _dump(_classify(
+        visa_periods, days, target_year,
+        is_lawful_permanent_resident=is_lawful_permanent_resident,
+        section_6013_election=section_6013_election,
+    ))
 
 
 # ── intake / estimate / sources / summary / file&pay ───────────────────────────
@@ -849,7 +868,7 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     - income: wages (W-2 box 1), federal_withholding (withheld + estimated payments), interest,
       bank_deposit_interest (the DEPOSIT subset of interest — US bank / savings institution /
       insurance-company deposit, not effectively connected; excluded for a nonresident under
-      IRC 871(i)(2)(A), taxed on a §6013(g)/(h) joint return), dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
+      IRC 871(i)(2)(A), taxed under a §6013(g)/(h) election, joint or separate), dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
       capital_gain_short (signed), self_employment_net (signed), retirement_income_taxable (the
       TAXABLE amount, not simply 1099-R box 2a: a traditional-IRA distribution or Roth conversion shows
       the GROSS amount in 2a with 2b checked, so a filer with basis runs calc op ira_pro_rata and
@@ -867,6 +886,23 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     - ACA (Form 1095-A line 33): aca_premiums, aca_slcsp, aca_aptc
     - spouse: nested income object with the spouse's OWN amounts (same fields; enables a true
       two-return MFS comparison — otherwise amounts are couple-combined)
+
+    Residency (P-018): record the §6013(g)/(h) election as profile residency_facts.section_6013_election
+    (true = elected or still in effect) — it makes both spouses residents for the whole year, so the
+    standard deduction, preferential rates and NIIT apply and the deposit exclusion is off, while
+    FICA keeps following the day counts. It applies on a figure with a spouse (married for the
+    year, or a confirmed MFJ/MFS status), never onto single/HOH, and never when the recorded facts
+    show neither spouse a U.S. citizen or resident (IRC 6013(g)(3) - then separate Form 1040-NRs, one
+    for each spouse who meets the nonresident filing requirements). A confirmed
+    married_filing_jointly status for a filer whose own residency is nonresident is read as the election (a joint return with a nonresident exists only under it) unless the election
+    is recorded as DECLINED (false): a decline drops MFJ for a couple with a nonresident in it, and
+    a confirmed MFJ those facts rule out is priced MFS with the contradiction as the FIRST
+    assumption. result.residency_caveat carries the election's text — IRC 6013(g) or 6013(h),
+    whichever the facts point to (a recorded election in a dual-status year gives both: it may be
+    an earlier 6013(g) election still in effect). Each spouse's separate MFS return
+    follows that spouse's OWN classification (a US-citizen spouse's Form 1040 keeps the standard
+    deduction unless the couple itemizes: IRC 63(c)(6)(A) — both methods are priced and the better
+    total is kept); a spouse whose residency is unknown is priced both ways in the range.
 
     The result's `composition` is a reconciling LEDGER: each line carries a stable `slot`, a
     `role`, and an `effect` (its signed contribution to the bottom line; the effects sum EXACTLY
@@ -909,15 +945,28 @@ def compare_scenarios(
     """Run 2+ what-if scenarios and diff each against the FIRST (the baseline), with TWO exact
     attributions per diff: the per-slot ledger view, and a sequential input walk whose steps
     telescope to the headline delta (this is how the delta of a "marry + \u00a76013(g) election"
-    scenario decomposes into one line per input change: the election step and then the filing
-    status first (and the year, for a cross-year scenario), then each income override in the
-    order given).
+    scenario decomposes into one line per input change: the year (for a cross-year scenario), then
+    the election, then the filing status, then each income override in the order given).
 
     Each scenario: {name, filing_status (REQUIRED - deterministic, never candidate-selected),
     year? (cross-year what-ifs - the result is labeled PROJECTION when any year's pack is
     provisional, and per-scenario missing_blocks flag what a planning year could not price),
-    us_resident_election? (models \u00a76013(g)/(h): MFJ becomes available; worldwide-income and
-    FICA-is-status-based caveats auto-disclosed), income_overrides? ({IncomeSnapshot field: value};
+    us_resident_election? (models \u00a76013(g)/(h) as the residency fact
+    residency_facts.section_6013_election. OMITTED = follow the profile's recorded fact (a
+    continuing election stays in effect); true = elect: both spouses are residents for the whole
+    year, so the figure takes RESIDENT rules - standard deduction, NIIT, no 871(i)(2)(A) deposit
+    exclusion - on MFJ and on MFS alike, whatever the visa timeline says; false = NOT electing
+    (declined, or revoking a continuing election) for that scenario - it pairs with MFS: false on
+    MFJ for a couple with a nonresident in it is NOT a filing option (Pub 519 FAQ), priced as the
+    separate returns. A value that overrides the recorded fact is named in the assumptions; every
+    scenario that ran under the election - flagged, recorded, or read from a confirmed MFJ status
+    of a nonresident - is named, with its residency_caveat on the outcome (worldwide income, FICA,
+    the statement, the precondition), and the walk ends on each scenario's own configuration, booking
+    a change of the election's reading to the step where it happens. Never `recommended` (None when
+    nothing is a filing option): a JOINT scenario seeking an election the recorded facts rule out (a
+    separate one, priced without it, stays an option), MFJ with the election declined, MFS under a
+    definite 6013(h) choice, or head of household for a nonresident-alien taxpayer (Pub 519 ch. 5)),
+    income_overrides? ({IncomeSnapshot field: value};
     'spouse' replaces the whole spouse snapshot; attribution applies them in this order), note?}.
 
     PERSISTENCE (the "change one fact and re-diff" loop): pass save_as="name" to store the set

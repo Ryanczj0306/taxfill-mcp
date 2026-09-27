@@ -12,6 +12,8 @@ import pytest
 from taxfill_core.residency import (
     classify,
     exempt_individual_years,
+    section_6013_kind,
+    section_6013_texts,
     substantial_presence_test,
 )
 
@@ -715,3 +717,132 @@ def test_result_carries_work_inputs_and_citations():
     assert dumped["classification"] == "resident"
     assert dumped["spt"]["weighted_days_exact"] == "330"
     assert dumped["citations"][0]["url"].startswith("https://www.irs.gov")
+
+
+# ---------------------------------------------------------------------------
+# P-018 (Phase J JF5a): the §6013(g)/(h) election is a residency FACT. Pub 519
+# (2025) ch. 1, Nonresident Spouse Treated as a Resident: "If you make this
+# choice, you and your spouse are treated for income tax purposes as residents
+# for your entire tax year" — and "the special instructions and restrictions for
+# dual-status taxpayers in chapter 6 do not apply to you". IRC 6013(g)(1) reaches
+# "chapter 1 for all of such taxable year" and chapter 24 wage withholding only,
+# so the day-count answer is kept (FICA and the precondition still follow it).
+# ---------------------------------------------------------------------------
+
+_SAMPLE_F1_DAYS = {2018: 130, 2019: 330, 2020: 330, 2021: 330, 2022: 330}
+
+
+def test_p018_election_makes_an_exempt_f1_resident_and_keeps_the_day_count_answer():
+    without = classify(SAMPLE_F1, _SAMPLE_F1_DAYS, 2022)
+    assert without.classification == "nonresident"          # control: exempt year, SPT fails
+    assert without.section_6013_election is False
+    assert without.classification_without_election is None  # no election, nothing to keep
+    result = classify(SAMPLE_F1, _SAMPLE_F1_DAYS, 2022, section_6013_election=True)
+    assert result.classification == "resident"
+    assert result.section_6013_election is True
+    assert result.classification_without_election == "nonresident"
+    # The day-count work still runs and is unchanged — the election never rewrites it.
+    assert result.spt.weighted_days == 0.0
+    assert result.spt.meets_spt is False
+    assert result.work == without.work
+    # The reasons lead with the election and its three quoted rules, then explain the
+    # no-election answer (which still decides the precondition and FICA).
+    lead = result.reasons[0]
+    assert lead.startswith("§6013(g)/(h) election applied: RESIDENT for all of 2022")
+    assert "treated for income tax purposes as residents for your entire tax year" in lead
+    assert "one spouse is a U.S. citizen or a resident alien" in lead          # the precondition
+    assert "chapter 24 (relating to wage withholding)" in lead and "3121(b)(19)" in lead  # FICA
+    assert "classification_without_election" in result.reasons[1] and "'nonresident'" in result.reasons[1]
+    assert without.reasons[0] in result.reasons                              # the SPT reasons are kept
+    assert any("6013" in c.source and c.url.startswith("https://www.irs.gov") for c in result.citations)
+    assert all(c.source.startswith("IRS Pub. 519") for c in result.citations)
+    assert result.inputs["section_6013_election"] is True
+    dumped = result.model_dump()
+    assert dumped["classification"] == "resident"
+    assert dumped["classification_without_election"] == "nonresident"
+
+
+def test_p018_election_leaves_no_dual_status_flag():
+    # A mid-year first arrival is a dual-status candidate without the election; under it
+    # the couple are residents for the ENTIRE year — no split (Pub 519 ch. 1 Caution).
+    without = classify([period("H-1B", date(2024, 3, 15))], {2024: 250}, 2024)
+    assert without.classification == "dual_status_candidate"
+    result = classify([period("H-1B", date(2024, 3, 15))], {2024: 250}, 2024, section_6013_election=True)
+    assert result.classification == "resident"
+    assert result.classification_without_election == "dual_status_candidate"
+    assert "no dual-status split" in result.reasons[0]
+    assert "dual-status taxpayers in chapter 6 do not apply to you" in result.reasons[0]
+
+
+def test_p018_election_with_no_facts_is_resident_with_no_day_count_answer():
+    result = classify([], {}, 2024, section_6013_election=True)
+    assert result.classification == "resident"
+    assert result.section_6013_election is True
+    assert result.classification_without_election is None
+    assert any("classification_without_election is None" in r for r in result.reasons)
+    # Control: the same empty facts without the election are the usual nonresident default.
+    assert classify([], {}, 2024).classification == "nonresident"
+
+
+def test_p018_election_on_a_green_card_holder_keeps_resident_as_the_day_count_answer():
+    result = classify([], {2024: 200}, 2024, is_lawful_permanent_resident=True, section_6013_election=True)
+    assert result.classification == "resident"
+    assert result.classification_without_election == "resident"
+
+
+def test_p018_the_6013g_and_6013h_choices_are_two_texts():
+    # Pub 519 (2025) ch. 1 has two choices: Nonresident Spouse Treated as a Resident
+    # (IRC 6013(g) — a nonresident spouse at year end; "you and your spouse can file joint
+    # or separate returns in later years") and Choosing Resident Alien Status (IRC 6013(h)
+    # — the dual-status year; "Neither you nor your spouse can make this choice for any
+    # later tax year"). Pub 501: "You can only make this choice for 1 year".
+    assert section_6013_kind("nonresident", "us") == "g"
+    assert section_6013_kind("resident", "nonresident") == "g"
+    assert section_6013_kind("dual_status_candidate", "nonresident") == "g"   # RA at end + NRA spouse at end
+    assert section_6013_kind("nonresident", "nonresident") == "g"             # (its precondition fails)
+    assert section_6013_kind("dual_status_candidate", "us") == "h"
+    assert section_6013_kind("us", "dual_status_candidate") == "h"
+    assert section_6013_kind("dual_status_candidate", "dual_status_candidate") == "h"
+    assert section_6013_kind("us", None) == "either"
+    g_effect, g_pre, g_stmt = section_6013_texts("g")
+    h_effect, h_pre, h_stmt = section_6013_texts("h")
+    assert "can file joint or separate returns in later years" in g_effect
+    assert "only make this choice for 1 year" in h_effect and "later years" not in h_effect
+    assert "IRC 6013(g)(3)" in g_pre                               # the continuing election's own test
+    assert "You were a nonresident alien at the beginning of the year." in h_pre
+    assert "on the last day of your tax year" in g_stmt and "you both qualify to make the choice" in h_stmt
+    either = " ".join(section_6013_texts("either"))
+    assert "IRC 6013(g) choice" in either and "IRC 6013(h) choice instead" in either
+
+
+def test_p018_the_residency_tool_quotes_the_choice_its_answer_points_to():
+    # A full-year nonresident is the 6013(g) spouse; a dual-status arrival year could be
+    # either (the spouse's facts decide), so both are quoted conditionally.
+    full_year = classify(SAMPLE_F1, _SAMPLE_F1_DAYS, 2022, section_6013_election=True)
+    assert "IRC 6013(g)" in full_year.reasons[0] and "IRC 6013(h) choice instead" not in full_year.reasons[0]
+    arrival = classify([period("H-1B", "2025-06-02")], {2023: 0, 2024: 0, 2025: 213}, 2025,
+                       section_6013_election=True)
+    assert arrival.classification_without_election == "dual_status_candidate"
+    assert "IRC 6013(h) choice instead" in arrival.reasons[0]
+
+
+def test_p018_the_quoted_texts_carry_the_conditions_the_law_attaches():
+    # Second verify round (2026-09-26), texts read this session:
+    # IRC 3121(b)(19) excludes only service "performed to carry out the purpose specified in
+    # subparagraph (F), (J), (M), or (Q)"; Pub 519's Note on the 6013(h) choice: "If you
+    # previously made that choice and it is still in effect, you do not need to make the
+    # choice explained here"; IRC 6013(g)(3) and Pub 519 Suspending the Choice, worded on
+    # the recorded facts (the prior-year residency fact is JF5b's).
+    from taxfill_core import residency as r
+
+    assert "which is performed to carry out the purpose specified in subparagraph (F), (J), (M), or (Q)" in (
+        r.SECTION_6013_FICA)
+    h_effect, _, h_stmt = section_6013_texts("h")
+    for text in (h_effect, h_stmt):
+        assert "If you previously made that choice and it is still in effect" in text
+    assert section_6013_kind("dual_status_candidate", "us", recorded=True) == "either"
+    assert section_6013_kind("nonresident", "us", recorded=True) == "g"
+    assert ("any such election shall not apply for any taxable year if neither spouse is a citizen or resident of "
+            "the United States at any time during such year") in r.SECTION_6013_SUSPENDED
+    assert "residency carried over from the prior year" in r.SECTION_6013_SUSPENDED
+    assert "Generally, you cannot file as married filing jointly if either spouse" in r.SECTION_6013_NO_JOINT

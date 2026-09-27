@@ -580,3 +580,13 @@ def test_direct_deposit_or_a_balance_due_gets_no_paper_check_note():
         assert not any("ModernPayments" in n for n in r.notes)
         assert all(c.url != "https://www.irs.gov/ModernPayments" for c in r.citations)
         assert all(c.url != "https://www.irs.gov/pub/taxpros/fs-2026-02.pdf" for c in r.citations)
+
+
+def test_p018_the_election_statement_names_the_6013h_declaration_too():
+    # P-018. Pub 519 ch. 1, Choosing Resident Alien Status — the dual-status year's statement
+    # declares "that you both qualify to make the choice ...", not the 6013(g) last-day one.
+    r = _only([FilingManifestItem(form="1040", tax_year=2025, bottom_line=-500, state="Texas",
+                                  filing_jointly=True, section_6013_election=True)])
+    statement = r.assemble[0]
+    assert "IRC 6013(g) declaration" in statement and "IRC 6013(h)" in statement
+    assert "that you both qualify to make the choice" in statement and "dual-status spouse(s)" in statement

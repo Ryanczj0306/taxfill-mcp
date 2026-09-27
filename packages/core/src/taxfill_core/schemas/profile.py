@@ -181,6 +181,40 @@ class ResidencyFacts(BaseModel):
         description="Days physically present in the US, keyed by calendar year; computed from I-94 history when provided.",
     )
     home_country_address: Answer[str] | None = None
+    section_6013_election: Answer[bool] | None = Field(
+        default=None,
+        description=(
+            "The §6013(g)/(h) election to treat a nonresident-alien spouse as a U.S. resident (P-018). "
+            "True = the couple makes it for this tax year, or made it earlier and it remains in effect; "
+            "False = declined; None = not asked. Pub 519 ch. 1, Nonresident Spouse Treated as a Resident: "
+            "'If you make this choice, you and your spouse are treated for income tax purposes as "
+            "residents for your entire tax year' — so the residency answer becomes RESIDENT for BOTH "
+            "spouses whatever the visa timeline and day counts say (IRC 6013(g)(1): 'for purposes of "
+            "chapter 1 for all of such taxable year, and ... for purposes of chapter 24 (relating to wage "
+            "withholding)' — not FICA, so an F/J exempt individual's social security and Medicare "
+            "exemption is unchanged). The choice is JOINT and needs a spouse at year end ('If, at the end "
+            "of your tax year, you are married and one spouse is a U.S. citizen or a resident alien and "
+            "the other spouse is a nonresident alien, you can choose ...'), so it is recorded ONCE, here "
+            "on the taxpayer's residency facts, never on Spouse.residency_facts, and it is applied only "
+            "when the household is married for the year — household.marital_status 'married', or "
+            "'widowed' with spouse_death_year in the tax year (Pub 519, Ending the Choice: 'The death of "
+            "either spouse ends the choice, beginning with the first tax year following the year the "
+            "spouse died') — or, marital status unanswered, a confirmed married_filing_jointly or "
+            "married_filing_separately status (Pub 501: 'You can choose married filing separately as your "
+            "filing status if you are married'); never onto a single or head-of-household figure; and never "
+            "when the recorded facts show neither spouse a U.S. citizen or resident at any time in the year "
+            "(IRC 6013(g)(3): the election 'shall not apply for any taxable year if neither spouse is a "
+            "citizen or resident of the United States at any time during such year'; Pub 519, Suspending "
+            "the Choice). "
+            "Two choices share this fact: IRC 6013(g) (a nonresident spouse at year end) — 'You must file "
+            "a joint income tax return for the year you make the choice, but you and your spouse can file "
+            "joint or separate returns in later years' — and IRC 6013(h) (the dual-status year: both "
+            "spouses U.S. citizens or residents at year end, one a nonresident at the start) — 'You and "
+            "your spouse must file a joint return for the year of the choice' and 'Neither you nor your "
+            "spouse can make this choice for any later tax year' (Pub 519 ch. 1, Choosing Resident Alien "
+            "Status), so True in a later year means a continuing 6013(g) election."
+        ),
+    )
 
 
 class Identity(BaseModel):
@@ -256,8 +290,11 @@ class Spouse(BaseModel):
     (name, SSN/ITIN, DOB), their own income documents (tagged ``owner='spouse'``
     in ``income_documents``), and — when an NRA spouse is involved — their own
     immigration and residency facts. Treating an NRA spouse as a U.S. resident to
-    file jointly is the §6013(g)/(h) election (worldwide income becomes taxable);
-    the election itself is a recorded position, not a profile field.
+    file jointly is the §6013(g)/(h) election (worldwide income becomes taxable).
+    The election is a joint choice that makes BOTH spouses residents, so it is
+    recorded once, on the taxpayer's ``Profile.residency_facts.section_6013_election``
+    (P-018) — a copy on ``Spouse.residency_facts`` is refused, never a second
+    source of truth.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -278,6 +315,17 @@ class Spouse(BaseModel):
         default=None, description="Spouse's visa timeline — drives the NRA-spouse §6013(g)/(h) decision."
     )
     residency_facts: ResidencyFacts | None = None
+
+    @model_validator(mode="after")
+    def _election_lives_on_the_taxpayer(self) -> "Spouse":
+        if self.residency_facts is not None and self.residency_facts.section_6013_election is not None:
+            raise ValueError(
+                "household.spouse.residency_facts.section_6013_election is not where the §6013(g)/(h) "
+                "election is recorded — the choice is joint and makes BOTH spouses residents for the whole "
+                "year (Pub 519 ch. 1), so record it once as residency_facts.section_6013_election on the "
+                "taxpayer's profile and leave the spouse's copy unset"
+            )
+        return self
 
 
 class OtherTaxpayer(BaseModel):

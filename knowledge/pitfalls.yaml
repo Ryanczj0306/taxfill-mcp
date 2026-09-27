@@ -785,10 +785,11 @@ pitfalls:
       field description carries the three pinpoints. _bottom_line excludes it
       from income BEFORE "Total income" for a nonresident — a registered
       explanatory ledger slot, deposit_interest_exclusion, so status/scenario
-      diffs stay total — and switches the exclusion OFF when the candidate
-      status is married_filing_jointly, because a nonresident is on a joint
-      return only through the §6013(g)/(h) election that makes both spouses
-      residents; that path records a note the caller turns into a disclosure.
+      diffs stay total — and switches the exclusion OFF under the §6013(g)/(h)
+      election that makes both spouses residents: since P-018 the election is
+      applied as residency, before any rule runs, and a married_filing_jointly
+      status stays gated as the last line of defense, because a nonresident is
+      on a joint return only through the election.
       estimate_refund replaced the "may OVERTAX" sentence with four
       disclosures that each name an amount (the fourth, the spouse-taxed note,
       is rule (e)'s): the dollars EXCLUDED with the
@@ -847,23 +848,21 @@ pitfalls:
       taxable ($440 understated in its repro); a spouse whose residency is
       unknown is taxed on it with a disclosure, the rule (b) no-guessing shape.
       What is NOT modeled and is
-      reported rather than hidden: the reverse direction (a resident
-      taxpayer's nonresident spouse) gets neither the exclusion nor a
-      disclosure, and intake asks interest_character on the taxpayer's status
-      only (JF5a/JF5b); the spouse's MFS return still borrows the taxpayer's
-      nonresident flag for every OTHER rule (no standard deduction, ordinary
-      rates, no NIIT) — so the FDAP note covers every return computed under
-      those rules, not only the exclusion's payees (JF5a); a compare_scenarios
-      us_resident_election on an MFS status still applies the exclusion (only
-      the MFJ gate is modeled); and compare_scenarios' one-override-at-a-time
+      reported rather than hidden: compare_scenarios' one-override-at-a-time
       walk rejects an intermediate step where interest drops below
-      bank_deposit_interest (list the subset field first — the same pre-existing
-      shape as qualified_dividends / dividends); estimate_refund classifies residency from
-      the visa timeline and day counts alone, so an election scenario built by
-      compare_scenarios (which flips identity.us_person) leaves `nonresident`
-      True on a profile that carries a timeline — the MFJ gate here is what
-      keeps the exclusion honest on that path, while the other NRA rules
-      (itemized-only deduction, no NIIT) still run under the election there.
+      bank_deposit_interest (list the subset field first — the same
+      pre-existing shape as qualified_dividends / dividends; JF1b.6). The rest
+      of the J0 not-modeled list closed in JF5a (P-018): the reverse direction
+      (a resident taxpayer's nonresident spouse) now gets the exclusion on the
+      spouse's separate return, with its disclosure, and intake asks
+      interest_character about a 1099-INT whose OWNER classifies nonresident;
+      the spouse's MFS return runs on the spouse's own classification for
+      every rule, so the FDAP note covers exactly the returns computed under
+      the nonresident rules; and the election is a residency fact
+      (residency_facts.section_6013_election), so the exclusion is off under it
+      on a separate status too, and an election scenario on a profile that
+      carries a timeline runs under resident rules. The MFJ gate in
+      _bottom_line stays as the last line of defense.
       Regression tests, P-013-tagged: packages/core/tests/test_estimate.py
       (excluded when characterized, the ledger line and the disclosure amount;
       partial characterization taxes only the remainder and says so; resident
@@ -1157,3 +1156,184 @@ pitfalls:
       not the old sentence, the pack fields load with both quotes, and the
       schema refuses a block missing (C), a non-(a)(7)(i) pinpoint or an
       optional flag other than true.
+  - id: P-018
+    incident: >-
+      THE §6013(g)/(h) ELECTION WAS NOT A RESIDENCY FACT, SO THE ELECTED RETURN
+      KEPT THE NONRESIDENT RULES. compare_scenarios modeled the election by
+      flipping identity.us_person, and estimate_refund classifies residency from
+      the visa timeline and day counts whenever they exist, so on any profile
+      that carried a timeline the "election" figure was a joint return computed
+      under Form 1040-NR rules: an itemized-only deduction of $0, no NIIT, no
+      preferential rates. Reproduced at 17e7d5c on the repo's own nonresident
+      fixture (an F-1 from 2020, TY2023, wages $60,000, withheld $6,000):
+      married filing separately -$2,513 against an "election" of -$763, where
+      the resident joint return with the $27,700 standard deduction is +$2,561.
+      The scenario tests used a profile with no timeline. Neighbours of the same
+      defect: a later-year MFS figure under a continuing election still applied
+      the 871(i)(2)(A) deposit-interest exclusion, and the spouse's separate MFS
+      return borrowed the TAXPAYER's classification (a US-citizen spouse's Form
+      1040 got no standard deduction: $3,047 overstated on a $60,000 MFS return,
+      2023). Two adversarial verify rounds found the rest of the shape: 6013(h)
+      treated as 6013(g) (the wrong statement, "later years", the wrong NIIT
+      paragraph); IRC 63(c)(6)(A) ignored on the two separate returns; a default
+      False that silently revoked a recorded continuing election; the W-7 last
+      mile dropped; EXCLUDED said of a joint figure that taxed the interest;
+      then a recorded DECLINE the estimate ignored (it headlined and recommended
+      the joint return the couple had declined), an explicit false on a joint
+      scenario overruled by the joint-status reading (the original +0 walk
+      step), the election applied although both spouses were nonresidents, a
+      recorded election in a dual-status year told it was a new one-year 6013(h)
+      choice with no separate returns (it may be an earlier 6013(g) election
+      still in effect), and the election landing on a 'single' figure; a third
+      round: the scenario walk raising on [MFS, MFJ with the election declined],
+      two nonresidents who declined told to record the election as true, the
+      Suspending-the-Choice quote cut before its condition, a married
+      household's head-of-household scenario dropping the spouse's return, and
+      the 6013(g)(3) gate asserting a nonresident answer that rested on missing
+      day counts (intake treated the same answer as unknown); a fourth: the fix
+      for that over-reached (a missing year that could NOT flip the answer made
+      two certain nonresidents "unknown", so the election applied), a married
+      head of household forced onto one deduction method and given the EITC on
+      the nonresident-spouse route, cross-year walk labels claiming the wrong
+      step, and head of household offered to a nonresident-alien taxpayer. The law,
+      read 2026-09-25/26. Pub 519 (2025) ch. 1, Nonresident Spouse Treated as a
+      Resident (IRC 6013(g)): "If you make this choice, you and your spouse are
+      treated for income tax purposes as residents for your entire tax year."
+      and "You must file a joint income tax return for the year you make the
+      choice, but you and your spouse can file joint or separate returns in
+      later years."; it needs that "at the end of your tax year, you are married
+      and one spouse is a U.S. citizen or a resident alien and the other spouse
+      is a nonresident alien". Choosing Resident Alien Status (IRC 6013(h)):
+      "You and your spouse are treated as U.S. residents for the entire year for
+      income tax purposes", "You and your spouse must file a joint return for
+      the year of the choice", "Neither you nor your spouse can make this choice
+      for any later tax year", and its Note: "If you previously made that choice
+      and it is still in effect, you do not need to make the choice explained
+      here". IRC 6013(g)(3): an election applies "to all subsequent taxable
+      years until terminated", "except that any such election shall not apply
+      for any taxable year if neither spouse is a citizen or resident of the
+      United States at any time during such year" (Pub 519, Suspending the
+      Choice). Pub 519's FAQ: "Generally, you cannot file as married filing
+      jointly if either spouse was a nonresident alien at any time during the
+      tax year" and "If your spouse does not make this choice, you must file a
+      separate return on Form 1040 or 1040-SR. Your spouse must file Form
+      1040-NR." Pub 501: "If your spouse died during the year, you are
+      considered married for the whole year for filing status purposes"; "You
+      both must use the same method of claiming deductions"; Considered
+      Unmarried: "You are considered unmarried for head of household purposes if
+      your spouse was a nonresident alien at any time during the year and you
+      don't choose to treat your nonresident spouse as a resident alien." IRC
+      6013(g)(1): a resident "(A) for purposes of chapter 1 for all of such
+      taxable year, and (B) for purposes of chapter 24 (relating to wage
+      withholding)" — not chapter 21, where IRC 3121(b)(19) keeps excluding an
+      F, J, M or Q nonimmigrant's service "which is performed to carry out the
+      purpose specified in subparagraph (F), (J), (M), or (Q)". IRC 63(c)(6):
+      "(A) a married individual filing a separate return where either spouse
+      itemizes deductions, (B) a nonresident alien individual, ... the standard
+      deduction shall be zero." Treas. Reg. 1.1411-2(a)(2)(iii) (6013(g)) and
+      (iv) (6013(h)): NIIT follows the joint figure only under a second,
+      chapter-2A election; by default the spouses are "treated as married filing
+      separately for purposes of section 1411", and under (iii) "the nonresident
+      alien spouse will not be subject to tax under section 1411".
+    countermeasure: >-
+      The election is a residency FACT with one home:
+      ResidencyFacts.section_6013_election on the TAXPAYER (schemas/profile.py;
+      the Spouse model refuses a copy — the choice is joint).
+      residency.classify(..., section_6013_election=True) returns 'resident'
+      with no dual-status flag and keeps the day-count answer as
+      classification_without_election, which FICA follows (calc op
+      employee_fica, the estimate's withheld-in-error note, intake's FICA note).
+      The two choices are two texts (residency.SECTION_6013G_* / SECTION_6013H_*
+      — effect, precondition, statement — plus SECTION_6013_FICA, _DECLINE,
+      _NO_JOINT and _SUSPENDED), and residency.section_6013_kind picks from each
+      spouse's no-election answer: a full-year nonresident means 6013(g); a
+      dual-status year with a citizen or resident spouse means 6013(h) for the
+      joint-status reading but 'either' for a RECORDED election (it may be an
+      earlier 6013(g) one; the (h) texts carry the Note); only a definite 'h'
+      drops a separate figure from the range and from `recommended`.
+      estimate._election_state decides it once, before any rule: a recorded
+      election applies on a figure with a spouse (estimate._election_marriage_ok
+      and intake._election_in_effect, one rule: married for the year incl. the
+      year of death, or an unanswered marital status with a confirmed MFJ or MFS
+      status; never onto single, HOH or the death year's 'single'-only
+      candidates, and the reason is named — 'not answered', never 'not
+      married'); a confirmed MFJ status of a nonresident or dual-status filer is
+      read as the election unless a DECLINE is recorded (the user's explicit
+      fact wins); and neither applies when the recorded facts show both spouses
+      nonresident and neither a declared U.S. person (IRC 6013(g)(3), worded on
+      the recorded facts because the prior-year residency fact is JF5b's; a
+      spouse of unknown residency cannot be judged, so it applies — and a
+      nonresident answer counts only when CERTAIN: residency.certain_nonresident,
+      shared by estimate._election_state and intake._election_unavailable, is
+      False when a missing lookback year could flip it (classify's
+      nonresident_may_flip, the "may be WRONG" test), and a missing year that
+      cannot flip it leaves the answer certain).
+      On those facts a recorded decline is never answered with "record the
+      election as true": the suspended text, which keeps Pub 519's condition
+      ("if either meets the filing requirements for nonresident aliens"). A recorded
+      decline with a nonresident in the couple, or that unmet precondition,
+      means no joint return: MFJ leaves the candidates (MFS primary; HOH for the
+      citizen or resident spouse on the qualifying-person test, priced as that
+      return plus the spouse's separate one), and a confirmed MFJ those facts
+      rule out is priced MFS with a CONTRADICTION note FIRST — never a joint
+      figure under nonresident rules. Under the election the standard deduction,
+      the preferential rates and NIIT apply and the deposit exclusion is off on
+      a joint AND a separate status; the caveat carries the effect, statement,
+      precondition, FICA text and W-7 last mile, the later-year reading of an
+      MFS figure (with the continuing-(g) exception for (h)), and a NIIT note
+      saying the joint figure ASSUMES the second (chapter 2A) election, that the
+      unpriced default may be higher or lower, and when the second election is
+      available ((iii)(B)(2); pricing the default is JF5b.4). Each spouse's
+      separate MFS return runs on that spouse's OWN classification
+      (estimate._spouse_own_classification); the pair prices both deduction
+      methods under IRC 63(c)(6)(A) and keeps the better total; a spouse of
+      unknown residency is resident for the point (except on the no-joint path
+      when you are a declared U.S. person or a resident, where it is the
+      nonresident the decline rests on) and the other reading
+      is bracketed, and the note names what to record. The deposit disclosures name
+      only amounts a return actually excluded and quote the choice that applies.
+      compare_scenarios: us_resident_election is tri-state (omitted follows the
+      profile — the recorded fact or the joint-status reading; an override is
+      named); the walk always ends on the scenario's own configuration (its
+      explicit flag, or an omitted flag's changed reading carried as its own
+      step and restored after the status step); a married household's HOH
+      scenario keeps the marriage and prices both returns, as the estimate does
+      (a married filer's HOH comes by the nonresident-spouse route — spouse on
+      Form 1040-NR rules, no EITC computed with or without a spouse snapshot
+      (Pub 519 ch. 5: the filer "may still be considered married" for the EIC;
+      the separated-spouse rule is not modeled), one deduction method — or the
+      lived-apart route — the standard deduction even if the spouse itemizes,
+      Pub 501, and no EITC without a qualifying child from TY2021 (IRC 32(d)(2)); on the no-joint path a
+      spouse of unknown residency is priced as the nonresident the decline rests
+      on, for MFS and HOH alike, and the other reading bracketed); head of
+      household for a nonresident-alien taxpayer is never recommended (a
+      confirmed one is priced as given with a Pub 519 ch. 5 caveat, JF1b.12);
+      never `recommended` (None when nothing is left): a JOINT scenario seeking
+      an election its facts rule out (a separate one, priced without it, is the
+      couple's actual returns and stays an option), MFJ with the election
+      declined for a couple with a nonresident (priced as the separate returns,
+      quoting the FAQ), a definite-(h) MFS figure; a single/HOH scenario that
+      flags or follows an election is named as not applied (HOH per Pub 501, and
+      ending a recorded election is final — Pub 519, Ending the Choice). Intake:
+      both classifications are resident under the election; the spouse battery
+      and household.section_6013_election questions answer into the TAXPAYER's
+      fact (the prompts say so), a true answer covers an earlier election still
+      in effect (no new statement), and neither is asked when both spouses are
+      nonresident (a note quotes 6013(g)(3)); after a recorded decline the
+      status question offers MFS (and HOH for a citizen or resident spouse),
+      never MFJ. The reconcile checklist and file_and_pay's statement cover both
+      declarations and the later-year box. THE DURABLE RULE: residency is
+      decided once, from facts, before any rule runs — an election, a status, a
+      decline or a spouse's facts that change residency must change the
+      classification, never a flag the classifier ignores; the user's explicit
+      fact beats an implied reading; each return follows its own payee's
+      classification; and a quoted rule names WHICH election it is. Regression
+      tests, P-018-tagged: packages/core/tests/test_compare_scenarios.py (the
+      bug site on a timeline-bearing profile, the tri-state flag, MFJ-false not
+      a filing option, the implied walk step, the unavailable election, HOH
+      ending a recorded election), test_estimate.py (incl. the walk across
+      every election posture),
+      test_residency.py, test_profile.py, test_intake.py,
+      test_projection_ops.py, test_file_and_pay.py, test_workspace.py, eval (o)
+      in evals/test_scenarios.py, and the residency MCP tool in
+      packages/mcp-server/tests/test_server_e2e.py.

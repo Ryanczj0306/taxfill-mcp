@@ -276,20 +276,30 @@ class Workspace:
             lines += [f"- [ ] **{p.topic}** — {p.status}: {p.value or p.rationale or 'needs an authoritative source'}" for p in open_]
         else:
             lines.append("- [x] All recorded positions are decided and cited.")
-        # A recorded §6013(g)/(h) position means the joint election is in play: the
-        # election is only VALID with a statement signed by both spouses attached to
-        # the first joint return, so the checklist carries that last-mile item
-        # whenever any position's topic mentions 6013 (whatever its status).
-        if any("6013" in p.topic.lower() for p in positions):
+        # A recorded §6013(g)/(h) position — or the election recorded as the profile's
+        # residency fact (P-018: residency_facts.section_6013_election, its one home) —
+        # means the joint election is in play: the election is only VALID with a
+        # statement signed by both spouses attached to the joint return, so the
+        # checklist carries that last-mile item (the two choices take different
+        # declarations — Pub 519 ch. 1, How To Make the Choice / Choosing Resident Alien
+        # Status — so both are named).
+        if any("6013" in p.topic.lower() for p in positions) or self._election_recorded():
             lines += [
                 "",
                 "## §6013(g)/(h) election — required attachment",
-                "- [ ] Attach the ELECTION STATEMENT to the first joint return: a statement SIGNED BY BOTH "
-                "SPOUSES declaring that one spouse was a nonresident alien and the other a U.S. citizen or "
-                "resident on the last day of the tax year, and that both choose to be treated as U.S. "
-                "residents for the entire year, with each spouse's full name, address, and SSN/ITIN "
-                "(https://www.irs.gov/individuals/international-taxpayers/nonresident-spouse). A joint "
-                "return with a nonresident-alien spouse is not valid without it.",
+                "- [ ] Attach the ELECTION STATEMENT to the joint return, SIGNED BY BOTH SPOUSES, with each "
+                "spouse's full name, address, and SSN/ITIN "
+                "(https://www.irs.gov/individuals/international-taxpayers/nonresident-spouse). IRC 6013(g) "
+                "(one spouse a nonresident alien on the last day of the year) — on the first joint return, "
+                "declaring that one spouse was a nonresident alien and the other a U.S. citizen or resident on "
+                "the last day of the tax year, and that both choose to be treated as U.S. residents for the "
+                "entire year. IRC 6013(h) (both U.S. citizens or residents on the last day, one a nonresident "
+                "on the first — a dual-status year) — on the return for the year of the choice, declaring that "
+                "you both qualify to make the choice and choose to be treated as U.S. residents for the entire "
+                "tax year. In a LATER year of an IRC 6013(g) election still in effect there is no new statement: "
+                "\"Also, check the box and enter their name if you and your nonresident spouse made the choice to "
+                "be treated as residents in a prior year and the choice remains in effect\" (Pub 519 ch. 1). A "
+                "joint return with a nonresident-alien spouse is not valid without the election.",
             ]
         lines += ["", "## Missing inputs"]
         if gaps:
@@ -300,6 +310,21 @@ class Workspace:
         self.checklist_path.write_text("\n".join(lines))
         self._touch(now)
         return self.checklist_path
+
+    def _election_recorded(self) -> bool:
+        """True when the saved profile records residency_facts.section_6013_election as true on a
+        household that is not recorded as unmarried (the choice needs a spouse at year end)."""
+        try:
+            data = self.load_profile()
+        except (OSError, ValueError):
+            return False
+        data = data if isinstance(data, dict) else {}
+        rf = data.get("residency_facts") or {}
+        answer = rf.get("section_6013_election") if isinstance(rf, dict) else None
+        hh = data.get("household") or {}
+        marital = hh.get("marital_status") if isinstance(hh, dict) else None
+        unmarried = isinstance(marital, dict) and marital.get("value") == "unmarried"
+        return isinstance(answer, dict) and answer.get("value") is True and not unmarried
 
     # ── purge (privacy) ────────────────────────────────────────────────────
     def purge(self) -> int:

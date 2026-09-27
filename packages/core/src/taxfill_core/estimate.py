@@ -24,7 +24,31 @@ Honesty rules baked in (UX principle 1; eval scenario (j)):
   that character is taxed as effectively connected income and SAID to be, and
   on a joint return (which a nonresident reaches only through the §6013(g)/(h)
   election) the exclusion is switched OFF, because the election — not the
-  marriage — makes the payee a resident.
+  marriage — makes the payee a resident;
+- the §6013(g)/(h) election is RESIDENCY, applied before any rule runs
+  (P-018): recorded as ``residency_facts.section_6013_election`` on a household
+  married for the year (the year of a spouse's death included), or read from
+  a confirmed joint status of a filer whose own residency is nonresident — a
+  joint return that exists only under the election — it makes both spouses
+  "residents for your entire tax year" (Pub 519 ch. 1), so the standard
+  deduction, the preferential rates and NIIT apply and the deposit exclusion
+  is off on a joint AND a separate status, while FICA keeps following the
+  day-count answer (IRC 6013(g)(1) reaches chapters 1 and 24 only). Its texts
+  quote IRC 6013(g) or 6013(h) — two choices with different statements,
+  durations and NIIT defaults — whichever the facts point to. It is NOT
+  applied onto a status with no spouse, nor when the recorded facts show
+  neither spouse a U.S. citizen or resident (IRC 6013(g)(3)); a recorded
+  DECLINE drops married-filing-jointly for a couple with a nonresident in it,
+  and a joint status those facts rule out is priced married-filing-separately
+  with the contradiction named first;
+- each spouse's separate (two-return MFS) return follows that spouse's OWN
+  classification (P-018), never the taxpayer's: a US-citizen spouse's Form
+  1040 gets the standard deduction (unless the couple itemizes — IRC
+  63(c)(6)(A); both methods are priced) and the preferential rates; a
+  nonresident spouse's Form 1040-NR gets no standard deduction and, in this
+  estimate, ordinary rates on investment income (the graduated rates are the
+  same; FDAP is not modeled — disclosed); a spouse of unknown residency is
+  priced both ways in the range.
 
 The profile supplies the qualitative picture (filing status, dependents, which
 documents are still missing); ``income`` supplies the confirmed dollar amounts
@@ -35,7 +59,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal, NamedTuple
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -113,9 +137,10 @@ class IncomeSnapshot(BaseModel):
             "trade or business within the United States'; Pub 519 ch. 3 (Exclusions From Gross Income — "
             "Interest Income) excludes it from gross income; the Instructions for Form 1040-NR (line 2b, "
             "Exception 3) say not to report it on line 2b. For a RESIDENT it changes nothing (all interest "
-            "is taxable). On a JOINT return — which a nonresident reaches only through the §6013(g)/(h) "
-            "election that treats both spouses as residents for the whole year (Pub 519 ch. 1) — it is "
-            "taxed again: the election, not the marriage, ends the exclusion. Interest left in `interest` "
+            "is taxable). Under the §6013(g)/(h) election, which treats both spouses as residents for the "
+            "whole year (Pub 519 ch. 1), it is taxed on a JOINT and on a SEPARATE return alike (a joint "
+            "return is the only way a nonresident reaches one): the election, not the marriage, ends the "
+            "exclusion. Interest left in `interest` "
             "without this character is taxed here as effectively connected ordinary income. Treasury / "
             "savings-bond interest (1099-INT box 3) and bond interest are NOT deposits — leave them out."
         ),
@@ -551,6 +576,14 @@ class RefundEstimate(BaseModel):
     assumptions: list[str] = Field(default_factory=list)
     what_would_change_it: list[str] = Field(default_factory=list)
     citations: list[Citation] = Field(default_factory=list)
+    residency_caveat: str | None = Field(
+        default=None,
+        description=(
+            "The residency caveat these figures ran under (also in assumptions and what_would_change_it): the "
+            "§6013(g)/(h) election in effect (P-018), a dual-status year, or a nonresident spouse direction — "
+            "None when there is none. compare_scenarios surfaces it per scenario."
+        ),
+    )
 
 
 def _marital(profile: Profile) -> str | None:
@@ -563,6 +596,103 @@ def _marital(profile: Profile) -> str | None:
 
 def _is_married(profile: Profile) -> bool:
     return _marital(profile) == "married"
+
+
+def _married_for_year(profile: Profile, year: int | None) -> bool:
+    """Married for the tax year's filing-status purposes: married on Dec 31, or widowed
+    in the tax year itself. Pub 501 (2025), Spouse died during the year: "If your spouse
+    died during the year, you are considered married for the whole year for filing
+    status purposes. If you didn't remarry before the end of the tax year, you can file
+    a joint return for yourself and your deceased spouse." The §6013(g)/(h) election
+    survives that year too — Pub 519 ch. 1, Ending the Choice: "The death of either
+    spouse ends the choice, beginning with the first tax year following the year the
+    spouse died."
+    """
+    marital = _marital(profile)
+    if marital == "married":
+        return True
+    hh = profile.household
+    return (
+        marital == "widowed" and year is not None and hh is not None and hh.spouse_death_year is not None
+        and hh.spouse_death_year.value == year
+    )
+
+
+def _confirmed_status(profile: Profile) -> str | None:
+    hh = profile.household
+    if hh is None or hh.filing_status is None or not hh.filing_status.value:
+        return None
+    return str(hh.filing_status.value)
+
+
+_MARRIED_STATUSES = ("married_filing_jointly", "married_filing_separately")
+
+
+def _election_marriage_ok(profile: Profile, year: int | None) -> bool:
+    """The marriage the §6013(g)/(h) election needs, on a figure that has a spouse (P-018).
+
+    Married for the year, or an unanswered marital status with a confirmed married
+    status — MFJ or MFS is itself a statement of marriage (Pub 501: "You can choose
+    married filing separately as your filing status if you are married"). Never onto
+    a status with no spouse on it: a confirmed single / head-of-household / QSS status,
+    or the year of a spouse's death with no confirmed status, whose only candidate
+    here is 'single' (the candidate gap JF1b.9 closes). An explicit 'unmarried' (or a
+    widowed status outside the year of death) is not a marriage at all.
+    """
+    status = _confirmed_status(profile)
+    if status is not None and status not in _MARRIED_STATUSES:
+        return False
+    if status is None and _marital(profile) != "married":
+        return False
+    if _married_for_year(profile, year):
+        return True
+    return _marital(profile) is None and status in _MARRIED_STATUSES
+
+
+def _election_not_applied_reason(profile: Profile, year: int | None, *, unavailable: bool = False) -> str:
+    """Why a recorded election was not applied on the marriage test (P-018) — the facts as
+    they stand, never a guessed 'not married' for an unanswered question. ``unavailable``:
+    the IRC 6013(g)(3) facts hold, which answers first (intake says the same)."""
+    status = _confirmed_status(profile)
+    marital = _marital(profile)
+    if unavailable and _married_for_year(profile, year):
+        if marital == "married":
+            # The residency caveat already quotes the rule in full for a married nonresident.
+            return (
+                "neither spouse is a U.S. citizen or resident at any time in the year on the recorded facts, so the "
+                "election does not apply (IRC 6013(g)(3) — the residency caveat quotes it)"
+            )
+        return residency.SECTION_6013_SUSPENDED.rstrip(".") + (
+            ". This estimate prices 'single' only in the year of your spouse's death (JF1b.9) — Pub 501: \"If your "
+            "spouse died during the year, you are considered married for the whole year for filing status purposes\""
+            if status is None else ""
+        )
+    if status == "head_of_household":
+        return (
+            "the confirmed status is head of household, which exists only WITHOUT the election (Pub 501, Considered "
+            "Unmarried: \"You are considered unmarried for head of household purposes if your spouse was a "
+            "nonresident alien at any time during the year and you don't choose to treat your nonresident spouse as "
+            "a resident alien\") — for an election made in an earlier year that means ending it, and Pub 519 ch. 1 "
+            "(Ending the Choice): \"If the choice is ended in one of the following ways, neither spouse can make "
+            "this choice in any later tax year.\""
+        )
+    if status is not None and status not in _MARRIED_STATUSES:
+        return f"the confirmed status ({status}) has no spouse on the return, and the election needs one"
+    if marital == "widowed" and _married_for_year(profile, year):
+        return (
+            "this is the year of your spouse's death, and with no confirmed filing status this estimate prices "
+            "'single' only — Pub 501: \"If your spouse died during the year, you are considered married for the "
+            "whole year for filing status purposes\"; confirm married_filing_jointly (or married_filing_separately) "
+            "to price the election"
+        )
+    needs = (
+        " — the election needs a spouse at year end (Pub 519 ch. 1: \"If, at the end of your tax year, you are "
+        "married and one spouse is a U.S. citizen or a resident alien and the other spouse is a nonresident alien, "
+        "you can choose ...\")"
+    )
+    if marital is None:
+        return "household.marital_status is not answered (and no married filing status is confirmed)" + needs
+    return "the household is not married for the year (married on December 31, or widowed during the year)" + needs
 
 
 def _confirmed_true(answer) -> bool:
@@ -584,7 +714,7 @@ def _qss_window_open(hh, year: int | None) -> bool:
 
 
 def _candidate_statuses(
-    profile: Profile, classification: str | None = None, year: int | None = None
+    profile: Profile, classification: str | None = None, year: int | None = None, *, no_joint: bool = False,
 ) -> tuple[list[str], bool]:
     """Return (ordered candidate statuses, status_assumed). Primary (headline) is first.
 
@@ -595,6 +725,13 @@ def _candidate_statuses(
     A DUAL-STATUS candidate year carries the same restrictions (Pub 519:
     generally no joint return absent a §6013(g)/(h) election, no HOH), so
     MFJ/HOH are dropped there too — disclosed loudly upstream.
+
+    ``no_joint`` (P-018): the §6013(g)/(h) election is recorded as DECLINED and the
+    no-election facts put a nonresident in the couple, so there is no joint return
+    (Pub 519 FAQ: "Generally, you cannot file as married filing jointly if either
+    spouse was a nonresident alien at any time during the tax year"): MFS is the
+    primary, and a citizen or resident filer keeps head of household as a candidate
+    on the same qualifying-person test as below — Pub 501, Considered Unmarried.
     """
     hh = profile.household
     if hh is not None and hh.filing_status is not None and hh.filing_status.value:
@@ -605,6 +742,10 @@ def _candidate_statuses(
         # dual-status-year filer absent a §6013 election — the primary becomes MFS.
         if restricted:
             return ["married_filing_separately"], True
+        if no_joint:
+            hoh_qp = hh.hoh_qualifying_person
+            hoh = _confirmed_true(hoh_qp) or (bool(hh.dependents) and not (hoh_qp is not None and hoh_qp.value is False))
+            return ["married_filing_separately", *(["head_of_household"] if hoh else [])], True
         return ["married_filing_jointly", "married_filing_separately"], True
     if _marital(profile) == "widowed":
         # Recent widow(er) who maintained a home for a dependent child may file as a
@@ -679,17 +820,19 @@ _SECTION_6013_CONDITIONAL_CAVEAT = (
 # person / resident alien, and it is the SPOUSE who is (or may be) the nonresident.
 # §6013(a)(1) bars a joint return when EITHER spouse is a nonresident alien absent the
 # election, so MFJ stays a CANDIDATE here but only with the election + its trade-offs.
-def _spouse_6013_caveat(direction: str, spouse_has_tin: bool) -> str:
+def _spouse_6013_caveat(direction: str, spouse_has_tin: bool, *, mfj_shown: bool = True) -> str:
     """Compose the NRA-spouse §6013(g)/(h) caveat: confirmed vs conditional lead, the
     shared worldwide-income-inputs warning, and the W-7/ITIN last mile when the spouse
-    has no SSN/ITIN on file."""
+    has no SSN/ITIN on file. ``mfj_shown`` False (a confirmed non-joint status) drops the
+    'shown as a candidate' clause the figure would contradict (P-018)."""
     lead = (
         "Your spouse's own residency result is NONRESIDENT alien"
         if direction == "nonresident"
         else "Your spouse may be a nonresident alien (their residency is not confirmed)"
     )
+    shown = "married-filing-jointly is shown as a candidate, but " if mfj_shown else ""
     text = (
-        f"{lead}: married-filing-jointly is shown as a candidate, but a joint return with a "
+        f"{lead}: {shown}a joint return with a "
         "nonresident-alien spouse is only valid by electing under §6013(g)/(h) to treat the "
         "spouse as a U.S. resident — which makes the spouse's WORLDWIDE income taxable, and the "
         "election statement (signed by BOTH spouses) must be attached to the first joint return. "
@@ -699,10 +842,35 @@ def _spouse_6013_caveat(direction: str, spouse_has_tin: bool) -> str:
         text += (
             " Your spouse has no SSN/ITIN on file: filing jointly requires applying for an ITIN — "
             "Form W-7 is filed WITH the return, and the whole package mails to the IRS ITIN "
-            "Operation in Austin, TX; for married-filing-separately enter 'NRA' in the "
-            "spouse-SSN box instead."
+            "Operation in Austin, TX; on a married-filing-separately return, if your spouse doesn't have "
+            "and isn't required to have an SSN or ITIN, enter 'NRA' in the entry space below the filing "
+            "status checkboxes instead (Pub 501)."
         )
     return text
+
+
+def _spouse_own_classification(profile: Profile, year: int) -> str | None:
+    """The SPOUSE's residency from the spouse's OWN visa timeline and day counts, or None.
+
+    None when the spouse is absent, a declared US person (no SPT applies), or has no
+    facts that classify — never borrowed from the taxpayer, and never guessed. It
+    ignores the §6013(g)/(h) election: callers that honor the election ask for it
+    separately (it makes both spouses residents; this is the answer without it).
+    """
+    hh = profile.household
+    sp = hh.spouse if hh is not None else None
+    if sp is None or (sp.us_person is not None and sp.us_person.value is True):
+        return None
+    imm, rf = sp.immigration, sp.residency_facts
+    if imm is None or not imm.visa_timeline or rf is None or not rf.days_in_us:
+        return None
+    days_by_year = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+    if not days_by_year:
+        return None
+    try:
+        return residency.classify(imm.visa_timeline, days_by_year, year).classification
+    except (ValueError, AssertionError):
+        return None
 
 
 def _spouse_nra_direction(profile: Profile, year: int) -> str | None:
@@ -713,7 +881,9 @@ def _spouse_nra_direction(profile: Profile, year: int) -> str | None:
     not computable (unknown stays conditional — never asserted; a full classify
     is not attempted when the facts are absent), and None when there is no NRA
     direction (no spouse, a US-person spouse, or spouse facts classifying
-    resident).
+    resident). Like :func:`_spouse_own_classification` it is the answer WITHOUT
+    the §6013(g)/(h) election; estimate_refund drops the direction when the
+    election is in effect (both spouses are then residents).
     """
     hh = profile.household
     sp = hh.spouse if hh is not None else None
@@ -721,22 +891,134 @@ def _spouse_nra_direction(profile: Profile, year: int) -> str | None:
         return None
     if sp.us_person is not None and sp.us_person.value is True:
         return None
-    imm, rf = sp.immigration, sp.residency_facts
-    if imm is not None and imm.visa_timeline and rf is not None and rf.days_in_us:
-        days_by_year = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
-        if days_by_year:
-            try:
-                classification = residency.classify(imm.visa_timeline, days_by_year, year).classification
-            except (ValueError, AssertionError):
-                classification = None
-            if classification == "resident":
-                return None
-            if classification == "nonresident":
-                return "nonresident"
-            if classification == "dual_status_candidate":
-                return "conditional"
+    classification = _spouse_own_classification(profile, year)
+    if classification == "resident":
+        return None
+    if classification == "nonresident":
+        return "nonresident"
+    if classification == "dual_status_candidate":
+        return "conditional"
     us_person_false = sp.us_person is not None and sp.us_person.value is False
     return "conditional" if us_person_false else None
+
+
+def _spouse_separate_return_note(
+    profile: Profile, year: int, *, spouse_nonresident: bool, income: "IncomeSnapshot",
+    deduction_method: str | None = None, assumed: bool = False, dual_status: bool = False,
+) -> str:
+    """Which rules the spouse's SEPARATE (two-return MFS) return ran under, and why (P-018).
+
+    Each spouse's separate return follows that spouse's OWN classification —
+    Pub 519, Frequently Asked Questions: "If your spouse does not make this
+    choice, you must file a separate return on Form 1040 or 1040-SR. Your spouse
+    must file Form 1040-NR." — so a US
+    citizen spouse of a nonresident gets the regular rates and (unless the
+    couple itemizes — IRC 63(c)(6)(A)) the standard deduction, and a nonresident
+    spouse of a resident gets none of them. ``deduction_method`` is the couple's
+    method on the two returns ('itemize' / 'standard' / None when neither had
+    itemized deductions to weigh). ``assumed``: the spouse's residency is unknown and the
+    nonresident reading is the one a recorded decline rests on (P-018).
+    """
+    sp = profile.household.spouse if profile.household is not None else None
+    if spouse_nonresident:
+        used = 0 if deduction_method == "standard" else (income.itemized_deductions or 0)
+        if assumed and dual_status:
+            because = (
+                "the spouse's own facts show a dual-status year (a nonresident alien for part of it) and the recorded "
+                "decline rests on a nonresident alien in the couple — you are a U.S. person or a resident — so the "
+                "point prices the spouse's return as a nonresident's"
+            )
+        elif assumed:
+            because = (
+                "the recorded decline rests on a nonresident alien in the couple and you are a U.S. person or a "
+                "resident, so the spouse of unknown residency is priced as the nonresident"
+            )
+        else:
+            because = "the spouse's own visa timeline and day counts classify them as a nonresident alien"
+        if assumed and dual_status:
+            return (
+                f"The spouse's separate return was computed under NONRESIDENT rules (Form 1040-NR), because "
+                f"{because}. That approximates a dual-status year as a full-year nonresident's return — Pub 519 "
+                f"ch. 6: \"You must file Form 1040 or 1040-SR if you are a dual-status taxpayer who becomes a "
+                f"resident during the year and who is a U.S. resident on the last day of the tax year\" — so the "
+                f"range also prices the resident reading."
+            )
+        return (
+            f"The spouse's separate return was computed under NONRESIDENT rules (Form 1040-NR), because "
+            f"{because} — without the "
+            f"§6013(g)/(h) election, \"Your spouse must file Form 1040-NR\" (Pub 519, Frequently Asked "
+            f"Questions): no standard deduction (\"Nonresident aliens cannot claim the standard deduction\", "
+            f"Pub 519 ch. 5 — ${used:,} of the spouse's itemized deductions used), ordinary rates on "
+            f"investment income, and no NIIT."
+        )
+    if sp is not None and sp.us_person is not None and sp.us_person.value is True:
+        why = "the spouse is a declared U.S. citizen or lawful permanent resident"
+    elif _spouse_own_classification(profile, year) in ("resident", "dual_status_candidate"):
+        why = "the spouse's own visa timeline and day counts do not classify them as a nonresident alien"
+    else:
+        why = (
+            "the spouse's own residency is not established (no visa timeline and day counts that classify them) — "
+            "if the spouse is a nonresident alien, their Form 1040-NR takes no standard deduction (\"Nonresident "
+            "aliens cannot claim the standard deduction\", Pub 519 ch. 5), so record the spouse's visa timeline "
+            "and days in the US and rerun"
+        )
+    deduction = (
+        "their own itemized deductions — the couple itemizes, so the standard deduction is zero on both returns "
+        "(IRC 63(c)(6)(A); see the married-filing-separately deduction note)"
+        if deduction_method == "itemize"
+        else "the standard deduction"
+    )
+    return (
+        f"The spouse's separate return was computed under RESIDENT rules (Form 1040 — {deduction}, and the "
+        f"regular and preferential rates), not under your nonresident classification: each spouse's separate "
+        f"return follows that spouse's OWN residency, and {why}."
+    )
+
+
+# IRC 63(c)(6) (uscode.house.gov) and Pub 501 (2025), Married persons who filed separate
+# returns — read 2026-09-25. The two separate returns of a married couple share one
+# deduction method; the estimate prices both and keeps the better total.
+_MFS_DEDUCTION_LAW = (
+    "IRC 63(c)(6): \"In the case of- (A) a married individual filing a separate return where either spouse "
+    "itemizes deductions, (B) a nonresident alien individual, ... the standard deduction shall be zero.\" Pub "
+    "501: \"You and your spouse can use the method that gives you the lower total tax, even though one of you "
+    "may pay more tax than you would have paid by using the other method. You both must use the same method of "
+    "claiming deductions. If one itemizes deductions, the other should itemize because the other spouse won't "
+    "qualify for the standard deduction.\" Itemizing is itself an election — IRC 63(e)(1): \"Unless an "
+    "individual makes an election under this subsection for the taxable year, no itemized deduction shall be "
+    "allowed for the taxable year\" — so a nonresident spouse's Form 1040-NR may claim none, which is the "
+    "'neither itemizes' method."
+)
+
+
+def _mfs_deduction_method_note(
+    method: str, self_income: "IncomeSnapshot", spouse_income: "IncomeSnapshot", *,
+    self_nonresident: bool, spouse_nonresident: bool,
+) -> str:
+    """Disclose the couple's deduction method on the two-return MFS pair (IRC 63(c)(6)(A))."""
+    rows = [("your", self_income, self_nonresident), ("the spouse's", spouse_income, spouse_nonresident)]
+    if method == "itemize":
+        amounts = " and ".join(f"${snap.itemized_deductions or 0:,} on {who} return" for who, snap, _ in rows)
+        chosen = (
+            f"BOTH ITEMIZE — each separate return deducts its own itemized deductions ({amounts}) and neither "
+            "takes the standard deduction."
+        )
+    else:
+        forgone = [
+            f"{who} ${snap.itemized_deductions:,} of itemized deductions"
+            + (" (a nonresident alien has no standard deduction, so its Form 1040-NR claims none)" if nra else "")
+            for who, snap, nra in rows
+            if (snap.itemized_deductions or 0) > 0
+        ]
+        chosen = (
+            "NEITHER ITEMIZES — each resident return takes the standard deduction, so "
+            + " and ".join(forgone)
+            + " go unused."
+        )
+    return (
+        "Married filing separately (two returns): the couple uses ONE deduction method. "
+        f"{_MFS_DEDUCTION_LAW} Both methods were priced and the better combined total is shown: {chosen}"
+    )
 
 
 def _citizenship_country(profile: Profile) -> str | None:
@@ -891,6 +1173,313 @@ _DUAL_STATUS_CAVEAT = (
 )
 
 
+# The W-7 / ITIN last mile under the election (eval (o); P-018) — Pub 519 (2025),
+# Frequently Asked Questions and ch. 5, Identification Number (read 2026-09-25): the
+# joint return and its statement carry each spouse's TIN, so a spouse with neither an
+# SSN nor an ITIN applies for one with Form W-7 filed WITH the return.
+_SECTION_6013_ITIN_NOTE = (
+    " Your spouse has no SSN/ITIN on file — Pub 519, Frequently Asked Questions: \"If you are a U.S. citizen or "
+    "resident and you choose to treat your nonresident spouse as a resident and file a joint tax return, your "
+    "nonresident spouse needs an SSN or ITIN\", and the election statement carries each spouse's TIN. Apply "
+    "for an ITIN (Pub 519 ch. 5: \"If you do not have an ITIN and are not eligible to get an SSN, you must apply "
+    "for an ITIN. For details on how to do so, see Form W-7 and its instructions.\"): Form W-7 is filed WITH "
+    "the return, and the whole package mails to the IRS ITIN Operation in Austin, TX."
+)
+
+
+def _section_6013_caveat_in_effect(
+    *, implied: bool, mfs_candidate: bool, own_classification: str | None = None, kind: str = "either",
+    marital_inferred: bool = False, spouse_needs_itin: bool = False,
+) -> str:
+    """The caveat for an estimate computed UNDER the §6013(g)/(h) election (P-018).
+
+    The worldwide-income and FICA caveats stay (the ROADMAP's rule): the election
+    makes both spouses residents for income tax only. ``implied`` is the confirmed
+    married-filing-jointly status of a filer whose own residency is nonresident (or
+    a dual-status year, ``own_classification``) — a joint return that exists only
+    under the election. ``kind`` is residency.section_6013_kind's answer — IRC
+    6013(g), 6013(h) or 'either' — and picks the quoted effect, precondition and
+    statement. ``marital_inferred`` means the marital status is unanswered and the
+    confirmed married status stood in for it; ``spouse_needs_itin`` adds the W-7 last
+    mile for a non-US spouse with no TIN. (An election the facts rule out is never
+    applied — see :func:`_section_6013_no_joint_caveat`.)
+    """
+    effect, precondition, statement = residency.section_6013_texts(kind)
+    if implied:
+        own = (
+            "a dual-status year (nonresident for part of it)"
+            if own_classification == "dual_status_candidate"
+            else "nonresident alien"
+        )
+        lead = (
+            f"Your filing status is married-filing-jointly and your own residency result is {own}: a joint "
+            f"return with a nonresident alien exists only under the §6013(g)/(h) election ({residency.SECTION_6013_NO_JOINT}), "
+            "so this estimate applies the election — record it as residency_facts.section_6013_election: true."
+        )
+    else:
+        lead = "A §6013(g)/(h) election is recorded (residency_facts.section_6013_election)."
+        if marital_inferred:
+            lead += (
+                " household.marital_status is unanswered, so the confirmed married filing status was read as the "
+                "marriage the election needs — confirm the marital status."
+            )
+    text = (
+        f"{lead} {effect} So every figure here uses RESIDENT rules for both spouses: the standard deduction, "
+        "the regular and preferential rates, NIIT evaluated, and no IRC 871(i)(2)(A) deposit-interest "
+        "exclusion. Every figure is only valid when BOTH spouses' WORLDWIDE (foreign) income is in the inputs "
+        "(other_income on each snapshot) — otherwise it overstates the election's advantage. "
+        f"{residency.SECTION_6013_FICA} {statement} (file_and_pay's manifest flag section_6013_election adds "
+        "the statement to the assembly checklist.)"
+    )
+    if spouse_needs_itin:
+        text += _SECTION_6013_ITIN_NOTE
+    if mfs_candidate:
+        g_mfs = (
+            "under IRC 6013(g) it is the posture of a LATER year of a continuing election — for the year the "
+            "choice is made the return must be joint, so there filing separately means NOT electing; rerun "
+            "without the election for that figure."
+        )
+        h_mfs = (
+            "under a NEW IRC 6013(h) choice there is none — the return for the year of the choice must be joint "
+            "and the choice covers that one year only, so filing separately means NOT making it; rerun without "
+            "the election for that figure — UNLESS an IRC 6013(g) election made in an earlier year remains in "
+            "effect (IRC 6013(g)(3)): this is then a later year of that election, separate returns are available, "
+            "and no new statement is attached."
+        )
+        text += " A married-filing-separately figure under the election: " + (
+            g_mfs if kind == "g" else h_mfs if kind == "h" else f"{g_mfs} And {h_mfs}"
+        )
+    return f"{text} {precondition}"
+
+
+def _section_6013_no_joint_caveat(
+    *, joint_blocked: bool, precondition_unmet: bool, recorded: bool, spouse_unknown: bool = False,
+    unavailable: bool = False,
+) -> str:
+    """The caveat when the facts rule out a joint return (P-018): a recorded DECLINE with a
+    nonresident in the couple, or an election that cannot apply because neither spouse is
+    a U.S. citizen or resident (IRC 6013(g)(3)). ``joint_blocked``: a confirmed joint
+    status those facts rule out — named FIRST, priced married-filing-separately, and the
+    user asked to correct one of the two facts. ``unavailable``: the IRC 6013(g)(3) facts
+    hold, so a DECLINE is never answered with "record the election as true" — on those
+    facts the election is not available at all."""
+    if precondition_unmet or unavailable:
+        if precondition_unmet:
+            source = (
+                "A §6013(g)/(h) election is recorded (residency_facts.section_6013_election), but it was NOT applied."
+                if recorded else
+                "Your filing status is married-filing-jointly, which with a nonresident alien exists only under the "
+                "§6013(g)/(h) election — and that election was NOT applied."
+            )
+        else:
+            source = (
+                "residency_facts.section_6013_election is recorded as FALSE (declined) — and on these facts the "
+                "election is not available in any case."
+            )
+        body = f"{source} {residency.SECTION_6013_SUSPENDED}"
+        if joint_blocked:
+            return (
+                "CONTRADICTION — the confirmed status married-filing-jointly is not a filing option on these facts: "
+                f"{residency.SECTION_6013_NO_JOINT} {body} This estimate prices married-filing-separately instead "
+                "and shows no joint figure: change the filing status to married-filing-separately — each of you "
+                "who meets the nonresident filing requirements files Form 1040-NR — or correct the residency "
+                "facts, and rerun."
+            )
+        return body
+    # A recorded decline — the user's explicit residency fact.
+    may = " (or may be)" if spouse_unknown else ""
+    if joint_blocked:
+        lead = (
+            "CONTRADICTION — the confirmed status is married-filing-jointly, but residency_facts.section_6013_election "
+            f"is recorded as FALSE (declined), and on the facts without the election one of you is{may} a nonresident "
+            f"alien. {residency.SECTION_6013_NO_JOINT} So a joint return exists only under the election you declined: "
+            "this estimate prices married-filing-separately WITHOUT the election and shows no joint figure. Correct "
+            "one of the two facts — record the election as true (you are making it, or one made in an earlier year "
+            "remains in effect), or change the filing status — and rerun."
+        )
+    else:
+        lead = (
+            "residency_facts.section_6013_election is recorded as FALSE (declined), and on the facts without the "
+            f"election one of you is{may} a nonresident alien — so there is no joint return, and married-filing-"
+            f"jointly is not a candidate here. {residency.SECTION_6013_NO_JOINT}"
+        )
+    unknown = (
+        " If your spouse is in fact a U.S. resident (they pass the substantial presence test), no election is "
+        "needed and a joint return is open: record the spouse's visa timeline and days in the US and rerun."
+        if spouse_unknown else ""
+    )
+    return f"{lead} {residency.SECTION_6013_DECLINE}{unknown}"
+
+
+# NIIT under the election (P-018). Treas. Reg. 1.1411-2(a)(2)(iii) and (iv) on eCFR
+# and the Instructions for Form 8960 (2025), 'Election To File Jointly With
+# Nonresident Spouse—Section 6013(g) or 6013(h)', read 2026-09-25: the chapter-1
+# election does not by itself reach chapter 2A, so the joint NIIT figure is the one
+# a SECOND election produces, and the default differs between the two choices.
+_SECTION_6013G_NIIT = (
+    "For IRC 6013(g), Treas. Reg. 1.1411-2(a)(2)(iii)(B): \"Married taxpayers who file a joint Federal income "
+    "tax return pursuant to a section 6013(g) election for purposes of chapter 1 and chapter 24 also may elect "
+    "to be treated as making a section 6013(g) election for purposes of chapter 2A\"; without it the default "
+    "applies — (iii)(A): \"the spouses will be treated as married filing separately for purposes of section "
+    "1411\", the U.S. citizen or resident spouse figures their own net investment income and modified AGI "
+    "against the $125,000 married-filing-separately threshold, and \"the nonresident alien spouse will not be "
+    "subject to tax under section 1411\"."
+)
+_SECTION_6013H_NIIT = (
+    "For IRC 6013(h), Treas. Reg. 1.1411-2(a)(2)(iv)(B): \"Married taxpayers who file a joint Federal income "
+    "tax return pursuant to a section 6013(h) election for purposes of chapter 1 and chapter 24 also may elect "
+    "to be treated as making a section 6013(h) election for purposes of chapter 2A for such tax year\"; "
+    "without it the default applies — (iv)(A): \"each spouse will be treated as married filing separately for "
+    "the entire year for purposes of section 1411\" (each against the $125,000 threshold), and \"The spouse "
+    "who becomes a United States resident during the tax year will be subject to section 1411 only with "
+    "respect to income received for the portion of the year for which he or she is treated as a United States "
+    "resident.\""
+)
+_SECTION_6013_NIIT_I8960 = (
+    "The Instructions for Form 8960: \"To make either election under section 6013(g) or section 6013(h), for "
+    "NIIT purposes, use your combined items of income, gain, loss, and deduction from your joint return to "
+    "figure your NII and MAGI; use the married filing jointly return applicable threshold amount ($250,000); "
+    "and check the appropriate checkbox near the top of Form 8960, Part I\", and \"The election must be made "
+    "for the first tax year in which the U.S. taxpayer is subject to NIIT.\""
+)
+
+
+_SECTION_6013G_NIIT_TIMING = (
+    "for IRC 6013(g), 1.1411-2(a)(2)(iii)(B)(2): it must be made \"for the first taxable year beginning after "
+    "December 31, 2013, in which the United States taxpayer is subject to tax under section 1411\", and \"The "
+    "determination of whether the United States taxpayer is subject to tax under section 1411 is made without "
+    "regard to the effect of the section 6013(g) election\" — so it is not yet available in a year the U.S. "
+    "spouse would owe no NIIT on their own."
+)
+_SECTION_6013H_NIIT_TIMING = (
+    "for IRC 6013(h), 1.1411-2(a)(2)(iv)(B)(2): taxpayers making the chapter-1 election \"may elect to have "
+    "their section 6013(h) election apply for purposes of chapter 2A\", on \"an original or amended return for "
+    "the taxable year for which the election is made\"."
+)
+
+
+def _section_6013_niit_note(*, joint: bool, separate: bool, kind: str = "either") -> str:
+    """How NIIT was evaluated under the §6013(g)/(h) election, and what the default is.
+
+    ``joint`` / ``separate``: which candidate figures carry the election (both when a
+    recorded election leaves MFJ and MFS open). ``kind`` picks the 1.1411-2(a)(2)
+    paragraph — (iii) for IRC 6013(g), (iv) for IRC 6013(h), both for 'either'.
+    """
+    regs = (
+        _SECTION_6013G_NIIT if kind == "g"
+        else _SECTION_6013H_NIIT if kind == "h"
+        else f"{_SECTION_6013G_NIIT} {_SECTION_6013H_NIIT}"
+    )
+    parts = ["NIIT under the §6013(g)/(h) election:"]
+    if joint:
+        timing = {
+            "g": _SECTION_6013G_NIIT_TIMING,
+            "h": _SECTION_6013H_NIIT_TIMING,
+        }.get(kind, f"{_SECTION_6013G_NIIT_TIMING.rstrip('.')}; {_SECTION_6013H_NIIT_TIMING}")
+        parts.append(
+            "the joint-return figure evaluates the net investment income tax on the couple's combined income "
+            "against the joint threshold — it ASSUMES the optional SECOND election, to apply the election for NIIT "
+            "(chapter 2A) too. Without it the DEFAULT applies — the spouses are treated as married filing "
+            "separately for NIIT, each against the separate threshold, and under IRC 6013(g) the nonresident "
+            "spouse is not subject at all — which may be HIGHER or LOWER than the joint figure and is not priced "
+            f"here. When the second election is available: {timing} " + _SECTION_6013_NIIT_I8960
+        )
+    if separate:
+        parts.append(
+            ("And each" if joint else "Each")
+            + " separate return here evaluates the net investment income tax on that spouse's own income "
+            "against the married-filing-separately threshold, as a resident's would — so if the spouse who is a "
+            "nonresident without the election has investment income, their NIIT on a separate figure may be "
+            "overstated (the defaults below)."
+        )
+    parts.append(
+        "The chapter-1 election does not by itself reach NIIT (chapter 2A). " + regs
+    )
+    return " ".join(parts)
+
+
+def _hoh_pair_note(
+    *, spouse_nra: bool, weighed: bool, unsettled: bool, alternative: int | None, snapshot: bool = True,
+    taxpayer_nonresident: bool = False, eitc_child: bool = True,
+) -> str:
+    """What a married filer's head-of-household figure is, by route (P-018; Pub 501 and Pub 519)."""
+    if taxpayer_nonresident:
+        return (
+            "The head-of-household figure prices the confirmed status as given — the residency caveat explains why "
+            "a nonresident alien cannot use it (Pub 519 ch. 5)."
+            + (" The spouse's separate return inside it is priced on resident rules, and the spouse's residency is "
+               "not settled — record the spouse's visa timeline and days in the US." if unsettled and snapshot else "")
+        )
+    text = (
+        "The head-of-household figure is your own head-of-household return PLUS the spouse's separate return"
+        if snapshot else
+        "The head-of-household figure is your own head-of-household return (no spouse income snapshot was given, "
+        "so the spouse's separate return is not in it)"
+    )
+    eitc_quote = (
+        "Pub 519 ch. 5: \"Even if you are considered unmarried for head of household purposes because you are "
+        "married to a nonresident alien, you may still be considered married for purposes of the earned income "
+        "credit (EIC). In that case, you will need to meet the special rule for separated spouses to claim the "
+        "credit.\" — that rule is not modeled."
+    )
+    if spouse_nra:
+        text += (
+            (" on Form 1040-NR rules" if snapshot else "")
+            + " — head of household here rests on your spouse being a nonresident alien (Pub 501, Considered "
+            "Unmarried: \"You are considered unmarried for head of household purposes if your spouse was a "
+            "nonresident alien at any time during the year and you don't choose to treat your nonresident spouse "
+            f"as a resident alien.\"). No earned income credit is computed on it — {eitc_quote}"
+        )
+        if weighed:
+            text += (
+                " The couple's one deduction method is used, as on the married-filing-separately pair — the lower "
+                "reading: IRC 63(c)(6)(A) zeroes the standard deduction of \"a married individual filing a separate "
+                "return where either spouse itemizes deductions\", and whether it reaches this return is not "
+                "settled here."
+            )
+    else:
+        text += (
+            (" on resident rules" if snapshot else "")
+            + " — head of household through living apart (Pub 501, Considered Unmarried: \"Your spouse didn't "
+            "live in your home during the last 6 months of the tax year\", among its tests)."
+        )
+        if not eitc_child:
+            text += (
+                " No earned income credit is computed on it: Pub 501, \"You may be considered unmarried for the "
+                "purpose of using head of household status but not for other purposes, such as claiming the EIC\", "
+                "and the separated-spouse rule for the EIC needs a qualifying child."
+            )
+        if weighed:
+            text += (
+                " You may take the standard deduction even if your spouse itemizes (Pub 501: \"The head of "
+                "household filing status allows you to choose the standard deduction even if your spouse chooses "
+                "to itemize deductions.\"), so the better combination is used; the spouse's separate return "
+                "itemizes whenever you do (IRC 63(c)(6)(A))."
+            )
+    if unsettled and alternative is not None:
+        if snapshot:
+            other = "resident rules (head of household through living apart)" if spouse_nra else (
+                "Form 1040-NR rules (head of household through the nonresident-spouse rule, no EITC)")
+            priced = f"the spouse's return on {other}"
+        else:
+            priced = "the other route (" + (
+                "head of household through living apart" if spouse_nra
+                else "head of household through the nonresident-spouse rule, no EITC") + ")"
+        text += (
+            f" Your spouse's residency is not settled, so the range also prices {priced}: "
+            f"{'+' if alternative >= 0 else '-'}${abs(alternative):,}. Record the spouse's visa timeline and days "
+            "in the US to settle it."
+        )
+    elif unsettled:
+        text += (
+            " Your spouse's residency is not settled: if the spouse is a U.S. resident, head of household would "
+            "instead need the living-apart test — record the spouse's visa timeline and days in the US to settle it."
+            if spouse_nra else
+            " Your spouse's residency is not settled — record the spouse's visa timeline and days in the US."
+        )
+    return text
+
+
 def _slot_effects(lines: list[CompositionLine]) -> tuple[dict[str, int], dict[str, str]]:
     """Aggregate a ledger's operand effects (and a label) per slot."""
     effects: dict[str, int] = {}
@@ -960,28 +1549,187 @@ def _build_comparison(outcomes: dict[str, "BottomLineResult"]) -> StatusComparis
     )
 
 
-def _classify_residency(profile: Profile, year: int):
-    """Best-effort residency classification from the profile, or None when not computable."""
+def _section_6013_recorded(profile: Profile) -> bool:
+    """True when residency_facts.section_6013_election is answered True (P-018)."""
+    rf = profile.residency_facts
+    return rf is not None and _confirmed_true(rf.section_6013_election)
+
+
+def _classify_residency(profile: Profile, year: int, *, section_6013_election: bool | None = None):
+    """Best-effort residency classification from the profile, or None when not computable.
+
+    The §6013(g)/(h) election (P-018) wins over the visa timeline and day counts:
+    under it the couple are "treated for income tax purposes as residents for your
+    entire tax year" (Pub 519 ch. 1), so the result is resident-shaped — even with
+    no facts on file — and keeps the day-count answer as
+    ``classification_without_election``. ``section_6013_election`` None follows the
+    profile: the recorded fact, applied only on the marriage the choice needs
+    (:func:`_election_marriage_ok` — married for the year, the year of a spouse's
+    death included, or an unanswered marital status with a confirmed joint status).
+    """
+    elected = (
+        _section_6013_recorded(profile) and _election_marriage_ok(profile, year)
+        if section_6013_election is None
+        else section_6013_election
+    )
     rf = profile.residency_facts
     imm = profile.immigration
-    if rf is None or not rf.days_in_us or imm is None or not imm.visa_timeline:
-        return None
-    days_by_year = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
-    if not days_by_year:
-        return None
+    days_by_year = (
+        {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+        if rf is not None
+        else {}
+    )
+    if not days_by_year or imm is None or not imm.visa_timeline:
+        return residency.classify([], {}, year, section_6013_election=True) if elected else None
     try:
-        return residency.classify(imm.visa_timeline, days_by_year, year)
+        return residency.classify(imm.visa_timeline, days_by_year, year, section_6013_election=elected)
     except (ValueError, AssertionError):
         # An incomplete/contradictory timeline cannot be classified yet — fall back
-        # to the us_person best-effort rather than guessing.
+        # to the us_person best-effort rather than guessing (the election still
+        # decides residency when it is in effect; its no-election answer is unknown).
+        return residency.classify([], {}, year, section_6013_election=True) if elected else None
+
+
+def _spouse_6013_status(profile: Profile, year: int) -> str | None:
+    """The spouse's residency WITHOUT the election, for residency.section_6013_kind:
+    'us' for a declared U.S. person, else the spouse's own classification (or None)."""
+    hh = profile.household
+    sp = hh.spouse if hh is not None else None
+    if sp is None:
         return None
+    if sp.us_person is not None and sp.us_person.value is True:
+        return "us"
+    return _spouse_own_classification(profile, year)
 
 
-def _build_roadmap(profile: Profile, year: int, result=None) -> Roadmap:
-    """Returns/forms (from residency when computable, else us_person), missing docs, time."""
+def _gate_classification(classification: str | None, imm, rf, year: int) -> str | None:
+    """``classification`` for the IRC 6013(g)(3) gate: 'nonresident' only when it is CERTAIN —
+    a nonresident answer that real presence in a missing lookback year could flip is
+    unknown (None). The rule intake's gate shares (residency.certain_nonresident)."""
+    if classification != "nonresident" or imm is None or not imm.visa_timeline or rf is None:
+        return classification
+    days = {y: a.value for y, a in rf.days_in_us.items() if a is not None and a.value is not None}
+    return classification if residency.certain_nonresident(imm.visa_timeline, days, year) else None
+
+
+class _ElectionState(NamedTuple):
+    """How the §6013(g)/(h) election stands for one profile and year (P-018)."""
+
+    residency_result: Any
+    election: bool          # the figures run under the election
+    implied: bool           # read from a confirmed joint status, not recorded
+    declined: bool          # residency_facts.section_6013_election recorded False
+    marital_inferred: bool  # a recorded election applied on an unanswered marital status + a married status
+    own_classification: str | None  # the taxpayer's residency WITHOUT the election
+    kind: str               # residency.section_6013_kind: 'g' / 'h' / 'either'
+    precondition_unmet: bool  # sought (recorded or implied) but NOT applied: neither spouse a US citizen/resident
+    unavailable: bool       # the IRC 6013(g)(3) facts hold (sought or not): neither spouse a US citizen/resident
+    nonresident_in_couple: bool  # the no-election facts put a (possible) nonresident in the couple
+    no_joint: bool          # no joint return on these facts: a recorded decline, or precondition_unmet
+    joint_blocked: bool     # a confirmed MFJ status that no_joint rules out — priced MFS, named first
+
+
+def _election_state(profile: Profile, year: int) -> _ElectionState:
+    """Classify residency once, applying the §6013(g)/(h) election before any rule (P-018).
+
+    A recorded election applies on the marriage it needs (:func:`_election_marriage_ok`).
+    A confirmed joint status of a filer whose own residency is nonresident (or a
+    dual-status year) IS the election posture: a joint return with a nonresident alien
+    exists only under it (Pub 519, FAQ: "Generally, you cannot file as married filing
+    jointly if either spouse was a nonresident alien at any time during the tax year"),
+    so the figure is never a joint return under 1040-NR rules — unless the election is
+    recorded as DECLINED, the user's explicit fact, which beats that reading. An
+    election (recorded or implied) is NOT applied when the recorded facts show neither
+    spouse a U.S. citizen or resident (IRC 6013(g)(3); a spouse of unknown residency
+    cannot be judged, so it applies). ``joint_blocked``: a confirmed joint status those
+    facts rule out, which the estimate prices married-filing-separately and names
+    first. compare_scenarios reads this too, so a comparison says what each scenario
+    ran under.
+    """
+    base = _classify_residency(profile, year, section_6013_election=False)
+    own = base.classification if base is not None else None
+    rf = profile.residency_facts
+    declined = rf is not None and rf.section_6013_election is not None and rf.section_6013_election.value is False
+    confirmed = _confirmed_status(profile)
+    marriage_ok = _election_marriage_ok(profile, year)
+    recorded = _section_6013_recorded(profile) and marriage_ok
+    implied = (
+        not recorded and not declined and own in ("nonresident", "dual_status_candidate")
+        and marriage_ok and confirmed == _MFJ
+    )
+    ident = profile.identity
+    us_declared = ident is not None and ident.us_person is not None and ident.us_person.value is True
+    taxpayer = "us" if us_declared else own
+    spouse = _spouse_6013_status(profile, year)
+    # IRC 6013(g)(3): "shall not apply for any taxable year if neither spouse is a citizen or
+    # resident of the United States at any time during such year" — judged on the recorded
+    # facts (both classify full-year nonresident; neither declared a U.S. person), and a
+    # nonresident answer that a missing lookback year could flip is unknown, never
+    # asserted (residency.certain_nonresident — intake's gate shares it).
+    hh = profile.household
+    sp = hh.spouse if hh is not None else None
+    unavailable = (
+        _gate_classification(taxpayer, profile.immigration, profile.residency_facts, year) == "nonresident"
+        and sp is not None
+        and _gate_classification(spouse, sp.immigration, sp.residency_facts, year) == "nonresident"
+    )
+    unmet = (recorded or implied) and unavailable
+    election = (recorded or implied) and not unmet
+    residency_result = _classify_residency(profile, year, section_6013_election=True) if election else base
+    spouse_direction = _spouse_nra_direction(profile, year) if _married_for_year(profile, year) or (
+        _marital(profile) is None and confirmed in _MARRIED_STATUSES) else None
+    nonresident_in_couple = own in ("nonresident", "dual_status_candidate") or spouse_direction is not None
+    no_joint = not election and ((declined and nonresident_in_couple) or unmet)
+    return _ElectionState(
+        residency_result=residency_result,
+        election=election,
+        implied=implied and election,
+        declined=declined,
+        marital_inferred=election and not implied and _marital(profile) is None,
+        own_classification=own,
+        kind=residency.section_6013_kind(taxpayer, spouse, recorded=not implied),
+        precondition_unmet=unmet,
+        unavailable=unavailable,
+        nonresident_in_couple=nonresident_in_couple,
+        no_joint=no_joint,
+        joint_blocked=no_joint and confirmed == _MFJ,
+    )
+
+
+# Form 8843 (2025), Who Must File and When and Where To File (irs.gov/pub/irs-pdf/
+# f8843.pdf, read 2026-09-25). The election changes residency for income tax, not the
+# substantial presence test's day count, so an exempt individual's days are still
+# excluded — and FICA and every later year's SPT follow that count (P-018).
+_FORM_8843_UNDER_ELECTION = (
+    "Form 8843 — the exempt-individual days are still excluded from the substantial presence test under the "
+    "election (FICA and later years' residency follow that count). Form 8843 (2025), Who Must File: an alien "
+    "individual \"must file Form 8843 to explain the basis of your claim that you can exclude days of presence "
+    "in the United States for purposes of the substantial presence test because you: • Were an exempt "
+    "individual\". Its When and Where To File covers only attaching it to the nonresident return and mailing "
+    "it alone when no return is due — it does not address a joint Form 1040, so confirm how to file it with "
+    "the election return."
+)
+
+
+def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "either") -> Roadmap:
+    """Returns/forms (from residency when computable, else us_person), missing docs, time.
+
+    ``kind`` is the §6013 choice (residency.section_6013_kind) when the election is applied."""
     forms: list[str] = []
     if result is not None:
-        if result.classification == "resident":
+        if result.section_6013_election:
+            # P-018: under the election both spouses file as residents; the election is
+            # made ON the return, and IRC 6013(g) and 6013(h) take different statements
+            # (Pub 519 ch. 1, How To Make the Choice / Choosing Resident Alien Status).
+            forms = ["Form 1040", "§6013(g)/(h) election: " + residency.section_6013_texts(kind)[2]]
+            exempt_this_year = year in result.exempt_years.fully_exempt_years or (
+                year in result.exempt_years.partially_exempt_years
+            )
+            if result.classification_without_election in ("nonresident", "dual_status_candidate") and (
+                exempt_this_year
+            ):
+                forms.append(_FORM_8843_UNDER_ELECTION)
+        elif result.classification == "resident":
             forms = ["Form 1040"]
         elif result.classification == "nonresident":
             forms = ["Form 1040-NR", "Form 8843"]
@@ -1098,11 +1846,12 @@ def _bottom_line(
     knowledge_dir,
     *,
     nonresident: bool = False,
-    deposit_exclusion: bool | None = None,
     deps: list[_DepInfo] | tuple[_DepInfo, ...] = (),
     ss_withheld_groups: list[list[int]] | None = None,
     se_persons: list[tuple[int, int]] | None = None,
     notes: set[str] | None = None,
+    deduction_mode: str | None = None,
+    married_for_eitc: bool = False,
 ):
     """Compute the signed bottom line for one filing status. Returns (value, composition, citations).
 
@@ -1122,15 +1871,14 @@ def _bottom_line(
     worksheet (NRA investment income follows ECI/FDAP rules the estimate does
     not model — taxed at ordinary rates and disclosed upstream). The one NRA
     exclusion that IS modeled is US bank-deposit interest (IRC 871(i)(2)(A)):
-    ``income.bank_deposit_interest`` comes off income BEFORE the total, except on
+    ``income.bank_deposit_interest`` comes off income BEFORE the total, never on
     a joint return, which a nonresident reaches only through the §6013(g)/(h)
     election that treats both spouses as residents for the whole year (Pub 519
-    ch. 1) — there the interest stays taxable and ``notes`` records why.
-    ``deposit_exclusion`` overrides whether that exclusion applies to THIS snapshot
-    (None = follow ``nonresident``): the exclusion belongs to the PAYEE, so the
-    spouse's separate MFS return passes the spouse's own classification rather
-    than borrowing the taxpayer's. ``deps`` is the dependents' (age at year end,
-    has_ssn) list — the profile itself is never needed here.
+    ch. 1). ``nonresident`` describes THIS snapshot's payee (P-018): the
+    spouse's separate MFS return passes the spouse's OWN classification, never
+    the taxpayer's, and under the election every snapshot is resident. ``deps``
+    is the dependents' (age at year end, has_ssn) list — the profile itself is
+    never needed here.
 
     Per-person taxes/credits on a COMBINED (joint) snapshot: both the excess-SS
     credit and Schedule SE are per person, so the MFJ spouse-split path passes
@@ -1143,6 +1891,14 @@ def _bottom_line(
     ``notes`` is an optional accumulator of disclosure keys the caller turns
     into assumptions (e.g. the below-100%-FPL PTC eligibility caveat, read off
     the PtcAnnualResult). Pure and deterministic.
+
+    ``deduction_mode`` is the COUPLE's deduction method on a two-return MFS pair
+    (IRC 63(c)(6)(A): "a married individual filing a separate return where either
+    spouse itemizes deductions" has a standard deduction of zero): 'itemize' — this
+    return deducts its own itemized amount (or $0), never the standard deduction;
+    'standard' — this return takes the standard deduction, and a nonresident's
+    Form 1040-NR claims no itemized deductions so the other spouse keeps theirs;
+    None — this return alone (the larger of the two for a resident).
     """
     citations: list[Citation] = []
     comp: list[CompositionLine] = []
@@ -1166,28 +1922,24 @@ def _bottom_line(
     # 2b — so it comes off BEFORE "Total income", which then matches the return.
     # Only the CHARACTERIZED subset is excluded: the 871(i)(2)(A) condition is about
     # character, so interest left in `interest` stays taxed as ECI (871(b)) and is
-    # disclosed upstream. On a JOINT return the exclusion is switched OFF: a
-    # nonresident is on a joint return only through the §6013(g)/(h) election, and
-    # under it "you and your spouse are treated for income tax purposes as
-    # residents for your entire tax year" (Pub 519 ch. 1, Nonresident Spouse
-    # Treated as a Resident) — the election, not the marriage, ends the exclusion
-    # (the N-14 trap, encoded here instead of in prose).
+    # disclosed upstream. The exclusion is OFF under the §6013(g)/(h) election: "you
+    # and your spouse are treated for income tax purposes as residents for your
+    # entire tax year" (Pub 519 ch. 1, Nonresident Spouse Treated as a Resident) —
+    # the election, not the marriage, ends it (the N-14 trap). estimate_refund
+    # applies the election as RESIDENCY (P-018), so an elected snapshot arrives with
+    # nonresident=False on MFJ and MFS alike; the MFJ gate below stays as the last
+    # line of defense, because a nonresident is on a joint return ONLY through it.
     deposit_excluded = 0
-    exclusion_applies = nonresident if deposit_exclusion is None else deposit_exclusion
-    if exclusion_applies and income.bank_deposit_interest > 0:
-        if status == _MFJ:
-            if notes is not None:
-                notes.add("deposit_interest_taxed_under_election")
-        else:
-            deposit_excluded = income.bank_deposit_interest
-            base -= deposit_excluded
-            comp.append(
-                _line(
-                    "deposit_interest_exclusion",
-                    label=_DEPOSIT_EXCLUSION_LABEL,
-                    amount=-deposit_excluded,
-                )
+    if nonresident and status != _MFJ and income.bank_deposit_interest > 0:
+        deposit_excluded = income.bank_deposit_interest
+        base -= deposit_excluded
+        comp.append(
+            _line(
+                "deposit_interest_exclusion",
+                label=_DEPOSIT_EXCLUSION_LABEL,
+                amount=-deposit_excluded,
             )
+        )
 
     half_se = 0
     se_amount = 0
@@ -1311,12 +2063,29 @@ def _bottom_line(
         # withheld): a nonresident alien cannot take the standard deduction (Pub 519;
         # the India treaty Art. 21(2) student exception is disclosed upstream). The
         # max(itemized, standard) logic must never run here.
-        deduction = income.itemized_deductions or 0
-        label = "Less: itemized deductions (1040-NR — nonresidents cannot take the standard deduction)"
+        if deduction_mode == "standard":
+            deduction = 0
+            label = (
+                "Less: itemized deductions (1040-NR — none claimed, so the spouse's separate return keeps "
+                "the standard deduction: IRC 63(c)(6)(A))"
+            )
+        else:
+            deduction = income.itemized_deductions or 0
+            label = "Less: itemized deductions (1040-NR — nonresidents cannot take the standard deduction)"
     else:
         sd = standard_deduction(status, year, knowledge_dir=knowledge_dir)
         citations.append(sd.citation)
-        if income.itemized_deductions is not None:
+        if deduction_mode == "itemize":
+            deduction = income.itemized_deductions or 0
+            label = (
+                "Less: itemized deductions (married filing separately — the couple itemizes, so the standard "
+                "deduction is zero: IRC 63(c)(6)(A))"
+                if status == _MFS else
+                "Less: itemized deductions (the better method on the couple's two returns)"
+            )
+        elif deduction_mode == "standard":
+            deduction, label = sd.amount, "Less: standard deduction"
+        elif income.itemized_deductions is not None:
             deduction = max(income.itemized_deductions, sd.amount)
             label = "Less: itemized deductions" if deduction == income.itemized_deductions else "Less: standard deduction"
         else:
@@ -1623,10 +2392,14 @@ def _bottom_line(
             )
         )
 
-    # EITC: never for a nonresident alien or (as modeled) married filing separately;
-    # gated by the investment-income limit; needs positive earned income.
+    # EITC: never for a nonresident alien or (as modeled) married filing separately —
+    # nor for a head of household who "may still be considered married for purposes of the
+    # earned income credit (EIC)" (``married_for_eitc``, Pub 519 ch. 5: the nonresident-spouse
+    # route to head of household, or a lived-apart one with no qualifying child; the
+    # separated-spouse rule is not modeled); gated by
+    # the investment-income limit; needs positive earned income.
     eitc_cfg = getattr(credits_block, "earned_income_tax_credit", None) if credits_block is not None else None
-    if eitc_cfg and not nonresident and not mfs and earned > 0:
+    if eitc_cfg and not nonresident and not mfs and not married_for_eitc and earned > 0:
         # Pub 596 Worksheet 1: investment income uses the NET capital gain (Form 1040
         # line 7, floored at 0) — the loss-limited `capital` figure — never the gross
         # positive short/long legs summed separately.
@@ -1698,58 +2471,165 @@ def estimate_refund(
     """
     # Classify residency once and thread it into both status selection and the roadmap
     # (H1): a confirmed nonresident alien files 1040-NR, which cannot use MFJ/HOH.
-    residency_result = _classify_residency(profile, year)
+    # P-018: the §6013(g)/(h) election is RESIDENCY — "you and your spouse are treated
+    # for income tax purposes as residents for your entire tax year" (Pub 519 ch. 1) —
+    # so it is applied here, once (_election_state: recorded, or read from a confirmed
+    # joint status of a nonresident), and every rule downstream (the deduction, NIIT, the
+    # rates, the 871(i)(2)(A) exclusion, the candidate statuses) follows from the
+    # classification.
+    married = _is_married(profile)
+    state = _election_state(profile, year)
+    residency_result = state.residency_result
+    election_implied = state.implied
+    own_classification = state.own_classification
+    election = state.election
     classification = residency_result.classification if residency_result is not None else None
     nonresident = classification == "nonresident"
+    # The election reaches chapter 1 and chapter 24 only (IRC 6013(g)(1)), so the FICA
+    # disclosure keeps following the day-count answer.
+    fica_nonresident = (
+        residency_result.classification_without_election if election else classification
+    ) == "nonresident"
 
-    statuses, status_assumed = _candidate_statuses(profile, classification, year)
+    statuses, status_assumed = _candidate_statuses(profile, classification, year, no_joint=state.no_joint)
+    if state.joint_blocked:
+        # P-018: a confirmed joint status the facts rule out (a recorded decline with a
+        # nonresident in the couple, or neither spouse a U.S. citizen or resident) is
+        # never priced as a joint return under nonresident rules, nor under an election
+        # the facts refuse — it is priced married-filing-separately, named FIRST below.
+        statuses = [_MFS]
     deps = _dependent_infos(profile, year)
-    married = _is_married(profile)
     spouse_split = income.spouse is not None and married
-    # N-8 / P-013: the §871(i)(2)(A) exclusion belongs to the PAYEE. On the true
-    # two-return MFS path the spouse's own return gets it only when the spouse's OWN
-    # facts classify nonresident — never borrowed from the taxpayer's residency (a US
-    # citizen or resident spouse's deposit interest is taxable on their 1040, and a
-    # spouse whose residency is unknown is taxed on it with a disclosure, the same
-    # no-guessing rule as uncharacterized interest). The reverse direction (a resident
-    # taxpayer's nonresident spouse) is not modeled — P-013 says so.
-    spouse_deposit_exclusion = (
-        nonresident and spouse_split and _spouse_nra_direction(profile, year) == "nonresident"
+    # P-018 (the J0 re-verify follow-up) and P-013 rule (e): each spouse's SEPARATE
+    # return follows that spouse's OWN classification — never the taxpayer's. A US
+    # citizen or resident spouse of a nonresident files Form 1040 (standard deduction,
+    # regular and preferential rates, deposit interest taxed); a spouse whose own facts
+    # classify nonresident files Form 1040-NR (no standard deduction, the 871(i)(2)(A)
+    # exclusion) in either direction; a spouse whose residency is unknown is not
+    # assumed nonresident (resident rules, with a disclosure — the no-guessing rule —
+    # and the range prices that return under nonresident rules too) — EXCEPT on the
+    # no-joint path (a recorded decline), whose premise is a nonresident in the couple:
+    # when the taxpayer is not that nonresident, the spouse of unknown residency is
+    # (spouse_nra_assumed), every candidate prices the spouse on that one reading, and
+    # the range prices the resident one. Under the election both spouses are residents,
+    # so the direction is moot.
+    spouse_direction = _spouse_nra_direction(profile, year) if married and not election else None
+    tp_ident = profile.identity
+    taxpayer_not_nra = own_classification == "resident" or (
+        tp_ident is not None and tp_ident.us_person is not None and tp_ident.us_person.value is True
+        and own_classification not in ("nonresident", "dual_status_candidate")
     )
+    spouse_nra_assumed = state.no_joint and spouse_direction == "conditional" and taxpayer_not_nra
+    spouse_dual_status = spouse_direction == "conditional" and _spouse_own_classification(profile, year) == (
+        "dual_status_candidate")
+    spouse_nra_reading = spouse_direction == "nonresident" or spouse_nra_assumed
+    spouse_nonresident = spouse_split and spouse_nra_reading
+    spouse_mfs_return = spouse_split and _MFS in statuses
+    # A married filer's head of household (Pub 501, Considered Unmarried) comes by one of two
+    # routes. The NONRESIDENT-SPOUSE route (spouse_nra_reading) — the spouse's return on Form
+    # 1040-NR rules, and the filer "may still be considered married for purposes of the earned
+    # income credit (EIC)" (Pub 519 ch. 5; the separated-spouse rule is not modeled), so no
+    # EITC, with or without a spouse snapshot, and the couple's one deduction method (the
+    # literal IRC 63(c)(6)(A) reading). The LIVED-APART route ("Your spouse didn't live in your
+    # home during the last 6 months of the tax year") — a resident spouse and a free deduction
+    # method (Pub 501); for the EITC the separated-spouse rule needs a qualifying child, so a
+    # lived-apart figure with none computes no EITC either.
+    hoh_spouse_nra = spouse_nra_reading
+    eitc_qualifying_child = any(a is not None and 0 <= a < 19 and ssn is True for a, ssn in deps)
+    # The separated-spouse rule (IRC 32(d)(2)) starts in TY2021; before it a lived-apart HOH was
+    # unmarried for the EITC under IRC 7703(b), so the qualifying-child gate is year-bound.
+    lived_apart_no_eitc = year >= 2021 and not eitc_qualifying_child
     notes: set[str] = set()  # disclosure keys accumulated across every candidate status
+    mfs_method: dict[str, str | None] = {}  # the couple's deduction method on the two-return MFS pair
+
+    def _mfs_pair(
+        spouse_nra: bool, self_status: str = _MFS, *, lived_apart_hoh: bool = False, married_for_eitc: bool = False,
+    ) -> tuple[BottomLineResult, str | None, set[str]]:
+        """F10: a TRUE two-return MFS comparison — one MFS return per spouse, bottom lines
+        summed. All dependents go to the primary taxpayer (disclosed as an assumption;
+        reallocating them could change it).
+
+        The couple uses ONE deduction method (IRC 63(c)(6)(A): the standard deduction is
+        zero for "a married individual filing a separate return where either spouse
+        itemizes deductions"), so when either return has itemized deductions both
+        methods are priced and the better total is kept — Pub 501: "You and your spouse
+        can use the method that gives you the lower total tax". Each run keeps its own
+        disclosure keys; only the kept run's reach ``notes``.
+
+        ``lived_apart_hoh``: a head of household considered unmarried because the spouses
+        live apart may take the standard deduction while the spouse itemizes — Pub 501,
+        Married Filing Separately: "The head of household filing status allows you to
+        choose the standard deduction even if your spouse chooses to itemize deductions"
+        — so that combination ('standard+itemize') is priced too; the spouse's separate
+        return itemizes whenever the head of household does (IRC 63(c)(6)(A)).
+        ``married_for_eitc``: the head of household is still married for the EITC (the
+        nonresident-spouse route, Pub 519 ch. 5), so no EITC on that return.
+        """
+        self_income = income.model_copy(update={"spouse": None})
+
+        def _run(self_mode: str | None, spouse_mode: str | None):
+            local: set[str] = set()
+            rs = _bottom_line(
+                self_income, self_status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=local,
+                deduction_mode=self_mode, married_for_eitc=married_for_eitc,
+            )
+            rp = _bottom_line(
+                income.spouse, _MFS, year, knowledge_dir, nonresident=spouse_nra, deps=[], notes=local,
+                deduction_mode=spouse_mode,
+            )
+            return rs, rp, local
+
+        # Two nonresident returns have no standard deduction to lose (IRC 63(c)(6)(B)), so
+        # the method is weighed only when at least one return is a resident's.
+        if (not nonresident or not spouse_nra) and any(
+            (snap.itemized_deductions or 0) > 0 for snap in (self_income, income.spouse)
+        ):
+            combos = {"standard": ("standard", "standard"), "itemize": ("itemize", "itemize")}
+            if lived_apart_hoh:
+                combos["standard+itemize"] = ("standard", "itemize")
+            runs = {m: _run(*modes) for m, modes in combos.items()}
+            method: str | None = max(runs, key=lambda m: (runs[m][0].bottom + runs[m][1].bottom, m == "standard"))
+        else:
+            method = None
+            runs = {None: _run(None, None)}
+        res_self, res_spouse, local = runs[method]
+        total = res_self.bottom + res_spouse.bottom
+        comp = [
+            *res_self.lines[:-1],  # drop the per-return bottom line (a zero-effect subtotal)
+            # The spouse's whole return folds into ONE operand row; its bottom
+            # line ADDS to the combined total, so effect = +amount — the single
+            # exception to the effect = -amount convention.
+            _line(
+                "spouse_mfs_return",
+                label="Spouse's MFS return (computed separately)",
+                amount=res_spouse.bottom,
+                effect=res_spouse.bottom,
+            ),
+            _line("bottom_line", label=_BOTTOM_LINE_LABEL, amount=total),
+        ]
+        _reconcile(total, comp)
+        result = BottomLineResult(bottom=total, lines=comp, citations=[*res_self.citations, *res_spouse.citations])
+        return result, method, local
 
     def _outcome(status: str) -> BottomLineResult:
         if spouse_split:
             if status == _MFS:
-                # F10: a TRUE two-return MFS comparison — one MFS return per spouse,
-                # bottom lines summed. All dependents go to the primary taxpayer
-                # (disclosed as an assumption; reallocating them could change it).
-                self_income = income.model_copy(update={"spouse": None})
-                res_self = _bottom_line(
-                    self_income, status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=notes
+                result, method, local = _mfs_pair(spouse_nonresident)
+                notes.update(local)
+                mfs_method["method"] = method
+                return result
+            if status == "head_of_household":
+                # Every married head-of-household figure with a spouse snapshot (a married
+                # filer reaches HOH only as "considered unmarried", Pub 501, and only MFJ
+                # combines two people's income): your head-of-household return plus the
+                # spouse's separate one, on the route hoh_spouse_nra names (above).
+                result, method, local = _mfs_pair(
+                    hoh_spouse_nra, "head_of_household", lived_apart_hoh=not hoh_spouse_nra,
+                    married_for_eitc=hoh_spouse_nra or lived_apart_no_eitc,
                 )
-                res_spouse = _bottom_line(
-                    income.spouse, status, year, knowledge_dir, nonresident=nonresident,
-                    deposit_exclusion=spouse_deposit_exclusion, deps=[], notes=notes,
-                )
-                total = res_self.bottom + res_spouse.bottom
-                comp = [
-                    *res_self.lines[:-1],  # drop the per-return bottom line (a zero-effect subtotal)
-                    # The spouse's whole return folds into ONE operand row; its bottom
-                    # line ADDS to the combined total, so effect = +amount — the single
-                    # exception to the effect = -amount convention.
-                    _line(
-                        "spouse_mfs_return",
-                        label="Spouse's MFS return (computed separately)",
-                        amount=res_spouse.bottom,
-                        effect=res_spouse.bottom,
-                    ),
-                    _line("bottom_line", label=_BOTTOM_LINE_LABEL, amount=total),
-                ]
-                _reconcile(total, comp)
-                return BottomLineResult(
-                    bottom=total, lines=comp, citations=[*res_self.citations, *res_spouse.citations]
-                )
+                notes.update(local)
+                mfs_method["hoh_method"] = method
+                return result
             # Combined (joint) return: income is summed, but the per-PERSON pieces —
             # the excess-SS credit and Schedule SE — are computed per spouse.
             return _bottom_line(
@@ -1764,16 +2644,58 @@ def estimate_refund(
                 ],
                 notes=notes,
             )
-        return _bottom_line(income, status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=notes)
+        # A married head of household with no spouse snapshot: the same EITC rule (above).
+        married_hoh = status == "head_of_household" and married and not election
+        return _bottom_line(
+            income, status, year, knowledge_dir, nonresident=nonresident, deps=deps, notes=notes,
+            married_for_eitc=married_hoh and (hoh_spouse_nra or lived_apart_no_eitc),
+        )
 
     outcomes = {s: _outcome(s) for s in statuses}
     primary = statuses[0]
     point, composition, citations = outcomes[primary].bottom, outcomes[primary].lines, outcomes[primary].citations
-    values = [r.bottom for r in outcomes.values()]
+    # A DEFINITE 6013(h) choice (read from a joint status, never a recorded answer that an
+    # earlier 6013(g) election may explain) has no separate figure: "You and your spouse
+    # must file a joint return for the year of the choice" (Pub 519 ch. 1). It stays in
+    # the disclosure but leaves the range and the comparison.
+    priced = {
+        s: r for s, r in outcomes.items()
+        if not (election and state.kind == "h" and s == _MFS and s != primary)
+    }
+    values = [r.bottom for r in priced.values()]
+    # A spouse whose residency is not settled (a declared non-US person with no facts
+    # that classify them, or a dual-status year) has the separate return computed under
+    # RESIDENT rules — never the taxpayer's borrowed flag — and the range brackets the
+    # other reading: the same pair with the spouse on Form 1040-NR rules (P-018).
+    spouse_nra_alternative: int | None = None
+    if spouse_mfs_return and spouse_direction == "conditional":
+        spouse_nra_alternative = _mfs_pair(not spouse_nonresident)[0].bottom
+        values.append(spouse_nra_alternative)
+    # The same for a CONFIRMED head-of-household figure: the other route (P-018, above). An
+    # unconfirmed candidate's lived-apart reading rests on an unrecorded fact, so the note
+    # names it without widening the range.
+    hoh_alternative: int | None = None
+    if (
+        "head_of_household" in priced and married and not election and spouse_direction == "conditional"
+        and _confirmed_status(profile) == "head_of_household"
+        and classification not in ("nonresident", "dual_status_candidate")  # priced as given (JF1b.12)
+    ):
+        alt_nra = not hoh_spouse_nra
+        if spouse_split:
+            hoh_alternative = _mfs_pair(
+                alt_nra, "head_of_household", lived_apart_hoh=not alt_nra,
+                married_for_eitc=alt_nra or lived_apart_no_eitc,
+            )[0].bottom
+        else:
+            hoh_alternative = _bottom_line(
+                income, "head_of_household", year, knowledge_dir, nonresident=nonresident, deps=deps,
+                married_for_eitc=alt_nra or lived_apart_no_eitc,
+            ).bottom
+        values.append(hoh_alternative)
     low, high = min(values), max(values)
 
-    comparison = _build_comparison(outcomes)
-    roadmap = _build_roadmap(profile, year, residency_result)
+    comparison = _build_comparison(priced)
+    roadmap = _build_roadmap(profile, year, residency_result, kind=state.kind)
 
     # De-duplicate citations by (source, url).
     seen, unique_citations = set(), []
@@ -1794,36 +2716,95 @@ def estimate_refund(
             f"Filing status not confirmed — showing the range across {', '.join(statuses)}. "
             f"Confirm your status to get a single number."
         )
+    elif state.joint_blocked:
+        assumptions.append(
+            f"Filing status: {primary} — priced in place of the confirmed married_filing_jointly, which these "
+            "facts rule out (see the first note)."
+        )
     else:
         assumptions.append(f"Filing status: {primary}.")
     if income.itemized_deductions is None and not nonresident:
         assumptions.append("Standard deduction assumed (no itemizing, and no age-65+/blind adjustment).")
+    method = mfs_method.get("method")
     if nonresident:
         # 1040-NR deduction law: itemized-only, never the standard deduction.
+        forgone = (
+            " (on the married-filing-separately figure the couple's deduction method claims none of them — see "
+            "the married-filing-separately deduction note)"
+            if method == "standard" and (income.itemized_deductions or 0) > 0
+            else ""
+        )
         assumptions.append(
             f"Nonresident aliens cannot take the standard deduction: Form 1040-NR line 12 is "
             f"ITEMIZED-only (typically state/local income tax withheld), so this estimate used "
-            f"${income.itemized_deductions or 0:,} of itemized deductions."
+            f"${income.itemized_deductions or 0:,} of itemized deductions{forgone}."
         )
         assumptions.append(
             "Exception: students/business apprentices from India MAY claim the standard deduction "
             "under US-India treaty Art. 21(2) — confirm nationality and treaty eligibility, and if "
             "it applies, rerun with itemized_deductions set to the standard-deduction amount."
         )
+    if _section_6013_recorded(profile) and not election and not state.precondition_unmet:
+        assumptions.append(
+            "residency_facts.section_6013_election is recorded, but it was NOT applied: "
+            f"{_election_not_applied_reason(profile, year, unavailable=state.unavailable)}. Residency follows the "
+            "visa timeline and day counts."
+        )
+    if method is not None:
+        assumptions.append(_mfs_deduction_method_note(
+            method, income.model_copy(update={"spouse": None}), income.spouse,
+            self_nonresident=nonresident, spouse_nonresident=spouse_nonresident,
+        ))
+    if "head_of_household" in outcomes and married and not election:
+        assumptions.append(_hoh_pair_note(
+            spouse_nra=hoh_spouse_nra, weighed=mfs_method.get("hoh_method") is not None,
+            unsettled=spouse_direction == "conditional", alternative=hoh_alternative, snapshot=spouse_split,
+            taxpayer_nonresident=classification in ("nonresident", "dual_status_candidate"),
+            eitc_child=not lived_apart_no_eitc,
+        ))
+    if spouse_mfs_return and (nonresident != spouse_nonresident):
+        # P-018: the spouse's separate return ran under the spouse's OWN rules — say which.
+        assumptions.append(_spouse_separate_return_note(
+            profile, year, spouse_nonresident=spouse_nonresident, income=income.spouse, deduction_method=method,
+        assumed=spouse_nra_assumed, dual_status=spouse_dual_status,
+        ))
+    if spouse_nra_alternative is not None:
+        if spouse_nra_assumed:
+            reading = (
+                "NONRESIDENT rules (Form 1040-NR) for the point estimate — the reading the recorded decline rests "
+                "on, since a joint return is ruled out only when a spouse is a nonresident alien — and the range "
+                "ALSO prices it under RESIDENT rules (Form 1040: the standard deduction, the regular and "
+                "preferential rates, deposit interest taxed)"
+            )
+        else:
+            reading = (
+                "RESIDENT rules for the point estimate — never by borrowing your classification — and the range "
+                "ALSO prices it under NONRESIDENT rules (Form 1040-NR: no standard deduction, ordinary rates, the "
+                "IRC 871(i)(2)(A) deposit-interest exclusion)"
+            )
+        assumptions.append(
+            "The spouse's own residency is not settled (no visa timeline and day counts that classify them, or a "
+            f"dual-status year), so the spouse's separate return was computed under {reading}: "
+            "married-filing-separately would then total "
+            f"{'+' if spouse_nra_alternative >= 0 else '-'}${abs(spouse_nra_alternative):,} (+ refund / - owed). "
+            "Record the spouse's visa timeline and days in the US to settle it."
+        )
     # The nonresident-income disclosures name only amounts that sit on a NONRESIDENT's
-    # return: the primary's, plus the spouse's when the spouse's own facts classify
-    # nonresident (spouse_deposit_exclusion — which also requires a confirmed
-    # marriage, so an ignored spouse snapshot never inflates a disclosed amount).
-    nra_snapshots = ([income] + ([income.spouse] if spouse_deposit_exclusion else [])) if nonresident else []
-    # The FDAP note covers every snapshot whose return was COMPUTED under the nonresident
-    # rules — the primary, plus the spouse whenever the marriage is confirmed (the spouse's
-    # MFS return and the joint figure both still run with the taxpayer's `nonresident`
-    # flag; see P-013's not-modeled list) — not only the deposit-exclusion payees.
-    computed_nra_snapshots = ([income] + ([income.spouse] if spouse_split else [])) if nonresident else []
+    # return (P-018): the primary's when the primary classifies nonresident, and the
+    # spouse's SEPARATE (MFS) return when the spouse's OWN facts classify nonresident —
+    # in either direction, since each return follows its own payee. spouse_split also
+    # requires a confirmed marriage, so an ignored spouse snapshot never inflates a
+    # disclosed amount. The FDAP note covers exactly the same returns: every return
+    # computed under the nonresident rules, and no other.
+    # The spouse's separate return inside a head-of-household figure on the nonresident-spouse
+    # route runs on Form 1040-NR rules too, so its amounts are disclosed alike (P-013 rule (c)).
+    spouse_hoh_nra_return = spouse_split and "head_of_household" in statuses and hoh_spouse_nra and not election
+    spouse_nra_return = (spouse_nonresident and spouse_mfs_return) or spouse_hoh_nra_return
+    nra_snapshots = ([income] if nonresident else []) + ([income.spouse] if spouse_nra_return else [])
     nra_investment_income = any(
         (snap.interest - snap.bank_deposit_interest) or snap.dividends
         or snap.capital_gain_long or snap.capital_gain_short
-        for snap in computed_nra_snapshots
+        for snap in nra_snapshots
     )
     if nra_investment_income:
         assumptions.append(
@@ -1836,79 +2817,114 @@ def estimate_refund(
             "relying on it."
         )
     # N-8 / P-013: the §871(i)(2)(A) exclusion is MODELED, and each disclosure names
-    # the amount it applies to — never a generic "may OVERTAX".
-    if nonresident:
-        deposit_total = sum(snap.bank_deposit_interest for snap in nra_snapshots)
-        uncharacterized_interest = sum(snap.interest - snap.bank_deposit_interest for snap in nra_snapshots)
-        # The JOINT (election) return taxes BOTH spouses' interest whatever either one's
-        # residency, so its disclosures name the combined amounts of a confirmed marriage.
-        joint_snapshots = [income] + ([income.spouse] if spouse_split else [])
-        joint_deposit = sum(snap.bank_deposit_interest for snap in joint_snapshots)
-        joint_uncharacterized = sum(snap.interest - snap.bank_deposit_interest for snap in joint_snapshots)
-        if deposit_total > 0 and "deposit_interest_taxed_under_election" not in notes:
-            assumptions.append(
-                f"US bank-deposit interest of ${deposit_total:,} was EXCLUDED from income: IRC 871(i)(1) "
-                f"imposes no 30% tax on 871(i)(2)(A) 'interest on deposits, if such interest is not "
-                f"effectively connected with the conduct of a trade or business within the United States' "
-                f"('deposits' per 871(i)(3): deposits with persons carrying on the banking business, "
-                f"deposits or withdrawable accounts with savings institutions, and amounts held by an "
-                f"insurance company under an agreement to pay interest); Pub 519 ch. 3 (Exclusions From "
-                f"Gross Income — Interest Income) excludes it from gross income, and the Instructions for "
-                f"Form 1040-NR (line 2b, Exception 3) say not to report it on line 2b. The exclusion is "
-                f"conditioned on the CHARACTER you entered — confirm the payer is a bank, savings "
-                f"institution or insurance company and the account is not part of a US trade or business. "
-                f"It ENDS if a §6013(g)/(h) election treats you as a resident (the election, not the "
-                f"marriage, makes the interest taxable)."
-            )
-        spouse_deposit_taxed = (
-            income.spouse.bank_deposit_interest
-            if spouse_split and not spouse_deposit_exclusion and _MFS in statuses
-            else 0
+    # the amount it applies to — never a generic "may OVERTAX". The EXCLUDED amounts
+    # come from the returns _bottom_line actually excluded them on: a nonresident's
+    # non-joint return (the MFJ gate taxes it — a nonresident is on a joint return only
+    # through the election), and the spouse's separate return when the spouse's own
+    # facts classify nonresident. Deriving them from the flag alone once told a
+    # nonresident on a contradictory joint status the interest was excluded while the
+    # joint figure taxed it (P-013 rule (c): the text must match the number).
+    primary_excludes = nonresident and any(s != _MFJ for s in statuses)
+    spouse_excludes = spouse_nra_return
+    excluded_snapshots = ([income] if primary_excludes else []) + ([income.spouse] if spouse_excludes else [])
+    deposit_total = sum(snap.bank_deposit_interest for snap in excluded_snapshots)
+    uncharacterized_interest = sum(snap.interest - snap.bank_deposit_interest for snap in excluded_snapshots)
+    # A JOINT return taxes BOTH spouses' interest whatever either one's residency, and so
+    # does every return under the election; those disclosures name the household amounts.
+    joint_snapshots = [income] + ([income.spouse] if spouse_split else [])
+    joint_deposit = sum(snap.bank_deposit_interest for snap in joint_snapshots)
+    joint_uncharacterized = sum(snap.interest - snap.bank_deposit_interest for snap in joint_snapshots)
+    # The ELECTION posture: every figure under the election, or the joint candidate of a
+    # couple whose spouse's own facts classify nonresident (that joint return, too,
+    # exists only under the election). Its figures tax the interest whatever its character.
+    election_figures = election or (_MFJ in statuses and spouse_nonresident)
+    # ... and every joint figure of a nonresident: the MFJ gate taxes the interest there
+    # too, even on a contradictory profile the election was not read into.
+    joint_posture = election_figures or (nonresident and _MFJ in statuses)
+    recorded_election = election and not election_implied
+    if deposit_total > 0:
+        where = (
+            ""
+            if primary_excludes
+            else " on the spouse's separate (married-filing-separately) return — the spouse's own facts classify "
+            "them as a nonresident alien"
+            if not spouse_nra_assumed
+            else " on the spouse's separate return — priced as a nonresident alien's, the reading the recorded "
+            "decline rests on ("
+            + ("the spouse's own facts show a dual-status year" if spouse_dual_status
+               else "the spouse's residency is not on file") + ")"
         )
-        if spouse_deposit_taxed > 0:
-            assumptions.append(
-                f"On the spouse's separate return the spouse's ${spouse_deposit_taxed:,} of "
-                f"bank_deposit_interest was NOT excluded: the IRC 871(i)(2)(A) exclusion belongs to a "
-                f"NONRESIDENT payee, and the spouse's own facts do not classify them as a nonresident "
-                f"alien (a US citizen or resident spouse is taxed on it on their Form 1040). If the "
-                f"spouse is a nonresident, record the spouse's visa timeline and days in the US and "
-                f"rerun."
-            )
-        if "deposit_interest_taxed_under_election" in notes:
-            assumptions.append(
-                f"On the joint-return figure the ${joint_deposit:,} of bank_deposit_interest was NOT "
-                f"excluded: a nonresident alien is on a joint return only through the §6013(g)/(h) "
-                f"election, under which 'you and your spouse are treated for income tax purposes as "
-                f"residents for your entire tax year' (Pub 519 ch. 1, Nonresident Spouse Treated as a "
-                f"Resident) — so the IRC 871(i)(2)(A) exclusion does not apply and the interest is taxed. "
-                f"It is the ELECTION, not the marriage, that ends the exclusion: married filing "
-                f"separately on Form 1040-NR keeps it."
-            )
-        # A nonresident's candidate set holds MFJ only when that status is CONFIRMED
-        # (_candidate_statuses drops it otherwise) — i.e. the §6013(g)/(h) election
-        # posture, where the character of the interest no longer matters: telling the
-        # filer 871(i)(2)(A) "excludes it — rerun" there would contradict the election
-        # disclosure above (P-013 rule (c)).
-        if joint_uncharacterized > 0 and _MFJ in statuses:
-            assumptions.append(
-                f"${joint_uncharacterized:,} of interest was entered without deposit character and was "
-                f"taxed on the joint-return figure. Under the §6013(g)/(h) election both spouses are treated "
-                f"as residents for the entire tax year (Pub 519 ch. 1), so that interest is taxable whatever "
-                f"its character — the IRC 871(i)(2)(A) deposit-interest exclusion and the Form 1040-NR "
-                f"Schedule NEC treatment do not apply to a joint return."
-            )
-        elif uncharacterized_interest > 0:
-            assumptions.append(
-                f"${uncharacterized_interest:,} of interest was entered WITHOUT deposit character "
-                f"(interest minus bank_deposit_interest) and was taxed as effectively connected ordinary "
-                f"income. If it is interest on a deposit with a US bank, savings institution or insurance "
-                f"company that is not effectively connected with a US trade or business, IRC 871(i)(2)(A) "
-                f"excludes it — rerun with that portion in bank_deposit_interest. If it is other "
-                f"US-source interest not effectively connected with a US trade or business (bond or "
-                f"brokerage interest; Treasury interest in 1099-INT box 3), it belongs on Schedule NEC "
-                f"line 2 at 30%/treaty rate unless the 871(h) portfolio-interest exemption applies — "
-                f"neither is modeled here."
-            )
+        assumptions.append(
+            f"US bank-deposit interest of ${deposit_total:,} was EXCLUDED from income{where}: IRC 871(i)(1) "
+            f"imposes no 30% tax on 871(i)(2)(A) 'interest on deposits, if such interest is not "
+            f"effectively connected with the conduct of a trade or business within the United States' "
+            f"('deposits' per 871(i)(3): deposits with persons carrying on the banking business, "
+            f"deposits or withdrawable accounts with savings institutions, and amounts held by an "
+            f"insurance company under an agreement to pay interest); Pub 519 ch. 3 (Exclusions From "
+            f"Gross Income — Interest Income) excludes it from gross income, and the Instructions for "
+            f"Form 1040-NR (line 2b, Exception 3) say not to report it on line 2b. The exclusion is "
+            f"conditioned on the CHARACTER you entered — confirm the payer is a bank, savings "
+            f"institution or insurance company and the account is not part of a US trade or business. "
+            f"It ENDS if a §6013(g)/(h) election treats you as a resident (the election, not the "
+            f"marriage, makes the interest taxable)."
+        )
+    spouse_deposit_taxed = (
+        income.spouse.bank_deposit_interest
+        if spouse_mfs_return and not spouse_nonresident and not election
+        and (nonresident or spouse_direction is not None)
+        else 0
+    )
+    if spouse_deposit_taxed > 0:
+        assumptions.append(
+            f"On the spouse's separate return the spouse's ${spouse_deposit_taxed:,} of "
+            f"bank_deposit_interest was NOT excluded: the IRC 871(i)(2)(A) exclusion belongs to a "
+            f"NONRESIDENT payee, and the spouse's own facts do not classify them as a nonresident "
+            f"alien (a US citizen or resident spouse is taxed on it on their Form 1040). If the "
+            f"spouse is a nonresident, record the spouse's visa timeline and days in the US and "
+            f"rerun."
+        )
+    if joint_posture and joint_deposit > 0:
+        lead = (
+            f"Under the §6013(g)/(h) election recorded on this profile the ${joint_deposit:,} of "
+            f"bank_deposit_interest was NOT excluded on any figure here — joint or separate alike: under the "
+            f"election"
+            if recorded_election
+            else f"On the joint-return figure the ${joint_deposit:,} of bank_deposit_interest was NOT "
+            f"excluded: a nonresident alien is on a joint return only through the §6013(g)/(h) election, "
+            f"under which"
+        )
+        quote = residency.section_6013_effect_quote(state.kind)
+        assumptions.append(
+            f"{lead} {quote} — so the IRC 871(i)(2)(A) exclusion does not apply and the interest is taxed. It is "
+            f"the ELECTION, not the marriage, that ends the exclusion: married filing separately on Form 1040-NR "
+            f"WITHOUT the election keeps it."
+        )
+    # Under the election the character of the interest no longer matters: telling the
+    # filer 871(i)(2)(A) "excludes it — rerun" about an ELECTION figure would contradict
+    # the disclosure above (P-013 rule (c)); that note speaks only for a nonresident's
+    # own non-election return.
+    if joint_posture and joint_uncharacterized > 0:
+        figure = "every figure here (joint or separate)" if recorded_election else "the joint-return figure"
+        assumptions.append(
+            f"${joint_uncharacterized:,} of interest was entered without deposit character and was "
+            f"taxed on {figure}. Under the §6013(g)/(h) election both spouses are treated "
+            f"as residents for the entire tax year (Pub 519 ch. 1), so that interest is taxable whatever "
+            f"its character — the IRC 871(i)(2)(A) deposit-interest exclusion and the Form 1040-NR "
+            f"Schedule NEC treatment do not apply under the election."
+        )
+    if uncharacterized_interest > 0:
+        where = "" if primary_excludes else "On the spouse's separate (married-filing-separately) return, "
+        assumptions.append(
+            f"{where}${uncharacterized_interest:,} of interest was entered WITHOUT deposit character "
+            f"(interest minus bank_deposit_interest) and was taxed as effectively connected ordinary "
+            f"income. If it is interest on a deposit with a US bank, savings institution or insurance "
+            f"company that is not effectively connected with a US trade or business, IRC 871(i)(2)(A) "
+            f"excludes it — rerun with that portion in bank_deposit_interest. If it is other "
+            f"US-source interest not effectively connected with a US trade or business (bond or "
+            f"brokerage interest; Treasury interest in 1099-INT box 3), it belongs on Schedule NEC "
+            f"line 2 at 30%/treaty rate unless the 871(h) portfolio-interest exemption applies — "
+            f"neither is modeled here."
+        )
     ident = profile.identity
     declared_non_us_person = (
         ident is not None and ident.us_person is not None and ident.us_person.value is False
@@ -2339,20 +3355,36 @@ def estimate_refund(
             f"interest deduction (IRC 221). It was computed, not ignored."
         )
     # FICA withheld in error on an exempt nonresident is recovered OFF-return.
+    # The election does not reach FICA (IRC 6013(g)(1): chapters 1 and 24 only), so this
+    # note follows the day-count answer, not the elected one (P-018).
     nra_fica_msg: str | None = None
-    if nonresident and sum(income.ss_withheld_by_employer) > 0:
+    if fica_nonresident and sum(income.ss_withheld_by_employer) > 0:
         ss_total = sum(income.ss_withheld_by_employer)
         nra_fica_msg = (
             f"${ss_total:,} of Social Security tax (W-2 box 4) was "
             f"withheld, but exempt F/J students and scholars are generally FICA-EXEMPT (IRC "
             f"3121(b)(19)): Social Security/Medicare withheld in error is recovered from the "
             f"EMPLOYER first, otherwise with Form 843 + Form 8316 — a separate claim, NOT on the "
-            f"1040-NR. This estimate does not include it. The claim would recover AT LEAST the "
+            f"{'Form 1040' if election else '1040-NR'}. This estimate does not include it. The claim "
+            f"would recover AT LEAST the "
             f"${ss_total:,} of box-4 Social Security tax PLUS the box-6 Medicare tax withheld — "
             f"Medicare withholding is not tracked in this snapshot, so add box 4 + box 6 from each "
             f"W-2 for the actual claim amount."
+            + (f" {residency.SECTION_6013_FICA}" if election else "")
         )
         assumptions.append(nra_fica_msg)
+    if election_figures and any(
+        snap.interest + snap.dividends + snap.capital_gain_long + snap.capital_gain_short > 0
+        for snap in joint_snapshots
+    ):
+        # P-018: the joint NIIT figure is a SECOND election's result (Treas. Reg.
+        # 1.1411-2(a)(2)(iii)(B) for 6013(g), (iv)(B) for 6013(h)); the default is
+        # married-filing-separately for NIIT. Every election figure carries it — the
+        # recorded election's (joint AND separate), and the joint candidate of a couple
+        # whose spouse's own facts classify nonresident.
+        assumptions.append(_section_6013_niit_note(
+            joint=_MFJ in statuses, separate=election and _MFS in statuses, kind=state.kind,
+        ))
     assumptions.append(
         "Not modeled in this estimate: AMT, LLC (available via the calc tool), itemized-deduction "
         "sub-limits, EITC official-table $50 banding (formula used), capital-loss carryovers, and "
@@ -2366,15 +3398,49 @@ def estimate_refund(
     us_person_false = (
         ident is not None and ident.us_person is not None and ident.us_person.value is False
     )
-    spouse_direction = _spouse_nra_direction(profile, year) if _is_married(profile) else None
     residency_caveat: str | None = None
-    if classification == "dual_status_candidate":
+    if election:
+        # P-018: the figures ran UNDER the election — say so, with the worldwide-income,
+        # FICA, how-to and precondition caveats (the direction caveats below are moot).
+        residency_caveat = _section_6013_caveat_in_effect(
+            implied=election_implied,
+            own_classification=own_classification,
+            mfs_candidate=_MFS in statuses,
+            kind=state.kind,
+            marital_inferred=state.marital_inferred,
+            # The W-7 last mile rides the election too (eval (o)): a spouse who is not a
+            # U.S. person on the no-election facts and has no SSN/ITIN on file.
+            spouse_needs_itin=_spouse_nra_direction(profile, year) is not None and not _spouse_has_tin(profile),
+        )
+    elif state.no_joint:
+        # P-018: a recorded decline with a nonresident in the couple, or an election the
+        # facts rule out — no caveat here presents a joint return as available.
+        residency_caveat = _section_6013_no_joint_caveat(
+            joint_blocked=state.joint_blocked,
+            precondition_unmet=state.precondition_unmet,
+            recorded=_section_6013_recorded(profile),
+            spouse_unknown=spouse_direction == "conditional" and own_classification not in (
+                "nonresident", "dual_status_candidate"),
+            unavailable=state.unavailable,
+        )
+        if classification == "dual_status_candidate":
+            residency_caveat += " " + _DUAL_STATUS_CAVEAT
+    elif classification == "dual_status_candidate":
         # A dual-status year restricts statuses and the deduction; MFJ/HOH were
         # dropped and the numbers are full-year approximations — say so loudly.
         residency_caveat = _DUAL_STATUS_CAVEAT
     elif classification == "nonresident" and _is_married(profile):
-        # MFJ was dropped for a confirmed married NRA — explain the §6013 election.
-        residency_caveat = _SECTION_6013_CAVEAT
+        # MFJ was dropped for a confirmed married NRA — explain the §6013 election, or, when
+        # the spouse's own facts classify nonresident too, that it is not available (P-018).
+        residency_caveat = (
+            "As a nonresident alien (Form 1040-NR) you cannot file jointly (MFJ). " + residency.SECTION_6013_SUSPENDED
+            if state.unavailable
+            else _SECTION_6013_CAVEAT.replace(
+                "Showing married-filing-separately instead. ",
+                "Married filing separately is generally the status open to you (the exceptions above). "
+            ) if _confirmed_status(profile) == "head_of_household"
+            else _SECTION_6013_CAVEAT
+        )
     elif classification is None and us_person_false:
         # Visa holder whose residency is not yet determined — frame it conditionally.
         residency_caveat = _SECTION_6013_CONDITIONAL_CAVEAT
@@ -2383,9 +3449,25 @@ def estimate_refund(
         # resident-alien filer whose SPOUSE is (or may be) the nonresident. MFJ
         # stayed a candidate, so the §6013 election trade-offs (worldwide income,
         # the signed statement, the W-7/ITIN last mile) must ride along.
-        residency_caveat = _spouse_6013_caveat(spouse_direction, _spouse_has_tin(profile))
+        residency_caveat = _spouse_6013_caveat(spouse_direction, _spouse_has_tin(profile), mfj_shown=_MFJ in statuses)
+    if classification in ("nonresident", "dual_status_candidate") and _confirmed_status(profile) == "head_of_household":
+        # Pub 519 ch. 5 (read 2026-09-27) bars the status outright; the confirmed status is
+        # priced as given (JF1b.12), and the caveat says it is not open — prepended to whatever
+        # residency caveat the facts carry, never replacing it (P-018).
+        hoh_bar = (
+            "A nonresident alien cannot file as head of household — Pub 519 ch. 5: \"You cannot file as head of "
+            "household if you are a nonresident alien at any time during the tax year.\" This figure prices the "
+            "confirmed head_of_household status as given; change it (generally married filing separately for a "
+            "married filer — Pub 519 ch. 5 lists exceptions — otherwise single or, if eligible, qualifying "
+            "surviving spouse) and rerun."
+        )
+        residency_caveat = hoh_bar if residency_caveat is None else f"{hoh_bar} {residency_caveat}"
     if residency_caveat is not None:
-        assumptions.append(residency_caveat)
+        # A joint status the facts rule out is the first thing the user reads (P-018).
+        if state.joint_blocked:
+            assumptions.insert(0, residency_caveat)
+        else:
+            assumptions.append(residency_caveat)
 
     changes: list[str] = []
     if residency_caveat is not None:
@@ -2471,4 +3553,5 @@ def estimate_refund(
         assumptions=assumptions,
         what_would_change_it=changes,
         citations=unique_citations,
+        residency_caveat=residency_caveat,
     )

@@ -54,6 +54,20 @@ for Aliens) and the IRS international-taxpayer pages on 2026-06-11:
   calendar year is a resident for tax purposes regardless of the SPT.
   https://www.irs.gov/individuals/international-taxpayers/alien-residency-green-card-test
 
+* **§6013(g)/(h) election** (P-018; Pub 519 (2025) ch. 1, Pub 501 (2025)
+  and IRC 6013(g)/(h) read 2026-09-25) — "If you make this choice, you and
+  your spouse are treated for income tax purposes as residents for your
+  entire tax year", so ``section_6013_election=True`` returns ``resident``
+  with no dual-status flag and keeps the day-count answer as
+  ``classification_without_election``: the election covers "chapter 1 for
+  all of such taxable year" and chapter 24 wage withholding only, so FICA
+  (chapter 21) and the election's own precondition still follow the SPT
+  answer. They are two choices — 6013(g) (a nonresident spouse at year end;
+  it continues into later years) and 6013(h) (the year a nonresident becomes
+  a resident, both spouses residents at year end; one year only, a different
+  statement) — and :func:`section_6013_texts` quotes the one that applies.
+  https://www.irs.gov/publications/p519
+
 * **Closer connection exception** — someone who meets the SPT but was
   present fewer than 183 countable days in the current year (exempt-
   individual days are not days of presence under IRC 7701(b)), keeps a tax
@@ -136,6 +150,214 @@ CITATION_CLOSER_CONNECTION = Citation(
         "closer-connection-exception-to-the-substantial-presence-test"
     ),
 )
+CITATION_SECTION_6013 = Citation(
+    source=(
+        "IRS Pub. 519, ch. 1 'Nonresident Spouse Treated as a Resident' (IRC 6013(g)) / "
+        "'Choosing Resident Alien Status' (IRC 6013(h))"
+    ),
+    url="https://www.irs.gov/publications/p519",
+)
+
+# The §6013(g)/(h) election's effect, quoted (P-018). Read 2026-09-25 on Pub 519
+# (2025) ch. 1 (irs.gov/publications/p519), Pub 501 (2025) and IRC 6013(g)/(h) on
+# uscode.house.gov. They are TWO choices with different rules, so they are two
+# texts: IRC 6013(g) — at year end one spouse is a nonresident alien and the other
+# a U.S. citizen or resident ("Nonresident Spouse Treated as a Resident"; it
+# continues into later years) — and IRC 6013(h) — the year a nonresident alien
+# becomes a resident, both spouses U.S. citizens or residents at year end
+# ("Choosing Resident Alien Status"; one year only, a different statement). One
+# text per choice, so the residency tool, the estimator and intake say the same
+# thing, and section_6013_texts() picks which one applies from the no-election
+# residency answers.
+SECTION_6013G_EFFECT = (
+    "IRC 6013(g) — Pub 519 ch. 1, Nonresident Spouse Treated as a Resident: \"If you make this choice, you "
+    "and your spouse are treated for income tax purposes as residents for your entire tax year. Neither you "
+    "nor your spouse can claim under any tax treaty not to be a U.S. resident. You are both taxed on "
+    "worldwide income. You must file a joint income tax return for the year you make the choice, but you "
+    "and your spouse can file joint or separate returns in later years.\" And: \"If you file a joint "
+    "return under this provision, the special instructions and restrictions for dual-status taxpayers in "
+    "chapter 6 do not apply to you.\""
+)
+SECTION_6013G_PRECONDITION = (
+    "The IRC 6013(g) choice needs a spouse who is a U.S. citizen or resident at year end — Pub 519 ch. 1: "
+    "\"If, at the end of your tax year, you are married and one spouse is a U.S. citizen or a resident alien "
+    "and the other spouse is a nonresident alien, you can choose to treat the nonresident spouse as a U.S. "
+    "resident. This includes situations in which one spouse is a nonresident alien at the beginning of the "
+    "tax year, but a resident alien at the end of the year, and the other spouse is a nonresident alien at "
+    "the end of the year.\" Two spouses who are both nonresident aliens at year end cannot MAKE it. An "
+    "election made in an EARLIER year that remains in effect is tested differently — IRC 6013(g)(3): it "
+    "\"shall not apply for any taxable year if neither spouse is a citizen or resident of the United States "
+    "at any time during such year\" (Pub 519, Suspending the Choice)."
+)
+SECTION_6013G_STATEMENT = (
+    "How to make the IRC 6013(g) choice (Pub 519 ch. 1, How To Make the Choice): \"check the box in the "
+    "Filing Status section of Form 1040 or 1040-SR and enter the name of the nonresident spouse in the entry "
+    "space, and attach a statement, signed by both spouses, to your joint return for the first tax year for "
+    "which the choice applies\", containing \"A declaration that one spouse was a nonresident alien and the "
+    "other spouse a U.S. citizen or resident alien on the last day of your tax year, and that you choose to "
+    "be treated as U.S. residents for the entire tax year\" and \"The name, address, and TIN of each "
+    "spouse\"; in a later year: \"Also, check the box and enter their name if you and your nonresident "
+    "spouse made the choice to be treated as residents in a prior year and the choice remains in effect.\""
+)
+SECTION_6013H_EFFECT = (
+    "IRC 6013(h), the year a nonresident alien becomes a resident — Pub 519 ch. 1, Choosing Resident Alien "
+    "Status: \"You and your spouse are treated as U.S. residents for the entire year for income tax "
+    "purposes.\" \"You and your spouse are taxed on worldwide income.\" \"You and your spouse must file a "
+    "joint return for the year of the choice.\" \"Neither you nor your spouse can make this choice for any "
+    "later tax year, even if you are separated, divorced, or remarried.\" \"The special instructions and "
+    "restrictions for dual-status taxpayers in chapter 6 do not apply to you.\" Pub 501: \"You can only make "
+    "this choice for 1 year, and it doesn't apply to any future years.\" Unless an IRC 6013(g) election made "
+    "in an earlier year remains in effect — Pub 519's Note: \"If you previously made that choice and it is "
+    "still in effect, you do not need to make the choice explained here\" (IRC 6013(g)(3): it applies \"to "
+    "all subsequent taxable years until terminated\"); this year is then a later year of that election, "
+    "which may be filed jointly or separately."
+)
+SECTION_6013H_PRECONDITION = (
+    "The IRC 6013(h) choice — Pub 519 ch. 1, Choosing Resident Alien Status: \"If you are a dual-status "
+    "alien, you can choose to be treated as a U.S. resident for the entire year if all of the following "
+    "apply\": \"You were a nonresident alien at the beginning of the year.\" \"You are a resident alien or "
+    "U.S. citizen at the end of the year.\" \"You are married to a U.S. citizen or resident alien at the end "
+    "of the year.\" \"Your spouse joins you in making the choice.\" \"This includes situations in which both "
+    "you and your spouse were nonresident aliens at the beginning of the tax year and both of you are "
+    "resident aliens at the end of the tax year.\""
+)
+SECTION_6013H_STATEMENT = (
+    "How to make the IRC 6013(h) choice (Pub 519 ch. 1, Choosing Resident Alien Status — Making the choice): "
+    "\"check the box in the Filing Status section of the Form 1040 or 1040-SR and enter the name of the "
+    "dual-status spouse(s) in the entry space, and attach a statement signed by both spouses to your joint "
+    "return for the year of the choice\", containing \"A declaration that you both qualify to make the "
+    "choice and that you choose to be treated as U.S. residents for the entire tax year\" and \"The name, "
+    "address, and TIN (social security number (SSN) or individual taxpayer identification number (ITIN)) of "
+    "each spouse\". No new statement when an earlier IRC 6013(g) election remains in effect (Pub 519's Note: "
+    "\"If you previously made that choice and it is still in effect, you do not need to make the choice "
+    "explained here\") — then \"check the box and enter their name if you and your nonresident spouse made "
+    "the choice to be treated as residents in a prior year and the choice remains in effect\"."
+)
+SECTION_6013_FICA = (
+    "The election does NOT reach FICA: IRC 6013(g)(1) treats the electing nonresident as a resident \"(A) "
+    "for purposes of chapter 1 for all of such taxable year, and (B) for purposes of chapter 24 (relating "
+    "to wage withholding)\" (IRC 6013(h)(1) says the same of the dual-status year) — social security and "
+    "Medicare tax is chapter 21, where IRC 3121(b)(19) still excludes \"Service which is performed by a "
+    "nonresident alien individual for the period he is temporarily present in the United States as a "
+    "nonimmigrant under subparagraph (F), (J), (M), or (Q) of section 101(a)(15) of the Immigration and "
+    "Nationality Act, as amended, and which is performed to carry out the purpose specified in subparagraph "
+    "(F), (J), (M), or (Q), as the case may be\" — service that carries out the visa's purpose. So an F/J/M/Q "
+    "exempt individual's FICA exemption is unchanged: pass the classification WITHOUT the election "
+    "(classification_without_election) to calc op employee_fica."
+)
+
+# What declining the choice leaves (Pub 501 (2025), Considered Unmarried, read
+# 2026-09-25): no joint return — but head of household stays open to the citizen or
+# resident spouse who has another qualifying person.
+SECTION_6013_DECLINE = (
+    "Declining the election means no joint return — the nonresident spouse, if required to file (Pub 519 ch. 7: "
+    "\"Nonresident aliens who are required to file an income tax return should use Form 1040-NR\"), files Form "
+    "1040-NR (married filing separately; in a dual-status year, the dual-status return and statement Pub 519 "
+    "ch. 6 describes), and the "
+    "U.S. citizen or resident spouse files married filing separately, or head of "
+    "household with another qualifying person (Pub 501, Considered Unmarried: \"You are considered unmarried "
+    "for head of household purposes if your spouse was a nonresident alien at any time during the year and "
+    "you don't choose to treat your nonresident spouse as a resident alien. However, your spouse isn't a "
+    "qualifying person for head of household purposes.\")."
+)
+
+# Without the election there is no joint return with a nonresident alien (Pub 519 (2025),
+# Frequently Asked Questions, read 2026-09-26) — the text a joint status that the facts
+# rule out is answered with (P-018).
+SECTION_6013_NO_JOINT = (
+    "Pub 519, Frequently Asked Questions: \"Generally, you cannot file as married filing jointly if either "
+    "spouse was a nonresident alien at any time during the tax year. However, nonresident aliens married to "
+    "U.S. citizens or residents can choose to be treated as U.S. residents and file joint returns.\""
+)
+
+# The election has no effect in a year NEITHER spouse is a U.S. citizen or resident at any
+# time (IRC 6013(g)(3) on uscode.house.gov and Pub 519 (2025) ch. 1, Suspending the
+# Choice, read 2026-09-26). Worded on the facts RECORDED: the classifier has no
+# prior-year residency input yet (JF5b), so a departure year can hide part-year residency.
+SECTION_6013_SUSPENDED = (
+    "On the facts recorded here NEITHER spouse is a U.S. citizen or resident at any time in the year (each "
+    "classifies nonresident on their own visa timeline and day counts), and then the election is NOT "
+    "available — a new one cannot be made (Pub 519 ch. 1: the choice needs \"one spouse is a U.S. citizen or "
+    "a resident alien\" at the end of the year), and one made in an earlier year does not apply: IRC "
+    "6013(g)(3), \"any such election shall not apply for any taxable year if neither spouse is a citizen or "
+    "resident of the United States at any time during such year\"; Pub 519 ch. 1, Suspending the Choice: "
+    "\"The choice to be treated as a resident alien is suspended for any tax year (after the tax year you "
+    "made the choice) if neither spouse is a U.S. citizen or resident alien at any time during the tax "
+    "year. This means each spouse must file a separate return as a nonresident alien for that year if either "
+    "meets the filing requirements for nonresident aliens discussed in chapter 7\". So it is NOT applied: "
+    "married filing separately, each spouse who meets the nonresident filing requirements on Form 1040-NR. "
+    "If either of you was a U.S. "
+    "resident for part of the year — a year you left the United States, or residency carried over from the "
+    "prior year, which the recorded facts cannot show yet — the election may still apply: record the full "
+    "visa timeline and days in the US and rerun."
+)
+
+# Which choice a couple is making, from each spouse's residency WITHOUT the election:
+# 'us' (a declared U.S. citizen or green-card holder), 'resident', 'nonresident'
+# (full year), 'dual_status_candidate' (this classifier flags a dual-status year only
+# when the SPT is met with a nonresident part BEFORE the residency starting date — an
+# arrival year) or None (unknown).
+Section6013Kind = Literal["g", "h", "either"]
+
+
+def section_6013_kind(taxpayer: str | None, spouse: str | None, *, recorded: bool = False) -> Section6013Kind:
+    """'g', 'h', or 'either' (not decidable from the facts on file) — P-018.
+
+    IRC 6013(g) when either spouse is a nonresident alien for the whole year (so at
+    year end); IRC 6013(h) when one spouse's year is a dual-status arrival year and
+    the other is a U.S. citizen or resident (or also arrived) — both residents at
+    year end, one nonresident at the start; otherwise 'either'.
+
+    ``recorded``: the election is a RECORDED answer (true = elect, or an earlier
+    election remains in effect). Facts that point to 6013(h) then give 'either': a
+    6013(g) election made in an earlier year continues (IRC 6013(g)(3)) and Pub 519's
+    Note says "If you previously made that choice and it is still in effect, you do
+    not need to make the choice explained here" — the prior-year fact that tells the
+    two apart is JF5b's.
+    """
+    if taxpayer == "nonresident" or spouse == "nonresident":
+        return "g"
+    at_year_end_us = ("us", "resident", "dual_status_candidate")
+    if (taxpayer == "dual_status_candidate" and spouse in at_year_end_us) or (
+        spouse == "dual_status_candidate" and taxpayer in at_year_end_us
+    ):
+        return "either" if recorded else "h"
+    return "either"
+
+
+def section_6013_texts(kind: Section6013Kind) -> tuple[str, str, str]:
+    """The (effect, precondition, statement) texts for ``kind`` — both, conditionally, for 'either'."""
+    if kind == "g":
+        return SECTION_6013G_EFFECT, SECTION_6013G_PRECONDITION, SECTION_6013G_STATEMENT
+    if kind == "h":
+        return SECTION_6013H_EFFECT, SECTION_6013H_PRECONDITION, SECTION_6013H_STATEMENT
+    g_if = "If on the last day of the year one of you is a nonresident alien, it is the IRC 6013(g) choice: "
+    h_if = (
+        "If you are both U.S. citizens or residents on the last day and one of you was a nonresident alien on "
+        "the first day (a dual-status year), it is the IRC 6013(h) choice instead: "
+    )
+    return (
+        f"{g_if}{SECTION_6013G_EFFECT} {h_if}{SECTION_6013H_EFFECT}",
+        f"{SECTION_6013G_PRECONDITION} {SECTION_6013H_PRECONDITION}",
+        f"{g_if}{SECTION_6013G_STATEMENT} {h_if}{SECTION_6013H_STATEMENT}",
+    )
+
+
+def section_6013_effect_quote(kind: Section6013Kind) -> str:
+    """The one-sentence Pub 519 effect quote for ``kind`` (both, joined by 'or', for 'either')."""
+    g_quote = (
+        "'you and your spouse are treated for income tax purposes as residents for your entire tax year' "
+        "(Pub 519 ch. 1, Nonresident Spouse Treated as a Resident — IRC 6013(g))"
+    )
+    h_quote = (
+        "'You and your spouse are treated as U.S. residents for the entire year for income tax purposes' "
+        "(Pub 519 ch. 1, Choosing Resident Alien Status — IRC 6013(h))"
+    )
+    return g_quote if kind == "g" else h_quote if kind == "h" else f"{g_quote}, or {h_quote}"
+
+
+# Back-compatible names: the 'either' texts, for surfaces that know neither spouse's facts.
+SECTION_6013_EFFECT, SECTION_6013_PRECONDITION, SECTION_6013_STATEMENT = section_6013_texts("either")
 
 # When the weighted total falls short of 183 but lands at or above this
 # value, the nonresident result reminds the user to recount days and that
@@ -267,6 +489,32 @@ class ClassificationResult(BaseModel):
     spt: SPTResult
     exempt_years: ExemptYearsResult
     is_lawful_permanent_resident: bool
+    section_6013_election: bool = Field(
+        default=False,
+        description=(
+            "True when the §6013(g)/(h) election was applied: the classification is then 'resident' for the "
+            "ENTIRE year (Pub 519 ch. 1), whatever the substantial presence test says."
+        ),
+    )
+    nonresident_may_flip: bool = Field(
+        default=False,
+        description=(
+            "True when the (no-election) answer is 'nonresident' only because a preceding lookback year the "
+            "visa timeline covers is missing from days_by_year and counted as 0, AND real presence in it could "
+            "bring the weighted total to 183 (the 'may be WRONG' reason). Such an answer is never asserted — "
+            "e.g. by the IRC 6013(g)(3) gate on the §6013(g)/(h) election (P-018)."
+        ),
+    )
+    classification_without_election: Classification | None = Field(
+        default=None,
+        description=(
+            "Under the §6013(g)/(h) election, the answer the visa timeline and day counts give WITHOUT it "
+            "(None when no facts were given, or when no election was applied). The election reaches "
+            "chapter 1 and chapter 24 only (IRC 6013(g)(1)), so THIS is the classification calc op "
+            "employee_fica takes, and it decides the election's precondition (a U.S. citizen or resident "
+            "spouse at year end)."
+        ),
+    )
 
 
 def _fmt_fraction(value: Fraction) -> str:
@@ -838,6 +1086,7 @@ def classify(
     target_year: int,
     *,
     is_lawful_permanent_resident: bool = False,
+    section_6013_election: bool = False,
 ) -> ClassificationResult:
     """Classify federal residency for ``target_year``: nonresident, resident, or dual-status candidate.
 
@@ -871,6 +1120,16 @@ def classify(
     ``days_by_year`` lacks is counted as 0 WITH an explicit warning — made
     prominent when a nonresident answer could flip to resident on the real
     counts. Supply all three lookback years (0 is a valid answer).
+
+    ``section_6013_election=True`` applies the §6013(g)/(h) election (P-018):
+    the couple are "treated for income tax purposes as residents for your
+    entire tax year" (Pub 519 ch. 1), so the classification is ``resident``
+    with no dual-status flag, whatever the SPT says. The day-count analysis
+    still runs and its answer is kept as ``classification_without_election``
+    (None when no timeline or day counts were given): the election reaches
+    chapter 1 and chapter 24 only (IRC 6013(g)(1)), so that answer is the one
+    FICA follows, and it decides the election's precondition — a U.S.
+    citizen or resident spouse at year end.
     """
     year = _validate_target_year(target_year)
     days = _normalize_days(days_by_year)
@@ -1085,6 +1344,7 @@ def classify(
             )
             citations.append(CITATION_CLOSER_CONNECTION)
 
+    may_flip = False
     if missing_prior:
         yl = _year_list(missing_prior)
         those = "that year" if len(missing_prior) == 1 else "those years"
@@ -1105,6 +1365,7 @@ def classify(
             if spt.meets_31_day_test and potential >= 183:
                 # A nonresident answer that rests on missing-years-as-zero is NOT
                 # monotone-safe: make the caveat the first thing the caller reads.
+                may_flip = True
                 reasons.insert(
                     0,
                     f"IMPORTANT — this nonresident result may be WRONG: {base}. You were present "
@@ -1133,6 +1394,38 @@ def classify(
                 f"(IRS Pub. 519)."
             )
 
+    without_election: Classification | None = None
+    if section_6013_election:
+        # P-018: the election overrides the SPT answer for income tax, and only for
+        # income tax — the day-count answer is kept, never discarded. Which choice it
+        # is follows from that answer: a full-year nonresident is the 6013(g) spouse;
+        # otherwise the spouse's facts (not given here) decide between (g) and (h).
+        no_facts = not periods and not days and not is_lawful_permanent_resident
+        without_election = None if no_facts else classification
+        effect, precondition, _statement = section_6013_texts(
+            section_6013_kind(without_election, None, recorded=True)
+        )
+        lead = (
+            f"§6013(g)/(h) election applied: RESIDENT for all of {year}, whatever the substantial presence "
+            f"test says, and no dual-status split. {effect} {precondition} {SECTION_6013_FICA}"
+        )
+        if no_facts:
+            reasons = [
+                lead,
+                "No visa timeline or day counts were given, so the answer WITHOUT the election is not computed "
+                "(classification_without_election is None) — record them to check the precondition and FICA.",
+            ]
+        else:
+            reasons = [
+                lead,
+                f"Without the election the visa timeline and day counts give "
+                f"'{without_election}' for {year} (classification_without_election); the reasons below "
+                f"explain that answer, which still decides the precondition above and FICA.",
+                *reasons,
+            ]
+        classification = "resident"
+        citations.append(CITATION_SECTION_6013)
+
     return ClassificationResult(
         target_year=year,
         classification=classification,
@@ -1142,10 +1435,55 @@ def classify(
             "days_by_year": days,
             "target_year": year,
             "is_lawful_permanent_resident": is_lawful_permanent_resident,
+            "section_6013_election": section_6013_election,
         },
         work="\n".join(work_lines),
         citations=_dedup_citations(citations),
         spt=spt,
         exempt_years=exempt,
         is_lawful_permanent_resident=is_lawful_permanent_resident,
+        section_6013_election=section_6013_election,
+        classification_without_election=without_election,
+        nonresident_may_flip=may_flip,
     )
+
+
+def nonresident_rests_on_missing_lookback(visa_periods: Iterable[Any], days_by_year: Mapping[Any, int], target_year: int) -> bool:
+    """True when a preceding lookback year the visa timeline covers is missing from ``days_by_year``.
+
+    :func:`classify` counts such a year (``target_year - 1`` or ``target_year - 2``)
+    as 0 days, with a warning. Intake's classification treats any 'nonresident'
+    answer resting on one as unknown and asks for the days (the conservative
+    interview rule). The IRC 6013(g)(3) gate uses the narrower
+    :func:`certain_nonresident` instead, because there "unknown" applies the
+    election.
+    """
+    periods = _normalize_periods(visa_periods)
+    days = _normalize_days(days_by_year)
+    covered: set[int] = set()
+    for p in periods:
+        end_year = min(p.end.year if p.end else target_year, target_year)
+        covered.update(range(p.start.year, end_year + 1))
+    return any(y not in days and y in covered for y in (target_year - 1, target_year - 2))
+
+
+def certain_nonresident(visa_periods: Iterable[Any], days_by_year: Mapping[Any, int], target_year: int) -> bool:
+    """True when the facts classify 'nonresident' and no missing lookback year could flip it.
+
+    The IRC 6013(g)(3) gate on the §6013(g)/(h) election (P-018): the election
+    "shall not apply for any taxable year if neither spouse is a citizen or resident
+    of the United States at any time during such year", judged on the recorded facts.
+    A nonresident answer that real presence in a missing lookback year could turn
+    resident (``nonresident_may_flip``) is not certain; one that cannot turn on the
+    missing years is. The estimator and intake both call this, so they never
+    disagree on whether the election is available.
+    """
+    try:
+        # A missing CURRENT-year count is counted as 0 by classify with no flip test, so it is
+        # never certain (the 31-day prong would "fail" on a count nobody recorded).
+        if target_year not in _normalize_days(days_by_year):
+            return False
+        result = classify(visa_periods, days_by_year, target_year)
+    except (ValueError, AssertionError):
+        return False
+    return result.classification == "nonresident" and not result.nonresident_may_flip
