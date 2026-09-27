@@ -2805,16 +2805,16 @@ def test_p018_a_confirmed_mfs_status_is_a_marriage_and_unanswered_is_not_unmarri
 
 def test_p018_the_election_never_lands_on_a_figure_with_no_spouse():
     income = IncomeSnapshot(wages=40_000, federal_withholding=3_000)
-    nr_single = 3_000 - tax_from_taxable_income(40_000, "single", 2023).tax
-    # The year of a spouse's death with no confirmed status: the candidates are 'single'
-    # only (JF1b.9), so the election is refused and the estimate says why.
+    # JF1b.9: the year of a spouse's death is a married year for filing status (Pub 501), so the
+    # recorded election applies on the joint candidate — never on a single figure.
     widowed = _nra_profile(marital="widowed", spouse_death_year=_ans(2023), spouse=Spouse(us_person=_ans(True)))
     widowed.residency_facts.section_6013_election = _ans(True)
     est = estimate_refund(widowed, 2023, income)
-    assert est.filing_status_used == "single" and est.point == nr_single
-    assert est.residency_caveat is None or "RESIDENT rules for both spouses" not in est.residency_caveat
-    note = next(a for a in est.assumptions if "NOT applied" in a)
-    assert "year of your spouse's death" in note and "considered married for the whole year" in note
+    assert est.filing_status_used == "married_filing_jointly" and "single" not in {
+        c.status for c in (est.comparison.candidates if est.comparison else [])}
+    assert est.point == 3_000 - tax_from_taxable_income(
+        40_000 - standard_deduction("married_filing_jointly", 2023).amount, "married_filing_jointly", 2023).tax
+    assert "RESIDENT rules for both spouses" in est.residency_caveat
     # A confirmed head of household exists only without the election (Pub 501).
     hoh = _nra_profile(marital="married", filing_status=_ans("head_of_household"), spouse=Spouse(us_person=_ans(True)))
     hoh.residency_facts.section_6013_election = _ans(True)
@@ -3117,9 +3117,9 @@ def test_p018_intake_and_the_estimate_agree_in_the_year_of_a_spouses_death():
     profile = _nra_profile(marital="widowed", spouse=Spouse(us_person=_ans(True)), spouse_death_year=_ans(2023))
     profile.residency_facts.section_6013_election = _ans(True)
     est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
-    assert est.filing_status_used == "single" and _election_in_effect(profile, 2023) is False
-    note = next(n for n in intake_checklist(profile, tax_year=2023).notes if "NOT applied" in n)
-    assert "year of your spouse's death" in note and "not married for the year" not in note
+    # JF1b.9: the year of death is married for filing status — both apply the recorded election.
+    assert est.filing_status_used == "married_filing_jointly" and _election_in_effect(profile, 2023) is True
+    assert not any("NOT applied" in n for n in intake_checklist(profile, tax_year=2023).notes)
 
 
 # ---------------------------------------------------------------------------
@@ -3210,9 +3210,11 @@ def test_p018_the_head_of_household_bar_keeps_the_married_nonresident_caveat():
     both = _two_nonresidents(filing_status=_ans("head_of_household"))
     caveat = estimate_refund(both, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000)).residency_caveat
     assert "shall not apply for any taxable year" in caveat
-    note = next(a for a in estimate_refund(both, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
-                .assumptions if a.startswith("The head-of-household figure"))
-    assert "prices the confirmed status as given" in note and "living apart" not in note
+    # JF1b.12: the barred status is not priced — the figure is the status the filer can use.
+    est = estimate_refund(both, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    assert est.filing_status_used == "married_filing_separately"
+    assert "prices married filing separately instead of the confirmed head_of_household" in est.residency_caveat
+    assert not any(a.startswith("The head-of-household figure") for a in est.assumptions)
 
 
 def test_p018_compare_keys_the_head_of_household_bar_on_the_priced_classification():
@@ -3225,7 +3227,8 @@ def test_p018_compare_keys_the_head_of_household_bar_on_the_priced_classificatio
         {"name": "single", "filing_status": "single"}, {"name": "HOH", "filing_status": "head_of_household"}])
     hoh = next(o for o in r.outcomes if o.name == "HOH")
     assert "cannot file as head of household" in hoh.residency_caveat
-    assert hoh.bottom_line > next(o.bottom_line for o in r.outcomes if o.name == "single")
+    # JF1b.12: the HOH scenario is priced as single (the status the filer can use).
+    assert hoh.bottom_line == next(o.bottom_line for o in r.outcomes if o.name == "single")
     assert r.recommended == "single"
 
 
@@ -3646,9 +3649,12 @@ def test_p018_dual_status_unanswered_marital_status_keeps_the_election_route_con
         est.residency_caveat)
     # The year of a spouse's death is not ruled out either (Pub 501: "considered married for the
     # whole year for filing status purposes"), and never asserted.
+    # JF1b.9: the year of death is married for filing status, so MFS is the point and the
+    # election's joint figure is the candidate (the route stays conditional).
     widowed = _dual_2025(prior={2024: "1040-NR"}, marital="widowed", spouse_death_year=_ans(2025))
     est = estimate_refund(widowed, 2025, IncomeSnapshot(wages=60_000, federal_withholding=8_000))
-    assert est.high == 8_000 - _tax(60_000 - _sd("single", 2025), "single", 2025) > est.point
+    assert est.filing_status_used == "married_filing_separately"
+    assert est.high == 8_000 - _tax(60_000 - _sd("married_filing_jointly", 2025), "married_filing_jointly", 2025)
     assert "(ii) IF the choice is open in the year of your spouse's death" in est.residency_caveat
 
 
@@ -4582,3 +4588,239 @@ def test_jf1b2_a_prior_year_resident_meeting_the_spt_gets_no_taxpayer_direction_
                                 spouse=Spouse(us_person=_ans(False)))
     texts = _six013_texts(estimate_refund(with_spouse, 2025, _WAGES))
     assert texts and all(t.startswith("Your spouse may be a nonresident alien") for t in texts)
+
+
+# JF1b.12 (2026-09-27): a nonresident's or a dual-status filer's confirmed head of household is
+# priced as the status the filer can use. Hypothetical data.
+
+def test_jf1b12_a_nonresidents_confirmed_head_of_household_is_priced_as_single():
+    profile = _nra_profile(filing_status=_ans("head_of_household"))
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=40_000, federal_withholding=3_000))
+    assert est.filing_status_used == "single"
+    assert est.point == 3_000 - tax_from_taxable_income(40_000, "single", 2023).tax   # 1040-NR: no standard deduction
+    assert "You cannot file as head of household if you are a nonresident alien" in est.residency_caveat
+
+
+def test_jf1b12_a_dual_status_confirmed_head_of_household_is_priced_as_single():
+    est = estimate_refund(_dual_2025(filing_status=_ans("head_of_household")), 2025, _WAGES)
+    assert est.filing_status_used == "single"
+    assert "You cannot use the head of household Tax Table column" in est.residency_caveat
+
+
+# JF1b.11 (2026-09-27): the FICA withheld-in-error note follows each person's own snapshot and
+# F/J/M/Q status — IRC 3121(b)(19). Hypothetical data.
+
+def test_jf1b11_an_f1_spouses_withheld_fica_gets_its_own_note():
+    profile = _us_filer_married(_nra_spouse())
+    income = IncomeSnapshot(wages=90_000, federal_withholding=9_000,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=1_000,
+                                                  ss_withheld_by_employer=[1_240]))
+    est = estimate_refund(profile, 2023, income)
+    note = next(a for a in est.assumptions if a.startswith("Your spouse's $1,240 of Social Security tax"))
+    assert "IRC 3121(b)(19)" in note and "Form 843 + Form 8316" in note
+    assert note in est.what_would_change_it
+
+
+def test_jf1b11_an_h1b_nonresident_gets_no_fica_exemption_note():
+    # 3121(b)(19) covers F, J, M and Q nonimmigrants only: an H-1B nonresident owes FICA.
+    profile = Profile(
+        identity=Identity(us_person=_ans(False)),
+        household=Household(marital_status=_ans("unmarried")),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status="H-1B", start=date(2023, 10, 1), provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={2023: _ans(92), 2022: _ans(0), 2021: _ans(0)}),
+    )
+    est = estimate_refund(profile, 2023, IncomeSnapshot(wages=20_000, federal_withholding=2_000,
+                                                        ss_withheld_by_employer=[1_240]))
+    assert not any("FICA-EXEMPT" in a for a in est.assumptions)
+
+
+# JF1b.9 (2026-09-27): Pub 501, "If your spouse died during the year, you are considered married for
+# the whole year for filing status purposes." Hypothetical data.
+
+def test_jf1b9_the_year_of_a_spouses_death_offers_the_joint_return_and_keeps_the_spouse_snapshot():
+    profile = _us_filer_married(Spouse(us_person=_ans(True)))
+    profile.household.marital_status = _ans("widowed")
+    profile.household.spouse_death_year = _ans(2023)
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=20_000, federal_withholding=2_000))
+    est = estimate_refund(profile, 2023, income)
+    assert [c.status for c in est.comparison.candidates] == ["married_filing_jointly", "married_filing_separately"]
+    joint = 8_000 - tax_from_taxable_income(
+        80_000 - standard_deduction("married_filing_jointly", 2023).amount, "married_filing_jointly", 2023).tax
+    assert est.point == joint                                   # the deceased spouse's income is on the joint figure
+    # Outside the year of death, a widow(er) is not married (single, or QSS in its window).
+    later = estimate_refund(profile, 2024, income)
+    assert "married_filing_jointly" not in {c.status for c in (later.comparison.candidates if later.comparison else [])}
+
+
+# ---------------------------------------------------------------------------
+# JF1b.10 (P-018): head of household for a citizen or resident whose spouse is a
+# nonresident alien — a CANDIDATE with no election recorded, and on that route the
+# filer is still married outside IRC 2(b) (a married individual's separate return).
+# Hypothetical demo fixtures only.
+# ---------------------------------------------------------------------------
+
+_M7703 = "Head of household on the nonresident-spouse route makes you unmarried ONLY for the filing status"
+
+
+def _parent_married_to(spouse: Spouse, *, confirmed_hoh: bool = False) -> Profile:
+    profile = _us_filer_married(spouse)
+    profile.household.dependents = [_kid_with_ssn()]
+    if confirmed_hoh:
+        profile.household.filing_status = _ans("head_of_household")
+    return profile
+
+
+def _hoh_routes(income: IncomeSnapshot, year: int = 2023) -> tuple[RefundEstimate, RefundEstimate]:
+    """(the nonresident-spouse route, the lived-apart route) — the same confirmed head of household."""
+    return (
+        estimate_refund(_parent_married_to(_nra_spouse(), confirmed_hoh=True), year, income),
+        estimate_refund(_parent_married_to(Spouse(us_person=_ans(True)), confirmed_hoh=True), year, income),
+    )
+
+
+def _slot(est: RefundEstimate, slot: str) -> int | None:
+    return next((ln.amount for ln in est.composition if ln.slot == slot), None)
+
+
+def _m7703_note(est: RefundEstimate) -> str:
+    return next(a for a in est.assumptions if a.startswith(_M7703))
+
+
+def test_jf1b10_head_of_household_is_a_candidate_with_no_election_recorded():
+    # Pub 501, Considered Unmarried: "You are considered unmarried for head of household purposes if
+    # your spouse was a nonresident alien at any time during the year and you don't choose to treat
+    # your nonresident spouse as a resident alien."
+    income = IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                            spouse=IncomeSnapshot(wages=9_000, federal_withholding=300))
+    for spouse in (_nra_spouse(), Spouse(us_person=_ans(False))):   # a nonresident, and one of unknown residency
+        est = estimate_refund(_parent_married_to(spouse), 2023, income)
+        statuses = [c.status for c in est.comparison.candidates]
+        assert statuses == ["married_filing_jointly", _MFS, "head_of_household"]
+        note = next(a for a in est.assumptions if a.startswith("The head-of-household figure is your own"))
+        assert "on Form 1040-NR rules" in note and "rests on your spouse being a nonresident alien" in note
+        assert "exists only if you and your spouse do NOT make it" in note
+    # The HOH figure: your own head-of-household return (Tax Table midpoint, CTC) plus the spouse's
+    # separate Form 1040-NR (no standard deduction).
+    est = estimate_refund(_parent_married_to(_nra_spouse()), 2023, income)
+    hoh = next(c for c in est.comparison.candidates if c.status == "head_of_household")
+    own = 6_000 - (tax_from_taxable_income(60_000 - standard_deduction("head_of_household", 2023).amount,
+                                           "head_of_household", 2023).tax - 2_000)
+    spouse = 300 - tax_from_taxable_income(9_000, _MFS, 2023).tax
+    assert hoh.bottom_line == own + spouse
+    # No candidate without a nonresident in view, under a recorded election, or with no qualifying person.
+    us = estimate_refund(_parent_married_to(Spouse(us_person=_ans(True))), 2023, income)
+    assert "head_of_household" not in {c.status for c in us.comparison.candidates}
+    elected = _parent_married_to(_nra_spouse())
+    elected.residency_facts = ResidencyFacts(section_6013_election=_ans(True))
+    under = estimate_refund(elected, 2023, income)
+    assert "head_of_household" not in {c.status for c in (under.comparison.candidates if under.comparison else [])}
+    no_qp = _parent_married_to(_nra_spouse())
+    no_qp.household.hoh_qualifying_person = _ans(False)
+    assert "head_of_household" not in {c.status for c in estimate_refund(no_qp, 2023, income).comparison.candidates}
+
+
+def test_jf1b10_the_nonresident_spouse_route_claims_no_education_credit():
+    # IRC 25A(g)(6): "If the taxpayer is a married individual (within the meaning of section 7703),
+    # this section shall apply only if the taxpayer and the taxpayer's spouse file a joint return".
+    nra, apart = _hoh_routes(IncomeSnapshot(wages=60_000, federal_withholding=6_000, aotc_qualified_expenses=[4_000]))
+    assert _slot(apart, "education_credits_nonrefundable") or _slot(apart, "aotc_refundable")
+    assert _slot(nra, "education_credits_nonrefundable") is None and _slot(nra, "aotc_refundable") is None
+    assert "IRC 25A(g)(6)" in _m7703_note(nra)
+    assert not any(a.startswith(_M7703) for a in apart.assumptions)
+
+
+def test_jf1b10_the_nonresident_spouse_route_claims_no_dependent_care_credit():
+    # IRC 21(e)(2): "If the taxpayer is married at the close of the taxable year, the credit shall be
+    # allowed under subsection (a) only if the taxpayer and his spouse file a joint return".
+    nra, apart = _hoh_routes(IncomeSnapshot(wages=60_000, federal_withholding=6_000,
+                                            dependent_care_expenses=3_000, dependent_care_persons=1))
+    assert _slot(apart, "dependent_care_credit_nonrefundable")
+    assert _slot(nra, "dependent_care_credit_nonrefundable") is None
+    assert "IRC 21(e)(2)" in _m7703_note(nra)
+
+
+def test_jf1b10_the_nonresident_spouse_route_takes_no_student_loan_interest_deduction():
+    # IRC 221(e)(2)-(3): married at year end, the deduction needs a joint return; "Marital status
+    # shall be determined in accordance with section 7703."
+    nra, apart = _hoh_routes(IncomeSnapshot(wages=60_000, federal_withholding=6_000, student_loan_interest_paid=1_000))
+    assert _slot(apart, "student_loan_interest_deduction") == -1_000
+    assert _slot(nra, "student_loan_interest_deduction") is None
+    assert "IRC 221(e)(2)" in _m7703_note(nra)
+    assert not any("gives a $0 deduction on the married-filing-separately candidate" in a for a in nra.assumptions)
+
+
+def test_jf1b10_the_nonresident_spouse_route_caps_a_capital_loss_at_1500():
+    # IRC 1211(b)(1): "$3,000 ($1,500 in the case of a married individual filing a separate return)".
+    nra, apart = _hoh_routes(IncomeSnapshot(wages=60_000, federal_withholding=6_000, capital_gain_short=-2_500))
+    assert _slot(apart, "capital_loss") == -2_500
+    assert _slot(nra, "capital_loss") == -1_500
+    assert "IRC 1211(b)(1)" in _m7703_note(nra) and "1.1211-1(b)(7)(i)" in _m7703_note(nra)
+    # A loss within $1,500 is the same on both routes, and no note claims the cap bound.
+    small, _ = _hoh_routes(IncomeSnapshot(wages=60_000, federal_withholding=6_000, capital_gain_short=-1_000))
+    assert _slot(small, "capital_loss") == -1_000
+    assert not any(a.startswith(_M7703) for a in small.assumptions)
+
+
+def test_jf1b10_the_nonresident_spouse_route_gets_no_premium_tax_credit():
+    # IRC 36B(c)(1)(C): married "(within the meaning of section 7703)", the taxpayer is an applicable
+    # taxpayer only on a joint return — the advance payments are repaid (Table 5 'other' column).
+    income = IncomeSnapshot(wages=40_000, federal_withholding=3_000,
+                            aca_premiums=6_000, aca_slcsp=7_000, aca_aptc=3_000)
+    nra, apart = _hoh_routes(income)
+    assert _slot(nra, "net_ptc") is None and _slot(nra, "aptc_repayment")
+    assert (_slot(apart, "net_ptc") or 0) > 0 or (_slot(apart, "aptc_repayment") or 0) < _slot(nra, "aptc_repayment")
+    assert "IRC 36B(c)(1)(C)" in _m7703_note(nra)
+
+
+def test_jf1b10_the_nonresident_spouse_route_uses_the_separate_niit_threshold():
+    # Treas. Reg. 1.1411-2(a)(2)(iii)(A): "the spouses will be treated as married filing separately for
+    # purposes of section 1411" — the $125,000 threshold of (d)(1)(ii).
+    nra, apart = _hoh_routes(IncomeSnapshot(wages=100_000, federal_withholding=20_000, interest=50_000))
+    assert _slot(apart, "niit") is None                                   # $150,000 MAGI is under $200,000
+    assert _slot(nra, "niit") == round(0.038 * (150_000 - 125_000))
+    assert "1.1411-2(a)(2)(iii)(A)" in _m7703_note(nra)
+
+
+def test_jf1b10_the_nonresident_spouse_route_uses_the_separate_additional_medicare_threshold():
+    # IRC 3101(b)(2)(B): "in the case of a married taxpayer (as defined in section 7703) filing a separate
+    # return, ½ of the dollar amount determined under subparagraph (A)".
+    nra, apart = _hoh_routes(IncomeSnapshot(wages=150_000, federal_withholding=30_000))
+    assert _slot(apart, "additional_medicare_tax") is None
+    assert _slot(nra, "additional_medicare_tax") == round(0.009 * (150_000 - 125_000))
+    assert "IRC 3101(b)(2)(B)" in _m7703_note(nra)
+
+
+def test_jf1b10_the_nonresident_spouse_route_uses_a_zero_social_security_base_amount():
+    # IRC 86(c)(1)(C): "zero in the case of a taxpayer who— (i) is married as of the close of the taxable
+    # year (within the meaning of section 7703) but does not file a joint return for such year, and (ii)
+    # does not live apart from his spouse at all times during the taxable year".
+    nra, apart = _hoh_routes(IncomeSnapshot(wages=10_000, federal_withholding=500, social_security_benefits=20_000))
+    assert _slot(apart, "taxable_social_security") is None                # $20,000 provisional income < $25,000
+    # Base and adjusted base both $0: the lesser of 85% of the benefits and 85% of the $20,000 provisional income.
+    assert _slot(nra, "taxable_social_security") == 17_000
+    note = _m7703_note(nra)
+    assert "IRC 86(c)(1)(C)" in note and "did not live apart at all times" in note
+
+
+def test_jf1b10_intake_names_head_of_household_for_the_citizen_side():
+    from taxfill_core.intake import intake_checklist  # noqa: PLC0415
+    profile = _parent_married_to(_nra_spouse())
+    q = next(q for q in intake_checklist(profile, tax_year=2023).next_questions if q.id == "household.filing_status")
+    assert "head of household if you have another qualifying person" in q.prompt and "without the election" in q.prompt
+    # A U.S.-person spouse: the plain joint-or-separate question.
+    us = _parent_married_to(Spouse(us_person=_ans(True)))
+    q = next(q for q in intake_checklist(us, tax_year=2023).next_questions if q.id == "household.filing_status")
+    assert q.prompt == "Do you want to file jointly with your spouse or separately?"
+
+
+def test_jf1b12_intake_quotes_the_dual_status_head_of_household_bar():
+    from taxfill_core.intake import intake_checklist  # noqa: PLC0415
+    profile = _visa_profile(_SWITCH_APRIL, _DAYS_2021)
+    profile.household.dependents = [_kid_with_ssn()]
+    q = next(q for q in intake_checklist(profile, tax_year=2025).next_questions
+             if q.id == "household.hoh_qualifying_person")
+    assert "You cannot use the head of household Tax Table column or Tax Computation Worksheet." in q.disambiguation
+    profile.household.hoh_qualifying_person = _ans(True)
+    q = next(q for q in intake_checklist(profile, tax_year=2025).next_questions if q.id == "household.filing_status")
+    assert "in a dual-status year you file as single" in q.prompt

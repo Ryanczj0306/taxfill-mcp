@@ -597,7 +597,9 @@ def compare_scenarios(
         assumptions.append(
             f"Scenario {name!r} is head of household for a taxpayer who is a nonresident alien on the visa timeline "
             f"and day counts — NOT a filing option (Pub 519 ch. 5: \"You cannot file as head of household if you "
-            f"are a nonresident alien at any time during the tax year.\"), so never the recommended scenario."
+            f"are a nonresident alien at any time during the tax year.\"; a dual-status year, ch. 6), so its figure "
+            f"prices the status the filer can use instead (married filing separately if married, else single — "
+            f"its residency_caveat names it) and it is never the recommended scenario."
         )
     for s in specs:
         if s.name in nra_hoh:

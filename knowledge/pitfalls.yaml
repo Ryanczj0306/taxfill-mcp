@@ -1578,6 +1578,33 @@ pitfalls:
       test_p018_a_dual_status_spouse_inside_a_head_of_household_figure_keeps_chapter_6_rules,
       test_p018_a_prior_year_election_return_* (test_estimate.py, test_intake.py)
       and test_p018_section_6013_kind_reads_a_prior_year_election_return.
+      JF1b.10 (2026-09-27), THE CONSIDERED-UNMARRIED HEAD OF HOUSEHOLD IS STILL
+      MARRIED: head of household is a CANDIDATE for a citizen or resident whose
+      spouse is, or may be, a nonresident alien with no election recorded and
+      none declined (Pub 501, Considered Unmarried: "You are considered
+      unmarried for head of household purposes if your spouse was a
+      nonresident alien at any time during the year and you don't choose to
+      treat your nonresident spouse as a resident alien.") — before it, only a
+      recorded decline opened it. It is priced on the nonresident-spouse route
+      (a spouse of unknown residency read as the nonresident it needs), and
+      that return carries _bottom_line(married_7703=True): IRC 2(b)(2)(B)
+      applies only "For purposes of this subsection", so every rule that asks
+      whether a married individual files jointly still reads the filer as
+      filing separately — no education credit (IRC 25A(g)(6); the 2025 Form
+      8863 instructions: "You (or your spouse) were a nonresident alien for
+      any part of 2025 and didn't elect to be treated as a resident alien for
+      tax purposes."), no dependent care credit (21(e)(2)), no student loan
+      interest deduction (221(e)(2)-(3)), the $1,500 capital-loss limit
+      (1211(b)(1); Treas. Reg. 1.1211-1(b)(7)(i)), no premium tax credit
+      (36B(c)(1)(C); the 8962 instructions' Exception 1 is the living-apart
+      head of household only), the $125,000 NIIT threshold (Treas. Reg.
+      1.1411-2(a)(2)(iii)(A) with (d)(1)(ii)) and Additional Medicare Tax
+      threshold (IRC 3101(b)(2)(B)), and a $0 taxable-Social-Security base
+      amount on the MFS candidate's lived-together assumption (IRC
+      86(c)(1)(C)). One assumption quotes each rule that changed the figure.
+      The lived-apart route never carries the flag (IRC 7703(b) unmarries that
+      filer for each provision that refers to section 7703). Tests:
+      test_jf1b10_* (test_estimate.py).
   - id: P-026
     incident: >-
       The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer

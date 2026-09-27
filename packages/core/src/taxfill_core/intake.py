@@ -242,10 +242,9 @@ def _election_in_effect(profile: Profile, tax_year: int | None = None) -> bool:
     a U.S. resident" — so a recorded flag without a marriage is not applied, nor on a
     confirmed status with no spouse on it (head of household exists only without the
     election — Pub 501, Considered Unmarried). The year of a spouse's death counts
-    when a married status is confirmed (Pub 519 ch. 1, Ending the Choice: "The death of
-    either spouse ends the choice, beginning with the first tax year following the year
-    the spouse died"); with no confirmed status the estimator prices 'single' only
-    (JF1b.9), so it is not applied. An
+    (Pub 519 ch. 1, Ending the Choice: "The death of either spouse ends the choice,
+    beginning with the first tax year following the year the spouse died"; the estimator
+    prices MFJ/MFS in that year — JF1b.9). An
     unanswered marital status with a confirmed married status (MFJ or MFS — Pub 501:
     "You can choose married filing separately as your filing status if you are
     married") counts too, the estimator's rule (estimate._election_marriage_ok). And it
@@ -256,11 +255,6 @@ def _election_in_effect(profile: Profile, tax_year: int | None = None) -> bool:
         return False
     status = _confirmed_status(profile)
     if status is not None and status not in _MARRIED_STATUSES:
-        return False
-    if status is None and _marital(profile) != "married":
-        # The year of a spouse's death with no confirmed status: the estimator's candidate
-        # statuses there are 'single' only (JF1b.9), and the election is never applied onto
-        # a figure with no spouse — so it is not applied here either, and the two agree.
         return False
     married = _married_for_year(profile, tax_year) or (_marital(profile) is None and status in _MARRIED_STATUSES)
     return married and not _election_unavailable(profile, tax_year)
@@ -592,13 +586,6 @@ def _household_questions(
                    "tax year.\"")
         elif _confirmed_status(profile) is not None and _confirmed_status(profile) not in _MARRIED_STATUSES:
             why = f"the confirmed status ({_confirmed_status(profile)}) has no spouse on the return."
-        elif (_marital(profile) == "widowed" and _married_for_year(profile, tax_year)
-              and _confirmed_status(profile) is None):
-            # The estimator's reason (estimate._election_not_applied_reason), word for word in substance.
-            why = ("this is the year of your spouse's death, and with no confirmed filing status the estimate prices "
-                   "'single' only — Pub 501: \"If your spouse died during the year, you are considered married for "
-                   "the whole year for filing status purposes\"; confirm married_filing_jointly (or "
-                   "married_filing_separately) to price the election.")
         elif _marital(profile) is None:
             why = ("household.marital_status is not answered (and no married filing status is confirmed), and the "
                    "election needs a spouse at year end. " + residency.section_6013_texts(kind)[1])
@@ -669,8 +656,14 @@ def _household_questions(
                 note += (" Your spouse is (or may be) a nonresident alien: filing jointly requires the §6013(g)/(h) "
                          "election to treat them as a U.S. resident — which makes their worldwide income taxable. "
                          + residency.SECTION_6013_DECLINE)
-            out.append(_q("household.filing_status", "household",
-                          "Do you want to file jointly with your spouse or separately?",
+            # JF1b.10 (P-018): the citizen or resident side keeps head of household open WITHOUT the
+            # election (Pub 501, Considered Unmarried) — the estimate prices it as a candidate.
+            citizen_side = (spouse_nra_path and not election and not nonresident_path
+                            and classification != "dual_status_candidate")
+            prompt = ("Do you want to file jointly with your spouse (the §6013(g)/(h) election) or separately — or, "
+                      "without the election, head of household if you have another qualifying person?"
+                      if citizen_side else "Do you want to file jointly with your spouse or separately?")
+            out.append(_q("household.filing_status", "household", prompt,
                           "It changes your brackets, standard deduction, and credit eligibility.",
                           "household.filing_status", disambiguation=note))
         # Spouse as a second taxpayer on a married path.
@@ -761,8 +754,17 @@ def _household_questions(
         # Unmarried. Branch the HOH-vs-single advice on the nonresident condition so it
         # agrees with the gating note: Form 1040-NR has no head-of-household box, so do
         # NOT recommend head of household on the nonresident path.
+        dual_year = classification == "dual_status_candidate"
         if not _has(hh.hoh_qualifying_person):
-            if nonresident_path:
+            if dual_year:
+                # JF1b.12: a dual-status year bars head of household too (Pub 519 ch. 6).
+                prompt = ("Did you support a qualifying person (e.g. a child or relative) who lived with you, and "
+                          "pay more than half the cost of keeping up their home?")
+                disamb = ("This records the qualifying-person fact (the dependent-based credits still read it), but "
+                          "your residency result is a dual-status year, and Pub 519 ch. 6 bars head of household "
+                          "there: \"You cannot use the head of household Tax Table column or Tax Computation "
+                          "Worksheet.\" You file single.")
+            elif nonresident_path:
                 prompt = ("Did you support a qualifying person (e.g. a child or relative) who lived with you, and "
                           "pay more than half the cost of keeping up their home?")
                 disamb = ("This records the head-of-household fact. Note: if your residency result is nonresident "
@@ -781,7 +783,7 @@ def _household_questions(
                           "recent widow(er) with a dependent child may instead qualify as a surviving spouse.")
             out.append(_q("household.hoh_qualifying_person", "household", prompt,
                           ("An unmarried taxpayer with a qualifying person may file head of household (lower tax "
-                           "than single)." if not nonresident_path else
+                           "than single)." if not (nonresident_path or dual_year) else
                            "It records the qualifying-person fact, though a nonresident alien cannot use head of "
                            "household."),
                           "household.hoh_qualifying_person", disambiguation=disamb))
@@ -789,9 +791,11 @@ def _household_questions(
             # The HOH fact is in: confirm the derived filing status so the unmarried
             # path can actually reach ready_to_fill through the interview alone.
             hoh_fact = bool(hh.hoh_qualifying_person.value)
-            if is_nonresident:
+            if is_nonresident or dual_year:
                 prompt = ("Please confirm your filing status: as an unmarried nonresident alien you file as "
-                          "single (Form 1040-NR has no head-of-household box).")
+                          "single (Form 1040-NR has no head-of-household box)." if is_nonresident else
+                          "Please confirm your filing status: in a dual-status year you file as single (Pub 519 "
+                          "ch. 6 bars head of household).")
                 disamb = "Answer 'single' to confirm, or correct any earlier answer that is wrong."
             elif hoh_fact and residency_unknown:
                 prompt = ("Based on your answers you may qualify for head of household — please confirm your "
