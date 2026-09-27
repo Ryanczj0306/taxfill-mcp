@@ -1017,13 +1017,16 @@ form_lines:
     note: >-
       The prior-year AGI the IRC 6654(d)(1)(C) 110% test reads (estimated_tax_safe_harbor, JF4).
   f1040.total_tax:
-    line: "24a"
+    line: null
+    absent: >-
+      UNVERIFIED until the 2026 instructions post (JF6c; re-read at JT6): the draft prints "24a Add lines
+      22 and 23. This is your total tax" and "24c Add lines 24a and 24b" (24b the Form 1062 amount), and
+      which one the IRC 6654(d)(1)(B)(ii) prior-year prong reads is not yet shown anywhere. Nothing reads it
+      before tax year 2027.
     line_source: "draft Created 8/19/26"
     url: "https://www.irs.gov/pub/irs-dft/f1040--dft.pdf"
     read: "2026-09-27"
-    printed: "24a Add lines 22 and 23. This is your total tax 24a"
-    note: >-
-      The prior-year total tax the IRC 6654(d)(1)(B)(ii) prong reads (estimated_tax_safe_harbor, JF4).
+    printed: "Add lines 22 and 23. This is your total tax 24a 24b Enter amount from Form 1062, line 15 24b 24c Add lines 24a and 24b"
   f1040.ira_distributions:
     line: "4a"
     line_source: "draft Created 8/19/26"
@@ -1324,3 +1327,48 @@ form_lines:
     url: https://www.irs.gov/pub/irs-dft/f8889--dft.pdf
     read: '2026-09-27'
     printed: 21 by 10% (0.10). Include this amount in the total on Schedule 2 (Form 1040), Part II, line 13d
+  # JF6c (read 2026-09-27): the 1040-NR lines and the Schedule 1-A part totals.
+  f1040nr.taxable_interest:
+    line: 2b
+    line_source: draft Created 8/19/26
+    url: https://www.irs.gov/pub/irs-dft/f1040nr--dft.pdf
+    read: '2026-09-27'
+    printed: Taxable interest 2b
+  f1040nr.itemized:
+    line: 12a
+    line_source: draft Created 8/19/26
+    url: https://www.irs.gov/pub/irs-dft/f1040nr--dft.pdf
+    read: '2026-09-27'
+    printed: Itemized deductions (from Schedule A (Form 1040-NR)) or, for certain residents of India, standard deduction
+      (see instructions) 12a
+  f1040nr.agi:
+    line: 11a
+    line_source: draft Created 8/19/26
+    url: https://www.irs.gov/pub/irs-dft/f1040nr--dft.pdf
+    read: '2026-09-27'
+    printed: This is your adjusted gross income 11a
+  sched1a.tips:
+    line: '15'
+    line_source: draft Created 6/16/26
+    url: https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf
+    read: '2026-09-27'
+    printed: 15 Qualified tips deduction. Subtract line 14 from line 9. If zero or less, enter -0-
+  sched1a.overtime:
+    line: '27'
+    line_source: draft Created 6/16/26
+    url: https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf
+    read: '2026-09-27'
+    printed: 27 Qualified overtime compensation deduction. Subtract line 26 from line 21. If zero or less, enter -0-
+  sched1a.car_loan:
+    line: '36'
+    line_source: draft Created 6/16/26
+    url: https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf
+    read: '2026-09-27'
+    printed: 36 Qualified passenger vehicle loan interest deduction. Subtract line 35 from line 30. If zero or less,
+      enter -0-
+  sched1a.senior:
+    line: '43'
+    line_source: draft Created 6/16/26
+    url: https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf
+    read: '2026-09-27'
+    printed: 43 Enhanced deduction for seniors. Add lines 42a and 42b

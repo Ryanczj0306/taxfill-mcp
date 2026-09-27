@@ -78,7 +78,7 @@ class Position(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    topic: str = Field(description="What was decided, e.g. '1040 line 12 — standard deduction' or 'Treaty Art. 20(c)'.")
+    topic: str = Field(description="What was decided, e.g. 'Form 1040 standard deduction' or 'Treaty Art. 20(c)'.")
     value: str = Field(description="The figure or decision, as it will appear on the return.")
     citation: Citation | None = Field(default=None, description="The authoritative source. Absent => unverified.")
     rationale: str = Field(default="", description="Why this position (one or two sentences).")

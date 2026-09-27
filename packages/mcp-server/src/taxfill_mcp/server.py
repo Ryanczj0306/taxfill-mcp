@@ -328,7 +328,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     - additional_medicare_tax: args {medicare_wages, filing_status, year, se_net_profit?} (Form 8959)
     - niit: args {net_investment_income, magi, filing_status, year} (Form 8960; NRAs exempt)
     - taxable_social_security: args {benefits, other_income, tax_exempt_interest?, filing_status,
-      year, mfs_lived_with_spouse?} (SS Benefits Worksheet -> Form 1040 line 6b)
+      year, mfs_lived_with_spouse?} (SS Benefits Worksheet -> the Form 1040 taxable-benefits line, named in the work)
     - excess_ss: args {withheld_by_employer: [per-employer W-2 box 4, ONE person], year}
       (Schedule 3 excess-SS credit; multiple employers only)
     - student_loan_interest_deduction: args {interest_paid, magi, filing_status, year} (MFS gets $0)
@@ -354,7 +354,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       gates; phases out on the GREATER of AGI or earned income; the printed EIC table's $50 bands can
       differ by ~$27)
     - dependent_care_credit: args {expenses, qualifying_persons, earned_income, spouse_earned_income?,
-      agi, filing_status, year, employer_benefits?} (Form 2441 -> Schedule 3 line 2: caps
+      agi, filing_status, year, employer_benefits?} (Form 2441 -> Schedule 3's dependent-care line: caps
       $3,000/$6,000 by persons count (2021: $8,000/$16,000), minus employer benefits (W-2 box 10),
       limited by the LOWER earned income — spouse_earned_income REQUIRED for MFJ; the AGI slide
       35%->20% (2021: 50%->20%->0%, zero over $438,000); MFS gets $0 by rule; refundable for 2021
@@ -383,7 +383,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       keeps the split and names the line in words)
     - schedule_1a_deductions: args {magi, filing_status?, year?, qualified_tips?, qualified_overtime?,
       car_loan_interest?, seniors_qualifying?} (the four OBBBA Schedule 1-A deductions, TY2025-2028 —
-      line 38 -> Form 1040 line 13b / 1040-NR line 13c, reduces taxable income whether itemizing or not.
+      the Schedule 1-A total -> the Form 1040 / 1040-NR Schedule 1-A line (each read off the year's face and
+      named in the work), reduces taxable income whether itemizing or not.
       ONE MAGI (AGI + PR-excluded income + Form 2555 lines 45/50 + Form 4563 line 15) feeds all four
       parts. TRAPS the op enforces: tips/overtime/senior are FORFEITED on married-filing-separately
       (car-loan interest is NOT); the tips $25,000 cap is PER RETURN (a joint return does not double
@@ -558,7 +559,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       box 12 code W is the employer's contributions AND the employee's own cafeteria-plan payroll
       deferrals, all already excluded from box 1 — it goes in employer_contributions (line 9), where
       it SUBTRACTS room; only DIRECT contributions (line 2 = 5498-SA box 2 minus code W minus any
-      funding distribution) reach Schedule 1 Part II line 13. Deducting code W as well is the most
+      funding distribution) reach Schedule 1's HSA-deduction line. Deducting code W as well is the most
       common HSA filing error. (4) A GENERAL-PURPOSE HEALTH FSA — INCLUDING ONE FROM THE SPOUSE'S
       EMPLOYER (Rev. Rul. 2004-45) — is disqualifying coverage; health_fsa='general_purpose' is
       REFUSED with the fix, while 'limited_purpose' (dental/vision) and 'post_deductible' are fine.
@@ -612,7 +613,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       — the carryover is $2,000 LARGER than 'loss minus $3,000'. Read `loss_absorbed` and
       `deduction_not_absorbed`, not just `deduction`. Pass taxable_income_before_capital_loss WITHOUT
       the line 21 deduction subtracted (negative is fine and the worksheet wants it that way); the op
-      derives worksheet line 1 and prints it so you can tie it to the filed Form 1040 line 15. Prior
+      derives worksheet line 1 and prints it so you can tie it to the filed Form 1040 taxable income. Prior
       carryovers go in short_term_carryover_in / long_term_carryover_in as POSITIVE amounts, the way
       Schedule D lines 6 and 14 are printed. `following_years` rolls the chain forward one mapping
       per later year ({short_term, long_term, taxable_income_before_capital_loss, filing_status?,
@@ -626,7 +627,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       answer is usually no. Foreign tax withheld on fund dividends arrives in FORM 1099-DIV BOX 7
       (interest: 1099-INT box 6), and while creditable foreign taxes stay at or under $300 ($600 in
       the case of a JOINT RETURN — 904(j)(2)(B), statutory and never indexed) 904(j) lets the whole
-      credit be claimed as ONE NUMBER on Schedule 3 (Form 1040), Part I, line 1, with no Form 1116,
+      credit be claimed as ONE NUMBER on Schedule 3's foreign-tax-credit line, with no Form 1116,
       no three-country column grid and no 904(a) limitation fraction. Run this BEFORE authoring
       formpacks/federal/<year>/f1116. THREE THINGS IT REFUSES TO GUESS, because each one silently
       decides the election: all_foreign_income_passive (904(j)(2)(A) needs the ENTIRE foreign-source
@@ -639,8 +640,9 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       election_available and election_made are reported SEPARATELY — a filer who qualifies may still
       prefer Form 1116). ESTATES AND TRUSTS ARE EXCLUDED OUTRIGHT (904(j)(3)(D)). QUOTE THE COST, it
       is never free: 904(j)(1)(B)/(C) forfeit the 904(c) 1-year-back / 10-year-forward carryover in
-      BOTH directions for the election year, so pass regular_tax (Form 1116 line 20 = Form 1040 line
-      16 + Schedule 2 line 2, less any Form 4972 tax) to get both the amount claimed — "the smaller
+      BOTH directions for the election year, so pass regular_tax (Form 1116 line 20 = the Form 1040 tax
+      plus the Schedule 2 amount the year's 1116 instructions name, less any Form 4972 tax; the work names
+      both lines, read off the year's faces) to get both the amount claimed — "the smaller
       of (a) your total foreign tax, or (b) your regular tax" — and credit_lost_to_regular_tax_cap,
       foreign tax that exceeds regular tax and is therefore lost PERMANENTLY. The election does NOT
       waive creditability (IRC 901/903, including 901(k)'s minimum holding period on dividend

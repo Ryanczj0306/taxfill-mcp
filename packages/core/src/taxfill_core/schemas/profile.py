@@ -543,8 +543,8 @@ class PriorFilings(BaseModel):
     payment is the smaller of 90% of the current year's tax and 100% of the
     prior year's (110% when prior AGI is high) — so a mid-year planning session
     cannot answer "am I withholding enough?" without these two figures. Both
-    come straight off the prior-year Form 1040 (AGI = line 11; total tax =
-    line 24). New fields default None, so profiles saved before they existed
+    come straight off the prior-year Form 1040 (the lines ``form_lines`` records as ``f1040.agi`` and
+    ``f1040.total_tax`` for that year). New fields default None, so profiles saved before they existed
     still load.
     """
 
@@ -554,11 +554,13 @@ class PriorFilings(BaseModel):
     late_filing_context: Answer[str] | None = None
     prior_year_agi: Answer[int] | None = Field(
         default=None,
-        description="The PRIOR year's AGI (that return's Form 1040 line 11) — drives the 110%-vs-100% safe-harbor tier.",
+        description="The PRIOR year's AGI (that return's Form 1040 AGI line, form_lines f1040.agi) — drives the "
+                    "110%-vs-100% safe-harbor tier.",
     )
     prior_year_total_tax: Answer[int] | None = Field(
         default=None,
-        description="The PRIOR year's total tax (that return's Form 1040 line 24) — the base the safe-harbor percentage applies to.",
+        description="The PRIOR year's total tax (that return's Form 1040 total-tax line, form_lines f1040.total_tax) "
+                    "— the base the safe-harbor percentage applies to.",
     )
     return_forms: dict[int, Answer[PriorReturnForm]] = Field(
         default_factory=dict,

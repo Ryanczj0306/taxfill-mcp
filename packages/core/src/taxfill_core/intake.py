@@ -28,6 +28,7 @@ import re
 from pydantic import BaseModel, ConfigDict, Field
 
 from taxfill_core import residency
+from taxfill_core.knowledge import form_line
 from taxfill_core.schemas.profile import Answer, Profile
 from taxfill_core.worksheet import intake_worksheet
 
@@ -1462,8 +1463,10 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                           "For a nonresident alien, interest on US bank deposits that is not effectively "
                           "connected with a US trade or business is NOT income: IRC 871(i)(2)(A) exempts it "
                           "from the 30% tax and Pub 519 ch. 3 (Exclusions From Gross Income — Interest Income) "
-                          "excludes it from gross income, so it does not go on Form 1040-NR line 2b "
-                          "(Instructions for Form 1040-NR, line 2b, Exception 3). Interest that is NOT deposit "
+                          "excludes it from gross income, so it does not go on the Form 1040-NR "
+                          + (f"line {form_line(tax_year, 'f1040nr.taxable_interest')} " if tax_year else
+                             "taxable-interest line ")
+                          + "(the Instructions' Exception 3 for that line). Interest that is NOT deposit "
                           "interest gets no such exclusion — it is taxed on Schedule NEC line 2 at 30%/treaty "
                           "rate, or as effectively connected income, unless a separate exemption such as "
                           "portfolio interest (IRC 871(h)) applies. A §6013(g)/(h) election to file jointly "
@@ -1709,13 +1712,15 @@ def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion], tax_ye
     has_filed_prior = pf.filed_years is not None and bool(pf.filed_years.value)
     if has_filed_prior and (pf.prior_year_agi is None or pf.prior_year_total_tax is None):
         out.append(_q("prior_filings.safe_harbor_figures", "prior_filings",
-                      "From your most recent filed return: what were the AGI (Form 1040 line 11) and "
-                      "the total tax (line 24)?",
+                      f"From your most recent filed return: what were the AGI (Form 1040 line "
+                      f"{form_line(tax_year - 1, 'f1040.agi')}) and the total tax (line "
+                      f"{form_line(tax_year - 1, 'f1040.total_tax')})?",
                       "They set your estimated-tax safe harbor — withholding at least 100%/110% of last "
                       "year's tax avoids an underpayment penalty even if this year's income jumps.",
                       "prior_filings",
-                      disambiguation="Read both straight off the prior-year Form 1040: line 11 (adjusted "
-                                     "gross income) and line 24 (total tax). The 110% tier applies when "
+                      disambiguation=f"Read both straight off the {tax_year - 1} Form 1040: line "
+                                     f"{form_line(tax_year - 1, 'f1040.agi')} (adjusted gross income) and line "
+                                     f"{form_line(tax_year - 1, 'f1040.total_tax')} (total tax). The 110% tier applies when "
                                      "that AGI was over $150,000 ($75,000 if filing separately this "
                                      "year). Skip if the prior year is still unfiled."))
 

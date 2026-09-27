@@ -63,7 +63,7 @@ EXPECTED: dict[str, dict[int, str]] = {
     "sched_se.ss_wages": {y: "8a" for y in range(2019, 2027)},
     # JF4 (read 2026-09-27): the prior-year figures the safe harbor asks for — AGI moved to 11a in 2025.
     "f1040.agi": {2019: "8b", **{y: "11" for y in range(2020, 2025)}, 2025: "11a", 2026: "11a"},
-    "f1040.total_tax": {2019: "16", **{y: "24" for y in range(2020, 2026)}, 2026: "24a"},
+    "f1040.total_tax": {2019: "16", **{y: "24" for y in range(2020, 2026)}, 2026: None},   # JF6c: 24a vs 24c unverified
     # JR2a (read 2026-09-27): the IRA distribution lines the statements name.
     "f1040.ira_distributions": {y: "4a" for y in range(2019, 2027)},
     "f1040.ira_taxable": {y: "4b" for y in range(2019, 2027)},
@@ -123,7 +123,12 @@ def test_every_year_records_every_jf6a_key_with_its_face(key: str, year: int):
     if year == 2026:
         assert entry.line_source == f"draft Created {DRAFT_CREATED[key]}"
         assert entry.url.startswith("https://www.irs.gov/pub/irs-dft/") and entry.url.endswith("--dft.pdf")
-        assert form_line(year, key) == EXPECTED[key][year] + DRAFT
+        if EXPECTED[key][year] is None:          # recorded absent, with its reason (f1040.total_tax, JF6c)
+            assert entry.absent
+            with pytest.raises(FormLineError):
+                form_line(year, key)
+        else:
+            assert form_line(year, key) == EXPECTED[key][year] + DRAFT
     else:
         assert entry.line_source == "final"
         assert entry.url.startswith("https://www.irs.gov/pub/irs-prior/") and entry.url.endswith(f"--{year}.pdf")
@@ -164,7 +169,8 @@ def test_a_pack_and_its_year_render_the_same():
     for year in FEDERAL_YEARS:
         pack = load_knowledge("federal", year)
         for key in EXPECTED:
-            assert form_line(pack, key) == form_line(year, key)
+            if EXPECTED[key].get(year) is not None:
+                assert form_line(pack, key) == form_line(year, key)
 
 
 def test_form_line_rejects_a_bool_or_a_string_year():
@@ -485,25 +491,7 @@ def _stale_rows(actual: Counter, debt: dict) -> dict:
 # ever shrinks. NEVER add a row to make the guard pass — render the line through
 # form_line(pack, key) instead, adding the key to each year's form_lines block
 # after reading that year's face.
-FORM_LINE_DEBT: dict[tuple[str, str, str], int] = {
-    # ── estimate.py ──
-    ('estimate.py', 'IncomeSnapshot', 'Form 1040-NR (line 2b'): 1,
-    ('estimate.py', 'estimate_refund', 'Form 1040-NR (line 2b'): 1,
-    ('estimate.py', 'estimate_refund', 'Form 1040-NR line 12'): 1,
-    # ── intake.py ──
-    ('intake.py', '_income_document_questions', 'Form 1040-NR line 2b'): 1,
-    ('intake.py', '_income_document_questions', 'Form 1040-NR, line 2b'): 1,
-    ('intake.py', '_prior_filings_questions', 'Form 1040 line 11'): 1,
-    ('intake.py', '_prior_filings_questions', 'Form 1040: line 11'): 1,
-    # ── server.py ──
-    ('server.py', 'calc', 'Form 1040 line 13b'): 1,
-    ('server.py', 'calc', 'Form 1040 line 15'): 1,
-    ('server.py', 'calc', 'Form 1040 line 6b'): 1,
-    ('server.py', 'calc', 'Form 1040), Part I, line 1'): 1,
-    ('server.py', 'calc', 'Schedule 1 Part II line 13'): 1,
-    ('server.py', 'calc', 'Schedule 2 line 2'): 1,
-    ('server.py', 'calc', 'Schedule 3 line 2'): 1,
-}
+FORM_LINE_DEBT: dict[tuple[str, str, str], int] = {}   # JF6b cleared calc.py, JF6c the rest (2026-09-27)
 
 
 def test_no_new_form_line_literal_in_engine_text():
@@ -1055,3 +1043,50 @@ def test_jf6b_the_capital_loss_destination_is_the_registry_not_a_year_table():
 
 def test_jf6b_no_calc_py_debt_is_left():
     assert not [k for k in FORM_LINE_DEBT if k[0] == "calc.py"]
+
+
+# ══ JF6c: the other modules, and the Schedule 1-A keys ═══════════════════════
+_FORM_LINE_CALL_RE = re.compile(r"form_line(?:_entry)?\([^()]*?['\"]([a-z0-9_]+\.[a-z0-9_]+)['\"]")
+
+
+def test_form_lines_resolve():
+    """Every key the engine renders resolves in every shipped year — to a line, or to an entry that records
+    why the form has none — so no year's work text can raise FormLineError for a key that simply was not read."""
+    keys = set()
+    for path in [*GUARDED.values(), REPO_ROOT / "packages" / "core" / "src" / "taxfill_core" / "statements.py"]:
+        keys |= set(_FORM_LINE_CALL_RE.findall(path.read_text(encoding="utf-8")))
+    assert len(keys) > 40, sorted(keys)
+    missing = [(key, year) for key in sorted(keys) for year in FEDERAL_YEARS
+               if key not in (load_knowledge("federal", year).form_lines or {})]
+    assert missing == []
+
+
+def test_jf6c_the_planning_year_intake_names_the_prior_faces_lines():
+    from taxfill_core.intake import intake_checklist  # noqa: PLC0415
+    from taxfill_core.schemas.profile import Answer, PriorFilings, Profile, Provenance  # noqa: PLC0415
+    profile = Profile(prior_filings=PriorFilings(filed_years=Answer(value=[2025], provenance=Provenance.user_stated())))
+    q = next(q for q in intake_checklist(profile, tax_year=2026).next_questions if q.id == "prior_filings.safe_harbor_figures")
+    assert "Form 1040 line 11a" in q.prompt and "(line 24)" in q.prompt       # the 2025 face
+    assert "11a" in q.disambiguation
+
+
+def test_jf6c_the_schedule_1a_parts_come_from_the_registry():
+    from taxfill_core.calc import schedule_1a_deductions  # noqa: PLC0415
+    r = schedule_1a_deductions(magi=100_000, filing_status="single", year=2025, qualified_tips=1_000,
+                               qualified_overtime=1_000, car_loan_interest=1_000, seniors_qualifying=1)
+    assert [p.form_line for p in r.parts] == ["13", "21", "30", "37"]
+    assert form_line_entry(2026, "sched1a.car_loan").line == "36"
+    assert form_line_entry(2026, "f1040.sched_1a").line == "13a"
+    assert [form_line_entry(2026, f"sched1a.{k}").line for k in ("tips", "overtime", "car_loan", "senior")] == \
+        ["15", "27", "36", "43"]
+    assert form_line_entry(2026, "sched1a.total").line == "44"
+
+
+def test_jf6c_the_1040nr_lines():
+    assert [form_line_entry(y, "f1040nr.taxable_interest").line for y in (2019, 2020, 2025)] == ["9a", "2b", "2b"]
+    assert [form_line_entry(y, "f1040nr.itemized").line for y in (2019, 2021, 2025, 2026)] == ["37", "12a", "12", "12a"]
+    assert [form_line_entry(y, "f1040nr.agi").line for y in (2019, 2024, 2025)] == ["35", "11", "11a"]
+
+
+def test_jf6c_the_frozen_debt_list_is_empty():
+    assert FORM_LINE_DEBT == {} and REBINDING_DEBT == {}

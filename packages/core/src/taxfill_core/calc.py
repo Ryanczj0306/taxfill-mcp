@@ -3203,10 +3203,10 @@ def schedule_1a_deductions(
 
     if tips_d > 0:
         cap_note = " — per RETURN; a joint return does NOT double it" if params.tips.cap_is_per_return else ""
-        _step_part("II", "13", "No Tax on Tips", tips_d, params.tips.deduction_cap, params.tips.phaseout,
+        _step_part("II", form_line_entry(pack, "sched1a.tips").line, "No Tax on Tips", tips_d, params.tips.deduction_cap, params.tips.phaseout,
                    forfeit_on_mfs=not params.tips.mfs_allowed, lines_note="lines 4-13", cap_note=cap_note)
     if overtime_d > 0:
-        _step_part("III", "21", "No Tax on Overtime", overtime_d,
+        _step_part("III", form_line_entry(pack, "sched1a.overtime").line, "No Tax on Overtime", overtime_d,
                    params.overtime.deduction_cap.for_status(filing_status), params.overtime.phaseout,
                    forfeit_on_mfs=not params.overtime.mfs_allowed, lines_note="lines 14-21")
         # N-14 push-back: the marketing name invites a wrong conclusion ("no tax
@@ -3219,7 +3219,7 @@ def schedule_1a_deductions(
             "above it (IRA phase-outs, NIIT, this schedule's own phase-outs)."
         )
     if car_d > 0:
-        _step_part("IV", "30", "Qualified passenger vehicle loan interest", car_d,
+        _step_part("IV", form_line_entry(pack, "sched1a.car_loan").line, "Qualified passenger vehicle loan interest", car_d,
                    params.car_loan_interest.deduction_cap, params.car_loan_interest.phaseout,
                    forfeit_on_mfs=False, lines_note="lines 22-30")
     if seniors_qualifying > 0:
@@ -3229,7 +3229,7 @@ def schedule_1a_deductions(
         total_base = per_person * seniors_qualifying
         if mfs and not sd.mfs_allowed:
             parts.append(Schedule1APart(
-                part="V", form_line="37", name="Senior deduction", input_amount=total_base,
+                part="V", form_line=form_line_entry(pack, "sched1a.senior").line, name="Senior deduction", input_amount=total_base,
                 cap_applied=total_base, tentative=0, magi_threshold=threshold, magi_excess=0,
                 reduction=0, deduction=0, forfeited_reason=_MFS_FORFEIT,
             ))
@@ -3240,7 +3240,7 @@ def schedule_1a_deductions(
             per_person_ded = per_person - reduction_pp
             deduction = per_person_ded * seniors_qualifying
             parts.append(Schedule1APart(
-                part="V", form_line="37", name="Senior deduction", input_amount=total_base,
+                part="V", form_line=form_line_entry(pack, "sched1a.senior").line, name="Senior deduction", input_amount=total_base,
                 cap_applied=total_base, tentative=total_base, magi_threshold=threshold,
                 magi_excess=irs_round(excess), reduction=reduction_pp * seniors_qualifying,
                 deduction=deduction,

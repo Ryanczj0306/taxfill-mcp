@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,193 tests** — offline 5,813 + live-.gov 380; derived
+Done and on `main` (**6,198 tests** — offline 5,818 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1915,7 +1915,23 @@ not wait for any of this.
     - Parametrized over 2019–2026: the additional_medicare_tax / niit / hsa_deduction work strings equal their `form_line` values. For 2026 that is 17b + 11, 6, and 13c/13d; for 2019/2020, 8a/8b.
     - `eitc(…, 2025).work` contains "27a"; "Part V" appears wherever the face says so.
     - The frozen debt list has no calc.py entries left.
-- [ ] **JF6c — Rewire the other sites and the Schedule 1-A keys** (M; deps JF6b) [DEF-06 rest + DEF-07 + the line half of LD-08]
+- [x] **JF6c — Rewire the other sites and the Schedule 1-A keys — DONE 2026-09-27** (M; deps JF6b) [DEF-06 rest + DEF-07 + the line half of LD-08]
+  - *As built:*
+    - **Seven more keys in every federal pack, read 2026-09-27:**
+      - `f1040nr.taxable_interest` (9a in 2019, then 2b);
+      - `f1040nr.itemized` (37 / 12 / 12a in 2021 / 12 / 12a in 2026);
+      - `f1040nr.agi` (35 / 11 / 11a from 2025);
+      - the Schedule 1-A part totals `sched1a.tips` / `.overtime` / `.car_loan` / `.senior` (13/21/30/37 for 2025, 15/27/36/43 on the 2026 draft; absent before 2025).
+    - **Rewired through form_line:**
+      - the planning-year intake question (the prior year's `f1040.agi` / `f1040.total_tax`, so 2026 asks for "11a");
+      - the 1040-NR deposit-interest texts in intake and estimate;
+      - the 1040-NR itemized-only note;
+      - the server.py calc docs, including the 1116 line 20 note, now "the Schedule 2 amount the year's instructions name".
+    - **Rephrased as registry keys:** schemas/profile.py's prior-year fields and workspace.py's Position example.
+    - **Schedule 1-A:** `schedule_1a_deductions` takes its part keys from the registry. The 2025 keys stay ['13','21','30','37'].
+    - **Debt:** FORM_LINE_DEBT and REBINDING_DEBT are empty.
+    - **New `test_form_lines_resolve`:** every key the guarded modules and statements.py pass to form_line resolves in every shipped year.
+    - **2026 total tax:** `f1040.total_tax` for 2026 is now recorded ABSENT with the reason. The draft prints 24a "This is your total tax" and 24c = 24a + 24b, and which one §6654 reads is unverified until JT6; nothing reads it before tax year 2027.
   - intake.py:1172-1179 asks a planning-year user for "line 11" of the prior return. Also fix schemas/profile.py:477-492, server.py:211/344/386-392 and workspace.py:81, and the Form 1040-NR itemized "line 12" (estimate.py:1033/1223/1717), which becomes 12a in 2026.
   - schedule_1a_deductions hardcodes form_line keys 13/21/30/37 and "line 38 → 1040 13b / 1040-NR 13c" (calc.py:2937-2940, :2962-2965, :3129-3180; server.py:396). These key verify_form's recompute.
   - The draft 2026 Schedule 1-A (Created 6/16/26) totals on 15/27/36/43 → 44 → 1040/1040-NR 13a, with rounding lines 13/25/34. Data-drive the keys.

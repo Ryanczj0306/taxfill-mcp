@@ -1287,3 +1287,51 @@ form_lines:
     url: https://www.irs.gov/pub/irs-prior/f8889--2020.pdf
     read: '2026-09-27'
     printed: 21 line 8; check box c and enter “HDHP” and the amount on the line next to the box
+  # JF6c (read 2026-09-27): the 1040-NR lines and the Schedule 1-A part totals.
+  f1040nr.taxable_interest:
+    line: 2b
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040nr--2020.pdf
+    read: '2026-09-27'
+    printed: Taxable interest 2b
+  f1040nr.itemized:
+    line: '12'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040nr--2020.pdf
+    read: '2026-09-27'
+    printed: 12 Itemized deductions (from Schedule A (Form 1040-NR)) or, for certain residents of India, standard
+      deduction. See instructions
+  f1040nr.agi:
+    line: '11'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040nr--2020.pdf
+    read: '2026-09-27'
+    printed: 11 This is your adjusted gross income
+  sched1a.tips:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2020.pdf
+    read: '2026-09-27'
+    absent: Schedule 1-A first appears for 2025 (P.L. 119-21); this year's Form 1040 has no Schedule 1-A line
+    printed: Qualified business income deduction. Attach Form 8995 or Form 8995-A
+  sched1a.overtime:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2020.pdf
+    read: '2026-09-27'
+    absent: Schedule 1-A first appears for 2025 (P.L. 119-21); this year's Form 1040 has no Schedule 1-A line
+    printed: Qualified business income deduction. Attach Form 8995 or Form 8995-A
+  sched1a.car_loan:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2020.pdf
+    read: '2026-09-27'
+    absent: Schedule 1-A first appears for 2025 (P.L. 119-21); this year's Form 1040 has no Schedule 1-A line
+    printed: Qualified business income deduction. Attach Form 8995 or Form 8995-A
+  sched1a.senior:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2020.pdf
+    read: '2026-09-27'
+    absent: Schedule 1-A first appears for 2025 (P.L. 119-21); this year's Form 1040 has no Schedule 1-A line
+    printed: Qualified business income deduction. Attach Form 8995 or Form 8995-A

@@ -158,8 +158,9 @@ class IncomeSnapshot(BaseModel):
             "NONRESIDENT alien this amount is excluded from income: IRC 871(i)(1)-(2)(A) impose no tax on "
             "'interest on deposits, if such interest is not effectively connected with the conduct of a "
             "trade or business within the United States'; Pub 519 ch. 3 (Exclusions From Gross Income — "
-            "Interest Income) excludes it from gross income; the Instructions for Form 1040-NR (line 2b, "
-            "Exception 3) say not to report it on line 2b. For a RESIDENT it changes nothing (all interest "
+            "Interest Income) excludes it from gross income; the Instructions for Form 1040-NR (Exception 3 "
+            "under the taxable-interest line, form_lines f1040nr.taxable_interest) say not to report it there. "
+            "For a RESIDENT it changes nothing (all interest "
             "is taxable). In a DUAL-STATUS year only the part received before the residency starting date "
             "is excluded — record it in bank_deposit_interest_nonresident_period; the rest is taxed as "
             "resident-period interest. Under the §6013(g)/(h) election, which treats both spouses as residents for the "
@@ -4519,7 +4520,8 @@ def estimate_refund(
             else ""
         )
         assumptions.append(
-            f"Nonresident aliens cannot take the standard deduction: Form 1040-NR line 12 is "
+            f"Nonresident aliens cannot take the standard deduction: Form 1040-NR line "
+            f"{form_line(year, 'f1040nr.itemized', base_dir=knowledge_dir)} is "
             f"ITEMIZED-only (typically state/local income tax withheld), so this estimate used "
             f"${income.itemized_deductions or 0:,} of itemized deductions{forgone}."
         )
@@ -4665,7 +4667,9 @@ def estimate_refund(
             f"deposits or withdrawable accounts with savings institutions, and amounts held by an "
             f"insurance company under an agreement to pay interest); Pub 519 ch. 3 (Exclusions From "
             f"Gross Income — Interest Income) excludes it from gross income, and the Instructions for "
-            f"Form 1040-NR (line 2b, Exception 3) say not to report it on line 2b. The exclusion is "
+            f"Form 1040-NR (Exception 3 under line "
+            f"{form_line(year, 'f1040nr.taxable_interest', base_dir=knowledge_dir)}) say not to report it "
+            f"there. The exclusion is "
             f"conditioned on the CHARACTER you entered — confirm the payer is a bank, savings "
             f"institution or insurance company and the account is not part of a US trade or business. "
             f"It ENDS if a §6013(g)/(h) election treats you as a resident (the election, not the "

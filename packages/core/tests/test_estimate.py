@@ -1838,7 +1838,7 @@ def test_p013_characterized_deposit_interest_is_excluded_for_a_nonresident():
     assert "$900" in note
     assert "871(i)(1)" in note and "871(i)(2)(A)" in note and "871(i)(3)" in note
     assert "interest on deposits, if such interest is not effectively connected" in note
-    assert "Pub 519 ch. 3" in note and "line 2b, Exception 3" in note
+    assert "Pub 519 ch. 3" in note and "Exception 3 under line 2b" in note   # f1040nr.taxable_interest (JF6c)
     assert "§6013(g)/(h) election" in note and "the election, not the marriage" in note   # rule (c) rides along
     # Only deposit interest was entered, so neither the uncharacterized-interest note
     # nor the FDAP "NOT modeled" note fires, and the old hedge is gone for good.
