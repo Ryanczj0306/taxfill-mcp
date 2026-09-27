@@ -165,7 +165,11 @@ def check_form_blanks() -> list[str]:
             drift.append(f"{rel}: source_url unreachable — {pack.source_url} ({exc})")
             print(f"  DRIFT  {rel}: UNREACHABLE {pack.source_url}")
             continue
-        if actual.lower() != pack.pdf_sha256.lower():
+        if actual.lower() != pack.pdf_sha256.lower() and pack.source_status == "draft":
+            # JT0a: the IRS re-posts drafts; a new digest on a draft is a re-audit, not drift.
+            print(f"  warn   {rel}: draft re-posted: re-audit (recorded {pack.pdf_sha256[:12]}…, now "
+                  f"{actual[:12]}…; draft Created {pack.draft_created}) {pack.source_url}")
+        elif actual.lower() != pack.pdf_sha256.lower():
             drift.append(f"{rel}: blank REVISED — recorded {pack.pdf_sha256[:12]}…, now {actual[:12]}… ({pack.source_url})")
             print(f"  DRIFT  {rel}: REVISED (checksum changed)")
         else:

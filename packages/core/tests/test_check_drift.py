@@ -162,3 +162,20 @@ def test_not_drift_reason_classifies_transport_vs_move():
     refused = OfflineFetchError("dns")
     refused.__cause__ = _ue.URLError(ConnectionRefusedError("refused"))
     assert cd._not_drift_reason(refused) is None                    # genuine drift
+
+
+def test_a_reposted_draft_blank_is_a_reaudit_warning_not_drift(monkeypatch, tmp_path, capsys):
+    # JT0a: the IRS re-posts drafts, so a draft pack's changed digest is a re-audit, not drift.
+    pack_dir = tmp_path / "formpacks" / "federal" / "2026" / "ftest"
+    pack_dir.mkdir(parents=True)
+    (pack_dir / "pack.yaml").write_text(yaml.safe_dump({
+        "form": "TEST", "jurisdiction": "federal", "tax_year": 2026, "source_status": "draft",
+        "draft_created": "8/19/26", "source_url": "https://www.irs.gov/pub/irs-dft/ftest--dft.pdf",
+        "pdf_sha256": "a" * 64, "acroform_root": "topmostSubform[0]",
+        "fields": [{"line": "name", "field": "Page1[0].f1_1[0]", "type": "text"}],
+    }))
+    monkeypatch.setattr(cd, "REPO", tmp_path)
+    monkeypatch.setattr(cd, "_download", lambda url, timeout: b"x")
+    monkeypatch.setattr(cd, "compute_sha256", lambda p: "0" * 64)
+    assert cd.check_form_blanks() == []
+    assert "draft re-posted: re-audit" in capsys.readouterr().out

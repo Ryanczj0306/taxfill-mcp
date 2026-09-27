@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,782 tests** — offline 5,402 + live-.gov 380; derived
+Done and on `main` (**5,788 tests** — offline 5,408 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1760,11 +1760,12 @@ not wait for any of this.
 
 ### Block 4 — The TY2026 foundation (dated)
 
-- [ ] **JT0a — Draft packs, rehearsal mode, multiple second passes** (M; deps J0; **latest start 2026-10-12**) [TY26-01 + TY26-03 + G32 + LD-08(3)]
+- [x] **JT0a — Draft packs, rehearsal mode, multiple second passes — DONE 2026-09-27** (M; deps J0; **latest start 2026-10-12**) [TY26-01 + TY26-03 + G32 + LD-08(3)]
   - **Why.** Every 2026 draft for the Wave A forms is posted at irs.gov/pub/irs-dft/. The IRS cover sheet says "there are never any changes to the last posted draft of the form and the final revision of the form"; drafts of instructions and publications do change. Three gates refuse drafts-first authoring today:
     - the URL-prefix test (test_formpacks_federal.py:208-217);
     - `assert_filing_grade` inside the golden test (filler.py:360; verify.py:2324/2427);
     - the sha256 pin, which breaks when IRS re-posts a draft (f1040--dft: Last-Modified 2026-09-17, Created 8/19/26).
+  - *As built:* `FormPack.source_status` / `draft_created` with a validator (a draft needs its Created stamp; a final pack may not use irs-dft or carry the stamp); the URL test allows irs-dft only for a draft; core-only `fill_form(..., rehearsal=True)` / `verify_form(..., rehearsal=True)` accept only a draft pack, bypass the filing-grade guard and stamp every page with a FreeText "REHEARSAL — DRAFT FORM — NOT FOR FILING" (MCP never passes it, so MCP fill_form still refuses 2026); check_drift reports a re-posted draft as "draft re-posted: re-audit" (a warning); `test_no_draft_packs_in_a_filing_grade_year`; `Provisional.second_passes` (second_pass kept as a deprecated alias) with each pass's `source_status` / `draft_created`, `draft_only_blocks()` and `removal_blockers()` (absent blocks, draft-only blocks); CONTRIBUTING-PACKS "Drafts-first" and DEV_PLAN §5.
   - **Build.**
     - FormPack gains `source_status: final | draft` and `draft_created`; the URL test allows irs-dft only for draft packs.
     - A core-only `rehearsal=True` on fill_form / verify_form, never reachable through MCP. It bypasses the filing-grade guard only for draft packs and stamps "REHEARSAL — DRAFT FORM — NOT FOR FILING"; the golden test uses it.

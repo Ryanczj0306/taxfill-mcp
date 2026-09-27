@@ -155,6 +155,17 @@ class FormPack(BaseModel):
     acroform_root: str = Field(
         description="XFA-derived AcroForm root name; varies per form (e.g. 'topmostSubform[0]', Sched OI: 'form1040-NR[0]')."
     )
+    source_status: Literal["final", "draft"] = Field(
+        default="final",
+        description=(
+            "JT0a: 'draft' for a pack authored drafts-first against an irs.gov/pub/irs-dft/ form (the IRS "
+            "cover sheet: \"there are never any changes to the last posted draft of the form and the final "
+            "revision of the form\"); only a draft pack may use an irs-dft URL, and only in a provisional year."
+        ),
+    )
+    draft_created: str | None = Field(
+        default=None, description="The draft's footer stamp, e.g. '8/19/26' (\"Created 8/19/26\"); drafts only."
+    )
     fields: list[PackField] = Field(min_length=1)
     relations: list[str] = Field(
         default_factory=list,
@@ -232,6 +243,21 @@ class FormPack(BaseModel):
                 "compute it with: shasum -a 256 blank.pdf"
             )
         return value.lower()
+
+    @model_validator(mode="after")
+    def _check_draft_source(self) -> "FormPack":
+        # JT0a: an irs-dft URL is a DRAFT form, so it needs the draft status and its footer stamp; a
+        # final pack never points at a draft.
+        is_dft = "/pub/irs-dft/" in self.source_url
+        if self.source_status == "draft":
+            if not self.draft_created:
+                raise ValueError("a draft pack records draft_created — the 'Created <date>' stamp in the draft's footer")
+        elif is_dft or self.draft_created:
+            raise ValueError(
+                "a final pack cannot use an irs.gov/pub/irs-dft/ source_url or carry draft_created — set "
+                "source_status: draft (drafts-first authoring, docs/CONTRIBUTING-PACKS.md) or point at the final form"
+            )
+        return self
 
     @model_validator(mode="after")
     def _check_unique_lines(self) -> "FormPack":

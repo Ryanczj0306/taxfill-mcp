@@ -2121,6 +2121,10 @@ class ProvisionalSecondPass(BaseModel):
         ),
     )
     result: str = ""
+    source_status: Literal["final", "draft"] = Field(
+        default="final", description="JT0a: whether this pass read a FINAL document or an IRS draft."
+    )
+    draft_created: str | None = Field(default=None, description="The draft's 'Created <date>' stamp, drafts only.")
 
 
 class Provisional(BaseModel):
@@ -2150,8 +2154,32 @@ class Provisional(BaseModel):
             "prescriptive 'no block for this year' error instead of returning a fabricated figure."
         ),
     )
-    second_pass: ProvisionalSecondPass | None = None
+    second_pass: ProvisionalSecondPass | None = Field(
+        default=None, description="DEPRECATED alias of second_passes[0] (JT0a); read second_passes."
+    )
+    second_passes: list[ProvisionalSecondPass] = Field(
+        default_factory=list,
+        description="JT0a: every independent second pass, each with its source_status — a draft pass is not final.",
+    )
     still_assumed: str = ""
+
+    @model_validator(mode="after")
+    def _alias_second_pass(self) -> "Provisional":
+        if self.second_pass is not None and not self.second_passes:
+            self.second_passes = [self.second_pass]
+        return self
+
+    def draft_only_blocks(self) -> list[str]:
+        """Blocks verified ONLY by a draft pass (JT0a) — the marker may not come off while any remain."""
+        final = {b for p in self.second_passes if p.source_status == "final" for b in p.verified_blocks}
+        draft = {b for p in self.second_passes if p.source_status == "draft" for b in p.verified_blocks}
+        return sorted(draft - final)
+
+    def removal_blockers(self) -> list[str]:
+        """Why this marker cannot come off yet (JT0a): blocks still absent, and blocks verified only by a draft."""
+        out = [f"block {b!r} is deliberately absent" for b in self.blocks_deliberately_absent]
+        out += [f"block {b!r} is verified only against a DRAFT" for b in self.draft_only_blocks()]
+        return out
 
 
 class ProvisionalPackError(RuntimeError):

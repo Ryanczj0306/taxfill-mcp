@@ -2296,6 +2296,7 @@ def verify_form(
     widgets: Sequence[TextWidget | Mapping] | None = None,
     baseline: Mapping[str, str] | None = None,
     confirmed_current_address: str | None = None,
+    rehearsal: bool = False,
 ) -> VerifyReport:
     """Run every single-form check and aggregate a :class:`VerifyReport`.
 
@@ -2323,7 +2324,14 @@ def verify_form(
             projection-grade numbers is exactly the false assurance the marker
             exists to prevent.
     """
-    assert_filing_grade(pack.jurisdiction, pack.tax_year, action="verify a form")
+    # JT0a: `rehearsal` (core-only) verifies a DRAFT pack's rehearsal fill in a provisional year; it
+    # never lifts the guard for a final pack.
+    if rehearsal:
+        from taxfill_core.filler import _require_rehearsable  # noqa: PLC0415
+
+        _require_rehearsable(pack)
+    else:
+        assert_filing_grade(pack.jurisdiction, pack.tax_year, action="verify a form")
 
     widgets_from_disk = False
     if isinstance(fields, (str, Path)):

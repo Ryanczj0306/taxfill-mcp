@@ -208,9 +208,10 @@ def test_pack_sha256_is_real_not_placeholder(pack_path: Path):
 @pytest.mark.parametrize("pack_path", PACK_PATHS, ids=_pack_id)
 def test_pack_source_url_is_official_irs(pack_path: Path):
     pack = load_pack(pack_path)
-    assert pack.source_url.startswith(
-        ("https://www.irs.gov/pub/irs-pdf/", "https://www.irs.gov/pub/irs-prior/")
-    ), (
+    allowed = ("https://www.irs.gov/pub/irs-pdf/", "https://www.irs.gov/pub/irs-prior/")
+    if pack.source_status == "draft":          # JT0a: drafts-first authoring
+        allowed = ("https://www.irs.gov/pub/irs-dft/",)
+    assert pack.source_url.startswith(allowed), (
         f"source_url {pack.source_url!r} is not an official IRS pattern — use "
         f"https://www.irs.gov/pub/irs-pdf/<file>.pdf (current year) or "
         f"https://www.irs.gov/pub/irs-prior/<file>--<year>.pdf (prior revision)"
@@ -1331,3 +1332,84 @@ def test_offline_golden_roundtrip_over_synthetic_fixture(tmp_path: Path):
 
     pages = render_pdf(filled, tmp_path / "png", pages=[1])
     assert pages[0].path.is_file() and pages[0].path.stat().st_size > 1000
+
+
+# ── JT0a: drafts-first packs, rehearsal mode, multiple second passes ─────────
+
+
+def _draft_pack(year: int = 2026) -> FormPack:
+    data = _harness_pack().model_dump()
+    data.update(tax_year=year, source_status="draft", draft_created="8/19/26",
+                source_url="https://www.irs.gov/pub/irs-dft/ftest--dft.pdf")
+    return FormPack.model_validate(data)
+
+
+def _draft_violations(packs) -> list[str]:
+    """The drafts-first invariant: a draft pack only in a year whose knowledge pack is provisional."""
+    from taxfill_core.knowledge import provisional_marker  # noqa: PLC0415
+    return [f"{p.form} {p.tax_year}" for p in packs
+            if p.source_status == "draft" and provisional_marker(p.jurisdiction, p.tax_year) is None]
+
+
+def test_no_draft_packs_in_a_filing_grade_year():
+    assert _draft_violations(load_pack(p) for p in PACK_PATHS) == []
+    # The invariant fails on a draft pack in a non-provisional year (2025 is filing-grade).
+    assert _draft_violations([_draft_pack(2025)]) == ["TEST-HARNESS 2025"]
+    assert _draft_violations([_draft_pack(2026)]) == []
+
+
+def test_jt0a_a_draft_pack_passes_the_golden_test_in_rehearsal_mode(tmp_path: Path):
+    from taxfill_core.filler import REHEARSAL_STAMP  # noqa: PLC0415
+    from taxfill_core.knowledge import ProvisionalPackError  # noqa: PLC0415
+    pack = _draft_pack()
+    blank = _harness_blank(tmp_path)
+    values = synthetic_values(pack)
+    with pytest.raises(ProvisionalPackError):                       # 2026 is planning-only
+        fill_form(pack, values, blank, tmp_path / "refused.pdf")
+    filled = tmp_path / "rehearsal.pdf"
+    result = fill_form(pack, values, blank, filled, rehearsal=True)
+    assert result.rehearsal and any(REHEARSAL_STAMP in w for w in result.warnings)
+    from pypdf import PdfReader  # noqa: PLC0415
+    annots = [a.get_object() for a in (PdfReader(str(filled)).pages[0].get("/Annots") or [])]
+    assert any(a.get("/Subtype") == "/FreeText" and REHEARSAL_STAMP in str(a.get("/Contents")) for a in annots)
+    report = verify_form(pack, filled, expected=values, rehearsal=True)
+    _assert_section_clean(report.assertions, "assertion diff")
+    with pytest.raises(ValueError, match="only for a DRAFT pack"):
+        fill_form(_harness_pack(), values, blank, tmp_path / "x.pdf", rehearsal=True)
+
+
+def test_jt0a_mcp_fill_form_still_refuses_the_draft_year(tmp_path: Path, monkeypatch):
+    from taxfill_core.knowledge import ProvisionalPackError  # noqa: PLC0415
+    from taxfill_mcp import server  # noqa: PLC0415
+    blank = _harness_blank(tmp_path)
+    monkeypatch.setattr(server, "load_form_pack", lambda form, year, jurisdiction: _draft_pack())
+    monkeypatch.setattr(server, "_fetch_blank", lambda url, sha256=None: blank)
+    with pytest.raises(ProvisionalPackError):
+        server.fill_form("TEST-HARNESS", 2026, synthetic_values(_draft_pack()), str(tmp_path / "out.pdf"))
+
+
+def test_jt0a_the_schema_keeps_draft_and_final_apart():
+    data = _harness_pack().model_dump()
+    with pytest.raises(ValueError, match="draft_created"):
+        FormPack.model_validate({**data, "source_status": "draft", "source_url": "https://www.irs.gov/pub/irs-dft/f.pdf"})
+    with pytest.raises(ValueError, match="cannot use an irs.gov/pub/irs-dft/"):
+        FormPack.model_validate({**data, "source_url": "https://www.irs.gov/pub/irs-dft/f.pdf"})
+
+
+def test_jt0a_second_passes_record_each_pass_and_what_keeps_the_marker_on():
+    from taxfill_core.knowledge import Provisional, load_knowledge  # noqa: PLC0415
+    marker = load_knowledge("federal", 2026).provisional
+    assert marker.second_passes and marker.second_passes[0] == marker.second_pass      # the deprecated alias
+    assert marker.removal_blockers()                                                  # absent blocks remain
+    p = Provisional.model_validate({
+        "status": "planning_only", "authored": "2026-09-27",
+        "second_passes": [
+            {"date": "2026-09-27", "source": "f1040es (2026)", "url": "https://www.irs.gov/pub/irs-pdf/f1040es.pdf",
+             "verified_blocks": ["rate_schedules"]},
+            {"date": "2026-09-27", "source": "f1040 draft", "url": "https://www.irs.gov/pub/irs-dft/f1040--dft.pdf",
+             "verified_blocks": ["rate_schedules", "standard_deduction"], "source_status": "draft",
+             "draft_created": "8/19/26"},
+        ],
+    })
+    assert p.draft_only_blocks() == ["standard_deduction"]
+    assert p.removal_blockers() == ["block 'standard_deduction' is verified only against a DRAFT"]

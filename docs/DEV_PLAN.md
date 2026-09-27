@@ -133,6 +133,14 @@ mailing:
 
 Blank PDFs (IRS and state DOR) are **downloaded at runtime** from official URLs and checksum-verified — never vendored in the repo.
 
+**Drafts-first (Phase J JT0a).** A pack authored before its year's finals post carries `source_status: draft`,
+`draft_created` (the draft footer's `Created <date>`) and an `irs.gov/pub/irs-dft/` URL; it may exist only in a
+provisional year, fills and verifies only in the core-only rehearsal mode (stamped "REHEARSAL — DRAFT FORM —
+NOT FOR FILING"; MCP `fill_form` still refuses the year), and a re-posted draft is a drift WARNING to re-audit.
+The knowledge pack's `provisional.second_passes` (the older `second_pass` is a deprecated alias) records each
+pass's `source_status`, and the marker comes off only when `removal_blockers()` is empty — see
+`docs/CONTRIBUTING-PACKS.md` ("Drafts-first").
+
 ## 6. State tax support
 
 Three layers, all data-driven:

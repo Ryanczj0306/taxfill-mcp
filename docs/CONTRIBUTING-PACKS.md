@@ -108,6 +108,28 @@ Run the gates ON THE EXACT TREE YOU PUSH. A lint or suite run from before your
 last edit is not a gate (this exact failure shipped once; see the 2026-08-09
 lint-fix commit).
 
+## Drafts-first (a year whose forms are still drafts)
+
+Every coming year's forms post as drafts at `irs.gov/pub/irs-dft/` months before the finals, and the IRS
+draft cover sheet says "there are never any changes to the last posted draft of the form and the final
+revision of the form". A pack may therefore be authored against the draft (Phase J JT0a):
+
+- set `source_status: draft`, `draft_created` to the draft footer's `Created <date>` stamp, and the
+  `irs-dft` URL (a final pack may not use one — the schema refuses it);
+- only in a PROVISIONAL year: `test_no_draft_packs_in_a_filing_grade_year` fails a draft pack whose
+  year's knowledge pack is filing-grade;
+- run the golden test in REHEARSAL mode — core-only `fill_form(..., rehearsal=True)` /
+  `verify_form(..., rehearsal=True)`, never reachable through MCP — which stamps every page
+  "REHEARSAL — DRAFT FORM — NOT FOR FILING"; MCP `fill_form` keeps refusing the year;
+- when the IRS re-posts the draft, `scripts/check_drift.py` reports "draft re-posted: re-audit" as a
+  warning (not drift): re-read the face and re-pin the digest;
+- the knowledge pack's `provisional.second_passes` record each second pass with its own
+  `source_status`; `Provisional.removal_blockers()` lists what keeps the marker on — a block still
+  deliberately absent, or one verified only against a draft.
+
+Drafts of instructions and publications DO change, so a figure read from a draft instruction stays
+projection-grade until the final posts.
+
 ## What reviewers will do
 
 Re-render your filled golden PDF and look at it; spot-check two or three cited

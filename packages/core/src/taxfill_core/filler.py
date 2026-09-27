@@ -164,6 +164,7 @@ class FillResult(BaseModel):
             "written to the PDF (checkboxes: the on_state or '/Off')."
         )
     )
+    rehearsal: bool = Field(default=False, description="JT0a: a rehearsal fill of a DRAFT form, stamped NOT FOR FILING.")
     warnings: list[str] = Field(
         default_factory=list,
         description="Non-fatal notes, e.g. IRS whole-dollar rounding adjustments.",
@@ -394,11 +395,24 @@ def _set_checkboxes(writer: PdfWriter, updates: dict[str, tuple[str, str]]) -> N
         field_obj[NameObject("/V")] = NameObject(state)
 
 
+REHEARSAL_STAMP = "REHEARSAL — DRAFT FORM — NOT FOR FILING"
+
+
+def _require_rehearsable(pack: FormPack) -> None:
+    if pack.source_status != "draft":
+        raise ValueError(
+            f"rehearsal=True is only for a DRAFT pack (source_status: draft); {pack.form} {pack.tax_year} is "
+            f"'{pack.source_status}' — fill a final pack normally"
+        )
+
+
 def fill_form(
     pack: FormPack,
     values: Mapping[str, object],
     blank_pdf: str | Path,
     out_path: str | Path,
+    *,
+    rehearsal: bool = False,
 ) -> FillResult:
     """Fill ``blank_pdf`` with ``values`` per the pack's field map; write ``out_path``.
 
@@ -429,8 +443,15 @@ def fill_form(
             filling a return for that year would rest on projection-grade
             numbers. Checked FIRST, before any other validation, so the caller
             learns the year is unfilable before spending effort on values.
+
+    ``rehearsal`` (JT0a) is CORE-ONLY — no MCP tool passes it: a DRAFT pack (source_status draft) may be
+    filled in a provisional year to rehearse the drafts-first authoring, every page stamped
+    "REHEARSAL — DRAFT FORM — NOT FOR FILING". It never unlocks a final pack's planning year.
     """
-    assert_filing_grade(pack.jurisdiction, pack.tax_year, action="fill a form")
+    if rehearsal:
+        _require_rehearsable(pack)
+    else:
+        assert_filing_grade(pack.jurisdiction, pack.tax_year, action="fill a form")
 
     blank_pdf = Path(blank_pdf)
     out_path = Path(out_path)
@@ -561,7 +582,19 @@ def fill_form(
     # Viewers must regenerate appearance streams for the values to show.
     writer.set_need_appearances_writer(True)
 
+    if rehearsal:
+        from pypdf.annotations import FreeText  # noqa: PLC0415
+
+        for index, page in enumerate(writer.pages):
+            top = float(page.mediabox.top)
+            writer.add_annotation(page_number=index, annotation=FreeText(
+                text=REHEARSAL_STAMP, rect=(36, top - 30, 420, top - 12), font="Helvetica", bold=True,
+                font_size="11pt", font_color="cc0000", border_color=None, background_color=None,
+            ))
+        warnings.append(f"{REHEARSAL_STAMP}: drafts-first rehearsal of {pack.form} {pack.tax_year} "
+                        f"(draft Created {pack.draft_created}).")
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("wb") as fh:
         writer.write(fh)
-    return FillResult(written=written, warnings=warnings)
+    return FillResult(written=written, warnings=warnings, rehearsal=rehearsal)
