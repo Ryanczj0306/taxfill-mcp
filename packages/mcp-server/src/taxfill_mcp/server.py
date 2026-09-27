@@ -884,7 +884,11 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     - income: wages (W-2 box 1), federal_withholding (withheld + estimated payments), interest,
       bank_deposit_interest (the DEPOSIT subset of interest — US bank / savings institution /
       insurance-company deposit, not effectively connected; excluded for a nonresident under
-      IRC 871(i)(2)(A), taxed under a §6013(g)/(h) election, joint or separate), dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
+      IRC 871(i)(2)(A), taxed under a §6013(g)/(h) election, joint or separate),
+      bank_deposit_interest_nonresident_period (the part of bank_deposit_interest RECEIVED before the
+      residency starting date of a dual-status year, from the account statements - never prorated;
+      only that part is excluded on a dual-status payee's return, Treas. Reg. 1.871-13(a)(1), and the
+      rest is taxed), dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
       capital_gain_short (signed), self_employment_net (signed), retirement_income_taxable (the
       TAXABLE amount, not simply 1099-R box 2a: a traditional-IRA distribution or Roth conversion shows
       the GROSS amount in 2a with 2b checked, so a filer with basis runs calc op ira_pro_rata and
@@ -930,6 +934,16 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     counts - classify's "may be WRONG") or that contradicts the prior year is priced on Form 1040-NR
     rules with the RESIDENT reading bracketed in the range and the reason first; a spouse's own
     answer that may flip brackets the spouse-resident reading of the two-return MFS pair.
+    A DUAL-STATUS year with no election (JF5b part 2) prices Pub 519 ch. 6's restrictions for the
+    point - no standard deduction (itemized or $0), no EITC, no education credits, no joint return
+    or HOH, MFS rates if married and single rates otherwise (an inference - ch. 6 names the rate column only for a married filer) - as one whole-year snapshot (NIIT on
+    the whole year's investment income may be overstated: Treas. Reg. 1.1411-2(a)(2)(ii) counts
+    resident-period income only); the range's other end is the full-year-resident figure when a
+    route could make it lawful (a prior-year residency not ruled out, or the election open to a
+    married filer), and collapses to the point for an unmarried filer whose prior year is a
+    recorded 1040-NR. Only bank_deposit_interest_nonresident_period is excluded on a dual-status
+    payee's return (the spouse's separate return by the spouse's own year), with a disclosure
+    naming the amount - or, without the split, the amount taxed in full and what to record.
 
     The result's `composition` is a reconciling LEDGER: each line carries a stable `slot`, a
     `role`, and an `effect` (its signed contribution to the bottom line; the effects sum EXACTLY

@@ -1540,3 +1540,107 @@ def test_p018_answering_the_prior_year_return_still_leaves_the_filing_history_qu
     profile.prior_filings = PriorFilings(return_forms={2022: _ans("1040-NR")})
     ids = _ids(intake_checklist(profile, tax_year=2023))
     assert "prior_filings.history" in ids and "prior_filings.return_form" not in ids
+
+
+# ── P-013 rule (f) / P-018 (JF5b part 2): the dual-status year's deposit interest ─────
+# Treas. Reg. 1.871-13(a)(1): the year is figured "under two different sets of rules, one
+# relating to resident aliens for the period of residence and the other relating to
+# nonresident aliens for the period of nonresidence" — so the character AND the part received
+# before the residency starting date are asked of a dual-status owner. Hypothetical data only.
+
+_PERIOD_Q = "income_documents.interest_period"
+
+
+def _dual_with(*docs: IncomeDocument, us_person=False, prior=None) -> Profile:
+    profile = _visa(_SWITCH_APRIL, us_person=us_person, prior=prior)
+    profile.income_documents = list(docs)
+    return profile
+
+
+def _dual_spouse() -> Spouse:
+    return Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status=s, start=start, end=end, provenance=US) for s, start, end in _SWITCH_APRIL
+        ]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in _DAYS.items()}),
+    )
+
+
+def test_p013_dual_status_owner_is_asked_the_interest_character():
+    for us_person in (False, None):
+        cl = intake_checklist(_dual_with(_doc("1099-INT"), us_person=us_person), tax_year=2025)
+        q = next(q for q in cl.next_questions if q.id == _INTEREST_Q)
+        assert q.prompt.startswith("Your residency result is a DUAL-STATUS year"), us_person
+        assert "1.871-13(a)(1)" in q.why and "only the part received before the residency starting date" in q.why
+        assert "bank_deposit_interest_nonresident_period" in q.disambiguation
+    # A full-year nonresident's question is unchanged (no dual-status sentence).
+    nra = next(q for q in intake_checklist(_confirmed_nra(_doc("1099-INT")), tax_year=2023).next_questions
+               if q.id == _INTEREST_Q)
+    assert "DUAL-STATUS" not in nra.why and "nonresident_period" not in nra.disambiguation
+    # A prior-year resident is a resident from January 1: nothing to ask.
+    resident = _dual_with(_doc("1099-INT"), prior={2024: "1040"})
+    assert _INTEREST_Q not in _ids(intake_checklist(resident, tax_year=2025))
+
+
+def test_p013_dual_status_deposit_1099_int_is_asked_the_period():
+    cl = intake_checklist(_dual_with(_doc("1099-INT (bank deposit)")), tax_year=2025)
+    q = next(q for q in cl.next_questions if q.id == _PERIOD_Q)
+    assert q.section == "income_documents" and q.answers_into == "income_documents"
+    assert q.prompt.startswith("Your residency result is a DUAL-STATUS year for 2025")
+    assert "BEFORE the residency starting date" in q.prompt and "IRC 7701(b)(3)(D)" in q.prompt
+    assert "1.871-13(a)(1)" in q.why and "871(i)(2)(A)" in q.why and "Without the amount the estimate taxes all" in q.why
+    assert "does not apply to alien individuals treated as residents" in q.why          # the election ends it
+    assert "`bank_deposit_interest_nonresident_period`" in q.disambiguation
+    assert "never prorate" in q.disambiguation and "0 is a valid answer" in q.disambiguation
+    assert _INTEREST_Q not in _ids(cl)                                                  # the character is on file
+    # Recorded — either amount — stops it; the words are the token, never digits (P-012).
+    for kind in ("1099-INT (bank deposit; $120 before the residency starting date)",
+                 "1099-INT (bank deposit; none before the residency start date)"):
+        assert _PERIOD_Q not in _ids(intake_checklist(_dual_with(_doc(kind)), tax_year=2025)), kind
+    assert _PERIOD_Q in _ids(intake_checklist(_dual_with(_doc("1099-INT (bank deposit) acct 20250401")), tax_year=2025))
+    # Not a deposit, uncharacterized, or not applicable: no period to ask.
+    for kind, status in (("1099-INT (not a deposit — brokerage/bond interest)", "have"), ("1099-INT", "have"),
+                         ("1099-INT (bank deposit)", "not_applicable")):
+        assert _PERIOD_Q not in _ids(intake_checklist(_dual_with(_doc(kind, status)), tax_year=2025)), kind
+
+
+def test_p013_the_period_question_is_only_for_a_dual_status_owner():
+    # A full-year nonresident's whole deposit interest is excluded, and a resident's is taxed.
+    assert _PERIOD_Q not in _ids(intake_checklist(_confirmed_nra(_doc("1099-INT (bank deposit)")), tax_year=2023))
+    resident = _dual_with(_doc("1099-INT (bank deposit)"), prior={2024: "1040"})
+    assert _PERIOD_Q not in _ids(intake_checklist(resident, tax_year=2025))
+    # Under the §6013(g)/(h) election 1.871-13 does not apply — nothing to ask.
+    elected = _dual_with(_doc("1099-INT (bank deposit)"))
+    elected.household = Household(marital_status=_ans("married"), spouse=Spouse(us_person=_ans(True)))
+    assert _PERIOD_Q in _ids(intake_checklist(elected, tax_year=2025))
+    elected.residency_facts.section_6013_election = _ans(True)
+    assert _PERIOD_Q not in _ids(intake_checklist(elected, tax_year=2025))
+
+
+def test_p018_dual_status_spouse_deposit_is_asked_on_the_spouses_own_year():
+    profile = _citizen_married(_dual_spouse())
+    profile.income_documents = [IncomeDocument(kind="1099-INT (bank deposit)", status="have", owner="spouse",
+                                                provenance=US)]
+    q = next(q for q in intake_checklist(profile, tax_year=2025).next_questions if q.id == _PERIOD_Q)
+    assert q.prompt.startswith("Your spouse's residency result is a DUAL-STATUS year")
+    assert "the spouse's goes in the spouse snapshot" in q.disambiguation
+    # The citizen's own deposit 1099-INT is never asked about.
+    own = _citizen_married(_dual_spouse())
+    own.income_documents = [_doc("1099-INT (bank deposit)")]
+    assert _PERIOD_Q not in _ids(intake_checklist(own, tax_year=2025))
+    # An uncharacterized spouse 1099-INT gets the character question with the dual-status wording.
+    profile.income_documents = [IncomeDocument(kind="1099-INT", status="have", owner="spouse", provenance=US)]
+    q = next(q for q in intake_checklist(profile, tax_year=2025).next_questions if q.id == _INTEREST_Q)
+    assert q.prompt.startswith("Your spouse's residency result is a DUAL-STATUS year")
+
+
+def test_p018_dual_status_prior_year_question_says_what_the_answer_decides():
+    q = next(q for q in intake_checklist(_visa(_SWITCH_APRIL), tax_year=2025).next_questions
+             if q.id == "prior_filings.return_form")
+    assert "Your 2025 result is a DUAL-STATUS year, which takes no standard deduction" in q.why
+    assert "a 2024 Form 1040-NR rules that route out" in q.why
+    # A full-year nonresident's question is unchanged.
+    nra = next(q for q in intake_checklist(_confirmed_nra(), tax_year=2023).next_questions
+               if q.id == "prior_filings.return_form")
+    assert "DUAL-STATUS" not in nra.why

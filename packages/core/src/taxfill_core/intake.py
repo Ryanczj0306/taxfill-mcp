@@ -1241,6 +1241,20 @@ def _records_interest_character(kind: str) -> bool:
     return "DEPOSIT" in re.sub(r"[^0-9A-Z]", "", kind.upper())
 
 
+def _records_deposit_interest(kind: str) -> bool:
+    """True when a 1099-INT entry's recorded character is DEPOSIT interest — the word DEPOSIT
+    without the "not a deposit" answer (:func:`_records_interest_character`'s two answers)."""
+    token = re.sub(r"[^0-9A-Z]", "", kind.upper())
+    return "DEPOSIT" in token and not any(neg in token for neg in ("NOTADEPOSIT", "NONDEPOSIT", "NOTDEPOSIT", "NODEPOSIT"))
+
+
+def _records_interest_period(kind: str) -> bool:
+    """True when a deposit 1099-INT entry records the amount received before the residency
+    starting date (JF5b.3) — the words RESIDENCY START ("residency starting date", "residency
+    start date"), a WORD token like DEPOSIT, never digits (P-012)."""
+    return "RESIDENCYSTART" in re.sub(r"[^0-9A-Z]", "", kind.upper())
+
+
 def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> None:
     if not profile.income_documents:
         out.append(_q("income_documents.inventory", "income_documents",
@@ -1323,25 +1337,36 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
     # question. The exclusion belongs to the PAYEE (P-013 rule (e), P-018), so a
     # 1099-INT is asked about only when its OWNER classifies nonresident — the
     # taxpayer's own forms on the taxpayer's residency, the spouse's on the spouse's
-    # own facts (never the taxpayer's), and nobody's under the §6013(g)/(h) election.
-    nra_owners = set()
-    if _residency_classification(profile, tax_year) == "nonresident":
-        nra_owners.add("taxpayer")
-    if _marital(profile) == "married" and _spouse_classification(profile, tax_year) == "nonresident":
-        nra_owners.add("spouse")
-    if nra_owners:
+    # own facts (never the taxpayer's), and nobody's under the §6013(g)/(h) election. A
+    # DUAL-STATUS owner is asked too (JF5b.3): the exclusion covers the part of the year before
+    # the residency starting date (Treas. Reg. 1.871-13(a)(1)), so the character matters there,
+    # and a deposit 1099-INT then gets the period question below.
+    owner_class: dict[str, str] = {}
+    taxpayer_class = _residency_classification(profile, tax_year)
+    if taxpayer_class in ("nonresident", "dual_status_candidate"):
+        owner_class["taxpayer"] = taxpayer_class
+    spouse_class = _spouse_classification(profile, tax_year) if _marital(profile) == "married" else None
+    if spouse_class in ("nonresident", "dual_status_candidate"):
+        owner_class["spouse"] = spouse_class
+    if owner_class:
         uncharacterized = [
             d for d in profile.income_documents
-            if d.owner in nra_owners and _mentions_1099int(d.kind) and d.status != "not_applicable"
+            if d.owner in owner_class and _mentions_1099int(d.kind) and d.status != "not_applicable"
             and not _records_interest_character(d.kind)
         ]
         if uncharacterized:
-            whose = (
-                "Your spouse's residency result is NONRESIDENT alien and the document inventory has a 1099-INT "
-                "of theirs."
-                if {d.owner for d in uncharacterized} == {"spouse"}
-                else "Your residency result is NONRESIDENT alien and your document inventory has a 1099-INT."
+            owners = {d.owner for d in uncharacterized}
+            asked = owner_class["spouse"] if owners == {"spouse"} else owner_class["taxpayer"]
+            result = (
+                "NONRESIDENT alien" if asked == "nonresident"
+                else "a DUAL-STATUS year (a nonresident alien before the residency starting date, a resident after it)"
             )
+            whose = (
+                f"Your spouse's residency result is {result} and the document inventory has a 1099-INT of theirs."
+                if owners == {"spouse"}
+                else f"Your residency result is {result} and your document inventory has a 1099-INT."
+            )
+            dual_asked = any(owner_class[o] == "dual_status_candidate" for o in owners)
             out.append(_q("income_documents.interest_character", "income_documents",
                           f"{whose} Is that interest from a DEPOSIT account — checking, savings, money market "
                           "or CD — with a US bank, credit union or savings institution (or an amount an "
@@ -1356,7 +1381,12 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                           "interest gets no such exclusion — it is taxed on Schedule NEC line 2 at 30%/treaty "
                           "rate, or as effectively connected income, unless a separate exemption such as "
                           "portfolio interest (IRC 871(h)) applies. A §6013(g)/(h) election to file jointly "
-                          "ENDS the exclusion; the marriage itself does not.",
+                          "ENDS the exclusion; the marriage itself does not."
+                          + (" In a DUAL-STATUS year only the part received before the residency starting date "
+                             "is excluded — Treas. Reg. 1.871-13(a)(1) taxes the year \"under two different sets "
+                             "of rules, one relating to resident aliens for the period of residence and the other "
+                             "relating to nonresident aliens for the period of nonresidence\" — and the rest is "
+                             "taxed like any resident's interest." if dual_asked else ""),
                           "income_documents",
                           disambiguation="Record the character in the 1099-INT entry's kind — e.g. "
                                          "'1099-INT (bank deposit)' or '1099-INT (not a deposit — brokerage/bond "
@@ -1364,7 +1394,48 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                                          "estimate_refund, put the deposit portion of box 1 in BOTH `interest` "
                                          "and `bank_deposit_interest` (the second is a subset of the first); "
                                          "Treasury and savings-bond interest (box 3) is not a deposit and stays "
-                                         "out of bank_deposit_interest."))
+                                         "out of bank_deposit_interest."
+                                         + (" For a dual-status year the follow-up asks how much of the deposit "
+                                            "interest was received before the residency starting date "
+                                            "(bank_deposit_interest_nonresident_period)." if dual_asked else "")))
+    # THE DUAL-STATUS YEAR'S SPLIT (JF5b.3, P-013, P-018). A deposit 1099-INT of an owner whose
+    # own residency is a dual-status year (no election — under it the classification is
+    # resident) is excluded only for the part received before the residency starting date,
+    # so that amount is asked, once, and recorded in the entry's kind like the character.
+    dual_owners = {o for o, c in owner_class.items() if c == "dual_status_candidate"}
+    unsplit = [
+        d for d in profile.income_documents
+        if d.owner in dual_owners and _mentions_1099int(d.kind) and d.status != "not_applicable"
+        and _records_deposit_interest(d.kind) and not _records_interest_period(d.kind)
+    ]
+    if unsplit:
+        yr = str(tax_year) if tax_year is not None else "the tax year"
+        spouse_only = {d.owner for d in unsplit} == {"spouse"}
+        whose = "Your spouse's" if spouse_only else "Your"
+        out.append(_q("income_documents.interest_period", "income_documents",
+                      f"{whose} residency result is a DUAL-STATUS year for {yr}, and the document inventory records a "
+                      "1099-INT of deposit interest. How much of that interest was received — paid or credited to "
+                      "the account — BEFORE the residency starting date? Under the substantial presence test that "
+                      f"is generally the first day of presence in {yr} (Pub 519 ch. 1), and a day as an exempt "
+                      "individual (such as on an F or J visa) is not a day of presence (IRC 7701(b)(3)(D)).",
+                      "In a dual-status year only the deposit interest of the nonresident part is excluded: Treas. "
+                      "Reg. 1.871-13(a)(1) taxes the year \"under two different sets of rules, one relating to "
+                      "resident aliens for the period of residence and the other relating to nonresident aliens for "
+                      "the period of nonresidence\", and IRC 871(i)(2)(A) exempts a nonresident's deposit interest "
+                      "that is not effectively connected with a US trade or business; the rest is taxed as "
+                      "resident-period interest. Without the amount the estimate taxes all of it. A §6013(g)/(h) "
+                      "election ends the exclusion (1.871-13 \"does not apply to alien individuals treated as "
+                      "residents for the entire taxable year under section 6013 (g) or (h)\").",
+                      "income_documents",
+                      disambiguation="Take the amount from the account statements (0 is a valid answer) — the law "
+                                     "keys on receipt, so never prorate the year's total by days. Record it in the "
+                                     "1099-INT entry's kind — e.g. '1099-INT (bank deposit; $120 before the "
+                                     "residency starting date)' or '1099-INT (bank deposit; none before the "
+                                     "residency starting date)' — so the interview stops asking. When running "
+                                     "estimate_refund, put it in `bank_deposit_interest_nonresident_period` (a "
+                                     "subset of `bank_deposit_interest`"
+                                     + ("; the spouse's goes in the spouse snapshot" if dual_owners != {"taxpayer"}
+                                        else "") + ")."))
 
 
 def _banking_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
@@ -1587,13 +1658,21 @@ def _prior_return_form_question(profile: Profile, out: list[IntakeQuestion], tax
     pf = profile.prior_filings
     if pf is not None and residency.prior_year_return_form(pf.return_forms, tax_year) is not None:
         return
+    # JF5b.2: on a dual-status answer the prior year decides the estimate's range too — a
+    # resident prior year removes the split; a Form 1040-NR confirms it (no standard deduction).
+    dual = _residency_classification(profile, tax_year) == "dual_status_candidate"
     out.append(_q("prior_filings.return_form", "prior_filings",
                   f"Which federal return did you file for {prior}?",
                   f"If you were a U.S. resident during any part of {prior} and are a resident for any part of "
                   f"{tax_year}, your {tax_year} residency runs from January 1 — no arrival split (Treas. "
                   f"Reg. 301.7701(b)-4(e)(1)). If the {tax_year} answer comes out nonresident, it is checked against "
                   f"{prior} instead of trusted, since the facts may be incomplete. Only {prior}'s return matters for "
-                  f"this.",
+                  f"this."
+                  + (f" Your {tax_year} result is a DUAL-STATUS year, which takes no standard deduction (Pub 519 ch. "
+                     f"6: \"You cannot use the standard deduction allowed on Form 1040 or 1040-SR.\") and no earned "
+                     f"income or education credit; the estimate prices that and brackets the full-year-resident "
+                     f"figure, which a resident {prior} would make the answer — a {prior} Form 1040-NR rules that "
+                     f"route out (a married filer keeps the §6013(g)/(h) election's)." if dual else ""),
                   f"prior_filings.return_forms.{prior}",
                   disambiguation=f"Pick one for {prior}: '1040' — a regular Form 1040 (or 1040-SR) as a resident "
                                  f"for the whole year; '1040-NR' — Form 1040-NR, as a nonresident; 'dual_status' — "

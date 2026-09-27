@@ -3364,9 +3364,19 @@ def test_p018_a_prior_1040_removes_the_dual_status_flag_and_prices_a_full_year_r
 
 def test_p018_the_prior_year_fact_reads_only_the_preceding_year():
     base = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021), 2025, _WAGES).model_dump()
-    for prior in ({2023: "1040"}, {2024: "1040-NR"}, {2024: "not_filed"}, {}):
+    for prior in ({2023: "1040"}, {2023: "1040-NR"}, {}):
         other = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, prior=prior), 2025, _WAGES).model_dump()
         assert other == base, prior
+    # A recorded 'not_filed' leaves the figures unchanged; the text only names what is recorded.
+    nf = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, prior={2024: "not_filed"}), 2025, _WAGES)
+    assert (nf.point, nf.low, nf.high) == (base["point"], base["low"], base["high"])
+    assert "recorded as 'not_filed', which does not settle 2024's residency" in nf.residency_caveat
+    # The PRECEDING year's Form 1040-NR is read (JF5b part 2): it closes the prior-year route to
+    # the full-year-resident figure, so this unmarried filer's range collapses onto the same
+    # dual-status point, which an unknown prior year keeps bracketed.
+    nr = estimate_refund(_visa_profile(_SWITCH_APRIL, _DAYS_2021, prior={2024: "1040-NR"}), 2025, _WAGES)
+    assert nr.point == base["point"] and nr.low == nr.high == nr.point
+    assert base["high"] > base["point"] == base["low"]
 
 
 def test_p018_a_prior_year_election_return_is_not_read_as_residency():
@@ -3476,3 +3486,393 @@ def test_p018_the_contradiction_bracket_is_the_incomplete_timeline_reading_only(
     # The FICA withheld-in-error note is conditional on the nonresident answer standing.
     fica = next(a for a in est.assumptions if "FICA-EXEMPT" in a)
     assert fica.startswith("If the nonresident answer stands (see the first note): ")
+
+
+# ---------------------------------------------------------------------------
+# P-018 / P-013 rule (f) — JF5b part 2: the dual-status year. Pub 519 (2025) ch. 6,
+# Restrictions for Dual-Status Taxpayers: "You cannot use the standard deduction allowed on
+# Form 1040 or 1040-SR. However, you can itemize any allowable deductions." The point prices
+# the restrictions; the range's other end is the full-year-resident figure where a route could
+# make it lawful. Treas. Reg. 1.871-13(a)(1) splits the deposit interest at the residency
+# starting date. Every expected value is an independent calc recomputation. Hypothetical data.
+# ---------------------------------------------------------------------------
+
+from taxfill_core.calc import education_credits  # noqa: E402
+
+_H1B_2025 = [("H-1B", date(2025, 3, 1), None)]
+_H1B_2025_DAYS = {2025: 306, 2024: 0, 2023: 0}
+
+
+def _dual_2025(**kwargs) -> Profile:
+    return _visa_profile(_H1B_2025, _H1B_2025_DAYS, **kwargs)
+
+
+def _signed(value: int) -> str:
+    return f"{'+' if value >= 0 else '-'}${abs(value):,}"
+
+
+def _tax(taxable: int, status: str, year: int) -> int:
+    return tax_from_taxable_income(max(0, taxable), status, year).tax
+
+
+def _sd(status: str, year: int) -> int:
+    return standard_deduction(status, year).amount
+
+
+def test_p018_dual_status_acceptance_h1b_arrival_2026_prices_the_range():
+    # The ROADMAP acceptance: H-1B arrival 2026-03-01 (306 days) -> the low end has deduction 0,
+    # the high end the standard deduction, and the assumption names the range.
+    from taxfill_core.residency import classify
+
+    days = {2026: 306, 2025: 0, 2024: 0}
+    assert classify([{"status": "H-1B", "start": "2026-03-01", "end": None}], days, 2026).classification == (
+        "dual_status_candidate")
+    est = estimate_refund(
+        _visa_profile([("H-1B", date(2026, 3, 1), None)], days), 2026,
+        IncomeSnapshot(wages=60_000, federal_withholding=8_000),
+    )
+    low_end = 8_000 - _tax(60_000, "single", 2026)
+    high_end = 8_000 - _tax(60_000 - _sd("single", 2026), "single", 2026)
+    assert (est.point, est.low, est.high) == (low_end, low_end, high_end) and low_end < high_end
+    deduction = next(line for line in est.composition if line.slot == "deduction")
+    assert deduction.amount == 0 and "dual-status year — no standard deduction: Pub 519 ch. 6" in deduction.label
+    caveat = est.residency_caveat
+    assert caveat in est.assumptions and caveat in est.what_would_change_it
+    assert "The range ALSO prices the full-year-resident figure" in caveat and f"single: {_signed(high_end)}" in caveat
+    assert "(i) you were a U.S. resident during 2025" in caveat and "record the return you filed for 2025" in caveat
+    assert "(iii) the dates on the visa timeline are wrong" in caveat and "(ii)" not in caveat   # unmarried
+    assert not any(a.startswith("Standard deduction assumed") for a in est.assumptions)
+    assert any("the residency reading named in these notes keeps a range of its own" in a for a in est.assumptions)
+
+
+def test_p018_dual_status_caveat_names_the_restrictions_and_the_approximation():
+    est = estimate_refund(_dual_2025(), 2025, IncomeSnapshot(wages=60_000, federal_withholding=8_000))
+    caveat = est.residency_caveat
+    assert "DUAL-STATUS" in caveat and "no §6013(g)/(h) election is in effect" in caveat
+    assert "NO standard deduction" in caveat and "However, you can itemize any allowable deductions." in caveat
+    assert "no joint return and no head of household" in caveat
+    assert "single rates — an inference: ch. 6 names the rate column only for a married filer" in caveat
+    assert "IRC 32(c)(1)(D), 25A(g)(7), 22(f)" in caveat and "credit for the elderly or the disabled" in caveat
+    assert "FULL-YEAR approximation" in caveat and "Form 1040 + Form 1040-NR" in caveat
+    assert "is subject to the flat 30% rate or lower treaty rate" in caveat
+    assert "NIIT" not in caveat   # no investment income: nothing to overstate
+    # The roadmap's dual-status step names the credit bars too.
+    step = next(f for f in est.roadmap.returns_and_forms if f.startswith("Dual-status restrictions"))
+    assert "NO earned income credit, education credits (AOTC/LLC) or credit for the elderly or the disabled" in step
+    # A married filer: the married-filing-separately column, quoted.
+    married = estimate_refund(
+        _dual_2025(marital="married"), 2025, IncomeSnapshot(wages=60_000, federal_withholding=8_000))
+    assert married.filing_status_used == "married_filing_separately"
+    assert "\"must use the Tax Table column or Tax Computation Worksheet for married filing separately\"" in (
+        married.residency_caveat)
+
+
+def test_p018_dual_status_unmarried_with_a_prior_1040nr_has_no_route_to_the_standard_deduction():
+    income = IncomeSnapshot(wages=60_000, federal_withholding=8_000)
+    est = estimate_refund(_dual_2025(prior={2024: "1040-NR"}), 2025, income)
+    point = 8_000 - _tax(60_000, "single", 2025)
+    assert est.low == est.high == est.point == point
+    caveat = est.residency_caveat
+    assert "No route to the standard deduction is open on these facts, so the range is this figure alone" in caveat
+    assert "your 2024 return is recorded as '1040-NR'" in caveat
+    assert "\"If you are single at the end of the year, you cannot make this choice.\"" in caveat
+    assert "The range ALSO prices" not in caveat
+    # Married: the election route stays open, so the range keeps the full-year-resident figure —
+    # the same MFS status under resident rules — and names route (ii), not route (i).
+    married = estimate_refund(_dual_2025(prior={2024: "1040-NR"}, marital="married"), 2025, income)
+    assert married.point == married.low == 8_000 - _tax(60_000, "married_filing_separately", 2025)
+    assert married.high == 8_000 - _tax(60_000 - _sd("married_filing_separately", 2025), "married_filing_separately",
+                                         2025)
+    assert "(ii) you are married at the end of the year" in married.residency_caveat
+    assert "record residency_facts.section_6013_election to price the election" in married.residency_caveat
+    assert "(i)" not in married.residency_caveat
+    # A recorded DECLINE closes the election route: the range collapses and the note says why.
+    declined = _dual_2025(prior={2024: "1040-NR"}, marital="married")
+    declined.residency_facts.section_6013_election = _ans(False)
+    closed = estimate_refund(declined, 2025, income)
+    assert closed.low == closed.high == closed.point == married.point
+    assert "the §6013(g)/(h) election is recorded as DECLINED" in closed.residency_caveat
+
+
+def test_p018_dual_status_unanswered_marital_status_keeps_the_election_route_conditional():
+    profile = _dual_2025(prior={2024: "1040-NR"})
+    profile.household = Household()
+    est = estimate_refund(profile, 2025, IncomeSnapshot(wages=60_000, federal_withholding=8_000))
+    assert est.high == 8_000 - _tax(60_000 - _sd("single", 2025), "single", 2025) > est.point
+    assert "(ii) IF you are married at the end of the year (household.marital_status is not answered)" in (
+        est.residency_caveat)
+    # The year of a spouse's death is not ruled out either (Pub 501: "considered married for the
+    # whole year for filing status purposes"), and never asserted.
+    widowed = _dual_2025(prior={2024: "1040-NR"}, marital="widowed", spouse_death_year=_ans(2025))
+    est = estimate_refund(widowed, 2025, IncomeSnapshot(wages=60_000, federal_withholding=8_000))
+    assert est.high == 8_000 - _tax(60_000 - _sd("single", 2025), "single", 2025) > est.point
+    assert "(ii) IF the choice is open in the year of your spouse's death" in est.residency_caveat
+
+
+def test_p018_dual_status_bars_the_eitc_and_the_education_credits():
+    # Probe A2's shape: before JF5b part 2 this point claimed the EITC and a refundable AOTC.
+    income = IncomeSnapshot(wages=12_000, federal_withholding=500, aotc_qualified_expenses=[4_000])
+    est = estimate_refund(_dual_2025(), 2025, income)
+    assert est.point == est.low == 500 - _tax(12_000, "single", 2025)
+    assert not {line.slot for line in est.composition} & {"eitc", "aotc_refundable", "education_credits_nonrefundable"}
+    # The other end: the same inputs for a full-year resident (a U.S. citizen's single figure).
+    resident = estimate_refund(_single(), 2025, income)
+    assert est.high == resident.point
+    eitc = -next(line.amount for line in resident.composition if line.slot == "eitc")
+    aotc = education_credits([4_000], 0, magi=12_000, filing_status="single", year=2025).aotc_refundable
+    assert -next(line.amount for line in resident.composition if line.slot == "aotc_refundable") == aotc > 0
+    note = next(a for a in est.assumptions if a.startswith(
+        "Education expenses were provided but NO education credit was estimated on the dual-status figure"))
+    assert "IRC 25A(g)(7)" in note and "for any portion of the taxable year" in note
+    assert "NO earned income credit on the dual-status figure: IRC 32(c)(1)(D)" in note
+    assert f"The full-year-resident figure in the range claims ${eitc:,} of earned income credit and ${aotc:,} of " \
+           "education credits" in note
+    # With no route open the amounts are still named, as a comparison only.
+    closed = estimate_refund(_dual_2025(prior={2024: "1040-NR"}), 2025, income)
+    note = next(a for a in closed.assumptions if "NO earned income credit" in a)
+    assert "computed for comparison only — no route to that figure is open on these facts" in note
+
+
+def test_p018_dual_status_married_pair_prices_each_return_by_its_own_rules():
+    # The taxpayer's dual-status MFS return takes no standard deduction; the U.S.-citizen spouse's
+    # separate return keeps it; the resident reading of the pair is the other end (route (ii)).
+    mfs = "married_filing_separately"
+    profile = _dual_2025(marital="married", prior={2024: "1040-NR"}, spouse=Spouse(us_person=_ans(True)))
+    income = IncomeSnapshot(wages=70_000, federal_withholding=9_000,
+                            spouse=IncomeSnapshot(wages=25_000, federal_withholding=2_500))
+    est = estimate_refund(profile, 2025, income)
+    spouse_return = 2_500 - _tax(25_000 - _sd(mfs, 2025), mfs, 2025)
+    assert est.point == est.low == 9_000 - _tax(70_000, mfs, 2025) + spouse_return
+    assert est.high == 9_000 - _tax(70_000 - _sd(mfs, 2025), mfs, 2025) + spouse_return
+    assert next(line.amount for line in est.composition if line.slot == "spouse_mfs_return") == spouse_return
+    # With itemized deductions the couple's one method is weighed (IRC 63(c)(6)(A)): the
+    # dual-status return has no standard deduction to lose, the spouse's does.
+    item = IncomeSnapshot(wages=70_000, federal_withholding=9_000, itemized_deductions=9_000,
+                          spouse=IncomeSnapshot(wages=25_000, federal_withholding=2_500, itemized_deductions=2_000))
+    est = estimate_refund(profile, 2025, item)
+    both_itemize = (9_000 - _tax(61_000, mfs, 2025)) + (2_500 - _tax(23_000, mfs, 2025))
+    spouse_standard = (9_000 - _tax(70_000, mfs, 2025)) + (2_500 - _tax(25_000 - _sd(mfs, 2025), mfs, 2025))
+    assert est.point == max(both_itemize, spouse_standard)
+    resident_best = max(
+        both_itemize, (9_000 - _tax(70_000 - _sd(mfs, 2025), mfs, 2025)) + (2_500 - _tax(25_000 - _sd(mfs, 2025), mfs, 2025)))
+    assert est.high == resident_best
+
+
+def test_p018_dual_status_itemized_deductions_are_used_on_the_point():
+    income = IncomeSnapshot(wages=50_000, federal_withholding=6_000, itemized_deductions=4_000)
+    est = estimate_refund(_dual_2025(), 2025, income)
+    assert est.point == 6_000 - _tax(46_000, "single", 2025)
+    assert "— $4,000 of itemized deductions used" in est.residency_caveat
+    assert est.high == 6_000 - _tax(50_000 - _sd("single", 2025), "single", 2025)   # max(itemized, standard)
+
+
+def test_p013_dual_status_deposit_split_excludes_only_the_nonresident_period():
+    # _dual_status_profile: F-1 -> H-1B on 2023-04-01, identity.us_person unanswered.
+    income = IncomeSnapshot(wages=90_000, federal_withholding=12_000, interest=1_200, bank_deposit_interest=1_200,
+                            bank_deposit_interest_nonresident_period=400)
+    est = estimate_refund(_dual_status_profile(marital="unmarried"), 2023, income)
+    line = _deposit_line(est)
+    assert line.amount == -400 and "received before the residency starting date" in line.label
+    assert "Treas. Reg. 1.871-13(a)(1)" in line.label and line.effect == 0
+    assert _labels(est)["Total income"] == 90_800
+    assert est.point == est.low == 12_000 - _tax(90_800, "single", 2023)
+    # The full-year-resident end taxes all of it (and takes the standard deduction).
+    assert est.high == 12_000 - _tax(91_200 - _sd("single", 2023), "single", 2023)
+    note = next(a for a in est.assumptions if a.startswith("US bank-deposit interest of $400 received before"))
+    assert "and the other $800 of bank_deposit_interest was taxed as resident-period interest" in note
+    assert "871(i)(2)(A)" in note and "\"under two different sets of rules" in note
+    assert "unless specifically exempt under the Internal Revenue Code or a tax treaty provision" in note
+    assert "never a proration" in note and "does not apply to alien individuals treated as residents" in note
+    assert "The full-year-resident figure in the range taxes all of it." in note
+    assert not any("was EXCLUDED from income:" in a for a in est.assumptions)   # never the full-year note
+
+
+def test_p013_dual_status_without_a_split_names_the_amount_taxed_in_full():
+    income = IncomeSnapshot(wages=90_000, federal_withholding=12_000, interest=1_500, bank_deposit_interest=1_200)
+    unanswered = _dual_status_profile(marital="unmarried")
+    declared = _dual_status_profile(marital="unmarried")
+    declared.identity = Identity(us_person=_ans(False))
+    for profile in (unanswered, declared):
+        est = estimate_refund(profile, 2023, income)
+        assert _deposit_line(est) is None and _labels(est)["Total income"] == 91_500
+        assert est.point == 12_000 - _tax(91_500, "single", 2023)
+        note = next(a for a in est.assumptions if a.startswith("$1,200 of bank_deposit_interest was taxed IN FULL"))
+        assert "the part received before that date — the nonresident part — is excluded" in note
+        assert "in bank_deposit_interest_nonresident_period and rerun" in note
+        assert "A §6013(g)/(h) election ENDS it" in note
+        assert "$300 of interest was entered WITHOUT deposit character" in note
+        # The old wording belongs to an unclassified filer only.
+        assert not any("not established" in a or "confirmed NONRESIDENT" in a for a in est.assumptions)
+
+
+def test_p013_dual_status_under_the_election_excludes_nothing():
+    profile = _dual_status_profile(marital="married", spouse=Spouse(us_person=_ans(True)))
+    profile.residency_facts.section_6013_election = _ans(True)
+    income = IncomeSnapshot(wages=90_000, federal_withholding=12_000, interest=1_200, bank_deposit_interest=1_200,
+                            bank_deposit_interest_nonresident_period=400)
+    est = estimate_refund(profile, 2023, income)
+    assert _deposit_line(est) is None and _labels(est)["Total income"] == 91_200
+    assert any("$1,200 of bank_deposit_interest was NOT excluded on any figure here" in a for a in est.assumptions)
+    assert not any("received before the residency starting date was EXCLUDED" in a for a in est.assumptions)
+    assert "DUAL-STATUS" not in (est.residency_caveat or "")
+
+
+def test_p013_dual_status_split_is_not_net_investment_income():
+    # Treas. Reg. 1.1411-2(a)(2)(ii) counts resident-period income only; the excluded part is
+    # not income at all — and the whole-year rest may still overstate the NIIT (disclosed).
+    income = IncomeSnapshot(wages=250_000, federal_withholding=60_000, interest=20_000, bank_deposit_interest=20_000,
+                            bank_deposit_interest_nonresident_period=5_000, dividends=10_000)
+    est = estimate_refund(_dual_status_profile(marital="unmarried"), 2023, income)
+    niit_line = next(line for line in est.composition if line.slot == "niit")
+    assert niit_line.amount == niit(25_000, 275_000, "single", 2023).niit
+    assert niit_line.amount != niit(30_000, 275_000, "single", 2023).niit
+    assert "NIIT is figured on the whole year's investment income" in est.residency_caveat
+    assert "Treas. Reg. 1.1411-2(a)(2)(ii)" in est.residency_caveat and "may be OVERSTATED" in est.residency_caveat
+
+
+def _citizen_with_dual_spouse(**household_kwargs) -> Profile:
+    spouse = Spouse(
+        us_person=_ans(False),
+        immigration=Immigration(visa_timeline=[
+            VisaPeriod(status=s, start=start, end=end, provenance=US) for s, start, end in _SWITCH_APRIL
+        ]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in _DAYS_2021.items()}),
+    )
+    return Profile(
+        identity=Identity(us_person=_ans(True)),
+        household=Household(marital_status=_ans("married"), spouse=spouse, **household_kwargs),
+    )
+
+
+_DUAL_SPOUSE_INCOME = IncomeSnapshot(
+    wages=70_000, federal_withholding=9_000,
+    spouse=IncomeSnapshot(wages=25_000, federal_withholding=2_500, interest=600, bank_deposit_interest=600,
+                          bank_deposit_interest_nonresident_period=250),
+)
+
+
+def test_p018_dual_status_spouse_excludes_only_the_spouses_own_subset():
+    # P-013 rule (e) + (f): the SPOUSE's own dual-status year splits the spouse's deposit interest
+    # on the spouse's separate return — resident rules for the point, nonresident in the range.
+    mfs = "married_filing_separately"
+    est = estimate_refund(_citizen_with_dual_spouse(filing_status=_ans(mfs)), 2025, _DUAL_SPOUSE_INCOME)
+    mine = 9_000 - _tax(70_000 - _sd(mfs, 2025), mfs, 2025)
+    spouse_resident = 2_500 - _tax(25_600 - 250 - _sd(mfs, 2025), mfs, 2025)
+    spouse_nonresident = 2_500 - _tax(25_600 - 250, mfs, 2025)
+    assert next(line.amount for line in est.composition if line.slot == "spouse_mfs_return") == spouse_resident
+    assert est.point == est.high == mine + spouse_resident
+    assert est.low == mine + spouse_nonresident
+    note = next(a for a in est.assumptions if a.startswith(
+        "On the spouse's separate return (the spouse's own facts show a dual-status year), US bank-deposit interest "
+        "of $250 received before the residency starting date was EXCLUDED"))
+    assert "the other $350 of bank_deposit_interest was taxed as resident-period interest" in note
+    assert not any("$600 of bank_deposit_interest was NOT excluded" in a for a in est.assumptions)
+    # With the joint candidate on the table the note says the joint figure taxes it.
+    joint = estimate_refund(_citizen_with_dual_spouse(), 2025, _DUAL_SPOUSE_INCOME)
+    note = next(a for a in joint.assumptions if a.startswith("On the spouse's separate return (the spouse's own"))
+    assert "The joint-return figure taxes it" in note
+
+
+def test_p018_dual_status_spouse_on_the_assumed_nonresident_reading_excludes_only_its_subset():
+    # JF5a's spouse_nra_assumed dual-status reading (a recorded decline): the spouse's return runs
+    # on Form 1040-NR rules for the point, but only the nonresident-period subset is excluded.
+    mfs = "married_filing_separately"
+    profile = _citizen_with_dual_spouse()
+    profile.residency_facts = ResidencyFacts(section_6013_election=_ans(False))
+    est = estimate_refund(profile, 2025, _DUAL_SPOUSE_INCOME)
+    mine = 9_000 - _tax(70_000 - _sd(mfs, 2025), mfs, 2025)
+    assert est.point == est.low == mine + 2_500 - _tax(25_600 - 250, mfs, 2025)
+    assert est.high == mine + 2_500 - _tax(25_600 - 250 - _sd(mfs, 2025), mfs, 2025)
+    assert not any("$600 was EXCLUDED from income" in a for a in est.assumptions)
+    assert any(a.startswith("On the spouse's separate return (the spouse's own facts show a dual-status year), US "
+                            "bank-deposit interest of $250") for a in est.assumptions)
+
+
+def test_p013_dual_status_period_is_a_subset_of_deposit_interest():
+    with pytest.raises(ValueError, match=r"bank_deposit_interest_nonresident_period \(301\) cannot exceed "
+                                         r"bank_deposit_interest \(300\)"):
+        IncomeSnapshot(interest=500, bank_deposit_interest=300, bank_deposit_interest_nonresident_period=301)
+    with pytest.raises(ValueError, match="bank_deposit_interest_nonresident_period"):
+        IncomeSnapshot(interest=500, bank_deposit_interest=300, bank_deposit_interest_nonresident_period=-1)
+    assert IncomeSnapshot(interest=500).bank_deposit_interest_nonresident_period == 0
+    desc = IncomeSnapshot.model_fields["bank_deposit_interest_nonresident_period"].description
+    assert "1.871-13(a)(1)" in desc and "871(i)(1)-(2)(A)" in desc and "never a proration" in desc
+    assert "bank_deposit_interest_nonresident_period" in IncomeSnapshot.model_fields["bank_deposit_interest"].description
+    # A full-year nonresident excludes all of bank_deposit_interest; a resident excludes nothing.
+    income = IncomeSnapshot(wages=18_000, federal_withholding=1_400, interest=900, bank_deposit_interest=900,
+                            bank_deposit_interest_nonresident_period=300)
+    assert _deposit_line(estimate_refund(_nra_profile(), 2023, income)).amount == -900
+    assert _deposit_line(estimate_refund(_single(), 2023, income)) is None
+
+
+def test_p013_combined_with_spouse_sums_every_amount_field():
+    # The spouse-field coverage: every whole-dollar amount on the snapshot is summed on the joint
+    # view — the new dual-status subset included — except the household-level dependent_care_persons
+    # (the MAX), with the lists concatenated and itemized_deductions summed when either is set.
+    household_level = {"dependent_care_persons"}
+    ints = [f for f, info in IncomeSnapshot.model_fields.items() if info.annotation is int]
+    assert "bank_deposit_interest_nonresident_period" in ints
+    one = IncomeSnapshot(**{f: 1 for f in ints})
+    two = IncomeSnapshot(**{f: 2 for f in ints}, spouse=None)
+    combined = one.model_copy(update={"spouse": two}).combined_with_spouse()
+    missing = [f for f in ints if f not in household_level and getattr(combined, f) != 3]
+    assert missing == [], f"combined_with_spouse does not sum {missing}"
+    assert combined.dependent_care_persons == 2
+
+
+# JF5b part 2, the adversarial verify's fixes (2026-09-27). Hypothetical data.
+
+def test_p018_a_married_dual_status_filer_on_a_single_figure_is_told_the_mfs_column():
+    # Pub 519 ch. 6, Tax rates: "You cannot use the Tax Table column or Tax Computation Worksheet
+    # for married filing jointly or single" — the column follows the marriage, not the status priced.
+    est = estimate_refund(_dual_2025(marital="married", filing_status=_ans("single")), 2025, _WAGES)
+    caveat = est.residency_caveat
+    assert "You cannot use the Tax Table column or Tax Computation Worksheet for married filing jointly or single" in caveat
+    assert "because it is the confirmed status" in caveat and "an inference" not in caveat
+    unmarried = estimate_refund(_dual_2025(), 2025, _WAGES).residency_caveat
+    assert "single rates — an inference" in unmarried
+
+
+def test_p018_a_dual_status_confirmed_head_of_household_quotes_the_ch6_bar():
+    est = estimate_refund(_dual_2025(filing_status=_ans("head_of_household")), 2025, _WAGES)
+    assert "You cannot use the head of household Tax Table column or Tax Computation Worksheet." in est.residency_caveat
+
+
+def test_p018_route_one_never_asks_for_a_prior_return_already_recorded():
+    est = estimate_refund(_dual_2025(prior={2024: "not_filed"}), 2025, _WAGES)
+    caveat = est.residency_caveat
+    assert "recorded as 'not_filed', which does not settle 2024's residency (not filing says nothing" in caveat
+    assert "record the return you filed for 2024 in prior_filings.return_forms" not in caveat
+
+
+def test_p018_the_dual_status_range_spans_every_candidates_resident_figure():
+    # A dual-status widow in the qualifying-surviving-spouse window (candidates single + QSS): the
+    # range's high end is the resident QSS figure, not only the primary's resident figure.
+    widow = dict(marital="widowed", spouse_death_year=_ans(2024), dependents=[_kid_with_ssn()])
+    est = estimate_refund(_dual_2025(**widow), 2025, _WAGES)
+    assert {c.status for c in est.comparison.candidates} == {"single", "qualifying_surviving_spouse"}
+    # The full-year-resident figures, read off the same facts made resident from January 1 (route (i)).
+    resident = estimate_refund(_dual_2025(**widow, prior={2024: "1040"}), 2025, _WAGES)
+    resident_qss = next(c.bottom_line for c in resident.comparison.candidates
+                        if c.status == "qualifying_surviving_spouse")
+    assert est.high == resident_qss > max(c.bottom_line for c in est.comparison.candidates)
+
+
+def test_p013_a_negative_deposit_answer_is_never_read_as_deposit():
+    from taxfill_core.intake import _records_deposit_interest  # noqa: PLC0415
+    for kind in ("1099-INT non-deposit", "1099-INT not deposit", "1099-INT no deposit", "1099-INT not a deposit"):
+        assert _records_deposit_interest(kind) is False, kind
+    assert _records_deposit_interest("1099-INT DEPOSIT") is True
+
+
+def test_p018_dual_status_rates_with_an_unanswered_marital_status_name_both_columns():
+    profile = _dual_2025()
+    profile.household = Household()
+    caveat = estimate_refund(profile, 2025, _WAGES).residency_caveat
+    assert "single rates IF you are unmarried" in caveat and "for married filing separately" in caveat
+
+
+def test_p018_the_dual_status_resident_end_says_head_of_household_is_not_priced():
+    est = estimate_refund(_dual_2025(dependents=[_kid_with_ssn()]), 2025, _WAGES)
+    assert "head of household, which a full-year resident with a qualifying person may use, is not priced" in (
+        est.residency_caveat)

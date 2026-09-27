@@ -143,6 +143,10 @@ _SPECS: list[DocSpec] = [
             "institution or insurance-company deposit, not part of a US trade or business) ALSO in "
             "IncomeSnapshot.bank_deposit_interest, a subset of interest: only that characterized "
             "amount is excluded for a nonresident, and box 1 left without it is taxed and disclosed. "
+            "In a DUAL-STATUS year only the deposit interest received before the residency starting date "
+            "is excluded (Treas. Reg. 1.871-13(a)(1)) — box 1 is a whole-year total, so that part comes "
+            "from the account statements, never a proration, into "
+            "IncomeSnapshot.bank_deposit_interest_nonresident_period (a subset of bank_deposit_interest). "
             "Box 3 (US Savings Bond / Treasury interest, which the payer keeps OUT of box 1) is "
             "interest too but never a deposit — it can go in interest, never in bank_deposit_interest."
         ),

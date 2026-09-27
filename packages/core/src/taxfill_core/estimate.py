@@ -137,12 +137,35 @@ class IncomeSnapshot(BaseModel):
             "trade or business within the United States'; Pub 519 ch. 3 (Exclusions From Gross Income — "
             "Interest Income) excludes it from gross income; the Instructions for Form 1040-NR (line 2b, "
             "Exception 3) say not to report it on line 2b. For a RESIDENT it changes nothing (all interest "
-            "is taxable). Under the §6013(g)/(h) election, which treats both spouses as residents for the "
+            "is taxable). In a DUAL-STATUS year only the part received before the residency starting date "
+            "is excluded — record it in bank_deposit_interest_nonresident_period; the rest is taxed as "
+            "resident-period interest. Under the §6013(g)/(h) election, which treats both spouses as residents for the "
             "whole year (Pub 519 ch. 1), it is taxed on a JOINT and on a SEPARATE return alike (a joint "
             "return is the only way a nonresident reaches one): the election, not the marriage, ends the "
             "exclusion. Interest left in `interest` "
             "without this character is taxed here as effectively connected ordinary income. Treasury / "
             "savings-bond interest (1099-INT box 3) and bond interest are NOT deposits — leave them out."
+        ),
+    )
+    bank_deposit_interest_nonresident_period: int = Field(
+        default=0, ge=0,
+        description=(
+            "The part of `bank_deposit_interest` RECEIVED before the residency starting date of a DUAL-STATUS "
+            "year (a nonresident alien for part of the year, a resident for the rest) — a SUBSET of "
+            "bank_deposit_interest, as that is of interest. Only on a return whose payee's OWN residency is a "
+            "dual-status year and no §6013(g)/(h) election is in effect, this amount is excluded from income "
+            "and the rest of bank_deposit_interest is taxed as resident-period interest: Treas. Reg. "
+            "1.871-13(a)(1) taxes the year 'under two different sets of rules, one relating to resident aliens "
+            "for the period of residence and the other relating to nonresident aliens for the period of "
+            "nonresidence', and IRC 871(i)(1)-(2)(A) impose no tax on the nonresident's 'interest on deposits, "
+            "if such interest is not effectively connected with the conduct of a trade or business within the "
+            "United States' (Pub 519 ch. 6: U.S.-source income of either part is taxable 'unless specifically "
+            "exempt under the Internal Revenue Code'). The law keys on receipt, so take the amount paid or "
+            "credited before that date from the account statements — never a proration. The residency "
+            "starting date under the substantial presence test is generally the first day of presence in the "
+            "year (Pub 519 ch. 1). Under the election 1.871-13 'does not apply', so nothing is excluded; for a "
+            "full-year resident or nonresident the field changes nothing (a nonresident's whole "
+            "bank_deposit_interest is excluded)."
         ),
     )
     dividends: int = Field(default=0, ge=0, description="Ordinary dividends, 1099-DIV box 1a (includes qualified).")
@@ -254,6 +277,13 @@ class IncomeSnapshot(BaseModel):
                 f"({self.interest}) — it is the deposit-character SUBSET of the 1099-INT box 1 total, so "
                 f"enter the deposit portion in both fields"
             )
+        if self.bank_deposit_interest_nonresident_period > self.bank_deposit_interest:
+            raise ValueError(
+                f"bank_deposit_interest_nonresident_period ({self.bank_deposit_interest_nonresident_period}) "
+                f"cannot exceed bank_deposit_interest ({self.bank_deposit_interest}) — it is the SUBSET of the "
+                f"deposit interest received before the residency starting date, so the same dollars are also in "
+                f"bank_deposit_interest (and in interest)"
+            )
         if self.dependent_care_expenses > 0 and self.dependent_care_persons < 1:
             raise ValueError(
                 f"dependent_care_expenses ({self.dependent_care_expenses}) requires "
@@ -284,8 +314,8 @@ class IncomeSnapshot(BaseModel):
             **{
                 f: getattr(self, f) + getattr(s, f)
                 for f in (
-                    "wages", "federal_withholding", "interest", "bank_deposit_interest", "dividends",
-                    "qualified_dividends",
+                    "wages", "federal_withholding", "interest", "bank_deposit_interest",
+                    "bank_deposit_interest_nonresident_period", "dividends", "qualified_dividends",
                     "capital_gain_long", "capital_gain_short", "self_employment_net",
                     "retirement_income_taxable", "social_security_benefits", "other_income",
                     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
@@ -780,6 +810,11 @@ _BOTTOM_LINE_LABEL = "Estimated refund (+) or amount owed (-)"
 _DEPOSIT_EXCLUSION_LABEL = (
     "Less: US bank-deposit interest excluded (IRC 871(i)(2)(A) — not income to a nonresident)"
 )
+# JF5b (P-018, P-013): a dual-status year's nonresident part — Treas. Reg. 1.871-13(a)(1).
+_DUAL_DEPOSIT_EXCLUSION_LABEL = (
+    "Less: US bank-deposit interest received before the residency starting date excluded (IRC 871(i)(2)(A); "
+    "Treas. Reg. 1.871-13(a)(1) — the nonresident part of a dual-status year)"
+)
 
 _JOINT_LIABILITY_CAVEAT = (
     "Filing jointly (MFJ) makes both spouses jointly and severally liable for the whole tax; "
@@ -1007,10 +1042,19 @@ _MFS_DEDUCTION_LAW = (
 
 def _mfs_deduction_method_note(
     method: str, self_income: "IncomeSnapshot", spouse_income: "IncomeSnapshot", *,
-    self_nonresident: bool, spouse_nonresident: bool,
+    self_nonresident: bool, spouse_nonresident: bool, self_dual: bool = False,
 ) -> str:
-    """Disclose the couple's deduction method on the two-return MFS pair (IRC 63(c)(6)(A))."""
-    rows = [("your", self_income, self_nonresident), ("the spouse's", spouse_income, spouse_nonresident)]
+    """Disclose the couple's deduction method on the two-return MFS pair (IRC 63(c)(6)(A)).
+    ``self_dual``: your return is a dual-status year's, which has no standard deduction either
+    (Pub 519 ch. 6 — JF5b)."""
+    no_sd = {
+        "nra": " (a nonresident alien has no standard deduction, so its Form 1040-NR claims none)",
+        "dual": " (a dual-status year has no standard deduction — Pub 519 ch. 6 — so that return claims none)",
+    }
+    rows = [
+        ("your", self_income, "nra" if self_nonresident else "dual" if self_dual else None),
+        ("the spouse's", spouse_income, "nra" if spouse_nonresident else None),
+    ]
     if method == "itemize":
         amounts = " and ".join(f"${snap.itemized_deductions or 0:,} on {who} return" for who, snap, _ in rows)
         chosen = (
@@ -1019,9 +1063,8 @@ def _mfs_deduction_method_note(
         )
     else:
         forgone = [
-            f"{who} ${snap.itemized_deductions:,} of itemized deductions"
-            + (" (a nonresident alien has no standard deduction, so its Form 1040-NR claims none)" if nra else "")
-            for who, snap, nra in rows
+            f"{who} ${snap.itemized_deductions:,} of itemized deductions" + (no_sd[kind] if kind else "")
+            for who, snap, kind in rows
             if (snap.itemized_deductions or 0) > 0
         ]
         chosen = (
@@ -1175,16 +1218,305 @@ def _spouse_has_tin(profile: Profile) -> bool:
     return str(sp.tax_id.value).strip().upper() != "NRA"
 
 
-# A dual-status candidate year restricts the return itself (Pub 519): the estimate can
-# only show full-year approximations, and it must say so loudly.
-_DUAL_STATUS_CAVEAT = (
-    "Your residency result flags a possible DUAL-STATUS year, but every number here is a "
-    "FULL-YEAR approximation — the real return is a split-year Form 1040 + Form 1040-NR. A "
-    "dual-status year restricts filing: generally NO joint return (absent a §6013(g)/(h) "
-    "election to be treated as a full-year resident, which makes worldwide income taxable), "
-    "NO head of household, and NO standard deduction (Pub 519). Confirm the split-year "
-    "treatment before relying on these numbers."
+# A dual-status year with no §6013(g)/(h) election (JF5b.2, P-018). Pub 519 (2025) ch. 6,
+# Restrictions for Dual-Status Taxpayers and Tax Credits and Payments; ch. 1, Dual-Status
+# Aliens and Choosing Resident Alien Status; IRC 32(c)(1)(D), 25A(g)(7), 22(f); Treas. Reg.
+# 1.1411-2(a)(2)(ii) — read 2026-09-27. The point prices the restrictions; the range's other
+# end is the full-year-resident figure, only where some route could make it lawful.
+_DUAL_STATUS_STANDARD_DEDUCTION = (
+    "\"You cannot use the standard deduction allowed on Form 1040 or 1040-SR. However, you can itemize any "
+    "allowable deductions.\""
 )
+_DUAL_STATUS_CREDITS = (
+    "\"You cannot claim the education credits, EIC, or credit for the elderly or the disabled unless you are "
+    "married and you choose to be treated as a resident\" for the whole year by filing jointly (Pub 519 ch. 6; "
+    "IRC 32(c)(1)(D), 25A(g)(7), 22(f))"
+)
+_DUAL_STATUS_NIIT = (
+    "Treas. Reg. 1.1411-2(a)(2)(ii): \"The only income the individual must take into account for purposes of "
+    "section 1411 is the income he or she receives during the portion of the year for which he or she is "
+    "treated as a resident of the United States.\""
+)
+_DUAL_STATUS_TWO_RULES = (
+    "Treas. Reg. 1.871-13(a)(1) figures a dual-status year \"under two different sets of rules, one relating to "
+    "resident aliens for the period of residence and the other relating to nonresident aliens for the period of "
+    "nonresidence\""
+)
+_DUAL_STATUS_ELECTION_ENDS = (
+    "A §6013(g)/(h) election ENDS it: Treas. Reg. 1.871-13(a)(1) — \"This section does not apply to alien "
+    "individuals treated as residents for the entire taxable year under section 6013 (g) or (h).\""
+)
+
+
+class _DualRoutes(NamedTuple):
+    """Which routes could make a dual-status year's full-year-resident figure lawful (JF5b.2)."""
+
+    prior_year: bool      # (i) the prior-year residency fact is not recorded False
+    married: str | None   # (ii) 'married' / 'unanswered' — the election is open; None = closed
+    prior_form: str | None
+    declined: bool
+
+    @property
+    def any_open(self) -> bool:
+        # (iii), the dates on the timeline, is always named but never opens the range alone.
+        return self.prior_year or self.married is not None
+
+
+def _dual_status_routes(profile: Profile, year: int, *, declined: bool) -> _DualRoutes:
+    """The routes open on the recorded facts for a dual-status year (JF5b.2, P-018).
+
+    (i) A prior-year resident is a resident from January 1 (Pub 519 ch. 1, "Residency
+    during the preceding year"), so the year is not dual-status — open unless the
+    prior-year fact is recorded False (a Form 1040-NR). (ii) The §6013(g)/(h) election
+    (Pub 519 ch. 6: "the rules of this chapter do not apply to you for that year") needs a
+    spouse at year end — "If you are single at the end of the year, you cannot make this
+    choice." (Pub 519 ch. 1) — so it is open when the household is married for the year
+    (or the marital status is unanswered with a confirmed married status), 'unanswered'
+    when neither the marital status nor a status is on file, and closed after a recorded
+    DECLINE (the user's explicit fact) or on facts with no spouse. (iii) Wrong dates on the
+    visa timeline is a labeled judgment the caveat always names.
+    """
+    prior = _prior_year_resident(profile, year)
+    marital, status = _marital(profile), _confirmed_status(profile)
+    married: str | None = None
+    if not declined:
+        if marital == "married" or (marital is None and status in _MARRIED_STATUSES):
+            married = "married"
+        elif _married_for_year(profile, year):
+            married = "death_year"   # widowed in the tax year: not ruled out, never asserted
+        elif marital is None and status is None:
+            married = "unanswered"
+    return _DualRoutes(prior_year=prior is not False, married=married, prior_form=_prior_year_form(profile, year),
+                       declined=declined)
+
+
+def _dual_status_caveat(
+    year: int, primary: str, *, itemized_used: int, routes: _DualRoutes, resident_reading: int | None,
+    niit: bool, married: bool = False, confirmed: bool = False, otherwise_bracketed: bool = False,
+    marital_unanswered: bool = False, hoh_not_priced: bool = False,
+) -> str:
+    """The dual-status caveat: the point (Pub 519 ch. 6's restrictions), the approximation it
+    is, and the range — the full-year-resident figure with the route that would make it
+    lawful, or why no route is open (JF5b.2, P-018)."""
+    if primary == _MFS:
+        rates = (
+            "married-filing-separately rates (Pub 519 ch. 6, Tax rates: a married dual-status filer who does not "
+            "choose to file jointly \"must use the Tax Table column or Tax Computation Worksheet for married filing "
+            "separately\")"
+        )
+    elif married:
+        # Pub 519 ch. 6 names the column for a MARRIED dual-status filer whatever status is priced.
+        why = "it is the confirmed status" if confirmed else (
+            "it is the only status this estimate prices in the year of a spouse's death (JF1b.9)")
+        rates = (
+            f"the {primary} rates as priced, because {why} — but Pub 519 ch. 6, Tax rates, names married filing "
+            "separately for a married dual-status filer who does not choose to file jointly: \"You cannot use the "
+            "Tax Table column or Tax Computation Worksheet for married filing jointly or single. However, you may be "
+            "able to file as single if you lived apart from your spouse during the last 6 months of the year and you "
+            "are a: • Married resident of Canada, Mexico, or South Korea; or • Married U.S. national.\""
+        )
+    elif primary == "head_of_household":
+        rates = (
+            "the head_of_household rates as priced, only because that status is confirmed — Pub 519 ch. 6: \"You "
+            "cannot use the head of household Tax Table column or Tax Computation Worksheet.\" (single is the "
+            "column left for an unmarried filer)"
+        )
+    elif primary == "single" and marital_unanswered:
+        rates = (
+            "single rates IF you are unmarried (household.marital_status is not answered) — a married dual-status "
+            "filer who does not choose to file jointly \"must use the Tax Table column or Tax Computation Worksheet "
+            "for married filing separately\" (Pub 519 ch. 6, Tax rates)"
+        )
+    elif primary == "single":
+        rates = (
+            "single rates — an inference: ch. 6 names the rate column only for a married filer, and it bars the "
+            "joint return and head of household, which leaves single"
+        )
+    else:
+        rates = f"the {primary} rates as priced (ch. 6 names the rate column only for a married filer)"
+    text = (
+        "Your residency result flags a DUAL-STATUS year — a nonresident alien before the residency starting date "
+        "and a resident after it (Pub 519 ch. 1: \"You are a nonresident alien for the part of the year before that "
+        "date.\") — and no §6013(g)/(h) election is in effect. The point applies Pub 519 ch. 6, Restrictions for "
+        f"Dual-Status Taxpayers: NO standard deduction ({_DUAL_STATUS_STANDARD_DEDUCTION} — ${itemized_used:,} of "
+        f"itemized deductions used); no joint return and no head of household; {rates}; and no earned income credit, "
+        f"education credit or credit for the elderly or the disabled — {_DUAL_STATUS_CREDITS}; the elderly credit is "
+        "not modeled here at all. Every number is still a FULL-YEAR approximation — one snapshot for the whole "
+        "year, where the real return is a split-year Form 1040 + Form 1040-NR (one of them the statement for the "
+        "other part of the year): resident-period income from all sources and nonresident-period effectively "
+        "connected income are taxed at the graduated rates, while nonresident-period U.S.-source income that is "
+        "not effectively connected \"is subject to the flat 30% rate or lower treaty rate. You cannot take any "
+        "deductions against this income.\" (Pub 519 ch. 6, How To Figure Your Tax). This estimate splits nothing "
+        "by period except the deposit interest recorded in bank_deposit_interest_nonresident_period."
+    )
+    if niit:
+        text += (
+            " NIIT is figured on the whole year's investment income (less any deposit interest recorded as received "
+            "before the residency starting date), but " + _DUAL_STATUS_NIIT
+            + " — so the NIIT here may be OVERSTATED."
+        )
+    if resident_reading is not None:
+        opened: list[str] = []
+        if routes.prior_year:
+            recorded = routes.prior_form in ("1040", "dual_status")
+            unsettling = {
+                "not_filed": "not filing says nothing about residency",
+                "1040_with_6013_election": "a joint return under the election is not read as residency",
+            }.get(routes.prior_form or "")
+            lead = (
+                f"(i) your {year - 1} return is recorded as '{routes.prior_form}' (a U.S. resident then)"
+                if recorded else
+                f"(i) your {year - 1} return is recorded as '{routes.prior_form}', which does not settle {year - 1}'s "
+                f"residency ({unsettling}) — if you were in fact a U.S. resident during {year - 1}"
+                if unsettling else f"(i) you were a U.S. resident during {year - 1}"
+            )
+            opened.append(
+                f"{lead}: you are then a resident from January 1 of {year} and the year is not dual-status (Pub 519 "
+                "ch. 1: \"If you were a U.S. resident during any part of the preceding calendar year and you are a "
+                "U.S. resident for any part of the current year, you will be considered a U.S. resident at the "
+                "beginning of the current year.\")"
+                + ("" if recorded else (
+                    f" — record the visa timeline and days in the U.S. for {year - 1} to settle it" if unsettling
+                    else f" — record the return you filed for {year - 1} in prior_filings.return_forms"))
+            )
+        if routes.married is not None:
+            cond = {
+                "married": "you are married at the end of the year",
+                "unanswered": "IF you are married at the end of the year (household.marital_status is not answered)",
+                "death_year": (
+                    "IF the choice is open in the year of your spouse's death (Pub 501: \"If your spouse died during "
+                    "the year, you are considered married for the whole year for filing status purposes\" — this "
+                    "estimate does not decide it)"
+                ),
+            }[routes.married]
+            opened.append(
+                f"(ii) {cond} and you and your spouse choose the §6013(g)/(h) election to be treated as U.S. "
+                "residents for the whole year — a JOINT return that makes worldwide income taxable (Pub 519 ch. 6: "
+                "\"If you are married and choose to be a nonresident spouse treated as a resident, as explained in "
+                "chapter 1, the rules of this chapter do not apply to you for that year.\"); this end of the range is "
+                "the same status under resident rules, not the joint figure — record "
+                "residency_facts.section_6013_election to price the election"
+            )
+        text += (
+            " The range ALSO prices the full-year-resident figure — the same inputs under resident rules for the "
+            f"whole year, with the standard deduction and the credits ({primary}: {_signed_dollars(resident_reading)}, "
+            "+ refund / - owed). It is lawful only by one of these routes: " + "; ".join(opened)
+            + "; or (iii) the dates on the visa timeline are wrong (the dual-status flag rests on them — a labeled "
+            "judgment)."
+            + (" That end prices the same statuses as the point: head of household, which a full-year resident with "
+               "a qualifying person may use, is not priced here." if hoh_not_priced else "")
+        )
+    else:
+        why = (
+            "the §6013(g)/(h) election is recorded as DECLINED"
+            if routes.declined
+            else "the §6013(g)/(h) election needs a spouse at the end of the year and none is on these facts (Pub 519 "
+            "ch. 1: \"If you are single at the end of the year, you cannot make this choice.\")"
+        )
+        text += (
+            " No route to the standard deduction is open on these facts, so the range "
+            + ("adds no full-year-resident figure (it is bracketed only by the other readings named here)"
+               if otherwise_bracketed else "is this figure alone")
+            + ": your "
+            f"{year - 1} return is recorded as '{routes.prior_form}' (prior_filings.return_forms — read as not a U.S. resident "
+            f"in {year - 1}, so residency starts partway through {year}), and {why} — unless the dates on the visa "
+            "timeline are wrong."
+        )
+    return text + " Confirm the split-year treatment before relying on these numbers."
+
+
+def _dual_status_credits_note(
+    income: "IncomeSnapshot", unrestricted: "BottomLineResult", *, in_range: bool,
+) -> str | None:
+    """The EITC and education-credit disclosures extended to a dual-status year (JF5b.2):
+    what the dual-status point does not claim, and what the full-year-resident figure
+    would — with its amounts (P-013 rule (d): name the dollars)."""
+    effects = {line.slot: -line.amount for line in unrestricted.lines}
+    eitc = effects.get("eitc", 0)
+    edu = effects.get("education_credits_nonrefundable", 0) + effects.get("aotc_refundable", 0)
+    if not (eitc or edu or income.aotc_qualified_expenses):
+        return None
+    parts: list[str] = []
+    if income.aotc_qualified_expenses:
+        parts.append(
+            "Education expenses were provided but NO education credit was estimated on the dual-status figure: IRC "
+            "25A(g)(7) — \"If the taxpayer is a nonresident alien individual for any portion of the taxable year, this "
+            "section shall apply only if such individual is treated as a resident alien of the United States for "
+            "purposes of this chapter by reason of an election under subsection (g) or (h) of section 6013.\""
+        )
+    if eitc:
+        parts.append(
+            "NO earned income credit on the dual-status figure: IRC 32(c)(1)(D) — the eligible individual \"shall not "
+            "include any individual who is a nonresident alien individual for any portion of the taxable year\" "
+            "unless treated as a resident by reason of the §6013(g)/(h) election."
+        )
+    claimed = [f"${amount:,} of {name}" for name, amount in (("earned income credit", eitc), ("education credits", edu))
+               if amount]
+    if claimed:
+        where = (
+            "The full-year-resident figure in the range claims "
+            if in_range
+            else "Under resident rules for the whole year (computed for comparison only — no route to that figure is "
+            "open on these facts) the same inputs would claim "
+        )
+        parts.append(where + " and ".join(claimed) + " (Pub 519 ch. 6 Caution).")
+    return " ".join(parts)
+
+
+def _dual_deposit_note(
+    snap: "IncomeSnapshot", *, whose: str, in_range: bool, joint_taxes: bool = False,
+) -> str | None:
+    """The deposit-interest disclosure for a dual-status payee's return (JF5b.3, P-013, P-018):
+    the nonresident-period subset EXCLUDED and the rest taxed, or — with no split recorded —
+    the amount taxed in full and what to record. ``whose`` is '' for your return or the
+    spouse's lead-in; ``joint_taxes``: a joint-return candidate taxes it (election only)."""
+    deposit, period = snap.bank_deposit_interest, snap.bank_deposit_interest_nonresident_period
+    uncharacterized = snap.interest - deposit
+    if deposit <= 0 and uncharacterized <= 0:
+        return None
+    field = "the spouse snapshot's bank_deposit_interest_nonresident_period" if whose else (
+        "bank_deposit_interest_nonresident_period")
+    law = (
+        f"{_DUAL_STATUS_TWO_RULES}; for the nonresident part IRC 871(i)(1) imposes no tax on 871(i)(2)(A) \"interest "
+        "on deposits, if such interest is not effectively connected with the conduct of a trade or business within "
+        "the United States\" (Pub 519 ch. 6: U.S.-source income is taxable in either part \"unless specifically "
+        "exempt under the Internal Revenue Code or a tax treaty provision\"), and for the resident part \"you are "
+        "taxed on income from all sources\" (Pub 519 ch. 6)"
+    )
+    tail = (" The full-year-resident figure in the range taxes all of it." if in_range and not whose else "") + (
+        " The joint-return figure taxes it: a joint return with a spouse who is a nonresident alien for part of the "
+        "year exists only under the §6013(g)/(h) election." if joint_taxes else "")
+    sentences: list[str] = []
+    if period > 0:
+        rest = deposit - period
+        sentences.append(
+            f"{whose}US bank-deposit interest of ${period:,} received before the residency starting date was EXCLUDED "
+            f"from income" + (f", and the other ${rest:,} of bank_deposit_interest was taxed as resident-period "
+                              "interest" if rest else "")
+            + f": {law}. The exclusion rests on the CHARACTER and the DATE you entered — the amount paid or credited "
+            "before the residency starting date, from the account statements, never a proration. "
+            + _DUAL_STATUS_ELECTION_ENDS + tail
+        )
+    elif deposit > 0:
+        sentences.append(
+            f"{whose}${deposit:,} of bank_deposit_interest was taxed IN FULL"
+            + ("" if whose else " on the dual-status figure")
+            + ": none of it is recorded as received before the residency starting date. In a dual-status year the "
+            "part received before "
+            "that date — the nonresident part — is excluded if it is deposit interest not effectively connected with "
+            f"a U.S. trade or business, and the rest is taxed as resident-period interest: {law}. Record the amount "
+            f"paid or credited before the residency starting date (from the account statements — never a proration) "
+            f"in {field} and rerun. " + _DUAL_STATUS_ELECTION_ENDS + tail
+        )
+    if uncharacterized > 0:
+        sentences.append(
+            f"{whose}${uncharacterized:,} of interest was entered WITHOUT deposit character (interest minus "
+            "bank_deposit_interest) and was taxed in full. If part of it is interest on a deposit with a US bank, "
+            "savings institution or insurance company, not effectively connected with a US trade or business, and "
+            "received before the residency starting date, 871(i)(2)(A) excludes that part — put the deposit portion "
+            f"in bank_deposit_interest and the part received before that date in {field}, and rerun."
+        )
+    return " ".join(sentences)
 
 
 # The W-7 / ITIN last mile under the election (eval (o); P-018) — Pub 519 (2025),
@@ -1896,9 +2228,15 @@ def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "eit
                 "that you were not a resident the prior year and meet the SPT the following year); it "
                 "is a recorded POSITION — record it with workspace_record_position, citing Pub 519.",
                 "Dual-status restrictions: NO standard deduction (deductions must be itemized), and "
-                "married filers use married-filing-separately (single if unmarried) — no joint return "
+                "married filers use married-filing-separately (single if unmarried — an inference, ch. 6 "
+                "names the column only for a married filer) — no joint return "
                 "and no head of household absent a §6013(g)/(h) election to be treated as a full-year "
-                "resident (Pub 519 ch. 6, 'Restrictions for Dual-Status Taxpayers').",
+                "resident (Pub 519 ch. 6, 'Restrictions for Dual-Status Taxpayers'); and NO earned income "
+                "credit, education credits (AOTC/LLC) or credit for the elderly or the disabled without that "
+                "election (Pub 519 ch. 6, Tax Credits and Payments: \"You cannot claim the education credits, "
+                "EIC, or credit for the elderly or the disabled unless you are married and you choose to be "
+                "treated as a resident\" for the whole year by filing jointly; IRC 32(c)(1)(D), 25A(g)(7), "
+                "22(f)).",
                 "Due date: an arrival-year dual-status return (resident at year end) is due April 15; "
                 "a departure-year return (nonresident at year end) is due April 15 when you had wages "
                 "subject to US withholding, otherwise June 15 — the 15th day of the 6th month "
@@ -1992,6 +2330,8 @@ def _bottom_line(
     notes: set[str] | None = None,
     deduction_mode: str | None = None,
     married_for_eitc: bool = False,
+    dual_status: bool = False,
+    nonresident_period_deposit: bool = False,
 ):
     """Compute the signed bottom line for one filing status. Returns (value, composition, citations).
 
@@ -2039,6 +2379,23 @@ def _bottom_line(
     'standard' — this return takes the standard deduction, and a nonresident's
     Form 1040-NR claims no itemized deductions so the other spouse keeps theirs;
     None — this return alone (the larger of the two for a resident).
+
+    ``dual_status`` (JF5b, P-018): THIS return is a dual-status year's (no §6013(g)/(h)
+    election) and runs under Pub 519 ch. 6, Restrictions for Dual-Status Taxpayers —
+    "You cannot use the standard deduction allowed on Form 1040 or 1040-SR. However, you
+    can itemize any allowable deductions." (the deduction is the supplied itemized amount
+    or $0, as on the nonresident path, including the 'standard' pair mode), and no EITC
+    (IRC 32(c)(1)(D)) and no education credit (IRC 25A(g)(7)); the rates, the preferential
+    worksheet and NIIT stay the resident ones (one snapshot for the whole year — the
+    caller discloses the approximation). ``nonresident_period_deposit``: the PAYEE's own
+    year is dual-status, so only ``income.bank_deposit_interest_nonresident_period`` is
+    excluded — Treas. Reg. 1.871-13(a)(1) prices the nonresident part under the nonresident
+    rules, where 871(i)(2)(A) applies, and the resident part under the resident rules —
+    even when ``nonresident`` prices this return as a full-year nonresident's (the spouse's
+    assumed reading, P-018). ``dual_status`` implies it. The excluded amount is also out of
+    NIIT's investment income: it is not income at all, and Treas. Reg. 1.1411-2(a)(2)(ii)
+    counts only "the income he or she receives during the portion of the year for which he
+    or she is treated as a resident of the United States".
     """
     citations: list[Citation] = []
     comp: list[CompositionLine] = []
@@ -2069,14 +2426,20 @@ def _bottom_line(
     # applies the election as RESIDENCY (P-018), so an elected snapshot arrives with
     # nonresident=False on MFJ and MFS alike; the MFJ gate below stays as the last
     # line of defense, because a nonresident is on a joint return ONLY through it.
+    # JF5b: a dual-status payee's year splits (Treas. Reg. 1.871-13(a)(1)), so only the
+    # deposit interest received in the nonresident part is excluded — never the whole.
     deposit_excluded = 0
-    if nonresident and status != _MFJ and income.bank_deposit_interest > 0:
-        deposit_excluded = income.bank_deposit_interest
+    period_only = dual_status or nonresident_period_deposit
+    if status != _MFJ and (period_only or nonresident):
+        deposit_excluded = (
+            income.bank_deposit_interest_nonresident_period if period_only else income.bank_deposit_interest
+        )
+    if deposit_excluded > 0:
         base -= deposit_excluded
         comp.append(
             _line(
                 "deposit_interest_exclusion",
-                label=_DEPOSIT_EXCLUSION_LABEL,
+                label=_DUAL_DEPOSIT_EXCLUSION_LABEL if period_only else _DEPOSIT_EXCLUSION_LABEL,
                 amount=-deposit_excluded,
             )
         )
@@ -2212,6 +2575,21 @@ def _bottom_line(
         else:
             deduction = income.itemized_deductions or 0
             label = "Less: itemized deductions (1040-NR — nonresidents cannot take the standard deduction)"
+    elif dual_status:
+        # Pub 519 ch. 6, Restrictions for Dual-Status Taxpayers: "You cannot use the standard
+        # deduction allowed on Form 1040 or 1040-SR. However, you can itemize any allowable
+        # deductions." The Instructions for Form 1040-NR, Restrictions for Dual-Status Taxpayers:
+        # "You can't take the standard deduction even for the part of the year you were a resident
+        # alien."
+        if deduction_mode == "standard":
+            deduction = 0
+            label = (
+                "Less: itemized deductions (dual-status year — none claimed, so the spouse's separate return "
+                "keeps the standard deduction: IRC 63(c)(6)(A))"
+            )
+        else:
+            deduction = income.itemized_deductions or 0
+            label = "Less: itemized deductions (dual-status year — no standard deduction: Pub 519 ch. 6)"
     else:
         sd = standard_deduction(status, year, knowledge_dir=knowledge_dir)
         citations.append(sd.citation)
@@ -2269,8 +2647,15 @@ def _bottom_line(
     # Education credits first — the Schedule 8812 credit-limit worksheet subtracts
     # Schedule 3 credits before the CTC gets what is left. A nonresident alien
     # cannot claim them (Form 8863 bars NRAs absent a residency election).
+    # A dual-status year without the election is barred too — IRC 25A(g)(7): "If the taxpayer is a
+    # nonresident alien individual for any portion of the taxable year, this section shall apply only
+    # if such individual is treated as a resident alien ... by reason of an election under subsection
+    # (g) or (h) of section 6013."
     aotc_refundable = 0
-    if income.aotc_qualified_expenses and not nonresident and pack_tax.education_credits is not None:
+    if (
+        income.aotc_qualified_expenses and not nonresident and not dual_status
+        and pack_tax.education_credits is not None
+    ):
         edu = education_credits(
             income.aotc_qualified_expenses, 0, magi=agi, filing_status=status, year=year,
             knowledge_dir=knowledge_dir,
@@ -2438,7 +2823,9 @@ def _bottom_line(
             )
 
     niit_amount = 0
-    investment_income = income.interest + income.dividends + capital
+    # The excluded deposit interest is not income, so it is not investment income either
+    # (it is nonzero here only on a dual-status payee's return: a nonresident has no NIIT).
+    investment_income = income.interest - deposit_excluded + income.dividends + capital
     # NRAs are generally not subject to NIIT (Form 8960 instructions).
     if investment_income > 0 and not nonresident and pack_tax.niit is not None:
         niit_res = niit(investment_income, agi, status, year, knowledge_dir=knowledge_dir)
@@ -2538,8 +2925,11 @@ def _bottom_line(
     # route to head of household, or a lived-apart one with no qualifying child; the
     # separated-spouse rule is not modeled); gated by
     # the investment-income limit; needs positive earned income.
+    # A dual-status year without the election: IRC 32(c)(1)(D) — the eligible individual "shall
+    # not include any individual who is a nonresident alien individual for any portion of the
+    # taxable year" absent the §6013(g)/(h) election.
     eitc_cfg = getattr(credits_block, "earned_income_tax_credit", None) if credits_block is not None else None
-    if eitc_cfg and not nonresident and not mfs and not married_for_eitc and earned > 0:
+    if eitc_cfg and not nonresident and not dual_status and not mfs and not married_for_eitc and earned > 0:
         # Pub 596 Worksheet 1: investment income uses the NET capital gain (Form 1040
         # line 7, floored at 0) — the loss-limited `capital` figure — never the gross
         # positive short/long legs summed separately.
@@ -2625,6 +3015,9 @@ def estimate_refund(
     election = state.election
     classification = residency_result.classification if residency_result is not None else None
     nonresident = classification == "nonresident"
+    # JF5b (P-018): a dual-status year with no §6013(g)/(h) election (under the election the
+    # classification is 'resident') is priced under Pub 519 ch. 6's restrictions for the point.
+    dual = classification == "dual_status_candidate"
     # The election reaches chapter 1 and chapter 24 only (IRC 6013(g)(1)), so the FICA
     # disclosure keeps following the day-count answer.
     fica_nonresident = (
@@ -2665,6 +3058,11 @@ def estimate_refund(
     spouse_nra_reading = spouse_direction == "nonresident" or spouse_nra_assumed
     spouse_nonresident = spouse_split and spouse_nra_reading
     spouse_mfs_return = spouse_split and _MFS in statuses
+    # JF5b (P-018, P-013 rule (e)): the SPOUSE's own dual-status year (no election — the
+    # direction is None under it) splits the spouse's deposit interest on every separate
+    # return priced for the spouse, the assumed nonresident reading included: only the
+    # recorded nonresident-period subset is excluded (Treas. Reg. 1.871-13(a)(1)).
+    spouse_period_rule = spouse_split and spouse_dual_status
     # A married filer's head of household (Pub 501, Considered Unmarried) comes by one of two
     # routes. The NONRESIDENT-SPOUSE route (spouse_nra_reading) — the spouse's return on Form
     # 1040-NR rules, and the filer "may still be considered married for purposes of the earned
@@ -2684,7 +3082,7 @@ def estimate_refund(
 
     def _mfs_pair(
         spouse_nra: bool, self_status: str = _MFS, *, lived_apart_hoh: bool = False, married_for_eitc: bool = False,
-        self_nra: bool | None = None,
+        self_nra: bool | None = None, self_dual: bool | None = None,
     ) -> tuple[BottomLineResult, str | None, set[str]]:
         """F10: a TRUE two-return MFS comparison — one MFS return per spouse, bottom lines
         summed. All dependents go to the primary taxpayer (disclosed as an assumption;
@@ -2707,25 +3105,30 @@ def estimate_refund(
         nonresident-spouse route, Pub 519 ch. 5), so no EITC on that return.
         ``self_nra``: the rules YOUR return runs under (None = your classification) —
         False prices the resident reading of a nonresident answer that may flip (JF5b).
+        ``self_dual``: your return runs under the dual-status restrictions (None = your
+        classification) — False prices the full-year-resident reading of a dual-status year.
+        The spouse's return keeps its own deposit rule (``spouse_period_rule``) on every reading.
         """
         self_income = income.model_copy(update={"spouse": None})
         self_nra = nonresident if self_nra is None else self_nra
+        self_dual = dual if self_dual is None else self_dual
 
         def _run(self_mode: str | None, spouse_mode: str | None):
             local: set[str] = set()
             rs = _bottom_line(
                 self_income, self_status, year, knowledge_dir, nonresident=self_nra, deps=deps, notes=local,
-                deduction_mode=self_mode, married_for_eitc=married_for_eitc,
+                deduction_mode=self_mode, married_for_eitc=married_for_eitc, dual_status=self_dual,
             )
             rp = _bottom_line(
                 income.spouse, _MFS, year, knowledge_dir, nonresident=spouse_nra, deps=[], notes=local,
-                deduction_mode=spouse_mode,
+                deduction_mode=spouse_mode, nonresident_period_deposit=spouse_period_rule,
             )
             return rs, rp, local
 
-        # Two nonresident returns have no standard deduction to lose (IRC 63(c)(6)(B)), so
-        # the method is weighed only when at least one return is a resident's.
-        if (not self_nra or not spouse_nra) and any(
+        # Two returns with no standard deduction (a nonresident's, IRC 63(c)(6)(B), or a
+        # dual-status year's, Pub 519 ch. 6) have none to lose, so the method is weighed only
+        # when at least one return is a full-year resident's.
+        if (not (self_nra or self_dual) or not spouse_nra) and any(
             (snap.itemized_deductions or 0) > 0 for snap in (self_income, income.spouse)
         ):
             combos = {"standard": ("standard", "standard"), "itemize": ("itemize", "itemize")}
@@ -2755,15 +3158,18 @@ def estimate_refund(
         result = BottomLineResult(bottom=total, lines=comp, citations=[*res_self.citations, *res_spouse.citations])
         return result, method, local
 
-    def _outcome(status: str, *, self_nra: bool | None = None, record: bool = True) -> BottomLineResult:
-        """One candidate's figure. ``self_nra`` overrides the rules YOUR return runs under
-        (None = your classification); ``record`` False prices a bracketing reading with no
-        side effects on the disclosure keys or the deduction method shown (JF5b)."""
+    def _outcome(
+        status: str, *, self_nra: bool | None = None, self_dual: bool | None = None, record: bool = True,
+    ) -> BottomLineResult:
+        """One candidate's figure. ``self_nra`` / ``self_dual`` override the rules YOUR return
+        runs under (None = your classification); ``record`` False prices a bracketing reading
+        with no side effects on the disclosure keys or the deduction method shown (JF5b)."""
         self_nra = nonresident if self_nra is None else self_nra
+        self_dual = dual if self_dual is None else self_dual
         sink = notes if record else None
         if spouse_split:
             if status == _MFS:
-                result, method, local = _mfs_pair(spouse_nonresident, self_nra=self_nra)
+                result, method, local = _mfs_pair(spouse_nonresident, self_nra=self_nra, self_dual=self_dual)
                 if record:
                     notes.update(local)
                     mfs_method["method"] = method
@@ -2775,16 +3181,18 @@ def estimate_refund(
                 # spouse's separate one, on the route hoh_spouse_nra names (above).
                 result, method, local = _mfs_pair(
                     hoh_spouse_nra, "head_of_household", lived_apart_hoh=not hoh_spouse_nra,
-                    married_for_eitc=hoh_spouse_nra or lived_apart_no_eitc, self_nra=self_nra,
+                    married_for_eitc=hoh_spouse_nra or lived_apart_no_eitc, self_nra=self_nra, self_dual=self_dual,
                 )
                 if record:
                     notes.update(local)
                     mfs_method["hoh_method"] = method
                 return result
             # Combined (joint) return: income is summed, but the per-PERSON pieces —
-            # the excess-SS credit and Schedule SE — are computed per spouse.
+            # the excess-SS credit and Schedule SE — are computed per spouse. (A dual-status
+            # year has no joint return without the election, so self_dual is False here.)
             return _bottom_line(
                 income.combined_with_spouse(), status, year, knowledge_dir, nonresident=self_nra, deps=deps,
+                dual_status=self_dual,
                 ss_withheld_groups=[
                     list(income.ss_withheld_by_employer),
                     list(income.spouse.ss_withheld_by_employer),
@@ -2799,7 +3207,7 @@ def estimate_refund(
         married_hoh = status == "head_of_household" and married and not election
         return _bottom_line(
             income, status, year, knowledge_dir, nonresident=self_nra, deps=deps, notes=sink,
-            married_for_eitc=married_hoh and (hoh_spouse_nra or lived_apart_no_eitc),
+            married_for_eitc=married_hoh and (hoh_spouse_nra or lived_apart_no_eitc), dual_status=self_dual,
         )
 
     outcomes = {s: _outcome(s) for s in statuses}
@@ -2867,6 +3275,20 @@ def estimate_refund(
     if spouse_flip_reason is not None and spouse_mfs_return and spouse_nonresident:
         spouse_flip_alternative = _mfs_pair(False)[0].bottom
         values.append(spouse_flip_alternative)
+    # JF5b.2 (P-018): a dual-status year's point prices Pub 519 ch. 6's restrictions; the same
+    # inputs under resident rules for the whole year (the standard deduction and the credits)
+    # are the range's other end — only where a route could make that figure lawful
+    # (_dual_status_routes): a prior-year residency not ruled out, or the election open to a
+    # married filer. A recorded Form 1040-NR for the prior year and no spouse (or a recorded
+    # decline) leave no route, and the range is the point alone.
+    dual_routes = _dual_status_routes(profile, year, declined=state.declined) if dual else None
+    dual_unrestricted = _outcome(primary, self_dual=False, record=False) if dual else None
+    dual_resident_reading: int | None = None
+    if dual_routes is not None and dual_routes.any_open:
+        dual_resident_reading = dual_unrestricted.bottom
+        values.append(dual_resident_reading)
+        # Every candidate status's full-year-resident figure bounds the range, not only the primary's.
+        values.extend(_outcome(s, self_dual=False, record=False).bottom for s in statuses if s != primary)
     low, high = min(values), max(values)
 
     comparison = _build_comparison(priced)
@@ -2889,7 +3311,7 @@ def estimate_refund(
     # JF5b: a residency reading (a flip, a CONTRADICTION, an unsettled spouse) keeps a range of its
     # own, so confirming the status alone does not collapse it.
     residency_bracketed = any(v is not None for v in (
-        resident_reading, spouse_flip_alternative, spouse_nra_alternative, hoh_alternative))
+        resident_reading, spouse_flip_alternative, spouse_nra_alternative, hoh_alternative, dual_resident_reading))
     if status_assumed:
         assumptions.append(
             f"Filing status not confirmed — showing the range across {', '.join(statuses)}. "
@@ -2903,7 +3325,8 @@ def estimate_refund(
         )
     else:
         assumptions.append(f"Filing status: {primary}.")
-    if income.itemized_deductions is None and not nonresident:
+    if income.itemized_deductions is None and not nonresident and not dual:
+        # A dual-status point takes none (Pub 519 ch. 6 — the dual-status caveat says so).
         assumptions.append("Standard deduction assumed (no itemizing, and no age-65+/blind adjustment).")
     method = mfs_method.get("method")
     if nonresident:
@@ -2933,7 +3356,7 @@ def estimate_refund(
     if method is not None:
         assumptions.append(_mfs_deduction_method_note(
             method, income.model_copy(update={"spouse": None}), income.spouse,
-            self_nonresident=nonresident, spouse_nonresident=spouse_nonresident,
+            self_nonresident=nonresident, spouse_nonresident=spouse_nonresident, self_dual=dual,
         ))
     if "head_of_household" in outcomes and married and not election:
         assumptions.append(_hoh_pair_note(
@@ -2954,13 +3377,16 @@ def estimate_refund(
                 "NONRESIDENT rules (Form 1040-NR) for the point estimate — the reading the recorded decline rests "
                 "on, since a joint return is ruled out only when a spouse is a nonresident alien — and the range "
                 "ALSO prices it under RESIDENT rules (Form 1040: the standard deduction, the regular and "
-                "preferential rates, deposit interest taxed)"
+                "preferential rates, deposit interest taxed"
+                + (" except the part recorded as received before the residency starting date" if spouse_period_rule
+                   else "") + ")"
             )
         else:
             reading = (
                 "RESIDENT rules for the point estimate — never by borrowing your classification — and the range "
                 "ALSO prices it under NONRESIDENT rules (Form 1040-NR: no standard deduction, ordinary rates, the "
-                "IRC 871(i)(2)(A) deposit-interest exclusion)"
+                + ("IRC 871(i)(2)(A) exclusion only for the deposit interest recorded as received before the residency "
+                   "starting date" if spouse_period_rule else "IRC 871(i)(2)(A) deposit-interest exclusion") + ")"
             )
         assumptions.append(
             "The spouse's own residency is not settled (no visa timeline and day counts that classify them, or a "
@@ -3005,7 +3431,9 @@ def estimate_refund(
     # nonresident on a contradictory joint status the interest was excluded while the
     # joint figure taxed it (P-013 rule (c): the text must match the number).
     primary_excludes = nonresident and any(s != _MFJ for s in statuses)
-    spouse_excludes = spouse_nra_return
+    # A dual-status spouse's separate return excludes only the nonresident-period subset, on
+    # any reading (JF5b.3): its own note below (_dual_deposit_note), never this one.
+    spouse_excludes = spouse_nra_return and not spouse_period_rule
     excluded_snapshots = ([income] if primary_excludes else []) + ([income.spouse] if spouse_excludes else [])
     deposit_total = sum(snap.bank_deposit_interest for snap in excluded_snapshots)
     uncharacterized_interest = sum(snap.interest - snap.bank_deposit_interest for snap in excluded_snapshots)
@@ -3030,9 +3458,7 @@ def estimate_refund(
             "them as a nonresident alien"
             if not spouse_nra_assumed
             else " on the spouse's separate return — priced as a nonresident alien's, the reading the recorded "
-            "decline rests on ("
-            + ("the spouse's own facts show a dual-status year" if spouse_dual_status
-               else "the spouse's residency is not on file") + ")"
+            "decline rests on (the spouse's residency is not on file)"
         )
         assumptions.append(
             f"US bank-deposit interest of ${deposit_total:,} was EXCLUDED from income{where}: IRC 871(i)(1) "
@@ -3050,7 +3476,7 @@ def estimate_refund(
         )
     spouse_deposit_taxed = (
         income.spouse.bank_deposit_interest
-        if spouse_mfs_return and not spouse_nonresident and not election
+        if spouse_mfs_return and not spouse_nonresident and not election and not spouse_period_rule
         and (nonresident or spouse_direction is not None)
         else 0
     )
@@ -3109,24 +3535,47 @@ def estimate_refund(
     declared_non_us_person = (
         ident is not None and ident.us_person is not None and ident.us_person.value is False
     )
-    if not nonresident and declared_non_us_person and classification != "resident":
+    if not nonresident and not dual and declared_non_us_person and classification != "resident":
         # P-013 rule (b)'s "taxed and SAID to be" shape for the primary: a filer who
-        # DECLARES they are not a US person but whose residency is not established as
-        # nonresident (no visa timeline/day counts that classify it, or a dual-status
-        # year, whose nonresident period is not modeled — JF5b.3) is taxed on a
-        # characterized amount, and the note says why instead of leaving the field
-        # silently inert. A resident (or a profile with no identity facts) keeps the
-        # resident control: the field changes nothing and says nothing.
+        # DECLARES they are not a US person but whose residency is not established (no
+        # visa timeline/day counts that classify it) is taxed on a characterized amount,
+        # and the note says why instead of leaving the field silently inert. A dual-status
+        # year has its own note (JF5b.3, below — for us_person False or unanswered alike).
+        # A resident (or a profile with no identity facts) keeps the resident control: the
+        # field changes nothing and says nothing.
+        # The spouse's separate return has its own note when it runs on its own rules.
         entered_deposit = income.bank_deposit_interest + (
-            income.spouse.bank_deposit_interest if spouse_split else 0
+            income.spouse.bank_deposit_interest
+            if spouse_split and not (spouse_nra_return or spouse_period_rule) else 0
         )
         if entered_deposit > 0:
             assumptions.append(
                 f"${entered_deposit:,} of bank_deposit_interest was taxed as ordinary interest: the IRC "
-                f"871(i)(2)(A) deposit-interest exclusion applies only to a confirmed NONRESIDENT alien, and "
-                f"this profile's residency is not established (record the visa timeline and days in the US "
-                f"to classify it; a dual-status year's nonresident period is not modeled)."
+                f"871(i)(2)(A) deposit-interest exclusion applies to a NONRESIDENT alien (in a dual-status year, "
+                f"to the part received before the residency starting date — bank_deposit_interest_nonresident_period), "
+                f"and this profile's residency is not established (record the visa timeline and days in the US "
+                f"to classify it)."
             )
+    # JF5b.3 (P-013, P-018): a dual-status payee's deposit interest splits at the residency
+    # starting date (Treas. Reg. 1.871-13(a)(1)) — the note names the dollars excluded and
+    # taxed, or, with no split recorded, the amount taxed in full and what to record. It
+    # fires for any dual-status filer, us_person False or unanswered, and for the spouse's
+    # separate return when the SPOUSE's own year is dual-status.
+    if dual:
+        note = _dual_deposit_note(
+            income.model_copy(update={"spouse": None}) if spouse_split else income, whose="",
+            in_range=dual_resident_reading is not None,
+        )
+        if note is not None:
+            assumptions.append(note)
+    spouse_return_priced = spouse_split and (_MFS in statuses or "head_of_household" in statuses)
+    if spouse_period_rule and spouse_return_priced:
+        note = _dual_deposit_note(
+            income.spouse, whose="On the spouse's separate return (the spouse's own facts show a dual-status year), ",
+            in_range=False, joint_taxes=_MFJ in statuses,
+        )
+        if note is not None:
+            assumptions.append(note)
     treaty_amount = income.treaty_exempt_income + (
         income.spouse.treaty_exempt_income if income.spouse is not None else 0
     )
@@ -3455,6 +3904,8 @@ def estimate_refund(
         )
     if (
         not nonresident
+        # a dual-status point cannot claim it (IRC 25A(g)(7)); only its full-year-resident end can
+        and (not dual or dual_resident_reading is not None)
         and income.aotc_qualified_expenses
         and pack_for_gaps.tax.education_credits is None
     ):
@@ -3465,8 +3916,9 @@ def estimate_refund(
         ))
         assumptions.append(
             f"NOT ESTIMATED — education credits: 1098-T expenses were supplied but the {year} pack has "
-            f"no Form 8863 parameters, so no AOTC/LLC was credited. This bottom line likely "
-            f"UNDERSTATES your refund."
+            f"no Form 8863 parameters, so no AOTC/LLC was credited. "
+            + ("The full-year-resident figure in the range likely UNDERSTATES your refund (the dual-status point "
+               "cannot claim the credit)." if dual else "This bottom line likely UNDERSTATES your refund.")
         )
     if (
         income.student_loan_interest_paid + (income.spouse.student_loan_interest_paid if income.spouse else 0)
@@ -3517,6 +3969,14 @@ def estimate_refund(
             "Education expenses were provided but NO education credit was estimated: nonresident "
             "aliens cannot claim education credits (Form 8863 AOTC/LLC) absent a residency election."
         )
+    # JF5b.2: the education-credit and EITC disclosures, extended to a dual-status year.
+    if dual and dual_unrestricted is not None:
+        credits_note = _dual_status_credits_note(
+            income.model_copy(update={"spouse": None}) if spouse_split else income, dual_unrestricted,
+            in_range=dual_resident_reading is not None,
+        )
+        if credits_note is not None:
+            assumptions.append(credits_note)
     # A supplied 1098-E that computes to a $0 deduction is disclosed, never dropped.
     sli_paid = income.student_loan_interest_paid + (
         income.spouse.student_loan_interest_paid if income.spouse is not None else 0
@@ -3580,6 +4040,25 @@ def estimate_refund(
     us_person_false = (
         ident is not None and ident.us_person is not None and ident.us_person.value is False
     )
+    dual_caveat: str | None = None
+    if dual and dual_routes is not None:
+        # JF5b.2: the point (Pub 519 ch. 6's restrictions — the deduction the point used is read
+        # off its own ledger), the approximation, and the range with its route (or none).
+        point_deduction = next((line for line in composition if line.slot == "deduction"), None)
+        dual_married = _married_for_year(profile, year) or (
+            _marital(profile) is None and _confirmed_status(profile) in _MARRIED_STATUSES)
+        dual_caveat = _dual_status_caveat(
+            year, primary, itemized_used=-point_deduction.amount if point_deduction is not None else 0,
+            routes=dual_routes, resident_reading=dual_resident_reading, niit="Form 8960" in labels,
+            married=dual_married, confirmed=_confirmed_status(profile) == primary,
+            otherwise_bracketed=dual_resident_reading is None and low != high,
+            marital_unanswered=_marital(profile) is None and _confirmed_status(profile) is None,
+            hoh_not_priced=(
+                dual_resident_reading is not None and not dual_married and "head_of_household" not in statuses
+                and (bool(profile.household and profile.household.dependents) or _confirmed_true(
+                    profile.household.hoh_qualifying_person if profile.household else None))
+            ),
+        )
     residency_caveat: str | None = None
     if election:
         # P-018: the figures ran UNDER the election — say so, with the worldwide-income,
@@ -3605,12 +4084,12 @@ def estimate_refund(
                 "nonresident", "dual_status_candidate"),
             unavailable=state.unavailable,
         )
-        if classification == "dual_status_candidate":
-            residency_caveat += " " + _DUAL_STATUS_CAVEAT
-    elif classification == "dual_status_candidate":
-        # A dual-status year restricts statuses and the deduction; MFJ/HOH were
-        # dropped and the numbers are full-year approximations — say so loudly.
-        residency_caveat = _DUAL_STATUS_CAVEAT
+        if dual_caveat is not None:
+            residency_caveat += " " + dual_caveat
+    elif dual_caveat is not None:
+        # A dual-status year restricts statuses, the deduction and the credits; MFJ/HOH were
+        # dropped and the point prices the restrictions — say so loudly, with the range.
+        residency_caveat = dual_caveat
     elif classification == "nonresident" and _is_married(profile):
         # MFJ was dropped for a confirmed married NRA — explain the §6013 election, or, when
         # the spouse's own facts classify nonresident too, that it is not available (P-018).

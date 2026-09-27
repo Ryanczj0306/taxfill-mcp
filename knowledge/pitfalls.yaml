@@ -880,7 +880,47 @@ pitfalls:
       1099-INT carrying an account number still asks), and
       packages/core/tests/test_sources.py (routing, the topic's
       characterization text, and neighbour theft on both the bank-bonus and
-      the spouse-election side).
+      the spouse-election side). RULE (f), THE DUAL-STATUS YEAR (JF5b part 2,
+      2026-09-27): the exclusion belongs to the nonresident PART of a
+      dual-status year, never the whole of it. Before it a dual-status filer's
+      deposit interest was taxed in full with no word (identity.us_person
+      unanswered) or with a note calling the residency "not established" and
+      the exclusion one that needs "a confirmed NONRESIDENT alien", while
+      JF5a's assumed-nonresident reading of a dual-status SPOUSE excluded all
+      of the spouse's deposit interest, the resident part included. The law,
+      read 2026-09-27: Treas. Reg. 1.871-13(a)(1) — a year of changed
+      residence "will be computed under two different sets of rules, one
+      relating to resident aliens for the period of residence and the other
+      relating to nonresident aliens for the period of nonresidence", and
+      "This section does not apply to alien individuals treated as residents
+      for the entire taxable year under section 6013 (g) or (h)"; IRC 871(i)(1)
+      "No tax shall be imposed under paragraph (1)(A) or (1)(C) of subsection
+      (a) on any amount described in paragraph (2)"; Pub 519 ch. 6: "Income
+      from U.S. sources is taxable whether you receive it while a nonresident
+      alien or a resident alien unless specifically exempt under the Internal
+      Revenue Code or a tax treaty provision." Countermeasure:
+      IncomeSnapshot.bank_deposit_interest_nonresident_period, a SUBSET of
+      bank_deposit_interest (validator; summed in combined_with_spouse) — the
+      amount RECEIVED before the residency starting date, from the account
+      statements, never a proration (the texts key on receipt). _bottom_line
+      excludes only it on a return whose payee's OWN year is dual-status with
+      no election (the taxpayer's dual_status figure; the spouse's separate
+      return by the spouse's own classification, the assumed nonresident
+      reading included — nonresident_period_deposit), under its own label in
+      the same deposit_interest_exclusion slot, and keeps it out of NIIT's
+      investment income; the rest is taxed as resident-period interest.
+      estimate._dual_deposit_note names the dollars excluded and taxed, or —
+      with no split — the amount taxed in full, the rule, what to record and
+      that the election ends it, for us_person False and unanswered alike;
+      the old "not established" note speaks only for an unclassified filer.
+      intake asks interest_character of a dual-status owner too, and
+      income_documents.interest_period (the amount before the residency
+      starting date, recorded in the entry's kind with the words RESIDENCY
+      START, the DEPOSIT convention) of a deposit 1099-INT's dual-status
+      owner. The compare_scenarios walk shape (JF1b.6) covers the new pair
+      too: list the subset field first. Tests, P-013-tagged:
+      test_p013_dual_status_* in packages/core/tests/test_estimate.py and
+      test_intake.py.
   - id: P-014
     incident: >-
       hand_fill_worksheet ticked the box for a "no". Its checkbox branch shared
@@ -1251,7 +1291,35 @@ pitfalls:
       7701(b)(1)(A): a resident "if (and only if)" a residency test is met; IRC
       7701(b)(4)(A)(ii): the First-Year Choice needs someone who "was not a
       resident of the United States under paragraph (1)(A) with respect to the
-      calendar year immediately preceding the election year".
+      calendar year immediately preceding the election year". JF5b part 2
+      (2026-09-27) found the dual-status half: a dual_status_candidate was
+      priced on the resident branch — the full standard deduction, the EITC
+      and the education credits — while its own caveat said "NO standard
+      deduction" (an H-1B arrival on 2025-03-01, 306 days, unmarried, wages
+      $80,000: "Less: standard deduction -15750" beside that caveat; with
+      wages $12,000 and a 1098-T, an EITC of $543 and an AOTC of $1,000 the
+      year bars), and its nonresident-period deposit interest was taxed with
+      no disclosure (the P-013 rule (f) half). The law, read 2026-09-27: Pub
+      519 (2025) ch. 6, Restrictions for Dual-Status Taxpayers: "You cannot use
+      the standard deduction allowed on Form 1040 or 1040-SR. However, you can
+      itemize any allowable deductions."; "You cannot use the head of household
+      Tax Table column or Tax Computation Worksheet."; a married filer who does
+      not choose to file jointly "must use the Tax Table column or Tax
+      Computation Worksheet for married filing separately"; Tax Credits and
+      Payments: "You cannot claim the education credits, EIC, or credit for the
+      elderly or the disabled unless you are married and you choose to be
+      treated as a resident for all of 2025 by filing a joint return with your
+      spouse who is a U.S. citizen or resident"; IRC 32(c)(1)(D), 25A(g)(7)
+      ("If the taxpayer is a nonresident alien individual for any portion of
+      the taxable year, this section shall apply only if such individual is
+      treated as a resident alien of the United States for purposes of this
+      chapter by reason of an election under subsection (g) or (h) of section
+      6013.") and 22(f) ("No credit shall be allowed under this section to any
+      nonresident alien."); Pub 519 ch. 1: "If you are single at the end of
+      the year, you cannot make this choice."; Treas. Reg. 1.1411-2(a)(2)(ii):
+      "The only income the individual must take into account for purposes of
+      section 1411 is the income he or she receives during the portion of the
+      year for which he or she is treated as a resident of the United States."
     countermeasure: >-
       The election is a residency FACT with one home:
       ResidencyFacts.section_6013_election on the TAXPAYER (schemas/profile.py;
@@ -1394,4 +1462,28 @@ pitfalls:
       the onboarding worksheet's options map onto the five values; the
       residency MCP tool takes prior_year_resident. Tests: test_p018_* in
       test_residency.py, test_estimate.py, test_intake.py, test_profile.py,
-      test_worksheet.py and test_server_e2e.py.
+      test_worksheet.py and test_server_e2e.py. THE DUAL-STATUS YEAR (JF5b
+      part 2): with no election in effect a dual_status_candidate's POINT
+      runs _bottom_line(dual_status=True) — Pub 519 ch. 6's restrictions: the
+      supplied itemized deductions or $0, never the standard deduction (the
+      'standard' pair mode claims none, as a nonresident's does), no EITC, no
+      education credits (the elderly credit is not modeled), no joint return
+      or HOH (the candidate statuses already), MFS rates if married and single
+      rates otherwise (a labeled inference), the preferential rates and NIIT
+      kept — and the caveat (estimate._dual_status_caveat) says it is one
+      whole-year snapshot with no period split and that NIIT on the whole
+      year's investment income may be overstated. The RANGE's other end is
+      the same inputs under resident rules for the whole year, only where a
+      route could make it lawful (estimate._dual_status_routes): (i) the
+      prior-year fact not recorded False, (ii) the election open to a married
+      filer (married for the year, or a married status confirmed on an
+      unanswered marital status; 'unanswered' when neither is on file; closed
+      by a recorded decline), each named with its law; (iii) wrong timeline
+      dates is always named and never opens it alone. An unmarried filer with
+      a recorded prior 1040-NR gets the point alone and a note that no route
+      to the standard deduction is open. No "Standard deduction assumed" on a
+      dual-status figure; the EITC and education-credit disclosures name what
+      the full-year-resident figure would claim; the roadmap names the credit
+      bars; intake's prior-year question says what the answer does to a
+      dual-status estimate. Tests: test_p018_dual_status_* in test_estimate.py
+      and test_intake.py.
