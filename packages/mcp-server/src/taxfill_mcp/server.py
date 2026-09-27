@@ -389,8 +389,13 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       premium HALF only, never the whole overtime wage. Eligibility stays YOUR judgment, quoted in the
       work: tipped-occupation list, new-vehicle/US-assembly/VIN rules, valid SSNs, seniors born before
       1961-01-02)
-    - employee_fica: args {wage_segments: [{wages, fica_exempt, label?, visa_status?, exempt_basis?}...],
-      year?, residency_classification?} (employee-side payroll FICA across STATUS periods — the
+    - employee_fica: args {wage_segments: [{wages, fica_exempt, label?, employer?, visa_status?,
+      exempt_basis?}...], year?, residency_classification?, filing_status?} (JP1a: two layers —
+      WITHHOLDING per employer (each applies its own wage base and IRC 3102(f)(1)'s 0.9% on "wages from
+      the employer in excess of $200,000"; segments without an employer are one employer's) and, with
+      filing_status, the person's LIABILITY (one base; the 0.9% over the Form 8959 status threshold);
+      excess_ss_credit and additional_medicare_reconciliation are the differences. Employee-side payroll
+      FICA across STATUS periods — the
       projection op for a year where FICA switches on mid-year, e.g. F-1 OPT (a NONRESIDENT exempt
       individual, NO FICA) -> H-1B (FICA from the I-797 start date). fica_exempt is YOUR status judgment
       per segment; the traps the work quotes: the F/J exemption is STATUS-based, not marital — a
@@ -402,11 +407,13 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       election reaches chapter 1 and chapter 24 only, IRC 6013(g)(1)): for 'resident', a fica_exempt F/J/M/Q segment (visa_status, or a label naming it as F-1/J-1/OPT)
       is REFUSED unless exempt_basis names a different exemption (student_employed_by_school —
       Pub 519's tip for a student enrolled and regularly attending classes at the school it works for —
-      or totalization_agreement). Enforces the SS wage base across segments in order, Medicare with no
-      base, and the 0.9% Additional Medicare withholding over $200,000; per-employer nuances disclosed)
+      or totalization_agreement). Enforces the SS wage base across one employer's segments in order,
+      Medicare with no base, and the 0.9% Additional Medicare withholding over $200,000 per employer)
     - estimated_tax_safe_harbor: args {projected_tax, expected_withholding, filing_status?, year?,
       prior_year_agi?, prior_year_total_tax?, excess_ss_credit?, additional_medicare_withheld?,
-      refundable_credits?, prior_year_refundable_credits?} (JF4: the excess-SS credit counts as
+      refundable_credits?, prior_year_refundable_credits?, remaining_pay_dates? (JP1a: returns
+      step_4c_per_check, the Form W-4 Step 4(c) amount per remaining paycheck that reaches the required
+      payment)} (JF4: the excess-SS credit counts as
       withholding, IRC 31(b)(1); refundable credits (the prior year's too, off prior_year_total_tax, per
       the Form 2210 instructions) and the Additional Medicare Tax withheld come off the tax, IRC
       6654(f)(4) and (m) — so

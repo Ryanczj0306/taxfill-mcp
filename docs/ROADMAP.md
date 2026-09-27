@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**5,744 tests** — offline 5,364 + live-.gov 380; derived
+Done and on `main` (**5,748 tests** — offline 5,368 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1576,11 +1576,12 @@ not wait for any of this.
 
 ### Block 2 — Paycheck-dated decision ops
 
-- [ ] **JP1a — employee_fica two layers, and the Step 4(c) solve** (M; deps JF1a, JF3, JF4; **latest start 2026-10-14**) [DEF-09 + the rest of LD-12 + LD-14's 4(c)] — pitfall *withholding-vs-liability*
+- [x] **JP1a — employee_fica two layers, and the Step 4(c) solve — DONE 2026-09-27** (M; deps JF1a, JF3, JF4; **latest start 2026-10-14**) [DEF-09 + the rest of LD-12 + LD-14's 4(c)] — pitfall *withholding-vs-liability*
   - **Why.**
     - employee_fica pools ONE Social Security base and ONE Medicare accumulator across all segments, labels the person-level LIABILITY split as per-segment "withholding" (calc.py:3221-3225, :3293-3345), and rounds wages to whole dollars (:3317).
     - Withholding is per employer: each employer withholds Social Security up to the base, and the 0.9% applies only to "wages from the employer in excess of $200,000" (IRC 3102(f)(1); Pub 15 (2026) §9; knowledge/federal/2026.yaml:271-276).
     - Liability is per person, against the Form 8959 status threshold. The difference between the two is the hidden excess-SS credit.
+  - *As built:* segments carry `employer` (none = one employer) and keep their cents; WITHHOLDING is per employer (its own wage base and IRC 3102(f)(1)'s $200,000 — segment rows, the `employers` rows, the totals); with `filing_status` the person's `liability` (one base; the 0.9% over the Form 8959 status threshold); `excess_ss_credit` (2+ employers) and `additional_medicare_reconciliation` (+ owed / − credited) name the differences; estimated_tax_safe_harbor's `remaining_pay_dates` returns `step_4c_per_check` (the shortfall over the remaining checks, rounded up), citing 6654(g)(1) and quoting the Form W-4 Step 4(c) line. Pitfall P-020.
   - **Build.**
     - Segments gain `employer`; wages stay in Decimal cents.
     - Two output layers: withholding per employer, and liability per person (when `filing_status` is given).

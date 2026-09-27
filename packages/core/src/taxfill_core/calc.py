@@ -3253,17 +3253,21 @@ def schedule_1a_deductions(
 
 
 class FicaSegment(BaseModel):
-    """One wage segment's FICA outcome (a visa-status period, an employer, a scenario leg)."""
+    """One wage segment's FICA WITHHOLDING (a visa-status period, an employer, a scenario leg) — what
+    its employer's payroll takes, against that employer's own wage base and $200,000 trigger (JP1a)."""
 
     model_config = ConfigDict(extra="forbid")
 
     label: str
-    wages: int
+    employer: str = Field(description="The employer whose payroll this segment is (segments without one share one).")
+    wages: Decimal = Field(description="The segment's wages, in cents.")
     fica_exempt: bool
-    social_security: Decimal = Field(description="6.2% of this segment's wages within the remaining wage base.")
+    social_security: Decimal = Field(
+        description="6.2% withheld on this segment's wages within its EMPLOYER's remaining wage base."
+    )
     medicare: Decimal = Field(description="1.45% of this segment's wages — Medicare has NO wage base.")
     additional_medicare: Decimal = Field(
-        description="0.9% withholding on this segment's share of wages over the $200,000 trigger."
+        description="0.9% withheld on this segment's share of its EMPLOYER's wages over $200,000 (IRC 3102(f)(1))."
     )
     total: Decimal
     exempt_reason: str | None = Field(
@@ -3271,16 +3275,57 @@ class FicaSegment(BaseModel):
     )
 
 
-class EmployeeFicaResult(BaseModel):
-    """Result of :func:`employee_fica`: the employee-side payroll tax projection."""
+class FicaEmployerWithholding(BaseModel):
+    """One employer's FICA withholding for the year (JP1a): its own wage base, its own $200,000."""
 
     model_config = ConfigDict(extra="forbid")
 
-    total_fica: Decimal = Field(description="Sum of every segment's SS + Medicare + Additional Medicare.")
+    employer: str
+    wages: Decimal
+    social_security_withheld: Decimal
+    medicare_withheld: Decimal
+    additional_medicare_withheld: Decimal
+
+
+class FicaPersonLiability(BaseModel):
+    """The PERSON's FICA liability for the year (JP1a) — one wage base across every employer, and the
+    Additional Medicare Tax against the Form 8959 filing-status threshold (wages only; SE earnings and
+    a spouse's wages on a joint return are the caller's to add)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    filing_status: str
     social_security: Decimal
     medicare: Decimal
     additional_medicare: Decimal
+    additional_medicare_threshold: int
+
+
+class EmployeeFicaResult(BaseModel):
+    """Result of :func:`employee_fica`: the employee-side payroll tax projection — WITHHOLDING per
+    employer, and (with ``filing_status``) the person's LIABILITY, which differ (JF1a, JP1a, P-020)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    total_fica: Decimal = Field(description="Total WITHHELD: every segment's SS + Medicare + Additional Medicare.")
+    social_security: Decimal = Field(description="Social security WITHHELD, summed over the employers.")
+    medicare: Decimal
+    additional_medicare: Decimal = Field(description="Additional Medicare Tax WITHHELD (each employer over $200,000).")
     segments: list[FicaSegment]
+    employers: list[FicaEmployerWithholding] = Field(default_factory=list)
+    excess_ss_credit: Decimal = Field(
+        default=Decimal("0.00"),
+        description="Social security withheld above the person's one-base liability — the Schedule 3 credit "
+        "(2+ employers only; a single employer's excess is that employer's to refund).",
+    )
+    liability: FicaPersonLiability | None = Field(
+        default=None, description="The person's liability, with filing_status; None without it."
+    )
+    additional_medicare_reconciliation: Decimal | None = Field(
+        default=None,
+        description="Additional Medicare Tax liability minus withholding (Form 8959): + owed with the return, "
+        "- credited as withholding; None without filing_status.",
+    )
     inputs: dict[str, Any]
     work: str
     citation: Citation
@@ -3388,12 +3433,13 @@ def employee_fica(
     year: int = 2025,
     residency_classification: str | None = None,
     knowledge_dir: str | Path | None = None,
+    filing_status: str | None = None,
 ) -> EmployeeFicaResult:
     """Employee-side FICA (social security + Medicare withholding) across wage
     segments — the projection op for a year whose FICA status CHANGES mid-year.
 
-    Each segment is ``{wages, fica_exempt, label?, visa_status?, exempt_basis?}``,
-    in chronological order. Whether a segment is exempt is CALLER judgment
+    Each segment is ``{wages, fica_exempt, label?, employer?, visa_status?, exempt_basis?}``,
+    in chronological order; segments with no ``employer`` are one employer's. Whether a segment is exempt is CALLER judgment
     (quoted in the work), and the biggest trap is N-7b: **the F/J student FICA
     exemption is STATUS-based, not marital** — an exempt-individual nonresident
     on F-1/OPT/STEM OPT pays no FICA (IRC 3121(b)(19), Pub 519), and a §6013(g)
@@ -3432,11 +3478,13 @@ def employee_fica(
     * Additional Medicare Tax withholding 0.9% on non-exempt wages over
       $200,000, attributed to the segments that cross the trigger.
 
-    Two per-employer nuances are disclosed, not modeled: an EMPLOYER applies the
-    wage base and the $200,000 trigger to its own wages only, so a multi-employer
-    year can over-withhold social security (recovered via the Schedule 3
-    excess-SS credit — calc op ``excess_ss``) and mis-withhold the 0.9%
-    (reconciled on Form 8959). This op computes the PERSON-level projection.
+    Two layers (JP1a, pitfall P-020 withholding-vs-liability). WITHHOLDING is per employer: each
+    employer applies the wage base to its own wages, and the 0.9% only "to the extent to which the
+    taxpayer receives wages from the employer in excess of $200,000" (IRC 3102(f)(1)) — the
+    segments, ``employers`` and the totals. LIABILITY is per person, with ``filing_status``: one
+    wage base across every employer, and the 0.9% over the Form 8959 status threshold
+    (``liability``). The differences are the Schedule 3 ``excess_ss_credit`` and the Form 8959
+    ``additional_medicare_reconciliation``. Wages are kept in cents.
     """
     if not wage_segments:
         raise ValueError(
@@ -3453,8 +3501,8 @@ def employee_fica(
         )
 
     segments: list[FicaSegment] = []
-    remaining_base = Decimal(params.ss_wage_base)
-    cumulative_medicare_wages = Decimal(0)
+    remaining_base: dict[str, Decimal] = {}          # per employer (JP1a)
+    cumulative_medicare_wages: dict[str, Decimal] = {}
     threshold = Decimal(params.additional_medicare_withholding_threshold)
     work_lines = [
         f"Employee FICA projection ({year}) — Pub 15 section 9: social security "
@@ -3489,10 +3537,11 @@ def employee_fica(
                 f"(F/J exempt individual: True; H-1B and other statuses: False); never omit it"
             )
         exempt = bool(raw["fica_exempt"])
-        wages = irs_round(_to_decimal(raw.get("wages", 0), f"wage_segments[{i}].wages"))
+        wages = _cents(_to_decimal(raw.get("wages", 0), f"wage_segments[{i}].wages"))
         if wages < 0:
             raise ValueError(f"wage_segments[{i}].wages must be >= 0, got {wages}")
         label = str(raw.get("label") or f"segment {i + 1}")
+        employer = str(raw.get("employer") or "employer 1")
         basis = raw.get("exempt_basis")
         if basis is not None and (not isinstance(basis, str) or basis not in _FICA_EXEMPT_BASES):
             raise ValueError(
@@ -3502,32 +3551,34 @@ def employee_fica(
         if exempt:
             reason = _fica_exempt_reason(i, raw, label, basis, residency_classification, exempt_note)
             segments.append(FicaSegment(
-                label=label, wages=wages, fica_exempt=True,
+                label=label, employer=employer, wages=wages, fica_exempt=True,
                 social_security=Decimal("0.00"), medicare=Decimal("0.00"),
                 additional_medicare=Decimal("0.00"), total=Decimal("0.00"),
                 exempt_reason=reason,
             ))
             work_lines.append(f"{label}: ${wages:,} wages, FICA-EXEMPT -> $0.00 ({reason})")
             continue
-        wages_d = Decimal(wages)
-        ss_taxable = min(wages_d, remaining_base)
-        remaining_base -= ss_taxable
+        wages_d = wages
+        base_left = remaining_base.setdefault(employer, Decimal(params.ss_wage_base))
+        ss_taxable = min(wages_d, base_left)
+        remaining_base[employer] = base_left - ss_taxable
         ss = (params.rate * ss_taxable).quantize(_CENT, rounding=ROUND_HALF_UP)
         medicare = (params.medicare_rate * wages_d).quantize(_CENT, rounding=ROUND_HALF_UP)
-        before = max(Decimal(0), cumulative_medicare_wages - threshold)
-        cumulative_medicare_wages += wages_d
-        after = max(Decimal(0), cumulative_medicare_wages - threshold)
+        so_far = cumulative_medicare_wages.get(employer, Decimal(0))
+        before = max(Decimal(0), so_far - threshold)
+        cumulative_medicare_wages[employer] = so_far + wages_d
+        after = max(Decimal(0), cumulative_medicare_wages[employer] - threshold)
         addl = (params.additional_medicare_withholding_rate * (after - before)).quantize(
             _CENT, rounding=ROUND_HALF_UP
         )
         total = ss + medicare + addl
         segments.append(FicaSegment(
-            label=label, wages=wages, fica_exempt=False,
+            label=label, employer=employer, wages=wages, fica_exempt=False,
             social_security=ss, medicare=medicare, additional_medicare=addl, total=total,
         ))
-        capped = " (wage base reached)" if remaining_base == 0 and ss_taxable < wages_d else ""
+        capped = " (wage base reached)" if remaining_base[employer] == 0 and ss_taxable < wages_d else ""
         work_lines.append(
-            f"{label}: ${wages:,} wages -> SS {params.rate:%} x ${ss_taxable:,.0f}{capped} = ${ss:,}; "
+            f"{label} ({employer}): ${wages:,} wages -> SS {params.rate:%} x ${ss_taxable:,.2f}{capped} = ${ss:,}; "
             f"Medicare {params.medicare_rate:%} = ${medicare:,}; Additional Medicare on "
             f"${(after - before):,.0f} over the trigger = ${addl:,}; segment total ${total:,}."
         )
@@ -3537,25 +3588,72 @@ def employee_fica(
     addl_total = sum((s.additional_medicare for s in segments), Decimal("0.00"))
     grand = ss_total + med_total + addl_total
     work_lines.append(
-        f"Totals: social security ${ss_total:,} + Medicare ${med_total:,} + Additional Medicare "
+        f"Totals WITHHELD: social security ${ss_total:,} + Medicare ${med_total:,} + Additional Medicare "
         f"${addl_total:,} = ${grand:,} employee FICA for the year."
     )
+    # ── the two layers (JP1a) ──
+    employers: list[FicaEmployerWithholding] = []
+    for name in dict.fromkeys(s.employer for s in segments):
+        own = [s for s in segments if s.employer == name]
+        employers.append(FicaEmployerWithholding(
+            employer=name,
+            wages=sum((s.wages for s in own if not s.fica_exempt), Decimal("0.00")),
+            social_security_withheld=sum((s.social_security for s in own), Decimal("0.00")),
+            medicare_withheld=sum((s.medicare for s in own), Decimal("0.00")),
+            additional_medicare_withheld=sum((s.additional_medicare for s in own), Decimal("0.00")),
+        ))
+    covered = sum((s.wages for s in segments if not s.fica_exempt), Decimal("0.00"))
+    ss_liability = (params.rate * min(covered, Decimal(params.ss_wage_base))).quantize(_CENT, rounding=ROUND_HALF_UP)
+    excess = max(Decimal("0.00"), ss_total - ss_liability) if len(employers) > 1 else Decimal("0.00")
     work_lines.append(
-        "Per-employer nuances NOT modeled (disclosed): each employer applies the wage base and the "
-        "$200,000 trigger to its own wages only — a multi-employer year can over-withhold social "
-        "security (recover via the Schedule 3 excess-SS credit, calc op excess_ss) and the 0.9% "
-        "withholding reconciles against the status-based thresholds on Form 8959."
+        f"Each employer withholds on its own wages ({len(employers)} employer(s)): the wage base and IRC "
+        "3102(f)(1)'s 0.9% \"to the extent to which the taxpayer receives wages from the employer in excess of "
+        f"$200,000\". The person owes social security on one base: ${ss_liability:,}"
+        + (f", so ${excess:,} of social security was over-withheld — the Schedule 3 excess_ss_credit (calc op "
+           "excess_ss)." if excess else
+           ". Segments of a different employer carry their own `employer`: that employer withholds on its own base "
+           "again, and the over-withholding is the Schedule 3 excess_ss_credit (calc op excess_ss).")
     )
+    liability: FicaPersonLiability | None = None
+    reconciliation: Decimal | None = None
+    if filing_status is not None:
+        amt = pack.tax.additional_medicare_tax
+        if amt is None:
+            raise ValueError(f"knowledge pack for federal {year} has no tax.additional_medicare_tax block")
+        status_threshold = _surtax_threshold(amt.thresholds, filing_status, "additional_medicare_tax")
+        addl_liability = (amt.rate * max(Decimal(0), covered - status_threshold)).quantize(
+            _CENT, rounding=ROUND_HALF_UP)
+        liability = FicaPersonLiability(
+            filing_status=filing_status,
+            social_security=ss_liability,
+            medicare=(params.medicare_rate * covered).quantize(_CENT, rounding=ROUND_HALF_UP),
+            additional_medicare=addl_liability,
+            additional_medicare_threshold=status_threshold,
+        )
+        reconciliation = addl_liability - addl_total
+        work_lines.append(
+            f"Liability ({filing_status}): Additional Medicare Tax {amt.rate:%} over the Form 8959 threshold of "
+            f"${status_threshold:,} = ${addl_liability:,} against ${addl_total:,} withheld -> "
+            + (f"${reconciliation:,} more is owed with the return (Form 8959)." if reconciliation > 0 else
+               f"${-reconciliation:,} comes back as withholding (Form 8959's withholding reconciliation)."
+               if reconciliation < 0 else "withholding and liability match.")
+            + " Wages only — self-employment earnings, and a spouse's wages on a joint return, are the caller's."
+        )
     return EmployeeFicaResult(
         total_fica=grand,
         social_security=ss_total,
         medicare=med_total,
         additional_medicare=addl_total,
         segments=segments,
+        employers=employers,
+        excess_ss_credit=excess,
+        liability=liability,
+        additional_medicare_reconciliation=reconciliation,
         inputs={
             "wage_segments": [dict(s) for s in wage_segments],
             "year": year,
             **({"residency_classification": residency_classification} if residency_classification else {}),
+            **({"filing_status": filing_status} if filing_status else {}),
         },
         work="\n".join(work_lines),
         citation=params.citation,
@@ -3583,6 +3681,11 @@ class SafeHarborResult(BaseModel):
     )
     shortfall: int = Field(description="required_annual_payment - expected withholding, floored at 0.")
     quarterly_payment: int = Field(description="The shortfall spread over four installments (rounded).")
+    step_4c_per_check: int | None = Field(
+        default=None,
+        description="With remaining_pay_dates: the extra Form W-4 Step 4(c) withholding per remaining check that "
+        "reaches the required annual payment (JP1a) — withholding is deemed paid ratably (IRC 6654(g)(1)).",
+    )
     inputs: dict[str, Any]
     work: str
     citation: Citation
@@ -3633,6 +3736,7 @@ def estimated_tax_safe_harbor(
     additional_medicare_withheld: int | float | Decimal | str = 0,
     refundable_credits: int | float | Decimal | str = 0,
     prior_year_refundable_credits: int | float | Decimal | str = 0,
+    remaining_pay_dates: int | None = None,
 ) -> SafeHarborResult:
     """The IRC 6654(d) estimated-tax safe harbor (Form 1040-ES, 'General Rule'):
     will the year's withholding be enough to avoid an underpayment penalty?
@@ -3681,6 +3785,13 @@ def estimated_tax_safe_harbor(
     2025 Instructions for Form 2210: "To figure your 2024 tax, first add the amounts listed in (1)
     below, then subtract from that total amount the refundable credits listed in (2)"). The work names
     IRC 6654(g)(1)'s ratable deeming of withholding, and the prior-year lines through ``form_line``.
+
+    ``remaining_pay_dates`` (JP1a): the paychecks left in the year; with a shortfall the result's
+    ``step_4c_per_check`` is the extra withholding per check (Form W-4 Step 4(c), "Extra withholding.
+    Enter any additional tax you want withheld each pay period") that reaches the required payment —
+    withholding counts ratably across the year's due dates (6654(g)(1)), so it covers installments
+    already past, which a late estimated payment does not. The projected withholding stays a caller
+    input (JP1c projects it).
     """
     if filing_status not in FILING_STATUSES and filing_status != _QSS:
         raise ValueError(
@@ -3739,6 +3850,12 @@ def estimated_tax_safe_harbor(
     payments_required = balance >= params.underpayment_de_minimis and irs_round(wh_d) < required
     shortfall = max(0, required - irs_round(wh_d)) if payments_required else 0
     quarterly = irs_round(Decimal(shortfall) / 4) if shortfall else 0
+    if remaining_pay_dates is not None and (not isinstance(remaining_pay_dates, int) or remaining_pay_dates < 1):
+        raise ValueError("remaining_pay_dates must be a whole number of paychecks, at least 1")
+    step_4c = (
+        int((Decimal(shortfall) / remaining_pay_dates).to_integral_value(rounding=ROUND_CEILING))
+        if shortfall and remaining_pay_dates else (0 if remaining_pay_dates else None)
+    )
 
     work_lines = [f"IRC 6654(d) safe harbor ({year}), filing status {filing_status}:"]
     if ref_d or amw_d:
@@ -3787,6 +3904,13 @@ def estimated_tax_safe_harbor(
         f"payments {'REQUIRED' if payments_required else 'not required'}"
         + (f"; shortfall ${shortfall:,} (${quarterly:,}/quarter over four installments)." if shortfall else ".")
     )
+    if step_4c:
+        work_lines.append(
+            f"Form W-4 Step 4(c) (\"Extra withholding. Enter any additional tax you want withheld each pay "
+            f"period\"): ${step_4c:,} on each of the {remaining_pay_dates} remaining paychecks covers the "
+            f"${shortfall:,} shortfall — and, withholding being deemed paid ratably (IRC 6654(g)(1), below), the "
+            "installments already past as well."
+        )
     work_lines.append(
         "Withholding counts by IRC 6654(g)(1): the section 31 credit \"shall be deemed a payment of estimated "
         "tax, and an equal part of such amount shall be deemed paid on each due date for such taxable year\" "
@@ -3806,6 +3930,7 @@ def estimated_tax_safe_harbor(
         estimated_payments_required=payments_required,
         shortfall=shortfall,
         quarterly_payment=quarterly,
+        step_4c_per_check=step_4c,
         inputs={
             "projected_tax": irs_round(tax_d),
             "expected_withholding": irs_round(wh_d),

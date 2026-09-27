@@ -431,3 +431,50 @@ def test_p018_the_resident_refusal_names_the_election_answer():
     ok = employee_fica([{"label": "OPT", "visa_status": "F-1", "wages": 30_000, "fica_exempt": True}],
                        year=2025, residency_classification="nonresident")
     assert ok.total_fica == Decimal("0.00")
+
+
+# ── JP1a (pitfall P-020): withholding per employer, liability per person ──
+
+
+def test_p020_two_employers_withhold_on_their_own_base_and_the_person_owes_one():
+    r = employee_fica([
+        {"label": "job A", "employer": "A", "wages": 150_000, "fica_exempt": False},
+        {"label": "job B", "employer": "B", "wages": 90_000, "fica_exempt": False},
+    ], year=2026, filing_status="head_of_household")
+    b = next(e for e in r.employers if e.employer == "B")
+    assert b.social_security_withheld == Decimal("5580.00") and b.additional_medicare_withheld == Decimal("0.00")
+    assert r.social_security == Decimal("14880.00")                      # withheld: 9,300 + 5,580
+    assert r.liability.social_security == Decimal("11439.00")            # one base: 6.2% x 184,500
+    assert r.excess_ss_credit == Decimal("3441.00")
+    assert r.liability.additional_medicare == Decimal("360.00")          # 0.9% x (240,000 - 200,000)
+    assert r.additional_medicare_reconciliation == Decimal("360.00")
+    assert "IRC 3102(f)(1)" in r.work and "excess_ss" in r.work
+
+
+def test_p020_wages_keep_their_cents():
+    r = employee_fica([
+        {"employer": "A", "wages": "150000.40", "fica_exempt": False},
+        {"employer": "B", "wages": "89999.60", "fica_exempt": False},
+    ], year=2026)
+    assert r.segments[0].wages == Decimal("150000.40") and r.segments[1].wages == Decimal("89999.60")
+    assert r.segments[1].social_security == Decimal("5579.98")           # 6.2% x 89,999.60
+
+
+def test_p020_one_employer_over_200000_withholds_what_a_joint_return_credits_back():
+    r = employee_fica([{"employer": "A", "wages": 230_000, "fica_exempt": False}], year=2026,
+                      filing_status="married_filing_jointly")
+    assert r.additional_medicare == Decimal("270.00")                    # withheld: 0.9% x 30,000
+    assert r.liability.additional_medicare == Decimal("0.00")            # $250,000 joint threshold
+    assert r.additional_medicare_reconciliation == Decimal("-270.00")
+    assert r.excess_ss_credit == Decimal("0.00")
+    assert employee_fica([{"wages": 230_000, "fica_exempt": False}], year=2026).liability is None
+
+
+def test_p020_a_shortfall_becomes_a_step_4c_amount_per_remaining_check():
+    # Required payment 90% x 32,000 = 28,800 against 26,400 withheld: a 2,400 shortfall over 6 checks.
+    r = estimated_tax_safe_harbor(32_000, 26_400, "single", 2026, remaining_pay_dates=6)
+    assert r.shortfall == 2_400 and r.step_4c_per_check == 400
+    assert "Step 4(c)" in r.work and "6654(g)(1)" in r.work
+    assert estimated_tax_safe_harbor(32_000, 26_400, "single", 2026).step_4c_per_check is None
+    with pytest.raises(ValueError, match="remaining_pay_dates"):
+        estimated_tax_safe_harbor(32_000, 26_400, "single", 2026, remaining_pay_dates=0)

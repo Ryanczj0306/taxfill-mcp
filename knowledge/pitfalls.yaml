@@ -1660,6 +1660,35 @@ pitfalls:
       in for a spouse who did not give it; compare_scenarios warns when a
       scenario moves wages but not boxes 3/5. Tests: test_p019_* in
       packages/core/tests/test_estimate.py.
+  - id: P-020
+    incident: >-
+      WITHHOLDING WAS REPORTED AS LIABILITY (withholding-vs-liability).
+      employee_fica pooled ONE social security wage base and ONE Medicare
+      accumulator across every segment and labeled the result per-segment
+      "withholding", but payroll withholds per EMPLOYER: each employer applies
+      the wage base to its own wages, and IRC 3102(f)(1) reads "In the case of
+      any tax imposed by section 3101(b)(2), subsection (a) shall only apply to
+      the extent to which the taxpayer receives wages from the employer in
+      excess of $200,000, and the employer may disregard the amount of wages
+      received by such taxpayer's spouse." Liability is per PERSON — one base,
+      and the Additional Medicare Tax against the Form 8959 filing-status
+      threshold. So two concurrent employers ($150,000 + $90,000, 2026) showed
+      $11,439 withheld where $14,880 is withheld and $3,441 comes back as the
+      Schedule 3 excess-SS credit, and a $230,000 joint filer's $270 of 0.9%
+      withholding was never shown as the credit it becomes. It also rounded
+      segment wages to whole dollars. Found by the 2026-09-23 review (DEF-09,
+      LD-12).
+    countermeasure: >-
+      employee_fica has two layers (JP1a): WITHHOLDING per employer (segments
+      carry `employer`; the base and the $200,000 trigger are the employer's
+      own; the `employers` rows and the totals), and, with `filing_status`,
+      the person's `liability` (one base; the 0.9% over the Form 8959
+      threshold). `excess_ss_credit` and `additional_medicare_reconciliation`
+      are the named differences; wages stay in cents. estimated_tax_safe_harbor
+      turns a shortfall into a Form W-4 Step 4(c) amount per remaining
+      paycheck (`remaining_pay_dates` -> `step_4c_per_check`), because IRC
+      6654(g)(1) deems withholding paid ratably. Tests: test_p020_* in
+      packages/core/tests/test_projection_ops.py and test_tax_calc.py.
   - id: P-026
     incident: >-
       The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer
