@@ -212,6 +212,53 @@ def _retirement_taxable(item: RetirementDistribution) -> tuple[int, str | None]:
     return max(0, item.taxable_amount - item.rolled_over), note
 
 
+class W2Box12(BaseModel):
+    """One box 12 entry (JT4a)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    code: str = Field(description="The code as printed (D, W, TT, ...) — knowledge/forms/w2_box12_codes.yaml.")
+    amount: int = Field(ge=0)
+
+
+class W2Facts(BaseModel):
+    """One Form W-2 as read (JT4a) — the boxes the estimator prices. Give ``IncomeSnapshot.w2s`` and the
+    aggregates (wages, ss_wages, medicare_wages, the per-employer box 4 / box 6 lists, the box 10 benefits,
+    the box 12 TT overtime) are derived from them; an aggregate given as well must agree, or the snapshot is
+    refused."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    employer: str = Field(default="", description="Which W-2 (employer name), for the assumptions.")
+    box1: int = Field(default=0, ge=0, description="Wages, tips, other compensation.")
+    box2: int = Field(default=0, ge=0, description="Federal income tax withheld.")
+    box3: int = Field(default=0, ge=0, description="Social security wages.")
+    box4: int = Field(default=0, ge=0, description="Social security tax withheld.")
+    box5: int = Field(default=0, ge=0, description="Medicare wages and tips.")
+    box6: int = Field(default=0, ge=0, description="Medicare tax withheld.")
+    box7: int = Field(default=0, ge=0, description="Social security tips.")
+    box10: int = Field(default=0, ge=0, description="Dependent care benefits.")
+    box12: list[W2Box12] = Field(default_factory=list)
+    box14b: list[str] = Field(default_factory=list, description="2026 onward: Treasury Tipped Occupation Code(s).")
+
+    def coded(self, *codes: str) -> int:
+        return sum(e.amount for e in self.box12 if e.code.strip().upper() in codes)
+
+
+_W2_402G_CODES = ("D", "E", "F", "S", "AA", "BB")   # IRC 402(g)(3) and 402A(c)(1) (w2_box12_codes.yaml)
+
+
+def _w2_aggregates(w2s: list[W2Facts]) -> dict[str, Any]:
+    return {
+        "wages": sum(w.box1 for w in w2s),
+        "ss_wages": sum(w.box3 + w.box7 for w in w2s),
+        "medicare_wages": sum(w.box5 for w in w2s),
+        "ss_withheld_by_employer": [w.box4 for w in w2s if w.box4],
+        "medicare_tax_withheld": [w.box6 for w in w2s if w.box6],
+        "dependent_care_benefits": sum(w.box10 for w in w2s),
+    }
+
+
 class IncomeSnapshot(BaseModel):
     """Confirmed dollar amounts so far (whole dollars).
 
@@ -481,6 +528,51 @@ class IncomeSnapshot(BaseModel):
         default=None,
         description="The spouse's own amounts (enables a true two-return MFS comparison). One level only.",
     )
+    # JT4a: the W-2s as read. The aggregates above derive from them when not given, and must agree when given.
+    w2s: list[W2Facts] = Field(
+        default_factory=list,
+        description="THIS person's Forms W-2 (boxes 1-7, 10, 12, 14b). wages, ss_wages, medicare_wages, "
+                    "ss_withheld_by_employer, medicare_tax_withheld and dependent_care_benefits derive from them; "
+                    "federal_withholding defaults to the box 2 total and may only be larger (estimated payments, other "
+                    "withholding); qualified_overtime_premium defaults to the code TT total.",
+    )
+    dependent_care_benefits: int = Field(
+        default=0, ge=0,
+        description="W-2 box 10 employer-provided dependent care benefits (Form 2441 Part III) — they reduce the "
+                    "dependent care credit's expense limit.",
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _derive_from_w2s(cls, data: Any) -> Any:
+        if not isinstance(data, dict) or not data.get("w2s"):
+            return data
+        w2s = [w if isinstance(w, W2Facts) else W2Facts.model_validate(w) for w in data["w2s"]]
+        derived = _w2_aggregates(w2s)
+        out = dict(data)
+        mismatches = []
+        for key, value in derived.items():
+            given = out.get(key)
+            if given in (None, [], 0) and key not in ("ss_withheld_by_employer", "medicare_tax_withheld"):
+                out[key] = value
+            elif key in ("ss_withheld_by_employer", "medicare_tax_withheld") and not given:
+                out[key] = value
+            elif (sorted(given) if isinstance(given, list) else given) != (
+                    sorted(value) if isinstance(value, list) else value):
+                mismatches.append(f"{key} {given!r} vs the W-2s' {value!r}")
+        box2 = sum(w.box2 for w in w2s)
+        if out.get("federal_withholding") in (None, 0):
+            out["federal_withholding"] = box2
+        elif out["federal_withholding"] < box2:
+            mismatches.append(f"federal_withholding {out['federal_withholding']} is below the W-2s' box 2 total {box2}")
+        tt = sum(w.coded("TT") for w in w2s)
+        if tt and out.get("qualified_overtime_premium") in (None, 0):
+            out["qualified_overtime_premium"] = tt
+        if mismatches:
+            raise ValueError(
+                "the W-2 facts and the aggregates disagree: " + "; ".join(mismatches) + " — pass the W-2s alone "
+                "(the aggregates derive from them) or fix the figure that was typed from the wrong box")
+        return out
 
     @model_validator(mode="after")
     def _check_internal_consistency(self) -> "IncomeSnapshot":
@@ -553,8 +645,10 @@ class IncomeSnapshot(BaseModel):
                     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
                     "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
                     "qualified_tips", "qualified_overtime_premium", "car_loan_interest", "charitable_cash_nonitemizer",
+                    "dependent_care_benefits",
                 )
             },
+            w2s=[*self.w2s, *s.w2s],
             **_joint_retirement(self, s),
             traditional_ira_excess=_capped_excess(self, "traditional") + _capped_excess(s, "traditional"),
             roth_ira_excess=_capped_excess(self, "roth") + _capped_excess(s, "roth"),
@@ -4117,6 +4211,7 @@ def _bottom_line(
                 agi=max(0, agi),
                 filing_status=status,
                 year=year,
+                employer_benefits=income.dependent_care_benefits,   # JT4a: W-2 box 10
                 knowledge_dir=knowledge_dir,
             )
             if dc.credit:
@@ -5562,10 +5657,12 @@ def estimate_refund(
             "qualifying-person count supplied. Not verified here: that the care let you (and your "
             "spouse) work, the qualifying-person tests, and each provider's name/address/TIN — "
             "Form 2441 Part I requires the provider TIN or the credit can be denied. "
-            "Employer-provided dependent care benefits (W-2 box 10) REDUCE the credit and are NOT "
-            "tracked in this snapshot — if box 10 is nonzero, recompute with the calc op "
-            "dependent_care_credit (employer_benefits). The deemed $250/$500-per-month income rule "
-            "for a full-time-student or disabled spouse is not applied."
+            + (f"Employer-provided dependent care benefits (W-2 box 10, ${income.combined_with_spouse().dependent_care_benefits:,}) "
+               f"reduce the expense limit (Form 2441 Part III). "
+               if income.combined_with_spouse().dependent_care_benefits else
+               "Employer-provided dependent care benefits (W-2 box 10) REDUCE the credit — none were given; pass "
+               "dependent_care_benefits (or the W-2s) if box 10 is nonzero. ")
+            + "The deemed $250/$500-per-month income rule for a full-time-student or disabled spouse is not applied."
         )
     if "child and dependent care credit (2021" in labels:
         assumptions.append(
@@ -5836,6 +5933,28 @@ def estimate_refund(
             + ("The full-year-resident figure in the range likely UNDERSTATES your refund (the dual-status point "
                "cannot claim the credit)." if dual else "This bottom line likely UNDERSTATES your refund.")
         )
+    # JT4a: what the W-2s say that the snapshot cannot price — each person's IRC 402(g) total, and code W.
+    limits = load_knowledge("federal", year, base_dir=knowledge_dir).contribution_limits
+    per_person = [("you", income)] + ([("your spouse", income.spouse)] if income.spouse is not None else [])
+    for who, snap in per_person:
+        if not snap.w2s:
+            continue
+        deferred = sum(w.coded(*_W2_402G_CODES) for w in snap.w2s)
+        limit = getattr(getattr(limits, "elective_deferral_402g", None), "limit", None) if limits else None
+        if limit is not None and deferred > int(limit):
+            assumptions.append(
+                f"EXCESS DEFERRAL: {who} deferred ${deferred:,} across the W-2s' box 12 codes "
+                f"{', '.join(_W2_402G_CODES)} — over the {year} IRC 402(g) limit of ${int(limit):,} before any "
+                f"catch-up. The limit is per PERSON across every employer; the excess is income for {year} and must "
+                f"be distributed by April 15 of the next year (calc op elective_deferral_room names the room and the "
+                f"catch-ups). Not priced here.")
+        hsa_w = sum(w.coded("W") for w in snap.w2s)
+        if hsa_w and snap.pre_agi_adjustments:
+            assumptions.append(
+                f"Check the HSA figure: {who} has W-2 box 12 code W (${hsa_w:,}) and pre_agi_adjustments were "
+                f"given — code W is employer money AND cafeteria-plan deferrals, already out of box 1, so it is "
+                f"NEVER also deducted (Form 8889: it goes on the employer-contributions line, which reduces the "
+                f"room). Only direct contributions reach Schedule 1 (calc op hsa_deduction).")
     # JT2a: the 2026 overall limitation on itemized deductions (IRC 68), disclosed at the Schedule A screen.
     limitation = getattr(pack_for_gaps.tax, "itemized_limitation", None)
     if isinstance(limitation, dict) and income.itemized_deductions:

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,536 tests** — offline 6,119 + live-.gov 417; derived
+Done and on `main` (**6,542 tests** — offline 6,125 + live-.gov 417; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2271,15 +2271,17 @@ not wait for any of this.
     - deadlines, payment_options and mailing_addresses leave blocks_deliberately_absent; only filing_thresholds remains (JT6).
   - **Tests** (test_file_and_pay `test_jt2b_*`): a 2026 balance due in California resolves Louisville and 2027-04-15 / 2027-06-15; Texas resolves Charlotte 1214; a refund and a 1040-NR get the "not published yet" note and the 2030-04-15 refund window; a filing-grade pack with an unstated address is refused.
   - **External:** filing_thresholds and the no-payment / 1040-NR addresses wait for the 2026 i1040gi, i1040nr and Pub 501 (JT6).
-- [ ] **JT4a — The 2026 W-2 and structured W-2 facts** (M; deps JF3, JF2) [TY26-24 + DEF-17]
-  - **Why.** The 2026 W-2 splits box 14 into 14a/14b and adds box 12 codes TA / TP / TT (iw2w3 2026). The DocSpec has 12a–12d as raw codes and no box 14 (extract.py:81-110).
-  - **Build.**
-    - Add 14a/14b, a box-12 code table, and revision aliases.
-    - Routing: TP → Schedule 1-A Part II, TT → Part III, W → 8889 line 9, D/E/G/AA/BB → 402(g).
-    - `IncomeSnapshot.w2s: list[W2Facts]` (boxes 1–7, 10, 12), with a validator that derives or checks the aggregates.
-    - Box 10 feeds the dependent-care employer benefits (estimate.py:2045-2047 admits they are untracked).
-    - A box-12-W double-count guard, and a 402(g) excess assumption.
-  - **Acceptance:** a W2Facts mismatch raises; derived aggregates equal hand-fed ones; box 10 reduces the 2441 expense limit (closed-year test).
+- [x] **JT4a — The 2026 W-2 and structured W-2 facts — DONE 2026-09-27** (M; deps JF3, JF2) [TY26-24 + DEF-17]
+  - *As built (read 2026-09-27):*
+    - **Source:** the FINAL Instructions for Forms W-2 and W-3 (2026) (Jan 29, 2026; irs-prior/iw2w3--2026.pdf). What's New: "Box 14 has been split into box 14a and box 14b", plus new box 12 codes TA (IRC 128 Trump account employer contributions), TP (cash tips) and TT (qualified overtime, "only the "half" portion").
+    - **Knowledge:** knowledge/forms/w2_box12_codes.yaml has all 33 codes, titled from the instructions' index, verbatim. `since` is 2026 for TA/TP/TT, and each code has a route. The IRC 402(g) group is D, E, F, S (402(g)(3)(A)-(D)) plus the designated Roth AA/BB (402A(c)(1): "any elective deferral"). 457(b) (G, EE) is separate. The box 14 and 14b rules are quoted. Loader: taxfill_core/w2_codes.py.
+    - **Extract:** the W-2 DocSpec gains 14a (alias "14", the pre-2026 box) and 14b. Validator V22 flags a box 12 entry that is unreadable or not a code for the tax year (TT on a 2025 W-2). V23 flags box 14b before 2026. V24 flags 14b without TP, TP without 14b, and a "000" occupation. V25 gives each routed code's destination as an info finding.
+    - **Estimator:** IncomeSnapshot.w2s (W2Facts: boxes 1-7, 10, 12, 14b) feeds a before-validator. It DERIVES wages, ss_wages (3 + 7), medicare_wages, the per-employer box 4 / box 6 lists, dependent_care_benefits (box 10) and qualified_overtime_premium (code TT). An aggregate given as well must agree, or the snapshot is refused. federal_withholding may exceed the box 2 total (estimated payments) but not fall below it.
+      - Box 10 reaches dependent_care_credit's employer_benefits; the old "NOT tracked" disclosure now names the amount or asks for it.
+      - The assumptions flag a per-person 402(g) excess across employers (the year's contribution_limits figure) and code W next to pre_agi_adjustments (the double-count trap).
+      - The joint view concatenates w2s and sums the benefits, and the field-coverage classes include both.
+    - **Not derived:** qualified_tips from code TP. TP is all cash tips, qualified only in a listed occupation (box 14b; "000" marks a nonqualifying one), so the caller confirms it. V25 names the route.
+  - **Tests** (test_w2_2026 `test_jt4a_*`): the code table; derived = hand-fed aggregates and the same estimate; each mismatch raises; box 10 reduces the 2025 Form 2441 limit to the op's figure; TT and the joint view; the 402(g) and code-W disclosures; the W-2 reading's V22-V25 and the box 14 alias.
 - [ ] **JT4b — 1099-B boxes** (S; deps J0) [TY26-26]
   - Add 1f, 2-ordinary, 3, 6, 7 and 12 (extract.py:268-285). Box 12 (basis reported to IRS) decides Form 8949 box A or B, or direct entry on Schedule D.
   - **Acceptance:** a box-12 reading carries the routing note.

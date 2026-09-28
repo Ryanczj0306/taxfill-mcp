@@ -113,6 +113,8 @@ _SPECS: list[DocSpec] = [
             _b("13_statutory", "Box 13 — Statutory employee", "checkbox"),
             _b("13_retirement", "Box 13 — Retirement plan", "checkbox"),
             _b("13_sick_pay", "Box 13 — Third-party sick pay", "checkbox"),
+            _b("14a", "Box 14a (before 2026: box 14) — Other", "text", aliases=("14",)),
+            _b("14b", "Box 14b (2026 onward) — Treasury Tipped Occupation Code(s)", "text"),
             _b("15_state", "Box 15 — State", "state"),
             _b("16", "Box 16 — State wages, tips, etc.", "money"),
             _b("17", "Box 17 — State income tax", "money"),
@@ -1642,7 +1644,75 @@ def _validate_1098vli(fields: dict[str, ExtractedField], tax_year: int | None):
     return found, None
 
 
-_VALIDATORS = {"1099-R": _validate_1099r, "5498": _validate_5498,
+def _validate_w2(fields: dict[str, ExtractedField], tax_year: int | None):
+    """Form W-2 checks V22-V25 (JT4a): each box 12 code against the tax year's code table, box 14b's pairing
+    with code TP, and where each coded amount goes on the return (info findings)."""
+    from taxfill_core import w2_codes  # noqa: PLC0415
+
+    found: list[Finding] = []
+    cite = "Instructions for Forms W-2 and W-3 (2026), Box 12—Codes and Box 14b"
+    allowed = w2_codes.codes_for(tax_year)
+    seen: dict[str, str | None] = {}
+
+    def add(severity, rule_id, boxes, message):
+        found.append(Finding(severity=severity, rule_id=rule_id, boxes=boxes, message=message, citation=cite))
+
+    for key in ("12a", "12b", "12c", "12d"):
+        f = fields.get(key)
+        if f is None or f.value in (None, ""):
+            continue
+        parsed = w2_codes.parse_box12(f.value)
+        if parsed is None:
+            add("error", "V22", [key], f"box {key} reads {f.value!r} — a box 12 entry is a code and an amount "
+                "(\"D 5300.00\"): misread OR employer error, request a CORRECTED Form W-2 (W-2c).")
+            continue
+        code, amount = parsed
+        entry = w2_codes.code_entry(code)
+        if entry is None or code not in allowed:
+            when = f" (it starts with the {entry['since']} W-2)" if entry is not None else ""
+            add("error", "V22", [key], f"box {key} code {code!r} is not a {tax_year or ''} box 12 code{when} — "
+                "misread OR employer error, request a CORRECTED Form W-2 (W-2c).")
+            continue
+        seen[code] = amount
+        route = entry["route"]
+        if route != "info":
+            add("info", "V25", [key], f"box {key} code {code} — {entry['title']}: {_W2_ROUTE_NOTES[route]}")
+    box14b = fields.get("14b")
+    has_14b = box14b is not None and box14b.value not in (None, "")
+    if has_14b and tax_year is not None and tax_year < 2026:
+        add("warning", "V23", ["14b"], f"box 14b exists from the 2026 W-2; a {tax_year} W-2 has one box 14 — read it "
+            "as box 14a.")
+    if has_14b and "TP" not in seen:
+        add("warning", "V24", ["14b"], "box 14b carries Treasury Tipped Occupation Code(s) but no box 12 code TP: "
+            "\"Use this box to report the Treasury Tipped Occupation Code(s) if cash tips are reported in box 12 with "
+            "code TP\" — misread OR employer error.")
+    if "TP" in seen and not has_14b and (tax_year or 2026) >= 2026:
+        add("warning", "V24", ["12", "14b"], "code TP reports cash tips but box 14b is blank: the qualified-tips "
+            "deduction needs the Treasury Tipped Occupation Code — request a CORRECTED Form W-2 (W-2c).")
+    if has_14b and "000" in str(box14b.value):
+        add("warning", "V24", ["14b"], "box 14b includes \"000\": some tips were received in a nonqualifying "
+            "occupation, so not all of code TP is qualified tips — only the tips from the listed occupation count.")
+    return found, None
+
+
+_W2_ROUTE_NOTES = {
+    "elective_deferral_402g": "counts toward the ONE per-person IRC 402(g) limit across every employer "
+                              "(calc op elective_deferral_room).",
+    "deferral_457b": "a 457(b) deferral, under its own IRC 457(e)(15) limit (not the 402(g) one).",
+    "hsa_employer": "Form 8889 employer contributions — already out of box 1, NEVER a second deduction "
+                    "(calc op hsa_deduction, employer_contributions).",
+    "archer_msa_employer": "Form 8853 employer contributions to an Archer MSA.",
+    "schedule_1a_tips": "the cash tips for Schedule 1-A Part II (qualified tips, with the box 14b occupation code).",
+    "schedule_1a_overtime": "the FLSA premium half for Schedule 1-A Part III (qualified overtime compensation).",
+    "trump_account_employer": "an IRC 128 employer contribution to a Trump account — excluded from income.",
+    "uncollected_tax": "uncollected social security / Medicare tax — reported on Schedule 2.",
+    "golden_parachute_excise": "the 20% excise on excess golden parachute payments — Schedule 2.",
+    "nontaxable_combat_pay": "nontaxable combat pay — may be elected into earned income for the EIC.",
+    "adoption_benefits": "employer adoption benefits — Form 8839 Part III.",
+}
+
+
+_VALIDATORS = {"W-2": _validate_w2, "1099-R": _validate_1099r, "5498": _validate_5498,
                "IRA custodian statement": _validate_custodian_statement, "1098-VLI": _validate_1098vli}
 
 

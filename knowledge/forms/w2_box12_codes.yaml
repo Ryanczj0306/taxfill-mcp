@@ -1,0 +1,62 @@
+# Form W-2 box 12 codes and the 2026 box 14 split — the Instructions for Forms W-2 and W-3 (2026)
+# (Jan 29, 2026; irs.gov/pub/irs-prior/iw2w3--2026.pdf), read 2026-09-27 (Phase J JT4a). Titles are the index
+# entries "Codes for box 12, Form W-2", verbatim. `since` is the first tax year whose W-2 carries the code
+# (TA, TP and TT are new for 2026, P.L. 119-21; every other code predates the 2019 base year). `route` is where
+# the amount goes on the individual's return:
+#   elective_deferral_402g — IRC 402(g)(3)'s "elective deferrals": (A) a 401(k) arrangement (D), (B) a salary
+#     reduction SEP (F), (C) a 403(b) salary reduction agreement (E), (D) a SIMPLE (S), and the designated Roth
+#     contributions IRC 402A(c)(1) makes "any elective deferral" (AA, BB) — one per-person limit;
+#   deferral_457b — a 457(b) plan (G, EE), with its own IRC 457(e)(15) limit;
+#   hsa_employer — Form 8889 employer contributions (never a second deduction); archer_msa_employer — Form 8853;
+#   schedule_1a_tips / schedule_1a_overtime — Schedule 1-A Parts II and III (2025-2028);
+#   trump_account_employer — IRC 128 employer contributions (excluded); uncollected_tax — Schedule 2;
+#   golden_parachute_excise — Schedule 2; nontaxable_combat_pay — the EIC election; adoption_benefits — Form
+#   8839; info — shown for information (already in or excluded from box 1).
+citation:
+  source: "Instructions for Forms W-2 and W-3 (2026), What's New, Box 12—Codes, Box 14b and the index 'Codes for box 12, Form W-2'"
+  url: "https://www.irs.gov/pub/irs-prior/iw2w3--2026.pdf"
+box14:
+  split_from: 2026
+  split: >-
+    "Box 14 has been split into box 14a and box 14b. Information that was reported in box 14—Other will now be
+    reported in box 14a—Other. Box 14b was created to report the Treasury Tipped Occupation Code(s)."
+  box14b: >-
+    "Use this box to report the Treasury Tipped Occupation Code(s) if cash tips are reported in box 12 with code
+    TP. Enter up to two code(s) based on the occupation(s) that the tips were received in. ... If any tips were
+    received in a nonqualifying occupation, then "000" must be input as one of the occupation code(s)."
+  overtime: >-
+    Code TT: "only the "half" portion of "time-and-a-half" compensation would be reported using code TT."
+codes:
+  A: { title: "Uncollected social security or RRTA tax on tips", since: 2019, route: uncollected_tax }
+  B: { title: "Uncollected Medicare tax on tips", since: 2019, route: uncollected_tax }
+  C: { title: "Taxable cost of group-term life insurance over $50,000", since: 2019, route: info }
+  D: { title: "Elective deferrals under section 401(k) cash or deferred arrangement (plan)", since: 2019, route: elective_deferral_402g }
+  E: { title: "Elective deferrals under a section 403(b) salary reduction agreement", since: 2019, route: elective_deferral_402g }
+  F: { title: "Elective deferrals under a section 408(k)(6) salary reduction SEP (this includes elective deferrals made to a Roth SEP IRA)", since: 2019, route: elective_deferral_402g }
+  G: { title: "Elective deferrals and employer contributions (including nonelective deferrals) to any governmental or nongovernmental section 457(b) deferred compensation plan", since: 2019, route: deferral_457b }
+  H: { title: "Elective deferrals under section 501(c) (18)(D) tax-exempt organization plan", since: 2019, route: info }
+  J: { title: "Nontaxable sick pay", since: 2019, route: info }
+  K: { title: "20% excise tax on excess golden parachute payments", since: 2019, route: golden_parachute_excise }
+  L: { title: "Substantiated employee business expense reimbursements", since: 2019, route: info }
+  M: { title: "Uncollected social security or RRTA tax on taxable cost of group-term life insurance over $50,000 (for former employees)", since: 2019, route: uncollected_tax }
+  N: { title: "Uncollected Medicare tax on taxable cost of group-term life insurance over $50,000 (for former employees)", since: 2019, route: uncollected_tax }
+  P: { title: "Excludable moving expense reimbursements paid directly to a member of the U.S. Armed Forces or intelligence community", since: 2019, route: info }
+  Q: { title: "Nontaxable combat pay", since: 2019, route: nontaxable_combat_pay }
+  R: { title: "Employer contributions to an Archer MSA", since: 2019, route: archer_msa_employer }
+  S: { title: "Employee salary reduction contributions under a section 408(p) SIMPLE plan (this includes salary reduction contributions made to a Roth SIMPLE IRA)", since: 2019, route: elective_deferral_402g }
+  T: { title: "Adoption benefits", since: 2019, route: adoption_benefits }
+  V: { title: "Income from the exercise of nonstatutory stock option(s)", since: 2019, route: info }
+  W: { title: "Employer contributions to a health savings account (HSA)", since: 2019, route: hsa_employer }
+  Y: { title: "Deferrals under a section 409A nonqualified deferred compensation plan", since: 2019, route: info }
+  Z: { title: "Income under section 409A on a nonqualified deferred compensation plan", since: 2019, route: info }
+  AA: { title: "Designated Roth contributions under a section 401(k) plan", since: 2019, route: elective_deferral_402g }
+  BB: { title: "Designated Roth contributions under a section 403(b) plan", since: 2019, route: elective_deferral_402g }
+  DD: { title: "Cost of employer-sponsored health coverage", since: 2019, route: info }
+  EE: { title: "Designated Roth contributions under a governmental section 457(b) plan", since: 2019, route: deferral_457b }
+  FF: { title: "Permitted benefits under a qualified small employer health reimbursement arrangement", since: 2019, route: info }
+  GG: { title: "Income from qualified equity grants under section 83(i)", since: 2019, route: info }
+  HH: { title: "Aggregate deferrals under section 83(i) elections as of the close of the calendar year", since: 2019, route: info }
+  II: { title: "Medicaid waiver payments", since: 2019, route: info }
+  TA: { title: "Employer contributions under a section 128 Trump account contribution program paid to a Trump account of an employee or a dependent of an employee", since: 2026, route: trump_account_employer }
+  TP: { title: "Total amount of cash tips reported to the employer", since: 2026, route: schedule_1a_tips }
+  TT: { title: "Total amount of qualified overtime compensation", since: 2026, route: schedule_1a_overtime }

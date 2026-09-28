@@ -3883,6 +3883,7 @@ _SPOUSE_SUMMED = frozenset({
     "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
     "qualified_tips", "qualified_overtime_premium", "car_loan_interest",   # JF7
     "charitable_cash_nonitemizer",   # JF9: capped per RETURN after the sum
+    "dependent_care_benefits",       # JT4a: W-2 box 10, both spouses' (Form 2441 Part III)
 })
 # JF7: each person's Schedule 1-A senior flag — the joint view takes the taxpayer's as its own and the
 # spouse snapshot's own flag as senior_spouse (never summed).
@@ -3895,7 +3896,7 @@ _SPOUSE_NEVER_MERGED = frozenset({"ira_pool", "traditional_ira_dec31_value", "ro
 # JR3c: each person's IRA excess, capped at that person's Dec 31 value, then summed.
 _SPOUSE_CAPPED_SUMMED = frozenset({"traditional_ira_excess", "roth_ira_excess"})
 _SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses", "medicare_tax_withheld",
-                                  "retirement_distributions"})   # JR3a (test_jr3a_the_joint_view_keeps_each_spouses_1099rs)
+                                  "retirement_distributions", "w2s"})   # JT4a: each person's W-2s   # JR3a (test_jr3a_the_joint_view_keeps_each_spouses_1099rs)
 _SPOUSE_BOX_SUMMED = frozenset({"medicare_wages", "ss_wages"})  # summed, box 1 standing in for a missing one (JF3)
 _SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions"})  # None unless either spouse itemizes
 _HOUSEHOLD_LEVEL = frozenset({"dependent_care_persons"})  # the same persons: the MAX, never doubled

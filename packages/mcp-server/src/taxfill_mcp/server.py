@@ -1015,6 +1015,10 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       car_loan_interest; the senior deduction is derived from the profile's date of birth and SSN
       (senior_taxpayer / senior_spouse override it). MFS forfeits tips, overtime and the senior deduction,
       not car-loan interest; a year whose pack lacks the block reports it in missing_blocks
+    - w2s (JT4a): each Form W-2 as read {employer?, box1..box7, box10, box12: [{code, amount}], box14b?} — the
+      aggregates (wages, ss_wages, medicare_wages, the box 4 / box 6 lists, dependent_care_benefits from box 10,
+      qualified_overtime_premium from code TT) derive from them, and an aggregate also given must agree; the
+      assumptions flag a 402(g) excess across employers and a code W figure deducted again
     - W-2 boxes beyond box 1 (JF3): medicare_wages (box 5 total — what Form 8959 prices; box 1 stands in
       when omitted), ss_wages (boxes 3 + 7 total — what Schedule SE subtracts from the wage base),
       medicare_tax_withheld [box 6 per employer — the excess over 1.45% of box 5 is credited; needs
