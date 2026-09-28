@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,566 tests** — offline 6,149 + live-.gov 417; derived
+Done and on `main` (**6,656 tests** — offline 6,227 + live-.gov 429; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2306,7 +2306,13 @@ not wait for any of this.
   - **Found for JT6:** a negative money entry renders as "-60000"; Pub 519's resident treaty exemption asks for the amount "in parentheses" on Schedule 1's other-income line. The packs' convention (a negative value) holds for the math. Whether the printed field should read "(60,000)" needs the final 2026 face and instructions.
   - All four flip to final mode at JT6.
 - [ ] **JT5a–g — Wave B: the rest of the federal set for 2026** (JT5a **latest start 2026-11-16**; deps JT3a; each sub-tranche commits per pack) [TY26-21]
-  - **JT5a** (M): copies f843, fw7, f8316 (current finals byte-identical to their 2025 pins) and fincen114; near-ports sched_se, f4868, f8960.
+  - **JT5a** (M): copies f843, fw7, f8316 (current finals byte-identical to their 2025 pins) and fincen114; near-ports sched_se, f4868, f8960. **DONE 2026-09-27:**
+    - **Copies:** the live irs-pdf f843 / fw7 / f8316, re-downloaded 2026-09-27, hash to their 2025 pins, so the 2026 packs keep URL and sha and change only tax_year. They are finals in a planning year, so rehearsal-only. FinCEN 114's 2026 handfill.yaml is the year-invariant worksheet.
+    - **Near-ports onto the drafts:**
+      - Schedule SE (Created 4/27/26): the same 27 widgets but two that lost their ReadOrder wrapper; new printed figures only (the $184,500 wage base, the optional-method amounts). Its Schedule 2 line 4 and Schedule 1 line 15 legs were re-read and stand.
+      - Form 4868 (Created 5/13/26): 18 widgets — the NEW line 10 disaster checkbox (c1_3) is mapped as `10.disaster`.
+      - Form 8960 (Created 6/1/26): an identical topology, but its Schedule 2 leg MOVES to the renumbered 2026 line 6 (2025: 12).
+    - The port rule's calc.py grep found no Schedule SE / 8960 / 4868 literal that moved (no line renumbered). test_discovery 130 federal. Tests: test_formpacks_federal `test_jt5a_*` plus the golden round trips and readonly sweeps (the drafts are cached).
   - **JT5b** (M): sched_8812, f2555, f8863.
   - **JT5c** (M–L): f1040nr (new 12b, 13a, 24a–c, 32b), sched_a_nr, f8843. The 2026 sched_1a pack then gains its f1040nr legs (`1 == f1040nr.11b`, `44 == f1040nr.13a` — re-read on the 1040-NR draft), and the 2026 sched_3 pack its `8 == f1040nr.20` / `15 == f1040nr.31`.
   - **JT5d** (M–L): sched_a, sched_c, sched_e.

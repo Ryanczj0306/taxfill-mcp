@@ -1723,3 +1723,40 @@ def test_jt3d_the_identical_topology_drafts_keep_the_2025_map(form_key: str):
     assert [(f.line, f.field, f.type, f.on_state, f.group, f.maxlen) for f in old.fields] == [
         (f.line, f.field, f.type, f.on_state, f.group, f.maxlen) for f in new.fields]
     assert (old.relations, old.cross_form) == (new.relations, new.cross_form)
+
+
+# ── Phase J JT5a: Wave B's first 2026 packs ──
+
+def test_jt5a_the_three_copies_keep_their_2025_pins():
+    from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
+
+    for form in ("f843", "fw7", "f8316"):
+        p25 = load_pack(REPO_ROOT / f"formpacks/federal/2025/{form}/pack.yaml")
+        p26 = load_pack(REPO_ROOT / f"formpacks/federal/2026/{form}/pack.yaml")
+        assert (p26.source_url, p26.pdf_sha256, p26.source_status) == (p25.source_url, p25.pdf_sha256, "final"), form
+        assert p26.tax_year == 2026 and rehearsal_only(p26), form
+        assert [f.field for f in p26.fields] == [f.field for f in p25.fields], form
+
+
+def test_jt5a_the_near_ports_read_their_drafts():
+    se = load_pack(REPO_ROOT / "formpacks/federal/2026/sched_se/pack.yaml")
+    ext = load_pack(REPO_ROOT / "formpacks/federal/2026/f4868/pack.yaml")
+    niit = load_pack(REPO_ROOT / "formpacks/federal/2026/f8960/pack.yaml")
+    assert {(p.form, p.source_status, p.draft_created) for p in (se, ext, niit)} == {
+        ("Schedule SE (Form 1040)", "draft", "4/27/26"), ("4868", "draft", "5/13/26"), ("8960", "draft", "6/1/26")}
+    fields = {f.line: f.field for f in se.fields}
+    assert (fields["5a"], fields["8a"]) == ("Page1[0].f1_10[0]", "Page1[0].f1_14[0]")      # the ReadOrder wrappers went
+    disaster = next(f for f in ext.fields if f.line == "10.disaster")
+    assert (disaster.field, disaster.type, disaster.on_state) == ("Page1[0].c1_3[0]", "checkbox", "/1")
+    # The 2026 Schedule 2 is renumbered: the NIIT is Section A line 6.
+    assert "17 == sched_2.6" in niit.cross_form
+    sched_2 = load_pack(REPO_ROOT / "formpacks/federal/2026/sched_2/pack.yaml")
+    assert "6" in {f.line for f in sched_2.fields}   # 2026 line 12 is now the section 965 installment
+    assert set(se.cross_form) == {"12 == sched_2.4", "13 == sched_1.15"}
+
+
+def test_jt5a_the_2026_fbar_worksheet_loads():
+    from taxfill_core.handfill import load_hand_fill_pack_for  # noqa: PLC0415
+
+    pack = load_hand_fill_pack_for("fincen114", 2026, "federal")
+    assert pack.tax_year == 2026

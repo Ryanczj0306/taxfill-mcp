@@ -890,7 +890,7 @@ def additional_medicare_tax(
 
 
 # ---------------------------------------------------------------------------
-# Net Investment Income Tax (Form 8960 -> Schedule 2 line 12)
+# Net Investment Income Tax (Form 8960 -> the Schedule 2 NIIT line, form_lines sched2.niit)
 # ---------------------------------------------------------------------------
 
 
