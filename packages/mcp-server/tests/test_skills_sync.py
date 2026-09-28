@@ -1,6 +1,6 @@
 """Guard: the agent-facing surfaces must not drift from the runtime surface.
 
-The 22-tool count is gated in four places (server, EXPECTED_TOOLS, bundle manifest,
+The 23-tool count is gated in four places (server, EXPECTED_TOOLS, bundle manifest,
 CI) — but until 2026-08-07 NOTHING guarded `skills/`, which is the text the model
 actually reads before it decides which tool to call. The result was a silent,
 45-commit regression: `calc(state_tax)` grew from 8 flat-rate states to all 42
@@ -94,7 +94,7 @@ def test_no_skill_file_invents_a_tool(name: str) -> None:
 
 
 def test_every_calc_op_is_named_in_the_full_skill() -> None:
-    """`calc` is one MCP tool wrapping 30 ops — the ops are only discoverable in prose."""
+    """`calc` is one MCP tool wrapping every op (38 today, pinned in _runtime_calc_ops) — the ops are only discoverable in prose."""
     text = FULL_SKILL.read_text()
     missing = sorted(op for op in _runtime_calc_ops() if op not in text)
     assert not missing, f"skills/claude/SKILL.md never mentions these calc ops: {missing}"

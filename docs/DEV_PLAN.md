@@ -301,3 +301,29 @@ The README is a deliverable with acceptance criteria, not an afterthought:
 ## 17. Naming & launch
 
 Repo: `taxfill-mcp` (alts: `formpilot`, `openreturn`). Tagline: *“The execution layer for AI tax prep — agents think, taxfill fills, verifies, and gets it mailed.”* Launch demo: a hypothetical W-2 filer (demo numbers), from a W-2 photo to a verified, cited 1040 draft, with `state_scope` explaining which state returns are required.
+
+## 18. Deviations as built
+
+Where the shipped code differs from the plan above, the code is right and this list says so (Phase J JD1,
+2026-09-28). The live registries — not this document — are the authority for what exists:
+`KNOWN_FORM_KEYS` (test_formpacks_federal.py) for form keys, `list_document_kinds` for DocSpecs, the `calc`
+dispatch chain in the MCP server for ops (38 today), `list_forms` / the formpack tree for packs, and the
+`sources.yaml` topics for `get_sources`. Tests pin README, the skills and CONVENTIONS to them.
+
+- **Two labels, not one (§2, §11).** `estimate_refund` labels a closed year ESTIMATE and a planning year —
+  a knowledge pack marked `provisional: planning_only`, today TY2026 — PROJECTION ("a future year whose forms do
+  not exist"). Form packs for a planning year fill only in rehearsal mode, stamped as such.
+- **Freshness runs weekly, not nightly (§7, §9, §14, §16).** `.github/workflows/freshness.yml` runs every
+  Monday (`cron: "13 9 * * 1"`) plus on demand; `finals.yml` watches for a planning year's finals in October
+  and November. Known reds sit in `scripts/freshness_quarantine.yaml` with an expiry.
+- **The DocSpec set is `list_document_kinds` (§8).** It carries 28 kinds — the W-2, the 1099 family, the
+  1098 family, the 1095s, 1042-S, SSA-1099, 3921/3922, 5498/5498-SA, W-2G, the three Schedule K-1s and the IRA
+  custodian statement. The I-94, the I-20 and the IRS wage-and-income transcript were never built; the
+  paystub arrives with JP3a. Presence days come from the user's own day counts (`residency`), not an I-94
+  parse.
+- **No perceptual-hash render tests (§14).** Render checks are the golden round trips (fill, re-read every
+  value, verify), the clipping scan and the vision audit an agent runs on `render_form` output.
+- **The routing checksum is not a `calc` op (§8).** The ABA 3-7-1 check (`is_valid_routing_number`) runs
+  inside the profile schema, so a bad routing number is refused when the profile is validated (intake,
+  `workspace_save`), and the core library exports it. `calc("routing_checksum")` is an unknown op; the op list
+  is the 38 in the dispatch chain.

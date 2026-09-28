@@ -6,10 +6,10 @@
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 6,914 passing](https://img.shields.io/badge/tests-6%2C914%20passing-brightgreen)
+![Tests: 6,920 passing](https://img.shields.io/badge/tests-6%2C920%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set, plus the first TY2026 packs mapped from the IRS drafts, rehearsal-only until the finals post), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 6,914 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 6,920 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -175,6 +175,7 @@ All 23 tools are available today (from source); the server registers exactly 23 
 | Tool | Purpose |
 |---|---|
 | `intake_checklist` | Next interview questions + required documents |
+| `list_document_kinds` | The supported tax-document types and their official box layouts — read this before `extract_document` |
 | `extract_document` | Structure + validate your reading of a W-2/1099/1098/1042-S/etc. into provenance-tagged fields |
 | `residency` | Federal NRA/RA/dual-status via the Substantial Presence Test, work shown |
 | `state_scope` | Which states to file, in what role, with which forms and candidate benefits |
@@ -183,11 +184,15 @@ All 23 tools are available today (from source); the server registers exactly 23 
 | `fill_form` | Deterministic fill; comb/format handling; rejects unknown lines |
 | `verify_form` / `verify_filing` | Assertion diffs, relation math, clipping scan, checkbox audit, cross-form consistency |
 | `render_form` | Page PNGs returned as MCP image content for agent vision review |
-| `calc` | Tax tables, QDCGT preferential rates, SE tax, Additional Medicare Tax (8959), NIIT (8960), taxable Social Security, excess-SS credit, student-loan interest, education credits, PTC (8962), presence-day counting, rounding, routing-number checksum |
-| `estimate_refund` | Early refund/owed range from a partial profile, with composition and assumption list — always labeled ESTIMATE |
+| `calc` | Deterministic tax math — 38 ops (`calc(op, args)`). Tax computation: `tax`, `tax_with_preferential_rates`, `standard_deduction`, `se_tax`, `additional_medicare_tax`, `niit`, `taxable_social_security`, `excess_ss`, `employee_fica`, `capital_loss_limitation`, `state_tax`; Credits and deductions: `child_tax_credit`, `eitc`, `dependent_care_credit`, `education_credits`, `ptc_annual`, `ptc_monthly`, `foreign_tax_credit_election`, `student_loan_interest_deduction`, `schedule_1a_deductions`, `charitable_deduction`, `hsa_deduction`, `treaty_benefit`; Retirement and equity: `contribution_limits`, `elective_deferral_room`, `ira_contribution_eligibility`, `ira_pro_rata`, `ira_net_income_attributable`, `ira_recharacterization`, `roth_conversion`, `espp_disposition`; Planning and payments: `estimated_tax_safe_harbor`, `underpayment_penalty`, `withholding_projection`, `annualize_ytd`, `marginal_dollar_savings`, `magi_ladder`, `foreign_asset_reporting` |
+| `estimate_refund` | Early refund/owed range from a partial profile, with composition and assumption list — labeled ESTIMATE for a closed year and PROJECTION for a planning year (a provisional pack, today TY2026) |
+| `compare_scenarios` | Two or more what-if scenarios diffed against the first, with an exact per-slot ledger and a sequential input walk that telescopes to the headline delta |
 | `get_sources` | Ranked official .gov sources per topic (freshness protocol) |
 | `filing_summary` | Plain-language bottom line per jurisdiction before printing |
 | `file_and_pay` | Personalized pay/print/sign/assemble/mail checklist |
+| `hand_fill_worksheet` | A line→value worksheet for the print-only state forms (CT, HI, NM, SC) and FinCEN Form 114, which have no fillable AcroForm |
+| `workspace_save` / `workspace_load` | Persist and resume the intake profile in the local workspace (`taxfill-workspace/<year>/`) |
+| `workspace_record_position` / `workspace_reconcile` | Record each decided position with its authority, then generate RECONCILIATION.md and CHECKLIST.md |
 
 ### Calling the tools from a shell (non-MCP agents)
 
@@ -231,7 +236,7 @@ Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
 
 - [x] **M0 — Scaffold:** monorepo, pack & profile schemas, CI, license + disclaimer, CONTRIBUTING
 - [x] **M1 — Core engine:** formpack loader, filler, verifier, render, calc (data-driven tax tables, source-verified), residency (SPT + exempt years)
-- [x] **M2 — Federal packs:** **111 packs** — f8843 (2019–2025), f1040-NR + schedules (2022–2025), f1040 + schedules (2023–2025, incl. the OBBBA TY2025 set with the new Schedule 1-A) — field-map + relation audits clean. Per year: 2019:1, 2020:1, 2021:1, 2022:5, 2023:34, 2024:34, 2025:35 (Forms 8606, 8889 and 8949 joined all three recent years in the 2026-08-26 Phase-I1/I2/I3 tranches; Forms 8833, 1116 and 8938 in the 2026-08-27 Phase-I4 tranche, which also added FinCEN Form 114 as a hand-fill worksheet because the FBAR is e-filed to FinCEN rather than attached to the return). The 2026-08 backfill closed the old year holes — the **f1040-NR chain now ships for 2024**, and the common attachments (Schedule D/E/SE, 8812, 8962, 2441, 8863, 8959, 8960, plus 843, 8316, W-7, 1040-X, 1040-ES, 4868, 2555) ship for **2023, 2024 and 2025**
+- [x] **M2 — Federal packs:** **145 packs** — f8843 (2019–2026), f1040-NR + schedules (2022–2026), f1040 + schedules (2023–2026, incl. the OBBBA TY2025 set with the new Schedule 1-A and the TY2026 set mapped from the IRS early-release drafts — rehearsal-only until the finals post) — field-map + relation audits clean. Per year: 2019:1, 2020:1, 2021:1, 2022:5, 2023:34, 2024:34, 2025:35, 2026:34 (Forms 8606, 8889 and 8949 joined all three recent years in the 2026-08-26 Phase-I1/I2/I3 tranches; Forms 8833, 1116 and 8938 in the 2026-08-27 Phase-I4 tranche, which also added FinCEN Form 114 as a hand-fill worksheet because the FBAR is e-filed to FinCEN rather than attached to the return). The 2026-08 backfill closed the old year holes — the **f1040-NR chain now ships for 2024**, and the common attachments (Schedule D/E/SE, 8812, 8962, 2441, 8863, 8959, 8960, plus 843, 8316, W-7, 1040-X, 1040-ES, 4868, 2555) ship for **2023, 2024 and 2025**
 - [x] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge **2019–2026** (irs.gov-cited; 2026 ships `provisional: planning_only` — projection math only, not for filing), sources registry, filing summary, file & pay
 - [x] **M4 — MCP server:** stdio server, 23 tools, image content for renders, client quickstarts
 - [x] **M5 — State support:** resident return packs for all **42 income-tax jurisdictions** (41 states + DC) — 38 via fillable AcroForm (**61** state `pack.yaml` in total) plus **4 via print/hand-fill** (CT, HI, NM, SC). Per year: **TY2023 42** (the full resident sweep: CA 540/540NR + both Schedule CAs, NY IT-201/IT-203, and 34 more), **TY2024 14** (AR1000F, IL-1040, MO-1040, NC D-400, ND-1, NJ-1040, NY IT-201/IT-203, OH IT 1040, OR-40, PA-40, RI-1040, UT TC-40, VA 760), **TY2025 5** (AR1000F, NY IT-201/IT-203, OR-40, PA-40). Knowledge packs for all 50 states + DC with cited credits and typed `tax` blocks: **2023 42/42, 2024 42/42, 2025 42/42** (RI 2025 closed the cohort 2026-08-07). No-income-tax states; state scoping. **13 of the 42 jurisdictions now fill a post-2023 year** (AR, IL, MO, NC, ND, NJ, NY, OH, OR, PA, RI, UT, VA); for the other 29, 2024/2025 returns can be *computed* from the knowledge packs but not yet *filled*
@@ -246,7 +251,7 @@ Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
 Yes. You are preparing and filing your own return — the same thing you'd do with pen and paper, with an AI assistant and verification tooling helping. taxfill is not a paid preparer and never signs anything; you do.
 
 **What if I already filed?**
-v0.1 targets original returns (including late back-filing). Amended returns (Form 1040-X, Rev. 2-2024) now ship too.
+v0.1 targets original returns (including late back-filing). Amended returns ship too: Form 1040-X Rev. 2-2024 for TY2023–2024, Rev. 12-2025 for TY2025, and the Rev. 12-2026 draft for TY2026 (rehearsal-only until the final posts).
 
 **What if I get audited?**
 The agent records every position decision and its cited authority in a `RECONCILIATION.md` — a line-by-line audit trail of what was claimed and why, which is exactly what you want to have on hand. (The skill instructs the agent to maintain it as you go.)

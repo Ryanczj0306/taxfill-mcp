@@ -125,13 +125,13 @@ into permanent protection. **Every bug-fix PR must include:**
 
 1. An entry in `knowledge/pitfalls.yaml` (id, incident description with PII redacted,
    permanent countermeasure);
-2. A **regression test** covering it — CI will fail if a pitfall lacks a test
-   (the coverage gate lands with the eval harness, M6);
+2. A **regression test** covering it — CI fails if a pitfall lacks one:
+   `packages/core/tests/test_pitfall_coverage.py` requires every `knowledge/pitfalls.yaml` id to
+   appear in at least one test file (a deferral must be allowlisted there with its reason);
 3. Where applicable, an **intake-question fix** (if the bug traces back to a question
    users predictably answer wrong, fix the question's built-in disambiguation too).
 
-This is enforced via the PR template today, and via CI once the coverage gate
-lands — not on the honor system.
+This is enforced by the PR template and by that CI gate — not on the honor system.
 
 ## Development setup
 
@@ -140,8 +140,9 @@ The packages are not on PyPI yet, but local development works today:
 ```bash
 git clone https://github.com/Ryanczj0306/taxfill-mcp
 cd taxfill-mcp
-uv sync          # install dependencies
-uv run pytest    # run the test suite
+uv sync                                        # install dependencies
+uv run python -m pytest -m "not network"       # the offline suite CI runs on every push
+uv run python -m pytest -m network             # the live-.gov layer (the weekly freshness job)
 ```
 
 Repo layout, architecture, and milestones are documented in
@@ -150,12 +151,17 @@ it is the single source of truth for the design.
 
 ## Testing
 
-- Golden-file tests compare field dumps of filled forms against golden YAML.
-- Render snapshot tests catch visual regressions (clipping, missing checkboxes).
-- Pack schema validation runs in CI; a nightly drift job (planned — see
-  [docs/DEV_PLAN.md §7](docs/DEV_PLAN.md)) will re-fetch official sources and
-  flag checksum and mailing-address drift.
-- Every pitfall in `knowledge/pitfalls.yaml` must have a regression test.
+- Golden round trips fill every pack from synthetic values, re-read every field and run the
+  verifier (assertions, relations, the clipping scan, the checkbox audit). There are NO render
+  snapshot or perceptual-hash tests: visual review is the agent's `render_form` pass.
+- Pack schema validation and the repo-wide pack invariants run in CI on every push.
+- Freshness runs WEEKLY (`.github/workflows/freshness.yml`, Mondays, plus on demand): it
+  re-fetches the official sources, blanks and addresses, and a red opens a `freshness red`
+  issue; known reds wait in `scripts/freshness_quarantine.yaml` with an expiry. `finals.yml`
+  watches for a planning year's final forms in October and November.
+- Every pitfall in `knowledge/pitfalls.yaml` must have a regression test (the gate above).
+- After adding tests, run `uv run python scripts/sync_test_count.py --write` so README and the
+  ROADMAP carry the real count.
 
 ## PII rule (hard rule)
 

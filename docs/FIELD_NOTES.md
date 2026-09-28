@@ -260,6 +260,9 @@ year pack, budgeting needs ops that do not exist:
 
 | Gap | Shipped as |
 |---|---|
+| N-1 visa sub-status and per-period tax attributes | H1, `VisaPeriod.sub_status` and the derived per-period FICA hint; the segment-by-segment intake |
+| N-2 an unmarried partner / a multi-taxpayer household | H2, `household.other_taxpayers[]`; `filing_summary`'s `household_rollup` |
+| N-3 / N-5 the state footprint as dated segments; a worksheet for a first-time filer | H3, the segmented `state_footprint.lived_worked` question and `INTAKE_WORKSHEET.md` via `intake_checklist` |
 | N-4 forward-year support | H5, the provisional TY2026 pack; H4, the PROJECTION mode and ops |
 | N-6 Schedule 1-A deductions and their MAGI phase-outs | H6, calc op `schedule_1a_deductions` |
 | N-7 employee FICA by status period (the F/J exemption under §6013(g)) | H4, calc op `employee_fica` |
@@ -267,6 +270,59 @@ year pack, budgeting needs ops that do not exist:
 | N-9 / N-15 a re-runnable multi-scenario diff with per-line attribution | H7, MCP tool `compare_scenarios` |
 | §6654 safe harbor (90% current-year / 100%-or-110% prior-year prongs) | H4, calc op `estimated_tax_safe_harbor` |
 | N-10 / N-11 / N-13 limits, Roth IRA eligibility, the MAGI ladder | H8, `contribution_limits` / `ira_contribution_eligibility` / `magi_ladder` |
+| N-12 supplemental-wage (bonus) withholding | H4's withholding-realism note, made conditional in Phase J JF1a (pitfall P-017); priced check by check by calc op `withholding_projection` (JP1c) |
+| N-14 volunteer the distinction the question skips | H3, the §6013 election-not-the-marriage note and Schedule 1-A's premium-half / below-AGI work line |
 
 The general lesson is the DEV_PLAN §1 thesis: citable per-year data belongs in shipped
 packs, with a deterministic op over it, so an agent never has to supply it itself.
+
+---
+
+## Later findings (H9, Phase I, Phase J) — mechanisms only
+
+Every case here is HYPOTHETICAL; the figures are demo numbers. Each entry names the mechanism
+that failed and where the fix lives — never a person's facts.
+
+### H9 — characterization, not figures
+
+- **Reward income (P-005).** A hypothetical saver's bank-account bonus: the engine could price the
+  tax once it knew the bonus was income, but whether a "bonus" is income or a rebate came from the
+  agent's head. Fix: the characterization rule became a pitfall and a sources topic, not a figure.
+- **Commuter benefits (P-006).** The packs carried the monthly caps but not what qualifies, so
+  eligibility was researched live every time. Fix: the scoping rides next to the cap in
+  `contribution_limits`.
+- **Nonresident FDAP.** A hypothetical F-1 student's dividends: Schedule NEC's flat 30% and the
+  treaty other-income articles were missing from the treaty data. Fix (H9): the FDAP sources topic
+  and the articles in the treaty packs.
+
+### Phase I — accounts and equity
+
+- **The backdoor Roth.** A hypothetical engineer converts a nondeductible IRA contribution while
+  an old pretax rollover IRA sits elsewhere: Form 8606's ratio counts every traditional, SEP and
+  SIMPLE IRA at December 31, so most of the conversion is taxable. Fix: calc op `ira_pro_rata`,
+  and `roth_conversion` refuses to mix the plan-to-Roth path with the IRA path.
+- **Equity compensation.** An ESPP sale's ordinary-income piece is not on the broker's 1099-B
+  basis: `espp_disposition` splits it by holding period.
+
+### Phase J — layers, preconditions and stale ports
+
+- **Withholding is per employer, liability per person (P-020).** Two concurrent demo jobs each
+  withhold social security up to their own wage base; the excess comes back as a credit. The op
+  once pooled one base and called it "withholding".
+- **A rate quoted without its precondition (P-017).** "Bonuses are withheld at 22%" is true only when
+  Treas. Reg. 31.3402(g)-1(a)(7)(i)'s conditions hold; otherwise the aggregate method applies.
+  Fix: the precondition is schema-required next to the rate, and `withholding_projection`
+  computes both.
+- **A printed table approximated by its formula.** The earned income credit was computed from its
+  rates and missed 1.6–10.4% of each year's printed EIC Table cells by $1. Fix: the op prices the
+  table's $50 bands exactly (2019–2023 phase out from the unrounded maximum, 2024 onward from the
+  printed one).
+- **Residency is not the federal-public-benefit test (P-023).** A hypothetical H-1B resident alien is
+  a tax resident but not a "qualified alien" under 8 U.S.C. 1641, so from 2026 Schedule 3-A can
+  claw back the refunded part of the EIC and ACTC.
+- **The stale port.** A form revision swapped two printed rows (Schedule C 2025 lines 27a/27b) while
+  the widget names followed the rows; a name-diff port kept the old keys, so the "other expenses"
+  total landed in the energy-deduction box. Found by a one-off audit comparing every numeric key
+  with the line number printed beside its widget (2023–2026 federal packs; no other real hit). Fix:
+  the pair rebound, with a regression test pinning both years.
+

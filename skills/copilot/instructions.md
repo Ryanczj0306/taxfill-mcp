@@ -13,7 +13,7 @@ tool, not your arithmetic; confirm extracted values before filling;
 key lines recomputed via `calc` (e.g. `{"16": 36036}`; keyed per form_key for
 `verify_filing`) so the independent recompute actually runs (recompute checks
 > 0) — then `render_form` and review every page; `estimate_refund` is a
-labeled range with assumptions; review draft only
+labeled range with assumptions (ESTIMATE for a closed year, PROJECTION for a planning year — TY2026 today, rehearsal-only; SKILL.md Recipes P and R cover planning and IRA basis); review draft only
 (user signs and mails paper — no e-file); for a year/benefit not in the shipped
 packs, resolve via `get_sources` (.gov) and cite, or refuse.
 

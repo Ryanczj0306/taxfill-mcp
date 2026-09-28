@@ -1998,3 +1998,15 @@ def test_jt5f_schedule_3a_is_a_new_form_key_with_its_unconditional_legs():
     assert radios == [("6.yes", "/1"), ("6.no", "/2"), ("7.yes", "/1"), ("7.no", "/2"), ("8.yes", "/1"), ("8.no", "/2")]
     # No pack before 2026 — the schedule is new with REG-119882-25 (P-023).
     assert not (REPO_ROOT / "formpacks/federal/2025/sched_3a").exists()
+
+
+
+def test_conventions_lists_exactly_the_known_form_keys():
+    """JD1: formpacks/CONVENTIONS.md's `<form_key>` list is KNOWN_FORM_KEYS, no more and no less."""
+    text = (REPO_ROOT / "formpacks" / "CONVENTIONS.md").read_text(encoding="utf-8")
+    start = text.index("- `<form_key>` MUST be one of")
+    end = text.index("This list IS `KNOWN_FORM_KEYS`", start)
+    listed = set(re.findall(r"`([a-z0-9_]+)`", text[start:end])) - {"form_key"}
+    assert listed == KNOWN_FORM_KEYS, (
+        f"CONVENTIONS.md form keys: missing {sorted(KNOWN_FORM_KEYS - listed)}, extra {sorted(listed - KNOWN_FORM_KEYS)}")
+    assert f"these {len(KNOWN_FORM_KEYS)} federal keys" in text[start:end]

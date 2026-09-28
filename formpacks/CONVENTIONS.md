@@ -30,13 +30,14 @@ formpacks/states/<st>/<tax_year>/<form_key>/pack.yaml
 
 - `<tax_year>` is the 4-digit filing year and MUST equal the pack's
   `tax_year` field.
-- `<form_key>` MUST be one of:
+- `<form_key>` MUST be one of these 36 federal keys (forms, then schedules):
 
-  `f8843`, `f8863`, `f2555`, `f1040nr`, `f1040`, `sched_1`, `sched_1a`,
-  `sched_2`, `sched_3`, `sched_a`, `sched_b`, `sched_c`, `sched_d`,
-  `sched_e`, `sched_oi`, `sched_se`
+  `f1040`, `f1040es`, `f1040nr`, `f1040x`, `f1116`, `f2441`, `f2555`, `f4868`, `f8316`, `f843`, `f8606`, `f8833`, `f8843`, `f8863`, `f8889`, `f8938`, `f8949`, `f8959`, `f8960`, `f8962`, `fw7`
 
-  (the full list is `KNOWN_FORM_KEYS` in `test_formpacks_federal.py`). State
+  `sched_1`, `sched_1a`, `sched_2`, `sched_3`, `sched_3a`, `sched_8812`, `sched_a`, `sched_a_nr`, `sched_b`, `sched_c`, `sched_d`, `sched_e`, `sched_nec`, `sched_oi`, `sched_se`
+
+  This list IS `KNOWN_FORM_KEYS` in `test_formpacks_federal.py` — a test holds the two equal, so a new
+  key lands in both places in the same change. State
   packs use the state's own form name as `<form_key>` (`it201`, `pa40`,
   `d400`), which is not whitelisted — the state module pins the pack's declared
   `jurisdiction` against the path instead.
@@ -306,6 +307,30 @@ docstring).
 | schedules (`sched_*`) | `null` (no signature block of their own) | `null` (mailed inside the parent return's envelope) |
 
 `mailing.verify_url` must be the official irs.gov where-to-file page.
+
+## Hand-fill packs (`handfill.yaml`)
+
+A form with no fillable AcroForm ships as `handfill.yaml` beside where its `pack.yaml` would sit
+(`formpacks/states/<st>/<year>/<form_key>/handfill.yaml`, or `formpacks/federal/<year>/fincen114/`).
+The schema is `taxfill_core.schemas.handfill.HandFillPack`; `hand_fill_worksheet(form, year,
+jurisdiction, values?)` turns it into a line→value worksheet. Five ship today: the four print-only
+state returns — CT `ct1040`, HI `n11`, NM `pit1`, SC `sc1040` — and FinCEN Form 114 (the FBAR), in
+every federal year 2023–2026.
+
+- `render_mode: hand_fill`, and `source_url` is the blank to PRINT — it is never filled.
+- `lines` lists the printed lines in printed order: `line` (the same line-id grammar as a
+  `pack.yaml` field), `label` (the printed label), `type` (`money`, `text` or `checkbox`),
+  optional `note`, and optional `compute` — an expression over OTHER line ids in the relation
+  grammar (`max(0, 4 - 5)`, `sum(1a..1h)`), which the engine evaluates so the filer copies a
+  derived figure instead of doing the arithmetic. Money lines only.
+- `mailing` states where to file or is `null` to defer to the knowledge layer; `signature_note`
+  reminds the filer to sign the paper form in ink.
+- `instructions` overrides the default "print the blank and hand-write each value" text. Set it
+  only when printing is WRONG: the FBAR is e-file only ("IRS will not accept paper filings ... or
+  a printed FinCEN Form 114"), so its worksheet gathers values for the BSA E-Filing System instead.
+- Hand-fill packs are NOT returned by `list_forms`; an empty `list_forms` for those four states is
+  expected. `fincen114` is a directory name, not a `KNOWN_FORM_KEYS` form key — it has no
+  `pack.yaml`.
 
 ## Validating your pack (the harness)
 

@@ -1013,7 +1013,8 @@ def state_scope(profile: dict, year: int) -> dict:
 
 @mcp.tool()
 def estimate_refund(profile: dict, year: int, income: dict) -> dict:
-    """Early bottom-line ESTIMATE (a range) from a partial profile + confirmed income amounts.
+    """Early bottom-line range from a partial profile + confirmed income amounts — labeled ESTIMATE for a closed
+    year and PROJECTION for a planning year (a provisional knowledge pack, today TY2026).
 
     `income` fields (whole dollars; every field optional, defaults 0; unknown fields rejected):
     - income: wages (W-2 box 1), federal_withholding (withheld + estimated payments), interest,

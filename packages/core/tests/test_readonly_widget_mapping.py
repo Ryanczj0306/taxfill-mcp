@@ -441,10 +441,8 @@ class StateComputed(NamedTuple):
 # ONE field with 12 widget kids).
 #
 # Every other state pack is absent from this table and therefore pinned at
-# ZERO. One pack went unmeasured for a while: states/ms/2023/f80105, whose
-# blank was not in .cache/blanks (dor.ms.gov fails certificate verification
-# here). Its sha-pinned blank has been cached since 2026-09-11, and the
-# 2026-09-23 run measured it at zero like the rest.
+# ZERO — states/ms/2023/f80105 included (measured 2026-09-23 from its cached,
+# sha-pinned blank).
 STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
     StateComputed(
         "states/al/2023/al40/pack.yaml",

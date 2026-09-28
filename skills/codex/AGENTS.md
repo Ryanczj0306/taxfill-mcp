@@ -28,7 +28,9 @@ on stderr).
    `{"16": 36036}`; keyed per form_key for `verify_filing`), or the
    independent-recompute section does not run — loop until `ok: true` with
    recompute checks > 0, then `render_form` and review every page (P-001).
-4. `estimate_refund` is a labeled RANGE with assumptions, never fake precision.
+4. `estimate_refund` is a labeled RANGE with assumptions, never fake precision — ESTIMATE for a closed
+   year, PROJECTION for a planning year (TY2026 today: draft forms, rehearsal-only; see SKILL.md Recipe P;
+   IRA basis / backdoor Roth / recharacterization: Recipe R).
 5. Review draft only: the user signs and mails paper. No e-file.
 6. Year/benefit not in the shipped packs → `get_sources`, cite .gov, or refuse.
 

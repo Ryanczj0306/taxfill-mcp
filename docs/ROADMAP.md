@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,914 tests** — offline 6,449 + live-.gov 465; derived
+Done and on `main` (**6,920 tests** — offline 6,455 + live-.gov 465; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -375,6 +375,19 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
         2026-09-23:** UT 2025 TC-40 is PORTABLE against UT's newest shipped base (2024)
         and was never shipped → JS3b; the 2026-09-11 re-triage counts 73 open pack-years
         → JS3a/JS3b/JS5.
+      * **Re-measured 2026-09-28 (Phase J JD1)** with `scripts/scaffold_state_year.py --triage`, against the
+        2023 base and, for the 13 jurisdictions that ship 2024, also 2024 → 2025:
+        * **TY2024:**
+          - 10 PORTABLE and 4 NEAR-PORT, all 14 shipped.
+          - 10 RE-MAP: the four CA packs, GA, MI, MT, VT, WI and WV.
+          - 12 URL-DEAD: AL, AZ, CO, DC, DE, ID, KY, LA, MA, NE, OK, and CT's hand-fill blank.
+          - 7 no-year-token: IA, IN, KS, MD, ME, MN, MS.
+          - 3 NO-ACROFORM: the HI, NM and SC hand-fill blanks.
+        * **TY2025:**
+          - 6 PORTABLE, five shipped — **UT TC-40 is PORTABLE and unshipped** (against both the 2023 and the 2024 base) → JS3b.
+          - 12 RE-MAP: the four CA packs, GA, MI, MT, VT and WI, plus MO, OH and VA (RE-MAP against their 2024 bases too: 59, 24 and 10 fields gone).
+          - 18 URL-DEAD: TY2024's 12, plus IL, NC, ND, NJ, RI and WV — the first five dead against their 2024 URLs as well.
+          - 7 no-year-token; 3 NO-ACROFORM.
       So the ~15 cheap ports AND the 4 near-ports are DONE — the tranche's
       remaining shape is: **~20 vision re-maps** (every CA pack is a
       full re-map — CA renames its fields yearly) and **~26 URL-discovery tasks**
@@ -2460,27 +2473,16 @@ not wait for any of this.
 
 ### Block 6 — Docs, release, debt
 
-- [ ] **JD1 — Docs truth-up, the rest of old J6** (M; deps JR2c, JF6c)
-  1. **README** [G08]. The tool table lists 16 of 23 tools. The calc row names non-ops (`routing_checksum` → "unknown calc op") and omits 20 real ones. It says "always labeled ESTIMATE", but planning years are labeled PROJECTION (estimate.py:501). The M7 line is stale. Generate the table, and add a test that every runtime tool name appears in README.
-  2. **DEV_PLAN** [G09]. Add "Deviations as built":
-     - the PROJECTION label;
-     - freshness runs weekly, not nightly;
-     - the DocSpec set is list_document_kinds (I-94, I-20 and the transcript were never built; the paystub arrives in JP3a);
-     - there are no perceptual-hash tests;
-     - the registries are the live lists.
-  3. **SKILL.md and the estimate_refund docstring** [G10]. Both say ESTIMATE only, and SKILL.md cites a "28-form set" (actually 34/34/35).
-     - Add Recipe P (planning-year projection) and Recipe R (IRA basis / backdoor / recharacterization).
-     - One bullet per calc op.
-     - Regenerate bundle/manifest.json tools; mirror to the codex and copilot skills.
-  4. **CONVENTIONS** [G11]. The form_key list shows 16 of 35 keys: defer to KNOWN_FORM_KEYS with an equality test, and add a hand-fill section. The overlay section waits for JS4.
-  5. **CONTRIBUTING** [G12]. The pitfall gate exists; there are no snapshot tests; freshness is weekly; the dev command is `uv run python -m pytest -m "not network"`.
-  6. **FIELD_NOTES** [G13]. A status line per N-item, and hypothetical-persona entries for the H9, Phase I and Phase J findings (mechanisms only, demo numbers).
-  7. **Test docstrings** [G14]:
-     - test_skills_sync.py:3 still says "22-tool" and :97 "30 ops";
-     - test_readonly_widget_mapping.py:41-43 still says "1,140 / 10", and :381-385 carries the resolved MS note.
-  8. **D2 triage table** [G05]. Re-measure it, and record UT 2025 as PORTABLE and unshipped (JS3b).
-  9. **Privacy** [G29] — DONE: docs, tests and evals use hypothetical fixtures with demo numbers.
-  - **Acceptance:** every count equals the runtime; the README tool-name test and the CONVENTIONS/KNOWN_FORM_KEYS test pass; the new FIELD_NOTES entries use hypothetical personas and demo numbers only.
+- [x] **JD1 — Docs truth-up, the rest of old J6 — DONE 2026-09-28** (M; deps JR2c, JF6c)
+  - *As built:*
+    1. **README:** all 23 tools, and a calc row naming the 38 ops. estimate_refund is ESTIMATE / PROJECTION; M2 reads 145 packs (2026:34); the 1040-X FAQ carries its three revisions. `test_readme_sync.py` derives every count from the runtime: tools, ops, the M2 per-year pack counts and the bundle manifest.
+    2. **DEV_PLAN §18 "Deviations as built":** the two labels, weekly freshness, the 28-kind DocSpec set, no perceptual-hash tests, the routing checksum living in the profile schema, and the live registries as the authority.
+    3. **SKILL.md:** a "calc ops" section with one bullet per op (38); Recipe P (planning-year projection) and Recipe R (IRA basis / backdoor / recharacterization); the coverage callout (145 packs; 34/34/35, plus TY2026's 34 drafts). The estimate_refund docstring states both labels. `scripts/sync_bundle_manifest.py` rewrites bundle/manifest.json's calc entry from the dispatch chain; the Codex and Copilot skills mirror the label and point at Recipes P and R.
+    4. **CONVENTIONS:** lists all 36 keys, pinned equal to KNOWN_FORM_KEYS by a test, and adds a hand-fill section (the four print-only states and FinCEN 114).
+    5. **CONTRIBUTING:** the pitfall gate as it really works, no snapshot tests, weekly freshness, the dev commands and the test-count sync.
+    6. **FIELD_NOTES:** a status row for every N-item, plus later findings (H9, Phase I, Phase J) — hypothetical personas, mechanisms only.
+    7. **Test docstrings** (23 tools; every op, 38) and the resolved MS note.
+    8. **D2** re-measured (the 2026-09-28 rows in the D2 entry): UT 2025 is PORTABLE and unshipped (JS3b).
 - [ ] **JA1 — Phase A, the agent half** (M; deps J0; takes the next slot the day the user says they are ready to publish; supersedes A1–A6's open boxes)
   1. **Immutable descriptions** [G16]. The PyPI-immutable descriptions say "21 calculation ops" (taxfill-core), "22 tools" (taxfill-mcp) and "21 deterministic ops" (packages/mcp-server README), and nothing tests them. The runtime has 32 ops and 23 tools. Use count-free wording, and add test_release_surfaces.py.
   2. **PUBLISHING runbook** [G17].
