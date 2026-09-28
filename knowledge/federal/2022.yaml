@@ -1331,3 +1331,41 @@ form_lines:
     read: '2026-09-27'
     absent: Schedule 1-A first appears for 2025 (P.L. 119-21); this year's Form 1040 has no Schedule 1-A line
     printed: Qualified business income deduction from Form 8995 or Form 8995-A
+  # JR3c (read 2026-09-27): Form 5329 and its Schedule 2 lines.
+  sched2.retirement_additional_tax:
+    line: '8'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2022.pdf
+    read: '2026-09-27'
+    printed: 8 Additional tax on IRAs or other tax-favored accounts. Attach Form 5329 if required. If not required,
+      check here
+    note: Form 5329's additional taxes (early distributions; through 2025 the excess-contribution excise too).
+  sched2.ira_excess_excise:
+    line: '8'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040s2--2022.pdf
+    read: '2026-09-27'
+    printed: 8 Additional tax on IRAs or other tax-favored accounts. Attach Form 5329 if required. If not required,
+      check here
+    note: 'Where Form 5329 lines 17 and 25 go: the one additional-tax line through 2025; its own line 18 on the 2026
+      draft.'
+  f5329.early_distribution_tax:
+    line: '4'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f5329--2022.pdf
+    read: '2026-09-27'
+    printed: 4 Additional tax. Enter 10% (0.10) of line 3. Include this amount on Schedule 2 (Form 1040), line 8
+  f5329.traditional_excess_tax:
+    line: '17'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f5329--2022.pdf
+    read: '2026-09-27'
+    printed: 17 31, 2022 (including 2022 contributions made in 2023). Include this amount on Schedule 2 (Form 1040),
+      line 8
+  f5329.roth_excess_tax:
+    line: '25'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f5329--2022.pdf
+    read: '2026-09-27'
+    printed: 25 31, 2022 (including 2022 contributions made in 2023). Include this amount on Schedule 2 (Form 1040),
+      line 8

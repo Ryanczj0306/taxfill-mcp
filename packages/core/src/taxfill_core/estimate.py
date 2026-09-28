@@ -309,6 +309,18 @@ class IncomeSnapshot(BaseModel):
                     "G/H box 2a, P moved to the prior year, an IRA's 2b-checked gross flagged for ira_pro_rata). "
                     "Mutually exclusive with retirement_income_taxable, the manual figure.",
     )
+    # JR3c: IRC 4973 — 6% of an IRA excess contribution left in at year end, capped per person at the IRAs'
+    # December 31 value (4973(a): "shall not exceed 6 percent of the value of the account").
+    traditional_ira_excess: int = Field(
+        default=0, ge=0, description="Form 5329 line 16: the traditional-IRA excess contributions at year end.")
+    roth_ira_excess: int = Field(
+        default=0, ge=0, description="Form 5329 line 24: the Roth IRA excess contributions at year end.")
+    traditional_ira_dec31_value: int | None = Field(
+        default=None, ge=0,
+        description="The Dec 31 value of the traditional IRAs (with that year's contributions made next year) — the "
+                    "excise cap. None: no cap applied (disclosed).")
+    roth_ira_dec31_value: int | None = Field(
+        default=None, ge=0, description="The same for the Roth IRAs.")
     ira_pool: IraPoolFacts | None = Field(
         default=None,
         description="JR3b: THIS person's IRA pool — required when a traditional-IRA 1099-R has box 2b 'Taxable amount "
@@ -520,6 +532,8 @@ class IncomeSnapshot(BaseModel):
                 )
             },
             **_joint_retirement(self, s),
+            traditional_ira_excess=_capped_excess(self, "traditional") + _capped_excess(s, "traditional"),
+            roth_ira_excess=_capped_excess(self, "roth") + _capped_excess(s, "roth"),
             senior_taxpayer=self.senior_taxpayer,
             senior_spouse=s.senior_taxpayer,
             ss_withheld_by_employer=[*self.ss_withheld_by_employer, *s.ss_withheld_by_employer],
@@ -599,6 +613,42 @@ def _resolve_ira_pool(snap: "IncomeSnapshot", year: int, knowledge_dir, who: str
                                      "label": (i.label or f"box 7 {i.codes or '(blank)'}") + f" ({who}'s Form 8606)"})
                 if id(i) in parts else i for i in items]
     return snap.model_copy(update={"retirement_distributions": resolved})
+
+
+def _capped_excess(snap: "IncomeSnapshot", kind: str) -> int:
+    """One person's IRA excess, capped at that person's December 31 value (IRC 4973(a)) — JR3c."""
+    excess, value = getattr(snap, f"{kind}_ira_excess"), getattr(snap, f"{kind}_ira_dec31_value")
+    return excess if value is None else min(excess, value)
+
+
+# IRC 72(t)(1): "10 percent of the portion of such amount which is includible in gross income"; 72(t)(6): 25% for a
+# SIMPLE IRA distribution in the first 2 years; 72(t)(2)(A)(ix): not on the net income of a 408(d)(4) return
+# (box 7 code 8 with J or 1). IRC 4973(a): 6 percent. Read 2026-09-27 (uscode.house.gov).
+_EARLY_RATE, _EARLY_RATE_SIMPLE, _EXCESS_EXCISE_RATE = Decimal("0.10"), Decimal("0.25"), Decimal("0.06")
+
+
+def _early_distribution_tax(items: list[RetirementDistribution]) -> tuple[int, set[str]]:
+    """Form 5329 Part I: the additional tax on the early distributions (codes 1, J; S at 25%) — JR3c."""
+    from taxfill_core.distribution_codes import parse_box7  # noqa: PLC0415
+
+    base10 = base25 = 0
+    keys: set[str] = set()
+    for item in items:
+        codes = set(parse_box7(item.codes))
+        taxable, key = _retirement_taxable(item)
+        if key == "prior_year" or not codes & {"1", "J", "S"}:
+            continue
+        if "8" in codes:
+            keys.add("early_corrective")
+            continue
+        part = max(0, taxable - item.early_exception_amount)
+        if item.early_exception_amount:
+            keys.add("early_exception")
+        if "S" in codes:
+            base25 += part
+        else:
+            base10 += part
+    return irs_round(_EARLY_RATE * base10 + _EARLY_RATE_SIMPLE * base25), keys
 
 
 def _joint_retirement(a: "IncomeSnapshot", b: "IncomeSnapshot") -> dict[str, Any]:
@@ -697,6 +747,8 @@ _LEDGER_SLOTS: dict[str, str] = {
     "additional_medicare_tax": _OPERAND,
     "niit": _OPERAND,
     "aptc_repayment": _OPERAND,
+    "early_distribution_additional_tax": _OPERAND,
+    "ira_excess_contribution_excise": _OPERAND,
     "withholding": _OPERAND,
     "additional_medicare_withholding": _OPERAND,
     "excess_ss_credit": _OPERAND,
@@ -4133,7 +4185,31 @@ def _bottom_line(
                 )
             )
 
-    total_tax = income_tax_after_credits + se_amount + addmed_amount + niit_amount + ptc_repayment
+    # JR3c: Form 5329 -> Schedule 2 — the 72(t) additional tax and the 4973 excise.
+    early_tax, early_keys = _early_distribution_tax(income.retirement_distributions)
+    if notes is not None:
+        notes.update(early_keys)
+    if early_tax:
+        comp.append(_line(
+            "early_distribution_additional_tax", amount=early_tax,
+            label=f"Plus: additional tax on early distributions (Form 5329 line "
+                  f"{form_line(year, 'f5329.early_distribution_tax', base_dir=knowledge_dir)} -> Schedule 2 line "
+                  f"{form_line(year, 'sched2.retirement_additional_tax', base_dir=knowledge_dir)})"))
+    excise = (irs_round(_EXCESS_EXCISE_RATE * _capped_excess(income, "traditional"))
+              + irs_round(_EXCESS_EXCISE_RATE * _capped_excess(income, "roth")))
+    if excise:
+        comp.append(_line(
+            "ira_excess_contribution_excise", amount=excise,
+            label=f"Plus: 6% excise on excess IRA contributions (Form 5329 lines "
+                  f"{form_line(year, 'f5329.traditional_excess_tax', base_dir=knowledge_dir)}/"
+                  f"{form_line(year, 'f5329.roth_excess_tax', base_dir=knowledge_dir)} -> Schedule 2 line "
+                  f"{form_line(year, 'sched2.ira_excess_excise', base_dir=knowledge_dir)})"))
+        if notes is not None and (
+                (income.traditional_ira_excess and income.traditional_ira_dec31_value is None)
+                or (income.roth_ira_excess and income.roth_ira_dec31_value is None)):
+            notes.add("excise_uncapped")
+    total_tax = (income_tax_after_credits + se_amount + addmed_amount + niit_amount + ptc_repayment
+                 + early_tax + excise)
     comp.append(_line("total_tax", label="Total tax", amount=total_tax))
 
     # ── Payments and refundable credits ─────────────────────────────────────
@@ -5301,6 +5377,19 @@ def estimate_refund(
             "disabled, the deemed $250/$500-per-month income rule can restore the credit (agent "
             "judgment; recompute with calc op dependent_care_credit using the deemed amount)."
         )
+    if "early_corrective" in notes:
+        assumptions.append(
+            "A corrective distribution (box 7 code 8 with J or 1) owes NO 10% additional tax on its earnings: IRC "
+            "72(t)(2)(A)(ix) exempts a distribution \"attributable to withdrawal of net income attributable to a "
+            "contribution which is distributed pursuant to section 408(d)(4)\" (Form 5329 exception 21).")
+    if "early_exception" in notes:
+        assumptions.append(
+            "The early_exception_amount you entered was taken off the 10% base (Form 5329 line 2) — the exception "
+            "and its number are your judgment; name them on the form.")
+    if "excise_uncapped" in notes:
+        assumptions.append(
+            "The 6% excise on an IRA excess contribution was charged on the whole excess: IRC 4973(a) caps it at 6% of "
+            "the account's value at year end — pass traditional_ira_dec31_value / roth_ira_dec31_value for the cap.")
     retirement_view = income.combined_with_spouse()
     for item in retirement_view.retirement_distributions:
         name = item.label or f"the 1099-R with box 7 {item.codes or '(blank)'}"

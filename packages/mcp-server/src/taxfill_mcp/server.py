@@ -979,7 +979,10 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       (JR3b) is priced through Form 8606 Part I with THAT PERSON's ira_pool {basis_carryforward (line 2; 0 =
       the explicit no-basis answer), nondeductible_contributions_this_year?, contributions_made_after_year_end?,
       dec31_total_value (line 6, needed with basis)} — required then, and a spouse's pool never merges;
-      mark each conversion converted_to_roth,
+      mark each conversion converted_to_roth. JR3c prices the 72(t) additional tax per 1099-R (codes 1/J 10%,
+      S 25%, early_exception_amount off the base, code 8 corrective earnings exempt) and the 4973 excise from
+      traditional_ira_excess / roth_ira_excess (Form 5329 lines 16/24) capped at traditional_ira_dec31_value /
+      roth_ira_dec31_value,
       social_security_benefits (SSA-1099 box 5), other_income
     - adjustments: student_loan_interest_paid (1098-E), pre_agi_adjustments (confirmed-eligible
       above-the-line), treaty_exempt_income (1042-S box 2 — agent-confirmed treaty amount; the

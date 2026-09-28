@@ -1372,3 +1372,41 @@ form_lines:
     url: https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf
     read: '2026-09-27'
     printed: 43 Enhanced deduction for seniors. Add lines 42a and 42b
+  # JR3c (read 2026-09-27): Form 5329 and its Schedule 2 lines.
+  sched2.retirement_additional_tax:
+    line: '5'
+    line_source: draft Created 4/27/26
+    url: https://www.irs.gov/pub/irs-dft/f1040s2--dft.pdf
+    read: '2026-09-27'
+    printed: 5 Additional tax on IRAs or other tax-favored accounts. Attach Form 5329 if required. If not required,
+      check here
+    note: Form 5329's additional taxes (early distributions; through 2025 the excess-contribution excise too).
+  sched2.ira_excess_excise:
+    line: '18'
+    line_source: draft Created 4/27/26
+    url: https://www.irs.gov/pub/irs-dft/f1040s2--dft.pdf
+    read: '2026-09-27'
+    printed: 18 Additional tax on excess contributions or accumulations in IRAs or other tax-favored accounts. Attach
+      Form 5329
+    note: 'Where Form 5329 lines 17 and 25 go: the one additional-tax line through 2025; its own line 18 on the 2026
+      draft.'
+  f5329.early_distribution_tax:
+    line: '4'
+    line_source: draft Created 7/31/26
+    url: https://www.irs.gov/pub/irs-dft/f5329--dft.pdf
+    read: '2026-09-27'
+    printed: 4 Additional tax. Enter 10% (0.10) of line 3. Include this amount on Schedule 2 (Form 1040), line 5
+  f5329.traditional_excess_tax:
+    line: '17'
+    line_source: draft Created 7/31/26
+    url: https://www.irs.gov/pub/irs-dft/f5329--dft.pdf
+    read: '2026-09-27'
+    printed: 17 2026 (including 2026 contributions made in 2027). Include this amount on Schedule 2 (Form 1040), line
+      18 .
+  f5329.roth_excess_tax:
+    line: '25'
+    line_source: draft Created 7/31/26
+    url: https://www.irs.gov/pub/irs-dft/f5329--dft.pdf
+    read: '2026-09-27'
+    printed: 25 31, 2026 (including 2026 contributions made in 2027). Include this amount on Schedule 2 (Form 1040),
+      line 18

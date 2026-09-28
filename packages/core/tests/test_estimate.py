@@ -3896,7 +3896,9 @@ _SPOUSE_SUMMED = frozenset({
 # spouse snapshot's own flag as senior_spouse (never summed).
 _SPOUSE_PERSON_FLAGS = frozenset({"senior_taxpayer", "senior_spouse"})
 # JR3b: each person's IRA pool is priced on their own snapshot and never reaches the joint view.
-_SPOUSE_NEVER_MERGED = frozenset({"ira_pool"})
+_SPOUSE_NEVER_MERGED = frozenset({"ira_pool", "traditional_ira_dec31_value", "roth_ira_dec31_value"})
+# JR3c: each person's IRA excess, capped at that person's Dec 31 value, then summed.
+_SPOUSE_CAPPED_SUMMED = frozenset({"traditional_ira_excess", "roth_ira_excess"})
 _SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses", "medicare_tax_withheld",
                                   "retirement_distributions"})   # JR3a (test_jr3a_the_joint_view_keeps_each_spouses_1099rs)
 _SPOUSE_BOX_SUMMED = frozenset({"medicare_wages", "ss_wages"})  # summed, box 1 standing in for a missing one (JF3)
@@ -3940,6 +3942,14 @@ def _spouse_coverage_gaps(combine) -> list[str]:
                                                 "spouse": spouse.model_copy(update={"ira_pool": IraPoolFacts(basis_carryforward=2)})}))
     if pooled.ira_pool is not None:
         gaps.append("ira_pool")
+    capped = combine(primary.model_copy(update={
+        "traditional_ira_excess": 900, "traditional_ira_dec31_value": 400, "roth_ira_excess": 50,
+        "spouse": spouse.model_copy(update={"traditional_ira_excess": 70, "roth_ira_excess": 30,
+                                            "roth_ira_dec31_value": 10})}))
+    if (capped.traditional_ira_excess, capped.roth_ira_excess) != (470, 60):
+        gaps += sorted(_SPOUSE_CAPPED_SUMMED)
+    if capped.traditional_ira_dec31_value is not None or capped.roth_ira_dec31_value is not None:
+        gaps += ["traditional_ira_dec31_value", "roth_ira_dec31_value"]
     flagged = combine(primary.model_copy(update={"senior_taxpayer": True,
                                                  "spouse": spouse.model_copy(update={"senior_taxpayer": False})}))
     flagged2 = combine(primary.model_copy(update={"senior_taxpayer": False,
@@ -3967,7 +3977,7 @@ def _spouse_coverage_gaps(combine) -> list[str]:
 
 def test_jf1b5_every_income_snapshot_field_is_classified_for_the_joint_view():
     classes = (_SPOUSE_SUMMED, _SPOUSE_CONCATENATED, _SPOUSE_OPTIONAL_SUMMED, _HOUSEHOLD_LEVEL, _SPOUSE_FIELD,
-               _SPOUSE_BOX_SUMMED, _SPOUSE_PERSON_FLAGS, _SPOUSE_NEVER_MERGED)
+               _SPOUSE_BOX_SUMMED, _SPOUSE_PERSON_FLAGS, _SPOUSE_NEVER_MERGED, _SPOUSE_CAPPED_SUMMED)
     classified = frozenset().union(*classes)
     assert sum(len(c) for c in classes) == len(classified), "a field is in two classes"
     fields = set(IncomeSnapshot.model_fields)
@@ -5199,3 +5209,56 @@ def test_jr3b_a_couples_pools_never_merge():
     # pool would have taxed half of each.
     assert _total_income(est) == 50_000 + 10_000
     assert mine.model_copy(update={"spouse": theirs}).combined_with_spouse().ira_pool is None
+
+
+# ── JR3c (RC-08): the 72(t) additional tax and the 4973 excise ───────────────
+
+
+def _ledger(est) -> dict[str, int]:
+    assert sum(ln.effect for ln in est.composition) == est.point           # the ledger reconciles
+    return {ln.slot: ln.amount for ln in est.composition}
+
+
+def test_jr3c_an_early_distribution_owes_the_10_percent_additional_tax():
+    est = estimate_refund(Profile(), 2025, _with_1099r(RetirementDistribution(gross=12_000, taxable_amount=12_000,
+                                                                              codes="1")))
+    assert _ledger(est)["early_distribution_additional_tax"] == 1_200     # IRC 72(t)(1)
+    line = next(ln.label for ln in est.composition if ln.slot == "early_distribution_additional_tax")
+    assert "Form 5329 line 4 -> Schedule 2 line 8" in line                 # read off the 2025 faces
+    excepted = estimate_refund(Profile(), 2025, _with_1099r(RetirementDistribution(
+        gross=12_000, taxable_amount=12_000, codes="1", early_exception_amount=5_000)))
+    assert _ledger(excepted)["early_distribution_additional_tax"] == 700
+    simple = estimate_refund(Profile(), 2025, _with_1099r(RetirementDistribution(
+        gross=4_000, taxable_amount=4_000, codes="S", ira_sep_simple=True)))
+    assert _ledger(simple)["early_distribution_additional_tax"] == 1_000  # 72(t)(6): 25% in the first 2 years
+    normal = estimate_refund(Profile(), 2025, _with_1099r(RetirementDistribution(gross=12_000, taxable_amount=12_000,
+                                                                                 codes="7")))
+    assert "early_distribution_additional_tax" not in _ledger(normal)
+
+
+def test_jr3c_a_corrective_distributions_earnings_owe_no_additional_tax():
+    est = estimate_refund(Profile(), 2025, _with_1099r(RetirementDistribution(gross=7_300, taxable_amount=300,
+                                                                              codes="J8")))
+    ledger = _ledger(est)
+    assert "early_distribution_additional_tax" not in ledger
+    assert ledger["total_income"] == 50_300                                  # the earnings stay taxable
+    assert any("72(t)(2)(A)(ix)" in a for a in est.assumptions)
+
+
+def test_jr3c_the_excess_contribution_excise_is_capped_at_the_year_end_value():
+    capped = estimate_refund(Profile(), 2025, IncomeSnapshot(wages=50_000, roth_ira_excess=7_000,
+                                                             roth_ira_dec31_value=5_000))
+    assert _ledger(capped)["ira_excess_contribution_excise"] == 300          # 6% of min(7,000, 5,000)
+    line = next(ln.label for ln in capped.composition if ln.slot == "ira_excess_contribution_excise")
+    assert "Form 5329 lines 17/25 -> Schedule 2 line 8" in line
+    uncapped = estimate_refund(Profile(), 2025, IncomeSnapshot(wages=50_000, traditional_ira_excess=2_000))
+    assert _ledger(uncapped)["ira_excess_contribution_excise"] == 120
+    assert any("4973(a) caps it" in a for a in uncapped.assumptions)
+    draft = estimate_refund(Profile(), 2026, IncomeSnapshot(wages=50_000, roth_ira_excess=1_000))
+    assert "Schedule 2 line 18" in next(ln.label for ln in draft.composition if ln.slot == "ira_excess_contribution_excise")
+
+
+def test_jr3c_the_joint_view_caps_each_persons_excess_before_summing():
+    joint = IncomeSnapshot(roth_ira_excess=7_000, roth_ira_dec31_value=1_000,
+                           spouse=IncomeSnapshot(roth_ira_excess=2_000)).combined_with_spouse()
+    assert joint.roth_ira_excess == 3_000 and joint.roth_ira_dec31_value is None

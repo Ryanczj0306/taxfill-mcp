@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,211 tests** — offline 5,831 + live-.gov 380; derived
+Done and on `main` (**6,215 tests** — offline 5,835 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1800,7 +1800,23 @@ not wait for any of this.
   - Traditional-IRA items with 2b checked go through ira_pro_rata. `ira_pool` is then REQUIRED, with a prescriptive refusal; `{basis_carryforward: 0}` is the explicit no-basis answer.
   - Spouses' pools never merge (Form 8606 is filed per spouse).
   - **Acceptance** (*illustrative*): a code-N recharacterization plus a code-2 conversion, with the pool carrying the line-1 basis → taxable = NIA + growth, not the box-2a gross. An MFJ couple's pools stay separate.
-- [ ] **JR3c — The 72(t) and 4973 taxes** (M; deps JR3a, JF6b) [RC-08]
+- [x] **JR3c — The 72(t) and 4973 taxes — DONE 2026-09-27** (M; deps JR3a, JF6b) [RC-08]
+  - *As built:*
+    - **New operand slots:** `early_distribution_additional_tax` and `ira_excess_contribution_excise`, both in total tax and labeled from form_line.
+    - **New keys, read 2026-09-27:**
+      - f5329.early_distribution_tax (4), f5329.traditional_excess_tax (17), f5329.roth_excess_tax (25);
+      - sched2.retirement_additional_tax (6 / 8 / 5 on the 2026 draft);
+      - sched2.ira_excess_excise (6 / 8 / 18 on the 2026 draft Schedule 2, Form 5329 Created 7/31/26).
+    - **72(t):** Form 5329 Part I prices each 1099-R's taxable part less its early_exception_amount at 10% for codes 1/J (72(t)(1)) and 25% for S (72(t)(6)).
+      - Code 8 with J/1 owes 0 (72(t)(2)(A)(ix), disclosed); code P is not this year's.
+    - **4973:** IncomeSnapshot gains `traditional_ira_excess` / `roth_ira_excess` (lines 16/24) and `*_ira_dec31_value`. The excise is 6% capped per person at the Dec-31 value, and the joint view applies each person's cap before summing.
+      - An uncapped charge is disclosed.
+    - **Docs:** server.py.
+    - **Tests** (test_estimate `test_jr3c_*`):
+      - code 1 $12,000 → $1,200 labeled "Form 5329 line 4 -> Schedule 2 line 8"; the exception amount; SIMPLE 25%; code 7 → none;
+      - J8 → earnings taxable, 0 additional tax;
+      - the cap (7,000 vs 5,000 → $300); the uncapped disclosure; 2026 → line 18; the joint caps;
+      - every ledger reconciles.
   - The estimator has no 72(t) additional tax and no 4973 excise (grep: 0 hits; `_LEDGER_SLOTS` estimate.py:307-343).
     - IRC 72(t)(1) is "10 percent of the portion … includible in gross income"; (t)(6) makes it 25% in a SIMPLE IRA's first two years.
     - 4973(a) is 6%, capped at the account value.
