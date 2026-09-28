@@ -20,6 +20,18 @@
 # the URL goes stale. SCOPE: complete — both pages (header/status/dependents,
 # income lines 9-22, payments/credits 23-32, due/refund 33-42, Refund
 # Express, HSD box). The Tax Rate Table lookup (line 18) stays a manual note.
+#
+# OVERLAY COORDINATES (Phase J JS4d, 2026-09-28): every line carries an `overlay` block, so
+# fill_form STAMPS the worksheet onto this blank. PIT-1's boxes are drawn with ruling lines: each
+# was measured from those lines and its printed line-number label (money ends 2 pt before the
+# right rule; a loss keeps its minus sign left of the number, per the instructions), stamped
+# with sentinels, verified, rendered and read. Your SSN is also stamped in the page-2 header.
+# The read found 20 printed entries the manifest never listed — the fiscal-year dates, the
+# separate State / ZIP and foreign-province cells (3c / 3d are now City / Country only), the
+# signature dates, both driver's-license / state-ID number, state and expiration blocks, and
+# the paid-preparer block. They are all lines now; signatures stay hand-written.
+# fetch_blank accepts this host only against the pdf_sha256 pin (fetch.PINNED_ONLY_BLANK_HOSTS:
+# tax.newmexico.gov/forms-publications/ loads its forms table from it).
 form: "PIT-1"
 jurisdiction: states/nm
 tax_year: 2023
@@ -46,116 +58,253 @@ printing_guidance:
 signature_note: "Sign and date page 2 (BOTH must sign if filing jointly, even if only one had income); each signer also enters driver's license/state ID number (or NONE/DECLINED), state, and expiration date. Submit ORIGINAL forms only — never a photocopy."
 lines:
   # ---- taxpayer / spouse identity (page 1) -----------------------------------
-  - { line: "1a", label: "Your name (first, middle, last)", type: text }
-  - { line: "1b", label: "Your Social Security Number", type: text }
-  - { line: "1c", label: "Taxpayer blind", type: checkbox }
-  - { line: "1d", label: "Taxpayer age 65 or over", type: checkbox }
-  - { line: "1e", label: "Taxpayer residency status (R resident / N non-resident / F first-year / P part-year)", type: text }
-  - { line: "1f", label: "Taxpayer's date of birth", type: text }
-  - { line: "2a", label: "Spouse's name (first, middle, last) — include if married filing separately", type: text }
-  - { line: "2b", label: "Spouse's Social Security Number", type: text }
-  - { line: "2c", label: "Spouse blind", type: checkbox }
-  - { line: "2d", label: "Spouse age 65 or over", type: checkbox }
-  - { line: "2e", label: "Spouse residency status (R/N/F/P)", type: text }
-  - { line: "2f", label: "Spouse's date of birth", type: text }
-  - { line: "3a", label: "Mark if the address is new or changed", type: checkbox }
-  - { line: "3b", label: "Mailing address (number and street)", type: text }
-  - { line: "3c", label: "City, State, Postal/ZIP code", type: text }
-  - { line: "3d", label: "Foreign country / province / state (foreign addresses)", type: text }
-  - { line: "4a", label: "Deceased-taxpayer refund payee name (attach Form RPD-41083)", type: text }
-  - { line: "4b", label: "Deceased-taxpayer refund payee SSN", type: text }
-  - { line: "4c", label: "Taxpayer's date of death (if died before filing)", type: text }
-  - { line: "4d", label: "Spouse's date of death (if died before filing)", type: text }
-  - { line: "5", label: "EXEMPTIONS: taxpayer, spouse, dependents and other dependents from federal 1040 (00 if you are another taxpayer's dependent)", type: text }
-  - { line: "6a", label: "Federal or state extension of time to file", type: checkbox }
-  - { line: "6b", label: "Extension date", type: text }
+  - { line: "tax_year.begin", label: "or fiscal year beginning (F.1)", type: text,
+      overlay: {page: 1, x: 128.9, y: 706.9, w: 77.29} }
+  - { line: "tax_year.end", label: "ending (F.2)", type: text,
+      overlay: {page: 1, x: 248.1, y: 706.53, w: 80.85} }
+  - { line: "1a", label: "Your name (first, middle, last)", type: text,
+      overlay: {page: 1, x: 46.09, y: 605.04, w: 251.41} }
+  - { line: "1b", label: "Your Social Security Number", type: text,
+      overlay: [{page: 1, x: 312.82, y: 602.72, w: 88.96}, {page: 2, x: 59.12, y: 686.46, w: 89.76}] }
+  - { line: "1c", label: "Taxpayer blind", type: checkbox,
+      overlay: {page: 1, x: 411.33, y: 602.37, w: 8.58} }
+  - { line: "1d", label: "Taxpayer age 65 or over", type: checkbox,
+      overlay: {page: 1, x: 432.14, y: 602.75, w: 8.58} }
+  - { line: "1e", label: "Taxpayer residency status (R resident / N non-resident / F first-year / P part-year)", type: text,
+      overlay: {page: 1, x: 457.54, y: 602.33, w: 16.6, cells: [457.54], cell_w: 16.6} }
+  - { line: "1f", label: "Taxpayer's date of birth", type: text,
+      overlay: {page: 1, x: 492.63, y: 601.99, w: 82.09} }
+  - { line: "2a", label: "Spouse's name (first, middle, last) — include if married filing separately", type: text,
+      overlay: {page: 1, x: 46.09, y: 578.25, w: 251.41} }
+  - { line: "2b", label: "Spouse's Social Security Number", type: text,
+      overlay: {page: 1, x: 312.82, y: 578.57, w: 88.96} }
+  - { line: "2c", label: "Spouse blind", type: checkbox,
+      overlay: {page: 1, x: 411.08, y: 578.63, w: 8.58} }
+  - { line: "2d", label: "Spouse age 65 or over", type: checkbox,
+      overlay: {page: 1, x: 432, y: 578.63, w: 8.58} }
+  - { line: "2e", label: "Spouse residency status (R/N/F/P)", type: text,
+      overlay: {page: 1, x: 457.54, y: 578.57, w: 16.6, cells: [457.54], cell_w: 16.6} }
+  - { line: "2f", label: "Spouse's date of birth", type: text,
+      overlay: {page: 1, x: 492.05, y: 579.72, w: 82.67} }
+  - { line: "3a", label: "Mark if the address is new or changed", type: checkbox,
+      overlay: {page: 1, x: 50.71, y: 556.47, w: 8.15} }
+  - { line: "3b", label: "Mailing address (number and street)", type: text,
+      overlay: {page: 1, x: 45.49, y: 533.35, w: 251.74} }
+  - { line: "3c", label: "City", type: text,
+      overlay: {page: 1, x: 45.49, y: 509.26, w: 149.43} }
+  - { line: "3c.state", label: "State", type: text,
+      overlay: {page: 1, x: 198.92, y: 509.26, w: 19.76} }
+  - { line: "3c.zip", label: "Postal/ZIP Code", type: text,
+      overlay: {page: 1, x: 222.68, y: 509.26, w: 74.55} }
+  - { line: "3d", label: "If foreign address, enter country", type: text,
+      overlay: {page: 1, x: 45.49, y: 483.46, w: 94.13} }
+  - { line: "3d.province", label: "Foreign province and/or state", type: text,
+      overlay: {page: 1, x: 143.62, y: 483.46, w: 153.61} }
+  - { line: "4a", label: "Deceased-taxpayer refund payee name (attach Form RPD-41083)", type: text,
+      overlay: {page: 1, x: 320.37, y: 505.66, w: 160.39} }
+  - { line: "4b", label: "Deceased-taxpayer refund payee SSN", type: text,
+      overlay: {page: 1, x: 320.46, y: 481.9, w: 89.24} }
+  - { line: "4c", label: "Taxpayer's date of death (if died before filing)", type: text,
+      overlay: {page: 1, x: 492.99, y: 553.95, w: 81.37} }
+  - { line: "4d", label: "Spouse's date of death (if died before filing)", type: text,
+      overlay: {page: 1, x: 492.44, y: 529.75, w: 81.92} }
+  - { line: "5", label: "EXEMPTIONS: taxpayer, spouse, dependents and other dependents from federal 1040 (00 if you are another taxpayer's dependent)", type: text,
+      overlay: {page: 1, x: 46.76, y: 468.83, w: 25.54} }
+  - { line: "6a", label: "Federal or state extension of time to file", type: checkbox,
+      overlay: {page: 1, x: 50.63, y: 435.95, w: 9.35} }
+  - { line: "6b", label: "Extension date", type: text,
+      overlay: {page: 1, x: 283.57, y: 436.01, w: 83.29} }
   # ---- filing status (mark only one) ------------------------------------------
-  - { line: "filing_status.single", label: "(1) Single", type: checkbox }
-  - { line: "filing_status.mfj", label: "(2) Married filing jointly", type: checkbox }
-  - { line: "filing_status.mfs", label: "(3) Married filing separately (spouse's name/SSN in 2a and 2b)", type: checkbox }
-  - { line: "filing_status.hoh", label: "(4) Head of household", type: checkbox }
-  - { line: "filing_status.hoh_person", label: "(4a) Name of qualifying person (if not a counted dependent)", type: text }
-  - { line: "filing_status.qss", label: "(5) Surviving spouse with dependent child", type: checkbox }
+  - { line: "filing_status.single", label: "(1) Single", type: checkbox,
+      overlay: {page: 1, x: 397.05, y: 423.23, w: 7.42} }
+  - { line: "filing_status.mfj", label: "(2) Married filing jointly", type: checkbox,
+      overlay: {page: 1, x: 397.05, y: 410.87, w: 7.42} }
+  - { line: "filing_status.mfs", label: "(3) Married filing separately (spouse's name/SSN in 2a and 2b)", type: checkbox,
+      overlay: {page: 1, x: 396.97, y: 398.23, w: 7.42} }
+  - { line: "filing_status.hoh", label: "(4) Head of household", type: checkbox,
+      overlay: {page: 1, x: 397.05, y: 374.79, w: 7.42} }
+  - { line: "filing_status.hoh_person", label: "(4a) Name of qualifying person (if not a counted dependent)", type: text,
+      overlay: {page: 1, x: 421.22, y: 350.34, w: 148.38} }
+  - { line: "filing_status.qss", label: "(5) Surviving spouse with dependent child", type: checkbox,
+      overlay: {page: 1, x: 397.05, y: 338.71, w: 7.42} }
   # ---- dependents table (first 5; more on Schedule PIT-S) ----------------------
-  - { line: "dep1.first", label: "Dependent 1 — first name", type: text }
-  - { line: "dep1.last", label: "Dependent 1 — last name", type: text }
-  - { line: "dep1.ssn", label: "Dependent 1 — SSN", type: text }
-  - { line: "dep1.dob", label: "Dependent 1 — date of birth (MM/DD/CCYY)", type: text }
-  - { line: "dep2.first", label: "Dependent 2 — first name", type: text }
-  - { line: "dep2.last", label: "Dependent 2 — last name", type: text }
-  - { line: "dep2.ssn", label: "Dependent 2 — SSN", type: text }
-  - { line: "dep2.dob", label: "Dependent 2 — date of birth", type: text }
-  - { line: "dep3.first", label: "Dependent 3 — first name", type: text }
-  - { line: "dep3.last", label: "Dependent 3 — last name", type: text }
-  - { line: "dep3.ssn", label: "Dependent 3 — SSN", type: text }
-  - { line: "dep3.dob", label: "Dependent 3 — date of birth", type: text }
-  - { line: "dep4.first", label: "Dependent 4 — first name", type: text }
-  - { line: "dep4.last", label: "Dependent 4 — last name", type: text }
-  - { line: "dep4.ssn", label: "Dependent 4 — SSN", type: text }
-  - { line: "dep4.dob", label: "Dependent 4 — date of birth", type: text }
-  - { line: "dep5.first", label: "Dependent 5 — first name", type: text }
-  - { line: "dep5.last", label: "Dependent 5 — last name", type: text }
-  - { line: "dep5.ssn", label: "Dependent 5 — SSN", type: text }
-  - { line: "dep5.dob", label: "Dependent 5 — date of birth", type: text }
+  - { line: "dep1.first", label: "Dependent 1 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 385.86, w: 65.7} }
+  - { line: "dep1.last", label: "Dependent 1 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 385.86, w: 90.79} }
+  - { line: "dep1.ssn", label: "Dependent 1 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 385.86, w: 89.51} }
+  - { line: "dep1.dob", label: "Dependent 1 — date of birth (MM/DD/CCYY)", type: text,
+      overlay: {page: 1, x: 297.21, y: 385.86, w: 82.89} }
+  - { line: "dep2.first", label: "Dependent 2 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 373.81, w: 65.7} }
+  - { line: "dep2.last", label: "Dependent 2 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 373.81, w: 90.79} }
+  - { line: "dep2.ssn", label: "Dependent 2 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 373.81, w: 89.51} }
+  - { line: "dep2.dob", label: "Dependent 2 — date of birth", type: text,
+      overlay: {page: 1, x: 297.21, y: 373.81, w: 82.89} }
+  - { line: "dep3.first", label: "Dependent 3 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 361.66, w: 65.7} }
+  - { line: "dep3.last", label: "Dependent 3 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 361.66, w: 90.79} }
+  - { line: "dep3.ssn", label: "Dependent 3 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 361.66, w: 89.51} }
+  - { line: "dep3.dob", label: "Dependent 3 — date of birth", type: text,
+      overlay: {page: 1, x: 297.21, y: 361.66, w: 82.89} }
+  - { line: "dep4.first", label: "Dependent 4 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 349.44, w: 65.7} }
+  - { line: "dep4.last", label: "Dependent 4 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 349.44, w: 90.79} }
+  - { line: "dep4.ssn", label: "Dependent 4 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 349.44, w: 89.51} }
+  - { line: "dep4.dob", label: "Dependent 4 — date of birth", type: text,
+      overlay: {page: 1, x: 297.21, y: 349.44, w: 82.89} }
+  - { line: "dep5.first", label: "Dependent 5 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 337.31, w: 65.7} }
+  - { line: "dep5.last", label: "Dependent 5 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 337.31, w: 90.79} }
+  - { line: "dep5.ssn", label: "Dependent 5 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 337.31, w: 89.51} }
+  - { line: "dep5.dob", label: "Dependent 5 — date of birth", type: text,
+      overlay: {page: 1, x: 297.21, y: 337.31, w: 82.89} }
   # ---- income (page 1, lines 9-22) ---------------------------------------------
-  - { line: "9", label: "Federal adjusted gross income (federal Form 1040/1040-SR, line 11)", type: money }
-  - { line: "10", label: "(+) State and local tax deduction claimed on federal Schedule A, line 5a (itemizers; worksheet)", type: money }
-  - { line: "11", label: "(+) Total additions to federal AGI (PIT-ADJ, line 6; attach PIT-ADJ)", type: money }
-  - { line: "12", label: "(-) Federal standard or itemized deduction (federal Form 1040, line 12)", type: money }
-  - { line: "12a", label: "Mark if you itemized", type: checkbox }
-  - { line: "13", label: "(-) Deduction for certain dependents (worksheet)", type: money }
-  - { line: "14", label: "(-) New Mexico low- and middle-income tax exemption", type: money }
-  - { line: "15", label: "(-) Total deductions and exemptions from federal income (PIT-ADJ, line 27; attach)", type: money }
-  - { line: "16", label: "(-) Medical care expense deduction (complete BOTH 16 and 16a or it is denied)", type: money }
-  - { line: "16a", label: "Unreimbursed and uncompensated medical care expenses", type: money }
+  - { line: "9", label: "Federal adjusted gross income (federal Form 1040/1040-SR, line 11)", type: money,
+      overlay: {page: 1, x: 483.24, y: 315.27, w: 91.12} }
+  - { line: "10", label: "(+) State and local tax deduction claimed on federal Schedule A, line 5a (itemizers; worksheet)", type: money,
+      overlay: {page: 1, x: 483.24, y: 297.63, w: 91.12} }
+  - { line: "11", label: "(+) Total additions to federal AGI (PIT-ADJ, line 6; attach PIT-ADJ)", type: money,
+      overlay: {page: 1, x: 483.24, y: 279.99, w: 91.12} }
+  - { line: "12", label: "(-) Federal standard or itemized deduction (federal Form 1040, line 12)", type: money,
+      overlay: {page: 1, x: 483.24, y: 267.03, w: 91.12} }
+  - { line: "12a", label: "Mark if you itemized", type: checkbox,
+      overlay: {page: 1, x: 423.11, y: 254.07, w: 10.57} }
+  - { line: "13", label: "(-) Deduction for certain dependents (worksheet)", type: money,
+      overlay: {page: 1, x: 483.24, y: 241.47, w: 91.12} }
+  - { line: "14", label: "(-) New Mexico low- and middle-income tax exemption", type: money,
+      overlay: {page: 1, x: 483.24, y: 228.87, w: 91.12} }
+  - { line: "15", label: "(-) Total deductions and exemptions from federal income (PIT-ADJ, line 27; attach)", type: money,
+      overlay: {page: 1, x: 483.24, y: 216.27, w: 91.12} }
+  - { line: "16", label: "(-) Medical care expense deduction (complete BOTH 16 and 16a or it is denied)", type: money,
+      overlay: {page: 1, x: 483.24, y: 204.03, w: 91.12} }
+  - { line: "16a", label: "Unreimbursed and uncompensated medical care expenses", type: money,
+      overlay: {page: 1, x: 340.57, y: 183.51, w: 91.11} }
   - { line: "17", label: "NEW MEXICO TAXABLE INCOME: lines 9+10+11 minus lines 12,13,14,15,16 (zero floor)",
-      type: money, compute: "max(0, 9 + 10 + 11 - 12 - 13 - 14 - 15 - 16)" }
+      type: money, compute: "max(0, 9 + 10 + 11 - 12 - 13 - 14 - 15 - 16)",
+      overlay: {page: 1, x: 483.24, y: 164.43, w: 91.12} }
   - { line: "18", label: "New Mexico tax on line 17, or from PIT-B line 14", type: money,
-      note: "MANDATED lookup: 2023 NM Tax Rate Table (1.7%/3.2%/4.7%/5.9% brackets as printed) or PIT-B apportionment — take the table/schedule value, never plain bracket arithmetic." }
-  - { line: "18a", label: "Enter R if from the Tax Rate Table, B if from PIT-B line 14", type: text }
-  - { line: "19", label: "(+) Additional tax on lump-sum distributions", type: money }
-  - { line: "20", label: "(-) Credit for taxes paid to another state (residents; attach the other state's return)", type: money }
-  - { line: "21", label: "(-) Business-related income tax credits applied (Schedule PIT-CR, line A; attach)", type: money }
+      note: "MANDATED lookup: 2023 NM Tax Rate Table (1.7%/3.2%/4.7%/5.9% brackets as printed) or PIT-B apportionment — take the table/schedule value, never plain bracket arithmetic.",
+      overlay: {page: 1, x: 483.24, y: 146.43, w: 91.12} }
+  - { line: "18a", label: "Enter R if from the Tax Rate Table, B if from PIT-B line 14", type: text,
+      overlay: {page: 1, x: 425.11, y: 134.19, w: 6.57, cells: [425.11], cell_w: 6.57} }
+  - { line: "19", label: "(+) Additional tax on lump-sum distributions", type: money,
+      overlay: {page: 1, x: 483.24, y: 121.95, w: 91.12} }
+  - { line: "20", label: "(-) Credit for taxes paid to another state (residents; attach the other state's return)", type: money,
+      overlay: {page: 1, x: 483.24, y: 104.49, w: 91.12} }
+  - { line: "21", label: "(-) Business-related income tax credits applied (Schedule PIT-CR, line A; attach)", type: money,
+      overlay: {page: 1, x: 483.24, y: 87.03, w: 91.12} }
   - { line: "22", label: "NET NEW MEXICO INCOME TAX: lines 18+19 minus lines 20,21 (zero floor)",
-      type: money, compute: "max(0, 18 + 19 - 20 - 21)" }
+      type: money, compute: "max(0, 18 + 19 - 20 - 21)",
+      overlay: {page: 1, x: 483.24, y: 68.67, w: 91.12} }
   # ---- payments and credits (page 2) --------------------------------------------
-  - { line: "23", label: "Amount on line 22 from page 1", type: money, compute: "22" }
-  - { line: "24", label: "Total claimed on rebate and credit schedule (PIT-RC, line 26; attach)", type: money }
-  - { line: "25", label: "(+) Working families tax credit (complete 25, 25a, and 25b or denied)", type: money }
-  - { line: "25a", label: "Federal earned income credit (EIC) reported or calculated under NM Expansion", type: money }
-  - { line: "25b", label: "NM Expansion only: check if you did NOT qualify for the federal EIC", type: checkbox }
-  - { line: "26", label: "(+) Refundable business-related credits (Schedule PIT-CR, line B; attach)", type: money }
-  - { line: "27", label: "(+) New Mexico income tax withheld (attach annual statements)", type: money }
-  - { line: "28", label: "(+) NM tax withheld from oil and gas proceeds (attach 1099-MISC or RPD-41285)", type: money }
-  - { line: "29", label: "(+) NM tax withheld from or paid by a pass-through entity (attach 1099-MISC or RPD-41359)", type: money }
-  - { line: "30", label: "(+) 2023 estimated income tax payments", type: money }
-  - { line: "31", label: "(+) Other payments", type: money }
+  - { line: "23", label: "Amount on line 22 from page 1", type: money, compute: "22",
+      overlay: {page: 2, x: 483.74, y: 640.84, w: 90.12} }
+  - { line: "24", label: "Total claimed on rebate and credit schedule (PIT-RC, line 26; attach)", type: money,
+      overlay: {page: 2, x: 483.74, y: 627.01, w: 90.12} }
+  - { line: "25", label: "(+) Working families tax credit (complete 25, 25a, and 25b or denied)", type: money,
+      overlay: {page: 2, x: 483.74, y: 613.19, w: 90.12} }
+  - { line: "25a", label: "Federal earned income credit (EIC) reported or calculated under NM Expansion", type: money,
+      overlay: {page: 2, x: 341.07, y: 596.35, w: 90.11} }
+  - { line: "25b", label: "NM Expansion only: check if you did NOT qualify for the federal EIC", type: checkbox,
+      overlay: {page: 2, x: 423.12, y: 579.5, w: 10.56} }
+  - { line: "26", label: "(+) Refundable business-related credits (Schedule PIT-CR, line B; attach)", type: money,
+      overlay: {page: 2, x: 483.74, y: 566.46, w: 90.12} }
+  - { line: "27", label: "(+) New Mexico income tax withheld (attach annual statements)", type: money,
+      overlay: {page: 2, x: 483.74, y: 554.22, w: 90.12} }
+  - { line: "28", label: "(+) NM tax withheld from oil and gas proceeds (attach 1099-MISC or RPD-41285)", type: money,
+      overlay: {page: 2, x: 483.74, y: 541.98, w: 90.12} }
+  - { line: "29", label: "(+) NM tax withheld from or paid by a pass-through entity (attach 1099-MISC or RPD-41359)", type: money,
+      overlay: {page: 2, x: 483.74, y: 530.18, w: 90.12} }
+  - { line: "30", label: "(+) 2023 estimated income tax payments", type: money,
+      overlay: {page: 2, x: 483.74, y: 518.39, w: 90.12} }
+  - { line: "31", label: "(+) Other payments", type: money,
+      overlay: {page: 2, x: 483.74, y: 506.15, w: 90.12} }
   - { line: "32", label: "TOTAL PAYMENTS AND CREDITS: add lines 24 through 31",
-      type: money, compute: "24 + 25 + 26 + 27 + 28 + 29 + 30 + 31" }
+      type: money, compute: "24 + 25 + 26 + 27 + 28 + 29 + 30 + 31",
+      overlay: {page: 2, x: 483.74, y: 494.16, w: 90.12} }
   # ---- tax due / overpayment ------------------------------------------------------
-  - { line: "33", label: "TAX DUE: if line 22 exceeds line 32, the difference", type: money, compute: "max(0, 22 - 32)" }
-  - { line: "34", label: "(+) Penalty on underpayment of estimated tax", type: money }
-  - { line: "35", label: "Special underpayment-penalty method code 1-5 (attach RPD-41272)", type: text }
-  - { line: "36", label: "(+) Penalty", type: money }
-  - { line: "37", label: "(+) Interest", type: money }
+  - { line: "33", label: "TAX DUE: if line 22 exceeds line 32, the difference", type: money, compute: "max(0, 22 - 32)",
+      overlay: {page: 2, x: 483.74, y: 481.42, w: 89.62} }
+  - { line: "34", label: "(+) Penalty on underpayment of estimated tax", type: money,
+      overlay: {page: 2, x: 483.74, y: 469.43, w: 89.62} }
+  - { line: "35", label: "Special underpayment-penalty method code 1-5 (attach RPD-41272)", type: text,
+      overlay: {page: 2, x: 483.74, y: 452.87, w: 89.62, align: right} }
+  - { line: "36", label: "(+) Penalty", type: money,
+      overlay: {page: 2, x: 483.74, y: 436.31, w: 89.62} }
+  - { line: "37", label: "(+) Interest", type: money,
+      overlay: {page: 2, x: 483.74, y: 424.07, w: 89.62} }
   - { line: "38", label: "TAX, PENALTY, AND INTEREST DUE: add lines 33, 34, 36, and 37",
-      type: money, compute: "33 + 34 + 36 + 37" }
-  - { line: "39", label: "OVERPAYMENT: if line 23 is less than line 32, the difference", type: money, compute: "max(0, 32 - 23)" }
-  - { line: "40", label: "(-) Refund voluntary contributions (PIT-D, line 18; attach PIT-D)", type: money }
-  - { line: "41", label: "(-) Amount of line 39 applied to your 2024 estimated tax", type: money }
+      type: money, compute: "33 + 34 + 36 + 37",
+      overlay: {page: 2, x: 483.74, y: 412.08, w: 89.62} }
+  - { line: "39", label: "OVERPAYMENT: if line 23 is less than line 32, the difference", type: money, compute: "max(0, 32 - 23)",
+      overlay: {page: 2, x: 483.74, y: 399.34, w: 89.62} }
+  - { line: "40", label: "(-) Refund voluntary contributions (PIT-D, line 18; attach PIT-D)", type: money,
+      overlay: {page: 2, x: 483.74, y: 387.35, w: 89.62} }
+  - { line: "41", label: "(-) Amount of line 39 applied to your 2024 estimated tax", type: money,
+      overlay: {page: 2, x: 483.74, y: 375.11, w: 89.62} }
   - { line: "42", label: "AMOUNT TO BE REFUNDED TO YOU: line 39 minus lines 40 and 41",
-      type: money, compute: "39 - 40 - 41" }
+      type: money, compute: "39 - 40 - 41",
+      overlay: {page: 2, x: 483.74, y: 363.12, w: 89.62} }
   # ---- Refund Express (direct deposit) ---------------------------------------------
-  - { line: "re.routing", label: "RE.1 Routing number", type: text }
-  - { line: "re.account", label: "RE.2 Account number", type: text }
-  - { line: "re.checking", label: "RE.3 Account type — checking", type: checkbox }
-  - { line: "re.savings", label: "RE.3 Account type — savings", type: checkbox }
-  - { line: "re.foreign_yes", label: "RE.4 Refund goes to/through an account outside the US — Yes (cannot use this method)", type: checkbox }
-  - { line: "re.foreign_no", label: "RE.4 Refund goes to/through an account outside the US — No", type: checkbox }
+  - { line: "re.routing", label: "RE.1 Routing number", type: text,
+      overlay: {page: 2, x: 103.27, y: 338.39, w: 79.55} }
+  - { line: "re.account", label: "RE.2 Account number", type: text,
+      overlay: {page: 2, x: 261.8, y: 338.39, w: 116.54} }
+  - { line: "re.checking", label: "RE.3 Account type — checking", type: checkbox,
+      overlay: {page: 2, x: 475.96, y: 338.39, w: 10.57} }
+  - { line: "re.savings", label: "RE.3 Account type — savings", type: checkbox,
+      overlay: {page: 2, x: 523.52, y: 338.39, w: 10.57} }
+  - { line: "re.foreign_yes", label: "RE.4 Refund goes to/through an account outside the US — Yes (cannot use this method)", type: checkbox,
+      overlay: {page: 2, x: 475.96, y: 326.4, w: 10.57} }
+  - { line: "re.foreign_no", label: "RE.4 Refund goes to/through an account outside the US — No", type: checkbox,
+      overlay: {page: 2, x: 523.52, y: 326.4, w: 10.57} }
   # ---- HSD data-sharing box ----------------------------------------------------------
-  - { line: "hsd_share", label: "HSD.1 Check to let HSD/NMHIE screen your household for medical insurance (authorizes TRD data sharing)", type: checkbox }
-  - { line: "phone", label: "Taxpayer's phone number", type: text }
-  - { line: "email", label: "Taxpayer's email address", type: text }
+  - { line: "hsd_share", label: "HSD.1 Check to let HSD/NMHIE screen your household for medical insurance (authorizes TRD data sharing)", type: checkbox,
+      overlay: {page: 2, x: 63.78, y: 301.67, w: 10.57} }
+  - { line: "signature.date", label: "Date (your signature)", type: text,
+      overlay: {page: 2, x: 251.23, y: 232.28, w: 79.55} }
+  - { line: "signature.dl_number", label: "Driver's License, State ID No. or enter \"NONE\" or \"DECLINED\"", type: text,
+      overlay: {page: 2, x: 39.86, y: 207.8, w: 185.23} }
+  - { line: "signature.dl_state", label: "State (your driver's license / state ID)", type: text,
+      overlay: {page: 2, x: 230.09, y: 207.8, w: 16.14} }
+  - { line: "signature.dl_expiration", label: "Expiration Date (your driver's license / state ID)", type: text,
+      overlay: {page: 2, x: 251.23, y: 207.8, w: 79.55} }
+  - { line: "spouse.signature_date", label: "Date (spouse's signature)", type: text,
+      overlay: {page: 2, x: 251.23, y: 183.32, w: 79.55} }
+  - { line: "spouse.dl_number", label: "Spouse's Driver's License, State ID No. or enter \"NONE\" or \"DECLINED\"", type: text,
+      overlay: {page: 2, x: 39.86, y: 158.84, w: 185.23} }
+  - { line: "spouse.dl_state", label: "State (spouse's driver's license / state ID)", type: text,
+      overlay: {page: 2, x: 230.09, y: 158.84, w: 16.14} }
+  - { line: "spouse.dl_expiration", label: "Expiration Date (spouse's driver's license / state ID)", type: text,
+      overlay: {page: 2, x: 251.23, y: 158.84, w: 79.55} }
+  - { line: "phone", label: "Taxpayer's phone number", type: text,
+      overlay: {page: 2, x: 140.26, y: 134, w: 122.82} }
+  - { line: "email", label: "Taxpayer's email address", type: text,
+      overlay: {page: 2, x: 139.26, y: 121.6, w: 176.67} }
+  - { line: "preparer.date", label: "Paid preparer's Date", type: text,
+      overlay: {page: 2, x: 520.23, y: 244.02, w: 48.85} }
+  - { line: "preparer.firm", label: "P.1 Firm's name (or yours, if self-employed)", type: text,
+      overlay: {page: 2, x: 345.85, y: 219.54, w: 223.23} }
+  - { line: "preparer.nmbtin", label: "P.2 NMBTIN", type: text,
+      overlay: {page: 2, x: 393.41, y: 195.5, w: 101.19} }
+  - { line: "preparer.ptin", label: "P.3 Preparer's PTIN", type: text,
+      overlay: {page: 2, x: 420.33, y: 182.82, w: 74.27} }
+  - { line: "preparer.fein", label: "P.4 FEIN", type: text,
+      overlay: {page: 2, x: 383.34, y: 170.58, w: 79.55} }
+  - { line: "preparer.phone", label: "P.5 Preparer's phone number", type: text,
+      overlay: {page: 2, x: 457.32, y: 158.34, w: 95.4} }
+  - { line: "preparer.rpd41338", label: "P.6 Mark this box if Form RPD-41338 is on file for this taxpayer", type: checkbox,
+      overlay: {page: 2, x: 354.42, y: 133.73, w: 10.57} }
 mailing:
   no_payment: "New Mexico Taxation and Revenue Department, P.O. Box 25122, Santa Fe, New Mexico 87504-5122"
   with_payment: "New Mexico Taxation and Revenue Department, P.O. Box 25122, Santa Fe, New Mexico 87504-5122 (same address printed on the form; payment vouchers use PIT-PV)"

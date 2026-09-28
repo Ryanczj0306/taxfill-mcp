@@ -267,7 +267,7 @@ def test_js4b_every_recorded_printing_rule_is_verbatim_in_its_source(state):
             except (FetchError, ValueError) as exc:  # the official-host rule refuses with ValueError
                 # NM TRD serves its library from an AWS API-gateway host, which fetch refuses as a blank host;
                 # its quotes were read from that document on 2026-09-28 (see the manifest).
-                if "official US government hosts" in str(exc):
+                if "official US government hosts" in str(exc) or "without a pinned sha256" in str(exc):
                     continue
                 raise
             texts[rule.url] = _normalised_text(pdf)

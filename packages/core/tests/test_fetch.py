@@ -181,6 +181,23 @@ def test_bare_us_host_is_refused_but_state_gov_us_is_not_host_blocked(cache: Pat
         fetch_blank("https://www.revenue.state.mn.us/form.pdf", cache_dir=cache)
 
 
+def test_js4d_nm_trds_document_host_is_allowed_only_with_a_pinned_digest(cache: Path, monkeypatch):
+    # NM TRD serves its forms from an AWS API-gateway host (tax.newmexico.gov's forms table loads from it). It passes
+    # the host gate only with the pack's pinned sha256; a look-alike gateway host never does.
+    url = "https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/x/y/2023pit-1.pdf"
+    with pytest.raises(ValueError, match="without a pinned sha256"):
+        fetch_blank(url, cache_dir=cache)
+
+    def _no_network(url, timeout):
+        raise OfflineFetchError("host gate passed; network stubbed")
+
+    monkeypatch.setattr("taxfill_core.fetch._download", _no_network)
+    with pytest.raises(OfflineFetchError, match="host gate passed"):
+        fetch_blank(url, sha256="0" * 63 + "1", cache_dir=cache)
+    with pytest.raises(ValueError, match="official US government hosts"):
+        fetch_blank("https://evil1234.execute-api.us-west-2.amazonaws.com/prod/f.pdf", sha256="0" * 63 + "1", cache_dir=cache)
+
+
 def test_non_pdf_content_is_rejected(tmp_path: Path, cache: Path):
     page = tmp_path / "f0000.pdf"
     page.write_bytes(b"<html><body>404 not found</body></html>")

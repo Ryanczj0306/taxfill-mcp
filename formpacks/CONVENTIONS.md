@@ -323,6 +323,11 @@ use reads as zeros), or it is not declared.
 - Before pinning the digest: render page 1 of the downloaded PDF and READ
   the printed revision year and form title. A wrong-revision pack is worse
   than no pack (freshness protocol, dev plan section 7).
+- A state pack's `source_url` is the state tax agency's own file on a government host (`.gov`,
+  `.mil`, `*.state.<xx>.us`). The one exception is a host an agency itself serves its forms
+  from that is not a government name: it is listed, with how that was verified, in
+  `taxfill_core.fetch.PINNED_ONLY_BLANK_HOSTS`, and a blank from it is accepted ONLY against
+  a pinned `pdf_sha256`. Today that is NM TRD's document library (Phase J JS4d).
 - Blank PDFs are NEVER committed. `fetch_blank` downloads them into the
   gitignored shared cache `.cache/blanks/`.
 - `mirror_urls` (optional) is for a host that refuses non-browser fetchers

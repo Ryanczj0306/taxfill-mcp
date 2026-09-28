@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,019 tests** — offline 7,212 + live-.gov 807; derived
+Done and on `main` (**8,022 tests** — offline 7,214 + live-.gov 808; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2298,6 +2298,10 @@ line items sum to the headline delta.
       - The same read found 51 printed entries the manifest had never listed: deceased boxes, fiscal-year dates, the spouse suffix, the four-row dependents table, the b / h / j type blanks, the p / q dates of birth, subsistence days, the Line 33 exception code, the signature date, the preparer-discussion Yes / No and the paid-preparer block. The SSN also repeats in the page 2-3 headers.
       - Lines 4 and 32 were "left manual" because their dotted addends "cannot appear in a compute expression". That stopped being true with JP5c, and the stamped demo return showed the result: Line 4 blank, so Line 5 wrong. Both now compute, the same stale-grammar-note class JEc cleared elsewhere.
       - test_sc1040_overlay.py covers every line's coordinates, the computes, and a demo and a full return stamping on the real blank with no warning, verifying on all 164 placements, with a wrong value FAILing.
+    - **NM PIT-1 2023 — DONE 2026-09-28.** 117 lines, 118 placements, from a 2-author / 2-verifier workflow plus the main-loop read.
+      - NM TRD serves the blank from an AWS API-gateway host, which fetch's official-host rule refused, so the pack could not even fetch its blank. Verified from the source: tax.newmexico.gov/forms-publications/ loads its forms table through prod.realfile.rtsclients.com/js/rf-tables.js, which fetches from that host. fetch now takes it, and ONLY with a pinned sha256, via `fetch.PINNED_ONLY_BLANK_HOSTS` (one entry, with that provenance). A look-alike gateway host is still refused.
+      - The read found 20 unlisted entries, and 3c / 3d were combined labels over separate City / State / ZIP and Country / Province cells.
+      - test_pit1_overlay.py: the demo and full returns (including a loss on line 9) stamp clean and verify on all 118 placements. test_fetch covers the pinned-only rule.
 - [ ] **JS5 — State 2024/2025 re-maps and URL discovery (rest of old J3)** (XL, per pack) [PJ-15 (4)–(5)]
   - Open at the 2026-09-11 count: 73 pack-years, minus JS3b.
     - 2024: 32 (RE-MAP 10, URL-DEAD 11, no-token 7, print-only 4).

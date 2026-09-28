@@ -83,6 +83,19 @@ class OfflineFetchError(FetchError):
     """
 
 
+# Blank hosts outside .gov / .mil / *.state.<xx>.us that a state tax agency ITSELF serves its forms from.
+# A download from one is allowed ONLY with a pinned sha256: the reviewed digest, not the host name, then vouches
+# for the bytes, and the fixed host name keeps the rule from opening a path to arbitrary hosts. Each entry says
+# how it was verified (Phase J JS4d).
+PINNED_ONLY_BLANK_HOSTS: dict[str, str] = {
+    "klvg4oyd4j.execute-api.us-west-2.amazonaws.com": (
+        "New Mexico Taxation and Revenue Department's document library: tax.newmexico.gov/forms-publications/ "
+        "loads its forms table through prod.realfile.rtsclients.com/js/rf-tables.js, which fetches from this "
+        "API (read 2026-09-28)"
+    ),
+}
+
+
 def compute_sha256(path: str | Path) -> str:
     """SHA-256 hex digest of a file (chunked read; suitable for large PDFs)."""
     digest = hashlib.sha256()
@@ -319,7 +332,13 @@ def fetch_blank(
         from taxfill_core.knowledge import is_official_gov_host
 
         host = (urllib.parse.urlparse(url).hostname or "").lower()
-        if not is_official_gov_host(host):
+        if host in PINNED_ONLY_BLANK_HOSTS and sha256 is None:
+            raise ValueError(
+                f"refusing to fetch {url!r} without a pinned sha256: {host!r} is not a government host — it is "
+                f"{PINNED_ONLY_BLANK_HOSTS[host]} — so a blank from it is accepted only against the pack's reviewed "
+                f"pdf_sha256"
+            )
+        if not is_official_gov_host(host) and host not in PINNED_ONLY_BLANK_HOSTS:
             raise ValueError(
                 f"refusing to fetch {url!r}: blank forms are downloaded only from official US "
                 f"government hosts (.gov, .mil, or *.state.<xx>.us), not {host!r} — a pack's "
