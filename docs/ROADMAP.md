@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,542 tests** — offline 6,125 + live-.gov 417; derived
+Done and on `main` (**6,545 tests** — offline 6,128 + live-.gov 417; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2282,9 +2282,12 @@ not wait for any of this.
       - The joint view concatenates w2s and sums the benefits, and the field-coverage classes include both.
     - **Not derived:** qualified_tips from code TP. TP is all cash tips, qualified only in a listed occupation (box 14b; "000" marks a nonqualifying one), so the caller confirms it. V25 names the route.
   - **Tests** (test_w2_2026 `test_jt4a_*`): the code table; derived = hand-fed aggregates and the same estimate; each mismatch raises; box 10 reduces the 2025 Form 2441 limit to the op's figure; TT and the joint view; the 402(g) and code-W disclosures; the W-2 reading's V22-V25 and the box 14 alias.
-- [ ] **JT4b — 1099-B boxes** (S; deps J0) [TY26-26]
-  - Add 1f, 2-ordinary, 3, 6, 7 and 12 (extract.py:268-285). Box 12 (basis reported to IRS) decides Form 8949 box A or B, or direct entry on Schedule D.
-  - **Acceptance:** a box-12 reading carries the routing note.
+- [x] **JT4b — 1099-B boxes — DONE 2026-09-27** (S; deps J0) [TY26-26]
+  - *As built (read 2026-09-27):* the Form 1099-B (2026) (irs-prior/f1099b--2026.pdf, Created 8/26/25) and its Instructions for Recipient, and the Instructions for Form 8949 (2025).
+    - The DocSpec gains the applicable Form 8949 checkbox, 1f, 2-Ordinary, 3 (collectibles / QOF), 6 (gross / net proceeds), 7, 12 and 13.
+    - Validator V26 (info) routes each reading. Box 12 and box 2 give Form 8949 box A/D (basis reported to the IRS) or B/E (not reported, or box 12 unchecked). Exception 1's direct entry on Schedule D line 1a / 8a applies when basis was reported, box 1f/1g shows no adjustment, and neither Ordinary nor box 3 is checked — quoted.
+    - V27 flags both term boxes checked, box 12 with box 5, box 12 without a term box, box 7's loss bar, and a printed applicable checkbox that disagrees with boxes 2 and 12.
+  - **Tests** (test_extract `test_jt4b_*`): a box-12 reading carries the routing note; unreported basis goes to B/E; an adjustment, Ordinary or a collectible forces Form 8949; the V27 contradictions.
 - [ ] **JT4c — Dress-rehearsal evals, scenarios t–t4** (M; deps JT3a–d, JT4a, JT4b, JF1a, JF8, JF9, JR2c, JR3c, JT2b) [TY26-29]
   - SYNTHETIC TY2026 dress rehearsals with demo amounts. Each fixture is built only from its own stated facts, and together they cover the Wave A form scope (JT3a–d):
     - **t = a hypothetical U.S. citizen with two CONCURRENT employers all year** (a full-time job plus a part-time one):

@@ -1205,3 +1205,40 @@ def test_jf8_1098vli_checks_the_vin_and_the_163h4_conditions():
     old_loan = _vli(**{"3a": "2024-11-30"}).findings
     assert [f.rule_id for f in old_loan] == ["V21"] and "after December 31, 2024" in old_loan[0].message
     assert [f.rule_id for f in _vli(**{"3a": "Feb 2026"}).findings] == ["V21"]
+
+
+# ── Phase J JT4b: the 1099-B boxes that route a sale ──
+
+def _b(**over):
+    reading = {"recipient_tin": "123-45-6789", "1a": "100 sh. Demo Index Fund", "1d": "5,000.00", "1e": "4,200.00",
+               "2_short_term": False, "2_long_term": True, "12": True}
+    reading.update(over)
+    return extract_document("docs/demo-1099b.pdf", "1099-B", reading, tax_year=2026)
+
+
+def test_jt4b_a_box_12_reading_carries_the_routing_note():
+    doc = _b()
+    notes = [f for f in doc.findings if f.rule_id == "V26"]
+    assert len(notes) == 1 and notes[0].severity == "info"
+    assert "Schedule D line 8a" in notes[0].message and "box D" in notes[0].message
+    short = _b(**{"2_short_term": True, "2_long_term": False}).findings
+    assert any("Schedule D line 1a" in f.message and "box A" in f.message for f in short)
+
+
+def test_jt4b_unreported_basis_and_adjustments_force_form_8949():
+    unreported = [f.message for f in _b(**{"12": False}).findings if f.rule_id == "V26"]
+    assert unreported and "box E" in unreported[0] and "NOT reported" in unreported[0]
+    for over, why in (({"1g": "300.00"}, "box 1f or 1g"), ({"2_ordinary": True}, "Ordinary"),
+                      ({"3_collectibles": True}, "collectibles")):
+        msg = [f.message for f in _b(**over).findings if f.rule_id == "V26"][0]
+        assert "Form 8949 Part II with box D" in msg and why in msg, over
+
+
+def test_jt4b_contradictions_are_flagged():
+    assert [f.rule_id for f in _b(**{"2_short_term": True}).findings] == ["V27"]          # both terms
+    assert "V27" in [f.rule_id for f in _b(**{"5": True}).findings]                      # box 12 with box 5
+    assert "V27" in [f.rule_id for f in _b(**{"2_long_term": False}).findings]           # box 12, no term
+    assert any("cannot take a loss" in f.message for f in _b(**{"7": True}).findings)
+    assert any(f.rule_id == "V27" and "applicable Form 8949 checkbox" in f.message
+               for f in _b(applicable_8949_checkbox="B").findings)
+    assert not [f for f in _b(applicable_8949_checkbox="D").findings if f.rule_id == "V27"]

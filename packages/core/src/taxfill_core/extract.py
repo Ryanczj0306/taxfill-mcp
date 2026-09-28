@@ -390,16 +390,26 @@ _SPECS: list[DocSpec] = [
         boxes=[
             _b("payer_tin", "Payer's TIN", "tin"),
             _b("recipient_tin", "Recipient's TIN", "tin", required=True),
+            _b("applicable_8949_checkbox", "Applicable checkbox on Form 8949 (A, B, D or E)", "text"),
             _b("1a", "Box 1a — Description of property", "text"),
             _b("1b", "Box 1b — Date acquired", "text"),
             _b("1c", "Box 1c — Date sold or disposed", "text"),
             _b("1d", "Box 1d — Proceeds", "money", required=True),
             _b("1e", "Box 1e — Cost or other basis", "money"),
+            _b("1f", "Box 1f — Accrued market discount", "money"),
             _b("1g", "Box 1g — Wash sale loss disallowed", "money"),
             _b("2_short_term", "Box 2 — Short-term gain or loss", "checkbox"),
             _b("2_long_term", "Box 2 — Long-term gain or loss", "checkbox"),
+            _b("2_ordinary", "Box 2 — Ordinary", "checkbox"),
+            _b("3_collectibles", "Box 3 — Proceeds from collectibles", "checkbox"),
+            _b("3_qof", "Box 3 — Proceeds from a Qualified Opportunity Fund", "checkbox"),
             _b("4", "Box 4 — Federal income tax withheld", "money"),
             _b("5", "Box 5 — Noncovered security", "checkbox"),
+            _b("6_gross_proceeds", "Box 6 — Reported to IRS: gross proceeds", "checkbox"),
+            _b("6_net_proceeds", "Box 6 — Reported to IRS: net proceeds", "checkbox"),
+            _b("7", "Box 7 — Loss not allowed based on amount in 1d", "checkbox"),
+            _b("12", "Box 12 — Basis reported to IRS", "checkbox"),
+            _b("13", "Box 13 — Bartering", "money"),
         ],
     ),
     DocSpec(
@@ -1712,7 +1722,67 @@ _W2_ROUTE_NOTES = {
 }
 
 
-_VALIDATORS = {"W-2": _validate_w2, "1099-R": _validate_1099r, "5498": _validate_5498,
+def _validate_1099b(fields: dict[str, ExtractedField], tax_year: int | None):
+    """Form 1099-B routing (JT4b): box 12 and box 2 decide the Form 8949 box — A/D when basis was reported to the
+    IRS, B/E when it was not — or the Schedule D direct entry of Exception 1 (V26, an info finding); V27 flags
+    readings the form's own text rules out."""
+    found: list[Finding] = []
+    cite = ("Form 1099-B (2026) Instructions for Recipient, Box 12; Instructions for Form 8949 (2025), Box A, Box B, "
+            "Box D, Box E and Exception 1")
+
+    def on(key):
+        f = fields.get(key)
+        return bool(f is not None and f.value is True)
+
+    def money(key):
+        f = fields.get(key)
+        return Decimal(str(f.value)) if f is not None and f.value not in (None, "") and f.status == "ok" else None
+
+    def add(severity, rule_id, boxes, message):
+        found.append(Finding(severity=severity, rule_id=rule_id, boxes=boxes, message=message, citation=cite))
+
+    short, long_, ordinary = on("2_short_term"), on("2_long_term"), on("2_ordinary")
+    reported, noncovered = on("12"), on("5")
+    if short and long_:
+        add("error", "V27", ["2"], "box 2 has both short-term and long-term checked — misread OR broker error.")
+        return found, None
+    if reported and noncovered:
+        add("warning", "V27", ["12", "5"], "box 12 (basis reported to the IRS) and box 5 (noncovered security) are both "
+            "checked — box 5 means \"boxes 1b, 1e, 1f, 1g, and 2 may be blank\"; confirm the reading.")
+    if reported and not (short or long_):
+        add("warning", "V27", ["12", "2"], "box 12 is checked but neither term box in box 2 is: \"If checked, the basis "
+            "in box 1e has been reported to the IRS and either the short-term or the long-term gain or loss box in box 2 "
+            "will be checked\" — misread OR broker error.")
+    if on("7"):
+        add("warning", "V27", ["7"], "box 7 is checked: \"you cannot take a loss on your tax return based on gross "
+            "proceeds from a reportable change in control or capital structure reported in box 1d\" — use the broker's "
+            "separate statement.")
+    if not (short or long_):
+        return found, None
+    term, part = ("short-term", "Part I") if short else ("long-term", "Part II")
+    box = ("A" if short else "D") if reported else ("B" if short else "E")
+    adjusted = any(money(k) not in (None, Decimal(0)) for k in ("1f", "1g"))
+    direct = reported and not adjusted and not ordinary and not on("3_collectibles") and not on("3_qof")
+    if direct:
+        line = "1a" if short else "8a"
+        add("info", "V26", ["12", "2"], f"{term}, basis reported to the IRS (box 12), no box 1f/1g adjustment: Exception "
+            f"1 lets the totals go directly on Schedule D line {line} (\"line 1a (for short-term transactions) or line "
+            f"8a (for long-term transactions)\") unless another adjustment applies; otherwise Form 8949 {part} with box "
+            f"{box} checked.")
+    else:
+        why = ("an adjustment in box 1f or 1g" if adjusted else "the Ordinary box in box 2" if ordinary
+               else "a collectibles or QOF sale (box 3)" if on("3_collectibles") or on("3_qof")
+               else "basis NOT reported to the IRS (box 12 unchecked)")
+        add("info", "V26", ["12", "2"], f"{term}: Form 8949 {part} with box {box} checked — {why} rules out the "
+            f"Schedule D direct entry.")
+    printed = fields.get("applicable_8949_checkbox")
+    if printed is not None and printed.value not in (None, "") and str(printed.value).strip().upper() != box:
+        add("warning", "V27", ["applicable_8949_checkbox"], f"the broker's applicable Form 8949 checkbox reads "
+            f"{printed.value!r} but boxes 2 and 12 point to box {box} — confirm the reading or ask the broker.")
+    return found, None
+
+
+_VALIDATORS = {"W-2": _validate_w2, "1099-B": _validate_1099b, "1099-R": _validate_1099r, "5498": _validate_5498,
                "IRA custodian statement": _validate_custodian_statement, "1098-VLI": _validate_1098vli}
 
 
