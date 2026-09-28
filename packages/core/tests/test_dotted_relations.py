@@ -67,3 +67,15 @@ def test_jec_schedule_nec_line_13_adds_each_column(year):
     bad = _by_relation(pack, {**values, "13c": 700})     # the Canada gambling net income on 10c left out
     assert [r for r, s in bad.items() if s == "FAIL" and r.startswith("13")] == [
         r for r in bad if r.startswith("13c ==")]
+
+
+STATES = FED.parent / "states"
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2025])
+def test_js3b_ut_tc40_part_4_total_adds_the_four_rows(year):
+    pack = load_pack(STATES / f"ut/{year}/tc40/pack.yaml")
+    rel = "contributions_total == contrib_a.amount + contrib_b.amount + contrib_c.amount + contrib_d.amount"
+    rows = {"contrib_a.amount": 50, "contrib_b.amount": 25, "contrib_d.amount": 10}
+    assert _by_relation(pack, {**rows, "contributions_total": 85, "28": 85})[rel] == "PASS"
+    assert _by_relation(pack, {**rows, "contributions_total": 75, "28": 75})[rel] == "FAIL"   # row d left out

@@ -1055,6 +1055,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JR4b: f5329 2023 and 2024 equal the reviewed 2025 row; the 2026 draft splits the city box into
     # city/state/zip, and its selection is exactly the reviewed 2026 f8606 set (foreign_* excluded).
     # JP5c: the NEW f2210 (2025 and the 2026 draft) has no address block at all (reviewed: name and SSN only).
+    # JS3b: UT 2025 TC-40 (a PORTABLE port of UT 2024) equals the reviewed UT 2024 row (the four mailing_address lines).
     import json
     from pathlib import Path
 

@@ -285,9 +285,9 @@ serves one FEDERAL filing: `fincen114`, the FBAR — e-file only, no PDF blank.)
 > ⚠️ **Year mismatch — read this before quoting a state number.** State *knowledge*
 > packs (rates, brackets, credits, thresholds → `calc("state_tax", …)`) ship for
 > **2023, 2024 and 2025** — all 42 jurisdictions, every year. State *form* packs
-> are **thinner and uneven**: 61 packs, TY2023 for all 42 jurisdictions but
-> post-2023 for only **13** — **AR, NY, OR, PA (2024 and 2025)** and
-> **IL, MO, NC, ND, NJ, OH, RI, UT, VA (2024)**. For the other 29 jurisdictions
+> are **thinner and uneven**: 62 packs, TY2023 for all 42 jurisdictions but
+> post-2023 for only **13** — **AR, NY, OR, PA, UT (2024 and 2025)** and
+> **IL, MO, NC, ND, NJ, OH, RI, VA (2024)**. For the other 29 jurisdictions
 > a 2024 or
 > 2025 return computes but **cannot be filled**: say so plainly and fall back to
 > `get_sources` + the state's own blank. Do not memorize this list — it grows

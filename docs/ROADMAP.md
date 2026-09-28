@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,841 tests** — offline 7,078 + live-.gov 763; derived
+Done and on `main` (**7,859 tests** — offline 7,092 + live-.gov 767; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -90,20 +90,20 @@ is JS5's).
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316, 8606, 8889, 8949, 8833, 1116, 8938 (2023–2025), Schedule 1-A (2025), and FinCEN 114 as a hand-fill worksheet. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (61 packs across TY2023–TY2025)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (62 packs across TY2023–TY2025)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**179 form packs total** — 172 `pack.yaml` (111 federal + 61 state) + 7
-`handfill.yaml`. The state 61 breaks down **TY2023 42 / TY2024 14 / TY2025 5**.
+**221 form packs total** — 213 `pack.yaml` (151 federal + 62 state) + 8
+`handfill.yaml`. The state 62 breaks down **TY2023 42 / TY2024 14 / TY2025 6**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
 > **13 of the 42 jurisdictions fill a post-2023 year** — AR (2024+2025),
-> NY (2024+2025), PA (2024+2025), OR (2024+2025), and
-> IL/MO/NC/ND/NJ/OH/RI/UT/VA (2024) — after the 2026-08-21 ten-pack and
-> 2026-08-25 four-pack tranches. For the remaining **29**, state *knowledge*
+> NY (2024+2025), PA (2024+2025), OR (2024+2025), UT (2024+2025), and
+> IL/MO/NC/ND/NJ/OH/RI/VA (2024) — after the 2026-08-21 ten-pack and
+> 2026-08-25 four-pack tranches and the JS3b UT 2025 port. For the remaining **29**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
 > still computes years those packs cannot fill. That asymmetry is now 29
 > jurisdictions wide rather than 40 (see D2).
@@ -325,9 +325,9 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
-      TY2023-only**: 61 packs across TY2023 (42) / TY2024 (14) / TY2025 (5), so
-      **13 of the 42 jurisdictions** can fill a post-2023 year — AR, NY, PA and OR
-      for both 2024 and 2025; IL, MO, NC, ND, NJ, OH, RI, UT, VA for 2024. For the
+      TY2023-only**: 62 packs across TY2023 (42) / TY2024 (14) / TY2025 (6), so
+      **13 of the 42 jurisdictions** can fill a post-2023 year — AR, NY, PA, OR and UT
+      for both 2024 and 2025; IL, MO, NC, ND, NJ, OH, RI, VA for 2024. For the
       other **29**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
@@ -368,7 +368,7 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
           - 7 no-year-token: IA, IN, KS, MD, ME, MN, MS.
           - 3 NO-ACROFORM: the HI, NM and SC hand-fill blanks.
         * **TY2025:**
-          - 6 PORTABLE, five shipped — **UT TC-40 is PORTABLE and unshipped** (against both the 2023 and the 2024 base) → JS3b.
+          - 6 PORTABLE, five shipped — **UT TC-40 is PORTABLE and unshipped** (against both the 2023 and the 2024 base) → JS3b (shipped 2026-09-28).
           - 12 RE-MAP: the four CA packs, GA, MI, MT, VT and WI, plus MO, OH and VA (RE-MAP against their 2024 bases too: 59, 24 and 10 fields gone).
           - 18 URL-DEAD: TY2024's 12, plus IL, NC, ND, NJ, RI and WV — the first five dead against their 2024 URLs as well.
           - 7 no-year-token; 3 NO-ACROFORM.
@@ -2205,6 +2205,16 @@ line items sum to the headline delta.
   - UT 2025 TC-40 is PORTABLE and unshipped: files.tax.utah.gov/tax/forms/2025/tc-40.pdf returns 200, sha256 0eac22fb…37cdf, and all 106 mapped UT-2024 fields exist in it.
   - Then the rows marked PORTABLE / NEAR-PORT, TY2025 first: AZ 24/25, DC 24/25, KY 24 (PORTABLE) / 25 (NEAR-PORT, 4 fields), LA 24, AL 24 (NEAR-PORT, 3), ID 24 (NEAR-PORT, 2).
   - **Acceptance, per pack:** re-downloaded with a digest pin, vision-audited, golden round trip.
+  - *Progress:*
+    - **UT 2025 TC-40 — SHIPPED 2026-09-28** (`formpacks/states/ut/2025/tc40`).
+      - The pin matches three independent downloads (`0eac22fb…37cdf`), and the printed identity is 40501 / "2025".
+      - All 111 widgets are identical to 2024 (page, /Rect, /MaxLen, /Ff, /FT, /AP states). There are zero ReadOnly widgets and the same script-slot census, and the scripts are byte-identical and format-only.
+      - Pages 2-3 of the 2025 file have no text layer, so they were rendered and compared: zero renumbering.
+      - Face deltas: 4.5%, $2,111, $18,213 / $27,320 / $36,426, the line-14 Schedule A 5e-less-5b/5c caption, fund codes 18 and 19, and the year captions. The UT 2025 knowledge pack already matched all of them.
+      - The sentinel audit ran 104/104 with 0 fails, and all three pages were read. Every UT network gate passes: golden round trip, ReadOnly audit, maxlen, verify sweep.
+      - UT 2023, 2024 and 2025 now declare the Part 4 contributions total; it waited only on the dotted-id grammar (JP5c). `test_dotted_relations.py` checks it both ways.
+      - The line-4 cross_form moved to `f1040.11a`: the 2025 Form 1040 prints AGI on line 11a. The pack-invariant gate caught the carried-over `f1040.11`.
+    - Next, from JS3a's 2025 work-list: AZ 140 and DC D-40 (PORTABLE), AL 40 (NEAR-PORT, 34 fields) and KY 740 (NEAR-PORT, 4); then the 2024 rows.
 - [ ] **JS4a — Overlay verifier fixed and tested** (M; on `phase-j2-overlay`) [PJ-01 + PJ-06]
   - **FILING-WRONG once merged.** verify_overlay substring-matches over the expected text's layout (overlay.py:596-610), so a PDF stamped 14,000 / 10 / 1,200 verifies ok against expected 4,000 / 0 / 200.
     - Look up text in the DECLARED box.

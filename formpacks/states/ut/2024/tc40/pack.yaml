@@ -347,9 +347,9 @@
 # zero", so its floor waits on the rate question, not on this one);
 # 11 = 2d x $2,046 (2d is a text count box); 17 (fixed amount keyed to filing
 # status); 33 (branches: page 3 Part 5 total OR TC-40W Part 1 total directly);
-# 43 <= 42 (inequality, not an equality); contributions_total = sum of the four
-# Part 4 row amounts (dotted row ids — the relations evaluator accepts only
-# undotted line tokens, so that sum lives here as a comment only).
+# 43 <= 42 (inequality, not an equality); contributions_total = the four Part 4
+# row amounts is DECLARED since Phase J JS3b (2026-09-28): it waited on the
+# dotted-id grammar, which verify admits since JP5c.
 # The same six floors are declarable on states/ut/2023/tc40, whose printed rows
 # are word-for-word identical, but that pack is not this file's to edit and the
 # change is reported for follow-up instead.
@@ -775,7 +775,7 @@ fields:
     field: 40 Line 28d ST Code
     type: text
     maxlen: 2
-  - line: contributions_total              # = contrib_a..d amounts (dotted ids — sum lives here as a comment); -> page 2, line 28
+  - line: contributions_total              # = contrib_a..d amounts (a declared relation since JS3b); -> page 2, line 28
     field: 40 pg 3 part 4 total v contr
     type: money
     maxlen: 15
@@ -837,6 +837,7 @@ relations:
   - "41 == 39 + 40"                        # 41 "TOTAL DUE - add line 39 and line 40"
   - "42 == max(38 - 32, 0)"                # 42 "REFUND - subtract line 32 from line 38 (not less than zero)"
   - "28 == contributions_total"            # Part 4 "enter the total here and on TC-40, page 2, line 28"
+  - "contributions_total == contrib_a.amount + contrib_b.amount + contrib_c.amount + contrib_d.amount"  # Part 4 total
   - "43 == voluntary_subtractions_total"   # Part 6 "enter the total here and on TC-40, page 2, line 43"
   - "withholding_total == withholding_tc40w + withholding_mineral + withholding_passthrough"  # Part 5 total
   - "voluntary_subtractions_total == my529_deposit + refund_applied_to_next_year"                  # Part 6 total

@@ -40,6 +40,9 @@ def counts() -> dict[str, object]:
         "federal": sum(federal.values()),
         "federal_by_year": dict(sorted(federal.items())),
         "state": len(list((REPO / "formpacks" / "states").glob("*/*/*/pack.yaml"))),
+        "state_by_year": {y: len(list((REPO / "formpacks" / "states").glob(f"*/{y}/*/pack.yaml")))
+                          for y in sorted({int(p.parent.parent.name)
+                                           for p in (REPO / "formpacks" / "states").glob("*/*/*/pack.yaml")})},
         "handfill": len(list((REPO / "formpacks").glob("**/handfill.yaml"))),
     }
 
@@ -47,6 +50,8 @@ def counts() -> dict[str, object]:
 def anchors(c: dict) -> list[tuple[Path, str, str]]:
     """(file, regex, replacement) for every place a count is quoted. Each regex must match exactly once."""
     readme, skill = REPO / "README.md", REPO / "skills" / "claude" / "SKILL.md"
+    roadmap = REPO / "docs" / "ROADMAP.md"
+    sy = c["state_by_year"]
     by_year = ", ".join(f"{y}:{n}" for y, n in c["federal_by_year"].items())
     return [
         (readme, r"All \d+ tools are available today", f"All {c['tools']} tools are available today"),
@@ -69,6 +74,19 @@ def anchors(c: dict) -> list[tuple[Path, str, str]]:
         (REPO / "packages" / "core" / "pyproject.toml", r"and \d+ calculation ops", f"and {c['ops']} calculation ops"),
         (REPO / "packages" / "mcp-server" / "pyproject.toml", r"cited tax math \(\d+ tools\)",
          f"cited tax math ({c['tools']} tools)"),
+        # Phase J JS3b: the state form-pack counts (they drifted: "61 state" survived the UT 2025 port).
+        (skill, r"are \*\*thinner and uneven\*\*: \d+ packs", f"are **thinner and uneven**: {c['state']} packs"),
+        (readme, r"38 via fillable AcroForm \(\*\*\d+\*\* state `pack\.yaml` in total\)",
+         f"38 via fillable AcroForm (**{c['state']}** state `pack.yaml` in total)"),
+        (roadmap, r"\*\*\d+ form packs total\*\* — \d+ `pack\.yaml` \(\d+ federal \+ \d+ state\) \+ \d+",
+         f"**{c['federal'] + c['state'] + c['handfill']} form packs total** — {c['federal'] + c['state']} `pack.yaml` "
+         f"({c['federal']} federal + {c['state']} state) + {c['handfill']}"),
+        (roadmap, r"The state \d+ breaks down \*\*TY2023 \d+ / TY2024 \d+ / TY2025 \d+\*\*",
+         f"The state {c['state']} breaks down **TY2023 {sy[2023]} / TY2024 {sy[2024]} / TY2025 {sy[2025]}**"),
+        (roadmap, r"38 via fillable AcroForm \(\d+ packs across TY2023–TY2025\)",
+         f"38 via fillable AcroForm ({c['state']} packs across TY2023–TY2025)"),
+        (roadmap, r"TY2023-only\*\*: \d+ packs across TY2023 \(\d+\) / TY2024 \(\d+\) / TY2025 \(\d+\)",
+         f"TY2023-only**: {c['state']} packs across TY2023 ({sy[2023]}) / TY2024 ({sy[2024]}) / TY2025 ({sy[2025]})"),
     ]
 
 
