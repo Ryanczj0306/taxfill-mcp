@@ -128,6 +128,16 @@ def _deadline_citation(d, is_nr: bool) -> Citation:
     return d.citation
 
 
+def _unpublished_address_note(item: "FilingManifestItem", form: str, enclosing_check: bool) -> str:
+    """JT2b: a planning year whose instructions have not printed this address yet — say so, never guess."""
+    kind = "with-payment" if enclosing_check else "no-payment (refund / no check enclosed)"
+    return (
+        f"The {kind} {form} mailing address for {item.tax_year} is not published yet — it prints in the "
+        f"{item.tax_year} {form} instructions, which are not posted. It is never carried from another year (the "
+        f"2025 table moved every domestic box), so read it off the final instructions before mailing."
+    )
+
+
 def _form_aware_memo(memo: str, item: "FilingManifestItem") -> str:
     """The pack's check memo quotes the plain-1040 wording (e.g. 'Write "2023 Form
     1040" (or "2023 Form 1040-SR")'). A 1040-NR filer must write "<year> Form
@@ -500,10 +510,14 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
         citations.append(ma.citation)
         if is_nr:
             mailing_address = ma.f1040nr.with_payment if enclosing_check else ma.f1040nr.no_payment
+            if mailing_address is None:
+                notes.append(_unpublished_address_note(item, "Form 1040-NR", enclosing_check))
         elif item.state:
             try:
                 pair = ma.f1040_for_state(_expand_state(item.state))
                 mailing_address = pair.with_payment if enclosing_check else pair.no_payment
+                if mailing_address is None:
+                    notes.append(_unpublished_address_note(item, "Form 1040", enclosing_check))
             except KeyError:
                 notes.append(
                     f"State {item.state!r} not found in the where-to-file table — pass the two-letter USPS code "

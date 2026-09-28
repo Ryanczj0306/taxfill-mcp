@@ -74,12 +74,15 @@ def test_jr2a_a_late_statement_carries_the_301_9100_2_header():
     assert ira_line_4b_statement(2025, {"Rollover": 1_000, "HFD": 500}) == "Line 4b – $1,000 Rollover and $500 HFD."
 
 
-def test_jr2a_the_due_date_comes_from_the_pack_or_a_labeled_fallback():
+def test_jr2a_the_due_date_comes_from_the_pack_or_a_labeled_fallback(planning_year, synthetic_provisional_pack):
     due, extended, source, assumed = _return_due_date(2025)
     assert (due, extended, assumed) == (date(2026, 4, 15), date(2026, 10, 15), False)
-    due, extended, source, assumed = _return_due_date(2026)            # the 2026 pack has no deadlines block
-    assert (due, extended, assumed) == (date(2027, 4, 15), date(2027, 10, 15), True)
-    assert due.weekday() == 3 and "ASSUMED" in source                  # a Thursday
+    # JT0b: the fallback on a pack whose deadlines block is stripped, whatever the planning pack ships.
+    due, extended, source, assumed = _return_due_date(planning_year, synthetic_provisional_pack(["deadlines"]))
+    assert (due, extended, assumed) == (date(planning_year + 1, 4, 15), date(planning_year + 1, 10, 15), True)
+    assert "ASSUMED" in source
+    due26, _, _, assumed26 = _return_due_date(2026)                    # JT2b: 2026 records it (a Thursday)
+    assert (due26, assumed26) == (date(2027, 4, 15), False) and due26.weekday() == 3
     # IRC 7503 with DC Emancipation Day: April 15, 2022 was a Friday and April 16 a Saturday observed that Friday.
     from taxfill_core.calc import _roll_7503  # noqa: PLC0415
     assert _roll_7503(date(2022, 4, 15)) == date(2022, 4, 18)

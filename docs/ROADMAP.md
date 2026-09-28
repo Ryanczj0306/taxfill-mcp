@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,532 tests** — offline 6,115 + live-.gov 417; derived
+Done and on `main` (**6,536 tests** — offline 6,119 + live-.gov 417; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2262,11 +2262,15 @@ not wait for any of this.
     - **Taxable Social Security.** IRC 86(c)'s statutory amounts, checked against the draft Pub 915 (2026) (Aug 17, 2026). Recorded as a draft pass.
     - taxable_social_security and student_loan_interest leave blocks_deliberately_absent; what remains is filing_thresholds, payment_options, mailing_addresses and deadlines (JT2b, JT6).
   - **Tests:** test_tax_calc `test_jt2a_*` (the Tax Table edges, the blocks and passes, the discipline test, the 2026 student-loan and Social Security ops); test_estimate `test_jt2a_the_2026_itemized_limitation_is_disclosed_at_the_screen`.
-- [ ] **JT2b — Deadlines, payment options, with-payment addresses** (S–M; deps JT0b) [TY26-14 + the rest of TY26-15]
-  - Deadlines from the draft 4868 (2026): "April 15, 2027 … June 15, 2027 … October 15, 2027". JR2a's helper then reads the block.
-  - Payment options and with-payment addresses from the draft 1040-V (2026), one per state group (e.g. "P.O. Box 1214 Charlotte, NC 28201-1214", shared by several states).
-  - **Acceptance:** file_and_pay on a synthetic TY2026 manifest returns 2027-04-15 and the address (today it returns `deadlines: []`, `mailing_address: None`).
-  - **External:** filing_thresholds and the no-payment addresses wait for the 2026 i1040gi / Pub 501 (JT6).
+- [x] **JT2b — Deadlines, payment options, with-payment addresses — DONE 2026-09-27** (S–M; deps JT0b) [TY26-14 + the rest of TY26-15]
+  - *As built (read 2026-09-27):*
+    - **Deadlines** from the draft Form 4868 (2026) (Created 5/13/26): "For a 2026 calendar-year return, this is April 15, 2027, for most people"; abroad "by June 15, 2027"; the 1040-NR no-wage due date "June 15, 2027"; the six-month limit "(October 15, 2027, for most calendar-year taxpayers)". April 15, 2027 is a Thursday, so no shift. The refund window is IRC 6511(a), as in 2025.
+    - **Payment options** from the draft Form 1040-V (2026) (Created 5/21/26): "United States Treasury", the "2026 Form 1040" memo, Direct Pay, EFTPS and card. The 2026 draft drops 2025's $1,000-per-day cash sentence, so the block gives only the PayCash page.
+    - **Addresses:** the draft 1040-V's three with-payment rows (Charlotte P.O. Box 1214; Louisville P.O. Box 931000 for the other states and DC; Charlotte P.O. Box 1303 for the foreign/territory row). The no-payment addresses and both Form 1040-NR addresses print only in the 2026 instructions, which are not posted (the irs-dft i1040gi and i1040nr still serve the 2025 drafts), so they are None — never carried from 2025.
+    - The knowledge schema admits a None address only in a planning pack (a filing-grade pack is refused), and file_and_pay says which address is unpublished instead of returning a bare None. The ITIN Operation and standalone-8843 entries carry over (the W-7 and 8843 pages are not year-specific).
+    - deadlines, payment_options and mailing_addresses leave blocks_deliberately_absent; only filing_thresholds remains (JT6).
+  - **Tests** (test_file_and_pay `test_jt2b_*`): a 2026 balance due in California resolves Louisville and 2027-04-15 / 2027-06-15; Texas resolves Charlotte 1214; a refund and a 1040-NR get the "not published yet" note and the 2030-04-15 refund window; a filing-grade pack with an unstated address is refused.
+  - **External:** filing_thresholds and the no-payment / 1040-NR addresses wait for the 2026 i1040gi, i1040nr and Pub 501 (JT6).
 - [ ] **JT4a — The 2026 W-2 and structured W-2 facts** (M; deps JF3, JF2) [TY26-24 + DEF-17]
   - **Why.** The 2026 W-2 splits box 14 into 14a/14b and adds box 12 codes TA / TP / TT (iw2w3 2026). The DocSpec has 12a–12d as raw codes and no box 14 (extract.py:81-110).
   - **Build.**

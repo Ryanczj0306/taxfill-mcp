@@ -590,3 +590,41 @@ def test_p018_the_election_statement_names_the_6013h_declaration_too():
     statement = r.assemble[0]
     assert "IRC 6013(g) declaration" in statement and "IRC 6013(h)" in statement
     assert "that you both qualify to make the choice" in statement and "dual-status spouse(s)" in statement
+
+
+# ── Phase J JT2b: TY2026 from the draft Form 4868 and Form 1040-V ──
+
+def test_jt2b_a_2026_balance_due_gets_the_due_date_and_the_payment_address():
+    r = _only([FilingManifestItem(form="1040", tax_year=2026, bottom_line=-800, state="California")])
+    assert "Louisville, KY 40293-1000" in r.mailing_address          # the draft 1040-V (2026)
+    assert any("2027-04-15" in d for d in r.deadlines)
+    assert any("2027-06-15" in d for d in r.deadlines)                # abroad: the draft 4868
+    assert any('"United States Treasury"' in p and '"2026 Form 1040"' in p for p in r.payment)
+    texas = _only([FilingManifestItem(form="1040", tax_year=2026, bottom_line=-50, state="TX")])
+    assert "P.O. Box 1214, Charlotte, NC 28201-1214" in texas.mailing_address
+
+
+def test_jt2b_an_unpublished_2026_address_is_said_never_guessed():
+    refund = _only([FilingManifestItem(form="1040", tax_year=2026, bottom_line=900, state="Texas")])
+    assert refund.mailing_address is None
+    assert any("no-payment" in n and "not published yet" in n for n in refund.notes)
+    assert any("2030-04-15" in d for d in refund.deadlines)          # the refund window: 3 years from 2027-04-15
+    nr = _only([FilingManifestItem(form="1040-NR", tax_year=2026, bottom_line=-100)])
+    assert nr.mailing_address is None and any("Form 1040-NR" in n and "not published" in n for n in nr.notes)
+    assert any("2027-06-15" in d for d in nr.deadlines)
+
+
+def test_jt2b_only_a_planning_pack_may_leave_an_address_unstated():
+    import yaml  # noqa: PLC0415
+    from pydantic import ValidationError  # noqa: PLC0415
+
+    from taxfill_core.datadir import knowledge_dir  # noqa: PLC0415
+    from taxfill_core.knowledge import KnowledgePack  # noqa: PLC0415
+
+    data = yaml.safe_load((knowledge_dir() / "federal" / "2026.yaml").read_text(encoding="utf-8"))
+    KnowledgePack.model_validate(data)
+    data.pop("provisional")
+    for entry in (data.get("form_lines") or {}).values():      # a filing-grade pack's lines are finals
+        entry.update(line_source="final", url="https://www.irs.gov/pub/irs-prior/f1040--2026.pdf")
+    with pytest.raises(ValidationError, match="leaves addresses unstated"):
+        KnowledgePack.model_validate(data)

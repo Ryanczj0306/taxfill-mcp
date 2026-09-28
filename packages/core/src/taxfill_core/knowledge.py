@@ -2165,7 +2165,9 @@ class StateMailingGroup(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     states: list[str]
-    no_payment: str = Field(description="Address when requesting a refund / not enclosing payment.")
+    no_payment: str | None = Field(
+        description="Address when requesting a refund / not enclosing payment. None only in a planning pack whose "
+                    "year's Form 1040 instructions are not posted (JT2b) — never guessed from another year.")
     with_payment: str = Field(description="Address when enclosing a check or money order.")
 
 
@@ -2174,8 +2176,8 @@ class MailingAddressPair(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    no_payment: str
-    with_payment: str
+    no_payment: str | None = Field(default=None, description="None: not yet published (a planning pack only, JT2b).")
+    with_payment: str | None = Field(default=None, description="None: not yet published (a planning pack only, JT2b).")
 
 
 class MailingAddresses(BaseModel):
@@ -2414,6 +2416,23 @@ class KnowledgePack(BaseModel):
                 f"(e.g. 'states/ca'), got {value!r}"
             )
         return value
+
+    @model_validator(mode="after")
+    def _unpublished_addresses_only_while_planning(self) -> "KnowledgePack":
+        # JT2b: a where-to-file address the year's instructions have not printed stays None — only in a planning
+        # pack; a filing-grade pack states every address.
+        ma = self.mailing_addresses
+        if ma is None or self.provisional is not None:
+            return self
+        gaps = [", ".join(g.states[:2]) for g in ma.f1040_groups if g.no_payment is None]
+        if ma.f1040nr.no_payment is None or ma.f1040nr.with_payment is None:
+            gaps.append("Form 1040-NR")
+        if gaps:
+            raise ValueError(
+                f"the federal {self.tax_year} mailing_addresses block leaves addresses unstated ({gaps}) but the "
+                f"pack is filing-grade — read them off the {self.tax_year} Form 1040 / 1040-NR instructions"
+            )
+        return self
 
     @model_validator(mode="after")
     def _education_ssn_rule_from_2026(self) -> "KnowledgePack":

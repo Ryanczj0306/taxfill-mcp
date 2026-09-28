@@ -186,9 +186,16 @@ def test_jf1b4_the_remedy_names_the_correction_deadlines():
     assert "no later than 6 months after the due date of your tax return, excluding extensions" in r.work
     assert "Filed pursuant to section 301.9100-2" in r.work
     assert "provided the taxpayer timely filed its return" in r.work  # Treas. Reg. 301.9100-2(b)
-    # A pack with no deadlines block says so instead of asserting a date.
+    # 2026 now records its due date (JT2b, the draft Form 4868).
     r26 = ira_contribution_eligibility(150_000, "married_filing_separately", 2026, ira_type="roth", contributed=7_500)
-    assert "April 15, 2027 (the 2026 pack records no due date — confirm it)" in r26.work
+    assert "April 15, 2027 (the 2026 pack's due date), or October 15, 2027 if you extend" in r26.work
+
+
+def test_jf1b4_a_pack_with_no_deadlines_block_says_so(planning_year, synthetic_provisional_pack):
+    # JT0b: the block stripped from a scratch copy, whatever the planning pack ships.
+    r = ira_contribution_eligibility(150_000, "married_filing_separately", planning_year, ira_type="roth",
+                                     contributed=7_500, knowledge_dir=synthetic_provisional_pack(["deadlines"]))
+    assert f"(the {planning_year} pack records no due date — confirm it)" in r.work
 
 
 def test_jf1b4_the_traditional_path_quotes_its_own_subsection_and_no_roth_input():
