@@ -1,0 +1,158 @@
+# Federal Schedule C (Form 1040), TAX YEAR 2026 — DRAFTS-FIRST (Phase J JT5d, read 2026-09-27).
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040sc--dft.pdf, footer "Schedule C (Form
+# 1040) 2026 Created 5/15/26"). PDF page 1 is the IRS cover sheet, so the form's pages 1 and 2 are PDF pages
+# 2 and 3. When the final posts at irs-prior/f1040sc--2026.pdf, re-pin source_url, pdf_sha256 and
+# source_status final, drop draft_created, and re-read the face. TY2026 is planning-only (rehearsal only).
+#
+# 109 widgets (2025: 105), all mapped (the numbering skips f1_30). 2025 -> 2026, read off the draft face
+# and widget tree (every binding re-read — the page-1 f-numbers shift after the new address boxes):
+# - Box E splits: "Business address. Number and street" + "Apt. no." on one row, then "City, town, or post
+#   office" / "State" / "ZIP code" (2025: a street box and ONE city/state/ZIP box). Keys
+#   business_address.street/.apt/.city/.state/.zip (the filer-address selector skips business_address).
+# - TRAP — line 16 grows: "16 Interest (see instructions): 16a Mortgage (paid to banks, etc.), 16b Vehicle
+#   loan, 16c Other" (2025: 16a Mortgage, 16b Other). The 2025 "16b" (other interest) is 2026 "16c"; 16b is
+#   the NEW vehicle-loan line. "28 Total expenses ... Add lines 8 through 27b".
+# - 27a/27b keep the 2025 order (27a energy efficient commercial buildings, Form 7205; 27b other expenses
+#   from line 48 — "Enter here and on line 27b").
+# - Checkbox kids renamed /Yes /No -> /1 /2 on G, I and J (c1_2, c1_4, c1_5). The B and D combs lose their
+#   BComb/DComb wrappers (D is now BoxD[0].f1_6). The Part V rows lose their PartVTable/ItemN wrappers:
+#   row k is f2_(13+2k) description / f2_(14+2k) amount.
+# - The draft's text is 9pt (2025: 8pt).
+form: Schedule C (Form 1040)
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040sc--dft.pdf
+pdf_sha256: 287b4510dd847c11f6cbbcc98fee05ac5ff187cc18e1413f8759a4a7cd802224
+source_status: draft
+draft_created: "5/15/26"
+acroform_root: topmostSubform[0]
+fields:
+  - { line: "name", field: "Page1[0].f1_1[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_2[0]", type: text, maxlen: 11, format: "ssn_digits_only" }
+  - { line: "principal_business", field: "Page1[0].f1_3[0]", type: text }
+  - { line: "business_code", field: "Page1[0].f1_4[0]", type: text, maxlen: 6, comb: true }
+  - { line: "business_name", field: "Page1[0].f1_5[0]", type: text }
+  - { line: "ein", field: "Page1[0].BoxD[0].f1_6[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "business_address.street", field: "Page1[0].f1_7[0]", type: text }
+  - { line: "business_address.apt", field: "Page1[0].f1_8[0]", type: text, maxlen: 10 }
+  - { line: "business_address.city", field: "Page1[0].f1_9[0]", type: text }
+  - { line: "business_address.state", field: "Page1[0].f1_10[0]", type: text }
+  - { line: "business_address.zip", field: "Page1[0].f1_11[0]", type: text, maxlen: 10 }
+  - { line: "accounting_method.cash", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1", group: "accounting_method", required: true }
+  - { line: "accounting_method.accrual", field: "Page1[0].c1_1[1]", type: checkbox, on_state: "/2", group: "accounting_method" }
+  - { line: "accounting_method.other", field: "Page1[0].c1_1[2]", type: checkbox, on_state: "/3", group: "accounting_method" }
+  - { line: "accounting_method.other_specify", field: "Page1[0].f1_12[0]", type: text }
+  - { line: "material_participation.yes", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1", group: "material_participation", required: true }
+  - { line: "material_participation.no", field: "Page1[0].c1_2[1]", type: checkbox, on_state: "/2", group: "material_participation" }
+  - { line: "started_or_acquired", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1" }
+  - { line: "payments_1099_required.yes", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1", group: "payments_1099_required", required: true }
+  - { line: "payments_1099_required.no", field: "Page1[0].c1_4[1]", type: checkbox, on_state: "/2", group: "payments_1099_required" }
+  - { line: "payments_1099_filed.yes", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1", group: "payments_1099_filed" }
+  - { line: "payments_1099_filed.no", field: "Page1[0].c1_5[1]", type: checkbox, on_state: "/2", group: "payments_1099_filed" }
+  - { line: "1", field: "Page1[0].f1_13[0]", type: money }
+  - { line: "1.statutory_employee", field: "Page1[0].Line1_ReadOrder[0].c1_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "2", field: "Page1[0].f1_14[0]", type: money }
+  - { line: "3", field: "Page1[0].f1_15[0]", type: money }
+  - { line: "4", field: "Page1[0].f1_16[0]", type: money }
+  - { line: "5", field: "Page1[0].f1_17[0]", type: money }
+  - { line: "6", field: "Page1[0].f1_18[0]", type: money }
+  - { line: "7", field: "Page1[0].f1_19[0]", type: money }
+  - { line: "8", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_20[0]", type: money }
+  - { line: "9", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_21[0]", type: money }
+  - { line: "10", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_22[0]", type: money }
+  - { line: "11", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_23[0]", type: money }
+  - { line: "12", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_24[0]", type: money }
+  - { line: "13", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_25[0]", type: money }
+  - { line: "14", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_26[0]", type: money }
+  - { line: "15", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_27[0]", type: money }
+  - { line: "16a", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_28[0]", type: money }
+  - { line: "16b", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_29[0]", type: money }
+  - { line: "16c", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_31[0]", type: money }
+  - { line: "17", field: "Page1[0].Lines8-16c_ReadOrder[0].f1_32[0]", type: money }
+  - { line: "18", field: "Page1[0].f1_33[0]", type: money }
+  - { line: "19", field: "Page1[0].f1_34[0]", type: money }
+  - { line: "20a", field: "Page1[0].f1_35[0]", type: money }
+  - { line: "20b", field: "Page1[0].f1_36[0]", type: money }
+  - { line: "21", field: "Page1[0].f1_37[0]", type: money }
+  - { line: "22", field: "Page1[0].f1_38[0]", type: money }
+  - { line: "23", field: "Page1[0].f1_39[0]", type: money }
+  - { line: "24a", field: "Page1[0].f1_40[0]", type: money }
+  - { line: "24b", field: "Page1[0].f1_41[0]", type: money }
+  - { line: "25", field: "Page1[0].f1_42[0]", type: money }
+  - { line: "26", field: "Page1[0].f1_43[0]", type: money }
+  - { line: "27a", field: "Page1[0].f1_44[0]", type: money }
+  - { line: "27b", field: "Page1[0].f1_45[0]", type: money }
+  - { line: "28", field: "Page1[0].f1_46[0]", type: money }
+  - { line: "29", field: "Page1[0].f1_47[0]", type: money }
+  - { line: "30.home_sqft", field: "Page1[0].Line30_ReadOrder[0].f1_48[0]", type: text }
+  - { line: "30.business_sqft", field: "Page1[0].Line30_ReadOrder[0].f1_49[0]", type: text }
+  - { line: "30", field: "Page1[0].f1_50[0]", type: money }
+  - { line: "31", field: "Page1[0].f1_51[0]", type: money }
+  - { line: "32a", field: "Page1[0].c1_7[0]", type: checkbox, on_state: "/1", group: "at_risk" }
+  - { line: "32b", field: "Page1[0].c1_7[1]", type: checkbox, on_state: "/2", group: "at_risk" }
+  - { line: "33a", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/1", group: "inventory_method" }
+  - { line: "33b", field: "Page2[0].c2_2[0]", type: checkbox, on_state: "/1", group: "inventory_method" }
+  - { line: "33c", field: "Page2[0].c2_3[0]", type: checkbox, on_state: "/1", group: "inventory_method" }
+  - { line: "34.yes", field: "Page2[0].c2_4[0]", type: checkbox, on_state: "/1", group: "line34" }
+  - { line: "34.no", field: "Page2[0].c2_4[1]", type: checkbox, on_state: "/2", group: "line34" }
+  - { line: "35", field: "Page2[0].f2_1[0]", type: money }
+  - { line: "36", field: "Page2[0].f2_2[0]", type: money }
+  - { line: "37", field: "Page2[0].f2_3[0]", type: money }
+  - { line: "38", field: "Page2[0].f2_4[0]", type: money }
+  - { line: "39", field: "Page2[0].f2_5[0]", type: money }
+  - { line: "40", field: "Page2[0].f2_6[0]", type: money }
+  - { line: "41", field: "Page2[0].f2_7[0]", type: money }
+  - { line: "42", field: "Page2[0].f2_8[0]", type: money }
+  - { line: "43.month", field: "Page2[0].f2_9[0]", type: text, maxlen: 2 }
+  - { line: "43.day", field: "Page2[0].f2_10[0]", type: text, maxlen: 2 }
+  - { line: "43.year", field: "Page2[0].f2_11[0]", type: text, maxlen: 4 }
+  - { line: "44a", field: "Page2[0].f2_12[0]", type: text }
+  - { line: "44b", field: "Page2[0].f2_13[0]", type: text }
+  - { line: "44c", field: "Page2[0].f2_14[0]", type: text }
+  - { line: "45.yes", field: "Page2[0].c2_5[0]", type: checkbox, on_state: "/1", group: "line45" }
+  - { line: "45.no", field: "Page2[0].c2_5[1]", type: checkbox, on_state: "/2", group: "line45" }
+  - { line: "46.yes", field: "Page2[0].c2_6[0]", type: checkbox, on_state: "/1", group: "line46" }
+  - { line: "46.no", field: "Page2[0].c2_6[1]", type: checkbox, on_state: "/2", group: "line46" }
+  - { line: "47a.yes", field: "Page2[0].c2_7[0]", type: checkbox, on_state: "/1", group: "line47a" }
+  - { line: "47a.no", field: "Page2[0].c2_7[1]", type: checkbox, on_state: "/2", group: "line47a" }
+  - { line: "47b.yes", field: "Page2[0].c2_8[0]", type: checkbox, on_state: "/1", group: "line47b" }
+  - { line: "47b.no", field: "Page2[0].c2_8[1]", type: checkbox, on_state: "/2", group: "line47b" }
+  - { line: "other_expense_1_description", field: "Page2[0].f2_15[0]", type: text }
+  - { line: "other_expense_1_amount", field: "Page2[0].f2_16[0]", type: money }
+  - { line: "other_expense_2_description", field: "Page2[0].f2_17[0]", type: text }
+  - { line: "other_expense_2_amount", field: "Page2[0].f2_18[0]", type: money }
+  - { line: "other_expense_3_description", field: "Page2[0].f2_19[0]", type: text }
+  - { line: "other_expense_3_amount", field: "Page2[0].f2_20[0]", type: money }
+  - { line: "other_expense_4_description", field: "Page2[0].f2_21[0]", type: text }
+  - { line: "other_expense_4_amount", field: "Page2[0].f2_22[0]", type: money }
+  - { line: "other_expense_5_description", field: "Page2[0].f2_23[0]", type: text }
+  - { line: "other_expense_5_amount", field: "Page2[0].f2_24[0]", type: money }
+  - { line: "other_expense_6_description", field: "Page2[0].f2_25[0]", type: text }
+  - { line: "other_expense_6_amount", field: "Page2[0].f2_26[0]", type: money }
+  - { line: "other_expense_7_description", field: "Page2[0].f2_27[0]", type: text }
+  - { line: "other_expense_7_amount", field: "Page2[0].f2_28[0]", type: money }
+  - { line: "other_expense_8_description", field: "Page2[0].f2_29[0]", type: text }
+  - { line: "other_expense_8_amount", field: "Page2[0].f2_30[0]", type: money }
+  - { line: "other_expense_9_description", field: "Page2[0].f2_31[0]", type: text }
+  - { line: "other_expense_9_amount", field: "Page2[0].f2_32[0]", type: money }
+  - { line: "48", field: "Page2[0].f2_33[0]", type: money }
+relations:
+  - "3 == 1 - 2"
+  - "4 == 42"
+  - "5 == 3 - 4"
+  - "7 == 5 + 6"
+  - "27b == 48"
+  - "28 == 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16a + 16b + 16c + 17 + 18 + 19 + 20a + 20b + 21 + 22 + 23 + 24a + 24b + 25 + 26 + 27a + 27b"
+  - "29 == 7 - 28"
+  - "31 == 29 - 30"
+  - "40 == 35 + 36 + 37 + 38 + 39"
+  - "42 == 40 - 41"
+  - "48 == other_expense_1_amount + other_expense_2_amount + other_expense_3_amount + other_expense_4_amount + other_expense_5_amount + other_expense_6_amount + other_expense_7_amount + other_expense_8_amount + other_expense_9_amount"
+cross_form:
+  - "31 == sched_1.3"   # "If a profit, enter on both Schedule 1 (Form 1040), line 3, and on Schedule SE, line 2"
+identity_fields:
+  - name
+  - identifying_number
+signature: null
+mailing: null

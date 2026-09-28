@@ -1835,3 +1835,52 @@ def test_the_2025_schedule_c_27a_27b_keys_follow_the_printed_rows():
     assert (f24["27a"], f24["27b"]) == ("Page1[0].Lines18-27[0].f1_39[0]", "Page1[0].Lines18-27[0].f1_40[0]")
     assert "27b == 48" in new.relations and "27a == 48" not in new.relations
     assert "27a == 48" in old.relations
+
+
+# ── Phase J JT5d: Schedules A, C and E on their 2026 drafts ──
+
+def test_jt5d_schedule_a_renumbers_the_gift_and_other_lines():
+    old, new = _fed_pack(2025, "sched_a"), _fed_pack(2026, "sched_a")
+    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "5/12/26", 47)
+    f = {pf.line: pf.field for pf in new.fields}
+    # 8d is live again (mortgage insurance premiums) and 8e sums it.
+    assert f["8d"] == "Page1[0].f1_19[0]" and "8e == 8a + 8b + 8c + 8d" in new.relations
+    # TRAP: 13 is the Charitable Contribution Limitation Worksheet's line 6 (2025: the carryover), 15 = 13 + 14,
+    # 16 casualty, 17a-17k + 17z other itemized, 18 the total, 19 the elect-to-itemize box.
+    assert (f["13"], f["14"], f["15"], f["16"]) == tuple(f"Page2[0].f2_0{n}[0]" for n in range(3, 7))
+    assert "15 == 13 + 14" in new.relations and "17z == sum(17a..17k)" in new.relations
+    assert {"16.type", "17"}.isdisjoint(f) and "16.type" in {pf.line for pf in old.fields}
+    radio = [(pf.line, pf.on_state) for pf in new.fields if pf.group == "line18_limited"]
+    assert radio == [("18.not_limited", "/1"), ("18.may_be_limited", "/2")]
+    # Line 18 is not a relation (the "Yes" answer prices it on the unposted worksheet); both legs are printed.
+    assert not any(r.startswith("18 ==") for r in new.relations)
+    assert set(new.cross_form) == {"2 == f1040.11b", "18 == f1040.12e"}
+
+
+def test_jt5d_schedule_c_splits_the_address_and_line_16():
+    new = _fed_pack(2026, "sched_c")
+    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "5/15/26", 109)
+    f = {pf.line: pf for pf in new.fields}
+    assert [k for k in f if k.startswith("business_address.")] == [
+        "business_address.street", "business_address.apt", "business_address.city", "business_address.state",
+        "business_address.zip"]
+    # TRAP: 16b is the NEW vehicle-loan line; the 2025 16b (other interest) is 16c.
+    assert (f["16b"].field, f["16c"].field) == (
+        "Page1[0].Lines8-16c_ReadOrder[0].f1_29[0]", "Page1[0].Lines8-16c_ReadOrder[0].f1_31[0]")
+    assert any(r.startswith("28 ==") and "16a + 16b + 16c + 17" in r for r in new.relations)
+    assert "27b == 48" in new.relations                                   # "Enter here and on line 27b"
+    assert (f["material_participation.yes"].on_state, f["material_participation.no"].on_state) == ("/1", "/2")
+    assert new.cross_form == ["31 == sched_1.3"]
+
+
+def test_jt5d_schedule_e_splits_the_address_and_line_13():
+    old, new = _fed_pack(2025, "sched_e"), _fed_pack(2026, "sched_e")
+    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "5/6/26", 193)
+    f = {pf.line: pf.field for pf in new.fields}
+    assert f["1a.b.zip"] == "Page1[0].Line1aTable[0].RowB[0].f1_12[0]" and "1a.b" in {pf.line for pf in old.fields}
+    # TRAP: the 2025 "13 Other interest" is 13b; 13a is the NEW vehicle loan; the 13 header row is shaded.
+    assert "13.a" not in f and (f["13a.a"], f["13b.a"]) == (
+        "Page1[0].Table_Expenses[0].Line13a[0].f1_61[0]", "Page1[0].Table_Expenses[0].Line13b[0].f1_64[0]")
+    # Part V moved to a new page 3, which repeats the header.
+    assert (f["41"], f["name_page3"]) == ("Page3[0].f3_4[0]", "Page3[0].f3_1[0]")
+    assert new.cross_form == ["41 == sched_1.5"]

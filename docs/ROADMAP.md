@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,756 tests** — offline 6,310 + live-.gov 446; derived
+Done and on `main` (**6,803 tests** — offline 6,351 + live-.gov 452; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2333,7 +2333,22 @@ not wait for any of this.
     - **Port rule:** the engine's 1040-NR line text already goes through form_lines (f1040nr.itemized 12a, f1040nr.sched_1a 13a, read in JT3a/JF9), so no literal moved.
     - The filer-address fixture gains the JT5a–c rows, each equal to its 2025 row. test_discovery 136 federal.
     - **Tests:** `test_jt5c_*` (test_formpacks_federal), and a nonresident dress rehearsal in test_dress_rehearsal_2026 (1040-NR + Schedule A (1040-NR) + 8843; the line 16 recompute; the unposted-address note).
-  - **JT5d** (M–L): sched_a, sched_c, sched_e.
+  - **JT5d** (M–L): sched_a, sched_c, sched_e. **DONE 2026-09-28:**
+    - **Schedule A** (Created 5/12/26): 47 widgets (2025: 33), all mapped by hand off the face.
+      - 8d is live again ("Mortgage insurance premiums"); 8e adds 8a–8d.
+      - TRAP: every line from 13 on moves. 13 is NEW (line 6 of the Charitable Contribution Limitation Worksheet), 14 the carryover, 15 = 13 + 14, 16 casualty, 17a–17k + 17z other itemized (17a gains a "winnings on Schedule C or E" box), 18 the total, 19 elect-to-itemize.
+      - Line 18 carries the IRC 68 screen ("more than $384,350?", a /1 No, /2 Yes radio), so 18 is not a relation. Legs `2 == f1040.11b` and `18 == f1040.12e` (the 2025 pack had none).
+    - **Schedule C** (Created 5/15/26): 109 widgets, all mapped.
+      - Box E splits into street/apt/city/state/ZIP.
+      - TRAP: 16b is the NEW "Vehicle loan" line and 2025's 16b "Other" is 16c; 28 adds 16c.
+      - The G/I/J checkbox kids went /Yes /No → /1 /2.
+    - **Schedule E** (Created 5/6/26): 205 widgets, 193 mapped, derived from the draft's own table containers.
+      - 1a splits into five address boxes per property.
+      - TRAP: 13 splits into 13a "Vehicle loan" and 13b "Other"; the 13 header row is shaded.
+      - Part V moves to a new page 3 with its own name/SSN header (IDENTITY_MIRROR_COUNTS 4).
+      - The 12 unmapped widgets are all ReadOnly: the nine Totals cells, as in 2025, plus the 13 header row.
+    - **The designator sweep** (every numeric key's widget vs the printed label beside it, 2023–2026) found ONE real defect, fixed in its own commit: the 2025 Schedule C bound 27a/27b to each other's box. The 2025 revision swapped the printed order, the name-diff template carried the 2024 keys, and the relation read `27a == 48` although line 48 prints "Enter here and on line 27b". Every other hit is a table column (row "11" vs key "11a") or the f8833 right-column box.
+    - The K-1 (1041) note now says the estate-tax line is 17e on the 2026 draft. test_discovery 139 federal. Tests: `test_jt5d_*`.
   - **JT5e** (M–L): f8962, f2441, f1116, f8938 (Rev. 12-2026).
   - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new).
   - **JT5g** (external): sched_nec and sched_oi, once their 2026 drafts post. The f1040nrn/nro drafts are still 2025; they are on the check_finals watchlist.

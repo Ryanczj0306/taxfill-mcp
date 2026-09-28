@@ -909,6 +909,8 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     "federal/2023/sched_e/pack.yaml": 2,
     "federal/2024/sched_e/pack.yaml": 2,
     "federal/2025/sched_e/pack.yaml": 2,
+    # The 2026 draft adds a third page (Part V) that repeats the header: page 2 AND page 3 mirrors (JT5d).
+    "federal/2026/sched_e/pack.yaml": 4,
     "states/nc/2023/d400/pack.yaml": 1,
     "states/nc/2024/d400/pack.yaml": 1,
     "states/ri/2023/ri1040/pack.yaml": 12,
