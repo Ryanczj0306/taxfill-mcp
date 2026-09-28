@@ -1,0 +1,347 @@
+# Form 1040 (2026) — U.S. Individual Income Tax Return — DRAFTS-FIRST
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040--dft.pdf,
+# page-1 footer "Form 1040 (2026) Created 8/19/26"). Its cover sheet: "there
+# are never any changes to the last posted draft of the form and the final
+# revision of the form". PDF page 1 is that cover sheet, so the form's pages 1
+# and 2 are PDF pages 2 and 3 (the signature block is on PDF page 3). When the
+# final posts at irs-prior/f1040--2026.pdf (scripts/check_finals.py opens the
+# "ty2026-finals: re-pin now" issue), re-pin: source_url, pdf_sha256,
+# source_status final, drop draft_created, signature page 2, and re-read the
+# face. TY2026 is planning-only, so this pack fills only in REHEARSAL mode
+# (core fill_form(..., rehearsal=True)); MCP fill_form refuses the year.
+#
+# 200 of 207 widgets are mapped. The 7 unmapped widgets are the "Paid Preparer
+# Use Only" block, which only a preparer fills:
+#   Page2[0].f2_51[0]  preparer's name
+#   Page2[0].f2_52[0]  preparer's PTIN
+#   Page2[0].c2_17[0]  "Check if: Self-employed" checkbox
+#   Page2[0].f2_53[0]  firm's name
+#   Page2[0].f2_54[0]  firm's phone no.
+#   Page2[0].f2_55[0]  firm's address
+#   Page2[0].f2_56[0]  firm's EIN
+#
+# 2025 -> 2026 changes, read off the draft face and widget tree (every binding
+# re-read; the positional f/c names shift after each new widget):
+# - NEW question under digital assets: "At the time you file your return, are
+#   you, and your spouse if filing jointly, a U.S. citizen, U.S. national, or
+#   an alien lawfully authorized to work in the U.S.? (see instructions)
+#   You: Yes No Spouse: Yes No" — two yes/no radio fields (c1_11, c1_12). Not
+#   marked required: the 2026 instructions that would say so are not final.
+#   Every later page-1 checkbox shifts by 2 (the dependents "more than four"
+#   box is c1_13, the lived-apart box c1_34, 3c-7b c1_35-c1_46).
+# - Filing status: Single/MFJ/MFS are kids /1 /2 /3 of Page1[0].c1_8 and
+#   HOH/QSS are /4 /5 of Page1[0].HOH-QSS_ReadOrder[0].c1_8. The MFS name
+#   box is now f1_28 (spouse's name) and f1_29 is the HOH/QSS child's name.
+#   The nonresident-spouse election box moved under Nonresident_ReadOrder.
+# - 12d: "Were born before January 2, 1962" (2025: 1961).
+# - NEW line 12f "Charitable contribution deduction for non-itemizers (see
+#   instructions)".
+# - TRAP — 13a and 13b SWAP MEANING. 2025: 13a QBI, 13b Schedule 1-A line 38.
+#   2026: "13a Additional deductions from Schedule 1-A, line 44" and "13b
+#   Qualified business income deduction from Form 8995 or Form 8995-A".
+#   "14 Add lines 12e, 12f, 13a, and 13b".
+# - Line 24 splits: "24a Add lines 22 and 23. This is your total tax", "24b
+#   Enter amount from Form 1062, line 15", "24c Add lines 24a and 24b"; lines
+#   34 and 37 now compare line 33 with 24c.
+# - Line 28 loses its 2025 decline-ACTC checkbox (the draft prints none).
+# - Line 32 splits: "32a Add lines 27a, 28, 29, 30, and 31", "32b Amount from
+#   Schedule 3-A", "32c Subtract line 32b from line 32a"; "33 Add lines 25d,
+#   26, and 32c".
+# - Line 36 applies the refund to "your 2027 estimated tax".
+#
+# Cross-form references NOT encoded (the 2025 template's scoping): 19 and 28
+# (Schedule 8812), 29 (Form 8863), 30 (Form 8839), 24b (Form 1062) and 32b
+# (Schedule 3-A) have no form key. The Schedule 1, 2 and 3 legs below are
+# printed on the draft but their 2026 packs land in JT3b/JT3c, so
+# test_pack_invariants allowlists those targets until then.
+form: "1040"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040--dft.pdf
+pdf_sha256: "e044e765ace334c76bda7910bd3193fc813c7789d06340124359b885c98d58d0"
+source_status: draft
+draft_created: "8/19/26"
+acroform_root: "topmostSubform[0]"
+fields:
+  # --- page 1: fiscal-year header (calendar-year filers leave these blank) ---
+  - { line: "fiscal_year.beginning", field: "Page1[0].f1_01[0]", type: text }
+  - { line: "fiscal_year.ending", field: "Page1[0].f1_02[0]", type: text }
+  - { line: "fiscal_year.ending_year", field: "Page1[0].f1_03[0]", type: text, maxlen: 2 }
+  # --- special-processing row ---
+  - { line: "special_processing.section_301_9100_2", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "special_processing.combat_zone", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "special_processing.combat_zone_entry", field: "Page1[0].f1_04[0]", type: text }
+  - { line: "special_processing.deceased", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1" }
+  # deceased dates print as MM / DD / YYYY (taxpayer, then spouse; MaxLen 2/2/4)
+  - { line: "special_processing.deceased_month", field: "Page1[0].f1_05[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.deceased_day", field: "Page1[0].f1_06[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.deceased_year", field: "Page1[0].f1_07[0]", type: text, maxlen: 4 }
+  - { line: "special_processing.spouse_deceased_month", field: "Page1[0].f1_08[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.spouse_deceased_day", field: "Page1[0].f1_09[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.spouse_deceased_year", field: "Page1[0].f1_10[0]", type: text, maxlen: 4 }
+  - { line: "special_processing.other", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1" }
+  - { line: "special_processing.other_text", field: "Page1[0].f1_11[0]", type: text }
+  - { line: "special_processing.other_text_2", field: "Page1[0].f1_12[0]", type: text }
+  - { line: "special_processing.other_text_3", field: "Page1[0].f1_13[0]", type: text }
+  # --- identity ---
+  - { line: "name.first", field: "Page1[0].f1_14[0]", type: text }
+  - { line: "name.last", field: "Page1[0].f1_15[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_16[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "spouse.first_name", field: "Page1[0].f1_17[0]", type: text }
+  - { line: "spouse.last_name", field: "Page1[0].f1_18[0]", type: text }
+  - { line: "spouse.identifying_number", field: "Page1[0].f1_19[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  # CURRENT mailing address (pitfall P-002); maxlen on the small boxes guards
+  # the fixed-font clipping of P-001 (the PDF itself sets no MaxLen). The
+  # 2026 State box is 62.8pt wide (2025: 63.0pt), so it takes 13 characters,
+  # not 14 (4.5pt each at 9pt Helvetica — the clipping scan's estimate).
+  - { line: "mailing_address.street", field: "Page1[0].Address_ReadOrder[0].f1_20[0]", type: text }
+  - { line: "mailing_address.apt", field: "Page1[0].Address_ReadOrder[0].f1_21[0]", type: text, maxlen: 10 }
+  - { line: "mailing_address.city", field: "Page1[0].Address_ReadOrder[0].f1_22[0]", type: text }
+  - { line: "mailing_address.state", field: "Page1[0].Address_ReadOrder[0].f1_23[0]", type: text, maxlen: 13 }
+  - { line: "mailing_address.zip", field: "Page1[0].Address_ReadOrder[0].f1_24[0]", type: text, maxlen: 10 }
+  - { line: "mailing_address.foreign_country", field: "Page1[0].Address_ReadOrder[0].f1_25[0]", type: text }
+  - { line: "mailing_address.foreign_province", field: "Page1[0].Address_ReadOrder[0].f1_26[0]", type: text }
+  - { line: "mailing_address.foreign_postal_code", field: "Page1[0].Address_ReadOrder[0].f1_27[0]", type: text, maxlen: 12 }
+  # "Check here if your main home, and your spouse's if filing a joint return,
+  # was in the U.S. for more than half of 2026."
+  - { line: "main_home_in_us", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "presidential_campaign.you", field: "Page1[0].c1_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "presidential_campaign.spouse", field: "Page1[0].c1_7[0]", type: checkbox, on_state: "/1" }
+  # --- filing status: "Check only one box." (required). Two /Btn parents:
+  # Page1[0].c1_8 kids /1 Single, /2 MFJ, /3 MFS; HOH-QSS_ReadOrder[0].c1_8
+  # kids /4 HOH, /5 QSS (the on-states read from each widget's /AP) ---
+  - { line: "filing_status.single", field: "Page1[0].c1_8[0]", type: checkbox, on_state: "/1", group: filing_status, required: true }
+  - { line: "filing_status.mfj", field: "Page1[0].c1_8[1]", type: checkbox, on_state: "/2", group: filing_status }
+  - { line: "filing_status.mfs", field: "Page1[0].c1_8[2]", type: checkbox, on_state: "/3", group: filing_status }
+  - { line: "filing_status.hoh", field: "Page1[0].HOH-QSS_ReadOrder[0].c1_8[0]", type: checkbox, on_state: "/4", group: filing_status }
+  - { line: "filing_status.qss", field: "Page1[0].HOH-QSS_ReadOrder[0].c1_8[1]", type: checkbox, on_state: "/5", group: filing_status }
+  # MFS: "Enter spouse's SSN above and full name here:"
+  - { line: "filing_status.mfs_spouse_name", field: "Page1[0].f1_28[0]", type: text }
+  # HOH/QSS: "enter the child's name if the qualifying person is a child but
+  # not your dependent"
+  - { line: "filing_status.hoh_qss_child_name", field: "Page1[0].f1_29[0]", type: text }
+  # "If treating a nonresident alien or dual-status alien spouse as a U.S.
+  # resident for the entire tax year, check the box and enter their name"
+  - { line: "filing_status.nra_spouse_election", field: "Page1[0].Nonresident_ReadOrder[0].c1_9[0]", type: checkbox, on_state: "/1" }
+  - { line: "filing_status.nra_spouse_name", field: "Page1[0].f1_30[0]", type: text }
+  # --- digital assets yes/no — the form REQUIRES an answer ---
+  - { line: "digital_assets.yes", field: "Page1[0].c1_10[0]", type: checkbox, on_state: "/1", group: digital_assets, required: true }
+  - { line: "digital_assets.no", field: "Page1[0].c1_10[1]", type: checkbox, on_state: "/2", group: digital_assets }
+  # NEW 2026: "At the time you file your return, are you, and your spouse if
+  # filing jointly, a U.S. citizen, U.S. national, or an alien lawfully
+  # authorized to work in the U.S.?" — one radio per person
+  - { line: "citizen_or_work_authorized.you.yes", field: "Page1[0].c1_11[0]", type: checkbox, on_state: "/1", group: citizen_or_work_authorized_you }
+  - { line: "citizen_or_work_authorized.you.no", field: "Page1[0].c1_11[1]", type: checkbox, on_state: "/2", group: citizen_or_work_authorized_you }
+  - { line: "citizen_or_work_authorized.spouse.yes", field: "Page1[0].c1_12[0]", type: checkbox, on_state: "/1", group: citizen_or_work_authorized_spouse }
+  - { line: "citizen_or_work_authorized.spouse.no", field: "Page1[0].c1_12[1]", type: checkbox, on_state: "/2", group: citizen_or_work_authorized_spouse }
+  # --- dependents table (columns = Dependent 1..4; rows (1)-(7)) ---
+  - { line: "dependents.more_than_four", field: "Page1[0].Dependents_ReadOrder[0].c1_13[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.first_name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_31[0]", type: text }
+  - { line: "dependent_2.first_name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_32[0]", type: text }
+  - { line: "dependent_3.first_name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_33[0]", type: text }
+  - { line: "dependent_4.first_name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_34[0]", type: text }
+  - { line: "dependent_1.last_name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_35[0]", type: text }
+  - { line: "dependent_2.last_name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_36[0]", type: text }
+  - { line: "dependent_3.last_name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_37[0]", type: text }
+  - { line: "dependent_4.last_name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_38[0]", type: text }
+  - { line: "dependent_1.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_39[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_2.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_40[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_3.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_41[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_4.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_42[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_1.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_43[0]", type: text, maxlen: 15 }
+  - { line: "dependent_2.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_44[0]", type: text, maxlen: 15 }
+  - { line: "dependent_3.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_45[0]", type: text, maxlen: 15 }
+  - { line: "dependent_4.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_46[0]", type: text, maxlen: 15 }
+  # (5) "Check if lived with you more than half of 2026: (a) Yes (b) And in
+  # the U.S." — independent boxes per dependent
+  - { line: "dependent_1.lived_with_you", field: "Page1[0].Table_Dependents[0].Row5[0].Dependent1[0].c1_14[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.lived_with_you_in_us", field: "Page1[0].Table_Dependents[0].Row5[0].Dependent1[0].c1_15[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.lived_with_you", field: "Page1[0].Table_Dependents[0].Row5[0].Dependent2[0].c1_16[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.lived_with_you_in_us", field: "Page1[0].Table_Dependents[0].Row5[0].Dependent2[0].c1_17[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.lived_with_you", field: "Page1[0].Table_Dependents[0].Row5[0].Dependent3[0].c1_18[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.lived_with_you_in_us", field: "Page1[0].Table_Dependents[0].Row5[0].Dependent3[0].c1_19[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.lived_with_you", field: "Page1[0].Table_Dependents[0].Row5[0].Dependent4[0].c1_20[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.lived_with_you_in_us", field: "Page1[0].Table_Dependents[0].Row5[0].Dependent4[0].c1_21[0]", type: checkbox, on_state: "/1" }
+  # (6) "Check if: Full-time student / Permanently and totally disabled"
+  - { line: "dependent_1.full_time_student", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent1[0].c1_22[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.permanently_disabled", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent1[0].c1_23[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.full_time_student", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent2[0].c1_24[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.permanently_disabled", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent2[0].c1_25[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.full_time_student", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent3[0].c1_26[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.permanently_disabled", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent3[0].c1_27[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.full_time_student", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent4[0].c1_28[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.permanently_disabled", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent4[0].c1_29[0]", type: checkbox, on_state: "/1" }
+  # (7) Credits: ONE /Btn field per dependent (/1 child tax credit, /2 credit
+  # for other dependents)
+  - { line: "dependent_1.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row7[0].Dependent1[0].c1_30[0]", type: checkbox, on_state: "/1", group: dependent_1_credit }
+  - { line: "dependent_1.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row7[0].Dependent1[0].c1_30[1]", type: checkbox, on_state: "/2", group: dependent_1_credit }
+  - { line: "dependent_2.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row7[0].Dependent2[0].c1_31[0]", type: checkbox, on_state: "/1", group: dependent_2_credit }
+  - { line: "dependent_2.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row7[0].Dependent2[0].c1_31[1]", type: checkbox, on_state: "/2", group: dependent_2_credit }
+  - { line: "dependent_3.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row7[0].Dependent3[0].c1_32[0]", type: checkbox, on_state: "/1", group: dependent_3_credit }
+  - { line: "dependent_3.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row7[0].Dependent3[0].c1_32[1]", type: checkbox, on_state: "/2", group: dependent_3_credit }
+  - { line: "dependent_4.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row7[0].Dependent4[0].c1_33[0]", type: checkbox, on_state: "/1", group: dependent_4_credit }
+  - { line: "dependent_4.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row7[0].Dependent4[0].c1_33[1]", type: checkbox, on_state: "/2", group: dependent_4_credit }
+  # "Check if your filing status is MFS or HOH and you lived apart from your
+  # spouse for the last 6 months of 2026, or you are legally separated ..."
+  - { line: "mfs_hoh_lived_apart", field: "Page1[0].c1_34[0]", type: checkbox, on_state: "/1" }
+  # --- income (page 1) ---
+  - { line: "1a", field: "Page1[0].f1_47[0]", type: money }
+  - { line: "1b", field: "Page1[0].f1_48[0]", type: money }
+  - { line: "1c", field: "Page1[0].f1_49[0]", type: money }
+  - { line: "1d", field: "Page1[0].f1_50[0]", type: money }
+  - { line: "1e", field: "Page1[0].f1_51[0]", type: money }
+  - { line: "1f", field: "Page1[0].f1_52[0]", type: money }
+  - { line: "1g", field: "Page1[0].f1_53[0]", type: money }
+  # 1h "Other earned income (see instructions). Enter type and amount:"
+  - { line: "1h.type", field: "Page1[0].f1_54[0]", type: text }
+  - { line: "1h", field: "Page1[0].f1_55[0]", type: money }
+  - { line: "1i", field: "Page1[0].f1_56[0]", type: money }
+  - { line: "1z", field: "Page1[0].f1_57[0]", type: money }
+  - { line: "2a", field: "Page1[0].f1_58[0]", type: money }
+  - { line: "2b", field: "Page1[0].f1_59[0]", type: money }
+  - { line: "3a", field: "Page1[0].f1_60[0]", type: money }
+  - { line: "3b", field: "Page1[0].f1_61[0]", type: money }
+  # 3c "Check if your child's dividends are included in 1 [ ] Line 3a
+  # 2 [ ] Line 3b" — independent boxes
+  - { line: "3c.line_3a", field: "Page1[0].c1_35[0]", type: checkbox, on_state: "/1" }
+  - { line: "3c.line_3b", field: "Page1[0].c1_36[0]", type: checkbox, on_state: "/1" }
+  - { line: "4a", field: "Page1[0].f1_62[0]", type: money }
+  - { line: "4b", field: "Page1[0].f1_63[0]", type: money }
+  # 4c "Check if (see instructions) 1 [ ] Rollover 2 [ ] QCD 3 [ ] ___"
+  - { line: "4c.rollover", field: "Page1[0].c1_37[0]", type: checkbox, on_state: "/1" }
+  - { line: "4c.qcd", field: "Page1[0].c1_38[0]", type: checkbox, on_state: "/1" }
+  - { line: "4c.other", field: "Page1[0].c1_39[0]", type: checkbox, on_state: "/1" }
+  - { line: "4c.other_text", field: "Page1[0].f1_64[0]", type: text }
+  - { line: "5a", field: "Page1[0].f1_65[0]", type: money }
+  - { line: "5b", field: "Page1[0].f1_66[0]", type: money }
+  # 5c "Check if (see instructions) 1 [ ] Rollover 2 [ ] PSO 3 [ ] ___"
+  - { line: "5c.rollover", field: "Page1[0].c1_40[0]", type: checkbox, on_state: "/1" }
+  - { line: "5c.pso", field: "Page1[0].c1_41[0]", type: checkbox, on_state: "/1" }
+  - { line: "5c.other", field: "Page1[0].c1_42[0]", type: checkbox, on_state: "/1" }
+  - { line: "5c.other_text", field: "Page1[0].f1_67[0]", type: text }
+  - { line: "6a", field: "Page1[0].f1_68[0]", type: money }
+  - { line: "6b", field: "Page1[0].f1_69[0]", type: money }
+  - { line: "6c", field: "Page1[0].c1_43[0]", type: checkbox, on_state: "/1" } # lump-sum election method
+  # 6d "If you are married filing separately and lived apart from your
+  # spouse the entire year (see inst.), check here"
+  - { line: "6d", field: "Page1[0].c1_44[0]", type: checkbox, on_state: "/1" }
+  - { line: "7a", field: "Page1[0].f1_70[0]", type: money }
+  - { line: "7b.schedule_d_not_required", field: "Page1[0].c1_45[0]", type: checkbox, on_state: "/1" }
+  - { line: "7b.includes_childs_capital_gain", field: "Page1[0].c1_46[0]", type: checkbox, on_state: "/1" }
+  # unlabeled write-in after "Includes child's capital gain or (loss)"
+  - { line: "7b.childs_capital_gain_amount", field: "Page1[0].f1_71[0]", type: money }
+  - { line: "8", field: "Page1[0].f1_72[0]", type: money }
+  - { line: "9", field: "Page1[0].f1_73[0]", type: money }
+  - { line: "10", field: "Page1[0].f1_74[0]", type: money }
+  - { line: "11a", field: "Page1[0].f1_75[0]", type: money } # AGI closes page 1
+  # --- tax and credits (page 2) ---
+  - { line: "11b", field: "Page2[0].f2_01[0]", type: money } # "Amount from line 11a (adjusted gross income)"
+  - { line: "12a.you_dependent", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "12a.spouse_dependent", field: "Page2[0].c2_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "12b", field: "Page2[0].c2_3[0]", type: checkbox, on_state: "/1" } # spouse itemizes on a separate return
+  - { line: "12c", field: "Page2[0].c2_4[0]", type: checkbox, on_state: "/1" } # you were a dual-status alien
+  - { line: "12d.you_born_before_jan_2_1962", field: "Page2[0].c2_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "12d.you_blind", field: "Page2[0].c2_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "12d.spouse_born_before_jan_2_1962", field: "Page2[0].c2_7[0]", type: checkbox, on_state: "/1" }
+  - { line: "12d.spouse_blind", field: "Page2[0].c2_8[0]", type: checkbox, on_state: "/1" }
+  - { line: "12e", field: "Page2[0].f2_02[0]", type: money } # standard deduction OR itemized deductions
+  - { line: "12f", field: "Page2[0].f2_03[0]", type: money } # NEW: charitable contribution deduction for non-itemizers
+  - { line: "13a", field: "Page2[0].f2_04[0]", type: money } # Schedule 1-A, line 44 (13b in 2025)
+  - { line: "13b", field: "Page2[0].f2_05[0]", type: money } # QBI deduction, Form 8995/8995-A (13a in 2025)
+  - { line: "14", field: "Page2[0].f2_06[0]", type: money }
+  - { line: "15", field: "Page2[0].f2_07[0]", type: money }
+  # Line 16 "Check if any from Form(s): 1 [ ] 8814 2 [ ] 4972 3 [ ] ___"
+  - { line: "16.form_8814", field: "Page2[0].c2_9[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_4972", field: "Page2[0].c2_10[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_other", field: "Page2[0].c2_11[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_other_number", field: "Page2[0].f2_08[0]", type: text, maxlen: 8 }
+  - { line: "16", field: "Page2[0].f2_09[0]", type: money }
+  - { line: "17", field: "Page2[0].f2_10[0]", type: money }
+  - { line: "18", field: "Page2[0].f2_11[0]", type: money }
+  - { line: "19", field: "Page2[0].f2_12[0]", type: money }
+  - { line: "20", field: "Page2[0].f2_13[0]", type: money }
+  - { line: "21", field: "Page2[0].f2_14[0]", type: money }
+  - { line: "22", field: "Page2[0].f2_15[0]", type: money }
+  - { line: "23", field: "Page2[0].f2_16[0]", type: money }
+  - { line: "24a", field: "Page2[0].f2_17[0]", type: money } # total tax (line 24 in 2025)
+  - { line: "24b", field: "Page2[0].f2_18[0]", type: money } # NEW: Form 1062, line 15
+  - { line: "24c", field: "Page2[0].f2_19[0]", type: money } # NEW: add lines 24a and 24b
+  # --- payments and refundable credits ---
+  - { line: "25a", field: "Page2[0].Line25_ReadOrder[0].f2_20[0]", type: money }
+  - { line: "25b", field: "Page2[0].f2_21[0]", type: money }
+  - { line: "25c", field: "Page2[0].f2_22[0]", type: money }
+  - { line: "25d", field: "Page2[0].f2_23[0]", type: money }
+  - { line: "26", field: "Page2[0].f2_24[0]", type: money }
+  # "If you made estimated tax payments with your former spouse in 2026,
+  # enter their SSN (see inst.)"
+  - { line: "26.former_spouse_ssn", field: "Page2[0].Estimated_ReadOrder[0].f2_25[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "27a", field: "Page2[0].f2_26[0]", type: money }
+  - { line: "27b", field: "Page2[0].c2_12[0]", type: checkbox, on_state: "/1" } # clergy filing Schedule SE
+  - { line: "27c", field: "Page2[0].c2_13[0]", type: checkbox, on_state: "/1" } # do not want to claim the EIC
+  - { line: "28", field: "Page2[0].f2_27[0]", type: money } # ACTC; no decline checkbox in 2026
+  - { line: "29", field: "Page2[0].f2_28[0]", type: money }
+  - { line: "30", field: "Page2[0].f2_29[0]", type: money } # refundable adoption credit, Form 8839 line 13
+  - { line: "31", field: "Page2[0].Line31-32_ReadOrder[0].f2_30[0]", type: money }
+  - { line: "32a", field: "Page2[0].Line31-32_ReadOrder[0].f2_31[0]", type: money } # line 32 in 2025
+  - { line: "32b", field: "Page2[0].f2_32[0]", type: money } # NEW: amount from Schedule 3-A
+  - { line: "32c", field: "Page2[0].f2_33[0]", type: money } # NEW: 32a - 32b
+  - { line: "33", field: "Page2[0].f2_34[0]", type: money }
+  # --- refund / amount you owe ---
+  - { line: "34", field: "Page2[0].f2_35[0]", type: money }
+  - { line: "35a.form_8888", field: "Page2[0].c2_14[0]", type: checkbox, on_state: "/1" }
+  - { line: "35a", field: "Page2[0].f2_36[0]", type: money }
+  - { line: "35b", field: "Page2[0].RoutingNo[0].f2_37[0]", type: text, maxlen: 9, comb: true }
+  - { line: "35c.checking", field: "Page2[0].c2_15[0]", type: checkbox, on_state: "/1", group: "35c" }
+  - { line: "35c.savings", field: "Page2[0].c2_15[1]", type: checkbox, on_state: "/2", group: "35c" }
+  - { line: "35d", field: "Page2[0].AccountNo[0].f2_38[0]", type: text, maxlen: 17, comb: true }
+  - { line: "36", field: "Page2[0].f2_39[0]", type: money } # applied to your 2027 estimated tax
+  - { line: "37", field: "Page2[0].f2_40[0]", type: money }
+  - { line: "38", field: "Page2[0].f2_41[0]", type: money }
+  # --- third party designee (yes/no pair) ---
+  - { line: "third_party_designee.yes", field: "Page2[0].c2_16[0]", type: checkbox, on_state: "/1", group: third_party_designee }
+  - { line: "third_party_designee.no", field: "Page2[0].c2_16[1]", type: checkbox, on_state: "/2", group: third_party_designee }
+  - { line: "third_party_designee.name", field: "Page2[0].f2_42[0]", type: text }
+  - { line: "third_party_designee.phone", field: "Page2[0].f2_43[0]", type: text }
+  - { line: "third_party_designee.pin", field: "Page2[0].f2_44[0]", type: text, maxlen: 5, comb: true }
+  # --- sign here (signature/date are handwritten; only these are fillable) ---
+  - { line: "occupation", field: "Page2[0].f2_45[0]", type: text }
+  - { line: "identity_protection_pin", field: "Page2[0].f2_46[0]", type: text, maxlen: 6, comb: true }
+  - { line: "spouse.occupation", field: "Page2[0].f2_47[0]", type: text }
+  - { line: "spouse.identity_protection_pin", field: "Page2[0].f2_48[0]", type: text, maxlen: 6, comb: true }
+  - { line: "phone", field: "Page2[0].f2_49[0]", type: text }
+  - { line: "email", field: "Page2[0].f2_50[0]", type: text }
+# Only arithmetic printed on the form face.
+relations:
+  - "1z == sum(1a..1h)"                              # "Add lines 1a through 1h"
+  - "9 == 1z + 2b + 3b + 4b + 5b + 6b + 7a + 8"      # "Add lines 1z, 2b, 3b, 4b, 5b, 6b, 7a, and 8"
+  - "11a == 9 - 10"                                  # "Subtract line 10 from line 9"
+  - "11b == 11a"                                     # "Amount from line 11a (adjusted gross income)"
+  - "14 == 12e + 12f + 13a + 13b"                    # "Add lines 12e, 12f, 13a, and 13b"
+  - "15 == max(0, 11b - 14)"                         # "Subtract line 14 from line 11b. If zero or less, enter -0-"
+  - "18 == 16 + 17"                                  # "Add lines 16 and 17"
+  - "21 == 19 + 20"                                  # "Add lines 19 and 20"
+  - "22 == max(0, 18 - 21)"                          # "Subtract line 21 from line 18. If zero or less, enter -0-"
+  - "24a == 22 + 23"                                 # "Add lines 22 and 23. This is your total tax"
+  - "24c == 24a + 24b"                               # "Add lines 24a and 24b"
+  - "25d == sum(25a..25c)"                           # "Add lines 25a through 25c"
+  - "32a == 27a + 28 + 29 + 30 + 31"                 # "Add lines 27a, 28, 29, 30, and 31"
+  - "32c == 32a - 32b"                               # "Subtract line 32b from line 32a"
+  - "33 == 25d + 26 + 32c"                           # "Add lines 25d, 26, and 32c. These are your total payments"
+  - "34 == max(0, 33 - 24c)"                         # "If line 33 is more than line 24c, subtract line 24c from line 33"
+  - "37 == max(0, 24c - 33)"                         # "Subtract line 33 from line 24c. This is the amount you owe"
+# sched_1a resolves against the shipped 2026 draft pack; the sched_1/2/3 legs
+# are allowlisted in test_pack_invariants until their 2026 packs ship.
+cross_form:
+  - "8 == sched_1.10"    # "Additional income from Schedule 1, line 10"
+  - "10 == sched_1.26"   # "Adjustments to income from Schedule 1, line 26"
+  - "13a == sched_1a.44" # "Additional deductions from Schedule 1-A, line 44"
+  - "17 == sched_2.3"    # "Amount from Schedule 2, line 3"
+  - "20 == sched_3.8"    # "Amount from Schedule 3, line 8"
+  - "23 == sched_2.21"   # "Additional taxes, including self-employment tax, from Schedule 2, line 21"
+  - "31 == sched_3.15"   # "Amount from Schedule 3, line 15"
+identity_fields: [identifying_number]
+# PDF page 3 of the draft (page 1 is the IRS cover sheet); page 2 on the final.
+signature: { page: 3 }
+# State-dependent where-to-file — knowledge packs own it (CONVENTIONS.md).
+mailing: null

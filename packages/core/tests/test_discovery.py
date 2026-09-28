@@ -32,7 +32,12 @@ def test_list_all_packs():
     # adds 3 handfill.yaml and ZERO pack.yaml — that asymmetry is the point of the
     # worksheet form (FBAR is e-filed to FinCEN, not attached to the return),
     # plus the state packs, pinned separately below.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 111
+    # + the Phase J JT3a TY2026 DRAFT packs (2026-09-27: f1040 and sched_1a, mapped
+    # drafts-first from irs-dft and filled only in rehearsal mode) = 113.
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 113
+    assert {s.form_key for s in allf if s.tax_year == 2026} == {"f1040", "sched_1a"}
+    assert {s.source_status for s in allf if s.tax_year == 2026} == {"draft"}
+    assert {s.source_status for s in allf if s.tax_year != 2026} == {"final"}
 
     # State packs. 42 for TY2023 (the C1 resident sweep: 38 states/DC with an
     # AcroForm pack — CA ships 4 — while HI/CT/NM/SC are hand-fill worksheets
@@ -51,7 +56,7 @@ def test_list_all_packs():
     assert len([s for s in states if s.tax_year == 2025]) == 5
     # Every discovered pack is one or the other, so the total is the sum. This
     # catches a pack landing under a third top-level jurisdiction unnoticed.
-    assert len(allf) == 111 + 61 == 172
+    assert len(allf) == 113 + 61 == 174
 
 
 def test_list_filters_by_jurisdiction_and_year():

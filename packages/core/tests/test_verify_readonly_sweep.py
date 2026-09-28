@@ -149,8 +149,9 @@ def test_one_line_fill_verifies_with_zero_clipping_fails(pack_path: Path, tmp_pa
     blank = _cached_blank(pack)
     line, value = _one_plain_text_line(pack, blank)
     filled = tmp_path / "one_line.pdf"
-    fill_form(pack, {line: value}, blank, filled)
-    report = verify_form(pack, filled)
+    rehearsal = pack.source_status == "draft"   # JT3a: a draft pack fills only in rehearsal mode
+    fill_form(pack, {line: value}, blank, filled, rehearsal=rehearsal)
+    report = verify_form(pack, filled, rehearsal=rehearsal)
     fails = _clip_fails(report)
     assert not fails, (
         f"{_pack_id(pack_path)}: filling ONLY line {line!r} = {value!r} FAILed the clipping scan on "

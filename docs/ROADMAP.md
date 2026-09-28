@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,215 tests** — offline 5,835 + live-.gov 380; derived
+Done and on `main` (**6,248 tests** — offline 5,864 + live-.gov 384; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1893,7 +1893,27 @@ not wait for any of this.
     - The 1040-ES allowlist test passes.
 - [ ] **JT3a–d — Wave A: the core W-2 / retirement / HSA 2026 federal packs, drafts-first** (JT3a **latest start 2026-10-26**; deps JT0a–c, JF6c) [TY26-20]
   - **Sub-tranches.** The count in parentheses is how many 2025-pack field names are missing from the draft.
-    - **JT3a** (M–L): f1040 (43 of 192), sched_1a (44/54; 225 fields).
+    - **JT3a** (M–L): f1040 (43 of 192), sched_1a (44/54; 225 fields). **DONE 2026-09-27** — *as built:*
+      - **formpacks/federal/2026/f1040** (draft Created 8/19/26, sha e044e765…): 200 of 207 widgets (the 7 unmapped are the paid-preparer block).
+        - New keys 12f, 24a–c and 32a–c; 12d keys roll to `…_jan_2_1962`; 13a is now Schedule 1-A line 44 and 13b QBI.
+        - The new citizen / U.S. national / work-authorized question maps as two grouped radios, `citizen_or_work_authorized.{you,spouse}.{yes,no}` (not required: the 2026 instructions are not final).
+        - 28.do_not_claim_actc is gone (the draft prints no box). The state box is 62.8pt, so maxlen 13 (the round trip's clipping scan caught the 2025 value of 14).
+        - `signature.page` 3: the draft's page 1 is the IRS cover sheet.
+        - The four ROADMAP relations plus 34/37 against 24c. Cross_form keeps the printed Schedule 1/2/3 legs, allowlisted in test_pack_invariants until JT3b/JT3c ship those packs (the 2022 precedent), and adds `13a == sched_1a.44`.
+      - **formpacks/federal/2026/sched_1a** (draft Created 6/16/26, sha e22aec7f…): all 185 widgets.
+        - Tables 4 (i–v), 6 (i–xiii: two printed tables sharing rows a–e), 16 (i–iii) and 18 (i–iv), keyed `<row>.<column>`.
+        - 28a/28b gain grouped yes/no radios `original_use` and `us_final_assembly`.
+        - Cross_form: `1 == f1040.11b`, `44 == f1040.13a`. The f1040nr legs join with the 2026 f1040nr pack (JT5c).
+      - **Harness:**
+        - The golden round trip runs a draft pack in rehearsal mode.
+        - `list_forms` / `get_form_map` carry `source_status` and `draft_created`.
+        - The renumbered-line guard adds 2026 f1040 24 and 32.
+        - test_discovery: 113 federal packs, the 2026 ones all drafts.
+      - **Tests** (test_formpacks_federal `test_jt3a_*`):
+        - the printed-face keys and the 13a/13b trap, the face math on a consistent demo return (and a stale 33 caught);
+        - the Schedule 1-A hookup read from the form_lines registry for 2025 and 2026;
+        - the Schedule 1-A table and radio shape.
+      - **Vision audit:** every page of both filled drafts, at 110 and 200 dpi, with each synthetic value checked against its printed line. It caught the state-box clip and found nothing else.
     - **JT3b** (M): sched_2 (19/63), f8959 (0/26, but its Parts are reordered), f8889 (0 missing).
     - **JT3c** (M): f8606 (18/45), sched_1 (1/73), sched_3 (2/36).
     - **JT3d** (M):
@@ -1905,6 +1925,7 @@ not wait for any of this.
     - The 1040 gains 12f, 24a–c and 32a–c.
     - Form 8959's Part II becomes RRTA and self-employment moves to Part IV, under identical field names.
     - Schedule 2 is renumbered.
+    - (Found in JT3a) A FINAL pack in a provisional year (the 2026 f8833 of JT3d) is neither filing-grade nor a draft, so `fill_form` refuses it and `rehearsal=True` refuses it too. The golden round trip needs a decision there: let rehearsal accept a final pack whose year is provisional, or have JT3d record why it is filing-grade.
   - **Relations and cross_form:**
     - f1040: '14 == 12e + 12f + 13a + 13b', '24c == 24a + 24b', '32c == 32a - 32b', '33 == 25d + 26 + 32c';
     - sched_1a: '44 == f1040.13a';
@@ -2154,7 +2175,7 @@ not wait for any of this.
 - [ ] **JT5a–g — Wave B: the rest of the federal set for 2026** (JT5a **latest start 2026-11-16**; deps JT3a; each sub-tranche commits per pack) [TY26-21]
   - **JT5a** (M): copies f843, fw7, f8316 (current finals byte-identical to their 2025 pins) and fincen114; near-ports sched_se, f4868, f8960.
   - **JT5b** (M): sched_8812, f2555, f8863.
-  - **JT5c** (M–L): f1040nr (new 12b, 13a, 24a–c, 32b), sched_a_nr, f8843.
+  - **JT5c** (M–L): f1040nr (new 12b, 13a, 24a–c, 32b), sched_a_nr, f8843. The 2026 sched_1a pack then gains its f1040nr legs (`1 == f1040nr.11b`, `44 == f1040nr.13a` — re-read on the 1040-NR draft).
   - **JT5d** (M–L): sched_a, sched_c, sched_e.
   - **JT5e** (M–L): f8962, f2441, f1116, f8938 (Rev. 12-2026).
   - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new).

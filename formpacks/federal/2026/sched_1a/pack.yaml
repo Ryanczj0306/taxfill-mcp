@@ -1,0 +1,280 @@
+# Schedule 1-A (Form 1040) — Additional Deductions — 2026 DRAFT.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040s1a--dft.pdf,
+# page-1 footer "Schedule 1-A (Form 1040) 2026 Created 6/16/26"). Its cover
+# sheet: "there are never any changes to the last posted draft of the form and
+# the final revision of the form". PDF page 1 is that cover sheet; the form's
+# three pages are PDF pages 2-4. When the final posts at
+# irs-prior/f1040s1a--2026.pdf, re-pin: source_url, pdf_sha256, source_status
+# final, drop draft_created, and re-read the face. TY2026 is planning-only, so
+# this pack fills only in REHEARSAL mode. Attachment sequence 1A; no signature
+# block; mailed in the parent return's envelope.
+#
+# 2025 -> 2026 is a REDESIGN (54 -> 185 widgets, all 185 mapped; 44 of the 54
+# 2025 field names are gone and every line from 4 on is renumbered):
+#   Part I   (1-3)    MAGI — unchanged
+#   Part II  (4-15)   No Tax on Tips: 4 is a per-employer table (rows a-e,
+#                     columns (i)-(v)); 6 is a per-business table printed as
+#                     TWO tables sharing rows a-e (columns (i)-(v), then the
+#                     1099 payer TINs and amounts (vi)-(xiii)); 15 = deduction
+#   Part III (16-27)  No Tax on Overtime: 16 (W-2 box 12 code "TT") and 18
+#                     (Form 1099-NEC box 1d / 1099-MISC box 14) are tables;
+#                     27 = deduction
+#   Part IV  (28-36)  No Tax on Car Loan Interest: 28a/28b each add two Yes/No
+#                     questions (original use; final assembly in the U.S.);
+#                     36 = deduction
+#   Part V   (37-43)  Enhanced Deduction for Seniors; "born before January 2,
+#                     1962"; 43 = deduction
+#   Part VI  (44)     Total -> Form 1040, 1040-SR, or 1040-NR, line 13a
+#
+# AcroForm: root "form1[0]" (as in 2025). The EIN columns carry /MaxLen 10 and
+# the payer-TIN columns /MaxLen 11 (plain boxes, not combs); the two VIN boxes
+# are 17-cell combs.
+#
+# Relations policy (formpacks/CONVENTIONS.md — face math only, the 2025 pack's
+# policy carried over): only the plain printed additions are encoded. Not
+# encoded: the phase-out worksheet lines (the smaller-of caps 9/21/30, the
+# conditional subtractions 12/24/33/39, the divide-by-$1,000 counts 13/25/34 —
+# Part IV rounds UP — the multiplies 14/26/35/40, the clamped subtractions
+# 15/27/36/41, the SSN/birth-date-gated copies 42a/42b); the "Enter the amount
+# from line 3" copies (10/22/31/37 — a Part legitimately left blank would fail
+# under blank-as-zero); the column totals 5/7/17/19/29 and the in-row column
+# rules of tables 4 and 6 (the relation grammar has no dotted refs like 4a.v).
+#
+# Cross-form: line 1 prints "Enter the amount from Form 1040, 1040-SR, or
+# 1040-NR, line 11b"; line 44 "Enter here and on Form 1040, 1040-SR, or
+# 1040-NR, line 13a" (13a — the 2025 target was 13b). The f1040nr legs join
+# when the 2026 Form 1040-NR pack ships (Wave B, JT5).
+form: "Schedule 1-A (Form 1040)"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf
+pdf_sha256: "e22aec7feb2f5b734e16ee74d70acfdfdc0d66a5292f69cf0ced3b87543d95ac"
+source_status: draft
+draft_created: "6/16/26"
+acroform_root: "form1[0]"
+fields:
+  # ---- header ----
+  - { line: "name", field: "Page1[0].f1_01[0]", type: text } # Name(s) shown on Form 1040, 1040-SR, or 1040-NR
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 11 } # plain box, /MaxLen 11 (a dashed SSN fits)
+  # ---- Part I — Modified Adjusted Gross Income (MAGI) Amount ----
+  - { line: "1", field: "Page1[0].f1_03[0]", type: money } # amount from Form 1040, 1040-SR, or 1040-NR, line 11b
+  - { line: "2a", field: "Page1[0].f1_04[0]", type: money } # income from Puerto Rico that you excluded
+  - { line: "2b", field: "Page1[0].f1_05[0]", type: money } # Form 2555, line 45
+  - { line: "2c", field: "Page1[0].f1_06[0]", type: money } # Form 2555, line 50
+  - { line: "2d", field: "Page1[0].f1_07[0]", type: money } # Form 4563, line 15
+  - { line: "2e", field: "Page1[0].f1_08[0]", type: money } # add lines 2a, 2b, 2c, and 2d
+  - { line: "3", field: "Page1[0].f1_09[0]", type: money } # add lines 1 and 2e
+  # ---- Part II — No Tax on Tips ----
+  # Line 4 table, rows a-e: (i) name of employer, (ii) EIN from Form W-2 box (b) or Form 4137 line 1 column (b),
+  # (iii) qualified tips in Form W-2 box 12 code "TP", (iv) qualified tips in Form 4137 line 1 column (c),
+  # (v) the larger of column (iii) or column (iv).
+  - { line: "4a.i", field: "Page1[0].Table_Line4[0].Row4a[0].f1_10[0]", type: text }
+  - { line: "4a.ii", field: "Page1[0].Table_Line4[0].Row4a[0].f1_11[0]", type: text, maxlen: 10 }
+  - { line: "4a.iii", field: "Page1[0].Table_Line4[0].Row4a[0].f1_12[0]", type: money }
+  - { line: "4a.iv", field: "Page1[0].Table_Line4[0].Row4a[0].f1_13[0]", type: money }
+  - { line: "4a.v", field: "Page1[0].Table_Line4[0].Row4a[0].f1_14[0]", type: money }
+  - { line: "4b.i", field: "Page1[0].Table_Line4[0].Row4b[0].f1_15[0]", type: text }
+  - { line: "4b.ii", field: "Page1[0].Table_Line4[0].Row4b[0].f1_16[0]", type: text, maxlen: 10 }
+  - { line: "4b.iii", field: "Page1[0].Table_Line4[0].Row4b[0].f1_17[0]", type: money }
+  - { line: "4b.iv", field: "Page1[0].Table_Line4[0].Row4b[0].f1_18[0]", type: money }
+  - { line: "4b.v", field: "Page1[0].Table_Line4[0].Row4b[0].f1_19[0]", type: money }
+  - { line: "4c.i", field: "Page1[0].Table_Line4[0].Row4c[0].f1_20[0]", type: text }
+  - { line: "4c.ii", field: "Page1[0].Table_Line4[0].Row4c[0].f1_21[0]", type: text, maxlen: 10 }
+  - { line: "4c.iii", field: "Page1[0].Table_Line4[0].Row4c[0].f1_22[0]", type: money }
+  - { line: "4c.iv", field: "Page1[0].Table_Line4[0].Row4c[0].f1_23[0]", type: money }
+  - { line: "4c.v", field: "Page1[0].Table_Line4[0].Row4c[0].f1_24[0]", type: money }
+  - { line: "4d.i", field: "Page1[0].Table_Line4[0].Row4d[0].f1_25[0]", type: text }
+  - { line: "4d.ii", field: "Page1[0].Table_Line4[0].Row4d[0].f1_26[0]", type: text, maxlen: 10 }
+  - { line: "4d.iii", field: "Page1[0].Table_Line4[0].Row4d[0].f1_27[0]", type: money }
+  - { line: "4d.iv", field: "Page1[0].Table_Line4[0].Row4d[0].f1_28[0]", type: money }
+  - { line: "4d.v", field: "Page1[0].Table_Line4[0].Row4d[0].f1_29[0]", type: money }
+  - { line: "4e.i", field: "Page1[0].Table_Line4[0].Row4e[0].f1_30[0]", type: text }
+  - { line: "4e.ii", field: "Page1[0].Table_Line4[0].Row4e[0].f1_31[0]", type: text, maxlen: 10 }
+  - { line: "4e.iii", field: "Page1[0].Table_Line4[0].Row4e[0].f1_32[0]", type: money }
+  - { line: "4e.iv", field: "Page1[0].Table_Line4[0].Row4e[0].f1_33[0]", type: money }
+  - { line: "4e.v", field: "Page1[0].Table_Line4[0].Row4e[0].f1_34[0]", type: money }
+  - { line: "5", field: "Page1[0].f1_35[0]", type: money } # add lines 4a through 4e, column (v)
+  # Line 6 (tips in a trade or business) is TWO printed tables sharing rows a-e. Columns (i)-(v): (i) business
+  # name, (ii) EIN (Schedule C line D / Schedule E Part II line 28(d) / Schedule F line D), (iii) net profit,
+  # (iv) other allocable deductions, (v) column (iii) less column (iv).
+  - { line: "6a.i", field: "Page1[0].Table_Line6_ColsI-V[0].Row6a[0].f1_36[0]", type: text }
+  - { line: "6a.ii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6a[0].f1_37[0]", type: text, maxlen: 10 }
+  - { line: "6a.iii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6a[0].f1_38[0]", type: money }
+  - { line: "6a.iv", field: "Page1[0].Table_Line6_ColsI-V[0].Row6a[0].f1_39[0]", type: money }
+  - { line: "6a.v", field: "Page1[0].Table_Line6_ColsI-V[0].Row6a[0].f1_40[0]", type: money }
+  - { line: "6b.i", field: "Page1[0].Table_Line6_ColsI-V[0].Row6b[0].f1_41[0]", type: text }
+  - { line: "6b.ii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6b[0].f1_42[0]", type: text, maxlen: 10 }
+  - { line: "6b.iii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6b[0].f1_43[0]", type: money }
+  - { line: "6b.iv", field: "Page1[0].Table_Line6_ColsI-V[0].Row6b[0].f1_44[0]", type: money }
+  - { line: "6b.v", field: "Page1[0].Table_Line6_ColsI-V[0].Row6b[0].f1_45[0]", type: money }
+  - { line: "6c.i", field: "Page1[0].Table_Line6_ColsI-V[0].Row6c[0].f1_46[0]", type: text }
+  - { line: "6c.ii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6c[0].f1_47[0]", type: text, maxlen: 10 }
+  - { line: "6c.iii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6c[0].f1_48[0]", type: money }
+  - { line: "6c.iv", field: "Page1[0].Table_Line6_ColsI-V[0].Row6c[0].f1_49[0]", type: money }
+  - { line: "6c.v", field: "Page1[0].Table_Line6_ColsI-V[0].Row6c[0].f1_50[0]", type: money }
+  - { line: "6d.i", field: "Page1[0].Table_Line6_ColsI-V[0].Row6d[0].f1_51[0]", type: text }
+  - { line: "6d.ii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6d[0].f1_52[0]", type: text, maxlen: 10 }
+  - { line: "6d.iii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6d[0].f1_53[0]", type: money }
+  - { line: "6d.iv", field: "Page1[0].Table_Line6_ColsI-V[0].Row6d[0].f1_54[0]", type: money }
+  - { line: "6d.v", field: "Page1[0].Table_Line6_ColsI-V[0].Row6d[0].f1_55[0]", type: money }
+  - { line: "6e.i", field: "Page1[0].Table_Line6_ColsI-V[0].Row6e[0].f1_56[0]", type: text }
+  - { line: "6e.ii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6e[0].f1_57[0]", type: text, maxlen: 10 }
+  - { line: "6e.iii", field: "Page1[0].Table_Line6_ColsI-V[0].Row6e[0].f1_58[0]", type: money }
+  - { line: "6e.iv", field: "Page1[0].Table_Line6_ColsI-V[0].Row6e[0].f1_59[0]", type: money }
+  - { line: "6e.v", field: "Page1[0].Table_Line6_ColsI-V[0].Row6e[0].f1_60[0]", type: money }
+  # Columns (vi)-(xiii): the payer's/filer's TIN and qualified tip amount from the first, second and third
+  # Form 1099-NEC box 1(b) / 1099-MISC box 13(a) / 1099-K box 1(c) — (vi)/(vii), (viii)/(ix), (x)/(xi) —
+  # then (xii) total of (vii), (ix) and (xi), and (xiii) the smaller of column (v) or column (xii).
+  - { line: "6a.vi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6a[0].f1_61[0]", type: text, maxlen: 11 }
+  - { line: "6a.vii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6a[0].f1_62[0]", type: money }
+  - { line: "6a.viii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6a[0].f1_63[0]", type: text, maxlen: 11 }
+  - { line: "6a.ix", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6a[0].f1_64[0]", type: money }
+  - { line: "6a.x", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6a[0].f1_65[0]", type: text, maxlen: 11 }
+  - { line: "6a.xi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6a[0].f1_66[0]", type: money }
+  - { line: "6a.xii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6a[0].f1_67[0]", type: money }
+  - { line: "6a.xiii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6a[0].f1_68[0]", type: money }
+  - { line: "6b.vi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6b[0].f1_69[0]", type: text, maxlen: 11 }
+  - { line: "6b.vii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6b[0].f1_70[0]", type: money }
+  - { line: "6b.viii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6b[0].f1_71[0]", type: text, maxlen: 11 }
+  - { line: "6b.ix", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6b[0].f1_72[0]", type: money }
+  - { line: "6b.x", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6b[0].f1_73[0]", type: text, maxlen: 11 }
+  - { line: "6b.xi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6b[0].f1_74[0]", type: money }
+  - { line: "6b.xii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6b[0].f1_75[0]", type: money }
+  - { line: "6b.xiii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6b[0].f1_76[0]", type: money }
+  - { line: "6c.vi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6c[0].f1_77[0]", type: text, maxlen: 11 }
+  - { line: "6c.vii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6c[0].f1_78[0]", type: money }
+  - { line: "6c.viii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6c[0].f1_79[0]", type: text, maxlen: 11 }
+  - { line: "6c.ix", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6c[0].f1_80[0]", type: money }
+  - { line: "6c.x", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6c[0].f1_81[0]", type: text, maxlen: 11 }
+  - { line: "6c.xi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6c[0].f1_82[0]", type: money }
+  - { line: "6c.xii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6c[0].f1_83[0]", type: money }
+  - { line: "6c.xiii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6c[0].f1_84[0]", type: money }
+  - { line: "6d.vi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6d[0].f1_85[0]", type: text, maxlen: 11 }
+  - { line: "6d.vii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6d[0].f1_86[0]", type: money }
+  - { line: "6d.viii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6d[0].f1_87[0]", type: text, maxlen: 11 }
+  - { line: "6d.ix", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6d[0].f1_88[0]", type: money }
+  - { line: "6d.x", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6d[0].f1_89[0]", type: text, maxlen: 11 }
+  - { line: "6d.xi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6d[0].f1_90[0]", type: money }
+  - { line: "6d.xii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6d[0].f1_91[0]", type: money }
+  - { line: "6d.xiii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6d[0].f1_92[0]", type: money }
+  - { line: "6e.vi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6e[0].f1_93[0]", type: text, maxlen: 11 }
+  - { line: "6e.vii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6e[0].f1_94[0]", type: money }
+  - { line: "6e.viii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6e[0].f1_95[0]", type: text, maxlen: 11 }
+  - { line: "6e.ix", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6e[0].f1_96[0]", type: money }
+  - { line: "6e.x", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6e[0].f1_97[0]", type: text, maxlen: 11 }
+  - { line: "6e.xi", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6e[0].f1_98[0]", type: money }
+  - { line: "6e.xii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6e[0].f1_99[0]", type: money }
+  - { line: "6e.xiii", field: "Page1[0].Table_Line6_ColsVI-XIII[0].Row6e[0].f1_100[0]", type: money }
+  - { line: "7", field: "Page1[0].f1_101[0]", type: money } # add lines 6a through 6e, column (xiii)
+  - { line: "8", field: "Page1[0].f1_102[0]", type: money } # add lines 5 and 7
+  - { line: "9", field: "Page1[0].f1_103[0]", type: money } # smaller of line 8 or $25,000
+  - { line: "10", field: "Page1[0].f1_104[0]", type: money } # amount from line 3 — only if Part II applies
+  - { line: "11", field: "Page1[0].f1_105[0]", type: money } # $150,000 ($300,000 MFJ)
+  - { line: "12", field: "Page1[0].f1_106[0]", type: money } # line 10 - line 11; if <= 0, enter line 9 on line 15
+  - { line: "13", field: "Page1[0].f1_107[0]", type: money } # line 12 / $1,000, decreased to a whole number (a count)
+  - { line: "14", field: "Page1[0].f1_108[0]", type: money } # line 13 x $100
+  - { line: "15", field: "Page1[0].f1_109[0]", type: money } # QUALIFIED TIPS DEDUCTION: line 9 - line 14, floor 0
+  # ---- Part III — No Tax on Overtime (page 2) ----
+  # Line 16 table, rows a-e: (i) name of employer, (ii) EIN from Form W-2 box (b), (iii) qualified overtime
+  # compensation in Form W-2 box 12 code "TT".
+  - { line: "16a.i", field: "Page2[0].Table_Line16[0].Row16a[0].f2_01[0]", type: text }
+  - { line: "16a.ii", field: "Page2[0].Table_Line16[0].Row16a[0].f2_02[0]", type: text, maxlen: 10 }
+  - { line: "16a.iii", field: "Page2[0].Table_Line16[0].Row16a[0].f2_03[0]", type: money }
+  - { line: "16b.i", field: "Page2[0].Table_Line16[0].Row16b[0].f2_04[0]", type: text }
+  - { line: "16b.ii", field: "Page2[0].Table_Line16[0].Row16b[0].f2_05[0]", type: text, maxlen: 10 }
+  - { line: "16b.iii", field: "Page2[0].Table_Line16[0].Row16b[0].f2_06[0]", type: money }
+  - { line: "16c.i", field: "Page2[0].Table_Line16[0].Row16c[0].f2_07[0]", type: text }
+  - { line: "16c.ii", field: "Page2[0].Table_Line16[0].Row16c[0].f2_08[0]", type: text, maxlen: 10 }
+  - { line: "16c.iii", field: "Page2[0].Table_Line16[0].Row16c[0].f2_09[0]", type: money }
+  - { line: "16d.i", field: "Page2[0].Table_Line16[0].Row16d[0].f2_10[0]", type: text }
+  - { line: "16d.ii", field: "Page2[0].Table_Line16[0].Row16d[0].f2_11[0]", type: text, maxlen: 10 }
+  - { line: "16d.iii", field: "Page2[0].Table_Line16[0].Row16d[0].f2_12[0]", type: money }
+  - { line: "16e.i", field: "Page2[0].Table_Line16[0].Row16e[0].f2_13[0]", type: text }
+  - { line: "16e.ii", field: "Page2[0].Table_Line16[0].Row16e[0].f2_14[0]", type: text, maxlen: 10 }
+  - { line: "16e.iii", field: "Page2[0].Table_Line16[0].Row16e[0].f2_15[0]", type: money }
+  - { line: "17", field: "Page2[0].f2_16[0]", type: money } # add lines 16a through 16e, column (iii)
+  # Line 18 table, rows a-e: (i) business name, (ii) EIN (Schedule C line D / Schedule E Part II line 28(d) /
+  # Schedule F line D), (iii) payer's TIN from Form 1099-NEC or 1099-MISC, (iv) qualified overtime compensation
+  # in Form 1099-NEC box 1d or Form 1099-MISC box 14.
+  - { line: "18a.i", field: "Page2[0].Table_Ln18[0].Row18a[0].f2_17[0]", type: text }
+  - { line: "18a.ii", field: "Page2[0].Table_Ln18[0].Row18a[0].f2_18[0]", type: text, maxlen: 10 }
+  - { line: "18a.iii", field: "Page2[0].Table_Ln18[0].Row18a[0].f2_19[0]", type: text, maxlen: 11 }
+  - { line: "18a.iv", field: "Page2[0].Table_Ln18[0].Row18a[0].f2_20[0]", type: money }
+  - { line: "18b.i", field: "Page2[0].Table_Ln18[0].Row18b[0].f2_21[0]", type: text }
+  - { line: "18b.ii", field: "Page2[0].Table_Ln18[0].Row18b[0].f2_22[0]", type: text, maxlen: 10 }
+  - { line: "18b.iii", field: "Page2[0].Table_Ln18[0].Row18b[0].f2_23[0]", type: text, maxlen: 11 }
+  - { line: "18b.iv", field: "Page2[0].Table_Ln18[0].Row18b[0].f2_24[0]", type: money }
+  - { line: "18c.i", field: "Page2[0].Table_Ln18[0].Row18c[0].f2_25[0]", type: text }
+  - { line: "18c.ii", field: "Page2[0].Table_Ln18[0].Row18c[0].f2_26[0]", type: text, maxlen: 10 }
+  - { line: "18c.iii", field: "Page2[0].Table_Ln18[0].Row18c[0].f2_27[0]", type: text, maxlen: 11 }
+  - { line: "18c.iv", field: "Page2[0].Table_Ln18[0].Row18c[0].f2_28[0]", type: money }
+  - { line: "18d.i", field: "Page2[0].Table_Ln18[0].Row18d[0].f2_29[0]", type: text }
+  - { line: "18d.ii", field: "Page2[0].Table_Ln18[0].Row18d[0].f2_30[0]", type: text, maxlen: 10 }
+  - { line: "18d.iii", field: "Page2[0].Table_Ln18[0].Row18d[0].f2_31[0]", type: text, maxlen: 11 }
+  - { line: "18d.iv", field: "Page2[0].Table_Ln18[0].Row18d[0].f2_32[0]", type: money }
+  - { line: "18e.i", field: "Page2[0].Table_Ln18[0].Row18e[0].f2_33[0]", type: text }
+  - { line: "18e.ii", field: "Page2[0].Table_Ln18[0].Row18e[0].f2_34[0]", type: text, maxlen: 10 }
+  - { line: "18e.iii", field: "Page2[0].Table_Ln18[0].Row18e[0].f2_35[0]", type: text, maxlen: 11 }
+  - { line: "18e.iv", field: "Page2[0].Table_Ln18[0].Row18e[0].f2_36[0]", type: money }
+  - { line: "19", field: "Page2[0].f2_37[0]", type: money } # add lines 18a through 18e, column (iv)
+  - { line: "20", field: "Page2[0].f2_38[0]", type: money } # add lines 17 and 19
+  - { line: "21", field: "Page2[0].f2_39[0]", type: money } # smaller of line 20 or $12,500 ($25,000 MFJ)
+  - { line: "22", field: "Page2[0].f2_40[0]", type: money } # amount from line 3 — only if Part III applies
+  - { line: "23", field: "Page2[0].f2_41[0]", type: money } # $150,000 ($300,000 MFJ)
+  - { line: "24", field: "Page2[0].f2_42[0]", type: money } # line 22 - line 23; if <= 0, enter line 21 on line 27
+  - { line: "25", field: "Page2[0].f2_43[0]", type: money } # line 24 / $1,000, decreased to a whole number (a count)
+  - { line: "26", field: "Page2[0].f2_44[0]", type: money } # line 25 x $100
+  - { line: "27", field: "Page2[0].f2_45[0]", type: money } # QUALIFIED OVERTIME DEDUCTION: line 21 - line 26, floor 0
+  # ---- Part IV — No Tax on Car Loan Interest (page 3) ----
+  # Line 28 rows a/b: (i) VIN — 17 comb cells; interest for this loan (ii) deducted on Schedule C, E, or F,
+  # (iii) Schedule 1-A. Each row asks (1) "Did the original use of this vehicle start with you, or your spouse
+  # if married filing jointly (a used vehicle does not qualify)?" and (2) "Did final assembly of this vehicle
+  # occur within the United States ...?" — one Yes/No radio each (NEW 2026).
+  - { line: "28a.i", field: "Page3[0].Table_Line28a[0].Line28a[0].VIN-1_Comb[0].f3_01[0]", type: text, maxlen: 17, comb: true }
+  - { line: "28a.ii", field: "Page3[0].Table_Line28a[0].Line28a[0].f3_02[0]", type: money }
+  - { line: "28a.iii", field: "Page3[0].Table_Line28a[0].Line28a[0].f3_03[0]", type: money }
+  - { line: "28a.original_use.yes", field: "Page3[0].c3_1[0]", type: checkbox, on_state: "/1", group: "28a_original_use" }
+  - { line: "28a.original_use.no", field: "Page3[0].c3_1[1]", type: checkbox, on_state: "/2", group: "28a_original_use" }
+  - { line: "28a.us_final_assembly.yes", field: "Page3[0].c3_2[0]", type: checkbox, on_state: "/1", group: "28a_us_final_assembly" }
+  - { line: "28a.us_final_assembly.no", field: "Page3[0].c3_2[1]", type: checkbox, on_state: "/2", group: "28a_us_final_assembly" }
+  - { line: "28b.i", field: "Page3[0].Table_Line28b[0].Line28b[0].VIN-2_Comb[0].f3_04[0]", type: text, maxlen: 17, comb: true }
+  - { line: "28b.ii", field: "Page3[0].Table_Line28b[0].Line28b[0].f3_05[0]", type: money }
+  - { line: "28b.iii", field: "Page3[0].Table_Line28b[0].Line28b[0].f3_06[0]", type: money }
+  - { line: "28b.original_use.yes", field: "Page3[0].c3_3[0]", type: checkbox, on_state: "/1", group: "28b_original_use" }
+  - { line: "28b.original_use.no", field: "Page3[0].c3_3[1]", type: checkbox, on_state: "/2", group: "28b_original_use" }
+  - { line: "28b.us_final_assembly.yes", field: "Page3[0].c3_4[0]", type: checkbox, on_state: "/1", group: "28b_us_final_assembly" }
+  - { line: "28b.us_final_assembly.no", field: "Page3[0].c3_4[1]", type: checkbox, on_state: "/2", group: "28b_us_final_assembly" }
+  - { line: "29", field: "Page3[0].f3_07[0]", type: money } # add lines 28a and 28b, column (iii)
+  - { line: "30", field: "Page3[0].f3_08[0]", type: money } # smaller of line 29 or $10,000
+  - { line: "31", field: "Page3[0].f3_09[0]", type: money } # amount from line 3 — only if Part IV applies
+  - { line: "32", field: "Page3[0].f3_10[0]", type: money } # $100,000 ($200,000 MFJ)
+  - { line: "33", field: "Page3[0].f3_11[0]", type: money } # line 31 - line 32; if <= 0, enter line 30 on line 36
+  - { line: "34", field: "Page3[0].f3_12[0]", type: money } # line 33 / $1,000, INCREASED to the next whole number (a count; Part IV rounds up)
+  - { line: "35", field: "Page3[0].f3_13[0]", type: money } # line 34 x $200
+  - { line: "36", field: "Page3[0].f3_14[0]", type: money } # QPVLI DEDUCTION: line 30 - line 35, floor 0
+  # ---- Part V — Enhanced Deduction for Seniors (page 3) ----
+  - { line: "37", field: "Page3[0].f3_15[0]", type: money } # amount from line 3 — only if Part V applies
+  - { line: "38", field: "Page3[0].f3_16[0]", type: money } # $75,000 ($150,000 MFJ)
+  - { line: "39", field: "Page3[0].f3_17[0]", type: money } # line 37 - line 38; if <= 0, enter $6,000 on line 41
+  - { line: "40", field: "Page3[0].f3_18[0]", type: money } # line 39 x 6% (0.06)
+  - { line: "41", field: "Page3[0].f3_19[0]", type: money } # $6,000 - line 40; if zero or less, enter -0-
+  - { line: "42a", field: "Page3[0].f3_20[0]", type: money } # you: valid SSN and born before January 2, 1962 -> line 41
+  - { line: "42b", field: "Page3[0].f3_21[0]", type: money } # MFJ spouse: valid SSN and born before January 2, 1962 -> line 41
+  - { line: "43", field: "Page3[0].f3_22[0]", type: money } # ENHANCED DEDUCTION FOR SENIORS: add lines 42a and 42b
+  # ---- Part VI — Total Additional Deductions (page 3) ----
+  - { line: "44", field: "Page3[0].f3_23[0]", type: money } # add lines 15, 27, 36, and 43 -> Form 1040/1040-SR/1040-NR line 13a
+relations:
+  # Plain printed additions only — see the header for what is not encoded.
+  - "2e == 2a + 2b + 2c + 2d"                   # "Add lines 2a, 2b, 2c, and 2d"
+  - "3 == 1 + 2e"                               # "Add lines 1 and 2e"
+  - "8 == 5 + 7"                                # "Add lines 5 and 7"
+  - "20 == 17 + 19"                             # "Add lines 17 and 19"
+  - "43 == 42a + 42b"                           # "Add lines 42a and 42b"
+  - "44 == 15 + 27 + 36 + 43"                   # "Add lines 15, 27, 36, and 43"
+cross_form:
+  - "1 == f1040.11b"                  # "Enter the amount from Form 1040, 1040-SR, or 1040-NR, line 11b"
+  - "44 == f1040.13a"                 # "Enter here and on Form 1040, 1040-SR, or 1040-NR, line 13a"
+identity_fields: [name, identifying_number]
+signature: null                       # schedules carry no signature block of their own
+mailing: null                         # mailed inside the parent return's envelope

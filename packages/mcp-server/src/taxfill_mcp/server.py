@@ -157,7 +157,11 @@ def _validation_problems(exc: ValidationError) -> str:
 
 @mcp.tool()
 def list_forms(jurisdiction: str | None = None, year: int | None = None) -> list[dict]:
-    """List available form packs (optionally filtered by jurisdiction/year)."""
+    """List available form packs (optionally filtered by jurisdiction/year).
+
+    `source_status: draft` marks a pack mapped from an IRS early-release draft (the TY2026 packs):
+    fill_form refuses its planning-only year until the final posts and the pack is re-pinned.
+    """
     return [_dump(s) for s in _list_forms(jurisdiction, year)]
 
 
@@ -191,7 +195,7 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
     nonresident-alien spouse has no SSN/ITIN (and needs none) writes 'NRA' in the MFS ENTRY
     SPACE (the Instructions for Form 1040: "enter 'NRA' in the entry space") —
     `filing_status.spouse_or_qualifying_person_name` on the 2023/2024 1040 packs,
-    `filing_status.mfs_spouse_name` on 2025 — and leaves `spouse.identifying_number` blank.
+    `filing_status.mfs_spouse_name` on 2025 and the 2026 draft — and leaves `spouse.identifying_number` blank.
     """
     pack = load_form_pack(form, year, jurisdiction)
     blank = _fetch_blank(pack.source_url, sha256=pack.pdf_sha256)

@@ -109,6 +109,16 @@ CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
         (2022, "sched_2", "21"),
         (2022, "sched_3", "8"),
         (2022, "sched_3", "15"),
+        # The 2026 Form 1040 draft pack (Phase J JT3a) keeps the Schedule 1/2/3 legs
+        # printed on its face ("Additional income from Schedule 1, line 10", "Amount from
+        # Schedule 2, line 3", ...) while those 2026 draft packs land in JT3b (sched_2)
+        # and JT3c (sched_1, sched_3). Remove each row as its pack ships.
+        (2026, "sched_1", "10"),
+        (2026, "sched_1", "26"),
+        (2026, "sched_2", "3"),
+        (2026, "sched_2", "21"),
+        (2026, "sched_3", "8"),
+        (2026, "sched_3", "15"),
     }
 )
 
@@ -269,7 +279,9 @@ def test_no_pack_cites_a_federal_line_that_year_renumbered_away():
     TY2025 pack is a leftover from the 2023/2024 face. The general check above
     catches it too; this one names it, so the failure explains itself.
     """
-    renumbered = {(2025, "f1040", "11")}
+    # TY2026 (the draft, Phase J JT3a): line 24 split into 24a/24b/24c and line 32
+    # into 32a/32b/32c, so neither bare number exists on the 2026 face.
+    renumbered = {(2025, "f1040", "11"), (2026, "f1040", "24"), (2026, "f1040", "32")}
     offenders: list[str] = []
     for path in ALL_PACK_PATHS:
         pack = _load(path)

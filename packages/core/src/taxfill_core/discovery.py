@@ -8,6 +8,7 @@ filling/verifying/rendering are separate tools.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -85,6 +86,12 @@ class FormSummary(BaseModel):
     num_fields: int
     has_relations: bool
     has_cross_form: bool
+    source_status: Literal["final", "draft"] = Field(
+        default="final",
+        description="'draft' for a pack mapped from an IRS early-release draft (irs.gov/pub/irs-dft/, JT0a): it "
+                    "fills only in core rehearsal mode until the final posts and the pack is re-pinned.",
+    )
+    draft_created: str | None = Field(default=None, description="A draft's footer stamp, e.g. '8/19/26'.")
 
 
 class LineMap(BaseModel):
@@ -114,6 +121,12 @@ class FormMap(BaseModel):
     relations: list[str]
     cross_form: list[str]
     identity_fields: list[str]
+    source_status: Literal["final", "draft"] = Field(
+        default="final",
+        description="'draft' for a pack mapped from an IRS early-release draft (irs.gov/pub/irs-dft/, JT0a): it "
+                    "fills only in core rehearsal mode until the final posts and the pack is re-pinned.",
+    )
+    draft_created: str | None = Field(default=None, description="A draft's footer stamp, e.g. '8/19/26'.")
 
 
 def list_forms(
@@ -155,6 +168,8 @@ def list_forms(
                 num_fields=len(pack.fields),
                 has_relations=bool(pack.relations),
                 has_cross_form=bool(pack.cross_form),
+                source_status=pack.source_status,
+                draft_created=pack.draft_created,
             )
         )
     return out
@@ -207,4 +222,6 @@ def get_form_map(
         relations=list(pack.relations),
         cross_form=list(pack.cross_form),
         identity_fields=list(pack.identity_fields),
+        source_status=pack.source_status,
+        draft_created=pack.draft_created,
     )

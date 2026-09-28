@@ -1003,6 +1003,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # signature.*.license_state + 28.state, UT's preparer_firm_name_address +
     # residential_exemption_county, VA's address_change::yes, OR's preparer_* block).
     # So the diff was purely 10 ADDED rows: zero removed, zero existing row changed.
+    # Phase J JT3a (2026-09-27) did the same for the 2026 f1040 and sched_1a drafts: each equals its
+    # 2025 row (the five mailing_address lines; none), so 2 ADDED rows.
     import json
     from pathlib import Path
 

@@ -1155,6 +1155,13 @@ def test_f8833_blank_is_the_rev_12_2022_layout_it_was_mapped_against(pack_path: 
 # ---------------------------------------------------------------------------
 
 
+def _needs_rehearsal(pack: FormPack) -> bool:
+    """A DRAFT pack (JT0a) fills only in rehearsal mode — its year is planning-only, which
+    test_no_draft_packs_in_a_filing_grade_year enforces. A final pack fills normally: in a
+    filing-grade year, or in a provisional one on its own final revision (JT0c, the 1040-ES)."""
+    return pack.source_status == "draft"
+
+
 @pytest.mark.network
 @pytest.mark.parametrize("pack_path", PACK_PATHS, ids=_pack_id)
 def test_pack_golden_roundtrip(pack_path: Path, tmp_path: Path):
@@ -1167,10 +1174,13 @@ def test_pack_golden_roundtrip(pack_path: Path, tmp_path: Path):
 
     values = synthetic_values(pack)
     filled = tmp_path / f"{_pack_id(pack_path)}_filled.pdf"
-    result = fill_form(pack, values, blank, filled)
+    # JT3a: a draft pack runs the round trip in REHEARSAL mode (every page stamped NOT FOR FILING).
+    rehearsal = _needs_rehearsal(pack)
+    result = fill_form(pack, values, blank, filled, rehearsal=rehearsal)
     assert set(result.written), "the pack mapped no fillable lines"
+    assert result.rehearsal == rehearsal
 
-    report = verify_form(pack, filled, expected=values)
+    report = verify_form(pack, filled, expected=values, rehearsal=rehearsal)
     _assert_section_clean(report.assertions, "assertion diff")
     _assert_section_clean(report.clipping, "clipping scan")
     _assert_section_clean(report.checkboxes, "checkbox audit")
@@ -1454,3 +1464,86 @@ def test_jt0a_second_passes_record_each_pass_and_what_keeps_the_marker_on():
     })
     assert p.draft_only_blocks() == ["standard_deduction"]
     assert p.removal_blockers() == ["block 'standard_deduction' is verified only against a DRAFT"]
+
+
+# ── JT3a: the 2026 Wave A draft packs — Form 1040 and Schedule 1-A ───────────
+
+
+def _fed_pack(year: int, form_key: str) -> FormPack:
+    return load_pack(REPO_ROOT / "formpacks" / "federal" / str(year) / form_key / "pack.yaml")
+
+
+def test_jt3a_the_2026_f1040_keys_follow_the_printed_draft_face():
+    pack = _fed_pack(2026, "f1040")
+    assert (pack.source_status, pack.draft_created) == ("draft", "8/19/26")
+    lines = {f.line: f for f in pack.fields}
+    # The draft adds 12f, 24a-c and 32a-c; 24 and 32 and the 2025 decline-ACTC box are gone.
+    assert {"12f", "24a", "24b", "24c", "32a", "32b", "32c"} <= set(lines)
+    assert not {"24", "32", "28.do_not_claim_actc", "12d.you_born_before_jan_2_1961"} & set(lines)
+    assert "12d.you_born_before_jan_2_1962" in lines
+    # TRAP: 13a and 13b swap meaning. 2026 prints "13a Additional deductions from Schedule 1-A,
+    # line 44" and "13b Qualified business income deduction"; the widgets run 12e, 12f, 13a, 13b.
+    assert "13a == sched_1a.44" in pack.cross_form
+    assert not any("13b" in rule for rule in pack.cross_form)
+    assert [lines[k].field for k in ("12e", "12f", "13a", "13b")] == [
+        f"Page2[0].f2_0{n}[0]" for n in (2, 3, 4, 5)
+    ]
+    # The new citizen / U.S. national / work-authorized question: one grouped radio per person.
+    for who in ("you", "spouse"):
+        yes, no = lines[f"citizen_or_work_authorized.{who}.yes"], lines[f"citizen_or_work_authorized.{who}.no"]
+        assert yes.field.rsplit("[", 1)[0] == no.field.rsplit("[", 1)[0] and yes.group == no.group
+        assert (yes.on_state, no.on_state) == ("/1", "/2")
+
+
+def test_jt3a_the_2026_f1040_face_math_holds_on_a_consistent_return():
+    pack = _fed_pack(2026, "f1040")
+    for rule in ("14 == 12e + 12f + 13a + 13b", "24c == 24a + 24b", "32c == 32a - 32b",
+                 "33 == 25d + 26 + 32c", "34 == max(0, 33 - 24c)", "37 == max(0, 24c - 33)"):
+        assert rule in pack.relations
+    # Hypothetical demo return (single, W-2 wages only).
+    values = {"1a": 50_000, "1z": 50_000, "2b": 100, "3b": 200, "7a": 300, "8": 400, "9": 51_000,
+              "10": 1_000, "11a": 50_000, "11b": 50_000, "12e": 16_100, "12f": 1_000, "13a": 2_000,
+              "13b": 500, "14": 19_600, "15": 30_400, "16": 3_400, "18": 3_400, "19": 2_000, "21": 2_000,
+              "22": 1_400, "23": 100, "24a": 1_500, "24b": 50, "24c": 1_550, "25a": 3_000, "25d": 3_000,
+              "27a": 400, "32a": 400, "32b": 100, "32c": 300, "33": 3_300, "34": 1_750, "37": 0}
+    checks = relations(pack, values)
+    assert checks and all(c.status == "PASS" for c in checks), [c.detail for c in checks if c.status != "PASS"]
+    # ... and a stale 2025 reading (33 from 32a, skipping 32b) is caught.
+    stale = relations(pack, {**values, "33": 3_400})
+    assert any(c.status == "FAIL" and c.relation.startswith("33 ==") for c in stale)
+
+
+@pytest.mark.parametrize(
+    "year", sorted({int(p.parent.parent.name) for p in PACK_PATHS if p.parent.name == "sched_1a"})
+)
+def test_jt3a_the_schedule_1a_hookup_matches_the_form_lines_registry(year: int):
+    # Both legs of the Schedule 1-A -> Form 1040 hookup read the year's own face through the
+    # form_lines registry: 2025 is Schedule 1-A line 38 -> 1040 line 13b, 2026 line 44 -> 13a.
+    from taxfill_core.knowledge import form_line_entry, load_knowledge  # noqa: PLC0415
+
+    knowledge = load_knowledge("federal", year)
+    total, dest = (form_line_entry(knowledge, key).line for key in ("sched1a.total", "f1040.sched_1a"))
+    assert f"{dest} == sched_1a.{total}" in _fed_pack(year, "f1040").cross_form
+    assert f"{total} == f1040.{dest}" in _fed_pack(year, "sched_1a").cross_form
+
+
+def test_jt3a_the_2026_schedule_1a_maps_the_redesigned_face():
+    pack = _fed_pack(2026, "sched_1a")
+    assert (pack.source_status, pack.draft_created, pack.acroform_root) == ("draft", "6/16/26", "form1[0]")
+    lines = {f.line: f for f in pack.fields}
+    assert len(lines) == 185
+    # The per-employer / per-business tables: rows a-e, each column its own key.
+    for row in "abcde":
+        assert {f"4{row}.{c}" for c in ("i", "ii", "iii", "iv", "v")} <= set(lines)
+        assert {f"6{row}.{c}" for c in ("i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi",
+                                         "xii", "xiii")} <= set(lines)
+        assert {f"16{row}.{c}" for c in ("i", "ii", "iii")} <= set(lines)
+        assert {f"18{row}.{c}" for c in ("i", "ii", "iii", "iv")} <= set(lines)
+        assert lines[f"4{row}.ii"].maxlen == 10 and lines[f"18{row}.iii"].maxlen == 11   # EIN / payer TIN
+    for vin in ("28a.i", "28b.i"):
+        assert lines[vin].comb and lines[vin].maxlen == 17
+    for row in "ab":
+        for q in ("original_use", "us_final_assembly"):
+            assert lines[f"28{row}.{q}.yes"].group == lines[f"28{row}.{q}.no"].group == f"28{row}_{q}"
+    assert "44 == 15 + 27 + 36 + 43" in pack.relations
+    assert "44 == f1040.13a" in pack.cross_form and "1 == f1040.11b" in pack.cross_form
