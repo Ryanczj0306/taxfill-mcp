@@ -1855,6 +1855,29 @@ pitfalls:
       ITIN-only dependent student, and leaves the credit NOT ESTIMATED when
       the answer is not recorded. Tests: test_p024_* in
       packages/core/tests/test_education_2026.py.
+  - id: P-025
+    incident: >-
+      A REPAID WAGE HAD NO HOME (claim-of-right). A hypothetical employee repays
+      a demo $5,000 signing bonus in the year after it was paid. Nothing priced
+      the repayment: no op knew that at $3,000 or less nothing is deductible
+      ("For tax years beginning after 2017, you can no longer claim any
+      miscellaneous itemized deductions; so, if the amount repaid was $3,000 or
+      less, you aren't able to deduct it", Pub 525), that above it IRC 1341
+      makes the tax "the lesser of" the tax with the deduction or the tax without
+      it minus the prior year's decrease, or that the payroll taxes come back a
+      different way (the employer or Form 843; Additional Medicare Tax only on a
+      prior-year Form 1040-X). Agents answered "deduct it" or "amend last year"
+      — the second is wrong for the income tax. Found by the 2026-09-23 review
+      (LD-13).
+    countermeasure: >-
+      calc op claim_of_right_repayment (JP4) prices Pub 525's Method 1 and
+      Method 2 and takes the lesser, refuses both at $3,000 or less, routes a
+      business or capital repayment to its own schedule, and returns the payroll
+      tax recovery notes. The destination lines render through form_lines
+      (scheda.claim_of_right: Schedule A line 16 through 2025, 17h on the 2026
+      draft; sched3.section_1341_credit: 13 box d in 2019, 12d in 2020, 13d in
+      2021-2023, 13b from 2024), each read off its year's face. Tests: test_p025_*
+      in packages/core/tests/test_claim_of_right.py.
   - id: P-026
     incident: >-
       The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer

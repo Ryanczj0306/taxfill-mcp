@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,920 tests** — offline 6,455 + live-.gov 465; derived
+Done and on `main` (**6,935 tests** — offline 6,470 + live-.gov 465; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2441,26 +2441,32 @@ not wait for any of this.
     - Draft Form 2210 (2026) (Created 4/16/26), labeled draft: the same factors, line 29 $46,125–$184,500, and the NEW line 9b "Additional deductions". The 2025 face has no such line, so the Schedule 1-A deductions come off line 13 per the 2025 line-14 instruction.
   - Line 27 = min(line 23, line 26) feeds line 10. The same payments are priced against the regular 25% installments too (`regular_method_penalty`).
   - **Tests:** a Q4-weighted demo year pays less under Schedule AI and the op reports both; the SE factors against each year's prorated base; the input guards.
-- [ ] **JP3a — Employment schema and paystub DocSpec** (M; deps JP1c) [LD-04, part 1]
-  - `Profile.employment`, per year: employer label, start/end, pay frequency, first pay date, W-4, per-period pre-tax amounts (401(k), §125, HSA cafeteria, FSA, §132(f)) and post-tax amounts (Roth, after-tax, loan).
-  - A `paystub` DocSpec. source_url = iw2w3.pdf; the note says it is not an IRS form and YTD figures are authoritative only through the pay date.
-  - **Acceptance:** a synthetic stub extracts; a workspace save/load round trip keeps the schema.
-- [ ] **JP3b — Paystub → projected W-2** (M; deps JP3a, JP2) [LD-04, part 2]
-  - **Build** `calc.paystub_to_w2`:
-    - box 1 = gross − 401(k) pretax − §125 − HSA cafeteria − FSA − §132(f);
-    - box 3 = gross − §125 − HSA − FSA − §132(f), capped per employer ("The total of boxes 3 and 7 cannot exceed $184,500");
-    - box 5 = the same, uncapped;
-    - box 12: D / AA / W / C;
-    - remaining checks counted by PAY DATE ≤ Dec 31 (the W-2 "Calendar year basis");
-    - nothing annualized after employment_end.
-  - annualize_ytd's work gains "never annualize an ended job".
-  - **Acceptance:** a synthetic YTD stub reproduces a known W-2; an ended job is not annualized; a check paid Jan 1 lands on next year's W-2. Op count +1.
-- [ ] **JP4 — Wage repayment: claim of right (§1341)** (M; deps JF2) [LD-13] — pitfall *claim-of-right*
-  - **Law.**
-    - Pub 525: "if the amount repaid was $3,000 or less, you aren't able to deduct it". Above $3,000, deduct on Schedule A line 16 or take the §1341 credit, "Use the method … that results in less tax".
-    - Pub 15 §13: prior-year wages "remain taxable … for that year"; Form 1040-X is used only for Additional Medicare Tax; FICA comes back through the employer's 941-X / W-2c.
-  - **Build** `calc.claim_of_right_repayment`.
-  - **Acceptance:** Pub 525 Example 40 ($5,000 → method 1 $5,156 vs method 2 $5,335); ≤ $3,000 → $0. Op count +1; the pitfall has citing tests.
+- [x] **JP3a — Employment schema and paystub DocSpec — DONE 2026-09-28** (M; deps JP1c) [LD-04, part 1]
+  - *As built:* `Profile.employment: dict[year, list[EmploymentRecord]]`. Each record: employer, start/end (checked in order), pay frequency, first pay date, gross per period, the JP1c `W4Facts`, and `PayrollDeductions` per period split by tax character — pre-tax 401(k), IRC 125 premiums, HSA through the plan (code W), health FSA, dependent care FSA (box 10), 132(f); post-tax Roth, after-tax, loan.
+  - The `paystub` DocSpec (29 kinds): source iw2w3.pdf. Its status note quotes the W-2 instructions' "Calendar year basis" and box 1's elective-deferral exclusion. Validators: V28 (a YTD figure below its own current figure) and V29 (a pay date outside the tax year).
+  - **Tests** (test_paystub.py): a synthetic stub extracts with its caveat; the validators; a workspace save/load round trip keeps the schema; the date guard.
+- [x] **JP3b — Paystub → projected W-2 — DONE 2026-09-28** (M; deps JP3a, JP2) [LD-04, part 2]
+  - *As built:* calc op 39 `paystub_to_w2` (taxfill_core/paystub.py). It takes the stub's YTD actuals plus the checks still to be PAID by December 31, counted by pay date.
+    - The first check after December 31 is reported as next year's (a biweekly January 1 check).
+    - An ended job adds nothing; nothing is annualized.
+    - Box 1 = gross − pre-tax 401(k) − the cafeteria-plan reductions. Boxes 3/5 exclude only the latter, box 3 is capped at the wage base, and boxes 4/6 use this employer's own rates (the 0.9% over $200,000).
+    - Box 10 and box 12 D/AA/W. The output `w2` feeds `estimate_refund`'s `income.w2s`.
+  - annualize_ytd's work now says never to annualize an ended job. The README calc row, SKILL.md bullets, DEV_PLAN §18 and the bundle manifest move to 39 ops.
+  - **Tests** (test_paystub_to_w2.py): a mid-year stub reproduces the hand-computed W-2; an ended job; the January 1 check; the wage-base cap; a stub from another year refuses.
+- [x] **JP4 — Wage repayment: claim of right (§1341) — DONE 2026-09-28** (M; deps JF2) [LD-13] — pitfall *claim-of-right* = **P-025**
+  - *As built:* calc op 40 `claim_of_right_repayment` (taxfill_core/repayment.py), quoting IRC 1341(a)–(b) (uscode.house.gov) and Pub 525 (2025) Repayments.
+    - Method 1 (the deduction) vs Method 2 (this year's tax less the prior year's decrease); the lesser tax wins.
+    - At $3,000 or less, nothing is deductible and no credit applies.
+    - A business or capital repayment goes on its own schedule; the claim-of-right premise is required.
+    - The payroll-tax notes: FICA back from the employer or on Form 843; Additional Medicare Tax only on a prior-year Form 1040-X.
+  - The destinations are two new form_lines keys, read off every 2019–2026 face (all 16 pass test_every_entry_quotes_its_face against the downloaded PDFs):
+    - `scheda.claim_of_right`: line 16 through 2025, 17h on the 2026 draft.
+    - `sched3.section_1341_credit`: 13 box d in 2019 and 12d in 2020 (both write-ins per that year's Form 1040 instructions), 13d in 2021–2023, 13b from 2024.
+  - **Tests** (test_claim_of_right.py, `test_p025_*`):
+    - Pub 525 Example 40 with its printed taxes: $5,156 vs $5,335, deduct.
+    - The same from the Tax Table ($5,159 vs $5,341) — the example's 2025 taxes are not the 2025 table's.
+    - $3,000 or less; the credit winning when last year's rate was higher; business routing and payroll notes; the lines per year.
+  - Op count 40.
 - [ ] **JR4a — Form 5329, 2025 pack** (M–L; deps JR3c) [RC-14]
   - New form key f5329 (added to KNOWN_FORM_KEYS). Built by the standard vision-audited process, with verify recomputing from JR3c's rules.
   - **Acceptance:** golden round trip; the Part I line 2 exception-21 entry exercised.

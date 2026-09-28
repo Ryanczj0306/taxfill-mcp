@@ -49,6 +49,10 @@ traditional IRA holding pretax money makes every backdoor Roth mostly taxable. A
 income to a traditional IRA by the due date including extensions; conversions cannot be recharacterized).
 `calc("withholding_projection", …)` projects 2026 paycheck withholding per employer by pay date (Pub 15-T
 Worksheet 1A; a bonus's flat 22% only when Treas. Reg. 31.3402(g)-1's conditions hold, else aggregate).
+`calc("claim_of_right_repayment", …)` prices repaid income taxed last year (IRC 1341: deduct vs credit, the
+lesser tax; nothing at $3,000 or less; never amend the prior year for the income tax).
+`calc("paystub_to_w2", …)` turns a pay stub into the job's projected W-2 by PAY date (never annualize an ended
+job; a January 1 check is next year's).
 `calc("underpayment_penalty", …)` prices Form 2210's regular-method penalty (the FIFO crediting of IRC
 6654(b)(3), the IRC 6621 rate periods; a rate not yet announced fails closed; `annualized` = Schedule AI, both methods).
 `calc("charitable_deduction", …)` prices 2026 gifts: IRC 170(p) for a non-itemizer (cash to a

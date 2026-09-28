@@ -313,7 +313,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
     treaty_benefit, schedule_1a_deductions, charitable_deduction, employee_fica, estimated_tax_safe_harbor,
-    underpayment_penalty, annualize_ytd,
+    underpayment_penalty, paystub_to_w2, claim_of_right_repayment, annualize_ytd,
     contribution_limits, elective_deferral_room, ira_net_income_attributable, ira_recharacterization,
     ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
     ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
@@ -483,6 +483,24 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       underpayment rate over 365 (the year's knowledge calendar; April 1-15 keeps the Q1 rate, 6621(b)(2)(B));
       a period whose rate is not announced yet FAILS CLOSED. Returns the Section A columns, the priced
       pieces and line 19)
+    - paystub_to_w2: args {stub: the extract_document('paystub') reading, employment: the Profile.employment
+      record (employer, end?, pay_frequency, first_pay_date, gross_per_period, deductions_per_period), year,
+      remaining_pay_dates?} (JP3b: the stub's YTD actuals plus the checks still to be PAID on or before
+      December 31 — "The entries on Form W-2 must be based on wages paid during the calendar year", so a check
+      paid January 1 is next year's; an ended job adds nothing, nothing is annualized. Box 1 = gross - pre-tax
+      401(k) - the cafeteria-plan reductions (IRC 125 premiums, HSA code W, health and dependent care FSA,
+      132(f)); boxes 3/5 exclude only the cafeteria-plan reductions, box 3 capped at the wage base; boxes 4/6
+      at this employer's own rates; box 10; box 12 D/AA/W. Returns w2 ready for estimate_refund's
+      IncomeSnapshot.w2s)
+    - claim_of_right_repayment: args {repaid, year, prior_year, taxable_income (this year, WITHOUT the
+      deduction), prior_taxable_income (as filed, WITH the item), filing_status?, prior_filing_status?,
+      income_type? (wages | unemployment | other_nonbusiness | business | capital_gain),
+      included_under_claim_of_right?, taxable_income_with_deduction?, and the four tax overrides
+      tax_without_deduction? / tax_with_deduction? / prior_tax_as_filed? / prior_tax_refigured?} (JP4, pitfall
+      P-025: IRC 1341 / Pub 525 Methods 1 and 2 — the lesser tax; nothing at $3,000 or less; a business or
+      capital repayment goes on its own schedule. Returns the destination line (Schedule A / Schedule 3, read
+      per year) and the payroll-tax notes: FICA back from the employer or Form 843, Additional Medicare Tax
+      only on a prior-year Form 1040-X)
     - annualize_ytd: args {ytd_amount, through, year} (project a YTD paystub figure to full-year by
       calendar-day proration — the deterministic home for the one arithmetic step every projection
       needs. ASSUMES LEVEL PAY: annualize each status segment separately, never annualize one-time
@@ -805,6 +823,14 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_withholding_projection(**args)), args)
     if op == "estimated_tax_safe_harbor":
         return _stamp_provisional(_dump(_estimated_tax_safe_harbor(**args)), args)
+    if op == "claim_of_right_repayment":
+        from taxfill_core.repayment import claim_of_right_repayment as _claim_of_right  # noqa: PLC0415
+
+        return _stamp_provisional(_dump(_claim_of_right(**args)), args)
+    if op == "paystub_to_w2":
+        from taxfill_core.paystub import paystub_to_w2 as _paystub_to_w2  # noqa: PLC0415
+
+        return _stamp_provisional(_dump(_paystub_to_w2(**args)), args)
     if op == "underpayment_penalty":
         from taxfill_core.penalty import underpayment_penalty as _underpayment_penalty  # noqa: PLC0415
 
@@ -847,7 +873,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
         f"charitable_deduction, employee_fica, withholding_projection, estimated_tax_safe_harbor, "
-        f"underpayment_penalty, annualize_ytd, "
+        f"underpayment_penalty, paystub_to_w2, claim_of_right_repayment, annualize_ytd, "
         f"contribution_limits, "
         f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, "
         f"roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, "

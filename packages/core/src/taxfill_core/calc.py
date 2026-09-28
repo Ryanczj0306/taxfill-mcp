@@ -4175,7 +4175,8 @@ def annualize_ytd(
         f"({days_elapsed} of {days_in_year} days) x {days_in_year}/{days_elapsed} = ${annualized:,}. "
         f"ASSUMES LEVEL PAY: a raise, a bonus, or a mid-year FICA-status change breaks straight-line "
         f"proration — annualize each segment separately, and never annualize one-time amounts "
-        f"(bonuses, RSU vests); add those at face value."
+        f"(bonuses, RSU vests); add those at face value. NEVER annualize a job that has ENDED — it pays "
+        f"nothing more; calc op paystub_to_w2 projects a stub by the checks actually still to be paid."
     )
     return AnnualizeResult(
         annualized=annualized,

@@ -24,12 +24,14 @@ a student-article treaty benefit on income earned during the student period
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, timedelta
+from decimal import Decimal
 from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from taxfill_core.calc import FilingStatusInput, is_valid_routing_number
+from taxfill_core.withholding import W4Facts
 
 T = TypeVar("T")
 
@@ -660,6 +662,55 @@ class RetirementContributionsYear(BaseModel):
     )
 
 
+class PayrollDeductions(BaseModel):
+    """What one job takes out of each paycheck, by TAX CHARACTER (JP3a) — the facts that turn gross pay into
+    W-2 boxes 1, 3 and 5. Pre-tax amounts lower box 1 (and, except the 401(k), boxes 3 and 5 too); post-tax
+    amounts lower nothing. Per pay period, in dollars and cents as the stub prints them."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    pretax_401k: Decimal = Field(default=Decimal(0), ge=0, description="Pre-tax elective deferral (W-2 box 12 D).")
+    section_125: Decimal = Field(
+        default=Decimal(0), ge=0, description="Cafeteria-plan premiums (health, dental, vision) under IRC 125.")
+    hsa_cafeteria: Decimal = Field(
+        default=Decimal(0), ge=0, description="HSA contributions through the cafeteria plan (W-2 box 12 W).")
+    health_fsa: Decimal = Field(default=Decimal(0), ge=0, description="Health FSA salary reduction.")
+    dependent_care_fsa: Decimal = Field(
+        default=Decimal(0), ge=0, description="Dependent care FSA (W-2 box 10; IRC 129).")
+    commuter_132f: Decimal = Field(
+        default=Decimal(0), ge=0, description="Qualified transportation fringe salary reduction (IRC 132(f)).")
+    roth_401k: Decimal = Field(default=Decimal(0), ge=0, description="POST-tax: Roth elective deferral (box 12 AA).")
+    after_tax_401k: Decimal = Field(default=Decimal(0), ge=0, description="POST-tax: after-tax plan contribution.")
+    plan_loan_repayment: Decimal = Field(default=Decimal(0), ge=0, description="POST-tax: 401(k) loan repayment.")
+
+
+class EmploymentRecord(BaseModel):
+    """One job in one tax year (JP3a): the payroll facts a paystub shows and a projection needs."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    employer: str = Field(description="A label for the employer.")
+    start: date | None = Field(default=None, description="First day of employment in the year (None: all year).")
+    end: date | None = Field(default=None, description="Last day of employment (None: still employed).")
+    pay_frequency: Literal["weekly", "biweekly", "semimonthly", "monthly", "quarterly", "semiannually", "annually",
+                           "daily"] | None = None
+    first_pay_date: date | None = Field(
+        default=None, description="The year's first pay date at this job — the W-2 counts checks by PAY date.")
+    gross_per_period: Decimal | None = Field(default=None, ge=0, description="Regular gross pay per period.")
+    w4: W4Facts | None = Field(default=None, description="The Form W-4 on file (calc op withholding_projection).")
+    deductions_per_period: PayrollDeductions = Field(default_factory=PayrollDeductions)
+    provenance: Provenance
+
+    @model_validator(mode="after")
+    def _dates_in_order(self) -> "EmploymentRecord":
+        if self.start and self.end and self.end < self.start:
+            raise ValueError(f"employment at {self.employer}: end {self.end} is before start {self.start}")
+        if self.first_pay_date and self.end and self.first_pay_date > self.end + timedelta(days=45):
+            raise ValueError(f"employment at {self.employer}: first_pay_date {self.first_pay_date} is long after end "
+                             f"{self.end} — re-read the stub")
+        return self
+
+
 class Profile(BaseModel):
     """The whole intake profile. Every section is optional — intake fills it incrementally."""
 
@@ -680,3 +731,8 @@ class Profile(BaseModel):
     )
     banking: Banking | None = None
     prior_filings: PriorFilings | None = None
+    employment: dict[int, list[EmploymentRecord]] = Field(
+        default_factory=dict,
+        description="Jobs keyed by tax year (JP3a): dates, pay frequency, first pay date, W-4 and per-period "
+                    "deductions by tax character — the input a paystub-to-W-2 projection reads.",
+    )

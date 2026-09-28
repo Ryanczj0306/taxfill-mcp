@@ -1133,6 +1133,45 @@ _SPECS: list[DocSpec] = [
     ),
     # JR2c: the custodian's OWN statements — not an IRS form, so the layout cites the
     # Instructions for Forms 1099-R and 5498 (2026), Specific Instructions for Form 5498 and
+    # JP3a: the pay stub. Not an IRS form; the W-2 instructions set what it can prove ("Calendar year basis").
+    DocSpec(
+        kind="paystub",
+        title="Pay stub (the employer's earnings statement)",
+        source_url="https://www.irs.gov/pub/irs-pdf/iw2w3.pdf",
+        status_note=(
+            "Not an IRS form: the employer's own earnings statement. Its YTD figures are authoritative only THROUGH "
+            "its pay date — \"The entries on Form W-2 must be based on wages paid during the calendar year\" and "
+            "wages for late December \"paid on January 1, 2027\" belong on \"the 2027 Form W-2\" (Instructions "
+            "for Forms W-2 and W-3 (2026), Calendar year basis). YTD gross is NOT box 1: box 1 must \"not include "
+            "elective deferrals (such as employee contributions to a section 401(k) or 403(b) plan)\", and the "
+            "cafeteria-plan, HSA, FSA and commuter reductions come out of boxes 1, 3 and 5. Record the per-period "
+            "deductions on Profile.employment; project the rest of the year by PAY date, never by annualizing a "
+            "job that has ended."
+        ),
+        boxes=[
+            _b("employer_name", "Employer", "text", required=True),
+            _b("pay_date", "Pay date (YYYY-MM-DD)", "text", required=True),
+            _b("period_start", "Pay period start (YYYY-MM-DD)", "text"),
+            _b("period_end", "Pay period end (YYYY-MM-DD)", "text"),
+            _b("gross_current", "Gross pay — this period", "money"),
+            _b("gross_ytd", "Gross pay — year to date", "money", required=True),
+            _b("federal_withholding_current", "Federal income tax — this period", "money"),
+            _b("federal_withholding_ytd", "Federal income tax — year to date", "money"),
+            _b("social_security_current", "Social security tax — this period", "money"),
+            _b("social_security_ytd", "Social security tax — year to date", "money"),
+            _b("medicare_current", "Medicare tax — this period", "money"),
+            _b("medicare_ytd", "Medicare tax — year to date", "money"),
+            _b("state_withholding_ytd", "State income tax — year to date", "money"),
+            _b("pretax_401k_ytd", "401(k) pre-tax — year to date", "money"),
+            _b("roth_401k_ytd", "401(k) Roth — year to date", "money"),
+            _b("section_125_ytd", "Cafeteria-plan (section 125) premiums — year to date", "money"),
+            _b("hsa_ytd", "HSA (through payroll) — year to date", "money"),
+            _b("health_fsa_ytd", "Health FSA — year to date", "money"),
+            _b("dependent_care_fsa_ytd", "Dependent care FSA — year to date", "money"),
+            _b("commuter_ytd", "Commuter (section 132(f)) — year to date", "money"),
+            _b("net_pay_current", "Net pay — this period", "money"),
+        ],
+    ),
     # "Statements to participants" (read 2026-09-27), which set when each arrives.
     DocSpec(
         kind="IRA custodian statement",
@@ -1783,7 +1822,38 @@ def _validate_1099b(fields: dict[str, ExtractedField], tax_year: int | None):
     return found, None
 
 
-_VALIDATORS = {"W-2": _validate_w2, "1099-B": _validate_1099b, "1099-R": _validate_1099r, "5498": _validate_5498,
+def _validate_paystub(fields: dict[str, ExtractedField], tax_year: int | None):
+    """Pay stub checks (JP3a): V28 a year-to-date figure below its own current-period figure (a misread or a stub
+    from another year), V29 a pay date outside the tax year — the W-2 counts wages by the date PAID."""
+    found: list[Finding] = []
+    cite = "Instructions for Forms W-2 and W-3 (2026), Calendar year basis"
+
+    def money(key):
+        f = fields.get(key)
+        return Decimal(str(f.value)) if f is not None and f.value not in (None, "") and f.status == "ok" else None
+
+    for current, ytd, what in (("gross_current", "gross_ytd", "gross pay"),
+                               ("federal_withholding_current", "federal_withholding_ytd", "federal income tax"),
+                               ("social_security_current", "social_security_ytd", "social security tax"),
+                               ("medicare_current", "medicare_ytd", "Medicare tax")):
+        c, y = money(current), money(ytd)
+        if c is not None and y is not None and y < c:
+            found.append(Finding(severity="error", rule_id="V28", boxes=[current, ytd], citation=cite,
+                                 message=f"{what}: year to date {y} is below this period's {c} — a misread, or a stub "
+                                         f"from a different year."))
+    paid = _iso_or_none(fields, "pay_date")
+    if paid == "invalid":
+        found.append(Finding(severity="error", rule_id="V29", boxes=["pay_date"], citation=cite,
+                             message="pay_date is not an ISO date (YYYY-MM-DD)."))
+    elif paid is not None and tax_year is not None and paid.year != tax_year:
+        found.append(Finding(severity="warning", rule_id="V29", boxes=["pay_date"], citation=cite,
+                             message=f"pay date {paid.isoformat()} is in {paid.year}, not {tax_year}: \"The entries on "
+                                     f"Form W-2 must be based on wages paid during the calendar year\" — this stub's "
+                                     f"figures belong to the {paid.year} W-2 even if the work was done earlier."))
+    return found, None
+
+
+_VALIDATORS = {"W-2": _validate_w2, "paystub": _validate_paystub, "1099-B": _validate_1099b, "1099-R": _validate_1099r, "5498": _validate_5498,
                "IRA custodian statement": _validate_custodian_statement, "1098-VLI": _validate_1098vli}
 
 
