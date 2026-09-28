@@ -2390,10 +2390,10 @@ fields:
   - line: ehrc.20
     field: EHRC Line 20
     type: money
-  - line: ehrc.21
+  - line: ehrc.21                        # the whole-number digit of the Credit Multiplier (0.00-1.00): one digit
     field: EHRC Line 21
     type: text
-    maxlen: 2
+    maxlen: 1                            # Courier 10 in 11.8 pt holds 1 (JS3c; the table tops out at 1.00)
   - line: ehrc.21.decimal
     field: EHRC Decimal Line 21
     type: text

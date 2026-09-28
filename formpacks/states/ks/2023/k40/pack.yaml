@@ -522,14 +522,14 @@ fields:
   - line: 42.school_district_number      # 42 "School District Number"
     field: 42 school district number
     type: text
-    maxlen: 6
+    maxlen: 5                            # Courier 12 in 42 pt holds 5 (JS3c; 6 was the Helvetica average)
   - line: "43"                           # 43 KANSAS HISTORIC SITE CONTRIBUTION FUND
     field: 43 Kansas Histric Site Contribution Fund
     type: money
   - line: 43.historic_site_number        # 43 "Historic Site Number"
     field: 43 Historic Site number
     type: text
-    maxlen: 6
+    maxlen: 5                            # Courier 12 in 42 pt holds 5 (JS3c; 6 was the Helvetica average)
   - line: "44"                           # 44 REFUND (subtract lines 35 through 43 from line 34)
     field: 44 refund, subtract lines 35 - 43 from line 34
     type: money
@@ -542,15 +542,17 @@ fields:
   - line: signature.taxpayer             # "Signature of taxpayer"
     field: Signature of taxpayer
     type: text
-  - line: signature.taxpayer_date        # "DATE"
+  - line: signature.taxpayer_date        # "DATE" — Courier 12 in 71.6 pt holds 9, so "MM/DD/YY" (JS3c)
     field: date signed
     type: text
+    maxlen: 8
   - line: signature.spouse               # "Signature of spouse (If married filing joint)"
     field: Signature of spouse
     type: text
-  - line: signature.spouse_date          # "DATE"
+  - line: signature.spouse_date          # "DATE" — Courier 12 in 68.1 pt holds 9, so "MM/DD/YY" (JS3c)
     field: date signed 2
     type: text
+    maxlen: 8
   - line: preparer.signature             # "Signature of preparer other than taxpayer"
     field: Signature of preparer
     type: text

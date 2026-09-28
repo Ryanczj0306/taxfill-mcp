@@ -65,7 +65,12 @@ Clipping heuristic (pitfall P-001): the font size is parsed from the
 widget's ``/DA`` default-appearance string (``<size> Tf``); ``0 Tf`` means
 auto-size and is safe. Otherwise the estimated text width is
 ``len(value) * 0.5 * font_size`` — 0.5 is the documented average Helvetica
-glyph-width ratio — compared against the widget rectangle width. A missing
+glyph-width ratio — compared against the widget rectangle width. A widget whose
+/DA font is a Courier face uses 0.6 instead: every Courier glyph is exactly
+600/1000 em, so the estimate is exact rather than an average (Phase J JS3c —
+31 state packs map Courier widgets, and 0.5 under-reported them by a sixth;
+the face is resolved through the AcroForm /DR /BaseFont, falling back to
+Acrobat's Courier aliases /Cour /CoBo /CoOb /CoBO). A missing
 ``/DA`` conservatively assumes 10 pt. A multiline widget (``/Ff`` bit 13)
 wraps, so its wrapped lines are counted against the rows its height holds.
 A pack ``maxlen`` binds a scanned widget that has no ``/MaxLen`` of its own
@@ -175,6 +180,9 @@ SKIPPED: Status = "SKIPPED"
 
 # --- Clipping-scan constants (documented in the module docstring) ----------
 _AVG_CHAR_WIDTH_RATIO = 0.5  # average Helvetica glyph width as a fraction of font size
+_MONOSPACE_CHAR_WIDTH_RATIO = 0.6  # every Courier glyph is 600/1000 em: exact, not an average (JS3c)
+_DA_FONT_RE = re.compile(r"/([^\s/()<>\[\]{}%]+)\s+\d+(?:\.\d+)?\s+Tf")
+_COURIER_ALIASES = frozenset({"Cour", "CoBo", "CoOb", "CoBO"})  # Acrobat's /DR names for the four Courier faces
 _LINE_HEIGHT_RATIO = 1.2  # a wrapped line's height as a multiple of the font size (multiline boxes)
 _MULTILINE_FLAG = 1 << 12  # /Ff bit 13
 _DEFAULT_FONT_SIZE = 10.0  # conservative assumption when a widget carries no /DA
@@ -537,6 +545,14 @@ class TextWidget(BaseModel):
         default=False,
         description="/Ff bit 13 (Multiline): the viewer WRAPS the text, so the width heuristic counts lines (JEa).",
     )
+    monospace: bool | None = Field(
+        default=None,
+        description=(
+            "The /DA font is a Courier face, so every glyph is 0.6 em and the width estimate uses 0.6, not "
+            "the Helvetica average 0.5 (JS3c). read_text_widgets resolves it through the AcroForm /DR "
+            "/BaseFont; None (a record built by hand) infers it from the /DA name — Acrobat's Courier aliases."
+        ),
+    )
     read_only: bool = Field(
         default=False,
         description=(
@@ -684,6 +700,7 @@ def read_text_widgets(
     reader = PdfReader(str(path))
     acroform = reader.trailer["/Root"].get("/AcroForm")
     default_da = acroform.get_object().get("/DA") if acroform is not None else None
+    base_fonts = _dr_base_fonts(acroform.get_object() if acroform is not None else None)
 
     widgets: list[TextWidget] = []
     for page in reader.pages:
@@ -724,6 +741,7 @@ def read_text_widgets(
                     rect_width=rect_width,
                     rect_height=rect_height,
                     multiline=flags is not None and bool(int(flags) & _MULTILINE_FLAG),
+                    monospace=_da_is_monospace(_pdf_text(da) if da is not None else None, base_fonts),
                     read_only=read_only,
                 )
             )
@@ -1339,6 +1357,39 @@ def independent_recompute(
 # ---------------------------------------------------------------------------
 
 
+def _da_is_monospace(da: str | None, base_fonts: Mapping[str, str] | None = None) -> bool:
+    """True when a /DA string's font is a Courier face (JS3c).
+
+    ``base_fonts`` maps the AcroForm /DR font resource names to their /BaseFont; a resolved BaseFont decides.
+    An unresolvable name counts as Courier when it is one of Acrobat's aliases or itself names Courier.
+    """
+    match = _DA_FONT_RE.search(da or "")
+    if match is None:
+        return False
+    name = match.group(1)
+    base = (base_fonts or {}).get(name)
+    if base:
+        return "courier" in base.lower()
+    return name in _COURIER_ALIASES or "courier" in name.lower()
+
+
+def _dr_base_fonts(acroform: Mapping | None) -> dict[str, str]:
+    """The AcroForm /DR /Font resource names -> /BaseFont (without the slash); empty when absent."""
+    try:
+        fonts = acroform["/DR"].get_object()["/Font"].get_object() if acroform is not None else None
+    except (KeyError, AttributeError, TypeError):
+        return {}
+    out: dict[str, str] = {}
+    for key, ref in (fonts or {}).items():
+        try:
+            base = ref.get_object().get("/BaseFont")
+        except AttributeError:
+            continue
+        if base is not None:
+            out[str(key).lstrip("/")] = str(base).lstrip("/")
+    return out
+
+
 def _font_size_from_da(da: str | None) -> float | None:
     """Parse the font size from a /DA string; None when no '<size> Tf' found."""
     if not da:
@@ -1371,7 +1422,8 @@ def clipping_scan(
     1. ``len(value) > /MaxLen`` — hard clipping; the PDF silently drops the
        overflow (invisible in field dumps; this is the P-001 SSN incident);
     2. width heuristic — ``len(value) * 0.5 * font_size`` vs the widget rect
-       width; ``0 Tf`` auto-size is safe; a missing /DA assumes 10 pt. A
+       width (``0.6`` for a Courier face — exact, JS3c); ``0 Tf`` auto-size
+       is safe; a missing /DA assumes 10 pt. A
        MULTILINE widget (``/Ff`` bit 13) wraps, so its lines are counted
        against the rows its height holds (1.2 x the font size each) instead.
 
@@ -1432,11 +1484,14 @@ def clipping_scan(
                 )
             )
             continue
-        estimated = length * _AVG_CHAR_WIDTH_RATIO * font_size
+        monospace = widget.monospace if widget.monospace is not None else _da_is_monospace(widget.da)
+        ratio = _MONOSPACE_CHAR_WIDTH_RATIO if monospace else _AVG_CHAR_WIDTH_RATIO
+        metric = "Courier metric" if monospace else "Helvetica heuristic"
+        estimated = length * ratio * font_size
         if widget.multiline and widget.rect_height > 0:
             # A multiline box wraps: count the lines each paragraph needs against the rows the box height holds
             # (a row per 1.2 x the font size), instead of one line against the width.
-            per_line = widget.rect_width / (_AVG_CHAR_WIDTH_RATIO * font_size)
+            per_line = widget.rect_width / (ratio * font_size)
             needed = sum(max(1, math.ceil(len(part) / per_line)) for part in re.split(r"\r\n|\r|\n", widget.value))
             rows = max(1, int(widget.rect_height // (font_size * _LINE_HEIGHT_RATIO)))
             checks.append(ClippingCheck(
@@ -1458,7 +1513,7 @@ def clipping_scan(
                     status=FAIL,
                     detail=(
                         f"field '{widget.name}': estimated text width {estimated:.1f}pt (len "
-                        f"{length} x 0.5 x {font_size:g}pt Helvetica heuristic{assumed}) exceeds "
+                        f"{length} x {ratio:g} x {font_size:g}pt {metric}{assumed}) exceeds "
                         f"the widget width {widget.rect_width:.1f}pt — text may be visually "
                         f"clipped (pitfall P-001); shorten this field's value or switch the "
                         f"field to auto-size, then re-render to confirm" + note

@@ -110,15 +110,21 @@ def test_the_recorded_rows_file_is_public_data_only():
 
 @pytest.mark.network
 def test_ut_2025_triages_portable_against_ut_2024():
-    rows = {(r["state"], r["form"]): r for r in sc.scaffold(2025, "newest", triage=True)}
+    # A fixed base keeps the census: newest mode stops triaging a form once its target-year pack ships (JS3b
+    # shipped UT 2025 the next day, and this test, pinned to newest mode, went red unnoticed until JS3c).
+    rows = {(r["state"], r["form"]): r for r in sc.scaffold(2025, "2024", triage=True)}
     ut = rows[("ut", "tc40")]
     assert ut["base_year"] == 2024 and ut["status"].startswith("PORTABLE"), ut
+    newest = {(r["state"], r["form"]): r for r in sc.scaffold(2025, "newest")}
+    assert newest[("ut", "tc40")]["status"].startswith("shipped"), newest[("ut", "tc40")]
 
 
 @pytest.mark.network
 def test_the_triage_reproduces_every_recorded_row():
+    # The recorded verdicts were measured against the 2023 base (the 2026-09-12 discovery run), so the triage
+    # replays that base; newest mode would skip every row JS3b has since shipped.
     for year in (2024, 2025):
-        recorded = [r for r in sc.scaffold(year, "newest", rows_path=sc.DEFAULT_ROWS, triage=True)
+        recorded = [r for r in sc.scaffold(year, "2023", rows_path=sc.DEFAULT_ROWS, triage=True)
                     if r.get("recorded_verdict")]
         assert len(recorded) == 8
         bad = [(r["state"], year, r["status"], r["recorded_verdict"]) for r in recorded if not r["reproduces"]]

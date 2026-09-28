@@ -27,13 +27,13 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
        "the 17th one-character account-number cell (14.6 pt at 9 pt, fits 3); cells 1-16 carry /MaxLen 1, this "
        "one the DOR's 10" for y in (2023, 2024, 2025)},
     ("states/id/2023/form40/pack.yaml", "preparer.state"): "31.5 pt at 10 pt fits 6; the widget says 10",
-    ("states/ks/2023/k40/pack.yaml", "42.school_district_number"): "42 pt at 12 pt fits 6; the widget says 10",
-    ("states/ks/2023/k40/pack.yaml", "43.historic_site_number"): "42 pt at 12 pt fits 6; the widget says 10",
+    ("states/ks/2023/k40/pack.yaml", "42.school_district_number"): "42 pt at Courier 12 fits 5; the widget says 10",
+    ("states/ks/2023/k40/pack.yaml", "43.historic_site_number"): "42 pt at Courier 12 fits 5; the widget says 10",
     ("states/ma/2023/form1/pack.yaml", "43a"): "12.5 pt at 12 pt fits 2; the widget says 10",
-    ("states/md/2023/md502/pack.yaml", "mailing_state"): "a two-letter state code (19.3 pt at 10 pt fits 3)",
+    ("states/md/2023/md502/pack.yaml", "mailing_state"): "a two-letter state code (19.3 pt at Courier 10 fits 3)",
     ("states/me/2023/f1040me/pack.yaml", "tax_period.begin.month"): "a two-digit month (25.7 pt at 10 pt fits 5)",
     ("states/me/2023/f1040me/pack.yaml", "tax_period.begin.day"): "a two-digit day (25.6 pt at 10 pt fits 5)",
-    ("states/wv/2023/it140/pack.yaml", "name.suffix"): "a name suffix (JR / III); 25.5 pt at 10 pt fits 5",
+    ("states/wv/2023/it140/pack.yaml", "name.suffix"): "a name suffix (JR / III); 25.5 pt at Courier 10 fits 4",
 }
 
 

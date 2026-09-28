@@ -492,6 +492,55 @@ def test_clipping_width_heuristic_fits():
     assert clipping_scan([widget])[0].status == "PASS"
 
 
+def test_js3c_a_courier_widget_uses_the_exact_0_6_em_metric():
+    # 12 characters at 12pt: Helvetica's 0.5 average says 72pt (fits 80pt); Courier's glyphs are all 0.6 em, so
+    # 86.4pt — the LA IT-540-WEB-BC 2024 shape, whose every text widget is "/CoBo 12 Tf".
+    helv = TextWidget(name="w", value="x" * 12, da="/Helv 12 Tf 0 g", rect_width=80.0)
+    cour = TextWidget(name="w", value="x" * 12, da="/CoBo 12 Tf 0 g", rect_width=80.0)
+    assert clipping_scan([helv])[0].status == "PASS"
+    check = clipping_scan([cour])[0]
+    assert check.status == "FAIL" and "86.4pt" in check.detail and "0.6 x 12pt Courier metric" in check.detail
+    # 11 characters (79.2pt) fit, and the multiline row budget uses the same metric (100 / 6 = 16 a row).
+    assert clipping_scan([cour.model_copy(update={"value": "x" * 11})])[0].status == "PASS"
+    wrapped = TextWidget(name="m", value="x" * 40, da="/Cour 10 Tf 0 g", rect_width=100.0, rect_height=25.0,
+                         multiline=True)
+    assert clipping_scan([wrapped])[0].status == "FAIL"        # 3 lines of 16 into 2 rows
+    assert clipping_scan([wrapped.model_copy(update={"da": "/Helv 10 Tf 0 g"})])[0].status == "PASS"   # 2 of 20
+
+
+def test_js3c_read_text_widgets_resolves_the_courier_face_through_dr(tmp_path):
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.generic import DictionaryObject, NameObject, TextStringObject
+
+    from pdf_fixtures import make_acroform_pdf
+
+    blank = make_acroform_pdf(tmp_path / "blank.pdf", [{"name": "f_mono", "value": "x"}, {"name": "f_alias", "value": "x"},
+                                                       {"name": "f_helv", "value": "x"}])
+    writer = PdfWriter(clone_from=PdfReader(str(blank)))
+    fonts = DictionaryObject()
+    for key, base in (("/F1", "/Courier-Bold"), ("/CoBo", "/Helvetica"), ("/Helv", "/Helvetica")):
+        fonts[NameObject(key)] = writer._add_object(DictionaryObject({
+            NameObject("/Type"): NameObject("/Font"), NameObject("/Subtype"): NameObject("/Type1"),
+            NameObject("/BaseFont"): NameObject(base)}))
+    acroform = writer._root_object["/AcroForm"]
+    acroform[NameObject("/DR")] = DictionaryObject({NameObject("/Font"): fonts})
+    das = {"f_mono": "/F1 10 Tf 0 g", "f_alias": "/CoBo 10 Tf 0 g", "f_helv": "/Helv 10 Tf 0 g"}
+    for annot in writer.pages[0]["/Annots"]:
+        obj = annot.get_object()
+        obj[NameObject("/DA")] = TextStringObject(das[str(obj["/T"])])
+    out = tmp_path / "fonts.pdf"
+    with out.open("wb") as fh:
+        writer.write(fh)
+    widgets = {w.name: w for w in read_text_widgets(out)}
+    assert widgets["f_mono"].monospace            # /F1 -> /BaseFont /Courier-Bold
+    assert widgets["f_alias"].monospace is False  # a resolved /BaseFont beats the alias name
+    assert widgets["f_helv"].monospace is False
+    long = {name: w.model_copy(update={"value": "x" * 26, "rect_width": 144.0}) for name, w in widgets.items()}
+    # 26 x 10pt: 130pt at 0.5 fits the 144pt box, 156pt at 0.6 does not — so only the true Courier face flags.
+    assert {c.name: c.status for c in clipping_scan(list(long.values()))} == {
+        "f_mono": "FAIL", "f_alias": "PASS", "f_helv": "PASS"}
+
+
 def test_clipping_missing_da_assumes_10pt():
     # 30 chars * 0.5 * assumed 10pt = 150pt > 100pt rect.
     widget = TextWidget(name="w", value="x" * 30, da=None, rect_width=100.0)

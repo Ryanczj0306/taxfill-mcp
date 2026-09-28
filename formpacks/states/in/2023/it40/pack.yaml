@@ -335,12 +335,16 @@ fields:
     type: money
 
   # ---- Sign and date
+  # The two date boxes print Courier Bold 12 (7.2 pt a character) in 66.5 / 67.1 pt: 9 characters, so
+  # "MM/DD/YYYY" clips and the cap is 8 — "MM/DD/YY" (Phase J JS3c, the Courier-aware clipping check).
   - line: your_signature_date
     field: Date1
     type: text
+    maxlen: 8
   - line: spouse_signature_date
     field: Date2
     type: text
+    maxlen: 8
 relations:
   - "3 == 1 + 2"            # Line 3 "Add line 1 and 2."
   - "5 == 3 - 4"            # Line 5 "Subtract line 4 from line 3."

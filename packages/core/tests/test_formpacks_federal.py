@@ -109,15 +109,27 @@ def _pack_id(pack_path: Path) -> str:
 
 
 def _synthetic_text(pack_field: PackField, index: int) -> str:
-    """Type-appropriate fake text for one line, keyed by format/comb/maxlen/name."""
+    """Type-appropriate fake text for one line, keyed by format/comb/maxlen/name.
+
+    Realistic LENGTHS matter since JS3c: verify measures a Courier face exactly (0.6 em a glyph), and 31 state
+    packs print in Courier, where a first-name box holds 13-15 characters and a suffix or count box 4-6. So a
+    suffix is "JR", a unit type "APT", a first-four-letters box "TEST", a name "Tess <n>", free text "T<n>", and
+    a date box whose pack caps it under 10 characters gets a two-digit year.
+    """
     line = pack_field.line.casefold()
     if pack_field.comb or pack_field.format == "ssn_digits_only":
         # Obviously-fake digits (999-88-xxxx style), distinct per index,
         # sized to the comb cell count.
         width = pack_field.maxlen or 9
         return str(999_880_000 + index)[-width:]
-    if "name" in line:
-        base = f"Test Taxpayer {index}"
+    if "suffix" in line:
+        base = "JR"
+    elif "unit_type" in line:
+        base = "APT"
+    elif "four_letters" in line:
+        base = "TEST"
+    elif "name" in line:
+        base = f"Tess {index}"
     elif "street" in line or "address" in line:
         base = f"{100 + index} Synthetic Way"
     elif "city" in line:
@@ -127,11 +139,11 @@ def _synthetic_text(pack_field: PackField, index: int) -> str:
     elif "country" in line:
         base = "Testland"
     elif "date" in line:
-        base = "01/15/2024"
+        base = "01/15/2024" if pack_field.maxlen is None or pack_field.maxlen >= 10 else "01/15/24"
     elif "phone" in line:
         base = "0000000000"
     else:
-        base = f"Test {index}"
+        base = f"T{index}"
     if pack_field.maxlen is not None and len(base) > pack_field.maxlen:
         base = base[: pack_field.maxlen]
     return base

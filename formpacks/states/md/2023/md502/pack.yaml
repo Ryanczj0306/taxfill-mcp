@@ -686,16 +686,17 @@ fields:
     field: Check Box 47
     type: checkbox
     on_state: /Yes
+  # The two date boxes print fixed 10 pt CourierNewPSMT (6 pt a character, not auto-size) and have no PDF
+  # /MaxLen: 50.4 pt and 48.3 pt hold 8 characters, so "MM/DD/YYYY" clips and both cap at 8 — "MM/DD/YY".
+  # (Phase J JS3c: the old caps — none and 9 — were sized by the 0.5-em Helvetica average.)
   - line: your_signature_date
     field: Text Box 101
     type: text
-  - line: spouse_signature_date     # date box: 48.3pt wide, fixed 10pt CourierNewPSMT /DA (not auto-size);
-    # the widget has no PDF /MaxLen, but 10 chars ("MM/DD/YYYY") overflow the 48.3pt rect at fixed 10pt
-    # (clipping heuristic), so cap at the box's real capacity (9). Use a 2-digit year (e.g. "1/15/24") to
-    # avoid truncation. Twin field your_signature_date (Text Box 101) is 50.4pt and fits 10 chars uncapped.
+    maxlen: 8
+  - line: spouse_signature_date
     field: Text Box 103
     type: text
-    maxlen: 9
+    maxlen: 8
   - line: preparer_name                  # Printed name of the Preparer / or Firm's name
     field: Text Box 102
     type: text

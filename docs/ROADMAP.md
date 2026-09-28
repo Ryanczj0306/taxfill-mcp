@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,950 tests** — offline 7,159 + live-.gov 791; derived
+Done and on `main` (**7,952 tests** — offline 7,161 + live-.gov 791; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2238,6 +2238,14 @@ line items sum to the headline delta.
       - The 2023 NOTE claiming the grammar could not reference column lines was stale after JP5c and was never flagged. It is now declared: 7.a, 9.a/9.b and 14.a/14.b as printed, and 19 = 18 A + B (checked against the 2023 and 2024 packets). Line 7 column B stays out because its line-5 key `5_b` (dot-free so cross_form can name it) does not tokenize in the relation grammar. 11 stays out because a zero is plausible under the deduction. `test_dotted_relations.py` checks all three years both ways.
       - Sentinel audits 108/108 (2024) and 107/107 (2025), 0 fails. All pages were read. Every KY network gate passes for 2023-2025.
     - Next, from JS3a's 2025 work-list: AL 40 (NEAR-PORT, 34 fields); then the 2024 rows (LA PORTABLE; ID NEAR-PORT).
+- [x] **JS3c — Courier-aware clipping check — DONE 2026-09-28** (M; added 2026-09-28 by JS3b, outside the original 62-tranche table)
+  - *Found by the LA 2024 port.* Its blank moved every text widget from "/HeBo 10" to "/CoBo 12". The audit's renders showed the dependent-name columns clipping "Test Taxpayer 27" at both edges while verify reported 0 fails. The P-001 width estimate used the 0.5-em Helvetica average for every font, but Courier advances exactly 0.6 em a glyph. 31 state packs map Courier text widgets (AL alone 2,074), so verify under-reported clipping on all of them by a sixth.
+  - *As built:* `read_text_widgets` resolves each widget's /DA font through the AcroForm /DR /BaseFont, sets `TextWidget.monospace`, and falls back to Acrobat's /Cour /CoBo /CoOb /CoBO aliases when unresolvable. `clipping_scan` uses 0.6 for a Courier face, on the single-line width and the multiline row budget, and names the metric in its message.
+  - *What the exact metric found* (network goldens: 51 overflows over 9 packs):
+    - **Real capacity limits, fixed in the packs.** A 10-character MM/DD/YYYY date does not fit the IN (Date1/Date2), KS ("date signed" x2) or MD (Text Box 101/103) signature-date boxes: they cap at 8, "MM/DD/YY". KS's school-district and historic-site boxes hold 5, not the 6 their Helvetica-era TIGHTER_THAN_WIDGET rows claimed. MT's EHRC line 21 is the one whole-number digit of a 0.00-1.00 Credit Multiplier, so maxlen 2 -> 1. The KS / MD / WV TIGHTER_THAN_WIDGET rows are re-measured in Courier.
+    - **Unrealistic test data, fixed in the generator.** `synthetic_values` put 16-character "Test Taxpayer N" into first-name boxes, "Test N" into suffix, count and code boxes, and a 10-character date into boxes the pack caps shorter. It now writes realistic lengths: suffix "JR", unit type "APT", first-four-letters "TEST", names "Tess N", free text "TN", and a two-digit year under a date cap.
+  - *Also fixed:* two JS3a network tests went red when JS3b shipped UT 2025 (newest mode stops triaging a shipped form), because the per-state gates never ran them. They now replay the recorded base (2023; UT against a fixed 2024) and pin the newest-mode "shipped" report.
+  - **Tests:** `test_js3c_*` in test_verify.py — Courier vs Helvetica on the same value, the multiline budget, /DR resolution where a resolved /BaseFont beats the alias name. Every network gate passes.
 - [ ] **JS4a — Overlay verifier fixed and tested** (M; on `phase-j2-overlay`) [PJ-01 + PJ-06]
   - **FILING-WRONG once merged.** verify_overlay substring-matches over the expected text's layout (overlay.py:596-610), so a PDF stamped 14,000 / 10 / 1,200 verifies ok against expected 4,000 / 0 / 200.
     - Look up text in the DECLARED box.
@@ -2305,7 +2313,7 @@ line items sum to the headline delta.
 
 2. **Phase J (re-planned 2026-09-23) is the whole forward plan.** Execution order:
 
-   J0 → JF6a → JF1a → JF5a → JF5b → JF1b → JF2 → JF3 → JF4 → JP1a → JP2 → JR1 → JR2a → JT0a → JT0b → JT0c → JR2b → JR2c → JF6b → JF6c → JF7 → JR3a → JR3b → JR3c → JT3a → JT3b → JT3c → JT3d → JF8 → JF9 → JT1a → JT1b → JT1c → JT1d → JT1e → JT2a → JT2b → JT4a → JT4b → JT4c → JP1b → JP1c → JT5a … JT5f → JP5a → JP5b → JD1 → JA1 → JP3a → JP3b → JP4 → JR4a → JR4b → JP5c → JEa → JEb → JD2 → *(JT6 when its trigger fires)* → JS1a → JS1b → JS2 → JS2b → JS3a → JS3b → JS4a … JS4d → JS5 → JS6 → JS7.
+   J0 → JF6a → JF1a → JF5a → JF5b → JF1b → JF2 → JF3 → JF4 → JP1a → JP2 → JR1 → JR2a → JT0a → JT0b → JT0c → JR2b → JR2c → JF6b → JF6c → JF7 → JR3a → JR3b → JR3c → JT3a → JT3b → JT3c → JT3d → JF8 → JF9 → JT1a → JT1b → JT1c → JT1d → JT1e → JT2a → JT2b → JT4a → JT4b → JT4c → JP1b → JP1c → JT5a … JT5f → JP5a → JP5b → JD1 → JA1 → JP3a → JP3b → JP4 → JR4a → JR4b → JP5c → JEa → JEb → JD2 → *(JT6 when its trigger fires)* → JS1a → JS1b → JS2 → JS2b → JS3a → JS3b → JS3c → JS4a … JS4d → JS5 → JS6 → JS7.
 
    **Hard dates** (latest start; a dated tranche takes the next free slot and never interrupts one in progress):
 
