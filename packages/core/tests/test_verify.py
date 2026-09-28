@@ -1021,6 +1021,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JR4a: the NEW 2025 f5329 (no base year). Reviewed: its standalone-only address block selects exactly
     # the f8606 2025 set (street, apt, city_state_zip); the three foreign_* boxes and the preparer.* lines
     # are rejected, as on 8606.
+    # JR4b: f5329 2023 and 2024 equal the reviewed 2025 row; the 2026 draft splits the city box into
+    # city/state/zip, and its selection is exactly the reviewed 2026 f8606 set (foreign_* excluded).
     import json
     from pathlib import Path
 

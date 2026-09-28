@@ -115,3 +115,65 @@ def test_jr4a_the_pack_is_per_person_and_signs_only_standalone():
     assert pack.cross_form == []                            # Schedule 2 line 8 is the COMBINED tax of both spouses
     assert not [r for r in pack.relations if r.startswith(("4 ", "54a", "54b", "17 ", "25 "))]
     assert "mailing_address.street" not in pack.identity_fields
+
+
+# ── JR4b: the 2023 / 2024 ports and the 2026 draft ──────────────────────────
+
+
+def _pack(year: int):
+    return load_pack(REPO_ROOT / f"formpacks/federal/{year}/f5329/pack.yaml")
+
+
+def test_jr4b_the_2024_port_swaps_the_preparer_address_and_ein():
+    old, new = ({f.line: f.field for f in _pack(y).fields} for y in (2025, 2024))
+    # TRAP: the same widget names, but 2024's f3_11 is the firm ADDRESS row and f3_12 the EIN — 2025 the reverse.
+    assert (new["preparer.firm_address"], new["preparer.firm_ein"]) == ("Page3[0].f3_11[0]", "Page3[0].f3_12[0]")
+    assert (old["preparer.firm_address"], old["preparer.firm_ein"]) == ("Page3[0].f3_12[0]", "Page3[0].f3_11[0]")
+    assert {k: v for k, v in new.items() if not k.startswith("preparer.firm_")} == {
+        k: v for k, v in old.items() if not k.startswith("preparer.firm_")}
+    assert _pack(2024).relations == _pack(2025).relations
+
+
+def test_jr4b_the_2023_part_ix_is_the_pre_2024_layout():
+    pack = _pack(2023)
+    lines = {f.line: f.field for f in pack.fields}
+    assert len(pack.fields) == 73 and pack.signature.page == 2
+    # 52 / 53 / 54 / 55 with the 10%-rate box — no 52a-54b split, so no "55 == 54a + 54b" and no line-54 relation
+    # (the 2023 RC waiver enters the reduced shortfall on line 54).
+    assert [lines[k] for k in ("52", "53", "54", "55.reduced_rate", "55")] == [
+        "Page2[0].f2_27[0]", "Page2[0].f2_28[0]", "Page2[0].f2_29[0]", "Page2[0].c2_1[0]", "Page2[0].f2_30[0]"]
+    assert "52a" not in lines and not [r for r in pack.relations if r.startswith(("54", "55"))]
+    assert (lines["preparer.firm_address"], lines["preparer.firm_ein"]) == ("Page2[0].f2_34[0]", "Page2[0].f2_35[0]")
+
+
+def test_jr4b_the_2026_draft_moves_page_1_by_two_and_adds_the_trump_account_parts():
+    pack = _pack(2026)
+    lines = {f.line: f.field for f in pack.fields}
+    assert (pack.source_status, pack.draft_created, pack.signature.page) == ("draft", "7/31/26", 4)
+    assert [lines[k] for k in ("mailing_address.city", "mailing_address.state", "mailing_address.zip")] == [
+        "Page1[0].f1_5[0]", "Page1[0].f1_6[0]", "Page1[0].f1_7[0]"]
+    assert (lines["1"], lines["2.exception_number"], lines["25"]) == (
+        "Page1[0].f1_11[0]", "Page1[0].f1_12[0]", "Page1[0].f1_36[0]")
+    assert [lines[str(n)] for n in range(56, 64)] == [f"Page3[0].f3_{n}[0]" for n in range(8, 16)]
+    # Part X's 6% has no "smaller of ... or the value" clause, and Part XI is 100%: both declared.
+    assert {"58 == 56 + 57", "60 == max(0, 58 - 59)", "61 == 60 * 0.06", "63 == 62"} <= set(pack.relations)
+    assert lines["preparer.firm_ein"] == "Page3[0].f3_19[0]" and lines["preparer.firm_address"] == "Page3[0].f3_20[0]"
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2026])
+def test_jr4b_per_pack_golden_with_the_exception_21_entry(year, tmp_path):
+    from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
+
+    pack = _pack(year)
+    rehearsal = rehearsal_only(pack)
+    assert rehearsal == (year == 2026)                     # the draft fills only in rehearsal mode
+    lines = form5329_lines(_snapshot(), year)
+    values = {"name": "Demo Filer", "identifying_number": "123-45-6789", "2.exception_number": "21",
+              "9": 1_000, "14": 1_000, **lines}
+    out = tmp_path / f"f5329_{year}.pdf"
+    fill_form(pack, values, _cached_blank(pack), out, rehearsal=rehearsal)
+    report = verify_form(pack, out, expected=values, independent=lines, rehearsal=rehearsal)
+    fails = [c.detail for section in (report.assertions, report.relations, report.recompute, report.clipping,
+                                      report.checkboxes) for c in section if c.status == "FAIL"]
+    assert report.ok, fails
+    assert {c.line for c in report.recompute if c.status == "PASS"} == set(lines)

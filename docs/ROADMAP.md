@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,955 tests** — offline 6,488 + live-.gov 467; derived
+Done and on `main` (**7,003 tests** — offline 6,530 + live-.gov 473; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2482,9 +2482,19 @@ not wait for any of this.
     - the golden round trip with "21" on line 2 (verify ok, and every recomputed line PASSes);
     - a line 4 that taxed the corrective earnings, caught only by the recompute;
     - the per-person / standalone-signature shape; the bare keys on a draft year.
-- [ ] **JR4b — Form 5329: 2023/2024 ports and the 2026 draft pack** (M; deps JR4a, JT0a)
-  - The 2026 draft (Created 7/31/26) routes to Schedule 2 lines 5 and 18. Ship it as `source_status: draft`, re-pinned at JT6.
-  - **Acceptance:** per-pack goldens (the 2026 one in rehearsal mode).
+- [x] **JR4b — Form 5329: 2023/2024 ports and the 2026 draft pack — DONE 2026-09-28** (M; deps JR4a, JT0a)
+  - *As built:* three packs, each bound from its own rects and checked on a sentinel render of every page.
+    - **2024** (75 widgets): the 2025 names, but 31 rects moved. TRAP: the preparer f3_11/f3_12 swap (2024: f3_11 is the firm address, f3_12 the EIN).
+    - **2023** (73 widgets, two pages): Part IX is the pre-2024 layout — 52 / 53 / 54, the line-55 10%-rate box (`55.reduced_rate`) and 55, with the rate split in the Line 55 Worksheet. So there is no `55 == 54a + 54b`, and line 54 carries no relation (the 2023 "RC" waiver enters the reduced shortfall on line 54). Exceptions run 01–21.
+    - **2026 draft** (Created 7/31/26, 85 widgets, `source_status: draft`, re-pinned at JT6):
+      - the city/state/ZIP box split into three (page 1 moves +2);
+      - Schedule 2 line 5 for Parts I/II/XI and line 18 for III–X;
+      - NEW Parts X (Trump-account excess contributions, 56–61) and XI (their distributed earnings, 62–63). Line 61's 6% has no "smaller of ... or the value" clause, and 63 is 100% of 62, so both are declared;
+      - the preparer block renumbered.
+  - Federal packs 149; filer-address fixture rows (2023/2024 = the 2025 row; 2026 = the 2026 f8606 set).
+  - **Tests** (test_form5329.py, `test_jr4b_*`):
+    - the 2024 swap; the 2023 Part IX shape; the 2026 renumbering and the Trump-account relations;
+    - a per-pack golden with exception 21 for each of 2023, 2024 and 2026 (the draft in rehearsal mode), every recomputed line PASSing.
 - [ ] **JP5c — Form 2210 packs** (M–L; deps JP5b, JT0a)
   - New form key f2210: a 2025 pack, plus the 2026 draft pack (Created 4/16/26) in draft mode.
   - **Acceptance:** per-pack goldens; the verify recompute matches JP5a/b.

@@ -1,0 +1,465 @@
+# Form 5329 (2026) — Additional Taxes on Qualified Plans (Including IRAs) and
+# Other Tax-Favored Accounts — DRAFTS-FIRST. Phase J JR4b.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f5329--dft.pdf,
+# footer "Form 5329 (2026) Created 7/31/26"). Its cover sheet: "there are never
+# any changes to the last posted draft of the form and the final revision of
+# the form". PDF page 1 is that cover sheet; the form's three pages are PDF
+# pages 2-4. When the final posts at irs-prior/f5329--2026.pdf, re-pin
+# source_url, pdf_sha256, source_status final, drop draft_created, signature
+# page 3, and re-read the face (JT6). TY2026 is planning-only, so this pack
+# fills only in REHEARSAL mode.
+#
+# PORTED 2026-09-28 from formpacks/federal/2025/f5329/pack.yaml — read that
+# pack's header for the form's logic (attached or by itself, one person per
+# form, exception 21, the independent recompute, the relations the face does
+# NOT support). Quotes from the Instructions for Form 5329 are the 2025
+# instructions; the 2026 ones are not posted.
+#
+# PROVENANCE: .cache/blanks/793b79515108_f5329--dft.pdf, 234,168 bytes, 4 PDF
+# pages, 85 widgets, 0 ReadOnly, root topmostSubform[0], every text widget
+# 9-point (2025: 8).
+#
+# MECHANICAL TOPOLOGY DIFF, 2025 final -> 2026 draft (75 -> 85 widgets):
+#   - the address block's one "City, town or post office, state, and ZIP code"
+#     box is now THREE — city (f1_5), state (f1_6), ZIP code (f1_7, /MaxLen
+#     10), keyed like the 2026 Form 8606 — so the foreign boxes are f1_8..f1_10
+#     and every page-1 line moved +2 (line 1 = f1_11 ... line 25 = f1_36);
+#   - page 2 (f2_1..f2_26, lines 26-51) keeps its names and rows (x +1);
+#   - page 3 adds Part X (lines 56-61, f3_8..f3_13) and Part XI (62-63,
+#     f3_14..f3_15), so the preparer block renumbers: f3_16 name, c3_1
+#     self-employed, f3_17 PTIN (/MaxLen 11), f3_18 firm name, f3_19 firm EIN
+#     (/MaxLen 10), f3_20 firm address, f3_21 phone — the 2025 name order, not
+#     2024's.
+# WHAT THE DRAFT FACE CHANGES:
+#   - Schedule 2 moves: Parts I and II (and the new Part XI) go to "Schedule 2
+#     (Form 1040), line 5"; Parts III-X to "line 18" (form_lines
+#     sched2.retirement_additional_tax / sched2.ira_excess_excise; the 2025
+#     form sent every Part to line 8). The code-1 shortcut above Part I now
+#     reads "line 5".
+#   - TRUMP ACCOUNTS (IRC 530A). Part I's caption now includes "an IRA and
+#     Trump account (after the growth period of the Trump account)"; Part III
+#     adds "Do not complete this part for a Trump account if the account
+#     beneficiary is under age 18 at the end of 2026 (see Part X)"; and two
+#     NEW Parts: X, "Additional Tax on Excess Contributions to Trump Accounts
+#     During the Growth Period" (56-61), and XI, "Additional Tax on Income
+#     Attributable to Excess Contributions Distributed From Trump Accounts"
+#     (62-63).
+#   - Part X's line 61 reads "Enter 6% (0.06) of line 60" — with NO "smaller of
+#     ... or the value" clause, unlike lines 17-51 — so "61 == 60 * 0.06" is
+#     declared; line 63 "Enter 100% of line 62" gives "63 == 62". Line 56's
+#     Caution: "For 2026, this amount is zero because there were no Trump
+#     accounts in 2025."
+# Lines 1-55 keep their numbers, text and the 2025 relation decisions.
+#
+# VISION AUDIT (2026-09-28): the same sentinel fill as the 2025 pack in
+# rehearsal mode, all four PDF pages rendered and READ: the cover sheet
+# untouched; every value on its printed row; MAILING_ADDRESS.CITY / ST / 00000
+# in the three new boxes; "21" on the exception rule; the inset pairs in the inset column;
+# 5600-6300 against the new lines 56-63; and the renumbered preparer block
+# each in its own box.
+
+form: "5329"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f5329--dft.pdf
+pdf_sha256: "f8822ccc8d14eca9424255d3b9606a8c210143ad8a317018f50222d03740edbe"
+source_status: draft
+draft_created: "7/31/26"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- header (page 1) ----
+  - line: "name"
+    # "Name of individual subject to additional tax. If married filing jointly, see instructions." — one person per form (see the header)
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "identifying_number"
+    # "Your social security number" — plain box, NOT a comb; widget /MaxLen 11 (fits a dashed SSN)
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 11
+    format: ssn_digits_only
+  # ---- address block: printed side caption "Fill in Your Address Only if You Are Filing This Form by Itself and
+  # Not With Your Tax Return" — mapped, but NOT in identity_fields (see the header) ----
+  - line: "mailing_address.street"
+    # "Home address (number and street), or P.O. box if mail is not delivered to your home"
+    field: "Page1[0].f1_3[0]"
+    type: text
+  - line: "mailing_address.apt"
+    # "Apt. no."
+    field: "Page1[0].f1_4[0]"
+    type: text
+    maxlen: 8
+  - line: "amended"
+    # "If this is an amended return, check here" — lone flag, so no `group`
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "mailing_address.city"
+    # "City, town, or post office. If you have a foreign address, also complete spaces below." — the draft splits 2025's one box into three (the 2026 f8606 keys)
+    field: "Page1[0].f1_5[0]"
+    type: text
+  - line: "mailing_address.state"
+    # "State"
+    field: "Page1[0].f1_6[0]"
+    type: text
+  - line: "mailing_address.zip"
+    # "ZIP code" — the widget's own /MaxLen
+    field: "Page1[0].f1_7[0]"
+    type: text
+    maxlen: 10
+  - line: "mailing_address.foreign_country"
+    # "Foreign country name"
+    field: "Page1[0].f1_8[0]"
+    type: text
+  - line: "mailing_address.foreign_province"
+    # "Foreign province/state/county"
+    field: "Page1[0].f1_9[0]"
+    type: text
+  - line: "mailing_address.foreign_postal_code"
+    # "Foreign postal code"
+    field: "Page1[0].f1_10[0]"
+    type: text
+  # ---- Part I: Additional Tax on Early Distributions (IRC 72(t)) ----
+  - line: "1"
+    # "Early distributions includible in income (see instructions). For Roth IRA distributions, see instructions" — INCLUDES the earnings on a withdrawn excess contribution (see the header, EXCEPTION 21)
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: "2.exception_number"
+    # "Enter the appropriate exception number from the instructions:" — the 36-point box mid-row; "enter the applicable exception number (01–23). If more than one exception applies, enter 99." (Line 2 instructions, 2025 — the 2026 instructions are not posted). Two characters
+    field: "Page1[0].f1_12[0]"
+    type: text
+    maxlen: 2
+  - line: "2"
+    # "Early distributions included on line 1 that are not subject to the additional tax (see instructions)" — exception 21 is the corrective-distribution earnings: "Report this amount on line 2 and enter exception number 21"
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "3"
+    # "Amount subject to additional tax. Subtract line 2 from line 1"
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "4"
+    # "Additional tax. Enter 10% (0.10) of line 3. Include this amount on Schedule 2 (Form 1040), line 5" — NO relation: the printed Caution ("If any part of the amount on line 3 was a distribution from a SIMPLE IRA, you may have to include 25% of that amount on line 4 instead of 10%") makes "4 == 3 * 0.10" false on a code-S path
+    field: "Page1[0].f1_15[0]"
+    type: money
+  # ---- Part II: Additional Tax on Certain Distributions From Education Accounts and ABLE Accounts ----
+  - line: "5"
+    # "Distributions included in income from a Coverdell ESA, a QTP, or an ABLE account"
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "6"
+    # "Distributions included on line 5 that are not subject to the additional tax (see instructions)"
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "7"
+    # "Amount subject to additional tax. Subtract line 6 from line 5"
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: "8"
+    # "Additional tax. Enter 10% (0.10) of line 7. Include this amount on Schedule 2 (Form 1040), line 5" — no caution or alternate rate on this row
+    field: "Page1[0].f1_19[0]"
+    type: money
+  # ---- Part III: Additional Tax on Excess Contributions to Traditional IRAs (IRC 4973(a), (b)) ----
+  - line: "9"
+    # "Enter your excess contributions from line 16 of your 2025 Form 5329. See instructions. If zero, go to line 15"
+    field: "Page1[0].f1_20[0]"
+    type: money
+  - line: "10"
+    # "If your traditional IRA contributions for 2026 are less than your maximum allowable contribution, see instructions. Otherwise, enter -0-" — INSET box (x 410-482, the column left of the amount column)
+    field: "Page1[0].f1_21[0]"
+    type: money
+  - line: "11"
+    # "2026 traditional IRA distributions included in income (see instructions)" — inset
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: "12"
+    # "2026 distributions of prior year excess contributions to traditional IRAs (see instructions)" — inset
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "13"
+    # "Add lines 10, 11, and 12"
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: "14"
+    # "Prior year excess contributions. Subtract line 13 from line 9. If zero or less, enter -0-"
+    field: "Page1[0].f1_25[0]"
+    type: money
+  - line: "15"
+    # "Excess contributions for 2026 (see instructions)"
+    field: "Page1[0].f1_26[0]"
+    type: money
+  - line: "16"
+    # "Total excess contributions. Add lines 14 and 15"
+    field: "Page1[0].f1_27[0]"
+    type: money
+  - line: "17"
+    # "Additional tax. Enter 6% (0.06) of the smaller of line 16 or the value of your traditional IRAs on December 31, 2026 (including 2026 contributions made in 2027). Include this amount on Schedule 2 (Form 1040), line 18" — the year-end value is not on the form, so no relation; the independent recompute (estimate.form5329_lines) prices it
+    field: "Page1[0].f1_28[0]"
+    type: money
+  # ---- Part IV: Additional Tax on Excess Contributions to Roth IRAs ----
+  - line: "18"
+    # "Enter your excess contributions from line 24 of your 2025 Form 5329. See instructions. If zero, go to line 23"
+    field: "Page1[0].f1_29[0]"
+    type: money
+  - line: "19"
+    # "If your Roth IRA contributions for 2026 are less than your maximum allowable contribution, see instructions. Otherwise, enter -0-" — inset
+    field: "Page1[0].f1_30[0]"
+    type: money
+  - line: "20"
+    # "2026 distributions from your Roth IRAs (see instructions)" — inset
+    field: "Page1[0].f1_31[0]"
+    type: money
+  - line: "21"
+    # "Add lines 19 and 20"
+    field: "Page1[0].f1_32[0]"
+    type: money
+  - line: "22"
+    # "Prior year excess contributions. Subtract line 21 from line 18. If zero or less, enter -0-"
+    field: "Page1[0].f1_33[0]"
+    type: money
+  - line: "23"
+    # "Excess contributions for 2026 (see instructions)"
+    field: "Page1[0].f1_34[0]"
+    type: money
+  - line: "24"
+    # "Total excess contributions. Add lines 22 and 23"
+    field: "Page1[0].f1_35[0]"
+    type: money
+  - line: "25"
+    # "Additional tax. Enter 6% (0.06) of the smaller of line 24 or the value of your Roth IRAs on December 31, 2026 (including 2026 contributions made in 2027). Include this amount on Schedule 2 (Form 1040), line 18" — no relation (the value is off-form)
+    field: "Page1[0].f1_36[0]"
+    type: money
+  # ---- Part V: Additional Tax on Excess Contributions to Coverdell ESAs (page 2) ----
+  - line: "26"
+    # "Enter the excess contributions from line 32 of your 2025 Form 5329. See instructions. If zero, go to line 31"
+    field: "Page2[0].f2_1[0]"
+    type: money
+  - line: "27"
+    # "If the contributions to your Coverdell ESAs for 2026 were less than the maximum allowable contribution, see instructions. Otherwise, enter -0-" — inset
+    field: "Page2[0].f2_2[0]"
+    type: money
+  - line: "28"
+    # "2026 distributions from your Coverdell ESAs (see instructions)" — inset
+    field: "Page2[0].f2_3[0]"
+    type: money
+  - line: "29"
+    # "Add lines 27 and 28"
+    field: "Page2[0].f2_4[0]"
+    type: money
+  - line: "30"
+    # "Prior year excess contributions. Subtract line 29 from line 26. If zero or less, enter -0-"
+    field: "Page2[0].f2_5[0]"
+    type: money
+  - line: "31"
+    # "Excess contributions for 2026 (see instructions)"
+    field: "Page2[0].f2_6[0]"
+    type: money
+  - line: "32"
+    # "Total excess contributions. Add lines 30 and 31"
+    field: "Page2[0].f2_7[0]"
+    type: money
+  - line: "33"
+    # "Additional tax. Enter 6% (0.06) of the smaller of line 32 or the value of your Coverdell ESAs on December 31, 2026 (including 2026 contributions made in 2027). Include this amount on Schedule 2 (Form 1040), line 18" — no relation
+    field: "Page2[0].f2_8[0]"
+    type: money
+  # ---- Part VI: Additional Tax on Excess Contributions to Archer MSAs ----
+  - line: "34"
+    # "Enter the excess contributions from line 40 of your 2025 Form 5329. See instructions. If zero, go to line 39"
+    field: "Page2[0].f2_9[0]"
+    type: money
+  - line: "35"
+    # "If the contributions to your Archer MSAs for 2026 are less than the maximum allowable contribution, see instructions. Otherwise, enter -0-" — inset
+    field: "Page2[0].f2_10[0]"
+    type: money
+  - line: "36"
+    # "2026 distributions from your Archer MSAs from Form 8853, line 8" — inset; Form 8853 is not shipped, so no cross_form leg
+    field: "Page2[0].f2_11[0]"
+    type: money
+  - line: "37"
+    # "Add lines 35 and 36"
+    field: "Page2[0].f2_12[0]"
+    type: money
+  - line: "38"
+    # "Prior year excess contributions. Subtract line 37 from line 34. If zero or less, enter -0-"
+    field: "Page2[0].f2_13[0]"
+    type: money
+  - line: "39"
+    # "Excess contributions for 2026 (see instructions)"
+    field: "Page2[0].f2_14[0]"
+    type: money
+  - line: "40"
+    # "Total excess contributions. Add lines 38 and 39"
+    field: "Page2[0].f2_15[0]"
+    type: money
+  - line: "41"
+    # "Additional tax. Enter 6% (0.06) of the smaller of line 40 or the value of your Archer MSAs on December 31, 2026 (including 2026 contributions made in 2027). Include this amount on Schedule 2 (Form 1040), line 18" — no relation
+    field: "Page2[0].f2_16[0]"
+    type: money
+  # ---- Part VII: Additional Tax on Excess Contributions to Health Savings Accounts (HSAs) ----
+  - line: "42"
+    # "Enter the excess contributions from line 48 of your 2025 Form 5329. If zero, go to line 47"
+    field: "Page2[0].f2_17[0]"
+    type: money
+  - line: "43"
+    # "If the contributions to your HSAs for 2026 are less than the maximum allowable contribution, see instructions. Otherwise, enter -0-" — inset
+    field: "Page2[0].f2_18[0]"
+    type: money
+  - line: "44"
+    # "2026 distributions from your HSAs from Form 8889, line 16" — inset; no cross_form leg: Form 8889 is filed per HSA beneficiary and a joint filing can carry two
+    field: "Page2[0].f2_19[0]"
+    type: money
+  - line: "45"
+    # "Add lines 43 and 44"
+    field: "Page2[0].f2_20[0]"
+    type: money
+  - line: "46"
+    # "Prior year excess contributions. Subtract line 45 from line 42. If zero or less, enter -0-"
+    field: "Page2[0].f2_21[0]"
+    type: money
+  - line: "47"
+    # "Excess contributions for 2026 (see instructions)"
+    field: "Page2[0].f2_22[0]"
+    type: money
+  - line: "48"
+    # "Total excess contributions. Add lines 46 and 47"
+    field: "Page2[0].f2_23[0]"
+    type: money
+  - line: "49"
+    # "Additional tax. Enter 6% (0.06) of the smaller of line 48 or the value of your HSAs on December 31, 2026 (including 2026 contributions made in 2027). Include this amount on Schedule 2 (Form 1040), line 18" — no relation
+    field: "Page2[0].f2_24[0]"
+    type: money
+  # ---- Part VIII: Additional Tax on Excess Contributions to an ABLE Account ----
+  - line: "50"
+    # "Excess contributions for 2026 (see instructions)"
+    field: "Page2[0].f2_25[0]"
+    type: money
+  - line: "51"
+    # "Additional tax. Enter 6% (0.06) of the smaller of line 50 or the value of your ABLE account on December 31, 2026. Include this amount on Schedule 2 (Form 1040), line 18" — no relation
+    field: "Page2[0].f2_26[0]"
+    type: money
+  # ---- Part IX: Additional Tax on Excess Accumulation in Qualified Retirement Plans (Including IRAs) (page 3, PDF page 4) ----
+  - line: "52a"
+    # "Minimum required distribution for 2026 from all qualified plans for which you received a distribution of the full amount of the excess accumulation during the correction window"
+    field: "Page3[0].f3_1[0]"
+    type: money
+  - line: "52b"
+    # "b Minimum required distribution for 2026 from all other plans"
+    field: "Page3[0].f3_2[0]"
+    type: money
+  - line: "53a"
+    # "Amount distributed to you during 2026 from all qualified plans for which you received a distribution of the full amount of the excess accumulation during the correction window"
+    field: "Page3[0].f3_3[0]"
+    type: money
+  - line: "53b"
+    # "b Amount distributed to you during 2026 from all other plans"
+    field: "Page3[0].f3_4[0]"
+    type: money
+  - line: "54a"
+    # "Subtract line 53a from line 52a and multiply the result by 10% (0.10). If zero or less, enter -0-" — NO relation: a reasonable-cause waiver enters "RC" and the waived shortfall on the dotted line "next to line(s) 54a and/or 54b" and enters the reduced result (Lines 54a and 54b instructions), so "54a == max(0, 52a - 53a) * 0.10" is false on the waiver path
+    field: "Page3[0].f3_5[0]"
+    type: money
+  - line: "54b"
+    # "b Subtract line 53b from line 52b and multiply the result by 25% (0.25). If zero or less, enter -0-" — no relation, the same waiver path
+    field: "Page3[0].f3_6[0]"
+    type: money
+  - line: "55"
+    # "Add lines 54a and 54b. Include the total on Schedule 2 (Form 1040), line 18, or Form 1041, Schedule G, line 8"
+    field: "Page3[0].f3_7[0]"
+    type: money
+  # ---- Part X: Additional Tax on Excess Contributions to Trump Accounts During the Growth Period (NEW on the 2026 draft) ----
+  - line: "56"
+    # "Enter your total excess contributions for 2025. Caution: For 2026, this amount is zero because there were no Trump accounts in 2025. See instructions"
+    field: "Page3[0].f3_8[0]"
+    type: money
+  - line: "57"
+    # "Excess contributions made during 2026 (see instructions)"
+    field: "Page3[0].f3_9[0]"
+    type: money
+  - line: "58"
+    # "Add lines 56 and 57"
+    field: "Page3[0].f3_10[0]"
+    type: money
+  - line: "59"
+    # "Distributions of excess contributions (not including earnings) under 530A(d)(5) (see instructions)"
+    field: "Page3[0].f3_11[0]"
+    type: money
+  - line: "60"
+    # "Total excess contributions for 2026. Subtract line 59 from 58. If zero or less, enter -0-"
+    field: "Page3[0].f3_12[0]"
+    type: money
+  - line: "61"
+    # "Additional tax. Enter 6% (0.06) of line 60. Include this amount on Schedule 2 (Form 1040), line 18" — unlike lines 17-51, no "smaller of ... or the value" on the face, so the relation is declared
+    field: "Page3[0].f3_13[0]"
+    type: money
+  # ---- Part XI: Additional Tax on Income Attributable to Excess Contributions Distributed From Trump Accounts (NEW) ----
+  - line: "62"
+    # "Enter the earnings attributable to the excess contributions distributed from Form 1099-R, box 7d"
+    field: "Page3[0].f3_14[0]"
+    type: money
+  - line: "63"
+    # "Additional tax. Enter 100% of line 62. Include this amount on Schedule 2 (Form 1040), line 5"
+    field: "Page3[0].f3_15[0]"
+    type: money
+  # ---- Paid Preparer Use Only (page 3, PDF page 4). The signature and date boxes have no widget ----
+  - line: "preparer.name"
+    # "Print/Type preparer's name"
+    field: "Page3[0].f3_16[0]"
+    type: text
+  - line: "preparer.self_employed"
+    # "Check if self-employed" — lone flag, no `group`
+    field: "Page3[0].c3_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "preparer.ptin"
+    # "PTIN" — widget /MaxLen 11
+    field: "Page3[0].f3_17[0]"
+    type: text
+    maxlen: 11
+  - line: "preparer.firm_name"
+    # "Firm's name"
+    field: "Page3[0].f3_18[0]"
+    type: text
+  - line: "preparer.firm_ein"
+    # "Firm's EIN" — widget /MaxLen 10
+    field: "Page3[0].f3_19[0]"
+    type: text
+    maxlen: 10
+  - line: "preparer.firm_address"
+    # "Firm's address"
+    field: "Page3[0].f3_20[0]"
+    type: text
+  - line: "preparer.firm_phone"
+    # "Phone no."
+    field: "Page3[0].f3_21[0]"
+    type: text
+relations:
+  - "3 == 1 - 2"                    # "3 Amount subject to additional tax. Subtract line 2 from line 1." No floor printed
+  - "7 == 5 - 6"                    # "7 Amount subject to additional tax. Subtract line 6 from line 5"
+  - "8 == 7 * 0.10"                 # "8 Additional tax. Enter 10% (0.10) of line 7"
+  - "13 == 10 + 11 + 12"            # "13 Add lines 10, 11, and 12"
+  - "14 == max(0, 9 - 13)"          # "14 Prior year excess contributions. Subtract line 13 from line 9. If zero or less, enter -0-"
+  - "16 == 14 + 15"                 # "16 Total excess contributions. Add lines 14 and 15"
+  - "21 == 19 + 20"                 # "21 Add lines 19 and 20"
+  - "22 == max(0, 18 - 21)"         # "22 Prior year excess contributions. Subtract line 21 from line 18. If zero or less, enter -0-"
+  - "24 == 22 + 23"                 # "24 Total excess contributions. Add lines 22 and 23"
+  - "29 == 27 + 28"                 # "29 Add lines 27 and 28"
+  - "30 == max(0, 26 - 29)"         # "30 Prior year excess contributions. Subtract line 29 from line 26. If zero or less, enter -0-"
+  - "32 == 30 + 31"                 # "32 Total excess contributions. Add lines 30 and 31"
+  - "37 == 35 + 36"                 # "37 Add lines 35 and 36"
+  - "38 == max(0, 34 - 37)"         # "38 Prior year excess contributions. Subtract line 37 from line 34. If zero or less, enter -0-"
+  - "40 == 38 + 39"                 # "40 Total excess contributions. Add lines 38 and 39"
+  - "45 == 43 + 44"                 # "45 Add lines 43 and 44"
+  - "46 == max(0, 42 - 45)"         # "46 Prior year excess contributions. Subtract line 45 from line 42. If zero or less, enter -0-"
+  - "48 == 46 + 47"                 # "48 Total excess contributions. Add lines 46 and 47"
+  - "55 == 54a + 54b"               # "55 Add lines 54a and 54b"
+  - "58 == 56 + 57"                 # "58 Add lines 56 and 57"
+  - "60 == max(0, 58 - 59)"         # "60 Total excess contributions for 2026. Subtract line 59 from 58. If zero or less, enter -0-"
+  - "61 == 60 * 0.06"               # "61 Additional tax. Enter 6% (0.06) of line 60"
+  - "63 == 62"                      # "63 Additional tax. Enter 100% of line 62"
+cross_form: []
+identity_fields: [name, identifying_number]
+identity_per_person: [identifying_number]
+signature:
+  page: 4                                   # PDF page 4 of the draft (page 1 is the IRS cover sheet); page 3 on the final
+  standalone_only: true
+mailing: null
