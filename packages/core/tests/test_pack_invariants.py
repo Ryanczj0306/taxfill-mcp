@@ -1221,3 +1221,316 @@ def test_year_family_and_stale_tables_are_consistent_and_justified():
             f"stale row ({pack}, {family}) needs the printed evidence and the consequence, "
             f"not a label — it is a live defect someone has to fix"
         )
+
+
+
+# ---------------------------------------------------------------------------
+# Checkbox groups, topology 3 — option sets on SEPARATE fields whose tokens are NOT yes/no (Phase J JEb)
+# ---------------------------------------------------------------------------
+
+# Filing statuses, residencies, account types and form checklists spread over one AcroForm field per box are
+# invisible to both gates above: the shared-field gate needs two lines on ONE field, and the Yes/No gate needs
+# yes/no tokens. Nothing then stops fill_form from ticking two filing statuses. JEb measured 377 such sets over
+# 212 packs (240 without one shared group id), grouped the ones the printed face makes exclusive (ID / KS / NE
+# filing status, KS / NE residency, KS "Amended Return (Mark ONE)", the ID / MD / MO / IN account types, MD's
+# "select one method", AZ's per-dependent under-17 / 17-or-over boxes, CA's 5805 / 5805F and tax method, MO-NRI's
+# home of record, GA's paper / electronic voucher), and adjudicated the rest here.
+#
+# Keyed (family, stem) with family = "federal/<form_key>" or "states/<st>/<form_key>", so a row covers every
+# year of that form. Each reason starts INDEPENDENT (the face lets several boxes apply) or PARTIAL (a grouped
+# subset sits beside independent boxes). A set whose members all share ONE group id passes without a row.
+SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
+    ('federal/f1040', '12a'):
+        'INDEPENDENT: "Someone can claim: You as a dependent / Your spouse as a dependent" — both may apply',
+    ('federal/f1040', '12d'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply ("You: Were born before January 2, ... / Are blind. Spouse: ...")',
+    ('federal/f1040', '16'):
+        'INDEPENDENT: "Check if any from Form(s): 1 8814 2 4972 3 ..." — any number may apply',
+    ('federal/f1040', '3c'):
+        'INDEPENDENT: "Check if your child\'s dividends are included in line 3a / line 3b" — both may apply',
+    ('federal/f1040', '4c'):
+        'INDEPENDENT: the 4c boxes (Rollover, QCD, Other) describe different IRA distributions; several may apply',
+    ('federal/f1040', '5c'):
+        'INDEPENDENT: the 5c boxes (Rollover, PSO, Other) describe different pension distributions; several may apply',
+    ('federal/f1040', '7b'):
+        'INDEPENDENT: "Schedule D not required" and "Includes child\'s capital gain or (loss)" are separate facts; both may apply',
+    ('federal/f1040', 'age_blindness'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply ("You: Were born before January 2, ... / Are blind. Spouse: ...")',
+    ('federal/f1040', 'dependent_1'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_1_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040', 'dependent_2'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_2_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040', 'dependent_3'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_3_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040', 'dependent_4'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_4_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040', 'filing_status'):
+        'PARTIAL: the five statuses share group filing_status; nra_spouse_election is the separate box for treating a nonresident spouse as a resident',
+    ('federal/f1040', 'presidential_campaign'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply ("Presidential Election Campaign ... You / Spouse")',
+    ('federal/f1040', 'special_processing'):
+        'INDEPENDENT: the header boxes (301.9100-2, Combat zone, Deceased, Other) mark separate circumstances; several may apply',
+    ('federal/f1040', 'standard_deduction'):
+        'INDEPENDENT: "Someone can claim: You as a dependent / Your spouse as a dependent" and the separate "Spouse itemizes on a separate return or you were a dual-status alien" box',
+    ('federal/f1040nr', '16'):
+        'INDEPENDENT: "Check if any from Form(s): 1 8814 2 4972 3 ..." — any number may apply',
+    ('federal/f1040nr', '3c'):
+        'INDEPENDENT: "Check if your child\'s dividends are included in line 3a / line 3b" — both may apply',
+    ('federal/f1040nr', '4c'):
+        'INDEPENDENT: the 4c boxes (Rollover, QCD, Other) describe different IRA distributions; several may apply',
+    ('federal/f1040nr', '5c'):
+        'INDEPENDENT: the 5c boxes (Rollover, PSO, Other) describe different pension distributions; several may apply',
+    ('federal/f1040nr', '7b'):
+        'INDEPENDENT: "Schedule D not required" and "Includes child\'s capital gain or (loss)" are separate facts; both may apply',
+    ('federal/f1040nr', 'dependent_1'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_1_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040nr', 'dependent_2'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_2_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040nr', 'dependent_3'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_3_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040nr', 'dependent_4'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_4_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040nr', 'special_processing'):
+        'INDEPENDENT: the header boxes (301.9100-2, Combat zone, Deceased, Other) mark separate circumstances; several may apply',
+    ('federal/f1040x', '15'):
+        'INDEPENDENT: line 15 checks every form the refundable credits came from (Schedule 8812, 2439, 4136, 8863, 8885, 8962, other); any number may apply',
+    ('federal/f1040x', 'dependent_1'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_1_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040x', 'dependent_2'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_2_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040x', 'dependent_3'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_3_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040x', 'dependent_4'):
+        'PARTIAL: child_tax_credit / credit_for_other_dependents share group dependent_4_credit (a dependent qualifies for one); the lived-with / student / disabled boxes are separate facts',
+    ('federal/f1040x', 'filing_status'):
+        'PARTIAL: the five statuses share group filing_status; nra_spouse_election is the separate box for treating a nonresident spouse as a resident',
+    ('federal/f1040x', 'presidential_campaign'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply ("Presidential Election Campaign ... You / Spouse")',
+    ('federal/f1040x', 'special_processing'):
+        'INDEPENDENT: the header boxes (301.9100-2, Combat zone, Deceased, Other) mark separate circumstances; several may apply',
+    ('federal/f2210', 'part_ii'):
+        'INDEPENDENT: Part II prints "Check applicable boxes" (A-E); several may apply',
+    ('federal/f8833', 'disclosure'):
+        'INDEPENDENT: the face prints "Check one or both of the following boxes as applicable" (section 6114; dual-resident 301.7701(b)-7)',
+    ('federal/f8960', 'elections'):
+        'INDEPENDENT: three separate elections (section 6013(g), 6013(h), Regulations 1.1411-10(g)); any may be made',
+    ('federal/fw7', 'reason'):
+        'INDEPENDENT: box a prints "(you must also check and complete box h)", so a and h are checked together; a group would block that',
+    ('federal/sched_1', '4'):
+        'INDEPENDENT: line 4 checks each form the other gains came from (Form 4684, Form 4797); both may apply',
+    ('federal/sched_2', '4'):
+        'INDEPENDENT: line 4 prints "Check if any exemption from: 1 4361 2 4029 3 ..."; several may apply',
+    ('federal/sched_e', '28.a'):
+        'INDEPENDENT: the row\'s "foreign partnership", "basis computation required" and "not at risk" boxes are separate facts',
+    ('federal/sched_e', '28.b'):
+        'INDEPENDENT: the row\'s "foreign partnership", "basis computation required" and "not at risk" boxes are separate facts',
+    ('federal/sched_e', '28.c'):
+        'INDEPENDENT: the row\'s "foreign partnership", "basis computation required" and "not at risk" boxes are separate facts',
+    ('federal/sched_e', '28.d'):
+        'INDEPENDENT: the row\'s "foreign partnership", "basis computation required" and "not at risk" boxes are separate facts',
+    ('states/ar/ar1000f', '7a'):
+        'INDEPENDENT: the 7A personal-credit boxes (yourself / spouse, 65 or over, 65 Special, blind, deaf, head of household / surviving spouse) are separate credits; several may apply',
+    ('states/ar/ar1000f', 'deceased'):
+        'INDEPENDENT: a deceased-taxpayer box and a deceased-spouse box; both may apply',
+    ('states/az/az140', '58_credit'):
+        'INDEPENDENT: line 58 checks each credit form claimed (308-I, 334, 349); several may apply',
+    ('states/az/az140', 'oe_10_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_1_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_2_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_3_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_4_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_5_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_6_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_7_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_8_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140', 'oe_9_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/ca/form540', '31'):
+        'PARTIAL: Tax Table / Tax Rate Schedule share group 31.tax_method (one regular-tax method); the FTB 3800 and 3803 boxes add to it independently',
+    ('states/ca/form540', '34'):
+        'INDEPENDENT: "Schedule G-1 / FTB 5870A" are separate additional taxes; both may apply',
+    ('states/ca/form540', 'filing_status'):
+        'PARTIAL: the five statuses share group filing_status; the separate box marks a CA status different from the federal one',
+    ('states/ca/form540nr', '31'):
+        'PARTIAL: Tax Table / Tax Rate Schedule share group 31.tax_method (one regular-tax method); the FTB 3800 and 3803 boxes add to it independently',
+    ('states/ca/form540nr', '41'):
+        'INDEPENDENT: "Schedule G-1 / FTB 5870A" are separate additional taxes; both may apply',
+    ('states/ca/form540nr', 'filing_status'):
+        'PARTIAL: the five statuses share group filing_status; the separate box marks a CA status different from the federal one',
+    ('states/dc/d40', 'deceased'):
+        'INDEPENDENT: a deceased-taxpayer box and a deceased-spouse box; both may apply',
+    ('states/de/pit_res', '20'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
+    ('states/de/pit_res', '26b'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply (over-60)',
+    ('states/de/pit_res', '6'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply (military pension)',
+    ('states/de/pit_res', '8b'):
+        'INDEPENDENT: the 529 and ABLE boxes for each person are separate subtractions; several may apply',
+    ('states/ga/ga500', '11_self'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
+    ('states/ga/ga500', '11_spouse'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
+    ('states/ga/ga500', 's3'):
+        "INDEPENDENT: Schedule 3's line-9 time-ratio box and the line-10b age / blind boxes per person are separate facts",
+    ('states/ga/ga500', 's4'):
+        'INDEPENDENT: the Schedule 4 TYPE OF LOSS boxes (normal, casualty, insurance 2-year, farm 2-year) print no "check one"',
+    ('states/ga/ga500', 'voucher'):
+        'PARTIAL: Paper Return / Electronically Filed share group voucher.return_medium; Amended Return is independent of both',
+    ('states/ia/ia1040', 'age65'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ia/ia1040', 'blind'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/id/form40', '12a'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/id/form40', '12b'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/il/il1040', '10b_65_or_older'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/il/il1040', '10c_legally_blind'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/il/il1040', 'C_claimed_as_dependent'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ky/form740', '13'):
+        'INDEPENDENT: line 13 checks each form the added taxes came from (4972-K, Schedule RCR, DSR, angel investor recapture); several may apply',
+    ('states/ky/form740', 'deceased'):
+        'INDEPENDENT: a deceased-taxpayer box and a deceased-spouse box; both may apply',
+    ('states/la/it540', '6a'):
+        'INDEPENDENT: the 6A boxes (65 or older, blind, qualifying surviving spouse) are separate exemptions; several may apply',
+    ('states/la/it540', '6b'):
+        'INDEPENDENT: the 6B boxes (spouse, 65 or older, blind) are separate exemptions; several may apply',
+    ('states/ma/form1', '2c'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ma/form1', '2d'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ma/form1', 'campaign_fund'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ma/form1', 'name_changed'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ma/form1', 'schedule'):
+        'INDEPENDENT: the Schedule FCI and TDS boxes mark separate attached schedules',
+    ('states/md/md502', '10a_pension_exclusion'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/md/md502', '10b_ranger_pension'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/md/md502', 'exemption_A'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/md/md502', 'exemption_B_65_or_over'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/md/md502', 'exemption_B_blind'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/me/f1040me', '1'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/mo/mo1040', '33'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/mo/mo1040', '34'):
+        'INDEPENDENT: "Lump sum distribution (Form 4972)" and "Recapture of low income housing credit (Form 8611)" are separate taxes; both may apply',
+    ('states/mo/mo1040', 'c'):
+        'INDEPENDENT: the MO-CRP / line-55 boxes mark separate credit rows',
+    ('states/mo/mo1040', 'moa'):
+        'INDEPENDENT: the MO-A modification boxes each mark their own modification line',
+    ('states/mo/mo1040', 'nri'):
+        'PARTIAL: Missouri / Non-Missouri Home of Record share group nri_line3.yourself (and nri_line3.spouse) per person; the two persons are independent',
+    ('states/mo/mo1040', 'nri_line1'):
+        'INDEPENDENT: the MO-NRI line 1 Nonresident and Remote Work boxes, one per person; separate facts',
+    ('states/mo/mo1040', 'nri_line2'):
+        'INDEPENDENT: the MO-NRI line 2 boxes and their Remote Work boxes, one per person; separate facts',
+    ('states/mo/mo1040', 'nri_line3'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ms/f80105', 'age65_blind'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
+    ('states/mt/form2', 'amended'):
+        'INDEPENDENT: "indicate the reasons for the changes you made" (a-e); several reasons may apply',
+    ('states/mt/form2', 'cpi'):
+        'INDEPENDENT: the annualization-method and farming-gross-income boxes are separate estimated-tax facts',
+    ('states/mt/form2', 'dd'):
+        'PARTIAL: checking / savings share group dd_account_type; the outside-US box is independent',
+    ('states/mt/form2', 'exemptions.a'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
+    ('states/mt/form2', 'exemptions.b'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply (and the spouse box)',
+    ('states/mt/form2', 'residency'):
+        'PARTIAL: the three residency statuses share group residency_status; the military-spouse and ND-reciprocity boxes are independent',
+    ('states/nd/nd1', 'amended'):
+        'INDEPENDENT: "Fill in if applicable: Amended: General / Amended: Federal NOL (See instructions)" — the face does not mark them alternatives',
+    ('states/nd/nd1', 'deceased'):
+        'INDEPENDENT: a deceased-taxpayer box and a deceased-spouse box; both may apply',
+    ('states/ne/f1040n', '2a'):
+        'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
+    ('states/ne/f1040n', '2b'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/oh/it1040_oh', 'nonresident_statement'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ok/form511', 'age_65'):
+        'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ok/form511', 'f538s'):
+        'INDEPENDENT: the 538-S qualification boxes (age 65, physical disability) and the discuss-with-preparer box are separate facts',
+    ('states/or/or40', '6a'):
+        'INDEPENDENT: the face prints "Check boxes that apply: Regular / Severely disabled / Someone else can claim you as a dependent"',
+    ('states/or/or40', '6b'):
+        'INDEPENDENT: the face prints "Check boxes that apply: Regular / Severely disabled / Someone else can claim you as a dependent"',
+    ('states/pa/pa40', 'deceased'):
+        'INDEPENDENT: a deceased-taxpayer box and a deceased-spouse box; both may apply',
+}
+
+
+def _family(pack_path: Path) -> str:
+    parts = _pack_key(pack_path).split("/")
+    return "/".join(parts[:1] + [parts[-2]]) if parts[0] == "federal" else "/".join(parts[:2] + [parts[-2]])
+
+
+def _separate_option_sets(pack: FormPack) -> dict[str, list[PackField]]:
+    """Checkbox lines sharing a stem (split at the last house separator) that bind two or more AcroForm fields and
+    whose option tokens are not yes/no (that pair is test_every_yes_no_pair_shares_one_group_id's)."""
+    stems: dict[str, list[PackField]] = {}
+    for pack_field in pack.fields:
+        if pack_field.type != "checkbox":
+            continue
+        for separator in _OPTION_SEPARATORS:
+            if separator not in pack_field.line:
+                continue
+            stem, last = pack_field.line.rsplit(separator, 1)
+            if last.casefold() not in ("yes", "no"):
+                stems.setdefault(stem, []).append(pack_field)
+            break
+    return {stem: members for stem, members in stems.items()
+            if len(members) > 1 and len({member.field for member in members}) > 1}
+
+
+def _ungrouped(members: list[PackField]) -> bool:
+    groups = {member.group for member in members}
+    return None in groups or len(groups) > 1
+
+
+@pytest.mark.parametrize("pack_path", ALL_PACK_PATHS, ids=_pack_id)
+def test_separate_widget_option_sets_are_adjudicated(pack_path: Path):
+    """JEb: an option set on separate fields is either one group (fill_form enforces it) or an adjudicated row."""
+    family = _family(pack_path)
+    for stem, members in _separate_option_sets(_load(pack_path)).items():
+        if not _ungrouped(members):
+            continue
+        assert (family, stem) in SEPARATE_OPTION_SETS_ADJUDICATED, (
+            f"{_pack_key(pack_path)}: lines {sorted(m.line for m in members)} are one option set on SEPARATE "
+            f"AcroForm fields without one shared 'group' id, so fill_form would tick any combination. Read the printed "
+            f"row: if the face makes them alternatives, give them one group (pitfall P-008); if several may apply, "
+            f"add ({family!r}, {stem!r}) to SEPARATE_OPTION_SETS_ADJUDICATED quoting the row")
+
+
+def test_every_option_set_row_still_describes_an_ungrouped_set():
+    """The table self-clears: a row whose set is gone or now fully grouped must be deleted."""
+    live = {(_family(path), stem) for path in ALL_PACK_PATHS
+            for stem, members in _separate_option_sets(_load(path)).items() if _ungrouped(members)}
+    stale = sorted(set(SEPARATE_OPTION_SETS_ADJUDICATED) - live)
+    assert not stale, f"SEPARATE_OPTION_SETS_ADJUDICATED row(s) {stale} no longer describe an ungrouped set — delete them"
+    thin = [key for key, why in SEPARATE_OPTION_SETS_ADJUDICATED.items()
+            if not why.startswith(("INDEPENDENT: ", "PARTIAL: ")) or len(why.split()) < 8]
+    assert not thin, f"row(s) {thin} need INDEPENDENT/PARTIAL and the printed evidence, not a label"

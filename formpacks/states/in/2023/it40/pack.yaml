@@ -303,14 +303,17 @@ fields:
   - line: 22c_account_type::checking
     field: Check Box4
     type: checkbox
+    group: 22c_account_type
     on_state: /Yes
   - line: 22c_account_type::savings
     field: Check Box5
     type: checkbox
+    group: 22c_account_type
     on_state: /Yes
   - line: 22c_account_type::hoosier_works_mc
     field: Check Box6
     type: checkbox
+    group: 22c_account_type
     on_state: /Yes
   - line: 22d_account_outside_us::yes  # refund will go to an account outside the United States
     field: Check Box7

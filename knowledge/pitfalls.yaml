@@ -374,7 +374,18 @@ pitfalls:
       `required` question, so the 12 pairs sit in
       KNOWN_UNGROUPED_YESNO_PAIRS — an allowlist that fails the moment a
       pair IS grouped, forcing the stale entry out, so the debt cannot go
-      quiet.
+      quiet (it emptied on 2026-08-24). THE THIRD TOPOLOGY, closed by Phase J
+      JEb (2026-09-28): an option set on SEPARATE fields whose tokens are
+      not yes/no (filing status, residency, account type, a form checklist)
+      was invisible to both gates. test_pack_invariants.py's
+      test_separate_widget_option_sets_are_adjudicated now requires every
+      such set to share one group or carry a SEPARATE_OPTION_SETS_ADJUDICATED
+      row quoting its printed row (INDEPENDENT / PARTIAL, self-clearing).
+      The sweep found and grouped the real defects: ID / KS / NE filing
+      status, KS / NE residency, KS "Amended Return (Mark ONE)", the ID / MD
+      / MO / IN account types, MD's "select one method", AZ's per-dependent
+      age boxes, CA's FTB 5805 / 5805F and tax method, MO-NRI's home of
+      record, and GA's paper / electronic voucher boxes.
 
   - id: P-009
     incident: >-

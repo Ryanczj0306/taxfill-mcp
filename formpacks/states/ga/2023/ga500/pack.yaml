@@ -939,10 +939,12 @@ fields:
   - line: voucher.paper_return
     field: Paper Return
     type: checkbox
+    group: voucher.return_medium
     on_state: /1
   - line: voucher.electronically_filed
     field: Electronically Filed
     type: checkbox
+    group: voucher.return_medium
     on_state: /1
   - line: voucher.type_of_return    # Type of Return (/Ch dropdown)
     field: TAXTYPE

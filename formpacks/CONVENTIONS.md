@@ -176,9 +176,14 @@ answer is NOT "the same either way":
   these exclusive and nothing in the engine can infer it, so the `group` id is
   the only thing preventing a return that answers one question both Yes and
   No. This shape gets no exemption. `states/wv/2023/it140`'s
-  `heptc.required_federal_return.yes`/`.no` is the live instance:
-  `homesteadY_checkbox` and `homesteadN_checkbox`, and `fill_form` writes BOTH
-  with zero warnings.
+  `heptc.required_federal_return.yes`/`.no` was the last live Yes/No instance
+  (`homesteadY_checkbox` / `homesteadN_checkbox`, both written with zero
+  warnings until it got its group). The same holds for N options that are not
+  yes/no — a filing status, residency or account type on one field per box.
+  `test_separate_widget_option_sets_are_adjudicated` (test_pack_invariants.py,
+  Phase J JEb) requires every such set to share one `group` or to carry an
+  `INDEPENDENT` / `PARTIAL` row in `SEPARATE_OPTION_SETS_ADJUDICATED` that
+  quotes the printed row ("Check applicable boxes", one box per spouse, ...).
 
 When you map a printed "fill in one circle only" set, decide which topology it
 is by dumping the widgets — never by the line-key spelling.

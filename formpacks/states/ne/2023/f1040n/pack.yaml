@@ -235,22 +235,27 @@ fields:
   - line: filing_status.single           # "(1) Single"
     field: Single
     type: checkbox
+    group: filing_status
     on_state: /On
   - line: filing_status.married_filing_jointly  # "(2) Married, filing jointly"
     field: Married, filing jointly
     type: checkbox
+    group: filing_status
     on_state: /On
   - line: filing_status.married_filing_separately  # "(3) Married, filing separately"
     field: Married, filing separately
     type: checkbox
+    group: filing_status
     on_state: /On
   - line: filing_status.head_of_household  # "(4) Head of Household"
     field: Head of Household
     type: checkbox
+    group: filing_status
     on_state: /On
   - line: filing_status.qualifying_surviving_spouse  # "(5) Qualifying surviving spouse (QSS)"
     field: Surviving Spouse
     type: checkbox
+    group: filing_status
     on_state: /On
   - line: filing_status.separate_ssn     # MFS "Spouse's SSN"
     field: Separate SSN
@@ -290,10 +295,12 @@ fields:
   - line: 3.resident                     # "(1) Resident"
     field: resident
     type: checkbox
+    group: type_of_return
     on_state: /On
   - line: 3.part_year_resident           # "(2) Partial-year resident"
     field: part year
     type: checkbox
+    group: type_of_return
     on_state: /On
   - line: 3.part_year_from.month         # "from ___ , 2023" (month)
     field: year from1
@@ -314,6 +321,7 @@ fields:
   - line: 3.nonresident                  # "(3) Nonresident (attach Schedule III)"
     field: nonresident
     type: checkbox
+    group: type_of_return
     on_state: /On
 
   # ---- Line 4: Nebraska personal exemptions

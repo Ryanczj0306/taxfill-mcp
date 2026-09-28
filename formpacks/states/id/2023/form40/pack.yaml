@@ -157,22 +157,27 @@ fields:
   - line: filing_status.single            # "1. Single"
     field: FilingStatusSingle
     type: checkbox
+    group: filing_status
     on_state: /Yes
   - line: filing_status.married_filing_jointly   # "2. Married filing jointly"
     field: FilingStatusMarriedJoint
     type: checkbox
+    group: filing_status
     on_state: /Yes
   - line: filing_status.married_filing_separately  # "3. Married filing separately"
     field: FilingStatusMarriedSeparate
     type: checkbox
+    group: filing_status
     on_state: /Yes
   - line: filing_status.head_of_household # "4. Head of household"
     field: FilingStatusHead
     type: checkbox
+    group: filing_status
     on_state: /Yes
   - line: filing_status.qualifying_surviving_spouse  # "5. Qualifying surviving spouse" (rect x=430)
     field: SpouseDeceased
     type: checkbox
+    group: filing_status
     on_state: /Yes
 
   # ---- Household (lines 6a-6d) and dependents table
@@ -480,10 +485,12 @@ fields:
   - line: 57.account_type.checking       # "Type of Account: Checking"
     field: DirectDepositChecking
     type: checkbox
+    group: 57.account_type
     on_state: /Yes
   - line: 57.account_type.savings        # "Type of Account: Savings"
     field: "DirectDepositSavings "
     type: checkbox
+    group: 57.account_type
     on_state: /Yes
 
   # ---- Amended Return Only (lines 58-61)

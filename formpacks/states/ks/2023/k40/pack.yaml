@@ -143,42 +143,51 @@ fields:
   - line: amended_return.kansas_only     # "Amended affects Kansas only"
     field: amended return - amended affects kansas only
     type: checkbox
+    group: amended_return
     on_state: /Yes
   - line: amended_return.federal         # "Amended Federal tax return"
     field: amended return - amended federal tax return
     type: checkbox
+    group: amended_return
     on_state: /Yes
   - line: amended_return.irs_adjustment  # "Adjustment by the IRS"
     field: amended return - adjustment by the irs
     type: checkbox
+    group: amended_return
     on_state: /Yes
 
   # ---- Filing Status (Mark ONE)
   - line: filing_status.single           # "Single"
     field: filing status - single
     type: checkbox
+    group: filing_status
     on_state: /Yes
   - line: filing_status.married_filing_joint  # "Married filing joint (Even if only one had income)"
     field: filing status - married filing joint
     type: checkbox
+    group: filing_status
     on_state: /Yes
   - line: filing_status.married_filing_separate  # "Married filing separate"
     field: filing status - married filing separate
     type: checkbox
+    group: filing_status
     on_state: /Yes
   - line: filing_status.head_of_household  # "Head of household (Do not mark if filing a joint return)"
     field: filing status - head of household
     type: checkbox
+    group: filing_status
     on_state: /Yes
 
   # ---- Residency Status (Mark ONE)
   - line: residency_status.resident      # "Resident"
     field: residency status - resident
     type: checkbox
+    group: residency_status
     on_state: /Yes
   - line: residency_status.part_year     # "Part-year resident (Complete Sch. S, Part B)"
     field: residency status - part-year resident
     type: checkbox
+    group: residency_status
     on_state: /Yes
   - line: residency_status.part_year_from  # "Part-year resident from"
     field: part-year resident from
@@ -191,6 +200,7 @@ fields:
   - line: residency_status.nonresident   # "Nonresident (Complete Sch. S, Part B)"
     field: residency status - nonresident
     type: checkbox
+    group: residency_status
     on_state: /Yes
 
   # ---- Exemptions and Dependents

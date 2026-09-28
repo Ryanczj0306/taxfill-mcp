@@ -276,10 +276,12 @@ fields:
 - line: 31.tax_table
   field: 2026 CB
   type: checkbox
+  group: 31.tax_method
   on_state: /Yes
 - line: 31.tax_rate_schedule
   field: 2027 CB
   type: checkbox
+  group: 31.tax_method
   on_state: /Yes
 - line: 31.ftb_3800
   field: 2028 CB
@@ -487,10 +489,12 @@ fields:
 - line: 113.ftb_5805
   field: 5004 CB
   type: checkbox
+  group: 113.form
   on_state: /Yes
 - line: 113.ftb_5805f
   field: 5005 CB
   type: checkbox
+  group: 113.form
   on_state: /Yes
 - line: '113'
   field: '5006'

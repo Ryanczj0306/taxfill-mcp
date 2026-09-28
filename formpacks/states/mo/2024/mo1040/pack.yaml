@@ -830,10 +830,12 @@ fields:
   - line: "dd_checking"
     field: "dd_checking"
     type: checkbox
+    group: dd_account_type
     on_state: "/X"
   - line: "dd_savings"
     field: "dd_savings"
     type: checkbox
+    group: dd_account_type
     on_state: "/X"
   - line: "line54"
     field: "line54"
@@ -1703,6 +1705,7 @@ fields:
   - line: "nri_line3Ya"
     field: "nri_line3Ya"
     type: checkbox
+    group: nri_line3.yourself
     on_state: "/X"
   - line: "nri_3aYstate2"
     field: "nri_3aYstate2"
@@ -1711,6 +1714,7 @@ fields:
   - line: "nri_line3aS"
     field: "nri_line3aS"
     type: checkbox
+    group: nri_line3.spouse
     on_state: "/X"
   - line: "nri_line3aSstate2"
     field: "nri_line3aSstate2"
@@ -1718,6 +1722,7 @@ fields:
   - line: "nri_3Ya"
     field: "nri_3Ya"
     type: checkbox
+    group: nri_line3.yourself
     on_state: "/X"
   - line: "nri_3Ystate2"
     field: "nri_3Ystate2"
@@ -1725,6 +1730,7 @@ fields:
   - line: "nri_line3bS"
     field: "nri_line3bS"
     type: checkbox
+    group: nri_line3.spouse
     on_state: "/X"
   - line: "nri_line3bSstate2"
     field: "nri_line3bSstate2"

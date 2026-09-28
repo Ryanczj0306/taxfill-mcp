@@ -424,10 +424,12 @@ fields:
   - line: deduction_method_standard      # STANDARD DEDUCTION METHOD
     field: Check Box 34
     type: checkbox
+    group: deduction_method
     on_state: /Yes
   - line: deduction_method_itemized      # ITEMIZED DEDUCTION METHOD
     field: Check Box 35
     type: checkbox
+    group: deduction_method
     on_state: /Yes
   - line: 17a        # Total federal itemized deductions (from line 17, federal Schedule A)
     field: 'Enter 17a '
@@ -634,10 +636,12 @@ fields:
   - line: 51a_account_type_checking
     field: Check Box 41
     type: checkbox
+    group: 51a_account_type
     on_state: /Yes
   - line: 51a_account_type_savings
     field: Check Box 42
     type: checkbox
+    group: 51a_account_type
     on_state: /Yes
   - line: 51b_routing_number             # Routing Number (9-digits)
     field: Text Box 93

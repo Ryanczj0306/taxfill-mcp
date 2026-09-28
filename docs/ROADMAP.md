@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,327 tests** — offline 6,566 + live-.gov 761; derived
+Done and on `main` (**7,540 tests** — offline 6,779 + live-.gov 761; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -579,7 +579,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       `STATE_COMPUTED_READONLY` pins moved 5→12 (2023) and 6→13 (2024) with the
       per-cell record in the 2023 pack's OUPC PAGE-13 ADJUDICATION header.
 
-- [ ] **A THIRD checkbox-topology blind spot, MEASURED 2026-08-26 (Phase I2).** → Phase J **JEb**.
+- [x] **A THIRD checkbox-topology blind spot, MEASURED 2026-08-26 (Phase I2).** → Phase J **JEb** — CLOSED 2026-09-28 (see JEb).
       The two P-008 gates between them still cannot see one shape.
       `test_every_yes_no_pair_shares_one_group_id` keys off the LINE SHAPE
       `<stem>.yes` + `<stem>.no`, and `test_pack_radio_options_share_one_group_and_distinct_states`
@@ -2566,10 +2566,20 @@ not wait for any of this.
     - test_verify multiline and bound-maxlen;
     - test_fetch cached_blank_path;
     - the two sweep controls re-based on the multiline rule.
-- [ ] **JEb — Checkbox topology** (L, commits per pack family; deps J0) [G31]
-  - Option sets on separate single-widget fields whose tokens are not yes/no are invisible to both P-008 gates. Measured 2026-08-26 on 160 packs: 285 such sets across 81 packs, 193 without a shared group id. Re-measure on 172.
-  - Add `test_separate_widget_option_sets_are_adjudicated` with a self-clearing table justified from the printed rows.
-  - **Acceptance:** green, with every exemption adjudicated; closes the Phase E box.
+- [x] **JEb — Checkbox topology — DONE 2026-09-28** (L; deps J0) [G31]
+  - *As built:* re-measured on 212 packs — 377 option sets on separate fields with non-yes/no tokens, 240 without one shared group id (147 families by form and stem). Each family was read off its printed row (row text beside the widgets, and a crop where the text layer was garbled).
+  - **Grouped — the face makes them alternatives** (82 lines, 11 packs):
+    - ID Form 40 / KS K-40 / NE 1040N filing status;
+    - KS / NE residency (type of return);
+    - KS "Amended Return (Mark ONE)";
+    - the ID / MD / MO 2023–2024 / IN account types;
+    - MD's "All taxpayers must select one method";
+    - AZ 140's per-dependent under-17 / 17-or-over boxes (14 dependents);
+    - CA 540 / 540NR's "FTB 5805 attached / FTB 5805F attached" and the Tax Table / Tax Rate Schedule method;
+    - MO-NRI's Missouri / Non-Missouri home of record per person;
+    - GA 500's paper / electronic voucher boxes.
+  - **Adjudicated — 120 families** in `SEPARATE_OPTION_SETS_ADJUDICATED` (test_pack_invariants.py), keyed (family, stem) so a row covers every year. Each is `INDEPENDENT:` (e.g. "Check applicable boxes", one box per spouse, W-7's "you must also check and complete box h") or `PARTIAL:` (a grouped subset beside independent boxes: filing status + the NRA-spouse election, the dependent credit pair + the lived-with boxes).
+  - **Gates:** `test_separate_widget_option_sets_are_adjudicated` over every pack; `test_every_option_set_row_still_describes_an_ungrouped_set` (self-clearing, INDEPENDENT/PARTIAL wording required). P-008 and CONVENTIONS updated; the Phase E box is closed.
 - [ ] **JEc — Declare the relations the dotted-id grammar now allows** (M; deps JP5c; added 2026-09-28 by JP5c, outside the original 62-tranche table)
   - JP5c let verify's relation grammar reference dotted keys. Eighteen packs and handfills recorded the old wall and left printed arithmetic undeclared:
     - sched_oi 2022–2025: item L (e) Total, spelled out in the pack;
