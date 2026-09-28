@@ -1,0 +1,112 @@
+# Form 1040-ES (2026) -- Estimated Tax for Individuals -- the FINAL revision.
+#
+# Mapped from irs.gov/pub/irs-prior/f1040es--2026.pdf (/Title "2026 Form 1040-ES",
+# page 1 "2026 / Form 1040-ES", footer stamp "Created 2/12/26"; 16 pages, 118
+# widgets). Phase J JT3d. This is the ONE 2026 pack whose own final revision is its
+# authority (filing_grade_basis: own_final_revision, allowlisted by
+# OWN_FINAL_REVISION_FORMS): the vouchers fall due during 2026 (the Q4 voucher on
+# Jan. 15, 2027) while the TY2026 knowledge pack stays planning-only, so it fills
+# and verifies WITHOUT rehearsal. The due dates printed on the vouchers are the
+# form's own (April 15, June 15 and Sept. 15, 2026; Jan. 15, 2027).
+#
+# WHAT THIS PACK FILLS: the four detachable payment vouchers -- the only part of
+# Form 1040-ES that is filed. Each carries the same 14 fields as in 2025. Every
+# binding was RE-INTROSPECTED by rect (pypdf widget dump: name + rect + MaxLen);
+# ALL 56 mapped names changed from 2025, because the booklet grew from 12 to 16
+# pages:
+#   - vouchers 1-3 moved from 2025 pdf page 11 (Page11[0].f11_*) to pdf page 15
+#     (Page15[0].f15_*), printed top-to-bottom as 3, 2, 1: voucher 3 = f15_1..14,
+#     voucher 2 = f15_15..28, voucher 1 = f15_29..42 (2025's names had a gap at
+#     f11_2; 2026 runs without gaps);
+#   - voucher 4 moved from pdf page 10 (Page10[0].f10_*) to pdf page 14
+#     (Page14[0].f14_1..14).
+# Per block: amount, your first/last name, SSN (/MaxLen 11), spouse first/last
+# name, spouse SSN (/MaxLen 11), address, city, state (/MaxLen 2), ZIP (/MaxLen
+# 10), foreign country / province / postal code.
+#
+# NOT MAPPED (62 of 118), the same classes as 2025: the page-12 Estimated Tax
+# Worksheet (f12_1..f12_23 + the c12_1/c12_2 Yes/No kid pairs = 27), the page-13
+# Record of Estimated Tax Payments (f13_1..f13_27 + four 1-pt Date1..4 structural
+# fields = 31) — the taxpayer's private computation and ledger, never mailed; the
+# engine's calc owns that math — and the four LinkActivator push-buttons over the
+# "Pay online" panels (1 on page 14, 3 on page 15). The vouchers carry no
+# signature block.
+form: "1040-ES"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf
+pdf_sha256: "396ffad25baa737b33a67d27624f7444be3ac4e7245d287aebe5f89864f90b54"
+filing_grade_basis: own_final_revision
+acroform_root: "topmostSubform[0]"
+fields:
+  # ===== Voucher 1 (Due April 15, 2026 -- page 15, BOTTOM) =====
+  - { line: "voucher_1.amount", field: "Page15[0].f15_29[0]", type: money }   # "Amount of estimated tax you are paying by check or money order."
+  - { line: "voucher_1.name.first", field: "Page15[0].f15_30[0]", type: text }
+  - { line: "voucher_1.name.last", field: "Page15[0].f15_31[0]", type: text }
+  - { line: "voucher_1.identifying_number", field: "Page15[0].f15_32[0]", type: text, maxlen: 11 }
+  - { line: "voucher_1.spouse.first_name", field: "Page15[0].f15_33[0]", type: text }
+  - { line: "voucher_1.spouse.last_name", field: "Page15[0].f15_34[0]", type: text }
+  - { line: "voucher_1.spouse.identifying_number", field: "Page15[0].f15_35[0]", type: text, maxlen: 11 }
+  - { line: "voucher_1.mailing_address.street", field: "Page15[0].f15_36[0]", type: text }
+  - { line: "voucher_1.mailing_address.city", field: "Page15[0].f15_37[0]", type: text }
+  - { line: "voucher_1.mailing_address.state", field: "Page15[0].f15_38[0]", type: text, maxlen: 2 }
+  - { line: "voucher_1.mailing_address.zip", field: "Page15[0].f15_39[0]", type: text, maxlen: 10 }
+  - { line: "voucher_1.mailing_address.foreign_country", field: "Page15[0].f15_40[0]", type: text }
+  - { line: "voucher_1.mailing_address.foreign_province", field: "Page15[0].f15_41[0]", type: text }
+  - { line: "voucher_1.mailing_address.foreign_postal_code", field: "Page15[0].f15_42[0]", type: text }
+  # ===== Voucher 2 (Due June 15, 2026 -- page 15, MIDDLE) =====
+  - { line: "voucher_2.amount", field: "Page15[0].f15_15[0]", type: money }   # "Amount of estimated tax you are paying by check or money order."
+  - { line: "voucher_2.name.first", field: "Page15[0].f15_16[0]", type: text }
+  - { line: "voucher_2.name.last", field: "Page15[0].f15_17[0]", type: text }
+  - { line: "voucher_2.identifying_number", field: "Page15[0].f15_18[0]", type: text, maxlen: 11 }
+  - { line: "voucher_2.spouse.first_name", field: "Page15[0].f15_19[0]", type: text }
+  - { line: "voucher_2.spouse.last_name", field: "Page15[0].f15_20[0]", type: text }
+  - { line: "voucher_2.spouse.identifying_number", field: "Page15[0].f15_21[0]", type: text, maxlen: 11 }
+  - { line: "voucher_2.mailing_address.street", field: "Page15[0].f15_22[0]", type: text }
+  - { line: "voucher_2.mailing_address.city", field: "Page15[0].f15_23[0]", type: text }
+  - { line: "voucher_2.mailing_address.state", field: "Page15[0].f15_24[0]", type: text, maxlen: 2 }
+  - { line: "voucher_2.mailing_address.zip", field: "Page15[0].f15_25[0]", type: text, maxlen: 10 }
+  - { line: "voucher_2.mailing_address.foreign_country", field: "Page15[0].f15_26[0]", type: text }
+  - { line: "voucher_2.mailing_address.foreign_province", field: "Page15[0].f15_27[0]", type: text }
+  - { line: "voucher_2.mailing_address.foreign_postal_code", field: "Page15[0].f15_28[0]", type: text }
+  # ===== Voucher 3 (Due Sept. 15, 2026 -- page 15, TOP) =====
+  - { line: "voucher_3.amount", field: "Page15[0].f15_1[0]", type: money }   # "Amount of estimated tax you are paying by check or money order."
+  - { line: "voucher_3.name.first", field: "Page15[0].f15_2[0]", type: text }
+  - { line: "voucher_3.name.last", field: "Page15[0].f15_3[0]", type: text }
+  - { line: "voucher_3.identifying_number", field: "Page15[0].f15_4[0]", type: text, maxlen: 11 }
+  - { line: "voucher_3.spouse.first_name", field: "Page15[0].f15_5[0]", type: text }
+  - { line: "voucher_3.spouse.last_name", field: "Page15[0].f15_6[0]", type: text }
+  - { line: "voucher_3.spouse.identifying_number", field: "Page15[0].f15_7[0]", type: text, maxlen: 11 }
+  - { line: "voucher_3.mailing_address.street", field: "Page15[0].f15_8[0]", type: text }
+  - { line: "voucher_3.mailing_address.city", field: "Page15[0].f15_9[0]", type: text }
+  - { line: "voucher_3.mailing_address.state", field: "Page15[0].f15_10[0]", type: text, maxlen: 2 }
+  - { line: "voucher_3.mailing_address.zip", field: "Page15[0].f15_11[0]", type: text, maxlen: 10 }
+  - { line: "voucher_3.mailing_address.foreign_country", field: "Page15[0].f15_12[0]", type: text }
+  - { line: "voucher_3.mailing_address.foreign_province", field: "Page15[0].f15_13[0]", type: text }
+  - { line: "voucher_3.mailing_address.foreign_postal_code", field: "Page15[0].f15_14[0]", type: text }
+  # ===== Voucher 4 (Due Jan. 15, 2027 -- page 14, below the e-pay promo) =====
+  - { line: "voucher_4.amount", field: "Page14[0].f14_1[0]", type: money }   # "Amount of estimated tax you are paying by check or money order."
+  - { line: "voucher_4.name.first", field: "Page14[0].f14_2[0]", type: text }
+  - { line: "voucher_4.name.last", field: "Page14[0].f14_3[0]", type: text }
+  - { line: "voucher_4.identifying_number", field: "Page14[0].f14_4[0]", type: text, maxlen: 11 }
+  - { line: "voucher_4.spouse.first_name", field: "Page14[0].f14_5[0]", type: text }
+  - { line: "voucher_4.spouse.last_name", field: "Page14[0].f14_6[0]", type: text }
+  - { line: "voucher_4.spouse.identifying_number", field: "Page14[0].f14_7[0]", type: text, maxlen: 11 }
+  - { line: "voucher_4.mailing_address.street", field: "Page14[0].f14_8[0]", type: text }
+  - { line: "voucher_4.mailing_address.city", field: "Page14[0].f14_9[0]", type: text }
+  - { line: "voucher_4.mailing_address.state", field: "Page14[0].f14_10[0]", type: text, maxlen: 2 }
+  - { line: "voucher_4.mailing_address.zip", field: "Page14[0].f14_11[0]", type: text, maxlen: 10 }
+  - { line: "voucher_4.mailing_address.foreign_country", field: "Page14[0].f14_12[0]", type: text }
+  - { line: "voucher_4.mailing_address.foreign_province", field: "Page14[0].f14_13[0]", type: text }
+  - { line: "voucher_4.mailing_address.foreign_postal_code", field: "Page14[0].f14_14[0]", type: text }
+# No arithmetic is printed on the vouchers (each amount is the payment the filer
+# chooses to send); the Estimated Tax Worksheet math lives in the engine's calc.
+relations: []
+cross_form: []
+# The vouchers are namespaced per quarter (voucher_N.*), so there is no single
+# bare identity line to cross-check against another in-filing form.
+identity_fields: []
+# Payment vouchers carry no signature block (you enclose a check; nothing to sign).
+signature: null
+# "Where To File" is a state-by-state table; the knowledge layer owns it.
+mailing: null

@@ -1,0 +1,753 @@
+# Form 8949 — Sales and Other Dispositions of Capital Assets — 2026 DRAFT.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f8949--dft.pdf,
+# footer "Created 4/1/26"). Its cover sheet: "there are never any changes to
+# the last posted draft of the form and the final revision of the form". PDF page
+# 1 is that cover sheet; the form is PDF pages 2-3. When the final posts at
+# irs-prior/f8949--2026.pdf, re-pin source_url, pdf_sha256, source_status final,
+# drop draft_created, and re-read the face. TY2026 is planning-only, so this pack
+# fills only in REHEARSAL mode. Phase J JT3d.
+#
+# PORTED 2026-09-27 from formpacks/federal/2025/f8949/pack.yaml — read that pack's
+# header for the field-map notes; the comments below are its own and describe
+# the 2025 revision's history. MECHANICAL TOPOLOGY DIFF, 2025 final -> 2026
+# draft: every widget keeps its name, rect, /MaxLen and /AP states. Printed-face
+# diff: the year in the title block and the page headers/footers only. No line was renumbered, so relations and cross_form carry
+# over unchanged.
+
+form: "8949"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f8949--dft.pdf
+pdf_sha256: "891d869c87ffe9c6d7f79079d19ebf4ac0afa7257f6374cd95936e44a7079ffe"
+source_status: draft
+draft_created: "4/1/26"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- page 1 header --------------------------------------------------------
+  - line: "name"                            # "Name(s) shown on return"
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: "identifying_number"              # "Social security number or taxpayer identification number" — plain box, NOT a comb
+    field: "Page1[0].f1_02[0]"
+    type: text
+    maxlen: 11                              # the widget's own /MaxLen (fits a dashed SSN/ITIN)
+    format: ssn_digits_only                 # digits only keeps cross-form identity values consistent and can never overflow (P-001)
+
+  # ---- Part I box set: "You must check Box A, B, C, G, H, or I below.
+  # ---- Check only one box." SIX separate terminal /Btn fields in this revision
+  # ---- (three in 2023 — G/H/I and J/K/L are new), so the shared `group` is the
+  # ---- only thing making them exclusive (P-008). Not `required`: a
+  # ---- long-term-only filer files page 2 alone (see the header).
+  - line: "short_term.box.a"              # (A) Short-term transactions reported on Form(s) 1099-B showing basis was reported to the IRS (see Note above)
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: short_term.box
+  - line: "short_term.box.b"              # (B) Short-term transactions reported on Form(s) 1099-B showing basis was not reported to the IRS
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: short_term.box
+  - line: "short_term.box.c"              # (C) Short-term transactions, other than digital asset transactions, not reported to you on Form 1099-B or Form 1099-DA
+    field: "Page1[0].c1_1[2]"
+    type: checkbox
+    on_state: "/3"
+    group: short_term.box
+  - line: "short_term.box.g"              # (G) Short-term transactions reported on Form(s) 1099-DA showing basis was reported to the IRS (see Note above)
+    field: "Page1[0].c1_1[3]"
+    type: checkbox
+    on_state: "/4"
+    group: short_term.box
+  - line: "short_term.box.h"              # (H) Short-term transactions reported on Form(s) 1099-DA showing basis was not reported to the IRS
+    field: "Page1[0].c1_1[4]"
+    type: checkbox
+    on_state: "/5"
+    group: short_term.box
+  - line: "short_term.box.i"              # (I) Short-term digital asset transactions not reported to you on Form 1099-DA or Form 1099-B
+    field: "Page1[0].c1_1[5]"
+    type: checkbox
+    on_state: "/6"
+    group: short_term.box
+
+  # ---- Part I — Short-Term: printed line 1, the ELEVEN transaction rows ----
+  # Columns, in printed order (full captions in the COLUMN LEGEND in the header):
+  #   .a description (MULTILINE widget)   .b date acquired   .c date sold
+  #   .d proceeds   .e cost/basis   .f code(s)   .g adjustment   .h gain/(loss)
+  # Widget arithmetic, so the map can be checked without the field dump: row N
+  # binds f1_(8N-5) .. f1_(8N+2) inside Page1[0].Table_Line1_Part1[0].RowN[0], with
+  # single-digit leaf numbers ZERO-PADDED in this revision (f1_03, not f1_3) —
+  # row 1 -> f1_03..f1_10, row 6 -> f1_43..f1_50, row 11 -> f1_83..f1_90.
+  # row 1 of 11
+  - line: "short_term.1.row01.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_03[0]"
+    type: text
+  - line: "short_term.1.row01.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_04[0]"
+    type: text
+  - line: "short_term.1.row01.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_05[0]"
+    type: text
+  - line: "short_term.1.row01.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_06[0]"
+    type: money
+  - line: "short_term.1.row01.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_07[0]"
+    type: money
+  - line: "short_term.1.row01.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_08[0]"
+    type: text
+  - line: "short_term.1.row01.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_09[0]"
+    type: money
+  - line: "short_term.1.row01.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row1[0].f1_10[0]"
+    type: money
+  # row 2 of 11
+  - line: "short_term.1.row02.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_11[0]"
+    type: text
+  - line: "short_term.1.row02.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_12[0]"
+    type: text
+  - line: "short_term.1.row02.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_13[0]"
+    type: text
+  - line: "short_term.1.row02.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_14[0]"
+    type: money
+  - line: "short_term.1.row02.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_15[0]"
+    type: money
+  - line: "short_term.1.row02.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_16[0]"
+    type: text
+  - line: "short_term.1.row02.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_17[0]"
+    type: money
+  - line: "short_term.1.row02.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row2[0].f1_18[0]"
+    type: money
+  # row 3 of 11
+  - line: "short_term.1.row03.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_19[0]"
+    type: text
+  - line: "short_term.1.row03.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_20[0]"
+    type: text
+  - line: "short_term.1.row03.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_21[0]"
+    type: text
+  - line: "short_term.1.row03.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_22[0]"
+    type: money
+  - line: "short_term.1.row03.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_23[0]"
+    type: money
+  - line: "short_term.1.row03.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_24[0]"
+    type: text
+  - line: "short_term.1.row03.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_25[0]"
+    type: money
+  - line: "short_term.1.row03.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row3[0].f1_26[0]"
+    type: money
+  # row 4 of 11
+  - line: "short_term.1.row04.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_27[0]"
+    type: text
+  - line: "short_term.1.row04.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_28[0]"
+    type: text
+  - line: "short_term.1.row04.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_29[0]"
+    type: text
+  - line: "short_term.1.row04.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_30[0]"
+    type: money
+  - line: "short_term.1.row04.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_31[0]"
+    type: money
+  - line: "short_term.1.row04.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_32[0]"
+    type: text
+  - line: "short_term.1.row04.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_33[0]"
+    type: money
+  - line: "short_term.1.row04.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row4[0].f1_34[0]"
+    type: money
+  # row 5 of 11
+  - line: "short_term.1.row05.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_35[0]"
+    type: text
+  - line: "short_term.1.row05.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_36[0]"
+    type: text
+  - line: "short_term.1.row05.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_37[0]"
+    type: text
+  - line: "short_term.1.row05.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_38[0]"
+    type: money
+  - line: "short_term.1.row05.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_39[0]"
+    type: money
+  - line: "short_term.1.row05.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_40[0]"
+    type: text
+  - line: "short_term.1.row05.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_41[0]"
+    type: money
+  - line: "short_term.1.row05.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row5[0].f1_42[0]"
+    type: money
+  # row 6 of 11
+  - line: "short_term.1.row06.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_43[0]"
+    type: text
+  - line: "short_term.1.row06.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_44[0]"
+    type: text
+  - line: "short_term.1.row06.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_45[0]"
+    type: text
+  - line: "short_term.1.row06.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_46[0]"
+    type: money
+  - line: "short_term.1.row06.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_47[0]"
+    type: money
+  - line: "short_term.1.row06.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_48[0]"
+    type: text
+  - line: "short_term.1.row06.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_49[0]"
+    type: money
+  - line: "short_term.1.row06.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row6[0].f1_50[0]"
+    type: money
+  # row 7 of 11
+  - line: "short_term.1.row07.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_51[0]"
+    type: text
+  - line: "short_term.1.row07.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_52[0]"
+    type: text
+  - line: "short_term.1.row07.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_53[0]"
+    type: text
+  - line: "short_term.1.row07.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_54[0]"
+    type: money
+  - line: "short_term.1.row07.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_55[0]"
+    type: money
+  - line: "short_term.1.row07.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_56[0]"
+    type: text
+  - line: "short_term.1.row07.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_57[0]"
+    type: money
+  - line: "short_term.1.row07.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row7[0].f1_58[0]"
+    type: money
+  # row 8 of 11
+  - line: "short_term.1.row08.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_59[0]"
+    type: text
+  - line: "short_term.1.row08.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_60[0]"
+    type: text
+  - line: "short_term.1.row08.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_61[0]"
+    type: text
+  - line: "short_term.1.row08.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_62[0]"
+    type: money
+  - line: "short_term.1.row08.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_63[0]"
+    type: money
+  - line: "short_term.1.row08.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_64[0]"
+    type: text
+  - line: "short_term.1.row08.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_65[0]"
+    type: money
+  - line: "short_term.1.row08.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row8[0].f1_66[0]"
+    type: money
+  # row 9 of 11
+  - line: "short_term.1.row09.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_67[0]"
+    type: text
+  - line: "short_term.1.row09.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_68[0]"
+    type: text
+  - line: "short_term.1.row09.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_69[0]"
+    type: text
+  - line: "short_term.1.row09.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_70[0]"
+    type: money
+  - line: "short_term.1.row09.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_71[0]"
+    type: money
+  - line: "short_term.1.row09.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_72[0]"
+    type: text
+  - line: "short_term.1.row09.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_73[0]"
+    type: money
+  - line: "short_term.1.row09.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row9[0].f1_74[0]"
+    type: money
+  # row 10 of 11
+  - line: "short_term.1.row10.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_75[0]"
+    type: text
+  - line: "short_term.1.row10.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_76[0]"
+    type: text
+  - line: "short_term.1.row10.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_77[0]"
+    type: text
+  - line: "short_term.1.row10.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_78[0]"
+    type: money
+  - line: "short_term.1.row10.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_79[0]"
+    type: money
+  - line: "short_term.1.row10.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_80[0]"
+    type: text
+  - line: "short_term.1.row10.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_81[0]"
+    type: money
+  - line: "short_term.1.row10.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row10[0].f1_82[0]"
+    type: money
+  # row 11 of 11
+  - line: "short_term.1.row11.a"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_83[0]"
+    type: text
+  - line: "short_term.1.row11.b"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_84[0]"
+    type: text
+  - line: "short_term.1.row11.c"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_85[0]"
+    type: text
+  - line: "short_term.1.row11.d"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_86[0]"
+    type: money
+  - line: "short_term.1.row11.e"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_87[0]"
+    type: money
+  - line: "short_term.1.row11.f"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_88[0]"
+    type: text
+  - line: "short_term.1.row11.g"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_89[0]"
+    type: money
+  - line: "short_term.1.row11.h"
+    field: "Page1[0].Table_Line1_Part1[0].Row11[0].f1_90[0]"
+    type: money
+
+  # ---- Part I printed line 2 — "Totals. Add the amounts in columns (d), (e),
+  # ---- (g), and (h) (subtract negative amounts). Enter each total here and
+  # ---- include on your Schedule D, line 1b (if Box A or Box G above is
+  # ---- checked), line 2 (if Box B or Box H above is checked), or line 3 (if
+  # ---- Box C or Box I above is checked)."
+  # The carry is CONDITIONAL on the box AND additive across forms, so no
+  # cross_form rule (see the header). Column (f) has NO key: its Totals cell is
+  # shaded grey and ReadOnly (f1_93[0]) because the printed row totals only
+  # (d), (e), (g) and (h) — P-007 class 2.
+  - line: "short_term.2.d"                        # Totals, column (d) Proceeds
+    field: "Page1[0].f1_91[0]"
+    type: money
+  - line: "short_term.2.e"                        # Totals, column (e) Cost or other basis
+    field: "Page1[0].f1_92[0]"
+    type: money
+  - line: "short_term.2.g"                        # Totals, column (g) Amount of adjustment
+    field: "Page1[0].f1_94[0]"
+    type: money
+  - line: "short_term.2.h"                        # Totals, column (h) Gain or (loss)
+    field: "Page1[0].f1_95[0]"
+    type: money
+
+  # ---- page 2 header — identity MIRRORS, mapped because nothing propagates
+  # ---- them and a Part-II-only filing has no "other side" (see the header)
+  - line: "page2_name"                      # "Name(s) shown on return. Name and SSN or taxpayer identification no. not required if shown on other side"
+    field: "Page2[0].f2_01[0]"
+    type: text
+  - line: "page2_identifying_number"        # "Social security number or taxpayer identification number" (page-2 header box)
+    field: "Page2[0].f2_02[0]"
+    type: text
+    maxlen: 11                              # this widget's own /MaxLen — same 11 as the page-1 source here
+    format: ssn_digits_only                 # must match the source's format, or the same SSN reaches the two boxes spelled differently
+
+  # ---- Part II box set: "You must check Box D, E, F, J, K, or L below.
+  # ---- Check only one box." SIX separate terminal /Btn fields in this revision
+  # ---- (three in 2023 — G/H/I and J/K/L are new), so the shared `group` is the
+  # ---- only thing making them exclusive (P-008). Not `required`: a
+  # ---- short-term-only filer files page 1 alone (see the header).
+  - line: "long_term.box.d"               # (D) Long-term transactions reported on Form(s) 1099-B showing basis was reported to the IRS (see Note above)
+    field: "Page2[0].c2_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: long_term.box
+  - line: "long_term.box.e"               # (E) Long-term transactions reported on Form(s) 1099-B showing basis was not reported to the IRS
+    field: "Page2[0].c2_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: long_term.box
+  - line: "long_term.box.f"               # (F) Long-term transactions, other than digital asset transactions, not reported to you on Form 1099-B or Form 1099-DA
+    field: "Page2[0].c2_1[2]"
+    type: checkbox
+    on_state: "/3"
+    group: long_term.box
+  - line: "long_term.box.j"               # (J) Long-term transactions reported on Form(s) 1099-DA showing basis was reported to the IRS (see Note above)
+    field: "Page2[0].c2_1[3]"
+    type: checkbox
+    on_state: "/4"
+    group: long_term.box
+  - line: "long_term.box.k"               # (K) Long-term transactions reported on Form(s) 1099-DA showing basis was not reported to the IRS
+    field: "Page2[0].c2_1[4]"
+    type: checkbox
+    on_state: "/5"
+    group: long_term.box
+  - line: "long_term.box.l"               # (L) Long-term digital asset transactions not reported to you on Form 1099-DA or Form 1099-B
+    field: "Page2[0].c2_1[5]"
+    type: checkbox
+    on_state: "/6"
+    group: long_term.box
+
+  # ---- Part II — Long-Term: printed line 1, the ELEVEN transaction rows ----
+  # Columns, in printed order (full captions in the COLUMN LEGEND in the header):
+  #   .a description (MULTILINE widget)   .b date acquired   .c date sold
+  #   .d proceeds   .e cost/basis   .f code(s)   .g adjustment   .h gain/(loss)
+  # Widget arithmetic, so the map can be checked without the field dump: row N
+  # binds f2_(8N-5) .. f2_(8N+2) inside Page2[0].Table_Line1_Part2[0].RowN[0], with
+  # single-digit leaf numbers ZERO-PADDED in this revision (f2_03, not f2_3) —
+  # row 1 -> f2_03..f2_10, row 6 -> f2_43..f2_50, row 11 -> f2_83..f2_90.
+  # row 1 of 11
+  - line: "long_term.1.row01.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_03[0]"
+    type: text
+  - line: "long_term.1.row01.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_04[0]"
+    type: text
+  - line: "long_term.1.row01.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_05[0]"
+    type: text
+  - line: "long_term.1.row01.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_06[0]"
+    type: money
+  - line: "long_term.1.row01.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_07[0]"
+    type: money
+  - line: "long_term.1.row01.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_08[0]"
+    type: text
+  - line: "long_term.1.row01.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_09[0]"
+    type: money
+  - line: "long_term.1.row01.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row1[0].f2_10[0]"
+    type: money
+  # row 2 of 11
+  - line: "long_term.1.row02.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_11[0]"
+    type: text
+  - line: "long_term.1.row02.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_12[0]"
+    type: text
+  - line: "long_term.1.row02.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_13[0]"
+    type: text
+  - line: "long_term.1.row02.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_14[0]"
+    type: money
+  - line: "long_term.1.row02.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_15[0]"
+    type: money
+  - line: "long_term.1.row02.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_16[0]"
+    type: text
+  - line: "long_term.1.row02.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_17[0]"
+    type: money
+  - line: "long_term.1.row02.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row2[0].f2_18[0]"
+    type: money
+  # row 3 of 11
+  - line: "long_term.1.row03.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_19[0]"
+    type: text
+  - line: "long_term.1.row03.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_20[0]"
+    type: text
+  - line: "long_term.1.row03.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_21[0]"
+    type: text
+  - line: "long_term.1.row03.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_22[0]"
+    type: money
+  - line: "long_term.1.row03.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_23[0]"
+    type: money
+  - line: "long_term.1.row03.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_24[0]"
+    type: text
+  - line: "long_term.1.row03.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_25[0]"
+    type: money
+  - line: "long_term.1.row03.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row3[0].f2_26[0]"
+    type: money
+  # row 4 of 11
+  - line: "long_term.1.row04.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_27[0]"
+    type: text
+  - line: "long_term.1.row04.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_28[0]"
+    type: text
+  - line: "long_term.1.row04.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_29[0]"
+    type: text
+  - line: "long_term.1.row04.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_30[0]"
+    type: money
+  - line: "long_term.1.row04.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_31[0]"
+    type: money
+  - line: "long_term.1.row04.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_32[0]"
+    type: text
+  - line: "long_term.1.row04.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_33[0]"
+    type: money
+  - line: "long_term.1.row04.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row4[0].f2_34[0]"
+    type: money
+  # row 5 of 11
+  - line: "long_term.1.row05.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_35[0]"
+    type: text
+  - line: "long_term.1.row05.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_36[0]"
+    type: text
+  - line: "long_term.1.row05.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_37[0]"
+    type: text
+  - line: "long_term.1.row05.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_38[0]"
+    type: money
+  - line: "long_term.1.row05.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_39[0]"
+    type: money
+  - line: "long_term.1.row05.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_40[0]"
+    type: text
+  - line: "long_term.1.row05.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_41[0]"
+    type: money
+  - line: "long_term.1.row05.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row5[0].f2_42[0]"
+    type: money
+  # row 6 of 11
+  - line: "long_term.1.row06.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_43[0]"
+    type: text
+  - line: "long_term.1.row06.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_44[0]"
+    type: text
+  - line: "long_term.1.row06.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_45[0]"
+    type: text
+  - line: "long_term.1.row06.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_46[0]"
+    type: money
+  - line: "long_term.1.row06.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_47[0]"
+    type: money
+  - line: "long_term.1.row06.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_48[0]"
+    type: text
+  - line: "long_term.1.row06.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_49[0]"
+    type: money
+  - line: "long_term.1.row06.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row6[0].f2_50[0]"
+    type: money
+  # row 7 of 11
+  - line: "long_term.1.row07.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_51[0]"
+    type: text
+  - line: "long_term.1.row07.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_52[0]"
+    type: text
+  - line: "long_term.1.row07.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_53[0]"
+    type: text
+  - line: "long_term.1.row07.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_54[0]"
+    type: money
+  - line: "long_term.1.row07.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_55[0]"
+    type: money
+  - line: "long_term.1.row07.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_56[0]"
+    type: text
+  - line: "long_term.1.row07.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_57[0]"
+    type: money
+  - line: "long_term.1.row07.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row7[0].f2_58[0]"
+    type: money
+  # row 8 of 11
+  - line: "long_term.1.row08.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_59[0]"
+    type: text
+  - line: "long_term.1.row08.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_60[0]"
+    type: text
+  - line: "long_term.1.row08.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_61[0]"
+    type: text
+  - line: "long_term.1.row08.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_62[0]"
+    type: money
+  - line: "long_term.1.row08.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_63[0]"
+    type: money
+  - line: "long_term.1.row08.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_64[0]"
+    type: text
+  - line: "long_term.1.row08.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_65[0]"
+    type: money
+  - line: "long_term.1.row08.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row8[0].f2_66[0]"
+    type: money
+  # row 9 of 11
+  - line: "long_term.1.row09.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_67[0]"
+    type: text
+  - line: "long_term.1.row09.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_68[0]"
+    type: text
+  - line: "long_term.1.row09.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_69[0]"
+    type: text
+  - line: "long_term.1.row09.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_70[0]"
+    type: money
+  - line: "long_term.1.row09.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_71[0]"
+    type: money
+  - line: "long_term.1.row09.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_72[0]"
+    type: text
+  - line: "long_term.1.row09.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_73[0]"
+    type: money
+  - line: "long_term.1.row09.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row9[0].f2_74[0]"
+    type: money
+  # row 10 of 11
+  - line: "long_term.1.row10.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_75[0]"
+    type: text
+  - line: "long_term.1.row10.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_76[0]"
+    type: text
+  - line: "long_term.1.row10.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_77[0]"
+    type: text
+  - line: "long_term.1.row10.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_78[0]"
+    type: money
+  - line: "long_term.1.row10.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_79[0]"
+    type: money
+  - line: "long_term.1.row10.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_80[0]"
+    type: text
+  - line: "long_term.1.row10.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_81[0]"
+    type: money
+  - line: "long_term.1.row10.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row10[0].f2_82[0]"
+    type: money
+  # row 11 of 11
+  - line: "long_term.1.row11.a"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_83[0]"
+    type: text
+  - line: "long_term.1.row11.b"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_84[0]"
+    type: text
+  - line: "long_term.1.row11.c"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_85[0]"
+    type: text
+  - line: "long_term.1.row11.d"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_86[0]"
+    type: money
+  - line: "long_term.1.row11.e"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_87[0]"
+    type: money
+  - line: "long_term.1.row11.f"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_88[0]"
+    type: text
+  - line: "long_term.1.row11.g"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_89[0]"
+    type: money
+  - line: "long_term.1.row11.h"
+    field: "Page2[0].Table_Line1_Part2[0].Row11[0].f2_90[0]"
+    type: money
+
+  # ---- Part II printed line 2 — "Totals. Add the amounts in columns (d), (e),
+  # ---- (g), and (h) (subtract negative amounts). Enter each total here and
+  # ---- include on your Schedule D, line 8b (if Box D or Box J above is
+  # ---- checked), line 9 (if Box E or Box K above is checked), or line 10 (if
+  # ---- Box F or Box L above is checked)."
+  # The carry is CONDITIONAL on the box AND additive across forms, so no
+  # cross_form rule (see the header). Column (f) has NO key: its Totals cell is
+  # shaded grey and ReadOnly (f2_93[0]) because the printed row totals only
+  # (d), (e), (g) and (h) — P-007 class 2.
+  - line: "long_term.2.d"                         # Totals, column (d) Proceeds
+    field: "Page2[0].f2_91[0]"
+    type: money
+  - line: "long_term.2.e"                         # Totals, column (e) Cost or other basis
+    field: "Page2[0].f2_92[0]"
+    type: money
+  - line: "long_term.2.g"                         # Totals, column (g) Amount of adjustment
+    field: "Page2[0].f2_94[0]"
+    type: money
+  - line: "long_term.2.h"                         # Totals, column (h) Gain or (loss)
+    field: "Page2[0].f2_95[0]"
+    type: money
+
+# Deliberately empty. Both pieces of on-face arithmetic — the per-row
+# (h) = (d) - (e) + (g) identity and the line-2 column totals — are equalities
+# over DOTTED column keys, and verify's relation tokenizer has no '.' token, so
+# neither can be expressed. Left to the recompute engine + human review,
+# exactly as sched_d leaves its own dotted per-row column equality. See the
+# header.
+relations: []
+
+# Deliberately empty. The six printed Schedule D carries are CONDITIONAL on
+# which box is checked (and in 2025 each condition is a two-box disjunction)
+# and ADDITIVE across as many Forms 8949 as the filer needs, and a dotted local
+# ref cannot appear in a cross_form rule anyway (refs split at the first dot).
+# See the header.
+cross_form: []
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only (Attachment Sequence No. 12A): no signature block of its own,
+# mailed inside the parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

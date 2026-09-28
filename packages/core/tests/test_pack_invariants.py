@@ -901,6 +901,7 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     # 2025 binds the renamed page-2 widgets (Page2[0].f2_01[0]/f2_02[0]); the
     # header text, the escape clause and the count are all unchanged.
     "federal/2025/f8949/pack.yaml": 2,
+    "federal/2026/f8949/pack.yaml": 2,   # the 2026 draft keeps the 2025 widgets (Phase J JT3d)
     "federal/2023/sched_e/pack.yaml": 2,
     "federal/2024/sched_e/pack.yaml": 2,
     "federal/2025/sched_e/pack.yaml": 2,

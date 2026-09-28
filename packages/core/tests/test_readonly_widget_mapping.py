@@ -649,9 +649,11 @@ def test_reserved_unmapped_row_stays_unmapped_and_the_filler_refuses_it(row: Res
         )
     # The keys are hard errors now, not silent writes into a locked box.
     # fill_form validates line keys before it opens the blank, so no PDF needed.
-    # A draft pack (JT0a) fills only in rehearsal mode; without it the planning-only year is
-    # refused before any key is read.
-    rehearsal = pack.source_status == "draft"
+    # A rehearsal-only pack (JT0a/JT3d) fills only in rehearsal mode; without it the planning-only
+    # year is refused before any key is read.
+    from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
+
+    rehearsal = rehearsal_only(pack)
     for line in row.lines:
         with pytest.raises(ValueError, match=r"unknown line key"):
             fill_form(pack, {line: 99999}, tmp_path / "absent-blank.pdf", tmp_path / "out.pdf", rehearsal=rehearsal)

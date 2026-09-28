@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,350 tests** — offline 5,953 + live-.gov 397; derived
+Done and on `main` (**6,430 tests** — offline 6,021 + live-.gov 409; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1891,7 +1891,7 @@ not wait for any of this.
     - check_finals prints the re-pin list and files the issue in a dry run.
     - A new failing network test fails freshness while the allowlisted ones do not; an expired allowlist entry fails.
     - The 1040-ES allowlist test passes.
-- [ ] **JT3a–d — Wave A: the core W-2 / retirement / HSA 2026 federal packs, drafts-first** (JT3a **latest start 2026-10-26**; deps JT0a–c, JF6c) [TY26-20]
+- [x] **JT3a–d — Wave A: the core W-2 / retirement / HSA 2026 federal packs, drafts-first — DONE 2026-09-27** (JT3a **latest start 2026-10-26**; deps JT0a–c, JF6c) [TY26-20]
   - **Sub-tranches.** The count in parentheses is how many 2025-pack field names are missing from the draft.
     - **JT3a** (M–L): f1040 (43 of 192), sched_1a (44/54; 225 fields). **DONE 2026-09-27** — *as built:*
       - **formpacks/federal/2026/f1040** (draft Created 8/19/26, sha e044e765…): 200 of 207 widgets (the 7 unmapped are the paid-preparer block).
@@ -1956,6 +1956,19 @@ not wait for any of this.
       - sched_b, sched_d and f8949 (0 missing each);
       - f8833: the current final is byte-identical to the 2025 pin → copy, source_status final;
       - **f1040es**: FINAL, but all 56 mapped names changed; uses `own_final_revision`.
+      - **DONE 2026-09-27** — *as built:*
+        - **The rehearsal decision** (the JT3a question): `filler.rehearsal_only(pack)` is True for a DRAFT pack and for a FINAL pack whose year is planning-only (basis year_knowledge); fill_form/verify_form(rehearsal=True) accept exactly those.
+          - A pack on its own final revision (the 1040-ES) fills normally and refuses rehearsal, as does a final pack in a filing-grade year. MCP never passes rehearsal.
+          - The golden round trip, the readonly sweep and the reserved-line refusal test all use the predicate.
+        - **sched_b / sched_d / f8949** (drafts Created 4/7/26, 4/1/26, 4/1/26): identical topology (72 / 55 / 202 widgets; name, rect, /MaxLen, /AP); only the year text moves (and Schedule B's "country(ies)").
+          - Ported with their 2025 maps, relations and cross_form. The same widgets stay unmapped as in 2025 (sched_d's shaded g cells, f8949's Totals (f) cells).
+        - **f8833**: the live irs-pdf/f8833.pdf re-downloaded 2026-09-27 is byte-identical to the Rev. 12-2022 pin, so the 2025 pack is copied with tax_year 2026. It is a FINAL pack that is rehearsal-only until JT6.
+        - **f1040es** (irs-prior/f1040es--2026.pdf, Created 2/12/26; 16 pages, 118 widgets): all 56 voucher bindings re-read by rect.
+          - Vouchers 3/2/1 are on page 15 (f15_1/15/29 blocks) and voucher 4 on page 14 (f14_1..14). The 62 unmapped are the page-12 worksheet (27), the page-13 record (31) and 4 link buttons.
+          - `filing_grade_basis: own_final_revision`, so it fills and verifies without rehearsal.
+        - **Tests** (`test_jt3d_*`): the rehearsal predicate's four cases; the f8833 pin and its refusal of a normal fill; the 1040-ES position rebind; the three identical-topology maps. test_discovery 124 (11 drafts + 2 finals for 2026); the filer-address fixture gains 5 rows, each equal to its 2025 base.
+        - **Per-form tables the new packs reached:** SCHED_D_SHADED_G_WIDGETS[2026] (the /Ff re-read: the same two cells); IDENTITY_MIRROR_COUNTS f8949 2026 = 2. The sched_d / sched_e / f1116 / f8833 pack-parametrized fill checks now pass the rehearsal predicate.
+        - **Vision audit:** the 1040-ES voucher pages (14, 15), each value in its box. The other four are field-for-field equal to their audited 2025 packs (pinned by test), and their round trips ran against the 2026 blanks.
   - **Traps.** Key every field by its PRINTED line:
     - 1040 13a and 13b swap meaning. 2025: 13a = QBI, 13b = Schedule 1-A. 2026: 13a = Schedule 1-A line 44, 13b = QBI.
     - The 1040 gains 12f, 24a–c and 32a–c.

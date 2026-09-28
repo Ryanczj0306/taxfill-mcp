@@ -1009,6 +1009,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JT3c: sched_1/sched_3 2026 equal their (empty) 2025 rows; f8606 2026 does NOT equal its 2025
     # row, because the draft splits 2025's one city_state_zip box into city/state/zip. Reviewed: its
     # selection is exactly the reviewed f1040 set (street, apt, city, state, zip; foreign_* excluded).
+    # JT3d: sched_b, sched_d, f8949, f8833 and f1040es 2026 each equal their 2025 rows.
     import json
     from pathlib import Path
 

@@ -2324,8 +2324,8 @@ def verify_form(
             projection-grade numbers is exactly the false assurance the marker
             exists to prevent.
     """
-    # JT0a: `rehearsal` (core-only) verifies a DRAFT pack's rehearsal fill in a provisional year; it
-    # never lifts the guard for a final pack.
+    # JT0a: `rehearsal` (core-only) verifies a rehearsal fill — a DRAFT pack, or (JT3d) a final pack in a
+    # planning-only year (filler.rehearsal_only); it never lifts the guard for a filing-grade fill.
     if rehearsal:
         from taxfill_core.filler import _require_rehearsable  # noqa: PLC0415
 

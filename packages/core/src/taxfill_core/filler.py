@@ -49,7 +49,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
 from pypdf.generic import NameObject
 
-from taxfill_core.knowledge import assert_pack_filing_grade
+from taxfill_core.knowledge import assert_pack_filing_grade, provisional_marker
 from taxfill_core.redact import redact
 from taxfill_core.schemas.formpack import FormPack, PackField
 
@@ -398,11 +398,23 @@ def _set_checkboxes(writer: PdfWriter, updates: dict[str, tuple[str, str]]) -> N
 REHEARSAL_STAMP = "REHEARSAL — DRAFT FORM — NOT FOR FILING"
 
 
+def rehearsal_only(pack: FormPack) -> bool:
+    """True when ``pack`` can be filled only in REHEARSAL mode: a DRAFT pack (JT0a), or — JT3d — a FINAL
+    pack whose year's knowledge pack is planning-only, such as the continuous-use Form 8833 (Rev.
+    12-2022) in the TY2026 set. A pack whose own final revision is its authority (JT0c, the 1040-ES)
+    fills normally, so it is never rehearsal-only."""
+    if pack.source_status == "draft":
+        return True
+    return (pack.filing_grade_basis == "year_knowledge"
+            and provisional_marker(pack.jurisdiction, pack.tax_year) is not None)
+
+
 def _require_rehearsable(pack: FormPack) -> None:
-    if pack.source_status != "draft":
+    if not rehearsal_only(pack):
         raise ValueError(
-            f"rehearsal=True is only for a DRAFT pack (source_status: draft); {pack.form} {pack.tax_year} is "
-            f"'{pack.source_status}' — fill a final pack normally"
+            f"rehearsal=True is only for a DRAFT pack (source_status: draft) or a final pack in a planning-only "
+            f"year; {pack.form} {pack.tax_year} is '{pack.source_status}' and fills normally — fill it without "
+            f"rehearsal"
         )
 
 
@@ -446,7 +458,8 @@ def fill_form(
 
     ``rehearsal`` (JT0a) is CORE-ONLY — no MCP tool passes it: a DRAFT pack (source_status draft) may be
     filled in a provisional year to rehearse the drafts-first authoring, every page stamped
-    "REHEARSAL — DRAFT FORM — NOT FOR FILING". It never unlocks a final pack's planning year.
+    "REHEARSAL — DRAFT FORM — NOT FOR FILING". JT3d: so may a FINAL pack whose year is planning-only
+    (:func:`rehearsal_only`). It never unlocks a filing-grade fill, and a pack that fills normally refuses it.
     """
     if rehearsal:
         _require_rehearsable(pack)

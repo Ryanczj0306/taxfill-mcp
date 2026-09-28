@@ -34,11 +34,14 @@ def test_list_all_packs():
     # plus the state packs, pinned separately below.
     # + the Phase J JT3a TY2026 DRAFT packs (2026-09-27: f1040 and sched_1a, mapped
     # drafts-first from irs-dft and filled only in rehearsal mode) = 113, + JT3b's
-    # sched_2, f8959 and f8889 drafts = 116, + JT3c's sched_1, sched_3 and f8606 = 119.
-    assert len([s for s in allf if s.jurisdiction == "federal"]) == 119
-    assert {s.form_key for s in allf if s.tax_year == 2026} == {
-        "f1040", "sched_1a", "sched_2", "f8959", "f8889", "sched_1", "sched_3", "f8606"}
-    assert {s.source_status for s in allf if s.tax_year == 2026} == {"draft"}
+    # sched_2, f8959 and f8889 drafts = 116, + JT3c's sched_1, sched_3 and f8606 = 119, + JT3d's
+    # sched_b / sched_d / f8949 drafts and the two 2026 FINALS (f8833, the continuous Rev. 12-2022;
+    # f1040es, on its own final revision) = 124.
+    assert len([s for s in allf if s.jurisdiction == "federal"]) == 124
+    ty2026 = {s.form_key: s.source_status for s in allf if s.tax_year == 2026}
+    assert {k for k, v in ty2026.items() if v == "draft"} == {
+        "f1040", "sched_1a", "sched_2", "f8959", "f8889", "sched_1", "sched_3", "f8606", "sched_b", "sched_d", "f8949"}
+    assert {k for k, v in ty2026.items() if v == "final"} == {"f8833", "f1040es"}
     assert {s.source_status for s in allf if s.tax_year != 2026} == {"final"}
 
     # State packs. 42 for TY2023 (the C1 resident sweep: 38 states/DC with an
@@ -58,7 +61,7 @@ def test_list_all_packs():
     assert len([s for s in states if s.tax_year == 2025]) == 5
     # Every discovered pack is one or the other, so the total is the sum. This
     # catches a pack landing under a third top-level jurisdiction unnoticed.
-    assert len(allf) == 119 + 61 == 180
+    assert len(allf) == 124 + 61 == 185
 
 
 def test_list_filters_by_jurisdiction_and_year():

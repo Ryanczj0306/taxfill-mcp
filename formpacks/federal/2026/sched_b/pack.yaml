@@ -1,0 +1,290 @@
+# Schedule B (Form 1040) — Interest and Ordinary Dividends — 2026 DRAFT.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040sb--dft.pdf,
+# footer "Created 4/7/26"). Its cover sheet: "there are never any changes to
+# the last posted draft of the form and the final revision of the form". PDF page
+# 1 is that cover sheet; the form is PDF pages 2 (one page). When the final posts at
+# irs-prior/f1040sb--2026.pdf, re-pin source_url, pdf_sha256, source_status final,
+# drop draft_created, and re-read the face. TY2026 is planning-only, so this pack
+# fills only in REHEARSAL mode. Phase J JT3d.
+#
+# PORTED 2026-09-27 from formpacks/federal/2025/sched_b/pack.yaml — read that pack's
+# header for the field-map notes; the comments below are its own and describe
+# the 2025 revision's history. MECHANICAL TOPOLOGY DIFF, 2025 final -> 2026
+# draft: every widget keeps its name, rect, /MaxLen and /AP states. Printed-face
+# diff: the year in the title block and in lines 7a and 8 ("At any time during 2026", "During 2026"), and 7b's "foreign country(ies)" (2025: "country(-ies)"). No line was renumbered, so relations and cross_form carry
+# over unchanged.
+
+form: "Schedule B (Form 1040)"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040sb--dft.pdf
+pdf_sha256: "aa6272f6b3b8a8c6a2aa6ef9d1069f1edb88fb9df4df60278d198da89cdfd93f"
+source_status: draft
+draft_created: "4/7/26"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # --- header ---
+  - line: name
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: identifying_number
+    field: "Page1[0].f1_02[0]"
+    type: text
+    maxlen: 11
+
+  # --- Part I, line 1: interest payer list (14 rows: name of payer, amount) ---
+  - line: interest_1.payer
+    field: "Page1[0].Line1_ReadOrder[0].f1_03[0]"
+    type: text
+  - line: interest_1.amount
+    field: "Page1[0].f1_04[0]"
+    type: money
+  - line: interest_2.payer
+    field: "Page1[0].f1_05[0]"
+    type: text
+  - line: interest_2.amount
+    field: "Page1[0].f1_06[0]"
+    type: money
+  - line: interest_3.payer
+    field: "Page1[0].f1_07[0]"
+    type: text
+  - line: interest_3.amount
+    field: "Page1[0].f1_08[0]"
+    type: money
+  - line: interest_4.payer
+    field: "Page1[0].f1_09[0]"
+    type: text
+  - line: interest_4.amount
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: interest_5.payer
+    field: "Page1[0].f1_11[0]"
+    type: text
+  - line: interest_5.amount
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: interest_6.payer
+    field: "Page1[0].f1_13[0]"
+    type: text
+  - line: interest_6.amount
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: interest_7.payer
+    field: "Page1[0].f1_15[0]"
+    type: text
+  - line: interest_7.amount
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: interest_8.payer
+    field: "Page1[0].f1_17[0]"
+    type: text
+  - line: interest_8.amount
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: interest_9.payer
+    field: "Page1[0].f1_19[0]"
+    type: text
+  - line: interest_9.amount
+    field: "Page1[0].f1_20[0]"
+    type: money
+  - line: interest_10.payer
+    field: "Page1[0].f1_21[0]"
+    type: text
+  - line: interest_10.amount
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: interest_11.payer
+    field: "Page1[0].f1_23[0]"
+    type: text
+  - line: interest_11.amount
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: interest_12.payer
+    field: "Page1[0].f1_25[0]"
+    type: text
+  - line: interest_12.amount
+    field: "Page1[0].f1_26[0]"
+    type: money
+  - line: interest_13.payer
+    field: "Page1[0].f1_27[0]"
+    type: text
+  - line: interest_13.amount
+    field: "Page1[0].f1_28[0]"
+    type: money
+  - line: interest_14.payer
+    field: "Page1[0].f1_29[0]"
+    type: text
+  - line: interest_14.amount
+    field: "Page1[0].f1_30[0]"
+    type: money
+
+  # --- Part I totals ---
+  - line: "2"            # Add the amounts on line 1
+    field: "Page1[0].f1_31[0]"
+    type: money
+  - line: "3"            # Excludable interest on series EE / I U.S. savings bonds (Form 8815)
+    field: "Page1[0].f1_32[0]"
+    type: money
+  - line: "4"            # Subtract line 3 from line 2 -> Form 1040/1040-SR line 2b
+    field: "Page1[0].f1_33[0]"
+    type: money
+
+  # --- Part II, line 5: ordinary dividend payer list (15 rows) ---
+  - line: dividend_1.payer
+    field: "Page1[0].ReadOrderControl[0].f1_34[0]"
+    type: text
+  - line: dividend_1.amount
+    field: "Page1[0].f1_35[0]"
+    type: money
+  - line: dividend_2.payer
+    field: "Page1[0].f1_36[0]"
+    type: text
+  - line: dividend_2.amount
+    field: "Page1[0].f1_37[0]"
+    type: money
+  - line: dividend_3.payer
+    field: "Page1[0].f1_38[0]"
+    type: text
+  - line: dividend_3.amount
+    field: "Page1[0].f1_39[0]"
+    type: money
+  - line: dividend_4.payer
+    field: "Page1[0].f1_40[0]"
+    type: text
+  - line: dividend_4.amount
+    field: "Page1[0].f1_41[0]"
+    type: money
+  - line: dividend_5.payer
+    field: "Page1[0].f1_42[0]"
+    type: text
+  - line: dividend_5.amount
+    field: "Page1[0].f1_43[0]"
+    type: money
+  - line: dividend_6.payer
+    field: "Page1[0].f1_44[0]"
+    type: text
+  - line: dividend_6.amount
+    field: "Page1[0].f1_45[0]"
+    type: money
+  - line: dividend_7.payer
+    field: "Page1[0].f1_46[0]"
+    type: text
+  - line: dividend_7.amount
+    field: "Page1[0].f1_47[0]"
+    type: money
+  - line: dividend_8.payer
+    field: "Page1[0].f1_48[0]"
+    type: text
+  - line: dividend_8.amount
+    field: "Page1[0].f1_49[0]"
+    type: money
+  - line: dividend_9.payer
+    field: "Page1[0].f1_50[0]"
+    type: text
+  - line: dividend_9.amount
+    field: "Page1[0].f1_51[0]"
+    type: money
+  - line: dividend_10.payer
+    field: "Page1[0].f1_52[0]"
+    type: text
+  - line: dividend_10.amount
+    field: "Page1[0].f1_53[0]"
+    type: money
+  - line: dividend_11.payer
+    field: "Page1[0].f1_54[0]"
+    type: text
+  - line: dividend_11.amount
+    field: "Page1[0].f1_55[0]"
+    type: money
+  - line: dividend_12.payer
+    field: "Page1[0].f1_56[0]"
+    type: text
+  - line: dividend_12.amount
+    field: "Page1[0].f1_57[0]"
+    type: money
+  - line: dividend_13.payer
+    field: "Page1[0].f1_58[0]"
+    type: text
+  - line: dividend_13.amount
+    field: "Page1[0].f1_59[0]"
+    type: money
+  - line: dividend_14.payer
+    field: "Page1[0].f1_60[0]"
+    type: text
+  - line: dividend_14.amount
+    field: "Page1[0].f1_61[0]"
+    type: money
+  - line: dividend_15.payer
+    field: "Page1[0].f1_62[0]"
+    type: text
+  - line: dividend_15.amount
+    field: "Page1[0].f1_63[0]"
+    type: money
+
+  # --- Part II total ---
+  - line: "6"            # Add the amounts on line 5 -> Form 1040/1040-SR line 3b
+    field: "Page1[0].f1_64[0]"
+    type: money
+
+  # --- Part III: Foreign Accounts and Trusts (required yes/no groups, P-003) ---
+  # NOTE (2025): c1_1 moved inside the new TagcorrectingSubform[0] wrapper.
+  - line: 7a.yes         # financial interest in / signature authority over a foreign account
+    field: "Page1[0].TagcorrectingSubform[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line7a
+    required: true
+  - line: 7a.no
+    field: "Page1[0].TagcorrectingSubform[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line7a
+  - line: 7a.fincen.yes  # "If 'Yes', are you required to file FinCEN Form 114?" — conditional, NOT required
+    field: "Page1[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line7a_fincen
+  - line: 7a.fincen.no
+    field: "Page1[0].c1_2[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line7a_fincen
+  - line: "7b"           # name(s) of foreign country(-ies), first write-in line
+    field: "Page1[0].f1_65[0]"
+    type: text
+  - line: 7b.continued   # second write-in line of 7b
+    field: "Page1[0].f1_66[0]"
+    type: text
+  - line: "8.yes"        # distribution from / grantor of / transferor to a foreign trust
+    field: "Page1[0].c1_3[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line8
+    required: true
+  - line: "8.no"
+    field: "Page1[0].c1_3[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line8
+
+# Form-face math. "2 == add the amounts on line 1" and "6 == add the
+# amounts on line 5" are also printed on the face but reference dotted
+# row ids (interest_1.amount ...), which the relation grammar cannot
+# express — see header comment.
+relations:
+  - "4 == 2 - 3"
+
+# Printed on the form face: line 4 -> Form 1040/1040-SR line 2b,
+# line 6 -> Form 1040/1040-SR line 3b.
+cross_form:
+  - "4 == f1040.2b"
+  - "6 == f1040.3b"
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only schedule: no signature block of its own, mailed inside
+# the parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

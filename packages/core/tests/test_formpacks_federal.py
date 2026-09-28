@@ -281,6 +281,12 @@ SCHED_D_SHADED_G_WIDGETS: dict[int, tuple[str, ...]] = {
         "Page1[0].Table_PartI[0].Row1a[0].f1_5[0]",
         "Page1[0].Table_PartII[0].Row8a[0].f1_25[0]",
     ),
+    # The 2026 draft (Phase J JT3d): /Ff re-read 2026-09-27 — the same two cells, the only
+    # ReadOnly widgets on the blank.
+    2026: (
+        "Page1[0].Table_PartI[0].Row1a[0].f1_5[0]",
+        "Page1[0].Table_PartII[0].Row8a[0].f1_25[0]",
+    ),
 }
 
 SCHED_D_PACK_PATHS = [path for path in PACK_PATHS if path.parent.name == "sched_d"]
@@ -364,7 +370,8 @@ def test_sched_d_never_maps_the_shaded_no_adjustment_g_cells(pack_path: Path, tm
     # unknown line keys before it opens the blank, so no PDF is needed here.
     for line in ("1a.g", "8a.g"):
         with pytest.raises(ValueError, match=r"unknown line key"):
-            fill_form(pack, {line: 99999}, tmp_path / "absent-blank.pdf", tmp_path / "out.pdf")
+            fill_form(pack, {line: 99999}, tmp_path / "absent-blank.pdf", tmp_path / "out.pdf",
+                      rehearsal=_needs_rehearsal(pack))
 
 
 @pytest.mark.network
@@ -463,12 +470,13 @@ def test_sched_e_yes_no_questions_are_grouped_and_reject_double_answers(
         # The guard itself: answering Yes AND No is now a hard error.
         with pytest.raises(ValueError, match=rf"checkbox group '{group_id}'"):
             fill_form(
-                pack, {f"{stem}.yes": True, f"{stem}.no": True}, stub, tmp_path / "out.pdf"
+                pack, {f"{stem}.yes": True, f"{stem}.no": True}, stub, tmp_path / "out.pdf",
+                rehearsal=_needs_rehearsal(pack),
             )
         # ...and exactly one answer is still accepted (no over-reach).
         for line in (f"{stem}.yes", f"{stem}.no"):
             with pytest.raises(ValueError, match="could not be parsed as a PDF"):
-                fill_form(pack, {line: True}, stub, tmp_path / "out.pdf")
+                fill_form(pack, {line: True}, stub, tmp_path / "out.pdf", rehearsal=_needs_rehearsal(pack))
 
 
 @pytest.mark.parametrize("pack_path", SCHED_E_PACK_PATHS, ids=_pack_id)
@@ -728,12 +736,12 @@ def test_f1116_one_of_n_sets_are_grouped_and_exclusive(pack_path: Path, tmp_path
         ("credit_claimed", "credit_claimed.paid", "credit_claimed.accrued"),
     ):
         with pytest.raises(ValueError, match=rf"checkbox group '{group}'"):
-            fill_form(pack, {a: True, b: True}, stub, tmp_path / "out.pdf")
+            fill_form(pack, {a: True, b: True}, stub, tmp_path / "out.pdf", rehearsal=_needs_rehearsal(pack))
     # ...and exactly one answer is still accepted (the guard is not over-broad):
     # it gets past the group check and dies on the unparseable stub instead.
     for line in ("category.passive", "category.lump_sum", "credit_claimed.accrued"):
         with pytest.raises(ValueError, match="could not be parsed as a PDF"):
-            fill_form(pack, {line: True}, stub, tmp_path / "out.pdf")
+            fill_form(pack, {line: True}, stub, tmp_path / "out.pdf", rehearsal=_needs_rehearsal(pack))
 
 
 @pytest.mark.parametrize("pack_path", F1116_PACK_PATHS, ids=_pack_id)
@@ -993,12 +1001,12 @@ def test_f8833_line5_is_grouped_while_the_two_bullets_are_deliberately_not(
 
     # The guard, proved by execution: Yes AND No is a hard error...
     with pytest.raises(ValueError, match="checkbox group 'line5'"):
-        fill_form(pack, {"5.yes": True, "5.no": True}, stub, tmp_path / "out.pdf")
+        fill_form(pack, {"5.yes": True, "5.no": True}, stub, tmp_path / "out.pdf", rehearsal=_needs_rehearsal(pack))
     # ...while either answer alone is accepted (it reaches the PDF parse and
     # fails there, which is as far as an unparseable stub can go).
     for line in ("5.yes", "5.no"):
         with pytest.raises(ValueError, match="could not be parsed as a PDF"):
-            fill_form(pack, {line: True}, stub, tmp_path / "out.pdf")
+            fill_form(pack, {line: True}, stub, tmp_path / "out.pdf", rehearsal=_needs_rehearsal(pack))
     # ...and BOTH bullets together is NOT an error: that is the printed
     # "one or both" case, and the whole reason they carry no group.
     with pytest.raises(ValueError, match="could not be parsed as a PDF"):
@@ -1007,6 +1015,7 @@ def test_f8833_line5_is_grouped_while_the_two_bullets_are_deliberately_not(
             {"disclosure.section_6114": True, "disclosure.dual_resident": True},
             stub,
             tmp_path / "out.pdf",
+            rehearsal=_needs_rehearsal(pack),
         )
 
 
@@ -1156,10 +1165,11 @@ def test_f8833_blank_is_the_rev_12_2022_layout_it_was_mapped_against(pack_path: 
 
 
 def _needs_rehearsal(pack: FormPack) -> bool:
-    """A DRAFT pack (JT0a) fills only in rehearsal mode — its year is planning-only, which
-    test_no_draft_packs_in_a_filing_grade_year enforces. A final pack fills normally: in a
-    filing-grade year, or in a provisional one on its own final revision (JT0c, the 1040-ES)."""
-    return pack.source_status == "draft"
+    """A draft pack, or a final pack in a planning-only year (JT3d, the TY2026 Form 8833), fills only in
+    rehearsal mode; a pack on its own final revision (JT0c, the 1040-ES) fills normally."""
+    from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
+
+    return rehearsal_only(pack)
 
 
 @pytest.mark.network
@@ -1174,7 +1184,7 @@ def test_pack_golden_roundtrip(pack_path: Path, tmp_path: Path):
 
     values = synthetic_values(pack)
     filled = tmp_path / f"{_pack_id(pack_path)}_filled.pdf"
-    # JT3a: a draft pack runs the round trip in REHEARSAL mode (every page stamped NOT FOR FILING).
+    # JT3a: a rehearsal-only pack runs the round trip in REHEARSAL mode (every page stamped NOT FOR FILING).
     rehearsal = _needs_rehearsal(pack)
     result = fill_form(pack, values, blank, filled, rehearsal=rehearsal)
     assert set(result.written), "the pack mapped no fillable lines"
@@ -1670,3 +1680,46 @@ def test_jt3c_the_2026_schedule_3_reserves_5b_and_adds_13e():
     for rule in f1040.cross_form:
         form_key, _, target = rule.split("==")[1].strip().partition(".")
         assert target in {f.line for f in _fed_pack(2026, form_key).fields}, rule
+
+
+# ── JT3d: the rest of Wave A — sched_b / sched_d / f8949 drafts, f8833 and f1040es finals ──
+
+
+def test_jt3d_rehearsal_only_covers_drafts_and_finals_of_a_planning_only_year():
+    from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
+
+    assert rehearsal_only(_fed_pack(2026, "sched_d"))                 # a draft
+    assert rehearsal_only(_fed_pack(2026, "f8833"))                   # a FINAL in the planning-only year
+    assert not rehearsal_only(_fed_pack(2026, "f1040es"))             # its own final revision is the authority
+    assert not rehearsal_only(_fed_pack(2025, "f8833"))               # the same revision in a filing-grade year
+
+
+def test_jt3d_the_2026_f8833_is_the_unchanged_rev_12_2022_pin_and_still_refuses_a_filing_grade_fill(tmp_path: Path):
+    from taxfill_core.knowledge import ProvisionalPackError  # noqa: PLC0415
+
+    old, new = _fed_pack(2025, "f8833"), _fed_pack(2026, "f8833")
+    assert (new.source_status, new.source_url, new.pdf_sha256) == ("final", old.source_url, old.pdf_sha256)
+    assert [(f.line, f.field) for f in old.fields] == [(f.line, f.field) for f in new.fields]
+    # The planning-only year refuses a normal fill before any value is read (no blank needed).
+    with pytest.raises(ProvisionalPackError):
+        fill_form(new, {}, tmp_path / "absent.pdf", tmp_path / "out.pdf")
+
+
+def test_jt3d_the_2026_f1040es_rebinds_every_voucher_by_position():
+    old, new = _fed_pack(2025, "f1040es"), _fed_pack(2026, "f1040es")
+    assert (new.source_status, new.filing_grade_basis) == ("final", "own_final_revision")
+    assert [f.line for f in old.fields] == [f.line for f in new.fields]
+    o, n = ({f.line: f.field for f in p.fields} for p in (old, new))
+    assert not {k for k in o if o[k] == n[k]}                         # all 56 names changed
+    # Printed top-to-bottom as 3, 2, 1 on pdf page 15; voucher 4 alone on page 14.
+    assert [n[f"voucher_{v}.amount"] for v in (3, 2, 1, 4)] == [
+        "Page15[0].f15_1[0]", "Page15[0].f15_15[0]", "Page15[0].f15_29[0]", "Page14[0].f14_1[0]"]
+
+
+@pytest.mark.parametrize("form_key", ["sched_b", "sched_d", "f8949"])
+def test_jt3d_the_identical_topology_drafts_keep_the_2025_map(form_key: str):
+    old, new = _fed_pack(2025, form_key), _fed_pack(2026, form_key)
+    assert new.source_status == "draft" and new.draft_created
+    assert [(f.line, f.field, f.type, f.on_state, f.group, f.maxlen) for f in old.fields] == [
+        (f.line, f.field, f.type, f.on_state, f.group, f.maxlen) for f in new.fields]
+    assert (old.relations, old.cross_form) == (new.relations, new.cross_form)

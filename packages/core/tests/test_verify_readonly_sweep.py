@@ -52,7 +52,7 @@ from pathlib import Path
 import pytest
 
 from taxfill_core.fetch import CACHE_DIR_ENV, _cache_path, compute_sha256, default_cache_dir
-from taxfill_core.filler import fill_form
+from taxfill_core.filler import fill_form, rehearsal_only
 from taxfill_core.schemas.formpack import FormPack, PackField, load_pack
 from taxfill_core.verify import (
     FilingItem,
@@ -149,7 +149,7 @@ def test_one_line_fill_verifies_with_zero_clipping_fails(pack_path: Path, tmp_pa
     blank = _cached_blank(pack)
     line, value = _one_plain_text_line(pack, blank)
     filled = tmp_path / "one_line.pdf"
-    rehearsal = pack.source_status == "draft"   # JT3a: a draft pack fills only in rehearsal mode
+    rehearsal = rehearsal_only(pack)   # JT3a/JT3d: a rehearsal-only pack fills only in rehearsal mode
     fill_form(pack, {line: value}, blank, filled, rehearsal=rehearsal)
     report = verify_form(pack, filled, rehearsal=rehearsal)
     fails = _clip_fails(report)
