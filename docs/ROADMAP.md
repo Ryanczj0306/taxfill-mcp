@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,902 tests** — offline 6,437 + live-.gov 465; derived
+Done and on `main` (**6,911 tests** — offline 6,446 + live-.gov 465; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2406,12 +2406,22 @@ not wait for any of this.
     - the part-year refusal at 246 days, and its lower total; the cumulative gate;
     - per-employer box 4 / box 6, and the w2s feeding IncomeSnapshot.
   - **Not built:** the wage bracket method's own tables (the percentage method is what automated payroll uses; the examples show the difference stays within $1), and the residency_classification auto-fill into employee_fica (fica_exempt stays the caller's per-employer judgment, as in employee_fica).
-- [ ] **JP5a — Underpayment penalty, regular method** (M; deps JF4) [critic: missing]
-  - **Why.** No op or knowledge covers Form 2210 (grep of calc.py and knowledge/federal 2025–2026). It is the only way to price the choice between accepting the penalty, bumping the W-4, and paying 1040-ES.
-  - **Law.** IRC 6654(a) adds an amount "determined by applying (1) the underpayment rate established under section 6621 … (2) to the amount of the underpayment, (3) for the period of the underpayment". The draft Form 2210 (2026) was Created 4/16/26; the draft Pub 505 (2026) is posted.
-  - **Build** `calc.underpayment_penalty`: required installments from JF4's safe-harbor inputs; withholding deemed ratable per §6654(g)(1) unless actual dates are elected; per-quarter §6621 rates from a new knowledge list.
-  - A quarter whose rate is not yet in the pack fails closed. The Q1-2027 rate is announced later — external.
-  - **Acceptance:** a Pub 505 / 2210-instructions worked example is reproduced; a missing-rate quarter refuses; op count +1.
+- [x] **JP5a — Underpayment penalty, regular method — DONE 2026-09-28** (M; deps JF4) [critic: missing]
+  - *As built:* calc op 38 `underpayment_penalty` (taxfill_core/penalty.py). It follows the statute's own mechanics, all quoted from uscode.house.gov:
+    - IRC 6654(b)(1)–(3): the underpayment, its period, and the FIFO "order in which such installments are required to be paid" — which is how Form 2210 Section A's line 14 compounds arrears;
+    - 6654(g)(1): ratable withholding, or all actual dates;
+    - the 6654(e)(1) $1,000 and 6654(h) January-31 exceptions.
+  - The per-year calendar is a new `tax.estimated_tax_penalty` block (due dates, period end, day count, rate periods).
+    - 2025: the Instructions for Form 2210 (2025) Penalty Worksheet's four periods, each × 0.07.
+    - 2026: the IRS quarterly table — Q2 6%, Q3 7%, Q4 7%, and Q1 2027 None, so the op fails closed.
+    - IRC 6621(b)(2)(B) is why period 4 keeps the Q1 rate through April 15 ("shall also apply during the first 15 days of the 4th month").
+    - sources.yaml's underpayment_penalty topic gains the IRS quarterly-rate page ("quarterly interest rates" now routes there instead of missing onto nonresident_fdap).
+  - **Tests** (test_underpayment_penalty.py) reproduce the instructions' own worked facts:
+    - Example 3's line-1b allocation and Example 4's "15"/"61" days ($204.05 total);
+    - Example 2's "56 days";
+    - Table 2's Chart of Total Days (76/92/92/105; 15/92/92/105; 15/92/105; 90);
+    - the 2026 6% quarter and the Q1-2027 refusal; the exceptions.
+  - Op count 38.
 - [ ] **JP5b — The annualized income installment method (Schedule AI)** (M; deps JP5a)
   - IRC 6654(d)(2)(A): "if the individual establishes that the annualized income installment is less than the amount determined under paragraph (1)- (i) the amount of such required installment shall be the annualized income installment".
   - Implement the draft Form 2210 (2026) Schedule AI periods and factors, read off the draft face, labeled draft.

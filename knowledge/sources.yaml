@@ -1296,6 +1296,15 @@ federal:
           Trusts: the penalty computation, the short and regular methods, and
           the annualized income installment method (Schedule AI).
         cadence: annual (per tax year)
+      - url: https://www.irs.gov/payments/quarterly-interest-rates
+        answers: >-
+          IRS Quarterly interest rates: the IRC 6621 underpayment rate for each
+          calendar quarter ("Underpayment (corporate and non-corporate)") with
+          the Internal Revenue Bulletin that announced it — the rates the
+          Form 2210 penalty worksheet applies. For estimated tax, IRC
+          6621(b)(2)(B) keeps the 3rd month's rate "during the first 15 days of
+          the 4th month following such taxable year".
+        cadence: quarterly
 
     # Phase J item JF6a: the registry behind the top-level `form_lines` pack
     # block. Before it existed, get_sources("form line numbers"), ("which line")

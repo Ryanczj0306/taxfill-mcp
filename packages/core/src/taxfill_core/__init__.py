@@ -130,6 +130,7 @@ from taxfill_core.schemas.formpack import FormPack, PackField, load_pack
 from taxfill_core.schemas.profile import Answer, Profile, Provenance
 from taxfill_core.sources import Source, SourcesResult, get_sources
 from taxfill_core.statescope import StateFiling, StateScopeResult, state_scope
+from taxfill_core.penalty import UnderpaymentPenaltyResult, underpayment_penalty
 from taxfill_core.withholding import WithholdingProjectionResult, withholding_projection
 from taxfill_core.verify import (
     FilingItem,
@@ -231,6 +232,8 @@ __all__ = [
     "dependent_care_credit",
     "employee_fica",
     "withholding_projection",
+    "underpayment_penalty",
+    "UnderpaymentPenaltyResult",
     "WithholdingProjectionResult",
     "espp_disposition",
     "estimated_tax_safe_harbor",

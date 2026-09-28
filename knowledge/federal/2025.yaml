@@ -265,6 +265,33 @@ tax:
     additional_medicare_withholding_rate: 0.009
     additional_medicare_withholding_threshold: 200000
 
+  # ── JP5a: the IRC 6654 underpayment-penalty calendar (read 2026-09-28) ──────
+  # The Worksheet for Form 2210, Part III, Section B (Penalty Worksheet) in the
+  # Instructions for Form 2210 (2025) prints four rate periods, each priced
+  # "Underpayment on line 1a x Number of days / 365 x 0.07". The rates agree with
+  # the IRS quarterly table (7% for every 2025 quarter and for Q1 2026), and
+  # IRC 6621(b)(2)(B) is why period 4 runs to April 15 at the Q1 rate: "the Federal
+  # short-term rate which applies during the 3rd month following such taxable year
+  # shall also apply during the first 15 days of the 4th month following such
+  # taxable year" (the Q2 2026 rate is 6%, but not for these 15 days).
+  estimated_tax_penalty:
+    citation:
+      source: >-
+        IRC 6654(a) ("an amount determined by applying- (1) the underpayment rate established under
+        section 6621, (2) to the amount of the underpayment, (3) for the period of the underpayment"),
+        6654(b)(2)-(3) and (c)(2); IRC 6621(b)(2)(B); Instructions for Form 2210 (2025), Worksheet for
+        Form 2210, Part III, Section B—Figure the Penalty (Penalty Worksheet) and Table 2, Chart of Total
+        Days.
+      url: "https://www.irs.gov/pub/irs-prior/i2210--2025.pdf"
+    installment_due_dates: ['2025-04-15', '2025-06-15', '2025-09-15', '2026-01-15']
+    period_end: '2026-04-15'
+    day_count: 365
+    rate_periods:
+      - {start: '2025-04-16', end: '2025-06-30', rate: 0.07, source: "Rate Period 1: April 16, 2025-June 30, 2025 (x 0.07)"}
+      - {start: '2025-07-01', end: '2025-09-30', rate: 0.07, source: "Rate Period 2: July 1, 2025-September 30, 2025 (x 0.07)"}
+      - {start: '2025-10-01', end: '2025-12-31', rate: 0.07, source: "Rate Period 3: October 1, 2025-December 31, 2025 (x 0.07)"}
+      - {start: '2026-01-01', end: '2026-04-15', rate: 0.07, source: "Rate Period 4: January 1, 2026-April 15, 2026 (x 0.07); IRC 6621(b)(2)(B)"}
+
   # ── H4 projection parameters ──────────────────────────────────────────────
   # The IRC 6654(d) safe harbor, transcribed from Form 1040-ES (2025) page 1
   # ("Who Must Make Estimated Tax Payments", General Rule + Special Rules) and

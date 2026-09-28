@@ -335,6 +335,32 @@ tax:
     additional_medicare_withholding_rate: 0.009
     additional_medicare_withholding_threshold: 200000
 
+  # ── JP5a: the IRC 6654 underpayment-penalty calendar (read 2026-09-28) ──────
+  # The 2026 Instructions for Form 2210 are not posted (irs-dft/i2210--dft.pdf
+  # still serves the 2025 edition), so the four periods follow the 2025
+  # worksheet's shape (IRC 6654(c)(2) due dates; 6621(b)(2)(B) for period 4) and
+  # each rate comes from the IRS quarterly table, "Current year 2026 quarterly
+  # interest rates", Underpayment (corporate and non-corporate): 1st quarter 7%
+  # (IRB 2025-48), 2nd quarter 6% (IRB 2026-8), 3rd quarter 7% (IRB 2026-22),
+  # 4th quarter 7% (IRB 2026-36; IR "Interest rates remain the same for the
+  # fourth quarter of 2026": "7% for underpayments"). Period 4 takes the Q1 2027
+  # rate, which the IRS announces in November 2026 — None until then, so the
+  # op fails closed on any underpayment still unpaid on December 31, 2026.
+  estimated_tax_penalty:
+    citation:
+      source: >-
+        IRC 6654(a)-(c); IRC 6621(b)(2)(B); IRS, Quarterly interest rates (irs.gov/payments/
+        quarterly-interest-rates), "Current year 2026 quarterly interest rates", read 2026-09-28.
+      url: "https://www.irs.gov/payments/quarterly-interest-rates"
+    installment_due_dates: ['2026-04-15', '2026-06-15', '2026-09-15', '2027-01-15']
+    period_end: '2027-04-15'
+    day_count: 365
+    rate_periods:
+      - {start: '2026-04-16', end: '2026-06-30', rate: 0.06, source: "2nd quarter (Apr-Jun) 2026 underpayment rate 6% (IRB 2026-8)"}
+      - {start: '2026-07-01', end: '2026-09-30', rate: 0.07, source: "3rd quarter (Jul-Sep) 2026 underpayment rate 7% (IRB 2026-22)"}
+      - {start: '2026-10-01', end: '2026-12-31', rate: 0.07, source: "4th quarter (Oct-Dec) 2026 underpayment rate 7% (IRB 2026-36)"}
+      - {start: '2027-01-01', end: '2027-04-15', rate: null, source: "the 1st quarter 2027 rate, not announced as of 2026-09-28 (IRC 6621(b)(2)(B) carries it to April 15, 2027)"}
+
   # ── H4 projection parameters (statutory, both citable to PUBLISHED 2026
   # documents — the same class as rate_schedules, NOT carried forward) ──────
   estimated_tax_safe_harbor:

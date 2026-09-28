@@ -1410,6 +1410,54 @@ class PayrollWithholdingParams(BaseModel):
     rounding: str = Field(description="The rounding rule, quoted.")
 
 
+class PenaltyRatePeriod(BaseModel):
+    """One rate period of the Form 2210 penalty worksheet: the IRC 6621 underpayment rate from start to end."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    start: date = Field(description="First day priced at this rate.")
+    end: date = Field(description="Last day priced at this rate (inclusive).")
+    rate: Decimal | None = Field(
+        description="The IRC 6621(a)(2) underpayment rate as a decimal (0.07). None: the Secretary has not announced "
+                    "it yet — a computation that reaches this period FAILS CLOSED, never borrows a neighbour.")
+    source: str = Field(description="Where the rate is printed (the worksheet, a revenue ruling, the IRS rate page).")
+
+    _exact = field_validator("rate", mode="before")(_as_exact_decimal)
+
+
+class EstimatedTaxPenaltyParams(BaseModel):
+    """The IRC 6654 underpayment penalty's calendar for one taxable year (JP5a): the four installment due dates,
+    the end of the period of underpayment and the rate periods (Form 2210 Part III Section B's worksheet)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    installment_due_dates: list[date] = Field(
+        min_length=4, max_length=4,
+        description="IRC 6654(c)(2): April 15, June 15, September 15 and January 15 of the following year, as the "
+                    "Form 2210 worksheet columns (a)-(d) print them.")
+    period_end: date = Field(
+        description="IRC 6654(b)(2)(A): 'the 15th day of the 4th month following the close of the taxable year'.")
+    day_count: int = Field(gt=0, description="The worksheet's divisor ('Number of days ... / 365').")
+    rate_periods: list[PenaltyRatePeriod] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _periods_tile_the_window(self) -> "EstimatedTaxPenaltyParams":
+        from datetime import timedelta  # noqa: PLC0415
+
+        dues = self.installment_due_dates
+        if dues != sorted(dues):
+            raise ValueError("estimated_tax_penalty: installment_due_dates must be in order")
+        periods = self.rate_periods
+        if periods[0].start != dues[0] + timedelta(days=1) or periods[-1].end != self.period_end:
+            raise ValueError("estimated_tax_penalty: rate_periods must run from the day after the first due date "
+                             "to period_end")
+        for a, b in zip(periods, periods[1:]):
+            if b.start != a.end + timedelta(days=1):
+                raise ValueError(f"estimated_tax_penalty: rate period {a.end} -> {b.start} leaves a gap or overlaps")
+        return self
+
+
 class EstimatedTaxSafeHarborParams(BaseModel):
     """IRC 6654(d) required-annual-payment parameters (Form 1040-ES, 'General Rule').
 
@@ -2147,6 +2195,8 @@ class TaxKnowledge(BaseModel):
     # Phase H item H4: projection-mode parameters. Optional so earlier packs
     # still load; the ops fail closed prescriptively when a year lacks them.
     estimated_tax_safe_harbor: EstimatedTaxSafeHarborParams | None = None
+    # Phase J item JP5a: the IRC 6654 penalty calendar (calc op underpayment_penalty).
+    estimated_tax_penalty: EstimatedTaxPenaltyParams | None = None
     supplemental_withholding: SupplementalWithholdingParams | None = None
 
     @model_validator(mode="after")

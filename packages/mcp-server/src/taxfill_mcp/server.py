@@ -312,7 +312,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     """Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
-    treaty_benefit, schedule_1a_deductions, charitable_deduction, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
+    treaty_benefit, schedule_1a_deductions, charitable_deduction, employee_fica, estimated_tax_safe_harbor,
+    underpayment_penalty, annualize_ytd,
     contribution_limits, elective_deferral_room, ira_net_income_attributable, ira_recharacterization,
     ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
     ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
@@ -466,6 +467,18 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       wages withheld as one payment under the W-4); 37% is mandatory only on supplemental wages over
       $1,000,000. Hire status is not the test; project the bonus withholding by the method the employer
       actually uses — at the flat rate a higher-bracket filer under-withholds on every bonus)
+    - underpayment_penalty: args {required_installments? (the four Form 2210 line-10 amounts) |
+      required_annual_payment? (25% each, IRC 6654(d)(1)(A) — take it from estimated_tax_safe_harbor),
+      payments?: [{date, amount}] (estimated payments, a prior-year overpayment dated the first due date,
+      the balance paid with the return), withholding? (deemed paid in equal parts on the four due dates,
+      IRC 6654(g)(1)) | withholding_dates?: [{date, amount}] (the actual-dates election, all amounts),
+      tax_after_withholding? (under $1,000 = the 6654(e)(1) exception), return_filed?,
+      paid_in_full_with_return? (by January 31 = no 4th-installment penalty, 6654(h)), year} (JP5a: Form
+      2210 Part III regular method — payments credited to the earliest unpaid installment (6654(b)(3)),
+      each late portion priced per day to the payment date or April 15 at the rate period's IRC 6621
+      underpayment rate over 365 (the year's knowledge calendar; April 1-15 keeps the Q1 rate, 6621(b)(2)(B));
+      a period whose rate is not announced yet FAILS CLOSED. Returns the Section A columns, the priced
+      pieces and line 19)
     - annualize_ytd: args {ytd_amount, through, year} (project a YTD paystub figure to full-year by
       calendar-day proration — the deterministic home for the one arithmetic step every projection
       needs. ASSUMES LEVEL PAY: annualize each status segment separately, never annualize one-time
@@ -788,6 +801,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_withholding_projection(**args)), args)
     if op == "estimated_tax_safe_harbor":
         return _stamp_provisional(_dump(_estimated_tax_safe_harbor(**args)), args)
+    if op == "underpayment_penalty":
+        from taxfill_core.penalty import underpayment_penalty as _underpayment_penalty  # noqa: PLC0415
+
+        return _stamp_provisional(_dump(_underpayment_penalty(**args)), args)
     if op == "annualize_ytd":
         return _dump(_annualize_ytd(**args))
     if op == "contribution_limits":
@@ -825,7 +842,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
         f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
-        f"charitable_deduction, employee_fica, withholding_projection, estimated_tax_safe_harbor, annualize_ytd, "
+        f"charitable_deduction, employee_fica, withholding_projection, estimated_tax_safe_harbor, "
+        f"underpayment_penalty, annualize_ytd, "
         f"contribution_limits, "
         f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, "
         f"roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, "
