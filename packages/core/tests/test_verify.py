@@ -1005,6 +1005,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # So the diff was purely 10 ADDED rows: zero removed, zero existing row changed.
     # Phase J JT3a (2026-09-27) did the same for the 2026 f1040 and sched_1a drafts: each equals its
     # 2025 row (the five mailing_address lines; none), so 2 ADDED rows.
+    # JT3b added the 2026 sched_2, f8959 and f8889 drafts the same way (each empty, as in 2025).
     import json
     from pathlib import Path
 

@@ -1,0 +1,192 @@
+# Form 8889 (2026) — Health Savings Accounts (HSAs) — DRAFTS-FIRST.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f8889--dft.pdf,
+# footer "Form 8889 (2026) Created 4/30/26"). Its cover sheet: "there are never
+# any changes to the last posted draft of the form and the final revision of the
+# form". PDF page 1 is that cover sheet; the form is PDF page 2. When the final
+# posts at irs-prior/f8889--2026.pdf, re-pin source_url, pdf_sha256,
+# source_status final, drop draft_created, and re-read the face. TY2026 is
+# planning-only, so this pack fills only in REHEARSAL mode. ATTACHMENT-ONLY
+# (Attachment Sequence No. 52): no signature block; mailed in the parent
+# return's envelope.
+#
+# PORTED 2026-09-27 from formpacks/federal/2025/f8889/pack.yaml (read that
+# pack's header for the form's three jobs, the worked examples, and why
+# cross_form is empty). Phase J JT3b.
+#
+# MECHANICAL TOPOLOGY DIFF, 2025 final -> 2026 draft: the same 27 widgets under
+# the same 27 names, with the same /MaxLen and /AP states; 26 rects identical and
+# the SSN box f1_2 1pt narrower. What changed on the printed face:
+#   1. The year in the row text of lines 1, 2, 3, 4, 6, 7, 9 and 14a (2026).
+#   2. LINE 3's figures: "enter $4,400 ($8,750 for family coverage)" (2025:
+#      $4,300 / $8,550) — the knowledge pack's 2026 hsa block.
+#   3. The Schedule 2 destinations follow Schedule 2's 2026 renumbering: 17b
+#      "Also include this amount in the total on Schedule 2 (Form 1040), Part II,
+#      line 13c" and 21 "... line 13d" (2025: 17c and 17d).
+#   4. The sub-lines now print their full designators: "14b", "14c", "17b"
+#      (2025: "b", "c", "b").
+# Nothing else moved: lines 13, 16 and 20 print the same text as 2025, so the
+# relations carry over unchanged. Quotes from the Instructions for Form 8889
+# below are the 2025 instructions; the 2026 instructions are not posted.
+
+form: "8889"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f8889--dft.pdf
+pdf_sha256: "c94550b7d4b735b11e9901c5dbff5dab0aa6dcbbefab04864c61cd5275cafec8"
+source_status: draft
+draft_created: "4/30/26"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header ---------------------------------------------------------------
+  - line: "name"                    # "Name(s) shown on Form 1040, 1040-SR, or 1040-NR"
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "identifying_number"      # "Social security number of HSA beneficiary. If both spouses have HSAs, see instructions." — plain box, NOT a comb
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 11                      # the widget's own /MaxLen (fits a dashed SSN); unchanged from 2025
+    format: ssn_digits_only         # digits only keeps cross-form identity values consistent and can never overflow (P-001)
+
+  # ---- Part I: HSA Contributions and Deduction (printed lines 1-13) ---------
+  # "See the instructions before completing this part. If you are filing jointly
+  #  and both you and your spouse each have separate HSAs, complete a separate
+  #  Part I for each spouse."
+  #
+  # Line 1: "Check the box to indicate your coverage under a high-deductible
+  # health plan (HDHP) during 2026. See instructions." — ONE question, TWO
+  # mutually exclusive options on SEPARATE /Btn fields (P-008): the shared
+  # `group: line1` is the only thing that stops a Self-only + Family return.
+  - line: "1.self_only"             # printed "Self-only" box (left)
+    field: "Page1[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line1
+  - line: "1.family"                # printed "Family" box (right)
+    field: "Page1[0].c1_1[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line1
+  - line: "2"                       # "HSA contributions you made for 2026 (or those made on your behalf), including those made by the unextended due date of your tax return that were for 2026. Do not include employer contributions, contributions through a cafeteria plan, or rollovers. See instructions"
+    field: "Page1[0].f1_3[0]"
+    type: money
+  - line: "3"                       # "If you were under age 55 at the end of 2026 and, on the first day of every month during 2026, you were, or were considered, an eligible individual with the same coverage, enter $4,400 ($8,750 for family coverage). All others, see the instructions for the amount to enter" — the two figures ROLLED from 2025's $4,300/$8,550 and match the knowledge pack's 2026 hsa block (Rev. Proc. 2025-19: self-only $4,400, family $8,750). They are printed in the ROW TEXT, not in the widget (f1_4[0] carries no /V on the draft either), so this line stays mapped and writable
+    field: "Page1[0].f1_4[0]"
+    type: money
+  - line: "4"                       # "Enter the amount you and your employer contributed to your Archer MSAs for 2026 from Form 8853, lines 1 and 2. If you or your spouse had family coverage under an HDHP at any time during 2026, also include any amount contributed to your spouse's Archer MSAs"
+    field: "Page1[0].f1_5[0]"
+    type: money
+  - line: "5"                       # "Subtract line 4 from line 3. If zero or less, enter -0-"
+    field: "Page1[0].f1_6[0]"
+    type: money
+  - line: "6"                       # "Enter the amount from line 5. But if you and your spouse each have separate HSAs and had family coverage under an HDHP at any time during 2026, see the instructions for the amount to enter" — conditional copy with a spousal-allocation leg, so no relation
+    field: "Page1[0].f1_7[0]"
+    type: money
+  - line: "7"                       # "If you were age 55 or older at the end of 2026, married, and you or your spouse had family coverage under an HDHP at any time during 2026, enter your additional contribution amount. See instructions" (the instructions' Additional Contribution Amount Worksheet, $1,000 x months eligible / 12 — no relation)
+    field: "Page1[0].f1_8[0]"
+    type: money
+  - line: "8"                       # "Add lines 6 and 7"
+    field: "Page1[0].f1_9[0]"
+    type: money
+  - line: "9"                       # "Employer contributions made to your HSAs for 2026" — INSET box (x 410-482), not the main amount column; the far-right cell on this row is shaded and holds no widget. (Instructions' Employer Contribution Worksheet — no relation.)
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: "10"                      # "Qualified HSA funding distributions" — INSET box, same as line 9. A trustee-to-trustee IRA-to-HSA transfer; NOT the same year's line 19 (see the 2025 pack's header)
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: "11"                      # "Add lines 9 and 10"
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "12"                      # "Subtract line 11 from line 8. If zero or less, enter -0-"
+    field: "Page1[0].f1_13[0]"
+    type: money
+  - line: "13"                      # "HSA deduction (see instructions)" — the WHOLE printed row in this revision. The 2023 face read "Enter the smaller of line 2 or line 12 here and on Schedule 1 (Form 1040), Part II, line 13" and the 2023 pack declares "13 == min(2, 12)"; that arithmetic left the face in the 2024 revision and the replacement instruction is conditional ("Generally, ...", plus the Form 5329 line-43 prior-year-excess add-back), so NO relation is declared here. The Schedule 1 leg is also ADDITIVE across spouses' Forms 8889, so no cross_form rule either (see the 2025 pack's header). The 2023 "Caution: If line 2 is more than line 13 ..." row no longer exists on the face.
+    field: "Page1[0].f1_14[0]"
+    type: money
+
+  # ---- Part II: HSA Distributions (printed lines 14a-17b) ------------------
+  # "If you are filing jointly and both you and your spouse each have separate
+  #  HSAs, complete a separate Part II for each spouse."
+  # The 2026 draft keeps every 2025 widget position (see the header above).
+  - line: "14a"                     # "Total distributions you received in 2026 from all HSAs (see instructions)" — Form 1099-SA box 1
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "14b"                     # "14b Distributions included on line 14a that you rolled over to another HSA. Also include any excess contributions (and the earnings on those excess contributions) included on line 14a that were withdrawn by the due date of your return. See instructions"
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "14c"                     # "14c Subtract line 14b from line 14a"
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "15"                      # "Qualified medical expenses paid using HSA distributions (see instructions)"
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: "16"                      # "Taxable HSA distributions. Subtract line 15 from line 14c. If zero or less, enter -0-. Also, include this amount in the total on Schedule 1 (Form 1040), Part I, line 8f"
+    field: "Page1[0].f1_19[0]"
+    type: money
+  - line: "17a"                     # "If any of the distributions included on line 16 meet any of the Exceptions to the Additional 20% Tax (see instructions), check here" — printed line 17a IS the checkbox; the cell to its right is shaded and holds no widget. Lone flag, so no `group`.
+    field: "Page1[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "17b"                     # "17b Additional 20% tax (see instructions). Enter 20% (0.20) of the distributions included on line 16 that are subject to the additional 20% tax. Also include this amount in the total on Schedule 2 (Form 1040), Part II, line 13c" — the base is a SUBSET of line 16, so no relation (see the 2025 pack's header)
+    field: "Page1[0].f1_20[0]"
+    type: money
+
+  # ---- Part III: Income and Additional Tax for Failure To Maintain HDHP
+  # ---- Coverage (printed lines 18-21) — the testing-period recapture
+  # "If you are filing jointly and both you and your spouse each have separate
+  #  HSAs, complete a separate Part III for each spouse."
+  - line: "18"                      # "Last-month rule" — the contributions allowed only BY the last-month rule, recaptured because the testing period was blown (prior-year worksheet, no relation)
+    field: "Page1[0].f1_21[0]"
+    type: money
+  - line: "19"                      # "Qualified HSA funding distribution" — the recaptured line-10 distribution, reported in the year eligibility FAILED, which is often a LATER year than the distribution: not equal to this year's line 10 (see the 2025 pack's header)
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: "20"                      # "Total income. Add lines 18 and 19. Include this amount on Schedule 1 (Form 1040), Part I, line 8f" — line 16 lands on 8f too, so the Schedule 1 leg is additive: no cross_form rule
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "21"                      # "Additional tax. Multiply line 20 by 10% (0.10). Include this amount in the total on Schedule 2 (Form 1040), Part II, line 13d"
+    field: "Page1[0].f1_24[0]"
+    type: money
+
+relations:
+  # Part I
+  - "5 == max(0, 3 - 4)"      # "5 Subtract line 4 from line 3. If zero or less, enter -0-"
+  - "8 == 6 + 7"              # "8 Add lines 6 and 7"
+  - "11 == 9 + 10"            # "11 Add lines 9 and 10"
+  - "12 == max(0, 8 - 11)"    # "12 Subtract line 11 from line 8. If zero or less, enter -0-"
+  # NO "13 == min(2, 12)" — the 2023 pack declares it because the 2023 row
+  # printed "Enter the smaller of line 2 or line 12"; the 2026 row, like 2025, prints only
+  # "13 HSA deduction (see instructions)". Beyond the missing printed math, the
+  # replacement instruction is conditional ("Generally, enter the smaller of
+  # line 2 or line 12 ...", Instructions for Form 8889 (2025), Line 13) and the
+  # Form 5329 Part VII line-43 prior-year-excess add-back makes the equality
+  # FALSE for a real filer: reproduced at FAIL "left side = 4300, right side =
+  # 3000 (difference +1300)" on worked example (D) in the 2025 pack's header.
+  # Part II
+  - "14c == 14a - 14b"        # "14c Subtract line 14b from line 14a." No floor is printed
+  - "16 == max(0, 14c - 15)"  # "16 Taxable HSA distributions. Subtract line 15 from line 14c. If zero or less, enter -0-"
+  # Part III
+  - "20 == 18 + 19"           # "20 Total income. Add lines 18 and 19"
+  - "21 == 20 * 0.10"         # "21 Additional tax. Multiply line 20 by 10% (0.10)"
+
+# Deliberately empty. All four surviving printed parent-return citations (16 and
+# 20 -> Schedule 1 line 8f; 17b -> Schedule 2 line 13c; 21 -> Schedule 2 line
+# 13d on the 2026 draft), plus line 13's now instructions-only Schedule 1 leg, are ADDITIVE, not
+# equalities — two lines of this form share Schedule 1 line 8f, and the
+# instructions say verbatim to "Combine the amounts on line 13 of both Forms
+# 8889" on a joint return. See the header.
+cross_form: []
+
+identity_fields: [name, identifying_number]
+# identifying_number is PER PERSON on this form, not per filing: Form 8889's box is printed "Social security number of HSA beneficiary",
+# so on a joint return it legitimately carries the SPOUSE's SSN while the 1040
+# carries the primary filer's. Declared 2026-08-26 after verify_filing was
+# reproduced FAILing that correct arrangement; verify now reports a difference
+# as SKIPPED with both values printed instead of rejecting the return.
+identity_per_person: [identifying_number]
+
+# Attachment-only form (Attachment Sequence No. 52): no signature block of its
+# own; mailed inside the parent return's envelope (formpacks/CONVENTIONS.md).
+signature: null
+mailing: null

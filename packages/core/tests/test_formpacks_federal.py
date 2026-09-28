@@ -1547,3 +1547,79 @@ def test_jt3a_the_2026_schedule_1a_maps_the_redesigned_face():
             assert lines[f"28{row}.{q}.yes"].group == lines[f"28{row}.{q}.no"].group == f"28{row}_{q}"
     assert "44 == 15 + 27 + 36 + 43" in pack.relations
     assert "44 == f1040.13a" in pack.cross_form and "1 == f1040.11b" in pack.cross_form
+
+
+# ── JT3b: the 2026 Wave A draft packs — Schedule 2, Form 8959, Form 8889 ─────
+
+
+def test_jt3b_the_2026_schedule_2_keys_follow_the_renumbered_face():
+    pack = _fed_pack(2026, "sched_2")
+    assert (pack.source_status, pack.draft_created) == ("draft", "4/27/26")
+    lines = {f.line: f for f in pack.fields}
+    assert len(lines) == 68
+    # Section A 13a-13o/13z (2025 17a-17o/17z), Section B 16a-c / 17a-d / 18 / 19a-c, Section C 21.
+    assert {f"13{c}" for c in "abcdefghijklmnoz"} | {"16a", "16b", "16c", "17a", "17b", "17c", "17d", "18",
+                                                    "19a", "19b", "19c", "20", "21"} <= set(lines)
+    assert not {"17e", "17z", "17p", "17q"} & set(lines)
+    # TRAP: 2026 line 5 is the IRA additional tax (2025 line 8) and carries its not-required box.
+    assert lines["5.not_required"].field == "Page1[0].c1_6[0]"
+    for rule in ("14 == sum(13a..13z)", "15 == 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 14",
+                 "20 == 16c + 17d + 18 + 19c", "21 == 15 + 20"):
+        assert rule in pack.relations
+    # The Form 1040's Schedule 2 legs now resolve against this pack.
+    assert {"17 == sched_2.3", "23 == sched_2.21"} <= set(_fed_pack(2026, "f1040").cross_form)
+
+
+def test_jt3b_the_2026_f8959_reorders_its_parts_under_the_same_field_names():
+    old, new = _fed_pack(2025, "f8959"), _fed_pack(2026, "f8959")
+    assert (new.source_status, new.draft_created) == ("draft", "5/27/26")
+    # The same 26 widgets in the same line order: only the MEANING of lines 8-18 moved.
+    assert [(f.line, f.field) for f in old.fields] == [(f.line, f.field) for f in new.fields]
+    # 2025: SE in Part II (8-13), RRTA in Part III (14-17), one total on line 18 -> Schedule 2 line 11.
+    assert "18 == 7 + 13 + 17" in old.relations and old.cross_form == ["18 == sched_2.11"]
+    # 2026: RRTA in Part II (8-11), the wages+RRTA total on 12 -> Schedule 2 line 17b, SE in Part IV (13-18).
+    for rule in ("10 == max(0, 8 - 9)", "11 == 10 * 0.009", "12 == 7 + 11", "15 == 4",
+                 "17 == max(0, 13 - 16)", "18 == 17 * 0.009"):
+        assert rule in new.relations
+    assert new.cross_form == ["12 == sched_2.17b", "18 == sched_2.11"]
+    assert "18 == 7 + 13 + 17" not in new.relations
+
+
+def test_jt3b_the_2026_f8959_math_holds_on_a_demo_wage_and_se_return():
+    # Hypothetical demo filer, single: $230,000 of Medicare wages and $40,000 of SE income.
+    values = {"1": 230_000, "4": 230_000, "5": 200_000, "6": 30_000, "7": 270, "12": 270,
+              "13": 40_000, "14": 200_000, "15": 230_000, "16": 0, "17": 40_000, "18": 360,
+              "19": 3_605, "20": 230_000, "21": 3_335, "22": 270, "24": 270}
+    checks = relations(_fed_pack(2026, "f8959"), values)
+    assert checks and all(c.status == "PASS" for c in checks), [c.detail for c in checks if c.status != "PASS"]
+
+
+def test_jt3b_the_2026_f8889_is_the_2025_map_with_the_draft_metadata():
+    old, new = _fed_pack(2025, "f8889"), _fed_pack(2026, "f8889")
+    assert (new.source_status, new.draft_created) == ("draft", "4/30/26")
+    assert [(f.line, f.field, f.type, f.on_state, f.group) for f in old.fields] == [
+        (f.line, f.field, f.type, f.on_state, f.group) for f in new.fields]
+    assert old.relations == new.relations and new.cross_form == []
+
+
+_FORM_LINES_PACK = {"f1040": "f1040", "f1040nr": "f1040nr", "sched1": "sched_1", "sched1a": "sched_1a",
+                    "sched2": "sched_2", "sched3": "sched_3", "sched_se": "sched_se", "f8959": "f8959",
+                    "f8889": "f8889", "f5329": "f5329"}
+
+
+@pytest.mark.parametrize("year", sorted({int(p.parent.parent.name) for p in PACK_PATHS}))
+def test_jt3b_every_form_lines_entry_names_a_line_its_years_pack_maps(year: int):
+    # The registry (knowledge/federal/<year>.yaml form_lines) and the form packs read the same
+    # face: a registry line that the same-year pack does not key is a renumbering one of them
+    # missed (the 2026 Schedule 2 moved nearly every line).
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    missing = []
+    for key, entry in sorted((load_knowledge("federal", year).form_lines or {}).items()):
+        form_key = _FORM_LINES_PACK.get(key.split(".")[0])
+        path = REPO_ROOT / "formpacks" / "federal" / str(year) / str(form_key) / "pack.yaml"
+        if form_key is None or not path.exists() or not re.fullmatch(r"[0-9]+[a-z]?", str(entry.line or "")):
+            continue
+        if entry.line not in {f.line for f in load_pack(path).fields}:
+            missing.append(f"{key} -> {form_key} line {entry.line}")
+    assert not missing, missing

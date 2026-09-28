@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,248 tests** — offline 5,864 + live-.gov 384; derived
+Done and on `main` (**6,302 tests** — offline 5,912 + live-.gov 390; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1914,7 +1914,22 @@ not wait for any of this.
         - the Schedule 1-A hookup read from the form_lines registry for 2025 and 2026;
         - the Schedule 1-A table and radio shape.
       - **Vision audit:** every page of both filled drafts, at 110 and 200 dpi, with each synthetic value checked against its printed line. It caught the state-box clip and found nothing else.
-    - **JT3b** (M): sched_2 (19/63), f8959 (0/26, but its Parts are reordered), f8889 (0 missing).
+    - **JT3b** (M): sched_2 (19/63), f8959 (0/26, but its Parts are reordered), f8889 (0 missing). **DONE 2026-09-27** — *as built:*
+      - **formpacks/federal/2026/sched_2** (draft Created 4/27/26, sha 0e3d4faa…): all 68 widgets, mapped from scratch — Part II is now Sections A/B/C.
+        - The header carries the 2025→2026 line map. TRAP: 2026 line 5 is the IRA additional tax (2025 line 8) and 16a/16b/16c the old 5/6/7.
+        - 13a–13o/13z are the old 17a–17o/17z; the old 17p/17q are 19a/19b; 18 is the NEW excess-contribution line; 11 is the SE Additional Medicare Tax and 17b the wages/RRTA part.
+        - 13z.type is a two-row multiline box: maxlen 70 at the draft's 9pt DA (2025's 8pt gave 79).
+        - Relations: 1z, 3, 14, 15, 16c, 17d, 19c, 20, 21. The Form 1040's `17 == sched_2.3` / `23 == sched_2.21` now resolve, so their allowlist rows are gone.
+      - **formpacks/federal/2026/f8959** (draft Created 5/27/26, sha 8f663b2c…): the same 26 names in the same line order, but Parts II/IV swap.
+        - RRTA is 8–11 and the wages+RRTA total is line 12 → Schedule 2 line 17b; SE is 13–18 → Schedule 2 line 11. The 2025 all-parts total (line 18) is gone.
+        - Relations re-derived from the face (10, 11, 12, 15, 16, 17, 18 new); cross_form `12 == sched_2.17b`, `18 == sched_2.11`.
+      - **formpacks/federal/2026/f8889** (draft Created 4/30/26, sha c94550b7…): a port of the 2025 pack. The topology is identical (the 1pt-narrower SSN box aside).
+        - The face changes: the year, line 3's $4,400/$8,750, the 13c/13d Schedule 2 destinations, and the full 14b/14c/17b designators. Cross_form stays empty (additive legs).
+      - **Tests** (test_formpacks_federal `test_jt3b_*`):
+        - the Schedule 2 renumber; the 8959 Part reorder against the 2025 pack; the 8959 math on a demo wage+SE return; 8889 = the 2025 map;
+        - NEW invariant: every form_lines registry entry names a line its same-year pack maps (220 entries over 2022-2026, 43 for 2026).
+        - test_discovery 116; the filer-address fixture gains 3 empty rows.
+      - **Vision audit:** all four pages, each synthetic value against its printed line. It caught nothing; the 8959 trap was caught from the face before the render.
     - **JT3c** (M): f8606 (18/45), sched_1 (1/73), sched_3 (2/36).
     - **JT3d** (M):
       - sched_b, sched_d and f8949 (0 missing each);

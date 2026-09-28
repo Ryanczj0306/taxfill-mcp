@@ -1,0 +1,157 @@
+# Schedule 2 (Form 1040) — Additional Taxes — 2026 DRAFT.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040s2--dft.pdf,
+# footer "Schedule 2 (Form 1040) 2026 Created 4/27/26"). Its cover sheet: "there
+# are never any changes to the last posted draft of the form and the final
+# revision of the form". PDF page 1 is that cover sheet; the form's two pages
+# are PDF pages 2-3. When the final posts at irs-prior/f1040s2--2026.pdf,
+# re-pin source_url, pdf_sha256, source_status final, drop draft_created, and
+# re-read the face. TY2026 is planning-only, so this pack fills only in
+# REHEARSAL mode. Attachment Sequence No. 02; no signature block; mailed in the
+# parent return's envelope. Phase J JT3b.
+#
+# 2025 -> 2026: Part II ("Additional Taxes") is REDESIGNED into three sections
+# and every line after 4 is renumbered (63 -> 68 widgets; 19 of the 2025 field
+# names are gone and the rest rebind). Mapped from scratch against the draft's
+# field tree and face, every money widget keyed by the designator printed at its
+# left. Where each 2025 line went (TRAP: the same number now means something
+# else — 2026 line 5 is the IRA additional tax, 2025 line 5 the 4137 tips tax):
+#   Section A — Additional Income Taxes
+#     4  SE tax (+ the 4361/4029/other exemption row)        2025 line 4
+#     5  additional tax on IRAs (Form 5329; not-required box) 2025 line 8
+#     6  net investment income tax (Form 8960)               2025 line 12
+#     7  interest, installment residential lots/timeshares   2025 line 14
+#     8  interest, deferred tax on installment sales > $150k 2025 line 15
+#     9  recapture of low-income housing credit (Form 8611)  2025 line 16
+#     10 recapture of net EPE (Form 4255 line 1d col (l))    2025 line 19
+#     11 Additional Medicare Tax on SELF-EMPLOYMENT income   part of 2025 line 11
+#     12 section 965 installment (Form 965-A), INSET column  2025 line 20
+#     13a-13o, 13z other additional income taxes             2025 lines 17a-17o, 17z
+#     14 total of 13a-13z                                    (2025 line 18 also held 17p/17q)
+#     15 "Add lines 4 through 11 and line 14"
+#   Section B — Additional Employment and Other Taxes
+#     16a/16b/16c SS and Medicare on tips (4137) / wages (8919) / total  2025 lines 5/6/7
+#     17a household employment taxes (Schedule H)            2025 line 9
+#     17b Additional Medicare Tax on Medicare wages and RRTA part of 2025 line 11
+#     17c uncollected SS/Medicare/RRTA on tips or GTL        2025 line 13
+#     17d total of 17a-17c
+#     18  additional tax on EXCESS contributions or accumulations in IRAs or
+#         other tax-favored accounts (Form 5329) — NEW; 2025 folded it into line 8
+#     19a/19b/19c Form 8621 interest                          2025 lines 17p/17q
+#     20  "Add lines 16c, 17d, 18, and 19c"
+#   Section C — 21 total additional taxes -> Form 1040/1040-SR line 23,
+#     Form 1040-NR line 23b                                   2025 line 21
+# (2025 line 10 "Reserved for future use" has no 2026 counterpart.)
+#
+# Write-ins: 1y.type (other additions), 4.exempt_other_type, 13a.type (single
+# row) and 13z.type (a TWO-row multiline widget; maxlen 70 = 317pt at the
+# clipping scan's 4.5pt per character — the draft's DA is 9pt, 2025's was 8pt,
+# which is why 2025's 17z.type took 79). The SSN box keeps the 2025 pack's
+# digits-only convention (widget /MaxLen 11).
+form: Schedule 2 (Form 1040)
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040s2--dft.pdf
+pdf_sha256: 0e3d4faa4b96f692bc31119d2c86189c3d8b9263e8f3aaaf7c3da371887ebc56
+source_status: draft
+draft_created: "4/27/26"
+acroform_root: form1[0]
+fields:
+  # ---- header ----
+  - { line: "name", field: "Page1[0].f1_01[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  # ---- Part I — Tax ----
+  - { line: "1a", field: "Page1[0].Line1_ReadOrder[0].f1_03[0]", type: money } # excess APTC repayment, Form 8962
+  - { line: "1b", field: "Page1[0].f1_04[0]", type: money } # repayment of new clean vehicle credit(s), Schedule A (Form 8936) Part II
+  - { line: "1c", field: "Page1[0].f1_05[0]", type: money } # repayment of previously owned clean vehicle credit(s), Part IV
+  - { line: "1d", field: "Page1[0].f1_06[0]", type: money } # recapture of net EPE, Form 4255 line 2a column (l)
+  # 1e "Excessive payments (EPs) on gross EPE from Form 4255. Check applicable
+  # box": (i) Line 1a (ii) Line 1c (iii) Line 1d (iv) Line 2a — one /Btn field
+  - { line: "1e.i", field: "Page1[0].Line1e_ReadOrder[0].c1_1[0]", type: checkbox, on_state: "/1", group: line1e_box }
+  - { line: "1e.ii", field: "Page1[0].Line1e_ReadOrder[0].c1_1[1]", type: checkbox, on_state: "/2", group: line1e_box }
+  - { line: "1e.iii", field: "Page1[0].Line1e_ReadOrder[0].c1_1[2]", type: checkbox, on_state: "/3", group: line1e_box }
+  - { line: "1e.iv", field: "Page1[0].Line1e_ReadOrder[0].c1_1[3]", type: checkbox, on_state: "/4", group: line1e_box }
+  - { line: "1e", field: "Page1[0].f1_07[0]", type: money }
+  # 1f "20% EP from Form 4255. Check applicable box": the same four options
+  - { line: "1f.i", field: "Page1[0].Line1f_ReadOrder[0].c1_2[0]", type: checkbox, on_state: "/1", group: line1f_box }
+  - { line: "1f.ii", field: "Page1[0].Line1f_ReadOrder[0].c1_2[1]", type: checkbox, on_state: "/2", group: line1f_box }
+  - { line: "1f.iii", field: "Page1[0].Line1f_ReadOrder[0].c1_2[2]", type: checkbox, on_state: "/3", group: line1f_box }
+  - { line: "1f.iv", field: "Page1[0].Line1f_ReadOrder[0].c1_2[3]", type: checkbox, on_state: "/4", group: line1f_box }
+  - { line: "1f", field: "Page1[0].f1_08[0]", type: money }
+  - { line: "1y.type", field: "Page1[0].f1_09[0]", type: text } # "Other additions to tax (see instructions):"
+  - { line: "1y", field: "Page1[0].f1_10[0]", type: money }
+  - { line: "1z", field: "Page1[0].f1_11[0]", type: money } # "Add lines 1a through 1y"
+  - { line: "2", field: "Page1[0].f1_12[0]", type: money } # alternative minimum tax, Form 6251
+  - { line: "3", field: "Page1[0].f1_13[0]", type: money } # "Add lines 1z and 2. Enter here and on Form 1040, 1040-SR, or 1040-NR, line 17"
+  # ---- Part II — Additional Taxes; Section A — Additional Income Taxes ----
+  # 4 "Self-employment tax. Attach Schedule SE. Check if any exemption from (see
+  # instructions): 1 [] 4361 2 [] 4029 3 [] ___" — independent boxes + write-in
+  - { line: "4.exempt_4361", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1" }
+  - { line: "4.exempt_4029", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1" }
+  - { line: "4.exempt_other", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "4.exempt_other_type", field: "Page1[0].f1_14[0]", type: text }
+  - { line: "4", field: "Page1[0].f1_15[0]", type: money }
+  # 5 "Additional tax on IRAs or other tax-favored accounts. Attach Form 5329 if
+  # required. If not required, check here" (2025 line 8)
+  - { line: "5.not_required", field: "Page1[0].c1_6[0]", type: checkbox, on_state: "/1", group: line5_not_required }
+  - { line: "5", field: "Page1[0].f1_16[0]", type: money }
+  - { line: "6", field: "Page1[0].f1_17[0]", type: money } # net investment income tax, Form 8960
+  - { line: "7", field: "Page1[0].f1_18[0]", type: money } # interest on tax due on installment income (residential lots and timeshares)
+  - { line: "8", field: "Page1[0].f1_19[0]", type: money } # interest on the deferred tax, installment sales over $150,000
+  - { line: "9", field: "Page1[0].f1_20[0]", type: money } # recapture of low-income housing credit, Form 8611
+  - { line: "10", field: "Page1[0].f1_21[0]", type: money } # recapture of net EPE from Form 4255, line 1d, column (l)
+  - { line: "11", field: "Page1[0].f1_22[0]", type: money } # "Additional Medicare Tax on self-employment income. Attach Form 8959"
+  - { line: "12", field: "Page1[0].f1_23[0]", type: money } # section 965 installment, Form 965-A — INSET column, outside line 15's sum
+  # 13 "Other additional income taxes:"
+  - { line: "13a.type", field: "Page1[0].Line13_ReadOrder[0].Line13a_ReadOrder[0].f1_24[0]", type: text } # "Recapture of other credits. List type, form number, and amount:"
+  - { line: "13a", field: "Page1[0].Line13_ReadOrder[0].f1_25[0]", type: money }
+  - { line: "13b", field: "Page1[0].f1_26[0]", type: money } # recapture of federal mortgage subsidy
+  - { line: "13c", field: "Page1[0].f1_27[0]", type: money } # additional tax on HSA distributions, Form 8889 (line 17b)
+  - { line: "13d", field: "Page1[0].f1_28[0]", type: money } # HSA: didn't remain an eligible individual, Form 8889 (line 21)
+  - { line: "13e", field: "Page1[0].f1_29[0]", type: money } # Archer MSA distributions, Form 8853
+  - { line: "13f", field: "Page1[0].f1_30[0]", type: money } # Medicare Advantage MSA distributions, Form 8853
+  - { line: "13g", field: "Page1[0].f1_31[0]", type: money } # recapture, fractional interest in tangible personal property
+  - { line: "13h", field: "Page1[0].f1_32[0]", type: money } # nonqualified deferred compensation failing section 409A
+  - { line: "13i", field: "Page1[0].f1_33[0]", type: money } # section 457A deferred compensation
+  - { line: "13j", field: "Page1[0].f1_34[0]", type: money } # section 72(m)(5) excess benefits tax
+  - { line: "13k", field: "Page1[0].f1_35[0]", type: money } # golden parachute payments
+  - { line: "13l", field: "Page1[0].f1_36[0]", type: money } # tax on accumulation distribution of trusts
+  - { line: "13m", field: "Page2[0].f2_01[0]", type: money } # excise tax on insider stock compensation, expatriated corporation
+  - { line: "13n", field: "Page2[0].f2_02[0]", type: money } # look-back interest, Form 8697 or 8866
+  - { line: "13o", field: "Page2[0].f2_03[0]", type: money } # tax on non-effectively connected income, Form 1040-NR
+  - { line: "13z.type", field: "Page2[0].Line13z_ReadOrder[0].f2_04[0]", type: text, maxlen: 70 } # "Any other taxes. List type and amount:" (two-row multiline)
+  - { line: "13z", field: "Page2[0].f2_05[0]", type: money }
+  - { line: "14", field: "Page2[0].f2_06[0]", type: money } # "Total additional income taxes. Add lines 13a through 13z"
+  - { line: "15", field: "Page2[0].f2_07[0]", type: money } # "Add lines 4 through 11 and line 14"
+  # ---- Section B — Additional Employment and Other Taxes ----
+  - { line: "16a", field: "Page2[0].Line16_ReadOrder[0].f2_08[0]", type: money } # SS and Medicare tax on unreported tip income, Form 4137
+  - { line: "16b", field: "Page2[0].f2_09[0]", type: money } # uncollected SS and Medicare tax on wages, Form 8919
+  - { line: "16c", field: "Page2[0].f2_10[0]", type: money } # "Add lines 16a and 16b"
+  - { line: "17a", field: "Page2[0].Line17_ReadOrder[0].f2_11[0]", type: money } # household employment taxes, Schedule H
+  - { line: "17b", field: "Page2[0].f2_12[0]", type: money } # "Additional Medicare tax on Medicare wages and RRTA compensation. Attach Form 8959"
+  - { line: "17c", field: "Page2[0].f2_13[0]", type: money } # uncollected SS/Medicare or RRTA tax on tips or group-term life insurance, W-2 box 12
+  - { line: "17d", field: "Page2[0].f2_14[0]", type: money } # "Add lines 17a through 17c"
+  - { line: "18", field: "Page2[0].f2_15[0]", type: money } # additional tax on excess contributions or accumulations in IRAs etc., Form 5329
+  - { line: "19a", field: "Page2[0].Line19a_ReadOrder[0].f2_16[0]", type: money } # Form 8621 line 16f interest (section 1291 fund)
+  - { line: "19b", field: "Page2[0].f2_17[0]", type: money } # Form 8621 line 24 interest
+  - { line: "19c", field: "Page2[0].f2_18[0]", type: money } # "Add lines 19a and 19b"
+  - { line: "20", field: "Page2[0].f2_19[0]", type: money } # "Add lines 16c, 17d, 18, and 19c"
+  # ---- Section C — Total Additional Taxes ----
+  - { line: "21", field: "Page2[0].f2_20[0]", type: money } # "Add lines 15 and 20 ... Form 1040 or 1040-SR, line 23; or Form 1040-NR, line 23b"
+# Face math only.
+relations:
+  - "1z == sum(1a..1y)"                             # "Add lines 1a through 1y"
+  - "3 == 1z + 2"                                   # "Add lines 1z and 2"
+  - "14 == sum(13a..13z)"                           # "Add lines 13a through 13z"
+  - "15 == 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 14"    # "Add lines 4 through 11 and line 14"
+  - "16c == 16a + 16b"                              # "Add lines 16a and 16b"
+  - "17d == sum(17a..17c)"                          # "Add lines 17a through 17c"
+  - "19c == 19a + 19b"                              # "Add lines 19a and 19b"
+  - "20 == 16c + 17d + 18 + 19c"                    # "Add lines 16c, 17d, 18, and 19c"
+  - "21 == 15 + 20"                                 # "Add lines 15 and 20"
+# The parent legs live on the parent packs (the 2025 convention): Form 1040
+# lines 17 and 23, and Form 8959 lines 12 and 18.
+cross_form: []
+identity_fields: [name, identifying_number]
+signature: null
+mailing: null

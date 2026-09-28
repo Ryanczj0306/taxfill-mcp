@@ -1,0 +1,100 @@
+# Form 8959 (2026) — Additional Medicare Tax — DRAFTS-FIRST.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f8959--dft.pdf,
+# footer "Form 8959 (2026) Created 5/27/26"). Its cover sheet: "there are never
+# any changes to the last posted draft of the form and the final revision of the
+# form". PDF page 1 is that cover sheet; the form is PDF page 2. When the final
+# posts at irs-prior/f8959--2026.pdf, re-pin source_url, pdf_sha256,
+# source_status final, drop draft_created, and re-read the face. TY2026 is
+# planning-only, so this pack fills only in REHEARSAL mode. Attachment to Form
+# 1040/1040-SR/1040-NR/1040-SS (Attachment Sequence No. 71): no signature block;
+# mailed in the parent return's envelope. Phase J JT3b.
+#
+# TRAP — THE SAME 26 FIELD NAMES, REORDERED PARTS. The draft keeps the 2025
+# widget names in line order (f1_3..f1_26 = printed lines 1..24), so a name-only
+# port "works" and writes every line from 8 to 18 into the wrong meaning:
+#   Part I   1-7   Additional Medicare Tax on Medicare wages       (unchanged)
+#   Part II  8-11  on RRTA compensation      (2025 Part III, lines 14-17)
+#   Part III 12    TOTAL of lines 7 and 11 -> Schedule 2 line 17b  (NEW)
+#   Part IV  13-18 on self-employment income (2025 Part II, lines 8-13);
+#                  18 -> Schedule 2 line 11
+#   Part V   19-24 withholding reconciliation                      (unchanged)
+# The 2025 line 18 total of all three parts is gone: the 2026 Schedule 2 takes
+# the wages/RRTA tax (line 17b, Section B) apart from the self-employment tax
+# (line 11, Section A). Every widget's column and row were re-read against the
+# draft face: lines 1-5, 8, 9, 13-16 and 19-21 are INSET (x 411), the rest sit
+# in the main column (x 505).
+#
+# RRTA source: lines 8 and 23 now read "Form(s) W-2, box 14a" (2025: box 14).
+# Line 24 still goes "with federal income tax withholding on Form 1040, 1040-SR,
+# or 1040-NR, line 25c" — an aggregate, so no cross_form equality (as in 2025).
+form: "8959"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f8959--dft.pdf
+pdf_sha256: "8f663b2ca3dd052537a4d8aea4ae9aada0606b0f7dc7711fa8948489ef870d2f"
+source_status: draft
+draft_created: "5/27/26"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- header ----------------------------------------------------------------
+  - { line: "name", field: "Page1[0].f1_1[0]", type: text }   # "Name(s) shown on return"
+  # "Your social security number" — plain text box (widget /MaxLen 11, NOT a
+  # comb); format ssn_digits_only keeps cross-form identity values consistent.
+  - { line: "identifying_number", field: "Page1[0].f1_2[0]", type: text, maxlen: 11, format: ssn_digits_only }
+  # ---- Part I: Additional Medicare Tax on Medicare Wages ----------------------
+  - { line: "1", field: "Page1[0].f1_3[0]", type: money }     # Medicare wages and tips from Form W-2, box 5
+  - { line: "2", field: "Page1[0].f1_4[0]", type: money }     # Unreported tips from Form 4137, line 6
+  - { line: "3", field: "Page1[0].f1_5[0]", type: money }     # Wages from Form 8919, line 6
+  - { line: "4", field: "Page1[0].f1_6[0]", type: money }     # Add lines 1 through 3
+  - { line: "5", field: "Page1[0].f1_7[0]", type: money }     # Filing-status threshold (MFJ $250,000 / MFS $125,000 / other $200,000)
+  - { line: "6", field: "Page1[0].f1_8[0]", type: money }     # Subtract line 5 from line 4; if zero or less, -0-
+  - { line: "7", field: "Page1[0].f1_9[0]", type: money }     # line 6 x 0.9% (0.009). "Enter here and go to Part II"
+  # ---- Part II: Additional Medicare Tax on RRTA Compensation (2025 Part III) --
+  - { line: "8", field: "Page1[0].f1_10[0]", type: money }    # RRTA compensation and tips from Form(s) W-2, box 14a
+  - { line: "9", field: "Page1[0].f1_11[0]", type: money }    # Filing-status threshold (the line 5 amounts)
+  - { line: "10", field: "Page1[0].f1_12[0]", type: money }   # Subtract line 9 from line 8; if zero or less, -0-
+  - { line: "11", field: "Page1[0].f1_13[0]", type: money }   # line 10 x 0.9% (0.009). "Enter here and go to Part III"
+  # ---- Part III: Total Additional Medicare Tax on Medicare Wages and RRTA -----
+  - { line: "12", field: "Page1[0].f1_14[0]", type: money }   # "Add lines 7 and 11. Also enter this amount on Schedule 2 (Form 1040), line 17b"
+  # ---- Part IV: Additional Medicare Tax on Self-Employment Income (2025 Part II)
+  - { line: "13", field: "Page1[0].f1_15[0]", type: money }   # SE income from Schedule SE (Form 1040), Part I, line 6; a loss -> -0-
+  - { line: "14", field: "Page1[0].f1_16[0]", type: money }   # Filing-status threshold (the line 5 amounts)
+  - { line: "15", field: "Page1[0].f1_17[0]", type: money }   # "Enter the amount from line 4"
+  - { line: "16", field: "Page1[0].f1_18[0]", type: money }   # Subtract line 15 from line 14; if zero or less, -0-
+  - { line: "17", field: "Page1[0].f1_19[0]", type: money }   # Subtract line 16 from line 13; if zero or less, -0-
+  - { line: "18", field: "Page1[0].f1_20[0]", type: money }   # line 17 x 0.9% (0.009). "Enter here and on Schedule 2 (Form 1040), line 11"
+  # ---- Part V: Withholding Reconciliation -------------------------------------
+  - { line: "19", field: "Page1[0].f1_21[0]", type: money }   # Medicare tax withheld from Form W-2, box 6
+  - { line: "20", field: "Page1[0].f1_22[0]", type: money }   # Enter the amount from line 1
+  - { line: "21", field: "Page1[0].f1_23[0]", type: money }   # Regular Medicare tax withholding: line 20 x 1.45% (0.0145)
+  - { line: "22", field: "Page1[0].f1_24[0]", type: money }   # Subtract line 21 from line 19; if zero or less, -0-
+  - { line: "23", field: "Page1[0].f1_25[0]", type: money }   # Additional Medicare Tax withholding on RRTA compensation, W-2 box 14a
+  - { line: "24", field: "Page1[0].f1_26[0]", type: money }   # Add lines 22 and 23 -> with 1040/1040-SR/1040-NR line 25c
+
+# Form-face math only (every printed add/subtract/multiply/copy instruction).
+relations:
+  - "4 == 1 + 2 + 3"           # "Add lines 1 through 3"
+  - "6 == max(0, 4 - 5)"       # "Subtract line 5 from line 4. If zero or less, enter -0-"
+  - "7 == 6 * 0.009"           # "Multiply line 6 by 0.9% (0.009)"
+  - "10 == max(0, 8 - 9)"      # "Subtract line 9 from line 8. If zero or less, enter -0-"
+  - "11 == 10 * 0.009"         # "Multiply line 10 by 0.9% (0.009)"
+  - "12 == 7 + 11"             # "Add lines 7 and 11"
+  - "15 == 4"                  # "Enter the amount from line 4"
+  - "16 == max(0, 14 - 15)"    # "Subtract line 15 from line 14. If zero or less, enter -0-"
+  - "17 == max(0, 13 - 16)"    # "Subtract line 16 from line 13. If zero or less, enter -0-"
+  - "18 == 17 * 0.009"         # "Multiply line 17 by 0.9% (0.009)"
+  - "20 == 1"                  # "Enter the amount from line 1"
+  - "21 == 20 * 0.0145"        # "Multiply line 20 by 1.45% (0.0145)"
+  - "22 == max(0, 19 - 21)"    # "Subtract line 21 from line 19. If zero or less, enter -0-"
+  - "24 == 22 + 23"            # "Add lines 22 and 23"
+
+# Exact carries printed on the face; visibly SKIPPED when the filing has no
+# Schedule 2 (a Form 1040-SS filer: Part I, lines 5a/5b there).
+cross_form:
+  - "12 == sched_2.17b"   # "Also enter this amount on Schedule 2 (Form 1040), line 17b"
+  - "18 == sched_2.11"    # "Enter here and on Schedule 2 (Form 1040), line 11"
+
+identity_fields: [name, identifying_number]
+signature: null
+mailing: null
