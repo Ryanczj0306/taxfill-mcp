@@ -1016,6 +1016,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JT5d: sched_a, sched_c and sched_e 2026 each equal their (empty) 2025 rows — Schedule C's and E's new
     # split address boxes are business/property addresses, which the selector rejects.
     # JT5e: f8962, f2441, f1116 and f8938 2026 each equal their 2025 rows.
+    # JT5f: f1040x 2026 (Rev. 12-2026) equals its 2025 row (the reviewed five mailing_address lines);
+    # the NEW sched_3a has no address line at all (reviewed: name and SSN only).
     import json
     from pathlib import Path
 

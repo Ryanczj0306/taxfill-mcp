@@ -47,7 +47,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
-from pypdf.generic import NameObject
+from pypdf.generic import ArrayObject, NameObject
 
 from taxfill_core.knowledge import assert_pack_filing_grade, provisional_marker
 from taxfill_core.redact import redact
@@ -197,6 +197,47 @@ def _render_text(pf: PackField, value: object, pack: FormPack | None = None) -> 
             # P-001: strip BEFORE the MaxLen check — dashes overflow comb cells.
             text = text.replace("-", "").replace(" ", "")
     return text
+
+
+def _repair_empty_field_array(writer: PdfWriter) -> int:
+    """Rebuild an EMPTY AcroForm /Fields array from the widgets on the pages; return how many roots.
+
+    The IRS draft Schedule 3-A (2026, Created 6/24/26) ships an /AcroForm whose /Fields is ``[]`` while all
+    16 of its widgets sit in the pages' /Annots — viewers still show the boxes, but a fields-based reader
+    (pypdf, so this filler and verify) sees no form at all. Only that shape is repaired: a blank whose
+    /Fields lists anything is left exactly as published, and a PDF with no widgets stays unfillable.
+    """
+    root = writer._root_object
+    acroform = root.get("/AcroForm")
+    if acroform is None:
+        return 0
+    acroform = acroform.get_object()
+    if acroform.get("/Fields"):
+        return 0
+    roots, seen = [], set()
+    for page in writer.pages:
+        for ref in page.get("/Annots") or []:
+            node = ref.get_object()
+            if node.get("/Subtype") != "/Widget" or not hasattr(ref, "idnum"):
+                continue
+            # The same draft's intermediate nodes (form1[0], Page1[0]) carry no /Kids either, so a reader
+            # that walks down from /Fields would stop at the root: re-link every hop on the way up.
+            while node.get("/Parent") is not None:
+                parent_ref = node.raw_get("/Parent")   # the IndirectObject, not the resolved dictionary
+                parent = parent_ref.get_object()
+                kids = parent.get("/Kids")
+                if kids is None:
+                    kids = ArrayObject()
+                    parent[NameObject("/Kids")] = kids
+                if all(getattr(k, "idnum", None) != ref.idnum for k in kids):
+                    kids.append(ref)
+                ref, node = parent_ref, parent
+            if ref.idnum not in seen:
+                seen.add(ref.idnum)
+                roots.append(ref)
+    if roots:
+        acroform[NameObject("/Fields")] = ArrayObject(roots)
+    return len(roots)
 
 
 def _render_money(pf: PackField, value: object) -> tuple[str, str | None]:
@@ -570,6 +611,7 @@ def fill_form(
             f"({pack.source_url}) via fetch_blank and retry"
         ) from exc
 
+    _repair_empty_field_array(writer)
     available = set(writer.get_fields() or {})
     if written and not available:
         raise ValueError(

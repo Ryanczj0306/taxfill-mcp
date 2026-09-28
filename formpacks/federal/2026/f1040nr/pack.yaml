@@ -53,8 +53,9 @@
 # f1040nr.28"; 12a's either/or (Schedule A (Form 1040-NR) or the India
 # standard deduction) lives on the sched_a_nr pack ("9 == f1040nr.12a"); 23a's
 # Schedule NEC carry waits for the 2026 sched_nec pack (JT5g); 24b (Form
-# 1062), 29 (Form 1040-C), 30 (Form 8839) and 32b (Schedule 3-A) have no form
-# key yet. The 1k leg names Schedule OI, whose 2026 pack also waits for its
+# 1062), 29 (Form 1040-C) and 30 (Form 8839) have no form key yet; 32b's Schedule
+# 3-A carry is conditional (line 6 or 8), so the sched_3a pack (JT5f) encodes only
+# "3 == f1040nr.24a". The 1k leg names Schedule OI, whose 2026 pack also waits for its
 # draft (JT5g) — test_pack_invariants allowlists that one target until then.
 form: 1040-NR
 jurisdiction: federal

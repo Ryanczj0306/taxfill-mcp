@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,870 tests** — offline 6,409 + live-.gov 461; derived
+Done and on `main` (**6,902 tests** — offline 6,437 + live-.gov 465; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2362,7 +2362,18 @@ not wait for any of this.
       - Line 18 adds Schedule 1-A line 43. foreign_tax_credit_election now returns the 2026 pack path.
     - **Form 8938** (Rev. 12-2026, Created 9/2/26): the same 131 widgets in the same reading order (checked position by position); 18 names lose their zero padding; wording only.
     - The designator sweep over the four is clean. The filer-address fixture gains the rows (each equals its 2025 row); test_discovery 143. The Schedule E 2026 line-13 header cells from JT5d gain their RESERVED_LINES_UNMAPPED row. Tests: `test_jt5e_*`.
-  - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new).
+  - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new). **DONE 2026-09-28:**
+    - **Form 1040-X** (Rev. 12-2026, Created 8/19/26): a wholesale redesign that tracks the 2026 Form 1040 — 194 widgets, 191 mapped (line 9's three reserved cells stay unmapped, RESERVED_LINES_UNMAPPED).
+      - New on the face: the special-processing row, main-home-in-U.S., split Presidential Election boxes, and Other Information (the NRA-spouse election, digital assets, citizen/work-authorized).
+      - New lines 2a–2c, 11a–11c (Form 1062), 17a–17c (Schedule 3-A) and direct deposit 22a–22d; the 8885 box is gone.
+      - TRAP: Part I renumbers — 2025 25/27 are 2026 24/25.
+      - Relations are column C only, re-read.
+    - **Schedule 3-A** (Created 6/24/26): NEW form key `sched_3a` (KNOWN_FORM_KEYS), 16 widgets, root form1[0].
+      - Relations `5 == 3 - 4` and line 6 = max(0, 2 − 5).
+      - Legs in from Form 1040 32a/31/24a, 1040-NR 24a and Schedule 2 line 20. The carry out to line 32b is conditional (line 6 or 8), so it is not encoded; the f1040/f1040nr headers say so.
+    - **The Schedule 3-A draft is malformed:** its /AcroForm /Fields is `[]`, the 16 widgets sit only in the page /Annots, and the parent nodes carry no /Kids, so pypdf saw no form. `filler._repair_empty_field_array` rebuilds /Fields and re-links /Kids from the widgets' parent chains. It runs only when /Fields is empty (a well-formed blank is untouched), with a unit test in test_filler.
+    - The 1040-X ZIP and foreign-postal-code boxes (70 pt at the draft's 9pt) take maxlen 10 / 15.
+    - The filer-address fixture gains both rows; test_discovery 145. Tests: `test_jt5f_*`.
   - **JT5g** (external): sched_nec and sched_oi, once their 2026 drafts post. The f1040nrn/nro drafts are still 2025; they are on the check_finals watchlist.
   - **Acceptance:** as JT3.
   - **Port rule (found in JF8):** calc.py prints ~330 worksheet and form line literals for forms outside the form_lines registry (Schedule SE, Form 8962, Form 8863, the QDCG and Social Security worksheets, ...), each true for the year it was read. Each Wave B port greps calc.py for its form's literals and moves any that differ onto form_lines.

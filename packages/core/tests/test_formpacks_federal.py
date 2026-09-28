@@ -78,6 +78,7 @@ KNOWN_FORM_KEYS = frozenset(
         "sched_1a",
         "sched_2",
         "sched_3",
+        "sched_3a",   # NEW 2026 (the federal public benefit schedule; Phase J JT5f)
         "sched_a",
         "sched_b",
         "sched_c",
@@ -1968,3 +1969,32 @@ def test_jt5e_the_foreign_tax_credit_op_points_at_the_2026_pack():
         creditable_foreign_taxes=250, all_foreign_income_passive=True, all_reported_on_payee_statement=True,
         year=2026)
     assert r.form_1116_pack_key == "formpacks/federal/2026/f1116"
+
+
+# ── Phase J JT5f: Form 1040-X (Rev. 12-2026) and the NEW Schedule 3-A ──
+
+def test_jt5f_the_1040x_rev_12_2026_tracks_the_2026_form_1040():
+    old, new = _fed_pack(2025, "f1040x"), _fed_pack(2026, "f1040x")
+    assert (new.source_status, new.draft_created, new.signature.page, len(new.fields)) == ("draft", "8/19/26", 3, 191)
+    f = {pf.line: pf for pf in new.fields}
+    # New lines: 2a-2c, 11a-11c, 17a-17c and direct deposit 22a-22d; 11 and 17 are split, so the bare keys went.
+    assert {"2b", "2c", "11a", "11b", "11c", "17a", "17b", "17c", "22b", "22c.checking", "22d"} <= set(f)
+    assert {"2", "11", "17", "22", "15.form_8885"}.isdisjoint(f) and "15.form_8885" in {pf.line for pf in old.fields}
+    # TRAP: Part I renumbered — 2025 "25" (children) / "27" (other dependents) are 2026 "24" / "25".
+    assert f["24"].field == "Page2[0].Table_Lines24-25[0].Line24[0].f2_12[0]" and "27" not in f
+    assert {"20 == max(0, 11c - 19)", "17c == 17a - 17b", "3 == 1 - 2c"} <= set(new.relations)
+    assert (f["citizen_or_work_authorized.spouse.no"].field, f["main_home_in_us"].field) == (
+        "Page1[0].c1_12[1]", "Page1[0].c1_5[0]")
+
+
+def test_jt5f_schedule_3a_is_a_new_form_key_with_its_unconditional_legs():
+    assert "sched_3a" in KNOWN_FORM_KEYS
+    new = _fed_pack(2026, "sched_3a")
+    assert (new.source_status, new.draft_created, new.acroform_root, len(new.fields)) == ("draft", "6/24/26", "form1[0]", 16)
+    assert set(new.relations) == {"5 == 3 - 4", "6 == max(0, 2 - 5)"}
+    assert set(new.cross_form) == {"1a == f1040.32a", "1b == f1040.31", "3 == f1040.24a", "3 == f1040nr.24a",
+                                   "4 == sched_2.20"}
+    radios = [(pf.line, pf.on_state) for pf in new.fields if pf.group in ("line6", "line7", "line8")]
+    assert radios == [("6.yes", "/1"), ("6.no", "/2"), ("7.yes", "/1"), ("7.no", "/2"), ("8.yes", "/1"), ("8.no", "/2")]
+    # No pack before 2026 — the schedule is new with REG-119882-25 (P-023).
+    assert not (REPO_ROOT / "formpacks/federal/2025/sched_3a").exists()

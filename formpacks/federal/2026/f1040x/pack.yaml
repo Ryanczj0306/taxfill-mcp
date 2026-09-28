@@ -1,0 +1,258 @@
+# Form 1040-X (Rev. December 2026) — Amended U.S. Individual Income Tax Return — DRAFTS-FIRST (Phase J
+# JT5f, read 2026-09-28). The pack for amending a TAX YEAR 2026 return.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040x--dft.pdf, footer "Form 1040-X (Rev.
+# 12-2026) Created 8/19/26"). PDF page 1 is the IRS cover sheet, so the form's pages 1 and 2 are PDF pages 2
+# and 3 (the signature block is on PDF page 3). When the final posts, re-pin source_url, pdf_sha256 and
+# source_status final, drop draft_created, signature page 2, and re-read the face. TY2026 is planning-only
+# (rehearsal mode only).
+#
+# 194 widgets (Rev. 12-2025: 166), 191 mapped. The three unmapped widgets are line 9's A/B/C cells (f1_63-
+# f1_65), which print "Reserved for future use" on ReadOnly widgets and are named by no printed sum — the
+# every-year RESERVED_LINES_UNMAPPED verdict for this form's reserved lines.
+#
+# Rev. 12-2025 -> Rev. 12-2026, read off the draft face and widget tree (a wholesale redesign that tracks
+# the 2026 Form 1040: every positional name moved, so every binding was re-derived from the containers):
+# - NEW special-processing row ("Filed pursuant to section 301.9100-2", "Combat zone" + write-in,
+#   "Deceased MM / DD / YYYY Spouse MM / DD / YYYY", "Other" + three write-ins) — the 2026 Form 1040 keys.
+# - NEW "Check here if your main home, and your spouse's if filing a joint return, was in the U.S. for more
+#   than half of the return year" (main_home_in_us). The Presidential Election Campaign boxes are now two
+#   separate fields (c1_6 / c1_7, each /1; Rev. 12-2025: one field /1 /2).
+# - NEW "Other Information": the nonresident-spouse election box + name, the digital-asset question and
+#   the citizen / U.S. national / work-authorized question (You and Spouse radios).
+# - Income and Deductions: "2a Itemized deductions or standard deduction", NEW "2b Charitable contribution
+#   deduction for non-itemizers", NEW "2c Add lines 2a and 2b", "3 Subtract line 2c from line 1", 4a the
+#   Schedule 1-A deductions, 4b QBI, 5 taxable income.
+# - TRAP — line 11 splits like the 1040's 24: "11a Add lines 8 and 10. This is your total tax", "11b Enter
+#   amount from Form 1062, line 15", "11c Add lines 11a and 11b"; lines 20/21 compare line 19 with 11c.
+# - TRAP — line 17 splits: "17a Add lines 12 through 15, column C, and line 16", "17b Amount from Schedule
+#   3-A", "17c Subtract line 17b from line 17a. These are your total payments"; 19 subtracts 18 from 17c.
+# - Line 15's refundable-credit boxes drop Form 8885 (Schedule 8812, 2439, 4136, 8863, 8962, other).
+# - Line 22 gains DIRECT DEPOSIT: 22a amount refunded, 22b routing number, 22c checking/savings, 22d
+#   account number; 23 applies to "(enter year): estimated tax".
+# - TRAP — Part I renumbers: "24 Your dependent children who lived with you more than half of the year"
+#   and "25 Other dependents" (Rev. 12-2025: 25 and 27, with 24/26/28/29 reserved). The dependents grid
+#   (rows (1)-(7)) keeps the 2025 keys.
+#
+# Relations: column C only, as in Rev. 12-2025, each re-read on the draft face. Cross-form: none — the
+# amended figures are compared with the attached corrected return by the filer, and 17b ("Amount from
+# Schedule 3-A") prints no line to tie to.
+form: 1040-X
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040x--dft.pdf
+pdf_sha256: "6b76023588d258bee82f7d549ab8cc8497fbbd263d2f963603df87831cfb28f2"
+source_status: draft
+draft_created: "8/19/26"
+acroform_root: "topmostSubform[0]"
+fields:
+  - { line: "amended_year", field: "Page1[0].f1_01[0]", type: text, maxlen: 4 }
+  - { line: "fiscal_year_ended", field: "Page1[0].f1_02[0]", type: text }
+  - { line: "special_processing.section_301_9100_2", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "special_processing.combat_zone", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "special_processing.combat_zone_entry", field: "Page1[0].f1_03[0]", type: text }
+  - { line: "special_processing.deceased", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1" }
+  - { line: "special_processing.deceased_month", field: "Page1[0].f1_04[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.deceased_day", field: "Page1[0].f1_05[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.deceased_year", field: "Page1[0].f1_06[0]", type: text, maxlen: 4 }
+  - { line: "special_processing.spouse_deceased_month", field: "Page1[0].f1_07[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.spouse_deceased_day", field: "Page1[0].f1_08[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.spouse_deceased_year", field: "Page1[0].f1_09[0]", type: text, maxlen: 4 }
+  - { line: "special_processing.other", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1" }
+  - { line: "special_processing.other_text", field: "Page1[0].f1_10[0]", type: text }
+  - { line: "special_processing.other_text_2", field: "Page1[0].f1_11[0]", type: text }
+  - { line: "special_processing.other_text_3", field: "Page1[0].f1_12[0]", type: text }
+  - { line: "name.first", field: "Page1[0].f1_13[0]", type: text }
+  - { line: "name.last", field: "Page1[0].f1_14[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_15[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "spouse.first_name", field: "Page1[0].f1_16[0]", type: text }
+  - { line: "spouse.last_name", field: "Page1[0].f1_17[0]", type: text }
+  - { line: "spouse.identifying_number", field: "Page1[0].f1_18[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "mailing_address.street", field: "Page1[0].Address_ReadOrder[0].f1_19[0]", type: text }
+  - { line: "mailing_address.apt", field: "Page1[0].Address_ReadOrder[0].f1_20[0]", type: text, maxlen: 10 }
+  - { line: "mailing_address.city", field: "Page1[0].Address_ReadOrder[0].f1_21[0]", type: text }
+  - { line: "mailing_address.state", field: "Page1[0].Address_ReadOrder[0].f1_22[0]", type: text, maxlen: 12 }
+  # The draft sets the address row in 9pt (Rev. 12-2025: 8pt): the 70-pt ZIP and foreign-postal-code boxes
+  # take 10 and 15 characters before clipping (P-001).
+  - { line: "mailing_address.zip", field: "Page1[0].Address_ReadOrder[0].f1_23[0]", type: text, maxlen: 10 }
+  - { line: "mailing_address.foreign_country", field: "Page1[0].Address_ReadOrder[0].f1_24[0]", type: text }
+  - { line: "mailing_address.foreign_province", field: "Page1[0].Address_ReadOrder[0].f1_25[0]", type: text }
+  - { line: "mailing_address.foreign_postal_code", field: "Page1[0].Address_ReadOrder[0].f1_26[0]", type: text, maxlen: 15 }
+  - { line: "main_home_in_us", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "presidential_campaign.you", field: "Page1[0].c1_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "presidential_campaign.spouse", field: "Page1[0].c1_7[0]", type: checkbox, on_state: "/1" }
+  - { line: "filing_status.single", field: "Page1[0].c1_8[0]", type: checkbox, on_state: "/1", group: "filing_status", required: true }
+  - { line: "filing_status.mfj", field: "Page1[0].c1_8[1]", type: checkbox, on_state: "/2", group: "filing_status" }
+  - { line: "filing_status.mfs", field: "Page1[0].c1_8[2]", type: checkbox, on_state: "/3", group: "filing_status" }
+  - { line: "filing_status.hoh", field: "Page1[0].c1_8[3]", type: checkbox, on_state: "/4", group: "filing_status" }
+  - { line: "filing_status.qss", field: "Page1[0].c1_8[4]", type: checkbox, on_state: "/5", group: "filing_status" }
+  - { line: "filing_status.spouse_or_qualifying_person_name", field: "Page1[0].f1_27[0]", type: text }
+  - { line: "filing_status.nra_spouse_election", field: "Page1[0].c1_9[0]", type: checkbox, on_state: "/1" }
+  - { line: "filing_status.nra_spouse_name", field: "Page1[0].f1_28[0]", type: text }
+  - { line: "digital_assets.yes", field: "Page1[0].c1_10[0]", type: checkbox, on_state: "/1", group: "digital_assets" }
+  - { line: "digital_assets.no", field: "Page1[0].c1_10[1]", type: checkbox, on_state: "/2", group: "digital_assets" }
+  - { line: "citizen_or_work_authorized.you.yes", field: "Page1[0].c1_11[0]", type: checkbox, on_state: "/1", group: "citizen_or_work_authorized_you" }
+  - { line: "citizen_or_work_authorized.you.no", field: "Page1[0].c1_11[1]", type: checkbox, on_state: "/2", group: "citizen_or_work_authorized_you" }
+  - { line: "citizen_or_work_authorized.spouse.yes", field: "Page1[0].c1_12[0]", type: checkbox, on_state: "/1", group: "citizen_or_work_authorized_spouse" }
+  - { line: "citizen_or_work_authorized.spouse.no", field: "Page1[0].c1_12[1]", type: checkbox, on_state: "/2", group: "citizen_or_work_authorized_spouse" }
+  - { line: "1.nol_carryback", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line1[0].Adjusted_ReadOrder[0].c1_13[0]", type: checkbox, on_state: "/1" }
+  - { line: "1.original", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line1[0].f1_29[0]", type: money }
+  - { line: "1.net_change", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line1[0].f1_30[0]", type: money }
+  - { line: "1", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line1[0].f1_31[0]", type: money }
+  - { line: "2a.original", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2a[0].f1_32[0]", type: money }
+  - { line: "2a.net_change", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2a[0].f1_33[0]", type: money }
+  - { line: "2a", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2a[0].f1_34[0]", type: money }
+  - { line: "2b.original", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2b[0].f1_35[0]", type: money }
+  - { line: "2b.net_change", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2b[0].f1_36[0]", type: money }
+  - { line: "2b", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2b[0].f1_37[0]", type: money }
+  - { line: "2c.original", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2c[0].f1_38[0]", type: money }
+  - { line: "2c.net_change", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2c[0].f1_39[0]", type: money }
+  - { line: "2c", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line2c[0].f1_40[0]", type: money }
+  - { line: "3.original", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line3[0].f1_41[0]", type: money }
+  - { line: "3.net_change", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line3[0].f1_42[0]", type: money }
+  - { line: "3", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line3[0].f1_43[0]", type: money }
+  - { line: "4a.original", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line4a[0].f1_44[0]", type: money }
+  - { line: "4a.net_change", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line4a[0].f1_45[0]", type: money }
+  - { line: "4a", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line4a[0].f1_46[0]", type: money }
+  - { line: "4b.original", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line4b[0].f1_47[0]", type: money }
+  - { line: "4b.net_change", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line4b[0].f1_48[0]", type: money }
+  - { line: "4b", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line4b[0].f1_49[0]", type: money }
+  - { line: "5.original", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line5[0].f1_50[0]", type: money }
+  - { line: "5.net_change", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line5[0].f1_51[0]", type: money }
+  - { line: "5", field: "Page1[0].TaxLiability_ReadOrder[0].Table_Income[0].Line5[0].f1_52[0]", type: money }
+  - { line: "6.method", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line6[0].Tax[0].f1_53[0]", type: text }
+  - { line: "6.original", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line6[0].f1_54[0]", type: money }
+  - { line: "6.net_change", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line6[0].f1_55[0]", type: money }
+  - { line: "6", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line6[0].f1_56[0]", type: money }
+  - { line: "7.gbc_carryback", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line7[0].Credits[0].c1_14[0]", type: checkbox, on_state: "/1" }
+  - { line: "7.original", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line7[0].f1_57[0]", type: money }
+  - { line: "7.net_change", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line7[0].f1_58[0]", type: money }
+  - { line: "7", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line7[0].f1_59[0]", type: money }
+  - { line: "8.original", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line8[0].f1_60[0]", type: money }
+  - { line: "8.net_change", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line8[0].f1_61[0]", type: money }
+  - { line: "8", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line8[0].f1_62[0]", type: money }
+  - { line: "10.original", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line10[0].f1_66[0]", type: money }
+  - { line: "10.net_change", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line10[0].f1_67[0]", type: money }
+  - { line: "10", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line10[0].f1_68[0]", type: money }
+  - { line: "11a.original", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11a[0].f1_69[0]", type: money }
+  - { line: "11a.net_change", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11a[0].f1_70[0]", type: money }
+  - { line: "11a", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11a[0].f1_71[0]", type: money }
+  - { line: "11b.original", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11b[0].f1_72[0]", type: money }
+  - { line: "11b.net_change", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11b[0].f1_73[0]", type: money }
+  - { line: "11b", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11b[0].f1_74[0]", type: money }
+  - { line: "11c.original", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11c[0].f1_75[0]", type: money }
+  - { line: "11c.net_change", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11c[0].f1_76[0]", type: money }
+  - { line: "11c", field: "Page1[0].Payments_ReadOrder[0].Table_TaxLiability[0].Line11c[0].f1_77[0]", type: money }
+  - { line: "12.original", field: "Page1[0].Table_Payments[0].Line12[0].f1_78[0]", type: money }
+  - { line: "12.net_change", field: "Page1[0].Table_Payments[0].Line12[0].f1_79[0]", type: money }
+  - { line: "12", field: "Page1[0].Table_Payments[0].Line12[0].f1_80[0]", type: money }
+  - { line: "13.original", field: "Page1[0].Table_Payments[0].Line13[0].f1_81[0]", type: money }
+  - { line: "13.net_change", field: "Page1[0].Table_Payments[0].Line13[0].f1_82[0]", type: money }
+  - { line: "13", field: "Page1[0].Table_Payments[0].Line13[0].f1_83[0]", type: money }
+  - { line: "14.original", field: "Page1[0].Table_Payments[0].Line14[0].f1_84[0]", type: money }
+  - { line: "14.net_change", field: "Page1[0].Table_Payments[0].Line14[0].f1_85[0]", type: money }
+  - { line: "14", field: "Page1[0].Table_Payments[0].Line14[0].f1_86[0]", type: money }
+  - { line: "15.schedule_8812", field: "Page1[0].Table_Payments[0].Line15[0].Refundable_ReadOrder[0].c1_15[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_2439", field: "Page1[0].Table_Payments[0].Line15[0].Refundable_ReadOrder[0].c1_16[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_4136", field: "Page1[0].Table_Payments[0].Line15[0].Refundable_ReadOrder[0].c1_17[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_8863", field: "Page1[0].Table_Payments[0].Line15[0].Refundable_ReadOrder[0].c1_18[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.form_8962", field: "Page1[0].Table_Payments[0].Line15[0].Refundable_ReadOrder[0].c1_19[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.other", field: "Page1[0].Table_Payments[0].Line15[0].Refundable_ReadOrder[0].c1_20[0]", type: checkbox, on_state: "/1" }
+  - { line: "15.other_specify", field: "Page1[0].Table_Payments[0].Line15[0].Refundable_ReadOrder[0].f1_87[0]", type: text }
+  - { line: "15.original", field: "Page1[0].Table_Payments[0].Line15[0].f1_88[0]", type: money }
+  - { line: "15.net_change", field: "Page1[0].Table_Payments[0].Line15[0].f1_89[0]", type: money }
+  - { line: "15", field: "Page1[0].Table_Payments[0].Line15[0].f1_90[0]", type: money }
+  - { line: "16", field: "Page1[0].f1_91[0]", type: money }
+  - { line: "17a", field: "Page1[0].f1_92[0]", type: money }
+  - { line: "17b", field: "Page1[0].f1_93[0]", type: money }
+  - { line: "17c", field: "Page1[0].f1_94[0]", type: money }
+  - { line: "18", field: "Page2[0].f2_01[0]", type: money }
+  - { line: "19", field: "Page2[0].f2_02[0]", type: money }
+  - { line: "20", field: "Page2[0].f2_03[0]", type: money }
+  - { line: "21", field: "Page2[0].f2_04[0]", type: money }
+  - { line: "22a", field: "Page2[0].f2_05[0]", type: money }
+  - { line: "22b", field: "Page2[0].RoutingNo[0].f2_06[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "22c.checking", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/1", group: "22c" }
+  - { line: "22c.savings", field: "Page2[0].c2_1[1]", type: checkbox, on_state: "/2", group: "22c" }
+  - { line: "22d", field: "Page2[0].AccountNo[0].f2_07[0]", type: text, maxlen: 17, comb: true, format: "ssn_digits_only" }
+  - { line: "23.estimated_tax_year", field: "Page2[0].f2_08[0]", type: text, maxlen: 4 }
+  - { line: "23", field: "Page2[0].f2_09[0]", type: money }
+  - { line: "24.original", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_10[0]", type: money }
+  - { line: "24.net_change", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_11[0]", type: money }
+  - { line: "24", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_12[0]", type: money }
+  - { line: "25.original", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_13[0]", type: money }
+  - { line: "25.net_change", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_14[0]", type: money }
+  - { line: "25", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_15[0]", type: money }
+  - { line: "dependents.more_than_four", field: "Page2[0].Dependents_ReadOrder[0].c2_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_16[0]", type: text }
+  - { line: "dependent_2.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_17[0]", type: text }
+  - { line: "dependent_3.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_18[0]", type: text }
+  - { line: "dependent_4.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_19[0]", type: text }
+  - { line: "dependent_1.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_20[0]", type: text }
+  - { line: "dependent_2.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_21[0]", type: text }
+  - { line: "dependent_3.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_22[0]", type: text }
+  - { line: "dependent_4.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_23[0]", type: text }
+  - { line: "dependent_1.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_24[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "dependent_2.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_25[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "dependent_3.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_26[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "dependent_4.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_27[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "dependent_1.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_28[0]", type: text, maxlen: 15 }
+  - { line: "dependent_2.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_29[0]", type: text, maxlen: 15 }
+  - { line: "dependent_3.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_30[0]", type: text, maxlen: 15 }
+  - { line: "dependent_4.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_31[0]", type: text, maxlen: 15 }
+  - { line: "dependent_1.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent1[0].c2_3[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent1[0].c2_4[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent2[0].c2_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent2[0].c2_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent3[0].c2_7[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent3[0].c2_8[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent4[0].c2_9[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent4[0].c2_10[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.full_time_student", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent1[0].c2_11[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.permanently_disabled", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent1[0].c2_12[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.full_time_student", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent2[0].c2_13[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.permanently_disabled", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent2[0].c2_14[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.full_time_student", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent3[0].c2_15[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.permanently_disabled", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent3[0].c2_16[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.full_time_student", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent4[0].c2_17[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.permanently_disabled", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent4[0].c2_18[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent1[0].c2_19[0]", type: checkbox, on_state: "/1", group: "dependent_1_credit" }
+  - { line: "dependent_1.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent1[0].c2_19[1]", type: checkbox, on_state: "/2", group: "dependent_1_credit" }
+  - { line: "dependent_2.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent2[0].c2_20[0]", type: checkbox, on_state: "/1", group: "dependent_2_credit" }
+  - { line: "dependent_2.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent2[0].c2_20[1]", type: checkbox, on_state: "/2", group: "dependent_2_credit" }
+  - { line: "dependent_3.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent3[0].c2_21[0]", type: checkbox, on_state: "/1", group: "dependent_3_credit" }
+  - { line: "dependent_3.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent3[0].c2_21[1]", type: checkbox, on_state: "/2", group: "dependent_3_credit" }
+  - { line: "dependent_4.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent4[0].c2_22[0]", type: checkbox, on_state: "/1", group: "dependent_4_credit" }
+  - { line: "dependent_4.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent4[0].c2_22[1]", type: checkbox, on_state: "/2", group: "dependent_4_credit" }
+  - { line: "mfs_hoh_lived_apart", field: "Page2[0].c2_23[0]", type: checkbox, on_state: "/1" }
+  - { line: "explanation", field: "Page2[0].f2_32[0]", type: text }
+  - { line: "occupation", field: "Page2[0].f2_33[0]", type: text }
+  - { line: "identity_protection_pin", field: "Page2[0].f2_34[0]", type: text, maxlen: 6, comb: true }
+  - { line: "spouse_occupation", field: "Page2[0].f2_35[0]", type: text }
+  - { line: "spouse_identity_protection_pin", field: "Page2[0].f2_36[0]", type: text, maxlen: 6, comb: true }
+  - { line: "phone", field: "Page2[0].f2_37[0]", type: text }
+  - { line: "email", field: "Page2[0].f2_38[0]", type: text }
+  - { line: "preparer.name", field: "Page2[0].f2_39[0]", type: text }
+  - { line: "preparer.ptin", field: "Page2[0].f2_40[0]", type: text, maxlen: 11 }
+  - { line: "preparer.self_employed", field: "Page2[0].c2_24[0]", type: checkbox, on_state: "/1" }
+  - { line: "preparer.firm_name", field: "Page2[0].f2_41[0]", type: text }
+  - { line: "preparer.firm_phone", field: "Page2[0].f2_42[0]", type: text }
+  - { line: "preparer.firm_address", field: "Page2[0].f2_43[0]", type: text }
+  - { line: "preparer.firm_ein", field: "Page2[0].f2_44[0]", type: text, maxlen: 10 }
+relations:
+  - "2c == 2a + 2b"                   # "Add lines 2a and 2b"
+  - "3 == 1 - 2c"                     # "Subtract line 2c from line 1"
+  - "5 == max(0, 3 - 4a - 4b)"        # "Subtract the total of lines 4a and 4b from line 3. If the result for column C is zero or less, enter -0-"
+  - "8 == max(0, 6 - 7)"              # "Subtract line 7 from line 6. If the result is zero or less, enter -0-"
+  - "11a == 8 + 10"                   # "Add lines 8 and 10. This is your total tax"
+  - "11c == 11a + 11b"                # "Add lines 11a and 11b"
+  - "17a == 12 + 13 + 14 + 15 + 16"   # "Add lines 12 through 15, column C, and line 16"
+  - "17c == 17a - 17b"                # "Subtract line 17b from line 17a. These are your total payments"
+  - "19 == 17c - 18"                  # "Subtract line 18 from line 17c"
+  - "20 == max(0, 11c - 19)"          # "If line 11c, column C, is more than line 19, subtract line 19 from line 11c, column C"
+  - "21 == max(0, 19 - 11c)"          # "If line 11c, column C, is less than line 19, enter the difference"
+cross_form: []
+identity_fields: [name.first, name.last, identifying_number]
+# PDF page 3 of the draft (page 1 is the IRS cover sheet); page 2 on the final.
+signature: { page: 3 }
+mailing: null

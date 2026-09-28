@@ -274,6 +274,16 @@ RESERVED_LINES_UNMAPPED: tuple[ReservedUnmapped, ...] = (
         )
         for year in (2023, 2024, 2025)
     ),
+    # Form 1040-X Rev. 12-2026 (the draft, Phase J JT5f, pinned by the 2026 pack): line 9 alone is still
+    # "Reserved for future use" (its A/B/C cells f1_63-f1_65, ReadOnly); Part I renumbered to 24/25, so the
+    # 2025 reserved 24/26/28/29 no longer print. Line 11a "Add lines 8 and 10" skips 9.
+    ReservedUnmapped(
+        "federal/2026/f1040x/pack.yaml",
+        ("9", "9.original", "9.net_change"),
+        ("8", "8.original", "10", "10.net_change", "11a"),
+        None,
+        "line 9 prints 'Reserved for future use'; 11a adds lines 8 and 10",
+    ),
     # Schedule 3 line 6e, every shipped year. Printed "Reserved for future
     # use"; the printed line-7 instruction is the RANGE "Add lines 6a through
     # 6z", which already tolerates gaps, and the pack's "7 == sum(6a..6z)"

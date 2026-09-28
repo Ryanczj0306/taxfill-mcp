@@ -894,3 +894,25 @@ def test_out_path_parent_directories_are_created(blank_pdf: Path, tmp_path: Path
     out = tmp_path / "drafts" / "2023" / "filled.pdf"
     fill_form(PACK, {"name": "T"}, blank_pdf, out)
     assert out.is_file()
+
+
+
+def test_an_empty_field_array_is_rebuilt_from_the_page_widgets(tmp_path):
+    """JT5f: the IRS draft Schedule 3-A (2026) ships /AcroForm /Fields [] with its widgets on the page."""
+    from pypdf import PdfReader, PdfWriter  # noqa: PLC0415
+    from pypdf.generic import ArrayObject, NameObject  # noqa: PLC0415
+
+    from pdf_fixtures import make_acroform_pdf  # noqa: PLC0415
+    from taxfill_core.filler import _repair_empty_field_array  # noqa: PLC0415
+
+    good = make_acroform_pdf(tmp_path / "good.pdf", [{"name": "form1[0].Page1[0].f1_01[0]"},
+                                                    {"name": "form1[0].Page1[0].f1_02[0]"}])
+    writer = PdfWriter(clone_from=str(good))
+    assert _repair_empty_field_array(writer) == 0                # a populated /Fields is left alone
+    writer._root_object["/AcroForm"].get_object()[NameObject("/Fields")] = ArrayObject()
+    broken = tmp_path / "broken.pdf"
+    writer.write(str(broken))
+    assert not PdfReader(str(broken)).get_fields()               # the draft's shape: no fields as pypdf reads it
+    repaired = PdfWriter(clone_from=str(broken))
+    assert _repair_empty_field_array(repaired) >= 1
+    assert {"form1[0].Page1[0].f1_01[0]", "form1[0].Page1[0].f1_02[0]"} <= set(repaired.get_fields())

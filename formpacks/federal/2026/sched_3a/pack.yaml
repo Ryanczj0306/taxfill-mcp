@@ -1,0 +1,69 @@
+# Schedule 3-A (Form 1040) (2026) — Federal Public Benefit — NEW FORM, DRAFTS-FIRST (Phase J JT5f, read
+# 2026-09-28).
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040s3a--dft.pdf, footer "Schedule 3-A (Form
+# 1040) 2026 Created 6/24/26"). PDF page 1 is the IRS cover sheet; the schedule is one page (PDF page 2).
+# When the final posts at irs-prior/f1040s3a--2026.pdf, re-pin source_url, pdf_sha256 and source_status
+# final, drop draft_created, and re-read the face. TY2026 is planning-only (rehearsal mode only).
+#
+# The schedule is the form face of REG-119882-25 (91 FR 53812; proposed), the PRWORA "federal public
+# benefit" reading of the refundable credits — the JT1c knowledge block federal_public_benefit and pitfall
+# P-023 carry the law; the estimator already prices it (BottomLineResult.federal_public_benefit). Its own
+# caution: "Complete Schedule 3-A (Form 1040) only if you are claiming the earned income credit (EIC),
+# additional child tax credit (ACTC), refundable American opportunity credit, or refundable adoption credit."
+# "Attach to Form 1040, 1040-SR, 1040-NR, or 1040-SS." The instructions are not posted.
+#
+# 16 widgets, all mapped; none ReadOnly. Every binding read off the draft face:
+#   Part I — 1a "Enter the amount from Form 1040 or 1040-SR, line 32a. If you are filing Form 1040-NR or
+#   Form 1040-SS, enter -0-"; 1b "... line 31 ..."; 2 "Subtract line 1b from line 1a. If you are filing Form
+#   1040-NR, add Form 1040-NR, lines 28 and 30, and enter the total"; 3 "Enter the amount from Form 1040,
+#   1040-SR, or 1040-NR, line 24a"; 4 "Enter the amount from Schedule 2 (Form 1040), line 20"; 5 "Subtract
+#   line 4 from line 3"; 6 "Is line 2 more than line 5?" Yes (subtract line 5 from line 2: the federal public
+#   benefit) / No (enter -0-); 7 "Do you want to receive your federal public benefit?" Yes / No (stop: line 6
+#   goes to Form 1040 line 32b).
+#   Part II — 8 "Are you or your spouse a U.S. citizen, U.S. national, or qualified alien?" Yes (enter -0-
+#   here and on line 32b) / No (enter the amount from line 6 here and on line 32b).
+#   Each Yes/No prints Yes first (/1) and No second (/2), on one radio per question.
+#
+# Relations: "5 == 3 - 4" and line 6 as printed — "Yes. Subtract line 5 from line 2" / "No. Stop. Enter -0-"
+# is exactly max(0, 2 - 5). Line 2 is not encoded (the 1040-NR branch adds 28 and 30 instead), nor is line 8
+# (it depends on the Part II answer). Cross-form: the unconditional carries in. The carry OUT to Form 1040 /
+# 1040-NR line 32b is line 6 on "No" at line 7, else line 8 — conditional, so not encoded.
+form: Schedule 3-A (Form 1040)
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040s3a--dft.pdf
+pdf_sha256: "787e1ae1eaa3e23a184074d0f437f6b2a8fe3f01290f366201f14eeecc82b8db"
+source_status: draft
+draft_created: "6/24/26"
+acroform_root: "form1[0]"
+fields:
+  - { line: "name", field: "Page1[0].f1_01[0]", type: text }
+  # plain box, widget /MaxLen 11; digits-only keeps the cross-form identity values consistent with f1040
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "1a", field: "Page1[0].Line1a_ReadOrder[0].f1_03[0]", type: money }   # Form 1040 line 32a (1040-NR/SS: -0-)
+  - { line: "1b", field: "Page1[0].f1_04[0]", type: money }                        # Form 1040 line 31 (1040-NR/SS: -0-)
+  - { line: "2", field: "Page1[0].f1_05[0]", type: money }                         # 1a - 1b (1040-NR: lines 28 + 30)
+  - { line: "3", field: "Page1[0].Line3_ReadOrder[0].f1_06[0]", type: money }      # Form 1040 / 1040-NR line 24a
+  - { line: "4", field: "Page1[0].f1_07[0]", type: money }                         # Schedule 2 line 20
+  - { line: "5", field: "Page1[0].f1_08[0]", type: money }                         # Subtract line 4 from line 3
+  - { line: "6.yes", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1", group: "line6" }
+  - { line: "6.no", field: "Page1[0].c1_1[1]", type: checkbox, on_state: "/2", group: "line6" }
+  - { line: "6", field: "Page1[0].f1_09[0]", type: money }                         # the federal public benefit
+  - { line: "7.yes", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1", group: "line7" }
+  - { line: "7.no", field: "Page1[0].c1_2[1]", type: checkbox, on_state: "/2", group: "line7" }
+  - { line: "8.yes", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1", group: "line8" }
+  - { line: "8.no", field: "Page1[0].c1_3[1]", type: checkbox, on_state: "/2", group: "line8" }
+  - { line: "8", field: "Page1[0].f1_10[0]", type: money }
+relations:
+  - "5 == 3 - 4"                      # "Subtract line 4 from line 3"
+  - "6 == max(0, 2 - 5)"              # "Is line 2 more than line 5? Yes. Subtract line 5 from line 2 ... No. Stop. Enter -0- here"
+cross_form:
+  - "1a == f1040.32a"                 # "Enter the amount from Form 1040 or 1040-SR, line 32a"
+  - "1b == f1040.31"                  # "Enter the amount from Form 1040 or 1040-SR, line 31"
+  - "3 == f1040.24a"                  # "Enter the amount from Form 1040, 1040-SR, or 1040-NR, line 24a"
+  - "3 == f1040nr.24a"
+  - "4 == sched_2.20"                 # "Enter the amount from Schedule 2 (Form 1040), line 20"
+identity_fields: [name, identifying_number]
+signature: null
+mailing: null

@@ -51,10 +51,12 @@
 # - Line 36 applies the refund to "your 2027 estimated tax".
 #
 # Cross-form references NOT encoded (the 2025 template's scoping): 19 and 28
-# (Schedule 8812), 29 (Form 8863), 30 (Form 8839), 24b (Form 1062) and 32b
-# (Schedule 3-A) have no form key. The Schedule 1, 2 and 3 legs below are
-# printed on the draft but their 2026 packs land in JT3b/JT3c, so
-# test_pack_invariants allowlists those targets until then.
+# (Schedule 8812), 29 (Form 8863), 30 (Form 8839) and 24b (Form 1062) have no form
+# key here (the 8812 and 8863 packs carry their own legs). 32b's Schedule 3-A carry
+# is CONDITIONAL — line 6 when the filer declines the benefit, else line 8 — so the
+# 2026 sched_3a pack (JT5f) encodes only its unconditional carries IN (1a/1b/3 from
+# this form). The Schedule 1, 2 and 3 legs below resolve against their 2026 packs
+# (JT3b/JT3c).
 form: "1040"
 jurisdiction: federal
 tax_year: 2026
