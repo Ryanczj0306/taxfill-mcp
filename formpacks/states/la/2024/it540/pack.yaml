@@ -1,16 +1,64 @@
-# Form IT-540 (IT-540-WEB), 2023 — Louisiana Resident Income Tax Return.
+# ===========================================================================
+# TY2024 PORT of formpacks/states/la/2023/it540/pack.yaml (ported 2026-09-28,
+# Phase J JS3b; triaged PORTABLE by scripts/scaffold_state_year.py — every
+# field the 2023 pack maps is still in the 2024 blank).
+#
+# URL. The 2024 booklet is renamed IT-540-WEB-BC ("…/IT-540-WEB-BC-2024-F.pdf",
+# the 2026-09-12 discovery run). Digest 24011393f204… — the discovery pair,
+# the JS3a triage and a direct re-download on 2026-09-28 all agree.
+#
+# PRINTED IDENTITY. PDF page 2 prints "IT-540-WEB-BC (Page 1 of 4) / 2024
+# LOUISIANA RESIDENT"; pages 3/4/5 print "2024 Form IT-540-WEB-BC (Page 2 of 4
+# / 3 of 4 / 4 of 4)"; the page barcodes read 62530..62533 (2023:
+# 62430..62433). Page 5 prints "Calendar year return due 5/15/2025".
+# printed_year_verified = 2024. Still 17 PDF pages, with the same four
+# return pages (PDF 2-5) mapped and the same attachments excluded.
+#
+# AcroForm topology against the 2023 blank. 519 widgets = 495 names (2023: 514
+# / 490). Every widget the 2023 pack maps is still there, with the same /Ff,
+# /FT and /AP states. What changed on the four mapped pages:
+#   * Return page 1 re-laid its date row. "Your Date of Birth" (YDOB) and
+#     "Spouse's Date of Birth" (SDOB) moved left, and two NEW 8-cell boxes
+#     follow them: "Decedent's Date of Death" (DDOD) and "Spouse's Date of
+#     Death" (SDOD), both MAPPED (date_of_death / spouse.date_of_death, maxlen 8
+#     like the DOB boxes). 30 mapped widgets moved there, SDOB furthest at
+#     186 pt, all re-placed by the sentinel audit.
+#   * Return page 4 gained an "Email Address" row under the signature line —
+#     NEW widget "Email Address", MAPPED as email_address. The two signature
+#     dates moved UP 24 pt to make room; the paid-preparer block and lines
+#     38-46 moved by under 3 pt.
+#   * Return page 4 also gained a 2-D barcode panel: "NoBarcode" (a ReadOnly
+#     multiline text cell), "ArchiveDataBarP1", "buttonClear" and
+#     "buttonPDF417" (pushbuttons). They are the DOR's barcode machinery, not
+#     return lines — NOT mapped.
+#   * Eleven mapped text boxes now carry a /MaxLen (2023: none, or 4 / 5):
+#     the name parts, street, unit type / number, city and foreign nation.
+#     Each pack maxlen now equals the widget's: both suffixes 4 -> 3, unit
+#     type 5 -> 6, unit number already 5, and the other seven gain one.
+#   * Every text widget's /DA changed from "/HeBo 10 Tf" (Helvetica Bold 10)
+#     to "/CoBo 12 Tf" (Courier Bold 12, 7.2 pt per character). The ZIP box
+#     (ZIPCD, 54.5 pt, no /MaxLen) now holds 7 characters, so a ZIP+4 no longer
+#     fits: its pack maxlen drops 10 -> 5, the printed "ZIP" (the first audit
+#     flagged the 10-character sentinel).
+# The excluded Schedule D page (PDF 7) re-cut its donation lines (HH, SLUF
+# added; CTSEC, LAoUW, LHRA, LSUACGWEC removed) — outside this pack.
+#
+# FACE DELTAS vs 2023. The form name (IT-540-WEB -> IT-540-WEB-BC), the date
+# row, the email row, the years (line 26 "WITHHELD FOR 2024", 27 "CARRIED
+# FORWARD FROM 2023", 28 "ESTIMATED PAYMENTS MADE FOR 2024", 36 "CREDITED TO
+# 2025"), and line 34 now cites "Schedule D, Line 20" (2023: Line 22). The
+# line numbering 6A-46 is unchanged.
+# Form IT-540 (IT-540-WEB-BC), 2024 — Louisiana Resident Income Tax Return.
 #
 # Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
 # every AcroForm widget rendered with its own field name) -> vision-map
 # workflow (each return page read at zoom to place every field on its printed
 # line) -> this map.
 #
-# Revision confirmed by READING the rendered pages: PDF page 2 prints
-# "IT-540-WEB (Page 1 of 4) / 2023 LOUISIANA RESIDENT"; pages 3/4/5 print
-# "2023 Form IT-540-WEB (Page 2 of 4 / 3 of 4 / 4 of 4)"; page 5 carries the
-# perjury declaration + "Your Signature" block + paid-preparer block + the
-# where-to-file addresses, and the IMPORTANT note "All four (4) pages of this
-# return MUST be mailed in together." The barcodes read 62430..62433.
+# Revision: see PRINTED IDENTITY in the port banner above. Page 5 carries the
+# perjury declaration + "Your Signature" block + the email row + the
+# paid-preparer block + the where-to-file addresses, and the IMPORTANT note
+# "All four (4) pages of this return MUST be mailed in together."
 #
 # PAGES MAPPED vs EXCLUDED.
 #   MAPPED — PDF pages 2,3,4,5 = the filed four-page IT-540 return
@@ -39,7 +87,7 @@
 # are comb:true, format:ssn_digits_only, maxlen:9 (dashes would overflow the
 # cells). PRMSSN is repeated as a header echo on return pages 2,3,4 — mapped as
 # identifying_number.page<N> echoes.
-# The date boxes are 8-cell combs too (/Ff comb bit, /MaxLen 8, printed
+# The date boxes (both birth dates and, from 2024, both dates of death) are 8-cell combs too (/Ff comb bit, /MaxLen 8, printed
 # "M M D D Y Y Y Y"): comb:true, maxlen 8, so a date goes in as MMDDYYYY digits
 # (Phase J JS3b: "01/15/2024" would put slashes in cells and drop the year).
 #
@@ -74,18 +122,18 @@
 #
 # Cross_form. Line 7's printed label is "FEDERAL ADJUSTED GROSS INCOME"; the
 # IT-540 starts from federal AGI, so the single cross_form equality
-# 7 == f1040.11 (Form 1040, 2023, line 11 = AGI) is declared.
+# 7 == f1040.11 (Form 1040, 2024, line 11 = AGI) is declared.
 #
 # Coverage. 4 filed pages. 6E NAME / ND / ND(2) free-text helper lines and the
 # 30-widget dependent-detail grid ARE mapped (real printed boxes). PRMSSN (SSN)
 # and LSTNAM (last-name echo) are each a SINGLE AcroForm field whose widgets
-# repeat on every return page, so each is mapped exactly once. 148 field entries
+# repeat on every return page, so each is mapped exactly once. 151 field entries
 # mapped below.
 form: IT-540
 jurisdiction: states/la
-tax_year: 2023
-source_url: https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf
-pdf_sha256: 3556780d8bb383fee4c06208fff63e40f5b41d55d8f82f1c349de476290af8ce
+tax_year: 2024
+source_url: https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf
+pdf_sha256: 24011393f204500e1d3c031dd8c80b5d624286b7d9a7aa1d9fb082a75581ecbb
 acroform_root: ''
 fields:
   # ===================================================== return Page 1 of 4
@@ -97,28 +145,30 @@ fields:
   - { line: amended_return, field: AMMEND, type: checkbox, on_state: /Yes }
   - { line: nol_carryback, field: NOL, type: checkbox, on_state: /Yes }
   # ---- name / suffix
-  - { line: name.first, field: PRMFN, type: text }
+  - { line: name.first, field: PRMFN, type: text, maxlen: 20 }
   - { line: name.middle_initial, field: PRMMN, type: text, maxlen: 1 }
-  - { line: name.last, field: PRMLN, type: text }
-  - { line: name.suffix, field: PRMSFX, type: text, maxlen: 4 }
-  - { line: spouse.name.first, field: SPOFN, type: text }
+  - { line: name.last, field: PRMLN, type: text, maxlen: 19 }
+  - { line: name.suffix, field: PRMSFX, type: text, maxlen: 3 }
+  - { line: spouse.name.first, field: SPOFN, type: text, maxlen: 20 }
   - { line: spouse.name.middle_initial, field: SPOMN, type: text, maxlen: 1 }
-  - { line: spouse.name.last, field: SPOLN, type: text }
-  - { line: spouse.name.suffix, field: SPOSFX, type: text, maxlen: 4 }
+  - { line: spouse.name.last, field: SPOLN, type: text, maxlen: 19 }
+  - { line: spouse.name.suffix, field: SPOSFX, type: text, maxlen: 3 }
   # ---- address
-  - { line: mailing_address.street, field: STADDR, type: text }
-  - { line: mailing_address.unit_type, field: UT, type: text, maxlen: 5 }
+  - { line: mailing_address.street, field: STADDR, type: text, maxlen: 30 }
+  - { line: mailing_address.unit_type, field: UT, type: text, maxlen: 6 }
   - { line: mailing_address.unit_number, field: UN, type: text, maxlen: 5 }
-  - { line: mailing_address.city, field: CITY, type: text }
+  - { line: mailing_address.city, field: CITY, type: text, maxlen: 25 }
   - { line: mailing_address.state, field: STATE, type: text, maxlen: 2 }
-  - { line: mailing_address.zip, field: ZIPCD, type: text, maxlen: 10 }
-  - { line: mailing_address.foreign_nation, field: FOREIGNNATION, type: text }
-  # ---- SSN combs / phone / DOB
+  - { line: mailing_address.zip, field: ZIPCD, type: text, maxlen: 5 }    # 2024: Courier Bold 12 in a 54.5 pt box holds 7 characters, so ZIP only
+  - { line: mailing_address.foreign_nation, field: FOREIGNNATION, type: text, maxlen: 25 }
+  # ---- SSN combs / phone / DOB / date of death
   - { line: identifying_number, field: PRMSSN, type: text, maxlen: 9, comb: true, format: ssn_digits_only }
   - { line: spouse.identifying_number, field: SPOSSN, type: text, maxlen: 9, comb: true, format: ssn_digits_only }
   - { line: daytime_phone, field: PHNNUM, type: text, maxlen: 10 }
   - { line: date_of_birth, field: YDOB, type: text, maxlen: 8, comb: true }   # 8 cells printed M M D D Y Y Y Y: digits only
   - { line: spouse.date_of_birth, field: SDOB, type: text, maxlen: 8, comb: true }
+  - { line: date_of_death, field: DDOD, type: text, maxlen: 8, comb: true }   # "Decedent's Date of Death" (new 2024)
+  - { line: spouse.date_of_death, field: SDOD, type: text, maxlen: 8, comb: true }   # "Spouse's Date of Death" (new 2024)
   # ---- filing status (enter 1-5 in one box) and exemptions
   - { line: filing_status, field: FILSTA, type: text, maxlen: 1 }
   - { line: 6a.65_older, field: EXM65A, type: checkbox, on_state: /Yes }   # 6A Yourself 65 or older
@@ -209,18 +259,18 @@ fields:
   - { line: "23", field: INUSTX, type: money }                            # Total income tax, use tax, and road usage fee
   - { line: "24", field: OPORP2C, type: money }                           # Overpayment of Refundable Priority 2 (from L19)
   - { line: "25", field: RFP4CRS, type: money }                           # Refundable Priority 4 credits (Sch I, L6)
-  - { line: "26", field: TAXWTH, type: money }                            # Louisiana tax withheld for 2023
-  - { line: "27", field: AMTFWD, type: money }                            # Credit carried forward from 2022
-  - { line: "28", field: ESTPAY, type: money }                            # Estimated payments made for 2023
+  - { line: "26", field: TAXWTH, type: money }                            # Louisiana tax withheld for 2024
+  - { line: "27", field: AMTFWD, type: money }                            # Credit carried forward from 2023
+  - { line: "28", field: ESTPAY, type: money }                            # Estimated payments made for 2024
   - { line: "29", field: EXTPAY, type: money }                            # Extension payment
   - { line: "30", field: TTLCR&PAY, type: money }                         # Total refundable credits and payments
   - { line: "31", field: OPYMNT, type: money }                            # Overpayment (30 - 23)
   - { line: 32_farmer, field: FARMER, type: checkbox, on_state: /Yes }    # L32 "If you are a farmer, check the box"
   - { line: "32", field: UNPYMT, type: money }                            # Underpayment penalty
   - { line: "33", field: ADJOPT, type: money }                            # Adjusted overpayment
-  - { line: "34", field: TOTALDONATIONS, type: money }                    # Total donations (Sch D, L22)
+  - { line: "34", field: TOTALDONATIONS, type: money }                    # Total donations (Sch D, L20)
   - { line: "35", field: SUBTOT, type: money }                            # Subtotal (33 - 34)
-  - { line: "36", field: CRDFWD, type: money }                            # Amount of L35 credited to 2024 income tax
+  - { line: "36", field: CRDFWD, type: money }                            # Amount of L35 credited to 2025 income tax
   - { line: "37", field: REFUND, type: money }                            # Amount to be refunded (35 - 36)
   - { line: 37_refund_method, field: REFUNDOPT, type: text, maxlen: 1 }   # enter 2 (paper check) or 3 (direct deposit)
   - { line: deposit_account_type.checking, field: CHECKING, type: checkbox, on_state: /1, group: deposit_account_type }
@@ -244,6 +294,7 @@ fields:
   # ---- Sign Here / paid-preparer block (signatures are handwritten)
   - { line: signature_date, field: Pg4 Date(A), type: text }
   - { line: spouse.signature_date, field: Pg4 Date(B), type: text }
+  - { line: email_address, field: Email Address, type: text }         # "Email Address" (new 2024 row)
   - { line: preparer.name, field: PreparerName, type: text }
   - { line: preparer.signature_date, field: Pg4 Date(C), type: text }
   - { line: preparer.self_employed, field: PPSELFEMP, type: checkbox, on_state: /Yes }
@@ -256,7 +307,7 @@ relations:
   - "8d == 8b - 8c"        # Line 8D "EXCESS FEDERAL ITEMIZED DEDUCTIONS — Subtract Line 8C from Line 8B."
   - "23 == 21 + 22a + 22b" # Line 23 "Add Lines 21, 22A, AND 22B."
 cross_form:
-  - "7 == f1040.11"        # Line 7 "FEDERAL ADJUSTED GROSS INCOME" = Form 1040 (2023) line 11 (AGI).
+  - "7 == f1040.11"        # Line 7 "FEDERAL ADJUSTED GROSS INCOME" = Form 1040 (2024) line 11 (AGI).
 identity_fields:
   - identifying_number
   - name.first

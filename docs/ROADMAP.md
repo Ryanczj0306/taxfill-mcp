@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,952 tests** — offline 7,161 + live-.gov 791; derived
+Done and on `main` (**7,967 tests** — offline 7,172 + live-.gov 795; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -69,7 +69,7 @@ is JS5's).
   an empty checkbox frame; 1,414 before). The first two of those had been
   federal-only while CONVENTIONS.md called them binding — see Phase E for what
   shipped through the gap, and for the two live defects the widening found.
-- **State form packs — 68 across three years** (TY2023 42 / TY2024 17 / TY2025 9).
+- **State form packs — 69 across three years** (TY2023 42 / TY2024 18 / TY2025 9).
   The 2026-08-21 tranche added 10 (AR 2024 + 2025, NC/NJ/OH/RI/UT/VA 2024,
   OR/PA 2025) and closed **every PORTABLE row** in D2's measured triage for both
   TY2024 and TY2025; the 2026-08-25 tranche added 4 (IL-1040, ND-1, OR-40,
@@ -90,22 +90,22 @@ is JS5's).
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316, 8606, 8889, 8949, 8833, 1116, 8938 (2023–2025), Schedule 1-A (2025), and FinCEN 114 as a hand-fill worksheet. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (68 packs across TY2023–TY2025)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (69 packs across TY2023–TY2025)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**227 form packs total** — 219 `pack.yaml` (151 federal + 68 state) + 8
-`handfill.yaml`. The state 68 breaks down **TY2023 42 / TY2024 17 / TY2025 9**.
+**228 form packs total** — 220 `pack.yaml` (151 federal + 69 state) + 8
+`handfill.yaml`. The state 69 breaks down **TY2023 42 / TY2024 18 / TY2025 9**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **16 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, KY, NY, OR, PA
-> and UT (2024+2025), and IL/MO/NC/ND/NJ/OH/RI/VA (2024) — after the 2026-08-21
+> **17 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, KY, NY, OR, PA
+> and UT (2024+2025), and IL/LA/MO/NC/ND/NJ/OH/RI/VA (2024) — after the 2026-08-21
 > ten-pack and 2026-08-25 four-pack tranches and the JS3b ports (UT 2025,
-> AZ 2024/2025, DC 2024/2025, KY 2024/2025). For the remaining **26**, state *knowledge*
+> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024). For the remaining **25**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
-> still computes years those packs cannot fill. That asymmetry is now 26
+> still computes years those packs cannot fill. That asymmetry is now 25
 > jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
@@ -325,10 +325,10 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
-      TY2023-only**: 68 packs across TY2023 (42) / TY2024 (17) / TY2025 (9), so
-      **16 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, KY, NY, OR, PA and UT
-      for both 2024 and 2025; IL, MO, NC, ND, NJ, OH, RI, VA for 2024. For the
-      other **26**, a 2024/2025 return still computes but cannot be filled.
+      TY2023-only**: 69 packs across TY2023 (42) / TY2024 (18) / TY2025 (9), so
+      **17 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, KY, NY, OR, PA and UT
+      for both 2024 and 2025; IL, LA, MO, NC, ND, NJ, OH, RI, VA for 2024. For the
+      other **25**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
@@ -2237,7 +2237,16 @@ line items sum to the headline delta.
       - All three KY years now carry group ids on the five shared-/Btn questions, retiring ky/2023's `SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID` row.
       - The 2023 NOTE claiming the grammar could not reference column lines was stale after JP5c and was never flagged. It is now declared: 7.a, 9.a/9.b and 14.a/14.b as printed, and 19 = 18 A + B (checked against the 2023 and 2024 packets). Line 7 column B stays out because its line-5 key `5_b` (dot-free so cross_form can name it) does not tokenize in the relation grammar. 11 stays out because a zero is plausible under the deduction. `test_dotted_relations.py` checks all three years both ways.
       - Sentinel audits 108/108 (2024) and 107/107 (2025), 0 fails. All pages were read. Every KY network gate passes for 2023-2025.
-    - Next, from JS3a's 2025 work-list: AL 40 (NEAR-PORT, 34 fields); then the 2024 rows (LA PORTABLE; ID NEAR-PORT).
+    - **LA IT-540 2024 — SHIPPED 2026-09-28** (`formpacks/states/la/2024/it540`). PORTABLE in the triage (no mapped name vanished), but a real re-layout:
+      - The booklet is renamed IT-540-WEB-BC. The pin matches three copies. Printed identity: "2024 LOUISIANA RESIDENT", barcodes 62530..62533, "Calendar year return due 5/15/2025". Still 17 PDF pages, with the same four return pages mapped.
+      - Return page 1's date row now holds four 8-cell combs. The DOBs moved (SDOB 186 pt), and two NEW boxes are mapped: "Decedent's Date of Death" and "Spouse's Date of Death".
+      - Return page 4 gained an "Email Address" row (mapped), and the signature dates moved up 24 pt. Its 2-D-barcode machinery (NoBarcode, ArchiveDataBarP1, two pushbuttons) is left unmapped.
+      - Eleven mapped boxes gained a /MaxLen, and each pack maxlen now tracks it (suffixes 4 -> 3, unit type 5 -> 6).
+      - Every text /DA went from Helvetica Bold 10 to Courier Bold 12. So the ZIP box (54.5 pt, 7 characters) caps at 5, and the dependent-name columns clip long names, which is what surfaced JS3c.
+      - The date boxes (2023's two and 2024's four) are now `comb: true`: the cells print M M D D Y Y Y Y, and "01/15/2024" would put slashes in the cells.
+      - The LA 2023 header's "109 field entries" is corrected to 148 (2024: 151).
+      - Face deltas: the years and line 34 "Schedule D, Line 20" (was 22). Sentinel audit 147/147 with 0 fails, all four return pages read. Every LA network gate passes.
+    - Next, from JS3a's work-lists: ID Form 40 2024 (NEAR-PORT — the routing/account combs split into 9 + 17 single-digit fields, AR-style `.routing.N` lines) and AL 40 2024 (NEAR-PORT, 3) / 2025 (NEAR-PORT, 34).
 - [x] **JS3c — Courier-aware clipping check — DONE 2026-09-28** (M; added 2026-09-28 by JS3b, outside the original 62-tranche table)
   - *Found by the LA 2024 port.* Its blank moved every text widget from "/HeBo 10" to "/CoBo 12". The audit's renders showed the dependent-name columns clipping "Test Taxpayer 27" at both edges while verify reported 0 fails. The P-001 width estimate used the 0.5-em Helvetica average for every font, but Courier advances exactly 0.6 em a glyph. 31 state packs map Courier text widgets (AL alone 2,074), so verify under-reported clipping on all of them by a sixth.
   - *As built:* `read_text_widgets` resolves each widget's /DA font through the AcroForm /DR /BaseFont, sets `TextWidget.monospace`, and falls back to Acrobat's /Cour /CoBo /CoOb /CoBO aliases when unresolvable. `clipping_scan` uses 0.6 for a Courier face, on the single-line width and the multiline row budget, and names the metric in its message.
