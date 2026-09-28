@@ -341,7 +341,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       year} (Form 8863 AOTC + LLC; MFS gets $0)
     - ptc_annual: args {household_income, household_size, annual_premiums, annual_slcsp, annual_aptc?,
       filing_status, year, state?, mfs_relief_exception?} (Form 8962 annual method; state in
-      other|alaska|hawaii; 2023-2024 only. MFS gets PTC $0 by rule — IRC 36B(c)(1)(C) — unless
+      other|alaska|hawaii; 2023-2026 — 2026 brings the 400% CLIFF back (over 400% FPL: no PTC) and NO repayment
+      limitation at any income (JT1a). MFS gets PTC $0 by rule — IRC 36B(c)(1)(C) — unless
       mfs_relief_exception claims the domestic-abuse/abandonment relief; below-100%-FPL with no APTC
       also gets $0)
     - ptc_monthly: args {household_income, household_size, monthly: [12 x {premium, slcsp, aptc}],

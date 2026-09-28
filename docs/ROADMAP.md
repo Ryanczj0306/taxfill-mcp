@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,452 tests** — offline 6,043 + live-.gov 409; derived
+Done and on `main` (**6,460 tests** — offline 6,051 + live-.gov 409; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2170,7 +2170,19 @@ not wait for any of this.
     - SO / SONFI / SOUNK / DAF payees are excluded from 170(p).
     - NRA path: NOT ESTIMATED until the 2026 1040-NR instructions settle eligibility (IRC 873 not read).
     - Op count +1; the pitfall has citing tests.
-- [ ] **JT1a — PTC 2026: the cliff returns** (M; deps JT0b) [TY26-12]
+- [x] **JT1a — PTC 2026: the cliff returns — DONE 2026-09-27** (M; deps JT0b) [TY26-12]
+  - *As built:*
+    - **Schema:** `no_400_pct_cliff: false` REQUIRES a bounded top band (and `true` an open one), and an empty `repayment_limitation` means no limitation at any FPL.
+    - **tax.ptc for 2026:**
+      - Rev. Proc. 2025-25 §3.01's six bands: 2.10% up to 9.96%, the top band "not more than 400%" = fpl_pct_less_than 401 on the integer line 5.
+      - The 2025 HHS Poverty Guidelines (FR Doc. 2025-01377): $15,650 + $5,500, AK $19,550 + $6,880, HI $17,990 + $6,330.
+      - `repayment_limitation: []` (Rev. Proc. 2025-32 §2.04: OBBBA §71305 removes 36B(f)(2)(B)).
+      - The draft Form 8962 (Created 4/21/26) is a draft second pass for the cliff (line 6 "Did you enter 401%?" / "You are not eligible") and the reserved lines 28-29. The posted draft i8962 still prints the 2024 guidelines ("For 2025, the 2024 federal poverty lines are used"), so it is not a source.
+      - ptc leaves blocks_deliberately_absent, with a modeled effective_law_changes entry.
+    - **Op:** over the bounded table no band applies. ptc_annual and ptc_monthly return PTC $0 with a null figure and contribution, and the settle text quotes §2.04 for the uncapped repayment.
+    - **Found and fixed:** the 401 test truncated first. Worksheet 2 compares the UNTRUNCATED income with 400% of the FPL, so 400.006% is 401. Harmless while 400 and 401 priced the same; the 2026 cliff turns on it.
+    - **Docs:** the server doc and the op docstring said 2023-2024 and "NO eligibility cliff".
+    - **Tests** (test_tax_calc `test_jt1a_*`): the 2026 table and FPL; 399 / 400 / 401% (1,781 / 1,765 / $0); the untruncated 401 in 2025 and 2026; the uncapped repayment below 200% and over 400%; the monthly method over the cliff; the schema pairing both ways.
   - **Why.**
     - Rev. Proc. 2025-25's 2026 table has no open top band ("At least 300% but not more than 400% 9.96%").
     - Rev. Proc. 2025-32 §2.04: §71305 "removes § 36B(f)(2)(B)".

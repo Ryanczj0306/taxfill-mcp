@@ -728,7 +728,8 @@ class PtcApplicablePercentageBand(BaseModel):
 
     fpl_pct_at_least: int = Field(ge=0, description="Inclusive lower bound of the band, in integer FPL percent.")
     fpl_pct_less_than: int | None = Field(
-        description="Exclusive upper bound; null on the top ('400 or more') band."
+        description="Exclusive upper bound; null on an open top ('400 or more') band. With the cliff (2026: 'At "
+                    "least 300% but not more than 400%') the top band ends at 401 — above it no band applies."
     )
     initial: Decimal = Field(description="Applicable figure at the bottom of the band, as a DECIMAL (0.02 = 2%).")
     final: Decimal = Field(description="Applicable figure approached at the top of the band, as a DECIMAL.")
@@ -820,9 +821,11 @@ class PtcRepaymentLimitationRow(BaseModel):
 
 
 class PtcParams(BaseModel):
-    """Form 8962 Premium Tax Credit parameters — the ARPA applicable-percentage
-    table as extended to taxable years 2023-2025 by IRA section 12001(a). The
-    regime EXPIRES after TY2025: never extrapolate these parameters forward.
+    """Form 8962 Premium Tax Credit parameters. 2023-2025: the ARPA applicable-percentage
+    table as extended by IRA section 12001(a) — open top band, Table 5 repayment caps.
+    2026: that regime has EXPIRED — Rev. Proc. 2025-25's table ends at "not more than
+    400%" (``no_400_pct_cliff: false``) and the repayment limitation is gone
+    (``repayment_limitation: []``). Never extrapolate one year's parameters to another.
 
     Applicable-figure mechanics the calc op must reproduce exactly (Worksheet 2
     + Table 2): line 5 = household income / FPL x 100 TRUNCATED to an integer
@@ -838,8 +841,16 @@ class PtcParams(BaseModel):
     citation: Citation
     applicable_percentage_table: list[PtcApplicablePercentageBand] = Field(min_length=1)
     federal_poverty_line: PtcFederalPovertyLine
-    repayment_limitation: list[PtcRepaymentLimitationRow] = Field(min_length=1)
-    no_400_pct_cliff: bool
+    repayment_limitation: list[PtcRepaymentLimitationRow] = Field(
+        description="Form 8962 Table 5. EMPTY = no limitation at any FPL: for taxable years beginning after "
+                    "December 31, 2025 OBBBA §71305 removes IRC 36B(f)(2)(B) (Rev. Proc. 2025-32 §2.04), and the "
+                    "draft 2026 Form 8962 prints lines 28 and 29 'Reserved for future use'.",
+    )
+    no_400_pct_cliff: bool = Field(
+        description="True (2023-2025): the top band is open. False (2026): the top band is bounded and household "
+                    "income over 400% of the FPL is not eligible (the draft 2026 Form 8962 line 6: 'Did you enter "
+                    "401% on line 5?' — 'Yes. You are not eligible to take the PTC').",
+    )
 
     @model_validator(mode="after")
     def _check_tables(self) -> "PtcParams":
@@ -851,10 +862,16 @@ class PtcParams(BaseModel):
             )
         for i, band in enumerate(bands):
             is_last = i == len(bands) - 1
-            if is_last and band.fpl_pct_less_than is not None:
+            if is_last and self.no_400_pct_cliff and band.fpl_pct_less_than is not None:
                 raise ValueError(
                     "ptc.applicable_percentage_table: the last band must have fpl_pct_less_than: null "
-                    "(the '400 or more' row has no upper bound)"
+                    "(the '400 or more' row has no upper bound) while no_400_pct_cliff is true"
+                )
+            if is_last and not self.no_400_pct_cliff and band.fpl_pct_less_than is None:
+                raise ValueError(
+                    "ptc.applicable_percentage_table: with the 400% cliff (no_400_pct_cliff: false) the top band is "
+                    "bounded — 'At least 300% but not more than 400%' is fpl_pct_less_than: 401 on the integer "
+                    "line 5, and above it the filer is not eligible"
                 )
             if not is_last:
                 if band.fpl_pct_less_than is None:
@@ -869,6 +886,8 @@ class PtcParams(BaseModel):
                         f"be contiguous with no gaps or overlaps"
                     )
         rows = self.repayment_limitation
+        if not rows:
+            return self   # no limitation at any FPL (2026 onward)
         if rows[-1].fpl_band_lt is not None:
             raise ValueError(
                 "ptc.repayment_limitation must end with the unlimited row (fpl_band_lt: null — 400% FPL "

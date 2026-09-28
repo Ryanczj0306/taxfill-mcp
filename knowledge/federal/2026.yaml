@@ -38,7 +38,7 @@
 #   and opens the `ty2026-finals: re-pin now` issue when one posts.
 #
 # WHAT IS OUTSTANDING before this pack can back a filed return
-#   1. The absent blocks (provisional.blocks_deliberately_absent): ptc,
+#   1. The absent blocks (provisional.blocks_deliberately_absent):
 #      taxable_social_security, student_loan_interest, education_credits,
 #      dependent_care, filing_thresholds, credits, payment_options, mailing_addresses
 #      and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
@@ -93,6 +93,17 @@ provisional:
         ($300,000 MFJ); overtime "up to $12,500 ($25,000 if married filing jointly)"; vehicle loan
         interest "up to $10,000" under $100,000 ($200,000 MFJ); seniors "$6,000" under $75,000
         ($150,000 MFJ). The worksheet prints no phase-out slopes or rounding.
+    # JT1a: tax.ptc (pass 1 = Rev. Proc. 2025-25 + the 2025 HHS guidelines + Rev. Proc. 2025-32 §2.04).
+    - date: "2026-09-27"
+      source: "Draft Form 8962 (2026), Created 4/21/26 — lines 5-6 and 28-29"
+      url: "https://www.irs.gov/pub/irs-dft/f8962--dft.pdf"
+      source_status: draft
+      draft_created: "4/21/26"
+      verified_blocks: [ptc.no_400_pct_cliff, ptc.repayment_limitation]
+      result: >-
+        line 6 "Did you enter 401% on line 5?" with "Yes. You are not eligible to take the PTC" — the
+        bounded top band; lines 28 and 29 "Reserved for future use" — no repayment limitation. The
+        applicable percentages and the FPL table are not printed on the form.
     - date: "2026-09-27"
       source: "Draft Schedule 1-A (Form 1040) 2026, Created 6/16/26 — Parts I-VI"
       url: "https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf"
@@ -118,7 +129,6 @@ provisional:
     unestimated (the estimator emits 'NOT ESTIMATED' assumptions for them).
     Insufficient for filing in every case.
   blocks_deliberately_absent:
-    - ptc
     - taxable_social_security
     - student_loan_interest
     - education_credits
@@ -456,6 +466,57 @@ tax:
       head_of_household: 579600
       qualifying_surviving_spouse: 613700
 
+  # ── Premium Tax Credit (Form 8962) for 2026 — Phase J JT1a: THE CLIFF RETURNS ──
+  # The ARPA table as extended by IRA section 12001(a) ended with 2025. Rev. Proc.
+  # 2025-25 §3.01, "Applicable Percentage Table for 2026. For taxable years
+  # beginning in calendar year 2026" (read 2026-09-27; initial -> final):
+  #   Less than 133%                        2.10% -> 2.10%
+  #   At least 133% but less than 150%      3.14% -> 4.19%
+  #   At least 150% but less than 200%      4.19% -> 6.60%
+  #   At least 200% but less than 250%      6.60% -> 8.44%
+  #   At least 250% but less than 300%      8.44% -> 9.96%
+  #   At least 300% but not more than 400%  9.96% -> 9.96%
+  # "not more than 400%" is the bounded top band (fpl_pct_less_than: 401 on the
+  # integer line 5); above it no band applies — the draft 2026 Form 8962 (Created
+  # 4/21/26) line 6: "Did you enter 401% on line 5?" / "Yes. You are not eligible
+  # to take the PTC". Rev. Proc. 2025-32 §2.04: "Section 71305 of the OBBBA removes
+  # § 36B(f)(2)(B), which limited the tax increase from excess advance payments for
+  # certain households, effective for taxable years beginning after December 31,
+  # 2025" — so repayment_limitation is EMPTY, and the draft Form 8962 prints lines
+  # 28 and 29 "Reserved for future use".
+  # Line 4 uses the PRIOR year's HHS guidelines: the 2025 Poverty Guidelines (FR
+  # Doc. 2025-01377, 90 FR, January 17, 2025). The posted draft i8962 still prints
+  # the 2024 figures ("For 2025, the 2024 federal poverty lines are used"), so it
+  # is NOT a source for this block.
+  ptc:
+    citation:
+      source: >-
+        Rev. Proc. 2025-25 §3.01 (2026 Applicable Percentage Table); Rev. Proc. 2025-32 §2.04 (OBBBA
+        §71305 removes IRC 36B(f)(2)(B), the repayment limitation, for taxable years beginning after
+        December 31, 2025); 2025 HHS Poverty Guidelines (FR Doc. 2025-01377, January 17, 2025); draft
+        2026 Form 8962 (Created 4/21/26) lines 5-6 and 28-29
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-25.pdf"
+    applicable_percentage_table:
+      - { fpl_pct_at_least: 0, fpl_pct_less_than: 133, initial: "0.0210", final: "0.0210" }
+      - { fpl_pct_at_least: 133, fpl_pct_less_than: 150, initial: "0.0314", final: "0.0419" }
+      - { fpl_pct_at_least: 150, fpl_pct_less_than: 200, initial: "0.0419", final: "0.0660" }
+      - { fpl_pct_at_least: 200, fpl_pct_less_than: 250, initial: "0.0660", final: "0.0844" }
+      - { fpl_pct_at_least: 250, fpl_pct_less_than: 300, initial: "0.0844", final: "0.0996" }
+      - { fpl_pct_at_least: 300, fpl_pct_less_than: 401, initial: "0.0996", final: "0.0996" }
+    federal_poverty_line:
+      guidelines_year: 2025   # Form 8962 line 4: a tax year uses the prior year's guidelines
+      contiguous_48_and_dc:
+        household_size: { 1: 15650, 2: 21150, 3: 26650, 4: 32150, 5: 37650, 6: 43150, 7: 48650, 8: 54150 }
+        per_additional_person: 5500
+      alaska:
+        household_size: { 1: 19550, 2: 26430, 3: 33310, 4: 40190, 5: 47070, 6: 53950, 7: 60830, 8: 67710 }
+        per_additional_person: 6880
+      hawaii:
+        household_size: { 1: 17990, 2: 24320, 3: 30650, 4: 36980, 5: 43310, 6: 49640, 7: 55970, 8: 62300 }
+        per_additional_person: 6330
+    repayment_limitation: []   # no limitation at any FPL (OBBBA §71305)
+    no_400_pct_cliff: false
+
   # ── OBBBA Schedule 1-A additional deductions (TY2026) — Phase J JF8 ────────
   # PASS 1, THE STATUTE (P.L. 119-21), read 2026-09-27 at uscode.house.gov. None of
   # the four is indexed, so 2026 carries the 2025 figures (test-pinned):
@@ -779,6 +840,21 @@ effective_law_changes:
     affects:
       - charitable_contributions
       - form_lines (f1040.charitable_nonitemizer, f1040nr.charitable_nonitemizer)
+    modeled: true
+  - description: >-
+      The Premium Tax Credit returns to the pre-ARPA shape for 2026: the IRA section 12001(a)
+      extension of the ARPA table ended with 2025, so Rev. Proc. 2025-25's 2026 table runs from
+      2.10% to 9.96% and stops at "not more than 400%" of the federal poverty line — above it no
+      credit — and OBBBA §71305 removes IRC 36B(f)(2)(B), the cap on repaying excess advance
+      payments, for taxable years beginning after December 31, 2025. Modeled in tax.ptc (Phase J
+      JT1a): a bounded top band and an empty repayment_limitation.
+    citation:
+      source: >-
+        Rev. Proc. 2025-25 §3.01 and Rev. Proc. 2025-32 §2.04 (read 2026-09-27)
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    status: enacted
+    affects:
+      - tax.ptc
     modeled: true
 
 # ── Foreign-account and foreign-asset REPORTING duties (Phase I4) ─────────────

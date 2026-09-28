@@ -1798,11 +1798,10 @@ def _ptc_params(year: int, knowledge_dir: str | Path | None):
     params = pack.tax.ptc
     if params is None:
         raise ValueError(
-            f"knowledge pack for federal {year} has no tax.ptc block — the Premium Tax Credit ships only "
-            f"for tax years 2023-2025 (the ARPA applicable-percentage table as extended to 2023-2025 "
-            f"by IRA section 12001(a); pre-2023 years use different indexed tables and post-2025 the "
-            f"regime expires). Use 2023 or 2024, or author the year's block from its Form 8962 "
-            f"instructions with citations."
+            f"knowledge pack for federal {year} has no tax.ptc block — the Premium Tax Credit ships for "
+            f"tax years 2023-2026 (2023-2025 the ARPA table as extended by IRA section 12001(a); 2026 Rev. "
+            f"Proc. 2025-25's table, with the 400% cliff back). Author the year's block from its revenue "
+            f"procedure and the prior year's HHS poverty guidelines, with citations."
         )
     return params
 
@@ -1829,7 +1828,9 @@ def _ptc_lines_4_to_8a(
 
     ratio_pct = income * 100 / Decimal(fpl)
     fpl_pct = int(ratio_pct)  # Worksheet 2: TRUNCATE — drop the decimals, never round
-    entered_401 = fpl_pct > 400
+    # Worksheet 2 compares the UNTRUNCATED income with 400% of the FPL ("Is the amount on line 1 more than the
+    # amount on line 3? Yes ... Enter 401"), so 400.006% is 401, not a truncated 400 — the cliff turns on it (JT1a).
+    entered_401 = ratio_pct > 400
     if entered_401:
         fpl_pct = 401
     pct_text = (
@@ -1839,10 +1840,18 @@ def _ptc_lines_4_to_8a(
     )
 
     band = next(
-        b
-        for b in params.applicable_percentage_table
-        if b.fpl_pct_at_least <= fpl_pct and (b.fpl_pct_less_than is None or fpl_pct < b.fpl_pct_less_than)
+        (b for b in params.applicable_percentage_table
+         if b.fpl_pct_at_least <= fpl_pct and (b.fpl_pct_less_than is None or fpl_pct < b.fpl_pct_less_than)),
+        None,
     )
+    if band is None:
+        # JT1a: the 2026 table ends at "not more than 400%" — above it no figure exists and no PTC is allowed.
+        figure_text = (
+            "line 6: Yes — 401% (household income is more than 400% of the federal poverty line). The table ends at "
+            "\"At least 300% but not more than 400%\" (Rev. Proc. 2025-25 §3.01), so the draft Form 8962's answer "
+            "applies: \"You are not eligible to take the PTC\"; lines 7-8a are not reached"
+        )
+        return fpl, fpl_pct, pct_text, None, figure_text, None
     if band.fpl_pct_less_than is None or band.final == band.initial:
         figure = band.initial.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
         figure_text = f"Table 2 figure for {fpl_pct} = {figure}"
@@ -1917,6 +1926,14 @@ def _ptc_settle(
             )
 
     diff = ptc_amount - aptc_whole
+    if diff < 0 and not params.repayment_limitation:
+        repayment = -diff
+        return ptc_amount, 0, repayment, line24_text, (
+            f"APTC {_dollars(aptc_whole)} exceeds PTC {_dollars(ptc_amount)} by {_dollars(repayment)}; there is NO "
+            f"repayment limitation at any income — OBBBA §71305 removes IRC 36B(f)(2)(B) for taxable years beginning "
+            f"after December 31, 2025 (Rev. Proc. 2025-32 §2.04), and the draft 2026 Form 8962 reserves lines 28-29 "
+            f"— repay the full {_dollars(repayment)} (Schedule 2)."
+        )
     if diff >= 0:
         net_ptc, repayment = diff, 0
         settle_text = (
@@ -1956,8 +1973,8 @@ class PtcAnnualResult(BaseModel):
     fpl_pct: int = Field(
         description="Line 5: household income as % of the FPL, TRUNCATED to an integer (literally 401 when over 400%)."
     )
-    applicable_figure: Decimal = Field(description="Line 7: the Table 2 applicable figure (4 decimals).")
-    contribution: int = Field(description="Line 8a: annual contribution amount = income x figure, whole dollars.")
+    applicable_figure: Decimal | None = Field(description="Line 7: the Table 2 applicable figure (4 decimals); None over the 2026 cliff.")
+    contribution: int | None = Field(description="Line 8a: annual contribution amount = income x figure, whole dollars; None over the 2026 cliff.")
     ptc: int = Field(description="Line 24: annual premium tax credit = min(premiums, SLCSP - contribution), floor 0.")
     net_ptc: int = Field(description="Line 26: PTC in excess of APTC (0 when APTC exceeds PTC).")
     repayment: int = Field(
@@ -1995,14 +2012,17 @@ def ptc_annual(
       literally 401 when over 400%.
     * line 7 (Table 2): the applicable figure for the INTEGER percentage —
       linear interpolation within its band, rounded HALF UP to 4 decimals
-      (349 -> 0.0723, 399 -> 0.0848; 0.0850 flat at 400 or more — there is
-      NO eligibility cliff). Below-150 rows are 0.0000 per the table.
+      (349 -> 0.0723, 399 -> 0.0848; 0.0850 flat at 400 or more for 2023-2025 —
+      no eligibility cliff then). 2026 (JT1a): the table stops at "not more than
+      400%", so 401 finds no band — PTC $0 ("You are not eligible to take the
+      PTC", draft Form 8962 line 6).
     * line 8a: contribution = household income x figure, whole dollars.
     * line 24: annual PTC = min(premiums, SLCSP - contribution), floor 0.
     * lines 25-29: against APTC — a surplus is ``net_ptc`` (Schedule 3);
       a shortfall is repaid, capped by the Table 5 limitation for the FPL
       band ('single' vs any other filing status), UNCAPPED at 400% FPL or
-      more (Schedule 2). The 400% figure cap and the vanishing repayment
+      more (Schedule 2) — and uncapped at EVERY income from 2026 (an empty
+      repayment_limitation: OBBBA §71305). The 400% figure cap and the vanishing repayment
       limitation are different rules — do not conflate them.
 
     Applicable-taxpayer gates (IRC 36B(c)(1)):
@@ -2046,25 +2066,28 @@ def ptc_annual(
     fpl, fpl_pct, pct_text, figure, figure_text, contribution = _ptc_lines_4_to_8a(
         income, household_size, state, params
     )
-    computed_ptc = irs_round(min(premiums, max(Decimal(0), slcsp - contribution)))
     aptc_whole = irs_round(aptc)
-
-    # Applicable-taxpayer gates (IRC 36B(c)(1)) — line 24 becomes $0 by RULE —
-    # then the APTC reconciliation (Table 5), via the tail shared with ptc_monthly.
-    computed_text = (
-        f"min(premiums {_money(premiums)}, SLCSP {_money(slcsp)} - contribution = "
-        f"{_money(slcsp - contribution)}, floor 0) = {_dollars(computed_ptc)}"
-    )
+    if contribution is None:   # JT1a: over the 2026 cliff — not eligible
+        computed_ptc, computed_text = 0, "$0 (not eligible — over 400% of the federal poverty line)"
+    else:
+        computed_ptc = irs_round(min(premiums, max(Decimal(0), slcsp - contribution)))
+        # Applicable-taxpayer gates (IRC 36B(c)(1)) — line 24 becomes $0 by RULE —
+        # then the APTC reconciliation (Table 5), via the tail shared with ptc_monthly.
+        computed_text = (
+            f"min(premiums {_money(premiums)}, SLCSP {_money(slcsp)} - contribution = "
+            f"{_money(slcsp - contribution)}, floor 0) = {_dollars(computed_ptc)}"
+        )
     ptc_amount, net_ptc, repayment, line24_text, settle_text = _ptc_settle(
         params, status, mfs_relief_exception, fpl_pct, computed_ptc, aptc_whole, computed_text, "annual PTC"
     )
 
     state_label = _PTC_STATE_LABELS[state]
+    line8a_text = ("" if contribution is None else
+                   f"; line 8a contribution = {_money(income)} x {figure} = {_dollars(contribution)}")
     work = (
         f"Form 8962 ({year}, annual method): line 4 FPL ({state_label} table, household of "
         f"{household_size}) = {_dollars(fpl)}; line 5 = household income {_money(income)} / FPL x 100 = "
-        f"{pct_text}; {figure_text}; line 8a contribution = {_money(income)} x {figure} = "
-        f"{_dollars(contribution)}; {line24_text}. {settle_text}"
+        f"{pct_text}; {figure_text}{line8a_text}; {line24_text}. {settle_text}"
     )
     return PtcAnnualResult(
         fpl_amount=fpl,
@@ -2095,10 +2118,11 @@ class PtcMonthlyResult(BaseModel):
     fpl_pct: int = Field(
         description="Line 5: household income as % of the FPL, TRUNCATED to an integer (literally 401 when over 400%)."
     )
-    applicable_figure: Decimal = Field(description="Line 7: the Table 2 applicable figure (4 decimals).")
-    contribution: int = Field(description="Line 8a: annual contribution amount = income x figure, whole dollars.")
-    monthly_contribution: int = Field(
-        description="Line 8b: line 8a / 12, rounded to whole dollars — column (c) of every monthly row (lines 12c-23c)."
+    applicable_figure: Decimal | None = Field(description="Line 7: the Table 2 applicable figure (4 decimals); None over the 2026 cliff.")
+    contribution: int | None = Field(description="Line 8a: annual contribution amount = income x figure, whole dollars; None over the 2026 cliff.")
+    monthly_contribution: int | None = Field(
+        description="Line 8b: line 8a / 12, rounded to whole dollars — column (c) of every monthly row (lines 12c-23c); "
+                    "None over the 2026 cliff."
     )
     months_covered: int = Field(description="Months with coverage (a premium or SLCSP entry) among the 12 rows.")
     ptc: int = Field(
@@ -2205,7 +2229,8 @@ def ptc_monthly(
     fpl, fpl_pct, pct_text, figure, figure_text, contribution = _ptc_lines_4_to_8a(
         income, household_size, state, params
     )
-    line_8b = irs_round(Decimal(contribution) / 12)
+    over_cliff = contribution is None   # JT1a: over the 2026 cliff — every month's PTC is $0
+    line_8b = None if over_cliff else irs_round(Decimal(contribution) / 12)
 
     # Lines 12-23: each row from its own whole-dollar 1095-A entries. An uncovered
     # month is all zeros, so its row math reduces to 0 exactly like a blank row.
@@ -2220,6 +2245,8 @@ def ptc_monthly(
         if prem == 0 and slcsp == 0:
             continue
         months_covered += 1
+        if over_cliff:
+            continue
         max_assistance = max(0, slcsp - line_8b)  # column (d)
         month_ptc = min(prem, max_assistance)  # column (e)
         computed_ptc += month_ptc
@@ -2247,6 +2274,7 @@ def ptc_monthly(
         aptc_whole = monthly_aptc_sum
 
     computed_text = (
+        "$0 (not eligible — over 400% of the federal poverty line)" if over_cliff else
         f"sum of the monthly PTC column (lines 12e-23e, {months_covered} covered month(s)) = "
         f"{_dollars(computed_ptc)}"
     )
@@ -2257,13 +2285,19 @@ def ptc_monthly(
 
     state_label = _PTC_STATE_LABELS[state]
     grid_text = "; ".join(month_lines) if month_lines else "no covered months (every row zero)"
+    if over_cliff:
+        lines_8_to_23 = f"{figure_text}; no monthly PTC ({months_covered} covered month(s))"
+    else:
+        lines_8_to_23 = (
+            f"{figure_text}; line 8a contribution = {_money(income)} x {figure} = "
+            f"{_dollars(contribution)}; line 8b monthly contribution = round({_dollars(contribution)} / 12) = "
+            f"{_dollars(line_8b)}. Lines 12-23 (per month: (d) = max(0, SLCSP - {_dollars(line_8b)}), "
+            f"(e) = min(premium, (d))): {grid_text}"
+        )
     work = (
         f"Form 8962 ({year}, monthly method): line 4 FPL ({state_label} table, household of "
         f"{household_size}) = {_dollars(fpl)}; line 5 = household income {_money(income)} / FPL x 100 = "
-        f"{pct_text}; {figure_text}; line 8a contribution = {_money(income)} x {figure} = "
-        f"{_dollars(contribution)}; line 8b monthly contribution = round({_dollars(contribution)} / 12) = "
-        f"{_dollars(line_8b)}. Lines 12-23 (per month: (d) = max(0, SLCSP - {_dollars(line_8b)}), "
-        f"(e) = min(premium, (d))): {grid_text}; {line24_text}; "
+        f"{pct_text}; {lines_8_to_23}; {line24_text}; "
         f"line 25 total APTC = {_dollars(aptc_whole)}{aptc_note}. {settle_text}"
     )
     return PtcMonthlyResult(

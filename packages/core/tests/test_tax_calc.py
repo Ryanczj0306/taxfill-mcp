@@ -4601,3 +4601,71 @@ def test_jf4_the_prior_year_prong_is_net_of_that_years_refundable_credits():
     r = estimated_tax_safe_harbor(40_000, 20_000, "single", 2025, prior_year_agi=120_000,
                                   prior_year_total_tax=25_000, prior_year_refundable_credits=3_000)
     assert r.prior_year_prong == 22_000 and "subtract from that total amount the refundable credits" in r.work
+
+
+# ── JT1a: PTC 2026 — the 400% cliff returns (Rev. Proc. 2025-25; OBBBA §71305) ──
+
+
+def test_jt1a_the_2026_table_is_rev_proc_2025_25_with_a_bounded_top_band():
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    ptc = load_knowledge("federal", 2026).tax.ptc
+    assert [(b.fpl_pct_at_least, b.fpl_pct_less_than, str(b.initial), str(b.final))
+            for b in ptc.applicable_percentage_table] == [
+        (0, 133, "0.0210", "0.0210"), (133, 150, "0.0314", "0.0419"), (150, 200, "0.0419", "0.0660"),
+        (200, 250, "0.0660", "0.0844"), (250, 300, "0.0844", "0.0996"), (300, 401, "0.0996", "0.0996")]
+    assert ptc.no_400_pct_cliff is False and ptc.repayment_limitation == []
+    # The 2025 HHS guidelines (FR Doc. 2025-01377) back line 4.
+    fpl = ptc.federal_poverty_line
+    assert (fpl.guidelines_year, fpl.contiguous_48_and_dc.household_size[1], fpl.contiguous_48_and_dc.per_additional_person,
+            fpl.alaska.household_size[1], fpl.hawaii.household_size[1]) == (2025, 15_650, 5_500, 19_550, 17_990)
+
+
+@pytest.mark.parametrize("income, fpl_pct, ptc", [
+    (62_444, 399, 1_781),   # 62,444 / 15,650 = 399.0%: 9.96% x 62,444 = 6,219 -> 8,000 - 6,219
+    (62_600, 400, 1_765),   # exactly 400%: "not more than 400%" keeps the 9.96% figure
+    (62_601, 401, 0),       # 400.006%: MORE than 400% -> 401 -> not eligible
+])
+def test_jt1a_399_400_401_percent_fpl(income, fpl_pct, ptc):
+    r = ptc_annual(income, 1, 7_000, 8_000, annual_aptc=0, year=2026)
+    assert (r.fpl_pct, r.ptc) == (fpl_pct, ptc)
+    if fpl_pct == 401:
+        assert r.applicable_figure is None and r.contribution is None
+        assert "not eligible" in r.work
+
+
+def test_jt1a_the_401_test_reads_the_untruncated_income():
+    # Worksheet 2 asks whether line 1 is MORE than 400% of the FPL before any truncation: 400.006% is 401.
+    r = ptc_annual(62_601, 1, 7_000, 8_000, year=2026)
+    assert r.fpl_pct == 401 and r.ptc == 0
+    # 2025 had no cliff, so the same reading priced at the open top band's 8.5%.
+    r25 = ptc_annual(60_241, 1, 7_000, 8_000, year=2025)   # 60,241 / 15,060 = 400.006%
+    assert r25.fpl_pct == 401 and r25.applicable_figure == Decimal("0.0850")
+
+
+def test_jt1a_every_2026_repayment_is_uncapped():
+    # 25,000 / 15,650 = 159%: in 2025 a single filer below 200% repaid at most $375; in 2026 the whole excess.
+    r = ptc_annual(25_000, 1, 7_000, 6_000, annual_aptc=6_000, year=2026)
+    assert r.repayment == 6_000 - r.ptc > 375
+    assert "NO repayment limitation" in r.work and "Rev. Proc. 2025-32" in r.work
+    over = ptc_annual(70_000, 1, 7_000, 6_000, annual_aptc=3_000, year=2026)
+    assert (over.ptc, over.repayment) == (0, 3_000)
+
+
+def test_jt1a_the_monthly_method_over_the_cliff():
+    m = ptc_monthly(70_000, 1, monthly=[{"premium": 500, "slcsp": 500, "aptc": 250}] * 12, year=2026)
+    assert (m.ptc, m.repayment, m.monthly_contribution, m.months_covered) == (0, 3_000, None, 12)
+
+
+def test_jt1a_the_schema_pairs_the_cliff_with_the_top_band():
+    from taxfill_core.knowledge import PtcParams, load_knowledge  # noqa: PLC0415
+
+    data = load_knowledge("federal", 2026).tax.ptc.model_dump()
+    with pytest.raises(ValueError, match="bounded"):
+        PtcParams.model_validate({**data, "applicable_percentage_table": [
+            *data["applicable_percentage_table"][:-1], {**data["applicable_percentage_table"][-1], "fpl_pct_less_than": None}]})
+    open_2025 = load_knowledge("federal", 2025).tax.ptc.model_dump()
+    with pytest.raises(ValueError, match="no upper bound"):
+        PtcParams.model_validate({**open_2025, "applicable_percentage_table": [
+            *open_2025["applicable_percentage_table"][:-1],
+            {**open_2025["applicable_percentage_table"][-1], "fpl_pct_less_than": 500}]})
